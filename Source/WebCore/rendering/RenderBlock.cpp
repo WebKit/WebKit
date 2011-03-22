@@ -1284,7 +1284,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageLogicalHeight)
         }
         
         IntRect repaintRect;
-        if (style()->isHorizontalWritingMode())
+        if (isHorizontalWritingMode())
             repaintRect = IntRect(repaintLogicalLeft, repaintLogicalTop, repaintLogicalRight - repaintLogicalLeft, repaintLogicalBottom - repaintLogicalTop);
         else
             repaintRect = IntRect(repaintLogicalTop, repaintLogicalLeft, repaintLogicalBottom - repaintLogicalTop, repaintLogicalRight - repaintLogicalLeft);
@@ -1323,7 +1323,7 @@ void RenderBlock::addOverflowFromChildren()
         ColumnInfo* colInfo = columnInfo();
         if (columnCount(colInfo)) {
             IntRect lastRect = columnRectAt(colInfo, columnCount(colInfo) - 1);
-            if (style()->isHorizontalWritingMode()) {
+            if (isHorizontalWritingMode()) {
                 int overflowLeft = !style()->isLeftToRightDirection() ? min(0, lastRect.x()) : 0;
                 int overflowRight = style()->isLeftToRightDirection() ? max(width(), lastRect.maxX()) : 0;
                 int overflowHeight = borderBefore() + paddingBefore() + colInfo->columnHeight();
@@ -1360,7 +1360,7 @@ void RenderBlock::computeOverflow(int oldClientAfterEdge, bool recomputeFloats)
         // be considered reachable.
         IntRect clientRect(clientBoxRect());
         IntRect rectToApply;
-        if (style()->isHorizontalWritingMode())
+        if (isHorizontalWritingMode())
             rectToApply = IntRect(clientRect.x(), clientRect.y(), 1, max(0, oldClientAfterEdge - clientRect.y()));
         else
             rectToApply = IntRect(clientRect.x(), clientRect.y(), max(0, oldClientAfterEdge - clientRect.x()), 1);
@@ -1418,7 +1418,7 @@ bool RenderBlock::expandsToEncloseOverhangingFloats() const
 
 void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marginInfo)
 {
-    bool isHorizontal = style()->isHorizontalWritingMode();
+    bool isHorizontal = isHorizontalWritingMode();
     bool hasStaticInlinePosition = child->style()->hasStaticInlinePosition(isHorizontal);
     bool hasStaticBlockPosition = child->style()->hasStaticBlockPosition(isHorizontal);
     RenderLayer* childLayer = child->layer();
@@ -1814,7 +1814,7 @@ void RenderBlock::handleAfterSideOfBlock(int beforeSide, int afterSide, MarginIn
 
 void RenderBlock::setLogicalLeftForChild(RenderBox* child, int logicalLeft, ApplyLayoutDeltaMode applyDelta)
 {
-    if (style()->isHorizontalWritingMode()) {
+    if (isHorizontalWritingMode()) {
         if (applyDelta == ApplyLayoutDelta)
             view()->addLayoutDelta(IntSize(child->x() - logicalLeft, 0));
         child->setX(logicalLeft);
@@ -1827,7 +1827,7 @@ void RenderBlock::setLogicalLeftForChild(RenderBox* child, int logicalLeft, Appl
 
 void RenderBlock::setLogicalTopForChild(RenderBox* child, int logicalTop, ApplyLayoutDeltaMode applyDelta)
 {
-    if (style()->isHorizontalWritingMode()) {
+    if (isHorizontalWritingMode()) {
         if (applyDelta == ApplyLayoutDelta)
             view()->addLayoutDelta(IntSize(0, child->y() - logicalTop));
         child->setY(logicalTop);
@@ -2126,7 +2126,7 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
         // non-positioned block.  Rather than trying to detect all of these movement cases, we just always lay out positioned
         // objects that are positioned implicitly like this.  Such objects are rare, and so in typical DHTML menu usage (where everything is
         // positioned explicitly) this should not incur a performance penalty.
-        if (relayoutChildren || (r->style()->hasStaticBlockPosition(style()->isHorizontalWritingMode()) && r->parent() != this && r->parent()->isBlockFlow()))
+        if (relayoutChildren || (r->style()->hasStaticBlockPosition(isHorizontalWritingMode()) && r->parent() != this && r->parent()->isBlockFlow()))
             r->setChildNeedsLayout(true, false);
             
         // If relayoutChildren is set and we have percentage padding, we also need to invalidate the child's pref widths.
@@ -2248,7 +2248,7 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, int tx, int ty)
     for (unsigned i = 0; i < colCount; i++) {
         IntRect colRect = columnRectAt(colInfo, i);
 
-        int inlineDirectionSize = style()->isHorizontalWritingMode() ? colRect.width() : colRect.height();
+        int inlineDirectionSize = isHorizontalWritingMode() ? colRect.width() : colRect.height();
         
         // Move to the next position.
         if (style()->isLeftToRightDirection()) {
@@ -2261,10 +2261,10 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, int tx, int ty)
        
         // Now paint the column rule.
         if (i < colCount - 1) {
-            int ruleLeft = style()->isHorizontalWritingMode() ? tx + ruleLogicalLeft - ruleWidth / 2 + ruleAdd : tx + borderBefore() + paddingBefore();
-            int ruleRight = style()->isHorizontalWritingMode() ? ruleLeft + ruleWidth : ruleLeft + contentWidth();
-            int ruleTop = style()->isHorizontalWritingMode() ? ty + borderTop() + paddingTop() : ty + ruleLogicalLeft - ruleWidth / 2 + ruleAdd;
-            int ruleBottom = style()->isHorizontalWritingMode() ? ruleTop + contentHeight() : ruleTop + ruleWidth;
+            int ruleLeft = isHorizontalWritingMode() ? tx + ruleLogicalLeft - ruleWidth / 2 + ruleAdd : tx + borderBefore() + paddingBefore();
+            int ruleRight = isHorizontalWritingMode() ? ruleLeft + ruleWidth : ruleLeft + contentWidth();
+            int ruleTop = isHorizontalWritingMode() ? ty + borderTop() + paddingTop() : ty + ruleLogicalLeft - ruleWidth / 2 + ruleAdd;
+            int ruleBottom = isHorizontalWritingMode() ? ruleTop + contentHeight() : ruleTop + ruleWidth;
             drawLineForBoxSide(paintInfo.context, ruleLeft, ruleTop, ruleRight, ruleBottom,
                                style()->isLeftToRightDirection() ? BSLeft : BSRight, ruleColor, ruleStyle, 0, 0);
         }
@@ -2286,8 +2286,8 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, int tx, int ty, bool
         // For each rect, we clip to the rect, and then we adjust our coords.
         IntRect colRect = columnRectAt(colInfo, i);
         flipForWritingMode(colRect);
-        int logicalLeftOffset = (style()->isHorizontalWritingMode() ? colRect.x() : colRect.y()) - logicalLeftOffsetForContent();
-        IntSize offset = style()->isHorizontalWritingMode() ? IntSize(logicalLeftOffset, currLogicalTopOffset) : IntSize(currLogicalTopOffset, logicalLeftOffset);
+        int logicalLeftOffset = (isHorizontalWritingMode() ? colRect.x() : colRect.y()) - logicalLeftOffsetForContent();
+        IntSize offset = isHorizontalWritingMode() ? IntSize(logicalLeftOffset, currLogicalTopOffset) : IntSize(currLogicalTopOffset, logicalLeftOffset);
         colRect.move(tx, ty);
         PaintInfo info(paintInfo);
         info.rect.intersect(colRect);
@@ -2310,7 +2310,7 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, int tx, int ty, bool
             context->restore();
         }
 
-        int blockDelta = (style()->isHorizontalWritingMode() ? colRect.height() : colRect.width());
+        int blockDelta = (isHorizontalWritingMode() ? colRect.height() : colRect.width());
         if (style()->isFlippedBlocksWritingMode())
             currLogicalTopOffset += blockDelta;
         else
@@ -2499,7 +2499,7 @@ IntPoint RenderBlock::flipFloatForWritingMode(const FloatingObject* child, const
     // This is similar to the ParentToChildFlippingAdjustment in RenderBox::flipForWritingMode.  We have to subtract out our left/top offsets twice, since
     // it's going to get added back in.  We hide this complication here so that the calling code looks normal for the unflipped
     // case.
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         return IntPoint(point.x(), point.y() + height() - child->renderer()->height() - 2 * yPositionForFloatIncludingMargin(child));
     return IntPoint(point.x() + width() - child->width() - 2 * xPositionForFloatIncludingMargin(child), point.y());
 }
@@ -2727,18 +2727,18 @@ static void clipOutPositionedObjects(const PaintInfo* paintInfo, const IntPoint&
 
 static int blockDirectionOffset(RenderBlock* rootBlock, const IntSize& offsetFromRootBlock)
 {
-    return rootBlock->style()->isHorizontalWritingMode() ? offsetFromRootBlock.height() : offsetFromRootBlock.width();
+    return rootBlock->isHorizontalWritingMode() ? offsetFromRootBlock.height() : offsetFromRootBlock.width();
 }
 
 static int inlineDirectionOffset(RenderBlock* rootBlock, const IntSize& offsetFromRootBlock)
 {
-    return rootBlock->style()->isHorizontalWritingMode() ? offsetFromRootBlock.width() : offsetFromRootBlock.height();
+    return rootBlock->isHorizontalWritingMode() ? offsetFromRootBlock.width() : offsetFromRootBlock.height();
 }
 
 IntRect RenderBlock::logicalRectToPhysicalRect(const IntPoint& rootBlockPhysicalPosition, const IntRect& logicalRect)
 {
     IntRect result;
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         result = logicalRect;
     else
         result = IntRect(logicalRect.y(), logicalRect.x(), logicalRect.height(), logicalRect.width());
@@ -2835,10 +2835,10 @@ GapRects RenderBlock::inlineSelectionGaps(RenderBlock* rootBlock, const IntPoint
                                                  selTop, paintInfo));
         
         IntRect logicalRect(curr->logicalLeft(), selTop, curr->logicalWidth(), selTop + selHeight);
-        logicalRect.move(style()->isHorizontalWritingMode() ? offsetFromRootBlock : IntSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
+        logicalRect.move(isHorizontalWritingMode() ? offsetFromRootBlock : IntSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
         IntRect physicalRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
-        if (!paintInfo || (style()->isHorizontalWritingMode() && physicalRect.y() < paintInfo->rect.maxY() && physicalRect.maxY() > paintInfo->rect.y())
-            || (!style()->isHorizontalWritingMode() && physicalRect.x() < paintInfo->rect.maxX() && physicalRect.maxX() > paintInfo->rect.x()))
+        if (!paintInfo || (isHorizontalWritingMode() && physicalRect.y() < paintInfo->rect.maxY() && physicalRect.maxY() > paintInfo->rect.y())
+            || (!isHorizontalWritingMode() && physicalRect.x() < paintInfo->rect.maxX() && physicalRect.maxX() > paintInfo->rect.x()))
             result.unite(curr->lineSelectionGap(rootBlock, rootBlockPhysicalPosition, offsetFromRootBlock, selTop, selHeight, paintInfo));
 
         lastSelectedLine = curr;
@@ -3665,8 +3665,8 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int logicalLeftOffset,
         if (logicalBottom > logicalHeight()) {
             // If the object is not in the list, we add it now.
             if (!containsFloat(r->m_renderer)) {
-                int leftOffset = style()->isHorizontalWritingMode() ? logicalLeftOffset : logicalTopOffset;
-                int topOffset = style()->isHorizontalWritingMode() ? logicalTopOffset : logicalLeftOffset;
+                int leftOffset = isHorizontalWritingMode() ? logicalLeftOffset : logicalTopOffset;
+                int topOffset = isHorizontalWritingMode() ? logicalTopOffset : logicalLeftOffset;
                 FloatingObject* floatingObj = new FloatingObject(r->type(), IntRect(r->x() - leftOffset, r->y() - topOffset, r->width(), r->height()));
                 floatingObj->m_renderer = r->m_renderer;
 
@@ -3714,7 +3714,7 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, int logicalLeftOffset, i
     if (!prev->m_floatingObjects)
         return;
 
-    logicalLeftOffset += (style()->isHorizontalWritingMode() ? marginLeft() : marginTop());
+    logicalLeftOffset += (isHorizontalWritingMode() ? marginLeft() : marginTop());
 
     FloatingObjectSet& prevSet = prev->m_floatingObjects->set();
     FloatingObjectSetIterator prevEnd = prevSet.end();
@@ -3722,8 +3722,8 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, int logicalLeftOffset, i
         FloatingObject* r = *prevIt;
         if (logicalBottomForFloat(r) > logicalTopOffset) {
             if (!m_floatingObjects || !m_floatingObjects->set().contains(r)) {
-                int leftOffset = style()->isHorizontalWritingMode() ? logicalLeftOffset : logicalTopOffset;
-                int topOffset = style()->isHorizontalWritingMode() ? logicalTopOffset : logicalLeftOffset;
+                int leftOffset = isHorizontalWritingMode() ? logicalLeftOffset : logicalTopOffset;
+                int topOffset = isHorizontalWritingMode() ? logicalTopOffset : logicalLeftOffset;
                 
                 FloatingObject* floatingObj = new FloatingObject(r->type(), IntRect(r->x() - leftOffset, r->y() - topOffset, r->width(), r->height()));
 
@@ -3733,7 +3733,7 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, int logicalLeftOffset, i
                 // into account.  Only apply this code if prev is the parent, since otherwise the left margin
                 // will get applied twice.
                 if (prev != parent()) {
-                    if (style()->isHorizontalWritingMode())
+                    if (isHorizontalWritingMode())
                         floatingObj->setX(floatingObj->x() + prev->marginLeft());
                     else
                         floatingObj->setY(floatingObj->y() + prev->marginTop());
@@ -3947,7 +3947,7 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
     int logicalLeft = logicalLeftOffsetForContent();
     int currLogicalTopOffset = 0;
     int i;
-    bool isHorizontal = style()->isHorizontalWritingMode();
+    bool isHorizontal = isHorizontalWritingMode();
     for (i = 0; i < colCount; i++) {
         IntRect colRect = columnRectAt(colInfo, i);
         int blockDelta =  (isHorizontal ? colRect.height() : colRect.width());
@@ -4045,7 +4045,7 @@ static VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock* 
 
     // Otherwise return before or after the child, depending on if the click was to the logical left or logical right of the child
     int childMiddle = parent->logicalWidthForChild(child) / 2;
-    int logicalLeft = parent->style()->isHorizontalWritingMode() ? pointInChildCoordinates.x() : pointInChildCoordinates.y();
+    int logicalLeft = parent->isHorizontalWritingMode() ? pointInChildCoordinates.x() : pointInChildCoordinates.y();
     if (logicalLeft < childMiddle)
         return ancestor->createVisiblePosition(childNode->nodeIndex(), DOWNSTREAM);
     return ancestor->createVisiblePosition(childNode->nodeIndex() + 1, UPSTREAM);
@@ -4092,7 +4092,7 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const IntPoint& 
 
         // pass the box a top position that is inside it
         IntPoint point(pointInLogicalContents.x(), closestBox->logicalTop());
-        if (!style()->isHorizontalWritingMode())
+        if (!isHorizontalWritingMode())
             point = point.transposedPoint();
         if (closestBox->renderer()->isReplaced())
             return positionForPointRespectingEditingBoundaries(this, toRenderBox(closestBox->renderer()), point);
@@ -4123,8 +4123,8 @@ VisiblePosition RenderBlock::positionForPoint(const IntPoint& point)
 
     if (isReplaced()) {
         // FIXME: This seems wrong when the object's writing-mode doesn't match the line's writing-mode.
-        int pointLogicalLeft = style()->isHorizontalWritingMode() ? point.x() : point.y();
-        int pointLogicalTop = style()->isHorizontalWritingMode() ? point.y() : point.x();
+        int pointLogicalLeft = isHorizontalWritingMode() ? point.x() : point.y();
+        int pointLogicalTop = isHorizontalWritingMode() ? point.y() : point.x();
 
         if (pointLogicalTop < 0 || (pointLogicalTop < logicalHeight() && pointLogicalLeft < 0))
             return createVisiblePosition(caretMinOffset(), DOWNSTREAM);
@@ -4137,7 +4137,7 @@ VisiblePosition RenderBlock::positionForPoint(const IntPoint& point)
     offsetForContents(contentsX, contentsY);
     IntPoint pointInContents(contentsX, contentsY);
     IntPoint pointInLogicalContents(pointInContents);
-    if (!style()->isHorizontalWritingMode())
+    if (!isHorizontalWritingMode())
         pointInLogicalContents = pointInLogicalContents.transposedPoint();
 
     if (childrenInline())
@@ -4305,7 +4305,7 @@ IntRect RenderBlock::columnRectAt(ColumnInfo* colInfo, unsigned index) const
                           logicalLeftOffsetForContent() + (index * (colLogicalWidth + colGap))
                         : logicalLeftOffsetForContent() + contentLogicalWidth() - colLogicalWidth - (index * (colLogicalWidth + colGap));
     IntRect rect(colLogicalLeft, colLogicalTop, colLogicalWidth, colLogicalHeight);
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         return IntRect(colLogicalLeft, colLogicalTop, colLogicalWidth, colLogicalHeight);
     return IntRect(colLogicalTop, colLogicalLeft, colLogicalHeight, colLogicalWidth);
 }
@@ -4372,7 +4372,7 @@ void RenderBlock::adjustPointToColumnContents(IntPoint& point) const
     for (unsigned i = 0; i < colInfo->columnCount(); i++) {
         // Add in half the column gap to the left and right of the rect.
         IntRect colRect = columnRectAt(colInfo, i);
-        if (style()->isHorizontalWritingMode()) {
+        if (isHorizontalWritingMode()) {
             IntRect gapAndColumnRect(colRect.x() - halfColGap, colRect.y(), colRect.width() + colGap, colRect.height());
             if (point.x() >= gapAndColumnRect.x() && point.x() < gapAndColumnRect.maxX()) {
                 // FIXME: The clamping that follows is not completely right for right-to-left
@@ -4442,7 +4442,7 @@ void RenderBlock::adjustRectForColumns(IntRect& r) const
     for (unsigned i = 0; i < colCount; i++) {
         IntRect colRect = columnRectAt(colInfo, i);
         IntRect repaintRect = r;
-        if (style()->isHorizontalWritingMode()) {
+        if (isHorizontalWritingMode()) {
             int currXOffset = colRect.x() - logicalLeft;
             repaintRect.move(currXOffset, currLogicalOffset);
             currLogicalOffset -= colRect.height();
@@ -4466,7 +4466,7 @@ IntPoint RenderBlock::flipForWritingModeIncludingColumns(const IntPoint& point) 
     ColumnInfo* colInfo = columnInfo();
     int columnLogicalHeight = colInfo->columnHeight();
     int expandedLogicalHeight = borderBefore() + paddingBefore() + columnCount(colInfo) * columnLogicalHeight + borderAfter() + paddingAfter() + scrollbarLogicalHeight();
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         return IntPoint(point.x(), expandedLogicalHeight - point.y());
     return IntPoint(expandedLogicalHeight - point.x(), point.y());
 }
@@ -4480,7 +4480,7 @@ void RenderBlock::flipForWritingModeIncludingColumns(IntRect& rect) const
     ColumnInfo* colInfo = columnInfo();
     int columnLogicalHeight = colInfo->columnHeight();
     int expandedLogicalHeight = borderBefore() + paddingBefore() + columnCount(colInfo) * columnLogicalHeight + borderAfter() + paddingAfter() + scrollbarLogicalHeight();
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         rect.setY(expandedLogicalHeight - rect.maxY());
     else
         rect.setX(expandedLogicalHeight - rect.maxX());
@@ -4501,7 +4501,7 @@ void RenderBlock::adjustForColumns(IntSize& offset, const IntPoint& point) const
     for (size_t i = 0; i < colCount; ++i) {
         // Compute the edges for a given column in the block progression direction.
         IntRect sliceRect = IntRect(logicalLeft, borderBefore() + paddingBefore() + i * colLogicalHeight, colLogicalWidth, colLogicalHeight);
-        if (!style()->isHorizontalWritingMode())
+        if (!isHorizontalWritingMode())
             sliceRect = sliceRect.transposedRect();
         
         // If we have a flipped blocks writing mode, then convert the column so that it's coming from the after edge (either top or left edge).
@@ -4510,7 +4510,7 @@ void RenderBlock::adjustForColumns(IntSize& offset, const IntPoint& point) const
         int logicalOffset = style()->isFlippedBlocksWritingMode() ? (colCount - 1 - i) * colLogicalHeight : i * colLogicalHeight;
 
         // Now we're in the same coordinate space as the point.  See if it is inside the rectangle.
-        if (style()->isHorizontalWritingMode()) {
+        if (isHorizontalWritingMode()) {
             if (point.y() >= sliceRect.y() && point.y() < sliceRect.maxY()) {
                 offset.expand(columnRectAt(colInfo, i).x() - logicalLeft, -logicalOffset);
                 return;
@@ -5161,7 +5161,7 @@ int RenderBlock::lastLineBoxBaseline() const
     if (!isBlockFlow() || (isWritingModeRoot() && !isRubyRun()))
         return -1;
 
-    LineDirectionMode lineDirection = style()->isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
+    LineDirectionMode lineDirection = isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
 
     if (childrenInline()) {
         if (!firstLineBox() && hasLineIfEmpty()) {
@@ -5917,7 +5917,7 @@ int RenderBlock::nextPageLogicalTop(int logicalOffset) const
     // The logicalOffset is in our coordinate space.  We can add in our pushed offset.
     int pageLogicalHeight = layoutState->m_pageLogicalHeight;
     IntSize delta = layoutState->m_layoutOffset - layoutState->m_pageOffset;
-    int offset = style()->isHorizontalWritingMode() ? delta.height() : delta.width();
+    int offset = isHorizontalWritingMode() ? delta.height() : delta.width();
     int remainingLogicalHeight = (pageLogicalHeight - (offset + logicalOffset) % pageLogicalHeight) % pageLogicalHeight;
     return logicalOffset + remainingLogicalHeight;
 }
@@ -5978,7 +5978,7 @@ int RenderBlock::adjustForUnsplittableChild(RenderBox* child, int logicalOffset,
     if (!pageLogicalHeight || childLogicalHeight > pageLogicalHeight)
         return logicalOffset;
     IntSize delta = layoutState->m_layoutOffset - layoutState->m_pageOffset;
-    int offset = style()->isHorizontalWritingMode() ? delta.height() : delta.width();
+    int offset = isHorizontalWritingMode() ? delta.height() : delta.width();
     int remainingLogicalHeight = (pageLogicalHeight - (offset + logicalOffset) % pageLogicalHeight) % pageLogicalHeight;
     if (remainingLogicalHeight < childLogicalHeight)
         return logicalOffset + remainingLogicalHeight;
@@ -6014,7 +6014,7 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, int& d
     if (!pageLogicalHeight || lineHeight > pageLogicalHeight)
         return;
     IntSize offsetDelta = layoutState->m_layoutOffset - layoutState->m_pageOffset;
-    int offset = style()->isHorizontalWritingMode() ? offsetDelta.height() : offsetDelta.width();
+    int offset = isHorizontalWritingMode() ? offsetDelta.height() : offsetDelta.width();
     int remainingLogicalHeight = pageLogicalHeight - (offset + logicalOffset) % pageLogicalHeight;
     if (remainingLogicalHeight < lineHeight) {
         int totalLogicalHeight = lineHeight + max(0, logicalOffset);
@@ -6036,7 +6036,7 @@ int RenderBlock::collapsedMarginBeforeForChild(RenderBox* child) const
     
     // The child has a different directionality.  If the child is parallel, then it's just
     // flipped relative to us.  We can use the collapsed margin for the opposite edge.
-    if (child->style()->isHorizontalWritingMode() == style()->isHorizontalWritingMode())
+    if (child->isHorizontalWritingMode() == isHorizontalWritingMode())
         return child->collapsedMarginAfter();
     
     // The child is perpendicular to us, which means its margins don't collapse but are on the
@@ -6053,7 +6053,7 @@ int RenderBlock::collapsedMarginAfterForChild(RenderBox* child) const
     
     // The child has a different directionality.  If the child is parallel, then it's just
     // flipped relative to us.  We can use the collapsed margin for the opposite edge.
-    if (child->style()->isHorizontalWritingMode() == style()->isHorizontalWritingMode())
+    if (child->isHorizontalWritingMode() == isHorizontalWritingMode())
         return child->collapsedMarginBefore();
     
     // The child is perpendicular to us, which means its margins don't collapse but are on the
@@ -6095,21 +6095,21 @@ int RenderBlock::marginAfterForChild(RenderBoxModelObject* child) const
     
 int RenderBlock::marginStartForChild(RenderBoxModelObject* child) const
 {
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         return style()->isLeftToRightDirection() ? child->marginLeft() : child->marginRight();
     return style()->isLeftToRightDirection() ? child->marginTop() : child->marginBottom();
 }
 
 int RenderBlock::marginEndForChild(RenderBoxModelObject* child) const
 {
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         return style()->isLeftToRightDirection() ? child->marginRight() : child->marginLeft();
     return style()->isLeftToRightDirection() ? child->marginBottom() : child->marginTop();
 }
 
 void RenderBlock::setMarginStartForChild(RenderBox* child, int margin)
 {
-    if (style()->isHorizontalWritingMode()) {
+    if (isHorizontalWritingMode()) {
         if (style()->isLeftToRightDirection())
             child->setMarginLeft(margin);
         else
@@ -6124,7 +6124,7 @@ void RenderBlock::setMarginStartForChild(RenderBox* child, int margin)
 
 void RenderBlock::setMarginEndForChild(RenderBox* child, int margin)
 {
-    if (style()->isHorizontalWritingMode()) {
+    if (isHorizontalWritingMode()) {
         if (style()->isLeftToRightDirection())
             child->setMarginRight(margin);
         else
@@ -6197,7 +6197,7 @@ RenderBlock::MarginValues RenderBlock::marginValuesForChild(RenderBox* child)
             beforeMargin = child->marginBefore();
             afterMargin = child->marginAfter();
         }
-    } else if (child->style()->isHorizontalWritingMode() == style()->isHorizontalWritingMode()) {
+    } else if (child->isHorizontalWritingMode() == isHorizontalWritingMode()) {
         // The child has a different directionality.  If the child is parallel, then it's just
         // flipped relative to us.  We can use the margins for the opposite edges.
         if (childRenderBlock) {

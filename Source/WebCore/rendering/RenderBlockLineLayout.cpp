@@ -222,7 +222,7 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine)
             ASSERT(newBox->isInlineFlowBox());
             parentBox = static_cast<InlineFlowBox*>(newBox);
             parentBox->setFirstLineStyleBit(firstLine);
-            parentBox->setIsHorizontal(style()->isHorizontalWritingMode());
+            parentBox->setIsHorizontal(isHorizontalWritingMode());
             constructedNewBox = true;
         }
 
@@ -980,7 +980,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
     setLogicalHeight(logicalHeight() + lastLineAnnotationsAdjustment + borderAfter() + paddingAfter() + scrollbarLogicalHeight());
 
     if (!firstLineBox() && hasLineIfEmpty())
-        setLogicalHeight(logicalHeight() + lineHeight(true, style()->isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
+        setLogicalHeight(logicalHeight() + lineHeight(true, isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
 
     // See if we have any lines that spill out of our block.  If we do, then we will possibly need to
     // truncate text.
@@ -1005,8 +1005,8 @@ void RenderBlock::checkFloatsInCleanLine(RootInlineBox* line, Vector<FloatWithRe
             return;
         }
         if (floats[floatIndex].rect.size() != newSize) {
-            int floatTop = style()->isHorizontalWritingMode() ? floats[floatIndex].rect.y() : floats[floatIndex].rect.x();
-            int floatHeight = style()->isHorizontalWritingMode() ? max(floats[floatIndex].rect.height(), newSize.height()) 
+            int floatTop = isHorizontalWritingMode() ? floats[floatIndex].rect.y() : floats[floatIndex].rect.x();
+            int floatHeight = isHorizontalWritingMode() ? max(floats[floatIndex].rect.height(), newSize.height()) 
                                                                  : max(floats[floatIndex].rect.width(), newSize.width());
             line->markDirty();
             markLinesDirtyInBlockRange(line->blockLogicalHeight(), floatTop + floatHeight, line);
@@ -1339,7 +1339,7 @@ static void setStaticPositions(RenderBlock* block, RenderBox* child)
         toRenderInline(containerBlock)->layer()->setStaticBlockPosition(block->logicalHeight());
     }
 
-    bool isHorizontal = block->style()->isHorizontalWritingMode();
+    bool isHorizontal = block->isHorizontalWritingMode();
     bool hasStaticInlinePosition = child->style()->hasStaticInlinePosition(isHorizontal);
     bool hasStaticBlockPosition = child->style()->hasStaticBlockPosition(isHorizontal);
 
@@ -1595,7 +1595,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 // go ahead and determine our static inline position now.
                 RenderBox* box = toRenderBox(o);
                 bool isInlineType = box->style()->isOriginalDisplayInlineType();
-                bool needToSetStaticInlinePosition = box->style()->hasStaticInlinePosition(style()->isHorizontalWritingMode());
+                bool needToSetStaticInlinePosition = box->style()->hasStaticInlinePosition(isHorizontalWritingMode());
                 if (needToSetStaticInlinePosition && !isInlineType) {
                     box->layer()->setStaticInlinePosition(borderAndPaddingStart());
                     needToSetStaticInlinePosition = false;
@@ -1603,7 +1603,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 
                 // If our original display was an INLINE type, then we can go ahead
                 // and determine our static y position now.
-                bool needToSetStaticBlockPosition = box->style()->hasStaticBlockPosition(style()->isHorizontalWritingMode());
+                bool needToSetStaticBlockPosition = box->style()->hasStaticBlockPosition(isHorizontalWritingMode());
                 if (needToSetStaticBlockPosition && isInlineType) {
                     box->layer()->setStaticBlockPosition(logicalHeight());
                     needToSetStaticBlockPosition = false;
@@ -2132,7 +2132,7 @@ void RenderBlock::addOverflowFromInlineChildren()
 int RenderBlock::beforeSideVisualOverflowForLine(RootInlineBox* line) const
 {
     // Overflow is in the block's coordinate space, which means it isn't purely physical.
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         return line->minYVisualOverflow();
     return line->minXVisualOverflow();
 }
@@ -2140,7 +2140,7 @@ int RenderBlock::beforeSideVisualOverflowForLine(RootInlineBox* line) const
 int RenderBlock::afterSideVisualOverflowForLine(RootInlineBox* line) const
 {
     // Overflow is in the block's coordinate space, which means it isn't purely physical.
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         return line->maxYVisualOverflow();
     return line->maxXVisualOverflow();
 }
@@ -2148,7 +2148,7 @@ int RenderBlock::afterSideVisualOverflowForLine(RootInlineBox* line) const
 int RenderBlock::beforeSideLayoutOverflowForLine(RootInlineBox* line) const
 {
     // Overflow is in the block's coordinate space, which means it isn't purely physical.
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         return line->minYLayoutOverflow();
     return line->minXLayoutOverflow();
 }
@@ -2156,7 +2156,7 @@ int RenderBlock::beforeSideLayoutOverflowForLine(RootInlineBox* line) const
 int RenderBlock::afterSideLayoutOverflowForLine(RootInlineBox* line) const
 {
     // Overflow is in the block's coordinate space, which means it isn't purely physical.
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         return line->maxYLayoutOverflow();
     return line->maxXLayoutOverflow();
 }

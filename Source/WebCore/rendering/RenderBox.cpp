@@ -119,21 +119,21 @@ int RenderBox::marginAfter() const
 
 int RenderBox::marginStart() const
 {
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         return style()->isLeftToRightDirection() ? m_marginLeft : m_marginRight;
     return style()->isLeftToRightDirection() ? m_marginTop : m_marginBottom;
 }
 
 int RenderBox::marginEnd() const
 {
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         return style()->isLeftToRightDirection() ? m_marginRight : m_marginLeft;
     return style()->isLeftToRightDirection() ? m_marginBottom : m_marginTop;
 }
 
 void RenderBox::setMarginStart(int margin)
 {
-    if (style()->isHorizontalWritingMode()) {
+    if (isHorizontalWritingMode()) {
         if (style()->isLeftToRightDirection())
             m_marginLeft = margin;
         else
@@ -148,7 +148,7 @@ void RenderBox::setMarginStart(int margin)
 
 void RenderBox::setMarginEnd(int margin)
 {
-    if (style()->isHorizontalWritingMode()) {
+    if (isHorizontalWritingMode()) {
         if (style()->isLeftToRightDirection())
             m_marginRight = margin;
         else
@@ -324,8 +324,11 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 
         if (viewStyle->writingMode() != style()->writingMode() && (isRootRenderer || !document()->writingModeSetOnDocumentElement())) {
             viewStyle->setWritingMode(style()->writingMode());
-            if (isBodyRenderer)
+            viewRenderer->setHorizontalWritingMode(style()->isHorizontalWritingMode());
+            if (isBodyRenderer) {
                 document()->documentElement()->renderer()->style()->setWritingMode(style()->writingMode());
+                document()->documentElement()->renderer()->setHorizontalWritingMode(style()->isHorizontalWritingMode());
+            }
             setNeedsLayoutAndPrefWidthsRecalc();
         }
     }
@@ -610,9 +613,9 @@ bool RenderBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranularit
 #if PLATFORM(MAC)
         // On Mac only we reset the inline direction position when doing a document scroll (e.g., hitting Home/End).
         if (granularity == ScrollByDocument)
-            scrolled = l->scroll(logicalToPhysical(ScrollInlineDirectionBackward, style()->isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), ScrollByDocument, multiplier);
+            scrolled = l->scroll(logicalToPhysical(ScrollInlineDirectionBackward, isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), ScrollByDocument, multiplier);
 #endif
-        if (l->scroll(logicalToPhysical(direction, style()->isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), granularity, multiplier))
+        if (l->scroll(logicalToPhysical(direction, isHorizontalWritingMode(), style()->isFlippedBlocksWritingMode()), granularity, multiplier))
             scrolled = true;
         
         if (scrolled) {
@@ -1525,7 +1528,7 @@ void RenderBox::computeLogicalWidth()
 
     RenderBlock* cb = containingBlock();
     int containerLogicalWidth = max(0, containingBlockLogicalWidthForContent());
-    bool hasPerpendicularContainingBlock = cb->style()->isHorizontalWritingMode() != style()->isHorizontalWritingMode();
+    bool hasPerpendicularContainingBlock = cb->isHorizontalWritingMode() != isHorizontalWritingMode();
     int containerWidthInInlineDirection = containerLogicalWidth;
     if (hasPerpendicularContainingBlock)
         containerWidthInInlineDirection = perpendicularContainingBlockLogicalHeight();
@@ -1700,7 +1703,7 @@ void RenderBox::computeLogicalHeight()
         computePositionedLogicalHeight();
     } else {
         RenderBlock* cb = containingBlock();
-        bool hasPerpendicularContainingBlock = cb->style()->isHorizontalWritingMode() != style()->isHorizontalWritingMode();
+        bool hasPerpendicularContainingBlock = cb->isHorizontalWritingMode() != isHorizontalWritingMode();
     
         if (!hasPerpendicularContainingBlock)
             computeBlockDirectionMargins(cb);
@@ -1781,7 +1784,7 @@ void RenderBox::computeLogicalHeight()
         if (document()->printing())
             visHeight = static_cast<int>(view()->pageLogicalHeight());
         else  {
-            if (style()->isHorizontalWritingMode())
+            if (isHorizontalWritingMode())
                 visHeight = view()->viewHeight();
             else
                 visHeight = view()->viewWidth();
@@ -1991,7 +1994,7 @@ int RenderBox::availableLogicalHeightUsing(const Length& h) const
         return computeContentBoxLogicalHeight(h.value());
 
     if (isRenderView())
-        return style()->isHorizontalWritingMode() ? toRenderView(this)->frameView()->visibleHeight() : toRenderView(this)->frameView()->visibleWidth();
+        return isHorizontalWritingMode() ? toRenderView(this)->frameView()->visibleHeight() : toRenderView(this)->frameView()->visibleWidth();
 
     // We need to stop here, since we don't want to increase the height of the table
     // artificially.  We're going to rely on this cell getting expanded to some new
@@ -2037,7 +2040,7 @@ void RenderBox::computeBlockDirectionMargins(RenderBlock* containingBlock)
 
 int RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode) const
 {
-    if (checkForPerpendicularWritingMode && containingBlock->style()->isHorizontalWritingMode() != style()->isHorizontalWritingMode())
+    if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalHeightForPositioned(containingBlock, false);
 
     if (containingBlock->isBox())
@@ -2068,7 +2071,7 @@ int RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxModelObje
 
 int RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxModelObject* containingBlock, bool checkForPerpendicularWritingMode) const
 {
-    if (checkForPerpendicularWritingMode && containingBlock->style()->isHorizontalWritingMode() != style()->isHorizontalWritingMode())
+    if (checkForPerpendicularWritingMode && containingBlock->isHorizontalWritingMode() != isHorizontalWritingMode())
         return containingBlockLogicalWidthForPositioned(containingBlock, false);
 
     if (containingBlock->isBox())
@@ -2086,7 +2089,7 @@ int RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxModelObj
 
     int heightResult;
     IntRect boundingBox = flow->linesBoundingBox();
-    if (containingBlock->style()->isHorizontalWritingMode())
+    if (containingBlock->isHorizontalWritingMode())
         heightResult = boundingBox.height();
     else
         heightResult = boundingBox.width();
@@ -2162,7 +2165,7 @@ void RenderBox::computePositionedLogicalWidth()
     // instead of the the container block's.
     TextDirection containerDirection = (document()->inQuirksMode()) ? parent()->style()->direction() : containerBlock->style()->direction();
 
-    bool isHorizontal = style()->isHorizontalWritingMode();
+    bool isHorizontal = isHorizontalWritingMode();
     const int bordersPlusPadding = borderAndPaddingLogicalWidth();
     const Length marginLogicalLeft = isHorizontal ? style()->marginLeft() : style()->marginTop();
     const Length marginLogicalRight = isHorizontal ? style()->marginRight() : style()->marginBottom();
@@ -2267,11 +2270,11 @@ static void computeLogicalLeftPositionedOffset(int& logicalLeftPos, const Render
 {
     // Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space. If the containing block is flipped
     // along this axis, then we need to flip the coordinate.  This can only happen if the containing block is both a flipped mode and perpendicular to us.
-    if (containerBlock->style()->isHorizontalWritingMode() != child->style()->isHorizontalWritingMode() && containerBlock->style()->isFlippedBlocksWritingMode()) {
+    if (containerBlock->isHorizontalWritingMode() != child->isHorizontalWritingMode() && containerBlock->style()->isFlippedBlocksWritingMode()) {
         logicalLeftPos = containerLogicalWidth - logicalWidthValue - logicalLeftPos;
-        logicalLeftPos += (child->style()->isHorizontalWritingMode() ? containerBlock->borderRight() : containerBlock->borderBottom());
+        logicalLeftPos += (child->isHorizontalWritingMode() ? containerBlock->borderRight() : containerBlock->borderBottom());
     } else
-        logicalLeftPos += (child->style()->isHorizontalWritingMode() ? containerBlock->borderLeft() : containerBlock->borderTop());
+        logicalLeftPos += (child->isHorizontalWritingMode() ? containerBlock->borderLeft() : containerBlock->borderTop());
 }
 
 void RenderBox::computePositionedLogicalWidthUsing(Length logicalWidth, const RenderBoxModelObject* containerBlock, TextDirection containerDirection,
@@ -2480,7 +2483,7 @@ void RenderBox::computePositionedLogicalHeight()
 
     const int containerLogicalHeight = containingBlockLogicalHeightForPositioned(containerBlock);
 
-    bool isHorizontal = style()->isHorizontalWritingMode();
+    bool isHorizontal = isHorizontalWritingMode();
     bool isFlipped = style()->isFlippedBlocksWritingMode();
     const int bordersPlusPadding = borderAndPaddingLogicalHeight();
     const Length marginBefore = style()->marginBefore();
@@ -2570,18 +2573,18 @@ static void computeLogicalTopPositionedOffset(int& logicalTopPos, const RenderBo
 {
     // Deal with differing writing modes here.  Our offset needs to be in the containing block's coordinate space. If the containing block is flipped
     // along this axis, then we need to flip the coordinate.  This can only happen if the containing block is both a flipped mode and perpendicular to us.
-    if ((child->style()->isFlippedBlocksWritingMode() && child->style()->isHorizontalWritingMode() != containerBlock->style()->isHorizontalWritingMode())
-        || (child->style()->isFlippedBlocksWritingMode() != containerBlock->style()->isFlippedBlocksWritingMode() && child->style()->isHorizontalWritingMode() == containerBlock->style()->isHorizontalWritingMode()))
+    if ((child->style()->isFlippedBlocksWritingMode() && child->isHorizontalWritingMode() != containerBlock->isHorizontalWritingMode())
+        || (child->style()->isFlippedBlocksWritingMode() != containerBlock->style()->isFlippedBlocksWritingMode() && child->isHorizontalWritingMode() == containerBlock->isHorizontalWritingMode()))
         logicalTopPos = containerLogicalHeight - logicalHeightValue - logicalTopPos;
 
     // Our offset is from the logical bottom edge in a flipped environment, e.g., right for vertical-rl and bottom for horizontal-bt.
-    if (containerBlock->style()->isFlippedBlocksWritingMode() && child->style()->isHorizontalWritingMode() == containerBlock->style()->isHorizontalWritingMode()) {
-        if (child->style()->isHorizontalWritingMode())
+    if (containerBlock->style()->isFlippedBlocksWritingMode() && child->isHorizontalWritingMode() == containerBlock->isHorizontalWritingMode()) {
+        if (child->isHorizontalWritingMode())
             logicalTopPos += containerBlock->borderBottom();
         else
             logicalTopPos += containerBlock->borderRight();
     } else {
-        if (child->style()->isHorizontalWritingMode())
+        if (child->isHorizontalWritingMode())
             logicalTopPos += containerBlock->borderTop();
         else
             logicalTopPos += containerBlock->borderLeft();
@@ -2727,7 +2730,7 @@ void RenderBox::computePositionedLogicalWidthReplaced()
     TextDirection containerDirection = (document()->inQuirksMode()) ? parent()->style()->direction() : containerBlock->style()->direction();
 
     // Variables to solve.
-    bool isHorizontal = style()->isHorizontalWritingMode();
+    bool isHorizontal = isHorizontalWritingMode();
     Length logicalLeft = style()->logicalLeft();
     Length logicalRight = style()->logicalRight();
     Length marginLogicalLeft = isHorizontal ? style()->marginLeft() : style()->marginTop();
@@ -2887,7 +2890,7 @@ void RenderBox::computePositionedLogicalHeightReplaced()
     const int containerLogicalHeight = containingBlockLogicalHeightForPositioned(containerBlock);
 
     // Variables to solve.
-    bool isHorizontal = style()->isHorizontalWritingMode();
+    bool isHorizontal = isHorizontalWritingMode();
     bool isFlipped = style()->isFlippedBlocksWritingMode();
     Length marginBefore = style()->marginBefore();
     Length marginAfter = style()->marginAfter();
@@ -3195,8 +3198,8 @@ void RenderBox::addLayoutOverflow(const IntRect& rect)
         // Overflow is in the block's coordinate space and thus is flipped for horizontal-bt and vertical-rl 
         // writing modes.  At this stage that is actually a simplification, since we can treat horizontal-tb/bt as the same
         // and vertical-lr/rl as the same.
-        bool hasTopOverflow = !style()->isLeftToRightDirection() && !style()->isHorizontalWritingMode();
-        bool hasLeftOverflow = !style()->isLeftToRightDirection() && style()->isHorizontalWritingMode();
+        bool hasTopOverflow = !style()->isLeftToRightDirection() && !isHorizontalWritingMode();
+        bool hasLeftOverflow = !style()->isLeftToRightDirection() && isHorizontalWritingMode();
         
         if (!hasTopOverflow)
             overflowRect.shiftYEdgeTo(max(overflowRect.y(), clientBox.y()));
@@ -3355,7 +3358,7 @@ IntPoint RenderBox::flipForWritingMode(const RenderBox* child, const IntPoint& p
     
     // The child is going to add in its x() and y(), so we have to make sure it ends up in
     // the right place.
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         return IntPoint(point.x(), point.y() + height() - child->height() - child->y() - (adjustment == ParentToChildFlippingAdjustment ? child->y() : 0));
     return IntPoint(point.x() + width() - child->width() - child->x() - (adjustment == ParentToChildFlippingAdjustment ? child->x() : 0), point.y());
 }
@@ -3365,7 +3368,7 @@ void RenderBox::flipForWritingMode(IntRect& rect) const
     if (!style()->isFlippedBlocksWritingMode())
         return;
 
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         rect.setY(height() - rect.maxY());
     else
         rect.setX(width() - rect.maxX());
@@ -3382,7 +3385,7 @@ IntPoint RenderBox::flipForWritingMode(const IntPoint& position) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return position;
-    return style()->isHorizontalWritingMode() ? IntPoint(position.x(), height() - position.y()) : IntPoint(width() - position.x(), position.y());
+    return isHorizontalWritingMode() ? IntPoint(position.x(), height() - position.y()) : IntPoint(width() - position.x(), position.y());
 }
 
 IntPoint RenderBox::flipForWritingModeIncludingColumns(const IntPoint& point) const
@@ -3396,14 +3399,14 @@ IntSize RenderBox::flipForWritingMode(const IntSize& offset) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return offset;
-    return style()->isHorizontalWritingMode() ? IntSize(offset.width(), height() - offset.height()) : IntSize(width() - offset.width(), offset.height());
+    return isHorizontalWritingMode() ? IntSize(offset.width(), height() - offset.height()) : IntSize(width() - offset.width(), offset.height());
 }
 
 FloatPoint RenderBox::flipForWritingMode(const FloatPoint& position) const
 {
     if (!style()->isFlippedBlocksWritingMode())
         return position;
-    return style()->isHorizontalWritingMode() ? FloatPoint(position.x(), height() - position.y()) : FloatPoint(width() - position.x(), position.y());
+    return isHorizontalWritingMode() ? FloatPoint(position.x(), height() - position.y()) : FloatPoint(width() - position.x(), position.y());
 }
 
 void RenderBox::flipForWritingMode(FloatRect& rect) const
@@ -3411,7 +3414,7 @@ void RenderBox::flipForWritingMode(FloatRect& rect) const
     if (!style()->isFlippedBlocksWritingMode())
         return;
 
-    if (style()->isHorizontalWritingMode())
+    if (isHorizontalWritingMode())
         rect.setY(height() - rect.maxY());
     else
         rect.setX(width() - rect.maxX());

@@ -410,7 +410,8 @@ public:
     bool isRunIn() const { return style()->display() == RUN_IN; } // run-in object
     bool isDragging() const { return m_isDragging; }
     bool isReplaced() const { return m_replaced; } // a "replaced" element (see CSS)
-    
+    bool isHorizontalWritingMode() const { return m_horizontalWritingMode; }
+
     bool hasLayer() const { return m_hasLayer; }
     
     bool hasBoxDecorations() const { return m_paintBackground; }
@@ -506,6 +507,7 @@ public:
     void setIsText() { m_isText = true; }
     void setIsBox() { m_isBox = true; }
     void setReplaced(bool b = true) { m_replaced = b; }
+    void setHorizontalWritingMode(bool b = true) { m_horizontalWritingMode = b; }
     void setHasOverflowClip(bool b = true) { m_hasOverflowClip = b; }
     void setHasLayer(bool b = true) { m_hasLayer = b; }
     void setHasTransform(bool b = true) { m_hasTransform = b; }
@@ -859,6 +861,7 @@ private:
     bool m_isBox                     : 1;
     bool m_inline                    : 1;
     bool m_replaced                  : 1;
+    bool m_horizontalWritingMode : 1;
     bool m_isDragging                : 1;
 
     bool m_hasLayer                  : 1;

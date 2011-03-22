@@ -171,9 +171,9 @@ public:
 
     // Accessors for logical width/height and margins in the containing block's block-flow direction.
     enum ApplyLayoutDeltaMode { ApplyLayoutDelta, DoNotApplyLayoutDelta };
-    int logicalWidthForChild(RenderBox* child) { return style()->isHorizontalWritingMode() ? child->width() : child->height(); }
-    int logicalHeightForChild(RenderBox* child) { return style()->isHorizontalWritingMode() ? child->height() : child->width(); }
-    int logicalTopForChild(RenderBox* child) { return style()->isHorizontalWritingMode() ? child->y() : child->x(); }
+    int logicalWidthForChild(RenderBox* child) { return isHorizontalWritingMode() ? child->width() : child->height(); }
+    int logicalHeightForChild(RenderBox* child) { return isHorizontalWritingMode() ? child->height() : child->width(); }
+    int logicalTopForChild(RenderBox* child) { return isHorizontalWritingMode() ? child->y() : child->x(); }
     void setLogicalLeftForChild(RenderBox* child, int logicalLeft, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     void setLogicalTopForChild(RenderBox* child, int logicalTop, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     int marginBeforeForChild(RenderBoxModelObject* child) const;
@@ -218,8 +218,8 @@ public:
 
     virtual void scrollbarsChanged(bool /*horizontalScrollbarChanged*/, bool /*verticalScrollbarChanged*/) { };
 
-    int logicalRightOffsetForContent() const { return style()->isHorizontalWritingMode() ? borderLeft() + paddingLeft() + availableLogicalWidth() : borderTop() + paddingTop() + availableLogicalWidth(); }
-    int logicalLeftOffsetForContent() const { return style()->isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
+    int logicalRightOffsetForContent() const { return isHorizontalWritingMode() ? borderLeft() + paddingLeft() + availableLogicalWidth() : borderTop() + paddingTop() + availableLogicalWidth(); }
+    int logicalLeftOffsetForContent() const { return isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
 
 protected:
     // These functions are only used internally to manipulate the render tree structure via remove/insert/appendChildNode.
@@ -429,35 +429,35 @@ private:
 
     IntPoint flipFloatForWritingMode(const FloatingObject*, const IntPoint&) const;
 
-    int logicalTopForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->y() : child->x(); }
-    int logicalBottomForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->maxY() : child->maxX(); }
-    int logicalLeftForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->x() : child->y(); }
-    int logicalRightForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->maxX() : child->maxY(); }
-    int logicalWidthForFloat(const FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->width() : child->height(); }
+    int logicalTopForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->y() : child->x(); }
+    int logicalBottomForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->maxY() : child->maxX(); }
+    int logicalLeftForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->x() : child->y(); }
+    int logicalRightForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->maxX() : child->maxY(); }
+    int logicalWidthForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->width() : child->height(); }
     void setLogicalTopForFloat(FloatingObject* child, int logicalTop)
     {
-        if (style()->isHorizontalWritingMode())
+        if (isHorizontalWritingMode())
             child->setY(logicalTop);
         else
             child->setX(logicalTop);
     }
     void setLogicalLeftForFloat(FloatingObject* child, int logicalLeft)
     {
-        if (style()->isHorizontalWritingMode())
+        if (isHorizontalWritingMode())
             child->setX(logicalLeft);
         else
             child->setY(logicalLeft);
     }
     void setLogicalHeightForFloat(FloatingObject* child, int logicalHeight)
     {
-        if (style()->isHorizontalWritingMode())
+        if (isHorizontalWritingMode())
             child->setHeight(logicalHeight);
         else
             child->setWidth(logicalHeight);
     }
     void setLogicalWidthForFloat(FloatingObject* child, int logicalWidth)
     {
-        if (style()->isHorizontalWritingMode())
+        if (isHorizontalWritingMode())
             child->setWidth(logicalWidth);
         else
             child->setHeight(logicalWidth);
@@ -465,7 +465,7 @@ private:
 
     int xPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
-        if (style()->isHorizontalWritingMode())
+        if (isHorizontalWritingMode())
             return child->x() + child->renderer()->marginLeft();
         else
             return child->x() + marginBeforeForChild(child->renderer());
@@ -473,7 +473,7 @@ private:
         
     int yPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
-        if (style()->isHorizontalWritingMode())
+        if (isHorizontalWritingMode())
             return child->y() + marginBeforeForChild(child->renderer());
         else
             return child->y() + child->renderer()->marginTop();

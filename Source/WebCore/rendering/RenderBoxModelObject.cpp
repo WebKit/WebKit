@@ -373,6 +373,7 @@ void RenderBoxModelObject::updateBoxModelInfoFromStyle()
     setHasBoxDecorations(hasBackground() || style()->hasBorder() || style()->hasAppearance() || style()->boxShadow());
     setInline(style()->isDisplayInlineType());
     setRelPositioned(style()->position() == RelativePosition);
+    setHorizontalWritingMode(style()->isHorizontalWritingMode());
 }
 
 int RenderBoxModelObject::relativePositionOffsetX() const

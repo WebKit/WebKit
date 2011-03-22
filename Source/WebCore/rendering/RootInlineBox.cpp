@@ -54,7 +54,7 @@ RootInlineBox::RootInlineBox(RenderBlock* block)
     , m_hasAnnotationsBefore(false)
     , m_hasAnnotationsAfter(false)
 {
-    setIsHorizontal(block->style()->isHorizontalWritingMode());
+    setIsHorizontal(block->isHorizontalWritingMode());
 }
 
 
@@ -337,7 +337,7 @@ GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const IntPoint&
         for (InlineBox* box = firstBox->nextLeafChild(); box; box = box->nextLeafChild()) {
             if (box->selectionState() != RenderObject::SelectionNone) {
                 IntRect logicalRect(lastLogicalLeft, selTop, box->logicalLeft() - lastLogicalLeft, selHeight);
-                logicalRect.move(renderer()->style()->isHorizontalWritingMode() ? offsetFromRootBlock : IntSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
+                logicalRect.move(renderer()->isHorizontalWritingMode() ? offsetFromRootBlock : IntSize(offsetFromRootBlock.height(), offsetFromRootBlock.width()));
                 IntRect gapRect = rootBlock->logicalRectToPhysicalRect(rootBlockPhysicalPosition, logicalRect);
                 if (isPreviousBoxSelected && gapRect.width() > 0 && gapRect.height() > 0) {
                     if (paintInfo && box->parent()->renderer()->style()->visibility() == VISIBLE)
@@ -706,7 +706,7 @@ int RootInlineBox::verticalPositionForBox(InlineBox* box, VerticalPositionCache&
         const FontMetrics& fontMetrics = font.fontMetrics();
         int fontSize = font.pixelSize();
 
-        LineDirectionMode lineDirection = parent->style()->isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
+        LineDirectionMode lineDirection = parent->isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
 
         if (verticalAlign == SUB)
             verticalPosition += fontSize / 5 + 1;

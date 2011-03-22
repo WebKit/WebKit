@@ -1,3 +1,115 @@
+2011-03-22  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56869
+        
+        Make horizontal writing mode a bit on RenderObject with a fast inlined method for access. This should be
+        a little faster than having to access the information from the RenderStyle's sub-structure.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::addOverflowFromChildren):
+        (WebCore::RenderBlock::computeOverflow):
+        (WebCore::RenderBlock::adjustPositionedBlock):
+        (WebCore::RenderBlock::setLogicalLeftForChild):
+        (WebCore::RenderBlock::setLogicalTopForChild):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::paintColumnContents):
+        (WebCore::RenderBlock::flipFloatForWritingMode):
+        (WebCore::blockDirectionOffset):
+        (WebCore::inlineDirectionOffset):
+        (WebCore::RenderBlock::logicalRectToPhysicalRect):
+        (WebCore::RenderBlock::inlineSelectionGaps):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        (WebCore::RenderBlock::hitTestColumns):
+        (WebCore::positionForPointRespectingEditingBoundaries):
+        (WebCore::RenderBlock::positionForPointWithInlineChildren):
+        (WebCore::RenderBlock::positionForPoint):
+        (WebCore::RenderBlock::columnRectAt):
+        (WebCore::RenderBlock::adjustPointToColumnContents):
+        (WebCore::RenderBlock::adjustRectForColumns):
+        (WebCore::RenderBlock::flipForWritingModeIncludingColumns):
+        (WebCore::RenderBlock::adjustForColumns):
+        (WebCore::RenderBlock::lastLineBoxBaseline):
+        (WebCore::RenderBlock::nextPageLogicalTop):
+        (WebCore::RenderBlock::adjustForUnsplittableChild):
+        (WebCore::RenderBlock::adjustLinePositionForPagination):
+        (WebCore::RenderBlock::collapsedMarginBeforeForChild):
+        (WebCore::RenderBlock::collapsedMarginAfterForChild):
+        (WebCore::RenderBlock::marginStartForChild):
+        (WebCore::RenderBlock::marginEndForChild):
+        (WebCore::RenderBlock::setMarginStartForChild):
+        (WebCore::RenderBlock::setMarginEndForChild):
+        (WebCore::RenderBlock::marginValuesForChild):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalWidthForChild):
+        (WebCore::RenderBlock::logicalHeightForChild):
+        (WebCore::RenderBlock::logicalTopForChild):
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        (WebCore::RenderBlock::logicalLeftOffsetForContent):
+        (WebCore::RenderBlock::logicalTopForFloat):
+        (WebCore::RenderBlock::logicalBottomForFloat):
+        (WebCore::RenderBlock::logicalLeftForFloat):
+        (WebCore::RenderBlock::logicalRightForFloat):
+        (WebCore::RenderBlock::logicalWidthForFloat):
+        (WebCore::RenderBlock::setLogicalTopForFloat):
+        (WebCore::RenderBlock::setLogicalLeftForFloat):
+        (WebCore::RenderBlock::setLogicalHeightForFloat):
+        (WebCore::RenderBlock::setLogicalWidthForFloat):
+        (WebCore::RenderBlock::xPositionForFloatIncludingMargin):
+        (WebCore::RenderBlock::yPositionForFloatIncludingMargin):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::createLineBoxes):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::checkFloatsInCleanLine):
+        (WebCore::setStaticPositions):
+        (WebCore::RenderBlock::findNextLineBreak):
+        (WebCore::RenderBlock::beforeSideVisualOverflowForLine):
+        (WebCore::RenderBlock::afterSideVisualOverflowForLine):
+        (WebCore::RenderBlock::beforeSideLayoutOverflowForLine):
+        (WebCore::RenderBlock::afterSideLayoutOverflowForLine):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::marginStart):
+        (WebCore::RenderBox::marginEnd):
+        (WebCore::RenderBox::setMarginStart):
+        (WebCore::RenderBox::setMarginEnd):
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::logicalScroll):
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::computeLogicalLeftPositionedOffset):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        (WebCore::computeLogicalTopPositionedOffset):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced):
+        (WebCore::RenderBox::addLayoutOverflow):
+        (WebCore::RenderBox::flipForWritingMode):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::updateBoxModelInfoFromStyle):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::styleWillChange):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isHorizontalWritingMode):
+        (WebCore::RenderObject::setHorizontalWritingMode):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paddingTop):
+        (WebCore::RenderTableCell::paddingBottom):
+        (WebCore::RenderTableCell::paddingLeft):
+        (WebCore::RenderTableCell::paddingRight):
+        (WebCore::RenderTableCell::scrollbarsChanged):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        (WebCore::RootInlineBox::lineSelectionGap):
+        (WebCore::RootInlineBox::verticalPositionForBox):
+
 2011-03-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Beth Dakin.

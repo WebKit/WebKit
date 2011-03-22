@@ -201,6 +201,7 @@ RenderObject::RenderObject(Node* node)
     , m_isBox(false)
     , m_inline(true)
     , m_replaced(false)
+    , m_horizontalWritingMode(true)
     , m_isDragging(false)
     , m_hasLayer(false)
     , m_hasOverflowClip(false)
@@ -1832,6 +1833,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
             m_positioned = false;
             m_relPositioned = false;
         }
+        m_horizontalWritingMode = true;
         m_paintBackground = false;
         m_hasOverflowClip = false;
         m_hasTransform = false;
