@@ -120,3 +120,4 @@ Coverage for DatabaseAgent
     sqlTransactionSucceeded : "not checked"
     sqlTransactionFailed : "not checked"
 }
+

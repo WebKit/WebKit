@@ -1,3 +1,10 @@
+2011-03-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed update of database-agent test expectations.
+        Empty line added at the end.
+
+        * inspector/protocol/database-agent-expected.txt:
+
 2011-03-22  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, Skipped one test failing because of the same reason.
