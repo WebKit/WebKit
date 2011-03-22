@@ -71,7 +71,7 @@ inline FPRReg next(FPRReg& reg)
 // A record of a call out from JIT code to a helper function.
 // Every CallRecord contains a reference to the call instruction & the function
 // that it needs to be linked to. Calls that might throw an exception also record
-// the Jump taken on expcetion (unset if not present), and ExceptionInfo (presently
+// the Jump taken on exception (unset if not present), and ExceptionInfo (presently
 // an unsigned, bytecode index) used to recover handler/source info.
 struct CallRecord {
     // Constructor for a call with no exception handler.
@@ -98,8 +98,8 @@ struct CallRecord {
 
 // === JITCompiler ===
 //
-// DFG::JITCompiler is reponsible for generating JIT code from the dataflow graph.
-// It does so by delagating to the speculative & non-speculative JITs, which
+// DFG::JITCompiler is responsible for generating JIT code from the dataflow graph.
+// It does so by delegating to the speculative & non-speculative JITs, which
 // generate to a MacroAssembler (which the JITCompiler owns through an inheritance
 // relationship). The JITCompiler holds references to information required during
 // compilation, and also records information used in linking (e.g. a list of all

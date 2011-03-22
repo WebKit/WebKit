@@ -94,10 +94,10 @@ struct SpeculationCheck {
 //
 // The SpeculativeJIT is used to generate a fast, but potentially
 // incomplete code path for the dataflow. When code generating
-// we may make assumtions about oparand types, dynamically check,
+// we may make assumptions about operand types, dynamically check,
 // and bail-out to an alternate code path if these checks fail.
 // Importantly, the speculative code path cannot be reentered once
-// a specualtive check has failed. This allows the SpeculativeJIT
+// a speculative check has failed. This allows the SpeculativeJIT
 // to propagate type information (including information that has
 // only speculatively been asserted) through the dataflow.
 class SpeculativeJIT : public JITCodeGenerator {
@@ -181,7 +181,7 @@ private:
 // These are used to lock the operands to a node into machine registers within the
 // SpeculativeJIT. The classes operate like those provided by the JITCodeGenerator,
 // however these will perform a speculative check for a more restrictive type than
-// we can staitically determine the operand to have. If the operand does not have
+// we can statically determine the operand to have. If the operand does not have
 // the requested type, a bail-out to the non-speculative path will be taken.
 
 class SpeculateIntegerOperand {

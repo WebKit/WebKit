@@ -70,7 +70,7 @@ void Graph::dump(CodeBlock* codeBlock)
         //         @#   - a NodeIndex referencing a prior node in the graph.
         //         arg# - an argument number.
         //         $#   - the index in the CodeBlock of a constant { for numeric constants the value is displayed | for integers, in both decimal and hex }.
-        //         id#  - the index in the CodeBlock of an identifer { if codeBlock is passed to dump(), the string representation is displayed }.
+        //         id#  - the index in the CodeBlock of an identifier { if codeBlock is passed to dump(), the string representation is displayed }.
         //         var# - the index of a var on the global object, used by GetGlobalVar/PutGlobalVar operations.
         printf("% 4d:\t<%c%u:%u>\t%s(", (int)i, mustGenerate ? '!' : ' ', refCount, node.virtualRegister, dfgOpNames[op & NodeIdMask]);
         if (node.child1 != NoNode)

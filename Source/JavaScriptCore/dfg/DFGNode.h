@@ -36,7 +36,7 @@
 #define DFG_JIT_ASSERT 0
 // Consistency check contents compiler data structures.
 #define DFG_CONSISTENCY_CHECK 0
-// Emit a brekpoint into the head of every generated function, to aid debugging in GDB.
+// Emit a breakpoint into the head of every generated function, to aid debugging in GDB.
 #define DFG_JIT_BREAK_ON_ENTRY 0
 
 
@@ -69,7 +69,7 @@ typedef uint32_t ExceptionInfo;
 
 // This macro defines a set of information about all known node types, used to populate NodeId, NodeType below.
 #define FOR_EACH_DFG_OP(macro) \
-    /* Nodes for consatnts. */\
+    /* Nodes for constants. */\
     macro(JSConstant, NodeResultJS | NodeIsConstant) \
     macro(Int32Constant, NodeResultJS | NodeIsConstant) \
     macro(DoubleConstant, NodeResultJS | NodeIsConstant) \
@@ -266,7 +266,7 @@ struct Node {
         m_constantValue.asDouble = value;
     }
 
-    // This enum value describes the type of the ndoe.
+    // This enum value describes the type of the node.
     NodeType op;
     // Used to look up exception handling information (currently implemented as a bytecode index).
     ExceptionInfo exceptionInfo;

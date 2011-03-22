@@ -37,13 +37,13 @@ namespace JSC { namespace DFG {
 // This class is used to implement the GPR and FPR register banks.
 // All registers have two pieces of state associated with them:
 // a lock count (used to indicate this register is already in use
-// in code genertion of the current node, and cannot be spilled or
+// in code generation of the current node, and cannot be spilled or
 // allocated as a temporary), and VirtualRegister 'name', recording
 // which value (if any) a machine register currently holds.
 // Either or both of these pieces of information may be valid for a
 // given register. A register may be:
 //
-//  - unlocked, and unnamed: Avilable for allocation.
+//  - unlocked, and unnamed: Available for allocation.
 //  - locked, but unnamed:   Already allocated as a temporary or
 //                           result for the current node.
 //  - unlocked, but named:   Contains the result of a prior operation,
@@ -97,7 +97,7 @@ public:
         // the maximum register value, then from 0 to the last allocated.
         // This implements a simple round-robin like approach to try to reduce
         // thrash, and minimize time spent scanning locked registers in allocation.
-        // If a unlocked and unnamed register is found return it immedaitely.
+        // If a unlocked and unnamed register is found return it immediately.
         // Otherwise, find the first unlocked register with the lowest spillOrder.
         for (uint32_t i = m_lastAllocated + 1; i < NUM_REGS; ++i) {
             // (1) If the current register is locked, it is not a candidate.

@@ -53,7 +53,7 @@ public:
         // Every VirtualRegister that was allocated should now be free.
         ASSERT(m_used.size() == m_free.size());
         // For every entry in the free list, the use count of the virtual register should be zero.
-        // * By using the virtual register numbers from m_free, we are cehcking that all values
+        // * By using the virtual register numbers from m_free, we are checking that all values
         //   in m_free are < m_used.size(), and correspond to an allocated VirtualRegsiter.
         // * By setting m_used to a non-zero value after checking it, we are checking that all
         //   entries in m_free are unique (otherwise the second test of m_used will fail).
@@ -68,7 +68,7 @@ public:
     VirtualRegister allocate()
     {
         // Do we have any VirtualRegsiters in the free list, that were used by
-        // prior nodes, but are now avaialble?
+        // prior nodes, but are now available?
         if (!m_free.isEmpty()) {
             VirtualRegister result = m_free.last();
             m_free.removeLast();

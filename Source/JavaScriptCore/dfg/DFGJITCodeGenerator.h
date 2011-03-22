@@ -128,9 +128,9 @@ public:
     }
 
     // Check whether a VirtualRegsiter is currently in a machine register.
-    // We use this when filling operands to fill those thet are already in
-    // machine registers first (by locking VirtualRegsiters taht are already
-    // in machine regsiter before filling those that are not we attempt to
+    // We use this when filling operands to fill those that are already in
+    // machine registers first (by locking VirtualRegsiters that are already
+    // in machine register before filling those that are not we attempt to
     // avoid spilling values we will need immediately).
     bool isFilled(NodeIndex nodeIndex)
     {
@@ -555,7 +555,7 @@ protected:
         }
 
         // If we get here, we haven't been able to move any of arg1/arg2/arg3.
-        // Since all three are blocked, then all three must alreary be in the argument register.
+        // Since all three are blocked, then all three must already be in the argument register.
         // But are they in the right ones?
 
         // First, ensure arg1 is in place.
@@ -691,10 +691,10 @@ protected:
 //
 // These classes are used to lock the operands to a node into machine
 // registers. These classes implement of pattern of locking a value
-// into register at the point of construction only if it ialready in
-// regsiters, and othewise loading it lazily at the point it is first
+// into register at the point of construction only if it is already in
+// registers, and otherwise loading it lazily at the point it is first
 // used. We do so in order to attempt to avoid spilling one operand
-// in order to make space avaialble for another.
+// in order to make space available for another.
 
 class IntegerOperand {
 public:
@@ -834,8 +834,8 @@ private:
 // === Temporaries ===
 //
 // These classes are used to allocate temporary registers.
-// A mechaism is provided to attempt to reuse the registers
-// currently allocted to child nodes whose value is consumed
+// A mechanism is provided to attempt to reuse the registers
+// currently allocated to child nodes whose value is consumed
 // by, and not live after, this operation.
 
 class GPRTemporary {

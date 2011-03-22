@@ -60,7 +60,7 @@ struct EntryLocation {
 // === NonSpeculativeJIT ===
 //
 // This class is used to generate code for the non-speculative path.
-// Code generation will take advantage of static information avaialble
+// Code generation will take advantage of static information available
 // in the dataflow to perform safe optimizations - for example, avoiding
 // boxing numeric values between arithmetic operations, but will not
 // perform any unsafe optimizations that would render the code unable

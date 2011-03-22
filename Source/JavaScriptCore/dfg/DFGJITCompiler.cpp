@@ -233,13 +233,13 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     // === Stage 1 - Function header code generation ===
     //
     // This code currently matches the old JIT. In the function header we need to
-    // pop the return addres (since we do not allow any recursion on the machine
+    // pop the return address (since we do not allow any recursion on the machine
     // stack), and perform a fast register file check.
 
     // This is the main entry point, without performing an arity check.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=56292
     // We'll need to convert the remaining cti_ style calls (specifically the register file
-    // check) which will be dependant on stack layout. (We'd need to account for this in
+    // check) which will be dependent on stack layout. (We'd need to account for this in
     // both normal return code and when jumping to an exception handler).
     preserveReturnAddressAfterCall(regT2);
     emitPutToCallFrameHeader(regT2, RegisterFile::ReturnPC);
@@ -408,14 +408,14 @@ void JITCompiler::jitAssertIsJSDouble(GPRReg gpr)
 }
 #endif
 
-#if ENABLE(SAMPLING_COUNTERS) && CPU(X86_64) // Or any other 64-bit plattform!
+#if ENABLE(SAMPLING_COUNTERS) && CPU(X86_64) // Or any other 64-bit platform!
 void JITCompiler::emitCount(AbstractSamplingCounter& counter, uint32_t increment)
 {
     addPtr(Imm32(increment), AbsoluteAddress(counter.addressOfCounter()));
 }
 #endif
 
-#if ENABLE(SAMPLING_COUNTERS) && CPU(X86) // Or any other little-endian 32-bit plattform!
+#if ENABLE(SAMPLING_COUNTERS) && CPU(X86) // Or any other little-endian 32-bit platform!
 void JITCompiler::emitCount(AbstractSamplingCounter& counter, uint32_t increment)
 {
     intptr_t hiWord = reinterpret_cast<intptr_t>(counter.addressOfCounter()) + sizeof(int32_t);

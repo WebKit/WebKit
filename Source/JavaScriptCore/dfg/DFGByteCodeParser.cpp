@@ -740,7 +740,7 @@ bool parse(Graph& graph, JSGlobalData* globalData, CodeBlock* codeBlock)
             scoreBoard.use(node.child2);
             scoreBoard.use(node.child3);
             node.virtualRegister = scoreBoard.allocate();
-            // 'mustGenerate' nodes have their useCount artifically elevated,
+            // 'mustGenerate' nodes have their useCount artificially elevated,
             // call use now to account for this.
             if (node.mustGenerate())
                 scoreBoard.use(i);

@@ -627,7 +627,7 @@ bool SpeculativeJIT::compile(Node& node)
 
     // Check if generation for the speculative path has failed catastrophically. :-)
     // In the future, we may want to throw away the code we've generated in this case.
-    // For now, there is no point generating any further code, return immedaitely.
+    // For now, there is no point generating any further code, return immediately.
     if (m_didTerminate)
         return false;
 

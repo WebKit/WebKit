@@ -195,7 +195,7 @@ public:
     // being in machine registers.
     void setSpilled()
     {
-        // Should only be called on values that don't need spillling, and are currently in registers.
+        // Should only be called on values that don't need spilling, and are currently in registers.
         ASSERT(m_canFill && m_registerFormat != DataFormatNone);
         m_registerFormat = DataFormatNone;
     }

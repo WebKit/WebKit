@@ -36,7 +36,7 @@ class Identifier;
 
 namespace DFG {
 
-// These typedefs provide typechecking when generaing calls out to helper routines;
+// These typedefs provide typechecking when generating calls out to helper routines;
 // this helps prevent calling a helper routine with the wrong arguments!
 typedef EncodedJSValue (*J_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
 typedef EncodedJSValue (*J_DFGOperation_EJ)(ExecState*, EncodedJSValue);
