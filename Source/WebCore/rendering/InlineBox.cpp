@@ -154,8 +154,9 @@ void InlineBox::adjustPosition(float dx, float dy)
 {
     m_x += dx;
     m_y += dy;
-    if (m_renderer->isReplaced())
-        toRenderBox(m_renderer)->positionLineBox(this);
+
+    if (m_renderer->isReplaced()) 
+        toRenderBox(m_renderer)->move(dx, dy); 
 }
 
 void InlineBox::paint(PaintInfo& paintInfo, int tx, int ty)

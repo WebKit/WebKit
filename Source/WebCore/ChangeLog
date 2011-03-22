@@ -1,3 +1,24 @@
+2011-03-21  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Revert small change made in r78846 of replacing move with positionLineBox
+        in the adjusting position function for inline box.
+        https://bugs.webkit.org/show_bug.cgi?id=56300
+
+        The change in r78846 caused positioning line boxes during the step of adjusting
+        position for inline box, thereby causing line boxes to be nuked. This happens as
+        part of aligning boxes in block direction in RenderBlock::computeBlockDirectionPositionsForLine.
+        Later on, we do the positioning of line boxes again later in that function. This
+        causes use of removed inline box leading to crash. Also, it is unnecessary to do
+        this twice.
+
+        Tests: fast/inline/inline-box-adjust-position-crash.html
+               fast/inline/inline-box-adjust-position-crash2.html
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::adjustPosition):
+
 2011-03-21  Adam Klein  <adamk@chromium.org>
 
         Reviewed by David Levin.
