@@ -65,11 +65,6 @@ bool WebInputElement::autoComplete() const
     return constUnwrap<HTMLInputElement>()->autoComplete();
 }
 
-bool WebInputElement::isEnabledFormControl() const
-{
-    return constUnwrap<HTMLInputElement>()->isEnabledFormControl();
-}
-
 int WebInputElement::maxLength() const
 {
     return constUnwrap<HTMLInputElement>()->maxLength();

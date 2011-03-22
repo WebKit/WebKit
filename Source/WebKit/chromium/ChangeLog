@@ -1,3 +1,14 @@
+2011-03-21  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Remove WebInputElement::isEnabledFormControl() from Chromium WebKit API
+        Clients should instead call into WebFormControlElement::isEnabled().
+        https://bugs.webkit.org/show_bug.cgi?id=56364
+
+        * public/WebInputElement.h: Removed isEnabledFormControl().
+        * src/WebInputElement.cpp: Removed isEnabledFormControl().
+
 2011-03-21  Robert Kroeger  <rjkroege@chromium.org>
 
         Reviewed by Antonio Gomes.
