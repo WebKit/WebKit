@@ -2,6 +2,21 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: protocol cleanup. DatabaseAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=56815
+
+        see protocol metabug:
+        - All events should use notification wording, not command wording:
+
+        addDatabase was renamed to DatabaseOpened.
+
+        * inspector/protocol/database-agent-expected.txt: Added.
+        * inspector/protocol/database-agent.html: Added.
+
+2011-03-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: protocol cleanup. ConsoleAgent.
         https://bugs.webkit.org/show_bug.cgi?id=56806
 

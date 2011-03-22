@@ -417,7 +417,7 @@
         ],
         "events": [
             {
-                "name": "addDatabase",
+                "name": "DatabaseOpened",
                 "parameters": [
                     { "name": "database", "$ref": "DatabaseDatabase" }
                 ]

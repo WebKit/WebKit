@@ -2,6 +2,26 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: protocol cleanup. DatabaseAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=56815
+
+        see protocol metabug:
+        - All events should use notification wording, not command wording:
+
+        addDatabase was renamed to DatabaseOpened.
+
+        Test: inspector/protocol/database-agent.html
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDatabaseResource.cpp:
+        (WebCore::InspectorDatabaseResource::bind):
+        * inspector/front-end/Database.js:
+        (WebInspector.DatabaseDispatcher.prototype.DatabaseOpened):
+
+2011-03-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: protocol cleanup. ConsoleAgent.
         https://bugs.webkit.org/show_bug.cgi?id=56806
 
@@ -27,7 +47,7 @@
 
         REGRESSION(r80096): Number type input unexpectedly rounds fractional values
         https://bugs.webkit.org/show_bug.cgi?id=56367
-        
+
         Because the default value of the maximum fractional digits of NSNumberFormatter
         and ICU NumberFormat is 3, the value 0.55555 is rounded to 0.556 in a
         localized representation. This bug affects only in Mac and Chromium.
