@@ -1,3 +1,12 @@
+2011-03-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Update expectations.
+
+        * platform/qt/Skipped:# Add fast/forms/input-autofilled.html because of missing layoutTestController.setAutofilled()
+        * platform/qt/css2.1/t09-c5526c-display-00-e-expected.checksum: Updated.
+        * platform/qt/css2.1/t09-c5526c-display-00-e-expected.png: Updated.
+        * platform/qt/css2.1/t09-c5526c-display-00-e-expected.txt: Updated.
+
 2011-03-22  Adam Roben  <aroben@apple.com>
 
         Skip a new test that relies on unimplemented LayoutTestController functionality in WTR
