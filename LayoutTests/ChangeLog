@@ -1,5 +1,18 @@
 2011-03-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r81664.
+        http://trac.webkit.org/changeset/81664
+        https://bugs.webkit.org/show_bug.cgi?id=56840
+
+        Rolling out followups to 81653 with expectations. (Requested
+        by pfeldman on #webkit).
+
+        * platform/win/fast/forms/listbox-bidi-align-expected.checksum: Removed.
+        * platform/win/fast/forms/listbox-bidi-align-expected.png: Removed.
+        * platform/win/fast/forms/listbox-bidi-align-expected.txt: Removed.
+
+2011-03-22  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r81653.
         http://trac.webkit.org/changeset/81653
         https://bugs.webkit.org/show_bug.cgi?id=56839
