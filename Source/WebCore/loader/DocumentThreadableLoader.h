@@ -39,6 +39,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
     class Document;
@@ -50,7 +51,7 @@ namespace WebCore {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         static void loadResourceSynchronously(Document*, const ResourceRequest&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
-        static PassRefPtr<DocumentThreadableLoader> create(Document*, ThreadableLoaderClient*, const ResourceRequest&, const ThreadableLoaderOptions&);
+        static PassRefPtr<DocumentThreadableLoader> create(Document*, ThreadableLoaderClient*, const ResourceRequest&, const ThreadableLoaderOptions&, const String& optionalOutgoingReferrer = String());
         virtual ~DocumentThreadableLoader();
 
         virtual void cancel();
@@ -69,7 +70,7 @@ namespace WebCore {
             LoadAsynchronously
         };
 
-        DocumentThreadableLoader(Document*, ThreadableLoaderClient*, BlockingBehavior blockingBehavior, const ResourceRequest&, const ThreadableLoaderOptions& options);
+        DocumentThreadableLoader(Document*, ThreadableLoaderClient*, BlockingBehavior, const ResourceRequest&, const ThreadableLoaderOptions&, const String& optionalOutgoingReferrer);
 
         virtual void willSendRequest(SubresourceLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
         virtual void didSendData(SubresourceLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
@@ -97,6 +98,7 @@ namespace WebCore {
         ThreadableLoaderClient* m_client;
         Document* m_document;
         ThreadableLoaderOptions m_options;
+        String m_optionalOutgoingReferrer;
         bool m_sameOriginRequest;
         bool m_async;
         OwnPtr<ResourceRequest> m_actualRequest;  // non-null during Access Control preflight checks

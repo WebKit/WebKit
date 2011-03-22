@@ -1,3 +1,30 @@
+2011-03-21  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        XHR in Workers doesn't set the referrer correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=24683
+
+        Tests: http/tests/xmlhttprequest/workers/referer.html
+               http/tests/xmlhttprequest/workers/shared-worker-referer.html
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadResourceSynchronously): Fill in empty string for the outgoing referrer.
+        (WebCore::DocumentThreadableLoader::create): Added the ability to set the outgoing referrer.
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader): Ditto.
+        (WebCore::DocumentThreadableLoader::loadRequest): Ditto.
+        * loader/DocumentThreadableLoader.h: Ditto.
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::scheduleSubresourceLoad): Ditto.
+        * loader/ResourceLoadScheduler.h: Ditto.
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create): Fixed bug (caught by the test) in last minute change done in previous check-in.
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::WorkerThreadableLoader): Fill in the outgoing referrer.
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge): Plumbing for the outgoing referrer.
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader): Plumbing for the outgoing referrer.
+        * loader/WorkerThreadableLoader.h:
+
 2011-03-21  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Brady Eidson.

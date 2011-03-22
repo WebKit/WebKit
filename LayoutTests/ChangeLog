@@ -1,3 +1,13 @@
+2011-03-21  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        XHR in Workers doesn't set the referrer correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=24683
+
+        * http/tests/xmlhttprequest/workers/referer-expected.txt: Fixed expectations now that this works correctly.
+        * http/tests/xmlhttprequest/workers/shared-worker-referer-expected.txt: Ditto.
+
 2011-03-21  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Unreviewed, rebaseline win/linux after r81625.

@@ -78,7 +78,7 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
 
     String outgoingReferrer;
     String outgoingOrigin;
-    if (outgoingReferrer.isNull()) {
+    if (optionalOutgoingReferrer.isNull()) {
         outgoingReferrer = fl->outgoingReferrer();
         outgoingOrigin = fl->outgoingOrigin();
     } else {

@@ -83,12 +83,13 @@ ResourceLoadScheduler::ResourceLoadScheduler()
 #endif
 }
 
-PassRefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, ResourceLoadPriority priority, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks, bool shouldContentSniff)
+PassRefPtr<SubresourceLoader> ResourceLoadScheduler::scheduleSubresourceLoad(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, ResourceLoadPriority priority, SecurityCheckPolicy securityCheck,
+                                                                             bool sendResourceLoadCallbacks, bool shouldContentSniff, const String& optionalOutgoingReferrer)
 {
-    PassRefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, client, request, securityCheck, sendResourceLoadCallbacks, shouldContentSniff);
+    RefPtr<SubresourceLoader> loader = SubresourceLoader::create(frame, client, request, securityCheck, sendResourceLoadCallbacks, shouldContentSniff, optionalOutgoingReferrer);
     if (loader)
         scheduleLoad(loader.get(), priority);
-    return loader;
+    return loader.release();
 }
 
 PassRefPtr<NetscapePlugInStreamLoader> ResourceLoadScheduler::schedulePluginStreamLoad(Frame* frame, NetscapePlugInStreamLoaderClient* client, const ResourceRequest& request)

@@ -34,6 +34,8 @@
 
 #include "WorkerThreadableLoader.h"
 
+#include "Document.h"
+#include "DocumentThreadableLoader.h"
 #include "CrossThreadTask.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -55,7 +57,7 @@ static const char loadResourceSynchronouslyMode[] = "loadResourceSynchronouslyMo
 WorkerThreadableLoader::WorkerThreadableLoader(WorkerContext* workerContext, ThreadableLoaderClient* client, const String& taskMode, const ResourceRequest& request, const ThreadableLoaderOptions& options)
     : m_workerContext(workerContext)
     , m_workerClientWrapper(ThreadableLoaderClientWrapper::create(client))
-    , m_bridge(*(new MainThreadBridge(m_workerClientWrapper, m_workerContext->thread()->workerLoaderProxy(), taskMode, request, options)))
+    , m_bridge(*(new MainThreadBridge(m_workerClientWrapper, m_workerContext->thread()->workerLoaderProxy(), taskMode, request, options, workerContext->url().strippedForUseAsReferrer())))
 {
 }
 
@@ -87,32 +89,30 @@ void WorkerThreadableLoader::cancel()
 }
 
 WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(PassRefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, WorkerLoaderProxy& loaderProxy, const String& taskMode,
-                                                           const ResourceRequest& request, const ThreadableLoaderOptions& options)
+                                                           const ResourceRequest& request, const ThreadableLoaderOptions& options, const String& outgoingReferrer)
     : m_workerClientWrapper(workerClientWrapper)
     , m_loaderProxy(loaderProxy)
     , m_taskMode(taskMode.crossThreadString())
 {
     ASSERT(m_workerClientWrapper.get());
-    m_loaderProxy.postTaskToLoader(createCallbackTask(&MainThreadBridge::mainThreadCreateLoader, this, request, options));
+    m_loaderProxy.postTaskToLoader(createCallbackTask(&MainThreadBridge::mainThreadCreateLoader, this, request, options, outgoingReferrer));
 }
 
 WorkerThreadableLoader::MainThreadBridge::~MainThreadBridge()
 {
 }
 
-void WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader(ScriptExecutionContext* context, MainThreadBridge* thisPtr, PassOwnPtr<CrossThreadResourceRequestData> requestData, ThreadableLoaderOptions options)
+void WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader(ScriptExecutionContext* context, MainThreadBridge* thisPtr, PassOwnPtr<CrossThreadResourceRequestData> requestData, ThreadableLoaderOptions options, const String& outgoingReferrer)
 {
     ASSERT(isMainThread());
     ASSERT(context->isDocument());
+    Document* document = static_cast<Document*>(context);
 
-    // FIXME: the created loader has no knowledge of the origin of the worker doing the load request.
-    // Basically every setting done in SubresourceLoader::create (including the contents of addExtraFieldsToRequest)
-    // needs to be examined for how it should take into account a different originator.
     OwnPtr<ResourceRequest> request(ResourceRequest::adopt(requestData));
     // FIXME: If the a site requests a local resource, then this will return a non-zero value but the sync path
     // will return a 0 value.  Either this should return 0 or the other code path should do a callback with
     // a failure.
-    thisPtr->m_mainThreadLoader = ThreadableLoader::create(context, thisPtr, *request, options);
+    thisPtr->m_mainThreadLoader = DocumentThreadableLoader::create(document, thisPtr, *request, options, outgoingReferrer);
     ASSERT(thisPtr->m_mainThreadLoader);
 }
 

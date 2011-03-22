@@ -51,27 +51,30 @@ namespace WebCore {
 void DocumentThreadableLoader::loadResourceSynchronously(Document* document, const ResourceRequest& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
 {
     // The loader will be deleted as soon as this function exits.
-    RefPtr<DocumentThreadableLoader> loader = adoptRef(new DocumentThreadableLoader(document, &client, LoadSynchronously, request, options));
+    RefPtr<DocumentThreadableLoader> loader = adoptRef(new DocumentThreadableLoader(document, &client, LoadSynchronously, request, options, String()));
     ASSERT(loader->hasOneRef());
 }
 
-PassRefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document* document, ThreadableLoaderClient* client, const ResourceRequest& request, const ThreadableLoaderOptions& options)
+PassRefPtr<DocumentThreadableLoader> DocumentThreadableLoader::create(Document* document, ThreadableLoaderClient* client, const ResourceRequest& request, const ThreadableLoaderOptions& options, const String& optionalOutgoingReferrer)
 {
-    RefPtr<DocumentThreadableLoader> loader = adoptRef(new DocumentThreadableLoader(document, client, LoadAsynchronously, request, options));
+    RefPtr<DocumentThreadableLoader> loader = adoptRef(new DocumentThreadableLoader(document, client, LoadAsynchronously, request, options, optionalOutgoingReferrer));
     if (!loader->m_loader)
         loader = 0;
     return loader.release();
 }
 
-DocumentThreadableLoader::DocumentThreadableLoader(Document* document, ThreadableLoaderClient* client, BlockingBehavior blockingBehavior, const ResourceRequest& request, const ThreadableLoaderOptions& options)
+DocumentThreadableLoader::DocumentThreadableLoader(Document* document, ThreadableLoaderClient* client, BlockingBehavior blockingBehavior, const ResourceRequest& request, const ThreadableLoaderOptions& options, const String& optionalOutgoingReferrer)
     : m_client(client)
     , m_document(document)
     , m_options(options)
+    , m_optionalOutgoingReferrer(optionalOutgoingReferrer)
     , m_sameOriginRequest(document->securityOrigin()->canRequest(request.url()))
     , m_async(blockingBehavior == LoadAsynchronously)
 {
     ASSERT(document);
     ASSERT(client);
+    // Setting an outgoing referer is only supported in the async code path.
+    ASSERT(m_async || m_optionalOutgoingReferrer.isEmpty());
 
     if (m_sameOriginRequest || m_options.crossOriginRequestPolicy == AllowCrossOriginRequests) {
         loadRequest(request, DoSecurityCheck);
@@ -346,7 +349,8 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
 
         // Clear the loader so that any callbacks from SubresourceLoader::create will not have the old loader.
         m_loader = 0;
-        m_loader = resourceLoadScheduler()->scheduleSubresourceLoad(m_document->frame(), this, request, ResourceLoadPriorityMedium, securityCheck, sendLoadCallbacks, sniffContent);
+        m_loader = resourceLoadScheduler()->scheduleSubresourceLoad(m_document->frame(), this, request, ResourceLoadPriorityMedium, securityCheck, sendLoadCallbacks,
+                                                                    sniffContent, m_optionalOutgoingReferrer);
         return;
     }
     
