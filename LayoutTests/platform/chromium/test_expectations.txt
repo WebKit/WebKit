@@ -3288,3 +3288,6 @@ BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-scale-drawImage-shadow.html = TEXT
 // Started failing after WebKit r81597. Must be sensitive to test order.
 BUGCR76971 WIN LINUX : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
 BUGCR76971 LINUX : svg/text/font-size-below-point-five.svg = TEXT
+
+BUGWK81597 SKIP : http/tests/filesystem/workers/resolve-url-sync.html = TIMEOUT
+BUGWK81597 SKIP : http/tests/filesystem/workers/resolve-url.html = TIMEOUT
