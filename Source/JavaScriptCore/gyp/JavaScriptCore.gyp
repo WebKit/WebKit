@@ -7,24 +7,8 @@
   'variables': {
     # FIXME: We should use a header map instead of listing these explicitly.
     'javascriptcore_include_dirs': [
-      '<(DEPTH)', # Some paths in API include JavaScriptCore/
       '<(project_dir)',
-      '<(project_dir)/ForwardingHeaders',
-      '<(project_dir)/API',
-      '<(project_dir)/assembler',
-      '<(project_dir)/collector/handles',
-      '<(project_dir)/bytecode',
-      '<(project_dir)/bytecompiler',
-      '<(project_dir)/debugger',
       '<(project_dir)/icu',
-      '<(project_dir)/interpreter',
-      '<(project_dir)/jit',
-      '<(project_dir)/parser',
-      '<(project_dir)/profiler',
-      '<(project_dir)/runtime',
-      '<(project_dir)/wtf',
-      '<(project_dir)/wtf/unicode',
-      '<(SHARED_INTERMEDIATE_DIR)',
     ],
     'derived_source_files': [
       '<(SHARED_INTERMEDIATE_DIR)/ArrayPrototype.lut.h',
@@ -108,7 +92,6 @@
         ['exclude', '(Default|Gtk|Chromium|None|Qt|Win|Wx|Symbian)\\.(cpp|mm|h)$'],
         ['exclude', 'GCActivityCallback\.cpp'],
         ['exclude', '.*BSTR.*$'],
-        ['exclude', 'jsc.cpp$'],
       ],
       'postbuilds': [
         {

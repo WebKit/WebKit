@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        GYP build should not have include paths that point within the source tree
+        https://bugs.webkit.org/show_bug.cgi?id=56788
+
+        Turns out we don't need these include paths anymore now that we have
+        header maps working properly.
+
+        * gyp/JavaScriptCore.gyp:
+            - Also, remove jsc.cpp from the excluded list because it's not part
+              of the jsc_files variable instead of the javascriptcore_files
+              variable.
+
+2011-03-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Solve the Assertions.cpp / -Wno-missing-format-attribute mystery
         https://bugs.webkit.org/show_bug.cgi?id=56780
 

@@ -12,7 +12,6 @@
         'Update Version'
       ],
       'include_dirs': [
-        '<(DEPTH)/JavaScriptGlue',
         '<(DEPTH)/JavaScriptGlue/ForwardingHeaders',
         '<(DEPTH)/JavaScriptGlue/icu',
         '<(PRODUCT_DIR)/include',

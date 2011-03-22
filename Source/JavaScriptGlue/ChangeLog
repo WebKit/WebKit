@@ -1,3 +1,15 @@
+2011-03-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        GYP build should not have include paths that point within the source tree
+        https://bugs.webkit.org/show_bug.cgi?id=56788
+
+        Turns out we don't need these include paths anymore now that we have
+        header maps working properly.
+
+        * gyp/JavaScriptGlue.gyp:
+
 2011-03-20  Bill Budge  <bbudge@chromium.org>
 
         Reviewed by Adam Barth.
