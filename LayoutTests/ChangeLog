@@ -1,3 +1,16 @@
+2011-03-21  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Add the first reftest so that we can make sure that reftests won't cause
+        any issues on all buildbots.
+        This patch will also act as a sample reftest which a Wiki page will refer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56450
+
+        * fast/harness/font-weight-bold-expected.html: Added.
+        * fast/harness/font-weight-bold.html: Added.
+
 2011-03-21  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Eric Seidel.
