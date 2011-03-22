@@ -1,4 +1,55 @@
 =================
+WebKitGTK+ 1.3.13
+=================
+
+What's new in WebKitGTK+ 1.3.13?
+
+In this release the GObject DOM Bindings contain a major change. Explicit
+invocation of DOM objects' addEventListener methods has replaced the GObject
+signal method of DOM event handling. For intance, where before a developer
+would connect to the "click-event" signal, a developer must now call:
+webkit_dom_event_target_add_event_listener. For a more illustrative example see:
+http://trac.webkit.org/changeset/81486/trunk/Source/WebKit/gtk/tests/testdomdomwindow.c
+
+Added API to control the IconDatabase and the cache database APIs.
+
+WebKit bugs mostly relevant with the GTK+ port fixed since 1.3.12:
+
+Bug 23526 - [CAIRO] Support ImageBuffers clip operation on all Cairo ports (Martin Robinson)
+Bug 56180 - [GTK] JSC crashes in 32bit Release bots after r80743 (Martin Robinson)
+Bug 56180 - [GTK] JSC crashes in 32bit Release bots after r80743 (Geoffrey Garen)
+Bug 49649 - [GTK] On-demand event-listeners for DOM event signals (David Keijser)
+Bug 56333 - [GTK] [WebKit2] The UIProcess never changes the mouse cursor (Martin Robinson)
+Bug 55989 - [GTK] Possible leaks after splitting TextCheckerClientEnchant. (Ryuan Choi)
+Bug 50497 - Add all web audio auto-generated files to GTK make system (Chris Rogers)
+Bug 56180 - [GTK] JSC crashes in 32bit Release bots after r80743 (Sergio Villar Senin)
+Bug 55932 - [GTK] close-web-view emitted on disposed WebView (Philippe Normand)
+Bug 53098 - [GTK] Implement spin buttons for GTK+ 2.x (Martin Robinson)
+Bug 56125 - [GTK] [Webkit2] There are no scrollbars visible in the MiniBrowser (Martin Robinson)
+Bug 41903 - [GTK] plugins/return-negative-one-from-write.html crashes (Martin Robinson)
+Bug 32510 - [GTK] provide an API to control the IconDatabase (Christian Dywan)
+Bug 55868 - [GTK] Do not set juntion sides on scrollbar stepper buttons (Carlos Garcia Campos)
+Bug 55866 - [GTK] Use doubles instead of integers for coordinates when rendering arrows (Carlos Garcia Campos)
+Bug 55878 - [Gtk] toDataURL uses incorrect quality value when saving GdkPixbuf to buffer (Zan Dobersek)
+Bug 55531 - [GTK] Windowless plugins override the view cursor (Martin Robinson)
+Bug 55136 - Enable Copy Image Address context menu item in the Gtk port (Christian Dywan)
+Bug 53960 - [GTK] DRT needs implementation of EventSender.scheduleAsynchronousClick (Carlos Garcia Campos)
+Bug 55335 - [GTK] Extended application cache database API and added unit tests file. (Lukasz Slachciak)
+Bug 53146 - [GTK] Combo boxes should emit object:selection-changed even when collapsed (Mario Sanchez Prada)
+Bug 55473 - [GTK] Add support for external protocol handlers (Sergio Villar Senin)
+Bug 53228 - [Gtk] Resource size is incorrectly reported to WebCore (Sergio Villar Senin)
+Bug 48510 - [GTK] Implement WebContext and NativeKeyboardEvent classes for WebKit2 (Amruth Raj)
+Bug 48509 - [GTK] Implement WebView and WebKitWebView classes for WebKit2 (Amruth Raj)
+Bug 48510 - [GTK] Implement WebEventFactory, WebErrors classes for WebKit2 ( Amruth Raj)
+Bug 54658 - [gtk] Failing collinear arcTo canvas tests (Zan Dobersek)
+Bug 37769 - [Gtk] Flash item placed on wrong location right after load (Martin Robinson)
+Bug 54981 - [GTK] position:fixed elements flicker while scrolling after r74196 (Martin Robinson)
+Bug 56180 - [GTK] JSC crashes in 32bit Release bots after r80743 (Oliver Hunt)
+Bug 56737 - [GTK] [Stable] AtkHypertext exposes wrong offsets for links placed inside <span> nodes (Mario Sanchez Prada)
+Bug 56201 - WebKitIconDatabase may trigger crash in cairoImageSurfaceToGdkPixbuf (Christian Dywan)
+Bug 56690 - Stop inserting when the parent is removed (Justin Schuh)
+
+=================
 WebKitGTK+ 1.3.12
 =================
 
