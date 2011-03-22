@@ -1,3 +1,14 @@
+2011-03-22  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Loading a new tab does not dismiss Lookup
+        <rdar://problem/9138391> 
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+        Hide the dictionary popup when moving the WKView out of a window.
+
 2011-03-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

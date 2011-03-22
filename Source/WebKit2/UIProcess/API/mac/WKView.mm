@@ -1478,6 +1478,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
             _data->_endGestureMonitor = nil;
         }
 #endif
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+        WKHideWordDefinitionWindow();
+#endif
     }
 }
 
