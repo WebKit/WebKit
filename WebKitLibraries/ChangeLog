@@ -1,5 +1,16 @@
 2011-03-22  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Going to certain pages causes a download of "st.html" or "jsp.html" (news.yahoo.com, etc.)
+        <rdar://problem/9139245>
+
+        "Windows edition".
+
+        * win/lib/WebKitSystemInterface.lib:
+
+2011-03-22  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Brady Eidson.
 
         Going to certain pages causes a download of "st.html" or "jsp.html" (news.yahoo.com, etc.)
