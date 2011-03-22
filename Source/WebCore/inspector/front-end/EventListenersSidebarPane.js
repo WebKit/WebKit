@@ -194,6 +194,8 @@ WebInspector.EventListenerBar.prototype = {
                 properties.push(new WebInspector.RemoteObjectProperty(propertyName, value));
             }
             this.updateProperties(properties);
+            if (nodeObject)
+                nodeObject.release();
         }
         var node = this.eventListener.node;
         delete this.eventListener.node;

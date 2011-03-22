@@ -517,217 +517,266 @@
     },
     {
         "domain": "DOM",
-        "types": [],
+        "types": [
+            {
+                "id": "DOMNode",
+                "type": "object",
+                "properties": {
+                    "id": { "type": "integer", "description": "Node identifier that is passed into the rest of the DOM messages as the <code>nodeId</code>. Backend will only push node with given <code>id</code> once. It is aware of all requested nodes and will only fire DOM events for nodes known to the client." },
+                    "nodeType": { "type": "integer",  "description": "<code>Node</code>'s nodeType." },
+                    "nodeName": { "type": "string", "description": "<code>Node</code>'s nodeName." },
+                    "localName": { "type": "string", "description": "<code>Node</code>'s localName." },
+                    "nodeValue": { "type": "string", "description": "<code>Node</code>'s nodeValue." },
+                    "childNodeCount": { "type": "integer", "optional": true, "description": "Child count for <code>Container</code> nodes." },
+                    "children": { "type": "array", "optional": true, "items": { "$ref" : "DOMNode" }, "description": "Child nodes of this node when requested with children." },
+                    "attributes": { "type": "array", "optional": true, "items": { "type" : "string" }, "description": "Attributes of the <code>Element</code> node in the form of flat array <code>[name1, value1, name2, value2]." },
+                    "documentURL": { "type": "string", "optional": true, "description": "Document URL that <code>Document</code> or <code>FrameOwner</code> node points to." },
+                    "publicId": { "type": "string", "optional": true, "description": "<code>DocumentType</code>'s publicId. // FIXME" },
+                    "systemId": { "type": "string", "optional": true, "description": "<code>DocumentType</code>'s systemId. // FIXME" },
+                    "internalSubset": { "type": "string", "optional": true, "description": "<code>DocumentType</code>'s internalSubset. // FIXME" },
+                    "name": { "type": "string", "optional": true, "description": "<code>Attr</code>'s name. // FIXME" },
+                    "value": { "type": "string", "optional": true, "description": "<code>Attr</code>'s value. // FIXME" }
+                },
+                "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type."
+            },
+            {
+                "id": "DOMEventListener",
+                "type": "object",
+                "properties": {
+                    "type": { "type": "string", "description": "<code>EventListener</code>'s type." },
+                    "useCapture": { "type": "boolean", "description": "<code>EventListener</code>'s useCapture." },
+                    "isAttribute": { "type": "boolean", "description": "<code>EventListener</code>'s isAttribute." },
+                    "nodeId": { "type": "integer",  "description": "Target <code>DOMNode</code> id." },
+                    "listenerBody": { "type": "string", "description": "Listener function body." },
+                    "sourceName": { "type": "string", "optional" : true, "description": "Handler location source name." },
+                    "lineNumber": { "type": "number", "optional" : true, "description": "Handler location line number." }
+                },
+                "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type."
+            }
+        ],
         "commands": [
             {
                 "name": "getDocument",
                 "returns": [
-                    { "name": "root", "$ref": "DOMNode" }
-                ]
+                    { "name": "root", "$ref": "DOMNode", "description": "Resulting node." }
+                ],
+                "description": "Returns the root DOM node to the caller."
             },
             {
                 "name": "getChildNodes",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" }
-                ]
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node to get children for." }
+                ],
+                "description": "Requests that children of the node with given id are returned to the caller in form of <code>setChildNodes</code> events."
             },
             {
                 "name": "querySelector",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" },
-                    { "name": "selectors", "type": "string" },
-                    { "name": "documentWide", "type": "boolean" }
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node to query upon." },
+                    { "name": "selectors", "type": "string", "description": "Selector string." },
+                    { "name": "documentWide", "type": "boolean", "description": "Set to true to start querying from the node's document." }
                 ],
                 "returns": [
-                    { "name": "elementId", "type": "integer" }
-                ]
+                    { "name": "elementId", "type": "integer", "description": "Query selector result." }
+                ],
+                "description": "Executes <code>querySelector</code> on a given node. Setting <code>documentWide</code> to true starts selecting from the document node."
             },
             {
                 "name": "querySelectorAll",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" },
-                    { "name": "selectors", "type": "string" },
-                    { "name": "documentWide", "type": "boolean" }
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node to query upon." },
+                    { "name": "selectors", "type": "string", "description": "Selector string." },
+                    { "name": "documentWide", "type": "boolean", "description": "Set to true to start querying from the node's document." }
                 ],
                 "returns": [
-                    { "name": "nodeIds", "type": ["integer"] }
-                ]
+                    { "name": "nodeIds", "type": ["integer"], "description": "Query selector result."  }
+                ],
+                "description": "Executes <code>querySelectorAll</code> on a given node. Setting <code>documentWide</code> to true starts selecting from the document node."
             },
             {
                 "name": "setNodeName",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" },
-                    { "name": "name", "type": "string" }
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node to set name for."  },
+                    { "name": "name", "type": "string", "description": "New node's name." }
                 ],
                 "returns": [
-                    { "name": "outNodeId", "type": "integer" }
-                ]
+                    { "name": "outNodeId", "type": "integer", "description": "New node's id." }
+                ],
+                "description": "Sets node name for a node with given id."
             },
             {
                 "name": "setNodeValue",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" },
-                    { "name": "value", "type": "string" }
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node to set value for." },
+                    { "name": "value", "type": "string", "description": "New node's value." }
                 ],
-                "returns": [
-                    { "name": "success", "type": "boolean" }
-                ]
+                "description": "Sets node value for a node with given id."
             },
             {
                 "name": "removeNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" }
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node to remove." }
                 ],
-                "returns": [
-                    { "name": "outNodeId", "type": "integer" }
-                ]
+                "description": "Removes node with given id."
             },
             {
                 "name": "setAttribute",
                 "parameters": [
-                    { "name": "elementId", "type": "integer" },
-                    { "name": "name", "type": "string" },
-                    { "name": "value", "type": "string" }
-                ]
+                    { "name": "elementId", "type": "integer", "description": "Id of the element to set attribute for." },
+                    { "name": "name", "type": "string", "description": "Attribute name." },
+                    { "name": "value", "type": "string", "description": "Attribute value." }
+                ],
+                "description": "Sets attribute for an element with given id."
             },
             {
                 "name": "removeAttribute",
                 "parameters": [
-                    { "name": "elementId", "type": "integer" },
-                    { "name": "name", "type": "string" }
-                ]
+                    { "name": "elementId", "type": "integer", "description": "Id of the element to remove attribute from." },
+                    { "name": "name", "type": "string", "description": "Name of the attribute to remove." }
+                ],
+                "description": "Removes attribute with given name from an element with given id."
             },
             {
                 "name": "getEventListenersForNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" }
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node to get listeners for." }
                 ],
                 "returns": [
-                    { "name": "listenersArray", "$ref": ["DOMListener"] }
-                ]
+                    { "name": "listenersArray", "$ref": ["DOMEventListener"], "description": "Array of relevant listeners." }
+                ],
+                "description": "Returns event listeners relevant to the node."
             },
             {
                 "name": "copyNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" }
-                ]
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node to copy." }
+                ],
+                "description": "Copies node's HTML markup into the clipboard."
             },
             {
                 "name": "getOuterHTML",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" }
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node to get markup for." }
                 ],
                 "returns": [
-                    { "name": "outerHTML", "type": "string" }
-                ]
+                    { "name": "outerHTML", "type": "string", "description": "Outer HTML markup." }
+                ],
+                "description": "Returns node's HTML markup."
             },
             {
                 "name": "setOuterHTML",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" },
-                    { "name": "outerHTML", "type": "string" }
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node to set markup for." },
+                    { "name": "outerHTML", "type": "string", "description": "Outer HTML markup to set." }
                 ],
                 "returns": [
-                    { "name": "outNodeId", "type": "integer" }
-                ]
+                    { "name": "outNodeId", "type": "integer", "description": "Setting outer HTML can change node's id." }
+                ],
+                "description": "Sets node HTML markup, returns new node id."
             },
             {
                 "name": "performSearch",
                 "parameters": [
-                    { "name": "query", "type": "string" },
-                    { "name": "runSynchronously", "type": "boolean" }
-                ]
+                    { "name": "query", "type": "string", "description": "Plain text or query selector or XPath search query." },
+                    { "name": "runSynchronously", "type": "boolean", "description": "When set to true, performing search synchronously (can block user interaction)." }
+                ],
+                "description": "Starts asynchronous search for a given string in the DOM tree. Use <code>cancelSearch</code> to stop given asynchronous search task."
             },
             {
-                "name": "cancelSearch"
+                "name": "cancelSearch",
+                "description": "Cancels asynchronous search started with <code>performSearch</code>."
             },
             {
                 "name": "pushNodeToFrontend",
                 "parameters": [
-                    { "name": "objectId", "type": "string" }
+                    { "name": "objectId", "type": "string", "description": "JavaScript object id to convert into node." }
                 ],
                 "returns": [
-                    { "name": "nodeId", "type": "integer" }
-                ]
+                    { "name": "nodeId", "type": "integer", "description": "Node id for given object." }
+                ],
+                "description": "Requests that the node is sent to the caller given the JavaScript node object reference."
             },
             {
                 "name": "pushNodeByPathToFrontend",
                 "parameters": [
-                    { "name": "path", "type": "string" }
+                    { "name": "path", "type": "string", "description": "Path to node in the proprietary format." }
                 ],
                 "returns": [
-                    { "name": "nodeId", "type": "integer" }
-                ]
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node for given path." }
+                ],
+                "description": "Requests that the node is sent to the caller given its path. // FIXME, use XPath"
             },
             {
                 "name": "resolveNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" },
-                    { "name": "objectGroup", "type": "string" }
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node to resolve." }
                 ],
                 "returns": [
-                    { "name": "object", "$ref": "Object" }
-                ]
+                    { "name": "object", "$ref": "Object", "description": "JavaScript object wrapper for given node." }
+                ],
+                "description": "Resolves JavaScript node object for given node id."
             }
         ],
         "events": [
             {
-                "name": "documentUpdated"
+                "name": "documentUpdated",
+                "description": "Fired when <code>Document</code> has been totally updated. Node ids are no longer valid."
             },
             {
                 "name": "setChildNodes",
                 "parameters": [
-                    { "name": "parentId", "type": "integer" },
-                    { "name": "nodes", "$ref": ["DOMNode"] }
-                ]
+                    { "name": "parentId", "type": "integer", "description": "Parent node id to populate with children." },
+                    { "name": "nodes", "$ref": ["DOMNode"], "description": "Child nodes array." }
+                ],
+                "description": "Fired when backend wants to provide client with the missing DOM structure. This happens upon most of the calls requesting node ids."
             },
             {
                 "name": "attributesUpdated",
                 "parameters": [
-                    { "name": "id", "type": "integer" },
-                    { "name": "attributes", "$ref": ["DOMAttribute"] }
-                ]
+                    { "name": "id", "type": "integer", "description": "Id of the node that has changed." },
+                    { "name": "attributes", "$ref": ["DOMAttribute"], "description": "New attributes value." }
+                ],
+                "description": "Fired when <code>Element</code>'s attributes are updated."
             },
             {
                 "name": "characterDataModified",
                 "parameters": [
-                    { "name": "id", "type": "integer" },
-                    { "name": "newValue", "type": "string" }
-                ]
-            },
-            {
-                "name": "setDetachedRoot",
-                "parameters": [
-                    { "name": "root", "$ref": "DOMNode" }
-                ]
+                    { "name": "id", "type": "integer", "description": "Id of the node that has changed." },
+                    { "name": "newValue", "type": "string", "description": "New text value." }
+                ],
+                "description": "Mirrors <code>DOMCharacterDataModified</code> event."
             },
             {
                 "name": "childNodeCountUpdated",
                 "parameters": [
-                    { "name": "id", "type": "integer" },
-                    { "name": "newValue", "type": "integer" }
-                ]
+                    { "name": "id", "type": "integer", "description": "Id of the node that has changed." },
+                    { "name": "newValue", "type": "integer", "description": "New node count." }
+                ],
+                "description": "Fired when <code>Container</code>'s child node count has changed."
             },
             {
                 "name": "childNodeInserted",
                 "parameters": [
-                    { "name": "parentId", "type": "integer" },
-                    { "name": "prevId", "type": "integer" },
-                    { "name": "node", "$ref": "DOMNode" }
-                ]
+                    { "name": "parentId", "type": "integer", "description": "Id of the node that has changed." },
+                    { "name": "prevId", "type": "integer", "description": "If of the previous siblint." },
+                    { "name": "node", "$ref": "DOMNode", "description": "Inserted node data." }
+                ],
+                "description": "Mirrors <code>DOMNodeInserted</code> event."
             },
             {
                 "name": "childNodeRemoved",
                 "parameters": [
-                    { "name": "parentId", "type": "integer" },
-                    { "name": "id", "type": "integer" }
-                ]
+                    { "name": "parentId", "type": "integer", "description": "Parent id." },
+                    { "name": "id", "type": "integer", "description": "Id of the node that has been removed." }
+                ],
+                "description": "Mirrors <code>DOMNodeRemoved</code> event."
             },
             {
                 "name": "searchResults",
                 "parameters": [
-                    { "name": "nodeIds", "type": ["integer"] }
-                ]
+                    { "name": "nodeIds", "type": ["integer"], "description": "Ids of the search result nodes." }
+                ],
+                "description": "Pushes search results initiated using <code>performSearch</code> to the client."
             }
         ]
     },

@@ -594,22 +594,22 @@ void InspectorDOMAgent::removeAttribute(ErrorString* errorString, int elementId,
     }
 }
 
-void InspectorDOMAgent::removeNode(ErrorString*, int nodeId, int* outNodeId)
+void InspectorDOMAgent::removeNode(ErrorString* errorString, int nodeId)
 {
-    Node* node = nodeForId(nodeId);
+    Node* node = assertNode(errorString, nodeId);
     if (!node)
         return;
 
     ContainerNode* parentNode = node->parentNode();
-    if (!parentNode)
+    if (!parentNode) {
+        *errorString = "Can not remove detached node.";
         return;
+    }
 
     ExceptionCode ec = 0;
     parentNode->removeChild(node, ec);
     if (ec)
-        return;
-
-    *outNodeId = nodeId;
+        *errorString = "Could not remove node due to DOM exception.";
 }
 
 void InspectorDOMAgent::setNodeName(ErrorString*, int nodeId, const String& tagName, int* newId)
@@ -693,17 +693,22 @@ void InspectorDOMAgent::setOuterHTML(ErrorString* errorString, int nodeId, const
         pushChildNodesToFrontend(*newId);
 }
 
-void InspectorDOMAgent::setNodeValue(ErrorString*, int nodeId, const String& value, bool* success)
+void InspectorDOMAgent::setNodeValue(ErrorString* errorString, int nodeId, const String& value)
 {
-    Node* node = nodeForId(nodeId);
-    if (node && (node->nodeType() == Node::TEXT_NODE)) {
-        Text* text_node = static_cast<Text*>(node);
-        ExceptionCode ec = 0;
-        text_node->replaceWholeText(value, ec);
-        *success = !ec;
+    Node* node = assertNode(errorString, nodeId);
+    if (!node)
+        return;
+
+    if (node->nodeType() != Node::TEXT_NODE) {
+        *errorString = "Can only set value of text nodes.";
         return;
     }
-    *success = false;
+
+    Text* textNode = static_cast<Text*>(node);
+    ExceptionCode ec = 0;
+    textNode->replaceWholeText(value, ec);
+    if (ec)
+        *errorString = "DOM Error while setting the node value.";
 }
 
 void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>* listenersArray)
@@ -868,14 +873,14 @@ void InspectorDOMAgent::cancelSearch(ErrorString*)
     m_searchResults.clear();
 }
 
-void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, const String& objectGroup, RefPtr<InspectorObject>* result)
+void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, RefPtr<InspectorObject>* result)
 {
     Node* node = nodeForId(nodeId);
     if (!node) {
         *error = "No node with given id found.";
         return;
     }
-    *result = resolveNode(node, objectGroup);
+    *result = resolveNode(node);
 }
 
 void InspectorDOMAgent::pushNodeToFrontend(ErrorString*, const String& objectId, int* nodeId)
@@ -1271,7 +1276,7 @@ void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString*, const String& pat
         *nodeId = pushNodePathToFrontend(node);
 }
 
-PassRefPtr<InspectorObject> InspectorDOMAgent::resolveNode(Node* node, const String& objectGroup)
+PassRefPtr<InspectorObject> InspectorDOMAgent::resolveNode(Node* node)
 {
     Document* document = node->ownerDocument();
     Frame* frame = document ? document->frame() : 0;
@@ -1282,7 +1287,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::resolveNode(Node* node, const Str
     if (injectedScript.hasNoValue())
         return 0;
 
-    return injectedScript.wrapNode(node, objectGroup);
+    return injectedScript.wrapNode(node);
 }
 
 } // namespace WebCore

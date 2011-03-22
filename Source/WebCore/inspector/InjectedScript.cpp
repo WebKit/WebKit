@@ -155,9 +155,9 @@ PassRefPtr<InspectorObject> InjectedScript::wrapObject(ScriptValue value, const 
     return r.toInspectorValue(m_injectedScriptObject.scriptState())->asObject();
 }
 
-PassRefPtr<InspectorObject> InjectedScript::wrapNode(Node* node, const String& groupName)
+PassRefPtr<InspectorObject> InjectedScript::wrapNode(Node* node)
 {
-    return wrapObject(nodeAsScriptValue(node), groupName);
+    return wrapObject(nodeAsScriptValue(node), "");
 }
 
 void InjectedScript::inspectNode(Node* node)

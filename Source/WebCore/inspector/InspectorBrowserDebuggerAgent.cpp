@@ -258,7 +258,7 @@ void InspectorBrowserDebuggerAgent::descriptionForDOMEvent(Node* target, int bre
     if ((1 << breakpointType) & inheritableDOMBreakpointTypesMask) {
         // For inheritable breakpoint types, target node isn't always the same as the node that owns a breakpoint.
         // Target node may be unknown to frontend, so we need to push it first.
-        RefPtr<InspectorObject> targetNodeObject = m_domAgent->resolveNode(target, "");
+        RefPtr<InspectorObject> targetNodeObject = m_domAgent->resolveNode(target);
         description->setObject("targetNode", targetNodeObject);
 
         // Find breakpoint owner node.

@@ -68,7 +68,7 @@ public:
 #endif
 
     PassRefPtr<InspectorObject> wrapObject(ScriptValue, const String& groupName);
-    PassRefPtr<InspectorObject> wrapNode(Node*, const String& groupName);
+    PassRefPtr<InspectorObject> wrapNode(Node*);
     void inspectNode(Node*);
     void releaseObjectGroup(const String&);
     ScriptState* scriptState() const { return m_injectedScriptObject.scriptState(); }

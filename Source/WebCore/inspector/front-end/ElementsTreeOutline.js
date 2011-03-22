@@ -426,12 +426,11 @@ WebInspector.ElementsTreeElement.prototype = {
             }
         }
 
-        function resolvedNode(objectPayload)
+        function resolvedNode(object)
         {
-            if (!objectPayload)
+            if (!object)
                 return;
 
-            var object = WebInspector.RemoteObject.fromPayload(objectPayload);
             object.evaluate("return '[' + this.offsetWidth + ',' + this.offsetHeight + ',' + this.naturalWidth + ',' + this.naturalHeight + ']'", setTooltip.bind(this));
             object.release();
         }
@@ -1423,9 +1422,7 @@ WebInspector.ElementsTreeElement.prototype = {
         var self = this;
         function removeNodeCallback(error, removedNodeId)
         {
-            // -1 is an error code, which means removing the node from the DOM failed,
-            // so we shouldn't remove it from the tree.
-            if (error || removedNodeId === -1)
+            if (error)
                 return;
 
             parentElement.removeChild(self);

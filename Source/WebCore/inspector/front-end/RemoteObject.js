@@ -58,7 +58,7 @@ WebInspector.RemoteObject.resolveNode = function(node, callback)
         else
             callback(WebInspector.RemoteObject.fromPayload(object));
     }
-    DOMAgent.resolveNode(node.id, "dom-selection", mycallback);
+    DOMAgent.resolveNode(node.id, mycallback);
 }
 
 WebInspector.RemoteObject.fromPayload = function(payload)

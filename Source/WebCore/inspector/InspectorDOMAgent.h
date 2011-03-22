@@ -114,15 +114,15 @@ public:
     void getChildNodes(ErrorString*, int nodeId);
     void setAttribute(ErrorString*, int elementId, const String& name, const String& value);
     void removeAttribute(ErrorString*, int elementId, const String& name);
-    void removeNode(ErrorString*, int nodeId, int* outNodeId);
+    void removeNode(ErrorString*, int nodeId);
     void setNodeName(ErrorString*, int nodeId, const String& name, int* newId);
     void getOuterHTML(ErrorString*, int nodeId, WTF::String* outerHTML);
     void setOuterHTML(ErrorString*, int nodeId, const String& outerHTML, int* newId);
-    void setNodeValue(ErrorString*, int nodeId, const String& value, bool* success);
+    void setNodeValue(ErrorString*, int nodeId, const String& value);
     void getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>* listenersArray);
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, bool runSynchronously);
     void cancelSearch(ErrorString*);
-    void resolveNode(ErrorString*, int nodeId, const String& objectGroup, RefPtr<InspectorObject>* result);
+    void resolveNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* result);
     void pushNodeToFrontend(ErrorString*, const String& objectId, int* nodeId);
     void pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId);
 
@@ -146,7 +146,7 @@ public:
 
     String documentURLString(Document*) const;
 
-    PassRefPtr<InspectorObject> resolveNode(Node*, const String& objectGroup);
+    PassRefPtr<InspectorObject> resolveNode(Node*);
 
     // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
     // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.

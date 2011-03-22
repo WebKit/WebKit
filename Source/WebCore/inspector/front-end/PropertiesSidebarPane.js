@@ -42,15 +42,14 @@ WebInspector.PropertiesSidebarPane.prototype = {
             return;
         }
 
-        RuntimeAgent.releaseObjectGroup("dom-selection");
         WebInspector.RemoteObject.resolveNode(node, nodeResolved.bind(this));
 
-        function nodeResolved(objectPayload)
+        function nodeResolved(object)
         {
-            if (!objectPayload)
+            if (!object)
                 return;
-            var object = WebInspector.RemoteObject.fromPayload(objectPayload);
             object.evaluate("var proto = this; result = {}; var counter = 1; while (proto) { result[counter++] = proto; proto = proto.__proto__ }; return result;", nodePrototypesReady.bind(this));
+            object.release();
         }
 
         function nodePrototypesReady(error, objectPayload)

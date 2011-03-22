@@ -41,6 +41,8 @@ input_path = sys.argv[3]
 
 input_file = open(input_path, "r")
 json_string = input_file.read()
+json_string = string.replace(json_string, ": true", ": True")
+json_string = string.replace(json_string, ": false", ": false")
 json_api = eval(json_string)
 
 output_file = open(output_path, "w")
