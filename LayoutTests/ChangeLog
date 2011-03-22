@@ -1,5 +1,15 @@
 2011-03-22  Adam Roben  <aroben@apple.com>
 
+        Add Windows results for new test added in r81653
+
+        Windows differs from Mac due to a different scrollbar width within the listboxes.
+
+        * platform/win/fast/forms/listbox-bidi-align-expected.checksum: Added.
+        * platform/win/fast/forms/listbox-bidi-align-expected.png: Added.
+        * platform/win/fast/forms/listbox-bidi-align-expected.txt: Added.
+
+2011-03-22  Adam Roben  <aroben@apple.com>
+
         Update Windows results for new test added in r81652
 
         The checked-in results were trying to show that Windows would fail this test, but weren't
