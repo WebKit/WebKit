@@ -1,3 +1,20 @@
+2011-03-22  Adam Roben  <aroben@apple.com>
+
+        Make Leopard Debug bots and Windows XP Debug (Tests) core builders
+
+        These bots are consistently green again.
+
+        Fixes <http://webkit.org/b/56830> Leopard Debug bots and Windows XP Debug (Tests) should be
+        core builders
+
+        Rubber-stamped by Antti Koivisto.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        (BuildBot.__init__): Loosened the regexps for Leopard and Windows.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        (BuildBotTest.test_builder_name_regexps): Updated expectations.
+
 2011-03-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81597.
