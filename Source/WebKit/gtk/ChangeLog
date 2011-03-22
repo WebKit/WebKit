@@ -1,3 +1,13 @@
+2011-03-22  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        Rubber-stamped by Xan Lopez.
+
+        Applications that include WebKit headers fail to build when using strict warnings
+        because the signature for webkit_application_cache_get_maximum_size is missing a
+        'void' to make it explicit it takes no arguments.
+
+        * webkit/webkitapplicationcache.h:
+
 2011-03-21  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
