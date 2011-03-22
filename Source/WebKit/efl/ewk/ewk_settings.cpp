@@ -321,7 +321,7 @@ const char* ewk_settings_proxy_uri_get(void)
     WTF::String proxy = soup_uri_to_string(uri, EINA_FALSE);
     return eina_stringshare_add(proxy.utf8().data());
 #elif USE(CURL)
-    EINA_SAFETY_ON_TRUE_RETURN_VAL(1, NULL);
+    EINA_SAFETY_ON_TRUE_RETURN_VAL(1, 0);
 #endif
 }
 
@@ -361,7 +361,7 @@ Eina_Bool ewk_settings_cache_directory_path_set(const char *path)
         eina_stringshare_replace(&_ewk_cache_directory_path, path);
     return EINA_TRUE;
 #else
-    return EINA_FALSE;
+    EINA_SAFETY_ON_TRUE_RETURN_VAL(1, EINA_FALSE);
 #endif
 }
 
@@ -379,6 +379,6 @@ const char *ewk_settings_cache_directory_path_get()
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     return _ewk_cache_directory_path;
 #else
-    return 0;
+    EINA_SAFETY_ON_TRUE_RETURN_VAL(1, 0);
 #endif
 }

@@ -1,3 +1,18 @@
+2011-03-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Change return values with better one in ewk_setting's functions
+        https://bugs.webkit.org/show_bug.cgi?id=56819
+
+        In ewk_settings_cache_directory_path_set_xxx, they return false value
+        when soup is disabled. It is better to use EINA_SAFETY_ON_TRUE_RETURN_XXX.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_proxy_uri_get):
+        (ewk_settings_cache_directory_path_set):
+        (ewk_settings_cache_directory_path_get):
+
 2011-03-22  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Reviewed by Kent Tamura.
