@@ -1496,6 +1496,8 @@ static bool fastDocumentTeardownEnabled()
     // Until we fix that, I will comment out the test (CFM)
     settings->setAcceleratedCompositingEnabled((coreVideoHas7228836Fix() || [preferences webGLEnabled] || 
         [preferences accelerated2dCanvasEnabled]) && [preferences acceleratedCompositingEnabled]);
+    settings->setAcceleratedDrawingEnabled([preferences acceleratedDrawingEnabled]);
+    settings->setCanvasUsesAcceleratedDrawing([preferences canvasUsesAcceleratedDrawing]);    
     settings->setShowDebugBorders([preferences showDebugBorders]);
     settings->setShowRepaintCounter([preferences showRepaintCounter]);
     settings->setPluginAllowedRunTime([preferences pluginAllowedRunTime]);

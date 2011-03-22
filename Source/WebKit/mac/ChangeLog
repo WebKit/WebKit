@@ -1,3 +1,12 @@
+2011-03-22  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Have WebKit push acceleratedDrawing preferences to settings
+        https://bugs.webkit.org/show_bug.cgi?id=56792
+
+        * WebView/WebView.mm:
+
 2011-03-21  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Brady Eidson.
