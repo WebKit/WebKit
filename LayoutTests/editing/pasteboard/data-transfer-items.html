@@ -2,6 +2,7 @@
 <html>
 <body oncopy="copy(event)" onpaste="paste(event)">
 <div>This file tests the basic functionality and properties of DataTransferItems. This test requires DRT.</div>
+<div id="console"></div>
 
 <script src="../editing.js"></script>
 <script>
@@ -10,9 +11,23 @@ var pendingCallbacks = 0;
 var savedDataTransferItems = null;
 var savedDataTransferItem = null;
 
+function log(text)
+{
+    var console = document.getElementById('console');
+    console.appendChild(document.createTextNode(text));
+    console.appendChild(document.createElement('br'));
+}
+
+function removeFontName(text)
+{
+    if (!text)
+        return text;
+    return text.replace(/font-family: [^;]+;/g, '');
+}
+
 function handleEvent(data)
 {
-    console.log(data);
+    log(data);
     if (--pendingCallbacks == 0) {
         window.layoutTestController.notifyDone();
     }
@@ -21,7 +36,7 @@ function handleEvent(data)
 function copy(ev)
 {
     var items = event.clipboardData.items;
-    console.log('Populating DataTransferItems...');
+    log('Populating DataTransferItems...');
     items.add('Hello World!', 'text/plain');
     items.add('<b>Hello World!', 'text/html');
 
@@ -29,23 +44,23 @@ function copy(ev)
     try {
         items.add('Moo', 'text/plain');
     } catch (e) {
-        console.log('Caught exception "' + e + '" as expected.');
+        log('Caught exception "' + e + '" as expected.');
     }
 
     // Check that the container didn't change.
-    console.log('Verifying contents of DataTransferItems...');
-    console.log('items.length: ' + items.length);
-    console.log('items[0].kind: ' + items[0].kind);
-    console.log('items[0].type: ' + items[0].type);
-    console.log('items[1].kind: ' + items[1].kind);
-    console.log('items[1].type: ' + items[1].type);
+    log('Verifying contents of DataTransferItems...');
+    log('items.length: ' + items.length);
+    log('items[0].kind: ' + items[0].kind);
+    log('items[0].type: ' + items[0].type);
+    log('items[1].kind: ' + items[1].kind);
+    log('items[1].type: ' + items[1].type);
     items[0].getAsString(function (data) { handleEvent('copy: items[0] value: ' + data); });
     pendingCallbacks++;
     items[1].getAsString(function (data) { handleEvent('copy: items[1] value: ' + data); });
     pendingCallbacks++;
 
-    console.log('Checking if items past the end of the collection can be indexed:');
-    console.log('items[2] is undefined: ' + typeof items[2]);
+    log('Checking if items past the end of the collection can be indexed:');
+    log('items[2] is undefined: ' + typeof items[2]);
 }
 
 function paste(ev)
@@ -57,19 +72,19 @@ function paste(ev)
     savedDataTransferItem = items[0];
 
     var originalLength = items.length;
-    console.log('Checking that a read-only DataTransferItems cannot be mutated...');
+    log('Checking that a read-only DataTransferItems cannot be mutated...');
     // Should be immutable.
     items.add('Hello World!', 'text/plain');
-    console.log('items.length: ' + items.length);
-    console.log('items[0].kind: ' + items[0].kind);
-    console.log('items[0].type: ' + items[0].type);
-    items[0].getAsString(function (data) { handleEvent('paste: items[0] value: ' + data); });
+    log('items.length: ' + items.length);
+    log('items[0].kind: ' + items[0].kind);
+    log('items[0].type: ' + items[0].type);
+    items[0].getAsString(function (data) { handleEvent('paste: items[0] value: ' + removeFontName(data)); });
     pendingCallbacks++;
-    console.log('items[1].kind: ' + items[1].kind);
-    console.log('items[1].type: ' + items[1].type);
-    items[1].getAsString(function (data) { handleEvent('paste: items[1] value: ' + data); });
+    log('items[1].kind: ' + items[1].kind);
+    log('items[1].type: ' + items[1].type);
+    items[1].getAsString(function (data) { handleEvent('paste: items[1] value: ' + removeFontName(data)); });
     pendingCallbacks++;
-    console.log('items[2] is undefined: ' + typeof items[2]);
+    log('items[2] is undefined: ' + typeof items[2]);
 }
 
 function runTest() {
@@ -86,19 +101,19 @@ function runTest() {
     copyCommand();
     pasteCommand();
 
-    console.log('Testing if DataTransferItems can be accessed outside an event handler...');
+    log('Testing if DataTransferItems can be accessed outside an event handler...');
     if (savedDataTransferItems.length != 0) {
-        console.log('DataTransferItems.length non-zero outside event handler!');
+        log('DataTransferItems.length non-zero outside event handler!');
     }
     savedDataTransferItems.add('Security?', 'text/foo');
     if (savedDataTransferItems.length != 0) {
-        console.log('DataTransferItems mutated outside event handler!');
+        log('DataTransferItems mutated outside event handler!');
     }
     if (typeof savedDataTransferItems[0] == 'undefined') {
-        console.log('DataTransferItem accessed outside event handler!');
+        log('DataTransferItem accessed outside event handler!');
     }
     if (typeof savedDataTransferItem == 'undefined') {
-        console.log('DataTransferItem accessed outside event handler!');
+        log('DataTransferItem accessed outside event handler!');
     }
 }
 

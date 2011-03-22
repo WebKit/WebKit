@@ -1,3 +1,13 @@
+2011-03-21  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Remove dependency on default font from data-transfer-items.html
+        https://bugs.webkit.org/show_bug.cgi?id=56791
+
+        * editing/pasteboard/data-transfer-items-expected.txt:
+        * editing/pasteboard/data-transfer-items.html:
+
 2011-03-21  Rik Cabanier  <cabanier@gmail.com>
 
         Reviewed by James Robinson.
