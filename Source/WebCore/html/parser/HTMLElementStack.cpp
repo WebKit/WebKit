@@ -114,8 +114,7 @@ inline bool isForeignContentScopeMarker(ContainerNode* node)
         || node->hasTagName(SVGNames::foreignObjectTag)
         || node->hasTagName(SVGNames::descTag)
         || node->hasTagName(SVGNames::titleTag)
-        || node->namespaceURI() == HTMLNames::xhtmlNamespaceURI
-        || node->nodeType() == Node::DOCUMENT_FRAGMENT_NODE;
+        || isInHTMLNamespace(node);
 }
 
 inline bool isButtonScopeMarker(ContainerNode* node)
@@ -436,7 +435,7 @@ bool HTMLElementStack::hasOnlyHTMLElementsInScope() const
 {
     for (ElementRecord* record = m_top.get(); record; record = record->next()) {
         Element* element = record->element();
-        if (element->namespaceURI() != xhtmlNamespaceURI)
+        if (!isInHTMLNamespace(element))
             return false;
         if (isScopeMarker(element))
             return true;
