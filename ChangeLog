@@ -1,3 +1,16 @@
+2011-03-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add GYP to Source/ThirdParty
+        https://bugs.webkit.org/show_bug.cgi?id=56870
+
+        We probably don't need all the test files, but it seems cleaner to just
+        check in the whole GYP tree.  GYP is BSD licensed, so it is compatible
+        with the WebKit license.
+
+        * Source/ThirdParty/gyp: Added.
+
 2011-03-21  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
