@@ -1,3 +1,17 @@
+2011-03-22  Andrew Wason  <rectalogic@rectalogic.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] QWebPage with WebGL content crashes when rendering if no QWebView parent
+        https://bugs.webkit.org/show_bug.cgi?id=54138
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (webGLScreenshotWithoutView):
+        (tst_QWebPage::acceleratedWebGLScreenshotWithoutView):
+        (tst_QWebPage::unacceleratedWebGLScreenshotWithoutView):
+         Render a QWebPage (with and without accelerated compositing)
+         with a WebGL context that has no owning view.  Shouldn't crash.
+
 2011-03-21  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

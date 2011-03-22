@@ -126,6 +126,11 @@ private slots:
     void screenshot_data();
     void screenshot();
 
+#if defined(ENABLE_WEBGL) && ENABLE_WEBGL
+    void acceleratedWebGLScreenshotWithoutView();
+    void unacceleratedWebGLScreenshotWithoutView();
+#endif
+
     void originatingObjectInNetworkRequests();
     void testJSPrompt();
     void showModalDialog();
@@ -2472,6 +2477,33 @@ void tst_QWebPage::screenshot()
 
     QDir::setCurrent(QApplication::applicationDirPath());
 }
+
+#if defined(ENABLE_WEBGL) && ENABLE_WEBGL
+// https://bugs.webkit.org/show_bug.cgi?id=54138
+static void webGLScreenshotWithoutView(bool accelerated)
+{
+    QWebPage page;
+    page.settings()->setAttribute(QWebSettings::WebGLEnabled, true);
+    page.settings()->setAttribute(QWebSettings::AcceleratedCompositingEnabled, accelerated);
+    QWebFrame* mainFrame = page.mainFrame();
+    mainFrame->setHtml("<html><body>"
+                       "<canvas id='webgl' width='300' height='300'></canvas>"
+                       "<script>document.getElementById('webgl').getContext('experimental-webgl')</script>"
+                       "</body></html>");
+
+    takeScreenshot(&page);
+}
+
+void tst_QWebPage::acceleratedWebGLScreenshotWithoutView()
+{
+    webGLScreenshotWithoutView(true);
+}
+
+void tst_QWebPage::unacceleratedWebGLScreenshotWithoutView()
+{
+    webGLScreenshotWithoutView(false);
+}
+#endif
 
 void tst_QWebPage::originatingObjectInNetworkRequests()
 {

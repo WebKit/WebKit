@@ -465,6 +465,8 @@ GraphicsContext3DInternal::~GraphicsContext3DInternal()
 QGLWidget* GraphicsContext3DInternal::getViewportGLWidget()
 {
     QWebPageClient* webPageClient = m_hostWindow->platformPageClient();
+    if (!webPageClient)
+        return 0;
 
     QAbstractScrollArea* scrollArea = qobject_cast<QAbstractScrollArea*>(webPageClient->ownerWidget());
     if (scrollArea)

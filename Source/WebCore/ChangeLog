@@ -1,3 +1,14 @@
+2011-03-22  Andrew Wason  <rectalogic@rectalogic.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] QWebPage with WebGL content crashes when rendering if no QWebView parent
+        https://bugs.webkit.org/show_bug.cgi?id=54138
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::getViewportGLWidget):
+         Check if we actually have a QWebPageClient before dereferencing it.
+
 2011-03-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
