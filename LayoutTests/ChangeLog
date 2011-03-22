@@ -1,3 +1,18 @@
+2011-03-21  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Implement glue between DataTransferItems and the pasteboard.
+        https://bugs.webkit.org/show_bug.cgi?id=56330
+
+        Update the layout test to take into account that the actual contents of the clipboard
+        are exposed in a paste via DataTransferItems now.
+        Also fix the flakiness in the layout test.
+
+        * editing/pasteboard/data-transfer-items-expected.txt:
+        * editing/pasteboard/data-transfer-items.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-21  Dean Jackson  <dino@apple.com>
 
         Reviewed by Chris Marrin and Simon Fraser.

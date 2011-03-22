@@ -57,7 +57,11 @@ public:
     virtual void add(const String& data, const String& type, ExceptionCode&);
 
 private:
+    friend class ClipboardChromium;
+
     DataTransferItemsChromium(PassRefPtr<Clipboard>, ScriptExecutionContext*);
+
+    virtual void addPasteboardItem(const String& type);
 
     RefPtr<Clipboard> m_owner;
     // Indirectly owned by our parent.

@@ -1,3 +1,26 @@
+2011-03-21  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Implement glue between DataTransferItems and the pasteboard.
+        https://bugs.webkit.org/show_bug.cgi?id=56330
+
+        Support retrieving clipboard data in a paste through DataTransferItems.
+
+        Test: editing/pasteboard/data-transfer-items.html
+
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::items):
+        * platform/chromium/DataTransferItemChromium.cpp:
+        (WebCore::DataTransferItemChromium::createFromPasteboard):
+        (WebCore::DataTransferItemChromium::create):
+        (WebCore::DataTransferItemChromium::DataTransferItemChromium):
+        (WebCore::DataTransferItemChromium::getAsString):
+        * platform/chromium/DataTransferItemChromium.h:
+        * platform/chromium/DataTransferItemsChromium.cpp:
+        (WebCore::DataTransferItemsChromium::addPasteboardItem):
+        * platform/chromium/DataTransferItemsChromium.h:
+
 2011-03-21  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

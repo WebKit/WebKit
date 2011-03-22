@@ -112,8 +112,6 @@ BUGWK55913 DEBUG : jquery/manipulation.html = TIMEOUT PASS
 BUGWK55913 DEBUG SLOW : jquery/offset.html = PASS
 BUGWK55913 DEBUG SLOW : jquery/traversing.html = PASS
 
-BUGCR76543 WIN MAC : editing/pasteboard/data-transfer-items.html = PASS TEXT
-
 // -----------------------------------------------------------------
 // SKIPPED TESTS
 // -----------------------------------------------------------------

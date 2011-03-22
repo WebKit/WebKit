@@ -44,6 +44,7 @@ class ScriptExecutionContext;
 
 class DataTransferItemChromium : public DataTransferItem {
 public:
+    static PassRefPtr<DataTransferItemChromium> createFromPasteboard(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& type);
     static PassRefPtr<DataTransferItemChromium> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& data, const String& type);
 
     virtual String kind() const;
@@ -52,10 +53,16 @@ public:
     virtual void getAsString(PassRefPtr<StringCallback>);
 
 private:
-    DataTransferItemChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& data, const String& type);
+    enum DataSource {
+        PasteboardSource,
+        InternalSource,
+    };
+
+    DataTransferItemChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, DataSource, const String& kind, const String& type, const String& data);
 
     const RefPtr<Clipboard> m_owner;
     ScriptExecutionContext* m_context;
+    const DataSource m_source;
     const String m_kind;
     const String m_type;
     const String m_data;

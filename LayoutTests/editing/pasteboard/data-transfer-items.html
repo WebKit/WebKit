@@ -5,12 +5,17 @@
 
 <script src="../editing.js"></script>
 <script>
+var undefined;
+var pendingCallbacks = 0;
 var savedDataTransferItems = null;
 var savedDataTransferItem = null;
 
 function handleEvent(data)
 {
     console.log(data);
+    if (--pendingCallbacks == 0) {
+        window.layoutTestController.notifyDone();
+    }
 }
 
 function copy(ev)
@@ -34,25 +39,37 @@ function copy(ev)
     console.log('items[0].type: ' + items[0].type);
     console.log('items[1].kind: ' + items[1].kind);
     console.log('items[1].type: ' + items[1].type);
-    items[0].getAsString(function (data) { handleEvent('items[0] value: ' + data); });
-    items[1].getAsString(function (data) { handleEvent('items[1] value: ' + data); });
+    items[0].getAsString(function (data) { handleEvent('copy: items[0] value: ' + data); });
+    pendingCallbacks++;
+    items[1].getAsString(function (data) { handleEvent('copy: items[1] value: ' + data); });
+    pendingCallbacks++;
 
     console.log('Checking if items past the end of the collection can be indexed:');
-    console.log('items[2]: ' + items[2]);
-
-    savedDataTransferItems = items;
-    savedDataTransferItem = items[0];
+    console.log('items[2] is undefined: ' + typeof items[2]);
 }
 
 function paste(ev)
 {
     var items = event.clipboardData.items;
+
+    // Cache references to make sure they aren't accessible outside the event handler.
+    savedDataTransferItems = items;
+    savedDataTransferItem = items[0];
+
     var originalLength = items.length;
     console.log('Checking that a read-only DataTransferItems cannot be mutated...');
     // Should be immutable.
     items.add('Hello World!', 'text/plain');
     console.log('items.length: ' + items.length);
-    console.log('items[0]: ' + items[0]); // Shouldn't exist.
+    console.log('items[0].kind: ' + items[0].kind);
+    console.log('items[0].type: ' + items[0].type);
+    items[0].getAsString(function (data) { handleEvent('paste: items[0] value: ' + data); });
+    pendingCallbacks++;
+    console.log('items[1].kind: ' + items[1].kind);
+    console.log('items[1].type: ' + items[1].type);
+    items[1].getAsString(function (data) { handleEvent('paste: items[1] value: ' + data); });
+    pendingCallbacks++;
+    console.log('items[2] is undefined: ' + typeof items[2]);
 }
 
 function runTest() {
@@ -61,44 +78,28 @@ function runTest() {
     layoutTestController.waitUntilDone();
     layoutTestController.dumpAsText();
 
+    eventSender.mouseMoveTo(0, 0);
+    for (var i = 0; i < 3; i++) {
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
     copyCommand();
     pasteCommand();
 
-    var failed = false;
     console.log('Testing if DataTransferItems can be accessed outside an event handler...');
     if (savedDataTransferItems.length != 0) {
-        failed = true;
         console.log('DataTransferItems.length non-zero outside event handler!');
     }
     savedDataTransferItems.add('Security?', 'text/foo');
     if (savedDataTransferItems.length != 0) {
-        failed = true;
         console.log('DataTransferItems mutated outside event handler!');
     }
-    if (savedDataTransferItems[0]) {
-        failed = true;
+    if (typeof savedDataTransferItems[0] == 'undefined') {
         console.log('DataTransferItem accessed outside event handler!');
     }
-    if (savedDataTransferItem.kind != '') {
-        failed = true;
-        console.log('DataTransferItem.kind accessible outside event handler!');
+    if (typeof savedDataTransferItem == 'undefined') {
+        console.log('DataTransferItem accessed outside event handler!');
     }
-    if (savedDataTransferItem.type != '') {
-        failed = true;
-        console.log('DataTransferItem.type accessible outside event handler!');
-    }
-    savedDataTransferItem.getAsString(function (data) {
-        failed = true;
-        console.log('getAsString called back outside event handler!');
-    });
-
-    window.setTimeout(function () {
-        if (failed)
-            console.log('FAILED');
-        else
-            console.log('PASSED');
-        window.layoutTestController.notifyDone();
-    }, 0);
 }
 
 runTest();

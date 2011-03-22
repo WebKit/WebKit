@@ -101,6 +101,11 @@ void DataTransferItemsChromium::add(const String& data, const String& type, Exce
     m_items.append(DataTransferItemChromium::create(m_owner, m_context, data, type));
 }
 
+void DataTransferItemsChromium::addPasteboardItem(const String& type)
+{
+    m_items.append(DataTransferItemChromium::createFromPasteboard(m_owner, m_context, type));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(DATA_TRANSFER_ITEMS)

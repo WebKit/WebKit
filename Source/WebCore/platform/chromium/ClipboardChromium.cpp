@@ -346,7 +346,18 @@ bool ClipboardChromium::hasData()
 #if ENABLE(DATA_TRANSFER_ITEMS)
 PassRefPtr<DataTransferItems> ClipboardChromium::items()
 {
-    return DataTransferItemsChromium::create(this, m_frame->document()->scriptExecutionContext());
+    RefPtr<DataTransferItemsChromium> items = DataTransferItemsChromium::create(this, m_frame->document()->scriptExecutionContext());
+
+    if (!m_dataObject)
+        return items;
+
+    if (isForCopyAndPaste() && policy() == ClipboardReadable) {
+        // Iterate through the types and add them.
+        HashSet<String> types = m_dataObject->types();
+        for (HashSet<String>::const_iterator it = types.begin(); it != types.end(); ++it)
+            items->addPasteboardItem(*it);
+    }
+    return items;
 }
 #endif
 

@@ -34,24 +34,34 @@
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
 #include "Clipboard.h"
+#include "ClipboardMimeTypes.h"
+#include "PlatformBridge.h"
 #include "StringCallback.h"
 
 namespace WebCore {
+
+PassRefPtr<DataTransferItemChromium> DataTransferItemChromium::createFromPasteboard(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context, const String& type)
+{
+    if (type == mimeTypeTextPlain || type == mimeTypeTextHTML)
+        return adoptRef(new DataTransferItemChromium(owner, context, PasteboardSource, DataTransferItem::kindString, type, ""));
+    return adoptRef(new DataTransferItemChromium(owner, context, PasteboardSource, DataTransferItem::kindFile, type, ""));
+}
 
 PassRefPtr<DataTransferItemChromium> DataTransferItemChromium::create(PassRefPtr<Clipboard> owner,
                                                                       ScriptExecutionContext* context,
                                                                       const String& data,
                                                                       const String& type)
 {
-    return adoptRef(new DataTransferItemChromium(owner, context, data, type));
+    return adoptRef(new DataTransferItemChromium(owner, context, InternalSource, DataTransferItem::kindString, type, data));
 }
 
-DataTransferItemChromium::DataTransferItemChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context, const String& data, const String& type)
+DataTransferItemChromium::DataTransferItemChromium(PassRefPtr<Clipboard> owner, ScriptExecutionContext* context, DataSource source, const String& kind, const String& type, const String& data)
     : m_owner(owner)
     , m_context(context)
-    , m_kind(kindString)
+    , m_source(source)
+    , m_kind(kind)
     , m_type(type)
-      , m_data(data)
+    , m_data(data)
 {
 }
 
@@ -74,7 +84,23 @@ void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback)
     if ((m_owner->policy() != ClipboardReadable && m_owner->policy() != ClipboardWritable)
         || m_kind != kindString)
         return;
-    callback->scheduleCallback(m_context, m_data);
+    if (m_source == InternalSource) {
+        callback->scheduleCallback(m_context, m_data);
+        return;
+    }
+    // This is ugly but there's no real alternative.
+    if (m_type == mimeTypeTextPlain) {
+        callback->scheduleCallback(m_context, PlatformBridge::clipboardReadPlainText(PasteboardPrivate::StandardBuffer));
+        return;
+    }
+    if (m_type == mimeTypeTextHTML) {
+        String html;
+        KURL ignoredSourceURL;
+        PlatformBridge::clipboardReadHTML(PasteboardPrivate::StandardBuffer, &html, &ignoredSourceURL);
+        callback->scheduleCallback(m_context, html);
+        return;
+    }
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore
