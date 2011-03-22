@@ -1,3 +1,21 @@
+2011-03-22  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] WebGL: renderbufferStorage() fails with internal format GL_RGBA4
+        https://bugs.webkit.org/show_bug.cgi?id=56824
+
+        On desktop OpenGL substitute in renderbufferStorage:
+        - GL_DEPTH24_STENCIL8 for GL_DEPTH_STENCIL
+        - GL_DEPTH_COMPONENT for GL_DEPTH_COMPONENT16
+        - GL_RGBA for GL_RGBA4 and GL_RGBA565
+        - GL_RGB for RGB5_A1.
+
+        Tests: fast/canvas/webgl/uninitialized-test.html
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::renderbufferStorage):
+
 2011-03-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.

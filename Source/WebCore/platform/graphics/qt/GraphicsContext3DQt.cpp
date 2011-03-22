@@ -46,6 +46,10 @@ namespace WebCore {
 typedef char GLchar;
 #endif
 
+#if !defined(GL_DEPTH24_STENCIL8)
+#define GL_DEPTH24_STENCIL8 0x88F0
+#endif
+
 #if !defined(APIENTRY)
 #define APIENTRY
 #endif
@@ -1098,6 +1102,23 @@ void GraphicsContext3D::releaseShaderCompiler()
 void GraphicsContext3D::renderbufferStorage(GC3Denum target, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height)
 {
     m_internal->m_glWidget->makeCurrent();
+#if !defined(QT_OPENGL_ES_2)
+    switch (internalformat) {
+    case DEPTH_STENCIL:
+        internalformat = GL_DEPTH24_STENCIL8;
+        break;
+    case DEPTH_COMPONENT16:
+        internalformat = DEPTH_COMPONENT;
+        break;
+    case RGBA4:
+    case RGB5_A1:
+        internalformat = RGBA;
+        break;
+    case RGB565:
+        internalformat = RGB;
+        break;
+    }
+#endif
     m_internal->renderbufferStorage(target, internalformat, width, height);
 }
 
