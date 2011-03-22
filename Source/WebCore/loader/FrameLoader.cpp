@@ -2350,12 +2350,9 @@ CachePolicy FrameLoader::subresourceCachePolicy() const
             return parentCachePolicy;
     }
 
-    // FIXME: POST documents are always Reloads, but their subresources should still be Revalidate.
-    // If we bring the CachePolicy.h and ResourceRequest cache policy enums in sync with each other and
-    // remember "Revalidate" in ResourceRequests, we can remove this "POST" check and return either "Reload" 
-    // or "Revalidate" if the DocumentLoader was requested with either.
     const ResourceRequest& request(documentLoader()->request());
-    if (request.cachePolicy() == ReloadIgnoringCacheData && !equalIgnoringCase(request.httpMethod(), "post"))
+    Settings* settings = m_frame->settings();
+    if (settings && settings->useQuickLookResourceCachingQuirks() && request.cachePolicy() == ReloadIgnoringCacheData && !equalIgnoringCase(request.httpMethod(), "post"))
         return CachePolicyRevalidate;
 
     if (m_loadType == FrameLoadTypeReload)
@@ -2746,12 +2743,6 @@ void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, String origin)
 void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String& referrer, const String& frameName, bool lockHistory, FrameLoadType loadType, PassRefPtr<Event> event, PassRefPtr<FormState> prpFormState)
 {
     RefPtr<FormState> formState = prpFormState;
-
-    // When posting, use the NSURLRequestReloadIgnoringCacheData load flag.
-    // This prevents a potential bug which may cause a page with a form that uses itself
-    // as an action to be returned from the cache without submitting.
-
-    // FIXME: Where's the code that implements what the comment above says?
 
     // Previously when this method was reached, the original FrameLoadRequest had been deconstructed to build a 
     // bunch of parameters that would come in here and then be built back up to a ResourceRequest.  In case

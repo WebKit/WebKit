@@ -1,3 +1,29 @@
+2011-03-21  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Do not check the DocumentLoader's request cache policy
+        in determining whether we should force revalidation of a cached
+        subresource. If the main resource received headers telling it not
+        to cache, that policy will be propagated to subresources.
+
+        The previous behavior is left in behind a flag in Settings, since
+        QuickLook depends on it.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38690
+
+        Tests: http/tests/cache/post-redirect-get.php
+               http/tests/cache/post-with-cached-subresources.php
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::subresourceCachePolicy):
+        (WebCore::FrameLoader::loadPostRequest):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setUseQuickLookResourceCachingQuirks):
+        (WebCore::Settings::useQuickLookResourceCachingQuirks):
+
 2011-03-21  Rik Cabanier  <cabanier@adobe.com>
 
         Reviewed by James Robinson.

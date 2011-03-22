@@ -1,3 +1,21 @@
+2011-03-21  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Expose a preference to use caching quirks for QuickLook,
+        and use it if the QuickLook framework is loaded.
+
+        https://bugs.webkit.org/show_bug.cgi?id=38690
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (useQuickLookQuirks):
+        (+[WebPreferences initialize]):
+        (-[WebPreferences useQuickLookResourceCachingQuirks]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2011-03-21  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

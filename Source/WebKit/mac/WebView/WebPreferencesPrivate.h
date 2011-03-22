@@ -236,4 +236,6 @@ extern NSString *WebPreferencesRemovedNotification;
 - (void)setUsePreHTML5ParserQuirks:(BOOL)flag;
 - (BOOL)usePreHTML5ParserQuirks;
 
+- (BOOL)useQuickLookResourceCachingQuirks;
+
 @end

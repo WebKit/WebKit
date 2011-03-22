@@ -1,3 +1,15 @@
+2011-03-21  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=38690.
+
+        * http/tests/cache/post-redirect-get-expected.txt: Added.
+        * http/tests/cache/post-redirect-get.php: Added.
+        * http/tests/cache/post-with-cached-subresources-expected.txt: Added.
+        * http/tests/cache/post-with-cached-subresources.php: Added.
+        * http/tests/cache/resources/post-image-to-verify.php: Added.
+
 2011-03-21  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.

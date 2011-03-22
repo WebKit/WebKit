@@ -1516,6 +1516,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setMemoryInfoEnabled([preferences memoryInfoEnabled]);
     settings->setHyperlinkAuditingEnabled([preferences hyperlinkAuditingEnabled]);
     settings->setUsePreHTML5ParserQuirks([self _needsPreHTML5ParserQuirks]);
+    settings->setUseQuickLookResourceCachingQuirks([preferences useQuickLookResourceCachingQuirks]);
     settings->setCrossOriginCheckInGetMatchedCSSRulesDisabled([self _needsUnrestrictedGetMatchedCSSRules]);
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.

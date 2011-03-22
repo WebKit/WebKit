@@ -371,6 +371,9 @@ namespace WebCore {
 
         void setCrossOriginCheckInGetMatchedCSSRulesDisabled(bool flag) { m_crossOriginCheckInGetMatchedCSSRulesDisabled = flag; }
         bool crossOriginCheckInGetMatchedCSSRulesDisabled() const { return m_crossOriginCheckInGetMatchedCSSRulesDisabled; }
+        
+        void setUseQuickLookResourceCachingQuirks(bool flag) { m_useQuickLookResourceCachingQuirks = flag; }
+        bool useQuickLookResourceCachingQuirks() const { return m_useQuickLookResourceCachingQuirks; }
 
         void setForceCompositingMode(bool flag) { m_forceCompositingMode = flag; }
         bool forceCompositingMode() { return m_forceCompositingMode; }
@@ -473,6 +476,7 @@ namespace WebCore {
         bool m_usePreHTML5ParserQuirks: 1;
         bool m_hyperlinkAuditingEnabled : 1;
         bool m_crossOriginCheckInGetMatchedCSSRulesDisabled : 1;
+        bool m_useQuickLookResourceCachingQuirks : 1;
         bool m_forceCompositingMode : 1;
 
 #if USE(SAFARI_THEME)
