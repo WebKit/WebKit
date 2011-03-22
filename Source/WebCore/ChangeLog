@@ -1,3 +1,13 @@
+2011-03-21  Christian Dywan  <christian@lanedo.com>
+
+        Reviewed by Martin Robinson.
+
+        WebKitIconDatabase may trigger crash in cairoImageSurfaceToGdkPixbuf
+        https://bugs.webkit.org/show_bug.cgi?id=56201
+
+        * platform/graphics/gtk/ImageGtk.cpp: Don't attempt to make a pixbuf
+            if there is no image.
+
 2011-03-21  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.
