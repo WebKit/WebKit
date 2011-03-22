@@ -3412,9 +3412,14 @@ int RenderBlock::logicalLeftOffsetForLine(int logicalTop, int fixedOffset, bool 
         if (heightRemaining)
             *heightRemaining = 1;
 
+        // We know the list is non-empty, since we have "left" objects to search for.
+        // Therefore we can assume that begin != end, and that we can do at least one
+        // decrement.
         FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        FloatingObjectSetIterator end = floatingObjectSet.end();
-        for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
+        FloatingObjectSetIterator begin = floatingObjectSet.begin();
+        FloatingObjectSetIterator it = floatingObjectSet.end();
+        do {
+            --it;
             FloatingObject* r = *it;
             if (r->isPlaced() && logicalTopForFloat(r) <= logicalTop && logicalBottomForFloat(r) > logicalTop
                 && r->type() == FloatingObject::FloatLeft
@@ -3422,8 +3427,9 @@ int RenderBlock::logicalLeftOffsetForLine(int logicalTop, int fixedOffset, bool 
                 left = logicalRightForFloat(r);
                 if (heightRemaining)
                     *heightRemaining = logicalBottomForFloat(r) - logicalTop;
+                break;
             }
-        }
+        } while (it != begin);
     }
 
     if (applyTextIndent && style()->isLeftToRightDirection()) {
@@ -3443,9 +3449,15 @@ int RenderBlock::logicalRightOffsetForLine(int logicalTop, int fixedOffset, bool
     if (m_floatingObjects && m_floatingObjects->hasRightObjects()) {
         if (heightRemaining)
             *heightRemaining = 1;
+            
+        // We know the list is non-empty, since we have "right" objects to search for.
+        // Therefore we can assume that begin != end, and that we can do at least one
+        // decrement.
         FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        FloatingObjectSetIterator end = floatingObjectSet.end();
-        for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
+        FloatingObjectSetIterator begin = floatingObjectSet.begin();
+        FloatingObjectSetIterator it = floatingObjectSet.end();
+        do {
+            --it;
             FloatingObject* r = *it;
             if (r->isPlaced() && logicalTopForFloat(r) <= logicalTop && logicalBottomForFloat(r) > logicalTop
                 && r->type() == FloatingObject::FloatRight
@@ -3453,8 +3465,9 @@ int RenderBlock::logicalRightOffsetForLine(int logicalTop, int fixedOffset, bool
                 right = logicalLeftForFloat(r);
                 if (heightRemaining)
                     *heightRemaining = logicalBottomForFloat(r) - logicalTop;
+                break;
             }
-        }
+        } while (it != begin);
     }
     
     if (applyTextIndent && !style()->isLeftToRightDirection()) {

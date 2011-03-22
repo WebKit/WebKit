@@ -1,3 +1,23 @@
+2011-03-22  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56859
+        
+        Floats in the floating object list occur in the order that they are positioned. This means
+        that for a given vertical offset, the last left object in the list that intersects that offset
+        will be the rightmost float. There is no need to check any previous floats, since they have to be
+        further left than that rightmost float. The same rules hold true for right-aligned floats.
+        
+        Change logicalLeft/RightOffsetForLine to iterate backwards instead of forwards and to stop the moment
+        they encounter a float that intersects the vertical range.
+        
+        This cuts the maze solving time for a 20x20 maze in the IE MazeSolver test in half.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+
 2011-03-22  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Dirk Schulze.
