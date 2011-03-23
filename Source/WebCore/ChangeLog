@@ -1,3 +1,18 @@
+2011-03-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add play / pause button to media control
+        https://bugs.webkit.org/show_bug.cgi?id=55463
+
+        Add play|pause button to media control.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::edjeGroupFromFormType):
+        (WebCore::RenderThemeEfl::emitMediaButtonSignal): Added.
+        (WebCore::RenderThemeEfl::paintMediaPlayButton):
+        * platform/efl/RenderThemeEfl.h:
+
 2011-03-23  Aparna Nandyal  <aparna.nand@wipro.com>
 
         Reviewed by Andreas Kling.

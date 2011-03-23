@@ -1,3 +1,17 @@
+2011-03-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Add play / pause button to media control
+        https://bugs.webkit.org/show_bug.cgi?id=55463
+
+        Add play|pause button to media control.
+
+        * DefaultTheme/default.edc:
+        * DefaultTheme/widget/mediacontrol/playpausebutton/pausebutton.png: Added.
+        * DefaultTheme/widget/mediacontrol/playpausebutton/playbutton.png: Added.
+        * DefaultTheme/widget/mediacontrol/playpausebutton/playpause_button.edc: Added.
+
 2011-03-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.

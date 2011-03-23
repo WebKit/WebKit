@@ -30,6 +30,9 @@
 #ifndef RenderThemeEfl_h
 #define RenderThemeEfl_h
 
+#if ENABLE(VIDEO)
+#include "MediaControlElements.h"
+#endif
 #include "RenderTheme.h"
 
 #include <cairo.h>
@@ -55,6 +58,9 @@ enum FormType { // KEEP IN SYNC WITH edjeGroupFromFormType()
     SearchFieldCancelButton,
     SliderVertical,
     SliderHorizontal,
+#if ENABLE(VIDEO)
+    MediaPlayPauseButton,
+#endif
     FormTypeLast
 };
 
@@ -181,6 +187,10 @@ private:
     const char* edjeGroupFromFormType(FormType) const;
     void applyEdjeStateFromForm(Evas_Object*, ControlStates);
     bool paintThemePart(RenderObject*, FormType, const PaintInfo&, const IntRect&);
+
+#if ENABLE(VIDEO)
+    bool emitMediaButtonSignal(FormType, MediaControlElementType, const IntRect&);
+#endif
 
     Page* m_page;
     Color m_activeSelectionBackgroundColor;

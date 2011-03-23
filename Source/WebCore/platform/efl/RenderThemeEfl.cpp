@@ -593,6 +593,9 @@ const char* RenderThemeEfl::edjeGroupFromFormType(FormType type) const
         W("search/cancel_button"),
         W("slider/vertical"),
         W("slider/horizontal"),
+#if ENABLE(VIDEO)
+        W("mediacontrol/playpause_button"),
+#endif
 #undef W
         0
     };
@@ -1045,6 +1048,25 @@ bool RenderThemeEfl::paintProgressBar(RenderObject* object, const PaintInfo& inf
 #endif
 
 #if ENABLE(VIDEO)
+bool RenderThemeEfl::emitMediaButtonSignal(FormType formType, MediaControlElementType mediaElementType, const IntRect& rect)
+{
+    ThemePartCacheEntry* entry;
+
+    entry = cacheThemePartGet(formType, rect.size());
+    ASSERT(entry);
+    if (!entry)
+        return false;
+
+    if (mediaElementType == MediaPlayButton)
+        edje_object_signal_emit(entry->o, "play", "");
+    else if (mediaElementType == MediaPauseButton)
+        edje_object_signal_emit(entry->o, "pause", "");
+    else 
+        return false;
+
+    return true;
+}
+
 String RenderThemeEfl::extraMediaControlsStyleSheet()
 {
     return String(mediaControlsEflUserAgentStyleSheet, sizeof(mediaControlsEflUserAgentStyleSheet));
@@ -1070,8 +1092,15 @@ bool RenderThemeEfl::paintMediaMuteButton(RenderObject* object, const PaintInfo&
 
 bool RenderThemeEfl::paintMediaPlayButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    notImplemented();
-    return false;
+    Node* node = object->node();
+    if (!node)
+        return false;
+
+    MediaControlPlayButtonElement* button = static_cast<MediaControlPlayButtonElement*>(node);
+    if (!emitMediaButtonSignal(MediaPlayPauseButton, button->displayType(), rect))
+        return false;
+
+    return paintThemePart(object, MediaPlayPauseButton, info, rect);
 }
 
 bool RenderThemeEfl::paintMediaSeekBackButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
