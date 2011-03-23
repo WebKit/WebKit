@@ -1,3 +1,9 @@
+2011-03-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline a GTK+ result after r81684.
+
+        * platform/gtk/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2011-03-23  Mihai Parparita  <mihaip@chromium.org>
 
         Update pixel results for Snow Leopard after r80755. Where possible,
