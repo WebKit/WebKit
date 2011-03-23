@@ -1,3 +1,27 @@
+2011-03-23  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [WK2] Handle keyboard and mouse events on X11
+        https://bugs.webkit.org/show_bug.cgi?id=56103
+
+        Propagate keyboard and mouse events to the plugin
+        as XEvent's.
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::initializeXEvent):
+        (WebKit::xTimeStamp):
+        (WebKit::xKeyModifiers):
+        (WebKit::setCommonMouseEventFields):
+        (WebKit::setXMotionEventFields):
+        (WebKit::setXButtonEventFields):
+        (WebKit::setXCrossingEventFields):
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseEnterEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseLeaveEvent):
+        (WebKit::setXKeyEventFields):
+        (WebKit::NetscapePlugin::platformHandleKeyboardEvent):
+
 2011-03-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

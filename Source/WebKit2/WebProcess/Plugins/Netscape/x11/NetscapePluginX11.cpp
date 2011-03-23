@@ -247,17 +247,84 @@ void NetscapePlugin::platformPaint(GraphicsContext* context, const IntRect& dirt
 #endif
 }
 
-NPEvent toNP(const WebMouseEvent& event)
+static inline void initializeXEvent(XEvent& event)
 {
-#if OS(SYMBIAN)
-    NPEvent npEvent = QEvent(QEvent::None);
-#else
-    NPEvent npEvent = NPEvent();
-#endif
+    memset(&event, 0, sizeof(XEvent));
+    event.xany.serial = 0;
+    event.xany.send_event = false;
+    event.xany.display = x11Display();
+    event.xany.window = 0;
+}
 
-    notImplemented();
+static inline uint64_t xTimeStamp(double timestampInSeconds)
+{
+    return timestampInSeconds * 1000;
+}
 
-    return npEvent;
+static inline unsigned xKeyModifiers(const WebEvent& event)
+{
+    unsigned xModifiers = 0;
+    if (event.controlKey())
+        xModifiers |= ControlMask;
+    if (event.shiftKey())
+        xModifiers |= ShiftMask;
+    if (event.altKey())
+        xModifiers |= Mod1Mask;
+    if (event.metaKey())
+        xModifiers |= Mod4Mask;
+
+    return xModifiers;
+}
+
+template <typename XEventType>
+static inline void setCommonMouseEventFields(XEventType& xEvent, const WebMouseEvent& webEvent, const WebCore::IntPoint& pluginLocation)
+{
+    xEvent.root = rootWindowID();
+    xEvent.subwindow = 0;
+    xEvent.time = xTimeStamp(webEvent.timestamp());
+    xEvent.x = webEvent.position().x() - pluginLocation.x();
+    xEvent.y = webEvent.position().y() - pluginLocation.y();
+    xEvent.x_root = webEvent.globalPosition().x();
+    xEvent.y_root = webEvent.globalPosition().y();
+    xEvent.state = xKeyModifiers(webEvent);
+    xEvent.same_screen = true;
+}
+
+static inline void setXMotionEventFields(XEvent& xEvent, const WebMouseEvent& webEvent, const WebCore::IntPoint& pluginLocation)
+{
+    XMotionEvent& xMotion = xEvent.xmotion;
+    setCommonMouseEventFields(xMotion, webEvent, pluginLocation);
+    xMotion.type = MotionNotify;
+}
+
+static inline void setXButtonEventFields(XEvent& xEvent, const WebMouseEvent& webEvent, const WebCore::IntPoint& pluginLocation)
+{
+    XButtonEvent& xButton = xEvent.xbutton;
+    setCommonMouseEventFields(xButton, webEvent, pluginLocation);
+
+    xButton.type = (webEvent.type() == WebEvent::MouseDown) ? ButtonPress : ButtonRelease;
+    switch (webEvent.button()) {
+    case WebMouseEvent::LeftButton:
+        xButton.button = Button1;
+        break;
+    case WebMouseEvent::MiddleButton:
+        xButton.button = Button2;
+        break;
+    case WebMouseEvent::RightButton:
+        xButton.button = Button3;
+        break;
+    }
+}
+
+static inline void setXCrossingEventFields(XEvent& xEvent, const WebMouseEvent& webEvent, const WebCore::IntPoint& pluginLocation, int type)
+{
+    XCrossingEvent& xCrossing = xEvent.xcrossing;
+    setCommonMouseEventFields(xCrossing, webEvent, pluginLocation);
+
+    xCrossing.type = type;
+    xCrossing.mode = NotifyNormal;
+    xCrossing.detail = NotifyDetailNone;
+    xCrossing.focus = false;
 }
 
 bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
@@ -265,10 +332,28 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& event)
     if (m_isWindowed)
         return false;
 
-    NPEvent npEvent = toNP(event);
-    NPP_HandleEvent(&npEvent);
-    return true;
+    XEvent xEvent;
+    initializeXEvent(xEvent);
+
+    switch (event.type()) {
+    case WebEvent::MouseDown:
+    case WebEvent::MouseUp:
+        setXButtonEventFields(xEvent, event, m_frameRect.location());
+        break;
+    case WebEvent::MouseMove:
+        setXMotionEventFields(xEvent, event, m_frameRect.location());
+        break;
+    }
+
+    return NPP_HandleEvent(&xEvent);
 }
+
+// We undefine these constants in npruntime_internal.h to avoid collision
+// with WebKit and platform headers. Values are defined in X.h.
+const int kKeyPressType = 2;
+const int kKeyReleaseType = 3;
+const int kFocusInType = 9;
+const int kFocusOutType = 10;
 
 bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent&)
 {
@@ -286,9 +371,11 @@ bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& event)
     if (m_isWindowed)
         return false;
 
-    NPEvent npEvent = toNP(event);
-    NPP_HandleEvent(&npEvent);
-    return true;
+    XEvent xEvent;
+    initializeXEvent(xEvent);
+    setXCrossingEventFields(xEvent, event, m_frameRect.location(), EnterNotify);
+
+    return NPP_HandleEvent(&xEvent);
 }
 
 bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& event)
@@ -296,15 +383,43 @@ bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& event)
     if (m_isWindowed)
         return false;
 
-    NPEvent npEvent = toNP(event);
-    NPP_HandleEvent(&npEvent);
-    return true;
+    XEvent xEvent;
+    initializeXEvent(xEvent);
+    setXCrossingEventFields(xEvent, event, m_frameRect.location(), LeaveNotify);
+
+    return NPP_HandleEvent(&xEvent);
 }
 
-bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent&)
+static inline void setXKeyEventFields(XEvent& xEvent, const WebKeyboardEvent& webEvent)
 {
-    notImplemented();
-    return false;
+    xEvent.xany.type = (webEvent.type() == WebEvent::KeyDown) ? kKeyPressType : kKeyReleaseType;
+    XKeyEvent& xKey = xEvent.xkey;
+    xKey.root = rootWindowID();
+    xKey.subwindow = 0;
+    xKey.time = xTimeStamp(webEvent.timestamp());
+    xKey.state = xKeyModifiers(webEvent);
+    xKey.keycode = webEvent.nativeVirtualKeyCode();
+
+    xKey.same_screen = true;
+
+    // Key events propagated to the plugin does not need to have position.
+    // source: https://developer.mozilla.org/en/NPEvent
+    xKey.x = 0;
+    xKey.y = 0;
+    xKey.x_root = 0;
+    xKey.y_root = 0;
+}
+
+bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& event)
+{
+    // We don't generate other types of keyboard events via WebEventFactory.
+    ASSERT(event.type() == WebEvent::KeyDown || event.type() == WebEvent::KeyUp);
+
+    XEvent xEvent;
+    initializeXEvent(xEvent);
+    setXKeyEventFields(xEvent, event);
+
+    return NPP_HandleEvent(&xEvent);
 }
 
 } // namespace WebKit
