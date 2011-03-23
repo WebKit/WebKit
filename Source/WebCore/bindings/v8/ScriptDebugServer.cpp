@@ -33,6 +33,7 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
+#include "DebuggerScriptSource.h"
 #include "Frame.h"
 #include "JavaScriptCallFrame.h"
 #include "Page.h"
@@ -86,11 +87,6 @@ ScriptDebugServer::ScriptDebugServer()
     , m_enabled(true)
     , m_breakpointsActivated(true)
 {
-}
-
-void ScriptDebugServer::setDebuggerScriptSource(const String& scriptSource)
-{
-    m_debuggerScriptSource = scriptSource;
 }
 
 void ScriptDebugServer::addListener(ScriptDebugListener* listener, Page* page)
@@ -454,7 +450,8 @@ void ScriptDebugServer::ensureDebuggerScriptCompiled()
         v8::HandleScope scope;
         v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
         v8::Context::Scope contextScope(debuggerContext);
-        m_debuggerScript.set(v8::Handle<v8::Object>::Cast(v8::Script::Compile(v8String(m_debuggerScriptSource))->Run()));
+        String debuggerScriptSource(DebuggerScriptSource_js, sizeof(DebuggerScriptSource_js));
+        m_debuggerScript.set(v8::Handle<v8::Object>::Cast(v8::Script::Compile(v8String(debuggerScriptSource))->Run()));
     }
 }
 

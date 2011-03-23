@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 
-# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2010-2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -41,5 +41,5 @@ close($input);
 $text = join(', ', map('0x' . unpack("H*", $_), split(undef, $text)));
 
 open($output, '>', $output) or die "Can't open file for write: $output $!";
-print $output "unsigned char $varname\[\] = {\n$text\n};\n";
+print $output "const char $varname\[\] = {\n$text\n};\n";
 close($output);

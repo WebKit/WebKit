@@ -187,9 +187,6 @@ void WebDevToolsAgentImpl::attach()
 
     m_debuggerAgentImpl.set(
         new DebuggerAgentImpl(m_webViewImpl, this, m_client));
-    WebCString debuggerScriptJs = m_client->debuggerScriptSource();
-    ScriptDebugServer::shared().setDebuggerScriptSource(
-        String(debuggerScriptJs.data(), debuggerScriptJs.length()));
     m_attached = true;
 }
 

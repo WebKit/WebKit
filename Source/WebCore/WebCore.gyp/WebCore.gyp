@@ -396,10 +396,33 @@
             'perl',
             '../inspector/xxd.pl',
             'InjectedScriptSource_js',
-            '../inspector/InjectedScriptSource.js',
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/InjectedScriptSource.h'
+            '<@(_inputs)',
+            '<@(_outputs)'
           ],
           'message': 'Generating InjectedScriptSource.h from InjectedScriptSource.js',
+        },
+      ]
+    },
+    {
+      'target_name': 'debugger_script_source',
+      'type': 'none',
+      'actions': [
+        {
+          'action_name': 'generateDebuggerScriptSource',
+          'inputs': [
+            '../bindings/v8/DebuggerScript.js',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/DebuggerScriptSource.h',
+          ],
+          'action': [
+            'perl',
+            '../inspector/xxd.pl',
+            'DebuggerScriptSource_js',
+            '<@(_inputs)',
+            '<@(_outputs)'
+          ],
+          'message': 'Generating DebuggerScriptSource.h from DebuggerScript.js',
         },
       ]
     },
@@ -814,6 +837,7 @@
         'webcore_bindings_sources',
         'inspector_protocol_sources',
         'injected_script_source',
+        'debugger_script_source',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',

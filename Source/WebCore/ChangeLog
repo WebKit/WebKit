@@ -1,3 +1,22 @@
+2011-03-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [V8] Web Inspector: compile DebuggerScript.js into DebuggerScriptSource.h
+        https://bugs.webkit.org/show_bug.cgi?id=56843
+
+        DebuggerScript.js is now translated into a char[] array before inspector compilation.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::ensureDebuggerScriptCompiled):
+        * bindings/v8/ScriptDebugServer.h:
+        * inspector/InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::injectedScriptSource):
+        * inspector/InjectedScriptSource.js: whitespace change to trigger InjectedScriptSource.h generation.
+        * inspector/xxd.pl:
+
 2011-03-23  Mark Rowe  <mrowe@apple.com>
 
         Fix the 32-bit build.

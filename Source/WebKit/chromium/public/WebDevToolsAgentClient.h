@@ -49,8 +49,6 @@ public:
     // Notifies host upon runtime feature being enabled/disabled.
     virtual void runtimePropertyChanged(const WebString& name, const WebString& value) { }
 
-    virtual WebCString debuggerScriptSource() { return WebCString(); }
-
     class WebKitClientMessageLoop {
     public:
         virtual ~WebKitClientMessageLoop() { }

@@ -86,8 +86,6 @@ public:
     void pageCreated(Page*) { }
 
     // v8-specific methods.
-    void setDebuggerScriptSource(const String& scriptSource);
-
     class ClientMessageLoop {
     public:
         virtual ~ClientMessageLoop() { }
@@ -125,7 +123,6 @@ private:
 
     typedef HashMap<Page*, ScriptDebugListener*> ListenersMap;
     ListenersMap m_listenersMap;
-    String m_debuggerScriptSource;
     PauseOnExceptionsState m_pauseOnExceptionsState;
     OwnHandle<v8::Object> m_debuggerScript;
     RefPtr<JavaScriptCallFrame> m_currentCallFrame;

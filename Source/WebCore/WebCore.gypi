@@ -6876,6 +6876,7 @@
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMXPathExpressionInternal.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMXPathResult.mm',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DOMXPathResultInternal.h',
+            '<(PRODUCT_DIR)/DerivedSources/WebCore/DebuggerScriptSource.h',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/DocTypeStrings.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/HTMLElementFactory.cpp',
             '<(PRODUCT_DIR)/DerivedSources/WebCore/HTMLElementFactory.h',
