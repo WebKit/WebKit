@@ -66829,6 +66829,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\SourceFile.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\SourceFrame.js"
 					>
 				</File>

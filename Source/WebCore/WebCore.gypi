@@ -6181,6 +6181,7 @@
             'inspector/front-end/SidebarPane.js',
             'inspector/front-end/SidebarTreeElement.js',
             'inspector/front-end/SourceCSSTokenizer.js',
+            'inspector/front-end/SourceFile.js',
             'inspector/front-end/SourceFrame.js',
             'inspector/front-end/SourceFrameContent.js',
             'inspector/front-end/SourceHTMLTokenizer.js',

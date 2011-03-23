@@ -59,23 +59,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     requestSourceFileContent: function(sourceFileId, callback)
     {
-        var sourceFile = this._sourceFiles[sourceFileId];
-        var script = sourceFile._script;
-        var resource = sourceFile._resource;
-        if (resource) {
-            // FIXME: move provider's load functions here.
-            var provider = new WebInspector.SourceFrameDelegateForScriptsPanel(null, null, script);
-            if (resource.finished)
-                provider._loadResourceContent(resource, callback);
-            else
-                provider._loadAndConcatenateScriptsContent(callback);
-        } else {
-            function didRequestSource(source)
-            {
-                callback("text/javascript", source);
-            }
-            script.requestSource(didRequestSource);
-        }
+        this._sourceFiles[sourceFileId].requestContent(callback);
     },
 
     _parsedScriptSource: function(event)
@@ -91,53 +75,26 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _addScript: function(script)
     {
         var sourceFileId = script.sourceURL || script.sourceID;
-        if (sourceFileId in this._sourceFiles)
+        var sourceFile = this._sourceFiles[sourceFileId];
+        if (sourceFile) {
+            sourceFile.addScript(script);
             return;
+        }
 
-        var sourceFile = {};
-        sourceFile.id = sourceFileId;
-        sourceFile.url = script.sourceURL;
-        sourceFile.isExtensionScript = script.worldType === WebInspector.Script.WorldType.EXTENSIONS_WORLD;
-        sourceFile._script = script;
-        sourceFile._resource = script.sourceURL ? this._resourceForURL(script.sourceURL) : null;
+        function contentChanged(sourceFile)
+        {
+            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileChanged, this._sourceFiles[sourceFileId]);
+        }
+        sourceFile = new WebInspector.SourceFile(sourceFileId, script, contentChanged.bind(this));
         this._sourceFiles[sourceFileId] = sourceFile;
 
-        if (!sourceFile._resource || sourceFile._resource.finished)
-            this._sourceFileAdded(sourceFile);
-        else {
-            sourceFile._pending = true;
-            function resourceFinished()
-            {
-                if (sourceFile._pending) {
-                    delete sourceFile._pending;
-                    this._sourceFileAdded(sourceFile);
-                } else {
-                    // Source file was forcibly added before resource was finished.
-                    this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileChanged, sourceFile);
-                }
-            }
-            sourceFile._resource.addEventListener("finished", resourceFinished.bind(this));
+        var breakpoints = WebInspector.debuggerModel.breakpoints;
+        for (var id in breakpoints) {
+            if (!(id in this._presentationBreakpoints))
+                this._breakpointAdded(breakpoints[id]);
         }
-    },
 
-    _ensureSourceFileAdded: function(script)
-    {
-        var sourceFile = this._sourceFiles[script.sourceURL || script.sourceID];
-        if (!sourceFile._resource || sourceFile._resource.finished)
-            return;
-
-        if (sourceFile._pending) {
-            delete sourceFile._pending;
-            this._sourceFileAdded(sourceFile);
-        } else {
-            // FIXME: dispatch event only if source file content changed.
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileChanged, sourceFile);
-        }
-    },
-
-    _resourceForURL: function(url)
-    {
-        return WebInspector.networkManager.inflightResourceForURL(url) || WebInspector.resourceForURL(url);
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileAdded, sourceFile);
     },
 
     _scriptSourceChanged: function(event)
@@ -181,19 +138,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
                 this.setBreakpoint(sourceFileId, newLineNumber, breakpoint.condition, breakpoint.enabled);
         }
 
-        var sourceFile = this._sourceFiles[sourceFileId];
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileChanged, sourceFile);
-    },
-
-    _sourceFileAdded: function(sourceFile)
-    {
-        sourceFile._breakpoints = [];
-        var breakpoints = WebInspector.debuggerModel.breakpoints;
-        for (var id in breakpoints) {
-            if (!(id in this._presentationBreakpoints))
-                this._breakpointAdded(breakpoints[id]);
-        }
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileAdded, sourceFile);
+        this._sourceFiles[sourceFileId].reload();
     },
 
     continueToLine: function(sourceFileId, lineNumber)
@@ -209,8 +154,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
         if (!sourceFile)
             return [];
         var breakpoints = [];
-        for (var lineNumber in sourceFile._breakpoints)
-            breakpoints.push(sourceFile._breakpoints[lineNumber]);
+        for (var lineNumber in sourceFile.breakpoints)
+            breakpoints.push(sourceFile.breakpoints[lineNumber]);
         return breakpoints;
     },
 
@@ -255,7 +200,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     {
         var sourceFile = this.sourceFile(sourceFileId);
         if (sourceFile)
-            return sourceFile._breakpoints[lineNumber];
+            return sourceFile.breakpoints[lineNumber];
     },
 
     _breakpointAdded: function(breakpoint)
@@ -287,7 +232,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         this._presentationBreakpoints[breakpoint.id] = presentationBreakpoint;
         var sourceFile = this.sourceFile(sourceLocation.sourceFileId);
-        sourceFile._breakpoints[sourceLocation.lineNumber] = presentationBreakpoint;
+        sourceFile.breakpoints[sourceLocation.lineNumber] = presentationBreakpoint;
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, presentationBreakpoint);
     },
 
@@ -296,7 +241,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         var breakpoint = this._presentationBreakpoints[breakpointId];
         delete this._presentationBreakpoints[breakpointId];
         var sourceFile = this.sourceFile(breakpoint.sourceFileId);
-        delete sourceFile._breakpoints[breakpoint.lineNumber];
+        delete sourceFile.breakpoints[breakpoint.lineNumber];
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, breakpoint);
     },
 
@@ -349,7 +294,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
             return;
 
         var script = WebInspector.debuggerModel.scriptForSourceID(callFrame.sourceID);
-        this._ensureSourceFileAdded(script);
+        var sourceFile = this._sourceFiles[script.sourceURL || script.sourceID];
+        if (sourceFile)
+            sourceFile.forceLoadContent(script);
         callFrame.sourceLocation = this._actualLocationToSourceLocation(script.sourceURL, script.sourceID, callFrame.line, callFrame.column);
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, callFrame);
     },

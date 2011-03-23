@@ -29,7 +29,8 @@ var test = function()
     function step2(sourceFrame)
     {
         InspectorTest.addResult("Script source was shown.");
-        WebInspector.panels.scripts._presentationModel._resourceForURL = function() { return new WebInspector.Resource(); };
+        // Use fake resources to make sure that scripts will be loaded from JavaScript VM.
+        WebInspector.networkManager.inflightResourceForURL = function() { return new WebInspector.Resource(); };
         InspectorTest.setBreakpoint(sourceFrame, 2, "", true);
         InspectorTest.setBreakpoint(sourceFrame, 9, "", true);
         InspectorTest.waitUntilPaused(step3);

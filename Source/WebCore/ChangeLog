@@ -1,3 +1,33 @@
+2011-03-21  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move content loading logic to a new SourceFile class.
+        https://bugs.webkit.org/show_bug.cgi?id=56748
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.requestSourceFileContent):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript.contentChanged):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        (WebInspector.DebuggerPresentationModel.prototype._scriptSourceChanged):
+        (WebInspector.DebuggerPresentationModel.prototype.set selectedCallFrame):
+        * inspector/front-end/SourceFile.js: Added.
+        (WebInspector.SourceFile):
+        (WebInspector.SourceFile.prototype.addScript):
+        (WebInspector.SourceFile.prototype.requestContent):
+        (WebInspector.SourceFile.prototype.forceLoadContent):
+        (WebInspector.SourceFile.prototype.reload):
+        (WebInspector.SourceFile.prototype._requestContent):
+        (WebInspector.SourceFile.prototype._loadResourceContent):
+        (WebInspector.SourceFile.prototype._loadScriptContent):
+        (WebInspector.SourceFile.prototype._loadAndConcatenateScriptsContent):
+        (WebInspector.SourceFile.prototype._didRequestContent):
+        (WebInspector.SourceFile.prototype._hasPendingResource):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-03-23  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, fix compilation broken by r81758.
