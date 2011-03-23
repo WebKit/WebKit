@@ -1338,3 +1338,6 @@ svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg
 http/tests/inspector/network/network-size-chunked.html
 http/tests/inspector/network/network-size.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=56966
+# window.clientWidth and window.clientHeight do not include scrollbar allocation
+fast/overflow/horizontal-scroll-after-back.html

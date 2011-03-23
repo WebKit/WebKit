@@ -1,3 +1,10 @@
+2011-03-23  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] fast/overflow/horizontal-scroll-after-back.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=56966
+
+        * platform/gtk/Skipped: Skip this test on GTK+ until the fix is in.
+
 2011-03-23  Mihai Parparita  <mihaip@chromium.org>
 
         Update expectations for one SVG and two media tests for Chromium Snow
