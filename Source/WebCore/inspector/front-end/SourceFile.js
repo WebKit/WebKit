@@ -93,6 +93,23 @@ WebInspector.SourceFile.prototype = {
             this._requestContent();
     },
 
+    scriptLocationToSourceLocation: function(lineNumber, columnNumber)
+    {
+        return { lineNumber: lineNumber, columnNumber: columnNumber };
+    },
+
+    sourceLocationToScriptLocation: function(lineNumber, columnNumber)
+    {
+        var closestScript = this._scripts[0];
+        for (var i = 1; i < this._scripts.length; ++i) {
+            script = this._scripts[i];
+            if (script.lineOffset > lineNumber || (script.lineOffset === lineNumber && script.columnOffset > columnNumber))
+                break;
+            closestScript = script;
+        }
+        return { scriptId: closestScript.sourceID, lineNumber: lineNumber, columnNumber: columnNumber };
+    },
+
     _requestContent: function()
     {
         if (this._contentRequested)
@@ -148,3 +165,41 @@ WebInspector.SourceFile.prototype = {
         return this._resource && !this._resource.finished;
     }
 }
+
+WebInspector.FormattedSourceFile = function(sourceFileId, script, contentChangedDelegate, formatter)
+{
+    WebInspector.SourceFile.call(this, sourceFileId, script, contentChangedDelegate);
+    this._formatter = formatter;
+}
+
+WebInspector.FormattedSourceFile.prototype = {
+    scriptLocationToSourceLocation: function(lineNumber, columnNumber)
+    {
+        // FIXME: this method should force content formatting to obtain the mapping.
+        if (!this._originalToFormatted)
+            return WebInspector.SourceFile.prototype.scriptLocationToSourceLocation.call(this, lineNumber, columnNumber);
+        return this._originalToFormatted(lineNumber, columnNumber);
+    },
+
+    sourceLocationToScriptLocation: function(lineNumber, columnNumber)
+    {
+        // FIXME: this method should force content formatting to obtain the mapping.
+        if (!this._formattedToOriginal)
+            return WebInspector.SourceFile.prototype.sourceLocationToScriptLocation.call(this, lineNumber, columnNumber);
+        var location = this._formattedToOriginal(lineNumber, columnNumber);
+        return WebInspector.SourceFile.prototype.sourceLocationToScriptLocation.call(this, location.lineNumber, location.columnNumber);
+    },
+
+    _didRequestContent: function(mimeType, text)
+    {
+        function didFormatContent(text, originalToFormatted, formattedToOriginal)
+        {
+            this._originalToFormatted = originalToFormatted;
+            this._formattedToOriginal = formattedToOriginal;
+            WebInspector.SourceFile.prototype._didRequestContent.call(this, mimeType, text);
+        }
+        this._formatter.formatContent(text, this._scripts, didFormatContent.bind(this));
+    }
+}
+
+WebInspector.FormattedSourceFile.prototype.__proto__ = WebInspector.SourceFile.prototype;

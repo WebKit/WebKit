@@ -1,3 +1,40 @@
+2011-03-21  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add support for formating source files in debugger presentation model.
+        https://bugs.webkit.org/show_bug.cgi?id=56558
+
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.reset):
+        (WebInspector.DebuggerModel.prototype.get scripts):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        (WebInspector.DebuggerPresentationModel.prototype._refreshBreakpoints):
+        (WebInspector.DebuggerPresentationModel.prototype.toggleFormatSourceFiles):
+        (WebInspector.DebuggerPresentationModel.prototype.continueToLine):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded):
+        (WebInspector.DebuggerPresentationModel.prototype.set selectedCallFrame):
+        (WebInspector.DebuggerPresentationModel.prototype._sourceFileForScript):
+        (WebInspector.DebuggerPresentationModel.prototype._reset):
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter.prototype.formatContent.didFormatChunks):
+        (WebInspector.ScriptFormatter.prototype.formatContent):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        (WebInspector.ScriptsPanel.prototype._toggleFormatSourceFiles):
+        * inspector/front-end/Settings.js:
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.SourceFile.prototype.scriptLocationToSourceLocation):
+        (WebInspector.SourceFile.prototype.sourceLocationToScriptLocation):
+        (WebInspector.FormattedSourceFile):
+        (WebInspector.FormattedSourceFile.prototype.scriptLocationToSourceLocation):
+        (WebInspector.FormattedSourceFile.prototype.sourceLocationToScriptLocation):
+        (WebInspector.FormattedSourceFile.prototype._didRequestContent):
+
 2011-03-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

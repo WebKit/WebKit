@@ -45,7 +45,8 @@ WebInspector.DebuggerModel.Events = {
     ParsedScriptSource: "parsed-script-source",
     FailedToParseScriptSource: "failed-to-parse-script-source",
     ScriptSourceChanged: "script-source-changed",
-    BreakpointResolved: "breakpoint-resolved"
+    BreakpointResolved: "breakpoint-resolved",
+    Reset: "reset"
 }
 
 WebInspector.DebuggerModel.prototype = {
@@ -145,6 +146,12 @@ WebInspector.DebuggerModel.prototype = {
                 breakpoint.locations = [];
         }
         this._scripts = {};
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.Reset);
+    },
+
+    get scripts()
+    {
+        return this._scripts;
     },
 
     scriptForSourceID: function(sourceID)

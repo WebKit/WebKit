@@ -69,25 +69,18 @@ WebInspector.ScriptFormatter.findScriptRanges = function(lineEndings, scripts)
 }
 
 WebInspector.ScriptFormatter.prototype = {
-    formatContent: function(content, callback)
+    formatContent: function(text, scripts, callback)
     {
-        var chunks = this._splitContentIntoChunks(content.text, content.scriptRanges);
+        var scriptRanges = WebInspector.ScriptFormatter.findScriptRanges(text.lineEndings(), scripts);
+        var chunks = this._splitContentIntoChunks(text, scriptRanges);
 
         function didFormatChunks()
         {
             var result = this._buildContentFromChunks(chunks);
-
-            var sourceMapping = new WebInspector.SourceMappingForFormattedScript(content.text.lineEndings(), result.text.lineEndings(), result.mapping);
-            var formattedScriptRanges = [];
-            for (var i = 0; i < content.scriptRanges.length; ++i) {
-                var scriptRange = content.scriptRanges[i];
-                formattedScriptRange = {};
-                formattedScriptRange.start = sourceMapping.originalPositionToFormattedLocation(scriptRange.start.position);
-                formattedScriptRange.end = sourceMapping.originalPositionToFormattedLocation(scriptRange.end.position);
-                formattedScriptRange.sourceID = scriptRange.sourceID;
-                formattedScriptRanges.push(formattedScriptRange);
-            }
-            callback(new WebInspector.SourceFrameContent(result.text, sourceMapping, formattedScriptRanges));
+            var sourceMapping = new WebInspector.SourceMappingForFormattedScript(text.lineEndings(), result.text.lineEndings(), result.mapping);
+            var originalToFormatted = sourceMapping.actualLocationToSourceLocation.bind(sourceMapping);
+            var formattedToOriginal = sourceMapping.sourceLocationToActualLocation.bind(sourceMapping);
+            callback(result.text, originalToFormatted, formattedToOriginal);
         }
         this._formatChunks(chunks, 0, didFormatChunks.bind(this));
     },

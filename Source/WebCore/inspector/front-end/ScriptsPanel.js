@@ -70,7 +70,7 @@ WebInspector.ScriptsPanel = function()
     this.formatButton.id = "format-script";
     this.formatButton.title = WebInspector.UIString("Format script.");
     this.formatButton.appendChild(document.createElement("img"));
-    this.formatButton.addEventListener("click", this._formatScript.bind(this), false);
+    this.formatButton.addEventListener("click", this._toggleFormatSourceFiles.bind(this), false);
     if (Preferences.debugMode)
         this.topStatusBar.appendChild(this.formatButton);
 
@@ -435,8 +435,6 @@ WebInspector.ScriptsPanel.prototype = {
 
     reset: function(preserveItems)
     {
-        this._presentationModel.reset();
-
         this.visibleView = null;
 
         delete this.currentQuery;
@@ -785,10 +783,10 @@ WebInspector.ScriptsPanel.prototype = {
         this._updateBackAndForwardButtons();
     },
 
-    _formatScript: function()
+    _toggleFormatSourceFiles: function()
     {
-        if (this.visibleView)
-            this.visibleView.formatSource();
+        this.reset();
+        this._presentationModel.toggleFormatSourceFiles();
     },
 
     _enableDebugging: function()
