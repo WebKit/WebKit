@@ -169,7 +169,7 @@ void ScrollbarThemeMac::unregisterScrollbar(Scrollbar* scrollbar)
     scrollbarMap()->remove(scrollbar);
 }
 
-#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+#if USE(WK_SCROLLBAR_PAINTER)
 void ScrollbarThemeMac::setNewPainterForScrollbar(Scrollbar* scrollbar, WKScrollbarPainterRef newPainter)
 {
     scrollbarMap()->set(scrollbar, newPainter);

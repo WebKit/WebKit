@@ -1,3 +1,13 @@
+2011-03-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Remove USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER.
+        <rdar://problem/8944718> 
+
+        * DerivedSources.make:
+        Remove generation of USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER.
+
 2011-03-22  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

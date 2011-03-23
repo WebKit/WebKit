@@ -1,3 +1,22 @@
+2011-03-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Remove USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER.
+        <rdar://problem/8944718> 
+
+        * DerivedSources.make:
+        Remove generation of HeaderDetection.h.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Remove HeaderDetection.h.
+
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        Replace use of USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER with USE(WK_SCROLLBAR_PAINTER).
+
 2011-03-22  Victoria Kirst  <vrk@google.com>
 
         Reviewed by Kenneth Russell.

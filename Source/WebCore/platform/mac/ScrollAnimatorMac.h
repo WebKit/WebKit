@@ -30,7 +30,6 @@
 
 #include "FloatPoint.h"
 #include "FloatSize.h"
-#include "HeaderDetection.h"
 #include "ScrollAnimator.h"
 #include "Timer.h"
 #include "WebCoreSystemInterface.h"
@@ -78,7 +77,7 @@ public:
 
     bool haveScrolledSincePageLoad() const { return m_haveScrolledSincePageLoad; }
 
-#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+#if USE(WK_SCROLLBAR_PAINTER)
     bool scrollbarPaintTimerIsActive() const;
     void startScrollbarPaintTimer();
     void stopScrollbarPaintTimer();
@@ -88,7 +87,7 @@ private:
     RetainPtr<id> m_scrollAnimationHelper;
     RetainPtr<ScrollAnimationHelperDelegate> m_scrollAnimationHelperDelegate;
 
-#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+#if USE(WK_SCROLLBAR_PAINTER)
     RetainPtr<WKScrollbarPainterControllerRef> m_scrollbarPainterController;
     RetainPtr<ScrollbarPainterControllerDelegate> m_scrollbarPainterControllerDelegate;
     RetainPtr<id> m_scrollbarPainterDelegate;

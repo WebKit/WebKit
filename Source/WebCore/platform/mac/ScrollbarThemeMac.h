@@ -26,7 +26,6 @@
 #ifndef ScrollbarThemeMac_h
 #define ScrollbarThemeMac_h
 
-#include "HeaderDetection.h"
 #include "ScrollbarThemeComposite.h"
 #include "WebCoreSystemInterface.h"
 
@@ -52,7 +51,7 @@ public:
     virtual void registerScrollbar(Scrollbar*);
     virtual void unregisterScrollbar(Scrollbar*);
 
-#if defined(USE_WK_SCROLLBAR_PAINTER_AND_CONTROLLER)
+#if USE(WK_SCROLLBAR_PAINTER)
     void setNewPainterForScrollbar(Scrollbar*, WKScrollbarPainterRef);
     WKScrollbarPainterRef painterForScrollbar(Scrollbar*);
 #endif
