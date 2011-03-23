@@ -303,7 +303,7 @@ void RenderBoxModelObject::styleWillChange(StyleDifference diff, const RenderSty
                 repaint();
         }
         
-        if (diff == StyleDifferenceLayout || diff == StyleDifferenceSimplifiedLayout) {
+        if (diff == StyleDifferenceLayout) {
             // When a layout hint happens, we go ahead and do a repaint of the layer, since the layer could
             // end up being destroyed.
             if (hasLayer()) {

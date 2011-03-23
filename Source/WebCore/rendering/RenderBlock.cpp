@@ -34,7 +34,6 @@
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
-#include "InlineIterator.h"
 #include "InlineTextBox.h"
 #include "PaintInfo.h"
 #include "RenderCombineText.h"
@@ -1134,7 +1133,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageLogicalHeight)
     if (isInline() && !isInlineBlockOrInlineTable()) // Inline <form>s inside various table elements can
         return;                                      // cause us to come in here.  Just bail.
 
-    if (!relayoutChildren && simplifiedLayout())
+    if (!relayoutChildren && layoutOnlyPositionedObjects())
         return;
 
     LayoutRepainter repainter(*this, m_everHadLayout && checkForRepaintDuringLayout());
@@ -2078,58 +2077,21 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
     ASSERT(oldLayoutDelta == view()->layoutDelta());
 }
 
-void RenderBlock::simplifiedNormalFlowLayout()
+bool RenderBlock::layoutOnlyPositionedObjects()
 {
-    if (childrenInline()) {
-        ListHashSet<RootInlineBox*> lineBoxes;
-        bool endOfInline = false;
-        RenderObject* o = bidiFirst(this, 0, false);
-        while (o) {
-            if (!o->isPositioned() && (o->isReplaced() || o->isFloating())) {
-                o->layoutIfNeeded();
-                if (toRenderBox(o)->inlineBoxWrapper()) {
-                    RootInlineBox* box = toRenderBox(o)->inlineBoxWrapper()->root();
-                    lineBoxes.add(box);
-                }
-            } else if (o->isText() || (o->isRenderInline() && !endOfInline))
-                o->setNeedsLayout(false);
-            o = bidiNext(this, o, 0, false, &endOfInline);
-        }
-
-        // FIXME: Glyph overflow will get lost in this case, but not really a big deal.
-        GlyphOverflowAndFallbackFontsMap textBoxDataMap;                  
-        for (ListHashSet<RootInlineBox*>::const_iterator it = lineBoxes.begin(); it != lineBoxes.end(); ++it) {
-            RootInlineBox* box = *it;
-            box->computeOverflow(box->lineTop(), box->lineBottom(), document()->inNoQuirksMode(), textBoxDataMap);
-        }
-    } else {
-        for (RenderBox* box = firstChildBox(); box; box = box->nextSiblingBox()) {
-            if (!box->isPositioned())
-                box->layoutIfNeeded();
-        }
-    }
-}
-
-bool RenderBlock::simplifiedLayout()
-{
-    if ((!posChildNeedsLayout() && !needsSimplifiedNormalFlowLayout()) || normalChildNeedsLayout() || selfNeedsLayout())
+    if (!posChildNeedsLayout() || normalChildNeedsLayout() || selfNeedsLayout())
         return false;
 
     LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), hasColumns() || hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
-    
+
     if (needsPositionedMovementLayout()) {
         tryLayoutDoingPositionedMovementOnly();
         if (needsLayout())
             return false;
     }
 
-    // Lay out positioned descendants or objects that just need to recompute overflow.
-    if (needsSimplifiedNormalFlowLayout())
-        simplifiedNormalFlowLayout();
-
-    // Lay out our positioned objects if our positioned child bit is set.
-    if (posChildNeedsLayout())
-        layoutPositionedObjects(false);
+    // All we have to is lay out our positioned objects.
+    layoutPositionedObjects(false);
 
     // Recompute our overflow information.
     // FIXME: We could do better here by computing a temporary overflow object from layoutPositionedObjects and only

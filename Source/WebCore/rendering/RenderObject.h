@@ -415,12 +415,11 @@ public:
     bool hasBoxDecorations() const { return m_paintBackground; }
     bool mustRepaintBackgroundOrBorder() const;
     bool hasBackground() const { return style()->hasBackground(); }
-    bool needsLayout() const { return m_needsLayout || m_normalChildNeedsLayout || m_posChildNeedsLayout || m_needsSimplifiedNormalFlowLayout || m_needsPositionedMovementLayout; }
+    bool needsLayout() const { return m_needsLayout || m_normalChildNeedsLayout || m_posChildNeedsLayout || m_needsPositionedMovementLayout; }
     bool selfNeedsLayout() const { return m_needsLayout; }
     bool needsPositionedMovementLayout() const { return m_needsPositionedMovementLayout; }
-    bool needsPositionedMovementLayoutOnly() const { return m_needsPositionedMovementLayout && !m_needsLayout && !m_normalChildNeedsLayout && !m_posChildNeedsLayout && !m_needsSimplifiedNormalFlowLayout; }
+    bool needsPositionedMovementLayoutOnly() const { return m_needsPositionedMovementLayout && !m_needsLayout && !m_normalChildNeedsLayout && !m_posChildNeedsLayout; }
     bool posChildNeedsLayout() const { return m_posChildNeedsLayout; }
-    bool needsSimplifiedNormalFlowLayout() const { return m_needsSimplifiedNormalFlowLayout; }
     bool normalChildNeedsLayout() const { return m_normalChildNeedsLayout; }
     
     bool preferredLogicalWidthsDirty() const { return m_preferredLogicalWidthsDirty; }
@@ -489,7 +488,6 @@ public:
     void setNeedsLayout(bool b, bool markParents = true);
     void setChildNeedsLayout(bool b, bool markParents = true);
     void setNeedsPositionedMovementLayout();
-    void setNeedsSimplifiedNormalFlowLayout();
     void setPreferredLogicalWidthsDirty(bool, bool markParents = true);
     void invalidateContainerPreferredLogicalWidths();
     
@@ -848,7 +846,6 @@ private:
     bool m_needsPositionedMovementLayout :1;
     bool m_normalChildNeedsLayout    : 1;
     bool m_posChildNeedsLayout       : 1;
-    bool m_needsSimplifiedNormalFlowLayout  : 1;
     bool m_preferredLogicalWidthsDirty           : 1;
     bool m_floating                  : 1;
 
@@ -934,7 +931,6 @@ inline void RenderObject::setNeedsLayout(bool b, bool markParents)
     } else {
         m_everHadLayout = true;
         m_posChildNeedsLayout = false;
-        m_needsSimplifiedNormalFlowLayout = false;
         m_normalChildNeedsLayout = false;
         m_needsPositionedMovementLayout = false;
     }
@@ -950,7 +946,6 @@ inline void RenderObject::setChildNeedsLayout(bool b, bool markParents)
             markContainingBlocksForLayout();
     } else {
         m_posChildNeedsLayout = false;
-        m_needsSimplifiedNormalFlowLayout = false;
         m_normalChildNeedsLayout = false;
         m_needsPositionedMovementLayout = false;
     }
@@ -960,17 +955,6 @@ inline void RenderObject::setNeedsPositionedMovementLayout()
 {
     bool alreadyNeededLayout = needsLayout();
     m_needsPositionedMovementLayout = true;
-    if (!alreadyNeededLayout) {
-        markContainingBlocksForLayout();
-        if (hasLayer())
-            setLayerNeedsFullRepaint();
-    }
-}
-
-inline void RenderObject::setNeedsSimplifiedNormalFlowLayout()
-{
-    bool alreadyNeededLayout = needsLayout();
-    m_needsSimplifiedNormalFlowLayout = true;
     if (!alreadyNeededLayout) {
         markContainingBlocksForLayout();
         if (hasLayer())
@@ -998,8 +982,6 @@ inline void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, R
     RenderObject* o = container();
     RenderObject* last = this;
 
-    bool simplifiedNormalFlowLayout = needsSimplifiedNormalFlowLayout() && !selfNeedsLayout() && !normalChildNeedsLayout();
-
     while (o) {
         // Don't mark the outermost object of an unrooted subtree. That object will be 
         // marked when the subtree is added to the document.
@@ -1007,15 +989,17 @@ inline void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, R
         if (!container && !o->isRenderView())
             return;
         if (!last->isText() && (last->style()->position() == FixedPosition || last->style()->position() == AbsolutePosition)) {
+            if (last->style()->top().isAuto() && last->style()->bottom().isAuto()) {
+                RenderObject* parent = last->parent();
+                if (!parent->normalChildNeedsLayout()) {
+                    parent->setChildNeedsLayout(true, false);
+                    if (parent != newRoot)
+                        parent->markContainingBlocksForLayout(scheduleRelayout, newRoot);
+                }
+            }
             if (o->m_posChildNeedsLayout)
                 return;
             o->m_posChildNeedsLayout = true;
-            simplifiedNormalFlowLayout = true;
-            ASSERT(!o->isSetNeedsLayoutForbidden());
-        } else if (simplifiedNormalFlowLayout) {
-            if (o->m_needsSimplifiedNormalFlowLayout)
-                return;
-            o->m_needsSimplifiedNormalFlowLayout = true;
             ASSERT(!o->isSetNeedsLayoutForbidden());
         } else {
             if (o->m_normalChildNeedsLayout)

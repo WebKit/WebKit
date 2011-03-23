@@ -1,3 +1,41 @@
+2011-03-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r81802.
+        http://trac.webkit.org/changeset/81802
+        https://bugs.webkit.org/show_bug.cgi?id=56963
+
+        Broke a layout test, and this fix is not trivial. (Requested
+        by dhyatt on #webkit).
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::layoutOnlyPositionedObjects):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::styleWillChange):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::adjustStyleDifference):
+        (WebCore::RenderObject::setStyle):
+        (WebCore::RenderObject::styleDidChange):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::needsLayout):
+        (WebCore::RenderObject::needsPositionedMovementLayoutOnly):
+        (WebCore::RenderObject::setNeedsLayout):
+        (WebCore::RenderObject::setChildNeedsLayout):
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+
 2011-03-23  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by David Hyatt.

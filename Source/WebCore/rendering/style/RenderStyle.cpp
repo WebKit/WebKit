@@ -493,19 +493,15 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         rareNonInheritedData->m_counterReset != other->rareNonInheritedData->m_counterReset)
         return StyleDifferenceLayout;
 
-    if ((visibility() == COLLAPSE) != (other->visibility() == COLLAPSE))
-        return StyleDifferenceLayout;
-
     if ((rareNonInheritedData->opacity == 1 && other->rareNonInheritedData->opacity < 1) ||
         (rareNonInheritedData->opacity < 1 && other->rareNonInheritedData->opacity == 1)) {
-        // FIXME: We would like to use SimplifiedLayout here, but we can't quite do that yet.
-        // We need to make sure SimplifiedLayout can operate correctly on RenderInlines (we will need
-        // to add a selfNeedsSimplifiedLayout bit in order to not get confused and taint every line).
-        // In addition we need to solve the floating object issue when layers come and go. Right now
-        // a full layout is necessary to keep floating object lists sane.
+        // FIXME: We should add an optimized form of layout that just recomputes visual overflow.
         return StyleDifferenceLayout;
     }
 
+    if ((visibility() == COLLAPSE) != (other->visibility() == COLLAPSE))
+        return StyleDifferenceLayout;
+                    
 #if ENABLE(SVG)
     // SVGRenderStyle::diff() might have returned StyleDifferenceRepaint, eg. if fill changes.
     // If eg. the font-size changed at the same time, we're not allowed to return StyleDifferenceRepaint,
@@ -523,10 +519,13 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
             if (position() == AbsolutePosition && positionedObjectMoved(surround->offset, other->surround->offset))
                 return StyleDifferenceLayoutPositionedMovementOnly;
 
-            // FIXME: We would like to use SimplifiedLayout for relative positioning, but we can't quite do that yet.
-            // We need to make sure SimplifiedLayout can operate correctly on RenderInlines (we will need
-            // to add a selfNeedsSimplifiedLayout bit in order to not get confused and taint every line).
-            return StyleDifferenceLayout;
+            // FIXME: We will need to do a bit of work in RenderObject/Box::setStyle before we
+            // can stop doing a layout when relative positioned objects move.  In particular, we'll need
+            // to update scrolling positions and figure out how to do a repaint properly of the updated layer.
+            //if (other->position() == RelativePosition)
+            //    return RepaintLayer;
+            //else
+                return StyleDifferenceLayout;
         } else if (m_box->zIndex() != other->m_box->zIndex() || m_box->hasAutoZIndex() != other->m_box->hasAutoZIndex() ||
                  visual->clip != other->visual->clip || visual->hasClip != other->visual->hasClip)
             return StyleDifferenceRepaintLayer;

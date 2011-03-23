@@ -51,7 +51,6 @@ enum StyleDifference {
     StyleDifferenceRepaint,
     StyleDifferenceRepaintLayer,
     StyleDifferenceLayoutPositionedMovementOnly,
-    StyleDifferenceSimplifiedLayout,
     StyleDifferenceLayout
 };
 
