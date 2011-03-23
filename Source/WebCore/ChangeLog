@@ -1,3 +1,17 @@
+2011-03-21  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move scripts concatenation logic to SourceFile.
+        https://bugs.webkit.org/show_bug.cgi?id=56756
+
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.SourceFile.prototype._requestContent):
+        (WebInspector.SourceFile.prototype._loadResourceContent):
+        (WebInspector.SourceFile.prototype._loadAndConcatenateScriptsContent):
+        (WebInspector.SourceFile.prototype._concatenateScriptsContent):
+
 2011-03-23  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Steve Block.

@@ -117,7 +117,7 @@ WebInspector.SourceFile.prototype = {
 
         this._contentRequested = true;
         if (this._resource && this._resource.finished)
-            this._loadResourceContent();
+            this._loadResourceContent(this._resource);
         else if (!this._resource)
             this._loadScriptContent();
         else if (this._concatenatedScripts)
@@ -126,11 +126,19 @@ WebInspector.SourceFile.prototype = {
             this._contentRequested = false;
     },
 
-    _loadResourceContent: function()
+    _loadResourceContent: function(resource)
     {
-        // FIXME: move provider's load functions here.
-        var provider = new WebInspector.SourceFrameDelegateForScriptsPanel(null, null, this._scripts[0]);
-        provider._loadResourceContent(this._resource, this._didRequestContent.bind(this));
+        function didRequestContent(text)
+        {
+            if (resource.type === WebInspector.Resource.Type.Script)
+                this._didRequestContent("text/javascript", text);
+            else {
+                // WebKit html lexer normalizes line endings and scripts are passed to VM with "\n" line endings.
+                // However, resource content has original line endings, so we have to normalize line endings here.
+                this._didRequestContent("text/html", text.replace(/\r\n/g, "\n"));
+            }
+        }
+        resource.requestContent(didRequestContent.bind(this));
     },
 
     _loadScriptContent: function()
@@ -140,9 +148,58 @@ WebInspector.SourceFile.prototype = {
 
     _loadAndConcatenateScriptsContent: function()
     {
-        // FIXME: move provider's load functions here.
-        var provider = new WebInspector.SourceFrameDelegateForScriptsPanel(null, null, this._scripts[0]);
-        provider._loadAndConcatenateScriptsContent(this._didRequestContent.bind(this));
+        var scripts = this._scripts.slice();
+        scripts.sort(function(x, y) { return x.lineOffset - y.lineOffset || x.columnOffset - y.columnOffset; });
+        var sources = [];
+        function didRequestSource(source)
+        {
+            sources.push(source);
+            if (sources.length === scripts.length)
+                this._concatenateScriptsContent(scripts, sources);
+        }
+        for (var i = 0; i < scripts.length; ++i)
+            scripts[i].requestSource(didRequestSource.bind(this));
+    },
+
+    _concatenateScriptsContent: function(scripts, sources)
+    {
+        var content = "";
+        var lineNumber = 0;
+        var columnNumber = 0;
+        var scriptRanges = [];
+        function appendChunk(chunk, script)
+        {
+            var start = { lineNumber: lineNumber, columnNumber: columnNumber };
+            content += chunk;
+            var lineEndings = chunk.lineEndings();
+            var lineCount = lineEndings.length;
+            if (lineCount === 1)
+                columnNumber += chunk.length;
+            else {
+                lineNumber += lineCount - 1;
+                columnNumber = lineEndings[lineCount - 1] - lineEndings[lineCount - 2] - 1;
+            }
+            var end = { lineNumber: lineNumber, columnNumber: columnNumber };
+            if (script)
+                scriptRanges.push({ start: start, end: end, sourceID: script.sourceID });
+        }
+
+        var scriptOpenTag = "<script>";
+        var scriptCloseTag = "</script>";
+        for (var i = 0; i < scripts.length; ++i) {
+            // Fill the gap with whitespace characters.
+            while (lineNumber < scripts[i].lineOffset)
+                appendChunk("\n");
+            while (columnNumber < scripts[i].columnOffset - scriptOpenTag.length)
+                appendChunk(" ");
+
+            // Add script tag.
+            appendChunk(scriptOpenTag);
+            appendChunk(sources[i], scripts[i]);
+            appendChunk(scriptCloseTag);
+        }
+
+        this._didRequestContent("text/html", content);
     },
 
     _didRequestContent: function(mimeType, content)
