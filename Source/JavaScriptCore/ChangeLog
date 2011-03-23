@@ -1,3 +1,17 @@
+2011-03-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        JavaScriptCore GYP build should work on a case-sensitive file system
+        https://bugs.webkit.org/show_bug.cgi?id=56911
+
+        The issue is that there are two UString.h headers, one named UString.h
+        and one named ustring.h.  This patch excludes ustring.h from the header
+        map to avoid confusion.  While I was editing this part of the GYP file,
+        I cleaned up the exclude rules to be more modern.
+
+        * gyp/JavaScriptCore.gyp:
+
 2011-03-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.
