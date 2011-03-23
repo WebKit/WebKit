@@ -70,9 +70,9 @@ public:
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
     static const JSC::ClassInfo s_info;
-    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
+    static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;
@@ -81,7 +81,7 @@ protected:
 const ClassInfo JSTestMediaQueryListListenerConstructor::s_info = { "TestMediaQueryListListenerConstructor", &DOMConstructorObject::s_info, &JSTestMediaQueryListListenerConstructorTable, 0 };
 
 JSTestMediaQueryListListenerConstructor::JSTestMediaQueryListListenerConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
-    : DOMConstructorObject(JSTestMediaQueryListListenerConstructor::createStructure(globalObject->objectPrototype()), globalObject)
+    : DOMConstructorObject(JSTestMediaQueryListListenerConstructor::createStructure(globalObject->globalData(), globalObject->objectPrototype()), globalObject)
 {
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestMediaQueryListListenerPrototype::self(exec, globalObject), DontDelete | ReadOnly);
@@ -140,7 +140,7 @@ JSTestMediaQueryListListener::JSTestMediaQueryListListener(NonNullPassRefPtr<Str
 
 JSObject* JSTestMediaQueryListListener::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return new (exec) JSTestMediaQueryListListenerPrototype(globalObject, JSTestMediaQueryListListenerPrototype::createStructure(globalObject->objectPrototype()));
+    return new (exec) JSTestMediaQueryListListenerPrototype(globalObject, JSTestMediaQueryListListenerPrototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));
 }
 
 bool JSTestMediaQueryListListener::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

@@ -149,9 +149,9 @@ public:
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
     static const JSC::ClassInfo s_info;
-    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
+    static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;
@@ -160,7 +160,7 @@ protected:
 const ClassInfo JSTestObjConstructor::s_info = { "TestObjConstructor", &DOMConstructorObject::s_info, &JSTestObjConstructorTable, 0 };
 
 JSTestObjConstructor::JSTestObjConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
-    : DOMConstructorObject(JSTestObjConstructor::createStructure(globalObject->objectPrototype()), globalObject)
+    : DOMConstructorObject(JSTestObjConstructor::createStructure(globalObject->globalData(), globalObject->objectPrototype()), globalObject)
 {
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestObjPrototype::self(exec, globalObject), DontDelete | ReadOnly);
@@ -265,7 +265,7 @@ JSTestObj::JSTestObj(NonNullPassRefPtr<Structure> structure, JSDOMGlobalObject* 
 
 JSObject* JSTestObj::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return new (exec) JSTestObjPrototype(globalObject, JSTestObjPrototype::createStructure(globalObject->objectPrototype()));
+    return new (exec) JSTestObjPrototype(globalObject, JSTestObjPrototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));
 }
 
 bool JSTestObj::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

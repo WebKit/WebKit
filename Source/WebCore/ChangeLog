@@ -1,3 +1,50 @@
+2011-03-23  Tyler Close  <tjclose@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        run-bindings-tests reference files are out of sync with CodeGenerator*.pm
+        https://bugs.webkit.org/show_bug.cgi?id=56934
+
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::createStructure):
+        (WebCore::JSTestInterfaceConstructor::JSTestInterfaceConstructor):
+        (WebCore::JSTestInterface::createPrototype):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        (WebCore::JSTestInterface::createStructure):
+        (WebCore::JSTestInterfacePrototype::createStructure):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListenerConstructor::createStructure):
+        (WebCore::JSTestMediaQueryListListenerConstructor::JSTestMediaQueryListListenerConstructor):
+        (WebCore::JSTestMediaQueryListListener::createPrototype):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        (WebCore::JSTestMediaQueryListListener::createStructure):
+        (WebCore::JSTestMediaQueryListListenerPrototype::createStructure):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::createStructure):
+        (WebCore::JSTestObjConstructor::JSTestObjConstructor):
+        (WebCore::JSTestObj::createPrototype):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (WebCore::JSTestObj::createStructure):
+        (WebCore::JSTestObjPrototype::createStructure):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::createStructure):
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::JSTestSerializedScriptValueInterfaceConstructor):
+        (WebCore::JSTestSerializedScriptValueInterface::createPrototype):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        (WebCore::JSTestSerializedScriptValueInterface::createStructure):
+        (WebCore::JSTestSerializedScriptValueInterfacePrototype::createStructure):
+        * bindings/scripts/test/V8/V8TestCallback.cpp:
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::V8TestInterface::wrapSlow):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore::V8TestMediaQueryListListener::wrapSlow):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::V8TestObj::wrapSlow):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::V8TestSerializedScriptValueInterface::wrapSlow):
+
 2011-03-23  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Antonio Gomes.

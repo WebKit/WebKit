@@ -1380,7 +1380,8 @@ v8::Handle<v8::Object> V8TestObj::wrapSlow(TestObj* impl)
         return wrapper;
 
     impl->ref();
-    getDOMObjectMap().set(impl, v8::Persistent<v8::Object>::New(wrapper));
+    v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
+    getDOMObjectMap().set(impl, wrapperHandle);
     return wrapper;
 }
 

@@ -27,7 +27,6 @@
 #include "V8Class1.h"
 #include "V8Class2.h"
 #include "V8CustomVoidCallback.h"
-#include "V8DOMString.h"
 #include "V8Proxy.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefCounted.h>

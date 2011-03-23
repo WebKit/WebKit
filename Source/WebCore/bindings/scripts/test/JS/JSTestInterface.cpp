@@ -69,9 +69,9 @@ public:
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
     static const JSC::ClassInfo s_info;
-    static PassRefPtr<JSC::Structure> createStructure(JSC::JSValue prototype)
+    static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
     {
-        return JSC::Structure::create(prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;
@@ -82,7 +82,7 @@ protected:
 const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterfaceConstructor", &DOMConstructorObject::s_info, &JSTestInterfaceConstructorTable, 0 };
 
 JSTestInterfaceConstructor::JSTestInterfaceConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
-    : DOMConstructorObject(JSTestInterfaceConstructor::createStructure(globalObject->objectPrototype()), globalObject)
+    : DOMConstructorObject(JSTestInterfaceConstructor::createStructure(globalObject->globalData(), globalObject->objectPrototype()), globalObject)
 {
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestInterfacePrototype::self(exec, globalObject), DontDelete | ReadOnly);
@@ -144,7 +144,7 @@ JSTestInterface::JSTestInterface(NonNullPassRefPtr<Structure> structure, JSDOMGl
 
 JSObject* JSTestInterface::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return new (exec) JSTestInterfacePrototype(globalObject, JSTestInterfacePrototype::createStructure(globalObject->objectPrototype()));
+    return new (exec) JSTestInterfacePrototype(globalObject, JSTestInterfacePrototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));
 }
 
 bool JSTestInterface::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
