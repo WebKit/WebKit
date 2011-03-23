@@ -80,6 +80,21 @@ ImageBufferData::ImageBufferData(const IntSize& size)
     m_image = StillImage::createForRendering(&m_pixmap);
 }
 
+QImage ImageBufferData::toQImage() const
+{
+    QPaintEngine* paintEngine = m_pixmap.paintEngine();
+    if (!paintEngine || paintEngine->type() != QPaintEngine::Raster)
+        return m_pixmap.toImage();
+
+    // QRasterPixmapData::toImage() will deep-copy the backing QImage if there's an active QPainter on it.
+    // For performance reasons, we don't want that here, so we temporarily redirect the paint engine.
+    QPaintDevice* currentPaintDevice = paintEngine->paintDevice();
+    paintEngine->setPaintDevice(0);
+    QImage image = m_pixmap.toImage();
+    paintEngine->setPaintDevice(currentPaintDevice);
+    return image;
+}
+
 ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode, bool& success)
     : m_data(size)
     , m_size(size)
@@ -159,7 +174,7 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
     if (isPainting)
         m_data.m_painter->end();
 
-    QImage image = m_data.m_pixmap.toImage().convertToFormat(QImage::Format_ARGB32);
+    QImage image = m_data.toQImage().convertToFormat(QImage::Format_ARGB32);
     ASSERT(!image.isNull());
 
     uchar* bits = image.bits();
@@ -214,7 +229,7 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& i
     int numRows = endy - originy;
 
     // NOTE: For unmultiplied data, we undo the premultiplication below.
-    QImage image = imageData.m_pixmap.toImage().convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    QImage image = imageData.toQImage().convertToFormat(QImage::Format_ARGB32_Premultiplied);
 
     ASSERT(!image.isNull());
 

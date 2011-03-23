@@ -42,6 +42,8 @@ class ImageBufferData {
 public:
     ImageBufferData(const IntSize&);
 
+    QImage toQImage() const;
+
     QPixmap m_pixmap;
     OwnPtr<QPainter> m_painter;
     RefPtr<Image> m_image;
