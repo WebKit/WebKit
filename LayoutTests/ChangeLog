@@ -1,3 +1,191 @@
+2011-03-22  Mihai Parparita  <mihaip@chromium.org>
+
+        Add Snow Leopard baselines for fast/html/details* tests added by r81035
+        (should work for both Mac and Chromium-Mac). Promote current
+        chromium-mac baselines to mac-leopard, since they work for both on
+        Leopard.
+
+        * platform/mac-leopard/fast/html/details-add-summary-1-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-1-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-1-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-1-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-1-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-1-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-1-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-1-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-10-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-10-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-10-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-10-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-10-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-10-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-10-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-10-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-2-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-2-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-2-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-2-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-2-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-2-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-2-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-2-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-3-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-3-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-3-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-3-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-3-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-3-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-3-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-3-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-4-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-4-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-4-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-4-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-4-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-4-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-4-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-4-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-5-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-5-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-5-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-5-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-5-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-5-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-5-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-5-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-6-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-6-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-6-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-6-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-6-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-6-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-6-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-6-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-7-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-7-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-7-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-7-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-7-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-7-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-7-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-7-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-8-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-8-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-8-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-8-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-8-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-8-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-8-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-8-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-9-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-9-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-9-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-9-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-add-summary-9-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-9-expected.checksum.
+        * platform/mac-leopard/fast/html/details-add-summary-9-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-add-summary-9-expected.png.
+        * platform/mac-leopard/fast/html/details-no-summary1-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-no-summary1-expected.checksum.
+        * platform/mac-leopard/fast/html/details-no-summary1-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-no-summary1-expected.png.
+        * platform/mac-leopard/fast/html/details-no-summary2-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-no-summary2-expected.checksum.
+        * platform/mac-leopard/fast/html/details-no-summary2-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-no-summary2-expected.png.
+        * platform/mac-leopard/fast/html/details-no-summary3-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-no-summary3-expected.checksum.
+        * platform/mac-leopard/fast/html/details-no-summary3-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-no-summary3-expected.png.
+        * platform/mac-leopard/fast/html/details-no-summary4-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-no-summary4-expected.checksum.
+        * platform/mac-leopard/fast/html/details-no-summary4-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-no-summary4-expected.png.
+        * platform/mac-leopard/fast/html/details-open-javascript-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-open-javascript-expected.checksum.
+        * platform/mac-leopard/fast/html/details-open-javascript-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-open-javascript-expected.png.
+        * platform/mac-leopard/fast/html/details-open1-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-open1-expected.checksum.
+        * platform/mac-leopard/fast/html/details-open1-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-open1-expected.png.
+        * platform/mac-leopard/fast/html/details-open2-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-open2-expected.checksum.
+        * platform/mac-leopard/fast/html/details-open2-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-open2-expected.png.
+        * platform/mac-leopard/fast/html/details-open3-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-open3-expected.checksum.
+        * platform/mac-leopard/fast/html/details-open3-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-open3-expected.png.
+        * platform/mac-leopard/fast/html/details-open4-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-open4-expected.checksum.
+        * platform/mac-leopard/fast/html/details-open4-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-open4-expected.png.
+        * platform/mac-leopard/fast/html/details-open5-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-open5-expected.checksum.
+        * platform/mac-leopard/fast/html/details-open5-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-open5-expected.png.
+        * platform/mac-leopard/fast/html/details-open6-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-open6-expected.checksum.
+        * platform/mac-leopard/fast/html/details-open6-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-open6-expected.png.
+        * platform/mac-leopard/fast/html/details-position-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-position-expected.checksum.
+        * platform/mac-leopard/fast/html/details-position-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-position-expected.png.
+        * platform/mac-leopard/fast/html/details-remove-summary-1-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-1-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-remove-summary-1-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-1-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-remove-summary-1-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-1-expected.checksum.
+        * platform/mac-leopard/fast/html/details-remove-summary-1-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-1-expected.png.
+        * platform/mac-leopard/fast/html/details-remove-summary-2-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-2-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-remove-summary-2-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-2-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-remove-summary-2-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-2-expected.checksum.
+        * platform/mac-leopard/fast/html/details-remove-summary-2-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-2-expected.png.
+        * platform/mac-leopard/fast/html/details-remove-summary-3-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-3-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-remove-summary-3-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-3-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-remove-summary-3-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-3-expected.checksum.
+        * platform/mac-leopard/fast/html/details-remove-summary-3-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-3-expected.png.
+        * platform/mac-leopard/fast/html/details-remove-summary-4-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-4-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-remove-summary-4-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-4-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-remove-summary-4-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-4-expected.checksum.
+        * platform/mac-leopard/fast/html/details-remove-summary-4-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-4-expected.png.
+        * platform/mac-leopard/fast/html/details-remove-summary-5-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-5-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-remove-summary-5-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-5-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-remove-summary-5-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-5-expected.checksum.
+        * platform/mac-leopard/fast/html/details-remove-summary-5-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-5-expected.png.
+        * platform/mac-leopard/fast/html/details-remove-summary-6-and-click-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-6-and-click-expected.checksum.
+        * platform/mac-leopard/fast/html/details-remove-summary-6-and-click-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-6-and-click-expected.png.
+        * platform/mac-leopard/fast/html/details-remove-summary-6-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-6-expected.checksum.
+        * platform/mac-leopard/fast/html/details-remove-summary-6-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-remove-summary-6-expected.png.
+        * platform/mac-leopard/fast/html/details-writing-mode-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-writing-mode-expected.checksum.
+        * platform/mac-leopard/fast/html/details-writing-mode-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/html/details-writing-mode-expected.png.
+        * platform/mac/fast/html/details-add-summary-1-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-1-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-1-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-1-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-10-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-10-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-10-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-10-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-2-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-2-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-2-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-2-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-3-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-3-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-3-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-3-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-4-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-4-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-4-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-4-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-5-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-5-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-5-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-5-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-6-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-6-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-6-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-6-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-7-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-7-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-7-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-7-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-8-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-8-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-8-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-8-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-9-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-9-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-add-summary-9-expected.checksum: Added.
+        * platform/mac/fast/html/details-add-summary-9-expected.png: Added.
+        * platform/mac/fast/html/details-no-summary1-expected.checksum: Added.
+        * platform/mac/fast/html/details-no-summary1-expected.png: Added.
+        * platform/mac/fast/html/details-no-summary2-expected.checksum: Added.
+        * platform/mac/fast/html/details-no-summary2-expected.png: Added.
+        * platform/mac/fast/html/details-no-summary3-expected.checksum: Added.
+        * platform/mac/fast/html/details-no-summary3-expected.png: Added.
+        * platform/mac/fast/html/details-no-summary4-expected.checksum: Added.
+        * platform/mac/fast/html/details-no-summary4-expected.png: Added.
+        * platform/mac/fast/html/details-open-javascript-expected.checksum: Added.
+        * platform/mac/fast/html/details-open-javascript-expected.png: Added.
+        * platform/mac/fast/html/details-open1-expected.checksum: Added.
+        * platform/mac/fast/html/details-open1-expected.png: Added.
+        * platform/mac/fast/html/details-open2-expected.checksum: Added.
+        * platform/mac/fast/html/details-open2-expected.png: Added.
+        * platform/mac/fast/html/details-open3-expected.checksum: Added.
+        * platform/mac/fast/html/details-open3-expected.png: Added.
+        * platform/mac/fast/html/details-open4-expected.checksum: Added.
+        * platform/mac/fast/html/details-open4-expected.png: Added.
+        * platform/mac/fast/html/details-open5-expected.checksum: Added.
+        * platform/mac/fast/html/details-open5-expected.png: Added.
+        * platform/mac/fast/html/details-open6-expected.checksum: Added.
+        * platform/mac/fast/html/details-open6-expected.png: Added.
+        * platform/mac/fast/html/details-position-expected.checksum: Added.
+        * platform/mac/fast/html/details-position-expected.png: Added.
+        * platform/mac/fast/html/details-remove-summary-1-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-remove-summary-1-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-remove-summary-1-expected.checksum: Added.
+        * platform/mac/fast/html/details-remove-summary-1-expected.png: Added.
+        * platform/mac/fast/html/details-remove-summary-2-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-remove-summary-2-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-remove-summary-2-expected.checksum: Added.
+        * platform/mac/fast/html/details-remove-summary-2-expected.png: Added.
+        * platform/mac/fast/html/details-remove-summary-3-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-remove-summary-3-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-remove-summary-3-expected.checksum: Added.
+        * platform/mac/fast/html/details-remove-summary-3-expected.png: Added.
+        * platform/mac/fast/html/details-remove-summary-4-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-remove-summary-4-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-remove-summary-4-expected.checksum: Added.
+        * platform/mac/fast/html/details-remove-summary-4-expected.png: Added.
+        * platform/mac/fast/html/details-remove-summary-5-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-remove-summary-5-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-remove-summary-5-expected.checksum: Added.
+        * platform/mac/fast/html/details-remove-summary-5-expected.png: Added.
+        * platform/mac/fast/html/details-remove-summary-6-and-click-expected.checksum: Added.
+        * platform/mac/fast/html/details-remove-summary-6-and-click-expected.png: Added.
+        * platform/mac/fast/html/details-remove-summary-6-expected.checksum: Added.
+        * platform/mac/fast/html/details-remove-summary-6-expected.png: Added.
+        * platform/mac/fast/html/details-writing-mode-expected.checksum: Added.
+        * platform/mac/fast/html/details-writing-mode-expected.png: Added.
+
 2011-03-22  Ojan Vafai  <ojan@chromium.org>
 
         Add a chromium expectation for this test. V8's exception logging
