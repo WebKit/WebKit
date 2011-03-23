@@ -1,3 +1,15 @@
+2011-03-22  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=56890 It is possible to calculate a 
+        NaN value for "value" in ScrollbarThemeMac::paint()
+        -and corresponding-
+        <rdar://problem/9160621>
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint):
+
 2011-03-17  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Antti Koivisto.

@@ -440,7 +440,11 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
         overhang = scrollbar->currentPos() + scrollbar->visibleSize() - scrollbar->totalSize();
     } else {
         // Within the bounds of the scrollable area.
-        value = scrollbar->currentPos() / scrollbar->maximum();
+        int maximum = scrollbar->maximum();
+        if (maximum > 0)
+            value = scrollbar->currentPos() / maximum;
+        else
+            value = 0;
     }
 
     ScrollAnimatorMac* scrollAnimator = static_cast<ScrollAnimatorMac*>(scrollbar->scrollableArea()->scrollAnimator());
