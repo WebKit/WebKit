@@ -1,3 +1,14 @@
+2011-03-23  Mark Rowe  <mrowe@apple.com>
+
+        Stop setting OTHER_OPTIONS in JavaScriptCore's Makefile.
+
+        It's not necessary to pass "-target All" as xcodebuild always builds the
+        first target in the project unless otherwise specified. The presence of
+        that option also breaks "make clean" since that results in both the
+        -target and -alltargets options being passed to xcodebuild.
+
+        * Makefile:
+
 2011-03-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: bring back Vector::contains that was removed as a part of roll back.
