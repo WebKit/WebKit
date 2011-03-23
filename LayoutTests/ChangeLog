@@ -1,5 +1,137 @@
 2011-03-22  Mihai Parparita  <mihaip@chromium.org>
 
+        Fix baselines for svg/W3C-I18N for Chromium Snow Leopard. Mac SL
+        baselines were added with r81168, so the Chromium ones only need to
+        be in chromium-mac-leopard/ (so that they don't override them). The
+        chromium-mac/ text baselines can be deleted, since we can now
+        fall back on the mac-leopard/ ones added by r81176.
+
+        * platform/chromium-mac-leopard/svg/W3C-I18N/g-dirLTR-ubNone-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/g-dirLTR-ubNone-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/g-dirLTR-ubNone-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/g-dirLTR-ubNone-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/g-dirLTR-ubOverride-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/g-dirLTR-ubOverride-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/g-dirLTR-ubOverride-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/g-dirLTR-ubOverride-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/g-dirRTL-ubNone-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/g-dirRTL-ubNone-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/g-dirRTL-ubNone-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/g-dirRTL-ubNone-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/g-dirRTL-ubOverride-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/g-dirRTL-ubOverride-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/g-dirRTL-ubOverride-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/g-dirRTL-ubOverride-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-no-markup-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-no-markup-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-anchor-no-markup-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-anchor-no-markup-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-dirLTR-ubNone-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-dirLTR-ubNone-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-dirLTR-ubNone-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-dirLTR-ubNone-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-dirLTR-ubOverride-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-dirLTR-ubOverride-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-dirLTR-ubOverride-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-dirLTR-ubOverride-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-dirRTL-ubNone-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-dirRTL-ubNone-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-dirRTL-ubNone-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-dirRTL-ubNone-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-dirRTL-ubOverride-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-dirRTL-ubOverride-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/text-dirRTL-ubOverride-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/text-dirRTL-ubOverride-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-direction-ltr-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-direction-ltr-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-direction-ltr-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-direction-ltr-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-direction-rtl-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-direction-rtl-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-I18N/tspan-direction-rtl-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-I18N/tspan-direction-rtl-expected.png.
+        * platform/chromium-mac/svg/W3C-I18N/g-dirLTR-ubNone-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/g-dirLTR-ubOverride-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-anchor-no-markup-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-dirLTR-ubNone-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/text-dirRTL-ubOverride-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-direction-ltr-expected.txt: Removed.
+        * platform/chromium-mac/svg/W3C-I18N/tspan-direction-rtl-expected.txt: Removed.
+
+2011-03-22  Mihai Parparita  <mihaip@chromium.org>
+
         Add Snow Leopard baselines for fast/html/details* tests added by r81035
         (should work for both Mac and Chromium-Mac). Promote current
         chromium-mac baselines to mac-leopard, since they work for both on
