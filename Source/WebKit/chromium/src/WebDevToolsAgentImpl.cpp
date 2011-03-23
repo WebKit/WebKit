@@ -46,7 +46,6 @@
 #include "ResourceResponse.h"
 #include "ScriptDebugServer.h"
 #include "V8Binding.h"
-#include "V8Node.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WebDataSource.h"
@@ -225,14 +224,6 @@ void WebDevToolsAgentImpl::dispatchOnInspectorBackend(const WebString& message)
 void WebDevToolsAgentImpl::inspectElementAt(const WebPoint& point)
 {
     m_webViewImpl->inspectElementAt(point);
-}
-
-void WebDevToolsAgentImpl::inspectNode(v8::Handle<v8::Value> node)
-{
-    if (!V8Node::HasInstance(node))
-        V8Proxy::setDOMException(TYPE_MISMATCH_ERR);
-    else
-        inspectorController()->inspect(V8Node::toNative(v8::Handle<v8::Object>::Cast(node)));
 }
 
 void WebDevToolsAgentImpl::setRuntimeProperty(const WebString& name, const WebString& value)

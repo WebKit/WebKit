@@ -1,3 +1,14 @@
+2011-03-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] Web Inspector: remove inspectNode method from WebDevToolsAgent
+        https://bugs.webkit.org/show_bug.cgi?id=56926
+
+        * public/WebDevToolsAgent.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        * src/WebDevToolsAgentImpl.h:
+
 2011-03-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81686.
