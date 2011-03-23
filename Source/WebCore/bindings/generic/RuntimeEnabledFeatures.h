@@ -165,6 +165,12 @@ public:
     static void setJavaScriptI18NAPIEnabled(bool isEnabled) { isJavaScriptI18NAPIEnabled = isEnabled; }
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+    static bool mediaStreamEnabled() { return isMediaStreamEnabled; }
+    static void setMediaStreamEnabled(bool isEnabled) { isMediaStreamEnabled = isEnabled; }
+    static bool webkitGetUserMediaEnabled() { return isMediaStreamEnabled; }
+#endif
+
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -193,6 +199,10 @@ private:
 
 #if ENABLE(JAVASCRIPT_I18N_API)
     static bool isJavaScriptI18NAPIEnabled;
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    static bool isMediaStreamEnabled;
 #endif
 };
 

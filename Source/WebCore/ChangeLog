@@ -1,3 +1,20 @@
+2011-03-23  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Media Stream API: add a flag to RuntimeEnabledFeatures.
+        https://bugs.webkit.org/show_bug.cgi?id=56921
+
+        Add a flag to RuntimeEnabledFeatures to check if the Media Stream API is enabled at runtime.
+
+        Tests for the Media Stream API will be provided by the bug 56587.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::mediaStreamEnabled):
+        (WebCore::RuntimeEnabledFeatures::setMediaStreamEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitGetUserMediaEnabled):
+
 2011-03-23  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt.
