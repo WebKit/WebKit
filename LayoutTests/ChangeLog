@@ -1,3 +1,20 @@
+2011-03-22  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Unreviewed, rebaseline chromium gpu tests after r81715.
+
+        * platform/chromium-gpu-linux/compositing/geometry/foreground-layer-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/foreground-layer-expected.png: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/repaint-foreground-layer-expected.checksum: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/repaint-foreground-layer-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/foreground-layer-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/foreground-layer-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/repaint-foreground-layer-expected.checksum: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/repaint-foreground-layer-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/geometry/foreground-layer-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/geometry/foreground-layer-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/geometry/repaint-foreground-layer-expected.checksum: Added.
+        * platform/chromium-gpu-win/compositing/geometry/repaint-foreground-layer-expected.png: Added.
+
 2011-03-22  Dean Jackson  <dino@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=56242
