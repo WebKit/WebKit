@@ -45,6 +45,7 @@ class WebURL;
 class WebClipboard {
 public:
     enum Format {
+        FormatPlainText,
         FormatHTML,
         FormatBookmark,
         FormatSmartPaste

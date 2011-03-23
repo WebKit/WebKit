@@ -1,3 +1,16 @@
+2011-03-23  Viet-Trung Luu  <viettrungluu@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Add FormatPlainText to WebClipboard::Format enumeration.
+        https://bugs.webkit.org/show_bug.cgi?id=56868
+
+        Chromium's WebClipboard::isFormatAvailable() will be correspondingly
+        extended.
+
+        * public/WebClipboard.h:
+        * src/AssertMatchingEnums.cpp:
+
 2011-03-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
