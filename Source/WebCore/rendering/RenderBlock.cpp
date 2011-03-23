@@ -4866,7 +4866,7 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                     continue;
                 }
 
-                if (t->style()->hasTextCombine())
+                if (t->style()->hasTextCombine() && t->isCombineText())
                     toRenderCombineText(t)->combineText();
 
                 // Determine if we have a breakable character.  Pass in

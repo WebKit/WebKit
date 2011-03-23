@@ -1704,7 +1704,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 #endif
 
             RenderStyle* style = t->style(firstLine);
-            if (style->hasTextCombine())
+            if (style->hasTextCombine() && o->isCombineText())
                 toRenderCombineText(o)->combineText();
 
             int strlen = t->textLength();

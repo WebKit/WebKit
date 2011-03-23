@@ -494,7 +494,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     boxOrigin.move(tx, ty);    
     FloatRect boxRect(boxOrigin, IntSize(logicalWidth(), logicalHeight()));
 
-    RenderCombineText* combinedText = styleToUse->hasTextCombine() && toRenderCombineText(textRenderer())->isCombined() ? toRenderCombineText(textRenderer()) : 0;
+    RenderCombineText* combinedText = styleToUse->hasTextCombine() && textRenderer()->isCombineText() && toRenderCombineText(textRenderer())->isCombined() ? toRenderCombineText(textRenderer()) : 0;
 
     bool shouldRotate = !isHorizontal() && !combinedText;
     if (shouldRotate)

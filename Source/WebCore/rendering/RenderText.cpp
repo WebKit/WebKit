@@ -566,7 +566,7 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
 
 ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len, float xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
-    if (style()->hasTextCombine()) {
+    if (style()->hasTextCombine() && isCombineText()) {
         const RenderCombineText* combineText = toRenderCombineText(this);
         if (combineText->isCombined())
             return combineText->combinedTextWidth(f);

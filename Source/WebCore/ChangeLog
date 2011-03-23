@@ -1,3 +1,22 @@
+2011-03-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Add combine text cast checks since style property is insufficient
+        in telling object types.
+        https://bugs.webkit.org/show_bug.cgi?id=56358
+
+        Test: fast/text/input-box-text-fragment-combine-text-crash.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+
 2011-03-23  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
