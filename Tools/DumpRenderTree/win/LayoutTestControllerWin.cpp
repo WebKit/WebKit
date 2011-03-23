@@ -933,17 +933,23 @@ bool LayoutTestController::isCommandEnabled(JSStringRef /*name*/)
 
 void LayoutTestController::clearAllApplicationCaches()
 {
-    // FIXME: implement to support Application Cache quotas.
+    // FIXME: Implement to support application cache quotas.
 }
 
 void LayoutTestController::clearApplicationCacheForOrigin(JSStringRef origin)
 {
-    // FIXME: implement to support deleting all ApplicationCache for an origin.
+    // FIXME: Implement to support deleting all application cache for an origin.
 }
 
 void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
 {
-    // FIXME: implement to support Application Cache quotas.
+    // FIXME: Implement to support application cache quotas.
+}
+
+JSValueRef LayoutTestController::originsWithApplicationCache(JSContextRef context)
+{
+    // FIXME: Implement to get origins that have application caches.
+    return JSValueMakeUndefined(context);
 }
 
 void LayoutTestController::clearAllDatabases()

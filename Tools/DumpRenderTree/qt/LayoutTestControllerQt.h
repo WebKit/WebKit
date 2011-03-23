@@ -191,6 +191,7 @@ public slots:
     void clearAllApplicationCaches();
     void clearApplicationCacheForOrigin(const QString& url);
     void setApplicationCacheOriginQuota(unsigned long long quota);
+    QStringList originsWithApplicationCache();
 
     void setDatabaseQuota(int size);
     void clearAllDatabases();

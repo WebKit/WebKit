@@ -154,6 +154,25 @@ void LayoutTestController::clearApplicationCacheForOrigin(JSStringRef url)
     [origin release];
 }
 
+JSValueRef originsArrayToJS(JSContextRef context, NSArray* origins)
+{
+    NSUInteger count = [origins count];
+
+    JSValueRef jsOriginsArray[count];
+    for (NSUInteger i = 0; i < count; i++) {
+        NSString *origin = [[origins objectAtIndex:i] databaseIdentifier];
+        JSRetainPtr<JSStringRef> originJS(Adopt, JSStringCreateWithCFString((CFStringRef)origin));
+        jsOriginsArray[i] = JSValueMakeString(context, originJS.get());
+    }
+
+    return JSObjectMakeArray(context, count, jsOriginsArray, NULL);
+}
+
+JSValueRef LayoutTestController::originsWithApplicationCache(JSContextRef context)
+{
+    return originsArrayToJS(context, [WebApplicationCache originsWithCache]);
+}
+
 void LayoutTestController::clearAllDatabases()
 {
     [[WebDatabaseManager sharedWebDatabaseManager] deleteAllDatabases];
@@ -166,19 +185,7 @@ void LayoutTestController::deleteAllLocalStorage()
 
 JSValueRef LayoutTestController::originsWithLocalStorage(JSContextRef context)
 {
-    WebStorageManager *storage = [WebStorageManager sharedWebStorageManager];
-
-    NSArray *origins = [storage origins];
-    NSInteger count = [origins count];
-
-    JSValueRef jsOriginsArray[count];
-    for (NSInteger i = 0; i < count; i++) {
-        NSString *origin = [[origins objectAtIndex:i] databaseIdentifier];
-        JSRetainPtr<JSStringRef> str(Adopt, JSStringCreateWithCFString((CFStringRef)origin));
-        jsOriginsArray[i] = JSValueMakeString(context, str.get());
-    }
-
-    return JSObjectMakeArray(context, count, jsOriginsArray, NULL);
+    return originsArrayToJS(context, [[WebStorageManager sharedWebStorageManager] origins]);
 }
 
 void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)

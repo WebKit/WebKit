@@ -1954,6 +1954,7 @@ http/tests/appcache/update-cache.html
 
 # WebKitTestRunner needs layoutTestController.clearAllApplicationCaches
 http/tests/appcache/origin-quota.html
+http/tests/appcache/origins-with-appcache.html
 
 # WebKitTestRunner needs layoutTestController.callShouldCloseOnWebView
 fast/events/onbeforeunload-focused-iframe.html

@@ -1,3 +1,24 @@
+2011-03-22  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add +[WebApplicationCache getOriginsWithCache]
+        https://bugs.webkit.org/show_bug.cgi?id=56722
+
+        This test twice retrieves lists of origins with application cache.
+        First, after deleting all application cache and after adding an iframe with an
+        application cache.
+
+        * http/tests/appcache/origins-with-appcache-expected.txt: Added.
+        * http/tests/appcache/origins-with-appcache.html: Added.
+        * http/tests/appcache/resources/origins-with-appcache-iframe.html: Added.
+        * http/tests/appcache/resources/origins-with-appcache-iframe.manifest: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/qt/Skipped:
+
 2011-03-22  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Unreviewed, rebaseline chromium gpu tests after r81715.

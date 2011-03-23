@@ -38,4 +38,6 @@
 + (void)deleteAllApplicationCaches;
 + (void)deleteCacheForOrigin:(WebSecurityOrigin *)origin;
 
++ (NSArray *)originsWithCache;
+
 @end

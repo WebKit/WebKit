@@ -1,3 +1,16 @@
+2011-03-22  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add +[WebApplicationCache getOriginsWithCache]
+        https://bugs.webkit.org/show_bug.cgi?id=56722
+
+        Call existing WebCore::ApplicationCacheStorage::getOriginsWithCache API.
+
+        * WebCoreSupport/WebApplicationCache.h:
+        * WebCoreSupport/WebApplicationCache.mm:
+        (+[WebApplicationCache originsWithCache]):
+
 2011-03-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

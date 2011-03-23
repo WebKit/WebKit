@@ -1,0 +1,5 @@
+This test verifies that ApplicationCacheStorage can report the set of origins that have an application cache. First, it tests that no origins are reported after all application caches are removed. Then, it loads an iframe that places a PNG into an application cache for the DumpRenderTree origin, and tests that this origin is now reported to have application cache.
+
+Origins with application cache after deletion: 
+Origins with application cache after frame was cached: http_127.0.0.1_8000
+

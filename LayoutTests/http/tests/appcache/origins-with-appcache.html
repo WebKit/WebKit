@@ -1,0 +1,57 @@
+<html>
+<head>
+<script>
+
+// Helpers.
+
+function log(message) {
+    document.getElementById("console").innerHTML += message + "<br>";
+}
+
+function handleMessage(event) {
+    if (event.data === "created_cache") {
+        log("Origins with application cache after frame was cached: " + layoutTestController.originsWithApplicationCache());
+    } else {
+        log("received invalid message from frame '" + event.data + "'");
+    }
+
+    finishTest();
+}
+
+function addIFrameWithCache()
+{
+    var iframe = document.createElement("iframe");
+    iframe.src = "resources/origins-with-appcache-iframe.html";
+    document.body.appendChild(iframe);
+}
+
+// Start and end.
+
+function startTest() {
+    if (window.layoutTestController) {
+        layoutTestController.clearAllApplicationCaches();
+        log("Origins with application cache after deletion: " + layoutTestController.originsWithApplicationCache());
+        layoutTestController.dumpApplicationCacheDelegateCallbacks();
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    window.onmessage = handleMessage;
+
+    addIFrameWithCache();
+}
+
+function finishTest() {
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+</head>
+<body onload="startTest()">
+<p>
+This test verifies that ApplicationCacheStorage can report the set of origins that have an application cache. First, it tests that no origins are reported after all application caches are removed. Then, it loads an iframe that places a PNG into an application cache for the DumpRenderTree origin, and tests that this origin is now reported to have application cache.
+</p>
+<pre id="console"></pre>
+</body>
+</html>

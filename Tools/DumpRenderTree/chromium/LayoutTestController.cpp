@@ -741,19 +741,25 @@ void LayoutTestController::setUseDashboardCompatibilityMode(const CppArgumentLis
 
 void LayoutTestController::clearAllApplicationCaches(const CppArgumentList&, CppVariant* result)
 {
-    // FIXME: implement to support Application Cache Quotas.
+    // FIXME: Implement to support application cache quotas.
     result->setNull();
 }
 
 void LayoutTestController::clearApplicationCacheForOrigin(const CppArgumentList&, CppVariant* result)
 {
-    // FIXME: Implement to support deleting all ApplicationCache for an origin
+    // FIXME: Implement to support deleting all application cache for an origin.
     result->setNull();
 }
 
 void LayoutTestController::setApplicationCacheOriginQuota(const CppArgumentList&, CppVariant* result)
 {
-    // FIXME: implement to support Application Cache Quotas.
+    // FIXME: Implement to support application cache quotas.
+    result->setNull();
+}
+
+void LayoutTestController::originsWithApplicationCache(const CppArgumentList&, CppVariant* result)
+{
+    // FIXME: Implement to support getting origins that have application caches.
     result->setNull();
 }
 

@@ -1731,6 +1731,8 @@ BUGCR2844 SKIP : http/tests/appcache/non-html.xhtml = TIMEOUT PASS
 
 // LayoutTestController::clearApplicationCacheForOrigin isn't implemented
 BUGWK SKIP : http/tests/appcache/origin-delete.html = FAIL
+// LayoutTestController::getOriginsWithApplicationCache isn't implemented
+BUGWK SKIP : http/tests/appcache/origins-with-appcache.html = FAIL
 
 // New failures from WebKit r51577
 BUGCR29164 WIN LINUX MAC : fast/frames/sandboxed-iframe-plugins.html = TEXT

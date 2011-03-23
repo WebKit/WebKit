@@ -1,3 +1,31 @@
+2011-03-22  Anton D'Auria  <adauria@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add +[WebApplicationCache getOriginsWithCache]
+        https://bugs.webkit.org/show_bug.cgi?id=56722
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (originsWithApplicationCacheCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp: Added stub.
+        (LayoutTestController::originsWithApplicationCache):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp: Added stub.
+        (LayoutTestController::originsWithApplicationCache):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm: Pass array of origin's database identifiers.
+        (originsArrayToJS): Helper function for converting array of WebSecurityOrigins to a JS array of origin identifiers.
+        (LayoutTestController::originsWithApplicationCache):
+        (LayoutTestController::originsWithLocalStorage):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp: Added stub.
+        (LayoutTestController::originsWithApplicationCache):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp: Added stub.
+        (LayoutTestController::originsWithApplicationCache):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp: Added stub.
+        (LayoutTestController::originsWithApplicationCache):
+
 2011-03-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

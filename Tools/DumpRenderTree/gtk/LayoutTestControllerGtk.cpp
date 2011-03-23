@@ -643,17 +643,23 @@ void LayoutTestController::clearPersistentUserStyleSheet()
 
 void LayoutTestController::clearAllApplicationCaches()
 {
-    // FIXME: implement to support Application Cache quotas.
+    // FIXME: Implement to support application cache quotas.
 }
 
 void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
 {
-    // FIXME: implement to support Application Cache quotas.
+    // FIXME: Implement to support application cache quotas.
 }
 
 void LayoutTestController::clearApplicationCacheForOrigin(OpaqueJSString*)
 {
-    // FIXME: implement to support deleting all Application Caches for an origin.
+    // FIXME: Implement to support deleting all application caches for an origin.
+}
+
+JSValueRef LayoutTestController::originsWithApplicationCache(JSContextRef context)
+{
+    // FIXME: Implement to get origins that contain application caches.
+    return JSValueMakeUndefined(context);
 }
 
 void LayoutTestController::clearAllDatabases()

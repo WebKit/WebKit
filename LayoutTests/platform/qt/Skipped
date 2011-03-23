@@ -3238,6 +3238,8 @@ http/tests/xmlhttprequest/basic-auth.html
 
 # LayoutTestController::clearApplicationCacheForOrigin is not implemented
 http/tests/appcache/origin-delete.html
+# LayoutTestController::getOriginsWithApplicationCache is not implemented
+http/tests/appcache/origins-with-appcache.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=56691
 http/tests/inspector/network/network-size-chunked.html

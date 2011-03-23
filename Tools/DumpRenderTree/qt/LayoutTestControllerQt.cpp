@@ -554,7 +554,7 @@ void LayoutTestController::clearAllApplicationCaches()
 
 void LayoutTestController::clearApplicationCacheForOrigin(const QString& url)
 {
-    // FIXME: Implement to support deleting all ApplicationCache for an origin.
+    // FIXME: Implement to support deleting all application caches for an origin.
 }
 
 void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quota)
@@ -562,6 +562,12 @@ void LayoutTestController::setApplicationCacheOriginQuota(unsigned long long quo
     if (!m_topLoadingFrame)
         return;
     m_topLoadingFrame->securityOrigin().setApplicationCacheQuota(quota);
+}
+
+QStringList LayoutTestController::originsWithApplicationCache()
+{
+    // FIXME: Implement to get origins that have application caches.
+    return QStringList();
 }
 
 void LayoutTestController::setDatabaseQuota(int size)

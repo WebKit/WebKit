@@ -63,6 +63,7 @@ public:
     void displayInvalidatedRegion();
     void execCommand(JSStringRef name, JSStringRef value);
     bool findString(JSContextRef, JSStringRef, JSObjectRef optionsArray);
+    JSValueRef originsWithApplicationCache(JSContextRef);
     bool isCommandEnabled(JSStringRef name);
     void keepWebHistory();
     JSValueRef computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef);
