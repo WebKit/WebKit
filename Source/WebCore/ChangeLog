@@ -1,3 +1,19 @@
+2011-03-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Replace height with logicalHeight when removing items from
+        gPercentHeightDescendantMap so that it is writing mode aware.
+        https://bugs.webkit.org/show_bug.cgi?id=56902
+
+        Test: fast/block/percent-height-descendant-not-removed-crash.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::destroy):
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::destroy):
+
 2011-03-23  Anders Carlsson  <andersca@apple.com>
 
         Fix clang build.

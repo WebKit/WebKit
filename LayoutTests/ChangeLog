@@ -1,3 +1,14 @@
+2011-03-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Tests that we do not crash when accessing entries in the percent
+        height descendant map.
+        https://bugs.webkit.org/show_bug.cgi?id=56902
+
+        * fast/block/percent-height-descendant-not-removed-crash-expected.txt: Added.
+        * fast/block/percent-height-descendant-not-removed-crash.html: Added.
+
 2011-03-23  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline a GTK+ result after r81684.
