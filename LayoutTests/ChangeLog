@@ -1,3 +1,10 @@
+2011-03-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Update expected files after r81684.
+
+        * platform/qt/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2011-03-22  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber-stamped by Beth Dakin.
