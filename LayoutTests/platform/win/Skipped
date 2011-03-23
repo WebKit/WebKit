@@ -1200,9 +1200,6 @@ fast/html/details-remove-summary-4-and-click.html
 fast/html/details-remove-summary-5-and-click.html
 fast/html/details-remove-summary-6-and-click.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=56242
-transitions/interrupted-accelerated-transition.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=56478
 plugins/refcount-leaks.html
 

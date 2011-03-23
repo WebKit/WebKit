@@ -1,3 +1,14 @@
+2011-03-22  Dean Jackson  <dino@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=56242
+        transitions/interrupted-accelerated-transition.html was failing
+
+        Unskipping this after r81722
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2011-03-22  Adam Klein  <adamk@chromium.org>
 
         Reviewed by David Levin.

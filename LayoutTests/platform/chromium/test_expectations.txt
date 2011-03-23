@@ -3259,8 +3259,6 @@ BUGCR76159 MAC LINUX : http/tests/media/video-play-stall-before-meta-data.html =
 BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = CRASH
 
 // Some transition tests are flakey since r79985
-// This test has an expectation for DEBUG above, so the test runner fails for Linux Debug builders.
-BUGWK56242 LINUX RELEASE : transitions/interrupted-accelerated-transition.html = PASS FAIL
 BUGWK56488 SKIP : compositing/transitions/scale-transition-no-start.html = CRASH
 
 // Slow
