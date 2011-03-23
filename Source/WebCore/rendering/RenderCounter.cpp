@@ -474,11 +474,19 @@ bool RenderCounter::isCounter() const
 
 PassRefPtr<StringImpl> RenderCounter::originalText() const
 {
-    if (!parent())
-        return 0;
-
     if (!m_counterNode) {
-        makeCounterNode(parent(), m_counter.identifier(), true)->addRenderer(const_cast<RenderCounter*>(this));
+        RenderObject* beforeAfterContainer = parent();
+        while (true) {
+            if (!beforeAfterContainer)
+                return 0;
+            if (!beforeAfterContainer->isAnonymous())
+                return 0; // RenderCounters are restricted to before and after pseudo elements
+            PseudoId containerStyle = beforeAfterContainer->style()->styleType();
+            if ((containerStyle == BEFORE) || (containerStyle == AFTER))
+                break;
+            beforeAfterContainer = beforeAfterContainer->parent();
+        }
+        makeCounterNode(beforeAfterContainer, m_counter.identifier(), true)->addRenderer(const_cast<RenderCounter*>(this));
         ASSERT(m_counterNode);
     }
     CounterNode* child = m_counterNode;

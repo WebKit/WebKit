@@ -1,3 +1,16 @@
+2011-03-23  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by David Hyatt.
+
+        Added new test to expose failure to correctly find the 
+        before/after container when creating a CSS counter.
+
+        CSS 2.1 failure: various before-after-* tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=47207
+
+        * fast/css/counters/complex-before-expected.txt: Added.
+        * fast/css/counters/complex-before.html: Added.
+
 2011-03-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Update expected files after r81684.

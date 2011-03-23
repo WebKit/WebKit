@@ -1,3 +1,19 @@
+2011-03-23  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by David Hyatt.
+
+        Modified RenderCounter::originalText() to correctly attach
+        the created counter to the before/after container even when
+        that is not the RenderCounter's direct parent.
+
+        CSS 2.1 failure: various before-after-* tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=47207
+
+        Test: fast/css/counters/complex-before.html
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::originalText):
+
 2011-03-23  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.
