@@ -286,6 +286,5 @@
     <file>Images/warningMediumIcon.png</file>
     <file>Images/warningOrangeDot.png</file>
     <file>Images/warningsErrors.png</file>
-    <file alias="DebuggerScript.js">../../bindings/v8/DebuggerScript.js</file>
 </qresource>
 </RCC>

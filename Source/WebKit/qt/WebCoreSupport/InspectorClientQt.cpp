@@ -174,22 +174,6 @@ private:
 
 }
 
-#if USE(V8)
-static void ensureDebuggerScriptLoaded()
-{
-    static bool scriptLoaded = false;
-    if (scriptLoaded)
-        return;
-
-    QFile debuggerScriptFile(":/webkit/inspector/DebuggerScript.js");
-    if (debuggerScriptFile.open(QIODevice::ReadOnly)) {
-        QByteArray ba = debuggerScriptFile.readAll();
-        ScriptDebugServer::shared().setDebuggerScriptSource(String(ba.constData(), ba.length()));
-        scriptLoaded = true;
-    }
-}
-#endif
-
 InspectorClientQt::InspectorClientQt(QWebPage* page)
     : m_inspectedWebPage(page)
     , m_frontendWebPage(0)
@@ -218,10 +202,6 @@ void InspectorClientQt::inspectorDestroyed()
 void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController* inspectorController)
 {
 #if ENABLE(INSPECTOR)
-#if USE(V8)
-    ensureDebuggerScriptLoaded();
-#endif
-
     QWebView* inspectorView = new QWebView;
     InspectorClientWebPage* inspectorPage = new InspectorClientWebPage(inspectorView);
     inspectorView->setPage(inspectorPage);

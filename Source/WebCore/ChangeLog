@@ -1,3 +1,12 @@
+2011-03-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [V8] Web Inspector: compile DebuggerScript.js into DebuggerScriptSource.h
+        https://bugs.webkit.org/show_bug.cgi?id=56843
+
+        * inspector/front-end/WebKit.qrc:
+
 2011-03-23  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Yury Semikhatsky.
