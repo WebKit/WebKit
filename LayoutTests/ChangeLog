@@ -1,3 +1,13 @@
+2011-03-23  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Preserve unicode-bidi:bidi-override in anonymous block.
+        https://bugs.webkit.org/show_bug.cgi?id=21440
+
+        * fast/css/bidi-override-in-anonymous-block.html: Added.
+        * platform/mac/fast/css/bidi-override-in-anonymous-block-expected.txt: Added.
+
 2011-03-23  Mihai Parparita  <mihaip@chromium.org>
 
         Group Snow Leopard failures for bug 56962.

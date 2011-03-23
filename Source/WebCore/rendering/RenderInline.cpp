@@ -201,8 +201,7 @@ void RenderInline::addChildIgnoringContinuation(RenderObject* newChild, RenderOb
         // inline into continuations.  This involves creating an anonymous block box to hold
         // |newChild|.  We then make that block box a continuation of this inline.  We take all of
         // the children after |beforeChild| and put them in a clone of this object.
-        RefPtr<RenderStyle> newStyle = RenderStyle::create();
-        newStyle->inheritFrom(style());
+        RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
         newStyle->setDisplay(BLOCK);
 
         RenderBlock* newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);

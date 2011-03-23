@@ -313,6 +313,7 @@ private:
 public:
     static PassRefPtr<RenderStyle> create();
     static PassRefPtr<RenderStyle> createDefaultStyle();
+    static PassRefPtr<RenderStyle> createAnonymousStyle(const RenderStyle* parentStyle);
     static PassRefPtr<RenderStyle> clone(const RenderStyle*);
 
     ~RenderStyle();
@@ -1322,6 +1323,7 @@ public:
 #endif
 
 private:
+    void inheritUnicodeBidiFrom(const RenderStyle* parent) { noninherited_flags._unicodeBidi = parent->noninherited_flags._unicodeBidi; }
     void getShadowExtent(const ShadowData*, int& top, int& right, int& bottom, int& left) const;
     void getShadowHorizontalExtent(const ShadowData*, int& left, int& right) const;
     void getShadowVerticalExtent(const ShadowData*, int& top, int& bottom) const;

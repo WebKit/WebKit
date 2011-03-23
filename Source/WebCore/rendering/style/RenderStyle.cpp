@@ -56,6 +56,14 @@ PassRefPtr<RenderStyle> RenderStyle::createDefaultStyle()
     return adoptRef(new RenderStyle(true));
 }
 
+PassRefPtr<RenderStyle> RenderStyle::createAnonymousStyle(const RenderStyle* parentStyle)
+{
+    RefPtr<RenderStyle> newStyle = RenderStyle::create();
+    newStyle->inheritFrom(parentStyle);
+    newStyle->inheritUnicodeBidiFrom(parentStyle);
+    return newStyle;
+}
+
 PassRefPtr<RenderStyle> RenderStyle::clone(const RenderStyle* other)
 {
     return adoptRef(new RenderStyle(*other));

@@ -240,8 +240,7 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     // FIXME: We could save this call when the change only affected non-inherited properties
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isAnonymousBlock()) {
-            RefPtr<RenderStyle> newStyle = RenderStyle::create();
-            newStyle->inheritFrom(style());
+            RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
             if (style()->specifiesColumns()) {
                 if (child->style()->specifiesColumns())
                     newStyle->inheritColumnPropertiesFrom(style());
@@ -976,8 +975,7 @@ void RenderBlock::removeChild(RenderObject* oldChild)
             // to clear out inherited column properties by just making a new style, and to also clear the
             // column span flag if it is set.
             ASSERT(!inlineChildrenBlock->continuation());
-            RefPtr<RenderStyle> newStyle = RenderStyle::create();
-            newStyle->inheritFrom(style());
+            RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
             children()->removeChildNode(this, inlineChildrenBlock, inlineChildrenBlock->hasLayer());
             inlineChildrenBlock->setStyle(newStyle);
             
@@ -5910,8 +5908,7 @@ void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
 
 RenderBlock* RenderBlock::createAnonymousBlock(bool isFlexibleBox) const
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::create();
-    newStyle->inheritFrom(style());
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
 
     RenderBlock* newBox = 0;
     if (isFlexibleBox) {
@@ -5937,8 +5934,7 @@ RenderBlock* RenderBlock::createAnonymousBlockWithSameTypeAs(RenderBlock* otherA
 
 RenderBlock* RenderBlock::createAnonymousColumnsBlock() const
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::create();
-    newStyle->inheritFrom(style());
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
     newStyle->inheritColumnPropertiesFrom(style());
     newStyle->setDisplay(BLOCK);
 
@@ -5949,8 +5945,7 @@ RenderBlock* RenderBlock::createAnonymousColumnsBlock() const
 
 RenderBlock* RenderBlock::createAnonymousColumnSpanBlock() const
 {
-    RefPtr<RenderStyle> newStyle = RenderStyle::create();
-    newStyle->inheritFrom(style());
+    RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(style());
     newStyle->setColumnSpan(true);
     newStyle->setDisplay(BLOCK);
 

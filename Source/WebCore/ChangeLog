@@ -1,3 +1,41 @@
+2011-03-23  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Preserve unicode-bidi:bidi-override in anonymous block.
+        https://bugs.webkit.org/show_bug.cgi?id=21440
+
+        unicode-bidi:bidi-override should be preserved in anonymous block
+        according to http://www.w3.org/TR/CSS21/visuren.html#propdef-unicode-bidi.
+
+        Introduce a helper function RenderStyle()::createAnonymousStyle() which
+        creates a default RenderStyle, inherits the inherited style from parent,
+        and inherit unicode-bidi:bidi-override from parent.
+        And replace the style creation when anonymous block is created.
+
+        Note: the TABLE releated anonymous blocks are untouched, including:
+        TABLE, TABLE_CELL, TABLE_ROW, TABLE_ROW_GROUP anonymous blocks created in
+        RenderObject, RenderTable, RenderTableRow, and RenderTableSection,
+        due to the expected behavior is not clear.
+        Please refer to https://bugs.webkit.org/show_bug.cgi?id=56594.
+        
+        Test: fast/css/bidi-override-in-anonymous-block.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::removeChild):
+        (WebCore::RenderBlock::createAnonymousBlock):
+        (WebCore::RenderBlock::createAnonymousColumnsBlock):
+        (WebCore::RenderBlock::createAnonymousColumnSpanBlock):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::createRubyBase):
+        (WebCore::RenderRubyRun::staticCreateRubyRun):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::createAnonymousStyle):
+        * rendering/style/RenderStyle.h:
+
 2011-03-23  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
