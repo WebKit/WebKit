@@ -1,3 +1,18 @@
+2011-03-22  Dean Jackson  <dino@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=56488
+        Some transitions/animations tests fail assertion in AnimationBase::updateStateMachine
+
+        Turning some tests back on after r81722.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+        - unskipping
+          animations/suspend-resume-animation-events.html
+          compositing/transitions/scale-transition-no-start.html
+          compositing/transitions/singular-scale-transition.html
+
 2011-03-22  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by Alexey Proskuryakov.
