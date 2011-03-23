@@ -1,3 +1,10 @@
+2011-03-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: bring back Vector::contains that was removed as a part of roll back.
+
+        * wtf/Vector.h:
+        (WTF::::contains):
+
 2011-03-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81686.
