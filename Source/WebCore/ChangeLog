@@ -1,3 +1,22 @@
+2011-03-23  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Antonio Gomes.
+
+        Clean up: Rename HTMLFrameSetElement::{noresize, frameborder, and frameBorderSet}
+        to conform to the WebKit Code style guidelines
+        https://bugs.webkit.org/show_bug.cgi?id=56871
+
+        No functionality changed. So, no new tests.
+
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::HTMLFrameSetElement):
+        (WebCore::HTMLFrameSetElement::parseMappedAttribute):
+        (WebCore::HTMLFrameSetElement::attach):
+        (WebCore::HTMLFrameSetElement::defaultEventHandler):
+        * html/HTMLFrameSetElement.h:
+        (WebCore::HTMLFrameSetElement::hasFrameBorder):
+        (WebCore::HTMLFrameSetElement::noResize):
+
 2011-03-23  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dan Bernstein.

@@ -33,8 +33,8 @@ class HTMLFrameSetElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLFrameSetElement> create(const QualifiedName&, Document*);
 
-    bool hasFrameBorder() const { return frameborder; }
-    bool noResize() const { return noresize; }
+    bool hasFrameBorder() const { return m_frameborder; }
+    bool noResize() const { return m_noresize; }
 
     int totalRows() const { return m_totalRows; }
     int totalCols() const { return m_totalCols; }
@@ -92,9 +92,9 @@ private:
     
     bool m_borderColorSet;
 
-    bool frameborder;
-    bool frameBorderSet;
-    bool noresize;
+    bool m_frameborder;
+    bool m_frameborderSet;
+    bool m_noresize;
 };
 
 } // namespace WebCore

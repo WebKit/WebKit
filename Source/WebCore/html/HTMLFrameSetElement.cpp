@@ -49,9 +49,9 @@ HTMLFrameSetElement::HTMLFrameSetElement(const QualifiedName& tagName, Document*
     , m_border(6)
     , m_borderSet(false)
     , m_borderColorSet(false)
-    , frameborder(true)
-    , frameBorderSet(false)
-    , noresize(false)
+    , m_frameborder(true)
+    , m_frameborderSet(false)
+    , m_noresize(false)
 {
     ASSERT(hasTagName(framesetTag));
 }
@@ -87,21 +87,21 @@ void HTMLFrameSetElement::parseMappedAttribute(Attribute* attr)
         if (!attr->isNull()) {
             // false or "no" or "0"..
             if (attr->value().toInt() == 0) {
-                frameborder = false;
+                m_frameborder = false;
                 m_border = 0;
             }
-            frameBorderSet = true;
+            m_frameborderSet = true;
         } else {
-            frameborder = false;
-            frameBorderSet = false;
+            m_frameborder = false;
+            m_frameborderSet = false;
         }
     } else if (attr->name() == noresizeAttr) {
-        noresize = true;
+        m_noresize = true;
     } else if (attr->name() == borderAttr) {
         if (!attr->isNull()) {
             m_border = attr->value().toInt();
             if (!m_border)
-                frameborder = false;
+                m_frameborder = false;
             m_borderSet = true;
         } else
             m_borderSet = false;
@@ -169,16 +169,16 @@ void HTMLFrameSetElement::attach()
     for (ContainerNode* node = parentNode(); node; node = node->parentNode()) {
         if (node->hasTagName(framesetTag)) {
             HTMLFrameSetElement* frameset = static_cast<HTMLFrameSetElement*>(node);
-            if (!frameBorderSet)
-                frameborder = frameset->hasFrameBorder();
-            if (frameborder) {
+            if (!m_frameborderSet)
+                m_frameborder = frameset->hasFrameBorder();
+            if (m_frameborder) {
                 if (!m_borderSet)
                     m_border = frameset->border();
                 if (!m_borderColorSet)
                     m_borderColorSet = frameset->hasBorderColor();
             }
-            if (!noresize)
-                noresize = frameset->noResize();
+            if (!m_noresize)
+                m_noresize = frameset->noResize();
             break;
         }
     }
@@ -188,7 +188,7 @@ void HTMLFrameSetElement::attach()
 
 void HTMLFrameSetElement::defaultEventHandler(Event* evt)
 {
-    if (evt->isMouseEvent() && !noresize && renderer() && renderer()->isFrameSet()) {
+    if (evt->isMouseEvent() && !m_noresize && renderer() && renderer()->isFrameSet()) {
         if (toRenderFrameSet(renderer())->userResize(static_cast<MouseEvent*>(evt))) {
             evt->setDefaultHandled();
             return;
