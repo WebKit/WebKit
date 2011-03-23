@@ -69,11 +69,18 @@ SOURCES += \
     bytecode/StructureStubInfo.cpp \
     bytecompiler/BytecodeGenerator.cpp \
     bytecompiler/NodesCodegen.cpp \
+    collector/handles/HandleHeap.cpp \
+    collector/handles/HandleStack.cpp \
     debugger/DebuggerActivation.cpp \
     debugger/DebuggerCallFrame.cpp \
     debugger/Debugger.cpp \
-    collector/handles/HandleHeap.cpp \
-    collector/handles/HandleStack.cpp \
+    dfg/DFGByteCodeParser.cpp \
+    dfg/DFGGraph.cpp \
+    dfg/DFGJITCodeGenerator.cpp \
+    dfg/DFGJITCompiler.cpp \
+    dfg/DFGNonSpeculativeJIT.cpp \
+    dfg/DFGOperations.cpp \
+    dfg/DFGSpeculativeJIT.cpp \
     interpreter/CallFrame.cpp \
     interpreter/Interpreter.cpp \
     interpreter/RegisterFile.cpp \
