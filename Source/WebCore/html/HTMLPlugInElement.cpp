@@ -166,7 +166,7 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
 
     if (!r || !r->isWidget())
         return;
-    Widget* widget = toRenderWidget(r)->widget();
+    RefPtr<Widget> widget = toRenderWidget(r)->widget();
     if (!widget)
         return;
     widget->handleEvent(event);

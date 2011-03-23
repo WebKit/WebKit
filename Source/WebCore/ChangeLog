@@ -1,3 +1,15 @@
+2011-03-23  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add refptr for widget. Mutations can happen within the event handler.
+        https://bugs.webkit.org/show_bug.cgi?id=56774
+
+        Test: plugins/change-widget-and-click-crash.html
+
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::defaultEventHandler):
+
 2011-03-23  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

@@ -1,3 +1,13 @@
+2011-03-23  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add test for crash when modifying a widget object within an event handler.
+        https://bugs.webkit.org/show_bug.cgi?id=56774
+
+        * plugins/change-widget-and-click-crash-expected.txt: Added.
+        * plugins/change-widget-and-click-crash.html: Added.
+
 2011-03-23  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

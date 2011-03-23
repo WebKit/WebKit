@@ -1,3 +1,13 @@
+2011-03-23  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add refptr for widget. Mutations can happen within the event handler.
+        https://bugs.webkit.org/show_bug.cgi?id=56774
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleEvent):
+
 2011-03-23  Viet-Trung Luu  <viettrungluu@chromium.org>
 
         Reviewed by Tony Chang.
