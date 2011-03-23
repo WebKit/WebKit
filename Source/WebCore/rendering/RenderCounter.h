@@ -34,12 +34,6 @@ public:
     RenderCounter(Document*, const CounterContent&);
     virtual ~RenderCounter();
 
-    // Removes the reference to the CounterNode associated with this renderer
-    // if its identifier matches the argument.
-    // This is used to cause a counter display update when the CounterNode
-    // tree for identifier changes.
-    void invalidate(const AtomicString& identifier);
-
     static void destroyCounterNodes(RenderObject*);
     static void destroyCounterNode(RenderObject*, const AtomicString& identifier);
     static void rendererSubtreeAttached(RenderObject*);
@@ -52,8 +46,14 @@ private:
     
     virtual void computePreferredLogicalWidths(float leadWidth);
 
+    // Removes the reference to the CounterNode associated with this renderer.
+    // This is used to cause a counter display update when the CounterNode tree changes.
+    void invalidate();
+
     CounterContent m_counter;
-    mutable CounterNode* m_counterNode;
+    CounterNode* m_counterNode;
+    RenderCounter* m_nextForSameCounter;
+    friend class CounterNode;
 };
 
 inline RenderCounter* toRenderCounter(RenderObject* object)

@@ -32,7 +32,8 @@ CounterNode::CounterNode(RenderObject* o, bool hasResetType, int value)
     : m_hasResetType(hasResetType)
     , m_value(value)
     , m_countInParent(0)
-    , m_renderer(o)
+    , m_owner(o)
+    , m_rootRenderer(0)
     , m_parent(0)
     , m_previousSibling(0)
     , m_nextSibling(0)
@@ -41,9 +42,9 @@ CounterNode::CounterNode(RenderObject* o, bool hasResetType, int value)
 {
 }
 
-PassRefPtr<CounterNode> CounterNode::create(RenderObject* renderer, bool hasResetType, int value)
+PassRefPtr<CounterNode> CounterNode::create(RenderObject* owner, bool hasResetType, int value)
 {
-    return adoptRef(new CounterNode(renderer, hasResetType, value));
+    return adoptRef(new CounterNode(owner, hasResetType, value));
 }
 
 CounterNode* CounterNode::nextInPreOrderAfterChildren(const CounterNode* stayWithin) const
@@ -102,24 +103,79 @@ int CounterNode::computeCountInParent() const
     return m_parent->m_value + increment;
 }
 
-void CounterNode::resetRenderer(const AtomicString& identifier) const
+void CounterNode::addRenderer(RenderCounter* value)
 {
-    if (!m_renderer || m_renderer->documentBeingDestroyed())
+    if (!value) {
+        ASSERT_NOT_REACHED();
         return;
-    if (RenderObjectChildList* children = m_renderer->virtualChildren())
-        children->invalidateCounters(m_renderer, identifier);
+    }
+    if (value->m_counterNode) {
+        ASSERT_NOT_REACHED();
+        value->m_counterNode->removeRenderer(value);
+    }
+    ASSERT(!value->m_nextForSameCounter);
+    for (RenderCounter* iterator = m_rootRenderer;iterator; iterator = iterator->m_nextForSameCounter) {
+        if (iterator == value) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
+    }
+    value->m_nextForSameCounter = m_rootRenderer;
+    m_rootRenderer = value;
+    if (value->m_counterNode != this) {
+        if (value->m_counterNode) {
+            ASSERT_NOT_REACHED();
+            value->m_counterNode->removeRenderer(value);
+        }
+        value->m_counterNode = this;
+    }
 }
 
-void CounterNode::resetRenderers(const AtomicString& identifier) const
+void CounterNode::removeRenderer(RenderCounter* value)
 {
-    const CounterNode* node = this;
+    if (!value) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    if (value->m_counterNode && value->m_counterNode != this) {
+        ASSERT_NOT_REACHED();
+        value->m_counterNode->removeRenderer(value);
+    }
+    RenderCounter* previous = 0;
+    for (RenderCounter* iterator = m_rootRenderer;iterator; iterator = iterator->m_nextForSameCounter) {
+        if (iterator == value) {
+            if (previous)
+                previous->m_nextForSameCounter = value->m_nextForSameCounter;
+            else
+                m_rootRenderer = value->m_nextForSameCounter;
+            value->m_nextForSameCounter = 0;
+            value->m_counterNode = 0;
+            return;
+        }
+        previous = iterator;
+    }
+    ASSERT_NOT_REACHED();
+}
+
+void CounterNode::resetRenderers()
+{
+    for (RenderCounter* iterator = m_rootRenderer;iterator; iterator = iterator->m_nextForSameCounter) {
+        iterator->invalidate();
+        ASSERT(!iterator->m_counterNode);
+        ASSERT(!iterator->m_nextForSameCounter);
+    }
+}
+
+void CounterNode::resetThisAndDescendantsRenderers()
+{
+    CounterNode* node = this;
     do {
-        node->resetRenderer(identifier);
+        node->resetRenderers();
         node = node->nextInPreOrder(this);
     } while (node);
 }
 
-void CounterNode::recount(const AtomicString& identifier)
+void CounterNode::recount()
 {
     for (CounterNode* node = this; node; node = node->m_nextSibling) {
         int oldCount = node->m_countInParent;
@@ -127,7 +183,7 @@ void CounterNode::recount(const AtomicString& identifier)
         if (oldCount == newCount)
             break;
         node->m_countInParent = newCount;
-        node->resetRenderers(identifier);
+        node->resetThisAndDescendantsRenderers();
     }
 }
 
@@ -141,7 +197,7 @@ void CounterNode::insertAfter(CounterNode* newChild, CounterNode* refChild, cons
 
     if (newChild->m_hasResetType) {
         while (m_lastChild != refChild)
-            RenderCounter::destroyCounterNode(m_lastChild->renderer(), identifier);
+            RenderCounter::destroyCounterNode(m_lastChild->owner(), identifier);
     }
 
     CounterNode* next;
@@ -168,9 +224,9 @@ void CounterNode::insertAfter(CounterNode* newChild, CounterNode* refChild, cons
         }
 
         newChild->m_countInParent = newChild->computeCountInParent();
-        newChild->resetRenderers(identifier);
+        newChild->resetThisAndDescendantsRenderers();
         if (next)
-            next->recount(identifier);
+            next->recount();
         return;
     }
 
@@ -203,11 +259,11 @@ void CounterNode::insertAfter(CounterNode* newChild, CounterNode* refChild, cons
     newChild->m_firstChild = 0;
     newChild->m_lastChild = 0;
     newChild->m_countInParent = newChild->computeCountInParent();
-    newChild->resetRenderer(identifier);
-    first->recount(identifier);
+    newChild->resetRenderers();
+    first->recount();
 }
 
-void CounterNode::removeChild(CounterNode* oldChild, const AtomicString& identifier)
+void CounterNode::removeChild(CounterNode* oldChild)
 {
     ASSERT(oldChild);
     ASSERT(!oldChild->m_firstChild);
@@ -235,7 +291,7 @@ void CounterNode::removeChild(CounterNode* oldChild, const AtomicString& identif
     }
 
     if (next)
-        next->recount(identifier);
+        next->recount();
 }
 
 #ifndef NDEBUG
@@ -253,8 +309,9 @@ static void showTreeAndMark(const CounterNode* node)
         fprintf(stderr, "%p %s: %d %d P:%p PS:%p NS:%p R:%p\n",
             current, current->actsAsReset() ? "reset____" : "increment", current->value(),
             current->countInParent(), current->parent(), current->previousSibling(),
-            current->nextSibling(), current->renderer());
+            current->nextSibling(), current->owner());
     }
+    fflush(stderr);
 }
 
 #endif

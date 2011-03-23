@@ -1,3 +1,63 @@
+2011-03-22  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by David Hyatt.
+
+        Introduced double linkage between a CounterNode and its display renderer.
+
+        use of freed pointer in WebCore::RenderCounter::originalText()
+        https://bugs.webkit.org/show_bug.cgi?id=56065
+
+        No new tests. This bug could only be reproduced manually by
+        refreshing the page during load at a critical point.
+        See bug attachment for testing.
+
+        * rendering/CounterNode.cpp:
+        Introduced new member "m_owner" to store the renderer that has the
+        style directives that produce the CounterNode.
+        Repurposed m_renderer to reffer to the RenderCounter that shows the
+        CounterNode.
+        (WebCore::CounterNode::CounterNode):
+        Updated member initialization.
+        (WebCore::CounterNode::create):
+        (WebCore::CounterNode::addRenderer):
+        (WebCore::CounterNode::removeRenderer):
+        Introduced to manage the renderer list associated wit this CounterNode.
+        (WebCore::CounterNode::resetRenderers):
+        This is the old resetRenderer. Renamed to take into account that there may be
+        more than one renderer to a CounterNode.
+        (WebCore::CounterNode::resetThisAndDescendantsRenderers):
+        This is the old resetRenderers renamed for clarity.
+        (WebCore::CounterNode::recount):
+        (WebCore::CounterNode::insertAfter):
+        (WebCore::CounterNode::removeChild):
+        No functional changes.
+        (WebCore::showTreeAndMark):
+        Added flushing to ensure that the output is complete.
+        * rendering/CounterNode.h:
+        (WebCore::CounterNode::owner):
+        Renamed from renderer()
+        * rendering/RenderCounter.cpp:
+        (WebCore::findPlaceForCounter):
+        Fixed comments. No functional changes.
+        (WebCore::RenderCounter::~RenderCounter):
+        Made sure that the CounterNode that this renderers displays is
+        detached from this.
+        (WebCore::RenderCounter::originalText):
+        (WebCore::RenderCounter::invalidate):
+        Changed to maintain the bidirectional relationship with the displayed CounterNode.
+        Also made "invalidate" private as it should be used only by CounterNode.
+        (WebCore::destroyCounterNodeWithoutMapRemoval):
+        (WebCore::RenderCounter::destroyCounterNodes):
+        (WebCore::RenderCounter::destroyCounterNode):
+        (WebCore::updateCounters):
+        No change, just kept code in line with the changes above.
+        (showCounterRendererTree):
+        Added fflush to ensure complete display.
+        * rendering/RenderCounter.h:
+        * rendering/RenderObjectChildList.cpp:
+        * rendering/RenderObjectChildList.h:
+        Removed unneeded invalidateCounters related functions.
+
 2011-03-22  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.
