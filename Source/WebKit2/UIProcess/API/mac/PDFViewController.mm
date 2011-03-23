@@ -223,6 +223,11 @@ WebPageProxy* PDFViewController::page() const
     return toImpl([m_wkView pageRef]);
 }
 
+NSView* PDFViewController::pdfView() const
+{ 
+    return m_wkPDFView.get(); 
+}
+    
 static RetainPtr<CFDataRef> convertPostScriptDataSourceToPDF(const CoreIPC::DataReference& dataReference)
 {
     // Convert PostScript to PDF using Quartz 2D API

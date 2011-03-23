@@ -1,3 +1,20 @@
+2011-03-23  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: WK2: AX: PDF in Safari no longer accessible.
+        https://bugs.webkit.org/show_bug.cgi?id=56849
+
+        The WKView needs to know when to return the WKPDFView and when to return
+        the remote web process connection.
+
+        * UIProcess/API/mac/PDFViewController.h:
+        (WebKit::PDFViewController::pdfView):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView accessibilityFocusedUIElement]):
+        (-[WKView accessibilityHitTest:]):
+        (-[WKView accessibilityAttributeValue:]):
+
 2011-03-21  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Simon Fraser.

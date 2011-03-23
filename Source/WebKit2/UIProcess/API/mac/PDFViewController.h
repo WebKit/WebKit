@@ -52,7 +52,8 @@ public:
 
     WKView* wkView() const { return m_wkView; }
     WebPageProxy* page() const;
-
+    NSView* pdfView() const;
+    
     void setPDFDocumentData(const String& mimeType, const String& suggestedFilename, const CoreIPC::DataReference&);
 
     double zoomFactor() const;

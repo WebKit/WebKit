@@ -1582,6 +1582,9 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (id)accessibilityFocusedUIElement
 {
+    if (_data->_pdfViewController)
+        return NSAccessibilityUnignoredDescendant(_data->_pdfViewController->pdfView());
+
     return _data->_remoteAccessibilityChild.get();
 }
 
@@ -1592,15 +1595,25 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (id)accessibilityHitTest:(NSPoint)point
 {
+    if (_data->_pdfViewController)
+        return [_data->_pdfViewController->pdfView() accessibilityHitTest:point];
+    
     return _data->_remoteAccessibilityChild.get();
 }
 
 - (id)accessibilityAttributeValue:(NSString*)attribute
 {
     if ([attribute isEqualToString:NSAccessibilityChildrenAttribute]) {
-        if (!_data->_remoteAccessibilityChild)
+
+        id child = nil;
+        if (_data->_pdfViewController)
+            child = NSAccessibilityUnignoredDescendant(_data->_pdfViewController->pdfView());
+        else if (_data->_remoteAccessibilityChild)
+            child = _data->_remoteAccessibilityChild.get();
+        
+        if (!child)
             return nil;
-        return [NSArray arrayWithObject:_data->_remoteAccessibilityChild.get()];
+        return [NSArray arrayWithObject:child];
     }
     if ([attribute isEqualToString:NSAccessibilityRoleAttribute])
         return NSAccessibilityGroupRole;
