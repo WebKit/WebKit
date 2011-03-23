@@ -1,3 +1,10 @@
+2011-03-23  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 32-bit build.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::initializeNewContext):
+
 2011-03-22  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Ojan Vafai.
