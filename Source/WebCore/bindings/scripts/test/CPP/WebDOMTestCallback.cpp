@@ -27,11 +27,13 @@
 #include "Class1.h"
 #include "Class2.h"
 #include "Class3.h"
+#include "DOMStringList.h"
 #include "KURL.h"
 #include "TestCallback.h"
 #include "WebDOMClass1.h"
 #include "WebDOMClass2.h"
 #include "WebDOMClass3.h"
+#include "WebDOMDOMStringList.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
 #include "wtf/text/AtomicString.h"
@@ -113,6 +115,14 @@ int WebDOMTestCallback::callbackWithNonBoolReturnType(const WebDOMClass3& class3
         return 0;
 
     return impl()->callbackWithNonBoolReturnType(toWebCore(class3Param));
+}
+
+bool WebDOMTestCallback::callbackWithStringList(const WebDOMDOMStringList& listParam)
+{
+    if (!impl())
+        return false;
+
+    return impl()->callbackWithStringList(toWebCore(listParam));
 }
 
 WebCore::TestCallback* toWebCore(const WebDOMTestCallback& wrapper)

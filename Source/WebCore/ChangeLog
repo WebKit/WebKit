@@ -1,3 +1,28 @@
+2011-03-23  Tyler Close  <tjclose@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Fix ambiguous method call in V8 IDL generated code for DOMStringList callback parameter
+        https://bugs.webkit.org/show_bug.cgi?id=56950
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/scripts/test/CPP/WebDOMTestCallback.cpp:
+        (WebDOMTestCallback::callbackWithStringList):
+        * bindings/scripts/test/CPP/WebDOMTestCallback.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        (webkit_dom_test_callback_callback_with_string_list):
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.h:
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+        (WebCore::JSTestCallback::callbackWithStringList):
+        * bindings/scripts/test/JS/JSTestCallback.h:
+        * bindings/scripts/test/ObjC/DOMTestCallback.h:
+        * bindings/scripts/test/ObjC/DOMTestCallback.mm:
+        (-[DOMTestCallback callbackWithStringList:]):
+        * bindings/scripts/test/TestCallback.idl:
+        * bindings/scripts/test/V8/V8TestCallback.cpp:
+        (WebCore::V8TestCallback::callbackWithStringList):
+        * bindings/scripts/test/V8/V8TestCallback.h:
+
 2011-03-23  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Eric Seidel.

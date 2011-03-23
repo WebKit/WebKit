@@ -45,8 +45,10 @@
 #import "DOMClass3Internal.h"
 #import "DOMClass5Internal.h"
 #import "DOMClass6Internal.h"
+#import "DOMDOMStringListInternal.h"
 #import "DOMEventInternal.h"
 #import "DOMNodeInternal.h"
+#import "DOMStringList.h"
 #import "DOMStyleSheetInternal.h"
 #import "DOMTestCallbackInternal.h"
 #import "ExceptionHandlers.h"
@@ -107,6 +109,12 @@
 {
     WebCore::JSMainThreadNullState state;
     return IMPL->customCallback(core(class5Param), core(class6Param));
+}
+
+- (BOOL)callbackWithStringList:(DOMDOMStringList *)listParam
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->callbackWithStringList(core(listParam));
 }
 
 @end

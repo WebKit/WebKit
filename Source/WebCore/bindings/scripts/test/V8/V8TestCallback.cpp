@@ -27,6 +27,7 @@
 #include "V8Class1.h"
 #include "V8Class2.h"
 #include "V8CustomVoidCallback.h"
+#include "V8DOMStringList.h"
 #include "V8Proxy.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefCounted.h>
@@ -128,6 +129,33 @@ bool V8TestCallback::callbackWithClass2Param(Class2* class2Param, const String& 
 
     bool callbackReturnValue = false;
     return !invokeCallback(m_callback, 2, argv, callbackReturnValue, scriptExecutionContext());
+}
+
+bool V8TestCallback::callbackWithStringList(PassRefPtr<DOMStringList> listParam)
+{
+    if (!canInvokeCallback())
+        return true;
+
+    v8::HandleScope handleScope;
+
+    v8::Handle<v8::Context> v8Context = toV8Context(scriptExecutionContext(), m_worldContext);
+    if (v8Context.IsEmpty())
+        return true;
+
+    v8::Context::Scope scope(v8Context);
+
+    v8::Handle<v8::Value> listParamHandle = toV8(listParam);
+    if (listParamHandle.IsEmpty()) {
+        CRASH();
+        return true;
+    }
+
+    v8::Handle<v8::Value> argv[] = {
+        listParamHandle
+    };
+
+    bool callbackReturnValue = false;
+    return !invokeCallback(m_callback, 1, argv, callbackReturnValue, scriptExecutionContext());
 }
 
 } // namespace WebCore

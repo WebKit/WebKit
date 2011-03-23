@@ -2846,6 +2846,7 @@ sub GetNativeType
 
     return "RefPtr<MediaQueryListListener>" if $type eq "MediaQueryListListener";
 
+    return "PassRefPtr<DOMStringList>" if $type eq "DOMStringList" and $isParameter;
     return "RefPtr<DOMStringList>" if $type eq "DOMStringList";
 
     # Default, assume native type is a pointer with same type name as idl type

@@ -58,6 +58,9 @@ webkit_dom_test_callback_callback_with_class2param(WebKitDOMTestCallback* self, 
 WEBKIT_API glong
 webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallback* self, WebKitDOMClass3* class3param);
 
+WEBKIT_API gboolean
+webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, WebKitDOMDOMStringList* list_param);
+
 G_END_DECLS
 
 #endif /* WebKitDOMTestCallback_h */

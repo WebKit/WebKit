@@ -37,6 +37,8 @@
 #include "webkit/WebKitDOMClass2Private.h"
 #include "webkit/WebKitDOMClass3.h"
 #include "webkit/WebKitDOMClass3Private.h"
+#include "webkit/WebKitDOMDOMStringList.h"
+#include "webkit/WebKitDOMDOMStringListPrivate.h"
 #include "webkit/WebKitDOMTestCallback.h"
 #include "webkit/WebKitDOMTestCallbackPrivate.h"
 #include "webkitdefines.h"
@@ -114,6 +116,22 @@ webkit_dom_test_callback_callback_with_non_bool_return_type(WebKitDOMTestCallbac
         g_return_val_if_fail(converted_class3param, 0);
     }
     glong res = item->callbackWithNonBoolReturnType(converted_class3param);
+    return res;
+}
+
+gboolean
+webkit_dom_test_callback_callback_with_string_list(WebKitDOMTestCallback* self, WebKitDOMDOMStringList* list_param)
+{
+    g_return_val_if_fail(self, 0);
+    WebCore::JSMainThreadNullState state;
+    WebCore::TestCallback * item = WebKit::core(self);
+    g_return_val_if_fail(list_param, 0);
+    WebCore::DOMStringList * converted_list_param = NULL;
+    if (list_param != NULL) {
+        converted_list_param = WebKit::core(list_param);
+        g_return_val_if_fail(converted_list_param, 0);
+    }
+    gboolean res = item->callbackWithStringList(converted_list_param);
     return res;
 }
 

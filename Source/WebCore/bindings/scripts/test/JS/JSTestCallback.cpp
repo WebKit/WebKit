@@ -26,6 +26,7 @@
 
 #include "JSClass1.h"
 #include "JSClass2.h"
+#include "JSDOMStringList.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/JSLock.h>
 #include <wtf/MainThread.h>
@@ -104,6 +105,24 @@ bool JSTestCallback::callbackWithClass2Param(Class2* class2Param, const String& 
     MarkedArgumentBuffer args;
     args.append(toJS(exec, class2Param));
     args.append(jsString(exec, strArg));
+
+    bool raisedException = false;
+    m_data->invokeCallback(args, &raisedException);
+    return !raisedException;
+}
+
+bool JSTestCallback::callbackWithStringList(DOMStringList* listParam)
+{
+    if (!canInvokeCallback())
+        return true;
+
+    RefPtr<JSTestCallback> protect(this);
+
+    JSLock lock(SilenceAssertionsOnly);
+
+    ExecState* exec = m_data->globalObject()->globalExec();
+    MarkedArgumentBuffer args;
+    args.append(toJS(exec, listParam));
 
     bool raisedException = false;
     m_data->invokeCallback(args, &raisedException);
