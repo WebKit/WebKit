@@ -116,11 +116,6 @@ void drawHighlightForLineBoxesOrSVGRenderer(GraphicsContext& context, const Vect
         drawOutlinedQuad(context, lineBoxQuads[i], lineBoxColor);
 }
 
-inline void convertFromFrameToMainFrame(Frame* frame, IntRect& rect)
-{
-    rect = frame->page()->mainFrame()->view()->windowToContents(frame->view()->contentsToWindow(rect));
-}
-
 inline IntSize frameToMainFrameOffset(Frame* frame)
 {
     IntPoint mainFramePoint = frame->page()->mainFrame()->view()->windowToContents(frame->view()->contentsToWindow(IntPoint()));
