@@ -1,5 +1,13 @@
 2011-03-23  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Rollout r81768 which broke compilation on Win.
+
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::transformDocumentToTreeView):
+        * xml/XMLViewer.xsl:
+
+2011-03-23  Yury Semikhatsky  <yurys@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Web Inspector: remove unnecessary reinterpret_cast in XMLTreeViewer

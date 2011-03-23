@@ -88,7 +88,7 @@ bool XMLTreeViewer::hasNoStyleInformation() const
 
 void XMLTreeViewer::transformDocumentToTreeView()
 {
-    String sheetString(XMLViewer_xsl, sizeof(XMLViewer_xsl));
+    String sheetString(reinterpret_cast<const char*>(XMLViewer_xsl), sizeof(XMLViewer_xsl));
     RefPtr<XSLStyleSheet> styleSheet = XSLStyleSheet::createForXMLTreeViewer(m_document, sheetString);
 
     RefPtr<XSLTProcessor> processor = XSLTProcessor::create();
