@@ -1,3 +1,18 @@
+2011-03-23  Aparna Nandyal  <aparna.nand@wipro.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QtWebKit rendering problem when maximizing and doing a back
+        https://bugs.webkit.org/show_bug.cgi?id=56669
+
+        Contents of the page are not re-sized on going back after
+        maximizing. ContentsResized() is not getting called. Hence old
+        document width and height are used. Corrected this behaviour by 
+        calling setBoundsSize() which calls contentsSize(). 
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::open):
+
 2011-03-21  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -1,3 +1,16 @@
+2011-03-23  Aparna Nandyal  <aparna.nand@wipro.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QtWebKit rendering problem when maximizing and doing a back
+        https://bugs.webkit.org/show_bug.cgi?id=56669
+
+        Added an auto test.
+        Patch by Alexis Menard < alexis.menard@nokia.com> on 2011-03-21
+ 
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::rendering):
+
 2011-03-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

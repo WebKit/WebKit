@@ -42,6 +42,7 @@ public slots:
     void cleanup();
 
 private slots:
+    void renderingAfterMaxAndBack();
     void renderHints();
     void getWebKitVersion();
 
@@ -436,6 +437,63 @@ void tst_QWebView::setPalette()
     controlView.close();
 
     QVERIFY(img1 != img2);
+}
+
+void tst_QWebView::renderingAfterMaxAndBack()
+{
+    QUrl url = QUrl("data:text/html,<html><head></head>"
+                   "<body width=1024 height=768 bgcolor=red>"
+                   "</body>"
+                   "</html>");
+
+    QWebView view;
+    view.page()->mainFrame()->load(url);
+    QVERIFY(waitForSignal(&view, SIGNAL(loadFinished(bool))));
+    view.show();
+
+    view.page()->settings()->setMaximumPagesInCache(3);
+
+    QTest::qWaitForWindowShown(&view);
+
+    QPixmap reference(view.page()->viewportSize());
+    reference.fill(Qt::red);
+
+    QPixmap image(view.page()->viewportSize());
+    QPainter painter(&image);
+    view.page()->currentFrame()->render(&painter);
+
+    QCOMPARE(image, reference);
+
+    QUrl url2 = QUrl("data:text/html,<html><head></head>"
+                     "<body width=1024 height=768 bgcolor=blue>"
+                     "</body>"
+                     "</html>");
+    view.page()->mainFrame()->load(url2);
+
+    QVERIFY(waitForSignal(&view, SIGNAL(loadFinished(bool))));
+
+    view.showMaximized();
+
+    QTest::qWaitForWindowShown(&view);
+
+    QPixmap reference2(view.page()->viewportSize());
+    reference2.fill(Qt::blue);
+
+    QPixmap image2(view.page()->viewportSize());
+    QPainter painter2(&image2);
+    view.page()->currentFrame()->render(&painter2);
+
+    QCOMPARE(image2, reference2);
+
+    view.back();
+
+    QPixmap reference3(view.page()->viewportSize());
+    reference3.fill(Qt::red);
+    QPixmap image3(view.page()->viewportSize());
+    QPainter painter3(&image3);
+    view.page()->currentFrame()->render(&painter3);
+
+    QCOMPARE(image3, reference3);
 }
 
 QTEST_MAIN(tst_QWebView)
