@@ -1,3 +1,18 @@
+2011-03-21  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56798
+        Wrap autorelease pools around calls that can have pathological memory growth on Membuster.  
+        Only wrap the main runloop because some background threads are not expected to call into 
+        objc and an autorelease pool could mask bugs.
+
+        * Platform/mac/RunLoopMac.mm:
+        (RunLoop::performWork):
+        (RunLoop::TimerBase::timerFired):
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback):
+
 2011-03-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

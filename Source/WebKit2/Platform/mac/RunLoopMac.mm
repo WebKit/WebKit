@@ -30,7 +30,14 @@
 
 void RunLoop::performWork(void* context)
 {
-    static_cast<RunLoop*>(context)->performWork();
+    // Wrap main thread in an Autorelease pool.  Sending messages can call 
+    // into objc code and accumulate memory.  
+    if (current() == main()) {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        static_cast<RunLoop*>(context)->performWork();
+        [pool drain];
+    } else
+        static_cast<RunLoop*>(context)->performWork();
 }
 
 RunLoop::RunLoop()
@@ -91,7 +98,15 @@ void RunLoop::wakeUp()
 void RunLoop::TimerBase::timerFired(CFRunLoopTimerRef, void* context)
 {
     TimerBase* timer = static_cast<TimerBase*>(context);
-    timer->fired();
+    
+    // Wrap main thread in an Autorelease pool.  The timer can call 
+    // into objc code and accumulate memory outside of the main event loop.
+    if (current() == main()) {
+        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; 
+        timer->fired();
+        [pool drain];
+    } else
+        timer->fired();
 }
 
 RunLoop::TimerBase::TimerBase(RunLoop* runLoop)

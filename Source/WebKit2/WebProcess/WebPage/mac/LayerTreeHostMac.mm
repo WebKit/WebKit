@@ -239,7 +239,10 @@ bool LayerTreeHostMac::showRepaintCounter() const
 
 void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
 {
+    // This gets called outside of the normal event loop so wrap in an autorelease pool
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     static_cast<LayerTreeHostMac*>(context)->flushPendingLayerChangesRunLoopObserverCallback();
+    [pool drain];
 }
 
 void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback()
