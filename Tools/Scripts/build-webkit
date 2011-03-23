@@ -423,7 +423,7 @@ for my $dir (@projects, @otherDirs) {
 
 # Generate the generate project files from .gyp files
 if ($useGYP) {
-    system("python", "Source/gyp/configure") == 0 or die "Failed to run Source/gyp/configure";
+    system("perl", "Tools/Scripts/generate-project-files") == 0 or die "Failed to run generate-project-files";
 }
 
 my @options = ();

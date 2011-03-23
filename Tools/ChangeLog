@@ -1,3 +1,22 @@
+2011-03-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Teach update-webkit about gyp
+        https://bugs.webkit.org/show_bug.cgi?id=56881
+
+        This makes it possible for someone who builds from Xcode
+        to just run update-webkit --gyp and have the project files
+        generated after update automatically.
+
+        I also added a stand-alone "generate-project-files" script
+        wrapping Source/gyp/configure.  This makes running gyp simpler
+        since most people will not have gyp or Source/gyp in their path.
+
+        * Scripts/build-webkit:
+        * Scripts/generate-project-files: Added.
+        * Scripts/update-webkit:
+
 2011-03-22  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by Alexey Proskuryakov.

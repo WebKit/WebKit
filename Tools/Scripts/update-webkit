@@ -45,6 +45,7 @@ sub runGitUpdate();
 # Handle options
 my $quiet = '';
 my $showHelp;
+my $useGYP = 0;
 
 determineIsChromium();
 
@@ -53,6 +54,7 @@ chdirWebKit();
 my $getOptionsResult = GetOptions(
     'h|help'  => \$showHelp,
     'q|quiet' => \$quiet,
+    'gyp' => \$useGYP,
 ); 
 
 if (!$getOptionsResult || $showHelp) {
@@ -61,6 +63,7 @@ Usage: @{[ basename($0) ]} [options]
   --chromium  also update dependencies of the chromium port
   -h|--help   show the help message
   -q|--quiet  pass -q to svn update for quiet updates
+  --gyp       generate project files from gyp after update
 __END__
     exit 1;
 }
@@ -96,6 +99,11 @@ if (-d "../Internal") {
 }
 
 setupAppleWinEnv() if isAppleWinWebKit();
+
+if ($useGYP) {
+    print "Generating Project Files\n";
+    system("perl", "Tools/Scripts/generate-project-files") == 0 or die "Failed to run generate-project-files";
+}
 
 exit 0;
 
