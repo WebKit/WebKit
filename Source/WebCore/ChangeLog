@@ -1,3 +1,28 @@
+2011-03-22  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Properly reset VideoLayerChromium textures after lost renderer context
+        https://bugs.webkit.org/show_bug.cgi?id=56514
+
+        The VideoLayerChromium textures were still mapped to the old
+        renderer's context when LayerRendererChromium was being recreated
+        i.e. when GPU process is killed. This patch allows VideoLayerChromium
+        it recreate textures in the new context when the old renderer is lost.
+        Patch also does a bit of refactoring and code clean-up.
+
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::~VideoLayerChromium):
+        (WebCore::VideoLayerChromium::cleanupResources):
+        (WebCore::VideoLayerChromium::updateContentsIfDirty):
+        (WebCore::VideoLayerChromium::allocateTexturesIfNeeded):
+        (WebCore::VideoLayerChromium::computeVisibleSize):
+        (WebCore::VideoLayerChromium::drawYUV):
+        (WebCore::VideoLayerChromium::drawRGBA):
+        (WebCore::VideoLayerChromium::resetFrameParameters):
+        (WebCore::VideoLayerChromium::saveCurrentFrame):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+
 2011-03-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

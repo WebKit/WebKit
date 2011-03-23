@@ -85,20 +85,29 @@ VideoLayerChromium::VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameP
 VideoLayerChromium::~VideoLayerChromium()
 {
     cleanupResources();
+    deleteTexturesInUse();
 }
 
-void VideoLayerChromium::cleanupResources()
+void VideoLayerChromium::deleteTexturesInUse()
 {
-    LayerChromium::cleanupResources();
-    releaseCurrentFrame();
     if (!layerRenderer())
         return;
 
     GraphicsContext3D* context = layerRendererContext();
     for (unsigned plane = 0; plane < VideoFrameChromium::maxPlanes; plane++) {
-        if (m_textures[plane])
-            GLC(context, context->deleteTexture(m_textures[plane]));
+        Texture texture = m_textures[plane];
+        if (!texture.isEmpty && texture.ownedByLayerRenderer)
+            GLC(context, context->deleteTexture(texture.id));
     }
+}
+
+void VideoLayerChromium::cleanupResources()
+{
+    LayerChromium::cleanupResources();
+    if (m_currentFrame)
+        releaseCurrentFrame();
+    else
+        resetFrameParameters();
 }
 
 void VideoLayerChromium::updateContentsIfDirty()
@@ -130,6 +139,9 @@ void VideoLayerChromium::updateContentsIfDirty()
         return;
     }
 
+    // If the incoming frame is backed by a texture (i.e. decoded in hardware),
+    // then we do not need to allocate a texture via the layer renderer. Instead
+    // we save the texture data then exit.
     if (frame->surfaceType() == VideoFrameChromium::TypeTexture) {
         releaseCurrentFrame();
         saveCurrentFrame(frame);
@@ -150,8 +162,9 @@ void VideoLayerChromium::updateContentsIfDirty()
 
     // Update texture planes.
     for (unsigned plane = 0; plane < frame->planes(); plane++) {
-        ASSERT(frame->requiredTextureSize(plane) == m_textureSizes[plane]);
-        updateTexture(context, m_textures[plane], frame->requiredTextureSize(plane), textureFormat, frame->data(plane));
+        Texture texture = m_textures[plane];
+        ASSERT(frame->requiredTextureSize(plane) == texture.size);
+        updateTexture(context, texture.id, texture.size, textureFormat, frame->data(plane));
     }
 
     m_dirtyRect.setSize(FloatSize());
@@ -160,7 +173,7 @@ void VideoLayerChromium::updateContentsIfDirty()
     m_provider->putCurrentFrame(frame);
 }
 
-unsigned VideoLayerChromium::determineTextureFormat(VideoFrameChromium* frame)
+unsigned VideoLayerChromium::determineTextureFormat(const VideoFrameChromium* frame)
 {
     switch (frame->format()) {
     case VideoFrameChromium::YV12:
@@ -174,56 +187,68 @@ unsigned VideoLayerChromium::determineTextureFormat(VideoFrameChromium* frame)
     return GraphicsContext3D::INVALID_VALUE;
 }
 
-bool VideoLayerChromium::allocateTexturesIfNeeded(GraphicsContext3D* context, VideoFrameChromium* frame, unsigned textureFormat)
+bool VideoLayerChromium::allocateTexturesIfNeeded(GraphicsContext3D* context, const VideoFrameChromium* frame, unsigned textureFormat)
 {
     ASSERT(context);
     ASSERT(frame);
 
     for (unsigned plane = 0; plane < frame->planes(); plane++) {
-        IntSize planeTextureSize = frame->requiredTextureSize(plane);
+        IntSize requiredTextureSize = frame->requiredTextureSize(plane);
+        Texture texture = m_textures[plane];
 
         // If the renderer cannot handle this large of a texture, return false.
         // FIXME: Remove this test when tiled layers are implemented.
-        if (!layerRenderer()->checkTextureSize(planeTextureSize))
+        if (!layerRenderer()->checkTextureSize(requiredTextureSize))
             return false;
 
-        if (!m_textures[plane])
-            m_textures[plane] = layerRenderer()->createLayerTexture();
-
-        if (!planeTextureSize.isZero() && planeTextureSize != m_textureSizes[plane]) {
-            allocateTexture(context, m_textures[plane], planeTextureSize, textureFormat);
-            m_textureSizes[plane] = planeTextureSize;
-            int frameWidth = frame->width(plane);
-            int frameHeight = frame->height(plane);
-            // When there are dead pixels at the edge of the texture, decrease
-            // the frame width by 1 to prevent the rightmost pixels from
-            // interpolating with the dead pixels.
-            if (frame->hasPaddingBytes(plane))
-                --frameWidth;
-            m_frameSizes[plane] = IntSize(frameWidth, frameHeight);
+        if (texture.isEmpty) {
+            texture.id = layerRenderer()->createLayerTexture();
+            texture.ownedByLayerRenderer = true;
+            texture.isEmpty = false;
         }
-    }
 
-    // In YV12, every 2x2 square of Y values corresponds to one U and
-    // one V value. If we decrease the width of the UV plane, we must decrease the
-    // width of the Y texture by 2 for proper alignment. This must happen
-    // always, even if Y's texture does not have padding bytes.
-    if (frame->format() == VideoFrameChromium::YV12) {
-        int yPlaneOriginalWidth = frame->width(VideoFrameChromium::yPlane);
-        if (frame->hasPaddingBytes(VideoFrameChromium::uPlane))
-            m_frameSizes[VideoFrameChromium::yPlane].setWidth(yPlaneOriginalWidth - 2);
+        if (!requiredTextureSize.isZero() && requiredTextureSize != texture.size) {
+            allocateTexture(context, texture.id, requiredTextureSize, textureFormat);
+            texture.size = requiredTextureSize;
+            texture.visibleSize = computeVisibleSize(frame, plane);
+        }
+        m_textures[plane] = texture;
     }
 
     return true;
 }
 
-void VideoLayerChromium::allocateTexture(GraphicsContext3D* context, unsigned textureId, const IntSize& dimensions, unsigned textureFormat)
+IntSize VideoLayerChromium::computeVisibleSize(const VideoFrameChromium* frame, unsigned plane)
+{
+    int visibleWidth = frame->width(plane);
+    int visibleHeight = frame->height(plane);
+    // When there are dead pixels at the edge of the texture, decrease
+    // the frame width by 1 to prevent the rightmost pixels from
+    // interpolating with the dead pixels.
+    if (frame->hasPaddingBytes(plane))
+        --visibleWidth;
+
+    // In YV12, every 2x2 square of Y values corresponds to one U and
+    // one V value. If we decrease the width of the UV plane, we must decrease the
+    // width of the Y texture by 2 for proper alignment. This must happen
+    // always, even if Y's texture does not have padding bytes.
+    if (plane == VideoFrameChromium::yPlane && frame->format() == VideoFrameChromium::YV12) {
+        if (frame->hasPaddingBytes(VideoFrameChromium::uPlane)) {
+            int originalWidth = frame->width(plane);
+            visibleWidth = originalWidth - 2;
+        }
+    }
+
+    return IntSize(visibleWidth, visibleHeight);
+}
+
+void VideoLayerChromium::allocateTexture(GraphicsContext3D* context, unsigned textureId, const IntSize& dimensions, unsigned textureFormat) const
 {
     GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
     GLC(context, context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, textureFormat, dimensions.width(), dimensions.height(), 0, textureFormat, GraphicsContext3D::UNSIGNED_BYTE));
 }
 
-void VideoLayerChromium::updateTexture(GraphicsContext3D* context, unsigned textureId, const IntSize& dimensions, unsigned format, const void* data)
+void VideoLayerChromium::updateTexture(GraphicsContext3D* context, unsigned textureId, const IntSize& dimensions, unsigned format, const void* data) const
 {
     ASSERT(context);
     GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
@@ -276,25 +301,25 @@ void VideoLayerChromium::releaseCurrentFrame()
     resetFrameParameters();
 }
 
-void VideoLayerChromium::drawYUV(const VideoLayerChromium::YUVProgram* program)
+void VideoLayerChromium::drawYUV(const VideoLayerChromium::YUVProgram* program) const
 {
     GraphicsContext3D* context = layerRendererContext();
+    Texture yTexture = m_textures[VideoFrameChromium::yPlane];
+    Texture uTexture = m_textures[VideoFrameChromium::uPlane];
+    Texture vTexture = m_textures[VideoFrameChromium::vPlane];
+
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE1));
-    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textures[VideoFrameChromium::yPlane]));
+    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, yTexture.id));
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE2));
-    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textures[VideoFrameChromium::uPlane]));
+    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, uTexture.id));
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE3));
-    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textures[VideoFrameChromium::vPlane]));
+    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, vTexture.id));
 
     layerRenderer()->useShader(program->program());
-    unsigned yFrameWidth = m_frameSizes[VideoFrameChromium::yPlane].width();
-    unsigned yTextureWidth = m_textureSizes[VideoFrameChromium::yPlane].width();
-    // Arbitrarily take the u sizes because u and v dimensions are identical.
-    unsigned uvFrameWidth = m_frameSizes[VideoFrameChromium::uPlane].width();
-    unsigned uvTextureWidth = m_textureSizes[VideoFrameChromium::uPlane].width();
 
-    float yWidthScaleFactor = static_cast<float>(yFrameWidth) / yTextureWidth;
-    float uvWidthScaleFactor = static_cast<float>(uvFrameWidth) / uvTextureWidth;
+    float yWidthScaleFactor = static_cast<float>(yTexture.visibleSize.width()) / yTexture.size.width();
+    // Arbitrarily take the u sizes because u and v dimensions are identical.
+    float uvWidthScaleFactor = static_cast<float>(uTexture.visibleSize.width()) / uTexture.size.width();
     GLC(context, context->uniform1f(program->vertexShader().yWidthScaleFactorLocation(), yWidthScaleFactor));
     GLC(context, context->uniform1f(program->vertexShader().uvWidthScaleFactorLocation(), uvWidthScaleFactor));
 
@@ -314,16 +339,16 @@ void VideoLayerChromium::drawYUV(const VideoLayerChromium::YUVProgram* program)
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
 }
 
-void VideoLayerChromium::drawRGBA(const VideoLayerChromium::RGBAProgram* program)
+void VideoLayerChromium::drawRGBA(const VideoLayerChromium::RGBAProgram* program) const
 {
     GraphicsContext3D* context = layerRendererContext();
+    Texture texture = m_textures[VideoFrameChromium::rgbPlane];
+
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
-    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textures[VideoFrameChromium::rgbPlane]));
+    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, texture.id));
 
     layerRenderer()->useShader(program->program());
-    unsigned frameWidth = m_frameSizes[VideoFrameChromium::rgbPlane].width();
-    unsigned textureWidth = m_textureSizes[VideoFrameChromium::rgbPlane].width();
-    float widthScaleFactor = static_cast<float>(frameWidth) / textureWidth;
+    float widthScaleFactor = static_cast<float>(texture.visibleSize.width()) / texture.size.width();
     GLC(context, context->uniform4f(program->vertexShader().texTransformLocation(), 0, 0, widthScaleFactor, 1));
 
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
@@ -336,21 +361,27 @@ void VideoLayerChromium::drawRGBA(const VideoLayerChromium::RGBAProgram* program
 
 void VideoLayerChromium::resetFrameParameters()
 {
+    deleteTexturesInUse();
     for (unsigned plane = 0; plane < VideoFrameChromium::maxPlanes; plane++) {
-        m_textures[plane] = 0;
-        m_textureSizes[plane] = IntSize();
-        m_frameSizes[plane] = IntSize();
+        m_textures[plane].id = 0;
+        m_textures[plane].size = IntSize();
+        m_textures[plane].visibleSize = IntSize();
+        m_textures[plane].ownedByLayerRenderer = false;
+        m_textures[plane].isEmpty = true;
     }
 }
 
 void VideoLayerChromium::saveCurrentFrame(VideoFrameChromium* frame)
 {
     ASSERT(!m_currentFrame);
+    deleteTexturesInUse();
     m_currentFrame = frame;
     for (unsigned plane = 0; plane < frame->planes(); plane++) {
-        m_textures[plane] = frame->texture(plane);
-        m_textureSizes[plane] = frame->requiredTextureSize(plane);
-        m_frameSizes[plane] = m_textureSizes[plane];
+        m_textures[plane].id = frame->texture(plane);
+        m_textures[plane].size = frame->requiredTextureSize(plane);
+        m_textures[plane].visibleSize = computeVisibleSize(frame, plane);
+        m_textures[plane].ownedByLayerRenderer = false;
+        m_textures[plane].isEmpty = false;
     }
 }
 

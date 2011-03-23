@@ -42,6 +42,14 @@ namespace WebCore {
 // A Layer that contains a Video element.
 class VideoLayerChromium : public LayerChromium {
 public:
+    struct Texture {
+        unsigned id;
+        IntSize size;
+        IntSize visibleSize;
+        bool ownedByLayerRenderer;
+        bool isEmpty;
+    };
+
     static PassRefPtr<VideoLayerChromium> create(GraphicsLayerChromium* owner = 0,
                                                  VideoFrameProvider* = 0);
     virtual ~VideoLayerChromium();
@@ -63,14 +71,15 @@ protected:
 private:
     VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameProvider*);
 
-    static unsigned determineTextureFormat(VideoFrameChromium*);
-    bool allocateTexturesIfNeeded(GraphicsContext3D*, VideoFrameChromium*, unsigned textureFormat);
-    void updateYUVContents(GraphicsContext3D*, const VideoFrameChromium*);
-    void updateRGBAContents(GraphicsContext3D*, const VideoFrameChromium*);
-    void allocateTexture(GraphicsContext3D*, unsigned textureId, const IntSize& dimensions, unsigned textureFormat);
-    void updateTexture(GraphicsContext3D*, unsigned textureId, const IntSize& dimensions, unsigned textureFormat, const void* data);
-    void drawYUV(const YUVProgram*);
-    void drawRGBA(const RGBAProgram*);
+    static unsigned determineTextureFormat(const VideoFrameChromium*);
+    static IntSize computeVisibleSize(const VideoFrameChromium*, unsigned plane);
+    void deleteTexturesInUse();
+
+    bool allocateTexturesIfNeeded(GraphicsContext3D*, const VideoFrameChromium*, unsigned textureFormat);
+    void allocateTexture(GraphicsContext3D*, unsigned textureId, const IntSize& dimensions, unsigned textureFormat) const;
+    void updateTexture(GraphicsContext3D*, unsigned textureId, const IntSize& dimensions, unsigned textureFormat, const void* data) const;
+    void drawYUV(const YUVProgram*) const;
+    void drawRGBA(const RGBAProgram*) const;
     void resetFrameParameters();
     void saveCurrentFrame(VideoFrameChromium*);
 
@@ -80,11 +89,12 @@ private:
     bool m_skipsDraw;
     VideoFrameChromium::Format m_frameFormat;
     VideoFrameProvider* m_provider;
-    VideoFrameChromium* m_currentFrame;
 
-    unsigned m_textures[3];
-    IntSize m_textureSizes[3];
-    IntSize m_frameSizes[3];
+    Texture m_textures[3];
+
+    // This will be null for the entire duration of video playback if hardware
+    // decoding is not being used.
+    VideoFrameChromium* m_currentFrame;
 };
 
 }
