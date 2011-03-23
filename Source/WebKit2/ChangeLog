@@ -1,3 +1,22 @@
+2011-03-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add asynchronous load decision call to WebKit2 IconDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=56887
+
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::getLoadDecisionForIconURL): In the future, get the actual load decision from the database.
+          For now, always message "IconLoadNo" back to the WebProcess.
+        * UIProcess/WebIconDatabase.h:
+        * UIProcess/WebIconDatabase.messages.in:
+        
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.cpp:
+        (WebKit::WebIconDatabaseProxy::loadDecisionForIconURL): Message the UIProcess for the load decision.
+        (WebKit::WebIconDatabaseProxy::receivedIconLoadDecision): Callback into WebCore with the received load decision.
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.h:
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.messages.in:
+
 2011-03-23  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

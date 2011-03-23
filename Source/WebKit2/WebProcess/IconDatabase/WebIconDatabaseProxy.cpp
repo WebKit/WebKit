@@ -111,6 +111,17 @@ bool WebIconDatabaseProxy::supportsAsynchronousMode()
 
 void WebIconDatabaseProxy::loadDecisionForIconURL(const String& iconURL, PassRefPtr<WebCore::IconLoadDecisionCallback> callback)
 {
+    uint64_t id = callback->callbackID();
+    m_iconLoadDecisionCallbacks.add(id, callback);
+    
+    m_process->connection()->send(Messages::WebIconDatabase::GetLoadDecisionForIconURL(iconURL, id), 0);
+}
+
+void WebIconDatabaseProxy::receivedIconLoadDecision(int decision, uint64_t callbackID)
+{
+    RefPtr<WebCore::IconLoadDecisionCallback> callback = m_iconLoadDecisionCallbacks.take(callbackID);
+    if (callback)
+        callback->performCallback(static_cast<WebCore::IconLoadDecision>(decision));
 }
 
 void WebIconDatabaseProxy::iconDataForIconURL(const String& iconURL, PassRefPtr<WebCore::IconDataCallback> callback)

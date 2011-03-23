@@ -1,3 +1,30 @@
+2011-03-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add asynchronous load decision call to WebKit2 IconDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=56887
+
+        Clear the callback when it's made:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::continueIconLoadWithDecision):
+
+        Don't load icons when using new-style icon database if in private browsing:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueIconLoadWithDecision):
+        
+        Enhance the IconDatabase callbacks to have an ID and inherit from a common base:
+        * loader/icon/IconDatabaseBase.h:
+        (WebCore::CallbackBase::~CallbackBase):
+        (WebCore::CallbackBase::callbackID):
+        (WebCore::CallbackBase::CallbackBase):
+        (WebCore::CallbackBase::context):
+        (WebCore::CallbackBase::generateCallbackID):
+        (WebCore::EnumCallback::performCallback):
+        (WebCore::EnumCallback::EnumCallback):
+        (WebCore::ObjectCallback::performCallback):
+        (WebCore::ObjectCallback::ObjectCallback):
+
 2011-03-21  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

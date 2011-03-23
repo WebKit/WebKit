@@ -27,6 +27,8 @@
 #include "WebIconDatabase.h"
 
 #include "DataReference.h"
+#include "WebContext.h"
+#include "WebIconDatabaseProxyMessages.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -82,7 +84,17 @@ void WebIconDatabase::synchronousIconDataKnownForIconURL(const String&, bool& ic
 
 void WebIconDatabase::synchronousLoadDecisionForIconURL(const String&, int& loadDecision) const
 {
-    loadDecision = (int)WebCore::IconLoadNo;
+    loadDecision = static_cast<int>(WebCore::IconLoadNo);
+}
+
+void WebIconDatabase::getLoadDecisionForIconURL(const String& iconURL, uint64_t callbackID)
+{
+    if (!m_webContext)
+        return;
+
+    // FIXME: Hookup to the real IconDatabase implementation.
+    
+    m_webContext->process()->send(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision(static_cast<int>(WebCore::IconLoadNo), callbackID), 0);
 }
 
 void WebIconDatabase::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* decoder)

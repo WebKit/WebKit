@@ -45,8 +45,36 @@ enum IconLoadDecision {
     IconLoadUnknown
 };
 
+class CallbackBase : public RefCounted<CallbackBase> {
+public:
+    virtual ~CallbackBase()
+    {
+    }
+
+    uint64_t callbackID() const { return m_callbackID; }
+
+protected:
+    CallbackBase(void* context)
+        : m_context(context)
+        , m_callbackID(generateCallbackID())
+    {
+    }
+
+    void* context() const { return m_context; }
+
+private:
+    static uint64_t generateCallbackID()
+    {
+        static uint64_t uniqueCallbackID = 1;
+        return uniqueCallbackID++;
+    }
+
+    void* m_context;
+    uint64_t m_callbackID;
+};
+
 template<typename EnumType> 
-class EnumCallback : public RefCounted<EnumCallback<EnumType> > {
+class EnumCallback : public CallbackBase {
 public:
     typedef void (*CallbackFunction)(EnumType, void*);
 
@@ -63,7 +91,7 @@ public:
     void performCallback(EnumType result)
     {
         ASSERT(m_callback);
-        m_callback(result, m_context);
+        m_callback(result, context());
         m_callback = 0;
     }
     
@@ -75,17 +103,16 @@ public:
 
 private:
     EnumCallback(void* context, CallbackFunction callback)
-        : m_context(context)
+        : CallbackBase(context)
         , m_callback(callback)
     {
     }
 
-    void* m_context;
     CallbackFunction m_callback;
 };
 
 template<typename ObjectType> 
-class ObjectCallback : public RefCounted<ObjectCallback<ObjectType> > {
+class ObjectCallback : public CallbackBase {
 public:
     typedef void (*CallbackFunction)(ObjectType, void*);
 
@@ -102,7 +129,7 @@ public:
     void performCallback(ObjectType result)
     {
         ASSERT(m_callback);
-        m_callback(result, m_context);
+        m_callback(result, context());
         m_callback = 0;
     }
     
@@ -114,12 +141,11 @@ public:
 
 private:
     ObjectCallback(void* context, CallbackFunction callback)
-        : m_context(context)
+        : CallbackBase(context)
         , m_callback(callback)
     {
     }
 
-    void* m_context;
     CallbackFunction m_callback;
 };
 

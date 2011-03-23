@@ -64,6 +64,8 @@ public:
     void synchronousIconURLForPageURL(const String&, String&);
     void synchronousIconDataKnownForIconURL(const String&, bool&) const;
     void synchronousLoadDecisionForIconURL(const String&, int&) const;
+    
+    void getLoadDecisionForIconURL(const String&, uint64_t callbackID);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);

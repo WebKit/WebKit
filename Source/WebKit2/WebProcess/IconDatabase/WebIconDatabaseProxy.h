@@ -30,6 +30,7 @@
 
 #include <WebCore/IconDatabaseBase.h>
 
+#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -66,6 +67,7 @@ public:
     // Asynchronous calls we should use to replace the above when supported.
     virtual bool supportsAsynchronousMode();
     virtual void loadDecisionForIconURL(const String&, PassRefPtr<WebCore::IconLoadDecisionCallback>);
+    void receivedIconLoadDecision(int decision, uint64_t callbackID);
     virtual void iconDataForIconURL(const String&, PassRefPtr<WebCore::IconDataCallback>);
         
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
@@ -78,6 +80,8 @@ private:
 
     bool m_isEnabled;
     WebProcess* m_process;
+    
+    HashMap<uint64_t, RefPtr<WebCore::IconLoadDecisionCallback> > m_iconLoadDecisionCallbacks;
 };
 
 } // namespace WebKit

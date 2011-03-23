@@ -22,4 +22,5 @@
 
 messages -> WebIconDatabaseProxy {
     URLImportFinished()
+    ReceivedIconLoadDecision(int loadDecision, uint64_t callbackID)
 }
