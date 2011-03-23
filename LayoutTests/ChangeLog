@@ -1,3 +1,107 @@
+2011-03-23  Mihai Parparita  <mihaip@chromium.org>
+
+        Update Chromium Snow Leopard baselines for SVG tests after r81168.
+
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-blend-01-b-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-turb-02-f-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/text-fonts-03-t-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1/text-fonts-03-t-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/text-fonts-03-t-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1/text-fonts-03-t-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/text-intro-01-t-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1/text-intro-01-t-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/text-intro-01-t-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1/text-intro-01-t-expected.png.
+        * platform/chromium-mac-leopard/svg/carto.net/scrollbar-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/carto.net/scrollbar-expected.checksum.
+        * platform/chromium-mac-leopard/svg/carto.net/scrollbar-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/carto.net/scrollbar-expected.png.
+        * platform/chromium-mac-leopard/svg/carto.net/selectionlist-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/carto.net/selectionlist-expected.checksum.
+        * platform/chromium-mac-leopard/svg/carto.net/selectionlist-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/carto.net/selectionlist-expected.png.
+        * platform/chromium-mac-leopard/svg/custom/image-small-width-height-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/custom/image-small-width-height-expected.checksum.
+        * platform/chromium-mac-leopard/svg/custom/image-small-width-height-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/custom/image-small-width-height-expected.png.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-container-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/custom/mouse-move-on-svg-container-expected.checksum.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-container-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/custom/mouse-move-on-svg-container-expected.png.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-container-standalone-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/custom/mouse-move-on-svg-container-standalone-expected.checksum.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-container-standalone-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/custom/mouse-move-on-svg-container-standalone-expected.png.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-root-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/custom/mouse-move-on-svg-root-expected.checksum.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-root-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/custom/mouse-move-on-svg-root-expected.png.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-root-standalone-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/custom/mouse-move-on-svg-root-standalone-expected.checksum.
+        * platform/chromium-mac-leopard/svg/custom/mouse-move-on-svg-root-standalone-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/custom/mouse-move-on-svg-root-standalone-expected.png.
+        * platform/chromium-mac-leopard/svg/text/bidi-text-anchor-direction-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/text/bidi-text-anchor-direction-expected.checksum.
+        * platform/chromium-mac-leopard/svg/text/bidi-text-anchor-direction-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/text/bidi-text-anchor-direction-expected.png.
+        * platform/chromium-mac-leopard/svg/text/bidi-text-anchor-direction-expected.txt: Renamed from LayoutTests/platform/chromium-mac/svg/text/bidi-text-anchor-direction-expected.txt.
+        * platform/chromium-mac-leopard/svg/text/bidi-text-query-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/text/bidi-text-query-expected.checksum.
+        * platform/chromium-mac-leopard/svg/text/bidi-text-query-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/text/bidi-text-query-expected.png.
+        * platform/chromium-mac-leopard/svg/text/bidi-text-query-expected.txt: Renamed from LayoutTests/platform/chromium-mac/svg/text/bidi-text-query-expected.txt.
+        * platform/chromium-mac-leopard/svg/text/bidi-tspans-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/svg/text/bidi-tspans-expected.checksum.
+        * platform/chromium-mac-leopard/svg/text/bidi-tspans-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/text/bidi-tspans-expected.png.
+        * platform/chromium-mac-leopard/svg/text/bidi-tspans-expected.txt: Renamed from LayoutTests/platform/chromium-mac/svg/text/bidi-tspans-expected.txt.
+        * platform/chromium-mac-leopard/svg/text/text-align-02-b-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/text/text-align-02-b-expected.checksum.
+        * platform/chromium-mac-leopard/svg/text/text-align-02-b-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/text/text-align-02-b-expected.png.
+        * platform/chromium-mac-leopard/svg/text/text-fonts-02-t-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/text/text-fonts-02-t-expected.checksum.
+        * platform/chromium-mac-leopard/svg/text/text-fonts-02-t-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/text/text-fonts-02-t-expected.png.
+        * platform/chromium-mac-leopard/svg/text/text-text-01-b-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/text/text-text-01-b-expected.checksum.
+        * platform/chromium-mac-leopard/svg/text/text-text-01-b-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/text/text-text-01-b-expected.png.
+        * platform/chromium-mac-leopard/svg/text/text-tspan-01-b-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/text/text-tspan-01-b-expected.checksum.
+        * platform/chromium-mac-leopard/svg/text/text-tspan-01-b-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/text/text-tspan-01-b-expected.png.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.checksum:
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.checksum:
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.checksum:
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.checksum:
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.checksum:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/text-intro-01-t-expected.checksum:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/text-intro-01-t-expected.png:
+        * platform/chromium-mac/svg/carto.net/scrollbar-expected.checksum:
+        * platform/chromium-mac/svg/carto.net/scrollbar-expected.png:
+        * platform/chromium-mac/svg/carto.net/selectionlist-expected.checksum:
+        * platform/chromium-mac/svg/carto.net/selectionlist-expected.png:
+        * platform/chromium-mac/svg/custom/image-small-width-height-expected.checksum:
+        * platform/chromium-mac/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-mac/svg/custom/mouse-move-on-svg-root-expected.checksum:
+        * platform/chromium-mac/svg/custom/mouse-move-on-svg-root-expected.png:
+        * platform/chromium-mac/svg/custom/mouse-move-on-svg-root-standalone-expected.checksum:
+        * platform/chromium-mac/svg/custom/mouse-move-on-svg-root-standalone-expected.png:
+        * platform/chromium-mac/svg/text/text-align-02-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-align-02-b-expected.png:
+        * platform/chromium-mac/svg/text/text-fonts-02-t-expected.checksum:
+        * platform/chromium-mac/svg/text/text-fonts-02-t-expected.png:
+        * platform/chromium-mac/svg/text/text-text-01-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-text-01-b-expected.png:
+        * platform/chromium-mac/svg/text/text-tspan-01-b-expected.checksum:
+        * platform/chromium-mac/svg/text/text-tspan-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png:
+        * platform/mac/svg/carto.net/scrollbar-expected.checksum:
+        * platform/mac/svg/carto.net/scrollbar-expected.png:
+        * platform/mac/svg/carto.net/selectionlist-expected.checksum:
+        * platform/mac/svg/carto.net/selectionlist-expected.png:
+
 2011-03-23  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dan Bernstein.
