@@ -1,3 +1,75 @@
+2011-03-22  John Bauman  <jbauman@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Add support for preserveDrawingBuffer context creation attribute
+        https://bugs.webkit.org/show_bug.cgi?id=56431
+
+        For the accelerated compositing case, only prepare the texture if it
+        has been updated since the last composite. For the non-accelerated case, make sure to
+        grab a copy of the image buffer and paint from that if the backbuffer
+        would be cleared.
+
+        In both cases, make sure to clear the context's backbuffer before the
+        first operation that uses it.
+
+        No new tests. It seems to be difficult/impossible to trigger an early
+        compositing operation in DumpRenderTree, making this hard to
+        test automatically. However, Chromium and Safari (Mac) have been
+        tested manually on the webgl conformance test for this.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        (WebCore::HTMLCanvasElement::makePresentationCopy):
+        (WebCore::HTMLCanvasElement::clearPresentationCopy):
+        * html/HTMLCanvasElement.h:
+        * html/canvas/WebGLContextAttributes.cpp:
+        (WebCore::WebGLContextAttributes::preserveDrawingBuffer):
+        (WebCore::WebGLContextAttributes::setPreserveDrawingBuffer):
+        * html/canvas/WebGLContextAttributes.h:
+        * html/canvas/WebGLContextAttributes.idl:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::initializeNewContext):
+        (WebCore::WebGLRenderingContext::markContextChanged):
+        (WebCore::WebGLRenderingContext::clearIfComposited):
+        (WebCore::WebGLRenderingContext::markLayerComposited):
+        (WebCore::WebGLRenderingContext::paintRenderingResultsToCanvas):
+        (WebCore::WebGLRenderingContext::paintRenderingResultsToImageData):
+        (WebCore::WebGLRenderingContext::clear):
+        (WebCore::WebGLRenderingContext::clearColor):
+        (WebCore::WebGLRenderingContext::clearDepth):
+        (WebCore::WebGLRenderingContext::clearStencil):
+        (WebCore::WebGLRenderingContext::colorMask):
+        (WebCore::WebGLRenderingContext::disable):
+        (WebCore::WebGLRenderingContext::drawArrays):
+        (WebCore::WebGLRenderingContext::drawElements):
+        (WebCore::WebGLRenderingContext::enable):
+        (WebCore::WebGLRenderingContext::readPixels):
+        * html/canvas/WebGLRenderingContext.h:
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::Attributes::Attributes):
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::updateContentsIfDirty):
+        (WebCore::WebGLLayerChromium::textureUpdated):
+        (WebCore::WebGLLayerChromium::setContext):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+        * platform/graphics/mac/GraphicsContext3DMac.mm
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::reshape):
+        (WebCore::GraphicsContext3D::prepareTexture):
+        (WebCore::GraphicsContext3D::activeTexture):
+        (WebCore::GraphicsContext3D::bindTexture):
+        (WebCore::GraphicsContext3D::markContextChanged):
+        (WebCore::GraphicsContext3D::markLayerComposited):
+        (WebCore::GraphicsContext3D::layerComposited):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3D::markLayerComposited):
+        (WebCore::GraphicsContext3D::markContextChanged):
+        (WebCore::GraphicsContext3D::layerComposited):
+
 2011-03-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

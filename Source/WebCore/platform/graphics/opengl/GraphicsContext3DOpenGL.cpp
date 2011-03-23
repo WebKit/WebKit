@@ -171,12 +171,12 @@ void GraphicsContext3D::reshape(int width, int height)
     
     makeContextCurrent();
     
-    GLuint internalColorFormat, colorFormat, internalDepthStencilFormat = 0;
+    GLuint colorFormat, internalDepthStencilFormat = 0;
     if (m_attrs.alpha) {
-        internalColorFormat = GL_RGBA8;
+        m_internalColorFormat = GL_RGBA8;
         colorFormat = GL_RGBA;
     } else {
-        internalColorFormat = GL_RGB8;
+        m_internalColorFormat = GL_RGB8;
         colorFormat = GL_RGB;
     }
     if (m_attrs.stencil || m_attrs.depth) {
@@ -202,7 +202,7 @@ void GraphicsContext3D::reshape(int width, int height)
             mustRestoreFBO = true;
         }
         ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
-        ::glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, internalColorFormat, width, height);
+        ::glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, sampleCount, m_internalColorFormat, width, height);
         ::glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, m_multisampleColorBuffer);
         if (m_attrs.stencil || m_attrs.depth) {
             ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_multisampleDepthStencilBuffer);
@@ -225,8 +225,10 @@ void GraphicsContext3D::reshape(int width, int height)
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
     }
     ::glBindTexture(GL_TEXTURE_2D, m_texture);
-    ::glTexImage2D(GL_TEXTURE_2D, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
+    ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     ::glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_texture, 0);
+    ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
+    ::glTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     ::glBindTexture(GL_TEXTURE_2D, 0);
     if (!m_attrs.antialias && (m_attrs.stencil || m_attrs.depth)) {
         ::glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthStencilBuffer);
@@ -313,19 +315,29 @@ IntSize GraphicsContext3D::getInternalFramebufferSize()
 
 void GraphicsContext3D::prepareTexture()
 {
+    if (m_layerComposited)
+        return;
     makeContextCurrent();
     if (m_attrs.antialias) {
         ::glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
         ::glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
         ::glBlitFramebufferEXT(0, 0, m_currentWidth, m_currentHeight, 0, 0, m_currentWidth, m_currentHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-        ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
     }
+    ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
+    ::glActiveTexture(0);
+    ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
+    ::glCopyTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, 0, 0, m_currentWidth, m_currentHeight, 0);
+    ::glBindTexture(GL_TEXTURE_2D, m_boundTexture0);
+    ::glActiveTexture(m_activeTexture);
+    ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
     ::glFinish();
+    m_layerComposited = true;
 }
 
 void GraphicsContext3D::activeTexture(GC3Denum texture)
 {
     makeContextCurrent();
+    m_activeTexture = texture;
     ::glActiveTexture(texture);
 }
 
@@ -375,6 +387,8 @@ void GraphicsContext3D::bindRenderbuffer(GC3Denum target, Platform3DObject rende
 void GraphicsContext3D::bindTexture(GC3Denum target, Platform3DObject texture)
 {
     makeContextCurrent();
+    if (m_activeTexture && target == GL_TEXTURE_2D)
+        m_boundTexture0 = texture;
     ::glBindTexture(target, texture);
 }
 
@@ -1475,6 +1489,21 @@ void GraphicsContext3D::deleteTexture(Platform3DObject texture)
 void GraphicsContext3D::synthesizeGLError(GC3Denum error)
 {
     m_syntheticErrors.add(error);
+}
+
+void GraphicsContext3D::markContextChanged()
+{
+    m_layerComposited = false;
+}
+
+void GraphicsContext3D::markLayerComposited()
+{
+    m_layerComposited = true;
+}
+
+bool GraphicsContext3D::layerComposited() const
+{
+    return m_layerComposited;
 }
 
 Extensions3D* GraphicsContext3D::getExtensions()

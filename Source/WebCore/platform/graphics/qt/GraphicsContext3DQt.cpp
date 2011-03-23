@@ -264,6 +264,7 @@ public:
     GLuint m_currentFbo;
     GLuint m_depthBuffer;
     QImage m_pixels;
+    bool m_layerComposited;
     ListHashSet<unsigned int> m_syntheticErrors;
 
     OwnPtr<Extensions3DQt> m_extensions;
@@ -298,6 +299,7 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attribut
     , m_mainFbo(0)
     , m_currentFbo(0)
     , m_depthBuffer(0)
+    , m_layerComposited(false)
     , m_contextValid(true)
 {
     m_viewportGLWidget = getViewportGLWidget();
@@ -1651,6 +1653,22 @@ void GraphicsContext3D::deleteTexture(Platform3DObject texture)
 void GraphicsContext3D::synthesizeGLError(GC3Denum error)
 {
     m_internal->m_syntheticErrors.add(error);
+}
+
+void GraphicsContext3D::markLayerComposited()
+{
+    m_internal->m_layerComposited = true;
+}
+
+void GraphicsContext3D::markContextChanged()
+{
+    // FIXME: Any accelerated compositor needs to be told to re-read from here.
+    m_internal->m_layerComposited = false;
+}
+
+bool GraphicsContext3D::layerComposited() const
+{
+    return m_internal->m_layerComposited;
 }
 
 Extensions3D* GraphicsContext3D::getExtensions()

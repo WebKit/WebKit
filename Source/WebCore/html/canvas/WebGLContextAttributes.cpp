@@ -107,6 +107,16 @@ void WebGLContextAttributes::setPremultipliedAlpha(bool premultipliedAlpha)
     m_attrs.premultipliedAlpha = premultipliedAlpha;
 }
 
+bool WebGLContextAttributes::preserveDrawingBuffer() const
+{
+    return m_attrs.preserveDrawingBuffer;
+}
+
+void WebGLContextAttributes::setPreserveDrawingBuffer(bool preserveDrawingBuffer)
+{
+    m_attrs.preserveDrawingBuffer = preserveDrawingBuffer;
+}
+
 GraphicsContext3D::Attributes WebGLContextAttributes::attributes() const
 {
     return m_attrs;

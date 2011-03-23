@@ -65,6 +65,11 @@ class WebGLContextAttributes : public CanvasContextAttributes {
     bool premultipliedAlpha() const;
     void setPremultipliedAlpha(bool premultipliedAlpha);
 
+    // Whether or not to preserve the drawing buffer after presentation to the
+    // screen; default=false
+    bool preserveDrawingBuffer() const;
+    void setPreserveDrawingBuffer(bool);
+
     // Fetches a copy of the attributes stored in this object in a
     // form that can be used to initialize a GraphicsContext3D.
     GraphicsContext3D::Attributes attributes() const;

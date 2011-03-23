@@ -93,9 +93,14 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     , m_attrs(attrs)
     , m_contextObj(0)
     , m_texture(0)
+    , m_compositorTexture(0)
     , m_fbo(0)
     , m_depthStencilBuffer(0)
+    , m_layerComposited(false)
+    , m_internalColorFormat(0)
     , m_boundFBO(0)
+    , m_activeTexture(0)
+    , m_boundTexture0(0)
     , m_multisampleFBO(0)
     , m_multisampleDepthStencilBuffer(0)
     , m_multisampleColorBuffer(0)
@@ -166,6 +171,12 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    ::glGenTextures(1, &m_compositorTexture);
+    ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
+    ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    ::glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
     ::glBindTexture(GL_TEXTURE_2D, 0);
     
     // create an FBO
@@ -215,6 +226,7 @@ GraphicsContext3D::~GraphicsContext3D()
     if (m_contextObj) {
         CGLSetCurrentContext(m_contextObj);
         ::glDeleteTextures(1, &m_texture);
+        ::glDeleteTextures(1, &m_compositorTexture);
         if (m_attrs.antialias) {
             ::glDeleteRenderbuffersEXT(1, &m_multisampleColorBuffer);
             if (m_attrs.stencil || m_attrs.depth)

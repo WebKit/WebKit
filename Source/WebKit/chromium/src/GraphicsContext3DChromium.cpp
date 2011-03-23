@@ -82,6 +82,7 @@ namespace WebCore {
 GraphicsContext3DInternal::GraphicsContext3DInternal()
     : m_webViewImpl(0)
     , m_initializedAvailableExtensions(false)
+    , m_layerComposited(false)
 #if USE(SKIA)
 #elif PLATFORM(CG)
     , m_renderOutput(0)
@@ -159,6 +160,24 @@ WebGLLayerChromium* GraphicsContext3DInternal::platformLayer() const
     return m_compositingLayer.get();
 }
 #endif
+
+void GraphicsContext3DInternal::markContextChanged()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    platformLayer()->setTextureUpdated();
+#endif
+    m_layerComposited = false;
+}
+
+void GraphicsContext3DInternal::markLayerComposited()
+{
+    m_layerComposited = true;
+}
+
+bool GraphicsContext3DInternal::layerComposited() const
+{
+    return m_layerComposited;
+}
 
 void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingContext* context)
 {
@@ -1084,6 +1103,14 @@ DELEGATE_TO_INTERNAL_2(vertexAttrib4fv, GC3Duint, GC3Dfloat*)
 DELEGATE_TO_INTERNAL_6(vertexAttribPointer, GC3Duint, GC3Dint, GC3Denum, GC3Dboolean, GC3Dsizei, GC3Dintptr)
 
 DELEGATE_TO_INTERNAL_4(viewport, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei)
+
+DELEGATE_TO_INTERNAL(markLayerComposited)
+DELEGATE_TO_INTERNAL(markContextChanged)
+
+bool GraphicsContext3D::layerComposited() const
+{
+    return m_internal->layerComposited();
+}
 
 DELEGATE_TO_INTERNAL_1(paintRenderingResultsToCanvas, CanvasRenderingContext*)
 DELEGATE_TO_INTERNAL_R(paintRenderingResultsToImageData, PassRefPtr<ImageData>)

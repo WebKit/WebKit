@@ -277,15 +277,22 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)
     if (hasCreatedImageBuffer()) {
         ImageBuffer* imageBuffer = buffer();
         if (imageBuffer) {
-            if (imageBuffer->drawsUsingCopy())
+            if (m_presentedImage)
+                context->drawImage(m_presentedImage.get(), ColorSpaceDeviceRGB, r);
+            else if (imageBuffer->drawsUsingCopy())
                 context->drawImage(copiedImage(), ColorSpaceDeviceRGB, r);
             else
                 context->drawImageBuffer(imageBuffer, ColorSpaceDeviceRGB, r);
         }
     }
-}
 
 #if ENABLE(WEBGL)    
+    if (is3D())
+        static_cast<WebGLRenderingContext*>(m_context.get())->markLayerComposited();
+#endif
+}
+
+#if ENABLE(WEBGL)
 bool HTMLCanvasElement::is3D() const
 {
     return m_context && m_context->is3d();
@@ -296,6 +303,19 @@ void HTMLCanvasElement::makeRenderingResultsAvailable()
 {
     if (m_context)
         m_context->paintRenderingResultsToCanvas();
+}
+
+void HTMLCanvasElement::makePresentationCopy()
+{
+    if (!m_presentedImage) {
+        // The buffer contains the last presented data, so save a copy of it.
+        m_presentedImage = buffer()->copyImage();
+    }
+}
+
+void HTMLCanvasElement::clearPresentationCopy()
+{
+    m_presentedImage.clear();
 }
 
 void HTMLCanvasElement::attach()

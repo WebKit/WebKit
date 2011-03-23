@@ -34,5 +34,6 @@ module html {
         attribute boolean stencil;
         attribute boolean antialias;
         attribute boolean premultipliedAlpha;
+        attribute boolean preserveDrawingBuffer;
     };
 }

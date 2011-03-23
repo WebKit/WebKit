@@ -66,6 +66,10 @@ public:
     void reshape(int width, int height);
     IntSize getInternalFramebufferSize();
 
+    void markContextChanged();
+    bool layerComposited() const;
+    void markLayerComposited();
+
     void paintRenderingResultsToCanvas(CanvasRenderingContext*);
     PassRefPtr<ImageData> paintRenderingResultsToImageData();
     bool paintsIntoCanvasBuffer() const;
@@ -274,6 +278,7 @@ private:
     bool m_initializedAvailableExtensions;
     HashSet<String> m_enabledExtensions;
     HashSet<String> m_requestableExtensions;
+    bool m_layerComposited;
 #if USE(ACCELERATED_COMPOSITING)
     RefPtr<WebGLLayerChromium> m_compositingLayer;
 #endif

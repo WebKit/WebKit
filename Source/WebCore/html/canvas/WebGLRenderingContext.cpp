@@ -412,6 +412,13 @@ void WebGLRenderingContext::initializeNewContext()
     m_stencilFuncRefBack = 0;
     m_stencilFuncMask = 0xFFFFFFFF;
     m_stencilFuncMaskBack = 0xFFFFFFFF;
+    m_layerCleared = false;
+    
+    m_clearColor[0] = m_clearColor[1] = m_clearColor[2] = m_clearColor[3] = 0;
+    m_scissorEnabled = false;
+    m_clearDepth = 1.0;
+    m_clearStencil = 0;
+    m_colorMask[0] = m_colorMask[1] = m_colorMask[2] = m_colorMask[3] = true;
 
     GC3Dint numCombinedTextureImageUnits = 0;
     m_context->getIntegerv(GraphicsContext3D::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &numCombinedTextureImageUnits);
@@ -472,6 +479,10 @@ WebGLRenderingContext::~WebGLRenderingContext()
 
 void WebGLRenderingContext::markContextChanged()
 {
+    if (m_framebufferBinding)
+        return;
+    m_context->markContextChanged();
+    m_layerCleared = false;
 #if USE(ACCELERATED_COMPOSITING)
     RenderBox* renderBox = canvas()->renderBox();
     if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
@@ -486,9 +497,69 @@ void WebGLRenderingContext::markContextChanged()
     m_markedCanvasDirty = true;
 }
 
+bool WebGLRenderingContext::clearIfComposited(GC3Dbitfield mask)
+{
+    if (isContextLost()) 
+        return false;
+
+    RefPtr<WebGLContextAttributes> contextAttributes = getContextAttributes();
+
+    if (!m_context->layerComposited() || m_layerCleared
+        || contextAttributes->preserveDrawingBuffer() || m_framebufferBinding)
+        return false;
+
+    // Determine if it's possible to combine the clear the user asked for and this clear.
+    bool combinedClear = mask && !m_scissorEnabled;
+
+    m_context->disable(GraphicsContext3D::SCISSOR_TEST);
+    if (combinedClear && (mask & GraphicsContext3D::COLOR_BUFFER_BIT))
+        m_context->clearColor(m_colorMask[0] ? m_clearColor[0] : 0,
+                              m_colorMask[1] ? m_clearColor[1] : 0,
+                              m_colorMask[2] ? m_clearColor[2] : 0,
+                              m_colorMask[3] ? m_clearColor[3] : 0);
+    else
+        m_context->clearColor(0, 0, 0, 0);
+    m_context->colorMask(true, true, true, true);
+    if (contextAttributes->depth() && (!combinedClear || !(mask & GraphicsContext3D::DEPTH_BUFFER_BIT)))
+        m_context->clearDepth(1.0f);
+    if (contextAttributes->stencil() && (!combinedClear || !(mask & GraphicsContext3D::STENCIL_BUFFER_BIT)))
+        m_context->clearStencil(0);
+    GC3Dbitfield clearMask = GraphicsContext3D::COLOR_BUFFER_BIT;
+    if (contextAttributes->depth())
+        clearMask |= GraphicsContext3D::DEPTH_BUFFER_BIT;
+    if (contextAttributes->stencil())
+        clearMask |= GraphicsContext3D::STENCIL_BUFFER_BIT;
+    m_context->clear(clearMask);
+
+    // Restore the state that the context set.
+    if (m_scissorEnabled)
+        m_context->enable(GraphicsContext3D::SCISSOR_TEST);
+    m_context->clearColor(m_clearColor[0], m_clearColor[1],
+                          m_clearColor[2], m_clearColor[3]);
+    m_context->colorMask(m_colorMask[0], m_colorMask[1],
+                         m_colorMask[2], m_colorMask[3]);
+    m_context->clearDepth(m_clearDepth);
+    m_context->clearStencil(m_clearStencil);
+    m_layerCleared = true;
+
+    return combinedClear;
+}
+
+void WebGLRenderingContext::markLayerComposited()
+{
+    m_context->markLayerComposited();
+}
+
 void WebGLRenderingContext::paintRenderingResultsToCanvas()
 {
-    if (!m_markedCanvasDirty)
+    // Until the canvas is written to by the application, the clear that
+    // happened after it was composited should be ignored by the compositor.
+    if (m_context->layerComposited() && !getContextAttributes()->preserveDrawingBuffer())
+        canvas()->makePresentationCopy();
+    else
+        canvas()->clearPresentationCopy();
+    clearIfComposited();
+    if (!m_markedCanvasDirty && !m_layerCleared)
         return;
     canvas()->clearCopiedImage();
     m_markedCanvasDirty = false;
@@ -497,6 +568,7 @@ void WebGLRenderingContext::paintRenderingResultsToCanvas()
 
 PassRefPtr<ImageData> WebGLRenderingContext::paintRenderingResultsToImageData()
 {
+    clearIfComposited();
     return m_context->paintRenderingResultsToImageData();
 }
 
@@ -890,7 +962,8 @@ void WebGLRenderingContext::clear(GC3Dbitfield mask)
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
-    m_context->clear(mask);
+    if (!clearIfComposited(mask))
+        m_context->clear(mask);
     cleanupAfterGraphicsCall(true);
 }
 
@@ -906,6 +979,10 @@ void WebGLRenderingContext::clearColor(GC3Dfloat r, GC3Dfloat g, GC3Dfloat b, GC
         b = 0;
     if (isnan(a))
         a = 1;
+    m_clearColor[0] = r;
+    m_clearColor[1] = g;
+    m_clearColor[2] = b;
+    m_clearColor[3] = a;
     m_context->clearColor(r, g, b, a);
     cleanupAfterGraphicsCall(false);
 }
@@ -914,6 +991,7 @@ void WebGLRenderingContext::clearDepth(GC3Dfloat depth)
 {
     if (isContextLost())
         return;
+    m_clearDepth = depth;
     m_context->clearDepth(depth);
     cleanupAfterGraphicsCall(false);
 }
@@ -922,6 +1000,7 @@ void WebGLRenderingContext::clearStencil(GC3Dint s)
 {
     if (isContextLost())
         return;
+    m_clearStencil = s;
     m_context->clearStencil(s);
     cleanupAfterGraphicsCall(false);
 }
@@ -930,6 +1009,10 @@ void WebGLRenderingContext::colorMask(GC3Dboolean red, GC3Dboolean green, GC3Dbo
 {
     if (isContextLost())
         return;
+    m_colorMask[0] = red;
+    m_colorMask[1] = green;
+    m_colorMask[2] = blue;
+    m_colorMask[3] = alpha;
     m_context->colorMask(red, green, blue, alpha);
     cleanupAfterGraphicsCall(false);
 }
@@ -964,6 +1047,7 @@ void WebGLRenderingContext::copyTexImage2D(GC3Denum target, GC3Dint level, GC3De
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
+    clearIfComposited();
     if (isResourceSafe())
         m_context->copyTexImage2D(target, level, internalformat, x, y, width, height, border);
     else {
@@ -1007,6 +1091,7 @@ void WebGLRenderingContext::copyTexSubImage2D(GC3Denum target, GC3Dint level, GC
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
+    clearIfComposited();
     if (isResourceSafe())
         m_context->copyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
     else {
@@ -1239,6 +1324,8 @@ void WebGLRenderingContext::disable(GC3Denum cap)
 {
     if (isContextLost() || !validateCapability(cap))
         return;
+    if (cap == GraphicsContext3D::SCISSOR_TEST)
+        m_scissorEnabled = false;
     m_context->disable(cap);
     cleanupAfterGraphicsCall(false);
 }
@@ -1484,6 +1571,8 @@ void WebGLRenderingContext::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsizei c
         return;
     }
 
+    clearIfComposited();
+
     bool vertexAttrib0Simulated = false;
     if (!isGLES2Compliant())
         vertexAttrib0Simulated = simulateVertexAttrib0(first + count - 1);
@@ -1555,6 +1644,7 @@ void WebGLRenderingContext::drawElements(GC3Denum mode, GC3Dsizei count, GC3Denu
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_FRAMEBUFFER_OPERATION);
         return;
     }
+    clearIfComposited();
 
     bool vertexAttrib0Simulated = false;
     if (!isGLES2Compliant()) {
@@ -1576,6 +1666,8 @@ void WebGLRenderingContext::enable(GC3Denum cap)
 {
     if (isContextLost() || !validateCapability(cap))
         return;
+    if (cap == GraphicsContext3D::SCISSOR_TEST)
+        m_scissorEnabled = true;
     m_context->enable(cap);
     cleanupAfterGraphicsCall(false);
 }
@@ -1602,7 +1694,7 @@ void WebGLRenderingContext::finish()
     if (isContextLost())
         return;
     m_context->finish();
-    cleanupAfterGraphicsCall(true);
+    cleanupAfterGraphicsCall(false);
 }
 
 void WebGLRenderingContext::flush()
@@ -1610,7 +1702,7 @@ void WebGLRenderingContext::flush()
     if (isContextLost())
         return;
     m_context->flush();
-    cleanupAfterGraphicsCall(true);
+    cleanupAfterGraphicsCall(false);
 }
 
 void WebGLRenderingContext::framebufferRenderbuffer(GC3Denum target, GC3Denum attachment, GC3Denum renderbuffertarget, WebGLRenderbuffer* buffer, ExceptionCode& ec)
@@ -2757,6 +2849,7 @@ void WebGLRenderingContext::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
+    clearIfComposited();
     void* data = pixels->baseAddress();
     m_context->readPixels(x, y, width, height, format, type, data);
 #if OS(DARWIN)

@@ -420,6 +420,7 @@ public:
             , antialias(true)
             , premultipliedAlpha(true)
             , canRecoverFromContextLoss(true)
+            , preserveDrawingBuffer(false)
         {
         }
 
@@ -429,6 +430,7 @@ public:
         bool antialias;
         bool premultipliedAlpha;
         bool canRecoverFromContextLoss;
+        bool preserveDrawingBuffer;
     };
 
     enum RenderStyle {
@@ -449,7 +451,7 @@ public:
 
 #if PLATFORM(MAC)
     PlatformGraphicsContext3D platformGraphicsContext3D() const { return m_contextObj; }
-    Platform3DObject platformTexture() const { return m_texture; }
+    Platform3DObject platformTexture() const { return m_compositorTexture; }
     CALayer* platformLayer() const { return reinterpret_cast<CALayer*>(m_webGLLayer.get()); }
 #elif PLATFORM(CHROMIUM)
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
@@ -756,6 +758,10 @@ public:
                        int canvasWidth, int canvasHeight, CGContextRef context);
 #endif
 
+    void markContextChanged();
+    void markLayerComposited();
+    bool layerComposited() const;
+
     void paintRenderingResultsToCanvas(CanvasRenderingContext* context);
     PassRefPtr<ImageData> paintRenderingResultsToImageData();
 
@@ -885,12 +891,16 @@ public:
 
     CGLContextObj m_contextObj;
     RetainPtr<WebGLLayer> m_webGLLayer;
-    GC3Duint m_texture;
+    GC3Duint m_texture, m_compositorTexture;
     GC3Duint m_fbo;
     GC3Duint m_depthStencilBuffer;
+    bool m_layerComposited;
+    GC3Duint m_internalColorFormat;
 
-    // For tracking which FBO is bound
+    // For tracking which FBO/texture is bound
     GC3Duint m_boundFBO;
+    GC3Denum m_activeTexture;
+    GC3Duint m_boundTexture0;
 
     // For multisampling
     GC3Duint m_multisampleFBO;

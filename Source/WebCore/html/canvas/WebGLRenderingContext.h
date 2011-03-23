@@ -285,6 +285,7 @@ public:
 
     void reshape(int width, int height);
 
+    void markLayerComposited();
     virtual void paintRenderingResultsToCanvas();
     virtual PassRefPtr<ImageData> paintRenderingResultsToImageData();
 
@@ -444,6 +445,13 @@ public:
     bool m_contextLost;
     GraphicsContext3D::Attributes m_attributes;
 
+    bool m_layerCleared;
+    GC3Dfloat m_clearColor[4];
+    bool m_scissorEnabled;
+    GC3Dfloat m_clearDepth;
+    GC3Dint m_clearStencil;
+    GC3Dboolean m_colorMask[4];
+
     long m_stencilBits;
     GC3Duint m_stencilMask, m_stencilMaskBack;
     GC3Dint m_stencilFuncRef, m_stencilFuncRefBack; // Note that these are the user specified values, not the internal clamped value.
@@ -469,6 +477,11 @@ public:
     WebGLGetInfo getUnsignedIntParameter(GC3Denum);
     WebGLGetInfo getWebGLFloatArrayParameter(GC3Denum);
     WebGLGetInfo getWebGLIntArrayParameter(GC3Denum);
+
+    // Clear the backbuffer if it was composited since the last operation.
+    // clearMask is set to the bitfield of any clear that would happen anyway at this time
+    // and the function returns true if that clear is now unnecessary.
+    bool clearIfComposited(GC3Dbitfield clearMask = 0);
 
     void texImage2DBase(GC3Denum target, GC3Dint level, GC3Denum internalformat,
                         GC3Dsizei width, GC3Dsizei height, GC3Dint border,

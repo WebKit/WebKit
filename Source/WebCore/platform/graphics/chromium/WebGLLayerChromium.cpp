@@ -47,6 +47,7 @@ PassRefPtr<WebGLLayerChromium> WebGLLayerChromium::create(GraphicsLayerChromium*
 WebGLLayerChromium::WebGLLayerChromium(GraphicsLayerChromium* owner)
     : CanvasLayerChromium(owner)
     , m_context(0)
+    , m_textureUpdated(false)
 {
 }
 
@@ -68,10 +69,17 @@ void WebGLLayerChromium::updateContentsIfDirty()
         m_textureChanged = false;
     }
     // Update the contents of the texture used by the compositor.
-    if (m_contentsDirty) {
+    if (m_contentsDirty && m_textureUpdated) {
         m_context->prepareTexture();
+        m_context->markLayerComposited();
         m_contentsDirty = false;
+        m_textureUpdated = false;
     }
+}
+
+void WebGLLayerChromium::setTextureUpdated()
+{
+    m_textureUpdated = true;
 }
 
 void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
@@ -79,8 +87,10 @@ void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
     m_context = const_cast<GraphicsContext3D*>(context);
 
     unsigned int textureId = m_context->platformTexture();
-    if (textureId != m_textureId)
+    if (textureId != m_textureId) {
         m_textureChanged = true;
+        m_textureUpdated = true;
+    }
     m_textureId = textureId;
     m_premultipliedAlpha = m_context->getContextAttributes().premultipliedAlpha;
 }
