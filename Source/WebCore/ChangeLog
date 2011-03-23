@@ -1,3 +1,19 @@
+2011-03-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Change IconDatabase opening to allow for arbitrary filenames
+        https://bugs.webkit.org/show_bug.cgi?id=56977
+
+        * WebCore.exp.in:
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::open):
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconDatabaseBase.cpp:
+        (WebCore::IconDatabaseBase::open):
+        * loader/icon/IconDatabaseBase.h:
+        * loader/icon/IconDatabaseClient.h:
+
 2011-03-23  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

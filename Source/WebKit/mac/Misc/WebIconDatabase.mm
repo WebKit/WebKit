@@ -303,7 +303,7 @@ static WebIconDatabaseClient* defaultClient()
     
     // Set the private browsing pref then open the WebCore icon database
     iconDatabase().setPrivateBrowsingEnabled([[WebPreferences standardPreferences] privateBrowsingEnabled]);
-    if (!iconDatabase().open(databaseDirectory))
+    if (!iconDatabase().open(databaseDirectory, IconDatabase::defaultDatabaseFilename()))
         LOG_ERROR("Unable to open icon database");
     
     // Register for important notifications

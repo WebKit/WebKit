@@ -161,7 +161,7 @@ Eina_Bool ewk_settings_icon_database_path_set(const char *directory)
         }
 
         WebCore::iconDatabase().setEnabled(true);
-        WebCore::iconDatabase().open(WTF::String::fromUTF8(directory));
+        WebCore::iconDatabase().open(WTF::String::fromUTF8(directory), WebCore::IconDatabase::defaultDatabaseFilename());
         if (!_ewk_icon_database_path)
             _ewk_icon_database_path = eina_stringshare_add(directory);
         else

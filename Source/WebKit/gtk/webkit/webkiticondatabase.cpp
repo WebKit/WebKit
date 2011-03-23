@@ -234,7 +234,7 @@ void webkit_icon_database_set_path(WebKitIconDatabase* database, const gchar* pa
     database->priv->path.set(g_strdup(path));
 
     WebCore::iconDatabase().setEnabled(true);
-    WebCore::iconDatabase().open(WebCore::filenameToString(database->priv->path.get()));
+    WebCore::iconDatabase().open(WebCore::filenameToString(database->priv->path.get()), WebCore::IconDatabase::defaultDatabaseFilename());
 
     static bool initialized = false;
     if (!initialized) {

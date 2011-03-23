@@ -33,6 +33,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -73,7 +74,7 @@ class IconDatabase : public IconDatabaseBase {
 public:
     virtual void setClient(IconDatabaseClient*);
 
-    virtual bool open(const String& path);
+    virtual bool open(const String& directory, const String& filename);
     virtual void close();
             
     virtual void removeAllIcons();

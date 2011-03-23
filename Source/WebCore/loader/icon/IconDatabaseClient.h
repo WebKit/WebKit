@@ -29,14 +29,11 @@
 #ifndef IconDatabaseClient_h
 #define IconDatabaseClient_h
 
-#include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
  
 namespace WebCore {
 
 class IconDatabaseClient {
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~IconDatabaseClient() { }
 

@@ -117,7 +117,7 @@ void IconDatabase::setClient(IconDatabaseClient* client)
     m_client = client;
 }
 
-bool IconDatabase::open(const String& databasePath)
+bool IconDatabase::open(const String& directory, const String& filename)
 {
     ASSERT_NOT_SYNC_THREAD();
 
@@ -129,10 +129,10 @@ bool IconDatabase::open(const String& databasePath)
         return false;
     }
 
-    m_databaseDirectory = databasePath.crossThreadString();
+    m_databaseDirectory = directory.crossThreadString();
 
     // Formulate the full path for the database file
-    m_completeDatabasePath = pathByAppendingComponent(m_databaseDirectory, defaultDatabaseFilename());
+    m_completeDatabasePath = pathByAppendingComponent(m_databaseDirectory, filename);
 
     // Lock here as well as first thing in the thread so the thread doesn't actually commence until the createThread() call 
     // completes and m_syncThreadRunning is properly set

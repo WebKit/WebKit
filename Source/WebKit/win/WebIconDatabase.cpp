@@ -99,7 +99,7 @@ void WebIconDatabase::startUpIconDatabase()
             LOG_ERROR("Failed to construct default icon database path");
     }
 
-    if (!iconDatabase().open(databasePath))
+    if (!iconDatabase().open(databasePath, WebCore::IconDatabase::defaultDatabaseFilename()))
             LOG_ERROR("Failed to open icon database path");
 }
 

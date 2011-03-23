@@ -41,6 +41,11 @@ String IconDatabaseBase::databasePath() const
     return String();
 }
 
+bool IconDatabaseBase::open(const String&, const String&)
+{
+    return false;
+}
+
 static IconDatabaseBase* globalDatabase = 0;
 
 // Functions to get/set the global icon database.

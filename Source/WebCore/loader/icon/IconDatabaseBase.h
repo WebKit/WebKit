@@ -198,7 +198,7 @@ public:
     virtual void importIconDataForIconURL(PassRefPtr<SharedBuffer>, const String&) { }
     virtual bool shouldStopThreadActivity() const { return true; }
 
-    virtual bool open(const String&) { return false; }
+    virtual bool open(const String& directory, const String& filename);
     virtual void close() { }
     virtual void removeAllIcons() { }
 
