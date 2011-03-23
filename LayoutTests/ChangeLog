@@ -1,3 +1,10 @@
+2011-03-22  Ojan Vafai  <ojan@chromium.org>
+
+        Add a chromium expectation for this test. V8's exception logging
+        is more specific than JSC's.
+
+        * platform/chromium/fast/dom/SelectorAPI/unknown-pseudo-expected.txt: Added.
+
 2011-03-17  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Antti Koivisto.
