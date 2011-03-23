@@ -174,6 +174,7 @@ CSSParser::~CSSParser()
     fastFree(m_data);
 
     fastDeleteAllValues(m_floatingSelectors);
+    deleteAllValues(m_floatingSelectorVectors);
     deleteAllValues(m_floatingValueLists);
     deleteAllValues(m_floatingFunctions);
 }
@@ -5691,6 +5692,7 @@ int CSSParser::lex(void* yylvalWithoutType)
     case DIMEN:
     case UNICODERANGE:
     case FUNCTION:
+    case ANYFUNCTION:
     case NOTFUNCTION:
         yylval->string.characters = t;
         yylval->string.length = length;
@@ -5902,6 +5904,22 @@ PassOwnPtr<CSSParserSelector> CSSParser::sinkFloatingSelector(CSSParserSelector*
         m_floatingSelectors.remove(selector);
     }
     return adoptPtr(selector);
+}
+
+Vector<OwnPtr<CSSParserSelector> >* CSSParser::createFloatingSelectorVector()
+{
+    Vector<OwnPtr<CSSParserSelector> >* selectorVector = new Vector<OwnPtr<CSSParserSelector> >;
+    m_floatingSelectorVectors.add(selectorVector);
+    return selectorVector;
+}
+
+Vector<OwnPtr<CSSParserSelector> >* CSSParser::sinkFloatingSelectorVector(Vector<OwnPtr<CSSParserSelector> >* selectorVector)
+{
+    if (selectorVector) {
+        ASSERT(m_floatingSelectorVectors.contains(selectorVector));
+        m_floatingSelectorVectors.remove(selectorVector);
+    }
+    return selectorVector;
 }
 
 CSSParserValueList* CSSParser::createFloatingValueList()

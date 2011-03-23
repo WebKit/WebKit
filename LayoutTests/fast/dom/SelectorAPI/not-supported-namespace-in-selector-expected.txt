@@ -27,6 +27,7 @@ PASS: document.body.webkitMatchesSelector('[*|name=value]') did not throw
 PASS: document.querySelector('[|name=value]') did not throw
 PASS: document.querySelectorAll('[|name=value]') did not throw
 PASS: document.body.webkitMatchesSelector('[|name=value]') did not throw
+PASS: document.querySelector(':-webkit-any(bbb|pre)') throws: Error: NAMESPACE_ERR: DOM Exception 14
 PASS: document.querySelector('div [bbb|name=value]') throws: Error: NAMESPACE_ERR: DOM Exception 14
 PASS: document.querySelectorAll('div [bbb|name=value]') throws: Error: NAMESPACE_ERR: DOM Exception 14
 PASS: document.body.webkitMatchesSelector('div [bbb|name=value]') throws: Error: NAMESPACE_ERR: DOM Exception 14

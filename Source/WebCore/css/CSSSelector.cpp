@@ -27,6 +27,7 @@
 #include "CSSSelector.h"
 
 #include "CSSOMUtils.h"
+#include "CSSSelectorList.h"
 #include "HTMLNames.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
@@ -78,6 +79,8 @@ inline unsigned CSSSelector::specificityForOneSelector() const
     case Contain:
     case Begin:
     case End:
+        // FIXME: PsuedoAny should base the specificity on the sub-selectors.
+        // See http://lists.w3.org/Archives/Public/www-style/2010Sep/0530.html
         if (pseudoType() == PseudoNot && simpleSelector())
             s += simpleSelector()->specificityForOneSelector();
         else
@@ -211,6 +214,7 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     case PseudoNthLastOfType:
     case PseudoLink:
     case PseudoVisited:
+    case PseudoAny:
     case PseudoAnyLink:
     case PseudoAutofill:
     case PseudoHover:
@@ -265,6 +269,7 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
 {
     DEFINE_STATIC_LOCAL(AtomicString, active, ("active"));
     DEFINE_STATIC_LOCAL(AtomicString, after, ("after"));
+    DEFINE_STATIC_LOCAL(AtomicString, any, ("-webkit-any("));
     DEFINE_STATIC_LOCAL(AtomicString, anyLink, ("-webkit-any-link"));
     DEFINE_STATIC_LOCAL(AtomicString, autofill, ("-webkit-autofill"));
     DEFINE_STATIC_LOCAL(AtomicString, before, ("before"));
@@ -364,6 +369,7 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(active.impl(), CSSSelector::PseudoActive);
         nameToPseudoType->set(after.impl(), CSSSelector::PseudoAfter);
         nameToPseudoType->set(anyLink.impl(), CSSSelector::PseudoAnyLink);
+        nameToPseudoType->set(any.impl(), CSSSelector::PseudoAny);
         nameToPseudoType->set(autofill.impl(), CSSSelector::PseudoAutofill);
         nameToPseudoType->set(before.impl(), CSSSelector::PseudoBefore);
         nameToPseudoType->set(checked.impl(), CSSSelector::PseudoChecked);
@@ -527,6 +533,7 @@ void CSSSelector::extractPseudoType() const
     case PseudoNthLastOfType:
     case PseudoLink:
     case PseudoVisited:
+    case PseudoAny:
     case PseudoAnyLink:
     case PseudoAutofill:
     case PseudoHover:
@@ -638,17 +645,33 @@ String CSSSelector::selectorText() const
         } else if (cs->m_match == CSSSelector::PseudoClass || cs->m_match == CSSSelector::PagePseudoClass) {
             str += ":";
             str += cs->value();
-            if (cs->pseudoType() == PseudoNot) {
+
+            switch (cs->pseudoType()) {
+            case PseudoNot:
                 if (CSSSelector* subSel = cs->simpleSelector())
                     str += subSel->selectorText();
                 str += ")";
-            } else if (cs->pseudoType() == PseudoLang
-                    || cs->pseudoType() == PseudoNthChild
-                    || cs->pseudoType() == PseudoNthLastChild
-                    || cs->pseudoType() == PseudoNthOfType
-                    || cs->pseudoType() == PseudoNthLastOfType) {
+                break;
+            case PseudoLang:
+            case PseudoNthChild:
+            case PseudoNthLastChild:
+            case PseudoNthOfType:
+            case PseudoNthLastOfType:
                 str += cs->argument();
                 str += ")";
+                break;
+            case PseudoAny: {
+                CSSSelector* firstSubSelector = cs->selectorList()->first();
+                for (CSSSelector* subSelector = firstSubSelector; subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+                    if (subSelector != firstSubSelector)
+                        str += ",";
+                    str += subSelector->selectorText();
+                }
+                str += ")";
+                break;
+            }
+            default:
+                break;
             }
         } else if (cs->m_match == CSSSelector::PseudoElement) {
             str += "::";
@@ -742,6 +765,12 @@ void CSSSelector::setSimpleSelector(PassOwnPtr<CSSSelector> value)
     createRareData(); 
     m_data.m_rareData->m_simpleSelector = value; 
 }
+    
+void CSSSelector::setSelectorList(PassOwnPtr<CSSSelectorList> selectorList)
+{
+    createRareData(); 
+    m_data.m_rareData->m_selectorList = selectorList;
+}
 
 bool CSSSelector::parseNth()
 {
@@ -784,6 +813,21 @@ bool CSSSelector::isSimple() const
     return numConditions <= 1;
 }
 
+CSSSelector::RareData::RareData(PassRefPtr<AtomicStringImpl> value)
+    : m_value(value.leakRef())
+    , m_a(0)
+    , m_b(0)
+    , m_attribute(anyQName())
+    , m_argument(nullAtom)
+{
+}
+
+CSSSelector::RareData::~RareData()
+{
+    if (m_value)
+        m_value->deref();
+}
+    
 // a helper function for parsing nth-arguments
 bool CSSSelector::RareData::parseNth()
 {

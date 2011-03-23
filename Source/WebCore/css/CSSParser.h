@@ -185,6 +185,9 @@ namespace WebCore {
         CSSParserSelector* createFloatingSelector();
         PassOwnPtr<CSSParserSelector> sinkFloatingSelector(CSSParserSelector*);
 
+        Vector<OwnPtr<CSSParserSelector> >* createFloatingSelectorVector();
+        Vector<OwnPtr<CSSParserSelector> >* sinkFloatingSelectorVector(Vector<OwnPtr<CSSParserSelector> >*);
+
         CSSParserValueList* createFloatingValueList();
         CSSParserValueList* sinkFloatingValueList(CSSParserValueList*);
 
@@ -318,6 +321,7 @@ namespace WebCore {
         Vector<RefPtr<StyleBase> > m_parsedStyleObjects;
         Vector<RefPtr<CSSRuleList> > m_parsedRuleLists;
         HashSet<CSSParserSelector*> m_floatingSelectors;
+        HashSet<Vector<OwnPtr<CSSParserSelector> >*> m_floatingSelectorVectors;
         HashSet<CSSParserValueList*> m_floatingValueLists;
         HashSet<CSSParserFunction*> m_floatingFunctions;
 

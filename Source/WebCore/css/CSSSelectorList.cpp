@@ -126,6 +126,12 @@ static bool forEachTagSelector(Functor& functor, CSSSelector* selector)
             if (forEachTagSelector(functor, simpleSelector))
                 return true;
         }
+        if (CSSSelectorList* selectorList = selector->selectorList()) {
+            for (CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+                if (forEachTagSelector(functor, subSelector))
+                    return true;
+            }
+        }
     } while ((selector = selector->tagHistory()));
 
     return false;

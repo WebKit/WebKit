@@ -1,3 +1,21 @@
+2011-03-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        webkit should implement -moz-any selector (as -webkit-any obviously)
+        https://bugs.webkit.org/show_bug.cgi?id=38095
+
+        * fast/css/css-selector-text-expected.txt:
+        * fast/css/css-selector-text.html:
+        * fast/css/css-set-selector-text-expected.txt:
+        * fast/css/css-set-selector-text.html:
+        * fast/css/pseudo-any-expected.txt: Added.
+        * fast/css/pseudo-any.html: Added.
+        * fast/dom/SelectorAPI/not-supported-namespace-in-selector-expected.txt:
+        * fast/dom/SelectorAPI/not-supported-namespace-in-selector.html:
+        * fast/dom/SelectorAPI/unknown-pseudo-expected.txt: Added.
+        * fast/dom/SelectorAPI/unknown-pseudo.html: Added.
+
 2011-03-22  Mihai Parparita  <mihaip@chromium.org>
 
         Remove duplicated test expectations for details tests (expectations were

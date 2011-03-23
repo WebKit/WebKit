@@ -56,6 +56,7 @@ PASS setThenReadSelectorText(':visited') is ':visited'
 
 PASS setThenReadSelectorText(':lang(a)') is ':lang(a)'
 PASS setThenReadSelectorText(':not(a)') is ':not(a)'
+PASS setThenReadSelectorText(':-webkit-any(a,b,p)') is ':-webkit-any(a,b,p)'
 
 PASS setThenReadSelectorText('::after') is '::after'
 PASS setThenReadSelectorText('::before') is '::before'
@@ -75,6 +76,13 @@ PASS setThenReadSelectorText('::-webkit-search-results-decoration') is '::-webki
 PASS setThenReadSelectorText('::-webkit-slider-thumb') is '::-webkit-slider-thumb'
 
 PASS setThenReadSelectorText('input:not([type="file"]):focus') is 'input:not([type="file"]):focus'
+PASS setThenReadSelectorText(':-webkit-any([type="file"])') is ':-webkit-any([type="file"])'
+PASS setThenReadSelectorText(':-webkit-any(:hover)') is ':-webkit-any(:hover)'
+PASS setThenReadSelectorText('input:-webkit-any([type="file"],:hover,:focus):enabled') is 'input:-webkit-any([type="file"],:hover,:focus):enabled'
+PASS setThenReadSelectorText(':-webkit-any(input[type="file"],a:hover,button:focus)') is ':-webkit-any(input[type="file"],a:hover,button:focus)'
+PASS setThenReadSelectorText(':-webkit-any(.class1.class2.class3)') is ':-webkit-any(.class1.class2.class3)'
+PASS setThenReadSelectorText(':-webkit-any(.class1:hover)') is ':-webkit-any(.class1:hover)'
+PASS setThenReadSelectorText(':-webkit-any(a.class1.class2.class3:hover)') is ':-webkit-any(a.class1.class2.class3:hover)'
 
 PASS setThenReadSelectorText('*:active') is ':active'
 PASS setThenReadSelectorText('|a') is 'a'
@@ -89,6 +97,7 @@ PASS setThenReadSelectorText(':after') is '::after'
 PASS setThenReadSelectorText(':before') is '::before'
 PASS setThenReadSelectorText(':first-letter') is '::first-letter'
 PASS setThenReadSelectorText(':first-line') is '::first-line'
+PASS setThenReadSelectorText(':-webkit-any(    a.class1  ,  	#id,[attr]  )') is ':-webkit-any(a.class1,#id,[attr])'
 
 PASS successfullyParsed is true
 

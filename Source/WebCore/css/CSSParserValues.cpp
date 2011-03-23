@@ -25,6 +25,7 @@
 #include "CSSFunctionValue.h"
 #include "CSSQuirkPrimitiveValue.h"
 #include "CSSSelector.h"
+#include "CSSSelectorList.h"
 
 namespace WebCore {
         
@@ -96,5 +97,11 @@ CSSParserSelector::~CSSParserSelector()
     deleteAllValues(toDelete);
 }
 
+void CSSParserSelector::adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectorVector)
+{
+    CSSSelectorList* selectorList = fastNew<CSSSelectorList>();
+    selectorList->adoptSelectorVector(selectorVector);
+    m_selector->setSelectorList(adoptPtr(selectorList));
+}
 }
 

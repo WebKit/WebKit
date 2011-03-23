@@ -106,6 +106,7 @@ nth             [\+-]?{intnum}*n([\t\r\n ]*[\+-][\t\r\n ]*{intnum})?
 {intnum}                {yyTok = INTEGER; return yyTok;}
 {num}                   {yyTok = FLOATTOKEN; return yyTok;}
 
+"-webkit-any("          {yyTok = ANYFUNCTION; return yyTok;}
 "not("                  {yyTok = NOTFUNCTION; return yyTok;}
 "url("{w}{string}{w}")" {yyTok = URI; return yyTok;}
 "url("{w}{url}{w}")"    {yyTok = URI; return yyTok;}

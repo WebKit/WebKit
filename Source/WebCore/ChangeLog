@@ -1,3 +1,50 @@
+2011-03-17  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        webkit should implement -moz-any selector (as -webkit-any obviously)
+        https://bugs.webkit.org/show_bug.cgi?id=38095
+
+        For now, match the Mozilla implementation with respect to specificity
+        and only allowing simple selectors. Both of these are likely to change
+        pending discussion on www-style@. 
+
+        Tests: fast/css/pseudo-any.html
+               fast/dom/SelectorAPI/unknown-pseudo.html
+
+        * css/CSSGrammar.y:
+        Create simple_selector_list. This is exactly like selector_list
+        except it only allows simple selectors and creates a new vector
+        instead of a reusable one since there can be multiple in one rule.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::~CSSParser):
+        (WebCore::CSSParser::lex):
+        (WebCore::CSSParser::createFloatingSelectorVector):
+        (WebCore::CSSParser::sinkFloatingSelectorVector):
+        * css/CSSParser.h:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserSelector::adoptSelectorVector):
+        * css/CSSParserValues.h:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::specificityForOneSelector):
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::nameToPseudoTypeMap):
+        (WebCore::CSSSelector::extractPseudoType):
+        (WebCore::CSSSelector::selectorText):
+        (WebCore::CSSSelector::setSelectorList):
+        (WebCore::CSSSelector::RareData::RareData):
+        (WebCore::CSSSelector::RareData::~RareData):
+        These need to be moved into the cpp file so that we can
+        have an OwnPtr<CSSSelectorList> in CSSSelector::RareData.
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::selectorList):
+        * css/CSSSelectorList.cpp:
+        (WebCore::forEachTagSelector):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        (WebCore::collectFeaturesFromSelector):
+        * css/tokenizer.flex:
+
 2011-03-22  John Bauman  <jbauman@chromium.org>
 
         Reviewed by Kenneth Russell.

@@ -189,6 +189,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %token <string> URI
 %token <string> FUNCTION
+%token <string> ANYFUNCTION
 %token <string> NOTFUNCTION
 
 %token <string> UNICODERANGE
@@ -247,6 +248,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <selector> simple_selector
 %type <selector> selector
 %type <selectorList> selector_list
+%type <selectorList> simple_selector_list
 %type <selector> selector_with_trailing_whitespace
 %type <selector> class
 %type <selector> attrib
@@ -921,6 +923,31 @@ simple_selector:
     }
   ;
 
+simple_selector_list:
+    simple_selector %prec UNIMPORTANT_TOK {
+        if ($1) {
+            CSSParser* p = static_cast<CSSParser*>(parser);
+            $$ = p->createFloatingSelectorVector();
+            $$->shrink(0);
+            $$->append(p->sinkFloatingSelector($1));
+            p->updateLastSelectorLineAndPosition();
+        } else
+            $$ = 0
+    }
+    | simple_selector_list maybe_space ',' maybe_space simple_selector %prec UNIMPORTANT_TOK {
+        if ($1 && $5) {
+            CSSParser* p = static_cast<CSSParser*>(parser);
+            $$ = $1;
+            $$->append(p->sinkFloatingSelector($5));
+            p->updateLastSelectorLineAndPosition();
+        } else
+            $$ = 0;
+    }
+    | simple_selector_list error {
+        $$ = 0;
+    }
+  ;
+
 element_name:
     IDENT {
         CSSParserString& str = $1;
@@ -1101,6 +1128,25 @@ pseudo:
         $$->setValue($3);
         // FIXME: This call is needed to force selector to compute the pseudoType early enough.
         $$->pseudoType();
+    }
+    // use by :-webkit-any.
+    // FIXME: should we support generic selectors here or just simple_selectors?
+    // Use simple_selector_list for now to match -moz-any.
+    // See http://lists.w3.org/Archives/Public/www-style/2010Sep/0566.html for some
+    // related discussion with respect to :not.
+    | ':' ANYFUNCTION maybe_space simple_selector_list maybe_space ')' {
+        if ($4) {
+            CSSParser *p = static_cast<CSSParser*>(parser);
+            $$ = p->createFloatingSelector();
+            $$->setMatch(CSSSelector::PseudoClass);
+            $$->adoptSelectorVector(*p->sinkFloatingSelectorVector($4));
+            $2.lower();
+            $$->setValue($2);
+            CSSSelector::PseudoType type = $$->pseudoType();
+            if (type != CSSSelector::PseudoAny)
+                $$ = 0;
+        } else
+            $$ = 0;
     }
     // used by :nth-*(ax+b)
     | ':' FUNCTION maybe_space NTH maybe_space ')' {

@@ -61,6 +61,8 @@
         shouldNotThrow("document.querySelectorAll('[|name=value]')");
         shouldNotThrow("document.body.webkitMatchesSelector('[|name=value]')");
 
+        shouldThrow("document.querySelector(':-webkit-any(bbb|pre)')");
+
         shouldThrow("document.querySelector('div [bbb|name=value]')");
         shouldThrow("document.querySelectorAll('div [bbb|name=value]')");
         shouldThrow("document.body.webkitMatchesSelector('div [bbb|name=value]')");

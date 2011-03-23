@@ -109,7 +109,9 @@ public:
     void setMatch(CSSSelector::Match value) { m_selector->m_match = value; }
     void setRelation(CSSSelector::Relation value) { m_selector->m_relation = value; }
     void setForPage() { m_selector->setForPage(); }
-    
+
+    void adoptSelectorVector(Vector<OwnPtr<CSSParserSelector> >& selectorVector);
+
     CSSSelector::PseudoType pseudoType() const { return m_selector->pseudoType(); }
     bool isUnknownPseudoElement() const { return m_selector->isUnknownPseudoElement(); }
     bool isSimple() const { return !m_tagHistory && m_selector->isSimple(); }

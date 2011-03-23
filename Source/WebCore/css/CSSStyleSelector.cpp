@@ -2843,6 +2843,12 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 if (e == e->document()->cssTarget())
                     return true;
                 break;
+            case CSSSelector::PseudoAny:
+                for (CSSSelector* selector = sel->selectorList()->first(); selector; selector = CSSSelectorList::next(selector)) {
+                    if (checkSelector(selector, e, selectorAttrs, dynamicPseudo, true, elementStyle, elementParentStyle) == SelectorMatches)
+                        return true;
+                }
+                break;
             case CSSSelector::PseudoAnyLink:
                 if (e && e->isLink())
                     return true;
@@ -3303,6 +3309,10 @@ static inline void collectFeaturesFromSelector(CSSStyleSelector::Features& featu
     case CSSSelector::PseudoVisited:
         features.usesLinkRules = true;
         break;
+    case CSSSelector::PseudoAny:
+        for (CSSSelector* subSelector = selector->selectorList()->first(); subSelector; subSelector = CSSSelectorList::next(subSelector))
+            collectFeaturesFromSelector(features, subSelector);
+        return;
     default:
         break;
     }
