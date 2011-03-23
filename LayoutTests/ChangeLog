@@ -1,3 +1,17 @@
+2011-03-23  Mihai Parparita  <mihaip@chromium.org>
+
+        Update expectations for one SVG and two media tests for Chromium Snow
+        Leopard.
+
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.png.
+        * platform/chromium-mac/media/controls-after-reload-expected.checksum:
+        * platform/chromium-mac/media/controls-after-reload-expected.png:
+        * platform/chromium-mac/media/controls-without-preload-expected.checksum:
+        * platform/chromium-mac/media/controls-without-preload-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.checksum:
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.png:
+
 2011-03-23  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by David Hyatt.
