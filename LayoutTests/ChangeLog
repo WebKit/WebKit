@@ -1,5 +1,13 @@
 2011-03-23  Xiaomei Ji  <xji@chromium.org>
 
+        Rebaseline chromium-mac after r81807.
+
+        * platform/chromium-mac/fast/css/bidi-override-in-anonymous-block-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/bidi-override-in-anonymous-block-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-03-23  Xiaomei Ji  <xji@chromium.org>
+
         Rebaseline after r81807.
 
         * platform/chromium-linux/fast/css/bidi-override-in-anonymous-block-expected.checksum: Added.
