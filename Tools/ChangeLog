@@ -1,3 +1,15 @@
+2011-03-23  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] GTK's DRT to ouput detail's string for the 'property-change' signal
+        https://bugs.webkit.org/show_bug.cgi?id=56953
+
+        Print the string for the detail of 'property-change' signal.
+
+        * DumpRenderTree/gtk/AccessibilityCallbacks.cpp:
+        (axObjectEventListener): Print the detail string.
+
 2011-03-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

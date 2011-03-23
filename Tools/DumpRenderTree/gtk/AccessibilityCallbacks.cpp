@@ -92,6 +92,9 @@ static gboolean axObjectEventListener(GSignalInvocationHint *signalHint,
     } else if (!g_strcmp0(signal_query.signal_name, "children-changed")) {
         signalName.set(g_strdup_printf("children-changed = %d",
                                        g_value_get_uint(&paramValues[1])));
+    } else if (!g_strcmp0(signal_query.signal_name, "property-change")) {
+        signalName.set(g_strdup_printf("property-change:%s",
+                                       g_quark_to_string(signalHint->detail)));
     } else
         signalName.set(g_strdup(signal_query.signal_name));
 
