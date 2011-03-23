@@ -25,38 +25,11 @@
                 ]
             },
             {
-                "name": "setSearchingForNode",
-                "parameters": [
-                    { "name": "enabled", "type": "boolean" }
-                ],
-                "returns": [
-                    { "name": "newState", "type": "boolean" }
-                ]
-            },
-            {
                 "name": "didEvaluateForTestInFrontend",
                 "parameters": [
                     { "name": "testCallId", "type": "integer" },
                     { "name": "jsonResult", "type": "string" }
                 ]
-            },
-            {
-                "name": "highlightDOMNode",
-                "parameters": [
-                    { "name": "nodeId", "type": "integer" }
-                ]
-            },
-            {
-                "name": "hideDOMNodeHighlight"
-            },
-            {
-                "name": "highlightFrame",
-                "parameters": [
-                    { "name": "frameId", "type": "string" }
-                ]
-            },
-            {
-                "name": "hideFrameHighlight"
             },
             {
                 "name": "setUserAgentOverride",
@@ -697,6 +670,34 @@
                 ],
                 "description": "Requests that the node is sent to the caller given the JavaScript node object reference."
             },
+            {
+                "name": "setSearchingForNode",
+                "parameters": [
+                    { "name": "enabled", "type": "boolean" }
+                ],
+                "returns": [
+                    { "name": "newState", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "highlightDOMNode",
+                "parameters": [
+                    { "name": "nodeId", "type": "integer" }
+                ]
+            },
+            {
+                "name": "hideDOMNodeHighlight"
+            },
+            {
+                "name": "highlightFrame",
+                "parameters": [
+                    { "name": "frameId", "type": "string" }
+                ]
+            },
+            {
+                "name": "hideFrameHighlight"
+            },
+
             {
                 "name": "pushNodeByPathToFrontend",
                 "parameters": [

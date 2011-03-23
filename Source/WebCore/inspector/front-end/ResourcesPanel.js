@@ -910,7 +910,7 @@ WebInspector.FrameTreeElement.prototype = {
         this._storagePanel.showCategoryView(this._displayName);
 
         this.listItemElement.removeStyleClass("hovered");
-        InspectorAgent.hideFrameHighlight();
+        DOMAgent.hideFrameHighlight();
     },
 
     get displayName()
@@ -943,10 +943,10 @@ WebInspector.FrameTreeElement.prototype = {
     {
         if (hovered) {
             this.listItemElement.addStyleClass("hovered");
-            InspectorAgent.highlightFrame(this._frameId);
+            DOMAgent.highlightFrame(this._frameId);
         } else {
             this.listItemElement.removeStyleClass("hovered");
-            InspectorAgent.hideFrameHighlight();
+            DOMAgent.hideFrameHighlight();
         }
     }
 }

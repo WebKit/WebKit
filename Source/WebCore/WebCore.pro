@@ -798,6 +798,7 @@ SOURCES += \
     html/shadow/SliderThumbElement.cpp \
     html/shadow/TextControlInnerElements.cpp \
     inspector/ConsoleMessage.cpp \
+    inspector/DOMNodeHighlighter.cpp \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptHost.cpp \
     inspector/InjectedScriptManager.cpp \
@@ -1720,6 +1721,7 @@ HEADERS += \
     html/parser/HTMLViewSourceParser.h \
     html/parser/XSSFilter.h \
     inspector/ConsoleMessage.h \
+    inspector/DOMNodeHighlighter.h \
     inspector/InjectedScript.h \
     inspector/InjectedScriptHost.h \
     inspector/InjectedScriptManager.h \

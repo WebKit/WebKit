@@ -47,6 +47,7 @@
 #include "ContainerNode.h"
 #include "Cookie.h"
 #include "CookieJar.h"
+#include "DOMNodeHighlighter.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "DocumentType.h"
@@ -57,10 +58,14 @@
 #include "EventTarget.h"
 #include "Frame.h"
 #include "FrameTree.h"
+#include "HitTestResult.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InjectedScriptManager.h"
+#include "InspectorAgent.h"
+#include "InspectorClient.h"
 #include "InspectorFrontend.h"
+#include "InspectorResourceAgent.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
 #include "MutationEvent.h"
@@ -262,12 +267,15 @@ InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, P
     , m_domListener(0)
     , m_lastNodeId(1)
     , m_matchJobsTimer(this, &InspectorDOMAgent::onMatchJobsTimer)
+    , m_searchingForNode(false)
 {
 }
 
 InspectorDOMAgent::~InspectorDOMAgent()
 {
     reset();
+    ASSERT(!m_highlightedNode);
+    ASSERT(!m_searchingForNode);
 }
 
 void InspectorDOMAgent::setFrontend(InspectorFrontend* frontend)
@@ -281,6 +289,11 @@ void InspectorDOMAgent::setFrontend(InspectorFrontend* frontend)
 void InspectorDOMAgent::clearFrontend()
 {
     ASSERT(m_frontend);
+    setSearchingForNode(false);
+
+    ErrorString error;
+    hideHighlight(&error);
+
     m_frontend = 0;
     m_instrumentingAgents->setInspectorDOMAgent(0);
     m_inspectorState->setBoolean(DOMAgentState::documentRequested, false);
@@ -873,6 +886,76 @@ void InspectorDOMAgent::cancelSearch(ErrorString*)
     m_searchResults.clear();
 }
 
+bool InspectorDOMAgent::handleMousePress()
+{
+    if (!m_searchingForNode)
+        return false;
+
+    if (m_highlightedNode) {
+        RefPtr<Node> node = m_highlightedNode;
+        setSearchingForNode(false);
+        m_instrumentingAgents->inspectorAgent()->inspect(node.get());
+    }
+    return true;
+}
+
+void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
+{
+    if (!m_searchingForNode)
+        return;
+
+    Node* node = result.innerNode();
+    while (node && node->nodeType() == Node::TEXT_NODE)
+        node = node->parentNode();
+    if (node) {
+        ErrorString error;
+        highlight(&error, node);
+    }
+}
+
+void InspectorDOMAgent::setSearchingForNode(bool enabled)
+{
+    if (m_searchingForNode == enabled)
+        return;
+    m_searchingForNode = enabled;
+    if (!enabled) {
+        ErrorString error;
+        hideHighlight(&error);
+    }
+}
+
+void InspectorDOMAgent::setSearchingForNode(ErrorString*, bool enabled, bool* newState)
+{
+    *newState = enabled;
+    setSearchingForNode(enabled);
+}
+
+void InspectorDOMAgent::highlight(ErrorString*, Node* node)
+{
+    ASSERT_ARG(node, node);
+    m_highlightedNode = node;
+    m_instrumentingAgents->inspectorAgent()->inspectorClient()->highlight(node);
+}
+
+void InspectorDOMAgent::highlightDOMNode(ErrorString* error, int nodeId)
+{
+    if (Node* node = nodeForId(nodeId))
+        highlight(error, node);
+}
+
+void InspectorDOMAgent::highlightFrame(ErrorString* error, const String& frameId)
+{
+    Frame* frame = m_instrumentingAgents->inspectorResourceAgent()->frameForId(frameId);
+    if (frame && frame->ownerElement())
+        highlight(error, frame->ownerElement());
+}
+
+void InspectorDOMAgent::hideHighlight(ErrorString*)
+{
+    m_highlightedNode = 0;
+    m_instrumentingAgents->inspectorAgent()->inspectorClient()->hideHighlight();
+}
+
 void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, RefPtr<InspectorObject>* result)
 {
     Node* node = nodeForId(nodeId);
@@ -1288,6 +1371,14 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::resolveNode(Node* node)
         return 0;
 
     return injectedScript.wrapNode(node);
+}
+
+void InspectorDOMAgent::drawNodeHighlight(GraphicsContext& context) const
+{
+    if (!m_highlightedNode)
+        return;
+
+    DOMNodeHighlighter::DrawNodeHighlight(context, m_highlightedNode.get());
 }
 
 } // namespace WebCore

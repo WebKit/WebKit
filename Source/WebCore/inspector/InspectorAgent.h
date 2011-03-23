@@ -50,9 +50,7 @@ class DOMWrapperWorld;
 class Document;
 class DocumentLoader;
 class FloatRect;
-class GraphicsContext;
 class HTTPHeaderMap;
-class HitTestResult;
 class InjectedScript;
 class InjectedScriptManager;
 class InspectorArray;
@@ -117,14 +115,7 @@ public:
 
     void restoreInspectorStateFromCookie(const String& inspectorCookie);
 
-    void highlight(ErrorString*, Node*);
-    void hideHighlight(ErrorString*);
     void inspect(Node*);
-    void highlightDOMNode(ErrorString*, int nodeId);
-    void hideDOMNodeHighlight(ErrorString* error) { hideHighlight(error); }
-
-    void highlightFrame(ErrorString*, const String& frameId);
-    void hideFrameHighlight(ErrorString* error) { hideHighlight(error); }
 
     void setFrontend(InspectorFrontend*);
     InspectorFrontend* frontend() const { return m_frontend; }
@@ -154,10 +145,6 @@ public:
     InspectorApplicationCacheAgent* applicationCacheAgent() { return m_applicationCacheAgent.get(); }
 #endif
 
-    bool handleMousePress();
-    bool searchingForNodeInPage() const;
-    void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
-
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
 
     void didCommitLoad(DocumentLoader*);
@@ -178,9 +165,7 @@ public:
 
     bool hasFrontend() const { return m_frontend; }
 
-    void drawNodeHighlight(GraphicsContext&) const;
     void openInInspectedWindow(ErrorString*, const String& url);
-    void drawElementTitle(GraphicsContext&, const IntRect& boundingBox, const IntRect& anchorBox, const FloatRect& overlayRect, WebCore::Settings*) const;
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void showProfilesPanel();
@@ -199,7 +184,6 @@ public:
     void getInspectorState(RefPtr<InspectorObject>* state);
     void setMonitoringXHREnabled(bool enabled, bool* newState);
     // Following are used from InspectorBackend and internally.
-    void setSearchingForNode(ErrorString*, bool enabled, bool* newState);
     void didEvaluateForTestInFrontend(ErrorString*, long callId, const String& jsonResult);
 
     void setUserAgentOverride(ErrorString*, const String& userAgent);
@@ -208,7 +192,6 @@ public:
 private:
     void showPanel(const String& panel);
     void unbindAllResources();
-    void setSearchingForNode(bool enabled);
 
     void releaseFrontendLifetimeAgents();
     void createFrontendLifetimeAgents();
@@ -247,7 +230,6 @@ private:
     OwnPtr<InspectorApplicationCacheAgent> m_applicationCacheAgent;
 #endif
 
-    RefPtr<Node> m_highlightedNode;
     RefPtr<Node> m_nodeToFocus;
     RefPtr<InspectorResourceAgent> m_resourceAgent;
     OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;

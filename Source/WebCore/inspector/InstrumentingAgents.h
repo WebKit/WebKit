@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class InspectorAgent;
 class InspectorApplicationCacheAgent;
 class InspectorBrowserDebuggerAgent;
 class InspectorCSSAgent;
@@ -54,7 +55,8 @@ class InstrumentingAgents {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     InstrumentingAgents()
-        : m_inspectorCSSAgent(0)
+        : m_inspectorAgent(0)
+        , m_inspectorCSSAgent(0)
         , m_inspectorConsoleAgent(0)
         , m_inspectorDOMAgent(0)
         , m_inspectorResourceAgent(0)
@@ -76,6 +78,9 @@ public:
 #endif
     { }
     ~InstrumentingAgents() { }
+
+    InspectorAgent* inspectorAgent() const { return m_inspectorAgent; }
+    void setInspectorAgent(InspectorAgent* agent) { m_inspectorAgent = agent; }
 
     InspectorCSSAgent* inspectorCSSAgent() const { return m_inspectorCSSAgent; }
     void setInspectorCSSAgent(InspectorCSSAgent* agent) { m_inspectorCSSAgent = agent; }
@@ -119,6 +124,7 @@ public:
 #endif
 
 private:
+    InspectorAgent* m_inspectorAgent;
     InspectorCSSAgent* m_inspectorCSSAgent;
     InspectorConsoleAgent* m_inspectorConsoleAgent;
     InspectorDOMAgent* m_inspectorDOMAgent;

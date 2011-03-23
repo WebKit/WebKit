@@ -1232,6 +1232,8 @@
 		4E19592C0A39DACC00220FE5 /* MediaQueryEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959260A39DACC00220FE5 /* MediaQueryEvaluator.h */; };
 		4E19592D0A39DACC00220FE5 /* MediaQueryExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E1959270A39DACC00220FE5 /* MediaQueryExp.cpp */; };
 		4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959280A39DACC00220FE5 /* MediaQueryExp.h */; };
+		4F1442281339FD6200E0D6F8 /* DOMNodeHighlighter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F1442261339FD6200E0D6F8 /* DOMNodeHighlighter.cpp */; };
+		4F1442291339FD6200E0D6F8 /* DOMNodeHighlighter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1442271339FD6200E0D6F8 /* DOMNodeHighlighter.h */; };
 		4F1534DE11B532EC0021FD86 /* EditingBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1534DD11B532EC0021FD86 /* EditingBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F1534E011B533020021FD86 /* EditingBehaviorTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F1534DF11B533020021FD86 /* EditingBehaviorTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F2D205412EAE7B3005C2874 /* InspectorAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F2D205212EAE7B3005C2874 /* InspectorAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7724,6 +7726,8 @@
 		4E1959260A39DACC00220FE5 /* MediaQueryEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaQueryEvaluator.h; sourceTree = "<group>"; };
 		4E1959270A39DACC00220FE5 /* MediaQueryExp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryExp.cpp; sourceTree = "<group>"; };
 		4E1959280A39DACC00220FE5 /* MediaQueryExp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaQueryExp.h; sourceTree = "<group>"; };
+		4F1442261339FD6200E0D6F8 /* DOMNodeHighlighter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMNodeHighlighter.cpp; sourceTree = "<group>"; };
+		4F1442271339FD6200E0D6F8 /* DOMNodeHighlighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMNodeHighlighter.h; sourceTree = "<group>"; };
 		4F1534DD11B532EC0021FD86 /* EditingBehavior.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingBehavior.h; sourceTree = "<group>"; };
 		4F1534DF11B533020021FD86 /* EditingBehaviorTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingBehaviorTypes.h; sourceTree = "<group>"; };
 		4F2D205212EAE7B3005C2874 /* InspectorAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorAgent.h; sourceTree = "<group>"; };
@@ -13093,6 +13097,8 @@
 				1C81B9590E97330800266E07 /* front-end */,
 				41F0618D0F5F069800A07EAC /* ConsoleMessage.cpp */,
 				41F0618C0F5F069800A07EAC /* ConsoleMessage.h */,
+				4F1442261339FD6200E0D6F8 /* DOMNodeHighlighter.cpp */,
+				4F1442271339FD6200E0D6F8 /* DOMNodeHighlighter.h */,
 				F3644AFD1119805900E0D537 /* InjectedScript.cpp */,
 				F3644AFE1119805900E0D537 /* InjectedScript.h */,
 				7A0E76F610BF08ED00A0276E /* InjectedScriptHost.cpp */,
@@ -22687,6 +22693,7 @@
 				319E69B313299BBD004AC91A /* WebKitAnimation.h in Headers */,
 				319E69B613299BBD004AC91A /* WebKitAnimationList.h in Headers */,
 				BC772E131331620C001EC9CE /* CSSLineBoxContainValue.h in Headers */,
+				4F1442291339FD6200E0D6F8 /* DOMNodeHighlighter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25356,6 +25363,7 @@
 				319E69B513299BBD004AC91A /* WebKitAnimationList.cpp in Sources */,
 				BC772E16133162C2001EC9CE /* CSSLineBoxContainValue.cpp in Sources */,
 				7E37EF2E1339208800B29250 /* SubresourceLoaderCF.cpp in Sources */,
+				4F1442281339FD6200E0D6F8 /* DOMNodeHighlighter.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

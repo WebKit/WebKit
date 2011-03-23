@@ -42,6 +42,7 @@
 #include "InspectorBrowserDebuggerAgent.h"
 #include "InspectorDebuggerAgent.h"
 #include "InspectorClient.h"
+#include "InspectorDOMAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorFrontendClient.h"
 #include "InspectorInstrumentation.h"
@@ -200,7 +201,7 @@ void InspectorController::evaluateForTestInFrontend(long callId, const String& s
 
 void InspectorController::drawNodeHighlight(GraphicsContext& context) const
 {
-    m_inspectorAgent->drawNodeHighlight(context);
+    m_inspectorAgent->domAgent()->drawNodeHighlight(context);
 }
 
 void InspectorController::showConsole()
@@ -250,7 +251,7 @@ void InspectorController::dispatchMessageFromFrontend(const String& message)
 void InspectorController::hideHighlight()
 {
     ErrorString error;
-    m_inspectorAgent->hideHighlight(&error);
+    m_inspectorAgent->domAgent()->hideHighlight(&error);
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

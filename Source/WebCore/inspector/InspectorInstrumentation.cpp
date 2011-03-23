@@ -158,12 +158,15 @@ void InspectorInstrumentation::didInvalidateStyleAttrImpl(InspectorAgent* inspec
 
 void InspectorInstrumentation::mouseDidMoveOverElementImpl(InspectorAgent* inspectorAgent, const HitTestResult& result, unsigned modifierFlags)
 {
-    inspectorAgent->mouseDidMoveOverElement(result, modifierFlags);
+    if (InspectorDOMAgent* domAgent = inspectorAgent->instrumentingAgents()->inspectorDOMAgent())
+        domAgent->mouseDidMoveOverElement(result, modifierFlags);
 }
 
 bool InspectorInstrumentation::handleMousePressImpl(InspectorAgent* inspectorAgent)
 {
-    return inspectorAgent->handleMousePress();
+    if (InspectorDOMAgent* domAgent = inspectorAgent->instrumentingAgents()->inspectorDOMAgent())
+        return domAgent->handleMousePress();
+    return false;
 }
 
 void InspectorInstrumentation::characterDataModifiedImpl(InspectorAgent* inspectorAgent, CharacterData* characterData)

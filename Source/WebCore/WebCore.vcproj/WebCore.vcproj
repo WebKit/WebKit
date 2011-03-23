@@ -66142,6 +66142,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\DOMNodeHighlighter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\DOMNodeHighlighter.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InjectedScript.cpp"
 				>
 			</File>

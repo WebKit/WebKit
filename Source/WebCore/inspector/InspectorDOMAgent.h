@@ -53,8 +53,10 @@ class CharacterData;
 class Document;
 class Element;
 class Event;
+class GraphicsContext;
 class InspectorDOMAgent;
 class InspectorFrontend;
+class HitTestResult;
 class MatchJob;
 class HTMLElement;
 class InspectorState;
@@ -123,8 +125,14 @@ public:
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, bool runSynchronously);
     void cancelSearch(ErrorString*);
     void resolveNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* result);
+    void setSearchingForNode(ErrorString*, bool enabled, bool* newState);
     void pushNodeToFrontend(ErrorString*, const String& objectId, int* nodeId);
     void pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId);
+    void hideHighlight(ErrorString*);
+    void highlightDOMNode(ErrorString*, int nodeId);
+    void hideDOMNodeHighlight(ErrorString* error) { hideHighlight(error); }
+    void highlightFrame(ErrorString*, const String& frameId);
+    void hideFrameHighlight(ErrorString* error) { hideHighlight(error); }
 
     // Methods called from the InspectorInstrumentation.
     void setDocument(Document*);
@@ -147,6 +155,11 @@ public:
     String documentURLString(Document*) const;
 
     PassRefPtr<InspectorObject> resolveNode(Node*);
+    bool handleMousePress();
+    bool searchingForNodeInPage() const;
+    void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
+
+    void drawNodeHighlight(GraphicsContext&) const;
 
     // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
     // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.
@@ -159,6 +172,9 @@ public:
 
 private:
     InspectorDOMAgent(InstrumentingAgents*, Page*, InspectorState*, InjectedScriptManager*);
+
+    void setSearchingForNode(bool enabled);
+    void highlight(ErrorString*, Node*);
 
     // Node-related methods.
     typedef HashMap<RefPtr<Node>, int> NodeToIdMap;
@@ -207,6 +223,8 @@ private:
     Timer<InspectorDOMAgent> m_matchJobsTimer;
     HashSet<RefPtr<Node> > m_searchResults;
     OwnPtr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
+    RefPtr<Node> m_highlightedNode;
+    bool m_searchingForNode;
 };
 
 #endif // ENABLE(INSPECTOR)

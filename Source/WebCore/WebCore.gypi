@@ -3169,6 +3169,8 @@
             'icu/unicode/uversion.h',
             'inspector/ConsoleMessage.cpp',
             'inspector/ConsoleMessage.h',
+            'inspector/DOMNodeHighlighter.cpp',
+            'inspector/DOMNodeHighlighter.h',
             'inspector/InjectedScript.cpp',
             'inspector/InjectedScript.h',
             'inspector/InjectedScriptHost.cpp',

@@ -1,3 +1,71 @@
+2011-03-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: move node searching and node highlight related methods from InspectorAgent to InspectorDOMAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=56912
+
+        The next functions were moved:
+            setSearchingForNode
+            highlightDOMNode
+            hideDOMNodeHighlight
+            highlightFrame
+            hideFrameHighlight
+            mouseDidMoveOverElement
+            handleMousePress
+
+        The code which does real highlight in Graphic context was moved to new files DOMNodeHighlighter.*
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/DOMNodeHighlighter.cpp: Added.
+        (WebCore::DOMNodeHighlighter::DrawNodeHighlight):
+        * inspector/DOMNodeHighlighter.h: Added.
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::~InspectorAgent):
+        (WebCore::InspectorAgent::inspectedPageDestroyed):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::drawNodeHighlight):
+        (WebCore::InspectorController::hideHighlight):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::~InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::clearFrontend):
+        (WebCore::InspectorDOMAgent::handleMousePress):
+        (WebCore::InspectorDOMAgent::mouseDidMoveOverElement):
+        (WebCore::InspectorDOMAgent::searchingForNodeInPage):
+        (WebCore::InspectorDOMAgent::setSearchingForNode):
+        (WebCore::InspectorDOMAgent::highlight):
+        (WebCore::InspectorDOMAgent::highlightDOMNode):
+        (WebCore::InspectorDOMAgent::highlightFrame):
+        (WebCore::InspectorDOMAgent::hideHighlight):
+        (WebCore::InspectorDOMAgent::drawNodeHighlight):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::hideDOMNodeHighlight):
+        (WebCore::InspectorDOMAgent::hideFrameHighlight):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::mouseDidMoveOverElementImpl):
+        (WebCore::InspectorInstrumentation::handleMousePressImpl):
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::inspectorAgent):
+        (WebCore::InstrumentingAgents::setInspectorAgent):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.setSearchingForNode):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FrameTreeElement.prototype.onselect):
+        (WebInspector.FrameTreeElement.prototype.set hovered):
+        * inspector/front-end/inspector.js:
+        (WebInspector.highlightDOMNode):
+
 2011-03-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Rollout r81768 which broke compilation on Win.
