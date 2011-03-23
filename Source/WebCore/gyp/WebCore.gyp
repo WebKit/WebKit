@@ -138,32 +138,6 @@
         '<@(webcore_resource_files)',
       ],
       'xcode_config_file': '<(project_dir)/Configurations/WebCore.xcconfig',
-      'actions': [
-        {
-          'action_name': 'Copy Forwarding and ICU Headers',
-          'inputs': [],
-          'outputs': [],
-          'action': [
-            'sh', '<(project_dir)/gyp/copy-forwarding-and-icu-headers.sh'
-          ],
-        },
-        {
-          'action_name': 'Copy Inspector Resources',
-          'inputs': [],
-          'outputs': [],
-          'action': [
-            'sh', '<(project_dir)/gyp/copy-inspector-resources.sh'
-          ],
-        },
-        {
-          'action_name': 'Streamline Inspector Source',
-          'inputs': [],
-          'outputs': [],
-          'action': [
-            'sh', '<(project_dir)/gyp/streamline-inspector-source.sh'
-          ],
-        },
-      ],
       # FIXME: A number of these actions aren't supposed to run if "${ACTION}" = "installhdrs"
       'postbuilds': [
         {
@@ -182,6 +156,24 @@
           'postbuild_name': 'Check For Weak VTables and Externals',
           'action': [
             'sh', '<(project_dir)/gyp/run-if-exists.sh', '<(DEPTH)/../Tools/Scripts/check-for-weak-vtables-and-externals'
+          ],
+        },
+        {
+          'postbuild_name': 'Copy Forwarding and ICU Headers',
+          'action': [
+            'sh', '<(project_dir)/gyp/copy-forwarding-and-icu-headers.sh'
+          ],
+        },
+        {
+          'postbuild_name': 'Copy Inspector Resources',
+          'action': [
+            'sh', '<(project_dir)/gyp/copy-inspector-resources.sh'
+          ],
+        },
+        {
+          'postbuild_name': 'Streamline Inspector Source',
+          'action': [
+            'sh', '<(project_dir)/gyp/streamline-inspector-source.sh'
           ],
         },
         {

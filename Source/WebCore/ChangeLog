@@ -1,3 +1,15 @@
+2011-03-22  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebCore GYP build should export the headers needed by WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=56883
+
+        * WebCore.gypi:
+        * gyp/WebCore.gyp:
+            - Export a couple more headers.
+            - Remove FIXME comments for things we've already fixed.
+
 2011-03-22  Anton D'Auria  <adauria@apple.com>
 
         Reviewed by Alexey Proskuryakov.
