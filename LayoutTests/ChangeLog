@@ -1,3 +1,13 @@
+2011-03-23  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by David Hyatt.
+
+        REGRESSION(81035): crash in RenderDetails::removeChild
+        https://bugs.webkit.org/show_bug.cgi?id=56773
+
+        * fast/html/details-children-merge-crash-expected.txt: Added.
+        * fast/html/details-children-merge-crash.html: Added.
+
 2011-03-23  Xiaomei Ji  <xji@chromium.org>
 
         Add fast/css/bidi-override-in-anonymous-block.html as expected to fail after r81807.

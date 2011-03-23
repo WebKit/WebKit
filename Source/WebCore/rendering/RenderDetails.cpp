@@ -46,8 +46,10 @@ RenderDetails::RenderDetails(Node* node)
 
 void RenderDetails::destroy()
 {
-    if (m_marker)
+    if (m_marker) {
         m_marker->destroy();
+        m_marker = 0;
+    }
 
     RenderBlock::destroy();
 }
@@ -79,13 +81,19 @@ void RenderDetails::addChild(RenderObject* newChild, RenderObject* beforeChild)
 
 void RenderDetails::removeChild(RenderObject* oldChild)
 {
-    if (oldChild == m_summaryBlock || oldChild == m_contentBlock) {
+    if (oldChild == m_summaryBlock) {
         RenderBlock::removeChild(oldChild);
         m_summaryBlock = 0;
         return;
     }
 
-    if (oldChild == m_mainSummary) {
+    if (oldChild == m_contentBlock) {
+        RenderBlock::removeChild(oldChild);
+        m_contentBlock = 0;
+        return;
+    }
+
+    if (oldChild == m_mainSummary && m_summaryBlock) {
         m_summaryBlock->removeChild(m_mainSummary);
         return;
     }
