@@ -209,7 +209,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXM
 {
     ASSERT(needsLayout());
 
-    if (!relayoutChildren && layoutOnlyPositionedObjects())
+    if (!relayoutChildren && simplifiedLayout())
         return;
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());

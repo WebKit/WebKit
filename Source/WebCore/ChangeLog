@@ -1,3 +1,63 @@
+2011-03-23  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56909
+        
+        Add a simplified normal flow layout path optimization for overflow recomputation
+        and for positioned objects inside relative positioned containers.
+
+        Currently there is an optimized code path for positioned objects, but as soon as
+        we encounter a normal flow object in the containing block chain, we lose the
+        optimization.
+
+        This patch adds a new type of style difference called SimplifiedLayout that is
+        returned when only overflow needs to be recomputed. Whenever opacity changes or
+        a transform changes, this is the hint returned now instead of a full layout.
+        
+        In addition, when positioned objects need layout and start marking up the
+        containing block chain, we now propagate the fact that the layout is simplified
+        all the way up to the root, even when we encounter normal flow containing
+        blocks.
+        
+        The layoutOnlyPositionedObjects function has been renamed to simplifiedLayout()
+        and is now used for all of these cases (in addition to what it handled before).
+        
+        No new tests, since existing tests covered this very well (especially the opacity
+        and transforms repaint tests in fast/repaint).
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::simplifiedNormalFlowLayout):
+        (WebCore::RenderBlock::simplifiedLayout):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::styleWillChange):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::adjustStyleDifference):
+        (WebCore::RenderObject::setStyle):
+        (WebCore::RenderObject::styleDidChange):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::needsLayout):
+        (WebCore::RenderObject::needsPositionedMovementLayoutOnly):
+        (WebCore::RenderObject::needsSimplifiedNormalFlowLayout):
+        (WebCore::RenderObject::setNeedsLayout):
+        (WebCore::RenderObject::setChildNeedsLayout):
+        (WebCore::RenderObject::setNeedsSimplifiedNormalFlowLayout):
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+
 2011-03-23  Tyler Close  <tjclose@chromium.org>
 
         Reviewed by Jeremy Orlow.

@@ -297,7 +297,9 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual bool hasLineIfEmpty() const;
-    bool layoutOnlyPositionedObjects();
+    
+    bool simplifiedLayout();
+    void simplifiedNormalFlowLayout();
 
     void computeOverflow(int oldClientAfterEdge, bool recomputeFloats = false);
     virtual void addOverflowFromChildren();
