@@ -1,3 +1,17 @@
+2011-03-23  Mihai Parparita  <mihaip@chromium.org>
+
+        Fix fast/table for Chromium Snow Leopard by promoting the chromium-mac/
+        baselines to mac-leopard/.
+
+        * platform/mac-leopard/fast/table/dynamic-descendant-percentage-height-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/table/dynamic-descendant-percentage-height-expected.checksum.
+        * platform/mac-leopard/fast/table/dynamic-descendant-percentage-height-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/table/dynamic-descendant-percentage-height-expected.png.
+        * platform/mac-leopard/fast/table/relative-position-containment-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/table/relative-position-containment-expected.checksum.
+        * platform/mac-leopard/fast/table/relative-position-containment-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/table/relative-position-containment-expected.png.
+        * platform/mac-leopard/fast/table/relative-position-offsets-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/table/relative-position-offsets-expected.checksum.
+        * platform/mac-leopard/fast/table/relative-position-offsets-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/table/relative-position-offsets-expected.png.
+        * platform/mac-leopard/fast/table/relative-position-stacking-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/table/relative-position-stacking-expected.checksum.
+        * platform/mac-leopard/fast/table/relative-position-stacking-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/table/relative-position-stacking-expected.png.
+
 2011-03-23  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Eric Seidel.
