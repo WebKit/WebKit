@@ -1,3 +1,39 @@
+2011-03-23  Mihai Parparita  <mihaip@chromium.org>
+
+        Fix more tests for Chromium Snow Leopard by promoting chromium-mac/
+        results to mac-leopard/ where possible.
+
+        * platform/chromium-mac-leopard/fast/backgrounds/background-position-parsing-expected.checksum: Copied from LayoutTests/platform/chromium-mac/fast/backgrounds/background-position-parsing-expected.checksum.
+        * platform/chromium-mac-leopard/fast/backgrounds/background-position-parsing-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/backgrounds/background-position-parsing-expected.png.
+        * platform/chromium-mac-leopard/fast/box-shadow/box-shadow-transformed-expected.checksum: Copied from LayoutTests/platform/chromium-mac/fast/box-shadow/box-shadow-transformed-expected.checksum.
+        * platform/chromium-mac-leopard/fast/box-shadow/box-shadow-transformed-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/box-shadow/box-shadow-transformed-expected.png.
+        * platform/chromium-mac/css1/text_properties/text_indent-expected.checksum: Removed.
+        * platform/chromium-mac/css1/text_properties/text_indent-expected.png: Removed.
+        * platform/chromium-mac/css1/units/length_units-expected.checksum: Removed.
+        * platform/chromium-mac/css1/units/length_units-expected.png: Removed.
+        * platform/chromium-mac/fast/backgrounds/background-position-parsing-expected.checksum:
+        * platform/chromium-mac/fast/backgrounds/background-position-parsing-expected.png:
+        * platform/chromium-mac/fast/box-shadow/box-shadow-transformed-expected.checksum:
+        * platform/chromium-mac/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.checksum:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.png:
+        * platform/mac-leopard/css1/text_properties/text_indent-expected.checksum:
+        * platform/mac-leopard/css1/text_properties/text_indent-expected.png:
+        * platform/mac-leopard/css1/units/length_units-expected.checksum:
+        * platform/mac-leopard/css1/units/length_units-expected.png:
+        * platform/mac-leopard/fast/css-generated-content/table-row-before-after-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/css-generated-content/table-row-before-after-expected.checksum.
+        * platform/mac-leopard/fast/css-generated-content/table-row-before-after-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/css-generated-content/table-row-before-after-expected.png.
+        * platform/mac-leopard/fast/multicol/scrolling-overflow-expected.checksum: Renamed from LayoutTests/platform/chromium-mac/fast/multicol/scrolling-overflow-expected.checksum.
+        * platform/mac-leopard/fast/multicol/scrolling-overflow-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/multicol/scrolling-overflow-expected.png.
+        * platform/mac/css1/text_properties/text_indent-expected.checksum:
+        * platform/mac/css1/text_properties/text_indent-expected.png:
+        * platform/mac/css1/units/length_units-expected.checksum:
+        * platform/mac/css1/units/length_units-expected.png:
+        * platform/mac/editing/selection/inline-closest-leaf-child-expected.checksum:
+        * platform/mac/editing/selection/inline-closest-leaf-child-expected.png:
+        * platform/mac/fast/box-shadow/box-shadow-transformed-expected.checksum:
+        * platform/mac/fast/box-shadow/box-shadow-transformed-expected.png:
+
 2011-03-23  Brian Weinstein  <bweinstein@apple.com>
 
         Skip plugins/change-widget-and-click-crash.html on WebKit2, because
