@@ -78,6 +78,7 @@ type_traits = {
     "integer": "int",
     "number": "double",
     "boolean": "boolean",
+    "array": "Array",
     "object": "Object"
 }
 
@@ -92,12 +93,8 @@ macro_traits = {
 
 def param_type(param):
     if "type" in param:
-        if isinstance(param["type"], list):
-            return "Array"
         return type_traits[param["type"]];
     if "$ref" in param:
-        if isinstance(param["$ref"], list):
-            return "Array"
         return "Object"
 
 for domain in json_api:

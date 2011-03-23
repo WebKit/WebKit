@@ -67,7 +67,7 @@
             {
                 "name": "getCookies",
                 "returns": [
-                    { "name": "cookies", "$ref": ["Cookie"] },
+                    { "name": "cookies", "type": "array", "items": { "$ref" : "Cookie"} },
                     { "name": "cookiesString", "type": "string" }
                 ]
             },
@@ -168,7 +168,7 @@
                     { "name": "abbreviate", "type": "boolean" }
                 ],
                 "returns": [
-                    { "name": "result", "$ref": ["RuntimeProperty"] }
+                    { "name": "result", "type": "array", "items": { "$ref" : "RuntimeProperty"} }
                 ]
             },
             {
@@ -191,9 +191,6 @@
                     { "name": "objectGroup", "type": "string" }
                 ]
             }
-        ],
-        "events": [
-
         ]
     },
     {
@@ -288,7 +285,7 @@
                     { "name": "identifier", "type": "integer" },
                     { "name": "url", "type": "string" },
                     { "name": "loader", "$ref": "NetworkLoader" },
-                    { "name": "callStack", "$ref": ["DebuggerStackFrame"] }
+                    { "name": "callStack", "type": "array", "items": { "$ref" : "DebuggerStackFrame"} }
                 ]
             },
             {
@@ -403,7 +400,7 @@
                     { "name": "databaseId", "type": "integer" }
                 ],
                 "returns": [
-                    { "name": "tableNames", "type": ["string"] }
+                    { "name": "tableNames", "type": "array", "items": { "type": "string" } }
                 ]
             },
             {
@@ -429,8 +426,8 @@
                 "name": "sqlTransactionSucceeded",
                 "parameters": [
                     { "name": "transactionId", "type": "integer" },
-                    { "name": "columnNames", "type": ["string"] },
-                    { "name": "values", "type": ["string or number"] }
+                    { "name": "columnNames", "type": "array", "items": { "type": "string" } },
+                    { "name": "values", "type": "array", "items": { "type": "string or number" }}
                 ]
             },
             {
@@ -452,7 +449,7 @@
                     { "name": "storageId", "type": "integer" }
                 ],
                 "returns": [
-                    { "name": "entries", "$ref": ["DOMStorageEntry"] }
+                    { "name": "entries", "type": "array", "items": { "$ref" : "DOMStorageEntry"} }
                 ]
             },
             {
@@ -520,6 +517,7 @@
     },
     {
         "domain": "DOM",
+        "description": "This domain exposes DOM read/write operations. Each DOM Node is represented with its mirror object that has an <code>id</code>. This <code>id</code> can be used to get additional information on the Node, convert it into the JavaScript object, etc. It is important that client receives DOM events only for the nodes that are known to the client. Backend keeps track of the nodes that were sent to the client and never sends the same node twice. It is client's responsibility to collect information about the nodes that were sent to the client.",
         "types": [
             {
                 "id": "DOMNode",
@@ -592,7 +590,7 @@
                     { "name": "documentWide", "type": "boolean", "description": "Set to true to start querying from the node's document." }
                 ],
                 "returns": [
-                    { "name": "nodeIds", "type": ["integer"], "description": "Query selector result."  }
+                    { "name": "nodeIds", "type": "array", "items": { "type": "integer" }, "description": "Query selector result."  }
                 ],
                 "description": "Executes <code>querySelectorAll</code> on a given node. Setting <code>documentWide</code> to true starts selecting from the document node."
             },
@@ -645,7 +643,7 @@
                     { "name": "nodeId", "type": "integer", "description": "Id of the node to get listeners for." }
                 ],
                 "returns": [
-                    { "name": "listenersArray", "$ref": ["DOMEventListener"], "description": "Array of relevant listeners." }
+                    { "name": "listenersArray", "type": "array", "items": { "$ref" : "DOMEventListener"}, "description": "Array of relevant listeners." }
                 ],
                 "description": "Returns event listeners relevant to the node."
             },
@@ -729,7 +727,7 @@
                 "name": "setChildNodes",
                 "parameters": [
                     { "name": "parentId", "type": "integer", "description": "Parent node id to populate with children." },
-                    { "name": "nodes", "$ref": ["DOMNode"], "description": "Child nodes array." }
+                    { "name": "nodes", "type": "array", "items": { "$ref" : "DOMNode"}, "description": "Child nodes array." }
                 ],
                 "description": "Fired when backend wants to provide client with the missing DOM structure. This happens upon most of the calls requesting node ids."
             },
@@ -737,7 +735,7 @@
                 "name": "attributesUpdated",
                 "parameters": [
                     { "name": "id", "type": "integer", "description": "Id of the node that has changed." },
-                    { "name": "attributes", "$ref": ["DOMAttribute"], "description": "New attributes value." }
+                    { "name": "attributes", "type": "array", "items": { "$ref" : "DOMAttribute"}, "description": "New attributes value." }
                 ],
                 "description": "Fired when <code>Element</code>'s attributes are updated."
             },
@@ -777,7 +775,7 @@
             {
                 "name": "searchResults",
                 "parameters": [
-                    { "name": "nodeIds", "type": ["integer"], "description": "Ids of the search result nodes." }
+                    { "name": "nodeIds", "type": "array", "items": { "type": "integer" }, "description": "Ids of the search result nodes." }
                 ],
                 "description": "Pushes search results initiated using <code>performSearch</code> to the client."
             }
@@ -817,7 +815,7 @@
             {
                 "name": "getAllStyles",
                 "returns": [
-                    { "name": "styleSheetIds", "type": ["string"] }
+                    { "name": "styleSheetIds", "type": "array", "items": { "type": "string" } }
                 ]
             },
             {
@@ -895,12 +893,9 @@
             {
                 "name": "getSupportedCSSProperties",
                 "returns": [
-                    { "name": "cssProperties", "type": ["string"] }
+                    { "name": "cssProperties", "type": "array", "items": { "type": "string" } }
                 ]
             }
-        ],
-        "events": [
-
         ]
     },
     {
@@ -956,7 +951,7 @@
                 ],
                 "returns": [
                     { "name": "breakpointId", "type": "string" },
-                    { "name": "locations", "$ref": ["DebuggerLocation"] }
+                    { "name": "locations", "type": "array", "items": { "$ref" : "DebuggerLocation"} }
                 ]
             },
             {
@@ -1012,7 +1007,7 @@
                 "returns": [
                     { "name": "success", "type": "boolean" },
                     { "name": "result", "type": "string" },
-                    { "name": "stackFrames", "$ref": ["DebuggerStackFrame"] }
+                    { "name": "stackFrames", "type": "array", "items": { "$ref" : "DebuggerStackFrame"} }
                 ]
             },
             {
@@ -1150,9 +1145,6 @@
                     { "name": "url", "type": "string" }
                 ]
             }
-        ],
-        "events": [
-
         ]
     },
     {
@@ -1180,7 +1172,7 @@
             {
                 "name": "getProfileHeaders",
                 "returns": [
-                    { "name": "headers", "$ref": ["ProfileHeader"] }
+                    { "name": "headers", "type": "array", "items": { "$ref" : "ProfileHeader"} }
                 ]
             },
             {
