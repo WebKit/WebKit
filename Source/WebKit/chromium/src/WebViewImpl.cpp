@@ -1789,6 +1789,20 @@ WebDragOperation WebViewImpl::dragTargetDragEnter(
     return dragTargetDragEnterOrOver(clientPoint, screenPoint, DragEnter);
 }
 
+WebDragOperation WebViewImpl::dragTargetDragEnter(
+    const WebDragData& webDragData,
+    const WebPoint& clientPoint,
+    const WebPoint& screenPoint,
+    WebDragOperationsMask operationsAllowed)
+{
+    ASSERT(!m_currentDragData.get());
+
+    m_currentDragData = webDragData;
+    m_operationsAllowed = operationsAllowed;
+
+    return dragTargetDragEnterOrOver(clientPoint, screenPoint, DragEnter);
+}
+
 WebDragOperation WebViewImpl::dragTargetDragOver(
     const WebPoint& clientPoint,
     const WebPoint& screenPoint,

@@ -232,6 +232,10 @@ public:
         const WebDragData&, int identity, // FIXME: remove identity from this function signature.
         const WebPoint& clientPoint, const WebPoint& screenPoint,
         WebDragOperationsMask operationsAllowed) = 0;
+    virtual WebDragOperation dragTargetDragEnter(
+        const WebDragData&,
+        const WebPoint& clientPoint, const WebPoint& screenPoint,
+        WebDragOperationsMask operationsAllowed) = 0;
     virtual WebDragOperation dragTargetDragOver(
         const WebPoint& clientPoint, const WebPoint& screenPoint,
         WebDragOperationsMask operationsAllowed) = 0;

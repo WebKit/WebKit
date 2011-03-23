@@ -1,3 +1,17 @@
+2011-03-22  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Remove identity from dragTargetDragEnter() function signature
+        https://bugs.webkit.org/show_bug.cgi?id=56875
+
+        First part of 3-sided patch.  Add new function signature sans identity.
+
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::dragTargetDragEnter):
+        * src/WebViewImpl.h:
+
 2011-03-22  John Bauman  <jbauman@chromium.org>
 
         Reviewed by Kenneth Russell.

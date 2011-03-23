@@ -158,6 +158,11 @@ public:
         const WebPoint& clientPoint,
         const WebPoint& screenPoint,
         WebDragOperationsMask operationsAllowed);
+    virtual WebDragOperation dragTargetDragEnter(
+        const WebDragData&,
+        const WebPoint& clientPoint,
+        const WebPoint& screenPoint,
+        WebDragOperationsMask operationsAllowed);
     virtual WebDragOperation dragTargetDragOver(
         const WebPoint& clientPoint,
         const WebPoint& screenPoint,
