@@ -156,6 +156,7 @@ WONTFIX SKIP : storage/domstorage/localstorage/storagetracker = PASS TIMEOUT FAI
 WONTFIX SKIP : fast/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : fast/files/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : fast/filesystem/workers = PASS TIMEOUT FAIL
+WONTFIX SKIP : http/tests/filesystem/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/xmlhttprequest/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/eventsource/workers = PASS TIMEOUT FAIL
@@ -3288,9 +3289,6 @@ BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-scale-drawImage-shadow.html = TEXT
 // Started failing after WebKit r81597. Must be sensitive to test order.
 BUGCR76971 WIN LINUX : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
 BUGCR76971 LINUX : svg/text/font-size-below-point-five.svg = TEXT
-
-BUGWK81597 SKIP : http/tests/filesystem/workers/resolve-url-sync.html = TIMEOUT
-BUGWK81597 SKIP : http/tests/filesystem/workers/resolve-url.html = TIMEOUT
 
 // New CSS3 feature in r81684. Some tests fail outside Mac.
 BUGCR77095 WIN LINUX : fast/block/lineboxcontain/block-glyphs-replaced.html = IMAGE+TEXT

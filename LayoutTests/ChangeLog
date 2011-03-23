@@ -1,3 +1,15 @@
+2011-03-22  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by David Levin.
+
+        [fileapi] New resolve url tests don't pass on Chromium. Skipping them.
+        https://bugs.webkit.org/show_bug.cgi?id=56800
+
+        * platform/chromium/test_expectations.txt:
+        Skip all tests in http/tests/filesystem/workers.
+        They can't run in test_shell, and are instead run in
+        Chromium's ui_tests.
+
 2011-03-22  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Beth Dakin.
