@@ -68,6 +68,27 @@
 
 using namespace WTF;
 
+namespace {
+
+using namespace JSC;
+
+class Recompiler {
+public:
+    void operator()(JSCell*);
+};
+
+inline void Recompiler::operator()(JSCell* cell)
+{
+    if (!cell->inherits(&JSFunction::s_info))
+        return;
+    JSFunction* function = asFunction(cell);
+    if (function->executable()->isHostFunction())
+        return;
+    function->jsExecutable()->discardCode();
+}
+
+} // namespace
+
 namespace JSC {
 
 extern JSC_CONST_HASHTABLE HashTable arrayTable;
@@ -332,22 +353,6 @@ void JSGlobalData::dumpSampleData(ExecState* exec)
 {
     interpreter->dumpSampleData(exec);
 }
-
-class Recompiler {
-public:
-    void operator()(JSCell*);
-};
-
-inline void Recompiler::operator()(JSCell* cell)
-{
-    if (!cell->inherits(&JSFunction::s_info))
-        return;
-    JSFunction* function = asFunction(cell);
-    if (function->executable()->isHostFunction())
-        return;
-    function->jsExecutable()->discardCode();
-}
-
 
 void JSGlobalData::recompileAllJSFunctions()
 {

@@ -29,7 +29,9 @@
 #include "Parser.h"
 #include "Protect.h"
 
-namespace JSC {
+namespace {
+
+using namespace JSC;
 
 class Recompiler {
 public:
@@ -81,6 +83,10 @@ inline void Recompiler::operator()(JSCell* cell)
     if (m_debugger == function->scope()->globalObject->debugger())
         m_sourceProviders.add(executable->source().provider(), exec);
 }
+
+} // namespace
+
+namespace JSC {
 
 Debugger::~Debugger()
 {
