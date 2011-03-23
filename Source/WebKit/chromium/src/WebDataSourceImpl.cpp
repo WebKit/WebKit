@@ -174,7 +174,7 @@ WebDataSourceImpl::WebDataSourceImpl(const ResourceRequest& request, const Subst
         // frame, which results in a second data source being created.  We want
         // to wait to attach the WebPluginLoadObserver to that data source.
         if (!request.url().isEmpty()) {
-            ASSERT(m_nextPluginLoadObserver->url() == WebURL(request.url()));
+            ASSERT(m_nextPluginLoadObserver->url() == request.url());
             m_pluginLoadObserver.set(m_nextPluginLoadObserver);
             m_nextPluginLoadObserver = 0;
         }

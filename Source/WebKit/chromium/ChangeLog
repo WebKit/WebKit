@@ -1,3 +1,29 @@
+2011-03-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r81686.
+        http://trac.webkit.org/changeset/81686
+        https://bugs.webkit.org/show_bug.cgi?id=56914
+
+        Breaks webkit_tests in Chromium again. (Requested by pfeldman
+        on #webkit).
+
+        * WebKit.gyp:
+        * public/WebPageSerializer.h:
+        * public/WebURL.h:
+        * public/WebVector.h:
+        (WebKit::WebVector::operator[]):
+        * src/WebDataSourceImpl.cpp:
+        (WebKit::WebDataSourceImpl::WebDataSourceImpl):
+        * src/WebPageSerializer.cpp:
+        * tests/WebFrameTest.cpp:
+        * tests/WebPageSerializerTest.cpp: Removed.
+        * tests/data/pageserialization/awesome.png: Removed.
+        * tests/data/pageserialization/embed_iframe.html: Removed.
+        * tests/data/pageserialization/object_iframe.html: Removed.
+        * tests/data/pageserialization/simple_iframe.html: Removed.
+        * tests/data/pageserialization/simple_page.html: Removed.
+        * tests/data/pageserialization/top_frame.html: Removed.
+
 2011-03-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
