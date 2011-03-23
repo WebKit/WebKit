@@ -1,3 +1,10 @@
+2011-03-23  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed. Replace shockwave plugin with test netscape in recent
+        timing out test plugins/change-widget-and-click-crash.html.
+
+        * plugins/change-widget-and-click-crash.html:
+
 2011-03-23  Mihai Parparita  <mihaip@chromium.org>
 
         Fix more tests for Chromium Snow Leopard by promoting chromium-mac/
