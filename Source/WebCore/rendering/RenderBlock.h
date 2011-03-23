@@ -490,7 +490,7 @@ private:
                         RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop);
 
     void skipTrailingWhitespace(InlineIterator&, bool isLineEmpty, bool previousLineBrokeCleanly);
-    int skipLeadingWhitespace(InlineBidiResolver&, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly, FloatingObject* lastFloatFromPreviousLine);
+    void skipLeadingWhitespace(InlineBidiResolver&, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly, FloatingObject* lastFloatFromPreviousLine, int& lineLeftOffset, int& lineRightOffset);
     void fitBelowFloats(float widthToFit, bool firstLine, float& availableWidth);
     typedef std::pair<RenderText*, LazyLineBreakIterator> LineBreakIteratorInfo;
     InlineIterator findNextLineBreak(InlineBidiResolver&, bool firstLine, bool& isLineEmpty, LineBreakIteratorInfo&, bool& previousLineBrokeCleanly, bool& hyphenated, EClear*, FloatingObject* lastFloatFromPreviousLine);
@@ -526,7 +526,7 @@ private:
     
     // Positions new floats and also adjust all floats encountered on the line if any of them
     // have to move to the next page/column.
-    bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine);
+    bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, bool firstLine, int& lineLeftOffset, int& lineRightOffset);
 
     void clearFloats();
     int getClearDelta(RenderBox* child, int yPos);

@@ -1,3 +1,28 @@
+2011-03-22  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56892
+        
+        Adding floats to an empty block is O(n^2). 
+
+        If you just add floats back to back to an empty block, the addition is essentially O(n^2)
+        once the floats move below your current line position.  This is because we repeatedly ask for the
+        available width for the line from scratch every time we add a float, regardless of whether the
+        float even vertically intersected our current line position.
+        
+        Change positionNewFloatOnLine to update left and right line offsets intelligently and to only
+        do it based off the single new float that just got added.
+        
+        This fix cuts the IE MazeSolver time in half.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionNewFloatOnLine):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::skipLeadingWhitespace):
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2011-03-22  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -1372,21 +1372,18 @@ void RenderBlock::skipTrailingWhitespace(InlineIterator& iterator, bool isLineEm
     }
 }
 
-int RenderBlock::skipLeadingWhitespace(InlineBidiResolver& resolver, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly,
-                                       FloatingObject* lastFloatFromPreviousLine)
+void RenderBlock::skipLeadingWhitespace(InlineBidiResolver& resolver, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly,
+                                       FloatingObject* lastFloatFromPreviousLine, int& lineLeftOffset, int& lineRightOffset)
 {
-    int availableWidth = availableLogicalWidthForLine(logicalHeight(), firstLine);
     while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), isLineEmpty, previousLineBrokeCleanly)) {
         RenderObject* object = resolver.position().obj;
-        if (object->isFloating()) {
-            positionNewFloatOnLine(insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine);
-            availableWidth = availableLogicalWidthForLine(logicalHeight(), firstLine);
-        } else if (object->isPositioned())
+        if (object->isFloating())
+            positionNewFloatOnLine(insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, firstLine, lineLeftOffset, lineRightOffset);
+        else if (object->isPositioned())
             setStaticPositions(this, toRenderBox(object));
         resolver.increment();
     }
     resolver.commitExplicitEmbedding();
-    return availableWidth;
 }
 
 // This is currently just used for list markers and inline flows that have line boxes. Neither should 
@@ -1492,8 +1489,13 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
     bool appliedStartWidth = resolver.position().pos > 0;
     LineMidpointState& lineMidpointState = resolver.midpointState();
     
-    float width = skipLeadingWhitespace(resolver, firstLine, isLineEmpty, previousLineBrokeCleanly, lastFloatFromPreviousLine);
+    int blockOffset = logicalHeight();
+    int lineLeftOffset = logicalLeftOffsetForLine(blockOffset, firstLine);
+    int lineRightOffset = logicalRightOffsetForLine(blockOffset, firstLine);
+    
+    skipLeadingWhitespace(resolver, firstLine, isLineEmpty, previousLineBrokeCleanly, lastFloatFromPreviousLine, lineLeftOffset, lineRightOffset);
 
+    float width = max(0, lineRightOffset - lineLeftOffset);
     float w = 0;
     float tmpW = 0;
 
@@ -1582,8 +1584,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 // If it does, position it now, otherwise, position
                 // it after moving to next line (in newLine() func)
                 if (floatsFitOnLine && logicalWidthForFloat(f) + w + tmpW <= width) {
-                    positionNewFloatOnLine(f, lastFloatFromPreviousLine);
-                    width = availableLogicalWidthForLine(logicalHeight(), firstLine);
+                    positionNewFloatOnLine(f, lastFloatFromPreviousLine, firstLine, lineLeftOffset, lineRightOffset);
+                    width = max(0, lineRightOffset - lineLeftOffset);
                     if (lBreak.obj == o) {
                         ASSERT(!lBreak.pos);
                         lBreak.increment();

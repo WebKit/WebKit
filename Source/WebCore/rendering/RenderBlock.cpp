@@ -3283,12 +3283,23 @@ bool RenderBlock::positionNewFloats()
     return true;
 }
 
-bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine)
+bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, bool firstLine, int& lineLeftOffset, int& lineRightOffset)
 {
     bool didPosition = positionNewFloats();
-    if (!didPosition || !newFloat->m_paginationStrut)
+    if (!didPosition)
         return didPosition;
+
+    int blockOffset = logicalHeight();
+    if (blockOffset >= logicalTopForFloat(newFloat) && blockOffset < logicalBottomForFloat(newFloat)) {
+        if (newFloat->type() == FloatingObject::FloatLeft)
+            lineLeftOffset = logicalRightForFloat(newFloat);
+        else
+            lineRightOffset = logicalLeftForFloat(newFloat);
+    }
     
+    if (!newFloat->m_paginationStrut)
+        return didPosition;
+     
     FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     ASSERT(floatingObjectSet.last() == newFloat);
 
@@ -3318,8 +3329,10 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
         }
     }
         
-    setLogicalHeight(logicalHeight() + paginationStrut);
-    
+    setLogicalHeight(blockOffset + paginationStrut);
+    lineLeftOffset = logicalLeftOffsetForLine(logicalHeight(), firstLine);
+    lineRightOffset = logicalRightOffsetForLine(logicalHeight(), firstLine);
+
     return didPosition;
 }
 
