@@ -3295,3 +3295,6 @@ BUGCR76971 LINUX : svg/text/font-size-below-point-five.svg = TEXT
 // New CSS3 feature in r81684. Some tests fail outside Mac.
 BUGCR77095 WIN LINUX : fast/block/lineboxcontain/block-glyphs-replaced.html = IMAGE+TEXT
 BUGCR77095 WIN LINUX : fast/block/lineboxcontain/glyphs.html = IMAGE+TEXT
+
+// Need rebaseline after r81807
+BUGXJI : fast/css/bidi-override-in-anonymous-block.html = FAIL

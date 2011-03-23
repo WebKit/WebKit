@@ -1,5 +1,11 @@
 2011-03-23  Xiaomei Ji  <xji@chromium.org>
 
+        Add fast/css/bidi-override-in-anonymous-block.html as expected to fail after r81807.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-23  Xiaomei Ji  <xji@chromium.org>
+
         Reviewed by David Hyatt.
 
         Preserve unicode-bidi:bidi-override in anonymous block.
