@@ -339,7 +339,6 @@
                    // To prevent selection on double click
                    e.preventDefault();
                 }
-
             </xsl:text>
         </script>
     </xsl:template>
