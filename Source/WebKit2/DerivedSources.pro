@@ -82,7 +82,7 @@ VPATH = \
     WebProcess/Geolocation \
     WebProcess/IconDatabase \
     WebProcess/KeyValueStorage \
-    WebProcess/MemoryCache \
+    WebProcess/MediaCache \
     WebProcess/Plugins \
     WebProcess/ResourceCache \
     WebProcess/WebCoreSupport \

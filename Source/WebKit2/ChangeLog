@@ -1,3 +1,9 @@
+2011-03-23  Brian Weinstein  <bweinstein@apple.com>
+
+        Qt Build Fix.
+
+        * DerivedSources.pro:
+
 2011-03-22  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Darin Adler.
