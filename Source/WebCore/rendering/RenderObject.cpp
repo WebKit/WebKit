@@ -216,7 +216,6 @@ RenderObject::RenderObject(Node* node)
     , m_hasMarkupTruncation(false)
     , m_selectionState(SelectionNone)
     , m_hasColumns(false)
-    , m_cellWidthChanged(false)
 {
 #ifndef NDEBUG
     renderObjectCounter.increment();

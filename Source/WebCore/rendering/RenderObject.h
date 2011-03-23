@@ -320,8 +320,6 @@ public:
     void setChildrenInline(bool b = true) { m_childrenInline = b; }
     bool hasColumns() const { return m_hasColumns; }
     void setHasColumns(bool b = true) { m_hasColumns = b; }
-    bool cellWidthChanged() const { return m_cellWidthChanged; }
-    void setCellWidthChanged(bool b = true) { m_cellWidthChanged = b; }
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return false; }
 

@@ -47,6 +47,7 @@ RenderTableCell::RenderTableCell(Node* node)
     , m_column(-1)
     , m_rowSpan(1)
     , m_columnSpan(1)
+    , m_cellWidthChanged(false)
     , m_intrinsicPaddingBefore(0)
     , m_intrinsicPaddingAfter(0)
 {

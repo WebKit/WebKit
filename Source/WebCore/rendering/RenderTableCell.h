@@ -126,6 +126,9 @@ public:
 
     virtual void scrollbarsChanged(bool horizontalScrollbarChanged, bool verticalScrollbarChanged);
 
+    bool cellWidthChanged() const { return m_cellWidthChanged; }
+    void setCellWidthChanged(bool b = true) { m_cellWidthChanged = b; }
+
 protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
@@ -151,7 +154,8 @@ private:
     int m_row;
     int m_column;
     int m_rowSpan;
-    int m_columnSpan;
+    int m_columnSpan : 31;
+    bool m_cellWidthChanged : 1;
     int m_intrinsicPaddingBefore;
     int m_intrinsicPaddingAfter;
 };
