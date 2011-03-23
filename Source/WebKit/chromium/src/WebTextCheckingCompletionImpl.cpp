@@ -43,7 +43,7 @@ static Vector<SpellCheckingResult> toCoreResults(const WebVector<WebTextChecking
 {
     Vector<SpellCheckingResult> coreResults;
     for (size_t i = 0; i < results.size(); ++i)
-        coreResults.append(SpellCheckingResult(static_cast<DocumentMarker::MarkerType>(results[i].error()), results[i].position(), results[i].length()));
+        coreResults.append(SpellCheckingResult(static_cast<DocumentMarker::MarkerType>(results[i].error), results[i].position, results[i].length));
     return coreResults;
 }
 

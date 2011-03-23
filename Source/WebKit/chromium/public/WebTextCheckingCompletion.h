@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-class WebTextCheckingResult;
+struct WebTextCheckingResult;
 template <typename T> class WebVector;
 
 // Gets called back when WebViewClient finished an asynchronous spell checking.

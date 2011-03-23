@@ -33,31 +33,26 @@
 
 #include "WebCommon.h"
 
+#define WEB_TEXT_CHECKING_RESULT_IS_A_STRUCT
 namespace WebKit {
 
 // A checked entry of text checking.
-class WebTextCheckingResult {
-public:
+struct WebTextCheckingResult {
     enum Error {
         ErrorSpelling = 1 << 0,
         ErrorGrammar = 1 << 1
     };
 
-    Error error() const { return m_error; }
-    int position() const { return m_position; }
-    int length() const { return m_length; }
-
-    explicit WebTextCheckingResult(Error error = ErrorSpelling, int position = 0, int length = 0) 
-        : m_error(error)
-        , m_position(position)
-        , m_length(length)
+    explicit WebTextCheckingResult(Error e = ErrorSpelling, int p = 0, int l = 0) 
+        : error(e)
+        , position(p)
+        , length(l)
     {
     }
-    
-private:
-    Error m_error;
-    int m_position;
-    int m_length;
+
+    Error error;
+    int position;
+    int length;
 };
 
 } // namespace WebKit
