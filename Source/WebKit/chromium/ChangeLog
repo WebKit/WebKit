@@ -1,3 +1,12 @@
+2011-03-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] Web Inspector: remove obsolete methods from WebDevToolsAgentClient.h
+        https://bugs.webkit.org/show_bug.cgi?id=56897
+
+        * public/WebDevToolsAgentClient.h:
+
 2011-03-22  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Tony Chang.

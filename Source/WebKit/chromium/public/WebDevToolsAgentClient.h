@@ -42,7 +42,6 @@ class WebDevToolsAgentClient {
 public:
     virtual void sendMessageToInspectorFrontend(const WebString&) { }
     virtual void sendDebuggerOutput(const WebString&) { }
-    virtual void sendDispatchToAPU(const WebString&) { }
 
     // Returns the identifier of the entity hosting this agent.
     virtual int hostIdentifier() { return -1; }
