@@ -66,6 +66,8 @@ WK_EXPORT void WKBundleRemoveAllUserContent(WKBundleRef bundle, WKBundlePageGrou
 // Will make WebProcess ignore this preference until a preferences change notification, only for WebKitTestRunner use.
 WK_EXPORT void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 
+WK_EXPORT void WKBundleSetHostAllowsAnyHTTPSCertificate(WKBundleRef bundle, WKStringRef host);
+
 #ifdef __cplusplus
 }
 #endif

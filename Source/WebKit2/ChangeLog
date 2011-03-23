@@ -1,3 +1,25 @@
+2011-03-23  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add WKBundleSetHostAllowsAnyHTTPSCertificate() for Windows
+        https://bugs.webkit.org/show_bug.cgi?id=56972
+        
+        This is the WebKit2 equivalent to the WebKit1 API IWebMutableURLRequest::setAllowsAnyHTTPSCertificate().
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetHostAllowsAnyHTTPSCertificate): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h: Added WKBundleSetHostAllowsAnyHTTPSCertificate().
+        * WebProcess/InjectedBundle/InjectedBundle.h: Added setHostAllowsAnyHTTPSCertificate().
+        * WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp:
+        (WebKit::InjectedBundle::setHostAllowsAnyHTTPSCertificate): Added, should never be called.
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.cpp:
+        (WebKit::InjectedBundle::setHostAllowsAnyHTTPSCertificate): Added, should never be called.
+        * WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp:
+        (WebKit::InjectedBundle::setHostAllowsAnyHTTPSCertificate): Added, should never be called.
+        * WebProcess/InjectedBundle/win/InjectedBundleWin.cpp:
+        (WebKit::InjectedBundle::setHostAllowsAnyHTTPSCertificate): Added.
+
 2011-03-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

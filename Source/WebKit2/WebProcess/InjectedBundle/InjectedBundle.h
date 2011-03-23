@@ -79,6 +79,7 @@ public:
     void initializeClient(WKBundleClient*);
     void postMessage(const String&, APIObject*);
     void postSynchronousMessage(const String&, APIObject*, RefPtr<APIObject>& returnData);
+    void setHostAllowsAnyHTTPSCertificate(const String&);
 
     // TestRunner only SPI
     void setShouldTrackVisitedLinks(bool);

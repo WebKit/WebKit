@@ -28,6 +28,7 @@
 
 #include "WKBundleAPICast.h"
 #include "WKBundleInitialize.h"
+#include <WebCore/ResourceHandle.h>
 #include <WebCore/SimpleFontData.h>
 
 #include <windows.h>
@@ -84,6 +85,13 @@ bool InjectedBundle::load(APIObject* initializationUserData)
 void InjectedBundle::activateMacFontAscentHack()
 {
     SimpleFontData::setShouldApplyMacAscentHack(true);
+}
+
+void InjectedBundle::setHostAllowsAnyHTTPSCertificate(const String& host)
+{
+#if USE(CF_NETWORK)
+    ResourceHandle::setHostAllowsAnyHTTPSCertificate(host);
+#endif
 }
 
 } // namespace WebKit

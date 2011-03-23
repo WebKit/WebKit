@@ -45,4 +45,10 @@ void InjectedBundle::activateMacFontAscentHack()
     notImplemented();
 }
 
+void InjectedBundle::setHostAllowsAnyHTTPSCertificate(const String& host)
+{
+    // This is only used on Windows.
+    ASSERT_NOT_REACHED();
+}
+
 } // namespace WebKit

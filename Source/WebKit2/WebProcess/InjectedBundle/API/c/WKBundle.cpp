@@ -132,3 +132,9 @@ void WKBundleReportException(JSContextRef context, JSValueRef exception)
 {
     InjectedBundle::reportException(context, exception);
 }
+
+void WKBundleSetHostAllowsAnyHTTPSCertificate(WKBundleRef bundleRef, WKStringRef host)
+{
+    toImpl(bundleRef)->setHostAllowsAnyHTTPSCertificate(toWTFString(host));
+}
+
