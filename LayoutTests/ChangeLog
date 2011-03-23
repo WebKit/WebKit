@@ -1,3 +1,14 @@
+2011-03-23  Mihai Parparita  <mihaip@chromium.org>
+
+        Rebaseline transitions/default-timing-function.html for Chromium Snow 
+        Leopard.
+
+        * platform/chromium-mac-leopard/transitions/default-timing-function-expected.checksum: Copied from LayoutTests/platform/chromium-mac/transitions/default-timing-function-expected.checksum.
+        * platform/chromium-mac-leopard/transitions/default-timing-function-expected.png: Copied from LayoutTests/platform/chromium-mac/transitions/default-timing-function-expected.png.
+        * platform/chromium-mac/transitions/default-timing-function-expected.checksum:
+        * platform/chromium-mac/transitions/default-timing-function-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-23  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] fast/overflow/horizontal-scroll-after-back.html fails
