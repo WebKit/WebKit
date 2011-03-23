@@ -75,7 +75,7 @@ void WebIconDatabaseProxy::releaseIconForPageURL(const String& pageURL)
 Image* WebIconDatabaseProxy::synchronousIconForPageURL(const String& pageURL, const IntSize& size)
 {
     CoreIPC::DataReference result;
-    if (!m_process->connection()->sendSync(Messages::WebIconDatabase::IconDataForPageURL(pageURL), Messages::WebIconDatabase::IconDataForPageURL::Reply(result), 0))
+    if (!m_process->connection()->sendSync(Messages::WebIconDatabase::SynchronousIconDataForPageURL(pageURL), Messages::WebIconDatabase::SynchronousIconDataForPageURL::Reply(result), 0))
         return 0;
     
     // FIXME: Return Image created with the above data.

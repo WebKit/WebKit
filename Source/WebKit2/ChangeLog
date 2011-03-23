@@ -1,3 +1,20 @@
+2011-03-22  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename the synchronous icon database messages to be prefixed with "synchronous"
+
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::synchronousIconDataForPageURL):
+        (WebKit::WebIconDatabase::synchronousIconURLForPageURL):
+        (WebKit::WebIconDatabase::synchronousIconDataKnownForIconURL):
+        (WebKit::WebIconDatabase::synchronousLoadDecisionForIconURL):
+        * UIProcess/WebIconDatabase.h:
+        * UIProcess/WebIconDatabase.messages.in:
+
+        * WebProcess/IconDatabase/WebIconDatabaseProxy.cpp:
+        (WebKit::WebIconDatabaseProxy::synchronousIconForPageURL):
+
 2011-03-22  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Anders Carlsson.

@@ -21,15 +21,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebIconDatabase {
-    IconDataForPageURL(WTF::String pageURL) -> (CoreIPC::DataReference iconData)
-    
     RetainIconForPageURL(WTF::String pageURL)
     ReleaseIconForPageURL(WTF::String pageURL)
-    
-    IconURLForPageURL(WTF::String pageURL) -> (WTF::String iconURL)
-    IconDataKnownForIconURL(WTF::String iconURL) -> (bool dataKnown)
-    LoadDecisionForIconURL(WTF::String iconURL) -> (int loadDecision)
-    
     SetIconURLForPageURL(WTF::String iconURL, WTF::String pageURL)
     SetIconDataForIconURL(CoreIPC::DataReference iconData, WTF::String iconURL)
+    
+    SynchronousIconDataForPageURL(WTF::String pageURL) -> (CoreIPC::DataReference iconData)
+    SynchronousIconURLForPageURL(WTF::String pageURL) -> (WTF::String iconURL)
+    SynchronousIconDataKnownForIconURL(WTF::String iconURL) -> (bool dataKnown)
+    SynchronousLoadDecisionForIconURL(WTF::String iconURL) -> (int loadDecision)
 }

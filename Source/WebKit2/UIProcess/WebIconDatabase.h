@@ -59,10 +59,11 @@ public:
     void releaseIconForPageURL(const String&);
     void setIconURLForPageURL(const String&, const String&);
     void setIconDataForIconURL(const CoreIPC::DataReference&, const String&);
-    void iconDataForPageURL(const String&, CoreIPC::DataReference&);
-    void iconURLForPageURL(const String&, String&);
-    void iconDataKnownForIconURL(const String&, bool&) const;
-    void loadDecisionForIconURL(const String&, int&) const;
+    
+    void synchronousIconDataForPageURL(const String&, CoreIPC::DataReference&);
+    void synchronousIconURLForPageURL(const String&, String&);
+    void synchronousIconDataKnownForIconURL(const String&, bool&) const;
+    void synchronousLoadDecisionForIconURL(const String&, int&) const;
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);

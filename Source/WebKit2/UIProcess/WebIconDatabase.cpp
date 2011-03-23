@@ -65,22 +65,22 @@ void WebIconDatabase::setIconDataForIconURL(const CoreIPC::DataReference&, const
 {
 }
 
-void WebIconDatabase::iconDataForPageURL(const String&, CoreIPC::DataReference& iconData)
+void WebIconDatabase::synchronousIconDataForPageURL(const String&, CoreIPC::DataReference& iconData)
 {
     iconData = CoreIPC::DataReference();
 }
 
-void WebIconDatabase::iconURLForPageURL(const String&, String& iconURL)
+void WebIconDatabase::synchronousIconURLForPageURL(const String&, String& iconURL)
 {
     iconURL = String();
 }
 
-void WebIconDatabase::iconDataKnownForIconURL(const String&, bool& iconDataKnown) const
+void WebIconDatabase::synchronousIconDataKnownForIconURL(const String&, bool& iconDataKnown) const
 {
     iconDataKnown = false;
 }
 
-void WebIconDatabase::loadDecisionForIconURL(const String&, int& loadDecision) const
+void WebIconDatabase::synchronousLoadDecisionForIconURL(const String&, int& loadDecision) const
 {
     loadDecision = (int)WebCore::IconLoadNo;
 }
