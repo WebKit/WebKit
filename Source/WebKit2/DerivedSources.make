@@ -30,6 +30,7 @@ VPATH = \
     $(WebKit2)/WebProcess/Geolocation \
     $(WebKit2)/WebProcess/IconDatabase \
     $(WebKit2)/WebProcess/KeyValueStorage \
+    $(WebKit2)/WebProcess/MediaCache \
     $(WebKit2)/WebProcess/Plugins \
     $(WebKit2)/WebProcess/ResourceCache \
     $(WebKit2)/WebProcess/WebCoreSupport \
@@ -67,6 +68,8 @@ MESSAGE_RECEIVERS = \
     WebInspectorProxy \
     WebKeyValueStorageManager \
     WebKeyValueStorageManagerProxy \
+    WebMediaCacheManager \
+    WebMediaCacheManagerProxy \
     WebPage \
     WebPageProxy \
     WebProcess \

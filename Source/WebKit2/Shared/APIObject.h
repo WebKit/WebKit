@@ -79,6 +79,7 @@ public:
         TypeIconDatabase,
         TypeInspector,
         TypeKeyValueStorageManager,
+        TypeMediaCacheManager,
         TypeNavigationData,
         TypeOpenPanelParameters,
         TypeOpenPanelResultListener,

@@ -183,6 +183,11 @@ WKKeyValueStorageManagerRef WKContextGetKeyValueStorageManager(WKContextRef cont
     return toAPI(toImpl(contextRef)->keyValueStorageManagerProxy());
 }
 
+WKMediaCacheManagerRef WKContextGetMediaCacheManager(WKContextRef contextRef)
+{
+    return toAPI(toImpl(contextRef)->mediaCacheManagerProxy());
+}
+
 WKPluginSiteDataManagerRef WKContextGetPluginSiteDataManager(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->pluginSiteDataManager());

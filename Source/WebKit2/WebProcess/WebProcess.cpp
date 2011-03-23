@@ -41,6 +41,7 @@
 #include "WebFrame.h"
 #include "WebGeolocationManagerMessages.h"
 #include "WebKeyValueStorageManager.h"
+#include "WebMediaCacheManager.h"
 #include "WebMemorySampler.h"
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
@@ -595,6 +596,11 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
 
     if (messageID.is<CoreIPC::MessageClassWebKeyValueStorageManager>()) {
         WebKeyValueStorageManager::shared().didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebMediaCacheManager>()) {
+        WebMediaCacheManager::shared().didReceiveMessage(connection, messageID, arguments);
         return;
     }
 

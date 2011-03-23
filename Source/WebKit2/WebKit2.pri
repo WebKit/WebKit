@@ -50,6 +50,7 @@ WEBKIT2_INCLUDEPATH = \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/DOM \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c \
     $$SOURCE_DIR/WebKit2/WebProcess/KeyValueStorage \
+    $$SOURCE_DIR/WebKit2/WebProcess/MediaCache \
     $$SOURCE_DIR/WebKit2/WebProcess/Plugins \
     $$SOURCE_DIR/WebKit2/WebProcess/Plugins/Netscape \
     $$SOURCE_DIR/WebKit2/WebProcess/ResourceCache \

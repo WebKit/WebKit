@@ -55,6 +55,7 @@ libWebKit2_la_HEADERS = \
 	$(WebKit2)/UIProcess/API/C/WKFramePolicyListener.h \
 	$(WebKit2)/UIProcess/API/C/WKInspector.h \
 	$(WebKit2)/UIProcess/API/C/WKKeyValueStorageManager.h \
+	$(WebKit2)/UIProcess/API/C/WKMediaCacheManager.h \
 	$(WebKit2)/UIProcess/API/C/WKNativeEvent.h \
 	$(WebKit2)/UIProcess/API/C/WKNavigationData.h \
 	$(WebKit2)/UIProcess/API/C/WKOpenPanelParameters.h \
@@ -324,6 +325,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/API/C/WKInspector.h \
 	Source/WebKit2/UIProcess/API/C/WKKeyValueStorageManager.cpp \
 	Source/WebKit2/UIProcess/API/C/WKKeyValueStorageManager.h \
+	Source/WebKit2/UIProcess/API/C/WKMediaCacheManager.cpp \
+	Source/WebKit2/UIProcess/API/C/WKMediaCacheManager.h \
 	Source/WebKit2/UIProcess/API/C/WKNativeEvent.h \
 	Source/WebKit2/UIProcess/API/C/WKNavigationData.cpp \
 	Source/WebKit2/UIProcess/API/C/WKNavigationData.h \
@@ -453,6 +456,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/WebInspectorProxy.h \
 	Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.cpp \
 	Source/WebKit2/UIProcess/WebKeyValueStorageManagerProxy.h \
+	Source/WebKit2/UIProcess/WebMediaCacheManagerProxy.cpp \
+	Source/WebKit2/UIProcess/WebMediaCacheManagerProxy.h \
 	Source/WebKit2/UIProcess/WebLoaderClient.cpp \
 	Source/WebKit2/UIProcess/WebLoaderClient.h \
 	Source/WebKit2/UIProcess/WebNavigationData.cpp \
@@ -570,6 +575,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h \
 	Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp \
 	Source/WebKit2/WebProcess/KeyValueStorage/WebKeyValueStorageManager.h \
+	Source/WebKit2/WebProcess/MediaCache/WebMediaCacheManager.cpp \
+	Source/WebKit2/WebProcess/MediaCache/WebMediaCacheManager.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/JSNPMethod.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/JSNPMethod.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/JSNPObject.cpp \
@@ -713,6 +720,7 @@ libWebKit2_la_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/gtk \
 	-I$(srcdir)/Source/WebKit2/WebProcess/KeyValueStorage \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Launching \
+	-I$(srcdir)/Source/WebKit2/WebProcess/MediaCache \
 	-I$(srcdir)/Source/WebKit2/WebProcess/ResourceCache \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Plugins \
 	-I$(srcdir)/Source/WebKit2/WebProcess/Plugins/Netscape \
@@ -887,6 +895,10 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/WebKeyValueStorageManagerMessages.h \
 	DerivedSources/WebKit2/WebKeyValueStorageManagerProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebKeyValueStorageManagerProxyMessages.h \
+	DerivedSources/WebKit2/WebMediaCacheManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebMediaCacheManagerMessages.h \
+	DerivedSources/WebKit2/WebMediaCacheManagerProxyMessageReceiver.cpp \
+	DerivedSources/WebKit2/WebMediaCacheManagerProxyMessages.h \
 	DerivedSources/WebKit2/WebPageProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/WebPageProxyMessages.h \
 	DerivedSources/WebKit2/WebPageMessageReceiver.cpp \
@@ -928,6 +940,7 @@ vpath %.messages.in = \
 	$(WebKit2)/WebProcess/Geolocation \
 	$(WebKit2)/WebProcess/IconDatabase \
 	$(WebKit2)/WebProcess/KeyValueStorage \
+	$(WebKit2)/WebProcess/MediaCache \
 	$(WebKit2)/WebProcess/Plugins \
 	$(WebKit2)/WebProcess/ResourceCache \
 	$(WebKit2)/WebProcess/WebCoreSupport \

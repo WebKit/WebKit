@@ -1491,6 +1491,22 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="MediaCache"
+				>
+				<File
+					RelativePath="..\WebProcess\MediaCache\WebMediaCacheManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\MediaCache\WebMediaCacheManager.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\MediaCache\WebMediaCacheManager.messages.in"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="ResourceCache"
 				>
 				<File
@@ -2651,6 +2667,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebMediaCacheManagerProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebMediaCacheManagerProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebMediaCacheManagerProxy.messages.in"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebNavigationData.cpp"
 				>
 			</File>
@@ -2922,6 +2950,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKKeyValueStorageManager.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKMediaCacheManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKMediaCacheManager.h"
 						>
 					</File>
 					<File
@@ -3712,6 +3748,22 @@
 			</File>
 			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebKeyValueStorageManagerProxyMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebMediaCacheManagerMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebMediaCacheManagerMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebMediaCacheManagerProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebMediaCacheManagerProxyMessages.h"
 				>
 			</File>
 			<File

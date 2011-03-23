@@ -82,6 +82,7 @@ VPATH = \
     WebProcess/Geolocation \
     WebProcess/IconDatabase \
     WebProcess/KeyValueStorage \
+    WebProcess/MemoryCache \
     WebProcess/Plugins \
     WebProcess/ResourceCache \
     WebProcess/WebCoreSupport \
@@ -113,6 +114,8 @@ MESSAGE_RECEIVERS = \
     WebInspectorProxy.messages.in \
     WebKeyValueStorageManager.messages.in \
     WebKeyValueStorageManagerProxy.messages.in \
+    WebMediaCacheManager.messages.in \
+    WebMediaCacheManagerProxy.messages.in \
     WebFullScreenManager.messages.in \
     WebFullScreenManagerProxy.messages.in \
     WebPage/WebInspector.messages.in \
