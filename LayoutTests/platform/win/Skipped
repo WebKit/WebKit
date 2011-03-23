@@ -1162,11 +1162,6 @@ fast/animation
 # This port doesn't support v8 i18n extension.
 fast/js/i18n-bindings-locale.html
 
-# For https://bugs.webkit.org/show_bug.cgi?id=54490
-inspector/console/console-api-on-call-frame.html
-inspector/console/console-assert.html
-inspector/debugger
-
 # For https://bugs.webkit.org/show_bug.cgi?id=54519
 fast/xmlhttprequest/xmlhttprequest-responsetype-arraybuffer.html
 
