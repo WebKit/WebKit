@@ -97,27 +97,6 @@ public:
     static bool webkitAudioContextEnabled() { return isWebAudioEnabled; }
 #endif
 
-#if ENABLE(WEBGL) || ENABLE(BLOB)
-    static void setWebGLEnabled(bool isEnabled) { isWebGLEnabled = isEnabled; }
-    static bool webGLRenderingContextEnabled() { return isWebGLEnabled; }
-    static bool webGLArrayBufferEnabled() { return isWebGLEnabled; }
-    static bool webGLByteArrayEnabled() { return isWebGLEnabled; }
-    static bool webGLUnsignedByteArrayEnabled() { return isWebGLEnabled; }
-    static bool webGLShortArrayEnabled() { return isWebGLEnabled; }
-    static bool webGLUnsignedShortArrayEnabled() { return isWebGLEnabled; }
-    static bool webGLIntArrayEnabled() { return isWebGLEnabled; }
-    static bool webGLUnsignedIntArrayEnabled() { return isWebGLEnabled; }
-    static bool webGLFloatArrayEnabled() { return isWebGLEnabled; }
-    static bool webGLActiveInfoEnabled() { return isWebGLEnabled; }
-    static bool webGLBufferEnabled() { return isWebGLEnabled; }
-    static bool webGLFramebufferEnabled() { return isWebGLEnabled; }
-    static bool webGLProgramEnabled() { return isWebGLEnabled; }
-    static bool webGLRenderbufferEnabled() { return isWebGLEnabled; }
-    static bool webGLShaderEnabled() { return isWebGLEnabled; }
-    static bool webGLTextureEnabled() { return isWebGLEnabled; }
-    static bool webGLUniformLocationEnabled() { return isWebGLEnabled; }
-#endif
-
     static void setPushStateEnabled(bool isEnabled) { isPushStateEnabled = isEnabled; }
     static bool pushStateEnabled() { return isPushStateEnabled; }
     static bool replaceStateEnabled() { return isPushStateEnabled; }
@@ -183,7 +162,6 @@ private:
     static bool isGeolocationEnabled;
     static bool isIndexedDBEnabled;
     static bool isWebAudioEnabled;
-    static bool isWebGLEnabled;
     static bool isPushStateEnabled;
     static bool isTouchEnabled;
     static bool isDeviceMotionEnabled;

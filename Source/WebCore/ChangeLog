@@ -1,3 +1,22 @@
+2011-03-23  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] WebGLRenderingContext and other DOMWindow properties should remain if WebGL is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=56947
+
+        Removed the RuntimeEnabledFeatures setting for WebGL and the
+        EnabledAtRuntime extended attribute from the WebGL-related
+        properties on the DOMWindow. WebGL support is now controlled
+        exclusively through the page's Settings.
+
+        No new tests; tested manually in Chromium with --disable-webgl
+        command line argument and blacklist.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        * page/DOMWindow.idl:
+
 2011-03-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81802.

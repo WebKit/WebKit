@@ -76,9 +76,6 @@ public:
     WEBKIT_API static void enableWebAudio(bool);
     WEBKIT_API static bool isWebAudioEnabled();
 
-    WEBKIT_API static void enableWebGL(bool);
-    WEBKIT_API static bool isWebGLEnabled();
-
     WEBKIT_API static void enablePushState(bool);
     WEBKIT_API static bool isPushStateEnabled(bool);
 

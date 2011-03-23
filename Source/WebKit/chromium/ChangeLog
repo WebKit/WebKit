@@ -1,3 +1,16 @@
+2011-03-23  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] WebGLRenderingContext and other DOMWindow properties should remain if WebGL is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=56947
+
+        Removed the WebRuntimeFeatures setting for WebGL. WebGL support is
+        now controlled exclusively through the page's Settings.
+
+        * public/WebRuntimeFeatures.h:
+        * src/WebRuntimeFeatures.cpp:
+
 2011-03-23  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

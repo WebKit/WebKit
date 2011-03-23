@@ -216,22 +216,6 @@ bool WebRuntimeFeatures::isWebAudioEnabled()
 #endif
 }
 
-void WebRuntimeFeatures::enableWebGL(bool enable)
-{
-#if ENABLE(WEBGL)
-    RuntimeEnabledFeatures::setWebGLEnabled(enable);
-#endif
-}
-
-bool WebRuntimeFeatures::isWebGLEnabled()
-{
-#if ENABLE(WEBGL)
-    return RuntimeEnabledFeatures::webGLRenderingContextEnabled();
-#else
-    return false;
-#endif
-}
-
 void WebRuntimeFeatures::enablePushState(bool enable)
 {
     RuntimeEnabledFeatures::setPushStateEnabled(enable);
