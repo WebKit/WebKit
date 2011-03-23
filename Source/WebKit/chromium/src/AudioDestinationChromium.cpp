@@ -98,8 +98,7 @@ void AudioDestinationChromium::stop()
 
 double AudioDestination::hardwareSampleRate()
 {
-    // FIXME: implement this properly for Chromium.
-    return 44100.0;
+    return webKitClient()->audioHardwareSampleRate();
 }
 
 // Pulls on our provider to get the rendered audio stream.

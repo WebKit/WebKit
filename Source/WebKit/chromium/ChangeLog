@@ -1,3 +1,16 @@
+2011-03-23  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add API to retrieve the audio hardware sample-rate
+        https://bugs.webkit.org/show_bug.cgi?id=56882
+
+        * public/WebAudioDevice.h:
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::audioHardwareSampleRate):
+        * src/AudioDestinationChromium.cpp:
+        (WebCore::AudioDestination::hardwareSampleRate):
+
 2011-03-23  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Eric Seidel.
