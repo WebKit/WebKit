@@ -1,3 +1,10 @@
+2011-03-23  Brian Weinstein  <bweinstein@apple.com>
+
+        Skip plugins/change-widget-and-click-crash.html on WebKit2, because
+        WebKit2 doesn't have an implementation of eventSender yet.
+
+        * platform/mac-wk2/Skipped:
+
 2011-03-23  Mihai Parparita  <mihaip@chromium.org>
 
         Fix fast/table for Chromium Snow Leopard by promoting the chromium-mac/

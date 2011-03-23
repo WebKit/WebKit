@@ -590,6 +590,7 @@ platform/mac/fast/forms/input-appearance-spinbutton-up.html
 platform/mac/fast/forms/input-number-click.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
+plugins/change-widget-and-click-crash.html
 plugins/mouse-events.html
 plugins/mouse-move-over-plugin-in-frame.html
 plugins/resize-from-plugin.html
