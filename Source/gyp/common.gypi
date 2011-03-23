@@ -5,6 +5,6 @@
       'Release': {},
       'Debug': {},
     },
+    'default_configuration': 'Production',
   },
-  'default_configuration': 'Production',
 }

@@ -1,3 +1,12 @@
+2011-03-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        GYP build should default to Production configuration
+        https://bugs.webkit.org/show_bug.cgi?id=56899
+
+        * Source/gyp/common.gypi:
+
 2011-03-22  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
