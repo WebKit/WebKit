@@ -101,7 +101,7 @@ static inline unsigned getCPUTime()
 
     // use a relative time from first call in order to avoid an overflow
     static double firstTime = currentTime();
-    return (currentTime() - firstTime) * 1000;
+    return static_cast<unsigned> ((currentTime() - firstTime) * 1000);
 #endif
 }
 

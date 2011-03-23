@@ -1,3 +1,16 @@
+2011-03-23  George Guo  <George.Guo@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        Webkit warning: converting to 'unsigned int' from 'double'
+        https://bugs.webkit.org/show_bug.cgi?id=56865
+
+        With -Werr enabled, this cause the build failure on RedHat Linux. 
+        Add a cast helped.  
+
+        * Source/JavaScriptCore/runtime/TimeoutChecker.cpp:
+        (JSC::getCPUTime):
+
 2011-03-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
