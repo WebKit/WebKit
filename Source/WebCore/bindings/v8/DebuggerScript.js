@@ -262,5 +262,4 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
 }
 
 return DebuggerScript;
-
 })();

@@ -698,6 +698,5 @@ CommandLineAPIImpl.prototype = {
 }
 
 injectedScript._commandLineAPIImpl = new CommandLineAPIImpl();
-
 return injectedScript;
 })

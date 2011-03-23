@@ -41,5 +41,5 @@ close($input);
 $text = join(', ', map('0x' . unpack("H*", $_), split(undef, $text)));
 
 open($output, '>', $output) or die "Can't open file for write: $output $!";
-print $output "const char $varname\[\] = {\n$text\n};\n";
+print $output "const unsigned char $varname\[\] = {\n$text\n};\n";
 close($output);

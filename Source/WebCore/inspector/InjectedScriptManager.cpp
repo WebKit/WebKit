@@ -103,7 +103,7 @@ void InjectedScriptManager::releaseObjectGroup(const String& objectGroup)
 
 String InjectedScriptManager::injectedScriptSource()
 {
-    return String(InjectedScriptSource_js, sizeof(InjectedScriptSource_js));
+    return String(reinterpret_cast<const char*>(InjectedScriptSource_js), sizeof(InjectedScriptSource_js));
 }
 
 pair<long, ScriptObject> InjectedScriptManager::injectScript(const String& source, ScriptState* scriptState)

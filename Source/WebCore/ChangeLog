@@ -1,3 +1,19 @@
+2011-03-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: use unsigned char instead of char when storing script source
+        https://bugs.webkit.org/show_bug.cgi?id=56920
+
+        * bindings/v8/DebuggerScript.js:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::ensureDebuggerScriptCompiled):
+        * inspector/InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::injectedScriptSource):
+        * inspector/InjectedScriptSource.js: whitespace change to trigger compilation
+        * inspector/xxd.pl:
+        * xml/XMLViewer.xsl:
+
 2011-03-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

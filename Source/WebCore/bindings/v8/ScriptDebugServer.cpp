@@ -450,7 +450,7 @@ void ScriptDebugServer::ensureDebuggerScriptCompiled()
         v8::HandleScope scope;
         v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
         v8::Context::Scope contextScope(debuggerContext);
-        String debuggerScriptSource(DebuggerScriptSource_js, sizeof(DebuggerScriptSource_js));
+        String debuggerScriptSource(reinterpret_cast<const char*>(DebuggerScriptSource_js), sizeof(DebuggerScriptSource_js));
         m_debuggerScript.set(v8::Handle<v8::Object>::Cast(v8::Script::Compile(v8String(debuggerScriptSource))->Run()));
     }
 }
