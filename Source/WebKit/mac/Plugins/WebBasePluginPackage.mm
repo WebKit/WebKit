@@ -38,6 +38,7 @@
 #import <wtf/Assertions.h>
 #import <wtf/Threading.h>
 #import <wtf/Vector.h>
+#import <wtf/text/CString.h>
 
 #import <WebKitSystemInterface.h>
 
@@ -222,8 +223,15 @@ static NSString *pathByResolvingSymlinksAndAliases(NSString *thePath)
         MimeClassInfo mimeClassInfo;
         
         extensions = [[MIMEDictionary objectForKey:WebPluginExtensionsKey] _web_lowercaseStrings];
-        for (NSUInteger i = 0; i < [extensions count]; ++i)
-            mimeClassInfo.extensions.append((NSString *)[extensions objectAtIndex:i]);
+        for (NSUInteger i = 0; i < [extensions count]; ++i) {
+            // The DivX plug-in lists multiple extensions in a comma separated string instead of using
+            // multiple array elements in the property list. Work around this here by splitting the
+            // extension string into components.
+            NSArray *extensionComponents = [[extensions objectAtIndex:i] componentsSeparatedByString:@","];
+
+            for (NSString *extension in extensionComponents)
+                mimeClassInfo.extensions.append(extension);
+        }
 
         if ([extensions count] == 0)
             extensions = [NSArray arrayWithObject:@""];

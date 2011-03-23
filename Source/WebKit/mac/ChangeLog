@@ -1,3 +1,15 @@
+2011-03-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        OBJECT element with DivX source is always downloaded
+        https://bugs.webkit.org/show_bug.cgi?id=56879
+
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage getPluginInfoFromPLists]):
+        Always try to split every element in the "WebPluginExtensions" array, since the DivX plug-in
+        specifies multiple file extensions in a single element.
+
 2011-03-22  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

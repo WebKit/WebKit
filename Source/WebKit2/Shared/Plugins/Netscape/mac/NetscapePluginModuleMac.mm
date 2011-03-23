@@ -142,8 +142,15 @@ static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginInfo& plugi
             CFStringRef extension = static_cast<CFStringRef>(CFArrayGetValueAtIndex(extensionsArray, i));
             if (!extension || CFGetTypeID(extension) != CFStringGetTypeID())
                 continue;
-            
-            mimeClassInfo.extensions.append(String(extension).lower());
+
+            // The DivX plug-in lists multiple extensions in a comma separated string instead of using
+            // multiple array elements in the property list. Work around this here by splitting the
+            // extension string into components.
+            Vector<String> extensionComponents;
+            String(extension).lower().split(',', extensionComponents);
+
+            for (size_t i = 0; i < extensionComponents.size(); ++i)
+                mimeClassInfo.extensions.append(extensionComponents[i]);
         }
 
         // Add this MIME type.

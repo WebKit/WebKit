@@ -1255,14 +1255,41 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& p
     return createPlugin(pluginSize, appletElement, KURL(), paramNames, paramValues, "application/x-java-applet", false);
 }
 
+static bool pluginSupportsExtension(PluginData* pluginData, const String& extension)
+{
+    ASSERT(extension.lower() == extension);
+
+    for (size_t i = 0; i < pluginData->mimes().size(); ++i) {
+        const MimeClassInfo& mimeClassInfo = pluginData->mimes()[i];
+
+        if (mimeClassInfo.extensions.contains(extension))
+            return true;
+    }
+    return false;
+}
+
 ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeTypeIn)
 {
     // FIXME: This should be merged with WebCore::FrameLoader::defaultObjectContentType when the plugin code
     // is consolidated.
 
     String mimeType = mimeTypeIn;
-    if (mimeType.isEmpty())
-        mimeType = MIMETypeRegistry::getMIMETypeForExtension(url.path().substring(url.path().reverseFind('.') + 1));
+    if (mimeType.isEmpty()) {
+        String extension = url.path().substring(url.path().reverseFind('.') + 1).lower();
+
+        // Try to guess the MIME type from the extension.
+        mimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
+
+        if (mimeType.isEmpty()) {
+            // Check if there's a plug-in around that can handle the extension.
+            if (WebPage* webPage = m_frame->page()) {
+                if (PluginData* pluginData = webPage->corePage()->pluginData()) {
+                    if (pluginSupportsExtension(pluginData, extension))
+                        return ObjectContentNetscapePlugin;
+                }
+            }
+        }
+    }
 
     if (mimeType.isEmpty())
         return ObjectContentFrame;
