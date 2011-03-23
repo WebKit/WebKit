@@ -1,3 +1,168 @@
+2011-03-23  Mihai Parparita  <mihaip@chromium.org>
+
+        Update pixel results for Snow Leopard after r80755. Where possible,
+        chromium-mac results were promoted to mac-leopard, except for cases
+        where Chromium behavior due to bug 52335 or form control rendering.
+
+        * platform/chromium-mac-leopard/fast/block/margin-collapse/103-expected.checksum: Copied from LayoutTests/platform/chromium-mac/fast/block/margin-collapse/103-expected.checksum.
+        * platform/chromium-mac-leopard/fast/block/margin-collapse/103-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/block/margin-collapse/103-expected.png.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1318-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug1318-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.png.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4527-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/bugs/bug4527-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.png.
+        * platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-02-d-ag-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-02-d-ag-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-03-d-agi-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-03-d-agi-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t040302-c61-ex-len-00-b-a-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t040302-c61-ex-len-00-b-a-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t040302-c61-rel-len-00-b-ag-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t040302-c61-rel-len-00-b-ag-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1008-c44-ln-box-02-d-ag-expected.checksum:
+        * platform/chromium-mac/css2.1/t1008-c44-ln-box-02-d-ag-expected.png:
+        * platform/chromium-mac/css2.1/t100801-c544-valgn-01-d-ag-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t100801-c544-valgn-01-d-ag-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t100801-c544-valgn-03-d-agi-expected.checksum:
+        * platform/chromium-mac/css2.1/t100801-c544-valgn-03-d-agi-expected.png:
+        * platform/chromium-mac/css2.1/t100801-c548-ln-ht-02-b-ag-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t100801-c548-ln-ht-02-b-ag-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1507-c526-font-sz-02-b-a-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1507-c526-font-sz-02-b-a-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1601-c547-indent-00-b-a-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1601-c547-indent-00-b-a-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1604-c541-word-sp-00-b-a-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1604-c541-word-sp-00-b-a-expected.png: Removed.
+        * platform/chromium-mac/css2.1/t1604-c542-letter-sp-00-b-a-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t1604-c542-letter-sp-00-b-a-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-2-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-2-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-2-left-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-2-left-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-expected.png: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-right-expected.checksum: Removed.
+        * platform/chromium-mac/editing/selection/caret-rtl-right-expected.png: Removed.
+        * platform/chromium-mac/fast/block/margin-collapse/103-expected.checksum:
+        * platform/chromium-mac/fast/block/margin-collapse/103-expected.png:
+        * platform/chromium-mac/fast/css/ex-after-font-variant-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/ex-after-font-variant-expected.png: Removed.
+        * platform/chromium-mac/fast/css/non-standard-checkbox-size-expected.checksum: Removed.
+        * platform/chromium-mac/fast/css/non-standard-checkbox-size-expected.png: Removed.
+        * platform/chromium-mac/fast/lists/008-expected.checksum: Removed.
+        * platform/chromium-mac/fast/lists/008-expected.png: Removed.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-08-expected.checksum: Removed.
+        * platform/chromium-mac/fast/media/mq-relative-constraints-08-expected.png: Removed.
+        * platform/chromium-mac/fast/overflow/overflow-rtl-expected.checksum: Removed.
+        * platform/chromium-mac/fast/overflow/overflow-rtl-expected.png: Removed.
+        * platform/chromium-mac/fast/replaced/width100percent-checkbox-expected.checksum: Removed.
+        * platform/chromium-mac/fast/replaced/width100percent-checkbox-expected.png: Removed.
+        * platform/chromium-mac/fast/replaced/width100percent-radio-expected.checksum: Removed.
+        * platform/chromium-mac/fast/replaced/width100percent-radio-expected.png: Removed.
+        * platform/chromium-mac/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.png: Removed.
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/bugs/bug4527-expected.png:
+        * platform/mac-leopard/css2.1/t040302-c61-ex-len-00-b-a-expected.checksum:
+        * platform/mac-leopard/css2.1/t040302-c61-ex-len-00-b-a-expected.png:
+        * platform/mac-leopard/css2.1/t040302-c61-rel-len-00-b-ag-expected.checksum:
+        * platform/mac-leopard/css2.1/t040302-c61-rel-len-00-b-ag-expected.png:
+        * platform/mac-leopard/css2.1/t100801-c544-valgn-01-d-ag-expected.checksum:
+        * platform/mac-leopard/css2.1/t100801-c544-valgn-01-d-ag-expected.png:
+        * platform/mac-leopard/css2.1/t100801-c548-ln-ht-02-b-ag-expected.checksum:
+        * platform/mac-leopard/css2.1/t100801-c548-ln-ht-02-b-ag-expected.png:
+        * platform/mac-leopard/css2.1/t1507-c526-font-sz-02-b-a-expected.checksum:
+        * platform/mac-leopard/css2.1/t1507-c526-font-sz-02-b-a-expected.png:
+        * platform/mac-leopard/css2.1/t1601-c547-indent-00-b-a-expected.checksum:
+        * platform/mac-leopard/css2.1/t1601-c547-indent-00-b-a-expected.png:
+        * platform/mac-leopard/css2.1/t1604-c541-word-sp-00-b-a-expected.checksum:
+        * platform/mac-leopard/css2.1/t1604-c541-word-sp-00-b-a-expected.png:
+        * platform/mac-leopard/css2.1/t1604-c542-letter-sp-00-b-a-expected.checksum:
+        * platform/mac-leopard/css2.1/t1604-c542-letter-sp-00-b-a-expected.png:
+        * platform/mac-leopard/editing/selection/caret-rtl-2-expected.checksum:
+        * platform/mac-leopard/editing/selection/caret-rtl-2-expected.png:
+        * platform/mac-leopard/editing/selection/caret-rtl-2-left-expected.checksum:
+        * platform/mac-leopard/editing/selection/caret-rtl-2-left-expected.png:
+        * platform/mac-leopard/editing/selection/caret-rtl-expected.checksum:
+        * platform/mac-leopard/editing/selection/caret-rtl-expected.png:
+        * platform/mac-leopard/editing/selection/caret-rtl-right-expected.checksum:
+        * platform/mac-leopard/editing/selection/caret-rtl-right-expected.png:
+        * platform/mac-leopard/fast/css/ex-after-font-variant-expected.checksum:
+        * platform/mac-leopard/fast/css/ex-after-font-variant-expected.png:
+        * platform/mac-leopard/fast/css/non-standard-checkbox-size-expected.checksum:
+        * platform/mac-leopard/fast/css/non-standard-checkbox-size-expected.png:
+        * platform/mac-leopard/fast/lists/008-expected.checksum:
+        * platform/mac-leopard/fast/lists/008-expected.png:
+        * platform/mac-leopard/fast/media/mq-relative-constraints-08-expected.checksum:
+        * platform/mac-leopard/fast/media/mq-relative-constraints-08-expected.png:
+        * platform/mac-leopard/fast/overflow/overflow-rtl-expected.checksum:
+        * platform/mac-leopard/fast/overflow/overflow-rtl-expected.png:
+        * platform/mac-leopard/fast/replaced/width100percent-checkbox-expected.checksum:
+        * platform/mac-leopard/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/mac-leopard/fast/replaced/width100percent-radio-expected.checksum:
+        * platform/mac-leopard/fast/replaced/width100percent-radio-expected.png:
+        * platform/mac-leopard/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.checksum:
+        * platform/mac-leopard/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.png:
+        * platform/mac/css2.1/t040302-c61-ex-len-00-b-a-expected.checksum:
+        * platform/mac/css2.1/t040302-c61-ex-len-00-b-a-expected.png:
+        * platform/mac/css2.1/t040302-c61-rel-len-00-b-ag-expected.checksum:
+        * platform/mac/css2.1/t040302-c61-rel-len-00-b-ag-expected.png:
+        * platform/mac/css2.1/t1008-c44-ln-box-02-d-ag-expected.checksum:
+        * platform/mac/css2.1/t1008-c44-ln-box-02-d-ag-expected.png:
+        * platform/mac/css2.1/t100801-c544-valgn-01-d-ag-expected.checksum:
+        * platform/mac/css2.1/t100801-c544-valgn-01-d-ag-expected.png:
+        * platform/mac/css2.1/t100801-c544-valgn-03-d-agi-expected.checksum:
+        * platform/mac/css2.1/t100801-c544-valgn-03-d-agi-expected.png:
+        * platform/mac/css2.1/t100801-c548-ln-ht-02-b-ag-expected.checksum:
+        * platform/mac/css2.1/t100801-c548-ln-ht-02-b-ag-expected.png:
+        * platform/mac/css2.1/t1507-c526-font-sz-02-b-a-expected.checksum:
+        * platform/mac/css2.1/t1507-c526-font-sz-02-b-a-expected.png:
+        * platform/mac/css2.1/t1601-c547-indent-00-b-a-expected.checksum:
+        * platform/mac/css2.1/t1601-c547-indent-00-b-a-expected.png:
+        * platform/mac/css2.1/t1604-c541-word-sp-00-b-a-expected.checksum:
+        * platform/mac/css2.1/t1604-c541-word-sp-00-b-a-expected.png:
+        * platform/mac/css2.1/t1604-c542-letter-sp-00-b-a-expected.checksum:
+        * platform/mac/css2.1/t1604-c542-letter-sp-00-b-a-expected.png:
+        * platform/mac/editing/selection/caret-ltr-2-expected.checksum:
+        * platform/mac/editing/selection/caret-ltr-2-expected.png:
+        * platform/mac/editing/selection/caret-ltr-2-left-expected.checksum:
+        * platform/mac/editing/selection/caret-ltr-2-left-expected.png:
+        * platform/mac/editing/selection/caret-ltr-expected.checksum:
+        * platform/mac/editing/selection/caret-ltr-expected.png:
+        * platform/mac/editing/selection/caret-ltr-right-expected.checksum:
+        * platform/mac/editing/selection/caret-ltr-right-expected.png:
+        * platform/mac/editing/selection/caret-rtl-2-expected.checksum:
+        * platform/mac/editing/selection/caret-rtl-2-expected.png:
+        * platform/mac/editing/selection/caret-rtl-2-left-expected.checksum:
+        * platform/mac/editing/selection/caret-rtl-2-left-expected.png:
+        * platform/mac/editing/selection/caret-rtl-expected.checksum:
+        * platform/mac/editing/selection/caret-rtl-expected.png:
+        * platform/mac/editing/selection/caret-rtl-right-expected.checksum:
+        * platform/mac/editing/selection/caret-rtl-right-expected.png:
+        * platform/mac/fast/block/margin-collapse/103-expected.checksum:
+        * platform/mac/fast/block/margin-collapse/103-expected.png:
+        * platform/mac/fast/css/ex-after-font-variant-expected.checksum:
+        * platform/mac/fast/css/ex-after-font-variant-expected.png:
+        * platform/mac/fast/css/non-standard-checkbox-size-expected.checksum:
+        * platform/mac/fast/css/non-standard-checkbox-size-expected.png:
+        * platform/mac/fast/lists/008-expected.checksum:
+        * platform/mac/fast/lists/008-expected.png:
+        * platform/mac/fast/media/mq-relative-constraints-08-expected.checksum:
+        * platform/mac/fast/media/mq-relative-constraints-08-expected.png:
+        * platform/mac/fast/overflow/overflow-rtl-expected.checksum:
+        * platform/mac/fast/overflow/overflow-rtl-expected.png:
+        * platform/mac/fast/replaced/width100percent-checkbox-expected.checksum:
+        * platform/mac/fast/replaced/width100percent-checkbox-expected.png:
+        * platform/mac/fast/replaced/width100percent-radio-expected.checksum:
+        * platform/mac/fast/replaced/width100percent-radio-expected.png:
+        * platform/mac/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.checksum:
+        * platform/mac/fast/text/whitespace/pre-wrap-spaces-after-newline-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug1318-expected.png:
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.checksum:
+        * platform/mac/tables/mozilla/bugs/bug4527-expected.png:
+
 2011-03-23  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt.
