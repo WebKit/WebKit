@@ -31,7 +31,7 @@
 #ifndef JPEGImageEncoder_h
 #define JPEGImageEncoder_h
 
-#include "Vector.h"
+#include <wtf/Vector.h>
 
 class SkBitmap;
 
@@ -41,7 +41,7 @@ class ImageData;
 
 class JPEGImageEncoder {
 public:
-    // Encode the input bitmap with a compression quality in [0-100].
+    // Encode the input data with a compression quality in [0-100].
     static bool encode(const SkBitmap&, int quality, Vector<unsigned char>*);
     static bool encode(const ImageData&, int quality, Vector<unsigned char>*);
 

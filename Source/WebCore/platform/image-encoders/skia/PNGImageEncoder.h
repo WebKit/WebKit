@@ -31,7 +31,7 @@
 #ifndef PNGImageEncoder_h
 #define PNGImageEncoder_h
 
-#include "Vector.h"
+#include <wtf/Vector.h>
 
 class SkBitmap;
 

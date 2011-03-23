@@ -1,3 +1,15 @@
+2011-03-22  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] skia image encoders should use <wtf/Vector.h>
+        https://bugs.webkit.org/show_bug.cgi?id=56893
+
+        No new tests. Covered by existing canvas.toDataURL tests.
+
+        * platform/image-encoders/skia/JPEGImageEncoder.h:
+        * platform/image-encoders/skia/PNGImageEncoder.h:
+
 2011-03-22  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Beth Dakin.
