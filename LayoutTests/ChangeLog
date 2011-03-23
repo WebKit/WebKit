@@ -1,3 +1,16 @@
+2011-03-23  Xiaomei Ji  <xji@chromium.org>
+
+        Rebaseline after r81807.
+
+        * platform/chromium-linux/fast/css/bidi-override-in-anonymous-block-expected.checksum: Added.
+        * platform/chromium-linux/fast/css/bidi-override-in-anonymous-block-expected.png: Added.
+        * platform/chromium-win/fast/css/bidi-override-in-anonymous-block-expected.checksum: Added.
+        * platform/chromium-win/fast/css/bidi-override-in-anonymous-block-expected.png: Added.
+        * platform/chromium-win/fast/css/bidi-override-in-anonymous-block-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/fast/css/bidi-override-in-anonymous-block-expected.txt: Added.
+        * platform/qt/fast/css/bidi-override-in-anonymous-block-expected.txt: Added.
+
 2011-03-23  Mihai Parparita  <mihaip@chromium.org>
 
         Rebaseline transitions/default-timing-function.html for Chromium Snow 

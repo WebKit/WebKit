@@ -3297,4 +3297,4 @@ BUGCR77095 WIN LINUX : fast/block/lineboxcontain/block-glyphs-replaced.html = IM
 BUGCR77095 WIN LINUX : fast/block/lineboxcontain/glyphs.html = IMAGE+TEXT
 
 // Need rebaseline after r81807
-BUGXJI : fast/css/bidi-override-in-anonymous-block.html = FAIL MISSING
+BUGXJI MAC : fast/css/bidi-override-in-anonymous-block.html = MISSING
