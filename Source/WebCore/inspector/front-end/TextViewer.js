@@ -435,6 +435,17 @@ WebInspector.TextEditorChunkedPanel.prototype = {
         }
     },
 
+    _expandChunks: function(fromIndex, toIndex)
+    {
+        // First collapse chunks to collect the DOM elements into a cache to reuse them later.
+        for (var i = 0; i < fromIndex; ++i)
+            this._textChunks[i].expanded = false;
+        for (var i = toIndex; i < this._textChunks.length; ++i)
+            this._textChunks[i].expanded = false;
+        for (var i = fromIndex; i < toIndex; ++i)
+            this._textChunks[i].expanded = true;
+    },
+
     _totalHeight: function(firstElement, lastElement)
     {
         lastElement = (lastElement || firstElement).nextElementSibling;
@@ -487,12 +498,6 @@ WebInspector.TextEditorGutterPanel.prototype = {
     _createNewChunk: function(startLine, endLine)
     {
         return new WebInspector.TextEditorGutterChunk(this, startLine, endLine);
-    },
-
-    _expandChunks: function(fromIndex, toIndex)
-    {
-        for (var i = 0; i < this._textChunks.length; ++i)
-            this._textChunks[i].expanded = (fromIndex <= i && i < toIndex);
     },
 
     textChanged: function(oldRange, newRange)
@@ -794,8 +799,8 @@ WebInspector.TextEditorMainPanel.prototype = {
         this._highlighter.highlight(lastVisibleLine);
         delete this._muteHighlightListener;
 
-        for (var i = 0; i < this._textChunks.length; ++i)
-            this._textChunks[i].expanded = (fromIndex <= i && i < toIndex);
+        this._restorePaintLinesOperationsCredit();
+        WebInspector.TextEditorChunkedPanel.prototype._expandChunks.call(this, fromIndex, toIndex);
 
         this._restoreSelection(selection);
     },
@@ -804,41 +809,75 @@ WebInspector.TextEditorMainPanel.prototype = {
     {
         if (this._muteHighlightListener)
             return;
+        this._restorePaintLinesOperationsCredit();
         this._paintLines(fromLine, toLine, true /*restoreSelection*/);
     },
 
-    _markSkippedPaintLines: function(startLine, endLine)
+    _schedulePaintLines: function(startLine, endLine)
     {
-        if (!this._skippedPaintLines)
-            this._skippedPaintLines = [ { startLine: startLine, endLine: endLine } ];
-        else {
-            for (var i = 0; i < this._skippedPaintLines.length; ++i) {
-                var chunk = this._skippedPaintLines[i];
+        if (startLine >= endLine)
+            return;
+
+        if (!this._scheduledPaintLines) {
+            this._scheduledPaintLines = [ { startLine: startLine, endLine: endLine } ];
+            this._paintScheduledLinesTimer = setTimeout(this._paintScheduledLines.bind(this), 10);
+        } else {
+            for (var i = 0; i < this._scheduledPaintLines.length; ++i) {
+                var chunk = this._scheduledPaintLines[i];
                 if (chunk.startLine <= endLine && chunk.endLine >= startLine) {
                     chunk.startLine = Math.min(chunk.startLine, startLine);
                     chunk.endLine = Math.max(chunk.endLine, endLine);
                     return;
                 }
+                if (chunk.startLine > endLine) {
+                    this._scheduledPaintLines.splice(i, 0, { startLine: startLine, endLine: endLine });
+                    return;
+                }
             }
-            this._skippedPaintLines.push({ startLine: startLine, endLine: endLine });
+            this._scheduledPaintLines.push({ startLine: startLine, endLine: endLine });
         }
     },
 
-    _paintSkippedLines: function()
+    _paintScheduledLines: function(skipRestoreSelection)
     {
-        if (!this._skippedPaintLines || this._dirtyLines)
+        if (this._paintScheduledLinesTimer)
+            clearTimeout(this._paintScheduledLinesTimer);
+        delete this._paintScheduledLinesTimer;
+
+        if (!this._scheduledPaintLines)
             return;
-        for (var i = 0; i < this._skippedPaintLines.length; ++i) {
-            var chunk = this._skippedPaintLines[i];
+
+        // Reschedule the timer if we can not paint the lines yet, or the user is scrolling.
+        if (this._dirtyLines || this._repaintAllTimer) {
+            this._paintScheduledLinesTimer = setTimeout(this._paintScheduledLines.bind(this), 50);
+            return;
+        }
+
+        var scheduledPaintLines = this._scheduledPaintLines;
+        delete this._scheduledPaintLines;
+
+        var selection = skipRestoreSelection ? null : this._getSelection();
+
+        this._restorePaintLinesOperationsCredit();
+        for (var i = 0; i < scheduledPaintLines.length; ++i) {
+            var chunk = scheduledPaintLines[i];
             this._paintLines(chunk.startLine, chunk.endLine);
         }
-        delete this._skippedPaintLines;
+        this._restoreSelection(selection);
+    },
+
+    _restorePaintLinesOperationsCredit: function()
+    {
+        this._paintLinesOperationsCredit = 250;
     },
 
     _paintLines: function(fromLine, toLine, restoreSelection)
     {
-        if (this._dirtyLines) {
-            this._markSkippedPaintLines(fromLine, toLine);
+        if (fromLine >= toLine)
+            return;
+
+        if (this._dirtyLines || this._scheduledPaintLines) {
+            this._schedulePaintLines(fromLine, toLine);
             return;
         }
 
@@ -853,6 +892,10 @@ WebInspector.TextEditorMainPanel.prototype = {
             if (restoreSelection && !selection)
                 selection = this._getSelection();
             this._paintLine(lineRow, i);
+            if (this._paintLinesOperationsCredit < 0) {
+                this._schedulePaintLines(i + 1, toLine);
+                break;
+            }
         }
         if (restoreSelection)
             this._restoreSelection(selection);
@@ -860,8 +903,8 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     _paintLine: function(lineRow, lineNumber)
     {
-        if (this._dirtyLines) {
-            this._markSkippedPaintLines(lineNumber, lineNumber + 1);
+        if (this._dirtyLines || this._scheduledPaintLines || this._paintLinesOperationsCredit < 0) {
+            this._schedulePaintLines(lineNumber, lineNumber + 1);
             return;
         }
 
@@ -896,13 +939,17 @@ WebInspector.TextEditorMainPanel.prototype = {
                     if (plainTextStart !== -1) {
                         this._appendTextNode(lineRow, line.substring(plainTextStart, j));
                         plainTextStart = -1;
+                        --this._paintLinesOperationsCredit;
                     }
                     this._appendSpan(lineRow, line.substring(j, j + attribute.length), attribute.tokenType);
                     j += attribute.length;
+                    --this._paintLinesOperationsCredit;
                 }
             }
-            if (plainTextStart !== -1)
+            if (plainTextStart !== -1) {
                 this._appendTextNode(lineRow, line.substring(plainTextStart, line.length));
+                --this._paintLinesOperationsCredit;
+            }
             if (this._rangeToMark && this._rangeToMark.startLine === lineNumber)
                 this._markedRangeElement = highlightSearchResult(lineRow, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
             if (lineRow.decorationsElement)
@@ -1204,7 +1251,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         this._removeDecorationsInRange(oldRange);
         this._updateChunksForRanges(oldRange, newRange);
         this._updateHighlightsForRange(newRange);
-        this._paintSkippedLines();
+        this._paintScheduledLines(true);
         this.endDomUpdates();
 
         this._restoreSelection(selection);
