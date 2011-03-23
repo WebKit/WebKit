@@ -2,6 +2,23 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: Add a star while editing a source code
+        https://bugs.webkit.org/show_bug.cgi?id=56743
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.setScriptSourceIsBeingEdited):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.setScriptSourceIsBeingEdited):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._startEditing):
+        (WebInspector.SourceFrame.prototype._registerShortcuts):
+        (WebInspector.SourceFrame.prototype._handleSave):
+        (WebInspector.SourceFrame.prototype._handleRevertEditing):
+        (WebInspector.SourceFrameDelegate.prototype.setScriptSourceIsBeingEdited):
+
+2011-03-23  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: Scrolling and navigation is not smooth on a script with many long lines
         https://bugs.webkit.org/show_bug.cgi?id=56559
 

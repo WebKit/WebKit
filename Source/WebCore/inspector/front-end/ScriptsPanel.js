@@ -297,6 +297,17 @@ WebInspector.ScriptsPanel.prototype = {
         this._sourceFileIdToFilesSelectOption[sourceFileId] = option;
     },
 
+    setScriptSourceIsBeingEdited: function(sourceFileId, inEditMode)
+    {
+        var option = this._sourceFileIdToFilesSelectOption[sourceFileId];
+        if (!option)
+            return;
+        if (inEditMode)
+            option.text = option.text.replace(/[^*]$/, "$&*");
+        else
+            option.text = option.text.replace(/[*]$/, "");
+    },
+
     addConsoleMessage: function(message)
     {
         this._messages.push(message);
@@ -1153,6 +1164,11 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
     editScriptSource: function(text)
     {
         WebInspector.debuggerModel.editScriptSource(this._script.sourceID, text);
+    },
+
+    setScriptSourceIsBeingEdited: function(inEditMode)
+    {
+        WebInspector.panels.scripts.setScriptSourceIsBeingEdited(this._sourceFileId, inEditMode);
     },
 
     debuggerPaused: function()

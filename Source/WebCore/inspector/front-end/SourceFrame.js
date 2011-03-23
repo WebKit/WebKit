@@ -176,8 +176,10 @@ WebInspector.SourceFrame.prototype = {
 
     _startEditing: function()
     {
-        if (this._originalTextModelContent === undefined)
+        if (this._originalTextModelContent === undefined) {
             this._originalTextModelContent = this._textModel.text;
+            this._delegate.setScriptSourceIsBeingEdited(true);
+        }
 
         WebInspector.searchController.cancelSearch();
         this.clearMessages();
@@ -772,7 +774,9 @@ WebInspector.SourceFrame.prototype = {
     _registerShortcuts: function()
     {
         this._shortcuts = {};
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey("s", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta)] = this._handleSave.bind(this);
+        var handleSaveCallback = this._handleSave.bind(this);
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey("s", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta)] = handleSaveCallback;
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.Keys.Enter.code, WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta)] = handleSaveCallback;
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.Keys.Esc.code)] = this._handleRevertEditing.bind(this);
     },
 
@@ -796,6 +800,7 @@ WebInspector.SourceFrame.prototype = {
             this._delegate.editScriptSource(newSource);
         delete this._originalTextModelContent;
         this._textViewer.readOnly = true;
+        this._delegate.setScriptSourceIsBeingEdited(false);
         return true;
     },
 
@@ -808,6 +813,7 @@ WebInspector.SourceFrame.prototype = {
             this._textModel.setText(null, this._originalTextModelContent);
         delete this._originalTextModelContent;
         this._textViewer.readOnly = true;
+        this._delegate.setScriptSourceIsBeingEdited(false);
         return true;
     },
 
@@ -876,6 +882,11 @@ WebInspector.SourceFrameDelegate.prototype = {
     },
 
     editScriptSource: function(text)
+    {
+        // Should be implemented by subclasses.
+    },
+
+    setScriptSourceIsBeingEdited: function(inEditMode)
     {
         // Should be implemented by subclasses.
     },
