@@ -1,3 +1,29 @@
+2011-03-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Roll out r81593 Need WebKit2 API for creating a page with a specific main frame name
+
+        This API is not necessary.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:]):
+        (-[WKView initWithFrame:contextRef:]):
+        (-[WKView initWithFrame:contextRef:pageGroupRef:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createMainFrame):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2011-03-23  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.

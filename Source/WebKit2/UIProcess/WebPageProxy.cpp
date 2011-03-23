@@ -935,11 +935,6 @@ void WebPageProxy::setCustomTextEncodingName(const String& encodingName)
     process()->send(Messages::WebPage::SetCustomTextEncodingName(encodingName), m_pageID);
 }
 
-void WebPageProxy::setMainFrameName(const String& mainFrameName)
-{
-    m_mainFrameName = mainFrameName;
-}
-
 void WebPageProxy::terminateProcess()
 {
     if (!isValid())
@@ -2578,7 +2573,6 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.useFixedLayout = m_useFixedLayout;
     parameters.fixedLayoutSize = m_fixedLayoutSize;
     parameters.userAgent = userAgent();
-    parameters.mainFrameName = m_mainFrameName;
     parameters.sessionState = SessionState(m_backForwardList->entries(), m_backForwardList->currentIndex());
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient.canRunBeforeUnloadConfirmPanel();

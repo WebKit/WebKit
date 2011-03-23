@@ -47,7 +47,6 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(useFixedLayout);
     encoder->encode(fixedLayoutSize);
     encoder->encode(userAgent);
-    encoder->encode(mainFrameName);
     encoder->encode(sessionState);
     encoder->encode(highestUsedBackForwardItemID);
     encoder->encode(canRunBeforeUnloadConfirmPanel);
@@ -91,8 +90,6 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPag
     if (!decoder->decode(parameters.fixedLayoutSize))
         return false;
     if (!decoder->decode(parameters.userAgent))
-        return false;
-    if (!decoder->decode(parameters.mainFrameName))
         return false;
     if (!decoder->decode(parameters.sessionState))
         return false;

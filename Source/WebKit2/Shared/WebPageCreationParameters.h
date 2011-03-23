@@ -64,7 +64,6 @@ struct WebPageCreationParameters {
     WebCore::IntSize fixedLayoutSize;
 
     String userAgent;
-    String mainFrameName;
 
     SessionState sessionState;
     uint64_t highestUsedBackForwardItemID;

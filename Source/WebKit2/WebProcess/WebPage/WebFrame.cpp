@@ -80,13 +80,13 @@ static uint64_t generateListenerID()
     return uniqueListenerID++;
 }
 
-PassRefPtr<WebFrame> WebFrame::createMainFrame(WebPage* page, const String& frameName)
+PassRefPtr<WebFrame> WebFrame::createMainFrame(WebPage* page)
 {
     RefPtr<WebFrame> frame = create();
 
     page->send(Messages::WebPageProxy::DidCreateMainFrame(frame->frameID()));
 
-    frame->init(page, frameName, 0);
+    frame->init(page, String(), 0);
 
     return frame.release();
 }
