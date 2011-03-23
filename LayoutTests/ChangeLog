@@ -1,3 +1,9 @@
+2011-03-23  Mihai Parparita  <mihaip@chromium.org>
+
+        Group Snow Leopard failures for bug 56962.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-23  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. Replace shockwave plugin with test netscape in recent

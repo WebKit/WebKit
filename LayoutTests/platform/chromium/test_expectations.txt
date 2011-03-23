@@ -3026,11 +3026,9 @@ BUGWK54322 MAC SNOWLEOPARD : fast/media/mq-transform-02.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/media/mq-transform-03.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/speech/input-appearance-numberandspeech.html = IMAGE
-BUGWK54322 WIN             : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/speech/input-appearance-searchandspeech.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/text/justify-nbsp.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fonts/monospace.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE
@@ -3099,6 +3097,29 @@ BUGWK54322 MAC SNOWLEOPARD : transforms/svg-vs-css.xhtml = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/dom/scroll-reveal-left-overflow.html = IMAGE
 
+// Vertical Japanese text is not displayed on Snow Leopard after r80582
+BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/border-vertical-lr.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
+BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/broken-ideographic-font.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/japanese-lr-selection.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/japanese-lr-text.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/japanese-rl-selection.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/japanese-rl-text.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/vertical-align-table-baseline.html = IMAGE 
+BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/vertical-font-fallback.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/dynamic/text-combine.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/repaint/japanese-rl-selection-clear.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
+BUGWK56962 MAC SNOWLEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE IMAGE+TEXT
+BUGWK56962 MAC SNOWLEOPARD : fast/text/emphasis-combined-text.html = IMAGE IMAGE+TEXT
+BUGWK56962 MAC SNOWLEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE
+
 // Snow Leopard-only flakiness
 BUGWK54322 MAC SNOWLEOPARD : dom/html/level1/core/hc_textwithnomarkup.html = TIMEOUT PASS
 BUGWK54322 MAC SNOWLEOPARD : fast/canvas/translate-text.html = PASS TIMEOUT
@@ -3157,7 +3178,6 @@ BUGV8_1228 : fast/js/preventExtensions.html = TEXT
 
 BUGWK54634 : media/video-controls-in-media-document.html = IMAGE+TEXT IMAGE PASS
 
-
 BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
 
 BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
@@ -3165,7 +3185,6 @@ BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 BUGJAMESR DEBUG : html5lib/runner.html = PASS TIMEOUT
 
 BUG_ANTONM : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
-
 
 BUGCR74497 : platform/win/plugins/windowless-paint-rect-coordinates.html = CRASH
 
@@ -3187,34 +3206,20 @@ BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TE
 
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
-BUGCR75424 MAC : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
-BUGCR75424 MAC : fast/blockflow/broken-ideographic-font.html = IMAGE
-BUGCR75424 MAC : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
+BUGCR75424 MAC LEOPARD : fast/blockflow/broken-ideographic-font.html = IMAGE
+BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
 
 // WebKit roll 80564:80631: vertical text fallout - these probably just need rebaseline:
-BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
-BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/border-vertical-lr.html = IMAGE
-BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/japanese-lr-selection.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/blockflow/japanese-lr-text.html = IMAGE
-BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/japanese-lr-text.html = IMAGE
-BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/japanese-rl-selection.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/blockflow/japanese-rl-text.html = IMAGE
-BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/japanese-rl-text.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
-BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/blockflow/vertical-align-table-baseline.html = IMAGE
-BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/vertical-align-table-baseline.html = IMAGE 
 BUGWK56072 WIN-VISTA : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUGWK56072 MAC SNOWLEOPARD : fast/blockflow/vertical-font-fallback.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-BUGWK56072 MAC SNOWLEOPARD : fast/repaint/japanese-rl-selection-clear.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
-BUGWK56072 MAC SNOWLEOPARD : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
-BUGWK56072 MAC SNOWLEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUGWK56072 MAC SNOWLEOPARD : fast/repaint/text-emphasis-h.html = IMAGE
 BUGWK56072 WIN-VISTA : fast/ruby/base-shorter-than-text.html = FAIL
 
@@ -3277,8 +3282,8 @@ BUGCR76979 LINUX DEBUG : inspector/console/console-dirxml.html = PASS TEXT
 
 // New in WebKit r81404. Text orientation is wrong and emphasis marks are wrong.
 BUGCR76616 WIN LINUX : fast/text/emphasis-combined-text.html = IMAGE+TEXT
-// Needs leopard baseline. Snow leopard is horribly broken.
-BUGCR76616 MAC : fast/text/emphasis-combined-text.html = IMAGE+TEXT
+// Needs leopard baseline.
+BUGCR76616 MAC LEOPARD : fast/text/emphasis-combined-text.html = IMAGE+TEXT
 
 BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-drawImage-shadow.html = TEXT
 BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-scale-drawImage-shadow.html = TEXT
