@@ -152,7 +152,7 @@ void Connection::SyncMessageState::endWaitForSyncReply()
 bool Connection::SyncMessageState::processIncomingMessage(Connection* connection, IncomingMessage& incomingMessage)
 {
     MessageID messageID = incomingMessage.messageID();
-    if (!messageID.isSync() && !messageID.shouldDispatchMessageWhenWaitingForSyncReply())
+    if (!messageID.shouldDispatchMessageWhenWaitingForSyncReply())
         return false;
 
     MutexLocker locker(m_mutex);
@@ -362,6 +362,7 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
     m_syncMessageState->beginWaitForSyncReply();
 
     // First send the message.
+    messageID = messageID.messageIDWithAddedFlags(MessageID::DispatchMessageWhenWaitingForSyncReply | MessageID::SyncMessage);
     sendMessage(messageID, encoder);
 
     // Then wait for a reply. Waiting for a reply could involve dispatching incoming sync messages, so

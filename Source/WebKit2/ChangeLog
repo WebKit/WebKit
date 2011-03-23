@@ -1,3 +1,25 @@
+2011-03-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Connection::SyncMessageState::processIncomingMessage should ignore whether the message is sync or not
+        https://bugs.webkit.org/show_bug.cgi?id=56954
+
+        This is so we'll eventually be able to send sync messages that aren't processed immediately if the 
+        destination is waiting for a reply to another synchronous message.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::SyncMessageState::processIncomingMessage):
+        Only check for the DispatchMessageWhenWaitingForSyncReply flag.
+
+        (CoreIPC::Connection::sendSyncMessage):
+        Add both DispatchMessageWhenWaitingForSyncReply and SyncMessage to the message ID.
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::sendSync):        
+        (CoreIPC::Connection::deprecatedSendSync):
+        No need to add SyncMessage here anymore.
+
 2011-03-23  Brian Weinstein  <bweinstein@apple.com>
 
         Qt Build Fix.

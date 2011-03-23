@@ -336,7 +336,7 @@ template<typename T> bool Connection::sendSync(const T& message, const typename 
     argumentEncoder->encode(message);
 
     // Now send the message and wait for a reply.
-    OwnPtr<ArgumentDecoder> replyDecoder = sendSyncMessage(MessageID(T::messageID, MessageID::SyncMessage), syncRequestID, argumentEncoder.release(), timeout);
+    OwnPtr<ArgumentDecoder> replyDecoder = sendSyncMessage(MessageID(T::messageID), syncRequestID, argumentEncoder.release(), timeout);
     if (!replyDecoder)
         return false;
 
@@ -367,7 +367,7 @@ inline bool Connection::deprecatedSendSync(E messageID, uint64_t destinationID, 
     argumentEncoder->encode(arguments);
     
     // Now send the message and wait for a reply.
-    OwnPtr<ArgumentDecoder> replyDecoder = sendSyncMessage(MessageID(messageID, MessageID::SyncMessage), syncRequestID, argumentEncoder.release(), timeout);
+    OwnPtr<ArgumentDecoder> replyDecoder = sendSyncMessage(MessageID(messageID), syncRequestID, argumentEncoder.release(), timeout);
     if (!replyDecoder)
         return false;
     
