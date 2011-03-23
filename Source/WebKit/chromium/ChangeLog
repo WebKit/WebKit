@@ -2,6 +2,16 @@
 
         Reviewed by Pavel Feldman.
 
+        [Chromium] Web Inspector: Remove DebuggerScript.js from Chromium resource bundle.
+        https://bugs.webkit.org/show_bug.cgi?id=56916
+
+        * DEPS: bump up Chromium dependency to the revision where no references to the DebuggerScript.js resource are left.
+        * WebKit.grd:
+
+2011-03-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         [Chromium] Web Inspector: remove inspectNode method from WebDevToolsAgent
         https://bugs.webkit.org/show_bug.cgi?id=56926
 

@@ -9,7 +9,6 @@
   </outputs>
   <release seq="1">
     <includes>
-      <include name="IDR_DEVTOOLS_DEBUGGER_SCRIPT_JS" file="..\..\..\Source\WebCore\bindings\v8\DebuggerScript.js" type="BINDATA"/>
       <include name="IDR_AUDIO_SPATIALIZATION_T000_P000" file="..\..\WebCore\platform\audio\resources\IRC_Composite_C_R0195_T000_P000.wav" type="BINDATA"/>
       <include name="IDR_AUDIO_SPATIALIZATION_T000_P015" file="..\..\WebCore\platform\audio\resources\IRC_Composite_C_R0195_T000_P015.wav" type="BINDATA"/>
       <include name="IDR_AUDIO_SPATIALIZATION_T000_P030" file="..\..\WebCore\platform\audio\resources\IRC_Composite_C_R0195_T000_P030.wav" type="BINDATA"/>
