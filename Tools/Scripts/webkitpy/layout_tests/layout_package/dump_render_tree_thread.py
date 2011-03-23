@@ -211,7 +211,7 @@ class TestShellThread(threading.Thread, worker_mixin.WorkerMixin):
                 self._num_tests_in_current_group = len(self._filename_list)
                 self._current_group_start_time = time.time()
 
-            test_input = self._filename_list.pop()
+            test_input = self._filename_list.pop(0)
 
             # We have a url, run tests.
             self._num_tests += 1

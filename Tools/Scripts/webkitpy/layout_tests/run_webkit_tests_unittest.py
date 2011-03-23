@@ -73,7 +73,7 @@ def parse_args(extra_args=None, record_results=False, tests_included=False,
         args.extend(['--platform', 'test'])
     if not record_results:
         args.append('--no-record-results')
-    if not '--child-processes' in extra_args:
+    if not '--child-processes' in extra_args and not '--worker-model' in extra_args:
         args.extend(['--worker-model', 'old-inline'])
     args.extend(extra_args)
     if not tests_included:
@@ -469,6 +469,32 @@ class MainTest(unittest.TestCase):
         res, out, err, user = logging_run(['--results-directory=foo'],
                                           tests_included=True)
         self.assertEqual(user.opened_urls, ['/tmp/foo/results.html'])
+
+    # These next tests test that we run the tests in ascending alphabetical
+    # order per directory. HTTP tests are sharded separately from other tests,
+    # so we have to test both.
+    def assert_run_order(self, worker_model, child_processes='1'):
+        tests_run = get_tests_run(['--worker-model', worker_model,
+            '--child-processes', child_processes, 'passes'],
+            tests_included=True, flatten_batches=True)
+        self.assertEquals(tests_run, sorted(tests_run))
+
+        tests_run = get_tests_run(['--worker-model', worker_model,
+            '--child-processes', child_processes, 'http/tests/passes'],
+            tests_included=True, flatten_batches=True)
+        self.assertEquals(tests_run, sorted(tests_run))
+
+    def test_run_order__inline(self):
+        self.assert_run_order('inline')
+
+    def test_run_order__old_inline(self):
+        self.assert_run_order('old-inline')
+
+    def test_run_order__threads(self):
+        self.assert_run_order('old-inline', child_processes='2')
+
+    def test_run_order__old_threads(self):
+        self.assert_run_order('old-threads', child_processes='2')
 
     def test_tolerance(self):
         class ImageDiffTestPort(TestPort):
