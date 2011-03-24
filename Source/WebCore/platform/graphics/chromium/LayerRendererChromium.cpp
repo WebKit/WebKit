@@ -44,6 +44,7 @@
 #include "NotImplemented.h"
 #include "TextStream.h"
 #include "TextureManager.h"
+#include "TraceEvent.h"
 #include "WebGLLayerChromium.h"
 #include "cc/CCLayerImpl.h"
 #if USE(SKIA)
@@ -187,11 +188,13 @@ void LayerRendererChromium::invalidateRootLayerRect(const IntRect& dirtyRect)
 
 void LayerRendererChromium::updateRootLayerContents()
 {
+    TRACE_EVENT("LayerRendererChromium::updateRootLayerContents", this, 0);
     m_rootLayerContentTiler->update(*m_rootLayerContentPaint, m_viewportVisibleRect);
 }
 
 void LayerRendererChromium::updateRootLayerScrollbars()
 {
+    TRACE_EVENT("LayerRendererChromium::updateRootLayerScrollbars", this, 0);
     if (m_viewportVisibleRect.width() > m_viewportContentRect.width()) {
         IntRect verticalScrollbar = verticalScrollbarRect();
         IntSize tileSize = verticalScrollbar.size().shrunkTo(IntSize(m_maxTextureSize, m_maxTextureSize));
@@ -276,6 +279,7 @@ void LayerRendererChromium::updateAndDrawLayers()
 
 void LayerRendererChromium::updateLayers(Vector<CCLayerImpl*>& renderSurfaceLayerList)
 {
+    TRACE_EVENT("LayerRendererChromium::updateLayers", this, 0);
     CCLayerImpl* rootDrawLayer = m_rootLayer->ccLayerImpl();
 
     if (!rootDrawLayer->renderSurface())
@@ -307,6 +311,7 @@ void LayerRendererChromium::updateLayers(Vector<CCLayerImpl*>& renderSurfaceLaye
 
 void LayerRendererChromium::drawLayers(const Vector<CCLayerImpl*>& renderSurfaceLayerList)
 {
+    TRACE_EVENT("LayerRendererChromium::drawLayers", this, 0);
     CCLayerImpl* rootDrawLayer = m_rootLayer->ccLayerImpl();
     makeContextCurrent();
 
@@ -382,11 +387,13 @@ void LayerRendererChromium::drawLayers(const Vector<CCLayerImpl*>& renderSurface
 
 void LayerRendererChromium::finish()
 {
+    TRACE_EVENT("LayerRendererChromium::finish", this, 0);
     m_context->finish();
 }
 
 void LayerRendererChromium::present()
 {
+    TRACE_EVENT("LayerRendererChromium::present", this, 0);
     // We're done! Time to swapbuffers!
 
     // Note that currently this has the same effect as swapBuffers; we should

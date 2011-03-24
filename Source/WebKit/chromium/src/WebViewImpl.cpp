@@ -77,7 +77,6 @@
 #include "PageGroup.h"
 #include "PageGroupLoadDeferrer.h"
 #include "Pasteboard.h"
-#include "PlatformBridge.h"
 #include "PlatformContextSkia.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
@@ -93,6 +92,7 @@
 #include "Settings.h"
 #include "SpeechInputClientImpl.h"
 #include "Timer.h"
+#include "TraceEvent.h"
 #include "TypingCommand.h"
 #include "UserGestureIndicator.h"
 #include "Vector.h"
@@ -1086,6 +1086,7 @@ void WebViewImpl::themeChanged()
 void WebViewImpl::composite(bool finish)
 {
 #if USE(ACCELERATED_COMPOSITING)
+    TRACE_EVENT("WebViewImpl::composite", this, 0);
     if (m_recreatingGraphicsContext) {
         // reallocateRenderer will request a repaint whether or not it succeeded
         // in creating a new context.

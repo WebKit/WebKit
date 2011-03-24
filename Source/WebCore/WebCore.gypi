@@ -3739,6 +3739,7 @@
             'platform/chromium/TemporaryLinkStubs.cpp',
             'platform/chromium/ThemeChromiumMac.h',
             'platform/chromium/ThemeChromiumMac.mm',
+            'platform/chromium/TraceEvent.h',
             'platform/chromium/WidgetChromium.cpp',
             'platform/chromium/WritableDataObject.cpp',
             'platform/chromium/WritableDataObject.h',

@@ -1,3 +1,13 @@
+2011-03-24  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Add traceEvents to compositor
+        https://bugs.webkit.org/show_bug.cgi?id=56965
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::composite):
+
 2011-03-24  Dominic Mazzoni  <dmazzoni@google.com>
 
         Reviewed by Dimitri Glazkov.

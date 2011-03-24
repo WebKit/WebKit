@@ -34,6 +34,7 @@
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
+#include "TraceEvent.h"
 
 #include <wtf/PassOwnArrayPtr.h>
 
@@ -247,10 +248,16 @@ void LayerTilerChromium::update(TilePaintInterface& painter, const IntRect& cont
     m_canvas.resize(paintRect.size());
     PlatformCanvas::Painter canvasPainter(&m_canvas);
     canvasPainter.context()->translate(-paintRect.x(), -paintRect.y());
-    painter.paint(*canvasPainter.context(), paintRect);
+    {
+        TRACE_EVENT("LayerTilerChromium::update::paint", this, 0);
+        painter.paint(*canvasPainter.context(), paintRect);
+    }
 
     PlatformCanvas::AutoLocker locker(&m_canvas);
-    updateFromPixels(paintRect, locker.pixels());
+    {
+        TRACE_EVENT("LayerTilerChromium::updateFromPixels", this, 0);
+        updateFromPixels(paintRect, locker.pixels());
+    }
 }
 
 void LayerTilerChromium::updateFromPixels(const IntRect& paintRect, const uint8_t* paintPixels)
