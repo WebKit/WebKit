@@ -61,6 +61,7 @@
 #include "DictionaryPopupInfo.h"
 #include <wtf/RetainPtr.h>
 OBJC_CLASS AccessibilityWebPageObject;
+OBJC_CLASS NSDictionary;
 OBJC_CLASS NSObject;
 #endif
 
@@ -78,6 +79,7 @@ namespace WebCore {
     class Range;
     class ResourceRequest;
     class SharedBuffer;
+    class VisibleSelection;
 }
 
 namespace WebKit {
@@ -316,7 +318,7 @@ public:
     void dummy(bool&);
 
 #if PLATFORM(MAC)
-    void performDictionaryLookupForRange(DictionaryPopupInfo::Type, WebCore::Frame*, WebCore::Range*);
+    void performDictionaryLookupForSelection(DictionaryPopupInfo::Type, WebCore::Frame*, const WebCore::VisibleSelection&);
 
     bool isSpeaking();
     void speak(const String&);
@@ -444,6 +446,7 @@ private:
 
 #if PLATFORM(MAC)
     void performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
+    void performDictionaryLookupForRange(DictionaryPopupInfo::Type, WebCore::Frame*, WebCore::Range*, NSDictionary *options);
 
     void setWindowIsVisible(bool windowIsVisible);
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates, const WebCore::IntPoint& accessibilityViewCoordinates);

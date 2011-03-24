@@ -45,6 +45,7 @@
 #import <wtf/PassOwnPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
+#import <WebKitSystemInterface.h>
 
 @interface NSApplication (WebNSApplicationDetails)
 - (NSCursor *)_cursorRectCursor;
@@ -422,9 +423,17 @@ void PageClientImpl::didPerformDictionaryLookup(const String& text, double scale
     NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
     textBaselineOrigin.y += [font ascender];
     
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    // Convert to screen coordinates.
+    textBaselineOrigin = [m_wkView convertPoint:textBaselineOrigin toView:nil];
+    textBaselineOrigin = [m_wkView.window convertRectToScreen:NSMakeRect(textBaselineOrigin.x, textBaselineOrigin.y, 0, 0)].origin;
+
+    WKShowWordDefinitionWindow(attributedString.get(), textBaselineOrigin, (NSDictionary *)dictionaryPopupInfo.options.get());
+#else
     // If the dictionary lookup is being triggered by a hot key, force the overlay style.
     NSDictionary *options = (dictionaryPopupInfo.type == DictionaryPopupInfo::HotKey) ? [NSDictionary dictionaryWithObject:NSDefinitionPresentationTypeOverlay forKey:NSDefinitionPresentationTypeKey] : 0;
     [m_wkView showDefinitionForAttributedString:attributedString.get() range:NSMakeRange(0, [attributedString.get() length]) options:options baselineOriginProvider:^(NSRange adjustedRange) { return (NSPoint)textBaselineOrigin; }];
+#endif
 }
 
 void PageClientImpl::showCorrectionPanel(CorrectionPanelInfo::PanelType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)

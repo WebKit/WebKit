@@ -28,6 +28,10 @@
 
 #include "WebCoreArgumentCoders.h"
 
+#if PLATFORM(MAC)
+#include "ArgumentCodersCF.h"
+#endif
+
 namespace WebKit {
 
 void DictionaryPopupInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
@@ -35,6 +39,10 @@ void DictionaryPopupInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(origin);
     encoder->encode(fontInfo);
     encoder->encodeEnum(type);
+
+#if PLATFORM(MAC)
+    CoreIPC::encode(encoder, options.get());
+#endif
 }
 
 bool DictionaryPopupInfo::decode(CoreIPC::ArgumentDecoder* decoder, DictionaryPopupInfo& result)
@@ -45,6 +53,10 @@ bool DictionaryPopupInfo::decode(CoreIPC::ArgumentDecoder* decoder, DictionaryPo
         return false;
     if (!decoder->decodeEnum(result.type))
         return false;
+#if PLATFORM(MAC)
+    if (!CoreIPC::decode(decoder, result.options))
+        return false;
+#endif
     return true;
 }
 

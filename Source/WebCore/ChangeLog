@@ -1,3 +1,14 @@
+2011-03-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Dictionary text extraction is not correctly detecting word boundaries on bing.com
+        <rdar://problem/9078569>
+        https://bugs.webkit.org/show_bug.cgi?id=56995
+
+        * WebCore.exp.in:
+        Add some editing related exports needed by WebKit2.
+
 2011-03-24  Andy Estes  <aestes@apple.com>
 
         Reviewed by Eric Seidel.

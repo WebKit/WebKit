@@ -1,3 +1,51 @@
+2011-03-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Dictionary text extraction is not correctly detecting word boundaries on bing.com
+        <rdar://problem/9078569>
+        https://bugs.webkit.org/show_bug.cgi?id=56995
+
+        * Shared/DictionaryPopupInfo.cpp:
+        (WebKit::DictionaryPopupInfo::encode):
+        (WebKit::DictionaryPopupInfo::decode):
+        * Shared/DictionaryPopupInfo.h:
+        Add options dictionary.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didPerformDictionaryLookup):
+        Add path that can pass options through.
+
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        (WebKit::WebContextMenuClient::lookUpInDictionary):
+        Use the new performDictionaryLookupForSelection which can extract context
+        if supported.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::characterRangeAtPositionForPoint):
+        (WebKit::characterRangeAtPoint):
+        Split functionality out of characterRangeAtPoint and into 
+        characterRangeAtPositionForPoint to avoid doing duplicate work 
+        if you already have the position.
+
+        (WebKit::isPositionInRange):
+        (WebKit::shouldUseSelection):
+        Add predicate to determine if we should use the selection instead
+        of expanding to find the word we are over.
+
+        (WebKit::WebPage::performDictionaryLookupAtLocation):
+        If available, use the surrounding paragraph as context to get better extraction
+        and to get lexicographical information about the word. Also, clean up and use 
+        editing APIs to make the code more concise and understandable.
+
+        (WebKit::WebPage::performDictionaryLookupForSelection):
+        Use similar logic as in performDictionaryLookupAtLocation to extract additional
+        details from a selection for use in the dictionary popup.
+
+        (WebKit::WebPage::performDictionaryLookupForRange):
+        Pass options to WebProcess if available.
+
 2011-03-24  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Darin Adler.
