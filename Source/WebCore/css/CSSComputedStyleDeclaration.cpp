@@ -662,8 +662,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForShadow(const ShadowDat
         RefPtr<CSSPrimitiveValue> x = zoomAdjustedPixelValue(s->x(), style, primitiveValueCache);
         RefPtr<CSSPrimitiveValue> y = zoomAdjustedPixelValue(s->y(), style, primitiveValueCache);
         RefPtr<CSSPrimitiveValue> blur = zoomAdjustedPixelValue(s->blur(), style, primitiveValueCache);
-        RefPtr<CSSPrimitiveValue> spread = propertyID == CSSPropertyTextShadow ? 0 : zoomAdjustedPixelValue(s->spread(), style, primitiveValueCache);
-        RefPtr<CSSPrimitiveValue> style = propertyID == CSSPropertyTextShadow || s->style() == Normal ? 0 : primitiveValueCache->createIdentifierValue(CSSValueInset);
+        RefPtr<CSSPrimitiveValue> spread = propertyID == CSSPropertyTextShadow ? PassRefPtr<CSSPrimitiveValue>() : zoomAdjustedPixelValue(s->spread(), style, primitiveValueCache);
+        RefPtr<CSSPrimitiveValue> style = propertyID == CSSPropertyTextShadow || s->style() == Normal ? PassRefPtr<CSSPrimitiveValue>() : primitiveValueCache->createIdentifierValue(CSSValueInset);
         RefPtr<CSSPrimitiveValue> color = primitiveValueCache->createColorValue(s->color().rgb());
         list->prepend(ShadowValue::create(x.release(), y.release(), blur.release(), spread.release(), style.release(), color.release()));
     }
