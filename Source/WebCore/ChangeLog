@@ -1,5 +1,12 @@
 2011-03-23  Alexey Proskuryakov  <ap@apple.com>
 
+        Build fix.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+        Removed a stray parenthesis.
+
+2011-03-23  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         REGRESSION: Infinite recursion in recursiveCheckLoadComplete()/checkLoadCompleteForThisFrame()/stopLoading()

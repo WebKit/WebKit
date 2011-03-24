@@ -2398,7 +2398,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 
             // Only reset if we aren't already going to a new provisional item.
             bool shouldReset = !history()->provisionalItem();
-            if (!pdl->isLoadingInAPISense() || pdl->isStopping())) {
+            if (!pdl->isLoadingInAPISense() || pdl->isStopping()) {
                 m_delegateIsHandlingProvisionalLoadError = true;
                 m_client->dispatchDidFailProvisionalLoad(error);
                 m_delegateIsHandlingProvisionalLoadError = false;
