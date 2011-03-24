@@ -1,3 +1,37 @@
+2011-03-24  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Resetting the URL property of a QWebView results in the current directory being set as file::-type URL
+        https://bugs.webkit.org/show_bug.cgi?id=29595
+
+        Qt Designer resets the URL by setting it to QUrl(). The bug was caused by
+        ensureAbsoluteUrl() helper function treating the empty URL as a relative URL, and
+        prepending the current directory.
+
+        By fixing this, now we can pass QUrl() invalid and empty URLs to WebCore layer, which
+        will end up loading "about:blank", but keeping it as a requested URL.
+
+        This patch also simplifies the logic for requestedUrl(), since m_lastRequestedUrl
+        is filled for the loaded URLs as well, we can use it in every case.
+
+        Three new autotests were added, to better cover the expected behavior of setting
+        the QUrl() in a QWebFrame.
+
+        * Api/qwebframe.cpp:
+        (ensureAbsoluteUrl): do not treat invalid URLs (empty included) as relative.
+        (QWebFrame::requestedUrl): always use m_lastRequestedUrl.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoad): do not clear m_lastRequestedUrl
+        anymore, since we always rely on it even for loaded frames.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::setUrlToEmpty): verify the behavior of setting empty URLs. This includes
+        the reduction of the bug report.
+        (tst_QWebFrame::setUrlToInvalid): setting invalid, but not necessarily empty, URLs.
+        (tst_QWebFrame::setUrlHistory): to verify how setting empty URLs affect history.
+
 2011-03-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

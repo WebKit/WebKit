@@ -731,7 +731,7 @@ QMultiMap<QString, QString> QWebFrame::metaData() const
 
 static inline QUrl ensureAbsoluteUrl(const QUrl &url)
 {
-    if (!url.isRelative())
+    if (!url.isValid() || !url.isRelative())
         return url;
 
     // This contains the URL with absolute path but without 
@@ -780,10 +780,7 @@ QUrl QWebFrame::url() const
 */
 QUrl QWebFrame::requestedUrl() const
 {
-    const KURL& lastRequestedUrl = d->frameLoaderClient->lastRequestedUrl();
-    if (lastRequestedUrl.isValid())
-        return lastRequestedUrl;
-    return d->frame->loader()->originalRequest().url();
+    return d->frameLoaderClient->lastRequestedUrl();
 }
 /*!
     \since 4.6

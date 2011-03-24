@@ -650,6 +650,9 @@ private slots:
     void setCacheLoadControlAttribute();
     void setUrlWithPendingLoads();
     void setUrlWithFragment();
+    void setUrlToEmpty();
+    void setUrlToInvalid();
+    void setUrlHistory();
 
 private:
     QString  evalJS(const QString&s) {
@@ -3338,6 +3341,149 @@ void tst_QWebFrame::setUrlWithFragment()
     QVERIFY(!page.mainFrame()->toPlainText().isEmpty());
     QCOMPARE(page.mainFrame()->requestedUrl(), url);
     QCOMPARE(page.mainFrame()->url(), url);
+}
+
+void tst_QWebFrame::setUrlToEmpty()
+{
+    int expectedLoadFinishedCount = 0;
+    const QUrl aboutBlank("about:blank");
+    const QUrl url("qrc:/test2.html");
+
+    QWebPage page;
+    QWebFrame* frame = page.mainFrame();
+    QCOMPARE(frame->url(), QUrl());
+    QCOMPARE(frame->requestedUrl(), QUrl());
+    QCOMPARE(frame->baseUrl(), QUrl());
+
+    QSignalSpy spy(frame, SIGNAL(loadFinished(bool)));
+
+    // Set existing url
+    frame->setUrl(url);
+    expectedLoadFinishedCount++;
+    ::waitForSignal(frame, SIGNAL(loadFinished(bool)));
+
+    QCOMPARE(spy.count(), expectedLoadFinishedCount);
+    QCOMPARE(frame->url(), url);
+    QCOMPARE(frame->requestedUrl(), url);
+    QCOMPARE(frame->baseUrl(), url);
+
+    // Set empty url
+    frame->setUrl(QUrl());
+    expectedLoadFinishedCount++;
+
+    QCOMPARE(spy.count(), expectedLoadFinishedCount);
+    QCOMPARE(frame->url(), aboutBlank);
+    QCOMPARE(frame->requestedUrl(), QUrl());
+    QCOMPARE(frame->baseUrl(), aboutBlank);
+
+    // Set existing url
+    frame->setUrl(url);
+    expectedLoadFinishedCount++;
+    ::waitForSignal(frame, SIGNAL(loadFinished(bool)));
+
+    QCOMPARE(spy.count(), expectedLoadFinishedCount);
+    QCOMPARE(frame->url(), url);
+    QCOMPARE(frame->requestedUrl(), url);
+    QCOMPARE(frame->baseUrl(), url);
+
+    // Load empty url
+    frame->load(QUrl());
+    expectedLoadFinishedCount++;
+
+    QCOMPARE(spy.count(), expectedLoadFinishedCount);
+    QCOMPARE(frame->url(), aboutBlank);
+    QCOMPARE(frame->requestedUrl(), QUrl());
+    QCOMPARE(frame->baseUrl(), aboutBlank);
+}
+
+void tst_QWebFrame::setUrlToInvalid()
+{
+    QWebPage page;
+    QWebFrame* frame = page.mainFrame();
+
+    const QUrl invalidUrl("http://strange;hostname/here");
+    QVERIFY(!invalidUrl.isEmpty());
+    QVERIFY(!invalidUrl.isValid());
+    QVERIFY(invalidUrl != QUrl());
+
+    frame->setUrl(invalidUrl);
+    QCOMPARE(frame->url(), invalidUrl);
+    QCOMPARE(frame->requestedUrl(), invalidUrl);
+    QCOMPARE(frame->baseUrl(), invalidUrl);
+
+    // QUrls equivalent to QUrl() will be treated as such.
+    const QUrl aboutBlank("about:blank");
+    const QUrl anotherInvalidUrl("1http://bugs.webkit.org");
+    QVERIFY(!anotherInvalidUrl.isEmpty()); // and they are not necessarily empty.
+    QVERIFY(!anotherInvalidUrl.isValid());
+    QCOMPARE(anotherInvalidUrl, QUrl());
+
+    frame->setUrl(anotherInvalidUrl);
+    QCOMPARE(frame->url(), aboutBlank);
+    QCOMPARE(frame->requestedUrl(), anotherInvalidUrl);
+    QCOMPARE(frame->baseUrl(), aboutBlank);
+}
+
+void tst_QWebFrame::setUrlHistory()
+{
+    const QUrl aboutBlank("about:blank");
+    QUrl url;
+    int expectedLoadFinishedCount = 0;
+    QWebFrame* frame = m_page->mainFrame();
+    QSignalSpy spy(frame, SIGNAL(loadFinished(bool)));
+
+    QCOMPARE(m_page->history()->count(), 0);
+
+    frame->setUrl(QUrl());
+    expectedLoadFinishedCount++;
+    QCOMPARE(spy.count(), expectedLoadFinishedCount);
+    QCOMPARE(frame->url(), aboutBlank);
+    QCOMPARE(frame->requestedUrl(), QUrl());
+    QCOMPARE(m_page->history()->count(), 0);
+
+    url = QUrl("http://non.existant/");
+    frame->setUrl(url);
+    ::waitForSignal(m_page, SIGNAL(loadFinished(bool)));
+    expectedLoadFinishedCount++;
+    QCOMPARE(spy.count(), expectedLoadFinishedCount);
+    QCOMPARE(frame->url(), url);
+    QCOMPARE(frame->requestedUrl(), url);
+    QCOMPARE(m_page->history()->count(), 0);
+
+    url = QUrl("qrc:/test1.html");
+    frame->setUrl(url);
+    ::waitForSignal(m_page, SIGNAL(loadFinished(bool)));
+    expectedLoadFinishedCount++;
+    QCOMPARE(spy.count(), expectedLoadFinishedCount);
+    QCOMPARE(frame->url(), url);
+    QCOMPARE(frame->requestedUrl(), url);
+    QCOMPARE(m_page->history()->count(), 1);
+
+    frame->setUrl(QUrl());
+    expectedLoadFinishedCount++;
+    QCOMPARE(spy.count(), expectedLoadFinishedCount);
+    QCOMPARE(frame->url(), aboutBlank);
+    QCOMPARE(frame->requestedUrl(), QUrl());
+    QCOMPARE(m_page->history()->count(), 1);
+
+    // Loading same page as current in history, so history count doesn't change.
+    url = QUrl("qrc:/test1.html");
+    frame->setUrl(url);
+    ::waitForSignal(m_page, SIGNAL(loadFinished(bool)));
+    expectedLoadFinishedCount++;
+    QCOMPARE(spy.count(), expectedLoadFinishedCount);
+    QCOMPARE(frame->url(), url);
+    QCOMPARE(frame->requestedUrl(), url);
+    QCOMPARE(m_page->history()->count(), 1);
+
+    url = QUrl("qrc:/test2.html");
+    frame->setUrl(url);
+    ::waitForSignal(m_page, SIGNAL(loadFinished(bool)));
+    expectedLoadFinishedCount++;
+    QCOMPARE(spy.count(), expectedLoadFinishedCount);
+    QCOMPARE(frame->url(), url);
+    QCOMPARE(frame->requestedUrl(), url);
+    QCOMPARE(m_page->history()->count(), 2);
 }
 
 QTEST_MAIN(tst_QWebFrame)
