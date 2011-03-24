@@ -108,7 +108,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
         globalObject->setCurrentEvent(event);
 
         JSGlobalData& globalData = globalObject->globalData();
-        DynamicGlobalObjectScope globalObjectScope(exec, globalData.dynamicGlobalObject ? globalData.dynamicGlobalObject : globalObject);
+        DynamicGlobalObjectScope globalObjectScope(globalData, globalData.dynamicGlobalObject ? globalData.dynamicGlobalObject : globalObject);
 
         globalData.timeoutChecker.start();
         JSValue retval;

@@ -38,7 +38,7 @@ namespace JSC {
         CachedCall(CallFrame* callFrame, JSFunction* function, int argCount)
             : m_valid(false)
             , m_interpreter(callFrame->interpreter())
-            , m_globalObjectScope(callFrame, function->scope()->globalObject.get())
+            , m_globalObjectScope(callFrame->globalData(), function->scope()->globalObject.get())
         {
             ASSERT(!function->isHostFunction());
             m_closure = m_interpreter->prepareForRepeatCall(function->jsExecutable(), callFrame, function, argCount, function->scope());

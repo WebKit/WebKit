@@ -132,9 +132,6 @@ JSValue evaluateInGlobalCallFrame(const UString& script, JSValue& exception, JSG
         globalData.exception = JSValue();
         return exception;
     }
-    JSObject* error = eval->compile(globalCallFrame, globalCallFrame->scopeChain());
-    if (error)
-        return error;
 
     JSValue result = globalData.interpreter->execute(eval, globalCallFrame, globalObject, globalCallFrame->scopeChain());
     if (globalData.exception) {

@@ -88,7 +88,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
         args.append(jsNumber(errorEvent->lineno()));
 
         JSGlobalData& globalData = globalObject->globalData();
-        DynamicGlobalObjectScope globalObjectScope(exec, globalData.dynamicGlobalObject ? globalData.dynamicGlobalObject : globalObject);
+        DynamicGlobalObjectScope globalObjectScope(globalData, globalData.dynamicGlobalObject ? globalData.dynamicGlobalObject : globalObject);
 
         JSValue thisValue = globalObject->toThisObject(exec);
 

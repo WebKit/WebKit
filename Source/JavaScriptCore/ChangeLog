@@ -1,3 +1,51 @@
+2011-03-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Ensure that all compilation takes place within a dynamic global object scope
+        https://bugs.webkit.org/show_bug.cgi?id=57054
+        <rdar://problem/9083011>        
+
+        Otherwise, entry to the global object scope might throw away the code
+        we just compiled, causing a crash.
+
+        * JavaScriptCore.exp: Updated for signature change.
+
+        * debugger/Debugger.cpp:
+        (JSC::evaluateInGlobalCallFrame):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate): Removed explicit compilation calls
+        here because (a) they took place outside a dynamic global object scope
+        and (b) they were redundant.
+
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall): Updated for signature change.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct): Declare our dynamic global object
+        scope earlier, to ensure that compilation takes place within it.
+
+        * runtime/Completion.cpp:
+        (JSC::evaluate): Removed explicit compilation calls here because (a)
+        they took place outside a dynamic global object scope and (b) they were
+        redundant.
+
+        * runtime/Executable.h:
+        (JSC::EvalExecutable::compile):
+        (JSC::ProgramExecutable::compile):
+        (JSC::FunctionExecutable::compileForCall):
+        (JSC::FunctionExecutable::compileForConstruct): Added an ASSERT to
+        verify our new invariant that all compilation takes place within a
+        dynamic global object scope.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::DynamicGlobalObjectScope::DynamicGlobalObjectScope):
+        * runtime/JSGlobalObject.h: Changed the signature of DynamicGlobalObjectScope
+        to require a JSGlobalData instead of an ExecState* since it is often
+        easier to provide the former, and the latter was not necessary.
+
 2011-03-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

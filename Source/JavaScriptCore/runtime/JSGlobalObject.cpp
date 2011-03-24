@@ -439,21 +439,21 @@ void* JSGlobalObject::operator new(size_t size, JSGlobalData* globalData)
     return globalData->heap.allocate(size);
 }
 
-DynamicGlobalObjectScope::DynamicGlobalObjectScope(CallFrame* callFrame, JSGlobalObject* dynamicGlobalObject)
-    : m_dynamicGlobalObjectSlot(callFrame->globalData().dynamicGlobalObject)
+DynamicGlobalObjectScope::DynamicGlobalObjectScope(JSGlobalData& globalData, JSGlobalObject* dynamicGlobalObject)
+    : m_dynamicGlobalObjectSlot(globalData.dynamicGlobalObject)
     , m_savedDynamicGlobalObject(m_dynamicGlobalObjectSlot)
 {
     if (!m_dynamicGlobalObjectSlot) {
 #if ENABLE(ASSEMBLER)
         if (ExecutableAllocator::underMemoryPressure())
-            callFrame->globalData().recompileAllJSFunctions();
+            globalData.recompileAllJSFunctions();
 #endif
 
         m_dynamicGlobalObjectSlot = dynamicGlobalObject;
 
         // Reset the date cache between JS invocations to force the VM
         // to observe time zone changes.
-        callFrame->globalData().resetDateCache();
+        globalData.resetDateCache();
     }
 }
 

@@ -58,9 +58,6 @@ Completion evaluate(ExecState* exec, ScopeChainNode* scopeChain, const SourceCod
         exec->globalData().exception = JSValue();
         return Completion(Throw, exception);
     }
-    JSObject* error = program->compile(exec, scopeChain);
-    if (error)
-        return Completion(Throw, error);
 
     JSObject* thisObj = (!thisValue || thisValue.isUndefinedOrNull()) ? exec->dynamicGlobalObject() : thisValue.toObject(exec);
 
