@@ -238,7 +238,7 @@ using namespace WebCore;
     if (completed) {                
         // Swap the webView placeholder into place.
         if (!_webViewPlaceholder)
-            _webViewPlaceholder.adoptNS([[NSView alloc] init]);        
+            _webViewPlaceholder.adoptNS([[NSView alloc] init]);
         [self _swapView:_webView with:_webViewPlaceholder.get()];
         
         // Then insert the WebView into the full screen window
@@ -286,7 +286,8 @@ using namespace WebCore;
     [webWindow setCollectionBehavior:behavior];
     
     // Swap the webView back into its original position:
-    [self _swapView:_webViewPlaceholder.get() with:_webView];
+    if ([_webView window] == [self window])
+        [self _swapView:_webViewPlaceholder.get() with:_webView];
     
     [CATransaction begin];
     [CATransaction setAnimationDuration:[self _animationDuration]];
@@ -329,7 +330,8 @@ using namespace WebCore;
     
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    [[[self window] contentView] addSubview:_layerHostingView.get()];
+    WKFullScreenWindow* window = [self _fullScreenWindow];
+    [[window animationView] addSubview:_layerHostingView.get()];
     
     // Create a root layer that will back the NSView.
     RetainPtr<CALayer> rootLayer(AdoptNS, [[CALayer alloc] init]);
@@ -342,7 +344,7 @@ using namespace WebCore;
     
     [_layerHostingView.get() setLayer:rootLayer.get()];
     [_layerHostingView.get() setWantsLayer:YES];
-    
+    [[window backgroundLayer] setHidden:NO];
     [CATransaction commit];
 }
 
@@ -351,9 +353,13 @@ using namespace WebCore;
     if (!_layerHostingView)
         return;
     
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
     [_layerHostingView.get() removeFromSuperview];
     [_layerHostingView.get() setLayer:nil];
     [_layerHostingView.get() setWantsLayer:NO];
+    [[[self _fullScreenWindow] backgroundLayer] setHidden:YES];
+    [CATransaction commit];
     
     _layerHostingView = 0;
 }

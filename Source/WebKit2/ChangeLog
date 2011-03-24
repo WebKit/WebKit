@@ -1,3 +1,25 @@
+2011-03-17  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Cancelling full screen early leaves full screen window up.
+        https://bugs.webkit.org/show_bug.cgi?id=56589
+
+        No new tests, as WebKitTestRunner does not currently support the new Full Screen API.
+
+        Notify the UIProcess when it needs to tear down its layer hosting view, turn off
+        the background layer when not in accelerated rendering mode and don't swap out 
+        the web view unnecessarily 
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController beganExitFullScreenAnimation]): Check before swapping _webView.
+        (-[WKFullScreenWindowController enterAcceleratedCompositingMode:]): Add the _layerHostingView
+            to the full screen window's animationView, not its contentsView.
+        (-[WKFullScreenWindowController exitAcceleratedCompositingMode]): Hide the background layer.
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::setRootFullScreenLayer): If given a null rootLayer, tell
+            the client to exit accelerated mode.
+
 2011-03-24  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Alexey Proskuryakov.

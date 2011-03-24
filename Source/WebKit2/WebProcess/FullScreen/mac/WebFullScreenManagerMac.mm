@@ -136,6 +136,15 @@ void WebFullScreenManagerMac::setRootFullScreenLayer(WebCore::GraphicsLayer* lay
         return;
     m_fullScreenRootLayer = layer;
 
+    if (!m_fullScreenRootLayer) {
+        m_page->send(Messages::WebFullScreenManagerProxy::ExitAcceleratedCompositingMode());
+        if (m_rootLayer) {
+            m_rootLayer->removeAllChildren();
+            m_rootLayer = 0;
+        }
+        return;
+    }
+
     if (!m_rootLayer) {
         mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
         m_remoteLayerClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
