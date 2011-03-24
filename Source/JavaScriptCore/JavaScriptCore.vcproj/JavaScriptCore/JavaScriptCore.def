@@ -7,7 +7,6 @@ EXPORTS
     ??0DateInstance@JSC@@QAE@PAVExecState@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@N@Z
     ??0DefaultGCActivityCallback@JSC@@QAE@PAVHeap@1@@Z
     ??0DropAllLocks@JSLock@JSC@@QAE@W4JSLockBehavior@2@@Z
-    ??0DynamicGlobalObjectScope@JSC@@QAE@PAVExecState@1@PAVJSGlobalObject@1@@Z
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalData@1@PAVJSGlobalObject@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@ABVIdentifier@1@@Z
     ??0JSArray@JSC@@QAE@AAVJSGlobalData@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@ABVArgList@1@@Z  
     ??0JSArray@JSC@@QAE@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@@Z

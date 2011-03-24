@@ -1,5 +1,11 @@
 2011-03-24  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix take 1: Removed old symobl.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2011-03-24  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Ensure that all compilation takes place within a dynamic global object scope
