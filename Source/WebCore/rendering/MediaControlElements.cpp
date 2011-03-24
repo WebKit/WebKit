@@ -803,6 +803,7 @@ PassRefPtr<MediaControlTimelineElement> MediaControlTimelineElement::create(HTML
 {
     RefPtr<MediaControlTimelineElement> timeline = adoptRef(new MediaControlTimelineElement(mediaElement));
     timeline->setType("range");
+    timeline->setAttribute(precisionAttr, "float");
     return timeline.release();
 }
 
@@ -864,6 +865,9 @@ PassRefPtr<MediaControlVolumeSliderElement> MediaControlVolumeSliderElement::cre
 {
     RefPtr<MediaControlVolumeSliderElement> slider = adoptRef(new MediaControlVolumeSliderElement(mediaElement));
     slider->setType("range");
+    slider->setAttribute(precisionAttr, "float");
+    slider->setAttribute(maxAttr, "1");
+    slider->setAttribute(valueAttr, String::number(mediaElement->volume()));
     return slider.release();
 }
 

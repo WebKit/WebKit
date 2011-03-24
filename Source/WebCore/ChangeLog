@@ -1,3 +1,24 @@
+2011-03-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Move media controls subtree creation into one method.
+        https://bugs.webkit.org/show_bug.cgi?id=56969
+
+        Mechanical move, no changes in functionality.
+
+        The purpose of this patch is to align existing code closer with its
+        future version, when MediaControls is an element whose tree is created
+        at the instantiation.
+
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::create): Added, consolidating all subtree generation logic into one place.
+        (WebCore::MediaControls::update): Replaced methods with one call.
+        * html/shadow/MediaControls.h: Updated decls.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlTimelineElement::create): Moved setting of attributes here.
+        (WebCore::MediaControlVolumeSliderElement::create): Ditto.
+
 2011-03-24  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.

@@ -60,6 +60,86 @@ MediaControls::MediaControls(HTMLMediaElement* mediaElement)
 {
 }
 
+// FIXME: This will turn into the standard element factory method once shadow DOM conversion is complete.
+// (see https://bugs.webkit.org/show_bug.cgi?id=53020)
+PassRefPtr<MediaControlShadowRootElement> MediaControls::create(HTMLMediaElement* mediaElement)
+{
+    ASSERT(!m_panel);
+    ASSERT(!m_muteButton);
+    ASSERT(!m_playButton);
+    ASSERT(!m_returnToRealtimeButton);
+    ASSERT(!m_statusDisplay);
+    ASSERT(!m_timelineContainer);
+    ASSERT(!m_currentTimeDisplay);
+    ASSERT(!m_timeline);
+    ASSERT(!m_timeRemainingDisplay);
+    ASSERT(!m_seekBackButton);
+    ASSERT(!m_seekForwardButton);
+    ASSERT(!m_toggleClosedCaptionsButton);
+    ASSERT(!m_fullscreenButton);
+    ASSERT(!m_muteButton);
+    ASSERT(!m_volumeSliderContainer);
+    ASSERT(!m_volumeSlider);
+    ASSERT(!m_volumeSliderMuteButton);
+
+    RefPtr<MediaControlShadowRootElement> controls = MediaControlShadowRootElement::create(mediaElement);
+
+    m_panel = MediaControlPanelElement::create(mediaElement);
+
+    m_rewindButton = MediaControlRewindButtonElement::create(mediaElement);
+    m_rewindButton->attachToParent(m_panel.get());
+
+    m_playButton = MediaControlPlayButtonElement::create(mediaElement);
+    m_playButton->attachToParent(m_panel.get());
+
+    m_returnToRealtimeButton = MediaControlReturnToRealtimeButtonElement::create(mediaElement);
+    m_returnToRealtimeButton->attachToParent(m_panel.get());
+
+    m_statusDisplay = MediaControlStatusDisplayElement::create(mediaElement);
+    m_statusDisplay->attachToParent(m_panel.get());
+
+    m_timelineContainer = MediaControlTimelineContainerElement::create(mediaElement);
+
+    m_currentTimeDisplay = MediaControlCurrentTimeDisplayElement::create(mediaElement);
+    m_currentTimeDisplay->attachToParent(m_timelineContainer.get());
+
+    m_timeline = MediaControlTimelineElement::create(mediaElement);
+    m_timeline->attachToParent(m_timelineContainer.get());
+
+    m_timeRemainingDisplay = MediaControlTimeRemainingDisplayElement::create(mediaElement);
+    m_timeRemainingDisplay->attachToParent(m_timelineContainer.get());
+
+    m_timelineContainer->attachToParent(m_panel.get());
+
+    m_seekBackButton = MediaControlSeekBackButtonElement::create(mediaElement);
+    m_seekBackButton->attachToParent(m_panel.get());
+
+    m_seekForwardButton = MediaControlSeekForwardButtonElement::create(mediaElement);
+    m_seekForwardButton->attachToParent(m_panel.get());
+
+    m_toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(mediaElement);
+    m_toggleClosedCaptionsButton->attachToParent(m_panel.get());
+
+    m_fullscreenButton = MediaControlFullscreenButtonElement::create(mediaElement);
+    m_fullscreenButton->attachToParent(m_panel.get());
+
+    m_muteButton = MediaControlPanelMuteButtonElement::create(mediaElement);
+    m_muteButton->attachToParent(m_panel.get());
+
+    m_volumeSliderContainer = MediaControlVolumeSliderContainerElement::create(mediaElement);
+
+    m_volumeSlider = MediaControlVolumeSliderElement::create(mediaElement);
+    m_volumeSlider->attachToParent(m_volumeSliderContainer.get());
+
+    m_volumeSliderMuteButton = MediaControlVolumeSliderMuteButtonElement::create(mediaElement);
+    m_volumeSliderMuteButton->attachToParent(m_volumeSliderContainer.get());
+
+    m_volumeSliderContainer->attachToParent(m_panel.get());
+
+    m_panel->attachToParent(controls.get());
+    return controls.release();
+}
+
 void MediaControls::reset()
 {
     update();
@@ -185,31 +265,9 @@ void MediaControls::update()
     }
 
     if (!m_controlsShadowRoot) {
-        createControlsShadowRoot();
-        createPanel();
-        if (m_panel) {
-            createRewindButton();
-            createPlayButton();
-            createReturnToRealtimeButton();
-            createStatusDisplay();
-            createTimelineContainer();
-            if (m_timelineContainer) {
-                createCurrentTimeDisplay();
-                createTimeline();
-                createTimeRemainingDisplay();
-            }
-            createSeekBackButton();
-            createSeekForwardButton();
-            createToggleClosedCaptionsButton();
-            createFullscreenButton();
-            createMuteButton();
-            createVolumeSliderContainer();
-            if (m_volumeSliderContainer) {
-                createVolumeSlider();
-                createVolumeSliderMuteButton();
-            }
-            m_panel->attach();
-        }
+        m_controlsShadowRoot = create(m_mediaElement);
+        m_mediaElement->renderer()->addChild(m_controlsShadowRoot->renderer());
+        m_panel->attach();
     }
 
     if (m_panel) {
@@ -254,136 +312,6 @@ void MediaControls::update()
 
     updateTimeDisplay();
     updateControlVisibility();
-}
-
-void MediaControls::createControlsShadowRoot()
-{
-    ASSERT(!m_controlsShadowRoot);
-    m_controlsShadowRoot = MediaControlShadowRootElement::create(m_mediaElement);
-    m_mediaElement->renderer()->addChild(m_controlsShadowRoot->renderer());
-}
-
-void MediaControls::createPanel()
-{
-    ASSERT(!m_panel);
-    m_panel = MediaControlPanelElement::create(m_mediaElement);
-    m_panel->attachToParent(m_controlsShadowRoot.get());
-}
-
-void MediaControls::createMuteButton()
-{
-    ASSERT(!m_muteButton);
-    m_muteButton = MediaControlPanelMuteButtonElement::create(m_mediaElement);
-    m_muteButton->attachToParent(m_panel.get());
-}
-
-void MediaControls::createPlayButton()
-{
-    ASSERT(!m_playButton);
-    m_playButton = MediaControlPlayButtonElement::create(m_mediaElement);
-    m_playButton->attachToParent(m_panel.get());
-}
-
-void MediaControls::createSeekBackButton()
-{
-    ASSERT(!m_seekBackButton);
-    m_seekBackButton = MediaControlSeekBackButtonElement::create(m_mediaElement);
-    m_seekBackButton->attachToParent(m_panel.get());
-}
-
-void MediaControls::createSeekForwardButton()
-{
-    ASSERT(!m_seekForwardButton);
-    m_seekForwardButton = MediaControlSeekForwardButtonElement::create(m_mediaElement);
-    m_seekForwardButton->attachToParent(m_panel.get());
-}
-
-void MediaControls::createRewindButton()
-{
-    ASSERT(!m_rewindButton);
-    m_rewindButton = MediaControlRewindButtonElement::create(m_mediaElement);
-    m_rewindButton->attachToParent(m_panel.get());
-}
-
-void MediaControls::createReturnToRealtimeButton()
-{
-    ASSERT(!m_returnToRealtimeButton);
-    m_returnToRealtimeButton = MediaControlReturnToRealtimeButtonElement::create(m_mediaElement);
-    m_returnToRealtimeButton->attachToParent(m_panel.get());
-}
-
-void MediaControls::createToggleClosedCaptionsButton()
-{
-    ASSERT(!m_toggleClosedCaptionsButton);
-    m_toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(m_mediaElement);
-    m_toggleClosedCaptionsButton->attachToParent(m_panel.get());
-}
-
-void MediaControls::createStatusDisplay()
-{
-    ASSERT(!m_statusDisplay);
-    m_statusDisplay = MediaControlStatusDisplayElement::create(m_mediaElement);
-    m_statusDisplay->attachToParent(m_panel.get());
-}
-
-void MediaControls::createTimelineContainer()
-{
-    ASSERT(!m_timelineContainer);
-    m_timelineContainer = MediaControlTimelineContainerElement::create(m_mediaElement);
-    m_timelineContainer->attachToParent(m_panel.get());
-}
-
-void MediaControls::createTimeline()
-{
-    ASSERT(!m_timeline);
-    m_timeline = MediaControlTimelineElement::create(m_mediaElement);
-    m_timeline->setAttribute(precisionAttr, "float");
-    m_timeline->attachToParent(m_timelineContainer.get());
-}
-
-void MediaControls::createVolumeSliderContainer()
-{
-    ASSERT(!m_volumeSliderContainer);
-    m_volumeSliderContainer = MediaControlVolumeSliderContainerElement::create(m_mediaElement);
-    m_volumeSliderContainer->attachToParent(m_panel.get());
-}
-
-void MediaControls::createVolumeSlider()
-{
-    ASSERT(!m_volumeSlider);
-    m_volumeSlider = MediaControlVolumeSliderElement::create(m_mediaElement);
-    m_volumeSlider->setAttribute(precisionAttr, "float");
-    m_volumeSlider->setAttribute(maxAttr, "1");
-    m_volumeSlider->setAttribute(valueAttr, String::number(m_mediaElement->volume()));
-    m_volumeSlider->attachToParent(m_volumeSliderContainer.get());
-}
-
-void MediaControls::createVolumeSliderMuteButton()
-{
-    ASSERT(!m_volumeSliderMuteButton);
-    m_volumeSliderMuteButton = MediaControlVolumeSliderMuteButtonElement::create(m_mediaElement);
-    m_volumeSliderMuteButton->attachToParent(m_volumeSliderContainer.get());
-}
-
-void MediaControls::createCurrentTimeDisplay()
-{
-    ASSERT(!m_currentTimeDisplay);
-    m_currentTimeDisplay = MediaControlCurrentTimeDisplayElement::create(m_mediaElement);
-    m_currentTimeDisplay->attachToParent(m_timelineContainer.get());
-}
-
-void MediaControls::createTimeRemainingDisplay()
-{
-    ASSERT(!m_timeRemainingDisplay);
-    m_timeRemainingDisplay = MediaControlTimeRemainingDisplayElement::create(m_mediaElement);
-    m_timeRemainingDisplay->attachToParent(m_timelineContainer.get());
-}
-
-void MediaControls::createFullscreenButton()
-{
-    ASSERT(!m_fullscreenButton);
-    m_fullscreenButton = MediaControlFullscreenButtonElement::create(m_mediaElement);
-    m_fullscreenButton->attachToParent(m_panel.get());
 }
 
 void MediaControls::updateTimeDisplay()

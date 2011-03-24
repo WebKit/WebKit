@@ -83,25 +83,7 @@ public:
     RenderBox* renderBox();
 
 private:
-    void createControlsShadowRoot();
-    void destroyControlsShadowRoot();
-    void createPanel();
-    void createMuteButton();
-    void createPlayButton();
-    void createSeekBackButton();
-    void createSeekForwardButton();
-    void createRewindButton();
-    void createReturnToRealtimeButton();
-    void createToggleClosedCaptionsButton();
-    void createStatusDisplay();
-    void createTimelineContainer();
-    void createTimeline();
-    void createVolumeSliderContainer();
-    void createVolumeSlider();
-    void createVolumeSliderMuteButton();
-    void createCurrentTimeDisplay();
-    void createTimeRemainingDisplay();
-    void createFullscreenButton();
+    PassRefPtr<MediaControlShadowRootElement> create(HTMLMediaElement*);
 
     void updateControlVisibility();
     void changeOpacity(HTMLElement*, float opacity);
