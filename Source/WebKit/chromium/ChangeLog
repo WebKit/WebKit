@@ -1,3 +1,17 @@
+2011-03-24  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Add an overloaded WebFrame::createAssociatedURLLoader method that takes WebURLLoaderOptions, so clients can specify CORS options to allow cross-origin requests.
+        https://bugs.webkit.org/show_bug.cgi?id=56885
+
+        No new tests. Exposes no new functionality.
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createAssociatedURLLoader):
+        * src/WebFrameImpl.h:
+
 2011-03-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

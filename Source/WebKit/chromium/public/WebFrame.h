@@ -63,6 +63,7 @@ class WebSecurityOrigin;
 class WebString;
 class WebURL;
 class WebURLLoader;
+class WebURLLoaderOptions;
 class WebURLRequest;
 class WebView;
 struct WebConsoleMessage;
@@ -345,10 +346,13 @@ public:
     // DEPRECATED: Please use createAssociatedURLLoader instead.
     virtual void dispatchWillSendRequest(WebURLRequest&) = 0;
 
+    // FIXME: Remove this overload when clients have been changed to pass options.
+    virtual WebURLLoader* createAssociatedURLLoader() = 0;
+
     // Returns a WebURLLoader that is associated with this frame.  The loader
     // will, for example, be cancelled when WebFrame::stopLoading is called.
     // FIXME: stopLoading does not yet cancel an associated loader!!
-    virtual WebURLLoader* createAssociatedURLLoader() = 0;
+    virtual WebURLLoader* createAssociatedURLLoader(const WebURLLoaderOptions&) = 0;
 
     // Called from within WebFrameClient::didReceiveDocumentData to commit
     // data for the frame that will be used to construct the frame's

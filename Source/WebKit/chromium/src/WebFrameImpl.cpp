@@ -1052,9 +1052,15 @@ void WebFrameImpl::dispatchWillSendRequest(WebURLRequest& request)
         0, 0, request.toMutableResourceRequest(), response);
 }
 
+// FIXME: Remove this overload when clients have been changed to pass options.
 WebURLLoader* WebFrameImpl::createAssociatedURLLoader()
 {
     return new AssociatedURLLoader(this);
+}
+
+WebURLLoader* WebFrameImpl::createAssociatedURLLoader(const WebURLLoaderOptions& options)
+{
+    return new AssociatedURLLoader(this, options);
 }
 
 void WebFrameImpl::commitDocumentData(const char* data, size_t length)
