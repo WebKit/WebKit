@@ -158,7 +158,7 @@ public:
     static Statistics& statistics();
 
     void setDatabaseDirectory(const String& dir) { m_overrideDatabaseDirectory = dir; }
-    void setIconDatabasePath(const String& path) { m_overrideIconDatabasePath = path; }
+    void setIconDatabasePath(const String&);
     void setLocalStorageDirectory(const String& dir) { m_overrideLocalStorageDirectory = dir; }
 
     void ensureWebProcess();

@@ -73,6 +73,9 @@ class IconDatabase : public IconDatabaseBase {
     
 // *** Main Thread Only ***
 public:
+    static PassOwnPtr<IconDatabase> create() { return new IconDatabase; }
+    ~IconDatabase();
+
     virtual void setClient(IconDatabaseClient*);
 
     virtual bool open(const String& directory, const String& filename);
@@ -112,7 +115,6 @@ public:
 
 private:
     IconDatabase();
-    ~IconDatabase();
     friend IconDatabaseBase& iconDatabase();
 
     static void notifyPendingLoadDecisionsOnMainThread(void*);
@@ -219,6 +221,7 @@ private:
     void dispatchDidImportIconURLForPageURLOnMainThread(const String&);
     void dispatchDidImportIconDataForPageURLOnMainThread(const String&);
     void dispatchDidRemoveAllIconsOnMainThread();
+    void dispatchDidFinishURLImportOnMainThread();
     
     // The client is set by the main thread before the thread starts, and from then on is only used by the sync thread
     IconDatabaseClient* m_client;

@@ -1,3 +1,37 @@
+2011-03-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57058
+        Hookup the UIProcess WebIconDatabase to a WebCore::IconDatabase as its implementation
+
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::WebIconDatabase):
+        (WebKit::WebIconDatabase::setDatabasePath): Create a new WebCore::IconDatabase and open it to this path.
+        (WebKit::WebIconDatabase::retainIconForPageURL): Actually retain the url, using the impl.
+        (WebKit::WebIconDatabase::releaseIconForPageURL): Actually release the url, using the impl.
+        (WebKit::WebIconDatabase::setIconURLForPageURL): Actually set the url, using the impl.
+        (WebKit::WebIconDatabase::setIconDataForIconURL): Actually set the data, using the impl.
+        (WebKit::WebIconDatabase::getLoadDecisionForIconURL): Actually ask for a load decision to call back with.
+        (WebKit::WebIconDatabase::performImport):
+        (WebKit::WebIconDatabase::didImportIconURLForPageURL):
+        (WebKit::WebIconDatabase::didImportIconDataForPageURL):
+        (WebKit::WebIconDatabase::didChangeIconForPageURL):
+        (WebKit::WebIconDatabase::didRemoveAllIcons):
+        (WebKit::WebIconDatabase::didFinishURLImport): Notify all the pending callbacks what their load decisions
+          are now that they're available.
+        * UIProcess/WebIconDatabase.h:
+
+        Add an IconDatabase logging channel:
+        * Platform/Logging.cpp:
+        (WebKit::initializeLogChannelsIfNecessary):
+        * Platform/Logging.h:
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setIconDatabasePath): Pass the new path on to the WebIconDatabase, possibly
+          opening it.
+        * UIProcess/WebContext.h:
+
 2011-03-24  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

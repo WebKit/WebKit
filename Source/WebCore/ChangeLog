@@ -1,3 +1,23 @@
+2011-03-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57058
+        Hookup the UIProcess WebIconDatabase to a WebCore::IconDatabase as its implementation
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::synchronousLoadDecisionForIconURL): Only add the DocumentLoader to the set if it's non-zero.
+        (WebCore::IconDatabase::IconDatabase): Add more logging.
+        (WebCore::IconDatabase::performURLImport): Dispatch the "didFinishURLImport" client callback using the following 3 methods.
+        (WebCore::FinishedURLImport::FinishedURLImport):
+        (WebCore::FinishedURLImport::performWork):
+        (WebCore::IconDatabase::dispatchDidFinishURLImportOnMainThread):
+
+        * loader/icon/IconDatabase.h:
+        (WebCore::IconDatabase::create): Expose a PassOwnPtr<> creator.
+
+        * WebCore.exp.in:
+
 2011-03-23  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

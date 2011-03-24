@@ -29,11 +29,12 @@
 #include "APIObject.h"
 
 #include "Connection.h"
-#include <WebCore/IconDatabaseBase.h>
+#include <WebCore/IconDatabaseClient.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringHash.h>
 
 namespace CoreIPC {
 class ArgumentDecoder;
@@ -41,11 +42,15 @@ class DataReference;
 class MessageID;
 }
 
+namespace WebCore {
+class IconDatabase;
+}
+
 namespace WebKit {
 
 class WebContext;
 
-class WebIconDatabase : public APIObject {
+class WebIconDatabase : public APIObject, public WebCore::IconDatabaseClient {
 public:
     static const Type APIType = TypeIconDatabase;
 
@@ -54,6 +59,7 @@ public:
 
     void invalidate();
     void clearContext() { m_webContext = 0; }
+    void setDatabasePath(const String&);
 
     void retainIconForPageURL(const String&);
     void releaseIconForPageURL(const String&);
@@ -67,6 +73,14 @@ public:
     
     void getLoadDecisionForIconURL(const String&, uint64_t callbackID);
 
+    // WebCore::IconDatabaseClient
+    virtual bool performImport();
+    virtual void didImportIconURLForPageURL(const String&);
+    virtual void didImportIconDataForPageURL(const String&);
+    virtual void didChangeIconForPageURL(const String&);
+    virtual void didRemoveAllIcons();
+    virtual void didFinishURLImport();
+    
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
@@ -79,6 +93,11 @@ private:
     CoreIPC::SyncReplyMode didReceiveSyncWebIconDatabaseMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
     WebContext* m_webContext;
+    
+    OwnPtr<WebCore::IconDatabase> m_iconDatabaseImpl;
+    bool m_urlImportCompleted;
+    HashMap<uint64_t, String> m_pendingLoadDecisionURLMap;
+
 };
 
 } // namespace WebKit

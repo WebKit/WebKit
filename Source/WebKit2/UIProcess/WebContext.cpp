@@ -771,6 +771,12 @@ String WebContext::databaseDirectory() const
     return platformDefaultDatabaseDirectory();
 }
 
+void WebContext::setIconDatabasePath(const String& path)
+{
+    m_overrideIconDatabasePath = path;
+    m_iconDatabase->setDatabasePath(path);
+}
+
 String WebContext::iconDatabasePath() const
 {
     if (!m_overrideIconDatabasePath.isEmpty())

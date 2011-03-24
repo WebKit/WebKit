@@ -662,7 +662,8 @@ IconLoadDecision IconDatabase::synchronousLoadDecisionForIconURL(const String& i
     // Otherwise - since we refuse to perform I/O on the main thread to find out for sure - we return the answer that says
     // "You might be asked to load this later, so flag that"
     LOG(IconDatabase, "Don't know if we should load %s or not - adding %p to the set of document loaders waiting on a decision", iconURL.ascii().data(), notificationDocumentLoader);
-    m_loadersPendingDecision.add(notificationDocumentLoader);    
+    if (notificationDocumentLoader)
+        m_loadersPendingDecision.add(notificationDocumentLoader);    
 
     return IconLoadUnknown;
 }
@@ -770,6 +771,7 @@ IconDatabase::IconDatabase()
     , m_imported(false)
     , m_isImportedSet(false)
 {
+    LOG(IconDatabase, "Creating IconDatabase %p", this);
     ASSERT(isMainThread());
 }
 
@@ -1287,7 +1289,6 @@ void IconDatabase::performURLImport()
     // Loop through the urls pending import
     // Remove unretained ones if database cleanup is allowed
     // Keep a set of ones that are retained and pending notification
-    
     {
         MutexLocker locker(m_urlAndIconLock);
         
@@ -1332,6 +1333,9 @@ void IconDatabase::performURLImport()
 
         pool.cycle();
     }
+    
+    // Notify the client that the URL import is complete in case it's managing its own pending notifications.
+    dispatchDidFinishURLImportOnMainThread();
     
     // Notify all DocumentLoaders that were waiting for an icon load decision on the main thread
     callOnMainThread(notifyPendingLoadDecisionsOnMainThread, this);
@@ -2178,6 +2182,20 @@ public:
     }
 };
 
+class FinishedURLImport : public ClientWorkItem {
+public:
+    FinishedURLImport(IconDatabaseClient* client)
+        : ClientWorkItem(client)
+    { }
+
+    virtual void performWork()
+    {
+        ASSERT(m_client);
+        m_client->didFinishURLImport();
+        m_client = 0;
+    }
+};
+
 static void performWorkItem(void* context)
 {
     ClientWorkItem* item = static_cast<ClientWorkItem*>(context);
@@ -2206,6 +2224,14 @@ void IconDatabase::dispatchDidRemoveAllIconsOnMainThread()
     ASSERT_ICON_SYNC_THREAD();
 
     RemovedAllIconsWorkItem* work = new RemovedAllIconsWorkItem(m_client);
+    callOnMainThread(performWorkItem, work);
+}
+
+void IconDatabase::dispatchDidFinishURLImportOnMainThread()
+{
+    ASSERT_ICON_SYNC_THREAD();
+
+    FinishedURLImport* work = new FinishedURLImport(m_client);
     callOnMainThread(performWorkItem, work);
 }
 
