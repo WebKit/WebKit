@@ -203,7 +203,8 @@ void WebBindings::extractIdentifierData(const NPIdentifier& identifier, const NP
 
 static bool getRangeImpl(NPObject* object, WebRange* webRange)
 {
-    // FIXME: why is this npobj not null checked here?
+    if (!object || (object->_class != npScriptObjectClass))
+        return false;
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);

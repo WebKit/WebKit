@@ -1,3 +1,13 @@
+2011-03-24  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] WebBindings::getRangeImpl() should NULL check its NPObject argument
+        https://bugs.webkit.org/show_bug.cgi?id=56996
+
+        * src/WebBindings.cpp:
+        (WebKit::getRangeImpl):
+
 2011-03-23  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Ojan Vafai.
