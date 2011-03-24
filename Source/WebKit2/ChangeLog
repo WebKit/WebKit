@@ -1,3 +1,11 @@
+2011-03-24  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix.
+
+        Remove reference to LayerTreeHostMac.h from WebFullScreenManagerMac.mm.
+
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+
 2011-03-24  Adam Roben  <aroben@apple.com>
 
         Split Mac-specific parts of LayerTreeHostCA into LayerTreeHostCAMac.mm

@@ -29,7 +29,6 @@
 
 #import "Connection.h"
 #import "LayerTreeContext.h"
-#import "LayerTreeHostMac.h"
 #import "MessageID.h"
 #import "WebFullScreenManagerProxyMessages.h"
 #import "WebPage.h"
