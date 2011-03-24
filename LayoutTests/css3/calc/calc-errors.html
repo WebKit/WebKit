@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<style>
+#test div {
+    height: 100px;
+    background-color: red;
+}
+</style>
+
+<p>
+  All boxes below should be 100px * 100px and green.
+</p>
+
+<div id="test">
+
+<!-- just plain bad -->
+<div style="width: 100px; width: -webkit-calc(;">unclosed calc</div>
+<div style="width: 100px; width: -webkit-calc( flim;">unclosed calc with garbage</div>
+<div style="width: 100px; width: -webkit-calc( flim );">garbage</div>
+
+
+<!-- zero division -->
+<div style="width: 100px; width: -webkit-calc(1ex / 0);">zero division</div>
+
+<!-- wrong combination -->
+<div style="width: 100px; width: -webkit-calc(200);">non length</div>
+<div style="width: 100px; width: -webkit-calc(10 + 10px);">number + length</div>
+<div style="width: 100px; width: -webkit-calc(10px + 10);">length + number</div>
+<div style="width: 100px; width: -webkit-calc(10% + 100);">percent + number</div>
+<div style="width: 100px; width: -webkit-calc(100 + 10%);">number + percent</div>
+
+<div style="width: 100px; width: -webkit-calc(300px - 100);">length - number</div>
+<div style="width: 100px; width: -webkit-calc(300 - 100px);">number - length</div>
+<div style="width: 100px; width: -webkit-calc(100% - 10);">percent - number</div>
+<div style="width: 100px; width: -webkit-calc(100 - 10%);">number - percent</div>
+
+<div style="width: 100px; width: -webkit-calc(10px*100px);">length * length</div>
+<div style="width: 100px; width: -webkit-calc(10px*100%);">length * percent</div>
+<div style="width: 100px; width: -webkit-calc(10%*100px);">percent * length</div>
+<div style="width: 100px; width: -webkit-calc(10%*100%);">percent * percent</div>
+
+<div style="width: 100px; width: -webkit-calc(100/10px);">number / length</div>
+<div style="width: 100px; width: -webkit-calc(100/10%);">number / percent</div>
+<div style="width: 100px; width: -webkit-calc(100px/10px);">length / length</div>
+<div style="width: 100px; width: -webkit-calc(100px/10%);">length / percent</div>
+<div style="width: 100px; width: -webkit-calc(100%/10px);">percent / length</div>
+<div style="width: 100px; width: -webkit-calc(100%/10%);">percent / percent</div>
+
+<div style="width: 100px; width: -webkit-calc(100 mod 10px);">number mod length</div>
+<div style="width: 100px; width: -webkit-calc(100 mod 10%);">number mod percent</div>
+<div style="width: 100px; width: -webkit-calc(100px mod 10px);">length mod length</div>
+<div style="width: 100px; width: -webkit-calc(100px mod 10%);">length mod percent</div>
+<div style="width: 100px; width: -webkit-calc(100% mod 10px);">percent mod length</div>
+<div style="width: 100px; width: -webkit-calc(100% mod 10%);">percent mod percent</div>
+
+<!-- mod, +, - require whitespaces around the operator -->
+<div style="width: 100px; width: -webkit-calc(1 mod10 * 200px);">mod10 </div>
+<div style="width: 100px; width: -webkit-calc(1mod 10 * 200px);">1mod</div>
+<div style="width: 100px; width: -webkit-calc(70px+40px);">70px+40px no whitespace around + </div>
+<div style="width: 100px; width: -webkit-calc(70px +40px);">70px +40px no whitespace on right of +</div>
+<div style="width: 100px; width: -webkit-calc(70px+ 40px);">70px+ 40px no whitespace on left of +</div>
+<div style="width: 100px; width: -webkit-calc(70px+-40px);">70px+-40px no whitespace around + </div>
+<div style="width: 100px; width: -webkit-calc(70px-40px);">70px-40px no whitespace around - </div>
+<div style="width: 100px; width: -webkit-calc(70px -40px);">70px -40px no whitespace on right of -</div>
+<div style="width: 100px; width: -webkit-calc(70px- 40px);">70px- 40px no whitespace on left of -</div>
+<div style="width: 100px; width: -webkit-calc(70px-+40px);">70px-+40px no whitespace around - </div>
+
+<!-- too many nests should be rejected to avoid stack overflow -->
+<div style="width: 100px; width: -webkit-calc(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((200px)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))));">too many nests</div>
+ 
+<!-- invalid formulas -->
+<div style="width: 100px; width: -webkit-calc(200px*);">end with operator</div>
+<div style="width: 100px; width: -webkit-calc(+ +200px);">start with operator</div>
+<div style="width: 100px; width: -webkit-calc();">no expressions</div>
+<div style="width: 100px; width: -webkit-calc(100px + + +100px);">too many pluses</div>
+<div style="width: 100px; width: -webkit-calc(200px 200px);">no binary operator</div>
+<div style="width: 100px; width: -webkit-calc(100px * * 2);">two binary operators</div>
+<div style="width: 100px; width: -webkit-calc(100px @ 2);">invalid operator '@'</div>
+<div style="width: 100px; width: -webkit-calc(1 flim 2);">invalid operator 'flim'</div>
+<div style="width: 100px; width: -webkit-calc(100px @ 2);">invalid operator '@'</div>
+<div style="width: 100px; width: -webkit-calc(1 flim 2);">invalid operator 'flim'</div>
+<div style="width: 100px; width: -webkit-calc(1 flim (2));">invalid operator 'flim' with parens</div>
+ 
+ 
+</div>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var test = document.getElementById("test");
+for (var element = test.firstChild; element; element = element.nextSibling) {
+    var width = element.offsetWidth;
+    var error = [];
+    if (width != 100)
+        error.push("expected width of 100, but was " + width);
+    var height = element.offsetHeight;
+    if (height != 100)
+        error.push("expected height of 100, but was " + width);
+
+    if (error == "") {
+        element.style.backgroundColor = "green";
+        element.innerHTML += " => PASS";
+    } else {
+        element.innerHTML += " => FAIL: " + error.join(", ");
+    }
+}
+</script>

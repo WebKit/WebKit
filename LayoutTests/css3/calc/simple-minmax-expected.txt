@@ -1,0 +1,18 @@
+All boxes below should be 100px * 100px and green.
+
+min(100px) => FAIL: expected width of 100, but was 256
+min( 100px ) => FAIL: expected width of 100, but was 256
+min((((100px)))) => FAIL: expected width of 100, but was 256
+min(150px,100px) => FAIL: expected width of 100, but was 256
+min(150px,100px,200px) => FAIL: expected width of 100, but was 256
+min( 150px , 100px ,200px) => FAIL: expected width of 100, but was 256
+min(90px + 50px ,100px) => FAIL: expected width of 100, but was 256
+min(100%,100px) - where 100% is 200px => FAIL: expected width of 100, but was 256
+min(100px,100%) - where 100% is 200px => FAIL: expected width of 100, but was 256
+max(100px) => FAIL: expected width of 100, but was 256
+max(50px,100px) => FAIL: expected width of 100, but was 256
+max(50px,100px,20px) => FAIL: expected width of 100, but was 256
+max(120px - 50px,100px) => FAIL: expected width of 100, but was 256
+max(100%,100px) - where 100% is 50px => FAIL: expected width of 100, but was 256
+max(100px,100%) - where 100% is 50px => FAIL: expected width of 100, but was 256
+min(200px,100px) => FAIL: expected height of 100, but was 50

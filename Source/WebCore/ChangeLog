@@ -1,3 +1,22 @@
+2011-03-23  Mike Lawther  <mikelawther@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        flex/bison tokens and grammar for CSS calc
+        https://bugs.webkit.org/show_bug.cgi?id=54412
+
+        Tests: css3/calc/calc-errors.html
+               css3/calc/minmax-errors.html
+               css3/calc/simple-calcs.html
+               css3/calc/simple-minmax.html
+
+        * css/CSSGrammar.y:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserValueList::insertValueAt):
+        (WebCore::CSSParserValueList::extend):
+        * css/CSSParserValues.h:
+        * css/tokenizer.flex:
+
 2011-03-23  Adam Klein  <adamk@chromium.org>
 
         Reviewed by David Levin.
