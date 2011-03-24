@@ -40,14 +40,13 @@ public:
     JavaField(JNIEnv*, jobject aField);
 
     const JavaString& name() const { return m_name; }
-    const char* type() const { return m_type.utf8(); }
-
-    JNIType getJNIType() const { return m_JNIType; }
+    const char* typeClassName() const { return m_typeClassName.utf8(); }
+    JavaType type() const { return m_type; }
 
 private:
     JavaString m_name;
-    JavaString m_type;
-    JNIType m_JNIType;
+    JavaString m_typeClassName;
+    JavaType m_type;
     RefPtr<JobjectWrapper> m_field;
 };
 

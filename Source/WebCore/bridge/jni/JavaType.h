@@ -1,19 +1,19 @@
 /*
- * Copyright 2010, The Android Open Source Project
+ * Copyright (C) 2003, 2004, 2005, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *  * Redistributions of source code must retain the above copyright
+ * 1. Redistributions of source code must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
- *  * Redistributions in binary form must reproduce the above copyright
+ * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,21 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JNIUtilityPrivate_h
-#define JNIUtilityPrivate_h
+#ifndef JavaType_h
+#define JavaType_h
 
 #if ENABLE(JAVA_BRIDGE)
-
-#include "JNIUtility.h"
-#include "npruntime.h"
-#include <wtf/text/WTFString.h>
 
 namespace JSC {
 
 namespace Bindings {
 
-jvalue convertNPVariantToJValue(NPVariant, const WTF::String& javaClass);
-void convertJValueToNPVariant(jvalue, JavaType, const char* javaClassName, NPVariant*);
+// The order of these items can not be modified as they are tightly
+// bound with the JVM on Mac OSX. If new types need to be added, they
+// should be added to the end. It is used in jni_obc.mm when calling
+// through to the JVM. Newly added items need to be made compatible
+// in that file.
+//
+// The type conversion logic used here needs improving and this enum will likely
+// be changed at that time. See https://bugs.webkit.org/show_bug.cgi?id=38745
+enum JavaType {
+    JavaTypeInvalid = 0,
+    JavaTypeVoid,
+    JavaTypeObject,
+    JavaTypeBoolean,
+    JavaTypeByte,
+    JavaTypeChar,
+    JavaTypeShort,
+    JavaTypeInt,
+    JavaTypeLong,
+    JavaTypeFloat,
+    JavaTypeDouble,
+    JavaTypeArray
+};
 
 } // namespace Bindings
 
@@ -45,4 +61,4 @@ void convertJValueToNPVariant(jvalue, JavaType, const char* javaClassName, NPVar
 
 #endif // ENABLE(JAVA_BRIDGE)
 
-#endif // JNIUtilityPrivate_h
+#endif // JavaType_h

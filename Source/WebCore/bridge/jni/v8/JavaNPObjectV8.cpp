@@ -151,7 +151,7 @@ bool JavaNPObjectInvoke(NPObject* obj, NPIdentifier identifier, const NPVariant*
     free(jArgs);
 
     VOID_TO_NPVARIANT(*result);
-    convertJValueToNPVariant(jResult, jMethod->JNIReturnType(), jMethod->returnType(), result);
+    convertJValueToNPVariant(jResult, jMethod->returnType(), jMethod->returnTypeClassName(), result);
     return true;
 }
 
@@ -189,7 +189,7 @@ bool JavaNPObjectGetProperty(NPObject* obj, NPIdentifier identifier, NPVariant* 
     jvalue value = instance->getField(field);
     instance->end();
 
-    convertJValueToNPVariant(value, field->getJNIType(), field->type(), result);
+    convertJValueToNPVariant(value, field->type(), field->typeClassName(), result);
 
     return true;
 }

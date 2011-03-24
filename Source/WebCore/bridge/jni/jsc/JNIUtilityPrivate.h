@@ -41,8 +41,8 @@ namespace Bindings {
 
 class RootObject;
 
-jvalue convertValueToJValue(ExecState*, RootObject*, JSValue, JNIType, const char* javaClassName);
-bool dispatchJNICall(ExecState*, const void* targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue* args, jvalue& result, const char* callingURL, JSValue& exceptionDescription);
+jvalue convertValueToJValue(ExecState*, RootObject*, JSValue, JavaType, const char* javaClassName);
+bool dispatchJNICall(ExecState*, const void* targetAppletView, jobject, bool isStatic, JavaType returnType, jmethodID, jvalue* args, jvalue& result, const char* callingURL, JSValue& exceptionDescription);
 
 } // namespace Bindings
 

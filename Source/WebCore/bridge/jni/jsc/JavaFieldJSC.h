@@ -47,17 +47,16 @@ public:
     virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const;
 
     const JavaString& name() const { return m_name; }
-    virtual RuntimeType type() const { return m_type.utf8(); }
-
-    JNIType getJNIType() const { return m_JNIType; }
+    virtual RuntimeType typeClassName() const { return m_typeClassName.utf8(); }
+    JavaType type() const { return m_type; }
 
 private:
     void dispatchSetValueToInstance(ExecState*, const JavaInstance*, jvalue, const char* name, const char* sig) const;
-    jvalue dispatchValueFromInstance(ExecState*, const JavaInstance*, const char* name, const char* sig, JNIType returnType) const;
+    jvalue dispatchValueFromInstance(ExecState*, const JavaInstance*, const char* name, const char* sig, JavaType returnType) const;
 
     JavaString m_name;
-    JavaString m_type;
-    JNIType m_JNIType;
+    JavaString m_typeClassName;
+    JavaType m_type;
     RefPtr<JobjectWrapper> m_field;
 };
 

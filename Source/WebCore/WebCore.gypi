@@ -2167,6 +2167,7 @@
             'bridge/jni/JavaMethod.cpp',
             'bridge/jni/JavaMethod.h',
             'bridge/jni/JavaString.h',
+            'bridge/jni/JavaType.h',
             'bridge/jni/JobjectWrapper.cpp',
             'bridge/jni/JobjectWrapper.h',
             'bridge/jni/jni_jsobject.mm',

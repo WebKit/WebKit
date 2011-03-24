@@ -28,7 +28,6 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JNIUtility.h"
 #include "JSDOMWindow.h"
 #include "JavaFieldJSC.h"
 #include "JavaMethod.h"

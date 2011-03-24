@@ -1423,6 +1423,7 @@
 		59A8F1D811A69520001AC34A /* DeviceOrientationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 59A8F1D711A69520001AC34A /* DeviceOrientationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		59A9E7B01104758800DFB4C1 /* JavaInstanceJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59A9E7AF1104758800DFB4C1 /* JavaInstanceJSC.cpp */; };
 		59A9E7B21104759400DFB4C1 /* JavaInstanceJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59A9E7B11104759400DFB4C1 /* JavaInstanceJSC.h */; };
+		59B0EEA7132A6F2A004331C7 /* JavaType.h in Headers */ = {isa = PBXBuildFile; fileRef = 59B0EEA6132A6F2A004331C7 /* JavaType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		59B597731108656B007159E8 /* BridgeJSC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59B597721108656B007159E8 /* BridgeJSC.cpp */; };
 		59B5977511086579007159E8 /* BridgeJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59B5977411086579007159E8 /* BridgeJSC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		59BC393F11054A1300FD85DB /* JavaStringJSC.h in Headers */ = {isa = PBXBuildFile; fileRef = 59BC393E11054A1300FD85DB /* JavaStringJSC.h */; };
@@ -7935,6 +7936,7 @@
 		59A8F1D711A69520001AC34A /* DeviceOrientationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationClient.h; sourceTree = "<group>"; };
 		59A9E7AF1104758800DFB4C1 /* JavaInstanceJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaInstanceJSC.cpp; path = jsc/JavaInstanceJSC.cpp; sourceTree = "<group>"; };
 		59A9E7B11104759400DFB4C1 /* JavaInstanceJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaInstanceJSC.h; path = jsc/JavaInstanceJSC.h; sourceTree = "<group>"; };
+		59B0EEA6132A6F2A004331C7 /* JavaType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaType.h; sourceTree = "<group>"; };
 		59B597721108656B007159E8 /* BridgeJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BridgeJSC.cpp; path = bridge/jsc/BridgeJSC.cpp; sourceTree = "<group>"; };
 		59B5977411086579007159E8 /* BridgeJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BridgeJSC.h; path = bridge/jsc/BridgeJSC.h; sourceTree = "<group>"; };
 		59BC393E11054A1300FD85DB /* JavaStringJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaStringJSC.h; path = jsc/JavaStringJSC.h; sourceTree = "<group>"; };
@@ -12838,6 +12840,7 @@
 		1A569CCE0D7E2B82007C3983 /* jni */ = {
 			isa = PBXGroup;
 			children = (
+				59B0EEA6132A6F2A004331C7 /* JavaType.h */,
 				593D3EB0132532950057E7EE /* JavaString.h */,
 				593D3EAE1325328C0057E7EE /* JavaMethod.h */,
 				593D3EAC132532840057E7EE /* JavaMethod.cpp */,
@@ -22698,6 +22701,7 @@
 				319E69B613299BBD004AC91A /* WebKitAnimationList.h in Headers */,
 				BC772E131331620C001EC9CE /* CSSLineBoxContainValue.h in Headers */,
 				4F1442291339FD6200E0D6F8 /* DOMNodeHighlighter.h in Headers */,
+				59B0EEA7132A6F2A004331C7 /* JavaType.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

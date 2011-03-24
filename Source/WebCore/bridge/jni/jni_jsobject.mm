@@ -419,7 +419,7 @@ jstring JavaJSObject::toString() const
     JSObject *thisObj = const_cast<JSObject*>(_imp);
     ExecState* exec = rootObject->globalObject()->globalExec();
     
-    return static_cast<jstring>(convertValueToJValue(exec, rootObject, thisObj, object_type, "java.lang.String").l);
+    return static_cast<jstring>(convertValueToJValue(exec, rootObject, thisObj, JavaTypeObject, "java.lang.String").l);
 }
 
 void JavaJSObject::finalize() const

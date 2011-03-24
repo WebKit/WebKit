@@ -50,8 +50,8 @@ JavaMethod::JavaMethod(JNIEnv* env, jobject aMethod)
             returnTypeName = env->NewStringUTF("<Unknown>");
         env->DeleteLocalRef(returnType);
     }
-    m_returnType = JavaString(env, returnTypeName);
-    m_JNIReturnType = JNITypeFromClassName(m_returnType.utf8());
+    m_returnTypeClassName = JavaString(env, returnTypeName);
+    m_returnType = javaTypeFromClassName(m_returnTypeClassName.utf8());
     env->DeleteLocalRef(returnTypeName);
 
     // Get method name
@@ -126,12 +126,12 @@ const char* JavaMethod::signature() const
         signatureBuilder.append('(');
         for (unsigned int i = 0; i < m_parameters.size(); i++) {
             CString javaClassName = parameterAt(i).utf8();
-            JNIType type = JNITypeFromClassName(javaClassName.data());
-            if (type == array_type)
+            JavaType type = javaTypeFromClassName(javaClassName.data());
+            if (type == JavaTypeArray)
                 appendClassName(signatureBuilder, javaClassName.data());
             else {
-                signatureBuilder.append(signatureFromPrimitiveType(type));
-                if (type == object_type) {
+                signatureBuilder.append(signatureFromJavaType(type));
+                if (type == JavaTypeObject) {
                     appendClassName(signatureBuilder, javaClassName.data());
                     signatureBuilder.append(';');
                 }
@@ -139,12 +139,12 @@ const char* JavaMethod::signature() const
         }
         signatureBuilder.append(')');
 
-        const char* returnType = m_returnType.utf8();
-        if (m_JNIReturnType == array_type)
+        const char* returnType = m_returnTypeClassName.utf8();
+        if (m_returnType == JavaTypeArray)
             appendClassName(signatureBuilder, returnType);
         else {
-            signatureBuilder.append(signatureFromPrimitiveType(m_JNIReturnType));
-            if (m_JNIReturnType == object_type) {
+            signatureBuilder.append(signatureFromJavaType(m_returnType));
+            if (m_returnType == JavaTypeObject) {
                 appendClassName(signatureBuilder, returnType);
                 signatureBuilder.append(';');
             }
@@ -155,11 +155,6 @@ const char* JavaMethod::signature() const
     }
 
     return m_signature;
-}
-
-JNIType JavaMethod::JNIReturnType() const
-{
-    return m_JNIReturnType;
 }
 
 jmethodID JavaMethod::methodID(jobject obj) const

@@ -36,16 +36,16 @@ namespace JSC {
 
 namespace Bindings {
 
-jvalue convertNPVariantToJValue(NPVariant value, const WTF::String& javaType)
+jvalue convertNPVariantToJValue(NPVariant value, const WTF::String& javaClass)
 {
-    CString javaClassName = javaType.utf8();
-    JNIType jniType = JNITypeFromClassName(javaClassName.data());
+    CString javaClassName = javaClass.utf8();
+    JavaType javaType = javaTypeFromClassName(javaClassName.data());
     jvalue result;
     NPVariantType type = value.type;
 
-    switch (jniType) {
-    case array_type:
-    case object_type:
+    switch (javaType) {
+    case JavaTypeArray:
+    case JavaTypeObject:
         {
             result.l = static_cast<jobject>(0);
 
@@ -80,7 +80,7 @@ jvalue convertNPVariantToJValue(NPVariant value, const WTF::String& javaType)
         }
         break;
 
-    case boolean_type:
+    case JavaTypeBoolean:
         {
             if (type == NPVariantType_Bool)
                 result.z = NPVARIANT_TO_BOOLEAN(value);
@@ -89,7 +89,7 @@ jvalue convertNPVariantToJValue(NPVariant value, const WTF::String& javaType)
         }
         break;
 
-    case byte_type:
+    case JavaTypeByte:
         {
             if (type == NPVariantType_Int32)
                 result.b = static_cast<jbyte>(NPVARIANT_TO_INT32(value));
@@ -100,7 +100,7 @@ jvalue convertNPVariantToJValue(NPVariant value, const WTF::String& javaType)
         }
         break;
 
-    case char_type:
+    case JavaTypeChar:
         {
             if (type == NPVariantType_Int32)
                 result.c = static_cast<char>(NPVARIANT_TO_INT32(value));
@@ -109,7 +109,7 @@ jvalue convertNPVariantToJValue(NPVariant value, const WTF::String& javaType)
         }
         break;
 
-    case short_type:
+    case JavaTypeShort:
         {
             if (type == NPVariantType_Int32)
                 result.s = static_cast<jshort>(NPVARIANT_TO_INT32(value));
@@ -120,7 +120,7 @@ jvalue convertNPVariantToJValue(NPVariant value, const WTF::String& javaType)
         }
         break;
 
-    case int_type:
+    case JavaTypeInt:
         {
             if (type == NPVariantType_Int32)
                 result.i = static_cast<jint>(NPVARIANT_TO_INT32(value));
@@ -131,7 +131,7 @@ jvalue convertNPVariantToJValue(NPVariant value, const WTF::String& javaType)
         }
         break;
 
-    case long_type:
+    case JavaTypeLong:
         {
             if (type == NPVariantType_Int32)
                 result.j = static_cast<jlong>(NPVARIANT_TO_INT32(value));
@@ -142,7 +142,7 @@ jvalue convertNPVariantToJValue(NPVariant value, const WTF::String& javaType)
         }
         break;
 
-    case float_type:
+    case JavaTypeFloat:
         {
             if (type == NPVariantType_Int32)
                 result.f = static_cast<jfloat>(NPVARIANT_TO_INT32(value));
@@ -153,7 +153,7 @@ jvalue convertNPVariantToJValue(NPVariant value, const WTF::String& javaType)
         }
         break;
 
-    case double_type:
+    case JavaTypeDouble:
         {
             if (type == NPVariantType_Int32)
                 result.d = static_cast<jdouble>(NPVARIANT_TO_INT32(value));
@@ -166,9 +166,9 @@ jvalue convertNPVariantToJValue(NPVariant value, const WTF::String& javaType)
 
         break;
 
-    case invalid_type:
+    case JavaTypeInvalid:
     default:
-    case void_type:
+    case JavaTypeVoid:
         {
             memset(&result, 0, sizeof(jvalue));
         }
@@ -178,16 +178,16 @@ jvalue convertNPVariantToJValue(NPVariant value, const WTF::String& javaType)
 }
 
 
-void convertJValueToNPVariant(jvalue value, JNIType jniType, const char* javaTypeName, NPVariant* result)
+void convertJValueToNPVariant(jvalue value, JavaType javaType, const char* javaTypeName, NPVariant* result)
 {
-    switch (jniType) {
-    case void_type:
+    switch (javaType) {
+    case JavaTypeVoid:
         {
             VOID_TO_NPVARIANT(*result);
         }
         break;
 
-    case object_type:
+    case JavaTypeObject:
         {
             if (value.l) {
                 if (!strcmp(javaTypeName, "java.lang.String")) {
@@ -203,56 +203,56 @@ void convertJValueToNPVariant(jvalue value, JNIType jniType, const char* javaTyp
         }
         break;
 
-    case boolean_type:
+    case JavaTypeBoolean:
         {
             BOOLEAN_TO_NPVARIANT(value.z, *result);
         }
         break;
 
-    case byte_type:
+    case JavaTypeByte:
         {
             INT32_TO_NPVARIANT(value.b, *result);
         }
         break;
 
-    case char_type:
+    case JavaTypeChar:
         {
             INT32_TO_NPVARIANT(value.c, *result);
         }
         break;
 
-    case short_type:
+    case JavaTypeShort:
         {
             INT32_TO_NPVARIANT(value.s, *result);
         }
         break;
 
-    case int_type:
+    case JavaTypeInt:
         {
             INT32_TO_NPVARIANT(value.i, *result);
         }
         break;
 
         // TODO: Check if cast to double is needed.
-    case long_type:
+    case JavaTypeLong:
         {
             DOUBLE_TO_NPVARIANT(value.j, *result);
         }
         break;
 
-    case float_type:
+    case JavaTypeFloat:
         {
             DOUBLE_TO_NPVARIANT(value.f, *result);
         }
         break;
 
-    case double_type:
+    case JavaTypeDouble:
         {
             DOUBLE_TO_NPVARIANT(value.d, *result);
         }
         break;
 
-    case invalid_type:
+    case JavaTypeInvalid:
     default:
         {
             VOID_TO_NPVARIANT(*result);

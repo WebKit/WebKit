@@ -1,3 +1,72 @@
+2011-03-11  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        JNIType is not specific to JNI so should be renamed
+        https://bugs.webkit.org/show_bug.cgi?id=56197
+
+        This patch renames JNIType to JavaType, renames the values of
+        the enum, and moves it out of JNIUtility.h to its own file.
+        Also renames the corresponding JavaField and JavaMethod getters.
+
+        No new tests, refactoring only.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/jni/JNIUtility.cpp:
+        (JSC::Bindings::javaTypeFromClassName):
+        (JSC::Bindings::signatureFromJavaType):
+        (JSC::Bindings::javaTypeFromPrimitiveType):
+        (JSC::Bindings::getJNIField):
+        (JSC::Bindings::callJNIMethod):
+        * bridge/jni/JNIUtility.h:
+        * bridge/jni/JavaMethod.cpp:
+        (JavaMethod::JavaMethod):
+        (JavaMethod::signature):
+        * bridge/jni/JavaMethod.h:
+        (JSC::Bindings::JavaMethod::returnTypeClassName):
+        (JSC::Bindings::JavaMethod::returnType):
+        * bridge/jni/JavaType.h: Copied from Source/WebCore/bridge/jni/JavaMethod.h.
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::toString):
+        * bridge/jni/jni_objc.mm:
+        (JSC::Bindings::dispatchJNICall):
+        * bridge/jni/jsc/JNIUtilityPrivate.cpp:
+        (JSC::Bindings::convertArrayInstanceToJavaArray):
+        (JSC::Bindings::convertValueToJValue):
+        * bridge/jni/jsc/JNIUtilityPrivate.h:
+        * bridge/jni/jsc/JavaArrayJSC.cpp:
+        (JavaArray::setValueAt):
+        (JavaArray::valueAt):
+        * bridge/jni/jsc/JavaClassJSC.cpp:
+        * bridge/jni/jsc/JavaFieldJSC.cpp:
+        (JavaField::JavaField):
+        (JavaField::dispatchValueFromInstance):
+        (JavaField::valueFromInstance):
+        (JavaField::dispatchSetValueToInstance):
+        (JavaField::setValueToInstance):
+        * bridge/jni/jsc/JavaFieldJSC.h:
+        (JSC::Bindings::JavaField::typeClassName):
+        (JSC::Bindings::JavaField::type):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::invokeMethod):
+        * bridge/jni/v8/JNIUtilityPrivate.cpp:
+        (JSC::Bindings::convertNPVariantToJValue):
+        (JSC::Bindings::convertJValueToNPVariant):
+        * bridge/jni/v8/JNIUtilityPrivate.h:
+        * bridge/jni/v8/JavaFieldV8.cpp:
+        (JavaField::JavaField):
+        * bridge/jni/v8/JavaFieldV8.h:
+        (JSC::Bindings::JavaField::typeClassName):
+        (JSC::Bindings::JavaField::type):
+        * bridge/jni/v8/JavaInstanceV8.cpp:
+        (JavaInstance::invokeMethod):
+        (JavaInstance::getField):
+        * bridge/jni/v8/JavaNPObjectV8.cpp:
+        (JSC::Bindings::JavaNPObjectInvoke):
+        (JSC::Bindings::JavaNPObjectGetProperty):
+
 2011-03-24  Ojan Vafai  <ojan@chromium.org>
 
         Was being a little braindead when I committed this.

@@ -75,7 +75,7 @@ void JavaArray::setValueAt(ExecState* exec, unsigned index, JSValue aValue) cons
     JNIEnv* env = getJNIEnv();
     char* javaClassName = 0;
 
-    JNIType arrayType = JNITypeFromPrimitiveType(m_type[1]);
+    JavaType arrayType = javaTypeFromPrimitiveType(m_type[1]);
     if (m_type[1] == 'L') {
         // The type of the array will be something like:
         // "[Ljava.lang.string;". This is guaranteed, so no need
@@ -86,54 +86,54 @@ void JavaArray::setValueAt(ExecState* exec, unsigned index, JSValue aValue) cons
     jvalue aJValue = convertValueToJValue(exec, m_rootObject.get(), aValue, arrayType, javaClassName);
 
     switch (arrayType) {
-    case object_type:
+    case JavaTypeObject:
         {
             env->SetObjectArrayElement(static_cast<jobjectArray>(javaArray()), index, aJValue.l);
             break;
         }
 
-    case boolean_type:
+    case JavaTypeBoolean:
         {
             env->SetBooleanArrayRegion(static_cast<jbooleanArray>(javaArray()), index, 1, &aJValue.z);
             break;
         }
 
-    case byte_type:
+    case JavaTypeByte:
         {
             env->SetByteArrayRegion(static_cast<jbyteArray>(javaArray()), index, 1, &aJValue.b);
             break;
         }
 
-    case char_type:
+    case JavaTypeChar:
         {
             env->SetCharArrayRegion(static_cast<jcharArray>(javaArray()), index, 1, &aJValue.c);
             break;
         }
 
-    case short_type:
+    case JavaTypeShort:
         {
             env->SetShortArrayRegion(static_cast<jshortArray>(javaArray()), index, 1, &aJValue.s);
             break;
         }
 
-    case int_type:
+    case JavaTypeInt:
         {
             env->SetIntArrayRegion(static_cast<jintArray>(javaArray()), index, 1, &aJValue.i);
             break;
         }
 
-    case long_type:
+    case JavaTypeLong:
         {
             env->SetLongArrayRegion(static_cast<jlongArray>(javaArray()), index, 1, &aJValue.j);
         }
 
-    case float_type:
+    case JavaTypeFloat:
         {
             env->SetFloatArrayRegion(static_cast<jfloatArray>(javaArray()), index, 1, &aJValue.f);
             break;
         }
 
-    case double_type:
+    case JavaTypeDouble:
         {
             env->SetDoubleArrayRegion(static_cast<jdoubleArray>(javaArray()), index, 1, &aJValue.d);
             break;
@@ -149,9 +149,9 @@ void JavaArray::setValueAt(ExecState* exec, unsigned index, JSValue aValue) cons
 JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
 {
     JNIEnv* env = getJNIEnv();
-    JNIType arrayType = JNITypeFromPrimitiveType(m_type[1]);
+    JavaType arrayType = javaTypeFromPrimitiveType(m_type[1]);
     switch (arrayType) {
-    case object_type:
+    case JavaTypeObject:
         {
             jobjectArray objectArray = static_cast<jobjectArray>(javaArray());
             jobject anObject;
@@ -168,7 +168,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             return JavaInstance::create(anObject, rootObject())->createRuntimeObject(exec);
         }
 
-    case boolean_type:
+    case JavaTypeBoolean:
         {
             jbooleanArray booleanArray = static_cast<jbooleanArray>(javaArray());
             jboolean aBoolean;
@@ -176,7 +176,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             return jsBoolean(aBoolean);
         }
 
-    case byte_type:
+    case JavaTypeByte:
         {
             jbyteArray byteArray = static_cast<jbyteArray>(javaArray());
             jbyte aByte;
@@ -184,7 +184,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             return jsNumber(aByte);
         }
 
-    case char_type:
+    case JavaTypeChar:
         {
             jcharArray charArray = static_cast<jcharArray>(javaArray());
             jchar aChar;
@@ -193,7 +193,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             break;
         }
 
-    case short_type:
+    case JavaTypeShort:
         {
             jshortArray shortArray = static_cast<jshortArray>(javaArray());
             jshort aShort;
@@ -201,7 +201,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             return jsNumber(aShort);
         }
 
-    case int_type:
+    case JavaTypeInt:
         {
             jintArray intArray = static_cast<jintArray>(javaArray());
             jint anInt;
@@ -209,7 +209,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             return jsNumber(anInt);
         }
 
-    case long_type:
+    case JavaTypeLong:
         {
             jlongArray longArray = static_cast<jlongArray>(javaArray());
             jlong aLong;
@@ -217,7 +217,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             return jsNumber(aLong);
         }
 
-    case float_type:
+    case JavaTypeFloat:
         {
             jfloatArray floatArray = static_cast<jfloatArray>(javaArray());
             jfloat aFloat;
@@ -225,7 +225,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             return jsNumber(aFloat);
         }
 
-    case double_type:
+    case JavaTypeDouble:
         {
             jdoubleArray doubleArray = static_cast<jdoubleArray>(javaArray());
             jdouble aDouble;

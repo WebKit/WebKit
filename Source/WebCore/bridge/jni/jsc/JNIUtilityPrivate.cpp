@@ -53,8 +53,8 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
     jobjectArray jarray = 0;
 
     // Build the correct array type
-    switch (JNITypeFromPrimitiveType(javaClassName[1])) {
-    case object_type:
+    switch (javaTypeFromPrimitiveType(javaClassName[1])) {
+    case JavaTypeObject:
             {
             // Only support string object types
             if (!strcmp("[Ljava.lang.String;", javaClassName)) {
@@ -71,7 +71,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
             break;
         }
 
-    case boolean_type:
+    case JavaTypeBoolean:
         {
             jarray = (jobjectArray)env->NewBooleanArray(length);
             for (unsigned i = 0; i < length; i++) {
@@ -82,7 +82,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
             break;
         }
 
-    case byte_type:
+    case JavaTypeByte:
         {
             jarray = (jobjectArray)env->NewByteArray(length);
             for (unsigned i = 0; i < length; i++) {
@@ -93,7 +93,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
             break;
         }
 
-    case char_type:
+    case JavaTypeChar:
         {
             jarray = (jobjectArray)env->NewCharArray(length);
             for (unsigned i = 0; i < length; i++) {
@@ -107,7 +107,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
             break;
         }
 
-    case short_type:
+    case JavaTypeShort:
         {
             jarray = (jobjectArray)env->NewShortArray(length);
             for (unsigned i = 0; i < length; i++) {
@@ -118,7 +118,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
             break;
         }
 
-    case int_type:
+    case JavaTypeInt:
         {
             jarray = (jobjectArray)env->NewIntArray(length);
             for (unsigned i = 0; i < length; i++) {
@@ -129,7 +129,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
             break;
         }
 
-    case long_type:
+    case JavaTypeLong:
         {
             jarray = (jobjectArray)env->NewLongArray(length);
             for (unsigned i = 0; i < length; i++) {
@@ -140,7 +140,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
             break;
         }
 
-    case float_type:
+    case JavaTypeFloat:
         {
             jarray = (jobjectArray)env->NewFloatArray(length);
             for (unsigned i = 0; i < length; i++) {
@@ -151,7 +151,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
             break;
         }
 
-    case double_type:
+    case JavaTypeDouble:
         {
             jarray = (jobjectArray)env->NewDoubleArray(length);
             for (unsigned i = 0; i < length; i++) {
@@ -162,9 +162,9 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
             break;
         }
 
-    case array_type: // don't handle embedded arrays
-    case void_type: // Don't expect arrays of void objects
-    case invalid_type: // Array of unknown objects
+    case JavaTypeArray: // don't handle embedded arrays
+    case JavaTypeVoid: // Don't expect arrays of void objects
+    case JavaTypeInvalid: // Array of unknown objects
         break;
     }
 
@@ -172,16 +172,16 @@ static jobject convertArrayInstanceToJavaArray(ExecState* exec, JSArray* jsArray
     return jarray;
 }
 
-jvalue convertValueToJValue(ExecState* exec, RootObject* rootObject, JSValue value, JNIType jniType, const char* javaClassName)
+jvalue convertValueToJValue(ExecState* exec, RootObject* rootObject, JSValue value, JavaType javaType, const char* javaClassName)
 {
     JSLock lock(SilenceAssertionsOnly);
 
     jvalue result;
     memset(&result, 0, sizeof(jvalue));
 
-    switch (jniType) {
-    case array_type:
-    case object_type:
+    switch (javaType) {
+    case JavaTypeArray:
+    case JavaTypeObject:
         {
             // FIXME: JavaJSObject::convertValueToJObject functionality is almost exactly the same,
             // these functions should use common code.
@@ -258,56 +258,56 @@ jvalue convertValueToJValue(ExecState* exec, RootObject* rootObject, JSValue val
         }
         break;
 
-    case boolean_type:
+    case JavaTypeBoolean:
         {
             result.z = (jboolean)value.toNumber(exec);
         }
         break;
 
-    case byte_type:
+    case JavaTypeByte:
         {
             result.b = (jbyte)value.toNumber(exec);
         }
         break;
 
-    case char_type:
+    case JavaTypeChar:
         {
             result.c = (jchar)value.toNumber(exec);
         }
         break;
 
-    case short_type:
+    case JavaTypeShort:
         {
             result.s = (jshort)value.toNumber(exec);
         }
         break;
 
-    case int_type:
+    case JavaTypeInt:
         {
             result.i = (jint)value.toNumber(exec);
         }
         break;
 
-    case long_type:
+    case JavaTypeLong:
         {
             result.j = (jlong)value.toNumber(exec);
         }
         break;
 
-    case float_type:
+    case JavaTypeFloat:
         {
             result.f = (jfloat)value.toNumber(exec);
         }
         break;
 
-    case double_type:
+    case JavaTypeDouble:
         {
             result.d = (jdouble)value.toNumber(exec);
         }
         break;
 
-    case invalid_type:
-    case void_type:
+    case JavaTypeInvalid:
+    case JavaTypeVoid:
         break;
     }
     return result;

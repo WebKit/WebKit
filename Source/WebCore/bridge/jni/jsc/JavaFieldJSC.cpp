@@ -48,9 +48,9 @@ JavaField::JavaField(JNIEnv* env, jobject aField)
         fieldTypeName = static_cast<jstring>(callJNIMethod<jobject>(fieldType, "getName", "()Ljava/lang/String;"));
     if (!fieldTypeName)
         fieldTypeName = env->NewStringUTF("<Unknown>");
-    m_type = JavaString(env, fieldTypeName);
+    m_typeClassName = JavaString(env, fieldTypeName);
 
-    m_JNIType = JNITypeFromClassName(m_type.utf8());
+    m_type = javaTypeFromClassName(m_typeClassName.utf8());
 
     // Get field name
     jstring fieldName = static_cast<jstring>(callJNIMethod<jobject>(aField, "getName", "()Ljava/lang/String;"));
@@ -61,7 +61,7 @@ JavaField::JavaField(JNIEnv* env, jobject aField)
     m_field = new JobjectWrapper(aField);
 }
 
-jvalue JavaField::dispatchValueFromInstance(ExecState* exec, const JavaInstance* instance, const char* name, const char* sig, JNIType returnType) const
+jvalue JavaField::dispatchValueFromInstance(ExecState* exec, const JavaInstance* instance, const char* name, const char* sig, JavaType returnType) const
 {
     jobject jinstance = instance->javaInstance();
     jobject fieldJInstance = m_field->m_instance;
@@ -94,17 +94,17 @@ JSValue JavaField::valueFromInstance(ExecState* exec, const Instance* i) const
 
     JSValue jsresult = jsUndefined();
 
-    switch (m_JNIType) {
-    case array_type:
-    case object_type:
+    switch (m_type) {
+    case JavaTypeArray:
+    case JavaTypeObject:
         {
-            jvalue result = dispatchValueFromInstance(exec, instance, "get", "(Ljava/lang/Object;)Ljava/lang/Object;", object_type);
+            jvalue result = dispatchValueFromInstance(exec, instance, "get", "(Ljava/lang/Object;)Ljava/lang/Object;", JavaTypeObject);
             jobject anObject = result.l;
 
             if (!anObject)
                 return jsNull();
 
-            const char* arrayType = type();
+            const char* arrayType = typeClassName();
             if (arrayType[0] == '[')
                 jsresult = JavaArray::convertJObjectToArray(exec, anObject, arrayType, instance->rootObject());
             else if (anObject)
@@ -112,29 +112,29 @@ JSValue JavaField::valueFromInstance(ExecState* exec, const Instance* i) const
         }
         break;
 
-    case boolean_type:
-        jsresult = jsBoolean(dispatchValueFromInstance(exec, instance, "getBoolean", "(Ljava/lang/Object;)Z", boolean_type).z);
+    case JavaTypeBoolean:
+        jsresult = jsBoolean(dispatchValueFromInstance(exec, instance, "getBoolean", "(Ljava/lang/Object;)Z", JavaTypeBoolean).z);
         break;
 
-    case byte_type:
-    case char_type:
-    case short_type:
+    case JavaTypeByte:
+    case JavaTypeChar:
+    case JavaTypeShort:
 
-    case int_type:
+    case JavaTypeInt:
         {
             jint value;
-            jvalue result = dispatchValueFromInstance(exec, instance, "getInt", "(Ljava/lang/Object;)I", int_type);
+            jvalue result = dispatchValueFromInstance(exec, instance, "getInt", "(Ljava/lang/Object;)I", JavaTypeInt);
             value = result.i;
             jsresult = jsNumber(static_cast<int>(value));
         }
         break;
 
-    case long_type:
-    case float_type:
-    case double_type:
+    case JavaTypeLong:
+    case JavaTypeFloat:
+    case JavaTypeDouble:
         {
             jdouble value;
-            jvalue result = dispatchValueFromInstance(exec, instance, "getDouble", "(Ljava/lang/Object;)D", double_type);
+            jvalue result = dispatchValueFromInstance(exec, instance, "getDouble", "(Ljava/lang/Object;)D", JavaTypeDouble);
             value = result.i;
             jsresult = jsNumber(static_cast<double>(value));
         }
@@ -166,7 +166,7 @@ void JavaField::dispatchSetValueToInstance(ExecState* exec, const JavaInstance* 
 
                 args[0].l = jinstance;
                 args[1] = javaValue;
-                dispatchJNICall(exec, rootObject->nativeHandle(), fieldJInstance, false, void_type, mid, args, result, 0, exceptionDescription);
+                dispatchJNICall(exec, rootObject->nativeHandle(), fieldJInstance, false, JavaTypeVoid, mid, args, result, 0, exceptionDescription);
                 if (exceptionDescription)
                     throwError(exec, createError(exec, exceptionDescription.toString(exec)));
             }
@@ -177,61 +177,61 @@ void JavaField::dispatchSetValueToInstance(ExecState* exec, const JavaInstance* 
 void JavaField::setValueToInstance(ExecState* exec, const Instance* i, JSValue aValue) const
 {
     const JavaInstance* instance = static_cast<const JavaInstance*>(i);
-    jvalue javaValue = convertValueToJValue(exec, i->rootObject(), aValue, m_JNIType, type());
+    jvalue javaValue = convertValueToJValue(exec, i->rootObject(), aValue, m_type, typeClassName());
 
     LOG(LiveConnect, "JavaField::setValueToInstance setting value %s to %s", UString(name().impl()).utf8().data(), aValue.toString(exec).ascii().data());
 
-    switch (m_JNIType) {
-    case array_type:
-    case object_type:
+    switch (m_type) {
+    case JavaTypeArray:
+    case JavaTypeObject:
         {
             dispatchSetValueToInstance(exec, instance, javaValue, "set", "(Ljava/lang/Object;Ljava/lang/Object;)V");
         }
         break;
 
-    case boolean_type:
+    case JavaTypeBoolean:
         {
             dispatchSetValueToInstance(exec, instance, javaValue, "setBoolean", "(Ljava/lang/Object;Z)V");
         }
         break;
 
-    case byte_type:
+    case JavaTypeByte:
         {
             dispatchSetValueToInstance(exec, instance, javaValue, "setByte", "(Ljava/lang/Object;B)V");
         }
         break;
 
-    case char_type:
+    case JavaTypeChar:
         {
             dispatchSetValueToInstance(exec, instance, javaValue, "setChar", "(Ljava/lang/Object;C)V");
         }
         break;
 
-    case short_type:
+    case JavaTypeShort:
         {
             dispatchSetValueToInstance(exec, instance, javaValue, "setShort", "(Ljava/lang/Object;S)V");
         }
         break;
 
-    case int_type:
+    case JavaTypeInt:
         {
             dispatchSetValueToInstance(exec, instance, javaValue, "setInt", "(Ljava/lang/Object;I)V");
         }
         break;
 
-    case long_type:
+    case JavaTypeLong:
         {
             dispatchSetValueToInstance(exec, instance, javaValue, "setLong", "(Ljava/lang/Object;J)V");
         }
         break;
 
-    case float_type:
+    case JavaTypeFloat:
         {
             dispatchSetValueToInstance(exec, instance, javaValue, "setFloat", "(Ljava/lang/Object;F)V");
         }
         break;
 
-    case double_type:
+    case JavaTypeDouble:
         {
             dispatchSetValueToInstance(exec, instance, javaValue, "setDouble", "(Ljava/lang/Object;D)V");
         }

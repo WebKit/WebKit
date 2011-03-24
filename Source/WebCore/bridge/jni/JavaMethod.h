@@ -30,9 +30,8 @@
 #if ENABLE(JAVA_BRIDGE)
 
 #include "Bridge.h"
-#include "JNIUtility.h"
-
 #include "JavaString.h"
+#include "JavaType.h"
 
 namespace JSC {
 
@@ -46,12 +45,12 @@ public:
     ~JavaMethod();
 
     const JavaString& name() const { return m_name; }
-    RuntimeType returnType() const { return m_returnType.utf8(); }
+    RuntimeType returnTypeClassName() const { return m_returnTypeClassName.utf8(); }
     const WTF::String& parameterAt(int i) const { return m_parameters[i]; }
     int numParameters() const { return m_parameters.size(); }
 
     const char* signature() const;
-    JNIType JNIReturnType() const;
+    JavaType returnType() const { return m_returnType; }
 
     jmethodID methodID(jobject obj) const;
 
@@ -61,8 +60,8 @@ private:
     Vector<WTF::String> m_parameters;
     JavaString m_name;
     mutable char* m_signature;
-    JavaString m_returnType;
-    JNIType m_JNIReturnType;
+    JavaString m_returnTypeClassName;
+    JavaType m_returnType;
     mutable jmethodID m_methodID;
     bool m_isStatic;
 };

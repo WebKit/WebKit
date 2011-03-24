@@ -28,31 +28,31 @@
 #if ENABLE(JAVA_BRIDGE)
 
 #import <Foundation/Foundation.h>
-#import "JNIUtility.h"
 #import "JNIUtilityPrivate.h"
+#import "JavaType.h"
 #import "objc_utility.h"
 #include <runtime/JSLock.h>
 
 using namespace JSC::Bindings;
 
 @interface NSObject (WebScriptingPrivate)
-- (jvalue)webPlugInCallJava:(jobject)object method:(jmethodID)method returnType:(JNIType)returnType arguments:(jvalue*)args;
+- (jvalue)webPlugInCallJava:(jobject)object method:(jmethodID)method returnType:(JavaType)returnType arguments:(jvalue*)args;
 - (jvalue)webPlugInCallJava:(jobject)object
                    isStatic:(BOOL)isStatic
-                 returnType:(JNIType)returnType
+                 returnType:(JavaType)returnType
                      method:(jmethodID)method
                   arguments:(jvalue*)args
                  callingURL:(NSURL *)url
        exceptionDescription:(NSString **)exceptionString;
 @end
 
-bool JSC::Bindings::dispatchJNICall(ExecState* exec, const void* targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue* args, jvalue &result, const char*, JSValue& exceptionDescription)
+bool JSC::Bindings::dispatchJNICall(ExecState* exec, const void* targetAppletView, jobject obj, bool isStatic, JavaType returnType, jmethodID methodID, jvalue* args, jvalue &result, const char*, JSValue& exceptionDescription)
 {
     id view = (id)targetAppletView;
     
-    // As array_type is not known by the Mac JVM, change it to a compatible type.
-    if (returnType == array_type)
-        returnType = object_type;
+    // As JavaTypeArray is not known by the Mac JVM, change it to a compatible type.
+    if (returnType == JavaTypeArray)
+        returnType = JavaTypeObject;
     
     if ([view respondsToSelector:@selector(webPlugInCallJava:isStatic:returnType:method:arguments:callingURL:exceptionDescription:)]) {
         NSString *_exceptionDescription = 0;
