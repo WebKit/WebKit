@@ -1,3 +1,12 @@
+2011-03-24  Ojan Vafai  <ojan@chromium.org>
+
+        Was being a little braindead when I committed this.
+        Only simple selectors are allowed, but sibling selectors
+        are sibling selectors.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::collectFeaturesFromList):
+
 2011-03-23  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

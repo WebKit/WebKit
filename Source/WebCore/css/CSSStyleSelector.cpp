@@ -3325,7 +3325,7 @@ static void collectFeaturesFromList(CSSStyleSelector::Features& features, const 
 
             if (CSSSelectorList* selectorList = selector->selectorList()) {
                 for (CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-                    ASSERT(!subSelector->isSiblingSelector());
+                    // FIXME: handle sibling selectors here.
                     collectFeaturesFromSelector(features, subSelector);
                 }
             }
