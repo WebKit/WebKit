@@ -90,7 +90,7 @@ inline bool isfinite(double x) { return finite(x) && !isnand(x); }
 inline bool isinf(double x) { return !finite(x) && !isnand(x); }
 #endif
 #ifndef signbit
-inline bool signbit(double x) { return x < 0.0; } // FIXME: Wrong for negative 0.
+inline bool signbit(double x) { return copysign(1.0, x) < 0; }
 #endif
 
 #endif
