@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -191,7 +191,7 @@ private:
     
     virtual PassRefPtr<WebCore::Widget> createJavaAppletWidget(const WebCore::IntSize&, WebCore::HTMLAppletElement*, const WebCore::KURL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues);
     
-    virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL& url, const String& mimeType);
+    virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL&, const String& mimeType, bool shouldPreferPlugInsForImages);
     virtual String overrideMediaType() const;
 
     virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld*);

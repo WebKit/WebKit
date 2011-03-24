@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Stefan Schimanski (1Stein@gmx.de)
- * Copyright (C) 2004, 2005, 2006, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2008, 2009, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -46,7 +46,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 inline HTMLEmbedElement::HTMLEmbedElement(const QualifiedName& tagName, Document* document, bool createdByParser)
-    : HTMLPlugInImageElement(tagName, document, createdByParser)
+    : HTMLPlugInImageElement(tagName, document, createdByParser, ShouldPreferPlugInsForImages)
 {
     ASSERT(hasTagName(embedTag));
 }

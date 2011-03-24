@@ -1,3 +1,50 @@
+2011-03-24  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r70748): latest nightly builds kills AC_QuickTime.js
+        https://bugs.webkit.org/show_bug.cgi?id=49016
+
+        AC_QuickTime.js uses the common <object>/<embed> paradigm to embed the
+        QuickTime plug-in in web pages. r70748 removed our mapping of classids
+        to MIME types, which causes WebKit to fall back from the object to the
+        embed tag when QuickTime is embedded by this script. The script emits
+        the following embed tag to embed a QuickTime movie with a poster frame:
+
+        <embed src="poster-frame.png" target="quicktimeplayer" href="movie.mov">
+
+        The expectation is that a QuickTime plug-in is instantiated to display the
+        poster frame, since QuickTime registers for many common image MIME
+        types. This is how Gecko behaves for embed. However, WebKit prefers to
+        use its native image rendering for image embeds, in which case no movie
+        is played when the poster frame is clicked.
+
+        Fix this by changing embed to check for a plug-in that can handle the
+        image type before rendering the image natively. This matches Gecko.
+
+        Test: fast/images/embed-image-plugins-disabled.html
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parametersForPlugin):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement):
+        (WebCore::HTMLPlugInImageElement::isImageType):
+        (WebCore::HTMLPlugInImageElement::wouldLoadAsNetscapePlugin):
+        * html/HTMLPlugInImageElement.h:
+        (WebCore::HTMLPlugInImageElement::preferPluginsForImages):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::objectContentType):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::defaultObjectContentType):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::resourceWillUsePlugin):
+        (WebCore::SubframeLoader::requestPlugin):
+        (WebCore::SubframeLoader::requestObject):
+        (WebCore::SubframeLoader::shouldUsePlugin):
+        * loader/SubframeLoader.h:
+
 2011-03-24  Mike Reed  <reed@google.com>
 
         Reviewed by James Robinson.

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Kevin Ollivier <kevino@theolliviers.com>
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * All rights reserved.
  *
@@ -217,7 +218,7 @@ namespace WebCore {
         
         virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues);
 
-        virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
+        virtual ObjectContentType objectContentType(const KURL&, const String& mimeType, bool shouldPreferPlugInsForImages);
         virtual String overrideMediaType() const;
 
         virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld*);

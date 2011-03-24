@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,6 +33,11 @@ enum PluginCreationOption {
     CreateAnyWidgetType,
     CreateOnlyNonNetscapePlugins,
 };
+    
+enum PreferPlugInsForImagesOption {
+    ShouldPreferPlugInsForImages,
+    ShouldNotPreferPlugInsForImages
+};
 
 // Base class for HTMLObjectElement and HTMLEmbedElement
 class HTMLPlugInImageElement : public HTMLPlugInElement {
@@ -43,9 +48,10 @@ public:
 
     const String& serviceType() const { return m_serviceType; }
     const String& url() const { return m_url; }
+    bool shouldPreferPlugInsForImages() const { return m_shouldPreferPlugInsForImages; }
 
 protected:
-    HTMLPlugInImageElement(const QualifiedName& tagName, Document*, bool createdByParser);
+    HTMLPlugInImageElement(const QualifiedName& tagName, Document*, bool createdByParser, PreferPlugInsForImagesOption);
 
     bool isImageType();
 
@@ -75,6 +81,7 @@ private:
     virtual bool useFallbackContent() const { return false; }
     
     bool m_needsWidgetUpdate;
+    bool m_shouldPreferPlugInsForImages;
 };
 
 } // namespace WebCore

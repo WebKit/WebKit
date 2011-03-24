@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  *
@@ -77,15 +77,16 @@ public:
 
     bool containsPlugins() const { return m_containsPlugins; }
     
-    bool resourceWillUsePlugin(const String& url, const String& mimeType);
+    bool resourceWillUsePlugin(const String& url, const String& mimeType, bool shouldPreferPlugInsForImages);
 
 private:
+    bool requestPlugin(HTMLPlugInImageElement*, const KURL&, const String& serviceType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
     Frame* loadOrRedirectSubframe(HTMLFrameOwnerElement*, const KURL&, const AtomicString& frameName, bool lockHistory, bool lockBackForwardList);
     Frame* loadSubframe(HTMLFrameOwnerElement*, const KURL&, const String& name, const String& referrer);
     bool loadPlugin(HTMLPlugInImageElement*, const KURL&, const String& mimeType,
         const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback);
 
-    bool shouldUsePlugin(const KURL&, const String& mimeType, bool hasFallback, bool& useFallback);
+    bool shouldUsePlugin(const KURL&, const String& mimeType, bool shouldPreferPlugInsForImages, bool hasFallback, bool& useFallback);
 
     Document* document() const;
 

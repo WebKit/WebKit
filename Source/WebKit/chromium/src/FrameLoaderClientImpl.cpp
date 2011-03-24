@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -1479,7 +1480,8 @@ PassRefPtr<Widget> FrameLoaderClientImpl::createJavaAppletWidget(
 
 ObjectContentType FrameLoaderClientImpl::objectContentType(
     const KURL& url,
-    const String& explicitMimeType)
+    const String& explicitMimeType,
+    bool shouldPreferPlugInsForImages)
 {
     // This code is based on Apple's implementation from
     // WebCoreSupport/WebFrameBridge.mm.
@@ -1503,12 +1505,14 @@ ObjectContentType FrameLoaderClientImpl::objectContentType(
             return ObjectContentFrame;
     }
 
-    if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-        return ObjectContentImage;
-
     // If Chrome is started with the --disable-plugins switch, pluginData is 0.
     PluginData* pluginData = m_webFrame->frame()->page()->pluginData();
-    if (pluginData && pluginData->supportsMimeType(mimeType))
+    bool plugInSupportsMIMEType = pluginData && pluginData->supportsMimeType(mimeType);
+
+    if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+        return shouldPreferPlugInsForImages && plugInSupportsMIMEType ? return ObjectContentNetscapePlugin : return ObjectContentImage;
+
+    if (plugInSupportsMIMEType)
         return ObjectContentNetscapePlugin;
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))

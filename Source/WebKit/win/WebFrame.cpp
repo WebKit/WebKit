@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1899,9 +1899,9 @@ PassRefPtr<Widget> WebFrame::createJavaAppletWidget(const IntSize& pluginSize, H
     return pluginView;
 }
 
-ObjectContentType WebFrame::objectContentType(const KURL& url, const String& mimeType)
+ObjectContentType WebFrame::objectContentType(const KURL& url, const String& mimeType, bool shouldPreferPlugInsForImages)
 {
-    return WebCore::FrameLoader::defaultObjectContentType(url, mimeType);
+    return WebCore::FrameLoader::defaultObjectContentType(url, mimeType, shouldPreferPlugInsForImages);
 }
 
 String WebFrame::overrideMediaType() const

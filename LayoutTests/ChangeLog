@@ -1,3 +1,18 @@
+2011-03-24  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r70748): latest nightly builds kills AC_QuickTime.js
+        https://bugs.webkit.org/show_bug.cgi?id=49016
+
+        * fast/images/embed-image-plugins-disabled.html: Added.
+        * platform/mac/fast/images/embed-image-expected.checksum:
+        * platform/mac/fast/images/embed-image-expected.png:
+        * platform/mac/fast/images/embed-image-expected.txt:
+        * platform/mac/fast/images/embed-image-plugins-disabled-expected.checksum: Added.
+        * platform/mac/fast/images/embed-image-plugins-disabled-expected.png: Added.
+        * platform/mac/fast/images/embed-image-plugins-disabled-expected.txt: Added.
+
 2011-03-24  Adam Klein  <adamk@chromium.org>
 
         Reviewed by David Levin.

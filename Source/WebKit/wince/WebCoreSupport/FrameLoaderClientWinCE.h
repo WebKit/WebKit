@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,7 +121,7 @@ public:
 
     virtual void registerForIconNotification(bool);
 
-    virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL& url, const WTF::String& mimeType);
+    virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL&, const WTF::String& mimeType, bool shouldPreferPlugInsForImages);
 
     virtual void setMainFrameDocumentReady(bool);
 
