@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<style type="text/css">
+div {
+    position: relative;
+}
+</style>
+</head>
+<body>
+<form>
+  <select required>
+    <option value="">X</option>
+    <option>Y</option>
+  </select>
+  <input type=submit id="submit">
+</form>
+
+<div id=console></div>
+
+<script>
+document.getElementById('submit').click();
+setTimeout(function () {
+    document.getElementsByTagName('select')[0].selectedIndex = 1;
+    testPassed('Not crashed');
+    finishJSTest();
+}, 0);
+
+var successfullyParsed = true;
+window.jsTestIsAsync = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>

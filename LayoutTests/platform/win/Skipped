@@ -1065,6 +1065,7 @@ fast/forms/interactive-validation-prevented.html
 fast/forms/interactive-validation-attach-assertion.html
 fast/forms/interactive-validation-assertion-by-validate-twice.html
 fast/forms/interactive-validation-select-crash.html
+fast/forms/interactive-validation-crash-by-style-override.html
 
 # Web Timing is not enabled.
 # https://bugs.webkit.org/show_bug.cgi?id=42435

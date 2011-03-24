@@ -1118,6 +1118,7 @@ fast/forms/interactive-validation-prevented.html
 fast/forms/interactive-validation-attach-assertion.html
 fast/forms/interactive-validation-assertion-by-validate-twice.html
 fast/forms/interactive-validation-select-crash.html
+fast/forms/interactive-validation-crash-by-style-override.html
 
 # Tests that seem to be Mac only, assume that smart drag-and-drop
 # is enabled or assume platform-dependent sizing.

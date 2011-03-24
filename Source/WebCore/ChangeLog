@@ -1,3 +1,18 @@
+2011-03-23  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Force to make validation bubble DIV position:absolute
+        https://bugs.webkit.org/show_bug.cgi?id=56901
+
+        Test: fast/forms/interactive-validation-crash-by-style-override.html
+
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::buildBubbleTree): Add position:absolute
+          because we need to move the validation message to a good position.
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::addChild):
+
 2011-03-23  Mike Lawther  <mikelawther@chromium.org>
 
         Reviewed by Ojan Vafai.

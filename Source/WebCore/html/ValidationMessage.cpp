@@ -31,7 +31,9 @@
 #include "config.h"
 #include "ValidationMessage.h"
 
+#include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
+#include "CSSValueKeywords.h"
 #include "FormAssociatedElement.h"
 #include "HTMLBRElement.h"
 #include "HTMLNames.h"
@@ -116,6 +118,9 @@ void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
     HTMLElement* host = toHTMLElement(m_element);
     Document* doc = host->document();
     m_bubble = ElementWithPseudoId::create(doc, "-webkit-validation-bubble");
+    // Need to force position:absolute because RenderMenuList doesn't assume it
+    // contains non-absolute or non-fixed renderers as children.
+    m_bubble->getInlineStyleDecl()->setProperty(CSSPropertyPosition, CSSValueAbsolute);
     ExceptionCode ec = 0;
     // FIXME: We need a way to host multiple shadow roots in a single node, or
     // to inherit an existing shadow tree.

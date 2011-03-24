@@ -1,3 +1,18 @@
+2011-03-23  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Force to make validation bubble DIV position:absolute
+        https://bugs.webkit.org/show_bug.cgi?id=56901
+
+        * fast/forms/interactive-validation-crash-by-style-override-expected.txt: Added.
+        * fast/forms/interactive-validation-crash-by-style-override.html: Added.
+        * platform/gtk/Skipped: Skip the new test because the interactive
+          validation feature is not enabled.
+        * platform/mac/Skipped: ditto.
+        * platform/qt/Skipped: ditto.
+        * platform/win/Skipped: ditto.
+
 2011-03-23  Ojan Vafai  <ojan@chromium.org>
 
         Add failing result for WebKit2. All tests that require
