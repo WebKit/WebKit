@@ -1,3 +1,15 @@
+2011-03-24  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Expose Node::isFocusable() in the Chromium WebKit API
+        In service of https://code.google.com/p/chromium/issues/detail?id=72918
+        https://bugs.webkit.org/show_bug.cgi?id=56809
+
+        * public/WebNode.h:
+        * src/WebNode.cpp:
+        (WebKit::WebNode::isFocusable):
+
 2011-03-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: fix chromium compilation.

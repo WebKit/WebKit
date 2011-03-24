@@ -96,6 +96,7 @@ public:
     WEBKIT_API WebNodeList childNodes();
     WEBKIT_API WebString createMarkup() const;
     WEBKIT_API bool isTextNode() const;
+    WEBKIT_API bool isFocusable() const;
     WEBKIT_API bool isContentEditable() const;
     WEBKIT_API bool isElementNode() const;
     WEBKIT_API void addEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture);
