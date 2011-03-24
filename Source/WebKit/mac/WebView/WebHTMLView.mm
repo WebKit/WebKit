@@ -383,6 +383,7 @@ static CachedResourceClient* promisedDataClient()
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard inContext:(DOMRange *)context allowPlainText:(BOOL)allowPlainText;
 - (NSString *)_plainTextFromPasteboard:(NSPasteboard *)pasteboard;
 - (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
+- (void)_pasteAsPlainTextWithPasteboard:(NSPasteboard *)pasteboard;
 - (void)_removeMouseMovedObserverUnconditionally;
 - (void)_removeSuperviewObservers;
 - (void)_removeWindowObservers;
@@ -912,6 +913,32 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 #endif
     [webView _setInsertionPasteboard:nil];
     [webView release];
+}
+
+- (void)_pasteAsPlainTextWithPasteboard:(NSPasteboard *)pasteboard 
+{ 
+    WebView *webView = [[self _webView] retain]; 
+    [webView _setInsertionPasteboard:pasteboard]; 
+
+    NSString *text = [self _plainTextFromPasteboard:pasteboard]; 
+    if ([self _shouldReplaceSelectionWithText:text givenAction:WebViewInsertActionPasted]) 
+        [[self _frame] _replaceSelectionWithText:text selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]]; 
+
+    [webView _setInsertionPasteboard:nil]; 
+    [webView release];
+}
+
+// This method is needed to support Mac OS X services.
+- (BOOL)readSelectionFromPasteboard:(NSPasteboard *)pasteboard 
+{ 
+    Frame* coreFrame = core([self _frame]); 
+    if (!coreFrame) 
+        return NO; 
+    if (coreFrame->selection()->isContentRichlyEditable()) 
+        [self _pasteWithPasteboard:pasteboard allowPlainText:YES]; 
+    else 
+        [self _pasteAsPlainTextWithPasteboard:pasteboard]; 
+    return YES; 
 }
 
 - (void)_removeMouseMovedObserverUnconditionally
@@ -2604,6 +2631,7 @@ WEBCORE_COMMAND(yankAndSelect)
     [NSPasteboard _web_setFindPasteboardString:[self selectedString] withOwner:self];
 }
 
+// This method is needed to support Mac OS X services.
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
 {
     [pasteboard declareTypes:types owner:[self _topHTMLView]];
