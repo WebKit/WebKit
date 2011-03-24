@@ -1,3 +1,21 @@
+2011-03-24  Adam Roben  <aroben@apple.com>
+
+        Rename LayerTreeHostMac to LayerTreeHostCA
+
+        This is the first step toward sharing code with Windows.
+
+        Fixes <http://webkit.org/b/57051>.
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        Updated for rename.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.h: Renamed from Source/WebKit2/WebProcess/WebPage/mac/LayerTreeHostMac.h.
+        * WebProcess/WebPage/ca/LayerTreeHostCA.mm: Renamed from Source/WebKit2/WebProcess/WebPage/mac/LayerTreeHostMac.mm.
+
 2011-03-17  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

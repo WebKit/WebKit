@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "LayerTreeHostMac.h"
+#import "LayerTreeHostCA.h"
 
 #import "DrawingAreaImpl.h"
 #import "WebPage.h"
@@ -44,12 +44,12 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<LayerTreeHostMac> LayerTreeHostMac::create(WebPage* webPage)
+PassRefPtr<LayerTreeHostCA> LayerTreeHostCA::create(WebPage* webPage)
 {
-    return adoptRef(new LayerTreeHostMac(webPage));
+    return adoptRef(new LayerTreeHostCA(webPage));
 }
 
-LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage)
+LayerTreeHostCA::LayerTreeHostCA(WebPage* webPage)
     : LayerTreeHost(webPage)
     , m_isValid(true)
     , m_notifyAfterScheduledLayerFlush(false)
@@ -89,7 +89,7 @@ LayerTreeHostMac::LayerTreeHostMac(WebPage* webPage)
     m_layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());
 }
 
-LayerTreeHostMac::~LayerTreeHostMac()
+LayerTreeHostCA::~LayerTreeHostCA()
 {
     ASSERT(!m_isValid);
     ASSERT(!m_flushPendingLayerChangesRunLoopObserver);
@@ -97,12 +97,12 @@ LayerTreeHostMac::~LayerTreeHostMac()
     ASSERT(!m_rootLayer);
 }
 
-const LayerTreeContext& LayerTreeHostMac::layerTreeContext()
+const LayerTreeContext& LayerTreeHostCA::layerTreeContext()
 {
     return m_layerTreeContext;
 }
 
-void LayerTreeHostMac::scheduleLayerFlush()
+void LayerTreeHostCA::scheduleLayerFlush()
 {
     CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
     
@@ -120,12 +120,12 @@ void LayerTreeHostMac::scheduleLayerFlush()
     CFRunLoopAddObserver(currentRunLoop, m_flushPendingLayerChangesRunLoopObserver.get(), kCFRunLoopCommonModes);
 }
 
-void LayerTreeHostMac::setShouldNotifyAfterNextScheduledLayerFlush(bool notifyAfterScheduledLayerFlush)
+void LayerTreeHostCA::setShouldNotifyAfterNextScheduledLayerFlush(bool notifyAfterScheduledLayerFlush)
 {
     m_notifyAfterScheduledLayerFlush = notifyAfterScheduledLayerFlush;
 }
 
-void LayerTreeHostMac::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
+void LayerTreeHostCA::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
     m_nonCompositedContentLayer->removeAllChildren();
 
@@ -134,7 +134,7 @@ void LayerTreeHostMac::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
         m_nonCompositedContentLayer->addChild(graphicsLayer);
 }
 
-void LayerTreeHostMac::invalidate()
+void LayerTreeHostCA::invalidate()
 {
     ASSERT(m_isValid);
 
@@ -149,7 +149,7 @@ void LayerTreeHostMac::invalidate()
     m_isValid = false;
 }
 
-void LayerTreeHostMac::setNonCompositedContentsNeedDisplay(const IntRect& rect)
+void LayerTreeHostCA::setNonCompositedContentsNeedDisplay(const IntRect& rect)
 {
     m_nonCompositedContentLayer->setNeedsDisplayInRect(rect);
     if (m_pageOverlayLayer)
@@ -158,12 +158,12 @@ void LayerTreeHostMac::setNonCompositedContentsNeedDisplay(const IntRect& rect)
     scheduleLayerFlush();
 }
 
-void LayerTreeHostMac::scrollNonCompositedContents(const IntRect& scrollRect, const IntSize& scrollOffset)
+void LayerTreeHostCA::scrollNonCompositedContents(const IntRect& scrollRect, const IntSize& scrollOffset)
 {
     setNonCompositedContentsNeedDisplay(scrollRect);
 }
 
-void LayerTreeHostMac::sizeDidChange(const IntSize& newSize)
+void LayerTreeHostCA::sizeDidChange(const IntSize& newSize)
 {
     m_rootLayer->setSize(newSize);
     m_nonCompositedContentLayer->setSize(newSize);
@@ -178,7 +178,7 @@ void LayerTreeHostMac::sizeDidChange(const IntSize& newSize)
     [CATransaction synchronize];
 }
 
-void LayerTreeHostMac::forceRepaint()
+void LayerTreeHostCA::forceRepaint()
 {
     scheduleLayerFlush();
     flushPendingLayerChanges();
@@ -187,34 +187,34 @@ void LayerTreeHostMac::forceRepaint()
     [CATransaction synchronize];
 }    
 
-void LayerTreeHostMac::didInstallPageOverlay()
+void LayerTreeHostCA::didInstallPageOverlay()
 {
     createPageOverlayLayer();
     scheduleLayerFlush();
 }
 
-void LayerTreeHostMac::didUninstallPageOverlay()
+void LayerTreeHostCA::didUninstallPageOverlay()
 {
     destroyPageOverlayLayer();
     scheduleLayerFlush();
 }
 
-void LayerTreeHostMac::setPageOverlayNeedsDisplay(const IntRect& rect)
+void LayerTreeHostCA::setPageOverlayNeedsDisplay(const IntRect& rect)
 {
     ASSERT(m_pageOverlayLayer);
     m_pageOverlayLayer->setNeedsDisplayInRect(rect);
     scheduleLayerFlush();
 }
 
-void LayerTreeHostMac::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)
+void LayerTreeHostCA::notifyAnimationStarted(const WebCore::GraphicsLayer*, double time)
 {
 }
 
-void LayerTreeHostMac::notifySyncRequired(const WebCore::GraphicsLayer*)
+void LayerTreeHostCA::notifySyncRequired(const WebCore::GraphicsLayer*)
 {
 }
 
-void LayerTreeHostMac::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const IntRect& clipRect)
+void LayerTreeHostCA::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& graphicsContext, GraphicsLayerPaintingPhase, const IntRect& clipRect)
 {
     if (graphicsLayer == m_nonCompositedContentLayer) {
         m_webPage->drawRect(graphicsContext, clipRect);
@@ -227,28 +227,28 @@ void LayerTreeHostMac::paintContents(const GraphicsLayer* graphicsLayer, Graphic
     }
 }
 
-bool LayerTreeHostMac::showDebugBorders() const
+bool LayerTreeHostCA::showDebugBorders() const
 {
     return m_webPage->corePage()->settings()->showDebugBorders();
 }
 
-bool LayerTreeHostMac::showRepaintCounter() const
+bool LayerTreeHostCA::showRepaintCounter() const
 {
     return m_webPage->corePage()->settings()->showRepaintCounter();
 }
 
-void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
+void LayerTreeHostCA::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
 {
     // This gets called outside of the normal event loop so wrap in an autorelease pool
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    static_cast<LayerTreeHostMac*>(context)->flushPendingLayerChangesRunLoopObserverCallback();
+    static_cast<LayerTreeHostCA*>(context)->flushPendingLayerChangesRunLoopObserverCallback();
     [pool drain];
 }
 
-void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback()
+void LayerTreeHostCA::flushPendingLayerChangesRunLoopObserverCallback()
 {
     {
-        RefPtr<LayerTreeHostMac> protect(this);
+        RefPtr<LayerTreeHostCA> protect(this);
         m_webPage->layoutIfNeeded();
 
         if (!m_isValid)
@@ -270,7 +270,7 @@ void LayerTreeHostMac::flushPendingLayerChangesRunLoopObserverCallback()
     }
 }
 
-bool LayerTreeHostMac::flushPendingLayerChanges()
+bool LayerTreeHostCA::flushPendingLayerChanges()
 {
     m_rootLayer->syncCompositingStateForThisLayerOnly();
     m_nonCompositedContentLayer->syncCompositingStateForThisLayerOnly();
@@ -280,7 +280,7 @@ bool LayerTreeHostMac::flushPendingLayerChanges()
     return m_webPage->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 }
 
-void LayerTreeHostMac::createPageOverlayLayer()
+void LayerTreeHostCA::createPageOverlayLayer()
 {
     ASSERT(!m_pageOverlayLayer);
 
@@ -295,7 +295,7 @@ void LayerTreeHostMac::createPageOverlayLayer()
     m_rootLayer->addChild(m_pageOverlayLayer.get());
 }
 
-void LayerTreeHostMac::destroyPageOverlayLayer()
+void LayerTreeHostCA::destroyPageOverlayLayer()
 {
     ASSERT(m_pageOverlayLayer);
     m_pageOverlayLayer->removeFromParent();

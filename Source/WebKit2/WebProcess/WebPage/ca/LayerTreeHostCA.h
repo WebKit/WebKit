@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerTreeHostMac_h
-#define LayerTreeHostMac_h
+#ifndef LayerTreeHostCA_h
+#define LayerTreeHostCA_h
 
 #include "LayerTreeContext.h"
 #include "LayerTreeHost.h"
@@ -36,13 +36,13 @@ typedef struct __WKCARemoteLayerClientRef* WKCARemoteLayerClientRef;
 
 namespace WebKit {
 
-class LayerTreeHostMac : public LayerTreeHost, WebCore::GraphicsLayerClient {
+class LayerTreeHostCA : public LayerTreeHost, WebCore::GraphicsLayerClient {
 public:
-    static PassRefPtr<LayerTreeHostMac> create(WebPage*);
-    ~LayerTreeHostMac();
+    static PassRefPtr<LayerTreeHostCA> create(WebPage*);
+    ~LayerTreeHostCA();
     
 private:
-    explicit LayerTreeHostMac(WebPage*);
+    explicit LayerTreeHostCA(WebPage*);
 
     // LayerTreeHost.
     virtual const LayerTreeContext& layerTreeContext();
@@ -99,4 +99,4 @@ private:
 
 } // namespace WebKit
 
-#endif // LayerTreeHostMac_h
+#endif // LayerTreeHostCA_h
