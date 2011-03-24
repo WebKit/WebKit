@@ -1,5 +1,11 @@
 2011-03-24  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: updated chromium expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-24  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: brush up Network agent API.
