@@ -1,3 +1,12 @@
+2011-03-24  Adam Roben  <aroben@apple.com>
+
+        Add Windows WebKit2 results for fast/css/pseudo-any.html
+
+        This test passes on Windows but fails on Mac. <http://webkit.org/b/56988> tracks the Mac
+        failure.
+
+        * platform/win-wk2/fast/css/pseudo-any-expected.txt: Added.
+
 2011-03-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
