@@ -1,3 +1,10 @@
+2011-03-23  Ojan Vafai  <ojan@chromium.org>
+
+        Add failing result for WebKit2. All tests that require
+        focus fail on WebKit2. See https://bugs.webkit.org/show_bug.cgi?id=56988.
+
+        * platform/mac-wk2/fast/css/pseudo-any-expected.txt: Added.
+
 2011-03-23  Mike Lawther  <mikelawther@chromium.org>
 
         Reviewed by Ojan Vafai.
