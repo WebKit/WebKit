@@ -31,6 +31,6 @@ Watch sidebar created, callback arguments dump follows:
         setHeight : <function>
     }
 }
-Sidebar content: f0: "object"f1: undefinedf2: nullf3: { }f4: [0]f5: [3]f6: {...}f7: 42
+Sidebar content: f0: "object"f1: undefinedf2: nullf3: {}f4: []f5: [aa, bb, cc]f6: {f60:42, f61:foo, f62:[]}f7: 42
 All tests done.
 

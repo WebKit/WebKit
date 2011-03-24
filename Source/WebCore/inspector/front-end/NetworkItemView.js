@@ -40,15 +40,26 @@ WebInspector.NetworkItemView = function(resource)
 
     this._tabbedPane = new WebInspector.TabbedPane(this.element);
     this._tabbedPane.appendTab("headers", WebInspector.UIString("Headers"), this._headersView);
+
     if (contentView.hasContent()) {
         // Reusing this view, so hide it at first.
         contentView.visible = false;
         this._tabbedPane.appendTab("content", WebInspector.UIString("Content"), contentView);
     }
+
+    if (resource.type === WebInspector.Resource.Type.XHR && resource.content) {
+        var parsedJSON = WebInspector.ResourceJSONView.parseJSON(resource.content);
+        if (parsedJSON) {
+            var jsonView = new WebInspector.ResourceJSONView(resource, parsedJSON);
+            this._tabbedPane.appendTab("json", WebInspector.UIString("JSON"), jsonView);
+        }
+    }
+
     if (Preferences.showCookiesTab) {
         this._cookiesView = new WebInspector.ResourceCookiesView(resource);
         this._tabbedPane.appendTab("cookies", WebInspector.UIString("Cookies"), this._cookiesView);
     }
+
     if (Preferences.showTimingTab) {
         var timingView = new WebInspector.ResourceTimingView(resource);
         this._tabbedPane.appendTab("timing", WebInspector.UIString("Timing"), timingView);

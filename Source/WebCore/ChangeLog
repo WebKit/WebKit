@@ -1,3 +1,31 @@
+2011-03-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: render XHRs matching JSON regex as JSON.
+        https://bugs.webkit.org/show_bug.cgi?id=57035
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.NetworkItemView):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.LocalJSONObject.prototype.get description.switch.case):
+        (WebInspector.LocalJSONObject.prototype.get description):
+        (WebInspector.LocalJSONObject.prototype._concatenate):
+        (WebInspector.LocalJSONObject.prototype.getProperties):
+        (WebInspector.LocalJSONObject.prototype._children):
+        * inspector/front-end/ResourceJSONView.js: Added.
+        (WebInspector.ResourceJSONView):
+        (WebInspector.ResourceJSONView.parseJSON.WebInspector.ResourceJSONView.prototype.hasContent):
+        (WebInspector.ResourceJSONView.parseJSON.WebInspector.ResourceJSONView.prototype.show):
+        (WebInspector.ResourceJSONView.parseJSON.WebInspector.ResourceJSONView.prototype._initialize):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.resource-view.json):
+        * inspector/front-end/inspector.html:
+
 2011-03-24  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

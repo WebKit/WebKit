@@ -66773,6 +66773,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ResourceJSONView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ResourcesPanel.js"
 					>
 				</File>

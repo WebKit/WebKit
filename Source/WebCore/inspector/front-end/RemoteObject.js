@@ -177,15 +177,50 @@ WebInspector.LocalJSONObject = function(value)
 WebInspector.LocalJSONObject.prototype = {
     get description()
     {
+        if (this._cachedDescription)
+            return this._cachedDescription;
+
         var type = this.type;
+
         switch (type) {
             case "array":
-                return "[" + this._value.length + "]";
+                function formatArrayItem(property)
+                {
+                    return property.value.description;
+                }
+                this._cachedDescription = this._concatenate("[", "]", formatArrayItem);
+                break;
             case "object":
-                return this.hasChildren ? "{...}" : "{ }";
+                function formatObjectItem(property)
+                {
+                    return property.name + ":" + property.value.description;
+                }
+                this._cachedDescription = this._concatenate("{", "}", formatObjectItem);
+                break;
             default:
-                return String(this._value);
+                this._cachedDescription = String(this._value);
         }
+        return this._cachedDescription;
+    },
+
+    _concatenate: function(prefix, suffix, formatProperty)
+    {
+        const previewChars = 100;
+
+        var buffer = prefix;
+        var children = this._children();
+        for (var i = 0; i < children.length; ++i) {
+            var itemDescription = formatProperty(children[i]);
+            if (buffer.length + itemDescription.length > previewChars) {
+                buffer += ",\u2026";
+                break;
+            }
+            if (i)
+                buffer += ", ";
+            buffer += itemDescription;
+        }
+        buffer += suffix;
+        return buffer;
     },
 
     get type()
@@ -209,11 +244,18 @@ WebInspector.LocalJSONObject.prototype = {
 
     getProperties: function(ignoreHasOwnProperty, abbreviate, callback)
     {
+        callback(this._children());
+    },
+
+    _children: function()
+    {
         function buildProperty(propName)
         {
             return new WebInspector.RemoteObjectProperty(propName, new WebInspector.LocalJSONObject(this._value[propName]));
         }
-        callback(Object.keys(this._value).map(buildProperty.bind(this)));
+        if (!this._cachedChildren)
+            this._cachedChildren = Object.keys(this._value).map(buildProperty.bind(this));
+        return this._cachedChildren;
     },
 
     isError: function()

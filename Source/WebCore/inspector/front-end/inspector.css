@@ -4455,3 +4455,7 @@ a.worker-item:hover {
     font-weight: bold;
     z-index: 10000;
 }
+
+.resource-view.json {
+    padding: 5px;
+}

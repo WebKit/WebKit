@@ -6168,6 +6168,7 @@
             'inspector/front-end/ResourceCategory.js',
             'inspector/front-end/ResourceCookiesView.js',
             'inspector/front-end/ResourceHeadersView.js',
+            'inspector/front-end/ResourceJSONView.js',
             'inspector/front-end/ResourceTimingView.js',
             'inspector/front-end/ResourceTreeModel.js',
             'inspector/front-end/ResourceView.js',
