@@ -2072,7 +2072,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
             doApplyCorrection = false;
     }
     if (doApplyCorrection)
-        dismissCorrectionPanel(ReasonForDismissingCorrectionPanelAccepted);
+        handleCorrectionPanelResult(dismissCorrectionPanelSoon(ReasonForDismissingCorrectionPanelAccepted));
     else
         m_correctionPanelInfo.rangeToBeReplaced.clear();
 #else
@@ -2387,7 +2387,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
                     m_correctionPanelInfo.replacedString = plainText(rangeToReplace.get());
                     m_correctionPanelInfo.replacementString = result->replacement;
                     m_correctionPanelInfo.isActive = true;
-                    client()->showCorrectionPanel(m_correctionPanelInfo.panelType, boundingBox, m_correctionPanelInfo.replacedString, result->replacement, Vector<String>(), this);
+                    client()->showCorrectionPanel(m_correctionPanelInfo.panelType, boundingBox, m_correctionPanelInfo.replacedString, result->replacement, Vector<String>());
                     break;
                 }
                 // If this function is called for showing correction panel, we ignore other correction or replacement.
@@ -2517,7 +2517,7 @@ void Editor::correctionPanelTimerFired(Timer<Editor>*)
         m_correctionPanelInfo.replacedString = plainText(m_correctionPanelInfo.rangeToBeReplaced.get());
         FloatRect boundingBox = windowRectForRange(m_correctionPanelInfo.rangeToBeReplaced.get());
         if (!boundingBox.isEmpty())
-            client()->showCorrectionPanel(m_correctionPanelInfo.panelType, boundingBox, m_correctionPanelInfo.replacedString, m_correctionPanelInfo.replacementString, Vector<String>(), this);
+            client()->showCorrectionPanel(m_correctionPanelInfo.panelType, boundingBox, m_correctionPanelInfo.replacedString, m_correctionPanelInfo.replacementString, Vector<String>());
     }
         break;
     case CorrectionPanelInfo::PanelTypeSpellingSuggestions: {
@@ -2535,7 +2535,7 @@ void Editor::correctionPanelTimerFired(Timer<Editor>*)
         m_correctionPanelInfo.isActive = true;
         FloatRect boundingBox = windowRectForRange(m_correctionPanelInfo.rangeToBeReplaced.get());
         if (!boundingBox.isEmpty())
-            client()->showCorrectionPanel(m_correctionPanelInfo.panelType, boundingBox, m_correctionPanelInfo.replacedString, topSuggestion, suggestions, this);
+            client()->showCorrectionPanel(m_correctionPanelInfo.panelType, boundingBox, m_correctionPanelInfo.replacedString, topSuggestion, suggestions);
     }
         break;
     }
@@ -2601,26 +2601,6 @@ void Editor::stopCorrectionPanelTimer()
 #endif
 }
 
-void Editor::handleCancelOperation()
-{
-#if SUPPORT_AUTOCORRECTION_PANEL
-    if (!m_correctionPanelInfo.isActive)
-        return;
-    m_correctionPanelInfo.isActive = false;
-    if (client())
-        client()->dismissCorrectionPanel(ReasonForDismissingCorrectionPanelCancelled);
-#endif
-}
-
-bool Editor::isShowingCorrectionPanel()
-{
-#if SUPPORT_AUTOCORRECTION_PANEL
-    if (client())
-        return client()->isShowingCorrectionPanel();
-#endif
-    return false;
-}
-
 void Editor::dismissCorrectionPanel(ReasonForDismissingCorrectionPanel reasonForDismissing)
 {
 #if SUPPORT_AUTOCORRECTION_PANEL
@@ -2634,6 +2614,23 @@ void Editor::dismissCorrectionPanel(ReasonForDismissingCorrectionPanel reasonFor
     UNUSED_PARAM(reasonForDismissing);
 #endif
 }
+
+String Editor::dismissCorrectionPanelSoon(ReasonForDismissingCorrectionPanel reasonForDismissing)
+{
+#if SUPPORT_AUTOCORRECTION_PANEL
+    if (!m_correctionPanelInfo.isActive)
+        return String();
+    m_correctionPanelInfo.isActive = false;
+    m_correctionPanelIsDismissedByEditor = true;
+    if (!client())
+        return String();
+    return client()->dismissCorrectionPanelSoon(reasonForDismissing);
+#else
+    UNUSED_PARAM(reasonForDismissing);
+    return String();
+#endif
+}
+
 void Editor::removeSpellAndCorrectionMarkersFromWordsToBeEdited(bool doNotRemoveIfSelectionAtWordBoundary)
 {
     // We want to remove the markers from a word if an editing command will change the word. This can happen in one of
@@ -2768,7 +2765,7 @@ bool Editor::applyAutocorrectionBeforeTypingIfAppropriate()
     Position caretPosition = m_frame->selection()->selection().start();
 
     if (m_correctionPanelInfo.rangeToBeReplaced->endPosition() == caretPosition) {
-        dismissCorrectionPanel(ReasonForDismissingCorrectionPanelAccepted);
+        handleCorrectionPanelResult(dismissCorrectionPanelSoon(ReasonForDismissingCorrectionPanelAccepted));
         return true;
     } 
     

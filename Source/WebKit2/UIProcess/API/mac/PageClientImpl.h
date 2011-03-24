@@ -26,6 +26,7 @@
 #ifndef PageClientImpl_h
 #define PageClientImpl_h
 
+#include "CorrectionPanel.h"
 #include "PageClient.h"
 #include <wtf/RetainPtr.h>
 
@@ -104,8 +105,16 @@ private:
 
     virtual void didPerformDictionaryLookup(const String&, double scaleFactor, const DictionaryPopupInfo&);
 
+    virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
+    virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel);
+    virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel);
+    virtual void recordAutocorrectionResponse(WebCore::EditorClient::AutocorrectionResponseType, const String& replacedString, const String& replacementString);
+
     WKView* m_wkView;
     RetainPtr<WebEditorUndoTargetObjC> m_undoTarget;
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    CorrectionPanel m_correctionPanel;
+#endif
 };
 
 } // namespace WebKit

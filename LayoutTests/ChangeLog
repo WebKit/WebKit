@@ -1,3 +1,15 @@
+2011-03-23  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Hook up new AppKit autocorrection UI with WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=56055
+        <rdar://problem/8947463>
+
+        Please see WebCore/ChangeLog for detail.
+
+        * platform/mac-wk2/Skipped: Enable autocorrection tests for WK2.
+
 2011-03-23  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt.

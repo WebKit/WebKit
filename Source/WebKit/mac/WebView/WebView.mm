@@ -5311,6 +5311,16 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
 
 #endif
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+- (void)handleCorrectionPanelResult:(NSString*)result
+{
+    WebFrame *webFrame = [self _selectedOrMainFrame];
+    Frame* coreFrame = core(webFrame);
+    if (coreFrame)
+        coreFrame->editor()->handleCorrectionPanelResult(result);
+}
+#endif
+
 @end
 
 @implementation WebView (WebViewUndoableEditing)

@@ -1,3 +1,45 @@
+2011-03-23  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Hook up new AppKit autocorrection UI with WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=56055
+        <rdar://problem/8947463>
+
+        This patch is to enable WK2 to utilize autocorrection UI on Mac OS X. It contains following
+        major changes:
+
+        1. All but one autocorrection related message is synchronous. Since dismissing autocorrection
+        panel can potentially cause editing to occur, a synchronous dismissCorrectionPanelSoon() function
+        is introduced to ensure all editing commands occur in correct order.
+
+        2. Additional condition variable is needed to implement dismissCorrectionPanelSoon().
+        To improve maintainability, CorrectionPanel class is introduced to manage the
+        internal state related to correction panel. This change is applied to both WK1 and WK2.
+
+        3. EditorClient::isShowingCorrectionPanel() has been removed. The original purpose is to allow
+        editor to know when to handle ESC key event. Now this is handled internally in AppKit, so
+        EditorClient::isShowingCorrectionPanel() isn't necessary anymore.
+
+        4. The Editor* argument in EditorClient::showCorrectionPanel() has been removed, since we can
+        access object via WebView or WKView.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::correctionPanelTimerFired):
+        (WebCore::Editor::dismissCorrectionPanel):
+        (WebCore::Editor::dismissCorrectionPanelSoon):
+        (WebCore::Editor::applyAutocorrectionBeforeTypingIfAppropriate):
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::createCommandMap):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyEditorClient::showCorrectionPanel):
+        (WebCore::EmptyEditorClient::dismissCorrectionPanelSoon):
+        * manual-tests/autocorrection/close-window-when-correction-is-shown.html: Added.
+        * page/EditorClient.h:
+
 2011-03-22  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Antti Koivisto.

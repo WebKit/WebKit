@@ -1,3 +1,35 @@
+2011-03-23  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Hook up new AppKit autocorrection UI with WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=56055
+        <rdar://problem/8947463>
+
+        Please see WebCore/ChangeLog for detail.
+
+        * WebCoreSupport/CorrectionPanel.h: Added.
+        (CorrectionPanel::isShowing):
+        * WebCoreSupport/CorrectionPanel.mm: Added.
+        (correctionBubbleType):
+        (CorrectionPanel::CorrectionPanel):
+        (CorrectionPanel::~CorrectionPanel):
+        (CorrectionPanel::show):
+        (CorrectionPanel::dismiss):
+        (CorrectionPanel::dismissSoon):
+        (CorrectionPanel::dismissInternal):
+        (CorrectionPanel::recordAutocorrectionResponse):
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::WebEditorClient):
+        (WebEditorClient::showCorrectionPanel):
+        (WebEditorClient::dismissCorrectionPanel):
+        (WebEditorClient::dismissCorrectionPanelSoon):
+        (WebEditorClient::recordAutocorrectionResponse):
+        * WebView/WebView.mm:
+        (-[WebView handleCorrectionPanelResult:]):
+        * WebView/WebViewPrivate.h:
+
 2011-03-23  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -380,6 +380,8 @@
 		93FC67BE12D3CCF200A60610 /* DecoderAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FC679E12D3CC7400A60610 /* DecoderAdapter.h */; };
 		93FC67BF12D3CCF200A60610 /* EncoderAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93FC679F12D3CC7400A60610 /* EncoderAdapter.cpp */; };
 		93FC67C012D3CCF200A60610 /* EncoderAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FC67A012D3CC7400A60610 /* EncoderAdapter.h */; };
+		B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = B878B613133428DC006888E9 /* CorrectionPanel.h */; };
+		B878B616133428DC006888E9 /* CorrectionPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = B878B614133428DC006888E9 /* CorrectionPanel.mm */; };
 		BC0092F7115837A300E0AE2A /* RunLoopMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0092F5115837A300E0AE2A /* RunLoopMac.mm */; };
 		BC0092F8115837A300E0AE2A /* WorkQueueMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0092F6115837A300E0AE2A /* WorkQueueMac.cpp */; };
 		BC032D7510F4378D0058C15A /* WebChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032D6010F4378D0058C15A /* WebChromeClient.h */; };
@@ -1260,6 +1262,8 @@
 		93FC67A012D3CC7400A60610 /* EncoderAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncoderAdapter.h; sourceTree = "<group>"; };
 		A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSerializedScriptValue.h; sourceTree = "<group>"; };
 		B396EA5512E0ED2D00F4FEB7 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		B878B613133428DC006888E9 /* CorrectionPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorrectionPanel.h; sourceTree = "<group>"; };
+		B878B614133428DC006888E9 /* CorrectionPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CorrectionPanel.mm; sourceTree = "<group>"; };
 		BC0092F5115837A300E0AE2A /* RunLoopMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RunLoopMac.mm; sourceTree = "<group>"; };
 		BC0092F6115837A300E0AE2A /* WorkQueueMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueueMac.cpp; sourceTree = "<group>"; };
 		BC032D6010F4378D0058C15A /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
@@ -2964,20 +2968,22 @@
 		BCCF085C113F3B7500C650C5 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				CDCA85DE132AD05300E961DF /* WebFullScreenManagerProxyMac.mm */,
-				CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */,
-				CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */,
 				1A64292C12DE5F9800CAAE2C /* BackingStoreMac.mm */,
 				BC2651F511825EF800243E12 /* ChunkedUpdateDrawingAreaProxyMac.mm */,
+				B878B613133428DC006888E9 /* CorrectionPanel.h */,
+				B878B614133428DC006888E9 /* CorrectionPanel.mm */,
 				1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */,
 				1A1C648611F415B700553C19 /* WebContextMac.mm */,
 				51ACBB9E127A8F2C00D203B9 /* WebContextMenuProxyMac.h */,
 				51ACBB9F127A8F2C00D203B9 /* WebContextMenuProxyMac.mm */,
+				CDCA85DE132AD05300E961DF /* WebFullScreenManagerProxyMac.mm */,
 				1CA8B935127C774E00576C2B /* WebInspectorProxyMac.mm */,
 				BC857E8512B71EBB00EDEB2E /* WebPageProxyMac.mm */,
 				BC5750951268F3C6006F0F12 /* WebPopupMenuProxyMac.h */,
 				BC5750961268F3C6006F0F12 /* WebPopupMenuProxyMac.mm */,
 				BC84EB1712A7100C0083F2DA /* WebPreferencesMac.mm */,
+				CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */,
+				CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -3579,6 +3585,7 @@
 				511B24AB132E097200065A0C /* WebIconDatabase.h in Headers */,
 				51D02F6A132EC73700BEAA96 /* WebIconDatabaseMessages.h in Headers */,
 				51D02F6C132EC73700BEAA96 /* WebIconDatabaseProxyMessages.h in Headers */,
+				B878B615133428DC006888E9 /* CorrectionPanel.h in Headers */,
 				33D3A3B61339600B00709BE4 /* WKMediaCacheManager.h in Headers */,
 				33D3A3BB1339606200709BE4 /* WebMediaCacheManagerProxy.h in Headers */,
 				33D3A3C2133960B000709BE4 /* WebMediaCacheManager.h in Headers */,
@@ -4196,6 +4203,7 @@
 				511B24AA132E097200065A0C /* WebIconDatabase.cpp in Sources */,
 				51D02F64132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp in Sources */,
 				51D02F6B132EC73700BEAA96 /* WebIconDatabaseProxyMessageReceiver.cpp in Sources */,
+				B878B616133428DC006888E9 /* CorrectionPanel.mm in Sources */,
 				33D3A3B51339600B00709BE4 /* WKMediaCacheManager.cpp in Sources */,
 				33D3A3BA1339606200709BE4 /* WebMediaCacheManagerProxy.cpp in Sources */,
 				33D3A3C1133960B000709BE4 /* WebMediaCacheManager.cpp in Sources */,

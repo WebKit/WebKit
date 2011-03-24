@@ -511,9 +511,9 @@ public:
     TextCheckerClient* textChecker() { return &m_textCheckerClient; }
 
 #if SUPPORT_AUTOCORRECTION_PANEL
-    virtual void showCorrectionPanel(CorrectionPanelInfo::PanelType, const FloatRect&, const String&, const String&, const Vector<String>&, Editor*) { }
+    virtual void showCorrectionPanel(CorrectionPanelInfo::PanelType, const FloatRect&, const String&, const String&, const Vector<String>&) { }
     virtual void dismissCorrectionPanel(ReasonForDismissingCorrectionPanel) { }
-    virtual bool isShowingCorrectionPanel() { return false; }
+    virtual String dismissCorrectionPanelSoon(ReasonForDismissingCorrectionPanel) { return String(); }
     virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const String&, const String&) { }
 #endif
     virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail&) { }

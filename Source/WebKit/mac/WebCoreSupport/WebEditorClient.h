@@ -27,11 +27,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebCore/Editor.h>
+#import "CorrectionPanel.h"
 #import <WebCore/EditorClient.h>
 #import <WebCore/TextCheckerClient.h>
-#import <wtf/RetainPtr.h>
 #import <wtf/Forward.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
 @class WebView;
@@ -140,10 +140,10 @@ public:
     virtual void setInputMethodState(bool enabled);
     virtual void requestCheckingOfString(WebCore::SpellChecker*, int, const WTF::String&);
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, const WTF::Vector<WTF::String>& alternativeReplacementStrings, WebCore::Editor*);
+    virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel);
-    virtual bool isShowingCorrectionPanel();
-    virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const WTF::String& replacedString, const WTF::String& replacementString);
+    virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel);
+    virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const String& replacedString, const String& replacementString);
 #endif
 private:
     void registerCommandForUndoOrRedo(PassRefPtr<WebCore::EditCommand>, bool isRedo);
@@ -154,8 +154,6 @@ private:
     bool m_haveUndoRedoOperations;
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    BOOL m_correctionPanelIsShown;
-    BOOL m_correctionPanelIsDismissedExternally;
-    WebCore::ReasonForDismissingCorrectionPanel m_reasonForDismissingCorrectionPanel;
+    CorrectionPanel m_correctionPanel;
 #endif
 };

@@ -1,3 +1,59 @@
+2011-03-23  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Hook up new AppKit autocorrection UI with WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=56055
+        <rdar://problem/8947463>
+
+        Please see WebCore/ChangeLog for detail.
+
+        The calls to AppKit are implemented in PageClientImpl. Other changes are necessary for the
+        plumbing work.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::showCorrectionPanel):
+        (WebKit::PageClientImpl::dismissCorrectionPanel):
+        (WebKit::PageClientImpl::dismissCorrectionPanelSoon):
+        (WebKit::PageClientImpl::recordAutocorrectionResponse):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView spellCheckerDocumentTag]):
+        (-[WKView handleCorrectionPanelResult:]):
+        * UIProcess/API/mac/WKViewPrivate.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::showCorrectionPanel):
+        (WebKit::WebPageProxy::dismissCorrectionPanel):
+        (WebKit::WebPageProxy::dismissCorrectionPanelSoon):
+        (WebKit::WebPageProxy::recordAutocorrectionResponse):
+        (WebKit::WebPageProxy::handleCorrectionPanelResult):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/CorrectionPanel.h: Added.
+        (WebKit::CorrectionPanel::isShowing):
+        * UIProcess/mac/CorrectionPanel.mm: Added.
+        (correctionBubbleType):
+        (WebKit::CorrectionPanel::CorrectionPanel):
+        (WebKit::CorrectionPanel::~CorrectionPanel):
+        (WebKit::CorrectionPanel::show):
+        (WebKit::CorrectionPanel::dismiss):
+        (WebKit::CorrectionPanel::dismissSoon):
+        (WebKit::CorrectionPanel::dismissInternal):
+        (WebKit::CorrectionPanel::recordAutocorrectionResponse):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::showCorrectionPanel):
+        (WebKit::WebEditorClient::dismissCorrectionPanel):
+        (WebKit::WebEditorClient::dismissCorrectionPanelSoon):
+        (WebKit::WebEditorClient::recordAutocorrectionResponse):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::handleCorrectionPanelResult):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2011-03-23  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Maciej Stachowiak.

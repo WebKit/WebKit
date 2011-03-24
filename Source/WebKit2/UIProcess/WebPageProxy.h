@@ -448,6 +448,10 @@ public:
 
     void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
 
+#if PLATFORM(MAC)
+    void handleCorrectionPanelResult(const String& result);
+#endif
+
     static void setDebugPaintFlags(WKPageDebugPaintFlags flags) { s_debugPaintFlags = flags; }
     static WKPageDebugPaintFlags debugPaintFlags() { return s_debugPaintFlags; }
 
@@ -640,6 +644,13 @@ private:
     void setPendingAPIRequestURL(const String& pendingAPIRequestURL) { m_pendingAPIRequestURL = pendingAPIRequestURL; }
 
     void initializeSandboxExtensionHandle(const WebCore::KURL&, SandboxExtension::Handle&);
+
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    void showCorrectionPanel(int32_t panelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
+    void dismissCorrectionPanel(int32_t reason);
+    void dismissCorrectionPanelSoon(int32_t reason, String& result);
+    void recordAutocorrectionResponse(int32_t responseType, const String& replacedString, const String& replacementString);
+#endif
 
     PageClient* m_pageClient;
     WebLoaderClient m_loaderClient;

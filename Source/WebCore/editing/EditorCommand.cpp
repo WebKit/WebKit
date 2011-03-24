@@ -1091,14 +1091,6 @@ static bool executeYankAndSelect(Frame* frame, Event*, EditorCommandSource, cons
     return true;
 }
 
-#if SUPPORT_AUTOCORRECTION_PANEL
-static bool executeCancelOperation(Frame* frame, Event*, EditorCommandSource, const String&)
-{
-    frame->editor()->handleCancelOperation();
-    return true;
-}
-#endif
-
 // Supported functions
 
 static bool supported(Frame*)
@@ -1248,13 +1240,6 @@ static bool enabledUndo(Frame* frame, Event*, EditorCommandSource)
 {
     return frame->editor()->canUndo();
 }
-
-#if SUPPORT_AUTOCORRECTION_PANEL
-static bool enabledDismissCorrectionPanel(Frame* frame, Event*, EditorCommandSource)
-{
-    return frame->editor()->isShowingCorrectionPanel();
-}
-#endif
 
 // State functions
 
@@ -1531,10 +1516,6 @@ static const CommandMap& createCommandMap()
 
 #if PLATFORM(MAC)
         { "TakeFindStringFromSelection", { executeTakeFindStringFromSelection, supportedFromMenuOrKeyBinding, enabledTakeFindStringFromSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-#endif
-
-#if SUPPORT_AUTOCORRECTION_PANEL
-        { "CancelOperation", { executeCancelOperation, supportedFromMenuOrKeyBinding, enabledDismissCorrectionPanel, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
 #endif
     };
 

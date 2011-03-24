@@ -427,4 +427,37 @@ void PageClientImpl::didPerformDictionaryLookup(const String& text, double scale
     [m_wkView showDefinitionForAttributedString:attributedString.get() range:NSMakeRange(0, [attributedString.get() length]) options:options baselineOriginProvider:^(NSRange adjustedRange) { return (NSPoint)textBaselineOrigin; }];
 }
 
+void PageClientImpl::showCorrectionPanel(CorrectionPanelInfo::PanelType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (!isViewVisible() || !isViewInWindow())
+        return;
+    m_correctionPanel.show(m_wkView, type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
+#endif
+}
+
+void PageClientImpl::dismissCorrectionPanel(ReasonForDismissingCorrectionPanel reason)
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    m_correctionPanel.dismiss(reason);
+#endif
+}
+
+String PageClientImpl::dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel reason)
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    return m_correctionPanel.dismissSoon(reason);
+#else
+    return String();
+#endif
+}
+
+void PageClientImpl::recordAutocorrectionResponse(EditorClient::AutocorrectionResponseType responseType, const String& replacedString, const String& replacementString)
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    NSCorrectionResponse response = responseType == EditorClient::AutocorrectionReverted ? NSCorrectionResponseReverted : NSCorrectionResponseEdited;
+    CorrectionPanel::recordAutocorrectionResponse(m_wkView, response, replacedString, replacementString);
+#endif
+}
+
 } // namespace WebKit

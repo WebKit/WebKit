@@ -158,14 +158,15 @@ public:
 
     virtual TextCheckerClient* textChecker() = 0;
 
-#if SUPPORT_AUTOCORRECTION_PANEL
     enum AutocorrectionResponseType {
         AutocorrectionEdited,
         AutocorrectionReverted
     };
-    virtual void showCorrectionPanel(CorrectionPanelInfo::PanelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacmentString, const Vector<String>& alternativeReplacementStrings, Editor*) = 0;
+
+#if SUPPORT_AUTOCORRECTION_PANEL
+    virtual void showCorrectionPanel(CorrectionPanelInfo::PanelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacmentString, const Vector<String>& alternativeReplacementStrings) = 0;
     virtual void dismissCorrectionPanel(ReasonForDismissingCorrectionPanel) = 0;
-    virtual bool isShowingCorrectionPanel() = 0;
+    virtual String dismissCorrectionPanelSoon(ReasonForDismissingCorrectionPanel) = 0;
     virtual void recordAutocorrectionResponse(AutocorrectionResponseType, const String& replacedString, const String& replacementString) = 0;
 #endif
 

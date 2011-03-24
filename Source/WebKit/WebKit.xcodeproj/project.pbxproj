@@ -344,6 +344,8 @@
 		B6CE5C25100BC5F500219936 /* WebApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B804176F1217A83100466BAE /* WebInspectorFrontend.h in Headers */ = {isa = PBXBuildFile; fileRef = B804176D1217A83100466BAE /* WebInspectorFrontend.h */; };
 		B80417701217A83100466BAE /* WebInspectorFrontend.mm in Sources */ = {isa = PBXBuildFile; fileRef = B804176E1217A83100466BAE /* WebInspectorFrontend.mm */; };
+		B82958D3132707D0000D0E79 /* CorrectionPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = B82958D1132707D0000D0E79 /* CorrectionPanel.h */; };
+		B82958D4132707D0000D0E79 /* CorrectionPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = B82958D2132707D0000D0E79 /* CorrectionPanel.mm */; };
 		BC26C69E10B743F400B687ED /* WebSerializedJSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC26C69D10B743F400B687ED /* WebSerializedJSValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC26C6A510B7447A00B687ED /* WebSerializedJSValue.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC26C6A410B7447A00B687ED /* WebSerializedJSValue.mm */; };
 		BC2E464D0FD8A96800A9D9DE /* WebViewData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2E464B0FD8A96800A9D9DE /* WebViewData.h */; };
@@ -660,6 +662,8 @@
 		B68049720FFBCEC1009F7F62 /* WebApplicationCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebApplicationCache.mm; sourceTree = "<group>"; };
 		B804176D1217A83100466BAE /* WebInspectorFrontend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorFrontend.h; sourceTree = "<group>"; };
 		B804176E1217A83100466BAE /* WebInspectorFrontend.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorFrontend.mm; sourceTree = "<group>"; };
+		B82958D1132707D0000D0E79 /* CorrectionPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorrectionPanel.h; sourceTree = "<group>"; };
+		B82958D2132707D0000D0E79 /* CorrectionPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CorrectionPanel.mm; sourceTree = "<group>"; };
 		BC26C69D10B743F400B687ED /* WebSerializedJSValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSerializedJSValue.h; sourceTree = "<group>"; };
 		BC26C6A410B7447A00B687ED /* WebSerializedJSValue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSerializedJSValue.mm; sourceTree = "<group>"; };
 		BC2E464B0FD8A96800A9D9DE /* WebViewData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewData.h; sourceTree = "<group>"; };
@@ -1295,6 +1299,8 @@
 		F5B36B400281DE87018635CB /* WebCoreSupport */ = {
 			isa = PBXGroup;
 			children = (
+				B82958D1132707D0000D0E79 /* CorrectionPanel.h */,
+				B82958D2132707D0000D0E79 /* CorrectionPanel.mm */,
 				598AD91D1201CECF00ABAE4E /* WebDeviceOrientationClient.mm */,
 				598AD9191201CEC900ABAE4E /* WebDeviceOrientationClient.h */,
 				B68049710FFBCEC1009F7F62 /* WebApplicationCache.h */,
@@ -1645,6 +1651,7 @@
 				3AE15D5012DBDED4009323C8 /* WebStorageManagerInternal.h in Headers */,
 				3ABB3C7A1309C3B500E93D94 /* WebStorageTrackerClient.h in Headers */,
 				BC42D324131ED1E00075FA4B /* WebLocalizableStringsInternal.h in Headers */,
+				B82958D3132707D0000D0E79 /* CorrectionPanel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2015,6 +2022,7 @@
 				CDA62AE3125F87C2007FD118 /* WebFullScreenController.mm in Sources */,
 				3ABB3C7B1309C3B500E93D94 /* WebStorageTrackerClient.mm in Sources */,
 				BC42D34D131ED3880075FA4B /* WebLocalizableStringsInternal.mm in Sources */,
+				B82958D4132707D0000D0E79 /* CorrectionPanel.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

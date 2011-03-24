@@ -1394,6 +1394,10 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
     if (!arguments->decode(messageDecoder))
         return;
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
+#endif
+
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
@@ -2758,5 +2762,37 @@ void WebPageProxy::saveDataToFileInDownloadsFolder(const String& suggestedFilena
 {
     m_uiClient.saveDataToFileInDownloadsFolder(this, suggestedFilename, mimeType, originatingURLString, data);
 }
+
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+void WebPageProxy::showCorrectionPanel(int32_t panelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
+{
+    m_pageClient->showCorrectionPanel((WebCore::CorrectionPanelInfo::PanelType)panelType, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
+}
+
+void WebPageProxy::dismissCorrectionPanel(int32_t reason)
+{
+    m_pageClient->dismissCorrectionPanel((WebCore::ReasonForDismissingCorrectionPanel)reason);
+}
+
+void WebPageProxy::dismissCorrectionPanelSoon(int32_t reason, String& result)
+{
+    result = m_pageClient->dismissCorrectionPanelSoon((WebCore::ReasonForDismissingCorrectionPanel)reason);
+}
+
+void WebPageProxy::recordAutocorrectionResponse(int32_t responseType, const String& replacedString, const String& replacementString)
+{
+    m_pageClient->recordAutocorrectionResponse((WebCore::EditorClient::AutocorrectionResponseType)responseType, replacedString, replacementString);
+}
+#endif
+
+#if PLATFORM(MAC)
+void WebPageProxy::handleCorrectionPanelResult(const String& result)
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (!isClosed())
+        process()->send(Messages::WebPage::HandleCorrectionPanelResult(result), m_pageID, 0);
+#endif
+}
+#endif
 
 } // namespace WebKit

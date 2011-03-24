@@ -192,4 +192,8 @@ messages -> WebPage {
 #if PLATFORM(QT)
     FindZoomableAreaForPoint(WebCore::IntPoint point)
 #endif
+
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    HandleCorrectionPanelResult(String result)
+#endif
 }

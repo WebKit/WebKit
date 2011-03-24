@@ -361,6 +361,10 @@ public:
     void setDragSource(NSObject *);
 #endif
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    void handleCorrectionPanelResult(const String&);
+#endif
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

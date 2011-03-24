@@ -46,7 +46,7 @@
 #import <WebCore/Page.h>
 #import <WebKit/WebResource.h>
 #import <WebKit/WebNSURLExtras.h>
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
 #import <AppKit/NSTextChecker.h>
 #endif
 
@@ -246,26 +246,27 @@ void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, uint64
     m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(String(text, length), checkingTypes), Messages::WebPageProxy::CheckTextOfParagraph::Reply(results));
 }
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-void WebEditorClient::showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType type, const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, const Vector<String>& alternativeReplacementStrings, WebCore::Editor*)
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+void WebEditorClient::showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType type, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
-    notImplemented();
+    m_page->send(Messages::WebPageProxy::ShowCorrectionPanel(type, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings));
 }
 
-void WebEditorClient::dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel)
+void WebEditorClient::dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel reason)
 {
-    notImplemented();
+    m_page->send(Messages::WebPageProxy::DismissCorrectionPanel(reason));
 }
 
-bool WebEditorClient::isShowingCorrectionPanel()
+String WebEditorClient::dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel reason)
 {
-    notImplemented();
-    return false;
+    String result;
+    m_page->sendSync(Messages::WebPageProxy::DismissCorrectionPanelSoon(reason), Messages::WebPageProxy::DismissCorrectionPanelSoon::Reply(result));
+    return result;
 }
 
 void WebEditorClient::recordAutocorrectionResponse(EditorClient::AutocorrectionResponseType responseType, const String& replacedString, const String& replacementString)
 {
-    notImplemented();
+    m_page->send(Messages::WebPageProxy::RecordAutocorrectionResponse(responseType, replacedString, replacementString));
 }
 #endif
 

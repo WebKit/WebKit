@@ -320,11 +320,9 @@ public:
 
     void addToKillRing(Range*, bool prepend);
 
-    void handleCancelOperation();
     void startCorrectionPanelTimer(CorrectionPanelInfo::PanelType);
     // If user confirmed a correction in the correction panel, correction has non-zero length, otherwise it means that user has dismissed the panel.
     void handleCorrectionPanelResult(const String& correction);
-    bool isShowingCorrectionPanel();
 
     void pasteAsFragment(PassRefPtr<DocumentFragment>, bool smartReplace, bool matchStyle);
     void pasteAsPlainText(const String&, bool smartReplace);
@@ -425,6 +423,7 @@ private:
     Node* findEventTargetFromSelection() const;
     void stopCorrectionPanelTimer();
     void dismissCorrectionPanel(ReasonForDismissingCorrectionPanel);
+    String dismissCorrectionPanelSoon(ReasonForDismissingCorrectionPanel);
     void applyCorrectionPanelInfo(const Vector<DocumentMarker::MarkerType>& markerTypesToAdd);
     // Return true if correction was applied, false otherwise.
     bool applyAutocorrectionBeforeTypingIfAppropriate();

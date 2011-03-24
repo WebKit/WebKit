@@ -1,3 +1,15 @@
+2011-03-23  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Hook up new AppKit autocorrection UI with WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=56055
+        <rdar://problem/8947463>
+
+        Please see WebCore/ChangeLog for detail.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2011-03-17  Jeff Miller  <jeffm@apple.com>
 
         Use a consistent set of file patterns in the svn:ignore property for all .xcodeproj directories, specifically:
