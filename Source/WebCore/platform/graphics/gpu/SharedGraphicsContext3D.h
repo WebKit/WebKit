@@ -43,6 +43,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+#if ENABLE(SKIA_GPU)
+class GrContext;
+#endif
+
 namespace WebCore {
 
 class AffineTransform;
@@ -135,6 +139,10 @@ public:
     void useLoopBlinnExteriorProgram(unsigned vertexOffset, unsigned klmOffset, const AffineTransform&, const Color&);
     DrawingBuffer* getOffscreenBuffer(unsigned index, const IntSize&);
 
+#if ENABLE(SKIA_GPU)
+    GrContext* grContext();
+#endif
+
 private:
     SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D>, PassOwnPtr<SolidFillShader>, PassOwnPtr<TexShader>, PassOwnPtr<BicubicShader>, PassOwnArrayPtr<OwnPtr<ConvolutionShader> >);
 
@@ -161,6 +169,10 @@ private:
     bool m_oesStandardDerivativesSupported;
 
     WTF::Vector<RefPtr<DrawingBuffer> > m_offscreenBuffers;
+
+#if ENABLE(SKIA_GPU)
+    GrContext* m_grContext;
+#endif
 };
 
 const float cMaxSigma = 4.0f;

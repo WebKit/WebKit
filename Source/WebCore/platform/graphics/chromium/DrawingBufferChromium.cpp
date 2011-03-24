@@ -46,10 +46,6 @@
 
 namespace WebCore {
 
-#if ENABLE(SKIA_GPU)
-extern GrContext* GetGlobalGrContext();
-#endif
-
 struct DrawingBufferInternal {
     unsigned offscreenColorTexture;
 #if USE(ACCELERATED_COMPOSITING)
@@ -91,6 +87,9 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     , m_multisampleFBO(0)
     , m_multisampleColorBuffer(0)
     , m_internal(new DrawingBufferInternal)
+#if ENABLE(SKIA_GPU)
+    , m_grContext(0)
+#endif
 {
     if (!m_context->getExtensions()->supports("GL_CHROMIUM_copy_texture_to_parent_texture")) {
         m_context.clear();
@@ -137,7 +136,8 @@ void DrawingBuffer::publishToPlatformLayer()
     // would insert a fence into the child command stream that the compositor could wait for.
     m_context->makeContextCurrent();
 #if ENABLE(SKIA_GPU)
-    GetGlobalGrContext()->flush(0);
+    if (m_grContext)
+        m_grContext->flush(0);
 #endif
     static_cast<Extensions3DChromium*>(m_context->getExtensions())->copyTextureToParentTextureCHROMIUM(m_colorBuffer, parentTexture);
     m_context->flush();
@@ -165,5 +165,14 @@ Platform3DObject DrawingBuffer::platformColorBuffer() const
 {
     return m_colorBuffer;
 }
+
+#if ENABLE(SKIA_GPU)
+void DrawingBuffer::setGrContext(GrContext* context)
+{
+    // We just take a ptr without referencing it, as we require that we never outlive
+    // the SharedGraphicsContext3D object that is giving us the context.
+    m_grContext = context;
+}
+#endif
 
 }

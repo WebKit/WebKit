@@ -42,6 +42,10 @@
 #include <wtf/RetainPtr.h>
 #endif
 
+#if ENABLE(SKIA_GPU)
+class GrContext;
+#endif
+
 namespace WebCore {
 
 #if PLATFORM(CHROMIUM)
@@ -95,6 +99,10 @@ public:
     void setWillPublishCallback(PassOwnPtr<WillPublishCallback> callback) { m_callback = callback; }
 #endif
 
+#if ENABLE(SKIA_GPU)
+    void setGrContext(GrContext* ctx);
+#endif
+
     PassRefPtr<GraphicsContext3D> graphicsContext3D() const { return m_context; }
 
 private:
@@ -130,6 +138,10 @@ private:
 
 #if PLATFORM(MAC)
     RetainPtr<WebGLLayer> m_platformLayer;
+#endif
+
+#if ENABLE(SKIA_GPU)
+    GrContext* m_grContext;
 #endif
 };
 

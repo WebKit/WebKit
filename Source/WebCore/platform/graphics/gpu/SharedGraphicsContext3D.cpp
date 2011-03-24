@@ -46,6 +46,14 @@
 #include "SolidFillShader.h"
 #include "TexShader.h"
 
+#if ENABLE(SKIA_GPU)
+#include "GrContext.h"
+// Limit the number of textures we hold in the bitmap->texture cache.
+static const int maxTextureCacheCount = 512;
+// Limit the bytes allocated toward textures in the bitmap->texture cache.
+static const size_t maxTextureCacheBytes = 50 * 1024 * 1024;
+#endif
+
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -90,6 +98,9 @@ SharedGraphicsContext3D::SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D> c
     , m_bicubicShader(bicubicShader)
     , m_convolutionShaders(convolutionShaders)
     , m_oesStandardDerivativesSupported(false)
+#if ENABLE(SKIA_GPU)
+    , m_grContext(0)
+#endif
 {
     allContexts()->add(this);
     Extensions3D* extensions = m_context->getExtensions();
@@ -107,6 +118,9 @@ SharedGraphicsContext3D::~SharedGraphicsContext3D()
 {
     m_context->deleteBuffer(m_quadVertices);
     allContexts()->remove(this);
+#if ENABLE(SKIA_GPU)
+    GrSafeUnref(m_grContext);
+#endif
 }
 
 void SharedGraphicsContext3D::makeContextCurrent()
@@ -450,6 +464,17 @@ DrawingBuffer* SharedGraphicsContext3D::getOffscreenBuffer(unsigned index, const
         m_offscreenBuffers[index]->reset(size);
     return m_offscreenBuffers[index].get();
 }
+
+#if ENABLE(SKIA_GPU)
+GrContext* SharedGraphicsContext3D::grContext()
+{
+    if (!m_grContext) {
+        m_grContext = GrContext::CreateGLShaderContext();
+        m_grContext->setTextureCacheLimits(maxTextureCacheCount, maxTextureCacheBytes);
+    }
+    return m_grContext;
+}
+#endif
 
 } // namespace WebCore
 

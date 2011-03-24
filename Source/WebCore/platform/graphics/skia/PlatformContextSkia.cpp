@@ -68,18 +68,6 @@
 
 namespace WebCore {
 
-#if ENABLE(SKIA_GPU)
-GrContext* GetGlobalGrContext()
-{
-    static GrContext* gGR;
-    if (!gGR) {
-        gGR = GrContext::CreateGLShaderContext();
-        gGR->setTextureCacheLimits(512, 50 * 1024 * 1024);
-    }
-    return gGR;
-}
-#endif
-
 extern bool isPathSkiaSafe(const SkMatrix& transform, const SkPath& path);
 
 // State -----------------------------------------------------------------------
@@ -245,7 +233,7 @@ PlatformContextSkia::~PlatformContextSkia()
 #if ENABLE(SKIA_GPU)
         // make sure everything related to this platform context has been flushed
         if (!m_useGPU)
-            GetGlobalGrContext()->flush(0);
+            m_gpuCanvas->context()->grContext()->flush(0);
 #endif
         m_gpuCanvas->drawingBuffer()->setWillPublishCallback(0);
     }
@@ -746,8 +734,10 @@ void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* co
         context->makeContextCurrent();
         m_gpuCanvas->bindFramebuffer();
 
-        GrContext* gr = GetGlobalGrContext();
+        GrContext* gr = context->grContext();
         gr->resetContext();
+        drawingBuffer->setGrContext(gr);
+
         SkDeviceFactory* factory = new SkGpuDeviceFactory(gr, SkGpuDevice::Current3DApiRenderTarget());
         SkDevice* device = factory->newDevice(m_canvas, SkBitmap::kARGB_8888_Config, drawingBuffer->size().width(), drawingBuffer->size().height(), false, false);
         m_canvas->setDevice(device)->unref();
