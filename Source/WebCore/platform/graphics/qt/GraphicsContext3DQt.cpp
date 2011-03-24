@@ -263,7 +263,6 @@ public:
     GLuint m_mainFbo;
     GLuint m_currentFbo;
     GLuint m_depthBuffer;
-    QImage m_pixels;
     bool m_layerComposited;
     ListHashSet<unsigned int> m_syntheticErrors;
 
@@ -481,6 +480,11 @@ QGLWidget* GraphicsContext3DInternal::getViewportGLWidget()
     return 0;
 }
 
+static inline quint32 swapBgrToRgb(quint32 pixel)
+{
+    return ((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00);
+}
+
 void GraphicsContext3DInternal::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget);
@@ -496,11 +500,39 @@ void GraphicsContext3DInternal::paint(QPainter* painter, const QStyleOptionGraph
     }
 
     // Alternatively read pixels to a memory buffer.
+    QImage offscreenImage(rect.width(), rect.height(), QImage::Format_ARGB32);
+    quint32* imagePixels = reinterpret_cast<quint32*>(offscreenImage.bits());
+
     m_glWidget->makeCurrent();
     bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_mainFbo);
-    glReadPixels(/* x */ 0, /* y */ 0, rect.width(), rect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, m_pixels.bits());
-    painter->drawImage(/* x */ 0, /* y */ 0, m_pixels.rgbSwapped().transformed(QMatrix().rotate(180)));
+    glReadPixels(/* x */ 0, /* y */ 0, rect.width(), rect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, imagePixels);
+
     bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_currentFbo);
+
+    // OpenGL gives us ABGR on 32 bits, and with the origin at the bottom left
+    // We need RGB32 or ARGB32_PM, with the origin at the top left.
+    quint32* pixelsSrc = imagePixels;
+    const int height = static_cast<int>(rect.height());
+    const int width = static_cast<int>(rect.width());
+    const int halfHeight = height / 2;
+    for (int row = 0; row < halfHeight; ++row) {
+        const int targetIdx = (height - 1 - row) * width;
+        quint32* pixelsDst = imagePixels + targetIdx;
+        for (int column = 0; column < width; ++column) {
+            quint32 tempPixel = *pixelsSrc;
+            *pixelsSrc = swapBgrToRgb(*pixelsDst);
+            *pixelsDst = swapBgrToRgb(tempPixel);
+            ++pixelsSrc;
+            ++pixelsDst;
+        }
+    }
+    if (static_cast<int>(height) % 2) {
+        for (int column = 0; column < width; ++column) {
+            *pixelsSrc = swapBgrToRgb(*pixelsSrc);
+            ++pixelsSrc;
+        }
+    }
+    painter->drawImage(/* x */ 0, /* y */ 0, offscreenImage);
 }
 
 QRectF GraphicsContext3DInternal::boundingRect() const
@@ -590,7 +622,6 @@ void GraphicsContext3D::reshape(int width, int height)
     m_currentHeight = height;
 
     m_internal->m_boundingRect = QRectF(QPointF(0, 0), QSizeF(width, height));
-    m_internal->m_pixels = QImage(m_currentWidth, m_currentHeight, QImage::Format_ARGB32);
 
     m_internal->m_glWidget->makeCurrent();
 

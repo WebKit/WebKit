@@ -1,3 +1,27 @@
+2011-03-24  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] When we render WebGL offscreen, color conversion cost a lot of CPU cycles
+        https://bugs.webkit.org/show_bug.cgi?id=40884
+
+        The software fallback is now only needed for corner cases like a manual rendering
+        of the page to QImage.
+
+        Keeping the image with the last pixel values is no longer needed. Removing it reduce the
+        performance for real-time rendering on software surface, but this case should no longer be
+        supported.
+
+        The conversion from OpenGL color space and coordinates is done manually for performance. This
+        also fix the bug of the inverted X axis due to the transformation.
+
+        The tests and benchmarks are done through Qt API tests.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::swapBgrToRgb):
+        (WebCore::GraphicsContext3DInternal::paint):
+        (WebCore::GraphicsContext3D::reshape):
+
 2011-03-24  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.

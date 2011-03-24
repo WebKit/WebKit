@@ -25,6 +25,10 @@
 #include <qwebpage.h>
 #include <qwebframe.h>
 
+#if defined(ENABLE_WEBGL) && ENABLE_WEBGL
+#include <QGLWidget>
+#endif
+
 class tst_QGraphicsWebView : public QObject
 {
     Q_OBJECT
@@ -39,6 +43,14 @@ private slots:
     void setPalette_data();
     void setPalette();
     void renderHints();
+
+#if defined(ENABLE_WEBGL) && ENABLE_WEBGL
+    void webglSoftwareFallbackVerticalOrientation();
+    void webglSoftwareFallbackHorizontalOrientation();
+
+private:
+    void compareCanvasToImage(const QUrl&, const QImage&);
+#endif
 };
 
 void tst_QGraphicsWebView::qgraphicswebview()
@@ -443,6 +455,112 @@ void tst_QGraphicsWebView::renderHints()
     QVERIFY(!(webView.renderHints() & QPainter::SmoothPixmapTransform));
     QVERIFY(!(webView.renderHints() & QPainter::HighQualityAntialiasing));
 }
+
+class GraphicsView : public QGraphicsView {
+public:
+    GraphicsView();
+    QGraphicsWebView* m_webView;
+};
+
+#if defined(ENABLE_WEBGL) && ENABLE_WEBGL
+bool compareImagesFuzzyPixelCount(const QImage& image1, const QImage& image2, qreal tolerance = 0.05)
+{
+    if (image1.size() != image2.size())
+        return false;
+
+    unsigned diffPixelCount = 0;
+    for (int row = 0; row < image1.size().width(); ++row) {
+        for (int column = 0; column < image1.size().height(); ++column)
+            if (image1.pixel(row, column) != image2.pixel(row, column))
+                ++diffPixelCount;
+    }
+
+    if (diffPixelCount > (image1.size().width() * image1.size().height()) * tolerance)
+        return false;
+
+    return true;
+}
+
+GraphicsView::GraphicsView()
+{
+    QGraphicsScene* const scene = new QGraphicsScene(this);
+    setScene(scene);
+
+    m_webView = new QGraphicsWebView;
+    scene->addItem(m_webView);
+
+    m_webView->page()->settings()->setAttribute(QWebSettings::WebGLEnabled, true);
+    m_webView->setResizesToContents(true);
+
+    setFrameShape(QFrame::NoFrame);
+    setViewport(new QGLWidget);
+}
+
+void tst_QGraphicsWebView::webglSoftwareFallbackVerticalOrientation()
+{
+    QSize canvasSize(100, 100);
+    QImage reference(canvasSize, QImage::Format_ARGB32);
+    reference.fill(0xFF00FF00);
+    { // Reference.
+        QPainter painter(&reference);
+        QPolygonF triangleUp;
+        triangleUp << QPointF(0, canvasSize.height())
+                   << QPointF(canvasSize.width(), canvasSize.height())
+                   << QPointF(canvasSize.width() / 2.0, canvasSize.height() / 2.0);
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(Qt::red);
+        painter.drawPolygon(triangleUp);
+    }
+
+    compareCanvasToImage(QUrl(QLatin1String("qrc:///resources/pointing_up.html")), reference);
+}
+
+void tst_QGraphicsWebView::webglSoftwareFallbackHorizontalOrientation()
+{
+    QSize canvasSize(100, 100);
+    QImage reference(canvasSize, QImage::Format_ARGB32);
+    reference.fill(0xFF00FF00);
+    { // Reference.
+        QPainter painter(&reference);
+        QPolygonF triangleUp;
+        triangleUp << QPointF(0, 0)
+                   << QPointF(0, canvasSize.height())
+                   << QPointF(canvasSize.width() / 2.0, canvasSize.height() / 2.0);
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(Qt::red);
+        painter.drawPolygon(triangleUp);
+    }
+
+    compareCanvasToImage(QUrl(QLatin1String("qrc:///resources/pointing_right.html")), reference);
+}
+
+void tst_QGraphicsWebView::compareCanvasToImage(const QUrl& url, const QImage& reference)
+{
+    GraphicsView view;
+    view.show();
+    QTest::qWaitForWindowShown(&view);
+
+    QGraphicsWebView* const graphicsWebView = view.m_webView;
+    graphicsWebView->load(url);
+    QVERIFY(waitForSignal(graphicsWebView, SIGNAL(loadFinished(bool))));
+    { // Force a render, to create the accelerated compositing tree.
+        QPixmap pixmap(view.size());
+        QPainter painter(&pixmap);
+        view.render(&painter);
+    }
+    QApplication::syncX();
+
+    const QSize imageSize = reference.size();
+
+    QImage target(imageSize, QImage::Format_ARGB32);
+    { // Web page content.
+        QPainter painter(&target);
+        QRectF renderRect(0, 0, imageSize.width(), imageSize.height());
+        view.scene()->render(&painter, renderRect, renderRect);
+    }
+    QVERIFY(compareImagesFuzzyPixelCount(target, reference, 0.01));
+}
+#endif
 
 QTEST_MAIN(tst_QGraphicsWebView)
 

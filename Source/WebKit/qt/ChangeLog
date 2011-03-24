@@ -1,3 +1,37 @@
+2011-03-24  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] When we render WebGL offscreen, color conversion cost a lot of CPU cycles
+        https://bugs.webkit.org/show_bug.cgi?id=40884
+
+        Add tests and benchmarks for the software fallback of WebGL.
+
+        * tests/benchmarks/webgl/10000_triangles.html: Added.
+        * tests/benchmarks/webgl/tst_webgl.cpp: Added.
+        (GraphicsView::GraphicsView):
+        (GraphicsView::resizeEvent):
+        (tst_WebGlPerformance::init):
+        (tst_WebGlPerformance::cleanup):
+        (tst_WebGlPerformance::benchSoftwareFallbackRgb16):
+        (tst_WebGlPerformance::benchSoftwareFallbackRgb32):
+        (tst_WebGlPerformance::benchSoftwareFallbackArgb32):
+        (tst_WebGlPerformance::benchSoftwareFallbackArgb32Premultiplied):
+        (tst_WebGlPerformance::benchmarkFrameRenderingOnImage):
+        * tests/benchmarks/webgl/tst_webgl.qrc: Added.
+        * tests/benchmarks/webgl/webgl.pro: Added.
+        * tests/qgraphicswebview/qgraphicswebview.pro:
+        * tests/qgraphicswebview/resources/pointing_right.html: Added.
+        * tests/qgraphicswebview/resources/pointing_up.html: Added.
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (compareImagesFuzzyPixelCount):
+        (GraphicsView::GraphicsView):
+        (tst_QGraphicsWebView::webglSoftwareFallbackVerticalOrientation):
+        (tst_QGraphicsWebView::webglSoftwareFallbackHorizontalOrientation):
+        (tst_QGraphicsWebView::compareCanvasToImage):
+        * tests/qgraphicswebview/tst_qgraphicswebview.qrc:
+        * tests/tests.pro:
+
 2011-03-24  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Benjamin Poulain.
