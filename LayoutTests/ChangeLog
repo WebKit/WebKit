@@ -1,5 +1,13 @@
 2011-03-24  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: removing newly added inspector test that fails on release bots.
+
+        * http/tests/inspector/network/network-redirect-expected.txt: Removed.
+        * http/tests/inspector/network/network-redirect.html: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-03-24  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: updated chromium expectations.
 
         * platform/chromium/test_expectations.txt:

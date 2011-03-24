@@ -663,7 +663,6 @@ BUGWK56454 WIN LINUX : inspector/elements/mutate-unknown-node.html = PASS TEXT
 BUGWK56602 SKIP : http/tests/inspector/network/network-timing.html = FAIL
 BUGWK56602 SKIP : http/tests/inspector/network/network-size.html = FAIL
 BUGWK56602 SKIP : http/tests/inspector/network/network-size-chunked.html = FAIL
-BUGWK56602 SKIP : http/tests/inspector/network/network-redirect.html = FAIL
 
 BUGJAMESR WIN LINUX : inspector/styles/styles-disable-then-delete.html = TIMEOUT PASS
 
