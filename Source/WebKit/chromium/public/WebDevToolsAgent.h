@@ -90,8 +90,8 @@ public:
     WEBKIT_API static void setMessageLoopDispatchHandler(MessageLoopDispatchHandler);
 
     // FIXME: remove once not used downstream.
-    virtual void identifierForInitialRequest(unsigned long resourceId, WebFrame*, const WebURLRequest&);
-    virtual void willSendRequest(unsigned long resourceId, WebURLRequest&);
+    virtual void identifierForInitialRequest(unsigned long resourceId, WebFrame*, const WebURLRequest&) = 0;
+    virtual void willSendRequest(unsigned long resourceId, WebURLRequest&) = 0;
 
     virtual void willSendRequest(unsigned long resourceId, WebFrame*, WebURLRequest&) = 0;
     virtual void didReceiveData(unsigned long resourceId, int length) = 0;
