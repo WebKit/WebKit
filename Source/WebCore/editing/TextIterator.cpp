@@ -2512,11 +2512,6 @@ tryAgain:
     return matchLength;
 }
 
-PassRefPtr<Range> findPlainText(const Range* range, const String& target, bool forward, bool caseSensitive)
-{
-    return findPlainText(range, target, (forward ? 0 : Backwards) | (caseSensitive ? 0 : CaseInsensitive));
-}
-
 PassRefPtr<Range> findPlainText(const Range* range, const String& target, FindOptions options)
 {
     // First, find the text.

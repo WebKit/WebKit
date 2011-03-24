@@ -1,3 +1,15 @@
+2011-03-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Remove legacy version of findPlainText.
+        https://bugs.webkit.org/show_bug.cgi?id=57056
+
+        * editing/TextIterator.cpp:
+        * editing/TextIterator.h:
+        Remove legacy overload of findPlainText that doesn't
+        take an options parameter.
+
 2011-03-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

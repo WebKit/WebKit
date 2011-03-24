@@ -1578,8 +1578,7 @@ void WebFrameImpl::scopeStringMatches(int identifier,
         // find an alternative.
         RefPtr<Range> resultRange(findPlainText(searchRange.get(),
                                                 searchText,
-                                                true,
-                                                options.matchCase));
+                                                options.matchCase ? 0 : CaseInsensitive));
         if (resultRange->collapsed(ec)) {
             if (!resultRange->startContainer()->isInShadowTree())
                 break;

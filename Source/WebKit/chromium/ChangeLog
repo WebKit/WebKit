@@ -1,3 +1,15 @@
+2011-03-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Remove legacy version of findPlainText.
+        https://bugs.webkit.org/show_bug.cgi?id=57056
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::scopeStringMatches):
+        Replace use of legacy findPlainText with a version that
+        takes an options parameter.
+
 2011-03-24  Nat Duca  <nduca@chromium.org>
 
         Reviewed by Kenneth Russell.
