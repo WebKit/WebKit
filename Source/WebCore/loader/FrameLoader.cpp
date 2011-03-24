@@ -2398,16 +2398,15 @@ void FrameLoader::checkLoadCompleteForThisFrame()
                 
             // Only reset if we aren't already going to a new provisional item.
             bool shouldReset = !history()->provisionalItem();
-            if (!(pdl->isLoadingInAPISense() && !pdl->isStopping())) {
+            if (!pdl->isLoadingInAPISense() || pdl->isStopping())) {
                 m_delegateIsHandlingProvisionalLoadError = true;
                 m_client->dispatchDidFailProvisionalLoad(error);
                 m_delegateIsHandlingProvisionalLoadError = false;
 
-                // FIXME: can stopping loading here possibly have any effect, if isLoading is false,
-                // which it must be to be in this branch of the if? And is it OK to just do a full-on
-                // stopAllLoaders instead of stopLoadingSubframes?
-                stopLoadingSubframes(ShouldNotClearProvisionalItem);
-                pdl->stopLoading();
+                ASSERT(!pdl->isLoading());
+                ASSERT(!pdl->isLoadingMainResource());
+                ASSERT(!pdl->isLoadingSubresources());
+                ASSERT(!pdl->isLoadingPlugIns());
 
                 // If we're in the middle of loading multipart data, we need to restore the document loader.
                 if (isReplacing() && !m_documentLoader.get())

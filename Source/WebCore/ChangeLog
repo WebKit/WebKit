@@ -1,3 +1,21 @@
+2011-03-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION: Infinite recursion in recursiveCheckLoadComplete()/checkLoadCompleteForThisFrame()/stopLoading()
+        https://bugs.webkit.org/show_bug.cgi?id=56978
+        <rdar://problem/9041670>
+
+        No new tests, because there is no known way to reproduce.
+
+        Removed strange code that was trying to stop a non-loading provisional document loader and
+        even its subframes (?!). Added assertions to catch it if we can actually be loading here in
+        some sense.
+        Rewrote a condition for clarity - starting with r43148, it was acting as an opposite of a
+        recursion guard (but that didn't cause immediate problems then).
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::checkLoadCompleteForThisFrame):
+
 2011-03-23  Brady Eidson  <beidson@apple.com>
 
         Attempt to fix the build for platforms that have the icon database 
