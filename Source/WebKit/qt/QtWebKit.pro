@@ -82,6 +82,9 @@ CONFIG(QTDIR_build) {
     symbian: TARGET =$$TARGET$${QT_LIBINFIX}
 }
 
+# Avoid ASCII-cast warnings because Qt use them a lot and warnings are treated as errors.
+DEFINES -= QT_ASCII_CAST_WARNINGS
+
 symbian {
     TARGET.EPOCALLOWDLLDATA=1
     # DRM and Allfiles capabilites need to be audited to be signed on Symbian

@@ -1,3 +1,20 @@
+2011-03-24  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        Avoided ASCII-cast warnings for WebKit.
+
+        Normally they won't be enabled anyway, but if you build webkit from
+        within the Qt mother repository it will pick up Qt's default build
+        settings, which do enable it. We need to disable them because
+        warnings are treated as errors and there are way too many of them in
+        the WebKit code.
+
+        [Qt] Avoid ASCII-cast warnings for WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=57016
+
+        * QtWebKit.pro:
+
 2011-03-24  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Benjamin Poulain.
