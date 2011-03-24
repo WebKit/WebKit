@@ -64,6 +64,7 @@ class SQLTransaction;
 class IconDatabase : public IconDatabaseBase {
 public:
     static void delayDatabaseCleanup() { }
+    static String defaultDatabaseFilename() { return "WebpageIcons.db"; }
 };
 #else 
 

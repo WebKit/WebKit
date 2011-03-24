@@ -1,3 +1,11 @@
+2011-03-23  Brady Eidson  <beidson@apple.com>
+
+        Attempt to fix the build for platforms that have the icon database 
+        disabled but still provide settings API for it...?
+
+        * loader/icon/IconDatabase.h:
+        (WebCore::IconDatabase::defaultDatabaseFilename):
+
 2011-03-23  Mark Rowe  <mrowe@apple.com>
 
         Fix the build.
