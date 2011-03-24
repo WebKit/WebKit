@@ -1,3 +1,13 @@
+2011-03-24  Brian Weinstein  <bweinstein@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Fix a typo in the VK_LEFT case of performDefaultBehaviorForKeyEvent.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent): It should be a logical or,
+            not a bitwise or.
+
 2011-03-24  Jeff Miller  <jeffm@apple.com>
 
         Fix typo - USE(CF_NETWORK) should be USE(CFNETWORK).

@@ -390,7 +390,7 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
         if (keyboardEvent.metaKey())
             m_page->goBack();
         else {
-            if (keyboardEvent.altKey()  | keyboardEvent.controlKey())
+            if (keyboardEvent.altKey() || keyboardEvent.controlKey())
                 scroll(m_page.get(), ScrollLeft, ScrollByPage);
             else
                 scroll(m_page.get(), ScrollLeft, ScrollByLine);
