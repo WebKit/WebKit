@@ -43,6 +43,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLInterchange.h"
 #include "HTMLNames.h"
+#include "NodeList.h"
 #include "SelectionController.h"
 #include "SmartReplace.h"
 #include "TextIterator.h"
@@ -776,6 +777,34 @@ static Node* enclosingInline(Node* node)
     return node;
 }
 
+static bool isInlineNodeWithStyle(const Node* node)
+{
+    // We don't want to skip over any block elements.
+    if (!node->renderer() || !node->renderer()->isInline())
+        return false;
+
+    if (!node->isHTMLElement())
+        return false;
+    
+    // We can skip over elements whose class attribute is
+    // one of our internal classes.
+    const HTMLElement* element = static_cast<const HTMLElement*>(node);
+    AtomicString classAttributeValue = element->getAttribute(classAttr);
+    if (classAttributeValue == AppleStyleSpanClass
+        || classAttributeValue == AppleTabSpanClass
+        || classAttributeValue == AppleConvertedSpace
+        || classAttributeValue == ApplePasteAsQuotation)
+        return true;
+
+    // We can skip inline elements that don't have attributes or whose only
+    // attribute is the style attribute.
+    const NamedNodeMap* attributeMap = element->attributeMap();
+    if (!attributeMap || attributeMap->isEmpty() || (attributeMap->length() == 1 && element->hasAttribute(styleAttr)))
+        return true;
+
+    return false;
+}
+    
 void ReplaceSelectionCommand::doApply()
 {
     VisibleSelection selection = endingSelection();
@@ -916,6 +945,29 @@ void ReplaceSelectionCommand::doApply()
     // position forward without changing the visible position so we're still at the same visible location, but
     // outside of preceding tags.
     insertionPos = positionAvoidingPrecedingNodes(insertionPos);
+
+    // If we are not trying to match the destination style we prefer a position
+    // that is outside inline elements that provide style.
+    // This way we can produce a less verbose markup.
+    // We can skip this optimization for fragments not wrapped in one of
+    // our style spans and for positions inside list items
+    // since insertAsListItems already does the right thing.
+    if (!m_matchStyle && !enclosingList(insertionPos.anchorNode()) && isStyleSpan(fragment.firstChild())) {
+        Node* parentNode = insertionPos.anchorNode()->parentNode();
+        while (parentNode && parentNode->renderer() && isInlineNodeWithStyle(parentNode)) {
+            // If we are in the middle of a text node, we need to split it before we can
+            // move the insertion position.
+            if (insertionPos.anchorNode()->isTextNode() && insertionPos.anchorType() == Position::PositionIsOffsetInAnchor && insertionPos.offsetInContainerNode() && !insertionPos.atLastEditingPositionForNode())
+                splitTextNodeContainingElement(static_cast<Text*>(insertionPos.anchorNode()), insertionPos.offsetInContainerNode());
+            
+            // If the style element has more than one child, we need to split it.
+            if (parentNode->firstChild()->nextSibling())
+                splitElement(static_cast<Element*>(parentNode), insertionPos.computeNodeAfterPosition());
+            
+            insertionPos = positionInParentBeforeNode(parentNode);
+            parentNode = parentNode->parentNode();
+        }
+    }
 
     // FIXME: When pasting rich content we're often prevented from heading down the fast path by style spans.  Try
     // again here if they've been removed.

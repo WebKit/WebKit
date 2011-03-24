@@ -1,3 +1,21 @@
+2011-03-24  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Repeated copy and paste-in-place operation results in increasingly verbose HTML.
+        <rdar://problem/8690506>
+        https://bugs.webkit.org/show_bug.cgi?id=56874
+
+        * editing/pasteboard/paste-text-with-style-expected.txt: Added.
+        * editing/pasteboard/paste-text-with-style.html: Added.
+        The following are new results for existing tests that now produce
+        a different markup.
+        * platform/mac/editing/pasteboard/5065605-expected.txt:
+        * platform/mac/editing/pasteboard/display-block-on-spans-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-011-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-at-tabspan-001-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-at-tabspan-002-expected.txt:
+
 2011-03-24  Adam Roben  <aroben@apple.com>
 
         Add some flaky tests to the mac-wk2 and win-wk2 Skipped files

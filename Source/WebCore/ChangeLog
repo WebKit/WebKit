@@ -1,3 +1,25 @@
+2011-03-24  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Repeated copy and paste-in-place operation results in increasingly verbose HTML.
+        <rdar://problem/8690506>
+        https://bugs.webkit.org/show_bug.cgi?id=56874
+        
+        When we calculate the style to apply at the insertion point we compare the initial
+        style at the insertion point against the style calculated at the span we wrap the
+        copied markup fragment with. We could end up with a series of unnecessary spans
+        to remove the initial style that simply grow our markup.
+        The consists in moving the insertion point outside any inline element that could
+        affect the fragment being inserted when we are not pasting and matching the style.
+
+        Test: editing/pasteboard/paste-text-with-style.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::isInlineNodeWithStyle): Added.
+        (WebCore::ReplaceSelectionCommand::doApply): Added logic to change the insertion
+        point according to the new rules.
+
 2011-03-24  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
