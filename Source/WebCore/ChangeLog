@@ -1,3 +1,26 @@
+2011-03-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: provide live edit callback to source frame delegate.
+        https://bugs.webkit.org/show_bug.cgi?id=57003
+
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.editScriptSource):
+        (WebInspector.DebuggerModel.prototype._didEditScriptSource):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype.canEditScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype.editScriptSource.didEditScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype.editScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._updateBreakpointsAfterLiveEdit):
+        (WebInspector.DebuggerPresentationModel.prototype._scriptForSourceFileId):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        (WebInspector.SourceFrameDelegateForScriptsPanel):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.canEditScriptSource):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.editScriptSource):
+
 2011-03-24  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.

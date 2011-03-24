@@ -547,9 +547,9 @@ WebInspector.ScriptsPanel.prototype = {
 
     _createSourceFrame: function(sourceFileId)
     {
-        var script = this._scriptForSourceFileId(sourceFileId);
-        var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(this._presentationModel, sourceFileId, script);
-        var sourceFrame = new WebInspector.SourceFrame(delegate, script.sourceURL);
+        var sourceFile = this._presentationModel.sourceFile(sourceFileId);
+        var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(this._presentationModel, sourceFileId);
+        var sourceFrame = new WebInspector.SourceFrame(delegate, sourceFile.url);
         sourceFrame._sourceFileId = sourceFileId;
         sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
         this._sourceFileIdToSourceFrame[sourceFileId] = sourceFrame;
@@ -595,15 +595,6 @@ WebInspector.ScriptsPanel.prototype = {
             sourceFrame.setExecutionLine(selectedCallFrame.sourceLocation.lineNumber);
             this._executionSourceFrame = sourceFrame;
         }
-    },
-
-    _scriptForSourceFileId: function(sourceFileId)
-    {
-        function filter(script)
-        {
-            return (script.sourceURL || script.sourceID) === sourceFileId;
-        }
-        return WebInspector.debuggerModel.queryScripts(filter)[0];
     },
 
     _clearCurrentExecutionLine: function()
@@ -1009,12 +1000,11 @@ WebInspector.ScriptsPanel.prototype = {
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 
-WebInspector.SourceFrameDelegateForScriptsPanel = function(model, sourceFileId, script)
+WebInspector.SourceFrameDelegateForScriptsPanel = function(model, sourceFileId)
 {
     WebInspector.SourceFrameDelegate.call(this);
     this._model = model;
     this._sourceFileId = sourceFileId;
-    this._script = script;
     this._popoverObjectGroup = "popover";
 }
 
@@ -1063,12 +1053,19 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
 
     canEditScriptSource: function()
     {
-        return Preferences.canEditScriptSource && !this._script.lineOffset && !this._script.columnOffset;
+        return this._model.canEditScriptSource(this._sourceFileId);
     },
 
-    editScriptSource: function(text)
+    editScriptSource: function(text, callback)
     {
-        WebInspector.debuggerModel.editScriptSource(this._script.sourceID, text);
+        function didEditScriptSource(success, newBodyOrErrorMessage)
+        {
+            if (!success) {
+                WebInspector.log(newBodyOrErrorMessage, WebInspector.ConsoleMessage.MessageLevel.Warning);
+                return;
+            }
+        }
+        this._model.editScriptSource(this._sourceFileId, text, didEditScriptSource.bind(this));
     },
 
     setScriptSourceIsBeingEdited: function(inEditMode)

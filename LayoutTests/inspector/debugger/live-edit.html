@@ -17,9 +17,11 @@ function test()
 
             function didShowScriptSource(sourceFrame)
             {
-                InspectorTest.addSniffer(WebInspector.debuggerModel, "_updateScriptSource", didEditScriptSource);
+                InspectorTest.addSniffer(WebInspector.debuggerModel, "_didEditScriptSource", didEditScriptSource);
+                sourceFrame._textViewer.readOnly = false;
                 var newText = sourceFrame._textModel.text.replace("return 0;", "return \"live-edited string\";");
-                sourceFrame._delegate.editScriptSource(newText);
+                sourceFrame._textModel.setText(null, newText);
+                sourceFrame._handleSave();
             }
 
             function didEditScriptSource()

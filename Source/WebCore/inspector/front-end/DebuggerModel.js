@@ -44,7 +44,6 @@ WebInspector.DebuggerModel.Events = {
     DebuggerResumed: "debugger-resumed",
     ParsedScriptSource: "parsed-script-source",
     FailedToParseScriptSource: "failed-to-parse-script-source",
-    ScriptSourceChanged: "script-source-changed",
     BreakpointResolved: "breakpoint-resolved",
     Reset: "reset"
 }
@@ -175,25 +174,17 @@ WebInspector.DebuggerModel.prototype = {
         return scripts;
     },
 
-    editScriptSource: function(sourceID, scriptSource)
+    editScriptSource: function(sourceID, newSource, callback)
     {
-        var oldSource = this._scripts[sourceID].source;
-        DebuggerAgent.editScriptSource(sourceID, scriptSource, this._updateScriptSource.bind(this, sourceID, oldSource));
+        DebuggerAgent.editScriptSource(sourceID, newSource, this._didEditScriptSource.bind(this, sourceID, callback));
     },
 
-    _updateScriptSource: function(sourceID, oldSource, error, success, newBodyOrErrorMessage, callFrames)
+    _didEditScriptSource: function(sourceID, callback, error, success, newBodyOrErrorMessage, callFrames)
     {
-        if (error)
+        callback(success, newBodyOrErrorMessage);
+        if (!success)
             return;
-
-        if (!success) {
-            WebInspector.log(newBodyOrErrorMessage, WebInspector.ConsoleMessage.MessageLevel.Warning);
-            return;
-        }
-
         this._scripts[sourceID].source = newBodyOrErrorMessage;
-        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.ScriptSourceChanged, { sourceID: sourceID, oldSource: oldSource });
-
         if (callFrames && callFrames.length) {
             this._debuggerPausedDetails.callFrames = callFrames;
             this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPausedDetails);

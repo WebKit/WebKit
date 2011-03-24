@@ -36,7 +36,6 @@ WebInspector.DebuggerPresentationModel = function()
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasEnabled, this._debuggerWasEnabled, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._failedToParseScriptSource, this);
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ScriptSourceChanged, this._scriptSourceChanged, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointResolved, this._breakpointResolved, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.Reset, this._reset, this);
 }
@@ -106,22 +105,44 @@ WebInspector.DebuggerPresentationModel.prototype = {
         }
     },
 
-    _scriptSourceChanged: function(event)
+    canEditScriptSource: function(sourceFileId)
     {
-        var sourceID = event.data.sourceID;
-        var oldSource = event.data.oldSource;
-        var script = WebInspector.debuggerModel.scriptForSourceID(sourceID);
+        if (!Preferences.canEditScriptSource)
+            return false;
+        var script = this._scriptForSourceFileId(sourceFileId);
+        return  !script.lineOffset && !script.columnOffset;
+    },
 
-        var resource = WebInspector.resourceForURL(script.sourceURL);
-        if (resource) {
-            var revertHandle = WebInspector.debuggerModel.editScriptSource.bind(WebInspector.debuggerModel, script.sourceID, oldSource);
-            resource.setContent(script.source, revertHandle);
+    editScriptSource: function(sourceFileId, text, callback)
+    {
+        var script = this._scriptForSourceFileId(sourceFileId);
+        var oldSource = script.source;
+        function didEditScriptSource(success, newBodyOrErrorMessage)
+        {
+            if (!success) {
+                callback(false, newBodyOrErrorMessage);
+                return;
+            }
+
+            var newSource = newBodyOrErrorMessage;
+            this._updateBreakpointsAfterLiveEdit(sourceFileId, oldSource, newSource);
+
+            var resource = WebInspector.resourceForURL(script.sourceURL);
+            if (resource) {
+                var sourceFile = this._sourceFiles[sourceFileId];
+                var revertHandle = this.editScriptSource.bind(this, sourceFileId, oldSource, sourceFile.reload.bind(sourceFile));
+                resource.setContent(newSource, revertHandle);
+            }
+
+            callback(true, newSource);
         }
+        WebInspector.debuggerModel.editScriptSource(script.sourceID, text, didEditScriptSource.bind(this));
+    },
 
-        var sourceFileId = script.sourceURL || script.sourceID;
-
+    _updateBreakpointsAfterLiveEdit: function(sourceFileId, oldSource, newSource)
+    {
         // Clear and re-create breakpoints according to text diff.
-        var diff = Array.diff(oldSource.split("\n"), script.source.split("\n"));
+        var diff = Array.diff(oldSource.split("\n"), newSource.split("\n"));
         for (var id in this._presentationBreakpoints) {
             var breakpoint = this._presentationBreakpoints[id];
             if (breakpoint.sourceFileId !== sourceFileId)
@@ -146,8 +167,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
             if (newLineNumber !== undefined)
                 this.setBreakpoint(sourceFileId, newLineNumber, breakpoint.condition, breakpoint.enabled);
         }
-
-        this._sourceFiles[sourceFileId].reload();
     },
 
     toggleFormatSourceFiles: function()
@@ -343,6 +362,15 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _sourceFileForScript: function(script)
     {
         return this._sourceFiles[script.sourceURL || script.sourceID];
+    },
+
+    _scriptForSourceFileId: function(sourceFileId)
+    {
+        function filter(script)
+        {
+            return (script.sourceURL || script.sourceID) === sourceFileId;
+        }
+        return WebInspector.debuggerModel.queryScripts(filter)[0];
     },
 
     _reset: function()
