@@ -1,3 +1,27 @@
+2011-03-24  Joe Wild  <joseph.wild@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Some Unicode tests fail with Qt version >= 4.7.0
+        https://bugs.webkit.org/show_bug.cgi?id=46251
+
+        Updated tests the print out character 0xFFFF for Qt Platform.
+        QString.toUtf8() converts non-defined Unicode char values, like
+        0xFFFF to a replacement character ('?') as documented.  Other
+        platforms leave the character as 0xFFFF (but utf8 encoded).
+        Converting to a real printable char seems reasonable and may
+        be more reliable.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/js/regexp-range-bound-ffff-expected.txt: Added.
+        * platform/qt/fast/js/switch-behaviour-expected.txt: Added.
+        * platform/qt/fast/url: Added.
+        * platform/qt/fast/url/anchor-expected.txt: Added.
+        * platform/qt/fast/url/path-expected.txt: Added.
+        * platform/qt/http/tests/websocket: Added.
+        * platform/qt/http/tests/websocket/tests: Added.
+        * platform/qt/http/tests/websocket/tests/bad-sub-protocol-non-ascii-expected.txt: Added.
+
 2011-03-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: removing newly added inspector test that fails on release bots.

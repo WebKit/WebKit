@@ -2943,15 +2943,6 @@ svg/W3C-SVG-1.1/filters-light-04-f.svg
 # Qt 4.7 related bugs
 # ============================================================================= #
 
-# [Qt] Some Unicode tests fail with Qt version >= 4.7.0
-# https://bugs.webkit.org/show_bug.cgi?id=46251
-fast/js/encode-URI-test.html 
-fast/js/regexp-range-bound-ffff.html 
-fast/js/switch-behaviour.html 
-fast/url/anchor.html 
-fast/url/path.html 
-http/tests/websocket/tests/bad-sub-protocol-non-ascii.html
-
 # [Qt] editing/execCommand/move-selection-back-line.html fails with Qt 4.7.1
 # https://bugs.webkit.org/show_bug.cgi?id=50144
 editing/execCommand/move-selection-back-line.html
