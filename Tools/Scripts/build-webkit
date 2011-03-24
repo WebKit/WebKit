@@ -207,6 +207,9 @@ my @features = (
     { option => "media-statistics", desc => "Toggle Media Statistics support",
       define => "ENABLE_MEDIA_STATISTICS", default => 0, value => \$mediaStatisticsSupport },
 
+    { option => "media-stream", desc => "Toggle Media Stream API support (implies Blob support, currently Chromium only)",
+      define => "ENABLE_MEDIA_STREAM", default => isChromium(), value => \$mediaStreamSupport },
+
     { option => "meter-tag", desc => "Meter Tag support",
       define => "ENABLE_METER_TAG", default => !isAppleWinWebKit(), value => \$meterTagSupport },
 
@@ -260,9 +263,6 @@ my @features = (
 
     { option => "touch-events", desc => "Toggle Touch Events support",
       define => "ENABLE_TOUCH_EVENTS", default => isQt(), value => \$touchEventsSupport },
-
-    { option => "media-stream", desc => "Toggle Media Stream API support (implies Blob support, currently Chromium only)",
-      define => "ENABLE_MEDIA_STREAM", default => isChromium(), value => \$mediaStreamSupport },
 
     { option => "video", desc => "Toggle Video support",
       define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk()), value => \$videoSupport },

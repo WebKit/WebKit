@@ -1,3 +1,14 @@
+2011-03-23  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Media Stream API: fix the order of the options in build-webkit.
+        https://bugs.webkit.org/show_bug.cgi?id=56949
+
+        Fix the order of the options in build-webkit.
+
+        * Scripts/build-webkit:
+
 2011-03-23  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Mihai Parparita.
