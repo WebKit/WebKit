@@ -1,5 +1,12 @@
 2011-03-23  Kenneth Russell  <kbr@google.com>
 
+        Rolled forward Chromium DEPS again to fix DumpRenderTree build
+        failure caused by r81821.
+
+        * DEPS:
+
+2011-03-23  Kenneth Russell  <kbr@google.com>
+
         Rolled forward Chromium DEPS to fix build breakage after r81821.
 
         * DEPS:
