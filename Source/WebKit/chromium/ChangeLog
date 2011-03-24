@@ -1,5 +1,12 @@
 2011-03-24  Andy Estes  <aestes@apple.com>
 
+        Fix the chromium build.
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::objectContentType):
+
+2011-03-24  Andy Estes  <aestes@apple.com>
+
         Reviewed by Darin Adler.
 
         REGRESSION (r70748): latest nightly builds kills AC_QuickTime.js

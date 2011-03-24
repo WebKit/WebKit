@@ -1510,7 +1510,7 @@ ObjectContentType FrameLoaderClientImpl::objectContentType(
     bool plugInSupportsMIMEType = pluginData && pluginData->supportsMimeType(mimeType);
 
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-        return shouldPreferPlugInsForImages && plugInSupportsMIMEType ? return ObjectContentNetscapePlugin : return ObjectContentImage;
+        return shouldPreferPlugInsForImages && plugInSupportsMIMEType ? ObjectContentNetscapePlugin : ObjectContentImage;
 
     if (plugInSupportsMIMEType)
         return ObjectContentNetscapePlugin;
