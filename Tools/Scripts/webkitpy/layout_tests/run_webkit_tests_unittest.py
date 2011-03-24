@@ -74,7 +74,7 @@ def parse_args(extra_args=None, record_results=False, tests_included=False,
     if not record_results:
         args.append('--no-record-results')
     if not '--child-processes' in extra_args and not '--worker-model' in extra_args:
-        args.extend(['--worker-model', 'old-inline'])
+        args.extend(['--worker-model', 'inline'])
     args.extend(extra_args)
     if not tests_included:
         # We use the glob to test that globbing works.
@@ -197,13 +197,13 @@ class MainTest(unittest.TestCase):
 
     def test_child_process_1(self):
         (res, buildbot_output, regular_output, user) = logging_run(
-             ['--print', 'config', '--child-processes', '1'])
+             ['--print', 'config', '--worker-model', 'threads', '--child-processes', '1'])
         self.assertTrue('Running one DumpRenderTree\n'
                         in regular_output.get())
 
     def test_child_processes_2(self):
         (res, buildbot_output, regular_output, user) = logging_run(
-             ['--print', 'config', '--child-processes', '2'])
+             ['--print', 'config', '--worker-model', 'threads', '--child-processes', '2'])
         self.assertTrue('Running 2 DumpRenderTrees in parallel\n'
                         in regular_output.get())
 
@@ -525,11 +525,11 @@ class MainTest(unittest.TestCase):
     def test_worker_model__inline(self):
         self.assertTrue(passing_run(['--worker-model', 'inline']))
 
-    def test_worker_model__old_inline_with_child_processes(self):
-        res, out, err, user = logging_run(['--worker-model', 'old-inline',
+    def test_worker_model__inline_with_child_processes(self):
+        res, out, err, user = logging_run(['--worker-model', 'inline',
                                            '--child-processes', '2'])
         self.assertEqual(res, 0)
-        self.assertTrue('--worker-model=old-inline overrides --child-processes\n' in err.get())
+        self.assertTrue('--worker-model=inline overrides --child-processes\n' in err.get())
 
     def test_worker_model__old_inline(self):
         self.assertTrue(passing_run(['--worker-model', 'old-inline']))

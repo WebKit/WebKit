@@ -245,6 +245,12 @@ class TestPort(base.Port):
     def baseline_search_path(self):
         return [self.baseline_path()]
 
+    def default_child_processes(self):
+        return 1
+
+    def default_worker_model(self):
+        return 'inline'
+
     def check_build(self, needs_http):
         return True
 

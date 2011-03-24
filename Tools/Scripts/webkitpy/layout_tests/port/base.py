@@ -139,7 +139,9 @@ class Port(object):
         return self._executive.cpu_count()
 
     def default_worker_model(self):
-        return 'old-threads'
+        if self._multiprocessing_is_available:
+            return 'processes'
+        return 'threads'
 
     def baseline_path(self):
         """Return the absolute path to the directory to store new baselines

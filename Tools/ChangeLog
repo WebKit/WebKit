@@ -1,3 +1,21 @@
+2011-03-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests: clean up worker model defaults. This
+        changes the default behavior to 'threads' instead of
+        'old-threads', and clarifies that chromium-win-* and
+        chromium-mac-leopard are exceptions.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56971
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-03-23  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Darin Adler.
