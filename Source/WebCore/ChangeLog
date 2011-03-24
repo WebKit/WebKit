@@ -1,3 +1,28 @@
+2011-03-23  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by David Hyatt.
+
+        Made sure that renderers displaying counters are invalidated upon
+        counter destruction.
+
+        Assertion and incorrect rendering of counters.
+        https://bugs.webkit.org/show_bug.cgi?id=56896
+
+        Test: fast/css/counters/2displays.html
+
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::~CounterNode):
+        Added to make sure that its display renderers are always reset when
+        the node is deleted.
+        (WebCore::CounterNode::resetRenderers):
+        Fixed bug that would prevent reset of second and subsequent
+        display renderers.
+        * rendering/CounterNode.h:
+        * rendering/RenderCounter.cpp:
+        (WebCore::destroyCounterNodeWithoutMapRemoval):
+        removed unnecessary calls to resetRenderers() as the CounterNode
+        destructor takes care of that now.
+
 2011-03-23  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Maciej Stachowiak.

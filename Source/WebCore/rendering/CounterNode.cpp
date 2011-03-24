@@ -42,6 +42,11 @@ CounterNode::CounterNode(RenderObject* o, bool hasResetType, int value)
 {
 }
 
+CounterNode::~CounterNode()
+{
+    resetRenderers();
+}
+
 PassRefPtr<CounterNode> CounterNode::create(RenderObject* owner, bool hasResetType, int value)
 {
     return adoptRef(new CounterNode(owner, hasResetType, value));
@@ -159,11 +164,8 @@ void CounterNode::removeRenderer(RenderCounter* value)
 
 void CounterNode::resetRenderers()
 {
-    for (RenderCounter* iterator = m_rootRenderer;iterator; iterator = iterator->m_nextForSameCounter) {
-        iterator->invalidate();
-        ASSERT(!iterator->m_counterNode);
-        ASSERT(!iterator->m_nextForSameCounter);
-    }
+    while (m_rootRenderer)
+        m_rootRenderer->invalidate(); // This makes m_rootRenderer point to the next renderer if any since it disconnects the m_rootRenderer from this.
 }
 
 void CounterNode::resetThisAndDescendantsRenderers()

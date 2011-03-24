@@ -1,3 +1,16 @@
+2011-03-23  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by David Hyatt.
+
+        This test verifies the correct update of a second renderer that
+        displays the same CounterNode.
+
+        Assertion and incorrect rendering of counters.
+        https://bugs.webkit.org/show_bug.cgi?id=56896
+
+        * fast/css/counters/2displays-expected.txt: Added.
+        * fast/css/counters/2displays.html: Added.
+
 2011-03-23  Xiaomei Ji  <xji@chromium.org>
 
         Rebaseline chromium-mac after r81807.

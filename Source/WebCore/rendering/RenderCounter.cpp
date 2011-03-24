@@ -530,9 +530,7 @@ static void destroyCounterNodeWithoutMapRemoval(const AtomicString& identifier, 
         child->parent()->removeChild(child.get());
         ASSERT(counterMaps().get(child->owner())->get(identifier.impl()) == child);
         counterMaps().get(child->owner())->remove(identifier.impl());
-        child->resetRenderers();
     }
-    node->resetRenderers();
     if (CounterNode* parent = node->parent())
         parent->removeChild(node);
 }
