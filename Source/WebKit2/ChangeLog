@@ -1,3 +1,13 @@
+2011-03-24  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Tabbing from the last focused field to a non-webpage element leaves the selection in a weird state
+        <rdar://problem/8553962>
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setFocused): When the page loses focus, clear out any selection in the frame
+
 2011-03-24  Brian Weinstein  <bweinstein@apple.com>
 
         Rubber-stamped by Sam Weinig.

@@ -1126,6 +1126,8 @@ void WebPage::viewWillEndLiveResize()
 
 void WebPage::setFocused(bool isFocused)
 {
+    if (!isFocused)
+        m_page->focusController()->focusedOrMainFrame()->selection()->clear();
     m_page->focusController()->setFocused(isFocused);
 }
 
