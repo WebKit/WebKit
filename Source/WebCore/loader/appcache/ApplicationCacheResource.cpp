@@ -31,11 +31,12 @@
 
 namespace WebCore {
 
-ApplicationCacheResource::ApplicationCacheResource(const KURL& url, const ResourceResponse& response, unsigned type, PassRefPtr<SharedBuffer> data)
+ApplicationCacheResource::ApplicationCacheResource(const KURL& url, const ResourceResponse& response, unsigned type, PassRefPtr<SharedBuffer> data, const String& path)
     : SubstituteResource(url, response, data)
     , m_type(type)
     , m_storageID(0)
     , m_estimatedSizeInStorage(0)
+    , m_path(path)
 {
 }
 

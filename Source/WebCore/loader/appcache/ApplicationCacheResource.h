@@ -42,10 +42,10 @@ public:
         Fallback = 1 << 4
     };
         
-    static PassRefPtr<ApplicationCacheResource> create(const KURL& url, const ResourceResponse& response, unsigned type, PassRefPtr<SharedBuffer> buffer = SharedBuffer::create())
+    static PassRefPtr<ApplicationCacheResource> create(const KURL& url, const ResourceResponse& response, unsigned type, PassRefPtr<SharedBuffer> buffer = SharedBuffer::create(), const String& path = String())
     {
         ASSERT(!url.hasFragmentIdentifier());
-        return adoptRef(new ApplicationCacheResource(url, response, type, buffer));
+        return adoptRef(new ApplicationCacheResource(url, response, type, buffer, path));
     }
 
     unsigned type() const { return m_type; }
@@ -56,16 +56,19 @@ public:
     void clearStorageID() { m_storageID = 0; }
     int64_t estimatedSizeInStorage();
 
+    const String& path() const { return m_path; }
+
 #ifndef NDEBUG
     static void dumpType(unsigned type);
 #endif
     
 private:
-    ApplicationCacheResource(const KURL& url, const ResourceResponse& response, unsigned type, PassRefPtr<SharedBuffer> buffer);
+    ApplicationCacheResource(const KURL&, const ResourceResponse&, unsigned type, PassRefPtr<SharedBuffer>, const String& path);
 
     unsigned m_type;
     unsigned m_storageID;
     int64_t m_estimatedSizeInStorage;
+    String m_path;
 };
     
 } // namespace WebCore
