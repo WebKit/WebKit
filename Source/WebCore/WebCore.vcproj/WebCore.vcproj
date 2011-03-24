@@ -30565,6 +30565,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\TextChecking.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\TextCodec.cpp"
 					>
 				</File>

@@ -36,6 +36,7 @@
 #include "EditorInsertAction.h"
 #include "FindOptions.h"
 #include "SelectionController.h"
+#include "TextChecking.h"
 #include "Timer.h"
 #include "VisibleSelection.h"
 #include "WritingDirection.h"
@@ -222,7 +223,7 @@ public:
     void markMisspellings(const VisibleSelection&, RefPtr<Range>& firstMisspellingRange);
     void markBadGrammar(const VisibleSelection&);
     void markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection);
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
     void uppercaseWord();
     void lowercaseWord();
     void capitalizeWord();
@@ -239,6 +240,8 @@ public:
     void toggleAutomaticTextReplacement();
     bool isAutomaticSpellingCorrectionEnabled();
     void toggleAutomaticSpellingCorrection();
+#endif
+
     enum TextCheckingOptionFlags {
         MarkSpelling = 1 << 0,
         MarkGrammar = 1 << 1,
@@ -249,7 +252,7 @@ public:
 
     void markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions, Range* spellingRange, Range* grammarRange);
     void changeBackToReplacedString(const String& replacedString);
-#endif
+
     void advanceToNextMisspelling(bool startBeforeSelection = false);
     void showSpellingGuessPanel();
     bool spellingPanelIsShowing();

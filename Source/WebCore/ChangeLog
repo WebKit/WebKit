@@ -1,3 +1,47 @@
+2011-03-23  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Spellcheck feature specific symbols should be defined.
+        https://bugs.webkit.org/show_bug.cgi?id=56818
+        
+        * Introduced USE(UNIFIED_TEXT_CHECKING), USE(GRAMMAR_CHECKING) and USE(AUTOMATIC_TEXT_REPLACEMENT)
+        * Replaced a part of of BUILDING_ON_* conditionals with them.
+
+        Note that small amount of code path on Editor.cpp is now compiled under USE(GRAMMAR_CHECKING)
+        because these code path is already built under non-Mac ports and
+        Keeping them buildable for such platforms reduces the build breakage risk.
+        These path is guarded by Settings thus should never get reached.
+
+        No new tests. No behavioral change.
+
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/Editor.cpp:
+        (WebCore::Editor::advanceToNextMisspelling):
+        (WebCore::Editor::isSelectionUngrammatical):
+        (WebCore::Editor::guessesForUngrammaticalSelection):
+        (WebCore::Editor::guessesForMisspelledOrUngrammaticalSelection):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markMisspellingsOrBadGrammar):
+        (WebCore::Editor::markBadGrammar):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::changeBackToReplacedString):
+        (WebCore::Editor::markMisspellingsAndBadGrammar):
+        * editing/Editor.h:
+        * editing/TextCheckingHelper.cpp:
+        (WebCore::TextCheckingHelper::findFirstMisspellingOrBadGrammar):
+        (WebCore::TextCheckingHelper::findFirstGrammarDetail):
+        (WebCore::TextCheckingHelper::findFirstBadGrammar):
+        (WebCore::TextCheckingHelper::isUngrammatical):
+        (WebCore::TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange):
+        (WebCore::TextCheckingHelper::markAllBadGrammar):
+        * loader/EmptyClients.h:
+        * platform/text/TextCheckerClient.h:
+        * platform/text/TextChecking.h: Added.
+
 2011-03-23  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

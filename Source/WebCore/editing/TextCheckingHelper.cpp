@@ -224,7 +224,7 @@ String TextCheckingHelper::findFirstMisspelling(int& firstMisspellingOffset, boo
 
 String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, bool& outIsSpelling, int& outFirstFoundOffset, GrammarDetail& outGrammarDetail)
 {
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if USE(UNIFIED_TEXT_CHECKING)
     String firstFoundItem;
     String misspelledWord;
     String badGrammarPhrase;
@@ -350,12 +350,12 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
     UNUSED_PARAM(outFirstFoundOffset);
     UNUSED_PARAM(outGrammarDetail);
     return "";
-#endif
+#endif // USE(UNIFIED_TEXT_CHECKING)
 }
 
 int TextCheckingHelper::findFirstGrammarDetail(const Vector<GrammarDetail>& grammarDetails, int badGrammarPhraseLocation, int /*badGrammarPhraseLength*/, int startOffset, int endOffset, bool markAll)
 {
-#ifndef BUILDING_ON_TIGER
+#if USE(GRAMMAR_CHECKING)
     // Found some bad grammar. Find the earliest detail range that starts in our search range (if any).
     // Optionally add a DocumentMarker for each detail in the range.
     int earliestDetailLocationSoFar = -1;
@@ -402,7 +402,7 @@ int TextCheckingHelper::findFirstGrammarDetail(const Vector<GrammarDetail>& gram
 
 String TextCheckingHelper::findFirstBadGrammar(GrammarDetail& outGrammarDetail, int& outGrammarPhraseOffset, bool markAll)
 {
-#ifndef BUILDING_ON_TIGER
+    ASSERT(WTF_USE_GRAMMAR_CHECKING);
     // Initialize out parameters; these will be updated if we find something to return.
     outGrammarDetail.location = -1;
     outGrammarDetail.length = 0;
@@ -458,18 +458,12 @@ String TextCheckingHelper::findFirstBadGrammar(GrammarDetail& outGrammarDetail, 
     }
     
     return firstBadGrammarPhrase;
-#else
-    ASSERT_NOT_REACHED();
-    UNUSED_PARAM(outGrammarDetail);
-    UNUSED_PARAM(outGrammarPhraseOffset);
-    UNUSED_PARAM(markAll);
-#endif
 }
 
 
 bool TextCheckingHelper::isUngrammatical(Vector<String>& guessesVector) const
 {
-#ifndef BUILDING_ON_TIGER
+    ASSERT(WTF_USE_GRAMMAR_CHECKING);
     if (!m_client)
         return false;
 
@@ -511,16 +505,11 @@ bool TextCheckingHelper::isUngrammatical(Vector<String>& guessesVector) const
     m_client->updateSpellingUIWithGrammarString(badGrammarPhrase, grammarDetail);
     
     return true;
-#else
-    ASSERT_NOT_REACHED();
-    UNUSED_PARAM(guessesVector);
-    return true;
-#endif
 }
 
 Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool checkGrammar, bool& misspelled, bool& ungrammatical) const
 {
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if USE(UNIFIED_TEXT_CHECKING)
     Vector<String> guesses;
     ExceptionCode ec;
     misspelled = false;
@@ -578,7 +567,7 @@ Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool
     UNUSED_PARAM(misspelled);
     UNUSED_PARAM(ungrammatical);
     return Vector<String>();
-#endif
+#endif // USE(UNIFIED_TEXT_CHECKING)
 }
 
 
@@ -592,15 +581,12 @@ void TextCheckingHelper::markAllMisspellings(RefPtr<Range>& firstMisspellingRang
 
 void TextCheckingHelper::markAllBadGrammar()
 {
-#ifndef BUILDING_ON_TIGER
-    // Use the "markAll" feature of findFirstBadGrammar. Ignore the return value and "out parameters"; all we need to
+    ASSERT(WTF_USE_GRAMMAR_CHECKING);
+    // Use the "markAll" feature of ofindFirstBadGrammar. Ignore the return value and "out parameters"; all we need to
     // do is mark every instance.
     GrammarDetail ignoredGrammarDetail;
     int ignoredOffset;
     findFirstBadGrammar(ignoredGrammarDetail, ignoredOffset, true);
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 }

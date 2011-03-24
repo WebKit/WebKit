@@ -1371,7 +1371,7 @@ int Editor::spellCheckerDocumentTag()
     return client() ? client()->spellCheckerDocumentTag() : 0;
 }
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
 
 void Editor::uppercaseWord()
 {
@@ -1823,14 +1823,16 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     int searchEndOffsetAfterWrap = spellingSearchRange->endOffset(ec);
     
     int misspellingOffset = 0;
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-    RefPtr<Range> grammarSearchRange = spellingSearchRange->cloneRange(ec);
-    String misspelledWord;
-    String badGrammarPhrase;
+    GrammarDetail grammarDetail;
     int grammarPhraseOffset = 0;
+    RefPtr<Range> grammarSearchRange;
+    String badGrammarPhrase;
+    String misspelledWord;
+
+#if USE(UNIFIED_TEXT_CHECKING)
+    grammarSearchRange = spellingSearchRange->cloneRange(ec);
     bool isSpelling = true;
     int foundOffset = 0;
-    GrammarDetail grammarDetail;
     String foundItem = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspellingOrBadGrammar(isGrammarCheckingEnabled(), isSpelling, foundOffset, grammarDetail);
     if (isSpelling) {
         misspelledWord = foundItem;
@@ -1841,15 +1843,11 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     }
 #else
     RefPtr<Range> firstMisspellingRange;
-    String misspelledWord = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspelling(misspellingOffset, false, firstMisspellingRange);
-    String badGrammarPhrase;
+    misspelledWord = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspelling(misspellingOffset, false, firstMisspellingRange);
 
-#ifndef BUILDING_ON_TIGER
-    int grammarPhraseOffset = 0;
-    GrammarDetail grammarDetail;
-
+#if USE(GRAMMAR_CHECKING)
     // Search for bad grammar that occurs prior to the next misspelled word (if any)
-    RefPtr<Range> grammarSearchRange = spellingSearchRange->cloneRange(ec);
+    grammarSearchRange = spellingSearchRange->cloneRange(ec);
     if (!misspelledWord.isEmpty()) {
         // Stop looking at start of next misspelled word
         CharacterIterator chars(grammarSearchRange.get());
@@ -1869,7 +1867,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         // going until the end of the very first chunk we tested is far enough
         spellingSearchRange->setEnd(searchEndNodeAfterWrap, searchEndOffsetAfterWrap, ec);
         
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if USE(UNIFIED_TEXT_CHECKING)
         grammarSearchRange = spellingSearchRange->cloneRange(ec);
         foundItem = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspellingOrBadGrammar(isGrammarCheckingEnabled(), isSpelling, foundOffset, grammarDetail);
         if (isSpelling) {
@@ -1882,7 +1880,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
 #else
         misspelledWord = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspelling(misspellingOffset, false, firstMisspellingRange);
 
-#ifndef BUILDING_ON_TIGER
+#if USE(GRAMMAR_CHECKING)
         grammarSearchRange = spellingSearchRange->cloneRange(ec);
         if (!misspelledWord.isEmpty()) {
             // Stop looking at start of next misspelled word
@@ -1898,9 +1896,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     }
     
     if (!badGrammarPhrase.isEmpty()) {
-#ifdef BUILDING_ON_TIGER
-        ASSERT_NOT_REACHED();
-#else
+        ASSERT(WTF_USE_GRAMMAR_CHECKING);
         // We found bad grammar. Since we only searched for bad grammar up to the first misspelled word, the bad grammar
         // takes precedence and we ignore any potential misspelled word. Select the grammar detail, update the spelling
         // panel, and store a marker so we draw the green squiggle later.
@@ -1915,7 +1911,6 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         
         client()->updateSpellingUIWithGrammarString(badGrammarPhrase, grammarDetail);
         frame()->document()->markers()->addMarker(badGrammarRange.get(), DocumentMarker::Grammar, grammarDetail.userDescription);
-#endif        
     } else if (!misspelledWord.isEmpty()) {
         // We found a misspelling, but not any earlier bad grammar. Select the misspelling, update the spelling panel, and store
         // a marker so we draw the red squiggle later.
@@ -1958,23 +1953,23 @@ bool Editor::isSelectionMisspelled()
 
 bool Editor::isSelectionUngrammatical()
 {
-#ifdef BUILDING_ON_TIGER
-    return false;
-#else
+#if USE(GRAMMAR_CHECKING)
     Vector<String> ignoredGuesses;
     return TextCheckingHelper(client(), frame()->selection()->toNormalizedRange()).isUngrammatical(ignoredGuesses);
+#else
+    return false;
 #endif
 }
 
 Vector<String> Editor::guessesForUngrammaticalSelection()
 {
-#ifdef BUILDING_ON_TIGER
-    return Vector<String>();
-#else
+#if USE(GRAMMAR_CHECKING)
     Vector<String> guesses;
     // Ignore the result of isUngrammatical; we just want the guesses, whether or not there are any
     TextCheckingHelper(client(), frame()->selection()->toNormalizedRange()).isUngrammatical(guesses);
     return guesses;
+#else
+    return Vector<String>();
 #endif
 }
 
@@ -1991,7 +1986,7 @@ Vector<String> Editor::guessesForMisspelledSelection()
 
 Vector<String> Editor::guessesForMisspelledOrUngrammaticalSelection(bool& misspelled, bool& ungrammatical)
 {
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if USE(UNIFIED_TEXT_CHECKING)
     return TextCheckingHelper(client(), frame()->selection()->toNormalizedRange()).guessesForMisspelledOrUngrammaticalRange(isGrammarCheckingEnabled(), misspelled, ungrammatical);
 #else
     misspelled = isSelectionMisspelled();
@@ -2060,7 +2055,7 @@ void Editor::markMisspellingsAndBadGrammar(const VisibleSelection &movingSelecti
 
 void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart, const VisibleSelection& selectionAfterTyping)
 {
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if USE(UNIFIED_TEXT_CHECKING)
 #if SUPPORT_AUTOCORRECTION_PANEL
     // Apply pending autocorrection before next round of spell checking.
     bool doApplyCorrection = true;
@@ -2082,12 +2077,14 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
     if (isContinuousSpellCheckingEnabled())
         textCheckingOptions |= MarkSpelling;
 
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
     if (isAutomaticQuoteSubstitutionEnabled()
         || isAutomaticLinkDetectionEnabled()
         || isAutomaticDashSubstitutionEnabled()
         || isAutomaticTextReplacementEnabled()
         || ((textCheckingOptions & MarkSpelling) && isAutomaticSpellingCorrectionEnabled()))
         textCheckingOptions |= PerformReplacement;
+#endif
 
     if (!textCheckingOptions & (MarkSpelling | PerformReplacement))
         return;
@@ -2176,12 +2173,9 @@ void Editor::markMisspellingsOrBadGrammar(const VisibleSelection& selection, boo
     if (checkSpelling)
         checker.markAllMisspellings(firstMisspellingRange);
     else {
-#ifdef BUILDING_ON_TIGER
-        ASSERT_NOT_REACHED();
-#else
+        ASSERT(WTF_USE_GRAMMAR_CHECKING);
         if (isGrammarCheckingEnabled())
             checker.markAllBadGrammar();
-#endif
     }    
 }
 
@@ -2207,17 +2201,14 @@ void Editor::markMisspellings(const VisibleSelection& selection, RefPtr<Range>& 
     
 void Editor::markBadGrammar(const VisibleSelection& selection)
 {
-#ifndef BUILDING_ON_TIGER
+    ASSERT(WTF_USE_GRAMMAR_CHECKING);
     RefPtr<Range> firstMisspellingRange;
     markMisspellingsOrBadGrammar(selection, false, firstMisspellingRange);
-#else
-    UNUSED_PARAM(selection);
-#endif
 }
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCheckingOptions, Range* spellingRange, Range* grammarRange)
 {
+#if USE(UNIFIED_TEXT_CHECKING)
     // There shouldn't be pending autocorrection at this moment.
     ASSERT(!m_correctionPanelInfo.rangeToBeReplaced);
 
@@ -2278,6 +2269,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
     if (shouldShowCorrectionPanel)
         checkingTypes |= TextCheckingTypeCorrection;
     if (shouldPerformReplacement) {
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
         if (isAutomaticLinkDetectionEnabled())
             checkingTypes |= TextCheckingTypeLink;
         if (isAutomaticQuoteSubstitutionEnabled())
@@ -2288,6 +2280,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
             checkingTypes |= TextCheckingTypeReplacement;
         if (shouldMarkSpelling && isAutomaticSpellingCorrectionEnabled())
             checkingTypes |= TextCheckingTypeCorrection;
+#endif
     }
     textChecker()->checkTextOfParagraph(paragraph.textCharacters(), paragraph.textLength(), checkingTypes, results);
 
@@ -2456,10 +2449,17 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
             m_frame->selection()->modify(SelectionController::AlterationMove, DirectionForward, CharacterGranularity);
         }
     }
+#else
+    ASSERT_NOT_REACHED();
+    UNUSED_PARAM(textCheckingOptions);
+    UNUSED_PARAM(spellingRange);
+    UNUSED_PARAM(grammarRange);
+#endif // USE(UNIFIED_TEXT_CHECKING)
 }
 
 void Editor::changeBackToReplacedString(const String& replacedString)
 {
+#if USE(UNIFIED_TEXT_CHECKING)
     if (replacedString.isEmpty())
         return;
 
@@ -2478,13 +2478,16 @@ void Editor::changeBackToReplacedString(const String& replacedString)
 #if SUPPORT_AUTOCORRECTION_PANEL
     changedRange->startContainer()->document()->markers()->addMarker(changedRange.get(), DocumentMarker::SpellCheckingExemption);
 #endif
+#else
+    ASSERT_NOT_REACHED();
+    UNUSED_PARAM(replacedString);
+#endif // USE(UNIFIED_TEXT_CHECKING)
 }
 
-#endif
 
 void Editor::markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection)
 {
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#if USE(UNIFIED_TEXT_CHECKING)
     if (!isContinuousSpellCheckingEnabled())
         return;
     TextCheckingOptions textCheckingOptions = MarkSpelling;

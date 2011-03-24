@@ -1947,6 +1947,7 @@ HEADERS += \
     platform/Length.h \
     platform/text/LineEnding.h \
     platform/text/TextCheckerClient.h \
+    platform/text/TextChecking.h \
     platform/LinkHash.h \
     platform/Logging.h \
     platform/Language.h \

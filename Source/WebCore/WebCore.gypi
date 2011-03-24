@@ -910,6 +910,7 @@
             'platform/text/TextBreakIterator.h',
             'platform/text/TextBreakIteratorInternalICU.h',
             'platform/text/TextCheckerClient.h',
+            'platform/text/TextChecking.h',
             'platform/text/TextCodec.h',
             'platform/text/TextCodecICU.h',
             'platform/text/TextCodecLatin1.h',
