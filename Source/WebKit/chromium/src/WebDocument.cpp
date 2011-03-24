@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebDocument.h"
 
+#include "AXObjectCache.h"
 #include "Document.h"
 #include "DocumentType.h"
 #include "Element.h"
@@ -41,6 +42,7 @@
 #include "HTMLHeadElement.h"
 #include "NodeList.h"
 
+#include "WebAccessibilityObject.h"
 #include "WebDocumentType.h"
 #include "WebElement.h"
 #include "WebFrameImpl.h"
@@ -127,6 +129,13 @@ WebNode WebDocument::focusedNode() const
 WebDocumentType WebDocument::doctype() const
 {
     return WebDocumentType(constUnwrap<Document>()->doctype());
+}
+
+WebAccessibilityObject WebDocument::accessibilityObject() const
+{
+    const Document* document = constUnwrap<Document>();
+    return WebAccessibilityObject(
+        document->axObjectCache()->getOrCreate(document->renderer()));
 }
 
 WebDocument::WebDocument(const PassRefPtr<Document>& elem)

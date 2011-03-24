@@ -1,3 +1,15 @@
+2011-03-24  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add accessibilityObject accessor to WebDocument (needed for
+        building an accessibility tree that includes iframes).
+        https://bugs.webkit.org/show_bug.cgi?id=56984
+
+        * public/WebDocument.h:
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::accessibilityObject):
+
 2011-03-24  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Dimitri Glazkov.

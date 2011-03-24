@@ -42,6 +42,7 @@ namespace WTF { template <typename T> class PassRefPtr; }
 #endif
 
 namespace WebKit {
+class WebAccessibilityObject;
 class WebDocumentType;
 class WebElement;
 class WebFrame;
@@ -79,6 +80,7 @@ public:
     WEBKIT_API WebElement getElementById(const WebString&) const;
     WEBKIT_API WebNode focusedNode() const;
     WEBKIT_API WebDocumentType doctype() const;
+    WEBKIT_API WebAccessibilityObject accessibilityObject() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebDocument(const WTF::PassRefPtr<WebCore::Document>&);
