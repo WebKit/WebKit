@@ -34,10 +34,12 @@
 #include "WebCommon.h"
 
 namespace WebKit {
+class WebCString;
 class WebFrame;
 class WebPageSerializerClient;
 class WebString;
 class WebURL;
+class WebView;
 template <typename T> class WebVector;
 
 // Get html data by serializing all frames of current page with lists
@@ -69,6 +71,14 @@ public:
                                      const WebVector<WebString>& localPaths,
                                      const WebString& localDirectoryName);
 
+    // Retrieve all the resource for the passed view, including the main frame
+    // and sub-frames. Returns true if all resources were retrieved
+    // successfully.
+    WEBKIT_API static bool retrieveAllResources(WebView*,
+                                                const WebVector<WebCString>& supportedSchemes,
+                                                WebVector<WebURL>* resources,
+                                                WebVector<WebURL>* frames);
+
     // FIXME: The following are here for unit testing purposes. Consider
     // changing the unit tests instead.
 
@@ -80,6 +90,6 @@ public:
     WEBKIT_API static WebString generateBaseTagDeclaration(const WebString& baseTarget);
 };
 
-}  // namespace WebKit
+} // namespace WebKit
 
 #endif
