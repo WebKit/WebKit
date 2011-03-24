@@ -76,17 +76,6 @@ JS_EXPORT void JSWeakObjectMapSet(JSContextRef ctx, JSWeakObjectMapRef map, void
  */
 JS_EXPORT JSObjectRef JSWeakObjectMapGet(JSContextRef ctx, JSWeakObjectMapRef map, void* key);
 
-/*!
- @function
- @abstract Clears the association between a key and an object in a JSWeakObjectMapRef
- @param ctx The execution context to use.
- @param map The map to clear the key association from.
- @param key The key to use.
- @param object The old object value.
- @result Returns true if the key/object association was present in map, and has been removed.
- */
-JS_EXPORT bool JSWeakObjectMapClear(JSContextRef ctx, JSWeakObjectMapRef map, void* key, JSObjectRef object);
-
 #ifdef __cplusplus
 }
 #endif

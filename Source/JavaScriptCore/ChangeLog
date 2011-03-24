@@ -1,3 +1,15 @@
+2011-03-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        REGRESSION (r79987-r80210): Crash in JSWeakObjectMapClear
+        https://bugs.webkit.org/show_bug.cgi?id=55671
+
+        This is no longer necessary, and it seems that with the new weakmap
+        model it's simply unsafe, so this reduces it to a no-op. 
+
+        * API/JSWeakObjectMapRefPrivate.cpp:
+
 2011-03-24  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Darin Adler.

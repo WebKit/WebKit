@@ -68,14 +68,11 @@ JSObjectRef JSWeakObjectMapGet(JSContextRef ctx, JSWeakObjectMapRef map, void* k
     return toRef(static_cast<JSObject*>(map->map().get(key)));
 }
 
-bool JSWeakObjectMapClear(JSContextRef ctx, JSWeakObjectMapRef map, void* key, JSObjectRef object)
+// We need to keep this function in the build to keep the nightlies running.
+JS_EXPORT bool JSWeakObjectMapClear(JSContextRef, JSWeakObjectMapRef, void*, JSObjectRef);
+bool JSWeakObjectMapClear(JSContextRef, JSWeakObjectMapRef, void*, JSObjectRef)
 {
-    ExecState* exec = toJS(ctx);
-    APIEntryShim entryShim(exec);
-    JSObject* obj = toJS(object);
-    if (map->map().deprecatedRemove(key, obj))
-        return true;
-    return false;
+    return true;
 }
 
 #ifdef __cplusplus
