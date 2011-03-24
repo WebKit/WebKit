@@ -113,10 +113,7 @@ void CorrectionPanel::dismissInternal(ReasonForDismissingCorrectionPanel reason,
     
     m_reasonForDismissing = reason;
     m_resultForSynchronousDismissal.clear();
-    if (reason == ReasonForDismissingCorrectionPanelAccepted)
-        [[NSSpellChecker sharedSpellChecker] dismissCorrectionBubbleForView:m_view.get()];
-    else
-        [[NSSpellChecker sharedSpellChecker] cancelCorrectionBubbleForView:m_view.get()];
+    [[NSSpellChecker sharedSpellChecker] dismissCorrectionBubbleForView:m_view.get()];
     m_view.clear();
 }
 

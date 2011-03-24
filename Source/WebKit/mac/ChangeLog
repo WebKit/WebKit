@@ -1,3 +1,18 @@
+2011-03-24  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Dismissed reversion suggestion is incorrectly learned.
+        https://bugs.webkit.org/show_bug.cgi?id=57039
+
+        CorrectionPanel should always use [NSSpellChecker dismissCorrectionBubbleForView].
+        [NSSpellChecker cancelCorrectionBubbleForView] is reserved for situation where correction panel
+        is dismissed explicitly by ESC key or clicking the dimiss button. Misusing these causes
+        incorrect automatic learning.
+
+        * WebCoreSupport/CorrectionPanel.mm:
+        (CorrectionPanel::dismissInternal):
+
 2011-03-24  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/56993> ENABLE_PLUGIN_PROXY_FOR_VIDEO should be defined to 0 on Mac OS X
