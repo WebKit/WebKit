@@ -250,24 +250,28 @@ Frame* WebDevToolsAgentImpl::mainFrame()
 
 
 //------- plugin resource load notifications ---------------
-void WebDevToolsAgentImpl::identifierForInitialRequest(
-    unsigned long resourceId,
-    WebFrame* webFrame,
-    const WebURLRequest& request)
+
+// FIXME: remove once not user downstream.
+
+static WebFrame* lastWebFrame;
+
+void WebDevToolsAgentImpl::identifierForInitialRequest(unsigned long resourceId, WebFrame* webFrame, const WebURLRequest&)
 {
-    WebFrameImpl* webFrameImpl = static_cast<WebFrameImpl*>(webFrame);
-    Frame* frame = webFrameImpl->frame();
-    DocumentLoader* loader = frame->loader()->activeDocumentLoader();
-    InspectorInstrumentation::identifierForInitialRequest(frame, resourceId, loader, request.toResourceRequest());
+    lastWebFrame = webFrame;
 }
 
 void WebDevToolsAgentImpl::willSendRequest(unsigned long resourceId, WebURLRequest& request)
 {
-    if (InspectorController* ic = inspectorController()) {
-        InspectorInstrumentation::willSendRequest(mainFrame(), resourceId, request.toMutableResourceRequest(), ResourceResponse());
-        if (ic->hasFrontend() && request.reportLoadTiming())
-            request.setReportRawHeaders(true);
-    }
+    // We know that identifierForInitialRequest and willSendRequest are called synchronously.
+    willSendRequest(resourceId, lastWebFrame, request);
+}
+
+void WebDevToolsAgentImpl::willSendRequest(unsigned long resourceId, WebFrame* webFrame, WebURLRequest& request)
+{
+    WebFrameImpl* webFrameImpl = static_cast<WebFrameImpl*>(webFrame);
+    Frame* frame = webFrameImpl->frame();
+    DocumentLoader* loader = frame->loader()->activeDocumentLoader();
+    InspectorInstrumentation::willSendRequest(mainFrame(), resourceId, loader, request.toMutableResourceRequest(), ResourceResponse());
 }
 
 void WebDevToolsAgentImpl::didReceiveData(unsigned long resourceId, int length)

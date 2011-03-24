@@ -40,6 +40,7 @@ WebInspector.NetworkPanel = function()
     this._resourcesByURL = {};
     this._staleResources = [];
     this._resourceGridNodes = {};
+    this._lastResourceGridNodeId = 0;
     this._mainResourceLoadTime = -1;
     this._mainResourceDOMContentTime = -1;
     this._hiddenCategories = {};
@@ -564,7 +565,15 @@ WebInspector.NetworkPanel.prototype = {
 
     _resourceGridNode: function(resource)
     {
-        return this._resourceGridNodes[resource.identifier];
+        return this._resourceGridNodes[resource.__gridNodeId];
+    },
+
+    _createResourceGridNode: function(resource)
+    {
+        var node = new WebInspector.NetworkDataGridNode(this, resource);
+        resource.__gridNodeId = this._lastResourceGridNodeId++;
+        this._resourceGridNodes[resource.__gridNodeId] = node;
+        return node;
     },
 
     revealAndSelectItem: function(resource)
@@ -671,8 +680,7 @@ WebInspector.NetworkPanel.prototype = {
             var node = this._resourceGridNode(resource);
             if (!node) {
                 // Create the timeline tree element and graph.
-                node = new WebInspector.NetworkDataGridNode(this, resource);
-                this._resourceGridNodes[resource.identifier] = node;
+                node = this._createResourceGridNode(resource);
                 this._dataGrid.appendChild(node);
             }
             node.refreshResource();
@@ -800,9 +808,12 @@ WebInspector.NetworkPanel.prototype = {
             return;
 
         this._reset();
+
         // Now resurrect the main resource along with all redirects that lead to it.
-        var resourcesToAppend = (WebInspector.mainResource.redirects || []).concat(WebInspector.mainResource);
-        resourcesToAppend.forEach(this._appendResource, this);
+        this._appendResource(WebInspector.mainResource);
+        var redirects = WebInspector.mainResource.redirects;
+        for (var i = 0; redirects && i < redirects.length; ++i)
+            this._appendResource(redirect);
     },
 
     canShowSourceLine: function(url, line)

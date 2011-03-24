@@ -262,16 +262,6 @@ WebInspector.Resource.prototype = {
         this._transferSize = (this._transferSize || 0) + x;
     },
 
-    get expectedContentLength()
-    {
-        return this._expectedContentLength || 0;
-    },
-
-    set expectedContentLength(x)
-    {
-        this._expectedContentLength = x;
-    },
-
     get finished()
     {
         return this._finished;

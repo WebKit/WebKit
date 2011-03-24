@@ -1,3 +1,16 @@
+2011-03-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: brush up Network agent API.
+        https://bugs.webkit.org/show_bug.cgi?id=57001
+
+        * public/WebDevToolsAgent.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::identifierForInitialRequest):
+        (WebKit::WebDevToolsAgentImpl::willSendRequest):
+        * src/WebDevToolsAgentImpl.h:
+
 2011-03-24  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Ojan Vafai.

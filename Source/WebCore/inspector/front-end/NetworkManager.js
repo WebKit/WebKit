@@ -90,75 +90,53 @@ WebInspector.NetworkDispatcher = function(resourceTreeModel, manager)
 WebInspector.NetworkDispatcher.prototype = {
     _updateResourceWithRequest: function(resource, request)
     {
-        resource.requestMethod = request.httpMethod;
-        resource.requestHeaders = request.httpHeaderFields;
-        resource.requestFormData = request.requestFormData;
+        resource.requestMethod = request.method;
+        resource.requestHeaders = request.headers;
+        resource.requestFormData = request.postData;
     },
 
     _updateResourceWithResponse: function(resource, response)
     {
-        if (resource.isNull)
+        if (!("status" in response))
             return;
 
         resource.mimeType = response.mimeType;
-        resource.expectedContentLength = response.expectedContentLength;
-        resource.textEncodingName = response.textEncodingName;
-        resource.suggestedFilename = response.suggestedFilename;
-        resource.statusCode = response.httpStatusCode;
-        resource.statusText = response.httpStatusText;
+        resource.statusCode = response.status;
+        resource.statusText = response.statusText;
+        resource.responseHeaders = response.headers;
+        // Raw request headers can be a part of response as well.
+        if (response.requestHeaders)
+            resource.requestHeaders = response.requestHeaders;
 
-        resource.responseHeaders = response.httpHeaderFields;
         resource.connectionReused = response.connectionReused;
         resource.connectionID = response.connectionID;
 
-        if (response.wasCached)
+        if (response.fromDiskCache)
             resource.cached = true;
         else
             resource.timing = response.timing;
-
-        if (response.loadInfo) {
-            if (response.loadInfo.httpStatusCode)
-                resource.statusCode = response.loadInfo.httpStatusCode;
-            if (response.loadInfo.httpStatusText)
-                resource.statusText = response.loadInfo.httpStatusText;
-            resource.requestHeaders = response.loadInfo.requestHeaders;
-            resource.responseHeaders = response.loadInfo.responseHeaders;
-        }
     },
 
     _updateResourceWithCachedResource: function(resource, cachedResource)
     {
         resource.type = WebInspector.Resource.Type[cachedResource.type];
-        resource.resourceSize = cachedResource.encodedSize;
+        resource.resourceSize = cachedResource.bodySize;
         this._updateResourceWithResponse(resource, cachedResource.response);
     },
 
-    identifierForInitialRequest: function(identifier, url, loader, callStack)
-    {
-        this._startResource(this._createResource(identifier, url, loader, callStack));
-    },
-
-    willSendRequest: function(identifier, time, request, redirectResponse)
+    willSendRequest: function(identifier, loader, request, redirectResponse, time, callStack)
     {
         var resource = this._inflightResourcesById[identifier];
-        if (!resource)
-            return;
-
-        // Redirect may have empty URL and we'd like to not crash with invalid HashMap entry.
-        // See http/tests/misc/will-send-request-returns-null-on-redirect.html
-        var isRedirect = !redirectResponse.isNull && request.url.length;
-        if (isRedirect) {
+        if (resource) {
             this.didReceiveResponse(identifier, time, "Other", redirectResponse);
-            resource = this._appendRedirect(resource.identifier, time, request.url);
-        }
+            resource = this._appendRedirect(identifier, time, request.url);
+        } else
+            resource = this._createResource(identifier, request.url, loader, callStack);
 
         this._updateResourceWithRequest(resource, request);
         resource.startTime = time;
 
-        if (isRedirect)
-            this._startResource(resource);
-        else
-            this._updateResource(resource);
+        this._startResource(resource);
     },
 
     markResourceAsCached: function(identifier)
@@ -275,8 +253,8 @@ WebInspector.NetworkDispatcher.prototype = {
             return;
 
         resource.requestMethod = "GET";
-        resource.requestHeaders = request.webSocketHeaderFields;
-        resource.webSocketRequestKey3 = request.webSocketRequestKey3;
+        resource.requestHeaders = request.headers;
+        resource.webSocketRequestKey3 = request.requestKey3;
         resource.startTime = time;
 
         this._updateResource(resource);
@@ -288,10 +266,10 @@ WebInspector.NetworkDispatcher.prototype = {
         if (!resource)
             return;
 
-        resource.statusCode = response.statusCode;
+        resource.statusCode = response.status;
         resource.statusText = response.statusText;
-        resource.responseHeaders = response.webSocketHeaderFields;
-        resource.webSocketChallengeResponse = response.webSocketChallengeResponse;
+        resource.responseHeaders = response.headers;
+        resource.webSocketChallengeResponse = response.challengeResponse;
         resource.responseReceivedTime = time;
 
         this._updateResource(resource);

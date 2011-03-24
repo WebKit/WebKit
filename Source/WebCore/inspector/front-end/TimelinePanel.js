@@ -985,8 +985,6 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
                     contentHelper._appendTextRow(WebInspector.UIString("Status Code"), this.data.statusCode);
                 if (this.data.mimeType)
                     contentHelper._appendTextRow(WebInspector.UIString("MIME Type"), this.data.mimeType);
-                if (typeof this.data.expectedContentLength === "number" && this.data.expectedContentLength !== -1)
-                    contentHelper._appendTextRow(WebInspector.UIString("Expected Content Length"), this.data.expectedContentLength);
                 break;
             case recordTypes.EvaluateScript:
                 if (this.data && this.data.url)

@@ -144,7 +144,6 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceReceiveResponse
     data->setNumber("identifier", identifier);
     data->setNumber("statusCode", response.httpStatusCode());
     data->setString("mimeType", response.mimeType());
-    data->setNumber("expectedContentLength", response.expectedContentLength());
     return data.release();
 }
 

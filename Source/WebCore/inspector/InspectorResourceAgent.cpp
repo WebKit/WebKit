@@ -193,41 +193,33 @@ static PassRefPtr<InspectorObject> buildObjectForResourceRequest(const ResourceR
 {
     RefPtr<InspectorObject> requestObject = InspectorObject::create();
     requestObject->setString("url", request.url().string());
-    requestObject->setString("httpMethod", request.httpMethod());
-    requestObject->setObject("httpHeaderFields", buildObjectForHeaders(request.httpHeaderFields()));
+    requestObject->setString("method", request.httpMethod());
+    requestObject->setObject("headers", buildObjectForHeaders(request.httpHeaderFields()));
     if (request.httpBody() && !request.httpBody()->isEmpty())
-        requestObject->setString("requestFormData", request.httpBody()->flattenToString());
+        requestObject->setString("postData", request.httpBody()->flattenToString());
     return requestObject;
 }
 
 static PassRefPtr<InspectorObject> buildObjectForResourceResponse(const ResourceResponse& response)
 {
     RefPtr<InspectorObject> responseObject = InspectorObject::create();
-    if (response.isNull()) {
-        responseObject->setBoolean("isNull", true);
+    if (response.isNull())
         return responseObject;
-    }
-    responseObject->setString("url", response.url().string());
+
+    responseObject->setNumber("status", response.resourceLoadInfo() ? response.resourceLoadInfo()->httpStatusCode : response.httpStatusCode());
+    responseObject->setString("statusText", response.resourceLoadInfo() ? response.resourceLoadInfo()->httpStatusText : response.httpStatusText());
+    responseObject->setObject("headers", buildObjectForHeaders(response.resourceLoadInfo() ? response.resourceLoadInfo()->responseHeaders : response.httpHeaderFields()));
+
     responseObject->setString("mimeType", response.mimeType());
-    responseObject->setNumber("expectedContentLength", response.expectedContentLength());
-    responseObject->setString("textEncodingName", response.textEncodingName());
-    responseObject->setString("suggestedFilename", response.suggestedFilename());
-    responseObject->setNumber("httpStatusCode", response.httpStatusCode());
-    responseObject->setString("httpStatusText", response.httpStatusText());
-    responseObject->setObject("httpHeaderFields", buildObjectForHeaders(response.httpHeaderFields()));
     responseObject->setBoolean("connectionReused", response.connectionReused());
     responseObject->setNumber("connectionID", response.connectionID());
-    responseObject->setBoolean("wasCached", response.wasCached());
+    responseObject->setBoolean("fromDiskCache", response.wasCached());
     if (response.resourceLoadTiming())
         responseObject->setObject("timing", buildObjectForTiming(*response.resourceLoadTiming()));
-    if (response.resourceLoadInfo()) {
-        RefPtr<InspectorObject> loadInfoObject = InspectorObject::create();
-        loadInfoObject->setNumber("httpStatusCode", response.resourceLoadInfo()->httpStatusCode);
-        loadInfoObject->setString("httpStatusText", response.resourceLoadInfo()->httpStatusText);
-        loadInfoObject->setObject("requestHeaders", buildObjectForHeaders(response.resourceLoadInfo()->requestHeaders));
-        loadInfoObject->setObject("responseHeaders", buildObjectForHeaders(response.resourceLoadInfo()->responseHeaders));
-        responseObject->setObject("loadInfo", loadInfoObject);
-    }
+
+    if (response.resourceLoadInfo())
+        responseObject->setObject("requestHeaders", buildObjectForHeaders(response.resourceLoadInfo()->requestHeaders));
+
     return responseObject;
 }
 
@@ -286,7 +278,7 @@ static PassRefPtr<InspectorObject> buildObjectForCachedResource(DocumentLoader* 
     RefPtr<InspectorObject> resourceObject = InspectorObject::create();
     resourceObject->setString("url", cachedResource.url());
     resourceObject->setString("type", cachedResourceTypeString(cachedResource));
-    resourceObject->setNumber("encodedSize", cachedResource.encodedSize());
+    resourceObject->setNumber("bodySize", cachedResource.encodedSize());
     resourceObject->setObject("response", buildObjectForResourceResponse(cachedResource.response()));
     resourceObject->setObject("loader", buildObjectForDocumentLoader(loader));
     return resourceObject;
@@ -312,25 +304,7 @@ InspectorResourceAgent::~InspectorResourceAgent()
     ASSERT(!m_instrumentingAgents->inspectorResourceAgent());
 }
 
-void InspectorResourceAgent::identifierForInitialRequest(unsigned long identifier, const KURL& url, DocumentLoader* loader)
-{
-    RefPtr<InspectorObject> loaderObject = buildObjectForDocumentLoader(loader);
-    RefPtr<ScriptCallStack> callStack = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
-    RefPtr<InspectorArray> callStackValue;
-    if (callStack)
-        callStackValue = callStack->buildInspectorArray();
-    else
-        callStackValue = InspectorArray::create();
-    m_frontend->identifierForInitialRequest(static_cast<int>(identifier), url.string(), loaderObject, callStackValue);
-}
-
-void InspectorResourceAgent::setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject> headers)
-{
-    m_state->setObject(ResourceAgentState::extraRequestHeaders, headers);
-}
-
-
-void InspectorResourceAgent::willSendRequest(unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     RefPtr<InspectorObject> headers = m_state->getObject(ResourceAgentState::extraRequestHeaders);
 
@@ -346,7 +320,15 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, ResourceR
     request.setReportLoadTiming(true);
     request.setReportRawHeaders(true);
 
-    m_frontend->willSendRequest(static_cast<int>(identifier), currentTime(), buildObjectForResourceRequest(request), buildObjectForResourceResponse(redirectResponse));
+    RefPtr<InspectorObject> loaderObject = buildObjectForDocumentLoader(loader);
+    RefPtr<ScriptCallStack> callStack = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
+    RefPtr<InspectorArray> callStackValue;
+    if (callStack)
+        callStackValue = callStack->buildInspectorArray();
+    else
+        callStackValue = InspectorArray::create();
+
+    m_frontend->willSendRequest(static_cast<int>(identifier), loaderObject, buildObjectForResourceRequest(request), buildObjectForResourceResponse(redirectResponse), currentTime(), callStackValue);
 }
 
 void InspectorResourceAgent::markResourceAsCached(unsigned long identifier)
@@ -480,18 +462,18 @@ void InspectorResourceAgent::didCreateWebSocket(unsigned long identifier, const 
 void InspectorResourceAgent::willSendWebSocketHandshakeRequest(unsigned long identifier, const WebSocketHandshakeRequest& request)
 {
     RefPtr<InspectorObject> requestObject = InspectorObject::create();
-    requestObject->setObject("webSocketHeaderFields", buildObjectForHeaders(request.headerFields()));
-    requestObject->setString("webSocketRequestKey3", createReadableStringFromBinary(request.key3().value, sizeof(request.key3().value)));
+    requestObject->setObject("headers", buildObjectForHeaders(request.headerFields()));
+    requestObject->setString("requestKey3", createReadableStringFromBinary(request.key3().value, sizeof(request.key3().value)));
     m_frontend->willSendWebSocketHandshakeRequest(static_cast<int>(identifier), currentTime(), requestObject);
 }
 
 void InspectorResourceAgent::didReceiveWebSocketHandshakeResponse(unsigned long identifier, const WebSocketHandshakeResponse& response)
 {
     RefPtr<InspectorObject> responseObject = InspectorObject::create();
-    responseObject->setNumber("statusCode", response.statusCode());
+    responseObject->setNumber("status", response.statusCode());
     responseObject->setString("statusText", response.statusText());
-    responseObject->setObject("webSocketHeaderFields", buildObjectForHeaders(response.headerFields()));
-    responseObject->setString("webSocketChallengeResponse", createReadableStringFromBinary(response.challengeResponse().value, sizeof(response.challengeResponse().value)));
+    responseObject->setObject("headers", buildObjectForHeaders(response.headerFields()));
+    responseObject->setString("challengeResponse", createReadableStringFromBinary(response.challengeResponse().value, sizeof(response.challengeResponse().value)));
     m_frontend->didReceiveWebSocketHandshakeResponse(static_cast<int>(identifier), currentTime(), responseObject);
 }
 
@@ -542,6 +524,11 @@ void InspectorResourceAgent::resourceContent(ErrorString*, const String& frameId
         *success = InspectorResourceAgent::resourceContentBase64(frame, KURL(ParsedURLString, url), content);
     else
         *success = InspectorResourceAgent::resourceContent(frame, KURL(ParsedURLString, url), content);
+}
+
+void InspectorResourceAgent::setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject> headers)
+{
+    m_state->setObject(ResourceAgentState::extraRequestHeaders, headers);
 }
 
 InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* state)

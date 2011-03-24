@@ -23,7 +23,6 @@ ResourceReceiveResponse Properties:
         identifier : <number>
         statusCode : 0
         mimeType : <string>
-        expectedContentLength : 213
         url : <string>
     }
     children : <object>

@@ -385,26 +385,17 @@ void InspectorInstrumentation::didRecalculateStyleImpl(const InspectorInstrument
         timelineAgent->didRecalculateStyle();
 }
 
-void InspectorInstrumentation::identifierForInitialRequestImpl(InspectorAgent* inspectorAgent, unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
-{
-    if (!inspectorAgent->enabled())
-        return;
-
-    if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
-        resourceAgent->identifierForInitialRequest(identifier, request.url(), loader);
-}
-
 void InspectorInstrumentation::applyUserAgentOverrideImpl(InspectorAgent* inspectorAgent, String* userAgent)
 {
     inspectorAgent->applyUserAgentOverride(userAgent);
 }
 
-void InspectorInstrumentation::willSendRequestImpl(InspectorAgent* inspectorAgent, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void InspectorInstrumentation::willSendRequestImpl(InspectorAgent* inspectorAgent, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(inspectorAgent))
         timelineAgent->willSendResourceRequest(identifier, request);
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
-        resourceAgent->willSendRequest(identifier, request, redirectResponse);
+        resourceAgent->willSendRequest(identifier, loader, request, redirectResponse);
 }
 
 void InspectorInstrumentation::markResourceAsCachedImpl(InspectorAgent* inspectorAgent, unsigned long identifier)

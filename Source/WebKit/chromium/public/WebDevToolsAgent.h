@@ -89,8 +89,11 @@ public:
     // while on a breakpoint.
     WEBKIT_API static void setMessageLoopDispatchHandler(MessageLoopDispatchHandler);
 
-    virtual void identifierForInitialRequest(unsigned long resourceId, WebFrame*, const WebURLRequest&) = 0;
-    virtual void willSendRequest(unsigned long resourceId, WebURLRequest&) = 0;
+    // FIXME: remove once not used downstream.
+    virtual void identifierForInitialRequest(unsigned long resourceId, WebFrame*, const WebURLRequest&);
+    virtual void willSendRequest(unsigned long resourceId, WebURLRequest&);
+
+    virtual void willSendRequest(unsigned long resourceId, WebFrame*, WebURLRequest&) = 0;
     virtual void didReceiveData(unsigned long resourceId, int length) = 0;
     virtual void didReceiveResponse(unsigned long resourceId, const WebURLResponse&) = 0;
     virtual void didFinishLoading(unsigned long resourceId) = 0;

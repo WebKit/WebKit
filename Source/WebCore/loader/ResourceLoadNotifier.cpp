@@ -103,8 +103,6 @@ void ResourceLoadNotifier::didFailToLoad(ResourceLoader* loader, const ResourceE
 void ResourceLoadNotifier::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
 {
     m_frame->loader()->client()->assignIdentifierToInitialRequest(identifier, loader, request);
-
-    InspectorInstrumentation::identifierForInitialRequest(m_frame, identifier, loader, request);
 }
 
 void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
@@ -118,7 +116,7 @@ void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsig
     if (!request.isNull() && oldRequestURL != request.url().string().impl())
         m_frame->loader()->documentLoader()->didTellClientAboutLoad(request.url());
 
-    InspectorInstrumentation::willSendRequest(m_frame, identifier, request, redirectResponse);
+    InspectorInstrumentation::willSendRequest(m_frame, identifier, loader, request, redirectResponse);
 
     // Report WebTiming for all frames.
     if (loader && !request.isNull() && request.url() == loader->requestURL())

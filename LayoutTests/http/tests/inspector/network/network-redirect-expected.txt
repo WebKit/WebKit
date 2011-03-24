@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 15: Done.
+Tests network panel redirect.
+
+
+Model data:
+GET: http://127.0.0.1:8000/inspector/network/resources/redirect.php?status=302 -> 302
+GET: http://127.0.0.1:8000/inspector/network/resources/redirect.php?redirected=true -> 200
+Grid data:
+GET: http://127.0.0.1:8000/inspector/network/resources/redirect.php?status=302 -> 302
+GET: http://127.0.0.1:8000/inspector/network/resources/redirect.php?redirected=true -> 200
+

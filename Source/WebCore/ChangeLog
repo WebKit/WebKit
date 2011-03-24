@@ -1,3 +1,42 @@
+2011-03-24  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: brush up Network agent API.
+        https://bugs.webkit.org/show_bug.cgi?id=57001
+
+        * inspector/Inspector.json:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willSendRequestImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willSendRequest):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForResourceRequest):
+        (WebCore::buildObjectForResourceResponse):
+        (WebCore::buildObjectForCachedResource):
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::willSendWebSocketHandshakeRequest):
+        (WebCore::InspectorResourceAgent::didReceiveWebSocketHandshakeResponse):
+        (WebCore::InspectorResourceAgent::setExtraHeaders):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createResourceReceiveResponseData):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype._updateResourceWithRequest):
+        (WebInspector.NetworkDispatcher.prototype._updateResourceWithResponse):
+        (WebInspector.NetworkDispatcher.prototype._updateResourceWithCachedResource):
+        (WebInspector.NetworkDispatcher.prototype.willSendRequest):
+        (WebInspector.NetworkDispatcher.prototype.didReceiveWebSocketHandshakeResponse):
+        (WebInspector.NetworkDispatcher.prototype.didCloseWebSocket):
+        * inspector/front-end/Resource.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::assignIdentifierToInitialRequest):
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::createResourceHandle):
+
 2011-03-11  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

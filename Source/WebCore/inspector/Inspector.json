@@ -215,12 +215,86 @@
     },
     {
         "domain": "Network",
-        "types": [],
+        "types": [
+            {
+                "id": "ResourceTiming",
+                "type": "object",
+                "properties": {
+                    "requestTime": { "type": "number" },
+                    "proxyStart": { "type": "number" },
+                    "proxyEnd": { "type": "number" },
+                    "dnsStart": { "type": "number" },
+                    "dnsEnd": { "type": "number" },
+                    "connectStart": { "type": "number" },
+                    "connectEnd": { "type": "number" },
+                    "sslStart": { "type": "number" },
+                    "sslEnd": { "type": "number" },
+                    "sendStart": { "type": "number" },
+                    "sendEnd": { "type": "number" },
+                    "receiveHeadersEnd": { "type": "number" }
+                }
+            },
+            {
+                "id": "ResourceRequest",
+                "type": "object",
+                "properties": {
+                    "url": { "type": "string" },
+                    "method": { "type": "string" },
+                    "headers": { "type": "object" },
+                    "postData": { "type": "string", "optional": true }
+                }
+            },
+            {
+                "id": "ResourceResponse",
+                "type": "object",
+                "properties": {
+                    "status": { "type": "number" },
+                    "statusText": { "type": "string" },
+                    "headers": { "type": "object" },
+                    "mimeType": { "type": "string" },
+                    "requestHeaders": { "type": "object" },
+                    "connectionReused": { "type": "boolean" },
+                    "connectionID": { "type": "number" },
+                    "fromDiskCache": { "type": "boolean" },
+                    "timing": { "$ref": "ResourceTiming", "optional": true }
+                }
+            },
+            {
+                "id": "CachedResource",
+                "type": "object",
+                "properties": {
+                    "url": { "type": "string" },
+                    "type": { "type": "string" },
+                    "response": { "$ref": "ResourceResponse" },
+                    "bodySize": { "type": "number" },
+                    "loader": { "$ref": "DocumentLoader" }
+                }
+            },
+            {
+                "id": "DocumentLoader",
+                "type": "object",
+                "properties": {
+                    "frameId": { "type": "string" },
+                    "loaderId": { "type": "string" },
+                    "url": { "type": "string" }
+                }
+            },
+            {
+                "id": "FrameResource",
+                "type": "object",
+                "properties": {
+                    "url": { "type": "string" },
+                    "loader": { "$ref": "DocumentLoader" },
+                    "request": { "$ref": "ResourceRequest" },
+                    "response": { "$ref": "ResourceResponse" }
+                }
+            }
+        ],
         "commands": [
             {
                 "name": "enable",
                 "returns": [
-                    { "name": "resources", "$ref": "NetworkResourceTree" }
+                    { "name": "resources", "$ref": "FrameResourceTree" }
                 ]
             },
             {
@@ -253,21 +327,14 @@
                 ]
             },
             {
-                "name": "identifierForInitialRequest",
-                "parameters": [
-                    { "name": "identifier", "type": "integer" },
-                    { "name": "url", "type": "string" },
-                    { "name": "loader", "$ref": "NetworkLoader" },
-                    { "name": "callStack", "type": "array", "items": { "$ref" : "DebuggerStackFrame"} }
-                ]
-            },
-            {
                 "name": "willSendRequest",
                 "parameters": [
                     { "name": "identifier", "type": "integer" },
+                    { "name": "loader", "$ref": "NetworkLoader" },
+                    { "name": "request", "$ref": "ResourceRequest" },
+                    { "name": "redirectResponse", "$ref": "ResourceResponse" },
                     { "name": "time", "type": "number" },
-                    { "name": "request", "$ref": "NetworkRequest" },
-                    { "name": "redirectResponse", "$ref": "NetworkResponse" }
+                    { "name": "callStack", "type": "array", "items": { "$ref" : "DebuggerStackFrame"} }
                 ]
             },
             {
@@ -282,7 +349,7 @@
                     { "name": "identifier", "type": "integer" },
                     { "name": "time", "type": "number" },
                     { "name": "resourceType", "type": "string" },
-                    { "name": "response", "$ref": "NetworkResponse" }
+                    { "name": "response", "$ref": "ResourceResponse" }
                 ]
             },
             {
@@ -503,7 +570,7 @@
                     "nodeValue": { "type": "string", "description": "<code>Node</code>'s nodeValue." },
                     "childNodeCount": { "type": "integer", "optional": true, "description": "Child count for <code>Container</code> nodes." },
                     "children": { "type": "array", "optional": true, "items": { "$ref" : "DOMNode" }, "description": "Child nodes of this node when requested with children." },
-                    "attributes": { "type": "array", "optional": true, "items": { "type" : "string" }, "description": "Attributes of the <code>Element</code> node in the form of flat array <code>[name1, value1, name2, value2]." },
+                    "attributes": { "type": "array", "optional": true, "items": { "type" : "string" }, "description": "Attributes of the <code>Element</code> node in the form of flat array <code>[name1, value1, name2, value2]</code>." },
                     "documentURL": { "type": "string", "optional": true, "description": "Document URL that <code>Document</code> or <code>FrameOwner</code> node points to." },
                     "publicId": { "type": "string", "optional": true, "description": "<code>DocumentType</code>'s publicId. // FIXME" },
                     "systemId": { "type": "string", "optional": true, "description": "<code>DocumentType</code>'s systemId. // FIXME" },

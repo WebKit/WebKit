@@ -88,8 +88,7 @@ public:
 
     ~InspectorResourceAgent();
 
-    void identifierForInitialRequest(unsigned long identifier, const KURL&, DocumentLoader*);
-    void willSendRequest(unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
+    void willSendRequest(unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     void markResourceAsCached(unsigned long identifier);
     void didReceiveResponse(unsigned long identifier, DocumentLoader* laoder, const ResourceResponse&);
     void didReceiveContentLength(unsigned long identifier, int dataLength, int lengthReceived);

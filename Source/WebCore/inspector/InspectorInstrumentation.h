@@ -110,8 +110,7 @@ public:
     static void didRecalculateStyle(const InspectorInstrumentationCookie&);
 
     static void applyUserAgentOverride(Frame*, String*);
-    static void identifierForInitialRequest(Frame*, unsigned long identifier, DocumentLoader*, const ResourceRequest&);
-    static void willSendRequest(Frame*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
+    static void willSendRequest(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     static void markResourceAsCached(Page*, unsigned long identifier);
     static void didLoadResourceFromMemoryCache(Page*, DocumentLoader*, const CachedResource*);
     static InspectorInstrumentationCookie willReceiveResourceData(Frame*, unsigned long identifier);
@@ -227,8 +226,7 @@ private:
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
 
     static void applyUserAgentOverrideImpl(InspectorAgent*, String*);
-    static void identifierForInitialRequestImpl(InspectorAgent*, unsigned long identifier, DocumentLoader*, const ResourceRequest&);
-    static void willSendRequestImpl(InspectorAgent*, unsigned long identifier, ResourceRequest&, const ResourceResponse& redirectResponse);
+    static void willSendRequestImpl(InspectorAgent*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
     static void markResourceAsCachedImpl(InspectorAgent*, unsigned long identifier);
     static void didLoadResourceFromMemoryCacheImpl(InspectorAgent*, DocumentLoader*, const CachedResource*);
     static InspectorInstrumentationCookie willReceiveResourceDataImpl(InspectorAgent*, unsigned long identifier);
@@ -601,17 +599,6 @@ inline void InspectorInstrumentation::didRecalculateStyle(const InspectorInstrum
 #endif
 }
 
-inline void InspectorInstrumentation::identifierForInitialRequest(Frame* frame, unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request)
-{
-#if ENABLE(INSPECTOR)
-    // This notification should be procecessed even in cases there is no frontend.
-    if (!frame)
-        return;
-    if (InspectorAgent* ic = inspectorAgentForPage(frame->page()))
-        identifierForInitialRequestImpl(ic, identifier, loader, request);
-#endif
-}
-
 inline void InspectorInstrumentation::applyUserAgentOverride(Frame* frame, String* userAgent)
 {
 #if ENABLE(INSPECTOR)
@@ -620,11 +607,11 @@ inline void InspectorInstrumentation::applyUserAgentOverride(Frame* frame, Strin
 #endif
 }
 
-inline void InspectorInstrumentation::willSendRequest(Frame* frame, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
+inline void InspectorInstrumentation::willSendRequest(Frame* frame, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
 #if ENABLE(INSPECTOR)
     if (InspectorAgent* ic = inspectorAgentWithFrontendForFrame(frame))
-        willSendRequestImpl(ic, identifier, request, redirectResponse);
+        willSendRequestImpl(ic, identifier, loader, request, redirectResponse);
 #endif
 }
 
