@@ -2627,13 +2627,18 @@ static inline EventTarget* eventTargetRespectingSVGTargetRules(Node* referenceNo
     return referenceNode;
 }
 
-void Node::getEventAncestors(Vector<EventContext>& ancestors, EventTarget* originalTarget, EventDispatchBehavior behavior)
+enum EventDispatchBehavior {
+    RetargetEvent,
+    StayInsideShadowDOM
+};
+
+static void getEventAncestors(Node* node, Vector<EventContext>& ancestors, EventTarget* originalTarget, EventDispatchBehavior behavior)
 {
-    if (!inDocument())
+    if (!node->inDocument())
         return;
 
     EventTarget* target = originalTarget;
-    Node* ancestor = this;
+    Node* ancestor = node;
     bool shouldSkipNextAncestor = false;
     while (true) {
         if (ancestor->isShadowRoot()) {
@@ -2714,7 +2719,7 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
     RefPtr<Node> thisNode(this);
     RefPtr<EventTarget> originalTarget = event->target();
     Vector<EventContext> ancestors;
-    getEventAncestors(ancestors, originalTarget.get(), determineDispatchBehavior(event.get()));
+    getEventAncestors(this, ancestors, originalTarget.get(), determineDispatchBehavior(event.get()));
 
     WindowEventContext windowContext(event.get(), this, topEventContext(ancestors));
 

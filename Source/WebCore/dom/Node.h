@@ -87,11 +87,6 @@ enum StyleChangeType {
     SyntheticStyleChange = 3 << nodeStyleChangeShift
 };
 
-enum EventDispatchBehavior {
-    RetargetEvent,
-    StayInsideShadowDOM
-};
-
 class Node : public EventTarget, public TreeShared<ContainerNode>, public ScriptWrappable {
     friend class Document;
 public:
@@ -224,9 +219,6 @@ public:
 
     // Returns the enclosing event parent node (or self) that, when clicked, would trigger a navigation.
     Node* enclosingLinkEventParentOrSelf();
-
-    // Node ancestors when concerned about event flow.
-    void getEventAncestors(Vector<EventContext>& ancestors, EventTarget*, EventDispatchBehavior = RetargetEvent);
 
     bool isBlockFlow() const;
     bool isBlockFlowOrBlockTable() const;

@@ -745,18 +745,19 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPt
     if (!eventTypesLength)
         return;
 
-    // The Node's Event Ancestors (not including self)
-    Vector<EventContext> ancestors;
-    node->getEventAncestors(ancestors, node);
+    // The Node's Ancestors (not including self)
+    Vector<ContainerNode*> ancestors;
+    for (ContainerNode* ancestor = node->parentOrHostNode(); ancestor; ancestor = ancestor->parentOrHostNode())
+        ancestors.append(ancestor);
 
     // Nodes and their Listeners for the concerned event types (order is top to bottom)
     Vector<EventListenerInfo> eventInformation;
     for (size_t i = ancestors.size(); i; --i) {
-        Node* ancestor = ancestors[i - 1].node();
+        ContainerNode* ancestor = ancestors[i - 1];
         for (size_t j = 0; j < eventTypesLength; ++j) {
             AtomicString& type = eventTypes[j];
             if (ancestor->hasEventListeners(type))
-                eventInformation.append(EventListenerInfo(static_cast<Node*>(ancestor), type, ancestor->getEventListeners(type)));
+                eventInformation.append(EventListenerInfo(ancestor, type, ancestor->getEventListeners(type)));
         }
     }
 

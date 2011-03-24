@@ -1,3 +1,23 @@
+2011-03-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Untangle dependency between event ancestor chain computation and InspectorDOMAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=57050
+
+        Inspector's list of event listeners does not need to invoke Node::getEventListeners,
+        because it simply wants to collect all ancestors and never uses EventContext bits.
+
+        No functional change, covered by existing tests.
+
+        * dom/Node.cpp:
+        (WebCore::getEventAncestors): Converted into a static function.
+        (WebCore::Node::dispatchGenericEvent): Changed to pass node to getEventAncestors.
+        * dom/Node.h: Removed decl, moved EventDispatchBehavior enum inside.
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getEventListenersForNode): Replaced the call
+            to getEventAncestors with a simple ancestor traversal loop.
+
 2011-03-24  Adam Klein  <adamk@chromium.org>
 
         Reviewed by David Levin.
