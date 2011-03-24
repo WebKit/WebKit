@@ -1,3 +1,15 @@
+2011-03-23  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Need API to manage the Media Cache
+        https://bugs.webkit.org/show_bug.cgi?id=56878
+        <rdar://problem/9082503>
+
+        Add functions that need to be exported.
+
+        * WebCore.exp.in:
+
 2011-03-23  Robert Kroeger  <rjkroege@chromium.org>
 
         Reviewed by James Robinson.

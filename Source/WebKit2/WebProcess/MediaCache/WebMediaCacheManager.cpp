@@ -30,7 +30,7 @@
 #include "SecurityOriginData.h"
 #include "WebMediaCacheManagerProxyMessages.h"
 #include "WebProcess.h"
-#include <WebCore/NotImplemented.h>
+#include <WebCore/HTMLMediaElement.h>
 
 using namespace WebCore;
 
@@ -55,22 +55,25 @@ void WebMediaCacheManager::getHostnamesWithMediaCache(uint64_t callbackID)
 {
     Vector<String> mediaCacheHostnames;
 
-    // FIXME: Popuplate the list of hosts that have entries in the media cache.
-    notImplemented();
+#if ENABLE(VIDEO)
+    HTMLMediaElement::getSitesInMediaCache(mediaCacheHostnames);
+#endif
 
     WebProcess::shared().connection()->send(Messages::WebMediaCacheManagerProxy::DidGetHostnamesWithMediaCache(mediaCacheHostnames, callbackID), 0);
 }
 
 void WebMediaCacheManager::clearCacheForHostname(const String& hostname)
 {
-    // FIXME: Delete the media cache entries for this hostname.
-    notImplemented();
+#if ENABLE(VIDEO)
+    HTMLMediaElement::clearMediaCacheForSite(hostname);
+#endif
 }
 
 void WebMediaCacheManager::clearCacheForAllHostnames()
 {
-    // FIXME: Delete all media cache entries.
-    notImplemented();
+#if ENABLE(VIDEO)
+    HTMLMediaElement::clearMediaCache();
+#endif
 }
 
 } // namespace WebKit

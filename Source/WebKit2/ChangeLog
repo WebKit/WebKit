@@ -1,3 +1,18 @@
+2011-03-23  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Need API to manage the Media Cache
+        https://bugs.webkit.org/show_bug.cgi?id=56878
+        <rdar://problem/9082503>
+
+        Call through to HTMLMediaElement functions to manage the WebCore media cache.
+
+        * WebProcess/MediaCache/WebMediaCacheManager.cpp:
+        (WebKit::WebMediaCacheManager::getHostnamesWithMediaCache):
+        (WebKit::WebMediaCacheManager::clearCacheForHostname):
+        (WebKit::WebMediaCacheManager::clearCacheForAllHostnames):
+
 2011-03-23  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Darin Adler.
