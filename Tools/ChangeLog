@@ -1,3 +1,15 @@
+2011-03-24  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction.
+
+        Add a stub implementation of the TestInvocation dumping logic.
+        Update project files to reflect new file.
+
+        * WebKitTestRunner/cairo: Added.
+        * WebKitTestRunner/cairo/TestInvocationCairo.cpp: Added.
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj:
+
 2011-03-24  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
