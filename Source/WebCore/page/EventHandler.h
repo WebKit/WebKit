@@ -77,7 +77,7 @@ class Widget;
 class PlatformGestureEvent;
 #endif
 
-#if ENABLE(ENABLE_GESTURE_RECOGNIZER)
+#if ENABLE(GESTURE_RECOGNIZER)
 class PlatformGestureRecognizer;
 #endif
 
@@ -455,7 +455,7 @@ private:
     TouchTargetMap m_originatingTouchPointTargets;
     bool m_touchPressed;
 #endif
-#if ENABLE(ENABLE_GESTURE_RECOGNIZER)
+#if ENABLE(GESTURE_RECOGNIZER)
     OwnPtr<PlatformGestureRecognizer> m_gestureRecognizer;
 #endif
 };

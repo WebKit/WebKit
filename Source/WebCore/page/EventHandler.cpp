@@ -95,7 +95,7 @@
 #include "TouchEvent.h"
 #endif
 
-#if ENABLE(ENABLE_GESTURE_RECOGNIZER)
+#if ENABLE(GESTURE_RECOGNIZER)
 #include "PlatformGestureRecognizer.h"
 #endif
 
@@ -206,7 +206,7 @@ EventHandler::EventHandler(Frame* frame)
 #if ENABLE(TOUCH_EVENTS)
     , m_touchPressed(false)
 #endif
-#if ENABLE(ENABLE_GESTURE_RECOGNIZER)
+#if ENABLE(GESTURE_RECOGNIZER)
     , m_gestureRecognizer(PlatformGestureRecognizer::create())
 #endif
 {
@@ -3108,7 +3108,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         }
     }
 
-#if ENABLE(ENABLE_GESTURE_RECOGNIZER)
+#if ENABLE(GESTURE_RECOGNIZER)
     if (m_gestureRecognizer)
         m_gestureRecognizer->processTouchEventForGesture(event, this, defaultPrevented);
 #endif
