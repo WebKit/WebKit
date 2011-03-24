@@ -1,5 +1,44 @@
 2011-03-24  Adam Roben  <aroben@apple.com>
 
+        Split Mac-specific parts of LayerTreeHostCA into LayerTreeHostCAMac.mm
+
+        Fixes <http://webkit.org/b/57046> LayerTreeHostMac's code should be shareable with Windows
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp: Renamed from Source/WebKit2/WebProcess/WebPage/ca/LayerTreeHostCA.mm.
+        (WebKit::LayerTreeHostCA::LayerTreeHostCA): Moved some Mac-specific code to
+        LayerTreeHostCAMac.mm.
+        (WebKit::LayerTreeHostCA::~LayerTreeHostCA): Wrapped some Mac-specific code in
+        PLATFORM(MAC).
+
+        (WebKit::LayerTreeHostCA::invalidate):
+        (WebKit::LayerTreeHostCA::sizeDidChange):
+        (WebKit::LayerTreeHostCA::forceRepaint):
+        Moved some Mac-specific code to LayerTreeHostCAMac.mm.
+
+        (WebKit::LayerTreeHostCA::performScheduledLayerFlush): Renamed from
+        flushPendingLayerChangesRunLoopObserverCallback. Moved some code from here...
+        (WebKit::LayerTreeHostCA::didPerformScheduledLayerFlush): ...to here. Moved some
+        Mac-specific code to LayerTreeHostCAMac.mm.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.h: Added new functions, wrapped some Mac-specific
+        declarations in PLATFORM(MAC).
+
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.mm: Added.
+        (WebKit::LayerTreeHostCA::platformInitialize):
+        (WebKit::LayerTreeHostCA::scheduleLayerFlush):
+        (WebKit::LayerTreeHostCA::platformInvalidate):
+        (WebKit::LayerTreeHostCA::platformSizeDidChange):
+        (WebKit::LayerTreeHostCA::platformForceRepaint):
+        (WebKit::LayerTreeHostCA::flushPendingLayerChangesRunLoopObserverCallback):
+        (WebKit::LayerTreeHostCA::platformDidPerformScheduledLayerFlush):
+        Code was extracted from LayerTreeHostCA.cpp.
+
+2011-03-24  Adam Roben  <aroben@apple.com>
+
         Rename LayerTreeHostMac to LayerTreeHostCA
 
         This is the first step toward sharing code with Windows.

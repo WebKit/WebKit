@@ -30,9 +30,14 @@
 #include "LayerTreeHost.h"
 #include <WebCore/GraphicsLayerClient.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/RetainPtr.h>
 
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+#endif
+
+#if PLATFORM(MAC)
 typedef struct __WKCARemoteLayerClientRef* WKCARemoteLayerClientRef;
+#endif
 
 namespace WebKit {
 
@@ -67,12 +72,22 @@ private:
     virtual bool showDebugBorders() const;
     virtual bool showRepaintCounter() const;
 
-    static void flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
-    void flushPendingLayerChangesRunLoopObserverCallback();
+    void platformInitialize();
+    void platformInvalidate();
+    void platformSizeDidChange();
+    void platformForceRepaint();
+
+    void performScheduledLayerFlush();
+    void didPerformScheduledLayerFlush();
+    void platformDidPerformScheduledLayerFlush();
     bool flushPendingLayerChanges();
 
     void createPageOverlayLayer();
     void destroyPageOverlayLayer();
+
+#if PLATFORM(MAC)
+    static void flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
+#endif
 
     // The context for this layer tree.
     LayerTreeContext m_layerTreeContext;
@@ -93,8 +108,10 @@ private:
     // The page overlay layer. Will be null if there's no page overlay.
     OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
 
+#if PLATFORM(MAC)
     RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
     RetainPtr<CFRunLoopObserverRef> m_flushPendingLayerChangesRunLoopObserver;
+#endif
 };
 
 } // namespace WebKit

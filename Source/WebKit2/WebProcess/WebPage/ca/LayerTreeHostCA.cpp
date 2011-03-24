@@ -23,22 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "LayerTreeHostCA.h"
+#include "config.h"
+#include "LayerTreeHostCA.h"
 
-#import "DrawingAreaImpl.h"
-#import "WebPage.h"
-#import "WebProcess.h"
-#import <QuartzCore/CATransaction.h>
-#import <WebCore/Frame.h>
-#import <WebCore/FrameView.h>
-#import <WebCore/Page.h>
-#import <WebCore/Settings.h>
-#import <WebKitSystemInterface.h>
-
-@interface CATransaction (Details)
-+ (void)synchronize;
-@end
+#include "DrawingAreaImpl.h"
+#include "WebPage.h"
+#include "WebProcess.h"
+#include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
+#include <WebCore/Page.h>
+#include <WebCore/Settings.h>
 
 using namespace WebCore;
 
@@ -54,8 +48,6 @@ LayerTreeHostCA::LayerTreeHostCA(WebPage* webPage)
     , m_isValid(true)
     , m_notifyAfterScheduledLayerFlush(false)
 {
-    mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
-    m_remoteLayerClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
 
     // Create a root layer.
     m_rootLayer = GraphicsLayer::create(this);
@@ -64,8 +56,6 @@ LayerTreeHostCA::LayerTreeHostCA(WebPage* webPage)
 #endif
     m_rootLayer->setDrawsContent(false);
     m_rootLayer->setSize(webPage->size());
-
-    [m_rootLayer->platformLayer() setGeometryFlipped:YES];
 
     m_nonCompositedContentLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
@@ -79,45 +69,27 @@ LayerTreeHostCA::LayerTreeHostCA(WebPage* webPage)
 
     m_rootLayer->addChild(m_nonCompositedContentLayer.get());
 
-    WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), m_rootLayer->platformLayer());
-
     if (m_webPage->hasPageOverlay())
         createPageOverlayLayer();
 
-    scheduleLayerFlush();
+    platformInitialize();
 
-    m_layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());
+    scheduleLayerFlush();
 }
 
 LayerTreeHostCA::~LayerTreeHostCA()
 {
     ASSERT(!m_isValid);
+    ASSERT(!m_rootLayer);
+#if PLATFORM(MAC)
     ASSERT(!m_flushPendingLayerChangesRunLoopObserver);
     ASSERT(!m_remoteLayerClient);
-    ASSERT(!m_rootLayer);
+#endif
 }
 
 const LayerTreeContext& LayerTreeHostCA::layerTreeContext()
 {
     return m_layerTreeContext;
-}
-
-void LayerTreeHostCA::scheduleLayerFlush()
-{
-    CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
-    
-    // Make sure we wake up the loop or the observer could be delayed until some other source fires.
-    CFRunLoopWakeUp(currentRunLoop);
-
-    if (m_flushPendingLayerChangesRunLoopObserver)
-        return;
-
-    // Run before the Core Animation commit observer, which has order 2000000.
-    const CFIndex runLoopOrder = 2000000 - 1;
-    CFRunLoopObserverContext context = { 0, this, 0, 0, 0 };
-    m_flushPendingLayerChangesRunLoopObserver.adoptCF(CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting | kCFRunLoopExit, true, runLoopOrder, flushPendingLayerChangesRunLoopObserverCallback, &context));
-
-    CFRunLoopAddObserver(currentRunLoop, m_flushPendingLayerChangesRunLoopObserver.get(), kCFRunLoopCommonModes);
 }
 
 void LayerTreeHostCA::setShouldNotifyAfterNextScheduledLayerFlush(bool notifyAfterScheduledLayerFlush)
@@ -137,14 +109,7 @@ void LayerTreeHostCA::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 void LayerTreeHostCA::invalidate()
 {
     ASSERT(m_isValid);
-
-    if (m_flushPendingLayerChangesRunLoopObserver) {
-        CFRunLoopObserverInvalidate(m_flushPendingLayerChangesRunLoopObserver.get());
-        m_flushPendingLayerChangesRunLoopObserver = nullptr;
-    }
-
-    WKCARemoteLayerClientInvalidate(m_remoteLayerClient.get());
-    m_remoteLayerClient = nullptr;
+    platformInvalidate();
     m_rootLayer = nullptr;
     m_isValid = false;
 }
@@ -174,8 +139,7 @@ void LayerTreeHostCA::sizeDidChange(const IntSize& newSize)
     scheduleLayerFlush();
     flushPendingLayerChanges();
 
-    [CATransaction flush];
-    [CATransaction synchronize];
+    platformSizeDidChange();
 }
 
 void LayerTreeHostCA::forceRepaint()
@@ -183,8 +147,7 @@ void LayerTreeHostCA::forceRepaint()
     scheduleLayerFlush();
     flushPendingLayerChanges();
 
-    [CATransaction flush];
-    [CATransaction synchronize];
+    platformForceRepaint();
 }    
 
 void LayerTreeHostCA::didInstallPageOverlay()
@@ -237,15 +200,7 @@ bool LayerTreeHostCA::showRepaintCounter() const
     return m_webPage->corePage()->settings()->showRepaintCounter();
 }
 
-void LayerTreeHostCA::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
-{
-    // This gets called outside of the normal event loop so wrap in an autorelease pool
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    static_cast<LayerTreeHostCA*>(context)->flushPendingLayerChangesRunLoopObserverCallback();
-    [pool drain];
-}
-
-void LayerTreeHostCA::flushPendingLayerChangesRunLoopObserverCallback()
+void LayerTreeHostCA::performScheduledLayerFlush()
 {
     {
         RefPtr<LayerTreeHostCA> protect(this);
@@ -258,10 +213,12 @@ void LayerTreeHostCA::flushPendingLayerChangesRunLoopObserverCallback()
     if (!flushPendingLayerChanges())
         return;
 
-    // We successfully flushed the pending layer changes, remove the run loop observer.
-    ASSERT(m_flushPendingLayerChangesRunLoopObserver);
-    CFRunLoopObserverInvalidate(m_flushPendingLayerChangesRunLoopObserver.get());
-    m_flushPendingLayerChangesRunLoopObserver = 0;
+    didPerformScheduledLayerFlush();
+}
+
+void LayerTreeHostCA::didPerformScheduledLayerFlush()
+{
+    platformDidPerformScheduledLayerFlush();
 
     if (m_notifyAfterScheduledLayerFlush) {
         // Let the drawing area know that we've done a flush of the layer changes.
