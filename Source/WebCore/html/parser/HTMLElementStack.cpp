@@ -50,7 +50,7 @@ inline bool isNumberedHeaderElement(ContainerNode* node)
         || node->hasTagName(h6Tag);
 }
     
-inline bool isRootMarker(ContainerNode* node)
+inline bool isRootNode(ContainerNode* node)
 {
     return node->nodeType() == Node::DOCUMENT_FRAGMENT_NODE
         || node->hasTagName(htmlTag);
@@ -74,7 +74,7 @@ inline bool isScopeMarker(ContainerNode* node)
         || node->hasTagName(SVGNames::foreignObjectTag)
         || node->hasTagName(SVGNames::descTag)
         || node->hasTagName(SVGNames::titleTag)
-        || isRootMarker(node);
+        || isRootNode(node);
 }
 
 inline bool isListItemScopeMarker(ContainerNode* node)
@@ -87,7 +87,7 @@ inline bool isListItemScopeMarker(ContainerNode* node)
 inline bool isTableScopeMarker(ContainerNode* node)
 {
     return node->hasTagName(tableTag)
-        || isRootMarker(node);
+        || isRootNode(node);
 }
 
 inline bool isTableBodyScopeMarker(ContainerNode* node)
@@ -95,13 +95,13 @@ inline bool isTableBodyScopeMarker(ContainerNode* node)
     return node->hasTagName(tbodyTag)
         || node->hasTagName(tfootTag)
         || node->hasTagName(theadTag)
-        || isRootMarker(node);
+        || isRootNode(node);
 }
 
 inline bool isTableRowScopeMarker(ContainerNode* node)
 {
     return node->hasTagName(trTag)
-        || isRootMarker(node);
+        || isRootNode(node);
 }
 
 inline bool isForeignContentScopeMarker(ContainerNode* node)
@@ -434,10 +434,10 @@ bool inScopeCommon(HTMLElementStack::ElementRecord* top, const AtomicString& tar
 bool HTMLElementStack::hasOnlyHTMLElementsInScope() const
 {
     for (ElementRecord* record = m_top.get(); record; record = record->next()) {
-        Element* element = record->element();
-        if (!isInHTMLNamespace(element))
+        ContainerNode* node = record->node();
+        if (!isInHTMLNamespace(node))
             return false;
-        if (isScopeMarker(element))
+        if (isScopeMarker(node))
             return true;
     }
     ASSERT_NOT_REACHED(); // <html> is always on the stack and is a scope marker.
@@ -460,10 +460,10 @@ bool HTMLElementStack::hasNumberedHeaderElementInScope() const
 bool HTMLElementStack::inScope(Element* targetElement) const
 {
     for (ElementRecord* pos = m_top.get(); pos; pos = pos->next()) {
-        Element* element = pos->element();
-        if (element == targetElement)
+        ContainerNode* node = pos->node();
+        if (node == targetElement)
             return true;
-        if (isScopeMarker(element))
+        if (isScopeMarker(node))
             return false;
     }
     ASSERT_NOT_REACHED(); // <html> is always on the stack and is a scope marker.

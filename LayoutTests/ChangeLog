@@ -1,3 +1,13 @@
+2011-03-24  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION (r80231): Bad cast in HTMLTreeBuilder with closed </form> tags
+        https://bugs.webkit.org/show_bug.cgi?id=56836
+
+        * fast/parser/fragment-closest-form-ancestor-expected.txt: Added.
+        * fast/parser/fragment-closest-form-ancestor.html: Added.
+
 2011-03-24  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

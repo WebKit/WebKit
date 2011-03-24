@@ -1,3 +1,31 @@
+2011-03-24  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION (r80231): Bad cast in HTMLTreeBuilder with closed </form> tags
+        https://bugs.webkit.org/show_bug.cgi?id=56836
+
+        During fragment parsing, HTMLConstructionSite holds a reference to the
+        fragment context's closest form ancestor. If a misnested form end tag is
+        then encountered as the first node of the fragment, we will check to see
+        if a corresponding form start tag is in scope even though no such tag
+        exists. This led to isScope() walking the HTMLElementStack all the way
+        to the root DocumentFragment and attempting to cast it to Element*.
+
+        Fix this by ensuring that the inScope() family of functions operate in
+        terms of ContainerNodes to account for the fragment case.
+
+        Test: fast/parser/fragment-closest-form-ancestor.html
+
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore::HTMLNames::isRootNode):
+        (WebCore::HTMLNames::isScopeMarker):
+        (WebCore::HTMLNames::isTableScopeMarker):
+        (WebCore::HTMLNames::isTableBodyScopeMarker):
+        (WebCore::HTMLNames::isTableRowScopeMarker):
+        (WebCore::HTMLElementStack::hasOnlyHTMLElementsInScope):
+        (WebCore::HTMLElementStack::inScope):
+
 2011-03-24  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
