@@ -48,6 +48,7 @@
 #include "WebPopupMenuProxy.h"
 #include "WebResourceLoadClient.h"
 #include "WebUIClient.h"
+#include <WebCore/ScrollTypes.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -276,6 +277,8 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     void handleTouchEvent(const WebTouchEvent&);
 #endif
+
+    void scrollBy(WebCore::ScrollDirection, WebCore::ScrollGranularity);
 
     String pageTitle() const;
     const String& toolTip() const { return m_toolTip; }

@@ -46,6 +46,7 @@
 #include <WebCore/Editor.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/ScrollTypes.h>
 #include <WebCore/WebCoreKeyboardUIMode.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
@@ -140,6 +141,8 @@ public:
     WebPageGroupProxy* pageGroup() const { return m_pageGroup.get(); }
 
     void scrollMainFrameIfNotAtMaxScrollPosition(const WebCore::IntSize& scrollOffset);
+
+    void scrollBy(uint32_t scrollDirection, uint32_t scrollGranularity);
 
 #if ENABLE(INSPECTOR)
     WebInspector* inspector();
@@ -414,6 +417,9 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     void touchEvent(const WebTouchEvent&);
 #endif
+
+    static void scroll(WebCore::Page*, WebCore::ScrollDirection, WebCore::ScrollGranularity);
+    static void logicalScroll(WebCore::Page*, WebCore::ScrollLogicalDirection, WebCore::ScrollGranularity);
 
     uint64_t restoreSession(const SessionState&);
     void restoreSessionAndNavigateToCurrentItem(const SessionState&, const SandboxExtension::Handle&);

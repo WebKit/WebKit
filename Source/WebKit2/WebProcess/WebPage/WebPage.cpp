@@ -1056,6 +1056,21 @@ void WebPage::touchEvent(const WebTouchEvent& touchEvent)
 }
 #endif
 
+void WebPage::scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)
+{
+    page->focusController()->focusedOrMainFrame()->eventHandler()->scrollRecursively(direction, granularity);
+}
+
+void WebPage::logicalScroll(Page* page, ScrollLogicalDirection direction, ScrollGranularity granularity)
+{
+    page->focusController()->focusedOrMainFrame()->eventHandler()->logicalScrollRecursively(direction, granularity);
+}
+
+void WebPage::scrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
+{
+    scroll(m_page.get(), static_cast<ScrollDirection>(scrollDirection), static_cast<ScrollGranularity>(scrollGranularity));
+}
+
 void WebPage::setActive(bool isActive)
 {
     m_page->focusController()->setActive(isActive);

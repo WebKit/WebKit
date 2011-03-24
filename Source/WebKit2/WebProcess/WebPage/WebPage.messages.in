@@ -42,6 +42,8 @@ messages -> WebPage {
     TouchEvent(WebKit::WebTouchEvent event)
 #endif
 
+    ScrollBy(uint32_t scrollDirection, uint32_t scrollGranularity)
+
     GoBack(uint64_t backForwardItemID, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     GoForward(uint64_t backForwardItemID, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     GoToBackForwardItem(uint64_t backForwardItemID, WebKit::SandboxExtension::Handle sandboxExtensionHandle)

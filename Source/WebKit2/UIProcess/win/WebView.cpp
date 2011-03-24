@@ -151,6 +151,12 @@ LRESULT WebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_VISTA_MOUSEHWHEEL:
         lResult = onWheelEvent(hWnd, message, wParam, lParam, handled);
         break;
+    case WM_HSCROLL:
+        lResult = onHorizontalScroll(hWnd, message, wParam, lParam, handled);
+        break;
+    case WM_VSCROLL:
+        lResult = onVerticalScroll(hWnd, message, wParam, lParam, handled);
+        break;
     case WM_SYSKEYDOWN:
     case WM_KEYDOWN:
     case WM_SYSCHAR:
@@ -282,6 +288,15 @@ WebView::~WebView()
 void WebView::initialize()
 {
     ::RegisterDragDrop(m_window, this);
+
+    if (shouldInitializeTrackPointHack()) {
+        // If we detected a registry key belonging to a TrackPoint driver, then create fake
+        // scrollbars, so the WebView will receive WM_VSCROLL and WM_HSCROLL messages.
+        // We create an invisible vertical scrollbar and an invisible horizontal scrollbar to allow
+        // for receiving both types of messages.
+        ::CreateWindow(TEXT("SCROLLBAR"), TEXT("FAKETRACKPOINTHSCROLLBAR"), WS_CHILD | WS_VISIBLE | SBS_HORZ, 0, 0, 0, 0, m_window, 0, instanceHandle(), 0);
+        ::CreateWindow(TEXT("SCROLLBAR"), TEXT("FAKETRACKPOINTVSCROLLBAR"), WS_CHILD | WS_VISIBLE | SBS_VERT, 0, 0, 0, 0, m_window, 0, instanceHandle(), 0);
+    }
 }
 
 void WebView::initializeUndoClient(const WKViewUndoClient* client)
@@ -396,6 +411,70 @@ LRESULT WebView::onWheelEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
     }
 
     m_page->handleWheelEvent(wheelEvent);
+
+    handled = true;
+    return 0;
+}
+
+LRESULT WebView::onHorizontalScroll(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
+{
+    ScrollDirection direction;
+    ScrollGranularity granularity;
+    switch (LOWORD(wParam)) {
+    case SB_LINELEFT:
+        granularity = ScrollByLine;
+        direction = ScrollLeft;
+        break;
+    case SB_LINERIGHT:
+        granularity = ScrollByLine;
+        direction = ScrollRight;
+        break;
+    case SB_PAGELEFT:
+        granularity = ScrollByDocument;
+        direction = ScrollLeft;
+        break;
+    case SB_PAGERIGHT:
+        granularity = ScrollByDocument;
+        direction = ScrollRight;
+        break;
+    default:
+        handled = false;
+        return 0;
+    }
+
+    m_page->scrollBy(direction, granularity);
+
+    handled = true;
+    return 0;
+}
+
+LRESULT WebView::onVerticalScroll(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
+{
+    ScrollDirection direction;
+    ScrollGranularity granularity;
+    switch (LOWORD(wParam)) {
+    case SB_LINEDOWN:
+        granularity = ScrollByLine;
+        direction = ScrollDown;
+        break;
+    case SB_LINEUP:
+        granularity = ScrollByLine;
+        direction = ScrollUp;
+        break;
+    case SB_PAGEDOWN:
+        granularity = ScrollByDocument;
+        direction = ScrollDown;
+        break;
+    case SB_PAGEUP:
+        granularity = ScrollByDocument;
+        direction = ScrollUp;
+        break;
+    default:
+        handled = false;
+        return 0;
+    }
+
+    m_page->scrollBy(direction, granularity);
 
     handled = true;
     return 0;
@@ -645,6 +724,36 @@ void WebView::stopTrackingMouseLeave()
     trackMouseEvent.hwndTrack = m_window;
 
     ::TrackMouseEvent(&trackMouseEvent);
+}
+
+bool WebView::shouldInitializeTrackPointHack()
+{
+    static bool shouldCreateScrollbars;
+    static bool hasRunTrackPointCheck;
+
+    if (hasRunTrackPointCheck)
+        return shouldCreateScrollbars;
+
+    hasRunTrackPointCheck = true;
+    const wchar_t* trackPointKeys[] = { 
+        L"Software\\Lenovo\\TrackPoint",
+        L"Software\\Lenovo\\UltraNav",
+        L"Software\\Alps\\Apoint\\TrackPoint",
+        L"Software\\Synaptics\\SynTPEnh\\UltraNavUSB",
+        L"Software\\Synaptics\\SynTPEnh\\UltraNavPS2"
+    };
+
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(trackPointKeys); ++i) {
+        HKEY trackPointKey;
+        int readKeyResult = ::RegOpenKeyExW(HKEY_CURRENT_USER, trackPointKeys[i], 0, KEY_READ, &trackPointKey);
+        ::RegCloseKey(trackPointKey);
+        if (readKeyResult == ERROR_SUCCESS) {
+            shouldCreateScrollbars = true;
+            return shouldCreateScrollbars;
+        }
+    }
+
+    return shouldCreateScrollbars;
 }
 
 void WebView::close()

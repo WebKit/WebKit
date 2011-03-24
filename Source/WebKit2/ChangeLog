@@ -1,3 +1,38 @@
+2011-03-24  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Add Trackpoint driver hack to support IBM trackpads
+        https://bugs.webkit.org/show_bug.cgi?id=49830
+        <rdar://problem/8705951>
+
+        Copy code from WebKit1 to WebKit2 to handle initializing fake scrollbars so 
+        IBM machines with a trackpad send us WM_VSCROLL and WM_HSCROLL messages.
+
+        Listen for the WM_VSCROLL and WM_HSCROLL messages, and turn the values into
+        ScrollDirection and ScrollGranularity, and send a scroll command to the
+        WebProcess.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::scrollBy): Send a message to the WebProcess.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::wndProc): Add WM_VSCROLL and WM_HSCROLL message handling.
+        (WebKit::WebView::initialize): Call shouldInitializeTrackPointHack.
+        (WebKit::WebView::onHorizontalScroll): Turn wParam into a ScrollDirection and ScrollGranularity. 
+        (WebKit::WebView::onVerticalScroll): Ditto.
+        (WebKit::WebView::shouldInitializeTrackPointHack): Check the registry for keys that indicate
+            the machine has a IBM Trackpoint driver.
+        * UIProcess/win/WebView.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scrollBy): Call scroll method.
+        (WebKit::WebPage::scroll): Moved from WebPageMac and WebPageWin.
+        (WebKit::WebPage::logicalScroll): Ditto.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add a new scrollBy message. 
+        * WebProcess/WebPage/mac/WebPageMac.mm: Remove scroll and logicalScroll, they are now in WebPage.cpp.
+        * WebProcess/WebPage/win/WebPageWin.cpp: Ditto.
+
 2011-03-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
