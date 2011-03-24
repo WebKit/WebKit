@@ -55,7 +55,7 @@ public:
     WEBKIT_API static NPObject* createObject(NPP, NPClass*);
 
     // NPN_Enumerate
-    WEBKIT_API static bool enumerate(NPP, NPObject*, NPIdentifier**, uint32_t* count);
+    WEBKIT_API static bool enumerate(NPP, NPObject*, NPIdentifier**, uint32_t* identifierCount);
 
     // NPN_Evaluate
     WEBKIT_API static bool evaluate(NPP, NPObject*, NPString* script, NPVariant* result);
@@ -67,7 +67,7 @@ public:
     WEBKIT_API static NPIdentifier getIntIdentifier(int32_t number);
 
     // NPN_GetProperty
-    WEBKIT_API static bool getProperty(NPP, NPObject*, NPIdentifier propertyName, NPVariant *result);
+    WEBKIT_API static bool getProperty(NPP, NPObject*, NPIdentifier property, NPVariant *result);
 
     // NPN_GetStringIdentifier
     WEBKIT_API static NPIdentifier getStringIdentifier(const NPUTF8* string);
@@ -76,10 +76,10 @@ public:
     WEBKIT_API static void getStringIdentifiers(const NPUTF8** names, int32_t nameCount, NPIdentifier*);
 
     // NPN_HasMethod
-    WEBKIT_API static bool hasMethod(NPP, NPObject*, NPIdentifier methodName);
+    WEBKIT_API static bool hasMethod(NPP, NPObject*, NPIdentifier method);
 
     // NPN_HasProperty
-    WEBKIT_API static bool hasProperty(NPP, NPObject*, NPIdentifier propertyName);
+    WEBKIT_API static bool hasProperty(NPP, NPObject*, NPIdentifier property);
 
     // NPN_IdentifierIsString
     WEBKIT_API static bool identifierIsString(NPIdentifier);
@@ -91,10 +91,10 @@ public:
     WEBKIT_API static int32_t intFromIdentifier(NPIdentifier);
 
     // NPN_Invoke
-    WEBKIT_API static bool invoke(NPP, NPObject*, NPIdentifier methodName, const NPVariant* args, uint32_t count, NPVariant* result);
+    WEBKIT_API static bool invoke(NPP, NPObject*, NPIdentifier method, const NPVariant* args, uint32_t argCount, NPVariant* result);
 
     // NPN_InvokeDefault
-    WEBKIT_API static bool invokeDefault(NPP, NPObject*, const NPVariant* args, uint32_t count, NPVariant* result);
+    WEBKIT_API static bool invokeDefault(NPP, NPObject*, const NPVariant* args, uint32_t argCount, NPVariant* result);
 
     // NPN_ReleaseObject
     WEBKIT_API static void releaseObject(NPObject*);

@@ -57,9 +57,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-bool WebBindings::construct(NPP npp, NPObject *npobj, const NPVariant *args, uint32_t argCount, NPVariant* result)
+bool WebBindings::construct(NPP npp, NPObject* object, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
-    return _NPN_Construct(npp, npobj, args, argCount, result);
+    return _NPN_Construct(npp, object, args, argCount, result);
 }
 
 NPObject* WebBindings::createObject(NPP npp, NPClass* npClass)
@@ -67,19 +67,19 @@ NPObject* WebBindings::createObject(NPP npp, NPClass* npClass)
     return _NPN_CreateObject(npp, npClass);
 }
 
-bool WebBindings::enumerate(NPP id, NPObject* obj, NPIdentifier** identifier, uint32_t* val)
+bool WebBindings::enumerate(NPP npp, NPObject* object, NPIdentifier** identifier, uint32_t* identifierCount)
 {
-    return _NPN_Enumerate(id, obj, identifier, val);
+    return _NPN_Enumerate(npp, object, identifier, identifierCount);
 }
 
-bool WebBindings::evaluate(NPP npp, NPObject* npObject, NPString* npScript, NPVariant* result)
+bool WebBindings::evaluate(NPP npp, NPObject* object, NPString* script, NPVariant* result)
 {
-    return _NPN_Evaluate(npp, npObject, npScript, result);
+    return _NPN_Evaluate(npp, object, script, result);
 }
 
-bool WebBindings::evaluateHelper(NPP npp, bool popups_allowed, NPObject* npobj, NPString* npscript, NPVariant* result)
+bool WebBindings::evaluateHelper(NPP npp, bool popupsAllowed, NPObject* object, NPString* script, NPVariant* result)
 {
-    return _NPN_EvaluateHelper(npp, popups_allowed, npobj, npscript, result);
+    return _NPN_EvaluateHelper(npp, popupsAllowed, object, script, result);
 }
 
 NPIdentifier WebBindings::getIntIdentifier(int32_t number)
@@ -87,9 +87,9 @@ NPIdentifier WebBindings::getIntIdentifier(int32_t number)
     return _NPN_GetIntIdentifier(number);
 }
 
-bool WebBindings::getProperty(NPP npp, NPObject* obj, NPIdentifier propertyName, NPVariant *result)
+bool WebBindings::getProperty(NPP npp, NPObject* object, NPIdentifier property, NPVariant* result)
 {
-    return _NPN_GetProperty(npp, obj, propertyName, result);
+    return _NPN_GetProperty(npp, object, property, result);
 }
 
 NPIdentifier WebBindings::getStringIdentifier(const NPUTF8* string)
@@ -102,14 +102,14 @@ void WebBindings::getStringIdentifiers(const NPUTF8** names, int32_t nameCount, 
     _NPN_GetStringIdentifiers(names, nameCount, identifiers);
 }
 
-bool WebBindings::hasMethod(NPP npp, NPObject* npObject, NPIdentifier methodName)
+bool WebBindings::hasMethod(NPP npp, NPObject* object, NPIdentifier method)
 {
-    return _NPN_HasMethod(npp, npObject, methodName);
+    return _NPN_HasMethod(npp, object, method);
 }
 
-bool WebBindings::hasProperty(NPP npp, NPObject* npObject, NPIdentifier propertyName)
+bool WebBindings::hasProperty(NPP npp, NPObject* object, NPIdentifier property)
 {
-    return _NPN_HasProperty(npp, npObject, propertyName);
+    return _NPN_HasProperty(npp, object, property);
 }
 
 bool WebBindings::identifierIsString(NPIdentifier identifier)
@@ -131,19 +131,19 @@ void WebBindings::initializeVariantWithStringCopy(NPVariant* variant, const NPSt
 #endif
 }
 
-bool WebBindings::invoke(NPP npp, NPObject* npObject, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+bool WebBindings::invoke(NPP npp, NPObject* object, NPIdentifier method, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
-    return _NPN_Invoke(npp, npObject, methodName, arguments, argumentCount, result);
+    return _NPN_Invoke(npp, object, method, args, argCount, result);
 }
 
-bool WebBindings::invokeDefault(NPP id, NPObject* obj, const NPVariant* args, uint32_t count, NPVariant* result)
+bool WebBindings::invokeDefault(NPP npp, NPObject* object, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
-    return _NPN_InvokeDefault(id, obj, args, count, result);
+    return _NPN_InvokeDefault(npp, object, args, argCount, result);
 }
 
-void WebBindings::releaseObject(NPObject* npObject)
+void WebBindings::releaseObject(NPObject* object)
 {
-    return _NPN_ReleaseObject(npObject);
+    return _NPN_ReleaseObject(object);
 }
 
 void WebBindings::releaseVariantValue(NPVariant* variant)
@@ -151,30 +151,30 @@ void WebBindings::releaseVariantValue(NPVariant* variant)
     _NPN_ReleaseVariantValue(variant);
 }
 
-bool WebBindings::removeProperty(NPP id, NPObject* object, NPIdentifier identifier)
+bool WebBindings::removeProperty(NPP npp, NPObject* object, NPIdentifier identifier)
 {
-    return  _NPN_RemoveProperty(id, object, identifier);
+    return _NPN_RemoveProperty(npp, object, identifier);
 }
 
-NPObject* WebBindings::retainObject(NPObject* npObject)
+NPObject* WebBindings::retainObject(NPObject* object)
 {
-    return _NPN_RetainObject(npObject);
+    return _NPN_RetainObject(object);
 }
 
-void WebBindings::setException(NPObject* obj, const NPUTF8* message)
+void WebBindings::setException(NPObject* object, const NPUTF8* message)
 {
-    _NPN_SetException(obj, message);
+    _NPN_SetException(object, message);
 }
 
-bool WebBindings::setProperty(NPP id, NPObject* obj, NPIdentifier identifier, const NPVariant* variant)
+bool WebBindings::setProperty(NPP npp, NPObject* object, NPIdentifier identifier, const NPVariant* value)
 {
-    return _NPN_SetProperty(id, obj, identifier, variant);
+    return _NPN_SetProperty(npp, object, identifier, value);
 }
 
-void WebBindings::unregisterObject(NPObject* npObject)
+void WebBindings::unregisterObject(NPObject* object)
 {
 #if USE(V8)
-    _NPN_UnregisterObject(npObject);
+    _NPN_UnregisterObject(object);
 #endif
 }
 
@@ -185,45 +185,45 @@ NPUTF8* WebBindings::utf8FromIdentifier(NPIdentifier identifier)
 
 void WebBindings::extractIdentifierData(const NPIdentifier& identifier, const NPUTF8*& string, int32_t& number, bool& isString)
 {
-    PrivateIdentifier* priv = static_cast<PrivateIdentifier*>(identifier);
-    if (!priv) {
+    PrivateIdentifier* data = static_cast<PrivateIdentifier*>(identifier);
+    if (!data) {
         isString = false;
         number = 0;
         return;
     }
 
-    isString = priv->isString;
+    isString = data->isString;
     if (isString)
-        string = priv->value.string;
+        string = data->value.string;
     else
-        number = priv->value.number;
+        number = data->value.number;
 }
 
 #if USE(V8)
 
-static bool getRangeImpl(NPObject* npobj, WebRange* range)
+static bool getRangeImpl(NPObject* object, WebRange* webRange)
 {
     // FIXME: why is this npobj not null checked here?
 
-    V8NPObject* v8npobject = reinterpret_cast<V8NPObject*>(npobj);
-    v8::Handle<v8::Object> v8object(v8npobject->v8Object);
-    if (!V8Range::info.equals(V8DOMWrapper::domWrapperType(v8object)))
+    V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
+    v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
+    if (!V8Range::info.equals(V8DOMWrapper::domWrapperType(v8Object)))
         return false;
 
-    Range* native = V8Range::toNative(v8object);
+    Range* native = V8Range::toNative(v8Object);
     if (!native)
         return false;
 
-    *range = WebRange(native);
+    *webRange = WebRange(native);
     return true;
 }
 
-static bool getElementImpl(NPObject* npObj, WebElement* webElement)
+static bool getElementImpl(NPObject* object, WebElement* webElement)
 {
-    if (!npObj || (npObj->_class != npScriptObjectClass))
+    if (!object || (object->_class != npScriptObjectClass))
         return false;
 
-    V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(npObj);
+    V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
     Element* native = V8Element::toNative(v8Object);
     if (!native)
@@ -237,7 +237,7 @@ static NPObject* makeIntArrayImpl(const WebVector<int>& data)
 {
     v8::HandleScope handleScope;
     v8::Handle<v8::Array> result = v8::Array::New(data.size());
-    for (size_t i = 0; i < data.size(); i++)
+    for (size_t i = 0; i < data.size(); ++i)
         result->Set(i, v8::Number::New(data[i]));
 
     WebCore::DOMWindow* window = WebCore::V8Proxy::retrieveWindow(WebCore::V8Proxy::currentContext());
@@ -257,10 +257,10 @@ static NPObject* makeStringArrayImpl(const WebVector<WebString>& data)
 
 #endif
 
-bool WebBindings::getRange(NPObject* range, WebRange* webrange)
+bool WebBindings::getRange(NPObject* range, WebRange* webRange)
 {
 #if USE(V8)
-    return getRangeImpl(range, webrange);
+    return getRangeImpl(range, webRange);
 #else
     // Not supported on other ports (JSC, etc).
     return false;
@@ -277,7 +277,7 @@ bool WebBindings::getElement(NPObject* element, WebElement* webElement)
 #endif
 }
 
-NPObject* WebBindings::makeIntArray(const WebVector<int> & data)
+NPObject* WebBindings::makeIntArray(const WebVector<int>& data)
 {
 #if USE(V8)
     return makeIntArrayImpl(data);

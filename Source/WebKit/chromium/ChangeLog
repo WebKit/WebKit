@@ -1,3 +1,38 @@
+2011-03-23  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] WebBindings{.h,.cpp}: should use consistent argument naming
+        https://bugs.webkit.org/show_bug.cgi?id=56898
+
+        Address FIXME I noted/added in r81676.  Wanted to just copy/paste the checking
+        code from elsewhere in the file, but inconsistent argument naming made it more
+        difficult than it need be, so first step: use consistent naming.
+
+        * public/WebBindings.h:
+        * src/WebBindings.cpp:
+        (WebKit::WebBindings::construct):
+        (WebKit::WebBindings::enumerate):
+        (WebKit::WebBindings::evaluate):
+        (WebKit::WebBindings::evaluateHelper):
+        (WebKit::WebBindings::getProperty):
+        (WebKit::WebBindings::hasMethod):
+        (WebKit::WebBindings::hasProperty):
+        (WebKit::WebBindings::invoke):
+        (WebKit::WebBindings::invokeDefault):
+        (WebKit::WebBindings::releaseObject):
+        (WebKit::WebBindings::removeProperty):
+        (WebKit::WebBindings::retainObject):
+        (WebKit::WebBindings::setException):
+        (WebKit::WebBindings::setProperty):
+        (WebKit::WebBindings::unregisterObject):
+        (WebKit::WebBindings::extractIdentifierData):
+        (WebKit::getRangeImpl):
+        (WebKit::getElementImpl):
+        (WebKit::makeIntArrayImpl):
+        (WebKit::WebBindings::getRange):
+        (WebKit::WebBindings::makeIntArray):
+
 2011-03-23  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by David Levin.
