@@ -1,3 +1,15 @@
+2011-03-24  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Regression: WebKit does not build with Python 3 following 56807
+        https://bugs.webkit.org/show_bug.cgi?id=56923
+
+        The module string does not have the function replace in Python 3. The str.replace function
+        can do the same operation in this case and works with the versions 2 and 3.
+
+        * inspector/generate-inspector-idl:
+
 2011-03-24  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
