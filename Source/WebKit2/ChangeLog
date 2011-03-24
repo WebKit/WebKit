@@ -1,3 +1,24 @@
+2011-03-24  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebKit2:Services menu item to convert selected Simplified/Traditional Chinese Text is not working.
+        https://bugs.webkit.org/show_bug.cgi?id=56975
+        <rdar://problem/8915066>
+        
+        Adding missing entry point to support Mac OS X services in WebKit2.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView readSelectionFromPasteboard:]): Added.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::readSelectionFromPasteboard): Added.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Added synchronous
+        message.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::readSelectionFromPasteboard): Added.
+
 2011-03-24  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

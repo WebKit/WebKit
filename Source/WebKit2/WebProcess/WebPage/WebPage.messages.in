@@ -184,6 +184,7 @@ messages -> WebPage {
     FirstRectForCharacterRange(uint64_t location, uint64_t length) -> (WebCore::IntRect resultRect)
     RegisterUIProcessAccessibilityTokens(CoreIPC::DataReference elemenToken, CoreIPC::DataReference windowToken)
     WriteSelectionToPasteboard(WTF::String pasteboardName, WTF::Vector<WTF::String> pasteboardTypes) -> (bool result)
+    ReadSelectionFromPasteboard(WTF::String pasteboardName) -> (bool result)
 #endif
 #if PLATFORM(WIN)
     ConfirmComposition(WTF::String compositionString)

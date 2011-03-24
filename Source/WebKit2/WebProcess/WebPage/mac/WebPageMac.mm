@@ -488,6 +488,13 @@ void WebPage::writeSelectionToPasteboard(const String& pasteboardName, const Vec
     result = true;
 }
 
+void WebPage::readSelectionFromPasteboard(const String& pasteboardName, bool& result)
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    frame->editor()->readSelectionFromPasteboard(pasteboardName);
+    result = true;
+}
+    
 AccessibilityWebPageObject* WebPage::accessibilityRemoteObject()
 {
     return m_mockAccessibilityElement.get();

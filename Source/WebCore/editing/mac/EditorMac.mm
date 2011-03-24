@@ -216,4 +216,13 @@ void Editor::writeSelectionToPasteboard(const String& pasteboardName, const Vect
     Pasteboard::writeSelection([NSPasteboard pasteboardWithName:pasteboardName], types.get(), selectedRange().get(), true, m_frame);
 }
     
+void Editor::readSelectionFromPasteboard(const String& pasteboardName)
+{
+    Pasteboard pasteboard([NSPasteboard pasteboardWithName:pasteboardName]);
+    if (m_frame->selection()->isContentRichlyEditable())
+        pasteWithPasteboard(&pasteboard, true);
+    else
+        pasteAsPlainTextWithPasteboard(&pasteboard);   
+}
+
 } // namespace WebCore

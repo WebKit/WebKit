@@ -377,6 +377,7 @@ public:
     bool canCopyExcludingStandaloneImages();
     void takeFindStringFromSelection();
     void writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes);
+    void readSelectionFromPasteboard(const String& pasteboardName);
 #endif
 
     bool selectionStartHasSpellingMarkerFor(int from, int length) const;

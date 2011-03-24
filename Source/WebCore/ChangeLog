@@ -1,3 +1,20 @@
+2011-03-24  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebKit2:Services menu item to convert selected Simplified/Traditional Chinese Text is not working.
+        https://bugs.webkit.org/show_bug.cgi?id=56975
+        <rdar://problem/8915066>
+        
+        Adding support in WebCore to implement readSelectionFromPasteboard
+        to support Mac OS X services from WebKit2.
+
+        * WebCore.exp.in:
+        * editing/Editor.h:
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::readSelectionFromPasteboard): Added entry point
+        to call the paste functions with the specified pasteboard.
+
 2011-03-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

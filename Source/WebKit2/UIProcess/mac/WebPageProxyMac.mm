@@ -161,6 +161,14 @@ bool WebPageProxy::writeSelectionToPasteboard(const String& pasteboardName, cons
     return result;
 }
 
+bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
+{
+    bool result;
+    const double MessageTimeout = 20;
+    process()->sendSync(Messages::WebPage::ReadSelectionFromPasteboard(pasteboardName), Messages::WebPage::ReadSelectionFromPasteboard::Reply(result), m_pageID, MessageTimeout);
+    return result;
+}
+
 void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const IntSize& imageSize, const SharedMemory::Handle& dragImageHandle, bool isLinkDrag)
 {
     RefPtr<ShareableBitmap> dragImage = ShareableBitmap::create(imageSize, dragImageHandle);

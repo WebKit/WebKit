@@ -500,6 +500,8 @@ WEBCORE_COMMAND(yankAndSelect)
 
 #undef WEBCORE_COMMAND
 
+// This method is needed to support Mac OS X services.
+
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
 {
     Vector<String> pasteboardTypes;
@@ -508,6 +510,8 @@ WEBCORE_COMMAND(yankAndSelect)
         pasteboardTypes.append([types objectAtIndex:i]);
     return _data->_page->writeSelectionToPasteboard([pasteboard name], pasteboardTypes);
 }
+
+// This method is needed to support Mac OS X services.
 
 - (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
 {
@@ -522,6 +526,13 @@ WEBCORE_COMMAND(yankAndSelect)
     if (isValidSendType && isValidReturnType)
         return self;
     return [[self nextResponder] validRequestorForSendType:sendType returnType:returnType];
+}
+
+// This method is needed to support Mac OS X services.
+
+- (BOOL)readSelectionFromPasteboard:(NSPasteboard *)pasteboard 
+{
+    return _data->_page->readSelectionFromPasteboard([pasteboard name]);
 }
 
 /*

@@ -329,6 +329,7 @@ public:
     // Called by the UI process when it is ready to send its tokens to the web process.
     void registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elemenToken, const CoreIPC::DataReference& windowToken);
     bool writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes);
+    bool readSelectionFromPasteboard(const String& pasteboardName);
 #endif
 
     void viewScaleFactorDidChange(double);
