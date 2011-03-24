@@ -1,5 +1,12 @@
 2011-03-24  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skipping 3 xmlhttprequest tests timing out on GTK, see
+        also bug 33026.
+
+        * platform/gtk/Skipped:
+
+2011-03-24  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, new GTK fast/block/lineboxcontain baselines after
         r81684 and r81608.
 

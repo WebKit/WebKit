@@ -124,6 +124,10 @@ http/tests/incremental/split-hex-entities.pl
 
 # Times out, see https://bugs.webkit.org/show_bug.cgi?id=33026
 http/tests/xmlhttprequest/simple-cross-origin-progress-events.html
+# Times out only on 32-Bits Release:
+http/tests/xmlhttprequest/redirect-cross-origin-post-sync.html
+http/tests/xmlhttprequest/redirect-cross-origin-sync-double.html
+http/tests/xmlhttprequest/redirect-cross-origin-sync.html
 
 #  https://bugs.webkit.org/show_bug.cgi?id=46644
 fast/text/large-text-composed-char-dos.html
