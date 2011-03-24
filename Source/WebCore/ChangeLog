@@ -1,3 +1,14 @@
+2011-03-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Use proper string method to generate webloc string.
+        https://bugs.webkit.org/show_bug.cgi?id=57028
+        <rdar://problem/9181955>
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::getWebLocData):
+
 2011-03-24  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Alexey Proskuryakov.
