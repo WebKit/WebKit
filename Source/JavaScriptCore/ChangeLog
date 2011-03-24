@@ -1,5 +1,13 @@
 2011-03-24  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix take 2: Add new symobl.
+        
+        (I should have used the EWS bots for this!)
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2011-03-24  Geoffrey Garen  <ggaren@apple.com>
+
         Windows build fix take 1: Removed old symobl.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
