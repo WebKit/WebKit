@@ -10,14 +10,20 @@ PASS [Worker] isFile is true
 [Worker] * Resolving test file by hand
 PASS [Worker] expectedPath is actualPath
 PASS [Worker] isFile is true
+[Worker] * Resolving a URL with the wrong security origin (domain)
+PASS [Worker] FileError.SECURITY_ERR is errorCode
+[Worker] * Resolving a URL with the wrong security origin (port)
+PASS [Worker] FileError.SECURITY_ERR is errorCode
+[Worker] * Resolving a URL with the wrong security origin (scheme)
+PASS [Worker] FileError.SECURITY_ERR is errorCode
 [Worker] * Resolving a completely bogus URL.
-PASS [Worker] 
+PASS [Worker] FileError.ENCODING_ERR is errorCode
 [Worker] * Resolving a URL with the wrong protocol
-PASS [Worker] 
+PASS [Worker] FileError.ENCODING_ERR is errorCode
 [Worker] * Resolving a URL with no slash between type and file
-PASS [Worker] 
-[Worker] * Resolving a URL with no slash between protocol and type
-PASS [Worker] 
+PASS [Worker] FileError.ENCODING_ERR is errorCode
+[Worker] * Resolving a URL with no slash between protocol and type (bogus port)
+PASS [Worker] FileError.SECURITY_ERR is errorCode
 [Worker] * Resolve a path using backslashes
 PASS [Worker] expectedPath is actualPath
 PASS [Worker] isFile is true

@@ -779,7 +779,7 @@ void DOMWindow::resolveLocalFileSystemURL(const String& url, PassRefPtr<EntryCal
     AsyncFileSystem::Type type;
     String filePath;
     if (!completedURL.isValid() || !DOMFileSystemBase::crackFileSystemURL(completedURL, type, filePath)) {
-        DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::SYNTAX_ERR));
+        DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::ENCODING_ERR));
         return;
     }
 

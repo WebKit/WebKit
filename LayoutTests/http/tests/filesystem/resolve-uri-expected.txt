@@ -9,14 +9,20 @@ PASS isFile is true
 * Resolving test file by hand
 PASS expectedPath is actualPath
 PASS isFile is true
+* Resolving a URL with the wrong security origin (domain)
+PASS FileError.SECURITY_ERR is errorCode
+* Resolving a URL with the wrong security origin (port)
+PASS FileError.SECURITY_ERR is errorCode
+* Resolving a URL with the wrong security origin (scheme)
+PASS FileError.SECURITY_ERR is errorCode
 * Resolving a completely bogus URL.
-PASS 
+PASS FileError.ENCODING_ERR is errorCode
 * Resolving a URL with the wrong protocol
-PASS 
+PASS FileError.ENCODING_ERR is errorCode
 * Resolving a URL with no slash between type and file
-PASS 
-* Resolving a URL with no slash between protocol and type
-PASS 
+PASS FileError.ENCODING_ERR is errorCode
+* Resolving a URL with no slash between protocol and type (bogus port)
+PASS FileError.SECURITY_ERR is errorCode
 * Resolve a path using backslashes
 PASS expectedPath is actualPath
 PASS isFile is true

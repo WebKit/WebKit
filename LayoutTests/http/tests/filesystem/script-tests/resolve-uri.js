@@ -7,16 +7,27 @@ description("Tests using resolveLocalFileSystemURL to obtain an Entry from a URL
 
 var testFileName = '/testFile';
 var fileSystem = null;
-var expectedAndRunNext = function() { testPassed(""); cleanupAndRunNext(); };
-
 var expectedPath = null;
 var actualPath = null;
+var errorCode = null;
 
 function errorCallback(error) {
     if (error && error.code)
         debug("Error occurred: " + error.code);
     testFailed("Bailing out early");
     finishJSTest();
+}
+
+function expectSecurityErrAndRunNext(error) {
+    errorCode = error.code;
+    shouldBe("FileError.SECURITY_ERR", "errorCode");
+    cleanupAndRunNext();
+}
+
+function expectEncodingErrAndRunNext(error) {
+    errorCode = error.code;
+    shouldBe("FileError.ENCODING_ERR", "errorCode");
+    cleanupAndRunNext();
 }
 
 function createTestFile(callback) {
@@ -65,27 +76,42 @@ function runHandmadeURL() {
     });
 }
 
+function runWrongDomain() {
+    debug("* Resolving a URL with the wrong security origin (domain)");
+    resolveLocalFileSystemURL("filesystem:http://localhost:8000/temporary/foo", errorCallback, expectSecurityErrAndRunNext);
+}
+
+function runWrongPort() {
+    debug("* Resolving a URL with the wrong security origin (port)");
+    resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8080/temporary/foo", errorCallback, expectSecurityErrAndRunNext);
+}
+
+function runWrongScheme() {
+    debug("* Resolving a URL with the wrong security origin (scheme)");
+    resolveLocalFileSystemURL("filesystem:https://127.0.0.1:8000/temporary/foo", errorCallback, expectSecurityErrAndRunNext);
+}
+
 function runBogusURL() {
     debug("* Resolving a completely bogus URL.");
-    resolveLocalFileSystemURL("foo", errorCallback, expectedAndRunNext);
+    resolveLocalFileSystemURL("foo", errorCallback, expectEncodingErrAndRunNext);
 }
 
 function runWrongProtocol() {
     debug("* Resolving a URL with the wrong protocol");
-    resolveLocalFileSystemURL("http://127.0.0.1:8000/foo/bar/baz", errorCallback, expectedAndRunNext);
+    resolveLocalFileSystemURL("http://127.0.0.1:8000/foo/bar/baz", errorCallback, expectEncodingErrAndRunNext);
 }
 
 function runNotEnoughSlashes() {
     debug("* Resolving a URL with no slash between type and file");
     createTestFile(function(entry) {
-        resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporarytestFile", errorCallback, expectedAndRunNext);
+        resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000/temporarytestFile", errorCallback, expectEncodingErrAndRunNext);
     });
 }
 
 function runNotEnoughSlashes2() {
-    debug("* Resolving a URL with no slash between protocol and type");
+    debug("* Resolving a URL with no slash between protocol and type (bogus port)");
     createTestFile(function(entry) {
-        resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000temporary/testFile", errorCallback, expectedAndRunNext);
+        resolveLocalFileSystemURL("filesystem:http://127.0.0.1:8000temporary/testFile", errorCallback, expectSecurityErrAndRunNext);
     });
 }
 
@@ -140,6 +166,9 @@ function runPersistentTest() {
 var testsList = [
     runBasicTest,
     runHandmadeURL,
+    runWrongDomain,
+    runWrongPort,
+    runWrongScheme,
     runBogusURL,
     runWrongProtocol,
     runNotEnoughSlashes,

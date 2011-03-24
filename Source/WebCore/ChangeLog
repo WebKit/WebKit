@@ -1,3 +1,22 @@
+2011-03-23  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fix resolveLocalFileSystemURL (and sync version) error codes to match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=56961
+
+        See error code listing in the Files & Directories spec:
+        http://dev.w3.org/2009/dap/file-system/file-dir-sys.html#widl-LocalFileSystemSync-resolveLocalFileSystemSyncURL
+
+        Note that the spec currently only specifies errors for the sync
+        version; I've used the same codes for the async version.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::resolveLocalFileSystemURL):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::resolveLocalFileSystemURL):
+        (WebCore::WorkerContext::resolveLocalFileSystemSyncURL):
+
 2011-03-23  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

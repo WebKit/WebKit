@@ -7,13 +7,23 @@ description("Tests using resolveLocalFileSystemSyncURL to obtain an Entry from a
 
 var testFileName = '/testFile';
 var fileSystem = null;
-var expectedAndRunNext = function() { testPassed(""); cleanupAndRunNext(); };
 
 var expectedPath = null;
 var actualPath = null;
+var errorCode = null;
 
 function createTestFile() {
     return fileSystem.root.getFile(testFileName, {create:true});
+}
+
+function assertEncodingErr(code) {
+    errorCode = code;
+    shouldBe("FileException.ENCODING_ERR", "errorCode");
+}
+
+function assertSecurityErr(code) {
+    errorCode = code;
+    shouldBe("FileException.SECURITY_ERR", "errorCode");
 }
 
 function assertPathsMatch(expected, actual) {
@@ -52,13 +62,43 @@ function runHandmadeURL() {
     assertIsFile(e);
 }
 
+function runWrongDomain() {
+    debug("* Resolving a URL with the wrong security origin (domain)");
+    try {
+        resolveLocalFileSystemSyncURL("filesystem:http://localhost:8000/temporary/foo");
+        testFailed();
+    } catch (e) {
+        assertSecurityErr(e.code);
+    }
+}
+
+function runWrongPort() {
+    debug("* Resolving a URL with the wrong security origin (port)");
+    try {
+        resolveLocalFileSystemSyncURL("filesystem:http://127.0.0.1:8080/temporary/foo");
+        testFailed();
+    } catch (e) {
+        assertSecurityErr(e.code);
+    }
+}
+
+function runWrongScheme() {
+    debug("* Resolving a URL with the wrong security origin (scheme)");
+    try {
+        resolveLocalFileSystemSyncURL("filesystem:https://127.0.0.1:8000/temporary/foo");
+        testFailed();
+    } catch (e) {
+        assertSecurityErr(e.code);
+    }
+}
+
 function runBogusURL() {
     debug("* Resolving a completely bogus URL.");
     try {
         resolveLocalFileSystemSyncURL("foo");
         testFailed();
     } catch (e) {
-        testPassed("Caught exception");
+        assertEncodingErr(e.code);
     }
 }
 
@@ -68,7 +108,7 @@ function runWrongProtocol() {
         resolveLocalFileSystemSyncURL("http://127.0.0.1:8000/foo/bar/baz");
         testFailed();
     } catch (e) {
-        testPassed("Caught exception");
+        assertEncodingErr(e.code);
     }
 }
 
@@ -79,17 +119,17 @@ function runNotEnoughSlashes() {
         resolveLocalFileSystemSyncURL("filesystem:http://127.0.0.1:8000/temporarytestFile");
         testFailed();
     } catch (e) {
-        testPassed("Caught exception");
+        assertEncodingErr(e.code);
     }
 }
 
 function runNotEnoughSlashes2() {
-    debug("* Resolving a URL with no slash between protocol and type");
+    debug("* Resolving a URL with no slash between protocol and type (bogus port)");
     entry = createTestFile();
     try {
         resolveLocalFileSystemSyncURL("filesystem:http://127.0.0.1:8000temporary/testFile");
     } catch (e) {
-        testPassed("Caught exception");
+        assertSecurityErr(e.code);
     }
 }
 
@@ -130,6 +170,9 @@ function runPersistentTest() {
 var testsList = [
     runBasicTest,
     runHandmadeURL,
+    runWrongDomain,
+    runWrongPort,
+    runWrongScheme,
     runBogusURL,
     runWrongProtocol,
     runNotEnoughSlashes,

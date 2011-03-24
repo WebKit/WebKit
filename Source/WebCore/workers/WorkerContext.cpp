@@ -391,7 +391,7 @@ void WorkerContext::resolveLocalFileSystemURL(const String& url, PassRefPtr<Entr
     AsyncFileSystem::Type type;
     String filePath;
     if (!completedURL.isValid() || !DOMFileSystemBase::crackFileSystemURL(completedURL, type, filePath)) {
-        DOMFileSystem::scheduleCallback(this, errorCallback, FileError::create(FileError::SYNTAX_ERR));
+        DOMFileSystem::scheduleCallback(this, errorCallback, FileError::create(FileError::ENCODING_ERR));
         return;
     }
 
@@ -410,7 +410,7 @@ PassRefPtr<EntrySync> WorkerContext::resolveLocalFileSystemSyncURL(const String&
     AsyncFileSystem::Type type;
     String filePath;
     if (!completedURL.isValid() || !DOMFileSystemBase::crackFileSystemURL(completedURL, type, filePath)) {
-        ec = FileException::SYNTAX_ERR;
+        ec = FileException::ENCODING_ERR;
         return 0;
     }
 
