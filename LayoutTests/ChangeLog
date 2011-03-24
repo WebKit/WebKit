@@ -1,3 +1,12 @@
+2011-03-24  Enrica Casucci  <enrica@apple.com>
+
+        Updating tests results for QT after changeset 81887.
+
+        * platform/qt/editing/pasteboard/5065605-expected.txt:
+        * platform/qt/editing/pasteboard/display-block-on-spans-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-011-expected.txt:
+        * platform/qt/editing/pasteboard/paste-text-at-tabspan-002-expected.txt:
+
 2011-03-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam Roben.
