@@ -50,6 +50,7 @@ http/tests/inspector/network/network-timing.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=19793
 http/tests/inspector/network/network-size-chunked.html
+http/tests/inspector/network/network-size-sync.html
 
 # Fails <rdar://problem/5674289>
 media/video-seek-past-end-paused.html

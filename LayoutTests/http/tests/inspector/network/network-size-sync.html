@@ -1,0 +1,42 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script>
+function loadData()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function()
+    {
+        if (xhr.readyState  == 4)
+            resourceLoaded();
+    };
+    xhr.open('GET', 'resources/resource.php?type=image&size=500&gzip=true&chunked=true', false);
+    xhr.send(null);
+}
+
+function resourceLoaded()
+{
+    console.log("Done.");
+}
+
+function test()
+{
+    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+    InspectorTest.evaluateInPage("loadData()");
+
+    function step2()
+    {
+        var resource1 = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 1];
+        InspectorTest.addResult(resource1.url);
+        InspectorTest.addResult("resourceSize: " + resource1.resourceSize);
+        InspectorTest.addResult("transferSize: " + resource1.transferSize);
+
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests network resource size reporting for synchronous requests.</p>
+</body>
+</html>

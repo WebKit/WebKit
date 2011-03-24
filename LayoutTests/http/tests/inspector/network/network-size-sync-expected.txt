@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 19: Done.
+Tests network resource size reporting for synchronous requests.
+
+
+http://127.0.0.1:8000/inspector/network/resources/resource.php?type=image&size=500&gzip=true&chunked=true
+resourceSize: 500
+transferSize: 219
+

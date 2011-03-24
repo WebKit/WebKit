@@ -152,13 +152,13 @@ void ResourceLoadNotifier::dispatchTransferLoadingResourceFromPage(unsigned long
     oldPage->progress()->completeProgress(identifier);
 }
 
-void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response, int length, const ResourceError& error)
+void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response, int dataLength, int lengthReceived, const ResourceError& error)
 {
     if (!response.isNull())
         dispatchDidReceiveResponse(loader, identifier, response);
 
-    if (length > 0)
-        dispatchDidReceiveContentLength(loader, identifier, length, 0);
+    if (dataLength > 0)
+        dispatchDidReceiveContentLength(loader, identifier, dataLength, lengthReceived);
 
     if (error.isNull())
         dispatchDidFinishLoading(loader, identifier, 0);

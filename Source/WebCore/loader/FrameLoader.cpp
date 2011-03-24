@@ -1543,7 +1543,7 @@ bool FrameLoader::willLoadMediaElementURL(KURL& url)
     unsigned long identifier;
     ResourceError error;
     requestFromDelegate(request, identifier, error);
-    notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, ResourceResponse(url, String(), -1, String(), String()), -1, error);
+    notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, ResourceResponse(url, String(), -1, String(), String()), -1, -1, error);
 
     url = request.url();
 
@@ -1960,7 +1960,7 @@ void FrameLoader::commitProvisionalLoad()
             // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
             // However, with today's computers and networking speeds, this won't happen in practice.
             // Could be an issue with a giant local file.
-            notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, response, static_cast<int>(response.expectedContentLength()), error);
+            notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, response, static_cast<int>(response.expectedContentLength()), 0, error);
         }
         
         pageCache()->remove(history()->currentItem());
@@ -2816,8 +2816,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
         }
 #endif
     }
-
-    notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, response, data.size(), error);
+    notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, response, data.size(), static_cast<int>(response.expectedContentLength()), error);
     return identifier;
 }
 
@@ -3110,7 +3109,7 @@ void FrameLoader::loadedResourceFromMemoryCache(const CachedResource* resource)
     ResourceError error;
     requestFromDelegate(request, identifier, error);
     InspectorInstrumentation::markResourceAsCached(page, identifier);
-    notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, resource->response(), resource->encodedSize(), error);
+    notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, resource->response(), resource->encodedSize(), 0, error);
 }
 
 void FrameLoader::applyUserAgent(ResourceRequest& request)

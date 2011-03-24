@@ -1,3 +1,20 @@
+2011-03-24  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Inspector does not show correct transfer size for synchronous requests
+        https://bugs.webkit.org/show_bug.cgi?id=56951
+
+        Fixed transfer size for synchronous load.
+
+        * http/tests/inspector/network/network-size-sync-expected.txt: Added.
+        * http/tests/inspector/network/network-size-sync.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-03-24  Enrica Casucci  <enrica@apple.com>
 
         Updating tests results for QT after changeset 81887.

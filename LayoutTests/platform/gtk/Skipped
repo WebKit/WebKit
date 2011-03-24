@@ -1341,6 +1341,7 @@ svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg
 
 # https://bugs.webkit.org/show_bug.cgi?id=56691
 http/tests/inspector/network/network-size-chunked.html
+http/tests/inspector/network/network-size-sync.html
 http/tests/inspector/network/network-size.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=56966

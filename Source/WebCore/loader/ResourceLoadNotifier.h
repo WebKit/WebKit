@@ -64,7 +64,7 @@ public:
     void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier, double finishTime);
     void dispatchTransferLoadingResourceFromPage(unsigned long, DocumentLoader*, const ResourceRequest&, Page*);
 
-    void sendRemainingDelegateMessages(DocumentLoader*, unsigned long identifier, const ResourceResponse&, int length, const ResourceError&);
+    void sendRemainingDelegateMessages(DocumentLoader*, unsigned long identifier, const ResourceResponse&, int dataLength, int lengthReceived, const ResourceError&);
 
 private:
     Frame* m_frame;
