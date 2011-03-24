@@ -55,7 +55,7 @@ class HttpdNotStarted(Exception):
 class Lighttpd(http_server_base.HttpServerBase):
 
     def __init__(self, port_obj, output_dir, background=False, port=None,
-                 root=None, run_background=None):
+                 root=None, run_background=None, layout_tests_dir=None):
         """Args:
           output_dir: the absolute path to the layout test result directory
         """
@@ -66,16 +66,21 @@ class Lighttpd(http_server_base.HttpServerBase):
         self._port = port
         self._root = root
         self._run_background = run_background
+        self._layout_tests_dir = layout_tests_dir
+
         if self._port:
             self._port = int(self._port)
 
+        if not self._layout_tests_dir:
+            self._layout_tests_dir = self._port_obj.layout_tests_dir()
+
         try:
             self._webkit_tests = os.path.join(
-                self._port_obj.layout_tests_dir(), 'http', 'tests')
+                self._layout_tests_dir, 'http', 'tests')
             self._js_test_resource = os.path.join(
-                self._port_obj.layout_tests_dir(), 'fast', 'js', 'resources')
+                self._layout_tests_dir, 'fast', 'js', 'resources')
             self._media_resource = os.path.join(
-                self._port_obj.layout_tests_dir(), 'media')
+                self._layout_tests_dir, 'media')
 
         except:
             self._webkit_tests = None

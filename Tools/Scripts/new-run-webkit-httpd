@@ -65,7 +65,8 @@ def run(options):
                                      tempfile.gettempdir(),
                                      port=options.port,
                                      root=options.root,
-                                     run_background=options.run_background)
+                                     run_background=options.run_background,
+                                     layout_tests_dir=options.layout_tests_dir)
         if options.server == 'start':
             httpd.start()
         else:
@@ -85,6 +86,9 @@ def main():
     option_parser.add_option('--run_background', action="store_true",
         dest="run_background",
         help='Run on background (for running as UI test)')
+    option_parser.add_option('--layout_tests_dir',
+        dest="layout_tests_dir",
+        help='Absolute path to LayoutTests root')
     options, args = option_parser.parse_args()
 
     # FIXME: Make this work with other ports as well.

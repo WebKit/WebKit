@@ -1,3 +1,18 @@
+2011-03-23  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Add an option to new-run-webkit-httpd to allow overriding the location of LayoutTests directory
+        https://bugs.webkit.org/show_bug.cgi?id=56884
+
+        This option will be utilized by Chromium's ui_tests to allow
+        referencing js-test-resources from a layout test over HTTP.
+
+        * Scripts/new-run-webkit-httpd:
+        Added --layout_tests_dir option.
+        * Scripts/webkitpy/layout_tests/port/http_server.py:
+        Plumbed through as layout_tests_dir param.
+
 2011-03-23  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Mihai Parparita.
