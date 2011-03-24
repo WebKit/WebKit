@@ -90,14 +90,14 @@ public:
 
     void performCallback(EnumType result)
     {
-        ASSERT(m_callback);
+        if (!m_callback)
+            return;
         m_callback(result, context());
         m_callback = 0;
     }
     
     void invalidate()
     {
-        ASSERT(m_callback);
         m_callback = 0;
     }
 
@@ -106,6 +106,7 @@ private:
         : CallbackBase(context)
         , m_callback(callback)
     {
+        ASSERT(m_callback);
     }
 
     CallbackFunction m_callback;
@@ -128,14 +129,14 @@ public:
 
     void performCallback(ObjectType result)
     {
-        ASSERT(m_callback);
+        if (!m_callback)
+            return;
         m_callback(result, context());
         m_callback = 0;
     }
     
     void invalidate()
     {
-        ASSERT(m_callback);
         m_callback = 0;
     }
 
@@ -144,6 +145,7 @@ private:
         : CallbackBase(context)
         , m_callback(callback)
     {
+        ASSERT(m_callback);
     }
 
     CallbackFunction m_callback;

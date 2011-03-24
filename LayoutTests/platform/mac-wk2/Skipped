@@ -2017,9 +2017,6 @@ storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html
 fast/forms/input-autofilled.html
 fast/forms/reset-autofilled.html
 
-# Sometimes crashes http://webkit.org/b/57030
-http/tests/inspector/extensions-resources-redirect.html
-
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

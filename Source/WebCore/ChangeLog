@@ -1,3 +1,23 @@
+2011-03-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57030
+        REGRESSION (r81782): http/tests/inspector/extensions-resources-redirect.html sometimes crashes WebKit2's 
+        web process while handling a WebIconDatabaseProxy::ReceivedIconLoadDecision message
+
+        The callback objects had some bogus ASSERTs and missed a relevant null check. If a callback was waiting on
+        a message back from the UIProcess, but was invalidated from within the WebProcess in the meantime, it's
+        perfectly valid to attempt to performCallback() after the callback function pointer has been cleared.
+
+        * loader/icon/IconDatabaseBase.h:
+        (WebCore::EnumCallback::performCallback):
+        (WebCore::EnumCallback::invalidate):
+        (WebCore::EnumCallback::EnumCallback):
+        (WebCore::ObjectCallback::performCallback):
+        (WebCore::ObjectCallback::invalidate):
+        (WebCore::ObjectCallback::ObjectCallback):
+
 2011-03-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
