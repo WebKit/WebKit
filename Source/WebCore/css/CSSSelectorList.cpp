@@ -122,10 +122,6 @@ static bool forEachTagSelector(Functor& functor, CSSSelector* selector)
     do {
         if (functor(selector))
             return true;
-        if (CSSSelector* simpleSelector = selector->simpleSelector()) {
-            if (forEachTagSelector(functor, simpleSelector))
-                return true;
-        }
         if (CSSSelectorList* selectorList = selector->selectorList()) {
             for (CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
                 if (forEachTagSelector(functor, subSelector))

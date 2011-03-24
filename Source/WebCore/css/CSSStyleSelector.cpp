@@ -2529,12 +2529,12 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
     if (sel->m_match == CSSSelector::PseudoClass) {
         // Handle :not up front.
         if (sel->pseudoType() == CSSSelector::PseudoNot) {
-            // check the simple selector
-            for (CSSSelector* subSel = sel->simpleSelector(); subSel; subSel = subSel->tagHistory()) {
+            ASSERT(sel->selectorList());
+            for (CSSSelector* subSel = sel->selectorList()->first(); subSel; subSel = subSel->tagHistory()) {
                 // :not cannot nest. I don't really know why this is a
                 // restriction in CSS3, but it is, so let's honor it.
                 // the parser enforces that this never occurs
-                ASSERT(!subSel->simpleSelector());
+                ASSERT(subSel->pseudoType() != CSSSelector::PseudoNot);
 
                 if (!checkOneSelector(subSel, e, selectorAttrs, dynamicPseudo, true, elementStyle, elementParentStyle))
                     return true;
@@ -3309,10 +3309,6 @@ static inline void collectFeaturesFromSelector(CSSStyleSelector::Features& featu
     case CSSSelector::PseudoVisited:
         features.usesLinkRules = true;
         break;
-    case CSSSelector::PseudoAny:
-        for (CSSSelector* subSelector = selector->selectorList()->first(); subSelector; subSelector = CSSSelectorList::next(subSelector))
-            collectFeaturesFromSelector(features, subSelector);
-        return;
     default:
         break;
     }
@@ -3326,8 +3322,14 @@ static void collectFeaturesFromList(CSSStyleSelector::Features& features, const 
         bool foundSiblingSelector = false;
         for (CSSSelector* selector = ruleData.selector(); selector; selector = selector->tagHistory()) {
             collectFeaturesFromSelector(features, selector);
-            if (CSSSelector* simpleSelector = selector->simpleSelector())
-                collectFeaturesFromSelector(features, simpleSelector);
+
+            if (CSSSelectorList* selectorList = selector->selectorList()) {
+                for (CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
+                    ASSERT(!subSelector->isSiblingSelector());
+                    collectFeaturesFromSelector(features, subSelector);
+                }
+            }
+
             if (selector->isSiblingSelector())
                 foundSiblingSelector = true;
         }

@@ -1,3 +1,34 @@
+2011-03-22  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        move :not over to using selectorList instead of simpleSelector
+        https://bugs.webkit.org/show_bug.cgi?id=56894
+
+        Saves memory and simplifies code.
+
+        No new tests since existing tests cover this code.
+
+        * css/CSSGrammar.y:
+        Also removed extranenous calls to updateLastSelectorLineAndPosition in
+        simple_selector_list. These happened to work, but are only actually
+        needed in selector_list.
+        * css/CSSParserValues.h:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::specificityForOneSelector):
+        Removed null-check. The parser null-checks, I don't see why we need to here.
+        (WebCore::CSSSelector::selectorText):
+        Ditto.
+        (WebCore::CSSSelector::setArgument):
+        (WebCore::CSSSelector::isSimple):
+        * css/CSSSelector.h:
+        * css/CSSSelectorList.cpp:
+        (WebCore::forEachTagSelector):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        (WebCore::collectFeaturesFromSelector):
+        (WebCore::collectFeaturesFromList):
+
 2011-03-23  Carol Szabo  <carol.szabo@nokia.com>
 
         Reviewed by David Hyatt.

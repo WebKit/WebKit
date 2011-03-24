@@ -81,9 +81,10 @@ inline unsigned CSSSelector::specificityForOneSelector() const
     case End:
         // FIXME: PsuedoAny should base the specificity on the sub-selectors.
         // See http://lists.w3.org/Archives/Public/www-style/2010Sep/0530.html
-        if (pseudoType() == PseudoNot && simpleSelector())
-            s += simpleSelector()->specificityForOneSelector();
-        else
+        if (pseudoType() == PseudoNot) {
+            ASSERT(selectorList());
+            s += selectorList()->first()->specificityForOneSelector();
+        } else
             s += 0x100;
     case None:
         break;
@@ -648,8 +649,8 @@ String CSSSelector::selectorText() const
 
             switch (cs->pseudoType()) {
             case PseudoNot:
-                if (CSSSelector* subSel = cs->simpleSelector())
-                    str += subSel->selectorText();
+                ASSERT(cs->selectorList());
+                str += cs->selectorList()->first()->selectorText();
                 str += ")";
                 break;
             case PseudoLang:
@@ -759,12 +760,6 @@ void CSSSelector::setArgument(const AtomicString& value)
     createRareData(); 
     m_data.m_rareData->m_argument = value; 
 }
-
-void CSSSelector::setSimpleSelector(PassOwnPtr<CSSSelector> value)
-{
-    createRareData(); 
-    m_data.m_rareData->m_simpleSelector = value; 
-}
     
 void CSSSelector::setSelectorList(PassOwnPtr<CSSSelectorList> selectorList)
 {
@@ -790,7 +785,7 @@ bool CSSSelector::matchNth(int count)
 
 bool CSSSelector::isSimple() const
 {
-    if (simpleSelector() || tagHistory() || matchesPseudoElement())
+    if (selectorList() || tagHistory() || matchesPseudoElement())
         return false;
 
     int numConditions = 0;

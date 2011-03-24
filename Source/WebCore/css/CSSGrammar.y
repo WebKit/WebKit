@@ -928,9 +928,7 @@ simple_selector_list:
         if ($1) {
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = p->createFloatingSelectorVector();
-            $$->shrink(0);
             $$->append(p->sinkFloatingSelector($1));
-            p->updateLastSelectorLineAndPosition();
         } else
             $$ = 0
     }
@@ -939,7 +937,6 @@ simple_selector_list:
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = $1;
             $$->append(p->sinkFloatingSelector($5));
-            p->updateLastSelectorLineAndPosition();
         } else
             $$ = 0;
     }
@@ -1197,7 +1194,11 @@ pseudo:
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = p->createFloatingSelector();
             $$->setMatch(CSSSelector::PseudoClass);
-            $$->setSimpleSelector(p->sinkFloatingSelector($4)->releaseSelector());
+
+            Vector<OwnPtr<CSSParserSelector> > selectorVector;
+            selectorVector.append(p->sinkFloatingSelector($4));
+            $$->adoptSelectorVector(selectorVector);
+
             $2.lower();
             $$->setValue($2);
         }
