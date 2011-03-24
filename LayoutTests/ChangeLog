@@ -1,5 +1,14 @@
 2011-03-24  Adam Roben  <aroben@apple.com>
 
+        Add some flaky tests to the mac-wk2 and win-wk2 Skipped files
+
+        The failures are tracked by <http://webkit.org/b/57027> and <http://webkit.org/b/57030>.
+
+        * platform/mac-wk2/Skipped: Added http/tests/inspector/extensions-resources-redirect.html.
+        * platform/win-wk2/Skipped: Added inspector/debugger/source-frame.html.
+
+2011-03-24  Adam Roben  <aroben@apple.com>
+
         Add Windows WebKit2 results for fast/css/pseudo-any.html
 
         This test passes on Windows but fails on Mac. <http://webkit.org/b/56988> tracks the Mac
