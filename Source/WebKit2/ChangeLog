@@ -1,3 +1,24 @@
+2011-03-24  Adam Roben  <aroben@apple.com>
+
+        Start compiling LayerTreeHostCA on Windows
+
+        Fixes <http://webkit.org/b/57060> WebKit2.vcproj should compile LayerTreeHostCA
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.cpp: Added.
+        (WebKit::LayerTreeHostCA::platformInitialize):
+        (WebKit::LayerTreeHostCA::scheduleLayerFlush):
+        (WebKit::LayerTreeHostCA::platformInvalidate):
+        (WebKit::LayerTreeHostCA::platformSizeDidChange):
+        (WebKit::LayerTreeHostCA::platformForceRepaint):
+        (WebKit::LayerTreeHostCA::platformDidPerformScheduledLayerFlush):
+        Stubbed out.
+
+        * win/WebKit2.vcproj: Added new files. Let VS reorder existing files.
+
+        * win/WebKit2Apple.vsprops: Added WebProcess\WebPage\ca to the include path.
+
 2011-03-24  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix.

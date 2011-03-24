@@ -1849,6 +1849,26 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="ca"
+					>
+					<File
+						RelativePath="..\WebProcess\WebPage\ca\LayerTreeHostCA.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\WebProcess\WebPage\ca\LayerTreeHostCA.h"
+						>
+					</File>
+					<Filter
+						Name="win"
+						>
+						<File
+							RelativePath="..\WebProcess\WebPage\ca\win\LayerTreeHostCAWin.cpp"
+							>
+						</File>
+					</Filter>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="win"
@@ -2591,14 +2611,14 @@
 				>
 			</File>
 			<File
- 				RelativePath="..\UIProcess\WebFullScreenManagerProxy.cpp"
- 				>
- 			</File>
- 			<File
- 				RelativePath="..\UIProcess\WebFullScreenManagerProxy.h"
- 				>
- 			</File>
- 			<File
+				RelativePath="..\UIProcess\WebFullScreenManagerProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebFullScreenManagerProxy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebGeolocationManagerProxy.cpp"
 				>
 			</File>
@@ -3671,22 +3691,22 @@
 				>
 			</File>
 			<File
- 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebFullScreenManagerMessageReceiver.cpp"
- 				>
- 			</File>
- 			<File
- 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebFullScreenManagerMessages.h"
- 				>
- 			</File>
- 			<File
- 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebFullScreenManagerProxyMessageReceiver.cpp"
- 				>
- 			</File>
- 			<File
- 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebFullScreenManagerProxyMessages.h"
- 				>
- 			</File>
- 			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebFullScreenManagerMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebFullScreenManagerMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebFullScreenManagerProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebFullScreenManagerProxyMessages.h"
+				>
+			</File>
+			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\WebGeolocationManagerMessageReceiver.cpp"
 				>
 			</File>
