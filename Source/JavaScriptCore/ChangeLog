@@ -1,5 +1,14 @@
 2011-03-23  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Darin Adler.
+
+        <rdar://problem/7959320> Threads that use APIs above the BSD layer must be registered with the Obj-C GC.
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeCurrentThreadInternal):
+
+2011-03-23  Mark Rowe  <mrowe@apple.com>
+
         Stop setting OTHER_OPTIONS in JavaScriptCore's Makefile.
 
         It's not necessary to pass "-target All" as xcodebuild always builds the

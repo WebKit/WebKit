@@ -55,6 +55,10 @@
 #include <wtf/PassOwnPtr.h>
 #endif
 
+#if OS(MAC_OS_X) && !defined(BUILDING_ON_LEOPARD)
+#include <objc/objc-auto.h>
+#endif
+
 namespace WTF {
 
 typedef HashMap<ThreadIdentifier, pthread_t> ThreadMap;
@@ -188,6 +192,12 @@ void initializeCurrentThreadInternal(const char* threadName)
     pthread_setname_np(threadName);
 #else
     UNUSED_PARAM(threadName);
+#endif
+
+#if OS(MAC_OS_X) && !defined(BUILDING_ON_LEOPARD)
+    // All threads that potentially use APIs above the BSD layer must be registered with the Objective-C
+    // garbage collector in case API implementations use garbage-collected memory.
+    objc_registerThreadWithCollector();
 #endif
 
     ThreadIdentifier id = identifierByPthreadHandle(pthread_self());
