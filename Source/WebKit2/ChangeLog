@@ -1,3 +1,10 @@
+2011-03-24  Jeff Miller  <jeffm@apple.com>
+
+        Fix typo - USE(CF_NETWORK) should be USE(CFNETWORK).
+
+        * WebProcess/InjectedBundle/win/InjectedBundleWin.cpp:
+        (WebKit::InjectedBundle::setHostAllowsAnyHTTPSCertificate): USE(CF_NETWORK) should be USE(CFNETWORK)
+
 2011-03-23  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

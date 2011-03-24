@@ -89,7 +89,7 @@ void InjectedBundle::activateMacFontAscentHack()
 
 void InjectedBundle::setHostAllowsAnyHTTPSCertificate(const String& host)
 {
-#if USE(CF_NETWORK)
+#if USE(CFNETWORK)
     ResourceHandle::setHostAllowsAnyHTTPSCertificate(host);
 #endif
 }
