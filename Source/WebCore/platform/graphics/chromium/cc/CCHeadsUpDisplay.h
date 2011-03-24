@@ -53,7 +53,7 @@ public:
     void setShowPlatformLayerTree(bool enable) { m_showPlatformLayerTree = enable; }
     bool showPlatformLayerTree() const { return m_showPlatformLayerTree; }
 
-    bool enabled() const { return true || m_showPlatformLayerTree || m_showFPSCounter; }
+    bool enabled() const { return m_showPlatformLayerTree || m_showFPSCounter; }
     void draw();
 
 private:
