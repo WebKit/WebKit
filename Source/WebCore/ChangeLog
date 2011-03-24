@@ -1,3 +1,27 @@
+2011-03-24  John Bauman  <jbauman@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        preserveDrawingBuffer=true is ignored
+        https://bugs.webkit.org/show_bug.cgi?id=56987
+
+        Add code to the V8 and JSC bindings to support grabbing the value of
+        preserveDrawingBuffer from the input context attributes. Also, in
+        WebGLRenderingContext use the WebGLContextAttributes that were input
+        directly, not those from the GraphicsContext3D which could have been
+        changed.
+
+        No new tests, as this can't be tested with DRT. However, this works
+        when tested manually.
+
+        * bindings/js/JSHTMLCanvasElementCustom.cpp:
+        (WebCore::JSHTMLCanvasElement::getContext):
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::V8HTMLCanvasElement::getContextCallback):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::clearIfComposited):
+        (WebCore::WebGLRenderingContext::paintRenderingResultsToCanvas):
+
 2011-03-24  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Alexey Proskuryakov.

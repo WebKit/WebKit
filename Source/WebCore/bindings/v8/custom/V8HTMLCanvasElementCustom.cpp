@@ -76,6 +76,9 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
             v8::Handle<v8::String> premultipliedAlpha = v8::String::New("premultipliedAlpha");
             if (jsAttrs->Has(premultipliedAlpha))
                 webGLAttrs->setPremultipliedAlpha(jsAttrs->Get(premultipliedAlpha)->BooleanValue());
+            v8::Handle<v8::String> preserveDrawingBuffer = v8::String::New("preserveDrawingBuffer");
+            if (jsAttrs->Has(preserveDrawingBuffer))
+                webGLAttrs->setPreserveDrawingBuffer(jsAttrs->Get(preserveDrawingBuffer)->BooleanValue());
         }
     }
 #endif

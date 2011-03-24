@@ -76,6 +76,9 @@ JSValue JSHTMLCanvasElement::getContext(ExecState* exec)
             Identifier premultipliedAlpha(exec, "premultipliedAlpha");
             if (jsAttrs->hasProperty(exec, premultipliedAlpha))
                 webGLAttrs->setPremultipliedAlpha(jsAttrs->get(exec, premultipliedAlpha).toBoolean(exec));
+            Identifier preserveDrawingBuffer(exec, "preserveDrawingBuffer");
+            if (jsAttrs->hasProperty(exec, preserveDrawingBuffer))
+                webGLAttrs->setPreserveDrawingBuffer(jsAttrs->get(exec, preserveDrawingBuffer).toBoolean(exec));
         }
     }
 #endif

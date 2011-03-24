@@ -505,7 +505,7 @@ bool WebGLRenderingContext::clearIfComposited(GC3Dbitfield mask)
     RefPtr<WebGLContextAttributes> contextAttributes = getContextAttributes();
 
     if (!m_context->layerComposited() || m_layerCleared
-        || contextAttributes->preserveDrawingBuffer() || m_framebufferBinding)
+        || m_attributes.preserveDrawingBuffer || m_framebufferBinding)
         return false;
 
     // Determine if it's possible to combine the clear the user asked for and this clear.
@@ -554,7 +554,7 @@ void WebGLRenderingContext::paintRenderingResultsToCanvas()
 {
     // Until the canvas is written to by the application, the clear that
     // happened after it was composited should be ignored by the compositor.
-    if (m_context->layerComposited() && !getContextAttributes()->preserveDrawingBuffer())
+    if (m_context->layerComposited() && !m_attributes.preserveDrawingBuffer)
         canvas()->makePresentationCopy();
     else
         canvas()->clearPresentationCopy();
