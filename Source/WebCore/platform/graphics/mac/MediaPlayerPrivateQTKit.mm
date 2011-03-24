@@ -827,8 +827,19 @@ IntSize MediaPlayerPrivateQTKit::naturalSize() const
     //    dimensions, aspect ratio, clean aperture, resolution, and so forth, as defined for the 
     //    format used by the resource
     
-    NSSize naturalSize = [[m_qtMovie.get() attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
-    return IntSize(naturalSize.width * m_scaleFactor.width(), naturalSize.height * m_scaleFactor.height());
+    FloatSize naturalSize([[m_qtMovie.get() attributeForKey:QTMovieNaturalSizeAttribute] sizeValue]);
+    if (naturalSize.isEmpty() && m_isStreaming) {
+        // HTTP Live Streams will occasionally return {0,0} natural sizes while scrubbing.
+        // Work around this problem (<rdar://problem/9078563>) by returning the last valid 
+        // cached natural size:
+        naturalSize = m_cachedNaturalSize;
+    } else {
+        // Unfortunately, due to another QTKit bug (<rdar://problem/9082071>) we won't get a sizeChanged
+        // event when this happens, so we must cache the last valid naturalSize here:
+        m_cachedNaturalSize = naturalSize;
+    }
+        
+    return IntSize(naturalSize.width() * m_scaleFactor.width(), naturalSize.height() * m_scaleFactor.height());
 }
 
 bool MediaPlayerPrivateQTKit::hasVideo() const

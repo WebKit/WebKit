@@ -211,6 +211,7 @@ private:
     double m_timeStartedPlaying;
     double m_timeStoppedPlaying;
 #endif
+    mutable FloatSize m_cachedNaturalSize;
 };
 
 }

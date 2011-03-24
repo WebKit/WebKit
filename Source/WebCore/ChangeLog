@@ -1,3 +1,23 @@
+2011-03-23  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Scrubbing <video> with HTTP Live Stream resizes element to 0x0
+        https://bugs.webkit.org/show_bug.cgi?id=55702
+
+        QTKit will occasionally set the natural size of a QTMovie to 0x0 while scrubbing
+        an HTTP Live Stream.  So we will cache the last valid value returned by QTKit
+        and use that as our naturalSize until a new valid value is returned.
+
+        Unfortunately, QTKit will also fail to generate a notification when the natural size
+        changes, so we are forced to cache the natural size from within naturalSize(), which
+        is a const function, necessitating a const_cast to set m_cachedNaturalSize.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h: Added m_cachedNaturalSize.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::MediaPlayerPrivateQTKit): Initialize m_cachedNaturalSize.
+        (WebCore::MediaPlayerPrivateQTKit::naturalSize): 
+
 2011-03-23  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.
