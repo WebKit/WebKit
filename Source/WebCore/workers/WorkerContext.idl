@@ -114,6 +114,8 @@ module threads {
         [EnabledAtRuntime=FileSystem] EntrySync resolveLocalFileSystemSyncURL(in DOMString url) raises (FileException);
 
                  attribute [EnabledAtRuntime=FileSystem] FlagsConstructor Flags;
+                 attribute [EnabledAtRuntime=FileSystem] FileErrorConstructor FileError;
+                 attribute [EnabledAtRuntime=FileSystem] FileExceptionConstructor FileException;
 #endif
 
         attribute ArrayBufferConstructor ArrayBuffer; // Usable with new operator

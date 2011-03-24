@@ -1,3 +1,15 @@
+2011-03-24  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by David Levin.
+
+        [fileapi] Make FileError and FileException accessible from WorkerContext
+        https://bugs.webkit.org/show_bug.cgi?id=57041
+
+        Fixed some test expectations related to FileError/FileExcetion and
+        exposed while testing this change under Chromium.
+
+        * http/tests/filesystem/workers/resolve-url-sync-expected.txt:
+
 2011-03-24  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
