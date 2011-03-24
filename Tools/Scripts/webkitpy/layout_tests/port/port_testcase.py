@@ -73,7 +73,7 @@ class PortTestCase(unittest.TestCase):
         if multiprocessing:
             self.assertEqual(port.default_worker_model(), 'processes')
         else:
-            self.assertEqual(port.default_worker_model(), 'old-threads')
+            self.assertEqual(port.default_worker_model(), 'threads')
 
     def test_driver_cmd_line(self):
         port = self.make_port()

@@ -1,3 +1,21 @@
+2011-03-24  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix regressions introduced in 81908 - there were a couple of
+        code paths that only fired under python 2.5 that I missed.
+
+        Also change a couple of 'python' references to sys.executable
+        in order to handle runing test-webkitpy with a binary other than
+        something called 'python'.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57063
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/test/cat.py:
+        * Scripts/webkitpy/test/echo.py:
+
 2011-03-24  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction.

@@ -30,7 +30,7 @@ from webkitpy.common.system import fileutils
 
 
 def command_arguments(*args):
-    return ['python', __file__] + list(args)
+    return [sys.executable, __file__] + list(args)
 
 
 def main(args=None):

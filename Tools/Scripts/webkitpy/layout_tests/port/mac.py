@@ -88,14 +88,14 @@ class MacPort(WebKitPort):
         # four threads in parallel.
         # See https://bugs.webkit.org/show_bug.cgi?id=36622
         child_processes = WebKitPort.default_child_processes(self)
-        if self.get_option('worker_model') == 'old-threads' and child_processes > 4:
+        if not self._multiprocessing_is_available and child_processes > 4:
             return 4
         return child_processes
 
     def default_worker_model(self):
         if self._multiprocessing_is_available:
             return 'processes'
-        return 'old-threads'
+        return 'threads'
 
     def baseline_search_path(self):
         return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
