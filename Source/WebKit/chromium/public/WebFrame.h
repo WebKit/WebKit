@@ -63,7 +63,6 @@ class WebSecurityOrigin;
 class WebString;
 class WebURL;
 class WebURLLoader;
-class WebURLLoaderOptions;
 class WebURLRequest;
 class WebView;
 struct WebConsoleMessage;
@@ -71,6 +70,7 @@ struct WebFindOptions;
 struct WebRect;
 struct WebScriptSource;
 struct WebSize;
+struct WebURLLoaderOptions;
 template <typename T> class WebVector;
 
 // FIXME(jam): take this out once Chromium has this

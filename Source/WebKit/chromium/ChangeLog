@@ -1,3 +1,14 @@
+2011-03-24  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Change a forward declaration of WebURLLoaderOptions to struct to prevent a build break in Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=57064
+
+        No tests. Exposes no new functionality.
+
+        * public/WebFrame.h:
+
 2011-03-24  Andy Estes  <aestes@apple.com>
 
         Fix the chromium build.
