@@ -6,11 +6,11 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 1 of #text > SPAN > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > SPAN > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > SPAN > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > SPAN > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > SPAN > SPAN > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > SPAN > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 1 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > SPAN > SPAN > DIV > BODY > HTML > #document to 2 of #text > SPAN > SPAN > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > SPAN > SPAN > SPAN > DIV > BODY > HTML > #document to 2 of #text > SPAN > SPAN > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > DIV > BODY > HTML > #document to 2 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > SPAN > DIV > BODY > HTML > #document to 2 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -25,13 +25,12 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 37x27
             RenderText {#text} at (25,14) size 37x27
               text run at (25,14) width 37: "\x{9}"
-          RenderInline {SPAN} at (0,0) size 96x27
-            RenderInline {SPAN} at (0,0) size 23x27
-              RenderText {#text} at (62,14) size 23x27
-                text run at (62,14) width 23: "ax"
+          RenderText {#text} at (62,14) size 23x27
+            text run at (62,14) width 23: "ax"
+          RenderInline {SPAN} at (0,0) size 73x27
             RenderText {#text} at (85,14) size 73x27
               text run at (85,14) width 73: "\x{9}\x{9}"
           RenderText {#text} at (158,14) size 10x27
             text run at (158,14) width 10: "z"
         RenderText {#text} at (0,0) size 0x0
-caret: position 2 of child 0 {#text} of child 0 {SPAN} of child 2 {SPAN} of child 1 {SPAN} of child 1 {DIV} of body
+caret: position 2 of child 2 {#text} of child 1 {SPAN} of child 1 {DIV} of body

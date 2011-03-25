@@ -1,3 +1,13 @@
+2011-03-24  Vincent Scheib  <scheib@chromium.org>
+
+        Update Chromium baselines for 81887
+
+        * platform/chromium-win/editing/pasteboard/5065605-expected.txt:
+        * platform/chromium-win/editing/pasteboard/display-block-on-spans-expected.txt:
+        * platform/chromium-win/editing/pasteboard/paste-text-011-expected.txt:
+        * platform/chromium-win/editing/pasteboard/paste-text-at-tabspan-001-expected.txt:
+        * platform/chromium-win/editing/pasteboard/paste-text-at-tabspan-002-expected.txt:
+
 2011-03-24  Rik Cabanier  <cabanier@adobe.com>
 
         Reviewed by David Hyatt.

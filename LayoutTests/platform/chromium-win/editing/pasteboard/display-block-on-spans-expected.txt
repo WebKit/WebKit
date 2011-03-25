@@ -5,7 +5,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of #text > B > SPAN > DIV > BODY > HTML > #document to 4 of #text > B > SPAN > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 4 of #text > B > SPAN > B > SPAN > DIV > BODY > HTML > #document to 4 of #text > B > SPAN > B > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 4 of #text > B > SPAN > DIV > BODY > HTML > #document to 4 of #text > B > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -33,11 +33,10 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 132x19
               text run at (0,0) width 132: "This is a paragraph."
         RenderBlock {SPAN} at (0,20) size 784x20
-          RenderInline {B} at (0,0) size 175x19
-            RenderInline {SPAN} at (0,0) size 29x19
-              RenderInline {B} at (0,0) size 29x19
-                RenderText {#text} at (0,0) size 29x19
-                  text run at (0,0) width 29: "This"
+          RenderInline {B} at (0,0) size 29x19
+            RenderText {#text} at (0,0) size 29x19
+              text run at (0,0) width 29: "This"
+          RenderInline {B} at (0,0) size 146x19
             RenderText {#text} at (29,0) size 146x19
               text run at (29,0) width 146: " is another paragraph."
-caret: position 4 of child 0 {#text} of child 0 {B} of child 0 {SPAN} of child 0 {B} of child 2 {SPAN} of child 5 {DIV} of body
+caret: position 4 of child 0 {#text} of child 0 {B} of child 2 {SPAN} of child 5 {DIV} of body
