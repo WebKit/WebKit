@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1268,7 +1268,7 @@ static bool pluginSupportsExtension(PluginData* pluginData, const String& extens
     return false;
 }
 
-ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeTypeIn)
+ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeTypeIn, bool shouldPreferPlugInsForImages)
 {
     // FIXME: This should be merged with WebCore::FrameLoader::defaultObjectContentType when the plugin code
     // is consolidated.
@@ -1294,15 +1294,19 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const
     if (mimeType.isEmpty())
         return ObjectContentFrame;
 
-    if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-        return WebCore::ObjectContentImage;
-
+    bool plugInSupportsMIMEType = false;
     if (WebPage* webPage = m_frame->page()) {
         if (PluginData* pluginData = webPage->corePage()->pluginData()) {
             if (pluginData->supportsMimeType(mimeType))
-                return ObjectContentNetscapePlugin;
+                plugInSupportsMIMEType = true;
         }
     }
+    
+    if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
+        return shouldPreferPlugInsForImages && plugInSupportsMIMEType ? ObjectContentNetscapePlugin : ObjectContentImage;
+
+    if (plugInSupportsMIMEType)
+        return ObjectContentNetscapePlugin;
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return ObjectContentFrame;

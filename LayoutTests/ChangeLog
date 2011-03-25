@@ -1,3 +1,17 @@
+2011-03-25  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION (r70748): latest nightly builds kills AC_QuickTime.js
+        https://bugs.webkit.org/show_bug.cgi?id=49016
+
+        * fast/images/embed-image.html: Disable plug-ins to continue testing
+        native image rendering with embed.
+        * plugins/embed-prefers-plugins-for-images-expected.txt: Added.
+        * plugins/embed-prefers-plugins-for-images.html: Added.
+        * plugins/plugin-javascript-access-expected.txt: Updated to include the
+        new MIME type registered by TestNetscapePlugIn.
+
 2011-03-25  Vincent Scheib  <scheib@chromium.org>
 
         fast/forms/input-file-directory-upload.html timing out.

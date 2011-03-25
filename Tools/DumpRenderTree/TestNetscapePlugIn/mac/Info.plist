@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
@@ -44,6 +44,15 @@
 	<string>Simple Netscape plug-in that handles test content for WebKit</string>
 	<key>WebPluginMIMETypes</key>
 	<dict>
+		<key>image/png</key>
+		<dict>
+			<key>WebPluginExtensions</key>
+			<array>
+				<string>png</string>
+			</array>
+			<key>WebPluginTypeDescription</key>
+			<string>PNG image</string>
+		</dict>
 		<key>application/x-webkit-test-netscape</key>
 		<dict>
 			<key>WebPluginExtensions</key>

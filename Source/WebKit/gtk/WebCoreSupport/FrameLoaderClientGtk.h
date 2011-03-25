@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  *
  * All rights reserved.
@@ -126,7 +126,7 @@ namespace WebKit {
 
         virtual void registerForIconNotification(bool);
 
-        virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL& url, const WTF::String& mimeType);
+        virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL&, const WTF::String& mimeType, bool shouldPreferPlugInsForImages);
 
         virtual void setMainFrameDocumentReady(bool);
 

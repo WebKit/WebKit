@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Ryan Leavengood <leavengood@gmail.com> All rights reserved.
  *
  *
@@ -239,7 +239,7 @@ namespace WebCore {
                                                           const KURL& baseURL, const Vector<String>& paramNames,
                                                           const Vector<String>& paramValues);
 
-        virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
+        virtual ObjectContentType objectContentType(const KURL&, const String& mimeType, bool shouldPreferPlugInsForImages);
         virtual String overrideMediaType() const;
 
         virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld*);

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -182,9 +183,9 @@ PassRefPtr<Widget> FrameLoaderClientWinCE::createJavaAppletWidget(const IntSize&
     return 0;
 }
 
-ObjectContentType FrameLoaderClientWinCE::objectContentType(const KURL& url, const String& mimeType)
+ObjectContentType FrameLoaderClientWinCE::objectContentType(const KURL& url, const String& mimeType, bool shouldPreferPlugInsForImages)
 {
-    return FrameLoader::defaultObjectContentType(url, mimeType);
+    return FrameLoader::defaultObjectContentType(url, mimeType, shouldPreferPlugInsForImages);
 }
 
 String FrameLoaderClientWinCE::overrideMediaType() const

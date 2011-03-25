@@ -787,7 +787,7 @@ NPError NPP_SetValue(NPP instance, NPNVariable variable, void *value)
 extern "C"
 const char* NP_GetMIMEDescription(void)
 {
-    return "application/x-webkit-test-netscape:testnetscape:test netscape content";
+    return "application/x-webkit-test-netscape:testnetscape:test netscape content;image/png:png:PNG image";
 }
 
 extern "C"

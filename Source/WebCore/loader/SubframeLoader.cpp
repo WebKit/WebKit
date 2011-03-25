@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
@@ -88,17 +88,35 @@ bool SubframeLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const Str
     return true;
 }
     
-bool SubframeLoader::resourceWillUsePlugin(const String& url, const String& mimeType)
+bool SubframeLoader::resourceWillUsePlugin(const String& url, const String& mimeType, bool shouldPreferPlugInsForImages)
 {
     KURL completedURL;
     if (!url.isEmpty())
         completedURL = completeURL(url);
+
     bool useFallback;
-    return shouldUsePlugin(completedURL, mimeType, false, useFallback);
+    return shouldUsePlugin(completedURL, mimeType, shouldPreferPlugInsForImages, false, useFallback);
 }
 
-bool SubframeLoader::requestObject(HTMLPlugInImageElement* ownerElement, const String& url, const AtomicString& frameName,
-    const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
+bool SubframeLoader::requestPlugin(HTMLPlugInImageElement* ownerElement, const KURL& url, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues, bool useFallback)
+{
+    Settings* settings = m_frame->settings();
+    if ((!allowPlugins(AboutToInstantiatePlugin)
+         // Application plug-ins are plug-ins implemented by the user agent, for example Qt plug-ins,
+         // as opposed to third-party code such as Flash. The user agent decides whether or not they are
+         // permitted, rather than WebKit.
+         && !MIMETypeRegistry::isApplicationPluginMIMEType(mimeType))
+        || (!settings->isJavaEnabled() && MIMETypeRegistry::isJavaAppletMIMEType(mimeType)))
+        return false;
+
+    if (m_frame->document() && m_frame->document()->securityOrigin()->isSandboxed(SandboxPlugins))
+        return false;
+
+    ASSERT(ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag));
+    return loadPlugin(ownerElement, url, mimeType, paramNames, paramValues, useFallback);
+}
+ 
+bool SubframeLoader::requestObject(HTMLPlugInImageElement* ownerElement, const String& url, const AtomicString& frameName, const String& mimeType, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
     if (url.isEmpty() && mimeType.isEmpty())
         return false;
@@ -114,23 +132,8 @@ bool SubframeLoader::requestObject(HTMLPlugInImageElement* ownerElement, const S
         completedURL = completeURL(url);
 
     bool useFallback;
-    if (shouldUsePlugin(completedURL, mimeType, renderer->hasFallbackContent(), useFallback)) {
-        Settings* settings = m_frame->settings();
-        if ((!allowPlugins(AboutToInstantiatePlugin)
-             // Application plugins are plugins implemented by the user agent, for example Qt plugins,
-             // as opposed to third-party code such as flash. The user agent decides whether or not they are
-             // permitted, rather than WebKit.
-             && !MIMETypeRegistry::isApplicationPluginMIMEType(mimeType))
-            || (!settings->isJavaEnabled() && MIMETypeRegistry::isJavaAppletMIMEType(mimeType)))
-            return false;
-        if (m_frame->document() && m_frame->document()->securityOrigin()->isSandboxed(SandboxPlugins))
-            return false;
-
-        ASSERT(ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag));
-        HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(ownerElement);
-
-        return loadPlugin(pluginElement, completedURL, mimeType, paramNames, paramValues, useFallback);
-    }
+    if (shouldUsePlugin(completedURL, mimeType, ownerElement->shouldPreferPlugInsForImages(), renderer->hasFallbackContent(), useFallback))
+        return requestPlugin(ownerElement, completedURL, mimeType, paramNames, paramValues, useFallback);
 
     // If the plug-in element already contains a subframe, loadOrRedirectSubframe will re-use it. Otherwise,
     // it will create a new frame and set it as the RenderPart's widget, causing what was previously 
@@ -289,7 +292,7 @@ bool SubframeLoader::allowPlugins(ReasonForCallingAllowPlugins reason)
     return allowed;
 }
 
-bool SubframeLoader::shouldUsePlugin(const KURL& url, const String& mimeType, bool hasFallback, bool& useFallback)
+bool SubframeLoader::shouldUsePlugin(const KURL& url, const String& mimeType, bool shouldPreferPlugInsForImages, bool hasFallback, bool& useFallback)
 {
     if (m_frame->loader()->client()->shouldUsePluginDocument(mimeType)) {
         useFallback = false;
@@ -305,7 +308,7 @@ bool SubframeLoader::shouldUsePlugin(const KURL& url, const String& mimeType, bo
             return true;
     }
         
-    ObjectContentType objectType = m_frame->loader()->client()->objectContentType(url, mimeType);
+    ObjectContentType objectType = m_frame->loader()->client()->objectContentType(url, mimeType, shouldPreferPlugInsForImages);
     // If an object's content can't be handled and it has no fallback, let
     // it be handled as a plugin to show the broken plugin icon.
     useFallback = objectType == ObjectContentNone && hasFallback;

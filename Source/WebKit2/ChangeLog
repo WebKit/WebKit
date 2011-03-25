@@ -1,3 +1,17 @@
+2011-03-25  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION (r70748): latest nightly builds kills AC_QuickTime.js
+        https://bugs.webkit.org/show_bug.cgi?id=49016
+
+        Update objectContentType() implementation to handle the
+        shouldPreferPlugInsForImages flag.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::objectContentType):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2011-03-25  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction.

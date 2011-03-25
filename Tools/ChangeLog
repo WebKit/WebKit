@@ -1,3 +1,19 @@
+2011-03-25  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION (r70748): latest nightly builds kills AC_QuickTime.js
+        https://bugs.webkit.org/show_bug.cgi?id=49016
+
+        TestNetscapePlugIn needs to register support for an image MIME type so
+        we can test that the embed tag prefers plug-ins to render image MIME
+        types.
+
+        * DumpRenderTree/TestNetscapePlugIn/mac/Info.plist: Register image/png.
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NP_GetMIMEDescription): Ditto.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.rc: Ditto.
+
 2011-03-25  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.

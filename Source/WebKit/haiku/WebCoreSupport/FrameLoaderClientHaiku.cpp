@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Don Gibson <dgibson77@gmail.com>
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  * Copyright (C) 2007 Ryan Leavengood <leavengood@gmail.com> All rights reserved.
  * Copyright (C) 2009 Maxime Simon <simon.maxime@gmail.com> All rights reserved.
@@ -754,7 +754,7 @@ void FrameLoaderClientHaiku::transferLoadingResourceFromPage(unsigned long, Docu
 {
 }
 
-ObjectContentType FrameLoaderClientHaiku::objectContentType(const KURL& url, const String& mimeType)
+ObjectContentType FrameLoaderClientHaiku::objectContentType(const KURL& url, const String& mimeType, bool shouldPreferPlugInsForImages)
 {
     notImplemented();
     return ObjectContentType();

@@ -1,0 +1,20 @@
+<script>
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    function logSuccess()
+    {
+        document.getElementById("console").innerHTML = "PASS";
+    }
+</script>
+<div id="console">FAIL</div>
+<embed name="plugin" src="image.png" logSrc="1">
+<script>
+    if (plugin.testCallback)
+        plugin.testCallback("logSuccess");
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+</script>
+    

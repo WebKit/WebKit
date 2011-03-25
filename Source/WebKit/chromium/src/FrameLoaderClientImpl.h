@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -197,7 +198,7 @@ public:
         const Vector<WTF::String>& paramNames,
         const Vector<WTF::String>& paramValues);
     virtual WebCore::ObjectContentType objectContentType(
-        const WebCore::KURL& url, const WTF::String& mimeType);
+        const WebCore::KURL&, const WTF::String& mimeType, bool shouldPreferPlugInsForImages);
     virtual WTF::String overrideMediaType() const;
     virtual void didPerformFirstNavigation() const;
     virtual void registerForIconNotification(bool listen = true);
