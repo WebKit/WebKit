@@ -38,12 +38,16 @@ namespace WebCore {
 FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool oblique, bool useGDI)
     : m_font(RefCountedGDIHandle<HFONT>::create(font))
     , m_size(size)
+    , m_orientation(Horizontal)
+    , m_textOrientation(TextOrientationVerticalRight)
+    , m_widthVariant(RegularWidth)
 #if PLATFORM(CG)
     , m_cgFont(0)
 #elif PLATFORM(CAIRO)
     , m_fontFace(0)
     , m_scaledFont(0)
 #endif
+    , m_isColorBitmapFont(false)
     , m_syntheticBold(bold)
     , m_syntheticOblique(oblique)
     , m_useGDI(useGDI)
@@ -69,20 +73,6 @@ FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool obliq
 
     RestoreDC(hdc, -1);
     ReleaseDC(0, hdc);
-}
-
-FontPlatformData::FontPlatformData(float size, bool bold, bool oblique)
-    : m_size(size)
-#if PLATFORM(CG)
-    , m_cgFont(0)
-#elif PLATFORM(CAIRO)
-    , m_fontFace(0)
-    , m_scaledFont(0)
-#endif
-    , m_syntheticBold(bold)
-    , m_syntheticOblique(oblique)
-    , m_useGDI(false)
-{
 }
 
 #ifndef NDEBUG

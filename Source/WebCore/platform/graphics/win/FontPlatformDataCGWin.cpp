@@ -115,17 +115,44 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
 }
 
 FontPlatformData::FontPlatformData(HFONT hfont, CGFontRef font, float size, bool bold, bool oblique, bool useGDI)
-    : m_font(RefCountedGDIHandle<HFONT>::create(hfont))
-    , m_size(size)
-    , m_cgFont(font)
-    , m_syntheticBold(bold)
+    : m_syntheticBold(bold)
     , m_syntheticOblique(oblique)
+    , m_orientation(Horizontal)
+    , m_textOrientation(TextOrientationVerticalRight)
+    , m_size(size)
+    , m_widthVariant(RegularWidth)
+    , m_font(RefCountedGDIHandle<HFONT>::create(hfont))
+    , m_cgFont(font)
+    , m_isColorBitmapFont(false)
     , m_useGDI(useGDI)
 {
 }
 
 FontPlatformData::~FontPlatformData()
 {
+}
+
+void FontPlatformData::platformDataInit(const FontPlatformData& source)
+{
+    m_font = source.m_font;
+    m_cgFont = source.m_cgFont;
+    m_useGDI = source.m_useGDI;
+}
+
+const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformData& other)
+{
+    m_font = other.m_font;
+    m_cgFont = other.m_cgFont;
+    m_useGDI = other.m_useGDI;
+
+    return *this;
+}
+
+bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
+{
+    return m_font == other.m_font
+        && m_cgFont == other.m_cgFont
+        && m_useGDI == other.m_useGDI;
 }
 
 }

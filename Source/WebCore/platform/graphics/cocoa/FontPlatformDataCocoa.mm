@@ -77,36 +77,26 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool syntheticBol
 #endif
 }
 
-FontPlatformData::FontPlatformData(const FontPlatformData& f)
-{
-    m_font = f.m_font && f.m_font != reinterpret_cast<NSFont *>(-1) ? const_cast<NSFont *>(static_cast<const NSFont *>(CFRetain(f.m_font))) : f.m_font;
-
-    m_syntheticBold = f.m_syntheticBold;
-    m_syntheticOblique = f.m_syntheticOblique;
-    m_size = f.m_size;
-    m_widthVariant = f.m_widthVariant;
-    m_cgFont = f.m_cgFont;
-    m_isColorBitmapFont = f.m_isColorBitmapFont;
-    m_orientation = f.m_orientation;
-    m_textOrientation = f.m_textOrientation;
-    m_CTFont = f.m_CTFont;
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-    m_inMemoryFont = f.m_inMemoryFont;
-#endif
-}
-
 FontPlatformData:: ~FontPlatformData()
 {
     if (m_font && m_font != reinterpret_cast<NSFont *>(-1))
         CFRelease(m_font);
 }
 
-const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& f)
+void FontPlatformData::platformDataInit(const FontPlatformData& f)
 {
-    m_syntheticBold = f.m_syntheticBold;
-    m_syntheticOblique = f.m_syntheticOblique;
-    m_size = f.m_size;
-    m_widthVariant = f.m_widthVariant;
+    m_font = f.m_font && f.m_font != reinterpret_cast<NSFont *>(-1) ? const_cast<NSFont *>(static_cast<const NSFont *>(CFRetain(f.m_font))) : f.m_font;
+
+    m_cgFont = f.m_cgFont;
+    m_CTFont = f.m_CTFont;
+
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+    m_inMemoryFont = f.m_inMemoryFont;
+#endif
+}
+
+const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformData& f)
+{
     m_cgFont = f.m_cgFont;
     if (m_font == f.m_font)
         return *this;
@@ -115,14 +105,17 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& f)
     if (m_font && m_font != reinterpret_cast<NSFont *>(-1))
         CFRelease(m_font);
     m_font = f.m_font;
-    m_isColorBitmapFont = f.m_isColorBitmapFont;
-    m_orientation = f.m_orientation;
-    m_textOrientation = f.m_textOrientation;
     m_CTFont = f.m_CTFont;
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
     m_inMemoryFont = f.m_inMemoryFont;
 #endif
     return *this;
+}
+
+bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
+{
+    return m_font == other.m_font
+        && m_cgFont == other.m_cgFont;
 }
 
 void FontPlatformData::setFont(NSFont *font)

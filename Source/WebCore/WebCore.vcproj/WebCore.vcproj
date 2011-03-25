@@ -26817,6 +26817,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\FontPlatformData.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FontPlatformData.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\FontRenderingMode.h"
 					>
 				</File>

@@ -58,8 +58,12 @@ void FontPlatformData::platformDataInit(HFONT font, float size, HDC hdc, WCHAR* 
 FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool bold, bool oblique)
     : m_font(0)
     , m_size(size)
+    , m_orientation(Horizontal)
+    , m_textOrientation(TextOrientationVerticalRight)
+    , m_widthVariant(RegularWidth)
     , m_fontFace(fontFace)
     , m_scaledFont(0)
+    , m_isColorBitmapFont(false)
     , m_syntheticBold(bold)
     , m_syntheticOblique(oblique)
     , m_useGDI(false)
@@ -79,15 +83,19 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool
    cairo_font_options_destroy(options);
 }
 
-FontPlatformData::FontPlatformData(const FontPlatformData& source)
-    : m_font(source.m_font)
-    , m_size(source.m_size)
-    , m_fontFace(0)
-    , m_scaledFont(0)
-    , m_syntheticBold(source.m_syntheticBold)
-    , m_syntheticOblique(source.m_syntheticOblique)
-    , m_useGDI(source.m_useGDI)
+FontPlatformData::~FontPlatformData()
 {
+    cairo_scaled_font_destroy(m_scaledFont);
+    cairo_font_face_destroy(m_fontFace);
+}
+
+void FontPlatformData::platformDataInit(const FontPlatformData& source)
+{
+    m_font = source.m_font;
+    m_useGDI = source.m_useGDI;
+    m_fontFace = 0;
+    m_scaledFont = 0;
+
     if (source.m_fontFace)
         m_fontFace = cairo_font_face_reference(source.m_fontFace);
 
@@ -95,23 +103,9 @@ FontPlatformData::FontPlatformData(const FontPlatformData& source)
         m_scaledFont = cairo_scaled_font_reference(source.m_scaledFont);
 }
 
-
-FontPlatformData::~FontPlatformData()
+const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformData& other)
 {
-    cairo_scaled_font_destroy(m_scaledFont);
-    cairo_font_face_destroy(m_fontFace);
-}
-
-FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
-{
-    // Check for self-assignment.
-    if (this == &other)
-        return *this;
-
     m_font = other.m_font;
-    m_size = other.m_size;
-    m_syntheticBold = other.m_syntheticBold;
-    m_syntheticOblique = other.m_syntheticOblique;
     m_useGDI = other.m_useGDI;
 
     if (other.m_fontFace)
@@ -129,14 +123,11 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
     return *this;
 }
 
-bool FontPlatformData::operator==(const FontPlatformData& other) const
-{ 
+bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
+{
     return m_font == other.m_font
         && m_fontFace == other.m_fontFace
         && m_scaledFont == other.m_scaledFont
-        && m_size == other.m_size
-        && m_syntheticBold == other.m_syntheticBold
-        && m_syntheticOblique == other.m_syntheticOblique
         && m_useGDI == other.m_useGDI;
 }
 

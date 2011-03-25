@@ -1,3 +1,57 @@
+2011-03-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Clean up FontPlatformData structure so that a single implementation
+        is used across all ports.  This first patch works for the Windows
+        build (both CG and WinCairo), and Cocoa.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/graphics/FontPlatformData.cpp: Added.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::operator=):
+        * platform/graphics/FontPlatformData.h: Added.
+        (WebCore::toCTFontRef):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::hfont):
+        (WebCore::FontPlatformData::useGDI):
+        (WebCore::FontPlatformData::font):
+        (WebCore::FontPlatformData::cgFont):
+        (WebCore::FontPlatformData::size):
+        (WebCore::FontPlatformData::setSize):
+        (WebCore::FontPlatformData::syntheticBold):
+        (WebCore::FontPlatformData::syntheticOblique):
+        (WebCore::FontPlatformData::isColorBitmapFont):
+        (WebCore::FontPlatformData::orientation):
+        (WebCore::FontPlatformData::textOrientation):
+        (WebCore::FontPlatformData::widthVariant):
+        (WebCore::FontPlatformData::setOrientation):
+        (WebCore::FontPlatformData::scaledFont):
+        (WebCore::FontPlatformData::fontFace):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::operator==):
+        (WebCore::FontPlatformData::isHashTableDeletedValue):
+        (WebCore::FontPlatformData::hashTableDeletedFontValue):
+        * platform/graphics/cg/FontPlatformData.h: Removed.
+        * platform/graphics/cocoa/FontPlatformData.h: Removed.
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::~FontPlatformData):
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::platformDataAssign):
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::platformDataAssign):
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::platformDataAssign):
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/win/cairo/FontPlatformData.h: Removed.
+
 2011-03-25  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Oliver Hunt.
