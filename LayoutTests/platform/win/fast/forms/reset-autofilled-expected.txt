@@ -1,5 +1,0 @@
-This tests that a field's autofilled state is reverted when the form is reset. It can only be run using DumpRenderTree.
-
-FAIL countAutofilledElements() should be 1. Was 0.
-PASS countAutofilledElements() is 0
-

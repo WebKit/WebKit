@@ -374,9 +374,25 @@ void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
     prefsPrivate->setAuthorAndUserStylesEnabled(flag);
 }
 
-void LayoutTestController::setAutofilled(JSContextRef, JSValueRef element, bool isAutofilled)
+void LayoutTestController::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
 {
-    // FIXME: implement
+    COMPtr<IWebView> webView;
+    if (FAILED(frame->webView(&webView)))
+        return;
+
+    COMPtr<IWebViewPrivate> webViewPrivate(Query, webView);
+    if (!webViewPrivate)
+        return;
+
+    COMPtr<IDOMElement> element;
+    if (FAILED(webViewPrivate->elementFromJS(context, nodeObject, &element)))
+        return;
+
+    COMPtr<IFormsAutoFillTransition> autofillElement(Query, element);
+    if (!autofillElement)
+        return;
+
+    autofillElement->setAutofilled(autofilled);
 }
 
 void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permissive)

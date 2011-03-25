@@ -1,3 +1,13 @@
+2011-03-24  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Implement layoutTestController.setAutoFilled in DRT on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=56828
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setAutofilled): Implemented.
+
 2011-03-24  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction.
