@@ -77,7 +77,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     QApplication::clipboard()->setMimeData(md, m_selectionMode ? QClipboard::Selection : QClipboard::Clipboard);
 #endif
     if (canSmartCopyOrDelete)
-        md->setData("application/vnd.qtwebkit.smartpaste", QByteArray());
+        md->setData(QLatin1String("application/vnd.qtwebkit.smartpaste"), QByteArray());
 }
 
 bool Pasteboard::canSmartReplace()

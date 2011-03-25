@@ -35,7 +35,7 @@ namespace WebCore {
 String platformDefaultLanguage()
 {
     QLocale locale;
-    return locale.name().replace("_", "-");
+    return locale.name().replace(QLatin1Char('_'), QLatin1Char('-'));
 }
 
 }
