@@ -1,3 +1,15 @@
+2011-03-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction.
+
+        Add stubs for WK2 cookie handling with cURL.
+
+        * WebProcess/Cookies/curl: Added.
+        * WebProcess/Cookies/curl/WebCookieManagerCurl.cpp: Added.
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::platformGetHTTPCookieAcceptPolicy):
+        * win/WebKit2.vcproj:
+
 2011-03-25  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Brian Weinstein.
