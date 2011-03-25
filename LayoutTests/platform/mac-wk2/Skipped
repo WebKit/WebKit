@@ -1233,6 +1233,7 @@ printing/page-break-orphans.html
 printing/page-break-widows.html
 printing/pageNumerForElementById.html
 printing/return-from-printing-mode.html
+printing/page-count-layout-overflow.html
 
 # WebKitTestRunner needs layoutTestController.waitForPolicyDelegate
 # <https://bugs.webkit.org/show_bug.cgi?id=42330>

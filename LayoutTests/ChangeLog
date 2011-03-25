@@ -1,3 +1,10 @@
+2011-03-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Skip the test added in r81970 on WebKit2, because its harness doesn't
+        yet support printing hooks.
+
+        * platform/mac-wk2/Skipped: Added printing/page-count-layout-overflow.html.
+
 2011-03-25  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Dimitri Glazkov.
