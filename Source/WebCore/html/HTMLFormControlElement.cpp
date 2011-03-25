@@ -141,7 +141,7 @@ void HTMLFormControlElement::attach()
 
     if (autofocus() && renderer() && !document()->ignoreAutofocus() && !isReadOnlyFormControl() &&
             ((hasTagName(inputTag) && !isInputTypeHidden) || hasTagName(selectTag) ||
-              hasTagName(buttonTag) || hasTagName(textareaTag)))
+              hasTagName(keygenTag) || hasTagName(buttonTag) || hasTagName(textareaTag)))
          focus();
 }
 

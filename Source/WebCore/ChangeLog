@@ -1,3 +1,15 @@
+2011-03-25  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Makes keygen support autofocus attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=57091
+
+        Test: fast/forms/autofocus-keygen.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::attach):
+
 2011-03-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.

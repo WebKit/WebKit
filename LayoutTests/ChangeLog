@@ -1,3 +1,13 @@
+2011-03-25  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Adds a regression test for keygen autofocus.
+        https://bugs.webkit.org/show_bug.cgi?id=57091
+
+        * fast/forms/autofocus-keygen-expected.txt: Added.
+        * fast/forms/autofocus-keygen.html: Added.
+
 2011-03-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
