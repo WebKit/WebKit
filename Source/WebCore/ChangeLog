@@ -1,3 +1,36 @@
+2011-03-25  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG <use> element performance improvement
+        https://bugs.webkit.org/show_bug.cgi?id=57077
+
+        SVG <use> element was expanding nesting <use> and <symbol> elements
+        in an inefficient way. After it expanded an <use> or a <symbol>
+        element it would restart expanding from the shadow tree root.
+        This behavior was leading about 160 millions of calls to
+        expandUseElementInShadowTree or expandSymbolElementInShadowTree for
+        a single shadow tree which is illustrated by
+        http://upload.wikimedia.org/wikipedia/commons/4/4e/Sierpinski_carpet_6.svg.
+        But the effective calls, which really expand <use> or <symbol>
+        elements, were about 5200; others were passing-by calls, which are
+        recursively down to the children.
+
+        This patch is altering the expanding path to reduce the passing-by
+        calls. It will expand elements in sibling chain where there is an
+        effective call, because the effective call replaces element which is
+        expanded and the replacement results lose of the sibling chain of
+        the replaced on the upper recursion stack. With this patch the
+        passing-by calls are reduced from about 160 millions to about 30
+        thousands.
+
+        No functionality change, no new tests.
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+        (WebCore::SVGUseElement::expandSymbolElementsInShadowTree):
+        * svg/SVGUseElement.h:
+
 2011-03-25  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Kent Tamura.
