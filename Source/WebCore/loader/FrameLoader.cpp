@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
@@ -983,7 +983,7 @@ void FrameLoader::loadArchive(PassRefPtr<Archive> prpArchive)
 }
 #endif // ENABLE(WEB_ARCHIVE)
 
-ObjectContentType FrameLoader::defaultObjectContentType(const KURL& url, const String& mimeTypeIn, bool shouldPreferPlugInsForImages)
+ObjectContentType FrameLoader::defaultObjectContentType(const KURL& url, const String& mimeTypeIn)
 {
     String mimeType = mimeTypeIn;
     String extension = url.path().substring(url.path().reverseFind('.') + 1);
@@ -1000,17 +1000,13 @@ ObjectContentType FrameLoader::defaultObjectContentType(const KURL& url, const S
     if (mimeType.isEmpty())
         return ObjectContentFrame; // Go ahead and hope that we can display the content.
 
-#if !PLATFORM(MAC) && !PLATFORM(CHROMIUM) && !PLATFORM(EFL) // Mac has no PluginDatabase, nor does Chromium or EFL
-    bool plugInSupportsMIMEType = PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType);
-#else
-    bool plugInSupportsMIMEType = false;
-#endif
-
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-        return shouldPreferPlugInsForImages && plugInSupportsMIMEType ? WebCore::ObjectContentNetscapePlugin : WebCore::ObjectContentImage;
+        return WebCore::ObjectContentImage;
 
-    if (plugInSupportsMIMEType)
+#if !PLATFORM(MAC) && !PLATFORM(CHROMIUM) && !PLATFORM(EFL) // Mac has no PluginDatabase, nor does Chromium or EFL
+    if (PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType))
         return WebCore::ObjectContentNetscapePlugin;
+#endif
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return WebCore::ObjectContentFrame;

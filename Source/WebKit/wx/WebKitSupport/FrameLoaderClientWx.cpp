@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2007 Kevin Ollivier <kevino@theolliviers.com>
- * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * All rights reserved.
  *
@@ -871,7 +870,7 @@ void FrameLoaderClientWx::transferLoadingResourceFromPage(unsigned long, Documen
 {
 }
 
-ObjectContentType FrameLoaderClientWx::objectContentType(const KURL& url, const String& mimeType, bool shouldPreferPlugInsForImages)
+ObjectContentType FrameLoaderClientWx::objectContentType(const KURL& url, const String& mimeType)
 {
     notImplemented();
     return ObjectContentType();

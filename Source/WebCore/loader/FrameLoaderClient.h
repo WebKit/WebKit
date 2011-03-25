@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -259,7 +259,7 @@ namespace WebCore {
         virtual void showMediaPlayerProxyPlugin(Widget*) = 0;
 #endif
 
-        virtual ObjectContentType objectContentType(const KURL&, const String& mimeType, bool shouldPreferPlugInsForImages) = 0;
+        virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType) = 0;
         virtual String overrideMediaType() const = 0;
 
         virtual void dispatchDidClearWindowObjectInWorld(DOMWrapperWorld*) = 0;

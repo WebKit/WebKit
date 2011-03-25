@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  *
@@ -323,7 +323,7 @@ public:
     
     bool suppressOpenerInNewFrame() const { return m_suppressOpenerInNewFrame; }
 
-    static ObjectContentType defaultObjectContentType(const KURL&, const String& mimeType, bool shouldPreferPlugInsForImages);
+    static ObjectContentType defaultObjectContentType(const KURL& url, const String& mimeType);
 
     void clear(bool clearWindowProperties = true, bool clearScriptObjects = true, bool clearFrameView = true);
 

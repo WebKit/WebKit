@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1454,7 +1454,7 @@ void WebFrameLoaderClient::transferLoadingResourceFromPage(unsigned long identif
     [kit(oldPage) _removeObjectForIdentifier:identifier];
 }
 
-ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeType, bool shouldPreferPlugInsForImages)
+ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeType)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -1491,25 +1491,18 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const
     if (type.isEmpty())
         return ObjectContentFrame; // Go ahead and hope that we can display the content.
 
+    if (MIMETypeRegistry::isSupportedImageMIMEType(type))
+        return ObjectContentImage;
+
     WebBasePluginPackage *package = [getWebView(m_webFrame.get()) _pluginForMIMEType:type];
-    ObjectContentType plugInType = ObjectContentNone;
     if (package) {
 #if ENABLE(NETSCAPE_PLUGIN_API)
         if ([package isKindOfClass:[WebNetscapePluginPackage class]])
-            plugInType = ObjectContentNetscapePlugin;
-        else
+            return ObjectContentNetscapePlugin;
 #endif
-        {
-            ASSERT([package isKindOfClass:[WebPluginPackage class]]);
-            plugInType = ObjectContentOtherPlugin;
-        }
+        ASSERT([package isKindOfClass:[WebPluginPackage class]]);
+        return ObjectContentOtherPlugin;
     }
-    
-    if (MIMETypeRegistry::isSupportedImageMIMEType(type))
-        return shouldPreferPlugInsForImages && plugInType != ObjectContentNone ? plugInType : ObjectContentImage;
-
-    if (plugInType != ObjectContentNone)
-        return plugInType;
 
     if ([m_webFrame->_private->webFrameView _viewClassForMIMEType:type])
         return ObjectContentFrame;

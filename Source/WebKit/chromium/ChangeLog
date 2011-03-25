@@ -1,3 +1,17 @@
+2011-03-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r81916 and r81917.
+        http://trac.webkit.org/changeset/81916
+        http://trac.webkit.org/changeset/81917
+        https://bugs.webkit.org/show_bug.cgi?id=57071
+
+        broke a test on platforms that do not have QuickTime installed
+        (Requested by estes on #webkit).
+
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::objectContentType):
+        * src/FrameLoaderClientImpl.h:
+
 2011-03-24  Min Qin  <qinmin@google.com>
 
         Reviewed by James Robinson.

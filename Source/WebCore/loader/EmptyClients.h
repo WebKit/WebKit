@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Eric Seidel (eric@webkit.org)
- * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -370,7 +370,7 @@ public:
     virtual void showMediaPlayerProxyPlugin(Widget*) { }
 #endif
 
-    virtual ObjectContentType objectContentType(const KURL&, const String&, bool) { return ObjectContentType(); }
+    virtual ObjectContentType objectContentType(const KURL&, const String&) { return ObjectContentType(); }
     virtual String overrideMediaType() const { return String(); }
 
     virtual void redirectDataToPlugin(Widget*) { }

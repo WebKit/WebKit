@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  * Copyright (C) 2008 INdT - Instituto Nokia de Tecnologia
  * Copyright (C) 2009-2010 ProFUSION embedded systems
@@ -149,7 +149,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
 
     virtual void registerForIconNotification(bool);
 
-    virtual ObjectContentType objectContentType(const KURL&, const String& mimeType, bool shouldPreferPlugInsForImages);
+    virtual ObjectContentType objectContentType(const KURL& url, const String& mimeType);
 
     virtual void setMainFrameDocumentReady(bool);
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2008 Collabora Ltd. All rights reserved.
  * Coypright (C) 2008 Holger Hans Peter Freyther
@@ -1312,18 +1312,18 @@ void FrameLoaderClientQt::transferLoadingResourceFromPage(unsigned long, Documen
 {
 }
 
-ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const String& mimeTypeIn, bool shouldPreferPlugInsForImages)
+ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const String& _mimeType)
 {
-//    qDebug()<<" ++++++++++++++++ url is "<<url.prettyURL()<<", mime = "<<mimeTypeIn;
+//    qDebug()<<" ++++++++++++++++ url is "<<url.prettyURL()<<", mime = "<<_mimeType;
     QFileInfo fi(url.path());
     String extension = fi.suffix();
-    if (mimeTypeIn == "application/x-qt-plugin" || mimeTypeIn == "application/x-qt-styled-widget")
+    if (_mimeType == "application/x-qt-plugin" || _mimeType == "application/x-qt-styled-widget")
         return ObjectContentOtherPlugin;
 
-    if (url.isEmpty() && !mimeTypeIn.length())
+    if (url.isEmpty() && !_mimeType.length())
         return ObjectContentNone;
 
-    String mimeType = mimeTypeIn;
+    String mimeType = _mimeType;
     if (!mimeType.length())
         mimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
 
@@ -1333,17 +1333,14 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
     if (!mimeType.length())
         return ObjectContentFrame;
 
-    ObjectContentType plugInType = ObjectContentNone;
-    if (PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType))
-        plugInType = ObjectContentNetscapePlugin;
-    else if (m_frame->page() && m_frame->page()->pluginData() && m_frame->page()->pluginData()->supportsMimeType(mimeType))
-        plugInType = ObjectContentOtherPlugin;
-        
     if (MIMETypeRegistry::isSupportedImageMIMEType(mimeType))
-        return shouldPreferPlugInsForImages && plugInType != ObjectContentNone ? plugInType : ObjectContentImage;
-    
-    if (plugInType != ObjectContentNone)
-        return plugInType;
+        return ObjectContentImage;
+
+    if (PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType))
+        return ObjectContentNetscapePlugin;
+
+    if (m_frame->page() && m_frame->page()->pluginData() && m_frame->page()->pluginData()->supportsMimeType(mimeType))
+        return ObjectContentOtherPlugin;
 
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(mimeType))
         return ObjectContentFrame;

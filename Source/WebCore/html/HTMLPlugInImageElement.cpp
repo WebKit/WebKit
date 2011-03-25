@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,7 +25,6 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLImageLoader.h"
-#include "HTMLNames.h"
 #include "Image.h"
 #include "Page.h"
 #include "RenderEmbeddedObject.h"
@@ -33,14 +32,13 @@
 
 namespace WebCore {
 
-HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Document* document, bool createdByParser, PreferPlugInsForImagesOption preferPlugInsForImagesOption)
+HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Document* document, bool createdByParser)
     : HTMLPlugInElement(tagName, document)
     // m_needsWidgetUpdate(!createdByParser) allows HTMLObjectElement to delay
     // widget updates until after all children are parsed.  For HTMLEmbedElement
     // this delay is unnecessary, but it is simpler to make both classes share
     // the same codepath in this class.
     , m_needsWidgetUpdate(!createdByParser)
-    , m_shouldPreferPlugInsForImages(preferPlugInsForImagesOption == ShouldPreferPlugInsForImages)
 {
 }
 
@@ -60,7 +58,7 @@ bool HTMLPlugInImageElement::isImageType()
 
     if (Frame* frame = document()->frame()) {
         KURL completedURL = frame->loader()->completeURL(m_url);
-        return frame->loader()->client()->objectContentType(completedURL, m_serviceType, shouldPreferPlugInsForImages()) == ObjectContentImage;
+        return frame->loader()->client()->objectContentType(completedURL, m_serviceType) == ObjectContentImage;
     }
 
     return Image::supportsType(m_serviceType);
@@ -101,7 +99,7 @@ bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const 
     if (!url.isEmpty())
         completedURL = frameLoader->completeURL(url);
 
-    if (frameLoader->client()->objectContentType(completedURL, serviceType, shouldPreferPlugInsForImages()) == ObjectContentNetscapePlugin)
+    if (frameLoader->client()->objectContentType(completedURL, serviceType) == ObjectContentNetscapePlugin)
         return true;
     return false;
 }

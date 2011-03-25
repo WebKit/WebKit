@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -216,7 +216,7 @@ private:
     virtual void showMediaPlayerProxyPlugin(WebCore::Widget*);
 #endif
     
-    virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL&, const WTF::String& mimeType, bool shouldPreferPlugInsForImages);
+    virtual WebCore::ObjectContentType objectContentType(const WebCore::KURL& url, const WTF::String& mimeType);
     virtual WTF::String overrideMediaType() const;
     
     virtual void dispatchDidClearWindowObjectInWorld(WebCore::DOMWrapperWorld*);

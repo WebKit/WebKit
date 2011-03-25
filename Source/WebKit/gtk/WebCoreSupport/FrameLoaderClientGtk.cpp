@@ -6,7 +6,6 @@
  *  Copyright (C) 2009, 2010 Gustavo Noronha Silva <gns@gnome.org>
  *  Copyright (C) Research In Motion Limited 2009. All rights reserved.
  *  Copyright (C) 2010 Igalia S.L.
- *  Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -712,9 +711,9 @@ PassRefPtr<Widget> FrameLoaderClient::createJavaAppletWidget(const IntSize& plug
     return FrameLoaderClient::createPlugin(pluginSize, element, baseURL, paramNames, paramValues, "application/x-java-applet", false);
 }
 
-ObjectContentType FrameLoaderClient::objectContentType(const KURL& url, const String& mimeType, bool shouldPreferPlugInsForImages)
+ObjectContentType FrameLoaderClient::objectContentType(const KURL& url, const String& mimeType)
 {
-    return FrameLoader::defaultObjectContentType(url, mimeType, shouldPreferPlugInsForImages);
+    return FrameLoader::defaultObjectContentType(url, mimeType);
 }
 
 String FrameLoaderClient::overrideMediaType() const
