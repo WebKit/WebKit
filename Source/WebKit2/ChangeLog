@@ -1,3 +1,16 @@
+2011-03-25  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION(r79227): CFURLCache not initialized correctly in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=57109
+        <rdar://problem/9184590>
+        
+        Check for a trailing Windows path separator, not a Unix path separator.
+
+        * UIProcess/win/WebContextWin.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+
 2011-03-25  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.
