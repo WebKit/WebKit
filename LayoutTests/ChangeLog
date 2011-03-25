@@ -1,3 +1,11 @@
+2011-03-24  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed. Rebaseline Chromium test results for fast/css/percentage-non-integer.html.
+
+        * platform/chromium-win/fast/css/percentage-non-integer-expected.checksum:
+        * platform/chromium-win/fast/css/percentage-non-integer-expected.png:
+        * platform/chromium-win/fast/css/percentage-non-integer-expected.txt:
+
 2011-03-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81916 and r81917.
