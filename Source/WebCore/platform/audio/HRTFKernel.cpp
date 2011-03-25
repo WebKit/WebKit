@@ -45,17 +45,18 @@ namespace WebCore {
 // This represents the initial delay before the most energetic part of the impulse response.
 // The sample-frame delay is removed from the impulseP impulse response, and this value  is returned.
 // the length of the passed in AudioChannel must be a power of 2.
-static double extractAverageGroupDelay(AudioChannel* channel)
+static double extractAverageGroupDelay(AudioChannel* channel, size_t analysisFFTSize)
 {
     ASSERT(channel);
         
     float* impulseP = channel->data();
-    size_t length = channel->length();
     
-    // Check that length is power-of-2;
-    ASSERT(1UL << static_cast<unsigned>(log2(length)) == length);
+    ASSERT(channel->length() >= analysisFFTSize);
+    
+    // Check for power-of-2.
+    ASSERT(1UL << static_cast<unsigned>(log2(analysisFFTSize)) == analysisFFTSize);
 
-    FFTFrame estimationFrame(length);
+    FFTFrame estimationFrame(analysisFFTSize);
     estimationFrame.doFFT(impulseP);
 
     double frameDelay = estimationFrame.extractAverageGroupDelay();
@@ -71,7 +72,7 @@ HRTFKernel::HRTFKernel(AudioChannel* channel, size_t fftSize, double sampleRate,
     ASSERT(channel);
 
     // Determine the leading delay (average group delay) for the response.
-    m_frameDelay = extractAverageGroupDelay(channel);
+    m_frameDelay = extractAverageGroupDelay(channel, fftSize / 2);
 
     float* impulseResponse = channel->data();
     size_t responseLength = channel->length();

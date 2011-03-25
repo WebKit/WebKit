@@ -32,6 +32,9 @@
 
 #include "AudioBus.h"
 
+#if !PLATFORM(MAC)
+#include "SincResampler.h"
+#endif
 #include "VectorMath.h"
 #include <algorithm>
 #include <assert.h>
@@ -358,6 +361,90 @@ void AudioBus::copyWithGainFrom(const AudioBus &sourceBus, double* lastMixGain, 
 void AudioBus::sumWithGainFrom(const AudioBus &sourceBus, double* lastMixGain, double targetGain)
 {
     processWithGainFrom(sourceBus, lastMixGain, targetGain, true);
+}
+
+#if !PLATFORM(MAC)
+PassOwnPtr<AudioBus> AudioBus::createBySampleRateConverting(AudioBus* sourceBus, bool mixToMono, double newSampleRate)
+{
+    // sourceBus's sample-rate must be known.
+    ASSERT(sourceBus && sourceBus->sampleRate());
+    if (!sourceBus || !sourceBus->sampleRate())
+        return 0;
+
+    double sourceSampleRate = sourceBus->sampleRate();
+    double destinationSampleRate = newSampleRate;
+    unsigned numberOfSourceChannels = sourceBus->numberOfChannels();
+
+    if (numberOfSourceChannels == 1)
+        mixToMono = false; // already mono
+        
+    if (sourceSampleRate == destinationSampleRate) {
+        // No sample-rate conversion is necessary.
+        if (mixToMono)
+            return AudioBus::createByMixingToMono(sourceBus);
+
+        // Return exact copy.
+        return AudioBus::createBufferFromRange(sourceBus, 0, sourceBus->length());
+    }
+    
+    // First, mix to mono (if necessary) then sample-rate convert.
+    AudioBus* resamplerSourceBus;
+    OwnPtr<AudioBus> mixedMonoBus;
+    if (mixToMono) {
+        mixedMonoBus = AudioBus::createByMixingToMono(sourceBus);
+        resamplerSourceBus = mixedMonoBus.get();
+    } else {
+        // Directly resample without down-mixing.
+        resamplerSourceBus = sourceBus;
+    }
+
+    // Calculate destination length based on the sample-rates.
+    double sampleRateRatio = sourceSampleRate / destinationSampleRate;
+    int sourceLength = resamplerSourceBus->length();
+    int destinationLength = sourceLength / sampleRateRatio;
+
+    // Create destination bus with same number of channels.
+    unsigned numberOfDestinationChannels = resamplerSourceBus->numberOfChannels();
+    OwnPtr<AudioBus> destinationBus(adoptPtr(new AudioBus(numberOfDestinationChannels, destinationLength)));
+
+    // Sample-rate convert each channel.
+    for (unsigned i = 0; i < numberOfDestinationChannels; ++i) {
+        float* source = resamplerSourceBus->channel(i)->data();
+        float* destination = destinationBus->channel(i)->data();
+
+        SincResampler resampler(sampleRateRatio);
+        resampler.process(source, destination, sourceLength);
+    }
+
+    return destinationBus.release();
+}
+#endif // !PLATFORM(MAC)
+
+PassOwnPtr<AudioBus> AudioBus::createByMixingToMono(AudioBus* sourceBus)
+{
+    switch (sourceBus->numberOfChannels()) {
+    case 1:
+        // Simply create an exact copy.
+        return AudioBus::createBufferFromRange(sourceBus, 0, sourceBus->length());
+    case 2:
+        {
+            unsigned n = sourceBus->length();
+            OwnPtr<AudioBus> destinationBus(adoptPtr(new AudioBus(1, n)));
+
+            float* sourceL = sourceBus->channel(0)->data();
+            float* sourceR = sourceBus->channel(1)->data();
+            float* destination = destinationBus->channel(0)->data();
+        
+            // Do the mono mixdown.
+            for (unsigned i = 0; i < n; ++i)
+                destination[i] = 0.5 * (sourceL[i] + sourceR[i]);
+
+            return destinationBus.release();
+        }
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 } // WebCore

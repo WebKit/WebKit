@@ -28,6 +28,8 @@
 
 #include "config.h"
 
+#if ENABLE(WEB_AUDIO)
+
 #include "SincResampler.h"
 
 #include <wtf/MathExtras.h>
@@ -336,3 +338,5 @@ void SincResampler::process(float* source, float* destination, unsigned numberOf
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUDIO)

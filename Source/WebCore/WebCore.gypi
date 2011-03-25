@@ -3617,6 +3617,8 @@
             'platform/audio/ReverbConvolverStage.h',
             'platform/audio/ReverbInputBuffer.cpp',
             'platform/audio/ReverbInputBuffer.h',
+            'platform/audio/SincResampler.cpp',
+            'platform/audio/SincResampler.h',
             'platform/audio/VectorMath.cpp',
             'platform/audio/VectorMath.h',
             'platform/audio/chromium/AudioBusChromium.cpp',

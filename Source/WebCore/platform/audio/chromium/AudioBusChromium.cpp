@@ -36,22 +36,30 @@ namespace WebCore {
 
 PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, double sampleRate)
 {
-    return PlatformBridge::loadPlatformAudioResource(name, sampleRate);
+    // FIXME: the sampleRate parameter is ignored. It should be removed from the API.
+    OwnPtr<AudioBus> audioBus = PlatformBridge::loadPlatformAudioResource(name, sampleRate);
+    if (!audioBus.get())
+        return 0;
+    
+    // If the bus is already at the requested sample-rate then return as is.
+    if (audioBus->sampleRate() == sampleRate)
+        return audioBus.release();
+    
+    return AudioBus::createBySampleRateConverting(audioBus.get(), false, sampleRate);
 }
 
 PassOwnPtr<AudioBus> createBusFromInMemoryAudioFile(const void* data, size_t dataSize, bool mixToMono, double sampleRate)
 {
+    // FIXME: the sampleRate parameter is ignored. It should be removed from the API.
     OwnPtr<AudioBus> audioBus = PlatformBridge::decodeAudioFileData(static_cast<const char*>(data), dataSize, sampleRate);
-    if (audioBus.get() && audioBus->numberOfChannels() == 2 && mixToMono) {
-        OwnPtr<AudioBus> monoAudioBus = adoptPtr(new AudioBus(1, audioBus->length()));
-
-        // FIXME: AudioBus::copyFrom() should be able to do a downmix to mono.
-        // for now simply copy the left channel.
-        monoAudioBus->channel(0)->copyFrom(audioBus->channel(0));
-        return monoAudioBus.release();
-    }
+    if (!audioBus.get())
+      return 0;
+      
+    // If the bus needs no conversion then return as is.
+    if ((!mixToMono || audioBus->numberOfChannels() == 1) && audioBus->sampleRate() == sampleRate)
+        return audioBus.release();
     
-    return audioBus.release();
+    return AudioBus::createBySampleRateConverting(audioBus.get(), mixToMono, sampleRate);    
 }
 
 } // namespace WebCore
