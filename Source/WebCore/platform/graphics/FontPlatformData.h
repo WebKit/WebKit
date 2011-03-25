@@ -23,7 +23,7 @@
  */
 
 // FIXME: This is temporary until Chromium and QT switch to using this file.
-#if PLATFORM(CHROMIUM)
+#if PLATFORM(CHROMIUM) && !OS(DARWIN)
 #include "chromium/FontPlatformData.h"
 #elif PLATFORM(QT)
 #include "qt/FontPlatformData.h"

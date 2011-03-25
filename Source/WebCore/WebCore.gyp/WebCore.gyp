@@ -1363,6 +1363,12 @@
             # Again, Skia is not used on Mac.
             ['exclude', 'platform/chromium/DragImageChromiumSkia\\.cpp$'],
           ],
+        },{ # OS!="mac"
+          'sources/': [
+            # FIXME: We will eventually compile this too, but for now it's
+            # only used on mac.
+            ['exclude', 'platform/graphics/FontPlatformData\\.cpp$']
+          ],
         }],
         ['OS!="linux" and OS!="freebsd"', {
           'sources/': [
