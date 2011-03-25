@@ -118,7 +118,13 @@ WebInspector.ExtensionServer.prototype = {
     _notifyResourceFinished: function(event)
     {
         var resource = event.data;
-        this._postNotification("resource-finished", this._resourceId(resource), (new WebInspector.HAREntry(resource)).build());
+        if (this._hasSubscribers("resource-finished"))
+            this._postNotification("resource-finished", this._resourceId(resource), (new WebInspector.HAREntry(resource)).build());
+    },
+
+    _hasSubscribers: function(type)
+    {
+        return !!this._subscribers[type];
     },
 
     _postNotification: function(type, details)
