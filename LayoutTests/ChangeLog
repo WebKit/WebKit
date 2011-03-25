@@ -1,3 +1,9 @@
+2011-03-25  Vincent Scheib  <scheib@chromium.org>
+
+        Attempting SLOW to resolve fast/forms/input-file-directory-upload.html
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-25  Martin Robinson  <mrobinson@igalia.com>
 
         Add a GTK+ specific baseline for a text test that seems to have whitespace difference,

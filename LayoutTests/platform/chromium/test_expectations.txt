@@ -112,6 +112,11 @@ BUGWK55913 DEBUG : jquery/manipulation.html = TIMEOUT PASS
 BUGWK55913 DEBUG SLOW : jquery/offset.html = PASS
 BUGWK55913 DEBUG SLOW : jquery/traversing.html = PASS
 
+// Has been timing out, initiated at:
+// Webkit patches in range [r81976, r81981]
+// Chromium patches in range [r79428, r79442]
+BUGCR77468 SLOW : fast/forms/input-file-directory-upload.html = PASS
+
 // -----------------------------------------------------------------
 // SKIPPED TESTS
 // -----------------------------------------------------------------
