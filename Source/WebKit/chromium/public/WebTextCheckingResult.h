@@ -33,7 +33,6 @@
 
 #include "WebCommon.h"
 
-#define WEB_TEXT_CHECKING_RESULT_IS_A_STRUCT
 namespace WebKit {
 
 // A checked entry of text checking.
