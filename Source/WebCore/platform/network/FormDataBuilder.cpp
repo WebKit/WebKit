@@ -32,6 +32,7 @@
 
 #include <limits>
 #include <wtf/Assertions.h>
+#include <wtf/HexNumber.h>
 #include <wtf/text/CString.h>
 #include <wtf/RandomNumber.h>
 
@@ -192,8 +193,6 @@ void FormDataBuilder::addKeyValuePairAsFormData(Vector<char>& buffer, const CStr
 
 void FormDataBuilder::encodeStringAsFormData(Vector<char>& buffer, const CString& string)
 {
-    static const char hexDigits[17] = "0123456789ABCDEF";
-
     // Same safe characters as Netscape for compatibility.
     static const char safeCharacters[] = "-._*";
 
@@ -210,8 +209,7 @@ void FormDataBuilder::encodeStringAsFormData(Vector<char>& buffer, const CString
             append(buffer, "%0D%0A");
         else if (c != '\r') {
             append(buffer, '%');
-            append(buffer, hexDigits[c >> 4]);
-            append(buffer, hexDigits[c & 0xF]);
+            appendByteAsHex(c, buffer);
         }
     }
 }

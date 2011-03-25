@@ -62,9 +62,10 @@
 #include "WebSocketHandshakeResponse.h"
 
 #include <wtf/CurrentTime.h>
+#include <wtf/HexNumber.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
-#include <wtf/text/StringBuffer.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -440,18 +441,14 @@ void InspectorResourceAgent::frameDetachedFromParent(Frame* frame)
 static String createReadableStringFromBinary(const unsigned char* value, size_t length)
 {
     ASSERT(length > 0);
-    static const char hexDigits[17] = "0123456789ABCDEF";
-    size_t bufferSize = length * 3 - 1;
-    StringBuffer buffer(bufferSize);
-    size_t index = 0;
+    StringBuilder builder;
+    builder.reserveCapacity(length * 3 - 1);
     for (size_t i = 0; i < length; ++i) {
         if (i > 0)
-            buffer[index++] = ':';
-        buffer[index++] = hexDigits[value[i] >> 4];
-        buffer[index++] = hexDigits[value[i] & 0xF];
+            builder.append(':');
+        appendByteAsHex(value[i], builder);
     }
-    ASSERT(index == bufferSize);
-    return String::adopt(buffer);
+    return builder.toString();
 }
 
 void InspectorResourceAgent::didCreateWebSocket(unsigned long identifier, const KURL& requestURL)

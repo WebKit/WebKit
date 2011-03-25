@@ -1,3 +1,33 @@
+2011-03-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Introduce WTF HexNumber.h
+        https://bugs.webkit.org/show_bug.cgi?id=56099
+
+        Introduce a set of functions that ease converting from a bye or a number to a hex string,
+        replacing several of these conversions and String::format("%x") usages all over WebCore.
+
+        * ForwardingHeaders/wtf/HexNumber.h: Added.
+        * css/CSSOMUtils.cpp:
+        (WebCore::serializeCharacterAsCodePoint):
+        * css/CSSParser.cpp:
+        (WebCore::quoteCSSString):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::createReadableStringFromBinary):
+        * platform/FileSystem.cpp:
+        (WebCore::encodeForFileName):
+        * platform/KURL.cpp:
+        (WebCore::appendEscapedChar):
+        * platform/UUID.cpp:
+        (WebCore::createCanonicalUUIDString):
+        * platform/graphics/Color.cpp:
+        (WebCore::Color::serialized):
+        * platform/network/FormDataBuilder.cpp:
+        (WebCore::FormDataBuilder::encodeStringAsFormData):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::quoteAndEscapeNonPrintables):
+
 2011-03-24  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Geoff Garen.

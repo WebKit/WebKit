@@ -46,6 +46,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "SelectionController.h"
+#include <wtf/HexNumber.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -210,11 +211,11 @@ String quoteAndEscapeNonPrintables(const String& s)
             if (c >= 0x20 && c < 0x7F)
                 result.append(c);
             else {
-                unsigned u = c;
-                String hex = String::format("\\x{%X}", u);
-                unsigned len = hex.length();
-                for (unsigned i = 0; i < len; ++i)
-                    result.append(hex[i]);
+                result.append('\\');
+                result.append('x');
+                result.append('{');
+                appendUnsignedAsHex(c, result); 
+                result.append('}');
             }
         }
     }

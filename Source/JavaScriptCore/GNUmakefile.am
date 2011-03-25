@@ -472,6 +472,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/HashTable.cpp \
 	Source/JavaScriptCore/wtf/HashTable.h \
 	Source/JavaScriptCore/wtf/HashTraits.h \
+	Source/JavaScriptCore/wtf/HexNumber.h \
 	Source/JavaScriptCore/wtf/ListHashSet.h \
 	Source/JavaScriptCore/wtf/ListRefPtr.h \
 	Source/JavaScriptCore/wtf/Locker.h \

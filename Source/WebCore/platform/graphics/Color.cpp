@@ -27,13 +27,12 @@
 #include "Color.h"
 
 #include "HashTools.h"
-#include "PlatformString.h"
-#include <math.h>
 #include <wtf/Assertions.h>
+#include <wtf/HexNumber.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace std;
-using namespace WTF;
 
 namespace WebCore {
 
@@ -180,14 +179,6 @@ Color::Color(const char* name)
     }
 }
 
-static inline void appendHexNumber(UChar* destination, uint8_t number)
-{
-    static const char hexDigits[17] = "0123456789abcdef";
-
-    destination[0] = hexDigits[number >> 4];
-    destination[1] = hexDigits[number & 0xF];
-}
-
 String Color::serialized() const
 {
     DEFINE_STATIC_LOCAL(const String, commaSpace, (", "));
@@ -195,13 +186,13 @@ String Color::serialized() const
     DEFINE_STATIC_LOCAL(const String, zeroPointZero, ("0.0"));
 
     if (!hasAlpha()) {
-        UChar* characters;
-        String result = String::createUninitialized(7, characters);
-        characters[0] = '#';
-        appendHexNumber(characters + 1, red());
-        appendHexNumber(characters + 3, green());
-        appendHexNumber(characters + 5, blue());
-        return result;
+        StringBuilder builder;
+        builder.reserveCapacity(7);
+        builder.append('#');
+        appendByteAsHex(red(), builder, Lowercase);
+        appendByteAsHex(green(), builder, Lowercase);
+        appendByteAsHex(blue(), builder, Lowercase);
+        return builder.toString();
     }
 
     Vector<UChar> result;

@@ -705,6 +705,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\HexNumber.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\ListHashSet.h"
 			>
 		</File>

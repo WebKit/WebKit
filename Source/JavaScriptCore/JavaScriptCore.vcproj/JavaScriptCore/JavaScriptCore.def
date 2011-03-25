@@ -278,6 +278,7 @@ EXPORTS
     ?recompileAllJSFunctions@Debugger@JSC@@QAEXPAVJSGlobalData@2@@Z
     ?regExpFlags@JSC@@YA?AW4RegExpFlags@1@ABVUString@1@@Z
     ?reifyString@StringBuilder@WTF@@AAEXXZ
+    ?reserveCapacity@StringBuilder@WTF@@QAEXI@Z
     ?releaseDecommitted@OSAllocator@WTF@@SAXPAXI@Z
     ?releaseStack@MarkStack@JSC@@CAXPAXI@Z
     ?reportExtraMemoryCostSlowCase@Heap@JSC@@AAEXI@Z

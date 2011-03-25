@@ -31,7 +31,7 @@
 #include "config.h"
 #include "CSSOMUtils.h"
 
-#include "PlatformString.h"
+#include <wtf/HexNumber.h>
 
 namespace WebCore {
 
@@ -53,7 +53,9 @@ void serializeCharacter(UChar32 c, Vector<UChar>& appendTo)
 
 void serializeCharacterAsCodePoint(UChar32 c, Vector<UChar>& appendTo)
 {
-    append(appendTo, String::format("\\%x ", c));
+    appendTo.append('\\');
+    appendUnsignedAsHex(c, appendTo, Lowercase);
+    appendTo.append(' ');
 }
 
 void serializeIdentifier(const String& identifier, String& appendTo)

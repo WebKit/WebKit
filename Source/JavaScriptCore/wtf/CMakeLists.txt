@@ -30,6 +30,7 @@ SET(WTF_HEADERS
     HashSet.h
     HashTable.h
     HashTraits.h
+    HexNumber.h
     ListHashSet.h
     ListRefPtr.h
     Locker.h

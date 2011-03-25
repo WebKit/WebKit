@@ -44,6 +44,7 @@
 #elif OS(LINUX) && !PLATFORM(CHROMIUM)
 #include <stdio.h>
 #elif (OS(LINUX) && PLATFORM(CHROMIUM)) || (OS(DARWIN) && !USE(CF))
+#include <wtf/HexNumber.h>
 #include <wtf/RandomNumber.h>
 #include <wtf/text/StringBuilder.h>
 #endif
@@ -100,17 +101,18 @@ String createCanonicalUUIDString()
 
     // Format as Version 4 UUID.
     StringBuilder builder;
-    builder.append(String::format("%08x", randomData[0]));
+    appendUnsignedAsHexFixedSize(randomData[0], builder, 8, Lowercase);
     builder.append("-");
-    builder.append(String::format("%04x", randomData[1] >> 16));
+    appendUnsignedAsHexFixedSize(randomData[1] >> 16, builder, 4, Lowercase);
     builder.append("-4");
-    builder.append(String::format("%03x", randomData[1] & 0x00000fff));
+    appendUnsignedAsHexFixedSize(randomData[1] & 0x00000fff, builder, 3, Lowercase);
     builder.append("-");
-    builder.append(String::format("%x", (randomData[2] >> 30) | 0x8)); // Condense this byte to 8, 9, a, and b.
-    builder.append(String::format("%03x", (randomData[2] >> 16) & 0x00000fff));
+    appendUnsignedAsHexFixedSize((randomData[2] >> 30) | 0x8, builder, 1, Lowercase);
+    appendUnsignedAsHexFixedSize((randomData[2] >> 16) & 0x00000fff, builder, 3, Lowercase);
     builder.append("-");
-    builder.append(String::format("%04x", randomData[2] & 0x0000ffff));
-    builder.append(String::format("%08x", randomData[3]));
+    appendUnsignedAsHexFixedSize(randomData[2] & 0x0000ffff, builder, 4, Lowercase);
+    appendUnsignedAsHexFixedSize(randomData[3], builder, 8, Lowercase);
+    builder.append("\n");
     return builder.toString();
 #else
     notImplemented();

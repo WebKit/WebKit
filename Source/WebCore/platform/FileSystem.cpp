@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FileSystem.h"
 
+#include <wtf/HexNumber.h>
+
 namespace WebCore {
 
 // The following lower-ASCII characters need escaping to be used in a filename
@@ -75,8 +77,6 @@ static inline bool shouldEscapeUChar(UChar c)
     return c > 127 ? false : needsEscaping[c];
 }
 
-static const char hexDigits[17] = "0123456789ABCDEF";
-
 String encodeForFileName(const String& inputStr)
 {
     unsigned length = inputStr.length();
@@ -90,8 +90,7 @@ String encodeForFileName(const String& inputStr)
         UChar c = *str++;
         if (shouldEscapeUChar(c)) {
             *p++ = '%';
-            *p++ = hexDigits[(c >> 4) & 0xF];
-            *p++ = hexDigits[c & 0xF];
+            placeByteAsHex(c, p);
         } else
             *p++ = c;
     }

@@ -164,6 +164,7 @@
             'wtf/HashSet.h',
             'wtf/HashTable.h',
             'wtf/HashTraits.h',
+            'wtf/HexNumber.h',
             'wtf/ListHashSet.h',
             'wtf/ListRefPtr.h',
             'wtf/Locker.h',

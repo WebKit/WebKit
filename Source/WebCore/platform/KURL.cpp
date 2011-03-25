@@ -30,6 +30,7 @@
 #include "TextEncoding.h"
 #include <wtf/text/CString.h>
 #include <wtf/HashMap.h>
+#include <wtf/HexNumber.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 
@@ -88,8 +89,6 @@ enum URLCharacterClasses {
     // not allowed in path
     BadChar = 1 << 6
 };
-
-static const char hexDigits[17] = "0123456789ABCDEF";
 
 static const unsigned char characterClassTable[256] = {
     /* 0 nul */ PathSegmentEndChar,    /* 1 soh */ BadChar,
@@ -970,8 +969,7 @@ String decodeURLEscapeSequences(const String& str, const TextEncoding& encoding)
 static void appendEscapedChar(char*& buffer, unsigned char c)
 {
     *buffer++ = '%';
-    *buffer++ = hexDigits[c >> 4];
-    *buffer++ = hexDigits[c & 0xF];
+    placeByteAsHex(c, buffer);
 }
 
 static void appendEscapingBadChars(char*& buffer, const char* strStart, size_t length)

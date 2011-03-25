@@ -73,6 +73,7 @@
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSTransformValue.h"
 #include <limits.h>
+#include <wtf/HexNumber.h>
 #include <wtf/dtoa.h>
 #include <wtf/text/StringBuffer.h>
 
@@ -6505,11 +6506,8 @@ String quoteCSSString(const String& string)
             buffer[index++] = ch;
             afterEscape = false;
         } else if (ch < 0x20 || ch == 0x7F) { // Control characters.
-            static const char hexDigits[17] = "0123456789abcdef";
             buffer[index++] = '\\';
-            if (ch >= 0x10)
-                buffer[index++] = hexDigits[ch >> 4];
-            buffer[index++] = hexDigits[ch & 0xF];
+            placeByteAsHexCompressIfPossible(ch, buffer, index, Lowercase);
             afterEscape = true;
         } else {
             // Space character may be required to separate backslash-escape sequence and normal characters.
