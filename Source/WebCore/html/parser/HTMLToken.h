@@ -398,27 +398,7 @@ public:
         case HTMLToken::EndTag: {
             m_selfClosing = token.selfClosing();
             m_name = AtomicString(token.name().data(), token.name().size());
-            const HTMLToken::AttributeList& attributes = token.attributes();
-            for (HTMLToken::AttributeList::const_iterator iter = attributes.begin();
-                 iter != attributes.end(); ++iter) {
-                if (!iter->m_name.isEmpty()) {
-                    String name(iter->m_name.data(), iter->m_name.size());
-                    String value(iter->m_value.data(), iter->m_value.size());
-                    ASSERT(iter->m_nameRange.m_start);
-                    ASSERT(iter->m_nameRange.m_end);
-                    ASSERT(iter->m_valueRange.m_start);
-                    ASSERT(iter->m_valueRange.m_end);
-                    RefPtr<Attribute> mappedAttribute = Attribute::createMapped(name, value);
-                    if (!m_attributes) {
-                        m_attributes = NamedNodeMap::create();
-                        // Reserving capacity here improves the parser
-                        // benchmark.  It might be worth experimenting with
-                        // the constant to see where the optimal point is.
-                        m_attributes->reserveInitialCapacity(10);
-                    }
-                    m_attributes->insertAttribute(mappedAttribute.release(), false);
-                }
-            }
+            initializeAttributes(token.attributes());
             break;
         }
         case HTMLToken::Comment:
@@ -513,6 +493,8 @@ public:
 private:
     HTMLToken::Type m_type;
 
+    void initializeAttributes(const HTMLToken::AttributeList& attributes);
+    
     bool usesName() const
     {
         return m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE;
@@ -547,6 +529,30 @@ private:
 
     RefPtr<NamedNodeMap> m_attributes;
 };
+
+inline void AtomicHTMLToken::initializeAttributes(const HTMLToken::AttributeList& attributes)
+{
+    size_t size = attributes.size();
+    if (!size)
+        return;
+
+    m_attributes = NamedNodeMap::create();
+    m_attributes->reserveInitialCapacity(size);
+    for (size_t i = 0; i < size; ++i) {
+        const HTMLToken::Attribute& attribute = attributes[i];
+        if (attribute.m_name.isEmpty())
+            continue;
+
+        ASSERT(attribute.m_nameRange.m_start);
+        ASSERT(attribute.m_nameRange.m_end);
+        ASSERT(attribute.m_valueRange.m_start);
+        ASSERT(attribute.m_valueRange.m_end);
+
+        String name(attribute.m_name.data(), attribute.m_name.size());
+        String value(attribute.m_value.data(), attribute.m_value.size());
+        m_attributes->insertAttribute(Attribute::createMapped(name, value), false);
+    }
+}
 
 }
 
