@@ -1,3 +1,12 @@
+2011-03-25  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] Remove deprecated overload of openFileSystem for workers
+        https://bugs.webkit.org/show_bug.cgi?id=57062
+
+        * public/WebCommonWorkerClient.h:
+
 2011-03-25  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Ryosuke Niwa.

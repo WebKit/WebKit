@@ -92,12 +92,6 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
     }
 
-    // This will be removed once changes in chromium use the new method above.
-    virtual void openFileSystem(WebFileSystem::Type, long long size, WebFileSystemCallbacks*)
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-    }
-
 protected:
     ~WebCommonWorkerClient() { }
 };
