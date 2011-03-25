@@ -1,3 +1,12 @@
+2011-03-25  David Kilzer  <ddkilzer@apple.com>
+
+        Remove duplicate entry from JavaScriptCore.exp
+
+        JSC::createStackOverflowError(JSC::ExecState*) was originally
+        exported in r60057, then duplicated in r60392.
+
+        * JavaScriptCore.exp: Removed duplicate entry.
+
 2011-03-25  Jarred Nicholls  <jarred@sencha.com>
 
         Reviewed by Ariya Hidayat.
