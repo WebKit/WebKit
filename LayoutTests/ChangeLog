@@ -1,3 +1,15 @@
+2011-03-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Allow defineOwnProperty to work on DOMObjects
+        https://bugs.webkit.org/show_bug.cgi?id=57129
+
+        Now we disallow the cross origin accesses, rather than just disallowing
+        the defineOwnProperty at all.
+
+        * http/tests/security/xss-DENIED-defineProperty-expected.txt:
+
 2011-03-25  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adele Peterson.

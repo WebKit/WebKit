@@ -1,3 +1,16 @@
+2011-03-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Allow defineOwnProperty to work on DOMObjects
+        https://bugs.webkit.org/show_bug.cgi?id=57129
+
+        Fix a couple of places where we uses getter()/setter() rather
+        than [gs]etterPresent().
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineOwnProperty):
+
 2011-03-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

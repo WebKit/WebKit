@@ -40,10 +40,4 @@ DOMObject::~DOMObject()
 
 #endif
 
-bool DOMObject::defineOwnProperty(ExecState* exec, const Identifier&, PropertyDescriptor&, bool)
-{
-    throwError(exec, createTypeError(exec, "defineProperty is not supported on DOM Objects"));
-    return false;
-}
-
 } // namespace WebCore

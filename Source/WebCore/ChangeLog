@@ -1,3 +1,17 @@
+2011-03-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Allow defineOwnProperty to work on DOMObjects
+        https://bugs.webkit.org/show_bug.cgi?id=57129
+
+        As other engines are allowing defineOwnProperty to be applied
+        to host objects there's no reason for us to retain this
+        restriction.
+
+        * bindings/js/JSDOMWrapper.cpp:
+        * bindings/js/JSDOMWrapper.h:
+
 2011-03-25  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adele Peterson.
