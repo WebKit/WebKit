@@ -1,0 +1,28 @@
+<html>
+<head>
+<script>
+    if (window.layoutTestController) {
+       layoutTestController.dumpAsText();
+       layoutTestController.waitUntilDone();
+    }
+
+    function print(str)
+    {
+        document.getElementById('output').textContent = str;
+    }
+
+    function runTest()
+    {
+        var xmlWindow = window.open('resources/sample.xml', "_blank");
+        var sourceXML = xmlWindow.document.getElementById('source-xml');
+        if (xmlWindow.onWebKitXMLViewerLoad && sourceXML && sourceXML.firstChild.localName='root')
+            print('SUCCESS');
+        else
+            print('FAIL');
+    }
+</script>
+</head>
+<body onload="runTest();">
+    <div id='output'></div>
+</body>
+</html>

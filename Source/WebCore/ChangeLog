@@ -1,3 +1,16 @@
+2011-03-25  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        XML Viewer: extensions can't render original XML
+        https://bugs.webkit.org/show_bug.cgi?id=56263
+
+        Added source xml to transformed document, renamed onload function.
+
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::transformDocumentToTreeView):
+        * xml/XMLViewer.xsl:
+
 2011-03-25  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.

@@ -7,4 +7,3 @@ This tests that xml viewer is not used when there is an attribute XLink namespac
 <FAIL/>
 <xlink l:type="simple" l:href="xlink.xml">SUCCESS</xlink>
 </test>
-

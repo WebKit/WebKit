@@ -33,6 +33,7 @@
 
 
 #include "Base64.h"
+#include "Element.h"
 #include "Document.h"
 #include "Frame.h"
 #include "HTMLNames.h"
@@ -104,9 +105,16 @@ void XMLTreeViewer::transformDocumentToTreeView()
     // FIXME: We should introduce error handling
     if (processor->transformToString(m_document, resultMIMEType, newSource, resultEncoding))
         processor->createDocumentFromSource(newSource, resultEncoding, resultMIMEType, m_document, frame);
+
+    // Adding source xml for dealing with namespaces and CDATA issues and for extensions use.
+    Element* sourceXmlElement = frame->document()->getElementById(AtomicString("source-xml"));
+    if (sourceXmlElement)
+        m_document->cloneChildNodes(sourceXmlElement);
+
     // New document should have been loaded in frame. Tell it to use view source styles.
     frame->document()->setUsesViewSourceStyles(true);
     frame->document()->styleSelectorChanged(RecalcStyleImmediately);
+
 }
 
 } // namespace WebCore

@@ -248,16 +248,16 @@
                 <xsl:call-template name="style"/>
                 <xsl:call-template name="script"/>
             </head>
-            <body onload="onload()">
+            <body onload="onWebKitXMLViewerLoad()">
                 <div class="header">
-                    <span> <xsl:value-of select="$xml_has_no_style_message"/> </span> 
+                    <span> <xsl:value-of select="$xml_has_no_style_message"/> </span>
                     <br/>
                 </div>
 
                 <div class="pretty-print">
                     <xsl:apply-templates/>
                 </div>
-                <div> </div>
+                <div id="source-xml"></div>
             </body>
         </html>
     </xsl:template>
@@ -265,7 +265,7 @@
     <xsl:template name="script">
         <script type="text/javascript">
             <xsl:text>
-                function onload()
+                function onWebKitXMLViewerLoad()
                 {
                     drawArrows();
                     initButtons();
@@ -360,6 +360,10 @@
                 margin-left: 20px;
                 font-family: monospace;
                 font-size: 13px;
+            }
+
+            #source-xml {
+                display: none;
             }
 
             .collapsable-content {

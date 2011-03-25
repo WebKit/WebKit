@@ -12,4 +12,3 @@ This tests that xml viewer is not used when there is a tag in MATHML namespace.
 </a:mrow>
 </a:math>
 </FAIL>
-

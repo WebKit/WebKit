@@ -4,4 +4,3 @@ This XML file does not appear to have any style information associated with it. 
 <desc>There should be no red on this page.</desc>
 <rect x="10" y="10" width="280" height="180" fill="red"/>
 </svg>
-

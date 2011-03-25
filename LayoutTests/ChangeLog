@@ -1,3 +1,28 @@
+2011-03-25  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        XML Viewer: extensions can't render original XML
+        https://bugs.webkit.org/show_bug.cgi?id=56263
+
+        Added source xml to transformed document, renamed onload function.
+
+        * fast/css/dumpAsText/xml-stylesheet-pi-not-in-prolog-expected.txt:
+        * fast/encoding/dumpAsText/utf-16-no-bom-expected.txt:
+        * http/tests/xmlviewer/dumpAsText/wml-expected.txt:
+        * http/tests/xmlviewer/dumpAsText/xlink-expected.txt:
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-charset-cp1251-expected.txt:
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-charset-utf8-expected.txt:
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-expected.txt:
+        * http/tests/xmlviewer/dumpAsText/xul-expected.txt:
+        * platform/chromium-linux/http/tests/xmlviewer/dumpAsText/wml-expected.txt:
+        * platform/chromium/http/tests/xmlviewer/dumpAsText/mathml-expected.txt:
+        * svg/hixie/error/dumpAsText/004-expected.txt:
+        * svg/hixie/error/dumpAsText/005-expected.txt:
+        * xmlviewer/extensions-api-expected.txt: Added.
+        * xmlviewer/extensions-api.html_disabled: Added.
+        * xmlviewer/resources/sample.xml: Added.
+
 2011-03-25  Adam Roben  <aroben@apple.com>
 
         Remove no-longer-necessary Windows results

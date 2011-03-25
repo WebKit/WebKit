@@ -6,4 +6,3 @@ This tests that xml viewer is not used when there is an attribute in XUL namespa
 </header>
 <box a:attr="value">SUCCESS</box>
 </FAIL>
-

@@ -28,4 +28,3 @@ The quick brown fox jumps over the lazy dog. The quick brown fox jumps over the 
 </tag-with-long-cdata>
 <ns:tag-with-some-namespace/>
 </root-tag-with-mixed-content>
-

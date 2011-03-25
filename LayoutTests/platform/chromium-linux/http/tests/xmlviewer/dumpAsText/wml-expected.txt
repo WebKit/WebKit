@@ -14,4 +14,3 @@ This tests that xml viewer is not used for documents with WML doctype.
 <p>SUCCESS</p>
 </card>
 </wml>
-
