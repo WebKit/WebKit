@@ -1,3 +1,35 @@
+2011-03-24  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Add setters for various client interfaces, and add WebSpellCheckClient
+        https://bugs.webkit.org/show_bug.cgi?id=57070
+
+        * public/WebSpellCheckClient.h: Added.
+        (WebKit::WebSpellCheckClient::spellCheck):
+        (WebKit::WebSpellCheckClient::requestCheckingOfText):
+        (WebKit::WebSpellCheckClient::autoCorrectWord):
+        (WebKit::WebSpellCheckClient::showSpellingUI):
+        (WebKit::WebSpellCheckClient::isShowingSpellingUI):
+        (WebKit::WebSpellCheckClient::updateSpellingUIWithMisspelledWord):
+        (WebKit::WebSpellCheckClient::~WebSpellCheckClient):
+        * public/WebView.h:
+        * public/WebViewClient.h:
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::checkSpellingOfString):
+        (WebKit::EditorClientImpl::requestCheckingOfString):
+        (WebKit::EditorClientImpl::getAutoCorrectSuggestionForMisspelledWord):
+        (WebKit::EditorClientImpl::updateSpellingUIWithMisspelledWord):
+        (WebKit::EditorClientImpl::showSpellingUI):
+        (WebKit::EditorClientImpl::spellingUIIsShowing):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setWebDevToolsAgentClient):
+        (WebKit::WebViewImpl::setWebAutoFillClient):
+        (WebKit::WebViewImpl::setWebSpellCheckClient):
+        (WebKit::WebViewImpl::WebViewImpl):
+        * src/WebViewImpl.h:
+        (WebKit::WebViewImpl::spellCheckClient):
+
 2011-03-25  Cary Clark  <caryclark@google.com>
 
         Reviewed by Dimitri Glazkov.

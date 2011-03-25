@@ -114,6 +114,9 @@ public:
 
     // WebView methods:
     virtual void initializeMainFrame(WebFrameClient*);
+    virtual void setDevToolsAgentClient(WebDevToolsAgentClient*);
+    virtual void setAutoFillClient(WebAutoFillClient*);
+    virtual void setSpellCheckClient(WebSpellCheckClient*);
     virtual WebSettings* settings();
     virtual WebString pageEncoding() const;
     virtual void setPageEncoding(const WebString& encoding);
@@ -222,6 +225,11 @@ public:
     WebAutoFillClient* autoFillClient()
     {
         return m_autoFillClient;
+    }
+
+    WebSpellCheckClient* spellCheckClient()
+    {
+        return m_spellCheckClient;
     }
 
     // Returns the page object associated with this view. This may be null when
@@ -408,6 +416,7 @@ private:
 
     WebViewClient* m_client;
     WebAutoFillClient* m_autoFillClient;
+    WebSpellCheckClient* m_spellCheckClient;
 
     ChromeClientImpl m_chromeClientImpl;
     ContextMenuClientImpl m_contextMenuClientImpl;

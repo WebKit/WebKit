@@ -270,9 +270,28 @@ void WebViewImpl::initializeMainFrame(WebFrameClient* frameClient)
     SecurityOrigin::setLocalLoadPolicy(SecurityOrigin::AllowLocalLoadsForLocalOnly);
 }
 
+void WebViewImpl::setDevToolsAgentClient(WebDevToolsAgentClient* devToolsClient) 
+{
+    if (devToolsClient)
+        m_devToolsAgent = new WebDevToolsAgentImpl(this, devToolsClient);
+    else
+        m_devToolsAgent.clear();
+}
+
+void WebViewImpl::setAutoFillClient(WebAutoFillClient* autoFillClient)
+{
+    m_autoFillClient = autoFillClient;
+}
+
+void WebViewImpl::setSpellCheckClient(WebSpellCheckClient* spellCheckClient)
+{
+    m_spellCheckClient = spellCheckClient;
+}
+
 WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devToolsClient, WebAutoFillClient* autoFillClient)
     : m_client(client)
     , m_autoFillClient(autoFillClient)
+    , m_spellCheckClient(0)
     , m_chromeClientImpl(this)
     , m_contextMenuClientImpl(this)
     , m_dragClientImpl(this)
@@ -320,8 +339,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
     // set to impossible point so we always get the first mouse pos
     m_lastMousePosition = WebPoint(-1, -1);
 
-    if (devToolsClient)
-        m_devToolsAgent = new WebDevToolsAgentImpl(this, devToolsClient);
+    setDevToolsAgentClient(devToolsClient);
 
     Page::PageClients pageClients;
     pageClients.chromeClient = &m_chromeClientImpl;

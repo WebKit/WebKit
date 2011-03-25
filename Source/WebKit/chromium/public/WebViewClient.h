@@ -171,6 +171,7 @@ public:
 
 
     // Spellchecker --------------------------------------------------------
+    // FIXME(jam): remove once chromium is updated to use WebSpellCheckClient
 
     // The client should perform spell-checking on the given text.  If the
     // text contains a misspelled word, then upon return misspelledOffset
