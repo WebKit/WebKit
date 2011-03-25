@@ -1,3 +1,24 @@
+2011-03-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Eliminate Node::dispatchGenericEvent.
+        https://bugs.webkit.org/show_bug.cgi?id=57045
+
+        No functional change, covered by existing tests.
+
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchEvent): Combined with the body of dispatchGenericEvent,
+            removed unnecessary extra refs and a stale comment.
+        * dom/Node.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchLoadEvent): Changed to use dispatchEvent.
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible): Ditto.
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::dispatchEvent): Ditto. The code here still
+            works thanks to SVG-aware retargeting in Node.
+
 2011-03-24  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

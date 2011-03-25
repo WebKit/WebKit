@@ -1569,11 +1569,8 @@ void DOMWindow::dispatchLoadEvent()
     // This is a DOM extension and is independent of bubbling/capturing rules of
     // the DOM.
     Element* ownerElement = m_frame ? m_frame->ownerElement() : 0;
-    if (ownerElement) {
-        RefPtr<Event> ownerEvent = Event::create(eventNames().loadEvent, false, false);
-        ownerEvent->setTarget(ownerElement);
-        ownerElement->dispatchGenericEvent(ownerEvent.release());
-    }
+    if (ownerElement)
+        ownerElement->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
 
     InspectorInstrumentation::loadEventFired(frame(), url());
 }

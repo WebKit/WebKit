@@ -133,19 +133,13 @@ void SVGElementInstance::removeAllEventListeners()
     m_element->removeAllEventListeners();
 }
 
-bool SVGElementInstance::dispatchEvent(PassRefPtr<Event> prpEvent)
+bool SVGElementInstance::dispatchEvent(PassRefPtr<Event> event)
 {
-    RefPtr<EventTarget> protect = this;
-    RefPtr<Event> event = prpEvent;
-
-    event->setTarget(this);
-
     SVGElement* element = shadowTreeElement();
     if (!element)
         return false;
 
-    RefPtr<FrameView> view = element->document()->view();
-    return element->dispatchGenericEvent(event.release());
+    return element->dispatchEvent(event);
 }
 
 EventTargetData* SVGElementInstance::eventTargetData()

@@ -2665,17 +2665,6 @@ static void getEventAncestors(Node* node, Vector<EventContext>& ancestors, Event
     }
 }
 
-bool Node::dispatchEvent(PassRefPtr<Event> prpEvent)
-{
-    RefPtr<EventTarget> protect = this;
-    RefPtr<Event> event = prpEvent;
-
-    event->setTarget(eventTargetRespectingSVGTargetRules(this));
-
-    RefPtr<FrameView> view = document()->view();
-    return dispatchGenericEvent(event.release());
-}
-
 void Node::dispatchScopedEvent(PassRefPtr<Event> event)
 {
     // We need to set the target here because it can go away by the time we actually fire the event.
@@ -2705,18 +2694,19 @@ static EventDispatchBehavior determineDispatchBehavior(Event* event)
     return RetargetEvent;
 }
 
-bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
+bool Node::dispatchEvent(PassRefPtr<Event> prpEvent)
 {
-    RefPtr<Event> event(prpEvent);
+    RefPtr<EventTarget> protect = this;
+    RefPtr<Event> event = prpEvent;
+
+    event->setTarget(eventTargetRespectingSVGTargetRules(this));
+
+    RefPtr<FrameView> view = document()->view();
 
     ASSERT(!eventDispatchForbidden());
     ASSERT(event->target());
     ASSERT(!event->type().isNull()); // JavaScript code can create an event with an empty name, but not null.
 
-    // Make a vector of ancestors to send the event to.
-    // If the node is not in a document just send the event to it.
-    // Be sure to ref all of nodes since event handlers could result in the last reference going away.
-    RefPtr<Node> thisNode(this);
     RefPtr<EventTarget> originalTarget = event->target();
     Vector<EventContext> ancestors;
     getEventAncestors(this, ancestors, originalTarget.get(), determineDispatchBehavior(event.get()));

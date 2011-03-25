@@ -526,7 +526,6 @@ public:
     bool dispatchEvent(PassRefPtr<Event>);
     void dispatchScopedEvent(PassRefPtr<Event>);
 
-    bool dispatchGenericEvent(PassRefPtr<Event>);
     virtual void handleLocalEvents(Event*);
 
     void dispatchSubtreeModifiedEvent();
