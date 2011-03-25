@@ -416,6 +416,9 @@ media/video-controls-in-media-document.html
 # Sometimes fails http://webkit.org/b/55329
 fast/events/pageshow-pagehide-on-back-cached.html
 
+# Different tests sometimes time out on apple-windows-5 http://webkit.org/b/55579
+http/tests/websocket
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
