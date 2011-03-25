@@ -22,6 +22,13 @@
  *
  */
 
+// FIXME: This is temporary until Chromium and QT switch to using this file.
+#if PLATFORM(CHROMIUM)
+#include "chromium/FontPlatformData.h"
+#elif PLATFORM(QT)
+#include "qt/FontPlatformData.h"
+#else
+
 #ifndef FontPlatformData_h
 #define FontPlatformData_h
 
@@ -372,3 +379,5 @@ private:
 } // namespace WebCore
 
 #endif
+
+#endif // PLATFORM(CHROMIUM)
