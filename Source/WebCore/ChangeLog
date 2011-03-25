@@ -1,3 +1,18 @@
+2011-03-25  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Pasteboard data's RTF data doesn't always include URLs via NSLinkAttributeName.
+        https://bugs.webkit.org/show_bug.cgi?id=57107
+        <rdar://problem/9084267>
+
+        If the selection is at the beginning of content inside an anchor tag
+        we move the selection start to include the anchor.
+        
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection): Modified to change the selection
+        start according to the new rule.
+
 2011-03-25  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

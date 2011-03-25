@@ -41,6 +41,7 @@
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 #import "HTMLConverter.h"
 #endif
+#import "htmlediting.h"
 #import "HTMLNames.h"
 #import "Image.h"
 #import "KURL.h"
@@ -147,6 +148,17 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, NSArray* pasteboardTyp
         Pasteboard::generalPasteboard(); // Initializes pasteboard types.
     ASSERT(selectedRange);
     
+    // If the selection is at the beginning of content inside an anchor tag
+    // we move the selection start to include the anchor.
+    // This way the attributed string will contain the url attribute as well.
+    // See <rdar://problem/9084267>.
+    ExceptionCode ec;
+    Node* commonAncestor = selectedRange->commonAncestorContainer(ec);
+    ASSERT(commonAncestor);
+    Node* enclosingAnchor = enclosingNodeWithTag(firstPositionInNode(commonAncestor), HTMLNames::aTag);
+    if (enclosingAnchor && comparePositions(firstPositionInOrBeforeNode(selectedRange->startPosition().anchorNode()), selectedRange->startPosition()) >= 0)
+        selectedRange->setStart(enclosingAnchor, 0, ec);
+
     // Using different API for WebKit and WebKit2.
     NSAttributedString *attributedString = nil;
     if (frame->view()->platformWidget())
