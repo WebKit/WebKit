@@ -1,3 +1,24 @@
+2011-03-25  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add CoreIPC::encodeResourceError() and CoreIPC::decodeResourceError() for all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=57125
+        
+        Currently, these are only implemented on the Mac, but we're going to need them for Windows as well, so we might as well make them always platform-specific.
+        In this patch, just replicate the existing common non-Mac implementation in WebCoreArgumentCoders.h to platform-specific files.
+
+        * Shared/WebCoreArgumentCoders.h: Move non-Mac implementations of encodeResourceError() and decodeResourceError() to common files.
+        * Shared/gtk/WebCoreArgumentCodersGtk.cpp:
+        (CoreIPC::encodeResourceError): Added.
+        (CoreIPC::decodeResourceError): Added.
+        * Shared/qt/WebCoreArgumentCodersQt.cpp:
+        (CoreIPC::encodeResourceError): Added.
+        (CoreIPC::decodeResourceError): Added.
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (CoreIPC::encodeResourceError): Added.
+        (CoreIPC::decodeResourceError): Added.
+
 2011-03-25  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adele Peterson.

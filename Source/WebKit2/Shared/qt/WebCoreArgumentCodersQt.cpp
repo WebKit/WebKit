@@ -60,4 +60,21 @@ bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse&
     return true;
 }
 
+void encodeResourceError(ArgumentEncoder* encoder, const WebCore::ResourceError& resourceError)
+{
+    encoder->encode(CoreIPC::In(resourceError.domain(), resourceError.errorCode(), resourceError.failingURL(), resourceError.localizedDescription()));
+}
+
+bool decodeResourceError(ArgumentDecoder* decoder, WebCore::ResourceError& resourceError)
+{
+    String domain;
+    int errorCode;
+    String failingURL;
+    String localizedDescription;
+    if (!decoder->decode(CoreIPC::Out(domain, errorCode, failingURL, localizedDescription)))
+        return false;
+    resourceError = WebCore::ResourceError(domain, errorCode, failingURL, localizedDescription);
+    return true;
+}
+
 } // namespace CoreIPC

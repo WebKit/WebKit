@@ -277,36 +277,19 @@ template<> struct ArgumentCoder<WebCore::ResourceResponse> {
     }
 };
 
-#if PLATFORM(MAC)
 // These two functions are implemented in a platform specific manner.
 void encodeResourceError(ArgumentEncoder*, const WebCore::ResourceError&);
 bool decodeResourceError(ArgumentDecoder*, WebCore::ResourceError&);
-#endif
 
 template<> struct ArgumentCoder<WebCore::ResourceError> {
     static void encode(ArgumentEncoder* encoder, const WebCore::ResourceError& resourceError)
     {
-#if PLATFORM(MAC)
         encodeResourceError(encoder, resourceError);
-#else
-        encoder->encode(CoreIPC::In(resourceError.domain(), resourceError.errorCode(), resourceError.failingURL(), resourceError.localizedDescription()));
-#endif
     }
     
     static bool decode(ArgumentDecoder* decoder, WebCore::ResourceError& resourceError)
     {
-#if PLATFORM(MAC)
         return decodeResourceError(decoder, resourceError);
-#else
-        String domain;
-        int errorCode;
-        String failingURL;
-        String localizedDescription;
-        if (!decoder->decode(CoreIPC::Out(domain, errorCode, failingURL, localizedDescription)))
-            return false;
-        resourceError = WebCore::ResourceError(domain, errorCode, failingURL, localizedDescription);
-        return true;
-#endif
     }
 };
 
