@@ -52,6 +52,32 @@ bool Font::canExpandAroundIdeographsInComplexText()
     return true;
 }
 
+// CTFontGetVerticalTranslationsForGlyphs is different on Snow Leopard.  It returns values for a font-size of 1
+// without unitsPerEm applied.  We have to apply a transform that scales up to the point size and that also 
+// divides by unitsPerEm.
+static bool hasBrokenCTFontGetVerticalTranslationsForGlyphs()
+{
+// Chromium runs the same binary on both Leopard and Snow Leopard, so the check has to happen at runtime.
+#if PLATFORM(CHROMIUM)
+    static bool isCached = false;
+    static bool result;
+    
+    if (!isCached) {
+        SInt32 majorVersion = 0;
+        SInt32 minorVersion = 0;
+        Gestalt(gestaltSystemVersionMajor, &majorVersion);
+        Gestalt(gestaltSystemVersionMinor, &minorVersion);
+        result = majorVersion == 10 && minorVersion == 6;
+        isCached = true;
+    }
+    return result;
+#elif defined(BUILDING_ON_SNOW_LEOPARD)
+    return true;
+#else
+    return false;
+#endif
+}
+
 static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData* font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, size_t count)
 {
     CGContextSetTextPosition(context, point.x(), point.y());
@@ -66,17 +92,15 @@ static void showGlyphsWithAdvances(const FloatPoint& point, const SimpleFontData
             CGAffineTransform runMatrix = CGAffineTransformConcat(savedMatrix, rotateLeftTransform);
             CGContextSetTextMatrix(context, runMatrix);
             
-#if defined(BUILDING_ON_SNOW_LEOPARD)
-            // CTFontGetVerticalTranslationsForGlyphs is different on Snow Leopard.  It returns values for a font-size of 1
-            // without unitsPerEm applied.  We have to apply a transform that scales up to the point size and that also 
-            // divides by unitsPerEm.
-            CGAffineTransform translationsTransform = CGAffineTransformMake(platformData.m_size, 0, 0, platformData.m_size, 0, 0);
-            translationsTransform = CGAffineTransformConcat(translationsTransform, rotateLeftTransform);
-            CGFloat unitsPerEm = CGFontGetUnitsPerEm(platformData.cgFont());
-            translationsTransform = CGAffineTransformConcat(translationsTransform, CGAffineTransformMakeScale(1 / unitsPerEm, 1 / unitsPerEm));
-#else
-            CGAffineTransform translationsTransform = rotateLeftTransform;
-#endif
+            CGAffineTransform translationsTransform;
+            if (hasBrokenCTFontGetVerticalTranslationsForGlyphs()) {
+                translationsTransform = CGAffineTransformMake(platformData.m_size, 0, 0, platformData.m_size, 0, 0);
+                translationsTransform = CGAffineTransformConcat(translationsTransform, rotateLeftTransform);
+                CGFloat unitsPerEm = CGFontGetUnitsPerEm(platformData.cgFont());
+                translationsTransform = CGAffineTransformConcat(translationsTransform, CGAffineTransformMakeScale(1 / unitsPerEm, 1 / unitsPerEm));
+            } else {
+                translationsTransform = rotateLeftTransform;
+            }
             Vector<CGSize, 256> translations(count);
             CTFontGetVerticalTranslationsForGlyphs(platformData.ctFont(), glyphs, translations.data(), count);
             

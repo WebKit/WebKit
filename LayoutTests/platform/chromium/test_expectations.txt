@@ -3096,29 +3096,6 @@ BUGWK54322 MAC SNOWLEOPARD : transforms/svg-vs-css.xhtml = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : transitions/move-after-transition.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/dom/scroll-reveal-left-overflow.html = IMAGE
 
-// Vertical Japanese text is not displayed on Snow Leopard after r80582
-BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/border-vertical-lr.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
-BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/broken-ideographic-font.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/japanese-lr-selection.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/japanese-lr-text.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/japanese-rl-selection.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/japanese-rl-text.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/vertical-align-table-baseline.html = IMAGE 
-BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/blockflow/vertical-font-fallback.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/dynamic/text-combine.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
-BUGWK56962 MAC SNOWLEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE IMAGE+TEXT
-BUGWK56962 MAC SNOWLEOPARD : fast/text/emphasis-combined-text.html = IMAGE IMAGE+TEXT
-BUGWK56962 MAC SNOWLEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE
-
 // Snow Leopard-only flakiness
 BUGWK54322 MAC SNOWLEOPARD : dom/html/level1/core/hc_textwithnomarkup.html = TIMEOUT PASS
 BUGWK54322 MAC SNOWLEOPARD : fast/canvas/translate-text.html = PASS TIMEOUT
@@ -3205,7 +3182,7 @@ BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TE
 
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
-BUGCR75424 MAC LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE+TEXT
+BUGCR75424 MAC LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
 BUGCR75424 MAC LEOPARD : fast/blockflow/broken-ideographic-font.html = IMAGE
 BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
 

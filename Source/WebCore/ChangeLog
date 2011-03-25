@@ -1,3 +1,17 @@
+2011-03-24  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [Chromium] Vertical Japanese text is not displayed on Snow Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=56962
+
+        Make Snow Leopard check added by r80740 into a runtime check for
+        Chromium, since it uses the same binary on both Leopard and Snow Leopard.
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::hasBrokenCTFontGetVerticalTranslationsForGlyphs):
+        (WebCore::showGlyphsWithAdvances):
+
 2011-03-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
