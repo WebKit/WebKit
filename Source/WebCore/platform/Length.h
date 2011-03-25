@@ -120,11 +120,8 @@ public:
     {
         switch (type()) {
             case Fixed:
-                return value();
             case Percent:
-                if (roundPercentages)
-                    return static_cast<int>(round(maxValue * percent() / 100.0));
-                return static_cast<int>(maxValue * percent() / 100.0);
+                return calcMinValue(maxValue, roundPercentages);
             case Auto:
                 return maxValue;
             default:
@@ -139,8 +136,9 @@ public:
                 return value();
             case Percent:
                 if (roundPercentages)
-                    return static_cast<int>(round(maxValue * percent() / 100.0));
-                return static_cast<int>(maxValue * percent() / 100.0);
+                    return static_cast<int>(round(maxValue * percent() / 100.0f));
+                // Don't remove the extra cast to float. It is needed for rounding on 32-bit Intel machines that use the FPU stack.
+                return static_cast<int>(static_cast<float>(maxValue * percent() / 100.0f));
             case Auto:
             default:
                 return 0;
@@ -153,7 +151,7 @@ public:
             case Fixed:
                 return getFloatValue();
             case Percent:
-                return static_cast<float>(maxValue * percent() / 100.0);
+                return static_cast<float>(maxValue * percent() / 100.0f);
             case Auto:
                 return static_cast<float>(maxValue);
             default:
