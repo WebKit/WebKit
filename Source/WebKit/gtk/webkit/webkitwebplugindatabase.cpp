@@ -74,7 +74,8 @@ static void webkit_web_plugin_database_init(WebKitWebPluginDatabase* database)
  */
 void webkit_web_plugin_database_plugins_list_free(GSList* list)
 {
-    g_return_if_fail(list);
+    if (!list)
+        return;
 
     for (GSList* p = list; p; p = p->next)
         g_object_unref(p->data);

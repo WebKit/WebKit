@@ -1,3 +1,14 @@
+2011-03-25  Priit Laes  <plaes@plaes.org>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] [PATCH] Avoid critical warning when free-ing list of plugins
+        https://bugs.webkit.org/show_bug.cgi?id=57025
+
+        * webkit/webkitwebplugindatabase.cpp:
+        (webkit_web_plugin_database_plugins_list_free):
+        Use regular check and return instead of g_return_if_fail.
+
 2011-03-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81916 and r81917.
