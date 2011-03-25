@@ -88,6 +88,8 @@ const String& CachedScript::script()
         m_script += m_decoder->flush();
         setDecodedSize(m_script.length() * sizeof(UChar));
     }
+    m_decodedDataDeletionTimer.startOneShot(0);
+    
     return m_script;
 }
 
@@ -125,7 +127,7 @@ void CachedScript::destroyDecodedData()
     m_script = String();
     unsigned extraSize = 0;
 #if USE(JSC)
-    if (m_sourceProviderCache)
+    if (m_sourceProviderCache && m_clients.isEmpty())
         m_sourceProviderCache->clear();
 
     extraSize = m_sourceProviderCache ? m_sourceProviderCache->byteSize() : 0;

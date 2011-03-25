@@ -620,6 +620,20 @@
 
         Reviewed by Geoff Garen.
 
+        <rdar://problem/9146716> REGRESSION: ~10 MB increase in memory under CachedScripts
+        Add back a call to destroy decoded data after access.  Keep the SourceProviderCache 
+        around as long as their are still clients to use it.
+
+        No new tests because there is no change in behavior.  Current tests pass.
+
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::script):
+        (WebCore::CachedScript::destroyDecodedData):
+
+2011-03-24  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff Garen.
+
         https://bugs.webkit.org/show_bug.cgi?id=57073
         Rework the AtomicHTMLConstructor to reserve space for attributes based on the size of the attribute list.
         Saves 1.5 MB on Membuster.
