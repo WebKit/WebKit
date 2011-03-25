@@ -1,3 +1,13 @@
+2011-03-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the GTK+ build until we can implement the new cross-platform
+        FontPlatformData.h bits.
+
+        * platform/graphics/FontPlatformData.h: Include the proper old font headers.
+        (WebCore::FontPlatformData::FontPlatformData): Eliminate GTK+ specific bits of this file
+        which reference our obsolete font implementation.
+        (WebCore::FontPlatformData::hash): Ditto.
+
 2011-03-25  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Brian Weinstein.

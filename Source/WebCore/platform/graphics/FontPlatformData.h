@@ -27,6 +27,10 @@
 #include "chromium/FontPlatformData.h"
 #elif PLATFORM(QT)
 #include "qt/FontPlatformData.h"
+#elif PLATFORM(GTK) && USE(FREETYPE)
+#include "freetype/FontPlatformData.h"
+#elif PLATFORM(GTK) && USE(PANGO)
+#include "pango/FontPlatformData.h"
 #else
 
 #ifndef FontPlatformData_h
@@ -45,8 +49,6 @@
 #if PLATFORM(CAIRO)
 #include <cairo-win32.h>
 #endif
-#elif PLATFORM(GTK)
-#include <pango/pangocairo.h>
 #endif
 
 #if PLATFORM(CAIRO)
@@ -121,9 +123,6 @@ public:
 #elif PLATFORM(CAIRO)
         , m_fontFace(0)
         , m_scaledFont(0)
-#if PLATFORM(GTK)
-        , m_context(0)
-#endif
 #endif
         , m_isColorBitmapFont(false)
 #if PLATFORM(WIN)
@@ -147,9 +146,6 @@ public:
 #elif PLATFORM(CAIRO)
         , m_fontFace(0)
         , m_scaledFont(0)
-#if PLATFORM(GTK)
-        , m_context(0)
-#endif
 #endif
         , m_isColorBitmapFont(false)
 #if PLATFORM(WIN)
@@ -176,9 +172,6 @@ public:
 #elif PLATFORM(CAIRO)
         , m_fontFace(0)
         , m_scaledFont(0)
-#if PLATFORM(GTK)
-        , m_context(0)
-#endif
 #endif
         , m_isColorBitmapFont(false)
 #if PLATFORM(WIN)
@@ -215,10 +208,6 @@ public:
 #endif
 
     ~FontPlatformData();
-
-#if PLATFORM(GTK)
-    static bool init();
-#endif
 
 #if PLATFORM(WIN)
     HFONT hfont() const { return m_font ? m_font->handle() : 0; }
@@ -265,9 +254,6 @@ public:
     {
 #if PLATFORM(WIN)
         return m_font ? m_font->hash() : 0;
-#elif PLATFORM(GTK)
-        uintptr_t hashCodes[1] = { reinterpret_cast<uintptr_t>(m_scaledFont) };
-        return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
 #elif OS(DARWIN)
         ASSERT(m_font || !m_cgFont);
         uintptr_t hashCodes[3] = { (uintptr_t)m_font, m_widthVariant, m_textOrientation << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique };
@@ -318,8 +304,6 @@ private:
     static NSFont* hashTableDeletedFontValue() { return reinterpret_cast<NSFont *>(-1); }
 #elif PLATFORM(WIN)
     void platformDataInit(HFONT, float size, HDC, WCHAR* faceName);
-#elif PLATFORM(GTK)
-    static PangoFont* hashTableDeletedFontValue() { return reinterpret_cast<PangoFont*>(-1); }
 #endif
 
 public:
@@ -335,8 +319,6 @@ private:
     NSFont* m_font;
 #elif PLATFORM(WIN)
     RefPtr<RefCountedGDIHandle<HFONT> > m_font;
-#elif PLATFORM(GTK)
-    PangoFont* m_font;
 #endif
 
 #if PLATFORM(CG)
@@ -355,14 +337,6 @@ private:
 #if PLATFORM(CAIRO)
     cairo_font_face_t* m_fontFace;
     cairo_scaled_font_t* m_scaledFont;
-#if PLATFORM(GTK)
-    PangoContext* m_context;
-#endif
-#endif
-
-#if PLATFORM(GTK)
-    static PangoFontMap* m_fontMap;
-    static GHashTable* m_hashTable;
 #endif
 
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
