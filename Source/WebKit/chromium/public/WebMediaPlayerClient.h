@@ -49,6 +49,7 @@ public:
     virtual void sizeChanged() = 0;
     virtual void sawUnsupportedTracks() = 0;
     virtual float volume() const = 0;
+    virtual void playbackStateChanged() = 0;
 
 protected:
     ~WebMediaPlayerClient() { }

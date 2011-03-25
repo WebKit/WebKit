@@ -183,6 +183,12 @@ float WebMediaPlayerClientImpl::volume() const
     return 0.0f;
 }
 
+void WebMediaPlayerClientImpl::playbackStateChanged()
+{
+    ASSERT(m_mediaPlayer);
+    m_mediaPlayer->playbackStateChanged();
+}
+
 // MediaPlayerPrivateInterface -------------------------------------------------
 
 void WebMediaPlayerClientImpl::load(const String& url)

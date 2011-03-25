@@ -76,6 +76,7 @@ public:
     virtual void sizeChanged();
     virtual void sawUnsupportedTracks();
     virtual float volume() const;
+    virtual void playbackStateChanged();
 
     // MediaPlayerPrivateInterface methods:
     virtual void load(const WTF::String& url);

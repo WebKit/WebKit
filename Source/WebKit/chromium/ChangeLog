@@ -1,3 +1,16 @@
+2011-03-24  Min Qin  <qinmin@google.com>
+
+        Reviewed by James Robinson.
+
+        Allow WebMediaPlayerClient to notify MediaPlayer that the playback state has changed
+
+        https://bugs.webkit.org/show_bug.cgi?id=56837
+
+        * public/WebMediaPlayerClient.h:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::playbackStateChanged):
+        * src/WebMediaPlayerClientImpl.h:
+
 2011-03-23  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Tony Chang.
