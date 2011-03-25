@@ -1,3 +1,13 @@
+2011-03-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        Rebaseline GTK+ tests results after r81887
+
+        * platform/gtk/editing/pasteboard/5065605-expected.txt:
+        * platform/gtk/editing/pasteboard/display-block-on-spans-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-011-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-at-tabspan-001-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-text-at-tabspan-002-expected.txt:
+
 2011-03-25  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Kent Tamura.

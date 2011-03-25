@@ -18,16 +18,11 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,38) size 784x38
           RenderBlock (anonymous) at (0,0) size 784x19
             RenderInline {FONT} at (0,0) size 148x19 [color=#FF0000]
-              RenderInline {SPAN} at (0,0) size 148x19 [color=#000000]
-                RenderInline {FONT} at (0,0) size 148x19 [color=#FF0000]
-                  RenderText {#text} at (0,0) size 148x19
-                    text run at (0,0) width 148: "This text should be red."
-          RenderBlock (anonymous) at (0,19) size 784x19 [color=#FF0000]
-            RenderBlock {DIV} at (0,0) size 784x19 [color=#000000]
-              RenderInline {FONT} at (0,0) size 148x19 [color=#FF0000]
-                RenderText {#text} at (0,0) size 148x19
-                  text run at (0,0) width 148: "This text should be red."
+              RenderText {#text} at (0,0) size 148x19
+                text run at (0,0) width 148: "This text should be red."
+          RenderBlock {DIV} at (0,19) size 784x19
+            RenderInline {FONT} at (0,0) size 148x19 [color=#FF0000]
+              RenderText {#text} at (0,0) size 148x19
+                text run at (0,0) width 148: "This text should be red."
           RenderBlock (anonymous) at (0,38) size 784x0
-            RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
-            RenderInline {FONT} at (0,0) size 0x0 [color=#FF0000]
-caret: position 24 of child 0 {#text} of child 0 {FONT} of child 1 {DIV} of child 0 {FONT} of child 2 {DIV} of child 2 {DIV} of body
+caret: position 24 of child 0 {#text} of child 0 {FONT} of child 1 {DIV} of child 2 {DIV} of child 2 {DIV} of body
