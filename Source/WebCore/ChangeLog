@@ -1,3 +1,18 @@
+2011-03-25  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Brian Weinstein.
+
+        Microsoft Windows Presentation Foundation (WPF) plug-in complains about missing xpcom.dll
+        https://bugs.webkit.org/show_bug.cgi?id=57119
+        <rdar://problem/9054148>
+        
+        This plug-in from Microsoft links against xpcom.dll, which is a Firefox-specific DLL
+        not available in WebKit. The plug-in is fairly widespread, since it was included in
+        a Windows Update push at one point.
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::isPluginBlacklisted): Blacklist npwpf.dll.
+
 2011-03-25  Tony Chang  <tony@chromium.org>
 
         Try to fix the chromium mac build.

@@ -360,6 +360,11 @@ bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
         return false;
     }
 
+    if (equalIgnoringCase(plugin.info.file, "npwpf.dll")) {
+        // Bug 57119: Microsoft Windows Presentation Foundation (WPF) plug-in complains about missing xpcom.dll
+        return false;
+    }
+
     if (plugin.info.name == "Yahoo Application State Plugin") {
         // https://bugs.webkit.org/show_bug.cgi?id=26860
         // Bug in Yahoo Application State plug-in earlier than 1.0.0.6 leads to heap corruption.

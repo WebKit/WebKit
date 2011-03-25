@@ -74,6 +74,9 @@ bool PluginPackage::isPluginBlacklisted()
     } else if (fileName() == "npmozax.dll") {
         // Bug 15217: Mozilla ActiveX control complains about missing xpcom_core.dll
         return true;
+    } else if (fileName() == "npwpf.dll") {
+        // Bug 57119: Microsoft Windows Presentation Foundation (WPF) plug-in complains about missing xpcom.dll
+        return true;
     } else if (name() == "Yahoo Application State Plugin") {
         // https://bugs.webkit.org/show_bug.cgi?id=26860
         // Bug in Yahoo Application State plug-in earlier than 1.0.0.6 leads to heap corruption. 
