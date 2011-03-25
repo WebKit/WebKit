@@ -1,3 +1,14 @@
+2011-03-25  Jarred Nicholls  <jarred@sencha.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] MSVC Build Error - need to link advapi32.lib for jsc.exe
+        https://bugs.webkit.org/show_bug.cgi?id=56098
+
+        Need to link advapi32.lib for jsc.exe since wtf/OSRandomSource.cpp uses the Win32 Crypto API
+
+        * jsc.pro:
+
 2011-03-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Darin Adler.
