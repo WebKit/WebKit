@@ -1,3 +1,15 @@
+2011-03-25  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Text field "onchange" event is triggered if actual value unchanged
+        https://bugs.webkit.org/show_bug.cgi?id=36314
+
+        Add tests for text field change events.
+
+        * fast/events/onchange-text-form-field-expected.txt: Added.
+        * fast/events/onchange-text-form-field.html: Added.
+
 2011-03-25  Jessie Berlin  <jberlin@apple.com>
 
         Websockets tests sometimes time out on apple-windows-5

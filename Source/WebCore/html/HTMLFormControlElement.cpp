@@ -547,6 +547,12 @@ HTMLTextFormControlElement::~HTMLTextFormControlElement()
 {
 }
 
+void HTMLTextFormControlElement::insertedIntoDocument()
+{
+    HTMLFormControlElement::insertedIntoDocument();
+    setTextAsOfLastFormControlChangeEvent(value());
+}
+
 void HTMLTextFormControlElement::dispatchFocusEvent()
 {
     if (supportsPlaceholder())
@@ -627,6 +633,15 @@ void HTMLTextFormControlElement::setSelectionEnd(int end)
 void HTMLTextFormControlElement::select()
 {
     setSelectionRange(0, numeric_limits<int>::max());
+}
+
+void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
+{
+    if (m_textAsOfLastFormControlChangeEvent != value()) {
+        HTMLElement::dispatchChangeEvents();
+        setTextAsOfLastFormControlChangeEvent(value());
+    }
+    setChangedSinceLastFormControlChangeEvent(false);
 }
 
 void HTMLTextFormControlElement::setSelectionRange(int start, int end)

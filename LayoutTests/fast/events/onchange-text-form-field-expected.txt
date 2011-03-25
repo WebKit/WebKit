@@ -1,0 +1,26 @@
+      
+PASS simulateTextEntry(elements[0], '', true); is false
+PASS simulateTextEntry(elements[0], 'fo', true); is true
+PASS simulateTextEntry(elements[0], 'o', false); is true
+PASS simulateTextEntry(elements[0], 'foo', true); is false
+PASS simulateTextEntry(elements[0], 'foo', true); is false
+PASS simulateTextEntry(elements[0], ' ', false); is true
+PASS simulateTextEntry(elements[0], 'foo bar', true); is true
+PASS simulateTextEntry(elements[0], 'foo bar', true); is false
+PASS setTextValue(elements[0], 'foo'); is false
+PASS simulateTextEntry(elements[0], 'foo bar', true); is true
+PASS simulateTextEntry(elements[1], '', true); is true
+PASS simulateTextEntry(elements[1], 'fo', true); is true
+PASS simulateTextEntry(elements[1], 'o', false); is true
+PASS simulateTextEntry(elements[1], 'foo', true); is false
+PASS simulateTextEntry(elements[2], '', true); is false
+PASS simulateTextEntry(elements[2], 'fo', true); is true
+PASS simulateTextEntry(elements[2], 'o', false); is true
+PASS simulateTextEntry(elements[2], 'foo', true); is false
+PASS simulateTextEntry(elements[3], 'foo', true); is false
+PASS simulateTextEntry(elements[3], 'foo', true); is false
+PASS setTextValue(elements[3], ''); is false
+PASS simulateTextEntry(elements[3], 'fo', true); is true
+PASS simulateTextEntry(elements[3], 'o', false); is true
+PASS simulateTextEntry(elements[3], 'foo', true); is false
+

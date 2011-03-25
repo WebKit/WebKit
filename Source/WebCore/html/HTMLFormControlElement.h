@@ -194,6 +194,8 @@ public:
 
     virtual ~HTMLTextFormControlElement();
 
+    virtual void insertedIntoDocument();
+
     // The derived class should return true if placeholder processing is needed.
     virtual bool supportsPlaceholder() const = 0;
     String strippedPlaceholder() const;
@@ -207,6 +209,8 @@ public:
     void setSelectionRange(int start, int end);
     PassRefPtr<Range> selection() const;
 
+    virtual void dispatchFormControlChangeEvent();
+
     virtual int maxLength() const = 0;
     virtual String value() const = 0;
 
@@ -216,6 +220,7 @@ protected:
     void updatePlaceholderVisibility(bool);
 
     virtual void parseMappedAttribute(Attribute*);
+    virtual void setTextAsOfLastFormControlChangeEvent(String text) { m_textAsOfLastFormControlChangeEvent = text; }
 
 private:
     virtual void dispatchFocusEvent();
@@ -236,6 +241,8 @@ private:
     virtual void handleBlurEvent() { }
 
     RenderTextControl* textRendererAfterUpdateLayout();
+
+    String m_textAsOfLastFormControlChangeEvent;
 };
 
 } // namespace

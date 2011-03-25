@@ -1,0 +1,81 @@
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<body>
+    <div id="test">
+        <input type="text">
+        <input type="text"value="foo">
+        <textarea></textarea>
+        <textarea>foo</textarea>
+    </div>
+    <div id="console"></div>
+</body>
+<script>
+
+    function simulateTextEntry(element, text, opt_clear) {
+        if (!window.eventSender)
+            return null;
+            
+        var firedEvent = false;
+        function listener(event) {
+            firedEvent = true;
+        }
+        element.addEventListener('change', listener, false);
+        element.focus();
+        if (opt_clear) {
+            element.select();
+            eventSender.keyDown('delete');
+        }
+        for (var i = 0; i < text.length; i++) {
+            eventSender.keyDown(text.charAt(i));
+        }
+        element.blur();
+        element.removeEventListener('change', listener, false);
+        return firedEvent;
+    }
+
+
+    function setTextValue(element, text) {
+        var firedEvent = false;
+        function listener(event) {
+            firedEvent = true;
+        }
+        element.addEventListener('change', listener, false);
+        element.focus();
+        element.value = text;
+        element.blur();
+        element.removeEventListener('change', listener, false);
+        return firedEvent;
+    }
+
+    var elements = document.getElementById('test').getElementsByTagName('*');
+
+    shouldBe("simulateTextEntry(elements[0], '', true);", "false");
+    shouldBe("simulateTextEntry(elements[0], 'fo', true);", "true");
+    shouldBe("simulateTextEntry(elements[0], 'o', false);", "true");
+    shouldBe("simulateTextEntry(elements[0], 'foo', true); ", "false");
+    shouldBe("simulateTextEntry(elements[0], 'foo', true); ", "false");
+    shouldBe("simulateTextEntry(elements[0], ' ', false); ", "true");
+    shouldBe("simulateTextEntry(elements[0], 'foo bar', true); ", "true");
+    shouldBe("simulateTextEntry(elements[0], 'foo bar', true); ", "false");
+    shouldBe("setTextValue(elements[0], 'foo'); ", "false");
+    shouldBe("simulateTextEntry(elements[0], 'foo bar', true);", "true");
+
+    shouldBe("simulateTextEntry(elements[1], '', true);", "true");
+    shouldBe("simulateTextEntry(elements[1], 'fo', true);", "true");
+    shouldBe("simulateTextEntry(elements[1], 'o', false);", "true");
+    shouldBe("simulateTextEntry(elements[1], 'foo', true); ", "false");
+
+    shouldBe("simulateTextEntry(elements[2], '', true);", "false");
+    shouldBe("simulateTextEntry(elements[2], 'fo', true);", "true");
+    shouldBe("simulateTextEntry(elements[2], 'o', false);", "true");
+    shouldBe("simulateTextEntry(elements[2], 'foo', true); ", "false");
+
+    shouldBe("simulateTextEntry(elements[3], 'foo', true);", "false");
+    shouldBe("simulateTextEntry(elements[3], 'foo', true);", "false");
+    shouldBe("setTextValue(elements[3], ''); ", "false");
+    shouldBe("simulateTextEntry(elements[3], 'fo', true);", "true");
+    shouldBe("simulateTextEntry(elements[3], 'o', false);", "true");
+    shouldBe("simulateTextEntry(elements[3], 'foo', true); ", "false");
+</script>
+</html> 

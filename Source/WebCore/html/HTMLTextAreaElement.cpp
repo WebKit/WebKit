@@ -291,6 +291,7 @@ void HTMLTextAreaElement::setValue(const String& value)
     setValueCommon(value);
     m_isDirty = true;
     setNeedsValidityCheck();
+    setTextAsOfLastFormControlChangeEvent(value);
 }
 
 void HTMLTextAreaElement::setNonDirtyValue(const String& value)
@@ -298,6 +299,7 @@ void HTMLTextAreaElement::setNonDirtyValue(const String& value)
     setValueCommon(value);
     m_isDirty = false;
     setNeedsValidityCheck();
+    setTextAsOfLastFormControlChangeEvent(value);
 }
 
 void HTMLTextAreaElement::setValueCommon(const String& value)

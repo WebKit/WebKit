@@ -790,8 +790,10 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
     // unchecked to match other browsers. DOM is not a useful standard for this
     // because it says only to fire change events at "lose focus" time, which is
     // definitely wrong in practice for these types of elements.
-    if (sendChangeEvent && inDocument() && m_inputType->shouldSendChangeEventAfterCheckedChanged())
+    if (sendChangeEvent && inDocument() && m_inputType->shouldSendChangeEventAfterCheckedChanged()) {
+        setTextAsOfLastFormControlChangeEvent(String());
         dispatchFormControlChangeEvent();
+    }
 }
 
 void HTMLInputElement::setIndeterminate(bool newValue)
@@ -911,6 +913,9 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
         else
             dispatchFormControlChangeEvent();
     }
+
+    if (isText() && (!focused() || !sendChangeEvent))
+        setTextAsOfLastFormControlChangeEvent(value);
 
     InputElement::notifyFormStateChanged(this);
 }
