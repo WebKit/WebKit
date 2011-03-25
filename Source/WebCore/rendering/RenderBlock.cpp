@@ -4054,7 +4054,7 @@ static VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock* 
         ancestor = ancestor->parent();
 
     // If we can't find an ancestor to check editability on, or editability is unchanged, we recur like normal
-    if (!ancestor || ancestor->node()->isContentEditable() == childNode->isContentEditable())
+    if (!ancestor || ancestor->node()->rendererIsEditable() == childNode->rendererIsEditable())
         return child->positionForPoint(pointInChildCoordinates);
 
     // Otherwise return before or after the child, depending on if the click was to the logical left or logical right of the child
@@ -5080,7 +5080,7 @@ bool RenderBlock::hasLineIfEmpty() const
     if (!node())
         return false;
     
-    if (node()->isContentEditable() && node()->rootEditableElement() == node())
+    if (node()->rendererIsEditable() && node()->rootEditableElement() == node())
         return true;
     
     if (node()->isShadowRoot() && (node()->shadowHost()->hasTagName(inputTag)))

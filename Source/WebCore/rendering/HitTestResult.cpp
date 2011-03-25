@@ -525,7 +525,7 @@ bool HitTestResult::isContentEditable() const
     if (m_innerNonSharedNode->hasTagName(inputTag))
         return static_cast<HTMLInputElement*>(m_innerNonSharedNode.get())->isTextField();
 
-    return m_innerNonSharedNode->isContentEditable();
+    return m_innerNonSharedNode->rendererIsEditable();
 }
 
 bool HitTestResult::addNodeToRectBasedTestResult(Node* node, int x, int y, const IntRect& rect)

@@ -46,7 +46,7 @@ using namespace HTMLNames;
 static Node* nextRenderedEditable(Node* node)
 {
     while ((node = node->nextLeafNode())) {
-        if (!node->isContentEditable())
+        if (!node->rendererIsEditable())
             continue;
         RenderObject* renderer = node->renderer();
         if (!renderer)
@@ -60,7 +60,7 @@ static Node* nextRenderedEditable(Node* node)
 static Node* previousRenderedEditable(Node* node)
 {
     while ((node = node->previousLeafNode())) {
-        if (!node->isContentEditable())
+        if (!node->rendererIsEditable())
             continue;
         RenderObject* renderer = node->renderer();
         if (!renderer)
@@ -345,15 +345,15 @@ bool Position::atLastEditingPositionForNode() const
 bool Position::atEditingBoundary() const
 {
     Position nextPosition = downstream(CanCrossEditingBoundary);
-    if (atFirstEditingPositionForNode() && nextPosition.isNotNull() && !nextPosition.deprecatedNode()->isContentEditable())
+    if (atFirstEditingPositionForNode() && nextPosition.isNotNull() && !nextPosition.deprecatedNode()->rendererIsEditable())
         return true;
         
     Position prevPosition = upstream(CanCrossEditingBoundary);
-    if (atLastEditingPositionForNode() && prevPosition.isNotNull() && !prevPosition.deprecatedNode()->isContentEditable())
+    if (atLastEditingPositionForNode() && prevPosition.isNotNull() && !prevPosition.deprecatedNode()->rendererIsEditable())
         return true;
         
-    return nextPosition.isNotNull() && !nextPosition.deprecatedNode()->isContentEditable()
-        && prevPosition.isNotNull() && !prevPosition.deprecatedNode()->isContentEditable();
+    return nextPosition.isNotNull() && !nextPosition.deprecatedNode()->rendererIsEditable()
+        && prevPosition.isNotNull() && !prevPosition.deprecatedNode()->rendererIsEditable();
 }
 
 Node* Position::parentEditingBoundary() const
@@ -366,7 +366,7 @@ Node* Position::parentEditingBoundary() const
         return 0;
 
     Node* boundary = m_anchorNode.get();
-    while (boundary != documentElement && boundary->parentNode() && m_anchorNode->isContentEditable() == boundary->parentNode()->isContentEditable())
+    while (boundary != documentElement && boundary->parentNode() && m_anchorNode->rendererIsEditable() == boundary->parentNode()->rendererIsEditable())
         boundary = boundary->parentNode();
     
     return boundary;
@@ -525,17 +525,17 @@ Position Position::upstream(EditingBoundaryCrossingRule rule) const
     // FIXME: PositionIterator should respect Before and After positions.
     PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? Position(m_anchorNode, caretMaxOffset(m_anchorNode.get())) : *this;
     PositionIterator currentPos = lastVisible;
-    bool startEditable = startNode->isContentEditable();
+    bool startEditable = startNode->rendererIsEditable();
     Node* lastNode = startNode;
     bool boundaryCrossed = false;
     for (; !currentPos.atStart(); currentPos.decrement()) {
         Node* currentNode = currentPos.node();
         
         // Don't check for an editability change if we haven't moved to a different node,
-        // to avoid the expense of computing isContentEditable().
+        // to avoid the expense of computing rendererIsEditable().
         if (currentNode != lastNode) {
             // Don't change editability.
-            bool currentEditable = currentNode->isContentEditable();
+            bool currentEditable = currentNode->rendererIsEditable();
             if (startEditable != currentEditable) {
                 if (rule == CannotCrossEditingBoundary)
                     break;
@@ -647,17 +647,17 @@ Position Position::downstream(EditingBoundaryCrossingRule rule) const
     // FIXME: PositionIterator should respect Before and After positions.
     PositionIterator lastVisible = m_anchorType == PositionIsAfterAnchor ? Position(m_anchorNode, caretMaxOffset(m_anchorNode.get())) : *this;
     PositionIterator currentPos = lastVisible;
-    bool startEditable = startNode->isContentEditable();
+    bool startEditable = startNode->rendererIsEditable();
     Node* lastNode = startNode;
     bool boundaryCrossed = false;
     for (; !currentPos.atEnd(); currentPos.increment()) {   
         Node* currentNode = currentPos.node();
         
         // Don't check for an editability change if we haven't moved to a different node,
-        // to avoid the expense of computing isContentEditable().
+        // to avoid the expense of computing rendererIsEditable().
         if (currentNode != lastNode) {
             // Don't change editability.
-            bool currentEditable = currentNode->isContentEditable();
+            bool currentEditable = currentNode->rendererIsEditable();
             if (startEditable != currentEditable) {
                 if (rule == CannotCrossEditingBoundary)
                     break;
@@ -799,10 +799,10 @@ bool Position::isCandidate() const
         if (toRenderBlock(renderer)->height() || m_anchorNode->hasTagName(bodyTag)) {
             if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(renderer))
                 return atFirstEditingPositionForNode() && !Position::nodeIsUserSelectNone(deprecatedNode());
-            return m_anchorNode->isContentEditable() && !Position::nodeIsUserSelectNone(deprecatedNode()) && atEditingBoundary();
+            return m_anchorNode->rendererIsEditable() && !Position::nodeIsUserSelectNone(deprecatedNode()) && atEditingBoundary();
         }
     } else
-        return m_anchorNode->isContentEditable() && !Position::nodeIsUserSelectNone(deprecatedNode()) && atEditingBoundary();
+        return m_anchorNode->rendererIsEditable() && !Position::nodeIsUserSelectNone(deprecatedNode()) && atEditingBoundary();
 
     return false;
 }

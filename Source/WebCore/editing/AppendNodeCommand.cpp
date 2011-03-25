@@ -40,7 +40,7 @@ AppendNodeCommand::AppendNodeCommand(PassRefPtr<ContainerNode> parent, PassRefPt
     ASSERT(m_node);
     ASSERT(!m_node->parentNode());
 
-    ASSERT(m_parent->isContentEditable() || !m_parent->attached());
+    ASSERT(m_parent->rendererIsEditable() || !m_parent->attached());
 }
 
 static void sendAXTextChangedIgnoringLineBreaks(Node* node, AXObjectCache::AXTextChange textChange)
@@ -56,7 +56,7 @@ static void sendAXTextChangedIgnoringLineBreaks(Node* node, AXObjectCache::AXTex
 
 void AppendNodeCommand::doApply()
 {
-    if (!m_parent->isContentEditable() && m_parent->attached())
+    if (!m_parent->rendererIsEditable() && m_parent->attached())
         return;
         
     ExceptionCode ec;
@@ -68,7 +68,7 @@ void AppendNodeCommand::doApply()
 
 void AppendNodeCommand::doUnapply()
 {
-    if (!m_parent->isContentEditable())
+    if (!m_parent->rendererIsEditable())
         return;
         
     // Need to notify this before actually deleting the text

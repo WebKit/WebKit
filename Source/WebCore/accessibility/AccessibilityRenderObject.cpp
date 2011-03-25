@@ -661,10 +661,10 @@ bool AccessibilityRenderObject::isReadOnly() const
             return true;
         
         HTMLElement* body = document->body();
-        if (body && body->isContentEditable())
+        if (body && body->rendererIsEditable())
             return false;
 
-        return !document->isContentEditable();
+        return !document->rendererIsEditable();
     }
 
     if (m_renderer->isBoxModelObject()) {
@@ -675,7 +675,7 @@ bool AccessibilityRenderObject::isReadOnly() const
             return static_cast<HTMLTextAreaElement*>(box->node())->readOnly();
     }
 
-    return !m_renderer->node() || !m_renderer->node()->isContentEditable();
+    return !m_renderer->node() || !m_renderer->node()->rendererIsEditable();
 }
 
 bool AccessibilityRenderObject::isOffScreen() const
@@ -1829,7 +1829,7 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
         return false;
     
     // Anything that is content editable should not be ignored.
-    // However, one cannot just call node->isContentEditable() since that will ask if its parents
+    // However, one cannot just call node->rendererIsEditable() since that will ask if its parents
     // are also editable. Only the top level content editable region should be exposed.
     if (node && node->isElementNode()) {
         Element* element = static_cast<Element*>(node);

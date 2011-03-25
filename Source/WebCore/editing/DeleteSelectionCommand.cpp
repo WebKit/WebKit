@@ -342,7 +342,7 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
         
     if (m_startRoot != m_endRoot && !(node->isDescendantOf(m_startRoot.get()) && node->isDescendantOf(m_endRoot.get()))) {
         // If a node is not in both the start and end editable roots, remove it only if its inside an editable region.
-        if (!node->parentNode()->isContentEditable()) {
+        if (!node->parentNode()->rendererIsEditable()) {
             // Don't remove non-editable atomic nodes.
             if (!node->firstChild())
                 return;

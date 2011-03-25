@@ -420,7 +420,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
         return;
 
     // FIXME: refactor all of this to use Actions or something like them
-    if (start->isContentEditable()) {
+    if (start->rendererIsEditable()) {
         bool doSpatialNavigation = false;
         if (isSpatialNavigationEnabled(frame)) {
             if (!kevent->modifiers()) {

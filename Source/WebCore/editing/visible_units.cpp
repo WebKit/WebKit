@@ -477,10 +477,10 @@ bool isEndOfLine(const VisiblePosition &p)
 // The first leaf before node that has the same editability as node.
 static Node* previousLeafWithSameEditability(Node* node)
 {
-    bool editable = node->isContentEditable();
+    bool editable = node->rendererIsEditable();
     Node* n = node->previousLeafNode();
     while (n) {
-        if (editable == n->isContentEditable())
+        if (editable == n->rendererIsEditable())
             return n;
         n = n->previousLeafNode();
     }
@@ -572,7 +572,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     // Could not find a previous line. This means we must already be on the first line.
     // Move to the start of the content in this block, which effectively moves us
     // to the start of the line we're on.
-    Element* rootElement = node->isContentEditable() ? node->rootEditableElement() : node->document()->documentElement();
+    Element* rootElement = node->rendererIsEditable() ? node->rootEditableElement() : node->document()->documentElement();
     if (!rootElement)
         return VisiblePosition();
     return VisiblePosition(firstPositionInNode(rootElement), DOWNSTREAM);
@@ -580,12 +580,12 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
 
 static Node* nextLeafWithSameEditability(Node* node, int offset)
 {
-    bool editable = node->isContentEditable();
+    bool editable = node->rendererIsEditable();
     ASSERT(offset >= 0);
     Node* child = node->childNode(offset);
     Node* n = child ? child->nextLeafNode() : node->lastDescendant()->nextLeafNode();
     while (n) {
-        if (editable == n->isContentEditable())
+        if (editable == n->rendererIsEditable())
             return n;
         n = n->nextLeafNode();
     }
@@ -597,10 +597,10 @@ static Node* nextLeafWithSameEditability(Node* node)
     if (!node)
         return 0;
     
-    bool editable = node->isContentEditable();
+    bool editable = node->rendererIsEditable();
     Node* n = node->nextLeafNode();
     while (n) {
-        if (editable == n->isContentEditable())
+        if (editable == n->rendererIsEditable())
             return n;
         n = n->nextLeafNode();
     }
@@ -679,7 +679,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
     // Could not find a next line. This means we must already be on the last line.
     // Move to the end of the content in this block, which effectively moves us
     // to the end of the line we're on.
-    Element* rootElement = node->isContentEditable() ? node->rootEditableElement() : node->document()->documentElement();
+    Element* rootElement = node->rendererIsEditable() ? node->rootEditableElement() : node->document()->documentElement();
     if (!rootElement)
         return VisiblePosition();
     return VisiblePosition(lastPositionInNode(rootElement), DOWNSTREAM);
@@ -759,10 +759,10 @@ VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossi
 
     Node* n = startNode;
     while (n) {
-        if (boundaryCrossingRule == CannotCrossEditingBoundary && n->isContentEditable() != startNode->isContentEditable())
+        if (boundaryCrossingRule == CannotCrossEditingBoundary && n->rendererIsEditable() != startNode->rendererIsEditable())
             break;
         if (boundaryCrossingRule == CanSkipOverEditingBoundary) {
-            while (n && n->isContentEditable() != startNode->isContentEditable())
+            while (n && n->rendererIsEditable() != startNode->rendererIsEditable())
                 n = n->traversePreviousNodePostOrder(startBlock);
             if (!n || !n->isDescendantOf(highestRoot))
                 break;
@@ -831,10 +831,10 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EditingBoundaryCrossing
 
     Node* n = startNode;
     while (n) {
-        if (boundaryCrossingRule == CannotCrossEditingBoundary && n->isContentEditable() != startNode->isContentEditable())
+        if (boundaryCrossingRule == CannotCrossEditingBoundary && n->rendererIsEditable() != startNode->rendererIsEditable())
             break;
         if (boundaryCrossingRule == CanSkipOverEditingBoundary) {
-            while (n && n->isContentEditable() != startNode->isContentEditable())
+            while (n && n->rendererIsEditable() != startNode->rendererIsEditable())
                 n = n->traverseNextNode(stayInsideBlock);
             if (!n || !n->isDescendantOf(highestRoot))
                 break;

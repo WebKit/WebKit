@@ -254,7 +254,7 @@ void EditorClientHaiku::handleKeyboardEvent(KeyboardEvent* event)
     if (!start)
         return;
 
-    if (start->isContentEditable()) {
+    if (start->rendererIsEditable()) {
         switch (kevent->windowsVirtualKeyCode()) {
         case VK_BACK:
             frame->editor()->deleteWithDirection(DirectionBackward,

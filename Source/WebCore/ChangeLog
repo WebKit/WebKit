@@ -1,3 +1,158 @@
+2011-03-25  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        rename Node::isContentEditable and all call sites to rendererIsEditable
+        https://bugs.webkit.org/show_bug.cgi?id=54290
+
+        This is part of the effort to separate JS API HTMLElement isContentEditable from
+        internal Node::rendererIsEditable.
+
+        Code refactoring. No new tests.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isReadOnly):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        * dom/Document.cpp:
+        (WebCore::acceptsEditingFocus):
+        * dom/Node.cpp:
+        (WebCore::Node::rendererIsEditable):
+        (WebCore::Node::shouldUseInputMethod):
+        (WebCore::Node::canStartSelection):
+        (WebCore::Node::rootEditableElement):
+        * dom/Node.h:
+        (WebCore::Node::isContentEditable):
+        (WebCore::Node::rendererIsEditable):
+        (WebCore::Node::rendererIsRichlyEditable):
+        * dom/Position.cpp:
+        (WebCore::nextRenderedEditable):
+        (WebCore::previousRenderedEditable):
+        (WebCore::Position::atEditingBoundary):
+        (WebCore::Position::parentEditingBoundary):
+        (WebCore::Position::upstream):
+        (WebCore::Position::downstream):
+        (WebCore::Position::isCandidate):
+        * dom/PositionIterator.cpp:
+        (WebCore::PositionIterator::isCandidate):
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::AppendNodeCommand):
+        (WebCore::AppendNodeCommand::doApply):
+        (WebCore::AppendNodeCommand::doUnapply):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::containsNonEditableRegion):
+        (WebCore::ApplyStyleCommand::applyInlineStyleToNodeRange):
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement):
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement):
+        (WebCore::enclosingDeletableElement):
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::doApply):
+        (WebCore::DeleteFromTextNodeCommand::doUnapply):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::removeNode):
+        * editing/Editor.cpp:
+        (WebCore::Editor::canDeleteRange):
+        (WebCore::Editor::markMisspellingsOrBadGrammar):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        * editing/EditorCommand.cpp:
+        (WebCore::verticalScrollDistance):
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::enclosingBlockToSplitTreeTo):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::doApply):
+        (WebCore::InsertIntoTextNodeCommand::doUnapply):
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::InsertNodeBeforeCommand):
+        (WebCore::InsertNodeBeforeCommand::doApply):
+        (WebCore::InsertNodeBeforeCommand::doUnapply):
+        * editing/JoinTextNodesCommand.cpp:
+        (WebCore::JoinTextNodesCommand::doApply):
+        (WebCore::JoinTextNodesCommand::doUnapply):
+        * editing/MergeIdenticalElementsCommand.cpp:
+        (WebCore::MergeIdenticalElementsCommand::doApply):
+        (WebCore::MergeIdenticalElementsCommand::doUnapply):
+        * editing/RemoveNodeCommand.cpp:
+        (WebCore::RemoveNodeCommand::doApply):
+        (WebCore::RemoveNodeCommand::doUnapply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::selectFrameElementInParentIfFullySelected):
+        (WebCore::SelectionController::setSelectionFromNone):
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::executeApply):
+        (WebCore::SplitElementCommand::doUnapply):
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::doApply):
+        (WebCore::SplitTextNodeCommand::doUnapply):
+        (WebCore::SplitTextNodeCommand::doReapply):
+        * editing/SplitTextNodeContainingElementCommand.cpp:
+        (WebCore::SplitTextNodeContainingElementCommand::doApply):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::canonicalPosition):
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        (WebCore::WrapContentsInDummySpanCommand::doUnapply):
+        (WebCore::WrapContentsInDummySpanCommand::doReapply):
+        * editing/htmlediting.cpp:
+        (WebCore::highestEditableRoot):
+        (WebCore::lowestEditableAncestor):
+        (WebCore::isEditablePosition):
+        (WebCore::isRichlyEditablePosition):
+        (WebCore::firstEditablePositionAfterPositionInRoot):
+        (WebCore::extendRangeToWrappingNodes):
+        (WebCore::enclosingNodeWithTag):
+        (WebCore::enclosingNodeOfType):
+        (WebCore::highestEnclosingNodeOfType):
+        (WebCore::canMergeLists):
+        * editing/visible_units.cpp:
+        (WebCore::previousLeafWithSameEditability):
+        (WebCore::previousLinePosition):
+        (WebCore::nextLeafWithSameEditability):
+        (WebCore::nextLinePosition):
+        (WebCore::startOfParagraph):
+        (WebCore::endOfParagraph):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::supportsFocus):
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        (WebCore::HTMLAnchorElement::setActive):
+        (WebCore::HTMLAnchorElement::canStartSelection):
+        (WebCore::HTMLAnchorElement::treatLinkAsLiveForEventType):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::supportsFocus):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::supportsFocus):
+        (WebCore::HTMLElement::isContentEditable):
+        (WebCore::HTMLElement::contentEditable):
+        * html/HTMLElement.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::operationForLoad):
+        (WebCore::DragController::canProcessDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::selectCursor):
+        * page/FocusController.cpp:
+        (WebCore::relinquishesEditingFocus):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::isContentEditable):
+        * rendering/RenderBlock.cpp:
+        (WebCore::positionForPointRespectingEditingBoundaries):
+        (WebCore::RenderBlock::hasLineIfEmpty):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::addOverflowFromInlineChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::canBeProgramaticallyScrolled):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createVisiblePosition):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::isEditableLeaf):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::supportsFocus):
+
 2011-03-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Antti Koivisto.

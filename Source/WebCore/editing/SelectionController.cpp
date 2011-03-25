@@ -1362,7 +1362,7 @@ void SelectionController::selectFrameElementInParentIfFullySelected()
         return;
         
     // This method's purpose is it to make it easier to select iframes (in order to delete them).  Don't do anything if the iframe isn't deletable.
-    if (!ownerElementParent->isContentEditable())
+    if (!ownerElementParent->rendererIsEditable())
         return;
 
     // Create compute positions before and after the element.
@@ -1824,7 +1824,7 @@ void SelectionController::setSelectionFromNone()
 
     Document* document = m_frame->document();
     bool caretBrowsing = m_frame->settings() && m_frame->settings()->caretBrowsingEnabled();
-    if (!isNone() || !(document->isContentEditable() || caretBrowsing))
+    if (!isNone() || !(document->rendererIsEditable() || caretBrowsing))
         return;
 
     Node* node = document->documentElement();

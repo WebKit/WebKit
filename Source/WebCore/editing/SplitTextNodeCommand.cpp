@@ -51,7 +51,7 @@ SplitTextNodeCommand::SplitTextNodeCommand(PassRefPtr<Text> text, int offset)
 void SplitTextNodeCommand::doApply()
 {
     ContainerNode* parent = m_text2->parentNode();
-    if (!parent || !parent->isContentEditable())
+    if (!parent || !parent->rendererIsEditable())
         return;
 
     ExceptionCode ec = 0;
@@ -68,7 +68,7 @@ void SplitTextNodeCommand::doApply()
 
 void SplitTextNodeCommand::doUnapply()
 {
-    if (!m_text1 || !m_text1->isContentEditable())
+    if (!m_text1 || !m_text1->rendererIsEditable())
         return;
 
     ASSERT(m_text1->document() == document());
@@ -89,7 +89,7 @@ void SplitTextNodeCommand::doReapply()
         return;
 
     ContainerNode* parent = m_text2->parentNode();
-    if (!parent || !parent->isContentEditable())
+    if (!parent || !parent->rendererIsEditable())
         return;
 
     insertText1AndTrimText2();

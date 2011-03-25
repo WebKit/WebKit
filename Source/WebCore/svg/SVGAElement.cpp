@@ -195,7 +195,7 @@ void SVGAElement::defaultEventHandler(Event* event)
 
 bool SVGAElement::supportsFocus() const
 {
-    if (isContentEditable())
+    if (rendererIsEditable())
         return SVGStyledTransformableElement::supportsFocus();
     return true;
 }

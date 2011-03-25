@@ -723,7 +723,7 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
         VisibleSelection newSelection;
         Node* node = event.targetNode();
         bool caretBrowsing = m_frame->settings()->caretBrowsingEnabled();
-        if (node && (caretBrowsing || node->isContentEditable()) && node->renderer()) {
+        if (node && (caretBrowsing || node->rendererIsEditable()) && node->renderer()) {
             VisiblePosition pos = node->renderer()->positionForPoint(event.localPoint());
             newSelection = VisibleSelection(pos);
         }
@@ -1175,7 +1175,7 @@ Cursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, Scr
 
     switch (style ? style->cursor() : CURSOR_AUTO) {
     case CURSOR_AUTO: {
-        bool editable = (node && node->isContentEditable());
+        bool editable = (node && node->rendererIsEditable());
         bool editableLinkEnabled = false;
 
         // If the link is editable, then we need to check the settings to see whether or not the link should be followed

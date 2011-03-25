@@ -44,7 +44,7 @@ InsertIntoTextNodeCommand::InsertIntoTextNodeCommand(PassRefPtr<Text> node, unsi
 
 void InsertIntoTextNodeCommand::doApply()
 {
-    if (!m_node->isContentEditable())
+    if (!m_node->rendererIsEditable())
         return;
     
     ExceptionCode ec;
@@ -56,7 +56,7 @@ void InsertIntoTextNodeCommand::doApply()
 
 void InsertIntoTextNodeCommand::doUnapply()
 {
-    if (!m_node->isContentEditable())
+    if (!m_node->rendererIsEditable())
         return;
         
     // Need to notify this before actually deleting the text

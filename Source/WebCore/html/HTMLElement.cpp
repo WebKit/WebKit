@@ -654,10 +654,15 @@ void HTMLElement::addHTMLAlignmentToStyledElement(StyledElement* element, Attrib
 
 bool HTMLElement::supportsFocus() const
 {
-    return Element::supportsFocus() || (isContentEditable() && parentNode() && !parentNode()->isContentEditable());
+    return Element::supportsFocus() || (rendererIsEditable() && parentNode() && !parentNode()->rendererIsEditable());
 }
 
-String HTMLElement::contentEditable() const 
+bool HTMLElement::isContentEditable() const
+{
+    return rendererIsEditable();
+}
+
+String HTMLElement::contentEditable() const
 {
     const AtomicString& value = fastGetAttribute(contenteditableAttr);
 

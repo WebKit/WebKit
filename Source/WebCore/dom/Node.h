@@ -319,8 +319,12 @@ public:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
 
-    bool isContentEditable() const { return isContentEditable(Editable); }
-    bool isContentRichlyEditable() const { return isContentEditable(RichlyEditable); }
+#if PLATFORM(MAC)
+    // Objective-C extensions
+    bool isContentEditable() const { return rendererIsEditable(Editable); }
+#endif
+    bool rendererIsEditable() const { return rendererIsEditable(Editable); }
+    bool rendererIsRichlyEditable() const { return rendererIsEditable(RichlyEditable); }
     virtual bool shouldUseInputMethod() const;
     virtual IntRect getRect() const;
     IntRect renderRect(bool* isReplaced);
@@ -651,7 +655,7 @@ private:
 #endif
 
     enum EditableLevel { Editable, RichlyEditable };
-    bool isContentEditable(EditableLevel) const;
+    bool rendererIsEditable(EditableLevel) const;
 
     void setStyleChange(StyleChangeType);
 

@@ -210,7 +210,7 @@ bool HTMLBodyElement::isURLAttribute(Attribute *attr) const
 
 bool HTMLBodyElement::supportsFocus() const
 {
-    return isContentEditable() || HTMLElement::supportsFocus();
+    return rendererIsEditable() || HTMLElement::supportsFocus();
 }
 
 String HTMLBodyElement::aLink() const

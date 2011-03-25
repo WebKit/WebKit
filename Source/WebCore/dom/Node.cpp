@@ -711,7 +711,7 @@ void Node::deprecatedParserAddChild(PassRefPtr<Node>)
 {
 }
 
-bool Node::isContentEditable(EditableLevel editableLevel) const
+bool Node::rendererIsEditable(EditableLevel editableLevel) const
 {
     if (document()->inDesignMode() || (document()->frame() && document()->frame()->page() && document()->frame()->page()->isEditable()))
         return true;
@@ -740,7 +740,7 @@ bool Node::isContentEditable(EditableLevel editableLevel) const
 
 bool Node::shouldUseInputMethod() const
 {
-    return isContentEditable();
+    return rendererIsEditable();
 }
 
 RenderBox* Node::renderBox() const
@@ -1514,7 +1514,7 @@ int Node::maxCharacterOffset() const
 // is obviously misplaced.
 bool Node::canStartSelection() const
 {
-    if (isContentEditable())
+    if (rendererIsEditable())
         return true;
 
     if (renderer()) {
@@ -1592,7 +1592,7 @@ Element *Node::enclosingBlockFlowElement() const
 Element* Node::rootEditableElement() const
 {
     Element* result = 0;
-    for (Node* n = const_cast<Node*>(this); n && n->isContentEditable(); n = n->parentNode()) {
+    for (Node* n = const_cast<Node*>(this); n && n->rendererIsEditable(); n = n->parentNode()) {
         if (n->isElementNode())
             result = static_cast<Element*>(n);
         if (n->hasTagName(bodyTag))

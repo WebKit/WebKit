@@ -149,14 +149,14 @@ Node* enclosingBlockToSplitTreeTo(Node* startNode)
 {
     Node* lastBlock = startNode;
     for (Node* n = startNode; n; n = n->parentNode()) {
-        if (!n->isContentEditable())
+        if (!n->rendererIsEditable())
             return lastBlock;
-        if (isTableCell(n) || n->hasTagName(bodyTag) || !n->parentNode() || !n->parentNode()->isContentEditable() || isElementForFormatBlock(n))
+        if (isTableCell(n) || n->hasTagName(bodyTag) || !n->parentNode() || !n->parentNode()->rendererIsEditable() || isElementForFormatBlock(n))
             return n;
         if (isBlock(n))
             lastBlock = n;
         if (isListElement(n))
-            return n->parentNode()->isContentEditable() ? n->parentNode() : n;
+            return n->parentNode()->rendererIsEditable() ? n->parentNode() : n;
     }
     return lastBlock;
 }

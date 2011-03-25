@@ -148,7 +148,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
     if (!editableRoot->getAttributeEventListener(eventNames().webkitBeforeTextInsertedEvent) &&
         // FIXME: Remove these checks once textareas and textfields actually register an event handler.
         !(shadowAncestorNode && shadowAncestorNode->renderer() && shadowAncestorNode->renderer()->isTextControl()) &&
-        editableRoot->isContentRichlyEditable()) {
+        editableRoot->rendererIsRichlyEditable()) {
         removeInterchangeNodes(m_fragment.get());
         return;
     }
@@ -163,7 +163,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
     ExceptionCode ec = 0;
     editableRoot->dispatchEvent(evt, ec);
     ASSERT(ec == 0);
-    if (text != evt->text() || !editableRoot->isContentRichlyEditable()) {
+    if (text != evt->text() || !editableRoot->rendererIsRichlyEditable()) {
         restoreTestRenderingNodesToFragment(holder.get());
         removeNode(holder);
 

@@ -46,7 +46,7 @@ void JoinTextNodesCommand::doApply()
         return;
 
     ContainerNode* parent = m_text2->parentNode();
-    if (!parent || !parent->isContentEditable())
+    if (!parent || !parent->rendererIsEditable())
         return;
     
     ExceptionCode ec = 0;
@@ -63,7 +63,7 @@ void JoinTextNodesCommand::doUnapply()
         return;
 
     ContainerNode* parent = m_text2->parentNode();
-    if (!parent || !parent->isContentEditable())
+    if (!parent || !parent->rendererIsEditable())
         return;
 
     ExceptionCode ec = 0;

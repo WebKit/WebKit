@@ -143,7 +143,7 @@ Node* highestEditableRoot(const Position& position)
     
     node = highestRoot;
     while (node) {
-        if (node->isContentEditable())
+        if (node->rendererIsEditable())
             highestRoot = node;
         if (node->hasTagName(bodyTag))
             break;
@@ -160,7 +160,7 @@ Node* lowestEditableAncestor(Node* node)
     
     Node *lowestRoot = 0;
     while (node) {
-        if (node->isContentEditable())
+        if (node->rendererIsEditable())
             return node->rootEditableElement();
         if (node->hasTagName(bodyTag))
             break;
@@ -179,7 +179,7 @@ bool isEditablePosition(const Position& p)
     if (node->renderer() && node->renderer()->isTable())
         node = node->parentNode();
     
-    return node->isContentEditable();
+    return node->rendererIsEditable();
 }
 
 bool isAtUnsplittableElement(const Position& pos)
@@ -198,7 +198,7 @@ bool isRichlyEditablePosition(const Position& p)
     if (node->renderer() && node->renderer()->isTable())
         node = node->parentNode();
     
-    return node->isContentRichlyEditable();
+    return node->rendererIsRichlyEditable();
 }
 
 Element* editableRootForPosition(const Position& p)
@@ -276,7 +276,7 @@ Position previousVisuallyDistinctCandidate(const Position& position)
 VisiblePosition firstEditablePositionAfterPositionInRoot(const Position& position, Node* highestRoot)
 {
     // position falls before highestRoot.
-    if (comparePositions(position, firstPositionInNode(highestRoot)) == -1 && highestRoot->isContentEditable())
+    if (comparePositions(position, firstPositionInNode(highestRoot)) == -1 && highestRoot->rendererIsEditable())
         return firstPositionInNode(highestRoot);
 
     Position p = position;
@@ -561,7 +561,7 @@ PassRefPtr<Range> extendRangeToWrappingNodes(PassRefPtr<Range> range, const Rang
     Node* ancestor = range->commonAncestorContainer(ec);// find the cloeset common ancestor
     Node* highestNode = 0;
     // traverse through ancestors as long as they are contained within the range, content-editable, and below rootNode (could be =0).
-    while (ancestor && ancestor->isContentEditable() && isNodeVisiblyContainedWithin(ancestor, maximumRange) && ancestor != rootNode) {
+    while (ancestor && ancestor->rendererIsEditable() && isNodeVisiblyContainedWithin(ancestor, maximumRange) && ancestor != rootNode) {
         highestNode = ancestor;
         ancestor = ancestor->parentNode();
     }
@@ -592,7 +592,7 @@ Node* enclosingNodeWithTag(const Position& p, const QualifiedName& tagName)
         
     Node* root = highestEditableRoot(p);
     for (Node* n = p.deprecatedNode(); n; n = n->parentNode()) {
-        if (root && !n->isContentEditable())
+        if (root && !n->rendererIsEditable())
             continue;
         if (n->hasTagName(tagName))
             return n;
@@ -614,7 +614,7 @@ Node* enclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), 
     for (Node* n = p.deprecatedNode(); n; n = n->parentNode()) {
         // Don't return a non-editable node if the input position was editable, since
         // the callers from editing will no doubt want to perform editing inside the returned node.
-        if (root && !n->isContentEditable())
+        if (root && !n->rendererIsEditable())
             continue;
         if (nodeIsOfType(n))
             return n;
@@ -630,7 +630,7 @@ Node* highestEnclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const N
     Node* highest = 0;
     Node* root = rule == CannotCrossEditingBoundary ? highestEditableRoot(p) : 0;
     for (Node* n = p.deprecatedNode(); n; n = n->parentNode()) {
-        if (root && !n->isContentEditable())
+        if (root && !n->rendererIsEditable())
             continue;
         if (nodeIsOfType(n))
             highest = n;
@@ -758,7 +758,7 @@ bool canMergeLists(Element* firstList, Element* secondList)
         return false;
 
     return firstList->hasTagName(secondList->tagQName())// make sure the list types match (ol vs. ul)
-    && firstList->isContentEditable() && secondList->isContentEditable()// both lists are editable
+    && firstList->rendererIsEditable() && secondList->rendererIsEditable() // both lists are editable
     && firstList->rootEditableElement() == secondList->rootEditableElement()// don't cross editing boundaries
     && isVisiblyAdjacent(positionInParentAfterNode(firstList), positionInParentBeforeNode(secondList));
     // Make sure there is no visible content between this li and the previous list

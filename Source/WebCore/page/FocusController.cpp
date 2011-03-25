@@ -301,7 +301,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 static bool relinquishesEditingFocus(Node *node)
 {
     ASSERT(node);
-    ASSERT(node->isContentEditable());
+    ASSERT(node->rendererIsEditable());
 
     Node* root = node->rootEditableElement();
     Frame* frame = node->document()->frame();

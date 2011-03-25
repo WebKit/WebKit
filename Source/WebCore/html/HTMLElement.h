@@ -57,6 +57,8 @@ public:
 
     virtual bool supportsFocus() const;
 
+    bool isContentEditable() const;
+
     String contentEditable() const;
     void setContentEditable(const String&, ExceptionCode&);
 

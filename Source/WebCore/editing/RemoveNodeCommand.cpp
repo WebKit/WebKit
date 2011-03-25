@@ -42,7 +42,7 @@ RemoveNodeCommand::RemoveNodeCommand(PassRefPtr<Node> node)
 void RemoveNodeCommand::doApply()
 {
     ContainerNode* parent = m_node->parentNode();
-    if (!parent || !parent->isContentEditable())
+    if (!parent || !parent->rendererIsEditable())
         return;
 
     m_parent = parent;
@@ -56,7 +56,7 @@ void RemoveNodeCommand::doUnapply()
 {
     RefPtr<ContainerNode> parent = m_parent.release();
     RefPtr<Node> refChild = m_refChild.release();
-    if (!parent || !parent->isContentEditable())
+    if (!parent || !parent->rendererIsEditable())
         return;
 
     ExceptionCode ec;

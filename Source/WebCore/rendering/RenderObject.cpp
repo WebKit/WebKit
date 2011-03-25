@@ -2645,14 +2645,14 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
 {
     // If this is a non-anonymous renderer in an editable area, then it's simple.
     if (Node* node = this->node()) {
-        if (!node->isContentEditable()) {
+        if (!node->rendererIsEditable()) {
             // If it can be found, we prefer a visually equivalent position that is editable. 
             Position position(node, offset);
             Position candidate = position.downstream(CanCrossEditingBoundary);
-            if (candidate.deprecatedNode()->isContentEditable())
+            if (candidate.deprecatedNode()->rendererIsEditable())
                 return VisiblePosition(candidate, affinity);
             candidate = position.upstream(CanCrossEditingBoundary);
-            if (candidate.deprecatedNode()->isContentEditable())
+            if (candidate.deprecatedNode()->rendererIsEditable())
                 return VisiblePosition(candidate, affinity);
         }
         // FIXME: Eliminate legacy editing positions

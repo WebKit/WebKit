@@ -46,7 +46,7 @@ void DeleteFromTextNodeCommand::doApply()
 {
     ASSERT(m_node);
 
-    if (!m_node->isContentEditable())
+    if (!m_node->rendererIsEditable())
         return;
 
     ExceptionCode ec = 0;
@@ -65,7 +65,7 @@ void DeleteFromTextNodeCommand::doUnapply()
 {
     ASSERT(m_node);
 
-    if (!m_node->isContentEditable())
+    if (!m_node->rendererIsEditable())
         return;
         
     ExceptionCode ec;

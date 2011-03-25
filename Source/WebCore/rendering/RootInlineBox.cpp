@@ -462,7 +462,7 @@ RenderBlock* RootInlineBox::block() const
 
 static bool isEditableLeaf(InlineBox* leaf)
 {
-    return leaf && leaf->renderer() && leaf->renderer()->node() && leaf->renderer()->node()->isContentEditable();
+    return leaf && leaf->renderer() && leaf->renderer()->node() && leaf->renderer()->node()->rendererIsEditable();
 }
 
 InlineBox* RootInlineBox::closestLeafChildForLogicalLeftPosition(int leftPosition, bool onlyEditableLeaves)

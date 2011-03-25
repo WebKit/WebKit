@@ -289,7 +289,7 @@ bool Editor::canDeleteRange(Range* range) const
     if (!startContainer || !endContainer)
         return false;
     
-    if (!startContainer->isContentEditable() || !endContainer->isContentEditable())
+    if (!startContainer->rendererIsEditable() || !endContainer->rendererIsEditable())
         return false;
     
     if (range->collapsed(ec)) {
@@ -2159,7 +2159,7 @@ void Editor::markMisspellingsOrBadGrammar(const VisibleSelection& selection, boo
     
     // If we're not in an editable node, bail.
     Node* editableNode = searchRange->startContainer();
-    if (!editableNode || !editableNode->isContentEditable())
+    if (!editableNode || !editableNode->rendererIsEditable())
         return;
 
     if (!isSpellCheckingEnabledFor(editableNode))
@@ -2224,7 +2224,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
 
     // If we're not in an editable node, bail.
     Node* editableNode = spellingRange->startContainer();
-    if (!editableNode || !editableNode->isContentEditable())
+    if (!editableNode || !editableNode->rendererIsEditable())
         return;
 
     if (!isSpellCheckingEnabledFor(editableNode))

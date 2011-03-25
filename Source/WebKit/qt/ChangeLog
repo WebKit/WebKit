@@ -1,3 +1,16 @@
+2011-03-25  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        rename Node::isContentEditable and all call sites to rendererIsEditable
+        https://bugs.webkit.org/show_bug.cgi?id=54290
+
+        This is part of the effort to separate JS API HTMLElement isContentEditable from
+        internal Node::rendererIsEditable.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+
 2011-03-25  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.

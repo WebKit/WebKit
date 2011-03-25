@@ -72,7 +72,7 @@ static unsigned parsePortFromStringPosition(const String& value, unsigned portSt
 
 bool HTMLAnchorElement::supportsFocus() const
 {
-    if (isContentEditable())
+    if (rendererIsEditable())
         return HTMLElement::supportsFocus();
     // If not a link we should still be able to focus the element if it has tabIndex.
     return isLink() || HTMLElement::supportsFocus();
@@ -154,7 +154,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* event)
             return;
         }
 
-        if (isContentEditable()) {
+        if (rendererIsEditable()) {
             // This keeps track of the editable block that the selection was in (if it was in one) just before the link was clicked
             // for the LiveWhenNotFocused editable link behavior
             if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() != RightButton && document()->frame() && document()->frame()->selection()) {
@@ -174,7 +174,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* event)
 
 void HTMLAnchorElement::setActive(bool down, bool pause)
 {
-    if (isContentEditable()) {
+    if (rendererIsEditable()) {
         EditableLinkBehavior editableLinkBehavior = EditableLinkDefaultBehavior;
         if (Settings* settings = document()->settings())
             editableLinkBehavior = settings->editableLinkBehavior();
@@ -247,7 +247,7 @@ bool HTMLAnchorElement::canStartSelection() const
     // FIXME: We probably want this same behavior in SVGAElement too
     if (!isLink())
         return HTMLElement::canStartSelection();
-    return isContentEditable();
+    return rendererIsEditable();
 }
 
 bool HTMLAnchorElement::draggable() const
@@ -501,7 +501,7 @@ HTMLAnchorElement::EventType HTMLAnchorElement::eventType(Event* event)
 
 bool HTMLAnchorElement::treatLinkAsLiveForEventType(EventType eventType) const
 {
-    if (!isContentEditable())
+    if (!rendererIsEditable())
         return true;
 
     Settings* settings = document()->settings();

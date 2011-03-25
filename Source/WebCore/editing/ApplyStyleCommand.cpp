@@ -1017,12 +1017,12 @@ void ApplyStyleCommand::fixRangeAndApplyInlineStyle(EditingStyle* style, const P
 
 static bool containsNonEditableRegion(Node* node)
 {
-    if (!node->isContentEditable())
+    if (!node->rendererIsEditable())
         return true;
 
     Node* sibling = node->traverseNextSibling();
     for (Node* descendent = node->firstChild(); descendent && descendent != sibling; descendent = descendent->traverseNextNode()) {
-        if (!descendent->isContentEditable())
+        if (!descendent->rendererIsEditable())
             return true;
     }
 
@@ -1037,10 +1037,10 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, Node* n
     for (RefPtr<Node> next; node && node != pastEndNode; node = next.get()) {
         next = node->traverseNextNode();
 
-        if (!node->renderer() || !node->isContentEditable())
+        if (!node->renderer() || !node->rendererIsEditable())
             continue;
         
-        if (!node->isContentRichlyEditable() && node->isHTMLElement()) {
+        if (!node->rendererIsRichlyEditable() && node->isHTMLElement()) {
             // This is a plaintext-only region. Only proceed if it's fully selected.
             // pastEndNode is the node after the last fully selected node, so if it's inside node then
             // node isn't fully selected.
@@ -1059,7 +1059,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle* style, Node* n
             continue;
         
         if (node->childNodeCount()) {
-            if (node->contains(pastEndNode) || containsNonEditableRegion(node) || !node->parentNode()->isContentEditable())
+            if (node->contains(pastEndNode) || containsNonEditableRegion(node) || !node->parentNode()->rendererIsEditable())
                 continue;
             if (editingIgnoresContent(node)) {
                 next = node->traverseNextSibling();
@@ -1134,7 +1134,7 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle* style, PassRe
 {
     ASSERT(element);
 
-    if (!element->parentNode() || !element->parentNode()->isContentEditable())
+    if (!element->parentNode() || !element->parentNode()->rendererIsEditable())
         return false;
 
     if (isStyledInlineElementToRemove(element.get())) {
@@ -1651,13 +1651,13 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(PassRefPtr<Node> passedStar
 
     RefPtr<Node> nextSibling = element->nextSibling();
     RefPtr<Node> previousSibling = element->previousSibling();
-    if (nextSibling && nextSibling->isElementNode() && nextSibling->isContentEditable()
+    if (nextSibling && nextSibling->isElementNode() && nextSibling->rendererIsEditable()
         && areIdenticalElements(element.get(), static_cast<Element*>(nextSibling.get())))
         mergeIdenticalElements(element.get(), static_cast<Element*>(nextSibling.get()));
 
-    if (previousSibling && previousSibling->isElementNode() && previousSibling->isContentEditable()) {
+    if (previousSibling && previousSibling->isElementNode() && previousSibling->rendererIsEditable()) {
         Node* mergedElement = previousSibling->nextSibling();
-        if (mergedElement->isElementNode() && mergedElement->isContentEditable()
+        if (mergedElement->isElementNode() && mergedElement->rendererIsEditable()
             && areIdenticalElements(static_cast<Element*>(previousSibling.get()), static_cast<Element*>(mergedElement)))
             mergeIdenticalElements(static_cast<Element*>(previousSibling.get()), static_cast<Element*>(mergedElement));
     }
