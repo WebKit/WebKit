@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\WebKit2Common.vsprops;.\WebKit2DirectX.vsprops;.\WebKit2Apple.vsprops"
+			InheritedPropertySheets="..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\WebKit2Common.vsprops;.\WebKit2DirectX.vsprops;.\WebKit2Apple.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -79,7 +79,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\WebKit2Common.vsprops;.\WebKit2DirectX.vsprops;.\WebKit2Apple.vsprops"
+			InheritedPropertySheets="..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\WebKit2Common.vsprops;.\WebKit2DirectX.vsprops;.\WebKit2Apple.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -140,7 +140,7 @@
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug_wincairo.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\cURL.vsprops;.\WebKit2Common.vsprops;.\WebKit2CFLite.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops"
+			InheritedPropertySheets="..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefinesCairo.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\debug_wincairo.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\cURL.vsprops;.\WebKit2Common.vsprops;.\WebKit2CFLite.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -202,7 +202,7 @@
 		<Configuration
 			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\cURL.vsprops;.\WebKit2Common.vsprops;.\WebKit2CFLite.vsprops"
+			InheritedPropertySheets="..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefinesCairo.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\cURL.vsprops;.\WebKit2Common.vsprops;.\WebKit2CFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -263,7 +263,7 @@
 		<Configuration
 			Name="Debug_All|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug_all.vsprops;.\WebKit2Common.vsprops;.\WebKit2DirectX.vsprops;.\WebKit2Apple.vsprops"
+			InheritedPropertySheets="..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\debug_all.vsprops;.\WebKit2Common.vsprops;.\WebKit2DirectX.vsprops;.\WebKit2Apple.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -324,7 +324,7 @@
 		<Configuration
 			Name="Release_LTCG|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\WebKit2Common.vsprops;.\WebKit2DirectX.vsprops;.\WebKit2Apple.vsprops"
+			InheritedPropertySheets="..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\WebKit2Common.vsprops;.\WebKit2DirectX.vsprops;.\WebKit2Apple.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -1855,6 +1855,22 @@
 					<File
 						RelativePath="..\WebProcess\WebPage\ca\LayerTreeHostCA.cpp"
 						>
+						<FileConfiguration
+							Name="Debug_Cairo_CFLite|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo_CFLite|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\WebProcess\WebPage\ca\LayerTreeHostCA.h"
@@ -1866,6 +1882,22 @@
 						<File
 							RelativePath="..\WebProcess\WebPage\ca\win\LayerTreeHostCAWin.cpp"
 							>
+							<FileConfiguration
+								Name="Debug_Cairo_CFLite|Win32"
+								ExcludedFromBuild="true"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release_Cairo_CFLite|Win32"
+								ExcludedFromBuild="true"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+								/>
+							</FileConfiguration>
 						</File>
 					</Filter>
 				</Filter>

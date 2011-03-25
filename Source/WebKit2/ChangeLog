@@ -1,3 +1,11 @@
+2011-03-24  Brent Fulgham  <bfulgham@webkit.org>
+
+        Build correction.
+
+        Disable the CA Layer stuff when building with Cairo.
+
+        * win/WebKit2.vcproj:
+
 2011-03-24  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
