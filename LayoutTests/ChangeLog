@@ -1,3 +1,12 @@
+2011-03-24  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, rebaseline Chromium test results for Mac Leopard.
+
+        * platform/chromium-mac-leopard/fast/blockflow/vertical-baseline-alignment-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/blockflow/vertical-baseline-alignment-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/dynamic/text-combine-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/dynamic/text-combine-expected.png: Added.
+
 2011-03-24  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Adam Roben.
