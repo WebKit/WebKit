@@ -382,7 +382,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
     int statusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 
     if (url.protocolInHTTPFamily()) {
-        String suggestedFilename = filenameFromHTTPContentDisposition(QString::fromAscii(m_reply->rawHeader("Content-Disposition")));
+        String suggestedFilename = filenameFromHTTPContentDisposition(QString::fromLatin1(m_reply->rawHeader("Content-Disposition")));
 
         if (!suggestedFilename.isEmpty())
             response.setSuggestedFilename(suggestedFilename);
@@ -394,7 +394,7 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
 
         // Add remaining headers.
         foreach (const QNetworkReply::RawHeaderPair& pair, m_reply->rawHeaderPairs())
-            response.setHTTPHeaderField(QString::fromAscii(pair.first), QString::fromAscii(pair.second));
+            response.setHTTPHeaderField(QString::fromLatin1(pair.first), QString::fromLatin1(pair.second));
     }
 
     QUrl redirection = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute).toUrl();
