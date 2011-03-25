@@ -43,7 +43,16 @@
 
 #include <Ecore_Evas.h>
 #include <Edje.h>
+
+#if ENABLE(VIDEO)
+#include "HTMLMediaElement.h"
+#include "HTMLNames.h"
+#endif
+
 namespace WebCore {
+#if ENABLE(VIDEO)
+using namespace HTMLNames;
+#endif
 
 // TODO: change from object count to ecore_evas size (bytes)
 // TODO: as objects are webpage/user defined and they can be very large.
@@ -595,6 +604,7 @@ const char* RenderThemeEfl::edjeGroupFromFormType(FormType type) const
         W("slider/horizontal"),
 #if ENABLE(VIDEO)
         W("mediacontrol/playpause_button"),
+        W("mediacontrol/mute_button"),
 #endif
 #undef W
         0
@@ -1061,6 +1071,10 @@ bool RenderThemeEfl::emitMediaButtonSignal(FormType formType, MediaControlElemen
         edje_object_signal_emit(entry->o, "play", "");
     else if (mediaElementType == MediaPauseButton)
         edje_object_signal_emit(entry->o, "pause", "");
+    else if (mediaElementType == MediaMuteButton)
+        edje_object_signal_emit(entry->o, "mute", "");
+    else if (mediaElementType == MediaUnMuteButton)
+        edje_object_signal_emit(entry->o, "sound", "");
     else 
         return false;
 
@@ -1086,8 +1100,16 @@ bool RenderThemeEfl::paintMediaFullscreenButton(RenderObject* object, const Pain
 
 bool RenderThemeEfl::paintMediaMuteButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    notImplemented();
-    return false;
+    Node* mediaNode = object->node() ? object->node()->shadowAncestorNode() : 0;
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
+        return false;
+
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
+
+    if (!emitMediaButtonSignal(MediaMuteUnMuteButton, mediaElement->muted() ? MediaMuteButton : MediaUnMuteButton, rect))
+        return false;
+
+    return paintThemePart(object, MediaMuteUnMuteButton, info, rect);
 }
 
 bool RenderThemeEfl::paintMediaPlayButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)

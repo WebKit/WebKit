@@ -77,4 +77,5 @@ collections {
 #include "widget/search/decoration/search_decoration.edc"
 #include "widget/slider/slider.edc"
 #include "widget/mediacontrol/playpausebutton/playpause_button.edc"
+#include "widget/mediacontrol/mutebutton/mute_button.edc"
 }

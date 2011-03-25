@@ -60,6 +60,7 @@ enum FormType { // KEEP IN SYNC WITH edjeGroupFromFormType()
     SliderHorizontal,
 #if ENABLE(VIDEO)
     MediaPlayPauseButton,
+    MediaMuteUnMuteButton,
 #endif
     FormTypeLast
 };
