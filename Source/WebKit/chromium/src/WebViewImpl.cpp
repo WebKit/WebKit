@@ -126,6 +126,7 @@
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(CG)
+#include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGContext.h>
 #endif
 
