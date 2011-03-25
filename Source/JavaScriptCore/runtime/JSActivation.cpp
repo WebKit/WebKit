@@ -76,12 +76,13 @@ void JSActivation::markChildren(MarkStack& markStack)
 inline bool JSActivation::symbolTableGet(const Identifier& propertyName, PropertySlot& slot)
 {
     SymbolTableEntry entry = symbolTable().inlineGet(propertyName.impl());
-    if (!entry.isNull()) {
-        ASSERT(entry.getIndex() < m_numCapturedVars);
-        slot.setValue(registerAt(entry.getIndex()).get());
-        return true;
-    }
-    return false;
+    if (entry.isNull())
+        return false;
+    if (entry.getIndex() >= m_numCapturedVars)
+        return false;
+
+    slot.setValue(registerAt(entry.getIndex()).get());
+    return true;
 }
 
 inline bool JSActivation::symbolTablePut(JSGlobalData& globalData, const Identifier& propertyName, JSValue value)
@@ -93,7 +94,9 @@ inline bool JSActivation::symbolTablePut(JSGlobalData& globalData, const Identif
         return false;
     if (entry.isReadOnly())
         return true;
-    ASSERT(entry.getIndex() < m_numCapturedVars);
+    if (entry.getIndex() >= m_numCapturedVars)
+        return false;
+
     registerAt(entry.getIndex()).set(globalData, this, value);
     return true;
 }
@@ -102,9 +105,11 @@ void JSActivation::getOwnPropertyNames(ExecState* exec, PropertyNameArray& prope
 {
     SymbolTable::const_iterator end = symbolTable().end();
     for (SymbolTable::const_iterator it = symbolTable().begin(); it != end; ++it) {
-        ASSERT(it->second.getIndex() < m_numCapturedVars);
-        if (!(it->second.getAttributes() & DontEnum) || (mode == IncludeDontEnumProperties))
-            propertyNames.add(Identifier(exec, it->first.get()));
+        if (it->second.getAttributes() & DontEnum && mode != IncludeDontEnumProperties)
+            continue;
+        if (it->second.getIndex() >= m_numCapturedVars)
+            continue;
+        propertyNames.add(Identifier(exec, it->first.get()));
     }
     // Skip the JSVariableObject implementation of getOwnPropertyNames
     JSObject::getOwnPropertyNames(exec, propertyNames, mode);
@@ -121,6 +126,7 @@ inline bool JSActivation::symbolTablePutWithAttributes(JSGlobalData& globalData,
     ASSERT(!entry.isNull());
     if (entry.getIndex() >= m_numCapturedVars)
         return false;
+
     entry.setAttributes(attributes);
     registerAt(entry.getIndex()).set(globalData, this, value);
     return true;

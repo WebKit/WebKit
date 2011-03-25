@@ -1,3 +1,16 @@
+2011-03-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Crash when paused at a breakpoint caused by inaccurate Activation records.
+        https://bugs.webkit.org/show_bug.cgi?id=57120
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::symbolTableGet):
+        (JSC::JSActivation::symbolTablePut):
+        (JSC::JSActivation::getOwnPropertyNames):
+        (JSC::JSActivation::symbolTablePutWithAttributes):
+
 2011-03-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
