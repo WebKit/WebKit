@@ -321,6 +321,8 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/UIProcess/API/C/WKFrame.h \
 	Source/WebKit2/UIProcess/API/C/WKFramePolicyListener.cpp \
 	Source/WebKit2/UIProcess/API/C/WKFramePolicyListener.h \
+	Source/WebKit2/UIProcess/API/C/WKIconDatabase.cpp \
+	Source/WebKit2/UIProcess/API/C/WKIconDatabase.h \
 	Source/WebKit2/UIProcess/API/C/WKInspector.cpp \
 	Source/WebKit2/UIProcess/API/C/WKInspector.h \
 	Source/WebKit2/UIProcess/API/C/WKKeyValueStorageManager.cpp \

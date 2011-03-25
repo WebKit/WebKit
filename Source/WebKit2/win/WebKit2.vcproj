@@ -2989,6 +2989,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\UIProcess\API\C\WKIconDatabase.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKIconDatabase.h"
+						>
+					</File>
+					<File
 						RelativePath="..\UIProcess\API\C\WKInspector.cpp"
 						>
 					</File>

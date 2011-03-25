@@ -1,3 +1,29 @@
+2011-03-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57069
+        Add WKIconDatabase api to the project files, and expose accessor on WKContext.
+
+        Project file stuffs:
+        * GNUmakefile.am:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
+        * Shared/API/c/WKBase.h:
+        * UIProcess/API/C/WKAPICast.h:
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetIconDatabase):
+        * UIProcess/API/C/WKContext.h:
+
+        * UIProcess/API/C/WKIconDatabase.cpp: Added.
+        (WKIconDatabaseGetTypeID):
+        * UIProcess/API/C/WKIconDatabase.h: Added.
+
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::iconDatabase):
+
 2011-03-24  Brent Fulgham  <bfulgham@webkit.org>
 
         Build correction.

@@ -178,6 +178,11 @@ WKGeolocationManagerRef WKContextGetGeolocationManager(WKContextRef contextRef)
     return toAPI(toImpl(contextRef)->geolocationManagerProxy());
 }
 
+WKIconDatabaseRef WKContextGetIconDatabase(WKContextRef contextRef)
+{
+    return toAPI(toImpl(contextRef)->iconDatabase());
+}
+
 WKKeyValueStorageManagerRef WKContextGetKeyValueStorageManager(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->keyValueStorageManagerProxy());

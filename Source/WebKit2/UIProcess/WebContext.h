@@ -145,6 +145,7 @@ public:
     WebCookieManagerProxy* cookieManagerProxy() const { return m_cookieManagerProxy.get(); }
     WebDatabaseManagerProxy* databaseManagerProxy() const { return m_databaseManagerProxy.get(); }
     WebGeolocationManagerProxy* geolocationManagerProxy() const { return m_geolocationManagerProxy.get(); }
+    WebIconDatabase* iconDatabase() const { return m_iconDatabase.get(); }
     WebKeyValueStorageManagerProxy* keyValueStorageManagerProxy() const { return m_keyValueStorageManagerProxy.get(); }
     WebMediaCacheManagerProxy* mediaCacheManagerProxy() const { return m_mediaCacheManagerProxy.get(); }
     WebPluginSiteDataManager* pluginSiteDataManager() const { return m_pluginSiteDataManager.get(); }
@@ -155,7 +156,7 @@ public:
         unsigned wkPageCount;
         unsigned wkFrameCount;
     };
-    static Statistics& statistics();
+    static Statistics& statistics();    
 
     void setDatabaseDirectory(const String& dir) { m_overrideDatabaseDirectory = dir; }
     void setIconDatabasePath(const String&);
