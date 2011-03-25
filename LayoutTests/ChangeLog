@@ -1,5 +1,12 @@
 2011-03-25  Vincent Scheib  <scheib@chromium.org>
 
+        fast/forms/input-file-directory-upload.html timing out.
+        http://crbug.com/77468
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-25  Vincent Scheib  <scheib@chromium.org>
+
         Attempting SLOW to resolve fast/forms/input-file-directory-upload.html
 
         * platform/chromium/test_expectations.txt:
