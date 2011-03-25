@@ -175,8 +175,14 @@ WebInspector.ResourcesPanel.prototype = {
         this.reset();
     },
 
-    addOrUpdateFrame: function(parentFrameId, frameId, title, subtitle)
+    addOrUpdateFrame: function(frame)
     {
+        var frameId = frame.id;
+        var parentFrameId = frame.parentId;
+        var title = frame.name;
+        var subtitle = new WebInspector.Resource(null, frame.url).displayName;
+        this.addDocumentURL(frame.url);
+        
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (frameTreeElement) {
             frameTreeElement.setTitles(title, subtitle);
@@ -220,8 +226,6 @@ WebInspector.ResourcesPanel.prototype = {
 
     addResourceToFrame: function(frameId, resource)
     {
-        this.addDocumentURL(resource.documentURL);
-
         if (resource.statusCode >= 301 && resource.statusCode <= 303)
             return;
 

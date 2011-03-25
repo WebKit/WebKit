@@ -231,15 +231,6 @@ static String pointerAsId(void* pointer)
     return String::format("%.0llX", address);
 }
 
-static PassRefPtr<InspectorObject> buildObjectForDocumentLoader(DocumentLoader* loader)
-{
-    RefPtr<InspectorObject> documentLoaderObject = InspectorObject::create();
-    documentLoaderObject->setString("frameId", pointerAsId(loader->frame()));
-    documentLoaderObject->setString("loaderId", pointerAsId(loader));
-    documentLoaderObject->setString("url", loader->requestURL().string());
-    return documentLoaderObject;
-}
-
 static PassRefPtr<InspectorObject> buildObjectForFrameResource(Frame* frame)
 {
     FrameLoader* frameLoader = frame->loader();
@@ -247,7 +238,6 @@ static PassRefPtr<InspectorObject> buildObjectForFrameResource(Frame* frame)
 
     RefPtr<InspectorObject> resourceObject = InspectorObject::create();
     resourceObject->setString("url", loader->url().string());
-    resourceObject->setObject("loader", buildObjectForDocumentLoader(loader));
     resourceObject->setObject("request", buildObjectForResourceRequest(loader->request()));
     resourceObject->setObject("response", buildObjectForResourceResponse(loader->response()));
     return resourceObject;
@@ -274,30 +264,14 @@ static String cachedResourceTypeString(const CachedResource& cachedResource)
     return "Other";
 }
 
-static PassRefPtr<InspectorObject> buildObjectForCachedResource(DocumentLoader* loader, const CachedResource& cachedResource)
+static PassRefPtr<InspectorObject> buildObjectForCachedResource(const CachedResource& cachedResource)
 {
     RefPtr<InspectorObject> resourceObject = InspectorObject::create();
     resourceObject->setString("url", cachedResource.url());
     resourceObject->setString("type", cachedResourceTypeString(cachedResource));
     resourceObject->setNumber("bodySize", cachedResource.encodedSize());
     resourceObject->setObject("response", buildObjectForResourceResponse(cachedResource.response()));
-    resourceObject->setObject("loader", buildObjectForDocumentLoader(loader));
     return resourceObject;
-}
-
-static void populateObjectWithFrameResources(Frame* frame, PassRefPtr<InspectorObject> frameResources)
-{
-    frameResources->setObject("resource", buildObjectForFrameResource(frame));
-    RefPtr<InspectorArray> subresources = InspectorArray::create();
-    frameResources->setArray("subresources", subresources);
-
-    const CachedResourceLoader::DocumentResourceMap& allResources = frame->document()->cachedResourceLoader()->allCachedResources();
-    CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
-    for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
-        CachedResource* cachedResource = it->second.get();
-        RefPtr<InspectorObject> cachedResourceObject = buildObjectForCachedResource(frame->loader()->documentLoader(), *cachedResource);
-        subresources->pushValue(cachedResourceObject);
-    }
 }
 
 InspectorResourceAgent::~InspectorResourceAgent()
@@ -321,15 +295,13 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
     request.setReportLoadTiming(true);
     request.setReportRawHeaders(true);
 
-    RefPtr<InspectorObject> loaderObject = buildObjectForDocumentLoader(loader);
     RefPtr<ScriptCallStack> callStack = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
     RefPtr<InspectorArray> callStackValue;
     if (callStack)
         callStackValue = callStack->buildInspectorArray();
     else
         callStackValue = InspectorArray::create();
-
-    m_frontend->willSendRequest(static_cast<int>(identifier), loaderObject, buildObjectForResourceRequest(request), buildObjectForResourceResponse(redirectResponse), currentTime(), callStackValue);
+    m_frontend->willSendRequest(static_cast<int>(identifier), pointerAsId(loader->frame()), pointerAsId(loader), loader->url().string(), buildObjectForResourceRequest(request), buildObjectForResourceResponse(redirectResponse), currentTime(), callStackValue);
 }
 
 void InspectorResourceAgent::markResourceAsCached(unsigned long identifier)
@@ -384,7 +356,7 @@ void InspectorResourceAgent::didFailLoading(unsigned long identifier, const Reso
 
 void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* loader, const CachedResource* resource)
 {
-    m_frontend->didLoadResourceFromMemoryCache(currentTime(), buildObjectForCachedResource(loader, *resource));
+    m_frontend->didLoadResourceFromMemoryCache(pointerAsId(loader->frame()), pointerAsId(loader), loader->url().string(), currentTime(), buildObjectForCachedResource(*resource));
 }
 
 void InspectorResourceAgent::setInitialContent(unsigned long identifier, const String& sourceString, const String& type)
@@ -404,29 +376,43 @@ static PassRefPtr<InspectorObject> buildObjectForFrame(Frame* frame)
         frameObject->setString("name", name);
     }
     frameObject->setString("url", frame->document()->url().string());
+    frameObject->setString("loaderId", pointerAsId(frame->loader()->documentLoader()));
+
     return frameObject;
 }
 
-static PassRefPtr<InspectorObject> buildObjectForFrameTree(Frame* frame, bool dumpResources)
+static PassRefPtr<InspectorObject> buildObjectForFrameTree(Frame* frame)
 {
+    RefPtr<InspectorObject> result = InspectorObject::create();
     RefPtr<InspectorObject> frameObject = buildObjectForFrame(frame);
+    result->setObject("frame", frameObject);
 
-    if (dumpResources)
-        populateObjectWithFrameResources(frame, frameObject);
+    result->setObject("mainResource", buildObjectForFrameResource(frame));
+    RefPtr<InspectorArray> subresources = InspectorArray::create();
+    result->setArray("subresources", subresources);
+
+    const CachedResourceLoader::DocumentResourceMap& allResources = frame->document()->cachedResourceLoader()->allCachedResources();
+    CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
+    for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
+        CachedResource* cachedResource = it->second.get();
+        RefPtr<InspectorObject> cachedResourceObject = buildObjectForCachedResource(*cachedResource);
+        subresources->pushValue(cachedResourceObject);
+    }
+
     RefPtr<InspectorArray> childrenArray;
     for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
         if (!childrenArray) {
             childrenArray = InspectorArray::create();
-            frameObject->setArray("children", childrenArray);
+            result->setArray("childFrames", childrenArray);
         }
-        childrenArray->pushObject(buildObjectForFrameTree(child, dumpResources));
+        childrenArray->pushObject(buildObjectForFrameTree(child));
     }
-    return frameObject;
+    return result;
 }
 
 void InspectorResourceAgent::didCommitLoad(DocumentLoader* loader)
 {
-    m_frontend->didCommitLoadForFrame(buildObjectForFrame(loader->frame()), buildObjectForDocumentLoader(loader));
+    m_frontend->didCommitLoadForFrame(buildObjectForFrame(loader->frame()), pointerAsId(loader));
 }
 
 void InspectorResourceAgent::frameDetachedFromParent(Frame* frame)
@@ -493,7 +479,7 @@ Frame* InspectorResourceAgent::frameForId(const String& frameId)
 void InspectorResourceAgent::enable(ErrorString*, RefPtr<InspectorObject>* object)
 {
     enable();
-    *object = buildObjectForFrameTree(m_page->mainFrame(), true);
+    *object = buildObjectForFrameTree(m_page->mainFrame());
 }
 
 void InspectorResourceAgent::enable()

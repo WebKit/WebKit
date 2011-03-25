@@ -1,3 +1,41 @@
+2011-03-25  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: refactor Network domain's frame tree API
+        https://bugs.webkit.org/show_bug.cgi?id=57103
+
+        * inspector/Inspector.json:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForFrameResource):
+        (WebCore::buildObjectForCachedResource):
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::didLoadResourceFromMemoryCache):
+        (WebCore::buildObjectForFrame):
+        (WebCore::buildObjectForFrameTree):
+        (WebCore::InspectorResourceAgent::didCommitLoad):
+        (WebCore::InspectorResourceAgent::enable):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype.requestContent):
+        (WebInspector.NetworkDispatcher):
+        (WebInspector.NetworkDispatcher.prototype.willSendRequest):
+        (WebInspector.NetworkDispatcher.prototype.didReceiveResponse):
+        (WebInspector.NetworkDispatcher.prototype.didLoadResourceFromMemoryCache):
+        (WebInspector.NetworkDispatcher.prototype.frameDetachedFromParent):
+        (WebInspector.NetworkDispatcher.prototype.didCommitLoadForFrame):
+        (WebInspector.NetworkDispatcher.prototype.didCreateWebSocket):
+        (WebInspector.NetworkDispatcher.prototype._appendRedirect):
+        (WebInspector.NetworkDispatcher.prototype._addFramesRecursively):
+        (WebInspector.NetworkDispatcher.prototype._createResource):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype.addOrUpdateFrame):
+        (WebInspector.ResourceTreeModel.prototype.didCommitLoadForFrame):
+        (WebInspector.ResourceTreeModel.prototype._clearChildFramesAndResources):
+        (WebInspector.ResourceTreeModel.prototype._clearResources):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.addOrUpdateFrame):
+        (WebInspector.ResourcesPanel.prototype.addResourceToFrame):
+
 2011-03-25  Dave Hyatt  <hyatt@apple.com>
 
         Reviewed by Adele Peterson.

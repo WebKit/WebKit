@@ -267,16 +267,27 @@
                     "type": { "type": "string" },
                     "response": { "$ref": "ResourceResponse" },
                     "bodySize": { "type": "number" },
-                    "loader": { "$ref": "DocumentLoader" }
                 }
             },
             {
-                "id": "DocumentLoader",
+                "id": "Frame",
                 "type": "object",
                 "properties": {
-                    "frameId": { "type": "string" },
+                    "id": { "type": "string" },
+                    "parentId": { "type": "string" },
                     "loaderId": { "type": "string" },
+                    "name": { "type": "string", "optional": true },
                     "url": { "type": "string" }
+                }
+            },
+            {
+                "id": "FrameResourceTree",
+                "type": "object",
+                "properties": {
+                    "frame": { "$ref": "Frame" },
+                    "childFrames": { "type": "array", "optional": true, "items": { "$ref": "FrameResourceTree" } },
+                    "mainResource": { "$ref": "FrameResource" },
+                    "subresources": { "type": "array", "items": { "$ref": "CachedResource" } }
                 }
             },
             {
@@ -284,7 +295,6 @@
                 "type": "object",
                 "properties": {
                     "url": { "type": "string" },
-                    "loader": { "$ref": "DocumentLoader" },
                     "request": { "$ref": "ResourceRequest" },
                     "response": { "$ref": "ResourceResponse" }
                 }
@@ -315,7 +325,7 @@
             {
                 "name": "setExtraHeaders",
                 "parameters": [
-                    { "name": "headers", "$ref": "NetworkHeaders" }
+                    { "name": "headers", "type": "object" }
                 ]
             }
         ],
@@ -330,7 +340,9 @@
                 "name": "willSendRequest",
                 "parameters": [
                     { "name": "identifier", "type": "integer" },
-                    { "name": "loader", "$ref": "NetworkLoader" },
+                    { "name": "frameId", "type": "string" },
+                    { "name": "loaderId", "type": "string" },
+                    { "name": "documentURL", "type": "string" },
                     { "name": "request", "$ref": "ResourceRequest" },
                     { "name": "redirectResponse", "$ref": "ResourceResponse" },
                     { "name": "time", "type": "number" },
@@ -373,14 +385,17 @@
                 "parameters": [
                     { "name": "identifier", "type": "integer" },
                     { "name": "time", "type": "number" },
-                    { "name": "localizedDescription", "type": "string" }
+                    { "name": "errorText", "type": "string" }
                 ]
             },
             {
                 "name": "didLoadResourceFromMemoryCache",
                 "parameters": [
+                    { "name": "frameId", "type": "string" },
+                    { "name": "loaderId", "type": "string" },
+                    { "name": "documentURL", "type": "string" },
                     { "name": "time", "type": "number" },
-                    { "name": "resource", "$ref": "NetworkCachedResource" }
+                    { "name": "resource", "$ref": "CachedResource" }
                 ]
             },
             {
@@ -395,7 +410,7 @@
                 "name": "didCommitLoadForFrame",
                 "parameters": [
                     { "name": "frame", "$ref": "Frame" },
-                    { "name": "loader", "$ref": "NetworkLoader" }
+                    { "name": "loaderId", "type": "string" }
                 ]
             },
             {
@@ -410,7 +425,7 @@
                 "parameters": [
                     { "name": "identifier", "type": "integer" },
                     { "name": "time", "type": "number" },
-                    { "name": "request", "$ref": "NetworkWebSocketRequest" }
+                    { "name": "request", "$ref": "WebSocketRequest" }
                 ]
             },
             {
@@ -418,7 +433,7 @@
                 "parameters": [
                     { "name": "identifier", "type": "integer" },
                     { "name": "time", "type": "number" },
-                    { "name": "response", "$ref": "NetworkWebSocketResponse" }
+                    { "name": "response", "$ref": "WebSocketResponse" }
                 ]
             },
             {

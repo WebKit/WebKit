@@ -46,8 +46,7 @@ WebInspector.ResourceTreeModel.prototype = {
 
     addOrUpdateFrame: function(frame)
     {
-        var tmpResource = new WebInspector.Resource(null, frame.url);
-        WebInspector.panels.resources.addOrUpdateFrame(frame.parentId, frame.id, frame.name, tmpResource.displayName);
+        WebInspector.panels.resources.addOrUpdateFrame(frame);
         var subframes = this._subframes[frame.parentId];
         if (!subframes) {
             subframes = {};
@@ -56,10 +55,10 @@ WebInspector.ResourceTreeModel.prototype = {
         subframes[frame.id] = true;
     },
 
-    didCommitLoadForFrame: function(frame, loader)
+    didCommitLoadForFrame: function(frame, loaderId)
     {
         // frame.parentId === 0 is when main frame navigation happens.
-        this._clearChildFramesAndResources(frame.parentId ? frame.id : 0, loader.loaderId);
+        this._clearChildFramesAndResources(frame.parentId ? frame.id : 0, loaderId);
 
         this.addOrUpdateFrame(frame);
 
@@ -141,18 +140,18 @@ WebInspector.ResourceTreeModel.prototype = {
             this._resourcesByURL[resource.url] = [resourceForURL, resource];
     },
 
-    _clearChildFramesAndResources: function(frameId, loaderId)
+    _clearChildFramesAndResources: function(frameId, loaderToPreserveId)
     {
         WebInspector.panels.resources.removeResourcesFromFrame(frameId);
 
-        this._clearResources(frameId, loaderId);
+        this._clearResources(frameId, loaderToPreserveId);
         var subframes = this._subframes[frameId];
         if (!subframes)
             return;
 
         for (var childFrameId in subframes) {
             WebInspector.panels.resources.removeFrame(childFrameId);
-            this._clearChildFramesAndResources(childFrameId, loaderId);
+            this._clearChildFramesAndResources(childFrameId, loaderToPreserveId);
         }
         delete this._subframes[frameId];
     },
@@ -166,7 +165,7 @@ WebInspector.ResourceTreeModel.prototype = {
         var preservedResourcesForFrame = [];
         for (var i = 0; i < resourcesForFrame.length; ++i) {
             var resource = resourcesForFrame[i];
-            if (resource.loader.loaderId === loaderToPreserveId) {
+            if (resource.loaderId === loaderToPreserveId) {
                 preservedResourcesForFrame.push(resource);
                 continue;
             }
@@ -174,8 +173,9 @@ WebInspector.ResourceTreeModel.prototype = {
         }
 
         delete this._resourcesByFrameId[frameId];
-        if (preservedResourcesForFrame.length)
+        if (preservedResourcesForFrame.length) {
             this._resourcesByFrameId[frameId] = preservedResourcesForFrame;
+        }
     },
 
     _callForFrameResources: function(frameId, callback)

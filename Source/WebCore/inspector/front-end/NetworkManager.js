@@ -57,7 +57,7 @@ WebInspector.NetworkManager.prototype = {
         {
             callback((!error && success) ? content : null);
         }
-        NetworkAgent.resourceContent(resource.loader.frameId, resource.url, base64Encode, callbackWrapper);
+        NetworkAgent.resourceContent(resource.frameId, resource.url, base64Encode, callbackWrapper);
     },
 
     _processCachedResources: function(error, mainFramePayload)
@@ -124,15 +124,14 @@ WebInspector.NetworkDispatcher.prototype = {
         this._updateResourceWithResponse(resource, cachedResource.response);
     },
 
-    willSendRequest: function(identifier, loader, request, redirectResponse, time, callStack)
+    willSendRequest: function(identifier, frameId, loaderId, documentURL, request, redirectResponse, time, callStack)
     {
         var resource = this._inflightResourcesById[identifier];
         if (resource) {
             this.didReceiveResponse(identifier, time, "Other", redirectResponse);
             resource = this._appendRedirect(identifier, time, request.url);
         } else
-            resource = this._createResource(identifier, request.url, loader, callStack);
-
+            resource = this._createResource(identifier, frameId, loaderId, request.url, documentURL, callStack);
         this._updateResourceWithRequest(resource, request);
         resource.startTime = time;
 
@@ -161,7 +160,7 @@ WebInspector.NetworkDispatcher.prototype = {
         this._updateResourceWithResponse(resource, response);
 
         this._updateResource(resource);
-        this._resourceTreeModel.addResourceToFrame(resource.loader.frameId, resource);
+        this._resourceTreeModel.addResourceToFrame(resource.frameId, resource);
     },
 
     didReceiveContentLength: function(identifier, time, dataLength, lengthReceived)
@@ -198,16 +197,16 @@ WebInspector.NetworkDispatcher.prototype = {
         this._finishResource(resource, time);
     },
 
-    didLoadResourceFromMemoryCache: function(time, cachedResource)
+    didLoadResourceFromMemoryCache: function(frameId, loaderId, documentURL, time, cachedResource)
     {
-        var resource = this._createResource("cached:" + ++this._lastIdentifierForCachedResource, cachedResource.url, cachedResource.loader);
+        var resource = this._createResource("cached:" + ++this._lastIdentifierForCachedResource, frameId, loaderId, cachedResource.url, documentURL);
         this._updateResourceWithCachedResource(resource, cachedResource);
         resource.cached = true;
         resource.requestMethod = "GET";
         this._startResource(resource);
         resource.startTime = resource.responseReceivedTime = time;
         this._finishResource(resource, time);
-        this._resourceTreeModel.addResourceToFrame(resource.loader.frameId, resource);
+        this._resourceTreeModel.addResourceToFrame(resource.frameId, resource);
     },
 
     frameDetachedFromParent: function(frameId)
@@ -226,14 +225,15 @@ WebInspector.NetworkDispatcher.prototype = {
         this._updateResource(resource);
     },
 
-    didCommitLoadForFrame: function(frame, loader)
+    didCommitLoadForFrame: function(frame, loaderId)
     {
-        this._resourceTreeModel.didCommitLoadForFrame(frame, loader);
+        this._resourceTreeModel.didCommitLoadForFrame(frame, loaderId);
         if (!frame.parentId) {
             var mainResource = this._resourceTreeModel.resourceForURL(frame.url);
             if (mainResource) {
                 WebInspector.mainResource = mainResource;
                 mainResource.isMainResource = true;
+                mainResource.documentURL = frame.url;
                 this._dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.MainResourceCommitLoad, mainResource);
             }
         }
@@ -241,7 +241,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     didCreateWebSocket: function(identifier, requestURL)
     {
-        var resource = this._createResource(identifier, requestURL);
+        var resource = this._createResource(identifier, null, null, requestURL);
         resource.type = WebInspector.Resource.Type.WebSocket;
         this._startResource(resource);
     },
@@ -290,7 +290,8 @@ WebInspector.NetworkDispatcher.prototype = {
         originalResource.identifier = "redirected:" + identifier + "." + previousRedirects.length;
         delete originalResource.redirects;
         this._finishResource(originalResource, time);
-        var newResource = this._createResource(identifier, redirectURL, originalResource.loader, originalResource.stackTrace);
+        var newResource = this._createResource(identifier, originalResource.frameId, originalResource.loaderId,
+             redirectURL, originalResource.documentURL, originalResource.stackTrace);
         newResource.redirects = previousRedirects.concat(originalResource);
         return newResource;
     },
@@ -316,26 +317,29 @@ WebInspector.NetworkDispatcher.prototype = {
         delete this._inflightResourcesByURL[resource.url];
     },
 
-    _addFramesRecursively: function(framePayload)
+    _addFramesRecursively: function(frameTreePayload)
     {
-        var frameResource = this._createResource(null, framePayload.resource.url, framePayload.resource.loader);
-        this._updateResourceWithRequest(frameResource, framePayload.resource.request);
-        this._updateResourceWithResponse(frameResource, framePayload.resource.response);
+        var framePayload = frameTreePayload.frame;
+        var mainResource = frameTreePayload.mainResource;
+
+        var frameResource = this._createResource(null, framePayload.id, framePayload.loaderId, mainResource.url, framePayload.url);
+        this._updateResourceWithRequest(frameResource, mainResource.request);
+        this._updateResourceWithResponse(frameResource, mainResource.response);
         frameResource.type = WebInspector.Resource.Type["Document"];
         frameResource.finished = true;
 
         this._resourceTreeModel.addOrUpdateFrame(framePayload);
         this._resourceTreeModel.addResourceToFrame(framePayload.id, frameResource);
 
-        for (var i = 0; framePayload.children && i < framePayload.children.length; ++i)
-            this._addFramesRecursively(framePayload.children[i]);
+        for (var i = 0; frameTreePayload.childFrames && i < frameTreePayload.childFrames.length; ++i)
+            this._addFramesRecursively(frameTreePayload.childFrames[i]);
 
-        if (!framePayload.subresources)
+        if (!frameTreePayload.subresources)
             return;
 
-        for (var i = 0; i < framePayload.subresources.length; ++i) {
-            var cachedResource = framePayload.subresources[i];
-            var resource = this._createResource(null, cachedResource.url, cachedResource.loader);
+        for (var i = 0; i < frameTreePayload.subresources.length; ++i) {
+            var cachedResource = frameTreePayload.subresources[i];
+            var resource = this._createResource(null, framePayload.id, framePayload.loaderId, cachedResource.url, framePayload.url);
             this._updateResourceWithCachedResource(resource, cachedResource);
             resource.finished = true;
             this._resourceTreeModel.addResourceToFrame(framePayload.id, resource);
@@ -348,12 +352,12 @@ WebInspector.NetworkDispatcher.prototype = {
         this._manager.dispatchEventToListeners(eventType, resource);
     },
 
-    _createResource: function(identifier, url, loader, stackTrace)
+    _createResource: function(identifier, frameId, loaderId, url, documentURL, stackTrace)
     {
         var resource = new WebInspector.Resource(identifier, url);
-        resource.loader = loader;
-        if (loader)
-            resource.documentURL = loader.url;
+        resource.documentURL = documentURL;
+        resource.frameId = frameId;
+        resource.loaderId = loaderId;
         resource.stackTrace = stackTrace;
         return resource;
     }
