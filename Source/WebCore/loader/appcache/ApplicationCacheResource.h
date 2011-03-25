@@ -57,6 +57,7 @@ public:
     int64_t estimatedSizeInStorage();
 
     const String& path() const { return m_path; }
+    void setPath(const String& path) { m_path = path; }
 
 #ifndef NDEBUG
     static void dumpType(unsigned type);

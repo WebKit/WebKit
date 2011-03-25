@@ -1,3 +1,41 @@
+2011-03-23  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Application Cache should save audio/ and video/ mime types as flat files
+        https://bugs.webkit.org/show_bug.cgi?id=53784
+        <rdar://problem/8932473>
+
+        No new tests, as this behavior is not possible to test without changes to the MediaPlayer engines.
+
+        Store certain mime types as flat files alongside the Application Cache database.
+        This requires plumbing the saved file path from ApplicationCacheStorage through
+        to ApplicationCacheResource.
+
+        (WebCore::ApplicationCacheStorage::openDatabase): Modify the CacheResourceData schema and
+            add a new DeletedCacheResources table, add a new CacheResourceDataDeleted trigger.
+        (WebCore::ApplicationCacheStorage::store): Add the new path data when adding new rows in 
+            CacheResourceData, and store media resources as flat files.
+        (WebCore::ApplicationCacheStorage::loadCache): Pull the "path" column from CacheResourceData
+            when loading cache items.
+        (WebCore::ApplicationCacheStorage::remove): Call checkForDeletedResources.
+        (WebCore::ApplicationCacheStorage::empty): Ditto.
+        (WebCore::ApplicationCacheStorage::storeCopyOfCache): Ditto.
+        (WebCore::ApplicationCacheStorage::deleteCacheGroup): Ditto.
+        (WebCore::ApplicationCacheStorage::checkForDeletedResources): Walk through DeletedCacheResourceData
+            looking for entries with non-empty "path" columns; if found, delete.
+        (WebCore::ApplicationCacheStorage::flatFileAreaSize): Walk through CacheResourceData rows
+            and sum the file size of those rows with flat file storage.
+        (WebCore::ApplicationCacheStorage::verifySchemaVersion): Call deleteTables() instead of 
+            clearAllTables() directly.
+        (WebCore::ApplicationCacheStorage::deleteTables): Call empty() before deleting the tables,
+            so that flat files get deleted.
+        (WebCore::ApplicationCacheStorage::shouldStoreResourceAsFlatFile): Added.
+        (WebCore::ApplicationCacheStorage::writeDataToUniqueFileInDirectory): Added.
+        * loader/appcache/ApplicationCacheStorage.h:
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::openFile): Implement openFile on Windows.
+
 2011-03-24  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

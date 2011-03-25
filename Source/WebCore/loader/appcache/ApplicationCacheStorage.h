@@ -113,6 +113,9 @@ private:
     bool store(ApplicationCacheResource*, unsigned cacheStorageID);
 
     bool ensureOriginRecord(const SecurityOrigin*);
+    bool shouldStoreResourceAsFlatFile(ApplicationCacheResource*);
+    void deleteTables();
+    bool writeDataToUniqueFileInDirectory(SharedBuffer*, const String& directory, String& outFilename);
 
     void loadManifestHostHashes();
     
@@ -124,6 +127,8 @@ private:
     bool executeSQLCommand(const String&);
 
     void checkForMaxSizeReached();
+    void checkForDeletedResources();
+    long long flatFileAreaSize();
     
     String m_cacheDirectory;
     String m_cacheFile;

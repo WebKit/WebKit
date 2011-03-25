@@ -38,6 +38,7 @@
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include "SecurityOrigin.h"
+#include "UUID.h"
 #include <wtf/text/CString.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
@@ -45,6 +46,8 @@
 using namespace std;
 
 namespace WebCore {
+
+static const char flatFileSubdirectory[] = "ApplicationCache";
 
 template <class T>
 class StorageIDJournal {
@@ -394,7 +397,7 @@ int64_t ApplicationCacheStorage::spaceNeeded(int64_t cacheToSave)
     if (!getFileSize(m_cacheFile, fileSize))
         return 0;
 
-    int64_t currentSize = fileSize;
+    int64_t currentSize = fileSize + flatFileAreaSize();
 
     // Determine the amount of free space we have available.
     int64_t totalAvailableSize = 0;
@@ -560,7 +563,7 @@ bool ApplicationCacheStorage::executeSQLCommand(const String& sql)
 // Update the schemaVersion when the schema of any the Application Cache
 // SQLite tables changes. This allows the database to be rebuilt when
 // a new, incompatible change has been introduced to the database schema.
-static const int schemaVersion = 6;
+static const int schemaVersion = 7;
     
 void ApplicationCacheStorage::verifySchemaVersion()
 {
@@ -568,7 +571,7 @@ void ApplicationCacheStorage::verifySchemaVersion()
     if (version == schemaVersion)
         return;
 
-    m_database.clearAllTables();
+    deleteTables();
 
     // Update user version.
     SQLiteTransaction setDatabaseVersion(m_database);
@@ -618,7 +621,8 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
     executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheEntries (cache INTEGER NOT NULL ON CONFLICT FAIL, type INTEGER, resource INTEGER NOT NULL)");
     executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheResources (id INTEGER PRIMARY KEY AUTOINCREMENT, url TEXT NOT NULL ON CONFLICT FAIL, "
                       "statusCode INTEGER NOT NULL, responseURL TEXT NOT NULL, mimeType TEXT, textEncodingName TEXT, headers TEXT, data INTEGER NOT NULL ON CONFLICT FAIL)");
-    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheResourceData (id INTEGER PRIMARY KEY AUTOINCREMENT, data BLOB)");
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS CacheResourceData (id INTEGER PRIMARY KEY AUTOINCREMENT, data BLOB, path TEXT)");
+    executeSQLCommand("CREATE TABLE IF NOT EXISTS DeletedCacheResources (id INTEGER PRIMARY KEY AUTOINCREMENT, path TEXT)");
     executeSQLCommand("CREATE TABLE IF NOT EXISTS Origins (origin TEXT UNIQUE ON CONFLICT IGNORE, quota INTEGER NOT NULL ON CONFLICT FAIL)");
 
     // When a cache is deleted, all its entries and its whitelist should be deleted.
@@ -640,6 +644,15 @@ void ApplicationCacheStorage::openDatabase(bool createIfDoesNotExist)
     executeSQLCommand("CREATE TRIGGER IF NOT EXISTS CacheResourceDeleted AFTER DELETE ON CacheResources"
                       " FOR EACH ROW BEGIN"
                       "  DELETE FROM CacheResourceData WHERE id = OLD.data;"
+                      " END");
+    
+    // When a cache resource is deleted, if it contains a non-empty path, that path should
+    // be added to the DeletedCacheResources table so the flat file at that path can
+    // be deleted at a later time.
+    executeSQLCommand("CREATE TRIGGER IF NOT EXISTS CacheResourceDataDeleted AFTER DELETE ON CacheResourceData"
+                      " FOR EACH ROW"
+                      " WHEN OLD.path NOT NULL BEGIN"
+                      "  INSERT INTO DeletedCacheResources (path) values (OLD.path);"
                       " END");
 }
 
@@ -772,15 +785,43 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
         return false;
 
     // First, insert the data
-    SQLiteStatement dataStatement(m_database, "INSERT INTO CacheResourceData (data) VALUES (?)");
+    SQLiteStatement dataStatement(m_database, "INSERT INTO CacheResourceData (data, path) VALUES (?, ?)");
     if (dataStatement.prepare() != SQLResultOk)
         return false;
     
-    if (resource->data()->size())
-        dataStatement.bindBlob(1, resource->data()->data(), resource->data()->size());
+
+    String fullPath;
+    if (!resource->path().isEmpty())
+        dataStatement.bindText(2, pathGetFileName(resource->path()));
+    else if (shouldStoreResourceAsFlatFile(resource)) {
+        // First, check to see if creating the flat file would violate the maximum total quota. We don't need
+        // to check the per-origin quota here, as it was already checked in storeNewestCache().
+        if (m_database.totalSize() + flatFileAreaSize() + resource->data()->size() > m_maximumSize) {
+            m_isMaximumSizeReached = true;
+            return false;
+        }
+        
+        String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, flatFileSubdirectory);
+        makeAllDirectories(flatFileDirectory);
+        String path;
+        if (!writeDataToUniqueFileInDirectory(resource->data(), flatFileDirectory, path))
+            return false;
+        
+        fullPath = pathByAppendingComponent(flatFileDirectory, path);
+        resource->setPath(fullPath);
+        dataStatement.bindText(2, path);
+    } else {
+        if (resource->data()->size())
+            dataStatement.bindBlob(1, resource->data()->data(), resource->data()->size());
+    }
     
-    if (!dataStatement.executeCommand())
+    if (!dataStatement.executeCommand()) {
+        // Clean up the file which we may have written to:
+        if (!fullPath.isEmpty())
+            deleteFile(fullPath);
+
         return false;
+    }
 
     unsigned dataId = static_cast<unsigned>(m_database.lastInsertRowID());
 
@@ -831,6 +872,12 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     if (!executeStatement(entryStatement))
         return false;
     
+    // Did we successfully write the resource data to a file? If so,
+    // release the resource's data and free up a potentially large amount
+    // of memory:
+    if (!fullPath.isEmpty())
+        resource->data()->clear();
+
     resource->setStorageID(resourceId);
     return true;
 }
@@ -861,7 +908,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, Applicat
         return false;
  
     m_isMaximumSizeReached = false;
-    m_database.setMaximumSize(m_maximumSize);
+    m_database.setMaximumSize(m_maximumSize - flatFileAreaSize());
 
     SQLiteTransaction storeResourceTransaction(m_database);
     storeResourceTransaction.begin();
@@ -908,7 +955,7 @@ bool ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group, App
         return false;
 
     m_isMaximumSizeReached = false;
-    m_database.setMaximumSize(m_maximumSize);
+    m_database.setMaximumSize(m_maximumSize - flatFileAreaSize());
 
     SQLiteTransaction storeCacheTransaction(m_database);
     
@@ -1008,7 +1055,7 @@ static inline void parseHeaders(const String& headers, ResourceResponse& respons
 PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storageID)
 {
     SQLiteStatement cacheStatement(m_database, 
-                                   "SELECT url, type, mimeType, textEncodingName, headers, CacheResourceData.data FROM CacheEntries INNER JOIN CacheResources ON CacheEntries.resource=CacheResources.id "
+                                   "SELECT url, type, mimeType, textEncodingName, headers, CacheResourceData.data, CacheResourceData.path FROM CacheEntries INNER JOIN CacheResources ON CacheEntries.resource=CacheResources.id "
                                    "INNER JOIN CacheResourceData ON CacheResourceData.id=CacheResources.data WHERE CacheEntries.cache=?");
     if (cacheStatement.prepare() != SQLResultOk) {
         LOG_ERROR("Could not prepare cache statement, error \"%s\"", m_database.lastErrorMsg());
@@ -1018,7 +1065,9 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
     cacheStatement.bindInt64(1, storageID);
 
     RefPtr<ApplicationCache> cache = ApplicationCache::create();
-    
+
+    String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, flatFileSubdirectory);
+
     int result;
     while ((result = cacheStatement.step()) == SQLResultRow) {
         KURL url(ParsedURLString, cacheStatement.getColumnText(0));
@@ -1030,15 +1079,24 @@ PassRefPtr<ApplicationCache> ApplicationCacheStorage::loadCache(unsigned storage
         
         RefPtr<SharedBuffer> data = SharedBuffer::adoptVector(blob);
         
+        String path = cacheStatement.getColumnText(6);
+        long long size = 0;
+        if (path.isEmpty())
+            size = data->size();
+        else {
+            path = pathByAppendingComponent(flatFileDirectory, path);
+            getFileSize(path, size);
+        }
+        
         String mimeType = cacheStatement.getColumnText(2);
         String textEncodingName = cacheStatement.getColumnText(3);
         
-        ResourceResponse response(url, mimeType, data->size(), textEncodingName, "");
+        ResourceResponse response(url, mimeType, size, textEncodingName, "");
 
         String headers = cacheStatement.getColumnText(4);
         parseHeaders(headers, response);
         
-        RefPtr<ApplicationCacheResource> resource = ApplicationCacheResource::create(url, response, type, data.release());
+        RefPtr<ApplicationCacheResource> resource = ApplicationCacheResource::create(url, response, type, data.release(), path);
 
         if (type & ApplicationCacheResource::Manifest)
             cache->setManifestResource(resource.release());
@@ -1132,6 +1190,8 @@ void ApplicationCacheStorage::remove(ApplicationCache* cache)
 
         cache->group()->clearStorageID();
     }
+    
+    checkForDeletedResources();
 }    
 
 void ApplicationCacheStorage::empty()
@@ -1152,7 +1212,51 @@ void ApplicationCacheStorage::empty()
     CacheGroupMap::const_iterator end = m_cachesInMemory.end();
     for (CacheGroupMap::const_iterator it = m_cachesInMemory.begin(); it != end; ++it)
         it->second->clearStorageID();
-}    
+    
+    checkForDeletedResources();
+}
+    
+void ApplicationCacheStorage::deleteTables()
+{
+    empty();
+    m_database.clearAllTables();
+}
+    
+bool ApplicationCacheStorage::shouldStoreResourceAsFlatFile(ApplicationCacheResource* resource)
+{
+    return resource->response().mimeType().startsWith("audio/", false) 
+        || resource->response().mimeType().startsWith("video/", false);
+}
+    
+bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer* data, const String& directory, String& path)
+{
+    String fullPath;
+    
+    do {
+        path = encodeForFileName(createCanonicalUUIDString());
+        // Guard against the above function being called on a platform which does not implement
+        // createCanonicalUUIDString().
+        ASSERT(!path.isEmpty());
+        if (path.isEmpty())
+            return false;
+        
+        fullPath = pathByAppendingComponent(directory, path);
+    } while (directoryName(fullPath) != directory || fileExists(fullPath));
+    
+    PlatformFileHandle handle = openFile(fullPath, OpenForWrite);
+    if (!handle)
+        return false;
+    
+    int64_t writtenBytes = writeToFile(handle, data->data(), data->size());
+    closeFile(handle);
+    
+    if (writtenBytes != static_cast<int64_t>(data->size())) {
+        deleteFile(fullPath);
+        return false;
+    }
+    
+    return true;
+}
 
 bool ApplicationCacheStorage::storeCopyOfCache(const String& cacheDirectory, ApplicationCacheHost* cacheHost)
 {
@@ -1171,7 +1275,7 @@ bool ApplicationCacheStorage::storeCopyOfCache(const String& cacheDirectory, App
     for (ApplicationCache::ResourceMap::const_iterator it = cache->begin(); it != end; ++it) {
         ApplicationCacheResource* resource = it->second.get();
         
-        RefPtr<ApplicationCacheResource> resourceCopy = ApplicationCacheResource::create(resource->url(), resource->response(), resource->type(), resource->data());
+        RefPtr<ApplicationCacheResource> resourceCopy = ApplicationCacheResource::create(resource->url(), resource->response(), resource->type(), resource->data(), resource->path());
         
         cacheCopy->addResource(resourceCopy.release());
     }
@@ -1279,6 +1383,9 @@ bool ApplicationCacheStorage::deleteCacheGroup(const String& manifestURL)
     }
 
     deleteTransaction.commit();
+    
+    checkForDeletedResources();
+    
     return true;
 }
 
@@ -1295,6 +1402,71 @@ void ApplicationCacheStorage::checkForMaxSizeReached()
 {
     if (m_database.lastError() == SQLResultFull)
         m_isMaximumSizeReached = true;
+}
+    
+void ApplicationCacheStorage::checkForDeletedResources()
+{
+    openDatabase(false);
+    if (!m_database.isOpen())
+        return;
+
+    // Select only the paths in DeletedCacheResources that do not also appear in CacheResourceData:
+    SQLiteStatement selectPaths(m_database, "SELECT DeletedCacheResources.path "
+        "FROM DeletedCacheResources "
+        "LEFT JOIN CacheResourceData "
+        "ON DeletedCacheResources.path = CacheResourceData.path "
+        "WHERE (SELECT DeletedCacheResources.path == CacheResourceData.path) IS NULL");
+    
+    if (selectPaths.prepare() != SQLResultOk)
+        return;
+    
+    if (selectPaths.step() != SQLResultRow)
+        return;
+    
+    do {
+        String path = selectPaths.getColumnText(0);
+        if (path.isEmpty())
+            continue;
+        
+        String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, flatFileSubdirectory);
+        String fullPath = pathByAppendingComponent(flatFileDirectory, path);
+        
+        // Don't exit the flatFileDirectory! This should only happen if the "path" entry contains a directory 
+        // component, but protect against it regardless.
+        if (directoryName(fullPath) != flatFileDirectory)
+            continue;
+        
+        deleteFile(fullPath);
+    } while (selectPaths.step() == SQLResultRow);
+    
+    executeSQLCommand("DELETE FROM DeletedCacheResources");
+}
+    
+long long ApplicationCacheStorage::flatFileAreaSize()
+{
+    openDatabase(false);
+    if (!m_database.isOpen())
+        return 0;
+    
+    SQLiteStatement selectPaths(m_database, "SELECT path FROM CacheResourceData WHERE path NOT NULL");
+
+    if (selectPaths.prepare() != SQLResultOk) {
+        LOG_ERROR("Could not load flat file cache resource data, error \"%s\"", m_database.lastErrorMsg());
+        return 0;
+    }
+
+    long long totalSize = 0;
+    String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, flatFileSubdirectory);
+    while (selectPaths.step() == SQLResultRow) {
+        String path = selectPaths.getColumnText(0);
+        String fullPath = pathByAppendingComponent(flatFileDirectory, path);
+        long long pathSize = 0;
+        if (!getFileSize(fullPath, pathSize))
+            continue;
+        totalSize += pathSize;
+    }
+    
+    return totalSize;
 }
 
 void ApplicationCacheStorage::getOriginsWithCache(HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>& origins)
