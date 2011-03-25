@@ -229,7 +229,10 @@ void RenderMathMLRoot::layout()
     }
     
     // Positioning of the index
-    RenderBoxModelObject* indexBox = toRenderBoxModelObject(firstChild()->firstChild());
+    RenderObject* possibleIndex = firstChild()->firstChild();
+    while (possibleIndex && !possibleIndex->isBoxModelObject())
+        possibleIndex = possibleIndex->nextSibling();
+    RenderBoxModelObject* indexBox = toRenderBoxModelObject(possibleIndex);
     if (!indexBox)
         return;
     

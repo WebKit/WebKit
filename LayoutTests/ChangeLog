@@ -1,3 +1,13 @@
+2011-03-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Crash when a wbr element is inserted inside mroot
+        https://bugs.webkit.org/show_bug.cgi?id=56352
+
+        * mathml/wbr-in-mroot-crash-expected.txt: Added.
+        * mathml/wbr-in-mroot-crash.html: Added.
+
 2011-03-25  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
