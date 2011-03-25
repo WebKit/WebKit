@@ -1,3 +1,14 @@
+2011-03-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Crash in debugger beneath MarkStack::drain @ me.com, ibm.com
+        https://bugs.webkit.org/show_bug.cgi?id=57080
+        <rdar://problem/8525907>
+
+        * inspector/debugger/debugger-activation-crash-expected.txt: Added.
+        * inspector/debugger/debugger-activation-crash.html: Added.
+
 2011-03-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Skip the test added in r81970 on WebKit2, because its harness doesn't
