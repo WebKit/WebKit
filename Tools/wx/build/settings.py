@@ -188,7 +188,7 @@ os.environ['CREATE_HASH_TABLE'] = create_hash_table
 feature_defines = ['ENABLE_DATABASE', 'ENABLE_XSLT', 'ENABLE_JAVASCRIPT_DEBUGGER',
                     'ENABLE_SVG', 'ENABLE_SVG_USE', 'ENABLE_FILTERS', 'ENABLE_SVG_FONTS',
                     'ENABLE_SVG_ANIMATION', 'ENABLE_SVG_AS_IMAGE', 'ENABLE_SVG_FOREIGN_OBJECT',
-                    'ENABLE_JIT', 'ENABLE_DOM_STORAGE', 'BUILDING_%s' % build_port.upper()]
+                    'ENABLE_DOM_STORAGE', 'BUILDING_%s' % build_port.upper()]
 
 msvc_version = 'msvc2008'
 
@@ -232,20 +232,8 @@ def common_configure(conf):
         print "ERROR: You must use the Win32 Python from python.org, not Cygwin Python, when building on Windows."
         sys.exit(1)
 
-    if sys.platform.startswith('darwin') and build_port == 'wx':
-        import platform
-        if platform.release().startswith('10'): # Snow Leopard
-            # wx currently only supports 32-bit compilation, so we want gcc-4.0 instead of 4.2 on Snow Leopard
-            # unless the user has explicitly set a different compiler.
-            if not "CC" in os.environ:
-                conf.env['CC'] = 'gcc-4.0'
-            if not "CXX" in os.environ:
-                conf.env['CXX'] = 'g++-4.0'
     conf.check_tool('compiler_cxx')
     conf.check_tool('compiler_cc')
-    if Options.options.wxpython:
-        conf.check_tool('python')
-        conf.check_python_headers()
 
     if sys.platform.startswith('darwin'):
         conf.check_tool('osx')
@@ -326,8 +314,6 @@ def common_configure(conf):
             if min_version in ['10.1','10.2','10.3']:
                 min_version = '10.4'
 
-        os.environ[mac_target] = conf.env[mac_target] = min_version
-
         sdk_version = min_version
         if min_version == "10.4":
             sdk_version += "u"
@@ -348,6 +334,16 @@ def common_configure(conf):
         
         conf.env.append_value('CPPPATH_SQLITE3', [os.path.join(wklibs_dir, 'WebCoreSQLite3')])
         conf.env.append_value('LIB_SQLITE3', ['WebCoreSQLite3'])
+
+    # NOTE: The order here is important, because python sets the MACOSX_DEPLOYMENT_TARGET to
+    # 10.3 even on intel. So we must first set the SDK and arch flags, then load Python's config,
+    # and finally override the value Python set for MACOSX_DEPLOYMENT_TARGET
+    if Options.options.wxpython:
+        conf.check_tool('python')
+        conf.check_python_headers()
+
+    if sys.platform.startswith('darwin'):
+        os.environ[mac_target] = conf.env[mac_target] = min_version
 
     conf.env.append_value('CXXDEFINES', feature_defines)
     if config == 'Release':

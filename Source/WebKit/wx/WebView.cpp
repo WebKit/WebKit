@@ -71,6 +71,7 @@
 
 #include "ScriptController.h"
 #include "JSDOMBinding.h"
+#include <runtime/initializeThreading.h>
 #include <runtime/JSValue.h>
 #include <runtime/UString.h>
 #include <wtf/text/CString.h>
@@ -358,7 +359,7 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
     if (!wxWindow::Create(parent, id, position, size, style, name))
         return false;
 
-    WTF::initializeThreading();
+    JSC::initializeThreading();
     WTF::initializeMainThread();
 
 // This is necessary because we are using SharedTimerWin.cpp on Windows,

@@ -1,3 +1,9 @@
+2011-03-24  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Fix the build so that gcc-4.1 and up can be used to build on SnowLeopard.
+
+        * wx/build/settings.py:
+
 2011-03-24  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Adam Roben.
