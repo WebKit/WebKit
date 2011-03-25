@@ -51,7 +51,7 @@ static Display *getPluginDisplay()
     // The code below has the same effect as this one:
     // Display *gdkDisplay = gdk_x11_display_get_xdisplay(gdk_display_get_default());
 
-    QLibrary library("libgdk-x11-2.0", 0);
+    QLibrary library(QLatin1String("libgdk-x11-2.0"), 0);
     if (!library.load())
         return 0;
 

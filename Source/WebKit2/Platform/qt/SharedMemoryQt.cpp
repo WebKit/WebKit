@@ -101,7 +101,7 @@ void SharedMemory::Handle::adoptFromAttachment(int fileDescriptor, size_t size)
 
 PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 {
-    QString tempName = QDir::temp().filePath("qwkshm.XXXXXX");
+    QString tempName = QDir::temp().filePath(QLatin1String("qwkshm.XXXXXX"));
     QByteArray tempNameCSTR = tempName.toLocal8Bit();
     char* tempNameC = tempNameCSTR.data();
 

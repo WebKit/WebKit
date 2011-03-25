@@ -40,7 +40,7 @@ namespace WebKit {
 #if PLATFORM(QT)
 static void initializeGTK()
 {
-    QLibrary library("libgtk-x11-2.0.so.0");
+    QLibrary library(QLatin1String("libgtk-x11-2.0.so.0"));
     if (library.load()) {
         typedef void *(*gtk_init_check_ptr)(int*, char***);
         gtk_init_check_ptr gtkInitCheck = reinterpret_cast<gtk_init_check_ptr>(library.resolve("gtk_init_check"));

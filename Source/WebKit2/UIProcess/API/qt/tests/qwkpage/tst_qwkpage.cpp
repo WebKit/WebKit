@@ -51,7 +51,7 @@ void tst_QWKPage::cleanup()
 void tst_QWKPage::loadEmptyUrl()
 {
     m_page->load(QUrl());
-    m_page->load(QUrl(""));
+    m_page->load(QUrl(QLatin1String("")));
 }
 
 QTEST_MAIN(tst_QWKPage)
