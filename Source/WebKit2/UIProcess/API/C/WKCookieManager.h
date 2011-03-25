@@ -32,6 +32,13 @@
 extern "C" {
 #endif
 
+enum {
+    kWKHTTPCookieAcceptPolicyAlways = 0,
+    kWKHTTPCookieAcceptPolicyNever = 1,
+    kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain = 2
+};
+typedef uint32_t WKHTTPCookieAcceptPolicy;
+
 // Cookie Manager Client
 typedef void (*WKCookieManagerCookiesDidChangeCallback)(WKCookieManagerRef cookieManager, const void *clientInfo);
 
@@ -51,6 +58,10 @@ WK_EXPORT void WKCookieManagerGetHostnamesWithCookies(WKCookieManagerRef cookieM
 
 WK_EXPORT void WKCookieManagerDeleteCookiesForHostname(WKCookieManagerRef cookieManager, WKStringRef hostname);
 WK_EXPORT void WKCookieManagerDeleteAllCookies(WKCookieManagerRef cookieManager);
+
+WK_EXPORT void WKCookieManagerSetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, WKHTTPCookieAcceptPolicy policy);
+typedef void (*WKCookieManagerGetHTTPCookieAcceptPolicyFunction)(WKHTTPCookieAcceptPolicy, WKErrorRef, void*);
+WK_EXPORT void WKCookieManagerGetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, void* context, WKCookieManagerGetHTTPCookieAcceptPolicyFunction callback);
 
 WK_EXPORT void WKCookieManagerStartObservingCookieChanges(WKCookieManagerRef cookieManager);
 WK_EXPORT void WKCookieManagerStopObservingCookieChanges(WKCookieManagerRef cookieManager);

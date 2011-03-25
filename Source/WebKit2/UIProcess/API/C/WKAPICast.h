@@ -29,13 +29,16 @@
 
 #include "CacheModel.h"
 #include "FontSmoothingLevel.h"
+#include "HTTPCookieAcceptPolicy.h"
 #include "ResourceCachesToClear.h"
 #include "WKContext.h"
+#include "WKCookieManager.h"
 #include "WKCredentialTypes.h"
 #include "WKPage.h"
 #include "WKPreferencesPrivate.h"
 #include "WKProtectionSpaceTypes.h"
 #include "WKSharedAPICast.h"
+#include <WebCore/CookieJar.h>
 #include <WebCore/Credential.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/ProtectionSpace.h>
@@ -251,6 +254,36 @@ inline ResourceCachesToClear toResourceCachesToClear(WKResourceCachesToClear wkR
 
     ASSERT_NOT_REACHED();
     return AllResourceCaches;
+}
+
+inline HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(WKHTTPCookieAcceptPolicy policy)
+{
+    switch (policy) {
+    case kWKHTTPCookieAcceptPolicyAlways:
+        return HTTPCookieAcceptPolicyAlways;
+    case kWKHTTPCookieAcceptPolicyNever:
+        return HTTPCookieAcceptPolicyNever;
+    case kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
+        return HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+    }
+
+    ASSERT_NOT_REACHED();
+    return HTTPCookieAcceptPolicyAlways;
+}
+
+inline WKHTTPCookieAcceptPolicy toAPI(HTTPCookieAcceptPolicy policy)
+{
+    switch (policy) {
+    case HTTPCookieAcceptPolicyAlways:
+        return kWKHTTPCookieAcceptPolicyAlways;
+    case HTTPCookieAcceptPolicyNever:
+        return kWKHTTPCookieAcceptPolicyNever;
+    case HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain:
+        return kWKHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
+    }
+
+    ASSERT_NOT_REACHED();
+    return kWKHTTPCookieAcceptPolicyAlways;
 }
 
 } // namespace WebKit

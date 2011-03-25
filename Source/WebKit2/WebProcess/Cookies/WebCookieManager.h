@@ -26,6 +26,7 @@
 #ifndef WebCookieManager_h
 #define WebCookieManager_h
 
+#include "HTTPCookieAcceptPolicy.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -52,6 +53,11 @@ private:
     void getHostnamesWithCookies(uint64_t callbackID);
     void deleteCookiesForHostname(const String&);
     void deleteAllCookies();
+
+    void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
+    void platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
+    void getHTTPCookieAcceptPolicy(uint64_t callbackID);
+    HTTPCookieAcceptPolicy platformGetHTTPCookieAcceptPolicy();
 
     void startObservingCookieChanges();
     void stopObservingCookieChanges();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,15 +22,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
- messages -> WebCookieManager {
-    void GetHostnamesWithCookies(uint64_t callbackID)
-    void DeleteCookiesForHostname(WTF::String hostname)
-    void DeleteAllCookies()
 
-    void SetHTTPCookieAcceptPolicy(uint32_t policy)
-    void GetHTTPCookieAcceptPolicy(uint64_t callbackID)
-    
-    void StartObservingCookieChanges()
-    void StopObservingCookieChanges()
+#import "config.h"
+#import "WebCookieManagerProxy.h"
+
+namespace WebKit {
+
+void WebCookieManagerProxy::persistHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
+{
+    // FIXME: The sandbox appears to prevent persisting the new policy to disk, so we must set the
+    // policy in the UI Process as well as in the Web Process (to make sure it gets set on any
+    // Private Browsing Cookie Storage).
+    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:policy];
 }
+
+} // namespace WebKit

@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-static RetainPtr<CFHTTPCookieStorageRef>& privateBrowsingCookieStorage()
+static RetainPtr<CFHTTPCookieStorageRef>& privateCookieStorage()
 {
     DEFINE_STATIC_LOCAL(RetainPtr<CFHTTPCookieStorageRef>, cookieStorage, ());
     return cookieStorage;
@@ -52,16 +52,21 @@ CFHTTPCookieStorageRef currentCookieStorage()
 {
     ASSERT(isMainThread());
 
-    if (CFHTTPCookieStorageRef privateCookieStorage = privateBrowsingCookieStorage().get())
-        return privateCookieStorage;
+    if (CFHTTPCookieStorageRef cookieStorage = privateCookieStorage().get())
+        return cookieStorage;
     return wkGetDefaultHTTPCookieStorage();
+}
+
+CFHTTPCookieStorageRef privateBrowsingCookieStorage()
+{
+    return privateCookieStorage().get();
 }
 
 void setCurrentCookieStorage(CFHTTPCookieStorageRef cookieStorage)
 {
     ASSERT(isMainThread());
 
-    privateBrowsingCookieStorage().adoptCF(cookieStorage);
+    privateCookieStorage().adoptCF(cookieStorage);
 }
 
 void setCookieStoragePrivateBrowsingEnabled(bool enabled)
@@ -69,16 +74,21 @@ void setCookieStoragePrivateBrowsingEnabled(bool enabled)
     ASSERT(isMainThread());
 
     if (!enabled) {
-        privateBrowsingCookieStorage() = nullptr;
+        privateCookieStorage() = nullptr;
         return;
     }
 
 #if USE(CFURLSTORAGESESSIONS)
     if (CFURLStorageSessionRef privateStorageSession = ResourceHandle::privateBrowsingStorageSession())
-        privateBrowsingCookieStorage().adoptCF(wkCopyHTTPCookieStorage(privateStorageSession));
+        privateCookieStorage().adoptCF(wkCopyHTTPCookieStorage(privateStorageSession));
     else
 #endif
-        privateBrowsingCookieStorage().adoptCF(wkCreateInMemoryHTTPCookieStorage());
+        privateCookieStorage().adoptCF(wkCreateInMemoryHTTPCookieStorage());
+}
+
+CFHTTPCookieStorageRef defaultCookieStorage()
+{
+    return wkGetDefaultHTTPCookieStorage();
 }
 
 static void notifyCookiesChangedOnMainThread(void* context)

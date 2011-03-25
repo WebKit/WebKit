@@ -50,6 +50,7 @@ WebCookieManagerProxy::~WebCookieManagerProxy()
 void WebCookieManagerProxy::invalidate()
 {
     invalidateCallbackMap(m_arrayCallbacks);
+    invalidateCallbackMap(m_httpCookieAcceptPolicyCallbacks);
 }
 
 void WebCookieManagerProxy::initializeClient(const WKCookieManagerClient* client)
@@ -129,6 +130,44 @@ void WebCookieManagerProxy::stopObservingCookieChanges()
 void WebCookieManagerProxy::cookiesDidChange()
 {
     m_client.cookiesDidChange(this);
+}
+
+void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
+{
+    ASSERT(m_webContext);
+    if (!m_webContext->hasValidProcess())
+        return;
+
+#if PLATFORM(MAC)
+    persistHTTPCookieAcceptPolicy(policy);
+#endif
+    m_webContext->process()->send(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy), 0);
+}
+
+void WebCookieManagerProxy::getHTTPCookieAcceptPolicy(PassRefPtr<HTTPCookieAcceptPolicyCallback> prpCallback)
+{
+    ASSERT(m_webContext);
+
+    RefPtr<HTTPCookieAcceptPolicyCallback> callback = prpCallback;
+    if (!m_webContext->hasValidProcess()) {
+        callback->invalidate();
+        return;
+    }
+
+    uint64_t callbackID = callback->callbackID();
+    m_httpCookieAcceptPolicyCallbacks.set(callbackID, callback.release());
+    m_webContext->process()->send(Messages::WebCookieManager::GetHTTPCookieAcceptPolicy(callbackID), 0);
+}
+
+void WebCookieManagerProxy::didGetHTTPCookieAcceptPolicy(uint32_t policy, uint64_t callbackID)
+{
+    RefPtr<HTTPCookieAcceptPolicyCallback> callback = m_httpCookieAcceptPolicyCallbacks.take(callbackID);
+    if (!callback) {
+        // FIXME: Log error or assert.
+        return;
+    }
+
+    callback->performCallbackWithReturnValue(policy);
 }
 
 } // namespace WebKit

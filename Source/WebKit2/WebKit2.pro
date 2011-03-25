@@ -431,6 +431,7 @@ SOURCES += \
     WebProcess/ApplicationCache/WebApplicationCacheManager.cpp \
     WebProcess/Authentication/AuthenticationManager.cpp \
     WebProcess/Cookies/WebCookieManager.cpp \
+    WebProcess/Cookies/qt/WebCookieManagerQt.cpp \
     WebProcess/Downloads/Download.cpp \
     WebProcess/Downloads/DownloadManager.cpp \
     WebProcess/Downloads/qt/DownloadQt.cpp \

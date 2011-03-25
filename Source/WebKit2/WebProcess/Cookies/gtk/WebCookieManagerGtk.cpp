@@ -22,15 +22,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
- messages -> WebCookieManager {
-    void GetHostnamesWithCookies(uint64_t callbackID)
-    void DeleteCookiesForHostname(WTF::String hostname)
-    void DeleteAllCookies()
 
-    void SetHTTPCookieAcceptPolicy(uint32_t policy)
-    void GetHTTPCookieAcceptPolicy(uint64_t callbackID)
-    
-    void StartObservingCookieChanges()
-    void StopObservingCookieChanges()
+#include "config.h"
+#include "WebCookieManager.h"
+
+namespace WebKit {
+
+void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy)
+{
+    // FIXME: Not implemented.
 }
+
+HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
+{
+    // FIXME: Not implemented.
+    return HTTPCookieAcceptPolicyAlways;
+}
+
+} // namespace WebKit

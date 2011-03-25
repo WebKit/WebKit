@@ -1,3 +1,74 @@
+2011-03-25  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2: Need to be able to set and get the Cookie Storage Policy.
+        https://bugs.webkit.org/show_bug.cgi?id=50780
+
+        * Shared/HTTPCookieAcceptPolicy.h: Added.
+
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toHTTPCookieAcceptPolicy):
+        (WebKit::toAPI):
+
+        * UIProcess/API/C/WKCookieManager.cpp:
+        (WKCookieManagerSetHTTPCookieAcceptPolicy):
+        Call through to WebCookieManagerProxy.
+        (WKCookieManagerGetHTTPCookieAcceptPolicy):
+        Ditto.
+        * UIProcess/API/C/WKCookieManager.h:
+
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::invalidate):
+        Invalidate the get http cookie accept policy callbacks.
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy):
+        Send a message to the Web Process with the new value.
+        (WebKit::WebCookieManagerProxy::getHTTPCookieAcceptPolicy):
+        Keep track of the callback and send a message to the Web Process.
+        (WebKit::WebCookieManagerProxy::didGetHTTPCookieAcceptPolicy):
+        Invoke the callback.
+        * UIProcess/mac/WebCookieManagerProxyMac.mm: Added.
+        (WebKit::WebCookieManagerProxy::persistHTTPCookieAcceptPolicy):
+        On Mac, also set the policy in the UI Process because the sandboxed Web Process cannot
+        persist the policy.
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebCookieManagerProxy.messages.in:
+
+        * WebKit2.pri:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Common.vsprops:
+
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::setHTTPCookieAcceptPolicy):
+        Call platformSetHTTPCookieAcceptPolicy.
+        (WebKit::WebCookieManager::getHTTPCookieAcceptPolicy):
+        Send the result of platformGetHTTPCookieAcceptPolicy to the UI Process.
+        * WebProcess/Cookies/WebCookieManager.h:
+        * WebProcess/Cookies/WebCookieManager.messages.in:
+
+        * WebProcess/Cookies/cf: Added.
+        * WebProcess/Cookies/cf/WebCookieManagerCFNet.cpp: Added.
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        Set the policy on both the default cookie storage and any Private Browsing cookie storage.
+        (WebKit::WebCookieManager::platformGetHTTPCookieAcceptPolicy):
+        * WebProcess/Cookies/mac: Added.
+        * WebProcess/Cookies/mac/WebCookieManagerMac.mm: Added.
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        Set the policy on the default cookie storage and add a FIXME to set it on any Private
+        Browsing cookie storage.
+        (WebKit::WebCookieManager::platformGetHTTPCookieAcceptPolicy):
+
+        * WebProcess/Cookies/gtk: Added.
+        * WebProcess/Cookies/gtk/WebCookieManagerGtk.cpp: Added.
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::platformGetHTTPCookieAcceptPolicy):
+        * WebProcess/Cookies/qt: Added.
+        * WebProcess/Cookies/qt/WebCookieManagerQt.cpp: Added.
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::platformGetHTTPCookieAcceptPolicy):
+
 2011-03-25  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Alexey Proskuryakov.

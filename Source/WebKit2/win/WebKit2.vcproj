@@ -1545,6 +1545,14 @@
 					RelativePath="..\WebProcess\Cookies\WebCookieManager.messages.in"
 					>
 				</File>
+				<Filter
+					Name="cf"
+					>
+					<File
+						RelativePath="..\WebProcess\Cookies\cf\WebCookieManagerCFNet.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="WebCoreSupport"

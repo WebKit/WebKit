@@ -22,15 +22,29 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
- messages -> WebCookieManager {
-    void GetHostnamesWithCookies(uint64_t callbackID)
-    void DeleteCookiesForHostname(WTF::String hostname)
-    void DeleteAllCookies()
 
-    void SetHTTPCookieAcceptPolicy(uint32_t policy)
-    void GetHTTPCookieAcceptPolicy(uint64_t callbackID)
-    
-    void StartObservingCookieChanges()
-    void StopObservingCookieChanges()
+#include "config.h"
+#include "WebCookieManager.h"
+
+#include <CFNetwork/CFHTTPCookiesPriv.h>
+#include <WebCore/CookieStorage.h>
+#include <WebCore/CookieStorageCFNet.h>
+
+namespace WebKit {
+
+void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
+{
+    CFHTTPCookieStorageSetCookieAcceptPolicy(WebCore::defaultCookieStorage(), policy);
+
+    CFHTTPCookieStorageRef privateBrowsingCookieStorage = WebCore::privateBrowsingCookieStorage();
+    if (!privateBrowsingCookieStorage)
+        return;
+    CFHTTPCookieStorageSetCookieAcceptPolicy(privateBrowsingCookieStorage, policy);
 }
+
+HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
+{
+    return CFHTTPCookieStorageGetCookieAcceptPolicy(WebCore::currentCookieStorage());
+}
+
+} // namespace WebKit

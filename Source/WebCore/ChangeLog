@@ -1,3 +1,25 @@
+2011-03-25  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2: Need to be able to set and get the Cookie Storage Policy.
+        https://bugs.webkit.org/show_bug.cgi?id=50780
+
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        (WebCore::privateCookieStorage):
+        Rename privateBrowsingCookieStorage to privateCookieStorage.
+        (WebCore::currentCookieStorage):
+        Ditto.
+        (WebCore::setCurrentCookieStorage):
+        Ditto.
+        (WebCore::setCookieStoragePrivateBrowsingEnabled):
+        Ditto.
+        (WebCore::defaultCookieStorage):
+        Return the default cookie storage.
+        (WebCore::privateBrowsingCookieStorage):
+        Return privateCookieStorage().get()
+        * platform/network/cf/CookieStorageCFNet.h:
+
 2011-03-25  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -803,9 +803,12 @@
 		F634445612A885C8000612D8 /* WebSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = F634445512A885C8000612D8 /* WebSecurityOrigin.h */; };
 		F634445C12A885E9000612D8 /* WKSecurityOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F634445A12A885E9000612D8 /* WKSecurityOrigin.cpp */; };
 		F634445D12A885E9000612D8 /* WKSecurityOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = F634445B12A885E9000612D8 /* WKSecurityOrigin.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F6389550133BEF38008941D5 /* HTTPCookieAcceptPolicy.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = F638954F133BEF38008941D5 /* HTTPCookieAcceptPolicy.h */; };
 		F67DD7BA125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F67DD7B9125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F6A25FDC12ADC6CC00DC40CC /* WebDatabaseManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6A25FDA12ADC6CC00DC40CC /* WebDatabaseManager.cpp */; };
 		F6A25FDD12ADC6CC00DC40CC /* WebDatabaseManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A25FDB12ADC6CC00DC40CC /* WebDatabaseManager.h */; };
+		F6A90813133C20510082C3F4 /* WebCookieManagerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6A90811133C1F3D0082C3F4 /* WebCookieManagerMac.mm */; };
+		F6D632BC133D198200743D77 /* WebCookieManagerProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = F6D632BA133D181B00743D77 /* WebCookieManagerProxyMac.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -862,6 +865,7 @@
 			files = (
 				1A50DB66110A3D57000D3FE5 /* WebProcess.app in CopyFiles */,
 				BCDE0ABF13272708001259FB /* PluginProcess.app in CopyFiles */,
+				F6389550133BEF38008941D5 /* HTTPCookieAcceptPolicy.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1713,10 +1717,13 @@
 		F634445512A885C8000612D8 /* WebSecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSecurityOrigin.h; sourceTree = "<group>"; };
 		F634445A12A885E9000612D8 /* WKSecurityOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKSecurityOrigin.cpp; sourceTree = "<group>"; };
 		F634445B12A885E9000612D8 /* WKSecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSecurityOrigin.h; sourceTree = "<group>"; };
+		F638954F133BEF38008941D5 /* HTTPCookieAcceptPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPCookieAcceptPolicy.h; sourceTree = "<group>"; };
 		F67DD7B9125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSerializedScriptValuePrivate.h; sourceTree = "<group>"; };
 		F6A0C13F13281E6E0070430F /* ResourceCachesToClear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceCachesToClear.h; sourceTree = "<group>"; };
 		F6A25FDA12ADC6CC00DC40CC /* WebDatabaseManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDatabaseManager.cpp; sourceTree = "<group>"; };
 		F6A25FDB12ADC6CC00DC40CC /* WebDatabaseManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDatabaseManager.h; sourceTree = "<group>"; };
+		F6A90811133C1F3D0082C3F4 /* WebCookieManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieManagerMac.mm; sourceTree = "<group>"; };
+		F6D632BA133D181B00743D77 /* WebCookieManagerProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieManagerProxyMac.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2030,6 +2037,7 @@
 				C517388012DF8F4F00EE3F47 /* DragControllerAction.h */,
 				0FB659221208B4DB0044816C /* DrawingAreaInfo.h */,
 				762B7481120BBA0100819339 /* FontSmoothingLevel.h */,
+				F638954F133BEF38008941D5 /* HTTPCookieAcceptPolicy.h */,
 				BCCF6B2312C93E7A008F9C35 /* ImageOptions.h */,
 				BC64696D11DBE603006455B0 /* ImmutableArray.cpp */,
 				BC64696E11DBE603006455B0 /* ImmutableArray.h */,
@@ -2234,6 +2242,7 @@
 		3309344B1315B93A0097A7BC /* Cookies */ = {
 			isa = PBXGroup;
 			children = (
+				F638955A133BF57D008941D5 /* mac */,
 				3309344C1315B94D0097A7BC /* WebCookieManager.cpp */,
 				3309344D1315B94D0097A7BC /* WebCookieManager.h */,
 				3309344E1315B94D0097A7BC /* WebCookieManager.messages.in */,
@@ -2975,6 +2984,7 @@
 		BCCF085C113F3B7500C650C5 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				F6D632BA133D181B00743D77 /* WebCookieManagerProxyMac.mm */,
 				1A64292C12DE5F9800CAAE2C /* BackingStoreMac.mm */,
 				BC2651F511825EF800243E12 /* ChunkedUpdateDrawingAreaProxyMac.mm */,
 				B878B613133428DC006888E9 /* CorrectionPanel.h */,
@@ -3220,6 +3230,15 @@
 			);
 			name = mac;
 			path = FullScreen/mac;
+			sourceTree = "<group>";
+		};
+		F638955A133BF57D008941D5 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				F6A90811133C1F3D0082C3F4 /* WebCookieManagerMac.mm */,
+			);
+			name = mac;
+			path = Cookies/mac;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -4238,6 +4257,8 @@
 				C0D74DDE133BE2D90089CD44 /* LayerTreeHostCA.cpp in Sources */,
 				C03A136C133BEBF900D767D1 /* LayerTreeHostCAMac.mm in Sources */,
 				5110AE0C133C16CB0072717A /* WKIconDatabase.cpp in Sources */,
+				F6A90813133C20510082C3F4 /* WebCookieManagerMac.mm in Sources */,
+				F6D632BC133D198200743D77 /* WebCookieManagerProxyMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

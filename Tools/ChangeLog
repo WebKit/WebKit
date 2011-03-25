@@ -1,3 +1,30 @@
+2011-03-25  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2: Need to be able to set and get the Cookie Storage Policy.
+        https://bugs.webkit.org/show_bug.cgi?id=50780
+
+        Add a test for getting and setting the HTTP Cookie Accept Policy in WebKit2.
+
+        The test is named "CookieManager" so that we can eventually exercise more of the
+        CookieManager functionality in the test.
+
+        * TestWebKitAPI/Tests/WebKit2/CookieManager.cpp: Added.
+        (TestWebKitAPI::didGetTestHTTPCookieAcceptPolicy):
+        Assert that the policy returned is equal to the policy set in
+        didGetUserHTTPCookieAcceptPolicy, and then restore the user's policy.
+        (TestWebKitAPI::didGetUserHTTPCookieAcceptPolicy):
+        Set the policy to something different than the user's policy and get the policy again.
+        (TestWebKitAPI::didFinishLoadForFrame):
+        Get the user's policy so that it can be restored at the end of the test.
+        (TestWebKitAPI::TEST):
+        Load about:blank so that the Web Process gets instatiated (needed to get the
+        CookieManager).
+
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        Add CookieManager.cpp.
+
 2011-03-24  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Fix the build so that gcc-4.1 and up can be used to build on SnowLeopard.

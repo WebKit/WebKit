@@ -58,6 +58,16 @@ void WKCookieManagerDeleteAllCookies(WKCookieManagerRef cookieManagerRef)
     toImpl(cookieManagerRef)->deleteAllCookies();
 }
 
+void WKCookieManagerSetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, WKHTTPCookieAcceptPolicy policy)
+{
+    toImpl(cookieManager)->setHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
+}
+
+void WKCookieManagerGetHTTPCookieAcceptPolicy(WKCookieManagerRef cookieManager, void* context, WKCookieManagerGetHTTPCookieAcceptPolicyFunction callback)
+{
+    toImpl(cookieManager)->getHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyCallback::create(context, callback));
+}
+
 void WKCookieManagerStartObservingCookieChanges(WKCookieManagerRef cookieManager)
 {
     toImpl(cookieManager)->startObservingCookieChanges();

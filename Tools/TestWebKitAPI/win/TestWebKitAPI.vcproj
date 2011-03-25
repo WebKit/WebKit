@@ -420,6 +420,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\CookieManager.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\DocumentStartUserScriptAlertCrash.cpp"
 					>
 				</File>
