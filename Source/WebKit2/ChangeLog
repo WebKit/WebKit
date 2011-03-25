@@ -1,3 +1,10 @@
+2011-03-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        Correct project file missing $(WebKitVSPropsRedirectionDir)s
+        after r81924.
+
+        * win/WebKit2.vcproj: Restore lost $(WebKitVSPropsRedirectionDir)
+
 2011-03-25  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
