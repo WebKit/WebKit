@@ -86,7 +86,7 @@ namespace WebKit {
 class MainThreadFileSystemCallbacks : public WebFileSystemCallbacks {
 public:
     // Callbacks are self-destructed and we always return leaked pointer here.
-    static MainThreadFileSystemCallbacks* createLeakedPtr(PassRefPtr<WorkerFileSystemCallbacksBridge> bridge, const String& mode)
+    static MainThreadFileSystemCallbacks* createLeakedPtr(WorkerFileSystemCallbacksBridge* bridge, const String& mode)
     {
         OwnPtr<MainThreadFileSystemCallbacks> callbacks = adoptPtr(new MainThreadFileSystemCallbacks(bridge, mode));
         return callbacks.leakPtr();
@@ -127,15 +127,16 @@ public:
     }
 
 private:
-    MainThreadFileSystemCallbacks(PassRefPtr<WorkerFileSystemCallbacksBridge> bridge, const String& mode)
+    MainThreadFileSystemCallbacks(WorkerFileSystemCallbacksBridge* bridge, const String& mode)
         : m_bridge(bridge)
         , m_mode(mode)
     {
-        ASSERT(m_bridge.get());
+        ASSERT(m_bridge);
     }
 
     friend class WorkerFileSystemCallbacksBridge;
-    RefPtr<WorkerFileSystemCallbacksBridge> m_bridge;
+    // The bridge pointer is kept by the bridge itself on the WorkerThread.
+    WorkerFileSystemCallbacksBridge* m_bridge;
     const String m_mode;
 };
 
@@ -381,12 +382,9 @@ void WorkerFileSystemCallbacksBridge::dispatchTaskToMainThread(PassOwnPtr<WebCor
 void WorkerFileSystemCallbacksBridge::mayPostTaskToWorker(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
 {
     ASSERT(isMainThread());
-    { // Let go of the mutex before possibly deleting this due to m_selfRef.clear().
-        MutexLocker locker(m_mutex);
-        if (m_worker)
-            m_worker->postTaskForModeToWorkerContext(createCallbackTask(&runTaskOnWorkerThread, m_selfRef, task), mode);
-    }
-    m_selfRef.clear();
+    MutexLocker locker(m_mutex);
+    if (m_worker)
+        m_worker->postTaskForModeToWorkerContext(createCallbackTask(&runTaskOnWorkerThread, m_selfRef.release(), task), mode);
 }
 
 } // namespace WebCore

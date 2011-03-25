@@ -138,7 +138,7 @@ private:
     void dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
     void mayPostTaskToWorker(PassOwnPtr<WebCore::ScriptExecutionContext::Task>, const String& mode);
 
-    // m_selfRef keeps a reference to itself until a task is created for the worker thread (at which point the task holds the reference).
+    // m_selfRef keeps a reference to itself while there's a pending callback on the main thread.
     RefPtr<WorkerFileSystemCallbacksBridge> m_selfRef;
 
     Mutex m_mutex;
