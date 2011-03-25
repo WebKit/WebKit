@@ -1,3 +1,13 @@
+2011-03-24  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction.
+
+        Correct vsprops file for Debug variant of the CFLite build.
+        Disable a CFNETWORK-specific test when building for CFLite.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPIDebugCairoCFLite.vsprops:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+
 2011-03-24  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.
