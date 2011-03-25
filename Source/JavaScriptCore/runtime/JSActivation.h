@@ -81,7 +81,10 @@ namespace JSC {
         static JSValue argumentsGetter(ExecState*, JSValue, const Identifier&);
         NEVER_INLINE PropertySlot::GetValueFunc getArgumentsGetter();
 
-        WriteBarrier<FunctionExecutable> m_functionExecutable;
+        int m_numParametersMinusThis;
+        int m_numCapturedVars : 31;
+        bool m_requiresDynamicChecks : 1;
+        int m_argumentsRegister;
     };
 
     JSActivation* asActivation(JSValue);

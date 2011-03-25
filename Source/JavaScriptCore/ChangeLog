@@ -1,3 +1,38 @@
+2011-03-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Crash in debugger beneath MarkStack::drain @ me.com, ibm.com
+        https://bugs.webkit.org/show_bug.cgi?id=57080
+        <rdar://problem/8525907>
+
+        The crash was caused by changes in the executable after recompilation.
+
+        The fix is for the activation to copy the data it needs instead of
+        relying on the data in the executable.
+        
+        SunSpider and v8 report no change.
+
+        * runtime/Arguments.h:
+        (JSC::JSActivation::copyRegisters): Use our own data members instead of
+        reading data out of the executable.
+
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation): Initialize our data members.
+
+        (JSC::JSActivation::markChildren):
+        (JSC::JSActivation::symbolTableGet):
+        (JSC::JSActivation::symbolTablePut):
+        (JSC::JSActivation::getOwnPropertyNames):
+        (JSC::JSActivation::symbolTablePutWithAttributes):
+        (JSC::JSActivation::isDynamicScope):
+        (JSC::JSActivation::argumentsGetter): Use our own data members instead of
+        reading data out of the executable.
+
+        * runtime/JSActivation.h: Added new data members to track data previously
+        tracked by the executable. Since I've removed the executable pointer,
+        on a 64bit system, I've only made activations bigger by an int.
+
 2011-03-25  David Kilzer  <ddkilzer@apple.com>
 
         Remove duplicate entry from JavaScriptCore.exp

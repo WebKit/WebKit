@@ -239,14 +239,12 @@ namespace JSC {
     {
         ASSERT(!m_registerArray);
 
-        size_t numParametersMinusThis = m_functionExecutable->parameterCount();
-        size_t numVars = m_functionExecutable->capturedVariableCount();
-        size_t numLocals = numVars + numParametersMinusThis;
+        size_t numLocals = m_numCapturedVars + m_numParametersMinusThis;
 
         if (!numLocals)
             return;
 
-        int registerOffset = numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
+        int registerOffset = m_numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
         size_t registerArraySize = numLocals + RegisterFile::CallFrameHeaderSize;
 
         OwnArrayPtr<WriteBarrier<Unknown> > registerArray = copyRegisterArray(globalData, m_registers - registerOffset, registerArraySize);
