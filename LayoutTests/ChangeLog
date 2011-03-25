@@ -1,3 +1,15 @@
+2011-03-25  Adam Roben  <aroben@apple.com>
+
+        Remove no-longer-necessary Windows results
+
+        r81925 made Windows match Mac on this test. New Windows results were checked in, but they
+        were generated using the wrong fonts. Since we match Mac now, we don't need Windows-specific
+        results at all.
+
+        * platform/win/fast/css/percentage-non-integer-expected.checksum: Removed.
+        * platform/win/fast/css/percentage-non-integer-expected.png: Removed.
+        * platform/win/fast/css/percentage-non-integer-expected.txt: Removed.
+
 2011-03-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81953.
