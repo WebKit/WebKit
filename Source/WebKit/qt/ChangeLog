@@ -1,3 +1,15 @@
+2011-03-25  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] The keyboard shortcuts during fullscreen playback do not work.
+        https://bugs.webkit.org/show_bug.cgi?id=57095
+
+        We need to explicitely set the focus on the widget in order to receive the keyboard events.
+
+        * WebCoreSupport/FullScreenVideoWidget.cpp:
+        (WebCore::FullScreenVideoWidget::show):
+
 2011-03-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81916 and r81917.

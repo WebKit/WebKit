@@ -66,6 +66,7 @@ void FullScreenVideoWidget::show(QMediaPlayer* player)
     setMouseTracking(true);
     raise();
     m_mediaPlayer->setVideoOutput(this);
+    setFocus();
     grabMouse();
     hideCursor();
 }
