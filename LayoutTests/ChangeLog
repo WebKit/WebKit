@@ -1,3 +1,13 @@
+2011-03-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION(r77257): Only first page of a document is printed
+        https://bugs.webkit.org/show_bug.cgi?id=56958
+
+        * printing/page-count-layout-overflow-expected.txt: Added.
+        * printing/page-count-layout-overflow.html: Added.
+
 2011-03-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Antti Koivisto.

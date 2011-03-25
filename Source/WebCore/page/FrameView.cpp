@@ -2420,7 +2420,6 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
             root->setLogicalWidth(flooredPageLogicalWidth);
             root->setNeedsLayoutAndPrefWidthsRecalc();
             forceLayout();
-            root->clearLayoutOverflow();
             int docLogicalHeight = root->style()->isHorizontalWritingMode() ? root->docHeight() : root->docWidth();
             int docLogicalTop = root->style()->isHorizontalWritingMode() ? root->docTop() : root->docLeft();
             int docLogicalRight = root->style()->isHorizontalWritingMode() ? root->docRight() : root->docBottom();
@@ -2430,6 +2429,7 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
             IntRect overflow(clippedLogicalLeft, docLogicalTop, flooredPageLogicalWidth, docLogicalHeight);
             if (!root->style()->isHorizontalWritingMode())
                 overflow = overflow.transposedRect();
+            root->clearLayoutOverflow();
             root->addLayoutOverflow(overflow); // This is how we clip in case we overflow again.
         }
     }

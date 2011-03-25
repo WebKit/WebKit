@@ -1,3 +1,16 @@
+2011-03-25  Dave Hyatt  <hyatt@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        REGRESSION(r77257): Only first page of a document is printed
+        https://bugs.webkit.org/show_bug.cgi?id=56958
+
+        Test: printing/page-count-layout-overflow.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::forceLayoutForPagination): Moved clearing of overflow
+            to the right place.
+
 2011-03-25  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.
