@@ -881,9 +881,9 @@
                 ]
             },
             {
-                "name": "getAllStyles",
+                "name": "getAllStyleSheets",
                 "returns": [
-                    { "name": "styleSheetIds", "type": "array", "items": { "type": "string" } }
+                    { "name": "styleSheetInfos", "type": "array", "items": { "$ref": "CSSStyleSheetInfo" } }
                 ]
             },
             {
