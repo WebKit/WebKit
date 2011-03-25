@@ -168,7 +168,6 @@ public:
     CSSStyleRule* addRule(const String& selector);
     CSSStyleRule* ruleForId(const InspectorCSSId&) const;
     PassRefPtr<InspectorObject> buildObjectForStyleSheet();
-    PassRefPtr<InspectorObject> buildObjectForStyleSheetInfo();
     PassRefPtr<InspectorObject> buildObjectForRule(CSSStyleRule*);
     PassRefPtr<InspectorObject> buildObjectForStyle(CSSStyleDeclaration*);
     bool setPropertyText(const InspectorCSSId&, unsigned propertyIndex, const String& text, bool overwrite);

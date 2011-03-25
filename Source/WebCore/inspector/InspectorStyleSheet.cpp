@@ -708,7 +708,9 @@ PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForStyleSheet()
         return 0;
 
     RefPtr<InspectorObject> result = InspectorObject::create();
-    result->setString("styleSheetId", id());
+    result->setBoolean("disabled", styleSheet->disabled());
+    result->setString("sourceURL", finalURL());
+    result->setString("title", styleSheet->title());
     RefPtr<CSSRuleList> cssRuleList = CSSRuleList::create(styleSheet, true);
     RefPtr<InspectorArray> cssRules = buildArrayForRuleList(cssRuleList.get());
     result->setArray("rules", cssRules.release());
@@ -718,20 +720,8 @@ PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForStyleSheet()
     if (success)
         result->setString("text", styleSheetText);
 
-    return result.release();
-}
-
-PassRefPtr<InspectorObject> InspectorStyleSheet::buildObjectForStyleSheetInfo()
-{
-    CSSStyleSheet* styleSheet = pageStyleSheet();
-    if (!styleSheet)
-        return 0;
-
-    RefPtr<InspectorObject> result = InspectorObject::create();
     result->setString("styleSheetId", id());
-    result->setBoolean("disabled", styleSheet->disabled());
-    result->setString("sourceURL", finalURL());
-    result->setString("title", styleSheet->title());
+
     return result.release();
 }
 
