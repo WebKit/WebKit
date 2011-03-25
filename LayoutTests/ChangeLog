@@ -1,3 +1,10 @@
+2011-03-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Add a GTK+ specific baseline for a text test that seems to have whitespace difference,
+        probably due to font sizes resulting in newlines.
+
+        * platform/gtk/fast/events/onchange-text-form-field-expected.txt: Added.
+
 2011-03-24  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
