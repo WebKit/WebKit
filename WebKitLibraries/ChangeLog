@@ -1,3 +1,9 @@
+2011-03-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        Kick the build machines after r81977.
+
+        * win/tools/vsprops/common.vsprops:
+
 2011-03-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81683.
