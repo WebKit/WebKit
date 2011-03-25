@@ -126,6 +126,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_resourceCacheManagerProxy(WebResourceCacheManagerProxy::create(this))
 #if PLATFORM(WIN)
     , m_shouldPaintNativeControls(true)
+    , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyAlways)
 #endif
 {
 #ifndef NDEBUG

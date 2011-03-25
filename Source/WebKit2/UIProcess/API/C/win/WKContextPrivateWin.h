@@ -28,6 +28,7 @@
 
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKContext.h>
+#include <WebKit2/WKCookieManager.h>
 
 #ifndef __cplusplus
 #include <stdbool.h>
@@ -39,6 +40,9 @@ extern "C" {
 
 // Defaults to true.
 WK_EXPORT void WKContextSetShouldPaintNativeControls(WKContextRef, bool);
+
+// Defaults to WKHTTPCookieAcceptPolicyAlways.
+WK_EXPORT void WKContextSetInitialHTTPCookieAcceptPolicy(WKContextRef, WKHTTPCookieAcceptPolicy);
 
 #ifdef __cplusplus
 }

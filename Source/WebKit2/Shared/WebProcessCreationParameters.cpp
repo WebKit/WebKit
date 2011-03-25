@@ -81,6 +81,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(cfURLCachePath);
     encoder->encode(cfURLCacheDiskCapacity);
     encoder->encode(cfURLCacheMemoryCapacity);
+    encoder->encode(initialHTTPCookieAcceptPolicy);
 #endif
 }
 
@@ -150,6 +151,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.cfURLCacheDiskCapacity))
         return false;
     if (!decoder->decode(parameters.cfURLCacheMemoryCapacity))
+        return false;
+    if (!decoder->decode(parameters.initialHTTPCookieAcceptPolicy))
         return false;
 #endif
 

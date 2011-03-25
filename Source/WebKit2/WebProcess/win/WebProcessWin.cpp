@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebProcess.h"
 
+#include "WebCookieManager.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/MemoryCache.h>
@@ -121,6 +122,8 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     RetainPtr<CFURLCacheRef> uiProcessCache(AdoptCF, CFURLCacheCreate(kCFAllocatorDefault, cacheMemoryCapacity, cacheDiskCapacity, cachePath.get()));
     CFURLCacheSetSharedURLCache(uiProcessCache.get());
 #endif
+
+    WebCookieManager::shared().setHTTPCookieAcceptPolicy(parameters.initialHTTPCookieAcceptPolicy);
 }
 
 void WebProcess::platformTerminate()

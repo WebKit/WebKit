@@ -100,6 +100,8 @@ struct WebProcessCreationParameters {
     uint64_t cfURLCacheDiskCapacity;
     uint64_t cfURLCacheMemoryCapacity;
 
+    uint32_t initialHTTPCookieAcceptPolicy;
+
     bool shouldPaintNativeControls;
 #endif
 };

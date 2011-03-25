@@ -36,3 +36,8 @@ void WKContextSetShouldPaintNativeControls(WKContextRef contextRef, bool b)
 {
     toImpl(contextRef)->setShouldPaintNativeControls(b);
 }
+
+void WKContextSetInitialHTTPCookieAcceptPolicy(WKContextRef contextRef, WKHTTPCookieAcceptPolicy policy)
+{
+    toImpl(contextRef)->setInitialHTTPCookieAcceptPolicy(toHTTPCookieAcceptPolicy(policy));
+}

@@ -47,6 +47,8 @@ public:
     
     void dispatchCookiesDidChange();
 
+    void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
+
 private:
     WebCookieManager();
     
@@ -54,7 +56,6 @@ private:
     void deleteCookiesForHostname(const String&);
     void deleteAllCookies();
 
-    void setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
     void platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy);
     void getHTTPCookieAcceptPolicy(uint64_t callbackID);
     HTTPCookieAcceptPolicy platformGetHTTPCookieAcceptPolicy();

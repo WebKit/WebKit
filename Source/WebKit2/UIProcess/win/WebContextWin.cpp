@@ -73,6 +73,8 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     parameters.uiProcessBundleIdentifier = String(reinterpret_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleIdentifierKey)));
 #endif // USE(CFURLSTORAGESESSIONS)
 
+    parameters.initialHTTPCookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
+
 #endif // USE(CFNETWORK)
 }
 

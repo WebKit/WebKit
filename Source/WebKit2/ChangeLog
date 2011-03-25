@@ -27,6 +27,47 @@
 
 2011-03-25  Jessie Berlin  <jberlin@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Need to be able to set and get the Cookie Storage Policy.
+        https://bugs.webkit.org/show_bug.cgi?id=50780
+
+        Part 2: Make it possible to set the initial policy on Windows.
+
+        In WebKit1, we read the initial policy on Windows from WebPreferences at startup.
+        Since that is not possible in WebKit2, make it possible to specify the initial policy
+        as a creation parameter to the WebProcess.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        Encode initialHTTPCookieAcceptPolicy on Windows.
+        (WebKit::WebProcessCreationParameters::decode):
+        Decode initialHTTPCookieAcceptPolicy on Windows.
+        * Shared/WebProcessCreationParameters.h:
+
+        * UIProcess/API/C/win/WKContextPrivateWin.h:
+        * UIProcess/API/C/win/WKContextWin.cpp:
+        (WKContextSetInitialHTTPCookieAcceptPolicy):
+        Call through to WebContext.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        Give the initial policy a default of "Always".
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::setInitialHTTPCookieAcceptPolicy):
+        * UIProcess/win/WebContextWin.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        Set the initial policy on Windows.
+
+        * WebProcess/Cookies/WebCookieManager.h:
+        Make setHTTPCookieAcceptPolicy public so that it can be called from WebProcessWin.
+
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Tell the WebCookieManager about the initial policy.
+
+2011-03-25  Jessie Berlin  <jberlin@apple.com>
+
         Reviewed by Sam Weinig.
 
         WebKit2: Need to be able to set and get the Cookie Storage Policy.

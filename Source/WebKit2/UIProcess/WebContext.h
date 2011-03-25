@@ -130,6 +130,8 @@ public:
 
 #if PLATFORM(WIN)
     void setShouldPaintNativeControls(bool);
+
+    void setInitialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy) { m_initialHTTPCookieAcceptPolicy = policy; }
 #endif
 
     void setEnhancedAccessibility(bool);
@@ -251,6 +253,7 @@ private:
 
 #if PLATFORM(WIN)
     bool m_shouldPaintNativeControls;
+    HTTPCookieAcceptPolicy m_initialHTTPCookieAcceptPolicy;
 #endif
 
 #if PLATFORM(MAC)
