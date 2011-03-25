@@ -1,3 +1,9 @@
+2011-03-25  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Roll forward Chromium deps to r79379 to pick up V8 3.2.4.2.
+
+        * DEPS:
+
 2011-03-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81916 and r81917.
