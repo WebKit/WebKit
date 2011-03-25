@@ -1,3 +1,37 @@
+2011-03-25  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=57057 Overlay scrollbars in overflow 
+        areas paint behind positive z-index content
+        -and corresponding-
+        <rdar://problem/9070500>
+
+        Since overlay scrollbars don't clip the scrollable content like other scrollbars do, 
+        the only way to get them to paint on top of all possible scrollable content is to 
+        make them paint on top of everything. To do this, this patch adds a second trip 
+        through the layer tree if it contains overlay scrollbars that need painting.
+
+        After calling paint() on the rootLayer, call paintOverlayScrollers() if 
+        containsDirtyOverlayScrollbars() is true. 
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+
+        RenderLayer has two new member variable. m_containsDirtyOverlayScrollbars is a bool 
+        that is set on the root layer when it has child layers that need overlay scrollbars 
+        to be painted. m_cachedOverlayScrollbarOffset is an IntPoint to cache the tx and ty 
+        of the overlay scrollbars on the first (normal) pass through the layer tree. This 
+        prevents us from having to re-enter the render tree during the second (overlay-only) 
+        pass. Finally, there is also a new paint flag: PaintLayerPaintingOverlayScrollbars.
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::containsDirtyOverlayScrollbars):
+        (WebCore::RenderLayer::setContainsDirtyOverlayScrollbars):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::paintOverflowControls):
+        (WebCore::RenderLayer::paintOverlayScrollbars):
+        (WebCore::RenderLayer::paintLayer):
+
 2011-03-25  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.

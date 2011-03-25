@@ -264,7 +264,7 @@ public:
     bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);
     IntSize offsetFromResizeCorner(const IntPoint& absolutePoint) const;
 
-    void paintOverflowControls(GraphicsContext*, int tx, int ty, const IntRect& damageRect);
+    void paintOverflowControls(GraphicsContext*, int tx, int ty, const IntRect& damageRect, bool paintingOverlayControls = false);
     void paintScrollCorner(GraphicsContext*, int tx, int ty, const IntRect& damageRect);
     void paintResizer(GraphicsContext*, int tx, int ty, const IntRect& damageRect);
 
@@ -361,6 +361,7 @@ public:
     // layers that intersect the point from front to back.
     void paint(GraphicsContext*, const IntRect& damageRect, PaintBehavior = PaintBehaviorNormal, RenderObject* paintingRoot = 0);
     bool hitTest(const HitTestRequest&, HitTestResult&);
+    void paintOverlayScrollbars(GraphicsContext*, const IntRect& damageRect, PaintBehavior, RenderObject* paintingRoot);
 
     // This method figures out our layerBounds in coordinates relative to
     // |rootLayer}.  It also computes our background and foreground clip rects
@@ -443,6 +444,9 @@ public:
 
     bool paintsWithTransform(PaintBehavior) const;
 
+    bool containsDirtyOverlayScrollbars() const { return m_containsDirtyOverlayScrollbars; }
+    void setContainsDirtyOverlayScrollbars(bool dirtyScrollbars) { m_containsDirtyOverlayScrollbars = dirtyScrollbars; }
+
 private:
     // The normal operator new is disallowed on all render objects.
     void* operator new(size_t) throw();
@@ -465,7 +469,8 @@ private:
         PaintLayerHaveTransparency = 1,
         PaintLayerAppliedTransform = 1 << 1,
         PaintLayerTemporaryClipRects = 1 << 2,
-        PaintLayerPaintingReflection = 1 << 3
+        PaintLayerPaintingReflection = 1 << 3,
+        PaintLayerPaintingOverlayScrollbars = 1 << 4
     };
     
     typedef unsigned PaintLayerFlags;
@@ -681,6 +686,10 @@ protected:
     bool m_hasCompositingDescendant : 1;
     bool m_mustOverlapCompositedLayers : 1;
 #endif
+
+    bool m_containsDirtyOverlayScrollbars : 1;
+
+    IntPoint m_cachedOverlayScrollbarOffset;
 
     RenderMarquee* m_marquee; // Used by layers with overflow:marquee
     

@@ -2291,8 +2291,12 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
 
     // m_nodeToDraw is used to draw only one element (and its descendants)
     RenderObject* eltRenderer = m_nodeToDraw ? m_nodeToDraw->renderer() : 0;
+    RenderLayer* rootLayer = contentRenderer->layer();
 
-    contentRenderer->layer()->paint(p, rect, m_paintBehavior, eltRenderer);
+    rootLayer->paint(p, rect, m_paintBehavior, eltRenderer);
+
+    if (rootLayer->containsDirtyOverlayScrollbars())
+        rootLayer->paintOverlayScrollbars(p, rect, m_paintBehavior, eltRenderer);
 
     m_isPainting = false;
 
