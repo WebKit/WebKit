@@ -125,6 +125,8 @@ public:
     virtual void computePreferredLogicalWidths(float leadWidth);
     bool isAllCollapsibleWhitespace();
     
+    bool knownToHaveNoOverflowAndNoFallbackFonts() const { return m_knownToHaveNoOverflowAndNoFallbackFonts; }
+
 protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle*) { }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);

@@ -261,7 +261,7 @@ void RenderTable::layout()
 {
     ASSERT(needsLayout());
 
-    if (layoutOnlyPositionedObjects())
+    if (simplifiedLayout())
         return;
 
     recalcSectionsIfNeeded();

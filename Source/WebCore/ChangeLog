@@ -1,3 +1,79 @@
+2011-03-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56909
+        
+        Add a simplified normal flow layout path optimization for overflow recomputation
+        and for positioned objects inside relative positioned containers.
+
+        Currently there is an optimized code path for positioned objects, but as soon as
+        we encounter a normal flow object in the containing block chain, we lose the
+        optimization.
+
+        This patch adds a new type of style difference called SimplifiedLayout that is
+        returned when only overflow needs to be recomputed. Whenever a transform changes,
+        this is the hint returned now instead of a full layout.
+        
+        In addition, when positioned objects need layout and start marking up the
+        containing block chain, we now propagate the fact that the layout is simplified
+        all the way up to the root, even when we encounter normal flow containing
+        blocks.
+        
+        The layoutOnlyPositionedObjects function has been renamed to simplifiedLayout()
+        and is now used for all of these cases (in addition to what it handled before).
+        
+        The simplified layout optimization (even in ToT) did not work correctly when
+        static distances needed to be recomputed. In order to make static distance
+        computations work with simplified layout, positioned objects now always compute
+        their static offsets, even if they explicitly specify left/top.  That way normal
+        flow layout never has to re-run when the positioned object moves.  This makes
+        movement of a positioned object along a single non-auto axis much faster when the
+        other axis is auto. Because this code kicked in more often for absolutely positioned
+        objects whose original display was inline, I went ahead and fixed the trailing space
+        issue with those objects.  This causes a bunch of layout tests to progress.
+
+        Added fast/block/positioning/static-inline-position-dynamic.html and trailing-space-test.html.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::adjustPositionedBlock):
+        (WebCore::RenderBlock::simplifiedNormalFlowLayout):
+        (WebCore::RenderBlock::simplifiedLayout):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::setStaticPositions):
+        (WebCore::RenderBlock::findNextLineBreak):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::positionLineBox):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::styleWillChange):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::adjustStyleDifference):
+        (WebCore::RenderObject::setStyle):
+        (WebCore::RenderObject::styleDidChange):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::needsLayout):
+        (WebCore::RenderObject::needsPositionedMovementLayoutOnly):
+        (WebCore::RenderObject::needsSimplifiedNormalFlowLayout):
+        (WebCore::RenderObject::setNeedsLayout):
+        (WebCore::RenderObject::setChildNeedsLayout):
+        (WebCore::RenderObject::setNeedsSimplifiedNormalFlowLayout):
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::layout):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+
 2011-03-25  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the GTK+ build until we can implement the new cross-platform

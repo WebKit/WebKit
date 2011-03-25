@@ -209,7 +209,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXM
 {
     ASSERT(needsLayout());
 
-    if (!relayoutChildren && layoutOnlyPositionedObjects())
+    if (!relayoutChildren && simplifiedLayout())
         return;
 
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
@@ -413,13 +413,11 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             if (child->isPositioned()) {
                 child->containingBlock()->insertPositionedObject(child);
                 RenderLayer* childLayer = child->layer();
-                if (child->style()->hasStaticInlinePosition(style()->isHorizontalWritingMode()))
-                    childLayer->setStaticInlinePosition(xPos);
-                if (child->style()->hasStaticBlockPosition(style()->isHorizontalWritingMode())) {
-                    if (childLayer->staticBlockPosition() != yPos) {
-                        childLayer->setStaticBlockPosition(yPos);
+                childLayer->setStaticInlinePosition(xPos);
+                if (childLayer->staticBlockPosition() != yPos) {
+                    childLayer->setStaticBlockPosition(yPos);
+                    if (child->style()->hasStaticBlockPosition(style()->isHorizontalWritingMode()))
                         child->setChildNeedsLayout(true, false);
-                    }
                 }
                 child = iterator.next();
                 continue;
@@ -676,17 +674,11 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             if (child->isPositioned()) {
                 child->containingBlock()->insertPositionedObject(child);
                 RenderLayer* childLayer = child->layer();
-                if (child->style()->hasStaticInlinePosition(style()->isHorizontalWritingMode())) {
-                    if (style()->isLeftToRightDirection())
-                        childLayer->setStaticInlinePosition(borderLeft() + paddingLeft());
-                    else
-                        childLayer->setStaticInlinePosition(borderRight() + paddingRight());
-                }
-                if (child->style()->hasStaticBlockPosition(style()->isHorizontalWritingMode())) {
-                    if (childLayer->staticBlockPosition() != height()) {
-                        childLayer->setStaticBlockPosition(height());
+                childLayer->setStaticInlinePosition(borderStart() + paddingStart());
+                if (childLayer->staticBlockPosition() != height()) {
+                    childLayer->setStaticBlockPosition(height());
+                    if (child->style()->hasStaticBlockPosition(style()->isHorizontalWritingMode()))
                         child->setChildNeedsLayout(true, false);
-                    }
                 }
                 child = iterator.next();
                 continue;

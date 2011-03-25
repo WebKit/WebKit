@@ -1,3 +1,144 @@
+2011-03-24  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add a simplified normal flow layout path optimization for overflow recomputation
+        and for positioned objects inside relative positioned containers.
+
+        Currently there is an optimized code path for positioned objects, but as soon as
+        we encounter a normal flow object in the containing block chain, we lose the
+        optimization.
+
+        This patch adds a new type of style difference called SimplifiedLayout that is
+        returned when only overflow needs to be recomputed. Whenever a transform changes,
+        this is the hint returned now instead of a full layout.
+        
+        In addition, when positioned objects need layout and start marking up the
+        containing block chain, we now propagate the fact that the layout is simplified
+        all the way up to the root, even when we encounter normal flow containing
+        blocks.
+        
+        The layoutOnlyPositionedObjects function has been renamed to simplifiedLayout()
+        and is now used for all of these cases (in addition to what it handled before).
+        
+        The simplified layout optimization (even in ToT) did not work correctly when
+        static distances needed to be recomputed. In order to make static distance
+        computations work with simplified layout, positioned objects now always compute
+        their static offsets, even if they explicitly specify left/top.  That way normal
+        flow layout never has to re-run when the positioned object moves.  This makes
+        movement of a positioned object along a single non-auto axis much faster when the
+        other axis is auto. Because this code kicked in more often for absolutely positioned
+        objects whose original display was inline, I went ahead and fixed the trailing space
+        issue with those objects.  This causes a bunch of layout tests to progress.
+
+        Added fast/block/positioning/static-inline-position-dynamic.html and trailing-space-test.html.
+
+        * animations/dynamic-stylesheet-loading-expected.txt:
+        * animations/keyframe-timing-functions-expected.txt:
+        * fast/block/positioning/static-inline-position-dynamic.html: Added.
+        * fast/block/positioning/trailing-space-test.html: Added.
+        * fast/dynamic/ancestor-to-absolute-expected.txt:
+        * fast/forms/input-appearance-elementFromPoint-expected.txt:
+        * fast/forms/input-hit-test-border-expected.txt:
+        * platform/mac/fast/block/positioning/002-expected.png:
+        * platform/mac/fast/block/positioning/003-expected.png:
+        * platform/mac/fast/block/positioning/004-expected.png:
+        * platform/mac/fast/block/positioning/005-expected.png:
+        * platform/mac/fast/block/positioning/006-expected.png:
+        * platform/mac/fast/block/positioning/007-expected.png:
+        * platform/mac/fast/block/positioning/008-expected.png:
+        * platform/mac/fast/block/positioning/009-expected.png:
+        * platform/mac/fast/block/positioning/010-expected.png:
+        * platform/mac/fast/block/positioning/011-expected.png:
+        * platform/mac/fast/block/positioning/012-expected.png:
+        * platform/mac/fast/block/positioning/013-expected.png:
+        * platform/mac/fast/block/positioning/014-expected.png:
+        * platform/mac/fast/block/positioning/015-expected.png:
+        * platform/mac/fast/block/positioning/016-expected.png:
+        * platform/mac/fast/block/positioning/017-expected.png:
+        * platform/mac/fast/block/positioning/018-expected.png:
+        * platform/mac/fast/block/positioning/019-expected.png:
+        * platform/mac/fast/block/positioning/020-expected.png:
+        * platform/mac/fast/block/positioning/021-expected.png:
+        * platform/mac/fast/block/positioning/022-expected.png:
+        * platform/mac/fast/block/positioning/023-expected.png:
+        * platform/mac/fast/block/positioning/024-expected.png:
+        * platform/mac/fast/block/positioning/025-expected.png:
+        * platform/mac/fast/block/positioning/026-expected.png:
+        * platform/mac/fast/block/positioning/027-expected.png:
+        * platform/mac/fast/block/positioning/028-expected.png:
+        * platform/mac/fast/block/positioning/029-expected.png:
+        * platform/mac/fast/block/positioning/030-expected.png:
+        * platform/mac/fast/block/positioning/031-expected.png:
+        * platform/mac/fast/block/positioning/032-expected.png:
+        * platform/mac/fast/block/positioning/033-expected.png:
+        * platform/mac/fast/block/positioning/034-expected.png:
+        * platform/mac/fast/block/positioning/035-expected.png:
+        * platform/mac/fast/block/positioning/036-expected.png:
+        * platform/mac/fast/block/positioning/037-expected.png:
+        * platform/mac/fast/block/positioning/038-expected.png:
+        * platform/mac/fast/block/positioning/039-expected.png:
+        * platform/mac/fast/block/positioning/040-expected.png:
+        * platform/mac/fast/block/positioning/041-expected.png:
+        * platform/mac/fast/block/positioning/042-expected.png:
+        * platform/mac/fast/block/positioning/043-expected.png:
+        * platform/mac/fast/block/positioning/044-expected.png:
+        * platform/mac/fast/block/positioning/045-expected.png:
+        * platform/mac/fast/block/positioning/046-expected.png:
+        * platform/mac/fast/block/positioning/047-expected.checksum:
+        * platform/mac/fast/block/positioning/047-expected.png:
+        * platform/mac/fast/block/positioning/048-expected.png:
+        * platform/mac/fast/block/positioning/049-expected.png:
+        * platform/mac/fast/block/positioning/050-expected.png:
+        * platform/mac/fast/block/positioning/056-expected.txt:
+        * platform/mac/fast/block/positioning/061-expected.png:
+        * platform/mac/fast/block/positioning/062-expected.png:
+        * platform/mac/fast/block/positioning/auto/005-expected.txt:
+        * platform/mac/fast/block/positioning/auto/006-expected.txt:
+        * platform/mac/fast/block/positioning/auto/007-expected.png:
+        * platform/mac/fast/block/positioning/auto/vertical-lr/005-expected.txt:
+        * platform/mac/fast/block/positioning/auto/vertical-lr/006-expected.txt:
+        * platform/mac/fast/block/positioning/auto/vertical-lr/007-expected.checksum:
+        * platform/mac/fast/block/positioning/auto/vertical-lr/007-expected.png:
+        * platform/mac/fast/block/positioning/auto/vertical-rl/005-expected.txt:
+        * platform/mac/fast/block/positioning/auto/vertical-rl/006-expected.txt:
+        * platform/mac/fast/block/positioning/auto/vertical-rl/007-expected.checksum:
+        * platform/mac/fast/block/positioning/auto/vertical-rl/007-expected.png:
+        * platform/mac/fast/block/positioning/fixed-positioning-scrollbar-bug-expected.txt:
+        * platform/mac/fast/block/positioning/inline-block-relposition-expected.checksum:
+        * platform/mac/fast/block/positioning/inline-block-relposition-expected.png:
+        * platform/mac/fast/block/positioning/inline-block-relposition-expected.txt:
+        * platform/mac/fast/block/positioning/move-with-auto-width-expected.png:
+        * platform/mac/fast/block/positioning/negative-rel-position-expected.png:
+        * platform/mac/fast/block/positioning/relative-overconstrained-expected.png:
+        * platform/mac/fast/block/positioning/relative-overflow-block-expected.txt:
+        * platform/mac/fast/block/positioning/static-inline-position-dynamic-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/static-inline-position-dynamic-expected.png: Added.
+        * platform/mac/fast/block/positioning/static-inline-position-dynamic-expected.txt: Added.
+        * platform/mac/fast/block/positioning/trailing-space-test-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/trailing-space-test-expected.png: Added.
+        * platform/mac/fast/block/positioning/trailing-space-test-expected.txt: Added.
+        * platform/mac/fast/clip/001-expected.txt:
+        * platform/mac/fast/clip/004-expected.txt:
+        * platform/mac/fast/clip/006-expected.txt:
+        * platform/mac/fast/clip/007-expected.txt:
+        * platform/mac/fast/clip/008-expected.txt:
+        * platform/mac/fast/clip/009-expected.txt:
+        * platform/mac/fast/clip/010-expected.txt:
+        * platform/mac/fast/clip/011-expected.txt:
+        * platform/mac/fast/clip/012-expected.txt:
+        * platform/mac/fast/clip/013-expected.txt:
+        * platform/mac/fast/clip/014-expected.txt:
+        * platform/mac/fast/clip/nestedTransparencyClip-expected.txt:
+        * platform/mac/fast/clip/outline-overflowClip-expected.txt:
+        * platform/mac/fast/forms/input-appearance-preventDefault-expected.txt:
+        * platform/mac/fast/invalid/014-expected.txt:
+        * platform/mac/fast/layers/layer-visibility-expected.txt:
+        * platform/mac/fast/repaint/layout-state-scrolloffset-expected.txt:
+        * platform/mac/fast/repaint/layout-state-scrolloffset2-expected.txt:
+        * platform/mac/fast/repaint/layout-state-scrolloffset3-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug51140-expected.txt:
+
 2011-03-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

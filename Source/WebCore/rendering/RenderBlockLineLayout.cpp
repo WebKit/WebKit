@@ -551,6 +551,28 @@ static inline bool isCollapsibleSpace(UChar character, RenderText* renderer)
     return false;
 }
 
+
+static void setStaticPositions(RenderBlock* block, RenderBox* child)
+{
+    // FIXME: The math here is actually not really right. It's a best-guess approximation that
+    // will work for the common cases
+    RenderObject* containerBlock = child->container();
+    int blockHeight = block->logicalHeight();
+    if (containerBlock->isRenderInline()) {
+        // A relative positioned inline encloses us. In this case, we also have to determine our
+        // position as though we were an inline. Set |staticInlinePosition| and |staticBlockPosition| on the relative positioned
+        // inline so that we can obtain the value later.
+        toRenderInline(containerBlock)->layer()->setStaticInlinePosition(block->startOffsetForLine(blockHeight, false));
+        toRenderInline(containerBlock)->layer()->setStaticBlockPosition(blockHeight);
+    }
+
+    if (child->style()->isOriginalDisplayInlineType())
+        child->layer()->setStaticInlinePosition(block->startOffsetForLine(blockHeight, false));
+    else
+        child->layer()->setStaticInlinePosition(block->borderAndPaddingStart());
+    child->layer()->setStaticBlockPosition(blockHeight);
+}
+
 void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogicalTop, int& repaintLogicalBottom)
 {
     bool useRepaintBounds = false;
@@ -702,10 +724,11 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
             
             EClear clear = CNONE;
             bool hyphenated;
+            Vector<RenderBox*> positionedObjects;
             
             InlineIterator oldEnd = end;
             FloatingObject* lastFloatFromPreviousLine = (m_floatingObjects && !m_floatingObjects->set().isEmpty()) ? m_floatingObjects->set().last() : 0;
-            end = findNextLineBreak(resolver, firstLine, isLineEmpty, lineBreakIteratorInfo, previousLineBrokeCleanly, hyphenated, &clear, lastFloatFromPreviousLine);
+            end = findNextLineBreak(resolver, firstLine, isLineEmpty, lineBreakIteratorInfo, previousLineBrokeCleanly, hyphenated, &clear, lastFloatFromPreviousLine, positionedObjects);
             if (resolver.position().atEnd()) {
                 resolver.deleteRuns();
                 checkForFloatsFromLastLine = true;
@@ -852,6 +875,9 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                         }
                     }
                 }
+
+                for (size_t i = 0; i < positionedObjects.size(); ++i)
+                    setStaticPositions(this, positionedObjects[i]);
 
                 firstLine = false;
                 newLine(clear);
@@ -1326,34 +1352,6 @@ bool RenderBlock::generatesLineBoxesForInlineChild(RenderObject* inlineObj, bool
     return !it.atEnd();
 }
 
-static void setStaticPositions(RenderBlock* block, RenderBox* child)
-{
-    // FIXME: The math here is actually not really right. It's a best-guess approximation that
-    // will work for the common cases
-    RenderObject* containerBlock = child->container();
-    if (containerBlock->isRenderInline()) {
-        // A relative positioned inline encloses us. In this case, we also have to determine our
-        // position as though we were an inline. Set |staticInlinePosition| and |staticBlockPosition| on the relative positioned
-        // inline so that we can obtain the value later.
-        toRenderInline(containerBlock)->layer()->setStaticInlinePosition(block->startOffsetForLine(block->logicalHeight(), false));
-        toRenderInline(containerBlock)->layer()->setStaticBlockPosition(block->logicalHeight());
-    }
-
-    bool isHorizontal = block->isHorizontalWritingMode();
-    bool hasStaticInlinePosition = child->style()->hasStaticInlinePosition(isHorizontal);
-    bool hasStaticBlockPosition = child->style()->hasStaticBlockPosition(isHorizontal);
-
-    if (hasStaticInlinePosition) {
-        if (child->style()->isOriginalDisplayInlineType())
-            child->layer()->setStaticInlinePosition(block->startOffsetForLine(block->logicalHeight(), false));
-        else
-            child->layer()->setStaticInlinePosition(block->borderAndPaddingStart());
-    }
-
-    if (hasStaticBlockPosition)
-        child->layer()->setStaticBlockPosition(block->logicalHeight());
-}
-
 // FIXME: The entire concept of the skipTrailingWhitespace function is flawed, since we really need to be building
 // line boxes even for containers that may ultimately collapse away.  Otherwise we'll never get positioned
 // elements quite right.  In other words, we need to build this function's work into the normal line
@@ -1482,7 +1480,7 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
 }
 
 InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool firstLine, bool& isLineEmpty, LineBreakIteratorInfo& lineBreakIteratorInfo, bool& previousLineBrokeCleanly, 
-                                              bool& hyphenated, EClear* clear, FloatingObject* lastFloatFromPreviousLine)
+                                              bool& hyphenated, EClear* clear, FloatingObject* lastFloatFromPreviousLine, Vector<RenderBox*>& positionedBoxes)
 {
     ASSERT(resolver.position().block == this);
 
@@ -1513,6 +1511,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
     bool currentCharacterIsSpace = false;
     bool currentCharacterIsWS = false;
     RenderObject* trailingSpaceObject = 0;
+    Vector<RenderBox*, 4> trailingPositionedBoxes;
 
     InlineIterator lBreak = resolver.position();
 
@@ -1597,37 +1596,27 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 // go ahead and determine our static inline position now.
                 RenderBox* box = toRenderBox(o);
                 bool isInlineType = box->style()->isOriginalDisplayInlineType();
-                bool needToSetStaticInlinePosition = box->style()->hasStaticInlinePosition(isHorizontalWritingMode());
-                if (needToSetStaticInlinePosition && !isInlineType) {
+                if (!isInlineType)
                     box->layer()->setStaticInlinePosition(borderAndPaddingStart());
-                    needToSetStaticInlinePosition = false;
-                }
-
-                // If our original display was an INLINE type, then we can go ahead
-                // and determine our static y position now.
-                bool needToSetStaticBlockPosition = box->style()->hasStaticBlockPosition(isHorizontalWritingMode());
-                if (needToSetStaticBlockPosition && isInlineType) {
+                else  {
+                    // If our original display was an INLINE type, then we can go ahead
+                    // and determine our static y position now.
                     box->layer()->setStaticBlockPosition(logicalHeight());
-                    needToSetStaticBlockPosition = false;
                 }
                 
-                bool needToCreateLineBox = needToSetStaticInlinePosition || needToSetStaticBlockPosition;
-                RenderObject* c = o->container();
-                if (c->isRenderInline() && (!needToSetStaticInlinePosition || !needToSetStaticBlockPosition))
-                    needToCreateLineBox = true;
-
                 // If we're ignoring spaces, we have to stop and include this object and
                 // then start ignoring spaces again.
-                if (needToCreateLineBox) {
-                    trailingSpaceObject = 0;
+                if (isInlineType || o->container()->isRenderInline()) {
                     ignoreStart.obj = o;
                     ignoreStart.pos = 0;
                     if (ignoringSpaces) {
                         addMidpoint(lineMidpointState, ignoreStart); // Stop ignoring spaces.
                         addMidpoint(lineMidpointState, ignoreStart); // Start ignoring again.
                     }
-                    
-                }
+                    if (trailingSpaceObject)
+                        trailingPositionedBoxes.append(box);
+                } else
+                    positionedBoxes.append(box);
             }
         } else if (o->isRenderInline()) {
             // Right now, we should only encounter empty inlines here.
@@ -1643,6 +1632,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 isLineEmpty = false;
                 if (ignoringSpaces) {
                     trailingSpaceObject = 0;
+                    trailingPositionedBoxes.clear();
                     addMidpoint(lineMidpointState, InlineIterator(0, o, 0)); // Stop ignoring spaces.
                     addMidpoint(lineMidpointState, InlineIterator(0, o, 0)); // Start ignoring again.
                 } else if (style()->collapseWhiteSpace() && resolver.position().obj == o
@@ -1677,6 +1667,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             currentCharacterIsSpace = false;
             currentCharacterIsWS = false;
             trailingSpaceObject = 0;
+            trailingPositionedBoxes.clear();
 
             // Optimize for a common case. If we can't find whitespace after the list
             // item, then this is all moot.
@@ -1946,8 +1937,10 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 
                 if (collapseWhiteSpace && currentCharacterIsSpace && !ignoringSpaces)
                     trailingSpaceObject = o;
-                else if (!o->style()->collapseWhiteSpace() || !currentCharacterIsSpace)
+                else if (!o->style()->collapseWhiteSpace() || !currentCharacterIsSpace) {
                     trailingSpaceObject = 0;
+                    trailingPositionedBoxes.clear();
+                }
                     
                 pos++;
                 len--;
@@ -2011,8 +2004,10 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 
         if (checkForBreak && (w + tmpW > width)) {
             // if we have floats, try to get below them.
-            if (currentCharacterIsSpace && !ignoringSpaces && o->style()->collapseWhiteSpace())
+            if (currentCharacterIsSpace && !ignoringSpaces && o->style()->collapseWhiteSpace()) {
                 trailingSpaceObject = 0;
+                trailingPositionedBoxes.clear();
+            }
 
             if (w)
                 goto end;
@@ -2092,17 +2087,20 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
         // exclude the space, allowing it to - in effect - collapse into the newline.
         if (lineMidpointState.numMidpoints % 2) {
             InlineIterator* midpoints = lineMidpointState.midpoints.data();
-            midpoints[lineMidpointState.numMidpoints - 1].pos--;
-        }
-        //else if (lBreak.pos > 0)
-        //    lBreak.pos--;
-        else if (lBreak.obj == 0 && trailingSpaceObject->isText()) {
+            midpoints[lineMidpointState.numMidpoints - trailingPositionedBoxes.size() * 2 - 1].pos--;
+        } else if (!lBreak.obj && trailingSpaceObject->isText()) {
             // Add a new end midpoint that stops right at the very end.
             RenderText* text = toRenderText(trailingSpaceObject);
             unsigned length = text->textLength();
             unsigned pos = length >= 2 ? length - 2 : UINT_MAX;
             InlineIterator endMid(0, trailingSpaceObject, pos);
             addMidpoint(lineMidpointState, endMid);
+            for (size_t i = 0; i < trailingPositionedBoxes.size(); ++i) {
+                ignoreStart.obj = trailingPositionedBoxes[i];
+                ignoreStart.pos = 0;
+                addMidpoint(lineMidpointState, ignoreStart); // Stop ignoring spaces.
+                addMidpoint(lineMidpointState, ignoreStart); // Start ignoring again.
+            }
         }
     }
 

@@ -288,8 +288,17 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 {
     RenderBoxModelObject::styleDidChange(diff, oldStyle);
 
-    if (needsLayout() && oldStyle && (oldStyle->logicalHeight().isPercent() || oldStyle->logicalMinHeight().isPercent() || oldStyle->logicalMaxHeight().isPercent()))
-        RenderBlock::removePercentHeightDescendant(this);
+    if (needsLayout() && oldStyle) {
+        if (oldStyle && (oldStyle->logicalHeight().isPercent() || oldStyle->logicalMinHeight().isPercent() || oldStyle->logicalMaxHeight().isPercent()))
+            RenderBlock::removePercentHeightDescendant(this);
+
+        // Normally we can do optimized positioning layout for absolute/fixed positioned objects. There is one special case, however, which is
+        // when the positioned object's margin-before is changed. In this case the parent has to get a layout in order to run margin collapsing
+        // to determine the new static position.
+        if (isPositioned() && style()->hasStaticBlockPosition(isHorizontalWritingMode()) && oldStyle->marginBefore() != style()->marginBefore()
+            && parent() && !parent()->normalChildNeedsLayout())
+            parent()->setChildNeedsLayout(true);
+    }
 
     // If our zoom factor changes and we have a defined scrollLeft/Top, we need to adjust that value into the
     // new zoomed coordinate space.
@@ -1304,19 +1313,21 @@ void RenderBox::positionLineBox(InlineBox* box)
     if (isPositioned()) {
         // Cache the x position only if we were an INLINE type originally.
         bool wasInline = style()->isOriginalDisplayInlineType();
-        if (wasInline && style()->hasStaticInlinePosition(box->isHorizontal())) {
+        if (wasInline) {
             // The value is cached in the xPos of the box.  We only need this value if
             // our object was inline originally, since otherwise it would have ended up underneath
             // the inlines.
             layer()->setStaticInlinePosition(lroundf(box->logicalLeft()));
-            setChildNeedsLayout(true, false); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
-        } else if (!wasInline && style()->hasStaticBlockPosition(box->isHorizontal())) {
+            if (style()->hasStaticInlinePosition(box->isHorizontal()))
+                setChildNeedsLayout(true, false); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
+        } else {
             // Our object was a block originally, so we make our normal flow position be
             // just below the line box (as though all the inlines that came before us got
             // wrapped in an anonymous block, which is what would have happened had we been
             // in flow).  This value was cached in the y() of the box.
             layer()->setStaticBlockPosition(box->logicalTop());
-            setChildNeedsLayout(true, false); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
+            if (style()->hasStaticBlockPosition(box->isHorizontal()))
+                setChildNeedsLayout(true, false); // Just go ahead and mark the positioned object as needing layout, so it will update its position properly.
         }
 
         // Nuke the box.

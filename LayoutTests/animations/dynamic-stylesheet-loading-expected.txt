@@ -1,3 +1,3 @@
-This test performs an animation and then dynamically loads a new stylesheet (which is empty). It should start animating after a 100ms delay and then stop halfway through the animation at which point we see if it is at the correct position. The loading of the stylesheet should not prevent the animation from running. 
+This test performs an animation and then dynamically loads a new stylesheet (which is empty). It should start animating after a 100ms delay and then stop halfway through the animation at which point we see if it is at the correct position. The loading of the stylesheet should not prevent the animation from running.
 PASS - "webkitTransform.5" property for "splash" element at 0.3s saw something close to: 100
 

@@ -191,6 +191,7 @@ RenderObject::RenderObject(Node* node)
     , m_needsPositionedMovementLayout(false)
     , m_normalChildNeedsLayout(false)
     , m_posChildNeedsLayout(false)
+    , m_needsSimplifiedNormalFlowLayout(false)
     , m_preferredLogicalWidthsDirty(false)
     , m_floating(false)
     , m_positioned(false)
@@ -1686,9 +1687,12 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
         // Text nodes share style with their parents but transforms don't apply to them,
         // hence the !isText() check.
         // FIXME: when transforms are taken into account for overflow, we will need to do a layout.
-        if (!isText() && (!hasLayer() || !toRenderBoxModelObject(this)->layer()->isComposited()))
-            diff = StyleDifferenceLayout;
-        else if (diff < StyleDifferenceRecompositeLayer)
+        if (!isText() && (!hasLayer() || !toRenderBoxModelObject(this)->layer()->isComposited())) {
+            if (!hasLayer())
+                diff = StyleDifferenceLayout; // FIXME: Do this for now since SimplifiedLayout cannot handle updating floating objects lists.
+            else if (diff < StyleDifferenceSimplifiedLayout)
+                diff = StyleDifferenceSimplifiedLayout;
+        } else if (diff < StyleDifferenceRecompositeLayer)
             diff = StyleDifferenceRecompositeLayer;
     }
 
@@ -1767,6 +1771,8 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
             setNeedsLayoutAndPrefWidthsRecalc();
         else if (updatedDiff == StyleDifferenceLayoutPositionedMovementOnly)
             setNeedsPositionedMovementLayout();
+        else if (updatedDiff == StyleDifferenceSimplifiedLayout)
+            setNeedsSimplifiedNormalFlowLayout();
     }
     
     if (updatedDiff == StyleDifferenceRepaintLayer || updatedDiff == StyleDifferenceRepaint) {
@@ -1880,7 +1886,7 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     if (!m_parent)
         return;
     
-    if (diff == StyleDifferenceLayout) {
+    if (diff == StyleDifferenceLayout || diff == StyleDifferenceSimplifiedLayout) {
         RenderCounter::rendererStyleChanged(this, oldStyle, m_style.get());
 
         // If the object already needs layout, then setNeedsLayout won't do
@@ -1891,7 +1897,10 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         if (m_needsLayout && oldStyle->position() != m_style->position())
             markContainingBlocksForLayout();
 
-        setNeedsLayoutAndPrefWidthsRecalc();
+        if (diff == StyleDifferenceLayout)
+            setNeedsLayoutAndPrefWidthsRecalc();
+        else
+            setNeedsSimplifiedNormalFlowLayout();
     } else if (diff == StyleDifferenceLayoutPositionedMovementOnly)
         setNeedsPositionedMovementLayout();
 
