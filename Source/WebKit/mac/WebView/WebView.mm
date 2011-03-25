@@ -1521,11 +1521,8 @@ static bool fastDocumentTeardownEnabled()
     settings->setUseQuickLookResourceCachingQuirks([preferences useQuickLookResourceCachingQuirks]);
     settings->setCrossOriginCheckInGetMatchedCSSRulesDisabled([self _needsUnrestrictedGetMatchedCSSRules]);
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];
-    [WebApplicationCache setMaximumSize:[preferences applicationCacheTotalQuota]];
-#endif
 
     BOOL zoomsTextOnly = [preferences zoomsTextOnly];
     if (_private->zoomsTextOnly != zoomsTextOnly)
