@@ -1,5 +1,14 @@
 2011-03-24  Mihai Parparita  <mihaip@chromium.org>
 
+        Add Chromium Snow Leopard baselines for fast/css/bidi-override-in-anonymous-block.html.
+
+        * platform/chromium-mac-leopard/fast/css/bidi-override-in-anonymous-block-expected.checksum: Copied from LayoutTests/platform/chromium-mac/fast/css/bidi-override-in-anonymous-block-expected.checksum.
+        * platform/chromium-mac-leopard/fast/css/bidi-override-in-anonymous-block-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/css/bidi-override-in-anonymous-block-expected.png.
+        * platform/chromium-mac/fast/css/bidi-override-in-anonymous-block-expected.checksum:
+        * platform/chromium-mac/fast/css/bidi-override-in-anonymous-block-expected.png:
+
+2011-03-24  Mihai Parparita  <mihaip@chromium.org>
+
         Reviewed by James Robinson.
 
         [Chromium] Vertical Japanese text is not displayed on Snow Leopard
