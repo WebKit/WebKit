@@ -1,3 +1,18 @@
+2011-03-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Graphic corruption appeared with Silverlight contents while resizing window
+        https://bugs.webkit.org/show_bug.cgi?id=57167
+        <rdar://problem/9094052>
+
+        Pass DispatchMessageEvenWhenWaitingForSyncReply when sending GeometryDidChange messages since that will guarantee
+        that those messages will be handled before PaintEntirePlugin messages which prevents the PaintEntirePlugin handler from
+        painting into the wrong backing store.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::geometryDidChange):
+
 2011-03-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

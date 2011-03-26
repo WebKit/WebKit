@@ -176,7 +176,7 @@ void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& cli
 
     if (!needsBackingStore()) {
         SharedMemory::Handle pluginBackingStoreHandle;
-        m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(frameRect, clipRect, pluginBackingStoreHandle), m_pluginInstanceID);
+        m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(frameRect, clipRect, pluginBackingStoreHandle), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
         return;
     }
 
@@ -202,14 +202,14 @@ void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& cli
 
         // Create a handle to the plug-in backing store so we can send it over.
         if (!m_pluginBackingStore->createHandle(pluginBackingStoreHandle)) {
-            m_pluginBackingStore.clear();
+            m_pluginBackingStore = nullptr;
             return;
         }
 
         m_pluginBackingStoreContainsValidData = false;
     }
 
-    m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(frameRect, clipRect, pluginBackingStoreHandle), m_pluginInstanceID);
+    m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(frameRect, clipRect, pluginBackingStoreHandle), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 void PluginProxy::frameDidFinishLoading(uint64_t requestID)
