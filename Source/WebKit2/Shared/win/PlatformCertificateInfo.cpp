@@ -65,12 +65,22 @@ PlatformCertificateInfo::PlatformCertificateInfo(const ResourceResponse& respons
     PCERT_SIMPLE_CHAIN firstSimpleChain = chainContext->rgpChain[0];
     for (unsigned i = 0; i < firstSimpleChain->cElement; ++i) {
         PCCERT_CONTEXT certificateContext = firstSimpleChain->rgpElement[i]->pCertContext;
-        ::CertDuplicateCertificateContext(certificateContext);
-        m_certificateChain.append(certificateContext);
+        PCCERT_CONTEXT certificateContextCopy = ::CertDuplicateCertificateContext(certificateContext);
+        m_certificateChain.append(certificateContextCopy);
     }
 #else
     // FIXME: WinCairo implementation
 #endif
+}
+
+PlatformCertificateInfo::PlatformCertificateInfo(PCCERT_CONTEXT certificateContext)
+{
+    ASSERT(certificateContext);
+    if (!certificateContext)
+        return;
+    
+    PCCERT_CONTEXT certificateContextCopy = ::CertDuplicateCertificateContext(certificateContext);
+    m_certificateChain.append(certificateContextCopy);    
 }
 
 PlatformCertificateInfo::~PlatformCertificateInfo()
@@ -81,8 +91,8 @@ PlatformCertificateInfo::~PlatformCertificateInfo()
 PlatformCertificateInfo::PlatformCertificateInfo(const PlatformCertificateInfo& other)
 {
     for (size_t i = 0; i < other.m_certificateChain.size(); ++i) {
-        ::CertDuplicateCertificateContext(other.m_certificateChain[i]);
-        m_certificateChain.append(other.m_certificateChain[i]);
+        PCCERT_CONTEXT certificateContextCopy = ::CertDuplicateCertificateContext(other.m_certificateChain[i]);
+        m_certificateChain.append(certificateContextCopy);
     }
 }
 
@@ -90,8 +100,8 @@ PlatformCertificateInfo& PlatformCertificateInfo::operator=(const PlatformCertif
 {
     clearCertificateChain();
     for (size_t i = 0; i < other.m_certificateChain.size(); ++i) {
-        ::CertDuplicateCertificateContext(other.m_certificateChain[i]);
-        m_certificateChain.append(other.m_certificateChain[i]);
+        PCCERT_CONTEXT certificateContextCopy = ::CertDuplicateCertificateContext(other.m_certificateChain[i]);
+        m_certificateChain.append(certificateContextCopy);
     }
     return *this;
 }

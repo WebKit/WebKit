@@ -43,6 +43,7 @@ class PlatformCertificateInfo {
 public:
     PlatformCertificateInfo();
     explicit PlatformCertificateInfo(const WebCore::ResourceResponse&);    
+    explicit PlatformCertificateInfo(PCCERT_CONTEXT);    
     ~PlatformCertificateInfo();
 
     PlatformCertificateInfo(const PlatformCertificateInfo&);

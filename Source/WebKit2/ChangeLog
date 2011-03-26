@@ -1,3 +1,18 @@
+2011-03-26  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Add PlatformCertificateInfo::PlatformCertificateInfo(PCCERT_CONTEXT) constructor on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57152
+        
+        We're going to need to create a PlatformCertificateInfo with a single certificate on Windows to support client certificates.
+        Also, stop relying on the fact that the Win32 API CertDuplicateCertificateContext() currently returns the same PCCERT_CONTEXT that you pass to it, since that may change in the future.
+
+        * Shared/win/PlatformCertificateInfo.cpp:
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo): Added PlatformCertificateInfo(PCCERT_CONTEXT) construtor. Use return value from CertDuplicateCertificateContext().
+        (WebKit::PlatformCertificateInfo::operator=): Use return value from CertDuplicateCertificateContext().
+        * Shared/win/PlatformCertificateInfo.h: Added PlatformCertificateInfo(PCCERT_CONTEXT) construtor.
+
 2011-03-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
