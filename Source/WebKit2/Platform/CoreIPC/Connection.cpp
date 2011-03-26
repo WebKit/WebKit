@@ -36,13 +36,10 @@ using namespace std;
 
 namespace CoreIPC {
 
-class Connection::SyncMessageState : public RefCounted<Connection::SyncMessageState> {
+class Connection::SyncMessageState : public ThreadSafeRefCounted<Connection::SyncMessageState> {
 public:
     static PassRefPtr<SyncMessageState> getOrCreate(RunLoop*);
     ~SyncMessageState();
-
-    void beginWaitForSyncReply();
-    void endWaitForSyncReply();
 
     void wakeUpClientRunLoop()
     {
@@ -76,13 +73,15 @@ private:
         return syncMessageStateMapMutex;
     }
 
+    void dispatchMessageAndResetDidScheduleDispatchMessagesWork();
+
     RunLoop* m_runLoop;
     BinarySemaphore m_waitForSyncReplySemaphore;
 
-    // Protects m_waitForSyncReplyCount and m_messagesToDispatchWhileWaitingForSyncReply.
+    // Protects m_didScheduleDispatchMessagesWork and m_messagesToDispatchWhileWaitingForSyncReply.
     Mutex m_mutex;
 
-    unsigned m_waitForSyncReplyCount;
+    bool m_didScheduleDispatchMessagesWork;
 
     struct ConnectionAndIncomingMessage {
         Connection* connection;
@@ -109,7 +108,7 @@ PassRefPtr<Connection::SyncMessageState> Connection::SyncMessageState::getOrCrea
 
 Connection::SyncMessageState::SyncMessageState(RunLoop* runLoop)
     : m_runLoop(runLoop)
-    , m_waitForSyncReplyCount(0)
+    , m_didScheduleDispatchMessagesWork(false)
 {
 }
 
@@ -121,49 +120,27 @@ Connection::SyncMessageState::~SyncMessageState()
     syncMessageStateMap().remove(m_runLoop);
 }
 
-void Connection::SyncMessageState::beginWaitForSyncReply()
-{
-    ASSERT(RunLoop::current() == m_runLoop);
-
-    MutexLocker locker(m_mutex);
-    m_waitForSyncReplyCount++;
-}
-
-void Connection::SyncMessageState::endWaitForSyncReply()
-{
-    ASSERT(RunLoop::current() == m_runLoop);
-
-    MutexLocker locker(m_mutex);
-    ASSERT(m_waitForSyncReplyCount);
-    --m_waitForSyncReplyCount;
-
-    if (m_waitForSyncReplyCount)
-        return;
-
-    // Dispatch any remaining incoming sync messages.
-    for (size_t i = 0; i < m_messagesToDispatchWhileWaitingForSyncReply.size(); ++i) {
-        ConnectionAndIncomingMessage& connectionAndIncomingMessage = m_messagesToDispatchWhileWaitingForSyncReply[i];
-        connectionAndIncomingMessage.connection->enqueueIncomingMessage(connectionAndIncomingMessage.incomingMessage);
-    }
-
-    m_messagesToDispatchWhileWaitingForSyncReply.clear();
-}
-
 bool Connection::SyncMessageState::processIncomingMessage(Connection* connection, IncomingMessage& incomingMessage)
 {
     MessageID messageID = incomingMessage.messageID();
     if (!messageID.shouldDispatchMessageWhenWaitingForSyncReply())
         return false;
 
-    MutexLocker locker(m_mutex);
-    if (!m_waitForSyncReplyCount)
-        return false;
-
     ConnectionAndIncomingMessage connectionAndIncomingMessage;
     connectionAndIncomingMessage.connection = connection;
     connectionAndIncomingMessage.incomingMessage = incomingMessage;
 
-    m_messagesToDispatchWhileWaitingForSyncReply.append(connectionAndIncomingMessage);
+    {
+        MutexLocker locker(m_mutex);
+        
+        if (!m_didScheduleDispatchMessagesWork) {
+            m_runLoop->scheduleWork(WorkItem::create(this, &SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMessagesWork));
+            m_didScheduleDispatchMessagesWork = true;
+        }
+
+        m_messagesToDispatchWhileWaitingForSyncReply.append(connectionAndIncomingMessage);
+    }
+
     wakeUpClientRunLoop();
 
     return true;
@@ -184,6 +161,17 @@ void Connection::SyncMessageState::dispatchMessages()
         ConnectionAndIncomingMessage& connectionAndIncomingMessage = messagesToDispatchWhileWaitingForSyncReply[i];
         connectionAndIncomingMessage.connection->dispatchMessage(connectionAndIncomingMessage.incomingMessage);
     }
+}
+
+void Connection::SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMessagesWork()
+{
+    {
+        MutexLocker locker(m_mutex);
+        ASSERT(m_didScheduleDispatchMessagesWork);
+        m_didScheduleDispatchMessagesWork = false;
+    }
+
+    dispatchMessages();
 }
 
 PassRefPtr<Connection> Connection::createServerConnection(Identifier identifier, Client* client, RunLoop* clientRunLoop)
@@ -357,10 +345,6 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
         m_pendingSyncReplies.append(PendingSyncReply(syncRequestID));
     }
 
-    // We have to begin waiting for the sync reply before sending the message, in case the other side
-    // would have sent a request before us, which would lead to a deadlock.
-    m_syncMessageState->beginWaitForSyncReply();
-
     // First send the message.
     messageID = messageID.messageIDWithAddedFlags(MessageID::DispatchMessageWhenWaitingForSyncReply | MessageID::SyncMessage);
     sendMessage(messageID, encoder);
@@ -376,8 +360,6 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
         ASSERT(m_pendingSyncReplies.last().syncRequestID == syncRequestID);
         m_pendingSyncReplies.removeLast();
     }
-
-    m_syncMessageState->endWaitForSyncReply();
 
     if (!reply && m_client)
         m_client->didFailToSendSyncMessage(this);

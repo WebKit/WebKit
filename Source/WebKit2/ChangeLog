@@ -1,3 +1,29 @@
+2011-03-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix a possible deadlock when two synchronous messages are sent at the same time
+        https://bugs.webkit.org/show_bug.cgi?id=57155
+
+        Simplify code and fix a possible (although highly improbable) dead lock.
+
+        * Platform/CoreIPC/Connection.cpp:
+        Make SyncMessageState atomically ref counted since it can be ref()'ed from the connection queue.
+        Get rid of m_waitForSyncReplyCount and add m_didScheduleDispatchMessagesWork.
+
+        (CoreIPC::Connection::SyncMessageState::SyncMessageState):
+        Initialize m_didScheduleDispatchMessagesWork to false.
+
+        (CoreIPC::Connection::SyncMessageState::processIncomingMessage):
+        if m_didScheduleDispatchMessagesWork is false, schedule a call to dispatchMessageAndResetDidScheduleDispatchMessagesWork
+        on the client run loop.
+
+        (CoreIPC::Connection::SyncMessageState::dispatchMessageAndResetDidScheduleDispatchMessagesWork):
+        Dispatch messages and set m_didScheduleDispatchMessagesWork back to false.
+
+        (CoreIPC::Connection::sendSyncMessage):
+        Remove calls to beginWaitForSyncReply and endWaitForSyncReply.
+
 2011-03-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele Peterson.
