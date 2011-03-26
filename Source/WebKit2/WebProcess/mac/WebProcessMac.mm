@@ -121,15 +121,14 @@ bool WebProcess::fullKeyboardAccessEnabled()
 }
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
-static void appendSandboxParameterPath(Vector<const char*>& vector, const char* name, NSString *path)
-{
-    vector.append(name);
-    vector.append(fastStrDup([[path stringByResolvingSymlinksInPath] fileSystemRepresentation]));
-}
-
 static void appendSandboxParameterPath(Vector<const char*>& vector, const char* name, const char* path)
 {
-    appendSandboxParameterPath(vector, name, [[NSFileManager defaultManager] stringWithFileSystemRepresentation:path length:strlen(path)]);
+    char normalizedPath[PATH_MAX];
+    if (!realpath(path, normalizedPath))
+        normalizedPath[0] = '\0';
+
+    vector.append(name);
+    vector.append(fastStrDup(normalizedPath));
 }
 
 static void appendSandboxParameterConfPath(Vector<const char*>& vector, const char* name, int confID)
@@ -152,12 +151,12 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
 
     Vector<const char*> sandboxParameters;
 
-    appendSandboxParameterPath(sandboxParameters, "HOME_DIR", NSHomeDirectory());
-    appendSandboxParameterPath(sandboxParameters, "WEBKIT2_FRAMEWORK_DIR", [[[NSBundle bundleForClass:NSClassFromString(@"WKView")] bundlePath] stringByDeletingLastPathComponent]);
+    appendSandboxParameterPath(sandboxParameters, "HOME_DIR", [NSHomeDirectory() fileSystemRepresentation]);
+    appendSandboxParameterPath(sandboxParameters, "WEBKIT2_FRAMEWORK_DIR", [[[[NSBundle bundleForClass:NSClassFromString(@"WKView")] bundlePath] stringByDeletingLastPathComponent] fileSystemRepresentation]);
     appendSandboxParameterConfPath(sandboxParameters, "DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);
     appendSandboxParameterConfPath(sandboxParameters, "DARWIN_USER_CACHE_DIR", _CS_DARWIN_USER_CACHE_DIR);
-    appendSandboxParameterPath(sandboxParameters, "WEBKIT_DATABASE_DIR", (NSString *)parameters.databaseDirectory);
-    appendSandboxParameterPath(sandboxParameters, "WEBKIT_LOCALSTORAGE_DIR", (NSString *)parameters.localStorageDirectory);
+    appendSandboxParameterPath(sandboxParameters, "WEBKIT_DATABASE_DIR", [(NSString *)parameters.databaseDirectory fileSystemRepresentation]);
+    appendSandboxParameterPath(sandboxParameters, "WEBKIT_LOCALSTORAGE_DIR", [(NSString *)parameters.localStorageDirectory fileSystemRepresentation]);
     appendSandboxParameterPath(sandboxParameters, "NSURL_CACHE_DIR", parameters.nsURLCachePath.data());
     appendSandboxParameterPath(sandboxParameters, "UI_PROCESS_BUNDLE_RESOURCE_DIR", parameters.uiProcessBundleResourcePath.data());
     sandboxParameters.append(static_cast<const char*>(0));

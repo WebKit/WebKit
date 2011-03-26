@@ -1,5 +1,16 @@
 2011-03-26  Sam Weinig  <sam@webkit.org>
 
+        Rollout r82042 (If a user doesn't have a Database/LocalStorage directory, it can't be created (sandbox violations))
+
+        -[NSString stringByResolvingSymlinksInPath] does not do what we needed for paths within /private.
+        This caused all SSL sites to stop working.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::appendSandboxParameterPath):
+        (WebKit::initializeSandbox):
+
+2011-03-26  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         If a user doesn't have a Database/LocalStorage directory, it can't be created (sandbox violations)
