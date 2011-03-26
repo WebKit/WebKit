@@ -1,3 +1,0 @@
-if (( TARGET_MAC_OS_X_VERSION_MAJOR > 1050 )); then
-    rm -rf \"$BUILT_PRODUCTS_DIR/$PUBLIC_HEADERS_FOLDER_PATH\"/*.h;
-fi

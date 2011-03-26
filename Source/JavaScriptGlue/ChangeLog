@@ -1,3 +1,15 @@
+2011-03-26  Adam Barth  <abarth@webkit.org>
+
+        Remove the JavaScriptGlue GYP build.  We're not going to use GYP for
+        JavaScriptGlue because JavaScriptGlue is used only by one port.
+
+        * gyp: Removed.
+        * gyp/JavaScriptGlue.gyp: Removed.
+        * gyp/JavaScriptGlue.gypi: Removed.
+        * gyp/remove-headers-if-needed.sh: Removed.
+        * gyp/run-if-exists.sh: Removed.
+        * gyp/update-info-plist.sh: Removed.
+
 2011-03-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
