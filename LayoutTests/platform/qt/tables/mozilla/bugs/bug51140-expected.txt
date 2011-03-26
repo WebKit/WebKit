@@ -12,8 +12,7 @@ layer at (0,0) size 800x600
         RenderInline {A} at (0,0) size 76x21 [color=#0000EE]
           RenderText {#text} at (33,0) size 76x21
             text run at (33,0) width 76: "closepopup"
-        RenderText {#text} at (109,0) size 4x21
-          text run at (109,0) width 4: " "
+        RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,21) size 43x31 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 41x29
           RenderTableRow {TR} at (0,2) size 41x25

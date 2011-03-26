@@ -1,3 +1,18 @@
+2011-03-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Update Qt specific expected results after r81992.
+
+        * platform/qt/fast/repaint/layout-state-scrolloffset-expected.checksum:
+        * platform/qt/fast/repaint/layout-state-scrolloffset-expected.png:
+        * platform/qt/fast/repaint/layout-state-scrolloffset-expected.txt:
+        * platform/qt/fast/repaint/layout-state-scrolloffset2-expected.checksum:
+        * platform/qt/fast/repaint/layout-state-scrolloffset2-expected.png:
+        * platform/qt/fast/repaint/layout-state-scrolloffset2-expected.txt:
+        * platform/qt/fast/repaint/layout-state-scrolloffset3-expected.checksum:
+        * platform/qt/fast/repaint/layout-state-scrolloffset3-expected.png:
+        * platform/qt/fast/repaint/layout-state-scrolloffset3-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug51140-expected.txt:
+
 2011-03-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

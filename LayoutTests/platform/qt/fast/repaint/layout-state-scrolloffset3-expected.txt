@@ -3,8 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x37
   RenderBlock {HTML} at (0,0) size 800x37
     RenderBody {BODY} at (8,8) size 784x21
-      RenderText {#text} at (0,0) size 478x21
-        text run at (0,0) width 478: "You should see the text 'after' in the inner box with no mangled pixels. "
+      RenderText {#text} at (0,0) size 474x21
+        text run at (0,0) width 474: "You should see the text 'after' in the inner box with no mangled pixels."
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
 layer at (8,29) size 127x302 clip at (9,30) size 125x300 scrollX 10 scrollY 10 scrollWidth 1000 scrollHeight 1000
