@@ -41,6 +41,7 @@
 #include "CachedPage.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
+#include "ContentSecurityPolicy.h"
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
 #include "Document.h"

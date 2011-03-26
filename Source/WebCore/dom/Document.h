@@ -32,7 +32,6 @@
 #include "CollectionType.h"
 #include "Color.h"
 #include "ContainerNode.h"
-#include "ContentSecurityPolicy.h"
 #include "DOMTimeStamp.h"
 #include "DocumentOrderedMap.h"
 #include "DocumentTiming.h"
@@ -51,19 +50,20 @@
 
 namespace WebCore {
 
-class Attr;
 class AXObjectCache;
+class Attr;
 class CDATASection;
+class CSSPrimitiveValueCache;
+class CSSStyleDeclaration;
+class CSSStyleSelector;
+class CSSStyleSheet;
 class CachedCSSStyleSheet;
 class CachedResourceLoader;
 class CachedScript;
 class CanvasRenderingContext;
 class CharacterData;
-class CSSPrimitiveValueCache;
-class CSSStyleDeclaration;
-class CSSStyleSelector;
-class CSSStyleSheet;
 class Comment;
+class ContentSecurityPolicy;
 class DOMImplementation;
 class DOMSelection;
 class DOMWindow;

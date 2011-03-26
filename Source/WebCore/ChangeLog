@@ -1,3 +1,77 @@
+2011-03-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Teach Content Security Policy how to parse source-list
+        https://bugs.webkit.org/show_bug.cgi?id=54799
+
+        This patch is larger than I would like, but I wasn't sure how to make
+        it any smaller while still being reasonably testable.  I've left out
+        some features (such as host wildcarding and 'self') so I can add them
+        in later patches with tests.
+
+        Test: http/tests/security/contentSecurityPolicy/source-list-parsing.html
+
+        * bindings/ScriptControllerBase.cpp:
+        * dom/ScriptElement.cpp:
+        * html/parser/HTMLDocumentParser.cpp:
+        * loader/FrameLoader.cpp:
+            - Add include explicitly now that we're not spamming the include
+              everywhere.
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+            - We need to pass the SecurityOrigin object to
+              ContentSecurityPolicy so that it can resolve implicit parts of
+              source patterns, such as the scheme.
+        * dom/Document.h:
+            - Forward declare ContentSecurityPolicy rather than including the
+              header.  Technically this could be a separate change, but I was
+              getting annoyed at the world re-builds.
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::skipExactly):
+        (WebCore::skipUtil):
+        (WebCore::skipWhile):
+            - Clean up these parser helper functions.  We might consider moving
+              them to a more general location.  They're very helpful for
+              writing secure HTTP header parsers.
+        (WebCore::CSPSource::CSPSource):
+            - New class to represent one source in a source-list.
+        (WebCore::CSPSource::matches):
+        (WebCore::CSPSource::schemeMatches):
+        (WebCore::CSPSource::hostMatches):
+        (WebCore::CSPSource::portMatches):
+        (WebCore::CSPSource::isSchemeOnly):
+            - Currently we represent scheme-only sources using with an empty
+              m_host.  Another approach I considered was using another bool,
+              but that seemed slighly messier.
+        (WebCore::CSPSourceList::CSPSourceList):
+            - CSPSourceList doesn't need to ref SecurityOrigin because
+              CSPSourceList is owned by ContentSecurityPolicy, which holds a
+              ref.
+        (WebCore::CSPSourceList::parse):
+        (WebCore::CSPSourceList::matches):
+        (WebCore::CSPSourceList::parseSource):
+        (WebCore::CSPSourceList::parseScheme):
+        (WebCore::CSPSourceList::parseHost):
+        (WebCore::CSPSourceList::parsePort):
+            - A basic "segment and recurse" parser.  This parser causes us to
+              take more branches than we need, but I don't think we need to
+              squeeze every last ouch of performance out of this parser.  This
+              approach is more simple than some of the other approaches I
+              tried.
+        (WebCore::CSPSourceList::addSourceSelf):
+        (WebCore::CSPDirective::CSPDirective):
+        (WebCore::CSPDirective::allows):
+        (WebCore::ContentSecurityPolicy::ContentSecurityPolicy):
+        (WebCore::ContentSecurityPolicy::parse):
+        (WebCore::ContentSecurityPolicy::parseDirective):
+        (WebCore::ContentSecurityPolicy::addDirective):
+            - I couldn't resist re-writing this parser to use the helper
+              functions and to match the style of the source-list parser.
+        * page/ContentSecurityPolicy.h:
+        (WebCore::ContentSecurityPolicy::create):
+            - Accept a SecurityOrigin context object.
+
 2011-03-26  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed EFL and WinCE build fix for r81977.

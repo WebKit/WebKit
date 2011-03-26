@@ -1,3 +1,16 @@
+2011-03-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Teach Content Security Policy how to parse source-list
+        https://bugs.webkit.org/show_bug.cgi?id=54799
+
+        Test a variety of source-list parsing cases.  There's a bunch more
+        cases we could be testing.  We'll add more over time.
+
+        * http/tests/security/contentSecurityPolicy/source-list-parsing-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/source-list-parsing.html: Added.
+
 2011-03-26  Dan Bernstein  <mitz@apple.com>
 
         Added platform-specific expected results for a new test.

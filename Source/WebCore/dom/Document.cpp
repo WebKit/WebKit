@@ -42,6 +42,7 @@
 #include "ChromeClient.h"
 #include "Comment.h"
 #include "Console.h"
+#include "ContentSecurityPolicy.h"
 #include "CookieJar.h"
 #include "CustomEvent.h"
 #include "DateComponents.h"
@@ -4500,7 +4501,7 @@ void Document::initSecurityContext()
     // loading URL with a fresh content security policy.
     m_cookieURL = m_url;
     ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(m_url, m_frame->loader()->sandboxFlags()));
-    m_contentSecurityPolicy = ContentSecurityPolicy::create();
+    m_contentSecurityPolicy = ContentSecurityPolicy::create(securityOrigin());
 
     if (SecurityOrigin::allowSubstituteDataAccessToLocal()) {
         // If this document was loaded with substituteData, then the document can

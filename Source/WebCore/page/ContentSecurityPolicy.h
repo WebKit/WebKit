@@ -32,10 +32,14 @@
 namespace WebCore {
 
 class CSPDirective;
+class SecurityOrigin;
 
 class ContentSecurityPolicy : public RefCounted<ContentSecurityPolicy> {
 public:
-    static PassRefPtr<ContentSecurityPolicy> create() { return adoptRef(new ContentSecurityPolicy); }
+    static PassRefPtr<ContentSecurityPolicy> create(SecurityOrigin* origin = 0)
+    {
+        return adoptRef(new ContentSecurityPolicy(origin));
+    }
     ~ContentSecurityPolicy();
 
     void didReceiveHeader(const String&);
@@ -45,13 +49,14 @@ public:
     bool canLoadExternalScriptFromSrc(const String& url) const;
 
 private:
-    ContentSecurityPolicy();
+    explicit ContentSecurityPolicy(SecurityOrigin*);
 
     void parse(const String&);
-    bool parseDirective(const UChar*& pos, const UChar* end, Vector<UChar, 32>& name, Vector<UChar, 64>& value);
-    void emitDirective(const String& name, const String& value);
+    bool parseDirective(const UChar* begin, const UChar* end, String& name, String& value);
+    void addDirective(const String& name, const String& value);
 
     bool m_havePolicy;
+    RefPtr<SecurityOrigin> m_origin;
     OwnPtr<CSPDirective> m_scriptSrc;
 };
 

@@ -26,6 +26,7 @@
 
 #include "CachedScript.h"
 #include "CachedResourceLoader.h"
+#include "ContentSecurityPolicy.h"
 #include "Document.h"
 #include "DocumentParser.h"
 #include "Frame.h"
