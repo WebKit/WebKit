@@ -31,35 +31,85 @@
 import os
 import subprocess
 
+from optparse import OptionParser
 
-PROJECTS = [
-    "JavaScriptGlue",
-    "JavaScriptCore",
-    "WebCore",
-]
-
-
-def create_project(project):
-    subprocess.call([
-        os.path.join('ThirdParty', 'gyp', 'gyp'),
-        os.path.join(project, 'gyp', project + '.gyp'),
-        '-G',
-        'xcode_list_excluded_files=0',
-        '--depth=.',
-    ])
-
-
-def create_all_projects():
-    for project in PROJECTS:
-        create_project(project)
-
-
-def main():
+def chdir_to_source():
     source_directory = os.path.abspath(os.path.join(__file__, '..', '..'))
     os.chdir(source_directory)
-    # FIXME: The user should be able to pass which port on the command line.
-    create_all_projects()
 
+def gyp():
+    return os.path.join('ThirdParty', 'gyp', 'gyp')
+
+class Project:
+    def __init__(self, name):
+        self._name = name
+
+    def name(self):
+        return self._name
+
+    def inputs(self):
+        return [
+            os.path.join(self._name, 'gyp', self._name + '.gyp'),
+            os.path.join(self._name, self._name + '.gypi'),
+            os.path.join('gyp', 'common.gypi'),
+        ]
+
+    def output(self):
+        return os.path.join(self._name, 'gyp', self._name + '.xcodeproj', 'project.pbxproj')
+
+    def should_generate(self):
+        if not os.path.exists(self.output()):
+            return True
+        return os.path.getmtime(self.output()) < self._newest(self.inputs())
+
+    def generate(self):
+        subprocess.call([
+            gyp(),
+            self.inputs()[0],
+            '-G',
+            'xcode_list_excluded_files=0',
+            '--depth=.',
+        ])
+        # GYP doesn't always touch the output file, but we want to touch the
+        # file so that we don't keep trying to regenerate it.
+        os.utime(self.output(), None)
+
+    @staticmethod
+    def _newest(paths):
+        return max([os.path.getmtime(path) for path in paths])
+
+PROJECTS = [
+    Project("JavaScriptCore"),
+    Project("WebCore"),
+]
+
+def projects_to_generate():
+    should_generate = [project for project in PROJECTS if project.should_generate()]
+    already_generated = [project.name() for project in set(PROJECTS) - set(should_generate)]
+
+    if already_generated:
+        print "Not generating %s because the generated files exist and are newer than the GYP files." % ', '.join(already_generated)
+        print "Pass --regenerate-projects to override."
+
+    return should_generate
+
+def main():
+    chdir_to_source()
+
+    parser = OptionParser()
+    # FIXME: The user should be able to pass which port on the command line.
+    parser.add_option("--regenerate-projects", dest="regenerate_projects",
+                      default=False, action="store_true",
+                      help="Generate all project files even if they appear to be up to date.")
+    (options, args) = parser.parse_args()
+
+    projects = PROJECTS
+    if not options.regenerate_projects:
+        projects = projects_to_generate()
+
+    for project in projects:
+        print "Generating %s." % project.name()
+        project.generate()
 
 if __name__ == "__main__":
     main()

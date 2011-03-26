@@ -1,3 +1,23 @@
+2011-03-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        We shouldn't bother running GYP if the generated files are newer than the GYP files
+        https://bugs.webkit.org/show_bug.cgi?id=57146
+
+        In the common case, this check will avoid any overhead from processing
+        the GYP files.  Another approach to doing this is to add the feature to
+        GYP directly, but GYP's approach to this problem is to compute the
+        output in its entirety and compare it byte-for-byte against the output
+        file.  In the future, it might make sense to add this approach as an
+        alternative approach for GYP itself.
+
+        I also removed JavaScriptGlue from the script because we're not really
+        going to change JavaScriptGlue over to GYP.  We were using
+        JavaScriptGlue as a learning experience.
+
+        * Source/gyp/configure:
+
 2011-03-25  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, don't use the new FPD implementation yet, until we can merge ours with it.
