@@ -2,6 +2,19 @@
 
         Reviewed by Sam Weinig.
 
+        Handle synchronous replies coming in out of order
+        https://bugs.webkit.org/show_bug.cgi?id=57158
+
+        When processing an incoming reply, don't assume that it belongs to the last sent synchronous request.
+        Instead, iterate over the m_pendingSyncReplies vector backwards looking for the corresponding request.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::processIncomingMessage):
+
+2011-03-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Fix a possible deadlock when two synchronous messages are sent at the same time
         https://bugs.webkit.org/show_bug.cgi?id=57155
 

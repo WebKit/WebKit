@@ -405,12 +405,29 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<Argument
         MutexLocker locker(m_syncReplyStateMutex);
         ASSERT(!m_pendingSyncReplies.isEmpty());
 
-        PendingSyncReply& pendingSyncReply = m_pendingSyncReplies.last();
-        ASSERT(pendingSyncReply.syncRequestID == arguments->destinationID());
+        // Go through the stack of sync requests that have pending replies and see which one
+        // this reply is for.
+        for (size_t i = m_pendingSyncReplies.size(); i > 0; --i) {
+            PendingSyncReply& pendingSyncReply = m_pendingSyncReplies[i - 1];
 
-        pendingSyncReply.replyDecoder = arguments.leakPtr();
-        pendingSyncReply.didReceiveReply = true;
-        m_syncMessageState->wakeUpClientRunLoop();
+            if (pendingSyncReply.syncRequestID != arguments->destinationID())
+                continue;
+
+            ASSERT(!pendingSyncReply.replyDecoder);
+
+            pendingSyncReply.replyDecoder = arguments.leakPtr();
+            pendingSyncReply.didReceiveReply = true;
+
+            // We got a reply to the last send message, wake up the client run loop so it can be processed.
+            if (i == m_pendingSyncReplies.size())
+                m_syncMessageState->wakeUpClientRunLoop();
+
+            return;
+        }
+
+        // We got a reply for a message we never sent.
+        // FIXME: Dispatch a didReceiveInvalidMessage callback on the client.
+        ASSERT_NOT_REACHED();
         return;
     }
 
