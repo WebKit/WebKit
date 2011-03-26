@@ -394,26 +394,27 @@ void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest)
 void WebPageProxy::loadHTMLString(const String& htmlString, const String& baseURL)
 {
     if (!isValid())
-        return;
+        reattachToWebProcess();
+
     process()->send(Messages::WebPage::LoadHTMLString(htmlString, baseURL), m_pageID);
 }
 
 void WebPageProxy::loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL)
 {
     if (!isValid())
-        return;
+        reattachToWebProcess();
 
-    if (!m_mainFrame)
-        return;
+    if (m_mainFrame)
+        m_mainFrame->setUnreachableURL(unreachableURL);
 
-    m_mainFrame->setUnreachableURL(unreachableURL);
     process()->send(Messages::WebPage::LoadAlternateHTMLString(htmlString, baseURL, unreachableURL), m_pageID);
 }
 
 void WebPageProxy::loadPlainTextString(const String& string)
 {
     if (!isValid())
-        return;
+        reattachToWebProcess();
+
     process()->send(Messages::WebPage::LoadPlainTextString(string), m_pageID);
 }
 
@@ -1346,7 +1347,7 @@ void WebPageProxy::didFinishProgress()
     m_loaderClient.didFinishProgress(this);
 }
 
-void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const String& url, bool loadingSubstituteDataForUnreachableURL, CoreIPC::ArgumentDecoder* arguments)
+void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const String& url, const String& unreachableURL, CoreIPC::ArgumentDecoder* arguments)
 {
     clearPendingAPIRequestURL();
 
@@ -1358,8 +1359,7 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const Strin
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
-    if (!loadingSubstituteDataForUnreachableURL)
-        frame->setUnreachableURL(String());
+    frame->setUnreachableURL(unreachableURL);
 
     frame->didStartProvisionalLoad(url);
     m_loaderClient.didStartProvisionalLoadForFrame(this, frame, userData.get());

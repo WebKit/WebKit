@@ -1,3 +1,33 @@
+2011-03-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        WKPageLoadAlternateHTMLString doesn't re-spawn a dead WebProcess, but should
+        <rdar://problem/9191493>
+        https://bugs.webkit.org/show_bug.cgi?id=57134
+
+        Make all load functions respawn a dead WebProcess for consistency.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadHTMLString):
+        Respawn a dead WebProcess.
+
+        (WebKit::WebPageProxy::loadAlternateHTMLString):
+        Respawn a dead WebProcess.
+
+        (WebKit::WebPageProxy::loadPlainTextString):
+        Respawn a dead WebProcess.
+
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadAlternateHTMLString):
+        Since we may no longer always have a main frame when calling WKPageLoadAlternateHTMLString,
+        set the unreachable URL, if there is one, on provisional load.
+
 2011-03-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

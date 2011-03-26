@@ -429,7 +429,7 @@ void WebPage::loadAlternateHTMLString(const String& htmlString, const String& ba
 {
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(htmlString.characters()), htmlString.length() * sizeof(UChar));
     KURL baseURL = baseURLString.isEmpty() ? blankURL() : KURL(KURL(), baseURLString);
-    KURL unreachableURL = unreachableURLString.isEmpty() ? KURL() : KURL(KURL(), unreachableURLString)  ;
+    KURL unreachableURL = unreachableURLString.isEmpty() ? KURL() : KURL(KURL(), unreachableURLString);
     loadData(sharedBuffer, "text/html", "utf-16", baseURL, unreachableURL);
 }
 
