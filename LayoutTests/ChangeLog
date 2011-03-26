@@ -1,5 +1,11 @@
 2011-03-26  Martin Robinson  <mrobinson@igalia.com>
 
+        Remove a test from the GTK+ skipped list that no longer exists.
+
+        * platform/gtk/Skipped: Update the skipped list.
+
+2011-03-26  Martin Robinson  <mrobinson@igalia.com>
+
         Rebaseline a few more GTK+ tests after r82033.
 
         * platform/gtk/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.checksum:

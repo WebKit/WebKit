@@ -750,7 +750,6 @@ fast/dom/Geolocation/timeout.html
 fast/dom/Geolocation/timestamp.html
 fast/dom/Geolocation/watch.html
 fast/dom/Geolocation/window-close-crash.html
-fast/dom/Geolocation/iframe-reparent.html
 
 # Needs LayoutTestController::numberOfPendingGeolocationPermissionRequests()
 # See https://bugs.webkit.org/show_bug.cgi?id=54197
