@@ -4,17 +4,25 @@
         layoutTestController.waitUntilDone();
     }
     
-    function logSuccess()
+    function runTest()
+    {
+        var plugin = document.getElementById("plugin");
+        if (plugin && plugin.testCallback) {
+            plugin.testCallback("finishTest");
+            return;
+        }
+
+        layoutTestController.notifyDone();
+    }
+    
+    function finishTest()
     {
         document.getElementById("console").innerHTML = "PASS";
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
     }
 </script>
+<body onload="runTest()">
 <div id="console">FAIL</div>
-<embed name="plugin" src="image.png" logSrc="1">
-<script>
-    if (plugin.testCallback)
-        plugin.testCallback("logSuccess");
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
-</script>
+<embed id="plugin" src="image.png" logSrc="1">
     

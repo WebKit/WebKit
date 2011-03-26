@@ -1,3 +1,9 @@
+2011-03-25  Andy Estes  <aestes@apple.com>
+
+        Re-work a test to not be flaky.
+
+        * plugins/embed-prefers-plugins-for-images.html:
+
 2011-03-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
