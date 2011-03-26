@@ -1205,3 +1205,6 @@ plugins/refcount-leaks.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=56496
 fast/js/array-sort-modifying-tostring.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=57132
+plugins/embed-prefers-plugins-for-images.html
