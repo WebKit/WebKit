@@ -1,3 +1,40 @@
+2011-03-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        ASSERTION FAILED: m_operationInProgress == NoOperation loading nytimes.com
+        https://bugs.webkit.org/show_bug.cgi?id=57165
+        <rdar://problem/9024311>
+
+        The assertion fired because during GC, the web process sends a synchronous NPObjectMessageReceiver::Deallocate
+        message to the plug-in process. Since this is a synchronous message, the web process needs to process incoming synchronous
+        messages. While waiting, we get an incoming PluginProxy::Evaluate message from the plug-in. This causes JavaScript to run
+        during GC which is very bad.
+
+        The fix for this is to add a flag on the connection that will cause synchronous messages sent by the connection (in this case the
+        plug-in process) to not be processed while the other side (the web process) is waiting for a synchronous reply _unless_ the connection
+        is actually processing a synchronous message. (The last part is to avoid deadlocks).
+
+        Since the call to NPN_Evaluate by the plug-in (that ends up sending the PluginProxy::Evaluate message) comes from a run loop timer firing,
+        it's OK to wait for it to be processed by the web process when it returns to the run loop.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::Connection):
+        Initialize m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage and m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount.
+
+        (CoreIPC::Connection::setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage):
+        Set m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage.
+
+        (CoreIPC::Connection::sendMessage):
+        Don't add the MessageID::DispatchMessageWhenWaitingForSyncReply flag when the right flags has been set on the connection, and it's not processing a synchronous message.
+
+        (CoreIPC::Connection::dispatchMessage):
+        Increment and decrement m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount accordingly.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::WebProcessConnection):
+        Call setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage on the connection.
+
 2011-03-26  Sam Weinig  <sam@webkit.org>
 
         Rollout r82042 (If a user doesn't have a Database/LocalStorage directory, it can't be created (sandbox violations))

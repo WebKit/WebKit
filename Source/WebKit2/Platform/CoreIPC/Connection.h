@@ -114,6 +114,8 @@ public:
     void setShouldCloseConnectionOnProcessTermination(WebKit::PlatformProcessIdentifier);
 #endif
 
+    void setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool);
+
     // The set callback will be called on the connection work queue when the connection is closed, 
     // before didCall is called on the client thread. Must be called before the connection is opened.
     // In the future we might want a more generic way to handle sync or async messages directly
@@ -214,13 +216,15 @@ private:
     bool m_isServer;
     uint64_t m_syncRequestID;
 
+    bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage;
     DidCloseOnConnectionWorkQueueCallback m_didCloseOnConnectionWorkQueueCallback;
 
     bool m_isConnected;
     WorkQueue m_connectionQueue;
     RunLoop* m_clientRunLoop;
 
-    uint32_t m_inDispatchMessageCount;
+    unsigned m_inDispatchMessageCount;
+    unsigned m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount;
     bool m_didReceiveInvalidMessage;
 
     // Incoming messages.

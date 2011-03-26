@@ -188,11 +188,13 @@ Connection::Connection(Identifier identifier, bool isServer, Client* client, Run
     : m_client(client)
     , m_isServer(isServer)
     , m_syncRequestID(0)
+    , m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(false)
     , m_didCloseOnConnectionWorkQueueCallback(0)
     , m_isConnected(false)
     , m_connectionQueue("com.apple.CoreIPC.ReceiveQueue")
     , m_clientRunLoop(clientRunLoop)
     , m_inDispatchMessageCount(0)
+    , m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount(0)
     , m_didReceiveInvalidMessage(false)
     , m_syncMessageState(SyncMessageState::getOrCreate(clientRunLoop))
     , m_shouldWaitForSyncReplies(true)
@@ -207,6 +209,13 @@ Connection::~Connection()
     ASSERT(!isValid());
 
     m_connectionQueue.invalidate();
+}
+
+void Connection::setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool flag)
+{
+    ASSERT(!m_isConnected);
+
+    m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage = flag;
 }
 
 void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback)
@@ -253,7 +262,9 @@ bool Connection::sendMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> ar
     if (!isValid())
         return false;
 
-    if (messageSendFlags & DispatchMessageEvenWhenWaitingForSyncReply)
+    if (messageSendFlags & DispatchMessageEvenWhenWaitingForSyncReply
+        && (!m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage
+            || m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount))
         messageID = messageID.messageIDWithAddedFlags(MessageID::DispatchMessageWhenWaitingForSyncReply);
 
     MutexLocker locker(m_outgoingMessagesLock);
@@ -573,6 +584,9 @@ void Connection::dispatchMessage(IncomingMessage& message)
 
     m_inDispatchMessageCount++;
 
+    if (message.messageID().shouldDispatchMessageWhenWaitingForSyncReply())
+        m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount++;
+
     bool oldDidReceiveInvalidMessage = m_didReceiveInvalidMessage;
     m_didReceiveInvalidMessage = false;
 
@@ -583,6 +597,9 @@ void Connection::dispatchMessage(IncomingMessage& message)
 
     m_didReceiveInvalidMessage |= arguments->isInvalid();
     m_inDispatchMessageCount--;
+
+    if (message.messageID().shouldDispatchMessageWhenWaitingForSyncReply())
+        m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount--;
 
     if (m_didReceiveInvalidMessage && m_client)
         m_client->didReceiveInvalidMessage(this, message.messageID());
