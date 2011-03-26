@@ -1,3 +1,9 @@
+2011-03-25  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix, don't use the new FPD implementation yet, until we can merge ours with it.
+
+        * platform/graphics/FontPlatformData.h:
+
 2011-03-25  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

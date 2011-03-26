@@ -323,6 +323,9 @@ def build(bld):
         excludes.append('LoaderRunLoopCF.cpp')
         excludes.append('ResourceErrorCF.cpp')
         
+        # once we move over to the new FPD implementation, remove this.
+        excludes.append('FontPlatformData.cpp')
+        
         if sys.platform.startswith('darwin'):
             webcore.includes += ' Source/WebKit/mac/WebCoreSupport WebCore/platform/mac'
             webcore.source += ' Source/WebKit/mac/WebCoreSupport/WebSystemInterface.mm'

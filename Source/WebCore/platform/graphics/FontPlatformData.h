@@ -27,6 +27,8 @@
 #include "chromium/FontPlatformData.h"
 #elif PLATFORM(QT)
 #include "qt/FontPlatformData.h"
+#elif PLATFORM(WX)
+#include "wx/FontPlatformData.h"
 #elif PLATFORM(GTK) && USE(FREETYPE)
 #include "freetype/FontPlatformData.h"
 #elif PLATFORM(GTK) && USE(PANGO)
