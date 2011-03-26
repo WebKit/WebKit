@@ -1,5 +1,17 @@
 2011-03-25  Andy Estes  <aestes@apple.com>
 
+        plugins/embed-prefers-plugins-for-images.html only passing on SnowLeopard.
+        https://bugs.webkit.org/show_bug.cgi?id=57137
+        
+        Check in failing results for this test (except for on SnowLeopard) until
+        the failure can be diagnosed.
+
+        * platform/mac-snowleopard/plugins: Added.
+        * platform/mac-snowleopard/plugins/embed-prefers-plugins-for-images-expected.txt: Added.
+        * plugins/embed-prefers-plugins-for-images-expected.txt:
+
+2011-03-25  Andy Estes  <aestes@apple.com>
+
         LayoutTestController.setPluginsEnabled() isn't implemented in WebKit2,
         and that is now required for fast/images/embed-image.html.
 
