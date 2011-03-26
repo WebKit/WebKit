@@ -1,3 +1,21 @@
+2011-02-03  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        MediaPlayerPrivateQTKit should use the Application Cache during load.        
+        https://bugs.webkit.org/show_bug.cgi?id=53818
+
+        No new tests.
+
+        When loading a URL, check to see if the Application Cache has a version of that URL
+        stored; if so, use that data instead of the remote URL.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::commonMovieAttributes):
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovie):
+        (WebCore::MediaPlayerPrivateQTKit::loadInternal):
+
 2011-03-25  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
