@@ -1,3 +1,10 @@
+2011-03-26  Dan Bernstein  <mitz@apple.com>
+
+        Added platform-specific expected results for a new test.
+
+        * platform/mac-snowleopard/fast/text/justify-ideograph-leading-expansion-expected.txt: Added.
+        * platform/win/fast/text/justify-ideograph-leading-expansion-expected.txt: Added.
+
 2011-03-25  Vincent Scheib  <scheib@chromium.org>
 
         Chromium test_expectations: bug added for tests impacted by r81992
