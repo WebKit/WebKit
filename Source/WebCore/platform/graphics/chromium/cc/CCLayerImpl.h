@@ -49,7 +49,7 @@ public:
         return adoptRef(new CCLayerImpl(owner));
     }
     // When this class gets subclasses, remember to add 'virtual' here.
-    ~CCLayerImpl();
+    virtual ~CCLayerImpl();
 
 #ifndef NDEBUG
     int debugID() const { return m_debugID; }
@@ -59,27 +59,41 @@ public:
     CCLayerImpl* maskLayer() const;
     CCLayerImpl* replicaLayer() const;
 
-    void draw();
+    virtual void draw();
+    virtual void updateCompositorResources();
     void unreserveContentsTexture();
     void bindContentsTexture();
 
     // Returns true if this layer has content to draw.
-    bool drawsContent() const;
+    virtual bool drawsContent() const;
 
     // Returns true if any of the layer's descendants has content to draw.
     bool descendantsDrawsContent();
 
     void cleanupResources();
 
-    void updateFromLayer(LayerChromium*);
-
+    void setAnchorPoint(const FloatPoint& anchorPoint) { m_anchorPoint = anchorPoint; }
     const FloatPoint& anchorPoint() const { return m_anchorPoint; }
+
+    void setAnchorPointZ(float anchorPointZ) { m_anchorPointZ = anchorPointZ; }
     float anchorPointZ() const { return m_anchorPointZ; }
+
+    void setMasksToBounds(bool masksToBounds) { m_masksToBounds = masksToBounds; }
     bool masksToBounds() const { return m_masksToBounds; }
+
+    void setOpacity(float opacity) { m_opacity = opacity; }
     float opacity() const { return m_opacity; }
+
+    void setPosition(const FloatPoint& position) { m_position = position; }
     const FloatPoint& position() const { return m_position; }
+
+    void setPreserves3D(bool preserves3D) { m_preserves3D = preserves3D; }
     bool preserves3D() const { return m_preserves3D; }
+
+    void setSublayerTransform(const TransformationMatrix& sublayerTransform) { m_sublayerTransform = sublayerTransform; }
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
+
+    void setTransform(const TransformationMatrix& transform) { m_transform = transform; }
     const TransformationMatrix& transform() const { return m_transform; }
 
     void setName(const String& name) { m_name = name; }
@@ -124,11 +138,14 @@ public:
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
-private:
+protected:
     // For now, CCLayers are owned directly by a LayerChromium.
     LayerChromium* m_owner;
     explicit CCLayerImpl(LayerChromium*);
 
+    static void writeIndent(TextStream&, int indent);
+
+private:
     // Properties synchronized from the associated LayerChromium.
     FloatPoint m_anchorPoint;
     float m_anchorPointZ;

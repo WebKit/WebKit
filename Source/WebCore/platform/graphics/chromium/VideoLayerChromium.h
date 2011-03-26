@@ -53,16 +53,17 @@ public:
     static PassRefPtr<VideoLayerChromium> create(GraphicsLayerChromium* owner = 0,
                                                  VideoFrameProvider* = 0);
     virtual ~VideoLayerChromium();
-    virtual void updateContentsIfDirty();
+
+    virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
+
+    virtual void updateCompositorResources();
     virtual bool drawsContent() const { return true; }
-    virtual void draw();
 
     // This function is called by VideoFrameProvider. When this method is called
     // putCurrentFrame() must be called to return the frame currently held.
     void releaseCurrentFrame();
 
-    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexFlipAlpha> RGBAProgram;
-    typedef ProgramBinding<VertexShaderPosTexYUVStretch, FragmentShaderYUVVideo> YUVProgram;
+    virtual void pushPropertiesTo(CCLayerImpl*);
 
 protected:
     virtual void cleanupResources();
@@ -77,14 +78,11 @@ private:
 
     bool allocateTexturesIfNeeded(GraphicsContext3D*, const VideoFrameChromium*, unsigned textureFormat);
     void allocateTexture(GraphicsContext3D*, unsigned textureId, const IntSize& dimensions, unsigned textureFormat) const;
+
     void updateTexture(GraphicsContext3D*, unsigned textureId, const IntSize& dimensions, unsigned textureFormat, const void* data) const;
-    void drawYUV(const YUVProgram*) const;
-    void drawRGBA(const RGBAProgram*) const;
+
     void resetFrameParameters();
     void saveCurrentFrame(VideoFrameChromium*);
-
-    static const float yuv2RGB[9];
-    static const float yuvAdjust[3];
 
     bool m_skipsDraw;
     VideoFrameChromium::Format m_frameFormat;

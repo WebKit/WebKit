@@ -43,9 +43,9 @@ class CanvasLayerChromium : public LayerChromium {
 public:
     virtual ~CanvasLayerChromium();
 
-    virtual void draw();
+    virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
 
-    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> Program;
+    virtual void pushPropertiesTo(CCLayerImpl*);
 
 protected:
     explicit CanvasLayerChromium(GraphicsLayerChromium* owner);
@@ -55,9 +55,6 @@ protected:
     bool m_textureChanged;
     unsigned m_textureId;
     bool m_premultipliedAlpha;
-
-private:
-    static unsigned m_shaderProgramId;
 };
 
 }

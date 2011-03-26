@@ -156,14 +156,14 @@ public:
 
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return false; }
-    virtual void updateContentsIfDirty() { }
+    virtual void paintContentsIfDirty() { }
+    virtual void updateCompositorResources() { }
     virtual void unreserveContentsTexture() { }
     virtual void bindContentsTexture() { }
     virtual void draw() { }
 
     // These exists just for debugging (via drawDebugBorder()).
     void setBorderColor(const Color&);
-    Color borderColor() const;
 
 #ifndef NDEBUG
     int debugID() const { return m_debugID; }
@@ -173,15 +173,16 @@ public:
     String layerTreeAsText() const;
 
     void setBorderWidth(float);
-    float borderWidth() const;
 
     // Everything from here down in the public section will move to CCLayerImpl.
-
-    CCLayerImpl* ccLayerImpl() const { return m_ccLayerImpl.get(); }
+    CCLayerImpl* ccLayerImpl();
+    void createCCLayerImplIfNeeded();
 
     static void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& layerMatrix,
                                  float width, float height, float opacity,
                                  int matrixLocation, int alphaLocation);
+
+    virtual void pushPropertiesTo(CCLayerImpl*);
 
     // Begin calls that forward to the CCLayerImpl.
     LayerRendererChromium* layerRenderer() const;
@@ -217,6 +218,11 @@ protected:
     static const unsigned s_positionAttribLocation;
     static const unsigned s_texCoordAttribLocation;
 
+    // Constructs a CCLayerImpl of the correct runtime type for this LayerChromium type.
+    virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
+
+    // For now, the LayerChromium directly owns its CCLayerImpl.
+    RefPtr<CCLayerImpl> m_ccLayerImpl;
 private:
     void setNeedsCommit();
 
@@ -235,6 +241,8 @@ private:
 
     Vector<RefPtr<LayerChromium> > m_sublayers;
     LayerChromium* m_superlayer;
+
+    RefPtr<LayerRendererChromium> m_layerRenderer;
 
 #ifndef NDEBUG
     int m_debugID;
@@ -260,8 +268,6 @@ private:
     TransformationMatrix m_sublayerTransform;
 
     FloatRect m_frame;
-    // For now, the LayerChromium directly owns its CCLayerImpl.
-    RefPtr<CCLayerImpl> m_ccLayerImpl;
 
     // Replica layer used for reflections.
     LayerChromium* m_replicaLayer;

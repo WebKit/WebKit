@@ -46,7 +46,7 @@ public:
     static PassRefPtr<Canvas2DLayerChromium> create(DrawingBuffer*, GraphicsLayerChromium* owner);
     virtual ~Canvas2DLayerChromium();
     virtual bool drawsContent() const { return true; }
-    virtual void updateContentsIfDirty();
+    virtual void updateCompositorResources();
 
     void setTextureChanged();
     unsigned textureId() const;
@@ -55,8 +55,6 @@ public:
 private:
     explicit Canvas2DLayerChromium(DrawingBuffer*, GraphicsLayerChromium* owner);
     DrawingBuffer* m_drawingBuffer;
-
-    static unsigned m_shaderProgramId;
 };
 
 }

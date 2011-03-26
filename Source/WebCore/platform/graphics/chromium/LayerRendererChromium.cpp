@@ -280,6 +280,7 @@ void LayerRendererChromium::updateAndDrawLayers()
 void LayerRendererChromium::updateLayers(Vector<CCLayerImpl*>& renderSurfaceLayerList)
 {
     TRACE_EVENT("LayerRendererChromium::updateLayers", this, 0);
+    m_rootLayer->createCCLayerImplIfNeeded();
     CCLayerImpl* rootDrawLayer = m_rootLayer->ccLayerImpl();
 
     if (!rootDrawLayer->renderSurface())
@@ -306,7 +307,9 @@ void LayerRendererChromium::updateLayers(Vector<CCLayerImpl*>& renderSurfaceLaye
     // concept of a large content layer.
     updatePropertiesAndRenderSurfaces(m_rootLayer.get(), identityMatrix, renderSurfaceLayerList, m_defaultRenderSurface->m_layerList);
 
-    updateContentsRecursive(m_rootLayer.get());
+    paintContentsRecursive(m_rootLayer.get());
+
+    updateCompositorResourcesRecursive(m_rootLayer.get());
 }
 
 void LayerRendererChromium::drawLayers(const Vector<CCLayerImpl*>& renderSurfaceLayerList)
@@ -472,9 +475,29 @@ bool LayerRendererChromium::isLayerVisible(LayerChromium* layer, const Transform
 // necessary transformations, scissor rectangles, render surfaces, etc.
 void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* layer, const TransformationMatrix& parentMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList)
 {
+    // Make sure we have CCLayerImpls for this subtree.
+    layer->createCCLayerImplIfNeeded();
     layer->setLayerRenderer(this);
+    if (layer->maskLayer()) {
+        layer->maskLayer()->createCCLayerImplIfNeeded();
+        layer->maskLayer()->setLayerRenderer(this);
+    }
+    if (layer->replicaLayer()) {
+        layer->replicaLayer()->createCCLayerImplIfNeeded();
+        layer->replicaLayer()->setLayerRenderer(this);
+    }
+    if (layer->replicaLayer() && layer->replicaLayer()->maskLayer()) {
+        layer->replicaLayer()->maskLayer()->createCCLayerImplIfNeeded();
+        layer->replicaLayer()->maskLayer()->setLayerRenderer(this);
+    }
+
     CCLayerImpl* drawLayer = layer->ccLayerImpl();
-    drawLayer->updateFromLayer(layer);
+    // Currently we're calling pushPropertiesTo() twice - once here and once in updateCompositorResourcesRecursive().
+    // We should only call pushPropertiesTo() in commit, but because we rely on the draw layer state to update
+    // RenderSurfaces and we rely on RenderSurfaces being up to date in order to paint contents we have
+    // to update the draw layers twice.
+    // FIXME: Remove this call once layer updates no longer depend on render surfaces.
+    layer->pushPropertiesTo(drawLayer);
 
     // Compute the new matrix transformation that will be applied to this layer and
     // all its sublayers. It's important to remember that the layer's position
@@ -529,8 +552,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     bool useSurfaceForOpacity = drawLayer->opacity() != 1 && !drawLayer->preserves3D();
     bool useSurfaceForMasking = drawLayer->maskLayer();
     bool useSurfaceForReflection = drawLayer->replicaLayer();
-    if (((useSurfaceForClipping || useSurfaceForOpacity) && drawLayer->descendantsDrawsContent())
-        || useSurfaceForMasking || useSurfaceForReflection) {
+    if (useSurfaceForMasking || useSurfaceForReflection || ((useSurfaceForClipping || useSurfaceForOpacity) && drawLayer->descendantsDrawsContent())) {
         RenderSurfaceChromium* renderSurface = drawLayer->renderSurface();
         if (!renderSurface)
             renderSurface = drawLayer->createRenderSurface();
@@ -567,15 +589,12 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
 
         if (drawLayer->maskLayer()) {
             renderSurface->m_maskLayer = drawLayer->maskLayer();
-            drawLayer->maskLayer()->setLayerRenderer(this);
             drawLayer->maskLayer()->setTargetRenderSurface(renderSurface);
         } else
             renderSurface->m_maskLayer = 0;
 
-        if (drawLayer->replicaLayer() && drawLayer->replicaLayer()->maskLayer()) {
-            drawLayer->replicaLayer()->maskLayer()->setLayerRenderer(this);
+        if (drawLayer->replicaLayer() && drawLayer->replicaLayer()->maskLayer())
             drawLayer->replicaLayer()->maskLayer()->setTargetRenderSurface(renderSurface);
-        }
 
         renderSurfaceLayerList.append(drawLayer);
     } else {
@@ -646,6 +665,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
 
     const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
     for (size_t i = 0; i < sublayers.size(); ++i) {
+        sublayers[i]->createCCLayerImplIfNeeded();
         CCLayerImpl* sublayer = sublayers[i]->ccLayerImpl();
         updatePropertiesAndRenderSurfaces(sublayers[i].get(), sublayerMatrix, renderSurfaceLayerList, descendants);
 
@@ -728,23 +748,46 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
         std::stable_sort(&descendants.at(thisLayerIndex), descendants.end(), compareLayerZ);
 }
 
-void LayerRendererChromium::updateContentsRecursive(LayerChromium* layer)
+void LayerRendererChromium::paintContentsRecursive(LayerChromium* layer)
 {
     const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
     for (size_t i = 0; i < sublayers.size(); ++i)
-        updateContentsRecursive(sublayers[i].get());
+        paintContentsRecursive(sublayers[i].get());
 
     if (layer->bounds().isEmpty())
         return;
 
     if (layer->drawsContent())
-        layer->updateContentsIfDirty();
+        layer->paintContentsIfDirty();
     if (layer->maskLayer() && layer->maskLayer()->drawsContent())
-        layer->maskLayer()->updateContentsIfDirty();
+        layer->maskLayer()->paintContentsIfDirty();
     if (layer->replicaLayer() && layer->replicaLayer()->drawsContent())
-        layer->replicaLayer()->updateContentsIfDirty();
+        layer->replicaLayer()->paintContentsIfDirty();
     if (layer->replicaLayer() && layer->replicaLayer()->maskLayer() && layer->replicaLayer()->maskLayer()->drawsContent())
-        layer->replicaLayer()->maskLayer()->updateContentsIfDirty();
+        layer->replicaLayer()->maskLayer()->paintContentsIfDirty();
+}
+
+void LayerRendererChromium::updateCompositorResourcesRecursive(LayerChromium* layer)
+{
+    const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
+    for (size_t i = 0; i < sublayers.size(); ++i)
+        updateCompositorResourcesRecursive(sublayers[i].get());
+
+    if (layer->bounds().isEmpty())
+        return;
+
+    CCLayerImpl* drawLayer = layer->ccLayerImpl();
+
+    if (drawLayer->drawsContent())
+        drawLayer->updateCompositorResources();
+    if (drawLayer->maskLayer() && drawLayer->maskLayer()->drawsContent())
+        drawLayer->maskLayer()->updateCompositorResources();
+    if (drawLayer->replicaLayer() && drawLayer->replicaLayer()->drawsContent())
+        drawLayer->replicaLayer()->updateCompositorResources();
+    if (drawLayer->replicaLayer() && drawLayer->replicaLayer()->maskLayer() && drawLayer->replicaLayer()->maskLayer()->drawsContent())
+        drawLayer->replicaLayer()->maskLayer()->updateCompositorResources();
+
+    layer->pushPropertiesTo(drawLayer);
 }
 
 void LayerRendererChromium::setCompositeOffscreen(bool compositeOffscreen)
@@ -818,16 +861,20 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
         return;
     }
 
-    if (layer->bounds().isEmpty())
+    if (layer->bounds().isEmpty()) {
+        layer->unreserveContentsTexture();
         return;
+    }
 
     setScissorToRect(layer->scissorRect());
 
     // Check if the layer falls within the visible bounds of the page.
     IntRect layerRect = layer->getDrawRect();
     bool isLayerVisible = layer->scissorRect().intersects(layerRect);
-    if (!isLayerVisible)
+    if (!isLayerVisible) {
+        layer->unreserveContentsTexture();
         return;
+    }
 
     // FIXME: Need to take into account the commulative render surface transforms all the way from
     //        the default render surface in order to determine visibility.
@@ -841,8 +888,10 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
         FloatPoint3D xAxis(horizontalDir.width(), horizontalDir.height(), 0);
         FloatPoint3D yAxis(verticalDir.width(), verticalDir.height(), 0);
         FloatPoint3D zAxis = xAxis.cross(yAxis);
-        if (zAxis.z() < 0)
+        if (zAxis.z() < 0) {
+            layer->unreserveContentsTexture();
             return;
+        }
     }
 
     if (layer->drawsContent())
@@ -920,10 +969,10 @@ bool LayerRendererChromium::initializeSharedObjects()
     m_sharedGeometry = adoptPtr(new GeometryBinding(m_context.get()));
     m_borderProgram = adoptPtr(new LayerChromium::BorderProgram(m_context.get()));
     m_contentLayerProgram = adoptPtr(new ContentLayerChromium::Program(m_context.get()));
-    m_canvasLayerProgram = adoptPtr(new CanvasLayerChromium::Program(m_context.get()));
-    m_videoLayerRGBAProgram = adoptPtr(new VideoLayerChromium::RGBAProgram(m_context.get()));
-    m_videoLayerYUVProgram = adoptPtr(new VideoLayerChromium::YUVProgram(m_context.get()));
-    m_pluginLayerProgram = adoptPtr(new PluginLayerChromium::Program(m_context.get()));
+    m_canvasLayerProgram = adoptPtr(new CCCanvasLayerImpl::Program(m_context.get()));
+    m_videoLayerRGBAProgram = adoptPtr(new CCVideoLayerImpl::RGBAProgram(m_context.get()));
+    m_videoLayerYUVProgram = adoptPtr(new CCVideoLayerImpl::YUVProgram(m_context.get()));
+    m_pluginLayerProgram = adoptPtr(new CCPluginLayerImpl::Program(m_context.get()));
     m_renderSurfaceProgram = adoptPtr(new RenderSurfaceChromium::Program(m_context.get()));
     m_renderSurfaceMaskProgram = adoptPtr(new RenderSurfaceChromium::MaskProgram(m_context.get()));
     m_tilerProgram = adoptPtr(new LayerTilerChromium::Program(m_context.get()));

@@ -34,16 +34,17 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "CanvasLayerChromium.h"
 #include "ContentLayerChromium.h"
 #include "IntRect.h"
 #include "LayerChromium.h"
 #include "LayerTilerChromium.h"
-#include "PluginLayerChromium.h"
 #include "RenderSurfaceChromium.h"
 #include "SkBitmap.h"
 #include "VideoLayerChromium.h"
+#include "cc/CCCanvasLayerImpl.h"
 #include "cc/CCHeadsUpDisplay.h"
+#include "cc/CCPluginLayerImpl.h"
+#include "cc/CCVideoLayerImpl.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
@@ -110,13 +111,13 @@ public:
     const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
     const LayerChromium::BorderProgram* borderProgram() const { return m_borderProgram.get(); }
     const ContentLayerChromium::Program* contentLayerProgram() const { return m_contentLayerProgram.get(); }
-    const CanvasLayerChromium::Program* canvasLayerProgram() const { return m_canvasLayerProgram.get(); }
-    const VideoLayerChromium::RGBAProgram* videoLayerRGBAProgram() const { return m_videoLayerRGBAProgram.get(); }
-    const VideoLayerChromium::YUVProgram* videoLayerYUVProgram() const { return m_videoLayerYUVProgram.get(); }
-    const PluginLayerChromium::Program* pluginLayerProgram() const { return m_pluginLayerProgram.get(); }
     const RenderSurfaceChromium::Program* renderSurfaceProgram() const { return m_renderSurfaceProgram.get(); }
     const RenderSurfaceChromium::MaskProgram* renderSurfaceMaskProgram() const { return m_renderSurfaceMaskProgram.get(); }
     const LayerTilerChromium::Program* tilerProgram() const { return m_tilerProgram.get(); }
+    const CCCanvasLayerImpl::Program* canvasLayerProgram() const { return m_canvasLayerProgram.get(); }
+    const CCPluginLayerImpl::Program* pluginLayerProgram() const { return m_pluginLayerProgram.get(); }
+    const CCVideoLayerImpl::RGBAProgram* videoLayerRGBAProgram() const { return m_videoLayerRGBAProgram.get(); }
+    const CCVideoLayerImpl::YUVProgram* videoLayerYUVProgram() const { return m_videoLayerYUVProgram.get(); }
 
     void resizeOnscreenContent(const IntSize&);
 
@@ -137,7 +138,8 @@ private:
     void updateRootLayerContents();
     void updateRootLayerScrollbars();
     void updatePropertiesAndRenderSurfaces(LayerChromium*, const TransformationMatrix& parentMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList);
-    void updateContentsRecursive(LayerChromium*);
+    void paintContentsRecursive(LayerChromium*);
+    void updateCompositorResourcesRecursive(LayerChromium*);
 
     void drawLayers(const Vector<CCLayerImpl*>& renderSurfaceLayerList);
     void drawLayer(CCLayerImpl*, RenderSurfaceChromium*);
@@ -205,13 +207,13 @@ private:
     OwnPtr<GeometryBinding> m_sharedGeometry;
     OwnPtr<LayerChromium::BorderProgram> m_borderProgram;
     OwnPtr<ContentLayerChromium::Program> m_contentLayerProgram;
-    OwnPtr<CanvasLayerChromium::Program> m_canvasLayerProgram;
-    OwnPtr<VideoLayerChromium::RGBAProgram> m_videoLayerRGBAProgram;
-    OwnPtr<VideoLayerChromium::YUVProgram> m_videoLayerYUVProgram;
-    OwnPtr<PluginLayerChromium::Program> m_pluginLayerProgram;
     OwnPtr<RenderSurfaceChromium::Program> m_renderSurfaceProgram;
     OwnPtr<RenderSurfaceChromium::MaskProgram> m_renderSurfaceMaskProgram;
     OwnPtr<LayerTilerChromium::Program> m_tilerProgram;
+    OwnPtr<CCCanvasLayerImpl::Program> m_canvasLayerProgram;
+    OwnPtr<CCVideoLayerImpl::RGBAProgram> m_videoLayerRGBAProgram;
+    OwnPtr<CCVideoLayerImpl::YUVProgram> m_videoLayerYUVProgram;
+    OwnPtr<CCPluginLayerImpl::Program> m_pluginLayerProgram;
 
     OwnPtr<TextureManager> m_textureManager;
 

@@ -51,7 +51,7 @@ WebGLLayerChromium::WebGLLayerChromium(GraphicsLayerChromium* owner)
 {
 }
 
-void WebGLLayerChromium::updateContentsIfDirty()
+void WebGLLayerChromium::updateCompositorResources()
 {
     if (!m_contentsDirty)
         return;

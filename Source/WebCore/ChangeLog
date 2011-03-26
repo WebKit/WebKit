@@ -1,3 +1,143 @@
+2011-03-25  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Move draw implementations to CCLayerImpl for everything except content layers
+        https://bugs.webkit.org/show_bug.cgi?id=56793
+
+        Moves the implementation of the layer's draw() function from LayerChromium subclasses to CCLayerImpl subclasses for
+        all layer types except content layers.  This gets us closer to decoupling the composite step itself from updating the layers.
+
+        The biggest change in this patch is adding a set of CCLayerImpl subclasses to implement the different drawing routines
+        and moving the code from each XXXLayerChromium to CCXXXLayerImpl.  In order to render from the CCLayerImpl side all state
+        needed at draw time also has to be synchronized, which is performed in pushPropertiesTo().
+
+        On the LayerRendererChromium side there are a few changes.  I've split the updateContents calls on LayerChromiums into two operations
+        tentatively named 'paintContentsIfNeeded' and 'updateCompositorResources'.  paintContents() is used for any code that calls into WebKit in order to generate
+        new pixel data.  It's expected that this call may take a long period of time and may involve "odd" side effects.  updateCompositorResources() is used for
+        code that needs to update the compositor's texture data or other state.  It is not expected that this callback will take long (since it's just inserting
+        commands into the GL command stream, ideally) and this call is expected to have access to the compositor's context, unlike paintContents().
+
+        The updateAndDrawLayers cycle now looks like this:
+        1.) update the root content layer
+        2.) update the root layer scrollbars
+        3.) for each LayerChromium in tree order:
+          a.) ensure a CCLayerImpl of the correct type exists for this layer
+          b.) push all draw time properties from the LayerChromium to the CCLayerImpl
+          c.) construct the appropriate draw transforms, render surfaces and render surface z-order sublayer lists
+        4.) for each LayerChromium in tree order, paint the layer's contents
+        5.) for each LayerChromium in tree order, update the associate compositor resources (textures, etc)
+        6.) draw the root layer and its scrollbars
+        7.) for each CCLayerImpl in render surface order, draw it
+
+        Step 3 should really happen after step 5, but right now painting a content layer requires knowledge of the render surface properties and draw transforms
+        in order to paint.  We also currently push layer properties from LayerChromium->CCLayerImpls twice now - once at 3.b and once after 5 so we can pick
+        up any texture updates.  This will also get fixed when the paint dependency on render surfaces is resolved.
+
+        I haven't modified the root layer or content layers in order to minimize conflicts with the other pending work in that area.
+
+        Tests: compositing/
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::createCCLayerImpl):
+        (WebCore::CanvasLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::requiresClippedUpdateRect):
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        (WebCore::ContentLayerChromium::updateCompositorResources):
+        (WebCore::ContentLayerChromium::bindContentsTexture):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::cleanupResources):
+        (WebCore::LayerChromium::setLayerRenderer):
+        (WebCore::LayerChromium::setName):
+        (WebCore::LayerChromium::pushPropertiesTo):
+        (WebCore::LayerChromium::dumpLayer):
+        (WebCore::LayerChromium::createCCLayerImpl):
+        (WebCore::LayerChromium::createCCLayerImplIfNeeded):
+        (WebCore::LayerChromium::ccLayerImpl):
+        (WebCore::LayerChromium::layerRenderer):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::paintContentsIfDirty):
+        (WebCore::LayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+        (WebCore::LayerRendererChromium::paintContentsRecursive):
+        (WebCore::LayerRendererChromium::updateCompositorResourcesRecursive):
+        (WebCore::LayerRendererChromium::drawLayer):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::canvasLayerProgram):
+        (WebCore::LayerRendererChromium::pluginLayerProgram):
+        (WebCore::LayerRendererChromium::videoLayerRGBAProgram):
+        (WebCore::LayerRendererChromium::videoLayerYUVProgram):
+        * platform/graphics/chromium/PluginLayerChromium.cpp:
+        (WebCore::PluginLayerChromium::createCCLayerImpl):
+        (WebCore::PluginLayerChromium::setTextureId):
+        (WebCore::PluginLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/PluginLayerChromium.h:
+        (WebCore::PluginLayerChromium::textureId):
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::createCCLayerImpl):
+        (WebCore::VideoLayerChromium::updateCompositorResources):
+        (WebCore::VideoLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp: Copied from Source/WebCore/platform/graphics/chromium/PluginLayerChromium.cpp.
+        (WebCore::CCCanvasLayerImpl::CCCanvasLayerImpl):
+        (WebCore::CCCanvasLayerImpl::~CCCanvasLayerImpl):
+        (WebCore::CCCanvasLayerImpl::draw):
+        (WebCore::CCCanvasLayerImpl::dumpLayerProperties):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.h: Copied from Source/WebCore/platform/graphics/chromium/PluginLayerChromium.h.
+        (WebCore::CCCanvasLayerImpl::create):
+        (WebCore::CCCanvasLayerImpl::setTextureId):
+        (WebCore::CCCanvasLayerImpl::setPremultipliedAlpha):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::descendantsDrawsContent):
+        (WebCore::CCLayerImpl::updateCompositorResources):
+        (WebCore::CCLayerImpl::writeIndent):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::setAnchorPoint):
+        (WebCore::CCLayerImpl::setAnchorPointZ):
+        (WebCore::CCLayerImpl::setMasksToBounds):
+        (WebCore::CCLayerImpl::setOpacity):
+        (WebCore::CCLayerImpl::setPosition):
+        (WebCore::CCLayerImpl::setPreserves3D):
+        (WebCore::CCLayerImpl::setSublayerTransform):
+        (WebCore::CCLayerImpl::setTransform):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp: Copied from Source/WebCore/platform/graphics/chromium/PluginLayerChromium.cpp.
+        (WebCore::CCPluginLayerImpl::CCPluginLayerImpl):
+        (WebCore::CCPluginLayerImpl::~CCPluginLayerImpl):
+        (WebCore::CCPluginLayerImpl::draw):
+        (WebCore::CCPluginLayerImpl::dumpLayerProperties):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.h: Copied from Source/WebCore/platform/graphics/chromium/PluginLayerChromium.h.
+        (WebCore::CCPluginLayerImpl::create):
+        (WebCore::CCPluginLayerImpl::setTextureId):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp: Added.
+        (WebCore::CCVideoLayerImpl::CCVideoLayerImpl):
+        (WebCore::CCVideoLayerImpl::~CCVideoLayerImpl):
+        (WebCore::CCVideoLayerImpl::setTexture):
+        (WebCore::CCVideoLayerImpl::draw):
+        (WebCore::CCVideoLayerImpl::drawYUV):
+        (WebCore::CCVideoLayerImpl::drawRGBA):
+        (WebCore::CCVideoLayerImpl::dumpLayerProperties):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h: Copied from Source/WebCore/platform/graphics/chromium/PluginLayerChromium.h.
+        (WebCore::CCVideoLayerImpl::create):
+        (WebCore::CCVideoLayerImpl::setSkipsDraw):
+        (WebCore::CCVideoLayerImpl::setFrameFormat):
+
 2011-03-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

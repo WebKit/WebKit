@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,53 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef CCVideoLayerImpl_h
+#define CCVideoLayerImpl_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
-#include "PluginLayerChromium.h"
-
-#include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h"
+#include "ProgramBinding.h"
+#include "ShaderChromium.h"
+#include "VideoFrameChromium.h"
+#include "VideoLayerChromium.h"
 #include "cc/CCLayerImpl.h"
-#include "cc/CCPluginLayerImpl.h"
 
 namespace WebCore {
 
-PassRefPtr<PluginLayerChromium> PluginLayerChromium::create(GraphicsLayerChromium* owner)
-{
-    return adoptRef(new PluginLayerChromium(owner));
+class VideoFrameProvider;
+
+class CCVideoLayerImpl : public CCLayerImpl {
+public:
+    static PassRefPtr<CCVideoLayerImpl> create(LayerChromium* owner)
+    {
+        return adoptRef(new CCVideoLayerImpl(owner));
+    }
+    virtual ~CCVideoLayerImpl();
+
+    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexFlipAlpha> RGBAProgram;
+    typedef ProgramBinding<VertexShaderPosTexYUVStretch, FragmentShaderYUVVideo> YUVProgram;
+
+    virtual void draw();
+
+    virtual void dumpLayerProperties(TextStream&, int indent) const;
+
+    void setSkipsDraw(bool skipsDraw) { m_skipsDraw = skipsDraw; }
+    void setFrameFormat(VideoFrameChromium::Format format) { m_frameFormat = format; }
+    void setTexture(size_t, VideoLayerChromium::Texture);
+
+private:
+    explicit CCVideoLayerImpl(LayerChromium*);
+
+    void drawYUV(const YUVProgram*) const;
+    void drawRGBA(const RGBAProgram*) const;
+
+    static const float yuv2RGB[9];
+    static const float yuvAdjust[3];
+
+    bool m_skipsDraw;
+    VideoFrameChromium::Format m_frameFormat;
+    VideoLayerChromium::Texture m_textures[3];
+};
+
 }
 
-PluginLayerChromium::PluginLayerChromium(GraphicsLayerChromium* owner)
-    : LayerChromium(owner)
-    , m_textureId(0)
-{
-}
+#endif // CCVideoLayerImpl_h
 
-PassRefPtr<CCLayerImpl> PluginLayerChromium::createCCLayerImpl()
-{
-    return CCPluginLayerImpl::create(this);
-}
-
-void PluginLayerChromium::setTextureId(unsigned id)
-{
-    m_textureId = id;
-}
-
-void PluginLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
-{
-    LayerChromium::pushPropertiesTo(layer);
-
-    CCPluginLayerImpl* pluginLayer = static_cast<CCPluginLayerImpl*>(layer);
-    pluginLayer->setTextureId(m_textureId);
-}
-
-}
-#endif // USE(ACCELERATED_COMPOSITING)

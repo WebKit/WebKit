@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,38 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef CCPluginLayerImpl_h
+#define CCPluginLayerImpl_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
-#include "PluginLayerChromium.h"
-
-#include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h"
+#include "ProgramBinding.h"
+#include "ShaderChromium.h"
 #include "cc/CCLayerImpl.h"
-#include "cc/CCPluginLayerImpl.h"
 
 namespace WebCore {
 
-PassRefPtr<PluginLayerChromium> PluginLayerChromium::create(GraphicsLayerChromium* owner)
-{
-    return adoptRef(new PluginLayerChromium(owner));
-}
+class CCPluginLayerImpl : public CCLayerImpl {
+public:
+    static PassRefPtr<CCPluginLayerImpl> create(LayerChromium* owner)
+    {
+        return adoptRef(new CCPluginLayerImpl(owner));
+    }
+    virtual ~CCPluginLayerImpl();
 
-PluginLayerChromium::PluginLayerChromium(GraphicsLayerChromium* owner)
-    : LayerChromium(owner)
-    , m_textureId(0)
-{
-}
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> Program;
 
-PassRefPtr<CCLayerImpl> PluginLayerChromium::createCCLayerImpl()
-{
-    return CCPluginLayerImpl::create(this);
-}
+    virtual void draw();
 
-void PluginLayerChromium::setTextureId(unsigned id)
-{
-    m_textureId = id;
-}
+    virtual void dumpLayerProperties(TextStream&, int indent) const;
 
-void PluginLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
-{
-    LayerChromium::pushPropertiesTo(layer);
+    void setTextureId(unsigned id) { m_textureId = id; }
 
-    CCPluginLayerImpl* pluginLayer = static_cast<CCPluginLayerImpl*>(layer);
-    pluginLayer->setTextureId(m_textureId);
-}
+private:
+    explicit CCPluginLayerImpl(LayerChromium*);
+
+    unsigned m_textureId;
+};
 
 }
-#endif // USE(ACCELERATED_COMPOSITING)
+
+#endif // CCPluginLayerImpl_h
+

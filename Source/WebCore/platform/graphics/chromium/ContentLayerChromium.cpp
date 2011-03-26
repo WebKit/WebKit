@@ -66,7 +66,7 @@ void ContentLayerChromium::cleanupResources()
     m_contentsTexture.clear();
 }
 
-bool ContentLayerChromium::requiresClippedUpdateRect() const
+bool ContentLayerChromium::requiresClippedUpdateRect()
 {
     // To avoid allocating excessively large textures, switch into "large layer mode" if
     // one of the layer's dimensions is larger than 2000 pixels or the size of
@@ -77,7 +77,7 @@ bool ContentLayerChromium::requiresClippedUpdateRect() const
             || !layerRenderer()->checkTextureSize(bounds()));
 }
 
-void ContentLayerChromium::updateContentsIfDirty()
+void ContentLayerChromium::paintContentsIfDirty()
 {
     RenderLayerBacking* backing = static_cast<RenderLayerBacking*>(m_owner->client());
     if (!backing || backing->paintingGoesToWindow())
@@ -269,6 +269,11 @@ void ContentLayerChromium::draw()
     unreserveContentsTexture();
 }
 
+void ContentLayerChromium::updateCompositorResources()
+{
+    updateTextureIfNeeded();
+}
+
 void ContentLayerChromium::unreserveContentsTexture()
 {
     if (!m_skipsDraw && m_contentsTexture)
@@ -277,8 +282,6 @@ void ContentLayerChromium::unreserveContentsTexture()
 
 void ContentLayerChromium::bindContentsTexture()
 {
-    updateTextureIfNeeded();
-
     if (!m_skipsDraw && m_contentsTexture)
         m_contentsTexture->bindTexture();
 }

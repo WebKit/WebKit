@@ -56,7 +56,7 @@ Canvas2DLayerChromium::~Canvas2DLayerChromium()
         layerRendererContext()->deleteTexture(m_textureId);
 }
 
-void Canvas2DLayerChromium::updateContentsIfDirty()
+void Canvas2DLayerChromium::updateCompositorResources()
 {
     if (!m_contentsDirty || !m_drawingBuffer)
         return;

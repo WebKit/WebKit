@@ -60,7 +60,7 @@ void ImageLayerChromium::setContents(Image* contents)
     setNeedsDisplay();
 }
 
-void ImageLayerChromium::updateContentsIfDirty()
+void ImageLayerChromium::paintContentsIfDirty()
 {
     ASSERT(layerRenderer());
 
@@ -68,7 +68,7 @@ void ImageLayerChromium::updateContentsIfDirty()
     if (requiresClippedUpdateRect()) {
         // Use the base version of updateContents which draws a subset of the
         // image to a bitmap, as the pixel contents can't be uploaded directly.
-        ContentLayerChromium::updateContentsIfDirty();
+        ContentLayerChromium::paintContentsIfDirty();
         return;
     }
 

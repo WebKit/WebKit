@@ -101,25 +101,6 @@ CCLayerImpl* CCLayerImpl::replicaLayer() const
     return m_owner->replicaLayer() ? m_owner->replicaLayer()->ccLayerImpl() : 0;
 }
 
-void CCLayerImpl::updateFromLayer(LayerChromium* layer)
-{
-    m_anchorPoint = layer->anchorPoint();
-    m_anchorPointZ = layer->anchorPointZ();
-    m_bounds = layer->bounds();
-    m_doubleSided = layer->doubleSided();
-    m_masksToBounds = layer->masksToBounds();
-    m_opacity = layer->opacity();
-    m_position = layer->position();
-    m_preserves3D = layer->preserves3D();
-    m_sublayerTransform = layer->sublayerTransform();
-    m_transform = layer->transform();
-
-    if (maskLayer())
-        maskLayer()->updateFromLayer(m_owner->maskLayer());
-    if (replicaLayer())
-        replicaLayer()->updateFromLayer(m_owner->replicaLayer());
-}
-
 void CCLayerImpl::setLayerRenderer(LayerRendererChromium* renderer)
 {
     m_layerRenderer = renderer;
@@ -134,13 +115,15 @@ RenderSurfaceChromium* CCLayerImpl::createRenderSurface()
 bool CCLayerImpl::descendantsDrawsContent()
 {
     const Vector<RefPtr<LayerChromium> >& sublayers = m_owner->getSublayers();
-    for (size_t i = 0; i < sublayers.size(); ++i)
+    for (size_t i = 0; i < sublayers.size(); ++i) {
+        sublayers[i]->createCCLayerImplIfNeeded();
         if (sublayers[i]->ccLayerImpl()->drawsContent() || sublayers[i]->ccLayerImpl()->descendantsDrawsContent())
             return true;
+    }
     return false;
 }
 
-// These belong on CCLayerImpl, but should be subclased by each type and not defer to the LayerChromium subtypes.
+// These belong on CCLayerImpl, but should be overridden by each type and not defer to the LayerChromium subtypes.
 bool CCLayerImpl::drawsContent() const
 {
     return m_owner->drawsContent();
@@ -149,6 +132,11 @@ bool CCLayerImpl::drawsContent() const
 void CCLayerImpl::draw()
 {
     return m_owner->draw();
+}
+
+void CCLayerImpl::updateCompositorResources()
+{
+    return m_owner->updateCompositorResources();
 }
 
 void CCLayerImpl::unreserveContentsTexture()
@@ -200,7 +188,7 @@ void CCLayerImpl::drawDebugBorder()
     GLC(context, context->drawElements(GraphicsContext3D::LINE_LOOP, 4, GraphicsContext3D::UNSIGNED_SHORT, 6 * sizeof(unsigned short)));
 }
 
-static void writeIndent(TextStream& ts, int indent)
+void CCLayerImpl::writeIndent(TextStream& ts, int indent)
 {
     for (int i = 0; i != indent; ++i)
         ts << "  ";

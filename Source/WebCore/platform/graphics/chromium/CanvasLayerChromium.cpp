@@ -40,8 +40,6 @@
 
 namespace WebCore {
 
-unsigned CanvasLayerChromium::m_shaderProgramId = 0;
-
 CanvasLayerChromium::CanvasLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
     , m_textureChanged(true)
@@ -54,22 +52,18 @@ CanvasLayerChromium::~CanvasLayerChromium()
 {
 }
 
-void CanvasLayerChromium::draw()
+PassRefPtr<CCLayerImpl> CanvasLayerChromium::createCCLayerImpl()
 {
-    ASSERT(layerRenderer());
-    const CanvasLayerChromium::Program* program = layerRenderer()->canvasLayerProgram();
-    ASSERT(program && program->initialized());
-    GraphicsContext3D* context = layerRendererContext();
-    GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
-    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId));
-    GC3Denum sfactor = m_premultipliedAlpha ? GraphicsContext3D::ONE : GraphicsContext3D::SRC_ALPHA;
-    GLC(context, context->blendFunc(sfactor, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
-    layerRenderer()->useShader(program->program());
-    GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
-    drawTexturedQuad(context, layerRenderer()->projectionMatrix(), ccLayerImpl()->drawTransform(),
-                     bounds().width(), bounds().height(), ccLayerImpl()->drawOpacity(),
-                     program->vertexShader().matrixLocation(),
-                     program->fragmentShader().alphaLocation());
+    return CCCanvasLayerImpl::create(this);
+}
+
+void CanvasLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
+{
+    LayerChromium::pushPropertiesTo(layer);
+
+    CCCanvasLayerImpl* canvasLayer = static_cast<CCCanvasLayerImpl*>(layer);
+    canvasLayer->setTextureId(m_textureId);
+    canvasLayer->setPremultipliedAlpha(m_premultipliedAlpha);
 }
 
 }
