@@ -28,12 +28,12 @@ layer at (0,0) size 781x674
             RenderText {#text} at (0,0) size 44x19
               text run at (0,0) width 44: "button"
         RenderText {#text} at (0,0) size 0x0
-        RenderMenuList {SELECT} at (3,243) size 74x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 72x25
+        RenderMenuList {SELECT} at (3,243) size 70x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 68x25
             RenderText at (3,3) size 42x19
               text run at (3,3) width 42: "select"
-        RenderMenuList {SELECT} at (3,274) size 74x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 72x25
+        RenderMenuList {SELECT} at (3,274) size 70x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 68x25
             RenderText at (3,3) size 42x19
               text run at (3,3) width 42: "select"
         RenderText {#text} at (0,0) size 0x0

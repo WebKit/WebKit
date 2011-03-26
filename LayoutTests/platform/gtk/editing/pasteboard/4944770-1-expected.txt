@@ -11,15 +11,15 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,54) size 784x31
         RenderText {#text} at (0,6) size 21x19
           text run at (0,6) width 21: "foo"
-        RenderMenuList {SELECT} at (23,2) size 41x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 39x25
+        RenderMenuList {SELECT} at (23,2) size 37x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 35x25
             RenderText at (3,3) size 9x19
               text run at (3,3) width 9: "1"
       RenderBlock {DIV} at (0,85) size 784x31
         RenderText {#text} at (0,6) size 21x19
           text run at (0,6) width 21: "foo"
-        RenderMenuList {SELECT} at (23,2) size 41x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 39x25
+        RenderMenuList {SELECT} at (23,2) size 37x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 35x25
             RenderText at (3,3) size 9x19
               text run at (3,3) width 9: "1"
 caret: position 3 of child 1 {SELECT} of child 4 {DIV} of body

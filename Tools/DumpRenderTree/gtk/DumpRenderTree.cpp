@@ -137,9 +137,13 @@ static void initializeGtkFontSettings(const char* testURL)
     GtkSettings* settings = gtk_settings_get_default();
     if (!settings)
         return;
-    g_object_set(settings, "gtk-xft-antialias", 1,
+    g_object_set(settings,
+                 "gtk-xft-dpi", 98304, // This is 96 * 1024 or 96 DPI according to the GTK+ docs.
+                 "gtk-xft-antialias", 1,
                  "gtk-xft-hinting", 0,
-                 "gtk-font-name", "Liberation Sans 16", NULL);
+                 "gtk-font-name", "Liberation Sans 12",
+                 NULL);
+    gdk_screen_set_resolution(gdk_screen_get_default(), 96.0);
 
     // One test needs subpixel anti-aliasing turned on, but generally we
     // want all text in other tests to use to grayscale anti-aliasing.
@@ -419,8 +423,8 @@ static void resetDefaultsToConsistentValues()
                  "sans-serif-font-family", "Helvetica",
                  "cursive-font-family", "cursive",
                  "fantasy-font-family", "fantasy",
-                 "default-font-size", 16,
-                 "default-monospace-font-size", 13,
+                 "default-font-size", 12,
+                 "default-monospace-font-size", 10,
                  "minimum-font-size", 0,
                  "enable-caret-browsing", FALSE,
                  "enable-page-cache", FALSE,
@@ -583,8 +587,6 @@ void dump()
 
 static void setDefaultsToConsistentStateValuesForTesting()
 {
-    gdk_screen_set_resolution(gdk_screen_get_default(), 72.0);
-
     resetDefaultsToConsistentValues();
 
     /* Disable the default auth dialog for testing */

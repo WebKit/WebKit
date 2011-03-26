@@ -31,8 +31,8 @@ layer at (0,0) size 800x600
                     text run at (1,20) width 29: "Test"
                     text run at (1,39) width 38: "Case:"
               RenderTableCell {TD} at (64,57) size 605x33 [r=1 c=1 rs=1 cs=1]
-                RenderMenuList {SELECT} at (3,3) size 345x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-                  RenderBlock (anonymous) at (1,1) size 343x25
+                RenderMenuList {SELECT} at (3,3) size 341x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+                  RenderBlock (anonymous) at (1,1) size 339x25
                     RenderText at (3,3) size 96x19
                       text run at (3,3) width 96: "a_abortinstall"
                 RenderText {#text} at (0,0) size 0x0

@@ -22,17 +22,17 @@ layer at (0,0) size 800x600
                   RenderBlock (anonymous) at (8,4) size 84x19
                     RenderText at (0,0) size 84x19
                       text run at (0,0) width 84: "Empty trash"
-              RenderTableCell {TD} at (271,15) size 283x21 [r=0 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (271,15) size 287x21 [r=0 c=3 rs=1 cs=1]
                 RenderText {#text} at (1,1) size 4x19
                   text run at (1,1) width 4: " "
-              RenderTableCell {TD} at (556,2) size 82x34 [r=0 c=4 rs=1 cs=1]
+              RenderTableCell {TD} at (560,2) size 82x34 [r=0 c=4 rs=1 cs=1]
                 RenderButton {INPUT} at (3,3) size 76x28 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                   RenderBlock (anonymous) at (8,4) size 60x19
                     RenderText at (0,0) size 60x19
                       text run at (0,0) width 60: "Move to:"
-              RenderTableCell {TD} at (640,3) size 142x33 [r=0 c=5 rs=1 cs=1]
-                RenderMenuList {SELECT} at (3,3) size 136x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-                  RenderBlock (anonymous) at (1,1) size 134x25
+              RenderTableCell {TD} at (644,3) size 138x33 [r=0 c=5 rs=1 cs=1]
+                RenderMenuList {SELECT} at (3,3) size 132x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+                  RenderBlock (anonymous) at (1,1) size 130x25
                     RenderText at (3,3) size 104x19
                       text run at (3,3) width 104: "Choose folder "
                 RenderText {#text} at (0,0) size 0x0

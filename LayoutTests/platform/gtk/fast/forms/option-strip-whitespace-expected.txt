@@ -19,24 +19,24 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,189) size 0x19
         RenderText {#text} at (0,214) size 298x19
           text run at (0,214) width 298: "Five Spaces (with leading/trailing whitespace): "
-        RenderMenuList {SELECT} at (300,210) size 121x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 119x25
+        RenderMenuList {SELECT} at (300,210) size 117x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 115x25
             RenderText at (3,3) size 89x19
               text run at (3,3) width 89: "Five Spaces"
-        RenderBR {BR} at (423,229) size 0x0
+        RenderBR {BR} at (419,229) size 0x0
         RenderBR {BR} at (0,239) size 0x19
         RenderText {#text} at (0,264) size 285x19
           text run at (0,264) width 285: "Five Tabs (with leading/trailing whitespace): "
-        RenderMenuList {SELECT} at (287,260) size 103x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 101x25
+        RenderMenuList {SELECT} at (287,260) size 99x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 97x25
             RenderText at (3,3) size 71x19
               text run at (3,3) width 71: "Five Tabs"
-        RenderBR {BR} at (392,279) size 0x0
+        RenderBR {BR} at (388,279) size 0x0
         RenderBR {BR} at (0,289) size 0x19
         RenderText {#text} at (0,314) size 126x19
           text run at (0,314) width 126: "Mixed Whitespace: "
-        RenderMenuList {SELECT} at (128,310) size 103x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 101x25
+        RenderMenuList {SELECT} at (128,310) size 99x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 97x25
             RenderText at (3,3) size 71x19
               text run at (3,3) width 71: "Five Tabs"
         RenderText {#text} at (0,0) size 0x0

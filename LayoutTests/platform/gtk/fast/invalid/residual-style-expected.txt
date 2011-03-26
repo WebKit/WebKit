@@ -444,13 +444,13 @@ layer at (0,0) size 781x3563
       RenderBlock (anonymous) at (0,1959) size 765x31
         RenderText {#text} at (0,6) size 76x19
           text run at (0,6) width 76: "KEYGEN: "
-        RenderBlock {KEYGEN} at (78,2) size 32x27
-          RenderMenuList {SELECT} at (0,0) size 32x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderBlock (anonymous) at (1,1) size 30x25
+        RenderBlock {KEYGEN} at (78,2) size 28x27
+          RenderMenuList {SELECT} at (0,0) size 28x27 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 26x25
               RenderBR at (3,3) size 0x19 [bgcolor=#FFFFFF]
         RenderInline {FONT} at (0,0) size 171x19 [color=#008000]
-          RenderText {#text} at (112,6) size 171x19
-            text run at (112,6) width 171: "All of this should be green."
+          RenderText {#text} at (108,6) size 171x19
+            text run at (108,6) width 171: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,1998) size 765x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,2008) size 765x19
@@ -556,25 +556,25 @@ layer at (0,0) size 781x3563
       RenderBlock (anonymous) at (0,2518) size 765x31
         RenderText {#text} at (0,6) size 95x19
           text run at (0,6) width 95: "OPTGROUP: "
-        RenderInline {FONT} at (0,0) size 241x19 [color=#008000]
-          RenderMenuList {SELECT} at (97,2) size 62x27 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderBlock (anonymous) at (1,1) size 60x25
+        RenderInline {FONT} at (0,0) size 237x19 [color=#008000]
+          RenderMenuList {SELECT} at (97,2) size 58x27 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 56x25
               RenderText at (3,3) size 30x19
                 text run at (3,3) width 30: "One"
-          RenderText {#text} at (161,6) size 175x19
-            text run at (161,6) width 175: " All of this should be green."
+          RenderText {#text} at (157,6) size 175x19
+            text run at (157,6) width 175: " All of this should be green."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,2557) size 765x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,2567) size 765x31
         RenderText {#text} at (0,6) size 68x19
           text run at (0,6) width 68: "OPTION: "
-        RenderInline {FONT} at (0,0) size 242x19 [color=#008000]
-          RenderMenuList {SELECT} at (70,2) size 63x27 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderBlock (anonymous) at (1,1) size 61x25
+        RenderInline {FONT} at (0,0) size 238x19 [color=#008000]
+          RenderMenuList {SELECT} at (70,2) size 59x27 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 57x25
               RenderText at (3,3) size 30x19
                 text run at (3,3) width 30: "One"
-          RenderText {#text} at (135,6) size 175x19
-            text run at (135,6) width 175: " All of this should be green."
+          RenderText {#text} at (131,6) size 175x19
+            text run at (131,6) width 175: " All of this should be green."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,2606) size 765x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,2616) size 765x19
@@ -647,12 +647,12 @@ layer at (0,0) size 781x3563
       RenderBlock (anonymous) at (0,2870) size 765x31
         RenderText {#text} at (0,6) size 68x19
           text run at (0,6) width 68: "SELECT: "
-        RenderInline {FONT} at (0,0) size 207x19 [color=#008000]
-          RenderMenuList {SELECT} at (70,2) size 32x27 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-            RenderBlock (anonymous) at (1,1) size 30x25
+        RenderInline {FONT} at (0,0) size 203x19 [color=#008000]
+          RenderMenuList {SELECT} at (70,2) size 28x27 [color=#000000] [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+            RenderBlock (anonymous) at (1,1) size 26x25
               RenderBR at (3,3) size 0x19 [bgcolor=#FFFFFF]
-          RenderText {#text} at (104,6) size 171x19
-            text run at (104,6) width 171: "All of this should be green."
+          RenderText {#text} at (100,6) size 171x19
+            text run at (100,6) width 171: "All of this should be green."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,2909) size 765x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,2919) size 765x19

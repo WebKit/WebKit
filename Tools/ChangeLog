@@ -1,3 +1,18 @@
+2011-03-23  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Force DumpRenderTree to use 96 DPI
+        https://bugs.webkit.org/show_bug.cgi?id=56866
+
+        Make sure that GTK+ is set to use 96 DPI when running tests. This ensures
+        broader compatibility with WebKit2 and makes setting font sizes more straightforward.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeGtkFontSettings): Set the screen resolution and GTK+ xft property to 96 DPI.
+        (resetDefaultsToConsistentValues):Remove the call which repeatedly set the GDK screen resolution.
+        (setDefaultsToConsistentStateValuesForTesting): Update the font sizes to reflect the new DPI.
+
 2011-03-25  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adele Peterson.
