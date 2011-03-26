@@ -1,3 +1,25 @@
+2011-03-23  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        MediaPlayerPrivateAVFoundation should use the Application Cache during load.
+        https://bugs.webkit.org/show_bug.cgi?id=56997
+
+        No new tests.
+
+        When loading a URL, check to see if the Application Cache has a version of that URL
+        stored; if so, use the local path to that cached media instead of the remote URL.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::prepareToPlay): Check to see if the media should be loaded
+            from the application cache.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerForURL):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerForCacheResource): Added.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer): Split out from createAVPlayerForURL.
+
 2011-03-25  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Darin Adler.

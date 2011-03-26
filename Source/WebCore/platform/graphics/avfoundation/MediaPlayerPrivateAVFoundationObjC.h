@@ -49,6 +49,8 @@ typedef struct objc_object *id;
 
 namespace WebCore {
 
+class ApplicationCacheResource;
+
 class MediaPlayerPrivateAVFoundationObjC : public MediaPlayerPrivateAVFoundation {
 public:
 
@@ -82,7 +84,11 @@ private:
     virtual bool supportsAcceleratedRendering() const { return true; }
     virtual float mediaTimeForTimeValue(float) const;
 
+    virtual void createAVPlayer();
     virtual void createAVPlayerForURL(const String& url);
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    virtual void createAVPlayerForCacheResource(ApplicationCacheResource*);
+#endif
     virtual MediaPlayerPrivateAVFoundation::ItemStatus playerItemStatus() const;
     virtual MediaPlayerPrivateAVFoundation::AVAssetStatus assetStatus() const;
 

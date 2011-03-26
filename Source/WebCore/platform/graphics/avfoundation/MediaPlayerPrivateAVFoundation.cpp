@@ -29,6 +29,8 @@
 
 #include "MediaPlayerPrivateAVFoundation.h"
 
+#include "ApplicationCacheHost.h"
+#include "DocumentLoader.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -234,6 +236,14 @@ void MediaPlayerPrivateAVFoundation::prepareToPlay()
     m_havePreparedToPlay = true;
 
     m_delayingLoad = false;
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    Frame* frame = m_player->frameView() ? m_player->frameView()->frame() : 0;
+    ApplicationCacheHost* cacheHost = frame ? frame->loader()->documentLoader()->applicationCacheHost() : 0;
+    ApplicationCacheResource* resource = 0;
+    if (cacheHost && cacheHost->shouldLoadResourceFromApplicationCache(ResourceRequest(m_assetURL), resource) && resource)
+        createAVPlayerForCacheResource(resource);
+    else
+#endif    
     createAVPlayerForURL(m_assetURL);
     checkPlayability();
 }

@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+class ApplicationCacheResource;
+
 class MediaPlayerPrivateAVFoundation : public MediaPlayerPrivateInterface {
 public:
 
@@ -144,6 +146,9 @@ protected:
 
     // Required interfaces for concrete derived classes.
     virtual void createAVPlayerForURL(const String& url) = 0;
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    virtual void createAVPlayerForCacheResource(ApplicationCacheResource*) = 0;
+#endif
 
     enum ItemStatus {
         MediaPlayerAVPlayerItemStatusUnknown,

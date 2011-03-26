@@ -29,6 +29,7 @@
 
 #import "MediaPlayerPrivateAVFoundationObjC.h"
 
+#import "ApplicationCacheResource.h"
 #import "BlockExceptions.h"
 #import "FloatConversion.h"
 #import "FrameView.h"
@@ -243,7 +244,33 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerForURL(const String& url)
         NSURL *cocoaURL = KURL(ParsedURLString, url);
         m_avAsset.adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:nil]);
     }
+    
+    createAVPlayer();
+}
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+void MediaPlayerPrivateAVFoundationObjC::createAVPlayerForCacheResource(ApplicationCacheResource* resource)
+{
+    // AVFoundation can't open arbitrary data pointers, so if this ApplicationCacheResource doesn't 
+    // have a valid local path, just open the resource's original URL.
+    if (resource->path().isEmpty()) {
+        createAVPlayerForURL(resource->url());
+        return;
+    }
+    
+    setDelayCallbacks(true);
+
+    if (!m_avAsset) {
+        NSURL* localURL = [NSURL fileURLWithPath:resource->path()];
+        m_avAsset.adoptNS([[AVURLAsset alloc] initWithURL:localURL options:nil]);
+    }
+
+    createAVPlayer();
+}
+#endif
+
+void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
+{
     if (!m_avPlayer) {
         m_avPlayer.adoptNS([[AVPlayer alloc] init]);
         
