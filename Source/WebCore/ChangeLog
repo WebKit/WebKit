@@ -1,3 +1,10 @@
+2011-03-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r82000.
+
+        * platform/wince/FileSystemWinCE.cpp:
+        (WebCore::openFile): Added missing function.
+
 2011-03-25  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix, don't use the new FPD implementation yet, until we can merge ours with it.
