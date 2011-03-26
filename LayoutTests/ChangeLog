@@ -1,5 +1,15 @@
 2011-03-25  Andy Estes  <aestes@apple.com>
 
+        Skip fast/images/embed-image.html on Windows XP
+        https://bugs.webkit.org/show_bug.cgi?id=57135
+
+        It would appear that the Windows XP bot is loading a plug-in despite
+        the test calling layoutTestController.setPluginsEnabled(false).
+
+        * platform/win-xp/Skipped: Skip fast/images/embed-image.html
+
+2011-03-25  Andy Estes  <aestes@apple.com>
+
         Re-work a test to not be flaky.
 
         * plugins/embed-prefers-plugins-for-images.html:
