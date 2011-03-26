@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2011 Andreas Kling <kling@webkit.org>
  *
  * All rights reserved.
  *
@@ -29,12 +30,35 @@
 
 #ifndef QT_NO_INPUTDIALOG
 
+static const QSize gPageIconSize(16, 16);
+
+static QPixmap defaultPageIcon()
+{
+    static QPixmap icon;
+    if (icon.isNull())
+        icon.load(":/favicon.png");
+
+    return icon;
+}
+
 LocationEdit::LocationEdit(QWidget* parent)
     : QLineEdit(parent)
     , m_progress(0)
 {
     m_clearTimer.setSingleShot(true);
     connect(&m_clearTimer, SIGNAL(timeout()), this, SLOT(reset()));
+
+    m_pageIconLabel = new QLabel(this);
+    m_pageIconLabel->setFixedSize(gPageIconSize);
+    m_pageIconLabel->setPixmap(defaultPageIcon());
+}
+
+void LocationEdit::setPageIcon(const QIcon& icon)
+{
+    if (icon.isNull())
+        m_pageIconLabel->setPixmap(defaultPageIcon());
+    else
+        m_pageIconLabel->setPixmap(icon.pixmap(gPageIconSize));
 }
 
 void LocationEdit::setProgress(int progress)
@@ -47,6 +71,30 @@ void LocationEdit::setProgress(int progress)
 void LocationEdit::reset()
 {
     setProgress(0);
+}
+
+void LocationEdit::resizeEvent(QResizeEvent*)
+{
+    updateInternalGeometry();
+}
+
+void LocationEdit::updateInternalGeometry()
+{
+    QStyleOptionFrameV3 styleOption;
+    initStyleOption(&styleOption);
+
+    QRect textRect = style()->subElementRect(QStyle::SE_LineEditContents, &styleOption, this);
+
+    const int spacing = 2;
+
+    int x = textRect.x() + spacing;
+    int y = (textRect.center().y() + 1) - gPageIconSize.height() / 2;
+
+    m_pageIconLabel->move(x, y);
+
+    QMargins margins = textMargins();
+    margins.setLeft(m_pageIconLabel->sizeHint().width() + spacing);
+    setTextMargins(margins);
 }
 
 void LocationEdit::paintEvent(QPaintEvent* ev)

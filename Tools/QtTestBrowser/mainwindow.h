@@ -58,6 +58,8 @@ protected slots:
     void openFile();
     void openLocation();
     void changeLocation();
+    void onIconChanged();
+    void onLoadStarted();
 
 protected:
     QString addressUrl() const;

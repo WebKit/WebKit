@@ -39,6 +39,8 @@ class LocationEdit : public QLineEdit {
 public:
     LocationEdit(QWidget* parent = 0);
 
+    void setPageIcon(const QIcon&);
+
 public slots:
     void setProgress(int progress);
 
@@ -48,10 +50,14 @@ private slots:
 protected:
     virtual void paintEvent(QPaintEvent*);
     virtual void focusInEvent(QFocusEvent*);
+    virtual void resizeEvent(QResizeEvent*);
 
 private:
+    void updateInternalGeometry();
+
     int m_progress;
     QTimer m_clearTimer;
+    QLabel* m_pageIconLabel;
 };
 
 #endif
