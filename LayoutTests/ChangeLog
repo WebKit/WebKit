@@ -1,5 +1,19 @@
 2011-03-26  Martin Robinson  <mrobinson@igalia.com>
 
+        Rebaseline a few more GTK+ tests after r82033.
+
+        * platform/gtk/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.checksum:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.png:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-layer-expected.checksum:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-layer-expected.png:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-layer-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-visibility-expected.checksum:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-visibility-expected.png:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-visibility-expected.txt:
+
+2011-03-26  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Xan Lopez.
 
         [GTK] Force DumpRenderTree to use 96 DPI
