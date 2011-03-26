@@ -51,6 +51,7 @@ WebIconDatabase::~WebIconDatabase()
 WebIconDatabase::WebIconDatabase(WebContext* context)
     : m_webContext(context)
     , m_urlImportCompleted(false)
+    , m_databaseCleanupDisabled(false)
 {
 }
 
@@ -67,13 +68,34 @@ void WebIconDatabase::setDatabasePath(const String& path)
 
     m_iconDatabaseImpl =  IconDatabase::create();
     m_iconDatabaseImpl->setClient(this);
+    IconDatabase::delayDatabaseCleanup();
+    m_databaseCleanupDisabled = true;
     m_iconDatabaseImpl->setEnabled(true);
     if (!m_iconDatabaseImpl->open(directoryName(path), pathGetFileName(path))) {
         LOG_ERROR("Unable to open WebKit2 icon database on disk");
         m_iconDatabaseImpl.clear();
         setGlobalIconDatabase(0);
+        IconDatabase::allowDatabaseCleanup();
+        m_databaseCleanupDisabled = false;
     }
     setGlobalIconDatabase(m_iconDatabaseImpl.get());
+}
+
+void WebIconDatabase::enableDatabaseCleanup()
+{
+    if (!m_iconDatabaseImpl) {
+        LOG_ERROR("Cannot enabled Icon Database cleanup - it hasn't been opened yet.");
+        return;
+    }
+
+    if (!m_databaseCleanupDisabled) {
+        LOG_ERROR("Attempt to enable database cleanup, but it's already enabled.");
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    
+    IconDatabase::allowDatabaseCleanup();
+    m_databaseCleanupDisabled = false;
 }
 
 void WebIconDatabase::retainIconForPageURL(const String& pageURL)
@@ -151,6 +173,20 @@ void WebIconDatabase::getLoadDecisionForIconURL(const String& iconURL, uint64_t 
     
     m_webContext->process()->send(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision((int)decision, callbackID), 0);
 }
+
+Image* WebIconDatabase::imageForPageURL(const String& pageURL)
+{
+    if (!m_webContext)
+        return 0;
+
+    if (!m_iconDatabaseImpl || !m_iconDatabaseImpl->isOpen() || pageURL.isEmpty())
+        return 0;
+
+    // The WebCore IconDatabase ignores the passed in size parameter.
+    // If that changes we'll need to rethink how this API is exposed.
+    return m_iconDatabaseImpl->synchronousIconForPageURL(pageURL, WebCore::IntSize(32, 32));
+}
+
 
 // WebCore::IconDatabaseClient
 bool WebIconDatabase::performImport()

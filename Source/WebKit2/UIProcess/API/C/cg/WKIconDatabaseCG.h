@@ -23,23 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKIconDatabase_h
-#define WKIconDatabase_h
+#ifndef WKIconDatabaseCG_h
+#define WKIconDatabaseCG_h
 
+#include <CoreGraphics/CGImage.h>
 #include <WebKit2/WKBase.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT WKTypeID WKIconDatabaseGetTypeID();
-
-WK_EXPORT void WKIconDatabaseRetainIconForURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL);
-WK_EXPORT void WKIconDatabaseReleaseIconForURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL);
-WK_EXPORT void WKIconDatabaseEnableDatabaseCleanup(WKIconDatabaseRef iconDatabase);
+WK_EXPORT CGImageRef WKIconDatabaseGetCGImageForURL(WKIconDatabaseRef iconDatabase, WKURLRef urlString);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* WKIconDatabase_h */
+#endif /* WKIconDatabaseCG_h */

@@ -35,3 +35,18 @@ WKTypeID WKIconDatabaseGetTypeID()
 {
     return toAPI(WebIconDatabase::APIType);
 }
+
+void WKIconDatabaseRetainIconForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef pageURLRef)
+{
+    toImpl(iconDatabaseRef)->retainIconForPageURL(toWTFString(pageURLRef));
+}
+
+void WKIconDatabaseReleaseIconForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef pageURLRef)
+{
+    toImpl(iconDatabaseRef)->releaseIconForPageURL(toWTFString(pageURLRef));
+}
+
+void WKIconDatabaseEnableDatabaseCleanup(WKIconDatabaseRef iconDatabaseRef)
+{
+    toImpl(iconDatabaseRef)->enableDatabaseCleanup();
+}

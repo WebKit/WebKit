@@ -1,3 +1,38 @@
+2011-03-25  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8648311> and https://bugs.webkit.org/show_bug.cgi?id=56425
+        WebKit2 IconDatabase and API
+
+        This gets a basic, usable API in place.
+        Enhancements can come in other bugs as they're needed.
+
+        * UIProcess/API/C/WKIconDatabase.cpp:
+        (WKIconDatabaseRetainIconForURL):
+        (WKIconDatabaseReleaseIconForURL):
+        (WKIconDatabaseEnableDatabaseCleanup):
+        * UIProcess/API/C/WKIconDatabase.h:
+        
+        The first actual accessor for an "icon for a URL" is for a CGImageRef:
+        * UIProcess/API/C/cg: Added.
+        * UIProcess/API/C/cg/WKIconDatabaseCG.cpp: Added.
+        (WKIconDatabaseGetCGImageForURL):
+        * UIProcess/API/C/cg/WKIconDatabaseCG.h: Added.
+        
+        Expose relevant methods to support the above API:
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::WebIconDatabase): New IconDatabases will have cleanup disabled from the start,
+          and require a single call to "enableDatabaseCleanup" to allow cleanup.
+        (WebKit::WebIconDatabase::setDatabasePath):
+        (WebKit::WebIconDatabase::enableDatabaseCleanup):
+        (WebKit::WebIconDatabase::imageForPageURL):
+        * UIProcess/WebIconDatabase.h:
+        
+        Project file stuff:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
 2011-03-25  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Darin Adler.

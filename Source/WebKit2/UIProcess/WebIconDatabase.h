@@ -44,6 +44,7 @@ class MessageID;
 
 namespace WebCore {
 class IconDatabase;
+class Image;
 }
 
 namespace WebKit {
@@ -60,6 +61,7 @@ public:
     void invalidate();
     void clearContext() { m_webContext = 0; }
     void setDatabasePath(const String&);
+    void enableDatabaseCleanup();
 
     void retainIconForPageURL(const String&);
     void releaseIconForPageURL(const String&);
@@ -73,6 +75,8 @@ public:
     
     void getLoadDecisionForIconURL(const String&, uint64_t callbackID);
 
+    WebCore::Image* imageForPageURL(const String&);
+    
     // WebCore::IconDatabaseClient
     virtual bool performImport();
     virtual void didImportIconURLForPageURL(const String&);
@@ -96,6 +100,7 @@ private:
     
     OwnPtr<WebCore::IconDatabase> m_iconDatabaseImpl;
     bool m_urlImportCompleted;
+    bool m_databaseCleanupDisabled;
     HashMap<uint64_t, String> m_pendingLoadDecisionURLMap;
 
 };

@@ -2900,6 +2900,18 @@
 				<Filter
 					Name="C"
 					>
+    				<Filter
+    					Name="cg"
+    					>
+    					<File
+    						RelativePath="..\UIProcess\API\C\cg\WKIconDatabaseCG.cpp"
+    						>
+    					</File>
+    					<File
+    						RelativePath="..\UIProcess\API\C\cg\WKIconDatabaseCG.h"
+    						>
+    					</File>
+    				</Filter>
 					<File
 						RelativePath="..\UIProcess\API\C\WebKit2.h"
 						>

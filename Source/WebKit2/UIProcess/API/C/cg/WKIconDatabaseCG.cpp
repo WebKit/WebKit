@@ -12,7 +12,7 @@
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * THE IMPLIED WARRANTIES OF MERCHANTAwBILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
  * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
  * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
@@ -23,23 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKIconDatabase_h
-#define WKIconDatabase_h
+#include "config.h"
+#include "WKIconDatabaseCG.h"
 
-#include <WebKit2/WKBase.h>
+#include "WebIconDatabase.h"
+#include "WKAPICast.h"
+#include "WKSharedAPICast.h"
+#include <WebCore/Image.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+using namespace WebKit;
+using namespace WebCore;
 
-WK_EXPORT WKTypeID WKIconDatabaseGetTypeID();
-
-WK_EXPORT void WKIconDatabaseRetainIconForURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL);
-WK_EXPORT void WKIconDatabaseReleaseIconForURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL);
-WK_EXPORT void WKIconDatabaseEnableDatabaseCleanup(WKIconDatabaseRef iconDatabase);
-
-#ifdef __cplusplus
+CGImageRef WKIconDatabaseGetCGImageForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef urlRef)
+{
+    Image* image = toImpl(iconDatabaseRef)->imageForPageURL(toWTFString(urlRef));
+    return image ? image->getCGImageRef() : 0;
 }
-#endif
-
-#endif /* WKIconDatabase_h */
