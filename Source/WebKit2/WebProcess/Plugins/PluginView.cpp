@@ -825,6 +825,11 @@ void PluginView::invalidateRect(const IntRect& dirtyRect)
     if (!parent() || !m_plugin || !m_isInitialized)
         return;
 
+#if PLATFORM(MAC)
+    if (m_plugin->pluginLayer())
+        return;
+#endif
+
     IntRect dirtyRectInWindowCoordinates = convertToContainingWindow(dirtyRect);
 
     parent()->hostWindow()->invalidateContentsAndWindow(intersection(dirtyRectInWindowCoordinates, clipRectInWindowCoordinates()), false);

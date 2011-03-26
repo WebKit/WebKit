@@ -287,6 +287,10 @@ void NetscapePlugin::platformDestroy()
 
 bool NetscapePlugin::platformInvalidate(const IntRect&)
 {
+    // NPN_InvalidateRect is just a no-op in the Core Animation drawing model.
+    if (m_drawingModel == NPDrawingModelCoreAnimation)
+        return true;
+
     return false;
 }
 

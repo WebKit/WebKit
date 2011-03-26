@@ -1,3 +1,19 @@
+2011-03-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        PluginView's call to invalidateContentsAndWindow() in invalidateRect() is wrong for plug-ins which paint into compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=57133
+        <rdar://problem/9029442>
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformInvalidate):
+        Return true under the Core Animation drawing model, since that prevents the plug-in from calling PluginController::invalidate.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::invalidateRect):
+        Don't call invalidateContentsAndWindow() if the plug-in has a Core Animation layer.
+
 2011-03-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
