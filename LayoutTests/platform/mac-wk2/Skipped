@@ -1834,6 +1834,7 @@ fast/events/onbeforeunload-focused-iframe.html
 
 # WebKitTestRunner needs layoutTestController.setPluginsEnabled
 platform/mac/plugins/disable-plugins.html
+fast/images/embed-image.html
 
 # WebKitTestRunner needs layoutTestController.setHandlesAuthenticationChallenges
 http/tests/misc/authentication-sent-to-redirect.html
