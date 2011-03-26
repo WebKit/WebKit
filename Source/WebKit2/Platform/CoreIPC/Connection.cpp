@@ -346,8 +346,7 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
     }
 
     // First send the message.
-    messageID = messageID.messageIDWithAddedFlags(MessageID::DispatchMessageWhenWaitingForSyncReply | MessageID::SyncMessage);
-    sendMessage(messageID, encoder);
+    sendMessage(messageID.messageIDWithAddedFlags(MessageID::SyncMessage), encoder, DispatchMessageEvenWhenWaitingForSyncReply);
 
     // Then wait for a reply. Waiting for a reply could involve dispatching incoming sync messages, so
     // keep an extra reference to the connection here in case it's invalidated.
@@ -398,36 +397,41 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
     return 0;
 }
 
+void Connection::processIncomingSyncReply(PassOwnPtr<ArgumentDecoder> arguments)
+{
+    MutexLocker locker(m_syncReplyStateMutex);
+    ASSERT(!m_pendingSyncReplies.isEmpty());
+
+    // Go through the stack of sync requests that have pending replies and see which one
+    // this reply is for.
+    for (size_t i = m_pendingSyncReplies.size(); i > 0; --i) {
+        PendingSyncReply& pendingSyncReply = m_pendingSyncReplies[i - 1];
+
+        if (pendingSyncReply.syncRequestID != arguments->destinationID())
+            continue;
+
+        ASSERT(!pendingSyncReply.replyDecoder);
+
+        pendingSyncReply.replyDecoder = arguments.leakPtr();
+        pendingSyncReply.didReceiveReply = true;
+
+        // We got a reply to the last send message, wake up the client run loop so it can be processed.
+        if (i == m_pendingSyncReplies.size())
+            m_syncMessageState->wakeUpClientRunLoop();
+
+        return;
+    }
+
+    // We got a reply for a message we never sent.
+    // FIXME: Dispatch a didReceiveInvalidMessage callback on the client.
+    ASSERT_NOT_REACHED();
+}
+
 void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<ArgumentDecoder> arguments)
 {
     // Check if this is a sync reply.
     if (messageID == MessageID(CoreIPCMessage::SyncMessageReply)) {
-        MutexLocker locker(m_syncReplyStateMutex);
-        ASSERT(!m_pendingSyncReplies.isEmpty());
-
-        // Go through the stack of sync requests that have pending replies and see which one
-        // this reply is for.
-        for (size_t i = m_pendingSyncReplies.size(); i > 0; --i) {
-            PendingSyncReply& pendingSyncReply = m_pendingSyncReplies[i - 1];
-
-            if (pendingSyncReply.syncRequestID != arguments->destinationID())
-                continue;
-
-            ASSERT(!pendingSyncReply.replyDecoder);
-
-            pendingSyncReply.replyDecoder = arguments.leakPtr();
-            pendingSyncReply.didReceiveReply = true;
-
-            // We got a reply to the last send message, wake up the client run loop so it can be processed.
-            if (i == m_pendingSyncReplies.size())
-                m_syncMessageState->wakeUpClientRunLoop();
-
-            return;
-        }
-
-        // We got a reply for a message we never sent.
-        // FIXME: Dispatch a didReceiveInvalidMessage callback on the client.
-        ASSERT_NOT_REACHED();
+        processIncomingSyncReply(arguments);
         return;
     }
 

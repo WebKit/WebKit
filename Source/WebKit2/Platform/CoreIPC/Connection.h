@@ -191,6 +191,8 @@ private:
 
     // Called on the connection work queue.
     void processIncomingMessage(MessageID, PassOwnPtr<ArgumentDecoder>);
+    void processIncomingSyncReply(PassOwnPtr<ArgumentDecoder>);
+
     bool canSendOutgoingMessages() const;
     bool platformCanSendOutgoingMessages() const;
     void sendOutgoingMessages();

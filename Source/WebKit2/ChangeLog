@@ -1,3 +1,20 @@
+2011-03-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Factor processing of incoming sync replies out into processIncomingSyncReply
+        https://bugs.webkit.org/show_bug.cgi?id=57161
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::sendSyncMessage):
+        Pass DispatchMessageEvenWhenWaitingForSyncReply to sendMessage.
+
+        (CoreIPC::Connection::processIncomingSyncReply):
+        Move code from processIncomingMessage to here.
+
+        (CoreIPC::Connection::processIncomingMessage):
+        Call processIncomingSyncReply.
+
 2011-03-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
