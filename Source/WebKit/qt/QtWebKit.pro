@@ -218,6 +218,15 @@ contains(DEFINES, ENABLE_VIDEO=1) {
     }
 }
 
+contains(DEFINES, ENABLE_ICONDATABASE=1) {
+    HEADERS += \
+        $$PWD/WebCoreSupport/IconDatabaseClient.h \
+        $$PWD/WebCoreSupport/IconDatabaseClientQt.h
+
+    SOURCES += \
+        $$PWD/WebCoreSupport/IconDatabaseClientQt.cpp
+}
+
 contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
     HEADERS += \
         $$PWD/WebCoreSupport/DeviceMotionClientQt.h \

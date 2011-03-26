@@ -28,6 +28,9 @@
 #include "MemoryCache.h"
 #include "CrossOriginPreflightResultCache.h"
 #include "FontCache.h"
+#if ENABLE(ICONDATABASE)
+#include "IconDatabaseClientQt.h"
+#endif
 #include "Page.h"
 #include "PageCache.h"
 #include "Settings.h"
@@ -636,6 +639,11 @@ QString QWebSettings::defaultTextEncoding() const
 */
 void QWebSettings::setIconDatabasePath(const QString& path)
 {
+#if ENABLE(ICONDATABASE)
+    // Make sure that IconDatabaseClientQt is instantiated.
+    WebCore::IconDatabaseClientQt::instance();
+#endif
+
     WebCore::IconDatabase::delayDatabaseCleanup();
 
     if (!path.isEmpty()) {

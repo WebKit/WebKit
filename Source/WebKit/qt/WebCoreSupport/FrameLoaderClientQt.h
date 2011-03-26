@@ -255,6 +255,9 @@ public:
     static bool dumpHistoryCallbacks;
     static QMap<QString, QString> URLsToRedirect;
 
+private slots:
+    void onIconLoadedForPageURL(const QString&);
+
 private:
     Frame *m_frame;
     QWebFrame *m_webFrame;

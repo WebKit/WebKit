@@ -40,6 +40,9 @@
 #include "FrameView.h"
 #include "DocumentLoader.h"
 #include "HitTestResult.h"
+#if ENABLE(ICONDATABASE)
+#include "IconDatabaseClientQt.h"
+#endif
 #if USE(JSC)
 #include "JSDOMWindowBase.h"
 #elif USE(V8)
@@ -771,10 +774,24 @@ void FrameLoaderClientQt::didPerformFirstNavigation() const
     m_webFrame->page()->d->updateNavigationActions();
 }
 
-void FrameLoaderClientQt::registerForIconNotification(bool)
+void FrameLoaderClientQt::registerForIconNotification(bool shouldRegister)
 {
-    notImplemented();
+#if ENABLE(ICONDATABASE)
+    if (shouldRegister)
+        connect(IconDatabaseClientQt::instance(), SIGNAL(iconLoadedForPageURL(QString)), this, SLOT(onIconLoadedForPageURL(QString)), Qt::UniqueConnection);
+    else
+        disconnect(IconDatabaseClientQt::instance(), SIGNAL(iconLoadedForPageURL(QString)), this, SLOT(onIconLoadedForPageURL(QString)));
+#endif
 }
+
+void FrameLoaderClientQt::onIconLoadedForPageURL(const QString& url)
+{
+#if ENABLE(ICONDATABASE)
+    if (m_webFrame && m_webFrame->url() == url)
+        emit m_webFrame->iconChanged();
+#endif
+}
+
 
 void FrameLoaderClientQt::updateGlobalHistory()
 {
