@@ -14,14 +14,14 @@ layer at (8,81) size 784x38
   RenderBlock (relative positioned) {DIV} at (0,73) size 784x38
     RenderText {#text} at (5,0) size 779x38
       text run at (5,0) width 779: "The black box's top should be aligned with the end of the last line in this parargaph and its right side should begin right after"
-      text run at (629,19) width 8 RTL: ". "
+      text run at (633,19) width 4 RTL: "."
       text run at (637,19) width 147: "the end of this sentence"
     RenderText {#text} at (0,0) size 0x0
-layer at (397,100) size 240x340
-  RenderBlock (positioned) {SPAN} at (389,19) size 240x340 [border: (20px solid #000000)]
-layer at (517,220) size 100x100
+layer at (401,100) size 240x340
+  RenderBlock (positioned) {SPAN} at (393,19) size 240x340 [border: (20px solid #000000)]
+layer at (521,220) size 100x100
   RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]
-layer at (517,120) size 100x100
+layer at (521,120) size 100x100
   RenderBlock (positioned) {DIV} at (120,20) size 100x100 [bgcolor=#808000]
-layer at (517,320) size 100x100
+layer at (521,320) size 100x100
   RenderBlock (positioned) {DIV} at (120,220) size 100x100 [bgcolor=#808000]

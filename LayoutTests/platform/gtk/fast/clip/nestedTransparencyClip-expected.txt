@@ -11,8 +11,8 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,38) size 0x19
 layer at (8,65) size 784x19
   RenderBlock {DIV} at (0,57) size 784x19
-    RenderText {#text} at (0,0) size 42x19
-      text run at (0,0) width 42: "Peach "
+    RenderText {#text} at (0,0) size 38x19
+      text run at (0,0) width 38: "Peach"
     RenderText {#text} at (0,0) size 0x0
 layer at (8,84) size 33x19
   RenderBlock (positioned) {DIV} at (8,84) size 33x19

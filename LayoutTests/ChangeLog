@@ -1,3 +1,52 @@
+2011-03-26  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline many GTK+ tests after r81994.
+
+        * platform/gtk/fast/block/positioning/056-expected.txt:
+        * platform/gtk/fast/block/positioning/auto/005-expected.checksum:
+        * platform/gtk/fast/block/positioning/auto/005-expected.png:
+        * platform/gtk/fast/block/positioning/auto/005-expected.txt:
+        * platform/gtk/fast/block/positioning/auto/006-expected.checksum:
+        * platform/gtk/fast/block/positioning/auto/006-expected.png:
+        * platform/gtk/fast/block/positioning/auto/006-expected.txt:
+        * platform/gtk/fast/block/positioning/auto/vertical-lr/005-expected.checksum:
+        * platform/gtk/fast/block/positioning/auto/vertical-lr/005-expected.png:
+        * platform/gtk/fast/block/positioning/auto/vertical-lr/005-expected.txt:
+        * platform/gtk/fast/block/positioning/auto/vertical-lr/006-expected.checksum:
+        * platform/gtk/fast/block/positioning/auto/vertical-lr/006-expected.png:
+        * platform/gtk/fast/block/positioning/auto/vertical-lr/006-expected.txt:
+        * platform/gtk/fast/block/positioning/auto/vertical-rl/005-expected.checksum:
+        * platform/gtk/fast/block/positioning/auto/vertical-rl/005-expected.png:
+        * platform/gtk/fast/block/positioning/auto/vertical-rl/005-expected.txt:
+        * platform/gtk/fast/block/positioning/auto/vertical-rl/006-expected.checksum:
+        * platform/gtk/fast/block/positioning/auto/vertical-rl/006-expected.png:
+        * platform/gtk/fast/block/positioning/auto/vertical-rl/006-expected.txt:
+        * platform/gtk/fast/block/positioning/fixed-positioning-scrollbar-bug-expected.txt:
+        * platform/gtk/fast/block/positioning/inline-block-relposition-expected.checksum:
+        * platform/gtk/fast/block/positioning/inline-block-relposition-expected.png:
+        * platform/gtk/fast/block/positioning/inline-block-relposition-expected.txt:
+        * platform/gtk/fast/block/positioning/relative-overflow-block-expected.txt:
+        * platform/gtk/fast/clip/001-expected.txt:
+        * platform/gtk/fast/clip/004-expected.txt:
+        * platform/gtk/fast/clip/006-expected.txt:
+        * platform/gtk/fast/clip/007-expected.txt:
+        * platform/gtk/fast/clip/008-expected.txt:
+        * platform/gtk/fast/clip/009-expected.txt:
+        * platform/gtk/fast/clip/010-expected.txt:
+        * platform/gtk/fast/clip/011-expected.txt:
+        * platform/gtk/fast/clip/012-expected.txt:
+        * platform/gtk/fast/clip/013-expected.txt:
+        * platform/gtk/fast/clip/014-expected.txt:
+        * platform/gtk/fast/clip/nestedTransparencyClip-expected.txt:
+        * platform/gtk/fast/clip/outline-overflowClip-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-preventDefault-expected.txt:
+        * platform/gtk/fast/invalid/014-expected.txt:
+        * platform/gtk/fast/layers/layer-visibility-expected.txt:
+        * platform/gtk/fast/repaint/layout-state-scrolloffset-expected.txt:
+        * platform/gtk/fast/repaint/layout-state-scrolloffset2-expected.txt:
+        * platform/gtk/fast/repaint/layout-state-scrolloffset3-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug51140-expected.txt:
+
 2011-03-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         Update Qt specific expected results after r81992.

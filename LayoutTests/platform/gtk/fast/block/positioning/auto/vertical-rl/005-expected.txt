@@ -10,13 +10,13 @@ layer at (0,0) size 800x600
         text run at (38,0) width 322: "olive boxes and the green box should be 100x100. "
         text run at (38,322) width 218: "The black box's left side should be"
         text run at (57,0) width 577: "aligned with the last line in this paragraph and its top side should begin right after the end of"
-        text run at (76,0) width 88: "this sentence. "
+        text run at (76,0) width 84: "this sentence."
       RenderText {#text} at (0,0) size 0x0
-layer at (376,96) size 340x240
-  RenderBlock (positioned) {SPAN} at (84,96) size 340x240 [border: (20px solid #000000)]
-layer at (496,216) size 100x100
+layer at (376,92) size 340x240
+  RenderBlock (positioned) {SPAN} at (84,92) size 340x240 [border: (20px solid #000000)]
+layer at (496,212) size 100x100
   RenderBlock (positioned) {DIV} at (120,120) size 100x100 [bgcolor=#008000]
-layer at (596,216) size 100x100
+layer at (596,212) size 100x100
   RenderBlock (positioned) {DIV} at (20,120) size 100x100 [bgcolor=#808000]
-layer at (396,216) size 100x100
+layer at (396,212) size 100x100
   RenderBlock (positioned) {DIV} at (220,120) size 100x100 [bgcolor=#808000]

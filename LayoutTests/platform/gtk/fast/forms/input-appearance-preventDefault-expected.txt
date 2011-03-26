@@ -4,10 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBR {BR} at (0,0) size 0x19
-      RenderText {#text} at (0,19) size 666x19
-        text run at (0,19) width 666: "This tests that preventDefault called onmousedown will prevent a caret from being placed in the text field."
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
+      RenderText {#text} at (0,19) size 670x19
+        text run at (0,19) width 670: "This tests that preventDefault called onmousedown will prevent a caret from being placed in the text field. "
+      RenderText {#text} at (670,19) size 4x19
+        text run at (670,19) width 4: " "
+      RenderText {#text} at (674,19) size 4x19
+        text run at (674,19) width 4: "    "
 layer at (12,52) size 194x25
   RenderTextControl {INPUT} at (12,52) size 194x25 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
 layer at (15,55) size 188x19
