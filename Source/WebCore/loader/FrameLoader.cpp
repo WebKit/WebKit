@@ -1409,7 +1409,7 @@ void FrameLoader::load(const ResourceRequest& request, const SubstituteData& sub
     m_loadType = FrameLoadTypeStandard;
     RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(request, substituteData);
     if (lockHistory && m_documentLoader)
-        loader->setClientRedirectSourceForHistory(m_documentLoader->didCreateGlobalHistoryEntry() ? m_documentLoader->urlForHistory() : m_documentLoader->clientRedirectSourceForHistory());
+        loader->setClientRedirectSourceForHistory(m_documentLoader->didCreateGlobalHistoryEntry() ? m_documentLoader->urlForHistory().string() : m_documentLoader->clientRedirectSourceForHistory());
     load(loader.get());
 }
 
@@ -1433,7 +1433,7 @@ void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, const
 {
     RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(request, SubstituteData());
     if (lockHistory && m_documentLoader)
-        loader->setClientRedirectSourceForHistory(m_documentLoader->didCreateGlobalHistoryEntry() ? m_documentLoader->urlForHistory() : m_documentLoader->clientRedirectSourceForHistory());
+        loader->setClientRedirectSourceForHistory(m_documentLoader->didCreateGlobalHistoryEntry() ? m_documentLoader->urlForHistory().string() : m_documentLoader->clientRedirectSourceForHistory());
 
     loader->setTriggeringAction(action);
     if (m_documentLoader)
