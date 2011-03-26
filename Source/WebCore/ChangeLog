@@ -1,3 +1,15 @@
+2011-03-26  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Remove GraphicsLayerTextureMapper::nativeLayer
+        https://bugs.webkit.org/show_bug.cgi?id=57141
+
+        GraphicsLayer::nativeLayer was removed in r73380.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+
 2011-03-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

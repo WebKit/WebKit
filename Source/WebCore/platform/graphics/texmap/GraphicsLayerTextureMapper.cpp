@@ -366,13 +366,6 @@ void GraphicsLayerTextureMapper::syncCompositingState()
 }
 
 /* \reimp (GraphicsLayer.h)
- */
-NativeLayer GraphicsLayerTextureMapper::nativeLayer() const
-{
-    return m_node.get();
-}
-
-/* \reimp (GraphicsLayer.h)
 */
 PlatformLayer* GraphicsLayerTextureMapper::platformLayer() const
 {

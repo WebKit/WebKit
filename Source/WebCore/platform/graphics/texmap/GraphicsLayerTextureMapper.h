@@ -81,7 +81,6 @@ public:
     virtual void syncCompositingState();
     virtual void syncCompositingStateForThisLayerOnly();
     virtual void setName(const String& name);
-    virtual NativeLayer nativeLayer() const;
     virtual PlatformLayer* platformLayer() const;
 
     virtual bool addAnimation(const KeyframeValueList&, const IntSize& /*boxSize*/, const Animation*, const String& /*keyframesName*/, double /*timeOffset*/) { return false; }
