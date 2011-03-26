@@ -202,6 +202,8 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 
     if (displayingPoster)
         paintIntoRect(paintInfo.context, rect);
+    else if (document()->view() && document()->view()->paintBehavior() & PaintBehaviorFlattenCompositingLayers)
+        mediaPlayer->paintCurrentFrameInContext(paintInfo.context, rect);
     else
         mediaPlayer->paint(paintInfo.context, rect);
 }

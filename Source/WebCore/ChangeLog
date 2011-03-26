@@ -1,3 +1,16 @@
+2011-03-26  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        RenderMedia should obey the view's flattening bit.
+        https://bugs.webkit.org/show_bug.cgi?id=57156
+
+        Paint the current frame in software when the associated FrameView
+        has its flattening bit set.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::paintReplaced):
+
 2011-03-26  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix for !ENABLE(DOM_STORAGE).
