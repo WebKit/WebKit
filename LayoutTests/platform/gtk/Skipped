@@ -1346,3 +1346,7 @@ http/tests/inspector/network/network-size.html
 # https://bugs.webkit.org/show_bug.cgi?id=56966
 # window.clientWidth and window.clientHeight do not include scrollbar allocation
 fast/overflow/horizontal-scroll-after-back.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=57160 
+# [GTK] layoutTestController.overridePreference("WebKitDefaultFontSize"...) does not take into account screen DPI
+fast/harness/override-preferences-2.html

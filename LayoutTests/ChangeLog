@@ -1,5 +1,14 @@
 2011-03-26  Martin Robinson  <mrobinson@igalia.com>
 
+        [GTK] layoutTestController.overridePreference("WebKitDefaultFontSize"...) does not take into account screen DPI
+        https://bugs.webkit.org/show_bug.cgi?id=57160
+
+        Skip failing test. This bug was uncovered by r82033.
+
+        * platform/gtk/Skipped:
+
+2011-03-26  Martin Robinson  <mrobinson@igalia.com>
+
         Remove a test from the GTK+ skipped list that no longer exists.
 
         * platform/gtk/Skipped: Update the skipped list.
