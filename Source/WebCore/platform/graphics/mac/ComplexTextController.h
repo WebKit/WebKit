@@ -175,6 +175,7 @@ private:
     unsigned m_characterInCurrentGlyph;
     float m_expansion;
     float m_expansionPerOpportunity;
+    float m_leadingExpansion;
     bool m_afterExpansion;
 
     HashSet<const SimpleFontData*>* m_fallbackFonts;

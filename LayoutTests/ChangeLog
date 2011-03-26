@@ -1,3 +1,15 @@
+2011-03-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9134330> Missing expansion before ideograph at the beginning or end of a text run
+        https://bugs.webkit.org/show_bug.cgi?id=57106
+
+        * fast/text/justify-ideograph-leading-expansion.html: Added.
+        * platform/mac/fast/text/justify-ideograph-leading-expansion-expected.checksum: Added.
+        * platform/mac/fast/text/justify-ideograph-leading-expansion-expected.png: Added.
+        * platform/mac/fast/text/justify-ideograph-leading-expansion-expected.txt: Added.
+
 2011-03-25  Andy Estes  <aestes@apple.com>
 
         plugins/embed-prefers-plugins-for-images.html fails on Windows.

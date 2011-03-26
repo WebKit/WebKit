@@ -347,6 +347,8 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             RenderText* rt = toRenderText(r->m_object);
 
             if (textAlign == JUSTIFY && r != trailingSpaceRun) {
+                if (!isAfterExpansion)
+                    static_cast<InlineTextBox*>(r->m_box)->setCanHaveLeadingExpansion(true);
                 unsigned opportunitiesInRun = Font::expansionOpportunityCount(rt->characters() + r->m_start, r->m_stop - r->m_start, r->m_box->direction(), isAfterExpansion);
                 expansionOpportunities.append(opportunitiesInRun);
                 expansionOpportunityCount += opportunitiesInRun;
@@ -480,7 +482,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             break;
     }
 
-    if (expansionOpportunityCount) {
+    if (expansionOpportunityCount && availableLogicalWidth > totalLogicalWidth) {
         size_t i = 0;
         for (BidiRun* r = firstRun; r; r = r->next()) {
             if (!r->m_box || r == trailingSpaceRun)

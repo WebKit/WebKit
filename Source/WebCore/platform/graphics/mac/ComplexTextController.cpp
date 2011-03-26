@@ -63,7 +63,8 @@ ComplexTextController::ComplexTextController(const Font* font, const TextRun& ru
     , m_glyphInCurrentRun(0)
     , m_characterInCurrentGlyph(0)
     , m_expansion(run.expansion())
-    , m_afterExpansion(true)
+    , m_leadingExpansion(0)
+    , m_afterExpansion(!run.allowsLeadingExpansion())
     , m_fallbackFonts(fallbackFonts)
     , m_minGlyphBoundingBoxX(numeric_limits<float>::max())
     , m_maxGlyphBoundingBoxX(numeric_limits<float>::min())
@@ -73,7 +74,7 @@ ComplexTextController::ComplexTextController(const Font* font, const TextRun& ru
     if (!m_expansion)
         m_expansionPerOpportunity = 0;
     else {
-        bool isAfterExpansion = true;
+        bool isAfterExpansion = m_afterExpansion;
         unsigned expansionOpportunityCount = Font::expansionOpportunityCount(m_run.characters(), m_end, m_run.ltr() ? LTR : RTL, isAfterExpansion);
         if (isAfterExpansion && !m_run.allowsTrailingExpansion())
             expansionOpportunityCount--;
@@ -86,12 +87,16 @@ ComplexTextController::ComplexTextController(const Font* font, const TextRun& ru
 
     collectComplexTextRuns();
     adjustGlyphsAndAdvances();
+
+    m_runWidthSoFar = m_leadingExpansion;
 }
 
 int ComplexTextController::offsetForPosition(float h, bool includePartialGlyphs)
 {
     if (h >= m_totalWidth)
         return m_run.ltr() ? m_end : 0;
+
+    h -= m_leadingExpansion;
     if (h < 0)
         return m_run.ltr() ? 0 : m_end;
 
@@ -472,16 +477,21 @@ void ComplexTextController::adjustGlyphsAndAdvances()
                 // Handle justification and word-spacing.
                 if (treatAsSpace || Font::isCJKIdeographOrSymbol(ch)) {
                     // Distribute the run's total expansion evenly over all expansion opportunities in the run.
-                    if (m_expansion && (!lastGlyph || m_run.allowsTrailingExpansion())) {
+                    if (m_expansion) {
                         if (!treatAsSpace && !m_afterExpansion) {
                             // Take the expansion opportunity before this ideograph.
                             m_expansion -= m_expansionPerOpportunity;
                             m_totalWidth += m_expansionPerOpportunity;
-                            m_adjustedAdvances.last().width += m_expansionPerOpportunity;
+                            if (m_adjustedAdvances.isEmpty())
+                                m_leadingExpansion = m_expansionPerOpportunity;
+                            else
+                                m_adjustedAdvances.last().width += m_expansionPerOpportunity;
                         }
-                        m_expansion -= m_expansionPerOpportunity;
-                        advance.width += m_expansionPerOpportunity;
-                        m_afterExpansion = true;
+                        if (!lastGlyph || m_run.allowsTrailingExpansion()) {
+                            m_expansion -= m_expansionPerOpportunity;
+                            advance.width += m_expansionPerOpportunity;
+                            m_afterExpansion = true;
+                        }
                     } else
                         m_afterExpansion = false;
 

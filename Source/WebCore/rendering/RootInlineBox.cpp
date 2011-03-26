@@ -356,13 +356,6 @@ GapRects RootInlineBox::lineSelectionGap(RenderBlock* rootBlock, const IntPoint&
     return result;
 }
 
-void RootInlineBox::setHasSelectedChildren(bool b)
-{
-    if (m_hasSelectedChildren == b)
-        return;
-    m_hasSelectedChildren = b;
-}
-
 RenderObject::SelectionState RootInlineBox::selectionState()
 {
     // Walk over all of the selected boxes.

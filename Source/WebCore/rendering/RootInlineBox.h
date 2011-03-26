@@ -99,8 +99,8 @@ public:
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int);
 
-    bool hasSelectedChildren() const { return m_hasSelectedChildren; }
-    void setHasSelectedChildren(bool);
+    bool hasSelectedChildren() const { return m_hasSelectedChildrenOrCanHaveLeadingExpansion; }
+    void setHasSelectedChildren(bool hasSelectedChildren) { m_hasSelectedChildrenOrCanHaveLeadingExpansion = hasSelectedChildren; }
 
     virtual RenderObject::SelectionState selectionState();
     InlineBox* firstSelectedBox();

@@ -33,17 +33,21 @@ class RenderSVGResource;
 
 class TextRun {
 public:
-    enum TrailingExpansionBehavior {
-        AllowTrailingExpansion,
-        ForbidTrailingExpansion
+    enum ExpansionBehaviorFlags {
+        ForbidTrailingExpansion = 0 << 0,
+        AllowTrailingExpansion = 1 << 0,
+        ForbidLeadingExpansion = 0 << 1,
+        AllowLeadingExpansion = 1 << 1,
     };
 
-    TextRun(const UChar* c, int len, bool allowTabs = false, float xpos = 0, float expansion = 0, TrailingExpansionBehavior trailingExpansionBehavior = AllowTrailingExpansion, bool rtl = false, bool directionalOverride = false)
+    typedef unsigned ExpansionBehavior;
+
+    TextRun(const UChar* c, int len, bool allowTabs = false, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, bool rtl = false, bool directionalOverride = false)
         : m_characters(c)
         , m_len(len)
         , m_xpos(xpos)
         , m_expansion(expansion)
-        , m_trailingExpansionBehavior(trailingExpansionBehavior)
+        , m_expansionBehavior(expansionBehavior)
 #if ENABLE(SVG)
         , m_horizontalGlyphStretch(1)
 #endif
@@ -58,12 +62,12 @@ public:
     {
     }
 
-    TextRun(const String& s, bool allowTabs = false, float xpos = 0, float expansion = 0, TrailingExpansionBehavior trailingExpansionBehavior = AllowTrailingExpansion, bool rtl = false, bool directionalOverride = false)
+    TextRun(const String& s, bool allowTabs = false, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, bool rtl = false, bool directionalOverride = false)
         : m_characters(s.characters())
         , m_len(s.length())
         , m_xpos(xpos)
         , m_expansion(expansion)
-        , m_trailingExpansionBehavior(trailingExpansionBehavior)
+        , m_expansionBehavior(expansionBehavior)
 #if ENABLE(SVG)
         , m_horizontalGlyphStretch(1)
 #endif
@@ -94,7 +98,8 @@ public:
     bool allowTabs() const { return m_allowTabs; }
     float xPos() const { return m_xpos; }
     float expansion() const { return m_expansion; }
-    bool allowsTrailingExpansion() const { return m_trailingExpansionBehavior == AllowTrailingExpansion; }
+    bool allowsLeadingExpansion() const { return m_expansionBehavior & AllowLeadingExpansion; }
+    bool allowsTrailingExpansion() const { return m_expansionBehavior & AllowTrailingExpansion; }
     bool rtl() const { return m_rtl; }
     bool ltr() const { return !m_rtl; }
     bool directionalOverride() const { return m_directionalOverride; }
@@ -121,7 +126,7 @@ private:
     // the text line is not the same as left start of the containing block.
     float m_xpos;  
     float m_expansion;
-    TrailingExpansionBehavior m_trailingExpansionBehavior;
+    ExpansionBehavior m_expansionBehavior;
 #if ENABLE(SVG)
     float m_horizontalGlyphStretch;
 #endif

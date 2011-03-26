@@ -1,3 +1,55 @@
+2011-03-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9134330> Missing expansion before ideograph at the beginning or end of a text run
+        https://bugs.webkit.org/show_bug.cgi?id=57106
+
+        Test: fast/text/justify-ideograph-leading-expansion.html
+
+        * platform/graphics/TextRun.h:
+        Replaced TrailingExpansionBehavior enum with ExpansionBehavior flags.
+        (WebCore::TextRun::TextRun): Constructors now take an expansionBehavior parameter.
+        (WebCore::TextRun::allowsLeadingExpansion): Added this accessor.
+        (WebCore::TextRun::allowsTrailingExpansion): Changed to use the m_expansionBehavior member.
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::WidthIterator): Initialize m_isAfterExpansion from the TextRun, allowing
+        leading expansion when appropriate.
+        (WebCore::WidthIterator::advance): Moved the last-glyph-in-run check to only apply to expansion
+        after the glyph, not expansion before the glyph, since that is not trailing expansion. Added code
+        to handle expansion before the first glyph.
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::ComplexTextController): Initialize m_afterExpansion from the
+        TextRun, allowing leading expansion when appropriate. Set m_runWidthSoFar to the leading expansion.
+        (WebCore::ComplexTextController::offsetForPosition): Account for leading expansion.
+        (WebCore::ComplexTextController::adjustGlyphsAndAdvances): Similar to WidthIterator::advance()
+        * platform/graphics/mac/ComplexTextController.h: Added m_leadingExpansion member variable.
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox): Renamed m_hasSelectedChildren to m_hasSelectedChildrenOrCanHaveLeadingExpansion
+        to reflect the use of this bit by InlineTextBox.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect): Replaced calls to trailingExpansionBehavior() with expansionBehavior().
+        (WebCore::InlineTextBox::paint): Ditto.
+        (WebCore::InlineTextBox::paintSelection): Ditto.
+        (WebCore::InlineTextBox::paintCompositionBackground): Ditto.
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker): Ditto.
+        (WebCore::InlineTextBox::paintTextMatchMarker): Ditto.
+        (WebCore::InlineTextBox::computeRectForReplacementMarker): Ditto.
+        (WebCore::InlineTextBox::offsetForPosition): Ditto.
+        (WebCore::InlineTextBox::positionForOffset): Ditto.
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::canHaveLeadingExpansion): Added this accessor.
+        (WebCore::InlineTextBox::setCanHaveLeadingExpansion): Ditto.
+        (WebCore::InlineTextBox::expansionBehavior): Replaced trailingExpansionBehavior() with this function,
+        which also considers canHaveLeadingExpansion().
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine): Call setCanHaveLeadingExpansion() on
+        text boxes that can have leading expansion. Avoid negative expansion.
+        * rendering/RootInlineBox.cpp:
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::hasSelectedChildren): Updated for renaming of the flag.
+        (WebCore::RootInlineBox::setHasSelectedChildren): Ditto.
+
 2011-03-23  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

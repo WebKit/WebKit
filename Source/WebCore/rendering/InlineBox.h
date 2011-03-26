@@ -53,7 +53,7 @@ public:
 #endif
         , m_isHorizontal(true)
         , m_endsWithBreak(false)
-        , m_hasSelectedChildren(false)
+        , m_hasSelectedChildrenOrCanHaveLeadingExpansion(false)
         , m_hasEllipsisBoxOrHyphen(false)
         , m_dirOverride(false)
         , m_isText(false)
@@ -87,7 +87,7 @@ public:
 #endif
         , m_isHorizontal(isHorizontal)
         , m_endsWithBreak(false)
-        , m_hasSelectedChildren(false)   
+        , m_hasSelectedChildrenOrCanHaveLeadingExpansion(false)   
         , m_hasEllipsisBoxOrHyphen(false)
         , m_dirOverride(false)
         , m_isText(false)
@@ -340,8 +340,9 @@ protected:
 
     // for RootInlineBox
     bool m_endsWithBreak : 1;  // Whether the line ends with a <br>.
-    bool m_hasSelectedChildren : 1; // Whether we have any children selected (this bit will also be set if the <br> that terminates our line is selected).
-    bool m_hasEllipsisBoxOrHyphen : 1; 
+    // shared between RootInlineBox and InlineTextBox
+    bool m_hasSelectedChildrenOrCanHaveLeadingExpansion : 1; // Whether we have any children selected (this bit will also be set if the <br> that terminates our line is selected).
+    bool m_hasEllipsisBoxOrHyphen : 1;
 
     // for InlineTextBox
 public:

@@ -47,7 +47,7 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const
     , m_end(run.length())
     , m_currentCharacter(0)
     , m_runWidthSoFar(0)
-    , m_isAfterExpansion(true)
+    , m_isAfterExpansion(!run.allowsLeadingExpansion())
     , m_fallbackFonts(fallbackFonts)
     , m_accountForGlyphBounds(accountForGlyphBounds)
     , m_maxGlyphBoundingBoxY(numeric_limits<float>::min())
@@ -62,7 +62,7 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const
     if (!m_expansion)
         m_expansionPerOpportunity = 0;
     else {
-        bool isAfterExpansion = true;
+        bool isAfterExpansion = m_isAfterExpansion;
         unsigned expansionOpportunityCount = Font::expansionOpportunityCount(m_run.characters(), m_end, m_run.ltr() ? LTR : RTL, isAfterExpansion);
         if (isAfterExpansion && !m_run.allowsTrailingExpansion())
             expansionOpportunityCount--;
@@ -164,18 +164,24 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             bool treatAsSpace = Font::treatAsSpace(c);
             if (treatAsSpace || (expandAroundIdeographs && Font::isCJKIdeographOrSymbol(c))) {
                 // Distribute the run's total expansion evenly over all expansion opportunities in the run.
-                if (m_expansion && (m_run.allowsTrailingExpansion() || (m_run.ltr() && currentCharacter + clusterLength < static_cast<size_t>(m_run.length()))
-                    || (m_run.rtl() && currentCharacter))) {
+                if (m_expansion) {
                     if (!treatAsSpace && !m_isAfterExpansion) {
                         // Take the expansion opportunity before this ideograph.
                         m_expansion -= m_expansionPerOpportunity;
                         m_runWidthSoFar += m_expansionPerOpportunity;
-                        if (glyphBuffer)
-                            glyphBuffer->expandLastAdvance(m_expansionPerOpportunity);
+                        if (glyphBuffer) {
+                            if (glyphBuffer->isEmpty())
+                                glyphBuffer->add(fontData->spaceGlyph(), fontData, m_expansionPerOpportunity);
+                            else
+                                glyphBuffer->expandLastAdvance(m_expansionPerOpportunity);
+                        }
                     }
-                    m_expansion -= m_expansionPerOpportunity;
-                    width += m_expansionPerOpportunity;
-                    m_isAfterExpansion = true;
+                    if (m_run.allowsTrailingExpansion() || (m_run.ltr() && currentCharacter + clusterLength < static_cast<size_t>(m_run.length()))
+                        || (m_run.rtl() && currentCharacter)) {
+                        m_expansion -= m_expansionPerOpportunity;
+                        width += m_expansionPerOpportunity;
+                        m_isAfterExpansion = true;
+                    }
                 } else
                     m_isAfterExpansion = false;
 

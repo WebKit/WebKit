@@ -69,6 +69,10 @@ public:
 
     bool hasHyphen() const { return m_hasEllipsisBoxOrHyphen; }
     void setHasHyphen(bool hasHyphen) { m_hasEllipsisBoxOrHyphen = hasHyphen; }
+
+    bool canHaveLeadingExpansion() const { return m_hasSelectedChildrenOrCanHaveLeadingExpansion; }
+    void setCanHaveLeadingExpansion(bool canHaveLeadingExpansion) { m_hasSelectedChildrenOrCanHaveLeadingExpansion = canHaveLeadingExpansion; }
+
     static inline bool compareByStart(const InlineTextBox* first, const InlineTextBox* second) { return first->start() < second->start(); }
 
     virtual int baselinePosition(FontBaseline) const;
@@ -158,7 +162,11 @@ private:
     void paintTextMatchMarker(GraphicsContext*, const FloatPoint& boxOrigin, const DocumentMarker&, RenderStyle*, const Font&);
     void computeRectForReplacementMarker(const DocumentMarker&, RenderStyle*, const Font&);
 
-    TextRun::TrailingExpansionBehavior trailingExpansionBehavior() const { return m_expansion && nextLeafChild() ? TextRun::AllowTrailingExpansion : TextRun::ForbidTrailingExpansion; }
+    TextRun::ExpansionBehavior expansionBehavior() const
+    {
+        return (canHaveLeadingExpansion() ? TextRun::AllowLeadingExpansion : TextRun::ForbidLeadingExpansion)
+            | (m_expansion && nextLeafChild() ? TextRun::AllowTrailingExpansion : TextRun::ForbidTrailingExpansion);
+    }
 };
 
 inline RenderText* InlineTextBox::textRenderer() const
