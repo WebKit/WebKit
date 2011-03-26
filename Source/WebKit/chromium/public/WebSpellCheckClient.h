@@ -31,6 +31,8 @@
 #ifndef WebSpellCheckClient_h
 #define WebSpellCheckClient_h
 
+#include "WebString.h"
+
 namespace WebKit {
 
 class WebString;
