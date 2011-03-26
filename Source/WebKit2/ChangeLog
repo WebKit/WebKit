@@ -1,3 +1,17 @@
+2011-03-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        If a user doesn't have a Database/LocalStorage directory, it can't be created (sandbox violations)
+        <rdar://problem/9127411>
+        https://bugs.webkit.org/show_bug.cgi?id=57164
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::appendSandboxParameterPath):
+        (WebKit::initializeSandbox):
+        Use -[NSString stringByResolvingSymlinksInPath] instead of realpath to ensure we can resolve
+        symlinks even if the file/directory doesn't exist yet.
+
 2011-03-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
