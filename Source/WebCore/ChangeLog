@@ -1,3 +1,21 @@
+2011-03-25  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        MediaPlayerPrivateQuickTimeVisualContext should use the Application Cache during load.
+        https://bugs.webkit.org/show_bug.cgi?id=57047
+
+        No new tests.
+        
+        When loading a URL, checkk osee if the Appplication Cache has a version of that URL
+        stored; if so, use the local path to that cached media instead of the remote URL.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::loadInternal):
+        * platform/graphics/win/QTMovie.cpp:
+        (QTMovie::loadPath):
+        * platform/graphics/win/QTMovie.h:
+
 2011-03-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

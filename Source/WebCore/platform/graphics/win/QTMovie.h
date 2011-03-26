@@ -70,6 +70,7 @@ public:
     void addClient(QTMovieClient*);
     void removeClient(QTMovieClient*);
 
+    void loadPath(const UChar* url, int len, bool preservesPitch);
     void load(const UChar* url, int len, bool preservesPitch);
     void load(CFURLRef, bool preservesPitch);
 

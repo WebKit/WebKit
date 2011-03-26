@@ -442,6 +442,17 @@ void QTMovie::getNaturalSize(int& width, int& height)
     height = (rect.bottom - rect.top) * m_private->m_heightScaleFactor;
 }
 
+void QTMovie::loadPath(const UChar* url, int len, bool preservesPitch)
+{
+    CFStringRef urlStringRef = CFStringCreateWithCharacters(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(url), len);
+    CFURLRef cfURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, urlStringRef, kCFURLWindowsPathStyle, false);
+
+    load(cfURL, preservesPitch);
+
+    CFRelease(cfURL);
+    CFRelease(urlStringRef);
+}
+
 void QTMovie::load(const UChar* url, int len, bool preservesPitch)
 {
     CFStringRef urlStringRef = CFStringCreateWithCharacters(kCFAllocatorDefault, reinterpret_cast<const UniChar*>(url), len);
