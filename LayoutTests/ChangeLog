@@ -1,3 +1,9 @@
+2011-03-25  Vincent Scheib  <scheib@chromium.org>
+
+        Chromium test_expectations: bug added for tests impacted by r81992
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-25  Andy Estes  <aestes@apple.com>
 
         plugins/embed-prefers-plugins-for-images.html only passing on SnowLeopard.

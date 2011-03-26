@@ -3277,3 +3277,42 @@ BUGCR77095 WIN LINUX : fast/block/lineboxcontain/glyphs.html = IMAGE+TEXT
 // Chromium patches in range [r79428, r79442]
 BUGCR77468 : fast/forms/input-file-directory-upload.html = TIMEOUT
 
+// Temprary bug holding to deal with many changed tests due to
+// http://build.chromium.org/p/chromium.webkit/builders/Webkit%20Linux/builds/4837
+// http://trac.webkit.org/changeset/81992
+BUGCR77494 : fast/block/positioning/056.html = FAIL
+BUGCR77494 : fast/block/positioning/auto/005.html = FAIL
+BUGCR77494 : fast/block/positioning/auto/006.html = FAIL
+BUGCR77494 : fast/block/positioning/auto/vertical-lr/005.html = FAIL
+BUGCR77494 : fast/block/positioning/auto/vertical-lr/006.html = FAIL
+BUGCR77494 : fast/block/positioning/auto/vertical-rl/005.html = FAIL
+BUGCR77494 : fast/block/positioning/auto/vertical-rl/006.html = FAIL
+BUGCR77494 : fast/block/positioning/fixed-positioning-scrollbar-bug.html = FAIL
+BUGCR77494 : fast/block/positioning/inline-block-relposition.html = FAIL
+BUGCR77494 : fast/block/positioning/relative-overflow-block.html = FAIL
+BUGCR77494 : fast/block/positioning/trailing-space-test.html = FAIL
+BUGCR77494 : fast/clip/001.html = FAIL
+BUGCR77494 : fast/clip/004.html = FAIL
+BUGCR77494 : fast/clip/006.html = FAIL
+BUGCR77494 : fast/clip/007.html = FAIL
+BUGCR77494 : fast/clip/008.html = FAIL
+BUGCR77494 : fast/clip/009.html = FAIL
+BUGCR77494 : fast/clip/010.html = FAIL
+BUGCR77494 : fast/clip/011.html = FAIL
+BUGCR77494 : fast/clip/012.html = FAIL
+BUGCR77494 : fast/clip/013.html = FAIL
+BUGCR77494 : fast/clip/014.html = FAIL
+BUGCR77494 : fast/clip/nestedTransparencyClip.html = FAIL
+BUGCR77494 : fast/clip/outline-overflowClip.html = FAIL
+BUGCR77494 : fast/forms/input-appearance-preventDefault.html = FAIL
+BUGCR77494 : fast/invalid/014.html = FAIL
+BUGCR77494 : fast/layers/layer-visibility.html = FAIL
+BUGCR77494 : fast/repaint/layout-state-scrolloffset.html = FAIL
+BUGCR77494 : fast/repaint/layout-state-scrolloffset2.html = FAIL
+BUGCR77494 : fast/repaint/layout-state-scrolloffset3.html = FAIL
+BUGCR77494 : tables/mozilla/bugs/bug51140.html = FAIL
+// Not included in tests modified by 81992, but started failing at same time:
+BUGCR77494 : fast/block/positioning/absolute-in-inline-rtl-4.html = FAIL
+BUGCR77494 : fast/repaint/transform-replaced-shadows.html = FAIL
+BUGCR77494 : media/audio-repaint.html = FAIL
+
