@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StorageTracker.h"
 
+#if ENABLE(DOM_STORAGE)
+
 #include "DatabaseThread.h"
 #include "FileSystem.h"
 #include "LocalStorageTask.h"
@@ -533,3 +535,5 @@ void StorageTracker::setIsActive(bool flag)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(DOM_STORAGE)

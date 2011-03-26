@@ -1,3 +1,10 @@
+2011-03-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix for !ENABLE(DOM_STORAGE).
+
+        * storage/StorageTracker.cpp:
+            Added #if ENABLE(DOM_STORAGE) like in the other storage files.
+
 2011-03-26  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Benjamin Poulain.
