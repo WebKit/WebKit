@@ -26,10 +26,10 @@
 #import "config.h"
 #import "PlatformCertificateInfo.h"
 
+#import "ArgumentCodersCF.h"
 #import "ArgumentDecoder.h"
 #import "ArgumentEncoder.h"
 #import <WebKitSystemInterface.h>
-#import <Security/Security.h>
 
 using namespace WebCore;
 
@@ -51,45 +51,27 @@ PlatformCertificateInfo::PlatformCertificateInfo(CFArrayRef certificateChain)
 
 void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    // Special case no certificates, 
     if (!m_certificateChain) {
-        encoder->encodeUInt64(std::numeric_limits<uint64_t>::max());
+        encoder->encodeBool(false);
         return;
     }
 
-    uint64_t length = CFArrayGetCount(m_certificateChain.get());
-    encoder->encodeUInt64(length);
-
-    for (size_t i = 0; i < length; ++i) {
-        RetainPtr<CFDataRef> data(AdoptCF, SecCertificateCopyData((SecCertificateRef)CFArrayGetValueAtIndex(m_certificateChain.get(), i)));
-        encoder->encodeBytes(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
-    }
+    encoder->encodeBool(true);
+    CoreIPC::encode(encoder, m_certificateChain.get());
 }
 
 bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder* decoder, PlatformCertificateInfo& c)
 {
-    uint64_t length;
-    if (!decoder->decode(length))
+    bool hasCertificateChain;
+    if (!decoder->decode(hasCertificateChain))
         return false;
 
-    if (length == std::numeric_limits<uint64_t>::max()) {
-        // This is the no certificates case.
+    if (!hasCertificateChain)
         return true;
-    }
 
-    RetainPtr<CFMutableArrayRef> array(AdoptCF, CFArrayCreateMutable(0, length, &kCFTypeArrayCallBacks));
+    if (!CoreIPC::decode(decoder, c.m_certificateChain))
+        return false;
 
-    for (size_t i = 0; i < length; ++i) {
-        Vector<uint8_t> bytes;
-        if (!decoder->decodeBytes(bytes))
-            return false;
-
-        RetainPtr<CFDataRef> data(AdoptCF, CFDataCreateWithBytesNoCopy(0, bytes.data(), bytes.size(), kCFAllocatorNull));
-        RetainPtr<SecCertificateRef> certificate(AdoptCF, SecCertificateCreateWithData(0, data.get()));
-        CFArrayAppendValue(array.get(), certificate.get());
-    }
-
-    c.m_certificateChain = array;
     return true;
 }
 

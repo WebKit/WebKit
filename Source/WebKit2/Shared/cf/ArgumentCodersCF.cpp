@@ -48,6 +48,9 @@ enum CFType {
     CFNumber,
     CFString,
     CFURL,
+#if PLATFORM(MAC)
+    SecCertificate,
+#endif
     Null,
     Unknown,
 };
@@ -76,6 +79,10 @@ static CFType typeFromCFTypeRef(CFTypeRef type)
         return CFString;
     if (typeID == CFURLGetTypeID())
         return CFURL;
+#if PLATFORM(MAC)
+    if (typeID == SecCertificateGetTypeID())
+        return SecCertificate;
+#endif
 
     ASSERT_NOT_REACHED();
     return Unknown;
@@ -110,6 +117,11 @@ static void encode(ArgumentEncoder* encoder, CFTypeRef typeRef)
     case CFURL:
         encode(encoder, static_cast<CFURLRef>(typeRef));
         return;
+#if PLATFORM(MAC)
+    case SecCertificate:
+        encode(encoder, (SecCertificateRef)typeRef);
+        return;
+#endif
     case Null:
         return;
     case Unknown:
@@ -178,6 +190,15 @@ static bool decode(ArgumentDecoder* decoder, RetainPtr<CFTypeRef>& result)
         result.adoptCF(url.leakRef());
         return true;
     }
+#if PLATFORM(MAC)
+    case SecCertificate: {
+        RetainPtr<SecCertificateRef> certificate;
+        if (!decode(decoder, certificate))
+            return false;
+        result.adoptCF(certificate.leakRef());
+        return true;
+    }
+#endif
     case Null:
         result = tokenNullTypeRef();
         return true;
@@ -459,5 +480,22 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<CFURLRef>& result)
     return true;
 }
 
-} // namespace CoreIPC
+#if PLATFORM(MAC)
+void encode(ArgumentEncoder* encoder, SecCertificateRef certificate)
+{
+    RetainPtr<CFDataRef> data(AdoptCF, SecCertificateCopyData(certificate));
+    encode(encoder, data.get());
+}
 
+bool decode(ArgumentDecoder* decoder, RetainPtr<SecCertificateRef>& result)
+{
+    RetainPtr<CFDataRef> data;
+    if (!decode(decoder, data))
+        return false;
+
+    result.adoptCF(SecCertificateCreateWithData(0, data.get()));
+    return true;
+}
+#endif
+
+} // namespace CoreIPC

@@ -28,6 +28,10 @@
 
 #include <wtf/RetainPtr.h>
 
+#if PLATFORM(MAC)
+#include <Security/SecCertificate.h>
+#endif
+
 namespace CoreIPC {
 
 class ArgumentEncoder;
@@ -60,6 +64,12 @@ bool decode(ArgumentDecoder*, RetainPtr<CFStringRef>& result);
 // CFURLRef
 void encode(ArgumentEncoder*, CFURLRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFURLRef>& result);
+
+#if PLATFORM(MAC)
+// SecCertificateRef
+void encode(ArgumentEncoder*, SecCertificateRef);
+bool decode(ArgumentDecoder*, RetainPtr<SecCertificateRef>& result);
+#endif
 
 CFTypeRef tokenNullTypeRef();
 
