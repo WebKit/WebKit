@@ -1766,6 +1766,9 @@ void WebPageProxy::runJavaScriptAlert(uint64_t frameID, const String& message)
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
+    // Since runJavaScriptAlert() can spin a nested run loop we need to turn off the responsiveness timer.
+    process()->responsivenessTimer()->stop();
+
     m_uiClient.runJavaScriptAlert(this, message, frame);
 }
 
@@ -1774,6 +1777,9 @@ void WebPageProxy::runJavaScriptConfirm(uint64_t frameID, const String& message,
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
+    // Since runJavaScriptConfirm() can spin a nested run loop we need to turn off the responsiveness timer.
+    process()->responsivenessTimer()->stop();
+
     result = m_uiClient.runJavaScriptConfirm(this, message, frame);
 }
 
@@ -1781,6 +1787,9 @@ void WebPageProxy::runJavaScriptPrompt(uint64_t frameID, const String& message, 
 {
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
+
+    // Since runJavaScriptPrompt() can spin a nested run loop we need to turn off the responsiveness timer.
+    process()->responsivenessTimer()->stop();
 
     result = m_uiClient.runJavaScriptPrompt(this, message, defaultValue, frame);
 }

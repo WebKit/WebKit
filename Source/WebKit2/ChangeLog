@@ -1,3 +1,17 @@
+2011-03-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Web process considered unresponsive (SPOD shown) when displaying a JavaScript alert() as a result of a click
+        <rdar://problem/9067557>
+        https://bugs.webkit.org/show_bug.cgi?id=57166
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        Invalidate the responsiveness timer before calling out to the client.
+
 2011-03-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
