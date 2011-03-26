@@ -145,6 +145,7 @@ HRESULT STDMETHODCALLTYPE WebScrollBar::setValue(
     /* [in] */ int value)
 {
     m_currentPosition = value;
+    ScrollableArea::scrollToOffsetWithoutAnimation(m_scrollBar->orientation(), m_currentPosition);
     return S_OK;
 }
 

@@ -1,3 +1,14 @@
+2011-03-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        WebScrollBar not updating when calling WebScrollBar::setValue.
+        <rdar://problem/9143871>
+
+        * WebScrollBar.cpp:
+        (WebScrollBar::setValue):
+        Call scrollToOffsetWithoutAnimation to actually update the scroll position.
+
 2011-03-25  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adele Peterson.
