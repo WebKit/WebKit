@@ -1,3 +1,9 @@
+2011-03-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix.
+
+        * CMakeListsWinCE.txt: Added missing include directory.
+
 2011-03-25  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adele Peterson.
