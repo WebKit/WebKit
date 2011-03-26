@@ -22,16 +22,18 @@
  *
  */
 
-// FIXME: This is temporary until Chromium and QT switch to using this file.
+// FIXME: This is temporary until all ports switch to using this file.
 #if PLATFORM(CHROMIUM) && !OS(DARWIN)
 #include "chromium/FontPlatformData.h"
 #elif PLATFORM(QT)
 #include "qt/FontPlatformData.h"
+#elif PLATFORM(WIN) && OS(WINCE)
+#include "wince/FontPlatformData.h"
 #elif PLATFORM(WX)
 #include "wx/FontPlatformData.h"
-#elif PLATFORM(GTK) && USE(FREETYPE)
+#elif (PLATFORM(EFL) || PLATFORM(GTK)) && USE(FREETYPE)
 #include "freetype/FontPlatformData.h"
-#elif PLATFORM(GTK) && USE(PANGO)
+#elif (PLATFORM(EFL) || PLATFORM(GTK)) && USE(PANGO)
 #include "pango/FontPlatformData.h"
 #else
 
@@ -354,6 +356,6 @@ private:
 
 } // namespace WebCore
 
-#endif
+#endif // FontPlatformData_h
 
-#endif // PLATFORM(CHROMIUM)
+#endif
