@@ -51,6 +51,7 @@
 #include "RenderPart.h"
 #include "ResourceRequest.h"
 #include "ViewportArguments.h"
+#include "WebKitVersion.h"
 #include "ewk_private.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
@@ -73,12 +74,6 @@ FrameLoaderClientEfl::FrameLoaderClientEfl(Evas_Object *view)
     , m_pluginView(0)
     , m_hasSentResponseToPlugin(false)
 {
-}
-
-static String agentPlatform()
-{
-    notImplemented();
-    return "Unknown";
 }
 
 static String agentOS()
@@ -106,35 +101,8 @@ static String agentOS()
 
 static String composeUserAgent()
 {
-    // This is a liberal interpretation of http://www.mozilla.org/build/revised-user-agent-strings.html
-    // See also http://developer.apple.com/internet/safari/faq.html#anchor2
-
-    String ua;
-
-    // Product
-    ua += "Mozilla/5.0";
-
-    // Comment
-    ua += " (";
-    ua += agentPlatform(); // Platform
-    ua += "; ";
-    ua += agentOS(); // OS-or-CPU
-    ua += ") ";
-
-    // WebKit Product
-    // FIXME: The WebKit version is hardcoded
-    static const String webKitVersion = "525.1+";
-    ua += "AppleWebKit/" + webKitVersion;
-    ua += " (KHTML, like Gecko, ";
-    // We mention Safari since many broken sites check for it (OmniWeb does this too)
-    // We re-use the WebKit version, though it doesn't seem to matter much in practice
-    ua += "Safari/" + webKitVersion;
-    ua += ") ";
-
-    // Vendor Product
-    // ua += g_get_prgname();
-
-    return ua;
+    String webKitVersion = String::format("%d.%d", WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION);
+    return makeString("Mozilla/5.0 (", agentOS(), ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) Safari/", webKitVersion);
 }
 
 void FrameLoaderClientEfl::setCustomUserAgent(const String &agent)
