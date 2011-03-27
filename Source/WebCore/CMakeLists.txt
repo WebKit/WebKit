@@ -2101,6 +2101,16 @@ LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/XMLNSNames.cpp)
 GENERATE_DOM_NAMES(XML ${WEBCORE_DIR}/xml/xmlattrs.in)
 LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/XMLNames.cpp)
 
+
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${DERIVED_SOURCES_DIR}/WebKitVersion.h
+    MAIN_DEPENDENCY ${WEBKIT_DIR}/scripts/generate-webkitversion.pl
+    DEPENDS ${WEBKIT_DIR}/mac/Configurations/Version.xcconfig
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_DIR}/scripts/generate-webkitversion.pl --config ${WEBKIT_DIR}/mac/Configurations/Version.xcconfig --outputDir ${DERIVED_SOURCES_DIR}
+    VERBATIM)
+LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/WebKitVersion.h)
+
+
 SET(WebCore_LIBRARIES
     ${JavaScriptCore_LIBRARY_NAME}
 )

@@ -1,3 +1,14 @@
+2011-03-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [CMake] Generate WebKitVersion.h
+        https://bugs.webkit.org/show_bug.cgi?id=57128
+
+        This file will be used for the user agent string by the CMake based ports.
+
+        * CMakeLists.txt:
+
 2011-03-27  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Alexey Proskuryakov.
