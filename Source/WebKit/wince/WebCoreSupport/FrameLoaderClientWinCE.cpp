@@ -36,7 +36,10 @@
 #include "Page.h"
 #include "PluginDatabase.h"
 #include "RenderPart.h"
+#include "SystemInfo.h"
+#include "WebKitVersion.h"
 #include "WebView.h"
+#include <wtf/text/StringConcatenate.h>
 
 using namespace WebCore;
 
@@ -55,7 +58,14 @@ FrameLoaderClientWinCE::~FrameLoaderClientWinCE()
 
 String FrameLoaderClientWinCE::userAgent(const KURL&)
 {
-    return "WebKitWinCE";
+    DEFINE_STATIC_LOCAL(String, userAgentString, ());
+
+    if (userAgentString.isNull()) {
+        String webKitVersion = String::format("%d.%d", WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION);
+        userAgentString = makeString("Mozilla/5.0 (", windowsVersionForUAString(), ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko) Mobile Safari/", webKitVersion);
+    }
+
+    return userAgentString;
 }
 
 PassRefPtr<DocumentLoader> FrameLoaderClientWinCE::createDocumentLoader(const WebCore::ResourceRequest& request, const SubstituteData& substituteData)
