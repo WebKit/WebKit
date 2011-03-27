@@ -3316,6 +3316,10 @@ BUGCR77494 : fast/block/positioning/absolute-in-inline-rtl-4.html = FAIL
 BUGCR77494 WIN LINUX : fast/repaint/transform-replaced-shadows.html = IMAGE
 BUGCR77494 : media/audio-repaint.html = FAIL
 
+// New test added in r81994.
+BUGCR77582 WIN LINUX RELEASE : inspector/debugger/debugger-activation-crash2.html = TEXT
+BUGCR77582 BUG_DRT WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation-crash2.html = TEXT
+
 // New test added in r82001.
 BUGWK57137 WIN RELEASE : plugins/embed-prefers-plugins-for-images.html = TEXT
 BUGWK57137 MAC LINUX : plugins/embed-prefers-plugins-for-images.html = TEXT

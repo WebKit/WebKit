@@ -1,3 +1,14 @@
+2011-03-27  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, add new Chromium test result and expectations.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-08-t-expected.checksum:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-08-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-08-t-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-08-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-27  Rob Buis  <rwlbuis@gmail.com>
 
         Unreviewed, update improve test result.
