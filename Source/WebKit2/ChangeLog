@@ -1,3 +1,13 @@
+2011-03-26  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WKErrorCopyCFError() doesn&apos;t actually return a copy of the CFErrorRef
+        https://bugs.webkit.org/show_bug.cgi?id=57172
+
+        * Shared/API/c/cf/WKErrorCF.cpp:
+        (WKErrorCopyCFError): Use RetainPtr<> and leakRef() to return a real copy.
+
 2011-03-26  Maciej Stachowiak  <mjs@apple.com>
 
         Revert inadvertantly commited changes.

@@ -40,5 +40,6 @@ WKErrorRef WKErrorCreateWithCFError(CFErrorRef cfError)
 
 CFErrorRef WKErrorCopyCFError(CFAllocatorRef alloc, WKErrorRef error)
 {
-    return toImpl(error)->platformError().cfError();
+    RetainPtr<CFErrorRef> cfError = toImpl(error)->platformError().cfError();
+    return cfError.leakRef();
 }
