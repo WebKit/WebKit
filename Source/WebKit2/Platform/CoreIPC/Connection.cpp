@@ -84,7 +84,7 @@ private:
     bool m_didScheduleDispatchMessagesWork;
 
     struct ConnectionAndIncomingMessage {
-        Connection* connection;
+        RefPtr<Connection> connection;
         IncomingMessage incomingMessage;
     };
     Vector<ConnectionAndIncomingMessage> m_messagesToDispatchWhileWaitingForSyncReply;

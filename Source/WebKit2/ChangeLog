@@ -1,3 +1,11 @@
+2011-03-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Keep a strong reference to the connection to avoid crashes.
+
+        * Platform/CoreIPC/Connection.cpp:
+
 2011-03-26  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Sam Weinig.
