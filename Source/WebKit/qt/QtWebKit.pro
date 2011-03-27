@@ -250,6 +250,10 @@ contains(DEFINES, ENABLE_GEOLOCATION=1) {
         $$PWD/WebCoreSupport/GeolocationClientQt.cpp
 }
 
+contains(CONFIG, texmap) {
+    DEFINES += WTF_USE_TEXTURE_MAPPER=1
+}
+
 !symbian-abld:!symbian-sbsv2 {
     modfile.files = $$moduleFile
     modfile.path = $$[QMAKE_MKSPECS]/modules

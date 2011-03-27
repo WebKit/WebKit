@@ -1,3 +1,15 @@
+2011-03-27  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Build fix: Define WTF_USE_TEXTURE_MAPPER=1 when CONFIG contains texmap.
+        https://bugs.webkit.org/show_bug.cgi?id=57143
+
+        Qt WebKit uses USE(TEXTURE_MAPPER) guard. Check texmap in CONFIG and
+        define WTF_USE_TEXTURE_MAPPER=1.
+
+        * QtWebKit.pro:
+
 2011-03-27  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Benjamin Poulain.
