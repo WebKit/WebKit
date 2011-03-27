@@ -1,3 +1,16 @@
+2011-03-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QtWebKit will not compile with QT_ASCII_CAST_WARNINGS enabled
+        https://bugs.webkit.org/show_bug.cgi?id=57087
+
+        Use explicit conversion for string to avoid depending on the default codec
+        installed by the user code.
+
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp:
+        (WTR::activateFonts):
+
 2011-03-26  Maciej Stachowiak  <mjs@apple.com>
 
         Revert inadvertantly committed changes.
