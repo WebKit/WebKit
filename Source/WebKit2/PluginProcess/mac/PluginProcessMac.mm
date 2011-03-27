@@ -200,7 +200,7 @@ void PluginProcess::initializeShim()
         cocoaWindowHidden,
         carbonWindowShown,
         carbonWindowHidden,
-        setModal
+        setModal,
     };
 
     PluginProcessShimInitializeFunc initFunc = reinterpret_cast<PluginProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitPluginProcessShimInitialize"));

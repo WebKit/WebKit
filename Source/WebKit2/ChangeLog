@@ -2,6 +2,21 @@
 
         Reviewed by Sam Weinig.
 
+        Dock doesn't come back after leaving fullscreen on Hulu
+        https://bugs.webkit.org/show_bug.cgi?id=57189
+        <rdar://problem/9192413>
+
+        Port some code over from the old WebKit1 plug-in host.
+
+        * PluginProcess/mac/PluginProcessShim.mm:
+        (WebKit::shimShowMenuBar):
+        (WebKit::shimHideMenuBar):
+        (WebKit::shimIsMenuBarVisible):
+
+2011-03-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Keep a strong reference to the connection to avoid crashes.
 
         * Platform/CoreIPC/Connection.cpp:
@@ -10,7 +25,7 @@
 
         Reviewed by Sam Weinig.
 
-        WKErrorCopyCFError() doesn&apos;t actually return a copy of the CFErrorRef
+        WKErrorCopyCFError() doesn't actually return a copy of the CFErrorRef
         https://bugs.webkit.org/show_bug.cgi?id=57172
 
         * Shared/API/c/cf/WKErrorCF.cpp:
@@ -18,7 +33,7 @@
 
 2011-03-26  Maciej Stachowiak  <mjs@apple.com>
 
-        Revert inadvertantly commited changes.
+        Revert inadvertently commited changes.
 
         * WebProcess/com.apple.WebProcess.sb:
 
