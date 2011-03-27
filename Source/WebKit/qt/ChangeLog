@@ -1,5 +1,11 @@
 2011-03-27  Andreas Kling  <kling@webkit.org>
 
+        Fix build warning about IconDatabaseClient.h (wrong path.)
+
+        * QtWebKit.pro:
+
+2011-03-27  Andreas Kling  <kling@webkit.org>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         [Qt] Support for CSS color and background-color properties on select element's dropdown list

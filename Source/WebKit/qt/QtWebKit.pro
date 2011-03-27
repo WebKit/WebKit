@@ -220,7 +220,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
 
 contains(DEFINES, ENABLE_ICONDATABASE=1) {
     HEADERS += \
-        $$PWD/WebCoreSupport/IconDatabaseClient.h \
+        $$SOURCE_DIR/WebCore/loader/icon/IconDatabaseClient.h \
         $$PWD/WebCoreSupport/IconDatabaseClientQt.h
 
     SOURCES += \
