@@ -1,3 +1,15 @@
+2011-03-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9180716> REGRESSION (r80582): Angle bracket rendered upright in vertical mode
+        https://bugs.webkit.org/show_bug.cgi?id=57169
+
+        * fast/blockflow/fallback-orientation.html: Added.
+        * platform/mac/fast/blockflow/fallback-orientation-expected.checksum: Added.
+        * platform/mac/fast/blockflow/fallback-orientation-expected.png: Added.
+        * platform/mac/fast/blockflow/fallback-orientation-expected.txt: Added.
+
 2011-03-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.

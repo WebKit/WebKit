@@ -1,3 +1,16 @@
+2011-03-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9180716> REGRESSION (r80582): Angle bracket rendered upright in vertical mode
+        https://bugs.webkit.org/show_bug.cgi?id=57169
+
+        Test: fast/blockflow/fallback-orientation.html
+
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataForCharacter): If the font has vertical glyphs, use it, rather
+        than continuing down the fallback list.
+
 2011-03-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.

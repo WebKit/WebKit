@@ -96,7 +96,6 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant va
                             
                             // Shouldn't be possible to even reach this point.
                             ASSERT_NOT_REACHED();
-                            return data;
                         }
                     } else {
                         if (m_fontDescription.textOrientation() == TextOrientationVerticalRight) {
@@ -131,8 +130,8 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant va
 
                         // Shouldn't be possible to even reach this point.
                         ASSERT_NOT_REACHED();
-                        return data;
                     }
+                    return data;
                 }
 
                 if (node->isSystemFallback())
