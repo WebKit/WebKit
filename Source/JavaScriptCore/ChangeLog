@@ -1,3 +1,14 @@
+2011-03-27  Ben Taylor  <bentaylor.solx86@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57170  Fix last elements
+        in an enum to remove a trailing comma. Sun Studio 12 CC errors out.
+
+        Compile fix only, no actual code change.
+
+        * wtf/MessageQueue.h:
+
 2011-03-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

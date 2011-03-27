@@ -49,7 +49,7 @@ enum ProtectionSpaceAuthenticationScheme {
     ProtectionSpaceAuthenticationSchemeNegotiate = 6,
     ProtectionSpaceAuthenticationSchemeClientCertificateRequested = 7,
     ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested = 8,
-    ProtectionSpaceAuthenticationSchemeUnknown = 100,
+    ProtectionSpaceAuthenticationSchemeUnknown = 100
 };
   
 class ProtectionSpace {

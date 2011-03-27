@@ -59,7 +59,7 @@ namespace WebCore {
     enum CacheStoragePolicy {
         StorageAllowed,
         StorageAllowedInMemoryOnly,
-        StorageNotAllowed,
+        StorageNotAllowed
     };
     
     class ResourceHandleClient {

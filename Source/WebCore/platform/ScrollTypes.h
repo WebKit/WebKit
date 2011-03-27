@@ -119,7 +119,7 @@ namespace WebCore {
     enum ScrollbarControlStateMask {
         ActiveScrollbarState = 1,
         EnabledScrollbarState = 1 << 1,
-        PressedScrollbarState = 1 << 2,
+        PressedScrollbarState = 1 << 2
     };
 
     enum ScrollbarPart {
@@ -133,7 +133,7 @@ namespace WebCore {
         ForwardButtonEndPart = 1 << 6,
         ScrollbarBGPart = 1 << 7,
         TrackBGPart = 1 << 8,
-        AllParts = 0xffffffff,
+        AllParts = 0xffffffff
     };
 
     enum ScrollbarButtonsPlacement {

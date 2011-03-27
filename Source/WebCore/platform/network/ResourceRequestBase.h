@@ -41,7 +41,7 @@ namespace WebCore {
         UseProtocolCachePolicy, // normal load
         ReloadIgnoringCacheData, // reload
         ReturnCacheDataElseLoad, // back/forward or encoding change - allow stale data
-        ReturnCacheDataDontLoad, // results of a post - allow stale data and only use cache
+        ReturnCacheDataDontLoad  // results of a post - allow stale data and only use cache
     };
 
     class ResourceRequest;

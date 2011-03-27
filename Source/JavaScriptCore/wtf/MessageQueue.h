@@ -41,7 +41,7 @@ namespace WTF {
     enum MessageQueueWaitResult {
         MessageQueueTerminated,       // Queue was destroyed while waiting for message.
         MessageQueueTimeout,          // Timeout was specified and it expired.
-        MessageQueueMessageReceived,  // A message was successfully received and returned.
+        MessageQueueMessageReceived   // A message was successfully received and returned.
     };
 
     // The queue takes ownership of messages and transfer it to the new owner

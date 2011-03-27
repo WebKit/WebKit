@@ -32,7 +32,7 @@ namespace WebCore {
 enum EditorInsertAction {
     EditorInsertActionTyped,
     EditorInsertActionPasted,
-    EditorInsertActionDropped,
+    EditorInsertActionDropped
 };
 
 } // namespace

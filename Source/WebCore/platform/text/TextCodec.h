@@ -52,7 +52,7 @@ namespace WebCore {
         // Encodes the character as en entity as above, but escaped
         // non-alphanumeric characters. This is used in URLs.
         // For example, U+6DE would be "%26%231758%3B".
-        URLEncodedEntitiesForUnencodables,
+        URLEncodedEntitiesForUnencodables
     };
 
     typedef char UnencodableReplacementArray[32];

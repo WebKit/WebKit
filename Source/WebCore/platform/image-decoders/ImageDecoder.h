@@ -62,7 +62,7 @@ namespace WebCore {
             DisposeNotSpecified,      // Leave frame in framebuffer
             DisposeKeep,              // Leave frame in framebuffer
             DisposeOverwriteBgcolor,  // Clear frame to transparent
-            DisposeOverwritePrevious, // Clear frame to previous framebuffer
+            DisposeOverwritePrevious  // Clear frame to previous framebuffer
                                       // contents
         };
 #if USE(SKIA) || PLATFORM(QT)

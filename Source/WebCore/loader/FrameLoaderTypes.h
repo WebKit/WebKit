@@ -42,7 +42,7 @@ namespace WebCore {
     enum PolicyAction {
         PolicyUse,
         PolicyDownload,
-        PolicyIgnore,
+        PolicyIgnore
     };
 
     // NOTE: Keep in sync with WebKit/mac/WebView/WebFramePrivate.h and WebKit/win/Interfaces/IWebFramePrivate.idl
