@@ -46,10 +46,6 @@
     ;; FIXME: This should be removed when <rdar://problem/8957845> is fixed.
     (subpath (string-append (param "HOME_DIR") "/Library/Fonts"))
 
-    ;; HIToolbox wants these during shutdown
-    (subpath (string-append (param "HOME_DIR") "/Library/Input Methods"))
-    (subpath (string-append (param "HOME_DIR") "/Library/Keyboard Layouts"))
-
     ;; Extensions from UIProcess
     (extension)
 )

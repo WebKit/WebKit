@@ -1,3 +1,10 @@
+2011-03-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Revert inadvertantly committed changes.
+
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-03-26  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -274,49 +274,49 @@ my $sampleDefault = $runSample ? "run" : "do not run";
 
 my $usage = <<EOF;
 Usage: $programName [options] [testdir|testpath ...]
-  --add-platform-exceptions         Put new results for non-platform-specific failing tests into the platform-specific results directory
-  --complex-text                    Use the complex text code path for all text (Mac OS X and Windows only)
-  -c CONFIG, --configuration CONFIG Set DumpRenderTree build configuration
-  --exit-after-n-failures N         Exit after the first N failures (includes crashes) instead of running all tests
+  --add-platform-exceptions       Put new results for non-platform-specific failing tests into the platform-specific results directory
+  --complex-text                  Use the complex text code path for all text (Mac OS X and Windows only)
+  -c|--configuration config       Set DumpRenderTree build configuration
+  -g|--guard-malloc               Enable malloc guard
+  --exit-after-n-failures N       Exit after the first N failures (includes crashes) instead of running all tests
   --exit-after-n-crashes-or-timeouts N
-                                    Exit after the first N crashes instead of running all tests
-  --[no-]http                       Run (or do not run) http tests (default: $httpDefault)
-  -g, --guard-malloc                Enable malloc guard
-  --ignore-metrics                  Ignore metrics in tests
-  -i, --ignore-tests                Comma-separated list of directories or tests to ignore
-  --iterations N                    Number of times to run the set of tests (e.g. ABCABCABC)
-  --[no-]launch-safari              Launch (or do not launch) Safari to display test results (default: $launchSafariDefault)
-  -l, --leaks                       Enable leaks checking
-  -m, --merge-leak-depth ARG        Merges leak callStacks and prints the number of unique leaks beneath a callstack depth of arg.  Defaults to 5.
-  --[no-]new-test-results           Generate results for new tests
-  --nthly n                         Restart DumpRenderTree every n tests (default: $testsPerDumpTool)
-  -o, --results-directory           Output results directory (default: $testResultsDirectory)
-  -p, --pixel-tests                 Enable pixel tests
-  --platform                        Override the detected platform to use for tests and results (default: $platform)
-  --port                            Web server port to use with http tests
-  -q, --quiet                       Less verbose output
-  --reset-results                   Reset ALL results (including pixel tests if --pixel-tests is set)
-  --random                          Run the tests in a random order
-  --repeat-each N                   Number of times to run each test (e.g. AAABBBCCC)
-  --reverse                         Run the tests in reverse alphabetical order
-  --root                            Path to root tools build
-  --[no-]sample-on-timeout          Run sample on timeout (default: $sampleDefault) (Mac OS X only)
-  -1, --singly                      Isolate each test case run (implies --nthly 1 --verbose)
-  --skipped=[default|ignore|only]   Specifies how to treat the Skipped file
+                                  Exit after the first N crashes instead of running all tests
+  -h|--help                       Show this help message
+  --[no-]http                     Run (or do not run) http tests (default: $httpDefault)
+  --[no-]wait-for-httpd           Wait for httpd if some other test session is using it already (same as WEBKIT_WAIT_FOR_HTTPD=1). (default: $shouldWaitForHTTPD) 
+  -i|--ignore-tests               Comma-separated list of directories or tests to ignore
+  --iterations n                  Number of times to run the set of tests (e.g. ABCABCABC)
+  --[no-]launch-safari            Launch (or do not launch) Safari to display test results (default: $launchSafariDefault)
+  -l|--leaks                      Enable leaks checking
+  --[no-]new-test-results         Generate results for new tests
+  --nthly n                       Restart DumpRenderTree every n tests (default: $testsPerDumpTool)
+  -p|--pixel-tests                Enable pixel tests
+  --tolerance t                   Ignore image differences less than this percentage (default: $tolerance)
+  --platform                      Override the detected platform to use for tests and results (default: $platform)
+  --port                          Web server port to use with http tests
+  -q|--quiet                      Less verbose output
+  --reset-results                 Reset ALL results (including pixel tests if --pixel-tests is set)
+  -o|--results-directory          Output results directory (default: $testResultsDirectory)
+  --random                        Run the tests in a random order
+  --repeat-each n                 Number of times to run each test (e.g. AAABBBCCC)
+  --reverse                       Run the tests in reverse alphabetical order
+  --root                          Path to root tools build
+  --[no-]sample-on-timeout        Run sample on timeout (default: $sampleDefault) (Mac OS X only)
+  -1|--singly                     Isolate each test case run (implies --nthly 1 --verbose)
+  --skipped=[default|ignore|only] Specifies how to treat the Skipped file
                                      default: Tests/directories listed in the Skipped file are not tested
                                      ignore:  The Skipped file is ignored
                                      only:    Only those tests/directories listed in the Skipped file will be run
-  --slowest                         Report the 10 slowest tests
-  --[no-]strip-editing-callbacks    Remove editing callbacks from expected results
-  -t, --threaded                    Run a concurrent JavaScript thead with each test
-  --timeout t                       Sets the number of seconds before a test times out (default: $timeoutSeconds)
-  --tolerance t                     Ignore image differences less than this percentage (default: $tolerance)
-  --use-remote-links-to-tests       Link to test files within the SVN repository in the results.
-  --valgrind                        Run DumpRenderTree inside valgrind (Qt/Linux only)
-  -v, --verbose                     More verbose output (overrides --quiet)
-  --[no-]wait-for-httpd             Wait for httpd if some other test session is using it already (same as WEBKIT_WAIT_FOR_HTTPD=1). (default: $shouldWaitForHTTPD) 
-  -2, --webkit-test-runner          Use WebKitTestRunner rather than DumpRenderTree.
-  -h, --help                        Show this help message
+  --slowest                       Report the 10 slowest tests
+  --ignore-metrics                Ignore metrics in tests
+  --[no-]strip-editing-callbacks  Remove editing callbacks from expected results
+  -t|--threaded                   Run a concurrent JavaScript thead with each test
+  --timeout t                     Sets the number of seconds before a test times out (default: $timeoutSeconds)
+  --valgrind                      Run DumpRenderTree inside valgrind (Qt/Linux only)
+  -v|--verbose                    More verbose output (overrides --quiet)
+  -m|--merge-leak-depth arg       Merges leak callStacks and prints the number of unique leaks beneath a callstack depth of arg.  Defaults to 5.
+  --use-remote-links-to-tests     Link to test files within the SVN repository in the results.
+  -2|--webkit-test-runner         Use WebKitTestRunner rather than DumpRenderTree.
 EOF
 
 setConfiguration();

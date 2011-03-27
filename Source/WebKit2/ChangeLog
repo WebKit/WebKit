@@ -1,3 +1,9 @@
+2011-03-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Revert inadvertantly commited changes.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-03-26  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.
