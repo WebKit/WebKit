@@ -1,3 +1,18 @@
+2011-03-27  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Text on path positioning at zero startOffset
+        https://bugs.webkit.org/show_bug.cgi?id=56245
+
+        Since for length 0 no previous point is set, choose epsilon
+        length to get normal at starting point of the path.
+
+        Test: svg/text/text-path-middle-align.svg
+
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::normalAngleAtLength):
+
 2011-03-27  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Oliver Hunt.

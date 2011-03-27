@@ -102,7 +102,7 @@ FloatPoint Path::pointAtLength(float length, bool& ok) const
 float Path::normalAngleAtLength(float length, bool& ok) const
 {
     PathTraversalState traversalState(PathTraversalState::TraversalNormalAngleAtLength);
-    traversalState.m_desiredLength = length;
+    traversalState.m_desiredLength = length ? length : std::numeric_limits<float>::epsilon();
     apply(&traversalState, pathLengthApplierFunction);
     ok = traversalState.m_success;
     return traversalState.m_normalAngle;
