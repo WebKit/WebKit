@@ -1992,14 +1992,14 @@ bool RenderThemeMac::shouldRenderMediaControlPart(ControlPart part, Element* ele
             return false;
         break;
     case MediaRewindButtonPart:
-        return mediaElement->isFullscreen()
-            && (mediaElement->movieLoadType() == MediaPlayer::LiveStream 
-            || mediaElement->movieLoadType() == MediaPlayer::StoredStream);
+        if (mediaElement->isFullscreen())
+            return mediaElement->movieLoadType() == MediaPlayer::LiveStream 
+                || mediaElement->movieLoadType() == MediaPlayer::StoredStream;
     case MediaSeekForwardButtonPart:
     case MediaSeekBackButtonPart:
-        return mediaElement->isFullscreen() 
-            && mediaElement->movieLoadType() != MediaPlayer::StoredStream 
-            && mediaElement->movieLoadType() != MediaPlayer::LiveStream;
+        if (mediaElement->isFullscreen())
+            return mediaElement->movieLoadType() != MediaPlayer::StoredStream 
+                && mediaElement->movieLoadType() != MediaPlayer::LiveStream;
     default:
         break;
     }

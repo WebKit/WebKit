@@ -1,3 +1,13 @@
+2011-03-26  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix.
+
+        Fix a bug which was causing the "skip back" button to be missing, causing 
+        the media layout tests to fail.
+
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::shouldRenderMediaControlPart):
+
 2011-03-26  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.
