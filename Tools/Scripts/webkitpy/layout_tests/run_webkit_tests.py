@@ -34,8 +34,11 @@ import errno
 import logging
 import optparse
 import os
+import re
 import signal
 import sys
+
+from operator import attrgetter
 
 from layout_package import json_results_generator
 from layout_package import printing
@@ -423,7 +426,10 @@ def parse_args(args=None):
                    chromium_options + results_options + test_options +
                    misc_options + results_json_options +
                    old_run_webkit_tests_compat)
-    option_parser = optparse.OptionParser(option_list=option_list)
+    # Sort option list alphabetically, except try to make --no- options sort immediately after
+    # the non-no version
+    option_list.sort(key=lambda opt: re.sub('^--no-(.*)$', r'--\1-no', opt._long_opts[0]))
+    option_parser = optparse.OptionParser(option_list=option_list, formatter=optparse.IndentedHelpFormatter(max_help_position=36, width=2048))
 
     return option_parser.parse_args(args)
 

@@ -1,3 +1,15 @@
+2011-03-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Follow-up fix for crash with giant inline stylesheets - actually don't crash, and add test
+        https://bugs.webkit.org/show_bug.cgi?id=56150
+
+        Test: fast/css/giant-stylesheet-crash.html
+
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::process):
+
 2011-03-22  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

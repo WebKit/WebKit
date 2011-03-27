@@ -103,8 +103,10 @@ void StyleElement::process(Element* e)
     for (Node* c = e->firstChild(); c; c = c->nextSibling()) {
         if (isValidStyleChild(c)) {
             unsigned length = c->nodeValue().length();
-            if (length > std::numeric_limits<unsigned>::max() - resultLength)
-                CRASH();
+            if (length > std::numeric_limits<unsigned>::max() - resultLength) {
+                createSheet(e, m_startLineNumber, "");
+                return;
+            }
             resultLength += length;
         }
     }
