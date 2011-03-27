@@ -73,11 +73,10 @@ static quint32 parseWebSocketChallengeNumber(QString field)
     int numSpaces = 0;
     for (int i = 0; i < field.size(); i++) {
         QChar c = field[i];
-        if (c == (QChar)' ') {
+        if (c == QLatin1Char(' '))
             numSpaces++;
-        } else if ((c >= (QChar)'0') && (c <= (QChar)'9')) {
-            nString.append((QChar)c);
-        }
+        else if ((c >= QLatin1Char('0')) && (c <= QLatin1Char('9')))
+            nString.append(c);
     }
     quint32 num = nString.toLong();
     quint32 result = (numSpaces ? (num / numSpaces) : num);
@@ -195,7 +194,7 @@ void InspectorServerRequestHandlerQt::tcpReadyRead()
                 m_path = header.path();
                 m_contentType = header.contentType().toLatin1();
                 m_contentLength = header.contentLength();
-                if (header.hasKey("Upgrade") && (header.value("Upgrade") == QLatin1String("WebSocket")))
+                if (header.hasKey(QLatin1String("Upgrade")) && (header.value(QLatin1String("Upgrade")) == QLatin1String("WebSocket")))
                     isWebSocket = true;
 
                 m_data.clear();
@@ -204,9 +203,9 @@ void InspectorServerRequestHandlerQt::tcpReadyRead()
     }
 
     if (m_endOfHeaders) {
-        QStringList pathAndQuery = m_path.split("?");
+        QStringList pathAndQuery = m_path.split(QLatin1Char('?'));
         m_path = pathAndQuery[0];
-        QStringList words = m_path.split(QString::fromLatin1("/"));
+        QStringList words = m_path.split(QLatin1Char('/'));
 
         if (isWebSocket) {
             // switch to websocket-style WebSocketService messaging
@@ -216,18 +215,18 @@ void InspectorServerRequestHandlerQt::tcpReadyRead()
 
                 QByteArray key3 = m_tcpConnection->read(8);
 
-                quint32 number1 = parseWebSocketChallengeNumber(header.value("Sec-WebSocket-Key1"));
-                quint32 number2 = parseWebSocketChallengeNumber(header.value("Sec-WebSocket-Key2"));
+                quint32 number1 = parseWebSocketChallengeNumber(header.value(QLatin1String("Sec-WebSocket-Key1")));
+                quint32 number2 = parseWebSocketChallengeNumber(header.value(QLatin1String("Sec-WebSocket-Key2")));
 
                 char responseData[16];
                 generateWebSocketChallengeResponse(number1, number2, (unsigned char*)key3.data(), (unsigned char*)responseData);
                 QByteArray response(responseData, sizeof(responseData));
 
-                QHttpResponseHeader responseHeader(101, "WebSocket Protocol Handshake", 1, 1);
-                responseHeader.setValue("Upgrade", header.value("Upgrade"));
-                responseHeader.setValue("Connection", header.value("Connection"));
-                responseHeader.setValue("Sec-WebSocket-Origin", header.value("Origin"));
-                responseHeader.setValue("Sec-WebSocket-Location", ("ws://" + header.value("Host") + m_path));
+                QHttpResponseHeader responseHeader(101, QLatin1String("WebSocket Protocol Handshake"), 1, 1);
+                responseHeader.setValue(QLatin1String("Upgrade"), header.value(QLatin1String("Upgrade")));
+                responseHeader.setValue(QLatin1String("Connection"), header.value(QLatin1String("Connection")));
+                responseHeader.setValue(QLatin1String("Sec-WebSocket-Origin"), header.value(QLatin1String("Origin")));
+                responseHeader.setValue(QLatin1String("Sec-WebSocket-Location"), (QLatin1String("ws://") + header.value(QLatin1String("Host")) + m_path));
                 responseHeader.setContentLength(response.size());
                 m_tcpConnection->write(responseHeader.toString().toLatin1());
                 m_tcpConnection->write(response);
@@ -259,19 +258,19 @@ void InspectorServerRequestHandlerQt::tcpReadyRead()
         QString text = QString::fromLatin1("OK");
 
         // If no path is specified, generate an index page.
-        if ((m_path == "") || (m_path == "/")) {
-            QString indexHtml = "<html><head><title>Remote Web Inspector</title></head><body><ul>\n";
+        if (m_path.isEmpty() || (m_path == QString(QLatin1Char('/')))) {
+            QString indexHtml = QLatin1String("<html><head><title>Remote Web Inspector</title></head><body><ul>\n");
             for (QMap<int, InspectorClientQt* >::const_iterator it = m_server->m_inspectorClients.begin();
                  it != m_server->m_inspectorClients.end(); 
                  ++it) {
-                indexHtml.append(QString("<li><a href=\"/webkit/inspector/inspector.html?page=%1\">%2</li>\n")
+                indexHtml.append(QString::fromLatin1("<li><a href=\"/webkit/inspector/inspector.html?page=%1\">%2</li>\n")
                                  .arg(it.key())
                                  .arg(it.value()->m_inspectedWebPage->mainFrame()->url().toString()));
             }
-            indexHtml.append("</ul></body></html>");
+            indexHtml.append(QLatin1String("</ul></body></html>"));
             response = indexHtml.toLatin1();
         } else {
-            QString path = QString(":%1").arg(m_path);
+            QString path = QString::fromLatin1(":%1").arg(m_path);
             QFile file(path);
             // It seems that there should be an enum or define for these status codes somewhere in Qt or WebKit,
             // but grep fails to turn one up.

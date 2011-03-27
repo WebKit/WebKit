@@ -531,7 +531,7 @@ QString DumpRenderTreeSupportQt::markerTextForListItem(const QWebElement& listIt
 
 static QString convertToPropertyName(const QString& name)
 {
-    QStringList parts = name.split('-');
+    QStringList parts = name.split(QLatin1Char('-'));
     QString camelCaseName;
     for (int j = 0; j < parts.count(); ++j) {
         QString part = parts.at(j);
@@ -626,11 +626,11 @@ void DumpRenderTreeSupportQt::setEditingBehavior(QWebPage* page, const QString& 
 {
     WebCore::EditingBehaviorType coreEditingBehavior;
 
-    if (editingBehavior == "win")
+    if (editingBehavior == QLatin1String("win"))
         coreEditingBehavior = EditingWindowsBehavior;
-    else if (editingBehavior == "mac")
+    else if (editingBehavior == QLatin1String("mac"))
         coreEditingBehavior = EditingMacBehavior;
-    else if (editingBehavior == "unix")
+    else if (editingBehavior == QLatin1String("unix"))
         coreEditingBehavior = EditingUnixBehavior;
     else {
         ASSERT_NOT_REACHED();
@@ -923,10 +923,10 @@ void DumpRenderTreeSupportQt::simulateDesktopNotificationClick(const QString& ti
 QString DumpRenderTreeSupportQt::plainText(const QVariant& range)
 {
     QMap<QString, QVariant> map = range.toMap();
-    QVariant startContainer  = map.value("startContainer");
+    QVariant startContainer  = map.value(QLatin1String("startContainer"));
     map = startContainer.toMap();
 
-    return map.value("innerText").toString();
+    return map.value(QLatin1String("innerText")).toString();
 }
 
 QVariantList DumpRenderTreeSupportQt::nodesFromRect(const QWebElement& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping)

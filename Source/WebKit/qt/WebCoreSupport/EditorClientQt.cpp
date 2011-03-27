@@ -76,9 +76,9 @@ static QString dumpRange(WebCore::Range *range)
         return QLatin1String("(null)");
     WebCore::ExceptionCode code;
 
-    QString str = QString("range from %1 of %2 to %3 of %4")
-        .arg(range->startOffset(code)).arg(dumpPath(range->startContainer(code)))
-        .arg(range->endOffset(code)).arg(dumpPath(range->endContainer(code)));
+    QString str = QString::fromLatin1("range from %1 of %2 to %3 of %4")
+            .arg(range->startOffset(code)).arg(dumpPath(range->startContainer(code)))
+            .arg(range->endOffset(code)).arg(dumpPath(range->endContainer(code)));
 
     return str;
 }

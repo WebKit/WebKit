@@ -122,7 +122,7 @@ static QString drtDescriptionSuitableForTestResult(const WebCore::KURL& _url)
     if (_url.isEmpty() || !_url.isLocalFile())
         return _url.string();
     // Remove the leading path from file urls
-    return QString(_url.string()).replace(WebCore::FrameLoaderClientQt::dumpResourceLoadCallbacksPath, "").mid(1);
+    return QString(_url.string()).remove(WebCore::FrameLoaderClientQt::dumpResourceLoadCallbacksPath).mid(1);
 }
 
 static QString drtDescriptionSuitableForTestResult(const WebCore::ResourceError& error)
@@ -150,17 +150,17 @@ static QString drtDescriptionSuitableForTestResult(const RefPtr<WebCore::Node> n
 {
     QString result;
     if (exception) {
-        result.append("ERROR");
+        result.append(QLatin1String("ERROR"));
         return result;
     }
     if (!node) {
-        result.append("NULL");
+        result.append(QLatin1String("NULL"));
         return result;
     }
     result.append(node->nodeName());
     RefPtr<WebCore::Node> parent = node->parentNode();
     if (parent) {
-        result.append(" > ");
+        result.append(QLatin1String(" > "));
         result.append(drtDescriptionSuitableForTestResult(parent, 0));
     }
     return result;
@@ -1229,7 +1229,7 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFun
 
         printf("Policy delegate: attempt to load %s with navigation type '%s'%s\n",
                qPrintable(drtDescriptionSuitableForTestResult(request.url())), navigationTypeToString(action.type()),
-               (node) ? qPrintable(QString(" originating from " + drtDescriptionSuitableForTestResult(node, 0))) : "");
+               (node) ? qPrintable(QString::fromLatin1(" originating from ") + drtDescriptionSuitableForTestResult(node, 0)) : "");
 
         if (policyDelegatePermissive)
             result = PolicyUse;

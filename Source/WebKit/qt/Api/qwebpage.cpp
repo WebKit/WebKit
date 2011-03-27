@@ -1168,7 +1168,7 @@ void QWebPagePrivate::dynamicPropertyChangeEvent(QDynamicPropertyChangeEvent* ev
 
         QString p = q->property("_q_RepaintThrottlingPreset").toString();
         for(int i = 0; i < sizeof(presets) / sizeof(presets[0]); i++) {
-            if(p == presets[i].name) {
+            if (p == QLatin1String(presets[i].name)) {
                 FrameView::setRepaintThrottlingDeferredRepaintDelay(
                         presets[i].deferredRepaintDelay);
                 FrameView::setRepaintThrottlingnInitialDeferredRepaintDelayDuringLoading(
@@ -2073,7 +2073,7 @@ void QWebPage::javaScriptConsoleMessage(const QString& message, int lineNumber, 
     // Catch plugin logDestroy message for LayoutTests/plugins/open-and-close-window-with-plugin.html
     // At this point DRT's WebPage has already been destroyed
     if (QWebPagePrivate::drtRun) {
-        if (message == "PLUGIN: NPP_Destroy")
+        if (message == QLatin1String("PLUGIN: NPP_Destroy"))
             fprintf (stdout, "CONSOLE MESSAGE: line %d: %s\n", lineNumber, message.toUtf8().constData());
     }
 }

@@ -40,7 +40,7 @@
 */
 QString qWebKitVersion()
 {
-    return QString("%1.%2").arg(WEBKIT_MAJOR_VERSION).arg(WEBKIT_MINOR_VERSION);
+    return QString::fromLatin1("%1.%2").arg(WEBKIT_MAJOR_VERSION).arg(WEBKIT_MINOR_VERSION);
 }
 
 /*!
