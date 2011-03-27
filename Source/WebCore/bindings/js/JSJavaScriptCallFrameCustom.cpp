@@ -49,7 +49,7 @@ JSValue JSJavaScriptCallFrame::evaluate(ExecState* exec)
 
 JSValue JSJavaScriptCallFrame::thisObject(ExecState*) const
 {
-    return impl()->thisObject() ? impl()->thisObject() : jsNull();
+    return impl()->thisObject() ? JSValue(impl()->thisObject()) : jsNull();
 }
 
 JSValue JSJavaScriptCallFrame::type(ExecState* exec) const

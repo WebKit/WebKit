@@ -1,3 +1,15 @@
+2011-03-27  Ben Taylor  <bentaylor.solx86@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57151, patch derived from set
+        created by Thiago Macieria in bug https://bugs.webkit.org/show_bug.cgi?id=24932
+
+        Fix compile issue on Solaris 10/Sun Studio 12 regarding ambiguity on ?: functions
+
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::thisObject):
+
 2011-03-26  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix.
