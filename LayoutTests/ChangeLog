@@ -1,5 +1,11 @@
 2011-03-27  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed, update Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-27  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed, add new Chromium test results.
 
         * platform/chromium-linux/svg/text/text-path-middle-align-expected.checksum: Added.
