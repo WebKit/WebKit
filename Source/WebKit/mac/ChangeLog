@@ -1,3 +1,13 @@
+2011-03-26  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Enable the Full Screen API by default in WebKit/mac and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=56956
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Default the WebKitFullScreenEnabled preference to true.
+
 2011-03-25  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adele Peterson.
