@@ -171,3 +171,15 @@ audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-co
     border: initial;
     color: inherit;
 }
+
+audio::-webkit-media-controls-fullscreen-volume-slider, video::-webkit-media-controls-fullscreen-volume-slider {
+    display: none;
+}
+
+audio::-webkit-media-controls-fullscreen-volume-min-button, video::-webkit-media-controls-fullscreen-volume-min-button {
+    display: none;
+}
+
+audio::-webkit-media-controls-fullscreen-volume-max-button, video::-webkit-media-controls-fullscreen-volume-max-button {
+    display: none;
+}

@@ -437,9 +437,6 @@ static RuleSet* siblingRulesInDefaultStyle;
 RenderStyle* CSSStyleSelector::s_styleNotYetAvailable;
 
 static void loadFullDefaultStyle();
-#if ENABLE(FULLSCREEN_API)
-static void loadFullScreenRulesIfNeeded(Document*);
-#endif
 static void loadSimpleDefaultStyle();
 // FIXME: It would be nice to use some mechanism that guarantees this is in sync with the real UA stylesheet.
 static const char* simpleUserAgentStyleSheet = "html,body,div{display:block}body{margin:8px}div:focus,span:focus{outline:auto 5px -webkit-focus-ring-color}a:-webkit-any-link{color:-webkit-link;text-decoration:underline}a:-webkit-any-link:active{color:-webkit-activelink}";
@@ -520,9 +517,6 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
             loadSimpleDefaultStyle();
         else {
             loadFullDefaultStyle();
-#if ENABLE(FULLSCREEN_API)
-            loadFullScreenRulesIfNeeded(document);
-#endif
         }
     }
 
@@ -656,19 +650,6 @@ static void loadFullDefaultStyle()
     CSSStyleSheet* quirksSheet = parseUASheet(quirksRules);
     defaultQuirksStyle->addRulesFromSheet(quirksSheet, screenEval());
 }
-
-#if ENABLE(FULLSCREEN_API)
-static void loadFullScreenRulesIfNeeded(Document* document)
-{
-    if (!document->webkitIsFullScreen())
-        return;
-    // Full-screen rules.
-    String fullscreenRules = String(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraDefaultStyleSheet();
-    CSSStyleSheet* fullscreenSheet = parseUASheet(fullscreenRules);
-    defaultStyle->addRulesFromSheet(fullscreenSheet, screenEval());
-    defaultQuirksStyle->addRulesFromSheet(fullscreenSheet, screenEval());
-}
-#endif
 
 static void loadSimpleDefaultStyle()
 {
@@ -1389,9 +1370,6 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     
     if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(e)) {
         loadFullDefaultStyle();
-#if ENABLE(FULLSCREEN_API)
-        loadFullScreenRulesIfNeeded(e->document());
-#endif
         assertNoSiblingRulesInDefaultStyle();
     }
 
@@ -1441,6 +1419,17 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         defaultStyle->addRulesFromSheet(mediaControlsSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(mediaControlsSheet, printEval());
         assertNoSiblingRulesInDefaultStyle();
+    }
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    static bool loadedFullScreenStyleSheet;
+    if (!loadedFullScreenStyleSheet && e->document()->webkitIsFullScreen()) {
+        loadedFullScreenStyleSheet = true;
+        String fullscreenRules = String(fullscreenUserAgentStyleSheet, sizeof(fullscreenUserAgentStyleSheet)) + RenderTheme::defaultTheme()->extraFullScreenStyleSheet();
+        CSSStyleSheet* fullscreenSheet = parseUASheet(fullscreenRules);
+        defaultStyle->addRulesFromSheet(fullscreenSheet, screenEval());
+        defaultQuirksStyle->addRulesFromSheet(fullscreenSheet, screenEval());
     }
 #endif
 

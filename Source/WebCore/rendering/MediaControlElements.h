@@ -372,9 +372,10 @@ public:
     virtual void defaultEventHandler(Event*);
     void update();
 
-private:
+protected:
     MediaControlVolumeSliderElement(HTMLMediaElement*);
 
+private:
     virtual const AtomicString& shadowPseudoId() const;
 };
 
@@ -389,6 +390,46 @@ public:
 private:
     MediaControlFullscreenButtonElement(HTMLMediaElement*);
 
+    virtual const AtomicString& shadowPseudoId() const;
+};
+
+// ----------------------------
+
+class MediaControlFullscreenVolumeSliderElement : public MediaControlVolumeSliderElement {
+public:
+    static PassRefPtr<MediaControlFullscreenVolumeSliderElement> create(HTMLMediaElement*);
+    
+private:
+    MediaControlFullscreenVolumeSliderElement(HTMLMediaElement*);
+    
+    virtual const AtomicString& shadowPseudoId() const;
+};
+
+// ----------------------------
+
+class MediaControlFullscreenVolumeMinButtonElement : public MediaControlInputElement {
+public:
+    static PassRefPtr<MediaControlFullscreenVolumeMinButtonElement> create(HTMLMediaElement*);
+    
+    virtual void defaultEventHandler(Event*);
+    
+private:
+    MediaControlFullscreenVolumeMinButtonElement(HTMLMediaElement*);
+    
+    virtual const AtomicString& shadowPseudoId() const;
+};
+
+// ----------------------------
+
+class MediaControlFullscreenVolumeMaxButtonElement : public MediaControlInputElement {
+public:
+    static PassRefPtr<MediaControlFullscreenVolumeMaxButtonElement> create(HTMLMediaElement*);
+    
+    virtual void defaultEventHandler(Event*);
+    
+private:
+    MediaControlFullscreenVolumeMaxButtonElement(HTMLMediaElement*);
+    
     virtual const AtomicString& shadowPseudoId() const;
 };
 

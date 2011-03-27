@@ -81,6 +81,9 @@ PassRefPtr<MediaControlShadowRootElement> MediaControls::create(HTMLMediaElement
     ASSERT(!m_volumeSliderContainer);
     ASSERT(!m_volumeSlider);
     ASSERT(!m_volumeSliderMuteButton);
+    ASSERT(!m_fullScreenMinVolumeButton);
+    ASSERT(!m_fullScreenMaxVolumeButton);
+    ASSERT(!m_fullScreenVolumeSlider);
 
     RefPtr<MediaControlShadowRootElement> controls = MediaControlShadowRootElement::create(mediaElement);
 
@@ -135,7 +138,18 @@ PassRefPtr<MediaControlShadowRootElement> MediaControls::create(HTMLMediaElement
     m_volumeSliderMuteButton->attachToParent(m_volumeSliderContainer.get());
 
     m_volumeSliderContainer->attachToParent(m_panel.get());
-
+    
+    // FIXME: These controls, and others, should be created dynamically when needed, instead of 
+    // always created.  <http://webkit.org/b/57163>
+    m_fullScreenMinVolumeButton = MediaControlFullscreenVolumeMinButtonElement::create(mediaElement);
+    m_fullScreenMinVolumeButton->attachToParent(m_panel.get());
+    
+    m_fullScreenVolumeSlider = MediaControlFullscreenVolumeSliderElement::create(mediaElement);
+    m_fullScreenVolumeSlider->attachToParent(m_panel.get());
+    
+    m_fullScreenMaxVolumeButton = MediaControlFullscreenVolumeMaxButtonElement::create(mediaElement);
+    m_fullScreenMaxVolumeButton->attachToParent(m_panel.get());
+    
     m_panel->attachToParent(controls.get());
     return controls.release();
 }
@@ -216,6 +230,12 @@ void MediaControls::updateStyle()
         m_volumeSliderMuteButton->updateStyle();
     if (m_volumeSlider)
         m_volumeSlider->updateStyle();
+    if (m_fullScreenMinVolumeButton)
+        m_fullScreenMinVolumeButton->updateStyle();
+    if (m_fullScreenVolumeSlider)
+        m_fullScreenVolumeSlider->updateStyle();
+    if (m_fullScreenMaxVolumeButton)
+        m_fullScreenMaxVolumeButton->updateStyle();
 }
 
 void MediaControls::destroy()
@@ -258,6 +278,9 @@ void MediaControls::update()
             m_volumeSliderMuteButton = 0;
             m_controlsShadowRoot = 0;
             m_toggleClosedCaptionsButton = 0;
+            m_fullScreenMinVolumeButton = 0;
+            m_fullScreenVolumeSlider = 0;
+            m_fullScreenMaxVolumeButton = 0;
         }
         m_opacityAnimationTo = 1.0f;
         m_opacityAnimationTimer.stop();
@@ -309,7 +332,12 @@ void MediaControls::update()
         m_volumeSlider->update();
     if (m_volumeSliderMuteButton)
         m_volumeSliderMuteButton->update();
-
+    if (m_fullScreenMinVolumeButton)
+        m_fullScreenMinVolumeButton->update();
+    if (m_fullScreenVolumeSlider)
+        m_fullScreenVolumeSlider->update();
+    if (m_fullScreenMaxVolumeButton)
+        m_fullScreenMaxVolumeButton->update();
     updateTimeDisplay();
     updateControlVisibility();
 }

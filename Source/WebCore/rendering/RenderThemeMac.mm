@@ -1961,20 +1961,45 @@ String RenderThemeMac::extraMediaControlsStyleSheet()
 #endif
 }
 
+#if ENABLE(FULLSCREEN_API)
+String RenderThemeMac::extraFullScreenStyleSheet()
+{
+#if PLATFORM(MAC)
+    if (mediaControllerTheme() == MediaControllerThemeQuickTime)
+        return String(fullscreenQuickTimeUserAgentStyleSheet, sizeof(fullscreenQuickTimeUserAgentStyleSheet));
+    
+    return String();
+#else
+    ASSERT_NOT_REACHED();
+    return String();
+#endif
+}
+#endif
+
 bool RenderThemeMac::shouldRenderMediaControlPart(ControlPart part, Element* element)
 {
+    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
     switch (part) {
     case MediaVolumeSliderContainerPart:
     case MediaVolumeSliderPart:
     case MediaVolumeSliderMuteButtonPart:
     case MediaVolumeSliderThumbPart: {
-        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
         return mediaControllerTheme() == MediaControllerThemeQuickTime && mediaElement->hasAudio();
     }
     case MediaToggleClosedCaptionsButtonPart:
         // We rely on QTKit to render captions so don't enable the button unless it will be able to do so.
         if (!element->hasTagName(videoTag))
             return false;
+        break;
+    case MediaRewindButtonPart:
+        return mediaElement->isFullscreen()
+            && (mediaElement->movieLoadType() == MediaPlayer::LiveStream 
+            || mediaElement->movieLoadType() == MediaPlayer::StoredStream);
+    case MediaSeekForwardButtonPart:
+    case MediaSeekBackButtonPart:
+        return mediaElement->isFullscreen() 
+            && mediaElement->movieLoadType() != MediaPlayer::StoredStream 
+            && mediaElement->movieLoadType() != MediaPlayer::LiveStream;
     default:
         break;
     }

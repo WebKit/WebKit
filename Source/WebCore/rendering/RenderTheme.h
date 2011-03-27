@@ -88,6 +88,9 @@ public:
     virtual String extraQuirksStyleSheet() { return String(); }
 #if ENABLE(VIDEO)
     virtual String extraMediaControlsStyleSheet() { return String(); };
+#if ENABLE(FULLSCREEN_API)
+    virtual String extraFullScreenStyleSheet() { return String(); };
+#endif
 #endif
 
     // A method to obtain the baseline position for a "leaf" control.  This will only be used if a baseline

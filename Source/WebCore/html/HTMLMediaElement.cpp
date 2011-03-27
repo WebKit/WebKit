@@ -2433,6 +2433,19 @@ void HTMLMediaElement::updateWidget(PluginCreationOption)
 
 #endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 
+bool HTMLMediaElement::isFullscreen() const
+{
+    if (m_isFullscreen)
+        return true;
+    
+#if ENABLE(FULLSCREEN_API)
+    if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == this)
+        return true;
+#endif
+    
+    return false;
+}
+
 void HTMLMediaElement::enterFullscreen()
 {
     LOG(Media, "HTMLMediaElement::enterFullscreen");

@@ -53,6 +53,9 @@ class MediaControlStatusDisplayElement;
 class MediaControlTimelineContainerElement;
 class MediaControlVolumeSliderContainerElement;
 class MediaControlElement;
+class MediaControlFullscreenVolumeMinButtonElement;
+class MediaControlFullscreenVolumeSliderElement;
+class MediaControlFullscreenVolumeMaxButtonElement;
 class MediaPlayer;
 
 class RenderBox;
@@ -110,6 +113,9 @@ private:
     RefPtr<MediaControlTimeDisplayElement> m_currentTimeDisplay;
     RefPtr<MediaControlTimeDisplayElement> m_timeRemainingDisplay;
     RefPtr<MediaControlStatusDisplayElement> m_statusDisplay;
+    RefPtr<MediaControlFullscreenVolumeMinButtonElement> m_fullScreenMinVolumeButton;
+    RefPtr<MediaControlFullscreenVolumeSliderElement> m_fullScreenVolumeSlider;
+    RefPtr<MediaControlFullscreenVolumeMaxButtonElement> m_fullScreenMaxVolumeButton;
 
     HTMLMediaElement* m_mediaElement;
     Timer<MediaControls> m_opacityAnimationTimer;

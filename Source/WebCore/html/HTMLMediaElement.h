@@ -164,7 +164,7 @@ public:
 
     bool hasSingleSecurityOrigin() const { return !m_player || m_player->hasSingleSecurityOrigin(); }
     
-    bool isFullscreen() const { return m_isFullscreen; }
+    bool isFullscreen() const;
     void enterFullscreen();
     void exitFullscreen();
 

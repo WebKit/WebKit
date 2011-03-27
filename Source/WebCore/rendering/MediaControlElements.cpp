@@ -909,6 +909,29 @@ const AtomicString& MediaControlVolumeSliderElement::shadowPseudoId() const
 
 // ----------------------------
 
+inline MediaControlFullscreenVolumeSliderElement::MediaControlFullscreenVolumeSliderElement(HTMLMediaElement* mediaElement)
+: MediaControlVolumeSliderElement(mediaElement)
+{
+}
+
+PassRefPtr<MediaControlFullscreenVolumeSliderElement> MediaControlFullscreenVolumeSliderElement::create(HTMLMediaElement* mediaElement)
+{
+    RefPtr<MediaControlFullscreenVolumeSliderElement> slider = adoptRef(new MediaControlFullscreenVolumeSliderElement(mediaElement));
+    slider->setType("range");
+    slider->setAttribute(precisionAttr, "float");
+    slider->setAttribute(maxAttr, "1");
+    slider->setAttribute(valueAttr, String::number(mediaElement->volume()));
+    return slider.release();
+}
+
+const AtomicString& MediaControlFullscreenVolumeSliderElement::shadowPseudoId() const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-fullscreen-volume-slider"));
+    return id;
+}
+
+// ----------------------------
+
 inline MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(HTMLMediaElement* mediaElement)
     : MediaControlInputElement(mediaElement, MediaFullscreenButton)
 {
@@ -946,6 +969,66 @@ void MediaControlFullscreenButtonElement::defaultEventHandler(Event* event)
 const AtomicString& MediaControlFullscreenButtonElement::shadowPseudoId() const
 {
     DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-fullscreen-button"));
+    return id;
+}
+
+// ----------------------------
+
+inline MediaControlFullscreenVolumeMinButtonElement::MediaControlFullscreenVolumeMinButtonElement(HTMLMediaElement* mediaElement)
+: MediaControlInputElement(mediaElement, MediaUnMuteButton)
+{
+}
+
+PassRefPtr<MediaControlFullscreenVolumeMinButtonElement> MediaControlFullscreenVolumeMinButtonElement::create(HTMLMediaElement* mediaElement)
+{
+    RefPtr<MediaControlFullscreenVolumeMinButtonElement> button = adoptRef(new MediaControlFullscreenVolumeMinButtonElement(mediaElement));
+    button->setType("button");
+    return button.release();
+}
+
+void MediaControlFullscreenVolumeMinButtonElement::defaultEventHandler(Event* event)
+{
+    if (event->type() == eventNames().clickEvent) {
+        ExceptionCode code = 0;
+        mediaElement()->setVolume(0, code);
+        event->setDefaultHandled();
+    }
+    HTMLInputElement::defaultEventHandler(event);
+}
+
+const AtomicString& MediaControlFullscreenVolumeMinButtonElement::shadowPseudoId() const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-fullscreen-volume-min-button"));
+    return id;
+}
+
+// ----------------------------
+
+inline MediaControlFullscreenVolumeMaxButtonElement::MediaControlFullscreenVolumeMaxButtonElement(HTMLMediaElement* mediaElement)
+: MediaControlInputElement(mediaElement, MediaMuteButton)
+{
+}
+
+PassRefPtr<MediaControlFullscreenVolumeMaxButtonElement> MediaControlFullscreenVolumeMaxButtonElement::create(HTMLMediaElement* mediaElement)
+{
+    RefPtr<MediaControlFullscreenVolumeMaxButtonElement> button = adoptRef(new MediaControlFullscreenVolumeMaxButtonElement(mediaElement));
+    button->setType("button");
+    return button.release();
+}
+
+void MediaControlFullscreenVolumeMaxButtonElement::defaultEventHandler(Event* event)
+{
+    if (event->type() == eventNames().clickEvent) {
+        ExceptionCode code = 0;
+        mediaElement()->setVolume(1, code);
+        event->setDefaultHandled();
+    }
+    HTMLInputElement::defaultEventHandler(event);
+}
+
+const AtomicString& MediaControlFullscreenVolumeMaxButtonElement::shadowPseudoId() const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-fullscreen-volume-max-button"));
     return id;
 }
 

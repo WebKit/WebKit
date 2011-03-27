@@ -1,3 +1,52 @@
+2011-03-22  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Media controls must use full screen style when in new full screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=56851
+
+        Add new full screen styles for the full screen media elements.
+
+        * DerivedSources.make: Add fullScreenQuickTime.css.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * css/CSSStyleSelector.cpp: Removed loadFullScreenRulesIfNeeded().
+        (WebCore::CSSStyleSelector::CSSStyleSelector): Ditto.
+        (WebCore::CSSStyleSelector::styleForElement): Load full screen rules 
+            if needed.
+        * css/fullscreenQuickTime.css: Added.
+        * css/mediaControls.css:
+        * html/shadow/MediaControls.cpp:
+        (WebCore::isFullScreen): Added.
+        (WebCore::MediaControls::create): Add new full screen volume controls.
+        (WebCore::MediaControls::updateStyle): Ditto.
+        (WebCore::MediaControls::update): Ditto.
+        (WebCore::MediaControls::updateVolumeSliderContainer): Ditto.
+        (WebCore::MediaControls::forwardEvent): Ditto.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlFullscreenVolumeSliderElement::MediaControlFullscreenVolumeSliderElement): Added.
+        (WebCore::MediaControlFullscreenVolumeSliderElement::create): Added.
+        (WebCore::MediaControlFullscreenVolumeSliderElement::shadowPseudoId): Added.
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::MediaControlFullscreenVolumeMinButtonElement): Addet
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::create): Added.
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::defaultEventHandler): Added.
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::shadowPseudoId): Added.
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::MediaControlFullscreenVolumeMaxButtonElement): Added.
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::create): Added.
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::defaultEventHandler): Added.
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::shadowPseudoId): Added.
+        * rendering/MediaControlElements.h:
+            Added m_overridePosition.
+        (WebCore::MediaControlVolumeSliderContainerElement::setOverridesPosition): Added.
+        * rendering/MediaControlElements.h:
+        (WebCore::MediaControlVolumeSliderContainerElement::overridesPosition): Added.
+        * rendering/RenderTheme.h:
+        (WebCore::RenderTheme::extraFullScreenStyleSheet): Added.
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::extraFullScreenStyleSheet): Added.
+        (WebCore::RenderThemeMac::shouldRenderMediaControlPart): Render seek forward and backward 
+            buttons.
+
 2011-03-26  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Dan Bernstein.
