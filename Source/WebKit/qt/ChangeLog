@@ -1,3 +1,17 @@
+2011-03-27  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][Symbian] Fix Api test failure -- microFocusCoordinates
+        https://bugs.webkit.org/show_bug.cgi?id=57108
+
+        Since the canvas is not self-closing tag, we need to add '</canvas>'. 
+
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::microFocusCoordinates):
+        * tests/qwebview/tst_qwebview.cpp:
+        (tst_QWebView::microFocusCoordinates):
+
 2011-03-27  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Eric Seidel.

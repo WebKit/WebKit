@@ -208,9 +208,9 @@ void tst_QWebView::microFocusCoordinates()
 
     page->mainFrame()->setHtml("<html><body>" \
         "<input type='text' id='input1' style='font--family: serif' value='' maxlength='20'/><br>" \
-        "<canvas id='canvas1' width='500' height='500'/>" \
+        "<canvas id='canvas1' width='500' height='500'></canvas>" \
         "<input type='password'/><br>" \
-        "<canvas id='canvas2' width='500' height='500'/>" \
+        "<canvas id='canvas2' width='500' height='500'></canvas>" \
         "</body></html>");
 
     page->mainFrame()->setFocus();
