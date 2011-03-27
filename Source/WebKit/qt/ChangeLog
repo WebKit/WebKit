@@ -1,3 +1,15 @@
+2011-03-27  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        REGRESSION(r54712): [Qt] Installed QtWebKit header does not compile.
+        https://bugs.webkit.org/show_bug.cgi?id=57183
+
+        The convenience <QtWebKit> header would include \<QtNetwork/QtNetwork\>
+        which was due to the outputting code previously being wrapped in eval().
+
+        * Api/DerivedSources.pro:
+
 2011-03-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.

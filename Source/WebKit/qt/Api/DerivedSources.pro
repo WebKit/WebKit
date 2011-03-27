@@ -26,7 +26,7 @@ qtheader_module.target = $${DESTDIR}/QtWebKit
 qtheader_module.depends = $${_PRO_FILE_}
 qtheader_module.commands = echo $${QUOTE}$${LITERAL_HASH}ifndef QT_QTWEBKIT_MODULE_H$${QUOTE} > $${qtheader_module.target} &&
 qtheader_module.commands += echo $${QUOTE}$${LITERAL_HASH}define QT_QTWEBKIT_MODULE_H$${QUOTE} >> $${qtheader_module.target} &&
-qtheader_module.commands += echo $${QUOTE}$${LITERAL_HASH}include $${ESCAPE}<QtNetwork/QtNetwork$${ESCAPE}>$${QUOTE} >> $${qtheader_module.target} &&
+qtheader_module.commands += echo $${QUOTE}$${LITERAL_HASH}include <QtNetwork/QtNetwork>$${QUOTE} >> $${qtheader_module.target} &&
 WEBKIT_CLASS_HEADERS = $${LITERAL_DOLLAR}$${LITERAL_DOLLAR}$${LITERAL_DOLLAR}$${LITERAL_DOLLAR}PWD/QtWebKit
 
 regex = ".*\\sclass\\sQWEBKIT_EXPORT\\s(\\w+)\\s(.*)"
