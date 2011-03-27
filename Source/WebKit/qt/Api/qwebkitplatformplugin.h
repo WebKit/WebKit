@@ -26,6 +26,7 @@
  *  and may be changed from version to version or even be completely removed.
 */
 
+#include <QColor>
 #include <QObject>
 #include <QUrl>
 #if defined(ENABLE_QT_MULTIMEDIA) && ENABLE_QT_MULTIMEDIA
@@ -46,6 +47,10 @@ public:
     virtual bool itemIsSelected(int index) const = 0;
     virtual int itemCount() const = 0;
     virtual bool multiple() const = 0;
+    virtual QColor backgroundColor() const = 0;
+    virtual QColor foregroundColor() const = 0;
+    virtual QColor itemBackgroundColor(int index) const = 0;
+    virtual QColor itemForegroundColor(int index) const = 0;
 };
 
 class QWebSelectMethod : public QObject

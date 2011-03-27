@@ -124,6 +124,17 @@ void QtFallbackWebPopup::show(const QWebSelectData& data)
 
     populate(data);
 
+    QColor backgroundColor = data.backgroundColor();
+    QColor foregroundColor = data.foregroundColor();
+
+    QPalette palette = m_combo->palette();
+    if (backgroundColor.isValid())
+        palette.setColor(QPalette::Background, backgroundColor);
+    if (foregroundColor.isValid())
+        palette.setColor(QPalette::Foreground, foregroundColor);
+    m_combo->setPalette(palette);
+
+
     QRect rect = geometry();
     if (QGraphicsWebView *webView = qobject_cast<QGraphicsWebView*>(pageClient()->pluginParent())) {
         QGraphicsProxyWidget* proxy = new QGraphicsProxyWidget(webView);
@@ -235,6 +246,8 @@ void QtFallbackWebPopup::populate(const QWebSelectData& data)
 #ifndef QT_NO_TOOLTIP
             model->item(i)->setToolTip(data.itemToolTip(i));
 #endif
+            model->item(i)->setBackground(data.itemBackgroundColor(i));
+            model->item(i)->setForeground(data.itemForegroundColor(i));
             if (data.itemIsSelected(i))
                 currentIndex = i;
             break;

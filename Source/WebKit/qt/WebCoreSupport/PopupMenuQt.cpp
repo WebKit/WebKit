@@ -44,6 +44,10 @@ public:
     virtual int itemCount() const { return d ? d->listSize() : 0; }
     virtual bool itemIsSelected(int idx) const { return d ? d->itemIsSelected(idx) : false; }
     virtual bool multiple() const;
+    virtual QColor backgroundColor() const { return d ? QColor(d->menuStyle().backgroundColor()) : QColor(); }
+    virtual QColor foregroundColor() const { return d ? QColor(d->menuStyle().foregroundColor()) : QColor(); }
+    virtual QColor itemBackgroundColor(int idx) const { return d ? QColor(d->itemStyle(idx).backgroundColor()) : QColor(); }
+    virtual QColor itemForegroundColor(int idx) const { return d ? QColor(d->itemStyle(idx).foregroundColor()) : QColor(); }
 
 private:
     WebCore::PopupMenuClient*& d;
