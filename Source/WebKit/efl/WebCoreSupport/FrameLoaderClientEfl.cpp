@@ -56,8 +56,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
-#if PLATFORM(UNIX)
+#if OS(UNIX)
 #include <sys/utsname.h>
+#elif OS(WINDOWS)
+#include "SystemInfo.h"
 #endif
 
 #include <Ecore_Evas.h>
@@ -78,21 +80,20 @@ FrameLoaderClientEfl::FrameLoaderClientEfl(Evas_Object *view)
 
 static String agentOS()
 {
-#if PLATFORM(DARWIN)
-#if PLATFORM(X86)
+#if OS(DARWIN)
+#if CPU(X86)
     return "Intel Mac OS X";
 #else
     return "PPC Mac OS X";
 #endif
-#elif PLATFORM(UNIX)
+#elif OS(UNIX)
     struct utsname name;
     if (uname(&name) != -1)
         return makeString(name.sysname, ' ', name.machine);
 
     return "Unknown";
-#elif PLATFORM(WIN_OS)
-    // FIXME: Compute the Windows version
-    return "Windows";
+#elif OS(WINDOWS)
+    return windowsVersionForUAString();
 #else
     notImplemented();
     return "Unknown";

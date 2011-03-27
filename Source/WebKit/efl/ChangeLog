@@ -2,6 +2,18 @@
 
         Reviewed by Andreas Kling.
 
+        Fix agentOS() in FrameLoaderClientEfl
+        https://bugs.webkit.org/show_bug.cgi?id=57177
+
+        Replace old PLATFORM macro with OS and CPU.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::agentOS):
+
+2011-03-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Andreas Kling.
+
         [EFL] Use an appropriate user agent string
         https://bugs.webkit.org/show_bug.cgi?id=57176
 
