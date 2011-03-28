@@ -33,7 +33,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if PLATFORM(MAC)
+#if PLATFORM(CG)
 #include <wtf/RetainPtr.h>
 #endif
 

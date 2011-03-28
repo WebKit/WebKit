@@ -1,5 +1,11 @@
 2011-03-28  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+
+        * Shared/ShareableBitmap.h:
+
+2011-03-28  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Beep when pressing a menu key equivalent when a plug-in has focus
