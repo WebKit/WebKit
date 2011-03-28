@@ -60,6 +60,7 @@ protected slots:
     void changeLocation();
     void onIconChanged();
     void onLoadStarted();
+    void onTitleChanged(const QString&);
 
 protected:
     QString addressUrl() const;

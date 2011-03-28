@@ -86,8 +86,7 @@ void MainWindow::buildUI()
 
     connect(page()->mainFrame(), SIGNAL(loadStarted()), this, SLOT(onLoadStarted()));
     connect(page()->mainFrame(), SIGNAL(iconChanged()), this, SLOT(onIconChanged()));
-    connect(page()->mainFrame(), SIGNAL(titleChanged(const QString&)),
-                this, SLOT(setWindowTitle(const QString&)));
+    connect(page()->mainFrame(), SIGNAL(titleChanged(QString)), this, SLOT(onTitleChanged(QString)));
     connect(page(), SIGNAL(windowCloseRequested()), this, SLOT(close()));
 
 #ifndef QT_NO_SHORTCUT
@@ -234,4 +233,12 @@ void MainWindow::onLoadStarted()
 #ifndef QT_NO_INPUTDIALOG
     urlEdit->setPageIcon(QIcon());
 #endif
+}
+
+void MainWindow::onTitleChanged(const QString& title)
+{
+    if (title.isEmpty())
+        setWindowTitle(QCoreApplication::applicationName());
+    else
+        setWindowTitle(QString::fromLatin1("%1 - %2").arg(title).arg(QCoreApplication::applicationName()));
 }
