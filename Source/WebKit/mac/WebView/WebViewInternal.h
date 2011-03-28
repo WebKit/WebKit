@@ -57,7 +57,6 @@ namespace WebCore {
 #ifdef __cplusplus
 
 @interface WebView (WebViewEditingExtras)
-- (BOOL)_interceptEditingKeyEvent:(WebCore::KeyboardEvent*)event shouldSaveCommand:(BOOL)shouldSave;
 - (BOOL)_shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange affinity:(NSSelectionAffinity)selectionAffinity stillSelecting:(BOOL)flag;
 @end
 

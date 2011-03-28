@@ -462,11 +462,12 @@ static CachedResourceClient* promisedDataClient()
 
 struct WebHTMLViewInterpretKeyEventsParameters {
     KeyboardEvent* event;
-    BOOL eventWasHandled;
-    BOOL shouldSaveCommand;
+    bool eventWasHandled;
+    bool shouldSaveCommands;
+    bool receivedNOOP;
     // The Input Method may consume an event and not tell us, in
     // which case we should not bubble the event up the DOM
-    BOOL consumedByIM;
+    bool consumedByIM;
 };
 
 @interface WebHTMLViewPrivate : NSObject {
@@ -523,7 +524,6 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     BOOL transparentBackground;
 
     WebHTMLViewInterpretKeyEventsParameters* interpretKeyEventsParameters;
-    BOOL receivedNOOP;
     
     WebDataSource *dataSource;
     WebCore::CachedImage* promisedDragTIFFDataSource;
@@ -5440,59 +5440,58 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     [self _updateMouseoverWithFakeEvent];
 }
 
-- (BOOL)_interceptEditingKeyEvent:(KeyboardEvent*)event shouldSaveCommand:(BOOL)shouldSave
+- (BOOL)_interpretKeyEvent:(KeyboardEvent*)event savingCommands:(BOOL)savingCommands
 {
-    // Ask AppKit to process the key event -- it will call back with either insertText or doCommandBySelector.
+    ASSERT(!savingCommands || event->keypressCommands().isEmpty()); // Save commands once for each event.
+
     WebHTMLViewInterpretKeyEventsParameters parameters;
     parameters.eventWasHandled = false;
-    parameters.shouldSaveCommand = shouldSave;
+    parameters.shouldSaveCommands = savingCommands;
+    parameters.receivedNOOP = false;
     // If we're intercepting the initial IM call we assume that the IM has consumed the event, 
     // and only change this assumption if one of the NSTextInput/Responder callbacks is used.
     // We assume the IM will *not* consume hotkey sequences
-    parameters.consumedByIM = !event->metaKey() && shouldSave;
+    parameters.consumedByIM = savingCommands && !event->metaKey();
 
-    if (const PlatformKeyboardEvent* platformEvent = event->keyEvent()) {
-        NSEvent *macEvent = platformEvent->macEvent();
-        if ([macEvent type] == NSKeyDown && [_private->completionController filterKeyDown:macEvent])
-            return true;
-        
-        if ([macEvent type] == NSFlagsChanged)
-            return false;
-        
-        parameters.event = event;
-        _private->interpretKeyEventsParameters = &parameters;
-        _private->receivedNOOP = NO;
-        const Vector<KeypressCommand>& commands = event->keypressCommands();
-        bool hasKeypressCommand = !commands.isEmpty();
+    const PlatformKeyboardEvent* platformEvent = event->keyEvent();
+    if (!platformEvent)
+        return NO;
 
-        // FIXME: interpretKeyEvents doesn't match application key equivalents (such as Cmd+A),
-        // and sends noop: for those. As a result, we don't handle those from within WebCore,
-        // but send a full sequence of DOM events, including an unneeded keypress.
-        if (parameters.shouldSaveCommand || !hasKeypressCommand)
-            [self interpretKeyEvents:[NSArray arrayWithObject:macEvent]];
-        else {
-            size_t size = commands.size();
-            // Are there commands that would just cause text insertion if executed via Editor?
-            // WebKit doesn't have enough information about mode to decide how they should be treated, so we leave it upon WebCore
-            // to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
-            // (e.g. Tab that inserts a Tab character, or Enter).
-            bool haveTextInsertionCommands = false;
+    NSEvent *macEvent = platformEvent->macEvent();
+    if ([macEvent type] == NSKeyDown && [_private->completionController filterKeyDown:macEvent])
+        return YES;
+    
+    if ([macEvent type] == NSFlagsChanged)
+        return NO;
+    
+    parameters.event = event;
+    _private->interpretKeyEventsParameters = &parameters;
+    const Vector<KeypressCommand>& commands = event->keypressCommands();
+
+    if (savingCommands)
+        [self interpretKeyEvents:[NSArray arrayWithObject:macEvent]];
+    else {
+        size_t size = commands.size();
+        // Are there commands that would just cause text insertion if executed via Editor?
+        // WebKit doesn't have enough information about mode to decide how they should be treated, so we leave it upon WebCore
+        // to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
+        // (e.g. Tab that inserts a Tab character, or Enter).
+        bool haveTextInsertionCommands = false;
+        for (size_t i = 0; i < size; ++i) {
+            if ([self coreCommandBySelector:NSSelectorFromString(commands[i].commandName)].isTextInsertion())
+                haveTextInsertionCommands = true;
+        }
+        if (!haveTextInsertionCommands || platformEvent->type() == PlatformKeyboardEvent::Char) {
             for (size_t i = 0; i < size; ++i) {
-                if ([self coreCommandBySelector:NSSelectorFromString(commands[i].commandName)].isTextInsertion())
-                    haveTextInsertionCommands = true;
-            }
-            if (!haveTextInsertionCommands || platformEvent->type() == PlatformKeyboardEvent::Char) {
-                for (size_t i = 0; i < size; ++i) {
-                    if (commands[i].commandName == "insertText:")
-                        [self insertText:commands[i].text];
-                    else
-                        [self doCommandBySelector:NSSelectorFromString(commands[i].commandName)];
-                }
+                if (commands[i].commandName == "insertText:")
+                    [self insertText:commands[i].text];
+                else
+                    [self doCommandBySelector:NSSelectorFromString(commands[i].commandName)];
             }
         }
-        _private->interpretKeyEventsParameters = 0;
     }
-    return (!_private->receivedNOOP && parameters.eventWasHandled) || parameters.consumedByIM;
+    _private->interpretKeyEventsParameters = 0;
+    return (!parameters.receivedNOOP && parameters.eventWasHandled) || parameters.consumedByIM;
 }
 
 - (WebCore::CachedImage*)promisedDragTIFFDataSource
@@ -5838,8 +5837,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     _private->interpretKeyEventsParameters = 0;
 
     if (parameters) {
-        parameters->eventWasHandled = YES;
-        parameters->consumedByIM = NO;
+        parameters->eventWasHandled = true;
+        parameters->consumedByIM = false;
     }
     
     if (Frame* coreFrame = core([self _frame]))
@@ -5877,8 +5876,8 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     _private->interpretKeyEventsParameters = 0;
 
     if (parameters) {
-        parameters->eventWasHandled = YES;
-        parameters->consumedByIM = NO;
+        parameters->eventWasHandled = true;
+        parameters->consumedByIM = false;
     }
     
     Frame* coreFrame = core([self _frame]);
@@ -5915,15 +5914,16 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     // The same call to interpretKeyEvents can do more than one command.
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
     if (parameters)
-        parameters->consumedByIM = NO;
+        parameters->consumedByIM = false;
 
     if (selector == @selector(noop:)) {
-        _private->receivedNOOP = YES;
+        if (parameters)
+            parameters->receivedNOOP = true;
         return;
     }
 
     KeyboardEvent* event = parameters ? parameters->event : 0;
-    bool shouldSaveCommand = parameters && parameters->shouldSaveCommand;
+    bool shouldSaveCommand = parameters && parameters->shouldSaveCommands;
 
     if (event && shouldSaveCommand)
         event->keypressCommands().append(KeypressCommand(NSStringFromSelector(selector)));
@@ -5974,7 +5974,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
     _private->interpretKeyEventsParameters = 0;
     if (parameters)
-        parameters->consumedByIM = NO;
+        parameters->consumedByIM = false;
 
     // We don't support inserting an attributed string but input methods don't appear to require this.
     RefPtr<Frame> coreFrame = core([self _frame]);
@@ -6005,7 +6005,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         // We assume it's from the input method if we have marked text.
         // FIXME: In theory, this could be wrong for some input methods, so we should try to find
         // another way to determine if the call is from the input method
-        bool shouldSaveCommand = parameters && parameters->shouldSaveCommand;
+        bool shouldSaveCommand = parameters && parameters->shouldSaveCommands;
         if (event && shouldSaveCommand && !isFromInputMethod) {
             event->keypressCommands().append(KeypressCommand("insertText:", text));
             _private->interpretKeyEventsParameters = parameters;
@@ -6030,7 +6030,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (isFromInputMethod) {
         // Allow doCommandBySelector: to be called after insertText: by resetting interpretKeyEventsParameters
         _private->interpretKeyEventsParameters = parameters;
-        parameters->consumedByIM = YES;
+        parameters->consumedByIM = true;
         return;
     }
     

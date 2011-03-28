@@ -1,3 +1,33 @@
+2011-03-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57260
+        Clean up text input code a little
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::handleKeyboardEvent):
+        (WebEditorClient::handleInputMethodKeydown):
+        * WebView/WebHTMLViewInternal.h:
+        Renamed _interceptEditingKeyEvent:shouldSaveCommand:, becasue it doesn't really intercept
+        anything. It's just a version it interpretKeyEvents: that tells us whether it was handled,
+        and also possibly saves resulting commands for later execution.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _interpretKeyEvent:savingCommands:]): Changed to use early return. Changed
+        return value in case platformEvent is null to be less mysterious. Moved receivedNOOP from
+        WebHTMLViewPrivate to WebHTMLViewInterpretKeyEventsParameters, as this is just part of event
+        handling state, like the other booleans there. Don't call interpretKeyEvents: again simply
+        because the first call resulted in no saved commands, becasue it's confusing and apparently
+        useless (I couldn't find any broken behavior).
+        (-[WebHTMLView unmarkText]): Cleaned upo BOOL vs. bool constants.
+        (-[WebHTMLView setMarkedText:selectedRange:]): Ditto.
+        (-[WebHTMLView doCommandBySelector:]): Ditto.
+        (-[WebHTMLView insertText:]): Ditto.
+
+        * WebView/WebViewInternal.h: There was no _interceptEditingKeyEvent:shouldSaveCommand:
+        method on WebView.
+
 2011-03-27  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

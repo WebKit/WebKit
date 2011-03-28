@@ -621,7 +621,7 @@ void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
     Frame* frame = event->target()->toNode()->document()->frame();
     WebHTMLView *webHTMLView = [[kit(frame) frameView] documentView];
-    if ([webHTMLView _interceptEditingKeyEvent:event shouldSaveCommand:NO])
+    if ([webHTMLView _interpretKeyEvent:event savingCommands:NO])
         event->setDefaultHandled();
 }
 
@@ -629,7 +629,7 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
 {
     Frame* frame = event->target()->toNode()->document()->frame();
     WebHTMLView *webHTMLView = [[kit(frame) frameView] documentView];
-    if ([webHTMLView _interceptEditingKeyEvent:event shouldSaveCommand:YES])
+    if ([webHTMLView _interpretKeyEvent:event savingCommands:YES])
         event->setDefaultHandled();
 }
 

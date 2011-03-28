@@ -1,3 +1,17 @@
+2011-03-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57260
+        Clean up text input code a little
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView doCommandBySelector:]): This NSTextInput protocol method lacked a LOG() call.
+        (-[WKView keyDown:]): Added (possibly useless) event protection to match performKeyEquivalent:
+        and also WebKit1.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm: Removed an obsolete comment.
+
 2011-03-28  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adam Roben.
