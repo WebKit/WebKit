@@ -667,6 +667,8 @@ BUGWK56602 SKIP : http/tests/inspector/network/network-size-sync.html = FAIL
 
 BUGJAMESR WIN LINUX : inspector/styles/styles-disable-then-delete.html = TIMEOUT PASS
 
+BUGCR77630 WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation-crash.html = PASS TEXT
+
 // -----------------------------------------------------------------
 // Other
 // -----------------------------------------------------------------
