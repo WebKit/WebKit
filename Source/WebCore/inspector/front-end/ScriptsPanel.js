@@ -192,6 +192,7 @@ WebInspector.ScriptsPanel = function()
 
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.SourceFileAdded, this._sourceFileAdded, this)
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.SourceFileChanged, this._sourceFileChanged, this);
+    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleMessageAdded, this._consoleMessageAdded, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, this._breakpointAdded, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, this._breakpointRemoved, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, this._callFrameSelected, this);
@@ -310,17 +311,24 @@ WebInspector.ScriptsPanel.prototype = {
 
     addConsoleMessage: function(message)
     {
-        this._messages.push(message);
-        var sourceFrame = this._sourceFileIdToSourceFrame[message.url];
-        if (sourceFrame)
-            sourceFrame.addMessage(message);
+        if (message.isErrorOrWarning() && message.message)
+            this._presentationModel.addConsoleMessage(message);
     },
 
     clearConsoleMessages: function()
     {
-        this._messages = [];
-        for (var url in this._sourceFileIdToSourceFrame)
-            this._sourceFileIdToSourceFrame[url].clearMessages();
+        this._presentationModel.clearConsoleMessages();
+        for (var sourceFileId in this._sourceFileIdToSourceFrame)
+            this._sourceFileIdToSourceFrame[sourceFileId].clearMessages();
+    },
+
+    _consoleMessageAdded: function(event)
+    {
+        var message = event.data;
+
+        var sourceFrame = this._sourceFileIdToSourceFrame[message.sourceFileId];
+        if (sourceFrame && sourceFrame.loaded)
+            sourceFrame.addMessageToSource(message.lineNumber, message.originalMessage);
     },
 
     _breakpointAdded: function(event)
@@ -448,7 +456,6 @@ WebInspector.ScriptsPanel.prototype = {
 
         this._sourceFileIdToSourceFrame = {};
         this._sourceFileIdToFilesSelectOption = {};
-        this._messages = [];
         this._filesSelectElement.removeChildren();
         this.functionsSelectElement.removeChildren();
         this.viewsContainerElement.removeChildren();
@@ -577,11 +584,12 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var sourceFrame = event.target;
         var sourceFileId = sourceFrame._sourceFileId;
+        var sourceFile = this._presentationModel.sourceFile(sourceFileId);
 
-        for (var i = 0; i < this._messages.length; ++i) {
-            var message = this._messages[i];
-            if (message.url === sourceFileId)
-                sourceFrame.addMessage(message);
+        var messages = sourceFile.messages;
+        for (var i = 0; i < messages.length; ++i) {
+            var message = messages[i];
+            sourceFrame.addMessageToSource(message.lineNumber, message.originalMessage);
         }
 
         var breakpoints = this._presentationModel.breakpointsForSourceFileId(sourceFileId);

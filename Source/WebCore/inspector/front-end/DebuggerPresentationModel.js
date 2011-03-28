@@ -31,6 +31,7 @@
 WebInspector.DebuggerPresentationModel = function()
 {
     this._sourceFiles = {};
+    this._messages = [];
     this._presentationBreakpoints = {};
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasEnabled, this._debuggerWasEnabled, this);
@@ -43,6 +44,7 @@ WebInspector.DebuggerPresentationModel = function()
 WebInspector.DebuggerPresentationModel.Events = {
     SourceFileAdded: "source-file-added",
     SourceFileChanged: "source-file-changed",
+    ConsoleMessageAdded: "console-message-added",
     BreakpointAdded: "breakpoint-added",
     BreakpointRemoved: "breakpoint-removed"
 }
@@ -175,12 +177,45 @@ WebInspector.DebuggerPresentationModel.prototype = {
         if (this._formatSourceFiles && !this._formatter)
             this._formatter = new WebInspector.ScriptFormatter();
 
+        var messages = this._messages;
+
         this._reset();
+
         var scripts = WebInspector.debuggerModel.scripts;
         for (var id in scripts)
             this._addScript(scripts[id]);
 
+        for (var i = 0; i < messages.length; ++i)
+            this.addConsoleMessage(messages[i]);
+
         this._refreshBreakpoints();
+    },
+
+    addConsoleMessage: function(message)
+    {
+        this._messages.push(message);
+
+        var sourceFile = this._sourceFileForScriptURL(message.url);
+        if (!sourceFile)
+            return;
+
+        function didRequestSourceMapping(mapping)
+        {
+            var presentationMessage = {};
+            presentationMessage.sourceFileId = sourceFile.id;
+            presentationMessage.lineNumber = mapping.scriptLocationToSourceLocation(message.line - 1, 0).lineNumber;
+            presentationMessage.originalMessage = message;
+            sourceFile.messages.push(presentationMessage);
+            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ConsoleMessageAdded, presentationMessage);
+        }
+        sourceFile.requestSourceMapping(didRequestSourceMapping.bind(this));
+    },
+
+    clearConsoleMessages: function()
+    {
+        this._messages = [];
+        for (var id in this._sourceFiles)
+            this._sourceFiles[id].messages = [];
     },
 
     continueToLine: function(sourceFileId, lineNumber)
@@ -365,6 +400,11 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return this._sourceFiles[script.sourceURL || script.sourceID];
     },
 
+    _sourceFileForScriptURL: function(scriptURL)
+    {
+        return this._sourceFiles[scriptURL];
+    },
+
     _scriptForSourceFileId: function(sourceFileId)
     {
         function filter(script)
@@ -377,6 +417,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _reset: function()
     {
         this._sourceFiles = {};
+        this._messages = [];
         this._presentationBreakpoints = {};
     }
 }

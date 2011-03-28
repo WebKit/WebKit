@@ -119,12 +119,9 @@ WebInspector.SourceFrame.prototype = {
 
     addMessage: function(msg)
     {
-        // Don't add the message if there is no message or valid line or if the msg isn't an error or warning.
-        if (!msg.message || msg.line <= 0 || !msg.isErrorOrWarning())
-            return;
         this._messages.push(msg);
         if (this._textViewer)
-            this._addMessageToSource(msg);
+            this.addMessageToSource(msg.line - 1, msg);
     },
 
     clearMessages: function()
@@ -406,26 +403,26 @@ WebInspector.SourceFrame.prototype = {
     {
         var length = this._messages.length;
         for (var i = 0; i < length; ++i)
-            this._addMessageToSource(this._messages[i]);
+            this.addMessageToSource(this._messages[i].line - 1, this._messages[i]);
     },
 
-    _addMessageToSource: function(msg)
+    addMessageToSource: function(lineNumber, msg)
     {
-        if (msg.line > this._textModel.linesCount)
+        if (lineNumber >= this._textModel.linesCount)
             return;
 
-        var messageBubbleElement = this._messageBubbles[msg.line];
+        var messageBubbleElement = this._messageBubbles[lineNumber];
         if (!messageBubbleElement || messageBubbleElement.nodeType !== Node.ELEMENT_NODE || !messageBubbleElement.hasStyleClass("webkit-html-message-bubble")) {
             messageBubbleElement = document.createElement("div");
             messageBubbleElement.className = "webkit-html-message-bubble";
-            this._messageBubbles[msg.line] = messageBubbleElement;
-            this._textViewer.addDecoration(msg.line - 1, messageBubbleElement);
+            this._messageBubbles[lineNumber] = messageBubbleElement;
+            this._textViewer.addDecoration(lineNumber, messageBubbleElement);
         }
 
-        var rowMessages = this._rowMessages[msg.line];
+        var rowMessages = this._rowMessages[lineNumber];
         if (!rowMessages) {
             rowMessages = [];
-            this._rowMessages[msg.line] = rowMessages;
+            this._rowMessages[lineNumber] = rowMessages;
         }
 
         for (var i = 0; i < rowMessages.length; ++i) {

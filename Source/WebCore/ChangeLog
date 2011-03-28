@@ -1,3 +1,33 @@
+2011-03-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: fix console messages positions in formatted scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=57010
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype.toggleFormatSourceFiles):
+        (WebInspector.DebuggerPresentationModel.prototype.addConsoleMessage.didRequestMapping):
+        (WebInspector.DebuggerPresentationModel.prototype.addConsoleMessage):
+        (WebInspector.DebuggerPresentationModel.prototype.clearConsoleMessages):
+        (WebInspector.DebuggerPresentationModel.prototype._reset):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype.addConsoleMessage):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.addConsoleMessage):
+        (WebInspector.ScriptsPanel.prototype.clearConsoleMessages):
+        (WebInspector.ScriptsPanel.prototype._consoleMessageAdded):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameLoaded):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.SourceFile):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.addMessage):
+        (WebInspector.SourceFrame.prototype._addExistingMessagesToSource):
+        (WebInspector.SourceFrame.prototype.addMessageToSource):
+
 2011-03-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -177,7 +177,7 @@ WebInspector.ResourceTreeModel.prototype = {
         }
 
         var view = WebInspector.ResourceView.resourceViewForResource(resource);
-        if (view.addMessage)
+        if (view.addMessage && msg.isErrorOrWarning() && msg.message)
             view.addMessage(msg);
     },
 
