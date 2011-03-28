@@ -52,6 +52,7 @@ from checker import CheckerDispatcher
 from checker import ProcessorBase
 from checker import StyleProcessor
 from checker import StyleProcessorConfiguration
+from checkers.changelog import ChangeLogChecker
 from checkers.cpp import CppChecker
 from checkers.python import PythonChecker
 from checkers.text import TextChecker
@@ -395,6 +396,10 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
                              "got_class": got_class,
                              "expected_class": expected_class})
 
+    def assert_checker_changelog(self, file_path):
+        """Assert that the dispatched checker is a ChangeLogChecker."""
+        self.assert_checker(file_path, ChangeLogChecker)
+
     def assert_checker_cpp(self, file_path):
         """Assert that the dispatched checker is a CppChecker."""
         self.assert_checker(file_path, CppChecker)
@@ -410,6 +415,25 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
     def assert_checker_xml(self, file_path):
         """Assert that the dispatched checker is a XMLChecker."""
         self.assert_checker(file_path, XMLChecker)
+
+    def test_changelog_paths(self):
+        """Test paths that should be checked as ChangeLog."""
+        paths = [
+                 "ChangeLog",
+                 "ChangeLog-2009-06-16",
+                 os.path.join("Source", "WebCore", "ChangeLog"),
+                 ]
+
+        for path in paths:
+            self.assert_checker_changelog(path)
+
+        # Check checker attributes on a typical input.
+        file_path = "ChangeLog"
+        self.assert_checker_changelog(file_path)
+        checker = self.dispatch(file_path)
+        self.assertEquals(checker.file_path, file_path)
+        self.assertEquals(checker.handle_style_error,
+                          self.mock_handle_style_error)
 
     def test_cpp_paths(self):
         """Test paths that should be checked as C++."""
@@ -465,8 +489,6 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
     def test_text_paths(self):
         """Test paths that should be checked as text."""
         paths = [
-           "ChangeLog",
-           "ChangeLog-2009-06-16",
            "foo.ac",
            "foo.cc",
            "foo.cgi",
@@ -491,7 +513,6 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
            "foo.wm",
            "foo.xhtml",
            "foo.y",
-           os.path.join("Source", "WebCore", "ChangeLog"),
            os.path.join("Source", "WebCore", "inspector", "front-end", "inspector.js"),
            os.path.join("Tools", "Scripts", "check-webkit-style"),
         ]

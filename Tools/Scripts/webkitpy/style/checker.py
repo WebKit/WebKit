@@ -36,6 +36,7 @@ import sys
 
 from checkers.common import categories as CommonCategories
 from checkers.common import CarriageReturnChecker
+from checkers.changelog import ChangeLogChecker
 from checkers.cpp import CppChecker
 from checkers.python import PythonChecker
 from checkers.test_expectations import TestExpectationsChecker
@@ -420,10 +421,11 @@ class FileType:
 
     NONE = 0  # FileType.NONE evaluates to False.
     # Alphabetize remaining types
-    CPP = 1
-    PYTHON = 2
-    TEXT = 3
-    XML = 4
+    CHANGELOG = 1
+    CPP = 2
+    PYTHON = 3
+    TEXT = 4
+    XML = 5
 
 
 class CheckerDispatcher(object):
@@ -482,8 +484,9 @@ class CheckerDispatcher(object):
             return FileType.PYTHON
         elif file_extension in _XML_FILE_EXTENSIONS:
             return FileType.XML
-        elif (os.path.basename(file_path).startswith('ChangeLog') or
-              (not file_extension and os.path.join("Tools", "Scripts") in file_path) or
+        elif os.path.basename(file_path).startswith('ChangeLog'):
+            return FileType.CHANGELOG
+        elif ((not file_extension and os.path.join("Tools", "Scripts") in file_path) or
               file_extension in _TEXT_FILE_EXTENSIONS):
             return FileType.TEXT
         else:
@@ -494,6 +497,8 @@ class CheckerDispatcher(object):
         """Instantiate and return a style checker based on file type."""
         if file_type == FileType.NONE:
             checker = None
+        elif file_type == FileType.CHANGELOG:
+            checker = ChangeLogChecker(file_path, handle_style_error)
         elif file_type == FileType.CPP:
             file_extension = self._file_extension(file_path)
             checker = CppChecker(file_path, file_extension,

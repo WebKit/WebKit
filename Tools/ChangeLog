@@ -1,3 +1,15 @@
+2011-03-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by David Levin.
+
+        check-webkit-style should check ChangeLog for a valid bug number
+        https://bugs.webkit.org/show_bug.cgi?id=57184
+
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+        * Scripts/webkitpy/style/checkers/changelog.py: Added.
+        * Scripts/webkitpy/style/checkers/changelog_unittest.py: Added.
+
 2011-03-27  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.
