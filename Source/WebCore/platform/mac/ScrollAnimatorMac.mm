@@ -240,6 +240,13 @@ static NSSize abs(NSSize size)
                                                                                      verticalScrollbar->controlSize(),
                                                                                      false);
         macTheme->setNewPainterForScrollbar(verticalScrollbar, newVerticalPainter);
+        wkSetPainterForPainterController(painterController, newVerticalPainter, false);
+
+        // The different scrollbar styles have different thicknesses, so we must re-set the 
+        // frameRect to the new thickness, and the re-layout below will ensure the position
+        // and length are properly updated.
+        int thickness = macTheme->scrollbarThickness(verticalScrollbar->controlSize());
+        verticalScrollbar->setFrameRect(WebCore::IntRect(0, 0, thickness, thickness));
     }
 
     WKScrollbarPainterRef oldHorizontalPainter = wkHorizontalScrollbarPainterForController(painterController);
@@ -250,9 +257,19 @@ static NSSize abs(NSSize size)
                                                                                        horizontalScrollbar->controlSize(),
                                                                                        true);
         macTheme->setNewPainterForScrollbar(horizontalScrollbar, newHorizontalPainter);
+        wkSetPainterForPainterController(painterController, newHorizontalPainter, true);
+
+        // The different scrollbar styles have different thicknesses, so we must re-set the 
+        // frameRect to the new thickness, and the re-layout below will ensure the position
+        // and length are properly updated.
+        int thickness = macTheme->scrollbarThickness(horizontalScrollbar->controlSize());
+        horizontalScrollbar->setFrameRect(WebCore::IntRect(0, 0, thickness, thickness));
     }
 
     wkSetScrollbarPainterControllerStyle(painterController, newRecommendedScrollerStyle);
+
+    // The different scrollbar styles affect layout, so we must re-layout everything.
+    _animator->scrollableArea()->scrollbarStyleChanged();
 }
 
 @end

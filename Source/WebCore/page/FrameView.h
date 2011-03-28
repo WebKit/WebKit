@@ -318,6 +318,7 @@ private:
     virtual void getTickmarks(Vector<IntRect>&) const;
     virtual void scrollTo(const IntSize&);
     virtual void didCompleteRubberBand(const IntSize&) const;
+    virtual void scrollbarStyleChanged();
 
     virtual void notifyPageThatContentAreaWillPaint() const;
     virtual void disconnectFromPage() { m_page = 0; }

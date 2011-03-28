@@ -1,3 +1,49 @@
+2011-03-28  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=57124 When the scroller style is 
+        changed via delegate method, the page needs a full relayout and repaint
+        -and corresponding-
+        <rdar://problem/9059129>
+
+        Call into WebKitSystemInterface to associate the new painter with the existing 
+        painter controller. Reset the scrollbar frame rects to the new thickness -- normally 
+        this only happens when a scrollbar is created, so we have to reset the thickness 
+        here to pick up the new theme thickness. Finally, force a full relayout and style 
+        recall with setNeedsRecalcStyleInAllFrames()
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPainterControllerDelegate scrollerImpPair:updateScrollerStyleForNewRecommendedScrollerStyle:]):
+
+        setNeedsRecalcStyleInAllFrames() used to be a static method in Settings.cpp. This 
+        patch moves it to be a member function on Page so that it can be called from 
+        FrameView when the scrollbar style changes.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setNeedsRecalcStyleInAllFrames):
+        * page/FrameView.h:
+        * page/Page.cpp:
+        (WebCore::Page::setNeedsRecalcStyleInAllFrames):
+        * page/Page.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::setStandardFontFamily):
+        (WebCore::Settings::setFixedFontFamily):
+        (WebCore::Settings::setSerifFontFamily):
+        (WebCore::Settings::setSansSerifFontFamily):
+        (WebCore::Settings::setCursiveFontFamily):
+        (WebCore::Settings::setFantasyFontFamily):
+        (WebCore::Settings::setMinimumFontSize):
+        (WebCore::Settings::setMinimumLogicalFontSize):
+        (WebCore::Settings::setDefaultFontSize):
+        (WebCore::Settings::setDefaultFixedFontSize):
+        (WebCore::Settings::setTextAreasAreResizable):
+        (WebCore::Settings::setAuthorAndUserStylesEnabled):
+        (WebCore::Settings::setFontRenderingMode):
+        (WebCore::Settings::setAcceleratedCompositingEnabled):
+        (WebCore::Settings::setShowDebugBorders):
+        (WebCore::Settings::setShowRepaintCounter):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::setNeedsRecalcStyleInAllFrames):
+
 2011-03-28  Dirk Pranke  <dpranke@chromium.org>
 
         RS=Tony Chang.

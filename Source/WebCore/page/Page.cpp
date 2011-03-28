@@ -391,6 +391,12 @@ void Page::scheduleForcedStyleRecalcForAllPages()
             frame->document()->scheduleForcedStyleRecalc();
 }
 
+void Page::setNeedsRecalcStyleInAllFrames()
+{
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frame->document()->styleSelectorChanged(DeferRecalcStyle);
+}
+
 void Page::updateViewportArguments()
 {
     if (!mainFrame() || !mainFrame()->document() || mainFrame()->document()->viewportArguments() == m_viewportArguments)

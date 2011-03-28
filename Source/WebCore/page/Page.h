@@ -119,6 +119,8 @@ namespace WebCore {
         Page(const PageClients&);
         ~Page();
 
+        void setNeedsRecalcStyleInAllFrames();
+
         RenderTheme* theme() const { return m_theme.get(); };
 
         ViewportArguments viewportArguments() const { return m_viewportArguments; }

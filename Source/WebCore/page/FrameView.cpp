@@ -2060,6 +2060,11 @@ void FrameView::didCompleteRubberBand(const IntSize& initialOverhang) const
     return page->chrome()->client()->didCompleteRubberBandForMainFrame(initialOverhang);
 }
 
+void FrameView::scrollbarStyleChanged()
+{
+    m_frame->page()->setNeedsRecalcStyleInAllFrames();
+}
+
 bool FrameView::shouldSuspendScrollAnimations() const
 {
     return m_frame->loader()->state() != FrameStateComplete;
