@@ -1,3 +1,11 @@
+2011-03-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Update expectations after r82105.
+
+        * platform/qt/fast/css/text-align-expected.checksum:
+        * platform/qt/fast/css/text-align-expected.png:
+        * platform/qt/fast/css/text-align-expected.txt:
+
 2011-03-27  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
