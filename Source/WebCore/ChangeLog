@@ -1,3 +1,15 @@
+2011-03-28  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Refactor duplicate code in HTMLTextElement
+        https://bugs.webkit.org/show_bug.cgi?id=57215
+
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::childrenChanged):
+        This method did an equivalent loop to the text() method on
+        the same object.
+
 2011-03-27  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
