@@ -1,3 +1,10 @@
+2011-03-28  Adele Peterson  <adele@apple.com>
+
+        Build fix.
+
+        * src/WebFrameImpl.cpp: (WebKit::WebFrameImpl::selectionStartHasSpellingMarkerFor):
+        Call new selectionStartHasMarkerFor method instead of selectionStartHasSpellingMarkerFor.
+
 2011-03-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: fixed chromium build.

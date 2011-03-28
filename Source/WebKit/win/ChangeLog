@@ -1,3 +1,10 @@
+2011-03-28  Adele Peterson  <adele@apple.com>
+
+        Build fix.
+        
+        * WebFrame.cpp: (WebFrame::hasSpellingMarker):
+        Call new selectionStartHasMarkerFor method instead of selectionStartHasSpellingMarkerFor.
+
 2011-03-28  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adam Roben.

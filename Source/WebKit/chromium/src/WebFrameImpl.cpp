@@ -1800,7 +1800,7 @@ bool WebFrameImpl::selectionStartHasSpellingMarkerFor(int from, int length) cons
 {
     if (!m_frame)
         return false;
-    return m_frame->editor()->selectionStartHasSpellingMarkerFor(from, length);
+    return m_frame->editor()->selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
 }
 
 bool WebFrameImpl::pauseSVGAnimation(const WebString& animationId, double time, const WebString& elementId)
