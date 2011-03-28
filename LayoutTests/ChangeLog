@@ -1,3 +1,16 @@
+2011-03-28  Vincent Scheib  <scheib@chromium.org>
+
+        Chromium rebaseline for r82123.
+
+        * platform/chromium-mac/fast/repaint/overflow-flipped-writing-mode-block-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/overflow-flipped-writing-mode-block-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/overflow-flipped-writing-mode-table-expected.checksum: Added.
+        * platform/chromium-mac/fast/repaint/overflow-flipped-writing-mode-table-expected.png: Added.
+        * platform/chromium-win/fast/repaint/overflow-flipped-writing-mode-block-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/overflow-flipped-writing-mode-block-expected.png: Added.
+        * platform/chromium-win/fast/repaint/overflow-flipped-writing-mode-table-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/overflow-flipped-writing-mode-table-expected.png: Added.
+
 2011-03-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler' .
