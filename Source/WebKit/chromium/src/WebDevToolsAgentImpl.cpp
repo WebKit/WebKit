@@ -387,10 +387,10 @@ bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)
     if (!InspectorBackendDispatcher::getCommandName(message, &commandName))
         return false;
     return commandName == InspectorBackendDispatcher::Debugger_pauseCmd
-        || commandName == InspectorBackendDispatcher::Debugger_setJavaScriptBreakpointCmd
-        || commandName == InspectorBackendDispatcher::Debugger_removeJavaScriptBreakpointCmd
-        || commandName == InspectorBackendDispatcher::Debugger_activateBreakpointsCmd
-        || commandName == InspectorBackendDispatcher::Debugger_deactivateBreakpointsCmd
+        || commandName == InspectorBackendDispatcher::Debugger_setBreakpointCmd
+        || commandName == InspectorBackendDispatcher::Debugger_setBreakpointByUrlCmd
+        || commandName == InspectorBackendDispatcher::Debugger_removeBreakpointCmd
+        || commandName == InspectorBackendDispatcher::Debugger_setBreakpointsActiveCmd
         || commandName == InspectorBackendDispatcher::Profiler_startCmd
         || commandName == InspectorBackendDispatcher::Profiler_stopCmd
         || commandName == InspectorBackendDispatcher::Profiler_getProfileCmd;
