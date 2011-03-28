@@ -1,5 +1,12 @@
 2011-03-28  Alexey Proskuryakov  <ap@apple.com>
 
+        Build fix.
+
+        * UIProcess/API/mac/WKView.mm: (-[WKView keyDown:]): It's not "event" in this function, it's
+        "theEvent".
+
+2011-03-28  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=57260

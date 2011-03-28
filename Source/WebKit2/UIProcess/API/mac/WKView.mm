@@ -1127,7 +1127,7 @@ static const short kIOHIDEventTypeScroll = 6;
     // There's a chance that responding to this event will run a nested event loop, and
     // fetching a new event might release the old one. Retaining and then autoreleasing
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
-    [[event retain] autorelease];
+    [[theEvent retain] autorelease];
 
     if (_data->_pluginComplexTextInputIdentifier) {
         // Try feeding the keyboard event directly to the plug-in.
