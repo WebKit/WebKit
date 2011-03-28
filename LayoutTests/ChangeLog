@@ -1,3 +1,23 @@
+2011-03-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, added new GTK+ test expectations.
+
+        * platform/gtk/fast/block/positioning/static-inline-position-dynamic-expected.checksum: Added.
+        * platform/gtk/fast/block/positioning/static-inline-position-dynamic-expected.png: Added.
+        * platform/gtk/fast/block/positioning/static-inline-position-dynamic-expected.txt: Added.
+        * platform/gtk/fast/block/positioning/trailing-space-test-expected.checksum: Added.
+        * platform/gtk/fast/block/positioning/trailing-space-test-expected.png: Added.
+        * platform/gtk/fast/block/positioning/trailing-space-test-expected.txt: Added.
+        * platform/gtk/fast/blockflow/fallback-orientation-expected.checksum: Added.
+        * platform/gtk/fast/blockflow/fallback-orientation-expected.png: Added.
+        * platform/gtk/fast/blockflow/fallback-orientation-expected.txt: Added.
+        * platform/gtk/fast/text/justify-ideograph-leading-expansion-expected.checksum: Added.
+        * platform/gtk/fast/text/justify-ideograph-leading-expansion-expected.png: Added.
+        * platform/gtk/fast/text/justify-ideograph-leading-expansion-expected.txt: Added.
+        * platform/gtk/svg/text/text-path-middle-align-expected.checksum: Added.
+        * platform/gtk/svg/text/text-path-middle-align-expected.png: Added.
+        * platform/gtk/svg/text/text-path-middle-align-expected.txt: Added.
+
 2011-03-28  Jessie Berlin  <jberlin@apple.com>
 
         Rubber-stamped by Adam Roben.
