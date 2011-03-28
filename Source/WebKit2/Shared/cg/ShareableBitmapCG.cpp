@@ -38,10 +38,10 @@ PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
 
-    ref(); // Balanced by deref in releaseData.
+    ref(); // Balanced by deref in releaseBitmapContextData.
     RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreateWithData(data(),
         m_size.width(), m_size.height(), 8, m_size.width() * 4, colorSpace.get(),
-        kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, releaseData, this));
+        kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, releaseBitmapContextData, this));
 
     // We want the origin to be in the top left corner so we flip the backing store context.
     CGContextTranslateCTM(bitmapContext.get(), 0, m_size.height());
@@ -52,14 +52,38 @@ PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 
 void ShareableBitmap::paint(WebCore::GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)
 {
-    paintBitmapContext(context.platformContext(), createGraphicsContext()->platformContext(), dstPoint, srcRect);
+    paintImage(context.platformContext(), makeCGImageCopy().get(), dstPoint, srcRect);
 }
 
-void ShareableBitmap::releaseData(void* typelessBitmap, void* typelessData)
+RetainPtr<CGImageRef> ShareableBitmap::makeCGImageCopy()
+{
+    OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext();
+    RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(graphicsContext->platformContext()));
+    return image;
+}
+
+RetainPtr<CGImageRef> ShareableBitmap::makeCGImage()
+{
+    ref(); // Balanced by deref in releaseDataProviderData.
+    RetainPtr<CGDataProvider> dataProvider(AdoptCF, CGDataProviderCreateWithData(this, data(), sizeInBytes(), releaseDataProviderData));
+
+    RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
+    RetainPtr<CGImageRef> image(AdoptCF, CGImageCreate(m_size.width(), m_size.height(), 8, 32, m_size.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+    return image;
+}
+
+void ShareableBitmap::releaseBitmapContextData(void* typelessBitmap, void* typelessData)
 {
     ShareableBitmap* bitmap = static_cast<ShareableBitmap*>(typelessBitmap);
     ASSERT_UNUSED(typelessData, bitmap->data() == typelessData);
     bitmap->deref(); // Balanced by ref in createGraphicsContext.
+}
+
+void ShareableBitmap::releaseDataProviderData(void* typelessBitmap, const void* typelessData, size_t)
+{
+    ShareableBitmap* bitmap = static_cast<ShareableBitmap*>(typelessBitmap);
+    ASSERT_UNUSED(typelessData, bitmap->data() == typelessData);
+    bitmap->deref(); // Balanced by ref in createCGImage.
 }
 
 } // namespace WebKit

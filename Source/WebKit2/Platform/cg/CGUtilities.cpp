@@ -29,37 +29,29 @@
 #include <wtf/RetainPtr.h>
 
 namespace WebKit {
-    
-void paintBitmapContext(CGContextRef context, CGContextRef bitmapContext, CGPoint destination, CGRect source)
+
+void paintImage(CGContextRef context, CGImageRef image, CGPoint destination, CGRect source)
 {
-    void* bitmapData = CGBitmapContextGetData(bitmapContext);
-    ASSERT(bitmapData);
-
-    size_t imageWidth = CGBitmapContextGetWidth(bitmapContext);
-    size_t imageHeight = CGBitmapContextGetHeight(bitmapContext);
-
-    size_t bytesPerRow = CGBitmapContextGetBytesPerRow(bitmapContext);
-
-    RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateWithData(0, bitmapData, bytesPerRow * imageHeight, 0));
-    RetainPtr<CGImageRef> image(AdoptCF, CGImageCreate(imageWidth, imageHeight, 
-                                                       CGBitmapContextGetBitsPerComponent(bitmapContext),
-                                                       CGBitmapContextGetBitsPerPixel(bitmapContext), 
-                                                       bytesPerRow,
-                                                       CGBitmapContextGetColorSpace(bitmapContext), 
-                                                       CGBitmapContextGetBitmapInfo(bitmapContext), 
-                                                       dataProvider.get(), 0, false, kCGRenderingIntentDefault));
-
     CGContextSaveGState(context);
 
     CGContextClipToRect(context, CGRectMake(destination.x, destination.y, source.size.width, source.size.height));
     CGContextScaleCTM(context, 1, -1);
 
+    size_t imageHeight = CGImageGetHeight(image);
+    size_t imageWidth = CGImageGetWidth(image);
+
     CGFloat destX = destination.x - source.origin.x;
     CGFloat destY = -static_cast<CGFloat>(imageHeight) - destination.y + source.origin.y;
 
-    CGContextDrawImage(context, CGRectMake(destX, destY, imageWidth, imageHeight), image.get());
+    CGContextDrawImage(context, CGRectMake(destX, destY, imageWidth, imageHeight), image);
     CGContextRestoreGState(context);
 }
-    
+
+void paintBitmapContext(CGContextRef context, CGContextRef bitmapContext, CGPoint destination, CGRect source)
+{
+    RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(bitmapContext));
+    paintImage(context, image.get(), destination, source);
+}
+
 } // namespace WebKit
 

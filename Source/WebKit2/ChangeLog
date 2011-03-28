@@ -1,3 +1,44 @@
+2011-03-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        CGImageRefs must hold a strong reference to underlying data
+        https://bugs.webkit.org/show_bug.cgi?id=57263
+        <rdar://problem/9146179>
+
+        Make paintBitmapContext use CGBitmapContextCreateImage, which creates a copy-on-write copy
+        of the bitmap data. Also, add ShareableBitmap::makeCGImageCopy which does the same thing, and
+        ShareableBitmap::makeCGImage in the cases where we know that the ShareableBitmap data will never change.
+
+        * Platform/cg/CGUtilities.cpp:
+        (WebKit::paintImage):
+        Factor image painting code out into a separate function.
+
+        (WebKit::paintBitmapContext):
+        Call paintImage.
+
+        * Shared/API/c/cg/WKImageCG.cpp:
+        (WKImagemakeCGImage):
+        Use ShareableBitmap::makeCGImageCopy.
+
+        * Shared/ShareableBitmap.h:
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::paint):
+        (WebKit::ShareableBitmap::makeCGImageCopy):
+        (WebKit::ShareableBitmap::makeCGImage):
+        (WebKit::ShareableBitmap::releaseBitmapContextData):
+        (WebKit::ShareableBitmap::releaseDataProviderData):
+        Add makeCGImage and makeCGImageCopy.
+
+        * Shared/cg/WebCoreArgumentCodersCG.cpp:
+        (CoreIPC::createImage):
+        Use ShareableBitmap::makeCGImage.
+        
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setDragImage):
+        Use ShareableBitmap::makeCGImage and plug a CGImageRef leak.
+
 2011-03-28  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.

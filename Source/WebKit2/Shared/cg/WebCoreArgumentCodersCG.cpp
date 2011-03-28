@@ -36,7 +36,7 @@ namespace CoreIPC {
 
 RefPtr<Image> createImage(ShareableBitmap* bitmap)
 {
-    RetainPtr<CGImageRef> platformImage(AdoptCF, CGBitmapContextCreateImage(bitmap->createGraphicsContext()->platformContext()));
+    RetainPtr<CGImageRef> platformImage = bitmap->makeCGImage();
     if (!platformImage)
         return 0;
     // BitmapImage::create adopts the CGImageRef that's passed in, which is why we need to leakRef here.

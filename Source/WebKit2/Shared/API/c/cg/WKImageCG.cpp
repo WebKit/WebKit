@@ -36,8 +36,7 @@ using namespace WebCore;
 
 CGImageRef WKImageCreateCGImage(WKImageRef imageRef)
 {
-    OwnPtr<GraphicsContext> sourceContext = toImpl(imageRef)->bitmap()->createGraphicsContext();
-    return CGBitmapContextCreateImage(sourceContext->platformContext());
+    return toImpl(imageRef)->bitmap()->makeCGImageCopy().leakRef();
 }
 
 WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)

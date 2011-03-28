@@ -299,8 +299,9 @@ void PageClientImpl::interceptKeyEvent(const NativeWebKeyboardEvent& event, Vect
 
 void PageClientImpl::setDragImage(const IntPoint& clientPosition, const IntSize& imageSize, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag)
 {
-    OwnPtr<GraphicsContext> graphicsContext = dragImage->createGraphicsContext();
-    RetainPtr<NSImage> dragNSImage(AdoptNS, [[NSImage alloc] initWithCGImage:CGBitmapContextCreateImage(graphicsContext->platformContext()) size:imageSize]);
+    RetainPtr<CGImageRef> dragCGImage = dragImage->makeCGImage();
+    RetainPtr<NSImage> dragNSImage(AdoptNS, [[NSImage alloc] initWithCGImage:dragCGImage.get() size:imageSize]);
+
     [m_wkView _setDragImage:dragNSImage.get() at:clientPosition linkDrag:isLinkDrag];
 }
     

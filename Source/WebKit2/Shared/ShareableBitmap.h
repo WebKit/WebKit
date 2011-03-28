@@ -33,6 +33,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+#endif
+
 namespace WebCore {
     class GraphicsContext;
 }
@@ -71,14 +75,26 @@ public:
 
     bool isBackedBySharedMemory() const { return m_sharedMemory; }
 
+#if PLATFORM(CG)
+    // This creates a copied CGImageRef (most likely a copy-on-write) of the shareable bitmap.
+    RetainPtr<CGImageRef> makeCGImageCopy();
+
+    // This creates a CGImageRef that directly references the shared bitmap data.
+    // This is only safe to use when we know that the contents of the shareable bitmap won't change.
+    RetainPtr<CGImageRef> makeCGImage();
+#endif
+
 private:
     ShareableBitmap(const WebCore::IntSize&, void*);
     ShareableBitmap(const WebCore::IntSize&, PassRefPtr<SharedMemory>);
 
     static size_t numBytesForSize(const WebCore::IntSize& size) { return size.width() * size.height() * 4; }
 
-    static void releaseData(void* typelessBitmap, void* typelessData);
-    
+#if PLATFORM(CG)
+    static void releaseBitmapContextData(void* typelessBitmap, void* typelessData);
+    static void releaseDataProviderData(void* typelessBitmap, const void* typelessData, size_t);
+#endif
+
     void* data() const;
     size_t sizeInBytes() const { return numBytesForSize(m_size); }
 

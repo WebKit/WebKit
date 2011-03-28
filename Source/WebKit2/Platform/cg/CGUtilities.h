@@ -28,6 +28,7 @@
 
 namespace WebKit {
 
+void paintImage(CGContextRef, CGImageRef, CGPoint destination, CGRect source);
 void paintBitmapContext(CGContextRef, CGContextRef bitmapContext, CGPoint destination, CGRect source);
 
 } // namespace WebKit
