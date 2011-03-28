@@ -1,5 +1,11 @@
 2011-03-28  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed. Yet another test result fix for fast/blockflow/fallback-orientation-expected.html.
+
+        * platform/chromium-win/fast/blockflow/fallback-orientation-expected.txt: Renamed from LayoutTests/platform/chromium-win-xp/fast/blockflow/fallback-orientation-expected.txt.
+
+2011-03-28  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed, add Chromium test expectation for inspector/debugger/debugger-activation-crash.html.
 
         * platform/chromium/test_expectations.txt:
