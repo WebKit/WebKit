@@ -158,6 +158,11 @@ static AccessibilityObject* core(AtkDocument* document)
     return core(ATK_OBJECT(document));
 }
 
+static AccessibilityObject* core(AtkValue* value)
+{
+    return core(ATK_OBJECT(value));
+}
+
 static gchar* webkit_accessible_text_get_text(AtkText* text, gint startOffset, gint endOffset);
 
 static const gchar* webkit_accessible_get_name(AtkObject* object)
@@ -2301,6 +2306,63 @@ static void atk_document_interface_init(AtkDocumentIface* iface)
     iface->get_document_locale = webkit_accessible_document_get_locale;
 }
 
+
+static void webkitAccessibleValueGetCurrentValue(AtkValue* value, GValue* gValue)
+{
+    memset(gValue,  0, sizeof(GValue));
+    g_value_init(gValue, G_TYPE_DOUBLE);
+    g_value_set_double(gValue, core(value)->valueForRange());
+}
+
+static void webkitAccessibleValueGetMaximumValue(AtkValue* value, GValue* gValue)
+{
+    memset(gValue,  0, sizeof(GValue));
+    g_value_init(gValue, G_TYPE_DOUBLE);
+    g_value_set_double(gValue, core(value)->maxValueForRange());
+}
+
+static void webkitAccessibleValueGetMinimumValue(AtkValue* value, GValue* gValue)
+{
+    memset(gValue,  0, sizeof(GValue));
+    g_value_init(gValue, G_TYPE_DOUBLE);
+    g_value_set_double(gValue, core(value)->minValueForRange());
+}
+
+static gboolean webkitAccessibleValueSetCurrentValue(AtkValue* value, const GValue* gValue)
+{
+    if (!G_VALUE_HOLDS_DOUBLE(gValue) && !G_VALUE_HOLDS_INT(gValue))
+        return FALSE;
+
+    AccessibilityObject* coreObject = core(value);
+    if (!coreObject->canSetValueAttribute())
+        return FALSE;
+
+    if (G_VALUE_HOLDS_DOUBLE(gValue))
+        coreObject->setValue(String::number(g_value_get_double(gValue)));
+    else
+        coreObject->setValue(String::number(g_value_get_int(gValue)));
+
+    return TRUE;
+}
+
+static void webkitAccessibleValueGetMinimumIncrement(AtkValue* value, GValue* gValue)
+{
+    memset(gValue,  0, sizeof(GValue));
+    g_value_init(gValue, G_TYPE_DOUBLE);
+
+    // There's not such a thing in the WAI-ARIA specification, thus return zero.
+    g_value_set_double(gValue, 0.0);
+}
+
+static void atkValueInterfaceInit(AtkValueIface* iface)
+{
+    iface->get_current_value = webkitAccessibleValueGetCurrentValue;
+    iface->get_maximum_value = webkitAccessibleValueGetMaximumValue;
+    iface->get_minimum_value = webkitAccessibleValueGetMinimumValue;
+    iface->set_current_value = webkitAccessibleValueSetCurrentValue;
+    iface->get_minimum_increment = webkitAccessibleValueGetMinimumIncrement;
+}
+
 static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {(GInterfaceInitFunc)atk_action_interface_init,
      (GInterfaceFinalizeFunc) 0, 0},
@@ -2321,6 +2383,8 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
     {(GInterfaceInitFunc)atkHyperlinkImplInterfaceInit,
      (GInterfaceFinalizeFunc) 0, 0},
     {(GInterfaceInitFunc)atk_document_interface_init,
+     (GInterfaceFinalizeFunc) 0, 0},
+    {(GInterfaceInitFunc)atkValueInterfaceInit,
      (GInterfaceFinalizeFunc) 0, 0}
 };
 
@@ -2334,7 +2398,8 @@ enum WAIType {
     WAI_TABLE,
     WAI_HYPERTEXT,
     WAI_HYPERLINK,
-    WAI_DOCUMENT
+    WAI_DOCUMENT,
+    WAI_VALUE,
 };
 
 static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
@@ -2360,6 +2425,8 @@ static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
         return ATK_TYPE_HYPERLINK_IMPL;
     case WAI_DOCUMENT:
         return ATK_TYPE_DOCUMENT;
+    case WAI_VALUE:
+        return ATK_TYPE_VALUE;
     }
 
     return G_TYPE_INVALID;
@@ -2430,6 +2497,10 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
     // Document
     if (role == WebAreaRole)
         interfaceMask |= 1 << WAI_DOCUMENT;
+
+    // Value
+    if (role == SliderRole)
+        interfaceMask |= 1 << WAI_VALUE;
 
     return interfaceMask;
 }

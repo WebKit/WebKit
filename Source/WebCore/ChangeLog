@@ -1,3 +1,29 @@
+2011-03-26  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Expose the AtkValue interface for WAI-ARIA sliders
+        https://bugs.webkit.org/show_bug.cgi?id=56655
+
+        Implement AtkValue interface for WAI-ARIA sliders.
+
+        Test: platform/gtk/accessibility/aria-slider-required-attributes.html
+
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::postPlatformNotification): Emit the
+        'property-change::accessible-value' signal when needed.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (core): New, returns a core object from an AtkValue.
+        (webkitAccessibleValueGetCurrentValue): New, implements AtkValue.
+        (webkitAccessibleValueGetMaximumValue): Ditto.
+        (webkitAccessibleValueGetMinimumValue): Ditto.
+        (webkitAccessibleValueSetCurrentValue): Ditto.
+        (webkitAccessibleValueGetMinimumIncrement): Ditto.
+        (atkValueInterfaceInit): Ditto.
+        (GetAtkInterfaceTypeFromWAIType): Add ATK_TYPE_VALUE.
+        (getInterfaceMaskFromObject): Set the WAI_VALUE bit for sliders.
+
 2011-03-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

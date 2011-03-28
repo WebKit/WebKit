@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+
+function finishTest()
+{
+    layoutTestController.notifyDone();
+}
+
+function runTest()
+{
+    slider = document.getElementById("slider");
+    slider.focus();
+
+    axSlider = accessibilityController.focusedElement;
+
+    shouldBe("axSlider.role", "'AXRole: slider'");
+    shouldBe("axSlider.intValue", "50");
+    shouldBe("axSlider.minValue", "0");
+    shouldBe("axSlider.maxValue", "100");
+
+    slider.setAttribute("aria-valuenow", "75");
+    shouldBe("axSlider.intValue", "75");
+
+    slider.setAttribute("aria-valuenow", "35");
+    shouldBe("axSlider.intValue", "35");
+
+    window.setTimeout("finishTest();", 0);
+}
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body" onload="runTest();">
+<div role="application">
+  <span id="slider" tabindex="0" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50"></span>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests the exposure of attributes for an ARIA slider.");
+
+if (window.accessibilityController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+if (window.accessibilityController) {
+    accessibilityController.logAccessibilityEvents();
+}
+
+successfullyParsed = true;
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

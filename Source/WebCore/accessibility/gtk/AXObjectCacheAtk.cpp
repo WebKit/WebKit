@@ -143,6 +143,17 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
             g_signal_emit_by_name(axObject, "state-change", "focused", true);
         }
         notifyChildrenSelectionChange(coreObject);
+    } else if (notification == AXValueChanged) {
+        if (!ATK_IS_VALUE(axObject))
+            return;
+
+        AtkPropertyValues propertyValues;
+        propertyValues.property_name = "accessible-value";
+
+        memset(&propertyValues.new_value,  0, sizeof(GValue));
+        atk_value_get_current_value(ATK_VALUE(axObject), &propertyValues.new_value);
+
+        g_signal_emit_by_name(ATK_OBJECT(axObject), "property-change::accessible-value", &propertyValues, NULL);
     }
 }
 
