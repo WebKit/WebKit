@@ -3326,6 +3326,7 @@ BUGWK57137 MAC LINUX : plugins/embed-prefers-plugins-for-images.html = TEXT
 
 // Regression since r82001.
 BUGCR77619 MAC SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
+BUGCR77628 MAC : fast/images/move-image-to-new-document.html = TIMEOUT
 
 // New test in r82013.
 BUGWK82013 WIN LINUX : fast/text/justify-ideograph-leading-expansion.html = IMAGE+TEXT

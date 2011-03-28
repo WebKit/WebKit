@@ -1,3 +1,11 @@
+2011-03-28  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, add new Chromium test results and expectation.
+
+        * platform/chromium-mac-snowleopard/fast/block/positioning/047-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/fast/block/positioning/047-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-26  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.
