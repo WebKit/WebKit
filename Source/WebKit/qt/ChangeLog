@@ -1,3 +1,12 @@
+2011-03-28  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] QtWebKit does not link with --3d-canvas using MinGW
+        https://bugs.webkit.org/show_bug.cgi?id=57225
+
+        * QtWebKit.pro: Append the OpenGL libraries on MinGW so it can resolve symbols.
+
 2011-03-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Andreas Kling.
