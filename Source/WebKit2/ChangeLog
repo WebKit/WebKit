@@ -1,5 +1,14 @@
 2011-03-28  Jeff Miller  <jeffm@apple.com>
 
+        Rubber-stamped by Adam Roben.
+
+        Remove unused CFErrorRef.
+
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (CoreIPC::encodeResourceError): Remove unused CFErrorRef.
+
+2011-03-28  Jeff Miller  <jeffm@apple.com>
+
         Reviewed by Adam Roben.
 
         Include certificate when sending a WebCore::ResourceError to UI process on Windows

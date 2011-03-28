@@ -123,12 +123,6 @@ void encodeResourceError(ArgumentEncoder* encoder, const WebCore::ResourceError&
     encoder->encode(CoreIPC::In(resourceError.domain(), resourceError.errorCode(), resourceError.failingURL(), resourceError.localizedDescription()));
 
 #if USE(CFNETWORK)
-    CFErrorRef cfError = resourceError.cfError();
-    if (!cfError) {
-        encoder->encode(WebKit::PlatformCertificateInfo());
-        return;
-    }
-    
     CFDataRef certificateData = resourceError.certificate();
     if (!certificateData) {
         encoder->encode(WebKit::PlatformCertificateInfo());
