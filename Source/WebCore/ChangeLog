@@ -1,3 +1,28 @@
+2011-03-28  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        MediaPlayerPrivateAVFoundation should report that it supportsFullScreen()
+        https://bugs.webkit.org/show_bug.cgi?id=57249
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::supportsFullscreen):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+
+2011-03-28  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AVFoundation can indeed support full screen.
+
+        MediaPlayerPrivateAVFoundation should report that it supportsFullScreen()
+        https://bugs.webkit.org/show_bug.cgi?id=57249
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::supportsFullscreen): Return true if using
+            the new full screen APIs.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+
 2011-03-28  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Darin Adler.

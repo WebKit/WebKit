@@ -384,6 +384,16 @@ void MediaPlayerPrivateAVFoundation::prepareForRendering()
         m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
 }
 
+bool MediaPlayerPrivateAVFoundation::supportsFullscreen() const
+{
+#if ENABLE(FULLSCREEN_API)
+    return true;
+#else
+    // FIXME: WebVideoFullscreenController assumes a QTKit/QuickTime media engine
+    return false;
+#endif
+}
+
 void MediaPlayerPrivateAVFoundation::updateStates()
 {
     MediaPlayer::NetworkState oldNetworkState = m_networkState;

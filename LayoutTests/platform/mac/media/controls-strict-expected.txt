@@ -12,12 +12,22 @@ layer at (8,50) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
 layer at (8,50) size 320x240
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,274) size 320x16
-  RenderFlexibleBox (positioned) {DIV} at (0,224) size 320x16
-    RenderButton {INPUT} at (0,0) size 16x16
-    RenderButton {INPUT} at (16,0) size 16x16
-    RenderFlexibleBox {DIV} at (32,0) size 256x16
-      RenderSlider {INPUT} at (0,0) size 256x16
-        RenderBlock {DIV} at (2,1) size 13x14
-    RenderButton {INPUT} at (288,0) size 16x16
-    RenderButton {INPUT} at (304,0) size 16x16
+layer at (8,265) size 320x25
+  RenderFlexibleBox (positioned) {DIV} at (0,215) size 320x25
+    RenderButton {INPUT} at (6,3) size 18x18
+    RenderButton {INPUT} at (32,4) size 16x16
+    RenderFlexibleBox {DIV} at (49,5) size 216x15
+      RenderSlider {INPUT} at (45,2) size 126x13
+        RenderBlock {DIV} at (0,2) size 10x8
+    RenderButton {INPUT} at (297,4) size 16x16
+    RenderButton {INPUT} at (267,6) size 14x12
+layer at (57,272) size 45x11
+  RenderFlexibleBox {DIV} at (0,2) size 45x11 [color=#FFFFFF]
+    RenderBlock (anonymous) at (9,0) size 26x11
+      RenderText {#text} at (0,0) size 26x11
+        text run at (0,0) width 26: "00:00"
+layer at (228,272) size 45x11
+  RenderFlexibleBox {DIV} at (171,2) size 45x11 [color=#FFFFFF]
+    RenderBlock (anonymous) at (7,0) size 31x11
+      RenderText {#text} at (0,0) size 31x11
+        text run at (0,0) width 31: "-00:06"

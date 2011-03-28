@@ -14,8 +14,8 @@ layer at (57,228) size 240x37
   RenderFlexibleBox (positioned) {DIV} at (0,143) size 240x37
     RenderButton {INPUT} at (9,4) size 27x27
     RenderButton {INPUT} at (48,6) size 24x24
-    RenderFlexibleBox {DIV} at (73,1) size 86x34
-      RenderSlider {INPUT} at (0,9) size 86x19
+    RenderFlexibleBox {DIV} at (73,7) size 86x22
+      RenderSlider {INPUT} at (0,3) size 86x19
         RenderBlock {DIV} at (0,3) size 15x12
     RenderButton {INPUT} at (206,6) size 24x24
     RenderButton {INPUT} at (162,9) size 21x18
@@ -27,8 +27,8 @@ layer at (57,453) size 240x37
   RenderFlexibleBox (positioned) {DIV} at (0,143) size 240x37
     RenderButton {INPUT} at (9,4) size 27x27
     RenderButton {INPUT} at (48,6) size 24x24
-    RenderFlexibleBox {DIV} at (73,1) size 86x34
-      RenderSlider {INPUT} at (0,9) size 86x19
+    RenderFlexibleBox {DIV} at (73,7) size 86x22
+      RenderSlider {INPUT} at (0,3) size 86x19
         RenderBlock {DIV} at (0,3) size 15x12
     RenderButton {INPUT} at (206,6) size 24x24
     RenderButton {INPUT} at (162,9) size 21x18

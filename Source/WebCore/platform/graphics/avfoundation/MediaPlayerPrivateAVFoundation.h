@@ -141,8 +141,7 @@ protected:
     virtual void prepareForRendering();
     virtual float mediaTimeForTimeValue(float) const = 0;
 
-    // FIXME: WebVideoFullscreenController assumes a QTKit/QuickTime media engine
-    virtual bool supportsFullscreen() const { return false; }
+    virtual bool supportsFullscreen() const;
 
     // Required interfaces for concrete derived classes.
     virtual void createAVPlayerForURL(const String& url) = 0;

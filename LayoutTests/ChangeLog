@@ -1,3 +1,31 @@
+2011-03-28  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        MediaPlayerPrivateAVFoundation should report that it supportsFullScreen()
+        https://bugs.webkit.org/show_bug.cgi?id=57249
+
+        * platform/mac/media/controls-strict-expected.txt:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-no-audio-expected.txt:
+        * platform/mac/media/video-zoom-controls-expected.txt:
+
+2011-03-28  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AVFoundation can indeed support full screen.
+
+        MediaPlayerPrivateAVFoundation should report that it supportsFullScreen()
+        https://bugs.webkit.org/show_bug.cgi?id=57249
+
+        * platform/mac/media/controls-strict-expected.txt:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-no-audio-expected.txt:
+        * platform/mac/media/video-zoom-controls-expected.txt:
+
 2011-03-28  Andy Estes  <aestes@apple.com>
 
         Check in failing results for embed-prefers-plugins-for-images.html on Leopard.
