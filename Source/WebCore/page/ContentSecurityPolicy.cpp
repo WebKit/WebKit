@@ -430,6 +430,11 @@ bool ContentSecurityPolicy::allowJavaScriptURLs() const
     return !m_scriptSrc;
 }
 
+bool ContentSecurityPolicy::allowInlineEventHandlers() const
+{
+    return !m_scriptSrc;
+}
+
 bool ContentSecurityPolicy::allowScriptFromSource(const KURL& url) const
 {
     return !m_scriptSrc || m_scriptSrc->allows(url);

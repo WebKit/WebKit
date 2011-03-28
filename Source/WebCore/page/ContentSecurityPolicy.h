@@ -46,6 +46,7 @@ public:
     void didReceiveHeader(const String&);
 
     bool allowJavaScriptURLs() const;
+    bool allowInlineEventHandlers() const;
     bool allowScriptFromSource(const KURL&) const;
 
 private:

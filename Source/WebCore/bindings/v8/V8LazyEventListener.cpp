@@ -31,6 +31,7 @@
 #include "config.h"
 #include "V8LazyEventListener.h"
 
+#include "ContentSecurityPolicy.h"
 #include "Frame.h"
 #include "V8Binding.h"
 #include "V8HiddenPropertyName.h"
@@ -78,6 +79,9 @@ static v8::Handle<v8::Value> V8LazyEventListenerToString(const v8::Arguments& ar
 void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
 {
     if (hasExistingListenerObject())
+        return;
+
+    if (context->isDocument() && !static_cast<Document*>(context)->contentSecurityPolicy()->allowInlineEventHandlers())
         return;
 
     v8::HandleScope handleScope;

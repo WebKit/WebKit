@@ -1,3 +1,14 @@
+2011-03-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        script-src should block inline event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=57212
+
+        * http/tests/security/contentSecurityPolicy/resources/event-handler.pl: Added.
+        * http/tests/security/contentSecurityPolicy/script-src-none-inline-event-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/script-src-none-inline-event.html: Added.
+
 2011-03-28  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser and Darin Adler.

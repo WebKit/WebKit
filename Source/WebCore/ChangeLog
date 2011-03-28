@@ -1,3 +1,31 @@
+2011-03-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        script-src should block inline event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=57212
+
+        I considered wrapping this into the canExecute check, but that approach
+        would require passing that function a bunch of context information to
+        behave correctly once we add support for the "options" directive that
+        re-enables these features.
+
+        Test: http/tests/security/contentSecurityPolicy/script-src-none-inline-event.html
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+            - This function was a mess.  I couldn't resist cleaning it up a
+              bunch.  Notice that we ASSERT at the beginning of the function
+              that scriptExecutionContext is a document and that both ways of
+              getting the global object are the same when document->frame() is
+              non-zero because the document must be active and there is a
+              one-to-one relation between Frames and active Documents.
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::prepareListenerObject):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowInlineEventHandlers):
+        * page/ContentSecurityPolicy.h:
+
 2011-03-28  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adam Roben.
