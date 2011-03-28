@@ -1,5 +1,11 @@
 2011-03-28  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed, add Chromium test expectation for fast/text/justify-ideograph-leading-expansion.html.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-28  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed, update Chromium test results for plugins/plugin-javascript-access.html.
 
         * platform/chromium-linux/plugins/plugin-javascript-access-expected.txt:
