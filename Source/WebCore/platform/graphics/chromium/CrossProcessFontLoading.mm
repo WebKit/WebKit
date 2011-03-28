@@ -29,7 +29,7 @@
 #import "config.h"
 #import "CrossProcessFontLoading.h"
 
-#import "../graphics/cocoa/FontPlatformData.h"
+#import "../graphics/FontPlatformData.h"
 #import "PlatformBridge.h"
 #import <AppKit/NSFont.h>
 #import <wtf/HashMap.h>

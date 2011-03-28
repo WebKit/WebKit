@@ -1,3 +1,15 @@
+2011-03-28  Dirk Pranke  <dpranke@chromium.org>
+
+        RS=Tony Chang.
+
+        r81977 moved FontPlatformData.h from
+        WebCore/platform/graphics/cocoa to platform/graphics. This
+        change updates the chromium build accordingly.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57281
+
+        * platform/graphics/chromium/CrossProcessFontLoading.mm:
+
 2011-03-28  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
