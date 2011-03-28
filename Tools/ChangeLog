@@ -1,3 +1,12 @@
+2011-03-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2 unfortunately uses code from WebKit, so MiniBrowser needs
+        to link against WebKit.framework for now.
+
+        * MiniBrowser/MiniBrowser.xcodeproj/project.pbxproj:
+
 2011-03-28  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.
