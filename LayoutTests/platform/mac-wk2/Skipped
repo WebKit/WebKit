@@ -340,6 +340,7 @@ fast/events/onchange-click-hang.html
 fast/events/onchange-passwordfield.html
 fast/events/onchange-searchfield.html
 fast/events/onchange-select-popup.html
+fast/events/onchange-text-form-field.html
 fast/events/onchange-textfield.html
 fast/events/onclick-list-marker.html
 fast/events/ondragenter.html

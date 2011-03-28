@@ -1,3 +1,10 @@
+2011-03-28  Jessie Berlin  <jberlin@apple.com>
+
+        Add another test that depends on EventSender to the mac-wk2 Skipped file.
+
+        * platform/mac-wk2/Skipped:
+        Add fast/events/onchange-text-form-field.html.
+
 2011-03-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
