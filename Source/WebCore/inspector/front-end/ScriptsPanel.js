@@ -683,7 +683,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _setPauseOnExceptions: function(pauseOnExceptionsState)
     {
-        function callback(error, pauseOnExceptionsState)
+        function callback(error)
         {
             if (error)
                 return;
@@ -864,11 +864,11 @@ WebInspector.ScriptsPanel.prototype = {
     {
         this.toggleBreakpointsButton.toggled = !this.toggleBreakpointsButton.toggled;
         if (this.toggleBreakpointsButton.toggled) {
-            DebuggerAgent.activateBreakpoints();
+            DebuggerAgent.setBreakpointsActive(true);
             this.toggleBreakpointsButton.title = WebInspector.UIString("Deactivate all breakpoints.");
             document.getElementById("main-panels").removeStyleClass("breakpoints-deactivated");
         } else {
-            DebuggerAgent.deactivateBreakpoints();
+            DebuggerAgent.setBreakpointsActive(false);
             this.toggleBreakpointsButton.title = WebInspector.UIString("Activate all breakpoints.");
             document.getElementById("main-panels").addStyleClass("breakpoints-deactivated");
         }

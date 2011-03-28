@@ -97,7 +97,7 @@ WebInspector.DebuggerModel.prototype = {
             if (callback)
                 callback(breakpoint);
         }
-        DebuggerAgent.setJavaScriptBreakpoint(url, lineNumber, columnNumber, condition, enabled, didSetBreakpoint.bind(this));
+        DebuggerAgent.setBreakpointByUrl(url, lineNumber, columnNumber, condition, enabled, didSetBreakpoint.bind(this));
     },
 
     setBreakpointBySourceId: function(sourceID, lineNumber, columnNumber, condition, enabled, callback)
@@ -113,12 +113,12 @@ WebInspector.DebuggerModel.prototype = {
             if (callback)
                 callback(breakpoint);
         }
-        DebuggerAgent.setJavaScriptBreakpointBySourceId(sourceID, lineNumber, columnNumber, condition, enabled, didSetBreakpoint.bind(this));
+        DebuggerAgent.setBreakpoint(sourceID, lineNumber, columnNumber, condition, enabled, didSetBreakpoint.bind(this));
     },
 
     removeBreakpoint: function(breakpointId)
     {
-        DebuggerAgent.removeJavaScriptBreakpoint(breakpointId);
+        DebuggerAgent.removeBreakpoint(breakpointId);
         delete this._breakpoints[breakpointId];
     },
 
@@ -179,12 +179,12 @@ WebInspector.DebuggerModel.prototype = {
         DebuggerAgent.editScriptSource(sourceID, newSource, this._didEditScriptSource.bind(this, sourceID, callback));
     },
 
-    _didEditScriptSource: function(sourceID, callback, error, success, newBodyOrErrorMessage, callFrames)
+    _didEditScriptSource: function(sourceID, callback, error, error, newBody, callFrames)
     {
-        callback(success, newBodyOrErrorMessage);
-        if (!success)
+        callback(!error, error || newBody);
+        if (error)
             return;
-        this._scripts[sourceID].source = newBodyOrErrorMessage;
+        this._scripts[sourceID].source = newBody;
         if (callFrames && callFrames.length) {
             this._debuggerPausedDetails.callFrames = callFrames;
             this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPausedDetails);
@@ -254,12 +254,12 @@ WebInspector.DebuggerDispatcher = function(debuggerModel)
 }
 
 WebInspector.DebuggerDispatcher.prototype = {
-    pausedScript: function(details)
+    paused: function(details)
     {
         this._debuggerModel._pausedScript(details);
     },
 
-    resumedScript: function()
+    resumed: function()
     {
         this._debuggerModel._resumedScript();
     },
@@ -274,12 +274,12 @@ WebInspector.DebuggerDispatcher.prototype = {
         this._debuggerModel._debuggerWasDisabled();
     },
 
-    parsedScriptSource: function(sourceID, sourceURL, lineOffset, columnOffset, length, scriptWorldType)
+    scriptParsed: function(sourceID, sourceURL, lineOffset, columnOffset, length, scriptWorldType)
     {
         this._debuggerModel._parsedScriptSource(sourceID, sourceURL, lineOffset, columnOffset, length, scriptWorldType);
     },
 
-    failedToParseScriptSource: function(sourceURL, source, startingLine, errorLine, errorMessage)
+    scriptFailedToParse: function(sourceURL, source, startingLine, errorLine, errorMessage)
     {
         this._debuggerModel._failedToParseScriptSource(sourceURL, source, startingLine, errorLine, errorMessage);
     },
@@ -287,17 +287,5 @@ WebInspector.DebuggerDispatcher.prototype = {
     breakpointResolved: function(breakpointId, sourceID, lineNumber, columnNumber)
     {
         this._debuggerModel._breakpointResolved(breakpointId, sourceID, lineNumber, columnNumber);
-    },
-
-    didCreateWorker: function()
-    {
-        var workersPane = WebInspector.panels.scripts.sidebarPanes.workers;
-        workersPane.addWorker.apply(workersPane, arguments);
-    },
-
-    didDestroyWorker: function()
-    {
-        var workersPane = WebInspector.panels.scripts.sidebarPanes.workers;
-        workersPane.removeWorker.apply(workersPane, arguments);
     }
 }

@@ -1048,6 +1048,18 @@ WebInspector.inspectedURLChanged = function(url)
     this.extensionServer.notifyInspectedURLChanged();
 }
 
+WebInspector.didCreateWorker = function()
+{
+    var workersPane = WebInspector.panels.scripts.sidebarPanes.workers;
+    workersPane.addWorker.apply(workersPane, arguments);
+}
+
+WebInspector.didDestroyWorker = function()
+{
+    var workersPane = WebInspector.panels.scripts.sidebarPanes.workers;
+    workersPane.removeWorker.apply(workersPane, arguments);
+}
+
 WebInspector.log = function(message, messageLevel)
 {
     // remember 'this' for setInterval() callback

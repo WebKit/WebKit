@@ -105,6 +105,20 @@
                     { "name": "object", "$ref": "RemoteObject" },
                     { "name": "hints", "type": "object" }
                 ]
+            },
+            {
+                "name": "didCreateWorker",
+                "parameters": [
+                    { "name": "id", "type": "integer" },
+                    { "name": "url", "type": "string" },
+                    { "name": "isShared", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "didDestroyWorker",
+                "parameters": [
+                    { "name": "id", "type": "integer" }
+                ]
             }
         ]
     },
@@ -1036,180 +1050,218 @@
     },
     {
         "domain": "Debugger",
-        "types": [],
+        "description": "Debugger domain exposes JavaScript debugging functions. It allows setting and removing breakpoints, stepping through execution, exploring stack traces, etc.",
+        "types": [
+            {
+                "id": "Location",
+                "type": "object",
+                "properties": {
+                    "sourceID": { "type": "string",  "description": "Script identifier as reported by the <code>scriptParsed</code>" },
+                    "lineNumber": { "type": "integer", "description": "Line number in the script." },
+                    "columnNumber": { "type": "integer", "description": "Column number in the script." }
+                },
+                "description": "Location in the source code."
+            },
+            {
+                "id": "CallFrame",
+                "type": "object",
+                "properties": {
+                    "id": { "type": "string",  "description": "Call frame identifier" },
+                    "type": { "type": "string", "description": "Call frame type. // FIXME" },
+                    "functionName": { "type": "string", "description": "Name of the function called on this frame." },
+                    "sourceID": { "type": "string", "description": "Script identifier." },
+                    "line": { "type": "integer", "description": "Line number in the script." },
+                    "column": { "type": "integer", "description": "Column number in the script." },
+                    "scopeChain": { "type": "array", "items": { "type": "object" }, "description": "Scope chain for given call frame. // FIXME" }
+                },
+                "description": "Debugger call frame. Array of call frames form call stack."
+            }
+        ],
         "commands": [
             {
-                "name": "enable"
+                "name": "enable",
+                "description": "Enables debugger for given page."
             },
             {
-                "name": "disable"
+                "name": "disable",
+                "description": "Disables debugger for given page."
             },
             {
-                "name": "activateBreakpoints"
-            },
-            {
-                "name": "deactivateBreakpoints"
-            },
-            {
-                "name": "setJavaScriptBreakpoint",
+                "name": "setBreakpointsActive",
                 "parameters": [
-                    { "name": "url", "type": "string" },
-                    { "name": "lineNumber", "type": "integer" },
-                    { "name": "columnNumber", "type": "integer" },
-                    { "name": "condition", "type": "string" },
-                    { "name": "enabled", "type": "boolean" }
+                    { "name": "active", "type": "boolean", "description": "New value for breakpoints active state." }
+                ],
+                "description": "Activates / deactivates all breakpoints on the page."
+            },
+            {
+                "name": "setBreakpointByUrl",
+                "parameters": [
+                    { "name": "url", "type": "string", "description": "URL of the resource to set breakpoint on." },
+                    { "name": "lineNumber", "type": "integer", "description": "Line number to set breakpoint at." },
+                    { "name": "columnNumber", "type": "integer", "optional": true, "description": "Offset in the line to set breakpoint at." },
+                    { "name": "condition", "type": "string", "optional": true, "description": "Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true." },
+                    { "name": "enabled", "type": "boolean", "optional": true, "description": "Determines initial state for the breakpoint." }
                 ],
                 "returns": [
-                    { "name": "breakpointId", "type": "string" },
-                    { "name": "locations", "type": "array", "items": { "$ref" : "DebuggerLocation"} }
-                ]
+                    { "name": "breakpointId", "type": "string", "description": "Id of the created breakpoint for further manipulations." },
+                    { "name": "locations", "type": "array", "items": { "$ref" : "Location"}, "description": "List of the locations this breakpoint resolved into."  }
+                ],
+                "description": "Sets JavaScript breakpoint at a given location specified by URL. This breakpoint will survive page reload."
             },
             {
-                "name": "setJavaScriptBreakpointBySourceId",
+                "name": "setBreakpoint",
                 "parameters": [
-                    { "name": "sourceId", "type": "string" },
-                    { "name": "lineNumber", "type": "integer" },
-                    { "name": "columnNumber", "type": "integer" },
-                    { "name": "condition", "type": "string" },
-                    { "name": "enabled", "type": "boolean" }
+                    { "name": "sourceId", "type": "string", "description": "Source ID of the resource to set breakpoint on (as reported by <code>scriptParsed</code>)." },
+                    { "name": "lineNumber", "type": "integer", "description": "Line number to set breakpoint at." },
+                    { "name": "columnNumber", "type": "integer", "optional": true, "description": "Offset in the line to set breakpoint at." },
+                    { "name": "condition", "type": "string", "optional": true, "description": "Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true." },
+                    { "name": "enabled", "type": "boolean", "optional": true, "description": "Determines initial state for the breakpoint." }
                 ],
                 "returns": [
-                    { "name": "breakpointId", "type": "string" },
-                    { "name": "actualLineNumber", "type": "integer" },
-                    { "name": "actualColumnNumber", "type": "integer" }
-                ]
+                    { "name": "breakpointId", "type": "string", "description": "Id of the created breakpoint for further manipulations." },
+                    { "name": "actualLineNumber", "type": "integer", "description": "Line number in the script." },
+                    { "name": "actualColumnNumber", "type": "integer", "description": "Column number in the script." }
+                ],
+                "description": "Sets JavaScript breakpoint at a given location."
             },
             {
-                "name": "removeJavaScriptBreakpoint",
+                "name": "removeBreakpoint",
                 "parameters": [
                     { "name": "breakpointId", "type": "string" }
-                ]
+                ],
+                "description": "Removes JavaScript breakpoint."
             },
             {
                 "name": "continueToLocation",
                 "parameters": [
-                    { "name": "sourceId", "type": "string" },
-                    { "name": "lineNumber", "type": "integer" },
-                    { "name": "columnNumber", "type": "integer" }
-                ]
+                    { "name": "sourceId", "type": "string", "description": "Source ID of the resource to continue to (as reported by <code>scriptParsed</code>)." },
+                    { "name": "lineNumber", "type": "integer", "description": "Line number to stop at." },
+                    { "name": "columnNumber", "type": "integer", "description": "Column number to stop at." }
+                ],
+                "description": "Continues execution until specific location is reached."
             },
             {
-                "name": "stepOver"
+                "name": "stepOver",
+                "description": "Steps over the statement."
             },
             {
-                "name": "stepInto"
+                "name": "stepInto",
+                "description": "Steps into the statement."
             },
             {
-                "name": "stepOut"
+                "name": "stepOut",
+                "description": "Steps out of the function."
             },
             {
-                "name": "pause"
+                "name": "pause",
+                "description": "Stops on the next JavaScript statement."
             },
             {
-                "name": "resume"
+                "name": "resume",
+                "description": "Resumes JavaScript execution."
             },
             {
                 "name": "editScriptSource",
                 "parameters": [
-                    { "name": "sourceID", "type": "string" },
-                    { "name": "newContent", "type": "string" }
+                    { "name": "sourceID", "type": "string", "description": "Id of the script to edit." },
+                    { "name": "newContent", "type": "string", "description": "New content of the script." }
                 ],
                 "returns": [
-                    { "name": "success", "type": "boolean" },
-                    { "name": "result", "type": "string" },
-                    { "name": "stackFrames", "type": "array", "items": { "$ref" : "DebuggerStackFrame"} }
-                ]
+                    { "name": "result", "type": "string", "description": "New content of the script." },
+                    { "name": "stackFrames", "type": "array", "items": { "$ref" : "CallFrame"}, "description": "New stack trace in case editing has happened while VM was stopped." }
+                ],
+                "description": "Edits JavaScript script live."
             },
             {
                 "name": "getScriptSource",
                 "parameters": [
-                    { "name": "sourceID", "type": "string" }
+                    { "name": "sourceID", "type": "string", "description": "Id of the script to get source for." }
                 ],
                 "returns": [
-                    { "name": "scriptSource", "type": "string" }
-                ]
+                    { "name": "scriptSource", "type": "string", "description": "Script source." }
+                ],
+                "description": "Returns source for the script with given ID."
             },
             {
                 "name": "setPauseOnExceptionsState",
                 "parameters": [
-                    { "name": "pauseOnExceptionsState", "type": "integer" }
+                    { "name": "pauseOnExceptionsState", "type": "integer", "description": "Pause on exceptions mode. // FIXME, make enumerable." }
                 ],
-                "returns": [
-                    { "name": "newState", "type": "integer" }
-                ]
+                "description": "Defines pause on exceptions state. Can be set to stop on all exceptions, uncaught exceptions or no exceptions."
             },
             {
                 "name": "evaluateOnCallFrame",
                 "parameters": [
-                    { "name": "callFrameId", "type": "string" },
-                    { "name": "expression", "type": "string" },
-                    { "name": "objectGroup", "type": "string" },
-                    { "name": "includeCommandLineAPI", "type": "boolean" }
+                    { "name": "callFrameId", "type": "string", "description": "Call frame identifier to evaluate on. This identifier is a part of backtrace reported by the <code>pausedScript</code>." },
+                    { "name": "expression", "type": "string", "description": "Expression to evaluate." },
+                    { "name": "objectGroup", "type": "string", "description": "String object group name to put result into (allows rapid releasing resulting object handles using <code>releaseObjectGroup</code>)." },
+                    { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Specifies whether command line API should be available to the evaluated expression, defaults to false." }
                 ],
                 "returns": [
-                    { "name": "result", "$ref": "RuntimeObject" }
-                ]
+                    { "name": "result", "$ref": "Object", "description": "Object wrapper for the evaluation result." }
+                ],
+                "description": "Evaluates expression on a given call frame."
             }
         ],
         "events": [
             {
-                "name": "debuggerWasEnabled"
+                "name": "debuggerWasEnabled",
+                "description": "Fired when debugger gets enabled."
             },
             {
-                "name": "debuggerWasDisabled"
+                "name": "debuggerWasDisabled",
+                "description": "Fired when debugger gets disabled."
             },
             {
-                "name": "parsedScriptSource",
+                "name": "scriptParsed",
                 "parameters": [
-                    { "name": "sourceID", "type": "string" },
-                    { "name": "url", "type": "string" },
-                    { "name": "lineOffset", "type": "integer" },
-                    { "name": "columnOffset", "type": "integer" },
-                    { "name": "length", "type": "integer" },
-                    { "name": "scriptWorldType", "type": "integer" }
-                ]
+                    { "name": "sourceID", "type": "string", "description": "Identifier of the script parsed." },
+                    { "name": "url", "type": "string", "description": "URL of the script parsed (if any)." },
+                    { "name": "lineOffset", "type": "integer", "description": "Line offset of the script within the resource with given URL (for script tags)." },
+                    { "name": "columnOffset", "type": "integer", "description": "Column offset of the script within the resource with given URL." },
+                    { "name": "length", "type": "integer", "description": "Length of the script" },
+                    { "name": "scriptWorldType", "type": "integer", "description": "Script type. // FIXME." }
+                ],
+                "description": "Fired when virtual machine parses script. This even is also fired for all known scripts upon enabling debugger."
             },
             {
-                "name": "failedToParseScriptSource",
+                "name": "scriptFailedToParse",
                 "parameters": [
-                    { "name": "url", "type": "string" },
-                    { "name": "data", "type": "string" },
-                    { "name": "firstLine", "type": "integer" },
-                    { "name": "errorLine", "type": "integer" },
-                    { "name": "errorMessage", "type": "string" }
-                ]
+                    { "name": "url", "type": "string", "description": "URL of the script that failed to parse." },
+                    { "name": "data", "type": "string", "description": "Source text of the script that failed to parse." },
+                    { "name": "firstLine", "type": "integer", "description": "Line offset of the script within the resource." },
+                    { "name": "errorLine", "type": "integer", "description": "Line with error." },
+                    { "name": "errorMessage", "type": "string", "description": "Parse error message." }
+                ],
+                "description": "Fired when virtual machine fails to parse the script."
             },
             {
                 "name": "breakpointResolved",
                 "parameters": [
-                    { "name": "breakpointId", "type": "string" },
-                    { "name": "sourceId", "type": "string" },
-                    { "name": "lineNumber", "type": "integer" },
-                    { "name": "columnNumber", "type": "integer" }
-                ]
+                    { "name": "breakpointId", "type": "string", "description": "Breakpoint unique identifier." },
+                    { "name": "sourceId", "type": "string", "description": "Identifier of the script breakpoint is set in." },
+                    { "name": "lineNumber", "type": "integer", "description": "Line number of the statement breakpoint is set on." },
+                    { "name": "columnNumber", "type": "integer", "description": "Column offset of the statement breakpoint is set on." }
+                ],
+                "description": "Fired when breakpoint is resolved to an actual script and location."
             },
             {
-                "name": "pausedScript",
+                "name": "paused",
                 "parameters": [
-                    { "name": "details", "$ref": "DebuggerBacktrace" }
-                ]
+                    { 
+                        "name": "details",
+                        "type": "object",
+                        "properties": {
+                            "callFrames": { "type": "array", "items": { "$ref": "CallFrame" }, "description": "Call stack the virtual machine stopped on." },
+                        },
+		                "description": "Call stack information."
+                    }
+                ],
+                "description": "Fired when the virtual machine stopped on breakpoint or exception or any other stop criteria."
             },
             {
-                "name": "resumedScript"
-            },
-            {
-                "name": "didCreateWorker",
-                "parameters": [
-                    { "name": "id", "type": "integer" },
-                    { "name": "url", "type": "string" },
-                    { "name": "isShared", "type": "boolean" }
-                ]
-            },
-            {
-                "name": "didDestroyWorker",
-                "parameters": [
-                    { "name": "id", "type": "integer" }
-                ]
+                "name": "resumed",
+                "description": "Fired when the virtual machine resumed execution."
             }
         ]
     },

@@ -78,15 +78,14 @@ public:
     void inspectedURLChanged(const String& url);
 
     // Part of the protocol.
-    void activateBreakpoints(ErrorString*);
-    void deactivateBreakpoints(ErrorString*);
+    void setBreakpointsActive(ErrorString*, bool active);
 
-    void setJavaScriptBreakpoint(ErrorString*, const String& url, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, RefPtr<InspectorArray>* locations);
-    void setJavaScriptBreakpointBySourceId(ErrorString*, const String& sourceId, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, int* actualLineNumber, int* actualColumnNumber);
-    void removeJavaScriptBreakpoint(ErrorString*, const String& breakpointId);
+    void setBreakpointByUrl(ErrorString*, const String& url, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, RefPtr<InspectorArray>* locations);
+    void setBreakpoint(ErrorString*, const String& sourceId, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, int* actualLineNumber, int* actualColumnNumber);
+    void removeBreakpoint(ErrorString*, const String& breakpointId);
     void continueToLocation(ErrorString*, const String& sourceId, int lineNumber, int columnNumber);
 
-    void editScriptSource(ErrorString*, const String& sourceID, const String& newContent, bool* success, String* result, RefPtr<InspectorArray>* newCallFrames);
+    void editScriptSource(ErrorString*, const String& sourceID, const String& newContent, String* result, RefPtr<InspectorArray>* newCallFrames);
     void getScriptSource(ErrorString*, const String& sourceID, String* scriptSource);
     void schedulePauseOnNextStatement(DebuggerEventType type, PassRefPtr<InspectorValue> data);
     void cancelPauseOnNextStatement();
@@ -96,7 +95,7 @@ public:
     void stepOver(ErrorString*);
     void stepInto(ErrorString*);
     void stepOut(ErrorString*);
-    void setPauseOnExceptionsState(ErrorString*, int pauseState, int* newState);
+    void setPauseOnExceptionsState(ErrorString*, int pauseState);
     void evaluateOnCallFrame(ErrorString*, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result);
 
     class Listener {

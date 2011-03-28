@@ -1,3 +1,42 @@
+2011-03-28  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: brush up and rename debugger domain functions.
+        https://bugs.webkit.org/show_bug.cgi?id=57240
+
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::setFrontend):
+        (WebCore::InspectorAgent::postWorkerNotificationToFrontend):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setBreakpointsActive):
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDebuggerAgent::removeBreakpoint):
+        (WebCore::InspectorDebuggerAgent::editScriptSource):
+        (WebCore::InspectorDebuggerAgent::setPauseOnExceptionsState):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        (WebCore::InspectorDebuggerAgent::failedToParseSource):
+        (WebCore::InspectorDebuggerAgent::didPause):
+        (WebCore::InspectorDebuggerAgent::didContinue):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerModel.prototype.setBreakpointBySourceId):
+        (WebInspector.DebuggerModel.prototype.removeBreakpoint):
+        (WebInspector.DebuggerModel.prototype._didEditScriptSource):
+        (WebInspector.DebuggerDispatcher.prototype.paused):
+        (WebInspector.DebuggerDispatcher.prototype.resumed):
+        (WebInspector.DebuggerDispatcher.prototype.scriptParsed):
+        (WebInspector.DebuggerDispatcher.prototype.scriptFailedToParse):
+        (WebInspector.DebuggerDispatcher.prototype.breakpointResolved):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.toggleBreakpointsClicked):
+        * inspector/front-end/inspector.js:
+        (WebInspector.didCreateWorker):
+        (WebInspector.didDestroyWorker):
+
 2011-03-28  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/57239> Use forward class declaration instead of including header

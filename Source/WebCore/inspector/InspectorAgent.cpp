@@ -283,7 +283,7 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
     WorkersMap::iterator workersEnd = m_workers.end();
     for (WorkersMap::iterator it = m_workers.begin(); it != workersEnd; ++it) {
         InspectorWorkerResource* worker = it->second.get();
-        m_frontend->debugger()->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
+        m_frontend->inspector()->didCreateWorker(worker->id(), worker->url(), worker->isSharedWorker());
     }
 #endif
     // Dispatch pending frontend commands
@@ -433,10 +433,10 @@ void InspectorAgent::postWorkerNotificationToFrontend(const InspectorWorkerResou
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     switch (action) {
     case InspectorAgent::WorkerCreated:
-        m_frontend->debugger()->didCreateWorker(worker.id(), worker.url(), worker.isSharedWorker());
+        m_frontend->inspector()->didCreateWorker(worker.id(), worker.url(), worker.isSharedWorker());
         break;
     case InspectorAgent::WorkerDestroyed:
-        m_frontend->debugger()->didDestroyWorker(worker.id());
+        m_frontend->inspector()->didDestroyWorker(worker.id());
         break;
     }
 #endif
