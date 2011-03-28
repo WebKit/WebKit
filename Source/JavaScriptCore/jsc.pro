@@ -28,7 +28,7 @@ mac {
 }
 
 win* {
-    LIBS += advapi32.lib
+    LIBS += -ladvapi32
 }
 
 wince* {

@@ -1,3 +1,11 @@
+2011-03-28  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Fix the linking of jsc with MinGW after r81963.
+
+        * jsc.pro: add -l and remove the lib suffix.
+
 2011-03-27  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Alexey Proskuryakov.
