@@ -26,6 +26,8 @@
 #ifndef WebKitCOMAPI_h
 #define WebKitCOMAPI_h
 
+#include <unknwn.h>
+
 extern "C" {
 
 // Callers should use this API instead of CoCreateInstance to instantiate WebKit COM classes.

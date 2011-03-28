@@ -40,6 +40,7 @@ namespace WebCore {
 
 template <typename T> class COMPtr;
 class WebFrame;
+class WebHistory;
 
 class WebFrameLoaderClient : public WebCore::FrameLoaderClient {
 public:

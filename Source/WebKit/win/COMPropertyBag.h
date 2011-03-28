@@ -27,6 +27,7 @@
 #define COMPropertyBag_h
 
 #define NOMINMAX
+#include <ocidl.h>
 #include <unknwn.h>
 
 #include <wtf/Noncopyable.h>

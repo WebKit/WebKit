@@ -1,3 +1,11 @@
+2011-03-28  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix.
+
+        * COMPropertyBag.h: Added missing include.
+        * WebKitCOMAPI.h: Ditto.
+        * WebCoreSupport/WebFrameLoaderClient.h: Added missing forward declaration.
+
 2011-03-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Jon Honeycutt.
