@@ -62,6 +62,13 @@ WebInspector.SourceFile.prototype = {
         this._requestContent();
     },
 
+    requestSourceMapping: function(callback)
+    {
+        if (!this._mapping)
+            this._mapping = new WebInspector.SourceMapping(this._scripts);
+        callback(this._mapping);
+    },
+
     forceLoadContent: function(script)
     {
         if (!this._hasPendingResource())
@@ -91,23 +98,6 @@ WebInspector.SourceFile.prototype = {
             this._reloadContent = true;
         else if (this._requestContentCallbacks.length)
             this._requestContent();
-    },
-
-    scriptLocationToSourceLocation: function(lineNumber, columnNumber)
-    {
-        return { lineNumber: lineNumber, columnNumber: columnNumber };
-    },
-
-    sourceLocationToScriptLocation: function(lineNumber, columnNumber)
-    {
-        var closestScript = this._scripts[0];
-        for (var i = 1; i < this._scripts.length; ++i) {
-            script = this._scripts[i];
-            if (script.lineOffset > lineNumber || (script.lineOffset === lineNumber && script.columnOffset > columnNumber))
-                break;
-            closestScript = script;
-        }
-        return { scriptId: closestScript.sourceID, lineNumber: lineNumber, columnNumber: columnNumber };
     },
 
     _requestContent: function()
@@ -230,33 +220,86 @@ WebInspector.FormattedSourceFile = function(sourceFileId, script, contentChanged
 }
 
 WebInspector.FormattedSourceFile.prototype = {
-    scriptLocationToSourceLocation: function(lineNumber, columnNumber)
+    requestSourceMapping: function(callback)
     {
-        // FIXME: this method should force content formatting to obtain the mapping.
-        if (!this._originalToFormatted)
-            return WebInspector.SourceFile.prototype.scriptLocationToSourceLocation.call(this, lineNumber, columnNumber);
-        return this._originalToFormatted(lineNumber, columnNumber);
-    },
-
-    sourceLocationToScriptLocation: function(lineNumber, columnNumber)
-    {
-        // FIXME: this method should force content formatting to obtain the mapping.
-        if (!this._formattedToOriginal)
-            return WebInspector.SourceFile.prototype.sourceLocationToScriptLocation.call(this, lineNumber, columnNumber);
-        var location = this._formattedToOriginal(lineNumber, columnNumber);
-        return WebInspector.SourceFile.prototype.sourceLocationToScriptLocation.call(this, location.lineNumber, location.columnNumber);
+        function didRequestContent()
+        {
+            callback(this._mapping);
+        }
+        this.requestContent(didRequestContent.bind(this));
     },
 
     _didRequestContent: function(mimeType, text)
     {
-        function didFormatContent(text, originalToFormatted, formattedToOriginal)
+        function didFormatContent(formattedText, mapping)
         {
-            this._originalToFormatted = originalToFormatted;
-            this._formattedToOriginal = formattedToOriginal;
-            WebInspector.SourceFile.prototype._didRequestContent.call(this, mimeType, text);
+            this._mapping = new WebInspector.FormattedSourceMapping(this._scripts, text, formattedText, mapping);
+            WebInspector.SourceFile.prototype._didRequestContent.call(this, mimeType, formattedText);
         }
         this._formatter.formatContent(text, this._scripts, didFormatContent.bind(this));
     }
 }
 
 WebInspector.FormattedSourceFile.prototype.__proto__ = WebInspector.SourceFile.prototype;
+
+WebInspector.SourceMapping = function(sortedScripts)
+{
+    this._sortedScripts = sortedScripts;
+}
+
+WebInspector.SourceMapping.prototype = {
+    scriptLocationToSourceLocation: function(lineNumber, columnNumber)
+    {
+        return { lineNumber: lineNumber, columnNumber: columnNumber };
+    },
+
+    sourceLocationToScriptLocation: function(lineNumber, columnNumber)
+    {
+        var closestScript = this._sortedScripts[0];
+        for (var i = 1; i < this._sortedScripts.length; ++i) {
+            script = this._sortedScripts[i];
+            if (script.lineOffset > lineNumber || (script.lineOffset === lineNumber && script.columnOffset > columnNumber))
+                break;
+            closestScript = script;
+        }
+        return { scriptId: closestScript.sourceID, lineNumber: lineNumber, columnNumber: columnNumber };
+    }
+}
+
+WebInspector.FormattedSourceMapping = function(sortedScripts, originalText, formattedText, mapping)
+{
+    WebInspector.SourceMapping.call(this, sortedScripts);
+    this._originalLineEndings = originalText.lineEndings();
+    this._formattedLineEndings = formattedText.lineEndings();
+    this._mapping = mapping;
+}
+
+WebInspector.FormattedSourceMapping.prototype = {
+    scriptLocationToSourceLocation: function(lineNumber, columnNumber)
+    {
+        var originalPosition = WebInspector.ScriptFormatter.locationToPosition(this._originalLineEndings, lineNumber, columnNumber);
+        var formattedPosition = this._convertPosition(this._mapping.original, this._mapping.formatted, originalPosition);
+        return WebInspector.ScriptFormatter.positionToLocation(this._formattedLineEndings, formattedPosition);
+    },
+
+    sourceLocationToScriptLocation: function(lineNumber, columnNumber)
+    {
+        var formattedPosition = WebInspector.ScriptFormatter.locationToPosition(this._formattedLineEndings, lineNumber, columnNumber);
+        var originalPosition = this._convertPosition(this._mapping.formatted, this._mapping.original, formattedPosition);
+        var originalLocation = WebInspector.ScriptFormatter.positionToLocation(this._originalLineEndings, originalPosition);
+        return WebInspector.SourceMapping.prototype.sourceLocationToScriptLocation.call(this, originalLocation.lineNumber, originalLocation.columnNumber);
+    },
+
+    _convertPosition: function(positions1, positions2, position)
+    {
+        var index = positions1.upperBound(position);
+        var range1 = positions1[index] - positions1[index - 1];
+        var range2 = positions2[index] - positions2[index - 1];
+        var position2 = positions2[index - 1];
+        if (range1)
+            position2 += Math.round((position - positions1[index - 1]) * range2 / range1);
+        return position2;
+    }
+}
+
+WebInspector.FormattedSourceMapping.prototype.__proto__ = WebInspector.SourceMapping.prototype;

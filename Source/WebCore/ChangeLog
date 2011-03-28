@@ -1,3 +1,44 @@
+2011-03-28  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: fix breakpoints positions in formatted scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=56931
+
+        Add async requestMapping method to SourceFile interface as required for populating
+        breakpoints sidebar pane when in "format all scripts" mode.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.continueToLine):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpoint.didRequestSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded.didRequestSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded):
+        (WebInspector.DebuggerPresentationModel.prototype.set selectedCallFrame.didRequestSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype.set selectedCallFrame):
+        (WebInspector.PresentationBreakpoint): Breakpoint wrapper for UI.
+        (WebInspector.PresentationBreakpoint.prototype.get sourceFileId):
+        (WebInspector.PresentationBreakpoint.prototype.get lineNumber):
+        (WebInspector.PresentationBreakpoint.prototype.get condition):
+        (WebInspector.PresentationBreakpoint.prototype.get enabled):
+        (WebInspector.PresentationBreakpoint.prototype.get url):
+        (WebInspector.PresentationBreakpoint.prototype.get resolved):
+        (WebInspector.PresentationBreakpoint.prototype.loadSnippet):
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter.prototype.formatContent.didFormatChunks):
+        (WebInspector.ScriptFormatter.prototype.formatContent):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.SourceFile.prototype.requestSourceMapping):
+        (WebInspector.FormattedSourceFile.prototype.requestSourceMapping):
+        (WebInspector.FormattedSourceFile.prototype._didRequestContent):
+        (WebInspector.SourceMapping):
+        (WebInspector.SourceMapping.prototype.scriptLocationToSourceLocation):
+        (WebInspector.SourceMapping.prototype.sourceLocationToScriptLocation):
+        (WebInspector.FormattedSourceMapping):
+        (WebInspector.FormattedSourceMapping.prototype.scriptLocationToSourceLocation):
+        (WebInspector.FormattedSourceMapping.prototype.sourceLocationToScriptLocation):
+        (WebInspector.FormattedSourceMapping.prototype._convertPosition):
+
 2011-03-28  Nancy Piedra  <nancy.piedra@nokia.com>
 
         Reviewed by Csaba Osztrogonác.

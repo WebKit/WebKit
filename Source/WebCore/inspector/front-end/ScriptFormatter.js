@@ -77,10 +77,7 @@ WebInspector.ScriptFormatter.prototype = {
         function didFormatChunks()
         {
             var result = this._buildContentFromChunks(chunks);
-            var sourceMapping = new WebInspector.SourceMappingForFormattedScript(text.lineEndings(), result.text.lineEndings(), result.mapping);
-            var originalToFormatted = sourceMapping.actualLocationToSourceLocation.bind(sourceMapping);
-            var formattedToOriginal = sourceMapping.sourceLocationToActualLocation.bind(sourceMapping);
-            callback(result.text, originalToFormatted, formattedToOriginal);
+            callback(result.text, result.mapping);
         }
         this._formatChunks(chunks, 0, didFormatChunks.bind(this));
     },
@@ -179,48 +176,3 @@ WebInspector.ScriptFormatter.prototype = {
         task.callback(task.source, { original: [], formatted: [] });
     }
 }
-
-
-WebInspector.SourceMappingForFormattedScript = function(originalLineEndings, formattedLineEndings, mapping)
-{
-    WebInspector.SourceMapping.call(this);
-    this._originalLineEndings = originalLineEndings;
-    this._formattedLineEndings = formattedLineEndings;
-    this._mapping = mapping;
-}
-
-WebInspector.SourceMappingForFormattedScript.prototype = {
-    actualLocationToSourceLocation: function(lineNumber, columnNumber)
-    {
-        var position = WebInspector.ScriptFormatter.locationToPosition(this._originalLineEndings, lineNumber, columnNumber);
-        return this.originalPositionToFormattedLocation(position);
-    },
-
-    sourceLocationToActualLocation: function(lineNumber, columnNumber)
-    {
-        var formattedPosition = WebInspector.ScriptFormatter.locationToPosition(this._formattedLineEndings, lineNumber, columnNumber);
-        var position = this._convertPosition(this._mapping.formatted, this._mapping.original, formattedPosition);
-        return WebInspector.ScriptFormatter.positionToLocation(this._originalLineEndings, position);
-    },
-
-    originalPositionToFormattedLocation: function(position)
-    {
-        var formattedPosition = this._convertPosition(this._mapping.original, this._mapping.formatted, position);
-        var location = WebInspector.ScriptFormatter.positionToLocation(this._formattedLineEndings, formattedPosition);
-        location.position = formattedPosition;
-        return location;
-    },
-
-    _convertPosition: function(positions1, positions2, position)
-    {
-        var index = positions1.upperBound(position);
-        var range1 = positions1[index] - positions1[index - 1];
-        var range2 = positions2[index] - positions2[index - 1];
-        var position2 = positions2[index - 1];
-        if (range1)
-            position2 += Math.round((position - positions1[index - 1]) * range2 / range1);
-        return position2;
-    }
-}
-
-WebInspector.SourceMappingForFormattedScript.prototype.__proto__ = WebInspector.SourceMapping.prototype;
