@@ -970,11 +970,6 @@ fast/text/international/thai-cursor-position.html
 fast/dom/tab-in-right-alignment.html
 svg/text/caret-in-svg-text.xhtml
 
-# textInputController.hasSpellingMarkers() is not implemented.
-editing/spelling/spelling-backspace-between-lines.html
-editing/spelling/spelling-contenteditable.html
-editing/spelling/spelling-textarea.html
-
 # EditorClient::requestCheckingOfString() is not implemented
 editing/spelling/spellcheck-paste.html
 

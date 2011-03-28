@@ -1,5 +1,19 @@
 2011-03-28  Jessie Berlin  <jberlin@apple.com>
 
+        Rubber-stamped by Adam Roben.
+
+        [Windows 7 Release Tests] editing/spelling/spelling-backspace-between-lines.html fails.
+        https://bugs.webkit.org/show_bug.cgi?id=57243
+
+        * platform/win/Skipped:
+        Remove the two tests that were removed in r71392.
+        Also, remove spelling-backspace-between-lines.html because it is not flakey and the
+        layoutTestController method is implemented on Windows, it just fails with this test.
+
+        * platform/win/editing/spelling/spelling-backspace-between-lines-expected.txt: Added.
+
+2011-03-28  Jessie Berlin  <jberlin@apple.com>
+
         [Windows 7 Release Tests] fast/blockflow/fallback-orientation.html failing since
         introduction in r82056.
         https://bugs.webkit.org/show_bug.cgi?id=57238
