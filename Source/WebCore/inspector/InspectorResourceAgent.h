@@ -81,8 +81,8 @@ public:
 
     static PassRefPtr<InspectorResourceAgent> restore(Page*, InspectorState*, InspectorFrontend*);
 
-    static bool resourceContent(Frame*, const KURL&, String* result);
-    static bool resourceContentBase64(Frame*, const KURL&, String* result);
+    static void resourceContent(ErrorString*, Frame*, const KURL&, String* result);
+    static void resourceContentBase64(ErrorString*, Frame*, const KURL&, String* result);
     static PassRefPtr<SharedBuffer> resourceData(Frame*, const KURL&, String* textEncodingName);
     static CachedResource* cachedResource(Frame*, const KURL&);
 
@@ -109,9 +109,10 @@ public:
     Frame* frameForId(const String& frameId);
 
     // Called from frontend 
-    void enable(ErrorString*, RefPtr<InspectorObject>*);
+    void enable(ErrorString*);
     void disable(ErrorString*);
-    void resourceContent(ErrorString*, const String& frameId, const String& url, bool base64Encode, bool* resourceFound, String* content);
+    void getCachedResources(ErrorString*, RefPtr<InspectorObject>*);
+    void getResourceContent(ErrorString*, const String& frameId, const String& url, bool base64Encode, String* content);
     void setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject>);
 
 private:

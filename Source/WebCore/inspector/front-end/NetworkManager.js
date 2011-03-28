@@ -28,45 +28,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkManager = function(resourceTreeModel)
+WebInspector.NetworkManager = function()
 {
     WebInspector.Object.call(this);
-    this._resourceTreeModel = resourceTreeModel;
-    this._dispatcher = new WebInspector.NetworkDispatcher(resourceTreeModel, this);
-    NetworkAgent.enable(this._processCachedResources.bind(this));
+    this._dispatcher = new WebInspector.NetworkDispatcher(this);
+    NetworkAgent.enable();
 }
 
 WebInspector.NetworkManager.EventTypes = {
     ResourceStarted: "ResourceStarted",
     ResourceUpdated: "ResourceUpdated",
     ResourceFinished: "ResourceFinished",
-    MainResourceCommitLoad: "MainResourceCommitLoad"
+    FrameCommittedLoad: "FrameCommittedLoad",
+    FrameDetached: "FrameDetached"
 }
 
 WebInspector.NetworkManager.prototype = {
     frontendReused: function()
     {
-        WebInspector.panels.network.clear();
-        this._resourceTreeModel.reset();
-        NetworkAgent.enable(this._processCachedResources.bind(this));
+        NetworkAgent.enable();
     },
 
     requestContent: function(resource, base64Encode, callback)
     {
-        function callbackWrapper(error, success, content)
+        function callbackWrapper(error, content)
         {
-            callback((!error && success) ? content : null);
+            callback(!error ? content : null);
         }
-        NetworkAgent.resourceContent(resource.frameId, resource.url, base64Encode, callbackWrapper);
-    },
-
-    _processCachedResources: function(error, mainFramePayload)
-    {
-        if (error)
-            return;
-        var mainResource = this._dispatcher._addFramesRecursively(mainFramePayload);
-        WebInspector.mainResource = mainResource;
-        mainResource.isMainResource = true;
+        NetworkAgent.getResourceContent(resource.frameId, resource.url, base64Encode, callbackWrapper);
     },
 
     inflightResourceForURL: function(url)
@@ -77,12 +66,11 @@ WebInspector.NetworkManager.prototype = {
 
 WebInspector.NetworkManager.prototype.__proto__ = WebInspector.Object.prototype;
 
-WebInspector.NetworkDispatcher = function(resourceTreeModel, manager)
+WebInspector.NetworkDispatcher = function(manager)
 {
     this._manager = manager;
     this._inflightResourcesById = {};
     this._inflightResourcesByURL = {};
-    this._resourceTreeModel = resourceTreeModel;
     this._lastIdentifierForCachedResource = 0;
     InspectorBackend.registerDomainDispatcher("Network", this);
 }
@@ -160,7 +148,6 @@ WebInspector.NetworkDispatcher.prototype = {
         this._updateResourceWithResponse(resource, response);
 
         this._updateResource(resource);
-        this._resourceTreeModel.addResourceToFrame(resource.frameId, resource);
     },
 
     didReceiveContentLength: function(identifier, time, dataLength, lengthReceived)
@@ -206,12 +193,11 @@ WebInspector.NetworkDispatcher.prototype = {
         this._startResource(resource);
         resource.startTime = resource.responseReceivedTime = time;
         this._finishResource(resource, time);
-        this._resourceTreeModel.addResourceToFrame(resource.frameId, resource);
     },
 
     frameDetachedFromParent: function(frameId)
     {
-        this._resourceTreeModel.frameDetachedFromParent(frameId);
+        this._dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.FrameDetached, frameId);
     },
 
     setInitialContent: function(identifier, sourceString, type)
@@ -227,16 +213,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     didCommitLoadForFrame: function(frame, loaderId)
     {
-        this._resourceTreeModel.didCommitLoadForFrame(frame, loaderId);
-        if (!frame.parentId) {
-            var mainResource = this._resourceTreeModel.resourceForURL(frame.url);
-            if (mainResource) {
-                WebInspector.mainResource = mainResource;
-                mainResource.isMainResource = true;
-                mainResource.documentURL = frame.url;
-                this._dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.MainResourceCommitLoad, mainResource);
-            }
-        }
+        this._dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.FrameCommittedLoad, { frame: frame, loaderId: loaderId });
     },
 
     didCreateWebSocket: function(identifier, requestURL)
@@ -315,36 +292,6 @@ WebInspector.NetworkDispatcher.prototype = {
         this._dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceFinished, resource);
         delete this._inflightResourcesById[resource.identifier];
         delete this._inflightResourcesByURL[resource.url];
-    },
-
-    _addFramesRecursively: function(frameTreePayload)
-    {
-        var framePayload = frameTreePayload.frame;
-        var mainResource = frameTreePayload.mainResource;
-
-        var frameResource = this._createResource(null, framePayload.id, framePayload.loaderId, mainResource.url, framePayload.url);
-        this._updateResourceWithRequest(frameResource, mainResource.request);
-        this._updateResourceWithResponse(frameResource, mainResource.response);
-        frameResource.type = WebInspector.Resource.Type["Document"];
-        frameResource.finished = true;
-
-        this._resourceTreeModel.addOrUpdateFrame(framePayload);
-        this._resourceTreeModel.addResourceToFrame(framePayload.id, frameResource);
-
-        for (var i = 0; frameTreePayload.childFrames && i < frameTreePayload.childFrames.length; ++i)
-            this._addFramesRecursively(frameTreePayload.childFrames[i]);
-
-        if (!frameTreePayload.subresources)
-            return;
-
-        for (var i = 0; i < frameTreePayload.subresources.length; ++i) {
-            var cachedResource = frameTreePayload.subresources[i];
-            var resource = this._createResource(null, framePayload.id, framePayload.loaderId, cachedResource.url, framePayload.url);
-            this._updateResourceWithCachedResource(resource, cachedResource);
-            resource.finished = true;
-            this._resourceTreeModel.addResourceToFrame(framePayload.id, resource);
-        }
-        return frameResource;
     },
 
     _dispatchEventToListeners: function(eventType, resource)

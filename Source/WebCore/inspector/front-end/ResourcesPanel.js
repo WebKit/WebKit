@@ -42,7 +42,6 @@ WebInspector.ResourcesPanel = function(database)
 
     this.resourcesListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Frames"), "Frames", ["frame-storage-tree-item"]);
     this.sidebarTree.appendChild(this.resourcesListTreeElement);
-    this._treeElementForFrameId = {};
 
     this.databasesListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Databases"), "Databases", ["database-storage-tree-item"]);
     this.sidebarTree.appendChild(this.databasesListTreeElement);
@@ -99,10 +98,10 @@ WebInspector.ResourcesPanel.prototype = {
     {
         WebInspector.Panel.prototype.show.call(this);
 
+        this._populateResourceTree();
+
         if (this.visibleView && this.visibleView.resource)
             this._showResourceView(this.visibleView.resource);
-
-        this._initDefaultSelection();
     },
 
     loadEventFired: function()
@@ -168,15 +167,36 @@ WebInspector.ResourcesPanel.prototype = {
             this.sidebarTree.selectedTreeElement.deselect();
     },
 
-    clear: function()
+    _populateResourceTree: function()
     {
-        this.resourcesListTreeElement.removeChildren();
+        if (this._treeElementForFrameId)
+            return;
+
         this._treeElementForFrameId = {};
-        this.reset();
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameAdded, this._frameAdded, this);
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, this._frameDetached, this);
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
+
+        function populateFrame(frameId)
+        {
+            var subframes = WebInspector.resourceTreeModel.subframes(frameId);
+            for (var i = 0; i < subframes.length; ++i) {
+                this._frameAdded({data:subframes[i]});
+                populateFrame.call(this, subframes[i].id);
+            }
+
+            var resources = WebInspector.resourceTreeModel.resources(frameId);
+            for (var i = 0; i < resources.length; ++i)
+                this._resourceAdded({data:resources[i]});
+        }
+        populateFrame.call(this, 0);
+        this._initDefaultSelection();
     },
 
-    addOrUpdateFrame: function(frame)
+    _frameAdded: function(event)
     {
+        var frame = event.data;
         var frameId = frame.id;
         var parentFrameId = frame.parentId;
         var title = frame.name;
@@ -214,8 +234,9 @@ WebInspector.ResourcesPanel.prototype = {
         parentTreeElement.appendChild(frameTreeElement);
     },
 
-    removeFrame: function(frameId)
+    _frameDetached: function(event)
     {
+        var frameId = event.data;
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (!frameTreeElement)
             return;
@@ -224,8 +245,11 @@ WebInspector.ResourcesPanel.prototype = {
             frameTreeElement.parent.removeChild(frameTreeElement);
     },
 
-    addResourceToFrame: function(frameId, resource)
+    _resourceAdded: function(event)
     {
+        var resource = event.data;
+        var frameId = resource.frameId;
+
         if (resource.statusCode >= 301 && resource.statusCode <= 303)
             return;
 
@@ -254,11 +278,20 @@ WebInspector.ResourcesPanel.prototype = {
         frameTreeElement.appendChild(resourceTreeElement);
     },
 
-    removeResourcesFromFrame: function(frameId)
+    _frameNavigated: function(event)
     {
+        var frameId = event.data;
+        if (!frameId) {
+            // Total update.
+            this.resourcesListTreeElement.removeChildren();
+            this._treeElementForFrameId = {};
+            this.reset();
+            return;
+        }
+
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (frameTreeElement)
-            frameTreeElement.removeChildren();
+            frameTreeElement.removeChildren();        
     },
 
     _refreshResource: function(event)
@@ -926,10 +959,8 @@ WebInspector.FrameTreeElement.prototype = {
     {
         this._displayName = "";
         if (this.parent) {
-            if (title) {
-                this.titleElement.textContent = title;
-                this._displayName = title;
-            }
+            this.titleElement.textContent = title || "";
+            this._displayName = title || "";
             if (subtitle) {
                 var subtitleElement = document.createElement("span");
                 subtitleElement.className = "base-storage-tree-element-subtitle";

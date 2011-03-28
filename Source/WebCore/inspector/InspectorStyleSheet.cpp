@@ -1033,7 +1033,9 @@ bool InspectorStyleSheet::resourceStyleSheetText(String* result) const
     if (!m_pageStyleSheet || !ownerDocument())
         return false;
 
-    return InspectorResourceAgent::resourceContent(ownerDocument()->frame(), m_pageStyleSheet->finalURL(), result);
+    String error;
+    InspectorResourceAgent::resourceContent(&error, ownerDocument()->frame(), m_pageStyleSheet->finalURL(), result);
+    return error.isEmpty();
 }
 
 bool InspectorStyleSheet::inlineStyleSheetText(String* result) const

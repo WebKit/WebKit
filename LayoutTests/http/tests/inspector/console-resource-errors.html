@@ -3,41 +3,43 @@
 <script src="console-test.js"></script>
 <script src="inspector-test.js"></script>
 
-<link rel="stylesheet" type="text/css" href="missing.css">
-
 <script>
-var xhr = new XMLHttpRequest();
-xhr.open("GET","non-existent-xhr", false);
-xhr.send(null);
 
-function performDownload()
+function performActions()
 {
-    var a = document.body.getElementsByTagName("a")[0];
-    var event = document.createEvent("UIEvents");
-    event.initUIEvent("click", true, true, window, 1);
-    a.dispatchEvent(event);
+    loadXHR();
+    loadIframe();
+}
+
+function loadXHR()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET","non-existent-xhr", false);
+    xhr.send(null);
+}
+
+function loadIframe()
+{
+    var iframe = document.createElement("iframe");
+    iframe.src = "resources/console-resource-errors-iframe.html";
+    document.body.appendChild(iframe);
 }
 
 function test()
 {
-    function onResource(event)
+    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", addMessage, true);
+
+    var messageCount = 0;
+    function addMessage(message)
     {
-        var resource = event.data;
-        if (/\/empty\.zip$/.test(resource.url)) {
-            InspectorTest.expandConsoleMessages();
-            InspectorTest.dumpConsoleMessagesWithClasses(true);
-            InspectorTest.completeTest();
+       if (message.toString().indexOf("non-existent-iframe") !== -1) {
+           InspectorTest.expandConsoleMessages();
+           InspectorTest.dumpConsoleMessagesWithClasses(true);
+           InspectorTest.completeTest();
         }
     }
-    function onMainResourceCommitLoad()
-    {
-        WebInspector.console.clearMessages();
-        WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, onResource, this);
-    }
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.MainResourceCommitLoad, onMainResourceCommitLoad, this);
-    InspectorTest.reloadPage(function() {
-        InspectorTest.evaluateInPageWithTimeout("performDownload();");
-    });
+
+    InspectorTest.evaluateInPage("performActions()");
 }
 
 </script>
@@ -45,14 +47,7 @@ function test()
 
 <body onload="runTest()">
 <p>
-<script src="non-existent-script.js"></script>
-
-<iframe src="non-existent-iframe.html"></iframe>
-
 Tests that errors to load a resource cause error messages to be logged to console.
 </p>
-
-<iframe name="frame"></iframe>
-<a href="resources/empty.zip" target="frame">download</a>
 </body>
 </html>

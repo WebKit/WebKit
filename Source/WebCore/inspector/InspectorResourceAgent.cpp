@@ -91,10 +91,12 @@ void InspectorResourceAgent::restore()
         enable();
 }
 
-bool InspectorResourceAgent::resourceContent(Frame* frame, const KURL& url, String* result)
+void InspectorResourceAgent::resourceContent(ErrorString* errorString, Frame* frame, const KURL& url, String* result)
 {
-    if (!frame)
-        return false;
+    if (!frame) {
+        *errorString = "No frame to get resource content for."; 
+        return;
+    }
 
     String textEncodingName;
     RefPtr<SharedBuffer> buffer = InspectorResourceAgent::resourceData(frame, url, &textEncodingName);
@@ -104,23 +106,22 @@ bool InspectorResourceAgent::resourceContent(Frame* frame, const KURL& url, Stri
         if (!encoding.isValid())
             encoding = WindowsLatin1Encoding();
         *result = encoding.decode(buffer->data(), buffer->size());
-        return true;
+        return;
     }
-
-    return false;
+    *errorString = "No resource with given URL found."; 
 }
 
-bool InspectorResourceAgent::resourceContentBase64(Frame* frame, const KURL& url, String* result)
+void InspectorResourceAgent::resourceContentBase64(ErrorString* errorString, Frame* frame, const KURL& url, String* result)
 {
     String textEncodingName;
     RefPtr<SharedBuffer> data = InspectorResourceAgent::resourceData(frame, url, &textEncodingName);
     if (!data) {
         *result = String();
-        return false;
+        *errorString = "No resource with given URL found."; 
+        return;
     }
 
     *result = base64Encode(data->data(), data->size());
-    return true;
 }
 
 PassRefPtr<SharedBuffer> InspectorResourceAgent::resourceData(Frame* frame, const KURL& url, String* textEncodingName)
@@ -229,18 +230,6 @@ static String pointerAsId(void* pointer)
     unsigned long long address = reinterpret_cast<uintptr_t>(pointer);
     // We want 0 to be "", so that JavaScript checks for if (frameId) worked.
     return String::format("%.0llX", address);
-}
-
-static PassRefPtr<InspectorObject> buildObjectForFrameResource(Frame* frame)
-{
-    FrameLoader* frameLoader = frame->loader();
-    DocumentLoader* loader = frameLoader->documentLoader();
-
-    RefPtr<InspectorObject> resourceObject = InspectorObject::create();
-    resourceObject->setString("url", loader->url().string());
-    resourceObject->setObject("request", buildObjectForResourceRequest(loader->request()));
-    resourceObject->setObject("response", buildObjectForResourceResponse(loader->response()));
-    return resourceObject;
 }
 
 static String cachedResourceTypeString(const CachedResource& cachedResource)
@@ -387,16 +376,16 @@ static PassRefPtr<InspectorObject> buildObjectForFrameTree(Frame* frame)
     RefPtr<InspectorObject> frameObject = buildObjectForFrame(frame);
     result->setObject("frame", frameObject);
 
-    result->setObject("mainResource", buildObjectForFrameResource(frame));
     RefPtr<InspectorArray> subresources = InspectorArray::create();
-    result->setArray("subresources", subresources);
-
+    result->setArray("resources", subresources);
     const CachedResourceLoader::DocumentResourceMap& allResources = frame->document()->cachedResourceLoader()->allCachedResources();
     CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
     for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
         CachedResource* cachedResource = it->second.get();
-        RefPtr<InspectorObject> cachedResourceObject = buildObjectForCachedResource(*cachedResource);
-        subresources->pushValue(cachedResourceObject);
+        RefPtr<InspectorObject> resourceObject = InspectorObject::create();
+        resourceObject->setString("url", cachedResource->url());
+        resourceObject->setString("type", cachedResourceTypeString(*cachedResource));
+        subresources->pushValue(resourceObject);
     }
 
     RefPtr<InspectorArray> childrenArray;
@@ -476,10 +465,9 @@ Frame* InspectorResourceAgent::frameForId(const String& frameId)
     return 0;
 }
 
-void InspectorResourceAgent::enable(ErrorString*, RefPtr<InspectorObject>* object)
+void InspectorResourceAgent::enable(ErrorString*)
 {
     enable();
-    *object = buildObjectForFrameTree(m_page->mainFrame());
 }
 
 void InspectorResourceAgent::enable()
@@ -496,17 +484,22 @@ void InspectorResourceAgent::disable(ErrorString*)
     m_instrumentingAgents->setInspectorResourceAgent(0);
 }
 
-void InspectorResourceAgent::resourceContent(ErrorString*, const String& frameId, const String& url, bool base64Encode, bool* success, String* content)
+void InspectorResourceAgent::getCachedResources(ErrorString*, RefPtr<InspectorObject>* object)
+{
+    *object = buildObjectForFrameTree(m_page->mainFrame());
+}
+
+void InspectorResourceAgent::getResourceContent(ErrorString* errorString, const String& frameId, const String& url, bool base64Encode, String* content)
 {
     Frame* frame = frameForId(frameId);
     if (!frame) {
-        *success = false;
+        *errorString = "No frame for given id found.";
         return;
     }
     if (base64Encode)
-        *success = InspectorResourceAgent::resourceContentBase64(frame, KURL(ParsedURLString, url), content);
+        InspectorResourceAgent::resourceContentBase64(errorString, frame, KURL(ParsedURLString, url), content);
     else
-        *success = InspectorResourceAgent::resourceContent(frame, KURL(ParsedURLString, url), content);
+        InspectorResourceAgent::resourceContent(errorString, frame, KURL(ParsedURLString, url), content);
 }
 
 void InspectorResourceAgent::setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject> headers)

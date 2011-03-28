@@ -1,3 +1,78 @@
+2011-03-27  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: refactor ResourceTreeModel to remove poor dependencies.
+        https://bugs.webkit.org/show_bug.cgi?id=57186
+
+        - ResourceTreeModel is now event target (Object)
+        - There is no ResourceTreeModel -> UI dependencies
+        - NetworkManager -> ResourceTreeModel dependencies has been removed
+        - NetworkManager is no longer dealing with the resources tree, it is only responsible for network events
+        - ResourceTreeModel requests tree structure from the backend separately
+        - Cached resources tree payload is now limited to url and type (no headers involved)
+        - Resources tree is being rendered lazily upon request from the panel.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::resourceContent):
+        (WebCore::InspectorResourceAgent::resourceContentBase64):
+        (WebCore::buildObjectForFrameTree):
+        (WebCore::InspectorResourceAgent::enable):
+        (WebCore::InspectorResourceAgent::getCachedResources):
+        (WebCore::InspectorResourceAgent::getResourceContent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::resourceStyleSheetText):
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (.WebInspector.InspectorFrontendHostStub.prototype.sendMessageToBackend):
+        (.WebInspector.InspectorFrontendHostStub.prototype.loadSessionSetting):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager):
+        (WebInspector.NetworkManager.prototype.frontendReused):
+        (WebInspector.NetworkManager.prototype.requestContent):
+        (WebInspector.NetworkDispatcher):
+        (WebInspector.NetworkDispatcher.prototype.didReceiveResponse):
+        (WebInspector.NetworkDispatcher.prototype.didLoadResourceFromMemoryCache):
+        (WebInspector.NetworkDispatcher.prototype.frameDetachedFromParent):
+        (WebInspector.NetworkDispatcher.prototype.didCommitLoadForFrame):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel):
+        (WebInspector.NetworkPanel.prototype._updateSummaryBar):
+        (WebInspector.NetworkPanel.prototype._onFrameCommitLoad):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel):
+        (WebInspector.ResourceTreeModel.prototype.frontendReused):
+        (WebInspector.ResourceTreeModel.prototype._processCachedResources):
+        (WebInspector.ResourceTreeModel.prototype._addOrUpdateFrame):
+        (WebInspector.ResourceTreeModel.prototype.frames):
+        (WebInspector.ResourceTreeModel.prototype.subframes):
+        (WebInspector.ResourceTreeModel.prototype.resources):
+        (WebInspector.ResourceTreeModel.prototype._onCommitLoad):
+        (WebInspector.ResourceTreeModel.prototype._onFrameDetachedFromParent):
+        (WebInspector.ResourceTreeModel.prototype._onResourceUpdated):
+        (WebInspector.ResourceTreeModel.prototype._addResourceToFrame):
+        (WebInspector.ResourceTreeModel.prototype.resourceForURL):
+        (WebInspector.ResourceTreeModel.prototype._bindResourceURL):
+        (WebInspector.ResourceTreeModel.prototype._clearChildFramesAndResources):
+        (WebInspector.ResourceTreeModel.prototype._clearResources):
+        (WebInspector.ResourceTreeModel.prototype._callForFrameResources):
+        (WebInspector.ResourceTreeModel.prototype._unbindResourceURL):
+        (WebInspector.ResourceTreeModel.prototype._addFramesRecursively):
+        (WebInspector.ResourceTreeModel.prototype._createResource):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.ResourcesPanel.prototype.show):
+        (WebInspector.ResourcesPanel.prototype._populateResourceTree.populateFrame):
+        (WebInspector.ResourcesPanel.prototype._populateResourceTree):
+        (WebInspector.ResourcesPanel.prototype._frameAdded):
+        (WebInspector.ResourcesPanel.prototype._frameDetached):
+        (WebInspector.ResourcesPanel.prototype._resourceAdded):
+        (WebInspector.ResourcesPanel.prototype._frameNavigated):
+        (WebInspector.FrameTreeElement.prototype.setTitles):
+        * inspector/front-end/inspector.js:
+        (WebInspector.frontendReused):
+
 2011-03-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

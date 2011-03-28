@@ -215,232 +215,259 @@
     },
     {
         "domain": "Network",
+        "description": "Network domain allows tracking network activities of the page. It exposes information about HTTP and WebSocket requests and responses, their headers, bodies, timing, etc. It also allows getting the tree of the Frames on the page along with information about their resources.",
         "types": [
             {
                 "id": "ResourceTiming",
                 "type": "object",
+                "description": "Timing information for the request.",
                 "properties": {
-                    "requestTime": { "type": "number" },
-                    "proxyStart": { "type": "number" },
-                    "proxyEnd": { "type": "number" },
-                    "dnsStart": { "type": "number" },
-                    "dnsEnd": { "type": "number" },
-                    "connectStart": { "type": "number" },
-                    "connectEnd": { "type": "number" },
-                    "sslStart": { "type": "number" },
-                    "sslEnd": { "type": "number" },
-                    "sendStart": { "type": "number" },
-                    "sendEnd": { "type": "number" },
-                    "receiveHeadersEnd": { "type": "number" }
+                    "requestTime": { "type": "number", "description": "Timing's requestTime is a baseline in seconds, while the other numbers are ticks in milliseconds relatively to this requestTime." },
+                    "proxyStart": { "type": "number", "description": "Started resolving proxy." },
+                    "proxyEnd": { "type": "number", "description": "Finished resolving proxy." },
+                    "dnsStart": { "type": "number", "description": "Started DNS address resolve." },
+                    "dnsEnd": { "type": "number", "description": "Finished DNS address resolve." },
+                    "connectStart": { "type": "number", "description": "Started connecting to the remote host." },
+                    "connectEnd": { "type": "number", "description": "Connected to the remote host." },
+                    "sslStart": { "type": "number", "description": "Started SSL handshake." },
+                    "sslEnd": { "type": "number", "description": "Finished SSL handshake." },
+                    "sendStart": { "type": "number", "description": "Started sending request." },
+                    "sendEnd": { "type": "number", "description": "Finished sending request." },
+                    "receiveHeadersEnd": { "type": "number", "description": "Finished receiving response headers." }
                 }
             },
             {
                 "id": "ResourceRequest",
                 "type": "object",
+                "description": "HTTP request data.",
                 "properties": {
-                    "url": { "type": "string" },
-                    "method": { "type": "string" },
-                    "headers": { "type": "object" },
-                    "postData": { "type": "string", "optional": true }
+                    "url": { "type": "string", "description": "Request URL." },
+                    "method": { "type": "string", "description": "HTTP request method." },
+                    "headers": { "type": "object", "description": "HTTP request headers." },
+                    "postData": { "type": "string", "optional": true, "description": "HTTP POST request data." }
                 }
             },
             {
                 "id": "ResourceResponse",
                 "type": "object",
+                "description": "HTTP response data.",
                 "properties": {
-                    "status": { "type": "number" },
-                    "statusText": { "type": "string" },
-                    "headers": { "type": "object" },
-                    "mimeType": { "type": "string" },
-                    "requestHeaders": { "type": "object" },
-                    "connectionReused": { "type": "boolean" },
-                    "connectionID": { "type": "number" },
-                    "fromDiskCache": { "type": "boolean" },
-                    "timing": { "$ref": "ResourceTiming", "optional": true }
+                    "status": { "type": "number", "description": "HTTP response status code." },
+                    "statusText": { "type": "string", "description": "HTTP response status text." },
+                    "headers": { "type": "object", "description": "HTTP response headers." },
+                    "mimeType": { "type": "string", "description": "Resource mimeType as determined by the browser." },
+                    "requestHeaders": { "type": "object", "optional": true, "description": "Refined HTTP request headers that were actually transmitted over the network." },
+                    "connectionReused": { "type": "boolean", "description": "Specifies whether physical connection was actually reused for this request." },
+                    "connectionID": { "type": "number", "description": "Physical connection id that was actually used for this request." },
+                    "fromDiskCache": { "type": "boolean", "optional": true, "description": "Specifies that the resource was loaded from the disk cache." },
+                    "timing": { "$ref": "ResourceTiming", "optional": true, "description": "Timing information for the given request." }
                 }
             },
             {
                 "id": "CachedResource",
                 "type": "object",
+                "description": "Information about the cached resource.",
                 "properties": {
-                    "url": { "type": "string" },
-                    "type": { "type": "string" },
-                    "response": { "$ref": "ResourceResponse" },
-                    "bodySize": { "type": "number" },
+                    "url": { "type": "string", "description": "Resource URL." },
+                    "type": { "type": "string", "description": "Type of this resource. // FIXME" },
+                    "response": { "$ref": "ResourceResponse", "description": "Cached response data." },
+                    "bodySize": { "type": "number", "description": "Cached response body size." }
                 }
             },
             {
                 "id": "Frame",
                 "type": "object",
+                "description": "Information about the Frame on the page.",
                 "properties": {
-                    "id": { "type": "string" },
-                    "parentId": { "type": "string" },
-                    "loaderId": { "type": "string" },
-                    "name": { "type": "string", "optional": true },
-                    "url": { "type": "string" }
+                    "id": { "type": "string", "description": "Frame unique identifier." },
+                    "parentId": { "type": "string", "description": "Parent frame identifier." },
+                    "loaderId": { "type": "string", "description": "Identifier of the loader associated with this frame." },
+                    "name": { "type": "string", "optional": true, "description": "Frame's name as specified in the tag." },
+                    "url": { "type": "string", "description": "Frame document's URL." }
                 }
             },
             {
                 "id": "FrameResourceTree",
                 "type": "object",
+                "description": "Information about the Frame hierarchy along with their cached resources.",
                 "properties": {
-                    "frame": { "$ref": "Frame" },
-                    "childFrames": { "type": "array", "optional": true, "items": { "$ref": "FrameResourceTree" } },
-                    "mainResource": { "$ref": "FrameResource" },
-                    "subresources": { "type": "array", "items": { "$ref": "CachedResource" } }
-                }
-            },
-            {
-                "id": "FrameResource",
-                "type": "object",
-                "properties": {
-                    "url": { "type": "string" },
-                    "request": { "$ref": "ResourceRequest" },
-                    "response": { "$ref": "ResourceResponse" }
+                    "frame": { "$ref": "Frame", "description": "Frame information for this tree item." },
+                    "childFrames": { "type": "array", "optional": true, "items": { "$ref": "FrameResourceTree" }, "description": "Child frames." },
+                    "resources": { "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "url": { "type": "string", "description": "Resource URL." },
+                                "type": { "type": "string", "description": "Type of this resource. // FIXME" }
+                            }
+                        },
+                        "description": "Information about frame resources."
+                    }
                 }
             }
         ],
         "commands": [
             {
                 "name": "enable",
+                "description": "Enables network tracking, network events will now be delivered to the client."
+            },
+            {
+                "name": "disable",
+                "description": "Disables network tracking, prevents network events from being sent to the client."
+            },
+            {
+                "name": "getCachedResources",
+                "description": "Returns present frame / resource tree structure.",
                 "returns": [
-                    { "name": "resources", "$ref": "FrameResourceTree" }
+                    { "name": "frameTree", "$ref": "FrameResourceTree", "description": "Present frame / resource tree structure." }
                 ]
             },
             {
-                "name": "disable"
-            },
-            {
-                "name": "resourceContent",
+                "name": "getResourceContent",
+                "description": "Returns content of the given resource.",
                 "parameters": [
-                    { "name": "frameId", "type": "string" },
-                    { "name": "url", "type": "string" },
-                    { "name": "base64Encode", "type": "boolean" }
+                    { "name": "frameId", "type": "string", "description": "Frame id to get resource for."  },
+                    { "name": "url", "type": "string", "description": "URL of the resource to get content for."  },
+                    { "name": "base64Encode", "type": "boolean", "optional": true, "description": "Requests that resource content is served as base64."  }
                 ],
                 "returns": [
-                    { "name": "success", "type": "boolean" },
-                    { "name": "content", "type": "string" }
+                    { "name": "content", "type": "string", "description": "Resource content." }
                 ]
             },
             {
                 "name": "setExtraHeaders",
+                "description": "Allows sending extra HTTP headers with the requests from this page.",
                 "parameters": [
-                    { "name": "headers", "type": "object" }
+                    { "name": "headers", "type": "object", "description": "Map with extra HTTP headers." }
                 ]
             }
         ],
         "events": [
             {
                 "name": "frameDetachedFromParent",
+                "description": "Fired when frame has been detached from its parent.",
                 "parameters": [
-                    { "name": "frameId", "type": "string" }
+                    { "name": "frameId", "type": "string", "description": "If of the frame that has been detached." }
                 ]
             },
             {
                 "name": "willSendRequest",
+                "description": "Fired when page is about to send HTTP request.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer" },
-                    { "name": "frameId", "type": "string" },
-                    { "name": "loaderId", "type": "string" },
-                    { "name": "documentURL", "type": "string" },
-                    { "name": "request", "$ref": "ResourceRequest" },
-                    { "name": "redirectResponse", "$ref": "ResourceResponse" },
-                    { "name": "time", "type": "number" },
-                    { "name": "callStack", "type": "array", "items": { "$ref" : "DebuggerStackFrame"} }
+                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "frameId", "type": "string", "description": "Frame identifier." },
+                    { "name": "loaderId", "type": "string", "description": "Loader identifier." },
+                    { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },
+                    { "name": "request", "$ref": "ResourceRequest", "description": "Request data." },
+                    { "name": "redirectResponse", "$ref": "ResourceResponse", "description": "Redirect response data." },
+                    { "name": "time", "type": "number", "description": "Timestamp." },
+                    { "name": "callStack", "type": "array", "items": { "$ref" : "DebuggerStackFrame"}, "description": "JavaScript stack trace upon issuing this request." }
                 ]
             },
             {
                 "name": "markResourceAsCached",
+                "description": "Fired when request is known to be served from memory cache.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer" }
+                    { "name": "identifier", "type": "integer", "description": "Request identifier." }
                 ]
             },
             {
                 "name": "didReceiveResponse",
+                "description": "Fired when HTTP response is available.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer" },
-                    { "name": "time", "type": "number" },
-                    { "name": "resourceType", "type": "string" },
-                    { "name": "response", "$ref": "ResourceResponse" }
+                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "time", "type": "number", "description": "Timestamp." },
+                    { "name": "resourceType", "type": "string", "description": "Resource type. // FIXME" },
+                    { "name": "response", "$ref": "ResourceResponse", "description": "Response data." }
                 ]
             },
             {
                 "name": "didReceiveContentLength",
+                "description": "Fired when data chunk was received over the network.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer" },
-                    { "name": "time", "type": "number" },
-                    { "name": "dataLength", "type": "integer" },
-                    { "name": "lengthReceived", "type": "integer" }
+                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "time", "type": "number", "description": "Timestamp." },
+                    { "name": "dataLength", "type": "integer", "description": "Data chunk length." },
+                    { "name": "lengthReceived", "type": "integer", "description": "Actual bytes received (might be less than dataLength for compressed encodings)." }
                 ]
             },
             {
                 "name": "didFinishLoading",
+                "description": "Fired when HTTP request has finished loading.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer" },
-                    { "name": "finishTime", "type": "number" }
+                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "finishTime", "type": "number", "description": "Timestamp." }
                 ]
             },
             {
                 "name": "didFailLoading",
+                "description": "Fired when HTTP request has failed to load.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer" },
-                    { "name": "time", "type": "number" },
-                    { "name": "errorText", "type": "string" }
+                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "time", "type": "number", "description": "Timestamp." },
+                    { "name": "errorText", "type": "string", "description": "User friendly error message." }
                 ]
             },
             {
                 "name": "didLoadResourceFromMemoryCache",
+                "description": "Fired when HTTP request has been served from memory cache.",
                 "parameters": [
-                    { "name": "frameId", "type": "string" },
-                    { "name": "loaderId", "type": "string" },
-                    { "name": "documentURL", "type": "string" },
-                    { "name": "time", "type": "number" },
-                    { "name": "resource", "$ref": "CachedResource" }
+                    { "name": "frameId", "type": "string", "description": "Frame identifier." },
+                    { "name": "loaderId", "type": "string", "description": "Loader identifier." },
+                    { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },
+                    { "name": "time", "type": "number", "description": "Timestamp." },
+                    { "name": "resource", "$ref": "CachedResource", "description": "Cached resource data." }
                 ]
             },
             {
                 "name": "setInitialContent",
+                "description": "Fired for XMLHttpRequests when their content becomes available.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer" },
-                    { "name": "sourceString", "type": "string" },
-                    { "name": "type", "type": "string" }
+                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "content", "type": "string", "description": "Resource content." },
+                    { "name": "type", "type": "string", "description": "Resource type. // FIXME" }
                 ]
             },
             {
                 "name": "didCommitLoadForFrame",
+                "description": "Fired once navigation of the frame has completed. Frame is now associated with the new loader.",
                 "parameters": [
-                    { "name": "frame", "$ref": "Frame" },
-                    { "name": "loaderId", "type": "string" }
+                    { "name": "frame", "$ref": "Frame", "description": "Frame identifier." },
+                    { "name": "loaderId", "type": "string", "description": "Loader identifier." }
                 ]
             },
             {
                 "name": "didCreateWebSocket",
+                "description": "Fired upon WebSocket creation.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer" },
-                    { "name": "requestURL", "type": "string" }
+                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "url", "type": "string", "description": "WebSocket request URL." }
                 ]
             },
             {
                 "name": "willSendWebSocketHandshakeRequest",
+                "description": "Fired when WebSocket is about to initiate handshake.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer" },
-                    { "name": "time", "type": "number" },
-                    { "name": "request", "$ref": "WebSocketRequest" }
+                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "time", "type": "number", "description": "Timestamp." },
+                    { "name": "request", "type": "object", "description": "WebSocket request data." }
                 ]
             },
             {
                 "name": "didReceiveWebSocketHandshakeResponse",
+                "description": "Fired when WebSocket handshake response becomes available.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer" },
-                    { "name": "time", "type": "number" },
-                    { "name": "response", "$ref": "WebSocketResponse" }
+                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "time", "type": "number", "description": "Timestamp." },
+                    { "name": "response", "type": "object", "description": "WebSocket response data." }
                 ]
             },
             {
                 "name": "didCloseWebSocket",
+                "description": "Fired when WebSocket is closed.",
                 "parameters": [
-                    { "name": "identifier", "type": "integer" },
-                    { "name": "time", "type": "number" }
+                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "time", "type": "number", "description": "Timestamp." }
                 ]
             }
         ]

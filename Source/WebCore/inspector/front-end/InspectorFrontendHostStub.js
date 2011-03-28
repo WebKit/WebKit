@@ -122,6 +122,10 @@ WebInspector.InspectorFrontendHostStub.prototype = {
 
     sendMessageToBackend: function(message)
     {
+    },
+
+    loadSessionSetting: function()
+    {
     }
 }
 

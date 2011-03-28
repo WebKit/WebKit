@@ -439,8 +439,8 @@ WebInspector.doLoadedDone = function()
     this.drawer = new WebInspector.Drawer();
     this.console = new WebInspector.ConsoleView(this.drawer);
     this.drawer.visibleView = this.console;
+    this.networkManager = new WebInspector.NetworkManager();
     this.resourceTreeModel = new WebInspector.ResourceTreeModel();
-    this.networkManager = new WebInspector.NetworkManager(this.resourceTreeModel);
     this.domAgent = new WebInspector.DOMAgent();
 
     InspectorBackend.registerDomainDispatcher("Inspector", this);
@@ -1397,6 +1397,8 @@ WebInspector.addMainEventListeners = function(doc)
 WebInspector.frontendReused = function()
 {
     this.networkManager.frontendReused();
+    this.resourceTreeModel.frontendReused();
+    WebInspector.panels.network.clear();
     this.reset();
 }
 

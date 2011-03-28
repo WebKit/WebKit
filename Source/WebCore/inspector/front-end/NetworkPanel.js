@@ -83,7 +83,7 @@ WebInspector.NetworkPanel = function()
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.MainResourceCommitLoad, this._onMainResourceCommitLoad, this);
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.FrameCommittedLoad, this._onFrameCommitLoad, this);
 }
 
 WebInspector.NetworkPanel.prototype = {
@@ -368,7 +368,7 @@ WebInspector.NetworkPanel.prototype = {
         for (var i = 0; i < this._resources.length; ++i) {
             var resource = this._resources[i];
             transferSize += (resource.cached || !resource.transferSize) ? 0 : resource.transferSize;
-            if (resource.isMainResource)
+            if (resource === WebInspector.mainResource)
                 baseTime = resource.startTime;
             if (resource.endTime > maxTime)
                 maxTime = resource.endTime;
@@ -802,18 +802,29 @@ WebInspector.NetworkPanel.prototype = {
         this._reset();
     },
 
-    _onMainResourceCommitLoad: function()
+    _onFrameCommitLoad: function(event)
     {
+        if (event.data.frame.parentId)
+            return;
+
+        // Main frame committed load.
         if (this._preserveLogToggle.toggled)
             return;
 
+        // Preserve provisional load resources.
+        var loaderId = event.data.loaderId;
+        var resourcesToPreserve = [];
+        for (var i = 0; i < this._resources.length; ++i) {
+            var resource = this._resources[i];
+            if (resource.loaderId === loaderId)
+                resourcesToPreserve.push(resource);
+        }
+
         this._reset();
 
-        // Now resurrect the main resource along with all redirects that lead to it.
-        this._appendResource(WebInspector.mainResource);
-        var redirects = WebInspector.mainResource.redirects;
-        for (var i = 0; redirects && i < redirects.length; ++i)
-            this._appendResource(redirect);
+        // Restore preserved items.
+        for (var i = 0; i < resourcesToPreserve.length; ++i)
+            this._appendResource(resourcesToPreserve[i]);
     },
 
     canShowSourceLine: function(url, line)
