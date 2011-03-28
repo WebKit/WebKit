@@ -1,3 +1,32 @@
+2011-03-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebKit's behavior for text-align inherit differs from other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=56377
+
+        The bug was caused by WebKit's resolving text-align: start and text-align: end too early.
+        As discussed on the bug, when text-align: start and text-align: end are inherited by descendent nodes,
+        the alignment of the text in those nodes should be determined based on the directionality of the text,
+        not by the directionality of the ancestor node from which text-align property is inherited.
+
+        Fixed the bug by introducing new enum values to ETextAlign: TASTART and TAEND. These two values will
+        align text to the left in a LTR context and to the right in a RTL context respectively.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Added the support for TASTART and TAEND.
+        (WebCore::CSSPrimitiveValue::operator ETextAlign): Ditto.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): No longer processes CSSValueStart and CSSValueEnd.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::localCaretRect): Added the support for TASTART and TAEND.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine): Added the support for TASTART and TAEND.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::localCaretRect): Ditto.
+        * rendering/style/RenderStyle.h: ETextAlign now has 10 values and requires 4 bits.
+        * rendering/style/RenderStyleConstants.h: Added TASTART and TAEND to ETextAlign.
+
 2011-03-28  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -5817,6 +5817,14 @@ IntRect RenderBlock::localCaretRect(InlineBox* inlineBox, int caretOffset, int* 
         case WEBKIT_RIGHT:
             alignment = alignRight;
             break;
+        case TASTART:
+            if (!currentStyle->isLeftToRightDirection())
+                alignment = alignRight;
+            break;
+        case TAEND:
+            if (currentStyle->isLeftToRightDirection())
+                alignment = alignRight;
+            break;
     }
 
     int x = borderLeft() + paddingLeft();

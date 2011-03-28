@@ -4621,13 +4621,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(textAlign, TextAlign)
         if (!primitiveValue)
             return;
-        int id = primitiveValue->getIdent();
-        if (id == CSSValueStart)
-            m_style->setTextAlign(m_style->isLeftToRightDirection() ? LEFT : RIGHT);
-        else if (id == CSSValueEnd)
-            m_style->setTextAlign(m_style->isLeftToRightDirection() ? RIGHT : LEFT);
-        else
-            m_style->setTextAlign(*primitiveValue);
+        m_style->setTextAlign(*primitiveValue);
         return;
     }
 

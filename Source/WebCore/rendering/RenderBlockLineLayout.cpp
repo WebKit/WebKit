@@ -497,6 +497,18 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
         case WEBKIT_CENTER:
             updateLogicalWidthForCenterAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
             break;
+        case TASTART:
+            if (style()->isLeftToRightDirection())
+                updateLogicalWidthForLeftAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            else
+                updateLogicalWidthForRightAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            break;
+        case TAEND:
+            if (style()->isLeftToRightDirection())
+                updateLogicalWidthForRightAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            else
+                updateLogicalWidthForLeftAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
+            break;
     }
 
     if (expansionOpportunityCount && availableLogicalWidth > totalLogicalWidth) {

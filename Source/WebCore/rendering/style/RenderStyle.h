@@ -187,7 +187,7 @@ protected:
         unsigned _list_style_type : 7; // EListStyleType
         unsigned _list_style_position : 1; // EListStylePosition
         unsigned _visibility : 2; // EVisibility
-        unsigned _text_align : 3; // ETextAlign
+        unsigned _text_align : 4; // ETextAlign
         unsigned _text_transform : 2; // ETextTransform
         unsigned _text_decorations : 4;
         unsigned _cursor_style : 6; // ECursor

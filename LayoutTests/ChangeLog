@@ -1,3 +1,17 @@
+2011-03-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebKit's behavior for text-align inherit differs from other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=56377
+
+        Added test more cases to text-align, which already has some tests for text-align: start and text-align: end.
+
+        * fast/css/text-align-expected.txt:
+        * fast/css/text-align.html:
+        * platform/mac/fast/css/text-align-expected.checksum:
+        * platform/mac/fast/css/text-align-expected.png:
+
 2011-03-28  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed. Yet another test result fix for fast/blockflow/fallback-orientation-expected.html.

@@ -551,6 +551,12 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
     case CENTER:
     case WEBKIT_CENTER:
         break;
+    case TASTART:
+        rightAligned = !cbStyle->isLeftToRightDirection();
+        break;
+    case TAEND:
+        rightAligned = cbStyle->isLeftToRightDirection();
+        break;
     }
 
     if (rightAligned) {

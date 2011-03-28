@@ -1617,30 +1617,36 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextAlign e)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
-        case TAAUTO:
-            m_value.ident = CSSValueWebkitAuto;
-            break;
-        case LEFT:
-            m_value.ident = CSSValueLeft;
-            break;
-        case RIGHT:
-            m_value.ident = CSSValueRight;
-            break;
-        case CENTER:
-            m_value.ident = CSSValueCenter;
-            break;
-        case JUSTIFY:
-            m_value.ident = CSSValueJustify;
-            break;
-        case WEBKIT_LEFT:
-            m_value.ident = CSSValueWebkitLeft;
-            break;
-        case WEBKIT_RIGHT:
-            m_value.ident = CSSValueWebkitRight;
-            break;
-        case WEBKIT_CENTER:
-            m_value.ident = CSSValueWebkitCenter;
-            break;
+    case TAAUTO:
+        m_value.ident = CSSValueWebkitAuto;
+        break;
+    case TASTART:
+        m_value.ident = CSSValueStart;
+        break;
+    case TAEND:
+        m_value.ident = CSSValueEnd;
+        break;
+    case LEFT:
+        m_value.ident = CSSValueLeft;
+        break;
+    case RIGHT:
+        m_value.ident = CSSValueRight;
+        break;
+    case CENTER:
+        m_value.ident = CSSValueCenter;
+        break;
+    case JUSTIFY:
+        m_value.ident = CSSValueJustify;
+        break;
+    case WEBKIT_LEFT:
+        m_value.ident = CSSValueWebkitLeft;
+        break;
+    case WEBKIT_RIGHT:
+        m_value.ident = CSSValueWebkitRight;
+        break;
+    case WEBKIT_CENTER:
+        m_value.ident = CSSValueWebkitCenter;
+        break;
     }
 }
 
@@ -1648,9 +1654,9 @@ template<> inline CSSPrimitiveValue::operator ETextAlign() const
 {
     switch (m_value.ident) {
         case CSSValueStart:
+            return TASTART;
         case CSSValueEnd:
-            ASSERT_NOT_REACHED(); // Depends on direction, thus should be handled by the caller.
-            return LEFT;
+            return TAEND;
         default:
             return static_cast<ETextAlign>(m_value.ident - CSSValueWebkitAuto);
     }
