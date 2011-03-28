@@ -1,3 +1,10 @@
+2011-03-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, update pixel test expectations after r82105.
+
+        * platform/gtk/fast/css/text-align-expected.checksum:
+        * platform/gtk/fast/css/text-align-expected.png:
+
 2011-03-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         [Chromium] [Mac Leopard] Update test expectations after r82105.
