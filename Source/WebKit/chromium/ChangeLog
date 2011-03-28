@@ -1,3 +1,12 @@
+2011-03-28  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] have DRT write the png checksum into a png comment
+        https://bugs.webkit.org/show_bug.cgi?id=57255
+
+        * DEPS: Pull in version of chromium with comment writing
+
 2011-03-28  Adele Peterson  <adele@apple.com>
 
         Build fix.

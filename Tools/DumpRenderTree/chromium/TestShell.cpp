@@ -550,14 +550,12 @@ void TestShell::dumpImage(skia::PlatformCanvas* canvas) const
         md5hash.append(hex);
     }
 
-    // Only encode and dump the png if the hashes don't match. Encoding the image
-    // is really expensive.
+    // Only encode and dump the png if the hashes don't match. Encoding the
+    // image is really expensive.
     if (md5hash.compare(m_params.pixelHash)) {
         std::vector<unsigned char> png;
-        webkit_support::EncodeBGRAPNG(
-            reinterpret_cast<const unsigned char*>(sourceBitmap.getPixels()),
-            sourceBitmap.width(), sourceBitmap.height(),
-            static_cast<int>(sourceBitmap.rowBytes()), discardTransparency, &png);
+        webkit_support::EncodeBGRAPNGWithChecksum(reinterpret_cast<const unsigned char*>(sourceBitmap.getPixels()), sourceBitmap.width(),
+            sourceBitmap.height(), static_cast<int>(sourceBitmap.rowBytes()), discardTransparency, md5hash, &png);
 
         m_printer->handleImage(md5hash.c_str(), m_params.pixelHash.c_str(), &png[0], png.size(), m_params.pixelFileName.c_str());
     } else
