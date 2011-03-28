@@ -1,3 +1,10 @@
+2011-03-28  Andy Estes  <aestes@apple.com>
+
+        Check in failing results for embed-prefers-plugins-for-images.html on Leopard.
+        https://bugs.webkit.org/show_bug.cgi?id=57137
+
+        * platform/mac-leopard/plugins/embed-prefers-plugins-for-images-expected.txt: Added.
+
 2011-03-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Eric Seidel.
