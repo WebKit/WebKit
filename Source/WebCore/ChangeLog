@@ -1,3 +1,12 @@
+2011-03-28  Jessie Berlin  <jberlin@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Add an extra newline to the end of the generated Inspector.idl file so that it does not
+        trigger the Windows "no newline at at end of file" warning.
+
+        * inspector/generate-inspector-idl:
+
 2011-03-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Buildfix after r82125.

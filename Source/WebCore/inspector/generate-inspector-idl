@@ -121,5 +121,5 @@ for domain in json_api:
     output_file.write("\n    };")
     if domain["domain"] in macro_traits:
         output_file.write("\n#endif // ENABLE_%s" % macro_traits[domain["domain"]])
-output_file.write("\n}")
+output_file.write("\n}\n")
 output_file.close()
