@@ -63,7 +63,7 @@ public:
 #if USE(CFNETWORK)
 #if PLATFORM(WIN)
     ResourceError(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription, CFDataRef certificate);
-    CFDataRef certificate() const { return m_certificate.get(); }
+    PCCERT_CONTEXT certificate() const;
 #endif
     ResourceError(CFStreamError error);
     CFStreamError cfStreamError() const;

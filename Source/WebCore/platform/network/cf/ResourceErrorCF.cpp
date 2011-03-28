@@ -52,6 +52,14 @@ ResourceError::ResourceError(const String& domain, int errorCode, const String& 
     , m_certificate(certificate)
 {
 }
+
+PCCERT_CONTEXT ResourceError::certificate() const
+{
+    if (!m_certificate)
+        return 0;
+    
+    return reinterpret_cast<PCCERT_CONTEXT>(CFDataGetBytePtr(m_certificate.get()));
+}
 #endif // PLATFORM(WIN)
 
 const CFStringRef failingURLStringKey = CFSTR("NSErrorFailingURLStringKey");

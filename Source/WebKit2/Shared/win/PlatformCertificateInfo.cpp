@@ -75,7 +75,6 @@ PlatformCertificateInfo::PlatformCertificateInfo(const ResourceResponse& respons
 
 PlatformCertificateInfo::PlatformCertificateInfo(PCCERT_CONTEXT certificateContext)
 {
-    ASSERT(certificateContext);
     if (!certificateContext)
         return;
     

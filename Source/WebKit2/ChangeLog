@@ -1,5 +1,17 @@
 2011-03-28  Jeff Miller  <jeffm@apple.com>
 
+        Reviewed by Adam Roben.
+
+        ResourceError::certificate() should return a PCCERT_CONTEXT
+        https://bugs.webkit.org/show_bug.cgi?id=57262
+
+        * Shared/win/PlatformCertificateInfo.cpp:
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo): Don't assert if no PCCERT_CONTEXT is specified.
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (CoreIPC::encodeResourceError): Removed unneeded code now that ResourceError::certificate() returns a PCCERT_CONTEXT.
+
+2011-03-28  Jeff Miller  <jeffm@apple.com>
+
         Rubber-stamped by Adam Roben.
 
         Remove unused CFErrorRef.

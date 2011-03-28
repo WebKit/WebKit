@@ -1,3 +1,14 @@
+2011-03-28  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Adam Roben.
+
+        ResourceError::certificate() should return a PCCERT_CONTEXT
+        https://bugs.webkit.org/show_bug.cgi?id=57262
+
+        * platform/network/cf/ResourceError.h: certificate() now returns a PCCERT_CONTEXT.
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::certificate): Added.
+
 2011-03-28  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser and Darin Adler.
