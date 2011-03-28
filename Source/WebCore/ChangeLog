@@ -1,3 +1,14 @@
+2011-03-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Buildfix after r82125.
+
+        [Qt] QtWebKit will not compile with QT_ASCII_CAST_WARNINGS enabled
+        https://bugs.webkit.org/show_bug.cgi?id=57087
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp: Convert all char* to QString explicitly.
+        (WebCore::MediaPlayerPrivateQt::getSupportedTypes):
+        (WebCore::MediaPlayerPrivateQt::commitLoad):
+
 2011-03-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82099.

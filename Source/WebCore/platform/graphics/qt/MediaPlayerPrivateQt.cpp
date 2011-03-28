@@ -74,7 +74,7 @@ void MediaPlayerPrivateQt::getSupportedTypes(HashSet<String> &supported)
 
     for (int i = 0; i < types.size(); i++) {
         QString mime = types.at(i);
-        if (mime.startsWith("audio/") || mime.startsWith("video/"))
+        if (mime.startsWith(QString::fromLatin1("audio/")) || mime.startsWith(QString::fromLatin1("video/")))
             supported.add(mime);
     }
 }
@@ -194,7 +194,7 @@ void MediaPlayerPrivateQt::commitLoad(const String& url)
     HTMLMediaElement* element = static_cast<HTMLMediaElement*>(m_webCorePlayer->mediaPlayerClient());
 
     // Construct the media content with a network request if the resource is http[s]
-    if (scheme == "http" || scheme == "https") {
+    if (scheme == QString::fromLatin1("http") || scheme == QString::fromLatin1("https")) {
         QNetworkRequest request = QNetworkRequest(rUrl);
 
         // Grab the current document
@@ -219,7 +219,7 @@ void MediaPlayerPrivateQt::commitLoad(const String& url)
 
             // Set the refferer, but not when requesting insecure content from a secure page
             QUrl documentUrl = QUrl(QString(document->documentURI()));
-            if (documentUrl.scheme().toLower() == "http" || scheme == "https")
+            if (documentUrl.scheme().toLower() == QString::fromLatin1("http") || scheme == QString::fromLatin1("https"))
                 request.setRawHeader("Referer", documentUrl.toEncoded());
 
             // Set the user agent
