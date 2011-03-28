@@ -1,3 +1,21 @@
+2011-03-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION [r78794-r79249] Allocation of memory is slow when number of active objects is large
+        https://bugs.webkit.org/show_bug.cgi?id=56823
+        
+        Partial fix for most of the problem. (TOT still shows a regression, though.)
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::reportExtraMemoryCostSlowCase): Use highWaterMark(), instead of
+        capacity(), since capacity() is O(n) relative to the size of the heap.
+
+        In limited circumstances, capacity() is also worse than highWaterMark()
+        for measuring extra cost relative to heap size, since capacity() only
+        measures the *current* capacity of the heap, but the heap will grow if
+        necessary to attain highWaterMark().
+
 2011-03-28  Oliver Hunt  <oliver@apple.com>
 
         REGRESSION(r82130): It made all tests crash (Requested by Ossy on #webkit).
