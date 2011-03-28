@@ -1,3 +1,31 @@
+2011-03-28  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=56825
+
+        Fixes for context attribute handling:
+        - Initialize depth and stencil buffer depending on whether they
+        are enabled in context attributes.
+        - Always enable depth buffer when stencil buffer is enabled.
+        - Disable stencil buffer on OpenGL ES 2.0
+        - Cleaned up clutter code from initialization. Made code paths 
+        more sane.
+        - Clear mask is now set correctly in reshape().
+
+        Tests: fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::isValid):
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::reshape):
+        (WebCore::GraphicsContext3DInternal::paint):
+        (WebCore::GraphicsContext3DInternal::getProcAddress):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::reshape):
+        (WebCore::GraphicsContext3D::bindFramebuffer):
+
 2011-03-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

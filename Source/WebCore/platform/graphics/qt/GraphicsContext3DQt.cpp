@@ -158,8 +158,10 @@ public:
     GraphicsContext3DInternal(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow);
     ~GraphicsContext3DInternal();
 
-    bool isContextValid() { return m_contextValid; }
+    bool isValid() { return m_valid; }
+
     QGLWidget* getViewportGLWidget();
+    void reshape(int width, int height);
     void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
     QRectF boundingRect() const;
 
@@ -260,7 +262,7 @@ public:
     QGLWidget* m_viewportGLWidget;
     QRectF m_boundingRect;
     GLuint m_texture;
-    GLuint m_mainFbo;
+    GLuint m_canvasFbo;
     GLuint m_currentFbo;
     GLuint m_depthBuffer;
     bool m_layerComposited;
@@ -271,7 +273,7 @@ public:
 private:
 
     void* getProcAddress(const String& proc);
-    bool m_contextValid;
+    bool m_valid;
 };
 
 #if defined (QT_OPENGL_ES_2) 
@@ -295,38 +297,35 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attribut
     , m_glWidget(0)
     , m_viewportGLWidget(0)
     , m_texture(0)
-    , m_mainFbo(0)
+    , m_canvasFbo(0)
     , m_currentFbo(0)
     , m_depthBuffer(0)
     , m_layerComposited(false)
-    , m_contextValid(true)
+    , m_valid(true)
 {
     m_viewportGLWidget = getViewportGLWidget();
 
     if (m_viewportGLWidget)
         m_glWidget = new QGLWidget(0, m_viewportGLWidget);
-    else {
-        QGLFormat format;
-        format.setDepth(true);
-        format.setSampleBuffers(true);
-        format.setStencil(false);
-
-        m_glWidget = new QGLWidget(format);
-    }
+    else
+        m_glWidget = new QGLWidget();
 
     if (!m_glWidget->isValid()) {
-        LOG_ERROR("GraphicsContext3D: QGLWidget does not have a valid context");
-        m_contextValid = false;
+        LOG_ERROR("GraphicsContext3D: QGLWidget initialization failed.");
+        m_valid = false;
         return;
     }
- 
-    QGLFormat format = m_glWidget->format();
 
-    m_attrs.alpha = format.alpha();
-    m_attrs.depth = format.depth();
-    m_attrs.stencil = format.stencil();
+    // Geometry can be set to zero because m_glWidget is used only for its QGLContext.
+    m_glWidget->setGeometry(0, 0, 0, 0);
+
+#if defined(QT_OPENGL_ES_2)
+    m_attrs.stencil = false;
+#else
+    if (m_attrs.stencil)
+        m_attrs.depth = true;
+#endif
     m_attrs.antialias = false;
-    m_attrs.premultipliedAlpha = true;
 
     m_glWidget->makeCurrent();
 
@@ -421,11 +420,13 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attribut
     vertexAttrib4fv = GET_PROC_ADDRESS(glVertexAttrib4fv);
     vertexAttribPointer = GET_PROC_ADDRESS(glVertexAttribPointer);
 
-    if (!m_contextValid) {
+    if (!m_valid) {
         LOG_ERROR("GraphicsContext3D: All needed OpenGL extensions are not available");
-        m_contextValid = false;
         return;
     }
+
+    // Create buffers for the canvas FBO.
+    genFramebuffers(/* count */ 1, &m_canvasFbo);
 
     glGenTextures(1, &m_texture);
     glBindTexture(GraphicsContext3D::TEXTURE_2D, m_texture);
@@ -433,32 +434,15 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attribut
     glTexParameterf(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
     glTexParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
     glTexParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
-    glTexImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, 1, 1, 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, 0);
     glBindTexture(GraphicsContext3D::TEXTURE_2D, 0);
 
-    genFramebuffers(/* count */ 1, &m_mainFbo);
-    m_currentFbo = m_mainFbo;
+    if (m_attrs.depth)
+        genRenderbuffers(/* count */ 1, &m_depthBuffer);
 
-    bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_mainFbo);
-
-    genRenderbuffers(/* count */ 1, &m_depthBuffer);
-    bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
-#if defined(QT_OPENGL_ES_2)
-    renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_COMPONENT16, /* width */ 1, /* height */ 1);
-#else
-    renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_COMPONENT, /* width */ 1, /* height */ 1);
-#endif
-
-    bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
- 
-    framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_texture, 0);
-    framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
-    glClearColor(/* red */ 0, /* green */ 0, /* blue */ 0, /* alpha */ 0);
-
-    if (checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
-        LOG_ERROR("GraphicsContext3D: Wasn't able to create the main framebuffer");
-        m_contextValid = false;
-    }
+    // Bind canvas FBO and set initial clear color to black.
+    m_currentFbo = m_canvasFbo;
+    bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_canvasFbo);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
 }
 
 GraphicsContext3DInternal::~GraphicsContext3DInternal()
@@ -485,6 +469,63 @@ static inline quint32 swapBgrToRgb(quint32 pixel)
     return ((pixel << 16) & 0xff0000) | ((pixel >> 16) & 0xff) | (pixel & 0xff00ff00);
 }
 
+void GraphicsContext3DInternal::reshape(int width, int height)
+{
+    if (width == m_boundingRect.width() && height == m_boundingRect.height())
+        return;
+
+    m_boundingRect = QRectF(QPointF(0, 0), QSizeF(width, height));
+
+    m_glWidget->makeCurrent();
+
+    // Create color buffer
+    glBindTexture(GraphicsContext3D::TEXTURE_2D, m_texture);
+    if (m_attrs.alpha)
+        glTexImage2D(GraphicsContext3D::TEXTURE_2D, /* level */ 0, GraphicsContext3D::RGBA, width, height, /* border */ 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, /* data */ 0);
+    else
+        glTexImage2D(GraphicsContext3D::TEXTURE_2D, /* level */ 0, GraphicsContext3D::RGB, width, height, /* border */ 0, GraphicsContext3D::RGB, GraphicsContext3D::UNSIGNED_BYTE, /* data */ 0);
+    glBindTexture(GraphicsContext3D::TEXTURE_2D, 0);
+
+    if (m_attrs.depth) {
+        // Create depth and stencil buffers.
+        bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
+#if defined(QT_OPENGL_ES_2)
+        renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_COMPONENT16, width, height);
+#else
+        if (m_attrs.stencil)
+            renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+        else
+            renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_COMPONENT, width, height);
+#endif
+        bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
+    }
+
+    // Construct canvas FBO.
+    bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_canvasFbo);
+    framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_texture, 0);
+    if (m_attrs.depth)
+        framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
+#if !defined(QT_OPENGL_ES_2)
+    if (m_attrs.stencil)
+        framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthBuffer);
+#endif
+
+    GLenum status = checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER);
+    if (status != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
+        LOG_ERROR("GraphicsContext3D: Canvas FBO initialization failed.");
+        return;
+    }
+
+    int clearFlags = GraphicsContext3D::COLOR_BUFFER_BIT;
+    if (m_attrs.depth)
+        clearFlags |= GraphicsContext3D::DEPTH_BUFFER_BIT;
+    if (m_attrs.stencil)
+        clearFlags |= GraphicsContext3D::STENCIL_BUFFER_BIT;
+
+    glClear(clearFlags);
+    glFlush();
+}
+
 void GraphicsContext3DInternal::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget);
@@ -504,7 +545,7 @@ void GraphicsContext3DInternal::paint(QPainter* painter, const QStyleOptionGraph
     quint32* imagePixels = reinterpret_cast<quint32*>(offscreenImage.bits());
 
     m_glWidget->makeCurrent();
-    bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_mainFbo);
+    bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_canvasFbo);
     glReadPixels(/* x */ 0, /* y */ 0, rect.width(), rect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, imagePixels);
 
     bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_currentFbo);
@@ -553,7 +594,7 @@ void* GraphicsContext3DInternal::getProcAddress(const String& proc)
     }
 
     LOG_ERROR("GraphicsContext3D: Did not find GL function %s", proc.utf8().data());
-    m_contextValid = false;
+    m_valid = false;
     return 0;
 }
 
@@ -569,7 +610,7 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
 GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, bool)
     : m_internal(new GraphicsContext3DInternal(attrs, hostWindow))
 {
-    if (!m_internal->isContextValid()) 
+    if (!m_internal->isValid())
         m_internal = 0;
 }
 
@@ -615,40 +656,13 @@ PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData()
 
 void GraphicsContext3D::reshape(int width, int height)
 {
-    if (((width == m_currentWidth) && (height == m_currentHeight)) || (!m_internal))
+    if (width == m_currentWidth && height == m_currentHeight || (!m_internal))
         return;
-    
+
     m_currentWidth = width;
     m_currentHeight = height;
 
-    m_internal->m_boundingRect = QRectF(QPointF(0, 0), QSizeF(width, height));
-
-    m_internal->m_glWidget->makeCurrent();
-
-    glBindTexture(GraphicsContext3D::TEXTURE_2D, m_internal->m_texture);
-    glTexImage2D(GraphicsContext3D::TEXTURE_2D, /* level */ 0, GraphicsContext3D::RGBA, width, height, /* border */ 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, /* data */ 0);
-    glBindTexture(GraphicsContext3D::TEXTURE_2D, 0);
-   
-    m_internal->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_internal->m_mainFbo);
-    m_internal->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_internal->m_depthBuffer);
-#if defined(QT_OPENGL_ES_2)
-    renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_COMPONENT16, width, height);
-#else
-    renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::DEPTH_COMPONENT, width, height);
-#endif
-    m_internal->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
-    
-    m_internal->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_internal->m_texture, 0);
-    m_internal->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_internal->m_depthBuffer);
-
-    GLenum status = m_internal->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER);
-    if (status != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
-        LOG_ERROR("GraphicsContext3D: Wasn't able to reshape the main framebuffer");
-        notImplemented();
-    }
-
-    glClear(GraphicsContext3D::COLOR_BUFFER_BIT);
-    glFlush();
+    m_internal->reshape(width, height);
 }
 
 IntSize GraphicsContext3D::getInternalFramebufferSize()
@@ -697,7 +711,7 @@ void GraphicsContext3D::bindBuffer(GC3Denum target, Platform3DObject buffer)
 void GraphicsContext3D::bindFramebuffer(GC3Denum target, Platform3DObject buffer)
 {
     m_internal->m_glWidget->makeCurrent();
-    m_internal->m_currentFbo = buffer ? buffer : m_internal->m_mainFbo;
+    m_internal->m_currentFbo = buffer ? buffer : m_internal->m_canvasFbo;
     m_internal->bindFramebuffer(target, m_internal->m_currentFbo);
 }
 
