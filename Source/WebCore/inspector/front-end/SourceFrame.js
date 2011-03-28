@@ -795,12 +795,31 @@ WebInspector.SourceFrame.prototype = {
         if (this._textViewer.readOnly || !this._delegate.canEditScriptSource())
             return false;
 
+        if (this._originalTextModelContent === undefined) {
+            // No editing was actually done.
+            this._textViewer.readOnly = true;
+            this._delegate.setScriptSourceIsBeingEdited(false);
+            return true;
+        }
+
+        var originalTextModelContent = this._originalTextModelContent;
         var newSource = this._textModel.text;
-        if (this._originalTextModelContent !== newSource)
-            this._delegate.editScriptSource(newSource);
+
         delete this._originalTextModelContent;
         this._textViewer.readOnly = true;
         this._delegate.setScriptSourceIsBeingEdited(false);
+
+        function didEditScriptSource(success, newBodyOrErrorMessage)
+        {
+            if (!success && this._originalTextModelContent === undefined && this._textModel.text === newSource) {
+                this._originalTextModelContent = originalTextModelContent;
+                this._textViewer.readOnly = false;
+                this._delegate.setScriptSourceIsBeingEdited(true);
+                WebInspector.log(newBodyOrErrorMessage, WebInspector.ConsoleMessage.MessageLevel.Error);
+                WebInspector.showConsole();
+            }
+        }
+        this._delegate.editScriptSource(newSource, didEditScriptSource.bind(this));
         return true;
     },
 
@@ -881,7 +900,7 @@ WebInspector.SourceFrameDelegate.prototype = {
         return false;
     },
 
-    editScriptSource: function(text)
+    editScriptSource: function(text, callback)
     {
         // Should be implemented by subclasses.
     },

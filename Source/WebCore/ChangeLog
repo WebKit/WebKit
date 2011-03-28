@@ -1,3 +1,17 @@
+2011-03-28  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: source frame should show the error to user when live edit is failed
+        https://bugs.webkit.org/show_bug.cgi?id=57002
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.editScriptSource):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._handleSave.didSaveScriptSource):
+        (WebInspector.SourceFrame.prototype._handleSave):
+        (WebInspector.SourceFrameDelegate.prototype.editScriptSource):
+
 2011-03-26  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.
