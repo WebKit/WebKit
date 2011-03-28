@@ -1,3 +1,15 @@
+2011-03-28  Vincent Scheib  <scheib@chromium.org>
+
+        Chromium rebaseline for r82144.
+
+        * platform/chromium-linux/fast/block/positioning/058-expected.checksum:
+        * platform/chromium-linux/fast/block/positioning/058-expected.png:
+        * platform/chromium-win/fast/block/positioning/052-expected.txt:
+        * platform/chromium-win/fast/block/positioning/058-expected.checksum:
+        * platform/chromium-win/fast/block/positioning/058-expected.png:
+        * platform/chromium-win/fast/block/positioning/058-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-28  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
