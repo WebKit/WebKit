@@ -1,3 +1,30 @@
+2011-03-28  Darin Adler  <darin@apple.com>
+
+        Set eol-style to native on more files. I noticed the last check-in had an entire file
+        changing because of an EOL style change, and setting this property prevents that from
+        happening in future. We may want to do this systematically for more of WebKit later.
+
+        * AccessibleBase.cpp: Added property svn:eol-style.
+        * AccessibleBase.h: Added property svn:eol-style.
+        * AccessibleDocument.cpp: Added property svn:eol-style.
+        * AccessibleDocument.h: Added property svn:eol-style.
+        * AccessibleImage.cpp: Added property svn:eol-style.
+        * AccessibleImage.h: Added property svn:eol-style.
+        * COMVariantSetter.h: Added property svn:eol-style.
+        * FullscreenVideoController.cpp: Added property svn:eol-style.
+        * FullscreenVideoController.h: Added property svn:eol-style.
+        * WebCoreSupport/EmbeddedWidget.cpp: Added property svn:eol-style.
+        * WebCoreSupport/EmbeddedWidget.h: Added property svn:eol-style.
+        * WebCoreSupport/WebDesktopNotificationsDelegate.cpp: Added property svn:eol-style.
+        * WebCoreSupport/WebDesktopNotificationsDelegate.h: Added property svn:eol-style.
+        * WebCoreSupport/WebFrameLoaderClient.cpp: Added property svn:eol-style.
+        * WebCoreSupport/WebInspectorDelegate.cpp: Added property svn:eol-style.
+        * WebCoreSupport/WebInspectorDelegate.h: Added property svn:eol-style.
+        * WebCoreSupport/WebPlatformStrategies.cpp: Added property svn:eol-style.
+        * WebCoreSupport/WebPlatformStrategies.h: Added property svn:eol-style.
+        * WebCoreSupport/WebPluginHalterClient.cpp: Added property svn:eol-style.
+        * WebCoreSupport/WebPluginHalterClient.h: Added property svn:eol-style.
+
 2011-03-28  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed build fix.
