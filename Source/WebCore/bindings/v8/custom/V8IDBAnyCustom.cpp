@@ -77,6 +77,6 @@ v8::Handle<v8::Value> toV8(IDBAny* impl)
     return v8::Undefined();
 }
 
-#endif // ENABLE(INDEXED_DATABASE)
-
 } // namespace WebCore
+
+#endif // ENABLE(INDEXED_DATABASE)

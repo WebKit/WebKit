@@ -1,3 +1,17 @@
+2011-03-28  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Steve Block.
+
+        V8IDBKeyCustom.cpp does not compile with INDEXED_DATABASE disabled
+        https://bugs.webkit.org/show_bug.cgi?id=57100
+
+        Close the ENABLE guard and the namespace in the right order.
+
+        No new tests, just cleanup.
+
+        * bindings/v8/custom/V8IDBAnyCustom.cpp:
+        * bindings/v8/custom/V8IDBKeyCustom.cpp:
+
 2011-03-28  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adam Roben.
