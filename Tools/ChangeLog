@@ -1,3 +1,11 @@
+2011-03-28  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        Add myself to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-03-28  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.
