@@ -1,3 +1,17 @@
+2011-03-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8895977> REGRESSION: multicol crashes with positioned elements
+        https://bugs.webkit.org/show_bug.cgi?id=48983
+
+        Test: fast/multicol/paginated-layer-crash.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintPaginatedChildLayer): Bring the logic for finding pagintating layers
+        into sync with updatePagination() after r68069.
+        (WebCore::RenderLayer::hitTestPaginatedChildLayer): Ditto.
+
 2011-03-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler' .

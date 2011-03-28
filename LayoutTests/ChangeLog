@@ -1,3 +1,13 @@
+2011-03-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8895977> REGRESSION: multicol crashes with positioned elements
+        https://bugs.webkit.org/show_bug.cgi?id=48983
+
+        * fast/multicol/paginated-layer-crash-expected.txt: Added.
+        * fast/multicol/paginated-layer-crash.html: Added.
+
 2011-03-28  Vincent Scheib  <scheib@chromium.org>
 
         Chromium rebaseline for r82123.
