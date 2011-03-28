@@ -1,3 +1,16 @@
+2011-03-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        instanceof Array test fails when using iframes
+        https://bugs.webkit.org/show_bug.cgi?id=17250
+
+        Add test cases for correct behaviour
+
+        * fast/js/js-constructors-use-correct-global-expected.txt: Added.
+        * fast/js/js-constructors-use-correct-global.html: Added.
+        * fast/js/resources/js-constructors-use-correct-global.js: Added.
+
 2011-03-28  Vincent Scheib  <scheib@chromium.org>
 
         Chromium rebaseline for r82144.

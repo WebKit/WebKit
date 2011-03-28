@@ -40,7 +40,7 @@ namespace JSC {
         virtual JSValue getJSNumber();
     };
 
-    NumberObject* constructNumber(ExecState*, JSValue);
+    NumberObject* constructNumber(ExecState*, JSGlobalObject*, JSValue);
 
 } // namespace JSC
 

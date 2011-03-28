@@ -119,7 +119,7 @@ bool JSCell::getOwnPropertySlot(ExecState* exec, const Identifier& identifier, P
     // This is not a general purpose implementation of getOwnPropertySlot.
     // It should only be called by JSValue::get.
     // It calls getPropertySlot, not getOwnPropertySlot.
-    JSObject* object = toObject(exec);
+    JSObject* object = toObject(exec, exec->lexicalGlobalObject());
     slot.setBase(object);
     if (!object->getPropertySlot(exec, identifier, slot))
         slot.setUndefined();
@@ -131,7 +131,7 @@ bool JSCell::getOwnPropertySlot(ExecState* exec, unsigned identifier, PropertySl
     // This is not a general purpose implementation of getOwnPropertySlot.
     // It should only be called by JSValue::get.
     // It calls getPropertySlot, not getOwnPropertySlot.
-    JSObject* object = toObject(exec);
+    JSObject* object = toObject(exec, exec->lexicalGlobalObject());
     slot.setBase(object);
     if (!object->getPropertySlot(exec, identifier, slot))
         slot.setUndefined();
@@ -140,27 +140,27 @@ bool JSCell::getOwnPropertySlot(ExecState* exec, unsigned identifier, PropertySl
 
 void JSCell::put(ExecState* exec, const Identifier& identifier, JSValue value, PutPropertySlot& slot)
 {
-    toObject(exec)->put(exec, identifier, value, slot);
+    toObject(exec, exec->lexicalGlobalObject())->put(exec, identifier, value, slot);
 }
 
 void JSCell::put(ExecState* exec, unsigned identifier, JSValue value)
 {
-    toObject(exec)->put(exec, identifier, value);
+    toObject(exec, exec->lexicalGlobalObject())->put(exec, identifier, value);
 }
 
 bool JSCell::deleteProperty(ExecState* exec, const Identifier& identifier)
 {
-    return toObject(exec)->deleteProperty(exec, identifier);
+    return toObject(exec, exec->lexicalGlobalObject())->deleteProperty(exec, identifier);
 }
 
 bool JSCell::deleteProperty(ExecState* exec, unsigned identifier)
 {
-    return toObject(exec)->deleteProperty(exec, identifier);
+    return toObject(exec, exec->lexicalGlobalObject())->deleteProperty(exec, identifier);
 }
 
 JSObject* JSCell::toThisObject(ExecState* exec) const
 {
-    return toObject(exec);
+    return toObject(exec, exec->lexicalGlobalObject());
 }
 
 JSValue JSCell::getJSNumber()
@@ -203,7 +203,7 @@ UString JSCell::toString(ExecState*) const
     return UString();
 }
 
-JSObject* JSCell::toObject(ExecState*) const
+JSObject* JSCell::toObject(ExecState*, JSGlobalObject*) const
 {
     ASSERT_NOT_REACHED();
     return 0;

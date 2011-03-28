@@ -54,14 +54,14 @@ double JSValue::toIntegerPreserveNaN(ExecState* exec) const
     return trunc(toNumber(exec));
 }
 
-JSObject* JSValue::toObjectSlowCase(ExecState* exec) const
+JSObject* JSValue::toObjectSlowCase(ExecState* exec, JSGlobalObject* globalObject) const
 {
     ASSERT(!isCell());
 
     if (isInt32() || isDouble())
-        return constructNumber(exec, asValue());
+        return constructNumber(exec, globalObject, asValue());
     if (isTrue() || isFalse())
-        return constructBooleanFromImmediateBoolean(exec, asValue());
+        return constructBooleanFromImmediateBoolean(exec, globalObject, asValue());
 
     ASSERT(isUndefinedOrNull());
     throwError(exec, createNotAnObjectError(exec, *this));
@@ -73,9 +73,9 @@ JSObject* JSValue::toThisObjectSlowCase(ExecState* exec) const
     ASSERT(!isCell());
 
     if (isInt32() || isDouble())
-        return constructNumber(exec, asValue());
+        return constructNumber(exec, exec->lexicalGlobalObject(), asValue());
     if (isTrue() || isFalse())
-        return constructBooleanFromImmediateBoolean(exec, asValue());
+        return constructBooleanFromImmediateBoolean(exec, exec->lexicalGlobalObject(), asValue());
     ASSERT(isUndefinedOrNull());
     return exec->globalThisValue();
 }
@@ -84,9 +84,9 @@ JSObject* JSValue::synthesizeObject(ExecState* exec) const
 {
     ASSERT(!isCell());
     if (isNumber())
-        return constructNumber(exec, asValue());
+        return constructNumber(exec, exec->lexicalGlobalObject(), asValue());
     if (isBoolean())
-        return constructBooleanFromImmediateBoolean(exec, asValue());
+        return constructBooleanFromImmediateBoolean(exec, exec->lexicalGlobalObject(), asValue());
 
     ASSERT(isUndefinedOrNull());
     throwError(exec, createNotAnObjectError(exec, *this));

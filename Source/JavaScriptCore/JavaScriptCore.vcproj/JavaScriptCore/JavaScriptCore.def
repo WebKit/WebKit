@@ -3,7 +3,6 @@ EXPORTS
     ??0CString@WTF@@QAE@PBD@Z
     ??0CString@WTF@@QAE@PBDI@Z
     ??0Collator@WTF@@QAE@PBD@Z
-    ??0DateInstance@JSC@@QAE@PAVExecState@1@N@Z
     ??0DateInstance@JSC@@QAE@PAVExecState@1@V?$NonNullPassRefPtr@VStructure@JSC@@@WTF@@N@Z
     ??0DefaultGCActivityCallback@JSC@@QAE@PAVHeap@1@@Z
     ??0DropAllLocks@JSLock@JSC@@QAE@W4JSLockBehavior@2@@Z
@@ -94,7 +93,7 @@ EXPORTS
     ?constructArray@JSC@@YAPAVJSArray@1@PAVExecState@1@ABVArgList@1@@Z
     ?constructEmptyArray@JSC@@YAPAVJSArray@1@PAVExecState@1@@Z
     ?constructEmptyObject@JSC@@YAPAVJSObject@1@PAVExecState@1@@Z
-    ?constructFunction@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVArgList@1@ABVIdentifier@1@ABVUString@1@H@Z
+    ?constructFunction@JSC@@YAPAVJSObject@1@PAVExecState@1@PAVJSGlobalObject@1@ABVArgList@1@ABVIdentifier@1@ABVUString@1@H@Z
     ?convertUTF16ToUTF8@Unicode@WTF@@YA?AW4ConversionResult@12@PAPB_WPB_WPAPADPAD_N@Z
     ?convertUTF8ToUTF16@Unicode@WTF@@YA?AW4ConversionResult@12@PAPBDPBDPAPA_WPA_W_N@Z
     ?create@ByteArray@WTF@@SA?AV?$PassRefPtr@VByteArray@WTF@@@2@I@Z
@@ -336,10 +335,9 @@ EXPORTS
     ?toNumber@JSCell@JSC@@UBENPAVExecState@2@@Z
     ?toNumber@JSObject@JSC@@UBENPAVExecState@2@@Z
     ?toNumber@JSString@JSC@@EBENPAVExecState@2@@Z
-    ?toObject@JSCell@JSC@@UBEPAVJSObject@2@PAVExecState@2@@Z
-    ?toObject@JSObject@JSC@@UBEPAV12@PAVExecState@2@@Z
-    ?toObject@JSString@JSC@@EBEPAVJSObject@2@PAVExecState@2@@Z
-    ?toObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
+    ?toObject@JSCell@JSC@@UBEPAVJSObject@2@PAVExecState@2@PAVJSGlobalObject@2@@Z
+    ?toObject@JSObject@JSC@@UBEPAV12@PAVExecState@2@PAVJSGlobalObject@2@@Z
+    ?toObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@PAVJSGlobalObject@2@@Z
     ?toPrimitive@JSCell@JSC@@UBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
     ?toPrimitive@JSString@JSC@@EBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
     ?toStrictThisObject@JSObject@JSC@@UBE?AVJSValue@2@PAVExecState@2@@Z

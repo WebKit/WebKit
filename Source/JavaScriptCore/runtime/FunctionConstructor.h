@@ -36,8 +36,8 @@ namespace JSC {
         virtual CallType getCallData(CallData&);
     };
 
-    JSObject* constructFunction(ExecState*, const ArgList&, const Identifier& functionName, const UString& sourceURL, int lineNumber);
-    JSObject* constructFunction(ExecState*, const ArgList&);
+    JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&, const Identifier& functionName, const UString& sourceURL, int lineNumber);
+    JSObject* constructFunction(ExecState*, JSGlobalObject*, const ArgList&);
 
 } // namespace JSC
 

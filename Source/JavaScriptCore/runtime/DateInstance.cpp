@@ -48,13 +48,6 @@ DateInstance::DateInstance(ExecState* exec, NonNullPassRefPtr<Structure> structu
     setInternalValue(exec->globalData(), jsNumber(timeClip(time)));
 }
 
-DateInstance::DateInstance(ExecState* exec, double time)
-    : JSWrapperObject(exec->lexicalGlobalObject()->dateStructure())
-{
-    ASSERT(inherits(&s_info));
-    setInternalValue(exec->globalData(), jsNumber(timeClip(time)));
-}
-
 const GregorianDateTime* DateInstance::calculateGregorianDateTime(ExecState* exec) const
 {
     double milli = internalNumber();

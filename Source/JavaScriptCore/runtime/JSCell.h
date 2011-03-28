@@ -35,6 +35,8 @@
 
 namespace JSC {
 
+    class JSGlobalObject;
+
 #if COMPILER(MSVC)
     // If WTF_MAKE_NONCOPYABLE is applied to JSCell we end up with a bunch of
     // undefined references to the JSCell copy constructor and assignment operator
@@ -106,7 +108,7 @@ namespace JSC {
         virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;
         virtual UString toString(ExecState*) const;
-        virtual JSObject* toObject(ExecState*) const;
+        virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
         // Garbage collection.
         void* operator new(size_t, ExecState*);
@@ -336,7 +338,12 @@ namespace JSC {
 
     inline JSObject* JSValue::toObject(ExecState* exec) const
     {
-        return isCell() ? asCell()->toObject(exec) : toObjectSlowCase(exec);
+        return isCell() ? asCell()->toObject(exec, exec->lexicalGlobalObject()) : toObjectSlowCase(exec, exec->lexicalGlobalObject());
+    }
+
+    inline JSObject* JSValue::toObject(ExecState* exec, JSGlobalObject* globalObject) const
+    {
+        return isCell() ? asCell()->toObject(exec, globalObject) : toObjectSlowCase(exec, globalObject);
     }
 
     inline JSObject* JSValue::toThisObject(ExecState* exec) const

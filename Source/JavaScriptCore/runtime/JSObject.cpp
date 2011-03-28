@@ -489,7 +489,7 @@ UString JSObject::toString(ExecState* exec) const
     return primitive.toString(exec);
 }
 
-JSObject* JSObject::toObject(ExecState*) const
+JSObject* JSObject::toObject(ExecState*, JSGlobalObject*) const
 {
     return const_cast<JSObject*>(this);
 }

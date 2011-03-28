@@ -31,7 +31,7 @@ namespace JSC {
         StringObject(ExecState*, NonNullPassRefPtr<Structure>);
         StringObject(ExecState*, NonNullPassRefPtr<Structure>, const UString&);
 
-        static StringObject* create(ExecState*, JSString*);
+        static StringObject* create(ExecState*, JSGlobalObject*, JSString*);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);

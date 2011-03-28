@@ -42,9 +42,9 @@ JSValue NumberObject::getJSNumber()
     return internalValue();
 }
 
-NumberObject* constructNumber(ExecState* exec, JSValue number)
+NumberObject* constructNumber(ExecState* exec, JSGlobalObject* globalObject, JSValue number)
 {
-    NumberObject* object = new (exec) NumberObject(exec->globalData(), exec->lexicalGlobalObject()->numberObjectStructure());
+    NumberObject* object = new (exec) NumberObject(exec->globalData(), globalObject->numberObjectStructure());
     object->setInternalValue(exec->globalData(), number);
     return object;
 }

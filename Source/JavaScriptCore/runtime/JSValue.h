@@ -37,6 +37,7 @@ namespace JSC {
     class Identifier;
     class JSCell;
     class JSGlobalData;
+    class JSGlobalObject;
     class JSImmediate;
     class JSObject;
     class JSString;
@@ -189,6 +190,7 @@ namespace JSC {
         UString toString(ExecState*) const;
         UString toPrimitiveString(ExecState*) const;
         JSObject* toObject(ExecState*) const;
+        JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
         // Integer conversions.
         double toInteger(ExecState*) const;
@@ -244,7 +246,7 @@ namespace JSC {
         JSValue(HashTableDeletedValueTag);
 
         inline const JSValue asValue() const { return *this; }
-        JSObject* toObjectSlowCase(ExecState*) const;
+        JSObject* toObjectSlowCase(ExecState*, JSGlobalObject*) const;
         JSObject* toThisObjectSlowCase(ExecState*) const;
 
         JSObject* synthesizePrototype(ExecState*) const;

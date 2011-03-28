@@ -1,3 +1,18 @@
+2011-03-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        instanceof Array test fails when using iframes
+        https://bugs.webkit.org/show_bug.cgi?id=17250
+
+        Up date for new toObject api
+
+        * UserObjectImp.cpp:
+        (UserObjectImp::toPrimitive):
+        (UserObjectImp::toBoolean):
+        (UserObjectImp::toNumber):
+        (UserObjectImp::toString):
+
 2011-03-26  Adam Barth  <abarth@webkit.org>
 
         Remove the JavaScriptGlue GYP build.  We're not going to use GYP for

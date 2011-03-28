@@ -104,7 +104,7 @@ static JSValue numberConstructorMinValue(ExecState*, JSValue, const Identifier&)
 // ECMA 15.7.1
 static EncodedJSValue JSC_HOST_CALL constructWithNumberConstructor(ExecState* exec)
 {
-    NumberObject* object = new (exec) NumberObject(exec->globalData(), exec->lexicalGlobalObject()->numberObjectStructure());
+    NumberObject* object = new (exec) NumberObject(exec->globalData(), asInternalFunction(exec->callee())->globalObject()->numberObjectStructure());
     double n = exec->argumentCount() ? exec->argument(0).toNumber(exec) : 0;
     object->setInternalValue(exec->globalData(), jsNumber(n));
     return JSValue::encode(object);

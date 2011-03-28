@@ -1,3 +1,80 @@
+2011-03-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        instanceof Array test fails when using iframes
+        https://bugs.webkit.org/show_bug.cgi?id=17250
+
+        This is a problem with all built in constructors, the use of
+        lexicalGlobalObject rather than the constructors own 
+        global object reference means that a builtin will always use
+        the prototype from the lexical global object rather than that
+        of the constructors origin.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        (JSObjectMakeRegExp):
+        * JavaScriptCore.exp:
+        * runtime/ArrayConstructor.cpp:
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::constructBoolean):
+        (JSC::constructBooleanFromImmediateBoolean):
+        * runtime/BooleanConstructor.h:
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        * runtime/DateInstance.cpp:
+        * runtime/DateInstance.h:
+        * runtime/ErrorConstructor.cpp:
+        (JSC::constructWithErrorConstructor):
+        (JSC::callErrorConstructor):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructWithFunctionConstructor):
+        (JSC::callFunctionConstructor):
+        (JSC::constructFunction):
+        * runtime/FunctionConstructor.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getOwnPropertySlot):
+        (JSC::JSCell::put):
+        (JSC::JSCell::deleteProperty):
+        (JSC::JSCell::toThisObject):
+        (JSC::JSCell::toObject):
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSValue::toObject):
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::toObject):
+        * runtime/JSNotAnObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::toObject):
+        * runtime/JSObject.h:
+        * runtime/JSString.cpp:
+        (JSC::StringObject::create):
+        (JSC::JSString::toObject):
+        (JSC::JSString::toThisObject):
+        * runtime/JSString.h:
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::toObjectSlowCase):
+        (JSC::JSValue::toThisObjectSlowCase):
+        (JSC::JSValue::synthesizeObject):
+        * runtime/JSValue.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::constructWithNumberConstructor):
+        * runtime/NumberObject.cpp:
+        (JSC::constructNumber):
+        * runtime/NumberObject.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::constructObject):
+        (JSC::constructWithObjectConstructor):
+        (JSC::callObjectConstructor):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructRegExp):
+        (JSC::constructWithRegExpConstructor):
+        (JSC::callRegExpConstructor):
+        * runtime/RegExpConstructor.h:
+        * runtime/StringConstructor.cpp:
+        (JSC::constructWithStringConstructor):
+        * runtime/StringObject.h:
+
 2011-03-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

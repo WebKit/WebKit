@@ -483,7 +483,7 @@ JSValue jsDateOrNull(ExecState* exec, double value)
 {
     if (!isfinite(value))
         return jsNull();
-    return new (exec) DateInstance(exec, value);
+    return new (exec) DateInstance(exec, exec->lexicalGlobalObject()->dateStructure(), value);
 }
 
 double valueToDate(ExecState* exec, JSValue value)

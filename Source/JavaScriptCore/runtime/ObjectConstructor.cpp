@@ -95,18 +95,18 @@ bool ObjectConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifi
 }
 
 // ECMA 15.2.2
-static ALWAYS_INLINE JSObject* constructObject(ExecState* exec, const ArgList& args)
+static ALWAYS_INLINE JSObject* constructObject(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args)
 {
     JSValue arg = args.at(0);
     if (arg.isUndefinedOrNull())
-        return constructEmptyObject(exec);
-    return arg.toObject(exec);
+        return constructEmptyObject(exec, globalObject);
+    return arg.toObject(exec, globalObject);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithObjectConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructObject(exec, args));
+    return JSValue::encode(constructObject(exec, asInternalFunction(exec->callee())->globalObject(), args));
 }
 
 ConstructType ObjectConstructor::getConstructData(ConstructData& constructData)
@@ -118,7 +118,7 @@ ConstructType ObjectConstructor::getConstructData(ConstructData& constructData)
 static EncodedJSValue JSC_HOST_CALL callObjectConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructObject(exec, args));
+    return JSValue::encode(constructObject(exec, asInternalFunction(exec->callee())->globalObject(), args));
 }
 
 CallType ObjectConstructor::getCallData(CallData& callData)

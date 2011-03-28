@@ -121,7 +121,7 @@ JSObject* constructDate(ExecState* exec, const ArgList& args)
         }
     }
 
-    return new (exec) DateInstance(exec, value);
+    return new (exec) DateInstance(exec, asInternalFunction(exec->callee())->globalObject()->dateStructure(), value);
 }
     
 static EncodedJSValue JSC_HOST_CALL constructWithDateConstructor(ExecState* exec)

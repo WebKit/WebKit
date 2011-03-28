@@ -293,7 +293,7 @@ void setRegExpConstructorMultiline(ExecState* exec, JSObject* baseObject, JSValu
 }
 
 // ECMA 15.10.4
-JSObject* constructRegExp(ExecState* exec, const ArgList& args)
+JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args)
 {
     JSValue arg0 = args.at(0);
     JSValue arg1 = args.at(1);
@@ -320,13 +320,13 @@ JSObject* constructRegExp(ExecState* exec, const ArgList& args)
     RefPtr<RegExp> regExp = exec->globalData().regExpCache()->lookupOrCreate(pattern, flags);
     if (!regExp->isValid())
         return throwError(exec, createSyntaxError(exec, regExp->errorMessage()));
-    return new (exec) RegExpObject(exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regExp.release());
+    return new (exec) RegExpObject(exec->lexicalGlobalObject(), globalObject->regExpStructure(), regExp.release());
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithRegExpConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructRegExp(exec, args));
+    return JSValue::encode(constructRegExp(exec, asInternalFunction(exec->callee())->globalObject(), args));
 }
 
 ConstructType RegExpConstructor::getConstructData(ConstructData& constructData)
@@ -339,7 +339,7 @@ ConstructType RegExpConstructor::getConstructData(ConstructData& constructData)
 static EncodedJSValue JSC_HOST_CALL callRegExpConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructRegExp(exec, args));
+    return JSValue::encode(constructRegExp(exec, asInternalFunction(exec->callee())->globalObject(), args));
 }
 
 CallType RegExpConstructor::getCallData(CallData& callData)

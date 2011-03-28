@@ -167,7 +167,7 @@ JSUserObject* UserObjectImp::GetJSUserObject() const
 JSValue UserObjectImp::toPrimitive(ExecState *exec, PreferredPrimitiveType) const
 {
     JSValue result = jsUndefined();
-    JSUserObject* jsObjPtr = KJSValueToJSObject(toObject(exec), exec);
+    JSUserObject* jsObjPtr = KJSValueToJSObject(toObject(exec, exec->lexicalGlobalObject()), exec);
     CFTypeRef cfValue = jsObjPtr ? jsObjPtr->CopyCFValue() : 0;
     if (cfValue) {
         CFTypeID cfType = CFGetTypeID(cfValue);  // toPrimitive
@@ -204,7 +204,7 @@ JSValue UserObjectImp::toPrimitive(ExecState *exec, PreferredPrimitiveType) cons
 bool UserObjectImp::toBoolean(ExecState *exec) const
 {
     bool result = false;
-    JSUserObject* jsObjPtr = KJSValueToJSObject(toObject(exec), exec);
+    JSUserObject* jsObjPtr = KJSValueToJSObject(toObject(exec, exec->lexicalGlobalObject()), exec);
     CFTypeRef cfValue = jsObjPtr ? jsObjPtr->CopyCFValue() : 0;
     if (cfValue)
     {
@@ -284,7 +284,7 @@ bool UserObjectImp::toBoolean(ExecState *exec) const
 double UserObjectImp::toNumber(ExecState *exec) const
 {
     double result = 0;
-    JSUserObject* jsObjPtr = KJSValueToJSObject(toObject(exec), exec);
+    JSUserObject* jsObjPtr = KJSValueToJSObject(toObject(exec, exec->lexicalGlobalObject()), exec);
     CFTypeRef cfValue = jsObjPtr ? jsObjPtr->CopyCFValue() : 0;
     if (cfValue)
     {
@@ -318,7 +318,7 @@ double UserObjectImp::toNumber(ExecState *exec) const
 UString UserObjectImp::toString(ExecState *exec) const
 {
     UString result;
-    JSUserObject* jsObjPtr = KJSValueToJSObject(toObject(exec), exec);
+    JSUserObject* jsObjPtr = KJSValueToJSObject(toObject(exec, exec->lexicalGlobalObject()), exec);
     CFTypeRef cfValue = jsObjPtr ? jsObjPtr->CopyCFValue() : 0;
     if (cfValue)
     {

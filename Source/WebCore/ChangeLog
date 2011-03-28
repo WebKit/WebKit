@@ -1,3 +1,20 @@
+2011-03-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        instanceof Array test fails when using iframes
+        https://bugs.webkit.org/show_bug.cgi?id=17250
+
+        Update for new function and date apis
+
+        Test: fast/js/js-constructors-use-correct-global.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsDateOrNull):
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::JSLazyEventListener::initializeJSFunction):
+
 2011-03-28  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

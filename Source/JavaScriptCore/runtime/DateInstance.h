@@ -31,7 +31,6 @@ namespace JSC {
 
     class DateInstance : public JSWrapperObject {
     public:
-        DateInstance(ExecState*, double);
         DateInstance(ExecState*, NonNullPassRefPtr<Structure>, double);
         explicit DateInstance(ExecState*, NonNullPassRefPtr<Structure>);
 

@@ -52,16 +52,18 @@ ArrayConstructor::ArrayConstructor(ExecState* exec, JSGlobalObject* globalObject
 
 static inline JSObject* constructArrayWithSizeQuirk(ExecState* exec, const ArgList& args)
 {
+    JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
+
     // a single numeric argument denotes the array size (!)
     if (args.size() == 1 && args.at(0).isNumber()) {
         uint32_t n = args.at(0).toUInt32(exec);
         if (n != args.at(0).toNumber(exec))
             return throwError(exec, createRangeError(exec, "Array size is not a small enough positive integer."));
-        return new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure(), n, CreateInitialized);
+        return new (exec) JSArray(globalObject->arrayStructure(), n, CreateInitialized);
     }
 
     // otherwise the array is constructed with the arguments in it
-    return new (exec) JSArray(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), args);
+    return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure(), args);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(ExecState* exec)

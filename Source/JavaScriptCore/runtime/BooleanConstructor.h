@@ -36,7 +36,7 @@ namespace JSC {
         virtual CallType getCallData(CallData&);
     };
 
-    JSObject* constructBooleanFromImmediateBoolean(ExecState*, JSValue);
+    JSObject* constructBooleanFromImmediateBoolean(ExecState*, JSGlobalObject*, JSValue);
     JSObject* constructBoolean(ExecState*, const ArgList&);
 
 } // namespace JSC

@@ -42,7 +42,7 @@ ErrorConstructor::ErrorConstructor(ExecState* exec, JSGlobalObject* globalObject
 static EncodedJSValue JSC_HOST_CALL constructWithErrorConstructor(ExecState* exec)
 {
     JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
-    Structure* errorStructure = exec->lexicalGlobalObject()->errorStructure();
+    Structure* errorStructure = asInternalFunction(exec->callee())->globalObject()->errorStructure();
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message));
 }
 
@@ -55,7 +55,7 @@ ConstructType ErrorConstructor::getConstructData(ConstructData& constructData)
 static EncodedJSValue JSC_HOST_CALL callErrorConstructor(ExecState* exec)
 {
     JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
-    Structure* errorStructure = exec->lexicalGlobalObject()->errorStructure();
+    Structure* errorStructure = asInternalFunction(exec->callee())->globalObject()->errorStructure();
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message));
 }
 

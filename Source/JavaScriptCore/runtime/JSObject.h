@@ -138,7 +138,7 @@ namespace JSC {
         virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;
         virtual UString toString(ExecState*) const;
-        virtual JSObject* toObject(ExecState*) const;
+        virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
         virtual JSObject* toThisObject(ExecState*) const;
         virtual JSValue toStrictThisObject(ExecState*) const;

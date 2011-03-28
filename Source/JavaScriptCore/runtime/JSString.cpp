@@ -253,19 +253,19 @@ UString JSString::toString(ExecState* exec) const
     return value(exec);
 }
 
-inline StringObject* StringObject::create(ExecState* exec, JSString* string)
+inline StringObject* StringObject::create(ExecState* exec, JSGlobalObject* globalObject, JSString* string)
 {
-    return new (exec) StringObject(exec->globalData(), exec->lexicalGlobalObject()->stringObjectStructure(), string);
+    return new (exec) StringObject(exec->globalData(), globalObject->stringObjectStructure(), string);
 }
 
-JSObject* JSString::toObject(ExecState* exec) const
+JSObject* JSString::toObject(ExecState* exec, JSGlobalObject* globalObject) const
 {
-    return StringObject::create(exec, const_cast<JSString*>(this));
+    return StringObject::create(exec, globalObject, const_cast<JSString*>(this));
 }
 
 JSObject* JSString::toThisObject(ExecState* exec) const
 {
-    return StringObject::create(exec, const_cast<JSString*>(this));
+    return StringObject::create(exec, exec->lexicalGlobalObject(), const_cast<JSString*>(this));
 }
 
 bool JSString::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

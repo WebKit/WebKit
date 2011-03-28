@@ -49,7 +49,7 @@ FunctionConstructor::FunctionConstructor(ExecState* exec, JSGlobalObject* global
 static EncodedJSValue JSC_HOST_CALL constructWithFunctionConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, args));
+    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->callee())->globalObject(), args));
 }
 
 ConstructType FunctionConstructor::getConstructData(ConstructData& constructData)
@@ -61,7 +61,7 @@ ConstructType FunctionConstructor::getConstructData(ConstructData& constructData
 static EncodedJSValue JSC_HOST_CALL callFunctionConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructFunction(exec, args));
+    return JSValue::encode(constructFunction(exec, asInternalFunction(exec->callee())->globalObject(), args));
 }
 
 // ECMA 15.3.1 The Function Constructor Called as a Function
@@ -72,7 +72,7 @@ CallType FunctionConstructor::getCallData(CallData& callData)
 }
 
 // ECMA 15.3.2 The Function Constructor
-JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifier& functionName, const UString& sourceURL, int lineNumber)
+JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, const Identifier& functionName, const UString& sourceURL, int lineNumber)
 {
     // Functions need to have a space following the opening { due to for web compatibility
     // see https://bugs.webkit.org/show_bug.cgi?id=24350
@@ -96,7 +96,6 @@ JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifi
         program = builder.toUString();
     }
 
-    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     JSGlobalData& globalData = globalObject->globalData();
     SourceCode source = makeSource(program, sourceURL, lineNumber);
     JSObject* exception = 0;
@@ -111,9 +110,9 @@ JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifi
 }
 
 // ECMA 15.3.2 The Function Constructor
-JSObject* constructFunction(ExecState* exec, const ArgList& args)
+JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args)
 {
-    return constructFunction(exec, args, Identifier(exec, "anonymous"), UString(), 1);
+    return constructFunction(exec, globalObject, args, Identifier(exec, "anonymous"), UString(), 1);
 }
 
 } // namespace JSC

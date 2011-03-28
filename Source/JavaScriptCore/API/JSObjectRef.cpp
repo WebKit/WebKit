@@ -124,7 +124,7 @@ JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned pa
         args.append(jsString(exec, parameterNames[i]->ustring()));
     args.append(jsString(exec, body->ustring()));
 
-    JSObject* result = constructFunction(exec, args, nameID, sourceURL->ustring(), startingLineNumber);
+    JSObject* result = constructFunction(exec, exec->lexicalGlobalObject(), args, nameID, sourceURL->ustring(), startingLineNumber);
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec, exec->exception());
@@ -207,7 +207,7 @@ JSObjectRef JSObjectMakeRegExp(JSContextRef ctx, size_t argumentCount, const JSV
     for (size_t i = 0; i < argumentCount; ++i)
         argList.append(toJS(exec, arguments[i]));
 
-    JSObject* result = constructRegExp(exec, argList);
+    JSObject* result = constructRegExp(exec, exec->lexicalGlobalObject(),  argList);
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec, exec->exception());

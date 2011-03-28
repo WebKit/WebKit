@@ -58,7 +58,7 @@ namespace JSC {
         virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;
         virtual UString toString(ExecState*) const;
-        virtual JSObject* toObject(ExecState*) const;
+        virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
         // JSObject methods
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
