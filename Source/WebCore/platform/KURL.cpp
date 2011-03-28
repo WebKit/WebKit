@@ -859,7 +859,11 @@ void KURL::setPath(const String& s)
 
     // FIXME: encodeWithURLEscapeSequences does not correctly escape '#' and '?', so fragment and query parts
     // may be inadvertently affected.
-    parse(m_string.left(m_portEnd) + encodeWithURLEscapeSequences(s) + m_string.substring(m_pathEnd));
+    String path = s;
+    if (path.isEmpty() || path[0] != '/')
+        path = "/" + path;
+
+    parse(m_string.left(m_portEnd) + encodeWithURLEscapeSequences(path) + m_string.substring(m_pathEnd));
 }
 
 String KURL::prettyURL() const

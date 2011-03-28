@@ -1,3 +1,17 @@
+2011-03-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Assigning location.path to something that doesn't start with / mangles the authority
+        https://bugs.webkit.org/show_bug.cgi?id=57209
+        <rdar://problem/9195132>
+
+        * http/tests/uri/assign-path-with-leading-slash-expected.txt: Added.
+        * http/tests/uri/assign-path-with-leading-slash.html: Added.
+        * http/tests/uri/assign-path-without-leading-slash-expected.txt: Added.
+        * http/tests/uri/assign-path-without-leading-slash.html: Added.
+        * http/tests/uri/resources/assign-path-landing.html: Added.
+
 2011-03-28  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, add Chromium test expectation for fast/text/justify-ideograph-leading-expansion.html.
