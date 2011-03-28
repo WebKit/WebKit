@@ -31,8 +31,11 @@
 #include "EventTarget.h"
 #include "FrameView.h"
 #include "InspectorInstrumentation.h"
+#include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "Node.h"
+#include "PlatformWheelEvent.h"
+#include "ScopedEventQueue.h"
 
 #if ENABLE(SVG)
 #include "SVGElementInstance.h"
@@ -42,6 +45,7 @@
 
 #include "UIEvent.h"
 #include "UIEventWithKeyState.h"
+#include "WheelEvent.h"
 #include "WindowEventContext.h"
 
 #include <wtf/RefPtr.h>
@@ -54,6 +58,53 @@ bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<Event> event)
 {
     EventDispatcher dispatcher(node);
     return dispatcher.dispatchEvent(event);
+}
+
+static EventTarget* findElementInstance(Node* referenceNode)
+{
+#if ENABLE(SVG)
+    // Spec: The event handling for the non-exposed tree works as if the referenced element had been textually included
+    // as a deeply cloned child of the 'use' element, except that events are dispatched to the SVGElementInstance objects
+    for (Node* n = referenceNode; n; n = n->parentNode()) {
+        if (!n->isShadowRoot() || !n->isSVGElement())
+            continue;
+
+        Element* shadowTreeParentElement = n->shadowHost();
+        ASSERT(shadowTreeParentElement->hasTagName(SVGNames::useTag));
+
+        if (SVGElementInstance* instance = static_cast<SVGUseElement*>(shadowTreeParentElement)->instanceForShadowTreeElement(referenceNode))
+            return instance;
+    }
+#else
+    // SVG elements with SVG disabled should not be possible.
+    ASSERT_NOT_REACHED();
+#endif
+
+    return referenceNode;
+}
+
+inline static EventTarget* eventTargetRespectingSVGTargetRules(Node* referenceNode)
+{
+    ASSERT(referenceNode);
+
+    return referenceNode->isSVGElement() ? findElementInstance(referenceNode) : referenceNode;
+}
+
+void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<Event> event)
+{
+    // We need to set the target here because it can go away by the time we actually fire the event.
+    event->setTarget(eventTargetRespectingSVGTargetRules(node));
+
+    ScopedEventQueue::instance()->enqueueEvent(event);
+}
+
+bool EventDispatcher::dispatchKeyboardEvent(Node* node, const PlatformKeyboardEvent& event)
+{
+    EventDispatcher dispatcher(node);
+
+    RefPtr<KeyboardEvent> keyboardEvent = KeyboardEvent::create(event, node->document()->defaultView());
+    // Make sure not to return true if we already took default action while handling the event.
+    return dispatcher.dispatchEvent(keyboardEvent) && !keyboardEvent->defaultHandled();
 }
 
 bool EventDispatcher::dispatchMouseEvent(Node* node, const PlatformMouseEvent& event, const AtomicString& eventType,
@@ -101,6 +152,45 @@ void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> event
     gNodesDispatchingSimulatedClicks->remove(node);
 }
 
+inline static WheelEvent::Granularity granularity(const PlatformWheelEvent& event)
+{
+    return event.granularity() == ScrollByPageWheelEvent ? WheelEvent::Page : WheelEvent::Pixel;
+}
+
+void EventDispatcher::dispatchWheelEvent(Node* node, PlatformWheelEvent& event)
+{
+    ASSERT(!eventDispatchForbidden());
+    if (!(event.deltaX() || event.deltaY()))
+        return;
+
+    EventDispatcher dispatcher(node);
+
+    if (!dispatcher.m_view)
+        return;
+
+    IntPoint position = dispatcher.m_view->windowToContents(event.pos());
+
+    int adjustedPageX = position.x();
+    int adjustedPageY = position.y();
+    if (Frame* frame = node->document()->frame()) {
+        float pageZoom = frame->pageZoomFactor();
+        if (pageZoom != 1.0f) {
+            adjustedPageX = lroundf(position.x() / pageZoom);
+            adjustedPageY = lroundf(position.y() / pageZoom);
+        }
+    }
+
+    RefPtr<WheelEvent> wheelEvent = WheelEvent::create(event.wheelTicksX(), event.wheelTicksY(), event.deltaX(), event.deltaY(), granularity(event),
+        node->document()->defaultView(), event.globalX(), event.globalY(), adjustedPageX, adjustedPageY,
+        event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey());
+
+    wheelEvent->setAbsoluteLocation(position);
+
+    if (!dispatcher.dispatchEvent(wheelEvent) || wheelEvent->defaultHandled())
+        event.accept();
+
+}
+
 // FIXME: Once https://bugs.webkit.org/show_bug.cgi?id=52963 lands, this should
 // be greatly improved. See https://bugs.webkit.org/show_bug.cgi?id=54025.
 static Node* pullOutOfShadow(Node* node)
@@ -111,31 +201,6 @@ static Node* pullOutOfShadow(Node* node)
             outermostShadowBoundary = n->parentOrHostNode();
     }
     return outermostShadowBoundary;
-}
-
-EventTarget* EventDispatcher::eventTargetRespectingSVGTargetRules(Node* referenceNode)
-{
-    ASSERT(referenceNode);
-
-#if ENABLE(SVG)
-    if (!referenceNode->isSVGElement())
-        return referenceNode;
-
-    // Spec: The event handling for the non-exposed tree works as if the referenced element had been textually included
-    // as a deeply cloned child of the 'use' element, except that events are dispatched to the SVGElementInstance objects
-    for (Node* n = referenceNode; n; n = n->parentNode()) {
-        if (!n->isShadowRoot() || !n->isSVGElement())
-            continue;
-
-        Element* shadowTreeParentElement = n->shadowHost();
-        ASSERT(shadowTreeParentElement->hasTagName(SVGNames::useTag));
-
-        if (SVGElementInstance* instance = static_cast<SVGUseElement*>(shadowTreeParentElement)->instanceForShadowTreeElement(referenceNode))
-            return instance;
-    }
-#endif
-
-    return referenceNode;
 }
 
 EventDispatcher::EventDispatcher(Node* node)
@@ -216,7 +281,7 @@ bool EventDispatcher::dispatchEvent(PassRefPtr<Event> prpEvent)
 
     event->setEventPhase(Event::AT_TARGET);
     event->setTarget(originalTarget.get());
-    event->setCurrentTarget(EventDispatcher::eventTargetRespectingSVGTargetRules(m_node.get()));
+    event->setCurrentTarget(eventTargetRespectingSVGTargetRules(m_node.get()));
     m_node->handleLocalEvents(event.get());
     if (event->propagationStopped())
         goto doneDispatching;

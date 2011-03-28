@@ -1,3 +1,26 @@
+2011-03-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Move more events to EventDispatcher.
+        https://bugs.webkit.org/show_bug.cgi?id=57247
+
+        No functional changes, covered by existing tests.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::eventTargetRespectingSVGTargetRules): Made a static function,
+            since it's not used anywhere outside of the EventDispatcher.
+        (WebCore::EventDispatcher::dispatchScopedEvent): Moved from Node.cpp.
+        (WebCore::EventDispatcher::dispatchKeyEvent): Ditto.
+        (WebCore::EventDispatcher::dispatchWheelEvent): Ditto.
+        (WebCore::EventDispatcher::dispatchEvent): Changed to use eventTargetRespectingSVGTargetRules
+            as a static function.
+        * dom/EventDispatcher.h: Updated decls.
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchScopedEvent): Replaced with calling EventDispatcher.
+        (WebCore::Node::dispatchKeyEvent): Ditto.
+        (WebCore::Node::dispatchWheelEvent): Ditto.
+
 2011-03-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Eric Seidel.

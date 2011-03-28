@@ -2602,10 +2602,7 @@ void Node::handleLocalEvents(Event* event)
 
 void Node::dispatchScopedEvent(PassRefPtr<Event> event)
 {
-    // We need to set the target here because it can go away by the time we actually fire the event.
-    event->setTarget(EventDispatcher::eventTargetRespectingSVGTargetRules(this));
-
-    ScopedEventQueue::instance()->enqueueEvent(event);
+    EventDispatcher::dispatchScopedEvent(this, event);
 }
 
 bool Node::dispatchEvent(PassRefPtr<Event> event)
@@ -2642,16 +2639,7 @@ void Node::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr
 
 bool Node::dispatchKeyEvent(const PlatformKeyboardEvent& key)
 {
-    RefPtr<KeyboardEvent> keyboardEvent = KeyboardEvent::create(key, document()->defaultView());
-    bool r = dispatchEvent(keyboardEvent);
-    
-    // we want to return false if default is prevented (already taken care of)
-    // or if the element is default-handled by the DOM. Otherwise we let it just
-    // let it get handled by AppKit 
-    if (keyboardEvent->defaultHandled())
-        r = false;
-    
-    return r;
+    return EventDispatcher::dispatchKeyboardEvent(this, key);
 }
 
 bool Node::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType,
@@ -2667,48 +2655,7 @@ void Node::dispatchSimulatedClick(PassRefPtr<Event> event, bool sendMouseEvents,
 
 void Node::dispatchWheelEvent(PlatformWheelEvent& e)
 {
-    ASSERT(!eventDispatchForbidden());
-    if (e.deltaX() == 0 && e.deltaY() == 0)
-        return;
-    
-    FrameView* view = document()->view();
-    if (!view)
-        return;
-    
-    IntPoint pos = view->windowToContents(e.pos());
-
-    int adjustedPageX = pos.x();
-    int adjustedPageY = pos.y();
-    if (Frame* frame = document()->frame()) {
-        float pageZoom = frame->pageZoomFactor();
-        if (pageZoom != 1.0f) {
-            // Adjust our pageX and pageY to account for the page zoom.
-            adjustedPageX = lroundf(pos.x() / pageZoom);
-            adjustedPageY = lroundf(pos.y() / pageZoom);
-        }
-    }
-    
-    WheelEvent::Granularity granularity;
-    switch (e.granularity()) {
-    case ScrollByPageWheelEvent:
-        granularity = WheelEvent::Page;
-        break;
-    case ScrollByPixelWheelEvent:
-    default:
-        granularity = WheelEvent::Pixel;
-        break;
-    }
-    
-    RefPtr<WheelEvent> we = WheelEvent::create(e.wheelTicksX(), e.wheelTicksY(), e.deltaX(), e.deltaY(), granularity,
-        document()->defaultView(), e.globalX(), e.globalY(), adjustedPageX, adjustedPageY,
-        e.ctrlKey(), e.altKey(), e.shiftKey(), e.metaKey());
-
-    we->setAbsoluteLocation(IntPoint(pos.x(), pos.y()));
-
-    if (!dispatchEvent(we) || we->defaultHandled())
-        e.accept();
-
-    we.release();
+    EventDispatcher::dispatchWheelEvent(this, e);
 }
 
 void Node::dispatchFocusEvent()

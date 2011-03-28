@@ -36,7 +36,9 @@ class EventContext;
 class EventTarget;
 class FrameView;
 class Node;
+class PlatformKeyboardEvent;
 class PlatformMouseEvent;
+class PlatformWheelEvent;
 
 enum EventDispatchBehavior {
     RetargetEvent,
@@ -47,10 +49,12 @@ enum EventDispatchBehavior {
 class EventDispatcher {
 public:
     static bool dispatchEvent(Node*, PassRefPtr<Event>);
+    static void dispatchScopedEvent(Node*, PassRefPtr<Event>);
+
+    static bool dispatchKeyboardEvent(Node*, const PlatformKeyboardEvent&);
     static bool dispatchMouseEvent(Node*, const PlatformMouseEvent&, const AtomicString& eventType, int clickCount = 0, Node* relatedTarget = 0);
     static void dispatchSimulatedClick(Node*, PassRefPtr<Event> underlyingEvent, bool sendMouseEvents = false, bool showPressedLook = true);
-
-    static EventTarget* eventTargetRespectingSVGTargetRules(Node*);
+    static void dispatchWheelEvent(Node*, PlatformWheelEvent&);
 
 private:
     EventDispatcher(Node*);
