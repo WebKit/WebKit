@@ -1,3 +1,23 @@
+2011-03-28  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser and Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57221, memory corruption/crashes when positioned objects
+        occur at the end of a line.
+        
+        The old code and new code for dealing with a trailing space object midpoint manipulated a raw
+        array instead of the Vector. Otherwise this corruption would have been caught prior to check-in.
+        
+        I have patched the code to only go through the Vector and to make it handle the case that led to
+        the corruption. Trailing positioned objects can occur both prior to and following the trailing space
+        object's midpoint, so we have to be prepared to deal with both cases.
+        
+        This is already tested by fast/block/positioning/052.html, and that test now properly progresses
+        like the other positioning tests did.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2011-03-28  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Steve Block.

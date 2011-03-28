@@ -1638,9 +1638,9 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 // If we're ignoring spaces, we have to stop and include this object and
                 // then start ignoring spaces again.
                 if (isInlineType || o->container()->isRenderInline()) {
-                    ignoreStart.obj = o;
-                    ignoreStart.pos = 0;
                     if (ignoringSpaces) {
+                        ignoreStart.obj = o;
+                        ignoreStart.pos = 0;
                         addMidpoint(lineMidpointState, ignoreStart); // Stop ignoring spaces.
                         addMidpoint(lineMidpointState, ignoreStart); // Start ignoring again.
                     }
@@ -2117,8 +2117,27 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
         // to be the actual endpoint.  In both cases we just decrease our pos by 1 level to
         // exclude the space, allowing it to - in effect - collapse into the newline.
         if (lineMidpointState.numMidpoints % 2) {
-            InlineIterator* midpoints = lineMidpointState.midpoints.data();
-            midpoints[lineMidpointState.numMidpoints - trailingPositionedBoxes.size() * 2 - 1].pos--;
+            // Find the trailing space object's midpoint.
+            int trailingSpaceMidpoint = lineMidpointState.numMidpoints - 1;
+            for ( ; trailingSpaceMidpoint >= 0 && lineMidpointState.midpoints[trailingSpaceMidpoint].obj != trailingSpaceObject; --trailingSpaceMidpoint) { }
+            ASSERT(trailingSpaceMidpoint >= 0);
+            lineMidpointState.midpoints[trailingSpaceMidpoint].pos--;
+
+            // Now make sure every single trailingPositionedBox following the trailingSpaceMidpoint properly stops and starts 
+            // ignoring spaces.
+            size_t currentMidpoint = trailingSpaceMidpoint + 1;
+            for (size_t i = 0; i < trailingPositionedBoxes.size(); ++i) {
+                if (currentMidpoint >= lineMidpointState.numMidpoints) {
+                    // We don't have a midpoint for this box yet.
+                    InlineIterator ignoreStart(this, trailingPositionedBoxes[i], 0);
+                    addMidpoint(lineMidpointState, ignoreStart); // Stop ignoring.
+                    addMidpoint(lineMidpointState, ignoreStart); // Start ignoring again.
+                } else {
+                    ASSERT(lineMidpointState.midpoints[currentMidpoint].obj == trailingPositionedBoxes[i]);
+                    ASSERT(lineMidpointState.midpoints[currentMidpoint + 1].obj == trailingPositionedBoxes[i]);
+                }
+                currentMidpoint += 2;
+            }
         } else if (!lBreak.obj && trailingSpaceObject->isText()) {
             // Add a new end midpoint that stops right at the very end.
             RenderText* text = toRenderText(trailingSpaceObject);
