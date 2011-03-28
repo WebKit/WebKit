@@ -1,3 +1,18 @@
+2011-03-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Fullscreen tests failing after r82084
+        https://bugs.webkit.org/show_bug.cgi?id=57219
+
+        Added the withKeyboard parameter to supportsFullScreenForElement
+        method in ChromeClient. Fullscreen will be disabled for keyboard
+        access by default.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::supportsFullScreenForElement):
+        * WebCoreSupport/ChromeClientGtk.h:
+
 2011-03-25  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adele Peterson.

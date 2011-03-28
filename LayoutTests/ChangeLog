@@ -1,3 +1,14 @@
+2011-03-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Fullscreen tests failing after r82084
+        https://bugs.webkit.org/show_bug.cgi?id=57219
+
+        Unskipped some fullscreen tests passing now.
+
+        * platform/gtk/Skipped:
+
 2011-03-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

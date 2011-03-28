@@ -484,15 +484,6 @@ fast/text/hyphenate-locale.html
 # This port doesn't support v8 i18n extension.
 fast/js/i18n-bindings-locale.html
 
-# Failing after r82084
-# https://bugs.webkit.org/show_bug.cgi?id=57219
-fullscreen/full-screen-css.html
-fullscreen/full-screen-iframe-allowed.html
-fullscreen/full-screen-remove-ancestor.html
-fullscreen/full-screen-remove.html
-fullscreen/full-screen-request.html
-fullscreen/full-screen-twice.html
-
 # Tests in http/ directory
 #   Tests failing
 http/tests/appcache/crash-when-navigating-away-then-back.html
