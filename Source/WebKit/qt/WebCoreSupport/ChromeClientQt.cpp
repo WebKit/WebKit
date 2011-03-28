@@ -411,7 +411,7 @@ void ChromeClientQt::invalidateContentsAndWindow(const IntRect& windowRect, bool
         if (!rect.isEmpty())
             platformPageClient()->update(rect);
     }
-    emit m_webPage->repaintRequested(windowRect);
+    QMetaObject::invokeMethod(m_webPage, "repaintRequested", Qt::QueuedConnection, Q_ARG(QRect, windowRect));
 
     // FIXME: There is no "immediate" support for window painting.  This should be done always whenever the flag
     // is set.

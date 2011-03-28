@@ -1,3 +1,21 @@
+2011-03-28  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Crash when calling QWebFrame::render() in response to QWebPage::repaintRequested()
+        https://bugs.webkit.org/show_bug.cgi?id=52629
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::invalidateContentsAndWindow): Make the emission of
+        QWebPage::repaintRequested() use a Qt::QueuedConnection.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (RepaintRequestedRenderer::RepaintRequestedRenderer):
+        (RepaintRequestedRenderer::onRepaintRequested):
+        (tst_QWebPage::renderOnRepaintRequestedShouldNotRecurse): Test that calling
+        QWebFrame::render() in a slot connected to to QWebPage::repaintRequested()
+        doesn't cause recursive signal emissions.
+
 2011-03-28  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.

@@ -140,6 +140,7 @@ private slots:
     void infiniteLoopJS();
     void navigatorCookieEnabled();
     void deleteQWebViewTwice();
+    void renderOnRepaintRequestedShouldNotRecurse();
 
 #ifdef Q_OS_MAC
     void macCopyUnicodeToClipboard();
@@ -2796,6 +2797,55 @@ void tst_QWebPage::deleteQWebViewTwice()
         connect(webView, SIGNAL(loadFinished(bool)), &mainWindow, SLOT(close()));
         QApplication::instance()->exec();
     }
+}
+
+class RepaintRequestedRenderer : public QObject {
+    Q_OBJECT
+public:
+    RepaintRequestedRenderer(QWebPage* page, QPainter* painter)
+        : m_page(page)
+        , m_painter(painter)
+        , m_recursionCount(0)
+    {
+        connect(m_page, SIGNAL(repaintRequested(QRect)), this, SLOT(onRepaintRequested(QRect)));
+    }
+
+signals:
+    void finished();
+
+private slots:
+    void onRepaintRequested(const QRect& rect)
+    {
+        QCOMPARE(m_recursionCount, 0);
+
+        m_recursionCount++;
+        m_page->mainFrame()->render(m_painter, rect);
+        m_recursionCount--;
+
+        QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
+    }
+
+private:
+    QWebPage* m_page;
+    QPainter* m_painter;
+    int m_recursionCount;
+};
+
+void tst_QWebPage::renderOnRepaintRequestedShouldNotRecurse()
+{
+    QSize viewportSize(720, 576);
+    QWebPage page;
+
+    QImage image(viewportSize, QImage::Format_ARGB32);
+    QPainter painter(&image);
+
+    page.setPreferredContentsSize(viewportSize);
+    page.setViewportSize(viewportSize);
+    RepaintRequestedRenderer r(&page, &painter);
+
+    page.mainFrame()->setHtml("zalan loves trunk", QUrl());
+
+    QVERIFY(::waitForSignal(&r, SIGNAL(finished())));
 }
 
 QTEST_MAIN(tst_QWebPage)
