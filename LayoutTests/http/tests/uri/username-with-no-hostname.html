@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="/js-test-resources/js-test-style.css">
+  <script src="/js-test-resources/js-test-pre.js"></script>
+</head>
+<body onload="load()">
+
+This test checks that URLs with a username but no hostname do not
+mistakenly get loaded. If it fails in the browser, you will also see
+an image.
+
+<p id="description"></p>
+<div id="console"></div>
+
+<img src="http://user@/localhost:8000/misc/resources/compass.jpg">
+<script>
+function load() {
+    shouldBe('document.getElementsByTagName("img")[0].width', "0");
+}
+</script>       
+
+</body>

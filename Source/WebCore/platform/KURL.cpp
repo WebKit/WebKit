@@ -1132,6 +1132,11 @@ static inline bool isDefaultPortForScheme(const char* port, size_t portLength, c
     return false;
 }
 
+static inline bool hostPortIsEmptyButCredentialsArePresent(int hostStart, int portEnd, char userEndChar)
+{
+    return userEndChar == '@' && hostStart == portEnd;
+}
+
 void KURL::parse(const char* url, const String* originalString)
 {
     if (!url || url[0] == '\0') {
@@ -1252,6 +1257,12 @@ void KURL::parse(const char* url, const String* originalString)
 
         if (!isPathSegmentEndChar(url[portEnd])) {
             // invalid character
+            m_string = originalString ? *originalString : url;
+            invalidate();
+            return;
+        }
+
+        if (hostPortIsEmptyButCredentialsArePresent(hostStart, portEnd, url[userEnd])) {
             m_string = originalString ? *originalString : url;
             invalidate();
             return;

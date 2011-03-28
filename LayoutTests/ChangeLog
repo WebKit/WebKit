@@ -1,3 +1,13 @@
+2011-03-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler' .
+
+        URLSs with non-empty username but empty hostname are allowed to load
+        https://bugs.webkit.org/show_bug.cgi?id=57220
+
+        * http/tests/uri/username-with-no-hostname-expected.txt: Added.
+        * http/tests/uri/username-with-no-hostname.html: Added.
+
 2011-03-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

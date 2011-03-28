@@ -1,3 +1,16 @@
+2011-03-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler' .
+
+        URLSs with non-empty username but empty hostname treat first path segment as hostname, potentially enabling XSS
+        https://bugs.webkit.org/show_bug.cgi?id=57220
+
+        Test: http/tests/uri/username-with-no-hostname.html
+
+        * platform/KURL.cpp:
+        (WebCore::hostPortIsEmptyButUserPassIsNot):
+        (WebCore::KURL::parse):
+
 2011-03-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
