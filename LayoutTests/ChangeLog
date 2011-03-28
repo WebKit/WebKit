@@ -1,3 +1,12 @@
+2011-03-27  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, add Chromium test results for fast/blockflow/fallback-orientation.html.
+
+        * platform/chromium-mac-leopard/fast/blockflow/fallback-orientation-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/blockflow/fallback-orientation-expected.png: Added.
+        * platform/chromium-win-vista/fast/blockflow/fallback-orientation-expected.checksum: Added.
+        * platform/chromium-win-vista/fast/blockflow/fallback-orientation-expected.png: Added.
+
 2011-03-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
