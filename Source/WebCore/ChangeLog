@@ -1,3 +1,16 @@
+2011-03-28  Nancy Piedra  <nancy.piedra@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        This patch fixes linking errors on Qt Webkit Windows MinGW builds.
+        This patch sets the BUILDING_WEBKIT & QT_MAKEDLL macros so that
+        QWEBKIT_EXPORT is defined as follows:
+        #define QWEBKIT_EXPORT Q_DECL_EXPORT
+
+        No new tests needed since only changing .pro file.
+
+        * WebCore.pro:
+
 2011-03-28  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Yury Semikhatsky.
