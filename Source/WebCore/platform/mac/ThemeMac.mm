@@ -52,6 +52,11 @@ using namespace std;
     return nil;
 }
 
+- (BOOL)_automaticFocusRingDisabled
+{
+    return YES;
+}
+
 - (NSRect)_focusRingVisibleRect
 {
     return [self visibleRect];

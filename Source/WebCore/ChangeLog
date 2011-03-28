@@ -1,3 +1,16 @@
+2011-03-28  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Search field focus ring is missing
+        https://bugs.webkit.org/show_bug.cgi?id=57270
+        <rdar://problem/8765555>
+
+        Add an _automaticFocusRingDisabled method which returns YES.
+
+        * platform/mac/ThemeMac.mm:
+        (-[WebCoreFlippedView _automaticFocusRingDisabled]):
+
 2011-03-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
