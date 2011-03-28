@@ -30,6 +30,7 @@
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "Position.h"
+#include "TextDirection.h"
 #include <wtf/Forward.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -96,6 +97,8 @@ bool isNodeVisiblyContainedWithin(Node*, const Range*);
 bool isRenderedAsNonInlineTableImageOrHR(const Node*);
 bool isNodeInTextFormControl(Node* node);
     
+TextDirection directionOfEnclosingBlock(const Position&);
+
 // -------------------------------------------------------------------------
 // Position
 // -------------------------------------------------------------------------

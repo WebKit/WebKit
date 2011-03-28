@@ -334,6 +334,11 @@ void SelectionController::setIsDirectional(bool isDirectional)
     m_isDirectional = !m_frame || m_frame->editor()->behavior().shouldConsiderSelectionAsDirectional() || isDirectional;
 }
 
+TextDirection SelectionController::directionOfEnclosingBlock()
+{
+    return WebCore::directionOfEnclosingBlock(m_selection.extent());
+}
+
 void SelectionController::willBeModified(EAlteration alter, SelectionDirection direction)
 {
     if (alter != AlterationExtend)
@@ -381,17 +386,6 @@ void SelectionController::willBeModified(EAlteration alter, SelectionDirection d
         m_selection.setBase(end);
         m_selection.setExtent(start);
     }
-}
-
-TextDirection SelectionController::directionOfEnclosingBlock()
-{
-    Node* enclosingBlockNode = enclosingBlock(m_selection.extent().containerNode());
-    if (!enclosingBlockNode)
-        return LTR;
-    RenderObject* renderer = enclosingBlockNode->renderer();
-    if (renderer)
-        return renderer->style()->direction();
-    return LTR;
 }
 
 VisiblePosition SelectionController::positionForPlatform(bool isGetStart) const

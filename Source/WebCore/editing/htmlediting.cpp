@@ -332,6 +332,15 @@ Node* enclosingBlock(Node* node, EditingBoundaryCrossingRule rule)
     return static_cast<Element*>(enclosingNodeOfType(firstPositionInOrBeforeNode(node), isBlock, rule));
 }
 
+TextDirection directionOfEnclosingBlock(const Position& position)
+{
+    Node* enclosingBlockNode = enclosingBlock(position.containerNode());
+    if (!enclosingBlockNode)
+        return LTR;
+    RenderObject* renderer = enclosingBlockNode->renderer();
+    return renderer ? renderer->style()->direction() : LTR;
+}
+
 // This method is used to create positions in the DOM. It returns the maximum valid offset
 // in a node.  It returns 1 for some elements even though they do not have children, which
 // creates technically invalid DOM Positions.  Be sure to call parentAnchoredEquivalent

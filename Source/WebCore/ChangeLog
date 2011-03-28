@@ -1,3 +1,22 @@
+2011-03-28  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        move directionOfEnclosingBlock() to be global so that it could be reused.
+        https://bugs.webkit.org/show_bug.cgi?id=57233.
+
+        Provide global function directionOfEnclosingBlock(Node*) so that it could be
+        reused in SelectionController and other functionalities that need enclosing
+        block's direcionality, such as moving caret by word in visual order.
+      
+        No new functionality, so no new tests.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::directionOfEnclosingBlock):
+        * editing/htmlediting.cpp:
+        (WebCore::directionOfEnclosingBlock):
+        * editing/htmlediting.h:
+
 2011-03-28  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
 
         Reviewed by Benjamin Poulain.
