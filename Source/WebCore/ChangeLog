@@ -1,3 +1,23 @@
+2011-03-27  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Don't call WebSocket::didClose() more than once.
+        https://bugs.webkit.org/show_bug.cgi?id=57081
+
+        If WebSocket close() is called, and connection is established, then
+        it will call didClose() that resets m_channel to 0.
+        After that, when connection is closed, WebSocketChannel will call
+        didClose for the WebSocket instance.
+
+        Call WebSocketChannel::disconnect() before m_channel = 0 to make sure
+        WebSocketChannel suppress the second didClose().
+
+        Test: http/tests/websocket/tests/close-unref-websocket.html
+
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didClose):
+
 2011-03-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

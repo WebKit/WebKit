@@ -1,3 +1,19 @@
+2011-03-27  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Don't call WebSocket::didClose() more than once.
+        https://bugs.webkit.org/show_bug.cgi?id=57081
+
+        If WebSocket close() is called, and connection is established, then
+        it will call didClose() that resets m_channel to 0.
+        After that, when connection is closed, WebSocketChannel will call
+        didClose for the WebSocket instance.
+
+        * http/tests/websocket/tests/close-unref-websocket-expected.txt: Added.
+        * http/tests/websocket/tests/close-unref-websocket.html: Added.
+        * http/tests/websocket/tests/hanging-handshake_wsh.py: Added.
+
 2011-03-27  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, add Chromium test results for fast/blockflow/fallback-orientation.html.

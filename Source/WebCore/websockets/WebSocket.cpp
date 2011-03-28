@@ -283,7 +283,10 @@ void WebSocket::didClose(unsigned long unhandledBufferedAmount)
     m_bufferedAmountAfterClose += unhandledBufferedAmount;
     ASSERT(scriptExecutionContext());
     dispatchEvent(Event::create(eventNames().closeEvent, false, false));
-    m_channel = 0;
+    if (m_channel) {
+        m_channel->disconnect();
+        m_channel = 0;
+    }
     if (hasPendingActivity())
         ActiveDOMObject::unsetPendingActivity(this);
 }
