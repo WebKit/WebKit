@@ -1,6 +1,18 @@
 2011-03-28  Ryosuke Niwa  <rniwa@webkit.org>
 
-        [GTK] Update text expectations after r82105.
+        [Chromium] [Mac Leopard] Update test expectations after r82105.
+
+        * platform/chromium-linux/fast/css/text-align-expected.checksum:
+        * platform/chromium-linux/fast/css/text-align-expected.png:
+        * platform/chromium-win/fast/css/text-align-expected.checksum:
+        * platform/chromium-win/fast/css/text-align-expected.png:
+        * platform/chromium-win/fast/css/text-align-expected.txt:
+        * platform/mac-leopard/fast/css/text-align-expected.checksum:
+        * platform/mac-leopard/fast/css/text-align-expected.png:
+
+2011-03-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [GTK] Update test expectations after r82105.
 
         * platform/gtk/fast/css/text-align-expected.txt:
 
