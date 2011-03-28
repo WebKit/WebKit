@@ -1,3 +1,12 @@
+2011-03-28  Jessie Berlin  <jberlin@apple.com>
+
+        http/tests/navigation/changing-frame-hierarchy-in-onload.html flakey on Snow Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=57236
+
+        Unreviewed, skip the flakey test in order to get the bots green.
+
+        * platform/mac-snowleopard/Skipped:
+
 2011-03-28  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, update pixel test expectations after r82105.

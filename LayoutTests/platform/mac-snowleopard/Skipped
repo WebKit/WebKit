@@ -163,3 +163,6 @@ compositing/geometry/empty-embed-rects.html
 
 # Times out https://bugs.webkit.org/show_bug.cgi?id=55808
 fast/loader/loadInProgress.html
+
+# Flakey: https://bugs.webkit.org/show_bug.cgi?id=57236
+http/tests/navigation/changing-frame-hierarchy-in-onload.html
