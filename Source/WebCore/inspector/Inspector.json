@@ -344,14 +344,14 @@
         ],
         "events": [
             {
-                "name": "frameDetachedFromParent",
+                "name": "frameDetached",
                 "description": "Fired when frame has been detached from its parent.",
                 "parameters": [
                     { "name": "frameId", "type": "string", "description": "If of the frame that has been detached." }
                 ]
             },
             {
-                "name": "willSendRequest",
+                "name": "requestWillBeSent",
                 "description": "Fired when page is about to send HTTP request.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
@@ -365,14 +365,14 @@
                 ]
             },
             {
-                "name": "markResourceAsCached",
+                "name": "resourceMarkedAsCached",
                 "description": "Fired when request is known to be served from memory cache.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." }
                 ]
             },
             {
-                "name": "didReceiveResponse",
+                "name": "responseReceived",
                 "description": "Fired when HTTP response is available.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
@@ -382,7 +382,7 @@
                 ]
             },
             {
-                "name": "didReceiveContentLength",
+                "name": "dataReceived",
                 "description": "Fired when data chunk was received over the network.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
@@ -392,7 +392,7 @@
                 ]
             },
             {
-                "name": "didFinishLoading",
+                "name": "loadingFinished",
                 "description": "Fired when HTTP request has finished loading.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
@@ -400,7 +400,7 @@
                 ]
             },
             {
-                "name": "didFailLoading",
+                "name": "loadingFailed",
                 "description": "Fired when HTTP request has failed to load.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
@@ -409,7 +409,7 @@
                 ]
             },
             {
-                "name": "didLoadResourceFromMemoryCache",
+                "name": "resourceLoadedFromMemoryCache",
                 "description": "Fired when HTTP request has been served from memory cache.",
                 "parameters": [
                     { "name": "frameId", "type": "string", "description": "Frame identifier." },
@@ -420,7 +420,7 @@
                 ]
             },
             {
-                "name": "setInitialContent",
+                "name": "initialContentSet",
                 "description": "Fired for XMLHttpRequests when their content becomes available.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
@@ -429,7 +429,7 @@
                 ]
             },
             {
-                "name": "didCommitLoadForFrame",
+                "name": "frameNavigated",
                 "description": "Fired once navigation of the frame has completed. Frame is now associated with the new loader.",
                 "parameters": [
                     { "name": "frame", "$ref": "Frame", "description": "Frame identifier." },
@@ -437,15 +437,7 @@
                 ]
             },
             {
-                "name": "didCreateWebSocket",
-                "description": "Fired upon WebSocket creation.",
-                "parameters": [
-                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
-                    { "name": "url", "type": "string", "description": "WebSocket request URL." }
-                ]
-            },
-            {
-                "name": "willSendWebSocketHandshakeRequest",
+                "name": "webSocketWillSendHandshakeRequest",
                 "description": "Fired when WebSocket is about to initiate handshake.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
@@ -454,7 +446,7 @@
                 ]
             },
             {
-                "name": "didReceiveWebSocketHandshakeResponse",
+                "name": "webSocketHandshakeResponseReceived",
                 "description": "Fired when WebSocket handshake response becomes available.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
@@ -463,7 +455,15 @@
                 ]
             },
             {
-                "name": "didCloseWebSocket",
+                "name": "webSocketCreated",
+                "description": "Fired upon WebSocket creation.",
+                "parameters": [
+                    { "name": "identifier", "type": "integer", "description": "Request identifier." },
+                    { "name": "url", "type": "string", "description": "WebSocket request URL." }
+                ]
+            },
+            {
+                "name": "webSocketClosed",
                 "description": "Fired when WebSocket is closed.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
