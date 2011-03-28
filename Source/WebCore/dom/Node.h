@@ -537,11 +537,6 @@ public:
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     void dispatchWheelEvent(PlatformWheelEvent&);
     bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomicString& eventType, int clickCount = 0, Node* relatedTarget = 0);
-    bool dispatchMouseEvent(const AtomicString& eventType, int button, int clickCount,
-        int pageX, int pageY, int screenX, int screenY,
-        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-        bool isSimulated, Node* relatedTarget, PassRefPtr<Event> underlyingEvent);
-    void dispatchSimulatedMouseEvent(const AtomicString& eventType, PassRefPtr<Event> underlyingEvent);
     void dispatchSimulatedClick(PassRefPtr<Event> underlyingEvent, bool sendMouseEvents = false, bool showPressedLook = true);
 
     virtual void dispatchFocusEvent();

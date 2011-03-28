@@ -69,6 +69,7 @@
 #include "ErrorEvent.cpp"
 #include "Event.cpp"
 #include "EventContext.cpp"
+#include "EventDispatcher.cpp"
 #include "EventNames.cpp"
 #include "EventQueue.cpp"
 #include "EventTarget.cpp"

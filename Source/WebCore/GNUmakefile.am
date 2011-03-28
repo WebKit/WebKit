@@ -1220,6 +1220,8 @@ webcore_sources += \
 	Source/WebCore/dom/Event.h \
 	Source/WebCore/dom/EventContext.cpp \
 	Source/WebCore/dom/EventContext.h \
+	Source/WebCore/dom/EventDispatcher.cpp \
+	Source/WebCore/dom/EventDispatcher.h \
 	Source/WebCore/dom/EventException.h \
 	Source/WebCore/dom/EventListener.h \
 	Source/WebCore/dom/EventNames.cpp \

@@ -2430,6 +2430,8 @@
             'dom/Event.cpp',
             'dom/EventContext.cpp',
             'dom/EventContext.h',
+            'dom/EventDispatcher.cpp',
+            'dom/EventDispatcher.h',
             'dom/EventException.h',
             'dom/EventNames.cpp',
             'dom/EventQueue.cpp',

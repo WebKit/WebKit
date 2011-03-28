@@ -1,3 +1,43 @@
+2011-03-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Introduce EventDispatcher, the new common way to fire events.
+        https://bugs.webkit.org/show_bug.cgi?id=57168
+
+        The goal here is two-fold:
+        1) reduce the need to randomly sprinkle guards around the dispatch code
+        by creating a well-scoped abstraction for dispatching events.
+        2) create a place where fiddly event-related things like creating event
+        contexts for ancestors can be done lazily.
+
+        Additionally, with all the free-standing static functions, this code was
+        just begging to come out of Node.cpp.
+
+        The first step is a near-mechanical extraction of mouse-related events
+        from Node.cpp to EventDispatcher. For now, the call sites are just
+        replaced with invoking EventDispatcher. Later, we can remove these methods
+        from Node.
+
+        Refactoring, no functional changes.
+
+        * Android.mk: Added EventDispatcher to build system.
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/DOMAllInOne.cpp: Ditto.
+        * dom/EventDispatcher.cpp: Added.
+        * dom/EventDispatcher.h: Added.
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchScopedEvent): Replaced to use EventDispatcher.
+        (WebCore::Node::dispatchEvent): Ditto.
+        (WebCore::Node::dispatchMouseEvent): Ditto.
+        (WebCore::Node::dispatchSimulatedClick): Ditto.
+        * dom/Node.h: Updated decls.
+
 2011-03-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

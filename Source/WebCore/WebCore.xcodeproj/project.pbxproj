@@ -902,6 +902,8 @@
 		416E75CC0EDF90C700360E1D /* ScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E75CA0EDF90C700360E1D /* ScriptCallFrame.cpp */; };
 		41885B9311B6FDA6003383BB /* FormSubmission.h in Headers */ = {isa = PBXBuildFile; fileRef = 41885B9111B6FDA6003383BB /* FormSubmission.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41885B9411B6FDA6003383BB /* FormSubmission.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41885B9211B6FDA6003383BB /* FormSubmission.cpp */; };
+		418A06D0133C04D500CD379C /* EventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 418A06CE133C04D500CD379C /* EventDispatcher.h */; };
+		418A06D1133C04D500CD379C /* EventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 418A06CF133C04D500CD379C /* EventDispatcher.cpp */; };
 		418F88040FF957AE0080F045 /* JSAbstractWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 418F88020FF957AE0080F045 /* JSAbstractWorker.cpp */; };
 		418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 418F88030FF957AE0080F045 /* JSAbstractWorker.h */; };
 		41A3D58E101C152D00316D07 /* DedicatedWorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41A3D58C101C152D00316D07 /* DedicatedWorkerThread.cpp */; };
@@ -7326,6 +7328,8 @@
 		416E75CA0EDF90C700360E1D /* ScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallFrame.cpp; sourceTree = "<group>"; };
 		41885B9111B6FDA6003383BB /* FormSubmission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormSubmission.h; sourceTree = "<group>"; };
 		41885B9211B6FDA6003383BB /* FormSubmission.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormSubmission.cpp; sourceTree = "<group>"; };
+		418A06CE133C04D500CD379C /* EventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcher.h; sourceTree = "<group>"; };
+		418A06CF133C04D500CD379C /* EventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDispatcher.cpp; sourceTree = "<group>"; };
 		418F88020FF957AE0080F045 /* JSAbstractWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbstractWorker.cpp; sourceTree = "<group>"; };
 		418F88030FF957AE0080F045 /* JSAbstractWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAbstractWorker.h; sourceTree = "<group>"; };
 		41A3D58C101C152D00316D07 /* DedicatedWorkerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DedicatedWorkerThread.cpp; path = workers/DedicatedWorkerThread.cpp; sourceTree = "<group>"; };
@@ -19228,6 +19232,8 @@
 				14E836D209F8512000B85AE4 /* Event.idl */,
 				4138D3341244054800323D33 /* EventContext.cpp */,
 				4138D3331244054800323D33 /* EventContext.h */,
+				418A06CF133C04D500CD379C /* EventDispatcher.cpp */,
+				418A06CE133C04D500CD379C /* EventDispatcher.h */,
 				BC60D9090D2A17CE00B9918F /* EventException.h */,
 				BC60D90A0D2A17CE00B9918F /* EventException.idl */,
 				935FBC4409BA00B900E230B1 /* EventListener.h */,
@@ -20795,6 +20801,7 @@
 				2ECF7AE210162B5800427DE7 /* ErrorEvent.h in Headers */,
 				85031B420A44EFC700F992E0 /* Event.h in Headers */,
 				4138D3351244054800323D33 /* EventContext.h in Headers */,
+				418A06D0133C04D500CD379C /* EventDispatcher.h in Headers */,
 				BC60D90C0D2A17CE00B9918F /* EventException.h in Headers */,
 				93C09A530B064DB3005ABD4D /* EventHandler.h in Headers */,
 				935FBC4509BA00B900E230B1 /* EventListener.h in Headers */,
@@ -23608,6 +23615,7 @@
 				2ECF7AE110162B5800427DE7 /* ErrorEvent.cpp in Sources */,
 				85031B410A44EFC700F992E0 /* Event.cpp in Sources */,
 				4138D3361244054800323D33 /* EventContext.cpp in Sources */,
+				418A06D1133C04D500CD379C /* EventDispatcher.cpp in Sources */,
 				93C09A810B064F00005ABD4D /* EventHandler.cpp in Sources */,
 				93C09A7F0B064EEF005ABD4D /* EventHandlerMac.mm in Sources */,
 				1CA19E050DC255950065A994 /* EventLoopMac.mm in Sources */,
