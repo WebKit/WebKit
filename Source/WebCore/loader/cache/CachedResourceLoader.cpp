@@ -34,6 +34,7 @@
 #include "CachedScript.h"
 #include "CachedXSLStyleSheet.h"
 #include "Console.h"
+#include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
@@ -217,9 +218,6 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
         }
         break;
 #endif
-    default:
-        ASSERT_NOT_REACHED();
-        break;
     }
 
     // Given that the load is allowed by the same-origin policy, we should
@@ -253,11 +251,12 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
         // Prefetch cannot affect the current document.
         break;
 #endif
-    default:
-        ASSERT_NOT_REACHED();
-        break;
     }
     // FIXME: Consider letting the embedder block mixed content loads.
+
+    if (type == CachedResource::Script && !m_document->contentSecurityPolicy()->allowScriptFromSource(url))
+        return false;
+
     return true;
 }
 

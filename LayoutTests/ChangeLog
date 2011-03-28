@@ -1,3 +1,18 @@
+2011-03-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix script-src redirect handling
+        https://bugs.webkit.org/show_bug.cgi?id=57196
+
+        Test both allow => disallow and disallow => allow redirect cases.
+        Previously, we had incorrect expectations for one of the redirect
+        cases.  Also, I've updated the policy syntax to match the default-src
+        syntax.
+
+        * http/tests/security/contentSecurityPolicy/script-src-redirect-expected.txt:
+        * http/tests/security/contentSecurityPolicy/script-src-redirect.html:
+
 2011-03-27  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, add new Chromium test result and expectations.

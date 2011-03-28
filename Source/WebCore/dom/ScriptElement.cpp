@@ -232,9 +232,6 @@ bool ScriptElement::prepareScript(const TextPosition1& scriptStartPosition, Lega
 
 bool ScriptElement::requestScript(const String& sourceUrl)
 {
-    if (!m_element->document()->contentSecurityPolicy()->canLoadExternalScriptFromSrc(sourceUrl))
-        return false;
-
     RefPtr<Document> originalDocument = m_element->document();
     if (!m_element->dispatchBeforeLoadEvent(sourceUrl))
         return false;

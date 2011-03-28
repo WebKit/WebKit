@@ -478,11 +478,6 @@ void HTMLDocumentParser::stopWatchingForLoad(CachedResource* cachedScript)
     cachedScript->removeClient(this);
 }
 
-bool HTMLDocumentParser::shouldLoadExternalScriptFromSrc(const AtomicString& srcValue)
-{
-    return document()->contentSecurityPolicy()->canLoadExternalScriptFromSrc(srcValue);
-}
-
 void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)
 {
     // pumpTokenizer can cause this parser to be detached from the Document,

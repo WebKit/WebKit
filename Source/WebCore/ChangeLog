@@ -1,3 +1,26 @@
+2011-03-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix script-src redirect handling
+        https://bugs.webkit.org/show_bug.cgi?id=57196
+
+        Resource-loading requirements in CSP apply to each hop in the redirect
+        chain.  To make that work properly, we need to move enforcement into
+        the loader.  Fortunately, we already have a choke-point in the loader
+        for enforcing this kind of policy.
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestScript):
+        * html/parser/HTMLDocumentParser.cpp:
+        * html/parser/HTMLDocumentParser.h:
+        * html/parser/HTMLScriptRunnerHost.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::canRequest):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowScriptFromSource):
+        * page/ContentSecurityPolicy.h:
+
 2011-03-27  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

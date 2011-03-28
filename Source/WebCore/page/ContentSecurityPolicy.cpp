@@ -430,9 +430,9 @@ bool ContentSecurityPolicy::allowJavaScriptURLs() const
     return !m_scriptSrc;
 }
 
-bool ContentSecurityPolicy::canLoadExternalScriptFromSrc(const String& url) const
+bool ContentSecurityPolicy::allowScriptFromSource(const KURL& url) const
 {
-    return !m_scriptSrc || m_scriptSrc->allows(KURL(ParsedURLString, url));
+    return !m_scriptSrc || m_scriptSrc->allows(url);
 }
 
 // policy            = directive-list

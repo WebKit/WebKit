@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class CSPDirective;
+class KURL;
 class SecurityOrigin;
 
 class ContentSecurityPolicy : public RefCounted<ContentSecurityPolicy> {
@@ -45,8 +46,7 @@ public:
     void didReceiveHeader(const String&);
 
     bool allowJavaScriptURLs() const;
-    // FIXME: Rename canLoadExternalScriptFromSrc to allowScriptFromURL.
-    bool canLoadExternalScriptFromSrc(const String& url) const;
+    bool allowScriptFromSource(const KURL&) const;
 
 private:
     explicit ContentSecurityPolicy(SecurityOrigin*);
