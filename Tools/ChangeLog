@@ -1,3 +1,17 @@
+2011-03-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Testing support for <rdar://problem/9112694> REGRESSION (r79411): "Check grammar with spelling" context menu doesn't check as you type
+        https://bugs.webkit.org/show_bug.cgi?id=57173
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (hasGrammarMarkerCallback): Added.
+        (LayoutTestController::staticFunctions): Added case for hasGrammarMarker.
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/DumpRenderTree.mm: (createWebViewAndOffscreenWindow): Call setGrammarCheckingEnabled.
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm: (LayoutTestController::hasGrammarMarker): Added. Call new hasGrammarMarker method.
+
 2011-03-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Benjamin Poulain.

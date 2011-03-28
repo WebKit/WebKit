@@ -1,3 +1,15 @@
+2011-03-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix for <rdar://problem/9112694> REGRESSION (r79411): "Check grammar with spelling" context menu doesn't check as you type
+        https://bugs.webkit.org/show_bug.cgi?id=57173
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame hasSpellingMarker:length:]): Call new selectionStartHasMarkerFor method instead of selectionStartHasSpellingMarkerFor.
+        (-[WebFrame hasGrammarMarker:length:]): Call new selectionStartHasMarkerFor method.
+        * WebView/WebFramePrivate.h: Add hasGrammarMarker so grammar marking can be tested.
+
 2011-03-28  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

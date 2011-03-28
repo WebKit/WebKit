@@ -1,3 +1,22 @@
+2011-03-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix for <rdar://problem/9112694> REGRESSION (r79411): "Check grammar with spelling" context menu doesn't check as you type
+        https://bugs.webkit.org/show_bug.cgi?id=57173
+
+        Test: editing/spelling/grammar.html
+
+        * WebCore.exp.in: Add symbol for new selectionStartHasMarkerFor method.
+        * editing/Editor.cpp:
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges): Every use of paragraph is specific to spelling or grammar, 
+         so to avoid confusion, we should explicitly use spellingParagraph or grammarParagraph.  In the case of this bug, 
+         when we're consider ambiguous boundary characters (characters that could indicate word boundaries, but are used 
+         in the middle of words too, like apostrophes), we should use the use the spellingParagraph since the spellingParagraph 
+         is the only one operated on when this information is used.
+         (WebCore::Editor::selectionStartHasMarkerFor): Changed from selectionStartHasSpellingMarkerFor so it can check for grammar as well as spelling.
+        * editing/Editor.h:
+
 2011-03-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

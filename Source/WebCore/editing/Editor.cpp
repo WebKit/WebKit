@@ -2239,7 +2239,6 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
 
     TextCheckingParagraph spellingParagraph(spellingRange);
     TextCheckingParagraph grammarParagraph(shouldMarkGrammar ? grammarRange : 0);
-    TextCheckingParagraph& paragraph = shouldMarkGrammar ? grammarParagraph : spellingParagraph; 
 
     if (shouldMarkGrammar ? (spellingParagraph.isRangeEmpty() && grammarParagraph.isEmpty()) : spellingParagraph.isEmpty())
         return;
@@ -2248,13 +2247,13 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
         if (m_frame->selection()->selectionType() == VisibleSelection::CaretSelection) {
             // Attempt to save the caret position so we can restore it later if needed
             Position caretPosition = m_frame->selection()->end();
-            int offset = paragraph.offsetTo(caretPosition, ec);
+            int offset = spellingParagraph.offsetTo(caretPosition, ec);
             if (!ec) {
                 selectionOffset = offset;
                 restoreSelectionAfterChange = true;
-                if (selectionOffset > 0 && (selectionOffset > paragraph.textLength() || paragraph.textCharAt(selectionOffset - 1) == newlineCharacter))
+                if (selectionOffset > 0 && (selectionOffset > spellingParagraph.textLength() || spellingParagraph.textCharAt(selectionOffset - 1) == newlineCharacter))
                     adjustSelectionForParagraphBoundaries = true;
-                if (selectionOffset > 0 && selectionOffset <= paragraph.textLength() && isAmbiguousBoundaryCharacter(paragraph.textCharAt(selectionOffset - 1)))
+                if (selectionOffset > 0 && selectionOffset <= spellingParagraph.textLength() && isAmbiguousBoundaryCharacter(spellingParagraph.textCharAt(selectionOffset - 1)))
                     ambiguousBoundaryOffset = selectionOffset - 1;
             }
         }
@@ -2282,7 +2281,11 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
             checkingTypes |= TextCheckingTypeCorrection;
 #endif
     }
-    textChecker()->checkTextOfParagraph(paragraph.textCharacters(), paragraph.textLength(), checkingTypes, results);
+    if (shouldMarkGrammar)
+        textChecker()->checkTextOfParagraph(grammarParagraph.textCharacters(), grammarParagraph.textLength(), checkingTypes, results);
+    else
+        textChecker()->checkTextOfParagraph(spellingParagraph.textCharacters(), spellingParagraph.textLength(), checkingTypes, results);
+        
 
 #if SUPPORT_AUTOCORRECTION_PANEL
     // If this checking is only for showing correction panel, we shouldn't bother to mark misspellings.
@@ -2341,7 +2344,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
             // 2. The result doesn't end at an ambiguous boundary.
             //    (FIXME: this is required until 6853027 is fixed and text checking can do this for us
             bool doReplacement = replacementLength > 0 && !resultEndsAtAmbiguousBoundary;
-            RefPtr<Range> rangeToReplace = paragraph.subrange(resultLocation, resultLength);
+            RefPtr<Range> rangeToReplace = spellingParagraph.subrange(resultLocation, resultLength);
             VisibleSelection selectionToReplace(rangeToReplace.get(), DOWNSTREAM);
 
             // adding links should be done only immediately after they are typed
@@ -2426,7 +2429,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
 
                 if (result->type == TextCheckingTypeCorrection) {
                     // Add a marker so that corrections can easily be undone and won't be re-corrected.
-                    RefPtr<Range> replacedRange = paragraph.subrange(resultLocation, replacementLength);
+                    RefPtr<Range> replacedRange = spellingParagraph.subrange(resultLocation, replacementLength);
                     replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::Replacement, replacedString);
                     replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::CorrectionIndicator);
                     replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::SpellCheckingExemption);
@@ -2437,9 +2440,9 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
 
     if (selectionChanged) {
         // Restore the caret position if we have made any replacements
-        paragraph.expandRangeToNextEnd();
-        if (restoreSelectionAfterChange && selectionOffset >= 0 && selectionOffset <= paragraph.rangeLength()) {
-            RefPtr<Range> selectionRange = paragraph.subrange(0, selectionOffset);
+        spellingParagraph.expandRangeToNextEnd();
+        if (restoreSelectionAfterChange && selectionOffset >= 0 && selectionOffset <= spellingParagraph.rangeLength()) {
+            RefPtr<Range> selectionRange = spellingParagraph.subrange(0, selectionOffset);
             m_frame->selection()->moveTo(selectionRange->endPosition(), DOWNSTREAM);
             if (adjustSelectionForParagraphBoundaries)
                 m_frame->selection()->modify(SelectionController::AlterationMove, DirectionForward, CharacterGranularity);
@@ -3572,7 +3575,7 @@ static Node* findFirstMarkable(Node* node)
     return 0;
 }
 
-bool Editor::selectionStartHasSpellingMarkerFor(int from, int length) const
+bool Editor::selectionStartHasMarkerFor(DocumentMarker::MarkerType markerType, int from, int length) const
 {
     Node* node = findFirstMarkable(m_frame->selection()->start().deprecatedNode());
     if (!node)
@@ -3583,7 +3586,7 @@ bool Editor::selectionStartHasSpellingMarkerFor(int from, int length) const
     Vector<DocumentMarker> markers = m_frame->document()->markers()->markersForNode(node);
     for (size_t i = 0; i < markers.size(); ++i) {
         DocumentMarker marker = markers[i];
-        if (marker.startOffset <= startOffset && endOffset <= marker.endOffset && marker.type == DocumentMarker::Spelling)
+        if (marker.startOffset <= startOffset && endOffset <= marker.endOffset && marker.type == markerType)
             return true;
     }
 

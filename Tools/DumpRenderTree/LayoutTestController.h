@@ -295,6 +295,7 @@ public:
     void abortModal();
 
     bool hasSpellingMarker(int from, int length);
+    bool hasGrammarMarker(int from, int length);
 
     void dumpConfigurationForViewport(int deviceDPI, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight);
 

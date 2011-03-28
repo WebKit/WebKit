@@ -1,3 +1,17 @@
+2011-03-28  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Test for <rdar://problem/9112694> REGRESSION (r79411): "Check grammar with spelling" context menu doesn't check as you type
+        https://bugs.webkit.org/show_bug.cgi?id=57173
+
+        * editing/spelling/grammar-expected.txt: Added.
+        * editing/spelling/grammar.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-03-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

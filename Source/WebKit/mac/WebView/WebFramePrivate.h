@@ -143,6 +143,8 @@ typedef enum {
 // Returns whether there is a spelling marker in the specified range of the focused node.
 - (BOOL)hasSpellingMarker:(int)location length:(int)length;
 
+- (BOOL)hasGrammarMarker:(int)from length:(int)length;
+
 // The top of the accessibility tree.
 - (id)accessibilityRoot;
 

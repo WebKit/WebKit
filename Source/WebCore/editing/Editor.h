@@ -380,7 +380,7 @@ public:
     void readSelectionFromPasteboard(const String& pasteboardName);
 #endif
 
-    bool selectionStartHasSpellingMarkerFor(int from, int length) const;
+    bool selectionStartHasMarkerFor(DocumentMarker::MarkerType, int from, int length) const;
     void removeSpellAndCorrectionMarkersFromWordsToBeEdited(bool doNotRemoveIfSelectionAtWordBoundary);
 
 private:

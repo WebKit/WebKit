@@ -1889,6 +1889,9 @@ editing/spelling/spelling-attribute-change.html
 editing/spelling/spelling-linebreak.html
 editing/spelling/spelling-hasspellingmarker.html
 
+# WebKitTestRunner needs layoutTestController.hasGrammarMarker
+editing/spelling/grammar.html
+
 # WebKitTestRunner needs layoutTestController.nodesFromRect
 fast/dom/nodesFromRect-basic.html
 fast/dom/nodesFromRect-inner-documents.html
