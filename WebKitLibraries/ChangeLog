@@ -1,3 +1,11 @@
+2011-03-28  Jeff Miller  <jeffm@apple.com>
+
+        Rubber-stamped by Adam Roben.
+
+        Remove WebKitSystemInterface_debug.lib, it hasn't been used for a few months now.
+
+        * win/lib/WebKitSystemInterface_debug.lib: Removed.
+
 2011-03-25  Brent Fulgham  <bfulgham@webkit.org>
 
         Kick the build machines after r81977.
