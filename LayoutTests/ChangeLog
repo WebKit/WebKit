@@ -1,3 +1,19 @@
+2011-03-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9003382> Incomplete repaint of overflow in flipped lines writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=57197
+
+        * fast/repaint/overflow-flipped-writing-mode-block-expected.checksum: Added.
+        * fast/repaint/overflow-flipped-writing-mode-block-expected.png: Added.
+        * fast/repaint/overflow-flipped-writing-mode-block-expected.txt: Added.
+        * fast/repaint/overflow-flipped-writing-mode-block.html: Added.
+        * fast/repaint/overflow-flipped-writing-mode-table-expected.checksum: Added.
+        * fast/repaint/overflow-flipped-writing-mode-table-expected.png: Added.
+        * fast/repaint/overflow-flipped-writing-mode-table-expected.txt: Added.
+        * fast/repaint/overflow-flipped-writing-mode-table.html: Added.
+
 2011-03-28  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, rebaseline GTK+ test results.

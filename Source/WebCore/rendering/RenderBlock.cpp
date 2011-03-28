@@ -2246,6 +2246,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
     // paints the root's background.
     if (!isRoot()) {
         IntRect overflowBox = visualOverflowRect();
+        flipForWritingMode(overflowBox);
         overflowBox.inflate(maximalOutlineSize(paintInfo.phase));
         overflowBox.move(tx, ty);
         if (!overflowBox.intersects(paintInfo.rect))

@@ -452,10 +452,11 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
     PaintPhase paintPhase = paintInfo.phase;
 
     if (!isRoot()) {
-        int os = 2 * maximalOutlineSize(paintPhase);
-        if (ty + minYVisualOverflow() >= paintInfo.rect.maxY() + os || ty + maxYVisualOverflow() <= paintInfo.rect.y() - os)
-            return;
-        if (tx + minXVisualOverflow() >= paintInfo.rect.maxX() + os || tx + maxXVisualOverflow() <= paintInfo.rect.x() - os)
+        IntRect overflowBox = visualOverflowRect();
+        flipForWritingMode(overflowBox);
+        overflowBox.inflate(maximalOutlineSize(paintInfo.phase));
+        overflowBox.move(tx, ty);
+        if (!overflowBox.intersects(paintInfo.rect))
             return;
     }
 

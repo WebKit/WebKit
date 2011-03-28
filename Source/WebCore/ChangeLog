@@ -1,3 +1,20 @@
+2011-03-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9003382> Incomplete repaint of overflow in flipped lines writing modes
+        https://bugs.webkit.org/show_bug.cgi?id=57197
+
+        Tests: fast/repaint/overflow-flipped-writing-mode-block.html
+               fast/repaint/overflow-flipped-writing-mode-table.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint): Flip the overflow rect before testing for intersection
+        with the damage rect.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint): Made the intersection check more like the one in
+        RenderBlock::paint().
+
 2011-03-28  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Ryosuke Niwa.
