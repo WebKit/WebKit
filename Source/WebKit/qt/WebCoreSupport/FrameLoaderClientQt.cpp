@@ -486,7 +486,7 @@ void FrameLoaderClientQt::dispatchDidCommitLoad()
     // We should assume first the frame has no title. If it has, then the above dispatchDidReceiveTitle()
     // will be called very soon with the correct title.
     // This properly resets the title when we navigate to a URI without a title.
-    emit titleChanged(String());
+    emit titleChanged(QString());
 
     bool isMainFrame = (m_frame == m_frame->page()->mainFrame());
     if (!isMainFrame)
