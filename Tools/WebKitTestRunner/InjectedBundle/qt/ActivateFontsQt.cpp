@@ -59,7 +59,7 @@ void activateFonts()
 
     char* const fontDir = getenv("WEBKIT_TESTFONTS");
     const QString fontDirString = QString::fromLocal8Bit(fontDir);
-    if (!fontDirString.isEmpty() || !QDir(fontDirString).exists()) {
+    if (fontDirString.isEmpty() || !QDir(fontDirString).exists()) {
         fprintf(stderr,
                 "\n\n"
                 "----------------------------------------------------------------------\n"

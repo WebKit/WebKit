@@ -1,3 +1,15 @@
+2011-03-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] QtWebKit will not compile with QT_ASCII_CAST_WARNINGS enabled
+        https://bugs.webkit.org/show_bug.cgi?id=57087
+
+        Trivial typo fix after r82082.
+
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp:
+        (WTR::activateFonts):
+
 2011-03-28  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.
