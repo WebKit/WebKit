@@ -1,3 +1,14 @@
+2011-03-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        REGRESSION(r54712): [Qt] Installed QtWebKit header does not compile.
+        https://bugs.webkit.org/show_bug.cgi?id=57183
+
+        Windows buildfix after r82065.
+
+        * Api/DerivedSources.pro: Readding escaping on Windows platforms.
+
 2011-03-27  Andreas Kling  <kling@webkit.org>
 
         Fix build warning about IconDatabaseClient.h (wrong path.)
