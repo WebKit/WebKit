@@ -32,3 +32,5 @@ symbian {
 # This define is used by some tests to look up resources in the source tree
 !symbian: DEFINES += TESTS_SOURCE_DIR=\\\"$$PWD/\\\"
 
+DEFINES -= QT_ASCII_CAST_WARNINGS
+

@@ -56,6 +56,8 @@ contains(QT_CONFIG, opengl) {
     DEFINES += QT_CONFIGURED_WITH_OPENGL
 }
 
+DEFINES -= QT_ASCII_CAST_WARNINGS
+
 # We copy the resource file to the build directory.
 # The copier is defined in Tools/MiniBrowser/DerivedSources.pro.
 RESOURCES += \

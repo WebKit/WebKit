@@ -62,5 +62,7 @@ contains(QT_CONFIG, opengl) {
     DEFINES += QT_CONFIGURED_WITH_OPENGL
 }
 
+DEFINES -= QT_ASCII_CAST_WARNINGS
+
 RESOURCES += \
     QtTestBrowser.qrc

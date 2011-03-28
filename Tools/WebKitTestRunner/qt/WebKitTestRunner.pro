@@ -9,6 +9,7 @@ GENERATED_SOURCES_DIR = ../generated
 include(../../../Source/WebKit.pri)
 
 DEFINES += USE_SYSTEM_MALLOC=1
+DEFINES -= QT_ASCII_CAST_WARNINGS
 
 INCLUDEPATH += \
     $$BASEDIR \

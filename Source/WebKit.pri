@@ -73,6 +73,8 @@ INCLUDEPATH += \
     $$OUTPUT_DIR/include \
     $$QT.script.includes
 
+DEFINES += QT_ASCII_CAST_WARNINGS
+
 webkit2:INCLUDEPATH *= $$OUTPUT_DIR/include/WebKit2
 
 # Pick up 3rdparty libraries from INCLUDE/LIB just like with MSVC

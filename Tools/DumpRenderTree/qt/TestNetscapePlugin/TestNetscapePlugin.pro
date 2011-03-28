@@ -47,6 +47,8 @@ mac {
     SOURCES += ../../unix/TestNetscapePlugin/TestNetscapePlugin.cpp
 }
 
+DEFINES -= QT_ASCII_CAST_WARNINGS
+
 !win32:!embedded:!mac:!symbian {
     LIBS += -lX11
 }
