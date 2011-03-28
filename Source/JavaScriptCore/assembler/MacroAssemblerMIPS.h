@@ -95,7 +95,7 @@ public:
     // Integer arithmetic operations:
     //
     // Operations are typically two operand - operation(source, srcDst)
-    // For many operations the source may be an Imm32, the srcDst operand
+    // For many operations the source may be an TrustedImm32, the srcDst operand
     // may often be a memory location (explictly described using an Address
     // object).
 
@@ -104,12 +104,12 @@ public:
         m_assembler.addu(dest, dest, src);
     }
 
-    void add32(Imm32 imm, RegisterID dest)
+    void add32(TrustedImm32 imm, RegisterID dest)
     {
         add32(imm, dest, dest);
     }
 
-    void add32(Imm32 imm, RegisterID src, RegisterID dest)
+    void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         if (!imm.m_isPointer && imm.m_value >= -32768 && imm.m_value <= 32767
             && !m_fixedWidth) {
@@ -127,7 +127,7 @@ public:
         }
     }
 
-    void add32(Imm32 imm, Address address)
+    void add32(TrustedImm32 imm, Address address)
     {
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth) {
@@ -207,7 +207,7 @@ public:
         }
     }
 
-    void add32(Imm32 imm, AbsoluteAddress address)
+    void add32(TrustedImm32 imm, AbsoluteAddress address)
     {
         /*
            li   addrTemp, address
@@ -216,7 +216,7 @@ public:
            addu dataTemp, dataTemp, immTemp
            sw   dataTemp, 0(addrTemp)
         */
-        move(ImmPtr(address.m_ptr), addrTempRegister);
+        move(TrustedImmPtr(address.m_ptr), addrTempRegister);
         m_assembler.lw(dataTempRegister, addrTempRegister, 0);
         if (!imm.m_isPointer && imm.m_value >= -32768 && imm.m_value <= 32767
             && !m_fixedWidth)
@@ -233,7 +233,7 @@ public:
         m_assembler.andInsn(dest, dest, src);
     }
 
-    void and32(Imm32 imm, RegisterID dest)
+    void and32(TrustedImm32 imm, RegisterID dest)
     {
         if (!imm.m_isPointer && !imm.m_value && !m_fixedWidth)
             move(MIPSRegisters::zero, dest);
@@ -250,7 +250,7 @@ public:
         }
     }
 
-    void lshift32(Imm32 imm, RegisterID dest)
+    void lshift32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.sll(dest, dest, imm.m_value);
     }
@@ -265,7 +265,7 @@ public:
         m_assembler.mul(dest, dest, src);
     }
 
-    void mul32(Imm32 imm, RegisterID src, RegisterID dest)
+    void mul32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         if (!imm.m_isPointer && !imm.m_value && !m_fixedWidth)
             move(MIPSRegisters::zero, dest);
@@ -296,7 +296,7 @@ public:
         m_assembler.orInsn(dest, dest, src);
     }
 
-    void or32(Imm32 imm, RegisterID dest)
+    void or32(TrustedImm32 imm, RegisterID dest)
     {
         if (!imm.m_isPointer && !imm.m_value && !m_fixedWidth)
             return;
@@ -320,7 +320,7 @@ public:
         m_assembler.srav(dest, dest, shiftAmount);
     }
 
-    void rshift32(Imm32 imm, RegisterID dest)
+    void rshift32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.sra(dest, dest, imm.m_value);
     }
@@ -330,7 +330,7 @@ public:
         m_assembler.srlv(dest, dest, shiftAmount);
     }
 
-    void urshift32(Imm32 imm, RegisterID dest)
+    void urshift32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.srl(dest, dest, imm.m_value);
     }
@@ -340,7 +340,7 @@ public:
         m_assembler.subu(dest, dest, src);
     }
 
-    void sub32(Imm32 imm, RegisterID dest)
+    void sub32(TrustedImm32 imm, RegisterID dest)
     {
         if (!imm.m_isPointer && imm.m_value >= -32767 && imm.m_value <= 32768
             && !m_fixedWidth) {
@@ -358,7 +358,7 @@ public:
         }
     }
 
-    void sub32(Imm32 imm, Address address)
+    void sub32(TrustedImm32 imm, Address address)
     {
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth) {
@@ -413,7 +413,7 @@ public:
         sub32(dataTempRegister, dest);
     }
 
-    void sub32(Imm32 imm, AbsoluteAddress address)
+    void sub32(TrustedImm32 imm, AbsoluteAddress address)
     {
         /*
            li   addrTemp, address
@@ -422,7 +422,7 @@ public:
            subu dataTemp, dataTemp, immTemp
            sw   dataTemp, 0(addrTemp)
         */
-        move(ImmPtr(address.m_ptr), addrTempRegister);
+        move(TrustedImmPtr(address.m_ptr), addrTempRegister);
         m_assembler.lw(dataTempRegister, addrTempRegister, 0);
 
         if (!imm.m_isPointer && imm.m_value >= -32767 && imm.m_value <= 32768
@@ -441,7 +441,7 @@ public:
         m_assembler.xorInsn(dest, dest, src);
     }
 
-    void xor32(Imm32 imm, RegisterID dest)
+    void xor32(TrustedImm32 imm, RegisterID dest)
     {
         /*
             li  immTemp, imm
@@ -459,7 +459,7 @@ public:
     // Memory access operations:
     //
     // Loads are of the form load(address, destination) and stores of the form
-    // store(source, address).  The source for a store may be an Imm32.  Address
+    // store(source, address).  The source for a store may be an TrustedImm32.  Address
     // operand objects to loads and store will be implicitly constructed if a
     // register is passed.
 
@@ -587,7 +587,7 @@ public:
             li  addrTemp, address
             lw  dest, 0(addrTemp)
         */
-        move(ImmPtr(address), addrTempRegister);
+        move(TrustedImmPtr(address), addrTempRegister);
         m_assembler.lw(dest, addrTempRegister, 0);
     }
 
@@ -601,7 +601,7 @@ public:
             lw  dest, 0(addrTemp)
         */
         DataLabel32 dataLabel(this);
-        move(Imm32(address.offset), addrTempRegister);
+        move(TrustedImm32(address.offset), addrTempRegister);
         m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
         m_assembler.lw(dest, addrTempRegister, 0);
         m_fixedWidth = false;
@@ -666,7 +666,7 @@ public:
             sw  src, 0(addrTemp)
         */
         DataLabel32 dataLabel(this);
-        move(Imm32(address.offset), addrTempRegister);
+        move(TrustedImm32(address.offset), addrTempRegister);
         m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
         m_assembler.sw(src, addrTempRegister, 0);
         m_fixedWidth = false;
@@ -719,7 +719,7 @@ public:
         }
     }
 
-    void store32(Imm32 imm, ImplicitAddress address)
+    void store32(TrustedImm32 imm, ImplicitAddress address)
     {
         if (address.offset >= -32768 && address.offset <= 32767
             && !m_fixedWidth) {
@@ -755,11 +755,11 @@ public:
             li  addrTemp, address
             sw  src, 0(addrTemp)
         */
-        move(ImmPtr(address), addrTempRegister);
+        move(TrustedImmPtr(address), addrTempRegister);
         m_assembler.sw(src, addrTempRegister, 0);
     }
 
-    void store32(Imm32 imm, const void* address)
+    void store32(TrustedImm32 imm, const void* address)
     {
         /*
             li  immTemp, imm
@@ -767,11 +767,11 @@ public:
             sw  src, 0(addrTemp)
         */
         if (!imm.m_isPointer && !imm.m_value && !m_fixedWidth) {
-            move(ImmPtr(address), addrTempRegister);
+            move(TrustedImmPtr(address), addrTempRegister);
             m_assembler.sw(MIPSRegisters::zero, addrTempRegister, 0);
         } else {
             move(imm, immTempRegister);
-            move(ImmPtr(address), addrTempRegister);
+            move(TrustedImmPtr(address), addrTempRegister);
             m_assembler.sw(immTempRegister, addrTempRegister, 0);
         }
     }
@@ -831,7 +831,7 @@ public:
         push(dataTempRegister);
     }
 
-    void push(Imm32 imm)
+    void push(TrustedImm32 imm)
     {
         move(imm, immTempRegister);
         push(immTempRegister);
@@ -841,7 +841,7 @@ public:
     //
     // Move values in registers.
 
-    void move(Imm32 imm, RegisterID dest)
+    void move(TrustedImm32 imm, RegisterID dest)
     {
         if (!imm.m_isPointer && !imm.m_value && !m_fixedWidth)
             move(MIPSRegisters::zero, dest);
@@ -858,9 +858,9 @@ public:
             m_assembler.move(dest, src);
     }
 
-    void move(ImmPtr imm, RegisterID dest)
+    void move(TrustedImmPtr imm, RegisterID dest)
     {
-        move(Imm32(imm), dest);
+        move(TrustedImm32(imm), dest);
     }
 
     void swap(RegisterID reg1, RegisterID reg2)
@@ -894,13 +894,13 @@ public:
     // used (representing the names 'below' and 'above').
     //
     // Operands to the comparision are provided in the expected order, e.g.
-    // jle32(reg1, Imm32(5)) will branch if the value held in reg1, when
+    // jle32(reg1, TrustedImm32(5)) will branch if the value held in reg1, when
     // treated as a signed 32bit value, is less than or equal to 5.
     //
     // jz and jnz test whether the first operand is equal to zero, and take
     // an optional second operand of a mask under which to perform the test.
 
-    Jump branch8(Condition cond, Address left, Imm32 right)
+    Jump branch8(Condition cond, Address left, TrustedImm32 right)
     {
         // Make sure the immediate value is unsigned 8 bits.
         ASSERT(!(right.m_value & 0xFFFFFF00));
@@ -985,7 +985,7 @@ public:
         return Jump();
     }
 
-    Jump branch32(Condition cond, RegisterID left, Imm32 right)
+    Jump branch32(Condition cond, RegisterID left, TrustedImm32 right)
     {
         move(right, immTempRegister);
         return branch32(cond, left, immTempRegister);
@@ -1003,14 +1003,14 @@ public:
         return branch32(cond, dataTempRegister, right);
     }
 
-    Jump branch32(Condition cond, Address left, Imm32 right)
+    Jump branch32(Condition cond, Address left, TrustedImm32 right)
     {
         load32(left, dataTempRegister);
         move(right, immTempRegister);
         return branch32(cond, dataTempRegister, immTempRegister);
     }
 
-    Jump branch32(Condition cond, BaseIndex left, Imm32 right)
+    Jump branch32(Condition cond, BaseIndex left, TrustedImm32 right)
     {
         load32(left, dataTempRegister);
         // Be careful that the previous load32() uses immTempRegister.
@@ -1019,7 +1019,7 @@ public:
         return branch32(cond, dataTempRegister, immTempRegister);
     }
 
-    Jump branch32WithUnalignedHalfWords(Condition cond, BaseIndex left, Imm32 right)
+    Jump branch32WithUnalignedHalfWords(Condition cond, BaseIndex left, TrustedImm32 right)
     {
         load32WithUnalignedHalfWords(left, dataTempRegister);
         // Be careful that the previous load32WithUnalignedHalfWords()
@@ -1035,7 +1035,7 @@ public:
         return branch32(cond, dataTempRegister, right);
     }
 
-    Jump branch32(Condition cond, AbsoluteAddress left, Imm32 right)
+    Jump branch32(Condition cond, AbsoluteAddress left, TrustedImm32 right)
     {
         load32(left.m_ptr, dataTempRegister);
         move(right, immTempRegister);
@@ -1048,7 +1048,7 @@ public:
         return branch32(cond, dataTempRegister, right);
     }
 
-    Jump branch16(Condition cond, BaseIndex left, Imm32 right)
+    Jump branch16(Condition cond, BaseIndex left, TrustedImm32 right)
     {
         ASSERT(!(right.m_value & 0xFFFF0000));
         load16(left, dataTempRegister);
@@ -1067,7 +1067,7 @@ public:
         return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
     }
 
-    Jump branchTest32(Condition cond, RegisterID reg, Imm32 mask = Imm32(-1))
+    Jump branchTest32(Condition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
         ASSERT((cond == Zero) || (cond == NonZero));
         if (mask.m_value == -1 && !m_fixedWidth) {
@@ -1079,19 +1079,19 @@ public:
         return branchTest32(cond, reg, immTempRegister);
     }
 
-    Jump branchTest32(Condition cond, Address address, Imm32 mask = Imm32(-1))
+    Jump branchTest32(Condition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
         load32(address, dataTempRegister);
         return branchTest32(cond, dataTempRegister, mask);
     }
 
-    Jump branchTest32(Condition cond, BaseIndex address, Imm32 mask = Imm32(-1))
+    Jump branchTest32(Condition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
         load32(address, dataTempRegister);
         return branchTest32(cond, dataTempRegister, mask);
     }
 
-    Jump branchTest8(Condition cond, Address address, Imm32 mask = Imm32(-1))
+    Jump branchTest8(Condition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
         load8(address, dataTempRegister);
         return branchTest32(cond, dataTempRegister, mask);
@@ -1174,7 +1174,7 @@ public:
         return Jump();
     }
 
-    Jump branchAdd32(Condition cond, Imm32 imm, RegisterID dest)
+    Jump branchAdd32(Condition cond, TrustedImm32 imm, RegisterID dest)
     {
         move(imm, immTempRegister);
         return branchAdd32(cond, immTempRegister, dest);
@@ -1225,7 +1225,7 @@ public:
         return Jump();
     }
 
-    Jump branchMul32(Condition cond, Imm32 imm, RegisterID src, RegisterID dest)
+    Jump branchMul32(Condition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         move(imm, immTempRegister);
         move(src, dest);
@@ -1279,7 +1279,7 @@ public:
         return Jump();
     }
 
-    Jump branchSub32(Condition cond, Imm32 imm, RegisterID dest)
+    Jump branchSub32(Condition cond, TrustedImm32 imm, RegisterID dest)
     {
         move(imm, immTempRegister);
         return branchSub32(cond, immTempRegister, dest);
@@ -1360,7 +1360,7 @@ public:
         set32Compare32(cond, left, right, dest);
     }
 
-    void set8Compare32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    void set8Compare32(Condition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
         move(right, immTempRegister);
         set32Compare32(cond, left, immTempRegister, dest);
@@ -1417,13 +1417,13 @@ public:
         }
     }
 
-    void set32Compare32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    void set32Compare32(Condition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
         move(right, immTempRegister);
         set32Compare32(cond, left, immTempRegister, dest);
     }
 
-    void set32Test8(Condition cond, Address address, Imm32 mask, RegisterID dest)
+    void set32Test8(Condition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
         ASSERT((cond == Zero) || (cond == NonZero));
         load8(address, dataTempRegister);
@@ -1443,7 +1443,7 @@ public:
         }
     }
 
-    void set32Test32(Condition cond, Address address, Imm32 mask, RegisterID dest)
+    void set32Test32(Condition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
         ASSERT((cond == Zero) || (cond == NonZero));
         load32(address, dataTempRegister);
@@ -1463,7 +1463,7 @@ public:
         }
     }
 
-    DataLabel32 moveWithPatch(Imm32 imm, RegisterID dest)
+    DataLabel32 moveWithPatch(TrustedImm32 imm, RegisterID dest)
     {
         m_fixedWidth = true;
         DataLabel32 label(this);
@@ -1472,7 +1472,7 @@ public:
         return label;
     }
 
-    DataLabelPtr moveWithPatch(ImmPtr initialValue, RegisterID dest)
+    DataLabelPtr moveWithPatch(TrustedImmPtr initialValue, RegisterID dest)
     {
         m_fixedWidth = true;
         DataLabelPtr label(this);
@@ -1481,7 +1481,7 @@ public:
         return label;
     }
 
-    Jump branchPtrWithPatch(Condition cond, RegisterID left, DataLabelPtr& dataLabel, ImmPtr initialRightValue = ImmPtr(0))
+    Jump branchPtrWithPatch(Condition cond, RegisterID left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
     {
         m_fixedWidth = true;
         dataLabel = moveWithPatch(initialRightValue, immTempRegister);
@@ -1490,7 +1490,7 @@ public:
         return temp;
     }
 
-    Jump branchPtrWithPatch(Condition cond, Address left, DataLabelPtr& dataLabel, ImmPtr initialRightValue = ImmPtr(0))
+    Jump branchPtrWithPatch(Condition cond, Address left, DataLabelPtr& dataLabel, TrustedImmPtr initialRightValue = TrustedImmPtr(0))
     {
         m_fixedWidth = true;
         load32(left, dataTempRegister);
@@ -1500,7 +1500,7 @@ public:
         return temp;
     }
 
-    DataLabelPtr storePtrWithPatch(ImmPtr initialValue, ImplicitAddress address)
+    DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, ImplicitAddress address)
     {
         m_fixedWidth = true;
         DataLabelPtr dataLabel = moveWithPatch(initialValue, dataTempRegister);
@@ -1511,14 +1511,14 @@ public:
 
     DataLabelPtr storePtrWithPatch(ImplicitAddress address)
     {
-        return storePtrWithPatch(ImmPtr(0), address);
+        return storePtrWithPatch(TrustedImmPtr(0), address);
     }
 
     Call tailRecursiveCall()
     {
         // Like a normal call, but don't update the returned address register
         m_fixedWidth = true;
-        move(Imm32(0), MIPSRegisters::t9);
+        move(TrustedImm32(0), MIPSRegisters::t9);
         m_assembler.jr(MIPSRegisters::t9);
         m_assembler.nop();
         m_fixedWidth = false;
@@ -1540,7 +1540,7 @@ public:
             lwc1        dest, 0(addrTemp)
             lwc1        dest+1, 4(addrTemp)
          */
-        move(Imm32(address.offset), addrTempRegister);
+        move(TrustedImm32(address.offset), addrTempRegister);
         m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
         m_assembler.lwc1(dest, addrTempRegister, 0);
         m_assembler.lwc1(FPRegisterID(dest + 1), addrTempRegister, 4);
@@ -1569,7 +1569,7 @@ public:
             lwc1        dest, 0(addrTemp)
             lwc1        dest+1, 4(addrTemp)
          */
-        move(ImmPtr(address), addrTempRegister);
+        move(TrustedImmPtr(address), addrTempRegister);
         m_assembler.lwc1(dest, addrTempRegister, 0);
         m_assembler.lwc1(FPRegisterID(dest + 1), addrTempRegister, 4);
 #else
@@ -1577,7 +1577,7 @@ public:
             li          addrTemp, address
             ldc1        dest, 0(addrTemp)
         */
-        move(ImmPtr(address), addrTempRegister);
+        move(TrustedImmPtr(address), addrTempRegister);
         m_assembler.ldc1(dest, addrTempRegister, 0);
 #endif
     }
@@ -1592,7 +1592,7 @@ public:
             swc1        dest, 0(addrTemp)
             swc1        dest+1, 4(addrTemp)
          */
-        move(Imm32(address.offset), addrTempRegister);
+        move(TrustedImm32(address.offset), addrTempRegister);
         m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
         m_assembler.swc1(src, addrTempRegister, 0);
         m_assembler.swc1(FPRegisterID(src + 1), addrTempRegister, 4);
@@ -1779,7 +1779,7 @@ public:
     {
         m_assembler.truncwd(fpTempRegister, src);
         m_assembler.mfc1(dest, fpTempRegister);
-        return branch32(Equal, dest, Imm32(0x7fffffff));
+        return branch32(Equal, dest, TrustedImm32(0x7fffffff));
     }
 
     // Convert 'src' to an integer, and places the resulting 'dest'.

@@ -83,7 +83,7 @@ public:
     // Integer arithmetic operations:
     //
     // Operations are typically two operand - operation(source, srcDst)
-    // For many operations the source may be an Imm32, the srcDst operand
+    // For many operations the source may be an TrustedImm32, the srcDst operand
     // may often be a memory location (explictly described using an Address
     // object).
 
@@ -92,12 +92,12 @@ public:
         m_assembler.addl_rr(src, dest);
     }
 
-    void add32(Imm32 imm, Address address)
+    void add32(TrustedImm32 imm, Address address)
     {
         m_assembler.addl_im(imm.m_value, address.offset, address.base);
     }
 
-    void add32(Imm32 imm, RegisterID dest)
+    void add32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.addl_ir(imm.m_value, dest);
     }
@@ -117,7 +117,7 @@ public:
         m_assembler.andl_rr(src, dest);
     }
 
-    void and32(Imm32 imm, RegisterID dest)
+    void and32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.andl_ir(imm.m_value, dest);
     }
@@ -132,7 +132,7 @@ public:
         m_assembler.andl_mr(src.offset, src.base, dest);
     }
 
-    void and32(Imm32 imm, Address address)
+    void and32(TrustedImm32 imm, Address address)
     {
         m_assembler.andl_im(imm.m_value, address.offset, address.base);
     }
@@ -149,7 +149,7 @@ public:
         }
     }
 
-    void and32(Imm32 imm, RegisterID src, RegisterID dest)
+    void and32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         move(src, dest);
         and32(imm, dest);
@@ -180,12 +180,12 @@ public:
         lshift32(shift_amount, dest);
     }
 
-    void lshift32(Imm32 imm, RegisterID dest)
+    void lshift32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.shll_i8r(imm.m_value, dest);
     }
     
-    void lshift32(RegisterID src, Imm32 imm, RegisterID dest)
+    void lshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
         if (src != dest)
             move(src, dest);
@@ -202,7 +202,7 @@ public:
         m_assembler.imull_mr(src.offset, src.base, dest);
     }
     
-    void mul32(Imm32 imm, RegisterID src, RegisterID dest)
+    void mul32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         m_assembler.imull_i32r(src, imm.m_value, dest);
     }
@@ -232,7 +232,7 @@ public:
         m_assembler.orl_rr(src, dest);
     }
 
-    void or32(Imm32 imm, RegisterID dest)
+    void or32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.orl_ir(imm.m_value, dest);
     }
@@ -247,7 +247,7 @@ public:
         m_assembler.orl_mr(src.offset, src.base, dest);
     }
 
-    void or32(Imm32 imm, Address address)
+    void or32(TrustedImm32 imm, Address address)
     {
         m_assembler.orl_im(imm.m_value, address.offset, address.base);
     }
@@ -264,7 +264,7 @@ public:
         }
     }
 
-    void or32(Imm32 imm, RegisterID src, RegisterID dest)
+    void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         move(src, dest);
         or32(imm, dest);
@@ -295,12 +295,12 @@ public:
         rshift32(shift_amount, dest);
     }
 
-    void rshift32(Imm32 imm, RegisterID dest)
+    void rshift32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.sarl_i8r(imm.m_value, dest);
     }
     
-    void rshift32(RegisterID src, Imm32 imm, RegisterID dest)
+    void rshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
         if (src != dest)
             move(src, dest);
@@ -332,12 +332,12 @@ public:
         urshift32(shift_amount, dest);
     }
 
-    void urshift32(Imm32 imm, RegisterID dest)
+    void urshift32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.shrl_i8r(imm.m_value, dest);
     }
     
-    void urshift32(RegisterID src, Imm32 imm, RegisterID dest)
+    void urshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
         if (src != dest)
             move(src, dest);
@@ -349,12 +349,12 @@ public:
         m_assembler.subl_rr(src, dest);
     }
     
-    void sub32(Imm32 imm, RegisterID dest)
+    void sub32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.subl_ir(imm.m_value, dest);
     }
     
-    void sub32(Imm32 imm, Address address)
+    void sub32(TrustedImm32 imm, Address address)
     {
         m_assembler.subl_im(imm.m_value, address.offset, address.base);
     }
@@ -375,12 +375,12 @@ public:
         m_assembler.xorl_rr(src, dest);
     }
 
-    void xor32(Imm32 imm, Address dest)
+    void xor32(TrustedImm32 imm, Address dest)
     {
         m_assembler.xorl_im(imm.m_value, dest.offset, dest.base);
     }
 
-    void xor32(Imm32 imm, RegisterID dest)
+    void xor32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.xorl_ir(imm.m_value, dest);
     }
@@ -398,7 +398,7 @@ public:
     void xor32(RegisterID op1, RegisterID op2, RegisterID dest)
     {
         if (op1 == op2)
-            move(Imm32(0), dest);
+            move(TrustedImm32(0), dest);
         else if (op1 == dest)
             xor32(op2, dest);
         else {
@@ -407,7 +407,7 @@ public:
         }
     }
 
-    void xor32(Imm32 imm, RegisterID src, RegisterID dest)
+    void xor32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         move(src, dest);
         xor32(imm, dest);
@@ -421,7 +421,7 @@ public:
     // Memory access operations:
     //
     // Loads are of the form load(address, destination) and stores of the form
-    // store(source, address).  The source for a store may be an Imm32.  Address
+    // store(source, address).  The source for a store may be an TrustedImm32.  Address
     // operand objects to loads and store will be implicitly constructed if a
     // register is passed.
 
@@ -472,7 +472,7 @@ public:
         m_assembler.movl_rm(src, address.offset, address.base, address.index, address.scale);
     }
 
-    void store32(Imm32 imm, ImplicitAddress address)
+    void store32(TrustedImm32 imm, ImplicitAddress address)
     {
         m_assembler.movl_i32m(imm.m_value, address.offset, address.base);
     }
@@ -637,7 +637,7 @@ public:
     {
         ASSERT(isSSE2Present());
         m_assembler.cvttsd2si_rr(src, dest);
-        return branch32(branchType ? NotEqual : Equal, dest, Imm32(0x80000000));
+        return branch32(branchType ? NotEqual : Equal, dest, TrustedImm32(0x80000000));
     }
 
     // Convert 'src' to an integer, and places the resulting 'dest'.
@@ -696,7 +696,7 @@ public:
         m_assembler.push_m(address.offset, address.base);
     }
 
-    void push(Imm32 imm)
+    void push(TrustedImm32 imm)
     {
         m_assembler.push_i32(imm.m_value);
     }
@@ -706,9 +706,9 @@ public:
     //
     // Move values in registers.
 
-    void move(Imm32 imm, RegisterID dest)
+    void move(TrustedImm32 imm, RegisterID dest)
     {
-        // Note: on 64-bit the Imm32 value is zero extended into the register, it
+        // Note: on 64-bit the TrustedImm32 value is zero extended into the register, it
         // may be useful to have a separate version that sign extends the value?
         if (!imm.m_value)
             m_assembler.xorl_rr(dest, dest);
@@ -725,7 +725,7 @@ public:
             m_assembler.movq_rr(src, dest);
     }
 
-    void move(ImmPtr imm, RegisterID dest)
+    void move(TrustedImmPtr imm, RegisterID dest)
     {
         m_assembler.movq_i64r(imm.asIntptr(), dest);
     }
@@ -752,7 +752,7 @@ public:
             m_assembler.movl_rr(src, dest);
     }
 
-    void move(ImmPtr imm, RegisterID dest)
+    void move(TrustedImmPtr imm, RegisterID dest)
     {
         m_assembler.movl_i32r(imm.asIntptr(), dest);
     }
@@ -787,14 +787,14 @@ public:
     // used (representing the names 'below' and 'above').
     //
     // Operands to the comparision are provided in the expected order, e.g.
-    // jle32(reg1, Imm32(5)) will branch if the value held in reg1, when
+    // jle32(reg1, TrustedImm32(5)) will branch if the value held in reg1, when
     // treated as a signed 32bit value, is less than or equal to 5.
     //
     // jz and jnz test whether the first operand is equal to zero, and take
     // an optional second operand of a mask under which to perform the test.
 
 public:
-    Jump branch8(Condition cond, Address left, Imm32 right)
+    Jump branch8(Condition cond, Address left, TrustedImm32 right)
     {
         m_assembler.cmpb_im(right.m_value, left.offset, left.base);
         return Jump(m_assembler.jCC(x86Condition(cond)));
@@ -806,7 +806,7 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branch32(Condition cond, RegisterID left, Imm32 right)
+    Jump branch32(Condition cond, RegisterID left, TrustedImm32 right)
     {
         if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
             m_assembler.testl_rr(left, left);
@@ -827,19 +827,19 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branch32(Condition cond, Address left, Imm32 right)
+    Jump branch32(Condition cond, Address left, TrustedImm32 right)
     {
         m_assembler.cmpl_im(right.m_value, left.offset, left.base);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branch32(Condition cond, BaseIndex left, Imm32 right)
+    Jump branch32(Condition cond, BaseIndex left, TrustedImm32 right)
     {
         m_assembler.cmpl_im(right.m_value, left.offset, left.base, left.index, left.scale);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branch32WithUnalignedHalfWords(Condition cond, BaseIndex left, Imm32 right)
+    Jump branch32WithUnalignedHalfWords(Condition cond, BaseIndex left, TrustedImm32 right)
     {
         return branch32(cond, left, right);
     }
@@ -850,7 +850,7 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branch16(Condition cond, BaseIndex left, Imm32 right)
+    Jump branch16(Condition cond, BaseIndex left, TrustedImm32 right)
     {
         ASSERT(!(right.m_value & 0xFFFF0000));
 
@@ -865,7 +865,7 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchTest32(Condition cond, RegisterID reg, Imm32 mask = Imm32(-1))
+    Jump branchTest32(Condition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
         ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         // if we are only interested in the low seven bits, this can be tested with a testb
@@ -878,7 +878,7 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchTest32(Condition cond, Address address, Imm32 mask = Imm32(-1))
+    Jump branchTest32(Condition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
         ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         if (mask.m_value == -1)
@@ -888,7 +888,7 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchTest32(Condition cond, BaseIndex address, Imm32 mask = Imm32(-1))
+    Jump branchTest32(Condition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
         ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         if (mask.m_value == -1)
@@ -898,9 +898,9 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branchTest8(Condition cond, RegisterID reg, Imm32 mask = Imm32(-1))
+    Jump branchTest8(Condition cond, RegisterID reg, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // Byte in Imm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
+        // Byte in TrustedImm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
         ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
         ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         if (mask.m_value == -1)
@@ -910,9 +910,9 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchTest8(Condition cond, Address address, Imm32 mask = Imm32(-1))
+    Jump branchTest8(Condition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // Byte in Imm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
+        // Byte in TrustedImm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
         ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
         ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         if (mask.m_value == -1)
@@ -922,9 +922,9 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branchTest8(Condition cond, BaseIndex address, Imm32 mask = Imm32(-1))
+    Jump branchTest8(Condition cond, BaseIndex address, TrustedImm32 mask = TrustedImm32(-1))
     {
-        // Byte in Imm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
+        // Byte in TrustedImm32 is not well defined, so be a little permisive here, but don't accept nonsense values.
         ASSERT(mask.m_value >= -128 && mask.m_value <= 255);
         ASSERT((cond == Zero) || (cond == NonZero) || (cond == Signed));
         if (mask.m_value == -1)
@@ -968,14 +968,14 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchAdd32(Condition cond, Imm32 imm, RegisterID dest)
+    Jump branchAdd32(Condition cond, TrustedImm32 imm, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         add32(imm, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branchAdd32(Condition cond, Imm32 src, Address dest)
+    Jump branchAdd32(Condition cond, TrustedImm32 src, Address dest)
     {
         ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         add32(src, dest);
@@ -1004,7 +1004,7 @@ public:
         return branchAdd32(cond, src1, dest);
     }
 
-    Jump branchAdd32(Condition cond, Imm32 imm, RegisterID src, RegisterID dest)
+    Jump branchAdd32(Condition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         move(src, dest);
         return branchAdd32(cond, imm, dest);
@@ -1024,7 +1024,7 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branchMul32(Condition cond, Imm32 imm, RegisterID src, RegisterID dest)
+    Jump branchMul32(Condition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         ASSERT(cond == Overflow);
         mul32(imm, src, dest);
@@ -1046,14 +1046,14 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branchSub32(Condition cond, Imm32 imm, RegisterID dest)
+    Jump branchSub32(Condition cond, TrustedImm32 imm, RegisterID dest)
     {
         ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
         sub32(imm, dest);
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branchSub32(Condition cond, Imm32 imm, Address dest)
+    Jump branchSub32(Condition cond, TrustedImm32 imm, Address dest)
     {
         ASSERT((cond == Overflow) || (cond == Zero) || (cond == NonZero));
         sub32(imm, dest);
@@ -1137,7 +1137,7 @@ public:
         m_assembler.setCC_r(x86Condition(cond), dest);
     }
 
-    void set8Compare32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    void set8Compare32(Condition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
         if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
             m_assembler.testl_rr(left, left);
@@ -1153,7 +1153,7 @@ public:
         m_assembler.movzbl_rr(dest, dest);
     }
 
-    void set32Compare32(Condition cond, RegisterID left, Imm32 right, RegisterID dest)
+    void set32Compare32(Condition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {
         if (((cond == Equal) || (cond == NotEqual)) && !right.m_value)
             m_assembler.testl_rr(left, left);
@@ -1168,7 +1168,7 @@ public:
     // dest-src, operations always have a dest? ... possibly not true, considering
     // asm ops like test, or pseudo ops like pop().
 
-    void set32Test8(Condition cond, Address address, Imm32 mask, RegisterID dest)
+    void set32Test8(Condition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
         if (mask.m_value == -1)
             m_assembler.cmpb_im(0, address.offset, address.base);
@@ -1178,7 +1178,7 @@ public:
         m_assembler.movzbl_rr(dest, dest);
     }
 
-    void set32Test32(Condition cond, Address address, Imm32 mask, RegisterID dest)
+    void set32Test32(Condition cond, Address address, TrustedImm32 mask, RegisterID dest)
     {
         if (mask.m_value == -1)
             m_assembler.cmpl_im(0, address.offset, address.base);

@@ -92,7 +92,7 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock, void* linkerOffset)
 #if USE(JSVALUE32_64)
 void JIT::emitTimeoutCheck()
 {
-    Jump skipTimeout = branchSub32(NonZero, Imm32(1), timeoutCheckRegister);
+    Jump skipTimeout = branchSub32(NonZero, TrustedImm32(1), timeoutCheckRegister);
     JITStubCall stubCall(this, cti_timeout_check);
     stubCall.addArgument(regT1, regT0); // save last result registers.
     stubCall.call(timeoutCheckRegister);
@@ -102,7 +102,7 @@ void JIT::emitTimeoutCheck()
 #else
 void JIT::emitTimeoutCheck()
 {
-    Jump skipTimeout = branchSub32(NonZero, Imm32(1), timeoutCheckRegister);
+    Jump skipTimeout = branchSub32(NonZero, TrustedImm32(1), timeoutCheckRegister);
     JITStubCall(this, cti_timeout_check).call(timeoutCheckRegister);
     skipTimeout.link(this);
 
@@ -497,7 +497,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
         arityCheck = label();
         preserveReturnAddressAfterCall(regT2);
         emitPutToCallFrameHeader(regT2, RegisterFile::ReturnPC);
-        branch32(Equal, regT1, Imm32(m_codeBlock->m_numParameters)).linkTo(beginLabel, this);
+        branch32(Equal, regT1, TrustedImm32(m_codeBlock->m_numParameters)).linkTo(beginLabel, this);
         restoreArgumentReference();
 
         JITStubCall(this, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck).call(callFrameRegister);

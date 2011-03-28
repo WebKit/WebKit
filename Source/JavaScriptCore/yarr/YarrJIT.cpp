@@ -157,7 +157,7 @@ class YarrGenerator : private MacroAssembler {
         }
         Jump unicodeFail;
         if (charClass->m_matchesUnicode.size() || charClass->m_rangesUnicode.size()) {
-            Jump isAscii = branch32(LessThanOrEqual, character, Imm32(0x7f));
+            Jump isAscii = branch32(LessThanOrEqual, character, TrustedImm32(0x7f));
 
             if (charClass->m_matchesUnicode.size()) {
                 for (unsigned i = 0; i < charClass->m_matchesUnicode.size(); ++i) {
@@ -207,9 +207,9 @@ class YarrGenerator : private MacroAssembler {
             }
 
             if (unsigned countAZaz = matchesAZaz.size()) {
-                or32(Imm32(32), character);
+                or32(TrustedImm32(32), character);
                 for (unsigned i = 0; i < countAZaz; ++i)
-                    matchDest.append(branch32(Equal, character, Imm32(matchesAZaz[i])));
+                    matchDest.append(branch32(Equal, character, TrustedImm32(matchesAZaz[i])));
             }
         }
 
@@ -265,14 +265,14 @@ class YarrGenerator : private MacroAssembler {
         poke(reg, frameLocation);
     }
 
-    void storeToFrame(Imm32 imm, unsigned frameLocation)
+    void storeToFrame(TrustedImm32 imm, unsigned frameLocation)
     {
         poke(imm, frameLocation);
     }
 
     DataLabelPtr storeToFrameWithPatch(unsigned frameLocation)
     {
-        return storePtrWithPatch(ImmPtr(0), Address(stackPointerRegister, frameLocation * sizeof(void*)));
+        return storePtrWithPatch(TrustedImmPtr(0), Address(stackPointerRegister, frameLocation * sizeof(void*)));
     }
 
     void loadFromFrame(unsigned frameLocation, RegisterID reg)
@@ -1109,11 +1109,11 @@ class YarrGenerator : private MacroAssembler {
             if (m_term.quantityType == QuantifierGreedy) {
                 // If this is -1 we have now tested with both with and without the parens.
                 generator->loadFromFrame(parenthesesFrameLocation, indexTemporary);
-                m_backtrack.jumpToBacktrack(generator, generator->branch32(Equal, indexTemporary, Imm32(-1)));
+                m_backtrack.jumpToBacktrack(generator, generator->branch32(Equal, indexTemporary, TrustedImm32(-1)));
             } else if (m_term.quantityType == QuantifierNonGreedy) {
                 // If this is -1 we have now tested with both with and without the parens.
                 generator->loadFromFrame(parenthesesFrameLocation, indexTemporary);
-                generator->branch32(Equal, indexTemporary, Imm32(-1)).linkTo(m_nonGreedyTryParentheses, generator);
+                generator->branch32(Equal, indexTemporary, TrustedImm32(-1)).linkTo(m_nonGreedyTryParentheses, generator);
             }
 
             if (!m_doDirectBacktrack)
@@ -1126,10 +1126,10 @@ class YarrGenerator : private MacroAssembler {
             m_withinBacktrackJumps.link(generator);
 
             if (m_term.capture())
-                generator->store32(Imm32(-1), Address(output, (m_term.parentheses.subpatternId << 1) * sizeof(int)));
+                generator->store32(TrustedImm32(-1), Address(output, (m_term.parentheses.subpatternId << 1) * sizeof(int)));
 
             if (m_term.quantityType == QuantifierGreedy) {
-                generator->storeToFrame(Imm32(-1), parenthesesFrameLocation);
+                generator->storeToFrame(TrustedImm32(-1), parenthesesFrameLocation);
                 generator->jump().linkTo(m_fallThrough, generator);
                 nextBacktrackFallThrough = false;
             } else if (!nextBacktrackFallThrough)
@@ -1271,7 +1271,7 @@ class YarrGenerator : private MacroAssembler {
 
         if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
             readCharacter(state.inputOffset(), character);
-            or32(Imm32(32), character);
+            or32(TrustedImm32(32), character);
             state.jumpToBacktrack(this, branch32(NotEqual, character, Imm32(Unicode::toLower(ch))));
         } else {
             ASSERT(!m_pattern.m_ignoreCase || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
@@ -1316,13 +1316,13 @@ class YarrGenerator : private MacroAssembler {
         Label loop(this);
         if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
             load16(BaseIndex(input, countRegister, TimesTwo, (state.inputOffset() + term.quantityCount) * sizeof(UChar)), character);
-            or32(Imm32(32), character);
+            or32(TrustedImm32(32), character);
             state.jumpToBacktrack(this, branch32(NotEqual, character, Imm32(Unicode::toLower(ch))));
         } else {
             ASSERT(!m_pattern.m_ignoreCase || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
             state.jumpToBacktrack(this, branch16(NotEqual, BaseIndex(input, countRegister, TimesTwo, (state.inputOffset() + term.quantityCount) * sizeof(UChar)), Imm32(ch)));
         }
-        add32(Imm32(1), countRegister);
+        add32(TrustedImm32(1), countRegister);
         branch32(NotEqual, countRegister, index).linkTo(loop, this);
     }
 
@@ -1333,22 +1333,22 @@ class YarrGenerator : private MacroAssembler {
         PatternTerm& term = state.term();
         UChar ch = term.patternCharacter;
 
-        move(Imm32(0), countRegister);
+        move(TrustedImm32(0), countRegister);
 
         JumpList failures;
         Label loop(this);
         failures.append(atEndOfInput());
         if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
             readCharacter(state.inputOffset(), character);
-            or32(Imm32(32), character);
+            or32(TrustedImm32(32), character);
             failures.append(branch32(NotEqual, character, Imm32(Unicode::toLower(ch))));
         } else {
             ASSERT(!m_pattern.m_ignoreCase || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
             failures.append(jumpIfCharNotEquals(ch, state.inputOffset()));
         }
 
-        add32(Imm32(1), countRegister);
-        add32(Imm32(1), index);
+        add32(TrustedImm32(1), countRegister);
+        add32(TrustedImm32(1), index);
         if (term.quantityCount != quantifyInfinite) {
             branch32(NotEqual, countRegister, Imm32(term.quantityCount)).linkTo(loop, this);
             failures.append(jump());
@@ -1358,8 +1358,8 @@ class YarrGenerator : private MacroAssembler {
         Label backtrackBegin(this);
         loadFromFrame(term.frameLocation, countRegister);
         state.jumpToBacktrack(this, branchTest32(Zero, countRegister));
-        sub32(Imm32(1), countRegister);
-        sub32(Imm32(1), index);
+        sub32(TrustedImm32(1), countRegister);
+        sub32(TrustedImm32(1), index);
 
         failures.link(this);
 
@@ -1375,7 +1375,7 @@ class YarrGenerator : private MacroAssembler {
         PatternTerm& term = state.term();
         UChar ch = term.patternCharacter;
 
-        move(Imm32(0), countRegister);
+        move(TrustedImm32(0), countRegister);
 
         Jump firstTimeDoNothing = jump();
 
@@ -1391,15 +1391,15 @@ class YarrGenerator : private MacroAssembler {
             branch32(Equal, countRegister, Imm32(term.quantityCount), hardFail);
         if (m_pattern.m_ignoreCase && isASCIIAlpha(ch)) {
             readCharacter(state.inputOffset(), character);
-            or32(Imm32(32), character);
+            or32(TrustedImm32(32), character);
             branch32(NotEqual, character, Imm32(Unicode::toLower(ch))).linkTo(hardFail, this);
         } else {
             ASSERT(!m_pattern.m_ignoreCase || (Unicode::toLower(ch) == Unicode::toUpper(ch)));
             jumpIfCharNotEquals(ch, state.inputOffset()).linkTo(hardFail, this);
         }
 
-        add32(Imm32(1), countRegister);
-        add32(Imm32(1), index);
+        add32(TrustedImm32(1), countRegister);
+        add32(TrustedImm32(1), index);
 
         firstTimeDoNothing.link(this);
         storeToFrame(countRegister, term.frameLocation);
@@ -1445,7 +1445,7 @@ class YarrGenerator : private MacroAssembler {
             matchDest.link(this);
         }
 
-        add32(Imm32(1), countRegister);
+        add32(TrustedImm32(1), countRegister);
         branch32(NotEqual, countRegister, index).linkTo(loop, this);
     }
 
@@ -1455,7 +1455,7 @@ class YarrGenerator : private MacroAssembler {
         const RegisterID countRegister = regT1;
         PatternTerm& term = state.term();
 
-        move(Imm32(0), countRegister);
+        move(TrustedImm32(0), countRegister);
 
         JumpList failures;
         Label loop(this);
@@ -1472,8 +1472,8 @@ class YarrGenerator : private MacroAssembler {
             matchDest.link(this);
         }
 
-        add32(Imm32(1), countRegister);
-        add32(Imm32(1), index);
+        add32(TrustedImm32(1), countRegister);
+        add32(TrustedImm32(1), index);
         if (term.quantityCount != quantifyInfinite) {
             branch32(NotEqual, countRegister, Imm32(term.quantityCount)).linkTo(loop, this);
             failures.append(jump());
@@ -1483,8 +1483,8 @@ class YarrGenerator : private MacroAssembler {
         Label backtrackBegin(this);
         loadFromFrame(term.frameLocation, countRegister);
         state.jumpToBacktrack(this, branchTest32(Zero, countRegister));
-        sub32(Imm32(1), countRegister);
-        sub32(Imm32(1), index);
+        sub32(TrustedImm32(1), countRegister);
+        sub32(TrustedImm32(1), index);
 
         failures.link(this);
 
@@ -1499,7 +1499,7 @@ class YarrGenerator : private MacroAssembler {
         const RegisterID countRegister = regT1;
         PatternTerm& term = state.term();
 
-        move(Imm32(0), countRegister);
+        move(TrustedImm32(0), countRegister);
 
         Jump firstTimeDoNothing = jump();
 
@@ -1524,8 +1524,8 @@ class YarrGenerator : private MacroAssembler {
             matchDest.link(this);
         }
 
-        add32(Imm32(1), countRegister);
-        add32(Imm32(1), index);
+        add32(TrustedImm32(1), countRegister);
+        add32(TrustedImm32(1), index);
 
         firstTimeDoNothing.link(this);
         storeToFrame(countRegister, term.frameLocation);
@@ -1669,7 +1669,7 @@ class YarrGenerator : private MacroAssembler {
             if (term.quantityType == QuantifierGreedy)
                 storeToFrame(index, parenthesesFrameLocation);
             else if (term.quantityType == QuantifierNonGreedy) {
-                storeToFrame(Imm32(-1), parenthesesFrameLocation);
+                storeToFrame(TrustedImm32(-1), parenthesesFrameLocation);
                 nonGreedySkipParentheses = jump();
                 nonGreedyTryParentheses = label();
                 storeToFrame(index, parenthesesFrameLocation);
@@ -2140,7 +2140,7 @@ class YarrGenerator : private MacroAssembler {
         if (m_pattern.m_body->m_callFrameSize)
             addPtr(Imm32(m_pattern.m_body->m_callFrameSize * sizeof(void*)), stackPointerRegister);
 
-        move(Imm32(-1), returnRegister);
+        move(TrustedImm32(-1), returnRegister);
 
         generateReturn();
 

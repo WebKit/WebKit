@@ -376,7 +376,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
 void JITCompiler::jitAssertIsInt32(GPRReg gpr)
 {
 #if CPU(X86_64)
-    Jump checkInt32 = branchPtr(BelowOrEqual, gprToRegisterID(gpr), ImmPtr(reinterpret_cast<void*>(static_cast<uintptr_t>(0xFFFFFFFFu))));
+    Jump checkInt32 = branchPtr(BelowOrEqual, gprToRegisterID(gpr), TrustedImmPtr(reinterpret_cast<void*>(static_cast<uintptr_t>(0xFFFFFFFFu))));
     breakpoint();
     checkInt32.link(this);
 #else
@@ -411,7 +411,7 @@ void JITCompiler::jitAssertIsJSDouble(GPRReg gpr)
 #if ENABLE(SAMPLING_COUNTERS) && CPU(X86_64) // Or any other 64-bit platform!
 void JITCompiler::emitCount(AbstractSamplingCounter& counter, uint32_t increment)
 {
-    addPtr(Imm32(increment), AbsoluteAddress(counter.addressOfCounter()));
+    addPtr(TrustedImm32(increment), AbsoluteAddress(counter.addressOfCounter()));
 }
 #endif
 
@@ -419,8 +419,8 @@ void JITCompiler::emitCount(AbstractSamplingCounter& counter, uint32_t increment
 void JITCompiler::emitCount(AbstractSamplingCounter& counter, uint32_t increment)
 {
     intptr_t hiWord = reinterpret_cast<intptr_t>(counter.addressOfCounter()) + sizeof(int32_t);
-    add32(Imm32(increment), AbsoluteAddress(counter.addressOfCounter()));
-    addWithCarry32(Imm32(0), AbsoluteAddress(reinterpret_cast<void*>(hiWord)));
+    add32(TrustedImm32(increment), AbsoluteAddress(counter.addressOfCounter()));
+    addWithCarry32(TrustedImm32(0), AbsoluteAddress(reinterpret_cast<void*>(hiWord)));
 }
 #endif
 

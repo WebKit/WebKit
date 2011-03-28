@@ -43,7 +43,7 @@ namespace JSC {
             , m_pool(pool)
         {
             // Check that we have the expected number of arguments
-            m_failures.append(branch32(NotEqual, Address(callFrameRegister, RegisterFile::ArgumentCount * (int)sizeof(Register)), Imm32(expectedArgCount + 1)));
+            m_failures.append(branch32(NotEqual, Address(callFrameRegister, RegisterFile::ArgumentCount * (int)sizeof(Register)), TrustedImm32(expectedArgCount + 1)));
         }
         
         void loadDoubleArgument(int argument, FPRegisterID dst, RegisterID scratch)
@@ -61,7 +61,7 @@ namespace JSC {
         void loadJSStringArgument(int argument, RegisterID dst)
         {
             loadCellArgument(argument, dst);
-            m_failures.append(branchPtr(NotEqual, Address(dst, 0), ImmPtr(m_globalData->jsStringVPtr)));
+            m_failures.append(branchPtr(NotEqual, Address(dst, 0), TrustedImmPtr(m_globalData->jsStringVPtr)));
             m_failures.append(branchTest32(NonZero, Address(dst, OBJECT_OFFSETOF(JSString, m_fiberCount))));
         }
         
@@ -141,14 +141,14 @@ namespace JSC {
 #if USE(JSVALUE64)
             orPtr(tagTypeNumberRegister, regT0);
 #else
-            move(Imm32(JSValue::Int32Tag), regT1);
+            move(TrustedImm32(JSValue::Int32Tag), regT1);
 #endif
         }
 
         void tagReturnAsJSCell()
         {
 #if USE(JSVALUE32_64)
-            move(Imm32(JSValue::CellTag), regT1);
+            move(TrustedImm32(JSValue::CellTag), regT1);
 #endif
         }
         

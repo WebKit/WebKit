@@ -167,7 +167,7 @@ void JIT::emit_op_urshift(Instruction* currentInstruction)
         // a toUint conversion, which can result in a value we can represent
         // as an immediate int.
         if (shift < 0 || !(shift & 31))
-            addSlowCase(branch32(LessThan, regT0, Imm32(0)));
+            addSlowCase(branch32(LessThan, regT0, TrustedImm32(0)));
         emitFastArithReTagImmediate(regT0, regT0);
         emitPutVirtualRegister(dst, regT0);
         return;
@@ -179,7 +179,7 @@ void JIT::emit_op_urshift(Instruction* currentInstruction)
     emitFastArithImmToInt(regT0);
     emitFastArithImmToInt(regT1);
     urshift32(regT1, regT0);
-    addSlowCase(branch32(LessThan, regT0, Imm32(0)));
+    addSlowCase(branch32(LessThan, regT0, TrustedImm32(0)));
     emitFastArithReTagImmediate(regT0, regT0);
     emitPutVirtualRegister(dst, regT0);
 }
@@ -202,7 +202,7 @@ void JIT::emitSlow_op_urshift(Instruction* currentInstruction, Vector<SlowCaseEn
             if (shift)
                 urshift32(Imm32(shift & 0x1f), regT0);
             if (shift < 0 || !(shift & 31))
-                failures.append(branch32(LessThan, regT0, Imm32(0)));
+                failures.append(branch32(LessThan, regT0, TrustedImm32(0)));
             emitFastArithReTagImmediate(regT0, regT0);
             emitPutVirtualRegister(dst, regT0);
             emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_rshift));
@@ -224,7 +224,7 @@ void JIT::emitSlow_op_urshift(Instruction* currentInstruction, Vector<SlowCaseEn
                 failures.append(emitJumpIfNotImmediateInteger(regT1)); // op2 is not an int
                 emitFastArithImmToInt(regT1);
                 urshift32(regT1, regT0);
-                failures.append(branch32(LessThan, regT0, Imm32(0)));
+                failures.append(branch32(LessThan, regT0, TrustedImm32(0)));
                 emitFastArithReTagImmediate(regT0, regT0);
                 emitPutVirtualRegister(dst, regT0);
                 emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_rshift));
@@ -773,7 +773,7 @@ void JIT::emit_op_post_inc(Instruction* currentInstruction)
     emitGetVirtualRegister(srcDst, regT0);
     move(regT0, regT1);
     emitJumpSlowCaseIfNotImmediateInteger(regT0);
-    addSlowCase(branchAdd32(Overflow, Imm32(1), regT1));
+    addSlowCase(branchAdd32(Overflow, TrustedImm32(1), regT1));
     emitFastArithIntToImmNoCheck(regT1, regT1);
     emitPutVirtualRegister(srcDst, regT1);
     emitPutVirtualRegister(result);
@@ -800,7 +800,7 @@ void JIT::emit_op_post_dec(Instruction* currentInstruction)
     emitGetVirtualRegister(srcDst, regT0);
     move(regT0, regT1);
     emitJumpSlowCaseIfNotImmediateInteger(regT0);
-    addSlowCase(branchSub32(Zero, Imm32(1), regT1));
+    addSlowCase(branchSub32(Zero, TrustedImm32(1), regT1));
     emitFastArithIntToImmNoCheck(regT1, regT1);
     emitPutVirtualRegister(srcDst, regT1);
     emitPutVirtualRegister(result);
@@ -825,7 +825,7 @@ void JIT::emit_op_pre_inc(Instruction* currentInstruction)
 
     emitGetVirtualRegister(srcDst, regT0);
     emitJumpSlowCaseIfNotImmediateInteger(regT0);
-    addSlowCase(branchAdd32(Overflow, Imm32(1), regT0));
+    addSlowCase(branchAdd32(Overflow, TrustedImm32(1), regT0));
     emitFastArithIntToImmNoCheck(regT0, regT0);
     emitPutVirtualRegister(srcDst);
 }
@@ -849,7 +849,7 @@ void JIT::emit_op_pre_dec(Instruction* currentInstruction)
 
     emitGetVirtualRegister(srcDst, regT0);
     emitJumpSlowCaseIfNotImmediateInteger(regT0);
-    addSlowCase(branchSub32(Zero, Imm32(1), regT0));
+    addSlowCase(branchSub32(Zero, TrustedImm32(1), regT0));
     emitFastArithIntToImmNoCheck(regT0, regT0);
     emitPutVirtualRegister(srcDst);
 }
@@ -888,7 +888,7 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     emitJumpSlowCaseIfNotImmediateInteger(regT0);
     emitJumpSlowCaseIfNotImmediateInteger(regT2);
 
-    addSlowCase(branchPtr(Equal, regT2, ImmPtr(JSValue::encode(jsNumber(0)))));
+    addSlowCase(branchPtr(Equal, regT2, TrustedImmPtr(JSValue::encode(jsNumber(0)))));
     m_assembler.cdq();
     m_assembler.idivl_r(regT2);
     emitFastArithReTagImmediate(regT1, regT0);

@@ -202,14 +202,14 @@ namespace JSC {
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitJumpIfNotJSCell(unsigned virtualRegisterIndex)
     {
         ASSERT(static_cast<int>(virtualRegisterIndex) < FirstConstantRegisterIndex);
-        return branch32(NotEqual, tagFor(virtualRegisterIndex), Imm32(JSValue::CellTag));
+        return branch32(NotEqual, tagFor(virtualRegisterIndex), TrustedImm32(JSValue::CellTag));
     }
     
     inline JSInterfaceJIT::Jump JSInterfaceJIT::emitLoadInt32(unsigned virtualRegisterIndex, RegisterID dst)
     {
         ASSERT(static_cast<int>(virtualRegisterIndex) < FirstConstantRegisterIndex);
         loadPtr(payloadFor(virtualRegisterIndex), dst);
-        return branch32(NotEqual, tagFor(static_cast<int>(virtualRegisterIndex)), Imm32(JSValue::Int32Tag));
+        return branch32(NotEqual, tagFor(static_cast<int>(virtualRegisterIndex)), TrustedImm32(JSValue::Int32Tag));
     }
     
     inline JSInterfaceJIT::Address JSInterfaceJIT::tagFor(int virtualRegisterIndex, RegisterID base)
@@ -238,8 +238,8 @@ namespace JSC {
     {
         ASSERT(static_cast<int>(virtualRegisterIndex) < FirstConstantRegisterIndex);
         loadPtr(tagFor(virtualRegisterIndex), scratch);
-        Jump isDouble = branch32(Below, scratch, Imm32(JSValue::LowestTag));
-        Jump notInt = branch32(NotEqual, scratch, Imm32(JSValue::Int32Tag));
+        Jump isDouble = branch32(Below, scratch, TrustedImm32(JSValue::LowestTag));
+        Jump notInt = branch32(NotEqual, scratch, TrustedImm32(JSValue::Int32Tag));
         loadPtr(payloadFor(virtualRegisterIndex), scratch);
         convertInt32ToDouble(scratch, dst);
         Jump done = jump();

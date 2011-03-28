@@ -57,8 +57,8 @@ static void stringCharLoad(SpecializedThunkJIT& jit)
 
 static void charToString(SpecializedThunkJIT& jit, JSGlobalData* globalData, MacroAssembler::RegisterID src, MacroAssembler::RegisterID dst, MacroAssembler::RegisterID scratch)
 {
-    jit.appendFailure(jit.branch32(MacroAssembler::AboveOrEqual, src, MacroAssembler::Imm32(0x100)));
-    jit.move(MacroAssembler::ImmPtr(globalData->smallStrings.singleCharacterStrings()), scratch);
+    jit.appendFailure(jit.branch32(MacroAssembler::AboveOrEqual, src, MacroAssembler::TrustedImm32(0x100)));
+    jit.move(MacroAssembler::TrustedImmPtr(globalData->smallStrings.singleCharacterStrings()), scratch);
     jit.loadPtr(MacroAssembler::BaseIndex(scratch, src, MacroAssembler::ScalePtr, 0), dst);
     jit.appendFailure(jit.branchTestPtr(MacroAssembler::Zero, dst));
 }
@@ -115,16 +115,16 @@ MacroAssemblerCodePtr powThunkGenerator(JSGlobalData* globalData, ExecutablePool
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     MacroAssembler::Jump nonIntExponent;
     jit.loadInt32Argument(1, SpecializedThunkJIT::regT0, nonIntExponent);
-    jit.appendFailure(jit.branch32(MacroAssembler::LessThan, SpecializedThunkJIT::regT0, MacroAssembler::Imm32(0)));
+    jit.appendFailure(jit.branch32(MacroAssembler::LessThan, SpecializedThunkJIT::regT0, MacroAssembler::TrustedImm32(0)));
     
     MacroAssembler::Jump exponentIsZero = jit.branchTest32(MacroAssembler::Zero, SpecializedThunkJIT::regT0);
     MacroAssembler::Label startLoop(jit.label());
 
-    MacroAssembler::Jump exponentIsEven = jit.branchTest32(MacroAssembler::Zero, SpecializedThunkJIT::regT0, MacroAssembler::Imm32(1));
+    MacroAssembler::Jump exponentIsEven = jit.branchTest32(MacroAssembler::Zero, SpecializedThunkJIT::regT0, MacroAssembler::TrustedImm32(1));
     jit.mulDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
     exponentIsEven.link(&jit);
     jit.mulDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
-    jit.rshift32(MacroAssembler::Imm32(1), SpecializedThunkJIT::regT0);
+    jit.rshift32(MacroAssembler::TrustedImm32(1), SpecializedThunkJIT::regT0);
     jit.branchTest32(MacroAssembler::NonZero, SpecializedThunkJIT::regT0).linkTo(startLoop, &jit);
 
     exponentIsZero.link(&jit);

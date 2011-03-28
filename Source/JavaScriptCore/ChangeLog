@@ -1,3 +1,461 @@
+2011-03-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add additional immediate types to allow us to distinguish the source of a JIT immediate
+        https://bugs.webkit.org/show_bug.cgi?id=57190
+
+        Allow us to distinguish whether a JIT immediate is a value that we
+        control (TrustedImm32 and TrustedImmPtr) vs. ones that can be controlled
+        or influenced by code we are compiling.  Currently we do nothing with this
+        information -- this change is large and mechanical but would obscure any
+        logic changes that we would have made.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::TrustedImmPtr::TrustedImmPtr):
+        (JSC::AbstractMacroAssembler::ImmPtr::ImmPtr):
+        (JSC::AbstractMacroAssembler::TrustedImm32::TrustedImm32):
+        (JSC::AbstractMacroAssembler::Imm32::Imm32):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::pop):
+        (JSC::MacroAssembler::poke):
+        (JSC::MacroAssembler::branchPtr):
+        (JSC::MacroAssembler::branch32):
+        (JSC::MacroAssembler::addPtr):
+        (JSC::MacroAssembler::andPtr):
+        (JSC::MacroAssembler::orPtr):
+        (JSC::MacroAssembler::subPtr):
+        (JSC::MacroAssembler::xorPtr):
+        (JSC::MacroAssembler::setPtr):
+        (JSC::MacroAssembler::storePtr):
+        (JSC::MacroAssembler::branchTestPtr):
+        (JSC::MacroAssembler::branchSubPtr):
+        (JSC::MacroAssembler::branchTest8):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::add32):
+        (JSC::MacroAssemblerARM::and32):
+        (JSC::MacroAssemblerARM::lshift32):
+        (JSC::MacroAssemblerARM::mul32):
+        (JSC::MacroAssemblerARM::or32):
+        (JSC::MacroAssemblerARM::rshift32):
+        (JSC::MacroAssemblerARM::urshift32):
+        (JSC::MacroAssemblerARM::sub32):
+        (JSC::MacroAssemblerARM::xor32):
+        (JSC::MacroAssemblerARM::store32):
+        (JSC::MacroAssemblerARM::push):
+        (JSC::MacroAssemblerARM::move):
+        (JSC::MacroAssemblerARM::branch8):
+        (JSC::MacroAssemblerARM::branch32):
+        (JSC::MacroAssemblerARM::branch32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerARM::branch16):
+        (JSC::MacroAssemblerARM::branchTest8):
+        (JSC::MacroAssemblerARM::branchTest32):
+        (JSC::MacroAssemblerARM::branchAdd32):
+        (JSC::MacroAssemblerARM::branchMul32):
+        (JSC::MacroAssemblerARM::branchSub32):
+        (JSC::MacroAssemblerARM::set32Compare32):
+        (JSC::MacroAssemblerARM::set8Compare32):
+        (JSC::MacroAssemblerARM::set32Test32):
+        (JSC::MacroAssemblerARM::set32Test8):
+        (JSC::MacroAssemblerARM::moveWithPatch):
+        (JSC::MacroAssemblerARM::branchPtrWithPatch):
+        (JSC::MacroAssemblerARM::storePtrWithPatch):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::add32):
+        (JSC::MacroAssemblerARMv7::and32):
+        (JSC::MacroAssemblerARMv7::lshift32):
+        (JSC::MacroAssemblerARMv7::mul32):
+        (JSC::MacroAssemblerARMv7::or32):
+        (JSC::MacroAssemblerARMv7::rshift32):
+        (JSC::MacroAssemblerARMv7::urshift32):
+        (JSC::MacroAssemblerARMv7::sub32):
+        (JSC::MacroAssemblerARMv7::xor32):
+        (JSC::MacroAssemblerARMv7::load32):
+        (JSC::MacroAssemblerARMv7::load32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerARMv7::load16):
+        (JSC::MacroAssemblerARMv7::store32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerARMv7::store32):
+        (JSC::MacroAssemblerARMv7::loadDouble):
+        (JSC::MacroAssemblerARMv7::storeDouble):
+        (JSC::MacroAssemblerARMv7::push):
+        (JSC::MacroAssemblerARMv7::move):
+        (JSC::MacroAssemblerARMv7::compare32):
+        (JSC::MacroAssemblerARMv7::test32):
+        (JSC::MacroAssemblerARMv7::branch32):
+        (JSC::MacroAssemblerARMv7::branch32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerARMv7::branch16):
+        (JSC::MacroAssemblerARMv7::branch8):
+        (JSC::MacroAssemblerARMv7::branchTest32):
+        (JSC::MacroAssemblerARMv7::branchTest8):
+        (JSC::MacroAssemblerARMv7::branchAdd32):
+        (JSC::MacroAssemblerARMv7::branchMul32):
+        (JSC::MacroAssemblerARMv7::branchSub32):
+        (JSC::MacroAssemblerARMv7::nearCall):
+        (JSC::MacroAssemblerARMv7::call):
+        (JSC::MacroAssemblerARMv7::set32Compare32):
+        (JSC::MacroAssemblerARMv7::set8Compare32):
+        (JSC::MacroAssemblerARMv7::set32Test32):
+        (JSC::MacroAssemblerARMv7::set32Test8):
+        (JSC::MacroAssemblerARMv7::moveWithPatch):
+        (JSC::MacroAssemblerARMv7::branchPtrWithPatch):
+        (JSC::MacroAssemblerARMv7::storePtrWithPatch):
+        (JSC::MacroAssemblerARMv7::tailRecursiveCall):
+        (JSC::MacroAssemblerARMv7::makeJump):
+        (JSC::MacroAssemblerARMv7::makeBranch):
+        (JSC::MacroAssemblerARMv7::setupArmAddress):
+        (JSC::MacroAssemblerARMv7::makeBaseIndexBase):
+        (JSC::MacroAssemblerARMv7::moveFixedWidthEncoding):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::add32):
+        (JSC::MacroAssemblerMIPS::and32):
+        (JSC::MacroAssemblerMIPS::lshift32):
+        (JSC::MacroAssemblerMIPS::mul32):
+        (JSC::MacroAssemblerMIPS::or32):
+        (JSC::MacroAssemblerMIPS::rshift32):
+        (JSC::MacroAssemblerMIPS::urshift32):
+        (JSC::MacroAssemblerMIPS::sub32):
+        (JSC::MacroAssemblerMIPS::xor32):
+        (JSC::MacroAssemblerMIPS::load32):
+        (JSC::MacroAssemblerMIPS::load32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerMIPS::store32WithAddressOffsetPatch):
+        (JSC::MacroAssemblerMIPS::store32):
+        (JSC::MacroAssemblerMIPS::push):
+        (JSC::MacroAssemblerMIPS::move):
+        (JSC::MacroAssemblerMIPS::branch8):
+        (JSC::MacroAssemblerMIPS::branch32):
+        (JSC::MacroAssemblerMIPS::branch32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerMIPS::branch16):
+        (JSC::MacroAssemblerMIPS::branchTest32):
+        (JSC::MacroAssemblerMIPS::branchTest8):
+        (JSC::MacroAssemblerMIPS::branchAdd32):
+        (JSC::MacroAssemblerMIPS::branchMul32):
+        (JSC::MacroAssemblerMIPS::branchSub32):
+        (JSC::MacroAssemblerMIPS::set8Compare32):
+        (JSC::MacroAssemblerMIPS::set32Compare32):
+        (JSC::MacroAssemblerMIPS::set32Test8):
+        (JSC::MacroAssemblerMIPS::set32Test32):
+        (JSC::MacroAssemblerMIPS::moveWithPatch):
+        (JSC::MacroAssemblerMIPS::branchPtrWithPatch):
+        (JSC::MacroAssemblerMIPS::storePtrWithPatch):
+        (JSC::MacroAssemblerMIPS::tailRecursiveCall):
+        (JSC::MacroAssemblerMIPS::loadDouble):
+        (JSC::MacroAssemblerMIPS::storeDouble):
+        (JSC::MacroAssemblerMIPS::branchTruncateDoubleToInt32):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::add32):
+        (JSC::MacroAssemblerX86::addWithCarry32):
+        (JSC::MacroAssemblerX86::and32):
+        (JSC::MacroAssemblerX86::or32):
+        (JSC::MacroAssemblerX86::sub32):
+        (JSC::MacroAssemblerX86::store32):
+        (JSC::MacroAssemblerX86::branch32):
+        (JSC::MacroAssemblerX86::moveWithPatch):
+        (JSC::MacroAssemblerX86::branchPtrWithPatch):
+        (JSC::MacroAssemblerX86::storePtrWithPatch):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::add32):
+        (JSC::MacroAssemblerX86Common::and32):
+        (JSC::MacroAssemblerX86Common::lshift32):
+        (JSC::MacroAssemblerX86Common::mul32):
+        (JSC::MacroAssemblerX86Common::or32):
+        (JSC::MacroAssemblerX86Common::rshift32):
+        (JSC::MacroAssemblerX86Common::urshift32):
+        (JSC::MacroAssemblerX86Common::sub32):
+        (JSC::MacroAssemblerX86Common::xor32):
+        (JSC::MacroAssemblerX86Common::store32):
+        (JSC::MacroAssemblerX86Common::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerX86Common::push):
+        (JSC::MacroAssemblerX86Common::move):
+        (JSC::MacroAssemblerX86Common::branch8):
+        (JSC::MacroAssemblerX86Common::branch32):
+        (JSC::MacroAssemblerX86Common::branch32WithUnalignedHalfWords):
+        (JSC::MacroAssemblerX86Common::branch16):
+        (JSC::MacroAssemblerX86Common::branchTest32):
+        (JSC::MacroAssemblerX86Common::branchTest8):
+        (JSC::MacroAssemblerX86Common::branchAdd32):
+        (JSC::MacroAssemblerX86Common::branchMul32):
+        (JSC::MacroAssemblerX86Common::branchSub32):
+        (JSC::MacroAssemblerX86Common::set8Compare32):
+        (JSC::MacroAssemblerX86Common::set32Compare32):
+        (JSC::MacroAssemblerX86Common::set32Test8):
+        (JSC::MacroAssemblerX86Common::set32Test32):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::add32):
+        (JSC::MacroAssemblerX86_64::and32):
+        (JSC::MacroAssemblerX86_64::or32):
+        (JSC::MacroAssemblerX86_64::sub32):
+        (JSC::MacroAssemblerX86_64::loadDouble):
+        (JSC::MacroAssemblerX86_64::addDouble):
+        (JSC::MacroAssemblerX86_64::convertInt32ToDouble):
+        (JSC::MacroAssemblerX86_64::store32):
+        (JSC::MacroAssemblerX86_64::call):
+        (JSC::MacroAssemblerX86_64::tailRecursiveCall):
+        (JSC::MacroAssemblerX86_64::makeTailRecursiveCall):
+        (JSC::MacroAssemblerX86_64::addPtr):
+        (JSC::MacroAssemblerX86_64::andPtr):
+        (JSC::MacroAssemblerX86_64::orPtr):
+        (JSC::MacroAssemblerX86_64::subPtr):
+        (JSC::MacroAssemblerX86_64::xorPtr):
+        (JSC::MacroAssemblerX86_64::storePtr):
+        (JSC::MacroAssemblerX86_64::setPtr):
+        (JSC::MacroAssemblerX86_64::branchPtr):
+        (JSC::MacroAssemblerX86_64::branchTestPtr):
+        (JSC::MacroAssemblerX86_64::branchSubPtr):
+        (JSC::MacroAssemblerX86_64::moveWithPatch):
+        (JSC::MacroAssemblerX86_64::branchPtrWithPatch):
+        (JSC::MacroAssemblerX86_64::storePtrWithPatch):
+        (JSC::MacroAssemblerX86_64::branchTest8):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::callOperation):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::jitAssertIsInt32):
+        (JSC::DFG::JITCompiler::emitCount):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::emitPutImmediateToCallFrameHeader):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JIT.cpp:
+        (JSC::JIT::emitTimeoutCheck):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_urshift):
+        (JSC::JIT::emitSlow_op_urshift):
+        (JSC::JIT::emit_op_post_inc):
+        (JSC::JIT::emit_op_post_dec):
+        (JSC::JIT::emit_op_pre_inc):
+        (JSC::JIT::emit_op_pre_dec):
+        (JSC::JIT::emit_op_mod):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_negate):
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emit_op_jless):
+        (JSC::JIT::emit_op_jlesseq):
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emitRightShift):
+        (JSC::JIT::emitRightShiftSlowCase):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emit_op_bitor):
+        (JSC::JIT::emit_op_bitxor):
+        (JSC::JIT::emit_op_bitnot):
+        (JSC::JIT::emit_op_post_inc):
+        (JSC::JIT::emit_op_post_dec):
+        (JSC::JIT::emitSlow_op_post_dec):
+        (JSC::JIT::emit_op_pre_inc):
+        (JSC::JIT::emit_op_pre_dec):
+        (JSC::JIT::emit_op_add):
+        (JSC::JIT::emitAdd32Constant):
+        (JSC::JIT::emit_op_sub):
+        (JSC::JIT::emitSub32Constant):
+        (JSC::JIT::emitBinaryDoubleOp):
+        (JSC::JIT::emit_op_mul):
+        (JSC::JIT::emitSlow_op_mul):
+        (JSC::JIT::emit_op_div):
+        (JSC::JIT::emit_op_mod):
+        * jit/JITCall.cpp:
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCallVarargs):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        (JSC::JIT::compileOpCall):
+        (JSC::JIT::compileOpCallSlowCase):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitPutCellToCallFrameHeader):
+        (JSC::JIT::emitPutIntToCallFrameHeader):
+        (JSC::JIT::emitPutImmediateToCallFrameHeader):
+        (JSC::JIT::emitLoadCharacterString):
+        (JSC::JIT::restoreArgumentReferenceForTrampoline):
+        (JSC::JIT::checkStructure):
+        (JSC::JIT::setSamplingFlag):
+        (JSC::JIT::clearSamplingFlag):
+        (JSC::JIT::emitCount):
+        (JSC::JIT::sampleInstruction):
+        (JSC::JIT::sampleCodeBlock):
+        (JSC::JIT::emitStoreInt32):
+        (JSC::JIT::emitStoreCell):
+        (JSC::JIT::emitStoreBool):
+        (JSC::JIT::emitJumpSlowCaseIfNotJSCell):
+        (JSC::JIT::emitInitRegister):
+        (JSC::JIT::emitJumpIfJSCell):
+        (JSC::JIT::emitJumpIfNotJSCell):
+        (JSC::JIT::emitJumpIfImmediateInteger):
+        (JSC::JIT::emitJumpIfNotImmediateInteger):
+        (JSC::JIT::emitFastArithDeTagImmediate):
+        (JSC::JIT::emitFastArithDeTagImmediateJumpIfZero):
+        (JSC::JIT::emitFastArithReTagImmediate):
+        (JSC::JIT::emitTagAsBoolImmediate):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_check_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        (JSC::JIT::emit_op_resolve):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_resolve_base):
+        (JSC::JIT::emit_op_ensure_property_exists):
+        (JSC::JIT::emit_op_resolve_skip):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emitSlow_op_resolve_global):
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_jsr):
+        (JSC::JIT::emit_op_resolve_with_base):
+        (JSC::JIT::emit_op_new_func_exp):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_next_pname):
+        (JSC::JIT::emit_op_to_jsnumber):
+        (JSC::JIT::emit_op_push_new_scope):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emit_op_init_lazy_reg):
+        (JSC::JIT::emit_op_convert_this):
+        (JSC::JIT::emit_op_convert_this_strict):
+        (JSC::JIT::emitSlow_op_not):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::emit_op_get_arguments_length):
+        (JSC::JIT::emitSlow_op_get_arguments_length):
+        (JSC::JIT::emit_op_get_argument_by_val):
+        (JSC::JIT::emitSlow_op_resolve_global_dynamic):
+        (JSC::JIT::emit_op_new_regexp):
+        (JSC::JIT::emit_op_load_varargs):
+        (JSC::JIT::emitSlow_op_load_varargs):
+        (JSC::JIT::emit_op_new_func):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+        (JSC::JIT::privateCompileCTINativeCall):
+        (JSC::JIT::emit_op_loop_if_lesseq):
+        (JSC::JIT::emit_op_check_has_instance):
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_tear_off_activation):
+        (JSC::JIT::emit_op_tear_off_arguments):
+        (JSC::JIT::emit_op_resolve):
+        (JSC::JIT::emit_op_to_primitive):
+        (JSC::JIT::emit_op_resolve_base):
+        (JSC::JIT::emit_op_ensure_property_exists):
+        (JSC::JIT::emit_op_resolve_skip):
+        (JSC::JIT::emit_op_resolve_global):
+        (JSC::JIT::emitSlow_op_resolve_global):
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_jneq_ptr):
+        (JSC::JIT::emit_op_jsr):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emit_op_resolve_with_base):
+        (JSC::JIT::emit_op_new_func_exp):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_next_pname):
+        (JSC::JIT::emit_op_to_jsnumber):
+        (JSC::JIT::emit_op_push_new_scope):
+        (JSC::JIT::emit_op_catch):
+        (JSC::JIT::emit_op_create_activation):
+        (JSC::JIT::emit_op_create_arguments):
+        (JSC::JIT::emit_op_convert_this):
+        (JSC::JIT::emit_op_convert_this_strict):
+        (JSC::JIT::emit_op_get_arguments_length):
+        (JSC::JIT::emitSlow_op_get_arguments_length):
+        (JSC::JIT::emit_op_get_argument_by_val):
+        (JSC::JIT::softModulo):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_get_by_pname):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emit_op_put_by_index):
+        (JSC::JIT::emit_op_put_getter):
+        (JSC::JIT::emit_op_put_setter):
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::testPrototype):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_getter):
+        (JSC::JIT::emit_op_put_setter):
+        (JSC::JIT::emit_op_del_by_id):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::stringGetByValStubGenerator):
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::testPrototype):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::emit_op_get_by_pname):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::addArgument):
+        * jit/JITStubs.cpp:
+        (JSC::getPolymorphicAccessStructureListSlot):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::emitJumpIfNotJSCell):
+        (JSC::JSInterfaceJIT::emitLoadInt32):
+        (JSC::JSInterfaceJIT::emitLoadDouble):
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::SpecializedThunkJIT):
+        (JSC::SpecializedThunkJIT::loadJSStringArgument):
+        (JSC::SpecializedThunkJIT::tagReturnAsInt32):
+        (JSC::SpecializedThunkJIT::tagReturnAsJSCell):
+        * jit/ThunkGenerators.cpp:
+        (JSC::charToString):
+        (JSC::powThunkGenerator):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::matchCharacterClass):
+        (JSC::Yarr::YarrGenerator::storeToFrame):
+        (JSC::Yarr::YarrGenerator::storeToFrameWithPatch):
+        (JSC::Yarr::YarrGenerator::ParenthesesTail::generateCode):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterSingle):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterFixed):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterGreedy):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterNonGreedy):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassFixed):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassNonGreedy):
+        (JSC::Yarr::YarrGenerator::generateParenthesesSingle):
+        (JSC::Yarr::YarrGenerator::generateDisjunction):
+
 2011-03-28  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

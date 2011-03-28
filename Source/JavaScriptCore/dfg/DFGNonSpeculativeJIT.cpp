@@ -231,7 +231,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         FPRTemporary result(this);
         m_jit.convertInt32ToDouble(op1.registerID(), result.registerID());
 
-        MacroAssembler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, op1.registerID(), Imm32(0));
+        MacroAssembler::Jump positive = m_jit.branch32(MacroAssembler::GreaterThanOrEqual, op1.registerID(), TrustedImm32(0));
         m_jit.addDouble(JITCompiler::AbsoluteAddress(&twoToThe32), result.registerID());
         positive.link(&m_jit);
 

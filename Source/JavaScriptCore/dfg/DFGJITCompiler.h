@@ -198,7 +198,7 @@ public:
 
     void emitPutImmediateToCallFrameHeader(void* value, RegisterFile::CallFrameHeaderEntry entry)
     {
-        storePtr(ImmPtr(value), Address(callFrameRegister, entry * sizeof(Register)));
+        storePtr(TrustedImmPtr(value), Address(callFrameRegister, entry * sizeof(Register)));
     }
 #endif
 

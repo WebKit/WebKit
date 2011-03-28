@@ -153,13 +153,13 @@ public:
         const void* m_ptr;
     };
 
-    // ImmPtr:
+    // TrustedImmPtr:
     //
     // A pointer sized immediate operand to an instruction - this is wrapped
     // in a class requiring explicit construction in order to differentiate
     // from pointers used as absolute addresses to memory operations
-    struct ImmPtr {
-        explicit ImmPtr(const void* value)
+    struct TrustedImmPtr {
+        explicit TrustedImmPtr(const void* value)
             : m_value(value)
         {
         }
@@ -172,14 +172,21 @@ public:
         const void* m_value;
     };
 
-    // Imm32:
+    struct ImmPtr : public TrustedImmPtr {
+        explicit ImmPtr(const void* value)
+            : TrustedImmPtr(value)
+        {
+        }
+    };
+
+    // TrustedImm32:
     //
     // A 32bit immediate operand to an instruction - this is wrapped in a
     // class requiring explicit construction in order to prevent RegisterIDs
     // (which are implemented as an enum) from accidentally being passed as
     // immediate values.
-    struct Imm32 {
-        explicit Imm32(int32_t value)
+    struct TrustedImm32 {
+        explicit TrustedImm32(int32_t value)
             : m_value(value)
 #if CPU(ARM) || CPU(MIPS)
             , m_isPointer(false)
@@ -188,7 +195,7 @@ public:
         }
 
 #if !CPU(X86_64)
-        explicit Imm32(ImmPtr ptr)
+        explicit TrustedImm32(TrustedImmPtr ptr)
             : m_value(ptr.asIntptr())
 #if CPU(ARM) || CPU(MIPS)
             , m_isPointer(true)
@@ -211,6 +218,19 @@ public:
     };
 
 
+    struct Imm32 : public TrustedImm32 {
+        explicit Imm32(int32_t value)
+            : TrustedImm32(value)
+        {
+        }
+#if !CPU(X86_64)
+        explicit Imm32(TrustedImmPtr ptr)
+            : TrustedImm32(ptr)
+        {
+        }
+#endif
+    };
+    
     // Section 2: MacroAssembler code buffer handles
     //
     // The following types are used to reference items in the code buffer

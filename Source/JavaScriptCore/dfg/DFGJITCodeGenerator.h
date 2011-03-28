@@ -50,6 +50,7 @@ class SpeculateCellOperand;
 // functions, etc.
 class JITCodeGenerator {
 protected:
+    typedef MacroAssembler::TrustedImm32 TrustedImm32;
     typedef MacroAssembler::Imm32 Imm32;
 
     // These constants are used to set priorities for spill order for
@@ -586,7 +587,7 @@ protected:
         ASSERT(isFlushed());
 
         m_jit.move(JITCompiler::gprToRegisterID(arg1), JITCompiler::argumentRegister1);
-        m_jit.move(JITCompiler::ImmPtr(pointer), JITCompiler::argumentRegister2);
+        m_jit.move(JITCompiler::TrustedImmPtr(pointer), JITCompiler::argumentRegister2);
         m_jit.move(JITCompiler::callFrameRegister, JITCompiler::argumentRegister0);
 
         appendCallWithExceptionCheck(operation);
@@ -621,7 +622,7 @@ protected:
         ASSERT(isFlushed());
 
         setupStubArguments(arg1, arg2);
-        m_jit.move(JITCompiler::ImmPtr(pointer), JITCompiler::argumentRegister3);
+        m_jit.move(JITCompiler::TrustedImmPtr(pointer), JITCompiler::argumentRegister3);
         m_jit.move(JITCompiler::callFrameRegister, JITCompiler::argumentRegister0);
 
         appendCallWithExceptionCheck(operation);

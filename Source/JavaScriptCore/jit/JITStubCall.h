@@ -99,13 +99,13 @@ namespace JSC {
             m_stackIndex += stackIndexStep;
         }
 
-        void addArgument(JIT::Imm32 argument)
+        void addArgument(JIT::TrustedImm32 argument)
         {
             m_jit->poke(argument, m_stackIndex);
             m_stackIndex += stackIndexStep;
         }
 
-        void addArgument(JIT::ImmPtr argument)
+        void addArgument(JIT::TrustedImmPtr argument)
         {
             m_jit->poke(argument, m_stackIndex);
             m_stackIndex += stackIndexStep;

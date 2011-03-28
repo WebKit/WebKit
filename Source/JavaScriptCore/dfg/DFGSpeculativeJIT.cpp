@@ -196,7 +196,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             JSValue jsValue = constantAsJSValue(nodeIndex);
             if (jsValue.isCell()) {
-                m_jit.move(MacroAssembler::ImmPtr(jsValue.asCell()), reg);
+                m_jit.move(MacroAssembler::TrustedImmPtr(jsValue.asCell()), reg);
                 info.fillJSValue(gpr, DataFormatJSCell);
                 return gpr;
             }
@@ -325,7 +325,7 @@ bool SpeculativeJIT::compile(Node& node)
         GPRTemporary result(this, op1);
 
         // Test the operand is positive.
-        speculationCheck(m_jit.branch32(MacroAssembler::LessThan, op1.registerID(), Imm32(0)));
+        speculationCheck(m_jit.branch32(MacroAssembler::LessThan, op1.registerID(), TrustedImm32(0)));
 
         m_jit.move(op1.registerID(), result.registerID());
         integerResult(result.gpr(), m_compileIndex, op1.format());
@@ -458,7 +458,7 @@ bool SpeculativeJIT::compile(Node& node)
         m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
 
         // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
-        speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::ImmPtr(m_jit.globalData()->jsArrayVPtr)));
+        speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
         speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
 
         // FIXME: In cases where there are subsequent by_val accesses to the same base it might help to cache
@@ -503,7 +503,7 @@ bool SpeculativeJIT::compile(Node& node)
             MacroAssembler::RegisterID baseReg = base.registerID();
 
             // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
-            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::ImmPtr(m_jit.globalData()->jsArrayVPtr)));
+            speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
             speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
 
             // Get the array storage.
@@ -511,13 +511,13 @@ bool SpeculativeJIT::compile(Node& node)
 
             // Check if we're writing to a hole; if so increment m_numValuesInVector.
             MacroAssembler::Jump notHoleValue = m_jit.branchTestPtr(MacroAssembler::NonZero, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
-            m_jit.add32(Imm32(1), MacroAssembler::Address(storageReg, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
+            m_jit.add32(TrustedImm32(1), MacroAssembler::Address(storageReg, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
 
             // If we're writing to a hole we might be growing the array; 
             MacroAssembler::Jump lengthDoesNotNeedUpdate = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(storageReg, OBJECT_OFFSETOF(ArrayStorage, m_length)));
-            m_jit.add32(Imm32(1), propertyReg);
+            m_jit.add32(TrustedImm32(1), propertyReg);
             m_jit.store32(propertyReg, MacroAssembler::Address(storageReg, OBJECT_OFFSETOF(ArrayStorage, m_length)));
-            m_jit.sub32(Imm32(1), propertyReg);
+            m_jit.sub32(TrustedImm32(1), propertyReg);
 
             lengthDoesNotNeedUpdate.link(&m_jit);
             notHoleValue.link(&m_jit);
@@ -560,7 +560,7 @@ bool SpeculativeJIT::compile(Node& node)
         GPRTemporary temp(this);
 
         m_jit.loadPtr(JITCompiler::Address(thisValue.registerID(), JSCell::structureOffset()), temp.registerID());
-        speculationCheck(m_jit.branchTest8(JITCompiler::NonZero, JITCompiler::Address(temp.registerID(), Structure::typeInfoFlagsOffset()), JITCompiler::Imm32(NeedsThisConversion)));
+        speculationCheck(m_jit.branchTest8(JITCompiler::NonZero, JITCompiler::Address(temp.registerID(), Structure::typeInfoFlagsOffset()), JITCompiler::TrustedImm32(NeedsThisConversion)));
 
         cellResult(thisValue.gpr(), m_compileIndex);
         break;

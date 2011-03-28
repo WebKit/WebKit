@@ -58,20 +58,20 @@ ALWAYS_INLINE void JIT::emitPutToCallFrameHeader(RegisterID from, RegisterFile::
 ALWAYS_INLINE void JIT::emitPutCellToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry entry)
 {
 #if USE(JSVALUE32_64)
-    store32(Imm32(JSValue::CellTag), tagFor(entry, callFrameRegister));
+    store32(TrustedImm32(JSValue::CellTag), tagFor(entry, callFrameRegister));
 #endif
     storePtr(from, payloadFor(entry, callFrameRegister));
 }
 
 ALWAYS_INLINE void JIT::emitPutIntToCallFrameHeader(RegisterID from, RegisterFile::CallFrameHeaderEntry entry)
 {
-    store32(Imm32(Int32Tag), intTagFor(entry, callFrameRegister));
+    store32(TrustedImm32(Int32Tag), intTagFor(entry, callFrameRegister));
     store32(from, intPayloadFor(entry, callFrameRegister));
 }
 
 ALWAYS_INLINE void JIT::emitPutImmediateToCallFrameHeader(void* value, RegisterFile::CallFrameHeaderEntry entry)
 {
-    storePtr(ImmPtr(value), Address(callFrameRegister, entry * sizeof(Register)));
+    storePtr(TrustedImmPtr(value), Address(callFrameRegister, entry * sizeof(Register)));
 }
 
 ALWAYS_INLINE void JIT::emitGetFromCallFrameHeaderPtr(RegisterFile::CallFrameHeaderEntry entry, RegisterID to, RegisterID from)
@@ -84,9 +84,9 @@ ALWAYS_INLINE void JIT::emitGetFromCallFrameHeaderPtr(RegisterFile::CallFrameHea
 
 ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures)
 {
-    failures.append(branchPtr(NotEqual, Address(src), ImmPtr(m_globalData->jsStringVPtr)));
+    failures.append(branchPtr(NotEqual, Address(src), TrustedImmPtr(m_globalData->jsStringVPtr)));
     failures.append(branchTest32(NonZero, Address(src, OBJECT_OFFSETOF(JSString, m_fiberCount))));
-    failures.append(branch32(NotEqual, MacroAssembler::Address(src, ThunkHelpers::jsStringLengthOffset()), Imm32(1)));
+    failures.append(branch32(NotEqual, MacroAssembler::Address(src, ThunkHelpers::jsStringLengthOffset()), TrustedImm32(1)));
     loadPtr(MacroAssembler::Address(src, ThunkHelpers::jsStringValueOffset()), dst);
     loadPtr(MacroAssembler::Address(dst, ThunkHelpers::stringImplDataOffset()), dst);
     load16(MacroAssembler::Address(dst, 0), dst);
@@ -214,7 +214,7 @@ ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 {
 #if CPU(X86)
     // Within a trampoline the return address will be on the stack at this point.
-    addPtr(Imm32(sizeof(void*)), stackPointerRegister, firstArgumentRegister);
+    addPtr(TrustedImm32(sizeof(void*)), stackPointerRegister, firstArgumentRegister);
 #elif CPU(ARM)
     move(stackPointerRegister, firstArgumentRegister);
 #endif
@@ -223,7 +223,7 @@ ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 
 ALWAYS_INLINE JIT::Jump JIT::checkStructure(RegisterID reg, Structure* structure)
 {
-    return branchPtr(NotEqual, Address(reg, JSCell::structureOffset()), ImmPtr(structure));
+    return branchPtr(NotEqual, Address(reg, JSCell::structureOffset()), TrustedImmPtr(structure));
 }
 
 ALWAYS_INLINE void JIT::linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator& iter, int vReg)
@@ -268,14 +268,14 @@ ALWAYS_INLINE void JIT::setSamplingFlag(int32_t flag)
 {
     ASSERT(flag >= 1);
     ASSERT(flag <= 32);
-    or32(Imm32(1u << (flag - 1)), AbsoluteAddress(&SamplingFlags::s_flags));
+    or32(TrustedImm32(1u << (flag - 1)), AbsoluteAddress(&SamplingFlags::s_flags));
 }
 
 ALWAYS_INLINE void JIT::clearSamplingFlag(int32_t flag)
 {
     ASSERT(flag >= 1);
     ASSERT(flag <= 32);
-    and32(Imm32(~(1u << (flag - 1))), AbsoluteAddress(&SamplingFlags::s_flags));
+    and32(TrustedImm32(~(1u << (flag - 1))), AbsoluteAddress(&SamplingFlags::s_flags));
 }
 #endif
 
@@ -283,11 +283,11 @@ ALWAYS_INLINE void JIT::clearSamplingFlag(int32_t flag)
 ALWAYS_INLINE void JIT::emitCount(AbstractSamplingCounter& counter, uint32_t count)
 {
 #if CPU(X86_64) // Or any other 64-bit plattform.
-    addPtr(Imm32(count), AbsoluteAddress(counter.addressOfCounter()));
+    addPtr(TrustedImm32(count), AbsoluteAddress(counter.addressOfCounter()));
 #elif CPU(X86) // Or any other little-endian 32-bit plattform.
     intptr_t hiWord = reinterpret_cast<intptr_t>(counter.addressOfCounter()) + sizeof(int32_t);
-    add32(Imm32(count), AbsoluteAddress(counter.addressOfCounter()));
-    addWithCarry32(Imm32(0), AbsoluteAddress(reinterpret_cast<void*>(hiWord)));
+    add32(TrustedImm32(count), AbsoluteAddress(counter.addressOfCounter()));
+    addWithCarry32(TrustedImm32(0), AbsoluteAddress(reinterpret_cast<void*>(hiWord)));
 #else
 #error "SAMPLING_FLAGS not implemented on this platform."
 #endif
@@ -298,13 +298,13 @@ ALWAYS_INLINE void JIT::emitCount(AbstractSamplingCounter& counter, uint32_t cou
 #if CPU(X86_64)
 ALWAYS_INLINE void JIT::sampleInstruction(Instruction* instruction, bool inHostFunction)
 {
-    move(ImmPtr(m_interpreter->sampler()->sampleSlot()), X86Registers::ecx);
-    storePtr(ImmPtr(m_interpreter->sampler()->encodeSample(instruction, inHostFunction)), X86Registers::ecx);
+    move(TrustedImmPtr(m_interpreter->sampler()->sampleSlot()), X86Registers::ecx);
+    storePtr(TrustedImmPtr(m_interpreter->sampler()->encodeSample(instruction, inHostFunction)), X86Registers::ecx);
 }
 #else
 ALWAYS_INLINE void JIT::sampleInstruction(Instruction* instruction, bool inHostFunction)
 {
-    storePtr(ImmPtr(m_interpreter->sampler()->encodeSample(instruction, inHostFunction)), m_interpreter->sampler()->sampleSlot());
+    storePtr(TrustedImmPtr(m_interpreter->sampler()->encodeSample(instruction, inHostFunction)), m_interpreter->sampler()->sampleSlot());
 }
 #endif
 #endif
@@ -313,13 +313,13 @@ ALWAYS_INLINE void JIT::sampleInstruction(Instruction* instruction, bool inHostF
 #if CPU(X86_64)
 ALWAYS_INLINE void JIT::sampleCodeBlock(CodeBlock* codeBlock)
 {
-    move(ImmPtr(m_interpreter->sampler()->codeBlockSlot()), X86Registers::ecx);
-    storePtr(ImmPtr(codeBlock), X86Registers::ecx);
+    move(TrustedImmPtr(m_interpreter->sampler()->codeBlockSlot()), X86Registers::ecx);
+    storePtr(TrustedImmPtr(codeBlock), X86Registers::ecx);
 }
 #else
 ALWAYS_INLINE void JIT::sampleCodeBlock(CodeBlock* codeBlock)
 {
-    storePtr(ImmPtr(codeBlock), m_interpreter->sampler()->codeBlockSlot());
+    storePtr(TrustedImmPtr(codeBlock), m_interpreter->sampler()->codeBlockSlot());
 }
 #endif
 #endif
@@ -436,27 +436,27 @@ inline void JIT::emitStoreInt32(unsigned index, RegisterID payload, bool indexIs
 {
     store32(payload, payloadFor(index, callFrameRegister));
     if (!indexIsInt32)
-        store32(Imm32(JSValue::Int32Tag), tagFor(index, callFrameRegister));
+        store32(TrustedImm32(JSValue::Int32Tag), tagFor(index, callFrameRegister));
 }
 
-inline void JIT::emitStoreInt32(unsigned index, Imm32 payload, bool indexIsInt32)
+inline void JIT::emitStoreInt32(unsigned index, TrustedImm32 payload, bool indexIsInt32)
 {
     store32(payload, payloadFor(index, callFrameRegister));
     if (!indexIsInt32)
-        store32(Imm32(JSValue::Int32Tag), tagFor(index, callFrameRegister));
+        store32(TrustedImm32(JSValue::Int32Tag), tagFor(index, callFrameRegister));
 }
 
 inline void JIT::emitStoreCell(unsigned index, RegisterID payload, bool indexIsCell)
 {
     store32(payload, payloadFor(index, callFrameRegister));
     if (!indexIsCell)
-        store32(Imm32(JSValue::CellTag), tagFor(index, callFrameRegister));
+        store32(TrustedImm32(JSValue::CellTag), tagFor(index, callFrameRegister));
 }
 
 inline void JIT::emitStoreBool(unsigned index, RegisterID tag, bool indexIsBool)
 {
     if (!indexIsBool)
-        store32(Imm32(0), payloadFor(index, callFrameRegister));
+        store32(TrustedImm32(0), payloadFor(index, callFrameRegister));
     store32(tag, tagFor(index, callFrameRegister));
 }
 
@@ -564,7 +564,7 @@ inline void JIT::emitJumpSlowCaseIfNotJSCell(unsigned virtualRegisterIndex, Regi
         if (m_codeBlock->isConstantRegisterIndex(virtualRegisterIndex))
             addSlowCase(jump());
         else
-            addSlowCase(branch32(NotEqual, tag, Imm32(JSValue::CellTag)));
+            addSlowCase(branch32(NotEqual, tag, TrustedImm32(JSValue::CellTag)));
     }
 }
 
@@ -666,7 +666,7 @@ ALWAYS_INLINE void JIT::emitPutVirtualRegister(unsigned dst, RegisterID from)
 
 ALWAYS_INLINE void JIT::emitInitRegister(unsigned dst)
 {
-    storePtr(ImmPtr(JSValue::encode(jsUndefined())), Address(callFrameRegister, dst * sizeof(Register)));
+    storePtr(TrustedImmPtr(JSValue::encode(jsUndefined())), Address(callFrameRegister, dst * sizeof(Register)));
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitJumpIfJSCell(RegisterID reg)
@@ -674,7 +674,7 @@ ALWAYS_INLINE JIT::Jump JIT::emitJumpIfJSCell(RegisterID reg)
 #if USE(JSVALUE64)
     return branchTestPtr(Zero, reg, tagMaskRegister);
 #else
-    return branchTest32(Zero, reg, Imm32(JSImmediate::TagMask));
+    return branchTest32(Zero, reg, TrustedImm32(JSImmediate::TagMask));
 #endif
 }
 
@@ -695,7 +695,7 @@ ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotJSCell(RegisterID reg)
 #if USE(JSVALUE64)
     return branchTestPtr(NonZero, reg, tagMaskRegister);
 #else
-    return branchTest32(NonZero, reg, Imm32(JSImmediate::TagMask));
+    return branchTest32(NonZero, reg, TrustedImm32(JSImmediate::TagMask));
 #endif
 }
 
@@ -736,7 +736,7 @@ ALWAYS_INLINE JIT::Jump JIT::emitJumpIfImmediateInteger(RegisterID reg)
 #if USE(JSVALUE64)
     return branchPtr(AboveOrEqual, reg, tagTypeNumberRegister);
 #else
-    return branchTest32(NonZero, reg, Imm32(JSImmediate::TagTypeNumber));
+    return branchTest32(NonZero, reg, TrustedImm32(JSImmediate::TagTypeNumber));
 #endif
 }
 
@@ -745,7 +745,7 @@ ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotImmediateInteger(RegisterID reg)
 #if USE(JSVALUE64)
     return branchPtr(Below, reg, tagTypeNumberRegister);
 #else
-    return branchTest32(Zero, reg, Imm32(JSImmediate::TagTypeNumber));
+    return branchTest32(Zero, reg, TrustedImm32(JSImmediate::TagTypeNumber));
 #endif
 }
 
@@ -774,12 +774,12 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmediateNumber(RegisterID reg)
 #if USE(JSVALUE32_64)
 ALWAYS_INLINE void JIT::emitFastArithDeTagImmediate(RegisterID reg)
 {
-    subPtr(Imm32(JSImmediate::TagTypeNumber), reg);
+    subPtr(TrustedImm32(JSImmediate::TagTypeNumber), reg);
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitFastArithDeTagImmediateJumpIfZero(RegisterID reg)
 {
-    return branchSubPtr(Zero, Imm32(JSImmediate::TagTypeNumber), reg);
+    return branchSubPtr(Zero, TrustedImm32(JSImmediate::TagTypeNumber), reg);
 }
 #endif
 
@@ -790,7 +790,7 @@ ALWAYS_INLINE void JIT::emitFastArithReTagImmediate(RegisterID src, RegisterID d
 #else
     if (src != dest)
         move(src, dest);
-    addPtr(Imm32(JSImmediate::TagTypeNumber), dest);
+    addPtr(TrustedImm32(JSImmediate::TagTypeNumber), dest);
 #endif
 }
 
@@ -810,8 +810,8 @@ ALWAYS_INLINE void JIT::emitFastArithIntToImmNoCheck(RegisterID src, RegisterID 
 
 ALWAYS_INLINE void JIT::emitTagAsBoolImmediate(RegisterID reg)
 {
-    lshift32(Imm32(JSImmediate::ExtendedPayloadShift), reg);
-    or32(Imm32(static_cast<int32_t>(JSImmediate::FullTagTypeBool)), reg);
+    lshift32(TrustedImm32(JSImmediate::ExtendedPayloadShift), reg);
+    or32(TrustedImm32(static_cast<int32_t>(JSImmediate::FullTagTypeBool)), reg);
 }
 
 #endif // USE(JSVALUE32_64)
