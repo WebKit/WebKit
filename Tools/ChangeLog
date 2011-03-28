@@ -1,5 +1,11 @@
 2011-03-28  Adele Peterson  <adele@apple.com>
 
+        Removing Qt stub, since it doesn't use the same header as the others.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+
+2011-03-28  Adele Peterson  <adele@apple.com>
+
         Added a few more stubs.
 
         * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
