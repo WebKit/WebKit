@@ -762,7 +762,7 @@ BUG_TONY WIN : plugins/mouse-events.html = TEXT
 BUG_TONY WIN : plugins/plugin-initiate-popup-window.html = TIMEOUT
 // This test is failing because the plugin has changed names on Windows to
 // match the name of the plugin upstream.
-BUG_TONY WIN : plugins/plugin-javascript-access.html = TEXT PASS
+BUG_TONY WIN : plugins/plugin-javascript-access.html = TEXT
 
 // Expectations for this test changed upstream. We should fix this test, but
 // it doesn't need to block the current release
@@ -3323,6 +3323,9 @@ BUGCR77582 BUG_DRT WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation
 // New test added in r82001.
 BUGWK57137 WIN RELEASE : plugins/embed-prefers-plugins-for-images.html = TEXT
 BUGWK57137 MAC LINUX : plugins/embed-prefers-plugins-for-images.html = TEXT
+
+// Regression since r82001.
+BUGCR77619 MAC SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
 
 // New test added in r82056. The arrow does not point upwards.
 BUGCR77574 LINUX : fast/blockflow/fallback-orientation.html = IMAGE

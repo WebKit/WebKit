@@ -1,3 +1,11 @@
+2011-03-28  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, update Chromium test results for plugins/plugin-javascript-access.html.
+
+        * platform/chromium-linux/plugins/plugin-javascript-access-expected.txt:
+        * platform/chromium-win/plugins/plugin-javascript-access-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-03-27  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
