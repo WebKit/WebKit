@@ -1,3 +1,16 @@
+2011-03-28  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows 7 Release Tests] fast/blockflow/fallback-orientation.html failing since
+        introduction in r82056.
+        https://bugs.webkit.org/show_bug.cgi?id=57238
+
+        Unreviewed, add expected failing results, since vertical text is not yet implemented on
+        Windows, to get the bots green.
+
+        * platform/win/fast/blockflow/fallback-orientation-expected.checksum: Added.
+        * platform/win/fast/blockflow/fallback-orientation-expected.png: Added.
+        * platform/win/fast/blockflow/fallback-orientation-expected.txt: Added.
+
 2011-03-28  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.
