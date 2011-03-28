@@ -1,3 +1,13 @@
+2011-03-28  Oliver Hunt  <oliver@apple.com>
+
+        REGRESSION(r82130): It made all tests crash (Requested by Ossy on #webkit).
+        https://bugs.webkit.org/show_bug.cgi?id=57251
+
+        Build fix, had remnant of another patch in r82130
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByIdChainList):
+
 2011-03-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Maciej Stachowiak.
