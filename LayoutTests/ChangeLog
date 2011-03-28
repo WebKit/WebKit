@@ -1,5 +1,14 @@
 2011-03-28  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed, move Chromium test results into the right directory (move WinXP
+        baseline into chromium-win-xp).
+
+        * platform/chromium-win-xp/fast/blockflow/fallback-orientation-expected.checksum: Renamed from LayoutTests/platform/chromium-win/fast/blockflow/fallback-orientation-expected.checksum.
+        * platform/chromium-win-xp/fast/blockflow/fallback-orientation-expected.png: Renamed from LayoutTests/platform/chromium-win/fast/blockflow/fallback-orientation-expected.png.
+        * platform/chromium-win-xp/fast/blockflow/fallback-orientation-expected.txt: Renamed from LayoutTests/platform/chromium-win/fast/blockflow/fallback-orientation-expected.txt.
+
+2011-03-28  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed, add new Chromium test results and expectation.
 
         * platform/chromium-mac-snowleopard/fast/block/positioning/047-expected.checksum: Added.
