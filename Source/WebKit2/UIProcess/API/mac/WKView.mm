@@ -1154,7 +1154,7 @@ static const short kIOHIDEventTypeScroll = 6;
 }
 
 - (NSTextInputContext *)inputContext {
-    if (_data->_pluginComplexTextInputIdentifier)
+    if (_data->_pluginComplexTextInputIdentifier && !_data->_isInInterpretKeyEvents)
         return [[WKTextInputWindowController sharedTextInputWindowController] inputContext];
 
     return [super inputContext];
