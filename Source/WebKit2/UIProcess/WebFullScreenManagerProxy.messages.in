@@ -22,7 +22,7 @@
 
 #if ENABLE(FULLSCREEN_API)
 messages -> WebFullScreenManagerProxy {
-    SupportsFullScreen() -> (bool supportsFullScreen)
+    SupportsFullScreen(bool withKeyboard) -> (bool supportsFullScreen)
     EnterFullScreen()
     ExitFullScreen()
     BeganEnterFullScreenAnimation()

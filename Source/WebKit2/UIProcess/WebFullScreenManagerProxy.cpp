@@ -100,9 +100,12 @@ void WebFullScreenManagerProxy::beginExitFullScreenAnimation(float duration)
     m_page->process()->send(Messages::WebFullScreenManager::BeginExitFullScreenAnimation(duration), m_page->pageID());
 }
 
-void WebFullScreenManagerProxy::supportsFullScreen(bool& supports)
+void WebFullScreenManagerProxy::supportsFullScreen(bool withKeyboard, bool& supports)
 {
-    supports = true;
+    if (withKeyboard)
+        supports = false;
+    else
+        supports = true;
 }
 
 } // namespace WebKit

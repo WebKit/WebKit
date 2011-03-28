@@ -61,13 +61,13 @@ void WebFullScreenManager::didReceiveMessage(CoreIPC::Connection* connection, Co
     didReceiveWebFullScreenManagerMessage(connection, messageID, arguments);
 }
 
-bool WebFullScreenManager::supportsFullScreen()
+bool WebFullScreenManager::supportsFullScreen(bool withKeyboard)
 {
     if (!m_page->corePage()->settings()->fullScreenEnabled())
         return false;
 
     bool supports = true;
-    m_page->sendSync(Messages::WebFullScreenManagerProxy::SupportsFullScreen(), supports);
+    m_page->sendSync(Messages::WebFullScreenManagerProxy::SupportsFullScreen(withKeyboard), supports);
     return supports;
 }
 

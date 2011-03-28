@@ -1,3 +1,24 @@
+2011-03-27  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Full Screen: disable keyboard access by default
+        https://bugs.webkit.org/show_bug.cgi?id=56684
+
+        Take into account whether keyboard access was requested when deciding whether full
+        screen mode is supported.
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::supportsFullScreen):
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * UIProcess/WebFullScreenManagerProxy.messages.in:
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::supportsFullScreen):
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::supportsFullScreenForElement):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2011-03-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

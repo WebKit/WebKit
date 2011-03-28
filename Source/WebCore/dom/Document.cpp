@@ -4888,7 +4888,7 @@ void Document::webkitRequestFullScreenForElement(Element* element, unsigned shor
     if (!ScriptController::processingUserGesture())
         return;
     
-    if (!page()->chrome()->client()->supportsFullScreenForElement(element))
+    if (!page()->chrome()->client()->supportsFullScreenForElement(element, flags & Element::ALLOW_KEYBOARD_INPUT))
         return;
     
     m_areKeysEnabledInFullScreen = flags & Element::ALLOW_KEYBOARD_INPUT;

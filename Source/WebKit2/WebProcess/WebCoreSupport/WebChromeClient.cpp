@@ -715,9 +715,9 @@ void WebChromeClient::setLastSetCursorToCurrentCursor()
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-bool WebChromeClient::supportsFullScreenForElement(const WebCore::Element* element)
+bool WebChromeClient::supportsFullScreenForElement(const WebCore::Element* element, bool withKeyboard)
 {
-    return m_page->fullScreenManager()->supportsFullScreen();
+    return m_page->fullScreenManager()->supportsFullScreen(withKeyboard);
 }
 
 void WebChromeClient::enterFullScreenForElement(WebCore::Element* element)

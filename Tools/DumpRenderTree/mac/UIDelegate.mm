@@ -235,7 +235,7 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
     return NO;
 }
 
-- (BOOL)webView:(WebView *)webView supportsFullScreenForElement:(DOMElement*)element
+- (BOOL)webView:(WebView *)webView supportsFullScreenForElement:(DOMElement*)element withKeyboard:(BOOL)withKeyboard
 {
     return YES;
 }

@@ -85,7 +85,7 @@ public:
 private:
     WebFullScreenManagerProxy(WebPageProxy*);
 
-    void supportsFullScreen(bool&);
+    void supportsFullScreen(bool withKeyboard, bool&);
     void enterFullScreen();
     void exitFullScreen();
     void beganEnterFullScreenAnimation();

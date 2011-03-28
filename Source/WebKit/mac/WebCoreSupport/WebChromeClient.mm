@@ -971,12 +971,12 @@ void WebChromeClient::exitFullscreenForNode(Node*)
 
 #if ENABLE(FULLSCREEN_API)
 
-bool WebChromeClient::supportsFullScreenForElement(const Element* element)
+bool WebChromeClient::supportsFullScreenForElement(const Element* element, bool withKeyboard)
 {
-    SEL selector = @selector(webView:supportsFullScreenForElement:);
+    SEL selector = @selector(webView:supportsFullScreenForElement:withKeyboard:);
     if ([[m_webView UIDelegate] respondsToSelector:selector])
-        return CallUIDelegateReturningBoolean(false, m_webView, selector, kit(const_cast<WebCore::Element*>(element)));
-    return [m_webView _supportsFullScreenForElement:const_cast<WebCore::Element*>(element)];
+        return CallUIDelegateReturningBoolean(false, m_webView, selector, kit(const_cast<WebCore::Element*>(element)), withKeyboard);
+    return [m_webView _supportsFullScreenForElement:const_cast<WebCore::Element*>(element) withKeyboard:withKeyboard];
 }
 
 void WebChromeClient::enterFullScreenForElement(Element* element)

@@ -6135,8 +6135,11 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-- (BOOL)_supportsFullScreenForElement:(const WebCore::Element*)element
+- (BOOL)_supportsFullScreenForElement:(const WebCore::Element*)element withKeyboard:(BOOL)withKeyboard
 {
+    if (withKeyboard)
+        return NO;
+
     if (![[WebPreferences standardPreferences] fullScreenEnabled])
         return NO;
 

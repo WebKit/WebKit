@@ -54,7 +54,7 @@ public:
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
-    bool supportsFullScreen();
+    bool supportsFullScreen(bool withKeyboard);
     void enterFullScreenForElement(WebCore::Element*);
     void exitFullScreenForElement(WebCore::Element*);
     void beganEnterFullScreenAnimation();

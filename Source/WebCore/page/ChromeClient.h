@@ -264,7 +264,7 @@ namespace WebCore {
         virtual bool requiresFullscreenForVideoPlayback() { return false; } 
 
 #if ENABLE(FULLSCREEN_API)
-        virtual bool supportsFullScreenForElement(const Element*) { return false; }
+        virtual bool supportsFullScreenForElement(const Element*, bool) { return false; }
         virtual void enterFullScreenForElement(Element*) { }
         virtual void exitFullScreenForElement(Element*) { }
         virtual void fullScreenRendererChanged(RenderBox*) { }

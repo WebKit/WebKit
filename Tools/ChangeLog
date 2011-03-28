@@ -1,3 +1,15 @@
+2011-03-27  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Full Screen: disable keyboard access by default
+        https://bugs.webkit.org/show_bug.cgi?id=56684
+
+        Accept the withKeyboard parameter to supportsFullScreenForElement.
+
+        * DumpRenderTree/mac/UIDelegate.mm:
+        (-[UIDelegate webView:supportsFullScreenForElement:withKeyboard:]):
+
 2011-03-27  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by David Levin.
