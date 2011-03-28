@@ -70,6 +70,8 @@ void Download::start(WebPage*)
 
     CFURLDownloadScheduleWithCurrentMessageQueue(m_download.get());
     CFURLDownloadScheduleDownloadWithRunLoop(m_download.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
+
+    CFURLDownloadStart(m_download.get());
 }
 
 void Download::startWithHandle(WebPage*, ResourceHandle* handle, const ResourceRequest& initialRequest, const ResourceResponse& response)
