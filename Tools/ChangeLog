@@ -1,5 +1,12 @@
 2011-03-28  Adele Peterson  <adele@apple.com>
 
+        Build fix.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::hasGrammarMarker):
+
+2011-03-28  Adele Peterson  <adele@apple.com>
+
         Reviewed by Eric Seidel.
 
         Testing support for <rdar://problem/9112694> REGRESSION (r79411): "Check grammar with spelling" context menu doesn't check as you type

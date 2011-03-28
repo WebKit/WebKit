@@ -1,3 +1,10 @@
+2011-03-28  Adele Peterson  <adele@apple.com>
+
+        Build fix.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::webkitWebFrameSelectionHasSpellingMarker):
+
 2011-03-28  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.

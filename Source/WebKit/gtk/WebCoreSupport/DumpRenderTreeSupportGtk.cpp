@@ -649,7 +649,7 @@ bool DumpRenderTreeSupportGtk::webkitWebFrameSelectionHasSpellingMarker(WebKitWe
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), FALSE);
 
-    return core(frame)->editor()->selectionStartHasSpellingMarkerFor(from, length);
+    return core(frame)->editor()->selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
 }
 
 bool DumpRenderTreeSupportGtk::findString(WebKitWebView* webView, const gchar* targetString, WebKitFindOptions findOptions)
