@@ -42,6 +42,7 @@ ResourceError ResourceErrorBase::copy() const
     errorCopy.m_localizedDescription = m_localizedDescription.crossThreadString();
     errorCopy.m_isNull = m_isNull;
     errorCopy.m_isCancellation = m_isCancellation;
+    platformCopy(errorCopy);
     return errorCopy;
 }
 

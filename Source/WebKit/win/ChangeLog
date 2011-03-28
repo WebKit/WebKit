@@ -1,3 +1,17 @@
+2011-03-28  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Include certificate when sending a WebCore::ResourceError to UI process on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57195
+        
+        Rename callers of wkGetSSLPeerCertificateData() to use wkGetSSLPeerCertificateDataBytePtr(), since it returns a void*.
+
+        * WebError.cpp:
+        (WebError::sslPeerCertificate):
+        * WebURLResponse.cpp:
+        (WebURLResponse::sslPeerCertificate):
+
 2011-03-28  Darin Adler  <darin@apple.com>
 
         Set eol-style to native on more files. I noticed the last check-in had an entire file

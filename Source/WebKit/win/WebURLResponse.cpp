@@ -410,7 +410,7 @@ HRESULT STDMETHODCALLTYPE WebURLResponse::sslPeerCertificate(
     CFDictionaryRef dict = certificateDictionary();
     if (!dict)
         return E_FAIL;
-    void* data = wkGetSSLPeerCertificateData(dict);
+    void* data = wkGetSSLPeerCertificateDataBytePtr(dict);
     if (!data)
         return E_FAIL;
     *result = (OLE_HANDLE)(ULONG64)data;

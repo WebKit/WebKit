@@ -28,6 +28,7 @@
 
 #if USE(CFNETWORK)
 #include "ArgumentCodersCF.h"
+#include "PlatformCertificateInfo.h"
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
@@ -120,7 +121,52 @@ bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse&
 void encodeResourceError(ArgumentEncoder* encoder, const WebCore::ResourceError& resourceError)
 {
     encoder->encode(CoreIPC::In(resourceError.domain(), resourceError.errorCode(), resourceError.failingURL(), resourceError.localizedDescription()));
+
+#if USE(CFNETWORK)
+    CFErrorRef cfError = resourceError.cfError();
+    if (!cfError) {
+        encoder->encode(WebKit::PlatformCertificateInfo());
+        return;
+    }
+    
+    CFDataRef certificateData = resourceError.certificate();
+    if (!certificateData) {
+        encoder->encode(WebKit::PlatformCertificateInfo());
+        return;
+    }
+
+    PCCERT_CONTEXT certificate = reinterpret_cast<PCCERT_CONTEXT>(CFDataGetBytePtr(certificateData));
+    if (!certificate) {
+        encoder->encode(WebKit::PlatformCertificateInfo());
+        return;
+    }
+    
+    encoder->encode(WebKit::PlatformCertificateInfo(certificate));
+#endif
 }
+
+#if USE(CFNETWORK)
+static void deallocCertContext(void* ptr, void* info)
+{
+    if (ptr)
+        CertFreeCertificateContext(static_cast<PCCERT_CONTEXT>(ptr));
+}
+
+static CFAllocatorRef createCertContextDeallocator()
+{
+    CFAllocatorContext allocContext = {
+        0, 0, 0, 0, 0, 0, 0, deallocCertContext, 0
+    };
+    return CFAllocatorCreate(kCFAllocatorDefault, &allocContext);
+}
+
+static CFDataRef copyCert(PCCERT_CONTEXT cert)
+{
+    static CFAllocatorRef certDealloc = createCertContextDeallocator();
+    PCCERT_CONTEXT certCopy = CertDuplicateCertificateContext(cert);
+    return CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(certCopy), sizeof(*certCopy), certDealloc);
+}
+#endif // USE(CFNETWORK)
 
 bool decodeResourceError(ArgumentDecoder* decoder, WebCore::ResourceError& resourceError)
 {
@@ -130,6 +176,20 @@ bool decodeResourceError(ArgumentDecoder* decoder, WebCore::ResourceError& resou
     String localizedDescription;
     if (!decoder->decode(CoreIPC::Out(domain, errorCode, failingURL, localizedDescription)))
         return false;
+
+#if USE(CFNETWORK)
+    WebKit::PlatformCertificateInfo certificate;
+    if (!decoder->decode(certificate))
+        return false;
+    
+    const Vector<PCCERT_CONTEXT> certificateChain = certificate.certificateChain();
+    if (!certificateChain.isEmpty()) {
+        ASSERT(certificateChain.size() == 1);
+        resourceError = WebCore::ResourceError(domain, errorCode, failingURL, localizedDescription, copyCert(certificateChain.first()));
+        return true;
+    }
+#endif
+
     resourceError = WebCore::ResourceError(domain, errorCode, failingURL, localizedDescription);
     return true;
 }

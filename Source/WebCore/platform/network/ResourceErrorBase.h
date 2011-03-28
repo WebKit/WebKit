@@ -74,6 +74,9 @@ protected:
     // The ResourceError subclass may "shadow" this method to lazily initialize platform specific fields
     void platformLazyInit() {}
 
+    // The ResourceError subclass may "shadow" this method to copy platform specific fields
+    void platformCopy(ResourceError&) const {}
+
     // The ResourceError subclass may "shadow" this method to compare platform specific fields
     static bool platformCompare(const ResourceError&, const ResourceError&) { return true; }
 

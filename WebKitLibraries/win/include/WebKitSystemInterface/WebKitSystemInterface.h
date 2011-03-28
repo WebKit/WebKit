@@ -86,7 +86,9 @@ CGAffineTransform wkGetUserToBaseCTM(CGContextRef);
 void wkDrawFocusRing(CGContextRef, CGColorRef, float radius);
 
 CFDictionaryRef wkGetSSLCertificateInfo(CFURLResponseRef);
-void* wkGetSSLPeerCertificateData(CFDictionaryRef);
+CFDataRef wkGetSSLPeerCertificateData(CFDictionaryRef);
+void* wkGetSSLPeerCertificateDataBytePtr(CFDictionaryRef);
+void wkSetSSLPeerCertificateData(CFMutableDictionaryRef, CFDataRef);
 void* wkGetSSLCertificateChainContext(CFDictionaryRef);
 CFHTTPCookieStorageRef wkGetDefaultHTTPCookieStorage();
 CFHTTPCookieStorageRef wkCreateInMemoryHTTPCookieStorage();

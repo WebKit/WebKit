@@ -1,5 +1,19 @@
 2011-03-28  Jeff Miller  <jeffm@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Include certificate when sending a WebCore::ResourceError to UI process on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57195
+
+        Rename wkGetSSLPeerCertificateData() to wkGetSSLPeerCertificateDataBytePtr(), since it returns a void*, and
+        implement wkGetSSLPeerCertificateData() to return a CFDataRef.  Add wkSetSSLPeerCertificateData() so
+        WebCore::ResourceError can set the certificate in the user info dictionary.
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+
+2011-03-28  Jeff Miller  <jeffm@apple.com>
+
         Rubber-stamped by Adam Roben.
 
         Remove WebKitSystemInterface_debug.lib, it hasn't been used for a few months now.

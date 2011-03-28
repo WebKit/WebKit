@@ -1,3 +1,19 @@
+2011-03-28  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Include certificate when sending a WebCore::ResourceError to UI process on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57195
+        
+        Add support for sending the certificate with the WebCore::ResourceError.
+
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (CoreIPC::encodeResourceError): Encode certificate data.
+        (CoreIPC::deallocCertContext): Added.
+        (CoreIPC::createCertContextDeallocator): Added.
+        (CoreIPC::copyCert): Added.
+        (CoreIPC::decodeResourceError): Decode certificate data.
+
 2011-03-27  Andy Estes  <aestes@apple.com>
 
         Reviewed by Maciej Stachowiak.

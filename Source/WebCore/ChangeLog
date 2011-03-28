@@ -1,3 +1,24 @@
+2011-03-28  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Include certificate when sending a WebCore::ResourceError to UI process on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57195
+
+        Add support for tracking the certificate in WebCore::ResourceError.
+
+        * platform/network/ResourceErrorBase.cpp:
+        (WebCore::ResourceErrorBase::copy): Call platformCopy() to copy platform-specific fields.
+        * platform/network/ResourceErrorBase.h:
+        (WebCore::ResourceErrorBase::platformCopy): Added.
+        * platform/network/cf/ResourceError.h: Added constructor that takes certificate data, shadowed platformCopy, added m_certificate.
+        (WebCore::ResourceError::certificate): Added.
+        * platform/network/cf/ResourceErrorCF.cpp:
+        (WebCore::ResourceError::ResourceError): Added constructor that takes certificate data.
+        (WebCore::ResourceError::platformLazyInit): Read any certificate from the userInfo dictionary.
+        (WebCore::ResourceError::platformCopy): Copy m_certificate.
+        (WebCore::ResourceError::cfError): Add any certificate data to the userInfo dictionary in the CFErrorRef.
+
 2011-03-28  Jessie Berlin  <jberlin@apple.com>
 
         Rubber-stamped by Adam Roben.

@@ -31,6 +31,9 @@
 #include "KURL.h"
 #include <CoreFoundation/CFError.h>
 #include <CFNetwork/CFNetworkErrors.h>
+#if PLATFORM(WIN)
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 #include <WTF/RetainPtr.h>
 
 namespace WebCore {
@@ -41,6 +44,15 @@ ResourceError::ResourceError(CFErrorRef cfError)
 {
     m_isNull = !cfError;
 }
+
+#if PLATFORM(WIN)
+ResourceError::ResourceError(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription, CFDataRef certificate)
+    : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription)
+    , m_dataIsUpToDate(true)
+    , m_certificate(certificate)
+{
+}
+#endif // PLATFORM(WIN)
 
 const CFStringRef failingURLStringKey = CFSTR("NSErrorFailingURLStringKey");
 const CFStringRef failingURLKey = CFSTR("NSErrorFailingURLKey");
@@ -83,9 +95,20 @@ void ResourceError::platformLazyInit()
             }
         }
         m_localizedDescription = (CFStringRef) CFDictionaryGetValue(userInfo.get(), kCFErrorLocalizedDescriptionKey);
+        
+#if PLATFORM(WIN)
+        m_certificate = wkGetSSLPeerCertificateData(userInfo.get());
+#endif
     }
 
     m_dataIsUpToDate = true;
+}
+
+void ResourceError::platformCopy(ResourceError& errorCopy) const
+{
+#if PLATFORM(WIN)
+    errorCopy.m_certificate = m_certificate;
+#endif
 }
 
 bool ResourceError::platformCompare(const ResourceError& a, const ResourceError& b)
@@ -115,6 +138,11 @@ CFErrorRef ResourceError::cfError() const
             CFDictionarySetValue(userInfo.get(), failingURLKey, url.get());
         }
 
+#if PLATFORM(WIN)
+        if (m_certificate)
+            wkSetSSLPeerCertificateData(userInfo.get(), m_certificate.get());
+#endif
+        
         RetainPtr<CFStringRef> domainString(AdoptCF, m_domain.createCFString());
         m_platformError.adoptCF(CFErrorCreate(0, domainString.get(), m_errorCode, userInfo.get()));
     }

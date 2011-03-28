@@ -227,7 +227,7 @@ HRESULT STDMETHODCALLTYPE WebError::sslPeerCertificate(
     if (!m_cfErrorUserInfoDict)
         return E_FAIL;
 
-    void* data = wkGetSSLPeerCertificateData(m_cfErrorUserInfoDict.get());
+    void* data = wkGetSSLPeerCertificateDataBytePtr(m_cfErrorUserInfoDict.get());
     if (!data)
         return E_FAIL;
     *result = (OLE_HANDLE)(ULONG64)data;

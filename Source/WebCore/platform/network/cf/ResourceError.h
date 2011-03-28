@@ -61,6 +61,10 @@ public:
     operator CFErrorRef() const;
 
 #if USE(CFNETWORK)
+#if PLATFORM(WIN)
+    ResourceError(const String& domain, int errorCode, const String& failingURL, const String& localizedDescription, CFDataRef certificate);
+    CFDataRef certificate() const { return m_certificate.get(); }
+#endif
     ResourceError(CFStreamError error);
     CFStreamError cfStreamError() const;
     operator CFStreamError() const;
@@ -74,11 +78,15 @@ private:
     friend class ResourceErrorBase;
 
     void platformLazyInit();
+    void platformCopy(ResourceError&) const;
     static bool platformCompare(const ResourceError& a, const ResourceError& b);
 
     bool m_dataIsUpToDate;
 #if USE(CFNETWORK)
     mutable RetainPtr<CFErrorRef> m_platformError;
+#if PLATFORM(WIN)
+    RetainPtr<CFDataRef> m_certificate;
+#endif
 #else
     mutable RetainPtr<NSError> m_platformError;
 #endif
