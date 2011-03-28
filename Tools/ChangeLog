@@ -1,5 +1,16 @@
 2011-03-28  Adele Peterson  <adele@apple.com>
 
+        Added a few more stubs.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::hasGrammarMarker):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::hasGrammarMarker):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::hasGrammarMarker):
+
+2011-03-28  Adele Peterson  <adele@apple.com>
+
         Build fix.
 
         * DumpRenderTree/win/LayoutTestControllerWin.cpp:
