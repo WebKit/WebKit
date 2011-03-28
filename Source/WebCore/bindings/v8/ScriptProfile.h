@@ -48,7 +48,7 @@ public:
     {
         return adoptRef(new ScriptProfile(profile));
     }
-    virtual ~ScriptProfile() {}
+    virtual ~ScriptProfile();
 
     String title() const;
     unsigned int uid() const;

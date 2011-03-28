@@ -250,6 +250,7 @@ void InspectorProfilerAgent::removeProfile(ErrorString*, const String& type, uns
 
 void InspectorProfilerAgent::resetState()
 {
+    stopUserInitiatedProfiling();
     m_profiles.clear();
     m_snapshots.clear();
     m_currentUserInitiatedProfileNumber = 1;

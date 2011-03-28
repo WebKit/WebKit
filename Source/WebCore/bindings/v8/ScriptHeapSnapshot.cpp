@@ -40,6 +40,11 @@
 
 namespace WebCore {
 
+ScriptHeapSnapshot::~ScriptHeapSnapshot()
+{
+    const_cast<v8::HeapSnapshot*>(m_snapshot)->Delete();
+}
+
 String ScriptHeapSnapshot::title() const
 {
     v8::HandleScope scope;

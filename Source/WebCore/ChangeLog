@@ -1,3 +1,19 @@
+2011-03-28  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: [Chromium] Delete native CPU profiles and heap snapshots on binding disposal.
+        https://bugs.webkit.org/show_bug.cgi?id=57099
+
+        * bindings/v8/ScriptHeapSnapshot.cpp:
+        (WebCore::ScriptHeapSnapshot::~ScriptHeapSnapshot):
+        * bindings/v8/ScriptHeapSnapshot.h:
+        * bindings/v8/ScriptProfile.cpp:
+        (WebCore::ScriptProfile::~ScriptProfile):
+        * bindings/v8/ScriptProfile.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::resetState):
+
 2011-03-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

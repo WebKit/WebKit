@@ -39,6 +39,11 @@
 
 namespace WebCore {
 
+ScriptProfile::~ScriptProfile()
+{
+    const_cast<v8::CpuProfile*>(m_profile)->Delete();
+}
+
 String ScriptProfile::title() const
 {
     v8::HandleScope scope;
