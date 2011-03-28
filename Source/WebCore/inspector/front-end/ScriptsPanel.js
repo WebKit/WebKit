@@ -1066,7 +1066,14 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
 
     editScriptSource: function(text, callback)
     {
-        this._model.editScriptSource(this._sourceFileId, text, callback);
+        function didEditScriptSource(success, newBodyOrErrorMessage)
+        {
+            if (!success) {
+                WebInspector.log(newBodyOrErrorMessage, WebInspector.ConsoleMessage.MessageLevel.Warning);
+                return;
+            }
+        }
+        this._model.editScriptSource(this._sourceFileId, text, didEditScriptSource.bind(this));
     },
 
     setScriptSourceIsBeingEdited: function(inEditMode)

@@ -1,3 +1,18 @@
+2011-03-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r82099.
+        http://trac.webkit.org/changeset/82099
+        https://bugs.webkit.org/show_bug.cgi?id=57245
+
+        Breaks live edits tests on chromium. (Requested by pfeldman on
+        #webkit).
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.editScriptSource):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._handleSave):
+        (WebInspector.SourceFrameDelegate.prototype.editScriptSource):
+
 2011-03-28  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
