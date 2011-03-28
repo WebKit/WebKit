@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "DocumentLoader.h"
 #import "DOM.h"
 #import "DOMDocument.h"
 #import "DOMRange.h"
 
-using namespace WebCore;
+namespace WebCore {
+class DocumentLoader;
+}
 
 @interface WebHTMLConverter : NSObject {
     NSMutableAttributedString *_attrStr;
@@ -36,7 +37,7 @@ using namespace WebCore;
     DOMDocument *_document;
     DOMRange *_domRange;
     NSMutableArray *_domStartAncestors;
-    DocumentLoader *_dataSource;
+    WebCore::DocumentLoader *_dataSource;
     NSString *_standardFontFamily;
     CGFloat _textSizeMultiplier;
     CGFloat _webViewTextSizeMultiplier;

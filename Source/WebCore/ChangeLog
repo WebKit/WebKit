@@ -1,3 +1,30 @@
+2011-03-28  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/57239> Use forward class declaration instead of including header
+
+        Reviewed by Dan Bernstein.
+
+        Adding a "using namespace WebCore;" statement in a header may
+        cause issues when <WebCore/Length.h> is included before
+        <CoreText/CoreText.h>.
+
+        Length.h defines the LengthType enum with a 'Fixed' value.
+        CoreText.h includes MacTypes.h, which has a
+        "typedef SInt32 Fixed;" statement, and then CoreText.h includes
+        other headers that also use 'Fixed', but expect the typedef to
+        be defined, not the enum.  If another header includes
+        "using namespace WebCore;" before CoreText.h, the
+        following compiler errors result (paths abbreviated):
+
+            CoreText.framework/Headers/SFNTLayoutTypes.h:689: error: reference to 'Fixed' is ambiguous
+            MacTypes.h:184: error: candidates are: typedef SInt32 Fixed
+            Length.h:37: error:                 WebCore::LengthType WebCore::Fixed
+            SFNTLayoutTypes.h:689: error: 'Fixed' does not name a type
+
+        * platform/mac/HTMLConverter.h: Use forward declaration of
+        DocumentLoader class instead of including header.  Remove the
+        unused "using namespace WebCore;" statement.
+
 2011-03-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
