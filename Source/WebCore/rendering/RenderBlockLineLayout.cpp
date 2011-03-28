@@ -325,6 +325,58 @@ ETextAlign RenderBlock::textAlignmentForLine(bool endsWithSoftBreak) const
     return alignment;
 }
 
+static void updateLogicalWidthForLeftAlignedBlock(bool isLeftToRightDirection, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float availableLogicalWidth)
+{
+    // The direction of the block should determine what happens with wide lines.
+    // In particular with RTL blocks, wide lines should still spill out to the left.
+    if (isLeftToRightDirection) {
+        if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun)
+            trailingSpaceRun->m_box->setLogicalWidth(max<float>(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
+        return;
+    }
+
+    if (trailingSpaceRun)
+        trailingSpaceRun->m_box->setLogicalWidth(0);
+    else if (totalLogicalWidth > availableLogicalWidth)
+        logicalLeft -= (totalLogicalWidth - availableLogicalWidth);
+}
+
+static void updateLogicalWidthForRightAlignedBlock(bool isLeftToRightDirection, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float availableLogicalWidth)
+{
+    // Wide lines spill out of the block based off direction.
+    // So even if text-align is right, if direction is LTR, wide lines should overflow out of the right
+    // side of the block.
+    if (isLeftToRightDirection) {
+        if (trailingSpaceRun) {
+            totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
+            trailingSpaceRun->m_box->setLogicalWidth(0);
+        }
+        if (totalLogicalWidth < availableLogicalWidth)
+            logicalLeft += availableLogicalWidth - totalLogicalWidth;
+        return;
+    }
+
+    if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun) {
+        trailingSpaceRun->m_box->setLogicalWidth(max<float>(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
+        totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
+    } else
+        logicalLeft += availableLogicalWidth - totalLogicalWidth;
+}
+
+static void updateLogicalWidthForCenterAlignedBlock(bool isLeftToRightDirection, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float availableLogicalWidth)
+{
+    float trailingSpaceWidth = 0;
+    if (trailingSpaceRun) {
+        totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
+        trailingSpaceWidth = min(trailingSpaceRun->m_box->logicalWidth(), (availableLogicalWidth - totalLogicalWidth + 1) / 2);
+        trailingSpaceRun->m_box->setLogicalWidth(max<float>(0, trailingSpaceWidth));
+    }
+    if (isLeftToRightDirection)
+        logicalLeft += max<float>((availableLogicalWidth - totalLogicalWidth) / 2, 0);
+    else
+        logicalLeft += totalLogicalWidth > availableLogicalWidth ? (availableLogicalWidth - totalLogicalWidth) : (availableLogicalWidth - totalLogicalWidth) / 2 - trailingSpaceWidth;
+}
+
 void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd,
                                                          GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)
 {
@@ -418,17 +470,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
     switch (textAlign) {
         case LEFT:
         case WEBKIT_LEFT:
-            // The direction of the block should determine what happens with wide lines.  In
-            // particular with RTL blocks, wide lines should still spill out to the left.
-            if (style()->isLeftToRightDirection()) {
-                if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun)
-                    trailingSpaceRun->m_box->setLogicalWidth(max<float>(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
-            } else {
-                if (trailingSpaceRun)
-                    trailingSpaceRun->m_box->setLogicalWidth(0);
-                else if (totalLogicalWidth > availableLogicalWidth)
-                    logicalLeft -= (totalLogicalWidth - availableLogicalWidth);
-            }
+            updateLogicalWidthForLeftAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
             break;
         case JUSTIFY:
             adjustInlineDirectionLineBounds(expansionOpportunityCount, logicalLeft, availableLogicalWidth);
@@ -449,36 +491,11 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             }
         case RIGHT:
         case WEBKIT_RIGHT:
-            // Wide lines spill out of the block based off direction.
-            // So even if text-align is right, if direction is LTR, wide lines should overflow out of the right
-            // side of the block.
-            if (style()->isLeftToRightDirection()) {
-                if (trailingSpaceRun) {
-                    totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
-                    trailingSpaceRun->m_box->setLogicalWidth(0);
-                }
-                if (totalLogicalWidth < availableLogicalWidth)
-                    logicalLeft += availableLogicalWidth - totalLogicalWidth;
-            } else {
-                if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun) {
-                    trailingSpaceRun->m_box->setLogicalWidth(max<float>(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
-                    totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
-                } else
-                    logicalLeft += availableLogicalWidth - totalLogicalWidth;
-            }
+            updateLogicalWidthForRightAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
             break;
         case CENTER:
         case WEBKIT_CENTER:
-            float trailingSpaceWidth = 0;
-            if (trailingSpaceRun) {
-                totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
-                trailingSpaceWidth = min(trailingSpaceRun->m_box->logicalWidth(), (availableLogicalWidth - totalLogicalWidth + 1) / 2);
-                trailingSpaceRun->m_box->setLogicalWidth(max<float>(0, trailingSpaceWidth));
-            }
-            if (style()->isLeftToRightDirection())
-                logicalLeft += max<float>((availableLogicalWidth - totalLogicalWidth) / 2, 0);
-            else
-                logicalLeft += totalLogicalWidth > availableLogicalWidth ? (availableLogicalWidth - totalLogicalWidth) : (availableLogicalWidth - totalLogicalWidth) / 2 - trailingSpaceWidth;
+            updateLogicalWidthForCenterAlignedBlock(style()->isLeftToRightDirection(), trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);
             break;
     }
 

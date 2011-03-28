@@ -1,3 +1,22 @@
+2011-03-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Extract functions to update logical width from computeInlineDirectionPositionsForLine
+        https://bugs.webkit.org/show_bug.cgi?id=57213
+
+        Extracted updateLogicalWidthForLeftAlignedBlock, updateLogicalWidthForRightAlignedBlock,
+        and updateLogicalWidthForCenterAlignedBlock from computeInlineDirectionPositionsForLine.
+
+        They are used to update logical widths, logical left, and total logical width for left,
+        right, and center aligned blocks.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::updateLogicalWidthForLeftAlignedBlock):
+        (WebCore::updateLogicalWidthForRightAlignedBlock):
+        (WebCore::updateLogicalWidthForCenterAlignedBlock):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+
 2011-03-28  Evan Martin  <evan@chromium.org>
 
         Reviewed by Ryosuke Niwa.
