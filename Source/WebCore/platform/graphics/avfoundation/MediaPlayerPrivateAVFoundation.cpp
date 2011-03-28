@@ -369,7 +369,7 @@ unsigned MediaPlayerPrivateAVFoundation::bytesLoaded() const
 
 bool MediaPlayerPrivateAVFoundation::isReadyForVideoSetup() const
 {
-    return m_readyState >= MediaPlayer::HaveMetadata && m_player->visible();
+    return m_isAllowedToRender && m_readyState >= MediaPlayer::HaveMetadata && m_player->visible();
 }
 
 void MediaPlayerPrivateAVFoundation::prepareForRendering()
@@ -378,8 +378,7 @@ void MediaPlayerPrivateAVFoundation::prepareForRendering()
         return;
     m_isAllowedToRender = true;
 
-    if (!hasSetUpVideoRendering())
-        setUpVideoRendering();
+    setUpVideoRendering();
 
     if (currentRenderingMode() == MediaRenderingToLayer || preferredRenderingMode() == MediaRenderingToLayer)
         m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
@@ -445,14 +444,14 @@ void MediaPlayerPrivateAVFoundation::updateStates()
                         m_readyState = MediaPlayer::HaveCurrentData;
                     break;
                 }
-                
+
                 if (itemStatus >= MediaPlayerAVPlayerItemStatusReadyToPlay)
                     m_networkState = (maxLoaded == duration()) ? MediaPlayer::Loaded : MediaPlayer::Loading;
             }
         }
     }
 
-    if (isReadyForVideoSetup() && !hasSetUpVideoRendering())
+    if (isReadyForVideoSetup() && currentRenderingMode() != preferredRenderingMode())
         setUpVideoRendering();
 
     if (m_networkState != oldNetworkState)
@@ -577,7 +576,7 @@ void MediaPlayerPrivateAVFoundation::repaint()
 
 MediaPlayer::MovieLoadType MediaPlayerPrivateAVFoundation::movieLoadType() const
 {
-    if (assetStatus() == MediaPlayerAVAssetStatusUnknown)
+    if (!metaDataAvailable() || assetStatus() == MediaPlayerAVAssetStatusUnknown)
         return MediaPlayer::Unknown;
 
     if (isinf(duration()))

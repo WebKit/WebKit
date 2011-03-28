@@ -296,6 +296,7 @@ MediaPlayer::MediaPlayer(MediaPlayerClient* client)
     , m_muted(false)
     , m_preservesPitch(true)
     , m_privateBrowsing(false)
+    , m_shouldPrepareToRender(false)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_playerProxy(0)
 #endif
@@ -369,6 +370,8 @@ void MediaPlayer::loadWithNextMediaEngine(MediaPlayerFactory* current)
         m_private->setPrivateBrowsingMode(m_privateBrowsing);
         m_private->setPreload(m_preload);
         m_private->setPreservesPitch(preservesPitch());
+        if (m_shouldPrepareToRender)
+            m_private->prepareForRendering();
     }
 
     if (m_private)
@@ -387,7 +390,8 @@ bool MediaPlayer::hasAvailableVideoFrame() const
 
 void MediaPlayer::prepareForRendering()
 {
-    return m_private->prepareForRendering();
+    m_shouldPrepareToRender = true;
+    m_private->prepareForRendering();
 }
 
 bool MediaPlayer::canLoadPoster() const

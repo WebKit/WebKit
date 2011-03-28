@@ -106,6 +106,9 @@ enum MediaPlayerAVFoundationObservationContext {
 
 namespace WebCore {
 
+static NSArray *assetMetadataKeyNames();
+static NSArray *itemKVOProperties();
+
 #if !LOG_DISABLED
 static const char *boolString(bool val)
 {
@@ -153,14 +156,9 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
         m_avAsset = nil;
     }
     if (m_avPlayerItem) {
-        [m_avPlayerItem.get() removeObserver:m_objcObserver.get() forKeyPath:@"status"];
-        [m_avPlayerItem.get() removeObserver:m_objcObserver.get() forKeyPath:@"asset"];
-        [m_avPlayerItem.get() removeObserver:m_objcObserver.get() forKeyPath:@"tracks"];
-        [m_avPlayerItem.get() removeObserver:m_objcObserver.get() forKeyPath:@"seekableTimeRanges"];
-        [m_avPlayerItem.get() removeObserver:m_objcObserver.get() forKeyPath:@"loadedTimeRanges"];
-        [m_avPlayerItem.get() removeObserver:m_objcObserver.get() forKeyPath:@"playbackLikelyToKeepUp"];
-        [m_avPlayerItem.get() removeObserver:m_objcObserver.get() forKeyPath:@"playbackBufferFull"];
-        [m_avPlayerItem.get() removeObserver:m_objcObserver.get() forKeyPath:@"playbackBufferEmpty"];
+        for (NSString *keyName in itemKVOProperties())
+            [m_avPlayerItem.get() removeObserver:m_objcObserver.get() forKeyPath:keyName];
+        
         m_avPlayerItem = nil;
     }
     if (m_avPlayer) {
@@ -290,15 +288,10 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
         m_avPlayerItem.adoptNS([[AVPlayerItem alloc] initWithAsset:m_avAsset.get()]);
         
         [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()selector:@selector(didEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:m_avPlayerItem.get()];
-        [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:@"status" options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
-        [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:@"asset" options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
-        [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:@"tracks" options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
-        [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:@"seekableTimeRanges" options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
-        [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:@"loadedTimeRanges" options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
-        [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:@"playbackLikelyToKeepUp" options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
-        [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:@"playbackBufferFull" options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
-        [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:@"playbackBufferEmpty" options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
-        
+
+        for (NSString *keyName in itemKVOProperties())
+            [m_avPlayerItem.get() addObserver:m_objcObserver.get() forKeyPath:keyName options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayerItem];
+
         [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
     }
 
@@ -317,7 +310,7 @@ void MediaPlayerPrivateAVFoundationObjC::checkPlayability()
 void MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata()
 {
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::playabilityKnown(%p) - requesting metadata loading", this);
-    [m_avAsset.get() loadValuesAsynchronouslyForKeys:[(NSArray *)metadataKeyNames() retain] completionHandler:^{
+    [m_avAsset.get() loadValuesAsynchronouslyForKeys:[assetMetadataKeyNames() retain] completionHandler:^{
         [m_objcObserver.get() metadataLoaded];
     }];
 }
@@ -381,11 +374,11 @@ void MediaPlayerPrivateAVFoundationObjC::pause()
 
 float MediaPlayerPrivateAVFoundationObjC::platformDuration() const
 {
-    if (!metaDataAvailable())
+    if (!metaDataAvailable() || !m_avPlayerItem)
         return 0;
-
+    
     float duration;
-    CMTime cmDuration = [m_avAsset.get() duration];
+    CMTime cmDuration = [m_avPlayerItem.get() duration];
     if (CMTIME_IS_NUMERIC(cmDuration))
         duration = narrowPrecisionToFloat(CMTimeGetSeconds(cmDuration));
     else if (CMTIME_IS_INDEFINITE(cmDuration))
@@ -533,8 +526,7 @@ MediaPlayerPrivateAVFoundation::AVAssetStatus MediaPlayerPrivateAVFoundationObjC
     if (!m_avAsset)
         return MediaPlayerAVAssetStatusUnknown;
 
-    NSArray *keys = (NSArray *)metadataKeyNames();
-    for (NSString *keyName in keys) {
+    for (NSString *keyName in assetMetadataKeyNames()) {
         AVKeyValueStatus keyStatus = [m_avAsset.get() statusOfValueForKey:keyName error:nil];
         if (keyStatus < AVKeyValueStatusLoaded)
             return MediaPlayerAVAssetStatusLoading;// At least one key is not loaded yet.
@@ -553,7 +545,7 @@ MediaPlayerPrivateAVFoundation::AVAssetStatus MediaPlayerPrivateAVFoundationObjC
 
 void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsContext* context, const IntRect& rect)
 {
-    if (context->paintingDisabled())
+    if (!metaDataAvailable() || context->paintingDisabled())
         return;
 
     paint(context, rect);
@@ -561,7 +553,7 @@ void MediaPlayerPrivateAVFoundationObjC::paintCurrentFrameInContext(GraphicsCont
 
 void MediaPlayerPrivateAVFoundationObjC::paint(GraphicsContext* context, const IntRect& rect)
 {
-    if (context->paintingDisabled())
+    if (!metaDataAvailable() || context->paintingDisabled())
         return;
 
     setDelayCallbacks(true);
@@ -654,51 +646,77 @@ float MediaPlayerPrivateAVFoundationObjC::mediaTimeForTimeValue(float timeValue)
 void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 {
     // This is called whenever the tracks collection changes so cache hasVideo and hasAudio since we get
-    // asked about those fairly fequently, and cache the natural size (setNaturalSize will notify the player 
-    // if it has changed).
+    // asked about those fairly fequently.
     setHasVideo([[m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicVisual] count]);
     setHasAudio([[m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicAudible] count]);
     setHasClosedCaptions([[m_avAsset.get() tracksWithMediaType:AVMediaTypeClosedCaption] count]);
 
+    sizeChanged();
+}
+
+void MediaPlayerPrivateAVFoundationObjC::sizeChanged()
+{
+    NSArray *tracks = [m_avAsset.get() tracks];
+
+    // Some assets don't report track properties until they are completely ready to play, but we
+    // want to report a size as early as possible so use presentationSize when an asset has no tracks.
+    if (![tracks count]) {
+        setNaturalSize(IntSize([m_avPlayerItem.get() presentationSize]));
+        return;
+    }
+
     // AVAsset's 'naturalSize' property only considers the movie's first video track, so we need to compute
     // the union of all visual track rects.
-    CGRect trackRectUnion = CGRectZero;
-    NSArray *tracks = [m_avAsset.get() tracks];
+    CGRect trackUnionRect = CGRectZero;
     for (AVAssetTrack *track in tracks) {
         CGSize trackSize = [track naturalSize];
         CGRect trackRect = CGRectMake(0, 0, trackSize.width, trackSize.height);
-        trackRectUnion = CGRectUnion(trackRectUnion, CGRectApplyAffineTransform(trackRect, [track preferredTransform]));
+        trackUnionRect = CGRectUnion(trackUnionRect, CGRectApplyAffineTransform(trackRect, [track preferredTransform]));
     }
-    // The movie is always displayed at 0,0 so move the track rect to the origin before using width and height.
-    trackRectUnion = CGRectOffset(trackRectUnion, trackRectUnion.origin.x, trackRectUnion.origin.y);
-    CGSize naturalSize = trackRectUnion.size;
 
+    // The movie is always displayed at 0,0 so move the track rect to the origin before using width and height.
+    trackUnionRect = CGRectOffset(trackUnionRect, trackUnionRect.origin.x, trackUnionRect.origin.y);
+    
     // Also look at the asset's preferred transform so we account for a movie matrix.
-    CGSize movieSize = CGSizeApplyAffineTransform([m_avAsset.get() naturalSize], [m_avAsset.get() preferredTransform]);
-    if (movieSize.width > naturalSize.width)
-        naturalSize.width = movieSize.width;
-    if (movieSize.height > naturalSize.height)
-        naturalSize.height = movieSize.height;
+    CGSize naturalSize = CGSizeApplyAffineTransform(trackUnionRect.size, [m_avAsset.get() preferredTransform]);
+
+    // Cache the natural size (setNaturalSize will notify the player if it has changed).
     setNaturalSize(IntSize(naturalSize));
 }
 
-CFArrayRef MediaPlayerPrivateAVFoundationObjC::metadataKeyNames()
+NSArray* assetMetadataKeyNames()
 {
-    static CFArrayRef keys;
-
+    static NSArray* keys;
     if (!keys) {
-        static const CFStringRef keyNames[] = { CFSTR("duration"),
-            CFSTR("naturalSize"),
-            CFSTR("preferredTransform"),
-            CFSTR("preferredVolume"),
-            CFSTR("preferredRate"),
-            CFSTR("playable"),
-            CFSTR("tracks") };
-        keys = CFArrayCreate(0, (const void**)keyNames, sizeof(keyNames) / sizeof(keyNames[0]), &kCFTypeArrayCallBacks);
+        keys = [[NSArray alloc] initWithObjects:@"duration",
+                    @"naturalSize",
+                    @"preferredTransform",
+                    @"preferredVolume",
+                    @"preferredRate",
+                    @"playable",
+                    @"tracks",
+                   nil];
     }
     return keys;
 }
 
+NSArray* itemKVOProperties()
+{
+    static NSArray* keys;
+    if (!keys) {
+        keys = [[NSArray alloc] initWithObjects:@"presentationSize",
+                @"status",
+                @"asset",
+                @"tracks",
+                @"seekableTimeRanges",
+                @"loadedTimeRanges",
+                @"playbackLikelyToKeepUp",
+                @"playbackBufferFull",
+                @"playbackBufferEmpty",
+                nil];
+    }
+    return keys;
+}
 
 } // namespace WebCore
 
@@ -775,7 +793,9 @@ CFArrayRef MediaPlayerPrivateAVFoundationObjC::metadataKeyNames()
             m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ItemSeekableTimeRangesChanged);
         else if ([keyPath isEqualToString:@"tracks"])
             m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ItemTracksChanged);
-        
+        else if ([keyPath isEqualToString:@"presentationSize"])
+            m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ItemPresentationSizeChanged);
+
         return;
     }
 

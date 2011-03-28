@@ -101,7 +101,7 @@ private:
     virtual float platformDuration() const;
     virtual float platformMaxTimeLoaded() const;
     virtual void beginLoadingMetadata();
-    virtual void sizeChanged() {};
+    virtual void sizeChanged();
 
     virtual void createContextVideoRenderer();
     virtual void destroyContextVideoRenderer();
@@ -114,8 +114,6 @@ private:
     virtual bool hasLayerRenderer() const;
 
     RetainPtr<CGImageRef> createImageForTimeInRect(float, const IntRect&);
-
-    static CFArrayRef metadataKeyNames();
 
     MediaPlayer* m_player;
     RetainPtr<AVAsset> m_avAsset;
