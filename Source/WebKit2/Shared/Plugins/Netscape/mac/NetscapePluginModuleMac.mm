@@ -86,13 +86,35 @@ static bool getPluginArchitecture(CFBundleRef bundle, cpu_type_t& pluginArchitec
 
     return false;
 }
+    
+static RetainPtr<CFDictionaryRef> getMIMETypesFromPluginBundle(CFBundleRef bundle)
+{
+    CFStringRef propertyListFilename = static_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginMIMETypesFilename")));
+    if (propertyListFilename) {
+        RetainPtr<CFStringRef> propertyListPath(AdoptCF, CFStringCreateWithFormat(kCFAllocatorDefault, 0, CFSTR("%@/Library/Preferences/%@"), NSHomeDirectory(), propertyListFilename));
+        RetainPtr<CFURLRef> propertyListURL(AdoptCF, CFURLCreateWithFileSystemPath(kCFAllocatorDefault, propertyListPath.get(), kCFURLPOSIXPathStyle, FALSE));
+
+        CFDataRef propertyListData;
+        CFURLCreateDataAndPropertiesFromResource(kCFAllocatorDefault, propertyListURL.get(), &propertyListData, 0, 0, 0);
+        RetainPtr<CFPropertyListRef> propertyList(AdoptCF, CFPropertyListCreateWithData(kCFAllocatorDefault, propertyListData, kCFPropertyListImmutable, 0, 0));
+        if (propertyListData)
+            CFRelease(propertyListData);
+        
+        // FIXME: Have the plug-in create the MIME types property list if it doesn't exist.
+        // https://bugs.webkit.org/show_bug.cgi?id=57204
+        if (!propertyList || CFGetTypeID(propertyList.get()) != CFDictionaryGetTypeID())
+            return 0;
+        
+        return static_cast<CFDictionaryRef>(CFDictionaryGetValue(static_cast<CFDictionaryRef>(propertyList.get()), CFSTR("WebPluginMIMETypes")));
+    }
+    
+    return static_cast<CFDictionaryRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginMIMETypes")));
+}
 
 static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginInfo& pluginInfo)
 {
-    // FIXME: Handle WebPluginMIMETypesFilenameKey.
-    
-    CFDictionaryRef mimeTypes = static_cast<CFDictionaryRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginMIMETypes")));
-    if (!mimeTypes || CFGetTypeID(mimeTypes) != CFDictionaryGetTypeID())
+    RetainPtr<CFDictionaryRef> mimeTypes = getMIMETypesFromPluginBundle(bundle);
+    if (!mimeTypes || CFGetTypeID(mimeTypes.get()) != CFDictionaryGetTypeID())
         return false;
 
     // Get the plug-in name.
@@ -106,10 +128,10 @@ static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginInfo& plugi
         pluginInfo.desc = pluginDescription;
     
     // Get the MIME type mapping dictionary.
-    CFIndex numMimeTypes = CFDictionaryGetCount(mimeTypes);
+    CFIndex numMimeTypes = CFDictionaryGetCount(mimeTypes.get());          
     Vector<CFStringRef> mimeTypesVector(numMimeTypes);
     Vector<CFDictionaryRef> mimeTypeInfoVector(numMimeTypes);
-    CFDictionaryGetKeysAndValues(mimeTypes, reinterpret_cast<const void**>(mimeTypesVector.data()), reinterpret_cast<const void**>(mimeTypeInfoVector.data()));
+    CFDictionaryGetKeysAndValues(mimeTypes.get(), reinterpret_cast<const void**>(mimeTypesVector.data()), reinterpret_cast<const void**>(mimeTypeInfoVector.data()));
     
     for (CFIndex i = 0; i < numMimeTypes; ++i) {
         MimeClassInfo mimeClassInfo;

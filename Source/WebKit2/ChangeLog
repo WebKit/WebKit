@@ -1,3 +1,23 @@
+2011-03-27  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Correctly get a plug-in's MIME type when it uses WebPluginMIMETypesFilename
+        https://bugs.webkit.org/show_bug.cgi?id=57205
+        
+        If the plug-in's Info.plist uses WebPluginMIMETypesFilename to specify
+        plug-in MIME types, WebKit has to check for a property list file in
+        ~/Library/Preferences for the MIME type dictionary.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::getMIMETypesFromPluginBundle): If the bundle's Info dictionary
+        has the key WebPluginMIMETypesFilename, open the property list
+        specified by that key's value and return the MIME type dictionary from
+        there. Otherwise, return the MIME type dictionary specified by the key
+        WebPluginMIMETypes.
+        (WebKit::getPluginInfoFromPropertyLists): Call
+        getMIMETypesFromPluginBundle().
+
 2011-03-27  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.
