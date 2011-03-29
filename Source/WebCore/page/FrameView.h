@@ -131,6 +131,7 @@ public:
     void willMoveOffscreen();
 
     void resetScrollbars();
+    void resetScrollbarsAndClearContentsSize();
     void detachCustomScrollbars();
 
     void clear();
@@ -267,9 +268,6 @@ public:
 
     // FIXME: Remove this method once plugin loading is decoupled from layout.
     void flushAnyPendingPostLayoutTasks();
-
-    void setIsRestoringFromBackForward(bool isRestoring) { m_isRestoringFromBackForward = isRestoring; }
-    bool isRestoringFromBackForward() const { return m_isRestoringFromBackForward; }
 
     virtual bool shouldSuspendScrollAnimations() const;
 
@@ -414,8 +412,6 @@ private:
 
     bool m_isVisuallyNonEmpty;
     bool m_firstVisuallyNonEmptyLayoutCallbackPending;
-
-    bool m_isRestoringFromBackForward;
 
     RefPtr<Node> m_maintainScrollPositionAnchor;
 

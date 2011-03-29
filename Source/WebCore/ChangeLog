@@ -1,3 +1,30 @@
+2011-03-28  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=57286 Alternative fix for: 
+        Horizontal scroller stops appearing after going Forward
+        -and corresponding-
+        <rdar://problem/9026946>
+
+        This patch rolls out revision 79053 and fixes the same bug in a  better way.
+
+        New function resetScrollbarsAndClearContentsSize() calls resetScrollbars() and then 
+        sets the contents size to 0. This is called when a document is going into the page 
+        cache.
+        * dom/Document.cpp:
+        (WebCore::Document::setInPageCache):
+        (WebCore::FrameView::resetScrollbarsAndClearContentsSize):
+
+        Roll-out of 79053.
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrameBase::restore):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::layout):
+        * page/FrameView.h:
+
 2011-03-28  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Antti Koivisto.

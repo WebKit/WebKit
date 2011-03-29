@@ -132,7 +132,6 @@ FrameView::FrameView(Frame* frame)
     , m_shouldUpdateWhileOffscreen(true)
     , m_deferSetNeedsLayouts(0)
     , m_setNeedsLayoutWasDeferred(false)
-    , m_isRestoringFromBackForward(false)
     , m_scrollCorner(0)
 {
     init();
@@ -227,7 +226,6 @@ void FrameView::reset()
     m_isPainting = false;
     m_isVisuallyNonEmpty = false;
     m_firstVisuallyNonEmptyLayoutCallbackPending = true;
-    m_isRestoringFromBackForward = false;
     m_maintainScrollPositionAnchor = 0;
 }
 
@@ -250,6 +248,15 @@ void FrameView::resetScrollbars()
         setScrollbarModes(ScrollbarAuto, ScrollbarAuto);
     else
         setScrollbarModes(ScrollbarAlwaysOff, ScrollbarAlwaysOff);
+    setScrollbarsSuppressed(false);
+}
+
+void FrameView::resetScrollbarsAndClearContentsSize()
+{
+    resetScrollbars();
+
+    setScrollbarsSuppressed(true);
+    setContentsSize(IntSize());
     setScrollbarsSuppressed(false);
 }
 
@@ -847,12 +854,7 @@ void FrameView::layout(bool allowSubtree)
 
         if (m_firstLayout || (hMode != currentHMode || vMode != currentVMode)) {
             if (m_firstLayout) {
-                if (!m_isRestoringFromBackForward)
-                    setScrollbarsSuppressed(true);
-                else {
-                    setScrollbarsSuppressed(false);
-                    m_isRestoringFromBackForward = false;
-                }
+                setScrollbarsSuppressed(true);
 
                 m_firstLayout = false;
                 m_firstLayoutCallbackPending = true;
