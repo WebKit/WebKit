@@ -1353,3 +1353,6 @@ editing/spelling/grammar.html
 # https://bugs.webkit.org/show_bug.cgi?id=57160 
 # [GTK] layoutTestController.overridePreference("WebKitDefaultFontSize"...) does not take into account screen DPI
 fast/harness/override-preferences-2.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=57137
+plugins/embed-prefers-plugins-for-images.html

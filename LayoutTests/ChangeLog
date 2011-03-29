@@ -1,5 +1,14 @@
 2011-03-28  Andy Estes  <aestes@apple.com>
 
+        plugins/embed-prefers-plugins-for-images.html fails on non-Apple platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=57137
+
+        * platform/chromium/test_expectations.txt: Skip the test.
+        * platform/gtk/Skipped: Ditto.
+        * platform/qt/Skipped: Ditto.
+
+2011-03-28  Andy Estes  <aestes@apple.com>
+
         Make embed-prefers-plugins-for-images.html pass on all Apple platforms.
         https://bugs.webkit.org/show_bug.cgi?id=57137
 
