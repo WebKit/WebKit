@@ -1,3 +1,15 @@
+2011-03-28  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Adam Barth.
+
+        Replace fprintf(stderr, ...) with LOG_ERROR
+        https://bugs.webkit.org/show_bug.cgi?id=57216
+
+        LOG_ERROR is a better choice here.
+
+        * bridge/jni/v8/JavaClassV8.cpp:
+        (JavaClass::JavaClass):
+
 2011-03-28  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
