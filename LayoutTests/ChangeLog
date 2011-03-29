@@ -1,3 +1,13 @@
+2011-03-29  Adam Roben  <aroben@apple.com>
+
+        Add Windows results for new test added in r82200
+
+        Windows differs from Mac due to a different scrollbar width within the listbox.
+
+        * platform/win/fast/forms/listbox-bidi-align-expected.checksum: Added.
+        * platform/win/fast/forms/listbox-bidi-align-expected.png: Added.
+        * platform/win/fast/forms/listbox-bidi-align-expected.txt: Added.
+
 2011-03-29  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Reviewed by Nikolas Zimmermann.
