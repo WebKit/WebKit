@@ -36,8 +36,13 @@ namespace JSC {
 
 namespace Bindings {
 
-jvalue convertNPVariantToJValue(NPVariant, const WTF::String& javaClass);
-void convertJValueToNPVariant(jvalue, JavaType, const char* javaClassName, NPVariant*);
+class JavaValue;
+
+JavaValue convertNPVariantToJavaValue(NPVariant, const String& javaClass);
+void convertJavaValueToNPVariant(JavaValue, NPVariant*);
+
+JavaValue jvalueToJavaValue(const jvalue&, const JavaType&);
+jvalue javaValueToJvalue(const JavaValue&);
 
 } // namespace Bindings
 

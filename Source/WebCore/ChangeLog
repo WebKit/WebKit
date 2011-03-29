@@ -1,3 +1,34 @@
+2011-03-28  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Add a new JavaValue to type to represent a Java value in the Java bridge
+        https://bugs.webkit.org/show_bug.cgi?id=57022
+
+        This change introduces a new JavaValue type and uses it in place of jvalue
+        in the conversions to and from JavaNPObject used in the V8 Java bridge.
+
+        Refactoring only, no new tests.
+
+        * WebCore.gypi:
+        * bridge/jni/JNIUtility.cpp:
+        (JSC::Bindings::javaTypeFromClassName):
+        (JSC::Bindings::signatureFromJavaType):
+        (JSC::Bindings::getJNIField):
+        (JSC::Bindings::callJNIMethod):
+        * bridge/jni/JavaType.h:
+        * bridge/jni/v8/JNIUtilityPrivate.cpp:
+        (JSC::Bindings::convertNPVariantToJavaValue):
+        (JSC::Bindings::convertJavaValueToNPVariant):
+        (JSC::Bindings::jvalueToJavaValue):
+        (JSC::Bindings::javaValueToJvalue):
+        * bridge/jni/v8/JNIUtilityPrivate.h:
+        * bridge/jni/v8/JavaNPObjectV8.cpp:
+        (JSC::Bindings::JavaNPObjectInvoke):
+        (JSC::Bindings::JavaNPObjectGetProperty):
+        * bridge/jni/v8/JavaValueV8.h: Added.
+        (JSC::Bindings::JavaValue::JavaValue):
+
 2011-03-28  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

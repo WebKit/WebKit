@@ -30,157 +30,128 @@
 
 #include "JavaInstanceV8.h"
 #include "JavaNPObjectV8.h"
+#include "JavaValueV8.h"
 #include <wtf/text/CString.h>
 
 namespace JSC {
 
 namespace Bindings {
 
-jvalue convertNPVariantToJValue(NPVariant value, const WTF::String& javaClass)
+JavaValue convertNPVariantToJavaValue(NPVariant value, const String& javaClass)
 {
     CString javaClassName = javaClass.utf8();
     JavaType javaType = javaTypeFromClassName(javaClassName.data());
-    jvalue result;
+    JavaValue result;
+    result.m_type = javaType;
     NPVariantType type = value.type;
 
     switch (javaType) {
     case JavaTypeArray:
     case JavaTypeObject:
         {
-            result.l = static_cast<jobject>(0);
-
-            // First see if we have a Java instance.
+            // See if we have a Java instance.
             if (type == NPVariantType_Object) {
                 NPObject* objectImp = NPVARIANT_TO_OBJECT(value);
-                if (JavaInstance* instance = ExtractJavaInstance(objectImp))
-                    result.l = instance->javaInstance();
+                result.m_objectValue = ExtractJavaInstance(objectImp);
             }
+        }
+        break;
 
-            // Now convert value to a string if the target type is a java.lang.string, and we're not
-            // converting from a Null.
-            if (!result.l && !strcmp(javaClassName.data(), "java.lang.String")) {
+    case JavaTypeString:
+        {
 #ifdef CONVERT_NULL_TO_EMPTY_STRING
-                if (type == NPVariantType_Null) {
-                    JNIEnv* env = getJNIEnv();
-                    jchar buf[2];
-                    jobject javaString = env->functions->NewString(env, buf, 0);
-                    result.l = javaString;
-                } else
+            if (type == NPVariantType_Null) {
+                result.m_type = JavaTypeString;
+                result.m_stringValue = String::fromUTF8("");
+            } else
 #else
-                if (type == NPVariantType_String)
+            if (type == NPVariantType_String)
 #endif
-                {
-                    NPString src = NPVARIANT_TO_STRING(value);
-                    JNIEnv* env = getJNIEnv();
-                    jobject javaString = env->NewStringUTF(src.UTF8Characters);
-                    result.l = javaString;
-                }
-            } else if (!result.l)
-                memset(&result, 0, sizeof(jvalue)); // Handle it the same as a void case
+            {
+                NPString src = NPVARIANT_TO_STRING(value);
+                result.m_type = JavaTypeString;
+                result.m_stringValue = String::fromUTF8(src.UTF8Characters);
+            }
         }
         break;
 
     case JavaTypeBoolean:
         {
             if (type == NPVariantType_Bool)
-                result.z = NPVARIANT_TO_BOOLEAN(value);
-            else
-                memset(&result, 0, sizeof(jvalue)); // as void case
+                result.m_booleanValue = NPVARIANT_TO_BOOLEAN(value);
         }
         break;
 
     case JavaTypeByte:
         {
             if (type == NPVariantType_Int32)
-                result.b = static_cast<jbyte>(NPVARIANT_TO_INT32(value));
+                result.m_byteValue = static_cast<signed char>(NPVARIANT_TO_INT32(value));
             else if (type == NPVariantType_Double)
-                result.b = static_cast<jbyte>(NPVARIANT_TO_DOUBLE(value));
-            else
-                memset(&result, 0, sizeof(jvalue));
+                result.m_byteValue = static_cast<signed char>(NPVARIANT_TO_DOUBLE(value));
         }
         break;
 
     case JavaTypeChar:
         {
             if (type == NPVariantType_Int32)
-                result.c = static_cast<char>(NPVARIANT_TO_INT32(value));
-            else
-                memset(&result, 0, sizeof(jvalue));
+                result.m_charValue = static_cast<unsigned short>(NPVARIANT_TO_INT32(value));
         }
         break;
 
     case JavaTypeShort:
         {
             if (type == NPVariantType_Int32)
-                result.s = static_cast<jshort>(NPVARIANT_TO_INT32(value));
+                result.m_shortValue = static_cast<short>(NPVARIANT_TO_INT32(value));
             else if (type == NPVariantType_Double)
-                result.s = static_cast<jshort>(NPVARIANT_TO_DOUBLE(value));
-            else
-                memset(&result, 0, sizeof(jvalue));
+                result.m_shortValue = static_cast<short>(NPVARIANT_TO_DOUBLE(value));
         }
         break;
 
     case JavaTypeInt:
         {
             if (type == NPVariantType_Int32)
-                result.i = static_cast<jint>(NPVARIANT_TO_INT32(value));
+                result.m_intValue = static_cast<int>(NPVARIANT_TO_INT32(value));
             else if (type == NPVariantType_Double)
-                result.i = static_cast<jint>(NPVARIANT_TO_DOUBLE(value));
-            else
-                memset(&result, 0, sizeof(jvalue));
+                result.m_intValue = static_cast<int>(NPVARIANT_TO_DOUBLE(value));
         }
         break;
 
     case JavaTypeLong:
         {
             if (type == NPVariantType_Int32)
-                result.j = static_cast<jlong>(NPVARIANT_TO_INT32(value));
+                result.m_longValue = static_cast<long long>(NPVARIANT_TO_INT32(value));
             else if (type == NPVariantType_Double)
-                result.j = static_cast<jlong>(NPVARIANT_TO_DOUBLE(value));
-            else
-                memset(&result, 0, sizeof(jvalue));
+                result.m_longValue = static_cast<long long>(NPVARIANT_TO_DOUBLE(value));
         }
         break;
 
     case JavaTypeFloat:
         {
             if (type == NPVariantType_Int32)
-                result.f = static_cast<jfloat>(NPVARIANT_TO_INT32(value));
+                result.m_floatValue = static_cast<float>(NPVARIANT_TO_INT32(value));
             else if (type == NPVariantType_Double)
-                result.f = static_cast<jfloat>(NPVARIANT_TO_DOUBLE(value));
-            else
-                memset(&result, 0, sizeof(jvalue));
+                result.m_floatValue = static_cast<float>(NPVARIANT_TO_DOUBLE(value));
         }
         break;
 
     case JavaTypeDouble:
         {
             if (type == NPVariantType_Int32)
-                result.d = static_cast<jdouble>(NPVARIANT_TO_INT32(value));
+                result.m_doubleValue = static_cast<double>(NPVARIANT_TO_INT32(value));
             else if (type == NPVariantType_Double)
-                result.d = static_cast<jdouble>(NPVARIANT_TO_DOUBLE(value));
-            else
-                memset(&result, 0, sizeof(jvalue));
+                result.m_doubleValue = static_cast<double>(NPVARIANT_TO_DOUBLE(value));
         }
         break;
-
-        break;
-
-    case JavaTypeInvalid:
     default:
-    case JavaTypeVoid:
-        {
-            memset(&result, 0, sizeof(jvalue));
-        }
         break;
     }
     return result;
 }
 
 
-void convertJValueToNPVariant(jvalue value, JavaType javaType, const char* javaTypeName, NPVariant* result)
+void convertJavaValueToNPVariant(JavaValue value, NPVariant* result)
 {
-    switch (javaType) {
+    switch (value.m_type) {
     case JavaTypeVoid:
         {
             VOID_TO_NPVARIANT(*result);
@@ -189,66 +160,68 @@ void convertJValueToNPVariant(jvalue value, JavaType javaType, const char* javaT
 
     case JavaTypeObject:
         {
-            if (value.l) {
-                if (!strcmp(javaTypeName, "java.lang.String")) {
-                    const char* v = getCharactersFromJString(static_cast<jstring>(value.l));
-                    // s is freed in NPN_ReleaseVariantValue (see npruntime.cpp)
-                    const char* s = strdup(v);
-                    releaseCharactersForJString(static_cast<jstring>(value.l), v);
-                    STRINGZ_TO_NPVARIANT(s, *result);
-                } else
-                    OBJECT_TO_NPVARIANT(JavaInstanceToNPObject(new JavaInstance(value.l)), *result);
-            } else
+            // If the JavaValue is a String object, it should have type JavaTypeString.
+            if (value.m_objectValue)
+                OBJECT_TO_NPVARIANT(JavaInstanceToNPObject(value.m_objectValue.get()), *result);
+            else
                 VOID_TO_NPVARIANT(*result);
+        }
+        break;
+
+    case JavaTypeString:
+        {
+            const char* utf8String = strdup(value.m_stringValue.utf8().data());
+            // The copied string is freed in NPN_ReleaseVariantValue (see npruntime.cpp)
+            STRINGZ_TO_NPVARIANT(utf8String, *result);
         }
         break;
 
     case JavaTypeBoolean:
         {
-            BOOLEAN_TO_NPVARIANT(value.z, *result);
+            BOOLEAN_TO_NPVARIANT(value.m_booleanValue, *result);
         }
         break;
 
     case JavaTypeByte:
         {
-            INT32_TO_NPVARIANT(value.b, *result);
+            INT32_TO_NPVARIANT(value.m_byteValue, *result);
         }
         break;
 
     case JavaTypeChar:
         {
-            INT32_TO_NPVARIANT(value.c, *result);
+            INT32_TO_NPVARIANT(value.m_charValue, *result);
         }
         break;
 
     case JavaTypeShort:
         {
-            INT32_TO_NPVARIANT(value.s, *result);
+            INT32_TO_NPVARIANT(value.m_shortValue, *result);
         }
         break;
 
     case JavaTypeInt:
         {
-            INT32_TO_NPVARIANT(value.i, *result);
+            INT32_TO_NPVARIANT(value.m_intValue, *result);
         }
         break;
 
         // TODO: Check if cast to double is needed.
     case JavaTypeLong:
         {
-            DOUBLE_TO_NPVARIANT(value.j, *result);
+            DOUBLE_TO_NPVARIANT(value.m_longValue, *result);
         }
         break;
 
     case JavaTypeFloat:
         {
-            DOUBLE_TO_NPVARIANT(value.f, *result);
+            DOUBLE_TO_NPVARIANT(value.m_floatValue, *result);
         }
         break;
 
     case JavaTypeDouble:
         {
-            DOUBLE_TO_NPVARIANT(value.d, *result);
+            DOUBLE_TO_NPVARIANT(value.m_doubleValue, *result);
         }
         break;
 
@@ -259,6 +232,103 @@ void convertJValueToNPVariant(jvalue value, JavaType javaType, const char* javaT
         }
         break;
     }
+}
+
+JavaValue jvalueToJavaValue(const jvalue& value, const JavaType& type)
+{
+    JavaValue result;
+    result.m_type = type;
+    switch (result.m_type) {
+    case JavaTypeVoid:
+        break;
+    case JavaTypeObject:
+        result.m_objectValue = new JavaInstance(value.l);
+        break;
+    case JavaTypeString:
+        {
+            jstring javaString = static_cast<jstring>(value.l);
+            const UChar* a = getUCharactersFromJStringInEnv(getJNIEnv(), javaString);
+            // We take a copy to allow the Java String to be released.
+            result.m_stringValue = String(a).threadsafeCopy();
+            releaseUCharactersForJStringInEnv(getJNIEnv(), javaString, a);
+        }
+        break;
+    case JavaTypeBoolean:
+        result.m_booleanValue = value.z == JNI_FALSE ? false : true;
+        break;
+    case JavaTypeByte:
+        result.m_byteValue = value.b;
+        break;
+    case JavaTypeChar:
+        result.m_charValue = value.c;
+        break;
+    case JavaTypeShort:
+        result.m_shortValue = value.s;
+        break;
+    case JavaTypeInt:
+        result.m_intValue = value.i;
+        break;
+    case JavaTypeLong:
+        result.m_longValue = value.j;
+        break;
+    case JavaTypeFloat:
+        result.m_floatValue = value.f;
+        break;
+    case JavaTypeDouble:
+        result.m_doubleValue = value.d;
+        break;
+    default:
+        ASSERT(false);
+    }
+    return result;
+}
+
+jvalue javaValueToJvalue(const JavaValue& value)
+{
+    jvalue result;
+    memset(&result, 0, sizeof(jvalue));
+    switch (value.m_type) {
+    case JavaTypeVoid:
+        break;
+    case JavaTypeObject:
+        if (value.m_objectValue)
+            result.l = value.m_objectValue->javaInstance();
+        break;
+    case JavaTypeString:
+        // This creates a local reference to a new String object, which will
+        // be released when the call stack returns to Java. Note that this
+        // may cause leaks if invoked from a native message loop, as is the
+        // case in workers.
+        result.l = getJNIEnv()->NewString(value.m_stringValue.characters(), value.m_stringValue.length());
+        break;
+    case JavaTypeBoolean:
+        result.z = value.m_booleanValue ? JNI_TRUE : JNI_FALSE;
+        break;
+    case JavaTypeByte:
+        result.b = value.m_byteValue;
+        break;
+    case JavaTypeChar:
+        result.c = value.m_charValue;
+        break;
+    case JavaTypeShort:
+        result.s = value.m_shortValue;
+        break;
+    case JavaTypeInt:
+        result.i = value.m_intValue;
+        break;
+    case JavaTypeLong:
+        result.j = value.m_longValue;
+        break;
+    case JavaTypeFloat:
+        result.f = value.m_floatValue;
+        break;
+    case JavaTypeDouble:
+        result.d = value.m_doubleValue;
+        break;
+    default:
+        ASSERT(false);
+    }
+    return result;
 }
 
 } // namespace Bindings

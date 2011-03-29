@@ -52,7 +52,21 @@ enum JavaType {
     JavaTypeLong,
     JavaTypeFloat,
     JavaTypeDouble,
-    JavaTypeArray
+    JavaTypeArray,
+#if USE(V8)
+    // JavaTypeString is distinct from JavaTypeObject because strings receive
+    // special handling when we convert to and from JavaScript. When calling
+    // Java methods, we must create Java String objects for string arguments.
+    // However, at conversion time we cannot assume that the mechanism used to
+    // interact with Java is JNI. Instead we use a special JavaTypeString.
+    // Implementations of JavaInstance which use JNI will create a Java String
+    // object when converting the JavaValue to a jvalue.
+    //
+    // Note that this type is independent of the JavaScript engine, but is
+    // currently used only with V8.
+    // See https://bugs.webkit.org/show_bug.cgi?id=57023.
+    JavaTypeString,
+#endif
 };
 
 } // namespace Bindings

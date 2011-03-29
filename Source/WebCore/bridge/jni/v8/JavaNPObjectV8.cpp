@@ -34,6 +34,7 @@
 #include "JavaFieldV8.h"
 #include "JavaInstanceV8.h"
 #include "JavaMethod.h"
+#include "JavaValueV8.h"
 #include "npruntime_impl.h"
 
 namespace JSC {
@@ -144,14 +145,14 @@ bool JavaNPObjectInvoke(NPObject* obj, NPIdentifier identifier, const NPVariant*
         jArgs = static_cast<jvalue*>(malloc(argCount * sizeof(jvalue)));
 
     for (unsigned int i = 0; i < argCount; i++)
-        jArgs[i] = convertNPVariantToJValue(args[i], jMethod->parameterAt(i));
+        jArgs[i] = javaValueToJvalue(convertNPVariantToJavaValue(args[i], jMethod->parameterAt(i)));
 
     jvalue jResult = instance->invokeMethod(jMethod, jArgs);
     instance->end();
     free(jArgs);
 
     VOID_TO_NPVARIANT(*result);
-    convertJValueToNPVariant(jResult, jMethod->returnType(), jMethod->returnTypeClassName(), result);
+    convertJavaValueToNPVariant(jvalueToJavaValue(jResult, jMethod->returnType()), result);
     return true;
 }
 
@@ -189,7 +190,7 @@ bool JavaNPObjectGetProperty(NPObject* obj, NPIdentifier identifier, NPVariant* 
     jvalue value = instance->getField(field);
     instance->end();
 
-    convertJValueToNPVariant(value, field->type(), field->typeClassName(), result);
+    convertJavaValueToNPVariant(jvalueToJavaValue(value, field->type()), result);
 
     return true;
 }

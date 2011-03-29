@@ -2195,6 +2195,7 @@
             'bridge/jni/v8/JavaNPObjectV8.cpp',
             'bridge/jni/v8/JavaNPObjectV8.h',
             'bridge/jni/v8/JavaStringV8.h',
+            'bridge/jni/v8/JavaValueV8.h',
             'bridge/jsc/BridgeJSC.cpp',
             'bridge/npruntime.cpp',
             'bridge/npruntime_priv.h',
