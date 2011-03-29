@@ -1,5 +1,11 @@
 2011-03-29  Patrick Gansterer  <paroga@webkit.org>
 
+        Unreviewed. Try to fix Windows build.
+
+        * DOMEventsClasses.cpp: Added initguid.h again.
+
+2011-03-29  Patrick Gansterer  <paroga@webkit.org>
+
         Reviewed by Adam Roben.
 
         [WIN] Cleanup includes in WebKit files

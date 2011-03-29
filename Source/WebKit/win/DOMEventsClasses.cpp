@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WebKitDLL.h"
+#include <initguid.h>
 #include "DOMEventsClasses.h"
 
 #include <WebCore/DOMWindow.h>
