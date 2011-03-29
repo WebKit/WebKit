@@ -1,3 +1,18 @@
+2011-03-29  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/9194927> REGRESSION (r81691): Page at www.mondaynote.com lays out incorrectly
+        
+        Back out the optimization that stopped when it hit the first float. This was an incorrect optimization
+        and can't be done without more work.
+
+        Added fast/block/float/float-forced-below-other-floats.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+
 2011-03-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.

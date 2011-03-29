@@ -1,3 +1,19 @@
+2011-03-29  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/9194927> REGRESSION (r81691): Page at www.mondaynote.com lays out incorrectly
+        
+        Back out the optimization that stopped when it hit the first float. This was an incorrect optimization
+        and can't be done without more work.
+
+        Added fast/block/float/float-below-other-floats.html
+
+        * fast/block/float/float-forced-below-other-floats.html: Added.
+        * platform/mac/fast/block/float/float-forced-below-other-floats-expected.checksum: Added.
+        * platform/mac/fast/block/float/float-forced-below-other-floats-expected.png: Added.
+        * platform/mac/fast/block/float/float-forced-below-other-floats-expected.txt: Added.
+
 2011-03-29  Adam Roben  <aroben@apple.com>
 
         Add passing results for a test that passes in WebKit2 but not WebKit1

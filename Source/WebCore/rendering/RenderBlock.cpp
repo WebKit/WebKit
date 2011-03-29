@@ -3455,6 +3455,11 @@ HashSet<RenderBox*>* RenderBlock::percentHeightDescendants() const
     return gPercentHeightDescendantsMap ? gPercentHeightDescendantsMap->get(this) : 0;
 }
 
+// FIXME: The logicalLeftOffsetForLine/logicalRightOffsetForLine functions are very slow if there are many floats
+// present. We need to add a structure to floating objects to represent "lines" of floats.  Then instead of checking
+// each float individually, we'd just walk backwards through the "lines" and stop when we hit a line that is fully above
+// the vertical offset that we'd like to check.  Computing the "lines" would be rather complicated, but could replace the left
+// objects and right objects count hack that is currently used here.
 int RenderBlock::logicalLeftOffsetForLine(int logicalTop, int fixedOffset, bool applyTextIndent, int* heightRemaining) const
 {
     int left = fixedOffset;
@@ -3474,10 +3479,9 @@ int RenderBlock::logicalLeftOffsetForLine(int logicalTop, int fixedOffset, bool 
             if (r->isPlaced() && logicalTopForFloat(r) <= logicalTop && logicalBottomForFloat(r) > logicalTop
                 && r->type() == FloatingObject::FloatLeft
                 && logicalRightForFloat(r) > left) {
-                left = logicalRightForFloat(r);
+                left = max(left, logicalRightForFloat(r));
                 if (heightRemaining)
                     *heightRemaining = logicalBottomForFloat(r) - logicalTop;
-                break;
             }
         } while (it != begin);
     }
@@ -3512,10 +3516,9 @@ int RenderBlock::logicalRightOffsetForLine(int logicalTop, int fixedOffset, bool
             if (r->isPlaced() && logicalTopForFloat(r) <= logicalTop && logicalBottomForFloat(r) > logicalTop
                 && r->type() == FloatingObject::FloatRight
                 && logicalLeftForFloat(r) < right) {
-                right = logicalLeftForFloat(r);
+                right = min(right, logicalLeftForFloat(r));
                 if (heightRemaining)
                     *heightRemaining = logicalBottomForFloat(r) - logicalTop;
-                break;
             }
         } while (it != begin);
     }
