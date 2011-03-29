@@ -1,5 +1,12 @@
 2011-03-29  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip failing test on GTK.
+
+        * platform/gtk/Skipped: Skip
+        fast/loader/onload-willSendRequest-null-for-frame.html.
+
+2011-03-29  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK baselines for fast/forms/listbox-bidi-align.html,
         added in r82200.
 
