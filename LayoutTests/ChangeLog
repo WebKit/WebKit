@@ -1,3 +1,11 @@
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
+        Scrollbars are different on different platforms.  Including scrollbars
+        in tests that don't need them is sadness.
+
+        * platform/chromium-linux/fast/block/float/float-forced-below-other-floats-expected.checksum: Added.
+        * platform/chromium-linux/fast/block/float/float-forced-below-other-floats-expected.png: Added.
+
 2011-03-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed rollout r82282, part of r82288, r82298.
