@@ -2974,8 +2974,6 @@ BUGCR74982 GPU : media/controls-without-preload.html = IMAGE
 BUGCR74982 GPU : media/video-aspect-ratio.html = IMAGE
 BUGCR74982 GPU WIN : media/video-transformed.html = IMAGE
 BUGCR74982 GPU LINUX : media/video-transformed.html = IMAGE
-BUGCR74982 GPU WIN-XP : media/video-transformed.html = IMAGE
-BUGCR74982 GPU WIN-7 : media/video-transformed.html = IMAGE
 BUGCR74982 GPU : media/video-zoom-controls.html = IMAGE
 
 BUGWK55708 BUGCR75345 GPU MAC : media/video-controls-rendering.html = CRASH

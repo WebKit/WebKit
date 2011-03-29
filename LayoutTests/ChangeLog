@@ -1,3 +1,9 @@
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
+        Remove more-specific instances of a general rule.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [DRT] GtkScrolledWindow adds three pixels of padding between the WebView and the scrollbar
