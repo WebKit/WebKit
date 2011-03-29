@@ -1,3 +1,36 @@
+2011-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rename InlineIterator::obj to m_obj to match modern style
+        https://bugs.webkit.org/show_bug.cgi?id=57319
+
+        I started this rename after confusion in InlineBidiResolver::appendRun.
+        (Which uses an "obj" local in InlineIterator.h.  It's not actually
+        masking m_obj because it's a separate class, but I didn't realize
+        that at the time because it's in InlineIterator.h which is itself confusing!)
+
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::InlineIterator):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::InlineIterator::increment):
+        (WebCore::InlineIterator::atEnd):
+        (WebCore::InlineIterator::current):
+        (WebCore::InlineIterator::direction):
+        (WebCore::InlineBidiResolver::appendRun):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::checkMidpoints):
+        (WebCore::RenderBlock::appendRunsForObject):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::matchedEndLine):
+        (WebCore::skipNonBreakingSpace):
+        (WebCore::RenderBlock::requiresLineBox):
+        (WebCore::RenderBlock::skipTrailingWhitespace):
+        (WebCore::RenderBlock::skipLeadingWhitespace):
+        (WebCore::tryHyphenating):
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2011-03-29  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
