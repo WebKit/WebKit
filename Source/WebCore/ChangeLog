@@ -1,3 +1,15 @@
+2011-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Rename BidiResolver::last to m_last to match modern style
+        https://bugs.webkit.org/show_bug.cgi?id=57367
+
+        * platform/text/BidiResolver.h:
+        (WebCore::::lowerExplicitEmbeddingLevel):
+        (WebCore::::raiseExplicitEmbeddingLevel):
+        (WebCore::::createBidiRunsForLine):
+
 2011-03-29  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by Maciej Stachowiak.
