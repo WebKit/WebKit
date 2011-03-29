@@ -1,3 +1,10 @@
+2011-03-29  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed build fix. Remove ASSERT hitting consitently on GTK.
+
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::moveToStartOf):
+
 2011-03-29  Darin Adler  <darin@apple.com>
 
         Fix some just-introduced build failures.

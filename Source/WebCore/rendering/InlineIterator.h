@@ -53,7 +53,6 @@ public:
 
     void moveToStartOf(RenderObject* object)
     {
-        ASSERT(object);
         moveTo(object, 0);
     }
 
