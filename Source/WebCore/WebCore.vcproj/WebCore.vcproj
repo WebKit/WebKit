@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCG.vsprops;.\WebCoreCFNetwork.vsprops;.\WebCorePthreads.vsprops;.\WebCoreMediaQT.vsprops;.\WebCoreQuartzCore.vsprops"
+			InheritedPropertySheets=".\WebCoreDebug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -72,7 +72,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCG.vsprops;.\WebCoreCFNetwork.vsprops;.\WebCorePthreads.vsprops;.\WebCoreMediaQT.vsprops;.\WebCoreQuartzCore.vsprops"
+			InheritedPropertySheets=".\WebCoreRelease.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -126,7 +126,7 @@
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug_wincairo.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCairo.vsprops;.\WebCoreCURL.vsprops"
+			InheritedPropertySheets=".\WebCoreDebugCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -180,7 +180,7 @@
 		<Configuration
 			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCairo.vsprops;.\WebCoreCURL.vsprops"
+			InheritedPropertySheets=".\WebCoreReleaseCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -234,7 +234,7 @@
 		<Configuration
 			Name="Debug_All|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCG.vsprops;.\WebCoreCFNetwork.vsprops;.\WebCorePthreads.vsprops;.\WebCoreMediaQT.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug_all.vsprops;.\WebCoreQuartzCore.vsprops"
+			InheritedPropertySheets=".\WebCoreDebugAll.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -288,7 +288,7 @@
 		<Configuration
 			Name="Release_LTCG|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\WebCoreCommon.vsprops;.\WebCoreCG.vsprops;.\WebCoreCFNetwork.vsprops;.\WebCorePthreads.vsprops;.\WebCoreMediaQT.vsprops;.\WebCoreQuartzCore.vsprops"
+			InheritedPropertySheets=".\WebCoreReleaseLTCG.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>

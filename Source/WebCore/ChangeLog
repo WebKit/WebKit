@@ -1,3 +1,30 @@
+2011-03-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Use per-configuration vsprops in WebCore to avoid WebKitVSPropsRedirectionDir removal by MSVC IDE
+        https://bugs.webkit.org/show_bug.cgi?id=57378
+
+        Visual Studio's IDE was removing instances of $(WebKitVSPropsRedirectionDir) from
+        InheritedPropertySheet rules in our vcproj files when the vcproj was edited from within
+        the IDE. To avoid this, add a separate vsprops file for each project configuration that
+        contains the required inherited property sheets.
+
+        * WebCore.vcproj/QTMovieWin.vcproj:
+        * WebCore.vcproj/QTMovieWinDebug.vsprops: Added.
+        * WebCore.vcproj/QTMovieWinDebugAll.vsprops: Added.
+        * WebCore.vcproj/QTMovieWinDebugCairoCFLite.vsprops: Added.
+        * WebCore.vcproj/QTMovieWinRelease.vsprops: Added.
+        * WebCore.vcproj/QTMovieWinReleaseCairoCFLite.vsprops: Added.
+        * WebCore.vcproj/QTMovieWinReleaseLTCG.vsprops: Added.
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreDebug.vsprops: Added.
+        * WebCore.vcproj/WebCoreDebugAll.vsprops: Added.
+        * WebCore.vcproj/WebCoreDebugCairoCFLite.vsprops: Added.
+        * WebCore.vcproj/WebCoreRelease.vsprops: Added.
+        * WebCore.vcproj/WebCoreReleaseCairoCFLite.vsprops: Added.
+        * WebCore.vcproj/WebCoreReleaseLTCG.vsprops: Added.
+
 2011-03-29  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.
