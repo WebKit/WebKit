@@ -1,3 +1,15 @@
+2011-03-29  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix documentation for QWebPage::repaintRequested()
+
+        This signal is always emitted when the page is dirtied, so remove
+        reference to old behavior where we would only emit the signal for
+        headless QWebPages.
+
+        * Api/qwebpage.cpp:
+
 2011-03-28  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Benjamin Poulain.

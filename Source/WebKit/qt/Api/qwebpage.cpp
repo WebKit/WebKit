@@ -4044,7 +4044,8 @@ quint64 QWebPage::bytesReceived() const
 /*!
     \fn void QWebPage::repaintRequested(const QRect& dirtyRect)
 
-    This signal is emitted whenever this QWebPage should be updated and no view was set.
+    This signal is emitted whenever this QWebPage should be updated. It's useful
+    when rendering a QWebPage without a QWebView or QGraphicsWebView.
     \a dirtyRect contains the area that needs to be updated. To paint the QWebPage get
     the mainFrame() and call the render(QPainter*, const QRegion&) method with the
     \a dirtyRect as the second parameter.
