@@ -1,3 +1,10 @@
+2011-03-29  Jessie Berlin  <jberlin@apple.com>
+
+        Update the WebKitSystemInterface libraries for changes in the implementation.
+
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2011-03-28  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adam Roben.
