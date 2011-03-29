@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\Configurations\MiniBrowserCoreFoundation.vsprops;.\Configurations\MiniBrowserCommon.vsprops"
+			InheritedPropertySheets=".\Configurations\MiniBrowserDebug.vsprops"
 			UseOfATL="1"
 			CharacterSet="1"
 			>
@@ -80,7 +80,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\Configurations\MiniBrowserCoreFoundation.vsprops;.\Configurations\MiniBrowserCommon.vsprops"
+			InheritedPropertySheets=".\Configurations\MiniBrowserRelease.vsprops"
 			UseOfATL="1"
 			CharacterSet="1"
 			>
@@ -142,7 +142,7 @@
 		<Configuration
 			Name="Debug_All|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\debug_all.vsprops;.\Configurations\MiniBrowserCoreFoundation.vsprops;.\Configurations\MiniBrowserCommon.vsprops"
+			InheritedPropertySheets=".\Configurations\MiniBrowserDebugAll.vsprops"
 			UseOfATL="1"
 			CharacterSet="1"
 			>
@@ -204,7 +204,7 @@
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\debug_wincairo.vsprops;.\Configurations\MiniBrowserCFLite.vsprops;.\Configurations\MiniBrowserCommon.vsprops"
+			InheritedPropertySheets=".\Configurations\MiniBrowserDebugCairoCFLite.vsprops"
 			UseOfATL="1"
 			CharacterSet="1"
 			>
@@ -266,7 +266,7 @@
 		<Configuration
 			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;.\Configurations\MiniBrowserCFLite.vsprops;.\Configurations\MiniBrowserCommon.vsprops"
+			InheritedPropertySheets=".\Configurations\MiniBrowserReleaseCairoCFLite.vsprops"
 			UseOfATL="1"
 			CharacterSet="1"
 			>
@@ -328,7 +328,7 @@
 		<Configuration
 			Name="Release_LTCG|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\Configurations\MiniBrowserCoreFoundation.vsprops;.\Configurations\MiniBrowserCommon.vsprops"
+			InheritedPropertySheets=".\Configurations\MiniBrowserReleaseLTCG.vsprops"
 			UseOfATL="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"

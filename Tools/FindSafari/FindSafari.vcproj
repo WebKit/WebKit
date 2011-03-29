@@ -17,7 +17,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\FindSafariCommon.vsprops"
+			InheritedPropertySheets=".\FindSafariDebug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -78,7 +78,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\FindSafariCommon.vsprops"
+			InheritedPropertySheets=".\FindSafariRelease.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -139,7 +139,7 @@
 		<Configuration
 			Name="Debug_All|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\debug_all.vsprops;.\FindSafariCommon.vsprops"
+			InheritedPropertySheets=".\FindSafariDebugAll.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -200,7 +200,7 @@
 		<Configuration
 			Name="Release_LTCG|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\FindSafariCommon.vsprops"
+			InheritedPropertySheets=".\FindSafariReleaseLTCG.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -261,7 +261,7 @@
 		<Configuration
 			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;.\FindSafariCommon.vsprops"
+			InheritedPropertySheets=".\FindSafariReleaseCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -322,7 +322,7 @@
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\debug_wincairo.vsprops;.\FindSafariCommon.vsprops"
+			InheritedPropertySheets=".\FindSafariDebugCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -383,7 +383,7 @@
 		<Configuration
 			Name="Release_PGO|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\FindSafariCommon.vsprops"
+			InheritedPropertySheets=".\FindSafariReleasePGO.vsprops"
 			CharacterSet="1"
 			>
 			<Tool

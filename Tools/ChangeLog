@@ -1,3 +1,94 @@
+2011-03-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Use per-configuration vsprops in tools projects to avoid WebKitVSPropsRedirectionDir removal by MSVC IDE
+        https://bugs.webkit.org/show_bug.cgi?id=57394
+
+        Visual Studio's IDE was removing instances of $(WebKitVSPropsRedirectionDir) from
+        InheritedPropertySheet rules in our vcproj files when the vcproj was edited from within
+        the IDE. To avoid this, add a separate vsprops file for each project configuration that
+        contains the required inherited property sheets.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginDebug.vsprops: Added.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginDebugAll.vsprops: Added.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginDebugCairoCFLite.vsprops: Added.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginRelease.vsprops: Added.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginReleaseCairoCFLite.vsprops: Added.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginReleaseLTCG.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/DumpRenderTreeDebug.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeDebugAll.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeDebugCairoCFLite.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeRelease.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeReleaseCairoCFLite.vsprops: Added.
+        * DumpRenderTree/win/DumpRenderTreeReleaseLTCG.vsprops: Added.
+        * DumpRenderTree/win/ImageDiff.vcproj:
+        * DumpRenderTree/win/ImageDiffDebug.vsprops: Added.
+        * DumpRenderTree/win/ImageDiffDebugAll.vsprops: Added.
+        * DumpRenderTree/win/ImageDiffDebugCairoCFLite.vsprops: Added.
+        * DumpRenderTree/win/ImageDiffRelease.vsprops: Added.
+        * DumpRenderTree/win/ImageDiffReleaseCairoCFLite.vsprops: Added.
+        * DumpRenderTree/win/ImageDiffReleaseLTCG.vsprops: Added.
+        * FindSafari/FindSafari.vcproj:
+        * FindSafari/FindSafariDebug.vsprops: Added.
+        * FindSafari/FindSafariDebugAll.vsprops: Added.
+        * FindSafari/FindSafariDebugCairoCFLite.vsprops: Added.
+        * FindSafari/FindSafariRelease.vsprops: Added.
+        * FindSafari/FindSafariReleaseCairoCFLite.vsprops: Added.
+        * FindSafari/FindSafariReleaseLTCG.vsprops: Added.
+        * FindSafari/FindSafariReleasePGO.vsprops: Added.
+        * MiniBrowser/Configurations/MiniBrowserDebug.vsprops: Added.
+        * MiniBrowser/Configurations/MiniBrowserDebugAll.vsprops: Added.
+        * MiniBrowser/Configurations/MiniBrowserDebugCairoCFLite.vsprops: Added.
+        * MiniBrowser/Configurations/MiniBrowserRelease.vsprops: Added.
+        * MiniBrowser/Configurations/MiniBrowserReleaseCairoCFLite.vsprops: Added.
+        * MiniBrowser/Configurations/MiniBrowserReleaseLTCG.vsprops: Added.
+        * MiniBrowser/MiniBrowser.vcproj:
+        * WebKitAPITest/WebKitAPITest.vcproj:
+        * WebKitAPITest/WebKitAPITestDebug.vsprops: Added.
+        * WebKitAPITest/WebKitAPITestDebugAll.vsprops: Added.
+        * WebKitAPITest/WebKitAPITestDebugCairoCFLite.vsprops: Added.
+        * WebKitAPITest/WebKitAPITestRelease.vsprops: Added.
+        * WebKitAPITest/WebKitAPITestReleaseCairoCFLite.vsprops: Added.
+        * WebKitAPITest/WebKitAPITestReleaseLTCG.vsprops: Added.
+        * WebKitLauncherWin/WebKitLauncherWin.vcproj:
+        * WebKitLauncherWin/WebKitLauncherWinDebug.vsprops: Added.
+        * WebKitLauncherWin/WebKitLauncherWinDebugAll.vsprops: Added.
+        * WebKitLauncherWin/WebKitLauncherWinDebugCairoCFLite.vsprops: Added.
+        * WebKitLauncherWin/WebKitLauncherWinRelease.vsprops: Added.
+        * WebKitLauncherWin/WebKitLauncherWinReleaseCairoCFLite.vsprops: Added.
+        * WebKitLauncherWin/WebKitLauncherWinReleaseLTCG.vsprops: Added.
+        * WebKitTestRunner/win/InjectedBundle.vcproj:
+        * WebKitTestRunner/win/InjectedBundleDebug.vsprops: Added.
+        * WebKitTestRunner/win/InjectedBundleDebugAll.vsprops: Added.
+        * WebKitTestRunner/win/InjectedBundleDebugCairoCFLite.vsprops: Added.
+        * WebKitTestRunner/win/InjectedBundleRelease.vsprops: Added.
+        * WebKitTestRunner/win/InjectedBundleReleaseCairoCFLite.vsprops: Added.
+        * WebKitTestRunner/win/InjectedBundleReleaseLTCG.vsprops: Added.
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj:
+        * WebKitTestRunner/win/WebKitTestRunnerDebug.vsprops: Added.
+        * WebKitTestRunner/win/WebKitTestRunnerDebugAll.vsprops: Added.
+        * WebKitTestRunner/win/WebKitTestRunnerDebugCairoCFLite.vsprops: Added.
+        * WebKitTestRunner/win/WebKitTestRunnerRelease.vsprops: Added.
+        * WebKitTestRunner/win/WebKitTestRunnerReleaseCairoCFLite.vsprops: Added.
+        * WebKitTestRunner/win/WebKitTestRunnerReleaseLTCG.vsprops: Added.
+        * WinLauncher/WinLauncher.vcproj:
+        * WinLauncher/WinLauncherDebug.vsprops: Added.
+        * WinLauncher/WinLauncherDebugAll.vsprops: Added.
+        * WinLauncher/WinLauncherDebugCairoCFLite.vsprops: Added.
+        * WinLauncher/WinLauncherRelease.vsprops: Added.
+        * WinLauncher/WinLauncherReleaseCairoCFLite.vsprops: Added.
+        * WinLauncher/WinLauncherReleaseLTCG.vsprops: Added.
+        * record-memory-win/record-memory-win.vcproj:
+        * record-memory-win/record-memory-winDebug.vsprops: Added.
+        * record-memory-win/record-memory-winDebugAll.vsprops: Added.
+        * record-memory-win/record-memory-winDebugCairoCFLite.vsprops: Added.
+        * record-memory-win/record-memory-winRelease.vsprops: Added.
+        * record-memory-win/record-memory-winReleaseCairoCFLite.vsprops: Added.
+        * record-memory-win/record-memory-winReleaseLTCG.vsprops: Added.
+
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
