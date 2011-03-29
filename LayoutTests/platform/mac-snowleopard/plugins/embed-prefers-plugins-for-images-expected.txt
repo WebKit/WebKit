@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 0: PLUGIN: src: image.png
-PASS
-
