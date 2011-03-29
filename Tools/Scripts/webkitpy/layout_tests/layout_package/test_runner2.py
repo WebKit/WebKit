@@ -224,7 +224,7 @@ class TestRunner2(test_runner.TestRunner):
 
         if worker_state.wedged:
             # This shouldn't happen if we have our timeouts tuned properly.
-            _log.error("%s unwedged", w.name)
+            _log.error("%s unwedged", source)
 
         self._all_results.append(result)
         self._update_summary_with_result(self._current_result_summary, result)
