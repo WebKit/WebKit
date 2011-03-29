@@ -322,6 +322,7 @@ fast/events/mouse-click-events.html
 fast/events/mouse-drag-from-frame-to-other-frame.html
 fast/events/mouse-drag-from-frame.html
 fast/events/mouse-focus-imagemap.html
+fast/events/mouse-relative-position.html
 fast/events/mouseclick-target-and-positioning.html
 fast/events/mousedown-in-subframe-scrollbar.html
 fast/events/mousedown_in_scrollbar.html
