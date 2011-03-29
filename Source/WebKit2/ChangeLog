@@ -1,3 +1,23 @@
+2011-03-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2 bundle page needs to offer generated file hooks
+        https://bugs.webkit.org/show_bug.cgi?id=57279
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: Added shouldGenerateFileForUpload and
+        generateFileForUpload callback pointers.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::shouldGenerateFileForUpload): Added.
+        (WebKit::InjectedBundlePageUIClient::generateFileForUpload): Added.
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h: Added functions above.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::shouldReplaceWithGeneratedFileForUpload): Implemented by
+        calling the functions above.
+        (WebKit::WebChromeClient::generateReplacementFile): Ditto.
+
 2011-03-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

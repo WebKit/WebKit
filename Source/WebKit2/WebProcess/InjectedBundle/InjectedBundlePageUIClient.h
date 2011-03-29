@@ -55,6 +55,9 @@ public:
 
     bool shouldPaintCustomOverhangArea();
     void paintCustomOverhangArea(WebPage*, WebCore::GraphicsContext*, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&);
+
+    String shouldGenerateFileForUpload(WebPage*, const String& originalFilePath);
+    String generateFileForUpload(WebPage*, const String& originalFilePath);
 };
 
 } // namespace WebKit

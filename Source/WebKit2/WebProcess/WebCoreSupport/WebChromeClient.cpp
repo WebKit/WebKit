@@ -546,14 +546,13 @@ void WebChromeClient::paintCustomHighlight(Node*, const AtomicString& type, cons
 
 bool WebChromeClient::shouldReplaceWithGeneratedFileForUpload(const String& path, String& generatedFilename)
 {
-    notImplemented();
-    return false;
+    generatedFilename = m_page->injectedBundleUIClient().shouldGenerateFileForUpload(m_page, path);
+    return !generatedFilename.isNull();
 }
 
 String WebChromeClient::generateReplacementFile(const String& path)
 {
-    notImplemented();
-    return String();
+    return m_page->injectedBundleUIClient().generateFileForUpload(m_page, path);
 }
 
 bool WebChromeClient::paintCustomScrollbar(GraphicsContext*, const FloatRect&, ScrollbarControlSize, 

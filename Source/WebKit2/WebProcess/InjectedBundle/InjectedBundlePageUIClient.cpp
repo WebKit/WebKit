@@ -99,4 +99,20 @@ void InjectedBundlePageUIClient::paintCustomOverhangArea(WebPage* page, Graphics
     m_client.paintCustomOverhangArea(toAPI(page), toAPI(context.get()), toAPI(horizontalOverhangArea), toAPI(verticalOverhangArea), toAPI(dirtyRect), m_client.clientInfo);
 }
 
+String InjectedBundlePageUIClient::shouldGenerateFileForUpload(WebPage* page, const String& originalFilePath)
+{
+    if (!m_client.shouldGenerateFileForUpload)
+        return String();
+    RefPtr<WebString> generatedFilePath = adoptRef(toImpl(m_client.shouldGenerateFileForUpload(toAPI(page), toAPI(originalFilePath.impl()), m_client.clientInfo)));
+    return generatedFilePath ? generatedFilePath->string() : String();
+}
+
+String InjectedBundlePageUIClient::generateFileForUpload(WebPage* page, const String& originalFilePath)
+{
+    if (!m_client.shouldGenerateFileForUpload)
+        return String();
+    RefPtr<WebString> generatedFilePath = adoptRef(toImpl(m_client.generateFileForUpload(toAPI(page), toAPI(originalFilePath.impl()), m_client.clientInfo)));
+    return generatedFilePath ? generatedFilePath->string() : String();
+}
+
 } // namespace WebKit
