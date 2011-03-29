@@ -1,8 +1,8 @@
-layer at (0,0) size 781x1214
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x1214
-  RenderBlock {HTML} at (0,0) size 781x1214
-    RenderBody {BODY} at (8,10) size 765x1196
+layer at (0,0) size 784x1214
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1214
+  RenderBlock {HTML} at (0,0) size 784x1214
+    RenderBody {BODY} at (8,10) size 768x1196
       RenderTable {TABLE} at (10,0) size 100x118 [border: (1px solid #000000)]
         RenderTableSection {THEAD} at (1,1) size 25x116
           RenderTableRow {TR} at (0,2) size 21x116
@@ -35,7 +35,7 @@ layer at (0,0) size 781x1214
             RenderTableCell {TD} at (25,59) size 21x55 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 19x38
                 text run at (1,1) width 38: "Cell 4"
-      RenderBlock {P} at (0,134) size 765x19
+      RenderBlock {P} at (0,134) size 768x19
         RenderText {#text} at (0,0) size 222x19
           text run at (0,0) width 222: "Row groups have display:table-cell"
       RenderTable {TABLE} at (10,169) size 64x234 [border: (1px solid #000000)]
@@ -91,7 +91,7 @@ layer at (0,0) size 781x1214
                     RenderTableCell {TD} at (2,44) size 21x40 [r=0 c=1 rs=1 cs=1]
                       RenderText {#text} at (1,1) size 19x38
                         text run at (1,1) width 38: "Cell 4"
-      RenderBlock {P} at (0,419) size 765x19
+      RenderBlock {P} at (0,419) size 768x19
         RenderText {#text} at (0,0) size 200x19
           text run at (0,0) width 200: "Row groups have display:block"
       RenderTable {TABLE} at (10,454) size 110x122 [border: (1px solid #000000)]

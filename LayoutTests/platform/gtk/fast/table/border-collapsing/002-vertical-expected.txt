@@ -1,9 +1,9 @@
-layer at (0,0) size 781x617
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x617
-  RenderBlock {HTML} at (0,0) size 781x617
-    RenderBody {BODY} at (8,8) size 765x593
-      RenderBlock {P} at (0,0) size 765x593
+layer at (0,0) size 784x617
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x617
+  RenderBlock {HTML} at (0,0) size 784x617
+    RenderBody {BODY} at (8,8) size 768x593
+      RenderBlock {P} at (0,0) size 768x593
         RenderTable {TABLE} at (0,0) size 277x158 [border: (2px solid #FFFF00)]
           RenderTableCol {COLGROUP} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0 [border: (3px solid #000000)]

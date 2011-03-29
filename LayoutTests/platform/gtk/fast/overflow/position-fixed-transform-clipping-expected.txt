@@ -1,8 +1,8 @@
-layer at (0,0) size 781x2000
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x2000
-  RenderBlock {HTML} at (0,0) size 781x2000
-    RenderBody {BODY} at (0,0) size 781x2000
+layer at (0,0) size 784x2000
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x2000
+  RenderBlock {HTML} at (0,0) size 784x2000
+    RenderBody {BODY} at (0,0) size 784x2000
 layer at (0,116) size 305x38
   RenderBlock (positioned) {P} at (0,116) size 305x38
     RenderInline {A} at (0,0) size 305x19 [color=#0000EE]

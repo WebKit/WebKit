@@ -1,12 +1,12 @@
-layer at (0,0) size 781x600
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x600
-  RenderBlock {HTML} at (0,0) size 781x600
-    RenderBody {BODY} at (8,8) size 765x584
-      RenderBlock (anonymous) at (0,0) size 765x19
+layer at (0,0) size 784x600
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x600
+  RenderBlock {HTML} at (0,0) size 784x600
+    RenderBody {BODY} at (8,8) size 768x584
+      RenderBlock (anonymous) at (0,0) size 768x19
         RenderText {#text} at (0,0) size 312x19
           text run at (0,0) width 312: "The body should always have a vertical scrollbar."
-      RenderBlock (anonymous) at (0,219) size 765x68
+      RenderBlock (anonymous) at (0,219) size 768x68
         RenderText {#text} at (206,49) size 4x19
           text run at (206,49) width 4: " "
         RenderText {#text} at (0,0) size 0x0

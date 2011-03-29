@@ -1,13 +1,13 @@
-layer at (0,0) size 781x1029
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x1029
-  RenderBlock {HTML} at (0,0) size 781x1029
-    RenderBody {BODY} at (8,21) size 765x1000
-      RenderBlock {H4} at (0,0) size 765x19
+layer at (0,0) size 784x1029
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1029
+  RenderBlock {HTML} at (0,0) size 784x1029
+    RenderBody {BODY} at (8,21) size 768x1000
+      RenderBlock {H4} at (0,0) size 768x19
         RenderText {#text} at (0,0) size 287x19
           text run at (0,0) width 287: "Safari Fixed / Overflow Hidden Scroll Bug"
-      RenderBlock {PRE} at (0,40) size 765x0
-      RenderBlock {PRE} at (0,40) size 765x495
+      RenderBlock {PRE} at (0,40) size 768x0
+      RenderBlock {PRE} at (0,40) size 768x495
         RenderText {#text} at (0,0) size 264x495
           text run at (0,0) width 72: "#fixed1 {"
           text run at (72,0) width 0: " "
@@ -74,17 +74,17 @@ layer at (0,0) size 781x1029
           text run at (0,465) width 64: "\x{9}"
           text run at (64,465) width 0: " "
           text run at (0,480) width 0: " "
-      RenderBlock {P} at (0,551) size 765x19
+      RenderBlock {P} at (0,551) size 768x19
         RenderText {#text} at (0,0) size 401x19
           text run at (0,0) width 401: "When you scroll this page the following objects will be clipped:"
-      RenderBlock {P} at (0,586) size 765x19
+      RenderBlock {P} at (0,586) size 768x19
         RenderText {#text} at (0,0) size 739x19
           text run at (0,0) width 739: "- (relative objects and overflowHidden objects) inside (overflowHidden objects) inside (fixed objects) will be clipped;"
-      RenderBlock {P} at (0,621) size 765x38
+      RenderBlock {P} at (0,621) size 768x38
         RenderText {#text} at (0,0) size 717x38
           text run at (0,0) width 717: "- (relative objects and overflowHidden objects and absolute objects) inside (fixed/overflowHidden objects) will be"
           text run at (0,19) width 50: "clipped;"
-      RenderBlock {P} at (0,675) size 765x38
+      RenderBlock {P} at (0,675) size 768x38
         RenderText {#text} at (0,0) size 723x38
           text run at (0,0) width 723: "Nice effect, but not what we want. Tested in Safari Version 2.0.4 (419.3), and WebKit Nightly Build Mon Nov 20"
           text run at (0,19) width 128: "5:18:23 GMT 2006."
@@ -172,12 +172,12 @@ layer at (527,358) size 118x31
   RenderBlock (relative positioned) {DIV} at (11,30) size 118x31 [border: (1px solid #999999)]
     RenderText {#text} at (6,6) size 50x19
       text run at (6,6) width 50: ".relative"
-layer at (705,149) size 162x380 backgroundClip at (0,0) size 781x1029 clip at (0,0) size 781x1029 outlineClip at (0,0) size 781x1029
+layer at (705,149) size 162x380 backgroundClip at (0,0) size 784x1029 clip at (0,0) size 784x1029 outlineClip at (0,0) size 784x1029
   RenderBlock (positioned) {DIV} at (705,85) size 162x380 [border: (1px solid #999999)]
     RenderBlock (anonymous) at (6,6) size 150x19
       RenderText {#text} at (0,0) size 48x19
         text run at (0,0) width 48: "#fixed3"
-layer at (716,179) size 140x339 backgroundClip at (716,179) size 65x339 clip at (717,180) size 64x337 outlineClip at (0,0) size 781x1029
+layer at (716,179) size 140x339 backgroundClip at (716,179) size 68x339 clip at (717,180) size 67x337 outlineClip at (0,0) size 784x1029
   RenderBlock {DIV} at (11,30) size 140x339 [border: (1px solid #999999)]
     RenderBlock (anonymous) at (6,6) size 128x19
       RenderText {#text} at (0,0) size 108x19
@@ -185,7 +185,7 @@ layer at (716,179) size 140x339 backgroundClip at (716,179) size 65x339 clip at 
     RenderBlock {DIV} at (11,30) size 118x31 [border: (1px solid #999999)]
       RenderText {#text} at (6,6) size 49x19
         text run at (6,6) width 49: "no style"
-layer at (727,281) size 118x72 backgroundClip at (727,281) size 54x72 clip at (728,282) size 53x70 outlineClip at (717,180) size 64x337
+layer at (727,281) size 118x72 backgroundClip at (727,281) size 57x72 clip at (728,282) size 56x70 outlineClip at (717,180) size 67x337
   RenderBlock {DIV} at (11,102) size 118x72 [border: (1px solid #999999)]
     RenderBlock (anonymous) at (6,6) size 106x19
       RenderText {#text} at (0,0) size 108x19
@@ -193,25 +193,25 @@ layer at (727,281) size 118x72 backgroundClip at (727,281) size 54x72 clip at (7
     RenderBlock {DIV} at (11,30) size 96x31 [border: (1px solid #999999)]
       RenderText {#text} at (6,6) size 49x19
         text run at (6,6) width 49: "no style"
-layer at (727,358) size 118x72 backgroundClip at (727,358) size 54x72 clip at (728,359) size 53x70 outlineClip at (717,180) size 64x337
+layer at (727,358) size 118x72 backgroundClip at (727,358) size 57x72 clip at (728,359) size 56x70 outlineClip at (717,180) size 67x337
   RenderBlock {DIV} at (11,179) size 118x72 [border: (1px solid #999999)]
     RenderBlock (anonymous) at (6,6) size 106x19
       RenderText {#text} at (0,0) size 108x19
         text run at (0,0) width 108: ".overflowHidden"
-layer at (727,435) size 118x72 backgroundClip at (727,435) size 54x72 clip at (728,436) size 53x70 outlineClip at (717,180) size 64x337
+layer at (727,435) size 118x72 backgroundClip at (727,435) size 57x72 clip at (728,436) size 56x70 outlineClip at (717,180) size 67x337
   RenderBlock {DIV} at (11,256) size 118x72 [border: (1px solid #999999)]
     RenderBlock (anonymous) at (6,6) size 106x19
       RenderText {#text} at (0,0) size 108x19
         text run at (0,0) width 108: ".overflowHidden"
-layer at (738,465) size 96x31 backgroundClip at (738,465) size 43x31 clip at (739,466) size 42x29 outlineClip at (728,436) size 53x70 scrollWidth 118
+layer at (738,465) size 96x31 backgroundClip at (738,465) size 46x31 clip at (739,466) size 45x29 outlineClip at (728,436) size 56x70 scrollWidth 118
   RenderBlock {DIV} at (11,30) size 96x31 [border: (1px solid #999999)]
     RenderText {#text} at (6,6) size 108x19
       text run at (6,6) width 108: ".overflowHidden"
-layer at (727,245) size 118x31 backgroundClip at (717,180) size 64x337 clip at (717,180) size 64x337 outlineClip at (717,180) size 64x337
+layer at (727,245) size 118x31 backgroundClip at (717,180) size 67x337 clip at (717,180) size 67x337 outlineClip at (717,180) size 67x337
   RenderBlock (relative positioned) {DIV} at (11,66) size 118x31 [border: (1px solid #999999)]
     RenderText {#text} at (6,6) size 50x19
       text run at (6,6) width 50: ".relative"
-layer at (738,388) size 96x31 backgroundClip at (728,359) size 53x70 clip at (728,359) size 53x70 outlineClip at (728,359) size 53x70
+layer at (738,388) size 96x31 backgroundClip at (728,359) size 56x70 clip at (728,359) size 56x70 outlineClip at (728,359) size 56x70
   RenderBlock (relative positioned) {DIV} at (11,30) size 96x31 [border: (1px solid #999999)]
     RenderText {#text} at (6,6) size 50x19
       text run at (6,6) width 50: ".relative"

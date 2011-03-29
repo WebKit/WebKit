@@ -1,14 +1,14 @@
-layer at (0,0) size 781x1189
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x1189
-  RenderBlock {HTML} at (0,0) size 781x1189
-    RenderBody {BODY} at (8,8) size 765x1173
-      RenderBlock (anonymous) at (0,0) size 765x19
+layer at (0,0) size 784x1189
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1189
+  RenderBlock {HTML} at (0,0) size 784x1189
+    RenderBody {BODY} at (8,8) size 768x1173
+      RenderBlock (anonymous) at (0,0) size 768x19
         RenderText {#text} at (0,0) size 339x19
           text run at (0,0) width 339: "This test should scroll recursively to reveal the button."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,19) size 765x500
-      RenderBlock (anonymous) at (0,519) size 765x154
+      RenderBlock {DIV} at (0,19) size 768x500
+      RenderBlock (anonymous) at (0,519) size 768x154
         RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
           layer at (0,0) size 308x316
             RenderView at (0,0) size 284x134
@@ -37,4 +37,4 @@ layer at (0,0) size 781x1189
                 RenderText {#text} at (0,0) size 0x0
               RenderBlock {DIV} at (0,570) size 134x300
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,673) size 765x500
+      RenderBlock {DIV} at (0,673) size 768x500

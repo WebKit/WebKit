@@ -1,26 +1,26 @@
-layer at (0,0) size 1274x597
-  RenderView at (0,0) size 781x581
-layer at (0,0) size 781x597
-  RenderBlock {HTML} at (0,0) size 781x597
-    RenderBody {BODY} at (8,8) size 765x581
-      RenderBlock {DIV} at (0,0) size 1266x581
-        RenderBlock {DIV} at (16,16) size 26x549 [border: (1px solid #000000)]
+layer at (0,0) size 1280x600
+  RenderView at (0,0) size 784x584
+layer at (0,0) size 784x600
+  RenderBlock {HTML} at (0,0) size 784x600
+    RenderBody {BODY} at (8,8) size 768x584
+      RenderBlock {DIV} at (0,0) size 1272x584
+        RenderBlock {DIV} at (16,16) size 26x552 [border: (1px solid #000000)]
           RenderBlock (floating) {DIV} at (1,1) size 24x100
             RenderBlock {DIV} at (0,0) size 24x100 [bgcolor=#008000]
-        RenderBlock {DIV} at (58,16) size 26x549 [border: (1px solid #000000)]
+        RenderBlock {DIV} at (58,16) size 26x552 [border: (1px solid #000000)]
           RenderBlock (floating) {DIV} at (1,1) size 24x96
             RenderTable {TABLE} at (0,0) size 24x96 [bgcolor=#FF0000]
               RenderTableSection {TBODY} at (0,0) size 24x96
                 RenderTableRow {TR} at (0,0) size 24x96
                   RenderTableCell {TD} at (0,1) size 24x94 [r=0 c=0 rs=1 cs=1]
                     RenderImage {IMG} at (1,-1) size 22x96 [bgcolor=#008000]
-        RenderBlock {DIV} at (100,16) size 567x549 [border: (1px solid #000000)]
-          RenderBlock {DIV} at (1,1) size 565x547
-            RenderBlock {DIV} at (0,0) size 565x100 [bgcolor=#008000]
-        RenderBlock {DIV} at (683,16) size 567x549 [border: (1px solid #000000)]
-          RenderBlock {DIV} at (1,1) size 565x547
-            RenderTable {TABLE} at (0,0) size 565x96 [bgcolor=#FF0000]
-              RenderTableSection {TBODY} at (0,0) size 565x96
-                RenderTableRow {TR} at (0,0) size 565x96
-                  RenderTableCell {TD} at (0,271) size 565x-447 [r=0 c=0 rs=1 cs=1]
-                    RenderImage {IMG} at (271,-271) size 22x96 [bgcolor=#008000]
+        RenderBlock {DIV} at (100,16) size 570x552 [border: (1px solid #000000)]
+          RenderBlock {DIV} at (1,1) size 568x550
+            RenderBlock {DIV} at (0,0) size 568x100 [bgcolor=#008000]
+        RenderBlock {DIV} at (686,16) size 570x552 [border: (1px solid #000000)]
+          RenderBlock {DIV} at (1,1) size 568x550
+            RenderTable {TABLE} at (0,0) size 568x96 [bgcolor=#FF0000]
+              RenderTableSection {TBODY} at (0,0) size 568x96
+                RenderTableRow {TR} at (0,0) size 568x96
+                  RenderTableCell {TD} at (0,273) size 568x-450 [r=0 c=0 rs=1 cs=1]
+                    RenderImage {IMG} at (273,-273) size 22x96 [bgcolor=#008000]

@@ -1,9 +1,9 @@
-layer at (0,0) size 781x2660
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x2660
-  RenderBlock {HTML} at (0,0) size 781x2660
-    RenderBody {BODY} at (8,8) size 765x2636
-      RenderBlock (anonymous) at (0,0) size 765x38
+layer at (0,0) size 784x2660
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x2660
+  RenderBlock {HTML} at (0,0) size 784x2660
+    RenderBody {BODY} at (8,8) size 768x2636
+      RenderBlock (anonymous) at (0,0) size 768x38
         RenderText {#text} at (0,0) size 760x38
           text run at (0,0) width 760: "In this test, all of the spanning elements have their spans turned off dynamically, and so they should just be in the column"
           text run at (0,19) width 33: "flow."

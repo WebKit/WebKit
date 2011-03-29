@@ -1,22 +1,22 @@
-layer at (0,0) size 781x817
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x817
-  RenderBlock {HTML} at (0,0) size 781x817
-    RenderBody {BODY} at (8,8) size 765x799
-      RenderBlock {P} at (0,0) size 765x19
+layer at (0,0) size 784x817
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x817
+  RenderBlock {HTML} at (0,0) size 784x817
+    RenderBody {BODY} at (8,8) size 768x799
+      RenderBlock {P} at (0,0) size 768x19
         RenderText {#text} at (0,0) size 174x19
           text run at (0,0) width 174: "Two words with no spaces."
       RenderBlock {DIV} at (0,35) size 302x21 [border: (1px solid #0000FF)]
         RenderText {#text} at (1,1) size 480x19
           text run at (1,1) width 480: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-      RenderTable {TABLE} at (0,66) size 765x21
-        RenderTableSection {TBODY} at (0,0) size 765x21
-          RenderTableRow {TR} at (0,0) size 765x21
+      RenderTable {TABLE} at (0,66) size 768x21
+        RenderTableSection {TBODY} at (0,0) size 768x21
+          RenderTableRow {TR} at (0,0) size 768x21
             RenderTableCell {TD} at (0,0) size 482x21 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 480x19
                 text run at (1,1) width 480: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-            RenderTableCell {TD} at (482,10) size 283x0 [r=0 c=1 rs=1 cs=1]
-      RenderBlock {P} at (0,103) size 765x19
+            RenderTableCell {TD} at (482,10) size 286x0 [r=0 c=1 rs=1 cs=1]
+      RenderBlock {P} at (0,103) size 768x19
         RenderText {#text} at (0,0) size 187x19
           text run at (0,0) width 187: "Using <wbr> to break words."
       RenderBlock {DIV} at (0,138) size 302x40 [border: (1px solid #0000FF)]
@@ -25,17 +25,17 @@ layer at (0,0) size 781x817
         RenderWordBreak {WBR} at (0,0) size 0x0
         RenderText {#text} at (1,20) size 256x19
           text run at (1,20) width 256: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-      RenderTable {TABLE} at (0,188) size 765x40
-        RenderTableSection {TBODY} at (0,0) size 765x40
-          RenderTableRow {TR} at (0,0) size 765x40
+      RenderTable {TABLE} at (0,188) size 768x40
+        RenderTableSection {TBODY} at (0,0) size 768x40
+          RenderTableRow {TR} at (0,0) size 768x40
             RenderTableCell {TD} at (0,0) size 258x40 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 224x19
                 text run at (1,1) width 224: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
               RenderWordBreak {WBR} at (0,0) size 0x0
               RenderText {#text} at (1,20) size 256x19
                 text run at (1,20) width 256: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-            RenderTableCell {TD} at (258,20) size 507x0 [r=0 c=1 rs=1 cs=1]
-      RenderBlock {P} at (0,244) size 765x19
+            RenderTableCell {TD} at (258,20) size 510x0 [r=0 c=1 rs=1 cs=1]
+      RenderBlock {P} at (0,244) size 768x19
         RenderText {#text} at (0,0) size 282x19
           text run at (0,0) width 282: "Using <wbr> within <nobr> to break words."
       RenderBlock {DIV} at (0,279) size 302x40 [border: (1px solid #0000FF)]
@@ -45,9 +45,9 @@ layer at (0,0) size 781x817
           RenderWordBreak {WBR} at (0,0) size 0x0
           RenderText {#text} at (1,20) size 256x19
             text run at (1,20) width 256: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-      RenderTable {TABLE} at (0,329) size 765x40
-        RenderTableSection {TBODY} at (0,0) size 765x40
-          RenderTableRow {TR} at (0,0) size 765x40
+      RenderTable {TABLE} at (0,329) size 768x40
+        RenderTableSection {TBODY} at (0,0) size 768x40
+          RenderTableRow {TR} at (0,0) size 768x40
             RenderTableCell {TD} at (0,0) size 258x40 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderInline {NOBR} at (0,0) size 256x38
                 RenderText {#text} at (1,1) size 224x19
@@ -55,8 +55,8 @@ layer at (0,0) size 781x817
                 RenderWordBreak {WBR} at (0,0) size 0x0
                 RenderText {#text} at (1,20) size 256x19
                   text run at (1,20) width 256: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-            RenderTableCell {TD} at (258,20) size 507x0 [r=0 c=1 rs=1 cs=1]
-      RenderBlock {P} at (0,385) size 765x19
+            RenderTableCell {TD} at (258,20) size 510x0 [r=0 c=1 rs=1 cs=1]
+      RenderBlock {P} at (0,385) size 768x19
         RenderText {#text} at (0,0) size 222x19
           text run at (0,0) width 222: "Using <wbr> to break three words."
       RenderBlock {DIV} at (0,420) size 302x59 [border: (1px solid #0000FF)]
@@ -68,9 +68,9 @@ layer at (0,0) size 781x817
         RenderWordBreak {WBR} at (0,0) size 0x0
         RenderText {#text} at (1,39) size 168x19
           text run at (1,39) width 168: "cccccccccccccccccccccccc"
-      RenderTable {TABLE} at (0,489) size 765x59
-        RenderTableSection {TBODY} at (0,0) size 765x59
-          RenderTableRow {TR} at (0,0) size 765x59
+      RenderTable {TABLE} at (0,489) size 768x59
+        RenderTableSection {TBODY} at (0,0) size 768x59
+          RenderTableRow {TR} at (0,0) size 768x59
             RenderTableCell {TD} at (0,0) size 194x59 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 168x19
                 text run at (1,1) width 168: "aaaaaaaaaaaaaaaaaaaaaaaa"
@@ -80,8 +80,8 @@ layer at (0,0) size 781x817
               RenderWordBreak {WBR} at (0,0) size 0x0
               RenderText {#text} at (1,39) size 168x19
                 text run at (1,39) width 168: "cccccccccccccccccccccccc"
-            RenderTableCell {TD} at (194,29) size 571x0 [r=0 c=1 rs=1 cs=1]
-      RenderBlock {P} at (0,564) size 765x19
+            RenderTableCell {TD} at (194,29) size 574x0 [r=0 c=1 rs=1 cs=1]
+      RenderBlock {P} at (0,564) size 768x19
         RenderText {#text} at (0,0) size 317x19
           text run at (0,0) width 317: "Using <wbr> within <nobr> to break three words."
       RenderBlock {DIV} at (0,599) size 302x59 [border: (1px solid #0000FF)]
@@ -94,9 +94,9 @@ layer at (0,0) size 781x817
           RenderWordBreak {WBR} at (0,0) size 0x0
           RenderText {#text} at (1,39) size 168x19
             text run at (1,39) width 168: "cccccccccccccccccccccccc"
-      RenderTable {TABLE} at (0,668) size 765x59
-        RenderTableSection {TBODY} at (0,0) size 765x59
-          RenderTableRow {TR} at (0,0) size 765x59
+      RenderTable {TABLE} at (0,668) size 768x59
+        RenderTableSection {TBODY} at (0,0) size 768x59
+          RenderTableRow {TR} at (0,0) size 768x59
             RenderTableCell {TD} at (0,0) size 194x59 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
               RenderInline {NOBR} at (0,0) size 192x57
                 RenderText {#text} at (1,1) size 168x19
@@ -107,8 +107,8 @@ layer at (0,0) size 781x817
                 RenderWordBreak {WBR} at (0,0) size 0x0
                 RenderText {#text} at (1,39) size 168x19
                   text run at (1,39) width 168: "cccccccccccccccccccccccc"
-            RenderTableCell {TD} at (194,29) size 571x0 [r=0 c=1 rs=1 cs=1]
-      RenderBlock {P} at (0,743) size 765x19
+            RenderTableCell {TD} at (194,29) size 574x0 [r=0 c=1 rs=1 cs=1]
+      RenderBlock {P} at (0,743) size 768x19
         RenderText {#text} at (0,0) size 436x19
           text run at (0,0) width 436: "Spaces both before and after <wbr> to check for collapsing behavior."
       RenderBlock {DIV} at (0,778) size 302x21 [border: (1px solid #0000FF)]

@@ -1,8 +1,8 @@
-layer at (0,0) size 781x7878
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x7878
-  RenderBlock {HTML} at (0,0) size 781x7878
-    RenderBody {BODY} at (8,8) size 765x7822
+layer at (0,0) size 784x7878
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x7878
+  RenderBlock {HTML} at (0,0) size 784x7878
+    RenderBody {BODY} at (8,8) size 768x7822
       RenderTable {TABLE} at (0,0) size 273x124
         RenderBlock {CAPTION} at (0,0) size 273x19
           RenderInline {A} at (0,0) size 224x19
@@ -2208,8 +2208,8 @@ layer at (0,0) size 781x7878
             RenderTableCell {TD} at (184,0) size 92x22 [border: (1px solid #808080)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 89x19
                 text run at (2,2) width 89: "Row 5, Cell 3"
-layer at (391,24) size 390x150
-  RenderBlock (positioned) {TABLE} at (391,24) size 390x150
+layer at (392,24) size 392x150
+  RenderBlock (positioned) {TABLE} at (392,24) size 392x150
     RenderTable at (0,0) size 361x156
       RenderBlock {CAPTION} at (0,0) size 361x19
         RenderText {#text} at (61,0) size 234x19

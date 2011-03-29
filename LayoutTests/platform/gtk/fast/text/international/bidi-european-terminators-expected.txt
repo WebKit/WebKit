@@ -1,9 +1,9 @@
-layer at (0,0) size 781x615
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x615
-  RenderBlock {HTML} at (0,0) size 781x615
-    RenderBody {BODY} at (8,8) size 765x599
-      RenderBlock {P} at (0,0) size 765x38
+layer at (0,0) size 784x615
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x615
+  RenderBlock {HTML} at (0,0) size 784x615
+    RenderBody {BODY} at (8,8) size 768x599
+      RenderBlock {P} at (0,0) size 768x38
         RenderText {#text} at (0,0) size 108x19
           text run at (0,0) width 108: "This tests for "
         RenderInline {I} at (0,0) size 732x38
@@ -12,7 +12,7 @@ layer at (0,0) size 781x615
             text run at (0,19) width 410: "resolved levels for neutrals between R and ET ON L"
         RenderText {#text} at (410,19) size 5x19
           text run at (410,19) width 5: "."
-      RenderBlock {P} at (0,54) size 765x57
+      RenderBlock {P} at (0,54) size 768x57
         RenderText {#text} at (0,0) size 748x57
           text run at (0,0) width 126: "The characters "
           text run at (126,0) width 10 RTL: "\x{5D0}"
@@ -21,60 +21,60 @@ layer at (0,0) size 781x615
           text run at (186,0) width 562: " are of type R; ^ and @ are of type ON; $ and % are of type ET; a is of"
           text run at (0,19) width 745: "type L; 1 is of type EN. In each of the following pairs, the two lines should be identical to each"
           text run at (0,38) width 48: "other."
-      RenderBlock {HR} at (0,127) size 765x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,145) size 765x19
+      RenderBlock {HR} at (0,127) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,145) size 768x19
         RenderText {#text} at (0,0) size 94x19
           text run at (0,0) width 10 RTL: "\x{5D0}"
           text run at (10,0) width 84: " ^ @ $% a"
-      RenderBlock (anonymous) at (0,180) size 765x19
+      RenderBlock (anonymous) at (0,180) size 768x19
         RenderInline {BDO} at (0,0) size 94x19
           RenderText {#text} at (0,0) size 94x19
             text run at (0,0) width 94 LTR override: "\x{5D0} ^ @ $% a"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,207) size 765x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,225) size 765x19
+      RenderBlock {HR} at (0,207) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,225) size 768x19
         RenderText {#text} at (0,0) size 94x19
           text run at (0,0) width 94 RTL: "\x{5D0} ^ @ $% \x{5D1}"
-      RenderBlock (anonymous) at (0,260) size 765x19
+      RenderBlock (anonymous) at (0,260) size 768x19
         RenderInline {BDO} at (0,0) size 94x19
           RenderText {#text} at (0,0) size 94x19
             text run at (0,0) width 94 LTR override: "\x{5D1} %$ @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,287) size 765x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,305) size 765x19
+      RenderBlock {HR} at (0,287) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,305) size 768x19
         RenderText {#text} at (0,0) size 89x19
           text run at (0,0) width 35: "$%1"
           text run at (35,0) width 54 RTL: "\x{5D0} ^ @ "
-      RenderBlock (anonymous) at (0,340) size 765x19
+      RenderBlock (anonymous) at (0,340) size 768x19
         RenderInline {BDO} at (0,0) size 89x19
           RenderText {#text} at (0,0) size 89x19
             text run at (0,0) width 89 LTR override: "$%1 @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,367) size 765x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,385) size 765x19
+      RenderBlock {HR} at (0,367) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,385) size 768x19
         RenderText {#text} at (0,0) size 94x19
           text run at (0,0) width 10: "a"
           text run at (10,0) width 84 RTL: "\x{5D0} ^ @ $% "
-      RenderBlock (anonymous) at (0,420) size 765x19
+      RenderBlock (anonymous) at (0,420) size 768x19
         RenderInline {BDO} at (0,0) size 94x19
           RenderText {#text} at (0,0) size 94x19
             text run at (0,0) width 94 LTR override: "a %$ @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,447) size 765x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,465) size 765x19
+      RenderBlock {HR} at (0,447) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,465) size 768x19
         RenderText {#text} at (0,0) size 94x19
           text run at (0,0) width 94 RTL: "\x{5D0} ^ @ $% \x{5D1}"
-      RenderBlock (anonymous) at (0,500) size 765x19
+      RenderBlock (anonymous) at (0,500) size 768x19
         RenderInline {BDO} at (0,0) size 94x19
           RenderText {#text} at (0,0) size 94x19
             text run at (0,0) width 94 LTR override: "\x{5D1} %$ @ ^ \x{5D0}"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {HR} at (0,527) size 765x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,545) size 765x19
+      RenderBlock {HR} at (0,527) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,545) size 768x19
         RenderText {#text} at (0,0) size 89x19
           text run at (0,0) width 35: "$%1"
           text run at (35,0) width 54 RTL: "\x{5D0} ^ @ "
-      RenderBlock (anonymous) at (0,580) size 765x19
+      RenderBlock (anonymous) at (0,580) size 768x19
         RenderInline {BDO} at (0,0) size 89x19
           RenderText {#text} at (0,0) size 89x19
             text run at (0,0) width 89 LTR override: "$%1 @ ^ \x{5D0}"

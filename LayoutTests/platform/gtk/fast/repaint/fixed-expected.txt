@@ -1,10 +1,10 @@
-layer at (0,0) size 781x2016
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x2016
-  RenderBlock {HTML} at (0,0) size 781x2016
-    RenderBody {BODY} at (8,8) size 765x2000
-layer at (8,28) size 765x38
-  RenderBlock (relative positioned) {P} at (0,0) size 765x38
+layer at (0,0) size 784x2016
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x2016
+  RenderBlock {HTML} at (0,0) size 784x2016
+    RenderBody {BODY} at (8,8) size 768x2000
+layer at (8,28) size 768x38
+  RenderBlock (relative positioned) {P} at (0,0) size 768x38
     RenderText {#text} at (0,0) size 100x19
       text run at (0,0) width 100: "Repaint test for "
     RenderInline {I} at (0,0) size 744x38

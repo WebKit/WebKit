@@ -1,9 +1,9 @@
-layer at (0,0) size 781x643
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x600
-  RenderBlock {HTML} at (0,0) size 781x600
-    RenderBody {BODY} at (8,8) size 765x576
-      RenderBlock {P} at (0,0) size 765x19 [color=#008000]
+layer at (0,0) size 784x643
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x600
+  RenderBlock {HTML} at (0,0) size 784x600
+    RenderBody {BODY} at (8,8) size 768x576
+      RenderBlock {P} at (0,0) size 768x19 [color=#008000]
         RenderText {#text} at (0,0) size 319x19
           text run at (0,0) width 319: "This text should be green if height is at least 30ex ."
       RenderBlock (floating) {DIV} at (0,35) size 115x240 [bgcolor=#ADD8E6]

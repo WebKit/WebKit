@@ -1,18 +1,18 @@
-layer at (0,0) size 781x674
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x674
-  RenderBlock {HTML} at (0,0) size 781x674
-    RenderBody {BODY} at (8,8) size 765x658
-      RenderBlock (anonymous) at (0,0) size 765x38
+layer at (0,0) size 784x674
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x674
+  RenderBlock {HTML} at (0,0) size 784x674
+    RenderBody {BODY} at (8,8) size 768x658
+      RenderBlock (anonymous) at (0,0) size 768x38
         RenderText {#text} at (0,0) size 745x38
           text run at (0,0) width 717: "In the test below, the column rules should not be visible, since a negative z-index child is painting on top of them. "
           text run at (717,0) width 28: "You"
           text run at (0,19) width 157: "should see no red below."
-layer at (8,46) size 765x620 layerType: background only
-layer at (13,51) size 755x610
-  RenderBlock (positioned) zI: -1 {DIV} at (5,5) size 755x610 [bgcolor=#EEEEEE]
-layer at (8,46) size 765x620 layerType: foreground only
-  RenderBlock (relative positioned) {DIV} at (0,38) size 765x620 [bgcolor=#FF0000] [border: (5px solid #000000)]
+layer at (8,46) size 768x620 layerType: background only
+layer at (13,51) size 758x610
+  RenderBlock (positioned) zI: -1 {DIV} at (5,5) size 758x610 [bgcolor=#EEEEEE]
+layer at (8,46) size 768x620 layerType: foreground only
+  RenderBlock (relative positioned) {DIV} at (0,38) size 768x620 [bgcolor=#FF0000] [border: (5px solid #000000)]
     RenderText {#text} at (35,5) size 221x1790
       text run at (35,5) width 177: "Lorem ipsum dolor sit amet,"
       text run at (35,24) width 212: "consectetuer adipiscing elit. Nulla"

@@ -1,8 +1,8 @@
-layer at (0,0) size 1518x581
-  RenderView at (0,0) size 800x581
-layer at (0,0) size 800x581
-  RenderBlock {HTML} at (0,0) size 800x581
-    RenderBody {BODY} at (8,8) size 784x557
+layer at (0,0) size 1518x584
+  RenderView at (0,0) size 800x584
+layer at (0,0) size 800x584
+  RenderBlock {HTML} at (0,0) size 800x584
+    RenderBody {BODY} at (8,8) size 784x560
       RenderBlock {OL} at (0,0) size 784x19
         RenderListItem {LI} at (40,0) size 744x19
           RenderListMarker at (-21,0) size 16x19: "1"

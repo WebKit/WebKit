@@ -1,12 +1,12 @@
 layer at (0,0) size 2008x2094
-  RenderView at (0,0) size 781x581
-layer at (0,0) size 781x2094
-  RenderBlock {HTML} at (0,0) size 781x2094
-    RenderBody {BODY} at (8,16) size 765x2070
-      RenderBlock {P} at (0,0) size 765x19
+  RenderView at (0,0) size 784x584
+layer at (0,0) size 784x2094
+  RenderBlock {HTML} at (0,0) size 784x2094
+    RenderBody {BODY} at (8,16) size 768x2070
+      RenderBlock {P} at (0,0) size 768x19
         RenderText {#text} at (0,0) size 342x19
           text run at (0,0) width 342: "You should see both vertical and horizontal scrollbars."
-      RenderBlock {P} at (0,35) size 765x19
+      RenderBlock {P} at (0,35) size 768x19
         RenderText {#text} at (0,0) size 116x19
           text run at (0,0) width 116: "This is the test for "
         RenderInline {A} at (0,0) size 383x19 [color=#0000EE]

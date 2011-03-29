@@ -1,10 +1,10 @@
-layer at (0,0) size 781x643
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x600
-  RenderBlock {HTML} at (0,0) size 781x600
-    RenderBody {BODY} at (8,8) size 765x584
+layer at (0,0) size 784x643
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x600
+  RenderBlock {HTML} at (0,0) size 784x600
+    RenderBody {BODY} at (8,8) size 768x584
       RenderBlock (floating) {DIV} at (0,0) size 100x200 [bgcolor=#00FF00]
-layer at (642,208) size 131x435
+layer at (645,208) size 131x435
   RenderBlock {DIV} at (0,200) size 131x435 [border: (10px solid #000000)]
     RenderBlock {P} at (10,10) size 95x415
       RenderText {#text} at (0,0) size 95x415
