@@ -1,3 +1,13 @@
+2011-03-28  Jessie Berlin  <jberlin@apple.com>
+
+        REGRESSION: http/tests/inspector/console-resource-errors.html failing on WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=56539
+
+        Unreviewed, remove the platform-specific failing results to get the bots green.
+        The test appears to be working in WebKit after r82106 and r82017.
+
+        * platform/mac-wk2/http/tests/inspector/console-resource-errors-expected.txt: Removed.
+
 2011-03-28  Vincent Scheib  <scheib@chromium.org>
 
         Chromium test expectation for r82159
