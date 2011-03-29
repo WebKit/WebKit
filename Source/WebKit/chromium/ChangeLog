@@ -1,3 +1,10 @@
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
+        Roll Chromium DEPS
+        https://bugs.webkit.org/show_bug.cgi?id=57361
+
+        * DEPS:
+
 2011-03-29  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by David Levin.
