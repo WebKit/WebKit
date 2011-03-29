@@ -1,3 +1,19 @@
+2011-03-29  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        removeAllInDirectory() layout test helper method can call successCallback twice
+        https://bugs.webkit.org/show_bug.cgi?id=57136
+
+        Fixed to only call successCallback once, thereby avoiding
+        flakiness in tests which use this function
+        (see http://crbug.com/77442).
+
+        * fast/filesystem/resources/fs-test-util.js:
+        (removeAllInDirectory):
+        * http/tests/filesystem/resources/fs-test-util.js:
+        (removeAllInDirectory):
+
 2011-03-29  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, add Chromium test expectation for http/tests/uri/username-with-no-hostname.html.

@@ -50,14 +50,17 @@ var JoinHelper = function()
 function removeAllInDirectory(directory, successCallback, errorCallback) {
     var RemoveAllInDirectoryHelper = function(successCallback, errorCallback) {
         this.entriesCount = 0;
+        this.done = false;
         this.reader = null;
         this.successCallback = successCallback;
         this.errorCallback = errorCallback;
 
         this.entryRemovedCallback = bindCallback(this, function(entry)
         {
-            if (--this.entriesCount == 0 && this.successCallback)
+            if (--this.entriesCount == 0 && this.successCallback && this.done) {
                 this.successCallback();
+                this.successCallback = null;
+            }
         });
 
         this.entriesCallback = bindCallback(this, function(entries)
@@ -66,13 +69,14 @@ function removeAllInDirectory(directory, successCallback, errorCallback) {
                 this.entriesCount++;
                 if (entries[i].isDirectory)
                     entries[i].removeRecursively(this.entryRemovedCallback, this.errorCallback);
-                else {
+                else
                     entries[i].remove(this.entryRemovedCallback, this.errorCallback);
-                }
             }
             if (entries.length)
                 this.reader.readEntries(this.entriesCallback, this.errorCallback);
-            else if (this.entriesCount == 0 && this.successCallback)
+            else if (this.entriesCount > 0)
+                this.done = true;
+            else if (this.successCallback)
                 this.successCallback();
         });
 
