@@ -25,7 +25,6 @@
 #ifndef DefaultDownloadDelegate_h
 #define DefaultDownloadDelegate_h
 
-#include "COMPtr.h"
 #include "WebKit.h"
 #include <wtf/HashSet.h>
 

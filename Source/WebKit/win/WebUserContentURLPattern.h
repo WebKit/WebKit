@@ -25,6 +25,7 @@
 #ifndef WebUserContentURLPattern_h
 #define WebUserContentURLPattern_h
 
+#include "WebKit.h"
 #include <WebCore/COMPtr.h>
 #include <WebCore/UserContentURLPattern.h>
 

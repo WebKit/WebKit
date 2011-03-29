@@ -31,9 +31,8 @@
 
 #if ENABLE(DATABASE)
 
-#include <WebCore/DatabaseTrackerClient.h>
-
 #include "WebKit.h"
+#include <WebCore/DatabaseTrackerClient.h>
 
 class WebDatabaseManager : public IWebDatabaseManager, private WebCore::DatabaseTrackerClient {
 public:

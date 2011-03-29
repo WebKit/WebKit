@@ -30,6 +30,7 @@
 #include "WebKit.h"
 #include "WebKitLogging.h"
 #include "WebMutableURLRequest.h"
+#include <WebCore/COMPtr.h>
 #include <wtf/text/CString.h>
 
 #include <shlobj.h>

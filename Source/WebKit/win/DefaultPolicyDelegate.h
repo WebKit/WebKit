@@ -26,7 +26,6 @@
 #ifndef DefaultPolicyDelegate_h
 #define DefaultPolicyDelegate_h
 
-#include "COMPtr.h"
 #include "WebKit.h"
 
 class DefaultPolicyDelegate : public IWebPolicyDelegate {

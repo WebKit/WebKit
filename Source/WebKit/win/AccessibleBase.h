@@ -26,10 +26,9 @@
 #ifndef AccessibleBase_h
 #define AccessibleBase_h
 
+#include "WebKit.h"
 #include <WebCore/AccessibilityObject.h>
 #include <WebCore/AccessibilityObjectWrapperWin.h>
-#include <WebKit/WebKit.h>
-#include <oleacc.h>
 
 class DECLSPEC_UUID("3dbd565b-db22-4d88-8e0e-778bde54524a") AccessibleBase : public IAccessibleComparable, public IServiceProvider, public WebCore::AccessibilityObjectWrapper {
 public:

@@ -27,8 +27,7 @@
 #include "WebKitDLL.h"
 #include "DefaultPolicyDelegate.h"
 
-#include "WebKit.h"
-
+#include <WebCore/COMPtr.h>
 #include <WebCore/PlatformString.h>
 
 using namespace WebCore;

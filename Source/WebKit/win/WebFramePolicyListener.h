@@ -27,9 +27,8 @@
 #define WebFramePolicyListener_h
 
 #include "WebKit.h"
-
-#include <WTF/PassRefPtr.h>
-#include <WTF/RefPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 #include <WebCore/FrameLoaderTypes.h>
 

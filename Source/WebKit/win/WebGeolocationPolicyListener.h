@@ -27,11 +27,9 @@
 #define WebGeolocationPolicyListener_h
 
 #include "WebKit.h"
-
 #include <WebCore/COMPtr.h>
-
-#include <WTF/PassRefPtr.h>
-#include <WTF/RefPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
     class Geolocation;

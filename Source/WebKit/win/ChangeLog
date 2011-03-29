@@ -1,3 +1,35 @@
+2011-03-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WIN] Cleanup includes in WebKit files
+        https://bugs.webkit.org/show_bug.cgi?id=57381
+
+        Add missing includes to fix build without precompiled header.
+        Also fix paths in #include statements (e.g. WTF -> wtf).
+
+        * AccessibleBase.h:
+        * AccessibleDocument.h: Replace using statement with a qualified name.
+        * CFDictionaryPropertyBag.h:
+        * DOMEventsClasses.cpp:
+        * DOMHTMLClasses.h:
+        * DefaultDownloadDelegate.cpp:
+        * DefaultDownloadDelegate.h:
+        * DefaultPolicyDelegate.cpp:
+        * DefaultPolicyDelegate.h:
+        * WebCoreSupport/EmbeddedWidget.h:
+        * WebCoreSupport/WebInspectorDelegate.h:
+        * WebDataSource.h:
+        * WebDatabaseManager.h:
+        * WebElementPropertyBag.h:
+        * WebFramePolicyListener.h:
+        * WebGeolocationPolicyListener.h:
+        * WebHistory.h:
+        * WebKitClassFactory.h:
+        * WebScriptWorld.h:
+        * WebSerializedJSValue.h:
+        * WebUserContentURLPattern.h:
+
 2011-03-29  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.

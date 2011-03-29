@@ -28,9 +28,7 @@
 
 #include "WebKit.h"
 #include "DOMCoreClasses.h"
-#include "WebScriptObject.h"
-
-#include <WTF/RefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
     class HTMLCollection;

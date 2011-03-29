@@ -25,6 +25,7 @@
 #ifndef WebScriptWorld_h
 #define WebScriptWorld_h
 
+#include "WebKit.h"
 #include <WebCore/COMPtr.h>
 
 namespace WebCore {

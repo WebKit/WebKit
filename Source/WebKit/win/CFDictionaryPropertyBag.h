@@ -26,6 +26,7 @@
 #ifndef CFDictionaryPropertyBag_h
 #define CFDictionaryPropertyBag_h
 
+#include "WebKit.h"
 #include <WebCore/COMPtr.h>
 #include <wtf/RetainPtr.h>
 

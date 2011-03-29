@@ -26,9 +26,8 @@
 #ifndef WebElementPropertyBag_H
 #define WebElementPropertyBag_H
 
-#include "ocidl.h"
-
-#include <WTF/OwnPtr.h>
+#include <ocidl.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
     class HitTestResult;

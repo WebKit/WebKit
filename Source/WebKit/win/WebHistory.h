@@ -27,9 +27,8 @@
 #define WebHistory_H
 
 #include "WebKit.h"
-
-#include "COMPtr.h"
 #include <CoreFoundation/CoreFoundation.h>
+#include <WebCore/COMPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>

@@ -27,8 +27,8 @@
 #define WebDataSource_H
 
 #include "WebKit.h"
-#include "COMPtr.h"
-#include <WTF/RefPtr.h>
+#include <WebCore/COMPtr.h>
+#include <wtf/RefPtr.h>
 
 class WebDocumentLoader;
 class WebMutableURLRequest;

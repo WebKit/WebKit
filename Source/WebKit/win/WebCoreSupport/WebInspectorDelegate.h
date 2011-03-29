@@ -29,13 +29,7 @@
 #ifndef WebInspectorDelegate_h
 #define WebInspectorDelegate_h
 
-struct IDataObject;
-struct IPropertyBag;
-struct IWebView;
-struct IWebFrame;
-struct IWebError;
-struct IWebURLRequest;
-struct IWebOpenPanelResultListener;
+#include "WebKit.h"
 
 class WebInspectorDelegate : public IWebUIDelegate {
 public:

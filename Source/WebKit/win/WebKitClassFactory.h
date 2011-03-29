@@ -26,6 +26,8 @@
 #ifndef WebKitClassFactory_H
 #define WebKitClassFactory_H
 
+#include <unknwn.h>
+
 class WebKitClassFactory : public IClassFactory
 {
 public:

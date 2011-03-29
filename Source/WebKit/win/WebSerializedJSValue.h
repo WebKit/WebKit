@@ -25,6 +25,7 @@
 #ifndef WebSerializedJSValue_h
 #define WebSerializedJSValue_h
 
+#include "WebKit.h"
 #include <WebCore/COMPtr.h>
 
 typedef const struct OpaqueJSContext* JSContextRef;
