@@ -1,3 +1,23 @@
+2011-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rename InlineIterator::nextBreakablePosition to m_nextBreakablePosition to match modern style
+        https://bugs.webkit.org/show_bug.cgi?id=57323
+
+        All of these m_nextBreakablePosition = -1 could probably be replaced with
+        some new methods.  But I'll do that in a separate change.  Clearly
+        m_nextBreakablePosition is just a cached value which should be cleared
+        at the right times.  I suspect we may even fail to clear it sometimes when
+        we should due to the current used of direct access instead of smarter functions.
+
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::InlineIterator):
+        (WebCore::InlineIterator::increment):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::tryHyphenating):
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2011-03-29  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Jon Honeycutt.

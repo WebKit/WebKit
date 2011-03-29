@@ -37,7 +37,7 @@ public:
         : m_block(0)
         , m_obj(0)
         , pos(0)
-        , nextBreakablePosition(-1)
+        , m_nextBreakablePosition(-1)
     {
     }
 
@@ -45,7 +45,7 @@ public:
         : m_block(b)
         , m_obj(o)
         , pos(p)
-        , nextBreakablePosition(-1)
+        , m_nextBreakablePosition(-1)
     {
     }
 
@@ -58,7 +58,7 @@ public:
     RenderBlock* m_block;
     RenderObject* m_obj;
     unsigned pos;
-    int nextBreakablePosition;
+    int m_nextBreakablePosition;
 };
 
 inline bool operator==(const InlineIterator& it1, const InlineIterator& it2)
@@ -188,12 +188,12 @@ inline void InlineIterator::increment(InlineBidiResolver* resolver)
         if (pos >= toRenderText(m_obj)->textLength()) {
             m_obj = bidiNext(m_block, m_obj, resolver);
             pos = 0;
-            nextBreakablePosition = -1;
+            m_nextBreakablePosition = -1;
         }
     } else {
         m_obj = bidiNext(m_block, m_obj, resolver);
         pos = 0;
-        nextBreakablePosition = -1;
+        m_nextBreakablePosition = -1;
     }
 }
 
