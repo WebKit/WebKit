@@ -3324,7 +3324,8 @@ BUGCR77582 BUG_DRT WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation
 
 // New test added in r82001.
 BUGWK57137 WIN RELEASE : plugins/embed-prefers-plugins-for-images.html = TEXT
-BUGWK57137 MAC LINUX : plugins/embed-prefers-plugins-for-images.html = TEXT
+BUGWK57137 MAC SNOWLEOPARD : plugins/embed-prefers-plugins-for-images.html = TEXT
+BUGWK57137 LINUX : plugins/embed-prefers-plugins-for-images.html = TEXT
 
 // Regression since r82001.
 BUGCR77619 MAC SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
@@ -3338,5 +3339,3 @@ BUGCR77574 LINUX : fast/blockflow/fallback-orientation.html = IMAGE
 
 // New test added in r82159
 BUGCR77706 : editing/spelling/grammar.html = FAIL
-
-BUGWK57137 SKIP WIN MAC LINUX : plugins/embed-prefers-plugins-for-images.html = TEXT

@@ -1,3 +1,9 @@
+2011-03-28  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed. Clean up Chromium test expectations for plugins/embed-prefers-plugins-for-images.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-28  Maciej Stachowiak  <mjs@apple.com>
 
         Fix test results that were accidentally committed with a wrong
