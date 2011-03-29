@@ -54,11 +54,12 @@ namespace WebCore {
 
 void GraphicsContext3D::validateAttributes()
 {
-    const char* extensions = reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS));
+    Extensions3D* extensions = getExtensions();
     if (m_attrs.stencil) {
-        if (std::strstr(extensions, "GL_EXT_packed_depth_stencil")) {
-            if (!m_attrs.depth)
-                m_attrs.depth = true;
+        if (extensions->supports("GL_EXT_packed_depth_stencil")) {
+            extensions->ensureEnabled("GL_EXT_packed_depth_stencil");
+            // Force depth if stencil is true.
+            m_attrs.depth = true;
         } else
             m_attrs.stencil = false;
     }
@@ -68,8 +69,10 @@ void GraphicsContext3D::validateAttributes()
         const char* vendor = reinterpret_cast<const char*>(::glGetString(GL_VENDOR));
         if (!std::strstr(vendor, "NVIDIA"))
             isValidVendor = false;
-        if (!isValidVendor || !std::strstr(extensions, "GL_EXT_framebuffer_multisample"))
+        if (!isValidVendor || !extensions->supports("GL_ANGLE_framebuffer_multisample"))
             m_attrs.antialias = false;
+        else
+            extensions->ensureEnabled("GL_ANGLE_framebuffer_multisample");
     }
 }
 
@@ -170,7 +173,8 @@ void GraphicsContext3D::reshape(int width, int height)
     m_currentHeight = height;
     
     makeContextCurrent();
-    
+    validateAttributes();
+
     GLuint colorFormat, internalDepthStencilFormat = 0;
     if (m_attrs.alpha) {
         m_internalColorFormat = GL_RGBA8;
@@ -181,8 +185,11 @@ void GraphicsContext3D::reshape(int width, int height)
     }
     if (m_attrs.stencil || m_attrs.depth) {
         // We don't allow the logic where stencil is required and depth is not.
-        // See GraphicsContext3D constructor.
-        if (m_attrs.stencil && m_attrs.depth)
+        // See GraphicsContext3D::validateAttributes.
+
+        Extensions3D* extensions = getExtensions();
+        // Use a 24 bit depth buffer where we know we have it
+        if (extensions->supports("GL_EXT_packed_depth_stencil"))
             internalDepthStencilFormat = GL_DEPTH24_STENCIL8_EXT;
         else
             internalDepthStencilFormat = GL_DEPTH_COMPONENT;

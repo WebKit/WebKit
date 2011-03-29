@@ -1,3 +1,24 @@
+2011-03-29  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Chris Marrin and Ken Russell.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57248
+        Occlusion issues with WebGL in Safari
+
+        The depth buffer on Safari ports was being set up with a
+        maximum of 16 bits. Now we use a combined 24/8 depth/stencil
+        buffer on Mac ports.
+
+        No new tests as this is the setting for a particular port. Other
+        ports may use different defaults.
+
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::validateAttributes):
+        - use Extensions3D to test for depth and multisample extensions
+          rather than querying OpenGL directly.
+        (WebCore::GraphicsContext3D::reshape):
+        - use a 24bit depth buffer when the extension is enabled.
+
 2011-03-29  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Sorted XCode project. It's gotten quite out of sorts.
