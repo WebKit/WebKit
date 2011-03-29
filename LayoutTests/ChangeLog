@@ -1,5 +1,56 @@
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
+        Moar pixel expectations.
+
+        * platform/chromium-mac/css2.1/t0804-c5510-padn-00-b-ag-expected.checksum: Added.
+        * platform/chromium-mac/css2.1/t0804-c5510-padn-00-b-ag-expected.png: Added.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-wrap-01-d-g-expected.checksum:
+        * platform/chromium-mac/css2.1/t0905-c414-flt-wrap-01-d-g-expected.png:
+        * platform/chromium-mac/editing/deleting/4845371-expected.checksum: Added.
+        * platform/chromium-mac/editing/deleting/4845371-expected.png: Added.
+        * platform/chromium-mac/editing/deleting/5126166-expected.checksum: Added.
+        * platform/chromium-mac/editing/deleting/5126166-expected.png: Added.
+        * platform/chromium-mac/editing/deleting/5483370-expected.checksum: Added.
+        * platform/chromium-mac/editing/deleting/5483370-expected.png: Added.
+        * platform/chromium-mac/editing/deleting/table-cells-expected.checksum: Added.
+        * platform/chromium-mac/editing/deleting/table-cells-expected.png: Added.
+        * platform/chromium-mac/editing/inserting/4875189-2-expected.checksum: Added.
+        * platform/chromium-mac/editing/inserting/4875189-2-expected.png: Added.
+        * platform/chromium-mac/editing/pasteboard/5387578-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/5387578-expected.png: Added.
+        * platform/chromium-mac/editing/pasteboard/paste-table-cells-expected.checksum: Added.
+        * platform/chromium-mac/editing/pasteboard/paste-table-cells-expected.png: Added.
+        * platform/chromium-mac/fast/backgrounds/repeat/negative-offset-repeat-expected.checksum:
+        * platform/chromium-mac/fast/backgrounds/repeat/negative-offset-repeat-expected.png:
+        * platform/chromium-mac/fast/block/float/014-expected.checksum:
+        * platform/chromium-mac/fast/block/float/014-expected.png:
+        * platform/chromium-mac/fast/block/float/clear-element-too-wide-for-containing-block-expected.checksum: Added.
+        * platform/chromium-mac/fast/block/float/clear-element-too-wide-for-containing-block-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/background-vertical-rl-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-inline-flow-expected.checksum: Added.
+        * platform/chromium-mac/fast/borders/border-radius-inline-flow-expected.png: Added.
+        * platform/chromium-mac/fast/canvas/canvas-zoom-expected.checksum: Added.
+        * platform/chromium-mac/fast/canvas/canvas-zoom-expected.png: Added.
+        * platform/chromium-mac/fast/canvas/image-pattern-rotate-expected.checksum:
+        * platform/chromium-mac/fast/canvas/image-pattern-rotate-expected.png:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-boundary-values-expected.checksum: Added.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png: Added.
+        * platform/chromium-mac/fast/forms/input-align-image-expected.png: Added.
+        * platform/chromium-mac/fast/forms/input-type-change-expected.png: Added.
+        * platform/chromium-mac/fast/forms/textfield-focus-ring-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/textfield-focus-ring-expected.png: Added.
+        * platform/chromium-mac/fast/images/icon-decoding-expected.png: Added.
+        * platform/chromium-mac/fast/images/pixel-crack-image-background-webkit-transform-scale-expected.checksum:
+        * platform/chromium-mac/fast/images/pixel-crack-image-background-webkit-transform-scale-expected.png:
+        * platform/chromium-mac/fast/inline-block: Added.
+        * platform/chromium-mac/fast/inline-block/14498-positionForCoordinates-expected.checksum: Added.
+        * platform/chromium-mac/fast/inline-block/14498-positionForCoordinates-expected.png: Added.
+        * platform/chromium-mac/fast/inline/inline-focus-ring-expected.checksum: Added.
+        * platform/chromium-mac/fast/inline/inline-focus-ring-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
         Previously, I forgot to update the rendertree expectations.
 
         * platform/mac/fast/block/float/float-forced-below-other-floats-expected.txt:

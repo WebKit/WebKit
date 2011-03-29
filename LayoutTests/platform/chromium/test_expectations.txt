@@ -3018,10 +3018,8 @@ BUGWK54322 MAC SNOWLEOPARD : fast/dom/HTMLInputElement/input-slider-update.html 
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/basic-buttons.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/button-sizes.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/file-input-direction.html = IMAGE+TEXT
-BUGWK54322 MAC SNOWLEOPARD : fast/forms/input-align-image.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/input-appearance-bkcolor.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/input-file-re-render.html = IMAGE
-BUGWK54322 MAC SNOWLEOPARD : fast/forms/input-type-change.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/preserveFormDuringResidualStyle.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/search-transformed.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/slider-padding.html = IMAGE
