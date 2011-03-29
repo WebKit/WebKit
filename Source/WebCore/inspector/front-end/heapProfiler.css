@@ -207,6 +207,18 @@
     position: static;
 }
 
+.detailed-heapshot-view .console-formatted-string {
+    white-space: nowrap;
+}
+
+.detailed-heapshot-view .data-grid tr.selected * {
+    color: inherit;
+}
+
+.detailed-heapshot-view .data-grid:focus tr.selected * {
+    color: white;
+}
+
 .detailed-heapshot-view .delimiter {
     height: 24px;
     background-color: #d6dde5;

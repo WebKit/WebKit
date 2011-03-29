@@ -450,6 +450,8 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.helpButton = new WebInspector.StatusBarButton("", "heapshot-help-status-bar-item status-bar-item");
     this.helpButton.addEventListener("click", this._helpClicked.bind(this), false);
 
+    var popoverHelper = new WebInspector.PopoverHelper(this.element, this._getHoverAnchor.bind(this), this._showStringContentPopup.bind(this));
+
     this._loadProfile(this._profileUid, profileCallback.bind(this));
 
     function profileCallback(profile)
@@ -835,6 +837,21 @@ WebInspector.DetailedHeapshotView.prototype = {
         this.retainmentDataGrid.refresh();
     },
 
+    _getHoverAnchor: function(target)
+    {
+        var span = target.enclosingNodeOrSelfWithNodeName("span");
+        if (!span || !span.hasStyleClass("console-formatted-string"))
+            return;
+        var row = target.enclosingNodeOrSelfWithNodeName("tr");
+        if (!row)
+            return;
+        var gridNode = row._dataGridNode;
+        if (!gridNode.snapshotNodeIndex)
+            return;
+        span.snapshotNodeIndex = gridNode.snapshotNodeIndex;
+        return span;
+    },
+
     get isTracingToWindowObjects()
     {
         return this.retainingPathsRoot.selectedIndex === 1;
@@ -852,6 +869,18 @@ WebInspector.DetailedHeapshotView.prototype = {
         this.showShallowSizeAsPercent = !currentState;
         this.showRetainedSizeAsPercent = !currentState;
         this.refreshShowAsPercents();
+    },
+
+    _showStringContentPopup: function(span)
+    {
+        var snapshotNode = new WebInspector.HeapSnapshotNode(this.profileWrapper, span.snapshotNodeIndex);
+        var stringContentElement = document.createElement("span");
+        stringContentElement.className = "monospace console-formatted-string";
+        stringContentElement.style.whiteSpace = "pre";
+        stringContentElement.textContent = "\"" + snapshotNode.name + "\"";
+        var popover = new WebInspector.Popover(stringContentElement);
+        popover.show(span);
+        return popover;
     },
 
     _helpClicked: function(event)
