@@ -1,3 +1,9 @@
+2011-03-29  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, add Chromium test expectation for http/tests/uri/username-with-no-hostname.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-28  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, fix Chromium test results and expectations.

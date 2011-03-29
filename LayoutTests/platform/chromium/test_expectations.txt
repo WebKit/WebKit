@@ -3343,3 +3343,6 @@ BUGWK57302 MAC LEOPARD : fast/text/international/text-combine-image-test.html = 
 
 // New test added in r82159
 BUGCR77706 : editing/spelling/grammar.html = FAIL
+
+// New test added in r82152 and test expectation updated in r82189.
+BUGCR77734 : http/tests/uri/username-with-no-hostname.html = TEXT
