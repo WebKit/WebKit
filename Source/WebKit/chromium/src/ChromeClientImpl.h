@@ -161,12 +161,12 @@ public:
     virtual CompositingTriggerFlags allowedCompositingTriggers() const;
 #endif
 
-    virtual bool supportsFullscreenForNode(const WebCore::Node*, bool);
+    virtual bool supportsFullscreenForNode(const WebCore::Node*);
     virtual void enterFullscreenForNode(WebCore::Node*);
     virtual void exitFullscreenForNode(WebCore::Node*);
 
 #if ENABLE(FULLSCREEN_API)
-    virtual bool supportsFullScreenForElement(const WebCore::Element*);
+    virtual bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard);
     virtual void enterFullScreenForElement(WebCore::Element*);
     virtual void exitFullScreenForElement(WebCore::Element*);
     virtual void fullScreenRendererChanged(WebCore::RenderBox*);

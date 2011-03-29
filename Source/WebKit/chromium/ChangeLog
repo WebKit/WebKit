@@ -1,5 +1,14 @@
 2011-03-29  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed. Another build fix. The last fix was incorrect.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::supportsFullscreenForNode):
+        (WebKit::ChromeClientImpl::supportsFullScreenForElement):
+        * src/ChromeClientImpl.h:
+
+2011-03-29  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed. Build fix for Chromium Clang bot.
 
         * src/ChromeClientImpl.cpp:
