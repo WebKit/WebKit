@@ -808,7 +808,7 @@ SOURCES += \
     inspector/InjectedScriptManager.cpp \
     inspector/InspectorAgent.cpp \
     inspector/InspectorApplicationCacheAgent.cpp \
-    inspector/InspectorBrowseebuggerAgent.cpp \
+    inspector/InspectorBrowserDebuggerAgent.cpp \
     inspector/InspectorCSSAgent.cpp \
     inspector/InspectorClient.cpp \
     inspector/InspectorConsoleAgent.cpp \

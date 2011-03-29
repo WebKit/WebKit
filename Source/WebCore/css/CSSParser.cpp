@@ -3991,7 +3991,7 @@ static bool parseColorIntOrPercentage(const UChar*& string, const UChar* end, co
     if (current == end || !isASCIIDigit(*current))
         return false;
     while (current != end && isASCIIDigit(*current)) {
-        int newValue = localValue * 10 + *current++ - '0';
+        double newValue = localValue * 10 + *current++ - '0';
         if (newValue >= 255) {
             // Clamp values at 255.
             localValue = 255;
@@ -4009,10 +4009,10 @@ static bool parseColorIntOrPercentage(const UChar*& string, const UChar* end, co
         // We already parsed the integral part, try to parse
         // the fraction part of the percentage value.
         double percentage = 0;
-        int parsed = parseDouble(current, end, '%', percentage);
-        if (!parsed)
+        int numCharactersParsed = parseDouble(current, end, '%', percentage);
+        if (!numCharactersParsed)
             return false;
-        current += parsed;
+        current += numCharactersParsed;
         if (*current != '%')
             return false;
         localValue += percentage;

@@ -1,3 +1,17 @@
+2011-03-29  Darin Adler  <darin@apple.com>
+
+        Fix some just-introduced build failures.
+
+        * WebCore.pro: Correct spelling of filename.
+
+        * css/CSSParser.cpp:
+        (WebCore::parseColorIntOrPercentage): Fix double/int conversion that fails to compile
+        on Leopard. Also renamed one local variabel.
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::didCommitLoad): Removed unused argument names to avoid warning.
+        (WebCore::InspectorAgent::domContentLoadedEventFired): Ditto.
+
 2011-03-29  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Darin Adler.
