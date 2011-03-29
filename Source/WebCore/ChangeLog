@@ -1,3 +1,37 @@
+2011-03-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55981
+        Second round of clean-ups, aimed at supporting GTK with the
+        same unified FontPlatformData header.  This version removes
+        some unneeded WinCairo code, and aligns the WinCairo and
+        GTK ports to reduce code duplication.
+
+        * WebCore.vcproj/WebCore.vcproj: Get rid of a dangling reference
+          to an old WinCairo file.
+        * platform/graphics/FontPlatformData.h: Remove unneeded member
+          for m_fontFace, which is a member of m_scaledFont.  Switch to
+          standard Cairo hashing.
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::font):
+        (WebCore::FontPlatformData::scaledFont):
+        (WebCore::FontPlatformData::hash):
+        (WebCore::FontPlatformData::isHashTableDeletedValue):
+        (WebCore::FontPlatformData::hashTableDeletedFontValue):
+        * platform/graphics/win/FontCacheWin.cpp: Update to no longer use
+          the unnecessary fontFace() accessor.
+        (WebCore::FontCache::createFontPlatformData):
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::platformDataInit):
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::~FontPlatformData):
+        (WebCore::FontPlatformData::platformDataAssign):
+        (WebCore::FontPlatformData::platformIsEqual):
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2011-03-29  Jian Li  <jianli@chromium.org>
 
         Reviewed by Adam Barth.

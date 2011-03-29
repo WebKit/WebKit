@@ -23,7 +23,10 @@
 
 #include "SharedBuffer.h"
 #include "FontPlatformData.h"
+
+#include <cairo-win32.h>
 #include <wtf/RetainPtr.h>
+
 
 namespace WebCore {
 

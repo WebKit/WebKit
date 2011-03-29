@@ -27731,46 +27731,6 @@
 							/>
 						</FileConfiguration>
 					</File>
-					<Filter
-						Name="cairo"
-						>
-						<File
-							RelativePath="..\platform\graphics\win\cairo\FontPlatformData.h"
-							>
-							<FileConfiguration
-								Name="Debug|Win32"
-								ExcludedFromBuild="true"
-								>
-								<Tool
-									Name="VCCustomBuildTool"
-								/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release|Win32"
-								ExcludedFromBuild="true"
-								>
-								<Tool
-									Name="VCCustomBuildTool"
-								/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Debug_All|Win32"
-								ExcludedFromBuild="true"
-								>
-								<Tool
-									Name="VCCustomBuildTool"
-								/>
-							</FileConfiguration>
-							<FileConfiguration
-								Name="Release_LTCG|Win32"
-								ExcludedFromBuild="true"
-								>
-								<Tool
-									Name="VCCustomBuildTool"
-								/>
-							</FileConfiguration>
-						</File>
-					</Filter>
 				</Filter>
 				<Filter
 					Name="cg"

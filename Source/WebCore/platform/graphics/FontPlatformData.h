@@ -49,13 +49,8 @@
 #include "RefCountedGDIHandle.h"
 #endif
 
-#if PLATFORM(WIN)
 #if PLATFORM(CAIRO)
-#include <cairo-win32.h>
-#endif
-#endif
-
-#if PLATFORM(CAIRO)
+#include "HashFunctions.h"
 #include <cairo.h>
 #endif
 
@@ -119,14 +114,13 @@ public:
         , m_widthVariant(RegularWidth)
 #if PLATFORM(WIN)
         , m_font(WTF::HashTableDeletedValue)
-#else
+#elif OS(DARWIN)
         , m_font(hashTableDeletedFontValue())
 #endif
 #if PLATFORM(CG) && (defined(BUILDING_ON_TIGER) || PLATFORM(WIN))
         , m_cgFont(0)
 #elif PLATFORM(CAIRO)
-        , m_fontFace(0)
-        , m_scaledFont(0)
+        , m_scaledFont(hashTableDeletedFontValue())
 #endif
         , m_isColorBitmapFont(false)
 #if PLATFORM(WIN)
@@ -142,13 +136,12 @@ public:
         , m_textOrientation(TextOrientationVerticalRight)
         , m_size(0)
         , m_widthVariant(RegularWidth)
-#if !PLATFORM(WIN)
+#if OS(DARWIN)
         , m_font(0)
 #endif
 #if PLATFORM(CG) && (defined(BUILDING_ON_TIGER) || PLATFORM(WIN))
         , m_cgFont(0)
 #elif PLATFORM(CAIRO)
-        , m_fontFace(0)
         , m_scaledFont(0)
 #endif
         , m_isColorBitmapFont(false)
@@ -168,13 +161,12 @@ public:
         , m_textOrientation(textOrientation)
         , m_size(size)
         , m_widthVariant(widthVariant)
-#if !PLATFORM(WIN)
+#if OS(DARWIN)
         , m_font(0)
 #endif
 #if PLATFORM(CG) && (defined(BUILDING_ON_TIGER) || PLATFORM(WIN))
         , m_cgFont(0)
 #elif PLATFORM(CAIRO)
-        , m_fontFace(0)
         , m_scaledFont(0)
 #endif
         , m_isColorBitmapFont(false)
@@ -217,7 +209,7 @@ public:
     HFONT hfont() const { return m_font ? m_font->handle() : 0; }
     bool useGDI() const { return m_useGDI; }
 #elif OS(DARWIN)
-    NSFont *font() const { return m_font; }
+    NSFont* font() const { return m_font; }
     void setFont(NSFont*);
 #endif
 
@@ -251,17 +243,18 @@ public:
 
 #if PLATFORM(CAIRO)
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont; }
-    cairo_font_face_t* fontFace() const { return m_fontFace; }
 #endif
 
     unsigned hash() const
     {
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && !PLATFORM(CAIRO)
         return m_font ? m_font->hash() : 0;
 #elif OS(DARWIN)
         ASSERT(m_font || !m_cgFont);
         uintptr_t hashCodes[3] = { (uintptr_t)m_font, m_widthVariant, m_textOrientation << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique };
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
+#elif PLATFORM(CAIRO)
+        return PtrHash<cairo_scaled_font_t*>::hash(m_scaledFont);
 #endif
     }
 
@@ -281,10 +274,12 @@ public:
 
     bool isHashTableDeletedValue() const
     {
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && !PLATFORM(CAIRO)
         return m_font.isHashTableDeletedValue();
-#else
+#elif OS(DARWIN)
         return m_font == hashTableDeletedFontValue();
+#elif PLATFORM(CAIRO)
+        return m_scaledFont == hashTableDeletedFontValue();
 #endif
     }
 
@@ -308,6 +303,10 @@ private:
     static NSFont* hashTableDeletedFontValue() { return reinterpret_cast<NSFont *>(-1); }
 #elif PLATFORM(WIN)
     void platformDataInit(HFONT, float size, HDC, WCHAR* faceName);
+#endif
+
+#if PLATFORM(CAIRO)
+    static cairo_scaled_font_t* hashTableDeletedFontValue() { return reinterpret_cast<cairo_scaled_font_t*>(-1); }
 #endif
 
 public:
@@ -339,7 +338,6 @@ private:
 #endif
 
 #if PLATFORM(CAIRO)
-    cairo_font_face_t* m_fontFace;
     cairo_scaled_font_t* m_scaledFont;
 #endif
 

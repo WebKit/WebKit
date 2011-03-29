@@ -584,7 +584,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
 #if PLATFORM(CG)
     bool fontCreationFailed = !result->cgFont();
 #elif PLATFORM(CAIRO)
-    bool fontCreationFailed = !result->fontFace();
+    bool fontCreationFailed = !result->scaledFont();
 #endif
 
     if (fontCreationFailed) {
