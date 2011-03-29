@@ -1,3 +1,30 @@
+2011-03-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Use per-configuration vsprops in WebKit to avoid WebKitVSPropsRedirectionDir removal by MSVC IDE
+        https://bugs.webkit.org/show_bug.cgi?id=57383
+
+        Visual Studio's IDE was removing instances of $(WebKitVSPropsRedirectionDir) from
+        InheritedPropertySheet rules in our vcproj files when the vcproj was edited from within
+        the IDE. To avoid this, add a separate vsprops file for each project configuration that
+        contains the required inherited property sheets.
+
+        * win/WebKit2.vcproj:
+        * win/WebKit2Debug.vsprops: Added.
+        * win/WebKit2DebugAll.vsprops: Added.
+        * win/WebKit2DebugCairoCFLite.vsprops: Added.
+        * win/WebKit2Release.vsprops: Added.
+        * win/WebKit2ReleaseCairoCFLite.vsprops: Added.
+        * win/WebKit2ReleaseLTCG.vsprops: Added.
+        * win/WebKit2WebProcess.vcproj:
+        * win/WebKit2WebProcessDebug.vsprops: Added.
+        * win/WebKit2WebProcessDebugAll.vsprops: Added.
+        * win/WebKit2WebProcessDebugCairoCFLite.vsprops: Added.
+        * win/WebKit2WebProcessRelease.vsprops: Added.
+        * win/WebKit2WebProcessReleaseCairoCFLite.vsprops: Added.
+        * win/WebKit2WebProcessReleaseLTCG.vsprops: Added.
+
 2011-03-29  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -1,3 +1,37 @@
+2011-03-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Use per-configuration vsprops in WebKit to avoid WebKitVSPropsRedirectionDir removal by MSVC IDE
+        https://bugs.webkit.org/show_bug.cgi?id=57383
+
+        Visual Studio's IDE was removing instances of $(WebKitVSPropsRedirectionDir) from
+        InheritedPropertySheet rules in our vcproj files when the vcproj was edited from within
+        the IDE. To avoid this, add a separate vsprops file for each project configuration that
+        contains the required inherited property sheets.
+
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/InterfacesDebug.vsprops: Added.
+        * WebKit.vcproj/InterfacesDebugAll.vsprops: Added.
+        * WebKit.vcproj/InterfacesDebugCairoCFLite.vsprops: Added.
+        * WebKit.vcproj/InterfacesRelease.vsprops: Added.
+        * WebKit.vcproj/InterfacesReleaseCairoCFLite.vsprops: Added.
+        * WebKit.vcproj/InterfacesReleaseLTCG.vsprops: Added.
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKit.vcproj/WebKitGUID.vcproj:
+        * WebKit.vcproj/WebKitGUIDDebug.vsprops: Added.
+        * WebKit.vcproj/WebKitGUIDDebugAll.vsprops: Added.
+        * WebKit.vcproj/WebKitGUIDDebugCairoCFLite.vsprops: Added.
+        * WebKit.vcproj/WebKitGUIDRelease.vsprops: Added.
+        * WebKit.vcproj/WebKitGUIDReleaseCairoCFLite.vsprops: Added.
+        * WebKit.vcproj/WebKitGUIDReleaseLTCG.vsprops: Added.
+        * WebKit.vcproj/WebKitLibDebug.vsprops: Added.
+        * WebKit.vcproj/WebKitLibDebugAll.vsprops: Added.
+        * WebKit.vcproj/WebKitLibDebugCairoCFLite.vsprops: Added.
+        * WebKit.vcproj/WebKitLibRelease.vsprops: Added.
+        * WebKit.vcproj/WebKitLibReleaseCairoCFLite.vsprops: Added.
+        * WebKit.vcproj/WebKitLibReleaseLTCG.vsprops: Added.
+
 2011-03-29  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

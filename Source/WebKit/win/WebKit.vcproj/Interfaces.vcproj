@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\InterfacesCommon.vsprops"
+			InheritedPropertySheets=".\InterfacesDebug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -70,7 +70,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\InterfacesCommon.vsprops"
+			InheritedPropertySheets=".\InterfacesRelease.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -122,7 +122,7 @@
 		<Configuration
 			Name="Release_LTCG|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\InterfacesCommon.vsprops"
+			InheritedPropertySheets=".\InterfacesReleaseLTCG.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -175,7 +175,7 @@
 		<Configuration
 			Name="Debug_All|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\InterfacesCommon.vsprops"
+			InheritedPropertySheets=".\InterfacesDebugAll.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -227,7 +227,7 @@
 		<Configuration
 			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;.\InterfacesCommon.vsprops"
+			InheritedPropertySheets=".\InterfacesReleaseCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -279,7 +279,7 @@
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug_wincairo.vsprops;.\InterfacesCommon.vsprops"
+			InheritedPropertySheets=".\InterfacesDebugCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
