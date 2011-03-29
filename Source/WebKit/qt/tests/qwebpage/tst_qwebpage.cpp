@@ -2123,6 +2123,28 @@ void tst_QWebPage::inputMethods()
     clickOnPage(page, inputElement.geometry().center());
 
     QVERIFY(!viewEventSpy.contains(QEvent::RequestSoftwareInputPanel));
+
+    // START - Newline test for textarea
+    qApp->processEvents();
+    page->mainFrame()->setHtml("<html><body>" \
+                                            "<textarea rows='5' cols='1' id='input5' value=''/>" \
+                                            "</body></html>");
+    page->mainFrame()->evaluateJavaScript("var inputEle = document.getElementById('input5'); inputEle.focus(); inputEle.select();");
+    QKeyEvent keyEnter(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
+    page->event(&keyEnter);
+    QList<QInputMethodEvent::Attribute> attribs;
+
+    QInputMethodEvent eventText("\n", attribs);
+    page->event(&eventText);
+
+    QInputMethodEvent eventText2("third line", attribs);
+    page->event(&eventText2);
+    qApp->processEvents();
+
+    QString inputValue2 = page->mainFrame()->evaluateJavaScript("document.getElementById('input5').value").toString();
+    QCOMPARE(inputValue2, QString("\n\nthird line"));
+    // END - Newline test for textarea
+
     delete container;
 }
 
