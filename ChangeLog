@@ -1,3 +1,14 @@
+2011-03-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Rubber-stamped by Andreas Kling.
+
+        [Qt] Remove modular references after support for the flag was removed.
+        https://bugs.webkit.org/show_bug.cgi?id=57018
+
+        Symbian buildfix after r82232.
+
+        * Source/WebKit.pri: Readd uitools option.
+
 2011-03-29  Kristian Amlie  <kristian.amlie@nokia.com>
 
         Reviewed by Andreas Kling.
