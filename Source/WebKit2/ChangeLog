@@ -1,3 +1,12 @@
+2011-03-29  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed build fix (64 bit gcc).
+
+        GCC does not accept uint64_t formatted as %lli.
+
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::getLoadDecisionForIconURL): Add explicit cast to long long.
+
 2011-03-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

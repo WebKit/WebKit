@@ -151,7 +151,7 @@ void WebIconDatabase::synchronousLoadDecisionForIconURL(const String&, int& load
 
 void WebIconDatabase::getLoadDecisionForIconURL(const String& iconURL, uint64_t callbackID)
 {
-    LOG(IconDatabase, "WK2 UIProcess getting load decision for icon URL %s with callback ID %lli", iconURL.ascii().data(), callbackID);
+    LOG(IconDatabase, "WK2 UIProcess getting load decision for icon URL %s with callback ID %lli", iconURL.ascii().data(), static_cast<long long>(callbackID));
 
     if (!m_webContext)
         return;
