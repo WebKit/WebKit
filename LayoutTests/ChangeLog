@@ -1,3 +1,15 @@
+2011-03-29  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        AX: GTK: ARIA role is not respected on <p> <label> <div> and <form>
+        https://bugs.webkit.org/show_bug.cgi?id=47636
+
+        Added new layout test to check that roles are correct in GTK.
+
+        * platform/gtk/accessibility/aria-roles-unignored-expected.txt: Added.
+        * platform/gtk/accessibility/aria-roles-unignored.html: Added.
+
 2011-03-29  Jessie Berlin  <jberlin@apple.com>
 
         [Snow Leopard WebKit2 Release Tests] fast/images/move-image-to-new-document.html timing out

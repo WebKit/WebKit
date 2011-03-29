@@ -3089,7 +3089,19 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return SplitterRole;
 #endif
 
-    if (m_renderer->isBlockFlow() || (node && node->hasTagName(labelTag)))
+    if (node && node->hasTagName(pTag))
+        return ParagraphRole;
+
+    if (node && node->hasTagName(labelTag))
+        return LabelRole;
+
+    if (node && node->hasTagName(divTag))
+        return DivRole;
+
+    if (node && node->hasTagName(formTag))
+        return FormRole;
+
+    if (m_renderer->isBlockFlow())
         return GroupRole;
     
     // If the element does not have role, but it has ARIA attributes, accessibility should fallback to exposing it as a group.

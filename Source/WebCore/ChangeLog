@@ -1,3 +1,30 @@
+2011-03-29  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        AX: GTK: ARIA role is not respected on <p> <label> <div> and <form>
+        https://bugs.webkit.org/show_bug.cgi?id=47636
+
+        Define new roles in WebCore and map them to ATK accordingly.
+
+        Test: platform/gtk/accessibility/aria-roles-unignored.html
+
+        * accessibility/AccessibilityObject.h: Added new roles to
+        represent paragraphs, labels, forms and div sections.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        Return ParagraphRole, LabelRole, FormRole and DivRole when needed.
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (atkRole): Map new WebCore roles to ATK Roles.
+        (webkit_accessible_get_role): Remove code to define roles for
+        paragraphs, labels, forms and divs based on node's tag name.
+
+        Update mappings for the Mac platform.
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (createAccessibilityRoleMap): Add explicit mappings from the new
+        roles introduced to NSAccessibilityGroupRole.
+
 2011-03-29  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed build fix. Remove ASSERT hitting consitently on GTK.
