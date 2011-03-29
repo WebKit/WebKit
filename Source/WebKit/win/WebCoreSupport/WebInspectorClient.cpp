@@ -47,7 +47,7 @@
 #include <WebCore/WindowMessageBroadcaster.h>
 #pragma warning(pop)
 
-#include <tchar.h>
+#include <wchar.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringConcatenate.h>
 

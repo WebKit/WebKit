@@ -162,7 +162,7 @@
 #include <comutil.h>
 #include <dimm.h>
 #include <oleacc.h>
-#include <tchar.h>
+#include <wchar.h>
 #include <windowsx.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/CString.h>
@@ -1676,12 +1676,12 @@ bool WebView::mouseWheel(WPARAM wParam, LPARAM lParam, bool isMouseHWheel)
     HWND focusedWindow = GetFocus();
     if (focusedWindow && focusedWindow != m_viewWindow) {
         // Our focus is on a different hwnd, see if it's a PopupMenu and if so, set the focus back on us (which will hide the popup).
-        TCHAR className[256];
+        WCHAR className[256];
 
         // Make sure truncation won't affect the comparison.
-        ASSERT(WTF_ARRAY_LENGTH(className) > _tcslen(PopupMenuWin::popupClassName()));
+        ASSERT(WTF_ARRAY_LENGTH(className) > wcslen(PopupMenuWin::popupClassName()));
 
-        if (GetClassName(focusedWindow, className, WTF_ARRAY_LENGTH(className)) && !_tcscmp(className, PopupMenuWin::popupClassName())) {
+        if (GetClassNameW(focusedWindow, className, WTF_ARRAY_LENGTH(className)) && !wcscmp(className, PopupMenuWin::popupClassName())) {
             // We don't let the WebView scroll here for two reasons - 1) To match Firefox behavior, 2) If we do scroll, we lose the
             // focus ring around the select menu.
             SetFocus(m_viewWindow);
@@ -2500,15 +2500,15 @@ bool WebView::shouldInitializeTrackPointHack()
         return shouldCreateScrollbars;
 
     hasRunTrackPointCheck = true;
-    const TCHAR trackPointKeys[][50] = { TEXT("Software\\Lenovo\\TrackPoint"),
-        TEXT("Software\\Lenovo\\UltraNav"),
-        TEXT("Software\\Alps\\Apoint\\TrackPoint"),
-        TEXT("Software\\Synaptics\\SynTPEnh\\UltraNavUSB"),
-        TEXT("Software\\Synaptics\\SynTPEnh\\UltraNavPS2") };
+    const WCHAR trackPointKeys[][50] = { L"Software\\Lenovo\\TrackPoint",
+        L"Software\\Lenovo\\UltraNav",
+        L"Software\\Alps\\Apoint\\TrackPoint",
+        L"Software\\Synaptics\\SynTPEnh\\UltraNavUSB",
+        L"Software\\Synaptics\\SynTPEnh\\UltraNavPS2" };
 
     for (int i = 0; i < 5; ++i) {
         HKEY trackPointKey;
-        int readKeyResult = ::RegOpenKeyEx(HKEY_CURRENT_USER, trackPointKeys[i], 0, KEY_READ, &trackPointKey);
+        int readKeyResult = ::RegOpenKeyExW(HKEY_CURRENT_USER, trackPointKeys[i], 0, KEY_READ, &trackPointKey);
         ::RegCloseKey(trackPointKey);
         if (readKeyResult == ERROR_SUCCESS) {
             shouldCreateScrollbars = true;
@@ -2539,8 +2539,8 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
         // If we detected a registry key belonging to a TrackPoint driver, then create fake trackpoint
         // scrollbars, so the WebView will receive WM_VSCROLL and WM_HSCROLL messages. We create one
         // vertical scrollbar and one horizontal to allow for receiving both types of messages.
-        ::CreateWindow(TEXT("SCROLLBAR"), TEXT("FAKETRACKPOINTHSCROLLBAR"), WS_CHILD | WS_VISIBLE | SBS_HORZ, 0, 0, 0, 0, m_viewWindow, 0, gInstance, 0);
-        ::CreateWindow(TEXT("SCROLLBAR"), TEXT("FAKETRACKPOINTVSCROLLBAR"), WS_CHILD | WS_VISIBLE | SBS_VERT, 0, 0, 0, 0, m_viewWindow, 0, gInstance, 0);
+        ::CreateWindowW(L"SCROLLBAR", L"FAKETRACKPOINTHSCROLLBAR", WS_CHILD | WS_VISIBLE | SBS_HORZ, 0, 0, 0, 0, m_viewWindow, 0, gInstance, 0);
+        ::CreateWindowW(L"SCROLLBAR", L"FAKETRACKPOINTVSCROLLBAR", WS_CHILD | WS_VISIBLE | SBS_VERT, 0, 0, 0, 0, m_viewWindow, 0, gInstance, 0);
     }
 
     hr = registerDragDrop();
@@ -3027,7 +3027,7 @@ HRESULT STDMETHODCALLTYPE WebView::setCustomTextEncodingName(
     if (FAILED(hr))
         return hr;
 
-    if (oldEncoding != encodingName && (!oldEncoding || !encodingName || _tcscmp(oldEncoding, encodingName))) {
+    if (oldEncoding != encodingName && (!oldEncoding || !encodingName || wcscmp(oldEncoding, encodingName))) {
         if (Frame* coreFrame = core(m_mainFrame))
             coreFrame->loader()->reloadWithOverrideEncoding(String(encodingName, SysStringLen(encodingName)));
     }
@@ -5248,7 +5248,7 @@ const IMMDict& IMMDict::dict()
 
 IMMDict::IMMDict()
 {
-    m_instance = ::LoadLibrary(TEXT("IMM32.DLL"));
+    m_instance = ::LoadLibraryW(L"IMM32.DLL");
     getContext = reinterpret_cast<getContextPtr>(::GetProcAddress(m_instance, "ImmGetContext"));
     ASSERT(getContext);
     releaseContext = reinterpret_cast<releaseContextPtr>(::GetProcAddress(m_instance, "ImmReleaseContext"));
@@ -5905,7 +5905,7 @@ bool WebView::onGetObject(WPARAM wParam, LPARAM lParam, LRESULT& lResult) const
         return false;
 
     if (!accessibilityLib) {
-        if (!(accessibilityLib = ::LoadLibrary(TEXT("oleacc.dll"))))
+        if (!(accessibilityLib = ::LoadLibraryW(L"oleacc.dll")))
             return false;
     }
 

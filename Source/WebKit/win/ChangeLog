@@ -1,3 +1,23 @@
+2011-03-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WIN] Use WCHAR instead of TCHAR
+        https://bugs.webkit.org/show_bug.cgi?id=57191
+
+        We always use the UNICODE versions of windows functions, so
+        the usage of TCHAR makes no sense and mixing them is bad style.
+
+        * DefaultDownloadDelegate.cpp:
+        * WebCoreSupport/WebChromeClient.cpp:
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        * WebCoreSupport/WebInspectorClient.cpp:
+        * WebKitDLL.cpp:
+        * WebNotificationCenter.cpp:
+        * WebPreferences.cpp:
+        * WebURLResponse.cpp:
+        * WebView.cpp:
+
 2011-03-29  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Jon Honeycutt.

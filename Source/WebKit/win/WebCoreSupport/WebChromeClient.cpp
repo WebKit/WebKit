@@ -56,7 +56,7 @@
 #include <WebCore/PopupMenuWin.h>
 #include <WebCore/SearchPopupMenuWin.h>
 #include <WebCore/WindowFeatures.h>
-#include <tchar.h>
+#include <wchar.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include <WebCore/GraphicsLayer.h>
@@ -591,8 +591,8 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
             uiDelegatePrivate->exceededDatabaseQuota(m_webView, kit(frame), origin.get(), BString(databaseIdentifier));
         else {
             // FIXME: remove this workaround once shipping Safari has the necessary delegate implemented.
-            TCHAR path[MAX_PATH];
-            HMODULE safariHandle = GetModuleHandle(TEXT("Safari.exe"));
+            WCHAR path[MAX_PATH];
+            HMODULE safariHandle = GetModuleHandleW(L"Safari.exe");
             if (!safariHandle)
                 return;
             GetModuleFileName(safariHandle, path, WTF_ARRAY_LENGTH(path));
@@ -606,9 +606,9 @@ void WebChromeClient::exceededDatabaseQuota(Frame* frame, const String& database
 
             LPCTSTR productVersion;
             UINT productVersionLength;
-            if (!VerQueryValue(data.data(), TEXT("\\StringFileInfo\\040904b0\\ProductVersion"), (void**)&productVersion, &productVersionLength))
+            if (!VerQueryValueW(data.data(), L"\\StringFileInfo\\040904b0\\ProductVersion", (void**)&productVersion, &productVersionLength))
                 return;
-            if (_tcsncmp(TEXT("3.1"), productVersion, productVersionLength) > 0) {
+            if (wcsncmp(L"3.1", productVersion, productVersionLength) > 0) {
                 const unsigned long long defaultQuota = 5 * 1024 * 1024; // 5 megabytes should hopefully be enough to test storage support.
                 origin->setQuota(defaultQuota);
             }
@@ -738,7 +738,7 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChoose
         return;
 
     bool multiFile = fileChooser->allowsMultipleFiles();
-    Vector<TCHAR> fileBuf(multiFile ? maxFilePathsListSize : MAX_PATH);
+    Vector<WCHAR> fileBuf(multiFile ? maxFilePathsListSize : MAX_PATH);
 
     OPENFILENAME ofn;
 
@@ -750,7 +750,7 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChoose
     ofn.lStructSize = sizeof(ofn);
     ofn.hwndOwner = viewWindow;
     String allFiles = allFilesText();
-    allFiles.append(TEXT("\0*.*\0\0"), 6);
+    allFiles.append(L"\0*.*\0\0", 6);
     ofn.lpstrFilter = allFiles.charactersWithNullTermination();
     ofn.lpstrFile = fileBuf.data();
     ofn.nMaxFile = fileBuf.size();
@@ -761,7 +761,7 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChoose
         ofn.Flags = ofn.Flags | OFN_ALLOWMULTISELECT;
 
     if (GetOpenFileName(&ofn)) {
-        TCHAR* files = fileBuf.data();
+        WCHAR* files = fileBuf.data();
         Vector<String> fileList;
         String file(files);
         if (multiFile) {
@@ -769,7 +769,7 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChoose
                 // When using the OFN_EXPLORER flag, the file list is null delimited.
                 // When you create a String from a ptr to this list, it will use strlen to look for the null character.
                 // Then we find the next file path string by using the length of the string we just created.
-                TCHAR* nextFilePtr = files + file.length() + 1;
+                WCHAR* nextFilePtr = files + file.length() + 1;
                 String nextFile(nextFilePtr);
                 // If multiple files are selected, there will be a directory name first, which we don't want to add to the vector.
                 // We know a single file was selected if there is only one filename in the list.  

@@ -40,7 +40,7 @@
 #include <WebCore/PlatformString.h>
 #include <limits>
 #include <shlobj.h>
-#include <tchar.h>
+#include <wchar.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/text/CString.h>
@@ -340,12 +340,12 @@ LONGLONG WebPreferences::longlongValueForKey(CFStringRef key)
 void WebPreferences::setStringValue(CFStringRef key, LPCTSTR value)
 {
     BSTR val = stringValueForKey(key);
-    if (val && !_tcscmp(val, value))
+    if (val && !wcscmp(val, value))
         return;
     SysFreeString(val);
     
     RetainPtr<CFStringRef> valueRef(AdoptCF,
-        CFStringCreateWithCharactersNoCopy(0, (UniChar*)_wcsdup(value), (CFIndex)_tcslen(value), kCFAllocatorMalloc));
+        CFStringCreateWithCharactersNoCopy(0, (UniChar*)_wcsdup(value), (CFIndex)wcslen(value), kCFAllocatorMalloc));
     setValueForKey(key, valueRef.get());
 
     postPreferencesChangesNotification();

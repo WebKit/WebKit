@@ -41,8 +41,6 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/NotImplemented.h>
 
-#include <tchar.h>
-
 using namespace WebCore;
 
 WebContextMenuClient::WebContextMenuClient(WebView* webView)

@@ -38,9 +38,9 @@
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/Widget.h>
-#include <wtf/Vector.h>
-#include <tchar.h>
 #include <olectl.h>
+#include <wchar.h>
+#include <wtf/Vector.h>
 
 using namespace WebCore;
 

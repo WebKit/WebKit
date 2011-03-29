@@ -36,8 +36,8 @@
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 #pragma warning(pop)
-#include <tchar.h>
 #include <utility>
+#include <wchar.h>
 
 using namespace WebCore;
 
