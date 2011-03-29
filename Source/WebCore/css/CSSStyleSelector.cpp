@@ -3314,12 +3314,11 @@ static void collectFeaturesFromList(CSSStyleSelector::Features& features, const 
 
             if (CSSSelectorList* selectorList = selector->selectorList()) {
                 for (CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
-                    // FIXME: handle sibling selectors here.
+                    if (selector->isSiblingSelector())
+                        foundSiblingSelector = true;
                     collectFeaturesFromSelector(features, subSelector);
                 }
-            }
-
-            if (selector->isSiblingSelector())
+            } else if (selector->isSiblingSelector())
                 foundSiblingSelector = true;
         }
         if (foundSiblingSelector) {

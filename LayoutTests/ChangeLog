@@ -1,3 +1,25 @@
+2011-03-28  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        fix style sharing with :any and sibling selectors
+        https://bugs.webkit.org/show_bug.cgi?id=57211
+
+        Also tests sibling selector style sharing in general since
+        no existing tests seem to cover that codepath.
+
+        * fast/css/sibling-selectors-expected.txt: Added.
+        * fast/css/sibling-selectors.html: Added.
+
+2011-03-27  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        fix :-webkit-any(:last-child)
+        https://bugs.webkit.org/show_bug.cgi?id=57207
+
+        * fast/css/pseudo-any.html:
+
 2011-03-27  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Antti Koivisto.
