@@ -49,6 +49,21 @@ public:
     {
     }
 
+    void clear() { moveTo(0, 0); }
+
+    void moveToStartOf(RenderObject* object)
+    {
+        ASSERT(object);
+        moveTo(object, 0);
+    }
+
+    void moveTo(RenderObject* object, unsigned offset, int nextBreak = -1)
+    {
+        m_obj = object;
+        m_pos = offset;
+        m_nextBreakablePosition = nextBreak;
+    }
+
     void increment(InlineBidiResolver* resolver = 0);
     bool atEnd() const;
 
@@ -189,16 +204,11 @@ inline void InlineIterator::increment(InlineBidiResolver* resolver)
         return;
     if (m_obj->isText()) {
         m_pos++;
-        if (m_pos >= toRenderText(m_obj)->textLength()) {
-            m_obj = bidiNext(m_block, m_obj, resolver);
-            m_pos = 0;
-            m_nextBreakablePosition = -1;
-        }
-    } else {
-        m_obj = bidiNext(m_block, m_obj, resolver);
-        m_pos = 0;
-        m_nextBreakablePosition = -1;
+        if (m_pos < toRenderText(m_obj)->textLength())
+            return;
     }
+    // bidiNext can return 0, so use moveTo instead of moveToStartOf
+    moveTo(bidiNext(m_block, m_obj, resolver), 0);
 }
 
 inline bool InlineIterator::atEnd() const

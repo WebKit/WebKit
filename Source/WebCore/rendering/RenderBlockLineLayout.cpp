@@ -1504,9 +1504,7 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
     UNUSED_PARAM(isFixedPitch);
 #endif
 
-    lineBreak.m_obj = text;
-    lineBreak.m_pos = lastSpace + prefixLength;
-    lineBreak.m_nextBreakablePosition = nextBreakable;
+    lineBreak.moveTo(text, lastSpace + prefixLength, nextBreakable);
     hyphenated = true;
 }
 
@@ -1546,6 +1544,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 
     InlineIterator lBreak = resolver.position();
 
+    // FIXME: It is error-prone to split the position object out like this.
+    // Teach this code to work with objects instead of this split tuple.
     RenderObject* o = resolver.position().m_obj;
     RenderObject* last = o;
     unsigned pos = resolver.position().m_pos;
@@ -1584,9 +1584,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             
         if (o->isBR()) {
             if (w + tmpW <= width) {
-                lBreak.m_obj = o;
-                lBreak.m_pos = 0;
-                lBreak.m_nextBreakablePosition = -1;
+                lBreak.moveToStartOf(o);
                 lBreak.increment();
 
                 // A <br> always breaks a line, so don't let the line be collapsed
@@ -1685,9 +1683,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             if ((autoWrap || RenderStyle::autoWrap(lastWS)) && (!o->isImage() || allowImagesToBreak)) {
                 w += tmpW;
                 tmpW = 0;
-                lBreak.m_obj = o;
-                lBreak.m_pos = 0;
-                lBreak.m_nextBreakablePosition = -1;
+                lBreak.moveToStartOf(o);
             }
 
             if (ignoringSpaces)
@@ -1758,9 +1754,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             if (t->isWordBreak()) {
                 w += tmpW;
                 tmpW = 0;
-                lBreak.m_obj = o;
-                lBreak.m_pos = 0;
-                lBreak.m_nextBreakablePosition = -1;
+                lBreak.moveToStartOf(o);
                 ASSERT(!len);
             }
 
@@ -1856,9 +1850,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                             // additional whitespace.
                             if (w + tmpW + charWidth > width) {
                                 lineWasTooWide = true;
-                                lBreak.m_obj = o;
-                                lBreak.m_pos = pos;
-                                lBreak.m_nextBreakablePosition = nextBreakable;
+                                lBreak.moveTo(o, pos, nextBreakable);
                                 skipTrailingWhitespace(lBreak, isLineEmpty, previousLineBrokeCleanly);
                             }
                         }
@@ -1897,9 +1889,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                             addMidpoint(lineMidpointState, InlineIterator(0, o, pos - 1)); // Stop
                             addMidpoint(lineMidpointState, InlineIterator(0, o, pos)); // Start
                         }
-                        lBreak.m_obj = o;
-                        lBreak.m_pos = pos;
-                        lBreak.m_nextBreakablePosition = nextBreakable;
+                        lBreak.moveTo(o, pos, nextBreakable);
                         lBreak.increment();
                         previousLineBrokeCleanly = true;
                         return lBreak;
@@ -1909,9 +1899,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                         w += tmpW;
                         wrapW = 0;
                         tmpW = 0;
-                        lBreak.m_obj = o;
-                        lBreak.m_pos = pos;
-                        lBreak.m_nextBreakablePosition = nextBreakable;
+                        lBreak.moveTo(o, pos, nextBreakable);
                         // Auto-wrapping text should not wrap in the middle of a word once it has had an
                         // opportunity to break after a word.
                         breakWords = false;
@@ -1920,9 +1908,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     if (midWordBreak) {
                         // Remember this as a breakable position in case
                         // adding the end width forces a break.
-                        lBreak.m_obj = o;
-                        lBreak.m_pos = pos;
-                        lBreak.m_nextBreakablePosition = nextBreakable;
+                        lBreak.moveTo(o, pos, nextBreakable);
                         midWordBreak &= (breakWords || breakAll);
                     }
 
@@ -1959,11 +1945,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 }
 
                 if (!currentCharacterIsWS && previousCharacterIsWS) {
-                    if (autoWrap && o->style()->breakOnlyAfterWhiteSpace()) {
-                        lBreak.m_obj = o;
-                        lBreak.m_pos = pos;
-                        lBreak.m_nextBreakablePosition = nextBreakable;
-                    }
+                    if (autoWrap && o->style()->breakOnlyAfterWhiteSpace())
+                        lBreak.moveTo(o, pos, nextBreakable);
                 }
                 
                 if (collapseWhiteSpace && currentCharacterIsSpace && !ignoringSpaces)
@@ -2025,9 +2008,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     if (canPlaceOnLine && checkForBreak) {
                         w += tmpW;
                         tmpW = 0;
-                        lBreak.m_obj = next;
-                        lBreak.m_pos = 0;
-                        lBreak.m_nextBreakablePosition = -1;
+                        lBreak.moveToStartOf(next);
                     }
                 }
             }
@@ -2057,9 +2038,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             if (last->isReplaced() && autoWrap && (!last->isImage() || allowImagesToBreak) && (!last->isListMarker() || toRenderListMarker(last)->isInside())) {
                 w += tmpW;
                 tmpW = 0;
-                lBreak.m_obj = next;
-                lBreak.m_pos = 0;
-                lBreak.m_nextBreakablePosition = -1;
+                lBreak.moveToStartOf(next);
             }
         }
 
@@ -2076,11 +2055,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
     }
 
     
-    if (w + tmpW <= width || lastWS == NOWRAP) {
-        lBreak.m_obj = 0;
-        lBreak.m_pos = 0;
-        lBreak.m_nextBreakablePosition = -1;
-    }
+    if (w + tmpW <= width || lastWS == NOWRAP)
+        lBreak.clear();
 
  end:
     if (lBreak == resolver.position() && (!lBreak.m_obj || !lBreak.m_obj->isBR())) {
@@ -2088,20 +2064,17 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
         if (style()->whiteSpace() == PRE) {
             // FIXME: Don't really understand this case.
             if (pos != 0) {
+                // FIXME: This should call moveTo which would clear m_nextBreakablePosition
+                // this code as-is is likely wrong.
                 lBreak.m_obj = o;
                 lBreak.m_pos = pos - 1;
-            } else {
-                lBreak.m_obj = last;
-                lBreak.m_pos = last->isText() ? last->length() : 0;
-                lBreak.m_nextBreakablePosition = -1;
-            }
+            } else
+                lBreak.moveTo(last, last->isText() ? last->length() : 0);
         } else if (lBreak.m_obj) {
             // Don't ever break in the middle of a word if we can help it.
             // There's no room at all. We just have to be on this line,
             // even though we'll spill out.
-            lBreak.m_obj = o;
-            lBreak.m_pos = pos;
-            lBreak.m_nextBreakablePosition = -1;
+            lBreak.moveTo(o, pos);
         }
     }
 

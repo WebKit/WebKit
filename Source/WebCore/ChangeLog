@@ -2,6 +2,28 @@
 
         Reviewed by Ryosuke Niwa.
 
+        Remove a bunch of duplicate code by adding some InlineIterator helper methods
+        https://bugs.webkit.org/show_bug.cgi?id=57326
+
+        Once I started adding these it became clear how much crazy duplicated code
+        we had due to treating InlineIterator as a struct and accessing its
+        members directly.  We can't quite make the members private yet since
+        findNextLineBreak still splits out the members.  But this change
+        makes the code much cleaner.
+
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::clear):
+        (WebCore::InlineIterator::moveToStartOf):i
+        (WebCore::InlineIterator::moveTo):
+        (WebCore::InlineIterator::increment):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::tryHyphenating):
+        (WebCore::RenderBlock::findNextLineBreak):
+
+2011-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
         Clean up bidiNext by abstracting repeated code
         https://bugs.webkit.org/show_bug.cgi?id=57335
 
