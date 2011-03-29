@@ -128,6 +128,11 @@ void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundleRef, WKBun
     toImpl(bundleRef)->overrideXSSAuditorEnabledForTestRunner(toImpl(pageGroupRef), enabled);
 }
 
+void WKBundleOverrideAllowUniversalAccessFromFileURLsForTestRunner(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
+{
+    toImpl(bundleRef)->overrideAllowUniversalAccessFromFileURLsForTestRunner(toImpl(pageGroupRef), enabled);
+}
+
 void WKBundleReportException(JSContextRef context, JSValueRef exception)
 {
     InjectedBundle::reportException(context, exception);

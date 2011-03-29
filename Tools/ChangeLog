@@ -1,3 +1,16 @@
+2011-03-29  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebKitTestRunner needs layoutTestController.setAllowUniversalAccessFromFileURLs
+        https://bugs.webkit.org/show_bug.cgi?id=42692
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::setAllowUniversalAccessFromFileURLs):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+
 2011-03-24  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

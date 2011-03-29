@@ -88,6 +88,7 @@ public:
     void removeAllVisitedLinks();
     void activateMacFontAscentHack();
     void overrideXSSAuditorEnabledForTestRunner(WebPageGroupProxy* pageGroup, bool enabled);
+    void overrideAllowUniversalAccessFromFileURLsForTestRunner(WebPageGroupProxy*, bool);
 
     // UserContent API
     void addUserScript(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime, WebCore::UserContentInjectedFrames);

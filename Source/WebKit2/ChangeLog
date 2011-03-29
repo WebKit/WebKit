@@ -1,3 +1,21 @@
+2011-03-29  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebKitTestRunner needs layoutTestController.setAllowUniversalAccessFromFileURLs
+        https://bugs.webkit.org/show_bug.cgi?id=42692
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::decode):
+        (WebKit::WebPreferencesStore::overrideAllowUniversalAccessFromFileURLsForTestRunner):
+        * Shared/WebPreferencesStore.h:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleOverrideAllowUniversalAccessFromFileURLsForTestRunner):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideAllowUniversalAccessFromFileURLsForTestRunner):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2011-03-29  Timothy Hatcher  <timothy@apple.com>
 
         Update the order of the context menu to better match AppKit on Mac.

@@ -49,6 +49,8 @@ namespace WebPreferencesKey {
 
 static bool hasXSSAuditorEnabledTestRunnerOverride;
 static bool xssAuditorEnabledTestRunnerOverride;
+static bool hasAllowUniversalAccessFromFileURLsTestRunnerOverride;
+static bool allowUniversalAccessFromFileURLsTestRunnerOverride;
 
 WebPreferencesStore::WebPreferencesStore()
 {
@@ -67,6 +69,9 @@ bool WebPreferencesStore::decode(CoreIPC::ArgumentDecoder* decoder, WebPreferenc
     if (hasXSSAuditorEnabledTestRunnerOverride)
         s.m_boolValues.set(WebPreferencesKey::xssAuditorEnabledKey(), xssAuditorEnabledTestRunnerOverride);
 
+    if (hasAllowUniversalAccessFromFileURLsTestRunnerOverride)
+        s.m_boolValues.set(WebPreferencesKey::allowUniversalAccessFromFileURLsKey(), allowUniversalAccessFromFileURLsTestRunnerOverride);
+
     return true;
 }
 
@@ -74,6 +79,12 @@ void WebPreferencesStore::overrideXSSAuditorEnabledForTestRunner(bool enabled)
 {
     hasXSSAuditorEnabledTestRunnerOverride = true;
     xssAuditorEnabledTestRunnerOverride = enabled;
+}
+
+void WebPreferencesStore::overrideAllowUniversalAccessFromFileURLsForTestRunner(bool enabled)
+{
+    hasAllowUniversalAccessFromFileURLsTestRunnerOverride = true;
+    allowUniversalAccessFromFileURLsTestRunnerOverride = enabled;
 }
 
 void WebPreferencesStore::removeTestRunnerOverrides()

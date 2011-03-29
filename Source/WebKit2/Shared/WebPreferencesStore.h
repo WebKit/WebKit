@@ -168,6 +168,7 @@ struct WebPreferencesStore {
     double getDoubleValueForKey(const String& key) const;
 
     static void overrideXSSAuditorEnabledForTestRunner(bool);
+    static void overrideAllowUniversalAccessFromFileURLsForTestRunner(bool);
     static void removeTestRunnerOverrides();
 
     HashMap<String, String> m_stringValues;
