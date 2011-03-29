@@ -1,3 +1,22 @@
+2011-03-29  Kristian Amlie  <kristian.amlie@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Removed modular references after support for the flag was removed.
+
+        Support was removed because the Qt Modularization project decided we
+        don't need it. It's better to base decisions on the available
+        information, as demonstrated in the patch by checking
+        QT.phonon.includes.
+
+        In addition, remove the reference to uitools. It has been moved to
+        QtKernel now, and therefore is always available.
+
+        [Qt] Remove modular references after support for the flag was removed.
+        https://bugs.webkit.org/show_bug.cgi?id=57018
+
+        * Source/WebKit.pri:
+
 2011-03-28  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.
