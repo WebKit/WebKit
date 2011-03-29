@@ -1513,7 +1513,7 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
 InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool firstLine, bool& isLineEmpty, LineBreakIteratorInfo& lineBreakIteratorInfo, bool& previousLineBrokeCleanly, 
                                               bool& hyphenated, EClear* clear, FloatingObject* lastFloatFromPreviousLine, Vector<RenderBox*>& positionedBoxes)
 {
-    ASSERT(resolver.position().block == this);
+    ASSERT(resolver.position().m_block == this);
 
     bool appliedStartWidth = resolver.position().pos > 0;
     LineMidpointState& lineMidpointState = resolver.midpointState();

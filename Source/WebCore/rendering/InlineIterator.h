@@ -34,7 +34,7 @@ namespace WebCore {
 class InlineIterator {
 public:
     InlineIterator()
-        : block(0)
+        : m_block(0)
         , m_obj(0)
         , pos(0)
         , nextBreakablePosition(-1)
@@ -42,7 +42,7 @@ public:
     }
 
     InlineIterator(RenderBlock* b, RenderObject* o, unsigned p)
-        : block(b)
+        : m_block(b)
         , m_obj(o)
         , pos(p)
         , nextBreakablePosition(-1)
@@ -55,7 +55,7 @@ public:
     UChar current() const;
     ALWAYS_INLINE WTF::Unicode::Direction direction() const;
 
-    RenderBlock* block;
+    RenderBlock* m_block;
     RenderObject* m_obj;
     unsigned pos;
     int nextBreakablePosition;
@@ -186,12 +186,12 @@ inline void InlineIterator::increment(InlineBidiResolver* resolver)
     if (m_obj->isText()) {
         pos++;
         if (pos >= toRenderText(m_obj)->textLength()) {
-            m_obj = bidiNext(block, m_obj, resolver);
+            m_obj = bidiNext(m_block, m_obj, resolver);
             pos = 0;
             nextBreakablePosition = -1;
         }
     } else {
-        m_obj = bidiNext(block, m_obj, resolver);
+        m_obj = bidiNext(m_block, m_obj, resolver);
         pos = 0;
         nextBreakablePosition = -1;
     }
@@ -240,7 +240,7 @@ inline void InlineBidiResolver::appendRun()
         while (obj && obj != eor.m_obj && obj != endOfLine.m_obj) {
             RenderBlock::appendRunsForObject(start, obj->length(), obj, *this);        
             start = 0;
-            obj = bidiNext(sor.block, obj);
+            obj = bidiNext(sor.m_block, obj);
         }
         if (obj) {
             unsigned pos = obj == eor.m_obj ? eor.pos : UINT_MAX;
