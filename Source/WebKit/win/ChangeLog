@@ -1,3 +1,15 @@
+2011-03-29  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Add WebCore::copyCertificateToData() on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57296
+
+        Remove duplicate code that implemented this functionality in WebMutableURLRequest.cpp and use WebCore::copyCertificateToData() instead. 
+
+        * WebMutableURLRequest.cpp:
+        (WebMutableURLRequest::setClientCertificate):  Use WebCore::copyCertificateToData().
+
 2011-03-28  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

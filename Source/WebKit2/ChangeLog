@@ -1,3 +1,15 @@
+2011-03-29  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Add WebCore::copyCertificateToData() on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57296
+        
+        Remove duplicate code that implemented this functionality in WebCoreArgumentCodersWin.cpp and use WebCore::copyCertificateToData() instead. 
+
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (CoreIPC::decodeResourceError): Use WebCore::copyCertificateToData().
+
 2011-03-29  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed build fix (64 bit gcc).

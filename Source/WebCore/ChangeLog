@@ -1,3 +1,21 @@
+2011-03-29  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Add WebCore::copyCertificateToData() on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57296
+
+        Create a new win directory in platform/cf and add CertificateCFWin.cpp and CertificateCFWin.h to it.
+
+        * WebCore.vcproj/WebCore.vcproj: Added CertificateCFWin.cpp and CertificateCFWin.h.
+        * WebCore.vcproj/copyForwardingHeaders.cmd: Copy all header files in \platform\cf\win\.
+        * platform/cf/win: Added.
+        * platform/cf/win/CertificateCFWin.cpp: Added.
+        (WebCore::deallocCertContext): Added.
+        (WebCore::createCertContextDeallocator): Added.
+        (WebCore::copyCertificateToData): Added.
+        * platform/cf/win/CertificateCFWin.h: Added.
+
 2011-03-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.

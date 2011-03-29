@@ -26576,6 +26576,18 @@
 					RelativePath="..\platform\cf\SharedBufferCF.cpp"
 					>
 				</File>
+				<Filter
+					Name="win"
+					>
+					<File
+						RelativePath="..\platform\cf\win\CertificateCFWin.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\cf\win\CertificateCFWin.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="graphics"
@@ -31757,7 +31769,7 @@
 				RelativePath="..\css\CSSInitialValue.h"
 				>
 			</File>
-                        <File
+			<File
 				RelativePath="..\css\CSSLineBoxContainValue.cpp"
 				>
 			</File>

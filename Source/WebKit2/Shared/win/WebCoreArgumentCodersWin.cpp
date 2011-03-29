@@ -29,6 +29,7 @@
 #if USE(CFNETWORK)
 #include "ArgumentCodersCF.h"
 #include "PlatformCertificateInfo.h"
+#include <WebCore/CertificateCFWin.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
@@ -127,29 +128,6 @@ void encodeResourceError(ArgumentEncoder* encoder, const WebCore::ResourceError&
 #endif
 }
 
-#if USE(CFNETWORK)
-static void deallocCertContext(void* ptr, void* info)
-{
-    if (ptr)
-        CertFreeCertificateContext(static_cast<PCCERT_CONTEXT>(ptr));
-}
-
-static CFAllocatorRef createCertContextDeallocator()
-{
-    CFAllocatorContext allocContext = {
-        0, 0, 0, 0, 0, 0, 0, deallocCertContext, 0
-    };
-    return CFAllocatorCreate(kCFAllocatorDefault, &allocContext);
-}
-
-static CFDataRef copyCert(PCCERT_CONTEXT cert)
-{
-    static CFAllocatorRef certDealloc = createCertContextDeallocator();
-    PCCERT_CONTEXT certCopy = CertDuplicateCertificateContext(cert);
-    return CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(certCopy), sizeof(*certCopy), certDealloc);
-}
-#endif // USE(CFNETWORK)
-
 bool decodeResourceError(ArgumentDecoder* decoder, WebCore::ResourceError& resourceError)
 {
     String domain;
@@ -167,7 +145,7 @@ bool decodeResourceError(ArgumentDecoder* decoder, WebCore::ResourceError& resou
     const Vector<PCCERT_CONTEXT> certificateChain = certificate.certificateChain();
     if (!certificateChain.isEmpty()) {
         ASSERT(certificateChain.size() == 1);
-        resourceError = WebCore::ResourceError(domain, errorCode, failingURL, localizedDescription, copyCert(certificateChain.first()));
+        resourceError = WebCore::ResourceError(domain, errorCode, failingURL, localizedDescription, WebCore::copyCertificateToData(certificateChain.first()).leakRef());
         return true;
     }
 #endif
