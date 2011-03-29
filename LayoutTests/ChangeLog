@@ -1,5 +1,13 @@
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
+        I need to spend some more quality time with the rebaselining tool to
+        figure out how to make it update these (or I can update them manually
+        when I catch up).
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
         The text renders slightly differently on Snow Leopard.
 
         * platform/chromium-mac-snowleopard/fast/forms/listbox-bidi-align-expected.checksum: Added.
