@@ -1,3 +1,20 @@
+2011-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Clean up bidiNext by abstracting repeated code
+        https://bugs.webkit.org/show_bug.cgi?id=57335
+
+        I also added a comment to explain what bidiNext is actually doing.
+        This whole area of code is confusing but need not be.
+
+        * rendering/InlineIterator.h:
+        (WebCore::embedCharFromDirection):
+        (WebCore::notifyResolverEnteredObject):
+        (WebCore::notifyResolverWillExitObject):
+        (WebCore::bidiNext):
+        (WebCore::bidiFirst):
+
 2011-03-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -71,6 +71,38 @@ inline bool operator!=(const InlineIterator& it1, const InlineIterator& it2)
     return it1.m_pos != it2.m_pos || it1.m_obj != it2.m_obj;
 }
 
+static inline WTF::Unicode::Direction embedCharFromDirection(TextDirection dir, EUnicodeBidi unicodeBidi)
+{
+    using namespace WTF::Unicode;
+    if (unicodeBidi == Embed)
+        return dir == RTL ? RightToLeftEmbedding : LeftToRightEmbedding;
+    return dir == RTL ? RightToLeftOverride : LeftToRightOverride;
+}
+
+static inline void notifyResolverEnteredObject(InlineBidiResolver* resolver, RenderObject* object)
+{
+    if (!resolver || !object || !object->isRenderInline())
+        return;
+
+    RenderStyle* style = object->style();
+    EUnicodeBidi unicodeBidi = style->unicodeBidi();
+    if (unicodeBidi == UBNormal)
+        return;
+    resolver->embed(embedCharFromDirection(style->direction(), unicodeBidi));
+}
+
+static inline void notifyResolverWillExitObject(InlineBidiResolver* resolver, RenderObject* object)
+{
+    if (!resolver || !object || !object->isRenderInline())
+        return;
+    if (object->style()->unicodeBidi() == UBNormal)
+        return;
+    resolver->embed(WTF::Unicode::PopDirectionalFormat);
+}
+
+// FIXME: This function is misleadingly named. It has little to do with bidi.
+// This function will iterate over inlines within a block, optionally notifying
+// a bidi resolver as it enters/exits inlines (so it can push/pop embedding levels).
 static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, InlineBidiResolver* resolver = 0, bool skipInlines = true, bool* endOfInlinePtr = 0)
 {
     RenderObject* next = 0;
@@ -81,16 +113,7 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
         next = 0;
         if (!oldEndOfInline && !current->isFloating() && !current->isReplaced() && !current->isPositioned() && !current->isText()) {
             next = current->firstChild();
-            if (next && resolver && next->isRenderInline()) {
-                EUnicodeBidi ub = next->style()->unicodeBidi();
-                if (ub != UBNormal) {
-                    TextDirection dir = next->style()->direction();
-                    WTF::Unicode::Direction d = (ub == Embed
-                        ? (dir == RTL ? WTF::Unicode::RightToLeftEmbedding : WTF::Unicode::LeftToRightEmbedding)
-                        : (dir == RTL ? WTF::Unicode::RightToLeftOverride : WTF::Unicode::LeftToRightOverride));
-                    resolver->embed(d);
-                }
-            }
+            notifyResolverEnteredObject(resolver, next);
         }
 
         if (!next) {
@@ -101,24 +124,14 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
             }
 
             while (current && current != block) {
-                if (resolver && current->isRenderInline() && current->style()->unicodeBidi() != UBNormal)
-                    resolver->embed(WTF::Unicode::PopDirectionalFormat);
+                notifyResolverWillExitObject(resolver, current);
 
                 next = current->nextSibling();
                 if (next) {
-                    if (resolver && next->isRenderInline()) {
-                        EUnicodeBidi ub = next->style()->unicodeBidi();
-                        if (ub != UBNormal) {
-                            TextDirection dir = next->style()->direction();
-                            WTF::Unicode::Direction d = (ub == Embed
-                                ? (dir == RTL ? WTF::Unicode::RightToLeftEmbedding: WTF::Unicode::LeftToRightEmbedding)
-                                : (dir == RTL ? WTF::Unicode::RightToLeftOverride : WTF::Unicode::LeftToRightOverride));
-                            resolver->embed(d);
-                        }
-                    }
+                    notifyResolverEnteredObject(resolver, next);
                     break;
                 }
-                
+
                 current = current->parent();
                 if (!skipInlines && current && current != block && current->isRenderInline()) {
                     next = current;
@@ -148,19 +161,10 @@ static inline RenderObject* bidiFirst(RenderBlock* block, InlineBidiResolver* re
 {
     if (!block->firstChild())
         return 0;
-    
+
     RenderObject* o = block->firstChild();
     if (o->isRenderInline()) {
-        if (resolver) {
-            EUnicodeBidi ub = o->style()->unicodeBidi();
-            if (ub != UBNormal) {
-                TextDirection dir = o->style()->direction();
-                WTF::Unicode::Direction d = (ub == Embed
-                    ? (dir == RTL ? WTF::Unicode::RightToLeftEmbedding : WTF::Unicode::LeftToRightEmbedding)
-                    : (dir == RTL ? WTF::Unicode::RightToLeftOverride : WTF::Unicode::LeftToRightOverride));
-                resolver->embed(d);
-            }
-        }
+        notifyResolverEnteredObject(resolver, o);
         if (skipInlines && o->firstChild())
             o = bidiNext(block, o, resolver, skipInlines);
         else {
