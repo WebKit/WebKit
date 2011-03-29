@@ -1,3 +1,21 @@
+2011-03-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r82295 and r82300.
+        http://trac.webkit.org/changeset/82295
+        http://trac.webkit.org/changeset/82300
+        https://bugs.webkit.org/show_bug.cgi?id=57380
+
+        This patch breaks compile on Chromium (Requested by
+        abarth|gardener on #webkit).
+
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAccessibilityRole):
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (atkRole):
+        (webkit_accessible_get_role):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+
 2011-03-29  Anders Carlsson  <andersca@apple.com>
 
         Fix clang build.

@@ -171,10 +171,6 @@ enum AccessibilityRole {
     ListItemRole,
     MenuListPopupRole,
     MenuListOptionRole,
-    ParagraphRole,
-    LabelRole,
-    DivRole,
-    FormRole,
 
     // ARIA Grouping roles
     LandmarkApplicationRole,

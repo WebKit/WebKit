@@ -476,14 +476,6 @@ static AtkRole atkRole(AccessibilityRole role)
     case ListItemRole:
     case ListBoxOptionRole:
         return ATK_ROLE_LIST_ITEM;
-    case ParagraphRole:
-        return ATK_ROLE_PARAGRAPH;
-    case LabelRole:
-        return ATK_ROLE_LABEL;
-    case DivRole:
-        return ATK_ROLE_SECTION;
-    case FormRole:
-        return ATK_ROLE_FORM;
     default:
         return ATK_ROLE_UNKNOWN;
     }
@@ -491,16 +483,31 @@ static AtkRole atkRole(AccessibilityRole role)
 
 static AtkRole webkit_accessible_get_role(AtkObject* object)
 {
-    AccessibilityObject* coreObject = core(object);
+    AccessibilityObject* axObject = core(object);
 
-    if (!coreObject)
+    if (!axObject)
         return ATK_ROLE_UNKNOWN;
 
+    // WebCore does not know about paragraph role, label role, or section role
+    if (axObject->isAccessibilityRenderObject()) {
+        Node* node = static_cast<AccessibilityRenderObject*>(axObject)->renderer()->node();
+        if (node) {
+            if (node->hasTagName(HTMLNames::pTag))
+                return ATK_ROLE_PARAGRAPH;
+            if (node->hasTagName(HTMLNames::labelTag))
+                return ATK_ROLE_LABEL;
+            if (node->hasTagName(HTMLNames::divTag))
+                return ATK_ROLE_SECTION;
+            if (node->hasTagName(HTMLNames::formTag))
+                return ATK_ROLE_FORM;
+        }
+    }
+
     // Note: Why doesn't WebCore have a password field for this
-    if (coreObject->isPasswordField())
+    if (axObject->isPasswordField())
         return ATK_ROLE_PASSWORD_TEXT;
 
-    return atkRole(coreObject->roleValue());
+    return atkRole(axObject->roleValue());
 }
 
 static bool selectionBelongsToObject(AccessibilityObject* coreObject, VisibleSelection& selection)
