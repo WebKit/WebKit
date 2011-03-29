@@ -1,3 +1,15 @@
+2011-03-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r82152): fast/dom/HTMLAnchorElement/set-href-attribute-pathname.html
+        https://bugs.webkit.org/show_bug.cgi?id=57291
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::parse): Instead of considering URLs with
+        credentials but no host invalid, consider them to have a host
+        ending in @ (which fails down the line)/
+
 2011-03-28  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

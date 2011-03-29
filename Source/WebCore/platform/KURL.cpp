@@ -1263,9 +1263,9 @@ void KURL::parse(const char* url, const String* originalString)
         }
 
         if (hostPortIsEmptyButCredentialsArePresent(hostStart, portEnd, url[userEnd])) {
-            m_string = originalString ? *originalString : url;
-            invalidate();
-            return;
+            // in this circumstance, act as if there is an erroneous hostname containing an '@'
+            userEnd = userStart;
+            hostStart = userEnd;
         }
 
         if (userStart == portEnd && !m_protocolInHTTPFamily && !isFile) {

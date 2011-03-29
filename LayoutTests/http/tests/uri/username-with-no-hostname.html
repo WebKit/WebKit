@@ -13,7 +13,7 @@ an image.
 <p id="description"></p>
 <div id="console"></div>
 
-<img src="http://user@/localhost:8000/misc/resources/compass.jpg">
+<img src="http://user@/localhost:8000/misc/resources/compass.jpg" onerror="this.width=0">
 <script>
 function load() {
     shouldBe('document.getElementsByTagName("img")[0].width', "0");
