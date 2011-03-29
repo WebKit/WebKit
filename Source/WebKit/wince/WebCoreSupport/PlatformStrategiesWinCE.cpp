@@ -289,7 +289,7 @@ String PlatformStrategiesWinCE::contextMenuItemTagSearchWeb()
     return UI_STRING("Search with Google", "Search in Google context menu item");
 }
 
-String PlatformStrategiesWinCE::contextMenuItemTagLookUpInDictionary()
+String PlatformStrategiesWinCE::contextMenuItemTagLookUpInDictionary(const String&)
 {
     return UI_STRING("Look Up in Dictionary", "Look Up in Dictionary context menu item");
 }

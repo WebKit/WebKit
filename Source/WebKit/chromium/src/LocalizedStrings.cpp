@@ -257,7 +257,7 @@ String contextMenuItemTagNoGuessesFound() { return String(); }
 String contextMenuItemTagIgnoreSpelling() { return String(); }
 String contextMenuItemTagLearnSpelling() { return String(); }
 String contextMenuItemTagSearchWeb() { return String(); }
-String contextMenuItemTagLookUpInDictionary() { return String(); }
+String contextMenuItemTagLookUpInDictionary(const String&) { return String(); }
 String contextMenuItemTagOpenLink() { return String(); }
 String contextMenuItemTagIgnoreGrammar() { return String(); }
 String contextMenuItemTagSpellingMenu() { return String(); }

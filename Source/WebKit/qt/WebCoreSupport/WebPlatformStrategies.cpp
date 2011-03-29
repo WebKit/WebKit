@@ -332,7 +332,7 @@ String WebPlatformStrategies::contextMenuItemTagSearchWeb()
     return QCoreApplication::translate("QWebPage", "Search The Web", "Search The Web context menu item");
 }
 
-String WebPlatformStrategies::contextMenuItemTagLookUpInDictionary()
+String WebPlatformStrategies::contextMenuItemTagLookUpInDictionary(const String&)
 {
     return QCoreApplication::translate("QWebPage", "Look Up In Dictionary", "Look Up in Dictionary context menu item");
 }
