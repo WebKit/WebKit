@@ -1,3 +1,9 @@
+2011-03-29  Jeff Miller  <jeffm@apple.com>
+
+        Fix formatting of WebKit2.vcproj after r82283.
+
+        * win/WebKit2.vcproj:
+
 2011-03-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Build failed with ‘GDK_KEY_KP_Space’ was not declared in this scope
