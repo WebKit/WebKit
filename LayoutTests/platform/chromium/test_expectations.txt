@@ -3335,3 +3335,6 @@ BUGWK82013 WIN LINUX : fast/text/justify-ideograph-leading-expansion.html = IMAG
 
 // New test added in r82056. The arrow does not point upwards.
 BUGCR77574 LINUX : fast/blockflow/fallback-orientation.html = IMAGE
+
+// New test added in r82159
+BUGCR77706 : editing/spelling/grammar.html = FAIL
