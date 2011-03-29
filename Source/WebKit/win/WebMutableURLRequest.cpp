@@ -41,8 +41,11 @@
 
 #include <wtf/RetainPtr.h>
 
-#if USE(CFNETWORK)
+#if USE(CF)
 #include <WebCore/CertificateCFWin.h>
+#endif
+
+#if USE(CFNETWORK)
 #include <CFNetwork/CFURLRequestPriv.h>
 #endif
 
