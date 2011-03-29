@@ -261,6 +261,7 @@ class BuildBotTest(unittest.TestCase):
             "Leopard.*",
             "Windows.*Build",
             "Windows.*\(Test",
+            "WinCairo",
             "WinCE",
             "EFL",
             "GTK.*32",
@@ -291,6 +292,7 @@ class BuildBotTest(unittest.TestCase):
             {'name': u'Chromium Win Release', },
             {'name': u'Chromium Mac Release', },
             {'name': u'Chromium Linux Release', },
+            {'name': u'WinCairo Debug (Build)', },
             {'name': u'WinCE Release (Build)', },
             {'name': u'EFL Linux Release (Build)', },
         ]
