@@ -1,3 +1,13 @@
+2011-03-29  Timothy Hatcher  <timothy@apple.com>
+
+        Update WebKit Localizable.strings to only contain WebKit/win strings.
+
+        https://webkit.org/b/57354
+
+        Reviewed by Sam Weinig.
+
+        * English.lproj/Localizable.strings: Updated.
+
 2011-03-23  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

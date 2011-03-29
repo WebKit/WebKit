@@ -1,3 +1,19 @@
+2011-03-29  Timothy Hatcher  <timothy@apple.com>
+
+        Update update-webkit-localizable-strings to understand that WebKit and
+        WebKit2 strings go in WebCore.
+
+        Also make extract-localizable-strings optionally use an exclude file. No individual
+        warnings are produced about unlocalized strings when there is no exclude file. This
+        is needed for WebCore, since there are too many bare strings.
+
+        https://webkit.org/b/57354
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/extract-localizable-strings: Support "-" to mean no exclude file.
+        * Scripts/update-webkit-localizable-strings: Update paths to scan WebCore and WebKit2.
+
 2011-03-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Roben.

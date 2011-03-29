@@ -261,6 +261,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Shared/WebImage.cpp \
 	Source/WebKit2/Shared/WebImage.h \
 	Source/WebKit2/Shared/WebKeyboardEvent.cpp \
+	Source/WebKit2/Shared/WebLocalizableStrings.h \
 	Source/WebKit2/Shared/WebMouseEvent.cpp \
 	Source/WebKit2/Shared/WebNavigationDataStore.h \
 	Source/WebKit2/Shared/WebNumber.h \

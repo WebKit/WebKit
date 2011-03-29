@@ -667,6 +667,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebLocalizableStrings.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebMouseEvent.cpp"
 				>
 			</File>

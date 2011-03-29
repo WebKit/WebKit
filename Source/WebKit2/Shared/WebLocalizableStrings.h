@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LoaderRunLoopCF_h
-#define LoaderRunLoopCF_h
+#ifndef WebLocalizableStrings_h
+#define WebLocalizableStrings_h
 
-#if USE(CFNETWORK)
+#include <WebCore/LocalizedStrings.h>
+#include <wtf/text/WTFString.h>
 
-#if !PLATFORM(WIN)
-#error This code is not needed on platforms other than Windows, because the CFRunLoop from the main thread can be used.
+#if PLATFORM(MAC)
+
+#define UI_STRING(string, description) WebCore::localizedString(string)
+#define UI_STRING_KEY(string, key, description) WebCore::localizedString(key)
+
+#else
+
+// FIXME: <rdar://problem/9119405> Win: WebKit2 needs to be made localizable
+
+#define UI_STRING(string, description) WTF::String::fromUTF8(string, strlen(string))
+#define UI_STRING_KEY(string, key, description) WTF::String::fromUTF8(string, strlen(string))
+
 #endif
 
-typedef struct __CFRunLoop* CFRunLoopRef;
-
-namespace WebCore {
-
-CFRunLoopRef loaderRunLoop();
-
-}
-
-#endif // USE(CFNETWORK)
-
-#endif // LoaderRunLoop_h
+#endif // WebLocalizableStrings_h

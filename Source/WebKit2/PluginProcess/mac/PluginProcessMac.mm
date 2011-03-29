@@ -28,13 +28,11 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-// FIXME (WebKit2) <rdar://problem/8728860> WebKit2 needs to be localized
-#define UI_STRING(__str, __desc) [NSString stringWithUTF8String:__str]
-
 #import "NetscapePlugin.h"
 #import "PluginProcessShim.h"
 #import "PluginProcessProxyMessages.h"
 #import "PluginProcessCreationParameters.h"
+#import "WebLocalizableStrings.h"
 #import <WebKitSystemInterface.h>
 #import <dlfcn.h>
 #import <wtf/HashSet.h>

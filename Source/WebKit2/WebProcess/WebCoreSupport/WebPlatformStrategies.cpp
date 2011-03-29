@@ -32,8 +32,8 @@
 #include "WebContextMessages.h"
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebLocalizableStrings.h"
 #include "WebProcess.h"
-#include <WebCore/LocalizedStrings.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
@@ -42,18 +42,6 @@
 
 #if USE(CF)
 #include <wtf/RetainPtr.h>
-#endif
-
-#if PLATFORM(MAC)
-
-#define UI_STRING(string, description) localizedString(string)
-#define UI_STRING_KEY(string, key, description) localizedString(key)
-
-#else
-
-#define UI_STRING(string, description) String::fromUTF8(string, strlen(string))
-#define UI_STRING_KEY(string, key, description) String::fromUTF8(string, strlen(string))
-
 #endif
 
 using namespace WebCore;

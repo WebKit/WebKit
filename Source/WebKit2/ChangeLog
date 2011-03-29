@@ -1,3 +1,28 @@
+2011-03-29  Timothy Hatcher  <timothy@apple.com>
+
+        Make WebKit2 work with update-webkit-localizable-strings.
+
+        https://webkit.org/b/57354
+
+        Reviewed by Sam Weinig.
+
+        * PluginProcess/mac/PluginProcessMac.mm: Remove UI_STRING macro. Use WebLocalizableStrings.h.
+        * Shared/WebLocalizableStrings.h: Added.
+        * UIProcess/API/mac/WKView.mm: Remove UI_STRING macro. Use WebLocalizableStrings.h.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformInspectedURLChanged): Use UI_STRING. Remove FIXME.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp: Remove UI_STRING macros.
+        Use WebLocalizableStrings.h.
+        * WebProcess/WebCoreSupport/mac/WebErrorsMac.mm:
+        (registerErrors): Remove UI_STRING macro. Use WebLocalizableStrings.h.
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess): Use UI_STRING. Remove FIXME.
+
+        * GNUmakefile.am: Added Shared/WebLocalizableStrings.h.
+        * WebKit2.pro: Ditto.
+        * WebKit2.xcodeproj/project.pbxproj: Ditto.
+        * win/WebKit2.vcproj: Ditto.
+
 2011-03-29  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Darin Adler.

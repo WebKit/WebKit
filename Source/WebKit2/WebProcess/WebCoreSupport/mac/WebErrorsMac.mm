@@ -28,6 +28,7 @@
 
 #import "WKError.h"
 #import "WebError.h"
+#import "WebLocalizableStrings.h"
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <pthread.h>
@@ -40,9 +41,6 @@ using namespace WebKit;
 static NSString * const WebKitErrorMIMETypeKey =               @"WebKitErrorMIMETypeKey";
 static NSString * const WebKitErrorPlugInNameKey =             @"WebKitErrorPlugInNameKey";
 static NSString * const WebKitErrorPlugInPageURLStringKey =    @"WebKitErrorPlugInPageURLStringKey";
-
-// FIXME (WebKit2) <rdar://problem/8728860> WebKit2 needs to be localized
-#define UI_STRING(__str, __desc) [NSString stringWithUTF8String:__str]
 
 // Policy errors
 #define WebKitErrorDescriptionCannotShowMIMEType UI_STRING("Content with specified MIME type can’t be shown", "WebKitErrorCannotShowMIMEType description")
@@ -119,17 +117,17 @@ static void registerErrors()
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         // Policy errors
-        WebKitErrorDescriptionCannotShowMIMEType,                   [NSNumber numberWithInt: kWKErrorCodeCannotShowMIMEType],
-        WebKitErrorDescriptionCannotShowURL,                        [NSNumber numberWithInt: kWKErrorCodeCannotShowURL],
-        WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,   [NSNumber numberWithInt: kWKErrorCodeFrameLoadInterruptedByPolicyChange],
-        WebKitErrorDescriptionCannotUseRestrictedPort,              [NSNumber numberWithInt: kWKErrorCodeCannotUseRestrictedPort],
+        (NSString *)WebKitErrorDescriptionCannotShowMIMEType,                   [NSNumber numberWithInt: kWKErrorCodeCannotShowMIMEType],
+        (NSString *)WebKitErrorDescriptionCannotShowURL,                        [NSNumber numberWithInt: kWKErrorCodeCannotShowURL],
+        (NSString *)WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,   [NSNumber numberWithInt: kWKErrorCodeFrameLoadInterruptedByPolicyChange],
+        (NSString *)WebKitErrorDescriptionCannotUseRestrictedPort,              [NSNumber numberWithInt: kWKErrorCodeCannotUseRestrictedPort],
         
         // Plug-in and java errors
-        WebKitErrorDescriptionCannotFindPlugin,                     [NSNumber numberWithInt: kWKErrorCodeCannotFindPlugIn],
-        WebKitErrorDescriptionCannotLoadPlugin,                     [NSNumber numberWithInt: kWKErrorCodeCannotLoadPlugIn],
-        WebKitErrorDescriptionJavaUnavailable,                      [NSNumber numberWithInt: kWKErrorCodeJavaUnavailable],
-        WebKitErrorDescriptionPlugInCancelledConnection,            [NSNumber numberWithInt: kWKErrorCodePlugInCancelledConnection],
-        WebKitErrorDescriptionPlugInWillHandleLoad,                 [NSNumber numberWithInt: kWKErrorCodePlugInWillHandleLoad],
+        (NSString *)WebKitErrorDescriptionCannotFindPlugin,                     [NSNumber numberWithInt: kWKErrorCodeCannotFindPlugIn],
+        (NSString *)WebKitErrorDescriptionCannotLoadPlugin,                     [NSNumber numberWithInt: kWKErrorCodeCannotLoadPlugIn],
+        (NSString *)WebKitErrorDescriptionJavaUnavailable,                      [NSNumber numberWithInt: kWKErrorCodeJavaUnavailable],
+        (NSString *)WebKitErrorDescriptionPlugInCancelledConnection,            [NSNumber numberWithInt: kWKErrorCodePlugInCancelledConnection],
+        (NSString *)WebKitErrorDescriptionPlugInWillHandleLoad,                 [NSNumber numberWithInt: kWKErrorCodePlugInWillHandleLoad],
         nil];
 
     [NSError _webkit_addErrorsWithCodesAndDescriptions:dict inDomain:WebError::webKitErrorDomain()];

@@ -34,13 +34,18 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
-my @directoriesToScan = ("Source/WebKit/mac", "Source/WebKit/win", "-Source/WebCore/icu", "-Source/WebKit/mac/icu");
-my $fileToUpdate = "Source/WebKit/English.lproj/Localizable.strings";
-my $exceptionsFile = "Source/WebKit/StringsNotToBeLocalized.txt";
+# WebKit and WebKit2 strings go into WebCore's Localizable.strings.
+my @directoriesToScan = ("Source/WebCore", "Source/WebKit/mac", "Source/WebKit2", "-Source/WebCore/icu", "-Source/WebKit/mac/icu");
+my $fileToUpdate = "Source/WebCore/English.lproj/Localizable.strings";
 
 @ARGV == 0 or die "Usage: " . basename($0) . "\n";
 
 chdirWebKit();
 
-system "sort -u $exceptionsFile -o $exceptionsFile";
-exec "./Tools/Scripts/extract-localizable-strings", $exceptionsFile, $fileToUpdate, @directoriesToScan;
+system "Tools/Scripts/extract-localizable-strings", "-", $fileToUpdate, @directoriesToScan;
+
+# FIXME: the following can be removed and "Source/WebKit/win" added above once Windows uses WebCore's Localizable.strings. <rdar://problem/9119405>
+my @webKitDirectoriesToScan = ("Source/WebKit/win");
+my $webKitFileToUpdate = "Source/WebKit/English.lproj/Localizable.strings";
+
+system "Tools/Scripts/extract-localizable-strings", "-", $webKitFileToUpdate, @webKitDirectoriesToScan;

@@ -51,6 +51,7 @@
 #import "WebContext.h"
 #import "WebEventFactory.h"
 #import "WebFullScreenManagerProxy.h"
+#import "WebLocalizableStrings.h"
 #import "WebPage.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
@@ -67,9 +68,6 @@
 #import <WebKitSystemInterface.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
-
-// FIXME (WebKit2) <rdar://problem/8728860> WebKit2 needs to be localized
-#define UI_STRING(__str, __desc) [NSString stringWithUTF8String:__str]
 
 @interface NSApplication (WebNSApplicationDetails)
 - (void)speakString:(NSString *)string;

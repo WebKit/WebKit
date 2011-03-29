@@ -141,6 +141,7 @@ HEADERS += \
     Shared/WebGeolocationPosition.h \
     Shared/WebGraphicsContext.h \
     Shared/WebImage.h \
+    Shared/WebLocalizableStrings.h \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
     Shared/WebOpenPanelParameters.h \

@@ -29,6 +29,7 @@
 #if ENABLE(INSPECTOR)
 
 #import "WKAPICast.h"
+#import "WebLocalizableStrings.h"
 #import "WKView.h"
 #import "WebPageProxy.h"
 #import <WebKitSystemInterface.h>
@@ -134,8 +135,7 @@ void WebInspectorProxy::platformClose()
 
 void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
 {
-    // FIXME: this should be made localizable once WebKit2 supports it. <rdar://problem/8728860>
-    NSString *title = [NSString stringWithFormat:@"Web Inspector \u2014 %@", (NSString *)urlString];
+    NSString *title = [NSString stringWithFormat:UI_STRING("Web Inspector — %@", "Web Inspector window title"), (NSString *)urlString];
     [m_inspectorWindow.get() setTitle:title];
 }
 

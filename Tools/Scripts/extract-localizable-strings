@@ -51,10 +51,12 @@ my %isDebugMacro = ( ASSERT_WITH_MESSAGE => 1, LOG_ERROR => 1, ERROR => 1, NSURL
 @ARGV >= 2 or die "Usage: extract-localizable-strings <exceptions file> <file to update> [ directory... ]\nDid you mean to run update-webkit-localizable-strings instead?\n";
 
 my $exceptionsFile = shift @ARGV;
--f $exceptionsFile or die "Couldn't find exceptions file $exceptionsFile\n";
+-f $exceptionsFile or die "Couldn't find exceptions file $exceptionsFile\n" unless $exceptionsFile eq "-";
 
 my $fileToUpdate = shift @ARGV;
 -f $fileToUpdate or die "Couldn't find file to update $fileToUpdate\n";
+
+my $warnAboutUnlocalizedStrings = $exceptionsFile ne "-";
 
 my @directories = ();
 my @directoriesToSkip = ();
@@ -80,7 +82,7 @@ my $NSLocalizeCount = 0;
 my %exception;
 my %usedException;
 
-if (open EXCEPTIONS, $exceptionsFile) {
+if ($exceptionsFile ne "-" && open EXCEPTIONS, $exceptionsFile) {
     while (<EXCEPTIONS>) {
         chomp;
         if (/^"([^\\"]|\\.)*"$/ or /^[-_\/\w.]+.(h|m|mm|c|cpp)$/ or /^[-_\/\w.]+.(h|m|mm|c|cpp):"([^\\"]|\\.)*"$/) {
@@ -105,7 +107,7 @@ for my $dir (@directoriesToSkip) {
 my @files = ( split "\n", `find $quotedDirectoriesString \\( -name "*.h" -o -name "*.m" -o -name "*.mm" -o -name "*.c" -o -name "*.cpp" \\)` );
 
 for my $file (sort @files) {
-    next if $file =~ /\/\w+LocalizableStrings\.h$/;
+    next if $file =~ /\/\w+LocalizableStrings\w*\.h$/;
 
     $file =~ s-^./--;
 
@@ -167,7 +169,7 @@ handleString:
                         # FIXME: Validate UTF-8 here?
                         $UIString = $string;
                         $expected = ",";
-                    } elsif (($macro =~ /UI_STRING_KEY$/) and !defined $key) {
+                    } elsif (($macro =~ /UI_STRING_KEY(_INTERNAL)?$/) and !defined $key) {
                         # FIXME: Validate UTF-8 here?
                         $key = $string;
                         $expected = ",";
@@ -192,7 +194,7 @@ handleString:
                     } elsif ($exception{"$file:\"$string\""}) {
                         $usedException{"$file:\"$string\""} = 1;
                     } else {
-                        print "$file:$stringLine:\"$string\" is not marked for localization\n";
+                        print "$file:$stringLine:\"$string\" is not marked for localization\n" if $warnAboutUnlocalizedStrings;
                         $notLocalizedCount++;
                     }
                 }
@@ -226,7 +228,7 @@ handleString:
                     $sawError = 1;
                     $expected = "";
                 }
-                if ($token =~ /UI_STRING(_KEY)?$/) {
+                if ($token =~ /UI_STRING(_KEY)?(_INTERNAL)?$/) {
                     $expected = "(";
                     $macro = $token;
                     $UIString = undef;

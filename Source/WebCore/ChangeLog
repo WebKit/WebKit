@@ -1,3 +1,16 @@
+2011-03-29  Timothy Hatcher  <timothy@apple.com>
+
+        Update WebCore Localizable.strings to contain WebCore, WebKit/mac and WebKit2 strings.
+
+        https://webkit.org/b/57354
+
+        Reviewed by Sam Weinig.
+
+        * English.lproj/Localizable.strings: Updated.
+        * StringsNotToBeLocalized.txt: Removed. To hard to maintain in WebCore.
+        * platform/network/cf/LoaderRunLoopCF.h: Remove a single quote in an #error so
+        extract-localizable-strings does not complain about unbalanced single quotes.
+
 2011-03-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82295 and r82300.
