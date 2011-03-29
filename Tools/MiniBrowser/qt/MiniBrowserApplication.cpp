@@ -60,6 +60,7 @@ void MiniBrowserApplication::handleUserOptions()
              << "[-robot-extra-time seconds]"
              << "[-chunked-drawing-area]"
              <<  "[-separate-web-process-per-window]"
+             << "[-print-loaded-urls]"
              << "URLs";
         appQuit(0);
     }
@@ -92,4 +93,7 @@ void MiniBrowserApplication::handleUserOptions()
 
     if (args.contains("-separate-web-process-per-window"))
         m_windowOptions.useSeparateWebProcessPerWindow = true;
+
+    if (args.contains("-print-loaded-urls"))
+        m_windowOptions.printLoadedUrls = true;
 }

@@ -36,11 +36,13 @@ struct WindowOptions {
     WindowOptions()
         : useTiledBackingStore(true)
         , useSeparateWebProcessPerWindow(false)
+        , printLoadedUrls(false)
     {
     }
 
     bool useTiledBackingStore;
     bool useSeparateWebProcessPerWindow;
+    bool printLoadedUrls;
 };
 
 class MiniBrowserApplication : public QApplication {

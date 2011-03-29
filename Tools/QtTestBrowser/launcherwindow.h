@@ -103,6 +103,7 @@ public:
 #if defined(Q_WS_X11)
         , useTestFonts(false)
 #endif
+        , printLoadedUrls(false)
     {
     }
 
@@ -125,6 +126,7 @@ public:
 #if defined(Q_WS_X11)
     bool useTestFonts;
 #endif
+    bool printLoadedUrls;
     QUrl inspectorUrl;
     quint16 remoteInspectorPort;
 };
@@ -191,6 +193,8 @@ protected slots:
     void selectElements();
     void showFPS(bool enable);
     void showUserAgentDialog();
+
+    void printURL(const QUrl&);
 
 public slots:
     LauncherWindow* newWindow();

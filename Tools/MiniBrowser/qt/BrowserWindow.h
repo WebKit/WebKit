@@ -69,6 +69,8 @@ protected slots:
     void toggleFrameFlattening(bool);
     void showUserAgentDialog();
 
+    void printURL(const QUrl&);
+
     void toggleAutoLoadImages(bool);
     void toggleDisableJavaScript(bool);
 

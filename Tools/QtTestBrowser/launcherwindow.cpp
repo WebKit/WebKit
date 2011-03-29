@@ -130,6 +130,9 @@ void LauncherWindow::initializeView()
             this, SLOT(showLinkHover(const QString&, const QString&)));
     connect(this, SIGNAL(enteredFullScreenMode(bool)), this, SLOT(toggleFullScreenMode(bool)));
 
+    if (m_windowOptions.printLoadedUrls)
+        connect(page()->mainFrame(), SIGNAL(urlChanged(QUrl)), this, SLOT(printURL(QUrl)));
+
     applyPrefs();
 
     splitter->addWidget(m_inspector);
@@ -895,6 +898,12 @@ void LauncherWindow::showUserAgentDialog()
 #endif
 
     delete dialog;
+}
+
+void LauncherWindow::printURL(const QUrl& url)
+{
+    QTextStream output(stdout);
+    output << "Loaded: " << url.toString() << endl;
 }
 
 void LauncherWindow::updateFPS(int fps)

@@ -197,6 +197,7 @@ void LauncherApplication::handleUserOptions()
 #if defined(Q_WS_X11)
              << "[-use-test-fonts]"
 #endif
+             << "[-print-loaded-urls]"
              << "URLs";
         appQuit(0);
     }
@@ -278,6 +279,9 @@ void LauncherApplication::handleUserOptions()
     if (args.contains("-use-test-fonts"))
         windowOptions.useTestFonts = true;
 #endif
+
+    if (args.contains("-print-loaded-urls"))
+        windowOptions.printLoadedUrls = true;
 
     QString inspectorUrlArg("-inspector-url");
     int inspectorUrlIndex = args.indexOf(inspectorUrlArg);

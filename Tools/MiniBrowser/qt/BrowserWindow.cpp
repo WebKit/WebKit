@@ -61,6 +61,9 @@ BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
     connect(m_browser->view(), SIGNAL(titleChanged(const QString&)), SLOT(setWindowTitle(const QString&)));
     connect(m_browser->view(), SIGNAL(urlChanged(const QUrl&)), SLOT(urlChanged(const QUrl&)));
 
+    if (m_windowOptions.printLoadedUrls)
+        connect(page(), SIGNAL(urlChanged(QUrl)), this, SLOT(printURL(QUrl)));
+
     this->setCentralWidget(m_browser);
     m_browser->setFocus(Qt::OtherFocusReason);
 
@@ -330,6 +333,12 @@ void BrowserWindow::showUserAgentDialog()
 
     if (dialog.exec() && !combo->currentText().isEmpty())
         page()->setCustomUserAgent(combo->currentText());
+}
+
+void BrowserWindow::printURL(const QUrl& url)
+{
+    QTextStream output(stdout);
+    output << "Loaded: " << url.toString() << endl;
 }
 
 void BrowserWindow::toggleDisableJavaScript(bool enable)
