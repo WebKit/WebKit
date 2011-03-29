@@ -1,3 +1,16 @@
+2011-03-29  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        cleanup rebaseline-chromium-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=57375
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+            - Split _extract_and_add_new_baselines into 3 functions
+            - Reduce the amount of line wrapping (the file already has lines
+              over 80 col, so may as well try to make the file consistent)
+            - Remove unnecessary ()s
+
 2011-03-29  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.
