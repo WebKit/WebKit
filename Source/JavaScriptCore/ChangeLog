@@ -1,5 +1,15 @@
 2011-03-29  Ben Taylor  <bentaylor.solx86@gmail.com>
 
+        Reviewed by Benjamin Poulain.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41953
+
+        Fix compile error on Solaris 10/Sun Studio 12 CC emanating from MathExtras.h
+
+        * wtf/MathExtras.h:
+
+2011-03-29  Ben Taylor  <bentaylor.solx86@gmail.com>
+
         Reviewed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=57231
