@@ -1024,27 +1024,44 @@
     },
     {
         "domain": "Timeline",
-        "types": [],
+        "description": "Timeline provides its clients with instrumentation records that are generated during the page runtime. Timeline instrumentation can be started and stopped using corresponding commands. While timeline is started, it is generating timeline event records.",
+        "types": [
+            {
+                "id": "TimelineRecord",
+                "type": "object",
+                "properties": {
+                    "type": { "type": "string", "description": "Event type." },
+                    "data": { "type": "object", "description": "Event data." },
+                    "children": { "type": "array", "optional" : true, "items": { "$ref": "TimelineRecord" }, "description": "Nested records." }
+                },
+                "description": "Timeline record contains information about the recorded activity."
+            }
+        ],
         "commands": [
             {
-                "name": "start"
+                "name": "start",
+                "description": "Starts capturing instrumentation events."
             },
             {
-                "name": "stop"
+                "name": "stop",
+                "description": "Stops capturing instrumentation events."
             }
         ],
         "events": [
             {
-                "name": "timelineProfilerWasStarted"
+                "name": "started",
+                "description": "Fired when timeline has been started."
             },
             {
-                "name": "timelineProfilerWasStopped"
+                "name": "stopped",
+                "description": "Fired when timeline has been stopped."
             },
             {
-                "name": "addRecordToTimeline",
+                "name": "eventRecorded",
                 "parameters": [
-                    { "name": "record", "$ref": "TimelineRecord" }
-                ]
+                    { "name": "record", "$ref": "TimelineRecord", "description": "Timeline record data." }
+                ],
+                "description": "Fired for every instrumentation event while timeline is started."
             }
         ]
     },

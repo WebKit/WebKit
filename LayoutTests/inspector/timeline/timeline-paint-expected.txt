@@ -11,7 +11,7 @@ Paint Properties:
     }
     children : <object>
     endTime : <number>
-    type : 3
+    type : "Paint"
     usedHeapSize : <number>
     totalHeapSize : <number>
 }

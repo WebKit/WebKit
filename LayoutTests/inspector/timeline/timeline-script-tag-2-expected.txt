@@ -10,7 +10,7 @@ EvaluateScript Properties:
     }
     children : <object>
     endTime : <number>
-    type : 10
+    type : "EvaluateScript"
     usedHeapSize : <number>
     totalHeapSize : <number>
 }

@@ -12,7 +12,7 @@ ParseHTML Properties:
     }
     children : <object>
     endTime : <number>
-    type : 4
+    type : "ParseHTML"
     usedHeapSize : <number>
     totalHeapSize : <number>
 }
@@ -27,7 +27,7 @@ ParseHTML Properties:
     }
     children : <object>
     endTime : <number>
-    type : 4
+    type : "ParseHTML"
     usedHeapSize : <number>
     totalHeapSize : <number>
 }

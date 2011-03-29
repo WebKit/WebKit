@@ -8,7 +8,7 @@ Layout Properties:
     }
     children : <object>
     endTime : <number>
-    type : 1
+    type : "Layout"
     usedHeapSize : <number>
     totalHeapSize : <number>
 }

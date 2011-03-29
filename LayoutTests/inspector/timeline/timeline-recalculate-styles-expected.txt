@@ -8,7 +8,7 @@ RecalculateStyles Properties:
     }
     children : <object>
     endTime : <number>
-    type : 2
+    type : "RecalculateStyles"
     usedHeapSize : <number>
     totalHeapSize : <number>
 }

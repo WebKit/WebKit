@@ -51,31 +51,6 @@ class ResourceResponse;
 
 typedef String ErrorString;
 
-// Must be kept in sync with TimelineAgent.js
-enum TimelineRecordType {
-    EventDispatchTimelineRecordType = 0,
-    LayoutTimelineRecordType = 1,
-    RecalculateStylesTimelineRecordType = 2,
-    PaintTimelineRecordType = 3,
-    ParseHTMLTimelineRecordType = 4,
-    TimerInstallTimelineRecordType = 5,
-    TimerRemoveTimelineRecordType = 6,
-    TimerFireTimelineRecordType = 7,
-    XHRReadyStateChangeRecordType = 8,
-    XHRLoadRecordType = 9,
-    EvaluateScriptTimelineRecordType = 10,
-    MarkTimelineRecordType = 11,
-    ResourceSendRequestTimelineRecordType = 12,
-    ResourceReceiveResponseTimelineRecordType = 13,
-    ResourceFinishTimelineRecordType = 14,
-    FunctionCallTimelineRecordType = 15,
-    ReceiveResourceDataTimelineRecordType = 16,
-    GCEventTimelineRecordType = 17,
-    MarkDOMContentEventType = 18,
-    MarkLoadEventType = 19,
-    ScheduleResourceRequestTimelineRecordType = 20
-};
-
 class InspectorTimelineAgent : ScriptGCEventListener {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
 public:
@@ -148,24 +123,24 @@ public:
 
 private:
     struct TimelineRecordEntry {
-        TimelineRecordEntry(PassRefPtr<InspectorObject> record, PassRefPtr<InspectorObject> data, PassRefPtr<InspectorArray> children, TimelineRecordType type)
+        TimelineRecordEntry(PassRefPtr<InspectorObject> record, PassRefPtr<InspectorObject> data, PassRefPtr<InspectorArray> children, const String& type)
             : record(record), data(data), children(children), type(type)
         {
         }
         RefPtr<InspectorObject> record;
         RefPtr<InspectorObject> data;
         RefPtr<InspectorArray> children;
-        TimelineRecordType type;
+        String type;
     };
         
     InspectorTimelineAgent(InstrumentingAgents*, InspectorState*);
 
-    void pushCurrentRecord(PassRefPtr<InspectorObject>, TimelineRecordType);
+    void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type);
     void setHeapSizeStatistic(InspectorObject* record);
         
-    void didCompleteCurrentRecord(TimelineRecordType);
+    void didCompleteCurrentRecord(const String& type);
 
-    void addRecordToTimeline(PassRefPtr<InspectorObject>, TimelineRecordType);
+    void addRecordToTimeline(PassRefPtr<InspectorObject>, const String& type);
 
     void pushGCEventRecords();
     void clearRecordStack();

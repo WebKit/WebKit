@@ -10,7 +10,7 @@ EventDispatch Properties:
     }
     children : <object>
     endTime : <number>
-    type : 0
+    type : "EventDispatch"
     usedHeapSize : <number>
     totalHeapSize : <number>
 }

@@ -25,7 +25,7 @@ InspectorTest.startTimeline = function(callback)
         for (var i = 0; record.children && i < record.children.length; ++i)
             addRecord(record.children[i]);
     }
-    InspectorTest.addSniffer(WebInspector.TimelineDispatcher.prototype, "addRecordToTimeline", addRecord, true);
+    InspectorTest.addSniffer(WebInspector.TimelineDispatcher.prototype, "eventRecorded", addRecord, true);
 };
 
 InspectorTest.stopTimeline = function(callback)

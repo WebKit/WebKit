@@ -1,3 +1,28 @@
+2011-03-29  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: document Timeline domain, make timeline event types of type string.
+        https://bugs.webkit.org/show_bug.cgi?id=57299
+
+        * inspector/timeline/timeline-enum-stability-expected.txt:
+        * inspector/timeline/timeline-event-dispatch-expected.txt:
+        * inspector/timeline/timeline-layout-expected.txt:
+        * inspector/timeline/timeline-mark-timeline-expected.txt:
+        * inspector/timeline/timeline-network-resource-expected.txt:
+        * inspector/timeline/timeline-paint-expected.txt:
+        * inspector/timeline/timeline-parse-html-expected.txt:
+        * inspector/timeline/timeline-recalculate-styles-expected.txt:
+        * inspector/timeline/timeline-script-tag-1-expected.txt:
+        * inspector/timeline/timeline-script-tag-2-expected.txt:
+        * inspector/timeline/timeline-test.js:
+        (initialize_Timeline.InspectorTest.startTimeline):
+        * platform/chromium/inspector/timeline/timeline-event-dispatch-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-mark-timeline-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-network-resource-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-paint-expected.txt:
+        * platform/chromium/inspector/timeline/timeline-parse-html-expected.txt:
+
 2011-03-29  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

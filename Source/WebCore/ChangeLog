@@ -1,3 +1,65 @@
+2011-03-29  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: document Timeline domain, make timeline event types of type string.
+        https://bugs.webkit.org/show_bug.cgi?id=57299
+
+        * inspector/Inspector.json:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::pushGCEventRecords):
+        (WebCore::InspectorTimelineAgent::start):
+        (WebCore::InspectorTimelineAgent::stop):
+        (WebCore::InspectorTimelineAgent::willCallFunction):
+        (WebCore::InspectorTimelineAgent::didCallFunction):
+        (WebCore::InspectorTimelineAgent::willDispatchEvent):
+        (WebCore::InspectorTimelineAgent::didDispatchEvent):
+        (WebCore::InspectorTimelineAgent::willLayout):
+        (WebCore::InspectorTimelineAgent::didLayout):
+        (WebCore::InspectorTimelineAgent::willRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::didRecalculateStyle):
+        (WebCore::InspectorTimelineAgent::willPaint):
+        (WebCore::InspectorTimelineAgent::didPaint):
+        (WebCore::InspectorTimelineAgent::willWriteHTML):
+        (WebCore::InspectorTimelineAgent::didWriteHTML):
+        (WebCore::InspectorTimelineAgent::didInstallTimer):
+        (WebCore::InspectorTimelineAgent::didRemoveTimer):
+        (WebCore::InspectorTimelineAgent::willFireTimer):
+        (WebCore::InspectorTimelineAgent::didFireTimer):
+        (WebCore::InspectorTimelineAgent::willChangeXHRReadyState):
+        (WebCore::InspectorTimelineAgent::didChangeXHRReadyState):
+        (WebCore::InspectorTimelineAgent::willLoadXHR):
+        (WebCore::InspectorTimelineAgent::didLoadXHR):
+        (WebCore::InspectorTimelineAgent::willEvaluateScript):
+        (WebCore::InspectorTimelineAgent::didEvaluateScript):
+        (WebCore::InspectorTimelineAgent::didScheduleResourceRequest):
+        (WebCore::InspectorTimelineAgent::willSendResourceRequest):
+        (WebCore::InspectorTimelineAgent::willReceiveResourceData):
+        (WebCore::InspectorTimelineAgent::didReceiveResourceData):
+        (WebCore::InspectorTimelineAgent::willReceiveResourceResponse):
+        (WebCore::InspectorTimelineAgent::didReceiveResourceResponse):
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource):
+        (WebCore::InspectorTimelineAgent::didMarkTimeline):
+        (WebCore::InspectorTimelineAgent::didMarkDOMContentEvent):
+        (WebCore::InspectorTimelineAgent::didMarkLoadEvent):
+        (WebCore::InspectorTimelineAgent::addRecordToTimeline):
+        (WebCore::InspectorTimelineAgent::didCompleteCurrentRecord):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::TimelineRecordEntry::TimelineRecordEntry):
+        * inspector/front-end/TimelineAgent.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.get _recordStyles):
+        (WebInspector.TimelinePanel.prototype._createEventDivider):
+        (WebInspector.TimelinePanel.prototype._findParentRecord):
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelineDispatcher.prototype.started):
+        (WebInspector.TimelineDispatcher.prototype.stopped):
+        (WebInspector.TimelineDispatcher.prototype.eventRecorded):
+        (WebInspector.TimelinePanel.FormattedRecord):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._generatePopupContent):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+
 2011-03-29  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

@@ -6,7 +6,7 @@ MarkTimeline Properties:
     data : {
         message : "MARK TIMELINE"
     }
-    type : 11
+    type : "MarkTimeline"
     usedHeapSize : <number>
     totalHeapSize : <number>
 }
