@@ -43,7 +43,7 @@ class TextureMapperPlatformLayer {
 public:
     enum Type {
         ContentLayer,
-        VideoLayer
+        MediaLayer
     };
 
     virtual Type layerType() const = 0;
@@ -66,13 +66,11 @@ public:
     virtual Type layerType() const { return ContentLayer; }
 };
 
-#if ENABLE(VIDEO)
-class TextureMapperVideoLayer : public TextureMapperPlatformLayer {
+class TextureMapperMediaLayer : public TextureMapperPlatformLayer {
 public:
     virtual void paint(GraphicsContext*) = 0;
-    virtual Type layerType() const { return VideoLayer; }
+    virtual Type layerType() const { return MediaLayer; }
 };
-#endif
 
 }
 

@@ -1,3 +1,21 @@
+2011-03-28  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Change TextureMapperVideoLayer to TextureMapperMediaLayer
+        https://bugs.webkit.org/show_bug.cgi?id=57142
+
+        TextureMapperMediaLayer is a better name here because both video and plugins use this layer.
+        Remove ENABLE(VIDEO) guard.
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::setContentsToMedia):
+        * platform/graphics/texmap/TextureMapperNode.h:
+        * platform/graphics/texmap/TextureMapperPlatformLayer.h:
+        (WebCore::TextureMapperMediaLayer::layerType):
+
 2011-03-28  Thomas Klausner  <tk@giga.or.at>
 
         Reviewed by David Levin.

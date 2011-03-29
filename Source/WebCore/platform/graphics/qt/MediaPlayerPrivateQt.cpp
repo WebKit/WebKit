@@ -597,7 +597,7 @@ void MediaPlayerPrivateQt::repaint()
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
 
-class TextureMapperVideoLayerQt : public virtual TextureMapperVideoLayer {
+class TextureMapperVideoLayerQt : public virtual TextureMapperMediaLayer {
 public:
     TextureMapperVideoLayerQt(QGraphicsVideoItem* videoItem)
         : m_videoItem(videoItem)

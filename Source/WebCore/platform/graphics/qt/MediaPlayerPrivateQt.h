@@ -33,7 +33,7 @@ QT_END_NAMESPACE
 
 namespace WebCore {
 
-class TextureMapperVideoLayer;
+class TextureMapperMediaLayer;
 
 class MediaPlayerPrivateQt : public QObject, public MediaPlayerPrivateInterface {
 
@@ -139,7 +139,7 @@ private:
     QGraphicsVideoItem* m_videoItem;
     QGraphicsScene* m_videoScene;
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-    OwnPtr<TextureMapperVideoLayer> m_platformLayer;
+    OwnPtr<TextureMapperMediaLayer> m_platformLayer;
 #endif
 
     mutable MediaPlayer::NetworkState m_networkState;

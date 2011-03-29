@@ -94,7 +94,7 @@ public:
 
         ContentType contentType;
         RefPtr<Image> image;
-        TextureMapperVideoLayer* media;
+        TextureMapperMediaLayer* media;
 
         ContentData()
             : needsDisplay(false)
