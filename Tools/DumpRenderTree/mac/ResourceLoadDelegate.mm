@@ -151,8 +151,8 @@ using namespace std;
         && NSOrderedSame != [host compare:@"127.0.0.1"]
         && NSOrderedSame != [host compare:@"255.255.255.255"] // used in some tests that expect to get back an error
         && NSOrderedSame != [host caseInsensitiveCompare:@"localhost"]) {
-        //printf("Blocked access to external URL %s\n", [[url absoluteString] cStringUsingEncoding:NSUTF8StringEncoding]);
-        //return nil;
+        printf("Blocked access to external URL %s\n", [[url absoluteString] cStringUsingEncoding:NSUTF8StringEncoding]);
+        return nil;
     }
 
     if (disallowedURLs && CFSetContainsValue(disallowedURLs, url))
