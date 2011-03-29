@@ -241,11 +241,11 @@ void PNGImageDecoder::headerAvailable()
 {
     png_structp png = m_reader->pngPtr();
     png_infop info = m_reader->infoPtr();
-    png_uint_32 width = png->width;
-    png_uint_32 height = png->height;
+    png_uint_32 width = png_get_image_width(png, info);
+    png_uint_32 height = png_get_image_height(png, info);
     
     // Protect against large images.
-    if (png->width > cMaxPNGSize || png->height > cMaxPNGSize) {
+    if (width > cMaxPNGSize || height > cMaxPNGSize) {
         longjmp(JMPBUF(png), 1);
         return;
     }
@@ -318,9 +318,14 @@ void PNGImageDecoder::headerAvailable()
     m_reader->setHasAlpha(channels == 4);
 
     if (m_reader->decodingSizeOnly()) {
-        // If we only needed the size, halt the reader.     
+        // If we only needed the size, halt the reader.
+#if defined(PNG_LIBPNG_VER_MAJOR) && defined(PNG_LIBPNG_VER_MINOR) && (PNG_LIBPNG_VER_MAJOR > 1 || (PNG_LIBPNG_VER_MAJOR == 1 && PNG_LIBPNG_VER_MINOR >= 5))
+        // '0' argument to png_process_data_pause means: Do not cache unprocessed data.
+        m_reader->setReadOffset(m_reader->currentBufferSize() - png_process_data_pause(png, 0));
+#else
         m_reader->setReadOffset(m_reader->currentBufferSize() - png->buffer_size);
         png->buffer_size = 0;
+#endif
     }
 }
 
@@ -343,7 +348,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         // For PNGs, the frame always fills the entire image.
         buffer.setOriginalFrameRect(IntRect(IntPoint(), size()));
 
-        if (m_reader->pngPtr()->interlaced)
+        if (png_get_interlace_type(m_reader->pngPtr(), m_reader->infoPtr()) != PNG_INTERLACE_NONE)
             m_reader->createInterlaceBuffer((m_reader->hasAlpha() ? 4 : 3) * size().width() * size().height());
     }
 
