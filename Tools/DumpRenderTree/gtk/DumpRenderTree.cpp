@@ -2,7 +2,7 @@
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008 Alp Toker <alp@nuanti.com>
  * Copyright (C) 2009 Jan Alonzo <jmalonzo@gmail.com>
- * Copyright (C) 2010 Igalia S.L.
+ * Copyright (C) 2010, 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -600,6 +600,26 @@ static void setDefaultsToConsistentStateValuesForTesting()
     gchar* databaseDirectory = g_build_filename(g_get_user_data_dir(), "gtkwebkitdrt", "databases", NULL);
     webkit_set_web_database_directory_path(databaseDirectory);
     g_free(databaseDirectory);
+
+#if defined(GTK_API_VERSION_2)
+    gtk_rc_parse_string("style \"nix_scrollbar_spacing\"                    "
+                        "{                                                  "
+                        "    GtkScrolledWindow::scrollbar-spacing = 0       "
+                        "}                                                  "
+                        "class \"GtkWidget\" style \"nix_scrollbar_spacing\"");
+
+#else
+    GtkCssProvider* cssProvider = gtk_css_provider_new();
+    gtk_css_provider_load_from_data(cssProvider,
+                                    " * {                                       "
+                                    "   -GtkScrolledWindow-scrollbar-spacing: 0;"
+                                    "}                                          ",
+                                    -1, 0);
+    gtk_style_context_add_provider_for_screen(gdk_display_get_default_screen(gdk_display_get_default()),
+                                              GTK_STYLE_PROVIDER(cssProvider),
+                                              GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    g_object_unref(cssProvider);
+#endif
 }
 
 static void sendPixelResultsEOF()

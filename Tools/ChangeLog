@@ -1,3 +1,18 @@
+2011-03-24  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] [DRT] GtkScrolledWindow adds three pixels of padding between the WebView and the scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=57067
+
+        Eliminate extra spacing between the DRT GtkScrolledWindow and the DRT WebView. This
+        will allow WebKit1GTK+ and WebKit2GTK+ to share test results. Followup commits will
+        update DRT and pixel results as hundreds of results will need to be updated.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (setDefaultsToConsistentStateValuesForTesting): Eliminate spacing on the GtkScrolledWindow
+        by overriding the theme RC/CSS files.
+
 2011-03-29  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
