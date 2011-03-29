@@ -1,3 +1,21 @@
+2011-03-29  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Highlight visible lines first
+        https://bugs.webkit.org/show_bug.cgi?id=57013
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorChunkedPanel.prototype._findFirstVisibleChunkNumber):
+        (WebInspector.TextEditorChunkedPanel.prototype._findVisibleChunks):
+        (WebInspector.TextEditorChunkedPanel.prototype._findFirstVisibleLineNumber.compareLineRowOffsetTops):
+        (WebInspector.TextEditorChunkedPanel.prototype._findFirstVisibleLineNumber):
+        (WebInspector.TextEditorMainPanel.prototype._paintScheduledLines):
+        (WebInspector.TextEditorMainPanel.prototype._paintLines):
+        (WebInspector.TextEditorMainPanel.prototype._paintLineChunks):
+        (WebInspector.TextEditorMainPanel.prototype._paintLine):
+        (WebInspector.TextEditorMainChunk.prototype.set expanded):
+
 2011-03-29  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -400,20 +400,44 @@ WebInspector.TextEditorChunkedPanel.prototype = {
         return this._textChunks[this._chunkNumberForLine(lineNumber)];
     },
 
-    _findVisibleChunks: function(visibleFrom, visibleTo)
+    _findFirstVisibleChunkNumber: function(visibleFrom)
     {
         function compareOffsetTops(value, chunk)
         {
             return value < chunk.offsetTop ? -1 : 1;
         }
         var insertBefore = insertionIndexForObjectInListSortedByFunction(visibleFrom, this._textChunks, compareOffsetTops);
+        return insertBefore - 1;
+    },
 
-        var from = insertBefore - 1;
+    _findVisibleChunks: function(visibleFrom, visibleTo)
+    {
+        var from = this._findFirstVisibleChunkNumber(visibleFrom);
         for (var to = from + 1; to < this._textChunks.length; ++to) {
             if (this._textChunks[to].offsetTop >= visibleTo)
                 break;
         }
         return { start: from, end: to };
+    },
+
+    _findFirstVisibleLineNumber: function(visibleFrom)
+    {
+        var chunk = this._textChunks[this._findFirstVisibleChunkNumber(visibleFrom)];
+        if (!chunk.expanded)
+            return chunk.startLine;
+
+        var lineNumbers = [];
+        for (var i = 0; i < chunk.linesCount; ++i) {
+            lineNumbers.push(chunk.startLine + i);
+        }
+
+        function compareLineRowOffsetTops(value, lineNumber)
+        {
+            var lineRow = chunk.getExpandedLineRow(lineNumber);
+            return value < lineRow.offsetTop ? -1 : 1;
+        }
+        var insertBefore = insertionIndexForObjectInListSortedByFunction(visibleFrom, lineNumbers, compareLineRowOffsetTops);
+        return lineNumbers[insertBefore - 1];
     },
 
     _repaintAll: function()
@@ -855,15 +879,9 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         var scheduledPaintLines = this._scheduledPaintLines;
         delete this._scheduledPaintLines;
-
-        var selection = skipRestoreSelection ? null : this._getSelection();
-
+        
         this._restorePaintLinesOperationsCredit();
-        for (var i = 0; i < scheduledPaintLines.length; ++i) {
-            var chunk = scheduledPaintLines[i];
-            this._paintLines(chunk.startLine, chunk.endLine);
-        }
-        this._restoreSelection(selection);
+        this._paintLineChunks(scheduledPaintLines, !skipRestoreSelection);
     },
 
     _restorePaintLinesOperationsCredit: function()
@@ -873,36 +891,58 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     _paintLines: function(fromLine, toLine, restoreSelection)
     {
-        if (fromLine >= toLine)
-            return;
+        this._paintLineChunks([ { startLine: fromLine, endLine: toLine } ], restoreSelection);
+    },
 
-        if (this._dirtyLines || this._scheduledPaintLines) {
-            this._schedulePaintLines(fromLine, toLine);
-            return;
-        }
+    _paintLineChunks: function(lineChunks, restoreSelection)
+    {
+        // First, paint visible lines, so that in case of long lines we should start highlighting
+        // the visible area immediately, instead of waiting for the lines above the visible area.
+        var visibleFrom = this.element.scrollTop;
+        var firstVisibleLineNumber = this._findFirstVisibleLineNumber(visibleFrom);
 
+        var chunk;
         var selection;
-        var chunk = this.chunkForLine(fromLine);
-        for (var i = fromLine; i < toLine; ++i) {
-            if (i >= chunk.startLine + chunk.linesCount)
-                chunk = this.chunkForLine(i);
-            var lineRow = chunk.getExpandedLineRow(i);
-            if (!lineRow)
+        var invisibleLineRows = [];
+        for (var i = 0; i < lineChunks.length; ++i) {
+            var lineChunk = lineChunks[i];
+            if (this._dirtyLines || this._scheduledPaintLines) {
+                this._schedulePaintLines(lineChunk.startLine, lineChunk.endLine);
                 continue;
-            if (restoreSelection && !selection)
-                selection = this._getSelection();
-            this._paintLine(lineRow, i);
-            if (this._paintLinesOperationsCredit < 0) {
-                this._schedulePaintLines(i + 1, toLine);
-                break;
+            }
+            for (var lineNumber = lineChunk.startLine; lineNumber < lineChunk.endLine; ++lineNumber) {
+                if (!chunk || lineNumber < chunk.startLine || lineNumber >= chunk.startLine + chunk.linesCount)
+                    chunk = this.chunkForLine(lineNumber);
+                var lineRow = chunk.getExpandedLineRow(lineNumber);
+                if (!lineRow)
+                    continue;
+                if (lineNumber < firstVisibleLineNumber) {
+                    invisibleLineRows.push(lineRow);
+                    continue;
+                }
+                if (restoreSelection && !selection)
+                    selection = this._getSelection();
+                this._paintLine(lineRow);
+                if (this._paintLinesOperationsCredit < 0) {
+                    this._schedulePaintLines(lineNumber + 1, lineChunk.endLine);
+                    break;
+                }
             }
         }
+
+        for (var i = 0; i < invisibleLineRows.length; ++i) {
+            if (restoreSelection && !selection)
+                selection = this._getSelection();
+            this._paintLine(invisibleLineRows[i]);
+        }
+
         if (restoreSelection)
             this._restoreSelection(selection);
     },
 
-    _paintLine: function(lineRow, lineNumber)
+    _paintLine: function(lineRow)
     {
+        var lineNumber = lineRow.lineNumber;
         if (this._dirtyLines || this._scheduledPaintLines || this._paintLinesOperationsCredit < 0) {
             this._schedulePaintLines(lineNumber, lineNumber + 1);
             return;
@@ -1504,7 +1544,7 @@ WebInspector.TextEditorMainChunk.prototype = {
 
         if (this.linesCount === 1) {
             if (expanded)
-                this._textViewer._paintLine(this.element, this.startLine);
+                this._textViewer._paintLine(this.element);
             return;
         }
 
@@ -1517,9 +1557,9 @@ WebInspector.TextEditorMainChunk.prototype = {
                 var lineRow = this._createRow(i);
                 parentElement.insertBefore(lineRow, this.element);
                 this._expandedLineRows.push(lineRow);
-                this._textViewer._paintLine(lineRow, i);
             }
             parentElement.removeChild(this.element);
+            this._textViewer._paintLines(this.startLine, this.startLine + this.linesCount);
         } else {
             var elementInserted = false;
             for (var i = 0; i < this._expandedLineRows.length; ++i) {
