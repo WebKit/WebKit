@@ -248,53 +248,6 @@ Frame* WebDevToolsAgentImpl::mainFrame()
     return 0;
 }
 
-
-//------- plugin resource load notifications ---------------
-
-// FIXME: remove once not user downstream.
-
-static WebFrame* lastWebFrame;
-
-void WebDevToolsAgentImpl::identifierForInitialRequest(unsigned long resourceId, WebFrame* webFrame, const WebURLRequest&)
-{
-    lastWebFrame = webFrame;
-}
-
-void WebDevToolsAgentImpl::willSendRequest(unsigned long resourceId, WebURLRequest& request)
-{
-    // We know that identifierForInitialRequest and willSendRequest are called synchronously.
-    willSendRequest(resourceId, lastWebFrame, request);
-}
-
-void WebDevToolsAgentImpl::willSendRequest(unsigned long resourceId, WebFrame* webFrame, WebURLRequest& request)
-{
-    WebFrameImpl* webFrameImpl = static_cast<WebFrameImpl*>(webFrame);
-    Frame* frame = webFrameImpl->frame();
-    DocumentLoader* loader = frame->loader()->activeDocumentLoader();
-    InspectorInstrumentation::willSendRequest(mainFrame(), resourceId, loader, request.toMutableResourceRequest(), ResourceResponse());
-}
-
-void WebDevToolsAgentImpl::didReceiveData(unsigned long resourceId, int length)
-{
-    InspectorInstrumentation::didReceiveContentLength(mainFrame(), resourceId, length, -1);
-}
-
-void WebDevToolsAgentImpl::didReceiveResponse(unsigned long resourceId, const WebURLResponse& response)
-{
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(mainFrame(), resourceId, response.toResourceResponse());
-    InspectorInstrumentation::didReceiveResourceResponse(cookie, resourceId, 0, response.toResourceResponse());
-}
-
-void WebDevToolsAgentImpl::didFinishLoading(unsigned long resourceId)
-{
-    InspectorInstrumentation::didFinishLoading(mainFrame(), resourceId, 0);
-}
-
-void WebDevToolsAgentImpl::didFailLoading(unsigned long resourceId, const WebURLError& error)
-{
-    InspectorInstrumentation::didFailLoading(mainFrame(), resourceId, error);
-}
-
 void WebDevToolsAgentImpl::inspectorDestroyed()
 {
     // Our lifetime is bound to the WebViewImpl.

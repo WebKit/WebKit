@@ -79,16 +79,6 @@ public:
     virtual void setRuntimeProperty(const WebString& name, const WebString& value);
     virtual void setTimelineProfilingEnabled(bool enable);
 
-    // FIXME: remove once not used.
-    virtual void identifierForInitialRequest(unsigned long resourceId, WebFrame*, const WebURLRequest&);
-    virtual void willSendRequest(unsigned long resourceId, WebURLRequest&);
-
-    virtual void willSendRequest(unsigned long, WebFrame*, WebURLRequest&);
-    virtual void didReceiveData(unsigned long, int length);
-    virtual void didReceiveResponse(unsigned long, const WebURLResponse&);
-    virtual void didFinishLoading(unsigned long);
-    virtual void didFailLoading(unsigned long, const WebURLError&);
-
     // InspectorClient implementation.
     virtual void inspectorDestroyed();
     virtual void openInspectorFrontend(WebCore::InspectorController*);

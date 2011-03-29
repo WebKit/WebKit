@@ -1,3 +1,16 @@
+2011-03-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] DevTools shows two resources for each plugin resource loaded
+        https://bugs.webkit.org/show_bug.cgi?id=57101
+
+        Remove DevToolsAgent network callbacks as this information is now available through ResourceLoader
+
+        * public/WebDevToolsAgent.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        * src/WebDevToolsAgentImpl.h:
+
 2011-03-29  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Dimitri Glazkov.
