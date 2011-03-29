@@ -1,5 +1,13 @@
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
+        Set overflow: hidden so we don't need to have scrollbars in the
+        results.  I've tested that this still shows what looks like the
+        intended behavior difference before and after the test.
+
+        * fast/block/float/float-forced-below-other-floats.html:
+
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
         Scrollbars are different on different platforms.  Including scrollbars
         in tests that don't need them is sadness.
 
