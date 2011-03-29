@@ -1,3 +1,9 @@
+2011-03-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Add new failing tests to the Skipped list until tomorrow.
+
+        * platform/qt/Skipped:
+
 2011-03-29  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Tony Gentilcore.

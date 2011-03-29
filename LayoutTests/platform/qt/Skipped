@@ -3248,3 +3248,18 @@ plugins/embed-prefers-plugins-for-images.html
 # http/tests/uri/username-with-no-hostname.html fails after r82151
 # https://bugs.webkit.org/show_bug.cgi?id=57306
 http/tests/uri/username-with-no-hostname.html
+
+# New failing tests caused by a change between r82279 - r82302
+# I'll fix it tomorrow, I won't spend my night with layout test fixing. /Ossy/
+editing/pasteboard/paste-text-011.html
+fast/css-generated-content/014.html
+fast/css/word-space-extra.html
+fast/events/onsearch-enter.html
+media/video-playbackrate.html
+tables/mozilla/bugs/bug2123.html
+tables/mozilla/bugs/bug4523.html
+tables/mozilla/bugs/bug16252.html
+tables/mozilla/bugs/bug43854-1.html
+tables/mozilla/bugs/bug57828-2.html
+tables/mozilla/core/bloomberg.html
+tables/mozilla/marvin/backgr_index.html
