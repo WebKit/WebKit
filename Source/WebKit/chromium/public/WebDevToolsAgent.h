@@ -94,11 +94,7 @@ public:
     virtual void willSendRequest(unsigned long resourceId, WebURLRequest&) = 0;
 
     virtual void willSendRequest(unsigned long resourceId, WebFrame*, WebURLRequest&) = 0;
-    virtual void didReceiveData(unsigned long resourceId, int dataLength, int lengthReceived) = 0;
-
-    // FIXME(vsevik): remove once not used downstream
     virtual void didReceiveData(unsigned long resourceId, int length) = 0;
-
     virtual void didReceiveResponse(unsigned long resourceId, const WebURLResponse&) = 0;
     virtual void didFinishLoading(unsigned long resourceId) = 0;
     virtual void didFailLoading(unsigned long resourceId, const WebURLError&) = 0;

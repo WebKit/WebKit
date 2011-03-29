@@ -1,5 +1,23 @@
 2011-03-29  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed, rolling out r82195.
+        http://trac.webkit.org/changeset/82195
+        https://bugs.webkit.org/show_bug.cgi?id=56602
+
+        Broke Chromium Clang builds.
+
+        * public/WebDevToolsAgent.h:
+        * public/WebURLLoaderClient.h:
+        * src/AssociatedURLLoader.cpp:
+        (WebKit::AssociatedURLLoader::ClientAdapter::didReceiveData):
+        * src/ResourceHandle.cpp:
+        (WebCore::ResourceHandleInternal::didReceiveData):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::didReceiveData):
+        * src/WebDevToolsAgentImpl.h:
+
+2011-03-29  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed. Another build fix. The last fix was incorrect.
 
         * src/ChromeClientImpl.cpp:

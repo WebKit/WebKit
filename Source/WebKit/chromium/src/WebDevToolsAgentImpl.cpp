@@ -274,15 +274,9 @@ void WebDevToolsAgentImpl::willSendRequest(unsigned long resourceId, WebFrame* w
     InspectorInstrumentation::willSendRequest(mainFrame(), resourceId, loader, request.toMutableResourceRequest(), ResourceResponse());
 }
 
-// FIXME(vsevik): remove once not used downstream
 void WebDevToolsAgentImpl::didReceiveData(unsigned long resourceId, int length)
 {
-    didReceiveData(resourceId, length, -1);
-}
-
-void WebDevToolsAgentImpl::didReceiveData(unsigned long resourceId, int length, int lengthReceived)
-{
-    InspectorInstrumentation::didReceiveContentLength(mainFrame(), resourceId, length, lengthReceived);
+    InspectorInstrumentation::didReceiveContentLength(mainFrame(), resourceId, length, -1);
 }
 
 void WebDevToolsAgentImpl::didReceiveResponse(unsigned long resourceId, const WebURLResponse& response)

@@ -119,14 +119,13 @@ void AssociatedURLLoader::ClientAdapter::didReceiveResponse(const ResourceRespon
     m_client->didReceiveResponse(m_loader, wrappedResponse);
 }
 
-void AssociatedURLLoader::ClientAdapter::didReceiveData(const char* data, int dataLength)
+void AssociatedURLLoader::ClientAdapter::didReceiveData(const char* data, int lengthReceived)
 {
     if (!m_client)
         return;
 
-    // FIXME(vsevik): add -1 to params once migrated.
-    m_client->didReceiveData(m_loader, data, dataLength);
-    m_downloadLength += dataLength;
+    m_client->didReceiveData(m_loader, data, lengthReceived);
+    m_downloadLength += lengthReceived;
 }
 
 void AssociatedURLLoader::ClientAdapter::didReceiveCachedMetadata(const char* data, int lengthReceived)
