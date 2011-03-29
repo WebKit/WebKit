@@ -949,8 +949,8 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
     unsigned char levelLow = 128;
     unsigned char levelHigh = 0;
     for (Run* r = firstRun(); r; r = r->next()) {
-        levelHigh = max(r->m_level, levelHigh);
-        levelLow = min(r->m_level, levelLow);
+        levelHigh = std::max(r->m_level, levelHigh);
+        levelLow = std::min(r->m_level, levelLow);
     }
 
     // implements reordering of the line (L2 according to Bidi spec):
