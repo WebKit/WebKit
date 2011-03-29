@@ -1,5 +1,15 @@
 2011-03-29  Jessie Berlin  <jberlin@apple.com>
 
+        webkit2 does not pass tests that require the window to be focused.
+        https://bugs.webkit.org/show_bug.cgi?id=56988
+
+        Unreviewed, update the WK2 expected results for pseudo-any.html after r82183.
+
+        * platform/mac-wk2/fast/css/pseudo-any-expected.txt:
+        * platform/win-wk2/fast/css/pseudo-any-expected.txt:
+
+2011-03-29  Jessie Berlin  <jberlin@apple.com>
+
         Add another test that depends on EventSender to the mac-wk2 Skipped file.
 
         * platform/mac-wk2/Skipped:

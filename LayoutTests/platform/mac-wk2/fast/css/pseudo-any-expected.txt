@@ -14,6 +14,10 @@ u s
 
 div span
 div~q q+q q>span
+first
+
+last
+
 
 h1
 PASS document.defaultView.getComputedStyle(element, null).getPropertyValue('background-color') is 'rgb(0, 0, 255)'
@@ -84,4 +88,10 @@ PASS document.defaultView.getComputedStyle(element, null).getPropertyValue('back
 
 q>span
 PASS document.defaultView.getComputedStyle(element, null).getPropertyValue('background-color') is 'rgb(0, 0, 255)'
+
+#test-last-child :first-child
+PASS document.defaultView.getComputedStyle(element, null).getPropertyValue('background-color') is 'rgb(0, 0, 255)'
+
+#test-last-child :last-child
+PASS document.defaultView.getComputedStyle(element, null).getPropertyValue('background-color') is 'rgb(0, 128, 0)'
 
