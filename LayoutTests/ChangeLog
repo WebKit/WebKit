@@ -1,3 +1,12 @@
+2011-03-29  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] http/tests/uri/username-with-no-hostname.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=57325
+
+        * platform/gtk/Skipped: Unskip fixed test.
+
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
         This test is flaky on Mac too.

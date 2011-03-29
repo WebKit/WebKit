@@ -1361,8 +1361,5 @@ fast/harness/override-preferences-2.html
 # https://bugs.webkit.org/show_bug.cgi?id=57137
 plugins/embed-prefers-plugins-for-images.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=57325
-http/tests/uri/username-with-no-hostname.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=57346
 fast/text/justify-ideograph-leading-expansion.html

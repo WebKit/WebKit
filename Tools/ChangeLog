@@ -1,3 +1,14 @@
+2011-03-29  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] http/tests/uri/username-with-no-hostname.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=57325
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (willSendRequestCallback): Check URI before submitting the request
+        to WebCore.
+
 2011-03-29  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Ojan Vafai.

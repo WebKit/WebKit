@@ -1029,6 +1029,17 @@ static void frameCreatedCallback(WebKitWebView* webView, WebKitWebFrame* webFram
 static void willSendRequestCallback(WebKitWebView* webView, WebKitWebFrame*, WebKitWebResource*, WebKitNetworkRequest* request, WebKitNetworkResponse*)
 {
     SoupMessage* soupMessage = webkit_network_request_get_message(request);
+    SoupURI* uri = soup_uri_new(webkit_network_request_get_uri(request));
+
+    if (SOUP_URI_VALID_FOR_HTTP(uri) && g_strcmp0(uri->host, "127.0.0.1")
+        && g_strcmp0(uri->host, "255.255.255.255")
+        && g_strcmp0(uri->host, "localhost")) {
+        printf("Blocked access to external URL %s\n", soup_uri_to_string(uri, FALSE));
+        soup_uri_free(uri);
+        return;
+    }
+    soup_uri_free(uri);
+
 
     if (soupMessage) {
         const set<string>& clearHeaders = gLayoutTestController->willSendRequestClearHeaders();
