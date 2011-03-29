@@ -4620,6 +4620,15 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(textAlign, TextAlign)
         if (!primitiveValue)
             return;
+        if (primitiveValue->getIdent() == CSSValueWebkitMatchParent) {
+            if (m_parentStyle->textAlign() == TASTART)
+                m_style->setTextAlign(m_parentStyle->isLeftToRightDirection() ? LEFT : RIGHT);
+            else if (m_parentStyle->textAlign() == TAEND)
+                m_style->setTextAlign(m_parentStyle->isLeftToRightDirection() ? RIGHT : LEFT);
+            else
+                m_style->setTextAlign(m_parentStyle->textAlign());
+            return;
+        }
         m_style->setTextAlign(*primitiveValue);
         return;
     }

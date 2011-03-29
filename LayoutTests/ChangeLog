@@ -1,3 +1,17 @@
+2011-03-29  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement text-align:match-parent as -webkit-match-parent.
+        https://bugs.webkit.org/show_bug.cgi?id=50951
+
+        Add tests to verify that the implementation works as expected.
+
+        * fast/css/text-align-webkit-match-parent-expected.txt: Added.
+        * fast/css/text-align-webkit-match-parent-parse-expected.txt: Added.
+        * fast/css/text-align-webkit-match-parent-parse.html: Added.
+        * fast/css/text-align-webkit-match-parent.html: Added.
+
 2011-03-29  Adam Roben  <aroben@apple.com>
 
         Add Windows results for new test added in r82200

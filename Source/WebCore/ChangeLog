@@ -1,3 +1,21 @@
+2011-03-29  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement text-align:match-parent as -webkit-match-parent.
+        https://bugs.webkit.org/show_bug.cgi?id=50951
+
+        Add support to the CSS parser.
+
+        Tests: fast/css/text-align-webkit-match-parent-parse.html
+               fast/css/text-align-webkit-match-parent.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+
 2011-03-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.

@@ -212,6 +212,7 @@ justify
 -webkit-left
 -webkit-right
 -webkit-center
+-webkit-match-parent
 #
 # CSS_PROP_LIST_STYLE_POSITION:
 #
