@@ -1,3 +1,19 @@
+2011-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Rename BidiResolver::current to BidiResolver::m_current to match modern style
+        https://bugs.webkit.org/show_bug.cgi?id=57363
+
+        I was very confused by current until I realized it was a member variable.
+        I also did m_reachedEndOfLine since that was small.
+
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiResolver::position):
+        (WebCore::BidiResolver::setPosition):
+        (WebCore::BidiResolver::increment):
+        (WebCore::::createBidiRunsForLine):
+
 2011-03-29  Geoff Pike  <gpike@chromium.org>
 
         Reviewed by Dimitri Glazkov.

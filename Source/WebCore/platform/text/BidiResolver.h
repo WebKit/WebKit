@@ -137,7 +137,7 @@ template <class Iterator, class Run> class BidiResolver {
 public :
     BidiResolver()
         : m_direction(WTF::Unicode::OtherNeutral)
-        , reachedEndOfLine(false)
+        , m_reachedEndOfLine(false)
         , emptyRun(true)
         , m_firstRun(0)
         , m_lastRun(0)
@@ -146,10 +146,10 @@ public :
     {
     }
 
-    const Iterator& position() const { return current; }
-    void setPosition(const Iterator& position) { current = position; }
+    const Iterator& position() const { return m_current; }
+    void setPosition(const Iterator& position) { m_current = position; }
 
-    void increment() { current.increment(); }
+    void increment() { m_current.increment(); }
 
     BidiContext* context() const { return m_status.context.get(); }
     void setContext(PassRefPtr<BidiContext> c) { m_status.context = c; }
@@ -188,14 +188,14 @@ protected:
     void appendRun();
     void reverseRuns(unsigned start, unsigned end);
 
-    Iterator current;
+    Iterator m_current;
     Iterator sor;
     Iterator eor;
     Iterator last;
     BidiStatus m_status;
     WTF::Unicode::Direction m_direction;
     Iterator endOfLine;
-    bool reachedEndOfLine;
+    bool m_reachedEndOfLine;
     Iterator lastBeforeET;
     bool emptyRun;
 
@@ -293,7 +293,7 @@ void BidiResolver<Iterator, Run>::appendRun()
         unsigned endOffset = eor.offset();
 
         if (!endOfLine.atEnd() && endOffset >= endOfLine.offset()) {
-            reachedEndOfLine = true;
+            m_reachedEndOfLine = true;
             endOffset = endOfLine.offset();
         }
 
@@ -572,10 +572,10 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
 
     if (override != NoVisualOverride) {
         emptyRun = false;
-        sor = current;
+        sor = m_current;
         eor = Iterator();
-        while (current != end && !current.atEnd()) {
-            eor = current;
+        while (m_current != end && !m_current.atEnd()) {
+            eor = m_current;
             increment();
         }
         m_direction = override == VisualLeftToRightOverride ? LeftToRight : RightToLeft;
@@ -590,13 +590,13 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
 
     eor = Iterator();
 
-    last = current;
+    last = m_current;
     bool pastEnd = false;
     BidiResolver<Iterator, Run> stateAtEnd;
 
     while (true) {
         Direction dirCurrent;
-        if (pastEnd && (hardLineBreak || current.atEnd())) {
+        if (pastEnd && (hardLineBreak || m_current.atEnd())) {
             BidiContext* c = context();
             while (c->parent())
                 c = c->parent();
@@ -610,7 +610,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                 stateAtEnd.setLastStrongDir(dirCurrent);
             }
         } else {
-            dirCurrent = current.direction();
+            dirCurrent = m_current.direction();
             if (context()->override()
                     && dirCurrent != RightToLeftEmbedding
                     && dirCurrent != LeftToRightEmbedding
@@ -688,7 +688,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                 default:
                     break;
             }
-            eor = current;
+            eor = m_current;
             m_status.eor = LeftToRight;
             m_status.lastStrong = LeftToRight;
             m_direction = LeftToRight;
@@ -725,7 +725,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                 default:
                     break;
             }
-            eor = current;
+            eor = m_current;
             m_status.eor = RightToLeft;
             m_status.lastStrong = dirCurrent;
             m_direction = RightToLeft;
@@ -791,7 +791,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                     default:
                         break;
                 }
-                eor = current;
+                eor = m_current;
                 m_status.eor = EuropeanNumber;
                 if (m_direction == OtherNeutral)
                     m_direction = LeftToRight;
@@ -836,7 +836,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                 default:
                     break;
             }
-            eor = current;
+            eor = m_current;
             m_status.eor = ArabicNumber;
             if (m_direction == OtherNeutral)
                 m_direction = ArabicNumber;
@@ -847,7 +847,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
         case EuropeanNumberTerminator:
             if (m_status.last == EuropeanNumber) {
                 dirCurrent = EuropeanNumber;
-                eor = current;
+                eor = m_current;
                 m_status.eor = dirCurrent;
             } else if (m_status.last != EuropeanNumberTerminator)
                 lastBeforeET = emptyRun ? eor : last;
@@ -856,7 +856,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
         // boundary neutrals should be ignored
         case BoundaryNeutral:
             if (eor == last)
-                eor = current;
+                eor = m_current;
             break;
             // neutrals
         case BlockSeparator:
@@ -873,8 +873,8 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
             break;
         }
 
-        if (pastEnd && eor == current) {
-            if (!reachedEndOfLine) {
+        if (pastEnd && eor == m_current) {
+            if (!m_reachedEndOfLine) {
                 eor = endOfLine;
                 switch (m_status.eor) {
                     case LeftToRight:
@@ -890,12 +890,12 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                 }
                 appendRun();
             }
-            current = end;
+            m_current = end;
             m_status = stateAtEnd.m_status;
             sor = stateAtEnd.sor; 
             eor = stateAtEnd.eor;
             last = stateAtEnd.last;
-            reachedEndOfLine = stateAtEnd.reachedEndOfLine;
+            m_reachedEndOfLine = stateAtEnd.m_reachedEndOfLine;
             lastBeforeET = stateAtEnd.lastBeforeET;
             emptyRun = stateAtEnd.emptyRun;
             m_direction = OtherNeutral;
@@ -903,10 +903,10 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
         }
 
         updateStatusLastFromCurrentDirection(dirCurrent);
-        last = current;
+        last = m_current;
 
         if (emptyRun) {
-            sor = current;
+            sor = m_current;
             emptyRun = false;
         }
 
@@ -914,12 +914,12 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
         if (!m_currentExplicitEmbeddingSequence.isEmpty()) {
             bool committed = commitExplicitEmbedding();
             if (committed && pastEnd) {
-                current = end;
+                m_current = end;
                 m_status = stateAtEnd.m_status;
                 sor = stateAtEnd.sor; 
                 eor = stateAtEnd.eor;
                 last = stateAtEnd.last;
-                reachedEndOfLine = stateAtEnd.reachedEndOfLine;
+                m_reachedEndOfLine = stateAtEnd.m_reachedEndOfLine;
                 lastBeforeET = stateAtEnd.lastBeforeET;
                 emptyRun = stateAtEnd.emptyRun;
                 m_direction = OtherNeutral;
@@ -927,14 +927,14 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
             }
         }
 
-        if (!pastEnd && (current == end || current.atEnd())) {
+        if (!pastEnd && (m_current == end || m_current.atEnd())) {
             if (emptyRun)
                 break;
             stateAtEnd.m_status = m_status;
             stateAtEnd.sor = sor; 
             stateAtEnd.eor = eor;
             stateAtEnd.last = last;
-            stateAtEnd.reachedEndOfLine = reachedEndOfLine;
+            stateAtEnd.m_reachedEndOfLine = m_reachedEndOfLine;
             stateAtEnd.lastBeforeET = lastBeforeET;
             stateAtEnd.emptyRun = emptyRun;
             endOfLine = last;

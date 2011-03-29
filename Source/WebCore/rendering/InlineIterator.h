@@ -241,7 +241,7 @@ ALWAYS_INLINE WTF::Unicode::Direction InlineIterator::direction() const
 template<>
 inline void InlineBidiResolver::increment()
 {
-    current.increment(this);
+    m_current.increment(this);
 }
 
 template <>
@@ -258,7 +258,7 @@ inline void InlineBidiResolver::appendRun()
         if (obj) {
             unsigned pos = obj == eor.m_obj ? eor.m_pos : UINT_MAX;
             if (obj == endOfLine.m_obj && endOfLine.m_pos <= pos) {
-                reachedEndOfLine = true;
+                m_reachedEndOfLine = true;
                 pos = endOfLine.m_pos;
             }
             // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
