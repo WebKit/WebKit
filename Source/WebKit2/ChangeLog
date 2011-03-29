@@ -1,3 +1,34 @@
+2011-03-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Assertion failure in plug-in process with clang-built 32/64-bit WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=57359
+
+        Don't use __alignof when encoding and decoding scalar types.
+        
+        Darwin 32-bit, double and unsigned long long are 4-byte aligned but on 64-bit they're
+        8-byte aligned which causes problems when doing IPC between 32-bit and 64-bit processes.
+        GCC is buggy and returns 8, but clang is correct and returns 4. Use sizeof instead which we know
+        is equal to or greater than the alignment.
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::decodeBool):
+        (CoreIPC::ArgumentDecoder::decodeUInt32):
+        (CoreIPC::ArgumentDecoder::decodeUInt64):
+        (CoreIPC::ArgumentDecoder::decodeInt32):
+        (CoreIPC::ArgumentDecoder::decodeInt64):
+        (CoreIPC::ArgumentDecoder::decodeFloat):
+        (CoreIPC::ArgumentDecoder::decodeDouble):
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        (CoreIPC::ArgumentEncoder::encodeBool):
+        (CoreIPC::ArgumentEncoder::encodeUInt32):
+        (CoreIPC::ArgumentEncoder::encodeUInt64):
+        (CoreIPC::ArgumentEncoder::encodeInt32):
+        (CoreIPC::ArgumentEncoder::encodeInt64):
+        (CoreIPC::ArgumentEncoder::encodeFloat):
+        (CoreIPC::ArgumentEncoder::encodeDouble):
+
 2011-03-29  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build fix after r81928.

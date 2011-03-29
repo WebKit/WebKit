@@ -145,7 +145,7 @@ bool ArgumentDecoder::decodeBytes(uint8_t* buffer, size_t bufferSize)
 
 bool ArgumentDecoder::decodeBool(bool& result)
 {
-    if (!alignBufferPosition(__alignof(result), sizeof(result)))
+    if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
     
     result = *reinterpret_cast<bool*>(m_bufferPos);
@@ -155,7 +155,7 @@ bool ArgumentDecoder::decodeBool(bool& result)
 
 bool ArgumentDecoder::decodeUInt32(uint32_t& result)
 {
-    if (!alignBufferPosition(__alignof(result), sizeof(result)))
+    if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
     
     result = *reinterpret_cast<uint32_t*>(m_bufferPos);
@@ -165,7 +165,7 @@ bool ArgumentDecoder::decodeUInt32(uint32_t& result)
 
 bool ArgumentDecoder::decodeUInt64(uint64_t& result)
 {
-    if (!alignBufferPosition(__alignof(result), sizeof(result)))
+    if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
     
     result = *reinterpret_cast<uint64_t*>(m_bufferPos);
@@ -175,7 +175,7 @@ bool ArgumentDecoder::decodeUInt64(uint64_t& result)
 
 bool ArgumentDecoder::decodeInt32(int32_t& result)
 {
-    if (!alignBufferPosition(__alignof(result), sizeof(result)))
+    if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
     
     result = *reinterpret_cast<uint32_t*>(m_bufferPos);
@@ -185,7 +185,7 @@ bool ArgumentDecoder::decodeInt32(int32_t& result)
 
 bool ArgumentDecoder::decodeInt64(int64_t& result)
 {
-    if (!alignBufferPosition(__alignof(result), sizeof(result)))
+    if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
     
     result = *reinterpret_cast<uint64_t*>(m_bufferPos);
@@ -195,7 +195,7 @@ bool ArgumentDecoder::decodeInt64(int64_t& result)
 
 bool ArgumentDecoder::decodeFloat(float& result)
 {
-    if (!alignBufferPosition(__alignof(result), sizeof(result)))
+    if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
     
     result = *reinterpret_cast<float*>(m_bufferPos);
@@ -205,7 +205,7 @@ bool ArgumentDecoder::decodeFloat(float& result)
 
 bool ArgumentDecoder::decodeDouble(double& result)
 {
-    if (!alignBufferPosition(__alignof(result), sizeof(result)))
+    if (!alignBufferPosition(sizeof(result), sizeof(result)))
         return false;
     
     result = *reinterpret_cast<double*>(m_bufferPos);

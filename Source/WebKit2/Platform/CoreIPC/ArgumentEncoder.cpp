@@ -97,49 +97,49 @@ void ArgumentEncoder::encodeBytes(const uint8_t* bytes, size_t size)
 
 void ArgumentEncoder::encodeBool(bool n)
 {
-    uint8_t* buffer = grow(__alignof(n), sizeof(n));
+    uint8_t* buffer = grow(sizeof(n), sizeof(n));
     
     *reinterpret_cast<bool*>(buffer) = n;
 }
 
 void ArgumentEncoder::encodeUInt32(uint32_t n)
 {
-    uint8_t* buffer = grow(__alignof(n), sizeof(n));
+    uint8_t* buffer = grow(sizeof(n), sizeof(n));
     
     *reinterpret_cast<uint32_t*>(buffer) = n;
 }
 
 void ArgumentEncoder::encodeUInt64(uint64_t n)
 {
-    uint8_t* buffer = grow(__alignof(n), sizeof(n));
+    uint8_t* buffer = grow(sizeof(n), sizeof(n));
     
     *reinterpret_cast<uint64_t*>(buffer) = n;
 }
 
 void ArgumentEncoder::encodeInt32(int32_t n)
 {
-    uint8_t* buffer = grow(__alignof(n), sizeof(n));
+    uint8_t* buffer = grow(sizeof(n), sizeof(n));
     
     *reinterpret_cast<int32_t*>(buffer) = n;
 }
 
 void ArgumentEncoder::encodeInt64(int64_t n)
 {
-    uint8_t* buffer = grow(__alignof(n), sizeof(n));
+    uint8_t* buffer = grow(sizeof(n), sizeof(n));
     
     *reinterpret_cast<int64_t*>(buffer) = n;
 }
 
 void ArgumentEncoder::encodeFloat(float n)
 {
-    uint8_t* buffer = grow(__alignof(n), sizeof(n));
+    uint8_t* buffer = grow(sizeof(n), sizeof(n));
 
     *reinterpret_cast<float*>(buffer) = n;
 }
 
 void ArgumentEncoder::encodeDouble(double n)
 {
-    uint8_t* buffer = grow(__alignof(n), sizeof(n));
+    uint8_t* buffer = grow(sizeof(n), sizeof(n));
 
     *reinterpret_cast<double*>(buffer) = n;
 }
