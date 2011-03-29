@@ -1,5 +1,13 @@
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
+        Add Windows baselines.
+
+        * platform/chromium-win/fast/forms/listbox-bidi-align-expected.checksum: Added.
+        * platform/chromium-win/fast/forms/listbox-bidi-align-expected.png: Added.
+        * platform/chromium-win/fast/forms/listbox-bidi-align-expected.txt: Added.
+
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
         Add platform-specific baselines for listbox-bidi-align.
 
         * platform/chromium-linux/fast/forms/listbox-bidi-align-expected.checksum: Added.
