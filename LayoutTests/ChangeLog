@@ -1,3 +1,14 @@
+2011-03-29  Jessie Berlin  <jberlin@apple.com>
+
+        [Snow Leopard WebKit2 Release Tests] fast/images/move-image-to-new-document.html timing out
+        since r82087.
+        https://bugs.webkit.org/show_bug.cgi?id=57347
+
+        Unreviewed, add fast/images/move-image-to-new-document.html to the skipped list in order to
+        get the bots green.
+
+        * platform/mac-wk2/Skipped:
+
 2011-03-29  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline of fast/forms/listbox-bidi-align.html.
