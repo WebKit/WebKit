@@ -1,13 +1,13 @@
-layer at (0,0) size 781x900
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x900
-  RenderBlock {HTML} at (0,0) size 781x900
-    RenderBody {BODY} at (8,8) size 765x884
-      RenderBlock {P} at (0,0) size 765x19
+layer at (0,0) size 784x900
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x900
+  RenderBlock {HTML} at (0,0) size 784x900
+    RenderBody {BODY} at (8,8) size 768x884
+      RenderBlock {P} at (0,0) size 768x19
         RenderText {#text} at (0,0) size 284x19
           text run at (0,0) width 284: "Tests: the height attribute for the marquee tag"
         RenderBR {BR} at (284,15) size 0x0
-      RenderBlock {P} at (0,35) size 765x76
+      RenderBlock {P} at (0,35) size 768x76
         RenderText {#text} at (0,0) size 73x19
           text run at (0,0) width 73: "Conditions:"
         RenderBR {BR} at (73,15) size 0x0
@@ -16,13 +16,13 @@ layer at (0,0) size 781x900
           text run at (0,38) width 173: "overridden when the given "
           text run at (173,38) width 573: "height is smaller than the font height. We also make sure that the default height of a vertical"
           text run at (0,57) width 116: "marquee is 200px."
-      RenderBlock {P} at (0,127) size 765x38
+      RenderBlock {P} at (0,127) size 768x38
         RenderText {#text} at (0,0) size 756x38
           text run at (0,0) width 756: "If successful, in the horizontal group, the pink marquee should be large, and the others should all be the same size. None"
           text run at (0,19) width 67: "of the text "
           text run at (67,19) width 678: "should be cut off. In the vertical group, the aqua marquee should be 200px, and the others should be 100px."
-      RenderBlock {HR} at (0,181) size 765x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,191) size 765x693
+      RenderBlock {HR} at (0,181) size 768x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,191) size 768x693
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
@@ -48,40 +48,40 @@ layer at (0,0) size 781x900
           RenderText {#text} at (0,0) size 113x19
             text run at (0,0) width 113: "This is 100px tall."
         RenderText {#text} at (0,0) size 0x0
-layer at (8,199) size 765x16 scrollX -784 scrollWidth 1692 scrollHeight 19
-  RenderBlock {MARQUEE} at (0,0) size 765x16 [bgcolor=#00FFFF]
+layer at (8,199) size 768x16 scrollX -784 scrollWidth 1692 scrollHeight 19
+  RenderBlock {MARQUEE} at (0,0) size 768x16 [bgcolor=#00FFFF]
     RenderInline {B} at (0,0) size 1692x19
       RenderText {#text} at (0,0) size 1692x19
         text run at (0,0) width 724: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
         text run at (724,0) width 116: "Paul O' Connell, "
         text run at (840,0) width 852: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,215) size 765x16 scrollX -784 scrollWidth 1692 scrollHeight 19
-  RenderBlock {MARQUEE} at (0,16) size 765x16 [bgcolor=#FFFF00]
+layer at (8,215) size 768x16 scrollX -784 scrollWidth 1692 scrollHeight 19
+  RenderBlock {MARQUEE} at (0,16) size 768x16 [bgcolor=#FFFF00]
     RenderInline {B} at (0,0) size 1692x19
       RenderText {#text} at (0,0) size 1692x19
         text run at (0,0) width 724: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
         text run at (724,0) width 116: "Paul O' Connell, "
         text run at (840,0) width 852: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,231) size 765x19 scrollX -784 scrollWidth 1692
-  RenderBlock {MARQUEE} at (0,32) size 765x19 [bgcolor=#FFA500]
+layer at (8,231) size 768x19 scrollX -784 scrollWidth 1692
+  RenderBlock {MARQUEE} at (0,32) size 768x19 [bgcolor=#FFA500]
     RenderInline {B} at (0,0) size 1692x19
       RenderText {#text} at (0,0) size 1692x19
         text run at (0,0) width 724: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
         text run at (724,0) width 116: "Paul O' Connell, "
         text run at (840,0) width 852: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,250) size 765x19 scrollX -784 scrollWidth 1692
-  RenderBlock {MARQUEE} at (0,51) size 765x19 [bgcolor=#A52A2A]
+layer at (8,250) size 768x19 scrollX -784 scrollWidth 1692
+  RenderBlock {MARQUEE} at (0,51) size 768x19 [bgcolor=#A52A2A]
     RenderInline {B} at (0,0) size 1692x19
       RenderText {#text} at (0,0) size 1692x19
         text run at (0,0) width 724: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "
         text run at (724,0) width 116: "Paul O' Connell, "
         text run at (840,0) width 852: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,269) size 765x100 scrollX -784 scrollWidth 1692
-  RenderBlock {MARQUEE} at (0,70) size 765x100 [bgcolor=#FFC0CB]
+layer at (8,269) size 768x100 scrollX -784 scrollWidth 1692
+  RenderBlock {MARQUEE} at (0,70) size 768x100 [bgcolor=#FFC0CB]
     RenderInline {B} at (0,0) size 1692x19
       RenderText {#text} at (0,0) size 1692x19
         text run at (0,0) width 724: "Four Irish players have been named on the starting team for Saturday's Test game, with two on the bench. "

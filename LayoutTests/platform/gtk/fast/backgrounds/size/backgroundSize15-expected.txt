@@ -1,10 +1,10 @@
 layer at (0,0) size 808x973
-  RenderView at (0,0) size 781x581
-layer at (0,0) size 781x973
-  RenderBlock {HTML} at (0,0) size 781x973
-    RenderBody {BODY} at (8,8) size 765x957
+  RenderView at (0,0) size 784x584
+layer at (0,0) size 784x973
+  RenderBlock {HTML} at (0,0) size 784x973
+    RenderBody {BODY} at (8,8) size 768x957
       RenderBlock {DIV} at (0,0) size 100x100
-      RenderBlock (anonymous) at (0,100) size 765x57
+      RenderBlock (anonymous) at (0,100) size 768x57
         RenderBR {BR} at (0,0) size 0x19
         RenderBR {BR} at (0,19) size 0x19
         RenderBR {BR} at (0,38) size 0x19

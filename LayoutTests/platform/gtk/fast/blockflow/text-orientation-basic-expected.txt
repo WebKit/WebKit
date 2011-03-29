@@ -1,9 +1,9 @@
-layer at (0,0) size 781x708
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x708
-  RenderBlock {HTML} at (0,0) size 781x708
-    RenderBody {BODY} at (8,8) size 765x692
-      RenderBlock {P} at (0,0) size 765x76
+layer at (0,0) size 784x708
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x708
+  RenderBlock {HTML} at (0,0) size 784x708
+    RenderBody {BODY} at (8,8) size 768x692
+      RenderBlock {P} at (0,0) size 768x76
         RenderText {#text} at (0,0) size 751x38
           text run at (0,0) width 358: "This test shows the following bugs with text-orientation. "
           text run at (358,0) width 393: "The far right test mis-renders differently in both the simple and"

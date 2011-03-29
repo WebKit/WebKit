@@ -1,9 +1,9 @@
 layer at (0,0) size 1518x3171
-  RenderView at (0,0) size 781x581
-layer at (0,0) size 781x3169
-  RenderBlock {HTML} at (0,0) size 781x3169
-    RenderBody {BODY} at (8,8) size 765x3145
-      RenderBlock (anonymous) at (0,0) size 765x38
+  RenderView at (0,0) size 784x584
+layer at (0,0) size 784x3169
+  RenderBlock {HTML} at (0,0) size 784x3169
+    RenderBody {BODY} at (8,8) size 768x3145
+      RenderBlock (anonymous) at (0,0) size 768x38
         RenderText {#text} at (0,0) size 746x38
           text run at (0,0) width 746: "In all of the examples, you should be able to see blue and green rectangles that spill way out of their containing blocks."
           text run at (0,19) width 602: "They should be 100px tall and not overlap one another at all. They should be stacked vertically."
@@ -47,7 +47,7 @@ layer at (0,0) size 781x3169
         RenderBR {BR} at (294,125) size 0x0
         RenderBlock (floating) {DIV} at (10,129) size 1500x100 [bgcolor=#008000]
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,1590) size 765x19
+      RenderBlock (anonymous) at (0,1590) size 768x19
         RenderText {#text} at (0,0) size 583x19
           text run at (0,0) width 583: "The next examples should have blue and green rectangles that snugly fit without spilling out."
       RenderBlock {DIV} at (0,1625) size 720x240 [border: (10px solid #000000)]

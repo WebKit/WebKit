@@ -1,21 +1,21 @@
-layer at (0,0) size 781x1168
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x1168
-  RenderBlock {HTML} at (0,0) size 781x1168
-    RenderBody {BODY} at (8,8) size 765x1130
-      RenderBlock {DIV} at (72,0) size 620x488 [border: (4px solid #000000)]
-        RenderBlock {P} at (4,20) size 612x38
+layer at (0,0) size 784x1168
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1168
+  RenderBlock {HTML} at (0,0) size 784x1168
+    RenderBody {BODY} at (8,8) size 768x1130
+      RenderBlock {DIV} at (73,0) size 622x488 [border: (4px solid #000000)]
+        RenderBlock {P} at (4,20) size 614x38
           RenderText {#text} at (0,0) size 580x38
             text run at (0,0) width 580: "Affected Browsers: Safari 2.0, Windows Internet Explorer 6"
             text run at (0,19) width 30: "SP2"
-        RenderBlock {HR} at (4,74) size 612x2 [border: (1px inset #000000)]
-        RenderBlock {P} at (4,92) size 612x57
+        RenderBlock {HR} at (4,74) size 614x2 [border: (1px inset #000000)]
+        RenderBlock {P} at (4,92) size 614x57
           RenderText {#text} at (0,0) size 610x57
             text run at (0,0) width 610: "Bug Description: On the Affected Browsers, if a rule sets the"
             text run at (0,19) width 540: "'background-color' of an element, this color cannot be"
             text run at (0,38) width 480: "overridden by 'background:inherit' declarations."
-        RenderBlock {HR} at (4,165) size 612x2 [border: (1px inset #000000)]
-        RenderBlock {P} at (4,183) size 612x95
+        RenderBlock {HR} at (4,165) size 614x2 [border: (1px inset #000000)]
+        RenderBlock {P} at (4,183) size 614x95
           RenderText {#text} at (0,0) size 600x57
             text run at (0,0) width 600: "Example: With the following code, the background color of H1"
             text run at (0,19) width 560: "elements stays pink, no matter what background color the"
@@ -28,18 +28,18 @@ layer at (0,0) size 781x1168
           RenderText {#text} at (0,76) size 290x19
             text run at (0,76) width 50: "  H1 "
             text run at (50,76) width 240: "{ background: inherit; }"
-        RenderBlock {HR} at (4,294) size 612x2 [border: (1px inset #000000)]
-        RenderBlock {P} at (4,312) size 612x57
+        RenderBlock {HR} at (4,294) size 614x2 [border: (1px inset #000000)]
+        RenderBlock {P} at (4,312) size 614x57
           RenderText {#text} at (0,0) size 610x57
             text run at (0,0) width 610: "Work-around: The 'background-color' can only be overridden by"
             text run at (0,19) width 600: "another 'background-color' declaration, or by a 'background'"
             text run at (0,38) width 380: "declaration that does specify a color."
-        RenderBlock {HR} at (4,385) size 612x2 [border: (1px inset #000000)]
-        RenderBlock (anonymous) at (4,395) size 612x19
+        RenderBlock {HR} at (4,385) size 614x2 [border: (1px inset #000000)]
+        RenderBlock (anonymous) at (4,395) size 614x19
           RenderText {#text} at (0,0) size 401x19
             text run at (0,0) width 401: "This is in contradiction with the CSS2 specification which says:"
-        RenderBlock {UL} at (4,430) size 612x38
-          RenderListItem {LI} at (40,0) size 572x38
+        RenderBlock {UL} at (4,430) size 614x38
+          RenderListItem {LI} at (40,0) size 574x38
             RenderListMarker at (-18,0) size 7x19: bullet
             RenderText {#text} at (0,0) size 29x19
               text run at (0,0) width 29: "The "
@@ -49,29 +49,29 @@ layer at (0,0) size 781x1168
             RenderText {#text} at (110,0) size 563x38
               text run at (110,0) width 453: " property first sets all the individual background properties to their initial"
               text run at (0,19) width 373: "values, then assigns explicit values given in the declaration."
-      RenderBlock {DIV} at (72,518) size 620x612 [color=#008000] [bgcolor=#90EE90] [border: (4px solid #008000)]
-        RenderBlock (anonymous) at (4,4) size 612x19
+      RenderBlock {DIV} at (73,518) size 622x612 [color=#008000] [bgcolor=#90EE90] [border: (4px solid #008000)]
+        RenderBlock (anonymous) at (4,4) size 614x19
           RenderText {#text} at (0,0) size 219x19
             text run at (0,0) width 219: "This DIV has a green background."
-        RenderBlock {H1} at (61,44) size 497x156 [border: (4px solid #008000)]
+        RenderBlock {H1} at (61,44) size 499x156 [border: (4px solid #008000)]
           RenderText {#text} at (4,4) size 445x147
             text run at (4,4) width 441: "This header should have a green"
             text run at (4,41) width 418: "background (not pink) but the"
             text run at (4,78) width 445: "inline style rule is ignored on the"
             text run at (4,115) width 258: "Affected Browsers."
-        RenderBlock (anonymous) at (4,230) size 612x19
+        RenderBlock (anonymous) at (4,230) size 614x19
           RenderText {#text} at (0,0) size 157x19
             text run at (0,0) width 157: "The DIV continues here."
-        RenderBlock {H1} at (61,270) size 497x156 [border: (4px solid #008000)]
+        RenderBlock {H1} at (61,270) size 499x156 [border: (4px solid #008000)]
           RenderText {#text} at (4,4) size 449x147
             text run at (4,4) width 441: "This header should have a green"
             text run at (4,41) width 418: "background (not pink) but the"
             text run at (4,78) width 449: "!important rule is ignored on the"
             text run at (4,115) width 258: "Affected Browsers."
-        RenderBlock (anonymous) at (4,456) size 612x19
+        RenderBlock (anonymous) at (4,456) size 614x19
           RenderText {#text} at (0,0) size 157x19
             text run at (0,0) width 157: "The DIV continues here."
-        RenderBlock {H1} at (61,496) size 497x82 [color=#FF0000] [bgcolor=#FFC0CB] [border: (4px solid #FF0000)]
+        RenderBlock {H1} at (61,496) size 499x82 [color=#FF0000] [bgcolor=#FFC0CB] [border: (4px solid #FF0000)]
           RenderText {#text} at (4,4) size 485x73
             text run at (4,4) width 485: "This header has a pink background"
             text run at (4,41) width 219: "and that's good."

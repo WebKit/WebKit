@@ -1,8 +1,8 @@
-layer at (0,0) size 781x608
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x600
-  RenderBlock {HTML} at (0,0) size 781x600
-    RenderBody {BODY} at (8,8) size 765x584
+layer at (0,0) size 784x608
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x600
+  RenderBlock {HTML} at (0,0) size 784x600
+    RenderBody {BODY} at (8,8) size 768x584
       RenderBlock {DIV} at (0,0) size 144x600
         RenderInline {SPAN} at (0,0) size 136x598 [bgcolor=#FFFFE0] [border: (5px solid #008000)]
           RenderText {#text} at (9,21) size 126x578

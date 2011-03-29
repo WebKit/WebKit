@@ -1,9 +1,9 @@
-layer at (0,0) size 781x1798
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x1798
-  RenderBlock {HTML} at (0,0) size 781x1798
-    RenderBody {BODY} at (8,20) size 765x1758 [bgcolor=#A6A972]
-      RenderBlock {DIV} at (81,0) size 602x1758 [bgcolor=#FDFDE9] [border: (1px solid #000000)]
+layer at (0,0) size 784x1798
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1798
+  RenderBlock {HTML} at (0,0) size 784x1798
+    RenderBody {BODY} at (8,20) size 768x1758 [bgcolor=#A6A972]
+      RenderBlock {DIV} at (83,0) size 602x1758 [bgcolor=#FDFDE9] [border: (1px solid #000000)]
         RenderBlock {DIV} at (1,31) size 600x70
         RenderBlock {DIV} at (1,114) size 600x1572
           RenderBlock {P} at (20,0) size 560x80 [color=#333333]
@@ -161,22 +161,22 @@ layer at (0,0) size 781x1798
           RenderBlock {SPAN} at (0,16) size 600x20 [color=#333333]
             RenderText {#text} at (244,2) size 112x15
               text run at (244,2) width 112: "\x{A9}2003 Kevin Davis"
-layer at (438,302) size 180x19
+layer at (440,302) size 180x19
   RenderBlock {DIV} at (3,3) size 180x19
-layer at (438,329) size 180x19
+layer at (440,329) size 180x19
   RenderBlock {DIV} at (3,3) size 180x19
-layer at (110,840) size 506x106 clip at (111,841) size 504x104
+layer at (112,840) size 506x106 clip at (113,841) size 504x104
   RenderTextControl {TEXTAREA} at (0,568) size 506x106 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x19
-layer at (110,1127) size 506x106 clip at (111,1128) size 504x104
+layer at (112,1127) size 506x106 clip at (113,1128) size 504x104
   RenderTextControl {TEXTAREA} at (0,855) size 506x106 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x19
-layer at (110,1258) size 506x106 clip at (111,1259) size 504x104
+layer at (112,1258) size 506x106 clip at (113,1259) size 504x104
   RenderTextControl {TEXTAREA} at (0,986) size 506x106 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x19
-layer at (110,1389) size 506x106 clip at (111,1390) size 504x104
+layer at (112,1389) size 506x106 clip at (113,1390) size 504x104
   RenderTextControl {TEXTAREA} at (0,1117) size 506x106 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x19
-layer at (110,1567) size 506x106 clip at (111,1568) size 504x104
+layer at (112,1567) size 506x106 clip at (113,1568) size 504x104
   RenderTextControl {TEXTAREA} at (0,1295) size 506x106 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 500x19

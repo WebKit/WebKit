@@ -1,8 +1,8 @@
 layer at (0,0) size 814x852
-  RenderView at (0,0) size 781x581
-layer at (0,0) size 781x581
-  RenderBlock {HTML} at (0,0) size 781x581
-    RenderBody {BODY} at (8,8) size 765x565
+  RenderView at (0,0) size 784x584
+layer at (0,0) size 784x584
+  RenderBlock {HTML} at (0,0) size 784x584
+    RenderBody {BODY} at (8,8) size 768x568
       RenderText {#text} at (0,0) size 762x38
         text run at (0,0) width 762: "Document canvas should be big enough to fit both blue and red (relative positioned) rectangles (ie. have scrollbars if they"
         text run at (0,19) width 127: "don't fit to the view)"
