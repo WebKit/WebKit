@@ -1,3 +1,12 @@
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
+        Add missing expectation (looks like a pass).
+
+        * platform/chromium/svg: Added.
+        * platform/chromium/svg/custom: Added.
+        * platform/chromium/svg/custom/use-in-symbol-with-offset-expected.checksum: Added.
+        * platform/chromium/svg/custom/use-in-symbol-with-offset-expected.png: Added.
+
 2011-03-29  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, skipping a test failing on GTK+ bots.
