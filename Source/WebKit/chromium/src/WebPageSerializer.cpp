@@ -31,14 +31,31 @@
 #include "config.h"
 #include "WebPageSerializer.h"
 
+#include "CSSFontFaceRule.h"
+#include "CSSFontFaceSrcValue.h"
+#include "CSSImageValue.h"
+#include "CSSImportRule.h"
+#include "CSSRule.h"
+#include "CSSRuleList.h"
+#include "CSSStyleRule.h"
+#include "CSSStyleSheet.h"
+#include "CSSValueList.h"
+#include "CachedImage.h"
 #include "DocumentLoader.h"
 #include "Element.h"
 #include "Frame.h"
 #include "HTMLAllCollection.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLLinkElement.h"
 #include "HTMLNames.h"
+#include "HTMLStyleElement.h"
 #include "KURL.h"
+#include "KURLHash.h"
+#include "ListHashSet.h"
+#include "StyleCachedImage.h"
+#include "StyleImage.h"
+#include "StyleSheetList.h"
 #include "Vector.h"
 
 #include "WebCString.h"
@@ -57,60 +74,81 @@ using namespace WebCore;
 
 namespace {
 
-KURL getSubResourceURLFromElement(Element* element)
+void retrieveResourcesForCSSStyleDeclaration(CSSStyleDeclaration*,
+                                             ListHashSet<KURL>* resourceURLs);
+
+const QualifiedName* getResourceAttributeForElement(HTMLElement* element)
 {
-    ASSERT(element);
-    const QualifiedName* attributeName = 0;
     if (element->hasTagName(HTMLNames::imgTag) || element->hasTagName(HTMLNames::scriptTag))
-        attributeName = &HTMLNames::srcAttr;
-    else if (element->hasTagName(HTMLNames::inputTag)) {
+        return &HTMLNames::srcAttr;
+
+    if (element->hasTagName(HTMLNames::inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(element);
         if (input->isImageButton())
-            attributeName = &HTMLNames::srcAttr;
-    } else if (element->hasTagName(HTMLNames::bodyTag)
-               || element->hasTagName(HTMLNames::tableTag)
-               || element->hasTagName(HTMLNames::trTag)
-               || element->hasTagName(HTMLNames::tdTag))
-        attributeName = &HTMLNames::backgroundAttr;
-    else if (element->hasTagName(HTMLNames::blockquoteTag)
-             || element->hasTagName(HTMLNames::qTag)
-             || element->hasTagName(HTMLNames::delTag)
-             || element->hasTagName(HTMLNames::insTag))
-        attributeName = &HTMLNames::citeAttr;
-    else if (element->hasTagName(HTMLNames::linkTag)) {
-        // If the link element is not css, ignore it.
-        if (equalIgnoringCase(element->getAttribute(HTMLNames::typeAttr), "text/css")) {
-            // FIXME: Add support for extracting links of sub-resources which
-            // are inside style-sheet such as @import, @font-face, url(), etc.
-            attributeName = &HTMLNames::hrefAttr;
-        }
-    } else if (element->hasTagName(HTMLNames::objectTag))
-        attributeName = &HTMLNames::dataAttr;
-    else if (element->hasTagName(HTMLNames::embedTag))
-        attributeName = &HTMLNames::srcAttr;
+            return &HTMLNames::srcAttr;
+    }
 
-    if (!attributeName)
-        return KURL();
+    if (element->hasTagName(HTMLNames::bodyTag)
+        || element->hasTagName(HTMLNames::tableTag)
+        || element->hasTagName(HTMLNames::trTag)
+        || element->hasTagName(HTMLNames::tdTag))
+        return &HTMLNames::backgroundAttr;
 
-    String value = element->getAttribute(*attributeName);
-    // Ignore javascript content.
-    if (value.isEmpty() || value.stripWhiteSpace().startsWith("javascript:", false))
-        return KURL();
-  
-    return element->document()->completeURL(value);
+    if (element->hasTagName(HTMLNames::blockquoteTag)
+        || element->hasTagName(HTMLNames::qTag)
+        || element->hasTagName(HTMLNames::delTag)
+        || element->hasTagName(HTMLNames::insTag))
+        return &HTMLNames::citeAttr;
+
+    if (element->hasTagName(HTMLNames::objectTag))
+        return &HTMLNames::dataAttr;
+
+    if (element->hasTagName(HTMLNames::iframeTag)
+        || element->hasTagName(HTMLNames::frameTag)
+        || element->hasTagName(HTMLNames::embedTag))
+        return &HTMLNames::srcAttr;
+
+    if (element->hasTagName(HTMLNames::linkTag)
+        && equalIgnoringCase(element->getAttribute(HTMLNames::typeAttr), "text/css"))
+        return &HTMLNames::hrefAttr;
+
+    return 0;
 }
 
-void retrieveResourcesForElement(Element* element,
-                                 Vector<Frame*>* visitedFrames,
-                                 Vector<Frame*>* framesToVisit,
-                                 Vector<KURL>* frameURLs,
-                                 Vector<KURL>* resourceURLs)
+void retrieveStyleSheetForElement(HTMLElement* element,
+                                  ListHashSet<CSSStyleSheet*>* styleSheets)
 {
-    // If the node is a frame, we'll process it later in retrieveResourcesForFrame.
+    if (element->hasTagName(HTMLNames::linkTag)) {
+        HTMLLinkElement* linkElement = static_cast<HTMLLinkElement*>(element);
+        // We are only interested in CSS links.
+        if (equalIgnoringCase(element->getAttribute(HTMLNames::typeAttr), "text/css")) {
+            StyleSheet* sheet = linkElement->sheet();
+            if (sheet && sheet->isCSSStyleSheet())
+                styleSheets->add(static_cast<CSSStyleSheet*>(sheet));
+        }
+        return;
+    } 
+    if (element->hasTagName(HTMLNames::styleTag)) {
+        HTMLStyleElement* styleElement = static_cast<HTMLStyleElement*>(element);
+        StyleSheet* sheet = styleElement->sheet();
+        if (sheet && sheet->isCSSStyleSheet())
+            styleSheets->add(static_cast<CSSStyleSheet*>(sheet));
+    }
+}
+
+void retrieveResourcesForElement(HTMLElement* element,
+                                 const WebKit::WebVector<WebKit::WebCString>& supportedSchemes,
+                                 ListHashSet<Frame*>* visitedFrames,
+                                 Vector<Frame*>* framesToVisit,
+                                 ListHashSet<CSSStyleSheet*>* styleSheets,
+                                 ListHashSet<KURL>* frameURLs,
+                                 ListHashSet<KURL>* resourceURLs)
+{
+    ASSERT(element);
     if ((element->hasTagName(HTMLNames::iframeTag) || element->hasTagName(HTMLNames::frameTag)
-        || element->hasTagName(HTMLNames::objectTag) || element->hasTagName(HTMLNames::embedTag))
-            && element->isFrameOwnerElement()) {
-        Frame* frame = static_cast<HTMLFrameOwnerElement*>(element)->contentFrame();
+         || element->hasTagName(HTMLNames::objectTag) || element->hasTagName(HTMLNames::embedTag))
+        && element->isFrameOwnerElement()) {
+        Frame* frame = static_cast<const HTMLFrameOwnerElement*>(element)->contentFrame();
         if (frame) {
             if (!visitedFrames->contains(frame))
                 framesToVisit->append(frame);
@@ -118,26 +156,36 @@ void retrieveResourcesForElement(Element* element,
         }
     }
 
-    KURL url = getSubResourceURLFromElement(element);
-    if (url.isEmpty() || !url.isValid())
-        return; // No subresource for this node.
+    const QualifiedName* attribute = getResourceAttributeForElement(element);
+    if (attribute) {
+        String value = element->getAttribute(*attribute);
+        if (!value.isEmpty()) {
+            KURL url = element->document()->completeURL(value);
+            // Ignore URLs that have a non-standard protocols. Since the FTP protocol
+            // does not have a cache mechanism, we skip it as well.
+            if (url.isValid() && (url.protocolInHTTPFamily() || url.isLocalFile()))
+                resourceURLs->add(url);
+        }
+    }
 
-    // Ignore URLs that have a non-standard protocols. Since the FTP protocol
-    // does no have a cache mechanism, we skip it as well.
-    if (!url.protocolInHTTPFamily() && !url.isLocalFile())
-        return;
-
-    if (!resourceURLs->contains(url))
-        resourceURLs->append(url);
+    retrieveStyleSheetForElement(element, styleSheets);
+    
+    // Process in-line style.
+    if (CSSStyleDeclaration* styleDeclaration = element->style())
+        retrieveResourcesForCSSStyleDeclaration(styleDeclaration, resourceURLs);
 }
 
 void retrieveResourcesForFrame(Frame* frame,
                                const WebKit::WebVector<WebKit::WebCString>& supportedSchemes,
-                               Vector<Frame*>* visitedFrames,
+                               ListHashSet<Frame*>* visitedFrames,
                                Vector<Frame*>* framesToVisit,
-                               Vector<KURL>* frameURLs,
-                               Vector<KURL>* resourceURLs)
+                               ListHashSet<CSSStyleSheet*>* styleSheets,
+                               ListHashSet<KURL>* frameURLs,
+                               ListHashSet<KURL>* resourceURLs)
 {
+    if (!visitedFrames->add(frame).second)
+        return; // We have already seen that frame.
+
     KURL frameURL = frame->loader()->documentLoader()->request().url();
 
     // If the frame's URL is invalid, ignore it, it is not retrievable.
@@ -155,23 +203,91 @@ void retrieveResourcesForFrame(Frame* frame,
     if (!isValidScheme)
         return;
 
-    // If we have already seen that frame, ignore it.
-    if (visitedFrames->contains(frame))
-        return;
-    visitedFrames->append(frame);
-    if (!frameURLs->contains(frameURL))
-        frameURLs->append(frameURL);
+    frameURLs->add(frameURL);
   
     // Now get the resources associated with each node of the document.
     RefPtr<HTMLAllCollection> allNodes = frame->document()->all();
     for (unsigned i = 0; i < allNodes->length(); ++i) {
-        Node* node = allNodes->item(i);
         // We are only interested in HTML resources.
-        if (!node->isElementNode())
+        if (HTMLElement* element = toHTMLElement(allNodes->item(i))) {
+            retrieveResourcesForElement(element, supportedSchemes,
+                                        visitedFrames, framesToVisit,
+                                        styleSheets, frameURLs, resourceURLs);
+        }
+    }
+}
+
+void retrieveResourcesForCSSRule(CSSStyleRule* rule,
+                                 ListHashSet<KURL>* resourceURLs)
+{
+    if (rule->style())
+        retrieveResourcesForCSSStyleDeclaration(rule->style(), resourceURLs);
+}
+
+void retrieveResourcesForCSSStyleDeclaration(CSSStyleDeclaration* styleDeclaration,
+                                             ListHashSet<KURL>* resourceURLs)
+{
+    // The background-image and list-style-image (for ul or ol) are the CSS properties
+    // that make use of images. We iterate to make sure we include any other
+    // image properties there might be.
+    for (unsigned i = 0; i < styleDeclaration->length(); ++i) {
+        // FIXME: it's kind of ridiculous to get the property name and then get
+        // the value out of the name. Ideally we would get the value out of the
+        // property ID, but CSSStyleDeclaration only gives access to property
+        // names, not IDs.
+        RefPtr<CSSValue> value = styleDeclaration->getPropertyCSSValue(styleDeclaration->item(i));
+        if (value->isImageValue()) {
+            CSSImageValue* imageValue = static_cast<CSSImageValue*>(value.get());
+            StyleImage* styleImage = imageValue->cachedOrPendingImage();
+            // Non cached-images are just place-holders and do not contain data.
+            if (styleImage->isCachedImage()) {
+                StyleSheet* styleSheet = styleDeclaration->stylesheet();
+                if (styleSheet->isCSSStyleSheet()) {
+                    String url = static_cast<StyleCachedImage*>(styleImage)->cachedImage()->url();
+                    resourceURLs->add(static_cast<CSSStyleSheet*>(styleSheet)->document()->completeURL(url));
+                }
+            }
+        }
+    }
+}
+
+void retrieveResourcesForCSSStyleSheet(CSSStyleSheet* styleSheet,
+                                       ListHashSet<CSSStyleSheet*>* visitedStyleSheets,
+                                       const WebKit::WebVector<WebKit::WebCString>& supportedSchemes,
+                                       ListHashSet<KURL>* resourceURLs)
+{
+    if (!styleSheet)
+        return;
+
+    if (!visitedStyleSheets->add(styleSheet).second)
+        return; // We have already seen that styleSheet.
+
+    // Parse the styles.
+    for (unsigned i = 0; i < styleSheet->length(); ++i) {
+        StyleBase* item = styleSheet->item(i);
+        if (!item)
             continue;
-        retrieveResourcesForElement(static_cast<Element*>(node),
-                                    visitedFrames, framesToVisit,
-                                    frameURLs, resourceURLs);
+
+       if (item->isImportRule()) {
+            CSSImportRule* importRule = static_cast<CSSImportRule*>(item);
+            // The imported CSS file itself is a resource.
+            resourceURLs->add(styleSheet->document()->completeURL(importRule->href()));
+            // And it may contain some more resources.
+            retrieveResourcesForCSSStyleSheet(importRule->styleSheet(), visitedStyleSheets, supportedSchemes, resourceURLs);
+        } else if (item->isFontFaceRule()) {
+            CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(item);
+            RefPtr<CSSValue> cssValue = fontFaceRule->style()->getPropertyCSSValue(CSSPropertySrc);
+            if (cssValue->isValueList()) {
+                CSSValueList* valueList = static_cast<CSSValueList*>(cssValue.get());
+                for (unsigned j = 0; j < valueList->length(); ++j) {
+                    // Note that there does not seem to be a way to ensure the value in the list is a CSSFontFaceSrcValue.
+                    // We do trust that list only contains CSSFontFaceSrcValues as done in WebCore/css/CSSFontSelector.cpp
+                    CSSFontFaceSrcValue* fontFaceSrc = static_cast<CSSFontFaceSrcValue*>(valueList->item(j));
+                    resourceURLs->add(styleSheet->document()->completeURL(fontFaceSrc->resource()));
+                }          
+            }
+        } else if (item->isStyleRule())
+            retrieveResourcesForCSSRule(static_cast<CSSStyleRule*>(item), resourceURLs);
     }
 }
 
@@ -200,9 +316,10 @@ bool WebPageSerializer::retrieveAllResources(WebView* view,
         return false;
 
     Vector<Frame*> framesToVisit;
-    Vector<Frame*> visitedFrames;
-    Vector<KURL> frameKURLs;
-    Vector<KURL> resourceKURLs;
+    ListHashSet<Frame*> visitedFrames;
+    ListHashSet<CSSStyleSheet*> styleSheets;
+    ListHashSet<KURL> frameKURLs;
+    ListHashSet<KURL> resourceKURLs;
     
     // Let's retrieve the resources from every frame in this page.
     framesToVisit.append(mainFrame->frame());
@@ -210,24 +327,37 @@ bool WebPageSerializer::retrieveAllResources(WebView* view,
         Frame* frame = framesToVisit[0];
         framesToVisit.remove(0);
         retrieveResourcesForFrame(frame, supportedSchemes,
-                                  &visitedFrames, &framesToVisit,
+                                  &visitedFrames, &framesToVisit, &styleSheets,
                                   &frameKURLs, &resourceKURLs);
+     }
+
+    // While retrieving the frame resources, we also retrieved the CSS style-sheets,
+    // we can process them now.
+    ListHashSet<CSSStyleSheet*> visitedStyleSheets;
+    for (ListHashSet<CSSStyleSheet*>::const_iterator iter = styleSheets.begin();
+         iter != styleSheets.end(); ++iter) {
+        retrieveResourcesForCSSStyleSheet(*iter, &visitedStyleSheets,
+                                          supportedSchemes, &resourceKURLs);
     }
 
     // Converts the results to WebURLs.
-    WebVector<WebURL> resultResourceURLs(resourceKURLs.size());
-    for (size_t i = 0; i < resourceKURLs.size(); ++i) {
-        resultResourceURLs[i] = resourceKURLs[i];
+    WebVector<WebURL> resultResourceURLs(static_cast<size_t>(resourceKURLs.size()));
+    int i = 0;
+    for (ListHashSet<KURL>::const_iterator iter = resourceKURLs.begin();
+         iter != resourceKURLs.end(); ++iter, ++i) {
+        KURL url = *iter;
+        resultResourceURLs[i] = url;
         // A frame's src can point to the same URL as another resource, keep the
         // resource URL only in such cases.
-        size_t index = frameKURLs.find(resourceKURLs[i]);
-        if (index != notFound)
-            frameKURLs.remove(index);
+        frameKURLs.remove(url);
     }
     *resourceURLs = resultResourceURLs;
-    WebVector<WebURL> resultFrameURLs(frameKURLs.size());
-    for (size_t i = 0; i < frameKURLs.size(); ++i)
-        resultFrameURLs[i] = frameKURLs[i];
+    WebVector<WebURL> resultFrameURLs(static_cast<size_t>(frameKURLs.size()));
+    i = 0;
+    for (ListHashSet<KURL>::const_iterator iter = frameKURLs.begin();
+         iter != frameKURLs.end(); ++iter, ++i)
+        resultFrameURLs[i] = *iter;
+
     *frameURLs = resultFrameURLs;
     
     return true;

@@ -622,6 +622,7 @@
                                 'tests/PopupMenuTest.cpp',
                                 'tests/TransparencyWinTest.cpp',
                                 'tests/UniscribeHelperTest.cpp',
+                                'tests/WebPageSerializerTest.cpp'
                                 'tests/WebUnitTests.cpp'
                             ]
                         }],

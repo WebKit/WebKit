@@ -1,3 +1,34 @@
+2011-03-29  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Adding retrieval off CSS resources to WebPageSerializer::retrieveAllResources.
+        https://bugs.webkit.org/show_bug.cgi?id=56650
+
+        * WebKit.gyp:
+        * src/WebPageSerializer.cpp:
+        (WebCore::getResourceAttributeForElement):
+        (WebCore::retrieveStyleSheetForElement):
+        (WebCore::retrieveResourcesForElement):
+        (WebCore::retrieveResourcesForFrame):
+        (WebCore::retrieveResourcesForCSSRule):
+        (WebCore::retrieveResourcesForCSSStyleDeclaration):
+        (WebCore::retrieveResourcesForCSSStyleSheet):
+        (WebKit::WebPageSerializer::retrieveAllResources):
+        * tests/WebPageSerializerTest.cpp:
+        (WebKit::TestWebFrameClient::TestWebFrameClient):
+        (WebKit::TestWebFrameClient::allowScript):
+        (WebKit::WebPageSerializerTest::enableJS):
+        (WebKit::WebPageSerializerTest::runOnLoad):
+        (WebKit::TEST_F):
+        * tests/data/pageserialization/css_test_page.html: Added.
+        * tests/data/pageserialization/import_style_from_link.css: Added.
+        (#divOrange):
+        * tests/data/pageserialization/import_styles.css: Added.
+        (#divYellow):
+        * tests/data/pageserialization/link_styles.css: Added.
+        (#divRed):
+
 2011-03-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
