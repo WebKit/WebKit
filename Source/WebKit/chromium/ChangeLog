@@ -1,3 +1,15 @@
+2011-03-29  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Adam Barth.
+
+        REGRESSION(r82295): This patch does not compile on Chromium (Requested by abarth|gardener on #webkit).
+        https://bugs.webkit.org/show_bug.cgi?id=57377
+
+        Fix build errors on Chromium bots.
+
+        * public/WebAccessibilityRole.h: Update to reflect newly added roles in WebCore.
+        * src/AssertMatchingEnums.cpp: Ditto.
+
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
         Roll Chromium DEPS

@@ -116,6 +116,11 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleMenuListPopup,
     WebAccessibilityRoleMenuListOption,
 
+    WebAccessibilityRoleParagraph,
+    WebAccessibilityRoleLabel,
+    WebAccessibilityRoleDiv,
+    WebAccessibilityRoleForm,
+
     WebAccessibilityRoleLandmarkApplication,
     WebAccessibilityRoleLandmarkBanner,
     WebAccessibilityRoleLandmarkComplementary,
