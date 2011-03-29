@@ -96,8 +96,48 @@ void InlineFlowBox::addToLine(InlineBox* child)
     }
     child->setFirstLineStyleBit(m_firstLine);
     child->setIsHorizontal(isHorizontal());
-    if (child->isText())
+    if (child->isText()) {
         m_hasTextChildren = true;
+        m_hasTextDescendants = true;
+    } else if (child->isInlineFlowBox()) {
+        if (static_cast<InlineFlowBox*>(child)->hasTextDescendants())
+            m_hasTextDescendants = true;
+    }
+
+    if (descendantsHaveSameLineHeightAndBaseline() && !child->renderer()->isPositioned()) {
+        RenderStyle* parentStyle = renderer()->style(m_firstLine);
+        RenderStyle* childStyle = child->renderer()->style(m_firstLine);
+        bool shouldClearDescendantsHaveSameLineHeightAndBaseline = false;
+        if (child->renderer()->isReplaced())
+            shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
+        else if (child->isText()) {
+            if (child->renderer()->isBR()) {
+                if (parentStyle->font().fontMetrics().ascent() != childStyle->font().fontMetrics().ascent()
+                    || parentStyle->font().fontMetrics().descent() != childStyle->font().fontMetrics().descent() || parentStyle->lineHeight() != childStyle->lineHeight()
+                    || (parentStyle->verticalAlign() != BASELINE && !isRootInlineBox()) || childStyle->verticalAlign() != BASELINE)
+                    shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
+            } else if (childStyle->hasTextCombine() || childStyle->textEmphasisMark() != TextEmphasisMarkNone)
+                shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
+        } else {
+            if (child->renderer()->isBR()) {
+                // FIXME: This is dumb. We only turn off because current layout test results expect the <br> to be 0-height on the baseline.
+                // Other than making a zillion tests have to regenerate results, there's no reason to ditch the optimization here.
+                shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
+            } else {
+                ASSERT(isInlineFlowBox());
+                InlineFlowBox* childFlowBox = static_cast<InlineFlowBox*>(child);
+                // Check the child's bit, and then also check for differences in font, line-height, vertical-align
+                if (!childFlowBox->descendantsHaveSameLineHeightAndBaseline() || parentStyle->font().fontMetrics().ascent() != childStyle->font().fontMetrics().ascent()
+                    || parentStyle->font().fontMetrics().descent() != childStyle->font().fontMetrics().descent() || parentStyle->lineHeight() != childStyle->lineHeight()
+                    || (parentStyle->verticalAlign() != BASELINE && !isRootInlineBox()) || childStyle->verticalAlign() != BASELINE
+                    || childStyle->hasBorder() || childStyle->hasPadding() || childStyle->hasTextCombine())
+                    shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
+            }
+        }
+
+        if (shouldClearDescendantsHaveSameLineHeightAndBaseline)
+            clearDescendantsHaveSameLineHeightAndBaseline();
+    }
 
     checkConsistency();
 }
@@ -406,12 +446,14 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox* rootBox, int& maxPos
     // part of the box (EXCLUDING leading) is above (for ascent) or below (for descent) the root box's baseline.
     bool affectsAscent = false;
     bool affectsDescent = false;
+    bool checkChildren = !descendantsHaveSameLineHeightAndBaseline();
+    
     if (isRootInlineBox()) {
         // Examine our root box.
         int ascent = 0;
         int descent = 0;
         rootBox->ascentAndDescentForBox(rootBox, textBoxDataMap, ascent, descent, affectsAscent, affectsDescent);
-        if (hasTextChildren() || strictMode) {
+        if (strictMode || hasTextChildren() || (!checkChildren && hasTextDescendants())) {
             if (maxAscent < ascent || !setMaxAscent) {
                 maxAscent = ascent;
                 setMaxAscent = true;
@@ -423,11 +465,14 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox* rootBox, int& maxPos
         }
     }
 
+    if (!checkChildren)
+        return;
+
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->renderer()->isPositioned())
             continue; // Positioned placeholders don't affect calculations.
         
-        bool isInlineFlow = curr->isInlineFlowBox();
+        InlineFlowBox* inlineFlowBox = curr->isInlineFlowBox() ? static_cast<InlineFlowBox*>(curr) : 0;
         
         bool affectsAscent = false;
         bool affectsDescent = false;
@@ -448,7 +493,8 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox* rootBox, int& maxPos
         } else if (curr->verticalAlign() == BOTTOM) {
             if (maxPositionBottom < boxHeight)
                 maxPositionBottom = boxHeight;
-        } else if ((!isInlineFlow || static_cast<InlineFlowBox*>(curr)->hasTextChildren()) || curr->boxModelObject()->hasInlineDirectionBordersOrPadding() || strictMode) {
+        } else if (!inlineFlowBox || strictMode || inlineFlowBox->hasTextChildren() || (inlineFlowBox->descendantsHaveSameLineHeightAndBaseline() && inlineFlowBox->hasTextDescendants())
+                   || inlineFlowBox->boxModelObject()->hasInlineDirectionBordersOrPadding()) {
             // Note that these values can be negative.  Even though we only affect the maxAscent and maxDescent values
             // if our box (excluding line-height) was above (for ascent) or below (for descent) the root baseline, once you factor in line-height
             // the final box can end up being fully above or fully below the root box's baseline!  This is ok, but what it
@@ -468,37 +514,47 @@ void InlineFlowBox::computeLogicalBoxHeights(RootInlineBox* rootBox, int& maxPos
             }
         }
 
-        if (curr->isInlineFlowBox())
-            static_cast<InlineFlowBox*>(curr)->computeLogicalBoxHeights(rootBox, maxPositionTop, maxPositionBottom, maxAscent, maxDescent,
-                                                                        setMaxAscent, setMaxDescent, strictMode, textBoxDataMap,
-                                                                        baselineType, verticalPositionCache);
+        if (inlineFlowBox)
+            inlineFlowBox->computeLogicalBoxHeights(rootBox, maxPositionTop, maxPositionBottom, maxAscent, maxDescent,
+                                                    setMaxAscent, setMaxDescent, strictMode, textBoxDataMap,
+                                                    baselineType, verticalPositionCache);
     }
 }
 
 void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAscent, bool strictMode, int& lineTop, int& lineBottom, bool& setLineTop,
                                                int& lineTopIncludingMargins, int& lineBottomIncludingMargins, bool& hasAnnotationsBefore, bool& hasAnnotationsAfter, FontBaseline baselineType)
 {
-    if (isRootInlineBox())
-        setLogicalTop(top + maxAscent - baselinePosition(baselineType)); // Place our root box.
+    bool isRootBox = isRootInlineBox();
+    if (isRootBox) {
+        const FontMetrics& fontMetrics = renderer()->style(m_firstLine)->fontMetrics();
+        setLogicalTop(top + maxAscent - fontMetrics.ascent(baselineType));
+    }
+
+    int adjustmentForChildrenWithSameLineHeightAndBaseline = 0;
+    if (descendantsHaveSameLineHeightAndBaseline()) {
+        adjustmentForChildrenWithSameLineHeightAndBaseline = logicalTop();
+        if (parent())
+            adjustmentForChildrenWithSameLineHeightAndBaseline += (boxModelObject()->borderBefore() + boxModelObject()->paddingBefore());
+    }
 
     for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
         if (curr->renderer()->isPositioned())
             continue; // Positioned placeholders don't affect calculations.
-        
-        // Adjust boxes to use their real box y/height and not the logical height (as dictated by
-        // line-height).
-        bool isInlineFlow = curr->isInlineFlowBox();
-        if (isInlineFlow)
-            static_cast<InlineFlowBox*>(curr)->placeBoxesInBlockDirection(top, maxHeight, maxAscent, strictMode, lineTop, lineBottom, setLineTop,
-                                                                          lineTopIncludingMargins, lineBottomIncludingMargins, hasAnnotationsBefore, hasAnnotationsAfter, baselineType);
 
+        if (descendantsHaveSameLineHeightAndBaseline()) {
+            curr->adjustBlockDirectionPosition(adjustmentForChildrenWithSameLineHeightAndBaseline);
+            continue;
+        }
+
+        InlineFlowBox* inlineFlowBox = curr->isInlineFlowBox() ? static_cast<InlineFlowBox*>(curr) : 0;
         bool childAffectsTopBottomPos = true;
         if (curr->verticalAlign() == TOP)
             curr->setLogicalTop(top);
         else if (curr->verticalAlign() == BOTTOM)
             curr->setLogicalTop(top + maxHeight - curr->lineHeight());
         else {
-            if ((isInlineFlow && !static_cast<InlineFlowBox*>(curr)->hasTextChildren()) && !curr->boxModelObject()->hasInlineDirectionBordersOrPadding() && !strictMode)
+            if (!strictMode && inlineFlowBox && !inlineFlowBox->hasTextChildren() && !curr->boxModelObject()->hasInlineDirectionBordersOrPadding()
+                && !(inlineFlowBox->descendantsHaveSameLineHeightAndBaseline() && inlineFlowBox->hasTextDescendants()))
                 childAffectsTopBottomPos = false;
             int posAdjust = maxAscent - curr->baselinePosition(baselineType);
             curr->setLogicalTop(curr->logicalTop() + top + posAdjust);
@@ -569,13 +625,16 @@ void InlineFlowBox::placeBoxesInBlockDirection(int top, int maxHeight, int maxAs
             lineBottom = max(lineBottom, newLogicalTop + boxHeight);
             lineBottomIncludingMargins = max(lineBottom, max(lineBottomIncludingMargins, newLogicalTopIncludingMargins + boxHeightIncludingMargins));
         }
+        
+        // Adjust boxes to use their real box y/height and not the logical height (as dictated by
+        // line-height).
+        if (inlineFlowBox)
+            inlineFlowBox->placeBoxesInBlockDirection(top, maxHeight, maxAscent, strictMode, lineTop, lineBottom, setLineTop,
+                                                      lineTopIncludingMargins, lineBottomIncludingMargins, hasAnnotationsBefore, hasAnnotationsAfter, baselineType);
     }
 
-    if (isRootInlineBox()) {
-        const FontMetrics& fontMetrics = renderer()->style(m_firstLine)->fontMetrics();
-        setLogicalTop(logicalTop() + baselinePosition(baselineType) - fontMetrics.ascent(baselineType));
-        
-        if (hasTextChildren() || strictMode) {
+    if (isRootBox) {
+        if (strictMode || hasTextChildren() || (descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
             if (!setLineTop) {
                 setLineTop = true;
                 lineTop = logicalTop();
@@ -821,7 +880,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
     // Constrain our hit testing to the line top and bottom if necessary.
     bool noQuirksMode = renderer()->document()->inNoQuirksMode();
-    if (!hasTextChildren() && !noQuirksMode) {
+    if (!noQuirksMode && !hasTextChildren() && !(descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
         RootInlineBox* rootBox = root();
         int& top = isHorizontal() ? minY : minX;
         int& logicalHeight = isHorizontal() ? height : width;
@@ -986,7 +1045,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 
     // Constrain our background/border painting to the line top and bottom if necessary.
     bool noQuirksMode = renderer()->document()->inNoQuirksMode();
-    if (!hasTextChildren() && !noQuirksMode) {
+    if (!noQuirksMode && !hasTextChildren() && !(descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
         RootInlineBox* rootBox = root();
         int& top = isHorizontal() ? y : x;
         int& logicalHeight = isHorizontal() ? h : w;
@@ -1068,7 +1127,7 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
 
     // Constrain our background/border painting to the line top and bottom if necessary.
     bool noQuirksMode = renderer()->document()->inNoQuirksMode();
-    if (!hasTextChildren() && !noQuirksMode) {
+    if (!noQuirksMode && !hasTextChildren() && !(descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
         RootInlineBox* rootBox = root();
         int& top = isHorizontal() ? y : x;
         int& logicalHeight = isHorizontal() ? h : w;

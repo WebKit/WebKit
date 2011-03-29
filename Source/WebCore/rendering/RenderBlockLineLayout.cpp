@@ -195,14 +195,14 @@ static bool parentIsConstructedOrHaveNext(InlineFlowBox* parentBox)
     return false;
 }
 
-InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine)
+InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine, InlineBox* childBox)
 {
     // See if we have an unconstructed line box for this object that is also
     // the last item on the line.
     unsigned lineDepth = 1;
-    InlineFlowBox* childBox = 0;
     InlineFlowBox* parentBox = 0;
     InlineFlowBox* result = 0;
+    bool hasDefaultLineBoxContain = style()->lineBoxContain() == RenderStyle::initialLineBoxContain();
     do {
         ASSERT(obj->isRenderInline() || obj == this);
         
@@ -223,6 +223,8 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine)
             parentBox = static_cast<InlineFlowBox*>(newBox);
             parentBox->setFirstLineStyleBit(firstLine);
             parentBox->setIsHorizontal(isHorizontalWritingMode());
+            if (!hasDefaultLineBoxContain)
+                parentBox->clearDescendantsHaveSameLineHeightAndBaseline();
             constructedNewBox = true;
         }
 
@@ -276,10 +278,11 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
         // run's inline box.
         if (!parentBox || parentBox->renderer() != r->m_object->parent())
             // Create new inline boxes all the way back to the appropriate insertion point.
-            parentBox = createLineBoxes(r->m_object->parent(), firstLine);
-
-        // Append the inline box to this line.
-        parentBox->addToLine(box);
+            parentBox = createLineBoxes(r->m_object->parent(), firstLine, box);
+        else {
+            // Append the inline box to this line.
+            parentBox->addToLine(box);
+        }
 
         bool visuallyOrdered = r->m_object->style()->visuallyOrdered();
         box->setBidiLevel(r->level());
@@ -439,6 +442,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
                 GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(static_cast<InlineTextBox*>(r->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
                 ASSERT(it->second.first.isEmpty());
                 copyToVector(fallbackFonts, it->second.first);
+                r->m_box->parent()->clearDescendantsHaveSameLineHeightAndBaseline();
             }
             if ((glyphOverflow.top || glyphOverflow.bottom || glyphOverflow.left || glyphOverflow.right)) {
                 ASSERT(r->m_box->isText());

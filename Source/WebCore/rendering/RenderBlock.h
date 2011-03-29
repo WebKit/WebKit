@@ -498,7 +498,7 @@ private:
     InlineIterator findNextLineBreak(InlineBidiResolver&, bool firstLine, bool& isLineEmpty, LineBreakIteratorInfo&, bool& previousLineBrokeCleanly, bool& hyphenated,
                                      EClear*, FloatingObject* lastFloatFromPreviousLine, Vector<RenderBox*>& positionedObjects);
     RootInlineBox* constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool firstLine, bool lastLine, RenderObject* endObject);
-    InlineFlowBox* createLineBoxes(RenderObject*, bool firstLine);
+    InlineFlowBox* createLineBoxes(RenderObject*, bool firstLine, InlineBox* childBox);
 
     void computeInlineDirectionPositionsForLine(RootInlineBox*, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
     void computeBlockDirectionPositionsForLine(RootInlineBox*, BidiRun*, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);

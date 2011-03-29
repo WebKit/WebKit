@@ -1,3 +1,43 @@
+2011-03-29  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57276
+        
+        Add optimizations to make the vertical placement of boxes much faster. Whenever a box is added
+        to a line, compare it with the parent box. If we can determine that the child box has the exact
+        same height and baseline position as the parent box, then we keep a boolean flag set called
+        descendantsHaveSameLineHeightAndBaseline(). If the box is different for any reason then we clear the
+        flag up the line box parent chain.
+
+        When it comes time to do computeLogicalboxHeights, we can avoid recurring into the children of
+        a box whose descendants all have the same position. When we do placeBoxesInBlockDirection, we
+        can do a simplified recursion that just calls adjustBlockDirectionPosition to offset the boxes
+        without doing anything else.
+        
+        Because of the quirks mode rule of only shrinking boxes with no immediate text children, we need
+        to track whether a box has text descendants now as well.  When we avoid doing the recursion
+        this flag tells us whether the collection of boxes should have an effect on the ascent and descent
+        of the line in quirks mode.
+ 
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::computeLogicalBoxHeights):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        (WebCore::InlineFlowBox::hasTextDescendants):
+        (WebCore::InlineFlowBox::descendantsHaveSameLineHeightAndBaseline):
+        (WebCore::InlineFlowBox::clearDescendantsHaveSameLineHeightAndBaseline):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::createLineBoxes):
+        (WebCore::RenderBlock::constructLine):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+
 2011-03-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.
