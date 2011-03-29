@@ -1,3 +1,13 @@
+2011-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support for parsing unicode-bidi: -webkit-isolate
+        https://bugs.webkit.org/show_bug.cgi?id=57181
+
+        * css3/unicode-bidi-insolate-parse-expected.txt: Added.
+        * css3/unicode-bidi-insolate-parse.html: Added.
+
 2011-03-29  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline for r82144.

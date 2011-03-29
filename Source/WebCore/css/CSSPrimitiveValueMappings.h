@@ -1741,30 +1741,34 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EUnicodeBidi e)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
-        case UBNormal:
-            m_value.ident = CSSValueNormal;
-            break;
-        case Embed:
-            m_value.ident = CSSValueEmbed;
-            break;
-        case Override:
-            m_value.ident = CSSValueBidiOverride;
-            break;
+    case UBNormal:
+        m_value.ident = CSSValueNormal;
+        break;
+    case Embed:
+        m_value.ident = CSSValueEmbed;
+        break;
+    case Override:
+        m_value.ident = CSSValueBidiOverride;
+        break;
+    case Isolate:
+        m_value.ident = CSSValueWebkitIsolate;
     }
 }
 
 template<> inline CSSPrimitiveValue::operator EUnicodeBidi() const
 {
     switch (m_value.ident) {
-        case CSSValueNormal:
-            return UBNormal; 
-        case CSSValueEmbed:
-            return Embed; 
-        case CSSValueBidiOverride:
-            return Override;
-        default:
-            ASSERT_NOT_REACHED();
-            return UBNormal;
+    case CSSValueNormal:
+        return UBNormal;
+    case CSSValueEmbed:
+        return Embed;
+    case CSSValueBidiOverride:
+        return Override;
+    case CSSValueWebkitIsolate:
+        return Isolate;
+    default:
+        ASSERT_NOT_REACHED();
+        return UBNormal;
     }
 }
 

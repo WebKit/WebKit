@@ -121,7 +121,7 @@ enum ETableLayout {
 };
 
 enum EUnicodeBidi {
-    UBNormal, Embed, Override
+    UBNormal, Embed, Override, Isolate
 };
 
 // CSS Text Layout Module Level 3: Vertical writing support

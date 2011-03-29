@@ -1,0 +1,12 @@
+<!DOCTYPE HTML>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<p id="description"></p><div id="console"></div>
+<script>
+description("Basic test for unicode-bidi: isolate parsing.")
+var testDiv = document.createElement("div");
+testDiv.style.cssText = "unicode-bidi: -webkit-isolate";
+shouldBeEqualToString("testDiv.style.unicodeBidi", "-webkit-isolate");
+successfullyParsed = true;
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>

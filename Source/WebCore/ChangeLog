@@ -1,3 +1,21 @@
+2011-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add support for parsing unicode-bidi: -webkit-isolate
+        https://bugs.webkit.org/show_bug.cgi?id=57181
+
+        Test: css3/unicode-bidi-insolate-parse.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EUnicodeBidi):
+        * css/CSSValueKeywords.in:
+        * rendering/style/RenderStyleConstants.h:
+
 2011-03-29  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix for r82193.
