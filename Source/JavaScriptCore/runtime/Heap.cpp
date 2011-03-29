@@ -383,7 +383,11 @@ void Heap::reset(SweepToggle sweepToggle)
         m_markedSpace.shrink();
     }
 
-    size_t proportionalBytes = static_cast<size_t>(1.5 * m_markedSpace.size());
+    // To avoid pathological GC churn in large heaps, we set the allocation high
+    // water mark to be proportional to the current size of the heap. The exact
+    // proportion is a bit arbitrary. A 2X multiplier gives a 1:1 (heap size :
+    // new bytes allocated) proportion, and seems to work well in benchmarks.
+    size_t proportionalBytes = 2 * m_markedSpace.size();
     m_markedSpace.setHighWaterMark(max(proportionalBytes, minBytesPerCycle));
 
     JAVASCRIPTCORE_GC_END();
