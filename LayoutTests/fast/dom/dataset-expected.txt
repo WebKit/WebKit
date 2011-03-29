@@ -8,6 +8,10 @@ PASS testGet('data-foo-bar', 'fooBar') is true
 PASS testGet('data--', '-') is true
 PASS testGet('data--foo', 'Foo') is true
 PASS testGet('data---foo', '-Foo') is true
+PASS testGet('data---foo--bar', '-Foo-Bar') is true
+PASS testGet('data---foo---bar', '-Foo--Bar') is true
+PASS testGet('data-foo-', 'foo-') is true
+PASS testGet('data-foo--', 'foo--') is true
 PASS testGet('data-Foo', 'foo') is true
 PASS testGet('data-', '') is true
 PASS testGet('data-à', 'à') is true

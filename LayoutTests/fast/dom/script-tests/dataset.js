@@ -12,6 +12,10 @@ shouldBeTrue("testGet('data-foo-bar', 'fooBar')");
 shouldBeTrue("testGet('data--', '-')");
 shouldBeTrue("testGet('data--foo', 'Foo')");
 shouldBeTrue("testGet('data---foo', '-Foo')");
+shouldBeTrue("testGet('data---foo--bar', '-Foo-Bar')");
+shouldBeTrue("testGet('data---foo---bar', '-Foo--Bar')");
+shouldBeTrue("testGet('data-foo-', 'foo-')");
+shouldBeTrue("testGet('data-foo--', 'foo--')");
 shouldBeTrue("testGet('data-Foo', 'foo')"); // HTML lowercases all attributes.
 shouldBeTrue("testGet('data-', '')");
 shouldBeTrue("testGet('data-\xE0', '\xE0')");

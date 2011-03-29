@@ -72,13 +72,30 @@ static String convertAttributeNameToPropertyName(const String& name)
 
 static bool propertyNameMatchesAttributeName(const String& propertyName, const String& attributeName)
 {
-    // FIXME: This should be able to match without creating a new string.
-
-    if (!isValidAttributeName(attributeName))
+    if (!attributeName.startsWith("data-"))
         return false;
 
-    String convertedName = convertAttributeNameToPropertyName(attributeName);
-    return (convertedName == propertyName);
+    const UChar* property = propertyName.characters();
+    const UChar* attribute = attributeName.characters();
+    unsigned propertyLength = propertyName.length();
+    unsigned attributeLength = attributeName.length();
+   
+    unsigned a = 5;
+    unsigned p = 0;
+    bool wordBoundary = false;
+    while (a < attributeLength && p < propertyLength) {
+        if (attribute[a] == '-' && a + 1 < attributeLength && attribute[a + 1] != '-')
+            wordBoundary = true;
+        else {
+            if ((wordBoundary ? toASCIIUpper(attribute[a]) : attribute[a]) != property[p])
+                return false;
+            p++;
+            wordBoundary = false;
+        }
+        a++;
+    }
+
+    return (a == attributeLength && p == propertyLength);
 }
 
 static bool isValidPropertyName(const String& name)

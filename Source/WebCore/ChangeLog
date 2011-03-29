@@ -1,3 +1,16 @@
+2011-03-29  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        DatasetDOMStringMap::item and ::contains copies attribute name string
+        https://bugs.webkit.org/show_bug.cgi?id=55645
+
+        Change propertyNameMatchesAttributeName to match without creating a copy
+        of the string.
+
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::propertyNameMatchesAttributeName):
+
 2011-03-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed rollout r82282, part of r82288, r82298.
