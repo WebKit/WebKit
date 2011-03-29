@@ -1,3 +1,15 @@
+2011-03-29  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix for execCommand("Delete") with an empty selection.
+        https://bugs.webkit.org/show_bug.cgi?id=56652
+
+        Add test for deleting an empty selection from an empty container.
+
+        * editing/execCommand/delete-empty-container-expected.txt: Added.
+        * editing/execCommand/delete-empty-container.html: Added.
+
 2011-03-29  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

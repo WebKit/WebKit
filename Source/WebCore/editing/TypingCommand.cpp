@@ -443,7 +443,7 @@ void TypingCommand::insertParagraphSeparatorInQuotedContent()
 bool TypingCommand::makeEditableRootEmpty()
 {
     Element* root = endingSelection().rootEditableElement();
-    if (!root->firstChild())
+    if (!root || !root->firstChild())
         return false;
 
     if (root->firstChild() == root->lastChild() && root->firstElementChild() && root->firstElementChild()->hasTagName(brTag)) {
