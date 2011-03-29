@@ -112,7 +112,9 @@ def unit_test_list():
               actual_checksum='image_checksum_fail-checksum',
               actual_image='image_checksum_fail-png')
     tests.add('failures/expected/keyboard.html', keyboard=True)
-    tests.add('failures/expected/missing_check.html', expected_checksum=None)
+    tests.add('failures/expected/missing_check.html',
+              expected_checksum=None,
+              expected_image=None)
     tests.add('failures/expected/missing_image.html', expected_image=None)
     tests.add('failures/expected/missing_text.html', expected_text=None)
     tests.add('failures/expected/newlines_leading.html',
@@ -133,6 +135,9 @@ def unit_test_list():
     tests.add('passes/error.html', error='stuff going to stderr')
     tests.add('passes/image.html')
     tests.add('passes/platform_image.html')
+    tests.add('passes/checksum_in_image.html',
+              expected_checksum=None,
+              expected_image='tEXtchecksum\x00checksum_in_image-checksum')
 
     # Text output files contain "\r\n" on Windows.  This may be
     # helpfully filtered to "\r\r\n" by our Python/Cygwin tooling.

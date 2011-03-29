@@ -207,6 +207,9 @@ class MockDRTTest(unittest.TestCase):
     def test_textonly(self):
         self.assertTest('passes/image.html', False)
 
+    def test_checksum_in_png(self):
+        self.assertTest('passes/checksum_in_image.html', True)
+
 
 class MockChromiumDRTTest(MockDRTTest):
     def extra_args(self, pixel_tests):

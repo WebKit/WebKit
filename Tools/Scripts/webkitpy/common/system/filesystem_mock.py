@@ -228,6 +228,11 @@ class MockFileSystem(object):
     def read_text_file(self, path):
         return self.read_binary_file(path).decode('utf-8')
 
+    def open_binary_file_for_reading(self, path):
+        if self.files[path] is None:
+            self._raise_not_found(path)
+        return ReadableFileObject(self, path, self.files[path])
+
     def read_binary_file(self, path):
         # Intentionally raises KeyError if we don't recognize the path.
         if self.files[path] is None:
@@ -285,3 +290,28 @@ class WritableFileObject(object):
     def write(self, str):
         self.fs.files[self.path] += str
         self.fs.written_files[self.path] = self.fs.files[self.path]
+
+
+class ReadableFileObject(object):
+    def __init__(self, fs, path, data=""):
+        self.fs = fs
+        self.path = path
+        self.closed = False
+        self.data = data
+        self.offset = 0
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.close()
+
+    def close(self):
+        self.closed = True
+
+    def read(self, bytes=None):
+        if not bytes:
+            return self.data[self.offset:]
+        start = self.offset
+        self.offset += bytes
+        return self.data[start:self.offset]

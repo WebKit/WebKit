@@ -1,3 +1,22 @@
+2011-03-29  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] NRWT should be able to read checksums from png comments
+        https://bugs.webkit.org/show_bug.cgi?id=57280
+
+        * Scripts/read-checksum-from-png: Added. Utility script to read the checksum
+            from a file.
+        * Scripts/webkitpy/common/system/filesystem.py: Add open_binary_file_for_reading
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/layout_tests/port/base.py: When loading a checksum,
+            if the -checksum.txt file doesn't exist, try looking in the png.
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/read_checksum_from_png.py: Added. Scan the first
+            2k for a png comment with the checksum
+        * Scripts/webkitpy/layout_tests/read_checksum_from_png_unittest.py: Added.
+
 2011-03-29  Philippe Normand  <pnormand@igalia.com>
 
         Rubber-stamped by Gustavo Noronha Silva.
