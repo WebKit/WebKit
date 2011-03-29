@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+    class EventDispatcher;
+    class Node;
     class PlatformKeyboardEvent;
 
 #if PLATFORM(MAC)
@@ -99,6 +101,7 @@ namespace WebCore {
         KeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*,
                       const String& keyIdentifier, unsigned keyLocation,
                       bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey);
+        virtual bool dispatch(EventDispatcher*);
 
         OwnPtr<PlatformKeyboardEvent> m_keyEvent;
         String m_keyIdentifier;

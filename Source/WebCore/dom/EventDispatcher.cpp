@@ -31,7 +31,6 @@
 #include "EventTarget.h"
 #include "FrameView.h"
 #include "InspectorInstrumentation.h"
-#include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "Node.h"
 #include "PlatformWheelEvent.h"
@@ -54,10 +53,12 @@ namespace WebCore {
 
 static HashSet<Node*>* gNodesDispatchingSimulatedClicks = 0;
 
-bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<Event> event)
+bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<Event> prpEvent)
 {
+    RefPtr<Event> event = prpEvent;
+
     EventDispatcher dispatcher(node);
-    return dispatcher.dispatchEvent(event);
+    return event->dispatch(&dispatcher);
 }
 
 static EventTarget* findElementInstance(Node* referenceNode)
@@ -96,15 +97,6 @@ void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<Event> event)
     event->setTarget(eventTargetRespectingSVGTargetRules(node));
 
     ScopedEventQueue::instance()->enqueueEvent(event);
-}
-
-bool EventDispatcher::dispatchKeyboardEvent(Node* node, const PlatformKeyboardEvent& event)
-{
-    EventDispatcher dispatcher(node);
-
-    RefPtr<KeyboardEvent> keyboardEvent = KeyboardEvent::create(event, node->document()->defaultView());
-    // Make sure not to return true if we already took default action while handling the event.
-    return dispatcher.dispatchEvent(keyboardEvent) && !keyboardEvent->defaultHandled();
 }
 
 bool EventDispatcher::dispatchMouseEvent(Node* node, const PlatformMouseEvent& event, const AtomicString& eventType,
@@ -245,10 +237,8 @@ void EventDispatcher::getEventAncestors(EventTarget* originalTarget, EventDispat
     }
 }
 
-bool EventDispatcher::dispatchEvent(PassRefPtr<Event> prpEvent)
+bool EventDispatcher::dispatchEvent(PassRefPtr<Event> event)
 {
-    RefPtr<Event> event = prpEvent;
-
     event->setTarget(eventTargetRespectingSVGTargetRules(m_node.get()));
 
     ASSERT(!eventDispatchForbidden());

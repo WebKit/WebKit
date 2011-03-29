@@ -2637,9 +2637,9 @@ void Node::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr
     dispatchScopedEvent(event.release());
 }
 
-bool Node::dispatchKeyEvent(const PlatformKeyboardEvent& key)
+bool Node::dispatchKeyEvent(const PlatformKeyboardEvent& event)
 {
-    return EventDispatcher::dispatchKeyboardEvent(this, key);
+    return EventDispatcher::dispatchEvent(this, KeyboardEvent::create(event, document()->defaultView()));
 }
 
 bool Node::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType,

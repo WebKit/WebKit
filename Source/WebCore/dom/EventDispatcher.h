@@ -45,17 +45,16 @@ enum EventDispatchBehavior {
     StayInsideShadowDOM
 };
 
-
 class EventDispatcher {
 public:
     static bool dispatchEvent(Node*, PassRefPtr<Event>);
     static void dispatchScopedEvent(Node*, PassRefPtr<Event>);
 
-    static bool dispatchKeyboardEvent(Node*, const PlatformKeyboardEvent&);
     static bool dispatchMouseEvent(Node*, const PlatformMouseEvent&, const AtomicString& eventType, int clickCount = 0, Node* relatedTarget = 0);
     static void dispatchSimulatedClick(Node*, PassRefPtr<Event> underlyingEvent, bool sendMouseEvents = false, bool showPressedLook = true);
     static void dispatchWheelEvent(Node*, PlatformWheelEvent&);
 
+    bool dispatchEvent(PassRefPtr<Event>);
 private:
     EventDispatcher(Node*);
 
@@ -64,7 +63,6 @@ private:
     const EventContext* topEventContext();
     bool ancestorsInitialized() const;
 
-    bool dispatchEvent(PassRefPtr<Event>);
     bool dispatchMouseEvent(const AtomicString& eventType, int button, int detail,
         int pageX, int pageY, int screenX, int screenY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
         bool isSimulated, Node* relatedTargetArg, PassRefPtr<Event> underlyingEvent);

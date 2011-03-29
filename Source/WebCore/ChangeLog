@@ -1,3 +1,29 @@
+2011-03-28  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove specialization of EventDispatcher with inversion of control.
+        https://bugs.webkit.org/show_bug.cgi?id=57285
+
+        Since some events have extra logic around their dispatch, allow them
+        to dispatch themselves and specialize the logic. This change only
+        converts KeyboardEvent to this model.
+
+        No functional change, covered by existing tests.
+
+        * dom/Event.cpp:
+        (WebCore::Event::dispatch): Added.
+        * dom/Event.h: Updated decls.
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent): Changed to ask event to dispatch
+            itself.
+        * dom/EventDispatcher.h: Updated decls.
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::dispatch): Added, moving code from EventDispatcher.
+        * dom/KeyboardEvent.h: Updated decls.
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchKeyEvent): Changed to use the new ways.
+
 2011-03-29  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

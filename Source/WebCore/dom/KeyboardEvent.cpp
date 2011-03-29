@@ -25,6 +25,7 @@
 
 #include "Document.h"
 #include "DOMWindow.h"
+#include "EventDispatcher.h"
 #include "EventNames.h"
 #include "EventHandler.h"
 #include "Frame.h"
@@ -158,6 +159,12 @@ KeyboardEvent* findKeyboardEvent(Event* event)
         if (e->isKeyboardEvent())
             return static_cast<KeyboardEvent*>(e);
     return 0;
+}
+
+bool KeyboardEvent::dispatch(EventDispatcher* dispatcher)
+{
+    // Make sure not to return true if we already took default action while handling the event.
+    return dispatcher->dispatchEvent(this) && !defaultHandled();
 }
 
 } // namespace WebCore

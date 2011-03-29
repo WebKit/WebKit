@@ -32,6 +32,7 @@
 namespace WebCore {
 
     class EventTarget;
+    class EventDispatcher;
 
     class Event : public RefCounted<Event> {
     public:
@@ -164,6 +165,8 @@ namespace WebCore {
         virtual void storeResult(const String&);
 
         virtual Clipboard* clipboard() const { return 0; }
+
+        virtual bool dispatch(EventDispatcher*);
 
     protected:
         Event();
