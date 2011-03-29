@@ -1,3 +1,13 @@
+2011-03-29  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        CoreIPC::decodeResourceError() leaks a CFDataRef
+        https://bugs.webkit.org/show_bug.cgi?id=57366
+
+        * Shared/win/WebCoreArgumentCodersWin.cpp:
+        (CoreIPC::decodeResourceError): Don't leak the result of WebCore::copyCertificateToData(), since the ResourceError will retain it.
+
 2011-03-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

@@ -145,7 +145,7 @@ bool decodeResourceError(ArgumentDecoder* decoder, WebCore::ResourceError& resou
     const Vector<PCCERT_CONTEXT> certificateChain = certificate.certificateChain();
     if (!certificateChain.isEmpty()) {
         ASSERT(certificateChain.size() == 1);
-        resourceError = WebCore::ResourceError(domain, errorCode, failingURL, localizedDescription, WebCore::copyCertificateToData(certificateChain.first()).leakRef());
+        resourceError = WebCore::ResourceError(domain, errorCode, failingURL, localizedDescription, WebCore::copyCertificateToData(certificateChain.first()).get());
         return true;
     }
 #endif
