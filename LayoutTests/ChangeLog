@@ -1,3 +1,18 @@
+2011-03-29  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Incorrect offset of svg <use> element which is in <symbol> element
+        https://bugs.webkit.org/show_bug.cgi?id=57318
+
+        Test case to verify offset of svg <use> element in <symbol> element
+        is set correctly.
+
+        * platform/qt/svg/custom/use-in-symbol-with-offset-expected.checksum: Added.
+        * platform/qt/svg/custom/use-in-symbol-with-offset-expected.png: Added.
+        * svg/custom/use-in-symbol-with-offset-expected.txt: Added.
+        * svg/custom/use-in-symbol-with-offset.svg: Added.
+
 2011-03-29  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

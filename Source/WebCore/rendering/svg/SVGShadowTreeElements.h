@@ -44,6 +44,7 @@ protected:
     SVGShadowTreeContainerElement(Document*);
 
 private:
+    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
     virtual bool isShadowTreeContainerElement() const { return true; }
 
     SVGLength m_xOffset;

@@ -1,3 +1,28 @@
+2011-03-29  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Incorrect offset of svg <use> element which is in <symbol> element
+        https://bugs.webkit.org/show_bug.cgi?id=57318
+
+        When webkit expanded a svg <symbol> element in the shadow tree it
+        would clone the children of the <symbol>. The children may contain
+        SVGShadowTreeContainerElement which was expanded from svg <use>
+        element. But the clone operation would clone a
+        SVGShadowTreeContainerElement as a svg <g> element. This resulted
+        that updateContainerOffset wouldn't update offset for those elements
+        which were expand from <use> elements.
+
+        This patch implements cloneElementWithoutAttributesAndChildren for
+        SVGShadowTreeContainerElement to make the container clone itself
+        correctly.
+
+        Test: svg/custom/use-in-symbol-with-offset.svg
+
+        * rendering/svg/SVGShadowTreeElements.cpp:
+        (WebCore::SVGShadowTreeContainerElement::cloneElementWithoutAttributesAndChildren):
+        * rendering/svg/SVGShadowTreeElements.h:
+
 2011-03-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.
