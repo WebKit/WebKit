@@ -129,8 +129,9 @@ void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
     else
         host->setShadowRoot(m_bubble);
 
-    m_bubble->appendChild(ElementWithPseudoId::create(doc, "-webkit-validation-bubble-top-outer-arrow"), ec);
-    m_bubble->appendChild(ElementWithPseudoId::create(doc, "-webkit-validation-bubble-top-inner-arrow"), ec);
+    RefPtr<HTMLElement> clipper = ElementWithPseudoId::create(doc, "-webkit-validation-bubble-arrow-clipper");
+    clipper->appendChild(ElementWithPseudoId::create(doc, "-webkit-validation-bubble-arrow"), ec);
+    m_bubble->appendChild(clipper.release(), ec);
     m_bubbleMessage = ElementWithPseudoId::create(doc, "-webkit-validation-bubble-message");
     m_bubble->appendChild(m_bubbleMessage, ec);
 

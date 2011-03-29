@@ -1,3 +1,38 @@
+2011-03-28  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix some problems of the appearance of form validation message bubble.
+        https://bugs.webkit.org/show_bug.cgi?id=57208
+
+        No new tests. Validation message bubble appearance is not testable
+        because it depends on a timer.
+
+        * css/html.css:
+        (::-webkit-validation-bubble):
+        (::-webkit-validation-bubble-message):
+        (::-webkit-validation-bubble-arrow):
+        (::-webkit-validation-bubble-arrow-clipper):
+          - Explicitly set margin, padding, and color.
+          - Make the shadow darker.
+          - Make the background color darker.
+          - Make opacity larger.
+          - Make the border color lighter.
+          - Add inset shadows
+          - Change the implementation of an arrow.
+            Stop making a right triangle by the border trick.
+            Use -webkit-transform instead.
+          - Make min-width workable by changing display property of
+            -webkit-validation-bubble to "inline-block".
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::buildBubbleTree):
+          Change the node structure. Before this change, -webkit-validation-bubble
+          had three DIVs inside. After this change, it has two DIVs;
+          -webkit-validation-bubble-arrow-clipper and
+          -webkit-validation-bubble-message, and
+          -webkit-validation-bubble-arrow-clipper contains
+          -webkit-validation-bubble-arrow.
+
 2011-03-28  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Sam Weinig.
