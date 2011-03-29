@@ -33,11 +33,15 @@ WebInspector.DebuggerPresentationModel = function()
     this._sourceFiles = {};
     this._messages = [];
     this._presentationBreakpoints = {};
+    this._presentationCallFrames = [];
+    this._selectedCallFrameIndex = 0;
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasEnabled, this._debuggerWasEnabled, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._failedToParseScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointResolved, this._breakpointResolved, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
+    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.Reset, this._reset, this);
 }
 
@@ -46,7 +50,10 @@ WebInspector.DebuggerPresentationModel.Events = {
     SourceFileChanged: "source-file-changed",
     ConsoleMessageAdded: "console-message-added",
     BreakpointAdded: "breakpoint-added",
-    BreakpointRemoved: "breakpoint-removed"
+    BreakpointRemoved: "breakpoint-removed",
+    DebuggerPaused: "debugger-paused",
+    DebuggerResumed: "debugger-resumed",
+    CallFrameSelected: "call-frame-selected"
 }
 
 WebInspector.DebuggerPresentationModel.prototype = {
@@ -118,7 +125,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
     editScriptSource: function(sourceFileId, text, callback)
     {
         var script = this._scriptForSourceFileId(sourceFileId);
-        var oldSource = script.source;
+        var sourceFile = this._sourceFiles[sourceFileId];
+        var oldSource = sourceFile.content;
         function didEditScriptSource(success, newBodyOrErrorMessage)
         {
             if (!success) {
@@ -131,12 +139,14 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
             var resource = WebInspector.resourceForURL(script.sourceURL);
             if (resource) {
-                var sourceFile = this._sourceFiles[sourceFileId];
                 var revertHandle = this.editScriptSource.bind(this, sourceFileId, oldSource, sourceFile.reload.bind(sourceFile));
                 resource.setContent(newSource, revertHandle);
             }
 
             callback(true, newSource);
+
+            if (WebInspector.debuggerModel.callFrames)
+                this._debuggerPaused();
         }
         WebInspector.debuggerModel.editScriptSource(script.sourceID, text, didEditScriptSource.bind(this));
     },
@@ -178,8 +188,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
             this._formatter = new WebInspector.ScriptFormatter();
 
         var messages = this._messages;
-
-        this._reset();
+        this._sourceFiles = {};
+        this._messages = [];
+        this._presentationBreakpoints = {};
 
         var scripts = WebInspector.debuggerModel.scripts;
         for (var id in scripts)
@@ -189,6 +200,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
             this.addConsoleMessage(messages[i]);
 
         this._refreshBreakpoints();
+
+        if (WebInspector.debuggerModel.callFrames)
+            this._debuggerPaused();
     },
 
     addConsoleMessage: function(message)
@@ -372,27 +386,41 @@ WebInspector.DebuggerPresentationModel.prototype = {
         WebInspector.settings.breakpoints = serializedBreakpoints;
     },
 
+    _debuggerPaused: function()
+    {
+        var callFrames = WebInspector.debuggerModel.callFrames;
+        this._presentationCallFrames = [];
+        for (var i = 0; i < callFrames.length; ++i) {
+            var callFrame = callFrames[i];
+            var sourceFile;
+            var script = WebInspector.debuggerModel.scriptForSourceID(callFrame.sourceID);
+            if (script)
+                sourceFile = this._sourceFileForScript(script);
+            this._presentationCallFrames.push(new WebInspector.PresenationCallFrame(callFrame, i, sourceFile));
+        }
+        var details = WebInspector.debuggerModel.debuggerPausedDetails;
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, { callFrames: this._presentationCallFrames, details: details });
+
+        this.selectedCallFrame = this._presentationCallFrames[this._selectedCallFrameIndex];
+    },
+
+    _debuggerResumed: function()
+    {
+        this._presentationCallFrames = [];
+        this._selectedCallFrameIndex = 0;
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.DebuggerResumed);
+    },
+
     set selectedCallFrame(callFrame)
     {
-        this._selectedCallFrame = callFrame;
-        if (!callFrame)
-            return;
-
-        function didRequestSourceMapping(mapping)
-        {
-            callFrame.sourceLocation = mapping.scriptLocationToSourceLocation(callFrame.line, callFrame.column);
-            callFrame.sourceLocation.sourceFileId = sourceFile.id;
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, callFrame);
-        }
-        var script = WebInspector.debuggerModel.scriptForSourceID(callFrame.sourceID);
-        var sourceFile = this._sourceFileForScript(script);
-        sourceFile.requestSourceMapping(didRequestSourceMapping.bind(this));
-        sourceFile.forceLoadContent(script);
+        this._selectedCallFrameIndex = callFrame.index;
+        callFrame.select();
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, callFrame);
     },
 
     get selectedCallFrame()
     {
-        return this._selectedCallFrame;
+        return this._presentationCallFrames[this._selectedCallFrameIndex];
     },
 
     _sourceFileForScript: function(script)
@@ -419,6 +447,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._sourceFiles = {};
         this._messages = [];
         this._presentationBreakpoints = {};
+        this._presentationCallFrames = [];
+        this._selectedCallFrameIndex = 0;
     }
 }
 
@@ -473,5 +503,76 @@ WebInspector.PresentationBreakpoint.prototype = {
             callback(snippet);
         }
         this._sourceFile.requestContent(didRequestContent.bind(this));
+    }
+}
+
+WebInspector.PresenationCallFrame = function(callFrame, index, sourceFile)
+{
+    this._callFrame = callFrame;
+    this._index = index;
+    this._sourceFile = sourceFile;
+    this._script = WebInspector.debuggerModel.scriptForSourceID(callFrame.sourceID);
+}
+
+WebInspector.PresenationCallFrame.prototype = {
+    get functionName()
+    {
+        return this._callFrame.functionName;
+    },
+
+    get type()
+    {
+        return this._callFrame.type;
+    },
+
+    get isInternalScript()
+    {
+        return !this._script;
+    },
+
+    get url()
+    {
+        if (this._sourceFile)
+            return this._sourceFile.url;
+    },
+
+    get scopeChain()
+    {
+        return this._callFrame.scopeChain;
+    },
+
+    get index()
+    {
+        return this._index;
+    },
+
+    select: function()
+    {
+        if (this._sourceFile)
+            this._sourceFile.forceLoadContent(this._script);
+    },
+
+    evaluate: function(code, objectGroup, includeCommandLineAPI, callback)
+    {
+        function didEvaluateOnCallFrame(error, result)
+        {
+            callback(WebInspector.RemoteObject.fromPayload(result));
+        }
+        DebuggerAgent.evaluateOnCallFrame(this._callFrame.id, code, objectGroup, includeCommandLineAPI, didEvaluateOnCallFrame.bind(this));
+    },
+
+    sourceLocation: function(callback)
+    {
+        if (!this._sourceFile) {
+            callback(undefined, this._callFrame.line, this._callFrame.column);
+            return;
+        }
+
+        function didRequestSourceMapping(mapping)
+        {
+            var sourceLocation = mapping.scriptLocationToSourceLocation(this._callFrame.line, this._callFrame.column);
+            callback(this._sourceFile.id, sourceLocation.lineNumber, sourceLocation.columnNumber);
+        }
+        this._sourceFile.requestSourceMapping(didRequestSourceMapping.bind(this));
     }
 }

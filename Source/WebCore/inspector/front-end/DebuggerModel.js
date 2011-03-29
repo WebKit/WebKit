@@ -185,10 +185,7 @@ WebInspector.DebuggerModel.prototype = {
         if (error)
             return;
         this._scripts[sourceID].source = newBody;
-        if (callFrames && callFrames.length) {
-            this._debuggerPausedDetails.callFrames = callFrames;
-            this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPausedDetails);
-        }
+        this._debuggerPausedDetails.callFrames = callFrames;
     },
 
     get callFrames()
@@ -196,10 +193,14 @@ WebInspector.DebuggerModel.prototype = {
         return this._debuggerPausedDetails.callFrames;
     },
 
+    get debuggerPausedDetails()
+    {
+        return this._debuggerPausedDetails;
+    },
+
     _pausedScript: function(details)
     {
         this._debuggerPausedDetails = details;
-        details.breakpoint = this._breakpointForCallFrame(details.callFrames[0]);
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerPaused, details);
     },
 
@@ -207,23 +208,6 @@ WebInspector.DebuggerModel.prototype = {
     {
         this._debuggerPausedDetails = {};
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerResumed);
-    },
-
-    _breakpointForCallFrame: function(callFrame)
-    {
-        function match(location)
-        {
-            if (location.sourceID != callFrame.sourceID)
-                return false;
-            return location.lineNumber === callFrame.line && location.columnNumber === callFrame.column;
-        }
-        for (var id in this._breakpoints) {
-            var breakpoint = this._breakpoints[id];
-            for (var i = 0; i < breakpoint.locations.length; ++i) {
-                if (match(breakpoint.locations[i]))
-                    return breakpoint;
-            }
-        }
     },
 
     _parsedScriptSource: function(sourceID, sourceURL, lineOffset, columnOffset, length, scriptWorldType)

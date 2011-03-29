@@ -211,6 +211,9 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.mimeType = mimeType;
         this._setTextViewerDecorations();
 
+        if ("_executionLineNumber" in this)
+            this.setExecutionLine(this._executionLineNumber);
+
         if (this._lineNumberToReveal) {
             this.revealLine(this._lineNumberToReveal);
             delete this._lineNumberToReveal;
@@ -362,13 +365,16 @@ WebInspector.SourceFrame.prototype = {
     setExecutionLine: function(lineNumber)
     {
         this._executionLineNumber = lineNumber;
-        this._textViewer.addDecoration(lineNumber, "webkit-execution-line");
-        this._textViewer.revealLine(lineNumber);
+        if (this._textViewer) {
+            this._textViewer.addDecoration(lineNumber, "webkit-execution-line");
+            this._textViewer.revealLine(lineNumber);
+        }
     },
 
     clearExecutionLine: function()
     {
-        this._textViewer.removeDecoration(this._executionLineNumber, "webkit-execution-line");
+        if (this._textViewer)
+            this._textViewer.removeDecoration(this._executionLineNumber, "webkit-execution-line");
         delete this._executionLineNumber;
     },
 
@@ -653,6 +659,9 @@ WebInspector.SourceFrame.prototype = {
 
     _showPopup: function(element)
     {
+        if (!this._delegate.debuggerPaused())
+            return;
+
         function killHidePopupTimer()
         {
             if (this._hidePopupTimer) {
@@ -667,6 +676,9 @@ WebInspector.SourceFrame.prototype = {
 
         function showObjectPopup(result)
         {
+            if (result.isError() || !this._delegate.debuggerPaused())
+                return;
+
             var popupContentElement = null;
             if (result.type !== "object" && result.type !== "node" && result.type !== "array") {
                 popupContentElement = document.createElement("span");

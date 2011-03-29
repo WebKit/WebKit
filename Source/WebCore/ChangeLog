@@ -1,3 +1,53 @@
+2011-03-29  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: fix call frames positions in formatted scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=57036
+
+        Introduce PresentationCallFrame class that encapsulates source mapping details from UI components.
+
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.update.didGetSourceLocation):
+        (WebInspector.CallStackSidebarPane.prototype.update):
+        (WebInspector.CallStackSidebarPane.prototype.set selectedCallFrame):
+        (WebInspector.CallStackSidebarPane.prototype._placardSelected):
+        (WebInspector.CallStackSidebarPane.prototype._contextMenu):
+        (WebInspector.CallStackSidebarPane.prototype._copyStackTrace):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype._didEditScriptSource):
+        (WebInspector.DebuggerModel.prototype.get debuggerPausedDetails):
+        (WebInspector.DebuggerModel.prototype._pausedScript):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype.editScriptSource.didEditScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype.editScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype.toggleFormatSourceFiles):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerPaused):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerResumed):
+        (WebInspector.DebuggerPresentationModel.prototype.set selectedCallFrame):
+        (WebInspector.DebuggerPresentationModel.prototype.get selectedCallFrame):
+        (WebInspector.DebuggerPresentationModel.prototype._reset):
+        (WebInspector.PresenationCallFrame): Call frame wrapper for UI.
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame):
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused.else.didGetSourceLocation):
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused):
+        (WebInspector.ScriptsPanel.prototype._debuggerResumed):
+        (WebInspector.ScriptsPanel.prototype._sourceFrameLoaded):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected.didGetSourceLocation):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.evaluateInSelectedCallFrame):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.SourceFile.prototype.get content):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._createTextViewer):
+        (WebInspector.SourceFrame.prototype.setExecutionLine):
+        (WebInspector.SourceFrame.prototype.clearExecutionLine):
+        (WebInspector.SourceFrame.prototype._showPopup.showObjectPopup):
+        (WebInspector.SourceFrame.prototype._showPopup):
+
 2011-03-29  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Darin Adler.

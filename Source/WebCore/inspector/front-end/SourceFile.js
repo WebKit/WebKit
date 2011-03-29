@@ -63,6 +63,11 @@ WebInspector.SourceFile.prototype = {
         this._requestContent();
     },
 
+    get content()
+    {
+        return this._content;
+    },
+
     requestSourceMapping: function(callback)
     {
         if (!this._mapping)
