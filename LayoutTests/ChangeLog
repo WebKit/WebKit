@@ -1,3 +1,10 @@
+2011-03-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Fix test results that were accidentally committed with a wrong
+        result due to a temporary wrong code change.
+
+        * http/tests/uri/username-with-no-hostname-expected.txt:
+
 2011-03-28  Andy Estes  <aestes@apple.com>
 
         plugins/embed-prefers-plugins-for-images.html fails on non-Apple platforms.
