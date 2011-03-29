@@ -1,5 +1,77 @@
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
+        Update expectations.
+
+        * platform/chromium-mac/fast/multicol/margin-collapse-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/margin-collapse-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/max-height-columns-block-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/max-height-columns-block-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/positioned-split-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/positioned-split-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/single-line-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/single-line-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/table-margin-collapse-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/table-margin-collapse-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/unsplittable-inline-block-expected.checksum: Added.
+        * platform/chromium-mac/fast/multicol/unsplittable-inline-block-expected.png: Added.
+        * platform/chromium-mac/fast/replaced/absolute-image-sizing-expected.checksum:
+        * platform/chromium-mac/fast/replaced/absolute-image-sizing-expected.png:
+        * platform/chromium-mac/fast/replaced/image-onload-expected.checksum:
+        * platform/chromium-mac/fast/replaced/image-onload-expected.png:
+        * platform/chromium-mac/fast/replaced/image-sizing-expected.checksum:
+        * platform/chromium-mac/fast/replaced/image-sizing-expected.png:
+        * platform/chromium-mac/fast/replaced/image-tag-expected.png: Added.
+        * platform/chromium-mac/fast/text/basic/002-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/basic/002-expected.png: Added.
+        * platform/chromium-mac/fast/text/word-break-soft-hyphen-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/word-break-soft-hyphen-expected.png: Added.
+        * platform/chromium-mac/media/video-transformed-expected.checksum: Added.
+        * platform/chromium-mac/media/video-transformed-expected.png: Added.
+        * platform/chromium-mac/scrollbars/listbox-scrollbar-combinations-expected.png: Added.
+        * platform/chromium-mac/scrollbars/overflow-scrollbar-combinations-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.checksum: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/struct-image-01-t-expected.png: Added.
+        * platform/chromium-mac/svg/custom/focus-ring-expected.checksum:
+        * platform/chromium-mac/svg/custom/focus-ring-expected.png:
+        * platform/chromium-mac/svg/custom/use-in-symbol-with-offset-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/use-in-symbol-with-offset-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr-expected.png:
+        * platform/chromium-mac/svg/filters/filterRes-expected.checksum: Added.
+        * platform/chromium-mac/svg/filters/filterRes-expected.png: Added.
+        * platform/chromium-mac/svg/filters/filteredImage-expected.png: Added.
+        * platform/chromium-mac/svg/text/foreignObject-text-clipping-bug-expected.png: Added.
+        * platform/chromium-mac/svg/zoom/page/zoom-hixie-mixed-008-expected.checksum: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug120107-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug12908-2-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug13169-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug196870-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/bugs/bug50695-2-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla/core/col_widths_auto_autoFix-expected.png: Added.
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug6933-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
         Green means pass, AFAICT.
 
         * platform/chromium-mac/fast/media/media-query-invalid-value-expected.png: Added.
