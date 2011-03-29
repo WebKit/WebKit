@@ -60,6 +60,7 @@
 #import <WebCore/ColorMac.h>
 #import <WebCore/DragController.h>
 #import <WebCore/DragData.h>
+#import <WebCore/LocalizedStrings.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntRect.h>
 #import <WebCore/KeyboardEvent.h>
@@ -603,12 +604,8 @@ static void validateCommandCallback(WKStringRef commandName, bool isEnabled, int
     SEL action = [item action];
 
     if (action == @selector(showGuessPanel:)) {
-        if (NSMenuItem *menuItem = ::menuItem(item)) {
-            BOOL panelShowing = [[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible];
-            [menuItem setTitle:panelShowing
-                ? UI_STRING("Hide Spelling and Grammar", "menu item title")
-                : UI_STRING("Show Spelling and Grammar", "menu item title")];
-        }
+        if (NSMenuItem *menuItem = ::menuItem(item))
+            [menuItem setTitle:contextMenuItemTagShowSpellingPanel([[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible])];
         return _data->_page->selectionState().isContentEditable;
     }
 
@@ -635,12 +632,8 @@ static void validateCommandCallback(WKStringRef commandName, bool isEnabled, int
     }
 
     if (action == @selector(orderFrontSubstitutionsPanel:)) {
-        if (NSMenuItem *menuItem = ::menuItem(item)) {
-            BOOL panelShowing = [[[NSSpellChecker sharedSpellChecker] substitutionsPanel] isVisible];
-            [menuItem setTitle:panelShowing
-                ? UI_STRING("Hide Substitutions", "menu item title")
-                : UI_STRING("Show Substitutions", "menu item title")];
-        }
+        if (NSMenuItem *menuItem = ::menuItem(item))
+            [menuItem setTitle:contextMenuItemTagShowSubstitutions([[[NSSpellChecker sharedSpellChecker] substitutionsPanel] isVisible])];
         return _data->_page->selectionState().isContentEditable;
     }
 
@@ -1768,7 +1761,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     return _data->_commandsList;
 }
 
-- (void)_getTextInputState:(unsigned)start selectionEnd:(unsigned)end underlines:(Vector<WebCore::CompositionUnderline>&)lines
+- (void)_getTextInputState:(unsigned)start selectionEnd:(unsigned)end underlines:(Vector<CompositionUnderline>&)lines
 {
     start = _data->_selectionStart;
     end = _data->_selectionEnd;

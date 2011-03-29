@@ -1,3 +1,17 @@
+2011-03-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Use LocalizedStrings.h as a bottleneck for localized strings instead of
+        using UI_STRING.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]):
+        Call existing localization functions instead of using UI_STRING.
+
+        (-[WKView _getTextInputState:selectionEnd:underlines:]):
+        Remove unnecessary WebCore:: prefix.
+
 2011-03-29  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
