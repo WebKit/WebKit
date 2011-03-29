@@ -2357,7 +2357,9 @@ BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT TIMEOUT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
 BUGWEBGL MAC LINUX : fast/canvas/webgl/gl-object-get-calls.html = TEXT
 
-BUGWEBGL LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT PASS
+// Started to crash around Chromium r79551-r79553.
+BUGCR77752 BUGWEBGL LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT PASS CRASH
+BUGCR77752 BUGWEBGL MAC DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = PASS CRASH
 
 // Failing after r75175
 BUGWEBGL WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT CRASH

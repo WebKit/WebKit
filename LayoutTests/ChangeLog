@@ -1,3 +1,9 @@
+2011-03-29  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, updating Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-29  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Dimitri Glazkov.
