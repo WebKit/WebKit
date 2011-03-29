@@ -1033,7 +1033,7 @@ static void willSendRequestCallback(WebKitWebView* webView, WebKitWebFrame*, Web
 
     if (SOUP_URI_VALID_FOR_HTTP(uri) && g_strcmp0(uri->host, "127.0.0.1")
         && g_strcmp0(uri->host, "255.255.255.255")
-        && g_strcmp0(uri->host, "localhost")) {
+        && g_ascii_strncasecmp(uri->host, "localhost", 9)) {
         printf("Blocked access to external URL %s\n", soup_uri_to_string(uri, FALSE));
         soup_uri_free(uri);
         return;
