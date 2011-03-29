@@ -142,7 +142,7 @@ static inline bool equal(StringImpl* string, const UChar* characters, unsigned l
 
     // FIXME: perhaps we should have a more abstract macro that indicates when
     // going 4 bytes at a time is unsafe
-#if CPU(ARM) || CPU(SH4) || CPU(MIPS)
+#if CPU(ARM) || CPU(SH4) || CPU(MIPS) || CPU(SPARC)
     const UChar* stringCharacters = string->characters();
     for (unsigned i = 0; i != length; ++i) {
         if (*stringCharacters++ != *characters++)
