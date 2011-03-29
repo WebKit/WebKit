@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebEventFactory.h"
 
+#include "GtkVersioning.h"
 #include "PlatformKeyboardEvent.h"
 #include "Scrollbar.h"
 #include "WindowsKeyboardCodes.h"
@@ -41,7 +42,7 @@ namespace WebKit {
 
 static inline bool isGdkKeyCodeFromKeyPad(unsigned keyval)
 {
-    return keyval >= GDK_KEY_KP_Space && keyval <= GDK_KEY_KP_9;
+    return keyval >= GDK_KP_Space && keyval <= GDK_KP_9;
 }
 
 static inline WebEvent::Modifiers modifiersForEvent(const GdkEvent* event)

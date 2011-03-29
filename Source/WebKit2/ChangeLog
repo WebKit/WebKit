@@ -1,3 +1,15 @@
+2011-03-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Build failed with ‘GDK_KEY_KP_Space’ was not declared in this scope
+        https://bugs.webkit.org/show_bug.cgi?id=55314
+
+        Build fix for older versions of GTK+. Use the deprecated names for GDK key
+        defines and include GtkVersioning.h to allow building on newer versions
+        of GTK+.
+
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::isGdkKeyCodeFromKeyPad): Update key defines.
+
 2011-03-29  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Darin Adler.
