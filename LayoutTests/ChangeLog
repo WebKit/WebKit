@@ -1,5 +1,12 @@
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
+        Green means pass, AFAICT.
+
+        * platform/chromium-mac/fast/media/media-query-invalid-value-expected.png: Added.
+        * platform/chromium-win/fast/media/media-query-invalid-value-expected.png: Added.
+
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
         Update image result due to different text metrics.
 
         * platform/chromium-win/printing/return-from-printing-mode-expected.png: Added.
