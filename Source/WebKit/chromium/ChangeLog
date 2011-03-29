@@ -1,3 +1,11 @@
+2011-03-29  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed. Build fix for Chromium Clang bot.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::supportsFullscreenForNode):
+        * src/ChromeClientImpl.h:
+
 2011-03-28  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

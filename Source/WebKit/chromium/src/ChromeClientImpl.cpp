@@ -837,7 +837,7 @@ ChromeClient::CompositingTriggerFlags ChromeClientImpl::allowedCompositingTrigge
 }
 #endif
 
-bool ChromeClientImpl::supportsFullscreenForNode(const WebCore::Node* node)
+bool ChromeClientImpl::supportsFullscreenForNode(const WebCore::Node* node, bool)
 {
     if (m_webView->client() && node->hasTagName(WebCore::HTMLNames::videoTag))
         return m_webView->client()->supportsFullscreen();
