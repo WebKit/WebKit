@@ -1,3 +1,20 @@
+2011-03-29  Thomas Klausner  <tk@giga.or.at>
+
+        Reviewed by David Levin.
+
+        png-1.5 fixes
+        https://bugs.webkit.org/show_bug.cgi?id=54406
+
+        Fix compilation with png-1.5: struct members were hidden, and
+        a new API to terminate data processing was added (especially for
+        WebKit).
+
+        Compilation fixes, so no new tests.
+
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::headerAvailable):
+        (WebCore::PNGImageDecoder::rowAvailable):
+
 2011-03-29  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Tony Gentilcore.
