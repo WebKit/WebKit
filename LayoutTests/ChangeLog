@@ -1,3 +1,12 @@
+2011-03-29  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Fixing live edits tests on chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=57316
+
+        * inspector/debugger/live-edit.html:
+
 2011-03-29  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip crashing svg test on GTK.

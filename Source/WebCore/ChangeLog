@@ -1,3 +1,17 @@
+2011-03-29  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Fixing live edits tests on chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=57316
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.editScriptSource):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._handleSave.didEditScriptSource):
+        (WebInspector.SourceFrame.prototype._handleSave):
+        (WebInspector.SourceFrameDelegate.prototype.editScriptSource):
+
 2011-03-29  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

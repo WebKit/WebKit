@@ -19,6 +19,7 @@ function test()
             {
                 InspectorTest.addSniffer(WebInspector.debuggerModel, "_didEditScriptSource", didEditScriptSource);
                 sourceFrame._textViewer.readOnly = false;
+                sourceFrame._startEditing();
                 var newText = sourceFrame._textModel.text.replace("return 0;", "return \"live-edited string\";");
                 sourceFrame._textModel.setText(null, newText);
                 sourceFrame._handleSave();
