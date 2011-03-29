@@ -1,3 +1,13 @@
+2011-03-29  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        SVGComponentTransferFunctionElement should validate type
+        https://bugs.webkit.org/show_bug.cgi?id=56960
+
+        * svg/filters/feComponentTransfer-style-crash-expected.txt: Added.
+        * svg/filters/feComponentTransfer-style-crash.xhtml: Added.
+
 2011-03-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [DRT] GtkScrolledWindow adds three pixels of padding between the WebView and the scrollbar

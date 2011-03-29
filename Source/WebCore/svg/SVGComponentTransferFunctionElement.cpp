@@ -81,6 +81,17 @@ void SVGComponentTransferFunctionElement::parseMappedAttribute(Attribute* attr)
         SVGElement::parseMappedAttribute(attr);
 }
 
+void SVGComponentTransferFunctionElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGElement::svgAttributeChanged(attrName);
+
+    if (attrName == SVGNames::typeAttr) {
+        ComponentTransferType componentType = static_cast<ComponentTransferType>(type());
+        if (componentType < FECOMPONENTTRANSFER_TYPE_UNKNOWN || componentType > FECOMPONENTTRANSFER_TYPE_GAMMA)
+            setTypeBaseValue(FECOMPONENTTRANSFER_TYPE_UNKNOWN);
+    }
+}
+
 void SVGComponentTransferFunctionElement::synchronizeProperty(const QualifiedName& attrName)
 {
     SVGElement::synchronizeProperty(attrName);

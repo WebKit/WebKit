@@ -1,3 +1,16 @@
+2011-03-29  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        SVGComponentTransferFunctionElement should validate type
+        https://bugs.webkit.org/show_bug.cgi?id=56960
+
+        Test: svg/filters/feComponentTransfer-style-crash.xhtml
+
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::svgAttributeChanged):
+        * svg/SVGComponentTransferFunctionElement.h:
+
 2011-03-29  Thomas Klausner  <tk@giga.or.at>
 
         Reviewed by David Levin.
