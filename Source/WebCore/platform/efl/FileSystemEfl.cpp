@@ -67,7 +67,7 @@ CString fileSystemRepresentation(const String& path)
 #endif
 }
 
-CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
+String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 {
     char buffer[PATH_MAX];
     const char* tmpDir = getenv("TMPDIR");
@@ -75,18 +75,18 @@ CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
     if (!tmpDir)
         tmpDir = "/tmp";
 
-    if (snprintf(buffer, PATH_MAX, "%s/%sXXXXXX", tmpDir, prefix) >= PATH_MAX)
+    if (snprintf(buffer, PATH_MAX, "%s/%sXXXXXX", tmpDir, prefix.utf8().data()) >= PATH_MAX)
         goto end;
 
     handle = mkstemp(buffer);
     if (handle < 0)
         goto end;
 
-    return CString(buffer);
+    return String::fromUTF8(buffer);
 
 end:
     handle = invalidPlatformFileHandle;
-    return CString();
+    return String();
 }
 
 bool unloadModule(PlatformModule module)

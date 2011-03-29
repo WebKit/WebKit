@@ -111,8 +111,8 @@ namespace WebCore {
         NPP m_instance;
         uint16_t m_transferMode;
         int32_t m_offset;
-        WTF::CString m_headers;
-        WTF::CString m_path;
+        CString m_headers;
+        String m_path;
         NPReason m_reason;
         NPStream m_stream;
         PluginQuirkSet m_quirks;

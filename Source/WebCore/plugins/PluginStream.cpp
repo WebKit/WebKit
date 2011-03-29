@@ -257,7 +257,7 @@ void PluginStream::destroyStream()
 
             if (m_loader)
                 m_loader->setDefersLoading(true);
-            m_pluginFuncs->asfile(m_instance, &m_stream, m_path.data());
+            m_pluginFuncs->asfile(m_instance, &m_stream, m_path.utf8().data());
             if (m_loader)
                 m_loader->setDefersLoading(false);
         }
@@ -306,10 +306,8 @@ void PluginStream::destroyStream()
     if (!m_loadManually && m_client)
         m_client->streamDidFinishLoading(this);
 
-    if (!m_path.isNull()) {
-        String tempFilePath = String::fromUTF8(m_path.data());
-        deleteFile(tempFilePath);
-    }
+    if (!m_path.isNull())
+        deleteFile(m_path);
 }
 
 void PluginStream::delayDeliveryTimerFired(Timer<PluginStream>* timer)

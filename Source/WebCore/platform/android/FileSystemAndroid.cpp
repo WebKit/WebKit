@@ -48,26 +48,25 @@ CString fileSystemRepresentation(const String& path)
     return path.utf8();
 }
 
-CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
+String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 {
     int number = rand() % 10000 + 1;
-    CString filename;
+    String filename;
     do {
         StringBuilder builder;
         builder.append(sPluginPath);
         builder.append('/');
         builder.append(prefix);
         builder.append(String::number(number));
-        filename = builder.toString().utf8();
-        const char* fstr = filename.data();
-        handle = open(filename.data(), O_WRONLY | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
+        filename = builder.toString();
+        handle = open(filename.utf8().data(), O_WRONLY | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR);
         number++;
         
         if (handle != -1)
             return filename;
     } while (errno == EEXIST);
     
-    return CString();
+    return String();
 }
 
 bool unloadModule(PlatformModule module)

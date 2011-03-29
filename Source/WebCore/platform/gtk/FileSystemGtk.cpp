@@ -227,16 +227,16 @@ Vector<String> listDirectory(const String& path, const String& filter)
     return entries;
 }
 
-CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
+String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 {
-    GOwnPtr<gchar> filename(g_strdup_printf("%s%s", prefix, createCanonicalUUIDString().utf8().data()));
+    GOwnPtr<gchar> filename(g_strdup_printf("%s%s", prefix.utf8().data(), createCanonicalUUIDString().utf8().data()));
     GOwnPtr<gchar> tempPath(g_build_filename(g_get_tmp_dir(), filename.get(), NULL));
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(tempPath.get()));
 
     handle = g_file_create_readwrite(file.get(), G_FILE_CREATE_NONE, 0, 0);
     if (!isHandleValid(handle))
-        return CString();
-    return tempPath.get();
+        return String();
+    return String::fromUTF8(tempPath.get());
 }
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)

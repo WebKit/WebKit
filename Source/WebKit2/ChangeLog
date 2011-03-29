@@ -1,3 +1,16 @@
+2011-03-28  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Use String instead of CString as return value of openTemporaryFile
+        https://bugs.webkit.org/show_bug.cgi?id=55332
+
+        * Shared/WebMemorySampler.cpp:
+        (WebKit::WebMemorySampler::initializeTempLogFile):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.cpp:
+        (WebKit::NetscapePluginStream::stop):
+        * WebProcess/Plugins/Netscape/NetscapePluginStream.h:
+
 2011-03-28  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Jon Honeycutt.

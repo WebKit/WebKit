@@ -186,7 +186,7 @@ String directoryName(const String& path)
     return dirName;
 }
 
-CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
+String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 {
     // BREW does not have a system-wide temporary directory,
     // use "fs:/~/tmp" as our temporary directory.
@@ -199,24 +199,24 @@ CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
 
     // Loop until we find a temporary filename that does not exist.
     int number = static_cast<int>(randomNumber() * 10000);
-    CString filename;
+    String filename;
     do {
         StringBuilder builder;
         builder.append(tempPath);
         builder.append('/');
         builder.append(prefix);
         builder.append(String::number(number));
-        filename = builder.toString().utf8();
+        filename = builder.toString();
         number++;
-    } while (IFILEMGR_Test(fileMgr.get(), filename.data()) == SUCCESS);
+    } while (IFILEMGR_Test(fileMgr.get(), filename.utf8().data()) == SUCCESS);
 
-    IFile* tempFile = IFILEMGR_OpenFile(fileMgr.get(), filename.data(), _OFM_CREATE);
+    IFile* tempFile = IFILEMGR_OpenFile(fileMgr.get(), filename.utf8().data(), _OFM_CREATE);
     if (tempFile) {
         handle = tempFile;
         return filename;
     }
 
-    return CString();
+    return String();
 }
 
 void closeFile(PlatformFileHandle& handle)

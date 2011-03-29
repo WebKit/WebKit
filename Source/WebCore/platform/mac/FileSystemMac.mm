@@ -41,28 +41,29 @@ String homeDirectoryPath()
     return NSHomeDirectory();
 }
 
-CString openTemporaryFile(const char* prefix, PlatformFileHandle& platformFileHandle)
+String openTemporaryFile(const String& prefix, PlatformFileHandle& platformFileHandle)
 {
     platformFileHandle = invalidPlatformFileHandle;
     
     Vector<char> temporaryFilePath(PATH_MAX);
     if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryFilePath.data(), temporaryFilePath.size()))
-        return CString();
+        return String();
 
     // Shrink the vector.   
     temporaryFilePath.shrink(strlen(temporaryFilePath.data()));
     ASSERT(temporaryFilePath.last() == '/');
 
-    // Append the file name.    
-    temporaryFilePath.append(prefix, strlen(prefix));
+    // Append the file name.
+    CString prefixUtf8 = prefix.utf8();
+    temporaryFilePath.append(prefixUtf8.data(), prefixUtf8.length());
     temporaryFilePath.append("XXXXXX", 6);
     temporaryFilePath.append('\0');
 
     platformFileHandle = mkstemp(temporaryFilePath.data());
     if (platformFileHandle == invalidPlatformFileHandle)
-        return CString();
+        return String();
 
-    return CString(temporaryFilePath.data());
+    return String::fromUTF8(temporaryFilePath.data());
 }
 
 bool canExcludeFromBackup()

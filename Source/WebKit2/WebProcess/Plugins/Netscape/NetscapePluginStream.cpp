@@ -304,7 +304,7 @@ void NetscapePluginStream::stop(NPReason reason)
             
             ASSERT(!m_filePath.isNull());
             
-            m_plugin->NPP_StreamAsFile(&m_npStream, m_filePath.data());
+            m_plugin->NPP_StreamAsFile(&m_npStream, m_filePath.utf8().data());
         } else {
             // Just close the file.
             if (m_fileHandle != invalidPlatformFileHandle)
@@ -315,8 +315,8 @@ void NetscapePluginStream::stop(NPReason reason)
         // to delete the file here -- NPP_StreamAsFile() is always called immediately before NPP_DestroyStream()
         // (the stream destruction function), so there can be no expectation that a plugin will read the stream
         // file asynchronously after NPP_StreamAsFile() is called.
-        deleteFile(String::fromUTF8(m_filePath.data()));
-        m_filePath = CString();
+        deleteFile(m_filePath);
+        m_filePath = String();
 
         // NPP_StreamAsFile could call NPN_DestroyStream and destroy the stream.
         if (!m_isStarted)

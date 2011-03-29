@@ -114,19 +114,19 @@ Vector<String> listDirectory(const String& path, const String& filter)
     return entries;
 }
 
-CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
+String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 {
 #ifndef QT_NO_TEMPORARYFILE
-    QTemporaryFile* tempFile = new QTemporaryFile(QDir::tempPath() + QLatin1Char('/') + QLatin1String(prefix));
+    QTemporaryFile* tempFile = new QTemporaryFile(QDir::tempPath() + QLatin1Char('/') + QString(prefix));
     tempFile->setAutoRemove(false);
     QFile* temp = tempFile;
     if (temp->open(QIODevice::ReadWrite)) {
         handle = temp;
-        return String(temp->fileName()).utf8();
+        return temp->fileName();
     }
 #endif
     handle = invalidPlatformFileHandle;
-    return CString();
+    return String();
 }
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)

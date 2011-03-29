@@ -1,3 +1,28 @@
+2011-03-28  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Use String instead of CString as return value of openTemporaryFile
+        https://bugs.webkit.org/show_bug.cgi?id=55332
+
+        We usually store all paths as UTF-16. Do this for temporary files too.
+
+        * WebCore.exp.in
+        * platform/FileSystem.h:
+        * platform/android/FileSystemAndroid.cpp:
+        * platform/brew/FileSystemBrew.cpp:
+        * platform/efl/FileSystemEfl.cpp:
+        * platform/gtk/FileSystemGtk.cpp:
+        * platform/haiku/FileSystemHaiku.cpp:
+        * platform/mac/FileSystemMac.mm:
+        * platform/qt/FileSystemQt.cpp:
+        * platform/win/FileSystemWin.cpp:
+        * platform/wince/FileSystemWinCE.cpp:
+        * platform/wx/FileSystemWx.cpp:
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::destroyStream):
+        * plugins/PluginStream.h:
+
 2011-03-28  Jeff Johnson  <opendarwin@lapcatsoftware.com>
 
         Reviewed by Pavel Feldman.

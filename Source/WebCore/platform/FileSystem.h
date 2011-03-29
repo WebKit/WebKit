@@ -172,7 +172,7 @@ CString fileSystemRepresentation(const String&);
 inline bool isHandleValid(const PlatformFileHandle& handle) { return handle != invalidPlatformFileHandle; }
 
 // Prefix is what the filename should be prefixed with, not the full path.
-CString openTemporaryFile(const char* prefix, PlatformFileHandle&);
+String openTemporaryFile(const String& prefix, PlatformFileHandle&);
 PlatformFileHandle openFile(const String& path, FileOpenMode);
 void closeFile(PlatformFileHandle&);
 // Returns the resulting offset from the beginning of the file if successful, -1 otherwise.

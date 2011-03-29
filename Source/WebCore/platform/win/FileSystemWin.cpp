@@ -186,18 +186,18 @@ static String cachedStorageDirectory(DWORD pathIdentifier)
     return directory;
 }
 
-CString openTemporaryFile(const char*, PlatformFileHandle& handle)
+String openTemporaryFile(const String&, PlatformFileHandle& handle)
 {
     handle = INVALID_HANDLE_VALUE;
 
     char tempPath[MAX_PATH];
     int tempPathLength = ::GetTempPathA(WTF_ARRAY_LENGTH(tempPath), tempPath);
     if (tempPathLength <= 0 || tempPathLength > WTF_ARRAY_LENGTH(tempPath))
-        return CString();
+        return String();
 
     HCRYPTPROV hCryptProv = 0;
     if (!CryptAcquireContext(&hCryptProv, 0, 0, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
-        return CString();
+        return String();
 
     char proposedPath[MAX_PATH];
     while (1) {
@@ -228,9 +228,9 @@ CString openTemporaryFile(const char*, PlatformFileHandle& handle)
     CryptReleaseContext(hCryptProv, 0);
 
     if (!isHandleValid(handle))
-        return CString();
+        return String();
 
-    return proposedPath;
+    return String::fromUTF8(proposedPath);
 }
 
 PlatformFileHandle openFile(const String& path, FileOpenMode mode)

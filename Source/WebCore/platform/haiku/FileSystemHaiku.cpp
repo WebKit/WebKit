@@ -56,11 +56,11 @@ String homeDirectoryPath()
     return String(path.Path());
 }
 
-CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
+String openTemporaryFile(const String&, PlatformFileHandle& handle)
 {
     notImplemented();
     handle = invalidPlatformFileHandle;
-    return CString();
+    return String();
 }
 
 void closeFile(PlatformFileHandle&)

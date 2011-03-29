@@ -88,7 +88,7 @@ private:
     uint16_t m_transferMode;
     int32_t m_offset;
 
-    CString m_filePath;
+    String m_filePath;
     WebCore::PlatformFileHandle m_fileHandle;
     
     // Whether NPP_NewStream has successfully been called.
