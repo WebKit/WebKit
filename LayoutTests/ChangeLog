@@ -1,3 +1,12 @@
+2011-03-29  Adam Roben  <aroben@apple.com>
+
+        Add Windows expected semi-failure results after r82189
+
+        The test is passing, but we're failing to print out an error message so we don't match the
+        expected results. Printing the error message is tracked by <http://webkit.org/b/57334>.
+
+        * platform/win/http/tests/uri/username-with-no-hostname-expected.txt: Added.
+
 2011-03-29  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
