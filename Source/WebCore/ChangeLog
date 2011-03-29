@@ -1,3 +1,18 @@
+2011-03-27  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        fix :-webkit-any(:last-child)
+        https://bugs.webkit.org/show_bug.cgi?id=57207
+
+        We were passing the wrong arguments to checkSelector. Also, we were not
+        passing through the encounteredLink bool.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * css/CSSStyleSelector.h:
+
 2011-03-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin Adler.

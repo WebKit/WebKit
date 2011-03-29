@@ -9,6 +9,7 @@
     background-color: blue;
 }
 
+#test-last-child :-webkit-any(:last-child),
 :-webkit-any(:link:focus),
 #container-div :-webkit-any(:link, :not(a)),
 h1:-webkit-any(.h1class, #bar) {
@@ -76,6 +77,7 @@ This page tests :-webkit-any. This window needs to be focused for the :focus tes
 <q>div~q</q>
 <q>q+q</q>
 <q><span>q>span</span></q>
+<div id="test-last-child"><p>first</p><p>last</p></div>
 <pre id="console"></pre>
 
 <script>
@@ -156,4 +158,7 @@ assertBlue("div span");
 assertBlue("div ~ q");
 assertBlue("q+q");
 assertBlue("q>span");
+
+assertBlue("#test-last-child :first-child");
+assertGreen("#test-last-child :last-child");
 </script>
