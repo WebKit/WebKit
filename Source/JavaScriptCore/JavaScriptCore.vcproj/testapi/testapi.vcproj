@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\testapiCommon.vsprops;..\JavaScriptCore\JavaScriptCoreCF.vsprops"
+			InheritedPropertySheets=".\testapiDebug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -79,7 +79,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\testapiCommon.vsprops;..\JavaScriptCore\JavaScriptCoreCF.vsprops"
+			InheritedPropertySheets=".\testapiRelease.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -140,7 +140,7 @@
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug_wincairo.vsprops;.\testapiCommon.vsprops;..\JavaScriptCore\JavaScriptCoreCFLite.vsprops"
+			InheritedPropertySheets=".\testapiDebugCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -201,7 +201,7 @@
 		<Configuration
 			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;.\testapiCommon.vsprops;..\JavaScriptCore\JavaScriptCoreCFLite.vsprops"
+			InheritedPropertySheets=".\testapiReleaseCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -262,7 +262,7 @@
 		<Configuration
 			Name="Debug_All|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\testapiCommon.vsprops;..\JavaScriptCore\JavaScriptCoreCF.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug_all.vsprops"
+			InheritedPropertySheets=".\testapiDebugAll.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -323,7 +323,7 @@
 		<Configuration
 			Name="Release_LTCG|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\testapiCommon.vsprops;..\JavaScriptCore\JavaScriptCoreCF.vsprops"
+			InheritedPropertySheets=".\testapiReleaseLTCG.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>

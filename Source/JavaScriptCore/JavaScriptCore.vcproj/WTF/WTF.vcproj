@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\WTFCommon.vsprops"
+			InheritedPropertySheets=".\WTFDebug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -70,7 +70,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\WTFCommon.vsprops"
+			InheritedPropertySheets=".\WTFRelease.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -122,7 +122,7 @@
 		<Configuration
 			Name="Debug_All|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\WTFCommon.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug_all.vsprops"
+			InheritedPropertySheets=".\WTFDebugAll.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -174,7 +174,7 @@
 		<Configuration
 			Name="Release_LTCG|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\WTFCommon.vsprops"
+			InheritedPropertySheets=".\WTFReleaseLTCG.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -227,7 +227,7 @@
 		<Configuration
 			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;.\WTFCommon.vsprops"
+			InheritedPropertySheets=".\WTFReleaseCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -279,7 +279,7 @@
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug_wincairo.vsprops;.\WTFCommon.vsprops"
+			InheritedPropertySheets=".\WTFDebugCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -331,7 +331,7 @@
 		<Configuration
 			Name="Release_PGO|Win32"
 			ConfigurationType="4"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\WTFCommon.vsprops"
+			InheritedPropertySheets=".\WTFReleasePGO.vsprops"
 			CharacterSet="1"
 			>
 			<Tool

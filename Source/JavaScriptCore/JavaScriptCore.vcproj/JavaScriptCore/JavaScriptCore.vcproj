@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\JavaScriptCoreCommon.vsprops;.\JavaScriptCoreCF.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreDebug.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -79,7 +79,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\JavaScriptCoreCommon.vsprops;.\JavaScriptCoreCF.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreRelease.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -140,7 +140,7 @@
 		<Configuration
 			Name="Release_PGO|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\JavaScriptCoreCommon.vsprops;.\JavaScriptCoreCF.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreReleasePGO.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="2"
 			>
@@ -202,7 +202,7 @@
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug_wincairo.vsprops;.\JavaScriptCoreCommon.vsprops;.\JavaScriptCoreCFLite.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreDebugCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -263,7 +263,7 @@
 		<Configuration
 			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefinesCairo.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\WinCairo.vsprops;.\JavaScriptCoreCommon.vsprops;.\JavaScriptCoreCFLite.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreReleaseCairoCFLite.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -324,7 +324,7 @@
 		<Configuration
 			Name="Debug_All|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;.\JavaScriptCoreCommon.vsprops;.\JavaScriptCoreCF.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\debug_all.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreDebugAll.vsprops"
 			CharacterSet="1"
 			>
 			<Tool
@@ -385,7 +385,7 @@
 		<Configuration
 			Name="Release_LTCG|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\JavaScriptCoreCommon.vsprops;.\JavaScriptCoreCF.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreReleaseLTCG.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -447,7 +447,7 @@
 		<Configuration
 			Name="Release_PGO_Optimize|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;$(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;.\JavaScriptCoreCommon.vsprops;.\JavaScriptCoreCF.vsprops;.\JavaScriptCorePGOOptimize.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreReleasePGOOptimize.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="4"
 			>

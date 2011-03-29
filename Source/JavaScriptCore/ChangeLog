@@ -1,3 +1,48 @@
+2011-03-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Use per-configuration vsprops in JavaScriptCore to avoid WebKitVSPropsRedirectionDir removal by MSVC IDE
+        https://bugs.webkit.org/show_bug.cgi?id=57350
+        
+        Visual Studio's IDE was removing instances of $(WebKitVSPropsRedirectionDir) from
+        InheritedPropertySheet rules in our vcproj files when the vcproj was edited from within
+        the IDE. To avoid this, add a separate vsprops file for each project configuration that
+        contains the required inherited property sheets.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreDebug.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreDebugAll.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreDebugCairoCFLite.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreRelease.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleaseCairoCFLite.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleaseLTCG.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleasePGO.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleasePGOOptimize.vsprops: Added.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.vcproj/WTF/WTFDebug.vsprops: Added.
+        * JavaScriptCore.vcproj/WTF/WTFDebugAll.vsprops: Added.
+        * JavaScriptCore.vcproj/WTF/WTFDebugCairoCFLite.vsprops: Added.
+        * JavaScriptCore.vcproj/WTF/WTFRelease.vsprops: Added.
+        * JavaScriptCore.vcproj/WTF/WTFReleaseCairoCFLite.vsprops: Added.
+        * JavaScriptCore.vcproj/WTF/WTFReleaseLTCG.vsprops: Added.
+        * JavaScriptCore.vcproj/WTF/WTFReleasePGO.vsprops: Added.
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+        * JavaScriptCore.vcproj/jsc/jscDebug.vsprops: Added.
+        * JavaScriptCore.vcproj/jsc/jscDebugAll.vsprops: Added.
+        * JavaScriptCore.vcproj/jsc/jscDebugCairoCFLite.vsprops: Added.
+        * JavaScriptCore.vcproj/jsc/jscRelease.vsprops: Added.
+        * JavaScriptCore.vcproj/jsc/jscReleaseCairoCFLite.vsprops: Added.
+        * JavaScriptCore.vcproj/jsc/jscReleaseLTCG.vsprops: Added.
+        * JavaScriptCore.vcproj/jsc/jscReleasePGO.vsprops: Added.
+        * JavaScriptCore.vcproj/testapi/testapi.vcproj:
+        * JavaScriptCore.vcproj/testapi/testapiDebug.vsprops: Added.
+        * JavaScriptCore.vcproj/testapi/testapiDebugAll.vsprops: Added.
+        * JavaScriptCore.vcproj/testapi/testapiDebugCairoCFLite.vsprops: Added.
+        * JavaScriptCore.vcproj/testapi/testapiRelease.vsprops: Added.
+        * JavaScriptCore.vcproj/testapi/testapiReleaseCairoCFLite.vsprops: Added.
+        * JavaScriptCore.vcproj/testapi/testapiReleaseLTCG.vsprops: Added.
+
 2011-03-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Eric Seidel.
