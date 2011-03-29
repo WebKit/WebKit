@@ -163,11 +163,7 @@ void WebPluginSiteDataManager::getSitesWithData(PassRefPtr<ArrayCallback> prpCal
     m_pendingGetSitesWithData.set(callbackID, state);
     state->getSitesWithDataForNextPlugin();
 #else
-    if (!m_webContext->hasValidProcess()) {
-        RefPtr<ArrayCallback> callback = m_arrayCallbacks.take(callbackID);
-        callback->invalidate();
-        return;
-    }
+    m_webContext->relaunchProcessIfNecessary();
 
     Vector<String> pluginPaths;
     m_webContext->pluginInfoStore()->getPluginPaths(pluginPaths);
@@ -227,11 +223,7 @@ void WebPluginSiteDataManager::clearSiteData(ImmutableArray* sites, uint64_t fla
     state->clearSiteDataForNextPlugin();
 #else
 
-    if (!m_webContext->hasValidProcess()) {
-        RefPtr<VoidCallback> callback = m_voidCallbacks.take(callbackID);
-        callback->invalidate();
-        return;
-    }
+    m_webContext->relaunchProcessIfNecessary();
     Vector<String> pluginPaths;
     m_webContext->pluginInfoStore()->getPluginPaths(pluginPaths);
     m_webContext->ensureWebProcess();    

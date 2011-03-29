@@ -60,10 +60,7 @@ void WebKeyValueStorageManagerProxy::didReceiveMessage(CoreIPC::Connection* conn
 void WebKeyValueStorageManagerProxy::getKeyValueStorageOrigins(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;
-    if (!m_webContext->hasValidProcess()) {
-        callback->invalidate();
-        return;
-    }
+    m_webContext->relaunchProcessIfNecessary();
     
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
@@ -78,8 +75,7 @@ void WebKeyValueStorageManagerProxy::didGetKeyValueStorageOrigins(const Vector<S
 
 void WebKeyValueStorageManagerProxy::deleteEntriesForOrigin(WebSecurityOrigin* origin)
 {
-    if (!m_webContext->hasValidProcess())
-        return;
+    m_webContext->relaunchProcessIfNecessary();
     
     SecurityOriginData securityOriginData;
     securityOriginData.protocol = origin->protocol();
@@ -91,9 +87,7 @@ void WebKeyValueStorageManagerProxy::deleteEntriesForOrigin(WebSecurityOrigin* o
 
 void WebKeyValueStorageManagerProxy::deleteAllEntries()
 {
-    if (!m_webContext->hasValidProcess())
-        return;
-
+    m_webContext->relaunchProcessIfNecessary();
     m_webContext->process()->send(Messages::WebKeyValueStorageManager::DeleteAllEntries(), 0);
 }
 

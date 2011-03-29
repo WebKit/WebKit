@@ -1,3 +1,47 @@
+2011-03-29  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: The WebProcess should be relaunched if necessary when WebKit2 is asked for
+        information about Cookies, Databases, Local Storage, etc.
+        https://bugs.webkit.org/show_bug.cgi?id=57374
+
+        Instead of bailing when the WebProcess is not valid, call relaunchProcessIfNecessary().
+
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::getSitesWithData):
+        (WebKit::WebPluginSiteDataManager::clearSiteData):
+        * UIProcess/WebApplicationCacheManagerProxy.cpp:
+        (WebKit::WebApplicationCacheManagerProxy::getApplicationCacheOrigins):
+        (WebKit::WebApplicationCacheManagerProxy::deleteEntriesForOrigin):
+        (WebKit::WebApplicationCacheManagerProxy::deleteAllEntries):
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::getHostnamesWithCookies):
+        (WebKit::WebCookieManagerProxy::deleteCookiesForHostname):
+        (WebKit::WebCookieManagerProxy::deleteAllCookies):
+        (WebKit::WebCookieManagerProxy::startObservingCookieChanges):
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManagerProxy::getHTTPCookieAcceptPolicy):
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::getDatabasesByOrigin):
+        (WebKit::WebDatabaseManagerProxy::getDatabaseOrigins):
+        (WebKit::WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin):
+        (WebKit::WebDatabaseManagerProxy::deleteDatabasesForOrigin):
+        (WebKit::WebDatabaseManagerProxy::deleteAllDatabases):
+        (WebKit::WebDatabaseManagerProxy::setQuotaForOrigin):
+        * UIProcess/WebKeyValueStorageManagerProxy.cpp:
+        (WebKit::WebKeyValueStorageManagerProxy::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManagerProxy::deleteEntriesForOrigin):
+        (WebKit::WebKeyValueStorageManagerProxy::deleteAllEntries):
+        * UIProcess/WebMediaCacheManagerProxy.cpp:
+        (WebKit::WebMediaCacheManagerProxy::getHostnamesWithMediaCache):
+        (WebKit::WebMediaCacheManagerProxy::clearCacheForHostname):
+        (WebKit::WebMediaCacheManagerProxy::clearCacheForAllHostnames):
+        * UIProcess/WebResourceCacheManagerProxy.cpp:
+        (WebKit::WebResourceCacheManagerProxy::getCacheOrigins):
+        (WebKit::WebResourceCacheManagerProxy::clearCacheForOrigin):
+        (WebKit::WebResourceCacheManagerProxy::clearCacheForAllOrigins):
+
 2011-03-29  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Darin Adler.

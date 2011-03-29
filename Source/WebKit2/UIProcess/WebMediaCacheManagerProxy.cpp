@@ -59,10 +59,7 @@ void WebMediaCacheManagerProxy::didReceiveMessage(CoreIPC::Connection* connectio
 void WebMediaCacheManagerProxy::getHostnamesWithMediaCache(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;
-    if (!m_webContext->hasValidProcess()) {
-        callback->invalidate();
-        return;
-    }
+    m_webContext->relaunchProcessIfNecessary();
     
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
@@ -88,17 +85,13 @@ void WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache(const Vector<Strin
 
 void WebMediaCacheManagerProxy::clearCacheForHostname(const String& hostname)
 {
-    if (!m_webContext->hasValidProcess())
-        return;
-
+    m_webContext->relaunchProcessIfNecessary();
     m_webContext->process()->send(Messages::WebMediaCacheManager::ClearCacheForHostname(hostname), 0);
 }
 
 void WebMediaCacheManagerProxy::clearCacheForAllHostnames()
 {
-    if (!m_webContext->hasValidProcess())
-        return;
-
+    m_webContext->relaunchProcessIfNecessary();
     m_webContext->process()->send(Messages::WebMediaCacheManager::ClearCacheForAllHostnames(), 0);
 }
 
