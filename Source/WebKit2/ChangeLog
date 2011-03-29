@@ -1,3 +1,22 @@
+2011-03-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WKPageGetSourceForFrame and WKPageGetContentsAsString should throw an error in case of a race with page loading
+        https://bugs.webkit.org/show_bug.cgi?id=57305
+        <rdar://problem/8738060>, <rdar://problem/8780168>
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): Clear m_loadDependentStringCallbackIDs
+        (WebKit::WebPageProxy::getSourceForFrame): track the callback as load dependent
+        (WebKit::WebPageProxy::getContentsAsString): ditto
+        (WebKit::WebPageProxy::clearLoadDependentCallbacks): Invalidate all load dependent callbacks
+        (WebKit::WebPageProxy::didCommitLoadForFrame): Call clearLoadDependentCallbacks
+        (WebKit::WebPageProxy::didFailLoadForFrame): ditto
+        (WebKit::WebPageProxy::stringCallback): Remove callback from load dependent set if appropriate
+        (WebKit::WebPageProxy::processDidCrash): Clear m_loadDependentStringCallbackIDs
+        * UIProcess/WebPageProxy.h: Add m_loadDependentStringCallbackIDs hash set.
+
 2011-03-28  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

@@ -323,6 +323,7 @@ void WebPageProxy::close()
     invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
     invalidateCallbackMap(m_stringCallbacks);
+    m_loadDependentStringCallbackIDs.clear();
     invalidateCallbackMap(m_scriptValueCallbacks);
     invalidateCallbackMap(m_computedPagesCallbacks);
 
@@ -1115,6 +1116,7 @@ void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, PassRefPtr<StringCall
 {
     RefPtr<StringCallback> callback = prpCallback;
     uint64_t callbackID = callback->callbackID();
+    m_loadDependentStringCallbackIDs.add(callbackID);
     m_stringCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::GetSourceForFrame(frame->frameID(), callbackID), m_pageID);
 }
@@ -1123,6 +1125,7 @@ void WebPageProxy::getContentsAsString(PassRefPtr<StringCallback> prpCallback)
 {
     RefPtr<StringCallback> callback = prpCallback;
     uint64_t callbackID = callback->callbackID();
+    m_loadDependentStringCallbackIDs.add(callbackID);
     m_stringCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::GetContentsAsString(callbackID), m_pageID);
 }
@@ -1395,6 +1398,19 @@ void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const Resour
     m_loaderClient.didFailProvisionalLoadWithErrorForFrame(this, frame, error, userData.get());
 }
 
+void WebPageProxy::clearLoadDependentCallbacks()
+{
+    Vector<uint64_t> callbackIDsCopy;
+    copyToVector(m_loadDependentStringCallbackIDs, callbackIDsCopy);
+    m_loadDependentStringCallbackIDs.clear();
+
+    for (size_t i = 0; i < callbackIDsCopy.size(); ++i) {
+        RefPtr<StringCallback> callback = m_stringCallbacks.take(callbackIDsCopy[i]);
+        if (callback)
+            callback->invalidate();
+    }
+}
+
 void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeType, bool frameHasCustomRepresentation, const PlatformCertificateInfo& certificateInfo, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
@@ -1408,6 +1424,8 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
 
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
+
+    clearLoadDependentCallbacks();
 
     frame->didCommitLoad(mimeType, certificateInfo);
 
@@ -1456,6 +1474,8 @@ void WebPageProxy::didFailLoadForFrame(uint64_t frameID, const ResourceError& er
 
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
+
+    clearLoadDependentCallbacks();
 
     frame->didFailLoad();
 
@@ -2431,8 +2451,11 @@ void WebPageProxy::stringCallback(const String& resultString, uint64_t callbackI
     RefPtr<StringCallback> callback = m_stringCallbacks.take(callbackID);
     if (!callback) {
         // FIXME: Log error or assert.
+        // this can validly happen if a load invalidated the callback, though
         return;
     }
+
+    m_loadDependentStringCallbackIDs.remove(callbackID);
 
     callback->performCallbackWithReturnValue(resultString.impl());
 }
@@ -2555,6 +2578,7 @@ void WebPageProxy::processDidCrash()
     invalidateCallbackMap(m_voidCallbacks);
     invalidateCallbackMap(m_dataCallbacks);
     invalidateCallbackMap(m_stringCallbacks);
+    m_loadDependentStringCallbackIDs.clear();
     invalidateCallbackMap(m_scriptValueCallbacks);
     invalidateCallbackMap(m_computedPagesCallbacks);
     invalidateCallbackMap(m_validateCommandCallbacks);
