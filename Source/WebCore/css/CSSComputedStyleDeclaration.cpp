@@ -770,8 +770,11 @@ static PassRefPtr<CSSValue> contentToCSSValue(const RenderStyle* style, CSSPrimi
 
 static PassRefPtr<CSSValue> counterToCSSValue(const RenderStyle* style, int propertyID, CSSPrimitiveValueCache* primitiveValueCache)
 {
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     const CounterDirectiveMap* map = style->counterDirectives();
+    if (!map)
+        return 0;
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     for (CounterDirectiveMap::const_iterator it = map->begin(); it != map->end(); ++it) {
         list->append(primitiveValueCache->createValue(it->first.get(), CSSPrimitiveValue::CSS_STRING));
         short number = propertyID == CSSPropertyCounterIncrement ? it->second.m_incrementValue : it->second.m_resetValue;

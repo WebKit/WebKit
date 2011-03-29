@@ -1,3 +1,15 @@
+2011-03-29  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        getComputedStyle counterIncrement crash @ WebCore::counterToCSSValue
+        https://bugs.webkit.org/show_bug.cgi?id=57266
+
+        Add test for getComputedStyle(...).counterIncrement without a counter.
+
+        * fast/css/getComputedStyle/counterIncrement-without-counter-expected.txt: Added.
+        * fast/css/getComputedStyle/counterIncrement-without-counter.html: Added.
+
 2011-03-29  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Tony Gentilcore.

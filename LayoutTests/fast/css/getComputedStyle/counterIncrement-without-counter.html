@@ -1,0 +1,13 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="console"></div>
+    <script>
+        var style = window.getComputedStyle(document.body, null);
+        shouldBe("style.counterIncrement", "'';");
+        shouldBe("style.counterReset", "'';");
+    </script>
+</body>
+</html>
