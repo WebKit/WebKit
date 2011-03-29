@@ -1,5 +1,12 @@
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
+        Update expected results now that we don't have a scrollbar to worry about.
+
+        * platform/mac/fast/block/float/float-forced-below-other-floats-expected.checksum:
+        * platform/mac/fast/block/float/float-forced-below-other-floats-expected.png:
+
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
         Update expectations.
 
         * platform/chromium-mac/fast/multicol/margin-collapse-expected.checksum: Added.
