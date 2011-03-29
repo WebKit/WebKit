@@ -1,9 +1,9 @@
-layer at (0,0) size 781x661
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x661
-  RenderBlock {HTML} at (0,0) size 781x661
-    RenderBody {BODY} at (8,8) size 765x633
-      RenderBlock {P} at (0,0) size 765x38
+layer at (0,0) size 784x661
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x661
+  RenderBlock {HTML} at (0,0) size 784x661
+    RenderBody {BODY} at (8,8) size 768x633
+      RenderBlock {P} at (0,0) size 768x38
         RenderText {#text} at (0,0) size 53x19
           text run at (0,0) width 53: "Test for "
         RenderInline {I} at (0,0) size 748x38
@@ -16,7 +16,7 @@ layer at (0,0) size 781x661
             text run at (0,19) width 22: "text"
         RenderText {#text} at (22,19) size 4x19
           text run at (22,19) width 4: "."
-      RenderBlock {P} at (0,54) size 765x19
+      RenderBlock {P} at (0,54) size 768x19
         RenderText {#text} at (0,0) size 458x19
           text run at (0,0) width 458: "The letter A should be fully visible in each one of the eight boxes below."
 layer at (28,101) size 150x50 clip at (28,101) size 150x34 scrollX 50 scrollWidth 200

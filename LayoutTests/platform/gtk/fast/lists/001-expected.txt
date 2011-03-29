@@ -1,8 +1,8 @@
-layer at (0,0) size 810x581
-  RenderView at (0,0) size 800x581
-layer at (0,0) size 800x581
-  RenderBlock {HTML} at (0,0) size 800x581
-    RenderBody {BODY} at (8,8) size 784x557
+layer at (0,0) size 810x584
+  RenderView at (0,0) size 800x584
+layer at (0,0) size 800x584
+  RenderBlock {HTML} at (0,0) size 800x584
+    RenderBody {BODY} at (8,8) size 784x560
       RenderBlock {DIV} at (0,0) size 784x107 [border: (3px solid #FFA500)]
         RenderBlock (floating) {DIV} at (11,11) size 122x122 [bgcolor=#FFA500] [border: (3px solid #FFA500)]
         RenderListItem {DIV} at (11,11) size 762x85 [border: (3px solid #FFA500)]

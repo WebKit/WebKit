@@ -1,17 +1,17 @@
-layer at (0,0) size 781x32803
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x32803
-  RenderBlock {HTML} at (0,0) size 781x32803
-    RenderBody {BODY} at (8,8) size 765x32787
-      RenderBlock (anonymous) at (0,0) size 765x19
+layer at (0,0) size 784x32803
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x32803
+  RenderBlock {HTML} at (0,0) size 784x32803
+    RenderBody {BODY} at (8,8) size 768x32787
+      RenderBlock (anonymous) at (0,0) size 768x19
         RenderText {#text} at (0,0) size 559x19
           text run at (0,0) width 559: "You should see a large green block below that is 32,768px tall. No red should be visible."
         RenderBR {BR} at (559,15) size 0x0
-      RenderBlock {DIV} at (0,19) size 765x32768 [bgcolor=#FF0000]
-        RenderPartObject {IFRAME} at (0,0) size 765x32768 [bgcolor=#008000]
-          layer at (0,0) size 765x32768
-            RenderView at (0,0) size 765x32768
-          layer at (0,0) size 765x32768
-            RenderBlock {HTML} at (0,0) size 765x32768
-              RenderBody {BODY} at (8,8) size 749x32752
+      RenderBlock {DIV} at (0,19) size 768x32768 [bgcolor=#FF0000]
+        RenderPartObject {IFRAME} at (0,0) size 768x32768 [bgcolor=#008000]
+          layer at (0,0) size 768x32768
+            RenderView at (0,0) size 768x32768
+          layer at (0,0) size 768x32768
+            RenderBlock {HTML} at (0,0) size 768x32768
+              RenderBody {BODY} at (8,8) size 752x32752
         RenderText {#text} at (0,0) size 0x0

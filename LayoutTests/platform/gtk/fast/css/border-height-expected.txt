@@ -1,9 +1,9 @@
-layer at (0,0) size 781x4175
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x4175
-  RenderBlock {HTML} at (0,0) size 781x4175
-    RenderBody {BODY} at (8,16) size 765x4151
-      RenderBlock {P} at (0,0) size 765x38
+layer at (0,0) size 784x4175
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x4175
+  RenderBlock {HTML} at (0,0) size 784x4175
+    RenderBody {BODY} at (8,16) size 768x4151
+      RenderBlock {P} at (0,0) size 768x38
         RenderText {#text} at (0,0) size 737x38
           text run at (0,0) width 737: "The very tall div below (> 4095 pixels) should have a 1-pixel dotted border on the right and bottom and a wider solid"
           text run at (0,19) width 112: "border on the left."

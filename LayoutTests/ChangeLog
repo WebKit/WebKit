@@ -3,6 +3,15 @@
         [GTK] [DRT] GtkScrolledWindow adds three pixels of padding between the WebView and the scrollbar
         https://bugs.webkit.org/show_bug.cgi?id=57067
 
+        Update more GTK+ results after r82343.
+
+        * platform/gtk/fast: Update many more results in this directory.
+
+2011-03-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [DRT] GtkScrolledWindow adds three pixels of padding between the WebView and the scrollbar
+        https://bugs.webkit.org/show_bug.cgi?id=57067
+
         Update GTK+ results after r82343.
 
         * platform/gtk/fast: Update many results in this directory.

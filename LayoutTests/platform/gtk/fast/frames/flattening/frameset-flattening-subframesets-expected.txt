@@ -1,8 +1,8 @@
-layer at (0,0) size 900x615
-  RenderView at (0,0) size 781x581
-layer at (0,0) size 781x615
-  RenderBlock {HTML} at (0,0) size 781x615
-    RenderFrameSet {FRAMESET} at (0,0) size 900x615
+layer at (0,0) size 900x618
+  RenderView at (0,0) size 784x584
+layer at (0,0) size 784x618
+  RenderBlock {HTML} at (0,0) size 784x618
+    RenderFrameSet {FRAMESET} at (0,0) size 900x618
       RenderFrameSet {FRAMESET} at (0,0) size 900x150
         RenderFrame {FRAME} at (0,0) size 450x150
           layer at (0,0) size 450x150
@@ -31,25 +31,25 @@ layer at (0,0) size 781x615
                     text run at (0,19) width 201: "150px tall and not be scrollable."
           layer at (0,0) size 450x150
             RenderBlock (positioned) {DIV} at (0,0) size 450x150
-      RenderFrameSet {FRAMESET} at (0,150) size 900x465
-        RenderFrame {FRAME} at (0,0) size 450x465
-          layer at (0,0) size 450x465
-            RenderView at (0,0) size 450x465
-          layer at (0,0) size 450x465
-            RenderBlock {HTML} at (0,0) size 450x465
-              RenderBody {BODY} at (8,8) size 434x441 [bgcolor=#FFFF00]
+      RenderFrameSet {FRAMESET} at (0,150) size 900x468
+        RenderFrame {FRAME} at (0,0) size 450x468
+          layer at (0,0) size 450x468
+            RenderView at (0,0) size 450x468
+          layer at (0,0) size 450x468
+            RenderBlock {HTML} at (0,0) size 450x468
+              RenderBody {BODY} at (8,8) size 434x444 [bgcolor=#FFFF00]
                 RenderBlock {P} at (0,0) size 434x38
                   RenderText {#text} at (0,0) size 414x38
                     text run at (0,0) width 414: "This frame is inside frameset 2 and should be at least 450px wide,"
                     text run at (0,19) width 201: "400px tall and not be scrollable."
           layer at (0,0) size 200x450
             RenderBlock (positioned) {DIV} at (0,0) size 200x450
-        RenderFrame {FRAME} at (450,0) size 450x465
-          layer at (0,0) size 450x465
-            RenderView at (0,0) size 450x465
-          layer at (0,0) size 450x465
-            RenderBlock {HTML} at (0,0) size 450x465
-              RenderBody {BODY} at (8,8) size 434x441 [bgcolor=#0000FF]
+        RenderFrame {FRAME} at (450,0) size 450x468
+          layer at (0,0) size 450x468
+            RenderView at (0,0) size 450x468
+          layer at (0,0) size 450x468
+            RenderBlock {HTML} at (0,0) size 450x468
+              RenderBody {BODY} at (8,8) size 434x444 [bgcolor=#0000FF]
                 RenderBlock {P} at (0,0) size 434x38
                   RenderText {#text} at (0,0) size 414x38
                     text run at (0,0) width 414: "This frame is inside frameset 2 and should be at least 450px wide,"
