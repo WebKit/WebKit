@@ -1,3 +1,19 @@
+2011-03-28  Ofri Wolfus  <ofri@google.com>
+
+        Reviewed by Eric Seidel.
+
+        RTL: Select elements with a size attribute are always left aligned.
+        https://bugs.webkit.org/show_bug.cgi?id=50928
+
+        Added support for alignment in RenderListBox.
+
+        * fast/forms/listbox-bidi-align.html: Added.
+        * platform/mac/fast/forms/listbox-bidi-align-expected.checksum: Added.
+        * platform/mac/fast/forms/listbox-bidi-align-expected.png: Added.
+        * platform/mac/fast/forms/listbox-bidi-align-expected.txt: Added.
+        * platform/mac/fast/text/drawBidiText-expected.checksum: Updated.
+        * platform/mac/fast/text/drawBidiText-expected.png: Updated.
+
 2011-03-28  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed. Clean up Chromium test expectations for plugins/embed-prefers-plugins-for-images.html.
