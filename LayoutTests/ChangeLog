@@ -1,5 +1,18 @@
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
+        Update IMAGE results to show test progression (yay!).
+
+        * platform/chromium-linux/fast/text/drawBidiText-expected.checksum:
+        * platform/chromium-linux/fast/text/drawBidiText-expected.png:
+        * platform/chromium-mac/fast/text/drawBidiText-expected.checksum: Added.
+        * platform/chromium-mac/fast/text/drawBidiText-expected.png: Added.
+        * platform/chromium-win-xp/fast/text/drawBidiText-expected.checksum: Added.
+        * platform/chromium-win-xp/fast/text/drawBidiText-expected.png: Added.
+        * platform/chromium-win/fast/text/drawBidiText-expected.checksum:
+        * platform/chromium-win/fast/text/drawBidiText-expected.png:
+
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
         Add Windows baselines.
 
         * platform/chromium-win/fast/forms/listbox-bidi-align-expected.checksum: Added.
