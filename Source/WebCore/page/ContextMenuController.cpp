@@ -63,6 +63,7 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "TextIterator.h"
+#include "UserTypingGestureIndicator.h"
 #include "WindowFeatures.h"
 #include "markup.h"
 #include <wtf/unicode/Unicode.h>
@@ -259,10 +260,10 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         frame->loader()->reload();
         break;
     case ContextMenuItemTagCut:
-        frame->editor()->cut();
+        frame->editor()->command("Cut").execute();
         break;
     case ContextMenuItemTagPaste:
-        frame->editor()->paste();
+        frame->editor()->command("Paste").execute();
         break;
 #if PLATFORM(GTK)
     case ContextMenuItemTagDelete:

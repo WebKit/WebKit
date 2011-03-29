@@ -1,3 +1,29 @@
+2011-03-28  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION: Can't enter pasted with context or Edit menu text in search or address field in the browser.
+        https://bugs.webkit.org/show_bug.cgi?id=57275
+        <rdar://problem/8246691>
+
+        We need to classify cut and paste actions as user typing actions even when
+        the action is triggered by a context menu selection to
+        allow the propagation of the textDidChangeInTextField event.
+
+        * editing/EditorCommand.cpp:
+        The following methods have been modified to properly set up
+        the UserTypingGestureAction when the command source is the
+        menu or a key binding sequence.
+        (WebCore::executeCut):
+        (WebCore::executePaste):
+        (WebCore::executePasteAndMatchStyle):
+        (WebCore::executePasteAsPlainText):
+        (WebCore::executeDelete):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Changed to
+        call execute command instead of referring to the specific method in
+        the editor class.
+
 2011-03-28  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

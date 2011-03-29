@@ -56,6 +56,7 @@
 #include "Sound.h"
 #include "TypingCommand.h"
 #include "UnlinkCommand.h"
+#include "UserTypingGestureIndicator.h"
 #include "htmlediting.h"
 #include "markup.h"
 #include <wtf/text/AtomicString.h>
@@ -294,19 +295,25 @@ static bool executeCreateLink(Frame* frame, Event*, EditorCommandSource, const S
     return true;
 }
 
-static bool executeCut(Frame* frame, Event*, EditorCommandSource, const String&)
+static bool executeCut(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    frame->editor()->cut();
+    if (source == CommandFromMenuOrKeyBinding) {
+        UserTypingGestureIndicator typingGestureIndicator(frame);
+        frame->editor()->cut();
+    } else
+        frame->editor()->cut();
     return true;
 }
 
 static bool executeDelete(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
     switch (source) {
-    case CommandFromMenuOrKeyBinding:
+    case CommandFromMenuOrKeyBinding: {
         // Doesn't modify the text if the current selection isn't a range.
+        UserTypingGestureIndicator typingGestureIndicator(frame);
         frame->editor()->performDelete();
         return true;
+    }
     case CommandFromDOM:
     case CommandFromDOMWithUserInterface:
         // If the current selection is a caret, delete the preceding character. IE performs forwardDelete, but we currently side with Firefox.
@@ -883,21 +890,33 @@ static bool executeOutdent(Frame* frame, Event*, EditorCommandSource, const Stri
     return true;
 }
 
-static bool executePaste(Frame* frame, Event*, EditorCommandSource, const String&)
+static bool executePaste(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    frame->editor()->paste();
+    if (source == CommandFromMenuOrKeyBinding) {
+        UserTypingGestureIndicator typingGestureIndicator(frame);
+        frame->editor()->paste();
+    } else
+        frame->editor()->paste();
     return true;
 }
 
-static bool executePasteAndMatchStyle(Frame* frame, Event*, EditorCommandSource, const String&)
+static bool executePasteAndMatchStyle(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    frame->editor()->pasteAsPlainText();
+    if (source == CommandFromMenuOrKeyBinding) {
+        UserTypingGestureIndicator typingGestureIndicator(frame);
+        frame->editor()->pasteAsPlainText();
+    } else
+        frame->editor()->pasteAsPlainText();
     return true;
 }
 
-static bool executePasteAsPlainText(Frame* frame, Event*, EditorCommandSource, const String&)
+static bool executePasteAsPlainText(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
-    frame->editor()->pasteAsPlainText();
+    if (source == CommandFromMenuOrKeyBinding) {
+        UserTypingGestureIndicator typingGestureIndicator(frame);
+        frame->editor()->pasteAsPlainText();
+    } else
+        frame->editor()->pasteAsPlainText();
     return true;
 }
 
