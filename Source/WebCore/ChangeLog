@@ -2,6 +2,49 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: [Chromium] Refactor HeapSnapshot-related code to
+        make sure we don't return big amounts of data to forms.
+        https://bugs.webkit.org/show_bug.cgi?id=57227
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGridNode.prototype.populateChildren):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.get _countPercent):
+        (WebInspector.HeapSnapshotObjectNode):
+        (WebInspector.HeapSnapshotObjectNode.prototype._createProvider):
+        (WebInspector.HeapSnapshotInstanceNode):
+        (WebInspector.HeapSnapshotInstanceNode.prototype._createProvider):
+        (WebInspector.HeapSnapshotConstructorNode.prototype._createNodesProvider):
+        (WebInspector.HeapSnapshotConstructorNode.prototype.get _countPercent):
+        (WebInspector.HeapSnapshotDiffNode.prototype._createNodesProvider.createProvider):
+        (WebInspector.HeapSnapshotDiffNode.prototype._createNodesProvider):
+        (WebInspector.HeapSnapshotDominatorObjectNode.prototype._createProvider):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotContainmentDataGrid.prototype.setDataSource):
+        (WebInspector.HeapSnapshotDominatorsDataGrid.prototype.setDataSource):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotNode.prototype.get dominatorIndex):
+        (WebInspector.HeapSnapshotNode.prototype.get retainers):
+        (WebInspector.HeapSnapshot):
+        (WebInspector.HeapSnapshot.prototype.get _allNodes):
+        (WebInspector.HeapSnapshot.prototype.get nodeCount):
+        (WebInspector.HeapSnapshot.prototype.get rootNodeIndex):
+        (WebInspector.HeapSnapshot.prototype.hasId):
+        (WebInspector.HeapSnapshot.prototype.get nodeIds):
+        (WebInspector.HeapSnapshot.prototype._retainersForNode):
+        (WebInspector.HeapSnapshot.prototype._buildRetainers):
+        (WebInspector.HeapSnapshot.prototype._buildAggregates):
+        (WebInspector.HeapSnapshot.prototype._buildAggregatesIndexes):
+        (WebInspector.HeapSnapshot.prototype._buildIdsList):
+        (WebInspector.HeapSnapshot.prototype._buildNodeIndex):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator):
+        (WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.next):
+        (WebInspector.HeapSnapshotEdgesProvider):
+        (WebInspector.HeapSnapshotNodesProvider):
+
+2011-03-29  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector: [Chromium] Fix detailed heap snapshots UI.
         https://bugs.webkit.org/show_bug.cgi?id=57235
 

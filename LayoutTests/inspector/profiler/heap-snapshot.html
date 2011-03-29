@@ -90,7 +90,7 @@ function test()
         function heapSnapshotSimpleTest(next)
         {
             var snapshot = new WebInspector.HeapSnapshot(InspectorTest.createHeapSnapshotMock());
-            InspectorTest.assertEquals(6, snapshot.nodesCount, "nodes count");
+            InspectorTest.assertEquals(6, snapshot.nodeCount, "node count");
             InspectorTest.assertEquals(20, snapshot.totalSize, "total size");
             next();
         },
@@ -116,7 +116,7 @@ function test()
                 "C": ["A", "B"],
                 "D": ["B"],
                 "E": ["C"]};
-            for (var nodes = snapshot.allNodes; nodes.hasNext(); nodes.next()) {
+            for (var nodes = snapshot._allNodes; nodes.hasNext(); nodes.next()) {
                 var names = [];
                 for (var retainers = nodes.item.retainers; retainers.hasNext(); retainers.next())
                     names.push(retainers.item.node.name);
@@ -168,7 +168,7 @@ function test()
                 return node.type === "object" && node.name !== "B" && node.name !== "D";
             }
          
-            var provider = new WebInspector.HeapSnapshotNodesProvider(snapshot, snapshot.allNodes, nodeFilter);
+            var provider = new WebInspector.HeapSnapshotNodesProvider(snapshot, nodeFilter);
             // Sort by names in reverse order.
             provider.sort(WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator(["name", false, "id", false]));
             InspectorTest.assertEquals(3, provider.length, "nodes provider length");
@@ -188,7 +188,7 @@ function test()
                 return edge.name === "b";
             }
          
-            var provider = new WebInspector.HeapSnapshotEdgesProvider(snapshot, snapshot.rootNode.rawEdges, edgeFilter);
+            var provider = new WebInspector.HeapSnapshotEdgesProvider(snapshot, snapshot.rootNodeIndex, edgeFilter);
             provider.sort(WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator(["!edgeName", false, "id", false]));
             InspectorTest.assertEquals(1, provider.length, "edges provider length");
             var names = [];
@@ -209,7 +209,7 @@ function test()
                 50: ["A@2[1].bd", "B@3.bd"],
                 57: ["A@2.ac.ce", "A@2[1].bc.ce", "B@3.bc.ce"]
             };
-            for (var nodes = snapshot.allNodes; nodes.hasNext(); nodes.next()) {
+            for (var nodes = snapshot._allNodes; nodes.hasNext(); nodes.next()) {
                 var pathFinder = new WebInspector.HeapSnapshotPathFinder(snapshot, nodes.index);
                 var paths = [];
                 var path;

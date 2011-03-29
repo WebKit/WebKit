@@ -1,3 +1,13 @@
+2011-03-29  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Refactor HeapSnapshot-related code to
+        make sure we don't return big amounts of data to forms.
+        https://bugs.webkit.org/show_bug.cgi?id=57227
+
+        * inspector/profiler/heap-snapshot.html:
+
 2011-03-29  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, updating Chromium test expectations.

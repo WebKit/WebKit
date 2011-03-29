@@ -45,8 +45,8 @@ WebInspector.HeapSnapshotContainmentDataGrid.prototype = {
     {
         this.snapshotView = snapshotView;
         this.snapshot = snapshot;
-        this.snapshotNodeIndex = this.snapshot._rootNodeIndex;
-        this._provider = this._createProvider(snapshot, snapshot.rootNode.rawEdges);
+        this.snapshotNodeIndex = this.snapshot.rootNodeIndex;
+        this._provider = this._createProvider(snapshot, this.snapshotNodeIndex);
         this.sort();
     }
 };
@@ -227,7 +227,7 @@ WebInspector.HeapSnapshotDominatorsDataGrid.prototype = {
     {
         this.snapshotView = snapshotView;
         this.snapshot = snapshot;
-        this.snapshotNodeIndex = this.snapshot._rootNodeIndex;
+        this.snapshotNodeIndex = this.snapshot.rootNodeIndex;
         this._provider = this._createProvider(snapshot, this.snapshotNodeIndex);
         this.sort();
     }
