@@ -1,0 +1,3 @@
+Tests that mouse event dispatch is linear with respect to the number of parent elements.
+PASS
+

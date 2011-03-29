@@ -44,6 +44,7 @@ MouseRelatedEvent::MouseRelatedEvent()
     , m_offsetX(0)
     , m_offsetY(0)
     , m_isSimulated(false)
+    , m_hasCachedRelativePosition(false)
 {
 }
 
@@ -91,21 +92,20 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubb
 void MouseRelatedEvent::initCoordinates()
 {
     // Set up initial values for coordinates.
-    // Correct values can't be computed until we have at target, so receivedTarget
-    // does the "real" computation.
+    // Correct values are computed lazily, see computeRelativePosition.
     m_layerX = m_pageX;
     m_layerY = m_pageY;
     m_offsetX = m_pageX;
     m_offsetY = m_pageY;
 
     computePageLocation();
+    m_hasCachedRelativePosition = false;
 }
 
 void MouseRelatedEvent::initCoordinates(int clientX, int clientY)
 {
     // Set up initial values for coordinates.
-    // Correct values can't be computed until we have at target, so receivedTarget
-    // does the "real" computation.
+    // Correct values are computed lazily, see computeRelativePosition.
     m_clientX = clientX;
     m_clientY = clientY;
     m_pageX = clientX + contentsX(view());
@@ -116,9 +116,10 @@ void MouseRelatedEvent::initCoordinates(int clientX, int clientY)
     m_offsetY = m_pageY;
 
     computePageLocation();
+    m_hasCachedRelativePosition = false;
 }
 
-static float pageZoomFactor(UIEvent* event)
+static float pageZoomFactor(const UIEvent* event)
 {
     DOMWindow* window = event->view();
     if (!window)
@@ -137,9 +138,13 @@ void MouseRelatedEvent::computePageLocation()
 
 void MouseRelatedEvent::receivedTarget()
 {
-    ASSERT(target());
-    Node* targ = target()->toNode();
-    if (!targ)
+    m_hasCachedRelativePosition = false;
+}
+
+void MouseRelatedEvent::computeRelativePosition()
+{
+    Node* targetNode = target() ? target()->toNode() : 0;
+    if (!targetNode)
         return;
 
     // Compute coordinates that are based on the target.
@@ -149,11 +154,11 @@ void MouseRelatedEvent::receivedTarget()
     m_offsetY = m_pageY;
 
     // Must have an updated render tree for this math to work correctly.
-    targ->document()->updateStyleIfNeeded();
+    targetNode->document()->updateStyleIfNeeded();
 
     // Adjust offsetX/Y to be relative to the target's position.
     if (!isSimulated()) {
-        if (RenderObject* r = targ->renderer()) {
+        if (RenderObject* r = targetNode->renderer()) {
             FloatPoint localPos = r->absoluteToLocal(absoluteLocation(), false, true);
             float zoomFactor = pageZoomFactor(this);
             m_offsetX = lroundf(localPos.x() / zoomFactor);
@@ -166,17 +171,48 @@ void MouseRelatedEvent::receivedTarget()
     // Our RenderLayer is a more modern concept, and layerX/Y is some
     // other notion about groups of elements (left over from the Netscape 4 days?);
     // we should test and fix this.
-    Node* n = targ;
+    Node* n = targetNode;
     while (n && !n->renderer())
         n = n->parentNode();
-    if (n) {
-        RenderLayer* layer = n->renderer()->enclosingLayer();
+
+    RenderLayer* layer;
+    if (n && (layer = n->renderer()->enclosingLayer())) {
         layer->updateLayerPosition();
         for (; layer; layer = layer->parent()) {
             m_layerX -= layer->x();
             m_layerY -= layer->y();
         }
     }
+
+    m_hasCachedRelativePosition = true;
+}
+
+int MouseRelatedEvent::layerX()
+{
+    if (!m_hasCachedRelativePosition)
+        computeRelativePosition();
+    return m_layerX;
+}
+
+int MouseRelatedEvent::layerY()
+{
+    if (!m_hasCachedRelativePosition)
+        computeRelativePosition();
+    return m_layerY;
+}
+
+int MouseRelatedEvent::offsetX()
+{
+    if (!m_hasCachedRelativePosition)
+        computeRelativePosition();
+    return m_offsetX;
+}
+
+int MouseRelatedEvent::offsetY()
+{
+    if (!m_hasCachedRelativePosition)
+        computeRelativePosition();
+    return m_offsetY;
 }
 
 int MouseRelatedEvent::pageX() const

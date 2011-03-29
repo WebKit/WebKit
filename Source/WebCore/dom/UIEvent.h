@@ -53,8 +53,8 @@ namespace WebCore {
         virtual int keyCode() const;
         virtual int charCode() const;
 
-        virtual int layerX() const;
-        virtual int layerY() const;
+        virtual int layerX();
+        virtual int layerY();
 
         virtual int pageX() const;
         virtual int pageY() const;

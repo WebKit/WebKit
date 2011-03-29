@@ -1,0 +1,53 @@
+<body>
+<script src="../resources/magnitude-perf.js"></script>
+<style>
+    .outer {
+        position: relative;
+        margin: 0.25px;
+        padding: 0.25px;
+    }
+    .inner {
+        width: 100px;
+        height: 100px;
+        background: red;
+    }
+</style>
+<div id="test"></div>
+<script>
+
+var innerElement, reportedPosition;
+var testElement = document.getElementById('test');
+
+function setupFunction(magnitude)
+{
+    testElement.innerHTML = '';
+    var element, parent = testElement;
+    for (var i = 0; i < magnitude; i++) {
+        element = document.createElement('div');
+        element.className = 'outer';
+        parent.appendChild(element);
+        parent = element;
+    }
+    element = document.createElement('div');
+    element.className = 'inner';
+    parent.appendChild(element);
+    element.onmouseover = function(e) {
+        reportedPosition = e.offsetX + ', ' + e.offsetY;
+    };
+    innerElement = element;
+}
+
+function test(magnitude)
+{
+    if (window.eventSender) {
+        var rect = innerElement.getBoundingClientRect();
+        eventSender.mouseMoveTo(0, 0);
+        eventSender.mouseMoveTo(rect.left, rect.top);
+        eventSender.mouseMoveTo(0, 0);
+    }
+}
+
+Magnitude.description("Tests that mouse event dispatch is linear with respect to the number of parent elements.");
+Magnitude.run(setupFunction, test, Magnitude.LINEAR);
+</script>
+</body>

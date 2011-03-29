@@ -1,5 +1,39 @@
 2011-03-29  Emil A Eklund  <eae@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        Relative mouse coordinates recalculated for each target
+        https://bugs.webkit.org/show_bug.cgi?id=57130
+
+        Calculate relative coordinates lazily for mouse events instead of doing
+        it for each target. Speeds up dispatching of mouse events in deep dom
+        structures significantly, O(n^2) to O(n).
+
+        Also fixes https://bugs.webkit.org/show_bug.cgi?id=34973
+
+        Tests: fast/events/mouse-relative-position.html
+               perf/mouse-event.html
+
+        * dom/Event.cpp:
+        (WebCore::Event::setTarget):
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        (WebCore::MouseRelatedEvent::initCoordinates):
+        (WebCore::pageZoomFactor):
+        (WebCore::MouseRelatedEvent::receivedTarget):
+        (WebCore::MouseRelatedEvent::computeRelativePosition):
+        (WebCore::MouseRelatedEvent::layerX):
+        (WebCore::MouseRelatedEvent::layerY):
+        (WebCore::MouseRelatedEvent::offsetX):
+        (WebCore::MouseRelatedEvent::offsetY):
+        * dom/MouseRelatedEvent.h:
+        * dom/UIEvent.cpp:
+        (WebCore::UIEvent::layerX):
+        (WebCore::UIEvent::layerY):
+        * dom/UIEvent.h:
+
+2011-03-29  Emil A Eklund  <eae@chromium.org>
+
         Reviewed by Darin Adler.
 
         getComputedStyle counterIncrement crash @ WebCore::counterToCSSValue

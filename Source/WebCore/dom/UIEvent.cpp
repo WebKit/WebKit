@@ -69,12 +69,12 @@ int UIEvent::charCode() const
     return 0;
 }
 
-int UIEvent::layerX() const
+int UIEvent::layerX()
 {
     return 0;
 }
 
-int UIEvent::layerY() const
+int UIEvent::layerY()
 {
     return 0;
 }

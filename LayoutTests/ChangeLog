@@ -1,3 +1,17 @@
+2011-03-29  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Relative mouse coordinates recalculated for target
+        https://bugs.webkit.org/show_bug.cgi?id=57130
+
+        Add mouse event performance test.
+
+        * fast/events/mouse-relative-position-expected.txt: Added.
+        * fast/events/mouse-relative-position.html: Added.
+        * perf/mouse-event-expected.txt: Added.
+        * perf/mouse-event.html: Added.
+
 2011-03-29  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip failing http/tests/uri test on GTK.

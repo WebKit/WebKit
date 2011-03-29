@@ -38,10 +38,10 @@ namespace WebCore {
         int screenY() const { return m_screenY; }
         int clientX() const { return m_clientX; }
         int clientY() const { return m_clientY; }
-        int layerX() const { return m_layerX; }
-        int layerY() const { return m_layerY; }
-        int offsetX() const { return m_offsetX; }
-        int offsetY() const { return m_offsetY; }
+        int layerX();
+        int layerY();
+        int offsetX();
+        int offsetY();
         bool isSimulated() const { return m_isSimulated; }
         virtual int pageX() const;
         virtual int pageY() const;
@@ -64,6 +64,7 @@ namespace WebCore {
         virtual void receivedTarget();
 
         void computePageLocation();
+        void computeRelativePosition();
         
         // Expose these so MouseEvent::initMouseEvent can set them.
         int m_screenX;
@@ -80,6 +81,7 @@ namespace WebCore {
         int m_offsetY;
         IntPoint m_absoluteLocation;
         bool m_isSimulated;
+        bool m_hasCachedRelativePosition;
     };
 
 } // namespace WebCore

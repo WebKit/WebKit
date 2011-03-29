@@ -57,24 +57,24 @@ int WebDOMMouseEvent::clientY() const
     return constUnwrap<MouseEvent>()->clientY();
 }
 
-int WebDOMMouseEvent::layerX() const
+int WebDOMMouseEvent::layerX()
 {
-    return constUnwrap<MouseEvent>()->layerX();
+    return unwrap<MouseEvent>()->layerX();
 }
 
-int WebDOMMouseEvent::layerY() const
+int WebDOMMouseEvent::layerY()
 {
-    return constUnwrap<MouseEvent>()->layerY();
+    return unwrap<MouseEvent>()->layerY();
 }
 
-int WebDOMMouseEvent::offsetX() const
+int WebDOMMouseEvent::offsetX()
 {
-    return constUnwrap<MouseEvent>()->offsetX();
+    return unwrap<MouseEvent>()->offsetX();
 }
 
-int WebDOMMouseEvent::offsetY() const
+int WebDOMMouseEvent::offsetY()
 {
-    return constUnwrap<MouseEvent>()->offsetY();
+    return unwrap<MouseEvent>()->offsetY();
 }
 
 int WebDOMMouseEvent::pageX() const

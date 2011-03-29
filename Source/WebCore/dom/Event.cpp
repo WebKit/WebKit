@@ -272,6 +272,9 @@ void Event::storeResult(const String&)
 
 void Event::setTarget(PassRefPtr<EventTarget> target)
 {
+    if (m_target == target)
+        return;
+
     m_target = target;
     if (m_target)
         receivedTarget();

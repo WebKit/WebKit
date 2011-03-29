@@ -44,10 +44,10 @@ public:
     WEBKIT_API int screenY() const;
     WEBKIT_API int clientX() const;
     WEBKIT_API int clientY() const;
-    WEBKIT_API int layerX() const;
-    WEBKIT_API int layerY() const;
-    WEBKIT_API int offsetX() const;
-    WEBKIT_API int offsetY() const;
+    WEBKIT_API int layerX();
+    WEBKIT_API int layerY();
+    WEBKIT_API int offsetX();
+    WEBKIT_API int offsetY();
     WEBKIT_API int pageX() const;
     WEBKIT_API int pageY() const;
     WEBKIT_API int x() const;

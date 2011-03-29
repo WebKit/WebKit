@@ -1,3 +1,17 @@
+2011-03-29  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Relative mouse coordinates recalculated for each target
+        https://bugs.webkit.org/show_bug.cgi?id=57130
+
+        * public/WebDOMMouseEvent.h:
+        * src/WebDOMMouseEvent.cpp:
+        (WebKit::WebDOMMouseEvent::layerX):
+        (WebKit::WebDOMMouseEvent::layerY):
+        (WebKit::WebDOMMouseEvent::offsetX):
+        (WebKit::WebDOMMouseEvent::offsetY):
+
 2011-03-29  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, rolling out r82195.
