@@ -79,7 +79,7 @@ public:
     virtual String contextMenuItemTagIgnoreSpelling() = 0;
     virtual String contextMenuItemTagLearnSpelling() = 0;
     virtual String contextMenuItemTagSearchWeb() = 0;
-    virtual String contextMenuItemTagLookUpInDictionary() = 0;
+    virtual String contextMenuItemTagLookUpInDictionary(const String& selectedString) = 0;
     virtual String contextMenuItemTagOpenLink() = 0;
     virtual String contextMenuItemTagIgnoreGrammar() = 0;
     virtual String contextMenuItemTagSpellingMenu() = 0;

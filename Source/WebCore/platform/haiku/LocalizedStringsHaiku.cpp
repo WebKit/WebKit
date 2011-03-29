@@ -213,7 +213,7 @@ String contextMenuItemTagSearchWeb()
     return "Search web";
 }
 
-String contextMenuItemTagLookUpInDictionary()
+String contextMenuItemTagLookUpInDictionary(const String&)
 {
     return "Lookup in dictionary";
 }

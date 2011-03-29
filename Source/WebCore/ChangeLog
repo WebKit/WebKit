@@ -1,3 +1,31 @@
+2011-03-29  Timothy Hatcher  <timothy@apple.com>
+
+        Update the order of the context menu to better match AppKit on Mac.
+
+        <rdar://problem/9054893>
+
+        Reviewed by John Sullivan.
+
+        * English.lproj/Localizable.strings: Updated.
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate): Update the order of items on Mac.
+        * platform/LocalizationStrategy.h:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::contextMenuItemTagLookUpInDictionary): Added argument for selected string.
+        * platform/LocalizedStrings.h:
+        * platform/android/LocalizedStringsAndroid.cpp:
+        (WebCore::contextMenuItemTagLookUpInDictionary): Ditto.
+        * platform/brew/LocalizedStringsBrew.cpp:
+        (WebCore::contextMenuItemTagLookUpInDictionary): Ditto.
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::contextMenuItemTagLookUpInDictionary): Ditto.
+        * platform/gtk/LocalizedStringsGtk.cpp:
+        (WebCore::contextMenuItemTagLookUpInDictionary): Ditto.
+        * platform/haiku/LocalizedStringsHaiku.cpp:
+        (WebCore::contextMenuItemTagLookUpInDictionary): Ditto.
+        * platform/wx/LocalizedStringsWx.cpp:
+        (WebCore::contextMenuItemTagLookUpInDictionary): Ditto.
+
 2011-03-29  Dean Jackson  <dino@apple.com>
 
         Reviewed by Chris Marrin and Ken Russell.

@@ -274,9 +274,13 @@ String WebPlatformStrategies::contextMenuItemTagSearchWeb()
     return UI_STRING_INTERNAL("Search in Google", "Search in Google context menu item");
 }
 
-String WebPlatformStrategies::contextMenuItemTagLookUpInDictionary()
+String WebPlatformStrategies::contextMenuItemTagLookUpInDictionary(const String& selectedString)
 {
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
     return UI_STRING_INTERNAL("Look Up in Dictionary", "Look Up in Dictionary context menu item");
+#else
+    return [NSString stringWithFormat:UI_STRING_INTERNAL("Look Up “%@”", "Look Up context menu item with selected word"), (NSString *)selectedString];
+#endif
 }
 
 String WebPlatformStrategies::contextMenuItemTagOpenLink()

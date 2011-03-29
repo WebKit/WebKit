@@ -1,3 +1,17 @@
+2011-03-29  Timothy Hatcher  <timothy@apple.com>
+
+        Update the order of the context menu to better match AppKit on Mac.
+
+        <rdar://problem/9054893>
+
+        Reviewed by John Sullivan.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        (-[WebDefaultUIDelegate webView:contextMenuItemsForElement:defaultMenuItems:]): Update the order of items.
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::contextMenuItemTagLookUpInDictionary): Added argument for selected string.
+
 2011-03-29  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

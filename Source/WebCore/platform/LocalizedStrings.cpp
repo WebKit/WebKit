@@ -190,9 +190,9 @@ String contextMenuItemTagSearchWeb()
     return platformStrategies()->localizationStrategy()->contextMenuItemTagSearchWeb();
 }
 
-String contextMenuItemTagLookUpInDictionary()
+String contextMenuItemTagLookUpInDictionary(const String& selectedString)
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagLookUpInDictionary();
+    return platformStrategies()->localizationStrategy()->contextMenuItemTagLookUpInDictionary(selectedString);
 }
 
 String contextMenuItemTagOpenLink()

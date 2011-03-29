@@ -97,7 +97,7 @@ private:
     virtual String contextMenuItemTagIgnoreSpelling();
     virtual String contextMenuItemTagLearnSpelling();
     virtual String contextMenuItemTagSearchWeb();
-    virtual String contextMenuItemTagLookUpInDictionary();
+    virtual String contextMenuItemTagLookUpInDictionary(const String& selectedString);
     virtual String contextMenuItemTagOpenLink();
     virtual String contextMenuItemTagIgnoreGrammar();
     virtual String contextMenuItemTagSpellingMenu();

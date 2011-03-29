@@ -80,7 +80,7 @@ private:
     virtual WTF::String contextMenuItemTagIgnoreSpelling();
     virtual WTF::String contextMenuItemTagLearnSpelling();
     virtual WTF::String contextMenuItemTagSearchWeb();
-    virtual WTF::String contextMenuItemTagLookUpInDictionary();
+    virtual WTF::String contextMenuItemTagLookUpInDictionary(const WTF::String& selectedString);
     virtual WTF::String contextMenuItemTagOpenLink();
     virtual WTF::String contextMenuItemTagIgnoreGrammar();
     virtual WTF::String contextMenuItemTagSpellingMenu();

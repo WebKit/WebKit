@@ -1,3 +1,15 @@
+2011-03-29  Timothy Hatcher  <timothy@apple.com>
+
+        Update the order of the context menu to better match AppKit on Mac.
+
+        <rdar://problem/9054893>
+
+        Reviewed by John Sullivan.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::contextMenuItemTagLookUpInDictionary): Added argument for selected string.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2011-03-29  Jeff Miller  <jeffm@apple.com>
 
         Fix formatting of WebKit2.vcproj after r82283.

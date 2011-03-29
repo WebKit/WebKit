@@ -241,7 +241,7 @@ String contextMenuItemTagSearchWeb()
     return String::fromUTF8("Search the Web");
 }
 
-String contextMenuItemTagLookUpInDictionary()
+String contextMenuItemTagLookUpInDictionary(const String&)
 {
     return String::fromUTF8("Look Up in Dictionary");
 }

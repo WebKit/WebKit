@@ -75,7 +75,7 @@ namespace WebCore {
     String contextMenuItemTagIgnoreSpelling();
     String contextMenuItemTagLearnSpelling();
     String contextMenuItemTagSearchWeb();
-    String contextMenuItemTagLookUpInDictionary();
+    String contextMenuItemTagLookUpInDictionary(const String& selectedString);
     String contextMenuItemTagOpenLink();
     String contextMenuItemTagIgnoreGrammar();
     String contextMenuItemTagSpellingMenu();

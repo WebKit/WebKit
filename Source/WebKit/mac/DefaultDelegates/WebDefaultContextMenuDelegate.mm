@@ -129,6 +129,12 @@
     }
 }
 
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+#define INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM 1
+#else
+#define INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM 0
+#endif
+
 - (NSArray *)webView:(WebView *)wv contextMenuItemsForElement:(NSDictionary *)element  defaultMenuItems:(NSArray *)defaultMenuItems
 {
     // The defaultMenuItems here are ones supplied by the WebDocumentView protocol implementation. WebPDFView is
@@ -141,16 +147,29 @@
         // The Spotlight and Google items are implemented in WebView, and require that the
         // current document view conforms to WebDocumentText
         ASSERT([[[webFrame frameView] documentView] conformsToProtocol:@protocol(WebDocumentText)]);
-        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight target:nil representedObject:element]];
-        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchWeb target:nil representedObject:element]];
-        [menuItems addObject:[NSMenuItem separatorItem]];
 
         // FIXME 4184640: The Look Up in Dictionary item is only implemented in WebHTMLView, and so is present but
         // dimmed for other cases where WebElementIsSelectedKey is present. It would probably 
         // be better not to include it in the menu if the documentView isn't a WebHTMLView, but that could break 
         // existing clients that have code that relies on it being present (unlikely for clients outside of Apple, 
         // but Safari has such code).
-        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLookUpInDictionary target:nil representedObject:element]];            
+
+#if INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight target:nil representedObject:element]];
+#else
+        NSMenuItem *lookupMenuItem = [self menuItemWithTag:WebMenuItemTagLookUpInDictionary target:nil representedObject:element];
+        NSString *selectedString = [(id <WebDocumentText>)[[webFrame frameView] documentView] selectedString];
+        [lookupMenuItem setTitle:[NSString stringWithFormat:UI_STRING_INTERNAL("Look Up “%@”", "Look Up context menu item with selected word"), selectedString]];
+        [menuItems addObject:lookupMenuItem];
+#endif
+
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchWeb target:nil representedObject:element]];
+
+#if INCLUDE_SPOTLIGHT_CONTEXT_MENU_ITEM
+        [menuItems addObject:[NSMenuItem separatorItem]];
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLookUpInDictionary target:nil representedObject:element]];
+#endif
+
         [menuItems addObject:[NSMenuItem separatorItem]];
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopy target:nil representedObject:element]];
     } else {
