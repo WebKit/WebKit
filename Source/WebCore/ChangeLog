@@ -1,5 +1,25 @@
 2011-03-29  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Reviewed by Martin Robinson.
+
+        [Gtk] Consistent crash from Google/ARIA combobox click
+        https://bugs.webkit.org/show_bug.cgi?id=55883
+
+        Do not call to firstChild() to avoid entering into infinite loops.
+
+        This would happen when current item is a WebCore Group and some of
+        its children have either role 'option' or 'menuitem'. Other than
+        that the logic behind that call to firstChild() seems to be no
+        longer needed so it's safe to remove it.
+
+        Test: platform/gtk/accessibility/aria-options-and-menuitems-crash.html
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        Remove call to firsChild, which was leading to crashes sometimes.
+
+2011-03-29  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Reviewed by Chris Fleizach.
 
         AX: GTK: ARIA role is not respected on <p> <label> <div> and <form>

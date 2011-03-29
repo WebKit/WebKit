@@ -1,5 +1,17 @@
 2011-03-29  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Reviewed by Martin Robinson.
+
+        [Gtk] Consistent crash from Google/ARIA combobox click
+        https://bugs.webkit.org/show_bug.cgi?id=55883
+
+        Added new layout test to check this doesn't crash anymore in GTK.
+
+        * platform/gtk/accessibility/aria-options-and-menuitems-crash-expected.txt: Added.
+        * platform/gtk/accessibility/aria-options-and-menuitems-crash.html: Added.
+
+2011-03-29  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Reviewed by Chris Fleizach.
 
         AX: GTK: ARIA role is not respected on <p> <label> <div> and <form>
