@@ -210,6 +210,8 @@ private:
     void lowerExplicitEmbeddingLevel(WTF::Unicode::Direction from);
     void checkDirectionInLowerRaiseEmbeddingLevel();
 
+    void updateStatusLastFromCurrentDirection(WTF::Unicode::Direction);
+
     Vector<WTF::Unicode::Direction, 8> m_currentExplicitEmbeddingSequence;
 };
 
@@ -517,6 +519,48 @@ void BidiResolver<Iterator, Run>::reverseRuns(unsigned start, unsigned end)
     startRun->m_next = afterEnd;
     if (!afterEnd)
         m_lastRun = startRun;
+}
+
+template <class Iterator, class Run>
+inline void BidiResolver<Iterator, Run>::updateStatusLastFromCurrentDirection(WTF::Unicode::Direction dirCurrent)
+{
+    using namespace WTF::Unicode;
+    switch (dirCurrent) {
+    case EuropeanNumberTerminator:
+        if (m_status.last != EuropeanNumber)
+            m_status.last = EuropeanNumberTerminator;
+        break;
+    case EuropeanNumberSeparator:
+    case CommonNumberSeparator:
+    case SegmentSeparator:
+    case WhiteSpaceNeutral:
+    case OtherNeutral:
+        switch (m_status.last) {
+        case LeftToRight:
+        case RightToLeft:
+        case RightToLeftArabic:
+        case EuropeanNumber:
+        case ArabicNumber:
+            m_status.last = dirCurrent;
+            break;
+        default:
+            m_status.last = OtherNeutral;
+        }
+        break;
+    case NonSpacingMark:
+    case BoundaryNeutral:
+    case RightToLeftEmbedding:
+    case LeftToRightEmbedding:
+    case RightToLeftOverride:
+    case LeftToRightOverride:
+    case PopDirectionalFormat:
+        // ignore these
+        break;
+    case EuropeanNumber:
+        // fall through
+    default:
+        m_status.last = dirCurrent;
+    }
 }
 
 template <class Iterator, class Run>
@@ -858,44 +902,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
             break;
         }
 
-        // set m_status.last as needed.
-        switch (dirCurrent) {
-            case EuropeanNumberTerminator:
-                if (m_status.last != EuropeanNumber)
-                    m_status.last = EuropeanNumberTerminator;
-                break;
-            case EuropeanNumberSeparator:
-            case CommonNumberSeparator:
-            case SegmentSeparator:
-            case WhiteSpaceNeutral:
-            case OtherNeutral:
-                switch(m_status.last) {
-                    case LeftToRight:
-                    case RightToLeft:
-                    case RightToLeftArabic:
-                    case EuropeanNumber:
-                    case ArabicNumber:
-                        m_status.last = dirCurrent;
-                        break;
-                    default:
-                        m_status.last = OtherNeutral;
-                    }
-                break;
-            case NonSpacingMark:
-            case BoundaryNeutral:
-            case RightToLeftEmbedding: 
-            case LeftToRightEmbedding: 
-            case RightToLeftOverride: 
-            case LeftToRightOverride: 
-            case PopDirectionalFormat:
-                // ignore these
-                break;
-            case EuropeanNumber:
-                // fall through
-            default:
-                m_status.last = dirCurrent;
-        }
-
+        updateStatusLastFromCurrentDirection(dirCurrent);
         last = current;
 
         if (emptyRun) {
@@ -941,13 +948,9 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
     // first find highest and lowest levels
     unsigned char levelLow = 128;
     unsigned char levelHigh = 0;
-    Run* r = firstRun();
-    while (r) {
-        if (r->m_level > levelHigh)
-            levelHigh = r->m_level;
-        if (r->m_level < levelLow)
-            levelLow = r->m_level;
-        r = r->next();
+    for (Run* r = firstRun(); r; r = r->next()) {
+        levelHigh = max(r->m_level, levelHigh);
+        levelLow = min(r->m_level, levelLow);
     }
 
     // implements reordering of the line (L2 according to Bidi spec):

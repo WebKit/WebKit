@@ -1,3 +1,22 @@
+2011-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Start to clean up BidiResolver::createBidiRunsForLine so that mere mortals can understand it
+        https://bugs.webkit.org/show_bug.cgi?id=57338
+
+        I'm attempting to break createBidiRunsForLine into understandable pieces
+        so that we can tell what it's actually doing.  Our implementation of the
+        unicode bidi algorithm is slightly different from the spec in that we
+        run it per-line (instead of over the entire paragraph at once).  This is
+        great for performance (our implementation is resumable), but it makes
+        things a bit tricky to understand.  Splitting createBidiRunsForLine into
+        pieces should help make our UBA implementation more readable.
+
+        * platform/text/BidiResolver.h:
+        (WebCore::::updateStatusLastFromCurrentDirection):
+        (WebCore::::createBidiRunsForLine):
+
 2011-03-29  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.
