@@ -1,3 +1,10 @@
+2011-03-29  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::contextMenuItemTagLookUpInDictionary):
+
 2011-03-29  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed. Try to fix Windows build.
