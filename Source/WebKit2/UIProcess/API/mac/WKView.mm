@@ -242,6 +242,7 @@ typedef HashMap<String, ValidationVector> ValidationMap;
     _data->_page->close();
 
     [_data release];
+    _data = nil;
 
     WebContext::statistics().wkViewCount--;
 
@@ -1818,20 +1819,23 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)removeTrackingRect:(NSTrackingRectTag)tag
 {
+    if (!_data)
+        return;
+
     if (tag == 0)
         return;
     
-    if (_data && (tag == TRACKING_RECT_TAG)) {
+    if (tag == TRACKING_RECT_TAG) {
         _data->_trackingRectOwner = nil;
         return;
     }
     
-    if (_data && (tag == _data->_lastToolTipTag)) {
+    if (tag == _data->_lastToolTipTag) {
         [super removeTrackingRect:tag];
         _data->_lastToolTipTag = 0;
         return;
     }
-    
+
     // If any other tracking rect is being removed, we don't know how it was created
     // and it's possible there's a leak involved (see 3500217)
     ASSERT_NOT_REACHED();

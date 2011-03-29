@@ -1,3 +1,21 @@
+2011-03-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Reproducible crash running under libgmalloc, in -[WKView(Internal) removeTrackingRect:] --&gt; objc_assign_ivar_non_gc
+        <rdar://problem/9193352>
+        https://bugs.webkit.org/show_bug.cgi?id=57358
+
+        -[WKView removeTrackingRect] can be called from below -[WKView dealloc] after we have
+        destroyed _data. So, nil out _data after releasing it and nil check it appropriately.
+        
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView dealloc]):
+        Nil out _data after releasing it.
+
+        (-[WKView removeTrackingRect:]):
+        Add early return for nil _data.
+
 2011-03-29  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Jon Honeycutt.
