@@ -33,7 +33,6 @@
 
 #include "WebFrame.h"
 #include "WebFrameClient.h"
-#include "WebScriptSource.h"
 #include "WebString.h"
 #include "WebURL.h"
 #include "WebURLRequest.h"
@@ -49,10 +48,6 @@ using namespace WebKit;
 namespace {
 
 class TestWebFrameClient : public WebFrameClient {
-public:
-    TestWebFrameClient() : m_scriptEnabled(false) { }
-    virtual bool allowScript(WebFrame*, bool /* enabledPerSettings */) { return m_scriptEnabled; }
-    bool m_scriptEnabled;
 };
 
 class WebPageSerializerTest : public testing::Test {
@@ -97,16 +92,6 @@ protected:
         m_webView->mainFrame()->loadRequest(urlRequest);
         // Make sure any pending request get served.
         webkit_support::ServeAsynchronousMockedRequests();
-    }
-
-    void enableJS()
-    {
-        m_webFrameClient.m_scriptEnabled = true;
-    }
-
-    void runOnLoad()
-    {
-        m_webView->mainFrame()->executeScript(WebScriptSource(WebString::fromUTF8("onLoad()")));
     }
 
     static bool webVectorContains(const WebVector<WebURL>& vector, char* url)
@@ -203,46 +188,6 @@ TEST_F(WebPageSerializerTest, MultipleFrames)
     // EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/music.mid"));
     EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/object.png"));
     EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/embed.png"));
-}
-
-TEST_F(WebPageSerializerTest, RetrieveCSSResources)
-{
-    // Register the mocked frame and load it.
-    WebURL topFrameURL = GURL("http://www.test.com");
-    registerMockedURLLoad(topFrameURL, WebString::fromUTF8("css_test_page.html"));
-    registerMockedURLLoad(GURL("http://www.test.com/link_styles.css"),
-                          WebString::fromUTF8("link_styles.css"));
-    registerMockedURLLoad(GURL("http://www.test.com/import_style_from_link.css"),
-                          WebString::fromUTF8("import_style_from_link.css"));
-    registerMockedURLLoad(GURL("http://www.test.com/import_styles.css"),
-                          WebString::fromUTF8("import_styles.css"));
-
-    enableJS();
-    loadURLInTopFrame(topFrameURL);
-    runOnLoad();
-
-    // Retrieve all resources.
-    WebVector<WebURL> frames;
-    WebVector<WebURL> resources;
-    ASSERT_TRUE(WebPageSerializer::retrieveAllResources(m_webView, m_supportedSchemes, &resources, &frames));
-
-    // Tests that all resources from the frame have been retrieved.
-    EXPECT_EQ(1, frames.size());
-    EXPECT_TRUE(webVectorContains(frames, "http://www.test.com"));
-
-    EXPECT_EQ(12, resources.size()); // There should be no duplicates.
-    EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/link_styles.css"));
-    EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/import_styles.css"));
-    EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/import_style_from_link.css"));
-    EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/red_background.png"));
-    EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/orange_background.png"));
-    EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/yellow_background.png"));
-    EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/green_background.png"));
-    EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/blue_background.png"));
-    EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/purple_background.png"));
-    EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/Chunkfive.otf"));
-    EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/ul-dot.png"));
-    EXPECT_TRUE(webVectorContains(resources, "http://www.test.com/ol-dot.png"));
 }
 
 }
