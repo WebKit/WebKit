@@ -140,19 +140,16 @@ bool JavaNPObjectInvoke(NPObject* obj, NPIdentifier identifier, const NPVariant*
     if (!jMethod)
         return false;
 
-    jvalue* jArgs = 0;
-    if (argCount > 0)
-        jArgs = static_cast<jvalue*>(malloc(argCount * sizeof(jvalue)));
-
+    JavaValue* jArgs = new JavaValue[argCount];
     for (unsigned int i = 0; i < argCount; i++)
-        jArgs[i] = javaValueToJvalue(convertNPVariantToJavaValue(args[i], jMethod->parameterAt(i)));
+        jArgs[i] = convertNPVariantToJavaValue(args[i], jMethod->parameterAt(i));
 
-    jvalue jResult = instance->invokeMethod(jMethod, jArgs);
+    JavaValue jResult = instance->invokeMethod(jMethod, jArgs);
     instance->end();
-    free(jArgs);
+    delete[] jArgs;
 
     VOID_TO_NPVARIANT(*result);
-    convertJavaValueToNPVariant(jvalueToJavaValue(jResult, jMethod->returnType()), result);
+    convertJavaValueToNPVariant(jResult, result);
     return true;
 }
 
@@ -187,10 +184,10 @@ bool JavaNPObjectGetProperty(NPObject* obj, NPIdentifier identifier, NPVariant* 
     if (!field)
         return false;
 
-    jvalue value = instance->getField(field);
+    JavaValue value = instance->getField(field);
     instance->end();
 
-    convertJavaValueToNPVariant(jvalueToJavaValue(value, field->type()), result);
+    convertJavaValueToNPVariant(value, result);
 
     return true;
 }

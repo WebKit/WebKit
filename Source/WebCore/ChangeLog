@@ -1,3 +1,26 @@
+2011-03-29  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        JavaInstance should not use jvalue in its API
+        https://bugs.webkit.org/show_bug.cgi?id=57019
+
+        This change updates JavaInstance for V8 to use JavaValue, rather than
+        jvalue, in its API. This will allow us to create an API for
+        JavaInstance that is independent of JNI, to allow it to be
+        implemented on platforms that do not use JNI directly.
+
+        Refactoring only, no new tests.
+
+        * bridge/jni/v8/JavaInstanceV8.cpp:
+        (JavaInstance::invokeMethod):
+        (JavaInstance::getField):
+        * bridge/jni/v8/JavaInstanceV8.h:
+        * bridge/jni/v8/JavaNPObjectV8.cpp:
+        (JSC::Bindings::JavaNPObjectInvoke):
+        (JSC::Bindings::JavaNPObjectGetProperty):
+        * bridge/jni/v8/JavaValueV8.h:
+
 2011-03-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dimitri Glazkov.

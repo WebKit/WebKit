@@ -28,7 +28,6 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JavaInstanceV8.h"
 #include "JavaType.h"
 
 #include <wtf/text/WTFString.h>
@@ -36,6 +35,8 @@
 namespace JSC {
 
 namespace Bindings {
+
+class JavaInstance;
 
 // A variant used to represent a Java value, almost identical to the JNI
 // jvalue type. It exists because the logic to convert between JavaScript

@@ -34,6 +34,7 @@
 #include "JavaFieldV8.h"
 #include "JavaMethod.h"
 
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/text/CString.h>
 
 using namespace JSC::Bindings;
@@ -69,16 +70,21 @@ JavaClass* JavaInstance::getClass() const
     return m_class;
 }
 
-jvalue JavaInstance::invokeMethod(const JavaMethod* method, jvalue* args)
+JavaValue JavaInstance::invokeMethod(const JavaMethod* method, JavaValue* args)
 {
     ASSERT(getClass()->methodsNamed(method->name().utf8()).find(method) != notFound);
-    return callJNIMethod(javaInstance(), method->returnType(), method->name().utf8(), method->signature(), args);
+    unsigned int numParams = method->numParameters();
+    OwnArrayPtr<jvalue> jvalueArgs = adoptArrayPtr(new jvalue[numParams]);
+    for (unsigned int i = 0; i < numParams; ++i)
+        jvalueArgs[i] = javaValueToJvalue(args[i]);
+    jvalue result = callJNIMethod(javaInstance(), method->returnType(), method->name().utf8(), method->signature(), jvalueArgs.get());
+    return jvalueToJavaValue(result, method->returnType());
 }
 
-jvalue JavaInstance::getField(const JavaField* field)
+JavaValue JavaInstance::getField(const JavaField* field)
 {
     ASSERT(getClass()->fieldNamed(field->name().utf8()) == field);
-    return getJNIField(javaInstance(), field->type(), field->name().utf8(), field->typeClassName());
+    return jvalueToJavaValue(getJNIField(javaInstance(), field->type(), field->name().utf8(), field->typeClassName()), field->type());
 }
 
 #endif // ENABLE(JAVA_BRIDGE)

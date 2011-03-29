@@ -30,6 +30,7 @@
 #if ENABLE(JAVA_BRIDGE)
 
 #include "JNIUtility.h"
+#include "JavaValueV8.h"
 #include "JobjectWrapper.h"
 #include "npruntime.h"
 
@@ -52,8 +53,10 @@ public:
     virtual ~JavaInstance();
 
     JavaClass* getClass() const;
-    jvalue invokeMethod(const JavaMethod*, jvalue* args);
-    jvalue getField(const JavaField*);
+    // args must be an array of length greater than or equal to the number of
+    // arguments expected by the method.
+    JavaValue invokeMethod(const JavaMethod*, JavaValue* args);
+    JavaValue getField(const JavaField*);
     jobject javaInstance() const { return m_instance->m_instance; }
 
     // These functions are called before and after the main entry points into
