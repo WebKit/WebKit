@@ -40,16 +40,16 @@ namespace WebKit {
 
 class AuthenticationDecisionListener;
 class WebCredential;
-class WebPageProxy;
+class WebProcessProxy;
 class WebProtectionSpace;
 
 class AuthenticationChallengeProxy : public APIObject {
 public:
     static const Type APIType = TypeAuthenticationChallenge;
 
-    static PassRefPtr<AuthenticationChallengeProxy> create(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, WebPageProxy* page)
+    static PassRefPtr<AuthenticationChallengeProxy> create(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, WebProcessProxy* process)
     {
-        return adoptRef(new AuthenticationChallengeProxy(authenticationChallenge, challengeID, page));
+        return adoptRef(new AuthenticationChallengeProxy(authenticationChallenge, challengeID, process));
     }
     
     ~AuthenticationChallengeProxy();
@@ -63,13 +63,13 @@ public:
     int previousFailureCount() const { return m_coreAuthenticationChallenge.previousFailureCount(); }
 
 private:
-    AuthenticationChallengeProxy(const WebCore::AuthenticationChallenge&, uint64_t challengeID, WebPageProxy* page);
+    AuthenticationChallengeProxy(const WebCore::AuthenticationChallenge&, uint64_t challengeID, WebProcessProxy*);
 
     virtual Type type() const { return APIType; }
     
     WebCore::AuthenticationChallenge m_coreAuthenticationChallenge;
     uint64_t m_challengeID;
-    RefPtr<WebPageProxy> m_page;
+    RefPtr<WebProcessProxy> m_process;
     RefPtr<AuthenticationDecisionListener> m_listener;
     mutable RefPtr<WebCredential> m_webCredential;
     mutable RefPtr<WebProtectionSpace> m_webProtectionSpace;

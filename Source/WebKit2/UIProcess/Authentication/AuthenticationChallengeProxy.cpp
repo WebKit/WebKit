@@ -36,10 +36,10 @@
 
 namespace WebKit {
 
-AuthenticationChallengeProxy::AuthenticationChallengeProxy(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, WebPageProxy* page)
+AuthenticationChallengeProxy::AuthenticationChallengeProxy(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, WebProcessProxy* process)
     : m_coreAuthenticationChallenge(authenticationChallenge)
     , m_challengeID(challengeID)
-    , m_page(page)
+    , m_process(process)
 {
     ASSERT(m_challengeID);
     m_listener = AuthenticationDecisionListener::create(this);
@@ -49,8 +49,8 @@ AuthenticationChallengeProxy::~AuthenticationChallengeProxy()
 {
     // If an outstanding AuthenticationChallengeProxy is being destroyed even though it hasn't been responded to yet,
     // we cancel it here so the WebProcess isn't waiting for an answer forever.
-    if (m_challengeID && m_page->process())
-        m_page->process()->send(Messages::AuthenticationManager::CancelChallenge(m_challengeID), m_page->pageID());
+    if (m_challengeID)
+        m_process->send(Messages::AuthenticationManager::CancelChallenge(m_challengeID), 0);
 
     if (m_listener)
         m_listener->detachChallenge();
@@ -62,9 +62,9 @@ void AuthenticationChallengeProxy::useCredential(WebCredential* credential)
         return;
 
     if (!credential)
-        m_page->process()->send(Messages::AuthenticationManager::ContinueWithoutCredentialForChallenge(m_challengeID), m_page->pageID());
+        m_process->send(Messages::AuthenticationManager::ContinueWithoutCredentialForChallenge(m_challengeID), 0);
     else 
-        m_page->process()->send(Messages::AuthenticationManager::UseCredentialForChallenge(m_challengeID, credential->core()), m_page->pageID());
+        m_process->send(Messages::AuthenticationManager::UseCredentialForChallenge(m_challengeID, credential->core()), 0);
 
     m_challengeID = 0;
 }
@@ -74,7 +74,7 @@ void AuthenticationChallengeProxy::cancel()
     if (!m_challengeID)
         return;
 
-    m_page->process()->send(Messages::AuthenticationManager::CancelChallenge(m_challengeID), m_page->pageID());
+    m_process->send(Messages::AuthenticationManager::CancelChallenge(m_challengeID), 0);
 
     m_challengeID = 0;
 }

@@ -1,3 +1,20 @@
+2011-03-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        AuthenticationChallengeProxy objects should be associated with processes, not pages
+        https://bugs.webkit.org/show_bug.cgi?id=57401
+
+        * UIProcess/Authentication/AuthenticationChallengeProxy.cpp:
+        (WebKit::AuthenticationChallengeProxy::AuthenticationChallengeProxy):
+        (WebKit::AuthenticationChallengeProxy::~AuthenticationChallengeProxy):
+        (WebKit::AuthenticationChallengeProxy::useCredential):
+        (WebKit::AuthenticationChallengeProxy::cancel):
+        * UIProcess/Authentication/AuthenticationChallengeProxy.h:
+        (WebKit::AuthenticationChallengeProxy::create):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallenge):
+
 2011-03-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
