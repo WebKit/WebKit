@@ -25,6 +25,11 @@ $typeTransform{"Console"} = {
     "header" => "InspectorConsoleAgent.h",
     "domainAccessor" => "m_consoleAgent",
 };
+$typeTransform{"Page"} = {
+    "forward" => "InspectorPageAgent",
+    "header" => "InspectorPageAgent.h",
+    "domainAccessor" => "m_pageAgent",
+};
 $typeTransform{"Debugger"} = {
     "forward" => "InspectorDebuggerAgent",
     "header" => "InspectorDebuggerAgent.h",

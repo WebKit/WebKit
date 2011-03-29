@@ -885,6 +885,7 @@ SET(WebCore_SOURCES
     inspector/InjectedScriptManager.cpp
     inspector/InspectorAgent.cpp
     inspector/InspectorApplicationCacheAgent.cpp
+    inspector/InspectorPageAgent.cpp
     inspector/InspectorBrowserDebuggerAgent.cpp
     inspector/InspectorCSSAgent.cpp
     inspector/InspectorClient.cpp

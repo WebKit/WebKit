@@ -134,6 +134,7 @@ void InspectorController::connectFrontend()
 #endif
         m_inspectorAgent.get(),
         m_inspectorAgent->resourceAgent(),
+        m_inspectorAgent->pageAgent(),
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         m_inspectorAgent->profilerAgent(),
 #endif

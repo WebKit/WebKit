@@ -1,3 +1,16 @@
+2011-03-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: extract InspectorPageAgent from InspectorAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=57327
+
+        There are page related methods and inspector related methods in InspectorAgent.
+        It would be nice to extract page specific methods for future usage the rest of methods in workers debugger.
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.reloadPage):
+
 2011-03-29  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip failing test on GTK.

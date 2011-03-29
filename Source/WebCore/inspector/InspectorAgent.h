@@ -31,19 +31,15 @@
 
 #include "CharacterData.h"
 #include "Console.h"
-#include "Cookie.h"
 #include "Page.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-class CachedResource;
 class CharacterData;
 class Database;
 class DOMWrapperWorld;
@@ -66,6 +62,7 @@ class InspectorDebuggerAgent;
 class InspectorFrontend;
 class InspectorFrontendClient;
 class InspectorObject;
+class InspectorPageAgent;
 class InspectorProfilerAgent;
 class InspectorResourceAgent;
 class InspectorRuntimeAgent;
@@ -121,7 +118,7 @@ public:
 
     InstrumentingAgents* instrumentingAgents() const { return m_instrumentingAgents.get(); }
 
-    InspectorAgent* inspectorAgent() { return this; }
+    InspectorPageAgent* pageAgent() { return m_pageAgent.get(); }
     InspectorConsoleAgent* consoleAgent() { return m_consoleAgent.get(); }
     InspectorCSSAgent* cssAgent() { return m_cssAgent.get(); }
     InspectorDOMAgent* domAgent() { return m_domAgent.get(); }
@@ -147,11 +144,7 @@ public:
 
     void didCommitLoad(DocumentLoader*);
 
-    void getCookies(ErrorString*, RefPtr<InspectorArray>* cookies, WTF::String* cookiesString);
-    void deleteCookie(ErrorString*, const String& cookieName, const String& domain);
-
     void domContentLoadedEventFired(DocumentLoader*, const KURL&);
-    void loadEventFired(DocumentLoader*, const KURL&);
 
 #if ENABLE(WORKERS)
     enum WorkerAction { WorkerCreated, WorkerDestroyed };
@@ -163,7 +156,6 @@ public:
 
     bool hasFrontend() const { return m_frontend; }
 
-    void openInInspectedWindow(ErrorString*, const String& url);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void showProfilesPanel();
@@ -172,8 +164,6 @@ public:
     // Generic code called from custom implementations.
     void evaluateForTestInFrontend(long testCallId, const String& script);
 
-    void addScriptToEvaluateOnLoad(ErrorString*, const String& source);
-    void removeAllScriptsToEvaluateOnLoad(ErrorString*);
     void setInspectorExtensionAPI(const String& source);
 
     InspectorState* state() { return m_state.get(); }
@@ -183,9 +173,6 @@ public:
     void setMonitoringXHREnabled(bool enabled, bool* newState);
     // Following are used from InspectorBackend and internally.
     void didEvaluateForTestInFrontend(ErrorString*, long callId, const String& jsonResult);
-
-    void setUserAgentOverride(ErrorString*, const String& userAgent);
-    void applyUserAgentOverride(String* userAgent) const;
 
 private:
     void showPanel(const String& panel);
@@ -198,9 +185,6 @@ private:
     void toggleRecordButton(bool);
 #endif
 
-    PassRefPtr<InspectorObject> buildObjectForCookie(const Cookie&);
-    PassRefPtr<InspectorArray> buildArrayForCookies(ListHashSet<Cookie>&);
-
     bool isMainResourceLoader(DocumentLoader*, const KURL& requestUrl);
     void issueEvaluateForTestCommands();
 
@@ -210,6 +194,7 @@ private:
     OwnPtr<InstrumentingAgents> m_instrumentingAgents;
     InjectedScriptManager* m_injectedScriptManager;
     OwnPtr<InspectorState> m_state;
+    OwnPtr<InspectorPageAgent> m_pageAgent;
     OwnPtr<InspectorDOMAgent> m_domAgent;
     OwnPtr<InspectorCSSAgent> m_cssAgent;
 
@@ -234,14 +219,12 @@ private:
 
     Vector<pair<long, String> > m_pendingEvaluateTestCommands;
     String m_showPanelAfterVisible;
-    Vector<String> m_scriptsToEvaluateOnLoad;
     String m_inspectorExtensionAPI;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
     OwnPtr<InspectorBrowserDebuggerAgent> m_browserDebuggerAgent;
     OwnPtr<InspectorProfilerAgent> m_profilerAgent;
 #endif
-    String m_userAgentOverride;
 #if ENABLE(WORKERS)
     typedef HashMap<intptr_t, RefPtr<InspectorWorkerResource> > WorkersMap;
     WorkersMap m_workers;

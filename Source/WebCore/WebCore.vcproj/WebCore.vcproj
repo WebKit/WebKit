@@ -66398,6 +66398,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorPageAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorPageAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorProfilerAgent.h"
 				>
 			</File>

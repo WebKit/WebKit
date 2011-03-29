@@ -137,7 +137,7 @@ InspectorTest.reloadPage = function(callback)
 
     if (WebInspector.panels.network)
         WebInspector.panels.network._reset();
-    InspectorAgent.reloadPage(false);
+    PageAgent.reloadPage(false);
 }
 
 InspectorTest.pageReloaded = function()

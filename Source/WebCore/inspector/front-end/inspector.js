@@ -444,6 +444,7 @@ WebInspector.doLoadedDone = function()
     this.domAgent = new WebInspector.DOMAgent();
 
     InspectorBackend.registerDomainDispatcher("Inspector", this);
+    InspectorBackend.registerDomainDispatcher("Page", this);
 
     this.resourceCategories = {
         documents: new WebInspector.ResourceCategory("documents", WebInspector.UIString("Documents"), "rgb(47,102,236)"),
@@ -674,7 +675,7 @@ WebInspector.openResource = function(resourceURL, inResourcesPanel)
         WebInspector.panels.resources.showResource(resource);
         WebInspector.showPanel("resources");
     } else
-        InspectorAgent.openInInspectedWindow(resource ? resource.url : resourceURL);
+        PageAgent.openInInspectedWindow(resource ? resource.url : resourceURL);
 }
 
 WebInspector._registerShortcuts = function()
@@ -798,13 +799,13 @@ WebInspector.documentKeyDown = function(event)
 
         case "U+0052": // R key
             if ((event.metaKey && isMac) || (event.ctrlKey && !isMac)) {
-                InspectorAgent.reloadPage(event.shiftKey);
+                PageAgent.reloadPage(event.shiftKey);
                 event.preventDefault();
             }
             break;
         case "F5":
             if (!isMac)
-                InspectorAgent.reloadPage(event.ctrlKey || event.shiftKey);
+                PageAgent.reloadPage(event.ctrlKey || event.shiftKey);
             break;
     }
 }

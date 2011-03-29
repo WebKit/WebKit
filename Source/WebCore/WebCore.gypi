@@ -3210,6 +3210,8 @@
             'inspector/InspectorFrontendHost.h',
             'inspector/InspectorInstrumentation.cpp',
             'inspector/InspectorInstrumentation.h',
+            'inspector/InspectorPageAgent.cpp',
+            'inspector/InspectorPageAgent.h',
             'inspector/InspectorProfilerAgent.cpp',
             'inspector/InspectorProfilerAgent.h',
             'inspector/InspectorResourceAgent.cpp',

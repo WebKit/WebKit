@@ -1,3 +1,80 @@
+2011-03-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: extract InspectorPageAgent from InspectorAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=57327
+
+        There are page related methods and inspector related methods in InspectorAgent.
+        It would be nice to extract page specific methods for future usage the rest of methods in workers debugger.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.json:
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::restoreInspectorStateFromCookie):
+        (WebCore::InspectorAgent::didClearWindowObjectInWorld):
+        (WebCore::InspectorAgent::setFrontend):
+        (WebCore::InspectorAgent::disconnectFrontend):
+        (WebCore::InspectorAgent::didCommitLoad):
+        (WebCore::InspectorAgent::domContentLoadedEventFired):
+        * inspector/InspectorAgent.h:
+        (WebCore::InspectorAgent::pageAgent):
+        * inspector/InspectorPageAgent.cpp: Added.
+        (WebCore::InspectorPageAgent::create):
+        (WebCore::InspectorPageAgent::InspectorPageAgent):
+        (WebCore::InspectorPageAgent::setFrontend):
+        (WebCore::InspectorPageAgent::clearFrontend):
+        (WebCore::InspectorPageAgent::addScriptToEvaluateOnLoad):
+        (WebCore::InspectorPageAgent::removeAllScriptsToEvaluateOnLoad):
+        (WebCore::InspectorPageAgent::reloadPage):
+        (WebCore::InspectorPageAgent::openInInspectedWindow):
+        (WebCore::InspectorPageAgent::setUserAgentOverride):
+        (WebCore::buildObjectForCookie):
+        (WebCore::buildArrayForCookies):
+        (WebCore::InspectorPageAgent::getCookies):
+        (WebCore::InspectorPageAgent::deleteCookie):
+        (WebCore::InspectorPageAgent::inspectedURLChanged):
+        (WebCore::InspectorPageAgent::restore):
+        (WebCore::InspectorPageAgent::didCommitLoad):
+        (WebCore::InspectorPageAgent::domContentEventFired):
+        (WebCore::InspectorPageAgent::loadEventFired):
+        (WebCore::InspectorPageAgent::didClearWindowObjectInWorld):
+        (WebCore::InspectorPageAgent::applyUserAgentOverride):
+        * inspector/InspectorPageAgent.h: Added.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::connectFrontend):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorldImpl):
+        (WebCore::InspectorInstrumentation::applyUserAgentOverrideImpl):
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFiredImpl):
+        (WebCore::InspectorInstrumentation::loadEventFiredImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::retrievePageAgent):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InstrumentingAgents.h:
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (WebCore::InstrumentingAgents::inspectorPageAgent):
+        (WebCore::InstrumentingAgents::setInspectorPageAgent):
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel.prototype._reloadResources):
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype._deleteCookie):
+        (WebInspector.Cookies.getCookiesAsync):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onReload):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkDataGridNode.prototype._openInNewTab):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FrameResourceTreeElement.prototype.ondblclick):
+        * inspector/front-end/WorkersSidebarPane.js:
+        (WebInspector.WorkersSidebarPane.prototype.setInstrumentation):
+        * inspector/front-end/inspector.js:
+        (WebInspector.openResource):
+        (WebInspector.documentKeyDown):
+
 2011-03-29  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.

@@ -140,7 +140,7 @@ WebInspector.CookieItemsView.prototype = {
 
     _deleteCookie: function(cookie)
     {
-        InspectorAgent.deleteCookie(cookie.name, this._cookieDomain);
+        PageAgent.deleteCookie(cookie.name, this._cookieDomain);
         this._update();
     },
 
@@ -215,7 +215,7 @@ WebInspector.Cookies.getCookiesAsync = function(callback)
             callback(cookies, true);
     }
 
-    InspectorAgent.getCookies(mycallback);
+    PageAgent.getCookies(mycallback);
 }
 
 WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)

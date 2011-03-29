@@ -74,9 +74,9 @@ WebInspector.WorkersSidebarPane.prototype = {
 
     setInstrumentation: function(enabled)
     {
-        InspectorAgent.removeAllScriptsToEvaluateOnLoad();
+        PageAgent.removeAllScriptsToEvaluateOnLoad();
         if (enabled)
-            InspectorAgent.addScriptToEvaluateOnLoad("(" + InjectedFakeWorker + ")");
+            PageAgent.addScriptToEvaluateOnLoad("(" + InjectedFakeWorker + ")");
     },
 
     reset: function()

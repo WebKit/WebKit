@@ -1243,6 +1243,8 @@
 		4F3289B511A42AAB005ABE7E /* InspectorValues.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F3289B311A42AAB005ABE7E /* InspectorValues.cpp */; };
 		4F3289B611A42AAB005ABE7E /* InspectorValues.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F3289B411A42AAB005ABE7E /* InspectorValues.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4F4F5FFB11CBD2E100A186BF /* InspectorFrontend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4F5FFA11CBD2D200A186BF /* InspectorFrontend.cpp */; };
+		4F6FDD641341DEDD001F8EE3 /* InspectorPageAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F6FDD621341DEDD001F8EE3 /* InspectorPageAgent.cpp */; };
+		4F6FDD651341DEDD001F8EE3 /* InspectorPageAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F6FDD631341DEDD001F8EE3 /* InspectorPageAgent.h */; };
 		4F707A9911EF679400ACDA69 /* InspectorBackendDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F707A9711EF679400ACDA69 /* InspectorBackendDispatcher.cpp */; };
 		4F707A9A11EF679400ACDA69 /* InspectorBackendDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F707A9811EF679400ACDA69 /* InspectorBackendDispatcher.h */; };
 		4FA3B90A125CD12200300BAD /* InspectorState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4FA3B908125CD12100300BAD /* InspectorState.cpp */; };
@@ -7743,6 +7745,8 @@
 		4F3289B411A42AAB005ABE7E /* InspectorValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorValues.h; sourceTree = "<group>"; };
 		4F4F5FFA11CBD2D200A186BF /* InspectorFrontend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorFrontend.cpp; sourceTree = "<group>"; };
 		4F4F5FFC11CBD30100A186BF /* InspectorFrontend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorFrontend.h; sourceTree = "<group>"; };
+		4F6FDD621341DEDD001F8EE3 /* InspectorPageAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorPageAgent.cpp; sourceTree = "<group>"; };
+		4F6FDD631341DEDD001F8EE3 /* InspectorPageAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorPageAgent.h; sourceTree = "<group>"; };
 		4F707A9711EF679400ACDA69 /* InspectorBackendDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackendDispatcher.cpp; sourceTree = "<group>"; };
 		4F707A9811EF679400ACDA69 /* InspectorBackendDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorBackendDispatcher.h; sourceTree = "<group>"; };
 		4FA3B908125CD12100300BAD /* InspectorState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorState.cpp; sourceTree = "<group>"; };
@@ -13155,6 +13159,8 @@
 				7A0E770D10C00A8800A0276E /* InspectorFrontendHost.idl */,
 				20D629241253690B00081543 /* InspectorInstrumentation.cpp */,
 				20D629251253690B00081543 /* InspectorInstrumentation.h */,
+				4F6FDD621341DEDD001F8EE3 /* InspectorPageAgent.cpp */,
+				4F6FDD631341DEDD001F8EE3 /* InspectorPageAgent.h */,
 				9F0D6B2C121BFEBA006C0288 /* InspectorProfilerAgent.cpp */,
 				9F0D6B2D121BFEBA006C0288 /* InspectorProfilerAgent.h */,
 				82AB1771125C826700C5069D /* InspectorResourceAgent.cpp */,
@@ -22714,6 +22720,7 @@
 				BC772E131331620C001EC9CE /* CSSLineBoxContainValue.h in Headers */,
 				4F1442291339FD6200E0D6F8 /* DOMNodeHighlighter.h in Headers */,
 				59B0EEA7132A6F2A004331C7 /* JavaType.h in Headers */,
+				4F6FDD651341DEDD001F8EE3 /* InspectorPageAgent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25386,6 +25393,7 @@
 				7E37EF2E1339208800B29250 /* SubresourceLoaderCF.cpp in Sources */,
 				4F1442281339FD6200E0D6F8 /* DOMNodeHighlighter.cpp in Sources */,
 				84B62685133138F90095A489 /* FontPlatformData.cpp in Sources */,
+				4F6FDD641341DEDD001F8EE3 /* InspectorPageAgent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

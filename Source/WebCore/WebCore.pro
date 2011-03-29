@@ -808,7 +808,7 @@ SOURCES += \
     inspector/InjectedScriptManager.cpp \
     inspector/InspectorAgent.cpp \
     inspector/InspectorApplicationCacheAgent.cpp \
-    inspector/InspectorBrowserDebuggerAgent.cpp \
+    inspector/InspectorBrowseebuggerAgent.cpp \
     inspector/InspectorCSSAgent.cpp \
     inspector/InspectorClient.cpp \
     inspector/InspectorConsoleAgent.cpp \
@@ -822,6 +822,7 @@ SOURCES += \
     inspector/InspectorFrontendClientLocal.cpp \
     inspector/InspectorFrontendHost.cpp \
     inspector/InspectorInstrumentation.cpp \
+    inspector/InspectorPageAgent.cpp \
     inspector/InspectorProfilerAgent.cpp \
     inspector/InspectorResourceAgent.cpp \
     inspector/InspectorRuntimeAgent.cpp \
@@ -1746,6 +1747,7 @@ HEADERS += \
     inspector/InspectorFrontendClientLocal.h \
     inspector/InspectorFrontendHost.h \
     inspector/InspectorInstrumentation.h \
+    inspector/InspectorPageAgent.h \
     inspector/InspectorProfilerAgent.h \
     inspector/InspectorResourceAgent.h \
     inspector/InspectorRuntimeAgent.h \

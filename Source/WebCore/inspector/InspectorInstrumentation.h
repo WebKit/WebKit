@@ -48,6 +48,7 @@ class EventContext;
 class DocumentLoader;
 class HitTestResult;
 class InspectorAgent;
+class InspectorPageAgent;
 class InspectorResourceAgent;
 class InspectorTimelineAgent;
 class KURL;
@@ -299,6 +300,7 @@ private:
     static InspectorTimelineAgent* retrieveTimelineAgent(InspectorAgent*);
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
     static InspectorResourceAgent* retrieveResourceAgent(InspectorAgent*);
+    static InspectorPageAgent* retrievePageAgent(InspectorAgent*);
 
     static HashMap<Page*, InspectorAgent*>& inspectorAgents();
     static int s_frontendCounter;

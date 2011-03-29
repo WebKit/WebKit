@@ -192,7 +192,7 @@ WebInspector.AuditsPanel.prototype = {
     _reloadResources: function(callback)
     {
         this._pageReloadCallback = callback;
-        InspectorAgent.reloadPage(false);
+        PageAgent.reloadPage(false);
     },
 
     _didMainResourceLoad: function()

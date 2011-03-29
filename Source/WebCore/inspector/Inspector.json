@@ -4,51 +4,10 @@
         "types": [],
         "commands": [
             {
-                "name": "addScriptToEvaluateOnLoad",
-                "parameters": [
-                    { "name": "scriptSource", "type": "string" }
-                ]
-            },
-            {
-                "name": "removeAllScriptsToEvaluateOnLoad"
-            },
-            {
-                "name": "reloadPage",
-                "parameters": [
-                    { "name": "ignoreCache", "type": "boolean" }
-                ]
-            },
-            {
-                "name": "openInInspectedWindow",
-                "parameters": [
-                    { "name": "url", "type": "string" }
-                ]
-            },
-            {
                 "name": "didEvaluateForTestInFrontend",
                 "parameters": [
                     { "name": "testCallId", "type": "integer" },
                     { "name": "jsonResult", "type": "string" }
-                ]
-            },
-            {
-                "name": "setUserAgentOverride",
-                "parameters": [
-                    { "name": "userAgent", "type": "string" }
-                ]
-            },
-            {
-                "name": "getCookies",
-                "returns": [
-                    { "name": "cookies", "type": "array", "items": { "$ref" : "Cookie"} },
-                    { "name": "cookiesString", "type": "string" }
-                ]
-            },
-            {
-                "name": "deleteCookie",
-                "parameters": [
-                    { "name": "cookieName", "type": "string" },
-                    { "name": "domain", "type": "string" }
                 ]
             }
         ],
@@ -61,24 +20,6 @@
             },
             {
                 "name": "disconnectFromBackend"
-            },
-            {
-                "name": "inspectedURLChanged",
-                "parameters": [
-                    { "name": "url", "type": "string" }
-                ]
-            },
-            {
-                "name": "domContentEventFired",
-                "parameters": [
-                    { "name": "time", "type": "number" }
-                ]
-            },
-            {
-                "name": "loadEventFired",
-                "parameters": [
-                    { "name": "time", "type": "number" }
-                ]
             },
             {
                 "name": "reset"
@@ -118,6 +59,73 @@
                 "name": "didDestroyWorker",
                 "parameters": [
                     { "name": "id", "type": "integer" }
+                ]
+            }
+        ]
+    },
+    {
+        "domain": "Page",
+        "types": [],
+        "commands": [
+            {
+                "name": "addScriptToEvaluateOnLoad",
+                "parameters": [
+                    { "name": "scriptSource", "type": "string" }
+                ]
+            },
+            {
+                "name": "removeAllScriptsToEvaluateOnLoad"
+            },
+            {
+                "name": "reloadPage",
+                "parameters": [
+                    { "name": "ignoreCache", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "openInInspectedWindow",
+                "parameters": [
+                    { "name": "url", "type": "string" }
+                ]
+            },
+            {
+                "name": "setUserAgentOverride",
+                "parameters": [
+                    { "name": "userAgent", "type": "string" }
+                ]
+            },
+            {
+                "name": "getCookies",
+                "returns": [
+                    { "name": "cookies", "type": "array", "items": { "$ref" : "Cookie"} },
+                    { "name": "cookiesString", "type": "string" }
+                ]
+            },
+            {
+                "name": "deleteCookie",
+                "parameters": [
+                    { "name": "cookieName", "type": "string" },
+                    { "name": "domain", "type": "string" }
+                ]
+            }
+        ],
+        "events": [
+            {
+                "name": "inspectedURLChanged",
+                "parameters": [
+                    { "name": "url", "type": "string" }
+                ]
+            },
+            {
+                "name": "domContentEventFired",
+                "parameters": [
+                    { "name": "time", "type": "number" }
+                ]
+            },
+            {
+                "name": "loadEventFired",
+                "parameters": [
+                    { "name": "time", "type": "number" }
                 ]
             }
         ]

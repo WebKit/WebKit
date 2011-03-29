@@ -32,12 +32,9 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "CachedResourceLoader.h"
-#include "CookieJar.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
-#include "FrameLoadRequest.h"
 #include "GraphicsContext.h"
 #include "InjectedScriptHost.h"
 #include "InjectedScriptManager.h"
@@ -50,6 +47,7 @@
 #include "InspectorDebuggerAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorInstrumentation.h"
+#include "InspectorPageAgent.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"
 #include "InspectorRuntimeAgent.h"
@@ -64,9 +62,6 @@
 #include "ScriptObject.h"
 #include "ScriptState.h"
 #include "Settings.h"
-#include "UserGestureIndicator.h"
-#include "WindowFeatures.h"
-#include <wtf/CurrentTime.h>
 
 #if ENABLE(DATABASE)
 #include "InspectorDatabaseAgent.h"
@@ -100,6 +95,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
     , m_instrumentingAgents(new InstrumentingAgents())
     , m_injectedScriptManager(injectedScriptManager)
     , m_state(new InspectorState(client))
+    , m_pageAgent(InspectorPageAgent::create(m_instrumentingAgents.get(), page, injectedScriptManager))
     , m_domAgent(InspectorDOMAgent::create(m_instrumentingAgents.get(), page, m_client, m_state.get(), injectedScriptManager))
     , m_cssAgent(new InspectorCSSAgent(m_instrumentingAgents.get(), m_domAgent.get()))
 #if ENABLE(DATABASE)
@@ -174,7 +170,7 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
     m_state->loadFromCookie(inspectorStateCookie);
 
     m_frontend->inspector()->frontendReused();
-    m_frontend->inspector()->inspectedURLChanged(inspectedURL().string());
+    m_pageAgent->restore();
 
     m_domAgent->restore();
     m_resourceAgent->restore();
@@ -191,19 +187,6 @@ void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* 
     if (world != mainThreadNormalWorld())
         return;
 
-    if (enabled()) {
-        if (m_frontend && frame == m_inspectedPage->mainFrame())
-            m_injectedScriptManager->discardInjectedScripts();
-
-        if (m_scriptsToEvaluateOnLoad.size()) {
-            ScriptState* scriptState = mainWorldScriptState(frame);
-            for (Vector<String>::iterator it = m_scriptsToEvaluateOnLoad.begin();
-                  it != m_scriptsToEvaluateOnLoad.end(); ++it) {
-                m_injectedScriptManager->injectScript(*it, scriptState);
-            }
-        }
-    }
-
     if (!m_inspectorExtensionAPI.isEmpty())
         m_injectedScriptManager->injectScript(m_inspectorExtensionAPI, mainWorldScriptState(frame));
 }
@@ -219,6 +202,7 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheAgent->setFrontend(m_frontend);
 #endif
+    m_pageAgent->setFrontend(m_frontend);
     m_domAgent->setFrontend(m_frontend);
     m_consoleAgent->setFrontend(m_frontend);
     m_timelineAgent->setFrontend(m_frontend);
@@ -233,8 +217,6 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
 #if ENABLE(DOM_STORAGE)
     m_domStorageAgent->setFrontend(m_frontend);
 #endif
-    // Initialize Web Inspector title.
-    m_frontend->inspector()->inspectedURLChanged(inspectedURL().string());
 
     if (!m_showPanelAfterVisible.isEmpty()) {
         m_frontend->inspector()->showPanel(m_showPanelAfterVisible);
@@ -285,9 +267,9 @@ void InspectorAgent::disconnectFrontend()
 #if ENABLE(DOM_STORAGE)
     m_domStorageAgent->clearFrontend();
 #endif
+    m_pageAgent->clearFrontend();
 
     releaseFrontendLifetimeAgents();
-    m_userAgentOverride = "";
 }
 
 void InspectorAgent::createFrontendLifetimeAgents()
@@ -302,10 +284,9 @@ void InspectorAgent::releaseFrontendLifetimeAgents()
 
 void InspectorAgent::didCommitLoad(DocumentLoader* loader)
 {
-    if (m_frontend) {
-        m_frontend->inspector()->inspectedURLChanged(loader->url().string());
+    if (m_frontend)
         m_frontend->inspector()->reset();
-    }
+
     m_injectedScriptManager->discardInjectedScripts();
 #if ENABLE(WORKERS)
     m_workers.clear();
@@ -314,49 +295,12 @@ void InspectorAgent::didCommitLoad(DocumentLoader* loader)
 
 void InspectorAgent::domContentLoadedEventFired(DocumentLoader* loader, const KURL& url)
 {
-    if (!enabled() || !isMainResourceLoader(loader, url))
-        return;
-
     m_injectedScriptManager->injectedScriptHost()->clearInspectedNodes();
-    if (InspectorDOMAgent* domAgent = m_instrumentingAgents->inspectorDOMAgent())
-        domAgent->mainFrameDOMContentLoaded();
-    if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->didMarkDOMContentEvent();
-    if (m_frontend)
-        m_frontend->inspector()->domContentEventFired(currentTime());
-}
-
-void InspectorAgent::loadEventFired(DocumentLoader* loader, const KURL& url)
-{
-    if (!enabled())
-        return;
-
-    if (InspectorDOMAgent* domAgent = m_instrumentingAgents->inspectorDOMAgent())
-        domAgent->loadEventFired(loader->frame()->document());
-
-    if (!isMainResourceLoader(loader, url))
-        return;
-
-    if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->didMarkLoadEvent();
-    if (m_frontend)
-        m_frontend->inspector()->loadEventFired(currentTime());
 }
 
 bool InspectorAgent::isMainResourceLoader(DocumentLoader* loader, const KURL& requestUrl)
 {
     return loader->frame() == m_inspectedPage->mainFrame() && requestUrl == loader->requestURL();
-}
-
-void InspectorAgent::setUserAgentOverride(ErrorString*, const String& userAgent)
-{
-    m_userAgentOverride = userAgent;
-}
-
-void InspectorAgent::applyUserAgentOverride(String* userAgent) const
-{
-    if (!m_userAgentOverride.isEmpty())
-        *userAgent = m_userAgentOverride;
 }
 
 #if ENABLE(WORKERS)
@@ -428,90 +372,6 @@ void InspectorAgent::didDestroyWorker(intptr_t id)
 }
 #endif // ENABLE(WORKERS)
 
-void InspectorAgent::getCookies(ErrorString*, RefPtr<InspectorArray>* cookies, WTF::String* cookiesString)
-{
-    // If we can get raw cookies.
-    ListHashSet<Cookie> rawCookiesList;
-
-    // If we can't get raw cookies - fall back to String representation
-    String stringCookiesList;
-
-    // Return value to getRawCookies should be the same for every call because
-    // the return value is platform/network backend specific, and the call will
-    // always return the same true/false value.
-    bool rawCookiesImplemented = false;
-
-    for (Frame* frame = m_inspectedPage->mainFrame(); frame; frame = frame->tree()->traverseNext(m_inspectedPage->mainFrame())) {
-        Document* document = frame->document();
-        const CachedResourceLoader::DocumentResourceMap& allResources = document->cachedResourceLoader()->allCachedResources();
-        CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
-        for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
-            Vector<Cookie> docCookiesList;
-            rawCookiesImplemented = getRawCookies(document, KURL(ParsedURLString, it->second->url()), docCookiesList);
-
-            if (!rawCookiesImplemented) {
-                // FIXME: We need duplication checking for the String representation of cookies.
-                ExceptionCode ec = 0;
-                stringCookiesList += document->cookie(ec);
-                // Exceptions are thrown by cookie() in sandboxed frames. That won't happen here
-                // because "document" is the document of the main frame of the page.
-                ASSERT(!ec);
-            } else {
-                int cookiesSize = docCookiesList.size();
-                for (int i = 0; i < cookiesSize; i++) {
-                    if (!rawCookiesList.contains(docCookiesList[i]))
-                        rawCookiesList.add(docCookiesList[i]);
-                }
-            }
-        }
-    }
-
-    if (rawCookiesImplemented)
-        *cookies = buildArrayForCookies(rawCookiesList);
-    else
-        *cookiesString = stringCookiesList;
-}
-
-PassRefPtr<InspectorArray> InspectorAgent::buildArrayForCookies(ListHashSet<Cookie>& cookiesList)
-{
-    RefPtr<InspectorArray> cookies = InspectorArray::create();
-
-    ListHashSet<Cookie>::iterator end = cookiesList.end();
-    ListHashSet<Cookie>::iterator it = cookiesList.begin();
-    for (int i = 0; it != end; ++it, i++)
-        cookies->pushObject(buildObjectForCookie(*it));
-
-    return cookies;
-}
-
-PassRefPtr<InspectorObject> InspectorAgent::buildObjectForCookie(const Cookie& cookie)
-{
-    RefPtr<InspectorObject> value = InspectorObject::create();
-    value->setString("name", cookie.name);
-    value->setString("value", cookie.value);
-    value->setString("domain", cookie.domain);
-    value->setString("path", cookie.path);
-    value->setNumber("expires", cookie.expires);
-    value->setNumber("size", (cookie.name.length() + cookie.value.length()));
-    value->setBoolean("httpOnly", cookie.httpOnly);
-    value->setBoolean("secure", cookie.secure);
-    value->setBoolean("session", cookie.session);
-    return value;
-}
-
-void InspectorAgent::deleteCookie(ErrorString*, const String& cookieName, const String& domain)
-{
-    for (Frame* frame = m_inspectedPage->mainFrame(); frame; frame = frame->tree()->traverseNext(m_inspectedPage->mainFrame())) {
-        Document* document = frame->document();
-        if (document->url().host() != domain)
-            continue;
-        const CachedResourceLoader::DocumentResourceMap& allResources = document->cachedResourceLoader()->allCachedResources();
-        CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
-        for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it)
-            WebCore::deleteCookie(document, KURL(ParsedURLString, it->second->url()), cookieName);
-    }
-}
-
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorAgent::showProfilesPanel()
 {
@@ -537,34 +397,6 @@ void InspectorAgent::didEvaluateForTestInFrontend(ErrorString*, long callId, con
     function.call();
 }
 
-void InspectorAgent::openInInspectedWindow(ErrorString*, const String& url)
-{
-    Frame* mainFrame = m_inspectedPage->mainFrame();
-
-    FrameLoadRequest request(mainFrame->document()->securityOrigin(), ResourceRequest(), "_blank");
-
-    bool created;
-    WindowFeatures windowFeatures;
-    Frame* newFrame = WebCore::createWindow(mainFrame, mainFrame, request, windowFeatures, created);
-    if (!newFrame)
-        return;
-
-    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
-    newFrame->loader()->setOpener(mainFrame);
-    newFrame->page()->setOpenedByDOM();
-    newFrame->loader()->changeLocation(mainFrame->document()->securityOrigin(), newFrame->loader()->completeURL(url), "", false, false);
-}
-
-void InspectorAgent::addScriptToEvaluateOnLoad(ErrorString*, const String& source)
-{
-    m_scriptsToEvaluateOnLoad.append(source);
-}
-
-void InspectorAgent::removeAllScriptsToEvaluateOnLoad(ErrorString*)
-{
-    m_scriptsToEvaluateOnLoad.clear();
-}
-
 void InspectorAgent::setInspectorExtensionAPI(const String& source)
 {
     m_inspectorExtensionAPI = source;
@@ -580,11 +412,6 @@ KURL InspectorAgent::inspectedURLWithoutFragment() const
     KURL url = inspectedURL();
     url.removeFragmentIdentifier();
     return url;
-}
-
-void InspectorAgent::reloadPage(ErrorString*, bool ignoreCache)
-{
-    m_inspectedPage->mainFrame()->loader()->reload(ignoreCache);
 }
 
 bool InspectorAgent::enabled() const
