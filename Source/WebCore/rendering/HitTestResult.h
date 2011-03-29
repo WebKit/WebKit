@@ -27,6 +27,7 @@
 #include "TextDirection.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -44,6 +45,8 @@ class Scrollbar;
 
 class HitTestResult {
 public:
+    typedef ListHashSet<RefPtr<Node> > NodeSet;
+
     HitTestResult();
     HitTestResult(const IntPoint&);
     // Pass non-negative padding values to perform a rect-based hit test.
@@ -112,10 +115,15 @@ public:
     // enclosed by the boundaries of a node.
     bool addNodeToRectBasedTestResult(Node*, int x, int y, const IntRect& = IntRect());
     bool addNodeToRectBasedTestResult(Node*, int x, int y, const FloatRect&);
-    const ListHashSet<RefPtr<Node> >& rectBasedTestResult() const { return m_rectBasedTestResult; }
     void append(const HitTestResult&);
 
+    // If m_rectBasedTestResult is 0 then set it to a new NodeSet. Return *m_rectBasedTestResult. Lazy allocation makes
+    // sense because the NodeSet is seldom necessary, and it's somewhat expensive to allocate and initialize. This method does
+    // the same thing as mutableRectBasedTestResult(), but here the return value is const.
+    const NodeSet& rectBasedTestResult() const;
+
 private:
+    NodeSet& mutableRectBasedTestResult(); // See above.
 
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElement() const;
@@ -134,7 +142,7 @@ private:
     int m_rightPadding;
     int m_bottomPadding;
     int m_leftPadding;
-    ListHashSet<RefPtr<Node> > m_rectBasedTestResult;
+    mutable OwnPtr<NodeSet> m_rectBasedTestResult;
 };
 
 inline IntRect HitTestResult::rectForPoint(int x, int y) const

@@ -1,3 +1,26 @@
+2011-03-29  Geoff Pike  <gpike@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        In HitTestResult objects, initialize the ListHashSet<RefPtr<Node> >
+        lazily.  In my informal testing it seems to be used hardly at all, so
+        it's wasteful to create it eagerly.  Initializing a ListHashSet
+        is expensive because a ListHashSet initially has space for 256
+        elements, and that space is memset to 0.
+
+        This change should improve performance but have no impact on
+        correctness.  On x86-64, for example, the change cuts the
+        cost of HitTestResult(IntPoint()) in EventHandler::mouseMoved()
+        from ~1700 cycles to ~300 cycles.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::HitTestResult): copy *m_rectBasedTestResult if m_rectBasedTestResult isn't 0
+        (WebCore::HitTestResult::operator=): copy *m_rectBasedTestResult if m_rectBasedTestResult isn't 0
+        (WebCore::HitTestResult::addNodeToRectBasedTestResult): use mutableRectBasedTestResult() rather than m_rectBasedTestResult
+        (WebCore::HitTestResult::append): append *(other.m_rectBasedTestResult) if other.m_rectBasedTestResult isn't 0
+        * rendering/HitTestResult.h:
+        (WebCore::HitTestResult::rectBasedTestResult): Add a typedef for ListHashSet<RefPtr<Node> > to ease readability.  Change m_rectBasedTestResult from ListHashSet<RefPtr<Node> > to an OwnPtr of same.  Modify rectBasedTestResult() and add mutableRectBasedTestResult().
+
 2011-03-29  Timothy Hatcher  <timothy@apple.com>
 
         Update the order of the context menu to better match AppKit on Mac.

@@ -95,16 +95,17 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     , m_scrollbar(other.scrollbar())
     , m_isOverWidget(other.isOverWidget())
 {
-    // Only copy the padding and ListHashSet in case of rect hit test.
+    // Only copy the padding and NodeSet in case of rect hit test.
     // Copying the later is rather expensive.
     if ((m_isRectBased = other.isRectBasedTest())) {
         m_topPadding = other.m_topPadding;
         m_rightPadding = other.m_rightPadding;
         m_bottomPadding = other.m_bottomPadding;
         m_leftPadding = other.m_leftPadding;
-        m_rectBasedTestResult = other.rectBasedTestResult();
     } else
         m_topPadding = m_rightPadding = m_bottomPadding = m_leftPadding = 0;
+
+    m_rectBasedTestResult = adoptPtr(other.m_rectBasedTestResult ? new NodeSet(*other.m_rectBasedTestResult) : 0);
 }
 
 HitTestResult::~HitTestResult()
@@ -120,16 +121,17 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
     m_innerURLElement = other.URLElement();
     m_scrollbar = other.scrollbar();
     m_isOverWidget = other.isOverWidget();
-    // Only copy the padding and ListHashSet in case of rect hit test.
+    // Only copy the padding and NodeSet in case of rect hit test.
     // Copying the later is rather expensive.
     if ((m_isRectBased = other.isRectBasedTest())) {
         m_topPadding = other.m_topPadding;
         m_rightPadding = other.m_rightPadding;
         m_bottomPadding = other.m_bottomPadding;
         m_leftPadding = other.m_leftPadding;
-        m_rectBasedTestResult = other.rectBasedTestResult();
     } else
         m_topPadding = m_rightPadding = m_bottomPadding = m_leftPadding = 0;
+
+    m_rectBasedTestResult = adoptPtr(other.m_rectBasedTestResult ? new NodeSet(*other.m_rectBasedTestResult) : 0);
     return *this;
 }
 
@@ -540,7 +542,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, int x, int y, const
         return true;
 
     node = node->shadowAncestorNode();
-    m_rectBasedTestResult.add(node);
+    mutableRectBasedTestResult().add(node);
 
     return !rect.contains(rectForPoint(x, y));
 }
@@ -557,7 +559,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, int x, int y, const
         return true;
 
     node = node->shadowAncestorNode();
-    m_rectBasedTestResult.add(node);
+    mutableRectBasedTestResult().add(node);
 
     return !rect.contains(rectForPoint(x, y));
 }
@@ -575,10 +577,11 @@ void HitTestResult::append(const HitTestResult& other)
         m_isOverWidget = other.isOverWidget();
     }
 
-    const ListHashSet<RefPtr<Node> >& list = other.rectBasedTestResult();
-    ListHashSet<RefPtr<Node> >::const_iterator last = list.end();
-    for (ListHashSet<RefPtr<Node> >::const_iterator it = list.begin(); it != last; ++it)
-        m_rectBasedTestResult.add(it->get());
+    if (other.m_rectBasedTestResult) {
+        NodeSet& set = mutableRectBasedTestResult();
+        for (NodeSet::const_iterator it = other.m_rectBasedTestResult->begin(), last = other.m_rectBasedTestResult->end(); it != last; ++it)
+            set.add(it->get());
+    }
 }
 
 IntRect HitTestResult::rectForPoint(const IntPoint& point, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
@@ -591,6 +594,20 @@ IntRect HitTestResult::rectForPoint(const IntPoint& point, unsigned topPadding, 
     actualPadding += IntSize(1, 1);
 
     return IntRect(actualPoint, actualPadding);
+}
+
+const HitTestResult::NodeSet& HitTestResult::rectBasedTestResult() const
+{
+    if (!m_rectBasedTestResult)
+        m_rectBasedTestResult = adoptPtr(new NodeSet);
+    return *m_rectBasedTestResult;
+}
+
+HitTestResult::NodeSet& HitTestResult::mutableRectBasedTestResult()
+{
+    if (!m_rectBasedTestResult)
+        m_rectBasedTestResult = adoptPtr(new NodeSet);
+    return *m_rectBasedTestResult;
 }
 
 } // namespace WebCore
