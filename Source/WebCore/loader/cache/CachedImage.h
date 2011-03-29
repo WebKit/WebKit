@@ -71,8 +71,6 @@ public:
     // For compatibility, images keep loading even if there are HTTP errors.
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return true; }
 
-    void checkNotify();
-    
     virtual bool isImage() const { return true; }
 
     void clear();

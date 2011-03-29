@@ -1,3 +1,40 @@
+2011-03-29  Gavin Peters  <gavinp@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Implement onerror events for <link rel=prefetch>
+        https://bugs.webkit.org/show_bug.cgi?id=57182
+
+        These events are equired on link elements, see
+        http://dev.w3.org/html5/spec/Overview.html#the-link-element
+
+        After a discussion in WebKit-dev about the direction of prefetch in the loader, and about a path
+        to adding the Link header, we decided to look at making onerror, onload and onbeforeload events
+        more uniformly supported.  See the thread at
+        https://lists.webkit.org/pipermail/webkit-dev/2011-February/016034.html .
+
+        It turned out that part of adding onerror for link prefetch was to make the top CachedResource less
+        abstract.  It was pure virtual until prefetch became the first consumer to use an unspecialised
+        implementation, and this CL continues that by adding a default checkNotify method to it.  As it
+        happens there were already two subclasses using what amounted to the generic checkNotify, so I
+        also removed those, buying us some code cleanup with the change.
+
+        Test: fast/dom/HTMLLinkElement/prefetch-onerror.html
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseMappedAttribute):
+        (WebCore::HTMLLinkElement::onloadTimerFired):
+        (WebCore::HTMLLinkElement::notifyFinished):
+        * loader/cache/CachedImage.cpp:
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::checkNotify):
+        (WebCore::CachedResource::data):
+        (WebCore::CachedResource::error):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedScript.cpp:
+        * loader/cache/CachedScript.h:
+
 2011-03-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.

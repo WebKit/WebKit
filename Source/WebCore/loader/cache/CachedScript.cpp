@@ -104,16 +104,6 @@ void CachedScript::data(PassRefPtr<SharedBuffer> data, bool allDataReceived)
     checkNotify();
 }
 
-void CachedScript::checkNotify()
-{
-    if (isLoading())
-        return;
-
-    CachedResourceClientWalker w(m_clients);
-    while (CachedResourceClient* c = w.next())
-        c->notifyFinished(this);
-}
-
 void CachedScript::error(CachedResource::Status status)
 {
     setStatus(status);

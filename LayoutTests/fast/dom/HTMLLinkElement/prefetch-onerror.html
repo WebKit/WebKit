@@ -1,0 +1,25 @@
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script type="text/javascript">
+function done()
+{
+    testPassed('onerror was called');
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<p>This tests that onerror events can be attached to link elements with rel=prefetch. Since prefetch links are just there as a performance optimization, the onerror/onload event is their only programatic side-effect.</p>
+<p>If it works you should see a message below saying the test has passed.</p>
+<link href="prefetch-noexisty.link" rel="prefetch" onload="testFailed('onload event should not occur')" onerror="done()">
+<hr>
+<div id="console"></div>
+</body>
+</html>
+

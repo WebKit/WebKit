@@ -134,15 +134,33 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, bool incre
     m_loading = true;
 }
 
+void CachedResource::checkNotify()
+{
+    if (isLoading())
+        return;
+
+    CachedResourceClientWalker w(m_clients);
+    while (CachedResourceClient* c = w.next())
+        c->notifyFinished(this);
+}
+
 void CachedResource::data(PassRefPtr<SharedBuffer>, bool allDataReceived)
 {
     if (!allDataReceived)
         return;
     
     setLoading(false);
-    CachedResourceClientWalker w(m_clients);
-    while (CachedResourceClient* c = w.next())
-        c->notifyFinished(this);
+    checkNotify();
+}
+
+void CachedResource::error(CachedResource::Status status)
+{
+    setStatus(status);
+    ASSERT(errorOccurred());
+    m_data.clear();
+
+    setLoading(false);
+    checkNotify();
 }
 
 void CachedResource::finish()

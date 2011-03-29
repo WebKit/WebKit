@@ -318,16 +318,6 @@ void CachedImage::error(CachedResource::Status status)
     checkNotify();
 }
 
-void CachedImage::checkNotify()
-{
-    if (isLoading())
-        return;
-
-    CachedResourceClientWalker w(m_clients);
-    while (CachedResourceClient* c = w.next())
-        c->notifyFinished(this);
-}
-
 void CachedImage::destroyDecodedData()
 {
     bool canDeleteImage = !m_image || (m_image->hasOneRef() && m_image->isBitmapImage());

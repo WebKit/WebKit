@@ -86,7 +86,7 @@ public:
     virtual void setEncoding(const String&) { }
     virtual String encoding() const { return String(); }
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
-    virtual void error(CachedResource::Status) { }
+    virtual void error(CachedResource::Status);
 
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return false; }
 
@@ -217,6 +217,8 @@ public:
     void updateResponseAfterRevalidation(const ResourceResponse& validatingResponse);
 
 protected:
+    void checkNotify();
+
     void setEncodedSize(unsigned);
     void setDecodedSize(unsigned);
     void didAccessDecodedData(double timeStamp);

@@ -55,8 +55,6 @@ namespace WebCore {
         virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
         virtual void error(Status);
 
-        void checkNotify();
-
         virtual void destroyDecodedData();
 #if USE(JSC)        
         // Allows JSC to cache additional information about the source.

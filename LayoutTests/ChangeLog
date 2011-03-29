@@ -1,3 +1,17 @@
+2011-03-29  Gavin Peters  <gavinp@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Implement onerror events for <link rel=prefetch>
+        https://bugs.webkit.org/show_bug.cgi?id=57182
+
+        * fast/dom/HTMLLinkElement/prefetch-onerror-expected.txt: Added.
+        * fast/dom/HTMLLinkElement/prefetch-onerror.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-03-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         http/tests/uri/username-with-no-hostname.html fails after r82151

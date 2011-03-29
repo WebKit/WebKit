@@ -145,6 +145,8 @@ void HTMLLinkElement::parseMappedAttribute(Attribute* attr)
 #if ENABLE(LINK_PREFETCH)
     else if (attr->name() == onloadAttr)
         setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attr));
+    else if (attr->name() == onerrorAttr)
+        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attr));
 #endif
     else {
         if (attr->name() == titleAttr && m_sheet)
@@ -395,16 +397,19 @@ bool HTMLLinkElement::isLoading() const
 void HTMLLinkElement::onloadTimerFired(Timer<HTMLLinkElement>* timer)
 {
     ASSERT_UNUSED(timer, timer == &m_onloadTimer);
-    dispatchEvent(Event::create(eventNames().loadEvent, false, false));
+    if (m_cachedLinkPrefetch->errorOccurred())
+        dispatchEvent(Event::create(eventNames().errorEvent, false, false));
+    else
+        dispatchEvent(Event::create(eventNames().loadEvent, false, false));
+
+    m_cachedLinkPrefetch->removeClient(this);
+    m_cachedLinkPrefetch = 0;
 }
 
 void HTMLLinkElement::notifyFinished(CachedResource* resource)
 {
     m_onloadTimer.startOneShot(0);
-    if (m_cachedLinkPrefetch.get() == resource) {
-        m_cachedLinkPrefetch->removeClient(this);
-        m_cachedLinkPrefetch = 0;
-    }
+    ASSERT(m_cachedLinkPrefetch.get() == resource);
 }
 #endif
 
