@@ -1302,7 +1302,7 @@ void HTMLMediaElement::setDefaultPlaybackRate(float rate)
 
 float HTMLMediaElement::playbackRate() const
 {
-    return m_player ? m_player->rate() : 0;
+    return m_playbackRate;
 }
 
 void HTMLMediaElement::setPlaybackRate(float rate)
@@ -1411,8 +1411,6 @@ void HTMLMediaElement::playInternal()
         ExceptionCode unused;
         seek(0, unused);
     }
-    
-    setPlaybackRate(defaultPlaybackRate());
     
     if (m_paused) {
         m_paused = false;
@@ -1541,9 +1539,10 @@ void HTMLMediaElement::togglePlayState()
 
     // We can safely call the internal play/pause methods, which don't check restrictions, because
     // this method is only called from the built-in media controller
-    if (canPlay())
+    if (canPlay()) {
+        setPlaybackRate(defaultPlaybackRate());
         playInternal();
-    else 
+    } else 
         pauseInternal();
 }
 

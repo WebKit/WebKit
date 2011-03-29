@@ -30,7 +30,6 @@ EVENT(seeked)
 
 *** beginning playback
 RUN(video.play())
-EVENT(ratechange)
 EVENT(play)
 EVENT(playing)
 EVENT(ended)
@@ -39,6 +38,7 @@ EVENT(ended)
 RUN(progressEventCount = 0)
 EVENT(abort)
 EVENT(emptied)
+EVENT(ratechange)
 EVENT(loadstart)
 EVENT(error)
 EXPECTED (progressEventCount == '0') OK

@@ -1,3 +1,21 @@
+2011-03-29  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        playbackRate should not be set to defaultPlaybackRate in play()
+        https://bugs.webkit.org/show_bug.cgi?id=55943
+
+        Test: media/video-playbackrate.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::playbackRate): No need to ask the media engine for the current
+            rate, we already have the current value cached.
+        (WebCore::HTMLMediaElement::playInternal): Don't reset the engine's playback rate to 
+            the default rate.
+        (WebCore::HTMLMediaElement::togglePlayState): Do reset the engine's playback rate to 
+            the default rate before triggering playback.
+        * manual-tests/media-default-playback-rate.html: Added.
+
 2011-03-28  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Seidel.
