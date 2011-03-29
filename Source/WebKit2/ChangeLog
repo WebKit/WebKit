@@ -1,3 +1,29 @@
+2011-03-29  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Support setting the client certificate on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57368
+        
+        Allow setting the client certificate for a host via the injected bundle.
+        This requires the ability for Webkit2 Windows clients to create a WKCertificateInfo from a PCCERT_CONTEXT so they can send it to the web process.
+
+        * Shared/API/c/win/WKCertificateInfoWin.cpp:
+        (WKCertificateInfoCreateWithCertificate): Added.
+        * Shared/API/c/win/WKCertificateInfoWin.h: Added WKCertificateInfoCreateWithCertificate().
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetClientCertificate): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h: Added WKBundleSetClientCertificate().
+        * WebProcess/InjectedBundle/InjectedBundle.h: Added setClientCertificate().
+        * WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp:
+        (WebKit::InjectedBundle::setClientCertificate): Added, should never be called.
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.cpp:
+        (WebKit::InjectedBundle::setClientCertificate): Added, should never be called.
+        * WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp:
+        (WebKit::InjectedBundle::setClientCertificate): Added, should never be called.
+        * WebProcess/InjectedBundle/win/InjectedBundleWin.cpp:
+        (WebKit::InjectedBundle::setClientCertificate): Added.
+
 2011-03-29  Timothy Hatcher  <timothy@apple.com>
 
         Make WebKit2 work with update-webkit-localizable-strings.

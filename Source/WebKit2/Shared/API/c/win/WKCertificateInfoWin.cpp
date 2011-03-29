@@ -31,6 +31,11 @@
 
 using namespace WebKit;
 
+WKCertificateInfoRef WKCertificateInfoCreateWithCertificate(PCCERT_CONTEXT certificate)
+{
+    return toAPI(WebCertificateInfo::create(PlatformCertificateInfo(certificate)).leakRef());
+}
+
 size_t WKCertificateInfoGetCertificateChainLength(WKCertificateInfoRef certificateInfoRef)
 {
     return toImpl(certificateInfoRef)->platformCertificateInfo().certificateChain().size();

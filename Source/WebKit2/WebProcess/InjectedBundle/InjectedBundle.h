@@ -59,6 +59,7 @@ typedef void* PlatformBundle;
 
 class ImmutableArray;
 class InjectedBundleScriptWorld;
+class WebCertificateInfo;
 class WebPage;
 class WebPageGroupProxy;
 
@@ -80,6 +81,7 @@ public:
     void postMessage(const String&, APIObject*);
     void postSynchronousMessage(const String&, APIObject*, RefPtr<APIObject>& returnData);
     void setHostAllowsAnyHTTPSCertificate(const String&);
+    void setClientCertificate(const String&, const WebCertificateInfo*);
 
     // TestRunner only SPI
     void setShouldTrackVisitedLinks(bool);

@@ -90,4 +90,10 @@ void InjectedBundle::setHostAllowsAnyHTTPSCertificate(const String& host)
     ASSERT_NOT_REACHED();
 }
 
+void InjectedBundle::setClientCertificate(const String& host, const WebCertificateInfo* certificateInfo)
+{
+    // This is only used on Windows.
+    ASSERT_NOT_REACHED();
+}
+
 } // namespace WebKit
