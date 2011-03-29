@@ -1,9 +1,9 @@
-layer at (0,0) size 808x583
-  RenderView at (0,0) size 781x581
-layer at (0,0) size 781x581
-  RenderBlock {html} at (0,0) size 781x581
-    RenderBody {body} at (8,16) size 765x567
-      RenderBlock {p} at (0,0) size 765x38
+layer at (0,0) size 808x584
+  RenderView at (0,0) size 800x584
+layer at (0,0) size 800x584
+  RenderBlock {html} at (0,0) size 800x584
+    RenderBody {body} at (8,16) size 784x567
+      RenderBlock {p} at (0,0) size 784x38
         RenderText {#text} at (0,0) size 747x38
           text run at (0,0) width 747: "The left edges of the black boxes below should line up with the left edges of their containing orange or green boxes. In"
           text run at (0,19) width 286: "addition, all the assertions below should pass."
@@ -22,7 +22,7 @@ layer at (0,0) size 781x581
               RenderSVGInlineText {#text} at (390,0) size 200x600
                 chunk 1 text run 1 at (390.00,10.00) startOffset 0 endOffset 1 width 200.00: "X"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {pre} at (0,267) size 765x300
+      RenderBlock {pre} at (0,267) size 784x300
         RenderInline {span} at (0,0) size 312x15
           RenderInline {span} at (0,0) size 312x15
             RenderInline {span} at (0,0) size 32x15

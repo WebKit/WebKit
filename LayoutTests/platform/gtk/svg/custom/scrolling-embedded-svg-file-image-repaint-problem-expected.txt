@@ -1,38 +1,38 @@
 layer at (0,0) size 1026x995
-  RenderView at (0,0) size 781x581
-layer at (0,0) size 781x995
-  RenderBlock {HTML} at (0,0) size 781x995
-    RenderBody {BODY} at (8,16) size 765x975
-      RenderBlock {DIV} at (16,0) size 733x60
-        RenderBlock {P} at (0,0) size 733x20
-          RenderInline {A} at (0,0) size 83x19 [color=#0000EE]
-            RenderText {#text} at (273,0) size 83x19
-              text run at (273,0) width 83: "Full version"
-          RenderText {#text} at (356,0) size 8x19
-            text run at (356,0) width 8: ", "
-          RenderInline {A} at (0,0) size 96x19 [color=#0000EE]
-            RenderText {#text} at (364,0) size 96x19
-              text run at (364,0) width 96: "Basic version"
-        RenderBlock {P} at (0,20) size 733x20
-          RenderText {#text} at (198,0) size 130x19
-            text run at (198,0) width 130: "Specification link: "
-          RenderInline {A} at (0,0) size 208x19 [color=#0000EE]
-            RenderText {#text} at (327,0) size 208x19
-              text run at (327,0) width 208: "3.4 How groups are rendered"
-        RenderBlock {P} at (0,40) size 733x20
-          RenderInline {A} at (0,0) size 173x19 [color=#0000EE]
-            RenderText {#text} at (182,0) size 173x19
-              text run at (182,0) width 173: "pservers-pattern-01-b \x{2190}"
-          RenderText {#text} at (354,0) size 5x19
-            text run at (354,0) width 5: " "
-          RenderInline {A} at (0,0) size 40x19 [color=#0000EE]
-            RenderText {#text} at (358,0) size 40x19
-              text run at (358,0) width 40: "index"
-          RenderText {#text} at (397,0) size 5x19
-            text run at (397,0) width 5: " "
-          RenderInline {A} at (0,0) size 150x19 [color=#0000EE]
-            RenderText {#text} at (401,0) size 150x19
-              text run at (401,0) width 150: "\x{2192} script-handle-01-b"
+  RenderView at (0,0) size 784x584
+layer at (0,0) size 784x995
+  RenderBlock {HTML} at (0,0) size 784x995
+    RenderBody {BODY} at (8,16) size 768x975
+      RenderBlock {DIV} at (16,0) size 736x60
+        RenderBlock {P} at (0,0) size 736x20
+          RenderInline {A} at (0,0) size 84x19 [color=#0000EE]
+            RenderText {#text} at (274,0) size 84x19
+              text run at (274,0) width 84: "Full version"
+          RenderText {#text} at (357,0) size 9x19
+            text run at (357,0) width 9: ", "
+          RenderInline {A} at (0,0) size 97x19 [color=#0000EE]
+            RenderText {#text} at (365,0) size 97x19
+              text run at (365,0) width 97: "Basic version"
+        RenderBlock {P} at (0,20) size 736x20
+          RenderText {#text} at (200,0) size 129x19
+            text run at (200,0) width 129: "Specification link: "
+          RenderInline {A} at (0,0) size 207x19 [color=#0000EE]
+            RenderText {#text} at (329,0) size 207x19
+              text run at (329,0) width 207: "3.4 How groups are rendered"
+        RenderBlock {P} at (0,40) size 736x20
+          RenderInline {A} at (0,0) size 172x19 [color=#0000EE]
+            RenderText {#text} at (184,0) size 172x19
+              text run at (184,0) width 172: "pservers-pattern-01-b \x{2190}"
+          RenderText {#text} at (356,0) size 4x19
+            text run at (356,0) width 4: " "
+          RenderInline {A} at (0,0) size 39x19 [color=#0000EE]
+            RenderText {#text} at (360,0) size 39x19
+              text run at (360,0) width 39: "index"
+          RenderText {#text} at (399,0) size 4x19
+            text run at (399,0) width 4: " "
+          RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
+            RenderText {#text} at (403,0) size 149x19
+              text run at (403,0) width 149: "\x{2192} script-handle-01-b"
           RenderText {#text} at (0,0) size 0x0
       RenderTable {TABLE} at (0,64) size 1018x551
         RenderTableSection {TBODY} at (0,0) size 1018x551
@@ -87,13 +87,13 @@ layer at (0,0) size 781x995
                     RenderTableCell {TD} at (500,148) size 496x381 [r=2 c=1 rs=1 cs=1]
                       RenderImage {IMG} at (8,8) size 480x360
                       RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (22,626) size 721x313
-        RenderBlock {P} at (0,0) size 721x40
+      RenderBlock {DIV} at (23,626) size 722x313
+        RenderBlock {P} at (0,0) size 722x40
           RenderText {#text} at (0,0) size 689x39
             text run at (0,0) width 647: "Verifies implicit rendering order (paragraph 3.3) and grouping mechanism (paragraphs 3.4). "
             text run at (647,0) width 42: "It also"
             text run at (0,20) width 345: "validates basic Shape, Image and text rendering."
-        RenderBlock {P} at (0,51) size 721x140
+        RenderBlock {P} at (0,51) size 722x140
           RenderText {#text} at (0,0) size 718x139
             text run at (0,0) width 135: "This test renders 3 "
             text run at (135,0) width 247: "elements: a text string \"SVG\", then "
@@ -110,7 +110,7 @@ layer at (0,0) size 781x995
             text run at (0,100) width 311: "none of the \"SVG\" should show through the "
             text run at (311,100) width 402: "rectangle and none of the rectangle should show through"
             text run at (0,120) width 74: "the image."
-        RenderBlock {P} at (0,202) size 721x80
+        RenderBlock {P} at (0,202) size 722x80
           RenderText {#text} at (0,0) size 713x79
             text run at (0,0) width 549: "Prerequisites: the test assumes proper handling of the fill stroke, stroke-width, "
             text run at (549,0) width 119: "opacity, font-size"
@@ -119,22 +119,22 @@ layer at (0,0) size 781x995
             text run at (0,40) width 429: "required for the test template. To ensure that the text string is "
             text run at (429,40) width 284: "overlapped by the other elements and to"
             text run at (0,60) width 411: "avoid a dependency on system fonts, an SVG font is used."
-        RenderBlock {P} at (0,293) size 721x20
+        RenderBlock {P} at (0,293) size 722x20
           RenderText {#text} at (0,0) size 446x19
             text run at (0,0) width 446: "The rendered image should match the reference image exactly."
-      RenderBlock {DIV} at (16,955) size 733x20
-        RenderBlock {P} at (0,0) size 733x20
-          RenderInline {A} at (0,0) size 173x19 [color=#0000EE]
-            RenderText {#text} at (182,0) size 173x19
-              text run at (182,0) width 173: "pservers-pattern-01-b \x{2190}"
-          RenderText {#text} at (354,0) size 5x19
-            text run at (354,0) width 5: " "
-          RenderInline {A} at (0,0) size 40x19 [color=#0000EE]
-            RenderText {#text} at (358,0) size 40x19
-              text run at (358,0) width 40: "index"
-          RenderText {#text} at (397,0) size 5x19
-            text run at (397,0) width 5: " "
-          RenderInline {A} at (0,0) size 150x19 [color=#0000EE]
-            RenderText {#text} at (401,0) size 150x19
-              text run at (401,0) width 150: "\x{2192} script-handle-01-b"
+      RenderBlock {DIV} at (16,955) size 736x20
+        RenderBlock {P} at (0,0) size 736x20
+          RenderInline {A} at (0,0) size 172x19 [color=#0000EE]
+            RenderText {#text} at (184,0) size 172x19
+              text run at (184,0) width 172: "pservers-pattern-01-b \x{2190}"
+          RenderText {#text} at (356,0) size 4x19
+            text run at (356,0) width 4: " "
+          RenderInline {A} at (0,0) size 39x19 [color=#0000EE]
+            RenderText {#text} at (360,0) size 39x19
+              text run at (360,0) width 39: "index"
+          RenderText {#text} at (399,0) size 4x19
+            text run at (399,0) width 4: " "
+          RenderInline {A} at (0,0) size 149x19 [color=#0000EE]
+            RenderText {#text} at (403,0) size 149x19
+              text run at (403,0) width 149: "\x{2192} script-handle-01-b"
           RenderText {#text} at (0,0) size 0x0

@@ -1,8 +1,8 @@
-layer at (0,0) size 781x4004
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x4004
-  RenderBlock {html} at (0,0) size 781x4004
-    RenderBody {body} at (0,0) size 781x4004
+layer at (0,0) size 784x4004
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x4004
+  RenderBlock {html} at (0,0) size 784x4004
+    RenderBody {body} at (0,0) size 784x4004
       RenderSVGRoot {svg} at (271,1950) size 258x154
         RenderSVGPath {rect} at (350,1950) size 100x100 [fill={[type=SOLID] [color=#000080] [opacity=0.50]}] [x=350.00] [y=1950.00] [width=100.00] [height=100.00]
         RenderSVGPath {circle} at (350,1950) size 100x100 [fill={[type=SOLID] [color=#F08080]}] [cx=400.00] [cy=2000.00] [r=50.00]
