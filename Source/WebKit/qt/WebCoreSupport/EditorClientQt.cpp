@@ -532,6 +532,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
 
 void EditorClientQt::handleInputMethodKeydown(KeyboardEvent* event)
 {
+#ifndef QT_NO_SHORTCUT
     const PlatformKeyboardEvent* kevent = event->keyEvent();
     if (kevent->type() == PlatformKeyboardEvent::RawKeyDown) {
         QWebPage::WebAction action = QWebPagePrivate::editorActionForKeyEvent(kevent->qtEvent());
@@ -544,6 +545,7 @@ void EditorClientQt::handleInputMethodKeydown(KeyboardEvent* event)
             break;
         }
     }
+#endif
 }
 
 EditorClientQt::EditorClientQt(QWebPage* page)

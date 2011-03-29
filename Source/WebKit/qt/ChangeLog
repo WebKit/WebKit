@@ -1,3 +1,13 @@
+2011-03-29  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed build fix for build-webkit -minimal.
+
+        Breakage introduced by http://trac.webkit.org/changeset/82238.
+        The minimal option has no support for shortcuts.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleInputMethodKeydown):
+
 2011-03-29  Janne Koskinen  <janne.p.koskinen@digia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
