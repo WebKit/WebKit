@@ -12,23 +12,6 @@ function parse(rgba) {
     return "RGBA[" + data[0] + ", " + data[1] + ", " + data[2] + ", " + data[3] + "]";
 }
 
-shouldBe("parse('rgba(0.9.9%, 0%, 0%, 1)')", "'RGBA[102, 102, 102, 255]'");
-shouldBe("parse('rgba(0, 0.., 0, 1)')", "'RGBA[102, 102, 102, 255]'");
-shouldBe("parse('rgba(10%, .%, 0%, 1)')", "'RGBA[102, 102, 102, 255]'");
-shouldBe("parse('rgba(13.37%1337%, 5%, 50.0%, 1)')", "'RGBA[102, 102, 102, 255]'");
-shouldBe("parse('rgba(%, 50%, 50.0%, 1)')", "'RGBA[102, 102, 102, 255]'");
-shouldBe("parse('rgba(50.0%, 50%, a%, 1)')", "'RGBA[102, 102, 102, 255]'");
-shouldBe("parse('rgba(500%, 0%, 0%, 1)')", "'RGBA[255, 0, 0, 255]'");
-shouldBe("parse('rgba(100%, 100%, 100%, 1)')", "'RGBA[255, 255, 255, 255]'");
-shouldBe("parse('rgba(10.5%, 80%, 70%, 1)')", "'RGBA[26, 204, 179, 255]'");
-shouldBe("parse('rgba(0%, 0%, 0%, 1)')", "'RGBA[0, 0, 0, 255]'");
-shouldBe("parse('rgba(50.0%, 50.0%, 50.0%, 1)')", "'RGBA[127, 127, 127, 255]'");
-shouldBe("parse('rgba(100%, 100%, 100%, 1)')", "'RGBA[255, 255, 255, 255]'");
-shouldBe("parse('rgba(10.5%, 80%, 70%, 1)')", "'RGBA[26, 204, 179, 255]'");
-shouldBe("parse('rgba(55.5%, 0.5%, 110%, 1)')", "'RGBA[142, 1, 255, 255]'");
-shouldBe("parse('rgba(60.59998%, 0.59999%, 110.12345%, 1)')", "'RGBA[155, 1, 255, 255]'");
-shouldBe("parse('rgba(10.999%, 0.999%, 0.000009%, 1)')", "'RGBA[28, 2, 0, 255]'");
-shouldBe("parse('rgba(79.99999%, 99.99999%, 500%, 1)')", "'RGBA[204, 255, 255, 255]'");
 shouldBe("parse('rgba(0, 0, 0, -0.10)')", "'RGBA[0, 0, 0, 0]'");
 shouldBe("parse('rgba(0, 0, 0, -5.0)')", "'RGBA[0, 0, 0, 0]'");
 shouldBe("parse('rgba(0, 0, 0, 5.0)')", "'RGBA[0, 0, 0, 255]'");

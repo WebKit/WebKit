@@ -1,3 +1,13 @@
+2011-03-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed rollout r82282, part of r82288, r82298.
+
+        * css/CSSParser.cpp:
+        (WebCore::parseColorInt):
+        (WebCore::isValidDouble):
+        (WebCore::parseAlphaValue):
+        (WebCore::CSSParser::parseColor):
+
 2011-03-25  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Dave Hyatt.

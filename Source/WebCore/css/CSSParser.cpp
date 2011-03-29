@@ -95,7 +95,6 @@ using namespace WTF;
 namespace WebCore {
 
 static const unsigned INVALID_NUM_PARSED_PROPERTIES = UINT_MAX;
-static const double MAX_SCALE = 1000000;
 
 static bool equal(const CSSParserString& a, const char* b)
 {
@@ -3911,76 +3910,10 @@ bool CSSParser::parseFontFaceUnicodeRange()
     return true;
 }
 
-// Returns the number of characters which form a valid double
-// and are terminated by the given terminator character
-static int checkForValidDouble(const UChar* string, const UChar* end, const char terminator)
-{
-    int length = end - string;
-    if (length < 1)
-        return 0;
-
-    bool decimalMarkSeen = false;
-    int processedLength = 0;
-
-    for (int i = 0; i < length; ++i) {
-        if (string[i] == terminator) {
-            processedLength = i;
-            break;
-        }
-        if (!isASCIIDigit(string[i])) {
-            if (!decimalMarkSeen && string[i] == '.')
-                decimalMarkSeen = true;
-            else
-                return 0;
-        }
-    }
-
-    if (decimalMarkSeen && processedLength == 1)
-        return 0;
-
-    return processedLength;
-}
-
-// Returns the number of characters consumed for parsing a valid double
-// terminated by the given terminator character
-static int parseDouble(const UChar* string, const UChar* end, const char terminator, double& value)
-{
-    int length = checkForValidDouble(string, end, terminator);
-    if (!length)
-        return 0;
-
-    int position = 0;
-    double localValue = 0;
-
-    // The consumed characters here are guaranteed to be
-    // ASCII digits with or without a decimal mark
-    for (; position < length; ++position) {
-        if (string[position] == '.')
-            break;
-        localValue = localValue * 10 + string[position] - '0';
-    }
-
-    if (++position == length) {
-        value = localValue;
-        return length;
-    }
-
-    double fraction = 0;
-    double scale = 1;
-
-    while (position < length && scale < MAX_SCALE) {
-        fraction = fraction * 10 + string[position++] - '0';
-        scale *= 10;
-    }
-
-    value = localValue + fraction / scale;
-    return length;
-}
-
-static bool parseColorIntOrPercentage(const UChar*& string, const UChar* end, const char terminator, CSSPrimitiveValue::UnitTypes& expect, int& value)
+static inline bool parseColorInt(const UChar*& string, const UChar* end, UChar terminator, int& value)
 {
     const UChar* current = string;
-    double localValue = 0;
+    int localValue = 0;
     bool negative = false;
     while (current != end && isHTMLSpace(*current))
         current++;
@@ -3991,7 +3924,7 @@ static bool parseColorIntOrPercentage(const UChar*& string, const UChar* end, co
     if (current == end || !isASCIIDigit(*current))
         return false;
     while (current != end && isASCIIDigit(*current)) {
-        double newValue = localValue * 10 + *current++ - '0';
+        int newValue = localValue * 10 + *current++ - '0';
         if (newValue >= 255) {
             // Clamp values at 255.
             localValue = 255;
@@ -4001,42 +3934,12 @@ static bool parseColorIntOrPercentage(const UChar*& string, const UChar* end, co
         }
         localValue = newValue;
     }
-
-    if (expect == CSSPrimitiveValue::CSS_NUMBER && (*current == '.' || *current == '%'))
-        return false;
-
-    if (*current == '.') {
-        // We already parsed the integral part, try to parse
-        // the fraction part of the percentage value.
-        double percentage = 0;
-        int numCharactersParsed = parseDouble(current, end, '%', percentage);
-        if (!numCharactersParsed)
-            return false;
-        current += numCharactersParsed;
-        if (*current != '%')
-            return false;
-        localValue += percentage;
-    }
-
-    if (expect == CSSPrimitiveValue::CSS_PERCENTAGE && *current != '%')
-        return false;
-
-    if (*current == '%') {
-        expect = CSSPrimitiveValue::CSS_PERCENTAGE;
-        localValue = localValue / 100.0 * nextafter(256.0, 0.0);
-        // Clamp values at 255 for percentages over 100%
-        if (localValue > 255)
-            localValue = 255;
-        current++;
-    } else
-        expect = CSSPrimitiveValue::CSS_NUMBER;
-
     while (current != end && isHTMLSpace(*current))
         current++;
     if (current == end || *current++ != terminator)
         return false;
     // Clamp negative values at zero.
-    value = negative ? 0 : static_cast<int>(localValue);
+    value = negative ? 0 : localValue;
     string = current;
     return true;
 }
@@ -4054,7 +3957,21 @@ static inline bool isTenthAlpha(const UChar* string, const int length)
     return false;
 }
 
-static inline bool parseAlphaValue(const UChar*& string, const UChar* end, const char terminator, int& value)
+static inline bool isValidDouble(const UChar* string, const int length)
+{
+    bool decimalMarkSeen = false;
+    for (int i = 0; i < length; ++i) {
+        if (!isASCIIDigit(string[i])) {
+            if (!decimalMarkSeen && string[i] == '.')
+                decimalMarkSeen = true;
+            else
+                return false;
+        }
+    }
+    return true;
+}
+
+static inline bool parseAlphaValue(const UChar*& string, const UChar* end, UChar terminator, int& value)
 {
     while (string != end && isHTMLSpace(*string))
         string++;
@@ -4076,7 +3993,7 @@ static inline bool parseAlphaValue(const UChar*& string, const UChar* end, const
         return false;
 
     if (string[0] != '0' && string[0] != '1' && string[0] != '.') {
-        if (checkForValidDouble(string, end, terminator)) {
+        if (isValidDouble(string, length - 1)) {
             value = negative ? 0 : 255;
             string = end;
             return true;
@@ -4097,12 +4014,20 @@ static inline bool parseAlphaValue(const UChar*& string, const UChar* end, const
         return true;
     }
 
-    double alpha = 0;
-    if (!parseDouble(string, end, terminator, alpha))
-        return false;
-    value = negative ? 0 : static_cast<int>(alpha * nextafter(256.0, 0.0));
-    string = end;
-    return true;
+    if (!isValidDouble(string, length - 1))
+       return false;
+
+    Vector<char, 8> bytes(length + 1);
+
+    for (int i = 0; i < length; ++i)
+        bytes[i] = string[i];
+
+    bytes[length] = '\0';
+    char* foundTerminator;
+    double d = WTF::strtod(bytes.data(), &foundTerminator);
+    value = negative ? 0 : static_cast<int>(d * nextafter(256.0, 0.0));
+    string += (foundTerminator - bytes.data()) + 1;
+    return *foundTerminator == terminator;
 }
 
 static inline bool mightBeRGBA(const UChar* characters, unsigned length)
@@ -4130,7 +4055,6 @@ bool CSSParser::parseColor(const String &name, RGBA32& rgb, bool strict)
 {
     const UChar* characters = name.characters();
     unsigned length = name.length();
-    CSSPrimitiveValue::UnitTypes expect = CSSPrimitiveValue::CSS_UNKNOWN;
 
     if (!strict && length >= 3) {
         if (name[0] == '#') {
@@ -4150,12 +4074,11 @@ bool CSSParser::parseColor(const String &name, RGBA32& rgb, bool strict)
         int green;
         int blue;
         int alpha;
-
-        if (!parseColorIntOrPercentage(current, end, ',', expect, red))
+        if (!parseColorInt(current, end, ',', red))
             return false;
-        if (!parseColorIntOrPercentage(current, end, ',', expect, green))
+        if (!parseColorInt(current, end, ',', green))
             return false;
-        if (!parseColorIntOrPercentage(current, end, ',', expect, blue))
+        if (!parseColorInt(current, end, ',', blue))
             return false;
         if (!parseAlphaValue(current, end, ')', alpha))
             return false;
@@ -4172,11 +4095,11 @@ bool CSSParser::parseColor(const String &name, RGBA32& rgb, bool strict)
         int red;
         int green;
         int blue;
-        if (!parseColorIntOrPercentage(current, end, ',', expect, red))
+        if (!parseColorInt(current, end, ',', red))
             return false;
-        if (!parseColorIntOrPercentage(current, end, ',', expect, green))
+        if (!parseColorInt(current, end, ',', green))
             return false;
-        if (!parseColorIntOrPercentage(current, end, ')', expect, blue))
+        if (!parseColorInt(current, end, ')', blue))
             return false;
         if (current != end)
             return false;

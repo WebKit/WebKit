@@ -1,3 +1,12 @@
+2011-03-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed rollout r82282, part of r82288, r82298.
+
+        * fast/canvas/rgba-parsing-expected.txt:
+        * fast/canvas/script-tests/rgba-parsing.js:
+        * platform/chromium-mac/fast/canvas/rgba-parsing-expected.txt: Removed.
+        * platform/chromium-win/fast/canvas/rgba-parsing-expected.txt: Removed.
+
 2011-03-29  Jian Li  <jianli@chromium.org>
 
         Reviewed by Adam Barth.
