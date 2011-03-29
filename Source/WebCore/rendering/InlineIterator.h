@@ -36,7 +36,7 @@ public:
     InlineIterator()
         : m_block(0)
         , m_obj(0)
-        , pos(0)
+        , m_pos(0)
         , m_nextBreakablePosition(-1)
     {
     }
@@ -44,7 +44,7 @@ public:
     InlineIterator(RenderBlock* b, RenderObject* o, unsigned p)
         : m_block(b)
         , m_obj(o)
-        , pos(p)
+        , m_pos(p)
         , m_nextBreakablePosition(-1)
     {
     }
@@ -57,18 +57,18 @@ public:
 
     RenderBlock* m_block;
     RenderObject* m_obj;
-    unsigned pos;
+    unsigned m_pos;
     int m_nextBreakablePosition;
 };
 
 inline bool operator==(const InlineIterator& it1, const InlineIterator& it2)
 {
-    return it1.pos == it2.pos && it1.m_obj == it2.m_obj;
+    return it1.m_pos == it2.m_pos && it1.m_obj == it2.m_obj;
 }
 
 inline bool operator!=(const InlineIterator& it1, const InlineIterator& it2)
 {
-    return it1.pos != it2.pos || it1.m_obj != it2.m_obj;
+    return it1.m_pos != it2.m_pos || it1.m_obj != it2.m_obj;
 }
 
 static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, InlineBidiResolver* resolver = 0, bool skipInlines = true, bool* endOfInlinePtr = 0)
@@ -184,15 +184,15 @@ inline void InlineIterator::increment(InlineBidiResolver* resolver)
     if (!m_obj)
         return;
     if (m_obj->isText()) {
-        pos++;
-        if (pos >= toRenderText(m_obj)->textLength()) {
+        m_pos++;
+        if (m_pos >= toRenderText(m_obj)->textLength()) {
             m_obj = bidiNext(m_block, m_obj, resolver);
-            pos = 0;
+            m_pos = 0;
             m_nextBreakablePosition = -1;
         }
     } else {
         m_obj = bidiNext(m_block, m_obj, resolver);
-        pos = 0;
+        m_pos = 0;
         m_nextBreakablePosition = -1;
     }
 }
@@ -208,10 +208,10 @@ inline UChar InlineIterator::current() const
         return 0;
 
     RenderText* text = toRenderText(m_obj);
-    if (pos >= text->textLength())
+    if (m_pos >= text->textLength())
         return 0;
 
-    return text->characters()[pos];
+    return text->characters()[m_pos];
 }
 
 ALWAYS_INLINE WTF::Unicode::Direction InlineIterator::direction() const
@@ -235,7 +235,7 @@ template <>
 inline void InlineBidiResolver::appendRun()
 {
     if (!emptyRun && !eor.atEnd()) {
-        int start = sor.pos;
+        int start = sor.m_pos;
         RenderObject* obj = sor.m_obj;
         while (obj && obj != eor.m_obj && obj != endOfLine.m_obj) {
             RenderBlock::appendRunsForObject(start, obj->length(), obj, *this);        
@@ -243,10 +243,10 @@ inline void InlineBidiResolver::appendRun()
             obj = bidiNext(sor.m_block, obj);
         }
         if (obj) {
-            unsigned pos = obj == eor.m_obj ? eor.pos : UINT_MAX;
-            if (obj == endOfLine.m_obj && endOfLine.pos <= pos) {
+            unsigned pos = obj == eor.m_obj ? eor.m_pos : UINT_MAX;
+            if (obj == endOfLine.m_obj && endOfLine.m_pos <= pos) {
                 reachedEndOfLine = true;
-                pos = endOfLine.pos;
+                pos = endOfLine.m_pos;
             }
             // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
             int end = obj->length() ? pos+1 : 0;

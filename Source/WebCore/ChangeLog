@@ -1,3 +1,27 @@
+2011-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Rename InlineIterator::pos to m_pos to match modern style
+        https://bugs.webkit.org/show_bug.cgi?id=57342
+
+        Somehow I failed to upload this one earlier, no wonder later patches didn't apply.
+
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::InlineIterator):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::InlineIterator::increment):
+        (WebCore::InlineIterator::current):
+        (WebCore::InlineBidiResolver::appendRun):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::checkMidpoints):
+        (WebCore::RenderBlock::appendRunsForObject):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::matchedEndLine):
+        (WebCore::tryHyphenating):
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2011-03-29  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
