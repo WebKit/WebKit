@@ -1,3 +1,22 @@
+2011-03-28  Andrew Foster  <andrewf@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        webkit-patch should be more intelligent about whether a bug applies to a patch
+        Create a new function, parse_bug_id_from_changelog() which determines
+        that a bug is related to a patch by parsing the output generated from
+        prepare-ChangeLog, rather than arbitrarily matching a URL to a bug in
+        the description of a patch.
+        https://bugs.webkit.org/show_bug.cgi?id=56989
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/checkout/changelog.py:
+        * Scripts/webkitpy/common/net/bugzilla/__init__.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        * Scripts/webkitpy/style/checkers/changelog.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+
 2011-03-28  Maciej Stachowiak  <mjs@apple.com>
 
         Revert accidentally commited change.

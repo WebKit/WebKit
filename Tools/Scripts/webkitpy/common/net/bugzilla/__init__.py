@@ -2,7 +2,7 @@
 
 # We only export public API here.
 # FIXME: parse_bug_id should not be a free function.
-from .bugzilla import Bugzilla, parse_bug_id
+from .bugzilla import Bugzilla, parse_bug_id, parse_bug_id_from_changelog
 # Unclear if Bug and Attachment need to be public classes.
 from .bug import Bug
 from .attachment import Attachment

@@ -37,7 +37,7 @@ from optparse import make_option
 from webkitpy.tool import steps
 
 from webkitpy.common.config.committers import CommitterList
-from webkitpy.common.net.bugzilla import parse_bug_id
+from webkitpy.common.net.bugzilla import parse_bug_id_from_changelog
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.system.user import User
 from webkitpy.thirdparty.mock import Mock
@@ -326,7 +326,7 @@ class PostCommits(AbstractDeclarativeCommand):
             commit_message = tool.scm().commit_message_for_local_commit(commit_id)
 
             # Prefer --bug-id=, then a bug url in the commit message, then a bug url in the entire commit diff (i.e. ChangeLogs).
-            bug_id = options.bug_id or parse_bug_id(commit_message.message()) or parse_bug_id(tool.scm().create_patch(git_commit=commit_id))
+            bug_id = options.bug_id or parse_bug_id_from_changelog(commit_message.message()) or parse_bug_id_from_changelog(tool.scm().create_patch(git_commit=commit_id))
             if not bug_id:
                 log("Skipping %s: No bug id found in commit or specified with --bug-id." % commit_id)
                 continue
@@ -366,7 +366,7 @@ class MarkBugFixed(AbstractDeclarativeCommand):
         commit_log = self._fetch_commit_log(tool, svn_revision)
 
         if not bug_id:
-            bug_id = parse_bug_id(commit_log)
+            bug_id = parse_bug_id_from_changelog(commit_log)
 
         if not svn_revision:
             match = re.search("^r(?P<svn_revision>\d+) \|", commit_log, re.MULTILINE)

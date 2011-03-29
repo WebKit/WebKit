@@ -27,7 +27,7 @@
 
 import re
 from common import TabChecker
-from webkitpy.common.net.bugzilla import parse_bug_id
+from webkitpy.common.net.bugzilla import parse_bug_id_from_changelog
 
 
 class ChangeLogChecker(object):
@@ -41,7 +41,7 @@ class ChangeLogChecker(object):
 
     def check_entry(self, entry_line_number, entry_lines):
         for line in entry_lines:
-            if parse_bug_id(line):
+            if parse_bug_id_from_changelog(line):
                 break
             if re.search("Unreviewed", line, re.IGNORECASE):
                 break

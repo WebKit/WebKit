@@ -35,7 +35,7 @@ from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.checkout.deps import DEPS
 from webkitpy.common.memoized import memoized
-from webkitpy.common.net.bugzilla import parse_bug_id
+from webkitpy.common.net.bugzilla import parse_bug_id_from_changelog
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.deprecated_logging import log
 
@@ -85,7 +85,7 @@ class Checkout(object):
             return None
         changelog_entry = changelog_entries[0]
         changelog_data = {
-            "bug_id": parse_bug_id(changelog_entry.contents()),
+            "bug_id": parse_bug_id_from_changelog(changelog_entry.contents()),
             "author_name": changelog_entry.author_name(),
             "author_email": changelog_entry.author_email(),
             "author": changelog_entry.author(),
@@ -145,7 +145,7 @@ class Checkout(object):
 
     def bug_id_for_this_commit(self, git_commit, changed_files=None):
         try:
-            return parse_bug_id(self.commit_message_for_this_commit(git_commit, changed_files).message())
+            return parse_bug_id_from_changelog(self.commit_message_for_this_commit(git_commit, changed_files).message())
         except ScriptError, e:
             pass # We might not have ChangeLogs.
 

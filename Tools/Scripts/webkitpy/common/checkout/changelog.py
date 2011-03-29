@@ -36,7 +36,7 @@ import textwrap
 
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.config.committers import CommitterList
-from webkitpy.common.net.bugzilla import parse_bug_id
+from webkitpy.common.net.bugzilla import parse_bug_id_from_changelog
 
 
 class ChangeLogEntry(object):
@@ -87,7 +87,7 @@ class ChangeLogEntry(object):
         return self._contents
 
     def bug_id(self):
-        return parse_bug_id(self._contents)
+        return parse_bug_id_from_changelog(self._contents)
 
 
 # FIXME: Various methods on ChangeLog should move into ChangeLogEntry instead.
