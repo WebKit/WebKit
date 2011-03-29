@@ -201,9 +201,12 @@ WebInspector.SourceFrame.prototype = {
             element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
             element.addEventListener("mousedown", this._mouseDown.bind(this), true);
             element.addEventListener("mousemove", this._mouseMove.bind(this), true);
-            element.addEventListener("dblclick", this._doubleClick.bind(this), true);
             element.addEventListener("scroll", this._scroll.bind(this), true);
         }
+
+        if (this._delegate.canEditScriptSource())
+            element.addEventListener("dblclick", this._doubleClick.bind(this), true);
+
         this.element.appendChild(element);
 
         this._textViewer.beginUpdates();

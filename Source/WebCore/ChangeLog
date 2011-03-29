@@ -1,3 +1,25 @@
+2011-03-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Support external CSS stylesheet freeflow text editing
+        https://bugs.webkit.org/show_bug.cgi?id=54397
+
+        In this implementation, Ctrl/Cmd-S commits the current changes into the model.
+
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.createResourceView):
+        (WebInspector.CSSSourceFrameDelegateForResourcesPanel):
+        (WebInspector.CSSSourceFrameDelegateForResourcesPanel.prototype.canEditScriptSource):
+        (WebInspector.CSSSourceFrameDelegateForResourcesPanel.prototype.editScriptSource):
+        (WebInspector.CSSSourceFrameDelegateForResourcesPanel.prototype.editScriptSource.handleInfos):
+        (WebInspector.CSSSourceFrameDelegateForResourcesPanel.prototype._saveStyleSheet):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._applyDiffMarkup):
+        (WebInspector.FrameResourceTreeElement.prototype._contentChanged):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._createTextViewer):
+
 2011-03-29  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -419,8 +419,8 @@ WebInspector.ResourcesPanel.prototype = {
     },
 
     _applyDiffMarkup: function(view, baseContent, newContent) {
-        var oldLines = baseContent.split("\n");
-        var newLines = newContent.split("\n");
+        var oldLines = baseContent.split(/\r?\n/);
+        var newLines = newContent.split(/\r?\n/);
 
         var diff = Array.diff(oldLines, newLines);
 
@@ -1111,7 +1111,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
         if (oldView) {
             var newView = WebInspector.ResourceView.recreateResourceView(this._resource);
             if (oldView === this._storagePanel.visibleView)
-                this._storagePanel.visibleView = newView;
+                this._storagePanel._showResourceView(this._resource);
         }
     }
 }
