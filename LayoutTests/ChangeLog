@@ -1,3 +1,12 @@
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
+        The text renders slightly differently on Snow Leopard.
+
+        * platform/chromium-mac-snowleopard/fast/forms/listbox-bidi-align-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/listbox-bidi-align-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/text/drawBidiText-expected.checksum: Added.
+        * platform/chromium-mac-snowleopard/fast/text/drawBidiText-expected.png: Added.
+
 2011-03-29  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
