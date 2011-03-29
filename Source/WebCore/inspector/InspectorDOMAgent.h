@@ -54,6 +54,7 @@ class Document;
 class Element;
 class Event;
 class GraphicsContext;
+class InspectorClient;
 class InspectorDOMAgent;
 class InspectorFrontend;
 class HitTestResult;
@@ -95,9 +96,9 @@ public:
         virtual void didModifyDOMAttr(Element*) = 0;
     };
 
-    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
+    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, Page* page, InspectorClient* client, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
     {
-        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, page, inspectorState, injectedScriptManager));
+        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, page, client, inspectorState, injectedScriptManager));
     }
 
     ~InspectorDOMAgent();
@@ -158,6 +159,8 @@ public:
     bool handleMousePress();
     bool searchingForNodeInPage() const;
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
+    void inspect(Node*);
+    void focusNode();
 
     void drawNodeHighlight(GraphicsContext&) const;
 
@@ -171,7 +174,7 @@ public:
     static bool isWhitespace(Node*);
 
 private:
-    InspectorDOMAgent(InstrumentingAgents*, Page*, InspectorState*, InjectedScriptManager*);
+    InspectorDOMAgent(InstrumentingAgents*, Page*, InspectorClient*, InspectorState*, InjectedScriptManager*);
 
     void setSearchingForNode(bool enabled);
     void highlight(ErrorString*, Node*);
@@ -207,6 +210,7 @@ private:
 
     InstrumentingAgents* m_instrumentingAgents;
     Page* m_inspectedPage;
+    InspectorClient* m_client;
     InspectorState* m_inspectorState;
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::DOM* m_frontend;
@@ -224,6 +228,7 @@ private:
     HashSet<RefPtr<Node> > m_searchResults;
     OwnPtr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
     RefPtr<Node> m_highlightedNode;
+    RefPtr<Node> m_nodeToFocus;
     bool m_searchingForNode;
 };
 

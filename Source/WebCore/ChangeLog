@@ -1,3 +1,27 @@
+2011-03-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: InspectorDOMAgent has unnecessary dependency from InspectorAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=57329
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::setFrontend):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::inspect):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::setFrontend):
+        (WebCore::InspectorDOMAgent::handleMousePress):
+        (WebCore::InspectorDOMAgent::inspect):
+        (WebCore::InspectorDOMAgent::focusNode):
+        (WebCore::InspectorDOMAgent::highlight):
+        (WebCore::InspectorDOMAgent::hideHighlight):
+        * inspector/InspectorDOMAgent.h:
+        (WebCore::InspectorDOMAgent::create):
+
 2011-03-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

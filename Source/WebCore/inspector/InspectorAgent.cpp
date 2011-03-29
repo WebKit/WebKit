@@ -100,7 +100,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
     , m_instrumentingAgents(new InstrumentingAgents())
     , m_injectedScriptManager(injectedScriptManager)
     , m_state(new InspectorState(client))
-    , m_domAgent(InspectorDOMAgent::create(m_instrumentingAgents.get(), page, m_state.get(), injectedScriptManager))
+    , m_domAgent(InspectorDOMAgent::create(m_instrumentingAgents.get(), page, m_client, m_state.get(), injectedScriptManager))
     , m_cssAgent(new InspectorCSSAgent(m_instrumentingAgents.get(), m_domAgent.get()))
 #if ENABLE(DATABASE)
     , m_databaseAgent(InspectorDatabaseAgent::create(m_instrumentingAgents.get()))
@@ -186,43 +186,6 @@ void InspectorAgent::restoreInspectorStateFromCookie(const String& inspectorStat
 #endif
 }
 
-void InspectorAgent::inspect(Node* node)
-{
-    if (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE)
-        node = node->parentNode();
-    m_nodeToFocus = node;
-
-    if (!m_frontend)
-        return;
-
-    focusNode();
-}
-
-void InspectorAgent::focusNode()
-{
-    if (!enabled())
-        return;
-
-    ASSERT(m_frontend);
-    ASSERT(m_nodeToFocus);
-
-    RefPtr<Node> node = m_nodeToFocus.get();
-    m_nodeToFocus = 0;
-
-    Document* document = node->ownerDocument();
-    if (!document)
-        return;
-    Frame* frame = document->frame();
-    if (!frame)
-        return;
-
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldScriptState(frame));
-    if (injectedScript.hasNoValue())
-        return;
-
-    injectedScript.inspectNode(node.get());
-}
-
 void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
 {
     if (world != mainThreadNormalWorld())
@@ -277,8 +240,6 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
         m_frontend->inspector()->showPanel(m_showPanelAfterVisible);
         m_showPanelAfterVisible = String();
     }
-    if (m_nodeToFocus)
-        focusNode();
 #if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(WORKERS)
     WorkersMap::iterator workersEnd = m_workers.end();
     for (WorkersMap::iterator it = m_workers.begin(); it != workersEnd; ++it) {

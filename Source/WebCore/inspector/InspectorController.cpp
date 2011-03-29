@@ -219,7 +219,7 @@ void InspectorController::inspect(Node* node)
 
     show();
 
-    m_inspectorAgent->inspect(node);
+    m_inspectorAgent->domAgent()->inspect(node);
 }
 
 bool InspectorController::enabled() const

@@ -115,8 +115,6 @@ public:
 
     void restoreInspectorStateFromCookie(const String& inspectorCookie);
 
-    void inspect(Node*);
-
     void setFrontend(InspectorFrontend*);
     InspectorFrontend* frontend() const { return m_frontend; }
     void disconnectFrontend();
@@ -203,7 +201,6 @@ private:
     PassRefPtr<InspectorObject> buildObjectForCookie(const Cookie&);
     PassRefPtr<InspectorArray> buildArrayForCookies(ListHashSet<Cookie>&);
 
-    void focusNode();
     bool isMainResourceLoader(DocumentLoader*, const KURL& requestUrl);
     void issueEvaluateForTestCommands();
 
@@ -230,7 +227,6 @@ private:
     OwnPtr<InspectorApplicationCacheAgent> m_applicationCacheAgent;
 #endif
 
-    RefPtr<Node> m_nodeToFocus;
     RefPtr<InspectorResourceAgent> m_resourceAgent;
     OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
 

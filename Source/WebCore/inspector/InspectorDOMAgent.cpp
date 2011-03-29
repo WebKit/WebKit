@@ -62,7 +62,6 @@
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InjectedScriptManager.h"
-#include "InspectorAgent.h"
 #include "InspectorClient.h"
 #include "InspectorFrontend.h"
 #include "InspectorResourceAgent.h"
@@ -258,9 +257,10 @@ void RevalidateStyleAttributeTask::onTimer(Timer<RevalidateStyleAttributeTask>*)
     m_elements.clear();
 }
 
-InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, Page* inspectedPage, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
+InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, Page* inspectedPage, InspectorClient* client, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
     : m_instrumentingAgents(instrumentingAgents)
     , m_inspectedPage(inspectedPage)
+    , m_client(client)
     , m_inspectorState(inspectorState)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
@@ -284,6 +284,9 @@ void InspectorDOMAgent::setFrontend(InspectorFrontend* frontend)
     m_frontend = frontend->dom();
     m_instrumentingAgents->setInspectorDOMAgent(this);
     m_document = m_inspectedPage->mainFrame()->document();
+
+    if (m_nodeToFocus)
+        focusNode();
 }
 
 void InspectorDOMAgent::clearFrontend()
@@ -895,9 +898,42 @@ bool InspectorDOMAgent::handleMousePress()
     if (m_highlightedNode) {
         RefPtr<Node> node = m_highlightedNode;
         setSearchingForNode(false);
-        m_instrumentingAgents->inspectorAgent()->inspect(node.get());
+        inspect(node.get());
     }
     return true;
+}
+
+void InspectorDOMAgent::inspect(Node* node)
+{
+    if (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE)
+        node = node->parentNode();
+    m_nodeToFocus = node;
+
+    focusNode();
+}
+
+void InspectorDOMAgent::focusNode()
+{
+    if (!m_frontend)
+        return;
+
+    ASSERT(m_nodeToFocus);
+
+    RefPtr<Node> node = m_nodeToFocus.get();
+    m_nodeToFocus = 0;
+
+    Document* document = node->ownerDocument();
+    if (!document)
+        return;
+    Frame* frame = document->frame();
+    if (!frame)
+        return;
+
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(mainWorldScriptState(frame));
+    if (injectedScript.hasNoValue())
+        return;
+
+    injectedScript.inspectNode(node.get());
 }
 
 void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
@@ -935,7 +971,7 @@ void InspectorDOMAgent::highlight(ErrorString*, Node* node)
 {
     ASSERT_ARG(node, node);
     m_highlightedNode = node;
-    m_instrumentingAgents->inspectorAgent()->inspectorClient()->highlight(node);
+    m_client->highlight(node);
 }
 
 void InspectorDOMAgent::highlightDOMNode(ErrorString* error, int nodeId)
@@ -954,7 +990,7 @@ void InspectorDOMAgent::highlightFrame(ErrorString* error, const String& frameId
 void InspectorDOMAgent::hideHighlight(ErrorString*)
 {
     m_highlightedNode = 0;
-    m_instrumentingAgents->inspectorAgent()->inspectorClient()->hideHighlight();
+    m_client->hideHighlight();
 }
 
 void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, RefPtr<InspectorObject>* result)
