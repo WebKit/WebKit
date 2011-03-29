@@ -338,7 +338,7 @@ void EventSender::doDragDrop(const WebDragData& dragData, WebDragOperationsMask 
     WebPoint screenPoint(event.globalX, event.globalY);
     currentDragData = dragData;
     currentDragEffectsAllowed = mask;
-    currentDragEffect = webview()->dragTargetDragEnter(dragData, 0, clientPoint, screenPoint, currentDragEffectsAllowed);
+    currentDragEffect = webview()->dragTargetDragEnter(dragData, clientPoint, screenPoint, currentDragEffectsAllowed);
 
     // Finish processing events.
     replaySavedEvents();
@@ -826,7 +826,7 @@ void EventSender::beginDragWithFiles(const CppArgumentList& arguments, CppVarian
     currentDragEffectsAllowed = WebKit::WebDragOperationCopy;
 
     // Provide a drag source.
-    webview()->dragTargetDragEnter(currentDragData, 0, lastMousePos, lastMousePos, currentDragEffectsAllowed);
+    webview()->dragTargetDragEnter(currentDragData, lastMousePos, lastMousePos, currentDragEffectsAllowed);
 
     // dragMode saves events and then replays them later. We don't need/want that.
     dragMode.set(false);

@@ -1,3 +1,14 @@
+2011-03-29  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Ojan Vafai.
+
+        [chromium] DRT EventSender: remove identity from dragTargetDragEnter() calls
+        https://bugs.webkit.org/show_bug.cgi?id=57303
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::doDragDrop):
+        (EventSender::beginDragWithFiles):
+
 2011-03-29  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Andreas Kling.
