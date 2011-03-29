@@ -1,5 +1,11 @@
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
+        This test is flaky on Mac too.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
         Add missing expectation (looks like a pass).
 
         * platform/chromium/svg: Added.

@@ -2563,7 +2563,7 @@ BUGCR62515 : printing/page-format-data-display-none.html = TEXT
 
 BUGCR60393 MAC : fast/selectors/001.html = PASS TIMEOUT
 
-BUGCR61739 WIN LINUX DEBUG : animations/suspend-resume-animation-events.html = CRASH TEXT PASS
+BUGCR61739 DEBUG : animations/suspend-resume-animation-events.html = CRASH TEXT PASS
 
 // New tests added with http://trac.webkit.org/changeset/72472 and further.
 // See https://bugs.webkit.org/show_bug.cgi?id=51982 for more info.
