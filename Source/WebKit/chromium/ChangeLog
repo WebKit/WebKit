@@ -2,6 +2,24 @@
 
         Reviewed by Pavel Feldman.
 
+        [Chromium] Inspector does not always shows transferred size correctly (e.g. gzipped/chunked content)
+        https://bugs.webkit.org/show_bug.cgi?id=56602
+
+        Added new methods to interface while keeping the old ones to keep
+        chromium working until it is also patched.
+
+        * public/WebURLLoaderClient.h:
+        (WebKit::WebURLLoaderClient::didReceiveData2):
+        * src/AssociatedURLLoader.cpp:
+        (WebKit::AssociatedURLLoader::ClientAdapter::didReceiveData):
+        * src/ResourceHandle.cpp:
+        (WebCore::ResourceHandleInternal::didReceiveData):
+        (WebCore::ResourceHandleInternal::didReceiveData2):
+
+2011-03-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector: [Chromium] DevTools shows two resources for each plugin resource loaded
         https://bugs.webkit.org/show_bug.cgi?id=57101
 

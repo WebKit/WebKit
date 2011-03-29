@@ -72,7 +72,11 @@ public:
     virtual void didSendData(
         WebURLLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void didReceiveResponse(WebURLLoader*, const WebURLResponse&);
+    virtual void didReceiveData2(WebURLLoader*, const char* data, int dataLength, int lengthReceived);
+
+    // FIXME(vsevik): remove once not used downstream
     virtual void didReceiveData(WebURLLoader*, const char* data, int dataLength);
+
     virtual void didReceiveCachedMetadata(WebURLLoader*, const char* data, int dataLength);
     virtual void didFinishLoading(WebURLLoader*, double finishTime);
     virtual void didFail(WebURLLoader*, const WebURLError&);
@@ -159,16 +163,20 @@ void ResourceHandleInternal::didReceiveResponse(WebURLLoader*, const WebURLRespo
     m_client->didReceiveResponse(m_owner, response.toResourceResponse());
 }
 
-void ResourceHandleInternal::didReceiveData(WebURLLoader*, const char* data, int dataLength)
+// FIXME(vsevik): remove once not used
+void ResourceHandleInternal::didReceiveData(WebURLLoader* webURLLoader, const char* data, int dataLength)
+{
+    didReceiveData2(webURLLoader, data, dataLength, -1);
+}
+
+void ResourceHandleInternal::didReceiveData2(WebURLLoader*, const char* data, int dataLength, int lengthReceived)
 {
     ASSERT(m_client);
     if (m_state != ConnectionStateReceivedResponse && m_state != ConnectionStateReceivingData)
         CRASH();
     m_state = ConnectionStateReceivingData;
 
-    // FIXME(vsevik): Add transfer size support to chromium port
-    // See WebKit bug: https://bugs.webkit.org/show_bug.cgi?id=56602
-    m_client->didReceiveData(m_owner, data, dataLength, -1);
+    m_client->didReceiveData(m_owner, data, dataLength, lengthReceived);
 }
 
 void ResourceHandleInternal::didReceiveCachedMetadata(WebURLLoader*, const char* data, int dataLength)
