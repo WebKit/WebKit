@@ -1,3 +1,9 @@
+2011-03-29  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip failing http/tests/uri test on GTK.
+
+        * platform/gtk/Skipped:
+
 2011-03-29  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Darin Adler.
