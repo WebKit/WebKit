@@ -372,6 +372,14 @@ void NetscapePluginModule::determineQuirks()
         // there's a 'background' attribute.
         m_pluginQuirks.add(PluginQuirks::MakeTransparentIfBackgroundAttributeExists);
     }
+
+#ifndef NP_NO_QUICKDRAW
+    if (plugin.bundleIdentifier == "com.apple.ist.ds.appleconnect.webplugin") {
+        // The AppleConnect plug-in uses QuickDraw but doesn't paint or receive events
+        // so we'll allow it to be instantiated even though we don't support QuickDraw.
+        m_pluginQuirks.add(PluginQuirks::AllowHalfBakedQuickDrawSupport);
+    }
+#endif
 }
 
 } // namespace WebKit

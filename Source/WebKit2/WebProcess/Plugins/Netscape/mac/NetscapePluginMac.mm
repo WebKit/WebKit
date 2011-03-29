@@ -221,7 +221,8 @@ bool NetscapePlugin::platformPostInitialize()
     
 #ifndef NP_NO_QUICKDRAW
     // Right now we don't support the QuickDraw drawing model at all
-    if (m_drawingModel == NPDrawingModelQuickDraw)
+    if (m_drawingModel == NPDrawingModelQuickDraw &&
+        !m_pluginModule->pluginQuirks().contains(PluginQuirks::AllowHalfBakedQuickDrawSupport))
         return false;
 #endif
 

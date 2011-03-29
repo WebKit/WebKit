@@ -1,4 +1,18 @@
-2011-03-28  Darin Adler  <darin@apple.com>
+2011-03-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Allow the AppleConnect plug-in to use the QuickDraw drawing model
+        https://bugs.webkit.org/show_bug.cgi?id=57365
+        <rdar://problem/8712320>
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        * Shared/Plugins/PluginQuirks.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPostInitialize):
+
+2011-03-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Roben.
 
