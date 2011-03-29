@@ -1,3 +1,14 @@
+2011-03-29  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline for r82144.
+
+        * platform/gtk/fast/block/positioning/052-expected.checksum:
+        * platform/gtk/fast/block/positioning/052-expected.png:
+        * platform/gtk/fast/block/positioning/052-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-preventDefault-expected.checksum:
+        * platform/gtk/fast/forms/input-appearance-preventDefault-expected.png:
+        * platform/gtk/fast/forms/input-appearance-preventDefault-expected.txt:
+
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
         Add GPU expectations for compositing tests (these appear to all be passes).
