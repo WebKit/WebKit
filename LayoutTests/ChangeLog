@@ -1,3 +1,9 @@
+2011-03-29  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline of fast/forms/listbox-bidi-align.html.
+
+        * platform/gtk/fast/forms/listbox-bidi-align-expected.txt:
+
 2011-03-29  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Darin Adler.
