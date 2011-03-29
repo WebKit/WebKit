@@ -2906,10 +2906,41 @@
     					<File
     						RelativePath="..\UIProcess\API\C\cg\WKIconDatabaseCG.cpp"
     						>
-    					</File>
+							<FileConfiguration
+								Name="Debug_Cairo_CFLite|Win32"
+								ExcludedFromBuild="true"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release_Cairo_CFLite|Win32"
+								ExcludedFromBuild="true"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+								/>
+							</FileConfiguration>    					</File>
     					<File
     						RelativePath="..\UIProcess\API\C\cg\WKIconDatabaseCG.h"
     						>
+							<FileConfiguration
+								Name="Debug_Cairo_CFLite|Win32"
+								ExcludedFromBuild="true"
+								>
+								<Tool
+									Name="VCCustomBuildTool"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release_Cairo_CFLite|Win32"
+								ExcludedFromBuild="true"
+								>
+								<Tool
+									Name="VCCustomBuildTool"
+								/>
+							</FileConfiguration>
     					</File>
     				</Filter>
 					<File

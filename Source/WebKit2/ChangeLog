@@ -1,3 +1,10 @@
+2011-03-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fix after r81928.
+
+        * win/WebKit2.vcproj: Don't build CG-specific icon routines
+        for WinCairo port.
+
 2011-03-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
