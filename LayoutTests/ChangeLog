@@ -1,3 +1,10 @@
+2011-03-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        http/tests/uri/username-with-no-hostname.html fails after r82151
+        https://bugs.webkit.org/show_bug.cgi?id=57306
+
+        * platform/qt/Skipped: Add http/tests/uri/username-with-no-hostname.html until fix.
+
 2011-03-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.
