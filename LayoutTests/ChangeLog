@@ -1,3 +1,10 @@
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
+        Looks like a rounding issue.
+
+        * platform/chromium-mac/fast/canvas/rgba-parsing-expected.txt: Added.
+        * platform/chromium-win/fast/canvas/rgba-parsing-expected.txt: Added.
+
 2011-03-29  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.
