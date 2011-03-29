@@ -1567,7 +1567,14 @@ sub buildCMakeProjectOrExit($$$$@)
 
 sub buildQMakeProject($@)
 {
-    my ($clean, @buildParams) = @_;
+    my ($project, $clean, @buildParams) = @_;
+
+    my @subdirs = ("JavaScriptCore", "WebCore", "WebKit/qt/Api");
+    if (grep { $_ eq $project } @subdirs) {
+        @subdirs = ($project);
+    } else {
+        $project = 0;
+    }
 
     my @buildArgs = ("-r");
 
@@ -1613,6 +1620,9 @@ sub buildQMakeProject($@)
     my @dsQmakeArgs = @buildArgs;
     push @dsQmakeArgs, "-r";
     push @dsQmakeArgs, sourceDir() . "/Source/DerivedSources.pro";
+    if ($project) {
+        push @dsQmakeArgs, "-after SUBDIRS=" . $project. "/DerivedSources.pro";
+    }
     push @dsQmakeArgs, "-o Makefile.DerivedSources";
     print "Calling '$qmakebin @dsQmakeArgs' in " . $dir . "\n\n";
     my $result = system "$qmakebin @dsQmakeArgs";
@@ -1620,23 +1630,24 @@ sub buildQMakeProject($@)
         die "Failed while running $qmakebin to generate derived sources!\n";
     }
 
-    # FIXME: Iterate over different source directories manually to workaround a problem with qmake+extraTargets+s60
-    # To avoid overwriting of Makefile.DerivedSources in the root dir use Makefile.DerivedSources.Tools for Tools
-    my @subdirs = ("JavaScriptCore", "WebCore", "WebKit/qt/Api");
-    if (grep { $_ eq "CONFIG+=webkit2"} @buildArgs) {
-        push @subdirs, "WebKit2";
-        if ( -e sourceDir() ."/Tools/DerivedSources.pro" ) {
-            @dsQmakeArgs = @buildArgs;
-            push @dsQmakeArgs, "-r";
-            push @dsQmakeArgs, sourceDir() . "/Tools/DerivedSources.pro";
-            push @dsQmakeArgs, "-o Makefile.DerivedSources.Tools";
-            print "Calling '$qmakebin @dsQmakeArgs' in " . $dir . "\n\n";
-            my $result = system "$qmakebin @dsQmakeArgs";
-            if ($result ne 0) {
-                die "Failed while running $qmakebin to generate derived sources for Tools!\n";
+    if ($project ne "JavaScriptCore") {
+        # FIXME: Iterate over different source directories manually to workaround a problem with qmake+extraTargets+s60
+        # To avoid overwriting of Makefile.DerivedSources in the root dir use Makefile.DerivedSources.Tools for Tools
+        if (grep { $_ eq "CONFIG+=webkit2"} @buildArgs) {
+            push @subdirs, "WebKit2";
+            if ( -e sourceDir() ."/Tools/DerivedSources.pro" ) {
+                @dsQmakeArgs = @buildArgs;
+                push @dsQmakeArgs, "-r";
+                push @dsQmakeArgs, sourceDir() . "/Tools/DerivedSources.pro";
+                push @dsQmakeArgs, "-o Makefile.DerivedSources.Tools";
+                print "Calling '$qmakebin @dsQmakeArgs' in " . $dir . "\n\n";
+                my $result = system "$qmakebin @dsQmakeArgs";
+                if ($result ne 0) {
+                    die "Failed while running $qmakebin to generate derived sources for Tools!\n";
+                }
+                push @subdirs, "MiniBrowser";
+                push @subdirs, "WebKitTestRunner";
             }
-            push @subdirs, "MiniBrowser";
-            push @subdirs, "WebKitTestRunner";
         }
     }
 
@@ -1669,6 +1680,12 @@ sub buildQMakeProject($@)
         }
     }
 
+    if ($project) {
+        push @buildArgs, "-after SUBDIRS=" . $project . "/" . $project . ".pro ";
+        if ($project eq "JavaScriptCore") {
+            push @buildArgs, "-after SUBDIRS+=" . $project . "/jsc.pro ";
+        }
+    }
     push @buildArgs, sourceDir() . "/Source/WebKit.pro";
     print "Calling '$qmakebin @buildArgs' in " . $dir . "\n\n";
     print "Installation headers directory: $installHeaders\n" if(defined($installHeaders));
@@ -1679,36 +1696,44 @@ sub buildQMakeProject($@)
        die "Failed to setup build environment using $qmakebin!\n";
     }
 
-    $buildArgs[-1] = sourceDir() . "/Tools/Tools.pro";
-    my $makefile = "Makefile.Tools";
+    my $makefile = "";
+    if (!$project) {
+        $buildArgs[-1] = sourceDir() . "/Tools/Tools.pro";
+        $makefile = "Makefile.Tools";
 
-    # On Symbian qmake needs to run in the same directory where the pro file is located.
-    if (isSymbian()) {
-        $dir = $sourceDir . "/Tools";
-        chdir $dir or die "Failed to cd into " . $dir . "\n";
-        $makefile = "bld.inf";
+        # On Symbian qmake needs to run in the same directory where the pro file is located.
+        if (isSymbian()) {
+            $dir = $sourceDir . "/Tools";
+            chdir $dir or die "Failed to cd into " . $dir . "\n";
+            $makefile = "bld.inf";
+        }
+
+        print "Calling '$qmakebin @buildArgs -o $makefile' in " . $dir . "\n\n";
+        $result = system "$qmakebin @buildArgs -o $makefile";
+        if ($result ne 0) {
+            die "Failed to setup build environment using $qmakebin!\n";
+        }
     }
 
-    print "Calling '$qmakebin @buildArgs -o $makefile' in " . $dir . "\n\n";
-    $result = system "$qmakebin @buildArgs -o $makefile";
-    if ($result ne 0) {
-       die "Failed to setup build environment using $qmakebin!\n";
+    if (!$project) {
+        # Manually create makefiles for the examples so we don't build by default
+        my $examplesDir = $dir . "/WebKit/qt/examples";
+        File::Path::mkpath($examplesDir);
+        $buildArgs[-1] = sourceDir() . "/Source/WebKit/qt/examples/examples.pro";
+        chdir $examplesDir or die;
+        print "Calling '$qmakebin @buildArgs' in " . $examplesDir . "\n\n";
+        $result = system "$qmakebin @buildArgs";
+        die "Failed to create makefiles for the examples!\n" if $result ne 0;
+        chdir $dir or die;
     }
 
-    # Manually create makefiles for the examples so we don't build by default
-    my $examplesDir = $dir . "/WebKit/qt/examples";
-    File::Path::mkpath($examplesDir);
-    $buildArgs[-1] = sourceDir() . "/Source/WebKit/qt/examples/examples.pro";
-    chdir $examplesDir or die;
-    print "Calling '$qmakebin @buildArgs' in " . $examplesDir . "\n\n";
-    $result = system "$qmakebin @buildArgs";
-    die "Failed to create makefiles for the examples!\n" if $result ne 0;
-    chdir $dir or die;
+    my $makeTools = "echo";
+    if (!$project) {
+        $makeTools = "echo No Makefile for Tools. Skipping make";
 
-    my $makeTools = "echo No Makefile for Tools. Skipping make";
-
-    if (-e "$dir/$makefile") {
-        $makeTools = "$make $makeargs -f $makefile";
+        if (-e "$dir/$makefile") {
+            $makeTools = "$make $makeargs -f $makefile";
+        }
     }
 
     if ($clean) {
@@ -1733,7 +1758,7 @@ sub buildQMakeQtProject($$@)
 {
     my ($project, $clean, @buildArgs) = @_;
 
-    return buildQMakeProject($clean, @buildArgs);
+    return buildQMakeProject("", $clean, @buildArgs);
 }
 
 sub buildGtkProject
