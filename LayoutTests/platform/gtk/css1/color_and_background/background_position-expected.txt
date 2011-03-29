@@ -1,12 +1,12 @@
-layer at (0,0) size 781x1507
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x1507
-  RenderBlock {HTML} at (0,0) size 781x1507
-    RenderBody {BODY} at (8,8) size 765x1491 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 765x19
+layer at (0,0) size 784x1507
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1507
+  RenderBlock {HTML} at (0,0) size 784x1507
+    RenderBody {BODY} at (8,8) size 768x1491 [bgcolor=#CCCCCC]
+      RenderBlock {P} at (0,0) size 768x19
         RenderText {#text} at (0,0) size 355x19
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,35) size 765x255
+      RenderBlock {PRE} at (0,35) size 768x255
         RenderText {#text} at (0,0) size 688x255
           text run at (0,0) width 648: "BODY {background-image: url(../resources/bg.gif); background-position: right top;"
           text run at (648,0) width 0: " "
@@ -41,108 +41,108 @@ layer at (0,0) size 781x1507
           text run at (0,225) width 488: "       background-repeat: no-repeat; background-color: aqua;}"
           text run at (488,225) width 0: " "
           text run at (0,240) width 0: " "
-      RenderBlock {HR} at (0,303) size 765x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,321) size 765x19
+      RenderBlock {HR} at (0,303) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,321) size 768x19
         RenderText {#text} at (0,0) size 503x19
           text run at (0,0) width 503: "This document should have a single, small green image in its upper right corner."
-      RenderBlock {P} at (0,356) size 765x57 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 741x57
+      RenderBlock {P} at (0,356) size 768x57 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 768x57
           text run at (0,0) width 735: "This paragraph should have a single, small green image exactly in its center; that is, the center of the image should be"
           text run at (0,19) width 227: "fixed at the center of the paragraph. "
-          text run at (227,19) width 514: "The background color will make it easier to determine the edges of the paragraph,"
-          text run at (0,38) width 289: "and therefore allow you to calculate its center."
-      RenderBlock {P} at (0,429) size 765x57 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 741x57
+          text run at (227,19) width 541: "The background color will make it easier to determine the edges of the paragraph, and"
+          text run at (0,38) width 262: "therefore allow you to calculate its center."
+      RenderBlock {P} at (0,429) size 768x57 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 768x57
           text run at (0,0) width 735: "This paragraph should have a single, small green image exactly in its center; that is, the center of the image should be"
           text run at (0,19) width 227: "fixed at the center of the paragraph. "
-          text run at (227,19) width 514: "The background color will make it easier to determine the edges of the paragraph,"
-          text run at (0,38) width 289: "and therefore allow you to calculate its center."
-      RenderBlock {P} at (0,502) size 765x57 [bgcolor=#00FFFF]
+          text run at (227,19) width 541: "The background color will make it easier to determine the edges of the paragraph, and"
+          text run at (0,38) width 262: "therefore allow you to calculate its center."
+      RenderBlock {P} at (0,502) size 768x57 [bgcolor=#00FFFF]
         RenderText {#text} at (0,0) size 749x57
           text run at (0,0) width 730: "This paragraph should have a single, small green image in its lower-right corner; that is, the lower right corner of the"
           text run at (0,19) width 409: "image should be fixed at the lower right corner of the paragraph. "
           text run at (409,19) width 340: "The background color will make it easier to determine"
           text run at (0,38) width 436: "the edges of the paragraph, and therefore allow you to see its corners."
-      RenderBlock {P} at (0,575) size 765x57 [bgcolor=#00FFFF]
+      RenderBlock {P} at (0,575) size 768x57 [bgcolor=#00FFFF]
         RenderText {#text} at (0,0) size 749x57
           text run at (0,0) width 730: "This paragraph should have a single, small green image in its lower-right corner; that is, the lower right corner of the"
           text run at (0,19) width 409: "image should be fixed at the lower right corner of the paragraph. "
           text run at (409,19) width 340: "The background color will make it easier to determine"
           text run at (0,38) width 436: "the edges of the paragraph, and therefore allow you to see its corners."
-      RenderBlock {P} at (0,648) size 765x57 [bgcolor=#00FFFF]
-        RenderText {#text} at (0,0) size 759x57
-          text run at (0,0) width 722: "This paragraph should have a single, small green image exactly at the left center; that is, the left center of the image"
-          text run at (0,19) width 316: "should be fixed at the left center of the paragraph. "
-          text run at (316,19) width 443: "The background color will make it easier to determine the edges of the"
+      RenderBlock {P} at (0,648) size 768x57 [bgcolor=#00FFFF]
+        RenderText {#text} at (0,0) size 768x57
+          text run at (0,0) width 768: "This paragraph should have a single, small green image exactly at the left center; that is, the left center of the image should"
+          text run at (0,19) width 270: "be fixed at the left center of the paragraph. "
+          text run at (270,19) width 443: "The background color will make it easier to determine the edges of the"
           text run at (0,38) width 360: "paragraph, and therefore allow you to calculate its center."
-      RenderBlock {P} at (0,721) size 765x57 [bgcolor=#00FFFF]
+      RenderBlock {P} at (0,721) size 768x57 [bgcolor=#00FFFF]
         RenderText {#text} at (0,0) size 761x57
           text run at (0,0) width 749: "This paragraph should have a single, small green image positioned 75% of the way across the element, and 25% down."
           text run at (0,19) width 761: "The background color will make it easier to determine the edges of the paragraph, which should help in determining if all"
           text run at (0,38) width 647: "this is so, and the extra text should make the element long enough for this test to be simpler to evaluate."
-      RenderBlock {P} at (0,794) size 765x76 [bgcolor=#00FFFF]
+      RenderBlock {P} at (0,794) size 768x76 [bgcolor=#00FFFF]
         RenderText {#text} at (0,0) size 760x76
           text run at (0,0) width 749: "This paragraph should have a single, small green image positioned 20 pixels down and to the left of the upper left-hand"
           text run at (0,19) width 760: "corner; that is, the upper left-hand corner of the image should be 20 pixels down and to the left of the upper-left corner of"
           text run at (0,38) width 80: "the element. "
           text run at (80,38) width 656: "The background color will make it easier to determine the edges of the paragraph, which should assist in"
           text run at (0,57) width 120: "evaluating this test."
-      RenderTable {TABLE} at (0,886) size 765x605 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 763x603
-          RenderTableRow {TR} at (0,0) size 763x27
-            RenderTableCell {TD} at (0,0) size 763x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,886) size 768x605 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 766x603
+          RenderTableRow {TR} at (0,0) size 766x27
+            RenderTableCell {TD} at (0,0) size 766x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x19
                 RenderText {#text} at (4,4) size 163x19
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,27) size 763x576
+          RenderTableRow {TR} at (0,27) size 766x576
             RenderTableCell {TD} at (0,301) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
-            RenderTableCell {TD} at (12,27) size 751x576 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 743x19
+            RenderTableCell {TD} at (12,27) size 754x576 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 746x19
                 RenderText {#text} at (0,0) size 503x19
                   text run at (0,0) width 503: "This document should have a single, small green image in its upper right corner."
-              RenderBlock {P} at (4,39) size 743x57 [bgcolor=#00FFFF]
+              RenderBlock {P} at (4,39) size 746x57 [bgcolor=#00FFFF]
                 RenderText {#text} at (0,0) size 741x57
                   text run at (0,0) width 735: "This paragraph should have a single, small green image exactly in its center; that is, the center of the image should be"
                   text run at (0,19) width 227: "fixed at the center of the paragraph. "
                   text run at (227,19) width 514: "The background color will make it easier to determine the edges of the paragraph,"
                   text run at (0,38) width 289: "and therefore allow you to calculate its center."
-              RenderBlock {P} at (4,112) size 743x57 [bgcolor=#00FFFF]
+              RenderBlock {P} at (4,112) size 746x57 [bgcolor=#00FFFF]
                 RenderText {#text} at (0,0) size 741x57
                   text run at (0,0) width 735: "This paragraph should have a single, small green image exactly in its center; that is, the center of the image should be"
                   text run at (0,19) width 227: "fixed at the center of the paragraph. "
                   text run at (227,19) width 514: "The background color will make it easier to determine the edges of the paragraph,"
                   text run at (0,38) width 289: "and therefore allow you to calculate its center."
-              RenderBlock {P} at (4,185) size 743x57 [bgcolor=#00FFFF]
+              RenderBlock {P} at (4,185) size 746x57 [bgcolor=#00FFFF]
                 RenderText {#text} at (0,0) size 730x57
                   text run at (0,0) width 730: "This paragraph should have a single, small green image in its lower-right corner; that is, the lower right corner of the"
                   text run at (0,19) width 409: "image should be fixed at the lower right corner of the paragraph. "
                   text run at (409,19) width 274: "The background color will make it easier to"
                   text run at (0,38) width 502: "determine the edges of the paragraph, and therefore allow you to see its corners."
-              RenderBlock {P} at (4,258) size 743x57 [bgcolor=#00FFFF]
+              RenderBlock {P} at (4,258) size 746x57 [bgcolor=#00FFFF]
                 RenderText {#text} at (0,0) size 730x57
                   text run at (0,0) width 730: "This paragraph should have a single, small green image in its lower-right corner; that is, the lower right corner of the"
                   text run at (0,19) width 409: "image should be fixed at the lower right corner of the paragraph. "
                   text run at (409,19) width 274: "The background color will make it easier to"
                   text run at (0,38) width 502: "determine the edges of the paragraph, and therefore allow you to see its corners."
-              RenderBlock {P} at (4,331) size 743x57 [bgcolor=#00FFFF]
+              RenderBlock {P} at (4,331) size 746x57 [bgcolor=#00FFFF]
                 RenderText {#text} at (0,0) size 736x57
                   text run at (0,0) width 722: "This paragraph should have a single, small green image exactly at the left center; that is, the left center of the image"
                   text run at (0,19) width 316: "should be fixed at the left center of the paragraph. "
                   text run at (316,19) width 420: "The background color will make it easier to determine the edges of"
                   text run at (0,38) width 383: "the paragraph, and therefore allow you to calculate its center."
-              RenderBlock {P} at (4,404) size 743x76 [bgcolor=#00FFFF]
+              RenderBlock {P} at (4,404) size 746x76 [bgcolor=#00FFFF]
                 RenderText {#text} at (0,0) size 705x76
                   text run at (0,0) width 705: "This paragraph should have a single, small green image positioned 75% of the way across the element, and 25%"
                   text run at (0,19) width 44: "down. "
                   text run at (44,19) width 650: "The background color will make it easier to determine the edges of the paragraph, which should help in"
                   text run at (0,38) width 698: "determining if all this is so, and the extra text should make the element long enough for this test to be simpler to"
                   text run at (0,57) width 56: "evaluate."
-              RenderBlock {P} at (4,496) size 743x76 [bgcolor=#00FFFF]
-                RenderText {#text} at (0,0) size 734x76
+              RenderBlock {P} at (4,496) size 746x76 [bgcolor=#00FFFF]
+                RenderText {#text} at (0,0) size 744x76
                   text run at (0,0) width 718: "This paragraph should have a single, small green image positioned 20 pixels down and to the left of the upper left-"
                   text run at (0,19) width 734: "hand corner; that is, the upper left-hand corner of the image should be 20 pixels down and to the left of the upper-left"
                   text run at (0,38) width 141: "corner of the element. "
-                  text run at (141,38) width 557: "The background color will make it easier to determine the edges of the paragraph, which"
-                  text run at (0,57) width 219: "should assist in evaluating this test."
+                  text run at (141,38) width 603: "The background color will make it easier to determine the edges of the paragraph, which should"
+                  text run at (0,57) width 173: "assist in evaluating this test."

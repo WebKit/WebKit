@@ -1,9 +1,9 @@
-layer at (0,0) size 781x708
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x708
-  RenderBlock {HTML} at (0,0) size 781x708
-    RenderBody {BODY} at (8,18) size 765x672 [color=#000080]
-      RenderBlock {P} at (0,0) size 765x672
+layer at (0,0) size 784x708
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x708
+  RenderBlock {HTML} at (0,0) size 784x708
+    RenderBody {BODY} at (8,18) size 768x672 [color=#000080]
+      RenderBlock {P} at (0,0) size 768x672
         RenderText {#text} at (0,37) size 735x117
           text run at (0,37) width 735: "This text should be 18px sans-serif, in small-caps and italicized. The lines should be one inch"
           text run at (0,133) width 54: "apart. "
