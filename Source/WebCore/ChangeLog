@@ -1,3 +1,21 @@
+2011-03-29  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        CSS: Slow parsing of rgb() with percent values
+        https://bugs.webkit.org/show_bug.cgi?id=16708
+
+        Implement fast-path parsing for percentage color values.
+
+        Gain ~30% speedup on http://canvex.lazyilluminati.com/misc/3d.html.
+
+        * css/CSSParser.cpp:
+        (WebCore::checkForValidDouble): Extend to return the number of characters forming a valid double.
+        (WebCore::parseDouble): Function for parsing double values if they are valid.
+        (WebCore::parseColorIntOrPercentage): Extend parseColorInt to deal with percentage values.
+        (WebCore::parseAlphaValue): Use the new functions.
+        (WebCore::CSSParser::parseColor): Ditto.
+
 2011-03-29  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -1,3 +1,16 @@
+2011-03-29  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        CSS: Slow parsing of rgb() with percent values
+        https://bugs.webkit.org/show_bug.cgi?id=16708
+
+        Implement fast-path parsing for percentage color values.
+
+        Gain ~30% speedup on http://canvex.lazyilluminati.com/misc/3d.html.
+
+        * fast/canvas/script-tests/rgba-parsing.js: Add cases to test the consistency.
+
 2011-03-29  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
