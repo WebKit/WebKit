@@ -1,3 +1,20 @@
+2011-03-28  Jeff Johnson  <opendarwin@lapcatsoftware.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: empty, non-functional window
+        https://bugs.webkit.org/show_bug.cgi?id=56354
+
+        Check whether DOM local storage is enabled
+        before attempting to access window.localStorage.
+
+        No new tests.
+
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings.prototype.findSettingForAllProjects):
+        (WebInspector.Settings.prototype._get):
+        (WebInspector.Settings.prototype._set):
+
 2011-03-28  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.
