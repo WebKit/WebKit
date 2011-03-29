@@ -1,3 +1,12 @@
+2011-03-29  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for fast/forms/listbox-bidi-align.html,
+        added in r82200.
+
+        * platform/gtk/fast/forms/listbox-bidi-align-expected.checksum: Added.
+        * platform/gtk/fast/forms/listbox-bidi-align-expected.png: Added.
+        * platform/gtk/fast/forms/listbox-bidi-align-expected.txt: Added.
+
 2011-03-29  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Dan Bernstein.
