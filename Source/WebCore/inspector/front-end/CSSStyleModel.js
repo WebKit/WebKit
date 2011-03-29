@@ -168,8 +168,10 @@ WebInspector.CSSStyleModel.prototype = {
             if (error)
                 return;
             var resource = WebInspector.resourceForURL(href);
-            if (resource && resource.type === WebInspector.Resource.Type.Stylesheet)
+            if (resource && resource.type === WebInspector.Resource.Type.Stylesheet) {
                 resource.setContent(content, this._onRevert.bind(this, styleSheetId));
+                this.dispatchEventToListeners("stylesheet changed");
+            }
         }
         CSSAgent.getStyleSheetText(styleSheetId, callback.bind(this));
     },
@@ -181,7 +183,6 @@ WebInspector.CSSStyleModel.prototype = {
             if (error)
                 return;
             this._styleSheetChanged(styleSheetId, true);
-            this.dispatchEventToListeners("stylesheet changed");
         }
         CSSAgent.setStyleSheetText(styleSheetId, contentToRevertTo, callback.bind(this));
     }
@@ -537,9 +538,6 @@ WebInspector.CSSProperty.prototype = {
 WebInspector.CSSStyleSheet = function(payload)
 {
     this.id = payload.styleSheetId;
-    this.sourceURL = payload.sourceURL;
-    this.title = payload.title;
-    this.disabled = payload.disabled;
     this.rules = [];
     this.styles = {};
     for (var i = 0; i < payload.rules.length; ++i) {
@@ -572,14 +570,12 @@ WebInspector.CSSStyleSheet.prototype = {
 
     setText: function(newText, userCallback)
     {
-        function callback(error, styleSheetPayload)
+        function callback(error, isChangeSuccessful)
         {
-            if (error)
-                userCallback(null);
-            else {
-                userCallback(new WebInspector.CSSStyleSheet(styleSheetPayload));
-                WebInspector.cssModel._styleSheetChanged(this.id, true);
-            }
+             if (userCallback)
+                 userCallback(isChangeSuccessful);
+             if (isChangeSuccessful)
+                 WebInspector.cssModel._styleSheetChanged(this.id, true);
         }
 
         CSSAgent.setStyleSheetText(this.id, newText, callback.bind(this));

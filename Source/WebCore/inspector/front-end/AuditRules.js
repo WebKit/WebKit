@@ -377,24 +377,28 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
             WebInspector.AuditRules.evaluateInTargetWindow(routine, [selectors], selectorsCallback.bind(null, callback, styleSheets, testedSelectors));
         }
 
-        function styleSheetCallback(styleSheets, continuation, styleSheet)
+        function styleSheetCallback(styleSheets, sourceURL, continuation, styleSheet)
         {
-            if (styleSheet)
+            if (styleSheet) {
+                styleSheet.sourceURL = sourceURL;
                 styleSheets.push(styleSheet);
+            }
             if (continuation)
                 continuation(styleSheets);
         }
 
-        function allStylesCallback(error, styleSheetIds)
+        function allStylesCallback(error, styleSheetInfos)
         {
-            if (error || !styleSheetIds || !styleSheetIds.length)
+            if (error || !styleSheetInfos || !styleSheetInfos.length)
                 return evalCallback([]);
             var styleSheets = [];
-            for (var i = 0; i < styleSheetIds.length; ++i)
-                WebInspector.CSSStyleSheet.createForId(styleSheetIds[i], styleSheetCallback.bind(null, styleSheets, i == styleSheetIds.length - 1 ? evalCallback : null));
+            for (var i = 0; i < styleSheetInfos.length; ++i) {
+                var info = styleSheetInfos[i];
+                WebInspector.CSSStyleSheet.createForId(info.styleSheetId, styleSheetCallback.bind(null, styleSheets, info.sourceURL, i == styleSheetInfos.length - 1 ? evalCallback : null));
+            }
         }
 
-        CSSAgent.getAllStyles(allStylesCallback);
+        CSSAgent.getAllStyleSheets(allStylesCallback);
     }
 }
 

@@ -7,18 +7,22 @@
 function test()
 {
     WebInspector.showPanel("elements");
-    InspectorTest.selectNodeWithId("inspected", step1);
+    InspectorTest.selectNodeWithId("inspected", step0);
 
     var treeElement;
+    var section;
 
-    function step1()
+    function step0()
     {
         InspectorTest.addResult("Before append:");
         InspectorTest.dumpSelectedElementStyles(true);
-
-        var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][1];
+        section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][1];
         section.expand();
+        InspectorTest.runAfterPendingDispatches(step1);
+    }
 
+    function step1()
+    {
         // Create and increment.
         treeElement = section.addNewBlankProperty();
         treeElement.startEditing();
