@@ -168,7 +168,7 @@ JSObjectRef JSObjectMakeDate(JSContextRef ctx, size_t argumentCount, const JSVal
     for (size_t i = 0; i < argumentCount; ++i)
         argList.append(toJS(exec, arguments[i]));
 
-    JSObject* result = constructDate(exec, argList);
+    JSObject* result = constructDate(exec, exec->lexicalGlobalObject(), argList);
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec, exec->exception());

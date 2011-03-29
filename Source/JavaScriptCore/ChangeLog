@@ -1,3 +1,20 @@
+2011-03-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(r82173): Causes assertion and test failures in run-javascriptcore-tests on Windows (Requested by aroben on #webkit).
+        https://bugs.webkit.org/show_bug.cgi?id=57333
+
+        constructDate now takes the global object explicitly as it may be called
+        by functions other than the constructor itself.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeDate):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        (JSC::constructWithDateConstructor):
+        * runtime/DateConstructor.h:
+
 2011-03-29  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Benjamin Poulain.

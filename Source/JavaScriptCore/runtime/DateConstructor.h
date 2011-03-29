@@ -36,7 +36,7 @@ namespace JSC {
         virtual CallType getCallData(CallData&);
     };
 
-    JSObject* constructDate(ExecState*, const ArgList&);
+    JSObject* constructDate(ExecState*, JSGlobalObject*, const ArgList&);
 
 } // namespace JSC
 

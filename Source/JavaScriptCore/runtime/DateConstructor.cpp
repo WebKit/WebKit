@@ -70,7 +70,7 @@ DateConstructor::DateConstructor(ExecState* exec, JSGlobalObject* globalObject, 
 }
 
 // ECMA 15.9.3
-JSObject* constructDate(ExecState* exec, const ArgList& args)
+JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args)
 {
     int numArgs = args.size();
 
@@ -121,13 +121,13 @@ JSObject* constructDate(ExecState* exec, const ArgList& args)
         }
     }
 
-    return new (exec) DateInstance(exec, asInternalFunction(exec->callee())->globalObject()->dateStructure(), value);
+    return new (exec) DateInstance(exec, globalObject->dateStructure(), value);
 }
     
 static EncodedJSValue JSC_HOST_CALL constructWithDateConstructor(ExecState* exec)
 {
     ArgList args(exec);
-    return JSValue::encode(constructDate(exec, args));
+    return JSValue::encode(constructDate(exec, asInternalFunction(exec->callee())->globalObject(), args));
 }
 
 ConstructType DateConstructor::getConstructData(ConstructData& constructData)
