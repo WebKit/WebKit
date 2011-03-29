@@ -462,11 +462,8 @@ static CachedResourceClient* promisedDataClient()
 
 struct WebHTMLViewInterpretKeyEventsParameters {
     KeyboardEvent* event;
-    bool eventWasHandled;
+    bool eventInterpretationHadSideEffects;
     bool shouldSaveCommands;
-    bool receivedNOOP;
-    // The Input Method may consume an event and not tell us, in
-    // which case we should not bubble the event up the DOM
     bool consumedByIM;
 };
 
@@ -5440,14 +5437,35 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     [self _updateMouseoverWithFakeEvent];
 }
 
+- (void)_executeSavedEditingCommands
+{
+    WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
+    if (!parameters || parameters->event->keypressCommands().isEmpty())
+        return;
+
+    // Avoid an infinite loop that would occur if executing a command appended it to event->keypressCommands() again.
+    bool wasSavingCommands = parameters->shouldSaveCommands;
+    parameters->shouldSaveCommands = false;
+
+    const Vector<KeypressCommand>& commands = parameters->event->keypressCommands();
+
+    for (size_t i = 0; i < commands.size(); ++i) {
+        if (commands[i].commandName == "insertText:")
+            [self insertText:commands[i].text];
+        else
+            [self doCommandBySelector:NSSelectorFromString(commands[i].commandName)];
+    }
+    parameters->event->keypressCommands().clear();
+    parameters->shouldSaveCommands = wasSavingCommands;
+}
+
 - (BOOL)_interpretKeyEvent:(KeyboardEvent*)event savingCommands:(BOOL)savingCommands
 {
     ASSERT(!savingCommands || event->keypressCommands().isEmpty()); // Save commands once for each event.
 
     WebHTMLViewInterpretKeyEventsParameters parameters;
-    parameters.eventWasHandled = false;
+    parameters.eventInterpretationHadSideEffects = false;
     parameters.shouldSaveCommands = savingCommands;
-    parameters.receivedNOOP = false;
     // If we're intercepting the initial IM call we assume that the IM has consumed the event, 
     // and only change this assumption if one of the NSTextInput/Responder callbacks is used.
     // We assume the IM will *not* consume hotkey sequences
@@ -5468,30 +5486,46 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     _private->interpretKeyEventsParameters = &parameters;
     const Vector<KeypressCommand>& commands = event->keypressCommands();
 
-    if (savingCommands)
+    if (savingCommands) {
+        // AppKit will respond with a series of NSTextInput protocol method calls. There are three groups that we heuristically differentiate:
+        // 1. Key Bindings. Only doCommandBySelector: and insertText: calls will be made, which we save in the event for execution
+        // after DOM dispatch. This is safe, because neither returns a result, so there is no branching on AppKit side.
+        // 2. Plain text input. Here as well, we need to dispatch DOM events prior to inserting text, so we save the insertText: command.
+        // 3. Input method processing. An IM can make any NSTextInput calls, and can base its decisions on results it gets, so we must
+        // execute the calls immediately. DOM events like keydown are tweaked to have keyCode of 229, and canceling them has no effect.
+        // Unfortunately, there is no real difference between plain text input and IM processing - for example, AppKit queries hasMarkedText
+        // when typing with U.S. keyboard, and inserts marked text for dead keys.
         [self interpretKeyEvents:[NSArray arrayWithObject:macEvent]];
-    else {
-        size_t size = commands.size();
-        // Are there commands that would just cause text insertion if executed via Editor?
+    } else {
+        // Are there commands that could just cause text insertion if executed via Editor?
         // WebKit doesn't have enough information about mode to decide how they should be treated, so we leave it upon WebCore
         // to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
         // (e.g. Tab that inserts a Tab character, or Enter).
         bool haveTextInsertionCommands = false;
-        for (size_t i = 0; i < size; ++i) {
+        for (size_t i = 0; i < commands.size(); ++i) {
             if ([self coreCommandBySelector:NSSelectorFromString(commands[i].commandName)].isTextInsertion())
                 haveTextInsertionCommands = true;
         }
-        if (!haveTextInsertionCommands || platformEvent->type() == PlatformKeyboardEvent::Char) {
-            for (size_t i = 0; i < size; ++i) {
-                if (commands[i].commandName == "insertText:")
-                    [self insertText:commands[i].text];
-                else
-                    [self doCommandBySelector:NSSelectorFromString(commands[i].commandName)];
-            }
-        }
+        // If there are no text insertion commands, default keydown handler is the right time to execute the commands.
+        // Keypress (Char event) handler is the latest opportunity to execute.
+        if (!haveTextInsertionCommands || platformEvent->type() == PlatformKeyboardEvent::Char)
+            [self _executeSavedEditingCommands];
     }
     _private->interpretKeyEventsParameters = 0;
-    return (!parameters.receivedNOOP && parameters.eventWasHandled) || parameters.consumedByIM;
+
+    // An input method may make several actions per keypress. For example, pressing Return with Korean IM both confirms it and sends a newline.
+    // IM-like actions are handled immediately (so parameters.eventInterpretationHadSideEffects is true), but there are saved commands that
+    // should be handled like normal text input after DOM event dispatch.
+    if (!event->keypressCommands().isEmpty())
+        return NO;
+
+    // An input method may consume an event and not tell us (e.g. when displaying a candidate window),
+    // in which case we should not bubble the event up the DOM.
+    if (parameters.consumedByIM)
+        return YES;
+
+    // If we have already executed all commands, don't do it again.
+    return parameters.eventInterpretationHadSideEffects;
 }
 
 - (WebCore::CachedImage*)promisedDragTIFFDataSource
@@ -5707,6 +5741,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (NSUInteger)characterIndexForPoint:(NSPoint)thePoint
 {
+    [self _executeSavedEditingCommands];
+
     NSWindow *window = [self window];
     WebFrame *frame = [self _frame];
 
@@ -5726,7 +5762,9 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 }
 
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
-{    
+{
+    [self _executeSavedEditingCommands];
+
     WebFrame *frame = [self _frame];
     
     // Just to match NSTextView's behavior. Regression tests cannot detect this;
@@ -5757,6 +5795,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (NSRange)selectedRange
 {
+    [self _executeSavedEditingCommands];
+
     if (!isTextInput(core([self _frame]))) {
         LOG(TextInput, "selectedRange -> (NSNotFound, 0)");
         return NSMakeRange(NSNotFound, 0);
@@ -5769,6 +5809,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (NSRange)markedRange
 {
+    [self _executeSavedEditingCommands];
+
     WebFrame *webFrame = [self _frame];
     Frame* coreFrame = core(webFrame);
     if (!coreFrame)
@@ -5781,6 +5823,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)nsRange
 {
+    [self _executeSavedEditingCommands];
+
     WebFrame *frame = [self _frame];
     Frame* coreFrame = core(frame);
     if (!isTextInput(coreFrame) || isInPasswordField(coreFrame)) {
@@ -5822,6 +5866,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (BOOL)hasMarkedText
 {
+    [self _executeSavedEditingCommands];
+
     Frame* coreFrame = core([self _frame]);
     BOOL result = coreFrame && coreFrame->editor()->hasComposition();
     LOG(TextInput, "hasMarkedText -> %u", result);
@@ -5830,6 +5876,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (void)unmarkText
 {
+    [self _executeSavedEditingCommands];
+
     LOG(TextInput, "unmarkText");
 
     // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
@@ -5837,7 +5885,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     _private->interpretKeyEventsParameters = 0;
 
     if (parameters) {
-        parameters->eventWasHandled = true;
+        parameters->eventInterpretationHadSideEffects = true;
         parameters->consumedByIM = false;
     }
     
@@ -5867,6 +5915,8 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
 {
+    [self _executeSavedEditingCommands];
+
     BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]]; // Otherwise, NSString
 
     LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u)", isAttributedString ? [string string] : string, newSelRange.location, newSelRange.length);
@@ -5876,7 +5926,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     _private->interpretKeyEventsParameters = 0;
 
     if (parameters) {
-        parameters->eventWasHandled = true;
+        parameters->eventInterpretationHadSideEffects = true;
         parameters->consumedByIM = false;
     }
     
@@ -5916,16 +5966,14 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (parameters)
         parameters->consumedByIM = false;
 
-    if (selector == @selector(noop:)) {
-        if (parameters)
-            parameters->receivedNOOP = true;
-        return;
-    }
-
     KeyboardEvent* event = parameters ? parameters->event : 0;
     bool shouldSaveCommand = parameters && parameters->shouldSaveCommands;
 
-    if (event && shouldSaveCommand)
+    // As in insertText:, we assume that the call comes from an input method if there is marked text.
+    RefPtr<Frame> coreFrame = core([self _frame]);
+    bool isFromInputMethod = coreFrame && coreFrame->editor()->hasComposition();
+
+    if (event && shouldSaveCommand && !isFromInputMethod)
         event->keypressCommands().append(KeypressCommand(NSStringFromSelector(selector)));
     else {
         // Make sure that only direct calls to doCommandBySelector: see the parameters by setting to 0.
@@ -5957,10 +6005,8 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         }
 
         if (parameters)
-            parameters->eventWasHandled = eventWasHandled;
+            parameters->eventInterpretationHadSideEffects = eventWasHandled;
 
-        // Restore the parameters so that other calls to doCommandBySelector: see them,
-        // and other commands can participate in setting the "eventWasHandled" flag.
         _private->interpretKeyEventsParameters = parameters;
     }
 }
@@ -5995,46 +6041,34 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     } else
         text = string;
 
-    bool eventHandled = false;
-    if ([text length]) {
-        KeyboardEvent* event = parameters ? parameters->event : 0;
+    KeyboardEvent* event = parameters ? parameters->event : 0;
 
-        // insertText can be called from an input method or from normal key event processing
-        // If its from normal key event processing, we may need to save the action to perform it later.
-        // If its from an input method, then we should go ahead and insert the text now.  
-        // We assume it's from the input method if we have marked text.
-        // FIXME: In theory, this could be wrong for some input methods, so we should try to find
-        // another way to determine if the call is from the input method
-        bool shouldSaveCommand = parameters && parameters->shouldSaveCommands;
-        if (event && shouldSaveCommand && !isFromInputMethod) {
-            event->keypressCommands().append(KeypressCommand("insertText:", text));
-            _private->interpretKeyEventsParameters = parameters;
-            return;
-        }
-        
-        String eventText = text;
-        eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
-        if (coreFrame && coreFrame->editor()->canEdit()) {
-            if (!coreFrame->editor()->hasComposition())
-                eventHandled = coreFrame->editor()->insertText(eventText, event);
-            else {
-                eventHandled = true;
-                coreFrame->editor()->confirmComposition(eventText);
-            }
-        }
-    }
-    
-    if (!parameters)
-        return;
-    
-    if (isFromInputMethod) {
-        // Allow doCommandBySelector: to be called after insertText: by resetting interpretKeyEventsParameters
+    // insertText can be called for several reasons:
+    // - If it's from normal key event processing (including key bindings), we may need to save the action to perform it later.
+    // - If it's from an input method, then we should go ahead and insert the text now. We assume it's from the input method if we have marked text.
+    // FIXME: In theory, this could be wrong for some input methods, so we should try to find another way to determine if the call is from the input method.
+    // - If it's sent outside of keyboard event processing (e.g. from Character Viewer, or when confirming an inline input area with a mouse),
+    // then we also execute it immediately, as there will be no other chance.
+    bool shouldSaveCommand = parameters && parameters->shouldSaveCommands;
+    if (event && shouldSaveCommand && !isFromInputMethod) {
+        event->keypressCommands().append(KeypressCommand("insertText:", text));
         _private->interpretKeyEventsParameters = parameters;
-        parameters->consumedByIM = true;
         return;
     }
+
+    String eventText = text;
+    eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
+    if (coreFrame && coreFrame->editor()->canEdit()) {
+        if (!coreFrame->editor()->hasComposition())
+            coreFrame->editor()->insertText(eventText, event);
+        else
+            coreFrame->editor()->confirmComposition(eventText);
+    }
     
-    parameters->eventWasHandled = eventHandled;
+    if (parameters)
+        parameters->eventInterpretationHadSideEffects = true;
+
+    _private->interpretKeyEventsParameters = parameters;
 }
 
 - (void)_updateSelectionForInputManager

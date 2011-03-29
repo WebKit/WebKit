@@ -1,3 +1,44 @@
+2011-03-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57379
+        Clean up WK1 key event handling logic
+
+        No bugs knowingly fixed, but this makes the code more consistent.
+
+        * WebView/WebHTMLView.mm:
+        (struct WebHTMLViewInterpretKeyEventsParameters): Renamed eventWasHandled to
+        eventInterpretationHadSideEffects, because "handled" doesn't really mean much.
+        (-[WebHTMLView _executeSavedEditingCommands]): Factored out from _interpretKeyEvent for use
+        from other functions. We need to execute saved commands when an input method asks for current
+        state, because providing stale state could confuse it.
+        (-[WebHTMLView _interpretKeyEvent:savingCommands:]): Heavily commented, and updated for other
+        changes.
+        (-[WebHTMLView characterIndexForPoint:]): Call _executeSavedEditingCommands, because otherwise,
+        the answer would be stale.
+        (-[WebHTMLView firstRectForCharacterRange:]): Ditto.
+        (-[WebHTMLView selectedRange]): Ditto.
+        (-[WebHTMLView markedRange]): Ditto.
+        (-[WebHTMLView attributedSubstringFromRange:]): Ditto.
+        (-[WebHTMLView hasMarkedText]): Ditto.
+        (-[WebHTMLView unmarkText]): Call _executeSavedEditingCommands, because otherwise, we'd be
+        operating on stale data. Also, updated for eventWasHandled renaming.
+        (-[WebHTMLView setMarkedText:selectedRange:]): Ditto.
+        (-[WebHTMLView doCommandBySelector:]): Removed special handling for noop:. I verified that
+        it's no longer needed for bug 14522, presumably due to WebCore level changes. It was also
+        fragile, because there is no guarantee about when noop: is sent (also, a custom key binding
+        could have a noop: as one of its commands, although that's hardly practical).
+        Added the same "from input method" logic that we have in insertText: - I don't know of any
+        IMs that call this method, but we clearly need to execute it as part of IM processing when
+        there is marked text.
+        (-[WebHTMLView insertText:]): Removed a confusing check for [text length]. Always set
+        eventInterpretationHadSideEffects to true, becasue there is no reason to try multiple times
+        if current selection isn't editable. This is different from doCommandBySelector:, where we
+        need to give super class a chance to handle the event if our processing fails.
+        Removed a nonsense "consumedByIM = true" assignment - we no longer need it now that the
+        return value of _interpretKeyEvent is computed differently.
+
 2011-03-28  Adele Peterson  <adele@apple.com>
 
         Reviewed by Eric Seidel.
