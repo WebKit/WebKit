@@ -1,3 +1,14 @@
+2011-03-29  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Inline worker powered by blob URL does not work with files URL even if
+        allowFileAccessFromFileURLs is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=56063
+
+        * fast/files/workers/inline-worker-via-blob-url-expected.txt: Added.
+        * fast/files/workers/inline-worker-via-blob-url.html: Added.
+
 2011-03-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82295 and r82300.

@@ -52,16 +52,6 @@ KURL BlobURL::createInternalURL()
     return createBlobURL("blobinternal://");
 }
 
-KURL BlobURL::getOrigin(const KURL& url)
-{
-    ASSERT(url.protocolIs(kBlobProtocol));
-
-    unsigned startIndex = url.pathStart();
-    unsigned afterEndIndex = url.pathAfterLastSlash();
-    String origin = url.string().substring(startIndex, afterEndIndex - startIndex);
-    return KURL(ParsedURLString, decodeURLEscapeSequences(origin));
-}
-
 String BlobURL::getIdentifier(const KURL& url)
 {
     ASSERT(url.protocolIs(kBlobProtocol));

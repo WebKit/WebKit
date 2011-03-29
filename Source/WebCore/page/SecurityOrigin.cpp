@@ -79,8 +79,17 @@ SecurityOrigin::SecurityOrigin(const KURL& url, SandboxFlags sandboxFlags)
     if (m_protocol == "about" || m_protocol == "javascript")
         m_protocol = "";
 
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+    bool isBlobOrFileSystemProtocol = false;
+#if ENABLE(BLOB)
+    if (m_protocol == BlobURL::blobProtocol())
+        isBlobOrFileSystemProtocol = true;
+#endif
 #if ENABLE(FILE_SYSTEM)
-    if (m_protocol == "filesystem") {
+    if (m_protocol == "filesystem")
+        isBlobOrFileSystemProtocol = true;
+#endif
+    if (isBlobOrFileSystemProtocol) {
         KURL originURL(ParsedURLString, url.path());
         if (originURL.isValid()) {
             m_protocol = originURL.protocol().lower();
@@ -102,7 +111,13 @@ SecurityOrigin::SecurityOrigin(const KURL& url, SandboxFlags sandboxFlags)
     m_canLoadLocalResources = isLocal();
     if (m_canLoadLocalResources) {
         // Directories should never be readable.
-        if (!url.hasPath() || url.path().endsWith("/"))
+        // Note that we do not do this check for blob or filesystem url because its origin is file:/// when it is created from local file urls.
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+        bool doDirectoryCheck = !isBlobOrFileSystemProtocol;
+#else
+        bool doDirectoryCheck = true;
+#endif
+        if (doDirectoryCheck && (!url.hasPath() || url.path().endsWith("/")))
             m_isUnique = true;
         // Store the path in case we are doing per-file origin checking.
         m_filePath = url.path();
@@ -137,10 +152,6 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::create(const KURL& url, SandboxFlags 
 {
     if (!url.isValid())
         return adoptRef(new SecurityOrigin(KURL(), sandboxFlags));
-#if ENABLE(BLOB)
-    if (url.protocolIs(BlobURL::blobProtocol()))
-        return adoptRef(new SecurityOrigin(BlobURL::getOrigin(url), sandboxFlags));
-#endif
     return adoptRef(new SecurityOrigin(url, sandboxFlags));
 }
 
@@ -253,12 +264,7 @@ bool SecurityOrigin::canRequest(const KURL& url) const
 
     RefPtr<SecurityOrigin> targetOrigin = SecurityOrigin::create(url);
 
-    bool doUniqueOriginCheck = true;
-#if ENABLE(BLOB)
-    // For blob scheme, we want to ignore this check.
-    doUniqueOriginCheck = !url.protocolIs(BlobURL::blobProtocol());
-#endif
-    if (doUniqueOriginCheck && targetOrigin->isUnique())
+    if (targetOrigin->isUnique())
         return false;
 
     // We call isSameSchemeHostPort here instead of canAccess because we want
