@@ -1,3 +1,9 @@
+2011-03-29  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip crashing svg test on GTK.
+
+        * platform/gtk/Skipped: Skip svg/text/text-deco-01-b.svg
+
 2011-03-29  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
