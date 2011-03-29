@@ -213,6 +213,8 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, /*mouseDidMoveOverElement*/
         0, /*pageDidScroll*/
         0, /*paintCustomOverhangArea*/
+        0, /*shouldGenerateFileForUpload*/
+        0, /*generateFileForUpload*/
     };
     WKBundlePageSetUIClient(m_page, &uiClient);
 
