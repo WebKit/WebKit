@@ -29,10 +29,7 @@
 #ifndef WebNodeHighlight_h
 #define WebNodeHighlight_h
 
-#pragma warning(push, 0)
 #include <WebCore/WindowMessageListener.h>
-#pragma warning(pop)
-
 #include <windows.h>
 
 class WebView;

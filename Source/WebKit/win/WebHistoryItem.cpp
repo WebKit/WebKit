@@ -31,13 +31,9 @@
 #include "COMPtr.h"
 #include "MarshallingHelpers.h"
 #include "WebKit.h"
-
-#pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/KURL.h>
-#pragma warning(pop)
-
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>

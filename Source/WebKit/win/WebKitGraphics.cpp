@@ -31,7 +31,6 @@
 
 #include "WebPreferences.h"
 
-#pragma warning(push, 0)
 #include <WebCore/Font.h>
 #include <WebCore/FontDescription.h>
 #include <WebCore/FontSelector.h>
@@ -42,7 +41,6 @@
 #include <wtf/unicode/CharacterNames.h>
 
 #include <CoreGraphics/CoreGraphics.h>
-#pragma warning(pop)
 
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 

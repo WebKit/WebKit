@@ -27,11 +27,9 @@
 #define WebEditorClient_H
 
 #include "WebKit.h"
-#pragma warning(push, 0)
 #include <WebCore/EditorClient.h>
 #include <WebCore/TextCheckerClient.h>
 #include <wtf/OwnPtr.h>
-#pragma warning(pop)
 
 class WebView;
 class WebNotification;

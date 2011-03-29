@@ -44,7 +44,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#pragma warning(push, 0)
 #include <WebCore/AuthenticationCF.h>
 #include <WebCore/BString.h>
 #include <WebCore/CredentialStorage.h>
@@ -55,7 +54,6 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/CurrentTime.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 

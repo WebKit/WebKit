@@ -1,3 +1,70 @@
+2011-03-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Remove #pragma warning push and pop statements
+        https://bugs.webkit.org/show_bug.cgi?id=57198
+
+        We do not need to disable warnings via #pragma since we started
+        compiling WebCore with the same compiler warnings flags as WebKit.
+
+        * DOMCSSClasses.cpp:
+        * DOMCoreClasses.cpp:
+        * DOMEventsClasses.cpp:
+        * DOMHTMLClasses.cpp:
+        * DefaultDownloadDelegate.cpp:
+        * DefaultPolicyDelegate.cpp:
+        * MarshallingHelpers.cpp:
+        * WebActionPropertyBag.cpp:
+        * WebActionPropertyBag.h:
+        * WebCache.cpp:
+        * WebCoreSupport/WebDragClient.cpp:
+        * WebCoreSupport/WebEditorClient.cpp:
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebInspectorClient.cpp:
+        * WebDocumentLoader.h:
+        * WebDownload.cpp:
+        * WebDownloadCFNet.cpp:
+        * WebDownloadCurl.cpp:
+        * WebElementPropertyBag.cpp:
+        * WebError.cpp:
+        * WebError.h:
+        * WebFrame.cpp:
+        * WebFrame.h:
+        * WebFramePolicyListener.cpp:
+        * WebFramePolicyListener.h:
+        * WebHistory.cpp:
+        * WebHistoryItem.cpp:
+        * WebIconDatabase.cpp:
+        * WebIconDatabase.h:
+        * WebInspector.cpp:
+        * WebJavaScriptCollector.cpp:
+        * WebKitGraphics.cpp:
+        * WebKitSystemBits.cpp:
+        * WebLocalizableStrings.cpp:
+        * WebMutableURLRequest.cpp:
+        * WebMutableURLRequest.h:
+        * WebNodeHighlight.cpp:
+        * WebNodeHighlight.h:
+        * WebNotificationCenter.cpp:
+        * WebResource.cpp:
+        * WebResource.h:
+        * WebScrollBar.cpp:
+        * WebScrollBar.h:
+        * WebURLAuthenticationChallenge.cpp:
+        * WebURLAuthenticationChallenge.h:
+        * WebURLAuthenticationChallengeSender.cpp:
+        * WebURLAuthenticationChallengeSenderCFNet.cpp:
+        * WebURLAuthenticationChallengeSenderCurl.cpp:
+        * WebURLCredential.cpp:
+        * WebURLCredential.h:
+        * WebURLProtectionSpace.cpp:
+        * WebURLProtectionSpace.h:
+        * WebURLResponse.cpp:
+        * WebURLResponse.h:
+
 2011-03-29  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build fix after r82247.

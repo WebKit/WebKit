@@ -31,9 +31,7 @@
 #include <WTF/PassRefPtr.h>
 #include <WTF/RefPtr.h>
 
-#pragma warning(push, 0)
 #include <WebCore/FrameLoaderTypes.h>
-#pragma warning(pop)
 
 namespace WebCore {
     class Frame;

@@ -27,10 +27,7 @@
 #define WebURLCredential_h
 
 #include "WebKit.h"
-
-#pragma warning(push, 0)
 #include <WebCore/Credential.h>
-#pragma warning(pop)
 
 class WebURLCredential : public IWebURLCredential
 {

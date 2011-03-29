@@ -30,7 +30,6 @@
 #include "MarshallingHelpers.h"
 #include "DOMCoreClasses.h"
 #include "WebFrame.h"
-#pragma warning(push, 0)
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/HitTestResult.h>
@@ -38,7 +37,6 @@
 #include <WebCore/Image.h>
 #include <WebCore/KURL.h>
 #include <WebCore/RenderObject.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 

@@ -44,7 +44,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
@@ -52,7 +51,6 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SystemTime.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 

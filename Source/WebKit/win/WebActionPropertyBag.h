@@ -27,12 +27,9 @@
 #define WebActionPropertyBag_h
 
 #include "ocidl.h"
-
-#pragma warning(push, 0)
 #include <WebCore/Frame.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/NavigationAction.h>
-#pragma warning(pop)
 
 class WebActionPropertyBag : public IPropertyBag {
 public:

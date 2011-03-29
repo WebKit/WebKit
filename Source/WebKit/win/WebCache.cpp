@@ -28,12 +28,9 @@
 #include "WebCache.h"
 
 #include "CFDictionaryPropertyBag.h"
-
-#pragma warning(push, 0)
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/CrossOriginPreflightResultCache.h>
-#pragma warning(pop)
 
 // WebCache ---------------------------------------------------------------------------
 

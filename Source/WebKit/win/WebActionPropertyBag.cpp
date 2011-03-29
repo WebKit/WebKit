@@ -31,13 +31,10 @@
 #include "DOMCoreClasses.h"
 #include "WebElementPropertyBag.h"
 #include "WebKit.h"
-
-#pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/EventHandler.h>
-#include <WebCore/MouseEvent.h>
 #include <WebCore/HitTestResult.h>
-#pragma warning(pop)
+#include <WebCore/MouseEvent.h>
 
 using namespace WebCore;
 

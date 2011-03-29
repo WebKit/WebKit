@@ -31,7 +31,6 @@
 #include "COMPtr.h"
 #include "WebPreferences.h"
 #include "WebNotificationCenter.h"
-#pragma warning(push, 0)
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/BString.h>
 #include <WebCore/FileSystem.h>
@@ -39,8 +38,6 @@
 #include <WebCore/Image.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/SharedBuffer.h>
-
-#pragma warning(pop)
 #include <wtf/MainThread.h>
 #include "shlobj.h"
 

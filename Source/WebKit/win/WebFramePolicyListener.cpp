@@ -28,12 +28,9 @@
 #include "WebFramePolicyListener.h"
 
 #include "WebFrame.h"
-
-#pragma warning(push, 0)
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameLoaderClient.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 

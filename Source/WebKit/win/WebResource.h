@@ -28,14 +28,11 @@
 
 #include "WebKit.h"
 #include "COMPtr.h"
-
-#pragma warning(push, 0)
 #include <WebCore/KURL.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/PassRefPtr.h>
-#pragma warning(pop)
 
 class WebResource : public IWebResource {
 public:

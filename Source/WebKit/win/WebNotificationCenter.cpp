@@ -28,14 +28,12 @@
 #include "WebNotificationCenter.h"
 
 #include "WebNotification.h"
-#pragma warning(push, 0)
 #include <WebCore/COMPtr.h>
 #include <WebCore/PlatformString.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
-#pragma warning(pop)
 #include <utility>
 #include <wchar.h>
 

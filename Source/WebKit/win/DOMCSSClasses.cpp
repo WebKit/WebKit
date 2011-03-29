@@ -27,9 +27,7 @@
 #include "WebKitDLL.h"
 #include "DOMCSSClasses.h"
 
-#pragma warning(push, 0)
 #include <WebCore/PlatformString.h>
-#pragma warning(pop)
 
 // DOMCSSStyleDeclaration - DOMCSSStyleDeclaration ----------------------------
 

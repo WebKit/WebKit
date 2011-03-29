@@ -24,10 +24,7 @@
  */
 
 #include "WebDataSource.h"
-
-#pragma warning(push, 0)
 #include <WebCore/DocumentLoader.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 

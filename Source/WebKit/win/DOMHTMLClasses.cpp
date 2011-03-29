@@ -29,7 +29,6 @@
 #include "COMPtr.h"
 #include "WebFrame.h"
 
-#pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/Document.h>
 #include <WebCore/Element.h>
@@ -47,7 +46,6 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/RenderTextControl.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 using namespace HTMLNames;

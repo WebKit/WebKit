@@ -27,11 +27,8 @@
 #define WebURLAuthenticationChallenge_h
 
 #include "WebKit.h"
-
-#pragma warning(push, 0)
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/COMPtr.h>
-#pragma warning(pop)
 
 class DECLSPEC_UUID("FD3B2381-0BB6-4B59-AF09-0E599C8901CF") WebURLAuthenticationChallenge : public IWebURLAuthenticationChallenge {
 public:

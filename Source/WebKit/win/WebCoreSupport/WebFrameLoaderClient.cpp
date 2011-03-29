@@ -49,7 +49,6 @@
 #include "WebURLAuthenticationChallenge.h"
 #include "WebURLResponse.h"
 #include "WebView.h"
-#pragma warning(push, 0)
 #include <WebCore/BackForwardController.h>
 #include <WebCore/CachedFrame.h>
 #include <WebCore/DocumentLoader.h>
@@ -69,7 +68,6 @@
 #include <WebCore/RenderPart.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/Settings.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 using namespace HTMLNames;

@@ -33,7 +33,6 @@
 #include "WebNotificationCenter.h"
 #include "WebView.h"
 #include "DOMCoreClasses.h"
-#pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/Document.h>
 #include <WebCore/EditCommand.h>
@@ -45,7 +44,6 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Range.h>
 #include <WebCore/UserTypingGestureIndicator.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 using namespace HTMLNames;

@@ -38,7 +38,6 @@
 #include "WebURLResponse.h"
 #include <wtf/text/CString.h>
 
-#pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/DownloadBundle.h>
 #include <WebCore/NotImplemented.h>
@@ -48,7 +47,6 @@
 #include <WebCore/ResourceResponse.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 

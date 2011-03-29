@@ -35,11 +35,8 @@
 #include "WebURLProtectionSpace.h"
 #include "WebURLResponse.h"
 #include "WebKit.h"
-
-#pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/ResourceHandle.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 

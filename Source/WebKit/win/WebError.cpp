@@ -28,9 +28,7 @@
 #include "WebError.h"
 #include "WebKit.h"
 
-#pragma warning(push, 0)
 #include <WebCore/BString.h>
-#pragma warning(pop)
 
 #if USE(CFNETWORK)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>

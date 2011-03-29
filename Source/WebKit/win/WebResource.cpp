@@ -29,10 +29,7 @@
 
 #include "MarshallingHelpers.h"
 #include "MemoryStream.h"
-
-#pragma warning(push, 0)
 #include <WebCore/BString.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 

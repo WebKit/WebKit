@@ -32,10 +32,7 @@
 #include "WebKit.h"
 #include "WebURLAuthenticationChallenge.h"
 #include "WebURLCredential.h"
-
-#pragma warning(push, 0)
 #include <WebCore/AuthenticationClient.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 

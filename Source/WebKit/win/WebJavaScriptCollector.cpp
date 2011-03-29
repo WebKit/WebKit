@@ -27,13 +27,11 @@
 #include "WebKitDLL.h"
 #include "WebJavaScriptCollector.h"
 
-#pragma warning(push, 0)
 #include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/JSGlobalData.h>
 #include <WebCore/GCController.h>
 #include <WebCore/JSDOMWindow.h>
 #include <runtime/JSLock.h>
-#pragma warning(pop)
 
 using namespace JSC;
 using namespace WebCore;

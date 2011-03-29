@@ -38,11 +38,9 @@
 #endif
 
 #include <wtf/platform.h>
-#pragma warning( push, 0 )
 #include <WebCore/BString.h>
 #include <WebCore/KURL.h>
 #include <WebCore/ResourceHandle.h>
-#pragma warning( pop )
 #include <shlobj.h>
 #include <shlwapi.h>
 #include <wchar.h>

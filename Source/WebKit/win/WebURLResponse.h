@@ -27,10 +27,7 @@
 #define WebURLResponse_H
 
 #include "WebKit.h"
-
-#pragma warning(push, 0)
 #include <WebCore/ResourceResponse.h>
-#pragma warning(pop)
 
 class WebURLResponse : public IWebHTTPURLResponse, IWebURLResponsePrivate
 {

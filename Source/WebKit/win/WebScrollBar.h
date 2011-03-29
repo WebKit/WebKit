@@ -31,11 +31,9 @@
 #include <wtf/RefPtr.h>
 #include <wtf/OwnPtr.h>
 
-#pragma warning(push, 0)
 #include <WebCore/COMPtr.h>
 #include <WebCore/Scrollbar.h>
 #include <WebCore/ScrollableArea.h>
-#pragma warning(pop)
 
 namespace WebCore {
 class Scrollbar;

@@ -28,12 +28,10 @@
 #include "WebKit.h"
 #include "WebScrollBar.h"
 
-#pragma warning(push, 0)
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/Scrollbar.h>
 #include <WebCore/ScrollbarTheme.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 

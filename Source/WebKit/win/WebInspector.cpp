@@ -31,10 +31,8 @@
 
 #include "WebKitDLL.h"
 #include "WebView.h"
-#pragma warning(push, 0)
 #include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>
-#pragma warning(pop)
 #include <wtf/Assertions.h>
 
 using namespace WebCore;

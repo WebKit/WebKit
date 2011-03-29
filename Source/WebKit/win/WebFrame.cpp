@@ -53,7 +53,6 @@
 #include "WebScriptWorld.h"
 #include "WebURLResponse.h"
 #include "WebView.h"
-#pragma warning( push, 0 )
 #include <WebCore/BString.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/Document.h>
@@ -104,7 +103,6 @@
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/JSValue.h>
 #include <wtf/MathExtras.h>
-#pragma warning(pop)
 
 #if PLATFORM(CG)
 #include <CoreGraphics/CoreGraphics.h>

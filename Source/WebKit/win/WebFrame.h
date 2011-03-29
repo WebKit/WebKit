@@ -33,13 +33,11 @@
 
 #include "AccessibleDocument.h"
 
-#pragma warning(push, 0)
 #include <WebCore/FrameWin.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/KURL.h>
 #include <WebCore/PlatformString.h>
 #include <WebCore/ResourceHandleClient.h>
-#pragma warning(pop)
 
 #include <WTF/RefPtr.h>
 #include <WTF/HashMap.h>

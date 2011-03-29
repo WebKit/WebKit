@@ -35,7 +35,6 @@
 #include "WebNodeHighlight.h"
 #include "WebView.h"
 
-#pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/Element.h>
 #include <WebCore/FloatRect.h>
@@ -45,7 +44,6 @@
 #include <WebCore/Page.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/WindowMessageBroadcaster.h>
-#pragma warning(pop)
 
 #include <wchar.h>
 #include <wtf/RetainPtr.h>

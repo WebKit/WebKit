@@ -29,9 +29,7 @@
 #ifndef WebFrameLoaderClient_h
 #define WebFrameLoaderClient_h
 
-#pragma warning(push, 0)
 #include <WebCore/FrameLoaderClient.h>
-#pragma warning(pop)
 
 namespace WebCore {
     class PluginManualLoader;

@@ -30,14 +30,12 @@
 #include "WebNodeHighlight.h"
 
 #include "WebView.h"
-#pragma warning(push, 0)
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/Color.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/InspectorController.h>
 #include <WebCore/Page.h>
 #include <WebCore/WindowMessageBroadcaster.h>
-#pragma warning(pop)
 #include <wtf/OwnPtr.h>
 #include <wtf/HashSet.h>
 

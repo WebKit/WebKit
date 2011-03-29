@@ -31,14 +31,12 @@
 
 #include <shlobj.h>
 
-#pragma warning(push, 0) 
 #include <WebCore/ClipboardWin.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Page.h>
-#pragma warning(pop) 
 
 using namespace WebCore;
 

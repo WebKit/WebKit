@@ -27,10 +27,7 @@
 #define WebURLProtectionSpace_h
 
 #include "WebKit.h"
-
-#pragma warning(push, 0)
 #include <WebCore/ProtectionSpace.h>
-#pragma warning(pop)
 
 class WebURLProtectionSpace : public IWebURLProtectionSpace
 {

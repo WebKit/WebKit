@@ -29,9 +29,7 @@
 
 #include "WebKit.h"
 
-#pragma warning(push, 0)
 #include <WebCore/PlatformString.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 

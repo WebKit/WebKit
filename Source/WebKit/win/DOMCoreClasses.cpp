@@ -33,7 +33,6 @@
 #include "DOMHTMLClasses.h"
 #include "WebKitGraphics.h"
 
-#pragma warning(push, 0)
 #include <WebCore/BString.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Document.h>
@@ -49,7 +48,6 @@
 #include <WebCore/NodeList.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/RenderTreeAsText.h>
-#pragma warning(pop)
 
 #include <initguid.h>
 // {3B0C0EFF-478B-4b0b-8290-D2321E08E23E}

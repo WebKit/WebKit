@@ -28,12 +28,9 @@
 
 #include "WebKit.h"
 
-#pragma warning(push, 0)
 #include <WebCore/IconDatabaseClient.h>
 #include <WebCore/IntSize.h>
 #include <WebCore/IntSizeHash.h>
-#pragma warning(pop)
-
 #include <wtf/Vector.h>
 #include <wtf/Threading.h>
 

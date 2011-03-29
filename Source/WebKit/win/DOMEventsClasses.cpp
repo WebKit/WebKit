@@ -28,12 +28,10 @@
 #include <initguid.h>
 #include "DOMEventsClasses.h"
 
-#pragma warning( push, 0 )
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Event.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/MouseEvent.h>
-#pragma warning( pop )
 
 // DOMEventListener -----------------------------------------------------------
 

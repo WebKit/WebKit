@@ -36,13 +36,11 @@
 #include "WebNotificationCenter.h"
 #include "WebPreferences.h"
 #include <CoreFoundation/CoreFoundation.h>
-#pragma warning( push, 0 )
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HistoryPropertyList.h>
 #include <WebCore/KURL.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/SharedBuffer.h>
-#pragma warning( pop )
 #include <functional>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>

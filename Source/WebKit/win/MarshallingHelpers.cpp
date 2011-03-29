@@ -28,11 +28,9 @@
 #include "MarshallingHelpers.h"
 #include "MathExtras.h"
 
-#pragma warning(push, 0)
 #include <WebCore/IntRect.h>
 #include <WebCore/KURL.h>
 #include <WebCore/PlatformString.h>
-#pragma warning(pop)
 
 using namespace WebCore;
 
