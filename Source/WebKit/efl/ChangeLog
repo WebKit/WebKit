@@ -1,3 +1,17 @@
+2011-03-29  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove unnecessary ewk_view_viewport_attributes_set() invocation
+        https://bugs.webkit.org/show_bug.cgi?id=57222
+
+        WebCore sends viewport signal whenever viewport is changed by Page::updateViewportArguments().
+        Thus, we don't need to call ewk_view_viewport_attributes_set() with dummy viewport data
+        anymore.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidCommitLoad):
+
 2011-03-27  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Andreas Kling.

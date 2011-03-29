@@ -50,7 +50,6 @@
 #include "ProgressTracker.h"
 #include "RenderPart.h"
 #include "ResourceRequest.h"
-#include "ViewportArguments.h"
 #include "WebKitVersion.h"
 #include "ewk_private.h"
 #include <wtf/text/CString.h>
@@ -599,9 +598,6 @@ void FrameLoaderClientEfl::dispatchDidCommitLoad()
         return;
     ewk_view_title_set(m_view, 0);
     ewk_view_uri_changed(m_view);
-
-    ViewportArguments arguments;
-    ewk_view_viewport_attributes_set(m_view, arguments);
 }
 
 void FrameLoaderClientEfl::dispatchDidFinishDocumentLoad()
