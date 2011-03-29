@@ -3353,3 +3353,6 @@ BUGXXX GPU MAC SNOWLEOPARD : compositing/overflow/overflow-compositing-descendan
 BUGXXX GPU MAC SNOWLEOPARD : compositing/overflow/scroll-ancestor-update.html = FAIL
 BUGXXX GPU MAC SNOWLEOPARD : compositing/reflections/load-video-in-reflection.html = FAIL
 BUGXXX GPU MAC SNOWLEOPARD : compositing/self-painting-layers.html = FAIL
+
+// Chrome doesn't load favicons in DRT tests.
+BUGWK57259 : http/tests/misc/link-rel-icon-beforeload.html = FAIL PASS

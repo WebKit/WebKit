@@ -1,3 +1,28 @@
+2011-03-29  Gavin Peters  <gavinp@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Add beforeload to icon and prefetch link rel types
+        https://bugs.webkit.org/show_bug.cgi?id=56424
+
+        Unfortunately, there's lots of skipped tests, and a chrome failure
+        expectation here, in a strange disjoint set.  On the chromium
+        port, favicon loads don't occur in DRT, so the favicon changes are
+        expected to fail.  On the ports without prefetching, we expect the
+        prefetching test to fail.
+
+        * fast/dom/HTMLLinkElement/prefetch-beforeload-expected.txt: Added.
+        * fast/dom/HTMLLinkElement/prefetch-beforeload.html: Added.
+        * http/tests/misc/link-rel-icon-beforeload-expected.txt: Added.
+        * http/tests/misc/link-rel-icon-beforeload.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * webarchive/test-link-rel-icon-beforeload-expected.webarchive: Added.
+        * webarchive/test-link-rel-icon-beforeload.html: Added.
+
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
         Moar pixel expectations.

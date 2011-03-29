@@ -1,0 +1,22 @@
+<html>
+<head>
+<script>
+function runTest()
+{
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.dumpResourceLoadCallbacks();
+        layoutTestController.setIconDatabaseEnabled(true);
+        layoutTestController.queueReload();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<link rel="icon" onbeforeload="return false" href="dont-load-this.ico">
+<p>This test should not show a request for the favicon
+dont-load-this.ico, since the beforeload handler on the favicon link
+returns false.  Therefore, if the resource request list below shows a
+request for dont-load-this.ico, then this test has failed.
+</body>
+</html>

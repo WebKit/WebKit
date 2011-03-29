@@ -1,3 +1,24 @@
+2011-03-29  Gavin Peters  <gavinp@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Add beforeload to icon and prefetch link rel types
+        https://bugs.webkit.org/show_bug.cgi?id=56424
+
+        Over in https://lists.webkit.org/pipermail/webkit-dev/2011-February/016034.html , a webkit-dev
+        thread, I've discussed my hopes for the link element, and adding the link header.  This
+        change helps improve the link header by making it participate in the beforeload event in
+        two more important cases.
+
+        Tests: fast/dom/HTMLLinkElement/prefetch-beforeload.html
+               http/tests/misc/link-rel-icon-beforeload.html
+               webarchive/test-link-rel-icon-beforeload.html
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::checkBeforeLoadEvent):
+        (WebCore::HTMLLinkElement::process):
+        * html/HTMLLinkElement.h:
+
 2011-03-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Dimitri Glazkov.

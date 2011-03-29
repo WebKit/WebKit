@@ -921,6 +921,7 @@ fast/dom/HTMLLinkElement/link-and-subresource-test.html
 fast/dom/HTMLLinkElement/prefetch.html
 fast/dom/HTMLLinkElement/prefetch-onerror.html
 fast/dom/HTMLLinkElement/prefetch-onload.html
+fast/dom/HTMLLinkElement/prefetch-beforeload.html
 
 # Tests failing because the context menu is grabbing mouse events.
 # https://bugs.webkit.org/show_bug.cgi?id=40601

@@ -195,6 +195,17 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, RelAttribute
     }
 }
 
+bool HTMLLinkElement::checkBeforeLoadEvent()
+{
+    RefPtr<Document> originalDocument = document();
+    if (!dispatchBeforeLoadEvent(m_url))
+        return false;
+    // A beforeload handler might have removed us from the document or changed the document.
+    if (!inDocument() || document() != originalDocument)
+        return false;
+    return true;
+}
+
 void HTMLLinkElement::process()
 {
     if (!inDocument() || m_isInShadowTree) {
@@ -206,8 +217,11 @@ void HTMLLinkElement::process()
 
     // IE extension: location of small icon for locationbar / bookmarks
     // We'll record this URL per document, even if we later only use it in top level frames
-    if (m_relAttribute.m_isIcon && m_url.isValid() && !m_url.isEmpty())
+    if (m_relAttribute.m_isIcon && m_url.isValid() && !m_url.isEmpty()) {
+        if (!checkBeforeLoadEvent()) 
+            return;
         document()->setIconURL(m_url.string(), type);
+    }
 
     if (m_relAttribute.m_isDNSPrefetch) {
         Settings* settings = document()->settings();
@@ -219,6 +233,8 @@ void HTMLLinkElement::process()
 
 #if ENABLE(LINK_PREFETCH)
     if (m_relAttribute.m_isLinkPrefetch && m_url.isValid() && document()->frame()) {
+        if (!checkBeforeLoadEvent())
+            return;
         m_cachedLinkPrefetch = document()->cachedResourceLoader()->requestLinkPrefetch(m_url);
         if (m_cachedLinkPrefetch)
             m_cachedLinkPrefetch->addClient(this);
@@ -240,11 +256,7 @@ void HTMLLinkElement::process()
             m_cachedSheet = 0;
         }
 
-        RefPtr<Document> originalDocument = document();
-        if (!dispatchBeforeLoadEvent(m_url))
-            return;
-        // A beforeload handler might have removed us from the document or changed the document.
-        if (!inDocument() || document() != originalDocument)
+        if (!checkBeforeLoadEvent())
             return;
 
         m_loading = true;
