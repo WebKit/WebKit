@@ -1,3 +1,9 @@
+2011-03-29  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Sorted XCode project. It's gotten quite out of sorts.
+
+        * WebCore.xcodeproj/project.pbxproj: Ran sort-XCode-project-file.
+
 2011-03-29  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Dimitri Glazkov.
