@@ -1,3 +1,17 @@
+2011-03-28  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Updating small batch of gradient expected results files
+        https://bugs.webkit.org/show_bug.cgi?id=57117
+
+        * platform/mac-snowleopard/canvas/philip/tests/2d.gradient.radial.inside2-expected.txt: Added.
+        * platform/mac-snowleopard/canvas/philip/tests/2d.gradient.radial.inside3-expected.txt: Added.
+        * platform/mac-snowleopard/canvas/philip/tests/2d.gradient.radial.outside1-expected.txt: Added.
+        * platform/mac/canvas/philip/tests/2d.gradient.radial.inside2-expected.txt: Removed.
+        * platform/mac/canvas/philip/tests/2d.gradient.radial.inside3-expected.txt: Removed.
+        * platform/mac/canvas/philip/tests/2d.gradient.radial.outside1-expected.txt: Removed.
+
 2011-03-28  Jessie Berlin  <jberlin@apple.com>
 
         REGRESSION: http/tests/inspector/console-resource-errors.html failing on WebKit2.
@@ -1070,6 +1084,7 @@
         * platform/mac/fast/repaint/layout-state-scrolloffset3-expected.txt:
         * platform/mac/tables/mozilla/bugs/bug51140-expected.txt:
 
+>>>>>>> .r82178
 2011-03-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
