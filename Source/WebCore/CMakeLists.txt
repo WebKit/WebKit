@@ -1033,6 +1033,7 @@ SET(WebCore_SOURCES
     platform/ContextMenuItem.cpp
     platform/ContentType.cpp
     platform/CrossThreadCopier.cpp
+    platform/DefaultLocalizationStrategy.cpp
     platform/DragData.cpp
     platform/DragImage.cpp
     platform/FileChooser.cpp

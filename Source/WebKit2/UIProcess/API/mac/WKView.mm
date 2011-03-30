@@ -51,7 +51,6 @@
 #import "WebContext.h"
 #import "WebEventFactory.h"
 #import "WebFullScreenManagerProxy.h"
-#import "WebLocalizableStrings.h"
 #import "WebPage.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"

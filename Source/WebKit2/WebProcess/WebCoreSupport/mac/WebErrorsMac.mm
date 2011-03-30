@@ -28,7 +28,7 @@
 
 #import "WKError.h"
 #import "WebError.h"
-#import "WebLocalizableStrings.h"
+#import <WebCore/LocalizedStrings.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ResourceResponse.h>
 #import <pthread.h>

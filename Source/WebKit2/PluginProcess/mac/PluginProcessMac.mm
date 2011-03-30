@@ -32,7 +32,7 @@
 #import "PluginProcessShim.h"
 #import "PluginProcessProxyMessages.h"
 #import "PluginProcessCreationParameters.h"
-#import "WebLocalizableStrings.h"
+#import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>
 #import <dlfcn.h>
 #import <wtf/HashSet.h>

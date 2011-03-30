@@ -699,4 +699,11 @@ String validationMessageStepMismatchText(const String&, const String&)
 
 #endif // USE(PLATFORM_STRATEGIES)
 
+#if !PLATFORM(MAC) && !PLATFORM(WIN)
+String localizedString(const char* key)
+{
+    return String::fromUTF8(key, strlen(key));
+}
+#endif
+
 } // namespace WebCore

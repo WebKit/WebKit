@@ -948,6 +948,7 @@ SOURCES += \
     platform/text/LocalizedNumberNone.cpp \
     platform/ContentType.cpp \
     platform/CrossThreadCopier.cpp \
+    platform/DefaultLocalizationStrategy.cpp \
     platform/DragData.cpp \
     platform/DragImage.cpp \
     platform/FileChooser.cpp \
@@ -1876,6 +1877,7 @@ HEADERS += \
     platform/ContentType.h \
     platform/ContextMenu.h \
     platform/CrossThreadCopier.h \
+    platform/DefaultLocalizationStrategy.h \
     platform/DragData.h \
     platform/DragImage.h \
     platform/FileChooser.h \

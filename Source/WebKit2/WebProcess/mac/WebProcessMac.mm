@@ -28,7 +28,6 @@
 
 #import "FullKeyboardAccessWatcher.h"
 #import "SandboxExtension.h"
-#import "WebLocalizableStrings.h"
 #import "WebPage.h"
 #import "WebProcessCreationParameters.h"
 #import <WebCore/MemoryCache.h>
@@ -40,6 +39,7 @@
 #import <mach/mach.h>
 #import <mach/mach_error.h>
 #import <objc/runtime.h>
+#import <WebCore/LocalizedStrings.h>
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
 #import <sandbox.h>

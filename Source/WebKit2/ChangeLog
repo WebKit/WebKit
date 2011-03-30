@@ -1,3 +1,30 @@
+2011-03-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add default localization strategy that can be shared by WebKit1 and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=57406
+
+        * Shared/WebLocalizableStrings.h: Removed.
+        Removed in favor of using WebCore/LocalizedStrings.h directly.
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        * WebProcess/WebCoreSupport/mac/WebErrorsMac.mm:
+        * WebProcess/mac/WebProcessMac.mm:
+        Use WebCore/LocalizedStrings.h directly.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        Remove localization strategy override in favor of using new default implementation.
+
+        * GNUmakefile.am:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Remove WebLocalizableStrings.h
+
 2011-03-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

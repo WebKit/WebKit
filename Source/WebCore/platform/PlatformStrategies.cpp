@@ -29,6 +29,8 @@
 
 #include "PlatformStrategies.h"
 
+#include "DefaultLocalizationStrategy.h"
+
 namespace WebCore {
 
 static PlatformStrategies* s_platformStrategies;
@@ -51,7 +53,12 @@ void setPlatformStrategies(PlatformStrategies* platformStrategies)
     // throw an exception here in release builds.
     ASSERT(platformStrategies != s_platformStrategies);
 }
-    
+
+LocalizationStrategy* PlatformStrategies::createLocalizationStrategy()
+{
+    return new DefaultLocalizationStrategy;
+}
+
 } // namespace WebCore
 
 #endif // USE(PLATFORM_STRATEGIES)

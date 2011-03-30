@@ -23,24 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebLocalizableStrings_h
-#define WebLocalizableStrings_h
+#include "config.h"
+#include "LocalizedStrings.h"
 
-#include <WebCore/LocalizedStrings.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(MAC)
+namespace WebCore {
 
-#define UI_STRING(string, description) WebCore::localizedString(string)
-#define UI_STRING_KEY(string, key, description) WebCore::localizedString(key)
+String localizedString(const char* key)
+{
+    // FIXME: <rdar://problem/9119405> Win: WebKit2 needs to be made localizable
+    return String::fromUTF8(key, strlen(key));
+}
 
-#else
-
-// FIXME: <rdar://problem/9119405> Win: WebKit2 needs to be made localizable
-
-#define UI_STRING(string, description) WTF::String::fromUTF8(string, strlen(string))
-#define UI_STRING_KEY(string, key, description) WTF::String::fromUTF8(string, strlen(string))
-
-#endif
-
-#endif // WebLocalizableStrings_h
+} // namespace WebCore

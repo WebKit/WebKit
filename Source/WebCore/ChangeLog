@@ -1,3 +1,44 @@
+2011-03-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add default localization strategy that can be shared by WebKit1 and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=57406
+
+        Currently, only WebKit2 uses this default strategy, but WebKit1 should be able
+        to adopt it soon.
+
+        * platform/DefaultLocalizationStrategy.cpp: Copied from Source/WebKit2/WebProcess/WebCoreSupport/WebPlatformStrategies.cpp.
+        (WebCore::DefaultLocalizationStrategy::DefaultLocalizationStrategy):
+        * platform/DefaultLocalizationStrategy.h: Copied from Source/WebKit2/WebProcess/WebCoreSupport/WebPlatformStrategies.h.
+        Copy the implementation of the Localization strategy from WebKit2 into a shared default strategy.
+
+        * platform/LocalizedStrings.cpp:
+        (WebCore::localizedString):
+        Add default implementation of localization bottleneck function.
+
+        * platform/LocalizedStrings.h:
+        Add localization macros here, instead of defining them in the above layer.
+
+        * platform/PlatformStrategies.cpp:
+        (WebCore::PlatformStrategies::createLocalizationStrategy):
+        * platform/PlatformStrategies.h:
+        Add default implementation of strategy creation function which creates the default strategy.
+
+        * platform/win/LocalizedStringsWin.cpp: Copied from Source/WebCore/platform/mac/LocalizedStringsMac.mm.
+        (WebCore::localizedString):
+        Add stub for windows, this will be update to pull from the bundle in a follow up patch.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
 2011-03-30  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Darin Adler.

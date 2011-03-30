@@ -29,10 +29,10 @@
 #if ENABLE(INSPECTOR)
 
 #import "WKAPICast.h"
-#import "WebLocalizableStrings.h"
 #import "WKView.h"
 #import "WebPageProxy.h"
 #import <WebKitSystemInterface.h>
+#import <WebCore/LocalizedStrings.h>
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;

@@ -81,7 +81,7 @@ protected:
 private:
     virtual CookiesStrategy* createCookiesStrategy() = 0;
     virtual PluginStrategy* createPluginStrategy() = 0;
-    virtual LocalizationStrategy* createLocalizationStrategy() = 0;
+    virtual LocalizationStrategy* createLocalizationStrategy();
     virtual VisitedLinkStrategy* createVisitedLinkStrategy() = 0;
 
     CookiesStrategy* m_cookiesStrategy;

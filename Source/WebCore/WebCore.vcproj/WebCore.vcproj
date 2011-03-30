@@ -25790,6 +25790,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\DefaultLocalizationStrategy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\DefaultLocalizationStrategy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\DragImage.cpp"
 				>
 			</File>
@@ -26294,6 +26302,10 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\LanguageWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\LocalizedStringsWin.cpp"
 					>
 				</File>
 				<File
