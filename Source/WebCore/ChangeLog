@@ -1,5 +1,12 @@
 2011-03-30  Sam Weinig  <sam@webkit.org>
 
+        Fix Leopard build.
+
+        * platform/DefaultLocalizationStrategy.cpp:
+        (WebCore::DefaultLocalizationStrategy::contextMenuItemTagLookUpInDictionary):
+
+2011-03-30  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Add default localization strategy that can be shared by WebKit1 and WebKit2

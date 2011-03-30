@@ -33,6 +33,7 @@
 #include "NotImplemented.h"
 #include <wtf/MathExtras.h>
 #include <wtf/text/CString.h>
+#include <wtf/UnusedParam.h>
 
 #if USE(CF)
 #include <wtf/RetainPtr.h>
@@ -298,6 +299,7 @@ String DefaultLocalizationStrategy::contextMenuItemTagSearchWeb()
 String DefaultLocalizationStrategy::contextMenuItemTagLookUpInDictionary(const String& selectedString)
 {
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+    UNUSED_PARAM(selectedString);
     return UI_STRING("Look Up in Dictionary", "Look Up in Dictionary context menu item");
 #else
     return UI_STRING("Look Up “<selection>”", "Look Up context menu item with selected word").replace("<selection>", selectedString);
