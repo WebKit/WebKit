@@ -24,30 +24,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JavaMethod_h
-#define JavaMethod_h
+#ifndef JavaMethodJobject_h
+#define JavaMethodJobject_h
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "Bridge.h"
-#include "JavaType.h"
+#include "JavaMethod.h"
+#include "JavaString.h"
 
-#include <wtf/text/WTFString.h>
+#include <wtf/text/CString.h>
 
 namespace JSC {
 
 namespace Bindings {
 
-typedef const char* RuntimeType;
-
-class JavaMethod : public Method {
+class JavaMethodJobject : public JavaMethod {
 public:
-    virtual String name() const = 0;
-    virtual RuntimeType returnTypeClassName() const = 0;
-    virtual String parameterAt(int) const = 0;
-    virtual const char* signature() const = 0;
-    virtual JavaType returnType() const = 0;
-    virtual bool isStatic() const = 0;
+    JavaMethodJobject(JNIEnv*, jobject);
+    virtual ~JavaMethodJobject();
+
+    // JavaMethod implementation
+    virtual String name() const { return m_name.impl(); }
+    virtual RuntimeType returnTypeClassName() const { return m_returnTypeClassName.utf8(); }
+    virtual String parameterAt(int i) const { return m_parameters[i]; }
+    virtual const char* signature() const;
+    virtual JavaType returnType() const { return m_returnType; }
+    virtual bool isStatic() const { return m_isStatic; }
+
+    // Method implementation
+    virtual int numParameters() const { return m_parameters.size(); }
+
+private:
+    Vector<String> m_parameters;
+    JavaString m_name;
+    mutable char* m_signature;
+    JavaString m_returnTypeClassName;
+    JavaType m_returnType;
+    bool m_isStatic;
 };
 
 } // namespace Bindings
@@ -56,4 +69,4 @@ public:
 
 #endif // ENABLE(JAVA_BRIDGE)
 
-#endif // JavaMethod_h
+#endif // JavaMethodJobject_h

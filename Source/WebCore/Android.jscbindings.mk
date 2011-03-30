@@ -199,7 +199,7 @@ LOCAL_SRC_FILES += \
 	bridge/c/c_runtime.cpp \
 	bridge/c/c_utility.cpp \
 	bridge/jni/JNIUtility.cpp \
-	bridge/jni/JavaMethod.cpp \
+	bridge/jni/JavaMethodJobject.cpp \
 	bridge/jni/JobjectWrapper.cpp \
 	bridge/jni/jsc/JNIUtilityPrivate.cpp \
 	bridge/jni/jsc/JavaArrayJSC.cpp \

@@ -72,12 +72,12 @@ JavaClass* JavaInstance::getClass() const
 
 JavaValue JavaInstance::invokeMethod(const JavaMethod* method, JavaValue* args)
 {
-    ASSERT(getClass()->methodsNamed(method->name().utf8()).find(method) != notFound);
+    ASSERT(getClass()->methodsNamed(method->name().utf8().data()).find(method) != notFound);
     unsigned int numParams = method->numParameters();
     OwnArrayPtr<jvalue> jvalueArgs = adoptArrayPtr(new jvalue[numParams]);
     for (unsigned int i = 0; i < numParams; ++i)
         jvalueArgs[i] = javaValueToJvalue(args[i]);
-    jvalue result = callJNIMethod(javaInstance(), method->returnType(), method->name().utf8(), method->signature(), jvalueArgs.get());
+    jvalue result = callJNIMethod(javaInstance(), method->returnType(), method->name().utf8().data(), method->signature(), jvalueArgs.get());
     return jvalueToJavaValue(result, method->returnType());
 }
 

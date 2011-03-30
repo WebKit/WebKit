@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "JavaMethod.h"
+#include "JavaMethodJobject.h"
 
 #if ENABLE(JAVA_BRIDGE)
 
@@ -40,7 +40,7 @@
 using namespace JSC;
 using namespace JSC::Bindings;
 
-JavaMethod::JavaMethod(JNIEnv* env, jobject aMethod)
+JavaMethodJobject::JavaMethodJobject(JNIEnv* env, jobject aMethod)
 {
     // Get return type name
     jstring returnTypeName = 0;
@@ -79,7 +79,6 @@ JavaMethod::JavaMethod(JNIEnv* env, jobject aMethod)
 
     // Created lazily.
     m_signature = 0;
-    m_methodID = 0;
 
     jclass modifierClass = env->FindClass("java/lang/reflect/Modifier");
     int modifiers = callJNIMethod<jint>(aMethod, "getModifiers", "()I");
@@ -87,7 +86,7 @@ JavaMethod::JavaMethod(JNIEnv* env, jobject aMethod)
     env->DeleteLocalRef(modifierClass);
 }
 
-JavaMethod::~JavaMethod()
+JavaMethodJobject::~JavaMethodJobject()
 {
     if (m_signature)
         fastFree(m_signature);
@@ -115,7 +114,7 @@ static void appendClassName(StringBuilder& builder, const char* className)
     fastFree(result);
 }
 
-const char* JavaMethod::signature() const
+const char* JavaMethodJobject::signature() const
 {
     if (!m_signature) {
 #if USE(JSC)
@@ -155,13 +154,6 @@ const char* JavaMethod::signature() const
     }
 
     return m_signature;
-}
-
-jmethodID JavaMethod::methodID(jobject obj) const
-{
-    if (!m_methodID)
-        m_methodID = getMethodID(obj, m_name.utf8(), signature());
-    return m_methodID;
 }
 
 #endif // ENABLE(JAVA_BRIDGE)

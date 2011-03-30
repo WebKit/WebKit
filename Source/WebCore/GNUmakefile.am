@@ -948,6 +948,8 @@ webcore_sources += \
 	Source/WebCore/bridge/IdentifierRep.h \
 	Source/WebCore/bridge/jni/JNIUtility.h \
 	Source/WebCore/bridge/jni/JavaMethod.h \
+	Source/WebCore/bridge/jni/JavaMethodJobject.cpp \
+	Source/WebCore/bridge/jni/JavaMethodJobject.h \
 	Source/WebCore/bridge/jni/JavaString.h \
 	Source/WebCore/bridge/jni/JavaType.h \
 	Source/WebCore/bridge/jni/jni_jsobject.h \

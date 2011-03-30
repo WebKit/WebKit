@@ -1,3 +1,48 @@
+2011-03-30  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        JavaMethod should not expose JavaString in its API
+        https://bugs.webkit.org/show_bug.cgi?id=55765
+
+        - Factors out a JavaMethod interface which does not use JNI types.
+          This will allow the Java bridge to be used with objects that
+          don't use JNI directly. The existing jobject-backed
+          implementation is moved to a new JavaMethodJobject class which
+          implements the interface.
+        - Use WTF::String in place of JavaString in the API, as JavaString
+          exposes JNI types in its interface.
+        - Remove the method ID as it uses JNI types.
+
+        No new tests, refactoring only.
+
+        * Android.jscbindings.mk:
+        * Android.v8bindings.mk:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/jni/JavaMethod.h:
+        * bridge/jni/JavaMethodJobject.cpp:
+        (JavaMethodJobject::JavaMethodJobject):
+        (JavaMethodJobject::~JavaMethodJobject):
+        (appendClassName):
+        (JavaMethodJobject::signature):
+        * bridge/jni/JavaMethodJobject.h: Copied from Source/WebCore/bridge/jni/JavaMethod.h.
+        (JSC::Bindings::JavaMethodJobject::name):
+        (JSC::Bindings::JavaMethodJobject::returnTypeClassName):
+        (JSC::Bindings::JavaMethodJobject::parameterAt):
+        (JSC::Bindings::JavaMethodJobject::returnType):
+        (JSC::Bindings::JavaMethodJobject::isStatic):
+        (JSC::Bindings::JavaMethodJobject::numParameters):
+        * bridge/jni/jsc/JavaClassJSC.cpp:
+        (JavaClass::JavaClass):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::invokeMethod):
+        * bridge/jni/v8/JavaClassV8.cpp:
+        (JavaClass::JavaClass):
+        * bridge/jni/v8/JavaInstanceV8.cpp:
+        (JavaInstance::invokeMethod):
+
 2011-03-30  Evan Martin  <evan@chromium.org>
 
         Reviewed by Ryosuke Niwa.
