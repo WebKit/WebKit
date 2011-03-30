@@ -1,3 +1,20 @@
+2011-03-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=57408 
+        webkit-min-device-pixel-ratio media query doesn't work post-SnowLeopard 
+        -and corresponding-
+        <rdar://problem/8665411>
+
+        * Misc/WebNSControlExtras.m:
+        (-[NSControl sizeToFitAndAdjustWindowHeight]):
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::scaleFactor):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView viewDidMoveToWindow]):
+        (-[WebHTMLView attachRootLayer:]):
+
 2011-03-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

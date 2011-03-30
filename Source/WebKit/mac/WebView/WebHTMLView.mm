@@ -3057,7 +3057,12 @@ WEBCORE_COMMAND(yankAndSelect)
         // We may have created the layer hosting view while outside the window. Update the scale factor
         // now that we have a window to get it from.
         if (_private->layerHostingView) {
-            CGFloat scaleFactor = [[self window] userSpaceScaleFactor];
+            CGFloat scaleFactor;
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+            scaleFactor = [[self window] backingScaleFactor];
+#else
+            scaleFactor = [[self window] userSpaceScaleFactor];
+#endif
             [[_private->layerHostingView layer] setTransform:CATransform3DMakeScale(scaleFactor, scaleFactor, 1)];
         }
 #endif
@@ -5608,7 +5613,20 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 #if !defined(BUILDING_ON_LEOPARD)
     // If we aren't in the window yet, we'll use the screen's scale factor now, and reset the scale 
     // via -viewDidMoveToWindow.
-    CGFloat scaleFactor = [self window] ? [[self window] userSpaceScaleFactor] : [[NSScreen mainScreen] userSpaceScaleFactor];
+    NSWindow *window = [self window];
+    CGFloat scaleFactor;
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (window)
+        scaleFactor = [window backingScaleFactor];
+    else
+        scaleFactor = [[NSScreen mainScreen] backingScaleFactor];
+#else
+    if (window)
+        scaleFactor = [window userSpaceScaleFactor];
+    else
+        scaleFactor = [[NSScreen mainScreen] userSpaceScaleFactor];
+#endif
+
     [viewLayer setTransform:CATransform3DMakeScale(scaleFactor, scaleFactor, 1)];
 #endif
 

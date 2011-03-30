@@ -359,6 +359,8 @@ public:
 
     void runModal();
 
+    float userSpaceScaleFactor() const { return m_userSpaceScaleFactor; }
+
     void setMemoryCacheMessagesEnabled(bool);
 
     void forceRepaintWithoutCallback();
@@ -587,6 +589,8 @@ private:
 
     bool m_canRunModal;
     bool m_isRunningModal;
+
+    float m_userSpaceScaleFactor;
 
     bool m_cachedMainFrameIsPinnedToLeftSide;
     bool m_cachedMainFrameIsPinnedToRightSide;

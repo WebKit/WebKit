@@ -95,6 +95,8 @@ public:
 
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
 
+    virtual float userSpaceScaleFactor() const { return 1; }
+
     void paint(QPainter* painter, QRect);
 
     void keyPressEvent(QKeyEvent*);

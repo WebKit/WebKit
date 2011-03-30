@@ -44,7 +44,15 @@
 
     NSWindow *window = [self window];
     NSRect windowFrame = [window frame];
-    windowFrame.size.height += heightDelta * [window userSpaceScaleFactor];
+
+    CGFloat userSpaceScaleFactor;
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    userSpaceScaleFactor = [window backingScaleFactor];
+#else
+    userSpaceScaleFactor = [window userSpaceScaleFactor];
+#endif
+
+    windowFrame.size.height += heightDelta * userSpaceScaleFactor;
     [window setFrame:windowFrame display:NO];
 }
 

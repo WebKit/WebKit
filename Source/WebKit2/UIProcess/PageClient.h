@@ -145,6 +145,8 @@ public:
     virtual void setCustomRepresentationZoomFactor(double) = 0;
 
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects) = 0;
+
+    virtual float userSpaceScaleFactor() const = 0;
 };
 
 } // namespace WebKit

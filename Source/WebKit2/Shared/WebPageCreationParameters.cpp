@@ -51,6 +51,7 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(highestUsedBackForwardItemID);
     encoder->encode(canRunBeforeUnloadConfirmPanel);
     encoder->encode(canRunModal);
+    encoder->encode(userSpaceScaleFactor);
 
 #if PLATFORM(MAC)
     encoder->encode(isSmartInsertDeleteEnabled);
@@ -98,6 +99,8 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPag
     if (!decoder->decode(parameters.canRunBeforeUnloadConfirmPanel))
         return false;
     if (!decoder->decode(parameters.canRunModal))
+        return false;
+    if (!decoder->decode(parameters.userSpaceScaleFactor))
         return false;
 
 #if PLATFORM(MAC)

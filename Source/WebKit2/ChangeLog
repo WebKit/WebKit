@@ -1,3 +1,35 @@
+2011-03-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=57408 
+        webkit-min-device-pixel-ratio media query doesn't work post-SnowLeopard 
+        -and corresponding-
+        <rdar://problem/8665411>
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::userSpaceScaleFactor):
+        * UIProcess/API/qt/qwkpage_p.h:
+        (QWKPagePrivate::userSpaceScaleFactor):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/gtk/WebView.h:
+        (WebKit::WebView::userSpaceScaleFactor):
+        * UIProcess/win/WebView.h:
+        (WebKit::WebView::userSpaceScaleFactor):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::scaleFactor):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::userSpaceScaleFactor):
+
 2011-03-29  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed WinCairo build fix.

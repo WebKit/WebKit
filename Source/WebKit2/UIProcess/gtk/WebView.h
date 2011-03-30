@@ -102,6 +102,7 @@ private:
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut);
     virtual void didChangeScrollbarsForMainFrame() const;
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
+    virtual float userSpaceScaleFactor() const { return 1; }
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void pageDidEnterAcceleratedCompositing();
