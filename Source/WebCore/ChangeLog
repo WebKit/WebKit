@@ -1,3 +1,58 @@
+2011-03-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION (r68976): Incorrect bidi rendering in SVG text
+        https://bugs.webkit.org/show_bug.cgi?id=53980
+
+        Deconvolute SVGTextLayoutEngine code, which was confusing due to the simultaneous processing of the rendered text
+        in visual and logical order. Added several helper methods to make the code more readable.
+
+        Fix Unicode directional formatting characters support, now works as expected.
+
+        Test: svg/text/bidi-embedded-direction.svg
+
+        * editing/visible_units.cpp: Refactor getLeafBoxesInLogicalOrder(), move to InlineFlowBox.
+        (WebCore::getLogicalStartBoxAndNode): Use new collectLeafBoxesInLogicalOrder() method in InlineFlowBox.
+        (WebCore::getLogicalEndBoxAndNode): Ditto.
+        * rendering/InlineFlowBox.cpp: Add new helper function, that returns a list of all leaf boxes in logical order.
+        (WebCore::InlineFlowBox::collectLeafBoxesInLogicalOrder):
+        * rendering/InlineFlowBox.h:
+        * rendering/svg/RenderSVGText.cpp: Actually trigger reordering the x/y/dx/dy/rotate value lists, if needed.
+        (WebCore::RenderSVGText::RenderSVGText):
+        (WebCore::RenderSVGText::layout):
+        * rendering/svg/RenderSVGText.h: Ditto.
+        (WebCore::RenderSVGText::layoutAttributes):
+        (WebCore::RenderSVGText::needsReordering):
+        * rendering/svg/SVGRootInlineBox.cpp: Use new InlineFlowBox::collectLeafBoxesINLogicalOrder(), with a custom "inline box reverse" implementation,
+                                              which not only reverses the order of InlineBoxes, but also the order of the x/y/dx/dy/rotate value lists, if needed.
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation):
+        (WebCore::SVGRootInlineBox::layoutCharactersInTextBoxes):
+        (WebCore::swapItems):
+        (WebCore::reverseInlineBoxRangeAndValueListsIfNeeded):
+        (WebCore::SVGRootInlineBox::reorderValueLists):
+        * rendering/svg/SVGRootInlineBox.h:
+        * rendering/svg/SVGTextLayoutAttributes.cpp: Store RenderSVGInlineText* pointer, where we belong to.
+        (WebCore::SVGTextLayoutAttributes::SVGTextLayoutAttributes):
+        (WebCore::SVGTextLayoutAttributes::dump):
+        * rendering/svg/SVGTextLayoutAttributes.h:
+        (WebCore::SVGTextLayoutAttributes::context):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp: Pass RenderSVGInlineText* object when creating SVGTextLayoutAttributes.
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextSubtree):
+        (WebCore::SVGTextLayoutAttributesBuilder::propagateLayoutAttributes):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.h:
+        * rendering/svg/SVGTextLayoutEngine.cpp: Rewrite & cleanup the main layout algorithm, to be less confusing.
+        (WebCore::SVGTextLayoutEngine::SVGTextLayoutEngine):
+        (WebCore::SVGTextLayoutEngine::updateRelativePositionAdjustmentsIfNeeded):
+        (WebCore::SVGTextLayoutEngine::recordTextFragment):
+        (WebCore::SVGTextLayoutEngine::currentLogicalCharacterAttributes):
+        (WebCore::SVGTextLayoutEngine::currentLogicalCharacterMetrics):
+        (WebCore::SVGTextLayoutEngine::currentVisualCharacterMetrics):
+        (WebCore::SVGTextLayoutEngine::advanceToNextLogicalCharacter):
+        (WebCore::SVGTextLayoutEngine::advanceToNextVisualCharacter):
+        (WebCore::SVGTextLayoutEngine::layoutTextOnLineOrPath):
+        * rendering/svg/SVGTextLayoutEngine.h:
+
 2011-03-30  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Not reviewed trivial change.

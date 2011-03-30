@@ -1334,6 +1334,59 @@ int InlineFlowBox::computeUnderAnnotationAdjustment(int allowedPosition) const
     return result;
 }
 
+void InlineFlowBox::collectLeafBoxesInLogicalOrder(Vector<InlineBox*>& leafBoxesInLogicalOrder, CustomInlineBoxRangeReverse customReverseImplementation, void* userData) const
+{
+    InlineBox* leaf = firstLeafChild();
+
+    // FIXME: The reordering code is a copy of parts from BidiResolver::createBidiRunsForLine, operating directly on InlineBoxes, instead of BidiRuns.
+    // Investigate on how this code could possibly be shared.
+    unsigned char minLevel = 128;
+    unsigned char maxLevel = 0;
+
+    // First find highest and lowest levels, and initialize leafBoxesInLogicalOrder with the leaf boxes in visual order.
+    for (; leaf; leaf = leaf->nextLeafChild()) {
+        minLevel = min(minLevel, leaf->bidiLevel());
+        maxLevel = max(maxLevel, leaf->bidiLevel());
+        leafBoxesInLogicalOrder.append(leaf);
+    }
+
+    if (renderer()->style()->visuallyOrdered())
+        return;
+
+    // Reverse of reordering of the line (L2 according to Bidi spec):
+    // L2. From the highest level found in the text to the lowest odd level on each line,
+    // reverse any contiguous sequence of characters that are at that level or higher.
+
+    // Reversing the reordering of the line is only done up to the lowest odd level.
+    if (!(minLevel % 2))
+        ++minLevel;
+
+    Vector<InlineBox*>::iterator end = leafBoxesInLogicalOrder.end();
+    while (minLevel <= maxLevel) {
+        Vector<InlineBox*>::iterator it = leafBoxesInLogicalOrder.begin();
+        while (it != end) {
+            while (it != end) {
+                if ((*it)->bidiLevel() >= minLevel)
+                    break;
+                ++it;
+            }
+            Vector<InlineBox*>::iterator first = it;
+            while (it != end) {
+                if ((*it)->bidiLevel() < minLevel)
+                    break;
+                ++it;
+            }
+            Vector<InlineBox*>::iterator last = it;
+            if (customReverseImplementation) {
+                ASSERT(userData);
+                (*customReverseImplementation)(userData, first, last);
+            } else
+                std::reverse(first, last);
+        }                
+        ++minLevel;
+    }
+}
+
 #ifndef NDEBUG
 
 void InlineFlowBox::checkConsistency() const

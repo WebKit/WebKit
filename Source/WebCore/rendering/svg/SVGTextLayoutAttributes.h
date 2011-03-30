@@ -27,14 +27,18 @@
 
 namespace WebCore {
 
+class RenderSVGInlineText;
+
 class SVGTextLayoutAttributes {
 public:
-    SVGTextLayoutAttributes();
+    SVGTextLayoutAttributes(RenderSVGInlineText* context = 0);
 
     void reserveCapacity(unsigned length);
     void dump() const;
 
     static float emptyValue();
+
+    RenderSVGInlineText* context() const { return m_context; }
 
     Vector<float>& xValues() { return m_xValues; }
     const Vector<float>& xValues() const { return m_xValues; }
@@ -55,6 +59,7 @@ public:
     const Vector<SVGTextMetrics>& textMetricsValues() const { return m_textMetricsValues; }
 
 private:
+    RenderSVGInlineText* m_context;
     Vector<float> m_xValues;
     Vector<float> m_yValues;
     Vector<float> m_dxValues;

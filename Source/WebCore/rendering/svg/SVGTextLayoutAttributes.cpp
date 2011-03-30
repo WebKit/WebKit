@@ -27,7 +27,8 @@
 
 namespace WebCore {
 
-SVGTextLayoutAttributes::SVGTextLayoutAttributes()
+SVGTextLayoutAttributes::SVGTextLayoutAttributes(RenderSVGInlineText* context)
+    : m_context(context)
 {
 }
 
@@ -65,6 +66,8 @@ static inline void dumpLayoutVector(const Vector<float>& values)
 
 void SVGTextLayoutAttributes::dump() const
 {
+    fprintf(stderr, "context: %p\n", m_context);
+
     fprintf(stderr, "x values: ");
     dumpLayoutVector(m_xValues);
     fprintf(stderr, "\n");

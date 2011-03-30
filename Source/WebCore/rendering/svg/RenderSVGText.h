@@ -26,6 +26,7 @@
 
 #include "AffineTransform.h"
 #include "RenderSVGBlock.h"
+#include "SVGTextLayoutAttributes.h"
 
 namespace WebCore {
 
@@ -33,7 +34,7 @@ class SVGTextElement;
 
 class RenderSVGText : public RenderSVGBlock {
 public:
-    RenderSVGText(SVGTextElement* node);
+    RenderSVGText(SVGTextElement*);
 
     void setNeedsPositioningValuesUpdate() { m_needsPositioningValuesUpdate = true; }
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
@@ -41,6 +42,9 @@ public:
 
     static RenderSVGText* locateRenderSVGTextAncestor(RenderObject*);
     static const RenderSVGText* locateRenderSVGTextAncestor(const RenderObject*);
+
+    Vector<SVGTextLayoutAttributes>& layoutAttributes() { return m_layoutAttributes; }
+    bool needsReordering() const { return m_needsReordering; }
 
 private:
     virtual const char* renderName() const { return "RenderSVGText"; }
@@ -71,9 +75,11 @@ private:
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();
 
+    bool m_needsReordering : 1;
     bool m_needsPositioningValuesUpdate : 1;
     bool m_needsTransformUpdate : 1;
     AffineTransform m_localTransform;
+    Vector<SVGTextLayoutAttributes> m_layoutAttributes;
 };
 
 inline RenderSVGText* toRenderSVGText(RenderObject* object)

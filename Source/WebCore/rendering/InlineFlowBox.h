@@ -76,6 +76,9 @@ public:
     InlineBox* firstLeafChild() const;
     InlineBox* lastLeafChild() const;
 
+    typedef void (*CustomInlineBoxRangeReverse)(void* userData, Vector<InlineBox*>::iterator first, Vector<InlineBox*>::iterator last);
+    void collectLeafBoxesInLogicalOrder(Vector<InlineBox*>&, CustomInlineBoxRangeReverse customReverseImplementation = 0, void* userData = 0) const;
+
     virtual void setConstructed()
     {
         InlineBox::setConstructed();

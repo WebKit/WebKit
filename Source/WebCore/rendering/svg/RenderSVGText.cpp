@@ -51,6 +51,7 @@ namespace WebCore {
 
 RenderSVGText::RenderSVGText(SVGTextElement* node) 
     : RenderSVGBlock(node)
+    , m_needsReordering(false)
     , m_needsPositioningValuesUpdate(true)
     , m_needsTransformUpdate(true)
 {
@@ -127,6 +128,7 @@ void RenderSVGText::layout()
         // Perform SVG text layout phase one (see SVGTextLayoutAttributesBuilder for details).
         SVGTextLayoutAttributesBuilder layoutAttributesBuilder;
         layoutAttributesBuilder.buildLayoutAttributesForTextSubtree(this);
+        m_needsReordering = true;
         m_needsPositioningValuesUpdate = false;
         updateCachedBoundariesInParents = true;
     }
@@ -149,6 +151,9 @@ void RenderSVGText::layout()
     FloatRect oldBoundaries = objectBoundingBox();
     ASSERT(childrenInline());
     forceLayoutInlineChildren();
+
+    if (m_needsReordering)
+        m_needsReordering = false;
 
     if (!updateCachedBoundariesInParents)
         updateCachedBoundariesInParents = oldBoundaries != objectBoundingBox();

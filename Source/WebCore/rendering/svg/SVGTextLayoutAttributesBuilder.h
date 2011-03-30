@@ -60,7 +60,7 @@ private:
     void buildLayoutScope(LayoutScope&, RenderObject*, unsigned textContentStart, unsigned textContentLength) const;
     void buildLayoutScopes(RenderObject*, unsigned& atCharacter, UChar& lastCharacter);
     void buildOutermostLayoutScope(RenderSVGText*, unsigned textLength);
-    void propagateLayoutAttributes(RenderObject*, unsigned& atCharacter, UChar& lastCharacter) const;
+    void propagateLayoutAttributes(RenderObject*, Vector<SVGTextLayoutAttributes>& allAttributes, unsigned& atCharacter, UChar& lastCharacter) const;
 
     enum LayoutValueType {
         XValueAttribute,

@@ -52,9 +52,11 @@ void SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextSubtree(RenderS
     buildOutermostLayoutScope(textRoot, atCharacter);
 
     // Propagate layout attributes to each RenderSVGInlineText object.
+    Vector<SVGTextLayoutAttributes>& allAttributes = textRoot->layoutAttributes();
+    allAttributes.clear();
     atCharacter = 0;
     lastCharacter = '\0';
-    propagateLayoutAttributes(textRoot, atCharacter, lastCharacter);
+    propagateLayoutAttributes(textRoot, allAttributes, atCharacter, lastCharacter);
 }
 
 static inline void extractFloatValuesFromSVGLengthList(SVGElement* lengthContext, const SVGLengthList& list, Vector<float>& floatValues, unsigned textContentLength)
@@ -186,7 +188,7 @@ void SVGTextLayoutAttributesBuilder::buildOutermostLayoutScope(RenderSVGText* te
     m_scopes.prepend(scope);
 }
 
-void SVGTextLayoutAttributesBuilder::propagateLayoutAttributes(RenderObject* start, unsigned& atCharacter, UChar& lastCharacter) const
+void SVGTextLayoutAttributesBuilder::propagateLayoutAttributes(RenderObject* start, Vector<SVGTextLayoutAttributes>& allAttributes, unsigned& atCharacter, UChar& lastCharacter) const
 {
     for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) { 
         if (child->isSVGInlineText()) {
@@ -195,7 +197,7 @@ void SVGTextLayoutAttributesBuilder::propagateLayoutAttributes(RenderObject* sta
             unsigned textLength = text->textLength();
             bool preserveWhiteSpace = shouldPreserveAllWhiteSpace(text->style());
 
-            SVGTextLayoutAttributes attributes;
+            SVGTextLayoutAttributes attributes(text);
             attributes.reserveCapacity(textLength);
     
             unsigned valueListPosition = atCharacter;
@@ -243,6 +245,7 @@ void SVGTextLayoutAttributesBuilder::propagateLayoutAttributes(RenderObject* sta
 #endif
 
             text->storeLayoutAttributes(attributes);
+            allAttributes.append(attributes);
             atCharacter = valueListPosition;
             continue;
         }
@@ -250,7 +253,7 @@ void SVGTextLayoutAttributesBuilder::propagateLayoutAttributes(RenderObject* sta
         if (!child->isSVGInline())
             continue;
 
-        propagateLayoutAttributes(child, atCharacter, lastCharacter);
+        propagateLayoutAttributes(child, allAttributes, atCharacter, lastCharacter);
     }
 }
 

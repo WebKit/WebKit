@@ -1,3 +1,22 @@
+2011-03-29  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION (r68976): Incorrect bidi rendering in SVG text
+        https://bugs.webkit.org/show_bug.cgi?id=53980
+
+        Add testcase from bug 53980, assuring that BiDi works as well, when using the Unicode directional formatting characters.
+
+        * platform/mac/svg/text/bidi-embedded-direction-expected.checksum: Added.
+        * platform/mac/svg/text/bidi-embedded-direction-expected.png: Added.
+        * platform/mac/svg/text/bidi-embedded-direction-expected.txt: Added.
+        * platform/mac/svg/text/bidi-reorder-value-lists-expected.checksum:
+        * platform/mac/svg/text/bidi-reorder-value-lists-expected.png:
+        * platform/mac/svg/text/bidi-reorder-value-lists-expected.txt:
+        * platform/mac/svg/text/font-size-below-point-five-expected.txt: Update result, as text runs aren't created anymore for empty text.
+        * svg/text/bidi-embedded-direction.svg: Added.
+        * svg/text/bidi-reorder-value-lists.svg: Extend testcase, to cover more reordering cases.
+
 2011-03-30  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, remove duplicate Chromium test expectations.

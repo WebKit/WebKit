@@ -1041,60 +1041,10 @@ VisiblePosition endOfEditableContent(const VisiblePosition& visiblePosition)
     return lastPositionInNode(highestRoot);
 }
 
-static void getLeafBoxesInLogicalOrder(RootInlineBox* rootBox, Vector<InlineBox*>& leafBoxesInLogicalOrder)
-{
-    unsigned char minLevel = 128;
-    unsigned char maxLevel = 0;
-    unsigned count = 0;
-    InlineBox* r = rootBox->firstLeafChild();
-    // First find highest and lowest levels,
-    // and initialize leafBoxesInLogicalOrder with the leaf boxes in visual order.
-    while (r) {
-        if (r->bidiLevel() > maxLevel)
-            maxLevel = r->bidiLevel();
-        if (r->bidiLevel() < minLevel)
-            minLevel = r->bidiLevel();
-        leafBoxesInLogicalOrder.append(r);
-        r = r->nextLeafChild();
-        ++count;
-    }
-
-    if (rootBox->renderer()->style()->visuallyOrdered())
-        return;
-    // Reverse of reordering of the line (L2 according to Bidi spec):
-    // L2. From the highest level found in the text to the lowest odd level on each line,
-    // reverse any contiguous sequence of characters that are at that level or higher.
-
-    // Reversing the reordering of the line is only done up to the lowest odd level.
-    if (!(minLevel % 2))
-        minLevel++;
-    
-    InlineBox** end = leafBoxesInLogicalOrder.end();
-    while (minLevel <= maxLevel) {
-        InlineBox** iter = leafBoxesInLogicalOrder.begin();
-        while (iter != end) {
-            while (iter != end) {
-                if ((*iter)->bidiLevel() >= minLevel)
-                    break;
-                ++iter;
-            }
-            InlineBox** first = iter;
-            while (iter != end) {
-                if ((*iter)->bidiLevel() < minLevel)
-                    break;
-                ++iter;
-            }
-            InlineBox** last = iter;
-            std::reverse(first, last);
-        }                
-        ++minLevel;
-    }
-}
-
 static void getLogicalStartBoxAndNode(RootInlineBox* rootBox, InlineBox*& startBox, Node*& startNode)
 {
     Vector<InlineBox*> leafBoxesInLogicalOrder;
-    getLeafBoxesInLogicalOrder(rootBox, leafBoxesInLogicalOrder);
+    rootBox->collectLeafBoxesInLogicalOrder(leafBoxesInLogicalOrder);
     startBox = 0;
     startNode = 0;
     for (size_t i = 0; i < leafBoxesInLogicalOrder.size(); ++i) {
@@ -1108,7 +1058,7 @@ static void getLogicalStartBoxAndNode(RootInlineBox* rootBox, InlineBox*& startB
 static void getLogicalEndBoxAndNode(RootInlineBox* rootBox, InlineBox*& endBox, Node*& endNode)
 {
     Vector<InlineBox*> leafBoxesInLogicalOrder;
-    getLeafBoxesInLogicalOrder(rootBox, leafBoxesInLogicalOrder);
+    rootBox->collectLeafBoxesInLogicalOrder(leafBoxesInLogicalOrder);
     endBox = 0;
     endNode = 0;
     // Generated content (e.g. list markers and CSS :before and :after

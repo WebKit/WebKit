@@ -1,7 +1,7 @@
 <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
-    <g font-size="16" transform="scale(4,4)">
+    <g font-size="16" transform="scale(3,3)">
         <!-- The order of all characters in both lines should be the same, the spacing is different due the absolute positioning in the second line -->
-        <text x="10 20 30 40 50" y="30">Test &#x5d0;&#x5d1;&#x5d2;&#x5d3;&#x5d4;</text>
+        <text y="20" x="10 20 30 40 50">Test &#x5d0;&#x5d1;&#x5d2;&#x5d3;&#x5d4;</text>
 
         <!--
           Quoting SVG 1.1: Whenever the character data within a ‘tspan’ element is re-ordered, the corresponding
@@ -21,6 +21,10 @@
           It's rendered according to the BiDi algorithm as: Test &#x5d4;&#x5d3;&#x5d2;&#x5d1;&#x5d0;
           The Hebrew string is reordered, and the x/y/dx/dy/rotate lists as well to maintain correspondence.
          -->
-        <text x="10 20 30 40 50 88 79 72 64 55" y="60">Test &#x5d0;&#x5d1;&#x5d2;&#x5d3;&#x5d4;</text>
+        <text y="40"><tspan x="10 20 30 40 50 88 79 72 64 55">Test &#x5d0;&#x5d1;&#x5d2;&#x5d3;&#x5d4;</tspan></text>
+
+        <text y="60" x="10 20 30 40 50">Test <tspan x="88 79 72 64 55">&#x5d0;&#x5d1;&#x5d2;&#x5d3;&#x5d4;</tspan></text>
+
+        <text y="80" x="10 20 30 40 50 88 79 72 64 55">Test &#x5d0;&#x5d1;&#x5d2;&#x5d3;&#x5d4;</text>
     </g>
 </svg>
