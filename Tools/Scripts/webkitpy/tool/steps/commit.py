@@ -58,7 +58,7 @@ class Commit(AbstractStep):
 
             try:
                 scm = self._tool.scm()
-                commit_text = scm.commit_with_message(self._commit_message, git_commit=self._options.git_commit, username=username, force_squash=force_squash)
+                commit_text = scm.commit_with_message(self._commit_message, git_commit=self._options.git_commit, username=username, force_squash=force_squash, changed_files=self._changed_files(state))
                 svn_revision = scm.svn_revision_from_commit_text(commit_text)
                 log("Committed r%s: <%s>" % (svn_revision, urls.view_revision_url(svn_revision)))
                 self._state["commit_text"] = commit_text

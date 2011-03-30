@@ -2,6 +2,16 @@
 
         Reviewed by Adam Barth.
 
+        make webkit-patch upload respect -d
+        https://bugs.webkit.org/show_bug.cgi?id=57425
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/tool/steps/commit.py:
+
+2011-03-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Barth.
+
         Make "webkit-patch --dry-run --verbose land" log the SVN command it's going to use
         https://bugs.webkit.org/show_bug.cgi?id=57429
 

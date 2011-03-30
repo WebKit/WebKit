@@ -291,7 +291,7 @@ class SCM:
     def revert_files(self, file_paths):
         self._subclass_must_implement()
 
-    def commit_with_message(self, message, username=None, git_commit=None, force_squash=False):
+    def commit_with_message(self, message, username=None, git_commit=None, force_squash=False, changed_files=None):
         self._subclass_must_implement()
 
     def svn_commit_log(self, svn_revision):
@@ -556,7 +556,7 @@ class SVN(SCM):
         # FIXME: This should probably use cwd=self.checkout_root.
         self.run(['svn', 'revert'] + file_paths)
 
-    def commit_with_message(self, message, username=None, git_commit=None, force_squash=False):
+    def commit_with_message(self, message, username=None, git_commit=None, force_squash=False, changed_files=None):
         # git-commit and force are not used by SVN.
         svn_commit_args = ["svn", "commit"]
 
@@ -566,6 +566,9 @@ class SVN(SCM):
             svn_commit_args.extend(["--username", username])
 
         svn_commit_args.extend(["-m", message])
+
+        if changed_files:
+            svn_commit_args.extend(changed_files)
 
         if self.dryrun:
             _log = logging.getLogger("webkitpy.common.system")
@@ -831,7 +834,7 @@ class Git(SCM):
             if num_local_commits > 1 or (num_local_commits > 0 and not working_directory_is_clean):
                 raise AmbiguousCommitError(num_local_commits, working_directory_is_clean)
 
-    def commit_with_message(self, message, username=None, git_commit=None, force_squash=False):
+    def commit_with_message(self, message, username=None, git_commit=None, force_squash=False, changed_files=None):
         # Username is ignored during Git commits.
         working_directory_is_clean = self.working_directory_is_clean()
 
