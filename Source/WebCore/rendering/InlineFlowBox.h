@@ -159,7 +159,7 @@ public:
     }
 
     // Helper functions used during line construction and placement.
-    void determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject);
+    void determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject, RenderObject* logicallyLastRunRenderer);
     int getFlowSpacingLogicalWidth();
     bool onEndChain(RenderObject* endObject);
     float placeBoxesInInlineDirection(float logicalLeft, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap&);

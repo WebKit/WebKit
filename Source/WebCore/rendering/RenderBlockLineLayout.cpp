@@ -251,7 +251,7 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine, I
     return result;
 }
 
-RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool firstLine, bool lastLine, RenderObject* endObject)
+RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool firstLine, bool lastLine, RenderObject* endObject, RenderObject* logicallyLastRunRenderer)
 {
     ASSERT(firstRun);
 
@@ -310,7 +310,7 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
     // paint borders/margins/padding.  This knowledge will ultimately be used when
     // we determine the horizontal positions and widths of all the inline boxes on
     // the line.
-    lastLineBox()->determineSpacingForFlowBoxes(lastLine, endObject);
+    lastLineBox()->determineSpacingForFlowBoxes(lastLine, endObject, logicallyLastRunRenderer);
 
     // Now mark the line boxes as being constructed.
     lastLineBox()->setConstructed();
@@ -608,6 +608,27 @@ static void setStaticPositions(RenderBlock* block, RenderBox* child)
     child->layer()->setStaticBlockPosition(blockHeight);
 }
 
+static bool reachedEndOfTextRenderer(InlineBidiResolver& resolver)
+{
+    BidiRun* run = resolver.logicallyLastRun();
+    if (!run)
+        return true;
+    unsigned int pos = run->stop();
+    RenderObject* r = run->m_object;
+    if (!r->isText())
+        return false;
+    RenderText* renderText = toRenderText(r);
+    if (pos >= renderText->textLength())
+        return true;
+
+    while (isASCIISpace(renderText->characters()[pos])) {
+        pos++;
+        if (pos >= renderText->textLength())
+            return true;
+    }
+    return false;
+}
+    
 void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogicalTop, int& repaintLogicalBottom)
 {
     bool useRepaintBounds = false;
@@ -836,7 +857,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                 if (resolver.runCount()) {
                     if (hyphenated)
                         resolver.logicallyLastRun()->m_hasHyphen = true;
-                    lineBox = constructLine(resolver.runCount(), resolver.firstRun(), resolver.lastRun(), firstLine, !end.m_obj, end.m_obj && !end.m_pos ? end.m_obj : 0);
+                    bool lastLine = end.m_obj && end.m_obj->isText() ? reachedEndOfTextRenderer(resolver) : !end.m_obj;
+                    lineBox = constructLine(resolver.runCount(), resolver.firstRun(), resolver.lastRun(), firstLine, lastLine, end.m_obj && !end.m_pos ? end.m_obj : 0, resolver.logicallyLastRun()->m_object);
                     if (lineBox) {
                         lineBox->setEndsWithBreak(previousLineBrokeCleanly);
 

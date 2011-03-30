@@ -1,3 +1,32 @@
+2011-03-30  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Left/Right borders/padding/margins are not always added correctly when rendering multiline inline boxes with bidi elements
+        https://bugs.webkit.org/show_bug.cgi?id=9272
+
+
+        Also fixes https://bugs.webkit.org/show_bug.cgi?id=47210 and https://bugs.webkit.org/show_bug.cgi?id=8392.
+
+        Change how we decide if an InlineFlowBox is the last one for its renderer. Use the position of resolver's logicallyLastRun
+        to decide if there is more text in the next line.
+
+        Tests: fast/borders/rtl-border-01.html
+               fast/borders/rtl-border-02.html
+               fast/borders/rtl-border-03.html
+               fast/borders/rtl-border-04.html
+               fast/borders/rtl-border-05.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::isAnsectorAndWithinBlock):
+        (WebCore::InlineFlowBox::determineSpacingForFlowBoxes):
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::constructLine):
+        (WebCore::reachedEndOfTextRenderer):
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2011-03-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Eric Seidel.

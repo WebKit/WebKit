@@ -253,7 +253,18 @@ bool InlineFlowBox::onEndChain(RenderObject* endObject)
     return true;
 }
 
-void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject)
+static bool isAnsectorAndWithinBlock(RenderObject* ancestor, RenderObject* child)
+{
+    RenderObject* object = child;
+    while (object && !object->isRenderBlock()) {
+        if (object == ancestor)
+            return true;
+        object = object->parent();
+    }
+    return false;
+}
+
+void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject, RenderObject* logicallyLastRunRenderer)
 {
     // All boxes start off open.  They will not apply any margins/border/padding on
     // any side.
@@ -273,23 +284,18 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
             else if (!ltr && lineBoxList->lastLineBox() == this)
                 includeRightEdge = true;
         }
-    
-        // In order to determine if the inline ends on this line, we check three things:
-        // (1) If we are the last line and we don't have a continuation(), then we can
-        // close up.
-        // (2) If the last line box for the flow has an object following it on the line (ltr,
-        // reverse for rtl), then the inline has closed.
-        // (3) The line may end on the inline.  If we are the last child (climbing up
-        // the end object's chain), then we just closed as well.
+
         if (!lineBoxList->lastLineBox()->isConstructed()) {
             RenderInline* inlineFlow = toRenderInline(renderer());
+            bool isLastObjectOnLine = (endObject && endObject->isText()) ? !isAnsectorAndWithinBlock(renderer(), logicallyLastRunRenderer->parent()) : onEndChain(logicallyLastRunRenderer);
+
             if (ltr) {
-                if (!nextLineBox() &&
-                    ((lastLine && !inlineFlow->continuation()) || nextOnLineExists() || onEndChain(endObject)))
+                if (!nextLineBox()
+                    && ((lastLine || isLastObjectOnLine) && !inlineFlow->continuation()))
                     includeRightEdge = true;
             } else {
-                if ((!prevLineBox() || prevLineBox()->isConstructed()) &&
-                    ((lastLine && !inlineFlow->continuation()) || prevOnLineExists() || onEndChain(endObject)))
+                if ((!prevLineBox() || prevLineBox()->isConstructed())
+                    && ((lastLine || isLastObjectOnLine) && !inlineFlow->continuation()))
                     includeLeftEdge = true;
             }
         }
@@ -301,7 +307,7 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
     for (InlineBox* currChild = firstChild(); currChild; currChild = currChild->nextOnLine()) {
         if (currChild->isInlineFlowBox()) {
             InlineFlowBox* currFlow = static_cast<InlineFlowBox*>(currChild);
-            currFlow->determineSpacingForFlowBoxes(lastLine, endObject);
+            currFlow->determineSpacingForFlowBoxes(lastLine, endObject, logicallyLastRunRenderer);
         }
     }
 }
