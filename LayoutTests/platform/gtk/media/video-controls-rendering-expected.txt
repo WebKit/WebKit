@@ -1,16 +1,16 @@
-layer at (0,0) size 781x763
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x600
-  RenderBlock {HTML} at (0,0) size 781x600
-    RenderBody {BODY} at (8,8) size 765x584
-      RenderBlock {P} at (0,0) size 765x19
+layer at (0,0) size 784x763
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x600
+  RenderBlock {HTML} at (0,0) size 784x600
+    RenderBody {BODY} at (8,8) size 768x584
+      RenderBlock {P} at (0,0) size 768x19
         RenderText {#text} at (0,0) size 153x19
           text run at (0,0) width 153: "Test controls placement."
-      RenderBlock {DIV} at (0,35) size 765x240
+      RenderBlock {DIV} at (0,35) size 768x240
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,275) size 765x240
+      RenderBlock {DIV} at (0,275) size 768x240
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,515) size 765x0
+      RenderBlock {DIV} at (0,515) size 768x0
 layer at (8,43) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
 layer at (8,283) size 320x240

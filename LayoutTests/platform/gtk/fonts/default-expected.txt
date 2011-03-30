@@ -1,12 +1,12 @@
-layer at (0,0) size 781x5449
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x5449
-  RenderBlock {HTML} at (0,0) size 781x5449
-    RenderBody {BODY} at (8,8) size 765x5425
-      RenderBlock (anonymous) at (0,0) size 765x19
+layer at (0,0) size 784x5449
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x5449
+  RenderBlock {HTML} at (0,0) size 784x5449
+    RenderBody {BODY} at (8,8) size 768x5425
+      RenderBlock (anonymous) at (0,0) size 768x19
         RenderText {#text} at (0,0) size 340x19
           text run at (0,0) width 340: "This tests font choices and metrics for the default font."
-      RenderBlock {P} at (0,35) size 765x1786
+      RenderBlock {P} at (0,35) size 768x1786
         RenderText {#text} at (0,0) size 16x19
           text run at (0,0) width 16: "    "
         RenderBR {BR} at (16,15) size 0x0
@@ -289,7 +289,7 @@ layer at (0,0) size 781x5449
         RenderText {#text} at (0,1767) size 32x19
           text run at (0,1767) width 32: "}}}}"
         RenderBR {BR} at (32,1782) size 0x0
-      RenderBlock {P} at (0,1837) size 765x1786
+      RenderBlock {P} at (0,1837) size 768x1786
         RenderInline {B} at (0,0) size 64x1786
           RenderText {#text} at (0,0) size 16x19
             text run at (0,0) width 16: "    "
@@ -574,7 +574,7 @@ layer at (0,0) size 781x5449
             text run at (0,1767) width 24: "}}}}"
           RenderBR {BR} at (24,1782) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,3639) size 765x1786
+      RenderBlock {P} at (0,3639) size 768x1786
         RenderInline {I} at (0,0) size 60x1786
           RenderText {#text} at (0,0) size 16x19
             text run at (0,0) width 16: "    "

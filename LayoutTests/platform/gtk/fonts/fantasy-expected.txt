@@ -1,12 +1,12 @@
-layer at (0,0) size 781x5468
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x5468
-  RenderBlock {HTML} at (0,0) size 781x5468
-    RenderBody {BODY} at (8,8) size 765x5444
-      RenderBlock (anonymous) at (0,0) size 765x19
+layer at (0,0) size 784x5468
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x5468
+  RenderBlock {HTML} at (0,0) size 784x5468
+    RenderBody {BODY} at (8,8) size 768x5444
+      RenderBlock (anonymous) at (0,0) size 768x19
         RenderText {#text} at (0,0) size 342x19
           text run at (0,0) width 342: "This tests font choices and metrics for the fantasy font."
-      RenderBlock {P} at (0,35) size 765x1805
+      RenderBlock {P} at (0,35) size 768x1805
         RenderInline {FONT} at (0,0) size 60x1805
           RenderText {#text} at (0,0) size 45x19
             text run at (0,0) width 45: "fantasy"
@@ -293,7 +293,7 @@ layer at (0,0) size 781x5468
           RenderText {#text} at (0,1786) size 32x19
             text run at (0,1786) width 32: "}}}}"
           RenderBR {BR} at (32,1801) size 0x0
-      RenderBlock {P} at (0,1856) size 765x1786
+      RenderBlock {P} at (0,1856) size 768x1786
         RenderInline {FONT} at (0,0) size 64x1786
           RenderText {#text} at (0,0) size 0x0
           RenderInline {B} at (0,0) size 64x1786
@@ -580,7 +580,7 @@ layer at (0,0) size 781x5468
               text run at (0,1767) width 24: "}}}}"
             RenderBR {BR} at (24,1782) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,3658) size 765x1786
+      RenderBlock {P} at (0,3658) size 768x1786
         RenderInline {FONT} at (0,0) size 60x1786
           RenderText {#text} at (0,0) size 0x0
           RenderInline {I} at (0,0) size 60x1786

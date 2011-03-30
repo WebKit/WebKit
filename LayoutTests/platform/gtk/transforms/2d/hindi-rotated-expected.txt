@@ -1,9 +1,9 @@
-layer at (0,0) size 781x678
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x636
-  RenderBlock {HTML} at (0,0) size 781x636
-    RenderBody {BODY} at (8,8) size 765x612
-      RenderBlock {P} at (0,0) size 765x19
+layer at (0,0) size 784x678
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x636
+  RenderBlock {HTML} at (0,0) size 784x636
+    RenderBody {BODY} at (8,8) size 768x612
+      RenderBlock {P} at (0,0) size 768x19
         RenderText {#text} at (0,0) size 141x19
           text run at (0,0) width 141: "This is to test a fix for "
         RenderInline {A} at (0,0) size 68x19 [color=#0000EE]
@@ -11,7 +11,7 @@ layer at (0,0) size 781x636
             text run at (141,0) width 68: "bug 26660"
         RenderText {#text} at (209,0) size 4x19
           text run at (209,0) width 4: "."
-      RenderBlock {P} at (0,628) size 765x0
+      RenderBlock {P} at (0,628) size 768x0
 layer at (8,102) size 252x59
   RenderBlock {DIV} at (0,94) size 252x59 [border: (1px solid #008000)]
     RenderText {#text} at (1,1) size 250x57

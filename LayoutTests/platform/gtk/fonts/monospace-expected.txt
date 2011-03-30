@@ -1,12 +1,12 @@
-layer at (0,0) size 781x4748
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x4748
-  RenderBlock {HTML} at (0,0) size 781x4748
-    RenderBody {BODY} at (8,8) size 765x4724
-      RenderBlock (anonymous) at (0,0) size 765x19
+layer at (0,0) size 784x4748
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x4748
+  RenderBlock {HTML} at (0,0) size 784x4748
+    RenderBody {BODY} at (8,8) size 768x4724
+      RenderBlock (anonymous) at (0,0) size 768x19
         RenderText {#text} at (0,0) size 351x19
           text run at (0,0) width 351: "This tests font choices and metrics for monospace fonts."
-      RenderBlock {P} at (0,35) size 765x190
+      RenderBlock {P} at (0,35) size 768x190
         RenderInline {FONT} at (0,0) size 750x190
           RenderText {#text} at (0,0) size 60x19
             text run at (0,0) width 60: "Monaco"
@@ -30,7 +30,7 @@ layer at (0,0) size 781x4748
               text run at (0,171) width 370: "l m n o p q r s t u v w x y z { | } >"
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,241) size 765x190
+      RenderBlock {P} at (0,241) size 768x190
         RenderInline {FONT} at (0,0) size 750x190
           RenderText {#text} at (0,0) size 70x19
             text run at (0,0) width 70: "Courier"
@@ -54,7 +54,7 @@ layer at (0,0) size 781x4748
               text run at (0,171) width 370: "l m n o p q r s t u v w x y z { | } >"
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,447) size 765x1425
+      RenderBlock {P} at (0,447) size 768x1425
         RenderInline {FONT} at (0,0) size 72x1425
           RenderText {#text} at (0,0) size 72x15
             text run at (0,0) width 72: "monospace"
@@ -341,7 +341,7 @@ layer at (0,0) size 781x4748
           RenderText {#text} at (0,1410) size 32x15
             text run at (0,1410) width 32: "}}}}"
           RenderBR {BR} at (32,1421) size 0x0
-      RenderBlock {P} at (0,1888) size 765x1410
+      RenderBlock {P} at (0,1888) size 768x1410
         RenderInline {FONT} at (0,0) size 32x1410
           RenderText {#text} at (0,0) size 0x0
           RenderInline {B} at (0,0) size 32x1410
@@ -628,7 +628,7 @@ layer at (0,0) size 781x4748
               text run at (0,1395) width 32: "}}}}"
             RenderBR {BR} at (32,1406) size 0x0
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,3314) size 765x1410
+      RenderBlock {P} at (0,3314) size 768x1410
         RenderInline {FONT} at (0,0) size 32x1410
           RenderText {#text} at (0,0) size 0x0
           RenderInline {I} at (0,0) size 32x1410
