@@ -857,11 +857,8 @@ void EditorClientImpl::checkSpellingOfString(const UChar* text, int length,
     int spellLength = 0;
 
     // Check to see if the provided text is spelled correctly.
-    // FIXME(jam): remove once chrome is updated.
     if (isContinuousSpellCheckingEnabled() && m_webView->spellCheckClient())
         m_webView->spellCheckClient()->spellCheck(WebString(text, length), spellLocation, spellLength);
-    if (isContinuousSpellCheckingEnabled() && m_webView->client())
-        m_webView->client()->spellCheck(WebString(text, length), spellLocation, spellLength);
     else {
         spellLocation = 0;
         spellLength = 0;
@@ -877,11 +874,8 @@ void EditorClientImpl::checkSpellingOfString(const UChar* text, int length,
 
 void EditorClientImpl::requestCheckingOfString(SpellChecker* sender, int identifier, const String& text)
 {
-    // FIXME(jam): remove once chrome is updated.
     if (m_webView->spellCheckClient())
         m_webView->spellCheckClient()->requestCheckingOfText(text, new WebTextCheckingCompletionImpl(identifier, sender));
-    else
-        m_webView->client()->requestCheckingOfText(text, new WebTextCheckingCompletionImpl(identifier, sender));
 }
 
 String EditorClientImpl::getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord)
@@ -896,10 +890,9 @@ String EditorClientImpl::getAutoCorrectSuggestionForMisspelledWord(const String&
             return String();
     }
 
-    // FIXME(jam): remove once chrome is updated.
     if (m_webView->spellCheckClient())
         return m_webView->spellCheckClient()->autoCorrectWord(WebString(misspelledWord));
-    return m_webView->client()->autoCorrectWord(WebString(misspelledWord));
+    return String();
 }
 
 void EditorClientImpl::checkGrammarOfString(const UChar*, int length,
@@ -922,29 +915,20 @@ void EditorClientImpl::updateSpellingUIWithGrammarString(const String&,
 
 void EditorClientImpl::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
 {
-    // FIXME(jam): remove once chrome is updated.
     if (m_webView->spellCheckClient())
         m_webView->spellCheckClient()->updateSpellingUIWithMisspelledWord(WebString(misspelledWord));
-    else if (m_webView->client())
-        m_webView->client()->updateSpellingUIWithMisspelledWord(WebString(misspelledWord));
 }
 
 void EditorClientImpl::showSpellingUI(bool show)
 {
-    // FIXME(jam): remove once chrome is updated.
     if (m_webView->spellCheckClient())
         m_webView->spellCheckClient()->showSpellingUI(show);
-    else if (m_webView->client())
-        m_webView->client()->showSpellingUI(show);
 }
 
 bool EditorClientImpl::spellingUIIsShowing()
 {
-    // FIXME(jam): remove once chrome is updated.
     if (m_webView->spellCheckClient())
         return m_webView->spellCheckClient()->isShowingSpellingUI();
-    if (m_webView->client())
-        return m_webView->client()->isShowingSpellingUI();
     return false;
 }
 

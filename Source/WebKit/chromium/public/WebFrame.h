@@ -73,9 +73,6 @@ struct WebSize;
 struct WebURLLoaderOptions;
 template <typename T> class WebVector;
 
-// FIXME(jam): take this out once Chromium has this
-#define WEBFRAME_PRINTBEGIN_TAKES_NODE
-
 class WebFrame {
 public:
     // Returns the number of live WebFrame objects, used for leak checking.

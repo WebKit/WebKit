@@ -64,7 +64,6 @@ class WebRange;
 class WebSpeechInputController;
 class WebSpeechInputListener;
 class WebStorageNamespace;
-class WebTextCheckingCompletion;
 class WebURL;
 class WebURLRequest;
 class WebView;
@@ -168,33 +167,6 @@ public:
     // Returns true if the keyboard event was handled by the embedder,
     // indicating that the default action should be suppressed.
     virtual bool handleCurrentKeyboardEvent() { return false; }
-
-
-    // Spellchecker --------------------------------------------------------
-    // FIXME(jam): remove once chromium is updated to use WebSpellCheckClient
-
-    // The client should perform spell-checking on the given text.  If the
-    // text contains a misspelled word, then upon return misspelledOffset
-    // will point to the start of the misspelled word, and misspelledLength
-    // will indicates its length.  Otherwise, if there was not a spelling
-    // error, then upon return misspelledLength is 0.
-    virtual void spellCheck(
-        const WebString& text, int& misspelledOffset, int& misspelledLength) { }
-    // Requests asynchronous spelling and grammar checking, whose result should be
-    // returned by passed completion object.
-    virtual void requestCheckingOfText(const WebString&, WebTextCheckingCompletion*) { }
-    // Computes an auto-corrected replacement for a misspelled word.  If no
-    // replacement is found, then an empty string is returned.
-    virtual WebString autoCorrectWord(const WebString& misspelledWord) { return WebString(); }
-
-    // Show or hide the spelling UI.
-    virtual void showSpellingUI(bool show) { }
-
-    // Returns true if the spelling UI is showing.
-    virtual bool isShowingSpellingUI() { return false; }
-
-    // Update the spelling UI with the given word.
-    virtual void updateSpellingUIWithMisspelledWord(const WebString& word) { }
 
 
     // Dialogs -------------------------------------------------------------

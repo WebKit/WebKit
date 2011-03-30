@@ -212,13 +212,13 @@ static bool shouldUseExternalPopupMenus = false;
 
 // WebView ----------------------------------------------------------------
 
-WebView* WebView::create(WebViewClient* client, WebDevToolsAgentClient* devToolsClient, WebAutoFillClient* autoFillClient)
+WebView* WebView::create(WebViewClient* client)
 {
     // Keep runtime flag for device motion turned off until it's implemented.
     WebRuntimeFeatures::enableDeviceMotion(false);
 
     // Pass the WebViewImpl's self-reference to the caller.
-    return adoptRef(new WebViewImpl(client, devToolsClient, autoFillClient)).leakRef();
+    return adoptRef(new WebViewImpl(client)).leakRef();
 }
 
 void WebView::setUseExternalPopupMenus(bool useExternalPopupMenus)
@@ -288,9 +288,9 @@ void WebViewImpl::setSpellCheckClient(WebSpellCheckClient* spellCheckClient)
     m_spellCheckClient = spellCheckClient;
 }
 
-WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devToolsClient, WebAutoFillClient* autoFillClient)
+WebViewImpl::WebViewImpl(WebViewClient* client)
     : m_client(client)
-    , m_autoFillClient(autoFillClient)
+    , m_autoFillClient(0)
     , m_spellCheckClient(0)
     , m_chromeClientImpl(this)
     , m_contextMenuClientImpl(this)
@@ -338,8 +338,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
 
     // set to impossible point so we always get the first mouse pos
     m_lastMousePosition = WebPoint(-1, -1);
-
-    setDevToolsAgentClient(devToolsClient);
 
     Page::PageClients pageClients;
     pageClients.chromeClient = &m_chromeClientImpl;

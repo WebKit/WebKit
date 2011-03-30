@@ -579,7 +579,8 @@ WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url)
 WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url, DRTDevToolsAgent* devToolsAgent)
 {
     WebViewHost* host = new WebViewHost(this);
-    WebView* view = WebView::create(host, devToolsAgent, 0);
+    WebView* view = WebView::create(host);
+    view->setDevToolsAgentClient(devToolsAgent);
     host->setWebWidget(view);
     m_prefs.applyTo(view);
     view->initializeMainFrame(host);

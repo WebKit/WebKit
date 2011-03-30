@@ -1,3 +1,34 @@
+2011-03-29  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium]: Remove the code that called WebViewClient for spelling now that chromium is updated
+        https://bugs.webkit.org/show_bug.cgi?id=57396
+
+        * DEPS:
+        * public/WebFrame.h:
+        * public/WebView.h:
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::handleCurrentKeyboardEvent):
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::checkSpellingOfString):
+        (WebKit::EditorClientImpl::requestCheckingOfString):
+        (WebKit::EditorClientImpl::getAutoCorrectSuggestionForMisspelledWord):
+        (WebKit::EditorClientImpl::updateSpellingUIWithMisspelledWord):
+        (WebKit::EditorClientImpl::showSpellingUI):
+        (WebKit::EditorClientImpl::spellingUIIsShowing):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebView::create):
+        * src/WebViewImpl.h:
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::initializeLoader):
+        * tests/PopupMenuTest.cpp:
+        (WebKit::SelectPopupMenuTest::SetUp):
+        * tests/WebFrameTest.cpp:
+        (WebKit::TEST_F):
+        * tests/WebPageSerializerTest.cpp:
+        (WebKit::WebPageSerializerTest::SetUp):
+
 2011-03-30  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

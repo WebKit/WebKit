@@ -37,6 +37,7 @@
 #include "WebAccessibilityNotification.h"
 #include "WebCursorInfo.h"
 #include "WebFrameClient.h"
+#include "WebSpellCheckClient.h"
 #include "WebViewClient.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -64,11 +65,11 @@ namespace skia {
 class PlatformCanvas;
 }
 
-class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient, public NavigationHost {
+class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewClient, public WebKit::WebFrameClient, public NavigationHost {
  public:
     WebViewHost(TestShell* shell);
     ~WebViewHost();
-    void setWebWidget(WebKit::WebWidget* widget) { m_webWidget = widget; }
+    void setWebWidget(WebKit::WebWidget*);
     WebKit::WebView* webView() const;
     WebKit::WebWidget* webWidget() const;
     void reset();
@@ -104,6 +105,11 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);
 
+    // WebKit::WebSpellCheckClient
+    virtual void spellCheck(const WebKit::WebString&, int& offset, int& length);
+    virtual void requestCheckingOfText(const WebKit::WebString&, WebKit::WebTextCheckingCompletion*);
+    virtual WebKit::WebString autoCorrectWord(const WebKit::WebString&);
+
     // WebKit::WebViewClient
     virtual WebKit::WebView* createView(WebKit::WebFrame*, const WebKit::WebURLRequest&, const WebKit::WebWindowFeatures&, const WebKit::WebString&);
     virtual WebKit::WebWidget* createPopupMenu(WebKit::WebPopupType);
@@ -126,9 +132,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void didChangeContents();
     virtual void didEndEditing();
     virtual bool handleCurrentKeyboardEvent();
-    virtual void spellCheck(const WebKit::WebString&, int& offset, int& length);
-    virtual void requestCheckingOfText(const WebKit::WebString&, WebKit::WebTextCheckingCompletion*);
-    virtual WebKit::WebString autoCorrectWord(const WebKit::WebString&);
     virtual void runModalAlertDialog(WebKit::WebFrame*, const WebKit::WebString&);
     virtual bool runModalConfirmDialog(WebKit::WebFrame*, const WebKit::WebString&);
     virtual bool runModalPromptDialog(WebKit::WebFrame*, const WebKit::WebString& message, const WebKit::WebString& defaultValue, WebKit::WebString* actualValue);

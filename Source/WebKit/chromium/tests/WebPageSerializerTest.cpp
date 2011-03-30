@@ -63,7 +63,7 @@ protected:
     virtual void SetUp()
     {
         // Create and initialize the WebView.
-        m_webView = WebView::create(0, 0, 0);
+        m_webView = WebView::create(0);
         m_webView->initializeMainFrame(&m_webFrameClient);
     }
 

@@ -1156,6 +1156,12 @@ WebViewHost::~WebViewHost()
         webkit_support::QuitMessageLoop();
 }
 
+void WebViewHost::setWebWidget(WebKit::WebWidget* widget)
+{
+    m_webWidget = widget;
+    webView()->setSpellCheckClient(this);
+}
+
 WebView* WebViewHost::webView() const
 {
     ASSERT(m_webWidget);

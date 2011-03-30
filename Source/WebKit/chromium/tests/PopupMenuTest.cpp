@@ -181,7 +181,7 @@ public:
 protected:
     virtual void SetUp()
     {
-        m_webView = static_cast<WebViewImpl*>(WebView::create(&m_webviewClient, 0, 0));
+        m_webView = static_cast<WebViewImpl*>(WebView::create(&m_webviewClient));
         m_webView->initializeMainFrame(&m_webFrameClient);
         m_popupMenu = adoptRef(new PopupMenuChromium(&m_popupMenuClient));
     }

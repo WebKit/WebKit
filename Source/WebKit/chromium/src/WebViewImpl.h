@@ -373,7 +373,7 @@ private:
       DragOver
     };
 
-    WebViewImpl(WebViewClient*, WebDevToolsAgentClient*, WebAutoFillClient*);
+    WebViewImpl(WebViewClient*);
     ~WebViewImpl();
 
     // Returns true if the event was actually processed.

@@ -84,10 +84,7 @@ public:
     // Creates a WebView that is NOT yet initialized.  You will need to
     // call initializeMainFrame to finish the initialization.  It is valid
     // to pass null client pointers.
-    // FIXME(jam): take out default parameters once chromium stops passing them.
-    WEBKIT_API static WebView* create(WebViewClient*,
-                                      WebDevToolsAgentClient* = 0,
-                                      WebAutoFillClient* = 0);
+    WEBKIT_API static WebView* create(WebViewClient*);
 
     // After creating a WebView, you should immediately call this method.
     // You can optionally modify the settings before calling this method.
