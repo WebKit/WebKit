@@ -44,7 +44,6 @@ namespace WebCore {
             return adoptRef(new MouseEvent(type, canBubble, cancelable, view, detail, screenX, screenY, pageX, pageY,
                 ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, clipboard, isSimulated));
         }
-        static PassRefPtr<MouseEvent> createSimulated(const AtomicString& eventType, PassRefPtr<AbstractView>, PassRefPtr<Event> underlyingEvent);
 
         virtual ~MouseEvent();
 

@@ -1,3 +1,9 @@
+2011-03-29  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Remove the extraneous declaration I accidentally added in r82376.
+
+        * dom/MouseEvent.h: Removed createSimulated decl.
+
 2011-03-29  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
