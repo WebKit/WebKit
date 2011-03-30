@@ -90,6 +90,9 @@ void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
         return;
     }
     
+    if (m_webPage->mainFrameHasCustomRepresentation())
+        return;
+
     m_dirtyRegion.unite(dirtyRect);
     scheduleDisplay();
 }
@@ -104,6 +107,9 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOff
         m_layerTreeHost->scrollNonCompositedContents(scrollRect, scrollOffset);
         return;
     }
+
+    if (m_webPage->mainFrameHasCustomRepresentation())
+        return;
 
     if (!m_scrollRect.isEmpty() && scrollRect != m_scrollRect) {
         unsigned scrollArea = scrollRect.width() * scrollRect.height();
@@ -502,8 +508,11 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     ASSERT(!m_webPage->size().isEmpty());
 
     // FIXME: It would be better if we could avoid painting altogether when there is a custom representation.
-    if (m_webPage->mainFrameHasCustomRepresentation())
+    if (m_webPage->mainFrameHasCustomRepresentation()) {
+        // ASSUMPTION: the custom representation will be painting the dirty region for us.
+        m_dirtyRegion = Region();
         return;
+    }
 
     m_webPage->layoutIfNeeded();
 

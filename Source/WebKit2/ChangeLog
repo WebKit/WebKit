@@ -1,3 +1,20 @@
+2011-03-30  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2: WebProcess is using 89%, while viewing a PDF
+        https://bugs.webkit.org/show_bug.cgi?id=57471
+
+        Break a never ending display/update cycle between the UIProcess and the WebProcess
+        by clearing the dirty region when a page has a custom representation (like a PDF).
+        Also, avoid the issue where possible by not setting the dirty region in the same case.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setNeedsDisplay): Bail early if mainFrameHasCustomRepresentation().
+        (WebKit::DrawingAreaImpl::scroll): Ditto.
+        (WebKit::DrawingAreaImpl::display): Both bail early and clear m_dirtyRegion if 
+            mainFrameHasCustomRepresentation().
+
 2011-03-30  Sam Weinig  <sam@webkit.org>
 
         Fix Snow Leopard build.
