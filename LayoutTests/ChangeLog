@@ -1,3 +1,18 @@
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix Chromium Mac Canary.  It's unclear whether removing
+        these files will help, but it's worth a try.
+
+        * platform/chromium-mac-leopard/media/video-transformed-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-hixie-mixed-008-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/listbox-bidi-align-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/listbox-bidi-align-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/drawBidiText-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/drawBidiText-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/media/video-transformed-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/media/video-transformed-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/preserveFormDuringResidualStyle-expected.png: Added.
+
 2011-03-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [DRT] GtkScrolledWindow adds three pixels of padding between the WebView and the scrollbar
