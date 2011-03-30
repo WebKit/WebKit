@@ -1,3 +1,15 @@
+2011-03-30  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Clicking below last line of right-to-left editable text that puts caret in the wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=38087
+
+        Doing the right thing when clicking below the last line box in RTL editable content.
+
+        * editing/selection/click-below-rtl-text-expected.txt: Added.
+        * editing/selection/click-below-rtl-text.html: Added.
+
 2011-03-30  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, update Chromium test expectation for fast/text/emphasis-combined-text.html.

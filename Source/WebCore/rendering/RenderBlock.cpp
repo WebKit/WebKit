@@ -52,6 +52,7 @@
 #include "Settings.h"
 #include "TextRun.h"
 #include "TransformState.h"
+#include "visible_units.h"
 #include <wtf/StdLibExtras.h>
 
 using namespace std;
@@ -4155,7 +4156,9 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const IntPoint& 
     if (lastRootBoxWithChildren) {
         // We hit this case for Mac behavior when the Y coordinate is below the last box.
         ASSERT(moveCaretToBoundary);
-        return VisiblePosition(positionForBox(lastRootBoxWithChildren->lastLeafChild(), false), DOWNSTREAM);
+        InlineBox* logicallyLastBox;
+        if (lastRootBoxWithChildren->getLogicalEndBoxWithNode(logicallyLastBox))
+            return VisiblePosition(positionForBox(logicallyLastBox, false), DOWNSTREAM);
     }
 
     // Can't reach this. We have a root line box, but it has no kids.

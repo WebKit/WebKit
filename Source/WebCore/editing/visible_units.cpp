@@ -1041,37 +1041,6 @@ VisiblePosition endOfEditableContent(const VisiblePosition& visiblePosition)
     return lastPositionInNode(highestRoot);
 }
 
-static void getLogicalStartBoxAndNode(RootInlineBox* rootBox, InlineBox*& startBox, Node*& startNode)
-{
-    Vector<InlineBox*> leafBoxesInLogicalOrder;
-    rootBox->collectLeafBoxesInLogicalOrder(leafBoxesInLogicalOrder);
-    startBox = 0;
-    startNode = 0;
-    for (size_t i = 0; i < leafBoxesInLogicalOrder.size(); ++i) {
-        startBox = leafBoxesInLogicalOrder[i];
-        startNode = startBox->renderer()->node();
-        if (startNode)
-            return; 
-    }
-}
-
-static void getLogicalEndBoxAndNode(RootInlineBox* rootBox, InlineBox*& endBox, Node*& endNode)
-{
-    Vector<InlineBox*> leafBoxesInLogicalOrder;
-    rootBox->collectLeafBoxesInLogicalOrder(leafBoxesInLogicalOrder);
-    endBox = 0;
-    endNode = 0;
-    // Generated content (e.g. list markers and CSS :before and :after
-    // pseudoelements) have no corresponding DOM element, and so cannot be
-    // represented by a VisiblePosition.  Use whatever precedes instead.
-    for (size_t i = leafBoxesInLogicalOrder.size(); i > 0; --i) { 
-        endBox = leafBoxesInLogicalOrder[i - 1];
-        endNode = endBox->renderer()->node();
-        if (endNode)
-            return;
-    }
-}
-
 static VisiblePosition logicalStartPositionForLine(const VisiblePosition& c)
 {
     if (c.isNull())
@@ -1089,8 +1058,7 @@ static VisiblePosition logicalStartPositionForLine(const VisiblePosition& c)
     }
     
     InlineBox* logicalStartBox;
-    Node* logicalStartNode;
-    getLogicalStartBoxAndNode(rootBox, logicalStartBox, logicalStartNode);
+    Node* logicalStartNode = rootBox->getLogicalStartBoxWithNode(logicalStartBox);
 
     if (!logicalStartNode)
         return VisiblePosition();
@@ -1125,8 +1093,8 @@ static VisiblePosition logicalEndPositionForLine(const VisiblePosition& c)
     }
     
     InlineBox* logicalEndBox;
-    Node* logicalEndNode;
-    getLogicalEndBoxAndNode(rootBox, logicalEndBox, logicalEndNode);
+    Node* logicalEndNode = rootBox->getLogicalEndBoxWithNode(logicalEndBox);
+
     if (!logicalEndNode)
         return VisiblePosition();
     

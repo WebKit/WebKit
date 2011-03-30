@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class RootInlineBox;
 class VisiblePosition;
 
 enum EWordSide { RightWordIfOnBoundary = false, LeftWordIfOnBoundary = true };

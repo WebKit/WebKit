@@ -1,3 +1,27 @@
+2011-03-30  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Clicking below last line of right-to-left editable text that puts caret in the wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=38087
+
+        Moving getLogical[Start/End]BoxWithNode to RootInlineBox and using it in positionForPointWithInlineChildren
+        instead of lastLeafChild, which wasn't correct in the RTL case.
+
+        Test: editing/selection/click-below-rtl-text.html
+
+        * editing/visible_units.cpp:
+        (WebCore::logicalStartPositionForLine): Moved to RootInlineBox.
+        (WebCore::logicalEndPositionForLine): Ditto.
+        * editing/visible_units.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPointWithInlineChildren): Useing getLogicalEndBoxWithNode instead
+        of lastLeafChild.
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::getLogicalStartBoxWithNode): Moved and refactored.
+        (WebCore::RootInlineBox::getLogicalEndBoxWithNode): Ditto.
+        * rendering/RootInlineBox.h:
+
 2011-03-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Rollout r82438 and r82436.

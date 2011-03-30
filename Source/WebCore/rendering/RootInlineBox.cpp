@@ -785,4 +785,32 @@ bool RootInlineBox::includesRootLineBoxFontOrLeading() const
     return (lineBoxContain & LineBoxContainBlock) || (lineBoxContain & LineBoxContainInline) || (lineBoxContain & LineBoxContainFont);
 }
 
+Node* RootInlineBox::getLogicalStartBoxWithNode(InlineBox*& startBox)
+{
+    Vector<InlineBox*> leafBoxesInLogicalOrder;
+    collectLeafBoxesInLogicalOrder(leafBoxesInLogicalOrder);
+    for (size_t i = 0; i < leafBoxesInLogicalOrder.size(); ++i) {
+        if (leafBoxesInLogicalOrder[i]->renderer()->node()) {
+            startBox = leafBoxesInLogicalOrder[i];
+            return startBox->renderer()->node();
+        }
+    }
+    startBox = 0;
+    return 0;
+}
+    
+Node* RootInlineBox::getLogicalEndBoxWithNode(InlineBox*& endBox)
+{
+    Vector<InlineBox*> leafBoxesInLogicalOrder;
+    collectLeafBoxesInLogicalOrder(leafBoxesInLogicalOrder);
+    for (size_t i = leafBoxesInLogicalOrder.size(); i > 0; --i) { 
+        if (leafBoxesInLogicalOrder[i - 1]->renderer()->node()) {
+            endBox = leafBoxesInLogicalOrder[i - 1];
+            return endBox->renderer()->node();
+        }
+    }
+    endBox = 0;
+    return 0;
+}
+
 } // namespace WebCore
