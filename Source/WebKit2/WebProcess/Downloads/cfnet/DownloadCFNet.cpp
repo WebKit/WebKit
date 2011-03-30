@@ -208,4 +208,19 @@ void didFailCallback(CFURLDownloadRef, CFErrorRef error, const void* clientInfo)
     downloadFromClientInfo(clientInfo)->didFail(ResourceError(error), dataReference);
 }
 
+void Download::receivedCredential(const AuthenticationChallenge& authenticationChallenge, const Credential& credential)
+{
+    notImplemented();
+}
+
+void Download::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& authenticationChallenge)
+{
+    notImplemented();
+}
+
+void Download::receivedCancellation(const AuthenticationChallenge& authenticationChallenge)
+{
+    notImplemented();
+}
+
 } // namespace WebKit

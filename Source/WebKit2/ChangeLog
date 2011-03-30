@@ -1,5 +1,14 @@
 2011-03-29  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+
+        * WebProcess/Downloads/cfnet/DownloadCFNet.cpp:
+        (WebKit::Download::receivedCredential):
+        (WebKit::Download::receivedRequestToContinueWithoutCredential):
+        (WebKit::Download::receivedCancellation):
+
+2011-03-29  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Downloads: Authentication support
