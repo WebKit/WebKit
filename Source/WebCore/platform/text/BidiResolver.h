@@ -211,6 +211,7 @@ private:
     void checkDirectionInLowerRaiseEmbeddingLevel();
 
     void updateStatusLastFromCurrentDirection(WTF::Unicode::Direction);
+    void reorderRunsFromLevels();
 
     Vector<WTF::Unicode::Direction, 8> m_currentExplicitEmbeddingSequence;
 };
@@ -560,6 +561,43 @@ inline void BidiResolver<Iterator, Run>::updateStatusLastFromCurrentDirection(WT
         // fall through
     default:
         m_status.last = dirCurrent;
+    }
+}
+
+template <class Iterator, class Run>
+inline void BidiResolver<Iterator, Run>::reorderRunsFromLevels()
+{
+    unsigned char levelLow = 128;
+    unsigned char levelHigh = 0;
+    for (Run* run = firstRun(); run; run = run->next()) {
+        levelHigh = std::max(run->level(), levelHigh);
+        levelLow = std::min(run->level(), levelLow);
+    }
+
+    // This implements reordering of the line (L2 according to Bidi spec):
+    // http://unicode.org/reports/tr9/#L2
+    // L2. From the highest level found in the text to the lowest odd level on each line,
+    // reverse any contiguous sequence of characters that are at that level or higher.
+
+    // Reversing is only done up to the lowest odd level.
+    if (!(levelLow % 2))
+        levelLow++;
+
+    unsigned count = runCount() - 1;
+
+    while (levelHigh >= levelLow) {
+        unsigned i = 0;
+        Run* run = firstRun();
+        while (i < count) {
+            for (;i < count && run && run->level() < levelHigh; i++)
+                run = run->next();
+            unsigned start = i;
+            for (;i <= count && run && run->level() >= levelHigh; i++)
+                run = run->next();
+            unsigned end = i - 1;
+            reverseRuns(start, end);
+        }
+        levelHigh--;
     }
 }
 
@@ -943,44 +981,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
     }
 
     m_logicallyLastRun = m_lastRun;
-
-    // reorder line according to run structure...
-    // first find highest and lowest levels
-    unsigned char levelLow = 128;
-    unsigned char levelHigh = 0;
-    for (Run* r = firstRun(); r; r = r->next()) {
-        levelHigh = std::max(r->m_level, levelHigh);
-        levelLow = std::min(r->m_level, levelLow);
-    }
-
-    // implements reordering of the line (L2 according to Bidi spec):
-    // L2. From the highest level found in the text to the lowest odd level on each line,
-    // reverse any contiguous sequence of characters that are at that level or higher.
-
-    // reversing is only done up to the lowest odd level
-    if (!(levelLow % 2))
-        levelLow++;
-
-    unsigned count = runCount() - 1;
-
-    while (levelHigh >= levelLow) {
-        unsigned i = 0;
-        Run* currRun = firstRun();
-        while (i < count) {
-            while (i < count && currRun && currRun->m_level < levelHigh) {
-                i++;
-                currRun = currRun->next();
-            }
-            unsigned start = i;
-            while (i <= count && currRun && currRun->m_level >= levelHigh) {
-                i++;
-                currRun = currRun->next();
-            }
-            unsigned end = i - 1;
-            reverseRuns(start, end);
-        }
-        levelHigh--;
-    }
+    reorderRunsFromLevels();
     endOfLine = Iterator();
 }
 

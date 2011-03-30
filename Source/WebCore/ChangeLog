@@ -1,3 +1,17 @@
+2011-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Split more logic out from createBidiRunsForLine for readability
+        https://bugs.webkit.org/show_bug.cgi?id=57341
+
+        I marked reorderRunsFromLevels inline, but it probably doesn't actually need to (or want to) be.
+        This lops another large hunk off of reorderRunsFromLevels further reducing the size and complexity.
+
+        * platform/text/BidiResolver.h:
+        (WebCore::::reorderRunsFromLevels):
+        (WebCore::::createBidiRunsForLine):
+
 2011-03-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
