@@ -1,19 +1,19 @@
-layer at (0,0) size 808x581
-  RenderView at (0,0) size 800x581
-layer at (0,0) size 800x581
-  RenderBlock {HTML} at (0,0) size 800x581
-    RenderBody {BODY} at (8,8) size 784x565
-      RenderTable {TABLE} at (0,0) size 800x565 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 798x563
-          RenderTableRow {TR} at (0,2) size 798x559
-            RenderTableCell {TD} at (2,2) size 794x559 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 790x555 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 788x553
-                  RenderTableRow {TR} at (0,2) size 788x549
-                    RenderTableCell {TD} at (2,4) size 784x545 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                      RenderPartObject {IFRAME} at (2,2) size 790x541 [border: (5px solid #0000FF)]
+layer at (0,0) size 808x584
+  RenderView at (0,0) size 800x584
+layer at (0,0) size 800x584
+  RenderBlock {HTML} at (0,0) size 800x584
+    RenderBody {BODY} at (8,8) size 784x568
+      RenderTable {TABLE} at (0,0) size 800x568 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 798x566
+          RenderTableRow {TR} at (0,2) size 798x562
+            RenderTableCell {TD} at (2,2) size 794x562 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 790x558 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 788x556
+                  RenderTableRow {TR} at (0,2) size 788x552
+                    RenderTableCell {TD} at (2,4) size 784x548 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                      RenderPartObject {IFRAME} at (2,2) size 790x544 [border: (5px solid #0000FF)]
                         layer at (0,0) size 764x1938
-                          RenderView at (0,0) size 764x531
+                          RenderView at (0,0) size 764x534
                         layer at (0,0) size 764x1938
                           RenderBlock {HTML} at (0,0) size 764x1938
                             RenderBody {BODY} at (0,0) size 764x1938 [bgcolor=#53799F]

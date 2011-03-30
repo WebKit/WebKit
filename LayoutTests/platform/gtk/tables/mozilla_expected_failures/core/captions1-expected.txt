@@ -1,12 +1,12 @@
-layer at (0,0) size 781x1141
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x1141
-  RenderBlock {HTML} at (0,0) size 781x1141
-    RenderBody {BODY} at (8,8) size 765x1125
-      RenderBlock {CENTER} at (0,0) size 765x19
-        RenderText {#text} at (320,0) size 125x19
-          text run at (320,0) width 125: "bottom caption tests"
-      RenderBlock (anonymous) at (0,19) size 765x19
+layer at (0,0) size 784x1141
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1141
+  RenderBlock {HTML} at (0,0) size 784x1141
+    RenderBody {BODY} at (8,8) size 768x1125
+      RenderBlock {CENTER} at (0,0) size 768x19
+        RenderText {#text} at (321,0) size 126x19
+          text run at (321,0) width 126: "bottom caption tests"
+      RenderBlock (anonymous) at (0,19) size 768x19
         RenderText {#text} at (0,0) size 103x19
           text run at (0,0) width 103: "table 1 - original"
       RenderTable {TABLE} at (5,48) size 90x115 [border: (10px solid #008000)]
@@ -29,7 +29,7 @@ layer at (0,0) size 781x1141
             RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock (anonymous) at (0,168) size 765x19
+      RenderBlock (anonymous) at (0,168) size 768x19
         RenderText {#text} at (0,0) size 188x19
           text run at (0,0) width 188: "table 2 - caption gains content"
       RenderTable {TABLE} at (5,197) size 90x134 [border: (10px solid #008000)]
@@ -55,7 +55,7 @@ layer at (0,0) size 781x1141
             RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock (anonymous) at (0,336) size 765x19
+      RenderBlock (anonymous) at (0,336) size 768x19
         RenderText {#text} at (0,0) size 384x19
           text run at (0,0) width 384: "table 3 - caption gains content extending its max element size"
       RenderTable {TABLE} at (5,365) size 148x115 [border: (10px solid #008000)]
@@ -80,7 +80,7 @@ layer at (0,0) size 781x1141
             RenderTableCell {TD} at (65,25) size 61x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock (anonymous) at (0,485) size 765x19
+      RenderBlock (anonymous) at (0,485) size 768x19
         RenderText {#text} at (0,0) size 186x19
           text run at (0,0) width 186: "table 4 - caption loses content"
       RenderTable {TABLE} at (5,514) size 90x95 [border: (10px solid #008000)]
@@ -102,7 +102,7 @@ layer at (0,0) size 781x1141
             RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock (anonymous) at (0,614) size 765x19
+      RenderBlock (anonymous) at (0,614) size 768x19
         RenderText {#text} at (0,0) size 154x19
           text run at (0,0) width 154: "table 5 - table gets wider"
       RenderTable {TABLE} at (5,643) size 136x96 [border: (10px solid #008000)]
@@ -127,7 +127,7 @@ layer at (0,0) size 781x1141
             RenderTableCell {TD} at (82,25) size 32x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock (anonymous) at (0,744) size 765x19
+      RenderBlock (anonymous) at (0,744) size 768x19
         RenderText {#text} at (0,0) size 149x19
           text run at (0,0) width 149: "table 6 - table gets taller"
       RenderTable {TABLE} at (5,773) size 106x121 [border: (10px solid #008000)]
@@ -155,7 +155,7 @@ layer at (0,0) size 781x1141
             RenderTableCell {TD} at (52,25) size 32x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock (anonymous) at (0,899) size 765x19
+      RenderBlock (anonymous) at (0,899) size 768x19
         RenderText {#text} at (0,0) size 139x19
           text run at (0,0) width 139: "table 7 - insert caption"
       RenderTable {TABLE} at (5,928) size 90x95 [border: (10px solid #008000)]
@@ -177,7 +177,7 @@ layer at (0,0) size 781x1141
         RenderBlock {CAPTION} at (10,68) size 60x25 [border: (3px solid #800080)]
           RenderText {#text} at (3,3) size 54x19
             text run at (3,3) width 54: "new cap"
-      RenderBlock (anonymous) at (0,1028) size 765x19
+      RenderBlock (anonymous) at (0,1028) size 768x19
         RenderText {#text} at (0,0) size 152x19
           text run at (0,0) width 152: "table 8 - remove caption"
       RenderTable {TABLE} at (5,1057) size 90x68 [border: (10px solid #008000)]

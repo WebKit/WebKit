@@ -1,31 +1,31 @@
-layer at (0,0) size 781x792
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x792
-  RenderBlock {HTML} at (0,0) size 781x792
-    RenderBody {BODY} at (8,8) size 765x776
-      RenderTable {TABLE} at (0,0) size 765x776 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 763x774
-          RenderTableRow {TR} at (0,0) size 763x21
+layer at (0,0) size 784x773
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x773
+  RenderBlock {HTML} at (0,0) size 784x773
+    RenderBody {BODY} at (8,8) size 768x757
+      RenderTable {TABLE} at (0,0) size 768x757 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 766x755
+          RenderTableRow {TR} at (0,0) size 766x21
             RenderTableCell {TD} at (0,0) size 74x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x19
                 text run at (1,1) width 21: "foo"
-            RenderTableCell {TD} at (74,0) size 689x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (74,0) size 692x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 20x19
                 text run at (1,1) width 20: "bar"
-          RenderTableRow {TR} at (0,21) size 763x753
-            RenderTableCell {TD} at (0,21) size 763x753 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
-              RenderTable {TABLE} at (1,1) size 761x751 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 759x749
-                  RenderTableRow {TR} at (0,2) size 759x745
-                    RenderTableCell {TD} at (2,2) size 755x745 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,21) size 766x734
+            RenderTableCell {TD} at (0,21) size 766x734 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=2]
+              RenderTable {TABLE} at (1,1) size 764x732 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 762x730
+                  RenderTableRow {TR} at (0,2) size 762x726
+                    RenderTableCell {TD} at (2,2) size 758x726 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (2,2) size 705x38
                         text run at (2,2) width 705: "When the Whiten house burned down in Renfrew Ontario, the insurer denied liability, asserting that the Plaintiff"
                         text run at (2,21) width 468: "Daphne Whiten was the cause of the fire herself and had committed arson."
                       RenderBR {BR} at (470,36) size 0x0
                       RenderBR {BR} at (2,40) size 0x19
-                      RenderText {#text} at (2,59) size 725x76
-                        text run at (2,59) width 725: "The insurance company had not only refused to pay, but had received opinions from its adjuster, its expert engineer"
-                        text run at (2,78) width 717: "and an investigative agency that the fire was accidental. Its own adjuster had recommended the claim be paid. The"
+                      RenderText {#text} at (2,59) size 752x76
+                        text run at (2,59) width 752: "The insurance company had not only refused to pay, but had received opinions from its adjuster, its expert engineer and"
+                        text run at (2,78) width 690: "an investigative agency that the fire was accidental. Its own adjuster had recommended the claim be paid. The"
                         text run at (2,97) width 722: "defendant's counsel, as the court found, had pressured experts to provide opinions supporting an arson defence and"
                         text run at (2,116) width 723: "withheld relevant information from the experts and gave them misleading information to buttress the arson defence."
                       RenderBR {BR} at (725,131) size 0x0
@@ -46,10 +46,10 @@ layer at (0,0) size 781x792
                         text run at (2,306) width 140: "damages of $100,000."
                       RenderBR {BR} at (142,321) size 0x0
                       RenderBR {BR} at (2,325) size 0x19
-                      RenderText {#text} at (2,344) size 743x95
-                        text run at (2,344) width 705: "Lawyers became hard pressed to reconcile this decision with a prior case, Hill vs. Church of Scientology. Hill, a"
-                        text run at (2,363) width 719: "Crown Attorney, had sued the Church for libel due to statements made accusing him of breaching a judge's order. "
-                        text run at (721,363) width 19: "He"
+                      RenderText {#text} at (2,344) size 753x95
+                        text run at (2,344) width 753: "Lawyers became hard pressed to reconcile this decision with a prior case, Hill vs. Church of Scientology. Hill, a Crown"
+                        text run at (2,363) width 671: "Attorney, had sued the Church for libel due to statements made accusing him of breaching a judge's order. "
+                        text run at (673,363) width 19: "He"
                         text run at (2,382) width 715: "succeeded. The jury at trial, aside from awarding compensatory damages, also awarded a punitive damage sum of"
                         text run at (2,401) width 743: "$800,000. The decision was appealed without success to the Ontario Court of Appeal and again to the Supreme Court"
                         text run at (2,420) width 514: "of Canada. The award of punitive damages was sustained at both appellate levels."
@@ -61,18 +61,17 @@ layer at (0,0) size 781x792
                         text run at (2,496) width 166: "decision a few years prior."
                       RenderBR {BR} at (168,511) size 0x0
                       RenderBR {BR} at (2,515) size 0x19
-                      RenderText {#text} at (2,534) size 732x76
+                      RenderText {#text} at (2,534) size 752x57
                         text run at (2,534) width 725: "The concept of punitive damages is designed to act as civil penalty imposed on a wrong doer, which has conducted"
                         text run at (2,553) width 732: "itself in a vindictive manner, which offends one's sense of propriety - high handed shocking behaviour. Traditionally"
-                        text run at (2,572) width 690: "the financial abilities of the wrong doer are a factor - the deeper the pockets the more substantial the sum to be"
-                        text run at (2,591) width 58: "awarded."
-                      RenderBR {BR} at (60,606) size 0x0
-                      RenderBR {BR} at (2,610) size 0x19
-                      RenderText {#text} at (2,629) size 745x95
-                        text run at (2,629) width 742: "Canadian courts have been reluctant to embrace the concept - awards such as Hill are rare. It is worthy of note that the"
-                        text run at (2,648) width 696: "dissenting reasons of Justice Laskin in Whiten were much in favour of maintaining the trial award - a lucid and"
-                        text run at (2,667) width 741: "powerful dissent written by a much respected jurist. Much attention will be given to this decision. Oral argument is set"
-                        text run at (2,686) width 745: "for the week of December 11th. A decision will likely be forthcoming in March to June time period. This decision will"
-                        text run at (2,705) width 499: "be no doubt a much quoted decision for many years, regardless of the outcome."
-                      RenderBR {BR} at (501,720) size 0x0
-                      RenderBR {BR} at (2,724) size 0x19
+                        text run at (2,572) width 752: "the financial abilities of the wrong doer are a factor - the deeper the pockets the more substantial the sum to be awarded."
+                      RenderBR {BR} at (754,587) size 0x0
+                      RenderBR {BR} at (2,591) size 0x19
+                      RenderText {#text} at (2,610) size 745x95
+                        text run at (2,610) width 742: "Canadian courts have been reluctant to embrace the concept - awards such as Hill are rare. It is worthy of note that the"
+                        text run at (2,629) width 696: "dissenting reasons of Justice Laskin in Whiten were much in favour of maintaining the trial award - a lucid and"
+                        text run at (2,648) width 741: "powerful dissent written by a much respected jurist. Much attention will be given to this decision. Oral argument is set"
+                        text run at (2,667) width 745: "for the week of December 11th. A decision will likely be forthcoming in March to June time period. This decision will"
+                        text run at (2,686) width 499: "be no doubt a much quoted decision for many years, regardless of the outcome."
+                      RenderBR {BR} at (501,701) size 0x0
+                      RenderBR {BR} at (2,705) size 0x19

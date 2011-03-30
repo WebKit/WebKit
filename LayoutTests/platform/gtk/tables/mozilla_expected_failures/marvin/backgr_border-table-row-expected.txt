@@ -1,56 +1,56 @@
-layer at (0,0) size 781x1449
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x1449
-  RenderBlock {HTML} at (0,0) size 781x1449
-    RenderBody {BODY} at (8,17) size 765x1424 [color=#00FF00] [bgcolor=#333333]
-      RenderBlock {H1} at (0,0) size 765x30
+layer at (0,0) size 784x1449
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1449
+  RenderBlock {HTML} at (0,0) size 784x1449
+    RenderBody {BODY} at (8,17) size 768x1424 [color=#00FF00] [bgcolor=#333333]
+      RenderBlock {H1} at (0,0) size 768x30
         RenderText {#text} at (0,0) size 528x30
           text run at (0,0) width 528: "CSS2 Table Backgrounds Test Suite"
-      RenderBlock {H2} at (0,47) size 765x23
+      RenderBlock {H2} at (0,47) size 768x23
         RenderText {#text} at (0,0) size 372x23
           text run at (0,0) width 372: "Part D: Background with Borders"
-      RenderBlock {H3} at (0,86) size 765x18
+      RenderBlock {H3} at (0,86) size 768x18
         RenderText {#text} at (0,0) size 225x18
           text run at (0,0) width 225: "Background on 'table-row'"
-      RenderBlock {P} at (0,119) size 765x15
+      RenderBlock {P} at (0,119) size 768x15
         RenderText {#text} at (0,0) size 176x15
           text run at (0,0) width 176: "Three rows are styled."
-      RenderBlock {P} at (0,147) size 765x60
+      RenderBlock {P} at (0,147) size 768x60
         RenderText {#text} at (0,0) size 752x60
           text run at (0,0) width 752: "The first row should have three aqua stripes just inside the bottom and right padding edges of"
           text run at (0,15) width 728: "its last cell. The bottom three stripes should continue across the row, appearing along the"
           text run at (0,30) width 728: "bottom of cells A, B, and C. (The bottom aqua stripe will be obscured by the thicker bottom"
           text run at (0,45) width 144: "border in cell B.)"
-      RenderBlock {P} at (0,220) size 765x45
-        RenderText {#text} at (0,0) size 736x45
+      RenderBlock {P} at (0,220) size 768x45
+        RenderText {#text} at (0,0) size 768x45
           text run at (0,0) width 736: "The second row should have three vertical aqua stripes a few pixels to the right of the left"
-          text run at (0,15) width 736: "padding edge. Three horizontal aqua stripes should cut across the first cell and align along"
-          text run at (0,30) width 264: "the bottom border edge of cell G."
-      RenderBlock {P} at (0,278) size 765x30
+          text run at (0,15) width 768: "padding edge. Three horizontal aqua stripes should cut across the first cell and align along the"
+          text run at (0,30) width 232: "bottom border edge of cell G."
+      RenderBlock {P} at (0,278) size 768x30
         RenderText {#text} at (0,0) size 752x30
           text run at (0,0) width 752: "The third row should have three horizontal aqua stripes along the top of the last three cells,"
           text run at (0,15) width 672: "aligning along cell K's top padding edge. The stripes will not continue into cell E."
-      RenderBlock {DL} at (0,321) size 765x90
-        RenderBlock {DT} at (0,0) size 765x15
+      RenderBlock {DL} at (0,321) size 768x90
+        RenderBlock {DT} at (0,0) size 768x15
           RenderText {#text} at (0,0) size 32x15
             text run at (0,0) width 32: "next"
-        RenderBlock {DD} at (40,15) size 725x15
+        RenderBlock {DD} at (40,15) size 728x15
           RenderInline {A} at (0,0) size 424x15 [color=#FFFF00]
             RenderText {#text} at (0,0) size 424x15
               text run at (0,0) width 424: "Background with Borders: Background on 'table-column'"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {DT} at (0,30) size 765x15
+        RenderBlock {DT} at (0,30) size 768x15
           RenderText {#text} at (0,0) size 64x15
             text run at (0,0) width 64: "previous"
-        RenderBlock {DD} at (40,45) size 725x15
+        RenderBlock {DD} at (40,45) size 728x15
           RenderInline {A} at (0,0) size 472x15 [color=#FFFF00]
             RenderText {#text} at (0,0) size 472x15
               text run at (0,0) width 472: "Background with Borders: Background on 'table-column-group'"
           RenderText {#text} at (0,0) size 0x0
-        RenderBlock {DT} at (0,60) size 765x15
+        RenderBlock {DT} at (0,60) size 768x15
           RenderText {#text} at (0,0) size 64x15
             text run at (0,0) width 64: "contents"
-        RenderBlock {DD} at (40,75) size 725x15
+        RenderBlock {DD} at (40,75) size 728x15
           RenderInline {A} at (0,0) size 136x15 [color=#FFFF00]
             RenderText {#text} at (0,0) size 136x15
               text run at (0,0) width 136: "Table of Contents"
@@ -173,10 +173,10 @@ layer at (0,0) size 781x1449
             RenderTableCell {TD} at (469,143) size 116x32 [border: (5px dotted #FFFFFF)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (4,6) size 43x23
                 text run at (4,6) width 43: "TD L"
-      RenderBlock {DIV} at (0,1374) size 765x35
+      RenderBlock {DIV} at (0,1374) size 768x35
         RenderInline {A} at (0,0) size 88x15 [color=#FFFF00]
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {ADDRESS} at (0,1409) size 765x15
+      RenderBlock {ADDRESS} at (0,1409) size 768x15
         RenderText {#text} at (0,0) size 704x15
           text run at (0,0) width 704: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"

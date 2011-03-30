@@ -1,12 +1,12 @@
-layer at (0,0) size 781x6979
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x6979
-  RenderBlock {HTML} at (0,0) size 781x6979
-    RenderBody {BODY} at (8,21) size 765x6942
-      RenderBlock {H1} at (0,0) size 765x37
+layer at (0,0) size 784x6979
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x6979
+  RenderBlock {HTML} at (0,0) size 784x6979
+    RenderBody {BODY} at (8,21) size 768x6942
+      RenderBlock {H1} at (0,0) size 768x37
         RenderText {#text} at (0,0) size 252x36
           text run at (0,0) width 252: "table-layout: fixed"
-      RenderBlock {P} at (0,58) size 765x19
+      RenderBlock {P} at (0,58) size 768x19
         RenderText {#text} at (0,0) size 562x19
           text run at (0,0) width 562: "The following tables should be laid out in the traditional manner because their widths are "
         RenderInline {CODE} at (0,0) size 32x15
@@ -36,27 +36,27 @@ layer at (0,0) size 781x6979
             RenderTableCell {TD} at (74,27) size 34x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-      RenderTable {TABLE} at (0,145) size 765x356
-        RenderTableSection {TBODY} at (0,0) size 765x356
-          RenderTableRow {TR} at (0,2) size 765x23
+      RenderTable {TABLE} at (0,145) size 768x356
+        RenderTableSection {TBODY} at (0,0) size 768x356
+          RenderTableRow {TR} at (0,2) size 768x23
             RenderTableCell {TD} at (2,2) size 34x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
             RenderTableCell {TD} at (38,2) size 34x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (74,2) size 689x23 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (74,2) size 692x23 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-          RenderTableRow {TR} at (0,27) size 765x327
+          RenderTableRow {TR} at (0,27) size 768x327
             RenderTableCell {TD} at (2,179) size 34x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
             RenderTableCell {TD} at (38,179) size 34x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (74,27) size 689x327 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 682x323
+            RenderTableCell {TD} at (74,27) size 692x327 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 686x323
                 text run at (2,2) width 189: "Lots and lots and lots of data. "
                 text run at (191,2) width 189: "Lots and lots and lots of data. "
                 text run at (380,2) width 189: "Lots and lots and lots of data. "
@@ -69,79 +69,78 @@ layer at (0,0) size 781x6979
                 text run at (2,40) width 157: "and lots and lots of data. "
                 text run at (159,40) width 189: "Lots and lots and lots of data. "
                 text run at (348,40) width 189: "Lots and lots and lots of data. "
-                text run at (537,40) width 134: "Lots and lots and lots"
-                text run at (2,59) width 51: "of data. "
-                text run at (53,59) width 189: "Lots and lots and lots of data. "
-                text run at (242,59) width 189: "Lots and lots and lots of data. "
-                text run at (431,59) width 189: "Lots and lots and lots of data. "
-                text run at (620,59) width 55: "Lots and"
-                text run at (2,78) width 130: "lots and lots of data. "
-                text run at (132,78) width 189: "Lots and lots and lots of data. "
-                text run at (321,78) width 189: "Lots and lots and lots of data. "
-                text run at (510,78) width 151: "Lots and lots and lots of"
-                text run at (2,97) width 34: "data. "
-                text run at (36,97) width 189: "Lots and lots and lots of data. "
-                text run at (225,97) width 189: "Lots and lots and lots of data. "
-                text run at (414,97) width 189: "Lots and lots and lots of data. "
-                text run at (603,97) width 81: "Lots and lots"
-                text run at (2,116) width 104: "and lots of data. "
-                text run at (106,116) width 189: "Lots and lots and lots of data. "
-                text run at (295,116) width 189: "Lots and lots and lots of data. "
-                text run at (484,116) width 185: "Lots and lots and lots of data."
-                text run at (2,135) width 189: "Lots and lots and lots of data. "
-                text run at (191,135) width 189: "Lots and lots and lots of data. "
-                text run at (380,135) width 189: "Lots and lots and lots of data. "
-                text run at (569,135) width 108: "Lots and lots and"
-                text run at (2,154) width 77: "lots of data. "
-                text run at (79,154) width 189: "Lots and lots and lots of data. "
-                text run at (268,154) width 189: "Lots and lots and lots of data. "
-                text run at (457,154) width 189: "Lots and lots and lots of data. "
-                text run at (646,154) width 28: "Lots"
-                text run at (2,173) width 157: "and lots and lots of data. "
-                text run at (159,173) width 189: "Lots and lots and lots of data. "
-                text run at (348,173) width 189: "Lots and lots and lots of data. "
-                text run at (537,173) width 134: "Lots and lots and lots"
-                text run at (2,192) width 51: "of data. "
-                text run at (53,192) width 189: "Lots and lots and lots of data. "
-                text run at (242,192) width 189: "Lots and lots and lots of data. "
-                text run at (431,192) width 189: "Lots and lots and lots of data. "
-                text run at (620,192) width 55: "Lots and"
-                text run at (2,211) width 130: "lots and lots of data. "
-                text run at (132,211) width 189: "Lots and lots and lots of data. "
-                text run at (321,211) width 189: "Lots and lots and lots of data. "
-                text run at (510,211) width 151: "Lots and lots and lots of"
-                text run at (2,230) width 34: "data. "
-                text run at (36,230) width 189: "Lots and lots and lots of data. "
-                text run at (225,230) width 189: "Lots and lots and lots of data. "
-                text run at (414,230) width 189: "Lots and lots and lots of data. "
-                text run at (603,230) width 81: "Lots and lots"
-                text run at (2,249) width 104: "and lots of data. "
-                text run at (106,249) width 189: "Lots and lots and lots of data. "
-                text run at (295,249) width 189: "Lots and lots and lots of data. "
-                text run at (484,249) width 185: "Lots and lots and lots of data."
-                text run at (2,268) width 189: "Lots and lots and lots of data. "
-                text run at (191,268) width 189: "Lots and lots and lots of data. "
-                text run at (380,268) width 189: "Lots and lots and lots of data. "
-                text run at (569,268) width 108: "Lots and lots and"
-                text run at (2,287) width 77: "lots of data. "
-                text run at (79,287) width 189: "Lots and lots and lots of data. "
-                text run at (268,287) width 189: "Lots and lots and lots of data. "
-                text run at (457,287) width 189: "Lots and lots and lots of data. "
-                text run at (646,287) width 28: "Lots"
-                text run at (2,306) width 157: "and lots and lots of data. "
-                text run at (159,306) width 189: "Lots and lots and lots of data. "
-                text run at (348,306) width 185: "Lots and lots and lots of data."
-      RenderTable {TABLE} at (0,501) size 765x356
-        RenderTableSection {TBODY} at (0,0) size 765x356
-          RenderTableRow {TR} at (0,2) size 765x327
+                text run at (537,40) width 151: "Lots and lots and lots of"
+                text run at (2,59) width 34: "data. "
+                text run at (36,59) width 189: "Lots and lots and lots of data. "
+                text run at (225,59) width 189: "Lots and lots and lots of data. "
+                text run at (414,59) width 189: "Lots and lots and lots of data. "
+                text run at (603,59) width 81: "Lots and lots"
+                text run at (2,78) width 104: "and lots of data. "
+                text run at (106,78) width 189: "Lots and lots and lots of data. "
+                text run at (295,78) width 189: "Lots and lots and lots of data. "
+                text run at (484,78) width 185: "Lots and lots and lots of data."
+                text run at (2,97) width 189: "Lots and lots and lots of data. "
+                text run at (191,97) width 189: "Lots and lots and lots of data. "
+                text run at (380,97) width 189: "Lots and lots and lots of data. "
+                text run at (569,97) width 108: "Lots and lots and"
+                text run at (2,116) width 77: "lots of data. "
+                text run at (79,116) width 189: "Lots and lots and lots of data. "
+                text run at (268,116) width 189: "Lots and lots and lots of data. "
+                text run at (457,116) width 189: "Lots and lots and lots of data. "
+                text run at (646,116) width 28: "Lots"
+                text run at (2,135) width 157: "and lots and lots of data. "
+                text run at (159,135) width 189: "Lots and lots and lots of data. "
+                text run at (348,135) width 189: "Lots and lots and lots of data. "
+                text run at (537,135) width 151: "Lots and lots and lots of"
+                text run at (2,154) width 34: "data. "
+                text run at (36,154) width 189: "Lots and lots and lots of data. "
+                text run at (225,154) width 189: "Lots and lots and lots of data. "
+                text run at (414,154) width 189: "Lots and lots and lots of data. "
+                text run at (603,154) width 81: "Lots and lots"
+                text run at (2,173) width 104: "and lots of data. "
+                text run at (106,173) width 189: "Lots and lots and lots of data. "
+                text run at (295,173) width 189: "Lots and lots and lots of data. "
+                text run at (484,173) width 185: "Lots and lots and lots of data."
+                text run at (2,192) width 189: "Lots and lots and lots of data. "
+                text run at (191,192) width 189: "Lots and lots and lots of data. "
+                text run at (380,192) width 189: "Lots and lots and lots of data. "
+                text run at (569,192) width 108: "Lots and lots and"
+                text run at (2,211) width 77: "lots of data. "
+                text run at (79,211) width 189: "Lots and lots and lots of data. "
+                text run at (268,211) width 189: "Lots and lots and lots of data. "
+                text run at (457,211) width 189: "Lots and lots and lots of data. "
+                text run at (646,211) width 28: "Lots"
+                text run at (2,230) width 157: "and lots and lots of data. "
+                text run at (159,230) width 189: "Lots and lots and lots of data. "
+                text run at (348,230) width 189: "Lots and lots and lots of data. "
+                text run at (537,230) width 151: "Lots and lots and lots of"
+                text run at (2,249) width 34: "data. "
+                text run at (36,249) width 189: "Lots and lots and lots of data. "
+                text run at (225,249) width 189: "Lots and lots and lots of data. "
+                text run at (414,249) width 189: "Lots and lots and lots of data. "
+                text run at (603,249) width 81: "Lots and lots"
+                text run at (2,268) width 104: "and lots of data. "
+                text run at (106,268) width 189: "Lots and lots and lots of data. "
+                text run at (295,268) width 189: "Lots and lots and lots of data. "
+                text run at (484,268) width 185: "Lots and lots and lots of data."
+                text run at (2,287) width 189: "Lots and lots and lots of data. "
+                text run at (191,287) width 189: "Lots and lots and lots of data. "
+                text run at (380,287) width 189: "Lots and lots and lots of data. "
+                text run at (569,287) width 108: "Lots and lots and"
+                text run at (2,306) width 77: "lots of data. "
+                text run at (79,306) width 189: "Lots and lots and lots of data. "
+                text run at (268,306) width 185: "Lots and lots and lots of data."
+      RenderTable {TABLE} at (0,501) size 768x356
+        RenderTableSection {TBODY} at (0,0) size 768x356
+          RenderTableRow {TR} at (0,2) size 768x327
             RenderTableCell {TD} at (2,154) size 34x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
             RenderTableCell {TD} at (38,154) size 34x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (74,2) size 689x327 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 682x323
+            RenderTableCell {TD} at (74,2) size 692x327 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (2,2) size 686x323
                 text run at (2,2) width 189: "Lots and lots and lots of data. "
                 text run at (191,2) width 189: "Lots and lots and lots of data. "
                 text run at (380,2) width 189: "Lots and lots and lots of data. "
@@ -154,123 +153,122 @@ layer at (0,0) size 781x6979
                 text run at (2,40) width 157: "and lots and lots of data. "
                 text run at (159,40) width 189: "Lots and lots and lots of data. "
                 text run at (348,40) width 189: "Lots and lots and lots of data. "
-                text run at (537,40) width 134: "Lots and lots and lots"
-                text run at (2,59) width 51: "of data. "
-                text run at (53,59) width 189: "Lots and lots and lots of data. "
-                text run at (242,59) width 189: "Lots and lots and lots of data. "
-                text run at (431,59) width 189: "Lots and lots and lots of data. "
-                text run at (620,59) width 55: "Lots and"
-                text run at (2,78) width 130: "lots and lots of data. "
-                text run at (132,78) width 189: "Lots and lots and lots of data. "
-                text run at (321,78) width 189: "Lots and lots and lots of data. "
-                text run at (510,78) width 151: "Lots and lots and lots of"
-                text run at (2,97) width 34: "data. "
-                text run at (36,97) width 189: "Lots and lots and lots of data. "
-                text run at (225,97) width 189: "Lots and lots and lots of data. "
-                text run at (414,97) width 189: "Lots and lots and lots of data. "
-                text run at (603,97) width 81: "Lots and lots"
-                text run at (2,116) width 104: "and lots of data. "
-                text run at (106,116) width 189: "Lots and lots and lots of data. "
-                text run at (295,116) width 189: "Lots and lots and lots of data. "
-                text run at (484,116) width 185: "Lots and lots and lots of data."
-                text run at (2,135) width 189: "Lots and lots and lots of data. "
-                text run at (191,135) width 189: "Lots and lots and lots of data. "
-                text run at (380,135) width 189: "Lots and lots and lots of data. "
-                text run at (569,135) width 108: "Lots and lots and"
-                text run at (2,154) width 77: "lots of data. "
-                text run at (79,154) width 189: "Lots and lots and lots of data. "
-                text run at (268,154) width 189: "Lots and lots and lots of data. "
-                text run at (457,154) width 189: "Lots and lots and lots of data. "
-                text run at (646,154) width 28: "Lots"
-                text run at (2,173) width 157: "and lots and lots of data. "
-                text run at (159,173) width 189: "Lots and lots and lots of data. "
-                text run at (348,173) width 189: "Lots and lots and lots of data. "
-                text run at (537,173) width 134: "Lots and lots and lots"
-                text run at (2,192) width 51: "of data. "
-                text run at (53,192) width 189: "Lots and lots and lots of data. "
-                text run at (242,192) width 189: "Lots and lots and lots of data. "
-                text run at (431,192) width 189: "Lots and lots and lots of data. "
-                text run at (620,192) width 55: "Lots and"
-                text run at (2,211) width 130: "lots and lots of data. "
-                text run at (132,211) width 189: "Lots and lots and lots of data. "
-                text run at (321,211) width 189: "Lots and lots and lots of data. "
-                text run at (510,211) width 151: "Lots and lots and lots of"
-                text run at (2,230) width 34: "data. "
-                text run at (36,230) width 189: "Lots and lots and lots of data. "
-                text run at (225,230) width 189: "Lots and lots and lots of data. "
-                text run at (414,230) width 189: "Lots and lots and lots of data. "
-                text run at (603,230) width 81: "Lots and lots"
-                text run at (2,249) width 104: "and lots of data. "
-                text run at (106,249) width 189: "Lots and lots and lots of data. "
-                text run at (295,249) width 189: "Lots and lots and lots of data. "
-                text run at (484,249) width 185: "Lots and lots and lots of data."
-                text run at (2,268) width 189: "Lots and lots and lots of data. "
-                text run at (191,268) width 189: "Lots and lots and lots of data. "
-                text run at (380,268) width 189: "Lots and lots and lots of data. "
-                text run at (569,268) width 108: "Lots and lots and"
-                text run at (2,287) width 77: "lots of data. "
-                text run at (79,287) width 189: "Lots and lots and lots of data. "
-                text run at (268,287) width 189: "Lots and lots and lots of data. "
-                text run at (457,287) width 189: "Lots and lots and lots of data. "
-                text run at (646,287) width 28: "Lots"
-                text run at (2,306) width 157: "and lots and lots of data. "
-                text run at (159,306) width 189: "Lots and lots and lots of data. "
-                text run at (348,306) width 185: "Lots and lots and lots of data."
-          RenderTableRow {TR} at (0,331) size 765x23
+                text run at (537,40) width 151: "Lots and lots and lots of"
+                text run at (2,59) width 34: "data. "
+                text run at (36,59) width 189: "Lots and lots and lots of data. "
+                text run at (225,59) width 189: "Lots and lots and lots of data. "
+                text run at (414,59) width 189: "Lots and lots and lots of data. "
+                text run at (603,59) width 81: "Lots and lots"
+                text run at (2,78) width 104: "and lots of data. "
+                text run at (106,78) width 189: "Lots and lots and lots of data. "
+                text run at (295,78) width 189: "Lots and lots and lots of data. "
+                text run at (484,78) width 185: "Lots and lots and lots of data."
+                text run at (2,97) width 189: "Lots and lots and lots of data. "
+                text run at (191,97) width 189: "Lots and lots and lots of data. "
+                text run at (380,97) width 189: "Lots and lots and lots of data. "
+                text run at (569,97) width 108: "Lots and lots and"
+                text run at (2,116) width 77: "lots of data. "
+                text run at (79,116) width 189: "Lots and lots and lots of data. "
+                text run at (268,116) width 189: "Lots and lots and lots of data. "
+                text run at (457,116) width 189: "Lots and lots and lots of data. "
+                text run at (646,116) width 28: "Lots"
+                text run at (2,135) width 157: "and lots and lots of data. "
+                text run at (159,135) width 189: "Lots and lots and lots of data. "
+                text run at (348,135) width 189: "Lots and lots and lots of data. "
+                text run at (537,135) width 151: "Lots and lots and lots of"
+                text run at (2,154) width 34: "data. "
+                text run at (36,154) width 189: "Lots and lots and lots of data. "
+                text run at (225,154) width 189: "Lots and lots and lots of data. "
+                text run at (414,154) width 189: "Lots and lots and lots of data. "
+                text run at (603,154) width 81: "Lots and lots"
+                text run at (2,173) width 104: "and lots of data. "
+                text run at (106,173) width 189: "Lots and lots and lots of data. "
+                text run at (295,173) width 189: "Lots and lots and lots of data. "
+                text run at (484,173) width 185: "Lots and lots and lots of data."
+                text run at (2,192) width 189: "Lots and lots and lots of data. "
+                text run at (191,192) width 189: "Lots and lots and lots of data. "
+                text run at (380,192) width 189: "Lots and lots and lots of data. "
+                text run at (569,192) width 108: "Lots and lots and"
+                text run at (2,211) width 77: "lots of data. "
+                text run at (79,211) width 189: "Lots and lots and lots of data. "
+                text run at (268,211) width 189: "Lots and lots and lots of data. "
+                text run at (457,211) width 189: "Lots and lots and lots of data. "
+                text run at (646,211) width 28: "Lots"
+                text run at (2,230) width 157: "and lots and lots of data. "
+                text run at (159,230) width 189: "Lots and lots and lots of data. "
+                text run at (348,230) width 189: "Lots and lots and lots of data. "
+                text run at (537,230) width 151: "Lots and lots and lots of"
+                text run at (2,249) width 34: "data. "
+                text run at (36,249) width 189: "Lots and lots and lots of data. "
+                text run at (225,249) width 189: "Lots and lots and lots of data. "
+                text run at (414,249) width 189: "Lots and lots and lots of data. "
+                text run at (603,249) width 81: "Lots and lots"
+                text run at (2,268) width 104: "and lots of data. "
+                text run at (106,268) width 189: "Lots and lots and lots of data. "
+                text run at (295,268) width 189: "Lots and lots and lots of data. "
+                text run at (484,268) width 185: "Lots and lots and lots of data."
+                text run at (2,287) width 189: "Lots and lots and lots of data. "
+                text run at (191,287) width 189: "Lots and lots and lots of data. "
+                text run at (380,287) width 189: "Lots and lots and lots of data. "
+                text run at (569,287) width 108: "Lots and lots and"
+                text run at (2,306) width 77: "lots of data. "
+                text run at (79,306) width 189: "Lots and lots and lots of data. "
+                text run at (268,306) width 185: "Lots and lots and lots of data."
+          RenderTableRow {TR} at (0,331) size 768x23
             RenderTableCell {TD} at (2,331) size 34x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
             RenderTableCell {TD} at (38,331) size 34x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (74,331) size 689x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (74,331) size 692x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-      RenderBlock {P} at (0,873) size 765x19
+      RenderBlock {P} at (0,873) size 768x19
         RenderText {#text} at (0,0) size 749x19
           text run at (0,0) width 749: "All the columns in the following three tables should divide equally the available space (100% of the width of the page):"
-      RenderTable {TABLE} at (0,908) size 765x52
-        RenderTableSection {TBODY} at (0,0) size 765x52
-          RenderTableRow {TR} at (0,2) size 765x23
-            RenderTableCell {TD} at (2,2) size 252x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,908) size 768x52
+        RenderTableSection {TBODY} at (0,0) size 768x52
+          RenderTableRow {TR} at (0,2) size 768x23
+            RenderTableCell {TD} at (2,2) size 253x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (256,2) size 252x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (257,2) size 253x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (510,2) size 253x23 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (512,2) size 254x23 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-          RenderTableRow {TR} at (0,27) size 765x23
-            RenderTableCell {TD} at (2,27) size 252x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,27) size 768x23
+            RenderTableCell {TD} at (2,27) size 253x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (256,27) size 252x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (257,27) size 253x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (510,27) size 253x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (512,27) size 254x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-      RenderTable {TABLE} at (0,960) size 765x945
-        RenderTableSection {TBODY} at (0,0) size 765x945
-          RenderTableRow {TR} at (0,2) size 765x23
-            RenderTableCell {TD} at (2,2) size 252x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,960) size 768x945
+        RenderTableSection {TBODY} at (0,0) size 768x945
+          RenderTableRow {TR} at (0,2) size 768x23
+            RenderTableCell {TD} at (2,2) size 253x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (256,2) size 252x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (257,2) size 253x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (510,2) size 253x23 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (512,2) size 254x23 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-          RenderTableRow {TR} at (0,27) size 765x916
-            RenderTableCell {TD} at (2,473) size 252x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,27) size 768x916
+            RenderTableCell {TD} at (2,473) size 253x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (256,473) size 252x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (257,473) size 253x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (510,27) size 253x916 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (512,27) size 254x916 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 244x912
                 text run at (2,2) width 189: "Lots and lots and lots of data. "
                 text run at (191,2) width 55: "Lots and"
@@ -368,16 +366,16 @@ layer at (0,0) size 781x6979
                 text run at (79,876) width 151: "Lots and lots and lots of"
                 text run at (2,895) width 34: "data. "
                 text run at (36,895) width 185: "Lots and lots and lots of data."
-      RenderTable {TABLE} at (0,1905) size 765x945
-        RenderTableSection {TBODY} at (0,0) size 765x945
-          RenderTableRow {TR} at (0,2) size 765x916
-            RenderTableCell {TD} at (2,448) size 252x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,1905) size 768x945
+        RenderTableSection {TBODY} at (0,0) size 768x945
+          RenderTableRow {TR} at (0,2) size 768x916
+            RenderTableCell {TD} at (2,448) size 253x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (256,448) size 252x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (257,448) size 253x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (510,2) size 253x916 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (512,2) size 254x916 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 244x912
                 text run at (2,2) width 189: "Lots and lots and lots of data. "
                 text run at (191,2) width 55: "Lots and"
@@ -475,61 +473,61 @@ layer at (0,0) size 781x6979
                 text run at (79,876) width 151: "Lots and lots and lots of"
                 text run at (2,895) width 34: "data. "
                 text run at (36,895) width 185: "Lots and lots and lots of data."
-          RenderTableRow {TR} at (0,920) size 765x23
-            RenderTableCell {TD} at (2,920) size 252x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,920) size 768x23
+            RenderTableCell {TD} at (2,920) size 253x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (256,920) size 252x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (257,920) size 253x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (510,920) size 253x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (512,920) size 254x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-      RenderBlock {P} at (0,2866) size 765x19
+      RenderBlock {P} at (0,2866) size 768x19
         RenderText {#text} at (0,0) size 741x19
           text run at (0,0) width 741: "All the columns in the following three tables should divide equally the available space (50% of the width of the page):"
-      RenderTable {TABLE} at (0,2901) size 382x52
-        RenderTableSection {TBODY} at (0,0) size 382x52
-          RenderTableRow {TR} at (0,2) size 382x23
-            RenderTableCell {TD} at (2,2) size 124x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,2901) size 384x52
+        RenderTableSection {TBODY} at (0,0) size 384x52
+          RenderTableRow {TR} at (0,2) size 384x23
+            RenderTableCell {TD} at (2,2) size 125x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (128,2) size 125x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (129,2) size 125x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (255,2) size 125x23 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (256,2) size 126x23 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-          RenderTableRow {TR} at (0,27) size 382x23
-            RenderTableCell {TD} at (2,27) size 124x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,27) size 384x23
+            RenderTableCell {TD} at (2,27) size 125x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (128,27) size 125x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (129,27) size 125x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (255,27) size 125x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (256,27) size 126x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-      RenderTable {TABLE} at (0,2953) size 382x1933
-        RenderTableSection {TBODY} at (0,0) size 382x1933
-          RenderTableRow {TR} at (0,2) size 382x23
-            RenderTableCell {TD} at (2,2) size 124x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,2953) size 384x1933
+        RenderTableSection {TBODY} at (0,0) size 384x1933
+          RenderTableRow {TR} at (0,2) size 384x23
+            RenderTableCell {TD} at (2,2) size 125x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (128,2) size 125x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (129,2) size 125x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (255,2) size 125x23 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (256,2) size 126x23 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-          RenderTableRow {TR} at (0,27) size 382x1904
-            RenderTableCell {TD} at (2,967) size 124x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,27) size 384x1904
+            RenderTableCell {TD} at (2,967) size 125x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (128,967) size 125x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (129,967) size 125x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (255,27) size 125x1904 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (256,27) size 126x1904 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 119x1900
                 text run at (2,2) width 108: "Lots and lots and"
                 text run at (2,21) width 77: "lots of data. "
@@ -671,16 +669,16 @@ layer at (0,0) size 781x6979
                 text run at (2,1864) width 34: "data. "
                 text run at (36,1864) width 81: "Lots and lots"
                 text run at (2,1883) width 100: "and lots of data."
-      RenderTable {TABLE} at (0,4886) size 382x1933
-        RenderTableSection {TBODY} at (0,0) size 382x1933
-          RenderTableRow {TR} at (0,2) size 382x1904
-            RenderTableCell {TD} at (2,942) size 124x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,4886) size 384x1933
+        RenderTableSection {TBODY} at (0,0) size 384x1933
+          RenderTableRow {TR} at (0,2) size 384x1904
+            RenderTableCell {TD} at (2,942) size 125x23 [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (128,942) size 125x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (129,942) size 125x23 [border: (1px solid #000000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (255,2) size 125x1904 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (256,2) size 126x1904 [border: (1px solid #000000)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 119x1900
                 text run at (2,2) width 108: "Lots and lots and"
                 text run at (2,21) width 77: "lots of data. "
@@ -822,21 +820,21 @@ layer at (0,0) size 781x6979
                 text run at (2,1864) width 34: "data. "
                 text run at (36,1864) width 81: "Lots and lots"
                 text run at (2,1883) width 100: "and lots of data."
-          RenderTableRow {TR} at (0,1908) size 382x23
-            RenderTableCell {TD} at (2,1908) size 124x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,1908) size 384x23
+            RenderTableCell {TD} at (2,1908) size 125x23 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (128,1908) size 125x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
+            RenderTableCell {TD} at (129,1908) size 125x23 [border: (1px solid #000000)] [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-            RenderTableCell {TD} at (255,1908) size 125x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
+            RenderTableCell {TD} at (256,1908) size 126x23 [border: (1px solid #000000)] [r=1 c=2 rs=1 cs=1]
               RenderText {#text} at (2,2) size 30x19
                 text run at (2,2) width 30: "Data"
-      RenderBlock {P} at (0,6835) size 765x19
+      RenderBlock {P} at (0,6835) size 768x19
         RenderText {#text} at (0,0) size 192x19
           text run at (0,0) width 192: "This test is still being written..."
-      RenderBlock {HR} at (0,6870) size 765x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,6888) size 765x19
+      RenderBlock {HR} at (0,6870) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,6888) size 768x19
         RenderText {#text} at (0,0) size 58x19
           text run at (0,0) width 58: "(Back to "
         RenderInline {A} at (0,0) size 158x19 [color=#0000EE]
@@ -849,7 +847,7 @@ layer at (0,0) size 781x6979
             text run at (224,0) width 82: "David Baron"
         RenderText {#text} at (306,0) size 5x19
           text run at (306,0) width 5: ")"
-      RenderBlock {P} at (0,6923) size 765x19
+      RenderBlock {P} at (0,6923) size 768x19
         RenderInline {A} at (0,0) size 33x19 [color=#0000EE]
           RenderText {#text} at (0,0) size 33x19
             text run at (0,0) width 33: "LDB"

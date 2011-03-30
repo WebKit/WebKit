@@ -1,14 +1,14 @@
-layer at (0,0) size 781x1380
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x1380
-  RenderBlock {HTML} at (0,0) size 781x1380
-    RenderBody {BODY} at (8,8) size 765x1356
-      RenderBlock {CENTER} at (0,0) size 765x1356
-        RenderBlock (anonymous) at (0,0) size 765x19
-          RenderText {#text} at (250,0) size 265x19
-            text run at (250,0) width 265: "Build 1999/10/27/08 Win95 - Daily Build"
-          RenderBR {BR} at (515,15) size 0x0
-        RenderTable {TABLE} at (72,19) size 621x1207 [border: (10px outset #808080)]
+layer at (0,0) size 784x1380
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x1380
+  RenderBlock {HTML} at (0,0) size 784x1380
+    RenderBody {BODY} at (8,8) size 768x1356
+      RenderBlock {CENTER} at (0,0) size 768x1356
+        RenderBlock (anonymous) at (0,0) size 768x19
+          RenderText {#text} at (251,0) size 266x19
+            text run at (251,0) width 266: "Build 1999/10/27/08 Win95 - Daily Build"
+          RenderBR {BR} at (516,15) size 1x0
+        RenderTable {TABLE} at (73,19) size 621x1207 [border: (10px outset #808080)]
           RenderBlock {CAPTION} at (0,0) size 601x19
             RenderText {#text} at (258,0) size 85x19
               text run at (258,0) width 85: "January 2000"
@@ -500,14 +500,14 @@ layer at (0,0) size 781x1380
               RenderTableCell {TD} at (509,1145) size 92x23 [color=#FFFFFF] [bgcolor=#404080] [border: (1px inset #808080)] [r=4 c=6 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 5x19
                   text run at (2,2) width 5: "-"
-        RenderBlock (anonymous) at (0,1226) size 765x38
-          RenderBR {BR} at (382,0) size 1x19
-          RenderText {#text} at (2,19) size 761x19
-            text run at (2,19) width 761: "Notice the scrollbars, they are rendered outside of the table columns, and the yellow day numbers are hidden under them."
-        RenderBlock {P} at (0,1280) size 765x76
-          RenderText {#text} at (7,0) size 757x76
-            text run at (7,0) width 751: "This is probably another bug already covered, or fixed, but day 3 & 16 should have no scrollbar, but the area where the"
-            text run at (4,19) width 418: "other scrollbars are drawn is drawn funny. They are not rendered. "
-            text run at (421,19) width 340: "They seem to be whatever was drawn there before, or"
-            text run at (20,38) width 725: "drawn somewhere else. Day 16 (contaings only the letter \"?\") has a region below the ? mark that is never rendered."
-            text run at (120,57) width 525: "Resize the window so the window can scroll down and scroll the page up & down."
+        RenderBlock (anonymous) at (0,1226) size 768x38
+          RenderBR {BR} at (384,0) size 0x19
+          RenderText {#text} at (3,19) size 762x19
+            text run at (3,19) width 762: "Notice the scrollbars, they are rendered outside of the table columns, and the yellow day numbers are hidden under them."
+        RenderBlock {P} at (0,1280) size 768x76
+          RenderText {#text} at (9,0) size 756x76
+            text run at (9,0) width 750: "This is probably another bug already covered, or fixed, but day 3 & 16 should have no scrollbar, but the area where the"
+            text run at (6,19) width 417: "other scrollbars are drawn is drawn funny. They are not rendered. "
+            text run at (423,19) width 339: "They seem to be whatever was drawn there before, or"
+            text run at (22,38) width 724: "drawn somewhere else. Day 16 (contaings only the letter \"?\") has a region below the ? mark that is never rendered."
+            text run at (122,57) width 524: "Resize the window so the window can scroll down and scroll the page up & down."

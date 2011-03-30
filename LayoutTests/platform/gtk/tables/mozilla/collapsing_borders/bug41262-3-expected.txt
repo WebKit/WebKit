@@ -1,9 +1,9 @@
-layer at (0,0) size 781x679
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x679
-  RenderBlock {HTML} at (0,0) size 781x679
-    RenderBody {BODY} at (8,16) size 765x647
-      RenderBlock {P} at (0,0) size 765x57
+layer at (0,0) size 784x679
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x679
+  RenderBlock {HTML} at (0,0) size 784x679
+    RenderBody {BODY} at (8,16) size 768x647
+      RenderBlock {P} at (0,0) size 768x57
         RenderText {#text} at (0,0) size 752x57
           text run at (0,0) width 463: "Following table should have 6px solid blue border around cell 3, red 5px "
           text run at (463,0) width 289: "solid border around the rest of table and green"
@@ -24,7 +24,7 @@ layer at (0,0) size 781x679
             RenderTableCell {TD} at (106,0) size 54x27 [border: (3px solid #0000FF)] [r=0 c=2 rs=1 cs=1]
               RenderText {#text} at (4,4) size 46x19
                 text run at (4,4) width 46: "Cell #3"
-      RenderBlock {P} at (0,122) size 765x19
+      RenderBlock {P} at (0,122) size 768x19
         RenderText {#text} at (0,0) size 27x19
           text run at (0,0) width 27: "See "
         RenderInline {A} at (0,0) size 225x19 [color=#0000EE]
@@ -89,7 +89,7 @@ layer at (0,0) size 781x679
             RenderTableCell {TD} at (102,218) size 51x54 [border: (1px solid #FF0000)] [r=4 c=2 rs=1 cs=1]
               RenderText {#text} at (17,17) size 16x19
                 text run at (17,17) width 16: "15"
-      RenderBlock {P} at (0,450) size 765x58
+      RenderBlock {P} at (0,450) size 768x58
         RenderText {#text} at (0,0) size 357x19
           text run at (0,0) width 357: "This is an example rendering for the previous table from "
         RenderInline {A} at (0,0) size 700x38 [color=#0000EE]
@@ -101,7 +101,7 @@ layer at (0,0) size 781x679
         RenderBR {BR} at (0,0) size 0x0
         RenderImage {IMG} at (0,38) size 213x20
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {P} at (0,524) size 765x38
+      RenderBlock {P} at (0,524) size 768x38
         RenderText {#text} at (0,0) size 755x38
           text run at (0,0) width 493: "Following table should have 2px solid black line between rows. There should "
           text run at (493,0) width 262: "be a total of two lines. There will be three"

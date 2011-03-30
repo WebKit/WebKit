@@ -1,22 +1,22 @@
-layer at (0,0) size 781x2426
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x2426
-  RenderBlock {HTML} at (0,0) size 781x2426
-    RenderBody {BODY} at (8,21) size 765x2397
-      RenderBlock {H1} at (0,0) size 765x37
+layer at (0,0) size 784x2426
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x2426
+  RenderBlock {HTML} at (0,0) size 784x2426
+    RenderBody {BODY} at (8,21) size 768x2397
+      RenderBlock {H1} at (0,0) size 768x37
         RenderText {#text} at (0,0) size 541x36
           text run at (0,0) width 541: "Problems with COLSPAN and WIDTH"
-      RenderBlock {P} at (0,58) size 765x19
+      RenderBlock {P} at (0,58) size 768x19
         RenderText {#text} at (0,0) size 254x19
           text run at (0,0) width 254: "Each block of tables should be identical."
-      RenderBlock {H2} at (0,96) size 765x28
+      RenderBlock {H2} at (0,96) size 768x28
         RenderText {#text} at (0,0) size 129x28
           text run at (0,0) width 129: "Sized Tables"
-      RenderBlock {P} at (0,143) size 765x38
+      RenderBlock {P} at (0,143) size 768x38
         RenderText {#text} at (0,0) size 732x38
           text run at (0,0) width 732: "The following tables have width=400, which should make them the same width as the red lines which are caused by"
           text run at (0,19) width 39: "DIVs:"
-      RenderBlock {H3} at (0,199) size 765x22
+      RenderBlock {H3} at (0,199) size 768x22
         RenderText {#text} at (0,0) size 65x22
           text run at (0,0) width 65: "260/140"
       RenderBlock {DIV} at (0,239) size 406x6 [border: (3px solid #FF0000)]
@@ -118,7 +118,7 @@ layer at (0,0) size 781x2426
               RenderText {#text} at (1,1) size 65x19
                 text run at (1,1) width 65: "colspan=2"
       RenderBlock {DIV} at (0,617) size 406x6 [border: (3px solid #FF0000)]
-      RenderBlock {H3} at (0,641) size 765x22
+      RenderBlock {H3} at (0,641) size 768x22
         RenderText {#text} at (0,0) size 65x22
           text run at (0,0) width 65: "140/260"
       RenderBlock {DIV} at (0,681) size 406x6 [border: (3px solid #FF0000)]
@@ -220,7 +220,7 @@ layer at (0,0) size 781x2426
               RenderText {#text} at (1,1) size 65x19
                 text run at (1,1) width 65: "colspan=2"
       RenderBlock {DIV} at (0,1059) size 406x6 [border: (3px solid #FF0000)]
-      RenderBlock {H3} at (0,1083) size 765x22
+      RenderBlock {H3} at (0,1083) size 768x22
         RenderText {#text} at (0,0) size 39x22
           text run at (0,0) width 39: "50%"
       RenderBlock {DIV} at (0,1123) size 406x6 [border: (3px solid #FF0000)]
@@ -294,14 +294,14 @@ layer at (0,0) size 781x2426
               RenderText {#text} at (1,1) size 65x19
                 text run at (1,1) width 65: "colspan=2"
       RenderBlock {DIV} at (0,1393) size 406x6 [border: (3px solid #FF0000)]
-      RenderBlock {H2} at (0,1418) size 765x28
+      RenderBlock {H2} at (0,1418) size 768x28
         RenderText {#text} at (0,0) size 230x28
           text run at (0,0) width 230: "Tables Without Width"
-      RenderBlock {P} at (0,1465) size 765x38
+      RenderBlock {P} at (0,1465) size 768x38
         RenderText {#text} at (0,0) size 753x38
           text run at (0,0) width 753: "The following tables have no width. They should still be the same size, by virtue of them having a 400 pixel cell and no"
           text run at (0,19) width 154: "padding/margin/borders."
-      RenderBlock {H3} at (0,1521) size 765x22
+      RenderBlock {H3} at (0,1521) size 768x22
         RenderText {#text} at (0,0) size 65x22
           text run at (0,0) width 65: "260/140"
       RenderBlock {DIV} at (0,1561) size 406x6 [border: (3px solid #FF0000)]
@@ -361,7 +361,7 @@ layer at (0,0) size 781x2426
               RenderText {#text} at (1,1) size 65x19
                 text run at (1,1) width 65: "colspan=2"
       RenderBlock {DIV} at (0,1777) size 406x6 [border: (3px solid #FF0000)]
-      RenderBlock {H3} at (0,1801) size 765x22
+      RenderBlock {H3} at (0,1801) size 768x22
         RenderText {#text} at (0,0) size 65x22
           text run at (0,0) width 65: "140/260"
       RenderBlock {DIV} at (0,1841) size 406x6 [border: (3px solid #FF0000)]
@@ -421,7 +421,7 @@ layer at (0,0) size 781x2426
               RenderText {#text} at (1,1) size 65x19
                 text run at (1,1) width 65: "colspan=2"
       RenderBlock {DIV} at (0,2057) size 406x6 [border: (3px solid #FF0000)]
-      RenderBlock {H3} at (0,2081) size 765x22
+      RenderBlock {H3} at (0,2081) size 768x22
         RenderText {#text} at (0,0) size 39x22
           text run at (0,0) width 39: "50%"
       RenderBlock {DIV} at (0,2121) size 406x6 [border: (3px solid #FF0000)]

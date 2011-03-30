@@ -1,12 +1,12 @@
-layer at (0,0) size 781x3130
-  RenderView at (0,0) size 781x600
-layer at (0,0) size 781x3130
-  RenderBlock {HTML} at (0,0) size 781x3130
-    RenderBody {BODY} at (8,21) size 765x3093
-      RenderBlock {H1} at (0,0) size 765x37
+layer at (0,0) size 784x3130
+  RenderView at (0,0) size 784x600
+layer at (0,0) size 784x3130
+  RenderBlock {HTML} at (0,0) size 784x3130
+    RenderBody {BODY} at (8,21) size 768x3093
+      RenderBlock {H1} at (0,0) size 768x37
         RenderText {#text} at (0,0) size 272x36
           text run at (0,0) width 272: "Tables and captions"
-      RenderBlock {P} at (0,58) size 765x19
+      RenderBlock {P} at (0,58) size 768x19
         RenderText {#text} at (0,0) size 527x19
           text run at (0,0) width 423: "The table should have width 300px, as should the caption (entirely "
           text run at (423,0) width 104: "above the table):"
@@ -29,7 +29,7 @@ layer at (0,0) size 781x3130
             RenderTableCell {TD} at (144,25) size 140x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock {P} at (0,202) size 765x19
+      RenderBlock {P} at (0,202) size 768x19
         RenderText {#text} at (0,0) size 495x19
           text run at (0,0) width 411: "The table should have width 300px, and the caption should have "
           text run at (411,0) width 84: "width 600px."
@@ -52,7 +52,7 @@ layer at (0,0) size 781x3130
             RenderTableCell {TD} at (294,25) size 290x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock {P} at (0,346) size 765x19
+      RenderBlock {P} at (0,346) size 768x19
         RenderText {#text} at (0,0) size 495x19
           text run at (0,0) width 411: "The table should have width 600px, and the caption should have "
           text run at (411,0) width 84: "width 300px."
@@ -75,7 +75,7 @@ layer at (0,0) size 781x3130
             RenderTableCell {TD} at (291,25) size 287x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock {P} at (0,490) size 765x19
+      RenderBlock {P} at (0,490) size 768x19
         RenderText {#text} at (0,0) size 683x19
           text run at (0,0) width 363: "The next four tables should have their caption on the top, "
           text run at (363,0) width 320: "with a 20px gap between the table and the caption."
@@ -163,7 +163,7 @@ layer at (0,0) size 781x3130
             RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock {P} at (0,1159) size 765x19
+      RenderBlock {P} at (0,1159) size 768x19
         RenderText {#text} at (0,0) size 692x19
           text run at (0,0) width 372: "The next four tables should have their caption on the right, "
           text run at (372,0) width 320: "with a 20px gap between the table and the caption."
@@ -251,7 +251,7 @@ layer at (0,0) size 781x3130
             RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock {P} at (0,1734) size 765x19
+      RenderBlock {P} at (0,1734) size 768x19
         RenderText {#text} at (0,0) size 707x19
           text run at (0,0) width 387: "The next four tables should have their caption on the bottom, "
           text run at (387,0) width 320: "with a 20px gap between the table and the caption."
@@ -339,7 +339,7 @@ layer at (0,0) size 781x3130
             RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock {P} at (0,2403) size 765x19
+      RenderBlock {P} at (0,2403) size 768x19
         RenderText {#text} at (0,0) size 683x19
           text run at (0,0) width 363: "The next four tables should have their caption on the left, "
           text run at (363,0) width 320: "with a 20px gap between the table and the caption."
@@ -427,11 +427,11 @@ layer at (0,0) size 781x3130
             RenderTableCell {TD} at (36,25) size 32x21 [r=1 c=1 rs=1 cs=1]
               RenderText {#text} at (1,1) size 30x19
                 text run at (1,1) width 30: "Data"
-      RenderBlock {HR} at (0,2970) size 765x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,2988) size 765x35
+      RenderBlock {HR} at (0,2970) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,2988) size 768x35
         RenderInline {A} at (0,0) size 88x19 [color=#0000EE]
           RenderImage {IMG} at (0,0) size 88x31
-      RenderBlock {P} at (0,3039) size 765x19
+      RenderBlock {P} at (0,3039) size 768x19
         RenderText {#text} at (0,0) size 58x19
           text run at (0,0) width 58: "(Back to "
         RenderInline {A} at (0,0) size 158x19 [color=#0000EE]
@@ -444,7 +444,7 @@ layer at (0,0) size 781x3130
             text run at (224,0) width 82: "David Baron"
         RenderText {#text} at (306,0) size 5x19
           text run at (306,0) width 5: ")"
-      RenderBlock {P} at (0,3074) size 765x19
+      RenderBlock {P} at (0,3074) size 768x19
         RenderInline {A} at (0,0) size 33x19 [color=#0000EE]
           RenderText {#text} at (0,0) size 33x19
             text run at (0,0) width 33: "LDB"
