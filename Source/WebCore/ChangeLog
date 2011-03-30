@@ -1,3 +1,12 @@
+2011-03-30  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix a last-second ASSERT in previous change that was wrong.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setTitle):
+
 2011-03-30  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

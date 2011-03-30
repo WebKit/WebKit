@@ -1351,9 +1351,11 @@ void Document::setTitle(const String& title)
 
     updateTitle(title);
 
-    ASSERT(m_titleElement->hasTagName(titleTag));
-    if (m_titleElement && m_titleElement->hasTagName(titleTag))
-        static_cast<HTMLTitleElement*>(m_titleElement.get())->setText(m_title);
+    if (m_titleElement) {
+        ASSERT(m_titleElement->hasTagName(titleTag));
+        if (m_titleElement->hasTagName(titleTag))
+            static_cast<HTMLTitleElement*>(m_titleElement.get())->setText(m_title);
+    }
 }
 
 void Document::setTitleElement(const String& title, Element* titleElement)
