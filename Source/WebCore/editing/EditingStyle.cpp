@@ -377,15 +377,13 @@ bool EditingStyle::textDirection(WritingDirection& writingDirection) const
         return false;
 
     RefPtr<CSSValue> unicodeBidi = m_mutableStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi);
-    if (!unicodeBidi)
+    if (!unicodeBidi || !unicodeBidi->isPrimitiveValue())
         return false;
 
-    ASSERT(unicodeBidi->isPrimitiveValue());
     int unicodeBidiValue = static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent();
     if (unicodeBidiValue == CSSValueEmbed) {
         RefPtr<CSSValue> direction = m_mutableStyle->getPropertyCSSValue(CSSPropertyDirection);
-        ASSERT(!direction || direction->isPrimitiveValue());
-        if (!direction)
+        if (!direction || !direction->isPrimitiveValue())
             return false;
 
         writingDirection = static_cast<CSSPrimitiveValue*>(direction.get())->getIdent() == CSSValueLtr ? LeftToRightWritingDirection : RightToLeftWritingDirection;
@@ -707,13 +705,10 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
         m_mutableStyle->removeProperty(CSSPropertyBackgroundColor, ec);
     }
 
-    if (unicodeBidi) {
-        ASSERT(unicodeBidi->isPrimitiveValue());
+    if (unicodeBidi && unicodeBidi->isPrimitiveValue()) {
         m_mutableStyle->setProperty(CSSPropertyUnicodeBidi, static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent());
-        if (direction) {
-            ASSERT(direction->isPrimitiveValue());
+        if (direction && direction->isPrimitiveValue())
             m_mutableStyle->setProperty(CSSPropertyDirection, static_cast<CSSPrimitiveValue*>(direction.get())->getIdent());
-        }
     }
 }
 

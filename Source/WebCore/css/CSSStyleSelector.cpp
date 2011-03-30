@@ -6123,8 +6123,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (list->length() != 2)
                 return;
             for (unsigned i = 0; i < 2; ++i) {
-                ASSERT(list->itemWithoutBoundsCheck(i)->isPrimitiveValue());
-                CSSPrimitiveValue* value = static_cast<CSSPrimitiveValue*>(list->itemWithoutBoundsCheck(i));
+                CSSValue* item = list->itemWithoutBoundsCheck(i);
+                if (!item->isPrimitiveValue())
+                    continue;
+
+                CSSPrimitiveValue* value = static_cast<CSSPrimitiveValue*>(item);
                 if (value->getIdent() == CSSValueFilled || value->getIdent() == CSSValueOpen)
                     m_style->setTextEmphasisFill(*value);
                 else

@@ -1,3 +1,28 @@
+2011-03-30  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Fix wrong type assumptions in editing code. Move code
+        from ASSERTs to hard checks.
+        https://bugs.webkit.org/show_bug.cgi?id=57348
+
+        Test: editing/execCommand/remove-format-non-html-element-crash.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::getRGBAFontColor):
+        (WebCore::ApplyStyleCommand::pushDownInlineStyleAroundNode):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::enclosingDeletableElement):
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::textDirection):
+        (WebCore::EditingStyle::prepareToApplyAt):
+        * editing/Editor.cpp:
+        (WebCore::Editor::textDirectionForSelection):
+        * editing/FormatBlockCommand.cpp:
+        (WebCore::FormatBlockCommand::elementForFormatBlockCommand):
+
 2011-03-30  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.

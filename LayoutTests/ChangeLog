@@ -1,3 +1,14 @@
+2011-03-30  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Tests that we do not crash when removing inline style
+        from a node that is not a html element.
+        https://bugs.webkit.org/show_bug.cgi?id=57348
+
+        * editing/execCommand/remove-format-non-html-element-crash-expected.txt: Added.
+        * editing/execCommand/remove-format-non-html-element-crash.html: Added.
+
 2011-03-30  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

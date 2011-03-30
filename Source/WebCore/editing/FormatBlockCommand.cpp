@@ -112,8 +112,7 @@ Element* FormatBlockCommand::elementForFormatBlockCommand(Range* range)
     if (!rootEditableElement || commonAncestor->contains(rootEditableElement))
         return 0;
 
-    ASSERT(commonAncestor->isElementNode());
-    return static_cast<Element*>(commonAncestor);
+    return commonAncestor->isElementNode() ? toElement(commonAncestor) : 0;
 }
 
 bool isElementForFormatBlock(const QualifiedName& tagName)

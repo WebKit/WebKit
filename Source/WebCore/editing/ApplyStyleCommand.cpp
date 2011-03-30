@@ -57,10 +57,8 @@ using namespace HTMLNames;
 static RGBA32 getRGBAFontColor(CSSStyleDeclaration* style)
 {
     RefPtr<CSSValue> colorValue = style->getPropertyCSSValue(CSSPropertyColor);
-    if (!colorValue)
+    if (!colorValue || !colorValue->isPrimitiveValue())
         return Color::transparent;
-
-    ASSERT(colorValue->isPrimitiveValue());
 
     CSSPrimitiveValue* primitiveColor = static_cast<CSSPrimitiveValue*>(colorValue.get());
     RGBA32 rgba = 0;
@@ -1304,7 +1302,6 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
     Vector<RefPtr<Element> > elementsToPushDown;
     while (current != targetNode) {
         ASSERT(current);
-        ASSERT(current->isHTMLElement());
         ASSERT(current->contains(targetNode));
         Node* child = current->firstChild();
         Node* lastChild = current->lastChild();
@@ -1313,8 +1310,10 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
             styledElement = static_cast<StyledElement*>(current);
             elementsToPushDown.append(styledElement);
         }
+
         RefPtr<EditingStyle> styleToPushDown = EditingStyle::create();
-        removeInlineStyleFromElement(style, toHTMLElement(current), RemoveIfNeeded, styleToPushDown.get());
+        if (current->isHTMLElement())
+            removeInlineStyleFromElement(style, toHTMLElement(current), RemoveIfNeeded, styleToPushDown.get());
 
         // The inner loop will go through children on each level
         // FIXME: we should aggregate inline child elements together so that we don't wrap each child separately.

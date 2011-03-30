@@ -653,10 +653,9 @@ WritingDirection Editor::textDirectionForSelection(bool& hasNestedOrMultipleEmbe
 
             RefPtr<CSSComputedStyleDeclaration> style = computedStyle(n);
             RefPtr<CSSValue> unicodeBidi = style->getPropertyCSSValue(CSSPropertyUnicodeBidi);
-            if (!unicodeBidi)
+            if (!unicodeBidi || !unicodeBidi->isPrimitiveValue())
                 continue;
 
-            ASSERT(unicodeBidi->isPrimitiveValue());
             int unicodeBidiValue = static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent();
             if (unicodeBidiValue == CSSValueEmbed || unicodeBidiValue == CSSValueBidiOverride)
                 return NaturalWritingDirection;
@@ -684,10 +683,9 @@ WritingDirection Editor::textDirectionForSelection(bool& hasNestedOrMultipleEmbe
 
         RefPtr<CSSComputedStyleDeclaration> style = computedStyle(node);
         RefPtr<CSSValue> unicodeBidi = style->getPropertyCSSValue(CSSPropertyUnicodeBidi);
-        if (!unicodeBidi)
+        if (!unicodeBidi || !unicodeBidi->isPrimitiveValue())
             continue;
 
-        ASSERT(unicodeBidi->isPrimitiveValue());
         int unicodeBidiValue = static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent();
         if (unicodeBidiValue == CSSValueNormal)
             continue;
@@ -697,10 +695,9 @@ WritingDirection Editor::textDirectionForSelection(bool& hasNestedOrMultipleEmbe
 
         ASSERT(unicodeBidiValue == CSSValueEmbed);
         RefPtr<CSSValue> direction = style->getPropertyCSSValue(CSSPropertyDirection);
-        if (!direction)
+        if (!direction || !direction->isPrimitiveValue())
             continue;
 
-        ASSERT(direction->isPrimitiveValue());
         int directionValue = static_cast<CSSPrimitiveValue*>(direction.get())->getIdent();
         if (directionValue != CSSValueLtr && directionValue != CSSValueRtl)
             continue;
