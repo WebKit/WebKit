@@ -1,5 +1,11 @@
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
+        Document that we're now passing these tests.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
         Add missing PNGs.  These PNGs match the checksums.
 
         * platform/chromium-mac/svg/zoom/page/zoom-hixie-mixed-008-expected.png: Added.

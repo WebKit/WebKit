@@ -378,15 +378,6 @@ WONTFIX : fast/js/removing-Cf-characters.html = FAIL
 WONTFIX SKIP : fast/js/date-DST-time-cusps.html = PASS FAIL
 WONTFIX SKIP : fast/js/date-big-setdate.html = PASS FAIL
 
-// This test expects weird behavior of __defineGetter__ on the
-// window object.  It expects variables introduced with 'var x = value'
-// to behave differently from variables introduced with 'y = value'.
-// This just seems wrong and should have very low priority.
-// Agreed, not required for Beta, we can debate this with WebKit post Beta
-// (eseidel, 4/25)
-// Ignore this until we see evidence that we need to support it.
-WONTFIX : fast/dom/getter-on-window-object2.html = FAIL
-
 // V8 doesn't stable sort and we currently have no intention of
 // changing this.  The following tests only happen to pass due to
 // the current algorithm used for sorting small arrays. If larger
@@ -711,7 +702,7 @@ BUGCR19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline
 // Flaky
 BUGCR31803 MAC LINUX : editing/inserting/12882.html = IMAGE PASS
 
-BUGWK45438 : editing/spelling/spelling-backspace-between-lines.html = TEXT
+BUGWK45438 MAC : editing/spelling/spelling-backspace-between-lines.html = TEXT
 
 // Tests added in r69269.
 // Apple-Mac port corrects "notationl" to "notational" automatically?
@@ -2360,10 +2351,6 @@ BUGWEBGL MAC LINUX : fast/canvas/webgl/gl-object-get-calls.html = TEXT
 BUGCR77752 BUGWEBGL LINUX DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT PASS CRASH
 BUGCR77752 BUGWEBGL MAC DEBUG : fast/canvas/webgl/tex-image-with-format-and-type.html = PASS CRASH
 
-// Failing after r75175
-BUGWEBGL WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT CRASH
-BUGWEBGL MAC LINUX : fast/canvas/webgl/glsl-conformance.html = CRASH
-
 BUGWEBGL GPU WIN DEBUG SLOW : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = PASS
 BUGWEBGL GPU WIN DEBUG SLOW : fast/canvas/webgl/index-validation-with-resized-buffer.html = PASS
 
@@ -2573,13 +2560,9 @@ BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-pattern-shadow.html = TEX
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-strokeRect-alpha-shadow.html = TEXT
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-strokePath-alpha-shadow.html = TEXT
-BUGCR63921 GPU LINUX WIN : fast/canvas/canvas-fillPath-gradient-shadow.html = TEXT TIMEOUT
-BUGCR63921 GPU LINUX WIN : fast/canvas/canvas-fillPath-pattern-shadow.html = TEXT TIMEOUT
 BUGCR63921 GPU LINUX WIN : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT TIMEOUT
 BUGCR63921 GPU LINUX WIN : fast/canvas/canvas-strokeRect-alpha-shadow.html = TEXT TIMEOUT
 BUGCR63921 GPU LINUX WIN : fast/canvas/canvas-strokePath-alpha-shadow.html = TEXT TIMEOUT
-BUGWK55436 LINUX WIN : fast/canvas/canvas-strokePath-gradient-shadow.html = TEXT TIMEOUT
-BUGWK52509 LINUX WIN : fast/canvas/canvas-strokeRect-gradient-shadow.html = TEXT TIMEOUT
 
 // Mainly flaky with mac debug, but also intermittent crashes seen on linux release
 BUGCR64129 MAC LINUX : fast/files/revoke-blob-url.html = CRASH PASS
@@ -2687,7 +2670,6 @@ BUG_DRT : platform/gtk/fast/forms/menulist-typeahead-find.html = CRASH TEXT
 BUG_DRT : storage/domstorage/quota.html = TEXT
 BUG_DRT LINUX : svg/carto.net/selectionlist.svg = IMAGE PASS
 BUG_DRT WIN LINUX : svg/custom/use-instanceRoot-event-bubbling.xhtml = TIMEOUT PASS
-BUG_DRT : svg/custom/selectSubString.html = TIMEOUT
 BUG_DRT MAC : transforms/2d/zoom-menulist.html = IMAGE
 
 // The test says you should see numbers, but we display letters.
@@ -3146,7 +3128,6 @@ BUGV8_1168 : fast/js/mozilla/strict/8.7.2.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/B.1.2.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/eval-variable-environment.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/this-for-function-expression-recursion.html = TEXT
-BUGV8_1228 : fast/js/preventExtensions.html = TEXT
 
 BUGWK54634 : media/video-controls-in-media-document.html = IMAGE+TEXT IMAGE PASS
 
@@ -3207,8 +3188,6 @@ BUGWK56060 LINUX X86_64 : svg/custom/pattern-excessive-malloc.svg = IMAGE
 BUGWK56060 LINUX X86_64 : fast/images/favicon-as-image.html = IMAGE+TEXT
 
 BUGCR75632 LINUX : svg/W3C-SVG-1.1/text-text-03-b.svg = CRASH PASS
-BUGCR75639 WIN LINUX : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
-BUGCR75639 MAC LEOPARD : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
 
 // I (antonm) am working on proper fix for it.  Temporary suppressing text differences.
 BUGWK55399 : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
@@ -3260,10 +3239,6 @@ BUGCR76616 MAC LEOPARD : fast/text/emphasis-combined-text.html = IMAGE+TEXT
 BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-drawImage-shadow.html = TEXT
 BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-scale-drawImage-shadow.html = TEXT
 
-// Started failing after WebKit r81597. Must be sensitive to test order.
-BUGCR76971 WIN LINUX : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
-BUGCR76971 LINUX : svg/text/font-size-below-point-five.svg = TEXT
-
 // New CSS3 feature in r81684. Some tests fail outside Mac.
 BUGCR77095 WIN LINUX : fast/block/lineboxcontain/block-glyphs-replaced.html = IMAGE+TEXT
 BUGCR77095 WIN LINUX : fast/block/lineboxcontain/glyphs.html = IMAGE+TEXT
@@ -3300,7 +3275,6 @@ BUGCR77494 : fast/clip/013.html = FAIL
 BUGCR77494 : fast/clip/014.html = FAIL
 BUGCR77494 : fast/clip/nestedTransparencyClip.html = FAIL
 BUGCR77494 : fast/clip/outline-overflowClip.html = FAIL
-BUGCR77494 : fast/forms/input-appearance-preventDefault.html = FAIL
 BUGCR77494 : fast/invalid/014.html = FAIL
 BUGCR77494 : fast/layers/layer-visibility.html = FAIL
 BUGCR77494 : fast/repaint/layout-state-scrolloffset.html = FAIL
@@ -3315,11 +3289,6 @@ BUGCR77494 : media/audio-repaint.html = FAIL
 // New test added in r81994.
 BUGCR77582 WIN LINUX RELEASE : inspector/debugger/debugger-activation-crash2.html = TEXT
 BUGCR77582 BUG_DRT WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation-crash2.html = TEXT
-
-// New test added in r82001.
-BUGWK57137 WIN RELEASE : plugins/embed-prefers-plugins-for-images.html = TEXT
-BUGWK57137 MAC SNOWLEOPARD : plugins/embed-prefers-plugins-for-images.html = TEXT
-BUGWK57137 LINUX : plugins/embed-prefers-plugins-for-images.html = TEXT
 
 // Regression since r82001.
 BUGCR77619 MAC SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
