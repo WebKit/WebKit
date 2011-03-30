@@ -1,3 +1,28 @@
+2011-03-30  Mihai Parparita  <mihaip@chromium.org>
+
+        Fix fast/multicol for Chromium Snow Leopard.
+
+        We somehow ended up with only .checksum files in chromium-mac-leopard/
+        (due to r67681 and then moved by r73376). The checksums in chromium-mac/
+        were identical, so I deleted those and moved the corresponding .png
+        to chromium-mac-leopard/, to live alongside its checksum.
+
+        The mac/ baselines are correct for Snow Leopard, so we don't actually
+        need any updates to get the tests to pass.
+
+        * platform/chromium-mac-leopard/fast/max-height-columns-block-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/multicol/max-height-columns-block-expected.png.
+        * platform/chromium-mac-leopard/fast/multicol/margin-collapse-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/multicol/margin-collapse-expected.png.
+        * platform/chromium-mac-leopard/fast/multicol/positioned-split-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/multicol/positioned-split-expected.png.
+        * platform/chromium-mac-leopard/fast/multicol/single-line-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/multicol/single-line-expected.png.
+        * platform/chromium-mac-leopard/fast/multicol/table-margin-collapse-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/multicol/table-margin-collapse-expected.png.
+        * platform/chromium-mac-leopard/fast/multicol/unsplittable-inline-block-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/multicol/unsplittable-inline-block-expected.png.
+        * platform/chromium-mac/fast/multicol/margin-collapse-expected.checksum: Removed.
+        * platform/chromium-mac/fast/multicol/max-height-columns-block-expected.checksum: Removed.
+        * platform/chromium-mac/fast/multicol/positioned-split-expected.checksum: Removed.
+        * platform/chromium-mac/fast/multicol/single-line-expected.checksum: Removed.
+        * platform/chromium-mac/fast/multicol/table-margin-collapse-expected.checksum: Removed.
+        * platform/chromium-mac/fast/multicol/unsplittable-inline-block-expected.checksum: Removed.
+
 2011-03-30  Adam Barth  <abarth@webkit.org>
 
         Remove platform/chromium-mac-snowleopard
