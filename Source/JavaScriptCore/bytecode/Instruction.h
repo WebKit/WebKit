@@ -63,7 +63,7 @@ namespace JSC {
             Structure* base;
             union {
                 Structure* proto;
-                StructureChain* chain;
+                WriteBarrierBase<StructureChain> chain;
             } u;
 
             void set(PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base)
@@ -82,11 +82,11 @@ namespace JSC {
                 isChain = false;
             }
             
-            void set(PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, StructureChain* _chain)
+            void set(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, StructureChain* _chain)
             {
                 stubRoutine = _stubRoutine;
                 base = _base;
-                u.chain = _chain;
+                u.chain.set(globalData, owner, _chain);
                 isChain = true;
             }
         } list[POLYMORPHIC_LIST_CACHE_SIZE];
@@ -101,9 +101,9 @@ namespace JSC {
             list[0].set(stubRoutine, firstBase, firstProto);
         }
 
-        PolymorphicAccessStructureList(PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, StructureChain* firstChain)
+        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, StructureChain* firstChain)
         {
-            list[0].set(stubRoutine, firstBase, firstChain);
+            list[0].set(globalData, owner, stubRoutine, firstBase, firstChain);
         }
 
         void derefStructures(int count)
@@ -115,11 +115,20 @@ namespace JSC {
                 info.base->deref();
 
                 if (info.u.proto) {
-                    if (info.isChain)
-                        info.u.chain->deref();
-                    else
+                    if (!info.isChain)
                         info.u.proto->deref();
                 }
+            }
+        }
+
+        void markAggregate(MarkStack& markStack, int count)
+        {
+            for (int i = 0; i < count; ++i) {
+                PolymorphicStubInfo& info = list[i];
+                ASSERT(info.base);
+                
+                if (info.u.proto && info.isChain)
+                    markStack.append(&info.u.chain);
             }
         }
     };
@@ -130,7 +139,7 @@ namespace JSC {
 #if !ENABLE(COMPUTED_GOTO_INTERPRETER)
             // We have to initialize one of the pointer members to ensure that
             // the entire struct is initialized, when opcode is not a pointer.
-            u.jsCell = 0;
+            u.jsCell.clear();
 #endif
             u.opcode = opcode;
         }
@@ -139,13 +148,21 @@ namespace JSC {
         {
             // We have to initialize one of the pointer members to ensure that
             // the entire struct is initialized in 64-bit.
-            u.jsCell = 0;
+            u.jsCell.clear();
             u.operand = operand;
         }
 
         Instruction(Structure* structure) { u.structure = structure; }
-        Instruction(StructureChain* structureChain) { u.structureChain = structureChain; }
-        Instruction(JSCell* jsCell) { u.jsCell = jsCell; }
+        Instruction(JSGlobalData& globalData, JSCell* owner, StructureChain* structureChain)
+        {
+            u.structureChain.clear();
+            u.structureChain.set(globalData, owner, structureChain);
+        }
+        Instruction(JSGlobalData& globalData, JSCell* owner, JSCell* jsCell)
+        {
+            u.jsCell.clear();
+            u.jsCell.set(globalData, owner, jsCell);
+        }
         Instruction(PolymorphicAccessStructureList* polymorphicStructures) { u.polymorphicStructures = polymorphicStructures; }
         Instruction(PropertySlot::GetValueFunc getterFunc) { u.getterFunc = getterFunc; }
 
@@ -153,8 +170,8 @@ namespace JSC {
             Opcode opcode;
             int operand;
             Structure* structure;
-            StructureChain* structureChain;
-            JSCell* jsCell;
+            WriteBarrierBase<StructureChain> structureChain;
+            WriteBarrierBase<JSCell> jsCell;
             PolymorphicAccessStructureList* polymorphicStructures;
             PropertySlot::GetValueFunc getterFunc;
         } u;

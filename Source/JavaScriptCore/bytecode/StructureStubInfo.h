@@ -85,7 +85,6 @@ namespace JSC {
             baseObjectStructure->ref();
 
             u.getByIdChain.chain = chain;
-            chain->ref();
         }
 
         void initGetByIdSelfList(PolymorphicAccessStructureList* structureList, int listSize)
@@ -117,7 +116,6 @@ namespace JSC {
             structure->ref();
 
             u.putByIdTransition.chain = chain;
-            chain->ref();
         }
 
         void initPutByIdReplace(Structure* baseObjectStructure)
@@ -129,6 +127,7 @@ namespace JSC {
         }
 
         void deref();
+        void markAggregate(MarkStack&);
 
         bool seenOnce()
         {

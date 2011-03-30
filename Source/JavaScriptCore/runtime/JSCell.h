@@ -68,6 +68,7 @@ namespace JSC {
         friend class MarkedSpace;
         friend class MarkedBlock;
         friend class ScopeChainNode;
+        friend class StructureChain;
 
     private:
         explicit JSCell(Structure*);

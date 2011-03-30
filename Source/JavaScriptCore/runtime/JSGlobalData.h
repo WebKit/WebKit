@@ -161,6 +161,7 @@ namespace JSC {
         RefPtr<Structure> programExecutableStructure;
         RefPtr<Structure> functionExecutableStructure;
         RefPtr<Structure> dummyMarkableCellStructure;
+        RefPtr<Structure> structureChainStructure;
 
         static void storeVPtrs();
         static JS_EXPORTDATA void* jsArrayVPtr;

@@ -77,7 +77,7 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
             return jsPropertyNameIterator;
     }
 
-    jsPropertyNameIterator->setCachedPrototypeChain(structureChain);
+    jsPropertyNameIterator->setCachedPrototypeChain(exec->globalData(), structureChain);
     jsPropertyNameIterator->setCachedStructure(o->structure());
     o->structure()->setEnumerationCache(exec->globalData(), jsPropertyNameIterator);
     return jsPropertyNameIterator;
@@ -86,7 +86,7 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
 JSValue JSPropertyNameIterator::get(ExecState* exec, JSObject* base, size_t i)
 {
     JSValue identifier = m_jsStrings[i].get();
-    if (m_cachedStructure == base->structure() && m_cachedPrototypeChain == base->structure()->prototypeChain(exec))
+    if (m_cachedStructure == base->structure() && m_cachedPrototypeChain.get() == base->structure()->prototypeChain(exec))
         return identifier;
 
     if (!base->hasProperty(exec, Identifier(exec, asString(identifier)->value(exec))))
@@ -97,6 +97,8 @@ JSValue JSPropertyNameIterator::get(ExecState* exec, JSObject* base, size_t i)
 void JSPropertyNameIterator::markChildren(MarkStack& markStack)
 {
     markStack.appendValues(m_jsStrings.get(), m_jsStringsSize, MayContainNullValues);
+    if (m_cachedPrototypeChain)
+        markStack.append(&m_cachedPrototypeChain);
 }
 
 #if !ASSERT_DISABLED

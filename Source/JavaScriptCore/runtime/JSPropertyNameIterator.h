@@ -73,7 +73,7 @@ namespace JSC {
         }
         Structure* cachedStructure() { return m_cachedStructure.get(); }
 
-        void setCachedPrototypeChain(NonNullPassRefPtr<StructureChain> cachedPrototypeChain) { m_cachedPrototypeChain = cachedPrototypeChain; }
+        void setCachedPrototypeChain(JSGlobalData& globalData, StructureChain* cachedPrototypeChain) { m_cachedPrototypeChain.set(globalData, this, cachedPrototypeChain); }
         StructureChain* cachedPrototypeChain() { return m_cachedPrototypeChain.get(); }
 
     private:
@@ -84,7 +84,7 @@ namespace JSC {
 #endif
 
         RefPtr<Structure> m_cachedStructure;
-        RefPtr<StructureChain> m_cachedPrototypeChain;
+        WriteBarrier<StructureChain> m_cachedPrototypeChain;
         uint32_t m_numCacheableSlots;
         uint32_t m_jsStringsSize;
         OwnArrayPtr<WriteBarrier<Unknown> > m_jsStrings;

@@ -28,6 +28,7 @@
 #include "JSWeakObjectMapRefInternal.h"
 #include "NumberPrototype.h"
 #include "StringPrototype.h"
+#include "StructureChain.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RandomNumber.h>
@@ -362,7 +363,7 @@ namespace JSC {
         // We cache our prototype chain so our clients can share it.
         if (!isValid(exec, m_cachedPrototypeChain.get())) {
             JSValue prototype = prototypeForLookup(exec);
-            m_cachedPrototypeChain = StructureChain::create(prototype.isNull() ? 0 : asObject(prototype)->structure());
+            m_cachedPrototypeChain = StructureChain::create(exec->globalData(), prototype.isNull() ? 0 : asObject(prototype)->structure());
         }
         return m_cachedPrototypeChain.get();
     }
