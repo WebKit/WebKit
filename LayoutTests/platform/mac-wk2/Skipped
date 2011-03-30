@@ -172,6 +172,7 @@ editing/selection/caret-rtl-right.html
 editing/selection/caret-rtl.html
 editing/selection/click-after-nested-block.html
 editing/selection/click-before-and-after-table.html
+editing/selection/click-below-rtl-text.html
 editing/selection/click-in-focusable-link-should-not-clear-selection.html
 editing/selection/click-in-margins-inside-editable-div.html
 editing/selection/click-in-padding-with-multiple-line-boxes.html

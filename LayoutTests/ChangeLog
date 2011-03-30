@@ -1,3 +1,11 @@
+2011-03-30  Levi Weintraub  <leviw@chromium.org>
+
+        Unreviewed.
+
+        Adding editing/selection/click-below-rtl-text.html to mac-wk2 since it requires eventSender.
+
+        * platform/mac-wk2/Skipped:
+
 2011-03-30  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
