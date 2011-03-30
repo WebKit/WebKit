@@ -31,6 +31,16 @@
 #include <qwebelement.h>
 #include <qwebframe.h>
 
+#ifdef Q_OS_SYMBIAN
+#define VERIFY_INPUTMETHOD_HINTS(actual, expect) \
+    QVERIFY(actual & Qt::ImhNoAutoUppercase); \
+    QVERIFY(actual & Qt::ImhNoPredictiveText); \
+    QVERIFY(actual & expect);
+#else
+#define VERIFY_INPUTMETHOD_HINTS(actual, expect) \
+    QVERIFY(actual == expect);
+#endif
+
 class tst_QWebView : public QObject
 {
     Q_OBJECT
@@ -253,37 +263,37 @@ void tst_QWebView::focusInputTypes()
     // 'password' field
     inputElement = mainFrame->documentElement().findFirst(QLatin1String("input[type=password]"));
     QTest::mouseClick(&webView, Qt::LeftButton, 0, inputElement.geometry().center());
-    QVERIFY(webView.inputMethodHints() == Qt::ImhHiddenText);
+    VERIFY_INPUTMETHOD_HINTS(webView.inputMethodHints(), Qt::ImhHiddenText);
     QVERIFY(webView.testAttribute(Qt::WA_InputMethodEnabled));
 
     // 'tel' field
     inputElement = mainFrame->documentElement().findFirst(QLatin1String("input[type=tel]"));
     QTest::mouseClick(&webView, Qt::LeftButton, 0, inputElement.geometry().center());
-    QVERIFY(webView.inputMethodHints() == Qt::ImhDialableCharactersOnly);
+    VERIFY_INPUTMETHOD_HINTS(webView.inputMethodHints(), Qt::ImhDialableCharactersOnly);
     QVERIFY(webView.testAttribute(Qt::WA_InputMethodEnabled));
 
     // 'number' field
     inputElement = mainFrame->documentElement().findFirst(QLatin1String("input[type=number]"));
     QTest::mouseClick(&webView, Qt::LeftButton, 0, inputElement.geometry().center());
-    QVERIFY(webView.inputMethodHints() == Qt::ImhDigitsOnly);
+    VERIFY_INPUTMETHOD_HINTS(webView.inputMethodHints(), Qt::ImhDigitsOnly);
     QVERIFY(webView.testAttribute(Qt::WA_InputMethodEnabled));
 
     // 'email' field
     inputElement = mainFrame->documentElement().findFirst(QLatin1String("input[type=email]"));
     QTest::mouseClick(&webView, Qt::LeftButton, 0, inputElement.geometry().center());
-    QVERIFY(webView.inputMethodHints() == Qt::ImhEmailCharactersOnly);
+    VERIFY_INPUTMETHOD_HINTS(webView.inputMethodHints(), Qt::ImhEmailCharactersOnly);
     QVERIFY(webView.testAttribute(Qt::WA_InputMethodEnabled));
 
     // 'url' field
     inputElement = mainFrame->documentElement().findFirst(QLatin1String("input[type=url]"));
     QTest::mouseClick(&webView, Qt::LeftButton, 0, inputElement.geometry().center());
-    QVERIFY(webView.inputMethodHints() == Qt::ImhUrlCharactersOnly);
+    VERIFY_INPUTMETHOD_HINTS(webView.inputMethodHints(), Qt::ImhUrlCharactersOnly);
     QVERIFY(webView.testAttribute(Qt::WA_InputMethodEnabled));
 
     // 'password' field
     inputElement = mainFrame->documentElement().findFirst(QLatin1String("input[type=password]"));
     QTest::mouseClick(&webView, Qt::LeftButton, 0, inputElement.geometry().center());
-    QVERIFY(webView.inputMethodHints() == Qt::ImhHiddenText);
+    VERIFY_INPUTMETHOD_HINTS(webView.inputMethodHints(), Qt::ImhHiddenText);
     QVERIFY(webView.testAttribute(Qt::WA_InputMethodEnabled));
 
     // 'text' type
@@ -300,13 +310,18 @@ void tst_QWebView::focusInputTypes()
     // 'password' field
     inputElement = mainFrame->documentElement().findFirst(QLatin1String("input[type=password]"));
     QTest::mouseClick(&webView, Qt::LeftButton, 0, inputElement.geometry().center());
-    QVERIFY(webView.inputMethodHints() == Qt::ImhHiddenText);
+    VERIFY_INPUTMETHOD_HINTS(webView.inputMethodHints(), Qt::ImhHiddenText);
     QVERIFY(webView.testAttribute(Qt::WA_InputMethodEnabled));
 
     // 'text area' field
     inputElement = mainFrame->documentElement().findFirst(QLatin1String("textarea"));
     QTest::mouseClick(&webView, Qt::LeftButton, 0, inputElement.geometry().center());
+#if defined(Q_OS_SYMBIAN)
+    QVERIFY(webView.inputMethodHints() & Qt::ImhNoAutoUppercase);
+    QVERIFY(webView.inputMethodHints() & Qt::ImhNoPredictiveText);
+#else
     QVERIFY(webView.inputMethodHints() == Qt::ImhNone);
+#endif
     QVERIFY(webView.testAttribute(Qt::WA_InputMethodEnabled));
 }
 
