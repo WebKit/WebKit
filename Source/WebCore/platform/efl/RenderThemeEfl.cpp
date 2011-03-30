@@ -283,7 +283,7 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
 
     applyEdjeStateFromForm(entry->o, controlStatesForRenderer(object));
 
-    cairo = info.context->platformContext();
+    cairo = info.context->platformContext()->cr();
     ASSERT(cairo);
 
     // Currently, only sliders needs this message; if other widget ever needs special
