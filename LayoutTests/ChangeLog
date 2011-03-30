@@ -1,5 +1,12 @@
 2011-03-30  Mihai Parparita  <mihaip@chromium.org>
 
+        Put expected PNG for fast/multicol/max-height-columns-block.html in the
+        right directory (fix after r82480).
+
+        * platform/chromium-mac-leopard/fast/multicol/max-height-columns-block-expected.png: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/max-height-columns-block-expected.png.
+
+2011-03-30  Mihai Parparita  <mihaip@chromium.org>
+
         Fix more tests for Chromium Snow Leopard.
         
         Most are due to mismatched checksum files (like r82480), some also
