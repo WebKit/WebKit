@@ -9,6 +9,7 @@
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2008 Dirk Schulze <vbs85@gmx.de>
  * Copyright (C) 2010, 2011 Sencha, Inc.
+ * Copyright (C) 2011 Andreas Kling <kling@webkit.org>
  *
  * All rights reserved.
  *
@@ -672,8 +673,6 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     ContextShadow* shadow = contextShadow();
 
     if (m_state.fillPattern) {
-        AffineTransform affine;
-        QBrush brush(m_state.fillPattern->createPlatformPattern(affine));
         QPixmap* image = m_state.fillPattern->tileImage()->nativeImageForCurrentFrame();
         QPainter* shadowPainter = hasShadow() ? shadow->beginShadowLayer(this, normalizedRect) : 0;
         if (shadowPainter) {
