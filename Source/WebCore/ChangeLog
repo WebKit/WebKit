@@ -1,5 +1,12 @@
 2011-03-30  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Fix compilation on Windows and EFL.
+
+        * CMakeLists.txt:
+        * bindings/js/JSBindingsAllInOne.cpp:
+
+2011-03-30  Yury Semikhatsky  <yurys@chromium.org>
+
         Reviewed by Pavel Feldman.
 
         Web Inspector: split debugger agent into Page and Worker-specific ones
