@@ -37,7 +37,7 @@ namespace CoreIPC {
 
 void encodeImage(ArgumentEncoder* encoder, Image* image)
 {
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(image->size());
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(image->size(), ShareableBitmap::SupportsAlpha);
     bitmap->createGraphicsContext()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
     ShareableBitmap::Handle handle;
     bitmap->createHandle(handle);

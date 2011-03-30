@@ -35,8 +35,8 @@ namespace WebKit {
 PassRefPtr<WebImage> WebImage::create(const IntSize& size, ImageOptions options)
 {
     if (options & ImageOptionsShareable)
-        return WebImage::create(ShareableBitmap::createShareable(size));
-    return WebImage::create(ShareableBitmap::create(size));
+        return WebImage::create(ShareableBitmap::createShareable(size, ShareableBitmap::SupportsAlpha));
+    return WebImage::create(ShareableBitmap::create(size, ShareableBitmap::SupportsAlpha));
 }
 
 PassRefPtr<WebImage> WebImage::create(PassRefPtr<ShareableBitmap> bitmap)

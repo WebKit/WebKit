@@ -513,7 +513,7 @@ PassRefPtr<ShareableBitmap> NetscapePlugin::snapshot()
 
     ASSERT(m_isStarted);
     
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(m_frameRect.size());
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(m_frameRect.size(), ShareableBitmap::SupportsAlpha);
     OwnPtr<GraphicsContext> context = bitmap->createGraphicsContext();
 
     context->translate(-m_frameRect.x(), -m_frameRect.y());

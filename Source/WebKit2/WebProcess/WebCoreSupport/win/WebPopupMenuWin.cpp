@@ -79,8 +79,8 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
     int backingStoreWidth = max(pageCoordinates.width() - m_popupClient->clientInsetLeft() - m_popupClient->clientInsetRight(), popupWidth);
 
     IntSize backingStoreSize(backingStoreWidth, (itemCount * data.m_itemHeight));
-    data.m_notSelectedBackingStore = ShareableBitmap::createShareable(backingStoreSize);
-    data.m_selectedBackingStore = ShareableBitmap::createShareable(backingStoreSize);
+    data.m_notSelectedBackingStore = ShareableBitmap::createShareable(backingStoreSize, ShareableBitmap::SupportsAlpha);
+    data.m_selectedBackingStore = ShareableBitmap::createShareable(backingStoreSize, ShareableBitmap::SupportsAlpha);
 
     OwnPtr<GraphicsContext> notSelectedBackingStoreContext = data.m_notSelectedBackingStore->createGraphicsContext();
     OwnPtr<GraphicsContext> selectedBackingStoreContext = data.m_selectedBackingStore->createGraphicsContext();

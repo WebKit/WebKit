@@ -1,5 +1,64 @@
 2011-03-29  Adam Roben  <aroben@apple.com>
 
+        Add a way to specify that a ShareableBitmap has no alpha channel
+
+        Before this patch, all ShareableBitmaps had an alpha channel. With this patch, all
+        ShareableBitmaps *still* have an alpha channel. But now there's a way to specify you don't
+        want one (which will be used in the future)!
+
+        Fixes <http://webkit.org/b/57388> Need a way to specify that a ShareableBitmap has no alpha
+        channel
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::Handle::Handle): Moved here from the header file, and added
+        initialization of m_flags.
+
+        (WebKit::ShareableBitmap::Handle::encode):
+        (WebKit::ShareableBitmap::Handle::decode):
+        Encode/decode m_flags.
+
+        (WebKit::ShareableBitmap::create):
+        (WebKit::ShareableBitmap::createShareable):
+        Pass along the new Flags argument.
+
+        (WebKit::ShareableBitmap::createHandle): Store our Flags on the Handle.
+        (WebKit::ShareableBitmap::ShareableBitmap): Store the Flags in m_flags.
+
+        * Shared/ShareableBitmap.h: Added Flag, Flags, and m_flags, and added a Flags argument to
+        some create functions.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::encodeImage):
+        * Shared/WebImage.cpp:
+        (WebKit::WebImage::create):
+        Specify that we want a bitmap that supports alpha to maintain current behavior.
+
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::bitmapInfo): New helper function. Includes an alpha channel only if specified in
+        the flags.
+
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::makeCGImage):
+        Use the new helper function.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::snapshot):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::geometryDidChange):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::convertImageToBitmap):
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp:
+        (WebKit::WebPopupMenu::setUpPlatformData):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::display):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindIndicator):
+        Specify that we want a bitmap that supports alpha to maintain current behavior.
+
+2011-03-29  Adam Roben  <aroben@apple.com>
+
         Add ShareableBitmap::Handle
 
         This object is used for encoding/decoding a ShareableBitmap via CoreIPC. It currently just

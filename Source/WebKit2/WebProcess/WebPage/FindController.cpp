@@ -165,7 +165,7 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
     selectedFrame->selection()->getClippedVisibleTextRectangles(textRects);
 
     // Create a backing store and paint the find indicator text into it.
-    RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createShareable(selectionRect.size());
+    RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createShareable(selectionRect.size(), ShareableBitmap::SupportsAlpha);
     if (!findIndicatorTextBackingStore)
         return false;
     

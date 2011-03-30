@@ -45,10 +45,15 @@ namespace WebKit {
     
 class ShareableBitmap : public RefCounted<ShareableBitmap> {
 public:
+    enum Flag {
+        SupportsAlpha = 1 << 0,
+    };
+    typedef unsigned Flags;
+
     class Handle {
         WTF_MAKE_NONCOPYABLE(Handle);
     public:
-        Handle() { }
+        Handle();
 
         bool isNull() const { return m_handle.isNull(); }
 
@@ -60,16 +65,17 @@ public:
 
         mutable SharedMemory::Handle m_handle;
         WebCore::IntSize m_size;
+        Flags m_flags;
     };
 
     // Create a shareable bitmap that uses malloced memory.
-    static PassRefPtr<ShareableBitmap> create(const WebCore::IntSize&);
+    static PassRefPtr<ShareableBitmap> create(const WebCore::IntSize&, Flags);
 
     // Create a shareable bitmap whose backing memory can be shared with another process.
-    static PassRefPtr<ShareableBitmap> createShareable(const WebCore::IntSize&);
+    static PassRefPtr<ShareableBitmap> createShareable(const WebCore::IntSize&, Flags);
 
     // Create a shareable bitmap from an already existing shared memory block.
-    static PassRefPtr<ShareableBitmap> create(const WebCore::IntSize&, PassRefPtr<SharedMemory>);
+    static PassRefPtr<ShareableBitmap> create(const WebCore::IntSize&, Flags, PassRefPtr<SharedMemory>);
 
     // Create a shareable bitmap from a handle.
     static PassRefPtr<ShareableBitmap> create(const Handle&);
@@ -102,8 +108,8 @@ public:
 #endif
 
 private:
-    ShareableBitmap(const WebCore::IntSize&, void*);
-    ShareableBitmap(const WebCore::IntSize&, PassRefPtr<SharedMemory>);
+    ShareableBitmap(const WebCore::IntSize&, Flags, void*);
+    ShareableBitmap(const WebCore::IntSize&, Flags, PassRefPtr<SharedMemory>);
 
     static size_t numBytesForSize(const WebCore::IntSize& size) { return size.width() * size.height() * 4; }
 
@@ -116,6 +122,7 @@ private:
     size_t sizeInBytes() const { return numBytesForSize(m_size); }
 
     WebCore::IntSize m_size;
+    Flags m_flags;
 
     // If the shareable bitmap is backed by shared memory, this points to the shared memory object.
     RefPtr<SharedMemory> m_sharedMemory;

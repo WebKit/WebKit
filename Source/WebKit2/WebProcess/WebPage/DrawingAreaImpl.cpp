@@ -515,7 +515,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     IntRect bounds = m_dirtyRegion.bounds();
     ASSERT(m_webPage->bounds().contains(bounds));
 
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bounds.size());
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bounds.size(), ShareableBitmap::SupportsAlpha);
     if (!bitmap->createHandle(updateInfo.bitmapHandle))
         return;
 

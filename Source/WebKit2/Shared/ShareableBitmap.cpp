@@ -34,10 +34,16 @@ using namespace WebCore;
 
 namespace WebKit {
 
+ShareableBitmap::Handle::Handle()
+    : m_flags(0)
+{
+}
+
 void ShareableBitmap::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(m_handle);
     encoder->encode(m_size);
+    encoder->encode(m_flags);
 }
 
 bool ShareableBitmap::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)
@@ -46,10 +52,12 @@ bool ShareableBitmap::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& 
         return false;
     if (!decoder->decode(handle.m_size))
         return false;
+    if (!decoder->decode(handle.m_flags))
+        return false;
     return true;
 }
 
-PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size)
+PassRefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags flags)
 {
     size_t numBytes = numBytesForSize(size);
     
@@ -57,10 +65,10 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size
     if (!tryFastMalloc(numBytes).getValue(data))
         return 0;
 
-    return adoptRef(new ShareableBitmap(size, data));
+    return adoptRef(new ShareableBitmap(size, flags, data));
 }
 
-PassRefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size)
+PassRefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size, Flags flags)
 {
     size_t numBytes = numBytesForSize(size);
 
@@ -68,17 +76,17 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::createShareable(const IntSize& size
     if (!sharedMemory)
         return 0;
 
-    return adoptRef(new ShareableBitmap(size, sharedMemory));
+    return adoptRef(new ShareableBitmap(size, flags, sharedMemory));
 }
 
-PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size, PassRefPtr<SharedMemory> sharedMemory)
+PassRefPtr<ShareableBitmap> ShareableBitmap::create(const IntSize& size, Flags flags, PassRefPtr<SharedMemory> sharedMemory)
 {
     ASSERT(sharedMemory);
 
     size_t numBytes = numBytesForSize(size);
     ASSERT_UNUSED(numBytes, sharedMemory->size() >= numBytes);
     
-    return adoptRef(new ShareableBitmap(size, sharedMemory));
+    return adoptRef(new ShareableBitmap(size, flags, sharedMemory));
 }
 
 PassRefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle)
@@ -88,7 +96,7 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle)
     if (!sharedMemory)
         return 0;
 
-    return create(handle.m_size, sharedMemory.release());
+    return create(handle.m_size, handle.m_flags, sharedMemory.release());
 }
 
 bool ShareableBitmap::createHandle(Handle& handle)
@@ -98,17 +106,20 @@ bool ShareableBitmap::createHandle(Handle& handle)
     if (!m_sharedMemory->createHandle(handle.m_handle, SharedMemory::ReadWrite))
         return false;
     handle.m_size = m_size;
+    handle.m_flags = m_flags;
     return true;
 }
 
-ShareableBitmap::ShareableBitmap(const IntSize& size, void* data)
+ShareableBitmap::ShareableBitmap(const IntSize& size, Flags flags, void* data)
     : m_size(size)
+    , m_flags(flags)
     , m_data(data)
 {
 }
 
-ShareableBitmap::ShareableBitmap(const IntSize& size, PassRefPtr<SharedMemory> sharedMemory)
+ShareableBitmap::ShareableBitmap(const IntSize& size, Flags flags, PassRefPtr<SharedMemory> sharedMemory)
     : m_size(size)
+    , m_flags(flags)
     , m_sharedMemory(sharedMemory)
     , m_data(0)
 {

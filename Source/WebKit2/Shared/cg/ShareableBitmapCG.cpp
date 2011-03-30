@@ -34,14 +34,26 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static CGBitmapInfo bitmapInfo(ShareableBitmap::Flags flags)
+{
+    CGBitmapInfo info = kCGBitmapByteOrder32Host;
+    if (flags & ShareableBitmap::SupportsAlpha)
+        info |= kCGImageAlphaPremultipliedFirst;
+    else
+        info |= kCGImageAlphaNoneSkipFirst;
+
+    return info;
+}
+
 PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
 
+
     ref(); // Balanced by deref in releaseBitmapContextData.
     RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreateWithData(data(),
         m_size.width(), m_size.height(), 8, m_size.width() * 4, colorSpace.get(),
-        kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, releaseBitmapContextData, this));
+        bitmapInfo(m_flags), releaseBitmapContextData, this));
 
     // We want the origin to be in the top left corner so we flip the backing store context.
     CGContextTranslateCTM(bitmapContext.get(), 0, m_size.height());
@@ -68,7 +80,7 @@ RetainPtr<CGImageRef> ShareableBitmap::makeCGImage()
     RetainPtr<CGDataProvider> dataProvider(AdoptCF, CGDataProviderCreateWithData(this, data(), sizeInBytes(), releaseDataProviderData));
 
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-    RetainPtr<CGImageRef> image(AdoptCF, CGImageCreate(m_size.width(), m_size.height(), 8, 32, m_size.width() * 4, colorSpace.get(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host, dataProvider.get(), 0, false, kCGRenderingIntentDefault));
+    RetainPtr<CGImageRef> image(AdoptCF, CGImageCreate(m_size.width(), m_size.height(), 8, 32, m_size.width() * 4, colorSpace.get(), bitmapInfo(m_flags), dataProvider.get(), 0, false, kCGRenderingIntentDefault));
     return image;
 }
 
