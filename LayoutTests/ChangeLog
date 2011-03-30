@@ -1,3 +1,18 @@
+2011-03-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Update Mac Leopard baselines after r82056
+        https://bugs.webkit.org/show_bug.cgi?id=57428
+
+        These expected results differ from old ones just by a pixel or two.
+        I suspect they're caused by text metrics differences, but I haven't
+        confirmed visually.
+
+        * platform/mac-leopard/fast/ruby/base-shorter-than-text-expected.txt:
+        * platform/mac-leopard/fast/text/emphasis-combined-text-expected.txt:
+        * platform/mac-leopard/fast/text/international/text-combine-image-test-expected.txt:
+
 2011-03-30  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Ojan Vafai.
