@@ -198,7 +198,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_LTCG|Win32"
+			Name="Production|Win32"
 			ConfigurationType="2"
 			InheritedPropertySheets="..\Configurations\TestWebKitAPIRelease.vsprops;..\Configurations\TestWebKitAPIInjectedBundleCommon.vsprops"
 			CharacterSet="1"

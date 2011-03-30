@@ -199,9 +199,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_LTCG|Win32"
+			Name="Production|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets=".\QTMovieWinReleaseLTCG.vsprops"
+			InheritedPropertySheets=".\QTMovieWinProduction.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>

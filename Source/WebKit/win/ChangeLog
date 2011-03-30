@@ -1,3 +1,22 @@
+2011-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Rename Windows configuration Release_LTCG to Production for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=57465
+
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/InterfacesProduction.vsprops: Copied from Source/WebKit/win/WebKit.vcproj/InterfacesReleaseLTCG.vsprops.
+        * WebKit.vcproj/InterfacesReleaseLTCG.vsprops: Removed.
+        * WebKit.vcproj/WebKit.sln:
+        * WebKit.vcproj/WebKit.submit.sln:
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebKit.vcproj/WebKitGUID.vcproj:
+        * WebKit.vcproj/WebKitGUIDProduction.vsprops: Copied from Source/WebKit/win/WebKit.vcproj/WebKitGUIDReleaseLTCG.vsprops.
+        * WebKit.vcproj/WebKitGUIDReleaseLTCG.vsprops: Removed.
+        * WebKit.vcproj/WebKitLibProduction.vsprops: Copied from Source/WebKit/win/WebKit.vcproj/WebKitLibReleaseLTCG.vsprops.
+        * WebKit.vcproj/WebKitLibReleaseLTCG.vsprops: Removed.
+
 2011-03-29  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

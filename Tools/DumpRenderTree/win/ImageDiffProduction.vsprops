@@ -2,12 +2,10 @@
 <VisualStudioPropertySheet
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="DumpRenderTreeReleaseLTCG"
+	Name="ImageDiffProduction"
 	InheritedPropertySheets="
-      $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;
       $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;
       $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;
-      .\DumpRenderTreeCommon.vsprops;
-      .\DumpRenderTreeApple.vsprops"
+      .\ImageDiffCommon.vsprops"
 	>
 </VisualStudioPropertySheet>

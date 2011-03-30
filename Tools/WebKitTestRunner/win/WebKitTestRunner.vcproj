@@ -321,9 +321,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_LTCG|Win32"
+			Name="Production|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets=".\WebKitTestRunnerReleaseLTCG.vsprops"
+			InheritedPropertySheets=".\WebKitTestRunnerProduction.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -461,7 +461,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release_LTCG|Win32"
+					Name="Production|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool

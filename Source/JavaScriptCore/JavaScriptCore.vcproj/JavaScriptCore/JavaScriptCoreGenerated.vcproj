@@ -43,7 +43,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_LTCG|Win32"
+			Name="Production|Win32"
 			ConfigurationType="0"
 			InheritedPropertySheets=".\JavaScriptCoreGeneratedCommon.vsprops"
 			>

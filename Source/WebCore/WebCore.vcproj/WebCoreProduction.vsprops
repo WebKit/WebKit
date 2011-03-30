@@ -2,10 +2,16 @@
 <VisualStudioPropertySheet
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="ImageDiffReleaseLTCG"
+	Name="WebCoreProduction"
 	InheritedPropertySheets="
+      $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;
       $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;
       $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;
-      .\ImageDiffCommon.vsprops"
+      .\WebCoreCommon.vsprops;
+      .\WebCoreCG.vsprops;
+      .\WebCoreCFNetwork.vsprops;
+      .\WebCorePthreads.vsprops;
+      .\WebCoreMediaQT.vsprops;
+      .\WebCoreQuartzCore.vsprops"
 	>
 </VisualStudioPropertySheet>

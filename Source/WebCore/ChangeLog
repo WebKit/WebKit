@@ -1,3 +1,20 @@
+2011-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Rename Windows configuration Release_LTCG to Production for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=57465
+
+        * WebCore.vcproj/QTMovieWin.vcproj:
+        * WebCore.vcproj/QTMovieWinProduction.vsprops: Copied from Source/WebCore/WebCore.vcproj/QTMovieWinReleaseLTCG.vsprops.
+        * WebCore.vcproj/QTMovieWinReleaseLTCG.vsprops: Removed.
+        * WebCore.vcproj/WebCore.sln:
+        * WebCore.vcproj/WebCore.submit.sln:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCoreGenerated.vcproj:
+        * WebCore.vcproj/WebCoreProduction.vsprops: Copied from Source/WebCore/WebCore.vcproj/WebCoreReleaseLTCG.vsprops.
+        * WebCore.vcproj/WebCoreReleaseLTCG.vsprops: Removed.
+
 2011-03-30  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Anders Carlsson.

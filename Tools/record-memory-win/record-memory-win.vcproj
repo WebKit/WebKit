@@ -77,9 +77,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_LTCG|Win32"
+			Name="Production|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets=".\record-memory-winReleaseLTCG.vsprops"
+			InheritedPropertySheets=".\record-memory-winProduction.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>

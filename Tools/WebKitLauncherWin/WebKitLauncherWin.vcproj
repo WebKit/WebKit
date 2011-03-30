@@ -77,9 +77,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_LTCG|Win32"
+			Name="Production|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets=".\WebKitLauncherWinReleaseLTCG.vsprops"
+			InheritedPropertySheets=".\WebKitLauncherWinProduction.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>

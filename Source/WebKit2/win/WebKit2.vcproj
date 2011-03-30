@@ -322,9 +322,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_LTCG|Win32"
+			Name="Production|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets=".\WebKit2ReleaseLTCG.vsprops"
+			InheritedPropertySheets=".\WebKit2Production.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -1345,7 +1345,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release_LTCG|Win32"
+						Name="Production|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1600,7 +1600,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Release_LTCG|Win32"
+							Name="Production|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -2060,7 +2060,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Release_LTCG|Win32"
+							Name="Production|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -4080,7 +4080,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Release_LTCG|Win32"
+				Name="Production|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"

@@ -1,3 +1,19 @@
+2011-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Rename Windows configuration Release_LTCG to Production for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=57465
+
+        * win/WebKit2.submit.sln:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.vcproj:
+        * win/WebKit2Production.vsprops: Copied from Source/WebKit2/win/WebKit2ReleaseLTCG.vsprops.
+        * win/WebKit2ReleaseLTCG.vsprops: Removed.
+        * win/WebKit2WebProcess.vcproj:
+        * win/WebKit2WebProcessProduction.vsprops: Copied from Source/WebKit2/win/WebKit2WebProcessReleaseLTCG.vsprops.
+        * win/WebKit2WebProcessReleaseLTCG.vsprops: Removed.
+
 2011-03-30  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Dan Bernstein.

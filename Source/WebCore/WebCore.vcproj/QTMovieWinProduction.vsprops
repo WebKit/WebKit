@@ -2,12 +2,11 @@
 <VisualStudioPropertySheet
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="WebKitTestRunnerReleaseLTCG"
+	Name="QTMovieWinProduction"
 	InheritedPropertySheets="
+      $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\FeatureDefines.vsprops;
       $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;
       $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;
-      ..\Configurations\WebKitTestRunnerCommon.vsprops;
-      ..\Configurations\WebKitTestRunnerCoreFoundation.vsprops;
-      ..\Configurations\WebKitTestRunnerCoreGraphics.vsprops"
+      .\QTMovieWinCommon.vsprops"
 	>
 </VisualStudioPropertySheet>

@@ -320,7 +320,7 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_LTCG|Win32"
+			Name="Production|Win32"
 			ConfigurationType="1"
 			InheritedPropertySheets="..\Configurations\TestWebKitAPIRelease.vsprops"
 			CharacterSet="1"

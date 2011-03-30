@@ -2,10 +2,10 @@
 <VisualStudioPropertySheet
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="FindSafariReleaseLTCG"
+	Name="WinLauncherProduction"
 	InheritedPropertySheets="
       $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;
       $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;
-      .\FindSafariCommon.vsprops"
+      .\WinLauncherCommon.vsprops"
 	>
 </VisualStudioPropertySheet>

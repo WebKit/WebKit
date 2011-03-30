@@ -1,3 +1,26 @@
+2011-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Rename Windows configuration Release_LTCG to Production for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=57465
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreProduction.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleaseLTCG.vsprops.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleaseLTCG.vsprops: Removed.
+        * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.vcproj/WTF/WTFProduction.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/WTF/WTFReleaseLTCG.vsprops.
+        * JavaScriptCore.vcproj/WTF/WTFReleaseLTCG.vsprops: Removed.
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+        * JavaScriptCore.vcproj/jsc/jscProduction.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/jsc/jscReleaseLTCG.vsprops.
+        * JavaScriptCore.vcproj/jsc/jscReleaseLTCG.vsprops: Removed.
+        * JavaScriptCore.vcproj/testapi/testapi.vcproj:
+        * JavaScriptCore.vcproj/testapi/testapiProduction.vsprops: Copied from Source/JavaScriptCore/JavaScriptCore.vcproj/testapi/testapiReleaseLTCG.vsprops.
+        * JavaScriptCore.vcproj/testapi/testapiReleaseLTCG.vsprops: Removed.
+
 2011-03-30  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Maciej Stachowiak.

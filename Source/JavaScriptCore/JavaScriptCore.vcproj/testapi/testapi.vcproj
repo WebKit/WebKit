@@ -321,9 +321,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_LTCG|Win32"
+			Name="Production|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets=".\testapiReleaseLTCG.vsprops"
+			InheritedPropertySheets=".\testapiProduction.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -430,7 +430,7 @@
 				/>
 			</FileConfiguration>
 			<FileConfiguration
-				Name="Release_LTCG|Win32"
+				Name="Production|Win32"
 				>
 				<Tool
 					Name="VCCLCompilerTool"

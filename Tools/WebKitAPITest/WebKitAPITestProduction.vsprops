@@ -2,10 +2,10 @@
 <VisualStudioPropertySheet
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="WebKitLauncherWinReleaseLTCG"
+	Name="WebKitAPITestProduction"
 	InheritedPropertySheets="
       $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;
       $(WebKitVSPropsRedirectionDir)..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;
-      .\WebKitLauncherWinCommon.vsprops"
+      .\WebKitAPITestCommon.vsprops"
 	>
 </VisualStudioPropertySheet>

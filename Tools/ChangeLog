@@ -1,3 +1,52 @@
+2011-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Rename Windows configuration Release_LTCG to Production for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=57465
+
+        * DumpRenderTree/DumpRenderTree.sln:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginProduction.vsprops: Copied from Tools/DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginReleaseLTCG.vsprops.
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginReleaseLTCG.vsprops: Removed.
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * DumpRenderTree/win/DumpRenderTreeProduction.vsprops: Copied from Tools/DumpRenderTree/win/DumpRenderTreeReleaseLTCG.vsprops.
+        * DumpRenderTree/win/DumpRenderTreeReleaseLTCG.vsprops: Removed.
+        * DumpRenderTree/win/ImageDiff.vcproj:
+        * DumpRenderTree/win/ImageDiffProduction.vsprops: Copied from Tools/DumpRenderTree/win/ImageDiffReleaseLTCG.vsprops.
+        * DumpRenderTree/win/ImageDiffReleaseLTCG.vsprops: Removed.
+        * FindSafari/FindSafari.vcproj:
+        * FindSafari/FindSafariProduction.vsprops: Copied from Tools/FindSafari/FindSafariReleaseLTCG.vsprops.
+        * FindSafari/FindSafariReleaseLTCG.vsprops: Removed.
+        * MiniBrowser/Configurations/MiniBrowserProduction.vsprops: Copied from Tools/MiniBrowser/Configurations/MiniBrowserReleaseLTCG.vsprops.
+        * MiniBrowser/Configurations/MiniBrowserReleaseLTCG.vsprops: Removed.
+        * MiniBrowser/MiniBrowser.vcproj:
+        * Scripts/webkitdirs.pm:
+        * TestWebKitAPI/win/TestWebKitAPI.sln:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        * TestWebKitAPI/win/TestWebKitAPIGenerated.vcproj:
+        * TestWebKitAPI/win/TestWebKitAPIInjectedBundle.vcproj:
+        * WebKitAPITest/WebKitAPITest.vcproj:
+        * WebKitAPITest/WebKitAPITestProduction.vsprops: Copied from Tools/WebKitAPITest/WebKitAPITestReleaseLTCG.vsprops.
+        * WebKitAPITest/WebKitAPITestReleaseLTCG.vsprops: Removed.
+        * WebKitLauncherWin/WebKitLauncherWin.vcproj:
+        * WebKitLauncherWin/WebKitLauncherWinProduction.vsprops: Copied from Tools/WebKitLauncherWin/WebKitLauncherWinReleaseLTCG.vsprops.
+        * WebKitLauncherWin/WebKitLauncherWinReleaseLTCG.vsprops: Removed.
+        * WebKitTestRunner/WebKitTestRunner.sln:
+        * WebKitTestRunner/win/InjectedBundle.vcproj:
+        * WebKitTestRunner/win/InjectedBundleGenerated.vcproj:
+        * WebKitTestRunner/win/InjectedBundleProduction.vsprops: Copied from Tools/WebKitTestRunner/win/InjectedBundleReleaseLTCG.vsprops.
+        * WebKitTestRunner/win/InjectedBundleReleaseLTCG.vsprops: Removed.
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj:
+        * WebKitTestRunner/win/WebKitTestRunnerProduction.vsprops: Copied from Tools/WebKitTestRunner/win/WebKitTestRunnerReleaseLTCG.vsprops.
+        * WebKitTestRunner/win/WebKitTestRunnerReleaseLTCG.vsprops: Removed.
+        * WinLauncher/WinLauncher.vcproj:
+        * WinLauncher/WinLauncherProduction.vsprops: Copied from Tools/WinLauncher/WinLauncherReleaseLTCG.vsprops.
+        * WinLauncher/WinLauncherReleaseLTCG.vsprops: Removed.
+        * record-memory-win/record-memory-win.vcproj:
+        * record-memory-win/record-memory-winProduction.vsprops: Copied from Tools/record-memory-win/record-memory-winReleaseLTCG.vsprops.
+        * record-memory-win/record-memory-winReleaseLTCG.vsprops: Removed.
+
 2011-03-30  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

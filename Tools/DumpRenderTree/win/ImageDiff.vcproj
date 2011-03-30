@@ -259,9 +259,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_LTCG|Win32"
+			Name="Production|Win32"
 			ConfigurationType="1"
-			InheritedPropertySheets=".\ImageDiffReleaseLTCG.vsprops"
+			InheritedPropertySheets=".\ImageDiffProduction.vsprops"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>

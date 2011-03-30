@@ -321,9 +321,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release_LTCG|Win32"
+			Name="Production|Win32"
 			ConfigurationType="2"
-			InheritedPropertySheets=".\InjectedBundleReleaseLTCG.vsprops"
+			InheritedPropertySheets=".\InjectedBundleProduction.vsprops"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
