@@ -1661,9 +1661,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
                 if (!rectToClipOut.isEmpty())
                     context->clipOutRoundedRect(rectToClipOut);
 
-                if (shadowSpread < 0)
-                    fillRect.expandRadii(shadowSpread);
-
+                fillRect.expandRadii(shadowSpread);
                 context->fillRoundedRect(fillRect, Color::black, s->colorSpace());
             } else {
                 IntRect rectToClipOut = border.rect();
@@ -1731,15 +1729,13 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
             context->translate(extraOffset.width(), extraOffset.height());
             shadowOffset -= extraOffset;
 
-            if (hasBorderRadius && shadowSpread > 0)
-                border.shrinkRadii(shadowSpread);
-            
             if (shadow->isWebkitBoxShadow())
                 context->setLegacyShadow(shadowOffset, shadowBlur, shadowColor, s->colorSpace());
             else
                 context->setShadow(shadowOffset, shadowBlur, shadowColor, s->colorSpace());
 
             RoundedIntRect roundedHole(holeRect, border.radii());
+            roundedHole.shrinkRadii(shadowSpread);
             context->fillRectWithRoundedHole(outerRect, roundedHole, fillColor, s->colorSpace());
 
             context->restore();

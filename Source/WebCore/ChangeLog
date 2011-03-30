@@ -1,3 +1,18 @@
+2011-03-30  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Simon Fraser.
+
+        box-shadow radii stays the same regardless of any spread set
+        https://bugs.webkit.org/show_bug.cgi?id=49726
+
+        - Removed special shadowSpread handling path
+        - Fixed broken multple inset shadow border computation.
+
+        Test: fast/box-shadow/spread-multiple-inset.html
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+
 2011-03-29  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

@@ -1,3 +1,25 @@
+2011-03-30  MORITA Hajime  <morrita@google.com>
+
+        box-shadow radii stays the same regardless of any spread set
+        https://bugs.webkit.org/show_bug.cgi?id=49726
+        
+        - Added test for multiple inset shadows.
+        - Updated wrong expectations which are fixed by this change.
+        - Moved some expectation file location to platform/mac because they don't match
+          against non-mac platform results due to the difference between graphics backends.
+
+        * fast/box-shadow/spread-multiple-inset-expected.txt: Added.
+        * fast/box-shadow/spread-multiple-inset.html: Added.
+        * fast/box-shadow/spread-multiple-normal-expected.checksum: Removed.
+        * fast/box-shadow/spread-multiple-normal-expected.png: Removed.
+        * fast/box-shadow/spread-multiple-normal.html: Changed to avoid overlapping boxes.
+        * platform/mac/fast/box-shadow/spread-expected.checksum:
+        * platform/mac/fast/box-shadow/spread-expected.png:
+        * platform/mac/fast/box-shadow/spread-multiple-inset-expected.checksum: Added.
+        * platform/mac/fast/box-shadow/spread-multiple-inset-expected.png: Added.
+        * platform/mac/fast/box-shadow/spread-multiple-normal-expected.checksum: Added.
+        * platform/mac/fast/box-shadow/spread-multiple-normal-expected.png: Added.
+
 2011-03-25  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.
