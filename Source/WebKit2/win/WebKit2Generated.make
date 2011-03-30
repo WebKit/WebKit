@@ -76,6 +76,7 @@ all:
     xcopy /y /d "..\UIProcess\API\C\win\WKView.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\win\WKViewPrivate.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\cpp\WKRetainPtr.h" "%ConfigurationBuildDir%\include\WebKit2"
+    xcopy /y /d "..\WebProcess\InjectedBundle\API\c\win\WKBundlePrivateWin.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundle.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleBackForwardList.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleBackForwardListItem.h" "%ConfigurationBuildDir%\include\WebKit2"

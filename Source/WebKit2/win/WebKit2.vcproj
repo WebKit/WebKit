@@ -2327,6 +2327,18 @@
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleScriptWorld.h"
 							>
 						</File>
+						<Filter
+							Name="win"
+							>
+							<File
+								RelativePath="..\WebProcess\InjectedBundle\API\c\win\WKBundlePrivateWin.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\WebProcess\InjectedBundle\API\c\win\WKBundlePrivateWin.h"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 				<Filter

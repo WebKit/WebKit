@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2010 University of Szeged.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +24,20 @@
  */
 
 #include "config.h"
+#include "WKBundlePrivateWin.h"
+
 #include "InjectedBundle.h"
-
+#include "WKAPICast.h"
 #include "WKBundleAPICast.h"
-#include "WKBundleInitialize.h"
 
-using namespace WebCore;
+using namespace WebKit;
 
-namespace WebKit {
-
-bool InjectedBundle::load(APIObject* initializationUserData)
+void WKBundleSetHostAllowsAnyHTTPSCertificate(WKBundleRef bundleRef, WKStringRef host)
 {
-    m_platformBundle.setFileName(static_cast<QString>(m_path));
-    if (!m_platformBundle.load()) {
-        qWarning("Error loading the injected bundle: %s", qPrintable(m_platformBundle.errorString()));
-        return false;
-    }
-
-    WKBundleInitializeFunctionPtr initializeFunction =
-            reinterpret_cast<WKBundleInitializeFunctionPtr>(m_platformBundle.resolve("WKBundleInitialize"));
-
-    if (!initializeFunction) {
-        qWarning("Error resolving WKBundleInitialize: %s", qPrintable(m_platformBundle.errorString()));
-        return false;
-    }
-
-    initializeFunction(toAPI(this), toAPI(initializationUserData));
-    return true;
+    toImpl(bundleRef)->setHostAllowsAnyHTTPSCertificate(toWTFString(host));
 }
 
-void InjectedBundle::activateMacFontAscentHack()
+void WKBundleSetClientCertificate(WKBundleRef bundleRef, WKStringRef host, WKCertificateInfoRef certificateInfoRef)
 {
+    toImpl(bundleRef)->setClientCertificate(toWTFString(host), toImpl(certificateInfoRef));
 }
-
-} // namespace WebKit

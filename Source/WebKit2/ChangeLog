@@ -1,3 +1,27 @@
+2011-03-29  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Make Windows-only InjectedBundle functions platform-specific
+        https://bugs.webkit.org/show_bug.cgi?id=57385
+        
+        Added files for Windows-specific WKBundle functions.
+        Removed stub wrappers for InjectedBundle::setHostAllowsAnyHTTPSCertificate() and InjectedBundle::setClientCertificate() from non-Windows platforms.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp: Moved WKBundleSetHostAllowsAnyHTTPSCertificate() and WKBundleSetClientCertificate() to WKBundlePrivateWin.cpp.
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h: Moved WKBundleSetHostAllowsAnyHTTPSCertificate() and WKBundleSetClientCertificate() to WKBundlePrivateWin.h.
+        * WebProcess/InjectedBundle/API/c/win: Added.
+        * WebProcess/InjectedBundle/API/c/win/WKBundlePrivateWin.cpp: Added.
+        (WKBundleSetHostAllowsAnyHTTPSCertificate): Moved from WKBundle.cpp.
+        (WKBundleSetClientCertificate): Moved from WKBundle.cpp.
+        * WebProcess/InjectedBundle/API/c/win/WKBundlePrivateWin.h: Added.
+        * WebProcess/InjectedBundle/InjectedBundle.h: setHostAllowsAnyHTTPSCertificate() and setClientCertificate() are Windows-only.
+        * WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp: Removed setHostAllowsAnyHTTPSCertificate() and setClientCertificate().
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.cpp: Removed setHostAllowsAnyHTTPSCertificate() and setClientCertificate().
+        * WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp: Removed setHostAllowsAnyHTTPSCertificate() and setClientCertificate().
+        * win/WebKit2.vcproj: Added WKBundlePrivateWin.cpp and WKBundlePrivateWin.h.
+        * win/WebKit2Generated.make: Copy WKBundlePrivateWin.h.
+
 2011-03-29  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.

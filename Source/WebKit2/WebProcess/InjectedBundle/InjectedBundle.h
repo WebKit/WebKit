@@ -80,8 +80,10 @@ public:
     void initializeClient(WKBundleClient*);
     void postMessage(const String&, APIObject*);
     void postSynchronousMessage(const String&, APIObject*, RefPtr<APIObject>& returnData);
+#if PLATFORM(WIN)
     void setHostAllowsAnyHTTPSCertificate(const String&);
     void setClientCertificate(const String&, const WebCertificateInfo*);
+#endif
 
     // TestRunner only SPI
     void setShouldTrackVisitedLinks(bool);

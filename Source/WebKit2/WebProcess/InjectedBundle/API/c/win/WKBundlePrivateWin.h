@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2010 University of Szeged.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,38 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "InjectedBundle.h"
+#ifndef WKBundlePrivateWin_h
+#define WKBundlePrivateWin_h
 
-#include "WKBundleAPICast.h"
-#include "WKBundleInitialize.h"
+#include <WebKit2/WKBase.h>
 
-using namespace WebCore;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace WebKit {
+WK_EXPORT void WKBundleSetHostAllowsAnyHTTPSCertificate(WKBundleRef bundle, WKStringRef host);
+WK_EXPORT void WKBundleSetClientCertificate(WKBundleRef bundle, WKStringRef host, WKCertificateInfoRef certificateInfo);
 
-bool InjectedBundle::load(APIObject* initializationUserData)
-{
-    m_platformBundle.setFileName(static_cast<QString>(m_path));
-    if (!m_platformBundle.load()) {
-        qWarning("Error loading the injected bundle: %s", qPrintable(m_platformBundle.errorString()));
-        return false;
-    }
-
-    WKBundleInitializeFunctionPtr initializeFunction =
-            reinterpret_cast<WKBundleInitializeFunctionPtr>(m_platformBundle.resolve("WKBundleInitialize"));
-
-    if (!initializeFunction) {
-        qWarning("Error resolving WKBundleInitialize: %s", qPrintable(m_platformBundle.errorString()));
-        return false;
-    }
-
-    initializeFunction(toAPI(this), toAPI(initializationUserData));
-    return true;
+#ifdef __cplusplus
 }
+#endif
 
-void InjectedBundle::activateMacFontAscentHack()
-{
-}
-
-} // namespace WebKit
+#endif /* WKBundlePrivateWin_h */

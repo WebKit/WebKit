@@ -67,9 +67,6 @@ WK_EXPORT void WKBundleRemoveAllUserContent(WKBundleRef bundle, WKBundlePageGrou
 WK_EXPORT void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleOverrideAllowUniversalAccessFromFileURLsForTestRunner(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 
-WK_EXPORT void WKBundleSetHostAllowsAnyHTTPSCertificate(WKBundleRef bundle, WKStringRef host);
-WK_EXPORT void WKBundleSetClientCertificate(WKBundleRef bundle, WKStringRef host, WKCertificateInfoRef certificateInfo);
-
 #ifdef __cplusplus
 }
 #endif
