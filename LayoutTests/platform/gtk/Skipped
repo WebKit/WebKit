@@ -394,6 +394,7 @@ editing/pasteboard/copy-standalone-image.html
 http/tests/security/mixedContent/empty-url-plugin-in-frame.html
 # Tests failing because of missing resource load delegate callbacks.
 fast/loader/main-document-url-for-non-http-loads.html
+http/tests/misc/link-rel-icon-beforeload.html
 # Tests failing because of missing policy delegate callbacks.
 fast/loader/onload-policy-ignore-for-frame.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html
@@ -620,9 +621,6 @@ storage/transaction-callback-isolated-world.html
 storage/transaction-error-callback-isolated-world.html
 storage/transaction-success-callback-isolated-world.html
 
-# Missing DRT ability return a null request for willSendRequest redirect calls
-http/tests/misc/will-send-request-returns-null-on-redirect.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=30577
 editing/selection/move-left-right.html
 
@@ -681,6 +679,7 @@ svg/custom/path-getTotalLength.svg
 # GTK+ does not have layoutTestController.setWillSendRequestReturnsNull.
 fast/loader/onload-willSendRequest-null-for-script.html
 fast/loader/willSendRequest-null-for-preload.html
+http/tests/misc/will-send-request-returns-null-on-redirect.html
 
 # GTK+ does not have layoutTestController.setDomainRelaxationForbiddenForURLScheme
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html

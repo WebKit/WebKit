@@ -1,3 +1,10 @@
+2011-03-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Skip a test which requires missing resource load callback dumps on GTK+.
+        Better clump another failing test.
+
+        * platform/gtk/Skipped: Update the skipped list.
+
 2011-03-30  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Simon Fraser.
