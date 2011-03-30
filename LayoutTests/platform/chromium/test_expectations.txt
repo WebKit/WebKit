@@ -2404,6 +2404,7 @@ BUGCR57934 WIN : http/tests/appcache/fail-on-update-2.html = PASS TEXT TIMEOUT
 // Failing since r69181. Verified as legitimate by looking at the results
 // of the SVG rendering.
 BUGCR58195 WIN LINUX : svg/filters/feDisplacementMap.svg = IMAGE
+BUGCR58195 MAC SNOWLEOPARD : svg/filters/feDisplacementMap.svg = IMAGE
 
 // Issues starting from
 // http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/35997

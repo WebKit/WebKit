@@ -1,5 +1,11 @@
 2011-03-30  Adam Barth  <abarth@webkit.org>
 
+        Add failing Snow Leopard test back to the list of failing tests.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-30  Adam Barth  <abarth@webkit.org>
+
         Moar Chromium Snow Leopard baselines!
 
         * platform/chromium-mac-snowleopard/fast/backgrounds/svg-as-background-5-expected.checksum: Added.
