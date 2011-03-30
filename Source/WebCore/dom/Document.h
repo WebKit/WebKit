@@ -812,7 +812,8 @@ public:
     HTMLFrameOwnerElement* ownerElement() const;
 
     String title() const { return m_title; }
-    void setTitle(const String&, Element* titleElement = 0);
+    void setTitle(const String&);
+    void setTitleElement(const String& title, Element* titleElement);
     void removeTitle(Element* titleElement);
 
     String cookie(ExceptionCode&) const;
@@ -1157,7 +1158,7 @@ private:
 
     String encoding() const;
 
-    void updateTitle();
+    void updateTitle(const String& title);
     void updateFocusAppearanceTimerFired(Timer<Document>*);
     void updateBaseURL();
 

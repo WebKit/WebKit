@@ -40,7 +40,7 @@ void SVGTitleElement::insertedIntoDocument()
 {
     SVGStyledElement::insertedIntoDocument();
     if (firstChild())
-        document()->setTitle(textContent(), this);
+        document()->setTitleElement(textContent(), this);
 }
 
 void SVGTitleElement::removedFromDocument()
@@ -53,7 +53,7 @@ void SVGTitleElement::childrenChanged(bool changedByParser, Node* beforeChange, 
 {
     SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     if (inDocument())
-        document()->setTitle(textContent(), this);
+        document()->setTitleElement(textContent(), this);
 }
 
 AttributeToPropertyTypeMap& SVGTitleElement::attributeToPropertyTypeMap()

@@ -46,7 +46,7 @@ PassRefPtr<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagNa
 void HTMLTitleElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
-    document()->setTitle(m_title, this);
+    document()->setTitleElement(m_title, this);
 }
 
 void HTMLTitleElement::removedFromDocument()
@@ -59,7 +59,7 @@ void HTMLTitleElement::childrenChanged(bool changedByParser, Node* beforeChange,
 {
     m_title = text();
     if (inDocument())
-        document()->setTitle(m_title, this);
+        document()->setTitleElement(m_title, this);
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
 

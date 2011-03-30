@@ -1,3 +1,33 @@
+2011-03-30  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        clean up Document's handling of title changes
+        https://bugs.webkit.org/show_bug.cgi?id=57433
+
+        Document::setTitle has two entry points:
+        1) from DOM bindings, like document.title="foo"
+        2) from title tags, like <title>foo</title> in HTML
+
+        Split these two code paths to make the code easier to follow.
+        Also, replace the repeated pattern of
+            m_rawTitle = "foo"; updateTitle();
+        with
+            updateTitle("foo");
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateTitle):
+        (WebCore::Document::setTitle):
+        (WebCore::Document::setTitleElement):
+        (WebCore::Document::removeTitle):
+        * dom/Document.h:
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::insertedIntoDocument):
+        (WebCore::HTMLTitleElement::childrenChanged):
+        * svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::insertedIntoDocument):
+        (WebCore::SVGTitleElement::childrenChanged):
+
 2011-03-30  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.

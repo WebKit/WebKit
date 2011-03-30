@@ -1323,43 +1323,49 @@ static inline String canonicalizedTitle(Document* document, const String& title)
     return String::adopt(buffer);
 }
 
-void Document::updateTitle()
+void Document::updateTitle(const String& title)
 {
+    if (m_rawTitle == title)
+        return;
+
+    m_rawTitle = title;
     m_title = canonicalizedTitle(this, m_rawTitle);
     if (Frame* f = frame())
         f->loader()->setTitle(m_title);
 }
 
-void Document::setTitle(const String& title, Element* titleElement)
+void Document::setTitle(const String& title)
 {
-    if (!titleElement) {
-        // Title set by JavaScript -- overrides any title elements.
-        m_titleSetExplicitly = true;
-        if (!isHTMLDocument())
-            m_titleElement = 0;
-        else if (!m_titleElement) {
-            if (HTMLElement* headElement = head()) {
-                m_titleElement = createElement(titleTag, false);
-                ExceptionCode ec = 0;
-                headElement->appendChild(m_titleElement, ec);
-                ASSERT(!ec);
-            }
+    // Title set by JavaScript -- overrides any title elements.
+    m_titleSetExplicitly = true;
+    if (!isHTMLDocument())
+        m_titleElement = 0;
+    else if (!m_titleElement) {
+        if (HTMLElement* headElement = head()) {
+            m_titleElement = createElement(titleTag, false);
+            ExceptionCode ec = 0;
+            headElement->appendChild(m_titleElement, ec);
+            ASSERT(!ec);
         }
-    } else if (titleElement != m_titleElement) {
+    }
+
+    updateTitle(title);
+
+    ASSERT(m_titleElement->hasTagName(titleTag));
+    if (m_titleElement && m_titleElement->hasTagName(titleTag))
+        static_cast<HTMLTitleElement*>(m_titleElement.get())->setText(m_title);
+}
+
+void Document::setTitleElement(const String& title, Element* titleElement)
+{
+    if (titleElement != m_titleElement) {
         if (m_titleElement || m_titleSetExplicitly)
             // Only allow the first title element to change the title -- others have no effect.
             return;
         m_titleElement = titleElement;
     }
 
-    if (m_rawTitle == title)
-        return;
-
-    m_rawTitle = title;
-    updateTitle();
-
-    if (m_titleSetExplicitly && m_titleElement && m_titleElement->hasTagName(titleTag) && !titleElement)
-        static_cast<HTMLTitleElement*>(m_titleElement.get())->setText(m_title);
+    updateTitle(title);
 }
 
 void Document::removeTitle(Element* titleElement)
@@ -1375,15 +1381,13 @@ void Document::removeTitle(Element* titleElement)
         for (Node* e = headElement->firstChild(); e; e = e->nextSibling())
             if (e->hasTagName(titleTag)) {
                 HTMLTitleElement* titleElement = static_cast<HTMLTitleElement*>(e);
-                setTitle(titleElement->text(), titleElement);
+                setTitleElement(titleElement->text(), titleElement);
                 break;
             }
     }
 
-    if (!m_titleElement && !m_rawTitle.isEmpty()) {
-        m_rawTitle = "";
-        updateTitle();
-    }
+    if (!m_titleElement)
+        updateTitle("");
 }
 
 String Document::nodeName() const
