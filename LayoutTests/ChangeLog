@@ -1,5 +1,86 @@
 2011-03-30  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed, rolling out r82404.
+        http://trac.webkit.org/changeset/82404
+
+        Revert Adam's rebaselines (part 4). They broke Chromium
+        Leopard bots.
+
+        * platform/chromium-mac-snowleopard/animations/3d/matrix-transform-type-animation-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/animations/3d/matrix-transform-type-animation-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/animations/3d/state-at-end-event-transform-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/animations/3d/state-at-end-event-transform-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/backgrounds/svg-as-background-6-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/backgrounds/svg-as-background-6-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/canvas/arc360-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/canvas/arc360-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/canvas/canvasDrawingIntoSelf-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/canvas/canvasDrawingIntoSelf-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/canvas/drawImage-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/canvas/drawImage-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/canvas/image-object-in-canvas-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/canvas/image-object-in-canvas-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/css/transform-default-parameter-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/css/transform-default-parameter-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLInputElement/input-slider-update-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLInputElement/input-slider-update-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/dom/blur-contenteditable-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/dom/blur-contenteditable-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/dom/scroll-reveal-left-overflow-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/dom/scroll-reveal-left-overflow-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/basic-buttons-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/basic-buttons-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/button-sizes-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/button-sizes-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-bkcolor-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/input-appearance-bkcolor-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/input-file-re-render-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/input-file-re-render-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/preserveFormDuringResidualStyle-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/preserveFormDuringResidualStyle-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/search-transformed-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/search-transformed-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/slider-padding-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/slider-padding-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/inline/inline-box-background-long-image-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/inline/inline-box-background-long-image-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-textarea-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/replaced/width100percent-textarea-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/speech/input-appearance-numberandspeech-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/speech/input-appearance-numberandspeech-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/speech/input-appearance-searchandspeech-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/speech/input-appearance-searchandspeech-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/international/pop-up-button-text-alignment-and-direction-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/international/pop-up-button-text-alignment-and-direction-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/international/text-combine-image-test-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/international/text-combine-image-test-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/justify-nbsp-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/justify-nbsp-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fonts/monospace-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fonts/monospace-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/http/tests/misc/acid3-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/http/tests/misc/acid3-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla/core/bloomberg-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla/core/bloomberg-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla/core/misc-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla/core/misc-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla/core/row_span-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla/core/row_span-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla/other/cell_widths-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla/other/cell_widths-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug85016-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/bugs/bug85016-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/other/test4-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/tables/mozilla_expected_failures/other/test4-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/transforms/no_transform_hit_testing-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/transforms/no_transform_hit_testing-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/transforms/svg-vs-css-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/transforms/svg-vs-css-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/transitions/move-after-transition-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/transitions/move-after-transition-expected.png: Removed.
+
+2011-03-30  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed, rolling out r82405.
         http://trac.webkit.org/changeset/82405
 
