@@ -1,3 +1,68 @@
+2011-03-30  Mihai Parparita  <mihaip@chromium.org>
+
+        Fix more tests for Chromium Snow Leopard.
+        
+        Most are due to mismatched checksum files (like r82480), some also
+        needed updated chromium-mac baselines.
+
+        * platform/chromium-mac-leopard/css2.1/t0804-c5510-padn-00-b-ag-expected.png: Renamed from LayoutTests/platform/chromium-mac/css2.1/t0804-c5510-padn-00-b-ag-expected.png.
+        * platform/chromium-mac-leopard/css2.1/t0905-c414-flt-wrap-01-d-g-expected.png: Copied from LayoutTests/platform/chromium-mac/css2.1/t0905-c414-flt-wrap-01-d-g-expected.png.
+        * platform/chromium-mac-leopard/editing/inserting/4875189-2-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/inserting/4875189-2-expected.png.
+        * platform/chromium-mac-leopard/editing/pasteboard/5387578-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/pasteboard/5387578-expected.png.
+        * platform/chromium-mac-leopard/editing/pasteboard/paste-table-cells-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/pasteboard/paste-table-cells-expected.png.
+        * platform/chromium-mac-leopard/fast/backgrounds/repeat/negative-offset-repeat-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/backgrounds/repeat/negative-offset-repeat-expected.png.
+        * platform/chromium-mac-leopard/fast/block/float/014-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/block/float/014-expected.png.
+        * platform/chromium-mac-leopard/fast/block/float/clear-element-too-wide-for-containing-block-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/block/float/clear-element-too-wide-for-containing-block-expected.png.
+        * platform/chromium-mac-leopard/fast/borders/border-radius-inline-flow-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/borders/border-radius-inline-flow-expected.png.
+        * platform/chromium-mac-leopard/fast/canvas/canvas-zoom-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/canvas/canvas-zoom-expected.png.
+        * platform/chromium-mac-leopard/fast/canvas/image-pattern-rotate-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/canvas/image-pattern-rotate-expected.png.
+        * platform/chromium-mac-leopard/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png.
+        * platform/chromium-mac-leopard/fast/forms/textfield-focus-ring-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/forms/textfield-focus-ring-expected.png.
+        * platform/chromium-mac-leopard/fast/images/pixel-crack-image-background-webkit-transform-scale-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/images/pixel-crack-image-background-webkit-transform-scale-expected.png.
+        * platform/chromium-mac-leopard/fast/inline-block/14498-positionForCoordinates-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/inline-block/14498-positionForCoordinates-expected.png.
+        * platform/chromium-mac-leopard/fast/inline/inline-focus-ring-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/inline/inline-focus-ring-expected.png.
+        * platform/chromium-mac-leopard/fast/replaced/absolute-image-sizing-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/replaced/absolute-image-sizing-expected.png.
+        * platform/chromium-mac-leopard/fast/replaced/image-onload-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/replaced/image-onload-expected.png.
+        * platform/chromium-mac-leopard/fast/replaced/image-sizing-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/replaced/image-sizing-expected.png.
+        * platform/chromium-mac-leopard/fast/text/basic/002-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/text/basic/002-expected.png.
+        * platform/chromium-mac-leopard/fast/text/word-break-soft-hyphen-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/text/word-break-soft-hyphen-expected.png.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-conv-01-f-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.png.
+        * platform/chromium-mac-leopard/svg/custom/focus-ring-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/custom/focus-ring-expected.png.
+        * platform/chromium-mac-leopard/svg/filters/filterRes-expected.png: Renamed from LayoutTests/platform/chromium-mac/svg/filters/filterRes-expected.png.
+        * platform/chromium-mac/css2.1/t0804-c5510-padn-00-b-ag-expected.checksum: Removed.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-wrap-01-d-g-expected.checksum:
+        * platform/chromium-mac/css2.1/t0905-c414-flt-wrap-01-d-g-expected.png:
+        * platform/chromium-mac/editing/inserting/4875189-2-expected.checksum: Removed.
+        * platform/chromium-mac/editing/pasteboard/5387578-expected.checksum: Removed.
+        * platform/chromium-mac/editing/pasteboard/paste-table-cells-expected.checksum: Removed.
+        * platform/chromium-mac/fast/backgrounds/repeat/negative-offset-repeat-expected.checksum:
+        * platform/chromium-mac/fast/backgrounds/repeat/negative-offset-repeat-expected.png:
+        * platform/chromium-mac/fast/block/float/014-expected.checksum:
+        * platform/chromium-mac/fast/block/float/014-expected.png:
+        * platform/chromium-mac/fast/block/float/clear-element-too-wide-for-containing-block-expected.checksum: Removed.
+        * platform/chromium-mac/fast/borders/border-radius-inline-flow-expected.checksum: Removed.
+        * platform/chromium-mac/fast/canvas/canvas-zoom-expected.checksum: Removed.
+        * platform/chromium-mac/fast/canvas/image-pattern-rotate-expected.checksum:
+        * platform/chromium-mac/fast/canvas/image-pattern-rotate-expected.png:
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-boundary-values-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/textfield-focus-ring-expected.checksum: Removed.
+        * platform/chromium-mac/fast/images/pixel-crack-image-background-webkit-transform-scale-expected.checksum:
+        * platform/chromium-mac/fast/images/pixel-crack-image-background-webkit-transform-scale-expected.png:
+        * platform/chromium-mac/fast/inline-block/14498-positionForCoordinates-expected.checksum: Removed.
+        * platform/chromium-mac/fast/inline/inline-focus-ring-expected.checksum: Removed.
+        * platform/chromium-mac/fast/replaced/absolute-image-sizing-expected.checksum:
+        * platform/chromium-mac/fast/replaced/absolute-image-sizing-expected.png:
+        * platform/chromium-mac/fast/replaced/image-onload-expected.checksum:
+        * platform/chromium-mac/fast/replaced/image-onload-expected.png:
+        * platform/chromium-mac/fast/replaced/image-sizing-expected.checksum:
+        * platform/chromium-mac/fast/replaced/image-sizing-expected.png:
+        * platform/chromium-mac/fast/text/basic/002-expected.checksum: Removed.
+        * platform/chromium-mac/fast/text/word-break-soft-hyphen-expected.checksum: Removed.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.checksum: Removed.
+        * platform/chromium-mac/svg/custom/focus-ring-expected.checksum:
+        * platform/chromium-mac/svg/custom/focus-ring-expected.png:
+        * platform/chromium-mac/svg/filters/filterRes-expected.checksum: Removed.
+
 2011-03-30  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.
