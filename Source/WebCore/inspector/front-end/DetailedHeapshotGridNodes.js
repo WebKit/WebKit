@@ -131,7 +131,6 @@ WebInspector.HeapSnapshotGenericObjectNode = function(tree, node, hasChildren, p
     this._type = node.type;
     this._shallowSize = node.selfSize;
     this._retainedSize = node.retainedSize;
-    this._retainedSizeExact = this._shallowSize === this._retainedSize;
     this.snapshotNodeId = node.id;
     this.snapshotNodeIndex = node.nodeIndex;
 };
@@ -204,16 +203,9 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
 
         var view = this.dataGrid.snapshotView;
         data["shallowSize"] = view.showShallowSizeAsPercent ? WebInspector.UIString("%.2f%%", this._shallowSizePercent) : Number.bytesToString(this._shallowSize);
-        data["retainedSize"] = (this._retainedSizeExact ? "" : "\u2248") + (view.showRetainedSizeAsPercent ? WebInspector.UIString("%.2f%%", this._retainedSizePercent) : Number.bytesToString(this._retainedSize));
+        data["retainedSize"] = view.showRetainedSizeAsPercent ? WebInspector.UIString("%.2f%%", this._retainedSizePercent) : Number.bytesToString(this._retainedSize);
 
         return this._enhanceData ? this._enhanceData(data) : data;
-    },
-
-    set exactRetainedSize(size)
-    {
-        this._retainedSize = size;
-        this._retainedSizeExact = true;
-        this.refresh();
     },
 
     get _retainedSizePercent()

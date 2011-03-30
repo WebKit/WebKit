@@ -1395,16 +1395,6 @@
                 ]
             },
             {
-                "name": "getExactHeapSnapshotNodeRetainedSize",
-                "parameters": [
-                    { "name": "uid", "type": "integer" },
-                    { "name": "nodeId", "type": "integer" }
-                ],
-                "returns": [
-                    { "name": "size", "type": "integer" }
-                ]
-            },
-            {
                 "name": "collectGarbage"
             }
         ],

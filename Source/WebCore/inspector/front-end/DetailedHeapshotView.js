@@ -364,7 +364,6 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.containmentView.element.addStyleClass("view");
     this.containmentDataGrid = new WebInspector.HeapSnapshotContainmentDataGrid();
     this.containmentDataGrid.element.addEventListener("click", this._mouseClickInContainmentGrid.bind(this), true);
-    this.containmentDataGrid.element.addEventListener("dblclick", this._dblClickInContainmentGrid.bind(this), true);
     this.containmentView.element.appendChild(this.containmentDataGrid.element);
     this.element.appendChild(this.containmentView.element);
 
@@ -372,7 +371,6 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.constructorsView.element.addStyleClass("view");
     this.constructorsDataGrid = new WebInspector.HeapSnapshotConstructorsDataGrid();
     this.constructorsDataGrid.element.addEventListener("click", this._mouseClickInContainmentGrid.bind(this), true);
-    this.constructorsDataGrid.element.addEventListener("dblclick", this._dblClickInContainmentGrid.bind(this), true);
     this.constructorsView.element.appendChild(this.constructorsDataGrid.element);
     this.element.appendChild(this.constructorsView.element);
 
@@ -380,7 +378,6 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.diffView.element.addStyleClass("view");
     this.diffDataGrid = new WebInspector.HeapSnapshotDiffDataGrid();
     this.diffDataGrid.element.addEventListener("click", this._mouseClickInContainmentGrid.bind(this), true);
-    this.diffDataGrid.element.addEventListener("dblclick", this._dblClickInContainmentGrid.bind(this), true);
     this.diffView.element.appendChild(this.diffDataGrid.element);
     this.element.appendChild(this.diffView.element);
 
@@ -388,7 +385,6 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.dominatorView.element.addStyleClass("view");
     this.dominatorDataGrid = new WebInspector.HeapSnapshotDominatorsDataGrid();
     this.dominatorDataGrid.element.addEventListener("click", this._mouseClickInContainmentGrid.bind(this), true);
-    this.dominatorDataGrid.element.addEventListener("dblclick", this._dblClickInContainmentGrid.bind(this), true);
     this.dominatorView.element.appendChild(this.dominatorDataGrid.element);
     this.element.appendChild(this.dominatorView.element);
 
@@ -750,24 +746,10 @@ WebInspector.DetailedHeapshotView.prototype = {
         profile.sideBarElement.subtitle = Number.bytesToString(s.totalSize);
     },
 
-    _dblClickInContainmentGrid: function(event)
-    {
-        var cell = event.target.enclosingNodeOrSelfWithNodeName("td");
-        if (!cell || (!cell.hasStyleClass("retainedSize-column")))
-            return;
-        var nodeItem = event.target.enclosingNodeOrSelfWithNodeName("tr")._dataGridNode;
-        ProfilerAgent.getExactHeapSnapshotNodeRetainedSize(this._profileUid, nodeItem.snapshotNodeId, setExactRetainedSize);
-
-        function setExactRetainedSize(exactSize) {
-            if (exactSize && exactSize != -1)
-                nodeItem.exactRetainedSize = exactSize;
-        }
-    },
-
     _mouseClickInContainmentGrid: function(event)
     {
         var cell = event.target.enclosingNodeOrSelfWithNodeName("td");
-        if (!cell || !(cell.hasStyleClass("object-column") ||  cell.hasStyleClass("shallowSize-column")))
+        if (!cell || (!cell.hasStyleClass("object-column") && !cell.hasStyleClass("shallowSize-column") && !cell.hasStyleClass("retainedSize-column")))
             return;
         var row = event.target.enclosingNodeOrSelfWithNodeName("tr");
         if (!row)

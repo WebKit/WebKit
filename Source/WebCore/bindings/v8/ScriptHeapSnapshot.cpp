@@ -81,10 +81,4 @@ void ScriptHeapSnapshot::writeJSON(ScriptHeapSnapshot::OutputStream* stream)
     m_snapshot->Serialize(&outputStream, v8::HeapSnapshot::kJSON);
 }
 
-int ScriptHeapSnapshot::exactRetainedSize(uint64_t nodeId)
-{
-    const v8::HeapGraphNode* node = m_snapshot->GetNodeById(nodeId);
-    return node ? node->GetRetainedSize(true) : -1;
-}
-
 } // namespace WebCore

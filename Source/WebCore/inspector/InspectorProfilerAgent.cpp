@@ -181,16 +181,6 @@ String InspectorProfilerAgent::getCurrentUserInitiatedProfileName(bool increment
     return makeString(UserInitiatedProfileName, '.', String::number(m_currentUserInitiatedProfileNumber));
 }
 
-void InspectorProfilerAgent::getExactHeapSnapshotNodeRetainedSize(ErrorString*, unsigned uid, int nodeId, int* size)
-{
-    HeapSnapshotsMap::iterator it = m_snapshots.find(uid);
-    if (it != m_snapshots.end()) {
-        RefPtr<ScriptHeapSnapshot> snapshot = it->second;
-        *size = snapshot->exactRetainedSize(nodeId);
-    } else
-        *size = -1;
-}
-
 void InspectorProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<InspectorArray>* headers)
 {
     ProfilesMap::iterator profilesEnd = m_profiles.end();

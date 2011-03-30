@@ -1,3 +1,22 @@
+2011-03-29  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Remove exact retained size request in detailed heap snapshots.
+        https://bugs.webkit.org/show_bug.cgi?id=57351
+
+        * bindings/js/ScriptHeapSnapshot.h:
+        * bindings/v8/ScriptHeapSnapshot.cpp:
+        * bindings/v8/ScriptHeapSnapshot.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorProfilerAgent.cpp:
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGenericObjectNode):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.get data):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype._mouseClickInContainmentGrid):
+
 2011-03-29  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.

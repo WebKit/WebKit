@@ -50,7 +50,6 @@ public:
     unsigned int uid() const { return 0; }
 
     void writeJSON(OutputStream*) { }
-    int exactRetainedSize(uint64_t) { return -1; }
 
 private:
     ScriptHeapSnapshot() { }
