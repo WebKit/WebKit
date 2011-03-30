@@ -1,3 +1,15 @@
+2011-03-30  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: audit run never completes, fails in DOMAgent.js
+        https://bugs.webkit.org/show_bug.cgi?id=57349
+
+        - assure document is present before calling DOMAgent.querySelectAll()
+
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun):
+
 2011-03-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Build fix.

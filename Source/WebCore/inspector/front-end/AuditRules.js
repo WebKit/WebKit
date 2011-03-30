@@ -729,7 +729,12 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
                 WebInspector.cssModel.getStylesAsync(nodeIds[i], imageStylesReady.bind(this, nodeIds[i], i === nodeIds.length - 1));
         }
 
-        DOMAgent.querySelectorAll(0, "img[src]", true, getStyles);
+        function getImages()
+        {
+            DOMAgent.querySelectorAll(0, "img[src]", true, getStyles);
+        }
+
+        WebInspector.domAgent.requestDocument(getImages);
     }
 }
 
