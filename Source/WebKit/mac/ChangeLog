@@ -1,3 +1,25 @@
+2011-03-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r82320): Spacebar no longer pages down
+        https://bugs.webkit.org/show_bug.cgi?id=57423
+        <rdar://problem/9207702>
+
+        Also includes some unrelated cleanup that I had in my tree.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _interpretKeyEvent:savingCommands:]): Added an assertion that the event is
+        being dispatched to the right frame.
+        (-[WebHTMLView setMarkedText:selectedRange:]): Use 0 for a pointer, not NULL.
+        (-[WebHTMLView doCommandBySelector:]): Update eventInterpretationHadSideEffects with "|=".
+        Even if this specific command hasn't been handled, that doesn't nullify side effects from
+        previous commands.
+        (-[WebHTMLView insertText:]): Besides looking at the return value of insertText() to fix the
+        bug, removed setting _private->interpretKeyEventsParameters to 0. I don't see any way for
+        another WebHTMLView NSTextInput method to be called from within insertText:, so no one is
+        going to look at it.
+
 2011-03-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.

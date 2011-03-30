@@ -5452,6 +5452,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (BOOL)_interpretKeyEvent:(KeyboardEvent*)event savingCommands:(BOOL)savingCommands
 {
+    ASSERT(core([self _frame]) == event->target()->toNode()->document()->frame());
     ASSERT(!savingCommands || event->keypressCommands().isEmpty()); // Save commands once for each event.
 
     WebHTMLViewInterpretKeyEventsParameters parameters;
@@ -5946,7 +5947,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     if (isAttributedString) {
         unsigned markedTextLength = [(NSString *)string length];
-        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:NULL inRange:NSMakeRange(0, markedTextLength)];
+        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:0 inRange:NSMakeRange(0, markedTextLength)];
         LOG(TextInput, "    ReplacementRange: %@", rangeString);
         // The AppKit adds a 'secret' property to the string that contains the replacement range.
         // The replacement range is the range of the the text that should be replaced with the new string.
@@ -6009,7 +6010,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         }
 
         if (parameters)
-            parameters->eventInterpretationHadSideEffects = eventWasHandled;
+            parameters->eventInterpretationHadSideEffects |= eventWasHandled;
 
         _private->interpretKeyEventsParameters = parameters;
     }
@@ -6022,7 +6023,6 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     LOG(TextInput, "insertText:\"%@\"", isAttributedString ? [string string] : string);
 
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
-    _private->interpretKeyEventsParameters = 0;
     if (parameters)
         parameters->consumedByIM = false;
 
@@ -6034,13 +6034,13 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         text = [string string];
         // We deal with the NSTextInputReplacementRangeAttributeName attribute from NSAttributedString here
         // simply because it is used by at least one Input Method -- it corresonds to the kEventParamTextInputSendReplaceRange
-        // event in TSM.  This behaviour matches that of -[WebHTMLView setMarkedText:selectedRange:] when it receives an
+        // event in TSM. This behavior matches that of -[WebHTMLView setMarkedText:selectedRange:] when it receives an
         // NSAttributedString
-        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:NULL inRange:NSMakeRange(0, [text length])];
+        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:0 inRange:NSMakeRange(0, [text length])];
         LOG(TextInput, "    ReplacementRange: %@", rangeString);
         if (rangeString) {
             [[self _frame] _selectNSRange:NSRangeFromString(rangeString)];
-            isFromInputMethod = YES;
+            isFromInputMethod = true;
         }
     } else
         text = string;
@@ -6056,23 +6056,26 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     bool shouldSaveCommand = parameters && parameters->shouldSaveCommands;
     if (event && shouldSaveCommand && !isFromInputMethod) {
         event->keypressCommands().append(KeypressCommand("insertText:", text));
-        _private->interpretKeyEventsParameters = parameters;
         return;
     }
 
+    if (!coreFrame || !coreFrame->editor()->canEdit())
+        return;
+
+    bool eventHandled = false;
     String eventText = text;
     eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
-    if (coreFrame && coreFrame->editor()->canEdit()) {
-        if (!coreFrame->editor()->hasComposition())
-            coreFrame->editor()->insertText(eventText, event);
-        else
-            coreFrame->editor()->confirmComposition(eventText);
+    if (!coreFrame->editor()->hasComposition()) {
+        // An insertText: might be handled by other responders in the chain if we don't handle it.
+        // One example is space bar that results in scrolling down the page.
+        eventHandled = coreFrame->editor()->insertText(eventText, event);
+    } else {
+        eventHandled = true;
+        coreFrame->editor()->confirmComposition(eventText);
     }
     
     if (parameters)
-        parameters->eventInterpretationHadSideEffects = true;
-
-    _private->interpretKeyEventsParameters = parameters;
+        parameters->eventInterpretationHadSideEffects |= eventHandled;
 }
 
 - (void)_updateSelectionForInputManager
