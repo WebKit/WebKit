@@ -23,9 +23,22 @@
 #include "config.h"
 #include "MouseEvent.h"
 
+#include "Frame.h"
+#include "FrameView.h"
 #include "EventNames.h"
+#include "PlatformMouseEvent.h"
 
 namespace WebCore {
+
+PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& eventType, PassRefPtr<AbstractView> view, const PlatformMouseEvent& event, const IntPoint& position, int detail, PassRefPtr<Node> relatedTarget)
+{
+    bool isCancelable = eventType != eventNames().mousemoveEvent;
+
+    return MouseEvent::create(eventType, true, isCancelable, view,
+        detail, event.globalX(), event.globalY(), position.x(), position.y(),
+        event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.button(),
+        relatedTarget, 0, false);
+}
 
 MouseEvent::MouseEvent()
     : m_button(0)

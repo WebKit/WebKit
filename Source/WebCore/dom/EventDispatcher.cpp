@@ -313,6 +313,8 @@ bool EventDispatcher::dispatchMouseEvent(Node* node, const PlatformMouseEvent& e
     int detail, Node* relatedTargetArg)
 {
     ASSERT(!eventDispatchForbidden());
+    ASSERT(event.eventType() == MouseEventMoved || event.button() != NoButton);
+
     if (node->disabled()) // Don't even send DOM events for disabled controls..
         return true;
 
@@ -321,38 +323,27 @@ bool EventDispatcher::dispatchMouseEvent(Node* node, const PlatformMouseEvent& e
 
     EventDispatcher dispatcher(node);
 
-    IntPoint contentsPos;
-    if (FrameView* view = node->document()->view())
-        contentsPos = view->windowToContents(event.pos());
-
-    ASSERT(event.eventType() == MouseEventMoved || event.button() != NoButton);
-
-    // FIXME: This should be in mouse event constructor.
-    bool cancelable = eventType != eventNames().mousemoveEvent;
-
-    bool swallowEvent = false;
-
     // Attempting to dispatch with a non-EventTarget relatedTarget causes the relatedTarget to be silently ignored.
     RefPtr<Node> relatedTarget = pullOutOfShadow(relatedTargetArg);
 
-    int adjustedPageX = contentsPos.x();
-    int adjustedPageY = contentsPos.y();
+    IntPoint contentsPosition;
+    if (FrameView* view = node->document()->view())
+        contentsPosition = view->windowToContents(event.pos());
+
+    IntPoint adjustedPagePosition = contentsPosition;
     if (Frame* frame = node->document()->frame()) {
         float pageZoom = frame->pageZoomFactor();
         if (pageZoom != 1.0f) {
             // Adjust our pageX and pageY to account for the page zoom.
-            adjustedPageX = lroundf(contentsPos.x() / pageZoom);
-            adjustedPageY = lroundf(contentsPos.y() / pageZoom);
+            adjustedPagePosition.setX(lroundf(contentsPosition.x() / pageZoom));
+            adjustedPagePosition.setY(lroundf(contentsPosition.y() / pageZoom));
         }
     }
 
-    RefPtr<MouseEvent> mouseEvent = MouseEvent::create(eventType,
-        true, cancelable, node->document()->defaultView(),
-        detail, event.globalX(), event.globalY(), adjustedPageX, adjustedPageY,
-        event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.button(),
-        relatedTarget,  0, false);
-    // FIXME: Should this be adjustedPageX, adjustedPageY?
-    mouseEvent->setAbsoluteLocation(IntPoint(contentsPos.x(), contentsPos.y()));
+    RefPtr<MouseEvent> mouseEvent = MouseEvent::create(eventType, node->document()->defaultView(), event, adjustedPagePosition, detail, relatedTarget);
+    mouseEvent->setAbsoluteLocation(contentsPosition);
+
+    bool swallowEvent = false;
 
     dispatcher.dispatchEvent(mouseEvent);
     bool defaultHandled = mouseEvent->defaultHandled();
@@ -364,11 +355,7 @@ bool EventDispatcher::dispatchMouseEvent(Node* node, const PlatformMouseEvent& e
     // of the DOM specs, but is used for compatibility with the ondblclick="" attribute. This is treated
     // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
     if (eventType == eventNames().clickEvent && detail == 2) {
-        RefPtr<Event> doubleClickEvent = MouseEvent::create(eventNames().dblclickEvent,
-            true, cancelable, node->document()->defaultView(),
-            detail, event.globalX(), event.globalY(), adjustedPageX, adjustedPageY,
-            event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.button(),
-            relatedTarget, 0, false);
+        RefPtr<Event> doubleClickEvent = MouseEvent::create(eventNames().dblclickEvent, node->document()->defaultView(), event, adjustedPagePosition, detail, relatedTarget);
         if (defaultHandled)
             doubleClickEvent->setDefaultHandled();
         dispatcher.dispatchEvent(doubleClickEvent);

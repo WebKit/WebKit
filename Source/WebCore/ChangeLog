@@ -1,3 +1,18 @@
+2011-03-29  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Move factory-like things in EventDispatcher::dispatchMouseEvent to a factory, clean up names and ordering.
+        https://bugs.webkit.org/show_bug.cgi?id=57419
+
+        Refactoring, covered by existing tests.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchMouseEvent): Reordered and clarified names.
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create): Added a new factory method that takes PlatformMouseEvent.
+        * dom/MouseEvent.h: Added decl.
+
 2011-03-30  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
