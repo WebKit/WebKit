@@ -1,3 +1,17 @@
+2011-03-30  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(r82419): New pixel test failure fast/box-shadow/basic-shadows.html
+        https://bugs.webkit.org/show_bug.cgi?id=57442
+
+        When checking the position of the inline iterator in the logicallyLastRun, we should not consider BR as text.
+
+        No new tests as existing test covers this case.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::reachedEndOfTextRenderer):
+
 2011-03-30  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

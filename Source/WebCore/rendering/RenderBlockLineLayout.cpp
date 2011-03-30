@@ -615,7 +615,7 @@ static bool reachedEndOfTextRenderer(InlineBidiResolver& resolver)
         return true;
     unsigned int pos = run->stop();
     RenderObject* r = run->m_object;
-    if (!r->isText())
+    if (!r->isText() || r->isBR())
         return false;
     RenderText* renderText = toRenderText(r);
     if (pos >= renderText->textLength())
