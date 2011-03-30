@@ -5,6 +5,7 @@
 	Name="InjectedBundleRelease"
 	InheritedPropertySheets="
       $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;
+      $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\releaseproduction.vsprops;
       $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;
       ..\Configurations\InjectedBundleCoreFoundation.vsprops;
       ..\Configurations\InjectedBundleCommon.vsprops"

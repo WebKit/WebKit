@@ -17,6 +17,50 @@
 
         Reviewed by Adam Roben.
 
+        Share most vsprops between Release and Production builds in releaseproduction.vsprops
+        https://bugs.webkit.org/show_bug.cgi?id=57508
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginProduction.vsprops:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginRelease.vsprops:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginReleaseCairoCFLite.vsprops:
+        * DumpRenderTree/win/DumpRenderTreeProduction.vsprops:
+        * DumpRenderTree/win/DumpRenderTreeRelease.vsprops:
+        * DumpRenderTree/win/DumpRenderTreeReleaseCairoCFLite.vsprops:
+        * DumpRenderTree/win/ImageDiffProduction.vsprops:
+        * DumpRenderTree/win/ImageDiffRelease.vsprops:
+        * DumpRenderTree/win/ImageDiffReleaseCairoCFLite.vsprops:
+        * FindSafari/FindSafariProduction.vsprops:
+        * FindSafari/FindSafariRelease.vsprops:
+        * FindSafari/FindSafariReleaseCairoCFLite.vsprops:
+        * FindSafari/FindSafariReleasePGO.vsprops:
+        * MiniBrowser/Configurations/MiniBrowserProduction.vsprops:
+        * MiniBrowser/Configurations/MiniBrowserRelease.vsprops:
+        * MiniBrowser/Configurations/MiniBrowserReleaseCairoCFLite.vsprops:
+        * TestWebKitAPI/Configurations/TestWebKitAPIRelease.vsprops:
+        * TestWebKitAPI/Configurations/TestWebKitAPIReleaseCairoCFLite.vsprops:
+        * WebKitAPITest/WebKitAPITestProduction.vsprops:
+        * WebKitAPITest/WebKitAPITestRelease.vsprops:
+        * WebKitAPITest/WebKitAPITestReleaseCairoCFLite.vsprops:
+        * WebKitLauncherWin/WebKitLauncherWinProduction.vsprops:
+        * WebKitLauncherWin/WebKitLauncherWinRelease.vsprops:
+        * WebKitLauncherWin/WebKitLauncherWinReleaseCairoCFLite.vsprops:
+        * WebKitTestRunner/win/InjectedBundleProduction.vsprops:
+        * WebKitTestRunner/win/InjectedBundleRelease.vsprops:
+        * WebKitTestRunner/win/InjectedBundleReleaseCairoCFLite.vsprops:
+        * WebKitTestRunner/win/WebKitTestRunnerProduction.vsprops:
+        * WebKitTestRunner/win/WebKitTestRunnerRelease.vsprops:
+        * WebKitTestRunner/win/WebKitTestRunnerReleaseCairoCFLite.vsprops:
+        * WinLauncher/WinLauncherProduction.vsprops:
+        * WinLauncher/WinLauncherRelease.vsprops:
+        * WinLauncher/WinLauncherReleaseCairoCFLite.vsprops:
+        * record-memory-win/record-memory-winProduction.vsprops:
+        * record-memory-win/record-memory-winRelease.vsprops:
+        * record-memory-win/record-memory-winReleaseCairoCFLite.vsprops:
+
+2011-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
         Update Windows production build logic for new production configurations
         https://bugs.webkit.org/show_bug.cgi?id=57494
 
