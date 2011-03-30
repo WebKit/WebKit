@@ -1,3 +1,14 @@
+2011-03-30  Adam Roben  <aroben@apple.com>
+
+        Stop ignoring leaks in CGGradientCreateWithColorStops
+
+        Fixes <rdar://problem/7888547>.
+
+        Rubber-stamped by John Sullivan.
+
+        * Scripts/old-run-webkit-tests:
+        (countAndPrintLeaks): Removed some code to ignore those leaks.
+
 2011-03-30  Timur Iskhodzhanov  <timurrrr@google.com>
 
         Reviewed by Alexey Proskuryakov.

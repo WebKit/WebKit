@@ -1255,12 +1255,6 @@ sub countAndPrintLeaks($$$)
         );
     }
 
-    if (isDarwin() && !isTiger() && !isLeopard() && !isSnowLeopard()) {
-        push @callStacksToExclude, (
-            "CGGradientCreateWithColorComponents", # leak in CoreGraphics, <rdar://problem/7888492>
-        );
-    }
-
     my $leaksTool = sourceDir() . "/Tools/Scripts/run-leaks";
     my $excludeString = "--exclude-callstack '" . (join "' --exclude-callstack '", @callStacksToExclude) . "'";
     $excludeString .= " --exclude-type '" . (join "' --exclude-type '", @typesToExclude) . "'" if @typesToExclude;
