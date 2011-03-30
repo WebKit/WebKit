@@ -1,3 +1,23 @@
+2011-03-30  Adam Roben  <aroben@apple.com>
+
+        Fix two svg/text tests that have been failing on Windows since r82411
+
+        Fixes <http://webkit.org/b/57448> REGRESSION (r82411): Two svg/text tests failing on Windows
+
+        Reviewed by Eric Seidel.
+
+        * svg/text/bidi-reorder-value-lists.svg: Pull in Mac-compatible-font-fallback.css so that
+        this test will give the same results on Mac and Windows.
+
+        * platform/win/svg/text/bidi-reorder-value-lists-expected.checksum: Removed.
+        * platform/win/svg/text/bidi-reorder-value-lists-expected.png: Removed.
+        * platform/win/svg/text/bidi-reorder-value-lists-expected.txt: Removed.
+        We now match Mac!
+
+        * platform/win/svg/text/font-size-below-point-five-expected.txt: Make the same change here
+        that was made to the Mac results in r82411. (The remaining differences between Windows and
+        Mac are just due to different rounding.)
+
 2011-03-25  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
