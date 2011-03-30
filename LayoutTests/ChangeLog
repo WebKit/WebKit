@@ -1,3 +1,11 @@
+2011-03-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, rebaseline GTK+ test expectations.
+
+        * platform/gtk/css2.1/t090501-c414-flt-ln-02-d-expected.checksum:
+        * platform/gtk/css2.1/t090501-c414-flt-ln-02-d-expected.png:
+        * platform/gtk/css2.1/t090501-c414-flt-ln-02-d-expected.txt:
+
 2011-03-30  Levi Weintraub  <leviw@chromium.org>
 
         Unreviewed.
