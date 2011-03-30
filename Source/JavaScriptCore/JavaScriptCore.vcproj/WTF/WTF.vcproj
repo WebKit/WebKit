@@ -605,6 +605,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\DynamicAnnotations.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\DynamicAnnotations.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\dtoa.cpp"
 			>
 		</File>

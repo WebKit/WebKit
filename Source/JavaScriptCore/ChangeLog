@@ -1,3 +1,31 @@
+2011-03-30  Timur Iskhodzhanov  <timurrrr@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add some dynamic annotations to JavaScriptCore/wtf
+        https://bugs.webkit.org/show_bug.cgi?id=53747
+
+        By using these annotations we can improve the precision of finding
+        WebKit errors using dynamic analysis tools like ThreadSanitizer and Valgrind.
+        These annotations don't affect the compiled binaries unless USE(DYNAMIC_ANNOTATIONS) is "1".
+
+        These files don't add new functionality, so don't need extra tests.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/DynamicAnnotations.cpp: Added.
+        (WTFAnnotateBenignRaceSized):
+        (WTFAnnotateHappensBefore):
+        (WTFAnnotateHappensAfter):
+        * wtf/DynamicAnnotations.h: Added.
+        * wtf/ThreadSafeRefCounted.h:
+        (WTF::ThreadSafeRefCountedBase::derefBase):
+        * wtf/text/StringStatics.cpp:
+        (WTF::StringImpl::empty):
+
 2011-03-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

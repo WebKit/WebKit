@@ -62,6 +62,7 @@
 #include "Platform.h"
 
 #include <wtf/Atomics.h>
+#include <wtf/DynamicAnnotations.h>
 #include <wtf/ThreadingPrimitives.h>
 
 namespace WTF {
@@ -103,8 +104,11 @@ protected:
     bool derefBase()
     {
 #if USE(LOCKFREE_THREADSAFEREFCOUNTED)
-        if (atomicDecrement(&m_refCount) <= 0)
+        WTF_ANNOTATE_HAPPENS_BEFORE(&m_refCount);
+        if (atomicDecrement(&m_refCount) <= 0) {
+            WTF_ANNOTATE_HAPPENS_AFTER(&m_refCount);
             return true;
+        }
 #else
         int refCount;
         {

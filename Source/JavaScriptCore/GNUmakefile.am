@@ -450,6 +450,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/DoublyLinkedList.h \
 	Source/JavaScriptCore/wtf/dtoa.cpp \
 	Source/JavaScriptCore/wtf/dtoa.h \
+	Source/JavaScriptCore/wtf/DynamicAnnotations.cpp \
+	Source/JavaScriptCore/wtf/DynamicAnnotations.h \
 	Source/JavaScriptCore/wtf/Encoder.h \
 	Source/JavaScriptCore/wtf/FastAllocBase.h \
 	Source/JavaScriptCore/wtf/FastMalloc.cpp \

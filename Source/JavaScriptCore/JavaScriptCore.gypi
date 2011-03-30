@@ -577,6 +577,8 @@
             'wtf/CurrentTime.cpp',
             'wtf/DateMath.cpp',
             'wtf/DecimalNumber.cpp',
+            'wtf/DynamicAnnotations.cpp',
+            'wtf/DynamicAnnotations.h',
             'wtf/FastMalloc.cpp',
             'wtf/HashTable.cpp',
             'wtf/MD5.cpp',

@@ -17,6 +17,7 @@ SET(WTF_HEADERS
     Deque.h
     DisallowCType.h
     DoublyLinkedList.h
+    DynamicAnnotations.h
     Encoder.h
     FastAllocBase.h
     FastMalloc.h
@@ -111,6 +112,7 @@ SET(WTF_SOURCES
     CryptographicallyRandomNumber.cpp
     CurrentTime.cpp
     DecimalNumber.cpp
+    DynamicAnnotations.cpp
     FastMalloc.cpp
     HashTable.cpp
     MainThread.cpp
