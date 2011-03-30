@@ -3234,8 +3234,3 @@ BUGXXX GPU MAC SNOWLEOPARD : compositing/self-painting-layers.html = FAIL
 
 // Chrome doesn't load favicons in DRT tests.
 BUGWK57259 : http/tests/misc/link-rel-icon-beforeload.html = FAIL PASS
-
-// r82411, probably just rebaseline.
-BUG_YUTAK WIN LINUX : svg/text/font-size-below-point-five.svg = TEXT
-BUG_YUTAK WIN LINUX : svg/text/bidi-embedded-direction.svg = IMAGE+TEXT
-BUG_YUTAK WIN LINUX : svg/text/bidi-reorder-value-lists.svg = IMAGE+TEXT
