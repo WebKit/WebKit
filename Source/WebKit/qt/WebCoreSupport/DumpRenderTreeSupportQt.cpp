@@ -950,6 +950,7 @@ QVariantList DumpRenderTreeSupportQt::nodesFromRect(const QWebElement& document,
     return res;
 }
 
+// API Candidate?
 QString DumpRenderTreeSupportQt::responseMimeType(QWebFrame* frame)
 {
     WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
@@ -1037,6 +1038,18 @@ QUrl DumpRenderTreeSupportQt::mediaContentUrlByElementId(QWebFrame* frame, const
 #endif
 
     return res;
+}
+
+// API Candidate?
+void DumpRenderTreeSupportQt::setAlternateHtml(QWebFrame* frame, const QString& html, const QUrl& baseUrl, const QUrl& failingUrl)
+{
+    KURL kurl(baseUrl);
+    WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
+    WebCore::ResourceRequest request(kurl);
+    const QByteArray utf8 = html.toUtf8();
+    WTF::RefPtr<WebCore::SharedBuffer> data = WebCore::SharedBuffer::create(utf8.constData(), utf8.length());
+    WebCore::SubstituteData substituteData(data, WTF::String("text/html"), WTF::String("utf-8"), failingUrl);
+    coreFrame->loader()->load(request, substituteData, false);
 }
 
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release

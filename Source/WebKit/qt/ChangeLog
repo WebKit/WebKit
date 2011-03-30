@@ -1,3 +1,19 @@
+2011-03-30  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Fix LoadHTMLStringItem::invoke() after r75966
+
+        Add DRT support for loading an alternate HTML string
+        for error pages. This allows Qt to unskip
+        http/tests/navigation/go-back-to-error-page.html.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52614
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setAlternateHtml):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2011-03-29  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed build fix for build-webkit -minimal.

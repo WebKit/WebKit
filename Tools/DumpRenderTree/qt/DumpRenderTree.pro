@@ -9,6 +9,7 @@ include(../../../Source/WebKit.pri)
 INCLUDEPATH += ../../../Source
 INCLUDEPATH += ../../../Source/JavaScriptCore
 INCLUDEPATH += ../../../Source/JavaScriptCore/ForwardingHeaders
+INCLUDEPATH += ../../../Source/WebKit/qt/WebCoreSupport
 INCLUDEPATH += $$BASEDIR
 DESTDIR = ../../bin
 

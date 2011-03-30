@@ -26,6 +26,7 @@ CONFIG += uitools
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../..
 include(../../Source/WebKit.pri)
+INCLUDEPATH += ../../Source/WebKit/qt/WebCoreSupport
 
 DESTDIR = $$OUTPUT_DIR/bin
 !CONFIG(standalone_package): CONFIG -= app_bundle

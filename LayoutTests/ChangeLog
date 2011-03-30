@@ -1,3 +1,15 @@
+2011-03-30  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Fix LoadHTMLStringItem::invoke() after r75966
+
+        Unskip http/tests/navigation/go-back-to-error-page.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=52614
+
+        * platform/qt/Skipped:
+
 2011-03-30  Mihai Parparita  <mihaip@chromium.org>
 
         Fix editing/deleting for Chromium Snow Leopard.

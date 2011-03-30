@@ -28,7 +28,7 @@
  */
 #include "config.h"
 #include "LayoutTestControllerQt.h"
-#include "../../../Source/WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
+#include "DumpRenderTreeSupportQt.h"
 
 #include "DumpRenderTreeQt.h"
 #include "WorkQueue.h"
@@ -315,9 +315,12 @@ void LayoutTestController::queueLoad(const QString& url, const QString& target)
     WorkQueue::shared()->queue(new LoadItem(absoluteUrl, target, m_drt->webPage()));
 }
 
-void LayoutTestController::queueLoadHTMLString(const QString& content, const QString& baseURL)
+void LayoutTestController::queueLoadHTMLString(const QString& content, const QString& baseURL, const QString& failingURL)
 {
-    WorkQueue::shared()->queue(new LoadHTMLStringItem(content, baseURL, m_drt->webPage()));
+    if (failingURL.isEmpty())
+        WorkQueue::shared()->queue(new LoadHTMLStringItem(content, baseURL, m_drt->webPage()));
+    else
+        WorkQueue::shared()->queue(new LoadAlternateHTMLStringItem(content, baseURL, failingURL, m_drt->webPage()));
 }
 
 void LayoutTestController::queueReload()

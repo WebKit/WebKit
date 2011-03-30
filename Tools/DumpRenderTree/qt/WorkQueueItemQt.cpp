@@ -28,6 +28,7 @@
  */
 #include "config.h"
 #include "WorkQueueItemQt.h"
+#include "DumpRenderTreeSupportQt.h"
 
 QWebFrame* findFrameNamed(const QString& frameName, QWebFrame* frame)
 {
@@ -69,6 +70,18 @@ bool LoadHTMLStringItem::invoke() const
         return false;
 
     frame->setHtml(m_content, QUrl(m_baseURL));
+    return true;
+}
+
+bool LoadAlternateHTMLStringItem::invoke() const
+{
+    Q_ASSERT(m_webPage);
+
+    QWebFrame* frame = m_webPage->mainFrame();
+    if (!frame)
+        return false;
+
+    DumpRenderTreeSupportQt::setAlternateHtml(frame, m_content, QUrl(m_baseURL), QUrl(m_failingURL));
     return true;
 }
 

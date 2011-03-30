@@ -61,13 +61,13 @@
 #include <qx11info_x11.h>
 #endif
 
+#include "DumpRenderTreeSupportQt.h"
 #include "mainwindow.h"
 #include "urlloader.h"
 #include "utils.h"
 #include "webinspector.h"
 #include "webpage.h"
 #include "webview.h"
-#include "../../Source/WebKit/qt/WebCoreSupport/DumpRenderTreeSupportQt.h"
 
 #ifdef Q_WS_MAEMO_5
 #include <X11/Xatom.h>

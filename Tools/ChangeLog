@@ -1,3 +1,31 @@
+2011-03-30  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Fix LoadHTMLStringItem::invoke() after r75966
+        Unskip http/tests/navigation/go-back-to-error-page.html
+
+        Also add the location of DumpRenderTreeSupportQt.h
+        to DRT's include paths.
+
+        https://bugs.webkit.org/show_bug.cgi?id=52614
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        * DumpRenderTree/qt/GCControllerQt.cpp:
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::queueLoadHTMLString):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/qt/PlainTextControllerQt.cpp:
+        * DumpRenderTree/qt/TextInputControllerQt.cpp:
+        * DumpRenderTree/qt/WorkQueueItemQt.cpp:
+        (LoadAlternateHTMLStringItem::invoke):
+        * DumpRenderTree/qt/WorkQueueItemQt.h:
+        (LoadAlternateHTMLStringItem::LoadAlternateHTMLStringItem):
+        * QtTestBrowser/QtTestBrowser.pro:
+        * QtTestBrowser/launcherwindow.h:
+
 2011-03-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Adam Roben.

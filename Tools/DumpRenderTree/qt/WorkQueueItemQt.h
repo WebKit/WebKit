@@ -80,6 +80,24 @@ private:
     QString m_baseURL;
 };
 
+class LoadAlternateHTMLStringItem : public WorkQueueItem {
+public:
+    LoadAlternateHTMLStringItem(const QString& content, const QString& baseURL,  const QString &failingURL, QWebPage *page)
+        : WorkQueueItem(page)
+        , m_content(content)
+        , m_baseURL(baseURL)
+        , m_failingURL(failingURL)
+    {
+    }
+
+private:
+    virtual bool invoke() const;
+
+    QString m_content;
+    QString m_baseURL;
+    QString m_failingURL;
+};
+
 class ReloadItem : public WorkQueueItem {
 public:
     ReloadItem(QWebPage *page)
