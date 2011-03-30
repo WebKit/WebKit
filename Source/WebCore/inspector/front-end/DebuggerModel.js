@@ -179,7 +179,7 @@ WebInspector.DebuggerModel.prototype = {
         DebuggerAgent.editScriptSource(sourceID, newSource, this._didEditScriptSource.bind(this, sourceID, callback));
     },
 
-    _didEditScriptSource: function(sourceID, callback, error, error, newBody, callFrames)
+    _didEditScriptSource: function(sourceID, callback, error, newBody, callFrames)
     {
         callback(!error, error || newBody);
         if (error)

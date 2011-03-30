@@ -1,3 +1,13 @@
+2011-03-30  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: fixing typo in the inspector front-end.
+
+        Web Inspector: REGRESSION: Broken live edit errors handling
+        https://bugs.webkit.org/show_bug.cgi?id=57436
+
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype._didEditScriptSource):
+
 2011-03-30  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Eric Seidel.
