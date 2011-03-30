@@ -501,7 +501,7 @@ void InspectorInstrumentation::domContentLoadedEventFiredImpl(InspectorAgent* in
     if (frame->page()->mainFrame() != frame || url != documentLoader->requestURL())
         return;
 
-    inspectorAgent->domContentLoadedEventFired(documentLoader, url);
+    inspectorAgent->domContentLoadedEventFired();
 
     if (InspectorDOMAgent* domAgent = inspectorAgent->instrumentingAgents()->inspectorDOMAgent())
         domAgent->mainFrameDOMContentLoaded();
@@ -580,7 +580,7 @@ void InspectorInstrumentation::didCommitLoadImpl(Page* page, InspectorAgent* ins
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
         pageAgent->inspectedURLChanged(loader->url().string());
 
-    inspectorAgent->didCommitLoad(loader);
+    inspectorAgent->didCommitLoad();
 }
 
 InspectorInstrumentationCookie InspectorInstrumentation::willWriteHTMLImpl(InspectorAgent* inspectorAgent, unsigned int length, unsigned int startLine)

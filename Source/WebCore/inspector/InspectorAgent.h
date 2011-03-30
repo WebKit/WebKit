@@ -142,9 +142,8 @@ public:
 
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
 
-    void didCommitLoad(DocumentLoader*);
-
-    void domContentLoadedEventFired(DocumentLoader*, const KURL&);
+    void didCommitLoad();
+    void domContentLoadedEventFired();
 
 #if ENABLE(WORKERS)
     enum WorkerAction { WorkerCreated, WorkerDestroyed };

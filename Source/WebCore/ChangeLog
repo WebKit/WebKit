@@ -1,3 +1,18 @@
+2011-03-30  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Not reviewed trivial change.
+
+        Web Inspector: Remove unnecessary function arguments after r82281.
+        https://bugs.webkit.org/show_bug.cgi?id=57327
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::didCommitLoad):
+        (WebCore::InspectorAgent::domContentLoadedEventFired):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFiredImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+
 2011-03-30  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Ojan Vafai.

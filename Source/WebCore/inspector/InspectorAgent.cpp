@@ -282,7 +282,7 @@ void InspectorAgent::releaseFrontendLifetimeAgents()
     m_runtimeAgent.clear();
 }
 
-void InspectorAgent::didCommitLoad(DocumentLoader*)
+void InspectorAgent::didCommitLoad()
 {
     if (m_frontend)
         m_frontend->inspector()->reset();
@@ -293,7 +293,7 @@ void InspectorAgent::didCommitLoad(DocumentLoader*)
 #endif
 }
 
-void InspectorAgent::domContentLoadedEventFired(DocumentLoader*, const KURL&)
+void InspectorAgent::domContentLoadedEventFired()
 {
     m_injectedScriptManager->injectedScriptHost()->clearInspectedNodes();
 }
