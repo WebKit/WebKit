@@ -1,3 +1,12 @@
+2011-03-30  Adam Barth  <abarth@webkit.org>
+
+        Remove platform/chromium-mac-snowleopard
+        https://bugs.webkit.org/show_bug.cgi?id=57486
+
+        Remove empty directories.
+
+        * platform/chromium-mac-snowleopard: Removed.
+
 2011-03-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Add 3 failing tests to the Skipped list because of different bugs.

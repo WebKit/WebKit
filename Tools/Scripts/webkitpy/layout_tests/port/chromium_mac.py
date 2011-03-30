@@ -46,11 +46,25 @@ class ChromiumMacPort(chromium.ChromiumPort):
     SUPPORTED_OS_VERSIONS = ('leopard', 'snowleopard')
 
     FALLBACK_PATHS = {
-        'leopard': ['chromium-mac-leopard', 'chromium-mac-snowleopard', 'chromium-mac', 'chromium',
-                    'mac-leopard', 'mac-snowleopard', 'mac'],
-        'snowleopard': ['chromium-mac-snowleopard', 'chromium-mac', 'chromium',
-                        'mac-snowleopard', 'mac'],
-        '': ['chromium-mac', 'chromium', 'mac'],
+        'leopard': [
+            'chromium-mac-leopard',
+            'chromium-mac',
+            'chromium',
+            'mac-leopard',
+            'mac-snowleopard',
+            'mac',
+        ],
+        'snowleopard': [
+            'chromium-mac',
+            'chromium',
+            'mac-snowleopard',
+            'mac',
+        ],
+        '': [
+            'chromium-mac',
+            'chromium',
+            'mac',
+        ],
     }
 
     def __init__(self, port_name=None, os_version_string=None, rebaselining=False, **kwargs):

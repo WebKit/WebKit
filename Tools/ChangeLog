@@ -1,3 +1,13 @@
+2011-03-30  Adam Barth  <abarth@webkit.org>
+
+        Remove platform/chromium-mac-snowleopard
+        https://bugs.webkit.org/show_bug.cgi?id=57486
+
+        This directory no longer exists, so we can remove it from the fallback
+        chain.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+
 2011-03-30  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
