@@ -113,6 +113,12 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
     return staticSupportedImageMIMETypes.get();
 }
 
++ (NSArray *)unsupportedTextMIMETypes
+{
+    DEFINE_STATIC_LOCAL(RetainPtr<NSArray>, staticUnsupportedTextMIMETypes, (stringArray(MIMETypeRegistry::getUnsupportedTextMIMETypes())));
+    return staticUnsupportedTextMIMETypes.get();
+}
+
 - (id)init
 {
     self = [super init];

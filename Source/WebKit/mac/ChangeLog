@@ -1,3 +1,19 @@
+2011-03-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        WebKit2: Attempting to view css file from url causes it to download
+        <rdar://problem/9102611>
+        https://bugs.webkit.org/show_bug.cgi?id=57501
+
+        * WebView/WebHTMLRepresentation.h:
+        * WebView/WebHTMLRepresentation.mm:
+        (+[WebHTMLRepresentation unsupportedTextMIMETypes]):
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLView unsupportedTextMIMETypes]):
+        Re-factor unsupportedTextMIMETypes to pull from WebCore's
+        MIMETypeRegistry, so that the list can be shared with WebKit2.
+
 2011-03-29  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej Stachowiak.

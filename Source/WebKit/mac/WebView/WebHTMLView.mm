@@ -1193,21 +1193,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 
 + (NSArray *)unsupportedTextMIMETypes
 {
-    return [NSArray arrayWithObjects:
-        @"text/calendar",       // iCal
-        @"text/x-calendar",
-        @"text/x-vcalendar",
-        @"text/vcalendar",
-        @"text/vcard",          // vCard
-        @"text/x-vcard",
-        @"text/directory",
-        @"text/ldif",           // Netscape Address Book
-        @"text/qif",            // Quicken
-        @"text/x-qif",
-        @"text/x-csv",          // CSV (for Address Book and Microsoft Outlook)
-        @"text/x-vcf",          // vCard type used in Sun affinity app
-        @"text/rtf",            // Rich Text Format
-        nil];
+    return [WebHTMLRepresentation unsupportedTextMIMETypes];
 }
 
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent

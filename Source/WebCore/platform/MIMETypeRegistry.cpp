@@ -55,6 +55,7 @@ static HashSet<String>* supportedImageMIMETypesForEncoding;
 static HashSet<String>* supportedJavaScriptMIMETypes;
 static HashSet<String>* supportedNonImageMIMETypes;
 static HashSet<String>* supportedMediaMIMETypes;
+static HashSet<String>* unsupportedTextMIMETypes;
 
 typedef HashMap<String, Vector<String>*, CaseFoldingHash> MediaMIMETypeMap;
     
@@ -396,6 +397,27 @@ static void initializeSupportedMediaMIMETypes()
 #endif
 }
 
+static void initializeUnsupportedTextMIMETypes()
+{
+    static const char* types[] = {
+        "text/calendar",
+        "text/x-calendar",
+        "text/x-vcalendar",
+        "text/vcalendar",
+        "text/vcard",
+        "text/x-vcard",
+        "text/directory",
+        "text/ldif",
+        "text/qif",
+        "text/x-qif",
+        "text/x-csv",
+        "text/x-vcf",
+        "text/rtf",
+    };
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(types); ++i)
+      unsupportedTextMIMETypes->add(types[i]);
+}
+
 static void initializeMIMETypeRegistry()
 {
     supportedJavaScriptMIMETypes = new HashSet<String>;
@@ -407,6 +429,9 @@ static void initializeMIMETypeRegistry()
     supportedImageResourceMIMETypes = new HashSet<String>;
     supportedImageMIMETypes = new HashSet<String>;
     initializeSupportedImageMIMETypes();
+
+    unsupportedTextMIMETypes = new HashSet<String>;
+    initializeUnsupportedTextMIMETypes();
 }
 
 String MIMETypeRegistry::getMIMETypeForPath(const String& path)
@@ -477,6 +502,15 @@ bool MIMETypeRegistry::isSupportedMediaMIMEType(const String& mimeType)
     return supportedMediaMIMETypes->contains(mimeType);
 }
 
+bool MIMETypeRegistry::isUnsupportedTextMIMEType(const String& mimeType)
+{
+    if (mimeType.isEmpty())
+        return false;
+    if (!unsupportedTextMIMETypes)
+        initializeMIMETypeRegistry();
+    return unsupportedTextMIMETypes->contains(mimeType);
+}
+
 bool MIMETypeRegistry::isJavaAppletMIMEType(const String& mimeType)
 {
     // Since this set is very limited and is likely to remain so we won't bother with the overhead
@@ -521,6 +555,13 @@ HashSet<String>& MIMETypeRegistry::getSupportedMediaMIMETypes()
     if (!supportedMediaMIMETypes)
         initializeSupportedMediaMIMETypes();
     return *supportedMediaMIMETypes;
+}
+
+HashSet<String>& MIMETypeRegistry::getUnsupportedTextMIMETypes()
+{
+    if (!unsupportedTextMIMETypes)
+        initializeMIMETypeRegistry();
+    return *unsupportedTextMIMETypes;
 }
 
 const String& defaultMIMEType()

@@ -68,6 +68,10 @@ public:
     // Check to see if a mime type is suitable for being loaded using <video> and <audio>
     static bool isSupportedMediaMIMEType(const String& mimeType); 
 
+    // Check to see if the mime type is not suitable for being loaded as a text
+    // document in a frame. Only valid for mime types begining with "text/".
+    static bool isUnsupportedTextMIMEType(const String& mimeType);
+
     // Check to see if a mime type is a valid Java applet mime type
     static bool isJavaAppletMIMEType(const String& mimeType);
 
@@ -80,6 +84,7 @@ public:
     static HashSet<String>& getSupportedImageMIMETypesForEncoding();
     static HashSet<String>& getSupportedNonImageMIMETypes();
     static HashSet<String>& getSupportedMediaMIMETypes();
+    static HashSet<String>& getUnsupportedTextMIMETypes();
 };
 
 const String& defaultMIMEType();

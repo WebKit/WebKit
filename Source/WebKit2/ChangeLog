@@ -1,3 +1,16 @@
+2011-03-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        WebKit2: Attempting to view css file from url causes it to download
+        <rdar://problem/9102611>
+        https://bugs.webkit.org/show_bug.cgi?id=57501
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::canShowMIMEType):
+        Match WebKit1 by allowing any MIME type that starts with "text/"
+        except the ones we explicitly blacklist.
+
 2011-03-30  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
