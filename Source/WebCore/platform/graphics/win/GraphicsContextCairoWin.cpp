@@ -78,7 +78,7 @@ void GraphicsContext::platformInit(HDC dc, bool hasAlpha)
     else
         setPaintingDisabled(true);
 
-    m_data = new GraphicsContextPlatformPrivateTopLevel(new PlatformContextCairo(cr));
+    m_data = new GraphicsContextPlatformPrivateToplevel(new PlatformContextCairo(cr));
     m_data->m_hdc = dc;
     if (platformContext()->cr()) {
         // Make sure the context starts in sync with our state.

@@ -1,3 +1,10 @@
+2011-03-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Try to fix the WinCairo build.
+
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContext::platformInit): Fix misspelling of GraphicsContextPlatformPrivateToplevel.
+
 2011-03-30  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
