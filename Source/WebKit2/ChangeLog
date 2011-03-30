@@ -1,3 +1,9 @@
+2011-03-30  Alejandro G. Castro  <alex@igalia.com>
+
+        Fix GTK build after r81980.
+
+        * GNUmakefile.am:
+
 2011-03-29  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej Stachowiak.

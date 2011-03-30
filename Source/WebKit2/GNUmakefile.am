@@ -492,6 +492,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/Authentication/AuthenticationManager.h \
 	Source/WebKit2/WebProcess/Cookies/WebCookieManager.h \
 	Source/WebKit2/WebProcess/Cookies/WebCookieManager.cpp \
+	Source/WebKit2/WebProcess/Cookies/gtk/WebCookieManagerGtk.cpp \
 	Source/WebKit2/WebProcess/Downloads/Download.cpp \
 	Source/WebKit2/WebProcess/Downloads/Download.h \
 	Source/WebKit2/WebProcess/Downloads/DownloadManager.cpp \
