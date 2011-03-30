@@ -1,3 +1,13 @@
+2011-03-30  Ofri Wolfus  <ofri@dhcp-172-28-40-178.tlv.corp.google.com>
+
+        Reviewed by Eric Seidel.
+
+        Add support for parsing unicode-bidi: -webkit-plaintext.
+        https://bugs.webkit.org/show_bug.cgi?id=57457
+
+        * css3/unicode-bidi-plaintext-parse-expected.txt: Added.
+        * css3/unicode-bidi-plaintext-parse.html: Added.
+
 2011-03-30  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.
