@@ -1,3 +1,15 @@
+2011-03-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Explicitly prevent testapi and minidom from being installed rather than relying
+        on Xcode's current behavior of not installing if INSTALL_PATH is not explicitly
+        set at the target level.
+
+        <rdar://problem/9206357>
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2011-03-30  Timur Iskhodzhanov  <timurrrr@google.com>
 
         Reviewed by Alexey Proskuryakov.

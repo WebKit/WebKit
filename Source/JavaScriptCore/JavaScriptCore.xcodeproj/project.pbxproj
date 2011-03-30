@@ -3061,6 +3061,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = minidom;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -3068,6 +3069,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = minidom;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -3075,6 +3077,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = minidom;
+				SKIP_INSTALL = YES;
 			};
 			name = Production;
 		};
@@ -3175,6 +3178,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = testapi;
+				SKIP_INSTALL = YES;
 			};
 			name = Debug;
 		};
@@ -3182,6 +3186,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = testapi;
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -3189,6 +3194,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = testapi;
+				SKIP_INSTALL = YES;
 			};
 			name = Production;
 		};
@@ -3247,6 +3253,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = minidom;
+				SKIP_INSTALL = YES;
 			};
 			name = Profiling;
 		};
@@ -3254,6 +3261,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = testapi;
+				SKIP_INSTALL = YES;
 			};
 			name = Profiling;
 		};
