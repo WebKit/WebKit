@@ -1,3 +1,15 @@
+2011-03-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed WinCairo build fix.
+
+        Bring DownloadCurl implementation stubs in line with current
+        CFNetwork API.
+
+        * WebProcess/Downloads/curl/DownloadCurl.cpp:
+        (WebKit::Download::receivedCredential):
+        (WebKit::Download::receivedRequestToContinueWithoutCredential):
+        (WebKit::Download::receivedCancellation):
+
 2011-03-29  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
