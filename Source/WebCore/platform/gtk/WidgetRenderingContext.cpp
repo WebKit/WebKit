@@ -33,6 +33,7 @@
 
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
+#include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include "RenderThemeGtk.h"
 #include "Timer.h"
@@ -128,7 +129,7 @@ WidgetRenderingContext::~WidgetRenderingContext()
     }
 
     // FIXME: It's unclear if it is necessary to preserve the current source here.
-    cairo_t* cairoContext = m_graphicsContext->platformContext();
+    cairo_t* cairoContext = m_graphicsContext->platformContext()->cr();
     RefPtr<cairo_pattern_t> previousSource(cairo_get_source(cairoContext));
 
     // The blit rectangle is the original target rectangle adjusted for any extra space.

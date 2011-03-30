@@ -34,6 +34,7 @@
 #include "GraphicsContext.h"
 #include "OwnPtrCairo.h"
 #include "Path.h"
+#include "PlatformContextCairo.h"
 #include "Timer.h"
 #include <cairo.h>
 
@@ -88,7 +89,7 @@ PlatformContext ContextShadow::beginShadowLayer(GraphicsContext* context, const 
     adjustBlurDistance(context);
 
     double x1, x2, y1, y2;
-    cairo_clip_extents(context->platformContext(), &x1, &y1, &x2, &y2);
+    cairo_clip_extents(context->platformContext()->cr(), &x1, &y1, &x2, &y2);
     IntRect layerRect = calculateLayerBoundingRect(context, layerArea, IntRect(x1, y1, x2 - x1, y2 - y1));
 
     // Don't paint if we are totally outside the clip region.
@@ -120,7 +121,7 @@ void ContextShadow::endShadowLayer(GraphicsContext* context)
         cairo_surface_mark_dirty(m_layerImage);
     }
 
-    cairo_t* cr = context->platformContext();
+    cairo_t* cr = context->platformContext()->cr();
     cairo_save(cr);
     setSourceRGBAFromColor(cr, m_color);
     cairo_mask_surface(cr, m_layerImage, m_layerOrigin.x(), m_layerOrigin.y());
@@ -198,7 +199,7 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
     int internalShadowHeight = radiusTwice + max(topLeftRadius.height(), topRightRadius.height()) +
         max(bottomLeftRadius.height(), bottomRightRadius.height());
 
-    cairo_t* cr = context->platformContext();
+    cairo_t* cr = context->platformContext()->cr();
 
     // drawShadowedRect still does not work with rotations.
     // https://bugs.webkit.org/show_bug.cgi?id=45042

@@ -44,6 +44,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
 #include "JSElement.h"
+#include "PlatformContextCairo.h"
 #include "PrintContext.h"
 #include "RenderListItem.h"
 #include "RenderTreeAsText.h"
@@ -765,17 +766,17 @@ static void begin_print_callback(GtkPrintOperation* op, GtkPrintContext* context
     gtk_print_operation_set_n_pages(op, printContext->pageCount());
 }
 
-static void draw_page_callback(GtkPrintOperation* op, GtkPrintContext* context, gint page_nr, gpointer user_data)
+static void draw_page_callback(GtkPrintOperation*, GtkPrintContext* gtkPrintContext, gint pageNumber, PrintContext* corePrintContext)
 {
-    PrintContext* printContext = reinterpret_cast<PrintContext*>(user_data);
-
-    if (page_nr >= static_cast<gint>(printContext->pageCount()))
+    if (pageNumber >= static_cast<gint>(corePrintContext->pageCount()))
         return;
 
-    cairo_t* cr = gtk_print_context_get_cairo_context(context);
-    GraphicsContext ctx(cr);
-    float width = gtk_print_context_get_width(context);
-    printContext->spoolPage(ctx, page_nr, width);
+    cairo_t* cr = gtk_print_context_get_cairo_context(gtkPrintContext);
+    float pageWidth = gtk_print_context_get_width(gtkPrintContext);
+
+    PlatformContextCairo platformContext(cr);
+    GraphicsContext graphicsContext(&platformContext);
+    corePrintContext->spoolPage(graphicsContext, pageNumber, pageWidth);
 }
 
 static void end_print_callback(GtkPrintOperation* op, GtkPrintContext* context, gpointer user_data)

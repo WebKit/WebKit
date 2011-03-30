@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,28 +20,33 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ImageBufferData_h
-#define ImageBufferData_h
+#ifndef PlatformContextCairo_h
+#define PlatformContextCairo_h
 
-#include "PlatformContextCairo.h"
-
-typedef struct _cairo_surface cairo_surface_t;
+#include "ContextShadow.h"
+#include "RefPtrCairo.h"
 
 namespace WebCore {
 
-class IntSize;
+// Much like PlatformContextSkia in the Skia port, this class holds information that
+// would normally be private to GraphicsContext, except that we want to allow access
+// to it in Font and Image code. This allows us to separate the concerns of Cairo-specific
+// code from the platform-independent GraphicsContext.
 
-class ImageBufferData {
+class PlatformContextCairo {
+    WTF_MAKE_NONCOPYABLE(PlatformContextCairo);
 public:
-    ImageBufferData(const IntSize&);
+    PlatformContextCairo(cairo_t*);
+    cairo_t* cr() { return m_cr.get(); }
+    void setCr(cairo_t* cr) { m_cr = cr; }
 
-    cairo_surface_t* m_surface;
-    PlatformContextCairo m_platformContext;
+private:
+    RefPtr<cairo_t> m_cr;
 };
 
-}  // namespace WebCore
+} // namespace WebCore
 
-#endif  // ImageBufferData_h
+#endif // PlatformContextCairo_h

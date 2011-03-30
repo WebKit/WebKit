@@ -36,6 +36,7 @@
 #include "GlyphBuffer.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
+#include "PlatformContextCairo.h"
 #include "ImageBuffer.h"
 #include "Pattern.h"
 #include "SimpleFontData.h"
@@ -64,7 +65,7 @@ static void drawGlyphsToContext(cairo_t* context, const SimpleFontData* font, Gl
     }
 }
 
-static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context, const FloatPoint& point, const SimpleFontData* font, GlyphBufferGlyph* glyphs, int numGlyphs)
+static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint& point, const SimpleFontData* font, GlyphBufferGlyph* glyphs, int numGlyphs)
 {
     ContextShadow* shadow = graphicsContext->contextShadow();
     ASSERT(shadow);
@@ -74,6 +75,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context,
 
     if (!shadow->mustUseContextShadow(graphicsContext)) {
         // Optimize non-blurry shadows, by just drawing text without the ContextShadow.
+        cairo_t* context = graphicsContext->platformContext()->cr();
         cairo_save(context);
         cairo_translate(context, shadow->m_offset.width(), shadow->m_offset.height());
         setSourceRGBAFromColor(context, shadow->m_color);
@@ -106,9 +108,10 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         offset += glyphBuffer.advanceAt(from + i);
     }
 
-    cairo_t* cr = context->platformContext();
-    drawGlyphsShadow(context, cr, point, font, glyphs, numGlyphs);
+    PlatformContextCairo* platformContext = context->platformContext();
+    drawGlyphsShadow(context, point, font, glyphs, numGlyphs);
 
+    cairo_t* cr = platformContext->cr();
     cairo_save(cr);
     prepareContextForGlyphDrawing(cr, font, point);
     if (context->textDrawingMode() & TextModeFill) {

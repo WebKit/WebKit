@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "MediaControlElements.h"
 #include "PaintInfo.h"
+#include "PlatformContextCairo.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "TimeRanges.h"
@@ -234,7 +235,7 @@ static void paintGdkPixbuf(GraphicsContext* context, const GdkPixbuf* icon, cons
         icon = scaledIcon.get();
     }
 
-    cairo_t* cr = context->platformContext();
+    cairo_t* cr = context->platformContext()->cr();
     cairo_save(cr);
     gdk_cairo_set_source_pixbuf(cr, icon, iconRect.x(), iconRect.y());
     cairo_paint(cr);

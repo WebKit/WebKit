@@ -47,6 +47,7 @@
 #include "NotImplemented.h"
 #include "Path.h"
 #include "Pattern.h"
+#include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include "SimpleFontData.h"
 #include <cairo.h>
@@ -148,7 +149,7 @@ static inline void drawPathShadow(GraphicsContext* context, PathDrawingStyle dra
         return;
 
     // Calculate the extents of the rendered solid paths.
-    cairo_t* cairoContext = context->platformContext();
+    cairo_t* cairoContext = context->platformContext()->cr();
     OwnPtr<cairo_path_t> path(cairo_copy_path(cairoContext));
 
     FloatRect solidFigureExtents;
@@ -199,12 +200,18 @@ static void strokeCurrentCairoPath(GraphicsContext* context,  cairo_t* cairoCont
     cairo_new_path(cairoContext);
 }
 
-void GraphicsContext::platformInit(PlatformGraphicsContext* cr)
+GraphicsContext::GraphicsContext(cairo_t* cr)
 {
-    m_data = new GraphicsContextPlatformPrivate;
-    m_data->cr = cairo_reference(cr);
-    m_data->syncContext(cr);
-    setPaintingDisabled(!cr);
+    m_data = new GraphicsContextPlatformPrivate(new PlatformContextCairo(cr));
+}
+
+void GraphicsContext::platformInit(PlatformContextCairo* platformContext)
+{
+    m_data = new GraphicsContextPlatformPrivate(platformContext);
+    if (platformContext)
+        m_data->syncContext(platformContext->cr());
+    else
+        setPaintingDisabled(true);
 }
 
 void GraphicsContext::platformDestroy()
@@ -214,20 +221,20 @@ void GraphicsContext::platformDestroy()
 
 AffineTransform GraphicsContext::getCTM() const
 {
-    cairo_t* cr = platformContext();
+    cairo_t* cr = platformContext()->cr();
     cairo_matrix_t m;
     cairo_get_matrix(cr, &m);
     return AffineTransform(m.xx, m.yx, m.xy, m.yy, m.x0, m.y0);
 }
 
-cairo_t* GraphicsContext::platformContext() const
+PlatformContextCairo* GraphicsContext::platformContext() const
 {
-    return m_data->cr;
+    return m_data->platformContext;
 }
 
 void GraphicsContext::savePlatformState()
 {
-    cairo_save(m_data->cr);
+    cairo_save(platformContext()->cr());
     m_data->save();
     m_data->shadowStack.append(m_data->shadow);
     m_data->maskImageStack.append(ImageMaskInformation());
@@ -235,7 +242,8 @@ void GraphicsContext::savePlatformState()
 
 void GraphicsContext::restorePlatformState()
 {
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
+
     const ImageMaskInformation& maskInformation = m_data->maskImageStack.last();
     if (maskInformation.isValid()) {
         const FloatRect& maskRect = maskInformation.maskRect();
@@ -251,7 +259,7 @@ void GraphicsContext::restorePlatformState()
         m_data->shadowStack.removeLast();
     }
 
-    cairo_restore(m_data->cr);
+    cairo_restore(cr);
     m_data->restore();
 }
 
@@ -261,7 +269,7 @@ void GraphicsContext::drawRect(const IntRect& rect)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_save(cr);
 
     if (fillColor().alpha())
@@ -289,7 +297,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     if (style == NoStroke)
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_save(cr);
 
     float width = strokeThickness();
@@ -376,7 +384,7 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_save(cr);
     float yRadius = .5 * rect.height();
     float xRadius = .5 * rect.width();
@@ -415,7 +423,7 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
     float fa = startAngle;
     float falen =  fa + angleSpan;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_save(cr);
 
     if (w != h)
@@ -492,7 +500,7 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     if (npoints <= 1)
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
 
     cairo_save(cr);
     cairo_set_antialias(cr, shouldAntialias ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
@@ -522,7 +530,7 @@ void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* poin
     if (numPoints <= 1)
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
 
     cairo_new_path(cr);
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
@@ -542,7 +550,7 @@ void GraphicsContext::fillPath(const Path& path)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     setPathOnCairoContext(cr, path.platformPath()->context());
     fillCurrentCairoPath(this, cr);
 }
@@ -552,7 +560,7 @@ void GraphicsContext::strokePath(const Path& path)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     setPathOnCairoContext(cr, path.platformPath()->context());
     strokeCurrentCairoPath(this, cr);
 }
@@ -562,7 +570,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_save(cr);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     fillCurrentCairoPath(this, cr);
@@ -578,7 +586,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
         m_data->shadow.drawRectShadow(this, enclosingIntRect(rect));
 
     if (color.alpha())
-        fillRectSourceOver(m_data->cr, rect, color);
+        fillRectSourceOver(platformContext()->cr(), rect, color);
 }
 
 void GraphicsContext::clip(const FloatRect& rect)
@@ -586,7 +594,7 @@ void GraphicsContext::clip(const FloatRect& rect)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
     cairo_set_fill_rule(cr, CAIRO_FILL_RULE_WINDING);
@@ -600,7 +608,7 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     setPathOnCairoContext(cr, path.platformPath()->context());
     cairo_set_fill_rule(cr, clipRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
     cairo_clip(cr);
@@ -638,7 +646,7 @@ void GraphicsContext::drawFocusRing(const Path& path, int width, int /* offset *
     adjustFocusRingColor(ringColor);
     adjustFocusRingLineWidth(width);
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_save(cr);
     appendWebCorePathToCairoContext(cr, path);
     setSourceRGBAFromColor(cr, ringColor);
@@ -655,7 +663,7 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
 
     unsigned rectCount = rects.size();
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_save(cr);
     cairo_push_group(cr);
     cairo_new_path(cr);
@@ -732,7 +740,7 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& origin, float wi
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_save(cr);
 
     switch (style) {
@@ -762,7 +770,7 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
     FloatRect result;
     double x = frect.x();
     double y = frect.y();
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_user_to_device(cr, &x, &y);
     x = round(x);
     y = round(y);
@@ -799,7 +807,7 @@ void GraphicsContext::translate(float x, float y)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_translate(cr, x, y);
     m_data->translate(x, y);
 }
@@ -821,7 +829,7 @@ void GraphicsContext::setPlatformStrokeThickness(float strokeThickness)
     if (paintingDisabled())
         return;
 
-    cairo_set_line_width(m_data->cr, strokeThickness);
+    cairo_set_line_width(platformContext()->cr(), strokeThickness);
 }
 
 void GraphicsContext::setPlatformStrokeStyle(StrokeStyle strokeStyle)
@@ -835,16 +843,16 @@ void GraphicsContext::setPlatformStrokeStyle(StrokeStyle strokeStyle)
     switch (strokeStyle) {
     case NoStroke:
         // FIXME: is it the right way to emulate NoStroke?
-        cairo_set_line_width(m_data->cr, 0);
+        cairo_set_line_width(platformContext()->cr(), 0);
         break;
     case SolidStroke:
-        cairo_set_dash(m_data->cr, 0, 0, 0);
+        cairo_set_dash(platformContext()->cr(), 0, 0, 0);
         break;
     case DottedStroke:
-        cairo_set_dash(m_data->cr, dotPattern, 2, 0);
+        cairo_set_dash(platformContext()->cr(), dotPattern, 2, 0);
         break;
     case DashedStroke:
-        cairo_set_dash(m_data->cr, dashPattern, 2, 0);
+        cairo_set_dash(platformContext()->cr(), dashPattern, 2, 0);
         break;
     }
 }
@@ -859,7 +867,7 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     const cairo_matrix_t matrix = cairo_matrix_t(transform);
     cairo_transform(cr, &matrix);
     m_data->concatCTM(transform);
@@ -870,7 +878,7 @@ void GraphicsContext::setCTM(const AffineTransform& transform)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     const cairo_matrix_t matrix = cairo_matrix_t(transform);
     cairo_set_matrix(cr, &matrix);
     m_data->setCTM(transform);
@@ -881,7 +889,7 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     clip(rect);
 
     Path p;
@@ -928,7 +936,7 @@ void GraphicsContext::beginTransparencyLayer(float opacity)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_push_group(cr);
     m_data->layers.append(opacity);
     m_data->beginTransparencyLayer();
@@ -939,7 +947,7 @@ void GraphicsContext::endTransparencyLayer()
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
 
     cairo_pop_group_to_source(cr);
     cairo_paint_with_alpha(cr, m_data->layers.last());
@@ -952,7 +960,7 @@ void GraphicsContext::clearRect(const FloatRect& rect)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
 
     cairo_save(cr);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
@@ -966,7 +974,7 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float width)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_save(cr);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_set_line_width(cr, width);
@@ -991,12 +999,12 @@ void GraphicsContext::setLineCap(LineCap lineCap)
         cairoCap = CAIRO_LINE_CAP_SQUARE;
         break;
     }
-    cairo_set_line_cap(m_data->cr, cairoCap);
+    cairo_set_line_cap(platformContext()->cr(), cairoCap);
 }
 
 void GraphicsContext::setLineDash(const DashArray& dashes, float dashOffset)
 {
-    cairo_set_dash(m_data->cr, dashes.data(), dashes.size(), dashOffset);
+    cairo_set_dash(platformContext()->cr(), dashes.data(), dashes.size(), dashOffset);
 }
 
 void GraphicsContext::setLineJoin(LineJoin lineJoin)
@@ -1016,7 +1024,7 @@ void GraphicsContext::setLineJoin(LineJoin lineJoin)
         cairoJoin = CAIRO_LINE_JOIN_BEVEL;
         break;
     }
-    cairo_set_line_join(m_data->cr, cairoJoin);
+    cairo_set_line_join(platformContext()->cr(), cairoJoin);
 }
 
 void GraphicsContext::setMiterLimit(float miter)
@@ -1024,7 +1032,7 @@ void GraphicsContext::setMiterLimit(float miter)
     if (paintingDisabled())
         return;
 
-    cairo_set_miter_limit(m_data->cr, miter);
+    cairo_set_miter_limit(platformContext()->cr(), miter);
 }
 
 void GraphicsContext::setAlpha(float alpha)
@@ -1042,7 +1050,7 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op)
     if (paintingDisabled())
         return;
 
-    cairo_set_operator(m_data->cr, toCairoOperator(op));
+    cairo_set_operator(platformContext()->cr(), toCairoOperator(op));
 }
 
 void GraphicsContext::clip(const Path& path)
@@ -1050,7 +1058,7 @@ void GraphicsContext::clip(const Path& path)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     OwnPtr<cairo_path_t> p(cairo_copy_path(path.platformPath()->context()));
     cairo_append_path(cr, p.get());
     cairo_fill_rule_t savedFillRule = cairo_get_fill_rule(cr);
@@ -1070,7 +1078,7 @@ void GraphicsContext::clipOut(const Path& path)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     double x1, y1, x2, y2;
     cairo_clip_extents(cr, &x1, &y1, &x2, &y2);
     cairo_rectangle(cr, x1, y1, x2 - x1, y2 - y1);
@@ -1087,7 +1095,7 @@ void GraphicsContext::rotate(float radians)
     if (paintingDisabled())
         return;
 
-    cairo_rotate(m_data->cr, radians);
+    cairo_rotate(platformContext()->cr(), radians);
     m_data->rotate(radians);
 }
 
@@ -1096,7 +1104,7 @@ void GraphicsContext::scale(const FloatSize& size)
     if (paintingDisabled())
         return;
 
-    cairo_scale(m_data->cr, size.width(), size.height());
+    cairo_scale(platformContext()->cr(), size.width(), size.height());
     m_data->scale(size);
 }
 
@@ -1105,7 +1113,7 @@ void GraphicsContext::clipOut(const IntRect& r)
     if (paintingDisabled())
         return;
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     double x1, y1, x2, y2;
     cairo_clip_extents(cr, &x1, &y1, &x2, &y2);
     cairo_rectangle(cr, x1, y1, x2 - x1, y2 - y1);
@@ -1132,7 +1140,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, 
     if (hasShadow())
         m_data->shadow.drawRectShadow(this, r, topLeft, topRight, bottomLeft, bottomRight);
 
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_save(cr);
     Path path;
     path.addRoundedRect(r, topLeft, topRight, bottomLeft, bottomRight);
@@ -1170,7 +1178,7 @@ void GraphicsContext::setPlatformShouldAntialias(bool enable)
     // When true, use the default Cairo backend antialias mode (usually this
     // enables standard 'grayscale' antialiasing); false to explicitly disable
     // antialiasing. This is the same strategy as used in drawConvexPolygon().
-    cairo_set_antialias(m_data->cr, enable ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
+    cairo_set_antialias(platformContext()->cr(), enable ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
 }
 
 void GraphicsContext::setImageInterpolationQuality(InterpolationQuality)
@@ -1196,7 +1204,7 @@ void GraphicsContext::pushImageMask(cairo_surface_t* surface, const FloatRect& r
     // We want to allow the clipped elements to composite with the surface as it
     // is now, but they are isolated in another group. To make this work, we're
     // going to blit the current surface contents onto the new group once we push it.
-    cairo_t* cr = m_data->cr;
+    cairo_t* cr = platformContext()->cr();
     cairo_surface_t* currentTarget = cairo_get_target(cr);
     cairo_surface_flush(currentTarget);
 

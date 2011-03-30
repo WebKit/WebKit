@@ -42,8 +42,9 @@ typedef struct CGContext PlatformGraphicsContext;
 #elif PLATFORM(CAIRO)
 namespace WebCore {
 class ContextShadow;
+class PlatformContextCairo;
 }
-typedef struct _cairo PlatformGraphicsContext;
+typedef WebCore::PlatformContextCairo PlatformGraphicsContext;
 #elif PLATFORM(OPENVG)
 namespace WebCore {
 class SurfaceOpenVG;
@@ -490,6 +491,7 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(CAIRO)
+        GraphicsContext(cairo_t*);
         void pushImageMask(cairo_surface_t*, const FloatRect&);
 #endif
 

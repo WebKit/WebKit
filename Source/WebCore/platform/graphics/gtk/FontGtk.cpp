@@ -35,6 +35,7 @@
 
 #include "CairoUtilities.h"
 #include "ContextShadow.h"
+#include "PlatformContextCairo.h"
 #include "GraphicsContext.h"
 #include "NotImplemented.h"
 #include "SimpleFontData.h"
@@ -220,7 +221,7 @@ bool Font::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
-static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context, const FloatPoint& point, PangoLayoutLine* layoutLine, PangoRegionType renderRegion)
+static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint& point, PangoLayoutLine* layoutLine, PangoRegionType renderRegion)
 {
     ContextShadow* shadow = graphicsContext->contextShadow();
     ASSERT(shadow);
@@ -232,6 +233,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context,
 
     // Optimize non-blurry shadows, by just drawing text without the ContextShadow.
     if (!shadow->mustUseContextShadow(graphicsContext)) {
+        cairo_t* context = graphicsContext->platformContext()->cr();
         cairo_save(context);
         cairo_translate(context, totalOffset.x(), totalOffset.y());
 
@@ -255,6 +257,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context,
         // because we don't want any bits and pieces of characters out of range to be
         // drawn. Since ContextShadow expects a consistent transform, we have to undo the
         // translation before calling endShadowLayer as well.
+        cairo_t* context = graphicsContext->platformContext()->cr();
         cairo_save(context);
         cairo_translate(context, totalOffset.x(), totalOffset.y());
         gdk_cairo_region(context, renderRegion);
@@ -275,7 +278,7 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
     }
 #endif
 
-    cairo_t* cr = context->platformContext();
+    cairo_t* cr = context->platformContext()->cr();
     PangoLayout* layout = pango_cairo_create_layout(cr);
     setPangoAttributes(this, run, layout);
 
@@ -294,7 +297,7 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
     int ranges[] = {start - utf8, end - utf8};
     partialRegion = gdk_pango_layout_line_get_clip_region(layoutLine, 0, 0, ranges, 1);
 
-    drawGlyphsShadow(context, cr, point, layoutLine, partialRegion);
+    drawGlyphsShadow(context, point, layoutLine, partialRegion);
 
     cairo_save(cr);
     cairo_translate(cr, point.x(), point.y());
