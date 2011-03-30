@@ -1791,9 +1791,6 @@ http/tests/inspector/resource-har-conversion.html
 # http://webkit.org/b/56584
 inspector/debugger/debug-inlined-scripts.html
 
-# Times out http://webkit.org/b/57347
-fast/images/move-image-to-new-document.html
-
 ### END OF (1) Classified failures with bug reports
 ########################################
 
@@ -1840,6 +1837,7 @@ fast/events/onbeforeunload-focused-iframe.html
 # WebKitTestRunner needs layoutTestController.setPluginsEnabled
 platform/mac/plugins/disable-plugins.html
 fast/images/embed-image.html
+fast/images/move-image-to-new-document.html
 
 # WebKitTestRunner needs layoutTestController.setHandlesAuthenticationChallenges
 http/tests/misc/authentication-sent-to-redirect.html

@@ -1,3 +1,16 @@
+2011-03-29  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        [Snow Leopard WebKit2 Release Tests] fast/images/move-image-to-new-document.html timing out since r82087
+        https://bugs.webkit.org/show_bug.cgi?id=57347
+
+        * fast/images/script-tests/move-image-to-new-document.js: Disable
+        plug-ins so that the embed portion of the test gets the expected image
+        loading behavior on bots with QuickTime installed.
+        * platform/mac-wk2/Skipped: Skip the test in WebKit2 since it doesn't
+        implement setPluginsEnabled().
+
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
         Remove a bunch of IMAGE only Snow Leopard Chromium failures from the

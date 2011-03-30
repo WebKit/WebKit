@@ -1,5 +1,8 @@
 description("Test that when images are moved to a new document, a new load fires.");
 
+if (window.layoutTestController)
+    layoutTestController.setPluginsEnabled(false);
+
 jsTestIsAsync = true;
 
 var subframe = document.createElement("iframe");
