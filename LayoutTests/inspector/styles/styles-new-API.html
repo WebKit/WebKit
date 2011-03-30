@@ -69,9 +69,10 @@ function test()
             }
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Attribute styles for table ===");
-            for (var attr in styles.styleAttributes) {
-                InspectorTest.addResult("Attribute: " + attr);
-                dumpRuleOrStyle(styles.styleAttributes[attr]);
+            var styleAttributes = styles.styleAttributes;
+            for (var i = 0; i < styleAttributes.length; ++i) {
+                InspectorTest.addResult("Attribute: " + styleAttributes[i].name);
+                dumpRuleOrStyle(styleAttributes[i].style);
             }
             test_styleSheets();
         }

@@ -91,7 +91,7 @@ private:
     String detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument);
 
     PassRefPtr<InspectorArray> buildArrayForRuleList(CSSRuleList* ruleList);
-    PassRefPtr<InspectorObject> buildObjectForAttributeStyles(Element* element);
+    PassRefPtr<InspectorArray> buildArrayForAttributeStyles(Element*);
 
     // InspectorDOMAgent::DOMListener interface
     virtual void didRemoveDocument(Document*);

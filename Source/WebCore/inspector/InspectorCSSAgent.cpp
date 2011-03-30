@@ -195,7 +195,7 @@ void InspectorCSSAgent::getStylesForNode(ErrorString* errorString, int nodeId, R
     RefPtr<CSSRuleList> matchedRules = selector->styleRulesForElement(element, false, true);
     resultObject->setArray("matchedCSSRules", buildArrayForRuleList(matchedRules.get()));
 
-    resultObject->setObject("styleAttributes", buildObjectForAttributeStyles(element));
+    resultObject->setArray("styleAttributes", buildArrayForAttributeStyles(element));
 
     RefPtr<InspectorArray> pseudoElements = InspectorArray::create();
     for (PseudoId pseudoId = FIRST_PUBLIC_PSEUDOID; pseudoId < AFTER_LAST_INTERNAL_PSEUDOID; pseudoId = static_cast<PseudoId>(pseudoId + 1)) {
@@ -512,20 +512,23 @@ PassRefPtr<InspectorArray> InspectorCSSAgent::buildArrayForRuleList(CSSRuleList*
     return result.release();
 }
 
-PassRefPtr<InspectorObject> InspectorCSSAgent::buildObjectForAttributeStyles(Element* element)
+PassRefPtr<InspectorArray> InspectorCSSAgent::buildArrayForAttributeStyles(Element* element)
 {
-    RefPtr<InspectorObject> styleAttributes = InspectorObject::create();
+    RefPtr<InspectorArray> attrStyles = InspectorArray::create();
     NamedNodeMap* attributes = element->attributes();
     for (unsigned i = 0; attributes && i < attributes->length(); ++i) {
         Attribute* attribute = attributes->attributeItem(i);
         if (attribute->style()) {
+            RefPtr<InspectorObject> attrStyleObject = InspectorObject::create();
             String attributeName = attribute->localName();
             RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), attribute->style(), 0);
-            styleAttributes->setObject(attributeName.utf8().data(), inspectorStyle->buildObjectForStyle());
+            attrStyleObject->setString("name", attributeName.utf8().data());
+            attrStyleObject->setObject("style", inspectorStyle->buildObjectForStyle());
+            attrStyles->pushObject(attrStyleObject.release());
         }
     }
 
-    return styleAttributes;
+    return attrStyles.release();
 }
 
 void InspectorCSSAgent::didRemoveDocument(Document* document)

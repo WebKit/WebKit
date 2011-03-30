@@ -59,8 +59,11 @@ WebInspector.CSSStyleModel.prototype = {
             result.matchedCSSRules = WebInspector.CSSStyleModel.parseRuleArrayPayload(payload.matchedCSSRules);
 
             result.styleAttributes = {};
-            for (var name in payload.styleAttributes)
-                result.styleAttributes[name] = WebInspector.CSSStyleDeclaration.parsePayload(payload.styleAttributes[name]);
+            var payloadStyleAttributes = payload.styleAttributes;
+            for (var i = 0; i < payloadStyleAttributes.length; ++i) {
+                var name = payloadStyleAttributes[i].name;
+                result.styleAttributes[name] = WebInspector.CSSStyleDeclaration.parsePayload(payloadStyleAttributes[i].style);
+            }
 
             result.pseudoElements = [];
             for (var i = 0; i < payload.pseudoElements.length; ++i) {

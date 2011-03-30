@@ -1,3 +1,17 @@
+2011-03-30  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Make the getStylesForNode result "styleAttributes" value an array rather than a map
+        https://bugs.webkit.org/show_bug.cgi?id=57440
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getStylesForNode):
+        (WebCore::InspectorCSSAgent::buildArrayForAttributeStyles):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.getStylesAsync):
+
 2011-03-30  Evan Martin  <evan@chromium.org>
 
         Reviewed by Ryosuke Niwa.
