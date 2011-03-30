@@ -1,3 +1,16 @@
+2011-03-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r82383.
+        http://trac.webkit.org/changeset/82383
+        https://bugs.webkit.org/show_bug.cgi?id=57417
+
+        "nrwt isn't shutting down cleanly" (Requested by dpranke on
+        #webkit).
+
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-03-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
