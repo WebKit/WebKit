@@ -52,6 +52,11 @@ void WebApplicationCacheManagerProxy::invalidate()
     invalidateCallbackMap(m_arrayCallbacks);
 }
 
+bool WebApplicationCacheManagerProxy::shouldTerminate(WebProcessProxy*) const
+{
+    return m_arrayCallbacks.isEmpty();
+}
+
 void WebApplicationCacheManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     didReceiveWebApplicationCacheManagerProxyMessage(connection, messageID, arguments);

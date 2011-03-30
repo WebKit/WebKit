@@ -60,6 +60,7 @@ void WebMediaCacheManager::getHostnamesWithMediaCache(uint64_t callbackID)
 #endif
 
     WebProcess::shared().connection()->send(Messages::WebMediaCacheManagerProxy::DidGetHostnamesWithMediaCache(mediaCacheHostnames, callbackID), 0);
+    WebProcess::shared().terminateIfPossible();
 }
 
 void WebMediaCacheManager::clearCacheForHostname(const String& hostname)
@@ -67,6 +68,7 @@ void WebMediaCacheManager::clearCacheForHostname(const String& hostname)
 #if ENABLE(VIDEO)
     HTMLMediaElement::clearMediaCacheForSite(hostname);
 #endif
+    WebProcess::shared().terminateIfPossible();
 }
 
 void WebMediaCacheManager::clearCacheForAllHostnames()
@@ -74,6 +76,7 @@ void WebMediaCacheManager::clearCacheForAllHostnames()
 #if ENABLE(VIDEO)
     HTMLMediaElement::clearMediaCache();
 #endif
+    WebProcess::shared().terminateIfPossible();
 }
 
 } // namespace WebKit

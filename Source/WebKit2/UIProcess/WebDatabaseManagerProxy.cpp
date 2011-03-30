@@ -103,6 +103,11 @@ void WebDatabaseManagerProxy::invalidate()
     invalidateCallbackMap(m_arrayCallbacks);
 }
 
+bool WebDatabaseManagerProxy::shouldTerminate(WebProcessProxy*) const
+{
+    return m_arrayCallbacks.isEmpty();
+}
+
 void WebDatabaseManagerProxy::initializeClient(const WKDatabaseManagerClient* client)
 {
     m_client.initialize(client);

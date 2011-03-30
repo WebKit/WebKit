@@ -43,6 +43,7 @@ class MessageID;
 namespace WebKit {
 
 class WebContext;
+class WebProcessProxy;
 class WebSecurityOrigin;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
@@ -76,6 +77,8 @@ public:
     static String databaseDetailsCurrentUsageKey();
 
     void didReceiveWebDatabaseManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
+    bool shouldTerminate(WebProcessProxy*) const;
 
 private:
     explicit WebDatabaseManagerProxy(WebContext*);

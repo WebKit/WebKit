@@ -44,6 +44,7 @@ namespace WebKit {
 
 struct SecurityOriginData;
 class WebContext;
+class WebProcessProxy;
 class WebSecurityOrigin;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
@@ -63,6 +64,8 @@ public:
     void deleteAllEntries();
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
+    bool shouldTerminate(WebProcessProxy*) const;
 
 private:
     WebKeyValueStorageManagerProxy(WebContext*);

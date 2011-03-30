@@ -282,7 +282,19 @@ bool WebContext::shouldTerminate(WebProcessProxy* process)
     if (!m_downloads.isEmpty())
         return false;
 
+    if (!m_applicationCacheManagerProxy->shouldTerminate(process))
+        return false;
+    if (!m_cookieManagerProxy->shouldTerminate(process))
+        return false;
+    if (!m_databaseManagerProxy->shouldTerminate(process))
+        return false;
+    if (!m_keyValueStorageManagerProxy->shouldTerminate(process))
+        return false;
+    if (!m_mediaCacheManagerProxy->shouldTerminate(process))
+        return false;
     if (!m_pluginSiteDataManager->shouldTerminate(process))
+        return false;
+    if (!m_resourceCacheManagerProxy->shouldTerminate(process))
         return false;
 
     return true;

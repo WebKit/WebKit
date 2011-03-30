@@ -56,6 +56,11 @@ void WebResourceCacheManagerProxy::invalidate()
     invalidateCallbackMap(m_arrayCallbacks);
 }
 
+bool WebResourceCacheManagerProxy::shouldTerminate(WebProcessProxy*) const
+{
+    return m_arrayCallbacks.isEmpty();
+}
+
 void WebResourceCacheManagerProxy::getCacheOrigins(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;

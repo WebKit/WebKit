@@ -43,6 +43,7 @@ namespace CoreIPC {
 namespace WebKit {
 
 class WebContext;
+class WebProcessProxy;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 typedef GenericCallback<WKHTTPCookieAcceptPolicy, HTTPCookieAcceptPolicy> HTTPCookieAcceptPolicyCallback;
@@ -70,6 +71,8 @@ public:
     void stopObservingCookieChanges();
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
+    bool shouldTerminate(WebProcessProxy*) const;
 
 private:
     WebCookieManagerProxy(WebContext*);

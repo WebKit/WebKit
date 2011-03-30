@@ -53,6 +53,11 @@ void WebCookieManagerProxy::invalidate()
     invalidateCallbackMap(m_httpCookieAcceptPolicyCallbacks);
 }
 
+bool WebCookieManagerProxy::shouldTerminate(WebProcessProxy*) const
+{
+    return m_arrayCallbacks.isEmpty() && m_httpCookieAcceptPolicyCallbacks.isEmpty();
+}
+
 void WebCookieManagerProxy::initializeClient(const WKCookieManagerClient* client)
 {
     m_client.initialize(client);

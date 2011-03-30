@@ -43,6 +43,7 @@ namespace CoreIPC {
 namespace WebKit {
 
 class WebContext;
+class WebProcessProxy;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
@@ -61,6 +62,8 @@ public:
     void clearCacheForAllHostnames();
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
+    bool shouldTerminate(WebProcessProxy*) const;
 
 private:
     WebMediaCacheManagerProxy(WebContext*);

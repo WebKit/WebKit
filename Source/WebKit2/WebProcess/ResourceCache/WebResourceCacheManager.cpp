@@ -93,6 +93,7 @@ void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
     }
 
     WebProcess::shared().connection()->send(Messages::WebResourceCacheManagerProxy::DidGetCacheOrigins(identifiers, callbackID), 0);
+    WebProcess::shared().terminateIfPossible();
 }
 
 void WebResourceCacheManager::clearCacheForOrigin(SecurityOriginData originData) const
@@ -110,11 +111,13 @@ void WebResourceCacheManager::clearCacheForOrigin(SecurityOriginData originData)
 
     clearCFURLCacheForHostNames(hostArray.get());
 #endif
+    WebProcess::shared().terminateIfPossible();
 }
 
 void WebResourceCacheManager::clearCacheForAllOrigins() const
 {
     WebProcess::shared().clearResourceCaches();
+    WebProcess::shared().terminateIfPossible();
 }
 
 } // namespace WebKit

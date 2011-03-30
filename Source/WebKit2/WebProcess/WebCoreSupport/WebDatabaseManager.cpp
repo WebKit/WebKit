@@ -105,6 +105,7 @@ void WebDatabaseManager::getDatabasesByOrigin(uint64_t callbackID) const
     }
 
     WebProcess::shared().connection()->send(Messages::WebDatabaseManagerProxy::DidGetDatabasesByOrigin(originAndDatabasesVector, callbackID), 0);
+    WebProcess::shared().terminateIfPossible();
 }
 
 void WebDatabaseManager::getDatabaseOrigins(uint64_t callbackID) const
@@ -118,6 +119,7 @@ void WebDatabaseManager::getDatabaseOrigins(uint64_t callbackID) const
     for (size_t i = 0; i < numOrigins; ++i)
         identifiers[i] = origins[i]->databaseIdentifier();
     WebProcess::shared().connection()->send(Messages::WebDatabaseManagerProxy::DidGetDatabaseOrigins(identifiers, callbackID), 0);
+    WebProcess::shared().terminateIfPossible();
 }
 
 void WebDatabaseManager::deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, const String& originIdentifier) const
@@ -127,6 +129,7 @@ void WebDatabaseManager::deleteDatabaseWithNameForOrigin(const String& databaseI
         return;
 
     DatabaseTracker::tracker().deleteDatabase(origin.get(), databaseIdentifier);
+    WebProcess::shared().terminateIfPossible();
 }
 
 void WebDatabaseManager::deleteDatabasesForOrigin(const String& originIdentifier) const
@@ -136,11 +139,13 @@ void WebDatabaseManager::deleteDatabasesForOrigin(const String& originIdentifier
         return;
 
     DatabaseTracker::tracker().deleteOrigin(origin.get());
+    WebProcess::shared().terminateIfPossible();
 }
 
 void WebDatabaseManager::deleteAllDatabases() const
 {
     DatabaseTracker::tracker().deleteAllDatabases();
+    WebProcess::shared().terminateIfPossible();
 }
 
 void WebDatabaseManager::setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const
@@ -154,6 +159,7 @@ void WebDatabaseManager::setQuotaForOrigin(const String& originIdentifier, unsig
         return;
 
     DatabaseTracker::tracker().setQuota(origin.get(), quota);
+    WebProcess::shared().terminateIfPossible();
 }
 
 void WebDatabaseManager::dispatchDidModifyOrigin(SecurityOrigin* origin)

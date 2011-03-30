@@ -1,3 +1,72 @@
+2011-03-30  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Make sure to try to terminate the Web Process when any work that might require the
+        Web Process to be relaunched is done
+        https://bugs.webkit.org/show_bug.cgi?id=57462
+
+        For the ManagerProxies in the UIProcess, only return true from shouldTerminate if there are
+        no more callbacks waiting to be invoked.
+
+        For the the Managers in the WebProcess, call WebProcess::shared().terminateIfPossible() when
+        any work called for by a ManagerProxy function that called relaunchProcessIfNecessary is
+        finished.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::shouldTerminate):
+        Check with each of the ManagerProxies.
+
+        * UIProcess/WebApplicationCacheManagerProxy.cpp:
+        (WebKit::WebApplicationCacheManagerProxy::shouldTerminate):
+        * UIProcess/WebApplicationCacheManagerProxy.h:
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::shouldTerminate):
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::shouldTerminate):
+        * UIProcess/WebDatabaseManagerProxy.h:
+        * UIProcess/WebKeyValueStorageManagerProxy.cpp:
+        (WebKit::WebKeyValueStorageManagerProxy::shouldTerminate):
+        * UIProcess/WebKeyValueStorageManagerProxy.h:
+        * UIProcess/WebMediaCacheManagerProxy.cpp:
+        (WebKit::WebMediaCacheManagerProxy::shouldTerminate):
+        * UIProcess/WebMediaCacheManagerProxy.h:
+        * UIProcess/WebResourceCacheManagerProxy.cpp:
+        (WebKit::WebResourceCacheManagerProxy::shouldTerminate):
+        * UIProcess/WebResourceCacheManagerProxy.h:
+
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.cpp:
+        (WebKit::WebApplicationCacheManager::getApplicationCacheOrigins):
+        (WebKit::WebApplicationCacheManager::deleteEntriesForOrigin):
+        (WebKit::WebApplicationCacheManager::deleteAllEntries):
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::getHostnamesWithCookies):
+        (WebKit::WebCookieManager::deleteCookiesForHostname):
+        (WebKit::WebCookieManager::deleteAllCookies):
+        (WebKit::WebCookieManager::startObservingCookieChanges):
+        (WebKit::WebCookieManager::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::getHTTPCookieAcceptPolicy):
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp:
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManager::deleteEntriesForOrigin):
+        (WebKit::WebKeyValueStorageManager::deleteAllEntries):
+        * WebProcess/MediaCache/WebMediaCacheManager.cpp:
+        (WebKit::WebMediaCacheManager::getHostnamesWithMediaCache):
+        (WebKit::WebMediaCacheManager::clearCacheForHostname):
+        (WebKit::WebMediaCacheManager::clearCacheForAllHostnames):
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+        (WebKit::WebResourceCacheManager::getCacheOrigins):
+        (WebKit::WebResourceCacheManager::clearCacheForOrigin):
+        (WebKit::WebResourceCacheManager::clearCacheForAllOrigins):
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        (WebKit::WebDatabaseManager::getDatabasesByOrigin):
+        (WebKit::WebDatabaseManager::getDatabaseOrigins):
+        (WebKit::WebDatabaseManager::deleteDatabaseWithNameForOrigin):
+        (WebKit::WebDatabaseManager::deleteDatabasesForOrigin):
+        (WebKit::WebDatabaseManager::deleteAllDatabases):
+        (WebKit::WebDatabaseManager::setQuotaForOrigin):
+
 2011-03-30  Adam Roben  <aroben@apple.com>
 
         Mac build fix after r82442

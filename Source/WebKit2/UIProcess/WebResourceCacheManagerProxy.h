@@ -42,6 +42,7 @@ namespace WebKit {
 
 struct SecurityOriginData;
 class WebContext;
+class WebProcessProxy;
 class WebSecurityOrigin;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
@@ -61,6 +62,8 @@ public:
     void clearCacheForAllOrigins();
 
     void didReceiveWebResourceCacheManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
+    bool shouldTerminate(WebProcessProxy*) const;
 
 private:
     explicit WebResourceCacheManagerProxy(WebContext*);
