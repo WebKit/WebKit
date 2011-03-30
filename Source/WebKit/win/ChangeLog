@@ -1,3 +1,20 @@
+2011-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Share most vsprops between Release and Production builds in releaseproduction.vsprops
+        https://bugs.webkit.org/show_bug.cgi?id=57508
+
+        * WebKit.vcproj/InterfacesProduction.vsprops:
+        * WebKit.vcproj/InterfacesRelease.vsprops:
+        * WebKit.vcproj/InterfacesReleaseCairoCFLite.vsprops:
+        * WebKit.vcproj/WebKitGUIDProduction.vsprops:
+        * WebKit.vcproj/WebKitGUIDRelease.vsprops:
+        * WebKit.vcproj/WebKitGUIDReleaseCairoCFLite.vsprops:
+        * WebKit.vcproj/WebKitLibProduction.vsprops:
+        * WebKit.vcproj/WebKitLibRelease.vsprops:
+        * WebKit.vcproj/WebKitLibReleaseCairoCFLite.vsprops:
+
 2011-03-30  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Dirk Schulze.

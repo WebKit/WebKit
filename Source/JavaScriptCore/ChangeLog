@@ -1,3 +1,27 @@
+2011-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Share most vsprops between Release and Production builds in releaseproduction.vsprops
+        https://bugs.webkit.org/show_bug.cgi?id=57508
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreProduction.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreRelease.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleaseCairoCFLite.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleasePGO.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleasePGOOptimize.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFProduction.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFRelease.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFReleaseCairoCFLite.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFReleasePGO.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscProduction.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscRelease.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscReleaseCairoCFLite.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscReleasePGO.vsprops:
+        * JavaScriptCore.vcproj/testapi/testapiProduction.vsprops:
+        * JavaScriptCore.vcproj/testapi/testapiRelease.vsprops:
+        * JavaScriptCore.vcproj/testapi/testapiReleaseCairoCFLite.vsprops:
+
 2011-03-30  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adam Roben.

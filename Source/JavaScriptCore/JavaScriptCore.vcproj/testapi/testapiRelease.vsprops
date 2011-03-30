@@ -5,6 +5,7 @@
 	Name="testapiRelease"
 	InheritedPropertySheets="
       $(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;
+      $(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\releaseproduction.vsprops;
       $(WebKitVSPropsRedirectionDir)..\..\..\..\WebKitLibraries\win\tools\vsprops\release.vsprops;
       .\testapiCommon.vsprops;
       ..\JavaScriptCore\JavaScriptCoreCF.vsprops"
