@@ -75,6 +75,21 @@ struct BidiStatus {
     RefPtr<BidiContext> context;
 };
 
+class BidiEmbedding {
+public:
+    BidiEmbedding(WTF::Unicode::Direction direction, BidiEmbeddingSource source)
+    : m_direction(direction)
+    , m_source(source)
+    {
+    }
+
+    WTF::Unicode::Direction direction() const { return m_direction; }
+    BidiEmbeddingSource source() const { return m_source; }
+private:
+    WTF::Unicode::Direction m_direction;
+    BidiEmbeddingSource m_source;
+};
+
 inline bool operator==(const BidiStatus& status1, const BidiStatus& status2)
 {
     return status1.eor == status2.eor && status1.last == status2.last && status1.lastStrong == status2.lastStrong && *(status1.context) == *(status2.context);
@@ -134,7 +149,7 @@ enum VisualDirectionOverride {
 
 template <class Iterator, class Run> class BidiResolver {
     WTF_MAKE_NONCOPYABLE(BidiResolver);
-public :
+public:
     BidiResolver()
         : m_direction(WTF::Unicode::OtherNeutral)
         , m_reachedEndOfLine(false)
@@ -166,7 +181,7 @@ public :
 
     MidpointState<Iterator>& midpointState() { return m_midpointState; }
 
-    void embed(WTF::Unicode::Direction);
+    void embed(WTF::Unicode::Direction, BidiEmbeddingSource);
     bool commitExplicitEmbedding();
 
     void createBidiRunsForLine(const Iterator& end, VisualDirectionOverride = NoVisualOverride, bool hardLineBreak = false);
@@ -215,7 +230,7 @@ private:
     void updateStatusLastFromCurrentDirection(WTF::Unicode::Direction);
     void reorderRunsFromLevels();
 
-    Vector<WTF::Unicode::Direction, 8> m_currentExplicitEmbeddingSequence;
+    Vector<BidiEmbedding, 8> m_currentExplicitEmbeddingSequence;
 };
 
 template <class Iterator, class Run>
@@ -312,12 +327,12 @@ void BidiResolver<Iterator, Run>::appendRun()
 }
 
 template <class Iterator, class Run>
-void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction d)
+void BidiResolver<Iterator, Run>::embed(WTF::Unicode::Direction dir, BidiEmbeddingSource source)
 {
     using namespace WTF::Unicode;
 
-    ASSERT(d == PopDirectionalFormat || d == LeftToRightEmbedding || d == LeftToRightOverride || d == RightToLeftEmbedding || d == RightToLeftOverride);
-    m_currentExplicitEmbeddingSequence.append(d);
+    ASSERT(dir == PopDirectionalFormat || dir == LeftToRightEmbedding || dir == LeftToRightOverride || dir == RightToLeftEmbedding || dir == RightToLeftOverride);
+    m_currentExplicitEmbeddingSequence.append(BidiEmbedding(dir, source));
 }
 
 template <class Iterator, class Run>
@@ -419,25 +434,20 @@ bool BidiResolver<Iterator, Run>::commitExplicitEmbedding()
     RefPtr<BidiContext> toContext = context();
 
     for (size_t i = 0; i < m_currentExplicitEmbeddingSequence.size(); ++i) {
-        Direction embedding = m_currentExplicitEmbeddingSequence[i];
-        if (embedding == PopDirectionalFormat) {
+        BidiEmbedding embedding = m_currentExplicitEmbeddingSequence[i];
+        if (embedding.direction() == PopDirectionalFormat) {
             if (BidiContext* parentContext = toContext->parent())
                 toContext = parentContext;
         } else {
-            Direction direction = (embedding == RightToLeftEmbedding || embedding == RightToLeftOverride) ? RightToLeft : LeftToRight;
-            bool override = embedding == LeftToRightOverride || embedding == RightToLeftOverride;
+            Direction direction = (embedding.direction() == RightToLeftEmbedding || embedding.direction() == RightToLeftOverride) ? RightToLeft : LeftToRight;
+            bool override = embedding.direction() == LeftToRightOverride || embedding.direction() == RightToLeftOverride;
             unsigned char level = toContext->level();
-            if (direction == RightToLeft) {
-                // Go to the least greater odd integer
-                level += 1;
-                level |= 1;
-            } else {
-                // Go to the least greater even integer
-                level += 2;
-                level &= ~1;
-            }
+            if (direction == RightToLeft)
+                level = nextGreaterOddLevel(level);
+            else
+                level = nextGreaterEvenLevel(level);
             if (level < 61)
-                toContext = BidiContext::create(level, direction, override, toContext.get());
+                toContext = BidiContext::create(level, direction, override, embedding.source(), toContext.get());
         }
     }
 
@@ -638,16 +648,21 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
         Direction dirCurrent;
         if (pastEnd && (hardLineBreak || m_current.atEnd())) {
             BidiContext* c = context();
-            while (c->parent())
-                c = c->parent();
-            dirCurrent = c->dir();
             if (hardLineBreak) {
                 // A deviation from the Unicode Bidi Algorithm in order to match
-                // Mac OS X text and WinIE: a hard line break resets bidi state.
-                stateAtEnd.setContext(c);
+                // WinIE and user expectations: hard line breaks reset bidi state
+                // coming from unicode bidi control characters, but not those from
+                // DOM nodes with specified directionality
+                stateAtEnd.setContext(c->copyStackRemovingUnicodeEmbeddingContexts());
+
+                dirCurrent = stateAtEnd.context()->dir();
                 stateAtEnd.setEorDir(dirCurrent);
                 stateAtEnd.setLastDir(dirCurrent);
                 stateAtEnd.setLastStrongDir(dirCurrent);
+            } else {
+                while (c->parent())
+                    c = c->parent();
+                dirCurrent = c->dir();
             }
         } else {
             dirCurrent = m_current.direction();
@@ -671,7 +686,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
         case RightToLeftOverride:
         case LeftToRightOverride:
         case PopDirectionalFormat:
-            embed(dirCurrent);
+            embed(dirCurrent, FromUnicode);
             commitExplicitEmbedding();
             break;
 

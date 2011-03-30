@@ -21,48 +21,80 @@
 
 #include "config.h"
 #include "BidiContext.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 using namespace WTF::Unicode;
 
-inline PassRefPtr<BidiContext> BidiContext::createUncached(unsigned char level, Direction direction, bool override, BidiContext* parent)
+inline PassRefPtr<BidiContext> BidiContext::createUncached(unsigned char level, Direction direction, bool override, BidiEmbeddingSource source, BidiContext* parent)
 {
-    return adoptRef(new BidiContext(level, direction, override, parent));
+    return adoptRef(new BidiContext(level, direction, override, source, parent));
 }
 
-PassRefPtr<BidiContext> BidiContext::create(unsigned char level, Direction direction, bool override, BidiContext* parent)
+PassRefPtr<BidiContext> BidiContext::create(unsigned char level, Direction direction, bool override, BidiEmbeddingSource source, BidiContext* parent)
 {
     ASSERT(direction == (level % 2 ? RightToLeft : LeftToRight));
 
     if (parent)
-        return createUncached(level, direction, override, parent);
+        return createUncached(level, direction, override, source, parent);
 
     ASSERT(level <= 1);
     if (!level) {
         if (!override) {
-            static BidiContext* ltrContext = createUncached(0, LeftToRight, false, 0).releaseRef();
+            static BidiContext* ltrContext = createUncached(0, LeftToRight, false, FromStyleOrDOM, 0).releaseRef();
             return ltrContext;
         }
 
-        static BidiContext* ltrOverrideContext = createUncached(0, LeftToRight, true, 0).releaseRef();
+        static BidiContext* ltrOverrideContext = createUncached(0, LeftToRight, true, FromStyleOrDOM, 0).releaseRef();
         return ltrOverrideContext;
     }
 
     if (!override) {
-        static BidiContext* rtlContext = createUncached(1, RightToLeft, false, 0).releaseRef();
+        static BidiContext* rtlContext = createUncached(1, RightToLeft, false, FromStyleOrDOM, 0).releaseRef();
         return rtlContext;
     }
 
-    static BidiContext* rtlOverrideContext = createUncached(1, RightToLeft, true, 0).releaseRef();
+    static BidiContext* rtlOverrideContext = createUncached(1, RightToLeft, true, FromStyleOrDOM, 0).releaseRef();
     return rtlOverrideContext;
+}
+
+static inline PassRefPtr<BidiContext> copyContextAndRebaselineLevel(BidiContext* context, BidiContext* parent)
+{
+    ASSERT(context);
+    unsigned char newLevel = parent ? parent->level() : 0;
+    if (context->dir() == RightToLeft)
+        newLevel = nextGreaterOddLevel(newLevel);
+    else if (parent)
+        newLevel = nextGreaterEvenLevel(newLevel);
+
+    return BidiContext::create(newLevel, context->dir(), context->override(), context->source(), parent);
+}
+
+// The BidiContext stack must be immutable -- they're re-used for re-layout after
+// DOM modification/editing -- so we copy all the non-unicode contexts, and
+// recalculate their levels.
+PassRefPtr<BidiContext> BidiContext::copyStackRemovingUnicodeEmbeddingContexts()
+{
+    Vector<BidiContext*, 64> contexts;
+    for (BidiContext* iter = this; iter; iter = iter->parent()) {
+        if (iter->source() != FromUnicode)
+            contexts.append(iter);
+    }
+    ASSERT(contexts.size());
+ 
+    RefPtr<BidiContext> topContext = copyContextAndRebaselineLevel(contexts.last(), 0);
+    for (int i = contexts.size() - 1; i > 0; --i)
+        topContext = copyContextAndRebaselineLevel(contexts[i - 1], topContext.get());
+
+    return topContext.release();
 }
 
 bool operator==(const BidiContext& c1, const BidiContext& c2)
 {
     if (&c1 == &c2)
         return true;
-    if (c1.level() != c2.level() || c1.override() != c2.override() || c1.dir() != c2.dir())
+    if (c1.level() != c2.level() || c1.override() != c2.override() || c1.dir() != c2.dir() || c1.source() != c2.source())
         return false;
     if (!c1.parent())
         return !c2.parent();

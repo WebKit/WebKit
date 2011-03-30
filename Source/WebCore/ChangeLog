@@ -1,3 +1,45 @@
+2011-03-30  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        RTL:  Directionality always reset on hard line break
+        https://bugs.webkit.org/show_bug.cgi?id=23124
+
+        No longer clearing all BidiContexts when we hit a hard line break.
+        Instead, directionality applied by DOM elements is preserved by
+        reconstructing the context stack ignoring those that didn't come
+        from the DOM.
+
+        Test: fast/text/international/bidi-br-as-paragraph-separator.html
+
+        * platform/text/BidiContext.cpp:
+        (WebCore::BidiContext::createUncached):
+        (WebCore::BidiContext::create):
+        (WebCore::copyContextAndRebaselineLevel): Helper to make a copy of a context
+        and recalculate its bidi level.
+        (WebCore::BidiContext::copyStackRemovingUnicodeEmbeddingContexts): Returns the top of
+        a BidiContext stack that's equivalent but without contexts from Unicode directional
+        characters.
+        (WebCore::operator==): Now takes into account embedding source.
+        * platform/text/BidiContext.h:
+        (WebCore::BidiContext::source): Enum to specify whether an embedded
+        bidirectional control came from the DOM/Style or Unicode characters
+        (WebCore::BidiContext::BidiContext):
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiEmbedding::BidiEmbedding): An embedding is now a direction
+        and a hint about where it came from so we can differentiate DOM directions
+        from unicode direction control characters.
+        (WebCore::BidiEmbedding::direction):
+        (WebCore::BidiEmbedding::source):
+        (WebCore::::embed): Now takes a source as well as a direction.
+        (WebCore::::commitExplicitEmbedding):
+        (WebCore::::createBidiRunsForLine):
+        * rendering/InlineIterator.h:
+        (WebCore::bidiNext):
+        (WebCore::bidiFirst):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::determineStartPosition):
+
 2011-03-30  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

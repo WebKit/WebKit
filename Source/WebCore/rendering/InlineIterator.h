@@ -102,7 +102,7 @@ static inline void notifyResolverEnteredObject(InlineBidiResolver* resolver, Ren
     EUnicodeBidi unicodeBidi = style->unicodeBidi();
     if (unicodeBidi == UBNormal)
         return;
-    resolver->embed(embedCharFromDirection(style->direction(), unicodeBidi));
+    resolver->embed(embedCharFromDirection(style->direction(), unicodeBidi), FromStyleOrDOM);
 }
 
 static inline void notifyResolverWillExitObject(InlineBidiResolver* resolver, RenderObject* object)
@@ -111,7 +111,7 @@ static inline void notifyResolverWillExitObject(InlineBidiResolver* resolver, Re
         return;
     if (object->style()->unicodeBidi() == UBNormal)
         return;
-    resolver->embed(WTF::Unicode::PopDirectionalFormat);
+    resolver->embed(WTF::Unicode::PopDirectionalFormat, FromStyleOrDOM);
 }
 
 // FIXME: This function is misleadingly named. It has little to do with bidi.

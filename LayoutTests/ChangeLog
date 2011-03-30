@@ -1,3 +1,22 @@
+2011-03-29  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        RTL:  Directionality always reset on hard line break
+        https://bugs.webkit.org/show_bug.cgi?id=23124
+
+        Testing that hard line breaks are being treated as paragraph separators but only
+        clearing directional state from Unicode control characters, not DOM nodes.
+        Also adding expected pixel results for bidi-override-in-anonymous-block as we're
+        passing more of the test with this patch.
+
+        * fast/text/international/bidi-br-as-paragraph-separator.html: Added.
+        * platform/mac/fast/css/bidi-override-in-anonymous-block-expected.checksum: Added.
+        * platform/mac/fast/css/bidi-override-in-anonymous-block-expected.png: Added.
+        * platform/mac/fast/text/international/bidi-br-as-paragraph-separator-expected.checksum: Added.
+        * platform/mac/fast/text/international/bidi-br-as-paragraph-separator-expected.png: Added.
+        * platform/mac/fast/text/international/bidi-br-as-paragraph-separator-expected.txt: Added.
+
 2011-03-30  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.

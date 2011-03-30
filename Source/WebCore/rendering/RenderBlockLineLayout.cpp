@@ -1213,7 +1213,7 @@ RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLa
         resolver.setLastStrongDir(direction);
         resolver.setLastDir(direction);
         resolver.setEorDir(direction);
-        resolver.setContext(BidiContext::create(ltr ? 0 : 1, direction, style()->unicodeBidi() == Override));
+        resolver.setContext(BidiContext::create(ltr ? 0 : 1, direction, style()->unicodeBidi() == Override, FromStyleOrDOM));
 
         startObj = bidiFirst(this, &resolver);
     }
