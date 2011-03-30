@@ -346,6 +346,7 @@ v8 {
         bindings/js/JSWebKitPointCustom.cpp \
         bindings/js/JSXMLHttpRequestCustom.cpp \
         bindings/js/JSXMLHttpRequestUploadCustom.cpp \
+        bindings/js/PageScriptDebugServer.cpp \
         bindings/js/ScheduledAction.cpp \
         bindings/js/ScriptCachedFrameData.cpp \
         bindings/js/ScriptCallStackFactory.cpp \
@@ -830,10 +831,12 @@ SOURCES += \
     inspector/InspectorStyleSheet.cpp \
     inspector/InspectorTimelineAgent.cpp \
     inspector/InspectorValues.cpp \
+    inspector/PageDebuggerAgent.cpp \
     inspector/ScriptArguments.cpp \
     inspector/ScriptCallFrame.cpp \
     inspector/ScriptCallStack.cpp \
     inspector/TimelineRecordFactory.cpp \
+    inspector/WorkerDebuggerAgent.cpp \
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \
     loader/cache/MemoryCache.cpp \
@@ -1300,9 +1303,11 @@ v8 {
         bindings/js/JSStorageCustom.h \
         bindings/js/JSWorkerContextBase.h \
         bindings/js/JavaScriptCallFrame.h \
+        bindings/js/PageScriptDebugServer.h \
         bindings/js/ScheduledAction.h \
         bindings/js/ScriptCachedFrameData.h \
         bindings/js/ScriptController.h \
+        bindings/js/ScriptDebugServer.h \
         bindings/js/ScriptEventListener.h \
         bindings/js/ScriptFunctionCall.h \
         bindings/js/ScriptGCEvent.h \
@@ -1320,6 +1325,7 @@ v8 {
         bindings/js/StringSourceProvider.h \
         bindings/js/WebCoreJSClientData.h \
         bindings/js/WorkerScriptController.h \
+        bindings/js/WorkerScriptDebugServer.h \
         bridge/Bridge.h \
         bridge/c/CRuntimeObject.h \
         bridge/c/c_class.h \
@@ -1755,8 +1761,10 @@ HEADERS += \
     inspector/InspectorStyleSheet.h \
     inspector/InspectorTimelineAgent.h \
     inspector/InstrumentingAgents.h \
+    inspector/PageDebuggerAgent.h \
     inspector/ScriptGCEventListener.h \
     inspector/TimelineRecordFactory.h \
+    inspector/WorkerDebuggerAgent.h \
     loader/appcache/ApplicationCacheGroup.h \
     loader/appcache/ApplicationCacheHost.h \
     loader/appcache/ApplicationCache.h \
@@ -2868,7 +2876,8 @@ contains(DEFINES, ENABLE_WORKERS=1) {
             bindings/js/JSWorkerContextBase.cpp \
             bindings/js/JSWorkerContextCustom.cpp \
             bindings/js/JSWorkerCustom.cpp \
-            bindings/js/WorkerScriptController.cpp
+            bindings/js/WorkerScriptController.cpp \
+            bindings/js/WorkerScriptDebugServer.cpp
     }
     SOURCES += \
         loader/WorkerThreadableLoader.cpp \

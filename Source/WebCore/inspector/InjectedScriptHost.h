@@ -47,6 +47,7 @@ class InspectorAgent;
 class InspectorConsoleAgent;
 class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
+class InspectorDebuggerAgent;
 class InspectorFrontend;
 class InspectorObject;
 class Node;
@@ -68,6 +69,9 @@ public:
 #if ENABLE(DOM_STORAGE)
             , InspectorDOMStorageAgent* domStorageAgent
 #endif
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+            , InspectorDebuggerAgent* debuggerAgent
+#endif
         )
     {
         m_inspectorAgent = inspectorAgent;
@@ -77,6 +81,9 @@ public:
 #endif
 #if ENABLE(DOM_STORAGE)
         m_domStorageAgent = domStorageAgent;
+#endif
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+        m_debuggerAgent = debuggerAgent;
 #endif
     }
     void setFrontend(InspectorFrontend* frontend) { m_frontend = frontend; }
@@ -105,6 +112,9 @@ public:
     void didCreateWorker(long id, const String& url, bool isSharedWorker);
     void didDestroyWorker(long id);
 #endif
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    InspectorDebuggerAgent* debuggerAgent() { return m_debuggerAgent; }
+#endif
 
 private:
     InjectedScriptHost();
@@ -116,6 +126,9 @@ private:
 #endif
 #if ENABLE(DOM_STORAGE)
     InspectorDOMStorageAgent* m_domStorageAgent;
+#endif
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    InspectorDebuggerAgent* m_debuggerAgent;
 #endif
     InspectorFrontend* m_frontend;
     long m_lastWorkerId;

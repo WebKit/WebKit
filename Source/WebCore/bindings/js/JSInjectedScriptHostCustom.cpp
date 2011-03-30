@@ -41,6 +41,7 @@
 #endif
 #include "ExceptionCode.h"
 #include "InjectedScriptHost.h"
+#include "InspectorDebuggerAgent.h"
 #include "InspectorValues.h"
 #include "JSNode.h"
 #include "ScriptValue.h"
@@ -75,7 +76,7 @@ ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node
 JSValue JSInjectedScriptHost::currentCallFrame(ExecState* exec)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    JavaScriptCallFrame* callFrame = ScriptDebugServer::shared().currentCallFrame();
+    JavaScriptCallFrame* callFrame = impl()->debuggerAgent()->scriptDebugServer().currentCallFrame();
     if (!callFrame || !callFrame->isValid())
         return jsUndefined();
 

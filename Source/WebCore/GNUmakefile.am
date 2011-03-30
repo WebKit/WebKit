@@ -893,6 +893,8 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JavaScriptCallFrame.cpp \
 	Source/WebCore/bindings/js/JavaScriptCallFrame.h \
 	Source/WebCore/bindings/js/OptionsObject.h \
+	Source/WebCore/bindings/js/PageScriptDebugServer.cpp \
+	Source/WebCore/bindings/js/PageScriptDebugServer.h \
 	Source/WebCore/bindings/js/ScheduledAction.cpp \
 	Source/WebCore/bindings/js/ScheduledAction.h \
 	Source/WebCore/bindings/js/ScriptCachedFrameData.cpp \
@@ -931,6 +933,8 @@ webcore_sources += \
 	Source/WebCore/bindings/js/WebCoreJSClientData.h \
 	Source/WebCore/bindings/js/WorkerScriptController.cpp \
 	Source/WebCore/bindings/js/WorkerScriptController.h \
+	Source/WebCore/bindings/js/WorkerScriptDebugServer.cpp \
+	Source/WebCore/bindings/js/WorkerScriptDebugServer.h \
 	Source/WebCore/bindings/ScriptControllerBase.cpp \
 	Source/WebCore/bindings/ScriptControllerBase.h \
 	Source/WebCore/bridge/Bridge.h \
@@ -2044,6 +2048,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorValues.h \
 	Source/WebCore/inspector/InspectorWorkerResource.h \
 	Source/WebCore/inspector/InstrumentingAgents.h \
+	Source/WebCore/inspector/PageDebuggerAgent.cpp \
+	Source/WebCore/inspector/PageDebuggerAgent.h \
 	Source/WebCore/inspector/ScriptArguments.cpp \
 	Source/WebCore/inspector/ScriptArguments.h \
 	Source/WebCore/inspector/ScriptBreakpoint.h \
@@ -2055,6 +2061,8 @@ webcore_sources += \
 	Source/WebCore/inspector/ScriptGCEventListener.h \
 	Source/WebCore/inspector/TimelineRecordFactory.cpp \
 	Source/WebCore/inspector/TimelineRecordFactory.h \
+	Source/WebCore/inspector/WorkerDebuggerAgent.cpp \
+	Source/WebCore/inspector/WorkerDebuggerAgent.h \
 	Source/WebCore/loader/appcache/ApplicationCache.cpp \
 	Source/WebCore/loader/appcache/ApplicationCacheGroup.cpp \
 	Source/WebCore/loader/appcache/ApplicationCacheGroup.h \

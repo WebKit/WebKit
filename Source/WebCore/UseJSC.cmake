@@ -141,6 +141,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSXMLHttpRequestUploadCustom.cpp
     bindings/js/JSXSLTProcessorCustom.cpp
     bindings/js/JavaScriptCallFrame.cpp
+    bindings/js/PageDebugServer.cpp
     bindings/js/ScheduledAction.cpp
     bindings/js/ScriptCachedFrameData.cpp
     bindings/js/ScriptCallStackFactory.cpp
@@ -156,6 +157,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/ScriptValue.cpp
     bindings/js/SerializedScriptValue.cpp
     bindings/js/WorkerScriptController.cpp
+    bindings/js/WorkerDebugServer.cpp
 
     bridge/IdentifierRep.cpp
     bridge/NP_jsobject.cpp

@@ -1,3 +1,139 @@
+2011-03-30  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: split debugger agent into Page and Worker-specific ones
+        https://bugs.webkit.org/show_bug.cgi?id=57345
+
+        ScriptDebugServer and InspectorDebuggerAgent contain only functionality common
+        for Worker and Page debugger. All specifics is moved into Page/WorkerScriptDebugServer
+        and Page/WorkerDebuggerAgent.
+
+        * GNUmakefile.am:
+        * UseJSC.cmake:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::currentCallFrame):
+        * bindings/js/PageScriptDebugServer.cpp: Added.
+        (WebCore::toPage):
+        (WebCore::PageScriptDebugServer::shared):
+        (WebCore::PageScriptDebugServer::PageScriptDebugServer):
+        (WebCore::PageScriptDebugServer::~PageScriptDebugServer):
+        (WebCore::PageScriptDebugServer::addListener):
+        (WebCore::PageScriptDebugServer::removeListener):
+        (WebCore::PageScriptDebugServer::recompileAllJSFunctions):
+        (WebCore::PageScriptDebugServer::getListenersForGlobalObject):
+        (WebCore::PageScriptDebugServer::didPause):
+        (WebCore::PageScriptDebugServer::didContinue):
+        (WebCore::PageScriptDebugServer::didRemoveLastListener):
+        (WebCore::PageScriptDebugServer::setJavaScriptPaused):
+        * bindings/js/PageScriptDebugServer.h: Added.
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        (WebCore::ScriptDebugServer::sourceParsed):
+        (WebCore::ScriptDebugServer::dispatchFunctionToListeners):
+        (WebCore::ScriptDebugServer::createCallFrameAndPauseIfNeeded):
+        (WebCore::ScriptDebugServer::updateCallFrameAndPauseIfNeeded):
+        (WebCore::ScriptDebugServer::pauseIfNeeded):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/js/WorkerScriptDebugServer.cpp: Added.
+        (WebCore::WorkerScriptDebugServer::WorkerScriptDebugServer):
+        (WebCore::WorkerScriptDebugServer::addListener):
+        (WebCore::WorkerScriptDebugServer::removeListener):
+        * bindings/js/WorkerScriptDebugServer.h: Added.
+        (WebCore::WorkerScriptDebugServer::~WorkerScriptDebugServer):
+        (WebCore::WorkerScriptDebugServer::recompileAllJSFunctions):
+        (WebCore::WorkerScriptDebugServer::getListenersForGlobalObject):
+        (WebCore::WorkerScriptDebugServer::didPause):
+        (WebCore::WorkerScriptDebugServer::didContinue):
+        * bindings/v8/PageScriptDebugServer.cpp: Added.
+        (WebCore::retrieveFrame):
+        (WebCore::PageScriptDebugServer::shared):
+        (WebCore::PageScriptDebugServer::PageScriptDebugServer):
+        (WebCore::PageScriptDebugServer::addListener):
+        (WebCore::PageScriptDebugServer::removeListener):
+        (WebCore::PageScriptDebugServer::setClientMessageLoop):
+        (WebCore::PageScriptDebugServer::getDebugListenerForContext):
+        (WebCore::PageScriptDebugServer::runMessageLoopOnPause):
+        (WebCore::PageScriptDebugServer::quitMessageLoopOnPause):
+        * bindings/v8/PageScriptDebugServer.h: Added.
+        (WebCore::PageScriptDebugServer::setEnabled):
+        (WebCore::PageScriptDebugServer::ClientMessageLoop::~ClientMessageLoop):
+        (WebCore::PageScriptDebugServer::~PageScriptDebugServer):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::ScriptDebugServer):
+        (WebCore::ScriptDebugServer::setPauseOnNextStatement):
+        (WebCore::ScriptDebugServer::breakProgram):
+        (WebCore::ScriptDebugServer::continueProgram):
+        (WebCore::ScriptDebugServer::stepIntoStatement):
+        (WebCore::ScriptDebugServer::stepOverStatement):
+        (WebCore::ScriptDebugServer::stepOutOfFunction):
+        (WebCore::ScriptDebugServer::editScriptSource):
+        (WebCore::toScriptDebugServer):
+        (WebCore::ScriptDebugServer::breakProgramCallback):
+        (WebCore::ScriptDebugServer::v8DebugEventCallback):
+        (WebCore::ScriptDebugServer::handleV8DebugEvent):
+        (WebCore::ScriptDebugServer::isPaused):
+        * bindings/v8/ScriptDebugServer.h:
+        * bindings/v8/WorkerScriptDebugServer.cpp: Added.
+        (WebCore::WorkerScriptDebugServer::WorkerScriptDebugServer):
+        (WebCore::WorkerScriptDebugServer::addListener):
+        (WebCore::WorkerScriptDebugServer::removeListener):
+        * bindings/v8/WorkerScriptDebugServer.h: Added.
+        (WebCore::WorkerScriptDebugServer::~WorkerScriptDebugServer):
+        (WebCore::WorkerScriptDebugServer::getDebugListenerForContext):
+        (WebCore::WorkerScriptDebugServer::runMessageLoopOnPause):
+        (WebCore::WorkerScriptDebugServer::quitMessageLoopOnPause):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::currentCallFrameCallback):
+        * inspector/InjectedScriptHost.h:
+        (WebCore::InjectedScriptHost::init):
+        (WebCore::InjectedScriptHost::debuggerAgent):
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::enable):
+        (WebCore::InspectorDebuggerAgent::disable):
+        (WebCore::InspectorDebuggerAgent::setBreakpointsActive):
+        (WebCore::InspectorDebuggerAgent::removeBreakpoint):
+        (WebCore::InspectorDebuggerAgent::continueToLocation):
+        (WebCore::InspectorDebuggerAgent::resolveBreakpoint):
+        (WebCore::InspectorDebuggerAgent::editScriptSource):
+        (WebCore::InspectorDebuggerAgent::schedulePauseOnNextStatement):
+        (WebCore::InspectorDebuggerAgent::cancelPauseOnNextStatement):
+        (WebCore::InspectorDebuggerAgent::resume):
+        (WebCore::InspectorDebuggerAgent::stepOver):
+        (WebCore::InspectorDebuggerAgent::stepInto):
+        (WebCore::InspectorDebuggerAgent::stepOut):
+        (WebCore::InspectorDebuggerAgent::setPauseOnExceptionsState):
+        (WebCore::InspectorDebuggerAgent::didPause):
+        (WebCore::InspectorDebuggerAgent::breakProgram):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::disable):
+        (WebCore::InspectorProfilerAgent::enable):
+        (WebCore::InspectorProfilerAgent::startUserInitiatedProfiling):
+        * inspector/PageDebuggerAgent.cpp: Added.
+        (WebCore::PageDebuggerAgent::create):
+        (WebCore::PageDebuggerAgent::PageDebuggerAgent):
+        (WebCore::PageDebuggerAgent::~PageDebuggerAgent):
+        (WebCore::PageDebuggerAgent::startListeningScriptDebugServer):
+        (WebCore::PageDebuggerAgent::stopListeningScriptDebugServer):
+        (WebCore::PageDebuggerAgent::scriptDebugServer):
+        * inspector/PageDebuggerAgent.h: Added.
+        * inspector/WorkerDebuggerAgent.cpp: Added.
+        (WebCore::WorkerDebuggerAgent::create):
+        (WebCore::WorkerDebuggerAgent::WorkerDebuggerAgent):
+        (WebCore::WorkerDebuggerAgent::~WorkerDebuggerAgent):
+        (WebCore::WorkerDebuggerAgent::startListeningScriptDebugServer):
+        (WebCore::WorkerDebuggerAgent::stopListeningScriptDebugServer):
+        (WebCore::WorkerDebuggerAgent::scriptDebugServer):
+        * inspector/WorkerDebuggerAgent.h: Added.
+
 2011-03-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

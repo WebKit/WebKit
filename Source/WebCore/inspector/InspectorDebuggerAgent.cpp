@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010-2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,15 +48,9 @@ static const char debuggerEnabled[] = "debuggerEnabled";
 static const char javaScriptBreakpoints[] = "javaScriptBreakopints";
 };
 
-PassOwnPtr<InspectorDebuggerAgent> InspectorDebuggerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, Page* inspectedPage, InjectedScriptManager* injectedScriptManager)
-{
-    return adoptPtr(new InspectorDebuggerAgent(instrumentingAgents, inspectorState, inspectedPage, injectedScriptManager));
-}
-
-InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, Page* inspectedPage, InjectedScriptManager* injectedScriptManager)
+InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState, InjectedScriptManager* injectedScriptManager)
     : m_instrumentingAgents(instrumentingAgents)
     , m_inspectorState(inspectorState)
-    , m_inspectedPage(inspectedPage)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
     , m_pausedScriptState(0)
@@ -78,10 +72,10 @@ void InspectorDebuggerAgent::enable(bool restoringFromState)
     m_inspectorState->setBoolean(DebuggerAgentState::debuggerEnabled, true);
     m_instrumentingAgents->setInspectorDebuggerAgent(this);
 
-    ScriptDebugServer::shared().clearBreakpoints();
+    scriptDebugServer().clearBreakpoints();
     // FIXME(WK44513): breakpoints activated flag should be synchronized between all front-ends
-    ScriptDebugServer::shared().setBreakpointsActivated(true);
-    ScriptDebugServer::shared().addListener(this, m_inspectedPage);
+    scriptDebugServer().setBreakpointsActivated(true);
+    startListeningScriptDebugServer();
 
     m_frontend->debuggerWasEnabled();
     if (m_listener)
@@ -96,7 +90,7 @@ void InspectorDebuggerAgent::disable()
     m_inspectorState->setObject(DebuggerAgentState::javaScriptBreakpoints, InspectorObject::create());
     m_instrumentingAgents->setInspectorDebuggerAgent(0);
 
-    ScriptDebugServer::shared().removeListener(this, m_inspectedPage);
+    stopListeningScriptDebugServer();
     clear();
 
     if (m_frontend)
@@ -136,9 +130,9 @@ void InspectorDebuggerAgent::clearFrontend()
 void InspectorDebuggerAgent::setBreakpointsActive(ErrorString*, bool active)
 {
     if (active)
-        ScriptDebugServer::shared().activateBreakpoints();
+        scriptDebugServer().activateBreakpoints();
     else
-        ScriptDebugServer::shared().deactivateBreakpoints();
+        scriptDebugServer().deactivateBreakpoints();
 }
 
 void InspectorDebuggerAgent::inspectedURLChanged(const String&)
@@ -199,18 +193,18 @@ void InspectorDebuggerAgent::removeBreakpoint(ErrorString*, const String& breakp
     if (debugServerBreakpointIdsIterator == m_breakpointIdToDebugServerBreakpointIds.end())
         return;
     for (size_t i = 0; i < debugServerBreakpointIdsIterator->second.size(); ++i)
-        ScriptDebugServer::shared().removeBreakpoint(debugServerBreakpointIdsIterator->second[i]);
+        scriptDebugServer().removeBreakpoint(debugServerBreakpointIdsIterator->second[i]);
     m_breakpointIdToDebugServerBreakpointIds.remove(debugServerBreakpointIdsIterator);
 }
 
 void InspectorDebuggerAgent::continueToLocation(ErrorString* error, const String& sourceId, int lineNumber, int columnNumber)
 {
     if (!m_continueToLocationBreakpointId.isEmpty()) {
-        ScriptDebugServer::shared().removeBreakpoint(m_continueToLocationBreakpointId);
+        scriptDebugServer().removeBreakpoint(m_continueToLocationBreakpointId);
         m_continueToLocationBreakpointId = "";
     }
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, "", true);
-    m_continueToLocationBreakpointId = ScriptDebugServer::shared().setBreakpoint(sourceId, breakpoint, &lineNumber, &columnNumber);
+    m_continueToLocationBreakpointId = scriptDebugServer().setBreakpoint(sourceId, breakpoint, &lineNumber, &columnNumber);
     resume(error);
 }
 
@@ -232,7 +226,7 @@ bool InspectorDebuggerAgent::resolveBreakpoint(const String& breakpointId, const
     if (breakpoint.lineNumber >= script.lineOffset + script.linesCount)
         return false;
 
-    String debugServerBreakpointId = ScriptDebugServer::shared().setBreakpoint(sourceId, breakpoint, actualLineNumber, actualColumnNumber);
+    String debugServerBreakpointId = scriptDebugServer().setBreakpoint(sourceId, breakpoint, actualLineNumber, actualColumnNumber);
     if (debugServerBreakpointId.isEmpty())
         return false;
 
@@ -247,7 +241,7 @@ bool InspectorDebuggerAgent::resolveBreakpoint(const String& breakpointId, const
 void InspectorDebuggerAgent::editScriptSource(ErrorString* errorString, const String& sourceID, const String& newContent, String* result, RefPtr<InspectorArray>* newCallFrames)
 {
     String editResult;
-    if (ScriptDebugServer::shared().editScriptSource(sourceID, newContent, editResult)) {
+    if (scriptDebugServer().editScriptSource(sourceID, newContent, editResult)) {
         *newCallFrames = currentCallFrames();
         *result = editResult;
     } else
@@ -266,7 +260,7 @@ void InspectorDebuggerAgent::schedulePauseOnNextStatement(DebuggerEventType type
     m_breakProgramDetails = InspectorObject::create();
     m_breakProgramDetails->setNumber("eventType", type);
     m_breakProgramDetails->setValue("eventData", data);
-    ScriptDebugServer::shared().setPauseOnNextStatement(true);
+    scriptDebugServer().setPauseOnNextStatement(true);
 }
 
 void InspectorDebuggerAgent::cancelPauseOnNextStatement()
@@ -274,7 +268,7 @@ void InspectorDebuggerAgent::cancelPauseOnNextStatement()
     if (m_javaScriptPauseScheduled)
         return;
     m_breakProgramDetails = 0;
-    ScriptDebugServer::shared().setPauseOnNextStatement(false);
+    scriptDebugServer().setPauseOnNextStatement(false);
 }
 
 void InspectorDebuggerAgent::pause(ErrorString*)
@@ -285,28 +279,28 @@ void InspectorDebuggerAgent::pause(ErrorString*)
 
 void InspectorDebuggerAgent::resume(ErrorString*)
 {
-    ScriptDebugServer::shared().continueProgram();
+    scriptDebugServer().continueProgram();
 }
 
 void InspectorDebuggerAgent::stepOver(ErrorString*)
 {
-    ScriptDebugServer::shared().stepOverStatement();
+    scriptDebugServer().stepOverStatement();
 }
 
 void InspectorDebuggerAgent::stepInto(ErrorString*)
 {
-    ScriptDebugServer::shared().stepIntoStatement();
+    scriptDebugServer().stepIntoStatement();
 }
 
 void InspectorDebuggerAgent::stepOut(ErrorString*)
 {
-    ScriptDebugServer::shared().stepOutOfFunction();
+    scriptDebugServer().stepOutOfFunction();
 }
 
 void InspectorDebuggerAgent::setPauseOnExceptionsState(ErrorString* errorString, int pauseState)
 {
-    ScriptDebugServer::shared().setPauseOnExceptionsState(static_cast<ScriptDebugServer::PauseOnExceptionsState>(pauseState));
-    if (ScriptDebugServer::shared().pauseOnExceptionsState() != pauseState)
+    scriptDebugServer().setPauseOnExceptionsState(static_cast<ScriptDebugServer::PauseOnExceptionsState>(pauseState));
+    if (scriptDebugServer().pauseOnExceptionsState() != pauseState)
         *errorString = "Internal error. Could not change pause on exceptions state.";
 }
 
@@ -377,7 +371,7 @@ void InspectorDebuggerAgent::didPause(ScriptState* scriptState)
     m_javaScriptPauseScheduled = false;
 
     if (!m_continueToLocationBreakpointId.isEmpty()) {
-        ScriptDebugServer::shared().removeBreakpoint(m_continueToLocationBreakpointId);
+        scriptDebugServer().removeBreakpoint(m_continueToLocationBreakpointId);
         m_continueToLocationBreakpointId = "";
     }
 }
@@ -394,7 +388,7 @@ void InspectorDebuggerAgent::breakProgram(DebuggerEventType type, PassRefPtr<Ins
     m_breakProgramDetails = InspectorObject::create();
     m_breakProgramDetails->setNumber("eventType", type);
     m_breakProgramDetails->setValue("eventData", data);
-    ScriptDebugServer::shared().breakProgram();
+    scriptDebugServer().breakProgram();
 }
 
 void InspectorDebuggerAgent::clear()
