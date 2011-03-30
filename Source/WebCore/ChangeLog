@@ -1,3 +1,24 @@
+2011-03-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Rename BidiResolver::eor and sor to m_eor and m_sor to match modern style
+        https://bugs.webkit.org/show_bug.cgi?id=57369
+
+        I considered renaming these to m_endOfRun and m_startOfRun but decided
+        that was too verbose for now (given how often they're used).  I suspect
+        with a bit more refactoring we'll find they're not used very often and can be renamed
+        if so desired.
+
+        * platform/text/BidiResolver.h:
+        (WebCore::::appendRun):
+        (WebCore::::checkDirectionInLowerRaiseEmbeddingLevel):
+        (WebCore::::lowerExplicitEmbeddingLevel):
+        (WebCore::::raiseExplicitEmbeddingLevel):
+        (WebCore::::createBidiRunsForLine):
+        * rendering/InlineIterator.h:
+        (WebCore::InlineBidiResolver::appendRun):
+
 2011-03-29  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -247,27 +247,27 @@ inline void InlineBidiResolver::increment()
 template <>
 inline void InlineBidiResolver::appendRun()
 {
-    if (!emptyRun && !eor.atEnd()) {
-        int start = sor.m_pos;
-        RenderObject* obj = sor.m_obj;
-        while (obj && obj != eor.m_obj && obj != endOfLine.m_obj) {
+    if (!emptyRun && !m_eor.atEnd()) {
+        int start = m_sor.m_pos;
+        RenderObject* obj = m_sor.m_obj;
+        while (obj && obj != m_eor.m_obj && obj != endOfLine.m_obj) {
             RenderBlock::appendRunsForObject(start, obj->length(), obj, *this);        
             start = 0;
-            obj = bidiNext(sor.m_block, obj);
+            obj = bidiNext(m_sor.m_block, obj);
         }
         if (obj) {
-            unsigned pos = obj == eor.m_obj ? eor.m_pos : UINT_MAX;
+            unsigned pos = obj == m_eor.m_obj ? m_eor.m_pos : UINT_MAX;
             if (obj == endOfLine.m_obj && endOfLine.m_pos <= pos) {
                 m_reachedEndOfLine = true;
                 pos = endOfLine.m_pos;
             }
             // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
-            int end = obj->length() ? pos+1 : 0;
+            int end = obj->length() ? pos + 1 : 0;
             RenderBlock::appendRunsForObject(start, end, obj, *this);
         }
         
-        eor.increment();
-        sor = eor;
+        m_eor.increment();
+        m_sor = m_eor;
     }
 
     m_direction = WTF::Unicode::OtherNeutral;
