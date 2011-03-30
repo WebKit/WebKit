@@ -1,3 +1,16 @@
+2011-03-29  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AX: WK2: When creating the window remote token, use what's returned from accessibility
+        https://bugs.webkit.org/show_bug.cgi?id=57398
+
+        This will allow a specific WKView to override what's used for the window attribute of the
+        HTML elements.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]):
+
 2011-03-29  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Sam Weinig.

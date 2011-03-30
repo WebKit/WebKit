@@ -1468,7 +1468,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         // Initialize remote accessibility when the window connection has been established.
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
         NSData *remoteElementToken = WKAXRemoteTokenForElement(self);
-        NSData *remoteWindowToken = WKAXRemoteTokenForElement([self window]);
+        NSData *remoteWindowToken = WKAXRemoteTokenForElement([self accessibilityAttributeValue:NSAccessibilityWindowAttribute]);
         CoreIPC::DataReference elementToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteElementToken bytes]), [remoteElementToken length]);
         CoreIPC::DataReference windowToken = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>([remoteWindowToken bytes]), [remoteWindowToken length]);
         _data->_page->registerUIProcessAccessibilityTokens(elementToken, windowToken);
