@@ -1,3 +1,9 @@
+2011-03-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build change to activate MathML for WinCairo.
+
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops: Enable MathML.
+
 2011-03-29  Jessie Berlin  <jberlin@apple.com>
 
         Update the WebKitSystemInterface libraries for changes in the implementation.
