@@ -1,5 +1,117 @@
 2011-03-30  Adam Barth  <abarth@webkit.org>
 
+        Move results from chromium-mac-snowleopard to chromium-mac.  We
+        shouldn't have any results in chromium-mac-snowleopard until we start
+        worrying about Lion.
+
+        This patch overwrites fast/transforms/shadows in chromium-mac, which
+        doesn't seem to be visible to any platform, as I understand things.
+
+        * platform/chromium-mac-snowleopard/css1/box_properties/clear-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css1/box_properties/clear-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css1/box_properties/float-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css1/box_properties/float-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css1/text_properties/vertical_align-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css1/text_properties/vertical_align-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5501-imrgn-t-00-b-ag-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5501-imrgn-t-00-b-ag-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5502-mrgn-r-00-c-ag-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5502-mrgn-r-00-c-ag-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5503-imrgn-b-00-b-a-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5503-imrgn-b-00-b-a-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5504-mrgn-l-00-c-ag-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5504-mrgn-l-00-c-ag-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5505-mrgn-00-b-ag-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t0803-c5505-mrgn-00-b-ag-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t0905-c414-flt-01-d-g-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t0905-c414-flt-01-d-g-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t100304-c43-rpl-bbx-00-d-g-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t100304-c43-rpl-bbx-00-d-g-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-00-d-ag-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-00-d-ag-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-03-d-ag-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-03-d-ag-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-02-d-agi-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-02-d-agi-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-04-d-agi-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-04-d-agi-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/block/positioning/047-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/block/positioning/047-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/css/resize-corner-tracking-transformed-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/css/resize-corner-tracking-transformed-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/searchfield-heights-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/searchfield-heights-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/slider-thumb-shared-style-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/slider-thumb-shared-style-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/gradients/background-clipped-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/gradients/background-clipped-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/replaced/selection-rect-transform-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/replaced/selection-rect-transform-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/whitespace/tab-character-basics-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/text/whitespace/tab-character-basics-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/transforms/diamond-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/transforms/diamond-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/transforms/shadows-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/transforms/shadows-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/transforms/transformed-caret-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/transforms/transformed-caret-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/text/bidi-embedded-direction-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/text/bidi-embedded-direction-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/text/bidi-embedded-direction-expected.txt: Removed.
+        * platform/chromium-mac/css1/box_properties/clear-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/css1/box_properties/clear-expected.checksum.
+        * platform/chromium-mac/css1/box_properties/clear-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/css1/box_properties/clear-expected.png.
+        * platform/chromium-mac/css1/box_properties/float-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/css1/box_properties/float-expected.checksum.
+        * platform/chromium-mac/css1/box_properties/float-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/css1/box_properties/float-expected.png.
+        * platform/chromium-mac/css1/text_properties/vertical_align-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/css1/text_properties/vertical_align-expected.checksum.
+        * platform/chromium-mac/css1/text_properties/vertical_align-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/css1/text_properties/vertical_align-expected.png.
+        * platform/chromium-mac/css2.1/t0803-c5501-imrgn-t-00-b-ag-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t0803-c5501-imrgn-t-00-b-ag-expected.checksum.
+        * platform/chromium-mac/css2.1/t0803-c5501-imrgn-t-00-b-ag-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t0803-c5501-imrgn-t-00-b-ag-expected.png.
+        * platform/chromium-mac/css2.1/t0803-c5502-mrgn-r-00-c-ag-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t0803-c5502-mrgn-r-00-c-ag-expected.checksum.
+        * platform/chromium-mac/css2.1/t0803-c5502-mrgn-r-00-c-ag-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t0803-c5502-mrgn-r-00-c-ag-expected.png.
+        * platform/chromium-mac/css2.1/t0803-c5503-imrgn-b-00-b-a-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t0803-c5503-imrgn-b-00-b-a-expected.checksum.
+        * platform/chromium-mac/css2.1/t0803-c5503-imrgn-b-00-b-a-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t0803-c5503-imrgn-b-00-b-a-expected.png.
+        * platform/chromium-mac/css2.1/t0803-c5504-mrgn-l-00-c-ag-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t0803-c5504-mrgn-l-00-c-ag-expected.checksum.
+        * platform/chromium-mac/css2.1/t0803-c5504-mrgn-l-00-c-ag-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t0803-c5504-mrgn-l-00-c-ag-expected.png.
+        * platform/chromium-mac/css2.1/t0803-c5505-mrgn-00-b-ag-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t0803-c5505-mrgn-00-b-ag-expected.checksum.
+        * platform/chromium-mac/css2.1/t0803-c5505-mrgn-00-b-ag-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t0803-c5505-mrgn-00-b-ag-expected.png.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-01-d-g-expected.checksum: Replaced with LayoutTests/platform/chromium-mac-snowleopard/css2.1/t0905-c414-flt-01-d-g-expected.checksum.
+        * platform/chromium-mac/css2.1/t0905-c414-flt-01-d-g-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t0905-c414-flt-01-d-g-expected.png.
+        * platform/chromium-mac/css2.1/t100304-c43-rpl-bbx-00-d-g-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t100304-c43-rpl-bbx-00-d-g-expected.checksum.
+        * platform/chromium-mac/css2.1/t100304-c43-rpl-bbx-00-d-g-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t100304-c43-rpl-bbx-00-d-g-expected.png.
+        * platform/chromium-mac/css2.1/t1008-c44-ln-box-00-d-ag-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-00-d-ag-expected.checksum.
+        * platform/chromium-mac/css2.1/t1008-c44-ln-box-00-d-ag-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-00-d-ag-expected.png.
+        * platform/chromium-mac/css2.1/t1008-c44-ln-box-03-d-ag-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-03-d-ag-expected.checksum.
+        * platform/chromium-mac/css2.1/t1008-c44-ln-box-03-d-ag-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t1008-c44-ln-box-03-d-ag-expected.png.
+        * platform/chromium-mac/css2.1/t100801-c544-valgn-02-d-agi-expected.checksum: Replaced with LayoutTests/platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-02-d-agi-expected.checksum.
+        * platform/chromium-mac/css2.1/t100801-c544-valgn-02-d-agi-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-02-d-agi-expected.png.
+        * platform/chromium-mac/css2.1/t100801-c544-valgn-04-d-agi-expected.checksum: Replaced with LayoutTests/platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-04-d-agi-expected.checksum.
+        * platform/chromium-mac/css2.1/t100801-c544-valgn-04-d-agi-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/css2.1/t100801-c544-valgn-04-d-agi-expected.png.
+        * platform/chromium-mac/fast/block/positioning/047-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/block/positioning/047-expected.checksum.
+        * platform/chromium-mac/fast/block/positioning/047-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/block/positioning/047-expected.png.
+        * platform/chromium-mac/fast/css/resize-corner-tracking-transformed-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/css/resize-corner-tracking-transformed-expected.checksum.
+        * platform/chromium-mac/fast/css/resize-corner-tracking-transformed-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/css/resize-corner-tracking-transformed-expected.png.
+        * platform/chromium-mac/fast/forms/searchfield-heights-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/searchfield-heights-expected.checksum.
+        * platform/chromium-mac/fast/forms/searchfield-heights-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/searchfield-heights-expected.png.
+        * platform/chromium-mac/fast/forms/slider-thumb-shared-style-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/slider-thumb-shared-style-expected.checksum.
+        * platform/chromium-mac/fast/forms/slider-thumb-shared-style-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/forms/slider-thumb-shared-style-expected.png.
+        * platform/chromium-mac/fast/gradients/background-clipped-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/gradients/background-clipped-expected.checksum.
+        * platform/chromium-mac/fast/gradients/background-clipped-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/gradients/background-clipped-expected.png.
+        * platform/chromium-mac/fast/replaced/selection-rect-transform-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/replaced/selection-rect-transform-expected.checksum.
+        * platform/chromium-mac/fast/replaced/selection-rect-transform-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/replaced/selection-rect-transform-expected.png.
+        * platform/chromium-mac/fast/text/whitespace/tab-character-basics-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/text/whitespace/tab-character-basics-expected.checksum.
+        * platform/chromium-mac/fast/text/whitespace/tab-character-basics-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/text/whitespace/tab-character-basics-expected.png.
+        * platform/chromium-mac/fast/transforms/diamond-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/transforms/diamond-expected.checksum.
+        * platform/chromium-mac/fast/transforms/diamond-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/transforms/diamond-expected.png.
+        * platform/chromium-mac/fast/transforms/shadows-expected.checksum: Replaced with LayoutTests/platform/chromium-mac-snowleopard/fast/transforms/shadows-expected.checksum.
+        * platform/chromium-mac/fast/transforms/shadows-expected.png: Replaced with LayoutTests/platform/chromium-mac-snowleopard/fast/transforms/shadows-expected.png.
+        * platform/chromium-mac/fast/transforms/transformed-caret-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/transforms/transformed-caret-expected.checksum.
+        * platform/chromium-mac/fast/transforms/transformed-caret-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/fast/transforms/transformed-caret-expected.png.
+        * platform/chromium-mac/svg/text/bidi-embedded-direction-expected.checksum: Copied from LayoutTests/platform/chromium-mac-snowleopard/svg/text/bidi-embedded-direction-expected.checksum.
+        * platform/chromium-mac/svg/text/bidi-embedded-direction-expected.png: Copied from LayoutTests/platform/chromium-mac-snowleopard/svg/text/bidi-embedded-direction-expected.png.
+        * platform/chromium-mac/svg/text/bidi-embedded-direction-expected.txt: Copied from LayoutTests/platform/chromium-mac-snowleopard/svg/text/bidi-embedded-direction-expected.txt.
+
+2011-03-30  Adam Barth  <abarth@webkit.org>
+
         Note that this test is flaky.
 
         * platform/chromium/test_expectations.txt:
