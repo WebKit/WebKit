@@ -1,3 +1,16 @@
+2011-03-30  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Add Chromium expectations for h1-in-section-elements.html
+
+        * platform/chromium-linux/fast/css/h1-in-section-elements-expected.checksum: Added.
+        * platform/chromium-linux/fast/css/h1-in-section-elements-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/css/h1-in-section-elements-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/css/h1-in-section-elements-expected.png: Added.
+        * platform/chromium-win/fast/css/h1-in-section-elements-expected.checksum: Added.
+        * platform/chromium-win/fast/css/h1-in-section-elements-expected.png: Added.
+        * platform/chromium-win/fast/css/h1-in-section-elements-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-29  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Eric Seidel.
