@@ -293,8 +293,6 @@ MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'update']
 MOCK: update_status: commit-queue Updated working directory
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--no-update', '--non-interactive', 106]
 MOCK: update_status: commit-queue Applied patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both']
-MOCK: update_status: commit-queue Built patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 106]
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass

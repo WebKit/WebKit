@@ -1,5 +1,21 @@
 2011-03-30  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        SheriffBot rollouts take too long
+        https://bugs.webkit.org/show_bug.cgi?id=57498
+
+        We used to build before landing rollouts via the commit-queue to
+        prevent further breakage, but now that our individual commit-queue
+        machines are slower, building takes too long.  I can't remember the
+        last time a rollout broke compile.  It seems like just landing the
+        patch is the better trade-off.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
+2011-03-30  Adam Barth  <abarth@webkit.org>
+
         Remove platform/chromium-mac-snowleopard
         https://bugs.webkit.org/show_bug.cgi?id=57486
 

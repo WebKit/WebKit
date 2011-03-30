@@ -178,8 +178,6 @@ class CommitQueueTask(object):
         self._delegate.report_flaky_tests(self._patch, flaky_test_results, results_archive)
 
     def _test_patch(self):
-        if self._patch.is_rollout():
-            return True
         if self._test():
             return True
 
@@ -220,12 +218,13 @@ class CommitQueueTask(object):
             return False
         if not self._apply():
             return self.report_failure()
-        if not self._build():
-            if not self._build_without_patch():
+        if not self._patch.is_rollout():
+            if not self._build():
+                if not self._build_without_patch():
+                    return False
+                return self.report_failure()
+            if not self._test_patch():
                 return False
-            return self.report_failure()
-        if not self._test_patch():
-            return False
         # Make sure the patch is still valid before landing (e.g., make sure
         # no one has set commit-queue- since we started working on the patch.)
         if not self._validate():
