@@ -1,3 +1,94 @@
+2011-03-29  Adam Roben  <aroben@apple.com>
+
+        Add ShareableBitmap::Handle
+
+        This object is used for encoding/decoding a ShareableBitmap via CoreIPC. It currently just
+        encapsulates a SharedMemory::Handle (which is what we were using previously) and the image's
+        size (which means callers no longer need to deal with the size explicitly), but in the
+        future could be used to store more information about the bitmap.
+
+        This should cause no behavior changes.
+
+        Fixes <http://webkit.org/b/57397> ShareableBitmap needs its own Handle type
+
+        Reviewed by Anders Carlsson.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::geometryDidChange): No longer need to pass a size to create,
+        since the Handle records the size.
+        (WebKit::PluginControllerProxy::snapshot): No longer need the bufferSize argument, since the
+        Handle records the size.
+
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginControllerProxy.messages.in:
+        Updated Handle types and removed unnecessary size argument to Snapshot.
+
+        * Shared/PlatformPopupMenuData.cpp:
+        (WebKit::PlatformPopupMenuData::encode):
+        (WebKit::PlatformPopupMenuData::decode):
+        * Shared/PlatformPopupMenuData.h:
+        Changed to use ShareableBitmap::Handle and removed m_backingStoreSize, which is now stored
+        in the Handles.
+
+        * Shared/ShareableBitmap.cpp:
+        (WebKit::ShareableBitmap::Handle::encode):
+        (WebKit::ShareableBitmap::Handle::decode):
+        Simple encode/decode functions.
+
+        (WebKit::ShareableBitmap::create): Get the size from the Handle instead of as a separate
+        argument.
+        (WebKit::ShareableBitmap::createHandle): Store our size in the Handle.
+
+        * Shared/ShareableBitmap.h: Added ShareableBitmap::Handle and made some functions use it.
+
+        * Shared/UpdateInfo.h: Changed to use ShareableBitmap::Handle.
+
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::encodeImage):
+        (CoreIPC::decodeImage):
+        Use the size stored in the Handle instead of encoding/decoding one separately.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setDragImage):
+        Removed the unnecessary imageSize argument. We can get it from the image itself.
+
+        * UIProcess/BackingStore.cpp:
+        (WebKit::BackingStore::incorporateUpdate):
+        * UIProcess/FindIndicator.cpp:
+        (WebKit::FindIndicator::create):
+        No longer need to pass a size when creating a ShareableBitmap from a Handle.
+
+        * UIProcess/FindIndicator.h: Changed to use ShareableBitmap::Handle.
+
+        * UIProcess/PageClient.h: Removed unnecessary imageSize argument from setDragImage.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setFindIndicator):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setDragImage):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::snapshot):
+        (WebKit::PluginProxy::geometryDidChange):
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::startDrag):
+        Changed to use ShareableBitmap::Handle and removed now-unnecessary size arguments (since we
+        can get the size from the Handle).
+
+        * WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp:
+        (WebKit::WebPopupMenu::setUpPlatformData): Don't need to store the backing store size in the
+        data anymore; the Handles will make sure it reaches the other process.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindIndicator):
+        (WebKit::FindController::hideFindIndicator):
+        Changed to use ShareableBitmap::Handle.
+
 2011-03-30  Alejandro G. Castro  <alex@igalia.com>
 
         Fix GTK build after r81980.

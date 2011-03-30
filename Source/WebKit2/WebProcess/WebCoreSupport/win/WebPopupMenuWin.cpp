@@ -78,9 +78,9 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
     // The backing stores should be drawn at least as wide as the control on the page to match the width of the popup window we'll create.
     int backingStoreWidth = max(pageCoordinates.width() - m_popupClient->clientInsetLeft() - m_popupClient->clientInsetRight(), popupWidth);
 
-    data.m_backingStoreSize = IntSize(backingStoreWidth, (itemCount * data.m_itemHeight));
-    data.m_notSelectedBackingStore = ShareableBitmap::createShareable(data.m_backingStoreSize);
-    data.m_selectedBackingStore = ShareableBitmap::createShareable(data.m_backingStoreSize);
+    IntSize backingStoreSize(backingStoreWidth, (itemCount * data.m_itemHeight));
+    data.m_notSelectedBackingStore = ShareableBitmap::createShareable(backingStoreSize);
+    data.m_selectedBackingStore = ShareableBitmap::createShareable(backingStoreSize);
 
     OwnPtr<GraphicsContext> notSelectedBackingStoreContext = data.m_notSelectedBackingStore->createGraphicsContext();
     OwnPtr<GraphicsContext> selectedBackingStoreContext = data.m_selectedBackingStore->createGraphicsContext();
@@ -88,7 +88,7 @@ void WebPopupMenu::setUpPlatformData(const WebCore::IntRect& pageCoordinates, Pl
     Color activeOptionBackgroundColor = RenderTheme::defaultTheme()->activeListBoxSelectionBackgroundColor();
     Color activeOptionTextColor = RenderTheme::defaultTheme()->activeListBoxSelectionForegroundColor();
 
-    for (int y = 0; y < data.m_backingStoreSize.height(); y += data.m_itemHeight) {
+    for (int y = 0; y < backingStoreSize.height(); y += data.m_itemHeight) {
         int index = y / data.m_itemHeight;
 
         PopupMenuStyle itemStyle = m_popupClient->itemStyle(index);

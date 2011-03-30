@@ -27,11 +27,27 @@
 #include "ShareableBitmap.h"
 
 #include "SharedMemory.h"
+#include "WebCoreArgumentCoders.h"
 #include <WebCore/GraphicsContext.h>
 
 using namespace WebCore;
 
 namespace WebKit {
+
+void ShareableBitmap::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
+{
+    encoder->encode(m_handle);
+    encoder->encode(m_size);
+}
+
+bool ShareableBitmap::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)
+{
+    if (!decoder->decode(handle.m_handle))
+        return false;
+    if (!decoder->decode(handle.m_size))
+        return false;
+    return true;
+}
 
 PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size)
 {
@@ -65,21 +81,24 @@ PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size
     return adoptRef(new ShareableBitmap(size, sharedMemory));
 }
 
-PassRefPtr<ShareableBitmap> ShareableBitmap::create(const WebCore::IntSize& size, const SharedMemory::Handle& handle)
+PassRefPtr<ShareableBitmap> ShareableBitmap::create(const Handle& handle)
 {
     // Create the shared memory.
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle, SharedMemory::ReadWrite);
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle.m_handle, SharedMemory::ReadWrite);
     if (!sharedMemory)
         return 0;
 
-    return create(size, sharedMemory.release());
+    return create(handle.m_size, sharedMemory.release());
 }
 
-bool ShareableBitmap::createHandle(SharedMemory::Handle& handle)
+bool ShareableBitmap::createHandle(Handle& handle)
 {
     ASSERT(isBackedBySharedMemory());
 
-    return m_sharedMemory->createHandle(handle, SharedMemory::ReadWrite);
+    if (!m_sharedMemory->createHandle(handle.m_handle, SharedMemory::ReadWrite))
+        return false;
+    handle.m_size = m_size;
+    return true;
 }
 
 ShareableBitmap::ShareableBitmap(const IntSize& size, void* data)

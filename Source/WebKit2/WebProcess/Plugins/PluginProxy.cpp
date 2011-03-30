@@ -153,11 +153,10 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
 
 PassRefPtr<ShareableBitmap> PluginProxy::snapshot()
 {
-    IntSize bufferSize;
-    SharedMemory::Handle snapshotStoreHandle;
-    m_connection->connection()->sendSync(Messages::PluginControllerProxy::Snapshot(), Messages::PluginControllerProxy::Snapshot::Reply(bufferSize, snapshotStoreHandle), m_pluginInstanceID);
+    ShareableBitmap::Handle snapshotStoreHandle;
+    m_connection->connection()->sendSync(Messages::PluginControllerProxy::Snapshot(), Messages::PluginControllerProxy::Snapshot::Reply(snapshotStoreHandle), m_pluginInstanceID);
 
-    RefPtr<ShareableBitmap> snapshotBuffer = ShareableBitmap::create(bufferSize, snapshotStoreHandle);
+    RefPtr<ShareableBitmap> snapshotBuffer = ShareableBitmap::create(snapshotStoreHandle);
     return snapshotBuffer.release();
 }
 
@@ -175,7 +174,7 @@ void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& cli
     m_frameRect = frameRect;
 
     if (!needsBackingStore()) {
-        SharedMemory::Handle pluginBackingStoreHandle;
+        ShareableBitmap::Handle pluginBackingStoreHandle;
         m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(frameRect, clipRect, pluginBackingStoreHandle), m_pluginInstanceID, CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
         return;
     }
@@ -192,7 +191,7 @@ void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& cli
         didUpdateBackingStore = true;
     }
 
-    SharedMemory::Handle pluginBackingStoreHandle;
+    ShareableBitmap::Handle pluginBackingStoreHandle;
 
     if (didUpdateBackingStore) {
         // Create a new plug-in backing store.

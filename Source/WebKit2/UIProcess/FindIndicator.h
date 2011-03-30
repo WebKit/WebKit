@@ -26,7 +26,7 @@
 #ifndef FindIndicator_h
 #define FindIndicator_h
 
-#include "SharedMemory.h"
+#include "ShareableBitmap.h"
 #include <WebCore/FloatRect.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -38,11 +38,9 @@ namespace WebCore {
 
 namespace WebKit {
 
-class ShareableBitmap;
-
 class FindIndicator : public RefCounted<FindIndicator> {
 public:
-    static PassRefPtr<FindIndicator> create(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, const SharedMemory::Handle& contentImageHandle);
+    static PassRefPtr<FindIndicator> create(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, const ShareableBitmap::Handle& contentImageHandle);
     ~FindIndicator();
 
     WebCore::FloatRect selectionRectInWindowCoordinates() const { return m_selectionRectInWindowCoordinates; }

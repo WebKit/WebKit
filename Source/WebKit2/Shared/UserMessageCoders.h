@@ -132,13 +132,12 @@ public:
                 return true;
             }
 
-            SharedMemory::Handle handle;
+            ShareableBitmap::Handle handle;
             if (!image->bitmap()->createHandle(handle))
                 return false;
 
             encoder->encode(true);
             
-            encoder->encode(image->size());
             encoder->encode(handle);
             return true;
         }
@@ -293,15 +292,11 @@ public:
             if (!didEncode)
                 break;
 
-            WebCore::IntSize size;
-            if (!decoder->decode(size))
-                return false;
-
-            SharedMemory::Handle handle;
+            ShareableBitmap::Handle handle;
             if (!decoder->decode(handle))
                 return false;
 
-            coder.m_root = WebImage::create(ShareableBitmap::create(size, handle));
+            coder.m_root = WebImage::create(ShareableBitmap::create(handle));
             return true;
         }
         case APIObject::TypeData: {

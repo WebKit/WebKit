@@ -182,7 +182,7 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
     selectedFrame->view()->paint(graphicsContext.get(), paintRect);
     selectedFrame->view()->setPaintBehavior(PaintBehaviorNormal);
     
-    SharedMemory::Handle handle;
+    ShareableBitmap::Handle handle;
     if (!findIndicatorTextBackingStore->createHandle(handle))
         return false;
 
@@ -207,7 +207,7 @@ void FindController::hideFindIndicator()
     if (!m_isShowingFindIndicator)
         return;
 
-    SharedMemory::Handle handle;
+    ShareableBitmap::Handle handle;
     m_webPage->send(Messages::WebPageProxy::SetFindIndicator(FloatRect(), Vector<FloatRect>(), handle, false));
     m_isShowingFindIndicator = false;
 }

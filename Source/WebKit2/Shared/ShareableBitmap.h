@@ -45,6 +45,23 @@ namespace WebKit {
     
 class ShareableBitmap : public RefCounted<ShareableBitmap> {
 public:
+    class Handle {
+        WTF_MAKE_NONCOPYABLE(Handle);
+    public:
+        Handle() { }
+
+        bool isNull() const { return m_handle.isNull(); }
+
+        void encode(CoreIPC::ArgumentEncoder*) const;
+        static bool decode(CoreIPC::ArgumentDecoder*, Handle&);
+
+    private:
+        friend class ShareableBitmap;
+
+        mutable SharedMemory::Handle m_handle;
+        WebCore::IntSize m_size;
+    };
+
     // Create a shareable bitmap that uses malloced memory.
     static PassRefPtr<ShareableBitmap> create(const WebCore::IntSize&);
 
@@ -54,11 +71,11 @@ public:
     // Create a shareable bitmap from an already existing shared memory block.
     static PassRefPtr<ShareableBitmap> create(const WebCore::IntSize&, PassRefPtr<SharedMemory>);
 
-    // Create a shareable bitmap from a shared memory handle.
-    static PassRefPtr<ShareableBitmap> create(const WebCore::IntSize&, const SharedMemory::Handle&);
+    // Create a shareable bitmap from a handle.
+    static PassRefPtr<ShareableBitmap> create(const Handle&);
 
-    // Create a shared memory handle.
-    bool createHandle(SharedMemory::Handle&);
+    // Create a handle.
+    bool createHandle(Handle&);
 
     ~ShareableBitmap();
 

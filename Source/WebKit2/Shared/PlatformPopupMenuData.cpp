@@ -51,13 +51,12 @@ void PlatformPopupMenuData::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(m_clientInsetRight);
     encoder->encode(m_popupWidth);
     encoder->encode(m_itemHeight);
-    encoder->encode(m_backingStoreSize);
 
-    SharedMemory::Handle notSelectedBackingStoreHandle;
+    ShareableBitmap::Handle notSelectedBackingStoreHandle;
     m_notSelectedBackingStore->createHandle(notSelectedBackingStoreHandle);
     encoder->encode(notSelectedBackingStoreHandle);
 
-    SharedMemory::Handle selectedBackingStoreHandle;
+    ShareableBitmap::Handle selectedBackingStoreHandle;
     m_selectedBackingStore->createHandle(selectedBackingStoreHandle);
     encoder->encode(selectedBackingStoreHandle);
 #elif PLATFORM(MAC)
@@ -80,18 +79,16 @@ bool PlatformPopupMenuData::decode(CoreIPC::ArgumentDecoder* decoder, PlatformPo
         return false;
     if (!decoder->decode(data.m_itemHeight))
         return false;
-    if (!decoder->decode(data.m_backingStoreSize))
-        return false;
 
-    SharedMemory::Handle notSelectedBackingStoreHandle;
+    ShareableBitmap::Handle notSelectedBackingStoreHandle;
     if (!decoder->decode(notSelectedBackingStoreHandle))
         return false;
-    data.m_notSelectedBackingStore = ShareableBitmap::create(data.m_backingStoreSize, notSelectedBackingStoreHandle);
+    data.m_notSelectedBackingStore = ShareableBitmap::create(notSelectedBackingStoreHandle);
 
-    SharedMemory::Handle selectedBackingStoreHandle;
+    ShareableBitmap::Handle selectedBackingStoreHandle;
     if (!decoder->decode(selectedBackingStoreHandle))
         return false;
-    data.m_selectedBackingStore = ShareableBitmap::create(data.m_backingStoreSize, selectedBackingStoreHandle);
+    data.m_selectedBackingStore = ShareableBitmap::create(selectedBackingStoreHandle);
 #elif PLATFORM(MAC)
     if (!decoder->decode(data.fontInfo))
         return false;

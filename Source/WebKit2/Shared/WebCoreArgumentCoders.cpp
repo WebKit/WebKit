@@ -39,23 +39,19 @@ void encodeImage(ArgumentEncoder* encoder, Image* image)
 {
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(image->size());
     bitmap->createGraphicsContext()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
-    SharedMemory::Handle handle;
+    ShareableBitmap::Handle handle;
     bitmap->createHandle(handle);
 
-    encoder->encode(image->size());
     encoder->encode(handle);
 }
 
 bool decodeImage(ArgumentDecoder* decoder, RefPtr<Image>& image)
 {
-    IntSize imageSize;
-    if (!decoder->decode(imageSize))
-        return false;
-    SharedMemory::Handle handle;
+    ShareableBitmap::Handle handle;
     if (!decoder->decode(handle))
         return false;
     
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(imageSize, handle);
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle);
     if (!bitmap)
         return false;
     image = createImage(bitmap.get());

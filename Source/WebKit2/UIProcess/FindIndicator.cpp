@@ -77,11 +77,12 @@ static const int gradientLightAlpha = 255;
 
 namespace WebKit {
 
-PassRefPtr<FindIndicator> FindIndicator::create(const FloatRect& selectionRectInWindowCoordinates, const Vector<FloatRect>& textRectsInSelectionRectCoordinates, const SharedMemory::Handle& contentImageHandle)
+PassRefPtr<FindIndicator> FindIndicator::create(const FloatRect& selectionRectInWindowCoordinates, const Vector<FloatRect>& textRectsInSelectionRectCoordinates, const ShareableBitmap::Handle& contentImageHandle)
 {
-    RefPtr<ShareableBitmap> contentImage = ShareableBitmap::create(enclosingIntRect(selectionRectInWindowCoordinates).size(), contentImageHandle);
+    RefPtr<ShareableBitmap> contentImage = ShareableBitmap::create(contentImageHandle);
     if (!contentImage)
         return 0;
+    ASSERT(contentImage->size() == enclosingIntRect(selectionRectInWindowCoordinates).size());
 
     return adoptRef(new FindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, contentImage.release()));
 }

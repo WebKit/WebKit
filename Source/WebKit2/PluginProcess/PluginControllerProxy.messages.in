@@ -24,7 +24,7 @@
 
 messages -> PluginControllerProxy {
     # Sent when the plug-in geometry changes.
-    GeometryDidChange(WebCore::IntRect frameRect, WebCore::IntRect clipRect, WebKit::SharedMemory::Handle backingStoreHandle)
+    GeometryDidChange(WebCore::IntRect frameRect, WebCore::IntRect clipRect, WebKit::ShareableBitmap::Handle backingStoreHandle)
 
     # Sent when a frame has finished loading.
     FrameDidFinishLoading(uint64_t requestID)
@@ -101,7 +101,7 @@ messages -> PluginControllerProxy {
 #endif
 
     # Return a snapshot of the plugin
-    Snapshot() -> (WebCore::IntSize size, WebKit::SharedMemory::Handle backingStoreHandle)
+    Snapshot() -> (WebKit::ShareableBitmap::Handle backingStoreHandle)
     
     # Sent when private browsing is enabled or disabled
     PrivateBrowsingStateChanged(bool isPrivateBrowsingEnabled)

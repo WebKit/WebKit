@@ -169,13 +169,13 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
     return result;
 }
 
-void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const IntSize& imageSize, const SharedMemory::Handle& dragImageHandle, bool isLinkDrag)
+void WebPageProxy::setDragImage(const WebCore::IntPoint& clientPosition, const ShareableBitmap::Handle& dragImageHandle, bool isLinkDrag)
 {
-    RefPtr<ShareableBitmap> dragImage = ShareableBitmap::create(imageSize, dragImageHandle);
+    RefPtr<ShareableBitmap> dragImage = ShareableBitmap::create(dragImageHandle);
     if (!dragImage)
         return;
     
-    m_pageClient->setDragImage(clientPosition, imageSize, dragImage.release(), isLinkDrag);
+    m_pageClient->setDragImage(clientPosition, dragImage.release(), isLinkDrag);
 }
 
 void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)

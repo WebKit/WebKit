@@ -26,7 +26,7 @@
 #ifndef UpdateInfo_h
 #define UpdateInfo_h
 
-#include "SharedMemory.h"
+#include "ShareableBitmap.h"
 #include <WebCore/IntRect.h>
 #include <wtf/Noncopyable.h>
 
@@ -60,7 +60,7 @@ public:
     Vector<WebCore::IntRect> updateRects;
 
     // The handle of the shareable bitmap containing the updates. Will be null if there are no updates.
-    SharedMemory::Handle bitmapHandle;
+    ShareableBitmap::Handle bitmapHandle;
 };
 
 } // namespace WebKit

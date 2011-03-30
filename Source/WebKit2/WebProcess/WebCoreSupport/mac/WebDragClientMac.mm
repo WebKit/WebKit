@@ -93,12 +93,12 @@ static PassRefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image)
 void WebDragClient::startDrag(RetainPtr<NSImage> image, const IntPoint& point, const IntPoint&, Clipboard*, Frame* frame, bool linkDrag)
 {
     RefPtr<ShareableBitmap> bitmap = convertImageToBitmap(image.get());
-    SharedMemory::Handle handle;
+    ShareableBitmap::Handle handle;
     if (!bitmap->createHandle(handle))
         return;
 
     // FIXME: Seems this message should be named StartDrag, not SetDragImage.
-    m_page->send(Messages::WebPageProxy::SetDragImage(frame->view()->contentsToWindow(point), bitmap->size(), handle, linkDrag));
+    m_page->send(Messages::WebPageProxy::SetDragImage(frame->view()->contentsToWindow(point), handle, linkDrag));
 }
 
 static CachedImage* cachedImage(Element* element)

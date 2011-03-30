@@ -50,7 +50,6 @@ struct PlatformPopupMenuData {
     int m_clientInsetRight;
     int m_popupWidth;
     int m_itemHeight;
-    WebCore::IntSize m_backingStoreSize;
     RefPtr<ShareableBitmap> m_notSelectedBackingStore;
     RefPtr<ShareableBitmap> m_selectedBackingStore;
 #elif PLATFORM(MAC)

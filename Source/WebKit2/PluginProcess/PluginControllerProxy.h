@@ -32,7 +32,7 @@
 #include "Plugin.h"
 #include "PluginController.h"
 #include "RunLoop.h"
-#include "SharedMemory.h"
+#include "ShareableBitmap.h"
 #include <wtf/Noncopyable.h>
 
 #if PLATFORM(MAC)
@@ -105,7 +105,7 @@ private:
     // Message handlers.
     void frameDidFinishLoading(uint64_t requestID);
     void frameDidFail(uint64_t requestID, bool wasCancelled);
-    void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, const SharedMemory::Handle& backingStoreHandle);
+    void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, const ShareableBitmap::Handle& backingStoreHandle);
     void didEvaluateJavaScript(uint64_t requestID, const String& requestURLString, const String& result);
     void streamDidReceiveResponse(uint64_t streamID, const String& responseURLString, uint32_t streamLength, uint32_t lastModifiedTime, const String& mimeType, const String& headers);
     void streamDidReceiveData(uint64_t streamID, const CoreIPC::DataReference& data);
@@ -121,7 +121,7 @@ private:
     void handleMouseLeaveEvent(const WebMouseEvent&, bool& handled);
     void handleKeyboardEvent(const WebKeyboardEvent&, bool& handled);
     void paintEntirePlugin();
-    void snapshot(WebCore::IntSize& bufferSize, SharedMemory::Handle& backingStoreHandle);
+    void snapshot(ShareableBitmap::Handle& backingStoreHandle);
     void setFocus(bool);
     void didUpdate();
     void getPluginScriptableNPObject(uint64_t& pluginScriptableNPObjectID);

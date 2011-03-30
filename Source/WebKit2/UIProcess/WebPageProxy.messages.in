@@ -159,7 +159,7 @@ messages -> WebPageProxy {
 
     # Find messages
     DidCountStringMatches(WTF::String string, uint32_t matchCount)
-    SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, WebKit::SharedMemory::Handle contentImageHandle, bool fadeOut)
+    SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, WebKit::ShareableBitmap::Handle contentImageHandle, bool fadeOut)
     DidFindString(WTF::String string, uint32_t matchCount)
     DidFailToFindString(WTF::String string)
 
@@ -203,7 +203,7 @@ messages -> WebPageProxy {
     # Drag and drop messages
     DidPerformDragControllerAction(uint64_t resultOperation)
 #if PLATFORM(MAC)
-    SetDragImage(WebCore::IntPoint clientPosition, WebCore::IntSize imageSize, WebKit::SharedMemory::Handle dragImage, bool linkDrag)
+    SetDragImage(WebCore::IntPoint clientPosition, WebKit::ShareableBitmap::Handle dragImage, bool linkDrag)
 #endif
 #if PLATFORM(WIN)
     StartDragDrop(WebCore::IntPoint imagePoint, WebCore::IntPoint dragPoint, uint64_t okEffect, HashMap<UINT,Vector<String> > dataMap, WebCore::IntSize dragImageSize, WebKit::SharedMemory::Handle dragImage, bool linkDrag)

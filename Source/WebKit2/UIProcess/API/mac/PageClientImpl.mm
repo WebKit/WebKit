@@ -297,10 +297,10 @@ void PageClientImpl::interceptKeyEvent(const NativeWebKeyboardEvent& event, Vect
     [m_wkView _getTextInputState:selectionStart selectionEnd:selectionEnd underlines:underlines];
 }
 
-void PageClientImpl::setDragImage(const IntPoint& clientPosition, const IntSize& imageSize, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag)
+void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag)
 {
     RetainPtr<CGImageRef> dragCGImage = dragImage->makeCGImage();
-    RetainPtr<NSImage> dragNSImage(AdoptNS, [[NSImage alloc] initWithCGImage:dragCGImage.get() size:imageSize]);
+    RetainPtr<NSImage> dragNSImage(AdoptNS, [[NSImage alloc] initWithCGImage:dragCGImage.get() size:dragImage->size()]);
 
     [m_wkView _setDragImage:dragNSImage.get() at:clientPosition linkDrag:isLinkDrag];
 }

@@ -340,7 +340,7 @@ void PluginControllerProxy::frameDidFail(uint64_t requestID, bool wasCancelled)
     m_plugin->frameDidFail(requestID, wasCancelled);
 }
 
-void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect, const SharedMemory::Handle& backingStoreHandle)
+void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect, const ShareableBitmap::Handle& backingStoreHandle)
 {
     m_frameRect = frameRect;
     m_clipRect = clipRect;
@@ -349,7 +349,7 @@ void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const In
 
     if (!backingStoreHandle.isNull()) {
         // Create a new backing store.
-        m_backingStore = ShareableBitmap::create(frameRect.size(), backingStoreHandle);
+        m_backingStore = ShareableBitmap::create(backingStoreHandle);
     }
 
     m_plugin->geometryDidChange(frameRect, clipRect);
@@ -448,7 +448,7 @@ void PluginControllerProxy::paintEntirePlugin()
     paint();
 }
 
-void PluginControllerProxy::snapshot(WebCore::IntSize& bufferSize, SharedMemory::Handle& backingStoreHandle)
+void PluginControllerProxy::snapshot(ShareableBitmap::Handle& backingStoreHandle)
 {
     ASSERT(m_plugin);
     RefPtr<ShareableBitmap> bitmap = m_plugin->snapshot();
@@ -456,7 +456,6 @@ void PluginControllerProxy::snapshot(WebCore::IntSize& bufferSize, SharedMemory:
         return;
 
     bitmap->createHandle(backingStoreHandle);
-    bufferSize = bitmap->size();
 }
 
 void PluginControllerProxy::setFocus(bool hasFocus)
