@@ -66,6 +66,8 @@ int pluginDatabaseClientCount = 0;
     zoomsTextOnly = NO;
 
     interactiveFormValidationEnabled = NO;
+    // The default value should be synchronized with WebCore/page/Settings.cpp.
+    validationMessageTimerMagnification = 50;
 
 #if ENABLE(DASHBOARD_SUPPORT)
     dashboardBehaviorAllowWheelScrolling = YES;

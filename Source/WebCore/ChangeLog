@@ -1,3 +1,25 @@
+2011-03-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Make validation message bubble testable
+        https://bugs.webkit.org/show_bug.cgi?id=57290
+
+        Introduce a setting for validation message timer so that we can configure
+        how long we show a validation message bubble.
+
+        Test: fast/forms/validation-message-appearance.html
+
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::setMessageDOMAndStartTimer):
+          Don't set a timer if the timer magnification value is 0 or negative.
+          Otherwise, hides the bubble length * magnification / 1000 seconds.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Initialize the timer magnification value.
+        * page/Settings.h:
+        (WebCore::Settings::setValidationMessageTimerMagnification): Added.
+        (WebCore::Settings::validationMessageTimerMaginification): Added.
+
 2011-03-29  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Remove the extraneous declaration I accidentally added in r82376.

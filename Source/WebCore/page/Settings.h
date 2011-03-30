@@ -362,6 +362,14 @@ namespace WebCore {
         // and http://webkit.org/b/40908
         void setInteractiveFormValidationEnabled(bool flag) { m_interactiveFormValidation = flag; }
         bool interactiveFormValidationEnabled() const { return m_interactiveFormValidation; }
+
+        // Sets the maginication value for validation message timer.
+        // If the maginication value is N, a validation message disappears
+        // automatically after <message length> * N / 1000 seconds. If N is
+        // equal to or less than 0, a validation message doesn't disappears
+        // automaticaly. The default value is 50.
+        void setValidationMessageTimerMagnification(int newValue) { m_validationMessageTimerMagnification = newValue; }
+        int validationMessageTimerMaginification() const { return m_validationMessageTimerMagnification; }
         
         void setUsePreHTML5ParserQuirks(bool flag) { m_usePreHTML5ParserQuirks = flag; }
         bool usePreHTML5ParserQuirks() const { return m_usePreHTML5ParserQuirks; }
@@ -397,6 +405,7 @@ namespace WebCore {
         int m_minimumLogicalFontSize;
         int m_defaultFontSize;
         int m_defaultFixedFontSize;
+        int m_validationMessageTimerMagnification;
         size_t m_maximumDecodedImageSize;
 #if ENABLE(DOM_STORAGE)
         unsigned m_sessionStorageQuota;

@@ -308,6 +308,7 @@ WebView *createWebViewAndOffscreenWindow()
     [webView setContinuousSpellCheckingEnabled:YES];
     [webView setGrammarCheckingEnabled:YES];
     [webView setInteractiveFormValidationEnabled:YES];
+    [webView setValidationMessageTimerMagnification:-1];
     
     // To make things like certain NSViews, dragging, and plug-ins work, put the WebView a window, but put it off-screen so you don't see it.
     // Put it at -10000, -10000 in "flipped coordinates", since WebCore and the DOM use flipped coordinates.

@@ -490,6 +490,8 @@ Could be worth adding to the API.
 // For DumpRenderTree
 - (BOOL)interactiveFormValidationEnabled;
 - (void)setInteractiveFormValidationEnabled:(BOOL)enabled;
+- (int)validationMessageTimerMagnification;
+- (void)setValidationMessageTimerMagnification:(int)newValue;
 
 // Returns YES if NSView -displayRectIgnoringOpacity:inContext: will produce a faithful representation of the content.
 - (BOOL)_isSoftwareRenderable;

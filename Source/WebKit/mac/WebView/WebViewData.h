@@ -188,5 +188,6 @@ extern int pluginDatabaseClientCount;
     RefPtr<WebCore::HistoryItem> _globalHistoryItem;
 
     BOOL interactiveFormValidationEnabled;
+    int validationMessageTimerMagnification;
 }
 @end

@@ -37,7 +37,9 @@
 #include "FormAssociatedElement.h"
 #include "HTMLBRElement.h"
 #include "HTMLNames.h"
+#include "Page.h"
 #include "RenderObject.h"
+#include "Settings.h"
 #include "Text.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -92,8 +94,13 @@ void ValidationMessage::setMessageDOMAndStartTimer(Timer<ValidationMessage>*)
         }
     }
 
-    m_timer.set(new Timer<ValidationMessage>(this, &ValidationMessage::deleteBubbleTree));
-    m_timer->startOneShot(max(5.0, m_message.length() / 20.0));
+    int magnification = doc->page() ? doc->page()->settings()->validationMessageTimerMaginification() : -1;
+    if (magnification <= 0)
+        m_timer.clear();
+    else {
+        m_timer.set(new Timer<ValidationMessage>(this, &ValidationMessage::deleteBubbleTree));
+        m_timer->startOneShot(max(5.0, static_cast<double>(m_message.length()) * magnification / 1000));
+    }
 }
 
 class ElementWithPseudoId : public HTMLElement {

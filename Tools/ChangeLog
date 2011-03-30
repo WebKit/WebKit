@@ -1,3 +1,14 @@
+2011-03-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Make validation message bubble testable
+        https://bugs.webkit.org/show_bug.cgi?id=57290
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow): Change a setting so that validation
+          bubbles isn't hidden automatically.
+
 2011-03-29  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.
