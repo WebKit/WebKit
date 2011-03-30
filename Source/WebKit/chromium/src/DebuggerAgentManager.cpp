@@ -34,7 +34,7 @@
 #include "DebuggerAgentImpl.h"
 #include "Frame.h"
 #include "PageGroupLoadDeferrer.h"
-#include "ScriptDebugServer.h"
+#include "PageScriptDebugServer.h"
 #include "V8Proxy.h"
 #include "WebDevToolsAgentImpl.h"
 #include "WebFrameImpl.h"
@@ -247,7 +247,7 @@ void DebuggerAgentManager::setMessageLoopDispatchHandler(WebDevToolsAgent::Messa
 void DebuggerAgentManager::setExposeV8DebuggerProtocol(bool value)
 {
     s_exposeV8DebuggerProtocol = value;
-    WebCore::ScriptDebugServer::shared().setEnabled(!s_exposeV8DebuggerProtocol);
+    WebCore::PageScriptDebugServer::shared().setEnabled(!s_exposeV8DebuggerProtocol);
 }
 
 void DebuggerAgentManager::setHostId(WebFrameImpl* webframe, int hostId)

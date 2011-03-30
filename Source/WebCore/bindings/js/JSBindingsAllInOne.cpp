@@ -159,6 +159,7 @@
 #include "JSXSLTProcessorCustom.cpp"
 #include "JavaScriptCallFrame.cpp"
 #include "MemoryInfo.cpp"
+#include "PageScriptDebugServer.cpp"
 #include "ScheduledAction.cpp"
 #include "ScriptCachedFrameData.cpp"
 #include "ScriptCallStackFactory.cpp"
@@ -172,4 +173,5 @@
 #include "ScriptState.cpp"
 #include "SerializedScriptValue.cpp"
 #include "WorkerScriptController.cpp"
+#include "WorkerScriptDebugServer.cpp"
 

@@ -1,5 +1,22 @@
 2011-03-30  Yury Semikhatsky  <yurys@chromium.org>
 
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: split debugger agent into Page and Worker-specific ones
+        https://bugs.webkit.org/show_bug.cgi?id=57345
+
+        ScriptDebugServer and InspectorDebuggerAgent contain only functionality common
+        for Worker and Page debugger. All specifics is moved into Page/WorkerScriptDebugServer
+        and Page/WorkerDebuggerAgent.
+
+        * src/DebuggerAgentManager.cpp:
+        (WebKit::DebuggerAgentManager::setExposeV8DebuggerProtocol):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgent::interruptAndDispatch):
+        (WebKit::WebDevToolsAgent::processPendingMessages):
+
+2011-03-30  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed. Rollout r82438 and r82436.
 
         * src/DebuggerAgentManager.cpp:
