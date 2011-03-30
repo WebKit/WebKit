@@ -3324,3 +3324,6 @@ BUGXXX GPU MAC SNOWLEOPARD : compositing/self-painting-layers.html = FAIL
 
 // Chrome doesn't load favicons in DRT tests.
 BUGWK57259 : http/tests/misc/link-rel-icon-beforeload.html = FAIL PASS
+
+// r82419.
+BUGWK57442 : fast/box-shadow/basic-shadows.html = IMAGE

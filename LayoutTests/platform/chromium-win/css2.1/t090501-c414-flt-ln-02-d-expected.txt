@@ -16,7 +16,7 @@ layer at (0,0) size 800x530
         RenderText {#text} at (171,21) size 518x19
           text run at (171,21) width 444: "dummy text dummy text dummy text dummy text dummy text dummy text "
           text run at (615,21) width 74: "dummy text "
-        RenderInline {SPAN} at (0,0) size 14x25 [color=#FFFFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]
+        RenderInline {SPAN} at (0,0) size 17x25 [color=#FFFFFF] [bgcolor=#008080] [border: (3px solid #00FFFF)]
           RenderText {#text} at (692,21) size 11x19
             text run at (692,21) width 11: "A"
         RenderText {#text} at (0,0) size 0x0

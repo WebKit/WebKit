@@ -1,3 +1,56 @@
+2011-03-30  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, add and update Chromium test results.
+
+        * platform/chromium-linux/css2.1/t090501-c414-flt-ln-00-d-expected.checksum:
+        * platform/chromium-linux/css2.1/t090501-c414-flt-ln-00-d-expected.png:
+        * platform/chromium-linux/css2.1/t090501-c414-flt-ln-02-d-expected.checksum:
+        * platform/chromium-linux/css2.1/t090501-c414-flt-ln-02-d-expected.png:
+        * platform/chromium-linux/fast/borders/rtl-border-01-expected.checksum: Added.
+        * platform/chromium-linux/fast/borders/rtl-border-01-expected.png: Added.
+        * platform/chromium-linux/fast/borders/rtl-border-02-expected.checksum: Added.
+        * platform/chromium-linux/fast/borders/rtl-border-02-expected.png: Added.
+        * platform/chromium-linux/fast/borders/rtl-border-03-expected.checksum: Added.
+        * platform/chromium-linux/fast/borders/rtl-border-03-expected.png: Added.
+        * platform/chromium-linux/fast/borders/rtl-border-04-expected.checksum: Added.
+        * platform/chromium-linux/fast/borders/rtl-border-04-expected.png: Added.
+        * platform/chromium-linux/fast/borders/rtl-border-05-expected.checksum: Added.
+        * platform/chromium-linux/fast/borders/rtl-border-05-expected.png: Added.
+        * platform/chromium-mac-leopard/css2.1/t090501-c414-flt-ln-02-d-expected.checksum: Added.
+        * platform/chromium-mac-leopard/css2.1/t090501-c414-flt-ln-02-d-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/borders/rtl-border-01-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/borders/rtl-border-01-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/borders/rtl-border-02-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/borders/rtl-border-02-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/borders/rtl-border-03-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/borders/rtl-border-03-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/borders/rtl-border-04-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/borders/rtl-border-04-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/borders/rtl-border-05-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/borders/rtl-border-05-expected.png: Added.
+        * platform/chromium-win/css2.1/t090501-c414-flt-ln-00-d-expected.checksum:
+        * platform/chromium-win/css2.1/t090501-c414-flt-ln-00-d-expected.png:
+        * platform/chromium-win/css2.1/t090501-c414-flt-ln-00-d-expected.txt:
+        * platform/chromium-win/css2.1/t090501-c414-flt-ln-02-d-expected.checksum:
+        * platform/chromium-win/css2.1/t090501-c414-flt-ln-02-d-expected.png:
+        * platform/chromium-win/css2.1/t090501-c414-flt-ln-02-d-expected.txt:
+        * platform/chromium-win/fast/borders/rtl-border-01-expected.checksum: Added.
+        * platform/chromium-win/fast/borders/rtl-border-01-expected.png: Added.
+        * platform/chromium-win/fast/borders/rtl-border-01-expected.txt: Added.
+        * platform/chromium-win/fast/borders/rtl-border-02-expected.checksum: Added.
+        * platform/chromium-win/fast/borders/rtl-border-02-expected.png: Added.
+        * platform/chromium-win/fast/borders/rtl-border-02-expected.txt: Added.
+        * platform/chromium-win/fast/borders/rtl-border-03-expected.checksum: Added.
+        * platform/chromium-win/fast/borders/rtl-border-03-expected.png: Added.
+        * platform/chromium-win/fast/borders/rtl-border-03-expected.txt: Added.
+        * platform/chromium-win/fast/borders/rtl-border-04-expected.checksum: Added.
+        * platform/chromium-win/fast/borders/rtl-border-04-expected.png: Added.
+        * platform/chromium-win/fast/borders/rtl-border-04-expected.txt: Added.
+        * platform/chromium-win/fast/borders/rtl-border-05-expected.checksum: Added.
+        * platform/chromium-win/fast/borders/rtl-border-05-expected.png: Added.
+        * platform/chromium-win/fast/borders/rtl-border-05-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
