@@ -6,5 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
+		AdditionalOptions="/Oy-"
+		OmitFramePointers="false"
 	/>
 </VisualStudioPropertySheet>

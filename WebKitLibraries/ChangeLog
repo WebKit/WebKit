@@ -2,6 +2,21 @@
 
         Reviewed by Adam Roben.
 
+        Should turn off frame pointer omission (FPO) for Release (not Production) builds
+        https://bugs.webkit.org/show_bug.cgi?id=54403
+
+        Leave it enabled for Windows Production builds.
+        Disabling this optimization improves stack traces for memory and performance tools like umdh and xperf.
+        
+        We use both /Oy- and OmitFramePointers="false" since OmitFramePointers="false" isnt' enough
+        to override /O2.
+
+        * win/tools/vsprops/release.vsprops:
+
+2011-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
         Share most vsprops between Release and Production builds in releaseproduction.vsprops
         https://bugs.webkit.org/show_bug.cgi?id=57508
 
