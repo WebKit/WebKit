@@ -1,3 +1,17 @@
+2011-03-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Crash when NPN_Evaluate removes the plug-in frame
+        https://bugs.webkit.org/show_bug.cgi?id=57474
+        <rdar://problem/9191396>
+
+        Get a reference to the frame since it can be nulled out if running the JavaScript code
+        causes the plug-in's containing frame to be removed from the frame tree.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::evaluate):
+
 2011-03-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

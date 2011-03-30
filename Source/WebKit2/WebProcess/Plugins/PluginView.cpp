@@ -931,11 +931,12 @@ NPObject* PluginView::pluginElementNPObject()
 
 bool PluginView::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result, bool allowPopups)
 {
-    if (!frame())
+    RefPtr<Frame> frame = m_pluginElement->document()->frame();
+    if (!frame)
         return false;
 
-    bool oldAllowPopups = frame()->script()->allowPopupsFromPlugin();
-    frame()->script()->setAllowPopupsFromPlugin(allowPopups);
+    bool oldAllowPopups = frame->script()->allowPopupsFromPlugin();
+    frame->script()->setAllowPopupsFromPlugin(allowPopups);
 
     // Calling evaluate will run JavaScript that can potentially remove the plug-in element, so we need to
     // protect the plug-in view from destruction.
@@ -943,7 +944,7 @@ bool PluginView::evaluate(NPObject* npObject, const String& scriptString, NPVari
 
     bool returnValue = m_npRuntimeObjectMap.evaluate(npObject, scriptString, result);
 
-    frame()->script()->setAllowPopupsFromPlugin(oldAllowPopups);
+    frame->script()->setAllowPopupsFromPlugin(oldAllowPopups);
 
     return returnValue;
 }
