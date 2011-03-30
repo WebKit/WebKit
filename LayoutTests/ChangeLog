@@ -1,3 +1,18 @@
+2011-03-25  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add test for bug 56747 (scripts panel is broken when frontend is reopened).
+        https://bugs.webkit.org/show_bug.cgi?id=56841
+
+        * http/tests/inspector-enabled/open-close-open-expected.txt: Removed.
+        * http/tests/inspector-enabled/open-close-open.html: Removed.
+        * inspector/debugger/open-close-open-expected.txt: Added.
+        * inspector/debugger/open-close-open.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+
 2011-03-30  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, add and update Chromium test results.

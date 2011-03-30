@@ -547,8 +547,8 @@ inspector/timeline/timeline-paint.html
 inspector/styles/styles-add-blank-property.html
 
 # [Qt] New fails caused by change(s) between r79317-r79320.
-http/tests/inspector-enabled/open-close-open.html
 http/tests/inspector/change-iframe-src.html
+inspector/debugger/open-close-open.html
 
 # [Qt] fast/frames/flattening/frameset-flattening-subframesets.html fails intermittently on Qt bot
 # Fails caused by layoutTestController.display() in fast/frames/flattening/frameset-flattening-subframe-resize.html

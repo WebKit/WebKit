@@ -170,7 +170,7 @@ http/tests/cache/subresource-fragment-identifier.html
 http/tests/misc/authentication-sent-to-redirect.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=50744
-http/tests/inspector-enabled/open-close-open.html
+inspector/debugger/open-close-open.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=55135
 http/tests/incremental/slow-utf8-html.pl

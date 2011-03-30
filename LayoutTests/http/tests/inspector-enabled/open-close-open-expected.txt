@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: line 13: Opening Web Inspector.
-CONSOLE MESSAGE: line 23: Closing Web Inspector.
-CONSOLE MESSAGE: line 26: Re-opending Web Inspector.
-CONSOLE MESSAGE: line 36: Completing the test.
-Tests that Web Inspector is functional after the open - close - open sequence. https://bugs.webkit.org/show_bug.cgi?id=54879

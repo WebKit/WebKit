@@ -2247,7 +2247,7 @@ storage/multiple-databases-garbage-collection.html
 # Unknown failures after enabling inspector tests
 inspector/timeline/timeline-paint.html
 inspector/timeline/timeline-script-tag-1.html
-http/tests/inspector-enabled/open-close-open.html
+inspector/debugger/open-close-open.html
 
 # Crashes the WebProcess
 editing/pasteboard/copy-standalone-image.html
