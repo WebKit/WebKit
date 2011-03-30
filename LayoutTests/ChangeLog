@@ -1,3 +1,17 @@
+2011-03-30  Adam Roben  <aroben@apple.com>
+
+        Make font fallback on Windows in new Hebrew-containing tests added in r82419 match Mac
+
+        Fixes <http://webkit.org/b/57445> fast/borders/rtl-border-0{4,5}.html failing on Windows
+        since they were added
+
+        Reviewed by Eric Seidel.
+
+        * fast/borders/rtl-border-04.html:
+        * fast/borders/rtl-border-05.html:
+        Pull in the magic Mac-compatible-font-fallback.css file, which will cause the Hebrew text in
+        these tests to be rendered using Lucida Grande on Windows, just like on Mac.
+
 2011-03-30  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, rolling out r82396.
