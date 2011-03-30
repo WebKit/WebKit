@@ -1,3 +1,15 @@
+2011-03-30  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] DumpRenderTree: Implement LayoutTestController::setPluginsEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=57430
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::setPluginsEnabled):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+
 2011-03-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam Barth.

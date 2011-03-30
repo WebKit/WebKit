@@ -3204,7 +3204,7 @@ BUGCR77582 BUG_DRT WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation
 
 // Regression since r82001.
 BUGCR77619 MAC SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
-// BUGCR77628 MAC : fast/images/move-image-to-new-document.html = TIMEOUT
+BUGCR77628 MAC : fast/images/move-image-to-new-document.html = TIMEOUT
 
 // New test in r82013.
 BUGWK82013 WIN LINUX : fast/text/justify-ideograph-leading-expansion.html = IMAGE+TEXT
@@ -3234,6 +3234,3 @@ BUGXXX GPU MAC SNOWLEOPARD : compositing/self-painting-layers.html = FAIL
 
 // Chrome doesn't load favicons in DRT tests.
 BUGWK57259 : http/tests/misc/link-rel-icon-beforeload.html = FAIL PASS
-
-// Needs LayoutTestController.setPluginsEnabled.
-BUGWK57430 : fast/images/move-image-to-new-document.html = TEXT

@@ -155,6 +155,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setMockGeolocationError", &LayoutTestController::setMockGeolocationError);
     bindMethod("setMockGeolocationPosition", &LayoutTestController::setMockGeolocationPosition);
     bindMethod("addMockSpeechInputResult", &LayoutTestController::addMockSpeechInputResult);
+    bindMethod("setPluginsEnabled", &LayoutTestController::setPluginsEnabled);
     bindMethod("setPopupBlockingEnabled", &LayoutTestController::setPopupBlockingEnabled);
     bindMethod("setPOSIXLocale", &LayoutTestController::setPOSIXLocale);
     bindMethod("setScrollbarPolicy", &LayoutTestController::setScrollbarPolicy);
@@ -1692,4 +1693,13 @@ void LayoutTestController::observeStorageTrackerNotifications(const CppArgumentL
 void LayoutTestController::syncLocalStorage(const CppArgumentList&, CppVariant*)
 {
     // Not Implemented
+}
+
+void LayoutTestController::setPluginsEnabled(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool()) {
+        m_shell->preferences()->pluginsEnabled = arguments[0].toBoolean();
+        m_shell->applyPreferences();
+    }
+    result->setNull();
 }
