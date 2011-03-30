@@ -15,6 +15,17 @@
 
         Reviewed by Adam Roben.
 
+        Update Windows production build logic for new production configurations
+        https://bugs.webkit.org/show_bug.cgi?id=57494
+
+        * win/WebKit2.make:
+        * win/WebKit2Production.vsprops:
+        * win/WebKit2WebProcessProduction.vsprops:
+
+2011-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
         Rename Windows configuration Release_LTCG to Production for clarity
         https://bugs.webkit.org/show_bug.cgi?id=57465
 

@@ -1,11 +1,10 @@
 !IF "$(BUILDSTYLE)"=="DEBUG"
 BUILDSTYLE=Debug_All
 !ELSE
-BUILDSTYLE=Release_LTCG
+BUILDSTYLE=Production
 !ENDIF
 
 install:
-    set PRODUCTION=1
 	set WebKitLibrariesDir=$(SRCROOT)\AppleInternal
 	set WebKitOutputDir=$(OBJROOT)
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)

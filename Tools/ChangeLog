@@ -1,3 +1,23 @@
+2011-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Update Windows production build logic for new production configurations
+        https://bugs.webkit.org/show_bug.cgi?id=57494
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePluginProduction.vsprops:
+        * DumpRenderTree/win/DumpRenderTreeProduction.vsprops:
+        * DumpRenderTree/win/ImageDiffProduction.vsprops:
+        * FindSafari/FindSafariProduction.vsprops:
+        * FindSafari/FindSafariReleasePGO.vsprops:
+        * MiniBrowser/Configurations/MiniBrowserProduction.vsprops:
+        * WebKitAPITest/WebKitAPITestProduction.vsprops:
+        * WebKitLauncherWin/WebKitLauncherWinProduction.vsprops:
+        * WebKitTestRunner/win/InjectedBundleProduction.vsprops:
+        * WebKitTestRunner/win/WebKitTestRunnerProduction.vsprops:
+        * WinLauncher/WinLauncherProduction.vsprops:
+        * record-memory-win/record-memory-winProduction.vsprops:
+
 2011-03-30  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.

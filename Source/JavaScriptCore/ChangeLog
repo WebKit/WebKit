@@ -2,6 +2,23 @@
 
         Reviewed by Adam Roben.
 
+        Update Windows production build logic for new production configurations
+        https://bugs.webkit.org/show_bug.cgi?id=57494
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreProduction.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleasePGO.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreReleasePGOOptimize.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFProduction.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTFReleasePGO.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscProduction.vsprops:
+        * JavaScriptCore.vcproj/jsc/jscReleasePGO.vsprops:
+        * JavaScriptCore.vcproj/testapi/testapiProduction.vsprops:
+
+2011-03-30  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
         Rename Windows configuration Release_LTCG to Production for clarity
         https://bugs.webkit.org/show_bug.cgi?id=57465
 
