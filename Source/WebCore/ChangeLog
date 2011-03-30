@@ -1,3 +1,17 @@
+2011-03-30  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+        
+        Crash when closing "Add Bookmark" dialog using the Enter Key
+        https://bugs.webkit.org/show_bug.cgi?id=57294
+        <rdar://problem/9044756>
+
+        Protect the FrameView in EventHandler::keyEvent, like we do in other EventHandler
+        functions that could destroy the frame.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent):
+
 2011-03-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82463.
