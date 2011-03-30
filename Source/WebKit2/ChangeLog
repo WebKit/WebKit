@@ -1,3 +1,10 @@
+2011-03-30  Adam Roben  <aroben@apple.com>
+
+        Mac build fix after r82442
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::geometryDidChange): Added a missing argument.
+
 2011-03-29  Adam Roben  <aroben@apple.com>
 
         Add a way to specify that a ShareableBitmap has no alpha channel

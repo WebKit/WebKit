@@ -181,7 +181,7 @@ void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& cli
 
     bool didUpdateBackingStore = false;
     if (!m_backingStore) {
-        m_backingStore = ShareableBitmap::create(frameRect.size());
+        m_backingStore = ShareableBitmap::create(frameRect.size(), ShareableBitmap::SupportsAlpha);
         didUpdateBackingStore = true;
     } else if (frameRect.size() != m_backingStore->size()) {
         // The backing store already exists, just resize it.
