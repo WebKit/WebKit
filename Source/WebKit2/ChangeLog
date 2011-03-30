@@ -1,5 +1,12 @@
 2011-03-30  Sam Weinig  <sam@webkit.org>
 
+        Fix Snow Leopard build.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+
+2011-03-30  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         WebKit2 contextual menu looks different than the rest of the OS

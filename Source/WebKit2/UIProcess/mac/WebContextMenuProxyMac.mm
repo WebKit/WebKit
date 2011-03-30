@@ -219,7 +219,7 @@ void WebContextMenuProxyMac::showContextMenu(const IntPoint& menuLocation, const
     NSPoint location = NSMakePoint(NSMinX(menuRect), NSMaxY(menuRect) - vertOffset);
 
     location = [m_webView convertPoint:location toView:nil];
-    location = [m_webView.window convertRectToScreen:NSMakeRect(location.x, location.y, 0, 0)].origin;
+    location = [m_webView.window convertBaseToScreen:location];
  
     WKPopupContextMenu(menu, location);
 
