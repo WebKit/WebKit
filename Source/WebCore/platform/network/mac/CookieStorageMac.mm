@@ -116,7 +116,10 @@ void startObservingCookieChanges()
 
 void stopObservingCookieChanges()
 {
-    ASSERT(cookieStorageAdapter);
+    // cookieStorageAdapter can be nil here, if the WebProcess crashed and was restarted between
+    // when startObservingCookieChanges was called, and stopObservingCookieChanges is currently being called.
+    if (!cookieStorageAdapter)
+        return;
     [cookieStorageAdapter stopListeningForCookieChangeNotifications];
 }
 

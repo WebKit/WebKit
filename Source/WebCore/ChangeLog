@@ -1,3 +1,20 @@
+2011-03-30  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Anders Carlsson.
+        
+        ASSERT(cookieStorageAdapter) when calling stopObservingCookieChanges after WebProcess has crashed
+        https://bugs.webkit.org/show_bug.cgi?id=57477
+        <rdar://problem/9178751>
+        
+        If someone has called startObservingCookieChanges, and the WebProcess crashes and restarts, the UIProcess
+        will call stopObservingCookieChanges when cookieStorageAdapter is nil.
+        
+        The assert is wrong when the web process crashes, and there is no harm in dispatching a message to nil,
+        so remove the assert.
+        
+        * platform/network/mac/CookieStorageMac.mm:
+        (WebCore::stopObservingCookieChanges):
+
 2011-03-30  Sam Weinig  <sam@webkit.org>
 
         Fix Leopard build.
