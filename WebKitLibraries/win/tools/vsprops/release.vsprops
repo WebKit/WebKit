@@ -6,33 +6,5 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		Optimization="2"
-		PreprocessorDefinitions="NDEBUG"
-		RuntimeLibrary="2"
-	/>
-	<Tool
-		Name="VCLinkerTool"
-		LinkIncremental="1"
-		OptimizeReferences="2"
-		EnableCOMDATFolding="2"
-		OptimizeForWindows98="1"
-	/>
-	<Tool
-		Name="VCResourceCompilerTool"
-		PreprocessorDefinitions="NDEBUG"
-	/>
-	<UserMacro
-		Name="WebKitConfigSuffix"
-		Value=""
-		PerformEnvironmentSet="true"
-	/>
-	<UserMacro
-		Name="LibraryConfigSuffix"
-		Value=""
-		PerformEnvironmentSet="true"
-	/>
-	<UserMacro
-		Name="WebKitDLLConfigSuffix"
-		Value=""
 	/>
 </VisualStudioPropertySheet>
