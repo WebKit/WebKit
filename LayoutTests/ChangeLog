@@ -1,3 +1,15 @@
+2011-03-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r82463.
+        http://trac.webkit.org/changeset/82463
+        https://bugs.webkit.org/show_bug.cgi?id=57482
+
+        Assertion failure in Node::rendererIsEditable on multiple
+        editing tests (Requested by aroben|meeting on #webkit).
+
+        * css3/unicode-bidi-plaintext-parse-expected.txt: Removed.
+        * css3/unicode-bidi-plaintext-parse.html: Removed.
+
 2011-03-30  Mihai Parparita  <mihaip@chromium.org>
 
         Fix fast/multicol for Chromium Snow Leopard.

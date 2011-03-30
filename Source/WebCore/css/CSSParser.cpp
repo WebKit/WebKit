@@ -648,12 +648,11 @@ bool CSSParser::parseValue(int propId, bool important)
         else
             return parseQuotes(propId, important);
         break;
-    case CSSPropertyUnicodeBidi: // normal | embed | bidi-override | isolate | plaintext | inherit
+    case CSSPropertyUnicodeBidi: // normal | embed | bidi-override | isolate | inherit
         if (id == CSSValueNormal
             || id == CSSValueEmbed
             || id == CSSValueBidiOverride
-            || id == CSSValueWebkitIsolate
-            || id == CSSValueWebkitPlaintext)
+            || id == CSSValueWebkitIsolate)
             validPrimitive = true;
         break;
 
