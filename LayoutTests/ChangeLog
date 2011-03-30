@@ -1,3 +1,12 @@
+2011-03-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Update some GTK+ results after r82411.
+
+        * platform/gtk/svg/text/bidi-reorder-value-lists-expected.checksum:
+        * platform/gtk/svg/text/bidi-reorder-value-lists-expected.png:
+        * platform/gtk/svg/text/bidi-reorder-value-lists-expected.txt:
+        * platform/gtk/svg/text/font-size-below-point-five-expected.txt:
+
 2011-03-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82463.
