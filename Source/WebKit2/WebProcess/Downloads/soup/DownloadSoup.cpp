@@ -63,4 +63,19 @@ void Download::platformDidFinish()
     notImplemented();
 }
 
+void Download::receivedCredential(const AuthenticationChallenge& authenticationChallenge, const Credential& credential)
+{
+    notImplemented();
+}
+
+void Download::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& authenticationChallenge)
+{
+    notImplemented();
+}
+
+void Download::receivedCancellation(const AuthenticationChallenge& authenticationChallenge)
+{
+    notImplemented();
+}
+
 } // namespace WebKit

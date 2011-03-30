@@ -41,6 +41,7 @@ namespace WebCore {
 
 namespace WebKit {
 
+class Download;
 class WebFrame;
 
 class AuthenticationManager {
@@ -52,6 +53,7 @@ public:
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     void didReceiveAuthenticationChallenge(WebFrame*, const WebCore::AuthenticationChallenge&);
+    void didReceiveAuthenticationChallenge(Download*, const WebCore::AuthenticationChallenge&);
 
     void useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential&);
     void continueWithoutCredentialForChallenge(uint64_t challengeID);

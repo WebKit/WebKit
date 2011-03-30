@@ -26,6 +26,7 @@
 #import "config.h"
 #import "Download.h"
 
+#import <WebCore/AuthenticationMac.h>
 #import <WebCore/BackForwardController.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/NotImplemented.h>
@@ -177,6 +178,21 @@ void Download::platformDidFinish()
 {
 }
 
+void Download::receivedCredential(const AuthenticationChallenge& authenticationChallenge, const Credential& credential)
+{
+    [authenticationChallenge.sender() useCredential:mac(credential) forAuthenticationChallenge:authenticationChallenge.nsURLAuthenticationChallenge()];
+}
+
+void Download::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& authenticationChallenge)
+{
+    [authenticationChallenge.sender() continueWithoutCredentialForAuthenticationChallenge:authenticationChallenge.nsURLAuthenticationChallenge()];
+}
+
+void Download::receivedCancellation(const AuthenticationChallenge& authenticationChallenge)
+{
+    [authenticationChallenge.sender() cancelAuthenticationChallenge:authenticationChallenge.nsURLAuthenticationChallenge()];
+}
+
 } // namespace WebKit
 
 @implementation WKDownloadAsDelegate
@@ -216,8 +232,8 @@ void Download::platformDidFinish()
 
 - (void)download:(NSURLDownload *)download didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
-    // FIXME: Implement.
-    notImplemented();
+    if (_download)
+        _download->didReceiveAuthenticationChallenge(core(challenge));
 }
 
 - (void)download:(NSURLDownload *)download didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
@@ -228,9 +244,7 @@ void Download::platformDidFinish()
 
 - (BOOL)downloadShouldUseCredentialStorage:(NSURLDownload *)download
 {
-    // FIXME: Implement.
-    notImplemented();
-    return YES;
+    return NO;
 }
 
 - (void)download:(NSURLDownload *)download didReceiveResponse:(NSURLResponse *)response

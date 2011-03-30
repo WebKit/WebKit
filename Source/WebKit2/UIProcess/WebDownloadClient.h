@@ -37,12 +37,14 @@ namespace WebCore {
 
 namespace WebKit {
 
+class AuthenticationChallengeProxy;
 class DownloadProxy;
 class WebContext;
 
 class WebDownloadClient : public APIClient<WKContextDownloadClient> {
 public:
     void didStart(WebContext*, DownloadProxy*);
+    void didReceiveAuthenticationChallenge(WebContext*, DownloadProxy*, AuthenticationChallengeProxy*);
     void didReceiveResponse(WebContext*, DownloadProxy*, const WebCore::ResourceResponse&);
     void didReceiveData(WebContext*, DownloadProxy*, uint64_t length);
     bool shouldDecodeSourceDataOfMIMEType(WebContext*, DownloadProxy*, const String& mimeType);

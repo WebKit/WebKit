@@ -77,6 +77,7 @@ typedef struct WKContextHistoryClient WKContextHistoryClient;
 
 // Download Client
 typedef void (*WKContextDownloadDidStartCallback)(WKContextRef context, WKDownloadRef download, const void *clientInfo);
+typedef void (*WKContextDownloadDidReceiveAuthenticationChallengeCallback)(WKContextRef context, WKDownloadRef download, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo);
 typedef void (*WKContextDownloadDidReceiveResponseCallback)(WKContextRef context, WKDownloadRef download, WKURLResponseRef response, const void *clientInfo);
 typedef void (*WKContextDownloadDidReceiveDataCallback)(WKContextRef context, WKDownloadRef download, uint64_t length, const void *clientInfo);
 typedef bool (*WKContextDownloadShouldDecodeSourceDataOfMIMETypeCallback)(WKContextRef context, WKDownloadRef download, WKStringRef mimeType, const void *clientInfo);
@@ -91,6 +92,7 @@ struct WKContextDownloadClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKContextDownloadDidStartCallback                                   didStart;
+    WKContextDownloadDidReceiveAuthenticationChallengeCallback          didReceiveAuthenticationChallenge;
     WKContextDownloadDidReceiveResponseCallback                         didReceiveResponse;
     WKContextDownloadDidReceiveDataCallback                             didReceiveData;
     WKContextDownloadShouldDecodeSourceDataOfMIMETypeCallback           shouldDecodeSourceDataOfMIMEType;

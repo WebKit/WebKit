@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DownloadProxy.h"
 
+#include "AuthenticationChallengeProxy.h"
 #include "DataReference.h"
 #include "WebContext.h"
 #include "WebData.h"
@@ -89,6 +90,15 @@ void DownloadProxy::didStart(const ResourceRequest& request)
         return;
 
     m_webContext->downloadClient().didStart(m_webContext, this);
+}
+
+void DownloadProxy::didReceiveAuthenticationChallenge(const AuthenticationChallenge& authenticationChallenge, uint64_t challengeID)
+{
+    if (!m_webContext)
+        return;
+
+    RefPtr<AuthenticationChallengeProxy> authenticationChallengeProxy = AuthenticationChallengeProxy::create(authenticationChallenge, challengeID, m_webContext->process());
+    m_webContext->downloadClient().didReceiveAuthenticationChallenge(m_webContext, this, authenticationChallengeProxy.get());
 }
 
 void DownloadProxy::didReceiveResponse(const ResourceResponse& response)

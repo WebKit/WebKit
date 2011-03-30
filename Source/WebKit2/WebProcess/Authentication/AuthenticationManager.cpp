@@ -26,6 +26,8 @@
 #include "config.h"
 #include "AuthenticationManager.h"
 
+#include "Download.h"
+#include "DownloadProxyMessages.h"
 #include "MessageID.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
@@ -34,6 +36,8 @@
 #include "WebProcess.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/AuthenticationClient.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -58,46 +62,64 @@ void AuthenticationManager::didReceiveMessage(CoreIPC::Connection* connection, C
     didReceiveAuthenticationManagerMessage(connection, messageID, arguments);
 }
 
-void AuthenticationManager::didReceiveAuthenticationChallenge(WebFrame* frame, const WebCore::AuthenticationChallenge& authenticationChallenge)
+void AuthenticationManager::didReceiveAuthenticationChallenge(WebFrame* frame, const AuthenticationChallenge& authenticationChallenge)
 {
     ASSERT(frame);
     ASSERT(frame->page());
 
-    uint64_t id = generateAuthenticationChallengeID();
-    m_challenges.set(id, authenticationChallenge);    
+    uint64_t challengeID = generateAuthenticationChallengeID();
+    m_challenges.set(challengeID, authenticationChallenge);    
     
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidReceiveAuthenticationChallenge(frame->frameID(), authenticationChallenge, id), frame->page()->pageID());
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidReceiveAuthenticationChallenge(frame->frameID(), authenticationChallenge, challengeID), frame->page()->pageID());
 }
 
-void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential& credential)
+void AuthenticationManager::didReceiveAuthenticationChallenge(Download* download, const AuthenticationChallenge& authenticationChallenge)
 {
-    WebCore::AuthenticationChallenge challenge = m_challenges.take(challengeID);
+    uint64_t challengeID = generateAuthenticationChallengeID();
+    m_challenges.set(challengeID, authenticationChallenge);
+
+    download->send(Messages::DownloadProxy::DidReceiveAuthenticationChallenge(authenticationChallenge, challengeID));
+}
+
+void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, const Credential& credential)
+{
+    AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
-    WebCore::AuthenticationClient* coreClient = challenge.authenticationClient();
-    if (!coreClient)
+    AuthenticationClient* coreClient = challenge.authenticationClient();
+    if (!coreClient) {
+        // This authentication challenge comes from a download.
+        Download::receivedCredential(challenge, credential);
         return;
+        
+    }
 
     coreClient->receivedCredential(challenge, credential);
 }
 
 void AuthenticationManager::continueWithoutCredentialForChallenge(uint64_t challengeID)
 {
-    WebCore::AuthenticationChallenge challenge = m_challenges.take(challengeID);
+    AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
-    WebCore::AuthenticationClient* coreClient = challenge.authenticationClient();
-    if (!coreClient)
+    AuthenticationClient* coreClient = challenge.authenticationClient();
+    if (!coreClient) {
+        // This authentication challenge comes from a download.
+        Download::receivedRequestToContinueWithoutCredential(challenge);
         return;
+    }
 
     coreClient->receivedRequestToContinueWithoutCredential(challenge);
 }
 
 void AuthenticationManager::cancelChallenge(uint64_t challengeID)
 {
-    WebCore::AuthenticationChallenge challenge = m_challenges.take(challengeID);
+    AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
-    WebCore::AuthenticationClient* coreClient = challenge.authenticationClient();
-    if (!coreClient)
+    AuthenticationClient* coreClient = challenge.authenticationClient();
+    if (!coreClient) {
+        // This authentication challenge comes from a download.
+        Download::receivedCancellation(challenge);
         return;
+    }
 
     coreClient->receivedCancellation(challenge);
 }

@@ -34,6 +34,7 @@
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
+    class AuthenticationChallenge;
     class ResourceError;
     class ResourceResponse;
 }
@@ -69,6 +70,7 @@ private:
 
     // Message handlers.
     void didStart(const WebCore::ResourceRequest&);
+    void didReceiveAuthenticationChallenge(const WebCore::AuthenticationChallenge&, uint64_t challengeID);
     void didReceiveResponse(const WebCore::ResourceResponse&);
     void didReceiveData(uint64_t length);
     void shouldDecodeSourceDataOfMIMEType(const String& mimeType, bool& result);

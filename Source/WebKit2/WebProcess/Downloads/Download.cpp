@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Download.h"
 
+#include "AuthenticationManager.h"
 #include "Connection.h"
 #include "DataReference.h"
 #include "DownloadProxyMessages.h"
@@ -66,6 +67,11 @@ CoreIPC::Connection* Download::connection() const
 void Download::didStart()
 {
     send(Messages::DownloadProxy::DidStart(m_request));
+}
+
+void Download::didReceiveAuthenticationChallenge(const AuthenticationChallenge& authenticationChallenge)
+{
+    AuthenticationManager::shared().didReceiveAuthenticationChallenge(this, authenticationChallenge);
 }
 
 void Download::didReceiveResponse(const ResourceResponse& response)

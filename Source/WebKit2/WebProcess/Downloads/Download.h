@@ -47,6 +47,8 @@ namespace CoreIPC {
 }
 
 namespace WebCore {
+    class AuthenticationChallenge;
+    class Credential;
     class ResourceError;
     class ResourceHandle;
     class ResourceResponse;
@@ -74,6 +76,7 @@ public:
     uint64_t downloadID() const { return m_downloadID; }
 
     void didStart();
+    void didReceiveAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
     void didReceiveResponse(const WebCore::ResourceResponse&);
     void didReceiveData(uint64_t length);
     bool shouldDecodeSourceDataOfMIMEType(const String& mimeType);
@@ -88,6 +91,11 @@ public:
 #if USE(CFNETWORK)
     const String& destination() const { return m_destination; }
 #endif
+
+    // Authentication
+    static void receivedCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
+    static void receivedRequestToContinueWithoutCredential(const WebCore::AuthenticationChallenge&);
+    static void receivedCancellation(const WebCore::AuthenticationChallenge&);
 
 private:
     Download(uint64_t downloadID, const WebCore::ResourceRequest&);

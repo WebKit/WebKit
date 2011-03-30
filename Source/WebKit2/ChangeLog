@@ -2,6 +2,64 @@
 
         Reviewed by Sam Weinig.
 
+        Downloads: Authentication support
+        https://bugs.webkit.org/show_bug.cgi?id=57403
+        <rdar://problem/8691166>
+
+        * UIProcess/API/C/WKContext.h:
+        Add didReceiveAuthenticationChallenge callback.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didReceiveAuthenticationChallenge):
+        Call the download client.
+
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        Add DidReceiveAuthenticationChallenge message.
+
+        * UIProcess/WebDownloadClient.cpp:
+        (WebKit::WebDownloadClient::didReceiveAuthenticationChallenge):
+        Call the client callback function.
+
+        * UIProcess/WebDownloadClient.h:
+        * WebProcess/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        Send the DidReceiveAuthenticationChallenge message to the download proxy.
+
+        (WebKit::AuthenticationManager::useCredentialForChallenge):
+        (WebKit::AuthenticationManager::continueWithoutCredentialForChallenge):
+        (WebKit::AuthenticationManager::cancelChallenge):
+        If the authentication client is null, call the static download member functions.
+
+        * WebProcess/Authentication/AuthenticationManager.h:
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::didReceiveAuthenticationChallenge):
+        Call the authentication manager.
+
+        * WebProcess/Downloads/Download.h:
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::receivedCredential):
+        (WebKit::Download::receivedRequestToContinueWithoutCredential):
+        (WebKit::Download::receivedCancellation):
+        Call the right sender methods.
+
+        (-[WKDownloadAsDelegate download:didReceiveAuthenticationChallenge:]):
+        (-[WKDownloadAsDelegate downloadShouldUseCredentialStorage:]):
+        Call the right Download member functions.
+
+        * WebProcess/Downloads/qt/DownloadQt.cpp:
+        (WebKit::Download::receivedCredential):
+        (WebKit::Download::receivedRequestToContinueWithoutCredential):
+        (WebKit::Download::receivedCancellation):
+        * WebProcess/Downloads/soup/DownloadSoup.cpp:
+        (WebKit::Download::receivedCredential):
+        (WebKit::Download::receivedRequestToContinueWithoutCredential):
+        (WebKit::Download::receivedCancellation):
+        Add stubs.
+
+2011-03-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         AuthenticationChallengeProxy objects should be associated with processes, not pages
         https://bugs.webkit.org/show_bug.cgi?id=57401
 

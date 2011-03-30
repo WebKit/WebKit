@@ -42,6 +42,14 @@ void WebDownloadClient::didStart(WebContext* webContext, DownloadProxy* download
     m_client.didStart(toAPI(webContext), toAPI(downloadProxy), m_client.clientInfo);
 }
 
+void WebDownloadClient::didReceiveAuthenticationChallenge(WebContext* webContext, DownloadProxy* downloadProxy, AuthenticationChallengeProxy* authenticationChallengeProxy)
+{
+    if (!m_client.didReceiveAuthenticationChallenge)
+        return;
+
+    m_client.didReceiveAuthenticationChallenge(toAPI(webContext), toAPI(downloadProxy), toAPI(authenticationChallengeProxy), m_client.clientInfo);
+}
+
 void WebDownloadClient::didReceiveResponse(WebContext* webContext, DownloadProxy* downloadProxy, const ResourceResponse& response)
 {
     if (!m_client.didReceiveResponse)

@@ -22,6 +22,8 @@
 
 messages -> DownloadProxy {
     DidStart(WebCore::ResourceRequest request)
+    DidReceiveAuthenticationChallenge(WebCore::AuthenticationChallenge challenge, uint64_t challengeID)
+
     DidReceiveResponse(WebCore::ResourceResponse response)
     DidReceiveData(uint64_t length)
     ShouldDecodeSourceDataOfMIMEType(String mimeType) -> (bool result)
