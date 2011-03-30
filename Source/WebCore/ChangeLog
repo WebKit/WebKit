@@ -1,3 +1,15 @@
+2011-03-30  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Missing DOM bindings for a ping
+        https://bugs.webkit.org/show_bug.cgi?id=51955
+
+        Test: fast/dom/ping-attribute-dom-binding.html
+
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAreaElement.idl:
+
 2011-03-30  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Dirk Schulze.

@@ -1,3 +1,13 @@
+2011-03-30  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Missing DOM bindings for a ping
+        https://bugs.webkit.org/show_bug.cgi?id=51955
+
+        * fast/dom/ping-attribute-dom-binding-expected.txt: Added.
+        * fast/dom/ping-attribute-dom-binding.html: Added.
+
 2011-03-30  Mihai Parparita  <mihaip@chromium.org>
 
         Fix remaining unexpected Chromium Snow Leopard image failures.

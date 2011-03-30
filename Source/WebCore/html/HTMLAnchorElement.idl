@@ -27,6 +27,7 @@ module html {
         attribute [Reflect, URL] DOMString href;
         attribute [Reflect] DOMString hreflang;
         attribute [Reflect] DOMString name;
+        attribute [Reflect] DOMString ping;
         attribute [Reflect] DOMString rel;
         attribute [Reflect] DOMString rev;
         attribute [Reflect] DOMString shape;
