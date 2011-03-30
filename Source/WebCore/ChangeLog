@@ -1,3 +1,17 @@
+2011-03-29  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by David Levin.
+
+        Improve the massive switch statement in CSSStyleSelector::applyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=56288
+
+        No new tests are needed because no new functionality exposed.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Asserted that cases implemented in the CSSStyleApplyProperty lookup table are unreachable.
+        Updated comment.
+
 2011-03-29  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

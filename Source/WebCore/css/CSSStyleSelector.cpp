@@ -6192,7 +6192,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    // FIXME: Move these properties to the appropriate places in this switch statement.
+    // These properties are implemented in the CSSStyleApplyProperty lookup table.
     case CSSPropertyColor:
     case CSSPropertyBackgroundColor:
     case CSSPropertyBorderBottomColor:
@@ -6204,6 +6204,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextStrokeColor:
+        ASSERT_NOT_REACHED();
         return;
 
 #if ENABLE(SVG)
