@@ -1,3 +1,19 @@
+2011-03-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        H1 element should have different default style if it is in HTML5 sectioning elements.
+        https://bugs.webkit.org/show_bug.cgi?id=52693
+
+        Test: fast/css/h1-in-section-elements.html
+
+        * css/html.css: Add font-size and margin declarations to follow HTML5 specification.
+        (:-webkit-any(article,aside,nav,section) h1):
+        (:-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) h1):
+        (:-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) h1):
+        (:-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) h1):
+        (:-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) :-webkit-any(article,aside,nav,section) h1):
+
 2011-03-29  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Maciej Stachowiak.

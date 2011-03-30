@@ -1,3 +1,15 @@
+2011-03-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        H1 element should have different default style if it is in HTML5 sectioning elements.
+        https://bugs.webkit.org/show_bug.cgi?id=52693
+
+        * fast/css/h1-in-section-elements.html: Added.
+        * platform/mac/fast/css/h1-in-section-elements-expected.checksum: Added.
+        * platform/mac/fast/css/h1-in-section-elements-expected.png: Added.
+        * platform/mac/fast/css/h1-in-section-elements-expected.txt: Added.
+
 2011-03-29  Andy Estes  <aestes@apple.com>
 
         Reviewed by Dan Bernstein.
