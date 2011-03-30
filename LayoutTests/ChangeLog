@@ -1,5 +1,14 @@
 2011-03-29  Adam Barth  <abarth@webkit.org>
 
+        Remove a bunch of IMAGE only Snow Leopard Chromium failures from the
+        expectations file.  This will trigger our rebaselining machinery to
+        make it possible to rebaseline these tests efficiently and accurately,
+        which I intend to do shortly.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-29  Adam Barth  <abarth@webkit.org>
+
         Re-land these expected results in the correct directory.
 
         * platform/chromium-mac-snowleopard/css2.1/t0804-c5510-padn-00-b-ag-expected.checksum: Added.
