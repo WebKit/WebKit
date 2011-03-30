@@ -1,5 +1,16 @@
 2011-03-30  Adam Roben  <aroben@apple.com>
 
+        Add mac-wk2 expected failure results for plugins/embed-prefers-plugins-for-images.html
+
+        The failure is tracked by <http://webkit.org/b/57456>.
+
+        * platform/mac-wk2/plugins/embed-prefers-plugins-for-images-expected.txt: Added.
+        * platform/win-wk2/plugins/embed-prefers-plugins-for-images-expected.txt: Added. (Since
+        win-wk2 falls back to mac-wk2, but the test passes on Windows, I had to copy passing results
+        here to override the mac-wk2 results.)
+
+2011-03-30  Adam Roben  <aroben@apple.com>
+
         Update the mac-wk2 Skipped file for recently-added tests
 
         See the file itself for the relevant bugs.
