@@ -1,5 +1,11 @@
 2011-03-30  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed, remove duplicate Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-30  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed, add Chromium test expectation for fast/images/move-image-to-new-document.html.
 
         * platform/chromium/test_expectations.txt:
