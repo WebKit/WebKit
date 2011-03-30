@@ -1,3 +1,20 @@
+2011-03-29  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Compositor crash with show-layer-borders flag
+        https://bugs.webkit.org/show_bug.cgi?id=57292
+
+        Synchronize the debug border color/width with other properties to ensure the appropriate
+        CCLayerImpl exists.  Code is only exercised with a debugging command line flag so no layout
+        test.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::pushPropertiesTo):
+        (WebCore::LayerChromium::setBorderColor):
+        (WebCore::LayerChromium::setBorderWidth):
+        * platform/graphics/chromium/LayerChromium.h:
+
 2011-03-29  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Adam Barth.

@@ -253,6 +253,8 @@ private:
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
     Color m_backgroundColor;
+    Color m_debugBorderColor;
+    float m_debugBorderWidth;
     float m_opacity;
     float m_zPosition;
     float m_anchorPointZ;

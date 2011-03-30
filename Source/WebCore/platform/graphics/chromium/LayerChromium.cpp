@@ -293,6 +293,8 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setAnchorPoint(m_anchorPoint);
     layer->setAnchorPointZ(m_anchorPointZ);
     layer->setBounds(m_bounds);
+    layer->setDebugBorderColor(m_debugBorderColor);
+    layer->setDebugBorderWidth(m_debugBorderWidth);
     layer->setDoubleSided(m_doubleSided);
     layer->setLayerRenderer(m_layerRenderer.get());
     layer->setMasksToBounds(m_masksToBounds);
@@ -398,18 +400,15 @@ CCLayerImpl* LayerChromium::ccLayerImpl()
     return m_ccLayerImpl.get();
 }
 
-// Begin calls that forward to the CCLayerImpl.
-// ==============================================
-// These exists just for debugging (via drawDebugBorder()).
 void LayerChromium::setBorderColor(const Color& color)
 {
-    m_ccLayerImpl->setDebugBorderColor(color);
+    m_debugBorderColor = color;
     setNeedsCommit();
 }
 
 void LayerChromium::setBorderWidth(float width)
 {
-    m_ccLayerImpl->setDebugBorderWidth(width);
+    m_debugBorderWidth = width;
     setNeedsCommit();
 }
 
@@ -417,9 +416,6 @@ LayerRendererChromium* LayerChromium::layerRenderer() const
 {
     return m_layerRenderer.get();
 }
-
-// ==============================================
-// End calls that forward to the CCLayerImpl.
 
 }
 #endif // USE(ACCELERATED_COMPOSITING)
