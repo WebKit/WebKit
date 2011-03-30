@@ -1,3 +1,9 @@
+2011-03-30  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, add Chromium test expectation for fast/images/move-image-to-new-document.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-30  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Mark h1-in-section-elements.html FAIL until Chromium bots get results.
