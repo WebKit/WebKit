@@ -1,3 +1,14 @@
+2011-03-30  Jessie Berlin  <jberlin@apple.com>
+
+        http/tests/uri/username-with-no-hostname.html is flaky due to preload scanner
+        https://bugs.webkit.org/show_bug.cgi?id=57496
+
+        Unreviewed, this test has been flakey on a bunch of platforms, so disable it to keep the
+        bots green.
+
+        * http/tests/uri/username-with-no-hostname.html: Removed.
+        * http/tests/uri/username-with-no-hostname.html-disabled: Copied from http/tests/uri/username-with-no-hostname.html.
+
 2011-03-30  Martin Robinson  <mrobinson@igalia.com>
 
         Skip a test which requires missing resource load callback dumps on GTK+.
