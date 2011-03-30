@@ -1,5 +1,15 @@
 2011-03-30  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed, rolling out r82397.
+        http://trac.webkit.org/changeset/82397
+
+        Revert Adam's rebaselines (part 5). They broke Chromium
+        Leopard bots.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-30  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed, rolling out r82404.
         http://trac.webkit.org/changeset/82404
 
