@@ -98,13 +98,4 @@ shouldBe("parse('rgba(0, 0, 0, 0.997)')", "'RGBA[0, 0, 0, 255]'");
 shouldBe("parse('rgba(0, 0, 0, 0.998)')", "'RGBA[0, 0, 0, 255]'");
 shouldBe("parse('rgba(0, 0, 0, 0.999)')", "'RGBA[0, 0, 0, 255]'");
 
-// Dump a bunch of colors
-for (g = 0; g < 256; g += 63) {
-    for (a = 0.0; a < 1.0; a += 0.01333) {
-        rgba = 'rgba(' + g + ', ' + g + ', ' + g + ', ' + a + ')';
-        result = parse(rgba);
-        debug(rgba + ' => ' + result);
-    }
-}
-
 var successfullyParsed = true;

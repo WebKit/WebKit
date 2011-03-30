@@ -42,6 +42,10 @@
 #include <wtf/Threading.h>
 #include <math.h>
 
+#if USE(ACCELERATE)
+#include <Accelerate/Accelerate.h>
+#endif
+
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
 #include <IOSurface/IOSurface.h>
 #endif
@@ -53,6 +57,16 @@
 using namespace std;
 
 namespace WebCore {
+
+#if USE(ACCELERATE)
+// The vImage unpremultiply routine had a rounding bug before 10.6.7 <rdar://problem/8631548>
+static bool haveVImageRoundingErrorFix()
+{
+    SInt32 version;
+    static bool result = (Gestalt(gestaltSystemVersion, &version) == noErr && version > 0x1066);
+    return result;
+}
+#endif
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
 static const int maxIOSurfaceDimension = 4096;
@@ -280,7 +294,7 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& i
     int endx = rect.maxX();
     if (endx > size.width())
         endx = size.width();
-    int numColumns = endx - originx;
+    int width = endx - originx;
 
     int originy = rect.y();
     int desty = 0;
@@ -291,8 +305,11 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& i
     int endy = rect.maxY();
     if (endy > size.height())
         endy = size.height();
-    int numRows = endy - originy;
-    
+    int height = endy - originy;
+
+    if (width <= 0 || height <= 0)
+        return result.release();
+
     unsigned destBytesPerRow = 4 * rect.width();
     unsigned char* destRows = data + desty * destBytesPerRow + destx * 4;
 
@@ -302,9 +319,27 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& i
     if (!accelerateRendering) {
         srcBytesPerRow = 4 * size.width();
         srcRows = reinterpret_cast<unsigned char*>(imageData.m_data) + originy * srcBytesPerRow + originx * 4;
-        
-        for (int y = 0; y < numRows; ++y) {
-            for (int x = 0; x < numColumns; x++) {
+
+#if USE(ACCELERATE)
+        if (multiplied == Unmultiplied && haveVImageRoundingErrorFix()) {
+            vImage_Buffer src;
+            src.height = height;
+            src.width = width;
+            src.rowBytes = srcBytesPerRow;
+            src.data = srcRows;
+
+            vImage_Buffer dst;
+            dst.height = height;
+            dst.width = width;
+            dst.rowBytes = destBytesPerRow;
+            dst.data = destRows;
+
+            vImageUnpremultiplyData_RGBA8888(&src, &dst, kvImageNoFlags);
+            return result.release();
+        }
+#endif
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; x++) {
                 int basex = x * 4;
                 unsigned char alpha = srcRows[basex + 3];
                 if (multiplied == Unmultiplied && alpha) {
@@ -325,8 +360,8 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& i
         srcBytesPerRow = IOSurfaceGetBytesPerRow(surface);
         srcRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + originy * srcBytesPerRow + originx * 4;
         
-        for (int y = 0; y < numRows; ++y) {
-            for (int x = 0; x < numColumns; x++) {
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; x++) {
                 int basex = x * 4;
                 unsigned char alpha = srcRows[basex + 3];
                 if (multiplied == Unmultiplied && alpha) {
@@ -383,7 +418,7 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
     int endx = destPoint.x() + sourceRect.maxX();
     ASSERT(endx <= size.width());
 
-    int numColumns = endx - destx;
+    int width = endx - destx;
 
     int originy = sourceRect.y();
     int desty = destPoint.y() + sourceRect.y();
@@ -394,7 +429,10 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
 
     int endy = destPoint.y() + sourceRect.maxY();
     ASSERT(endy <= size.height());
-    int numRows = endy - desty;
+    int height = endy - desty;
+
+    if (width <= 0 || height <= 0)
+        return;
 
     unsigned srcBytesPerRow = 4 * sourceSize.width();
     unsigned char* srcRows = source->data() + originy * srcBytesPerRow + originx * 4;
@@ -404,8 +442,27 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
     if (!accelerateRendering) {
         destBytesPerRow = 4 * size.width();
         destRows = reinterpret_cast<unsigned char*>(imageData.m_data) + desty * destBytesPerRow + destx * 4;
-        for (int y = 0; y < numRows; ++y) {
-            for (int x = 0; x < numColumns; x++) {
+
+#if USE(ACCELERATE)
+        if (haveVImageRoundingErrorFix() && multiplied == Unmultiplied) {
+            vImage_Buffer src;
+            src.height = height;
+            src.width = width;
+            src.rowBytes = srcBytesPerRow;
+            src.data = srcRows;
+
+            vImage_Buffer dst;
+            dst.height = height;
+            dst.width = width;
+            dst.rowBytes = destBytesPerRow;
+            dst.data = destRows;
+
+            vImagePremultiplyData_RGBA8888(&src, &dst, kvImageNoFlags);
+            return;
+        }
+#endif
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; x++) {
                 int basex = x * 4;
                 unsigned char alpha = srcRows[basex + 3];
                 if (multiplied == Unmultiplied && alpha != 255) {
@@ -426,8 +483,8 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
         destBytesPerRow = IOSurfaceGetBytesPerRow(surface);
         destRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + desty * destBytesPerRow + destx * 4;
         
-        for (int y = 0; y < numRows; ++y) {
-            for (int x = 0; x < numColumns; x++) {
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; x++) {
                 int basex = x * 4;
                 unsigned char alpha = srcRows[basex + 3];
                 if (multiplied == Unmultiplied && alpha != 255) {

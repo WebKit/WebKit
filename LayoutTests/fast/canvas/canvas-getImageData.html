@@ -95,20 +95,4 @@ if (matched)
 else
     log("FAIL: Did not get correct data for content outside canvas bounds: "+content);
 
-// Ensure returned values are not premultiplied
-var values = [0,1,2,16,32,64,96,128,192,254,255];
-
-// this function simply accounts for truncation due to premultiplication in the canvas implementation
-function premult(value, alpha) {
-    return alpha ? Math.floor(Math.round(value*alpha/255)*255/alpha) : 0;
-}
-
-for (var i = 0; i < values.length; i++) {
-    for (var a = 0; a < values.length; a++) {
-        context.fillStyle = "rgba(" + [values[i], 0, 0, values[a]/255] +")";
-        context.fillRect(50+i*4,50+a*4,2,2);
-        pixelShouldBe(context, 50+i*4, 50+a*4, [premult(values[i], values[a]), 0, 0, values[a]]);
-    }
-}
-
 </script>
