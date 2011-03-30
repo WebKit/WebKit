@@ -1,3 +1,18 @@
+2011-03-30  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        BreakBlockQuoteCommand assumes all li tags have list item renderers
+        https://bugs.webkit.org/show_bug.cgi?id=57253
+
+        Checking that the renderers of li nodes are actually RenderListItems
+        before treating them as such.
+
+        Test: editing/execCommand/crash-breaking-blockquote-with-list.html
+
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockQuoteCommand::doApply):
+
 2011-03-30  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: fixing typo in the inspector front-end.
