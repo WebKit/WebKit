@@ -1,5 +1,18 @@
 2011-03-29  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Add expectations for a test added in r82386.
+
+        * platform/chromium-linux/fast/forms/validation-message-appearance-expected.checksum: Added.
+        * platform/chromium-linux/fast/forms/validation-message-appearance-expected.png: Added.
+        * platform/chromium-linux/fast/forms/validation-message-appearance-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/forms/validation-message-appearance-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/forms/validation-message-appearance-expected.png: Added.
+        * platform/chromium-win/fast/forms/validation-message-appearance-expected.checksum: Added.
+        * platform/chromium-win/fast/forms/validation-message-appearance-expected.png: Added.
+        * platform/chromium-win/fast/forms/validation-message-appearance-expected.txt: Added.
+
+2011-03-29  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Make validation message bubble testable
