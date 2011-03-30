@@ -29,6 +29,7 @@
 #
 # Python module for interacting with an SCM system (like SVN or Git)
 
+import logging
 import os
 import re
 import sys
@@ -557,10 +558,6 @@ class SVN(SCM):
 
     def commit_with_message(self, message, username=None, git_commit=None, force_squash=False):
         # git-commit and force are not used by SVN.
-        if self.dryrun:
-            # Return a string which looks like a commit so that things which parse this output will succeed.
-            return "Dry run, no commit.\nCommitted revision 0."
-
         svn_commit_args = ["svn", "commit"]
 
         if not username and not self.has_authorization_for_realm():
@@ -569,6 +566,14 @@ class SVN(SCM):
             svn_commit_args.extend(["--username", username])
 
         svn_commit_args.extend(["-m", message])
+
+        if self.dryrun:
+            _log = logging.getLogger("webkitpy.common.system")
+            _log.debug('Would run SVN command: "' + " ".join(svn_commit_args) + '"')
+
+            # Return a string which looks like a commit so that things which parse this output will succeed.
+            return "Dry run, no commit.\nCommitted revision 0."
+
         # FIXME: Should this use cwd=self.checkout_root?
         return self.run(svn_commit_args, error_handler=commit_error_handler)
 

@@ -1,3 +1,12 @@
+2011-03-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Make "webkit-patch --dry-run --verbose land" log the SVN command it's going to use
+        https://bugs.webkit.org/show_bug.cgi?id=57429
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
 2011-03-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82383.
