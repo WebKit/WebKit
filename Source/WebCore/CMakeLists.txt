@@ -907,12 +907,10 @@ SET(WebCore_SOURCES
     inspector/InspectorStyleSheet.cpp
     inspector/InspectorTimelineAgent.cpp
     inspector/InspectorValues.cpp
-    inspector/PageDebugServer.cpp
     inspector/ScriptArguments.cpp
     inspector/ScriptCallFrame.cpp
     inspector/ScriptCallStack.cpp
     inspector/TimelineRecordFactory.cpp
-    inspector/WorkerDebugServer.cpp
 
     loader/CrossOriginAccessControl.cpp
     loader/CrossOriginPreflightResultCache.cpp

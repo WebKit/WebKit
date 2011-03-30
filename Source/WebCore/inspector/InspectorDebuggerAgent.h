@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2010-2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,7 +51,7 @@ class InspectorObject;
 class InspectorState;
 class InspectorValue;
 class InstrumentingAgents;
-class ScriptDebugServer;
+class Page;
 
 typedef String ErrorString;
 
@@ -64,6 +64,7 @@ enum DebuggerEventType {
 class InspectorDebuggerAgent : public ScriptDebugListener {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent); WTF_MAKE_FAST_ALLOCATED;
 public:
+    static PassOwnPtr<InspectorDebuggerAgent> create(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptManager*);
     virtual ~InspectorDebuggerAgent();
 
     void enable(ErrorString*) { enable(false); }
@@ -105,15 +106,9 @@ public:
     };
     void setListener(Listener* listener) { m_listener = listener; }
 
-    virtual ScriptDebugServer& scriptDebugServer() = 0;
-
-protected:
-    InspectorDebuggerAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*);
-
-    virtual void startListeningScriptDebugServer() = 0;
-    virtual void stopListeningScriptDebugServer() = 0;
-
 private:
+    InspectorDebuggerAgent(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptManager*);
+
     void enable(bool restoringFromState);
 
     PassRefPtr<InspectorArray> currentCallFrames();
@@ -156,6 +151,7 @@ private:
 
     InstrumentingAgents* m_instrumentingAgents;
     InspectorState* m_inspectorState;
+    Page* m_inspectedPage;
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::Debugger* m_frontend;
     ScriptState* m_pausedScriptState;

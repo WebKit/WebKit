@@ -40,8 +40,8 @@
 #include "InstrumentingAgents.h"
 #include "KURL.h"
 #include "Page.h"
-#include "PageScriptDebugServer.h"
 #include "ScriptController.h"
+#include "ScriptDebugServer.h"
 #include "ScriptHeapSnapshot.h"
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
@@ -157,7 +157,7 @@ void InspectorProfilerAgent::disable()
     if (!m_enabled)
         return;
     m_enabled = false;
-    PageScriptDebugServer::shared().recompileAllJSFunctionsSoon();
+    ScriptDebugServer::shared().recompileAllJSFunctionsSoon();
     if (m_frontend)
         m_frontend->profilerWasDisabled();
 }
@@ -168,7 +168,7 @@ void InspectorProfilerAgent::enable(bool skipRecompile)
         return;
     m_enabled = true;
     if (!skipRecompile)
-        PageScriptDebugServer::shared().recompileAllJSFunctionsSoon();
+        ScriptDebugServer::shared().recompileAllJSFunctionsSoon();
     if (m_frontend)
         m_frontend->profilerWasEnabled();
 }
@@ -294,7 +294,7 @@ void InspectorProfilerAgent::startUserInitiatedProfiling()
         return;
     if (!enabled()) {
         enable(true);
-        PageScriptDebugServer::shared().recompileAllJSFunctions(0);
+        ScriptDebugServer::shared().recompileAllJSFunctions();
     }
     m_recordingUserInitiatedProfile = true;
     String title = getCurrentUserInitiatedProfileName(true);

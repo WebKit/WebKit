@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -40,11 +40,11 @@
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "PageGroup.h"
-#include "PageScriptDebugServer.h"
 #include "PlatformString.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "ScriptDebugServer.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
@@ -72,14 +72,14 @@ namespace {
 static const char kFrontendConnectedFeatureName[] = "frontend-connected";
 static const char kInspectorStateFeatureName[] = "inspector-state";
 
-class ClientMessageLoopAdapter : public PageScriptDebugServer::ClientMessageLoop {
+class ClientMessageLoopAdapter : public ScriptDebugServer::ClientMessageLoop {
 public:
     static void ensureClientMessageLoopCreated(WebDevToolsAgentClient* client)
     {
         if (s_instance)
             return;
         s_instance = new ClientMessageLoopAdapter(client->createClientMessageLoop());
-        PageScriptDebugServer::shared().setClientMessageLoop(s_instance);
+        ScriptDebugServer::shared().setClientMessageLoop(s_instance);
     }
 
     static void inspectedViewClosed(WebViewImpl* view)
@@ -92,7 +92,7 @@ public:
     {
         // Release render thread if necessary.
         if (s_instance && s_instance->m_running)
-            PageScriptDebugServer::shared().continueProgram();
+            ScriptDebugServer::shared().continueProgram();
     }
 
 private:
@@ -319,7 +319,7 @@ void WebDevToolsAgent::debuggerPauseScript()
 
 void WebDevToolsAgent::interruptAndDispatch(MessageDescriptor* d)
 {
-    class DebuggerTask : public PageScriptDebugServer::Task {
+    class DebuggerTask : public ScriptDebugServer::Task {
     public:
         DebuggerTask(WebDevToolsAgent::MessageDescriptor* descriptor) : m_descriptor(descriptor) { }
         virtual ~DebuggerTask() { }
@@ -331,7 +331,7 @@ void WebDevToolsAgent::interruptAndDispatch(MessageDescriptor* d)
     private:
         OwnPtr<WebDevToolsAgent::MessageDescriptor> m_descriptor;
     };
-    PageScriptDebugServer::interruptAndRun(new DebuggerTask(d));
+    ScriptDebugServer::interruptAndRun(new DebuggerTask(d));
 }
 
 bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)
@@ -351,7 +351,7 @@ bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)
 
 void WebDevToolsAgent::processPendingMessages()
 {
-    PageScriptDebugServer::shared().runPendingTasks();
+    ScriptDebugServer::shared().runPendingTasks();
 }
 
 void WebDevToolsAgent::setMessageLoopDispatchHandler(MessageLoopDispatchHandler handler)

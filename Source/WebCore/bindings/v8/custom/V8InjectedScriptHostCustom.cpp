@@ -34,7 +34,6 @@
 #include "Database.h"
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
-#include "InspectorDebuggerAgent.h"
 #include "InspectorValues.h"
 #include "ScriptDebugServer.h"
 #include "ScriptValue.h"
@@ -110,8 +109,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::currentCallFrameCallback(const v8::A
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     INC_STATS("InjectedScriptHost.currentCallFrame()");
-    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
-    return toV8(host->debuggerAgent()->scriptDebugServer().currentCallFrame());
+    return toV8(ScriptDebugServer::shared().currentCallFrame());
 #else
     UNUSED_PARAM(args);
     return v8::Undefined();

@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
- * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +44,7 @@
 #include "InspectorConsoleAgent.h"
 #include "InspectorController.h"
 #include "InspectorDOMAgent.h"
+#include "InspectorDebuggerAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorPageAgent.h"
@@ -57,7 +57,6 @@
 #include "InspectorWorkerResource.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
-#include "PageDebuggerAgent.h"
 #include "ResourceRequest.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
@@ -112,7 +111,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
     , m_resourceAgent(InspectorResourceAgent::create(m_instrumentingAgents.get(), page, m_state.get()))
     , m_consoleAgent(new InspectorConsoleAgent(m_instrumentingAgents.get(), this, m_state.get(), injectedScriptManager, m_domAgent.get()))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    , m_debuggerAgent(PageDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, injectedScriptManager))
+    , m_debuggerAgent(InspectorDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, injectedScriptManager))
     , m_browserDebuggerAgent(InspectorBrowserDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_domAgent.get(), m_debuggerAgent.get(), this))
     , m_profilerAgent(InspectorProfilerAgent::create(m_instrumentingAgents.get(), m_consoleAgent.get(), page, m_state.get()))
 #endif
@@ -130,9 +129,6 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
 #endif
 #if ENABLE(DOM_STORAGE)
         , m_domStorageAgent.get()
-#endif
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-        , m_debuggerAgent.get()
 #endif
     );
 }
