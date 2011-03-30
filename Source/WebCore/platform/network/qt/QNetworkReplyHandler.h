@@ -36,6 +36,39 @@ namespace WebCore {
 class ResourceHandle;
 class ResourceResponse;
 
+class QNetworkReplyWrapper : public QObject {
+    Q_OBJECT
+public:
+    QNetworkReplyWrapper(QNetworkReply*, QObject* parent = 0);
+    ~QNetworkReplyWrapper();
+
+    QNetworkReply* reply() const { return m_reply; }
+    QNetworkReply* release();
+
+    QUrl redirectionTargetUrl() const { return m_redirectionTargetUrl; }
+    QString encoding() const { return m_encoding; }
+    QString advertisedMimeType() const { return m_advertisedMimeType; }
+
+Q_SIGNALS:
+    void finished();
+    void metaDataChanged();
+    void readyRead();
+    void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
+
+private Q_SLOTS:
+    void receiveMetaData();
+    void didReceiveFinished();
+
+private:
+    void resetConnections();
+
+    QNetworkReply* m_reply;
+    QUrl m_redirectionTargetUrl;
+
+    QString m_encoding;
+    QString m_advertisedMimeType;
+};
+
 class QNetworkReplyHandler : public QObject
 {
     Q_OBJECT
@@ -48,7 +81,7 @@ public:
     QNetworkReplyHandler(ResourceHandle*, LoadType, bool deferred = false);
     void setLoadingDeferred(bool);
 
-    QNetworkReply* reply() const { return m_reply; }
+    QNetworkReply* reply() const { return m_replyWrapper ? m_replyWrapper->reply() : 0; }
 
     void abort();
 
@@ -67,8 +100,9 @@ private:
     void resumeDeferredLoad();
     void redirect(ResourceResponse&, const QUrl&);
     bool wasAborted() const { return !m_resourceHandle; }
+    QNetworkReply* sendNetworkRequest();
 
-    QNetworkReply* m_reply;
+    QNetworkReplyWrapper* m_replyWrapper;
     ResourceHandle* m_resourceHandle;
     bool m_redirected;
     bool m_responseSent;

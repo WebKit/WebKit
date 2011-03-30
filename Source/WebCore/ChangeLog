@@ -1,3 +1,45 @@
+2011-03-24  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] QNetworkReplyHandler refactoring: signal sequence.
+        https://bugs.webkit.org/show_bug.cgi?id=57049
+
+        This is the first step in QNetworkReplyHandler. The main objective here is to create simple invariants:
+
+            1 - that the signals metadatachanged, readyRead and finished will come in this order.
+            2 - that signals metadatachanged and finished will be called exactly once.
+
+        Having these invariants further simplifications will be possible and will come in future patches.
+
+        Class QNetworkReplyWrapper was created to handle QNetworkReply object. To connect to the signals of it
+        instead of connecting to the signals of QNetworkReply is what guarantees the sequence of the signals.
+        QNetworkReplyWrapper will be used in future to perform mime type sniffing before sending
+        metadatachanged signal.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyWrapper::QNetworkReplyWrapper):
+        (WebCore::QNetworkReplyWrapper::~QNetworkReplyWrapper):
+        (WebCore::QNetworkReplyWrapper::release):
+        (WebCore::QNetworkReplyWrapper::resetConnections):
+        (WebCore::QNetworkReplyWrapper::receiveMetaData):
+        (WebCore::QNetworkReplyWrapper::didReceiveFinished):
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::resetState):
+        (WebCore::QNetworkReplyHandler::release):
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        (WebCore::QNetworkReplyHandler::redirect):
+        (WebCore::QNetworkReplyHandler::forwardData):
+        (WebCore::QNetworkReplyHandler::sendNetworkRequest):
+        (WebCore::QNetworkReplyHandler::start):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        (WebCore::QNetworkReplyWrapper::reply):
+        (WebCore::QNetworkReplyWrapper::redirectionTargetUrl):
+        (WebCore::QNetworkReplyWrapper::encoding):
+        (WebCore::QNetworkReplyWrapper::advertisedMimeType):
+        (WebCore::QNetworkReplyHandler::reply):
+
 2011-03-30  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
