@@ -1,3 +1,17 @@
+2011-03-30  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add the NEXT_OPCODE() macro to the DFG-JIT parser
+        https://bugs.webkit.org/show_bug.cgi?id=57322
+
+        In JavaScriptCore we use macros to jump to the next opcode
+        (both in interpreter and JIT). This macro is added to the
+        DFG-JIT parser as well.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parse):
+
 2011-03-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

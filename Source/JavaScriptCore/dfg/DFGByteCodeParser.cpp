@@ -420,6 +420,10 @@ private:
     UnaryOpMap m_numberToInt32Nodes;
 };
 
+#define NEXT_OPCODE(name) \
+    m_currentIndex += OPCODE_LENGTH(name); \
+    continue;
+
 bool ByteCodeParser::parse()
 {
     AliasTracker aliases(m_graph);
@@ -436,14 +440,12 @@ bool ByteCodeParser::parse()
         case op_enter:
             // This is a no-op for now - may need to initialize locals, if
             // DCE analysis cannot determine that the values are never read.
-            m_currentIndex += OPCODE_LENGTH(op_enter);
-            continue;
+            NEXT_OPCODE(op_enter);
 
         case op_convert_this: {
             NodeIndex op1 = getThis();
             setThis(addToGraph(ConvertThis, op1));
-            m_currentIndex += OPCODE_LENGTH(op_convert_this);
-            continue;
+            NEXT_OPCODE(op_convert_this);
         }
 
         // === Bitwise operations ===
@@ -452,24 +454,21 @@ bool ByteCodeParser::parse()
             NodeIndex op1 = getToInt32(currentInstruction[2].u.operand);
             NodeIndex op2 = getToInt32(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(BitAnd, op1, op2));
-            m_currentIndex += OPCODE_LENGTH(op_bitand);
-            continue;
+            NEXT_OPCODE(op_bitand);
         }
 
         case op_bitor: {
             NodeIndex op1 = getToInt32(currentInstruction[2].u.operand);
             NodeIndex op2 = getToInt32(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(BitOr, op1, op2));
-            m_currentIndex += OPCODE_LENGTH(op_bitor);
-            continue;
+            NEXT_OPCODE(op_bitor);
         }
 
         case op_bitxor: {
             NodeIndex op1 = getToInt32(currentInstruction[2].u.operand);
             NodeIndex op2 = getToInt32(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(BitXor, op1, op2));
-            m_currentIndex += OPCODE_LENGTH(op_bitxor);
-            continue;
+            NEXT_OPCODE(op_bitxor);
         }
 
         case op_rshift: {
@@ -482,8 +481,7 @@ bool ByteCodeParser::parse()
             else
                 result = addToGraph(BitRShift, op1, op2);
             set(currentInstruction[1].u.operand, result);
-            m_currentIndex += OPCODE_LENGTH(op_rshift);
-            continue;
+            NEXT_OPCODE(op_rshift);
         }
 
         case op_lshift: {
@@ -496,8 +494,7 @@ bool ByteCodeParser::parse()
             else
                 result = addToGraph(BitLShift, op1, op2);
             set(currentInstruction[1].u.operand, result);
-            m_currentIndex += OPCODE_LENGTH(op_lshift);
-            continue;
+            NEXT_OPCODE(op_lshift);
         }
 
         case op_urshift: {
@@ -524,8 +521,7 @@ bool ByteCodeParser::parse()
                 result = addToGraph(UInt32ToNumber, result);
             }
             set(currentInstruction[1].u.operand, result);
-            m_currentIndex += OPCODE_LENGTH(op_urshift);
-            continue;
+            NEXT_OPCODE(op_urshift);
         }
 
         // === Increment/Decrement opcodes ===
@@ -534,8 +530,7 @@ bool ByteCodeParser::parse()
             unsigned srcDst = currentInstruction[1].u.operand;
             NodeIndex op = getToNumber(srcDst);
             set(srcDst, addToGraph(ArithAdd, op, one()));
-            m_currentIndex += OPCODE_LENGTH(op_pre_inc);
-            continue;
+            NEXT_OPCODE(op_pre_inc);
         }
 
         case op_post_inc: {
@@ -544,16 +539,14 @@ bool ByteCodeParser::parse()
             NodeIndex op = getToNumber(srcDst);
             set(result, op);
             set(srcDst, addToGraph(ArithAdd, op, one()));
-            m_currentIndex += OPCODE_LENGTH(op_post_inc);
-            continue;
+            NEXT_OPCODE(op_post_inc);
         }
 
         case op_pre_dec: {
             unsigned srcDst = currentInstruction[1].u.operand;
             NodeIndex op = getToNumber(srcDst);
             set(srcDst, addToGraph(ArithSub, op, one()));
-            m_currentIndex += OPCODE_LENGTH(op_pre_dec);
-            continue;
+            NEXT_OPCODE(op_pre_dec);
         }
 
         case op_post_dec: {
@@ -562,8 +555,7 @@ bool ByteCodeParser::parse()
             NodeIndex op = getToNumber(srcDst);
             set(result, op);
             set(srcDst, addToGraph(ArithSub, op, one()));
-            m_currentIndex += OPCODE_LENGTH(op_post_dec);
-            continue;
+            NEXT_OPCODE(op_post_dec);
         }
 
         // === Arithmetic operations ===
@@ -578,8 +570,7 @@ bool ByteCodeParser::parse()
                 set(currentInstruction[1].u.operand, addToGraph(ArithAdd, toNumber(op1), toNumber(op2)));
             else
                 set(currentInstruction[1].u.operand, addToGraph(ValueAdd, op1, op2));
-            m_currentIndex += OPCODE_LENGTH(op_add);
-            continue;
+            NEXT_OPCODE(op_add);
         }
 
         case op_sub: {
@@ -587,8 +578,7 @@ bool ByteCodeParser::parse()
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithSub, op1, op2));
-            m_currentIndex += OPCODE_LENGTH(op_sub);
-            continue;
+            NEXT_OPCODE(op_sub);
         }
 
         case op_mul: {
@@ -596,8 +586,7 @@ bool ByteCodeParser::parse()
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithMul, op1, op2));
-            m_currentIndex += OPCODE_LENGTH(op_mul);
-            continue;
+            NEXT_OPCODE(op_mul);
         }
 
         case op_mod: {
@@ -605,8 +594,7 @@ bool ByteCodeParser::parse()
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithMod, op1, op2));
-            m_currentIndex += OPCODE_LENGTH(op_mod);
-            continue;
+            NEXT_OPCODE(op_mod);
         }
 
         case op_div: {
@@ -614,8 +602,7 @@ bool ByteCodeParser::parse()
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithDiv, op1, op2));
-            m_currentIndex += OPCODE_LENGTH(op_div);
-            continue;
+            NEXT_OPCODE(op_div);
         }
 
         // === Misc operations ===
@@ -623,8 +610,7 @@ bool ByteCodeParser::parse()
         case op_mov: {
             NodeIndex op = get(currentInstruction[2].u.operand);
             set(currentInstruction[1].u.operand, op);
-            m_currentIndex += OPCODE_LENGTH(op_mov);
-            continue;
+            NEXT_OPCODE(op_mov);
         }
 
         // === Property access operations ===
@@ -637,8 +623,7 @@ bool ByteCodeParser::parse()
             set(currentInstruction[1].u.operand, getByVal);
             aliases.recordGetByVal(getByVal);
 
-            m_currentIndex += OPCODE_LENGTH(op_get_by_val);
-            continue;
+            NEXT_OPCODE(op_get_by_val);
         };
 
         case op_put_by_val: {
@@ -650,8 +635,7 @@ bool ByteCodeParser::parse()
             NodeIndex putByVal = addToGraph(aliasedGet != NoNode ? PutByValAlias : PutByVal, base, property, value);
             aliases.recordPutByVal(putByVal);
 
-            m_currentIndex += OPCODE_LENGTH(op_put_by_val);
-            continue;
+            NEXT_OPCODE(op_put_by_val);
         };
 
         case op_get_by_id: {
@@ -662,8 +646,7 @@ bool ByteCodeParser::parse()
             set(currentInstruction[1].u.operand, getById);
             aliases.recordGetById(getById);
 
-            m_currentIndex += OPCODE_LENGTH(op_get_by_id);
-            continue;
+            NEXT_OPCODE(op_get_by_id);
         }
 
         case op_put_by_id: {
@@ -680,22 +663,19 @@ bool ByteCodeParser::parse()
                 aliases.recordPutById(putById);
             }
 
-            m_currentIndex += OPCODE_LENGTH(op_put_by_id);
-            continue;
+            NEXT_OPCODE(op_put_by_id);
         }
 
         case op_get_global_var: {
             NodeIndex getGlobalVar = addToGraph(GetGlobalVar, OpInfo(currentInstruction[2].u.operand));
             set(currentInstruction[1].u.operand, getGlobalVar);
-            m_currentIndex += OPCODE_LENGTH(op_get_global_var);
-            continue;
+            NEXT_OPCODE(op_get_global_var);
         }
 
         case op_put_global_var: {
             NodeIndex value = get(currentInstruction[2].u.operand);
             addToGraph(PutGlobalVar, OpInfo(currentInstruction[1].u.operand), value);
-            m_currentIndex += OPCODE_LENGTH(op_put_global_var);
-            continue;
+            NEXT_OPCODE(op_put_global_var);
         }
 
         // === Block terminators. ===
