@@ -40,6 +40,7 @@ namespace WebKit {
 
 class WebDragData;
 class WebElement;
+class WebNode;
 class WebRange;
 
 // A haphazard collection of functions for dealing with plugins.
@@ -137,6 +138,7 @@ public:
 
     WEBKIT_API static NPObject* makeIntArray(const WebVector<int>&);
     WEBKIT_API static NPObject* makeStringArray(const WebVector<WebString>&);
+    WEBKIT_API static NPObject* makeNode(const WebNode&);
 
     // Exceptions -------------------------------------------------------------
 

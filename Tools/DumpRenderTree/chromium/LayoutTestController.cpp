@@ -173,6 +173,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setWindowIsKey", &LayoutTestController::setWindowIsKey);
     bindMethod("setXSSAuditorEnabled", &LayoutTestController::setXSSAuditorEnabled);
     bindMethod("setAsynchronousSpellCheckingEnabled", &LayoutTestController::setAsynchronousSpellCheckingEnabled);
+    bindMethod("shadowRoot", &LayoutTestController::shadowRoot);
     bindMethod("showWebInspector", &LayoutTestController::showWebInspector);
     bindMethod("simulateDesktopNotificationClick", &LayoutTestController::simulateDesktopNotificationClick);
     bindMethod("suspendAnimations", &LayoutTestController::suspendAnimations);
@@ -645,6 +646,28 @@ void LayoutTestController::setAsynchronousSpellCheckingEnabled(const CppArgument
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webView()->settings()->setAsynchronousSpellCheckingEnabled(cppVariantToBool(arguments[0]));
     result->setNull();
+}
+
+void LayoutTestController::shadowRoot(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() != 1 || !arguments[0].isObject()) {
+        result->setNull();
+        return;
+    }
+
+    WebElement element;
+    if (!WebBindings::getElement(arguments[0].value.objectValue, &element)) {
+        result->setNull();
+        return;
+    }
+
+    WebNode shadowRoot = element.shadowRoot();
+    if (shadowRoot.isNull()) {
+        result->setNull();
+        return;
+    }
+
+    result->set(WebBindings::makeNode(shadowRoot));
 }
 
 void LayoutTestController::showWebInspector(const CppArgumentList&, CppVariant* result)

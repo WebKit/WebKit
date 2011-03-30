@@ -90,6 +90,11 @@ WebString WebElement::innerText() const
     return constUnwrap<Element>()->innerText();
 }
 
+WebNode WebElement::shadowRoot()
+{
+    return adoptRef(unwrap<Element>()->shadowRoot());
+}
+
 WebString WebElement::computeInheritedLanguage() const
 {
     return WebString(constUnwrap<Element>()->computeInheritedLanguage());

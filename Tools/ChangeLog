@@ -1,3 +1,17 @@
+2011-03-30  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Expose the shadow DOM to DumpRenderTree JS tests.
+        https://bugs.webkit.org/show_bug.cgi?id=56573
+
+        Added LayoutTestController.shadowRoot() to Chromium DRT.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::shadowRoot):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+
 2011-03-30  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.
