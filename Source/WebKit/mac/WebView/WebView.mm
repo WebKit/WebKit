@@ -1520,6 +1520,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setUsePreHTML5ParserQuirks([self _needsPreHTML5ParserQuirks]);
     settings->setUseQuickLookResourceCachingQuirks([preferences useQuickLookResourceCachingQuirks]);
     settings->setCrossOriginCheckInGetMatchedCSSRulesDisabled([self _needsUnrestrictedGetMatchedCSSRules]);
+    settings->setInteractiveFormValidationEnabled([self interactiveFormValidationEnabled]);
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];
@@ -2402,6 +2403,16 @@ static inline IMP getMethod(id o, SEL s)
     }
 #endif
     return NO;
+}
+
+- (BOOL)interactiveFormValidationEnabled
+{
+    return _private->interactiveFormValidationEnabled;
+}
+
+- (void)setInteractiveFormValidationEnabled:(BOOL)enabled
+{
+    _private->interactiveFormValidationEnabled = enabled;
 }
 
 - (BOOL)_isSoftwareRenderable

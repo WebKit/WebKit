@@ -65,6 +65,8 @@ int pluginDatabaseClientCount = 0;
     zoomMultiplier = 1;
     zoomsTextOnly = NO;
 
+    interactiveFormValidationEnabled = NO;
+
 #if ENABLE(DASHBOARD_SUPPORT)
     dashboardBehaviorAllowWheelScrolling = YES;
 #endif

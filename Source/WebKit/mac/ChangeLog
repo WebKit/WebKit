@@ -1,3 +1,20 @@
+2011-03-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Mac] Enable interactive-validation tests on Mac DRT
+        https://bugs.webkit.org/show_bug.cgi?id=57308
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+          Convey a WebView flag for interactive validation to WebCore::Settings.
+        (-[WebView interactiveFormValidationEnabled]): Added.
+        (-[WebView setInteractiveFormValidationEnabled:]): Added.
+        * WebView/WebViewData.h: Add interactiveFormValidationEnabled.
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate init]): Initialize interactiveFormValidationEnabled.
+        * WebView/WebViewPrivate.h: Add setter and getter for interactiveFormValidationEnabled.
+
 2011-03-29  Timothy Hatcher  <timothy@apple.com>
 
         Update the order of the context menu to better match AppKit on Mac.

@@ -487,6 +487,10 @@ Could be worth adding to the API.
 - (void)_setPostsAcceleratedCompositingNotifications:(BOOL)flag;
 - (BOOL)_isUsingAcceleratedCompositing;
 
+// For DumpRenderTree
+- (BOOL)interactiveFormValidationEnabled;
+- (void)setInteractiveFormValidationEnabled:(BOOL)enabled;
+
 // Returns YES if NSView -displayRectIgnoringOpacity:inContext: will produce a faithful representation of the content.
 - (BOOL)_isSoftwareRenderable;
 // When drawing into a bitmap context, we normally flatten compositing layers (and distort 3D transforms).

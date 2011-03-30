@@ -786,7 +786,6 @@ BUGCR20226 : fast/forms/input-selectedoption.html = FAIL
 
 // The feature was disabled due to a compatibility issue.
 BUGWK40520 : fast/forms/interactive-validation-lost-focusable.html = TEXT
-BUGWK40520 : fast/forms/interactive-validation-prevented.html = TEXT
 
 // These tests need to be changed to be platform independent.
 // These tests are skipped since they hang DRT and test_shell.

@@ -1,3 +1,16 @@
+2011-03-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Mac] Enable interactive-validation tests on Mac DRT
+        https://bugs.webkit.org/show_bug.cgi?id=57308
+
+        * fast/forms/interactive-validation-prevented-expected.txt: Fix a wrong expectation.
+        * platform/chromium/test_expectations.txt:
+          Update expectation of interactive-validation-prevented.html.
+        * platform/mac/Skipped: Unskip interactive-validation except
+          interactive-validation-lost-focusable.html, which doesn't pass for now.
+
 2011-03-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [DRT] GtkScrolledWindow adds three pixels of padding between the WebView and the scrollbar
