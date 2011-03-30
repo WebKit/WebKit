@@ -1,5 +1,13 @@
 2011-03-30  Steve Falkenburg  <sfalken@apple.com>
 
+        Rubber stamped by Adam Roben.
+
+        Remove unnecessary NDEBUG define.
+
+        * win/tools/vsprops/production.vsprops:
+
+2011-03-30  Steve Falkenburg  <sfalken@apple.com>
+
         Reviewed by Adam Roben.
 
         Update Windows production build logic for new production configurations

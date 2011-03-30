@@ -14,7 +14,7 @@
 	/>
 	<Tool
 		Name="VCResourceCompilerTool"
-		PreprocessorDefinitions="NDEBUG;__PRODUCTION__=1"
+		PreprocessorDefinitions="__PRODUCTION__=1"
 	/>
 	<UserMacro
 		Name="ProductionBuild"
