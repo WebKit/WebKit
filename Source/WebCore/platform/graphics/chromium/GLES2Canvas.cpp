@@ -62,13 +62,23 @@ typedef void (GLAPIENTRY *TESSCB)();
 typedef WTF::Vector<float> FloatVector;
 typedef WTF::Vector<double> DoubleVector;
 
+struct PathAndTransform {
+    PathAndTransform(const Path& p, const AffineTransform& t)
+        : path(p)
+        , transform(t)
+    {
+    }
+    Path path;
+    AffineTransform transform;
+};
+
 struct GLES2Canvas::State {
     State()
         : m_fillColor(0, 0, 0, 255)
         , m_shadowColor(0, 0, 0, 0)
         , m_alpha(1.0f)
         , m_compositeOp(CompositeSourceOver)
-        , m_clippingEnabled(false)
+        , m_numClippingPaths(0)
         , m_shadowOffset(0, 0)
         , m_shadowBlur(0)
         , m_shadowsIgnoreTransforms(false)
@@ -81,7 +91,7 @@ struct GLES2Canvas::State {
         , m_compositeOp(other.m_compositeOp)
         , m_ctm(other.m_ctm)
         , m_clippingPaths() // Don't copy; clipping paths are tracked per-state.
-        , m_clippingEnabled(other.m_clippingEnabled)
+        , m_numClippingPaths(other.m_numClippingPaths)
         , m_shadowOffset(other.m_shadowOffset)
         , m_shadowBlur(other.m_shadowBlur)
         , m_shadowsIgnoreTransforms(other.m_shadowsIgnoreTransforms)
@@ -92,8 +102,8 @@ struct GLES2Canvas::State {
     float m_alpha;
     CompositeOperator m_compositeOp;
     AffineTransform m_ctm;
-    WTF::Vector<Path> m_clippingPaths;
-    bool m_clippingEnabled;
+    WTF::Vector<PathAndTransform> m_clippingPaths;
+    int m_numClippingPaths;
     FloatSize m_shadowOffset;
     float m_shadowBlur;
     bool m_shadowsIgnoreTransforms;
@@ -116,6 +126,7 @@ struct GLES2Canvas::State {
     {
         return m_shadowColor.alpha() > 0 && (m_shadowBlur || m_shadowOffset.width() || m_shadowOffset.height());
     }
+    bool clippingEnabled() { return m_numClippingPaths > 0; }
 };
 
 static inline FloatPoint operator*(const FloatPoint& f, float scale)
@@ -208,7 +219,7 @@ void GLES2Canvas::bindFramebuffer()
 void GLES2Canvas::clearRect(const FloatRect& rect)
 {
     bindFramebuffer();
-    if (m_state->m_ctm.isIdentity() && !m_state->m_clippingEnabled) {
+    if (m_state->m_ctm.isIdentity() && !m_state->clippingEnabled()) {
         scissorClear(rect.x(), rect.y(), rect.width(), rect.height());
     } else {
         save();
@@ -233,29 +244,31 @@ void GLES2Canvas::scissorClear(float x, float y, float width, float height)
 
 void GLES2Canvas::fillPath(const Path& path)
 {
-    bindFramebuffer();
-    m_context->applyCompositeOperator(m_state->m_compositeOp);
-    applyClipping(m_state->m_clippingEnabled);
-
     if (m_state->shadowActive()) {
         beginShadowDraw();
         fillPathInternal(path, m_state->m_shadowColor);
         endShadowDraw(path.boundingRect());
     }
+
+    bindFramebuffer();
+    m_context->applyCompositeOperator(m_state->m_compositeOp);
+    applyClipping(m_state->clippingEnabled());
+
     fillPathInternal(path, m_state->applyAlpha(m_state->m_fillColor));
 }
 
 void GLES2Canvas::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
 {
-    bindFramebuffer();
-    m_context->applyCompositeOperator(m_state->m_compositeOp);
-    applyClipping(m_state->m_clippingEnabled);
-
     if (m_state->shadowActive()) {
         beginShadowDraw();
         fillRectInternal(rect, m_state->m_shadowColor);
         endShadowDraw(rect);
     }
+
+    bindFramebuffer();
+    m_context->applyCompositeOperator(m_state->m_compositeOp);
+    applyClipping(m_state->clippingEnabled());
+
     fillRectInternal(rect, color);
 }
 
@@ -335,12 +348,12 @@ void GLES2Canvas::clipPath(const Path& path)
 {
     bindFramebuffer();
     checkGLError("bindFramebuffer");
-    beginStencilDraw();
+    beginStencilDraw(GraphicsContext3D::INCR);
     // Red is used so we can see it if it ends up in the color buffer.
     Color red(255, 0, 0, 255);
     fillPathInternal(path, red);
-    m_state->m_clippingPaths.append(path);
-    m_state->m_clippingEnabled = true;
+    m_state->m_clippingPaths.append(PathAndTransform(path, m_state->m_ctm));
+    m_state->m_numClippingPaths++;
 }
 
 void GLES2Canvas::clipOut(const Path& path)
@@ -357,24 +370,19 @@ void GLES2Canvas::save()
 void GLES2Canvas::restore()
 {
     ASSERT(!m_stateStack.isEmpty());
-    bool hadClippingPaths = !m_state->m_clippingPaths.isEmpty();
-    m_stateStack.removeLast();
-    m_state = &m_stateStack.last();
-    if (hadClippingPaths) {
-        m_context->clear(GraphicsContext3D::STENCIL_BUFFER_BIT);
-        beginStencilDraw();
-        StateVector::const_iterator iter;
-        for (iter = m_stateStack.begin(); iter < m_stateStack.end(); ++iter) {
-            const State& state = *iter;
-            const Vector<Path>& clippingPaths = state.m_clippingPaths;
-            Vector<Path>::const_iterator pathIter;
-            for (pathIter = clippingPaths.begin(); pathIter < clippingPaths.end(); ++pathIter) {
-                // Red is used so we can see it if it ends up in the color buffer.
-                Color red(255, 0, 0, 255);
-                fillPathInternal(*pathIter, red);
-            }
+    const Vector<PathAndTransform>& clippingPaths = m_state->m_clippingPaths;
+    if (!clippingPaths.isEmpty()) {
+        beginStencilDraw(GraphicsContext3D::DECR);
+        WTF::Vector<PathAndTransform>::const_iterator pathIter;
+        for (pathIter = clippingPaths.begin(); pathIter < clippingPaths.end(); ++pathIter) {
+            m_state->m_ctm = pathIter->transform;
+            // Red is used so we can see it if it ends up in the color buffer.
+            Color red(255, 0, 0, 255);
+            fillPathInternal(pathIter->path, red);
         }
     }
+    m_stateStack.removeLast();
+    m_state = &m_stateStack.last();
 }
 
 void GLES2Canvas::drawTexturedRect(unsigned texture, const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace colorSpace, CompositeOperator compositeOp)
@@ -392,7 +400,7 @@ void GLES2Canvas::drawTexturedRect(unsigned texture, const IntSize& textureSize,
 
 void GLES2Canvas::drawTexturedRect(Texture* texture, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace colorSpace, CompositeOperator compositeOp)
 {
-    drawTexturedRect(texture, srcRect, dstRect, m_state->m_ctm, m_state->m_alpha, colorSpace, compositeOp, m_state->m_clippingEnabled);
+    drawTexturedRect(texture, srcRect, dstRect, m_state->m_ctm, m_state->m_alpha, colorSpace, compositeOp, m_state->clippingEnabled());
 }
 
 
@@ -778,6 +786,10 @@ void GLES2Canvas::beginShadowDraw()
         applyClipping(false);
         m_context->clearColor(Color(RGBA32(0)));
         m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
+    } else {
+        bindFramebuffer();
+        m_context->applyCompositeOperator(m_state->m_compositeOp);
+        applyClipping(m_state->clippingEnabled());
     }
 }
 
@@ -854,7 +866,7 @@ void GLES2Canvas::endShadowDraw(const FloatRect& boundingBox)
             // Upsample srcBuffer -> main framebuffer using bicubic filtering.
             bindFramebuffer();
             m_context->applyCompositeOperator(m_state->m_compositeOp);
-            applyClipping(m_state->m_clippingEnabled);
+            applyClipping(m_state->clippingEnabled());
             m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, srcBuffer->colorBuffer());
             FloatRect dstRect = srcRect;
             dstRect.scale(scaleFactor);
@@ -863,7 +875,7 @@ void GLES2Canvas::endShadowDraw(const FloatRect& boundingBox)
             // Blur in Y directly to framebuffer.
             bindFramebuffer();
             m_context->applyCompositeOperator(m_state->m_compositeOp);
-            applyClipping(m_state->m_clippingEnabled);
+            applyClipping(m_state->clippingEnabled());
 
             convolveRect(srcBuffer->colorBuffer(), srcBuffer->size(), flipRect(srcRect), srcRect, imageIncrementY, kernel.get(), kernelWidth);
         }
@@ -871,7 +883,7 @@ void GLES2Canvas::endShadowDraw(const FloatRect& boundingBox)
     restore();
 }
 
-void GLES2Canvas::beginStencilDraw()
+void GLES2Canvas::beginStencilDraw(unsigned op)
 {
     // Turn on stencil test.
     m_context->enableStencil(true);
@@ -882,9 +894,7 @@ void GLES2Canvas::beginStencilDraw()
     checkGLError("stencilFunc");
 
     // All writes incremement the stencil buffer.
-    m_context->graphicsContext3D()->stencilOp(GraphicsContext3D::INCR,
-                                              GraphicsContext3D::INCR,
-                                              GraphicsContext3D::INCR);
+    m_context->graphicsContext3D()->stencilOp(op, op, op);
     checkGLError("stencilOp");
 }
 
@@ -893,7 +903,7 @@ void GLES2Canvas::applyClipping(bool enable)
     m_context->enableStencil(enable);
     if (enable) {
         // Enable drawing only where stencil is non-zero.
-        m_context->graphicsContext3D()->stencilFunc(GraphicsContext3D::EQUAL, m_state->m_clippingPaths.size() % 256, 1);
+        m_context->graphicsContext3D()->stencilFunc(GraphicsContext3D::EQUAL, m_state->m_numClippingPaths, -1);
         checkGLError("stencilFunc");
         // Keep all stencil values the same.
         m_context->graphicsContext3D()->stencilOp(GraphicsContext3D::KEEP,

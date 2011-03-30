@@ -1,3 +1,44 @@
+2011-03-30  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Speed up clipping in accelerated 2D canvas.
+        https://bugs.webkit.org/show_bug.cgi?id=57464
+
+        Instead of clearing the entire stencil buffer when removing clipping paths, we erase the path with a DECR stencil operation.
+        Covered by canvas/philip/tests/2d.path.clip.intersect.html, and others.
+
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::PathAndTransform::PathAndTransform):
+        New structure to keep track of the CTM at the time the clipping path was added.
+        (WebCore::GLES2Canvas::State::State):
+        Replace m_clippingEnabled with a count of total clipping paths.
+        (WebCore::GLES2Canvas::clearRect):
+        Check the total clipping path count, instead of m_clippingEnabled.
+        (WebCore::GLES2Canvas::fillPath):
+        (WebCore::GLES2Canvas::fillRect):
+        Perform state application after doing shadows.  This is necessary
+        since restore() may now leave clipping enabled.
+        (WebCore::GLES2Canvas::clipPath):
+        Explicitly specify the stencil operation as INCR.  Store the current
+        transformation when saving clipping paths.
+        (WebCore::GLES2Canvas::restore):
+        Don't clear the stencil buffer and re-draw active paths on each restore.
+        Erase the old paths with DECR.
+        (WebCore::GLES2Canvas::drawTexturedRect):
+        Check m_numClippingPaths instead of m_clippingEnabled.
+        (WebCore::GLES2Canvas::beginShadowDraw):
+        Perform state application when drawing hard shadows.
+        (WebCore::GLES2Canvas::endShadowDraw):
+        Check m_numClippingPaths instead of m_clippingEnabled.
+        (WebCore::GLES2Canvas::beginStencilDraw):
+        Make the stencil op a parameter to beginShadowDraw().
+        (WebCore::GLES2Canvas::applyClipping):
+        Compare against the total number of stencil paths, not just the ones in
+        the current state.
+        * platform/graphics/chromium/GLES2Canvas.h:
+        Make the stencil op a parameter to beginShadowDraw().
+
 2011-03-29  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

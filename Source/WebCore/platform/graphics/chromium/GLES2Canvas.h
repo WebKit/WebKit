@@ -114,7 +114,7 @@ private:
     void clearBorders(const FloatRect&, int width);
     void beginShadowDraw();
     void endShadowDraw(const FloatRect& boundingBox);
-    void beginStencilDraw();
+    void beginStencilDraw(unsigned op);
     void applyClipping(bool enable);
     void checkGLError(const char* header);
 
