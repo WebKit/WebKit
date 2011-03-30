@@ -99,27 +99,7 @@ void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<Event> event)
     ScopedEventQueue::instance()->enqueueEvent(event);
 }
 
-bool EventDispatcher::dispatchMouseEvent(Node* node, const PlatformMouseEvent& event, const AtomicString& eventType,
-    int detail, Node* relatedTarget)
-{
-    ASSERT(!eventDispatchForbidden());
-    EventDispatcher dispatcher(node);
-
-    IntPoint contentsPos;
-    if (FrameView* view = node->document()->view())
-        contentsPos = view->windowToContents(event.pos());
-
-    short button = event.button();
-
-    ASSERT(event.eventType() == MouseEventMoved || button != NoButton);
-
-    return dispatcher.dispatchMouseEvent(eventType, button, detail,
-        contentsPos.x(), contentsPos.y(), event.globalX(), event.globalY(),
-        event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(),
-        false, relatedTarget, 0);
-}
-
-void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> event, bool sendMouseEvents, bool showPressedLook)
+void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> underlyingEvent, bool sendMouseEvents, bool showPressedLook)
 {
     EventDispatcher dispatcher(node);
 
@@ -132,14 +112,14 @@ void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> event
 
     // send mousedown and mouseup before the click, if requested
     if (sendMouseEvents)
-        dispatcher.dispatchSimulatedMouseEvent(eventNames().mousedownEvent, event.get());
+        dispatcher.dispatchEvent(SimulatedMouseEvent::create(eventNames().mousedownEvent, node->document()->defaultView(), underlyingEvent));
     node->setActive(true, showPressedLook);
     if (sendMouseEvents)
-        dispatcher.dispatchSimulatedMouseEvent(eventNames().mouseupEvent, event.get());
+        dispatcher.dispatchEvent(SimulatedMouseEvent::create(eventNames().mouseupEvent, node->document()->defaultView(), underlyingEvent));
     node->setActive(false);
 
     // always send click
-    dispatcher.dispatchSimulatedMouseEvent(eventNames().clickEvent, event);
+    dispatcher.dispatchEvent(SimulatedMouseEvent::create(eventNames().clickEvent, node->document()->defaultView(), underlyingEvent));
 
     gNodesDispatchingSimulatedClicks->remove(node);
 }
@@ -329,19 +309,25 @@ doneWithDefault:
 
     return !event->defaultPrevented();
 }
-
-bool EventDispatcher::dispatchMouseEvent(const AtomicString& eventType, int button, int detail,
-    int pageX, int pageY, int screenX, int screenY,
-    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-    bool isSimulated, Node* relatedTargetArg, PassRefPtr<Event> underlyingEvent)
+bool EventDispatcher::dispatchMouseEvent(Node* node, const PlatformMouseEvent& event, const AtomicString& eventType,
+    int detail, Node* relatedTargetArg)
 {
     ASSERT(!eventDispatchForbidden());
-    if (m_node->disabled()) // Don't even send DOM events for disabled controls..
+    if (node->disabled()) // Don't even send DOM events for disabled controls..
         return true;
 
     if (eventType.isEmpty())
         return false; // Shouldn't happen.
 
+    EventDispatcher dispatcher(node);
+
+    IntPoint contentsPos;
+    if (FrameView* view = node->document()->view())
+        contentsPos = view->windowToContents(event.pos());
+
+    ASSERT(event.eventType() == MouseEventMoved || event.button() != NoButton);
+
+    // FIXME: This should be in mouse event constructor.
     bool cancelable = eventType != eventNames().mousemoveEvent;
 
     bool swallowEvent = false;
@@ -349,26 +335,26 @@ bool EventDispatcher::dispatchMouseEvent(const AtomicString& eventType, int butt
     // Attempting to dispatch with a non-EventTarget relatedTarget causes the relatedTarget to be silently ignored.
     RefPtr<Node> relatedTarget = pullOutOfShadow(relatedTargetArg);
 
-    int adjustedPageX = pageX;
-    int adjustedPageY = pageY;
-    if (Frame* frame = m_node->document()->frame()) {
+    int adjustedPageX = contentsPos.x();
+    int adjustedPageY = contentsPos.y();
+    if (Frame* frame = node->document()->frame()) {
         float pageZoom = frame->pageZoomFactor();
         if (pageZoom != 1.0f) {
             // Adjust our pageX and pageY to account for the page zoom.
-            adjustedPageX = lroundf(pageX / pageZoom);
-            adjustedPageY = lroundf(pageY / pageZoom);
+            adjustedPageX = lroundf(contentsPos.x() / pageZoom);
+            adjustedPageY = lroundf(contentsPos.y() / pageZoom);
         }
     }
 
     RefPtr<MouseEvent> mouseEvent = MouseEvent::create(eventType,
-        true, cancelable, m_node->document()->defaultView(),
-        detail, screenX, screenY, adjustedPageX, adjustedPageY,
-        ctrlKey, altKey, shiftKey, metaKey, button,
-        relatedTarget, 0, isSimulated);
-    mouseEvent->setUnderlyingEvent(underlyingEvent.get());
-    mouseEvent->setAbsoluteLocation(IntPoint(pageX, pageY));
+        true, cancelable, node->document()->defaultView(),
+        detail, event.globalX(), event.globalY(), adjustedPageX, adjustedPageY,
+        event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.button(),
+        relatedTarget,  0, false);
+    // FIXME: Should this be adjustedPageX, adjustedPageY?
+    mouseEvent->setAbsoluteLocation(IntPoint(contentsPos.x(), contentsPos.y()));
 
-    dispatchEvent(mouseEvent);
+    dispatcher.dispatchEvent(mouseEvent);
     bool defaultHandled = mouseEvent->defaultHandled();
     bool defaultPrevented = mouseEvent->defaultPrevented();
     if (defaultHandled || defaultPrevented)
@@ -379,39 +365,18 @@ bool EventDispatcher::dispatchMouseEvent(const AtomicString& eventType, int butt
     // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
     if (eventType == eventNames().clickEvent && detail == 2) {
         RefPtr<Event> doubleClickEvent = MouseEvent::create(eventNames().dblclickEvent,
-            true, cancelable, m_node->document()->defaultView(),
-            detail, screenX, screenY, adjustedPageX, adjustedPageY,
-            ctrlKey, altKey, shiftKey, metaKey, button,
-            relatedTarget, 0, isSimulated);
-        doubleClickEvent->setUnderlyingEvent(underlyingEvent.get());
+            true, cancelable, node->document()->defaultView(),
+            detail, event.globalX(), event.globalY(), adjustedPageX, adjustedPageY,
+            event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.button(),
+            relatedTarget, 0, false);
         if (defaultHandled)
             doubleClickEvent->setDefaultHandled();
-        dispatchEvent(doubleClickEvent);
+        dispatcher.dispatchEvent(doubleClickEvent);
         if (doubleClickEvent->defaultHandled() || doubleClickEvent->defaultPrevented())
             swallowEvent = true;
     }
 
     return swallowEvent;
-}
-
-void EventDispatcher::dispatchSimulatedMouseEvent(const AtomicString& eventType, PassRefPtr<Event> underlyingEvent)
-{
-    ASSERT(!eventDispatchForbidden());
-
-    bool ctrlKey = false;
-    bool altKey = false;
-    bool shiftKey = false;
-    bool metaKey = false;
-    if (UIEventWithKeyState* keyStateEvent = findEventWithKeyState(underlyingEvent.get())) {
-        ctrlKey = keyStateEvent->ctrlKey();
-        altKey = keyStateEvent->altKey();
-        shiftKey = keyStateEvent->shiftKey();
-        metaKey = keyStateEvent->metaKey();
-    }
-
-    // Like Gecko, we just pass 0 for everything when we make a fake mouse event.
-    // Internet Explorer instead gives the current mouse position and state.
-    dispatchMouseEvent(eventType, 0, 0, 0, 0, 0, 0, ctrlKey, altKey, shiftKey, metaKey, true, 0, underlyingEvent);
 }
 
 const EventContext* EventDispatcher::topEventContext()

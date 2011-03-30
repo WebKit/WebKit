@@ -1,3 +1,23 @@
+2011-03-29  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Introduce SimulatedMouseEvent and teach EventDispatcher how to use it.
+        https://bugs.webkit.org/show_bug.cgi?id=57402
+
+        No functional changes, covered by existing tests.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchSimulatedClick): Changed to use SimulatedMouseEvent.
+        (WebCore::EventDispatcher::dispatchMouseEvent): Combined two dispatchMouseEvent methods
+            into one, now that simulated-click events don't need one.
+        * dom/EventDispatcher.h: Updated decls.
+        * dom/MouseEvent.cpp:
+        (WebCore::SimulatedMouseEvent::create): Added.
+        (WebCore::SimulatedMouseEvent::~SimulatedMouseEvent): Added.
+        (WebCore::SimulatedMouseEvent::SimulatedMouseEvent): Added.
+        * dom/MouseEvent.h: Made constructor protected.
+
 2011-03-29  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
