@@ -3236,7 +3236,7 @@ BUGCR76979 LINUX DEBUG : inspector/console/console-dirxml.html = PASS TEXT
 // New in WebKit r81404. Text orientation is wrong and emphasis marks are wrong.
 BUGCR76616 WIN LINUX : fast/text/emphasis-combined-text.html = IMAGE+TEXT
 // Needs leopard baseline.
-BUGCR76616 MAC LEOPARD : fast/text/emphasis-combined-text.html = IMAGE+TEXT
+BUGCR76616 MAC LEOPARD : fast/text/emphasis-combined-text.html = IMAGE
 
 BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-drawImage-shadow.html = TEXT
 BUGWK56677 GPU WIN LINUX : fast/canvas/canvas-scale-drawImage-shadow.html = TEXT
