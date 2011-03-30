@@ -1,3 +1,32 @@
+2011-03-29  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Teach the preload scanner about &lt;input type=image&gt;
+        https://bugs.webkit.org/show_bug.cgi?id=57404
+
+        I did a very rough sample of the top 50 web pages to see how many of each
+        HTML resource type they include:
+        img src: 1,359
+        script src: 276
+        link href: 256
+        iframe src: 104
+        input src: 50
+        embed src: 37
+        @import: 13
+        object data: 11
+
+        Based on this, it seems worthwhile to preload inputs and iframes (possibly embed).
+        This patch only does inputs.
+
+        Test: fast/preloader/input.html
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::HTMLNames::PreloadTask::PreloadTask):
+        (WebCore::HTMLNames::PreloadTask::processAttributes):
+        (WebCore::HTMLNames::PreloadTask::inputTypeAttributeIsImage):
+        (WebCore::HTMLNames::PreloadTask::preload):
+
 2011-03-29  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by David Levin.

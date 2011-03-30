@@ -1,3 +1,13 @@
+2011-03-29  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Teach the preload scanner about &lt;input type=image&gt;
+        https://bugs.webkit.org/show_bug.cgi?id=57404
+
+        * fast/preloader/input-expected.txt: Added.
+        * fast/preloader/input.html: Added.
+
 2011-03-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

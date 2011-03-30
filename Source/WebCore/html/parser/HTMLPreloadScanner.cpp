@@ -30,6 +30,7 @@
 
 #include "CachedResourceLoader.h"
 #include "Document.h"
+#include "InputType.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLTokenizer.h"
 #include "HTMLLinkElement.h"
@@ -50,13 +51,17 @@ public:
         : m_tagName(token.name().data(), token.name().size())
         , m_linkIsStyleSheet(false)
         , m_linkMediaAttributeIsScreen(true)
+        , m_inputIsImage(false)
     {
         processAttributes(token.attributes());
     }
 
     void processAttributes(const HTMLToken::AttributeList& attributes)
     {
-        if (m_tagName != scriptTag && m_tagName != imgTag && m_tagName != linkTag)
+        if (m_tagName != imgTag
+            && m_tagName != inputTag
+            && m_tagName != linkTag
+            && m_tagName != scriptTag)
             return;
 
         for (HTMLToken::AttributeList::const_iterator iter = attributes.begin();
@@ -77,6 +82,11 @@ public:
                     m_linkIsStyleSheet = relAttributeIsStyleSheet(attributeValue);
                 else if (attributeName == mediaAttr)
                     m_linkMediaAttributeIsScreen = linkMediaAttributeIsScreen(attributeValue);
+            } else if (m_tagName == inputTag) {
+                if (attributeName == srcAttr)
+                    setUrlToLoad(attributeValue);
+                else if (attributeName == typeAttr)
+                    m_inputIsImage = equalIgnoringCase(attributeValue, InputTypeNames::image());
             }
         }
     }
@@ -87,7 +97,7 @@ public:
         HTMLLinkElement::tokenizeRelAttribute(attributeValue, rel);
         return rel.m_isStyleSheet && !rel.m_isAlternate && !rel.m_isIcon && !rel.m_isDNSPrefetch;
     }
-    
+
     static bool linkMediaAttributeIsScreen(const String& attributeValue)
     {
         if (attributeValue.isEmpty())
@@ -118,7 +128,7 @@ public:
         CachedResourceLoader* cachedResourceLoader = document->cachedResourceLoader();
         if (m_tagName == scriptTag)
             cachedResourceLoader->preload(CachedResource::Script, m_urlToLoad, m_charset, scanningBody);
-        else if (m_tagName == imgTag) 
+        else if (m_tagName == imgTag || (m_tagName == inputTag && m_inputIsImage))
             cachedResourceLoader->preload(CachedResource::ImageResource, m_urlToLoad, String(), scanningBody);
         else if (m_tagName == linkTag && m_linkIsStyleSheet && m_linkMediaAttributeIsScreen) 
             cachedResourceLoader->preload(CachedResource::CSSStyleSheet, m_urlToLoad, m_charset, scanningBody);
@@ -132,6 +142,7 @@ private:
     String m_charset;
     bool m_linkIsStyleSheet;
     bool m_linkMediaAttributeIsScreen;
+    bool m_inputIsImage;
 };
 
 } // namespace
