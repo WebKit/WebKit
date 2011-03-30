@@ -1,3 +1,16 @@
+2011-03-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 contextual menu looks different than the rest of the OS
+        <rdar://problem/9172935>
+        https://bugs.webkit.org/show_bug.cgi?id=57475
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+        Use correct SPI for showing a context menu. The dummy view is also
+        not necessary, so remove it.
+
 2011-03-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
