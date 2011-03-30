@@ -1,5 +1,104 @@
 2011-03-30  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed, rolling out r82413.
+        http://trac.webkit.org/changeset/82413
+
+        Revert Adam's rebaselines (part 2). They broke Chromium
+        Leopard bots.
+
+        * platform/chromium-mac-snowleopard/fast/backgrounds/svg-as-background-5-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/fast/backgrounds/svg-as-background-5-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-36-t-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/animate-path-discrete-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/animate-path-discrete-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/dynamic-svg-document-creation-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/dynamic-svg-document-creation-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Discrete-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Discrete-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Gamma-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Gamma-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Linear-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Linear-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Table-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/feComponentTransfer-Table-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/foreign-object-skew-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/foreign-object-skew-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/glyph-transformation-with-hkern-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/glyph-transformation-with-hkern-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/gradient-rotated-bbox-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/gradient-rotated-bbox-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/grayscale-gradient-mask-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/grayscale-gradient-mask-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/inline-svg-in-xhtml-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/inline-svg-in-xhtml-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/js-late-gradient-and-object-creation-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/js-late-gradient-and-object-creation-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/js-late-gradient-creation-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/js-late-gradient-creation-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/js-late-pattern-and-object-creation-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/js-late-pattern-and-object-creation-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/js-late-pattern-creation-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/js-late-pattern-creation-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/non-scaling-stroke-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/non-scaling-stroke-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/pattern-skew-transformed-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/pattern-skew-transformed-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/pattern-with-transformation-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/pattern-with-transformation-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/preserve-aspect-ratio-syntax-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/preserve-aspect-ratio-syntax-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/resource-invalidate-on-target-update-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/resource-invalidate-on-target-update-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/shapes-supporting-markers-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/shapes-supporting-markers-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/svg-curve-with-relative-cordinates-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/svg-curve-with-relative-cordinates-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/svg-fonts-in-html-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/svg-fonts-in-html-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/svg-fonts-with-no-element-reference-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/svg-fonts-with-no-element-reference-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/text-rotated-gradient-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/text-rotated-gradient-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/use-detach-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/use-detach-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/use-on-clip-path-with-transformation-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/use-on-clip-path-with-transformation-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/viewbox-syntax-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/viewbox-syntax-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/hixie/mixed/003-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/hixie/mixed/003-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/hixie/mixed/006-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/hixie/mixed/006-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/hixie/mixed/008-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/hixie/mixed/008-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/hixie/mixed/011-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/hixie/mixed/011-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/text/text-intro-05-t-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/text/text-intro-05-t-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-foreignObject-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-foreignObject-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-mask-with-percentages-expected.checksum: Removed.
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-mask-with-percentages-expected.png: Removed.
+
+2011-03-30  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed, rolling out r82414.
         http://trac.webkit.org/changeset/82414
 
