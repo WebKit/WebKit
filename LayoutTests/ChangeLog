@@ -11,9 +11,10 @@
         * fast/canvas/getPutImageDataPairTest-expected.txt: Added.
         * fast/canvas/getPutImageDataPairTest.html: A new test to make sure that a batch of paired putImageData(getImageData)
           calls doesn't accumulate any error per the spec.
-        * fast/canvas/rgba-parsing-expected.txt: Reset the results for this test since the initial rgba rounding values are
-          now different. Note: the spec does not define how they *should* be rounded, so having them there is basically just
-          for bookkeeping to know when our rounding behavior changes since it could be early warning of related real issues.
+        * fast/canvas/script-tests/rgba-parsing.js: Removed the pixel spew section at the bottom since because 1) it is only
+          helpful for knowing when our rounding behavior changes and 2) the behavior is implementation dependent with no easy
+          in the layouttests to distinguish between 10.6.6 and 10.6.7.
+        * fast/canvas/rgba-parsing-expected.txt: Updated the expected results off of the the test change.
 
 2011-03-30  Jessie Berlin  <jberlin@apple.com>
 
