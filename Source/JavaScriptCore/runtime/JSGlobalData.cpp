@@ -184,7 +184,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     programExecutableStructure = ProgramExecutable::createStructure(*this, jsNull());
     functionExecutableStructure = FunctionExecutable::createStructure(*this, jsNull());
     dummyMarkableCellStructure = JSCell::createDummyStructure(*this);
-    structureChainStructure = StructureChain::createStructure(*this, jsNull());
 
     interpreter = new Interpreter(*this);
     if (globalDataType == Default)

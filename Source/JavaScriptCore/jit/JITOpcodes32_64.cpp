@@ -979,7 +979,7 @@ void JIT::emit_op_jneq_null(Instruction* currentInstruction)
 void JIT::emit_op_jneq_ptr(Instruction* currentInstruction)
 {
     unsigned src = currentInstruction[1].u.operand;
-    JSCell* ptr = currentInstruction[2].u.jsCell.get();
+    JSCell* ptr = currentInstruction[2].u.jsCell;
     unsigned target = currentInstruction[3].u.operand;
 
     emitLoad(src, regT1, regT0);

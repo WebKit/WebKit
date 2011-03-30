@@ -731,7 +731,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         case op_resolve_global_dynamic: {
             int r0 = (++it)->u.operand;
             int id0 = (++it)->u.operand;
-            JSValue scope = JSValue((++it)->u.jsCell.get());
+            JSValue scope = JSValue((++it)->u.jsCell);
             ++it;
             int depth = (++it)->u.operand;
             printf("[%4d] resolve_global_dynamic\t %s, %s, %s, %d\n", location, registerName(exec, r0).data(), valueToSourceString(exec, scope).utf8().data(), idName(id0, m_identifiers[id0]).data(), depth);
@@ -1437,11 +1437,13 @@ void CodeBlock::derefStructures(Instruction* vPC) const
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_chain)) {
         vPC[4].u.structure->deref();
+        vPC[5].u.structureChain->deref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition)) {
         vPC[4].u.structure->deref();
         vPC[5].u.structure->deref();
+        vPC[6].u.structureChain->deref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
@@ -1484,11 +1486,13 @@ void CodeBlock::refStructures(Instruction* vPC) const
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_chain)) {
         vPC[4].u.structure->ref();
+        vPC[5].u.structureChain->ref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition)) {
         vPC[4].u.structure->ref();
         vPC[5].u.structure->ref();
+        vPC[6].u.structureChain->ref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
@@ -1522,20 +1526,6 @@ void CodeBlock::markAggregate(MarkStack& markStack)
     for (unsigned i = 0; i < numberOfCallLinkInfos(); ++i)
         if (callLinkInfo(i).isLinked())
             markStack.append(&callLinkInfo(i).callee);
-#endif
-#if ENABLE(INTERPRETER)
-    Interpreter* interpreter = m_globalData->interpreter;
-    for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i) {
-        Instruction* vPC = &m_instructions[m_propertyAccessInstructions[i]];
-        if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_chain))
-            markStack.append(&vPC[5].u.structureChain);
-        else if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition))
-            markStack.append(&vPC[6].u.structureChain);
-    }
-#endif
-#if ENABLE(JIT)
-    for (size_t size = m_structureStubInfos.size(), i = 0; i < size; ++i)
-        m_structureStubInfos[i].markAggregate(markStack);
 #endif
 }
 

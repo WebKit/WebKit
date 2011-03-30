@@ -814,10 +814,8 @@ inline void JSValue::put(ExecState* exec, unsigned propertyName, JSValue value)
 ALWAYS_INLINE void JSObject::markChildrenDirect(MarkStack& markStack)
 {
     JSCell::markChildren(markStack);
-    
+
     markStack.append(m_structure->storedPrototypeSlot());
-    if (*m_structure->cachedPrototypeChainSlot())
-        markStack.append(m_structure->cachedPrototypeChainSlot());
     PropertyStorage storage = propertyStorage();
     size_t storageSize = m_structure->propertyStorageSize();
     markStack.appendValues(storage, storageSize);

@@ -32,8 +32,7 @@
 
 namespace JSC {
 
-StructureChain::StructureChain(NonNullPassRefPtr<Structure> structure, Structure* head)
-    : JSCell(structure.releaseRef())
+StructureChain::StructureChain(Structure* head)
 {
     size_t size = 0;
     for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())

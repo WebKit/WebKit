@@ -1007,7 +1007,8 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     
     // Track the stub we have created so that it will be deleted later.
     structure->ref();
-    prototypeStructures->list[currentIndex].set(callFrame->globalData(), m_codeBlock->ownerExecutable(), entryLabel, structure, chain);
+    chain->ref();
+    prototypeStructures->list[currentIndex].set(entryLabel, structure, chain);
     
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);

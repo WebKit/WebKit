@@ -215,12 +215,12 @@ namespace JSC {
 
     template <typename T> inline void MarkStack::append(DeprecatedPtr<T>* slot)
     {
-        internalAppend(*slot->slot());
+        internalAppend(slot->get());
     }
     
     template <typename T> inline void MarkStack::append(WriteBarrierBase<T>* slot)
     {
-        internalAppend(*slot->slot());
+        internalAppend(slot->get());
     }
 
     ALWAYS_INLINE void MarkStack::deprecatedAppend(JSCell** value)

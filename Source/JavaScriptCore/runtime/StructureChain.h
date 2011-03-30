@@ -26,8 +26,6 @@
 #ifndef StructureChain_h
 #define StructureChain_h
 
-#include "JSCell.h"
-
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -37,16 +35,15 @@ namespace JSC {
 
     class Structure;
 
-    class StructureChain : public JSCell {
+    class StructureChain : public RefCounted<StructureChain> {
         friend class JIT;
 
     public:
-        static StructureChain* create(JSGlobalData& globalData, Structure* head) { return new (&globalData) StructureChain(globalData.structureChainStructure, head); }
+        static PassRefPtr<StructureChain> create(Structure* head) { return adoptRef(new StructureChain(head)); }
         RefPtr<Structure>* head() { return m_vector.get(); }
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype) { return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesMarkChildren), 0, 0); }
     private:
-        StructureChain(NonNullPassRefPtr<Structure>, Structure* head);
+        StructureChain(Structure* head);
 
         OwnArrayPtr<RefPtr<Structure> > m_vector;
     };

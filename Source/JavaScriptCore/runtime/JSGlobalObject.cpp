@@ -88,8 +88,6 @@ static inline void markIfNeeded(MarkStack& markStack, const RefPtr<Structure>& s
 {
     if (s && s->storedPrototype())
         markStack.append(s->storedPrototypeSlot());
-    if (s && *s->cachedPrototypeChainSlot())
-        markStack.append(s->cachedPrototypeChainSlot());
 }
 
 JSGlobalObject::~JSGlobalObject()

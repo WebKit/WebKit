@@ -32,6 +32,7 @@
 #include "PropertyMapHashTable.h"
 #include "PropertyNameArray.h"
 #include "Protect.h"
+#include "StructureChain.h"
 #include "StructureTransitionTable.h"
 #include "JSTypeInfo.h"
 #include "UString.h"
@@ -45,7 +46,6 @@ namespace JSC {
     class MarkStack;
     class PropertyNameArray;
     class PropertyNameArrayData;
-    class StructureChain;
 
     struct ClassInfo;
 
@@ -107,7 +107,6 @@ namespace JSC {
         DeprecatedPtr<Unknown>* storedPrototypeSlot() { return &m_prototype; }
         JSValue prototypeForLookup(ExecState*) const;
         StructureChain* prototypeChain(ExecState*) const;
-        DeprecatedPtr<StructureChain>* cachedPrototypeChainSlot() { return &m_cachedPrototypeChain; }
 
         Structure* previousID() const { return m_previous.get(); }
 
@@ -211,7 +210,7 @@ namespace JSC {
         TypeInfo m_typeInfo;
 
         DeprecatedPtr<Unknown> m_prototype;
-        mutable DeprecatedPtr<StructureChain> m_cachedPrototypeChain;
+        mutable RefPtr<StructureChain> m_cachedPrototypeChain;
 
         RefPtr<Structure> m_previous;
         RefPtr<StringImpl> m_nameInPrevious;
