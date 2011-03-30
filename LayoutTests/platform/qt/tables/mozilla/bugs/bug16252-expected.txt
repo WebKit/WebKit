@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
                         RenderTableRow {TR} at (0,0) size 260x25
                           RenderTableCell {TD} at (0,0) size 6x25 [bgcolor=#FFFFFF] [r=0 c=0 rs=1 cs=1]
                             RenderBR {BR} at (2,2) size 0x21
-                          RenderTableCell {TD} at (6,2) size 254x21 [bgcolor=#CCCCDD] [r=0 c=1 rs=1 cs=1]
+                          RenderTableCell {TD} at (6,2) size 254x20 [bgcolor=#CCCCDD] [r=0 c=1 rs=1 cs=1]
                             RenderInline {FONT} at (0,0) size 246x16
                               RenderInline {B} at (0,0) size 246x16
                                 RenderText {#text} at (2,2) size 246x16

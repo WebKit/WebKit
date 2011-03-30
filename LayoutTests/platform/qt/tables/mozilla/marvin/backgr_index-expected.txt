@@ -1,8 +1,8 @@
-layer at (0,0) size 827x1738
+layer at (0,0) size 827x1737
   RenderView at (0,0) size 784x584
-layer at (0,0) size 784x1738
-  RenderBlock {HTML} at (0,0) size 784x1738
-    RenderBody {BODY} at (8,17) size 768x1708 [color=#00FF00] [bgcolor=#333333]
+layer at (0,0) size 784x1737
+  RenderBlock {HTML} at (0,0) size 784x1737
+    RenderBody {BODY} at (8,17) size 768x1707 [color=#00FF00] [bgcolor=#333333]
       RenderBlock {H1} at (0,0) size 768x33
         RenderText {#text} at (0,0) size 443x33
           text run at (0,0) width 443: "CSS2 Table Backgrounds Test Suite"
@@ -52,7 +52,7 @@ layer at (0,0) size 784x1738
       RenderBlock {P} at (0,1089) size 768x16
         RenderText {#text} at (0,0) size 541x16
           text run at (0,0) width 541: "Many image background rules in this test suite are backed up with a 'black' background color."
-      RenderBlock {P} at (0,1118) size 768x50
+      RenderBlock {P} at (0,1118) size 768x49
         RenderText {#text} at (0,0) size 170x16
           text run at (0,0) width 170: "This test suite assumes that "
         RenderInline {STRONG} at (0,0) size 763x33
@@ -64,18 +64,18 @@ layer at (0,0) size 784x1738
           RenderText {#text} at (679,0) size 763x33
             text run at (679,0) width 84: " of the border"
             text run at (0,17) width 298: "around the element, not the outer or inner edge."
-        RenderText {#text} at (298,17) size 733x33
+        RenderText {#text} at (298,17) size 733x32
           text run at (298,17) width 435: " (This also needs to be addressed by CSS2.1.) It also assumes support for"
-          text run at (0,34) width 171: "proper ordering of tables with "
+          text run at (0,33) width 171: "proper ordering of tables with "
         RenderInline {CODE} at (0,0) size 42x16
-          RenderText {#text} at (171,34) size 42x16
-            text run at (171,34) width 42: "<tfoot>"
-        RenderText {#text} at (213,34) size 4x16
-          text run at (213,34) width 4: "."
-      RenderBlock {H2} at (0,1184) size 768x26
+          RenderText {#text} at (171,33) size 42x16
+            text run at (171,33) width 42: "<tfoot>"
+        RenderText {#text} at (213,33) size 4x16
+          text run at (213,33) width 4: "."
+      RenderBlock {H2} at (0,1183) size 768x26
         RenderText {#text} at (0,0) size 169x26
           text run at (0,0) width 169: "Table of Contents"
-      RenderBlock {OL} at (0,1226) size 768x482
+      RenderBlock {OL} at (0,1225) size 768x482
         RenderListItem {LI} at (40,0) size 728x112
           RenderBlock (anonymous) at (0,0) size 728x16
             RenderListMarker at (-21,0) size 17x16: "A"

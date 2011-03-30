@@ -1,8 +1,8 @@
-layer at (0,0) size 784x963
+layer at (0,0) size 784x960
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x963
-  RenderBlock {HTML} at (0,0) size 784x963
-    RenderBody {BODY} at (8,21) size 768x917
+layer at (0,0) size 784x960
+  RenderBlock {HTML} at (0,0) size 784x960
+    RenderBody {BODY} at (8,21) size 768x914
       RenderBlock {H1} at (0,0) size 768x84
         RenderText {#text} at (0,0) size 750x83
           text run at (0,0) width 750: "Problem: Safari improperly handles generated content"
@@ -41,19 +41,19 @@ layer at (0,0) size 784x963
         RenderText {#text} at (577,0) size 729x42
           text run at (577,0) width 152: " (paragraph) tag, after"
           text run at (0,21) width 575: "which we'd like to insert generated content. One way to do so would be the following:"
-      RenderBlock {PRE} at (20,221) size 748x17 [color=#FF0000]
+      RenderBlock {PRE} at (20,221) size 748x16 [color=#FF0000]
         RenderInline {CODE} at (0,0) size 340x16
           RenderText {#text} at (0,0) size 340x16
             text run at (0,0) width 340: "div.box.one p:after{ content:'generated content here!'; }"
-      RenderBlock {P} at (0,254) size 768x42
+      RenderBlock {P} at (0,253) size 768x42
         RenderText {#text} at (0,0) size 709x42
           text run at (0,0) width 709: "But that doesn't work in Safari. However, if you drop one of the class names, as shown below, it works as"
           text run at (0,21) width 64: "expected:"
-      RenderBlock {PRE} at (20,312) size 748x17 [color=#008000]
+      RenderBlock {PRE} at (20,311) size 748x16 [color=#008000]
         RenderInline {CODE} at (0,0) size 313x16
           RenderText {#text} at (0,0) size 313x16
             text run at (0,0) width 313: "div.box p:after{ content:'generated content here!'; }"
-      RenderBlock {P} at (0,345) size 768x42
+      RenderBlock {P} at (0,343) size 768x42
         RenderText {#text} at (0,0) size 307x21
           text run at (0,0) width 307: "Note also that the bug only applies to content "
         RenderInline {EM} at (0,0) size 41x21
@@ -67,15 +67,15 @@ layer at (0,0) size 784x963
             text run at (0,21) width 84: "element itself"
         RenderText {#text} at (84,21) size 80x21
           text run at (84,21) width 80: " works fine:"
-      RenderBlock {PRE} at (20,403) size 748x17 [color=#008000]
+      RenderBlock {PRE} at (20,401) size 748x16 [color=#008000]
         RenderInline {CODE} at (0,0) size 328x16
           RenderText {#text} at (0,0) size 328x16
             text run at (0,0) width 328: "div.box.one:after{ content:'generated content here!'; }"
-      RenderBlock {HR} at (0,433) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {H2} at (0,454) size 768x31
+      RenderBlock {HR} at (0,430) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {H2} at (0,451) size 768x31
         RenderText {#text} at (0,0) size 477x32
           text run at (0,0) width 477: "Example (view source to see CSS and HTML):"
-      RenderBlock {P} at (0,504) size 768x21
+      RenderBlock {P} at (0,501) size 768x21
         RenderText {#text} at (0,0) size 356x21
           text run at (0,0) width 356: "Both boxes below should contain generated content ("
         RenderInline {SPAN} at (0,0) size 55x21 [color=#008000]
@@ -83,7 +83,7 @@ layer at (0,0) size 784x963
             text run at (356,0) width 55: "in green"
         RenderText {#text} at (411,0) size 10x21
           text run at (411,0) width 10: "):"
-      RenderBlock {DIV} at (0,550) size 768x171 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,547) size 768x171 [border: (1px solid #000000)]
         RenderBlock {H3} at (26,44) size 716x25
           RenderText {#text} at (0,0) size 48x25
             text run at (0,0) width 48: "Box 1"
@@ -94,7 +94,7 @@ layer at (0,0) size 784x963
           RenderBlock (generated) at (0,21) size 716x21 [color=#008000]
             RenderText at (0,0) size 121x21
               text run at (0,0) width 121: "generated content"
-      RenderBlock {DIV} at (0,746) size 768x171 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,743) size 768x171 [border: (1px solid #000000)]
         RenderBlock {H3} at (26,44) size 716x25
           RenderText {#text} at (0,0) size 48x25
             text run at (0,0) width 48: "Box 2"

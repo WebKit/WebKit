@@ -17,31 +17,31 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x21
+      RenderBlock {P} at (0,0) size 784x20
         RenderInline {FONT} at (0,0) size 37x20
           RenderInline {B} at (0,0) size 37x20
             RenderText {#text} at (0,0) size 37x20
               text run at (0,0) width 37: "hello"
-      RenderBlock {P} at (0,37) size 784x21
+      RenderBlock {P} at (0,36) size 784x20
         RenderInline {FONT} at (0,0) size 39x20
           RenderInline {B} at (0,0) size 39x20
             RenderText {#text} at (0,0) size 39x20
               text run at (0,0) width 39: "there"
-      RenderBlock {P} at (0,74) size 784x58
+      RenderBlock {P} at (0,72) size 784x56
         RenderBlock (anonymous) at (0,0) size 784x0
           RenderInline {FONT} at (0,0) size 0x0
-        RenderBlock (anonymous) at (0,0) size 784x58
-          RenderBlock {P} at (0,0) size 784x21
+        RenderBlock (anonymous) at (0,0) size 784x56
+          RenderBlock {P} at (0,0) size 784x20
             RenderInline {FONT} at (0,0) size 37x20
               RenderInline {B} at (0,0) size 37x20
                 RenderText {#text} at (0,0) size 37x20
                   text run at (0,0) width 37: "hello"
-          RenderBlock {P} at (0,37) size 784x21
+          RenderBlock {P} at (0,36) size 784x20
             RenderInline {FONT} at (0,0) size 39x20
               RenderInline {B} at (0,0) size 39x20
                 RenderText {#text} at (0,0) size 39x20
                   text run at (0,0) width 39: "there"
-        RenderBlock (anonymous) at (0,74) size 784x0
+        RenderBlock (anonymous) at (0,72) size 784x0
           RenderInline {FONT} at (0,0) size 0x0
           RenderInline {FONT} at (0,0) size 0x0
 caret: position 5 of child 0 {#text} of child 0 {B} of child 0 {FONT} of child 1 {P} of child 0 {FONT} of child 4 {P} of body

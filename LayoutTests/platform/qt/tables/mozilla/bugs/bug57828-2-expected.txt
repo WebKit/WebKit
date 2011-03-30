@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,37) size 675x62
         RenderTableSection {TBODY} at (0,0) size 675x62
           RenderTableRow {TR} at (0,0) size 675x62 [bgcolor=#9999CC]
-            RenderTableCell {TD} at (0,17) size 631x27 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (0,18) size 631x26 [r=0 c=0 rs=1 cs=1]
               RenderInline {FONT} at (0,0) size 153x23
                 RenderInline {B} at (0,0) size 153x23
                   RenderText {#text} at (2,2) size 153x23
@@ -35,10 +35,10 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,115) size 784x21
         RenderText {#text} at (0,0) size 505x21
           text run at (0,0) width 505: "The table below leaves in the nowrap but take out the 1% width in the cell."
-      RenderTable {TABLE} at (0,152) size 675x27
-        RenderTableSection {TBODY} at (0,0) size 675x27
-          RenderTableRow {TR} at (0,0) size 675x27 [bgcolor=#9999CC]
-            RenderTableCell {TD} at (0,0) size 506x27 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,152) size 675x26
+        RenderTableSection {TBODY} at (0,0) size 675x26
+          RenderTableRow {TR} at (0,0) size 675x26 [bgcolor=#9999CC]
+            RenderTableCell {TD} at (0,0) size 506x26 [r=0 c=0 rs=1 cs=1]
               RenderInline {FONT} at (0,0) size 153x23
                 RenderInline {B} at (0,0) size 153x23
                   RenderText {#text} at (2,2) size 153x23

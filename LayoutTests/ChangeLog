@@ -1,3 +1,43 @@
+2011-03-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Add 3 failing tests to the Skipped list because of different bugs.
+        Additionally update Qt specific results after r82280 and unskip them.
+
+        * platform/qt/Skipped:
+         - Add css2.1/t0805-c5519-ibrdr-r-00-a.html (https://bugs.webkit.org/show_bug.cgi?id=57459)
+         - Add media/video-playbackrate.html (https://bugs.webkit.org/show_bug.cgi?id=57476)
+         - Add fast/events/onsearch-enter.html (https://bugs.webkit.org/show_bug.cgi?id=57472)
+         - Unskip passing tests
+
+        * platform/qt/editing/pasteboard/paste-text-011-expected.checksum: Added.
+        * platform/qt/editing/pasteboard/paste-text-011-expected.png: Added.
+        * platform/qt/editing/pasteboard/paste-text-011-expected.txt:
+        * platform/qt/fast/css-generated-content/014-expected.checksum:
+        * platform/qt/fast/css-generated-content/014-expected.png:
+        * platform/qt/fast/css-generated-content/014-expected.txt:
+        * platform/qt/fast/css/word-space-extra-expected.checksum:
+        * platform/qt/fast/css/word-space-extra-expected.png:
+        * platform/qt/fast/css/word-space-extra-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug16252-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2123-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug2123-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug2123-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug43854-1-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug43854-1-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug43854-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug4523-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug4523-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug4523-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug57828-2-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug57828-2-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug57828-2-expected.txt:
+        * platform/qt/tables/mozilla/core/bloomberg-expected.checksum:
+        * platform/qt/tables/mozilla/core/bloomberg-expected.png:
+        * platform/qt/tables/mozilla/core/bloomberg-expected.txt:
+        * platform/qt/tables/mozilla/marvin/backgr_index-expected.checksum:
+        * platform/qt/tables/mozilla/marvin/backgr_index-expected.png:
+        * platform/qt/tables/mozilla/marvin/backgr_index-expected.txt:
+
 2011-03-30  Adam Barth  <abarth@webkit.org>
 
         Move results from chromium-mac-snowleopard to chromium-mac.  We
