@@ -72,6 +72,11 @@ void PluginProcess::removeWebProcessConnection(WebProcessConnection* webProcessC
     ASSERT(vectorIndex != notFound);
 
     m_webProcessConnections.remove(vectorIndex);
+    
+    if (m_webProcessConnections.isEmpty() && m_pluginModule) {
+        // Decrement the load count. This is balanced by a call to incrementLoadCount in createWebProcessConnection.
+        m_pluginModule->decrementLoadCount();
+    }        
 
     startShutdownTimerIfNecessary();
 }
@@ -144,7 +149,7 @@ void PluginProcess::createWebProcessConnection()
 
     if (NetscapePluginModule* module = netscapePluginModule()) {
         if (!didHaveAnyWebProcessConnections) {
-            // Increment the load count. This is matched by a call to decrementLoadCount in startShutdownTimerIfNecessary.
+            // Increment the load count. This is matched by a call to decrementLoadCount in removeWebProcessConnection.
             // We do this so that the plug-in module's NP_Shutdown won't be called until right before exiting.
             module->incrementLoadCount();
         }
@@ -186,10 +191,6 @@ void PluginProcess::startShutdownTimerIfNecessary()
 {
     if (!m_webProcessConnections.isEmpty())
         return;
-
-    // Decrement the load count. This is balanced by a call to incrementLoadCount in createWebProcessConnection.
-    if (m_pluginModule)
-        m_pluginModule->decrementLoadCount();
 
     // Start the shutdown timer.
     m_shutdownTimer.startOneShot(shutdownTimeout);

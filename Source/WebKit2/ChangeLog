@@ -1,3 +1,19 @@
+2011-03-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Assertion failure in plug-in process when calling WKPluginSiteDataManagerGetSitesWithData
+        https://bugs.webkit.org/show_bug.cgi?id=57468
+        <rdar://problem/9199089>
+
+        Call decrementLoadCount from removeWebProcessConnection instead of startShutdownTimerIfNecessary,
+        otherwise we'll get a load count underflow when a connection is never created.
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::removeWebProcessConnection):
+        (WebKit::PluginProcess::createWebProcessConnection):
+        (WebKit::PluginProcess::startShutdownTimerIfNecessary):
+
 2011-03-30  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Anders Carlsson.
