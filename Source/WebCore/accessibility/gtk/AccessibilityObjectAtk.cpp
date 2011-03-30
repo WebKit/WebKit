@@ -98,7 +98,13 @@ void AccessibilityObject::setWrapper(AccessibilityObjectWrapper* wrapper)
 
 bool AccessibilityObject::allowsTextRanges() const
 {
-    return isTextControl() || isWebArea() || isGroup() || isLink() || isHeading() || isListItem();
+    // Check type for the AccessibilityObject.
+    if (isTextControl() || isWebArea() || isGroup() || isLink() || isHeading() || isListItem())
+        return true;
+
+    // Check roles as the last fallback mechanism.
+    AccessibilityRole role = roleValue();
+    return role == ParagraphRole || role == LabelRole || role == DivRole || role == FormRole;
 }
 
 unsigned AccessibilityObject::getLengthForTextRange() const

@@ -1,3 +1,16 @@
+2011-03-30  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        AX: GTK: ARIA role is not respected on <p> <label> <div> and <form>
+        https://bugs.webkit.org/show_bug.cgi?id=47636
+
+        Duplicate new internal WebCore roles in the Chromium port.
+
+        * public/WebAccessibilityRole.h: Update enumeration
+        WebAccessibilityRole to reflect newly added roles in WebCore.
+        * src/AssertMatchingEnums.cpp: Added new assertions.
+
 2011-03-30  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
