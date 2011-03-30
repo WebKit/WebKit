@@ -1,3 +1,13 @@
+2011-03-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WIN] Remove unused GEN_DOMObject files
+        https://bugs.webkit.org/show_bug.cgi?id=57370
+
+        * GEN_DOMObject.cpp: Removed.
+        * GEN_DOMObject.h: Removed.
+
 2011-03-29  Steve Falkenburg  <sfalken@apple.com>
 
         More build fix.
