@@ -188,6 +188,8 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
     
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::ArgumentDecoder*)
 {
+    [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
+
     initializeSandbox(parameters);
 
     if (!parameters.parentProcessName.isNull()) {

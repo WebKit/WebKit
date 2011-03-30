@@ -1,3 +1,13 @@
+2011-03-30  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Ensure consistent, readable working directory for WebProcess before entering sandbox
+        <rdar://problem/8951176>
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2011-03-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.
