@@ -1,5 +1,54 @@
 2011-03-30  Mihai Parparita  <mihaip@chromium.org>
 
+        Fix remaining unexpected Chromium Snow Leopard image failures.
+        
+        Current Leopard baselines in chromium-mac/ are moved to
+        chromium-mac-leopard/.
+
+        * platform/chromium-mac-leopard/fast/forms/input-align-image-expected.checksum: Copied from LayoutTests/platform/chromium-mac/fast/forms/input-align-image-expected.checksum.
+        * platform/chromium-mac-leopard/fast/forms/input-align-image-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/input-align-image-expected.png.
+        * platform/chromium-mac-leopard/fast/forms/input-type-change-expected.checksum: Copied from LayoutTests/platform/chromium-mac/fast/forms/input-type-change-expected.checksum.
+        * platform/chromium-mac-leopard/fast/forms/input-type-change-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/input-type-change-expected.png.
+        * platform/chromium-mac-leopard/fast/forms/listbox-bidi-align-expected.checksum: Copied from LayoutTests/platform/chromium-mac/fast/forms/listbox-bidi-align-expected.checksum.
+        * platform/chromium-mac-leopard/fast/forms/listbox-bidi-align-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/forms/listbox-bidi-align-expected.png.
+        * platform/chromium-mac-leopard/fast/text/drawBidiText-expected.checksum: Copied from LayoutTests/platform/chromium-mac/fast/text/drawBidiText-expected.checksum.
+        * platform/chromium-mac-leopard/fast/text/drawBidiText-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/text/drawBidiText-expected.png.
+        * platform/chromium-mac-leopard/media/video-transformed-expected.checksum: Copied from LayoutTests/platform/chromium-mac/media/video-transformed-expected.checksum.
+        * platform/chromium-mac-leopard/media/video-transformed-expected.png: Copied from LayoutTests/platform/chromium-mac/media/video-transformed-expected.png.
+        * platform/chromium-mac-leopard/scrollbars/listbox-scrollbar-combinations-expected.checksum: Copied from LayoutTests/platform/chromium-mac/scrollbars/listbox-scrollbar-combinations-expected.checksum.
+        * platform/chromium-mac-leopard/scrollbars/listbox-scrollbar-combinations-expected.png: Copied from LayoutTests/platform/chromium-mac/scrollbars/listbox-scrollbar-combinations-expected.png.
+        * platform/chromium-mac-leopard/scrollbars/overflow-scrollbar-combinations-expected.checksum: Copied from LayoutTests/platform/chromium-mac/scrollbars/overflow-scrollbar-combinations-expected.checksum.
+        * platform/chromium-mac-leopard/scrollbars/overflow-scrollbar-combinations-expected.png: Copied from LayoutTests/platform/chromium-mac/scrollbars/overflow-scrollbar-combinations-expected.png.
+        * platform/chromium-mac-leopard/svg/text/foreignObject-text-clipping-bug-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/text/foreignObject-text-clipping-bug-expected.checksum.
+        * platform/chromium-mac-leopard/svg/text/foreignObject-text-clipping-bug-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/text/foreignObject-text-clipping-bug-expected.png.
+        * platform/chromium-mac-leopard/tables/mozilla/core/col_widths_auto_autoFix-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/core/col_widths_auto_autoFix-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla/core/col_widths_auto_autoFix-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla/core/col_widths_auto_autoFix-expected.png.
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug6933-expected.checksum: Copied from LayoutTests/platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug6933-expected.checksum.
+        * platform/chromium-mac-leopard/tables/mozilla_expected_failures/bugs/bug6933-expected.png: Copied from LayoutTests/platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug6933-expected.png.
+        * platform/chromium-mac/editing/deleting/table-cells-expected.checksum: Removed.
+        * platform/chromium-mac/fast/forms/input-align-image-expected.checksum:
+        * platform/chromium-mac/fast/forms/input-align-image-expected.png:
+        * platform/chromium-mac/fast/forms/input-type-change-expected.checksum:
+        * platform/chromium-mac/fast/forms/input-type-change-expected.png:
+        * platform/chromium-mac/fast/forms/listbox-bidi-align-expected.checksum:
+        * platform/chromium-mac/fast/forms/listbox-bidi-align-expected.png:
+        * platform/chromium-mac/fast/text/drawBidiText-expected.checksum:
+        * platform/chromium-mac/fast/text/drawBidiText-expected.png:
+        * platform/chromium-mac/media/video-transformed-expected.checksum:
+        * platform/chromium-mac/media/video-transformed-expected.png:
+        * platform/chromium-mac/scrollbars/listbox-scrollbar-combinations-expected.checksum:
+        * platform/chromium-mac/scrollbars/listbox-scrollbar-combinations-expected.png:
+        * platform/chromium-mac/scrollbars/overflow-scrollbar-combinations-expected.checksum:
+        * platform/chromium-mac/scrollbars/overflow-scrollbar-combinations-expected.png:
+        * platform/chromium-mac/svg/text/foreignObject-text-clipping-bug-expected.checksum:
+        * platform/chromium-mac/svg/text/foreignObject-text-clipping-bug-expected.png:
+        * platform/chromium-mac/tables/mozilla/core/col_widths_auto_autoFix-expected.checksum:
+        * platform/chromium-mac/tables/mozilla/core/col_widths_auto_autoFix-expected.png:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug6933-expected.checksum:
+        * platform/chromium-mac/tables/mozilla_expected_failures/bugs/bug6933-expected.png:
+
+2011-03-30  Mihai Parparita  <mihaip@chromium.org>
+
         Put expected PNG for fast/multicol/max-height-columns-block.html in the
         right directory (fix after r82480).
 
