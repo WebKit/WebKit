@@ -123,16 +123,18 @@ class DefaultStyleErrorHandler(object):
             return None
         return self._configuration.max_reports_per_category[category]
 
+    def should_line_be_checked(self, line_number):
+        "Returns if a particular line should be checked"
+        # Was the line that was modified?
+        return self._line_numbers is None or line_number in self._line_numbers
+
     def __call__(self, line_number, category, confidence, message):
         """Handle the occurrence of a style error.
 
         See the docstring of this module for more information.
 
         """
-        if (self._line_numbers is not None and
-            line_number not in self._line_numbers):
-            # Then the error occurred in a line that was not modified, so
-            # the error is not reportable.
+        if not self.should_line_be_checked(line_number):
             return
 
         if not self._configuration.is_reportable(category=category,

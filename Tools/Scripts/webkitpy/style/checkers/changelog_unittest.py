@@ -32,59 +32,124 @@ import unittest
 class ChangeLogCheckerTest(unittest.TestCase):
     """Tests ChangeLogChecker class."""
 
-    def assert_no_error(self, changelog_data):
+    def assert_no_error(self, lines_to_check, changelog_data):
         def handle_style_error(line_number, category, confidence, message):
-            self.fail('Unexpected error: %d %s %d %s' % (line_number, category, confidence, message))
-        checker = changelog.ChangeLogChecker('ChangeLog', handle_style_error)
+            self.fail('Unexpected error: %d %s %d %s for\n%s' % (line_number, category, confidence, message, changelog_data))
+        self.lines_to_check = set(lines_to_check)
+        checker = changelog.ChangeLogChecker('ChangeLog', handle_style_error, self.mock_should_line_be_checked)
         checker.check(changelog_data.split('\n'))
 
-    def assert_error(self, expected_line_number, expected_category, changelog_data):
+    def assert_error(self, expected_line_number, lines_to_check, expected_category, changelog_data):
         self.had_error = False
 
         def handle_style_error(line_number, category, confidence, message):
             self.had_error = True
             self.assertEquals(expected_line_number, line_number)
             self.assertEquals(expected_category, category)
-
-        checker = changelog.ChangeLogChecker('ChangeLog', handle_style_error)
+        self.lines_to_check = set(lines_to_check)
+        checker = changelog.ChangeLogChecker('ChangeLog', handle_style_error, self.mock_should_line_be_checked)
         checker.check(changelog_data.split('\n'))
         self.assertTrue(self.had_error)
 
     def mock_handle_style_error(self):
         pass
 
+    def mock_should_line_be_checked(self, line_number):
+        return line_number in self.lines_to_check
+
     def test_init(self):
-        checker = changelog.ChangeLogChecker('ChangeLog', self.mock_handle_style_error)
+        checker = changelog.ChangeLogChecker('ChangeLog', self.mock_handle_style_error, self.mock_should_line_be_checked)
         self.assertEquals(checker.file_path, 'ChangeLog')
         self.assertEquals(checker.handle_style_error, self.mock_handle_style_error)
+        self.assertEquals(checker.should_line_be_checked, self.mock_should_line_be_checked)
 
     def test_missing_bug_number(self):
-        entries = [
-            '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n\n        Example bug',
-            '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n\n        Example bug\n        http://bugs.webkit.org/show_bug.cgi?id=\n',
-            '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n\n        Example bug\n        https://bugs.webkit.org/show_bug.cgi?id=\n',
-            '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n\n        Example bug\n        http://webkit.org/b/\n',
-            '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n\n        Example bug\n        http://trac.webkit.org/changeset/12345\n',
-            'Example bug\n        https://bugs.webkit.org/show_bug.cgi\n\n2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n',
-            'Example bug\n        More text about bug.\n\n2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n',
-        ]
-
-        for entry in entries:
-            self.assert_error(1, 'changelog/bugnumber', entry)
+        self.assert_error(1, range(1, 20), 'changelog/bugnumber',
+                          '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                          '\n'
+                          '        Example bug\n')
+        self.assert_error(1, range(1, 20), 'changelog/bugnumber',
+                          '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                          '\n'
+                          '        Example bug\n'
+                          '        http://bugs.webkit.org/show_bug.cgi?id=\n')
+        self.assert_error(1, range(1, 20), 'changelog/bugnumber',
+                          '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                          '\n'
+                          '        Example bug\n'
+                          '        https://bugs.webkit.org/show_bug.cgi?id=\n')
+        self.assert_error(1, range(1, 20), 'changelog/bugnumber',
+                          '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                          '\n'
+                          '        Example bug\n'
+                          '        http://webkit.org/b/\n')
+        self.assert_error(1, range(1, 20), 'changelog/bugnumber',
+                          '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                          '\n'
+                          '        Example bug'
+                          '\n'
+                          '        http://trac.webkit.org/changeset/12345\n')
+        self.assert_error(2, range(2, 5), 'changelog/bugnumber',
+                          '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                          '        Example bug\n'
+                          '        https://bugs.webkit.org/show_bug.cgi\n'
+                          '\n'
+                          '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                          '        Another change\n')
+        self.assert_error(2, range(2, 6), 'changelog/bugnumber',
+                          '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                          '        Example bug\n'
+                          '        More text about bug.\n'
+                          '\n'
+                          '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                          '\n'
+                          '        No bug in this change.\n')
 
     def test_no_error(self):
-        entries = [
-            '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n\n        Example bug\n        http://bugs.webkit.org/show_bug.cgi?id=12345\n',
-            '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n\n        Example bug\n        https://bugs.webkit.org/show_bug.cgi?id=12345\n',
-            '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n\n        Example bug\n        http://webkit.org/b/12345\n',
-            '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n\n        Unreview build fix for r12345.\n',
-            '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n\n        Fix build after a bad change.\n',
-            '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n\n        Fix example port build.\n',
-            'Example bug\n        https://bugs.webkit.org/show_bug.cgi?id=12345\n\n2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n',
-        ]
-
-        for entry in entries:
-            self.assert_no_error(entry)
+        self.assert_no_error([],
+                             '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                             '\n'
+                             '        Example ChangeLog entry out of range\n'
+                             '        http://example.com/\n')
+        self.assert_no_error([],
+                             '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                             '\n'
+                             '        Example bug\n'
+                             '        http://bugs.webkit.org/show_bug.cgi?id=12345\n')
+        self.assert_no_error(range(1, 20),
+                             '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                             '\n'
+                             '        Example bug\n'
+                             '        http://bugs.webkit.org/show_bug.cgi?id=12345\n')
+        self.assert_no_error(range(1, 20),
+                             '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                             '\n'
+                             '        Example bug\n'
+                             '        https://bugs.webkit.org/show_bug.cgi?id=12345\n')
+        self.assert_no_error(range(1, 20),
+                             '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                             '\n'
+                             '        Example bug\n'
+                             '        http://webkit.org/b/12345\n')
+        self.assert_no_error(range(1, 20),
+                             '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                             '\n'
+                             '        Unreview build fix for r12345.\n')
+        self.assert_no_error(range(1, 20),
+                             '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                             '\n'
+                             '        Fix build after a bad change.\n')
+        self.assert_no_error(range(1, 20),
+                             '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                             '\n'
+                             '        Fix example port build.\n')
+        self.assert_no_error(range(2, 6),
+                             '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                             '        Example bug\n'
+                             '        https://bugs.webkit.org/show_bug.cgi?id=12345\n'
+                             '\n'
+                             '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                             '        No bug here!\n')
 
 if __name__ == '__main__':
     unittest.main()

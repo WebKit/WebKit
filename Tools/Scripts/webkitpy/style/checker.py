@@ -498,7 +498,10 @@ class CheckerDispatcher(object):
         if file_type == FileType.NONE:
             checker = None
         elif file_type == FileType.CHANGELOG:
-            checker = ChangeLogChecker(file_path, handle_style_error)
+            should_line_be_checked = None
+            if handle_style_error:
+                should_line_be_checked = handle_style_error.should_line_be_checked
+            checker = ChangeLogChecker(file_path, handle_style_error, should_line_be_checked)
         elif file_type == FileType.CPP:
             file_extension = self._file_extension(file_path)
             checker = CppChecker(file_path, file_extension,

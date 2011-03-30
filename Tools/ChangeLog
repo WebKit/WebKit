@@ -1,3 +1,18 @@
+2011-03-29  David Levin  <levin@chromium.org>
+
+        Reviewed by Shinichiro Hamaji.
+
+        check-webkit-style confused by two ChangeLog entries in a row from same user
+        https://bugs.webkit.org/show_bug.cgi?id=57250
+
+        * Scripts/webkitpy/style/checker.py: Add the line should be checked function to ChangeLogChecker.
+        * Scripts/webkitpy/style/checker_unittest.py: Fix test due to that new function.
+        * Scripts/webkitpy/style/checkers/changelog.py: Made this code aware of what lines were being checked.
+          It basically assumes only one ChangeLog entry is being processed because that is the standard case and
+          checking more than that would be very messey.
+        * Scripts/webkitpy/style/checkers/changelog_unittest.py: Add testing to catch the broken case.
+        * Scripts/webkitpy/style/error_handlers.py: Added should_line_be_checked.
+
 2011-03-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

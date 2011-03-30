@@ -369,12 +369,10 @@ class CheckerDispatcherDispatchTest(unittest.TestCase):
 
     """Tests dispatch() method of CheckerDispatcher class."""
 
-    def mock_handle_style_error(self):
-        pass
-
     def dispatch(self, file_path):
         """Call dispatch() with the given file path."""
         dispatcher = CheckerDispatcher()
+        self.mock_handle_style_error = DefaultStyleErrorHandler('', None, None, [])
         checker = dispatcher.dispatch(file_path,
                                       self.mock_handle_style_error,
                                       min_confidence=3)
