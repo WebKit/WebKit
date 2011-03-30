@@ -491,7 +491,7 @@ class MainTest(unittest.TestCase):
         self.assert_run_order('old-inline')
 
     def test_run_order__threads(self):
-        self.assert_run_order('old-inline', child_processes='2')
+        self.assert_run_order('threads', child_processes='2')
 
     def test_run_order__old_threads(self):
         self.assert_run_order('old-threads', child_processes='2')

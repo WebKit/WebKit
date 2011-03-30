@@ -63,7 +63,7 @@ class ChromiumWinTest(port_testcase.PortTestCase):
         if not port:
             return
 
-        self.assertEqual(port.default_worker_model(), 'old-threads')
+        self.assertEqual(port.default_worker_model(), 'threads')
 
     def test_setup_environ_for_server(self):
         port = self.make_port()

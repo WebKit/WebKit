@@ -130,8 +130,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
         return result
 
     def default_worker_model(self):
-        # FIXME: should use base class method instead. See bug 55163.
-        return 'old-threads'
+        return 'threads'
 
     def relative_test_filename(self, filename):
         path = filename[len(self.layout_tests_dir()) + 1:]

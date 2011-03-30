@@ -1,3 +1,20 @@
+2011-03-29  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: use 'threads' on win instead of 'old-threads'
+
+        It's a bit unclear whether multiple threads or multiple
+        processes will be a better model on windows. This change will
+        test threads for now while we're still working out the bugs in
+        multiple-processes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57410
+
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-03-29  David Levin  <levin@chromium.org>
 
         Reviewed by Shinichiro Hamaji.
