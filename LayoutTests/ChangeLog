@@ -1,3 +1,15 @@
+2011-03-30  Jessie Berlin  <jberlin@apple.com>
+
+        [Leopard Intel Release Tests] svg/text/bidi-embedded-direction.svg failing since
+        introduction in r82411.
+        https://bugs.webkit.org/show_bug.cgi?id=57458
+
+        Unreviewed, add the platform-specific failing results to get the bots green.
+
+        NOTE: The platform-specific failing pixel test results still need to be added.
+
+        * platform/mac-leopard/svg/text/bidi-embedded-direction-expected.txt: Added.
+
 2011-03-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Update expected files.
