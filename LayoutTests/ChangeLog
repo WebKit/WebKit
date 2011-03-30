@@ -1,3 +1,42 @@
+2011-03-30  Adam Barth  <abarth@webkit.org>
+
+        Remove empty directories in platform/mac-snowleopard, as requested by
+        Mark Rowe.
+
+        * platform/mac-snowleopard/css2.1: Removed.
+        * platform/mac-snowleopard/editing: Removed.
+        * platform/mac-snowleopard/editing/deleting: Removed.
+        * platform/mac-snowleopard/editing/inserting: Removed.
+        * platform/mac-snowleopard/editing/pasteboard: Removed.
+        * platform/mac-snowleopard/fast/backgrounds: Removed.
+        * platform/mac-snowleopard/fast/backgrounds/repeat: Removed.
+        * platform/mac-snowleopard/fast/block: Removed.
+        * platform/mac-snowleopard/fast/block/float: Removed.
+        * platform/mac-snowleopard/fast/borders: Removed.
+        * platform/mac-snowleopard/fast/canvas: Removed.
+        * platform/mac-snowleopard/fast/css: Removed.
+        * platform/mac-snowleopard/fast/dom: Removed.
+        * platform/mac-snowleopard/fast/dom/HTMLMeterElement: Removed.
+        * platform/mac-snowleopard/fast/images: Removed.
+        * platform/mac-snowleopard/fast/inline: Removed.
+        * platform/mac-snowleopard/fast/inline-block: Removed.
+        * platform/mac-snowleopard/fast/multicol: Removed.
+        * platform/mac-snowleopard/fast/replaced: Removed.
+        * platform/mac-snowleopard/fast/text/basic: Removed.
+        * platform/mac-snowleopard/media: Removed.
+        * platform/mac-snowleopard/plugins: Removed.
+        * platform/mac-snowleopard/scrollbars: Removed.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1: Removed.
+        * platform/mac-snowleopard/svg/custom: Removed.
+        * platform/mac-snowleopard/svg/dynamic-updates: Removed.
+        * platform/mac-snowleopard/svg/filters: Removed.
+        * platform/mac-snowleopard/svg/text: Removed.
+        * platform/mac-snowleopard/tables: Removed.
+        * platform/mac-snowleopard/tables/mozilla: Removed.
+        * platform/mac-snowleopard/tables/mozilla/core: Removed.
+        * platform/mac-snowleopard/tables/mozilla_expected_failures: Removed.
+        * platform/mac-snowleopard/tables/mozilla_expected_failures/bugs: Removed.
+
 2011-03-30  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Darin Adler.
