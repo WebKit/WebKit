@@ -1801,6 +1801,10 @@ fast/forms/interactive-validation-crash-by-style-override.html
 fast/forms/interactive-validation-prevented.html
 fast/forms/interactive-validation-select-crash.html
 
+# WebKitTestRunner needs support for validation message bubble tests
+# http://webkit.org/b/57455
+fast/forms/validation-message-appearance.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
