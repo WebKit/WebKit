@@ -1,3 +1,9 @@
+2011-03-29  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * WebCore.exp.in:
+
 2011-03-29  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
