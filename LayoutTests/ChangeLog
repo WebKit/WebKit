@@ -1,5 +1,11 @@
 2011-03-30  Adam Barth  <abarth@webkit.org>
 
+        Note that this test is flaky.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-30  Adam Barth  <abarth@webkit.org>
+
         Remove empty directories in platform/mac-snowleopard, as requested by
         Mark Rowe.
 

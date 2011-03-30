@@ -3327,3 +3327,6 @@ BUGWK57259 : http/tests/misc/link-rel-icon-beforeload.html = FAIL PASS
 
 // r82419.
 BUGWK57442 : fast/box-shadow/basic-shadows.html = IMAGE
+
+// This test is very flaky on Mac and a little flaky on Win and Linux.
+BUGXXX : media/video-delay-load-event.html = PASS TEXT
