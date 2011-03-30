@@ -31,7 +31,7 @@
 #include "config.h"
 #include "PageDebuggerAgent.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
+#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
 
 #include "PageScriptDebugServer.h"
 
@@ -69,4 +69,4 @@ PageScriptDebugServer& PageDebuggerAgent::scriptDebugServer()
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR) && ENABLE(WORKERS)
+#endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
