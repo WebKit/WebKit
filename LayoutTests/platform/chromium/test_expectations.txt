@@ -3354,3 +3354,10 @@ BUGXXX GPU MAC SNOWLEOPARD : compositing/self-painting-layers.html = FAIL
 
 // Chrome doesn't load favicons in DRT tests.
 BUGWK57259 : http/tests/misc/link-rel-icon-beforeload.html = FAIL PASS
+
+BUGXXX MAC : fast/forms/listbox-bidi-align.html = IMAGE
+BUGXXX MAC : fast/forms/preserveFormDuringResidualStyle.html = IMAGE
+BUGXXX MAC : fast/text/drawBidiText.html = IMAGE
+BUGXXX MAC : media/video-transformed.html = IMAGE
+BUGXXX MAC : svg/zoom/page/zoom-hixie-mixed-008.xml = IMAGE
+BUGXXX MAC : tables/mozilla/bugs/bug1271.html = IMAGE
