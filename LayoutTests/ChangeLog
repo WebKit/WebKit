@@ -1,5 +1,18 @@
 2011-03-30  Mihai Parparita  <mihaip@chromium.org>
 
+        Fix editing/deleting for Chromium Snow Leopard.
+        
+        Same mismatched checksum story as r82480.
+
+        * platform/chromium-mac-leopard/editing/deleting/4845371-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/deleting/4845371-expected.png.
+        * platform/chromium-mac-leopard/editing/deleting/5126166-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/deleting/5126166-expected.png.
+        * platform/chromium-mac-leopard/editing/deleting/5483370-expected.png: Renamed from LayoutTests/platform/chromium-mac/editing/deleting/5483370-expected.png.
+        * platform/chromium-mac/editing/deleting/4845371-expected.checksum: Removed.
+        * platform/chromium-mac/editing/deleting/5126166-expected.checksum: Removed.
+        * platform/chromium-mac/editing/deleting/5483370-expected.checksum: Removed.
+
+2011-03-30  Mihai Parparita  <mihaip@chromium.org>
+
         Fix svg/dynamic-updates/SVGFEConvolveMatrixElement* for Chromium Snow Leopard.
         
         There were lone .checksum files in chromium-mac-leopard/ (similar to
