@@ -1,3 +1,9 @@
+2011-03-30  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Mark h1-in-section-elements.html FAIL until Chromium bots get results.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-30  Adam Barth  <abarth@webkit.org>
 
         Remove a bunch of IMAGE only Snow Leopard Chromium failures from the
