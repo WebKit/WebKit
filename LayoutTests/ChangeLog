@@ -1,3 +1,41 @@
+2011-03-30  Mihai Parparita  <mihaip@chromium.org>
+
+        Fix svg/dynamic-updates/SVGFEConvolveMatrixElement* for Chromium Snow Leopard.
+        
+        There were lone .checksum files in chromium-mac-leopard/ (similar to
+        r82480), now they should have corresponding .pngs too.
+        
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.png.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.png.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.png.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr-expected.png.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr-expected.png.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr-expected.png.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr-expected.png.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.png.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.png.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr-expected.png.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr-expected.png:
+
 2011-03-30  Martin Robinson  <mrobinson@igalia.com>
 
         Update some GTK+ results after r82411.
