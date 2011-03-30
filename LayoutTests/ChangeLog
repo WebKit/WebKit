@@ -1,5 +1,13 @@
 2011-03-30  Adam Roben  <aroben@apple.com>
 
+        Update the mac-wk2 Skipped file for recently-added tests
+
+        See the file itself for the relevant bugs.
+
+        * platform/mac-wk2/Skipped:
+
+2011-03-30  Adam Roben  <aroben@apple.com>
+
         Fix two svg/text tests that have been failing on Windows since r82411
 
         Fixes <http://webkit.org/b/57448> REGRESSION (r82411): Two svg/text tests failing on Windows
