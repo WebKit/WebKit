@@ -27708,6 +27708,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\win\DIBPixelData.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\DIBPixelData.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\WKCAImageQueue.cpp"
 						>
 						<FileConfiguration

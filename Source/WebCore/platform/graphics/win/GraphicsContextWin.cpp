@@ -65,21 +65,20 @@ bool GraphicsContext::shouldIncludeChildWindows() const
 
 GraphicsContext::WindowsBitmap::WindowsBitmap(HDC hdc, IntSize size)
     : m_hdc(0)
-    , m_size(size)
 {
-    BitmapInfo bitmapInfo = BitmapInfo::create(m_size);
+    BitmapInfo bitmapInfo = BitmapInfo::create(size);
 
-    m_bitmap = CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, reinterpret_cast<void**>(&m_bitmapBuffer), 0, 0);
+    void* storage = 0;
+    m_bitmap = CreateDIBSection(0, &bitmapInfo, DIB_RGB_COLORS, &storage, 0, 0);
     if (!m_bitmap)
         return;
 
     m_hdc = CreateCompatibleDC(hdc);
     SelectObject(m_hdc, m_bitmap);
 
-    BITMAP bmpInfo;
-    GetObject(m_bitmap, sizeof(bmpInfo), &bmpInfo);
-    m_bytesPerRow = bmpInfo.bmWidthBytes;
-    m_bitmapBufferLength = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
+    m_pixelData.initialize(m_bitmap);
+
+    ASSERT(storage == m_pixelData.buffer());
 
     SetGraphicsMode(m_hdc, GM_ADVANCED);
 }

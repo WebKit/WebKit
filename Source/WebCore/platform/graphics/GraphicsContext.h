@@ -90,6 +90,7 @@ typedef void PlatformGraphicsContext;
 #endif
 
 #if PLATFORM(WIN)
+#include "DIBPixelData.h"
 typedef struct HDC__* HDC;
 #if !PLATFORM(CG)
 // UInt8 is defined in CoreFoundation/CFBase.h
@@ -450,18 +451,17 @@ namespace WebCore {
             ~WindowsBitmap();
 
             HDC hdc() const { return m_hdc; }
-            UInt8* buffer() const { return m_bitmapBuffer; }
-            unsigned bufferLength() const { return m_bitmapBufferLength; }
-            IntSize size() const { return m_size; }
-            unsigned bytesPerRow() const { return m_bytesPerRow; }
+            UInt8* buffer() const { return m_pixelData.buffer(); }
+            unsigned bufferLength() const { return m_pixelData.bufferLength(); }
+            const IntSize& size() const { return m_pixelData.size(); }
+            unsigned bytesPerRow() const { return m_pixelData.bytesPerRow(); }
+            unsigned short bitsPerPixel() const { return m_pixelData.bitsPerPixel(); }
+            const DIBPixelData& windowsDIB() const { return m_pixelData; }
 
         private:
             HDC m_hdc;
             HBITMAP m_bitmap;
-            UInt8* m_bitmapBuffer;
-            unsigned m_bitmapBufferLength;
-            IntSize m_size;
-            unsigned m_bytesPerRow;
+            DIBPixelData m_pixelData;
         };
 
         WindowsBitmap* createWindowsBitmap(IntSize);

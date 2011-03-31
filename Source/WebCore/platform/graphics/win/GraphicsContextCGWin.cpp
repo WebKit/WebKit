@@ -40,25 +40,24 @@ namespace WebCore {
 static CGContextRef CGContextWithHDC(HDC hdc, bool hasAlpha)
 {
     HBITMAP bitmap = static_cast<HBITMAP>(GetCurrentObject(hdc, OBJ_BITMAP));
-    BITMAP info;
 
-    GetObject(bitmap, sizeof(info), &info);
+    DIBPixelData pixelData(bitmap);
 
     // FIXME: We can get here because we asked for a bitmap that is too big
     // when we have a tiled layer and we're compositing. In that case 
     // bmBitsPixel will be 0. This seems to be benign, so for now we will
     // exit gracefully and look at it later:
     //  https://bugs.webkit.org/show_bug.cgi?id=52041   
-    // ASSERT(info.bmBitsPixel == 32);
-    if (info.bmBitsPixel != 32)
+    // ASSERT(bitmapBits.bitsPerPixel() == 32);
+    if (pixelData.bitsPerPixel() != 32)
         return 0;
 
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Little | (hasAlpha ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst);
-    CGContextRef context = CGBitmapContextCreate(info.bmBits, info.bmWidth, info.bmHeight, 8,
-                                                 info.bmWidthBytes, deviceRGBColorSpaceRef(), bitmapInfo);
+    CGContextRef context = CGBitmapContextCreate(pixelData.buffer(), pixelData.size().width(), pixelData.size().height(), 8,
+                                                 pixelData.bytesPerRow(), deviceRGBColorSpaceRef(), bitmapInfo);
 
     // Flip coords
-    CGContextTranslateCTM(context, 0, info.bmHeight);
+    CGContextTranslateCTM(context, 0, pixelData.size().height());
     CGContextScaleCTM(context, 1, -1);
     
     // Put the HDC In advanced mode so it will honor affine transforms.
@@ -99,16 +98,14 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     if (dstRect.isEmpty())
         return;
 
-    HBITMAP bitmap = static_cast<HBITMAP>(GetCurrentObject(hdc, OBJ_BITMAP));
+    OwnPtr<HBITMAP> bitmap = adoptPtr(static_cast<HBITMAP>(GetCurrentObject(hdc, OBJ_BITMAP)));
 
-    // Need to make a CGImage out of the bitmap's pixel buffer and then draw
-    // it into our context.
-    BITMAP info;
-    GetObject(bitmap, sizeof(info), &info);
-    ASSERT(info.bmBitsPixel == 32);
+    DIBPixelData pixelData(bitmap.get());
 
-    CGContextRef bitmapContext = CGBitmapContextCreate(info.bmBits, info.bmWidth, info.bmHeight, 8,
-                                                       info.bmWidthBytes, deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little |
+    ASSERT(pixelData.bitsPerPixel() == 32);
+
+    CGContextRef bitmapContext = CGBitmapContextCreate(pixelData.buffer(), pixelData.size().width(), pixelData.size().height(), 8,
+                                                       pixelData.bytesPerRow(), deviceRGBColorSpaceRef(), kCGBitmapByteOrder32Little |
                                                        (supportAlphaBlend ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst));
 
     CGImageRef image = CGBitmapContextCreateImage(bitmapContext);
@@ -118,7 +115,6 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
     CGImageRelease(image);
     CGContextRelease(bitmapContext);
     ::DeleteDC(hdc);
-    ::DeleteObject(bitmap);
 }
 
 void GraphicsContext::drawWindowsBitmap(WindowsBitmap* image, const IntPoint& point)
