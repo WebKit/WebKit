@@ -135,6 +135,11 @@ void DrawingAreaProxyImpl::visibilityDidChange()
 
     // Resume painting.
     m_webPageProxy->process()->send(Messages::DrawingArea::ResumePainting(), m_webPageProxy->pageID());
+
+    // If we don't have a backing store, go ahead and mark the backing store as being changed so
+    // that when paint we'll actually wait for something to paint and not flash white.
+    if (!m_backingStore && m_layerTreeContext.isEmpty())
+        backingStoreStateDidChange(DoNotRespondImmediately);
 }
 
 void DrawingAreaProxyImpl::setPageIsVisible(bool)
@@ -277,7 +282,7 @@ void DrawingAreaProxyImpl::waitForAndDispatchDidUpdateBackingStoreState()
         return;
     if (m_webPageProxy->process()->isLaunching())
         return;
-    
+
 #if USE(ACCELERATED_COMPOSITING)
     // FIXME: waitForAndDispatchImmediately will always return the oldest DidUpdateBackingStoreState message that
     // hasn't yet been processed. But it might be better to skip ahead to some other DidUpdateBackingStoreState
@@ -306,7 +311,6 @@ void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
 
     m_layerTreeContext = LayerTreeContext();    
     m_webPageProxy->exitAcceleratedCompositingMode();
-    backingStoreStateDidChange(DoNotRespondImmediately);
 }
 #endif
 
