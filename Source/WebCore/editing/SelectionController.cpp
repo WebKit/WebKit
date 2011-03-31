@@ -447,6 +447,9 @@ VisiblePosition SelectionController::modifyExtendingRight(TextGranularity granul
     case DocumentBoundary:
         // FIXME: implement all of the above?
         pos = modifyExtendingForward(granularity);
+        break;
+    case WebKitVisualWordGranularity:
+        break;
     }
     return pos;
 }
@@ -486,6 +489,8 @@ VisiblePosition SelectionController::modifyExtendingForward(TextGranularity gran
         else
             pos = endOfDocument(pos);
         break;
+    case WebKitVisualWordGranularity:
+        break;
     }
     
     return pos;
@@ -516,6 +521,9 @@ VisiblePosition SelectionController::modifyMovingRight(TextGranularity granulari
         break;
     case LineBoundary:
         pos = rightBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock());
+        break;
+    case WebKitVisualWordGranularity:
+        pos = rightWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
         break;
     }
     return pos;
@@ -565,6 +573,8 @@ VisiblePosition SelectionController::modifyMovingForward(TextGranularity granula
         else
             pos = endOfDocument(pos);
         break;
+    case WebKitVisualWordGranularity:
+        break;
     }
     return pos;
 }
@@ -604,6 +614,9 @@ VisiblePosition SelectionController::modifyExtendingLeft(TextGranularity granula
     case ParagraphBoundary:
     case DocumentBoundary:
         pos = modifyExtendingBackward(granularity);
+        break;
+    case WebKitVisualWordGranularity:
+        break;
     }
     return pos;
 }
@@ -648,6 +661,8 @@ VisiblePosition SelectionController::modifyExtendingBackward(TextGranularity gra
         else
             pos = startOfDocument(pos);
         break;
+    case WebKitVisualWordGranularity:
+        break;
     }
     return pos;
 }
@@ -666,6 +681,8 @@ VisiblePosition SelectionController::modifyMovingLeft(TextGranularity granularit
             pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).left(true);
         break;
     case WordGranularity:
+        pos = leftWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
+        break;
     case SentenceGranularity:
     case LineGranularity:
     case ParagraphGranularity:
@@ -677,6 +694,9 @@ VisiblePosition SelectionController::modifyMovingLeft(TextGranularity granularit
         break;
     case LineBoundary:
         pos = leftBoundaryOfLine(startForPlatform(), directionOfEnclosingBlock());
+        break;
+    case WebKitVisualWordGranularity:
+        pos = leftWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
         break;
     }
     return pos;
@@ -719,6 +739,8 @@ VisiblePosition SelectionController::modifyMovingBackward(TextGranularity granul
             pos = startOfEditableContent(pos);
         else
             pos = startOfDocument(pos);
+        break;
+    case WebKitVisualWordGranularity:
         break;
     }
     return pos;

@@ -37,6 +37,7 @@
 #include "TextBreakIterator.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
+#include "VisibleSelection.h"
 #include "htmlediting.h"
 #include <wtf/unicode/Unicode.h>
 
@@ -1144,6 +1145,110 @@ VisiblePosition leftBoundaryOfLine(const VisiblePosition& c, TextDirection direc
 VisiblePosition rightBoundaryOfLine(const VisiblePosition& c, TextDirection direction)
 {
     return direction == LTR ? logicalEndOfLine(c) : logicalStartOfLine(c);
+}
+
+static const int invalidOffset = -1;
+    
+static VisiblePosition previousWordBreakInBoxInsideBlockWithSameDirectionality(const InlineBox* box, const VisiblePosition& previousWordBreak, int& offsetOfWordBreak)
+{
+    bool hasSeenWordBreakInThisBox = previousWordBreak.isNotNull();
+    // In a LTR block, the word break should be on the left boundary of a word.
+    // In a RTL block, the word break should be on the right boundary of a word.
+    // Because nextWordPosition() returns the word break on the right boundary of the word for LTR text,
+    // we need to use previousWordPosition() to traverse words within the inline boxes from right to left
+    // to find the previous word break (i.e. the first word break on the left). The same applies to RTL text.
+    
+    VisiblePosition wordBreak = hasSeenWordBreakInThisBox ? previousWordBreak : Position(box->renderer()->node(), box->caretMaxOffset(), Position::PositionIsOffsetInAnchor);
+
+    // FIXME: handle multi-spaces (http://webkit.org/b/57543).
+    
+    wordBreak = previousWordPosition(wordBreak);
+    if (previousWordBreak == wordBreak)
+        return VisiblePosition();
+
+    InlineBox* boxContainingPreviousWordBreak;
+    wordBreak.getInlineBoxAndOffset(boxContainingPreviousWordBreak, offsetOfWordBreak);
+    if (boxContainingPreviousWordBreak != box)
+        return VisiblePosition();
+    return wordBreak;
+}
+
+static VisiblePosition previousWordBreakInBox(const InlineBox* box, int offset, TextDirection blockDirection)
+{
+    int offsetOfWordBreak = 0;
+    VisiblePosition wordBreak;
+    while (true) {
+        if (box->direction() == blockDirection)
+            wordBreak = previousWordBreakInBoxInsideBlockWithSameDirectionality(box, wordBreak, offsetOfWordBreak);
+        // FIXME: Implement the 'else' case when the box direction is not equal to the block direction.
+        if (wordBreak.isNull())
+            break;
+        if (offset == invalidOffset || offsetOfWordBreak != offset)
+            return wordBreak;
+    }        
+    return VisiblePosition();
+}
+
+static VisiblePosition leftWordBoundary(const InlineBox* box, int offset, TextDirection blockDirection)
+{
+    VisiblePosition wordBreak;
+    for  (const InlineBox* adjacentBox = box; adjacentBox; adjacentBox = adjacentBox->prevLeafChild()) {
+        if (blockDirection == LTR) 
+            wordBreak = previousWordBreakInBox(adjacentBox, adjacentBox == box ? offset : invalidOffset, blockDirection);
+        // FIXME: Implement the "else" case.
+        if (wordBreak.isNotNull())
+            return wordBreak;
+    }
+    return VisiblePosition();
+}
+ 
+static VisiblePosition rightWordBoundary(const InlineBox* box, int offset, TextDirection blockDirection)
+{
+    
+    VisiblePosition wordBreak;
+    for (const InlineBox* adjacentBox = box; adjacentBox; adjacentBox = adjacentBox->nextLeafChild()) {
+        if (blockDirection == RTL)
+            wordBreak = previousWordBreakInBox(adjacentBox, adjacentBox == box ? offset : invalidOffset, blockDirection);
+        // FIXME: Implement the "else" case.
+        if (!wordBreak.isNull())
+            return wordBreak;
+    }
+    return VisiblePosition();
+}
+
+VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)
+{
+    InlineBox* box;
+    int offset;
+    visiblePosition.getInlineBoxAndOffset(box, offset);
+    TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
+    
+    // FIXME: If the box's directionality is the same as that of the enclosing block, when the offset is at the box boundary
+    // and the direction is towards inside the box, do I still need to make it a special case? For example, a LTR box inside a LTR block,
+    // when offset is at box's caretMinOffset and the direction is DirectionRight, should it be taken care as a general case?
+    if (offset == box->caretLeftmostOffset())
+        return leftWordBoundary(box->prevLeafChild(), invalidOffset, blockDirection);
+    if (offset == box->caretRightmostOffset())
+        return leftWordBoundary(box, offset, blockDirection);
+    
+    // FIXME: Not implemented.
+    return VisiblePosition();
+}
+
+VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
+{
+    InlineBox* box;
+    int offset;
+    visiblePosition.getInlineBoxAndOffset(box, offset);
+    TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
+    
+    if (offset == box->caretLeftmostOffset())
+        return rightWordBoundary(box, offset, blockDirection);
+    if (offset == box->caretRightmostOffset())
+        return rightWordBoundary(box->nextLeafChild(), -1, blockDirection);
+    
+    // FIXME: Not implemented.
+    return VisiblePosition();
 }
 
 }

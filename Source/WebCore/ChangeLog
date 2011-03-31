@@ -1,3 +1,58 @@
+2011-03-30  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Experiment with moving caret by word in visual order.
+        https://bugs.webkit.org/show_bug.cgi?id=57336
+
+        Follow Firefox's convention in Windows, 
+        In LTR block, word break visually moves cursor to the left boundary of words,
+        In RTL block, word break visually moves cursor to the right boundary of words.
+
+        This is the 1st version of implementing "move caret by word in visual order".
+        It only works in the following situation:
+        1. For a LTR box in a LTR block or a RTL box in RTL block, 
+        when caret is at the left boundary of the box and we are looking for 
+        the word boundary in right.
+        2. For a LTR or RTL box in a LTR block, when caret is at the left boundary
+        of the box and we are looking for the word boundary in left and 
+        previous box is a LTR box.
+        3. For a LTR or RTL box in a RTL block, when the caret is at the right 
+        boundary of the box and we are looking for the word boundary in right and next box is RTL box.
+
+        An experimental granularity is introduced, as a side effect, functions having switch statements
+        to handle those granularities have to add more one case to handle this new granularity.
+        The experimental granularity is exposed though JS by '-webkit-visual-word".
+
+        The overall algorithm is looping through inline boxes visually and looking
+        for the visually nearest word break position. 
+
+        Test: editing/selection/move-by-word-visually.html
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyExtendingRight):
+        (WebCore::SelectionController::modifyExtendingForward):
+        (WebCore::SelectionController::modifyMovingRight):
+        (WebCore::SelectionController::modifyMovingForward):
+        (WebCore::SelectionController::modifyExtendingLeft):
+        (WebCore::SelectionController::modifyExtendingBackward):
+        (WebCore::SelectionController::modifyMovingLeft):
+        (WebCore::SelectionController::modifyMovingBackward):
+        * editing/TextGranularity.h:
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::setStartAndEndFromBaseAndExtentRespectingGranularity):
+        * editing/visible_units.cpp:
+        (WebCore::previousWordBreakInBoxInsideBlockWithSameDirectionality):
+        (WebCore::wordBoundaryInBox):
+        (WebCore::wordBoundaryInAdjacentBoxes):
+        (WebCore::leftWordBoundary):
+        (WebCore::rightWordBoundary):
+        (WebCore::leftWordPosition):
+        (WebCore::rightWordPosition):
+        * editing/visible_units.h:
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::modify):
+
 2011-03-31  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

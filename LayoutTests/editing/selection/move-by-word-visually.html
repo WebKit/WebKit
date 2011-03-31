@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+div.test {
+    -webkit-user-modify: read-write;
+    padding: 4px;
+    border: 1px dashed lightblue;
+    margin: 4px 4px 4px 24px;
+    outline: none;
+    font-family: Lucida Grande;
+    counter-increment: test-number;
+}
+div.test:before { content: counter(test-number); position: absolute; left: 8px; font-size: x-small; text-align: right; width: 20px; }
+div.test span { background-color: #def; }
+div.test img { width: 1em; height: 1em; background-color: lightgreen; }
+div.test img + img { background-color: lightblue; }
+div.test div { border: 1px dashed pink; padding: 3px; height: 2em; }
+test_move_by_word {display: none;}
+</style>
+<script>
+var messages = [];
+
+function log(message)
+{
+    messages.push(message);
+}
+
+function flushLog()
+{
+    document.getElementById("console").appendChild(document.createTextNode(messages.join("")));
+}
+
+function caretCoordinates()
+{
+    if (!window.textInputController)
+        return { x: 0, y :0 };
+    var caretRect = textInputController.firstRectForCharacterRange(textInputController.selectedRange()[0], 0);
+    return { x: caretRect[0], y: caretRect[1] };
+}
+
+
+function fold(string)
+{
+    var result = "";
+    for (var i = 0; i < string.length; ++i) {
+        var char = string.charCodeAt(i);
+        if (char >= 0x05d0)
+            char -= 0x058f;
+        else if (char == 10) {
+            result += "\\n";
+            continue;
+        }
+        result += String.fromCharCode(char);
+    }
+    return result;
+}
+
+function logPositions(positions)
+{
+    for (var i = 0; i < positions.length; ++i) {
+        if (i) {
+            if (positions[i].node != positions[i - 1].node)
+                log("]");
+            log(", ");
+        }
+        if (!i || positions[i].node != positions[i - 1].node)
+            log((positions[i].node instanceof Text ? '"' + fold(positions[i].node.data) + '"' : "<" + positions[i].node.tagName + ">") + "[");
+        log(positions[i].offset);
+    }
+    log("]");
+}
+
+var wordBreaks;
+
+function validateData(positions)
+{
+    for (var i = 0; i < wordBreaks.length - 1; ++i) {
+        if (positions[i].offset != wordBreaks[i + 1]) {
+            break;
+        }
+    }
+    if (i != wordBreaks.length - 1 && positions[i] != wordBreaks[i]) {
+        log("    FAIL expected: [");
+        for (var i = 1; i < wordBreaks.length; ++i) {
+            log(wordBreaks[i] + ", ");
+        }
+        log(wordBreaks[wordBreaks.length - 1] + "]");
+    }
+}
+
+function collectWordBreaks(test, searchDirection)
+{
+    if (searchDirection == "right") {
+        if (test.getAttribute("dir") == 'ltr') 
+            wordBreaks = test.title.split("|")[0].split(" ");
+        else 
+            wordBreaks = test.title.split("|")[1].split(" ");
+    } else {
+        if (test.getAttribute("dir") == 'ltr') 
+            wordBreaks = test.title.split("|")[1].split(" ");
+        else 
+            wordBreaks = test.title.split("|")[0].split(" ");
+    }
+}
+
+function moveByWord(sel, test, searchDirection, dir)
+{
+    log("Move " + searchDirection + " by one word\n");
+    var prevOffset = sel.anchorOffset;
+    var node = sel.anchorNode;
+    collectWordBreaks(test, searchDirection);
+    sel.setPosition(node, wordBreaks[0]);
+    var positions = [];
+    for (var index = 1; index < wordBreaks.length; ++index) {
+        sel.modify("move", searchDirection, "-webkit-visual-word");
+        positions.push({ node: sel.anchorNode, offset: sel.anchorOffset, point: caretCoordinates() });
+        sel.setPosition(node, wordBreaks[index]);
+    }
+    sel.modify("move", searchDirection, "-webkit-visual-word");
+    positions.push({ node: sel.anchorNode, offset: sel.anchorOffset, point: caretCoordinates() });
+    logPositions(positions);
+    validateData(positions);
+    log("\n");
+}
+
+function moveByWordForEveryPosition(sel, test, dir)
+{
+    // Check ctrl-right-arrow works for every position.
+    sel.setPosition(test, 0);
+    var direction = "right";
+    if (dir == "rtl")
+        direction = "left";    
+    moveByWord(sel, test, direction, dir);    
+    // Check ctrl-left-arrow works for every position.
+    if (dir == "ltr")
+        direction = "left";
+    else
+        direction = "right";    
+    moveByWord(sel, test, direction, dir);    
+}
+
+function runMoveLeftRight(tests, unit)
+{
+    var sel = getSelection();
+    for (var i = 0; i < tests.length; ++i) {
+        var positionsMovingRight;
+        var positionsMovingLeft;
+
+        if (tests[i].getAttribute("dir") == 'ltr')
+        {
+            log("Test " + (i + 1) + ", LTR:\n");
+            moveByWordForEveryPosition(sel, tests[i], "ltr");
+        } else {
+            log("Test " + (i + 1) + ", RTL:\n");
+            moveByWordForEveryPosition(sel, tests[i], "rtl");
+        }
+
+    }
+    document.getElementById("testMoveByWord").style.display = "none";
+}
+
+function runTest() {
+    log("\n======== Move By Word ====\n");
+    var tests = document.getElementsByClassName("test_move_by_word");
+    runMoveLeftRight(tests, "word");
+}
+
+onload = function() {
+    try {
+        runTest();
+    } finally {
+        flushLog();
+    }
+};
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+</head>
+<body>
+<div id="testMoveByWord">
+<!-- The numbers put in title are starting word boundaries.
+The numbers printed out in the output are ending word boundaries. -->
+<div dir=ltr class="test_move_by_word" title="0 4 8 12 16 19|19 16 12 8 4 0" contenteditable>abc def hij opq rst</div>
+<div dir=rtl class="test_move_by_word" title="0 15 11 7 3 19|19 3 7 11 15 0" contenteditable>abc def hij opq rst</div>
+<div dir=ltr class="test_move_by_word" title="0 15 11 7 3 19|19 3 7 11 15 0" contenteditable>ששש נננ בבב גגג קקק</div>
+<div dir=rtl class="test_move_by_word" title="0 4 8 12 16 19|19 16 12 8 4 0" contenteditable>ששש נננ בבב גגג קקק</div>
+<div dir=ltr class="test_move_by_word" title="0 4 8 11 16 20 23|23 20 16 11 8 4 0" contenteditable>abc def שנב סטז uvw xyz</div>
+<div dir=rtl class="test_move_by_word" title="0 3 8 12 16 19 23|23 19 16 12 8 3 0" contenteditable>abc def שנב סטז uvw xyz</div>
+<div dir=ltr class="test_move_by_word" title="0 4 8 11|11 8 4 0" contenteditable>שנב abc סטז</div>
+<div dir=rtl class="test_move_by_word" title="0 4 8 11|11 8 4 0" contenteditable>שנב abc סטז</div>
+</div>
+
+<pre id="console"></pre>
+</body>
+</html>

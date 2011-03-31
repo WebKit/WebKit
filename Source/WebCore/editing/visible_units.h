@@ -42,6 +42,8 @@ VisiblePosition startOfWord(const VisiblePosition &, EWordSide = RightWordIfOnBo
 VisiblePosition endOfWord(const VisiblePosition &, EWordSide = RightWordIfOnBoundary);
 VisiblePosition previousWordPosition(const VisiblePosition &);
 VisiblePosition nextWordPosition(const VisiblePosition &);
+VisiblePosition rightWordPosition(const VisiblePosition&);
+VisiblePosition leftWordPosition(const VisiblePosition&);
 
 // sentences
 VisiblePosition startOfSentence(const VisiblePosition &);

@@ -332,6 +332,8 @@ void DOMSelection::modify(const String& alterString, const String& directionStri
         granularity = ParagraphBoundary;
     else if (equalIgnoringCase(granularityString, "documentboundary"))
         granularity = DocumentBoundary;
+    else if (equalIgnoringCase(granularityString, "-webkit-visual-word"))
+        granularity = WebKitVisualWordGranularity;
     else
         return;
 
