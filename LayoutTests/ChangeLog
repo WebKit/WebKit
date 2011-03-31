@@ -1,3 +1,9 @@
+2011-03-31  Adam Barth  <abarth@webkit.org>
+
+        Copy expectation from downstream.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-31  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.
