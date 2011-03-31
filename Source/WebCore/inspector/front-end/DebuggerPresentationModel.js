@@ -122,19 +122,17 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return  !script.lineOffset && !script.columnOffset;
     },
 
-    editScriptSource: function(sourceFileId, text, callback)
+    editScriptSource: function(sourceFileId, newSource, callback)
     {
         var script = this._scriptForSourceFileId(sourceFileId);
         var sourceFile = this._sourceFiles[sourceFileId];
         var oldSource = sourceFile.content;
-        function didEditScriptSource(success, newBodyOrErrorMessage)
+        function didEditScriptSource(error)
         {
-            if (!success) {
-                callback(false, newBodyOrErrorMessage);
+            callback(error);
+            if (error)
                 return;
-            }
 
-            var newSource = newBodyOrErrorMessage;
             this._updateBreakpointsAfterLiveEdit(sourceFileId, oldSource, newSource);
 
             var resource = WebInspector.resourceForURL(script.sourceURL);
@@ -143,12 +141,10 @@ WebInspector.DebuggerPresentationModel.prototype = {
                 resource.setContent(newSource, revertHandle);
             }
 
-            callback(true, newSource);
-
             if (WebInspector.debuggerModel.callFrames)
                 this._debuggerPaused();
         }
-        WebInspector.debuggerModel.editScriptSource(script.sourceID, text, didEditScriptSource.bind(this));
+        WebInspector.debuggerModel.editScriptSource(script.sourceID, newSource, didEditScriptSource.bind(this));
     },
 
     _updateBreakpointsAfterLiveEdit: function(sourceFileId, oldSource, newSource)

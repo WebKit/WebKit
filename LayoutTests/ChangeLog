@@ -1,3 +1,18 @@
+2011-03-30  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove unnecessary newBody output parameter from editScriptSource protocol method.
+        https://bugs.webkit.org/show_bug.cgi?id=57444
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector/debugger/live-edit-expected.txt:
+        * inspector/debugger/live-edit.html:
+        * inspector/debugger/resources/edit-me-when-paused.js: Added.
+        (f2):
+        (f1):
+
 2011-03-30  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

@@ -78,7 +78,7 @@ public:
     void stepOverStatement();
     void stepOutOfFunction();
 
-    bool editScriptSource(const String& sourceID, const String& newContent, String& newSourceOrErrorMessage);
+    bool editScriptSource(const String& sourceID, const String& newContent, String* error);
 
     void recompileAllJSFunctionsSoon();
     virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) = 0;

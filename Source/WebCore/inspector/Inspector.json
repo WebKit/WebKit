@@ -1337,8 +1337,7 @@
                     { "name": "newContent", "type": "string", "description": "New content of the script." }
                 ],
                 "returns": [
-                    { "name": "result", "type": "string", "description": "New content of the script." },
-                    { "name": "stackFrames", "type": "array", "items": { "$ref" : "CallFrame"}, "description": "New stack trace in case editing has happened while VM was stopped." }
+                    { "name": "callFrames", "type": "array", "items": { "$ref" : "CallFrame"}, "description": "New stack trace in case editing has happened while VM was stopped." }
                 ],
                 "description": "Edits JavaScript script live."
             },

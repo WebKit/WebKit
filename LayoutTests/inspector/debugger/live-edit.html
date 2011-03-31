@@ -3,6 +3,7 @@
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/debugger-test.js"></script>
 <script src="resources/edit-me.js"></script>
+<script src="resources/edit-me-when-paused.js"></script>
 
 <script>
 
@@ -18,11 +19,7 @@ function test()
             function didShowScriptSource(sourceFrame)
             {
                 InspectorTest.addSniffer(WebInspector.debuggerModel, "_didEditScriptSource", didEditScriptSource);
-                sourceFrame._textViewer.readOnly = false;
-                sourceFrame._startEditing();
-                var newText = sourceFrame._textModel.text.replace("return 0;", "return \"live-edited string\";");
-                sourceFrame._textModel.setText(null, newText);
-                sourceFrame._handleSave();
+                replaceInSource(sourceFrame, "return 0;", "return \"live-edited string\";");
             }
 
             function didEditScriptSource()
@@ -36,8 +33,46 @@ function test()
                 InspectorTest.dumpSourceFrameContents(panel.visibleView);
                 next();
             }
+        },
+
+        function testLiveEditWhenPaused(next)
+        {
+            InspectorTest.showScriptSource("edit-me-when-paused.js", didShowScriptSource);
+
+            function didShowScriptSource(sourceFrame)
+            {
+                InspectorTest.waitUntilPaused(paused);
+                InspectorTest.evaluateInPage("f1()", didEvaluateInPage);
+            }
+
+            function paused(callFrames)
+            {
+                InspectorTest.addSniffer(WebInspector.debuggerModel, "_didEditScriptSource", didEditScriptSource);
+                replaceInSource(panel.visibleView, "return 1;", "return 2;\n\n\n\n");
+            }
+
+            function didEditScriptSource()
+            {
+                InspectorTest.captureStackTrace(WebInspector.debuggerModel.callFrames);
+                InspectorTest.resumeExecution();
+            }
+
+            function didEvaluateInPage(result)
+            {
+                InspectorTest.assertEquals("3", result.description, "edited function returns wrong result");
+                next();
+            }
         }
     ]);
+
+    function replaceInSource(sourceFrame, string, replacement)
+    {
+        sourceFrame._textViewer.readOnly = false;
+        sourceFrame._startEditing();
+        var newText = sourceFrame._textModel.text.replace(string, replacement);
+        sourceFrame._textModel.setText(null, newText);
+        sourceFrame._handleSave();
+    }
 };
 
 </script>

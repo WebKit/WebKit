@@ -212,7 +212,7 @@ void ScriptDebugServer::stepOutOfFunction()
     continueProgram();
 }
 
-bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& newContent, String& newSourceOrErrorMessage)
+bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& newContent, String* error)
 {
     ensureDebuggerScriptCompiled();
     v8::HandleScope scope;
@@ -230,11 +230,12 @@ bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& n
     if (tryCatch.HasCaught()) {
         v8::Local<v8::Message> message = tryCatch.Message();
         if (!message.IsEmpty())
-            newSourceOrErrorMessage = toWebCoreStringWithNullOrUndefinedCheck(message->Get());
+            *error = toWebCoreStringWithNullOrUndefinedCheck(message->Get());
+        else
+            *error = "Unknown error.";
         return false;
     }
     ASSERT(!result.IsEmpty());
-    newSourceOrErrorMessage = toWebCoreStringWithNullOrUndefinedCheck(result);
 
     // Call stack may have changed after if the edited function was on the stack.
     if (m_currentCallFrame)

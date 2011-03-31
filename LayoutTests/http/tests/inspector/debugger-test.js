@@ -107,8 +107,11 @@ InspectorTest.captureStackTrace = function(callFrames)
     for (var i = 0; i < callFrames.length; i++) {
         var frame = callFrames[i];
         var script = WebInspector.debuggerModel.scriptForSourceID(frame.sourceID);
-        var scriptOrResource = script.resource || script;
-        var url = scriptOrResource && WebInspector.displayNameForURL(scriptOrResource.sourceURL || scriptOrResource.url);
+        var url;
+        if (script)
+            url = WebInspector.displayNameForURL(script.sourceURL);
+        else
+            url = "(internal script)"
         var s = "    " + i + ") " + frame.functionName + " (" + url + ":" + (frame.line + 1) + ")";
         InspectorTest.addResult(s);
     }

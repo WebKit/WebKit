@@ -864,13 +864,13 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.readOnly = true;
         this._delegate.setScriptSourceIsBeingEdited(false);
 
-        function didEditScriptSource(success, newBodyOrErrorMessage)
+        function didEditScriptSource(error)
         {
-            if (!success && !this._viewerState && this._textModel.text === newSource) {
+            if (error && !this._viewerState && this._textModel.text === newSource) {
                 this._viewerState = originalViewerState;
                 this._textViewer.readOnly = false;
                 this._delegate.setScriptSourceIsBeingEdited(true);
-                WebInspector.log(newBodyOrErrorMessage, WebInspector.ConsoleMessage.MessageLevel.Error);
+                WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error);
                 WebInspector.showConsole();
             }
         }

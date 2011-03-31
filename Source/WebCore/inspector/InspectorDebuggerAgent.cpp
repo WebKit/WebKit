@@ -238,14 +238,10 @@ bool InspectorDebuggerAgent::resolveBreakpoint(const String& breakpointId, const
     return true;
 }
 
-void InspectorDebuggerAgent::editScriptSource(ErrorString* errorString, const String& sourceID, const String& newContent, String* result, RefPtr<InspectorArray>* newCallFrames)
+void InspectorDebuggerAgent::editScriptSource(ErrorString* error, const String& sourceID, const String& newContent, RefPtr<InspectorArray>* newCallFrames)
 {
-    String editResult;
-    if (scriptDebugServer().editScriptSource(sourceID, newContent, editResult)) {
+    if (scriptDebugServer().editScriptSource(sourceID, newContent, error))
         *newCallFrames = currentCallFrames();
-        *result = editResult;
-    } else
-        *errorString = editResult;
 }
 
 void InspectorDebuggerAgent::getScriptSource(ErrorString*, const String& sourceID, String* scriptSource)

@@ -176,16 +176,17 @@ WebInspector.DebuggerModel.prototype = {
 
     editScriptSource: function(sourceID, newSource, callback)
     {
-        DebuggerAgent.editScriptSource(sourceID, newSource, this._didEditScriptSource.bind(this, sourceID, callback));
+        DebuggerAgent.editScriptSource(sourceID, newSource, this._didEditScriptSource.bind(this, sourceID, newSource, callback));
     },
 
-    _didEditScriptSource: function(sourceID, callback, error, newBody, callFrames)
+    _didEditScriptSource: function(sourceID, newSource, callback, error, callFrames)
     {
-        callback(!error, error || newBody);
-        if (error)
-            return;
-        this._scripts[sourceID].source = newBody;
-        this._debuggerPausedDetails.callFrames = callFrames;
+        if (!error) {
+            this._scripts[sourceID].source = newSource;
+            if (callFrames && callFrames.length)
+                this._debuggerPausedDetails.callFrames = callFrames;
+        }
+        callback(error);
     },
 
     get callFrames()

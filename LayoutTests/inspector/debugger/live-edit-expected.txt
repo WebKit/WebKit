@@ -10,5 +10,16 @@ function f()
 }
 
 ==Source frame contents end==
+
+Running: testLiveEditWhenPaused
+Script execution paused.
+Call stack:
+    0) f1 (edit-me-when-paused.js:13)
+    1)  (:1)
+    2) eval ((internal script):146)
+    3) InjectedScript._evaluateOn (:283)
+    4) InjectedScript._evaluateAndWrap (:265)
+    5) InjectedScript.evaluate (:245)
+Script execution resumed.
 Debugger was disabled.
 
