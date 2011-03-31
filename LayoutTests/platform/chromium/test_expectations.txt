@@ -2933,7 +2933,7 @@ BUGWK48029 GPU MAC : compositing/tiling/huge-layer-with-layer-children-resize.ht
 BUGWK49629 GPU SKIP : platform/chromium/compositing/lots-of-img-layers.html = PASS
 BUGWK49629 GPU SKIP : platform/chromium/compositing/lots-of-img-layers-with-opacity.html = PASS
 
-BUGCR60965 GPU WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE+TEXT
+BUGCR60965 GPU WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMAGE
 
 BUGNONE SLOW GPU DEBUG WIN : fast/canvas/canvas-getImageData.html = PASS
 
