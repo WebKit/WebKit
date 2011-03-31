@@ -27,37 +27,18 @@
  */
 
 #include "config.h"
-
-#if ENABLE(XSLT)
 #include "XMLTreeViewer.h"
 
-
-#include "Base64.h"
-#include "Element.h"
 #include "Document.h"
+#include "Element.h"
 #include "Frame.h"
-#include "HTMLNames.h"
 #include "Page.h"
-#include "ProcessingInstruction.h"
+#include "ScriptController.h"
+#include "ScriptSourceCode.h"
 #include "Settings.h"
-#include "TransformSource.h"
-#include "XLinkNames.h"
-#include "XMLViewerXSL.h"
-#include "XPathResult.h"
-#include "XSLStyleSheet.h"
-#include "XSLTProcessor.h"
-
-#include <libxslt/xslt.h>
-
-#if ENABLE(MATHML)
-#include "MathMLNames.h"
-#endif
-#if ENABLE(SVG)
-#include "SVGNames.h"
-#endif
-#if ENABLE(WML)
-#include "WMLNames.h"
-#endif
+#include "Text.h"
+#include "XMLViewerCSS.h"
+#include "XMLViewerJS.h"
 
 using namespace std;
 
@@ -89,34 +70,18 @@ bool XMLTreeViewer::hasNoStyleInformation() const
 
 void XMLTreeViewer::transformDocumentToTreeView()
 {
-    String sheetString(reinterpret_cast<const char*>(XMLViewer_xsl), sizeof(XMLViewer_xsl));
-    RefPtr<XSLStyleSheet> styleSheet = XSLStyleSheet::createForXMLTreeViewer(m_document, sheetString);
+    String scriptString(reinterpret_cast<const char*>(XMLViewer_js), sizeof(XMLViewer_js));
+    m_document->frame()->script()->evaluate(ScriptSourceCode(scriptString));
+    String noStyleMessage("This XML file does not appear to have any style information associated with it. The document tree is shown below.");
+    m_document->frame()->script()->evaluate(ScriptSourceCode("prepareWebKitXMLViewer('" + noStyleMessage + "');"));
 
-    RefPtr<XSLTProcessor> processor = XSLTProcessor::create();
-    processor->setXSLStyleSheet(styleSheet);
+    String cssString(reinterpret_cast<const char*>(XMLViewer_css), sizeof(XMLViewer_css));
+    RefPtr<Text> text = m_document->createTextNode(cssString);
+    ExceptionCode exceptionCode;
+    m_document->getElementById("xml-viewer-style")->appendChild(text, exceptionCode);
 
-    processor->setParameter("", "xml_has_no_style_message", "This XML file does not appear to have any style information associated with it. The document tree is shown below.");
-
-    String resultMIMEType;
-    String newSource;
-    String resultEncoding;
-
-    Frame* frame = m_document->frame();
-    // FIXME: We should introduce error handling
-    if (processor->transformToString(m_document, resultMIMEType, newSource, resultEncoding))
-        processor->createDocumentFromSource(newSource, resultEncoding, resultMIMEType, m_document, frame);
-
-    // Adding source xml for dealing with namespaces and CDATA issues and for extensions use.
-    Element* sourceXmlElement = frame->document()->getElementById(AtomicString("source-xml"));
-    if (sourceXmlElement)
-        m_document->cloneChildNodes(sourceXmlElement);
-
-    // New document should have been loaded in frame. Tell it to use view source styles.
-    frame->document()->setUsesViewSourceStyles(true);
-    frame->document()->styleSelectorChanged(RecalcStyleImmediately);
-
+    m_document->setUsesViewSourceStyles(true);
+    m_document->styleSelectorChanged(RecalcStyleImmediately);
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(XSLT)

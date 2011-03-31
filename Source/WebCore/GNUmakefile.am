@@ -653,7 +653,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/XMLNames.h \
 	DerivedSources/WebCore/XMLNSNames.cpp \
 	DerivedSources/WebCore/XMLNSNames.h \
-	DerivedSources/WebCore/XMLViewerXSL.h 
+	DerivedSources/WebCore/XMLViewerCSS.h \
+	DerivedSources/WebCore/XMLViewerJS.h 
 
 webcore_sources += \
 	Source/WebCore/accessibility/AccessibilityARIAGridCell.cpp \
@@ -4947,9 +4948,13 @@ DerivedSources/WebCore/HashTools.h: DerivedSources/WebCore/DocTypeStrings.cpp
 DerivedSources/WebCore/DocTypeStrings.cpp: $(WebCore)/html/DocTypeStrings.gperf $(WebCore)/make-hash-tools.pl
 	$(PERL) $(WebCore)/make-hash-tools.pl $(GENSOURCES_WEBCORE) $(WebCore)/html/DocTypeStrings.gperf
 
-# XML Viewer XSL
-DerivedSources/WebCore/XMLViewerXSL.h: $(WebCore)/xml/XMLViewer.xsl
-	$(PERL) $(WebCore)/inspector/xxd.pl XMLViewer_xsl $(WebCore)/xml/XMLViewer.xsl $(GENSOURCES_WEBCORE)/XMLViewerXSL.h
+# XML Viewer CSS
+DerivedSources/WebCore/XMLViewerCSS.h: $(WebCore)/xml/XMLViewer.css
+	$(PERL) $(WebCore)/inspector/xxd.pl XMLViewer_css $(WebCore)/xml/XMLViewer.css $(GENSOURCES_WEBCORE)/XMLViewerCSS.h
+
+# XML Viewer JS
+DerivedSources/WebCore/XMLViewerJS.h: $(WebCore)/xml/XMLViewer.js
+	$(PERL) $(WebCore)/inspector/xxd.pl XMLViewer_js $(WebCore)/xml/XMLViewer.js $(GENSOURCES_WEBCORE)/XMLViewerJS.h
 
 # HTML entity names
 DerivedSources/WebCore/HTMLEntityTable.cpp: $(WebCore)/html/parser/HTMLEntityNames.in $(WebCore)/html/parser/create-html-entity-table
@@ -5177,7 +5182,8 @@ EXTRA_DIST += \
 	Source/WebCore/svg/xlinkattrs.in \
 	Source/WebCore/xml/xmlattrs.in \
 	Source/WebCore/xml/xmlnsattrs.in \
-	Source/WebCore/xml/XMLViewer.xsl \
+	Source/WebCore/xml/XMLViewer.css \
+	Source/WebCore/xml/XMLViewer.js \
 	Source/WebCore/xml/XPathGrammar.y
 
 # Installing web inspector files

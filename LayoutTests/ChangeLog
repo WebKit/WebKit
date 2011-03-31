@@ -1,3 +1,19 @@
+2011-03-29  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        XML Viewer: declared namespaces are not rendered.
+        https://bugs.webkit.org/show_bug.cgi?id=56262
+
+        XML viewer rewritten on javascript.
+
+        * http/tests/xmlviewer/dumpAsText/wml-expected.txt:
+        * http/tests/xmlviewer/dumpAsText/xlink-expected.txt:
+        * http/tests/xmlviewer/dumpAsText/xmlviewer-expected.txt:
+        * http/tests/xmlviewer/dumpAsText/xul-expected.txt:
+        * platform/chromium-linux/http/tests/xmlviewer/dumpAsText/wml-expected.txt: Removed.
+        * platform/chromium/http/tests/xmlviewer/dumpAsText/mathml-expected.txt:
+
 2011-03-31  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, remove stale chromium-gpu canvas expectations (see r82521).

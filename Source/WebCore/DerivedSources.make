@@ -655,12 +655,21 @@ DocTypeStrings.cpp : html/DocTypeStrings.gperf $(WebCore)/make-hash-tools.pl
 
 # --------
 
-# XMLViewer XSLT
+# XMLViewer CSS
 
-all : XMLViewerXSL.h
+all : XMLViewerCSS.h
 
-XMLViewerXSL.h : xml/XMLViewer.xsl
-	perl $(WebCore)/inspector/xxd.pl XMLViewer_xsl $(WebCore)/xml/XMLViewer.xsl XMLViewerXSL.h
+XMLViewerCSS.h : xml/XMLViewer.css
+	perl $(WebCore)/inspector/xxd.pl XMLViewer_css $(WebCore)/xml/XMLViewer.css XMLViewerCSS.h
+
+# --------
+
+# XMLViewer JS
+
+all : XMLViewerJS.h
+
+XMLViewerJS.h : xml/XMLViewer.js
+	perl $(WebCore)/inspector/xxd.pl XMLViewer_js $(WebCore)/xml/XMLViewer.js XMLViewerJS.h
 
 # --------
 

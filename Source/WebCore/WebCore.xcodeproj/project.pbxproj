@@ -1408,6 +1408,8 @@
 		59309A1311F4AE6A00250603 /* DeviceOrientationClientMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 59309A1211F4AE6A00250603 /* DeviceOrientationClientMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		593D3EAF1325328C0057E7EE /* JavaMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 593D3EAE1325328C0057E7EE /* JavaMethod.h */; };
 		593D3EB1132532950057E7EE /* JavaString.h in Headers */ = {isa = PBXBuildFile; fileRef = 593D3EB0132532950057E7EE /* JavaString.h */; };
+		5958F1CD1343917C0080B31F /* XMLViewer.css in Sources */ = {isa = PBXBuildFile; fileRef = 5958F1CB1343917C0080B31F /* XMLViewer.css */; };
+		5958F1CE1343917C0080B31F /* XMLViewer.js in Sources */ = {isa = PBXBuildFile; fileRef = 5958F1CC1343917C0080B31F /* XMLViewer.js */; };
 		596229781133EFD700DC4CBB /* GeolocationPositionCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 596229771133EFD700DC4CBB /* GeolocationPositionCache.cpp */; };
 		5962297A1133EFE200DC4CBB /* GeolocationPositionCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 596229791133EFE200DC4CBB /* GeolocationPositionCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		596950821321059900C3ED18 /* JobjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 596950811321059900C3ED18 /* JobjectWrapper.h */; };
@@ -7935,11 +7937,12 @@
 		59309A1211F4AE6A00250603 /* DeviceOrientationClientMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeviceOrientationClientMock.h; path = mock/DeviceOrientationClientMock.h; sourceTree = "<group>"; };
 		593D3EAE1325328C0057E7EE /* JavaMethod.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaMethod.h; sourceTree = "<group>"; };
 		593D3EB0132532950057E7EE /* JavaString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaString.h; sourceTree = "<group>"; };
+		5958F1CB1343917C0080B31F /* XMLViewer.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = XMLViewer.css; sourceTree = "<group>"; };
+		5958F1CC1343917C0080B31F /* XMLViewer.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = XMLViewer.js; sourceTree = "<group>"; };
 		596229771133EFD700DC4CBB /* GeolocationPositionCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeolocationPositionCache.cpp; sourceTree = "<group>"; };
 		596229791133EFE200DC4CBB /* GeolocationPositionCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationPositionCache.h; sourceTree = "<group>"; };
 		596950811321059900C3ED18 /* JobjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobjectWrapper.h; sourceTree = "<group>"; };
 		59695083132105A500C3ED18 /* JobjectWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JobjectWrapper.cpp; sourceTree = "<group>"; };
-		5980B03312EF3D8400DF5F85 /* XMLViewer.xsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = XMLViewer.xsl; sourceTree = "<group>"; };
 		598D77DC132541EE00761B22 /* JavaArrayJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaArrayJSC.cpp; path = jsc/JavaArrayJSC.cpp; sourceTree = "<group>"; };
 		598D77DE132541FA00761B22 /* JavaArrayJSC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JavaArrayJSC.h; path = jsc/JavaArrayJSC.h; sourceTree = "<group>"; };
 		598D77E01325420400761B22 /* JavaFieldJSC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JavaFieldJSC.cpp; path = jsc/JavaFieldJSC.cpp; sourceTree = "<group>"; };
@@ -18646,7 +18649,8 @@
 				1ACE53E60A8D18E70022947D /* XMLSerializer.idl */,
 				5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */,
 				5905ADBE1302F3CE00F116DF /* XMLTreeViewer.h */,
-				5980B03312EF3D8400DF5F85 /* XMLViewer.xsl */,
+				5958F1CB1343917C0080B31F /* XMLViewer.css */,
+				5958F1CC1343917C0080B31F /* XMLViewer.js */,
 				1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */,
 				1AB7FC480A8B92EC00D9D37B /* XPathEvaluator.h */,
 				1AB7FC490A8B92EC00D9D37B /* XPathEvaluator.idl */,
@@ -25438,6 +25442,8 @@
 				F34742E01343631F00531BC2 /* WorkerDebuggerAgent.cpp in Sources */,
 				F34742E41343633C00531BC2 /* PageScriptDebugServer.cpp in Sources */,
 				F34742E81343635000531BC2 /* WorkerScriptDebugServer.cpp in Sources */,
+				5958F1CD1343917C0080B31F /* XMLViewer.css in Sources */,
+				5958F1CE1343917C0080B31F /* XMLViewer.js in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

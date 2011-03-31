@@ -445,17 +445,33 @@
       'actions': [
         # Actions to build derived sources.
         {
-          'action_name': 'generateXMLViewerXSL',
+          'action_name': 'generateXMLViewerCSS',
           'inputs': [
-            '../xml/XMLViewer.xsl',
+            '../xml/XMLViewer.css',
           ],
           'outputs': [
-            '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLViewerXSL.h',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLViewerCSS.h',
           ],
           'action': [
             'perl',
             '../inspector/xxd.pl',
-            'XMLViewer_xsl',
+            'XMLViewer_css',
+            '<@(_inputs)',
+            '<@(_outputs)'
+          ],
+        },
+        {
+          'action_name': 'generateXMLViewerJS',
+          'inputs': [
+            '../xml/XMLViewer.js',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/XMLViewerJS.h',
+          ],
+          'action': [
+            'perl',
+            '../inspector/xxd.pl',
+            'XMLViewer_js',
             '<@(_inputs)',
             '<@(_outputs)'
           ],
