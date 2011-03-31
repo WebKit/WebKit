@@ -38,6 +38,7 @@ namespace Bindings {
 class JobjectWrapper {
 friend class JavaArray;
 friend class JavaField;
+friend class JavaFieldJobject;
 friend class JavaInstance;
 
 public:

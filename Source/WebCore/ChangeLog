@@ -1,3 +1,39 @@
+2011-03-30  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        JavaField should not expose JavaString in its API
+        https://bugs.webkit.org/show_bug.cgi?id=55766
+
+        This patch fixes JavaField for V8 only.
+        - Factors out a JavaField interface which does not use JNI types.
+          This will allow the Java bridge to be used with objects that
+          don't use JNI directly. The existing jobject-backed
+          implementation is moved to a new JavaFieldJobject class which
+          implements the interface.
+        - Use WTF::String in place of JavaString in the API, as JavaString
+          exposes JNI types in its interface.
+
+        No new tests, refactoring only.
+
+        * Android.v8bindings.mk:
+        * WebCore.gypi:
+        * bridge/jni/JavaMethod.h:
+        (JSC::Bindings::JavaMethod::~JavaMethod):
+        * bridge/jni/JobjectWrapper.h:
+        * bridge/jni/v8/JavaClassV8.cpp:
+        (JavaClass::JavaClass):
+        * bridge/jni/v8/JavaFieldJobjectV8.cpp:
+        (JavaFieldJobject::JavaFieldJobject):
+        * bridge/jni/v8/JavaFieldJobjectV8.h:
+        (JSC::Bindings::JavaFieldJobject::name):
+        (JSC::Bindings::JavaFieldJobject::typeClassName):
+        (JSC::Bindings::JavaFieldJobject::type):
+        * bridge/jni/v8/JavaFieldV8.h:
+        (JSC::Bindings::JavaField::~JavaField):
+        * bridge/jni/v8/JavaInstanceV8.cpp:
+        (JavaInstance::getField):
+
 2011-03-31  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.

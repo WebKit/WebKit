@@ -42,6 +42,8 @@ typedef const char* RuntimeType;
 
 class JavaMethod : public Method {
 public:
+    virtual ~JavaMethod() {}
+
     virtual String name() const = 0;
     virtual RuntimeType returnTypeClassName() const = 0;
     virtual String parameterAt(int) const = 0;

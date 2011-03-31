@@ -83,8 +83,8 @@ JavaValue JavaInstance::invokeMethod(const JavaMethod* method, JavaValue* args)
 
 JavaValue JavaInstance::getField(const JavaField* field)
 {
-    ASSERT(getClass()->fieldNamed(field->name().utf8()) == field);
-    return jvalueToJavaValue(getJNIField(javaInstance(), field->type(), field->name().utf8(), field->typeClassName()), field->type());
+    ASSERT(getClass()->fieldNamed(field->name().utf8().data()) == field);
+    return jvalueToJavaValue(getJNIField(javaInstance(), field->type(), field->name().utf8().data(), field->typeClassName()), field->type());
 }
 
 #endif // ENABLE(JAVA_BRIDGE)

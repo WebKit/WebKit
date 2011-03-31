@@ -24,13 +24,13 @@
  */
 
 #include "config.h"
-#include "JavaFieldV8.h"
+#include "JavaFieldJobjectV8.h"
 
 #if ENABLE(JAVA_BRIDGE)
 
 using namespace JSC::Bindings;
 
-JavaField::JavaField(JNIEnv* env, jobject aField)
+JavaFieldJobject::JavaFieldJobject(JNIEnv* env, jobject aField)
 {
     // Get field type
     jobject fieldType = callJNIMethod<jobject>(aField, "getType", "()Ljava/lang/Class;");

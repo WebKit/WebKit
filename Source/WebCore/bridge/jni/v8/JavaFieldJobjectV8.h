@@ -23,25 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JavaFieldV8_h
-#define JavaFieldV8_h
+#ifndef JavaFieldJobjectV8_h
+#define JavaFieldJobjectV8_h
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JNIUtility.h"
-#include <wtf/text/WTFString.h>
+#include "JavaFieldV8.h"
+#include "JavaString.h"
+#include "JobjectWrapper.h"
 
 namespace JSC {
 
 namespace Bindings {
 
-class JavaField {
+class JavaFieldJobject : public JavaField {
 public:
-    virtual ~JavaField() {}
+    JavaFieldJobject(JNIEnv*, jobject);
 
-    virtual String name() const = 0;
-    virtual const char* typeClassName() const = 0;
-    virtual JavaType type() const = 0;
+    // JavaField implementation
+    virtual String name() const { return m_name.impl(); }
+    virtual const char* typeClassName() const { return m_typeClassName.utf8(); }
+    virtual JavaType type() const { return m_type; }
+
+private:
+    JavaString m_name;
+    JavaString m_typeClassName;
+    JavaType m_type;
+    RefPtr<JobjectWrapper> m_field;
 };
 
 } // namespace Bindings
@@ -50,4 +58,4 @@ public:
 
 #endif // ENABLE(JAVA_BRIDGE)
 
-#endif // JavaFieldV8_h
+#endif // JavaFieldJobjectV8_h

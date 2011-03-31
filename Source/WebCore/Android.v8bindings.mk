@@ -179,7 +179,7 @@ LOCAL_SRC_FILES += \
 	bridge/jni/JobjectWrapper.cpp \
 	bridge/jni/v8/JNIUtilityPrivate.cpp \
 	bridge/jni/v8/JavaClassV8.cpp \
-	bridge/jni/v8/JavaFieldV8.cpp \
+	bridge/jni/v8/JavaFieldJobjectV8.cpp \
 	bridge/jni/v8/JavaInstanceV8.cpp \
 	bridge/jni/v8/JavaNPObject.cpp \
 	bridge/jni/v8/JobjectWrapper.cpp

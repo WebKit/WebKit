@@ -28,7 +28,7 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JavaFieldV8.h"
+#include "JavaFieldJobjectV8.h"
 #include "JavaMethodJobject.h"
 
 using namespace JSC::Bindings;
@@ -50,10 +50,8 @@ JavaClass::JavaClass(jobject anInstance)
     int numFields = env->GetArrayLength(fields);
     for (i = 0; i < numFields; i++) {
         jobject aJField = env->GetObjectArrayElement(static_cast<jobjectArray>(fields), i);
-        JavaField* aField = new JavaField(env, aJField); // deleted in the JavaClass destructor
-        {
-            m_fields.set(aField->name().utf8(), aField);
-        }
+        JavaField* aField = new JavaFieldJobject(env, aJField); // deleted in the JavaClass destructor
+        m_fields.set(aField->name(), aField);
         env->DeleteLocalRef(aJField);
     }
 
