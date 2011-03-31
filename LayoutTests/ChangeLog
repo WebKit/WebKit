@@ -1,3 +1,19 @@
+2011-03-31  Antti Koivisto  <antti@apple.com>
+
+        Not reviewed.
+
+        - Skip on platforms that don't have setSerializeHTTPLoads, make it a requirement.
+        - Update results after typo fix.
+
+        * fast/preloader/document-write-2-expected.txt:
+        * fast/preloader/document-write-2.html:
+        * fast/preloader/document-write-expected.txt:
+        * fast/preloader/document-write.html:
+        * platform/gtk/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-03-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r81849.

@@ -4,8 +4,7 @@ if (window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.dumpResourceResponseMIMETypes();
     // Prevent networking layer from reordering loads.
-    if (layoutTestController.setSerializeHTTPLoads)
-        layoutTestController.setSerializeHTTPLoads();
+    layoutTestController.setSerializeHTTPLoads();
     layoutTestController.waitUntilDone();
 }
 function done() {

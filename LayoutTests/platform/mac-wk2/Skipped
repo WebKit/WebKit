@@ -1781,6 +1781,8 @@ http/tests/media/video-buffered.html
 # These require DRT setSerializeHTTPLoads implementation for WebKit2 to be reliable.
 http/tests/local/link-stylesheet-load-order.html
 http/tests/local/link-stylesheet-load-order-preload.html
+fast/preloader/document-write.html
+fast/preloader/document-write-2.html
 
 # WebKit2 needs Java support
 dom/html/level2/html/HTMLAppletElement01.html
