@@ -171,6 +171,11 @@ public:
     // possible quality.
     bool isPrinting();
 
+    // Returns if the context allows rendering of fonts using native platform
+    // APIs. If false is returned font rendering is performed using the skia
+    // text drawing APIs.
+    bool isNativeFontRenderingAllowed();
+
     void getImageResamplingHint(IntSize* srcSize, FloatSize* dstSize) const;
     void setImageResamplingHint(const IntSize& srcSize, const FloatSize& dstSize);
     void clearImageResamplingHint();

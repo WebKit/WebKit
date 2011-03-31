@@ -39,15 +39,10 @@
 #include "SkPaint.h"
 #include "SkShader.h"
 #include "SkTemplates.h"
-#include "SkTypeface.h"
+#include "SkTypeface_win.h"
 
 #include <wtf/ListHashSet.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(SKIA_TEXT)
-// FIXME: a future role of skia will have this in a proper header
-extern SkTypeface* SkCreateTypefaceFromLOGFONT(const LOGFONT&);
-#endif
 
 namespace WebCore {
 
@@ -265,6 +260,9 @@ bool windowsCanHandleTextDrawing(GraphicsContext* context)
     if (context->platformContext()->getDrawLooper() && (!windowsCanHandleDrawTextShadow(context)))
         return false;
 
+    if (!context->platformContext()->isNativeFontRenderingAllowed())
+        return false;
+
     return true;
 }
 
@@ -272,7 +270,7 @@ bool windowsCanHandleTextDrawing(GraphicsContext* context)
 // pattern may be NULL, in which case a solid colour is used.
 static bool skiaDrawText(HFONT hfont,
                          HDC dc,
-                         SkCanvas* canvas,
+                         PlatformContextSkia* platformContext,
                          const SkPoint& point,
                          SkPaint* paint,
                          const WORD* glyphs,
@@ -280,47 +278,47 @@ static bool skiaDrawText(HFONT hfont,
                          const GOFFSET* offsets,
                          int numGlyphs)
 {
-#if ENABLE(SKIA_TEXT)
-    SkASSERT(sizeof(WORD) == sizeof(uint16_t));
+    SkCanvas* canvas = platformContext->canvas();
+    if (!platformContext->isNativeFontRenderingAllowed()) {
+        SkASSERT(sizeof(WORD) == sizeof(uint16_t));
 
-    // Reserve space for 64 glyphs on the stack. If numGlyphs is larger, the array
-    // will dynamically allocate it space for numGlyph glyphs.
-    static const size_t kLocalGlyphMax = 64;
-    SkAutoSTArray<kLocalGlyphMax, SkPoint> posStorage(numGlyphs);
-    SkPoint* pos = posStorage.get();
-    SkScalar x = point.fX;
-    SkScalar y = point.fY;
-    for (int i = 0; i < numGlyphs; i++) {
-        pos[i].set(x + (offsets ? offsets[i].du : 0),
-                   y + (offsets ? offsets[i].dv : 0));
-        x += SkIntToScalar(advances[i]);
-    }
-    canvas->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, *paint);
-#else
-    float x = point.fX, y = point.fY;
-
-    for (int i = 0; i < numGlyphs; i++) {
-        const SkPath* path = SkiaWinOutlineCache::lookupOrCreatePathForGlyph(dc, hfont, glyphs[i]);
-        if (!path)
-            return false;
-
-        float offsetX = 0.0f, offsetY = 0.0f;
-        if (offsets && (offsets[i].du != 0 || offsets[i].dv != 0)) {
-            offsetX = offsets[i].du;
-            offsetY = offsets[i].dv;
+        // Reserve space for 64 glyphs on the stack. If numGlyphs is larger, the array
+        // will dynamically allocate it space for numGlyph glyphs.
+        static const size_t kLocalGlyphMax = 64;
+        SkAutoSTArray<kLocalGlyphMax, SkPoint> posStorage(numGlyphs);
+        SkPoint* pos = posStorage.get();
+        SkScalar x = point.fX;
+        SkScalar y = point.fY;
+        for (int i = 0; i < numGlyphs; i++) {
+            pos[i].set(x + (offsets ? offsets[i].du : 0),
+                       y + (offsets ? offsets[i].dv : 0));
+            x += SkIntToScalar(advances[i]);
         }
+        canvas->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, *paint);
+    } else {
+        float x = point.fX, y = point.fY;
 
-        SkPath newPath;
-        newPath.addPath(*path, x + offsetX, y + offsetY);
-        canvas->drawPath(newPath, *paint);
+        for (int i = 0; i < numGlyphs; i++) {
+            const SkPath* path = SkiaWinOutlineCache::lookupOrCreatePathForGlyph(dc, hfont, glyphs[i]);
+            if (!path)
+                return false;
 
-        x += advances[i];
+            float offsetX = 0.0f, offsetY = 0.0f;
+            if (offsets && (offsets[i].du || offsets[i].dv)) {
+                offsetX = offsets[i].du;
+                offsetY = offsets[i].dv;
+            }
+
+            SkPath newPath;
+            newPath.addPath(*path, x + offsetX, y + offsetY);
+            canvas->drawPath(newPath, *paint);
+
+            x += advances[i];
+        }
     }
-#endif
     return true;
 }
 
-#if ENABLE(SKIA_TEXT)
 static void setupPaintForFont(HFONT hfont, SkPaint* paint)
 {
     //  FIXME:
@@ -339,7 +337,6 @@ static void setupPaintForFont(HFONT hfont, SkPaint* paint)
     paint->setTypeface(face);
     SkSafeUnref(face);
 }
-#endif
 
 bool paintSkiaText(GraphicsContext* context,
                    HFONT hfont,
@@ -359,14 +356,14 @@ bool paintSkiaText(GraphicsContext* context,
     SkPaint paint;
     platformContext->setupPaintForFilling(&paint);
     paint.setFlags(SkPaint::kAntiAlias_Flag);
-#if ENABLE(SKIA_TEXT)
-    paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-    setupPaintForFont(hfont, &paint);
-#endif
+    if (!platformContext->isNativeFontRenderingAllowed()) {
+        paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+        setupPaintForFont(hfont, &paint);
+    }
     bool didFill = false;
 
     if ((textMode & TextModeFill) && SkColorGetA(paint.getColor())) {
-        if (!skiaDrawText(hfont, dc, platformContext->canvas(), *origin, &paint,
+        if (!skiaDrawText(hfont, dc, platformContext, *origin, &paint,
                           &glyphs[0], &advances[0], &offsets[0], numGlyphs))
             return false;
         didFill = true;
@@ -398,7 +395,7 @@ bool paintSkiaText(GraphicsContext* context,
             paint.setLooper(0);
         }
 
-        if (!skiaDrawText(hfont, dc, platformContext->canvas(), *origin, &paint,
+        if (!skiaDrawText(hfont, dc, platformContext, *origin, &paint,
                           &glyphs[0], &advances[0], &offsets[0], numGlyphs))
             return false;
     }

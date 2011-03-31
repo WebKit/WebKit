@@ -1,3 +1,19 @@
+2011-03-30  Chris Guillory  <chris.guillory@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Render fonts using skia when requested by platform context.
+        https://bugs.webkit.org/show_bug.cgi?id=56441
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::isNativeFontRenderingAllowed):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::windowsCanHandleTextDrawing):
+        (WebCore::skiaDrawText):
+        (WebCore::setupPaintForFont):
+        (WebCore::paintSkiaText):
+
 2011-03-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

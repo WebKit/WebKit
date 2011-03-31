@@ -618,6 +618,11 @@ bool PlatformContextSkia::isPrinting()
 #endif
 }
 
+bool PlatformContextSkia::isNativeFontRenderingAllowed()
+{
+    return m_canvas->getTopPlatformDevice().IsNativeFontRenderingAllowed();
+}
+
 void PlatformContextSkia::getImageResamplingHint(IntSize* srcSize, FloatSize* dstSize) const
 {
     *srcSize = m_imageResamplingHintSrcSize;
