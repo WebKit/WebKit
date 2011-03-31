@@ -63,8 +63,6 @@ bool XMLTreeViewer::hasNoStyleInformation() const
     if (m_document->frame()->tree()->parent(true))
         return false; // This document is not in a top frame
 
-    if (m_document->frame()->loader()->opener())
-        return false; // This document is not opened manually by user
     return true;
 }
 

@@ -1,3 +1,19 @@
+2011-03-31  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        XML viewer is not shown when frame has non-null opener
+        https://bugs.webkit.org/show_bug.cgi?id=56384
+
+        Enabled test for extensions hooks in xml viewer.
+
+        * http/tests/xmlviewer/extensions-api-expected.txt: Added.
+        * http/tests/xmlviewer/extensions-api.html: Added.
+        * http/tests/xmlviewer/resources/sample.xml: Added.
+        * platform/qt/Skipped:
+        * xmlviewer/extensions-api-expected.txt: Removed.
+        * xmlviewer/extensions-api.html_disabled: Removed.
+
 2011-03-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82589.

@@ -85,6 +85,9 @@ function sourceXMLLoaded()
 
     drawArrows();
     initButtons();
+
+    if (typeof(onAfterWebkitXMLViewerLoaded) == 'function')
+      onAfterWebkitXMLViewerLoaded();
 }
 
 // Tree processing.
