@@ -35,9 +35,10 @@
 
 #include "CairoUtilities.h"
 #include "ContextShadow.h"
-#include "PlatformContextCairo.h"
+#include "GOwnPtr.h"
 #include "GraphicsContext.h"
 #include "NotImplemented.h"
+#include "PlatformContextCairo.h"
 #include "SimpleFontData.h"
 #include "TextRun.h"
 #include <cairo.h>
@@ -84,75 +85,71 @@ IntRect getPangoRegionExtents(PangoRegionType region)
 #define IS_HIGH_SURROGATE(u)  ((UChar)(u) >= (UChar)0xd800 && (UChar)(u) <= (UChar)0xdbff)
 #define IS_LOW_SURROGATE(u)  ((UChar)(u) >= (UChar)0xdc00 && (UChar)(u) <= (UChar)0xdfff)
 
-static void utf16_to_utf8(const UChar* aText, gint aLength, char* &text, gint &length)
+static gchar* utf16ToUtf8(const UChar* aText, gint aLength, gint &length)
 {
-  gboolean need_copy = FALSE;
-  int i;
+    gboolean needCopy = FALSE;
 
-  for (i = 0; i < aLength; i++) {
-    if (!aText[i] || IS_LOW_SURROGATE(aText[i])) {
-      need_copy = TRUE;
-      break;
-    }
-    else if (IS_HIGH_SURROGATE(aText[i])) {
-      if (i < aLength - 1 && IS_LOW_SURROGATE(aText[i+1]))
-        i++;
-      else {
-        need_copy = TRUE;
-        break;
-      }
-    }
-  }
+    for (int i = 0; i < aLength; i++) {
+        if (!aText[i] || IS_LOW_SURROGATE(aText[i])) {
+            needCopy = TRUE;
+            break;
+        } 
 
-  if (need_copy) {
-
-    /* Pango doesn't correctly handle nuls.  We convert them to 0xff. */
-    /* Also "validate" UTF-16 text to make sure conversion doesn't fail. */
-
-    UChar* p = (UChar*)g_memdup(aText, aLength * sizeof(aText[0]));
-
-    /* don't need to reset i */
-    for (i = 0; i < aLength; i++) {
-      if (!p[i] || IS_LOW_SURROGATE(p[i]))
-        p[i] = 0xFFFD;
-      else if (IS_HIGH_SURROGATE(p[i])) {
-        if (i < aLength - 1 && IS_LOW_SURROGATE(aText[i+1]))
-          i++;
-        else
-          p[i] = 0xFFFD;
-      }
+        if (IS_HIGH_SURROGATE(aText[i])) {
+            if (i < aLength - 1 && IS_LOW_SURROGATE(aText[i+1]))
+                i++;
+            else {
+                needCopy = TRUE;
+                break;
+            }
+        }
     }
 
-    aText = p;
-  }
+    GOwnPtr<UChar> copiedString;
+    if (needCopy) {
+        /* Pango doesn't correctly handle nuls.  We convert them to 0xff. */
+        /* Also "validate" UTF-16 text to make sure conversion doesn't fail. */
 
-  glong items_written;
-  text = g_utf16_to_utf8(reinterpret_cast<const gunichar2*>(aText), aLength, NULL, &items_written, NULL);
-  length = items_written;
+        copiedString.set(static_cast<UChar*>(g_memdup(aText, aLength * sizeof(aText[0]))));
+        UChar* p = copiedString.get();
 
-  if (need_copy)
-    g_free((gpointer)aText);
+        /* don't need to reset i */
+        for (int i = 0; i < aLength; i++) {
+            if (!p[i] || IS_LOW_SURROGATE(p[i]))
+                p[i] = 0xFFFD;
+            else if (IS_HIGH_SURROGATE(p[i])) {
+                if (i < aLength - 1 && IS_LOW_SURROGATE(aText[i+1]))
+                    i++;
+                else
+                    p[i] = 0xFFFD;
+            }
+        }
 
+        aText = p;
+    }
+
+    gchar* utf8Text;
+    glong itemsWritten;
+    utf8Text = g_utf16_to_utf8(static_cast<const gunichar2*>(aText), aLength, 0, &itemsWritten, 0);
+    length = itemsWritten;
+
+    return utf8Text;
 }
 
 static gchar* convertUniCharToUTF8(const UChar* characters, gint length, int from, int to)
 {
-    gchar* utf8 = 0;
-    gint new_length = 0;
-    utf16_to_utf8(characters, length, utf8, new_length);
-    if (!utf8)
-        return NULL;
+    gint newLength = 0;
+    GOwnPtr<gchar> utf8Text(utf16ToUtf8(characters, length, newLength));
+    if (!utf8Text)
+        return 0;
 
+    gchar* pos = utf8Text.get();
     if (from > 0) {
         // discard the first 'from' characters
         // FIXME: we should do this before the conversion probably
-        gchar* str_left = g_utf8_offset_to_pointer(utf8, from);
-        gchar* tmp = g_strdup(str_left);
-        g_free(utf8);
-        utf8 = tmp;
+        pos = g_utf8_offset_to_pointer(utf8Text.get(), from);
     }
 
-    gchar* pos = utf8;
     gint len = strlen(pos);
     GString* ret = g_string_new_len(NULL, len);
 
