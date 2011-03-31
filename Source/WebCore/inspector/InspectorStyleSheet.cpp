@@ -440,7 +440,7 @@ void InspectorStyle::populateObjectWithStyleProperties(InspectorObject* result) 
     populateAllProperties(&properties);
 
     RefPtr<InspectorArray> propertiesObject = InspectorArray::create();
-    RefPtr<InspectorObject> shorthandValues = InspectorObject::create();
+    RefPtr<InspectorArray> shorthandEntries = InspectorArray::create();
     HashMap<String, RefPtr<InspectorObject> > propertyNameToPreviousActiveProperty;
     HashSet<String> foundShorthands;
 
@@ -511,7 +511,10 @@ void InspectorStyle::populateObjectWithStyleProperties(InspectorObject* result) 
                 property->setString("shorthandName", shorthand);
                 if (!foundShorthands.contains(shorthand)) {
                     foundShorthands.add(shorthand);
-                    shorthandValues->setString(shorthand, shorthandValue(shorthand));
+                    RefPtr<InspectorObject> shorthandEntry = InspectorObject::create();
+                    shorthandEntry->setString("name", shorthand);
+                    shorthandEntry->setString("value", shorthandValue(shorthand));
+                    shorthandEntries->pushObject(shorthandEntry.release());
                 }
             }
         }
@@ -519,7 +522,7 @@ void InspectorStyle::populateObjectWithStyleProperties(InspectorObject* result) 
     }
 
     result->setArray("cssProperties", propertiesObject);
-    result->setObject("shorthandValues", shorthandValues);
+    result->setArray("shorthandEntries", shorthandEntries);
 }
 
 

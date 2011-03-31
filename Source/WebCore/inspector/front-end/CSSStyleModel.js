@@ -197,7 +197,7 @@ WebInspector.CSSStyleDeclaration = function(payload)
 {
     this.id = payload.styleId;
     this.properties = payload.properties;
-    this._shorthandValues = payload.shorthandValues;
+    this._shorthandValues = WebInspector.CSSStyleDeclaration.buildShorthandValueMap(payload.shorthandEntries);
     this._livePropertyMap = {}; // LIVE properties (source-based or style-based) : { name -> CSSProperty }
     this._allProperties = []; // ALL properties: [ CSSProperty ]
     this._longhandProperties = {}; // shorthandName -> [ CSSProperty ]
@@ -230,6 +230,14 @@ WebInspector.CSSStyleDeclaration = function(payload)
     this.length = propertyIndex;
     if ("cssText" in payload)
         this.cssText = payload.cssText;
+}
+
+WebInspector.CSSStyleDeclaration.buildShorthandValueMap = function(shorthandEntries)
+{
+    var result = {};
+    for (var i = 0; i < shorthandEntries.length; ++i)
+        result[shorthandEntries[i].name] = shorthandEntries[i].value;
+    return result;
 }
 
 WebInspector.CSSStyleDeclaration.parsePayload = function(payload)

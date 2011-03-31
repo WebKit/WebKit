@@ -81,10 +81,11 @@
 //                          ...
 //                          #cssProperty
 //                         ],
-//    shorthandValues    : {
-//                          shorthandName1 : shorthandValue1,
-//                          shorthandName2 : shorthandValue2
-//                         },
+//    shorthandEntries   : [
+//                          #shorthandEntry,
+//                          ...
+//                          #shorthandEntry
+//                         ],
 //    cssText            : <string>, // Optional - declaration text
 //    properties         : {
 //                          width,
@@ -92,6 +93,11 @@
 //                          startOffset, // Optional - for source-based styles only
 //                          endOffset, // Optional - for source-based styles only
 //                         }
+// }
+//
+// shorthandEntry = {
+//    name: <string>,
+//    value: <string>
 // }
 //
 // cssRule = {

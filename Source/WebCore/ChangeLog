@@ -1,3 +1,19 @@
+2011-03-30  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Make the CSStyle "shorthandValues" name-value map an array
+        https://bugs.webkit.org/show_bug.cgi?id=57452
+
+        No new tests, as this is a refactoring.
+
+        * inspector/InspectorCSSAgent.cpp:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::populateObjectWithStyleProperties):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleDeclaration):
+        (WebInspector.CSSStyleDeclaration.buildShorthandValueMap):
+
 2011-03-30  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.
