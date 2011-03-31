@@ -259,12 +259,18 @@ WebInspector.TextEditorChunkedPanel.prototype = {
 
     addDecoration: function(lineNumber, decoration)
     {
+        if (lineNumber >= this._textModel.linesCount)
+            return;
+
         var chunk = this.makeLineAChunk(lineNumber);
         chunk.addDecoration(decoration);
     },
 
     removeDecoration: function(lineNumber, decoration)
     {
+        if (lineNumber >= this._textModel.linesCount)
+            return;
+
         var chunk = this.makeLineAChunk(lineNumber);
         chunk.removeDecoration(decoration);
     },
@@ -799,6 +805,14 @@ WebInspector.TextEditorMainPanel.prototype = {
         this._cachedRows = [];
     },
 
+    makeLineAChunk: function(lineNumber)
+    {
+        var selection = this._getSelection();
+        var chunk = WebInspector.TextEditorChunkedPanel.prototype.makeLineAChunk.call(this, lineNumber);
+        this._restoreSelection(selection);
+        return chunk;
+    },
+
     _buildChunks: function()
     {
         for (var i = 0; i < this._textModel.linesCount; ++i)
@@ -1087,7 +1101,8 @@ WebInspector.TextEditorMainPanel.prototype = {
     _positionToSelection: function(line, column)
     {
         var chunk = this.chunkForLine(line);
-        var lineRow = chunk.getExpandedLineRow(line);
+        // One-lined collapsed chunks may still stay highlighted.
+        var lineRow = chunk.linesCount === 1 ? chunk.element : chunk.getExpandedLineRow(line);
         if (lineRow)
             var rangeBoundary = lineRow.rangeBoundaryForOffset(column);
         else {

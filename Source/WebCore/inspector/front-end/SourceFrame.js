@@ -171,10 +171,37 @@ WebInspector.SourceFrame.prototype = {
             delete this._lineToHighlight;
     },
 
+    _saveViewerState: function()
+    {
+        this._viewerState = {
+            textModelContent: this._textModel.text,
+            executionLineNumber: this._executionLineNumber,
+            messages: this._messages,
+            diffLines: this._diffLines
+        };
+    },
+
+    _restoreViewerState: function()
+    {
+        if (!this._viewerState)
+            return;
+        this._textModel.setText(null, this._viewerState.textModelContent);
+
+        this._messages = this._viewerState.messages;
+        this._diffLines = this._viewerState.diffLines;
+        this._setTextViewerDecorations();
+
+        if (typeof this._viewerState.executionLineNumber === "number") {
+            this.clearExecutionLine();
+            this.setExecutionLine(this._viewerState.executionLineNumber);
+        }
+        delete this._viewerState;
+    },
+
     _startEditing: function()
     {
-        if (this._originalTextModelContent === undefined) {
-            this._originalTextModelContent = this._textModel.text;
+        if (!this._viewerState) {
+            this._saveViewerState();
             this._delegate.setScriptSourceIsBeingEdited(true);
         }
 
@@ -184,7 +211,22 @@ WebInspector.SourceFrame.prototype = {
 
     _endEditing: function(oldRange, newRange)
     {
-        // FIXME: Implement this.
+        // Adjust execution line number.
+        if (typeof this._executionLineNumber === "number") {
+            var lineNumber = this._executionLineNumber;
+            var shiftOffset = lineNumber <= oldRange.startLine ? 0 : newRange.linesCount - oldRange.linesCount;
+
+            // Special case of editing the execution line itself. We should decide whether the execution line number should move below or not.
+            if (lineNumber === oldRange.startLine && lineNumber + 1 <= newRange.endLine && this._textModel.lineLength(lineNumber) < this._textModel.lineLength(lineNumber + 1))
+                shiftOffset = 1;
+
+            var newExecutionLineNumber = Math.max(0, lineNumber + shiftOffset);
+            if (oldRange.startLine < lineNumber && lineNumber < oldRange.endLine)
+                newExecutionLineNumber = oldRange.startLine;
+
+            this.clearExecutionLine();
+            this.setExecutionLine(newExecutionLineNumber, true);
+        }
     },
 
     _createTextViewer: function(mimeType, content)
@@ -214,7 +256,7 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.mimeType = mimeType;
         this._setTextViewerDecorations();
 
-        if ("_executionLineNumber" in this)
+        if (typeof this._executionLineNumber === "number")
             this.setExecutionLine(this._executionLineNumber);
 
         if (this._lineNumberToReveal) {
@@ -365,12 +407,13 @@ WebInspector.SourceFrame.prototype = {
         msg._resourceMessageRepeatCountElement.textContent = WebInspector.UIString(" (repeated %d times)", msg.repeatCount);
     },
 
-    setExecutionLine: function(lineNumber)
+    setExecutionLine: function(lineNumber, skipRevealLine)
     {
         this._executionLineNumber = lineNumber;
         if (this._textViewer) {
             this._textViewer.addDecoration(lineNumber, "webkit-execution-line");
-            this._textViewer.revealLine(lineNumber);
+            if (!skipRevealLine)
+                this._textViewer.revealLine(lineNumber);
         }
     },
 
@@ -807,24 +850,24 @@ WebInspector.SourceFrame.prototype = {
         if (this._textViewer.readOnly || !this._delegate.canEditScriptSource())
             return false;
 
-        if (this._originalTextModelContent === undefined) {
+        if (!this._viewerState) {
             // No editing was actually done.
             this._textViewer.readOnly = true;
             this._delegate.setScriptSourceIsBeingEdited(false);
             return true;
         }
 
-        var originalTextModelContent = this._originalTextModelContent;
+        var originalViewerState = this._viewerState;
         var newSource = this._textModel.text;
 
-        delete this._originalTextModelContent;
+        delete this._viewerState;
         this._textViewer.readOnly = true;
         this._delegate.setScriptSourceIsBeingEdited(false);
 
         function didEditScriptSource(success, newBodyOrErrorMessage)
         {
-            if (!success && this._originalTextModelContent === undefined && this._textModel.text === newSource) {
-                this._originalTextModelContent = originalTextModelContent;
+            if (!success && !this._viewerState && this._textModel.text === newSource) {
+                this._viewerState = originalViewerState;
                 this._textViewer.readOnly = false;
                 this._delegate.setScriptSourceIsBeingEdited(true);
                 WebInspector.log(newBodyOrErrorMessage, WebInspector.ConsoleMessage.MessageLevel.Error);
@@ -840,9 +883,7 @@ WebInspector.SourceFrame.prototype = {
         if (this._textViewer.readOnly)
             return false;
 
-        if (this._originalTextModelContent !== undefined)
-            this._textModel.setText(null, this._originalTextModelContent);
-        delete this._originalTextModelContent;
+        this._restoreViewerState();
         this._textViewer.readOnly = true;
         this._delegate.setScriptSourceIsBeingEdited(false);
         return true;

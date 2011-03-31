@@ -1,3 +1,26 @@
+2011-03-31  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: execution line is displayed incorrectly after source editing.
+        https://bugs.webkit.org/show_bug.cgi?id=57229
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._saveViewerState):
+        (WebInspector.SourceFrame.prototype._restoreViewerState):
+        (WebInspector.SourceFrame.prototype._startEditing):
+        (WebInspector.SourceFrame.prototype._endEditing):
+        (WebInspector.SourceFrame.prototype._createTextViewer):
+        (WebInspector.SourceFrame.prototype.setExecutionLine):
+        (WebInspector.SourceFrame.prototype._handleSave.didEditScriptSource):
+        (WebInspector.SourceFrame.prototype._handleSave):
+        (WebInspector.SourceFrame.prototype._handleRevertEditing):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorChunkedPanel.prototype.addDecoration):
+        (WebInspector.TextEditorChunkedPanel.prototype.removeDecoration):
+        (WebInspector.TextEditorMainPanel.prototype.makeLineAChunk):
+        (WebInspector.TextEditorMainPanel.prototype._positionToSelection):
+
 2011-03-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
