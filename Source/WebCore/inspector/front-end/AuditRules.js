@@ -322,7 +322,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                     for (var curRule = 0; curRule < styleSheet.rules.length; ++curRule) {
                         var rule = styleSheet.rules[curRule];
                         // Exact computation whenever source ranges are available.
-                        var textLength = (rule.selectorRange && rule.style.properties.endOffset) ? rule.style.properties.endOffset - rule.selectorRange.start + 1 : 0;
+                        var textLength = (rule.selectorRange && rule.style.range && rule.style.range.end) ? rule.style.range.end - rule.selectorRange.start + 1 : 0;
                         if (!textLength && rule.style.cssText)
                             textLength = rule.style.cssText.length + rule.selectorText.length;
                         stylesheetSize += textLength;

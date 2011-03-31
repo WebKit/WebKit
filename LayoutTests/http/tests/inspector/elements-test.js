@@ -212,4 +212,11 @@ InspectorTest.dumpDOMAgentTree = function()
     dump(WebInspector.domAgent._document, "", WebInspector.domAgent._document.id - 1);
 };
 
+InspectorTest.rangeText = function(range)
+{
+    if (!range)
+        return "[undefined-undefined]";
+    return "[" + range.start + "-" + range.end + "]";
+};
+
 };

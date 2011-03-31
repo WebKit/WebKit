@@ -102,6 +102,14 @@ RefPtr<WebCore::CSSRuleSourceData> ParsedStyleSheet::ruleSourceDataAt(unsigned i
 
 namespace WebCore {
 
+static PassRefPtr<InspectorObject> buildSourceRangeObject(const SourceRange& range)
+{
+    RefPtr<InspectorObject> result = InspectorObject::create();
+    result->setNumber("start", range.start);
+    result->setNumber("end", range.end);
+    return result.release();
+}
+
 static PassRefPtr<CSSRuleList> asCSSRuleList(StyleBase* styleBase)
 {
     if (!styleBase)
@@ -154,16 +162,12 @@ PassRefPtr<InspectorObject> InspectorStyle::buildObjectForStyle() const
     if (!m_styleId.isEmpty())
         result->setValue("styleId", m_styleId.asInspectorValue());
 
-    RefPtr<InspectorObject> propertiesObject = InspectorObject::create();
-    propertiesObject->setString("width", m_style->getPropertyValue("width"));
-    propertiesObject->setString("height", m_style->getPropertyValue("height"));
+    result->setString("width", m_style->getPropertyValue("width"));
+    result->setString("height", m_style->getPropertyValue("height"));
 
     RefPtr<CSSRuleSourceData> sourceData = m_parentStyleSheet ? m_parentStyleSheet->ruleSourceDataFor(m_style.get()) : 0;
-    if (sourceData) {
-        propertiesObject->setNumber("startOffset", sourceData->styleSourceData->styleBodyRange.start);
-        propertiesObject->setNumber("endOffset", sourceData->styleSourceData->styleBodyRange.end);
-    }
-    result->setObject("properties", propertiesObject);
+    if (sourceData)
+        result->setObject("range", buildSourceRangeObject(sourceData->styleSourceData->styleBodyRange));
 
     populateObjectWithStyleProperties(result.get());
 
@@ -466,8 +470,7 @@ void InspectorStyle::populateObjectWithStyleProperties(InspectorObject* result) 
         if (!it->disabled) {
             if (it->hasSource) {
                 property->setBoolean("implicit", false);
-                property->setNumber("startOffset", propertyEntry.range.start);
-                property->setNumber("endOffset", propertyEntry.range.end);
+                property->setObject("range", buildSourceRangeObject(propertyEntry.range));
 
                 // Parsed property overrides any property with the same name. Non-parsed property overrides
                 // previous non-parsed property with the same name (if any).

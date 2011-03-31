@@ -196,7 +196,9 @@ WebInspector.CSSStyleModel.prototype.__proto__ = WebInspector.Object.prototype;
 WebInspector.CSSStyleDeclaration = function(payload)
 {
     this.id = payload.styleId;
-    this.properties = payload.properties;
+    this.width = payload.width;
+    this.height = payload.height;
+    this.range = payload.range;
     this._shorthandValues = WebInspector.CSSStyleDeclaration.buildShorthandValueMap(payload.shorthandEntries);
     this._livePropertyMap = {}; // LIVE properties (source-based or style-based) : { name -> CSSProperty }
     this._allProperties = []; // ALL properties: [ CSSProperty ]
