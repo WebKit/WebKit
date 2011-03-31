@@ -1,7 +1,6 @@
 /*
  * Copyright (C) 2010 University of Szeged
  * Copyright (C) 2010 Zoltan Herczeg
- * Copyright (C) 2011 Renata Hodovan (reni@webkit.org)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,29 +32,8 @@
 #include "RenderSVGResource.h"
 #include "SVGFEImage.h"
 #include "SVGFilter.h"
-#include "SVGNames.h"
 
 namespace WebCore {
-
-
-void RenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, const RenderStyle* style)
-{
-    RenderSVGHiddenContainer::styleDidChange(diff, style);
-
-    RenderObject* filter = parent();
-    ASSERT(filter && filter->isSVGResourceFilter());
-    if (diff == StyleDifferenceEqual)
-        return;
-
-    const SVGRenderStyle* oldStyle = this->style()->svgStyle();
-    RenderSVGResourceFilter* resourceFilter = static_cast<RenderSVGResourceFilter*>(filter);
-    if (oldStyle->floodColor() != style->svgStyle()->floodColor())
-        resourceFilter->primitiveAttributeChanged(this, SVGNames::flood_colorAttr);
-    if (oldStyle->floodOpacity() != style->svgStyle()->floodOpacity())
-        resourceFilter->primitiveAttributeChanged(this, SVGNames::flood_opacityAttr);
-    if (oldStyle->lightingColor() != style->svgStyle()->lightingColor())
-        resourceFilter->primitiveAttributeChanged(this, SVGNames::lighting_colorAttr);
-}
 
 FloatRect RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(FilterEffect* effect)
 {

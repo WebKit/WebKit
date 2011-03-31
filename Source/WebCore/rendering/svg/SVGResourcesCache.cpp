@@ -126,10 +126,6 @@ void SVGResourcesCache::clientStyleChanged(RenderObject* renderer, StyleDifferen
     if (diff == StyleDifferenceEqual)
         return;
 
-    // In this case the proper SVGFE*Element will deceide whether the modifided CSS properties implies a relayout or repaint.
-    if (renderer->isSVGResourceFilterPrimitive() && diff == StyleDifferenceRepaint)
-        return;
-
     clientUpdatedFromElement(renderer, newStyle);
     RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 }

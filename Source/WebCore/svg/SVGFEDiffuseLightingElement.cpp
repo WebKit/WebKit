@@ -87,13 +87,14 @@ void SVGFEDiffuseLightingElement::parseMappedAttribute(Attribute* attr)
 bool SVGFEDiffuseLightingElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
 {
     FEDiffuseLighting* diffuseLighting = static_cast<FEDiffuseLighting*>(effect);
-
-    if (attrName == SVGNames::lighting_colorAttr)
-        return diffuseLighting->setLightingColor(this->renderer()->style()->svgStyle()->lightingColor());
     if (attrName == SVGNames::surfaceScaleAttr)
         return diffuseLighting->setSurfaceScale(surfaceScale());
     if (attrName == SVGNames::diffuseConstantAttr)
         return diffuseLighting->setDiffuseConstant(diffuseConstant());
+    if (attrName == SVGNames::lighting_colorAttr) {
+        RefPtr<RenderStyle> filterStyle = styleForRenderer();
+        return diffuseLighting->setLightingColor(filterStyle->svgStyle()->lightingColor());
+    }
 
     LightSource* lightSource = const_cast<LightSource*>(diffuseLighting->lightSource());
     const SVGFELightElement* lightElement = SVGFELightElement::findLightElement(this);

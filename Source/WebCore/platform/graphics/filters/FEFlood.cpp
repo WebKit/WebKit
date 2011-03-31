@@ -49,12 +49,9 @@ Color FEFlood::floodColor() const
     return m_floodColor;
 }
 
-bool FEFlood::setFloodColor(const Color& color)
+void FEFlood::setFloodColor(const Color& color)
 {
-    if (m_floodColor == color)
-        return false;
     m_floodColor = color;
-    return true;
 }
 
 float FEFlood::floodOpacity() const
@@ -62,12 +59,9 @@ float FEFlood::floodOpacity() const
     return m_floodOpacity;
 }
 
-bool FEFlood::setFloodOpacity(float floodOpacity)
+void FEFlood::setFloodOpacity(float floodOpacity)
 {
-    if (m_floodOpacity == floodOpacity)
-        return false;
     m_floodOpacity = floodOpacity;
-    return true;
 }
 
 void FEFlood::apply()
