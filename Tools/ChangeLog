@@ -1,3 +1,13 @@
+2011-03-30  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Update fast/canvas tests to avoid dumping the render tree when possible
+        https://bugs.webkit.org/show_bug.cgi?id=57493
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: Make DRT aware of new default values for
+          accelerated drawing and accelerated drawing for canvas
+
 2011-03-30  Adam Roben  <aroben@apple.com>
 
         Stop ignoring leaks in CGGradientCreateWithColorStops

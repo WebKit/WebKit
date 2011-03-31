@@ -1,0 +1,6 @@
+All three of these small canvases should be green, not red.
+
+  
+All three of these small canvases should be green, not red, too, but these test the Dashboard compatibility mode so they work properly only under DumpRenderTree.
+
+  

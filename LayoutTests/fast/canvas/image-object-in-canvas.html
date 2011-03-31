@@ -42,6 +42,7 @@ function imageLoaded() {
 
 function runTests() {
     if (window.layoutTestController) {
+	    layoutTestController.dumpAsText(true);
         layoutTestController.waitUntilDone();
     }
     

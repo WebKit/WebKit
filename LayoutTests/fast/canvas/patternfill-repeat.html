@@ -4,8 +4,10 @@
   <title>createPattern repeat test</title>
   <style> canvas { border:solid #000 } </style>
   <script>
-   if (window.layoutTestController)
+   if (window.layoutTestController) {
+     layoutTestController.dumpAsText(true);
      layoutTestController.waitUntilDone();
+   }
    window.onload = function(){
     var i = new Image();
     i.src = "resources/apple.gif";

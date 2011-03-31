@@ -4,6 +4,9 @@
 <head>
 <script src="resources/repaint.js"></script>
 <script>
+if (window.layoutTestController)
+  layoutTestController.dumpAsText(true);
+
 function repaintTest()
 {
     var canvas = document.getElementById('c1');
