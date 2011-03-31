@@ -1,5 +1,12 @@
 2011-03-31  Evan Martin  <evan@chromium.org>
 
+        Build fix from previous change.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDidReceiveTitle):
+
+2011-03-31  Evan Martin  <evan@chromium.org>
+
         Reviewed by Eric Seidel.
 
         <title> should support dir attribute

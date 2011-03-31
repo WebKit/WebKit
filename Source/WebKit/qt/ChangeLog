@@ -1,5 +1,12 @@
 2011-03-31  Evan Martin  <evan@chromium.org>
 
+        Build fix from previous change.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::title):
+
+2011-03-31  Evan Martin  <evan@chromium.org>
+
         Reviewed by Eric Seidel.
 
         <title> should support dir attribute

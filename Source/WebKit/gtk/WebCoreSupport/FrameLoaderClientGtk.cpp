@@ -964,7 +964,7 @@ void FrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& title
 
     WebKitWebView* webView = getViewFromFrame(m_frame);
     if (m_frame == webkit_web_view_get_main_frame(webView)) {
-        g_signal_emit_by_name(webView, "title-changed", m_frame, title.utf8().data());
+        g_signal_emit_by_name(webView, "title-changed", m_frame, title.string().utf8().data());
         g_object_notify(G_OBJECT(webView), "title");
     }
 }

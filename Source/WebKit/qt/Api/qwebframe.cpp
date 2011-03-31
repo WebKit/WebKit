@@ -678,7 +678,7 @@ QString QWebFrame::renderTreeDump() const
 QString QWebFrame::title() const
 {
     if (d->frame->document())
-        return d->frame->loader()->documentLoader()->title();
+        return d->frame->loader()->documentLoader()->title().string();
     return QString();
 }
 
