@@ -1,5 +1,14 @@
 2011-03-31  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, fix expectation files names after r82573.
+
+        * platform/chromium-gpu-linux/compositing/geometry/clipping-foreground-actual.checksum: Removed.
+        * platform/chromium-gpu-linux/compositing/geometry/clipping-foreground-expected.png: Renamed from LayoutTests/platform/chromium-gpu-linux/compositing/geometry/clipping-foreground-actual.png.
+        * platform/chromium-gpu-linux/compositing/iframes/composited-iframe-alignment-actual.checksum: Removed.
+        * platform/chromium-gpu-linux/compositing/iframes/composited-iframe-alignment-expected.png: Renamed from LayoutTests/platform/chromium-gpu-linux/compositing/iframes/composited-iframe-alignment-actual.png.
+
+2011-03-31  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, mark two canvas tests as TIMEOUT on chromium-gpu
 
         * platform/chromium/test_expectations.txt:
