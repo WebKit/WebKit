@@ -1,5 +1,36 @@
 2011-03-31  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, rebaseline chromium box-shadow tests after r82520.
+
+        * platform/chromium-linux/fast/box-shadow/inset-box-shadows-expected.checksum:
+        * platform/chromium-linux/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-linux/fast/box-shadow/inset-expected.checksum:
+        * platform/chromium-linux/fast/box-shadow/inset-expected.png:
+        * platform/chromium-linux/fast/box-shadow/spread-expected.checksum:
+        * platform/chromium-linux/fast/box-shadow/spread-expected.png:
+        * platform/chromium-linux/fast/box-shadow/spread-multiple-inset-expected.checksum: Added.
+        * platform/chromium-linux/fast/box-shadow/spread-multiple-inset-expected.png: Added.
+        * platform/chromium-linux/fast/box-shadow/spread-multiple-normal-expected.checksum:
+        * platform/chromium-linux/fast/box-shadow/spread-multiple-normal-expected.png:
+        * platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.checksum: Added.
+        * platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/inset-expected.checksum: Added.
+        * platform/chromium-mac/fast/box-shadow/inset-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/spread-multiple-inset-expected.checksum: Added.
+        * platform/chromium-mac/fast/box-shadow/spread-multiple-inset-expected.png: Added.
+        * platform/chromium-win/fast/box-shadow/inset-box-shadows-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/inset-expected.png:
+        * platform/chromium-win/fast/box-shadow/spread-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/spread-expected.png:
+        * platform/chromium-win/fast/box-shadow/spread-multiple-inset-expected.checksum: Added.
+        * platform/chromium-win/fast/box-shadow/spread-multiple-inset-expected.png: Added.
+        * platform/chromium-win/fast/box-shadow/spread-multiple-normal-expected.checksum:
+        * platform/chromium-win/fast/box-shadow/spread-multiple-normal-expected.png:
+
+2011-03-31  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, update chromium expectations after r82521.
 
         * platform/chromium-win/fast/canvas/arc360-expected.txt: Removed.
