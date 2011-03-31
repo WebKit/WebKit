@@ -1,3 +1,12 @@
+2011-03-31  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Sandbox violations when playing back HTML5 video on YouTube
+        <rdar://problem/8950692>
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-03-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
@@ -1343,7 +1352,7 @@
 
 2011-03-26  Maciej Stachowiak  <mjs@apple.com>
 
-        Revert inadvertently commited changes.
+        Revert inadvertently committed changes.
 
         * WebProcess/com.apple.WebProcess.sb:
 
