@@ -3290,3 +3290,7 @@ BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-strokePath-gradient-shadow.html = 
 BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-strokeRect-gradient-shadow.html = TIMEOUT
 BUGWK57547 WIN GPU : fast/canvas/canvas-fillPath-gradient-shadow.html = TIMEOUT
 BUGWK57547 WIN GPU : fast/canvas/canvas-fillPath-pattern-shadow.html = TIMEOUT
+
+// Flaky since creation because we lack layoutTestController.setSerializeHTTPLoads
+BUGWK57593 : LayoutTests/fast/preloader/document-write-2.html = TEXT
+BUGWK57593 : LayoutTests/fast/preloader/document-write.html = TEXT
