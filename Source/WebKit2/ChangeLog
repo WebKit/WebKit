@@ -1,3 +1,12 @@
+2011-03-31  Vamshikrishna.Yellenki  <vamshi@motorola.com> and Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Implement MiniBrowser for Gtk port.
+        https://bugs.webkit.org/show_bug.cgi?id=48512
+
+        * Shared/API/c/gtk/WKBaseGtk.h: Add the stdbool.h include.
+
 2011-03-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

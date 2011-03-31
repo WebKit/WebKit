@@ -1,0 +1,33 @@
+bin_PROGRAMS += \
+	Programs/MiniBrowser
+
+Programs_MiniBrowser_CPPFLAGS = \
+	-I$(srcdir)/Source \
+	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	$(global_cppflags) \
+	$(GLIB_CFLAGS) \
+	$(GTK_CFLAGS)
+
+Programs_MiniBrowser_SOURCES = \
+	Tools/MiniBrowser/gtk/main.c
+
+BUILT_SOURCES += \
+	generate-minibrowser-forward-headers
+
+MiniBrowser := $(srcdir)/Tools/MiniBrowser/gtk
+MiniBrowserFwdHeaders := $(GENSOURCES_WEBKIT2)/include
+generate-minibrowser-forward-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(Programs_MiniBrowser_SOURCES)
+	$(AM_V_GEN)$(PERL) $< $(MiniBrowser) $(MiniBrowserFwdHeaders) gtk
+	$(AM_V_GEN)$(PERL) $< $(MiniBrowser) $(MiniBrowserFwdHeaders) soup
+
+Programs_MiniBrowser_LDADD = \
+	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(GLIB_LIBS) \
+	$(GTK_LIBS)
+
+Programs_MiniBrowser_LDFLAGS = \
+	-no-fast-install \
+	-no-install
+
+CLEANFILES += \
+	$(top_builddir)/Programs/MiniBrowser

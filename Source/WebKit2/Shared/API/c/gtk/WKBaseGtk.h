@@ -32,6 +32,8 @@
 #error "Please #include \"WKBase.h\" instead of this file directly."
 #endif
 
+#include <stdbool.h>
+
 typedef const struct OpaqueWKView* WKViewRef;
 
 #endif /* WKBaseGtk_h */

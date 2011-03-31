@@ -229,6 +229,7 @@ include Source/JavaScriptCore/GNUmakefile.am
 include Source/WebCore/GNUmakefile.am
 if ENABLE_WEBKIT2
 include Source/WebKit2/GNUmakefile.am
+include Tools/MiniBrowser/gtk/GNUmakefile.am
 # [GTK] Refactor the translations now that we have webkit2
 # https://bugs.webkit.org/show_bug.cgi?id=55153
 stamp-po:
