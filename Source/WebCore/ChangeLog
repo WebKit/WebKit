@@ -1,3 +1,53 @@
+2011-03-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r82589.
+        http://trac.webkit.org/changeset/82589
+        https://bugs.webkit.org/show_bug.cgi?id=57564
+
+        This patch requires many more updated results than it contains
+        (Requested by abarth|gardener on #webkit).
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::nameToPseudoTypeMap):
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        * css/html.css:
+        (meter::-webkit-meter-horizontal-bar):
+        (meter::-webkit-meter-vertical-bar):
+        (meter::-webkit-meter-horizontal-optimum-value):
+        (meter::-webkit-meter-horizontal-suboptimal-value):
+        (meter::-webkit-meter-horizontal-even-less-good-value):
+        (meter::-webkit-meter-vertical-optimum-value):
+        (meter::-webkit-meter-vertical-suboptimal-value):
+        (meter::-webkit-meter-vertical-even-less-good-value):
+        * rendering/RenderMeter.cpp:
+        (WebCore::MeterPartElement::MeterPartElement):
+        (WebCore::MeterPartElement::createForPart):
+        (WebCore::MeterPartElement::hide):
+        (WebCore::MeterPartElement::restoreVisibility):
+        (WebCore::MeterPartElement::updateStyleForPart):
+        (WebCore::MeterPartElement::saveVisibility):
+        (WebCore::RenderMeter::~RenderMeter):
+        (WebCore::RenderMeter::createPart):
+        (WebCore::RenderMeter::updateFromElement):
+        (WebCore::RenderMeter::layoutParts):
+        (WebCore::RenderMeter::shouldHaveParts):
+        (WebCore::RenderMeter::valuePartRect):
+        (WebCore::RenderMeter::orientation):
+        (WebCore::RenderMeter::valuePseudoId):
+        (WebCore::RenderMeter::barPseudoId):
+        * rendering/RenderMeter.h:
+        (WebCore::RenderMeter::shadowAttached):
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::supportsMeter):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMeter):
+        (WebCore::RenderThemeMac::supportsMeter):
+        * rendering/style/RenderStyleConstants.h:
+
 2011-03-31  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

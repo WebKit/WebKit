@@ -1,3 +1,31 @@
+2011-03-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r82589.
+        http://trac.webkit.org/changeset/82589
+        https://bugs.webkit.org/show_bug.cgi?id=57564
+
+        This patch requires many more updated results than it contains
+        (Requested by abarth|gardener on #webkit).
+
+        * fast/dom/HTMLMeterElement/meter-element.html:
+        * fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html:
+        * fast/dom/HTMLMeterElement/meter-styles.html:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-boundary-values-expected.checksum:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-element-expected.checksum:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-element-expected.png:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-element-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.checksum:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.checksum:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+
 2011-03-31  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Benjamin Poulain.

@@ -83,7 +83,7 @@ public:
 #if ENABLE(METER_TAG)
     virtual IntSize meterSizeForBounds(const RenderMeter*, const IntRect&) const;
     virtual bool paintMeter(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool supportsMeter(ControlPart) const;
+    virtual bool supportsMeter(ControlPart, bool isHorizontal) const;
 #endif
 
 #if ENABLE(PROGRESS_TAG)

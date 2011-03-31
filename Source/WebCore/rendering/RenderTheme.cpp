@@ -964,7 +964,7 @@ IntSize RenderTheme::meterSizeForBounds(const RenderMeter*, const IntRect& bound
     return bounds.size();
 }
 
-bool RenderTheme::supportsMeter(ControlPart) const
+bool RenderTheme::supportsMeter(ControlPart, bool) const
 {
     return false;
 }
