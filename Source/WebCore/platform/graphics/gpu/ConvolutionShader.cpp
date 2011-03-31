@@ -58,13 +58,14 @@ PassOwnPtr<ConvolutionShader> ConvolutionShader::create(GraphicsContext3D* conte
         "uniform mat3 matrix;\n"
         "uniform mat3 texMatrix;\n"
         "uniform vec2 imageIncrement;\n"
-        "attribute vec3 position;\n"
+        "attribute vec2 position;\n"
         "varying vec2 imageCoord;\n"
         "void main() {\n"
+        "    vec3 pos = vec3(position, 1.0);\n"
         "    // Offset image coords by half of kernel width, in image texels\n"
-        "    gl_Position = vec4(matrix * position, 1.0);\n"
+        "    gl_Position = vec4(matrix * pos, 1.0);\n"
         "    float scale = (float(KERNEL_WIDTH) - 1.0) / 2.0;\n"
-        "    imageCoord = (texMatrix * position).xy - vec2(scale, scale) * imageIncrement;\n"
+        "    imageCoord = (texMatrix * pos).xy - vec2(scale, scale) * imageIncrement;\n"
         "}\n";
     char vertexShaderSource[1024];
     snprintf(vertexShaderSource, sizeof(vertexShaderSource), vertexShaderRaw, kernelWidth);
@@ -115,7 +116,7 @@ void ConvolutionShader::use(const AffineTransform& transform, const AffineTransf
         kernelWidth = m_kernelWidth;
     m_context->uniform1fv(m_kernelLocation, const_cast<float*>(kernel), kernelWidth);
 
-    m_context->vertexAttribPointer(m_positionLocation, 3, GraphicsContext3D::FLOAT, false, 0, 0);
+    m_context->vertexAttribPointer(m_positionLocation, 2, GraphicsContext3D::FLOAT, false, 0, 0);
 
     m_context->enableVertexAttribArray(m_positionLocation);
 }

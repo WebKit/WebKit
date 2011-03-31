@@ -101,6 +101,9 @@ bool xRayCrossesLine(const XRay& xRay,
                      const FloatPoint lineEndpoints[2],
                      bool& ambiguous);
 
+
+bool isConvex(const FloatPoint* vertices, int nVertices);
+
 } // namespace LoopBlinnMathUtils
 
 } // namespace WebCore

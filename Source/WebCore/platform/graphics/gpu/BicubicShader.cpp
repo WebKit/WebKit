@@ -55,11 +55,12 @@ PassOwnPtr<BicubicShader> BicubicShader::create(GraphicsContext3D* context)
     static const char* vertexShaderSource =
         "uniform mat3 matrix;\n"
         "uniform mat3 texMatrix;\n"
-        "attribute vec3 position;\n"
+        "attribute vec2 position;\n"
         "varying vec2 texCoord;\n"
         "void main() {\n"
-        "    texCoord = (texMatrix * position).xy;\n"
-        "    gl_Position = vec4(matrix * position, 1.0);\n"
+        "    vec3 pos = vec3(position, 1.0);\n"
+        "    texCoord = (texMatrix * pos).xy;\n"
+        "    gl_Position = vec4(matrix * pos, 1.0);\n"
         "}\n";
     static const char* fragmentShaderSource =
         "#ifdef GL_ES\n"
@@ -127,7 +128,7 @@ void BicubicShader::use(const AffineTransform& transform, const AffineTransform&
     m_context->uniform1i(m_imageLocation, 0);
     m_context->uniform1f(m_alphaLocation, alpha);
 
-    m_context->vertexAttribPointer(m_positionLocation, 3, GraphicsContext3D::FLOAT, false, 0, 0);
+    m_context->vertexAttribPointer(m_positionLocation, 2, GraphicsContext3D::FLOAT, false, 0, 0);
 
     m_context->enableVertexAttribArray(m_positionLocation);
 }

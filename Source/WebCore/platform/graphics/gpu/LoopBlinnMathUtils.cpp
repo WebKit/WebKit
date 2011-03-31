@@ -562,6 +562,108 @@ int numXRayCrossingsForCubic(const XRay& xRay, const FloatPoint cubic[4], bool& 
     return numCrossings;
 }
 
+/*
+ * Based on C code from the article
+ * "Testing the Convexity of a Polygon"
+ * by Peter Schorn and Frederick Fisher,
+ * (schorn@inf.ethz.ch, fred@kpc.com)
+ * in "Graphics Gems IV", Academic Press, 1994
+ */
+
+static inline int convexCompare(const FloatSize& delta)
+{
+    return (delta.width() > 0) ? -1 : /* x coord diff, second pt > first pt */
+           (delta.width() < 0) ?  1 : /* x coord diff, second pt < first pt */
+           (delta.height() > 0) ? -1 : /* x coord same, second pt > first pt */
+           (delta.height() < 0) ?  1 : /* x coord same, second pt > first pt */
+           0; /* second pt equals first point */
+}
+
+static inline float convexCross(const FloatSize& p, const FloatSize& q)
+{
+    return p.width() * q.height() - p.height() * q.width();
+}
+
+static inline bool convexCheckTriple(const FloatSize& dcur, const FloatSize& dprev, int* curDir, int* dirChanges, int* angleSign)
+{
+    int thisDir = convexCompare(dcur);
+    if (thisDir == -*curDir)
+        ++*dirChanges;
+    *curDir = thisDir;
+    float cross = convexCross(dprev, dcur);
+    if (cross > 0) {
+        if (*angleSign == -1)
+            return false;
+        *angleSign = 1;
+    } else if (cross < 0) {
+        if (*angleSign == 1)
+            return false;
+        *angleSign = -1;
+    }
+    return true;
+}
+
+bool isConvex(const FloatPoint* vertices, int nVertices)
+{
+    int dirChanges = 0, angleSign = 0;
+    FloatPoint second, third;
+    FloatSize dprev, dcur;
+
+    /* Get different point, return if less than 3 diff points. */
+    if (nVertices < 3)
+        return false;
+    int i = 1;
+    while (true) {
+        second = vertices[i++];
+        dprev = second - vertices[0];
+        if (dprev.width() || dprev.height())
+            break;
+        /* Check if out of points. Check here to avoid slowing down cases
+         * without repeated points.
+         */
+        if (i >= nVertices)
+            return false;
+    }
+    FloatPoint saveSecond = second;
+    int curDir = convexCompare(dprev);        /* Find initial direction */
+    while (i < nVertices) {
+        /* Get different point, break if no more points */
+        third = vertices[i++];
+        dcur = third - second;
+        if (!dcur.width() && !dcur.height())
+            continue;
+
+        /* Check current three points */
+        if (!convexCheckTriple(dcur, dprev, &curDir, &dirChanges, &angleSign)) 
+            return false;
+        second = third;     /* Remember ptr to current point. */
+        dprev = dcur;       /* Remember current delta. */
+    }
+
+    /* Must check for direction changes from last vertex back to first */
+    third = vertices[0];                  /* Prepare for 'ConvexCheckTriple' */
+    dcur = third - second;
+    if (convexCompare(dcur)) {
+        if (!convexCheckTriple(dcur, dprev, &curDir, &dirChanges, &angleSign)) 
+            return false;
+        second = third;     /* Remember ptr to current point. */
+        dprev = dcur;       /* Remember current delta. */
+    }
+
+    /* and check for direction changes back to second vertex */
+    dcur = saveSecond - second;
+    if (!convexCheckTriple(dcur, dprev, &curDir, &dirChanges, &angleSign)) 
+        return false;
+
+    /* Decide on polygon type given accumulated status */
+    if (dirChanges > 2)
+        return false;
+
+    if (angleSign > 0 || angleSign < 0)
+        return true;
+    return false;
+}
+
 } // namespace LoopBlinnMathUtils
 } // namespace WebCore
 

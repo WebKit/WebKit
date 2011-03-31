@@ -69,7 +69,7 @@ void SolidFillShader::use(const AffineTransform& transform, const Color& color)
     affineTo3x3(transform, matrix);
     m_context->uniformMatrix3fv(m_matrixLocation, false /*transpose*/, matrix, 1 /*count*/);
 
-    m_context->vertexAttribPointer(m_positionLocation, 3, GraphicsContext3D::FLOAT, false, 0, 0);
+    m_context->vertexAttribPointer(m_positionLocation, 2, GraphicsContext3D::FLOAT, false, 0, 0);
 
     m_context->enableVertexAttribArray(m_positionLocation);
 }

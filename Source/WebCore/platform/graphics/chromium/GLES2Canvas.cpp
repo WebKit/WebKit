@@ -38,6 +38,7 @@
 #include "GraphicsContext3D.h"
 #include "internal_glu.h"
 #include "IntRect.h"
+#include "LoopBlinnMathUtils.h"
 #include "LoopBlinnPathProcessor.h"
 #include "LoopBlinnSolidFillShader.h"
 #include "Path.h"
@@ -60,7 +61,7 @@ namespace WebCore {
 const int pathTesselation = 30;
 typedef void (GLAPIENTRY *TESSCB)();
 typedef WTF::Vector<float> FloatVector;
-typedef WTF::Vector<double> DoubleVector;
+typedef WTF::Vector<FloatPoint> FloatPointVector;
 
 struct PathAndTransform {
     PathAndTransform(const Path& p, const AffineTransform& t)
@@ -186,7 +187,7 @@ class Cubic {
         FloatPoint d = -1.0f * p0 + 3.0f * p1s - 3.0f * p2s + p3s;
         return Cubic(p0, b, c, d);
     }
-    FloatPoint evaluate(float t)
+    inline FloatPoint evaluate(float t)
     {
         return m_a + t * (m_b + t * (m_c + t * m_d));
     }
@@ -198,6 +199,7 @@ GLES2Canvas::GLES2Canvas(SharedGraphicsContext3D* context, DrawingBuffer* drawin
     , m_context(context)
     , m_drawingBuffer(drawingBuffer)
     , m_state(0)
+    , m_pathIndexBuffer(0)
     , m_pathVertexBuffer(0)
 {
     m_flipMatrix.translate(-1.0f, 1.0f);
@@ -209,6 +211,10 @@ GLES2Canvas::GLES2Canvas(SharedGraphicsContext3D* context, DrawingBuffer* drawin
 
 GLES2Canvas::~GLES2Canvas()
 {
+    if (m_pathIndexBuffer)
+        m_context->graphicsContext3D()->deleteBuffer(m_pathIndexBuffer);
+    if (m_pathVertexBuffer)
+        m_context->graphicsContext3D()->deleteBuffer(m_pathVertexBuffer);
 }
 
 void GLES2Canvas::bindFramebuffer()
@@ -546,38 +552,30 @@ Texture* GLES2Canvas::getTexture(NativeImagePtr ptr)
 #if USE(SKIA)
 // This is actually cross-platform code, but since its only caller is inside a
 // USE(SKIA), it will cause a warning-as-error on Chrome/Mac.
-static void interpolateQuadratic(DoubleVector* vertices, const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2)
+static void interpolateQuadratic(FloatPointVector* vertices, const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2)
 {
     float tIncrement = 1.0f / pathTesselation, t = tIncrement;
     Quadratic c = Quadratic::fromBezier(p0, p1, p2);
-    for (int i = 0; i < pathTesselation; ++i, t += tIncrement) {
-        FloatPoint p = c.evaluate(t);
-        vertices->append(p.x());
-        vertices->append(p.y());
-        vertices->append(1.0);
-    }
+    for (int i = 0; i < pathTesselation; ++i, t += tIncrement)
+        vertices->append(c.evaluate(t));
 }
 
-static void interpolateCubic(DoubleVector* vertices, const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& p3)
+static void interpolateCubic(FloatPointVector* vertices, const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& p3)
 {
     float tIncrement = 1.0f / pathTesselation, t = tIncrement;
     Cubic c = Cubic::fromBezier(p0, p1, p2, p3);
-    for (int i = 0; i < pathTesselation; ++i, t += tIncrement) {
-        FloatPoint p = c.evaluate(t);
-        vertices->append(p.x());
-        vertices->append(p.y());
-        vertices->append(1.0);
-    }
+    for (int i = 0; i < pathTesselation; ++i, t += tIncrement)
+        vertices->append(c.evaluate(t));
 }
 #endif
 
 struct PolygonData {
-    PolygonData(FloatVector* vertices, WTF::Vector<short>* indices)
+    PolygonData(FloatPointVector* vertices, WTF::Vector<short>* indices)
       : m_vertices(vertices)
       , m_indices(indices)
     {
     }
-    FloatVector* m_vertices;
+    FloatPointVector* m_vertices;
     WTF::Vector<short>* m_indices;
 };
 
@@ -603,22 +601,24 @@ static void combineData(GLdouble coords[3], void* vertexData[4],
                                  GLfloat weight[4], void **outData, void* data)
 {
     PolygonData* polygonData = static_cast<PolygonData*>(data);
-    int index = polygonData->m_vertices->size() / 3;
-    polygonData->m_vertices->append(static_cast<float>(coords[0]));
-    polygonData->m_vertices->append(static_cast<float>(coords[1]));
-    polygonData->m_vertices->append(1.0f);
+    int index = polygonData->m_vertices->size();
+    polygonData->m_vertices->append(FloatPoint(static_cast<float>(coords[0]), static_cast<float>(coords[1])));
     *outData = reinterpret_cast<void*>(index);
 }
 
 typedef void (*TESSCB)();
 
-void GLES2Canvas::createVertexBufferFromPath(const Path& path, int* count, unsigned* vertexBuffer, unsigned* indexBuffer)
+void GLES2Canvas::tesselateAndFillPath(const Path& path, const Color& color)
 {
-    *vertexBuffer = m_context->graphicsContext3D()->createBuffer();
-    checkGLError("createVertexBufferFromPath, createBuffer");
-    *indexBuffer = m_context->graphicsContext3D()->createBuffer();
-    checkGLError("createVertexBufferFromPath, createBuffer");
-    DoubleVector inVertices;
+    if (!m_pathVertexBuffer)
+        m_pathVertexBuffer = m_context->graphicsContext3D()->createBuffer();
+    if (!m_pathIndexBuffer)
+        m_pathIndexBuffer = m_context->graphicsContext3D()->createBuffer();
+
+    AffineTransform matrix(m_flipMatrix);
+    matrix *= m_state->m_ctm;
+
+    FloatPointVector inVertices;
     WTF::Vector<size_t> contours;
 #if USE(SKIA)
     const SkPath* skPath = path.platformPath();
@@ -628,14 +628,10 @@ void GLES2Canvas::createVertexBufferFromPath(const Path& path, int* count, unsig
     while ((verb = iter.next(pts)) != SkPath::kDone_Verb) {
         switch (verb) {
         case SkPath::kMove_Verb:
-            inVertices.append(pts[0].fX);
-            inVertices.append(pts[0].fY);
-            inVertices.append(1.0);
+            inVertices.append(pts[0]);
             break;
         case SkPath::kLine_Verb:
-            inVertices.append(pts[1].fX);
-            inVertices.append(pts[1].fY);
-            inVertices.append(1.0);
+            inVertices.append(pts[1]);
             break;
         case SkPath::kQuad_Verb:
             interpolateQuadratic(&inVertices, pts[0], pts[1], pts[2]);
@@ -644,7 +640,7 @@ void GLES2Canvas::createVertexBufferFromPath(const Path& path, int* count, unsig
             interpolateCubic(&inVertices, pts[0], pts[1], pts[2], pts[3]);
             break;
         case SkPath::kClose_Verb:
-            contours.append(inVertices.size() / 3);
+            contours.append(inVertices.size());
             break;
         case SkPath::kDone_Verb:
             break;
@@ -654,6 +650,21 @@ void GLES2Canvas::createVertexBufferFromPath(const Path& path, int* count, unsig
     ASSERT(!"Path extraction not implemented on this platform.");
 #endif
 
+    if (contours.size() == 1 && LoopBlinnMathUtils::isConvex(inVertices.begin(), inVertices.size())) {
+        m_context->graphicsContext3D()->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_pathVertexBuffer);
+        m_context->graphicsContext3D()->bufferData(GraphicsContext3D::ARRAY_BUFFER, inVertices.size() * 2 * sizeof(float), inVertices.data(), GraphicsContext3D::STREAM_DRAW);
+        m_context->useFillSolidProgram(matrix, color);
+        m_context->graphicsContext3D()->drawArrays(GraphicsContext3D::TRIANGLE_FAN, 0, inVertices.size());
+        return;
+    }
+
+    OwnArrayPtr<double> inVerticesDouble = adoptArrayPtr(new double[inVertices.size() * 3]);
+    for (size_t i = 0; i < inVertices.size(); ++i) {
+        inVerticesDouble[i * 3    ] = inVertices[i].x();
+        inVerticesDouble[i * 3 + 1] = inVertices[i].y();
+        inVerticesDouble[i * 3 + 2] = 1.0;
+    }
+
     GLUtesselator* tess = internal_gluNewTess();
     internal_gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_NONZERO);
     internal_gluTessCallback(tess, GLU_TESS_BEGIN_DATA, (TESSCB) &beginData);
@@ -662,7 +673,7 @@ void GLES2Canvas::createVertexBufferFromPath(const Path& path, int* count, unsig
     internal_gluTessCallback(tess, GLU_TESS_EDGE_FLAG_DATA, (TESSCB) &edgeFlagData);
     internal_gluTessCallback(tess, GLU_TESS_COMBINE_DATA, (TESSCB) &combineData);
     WTF::Vector<short> indices;
-    FloatVector vertices;
+    FloatPointVector vertices;
     vertices.reserveInitialCapacity(inVertices.size());
     PolygonData data(&vertices, &indices);
     internal_gluTessBeginPolygon(tess, &data);
@@ -671,26 +682,27 @@ void GLES2Canvas::createVertexBufferFromPath(const Path& path, int* count, unsig
     for (contour = contours.begin(); contour != contours.end(); ++contour) {
         internal_gluTessBeginContour(tess);
         for (; i < *contour; ++i) {
-            vertices.append(inVertices[i * 3]);
-            vertices.append(inVertices[i * 3 + 1]);
-            vertices.append(1.0f);
-            internal_gluTessVertex(tess, &inVertices[i * 3], reinterpret_cast<void*>(i));
+            double* inVertex = &inVerticesDouble[i * 3];
+            vertices.append(FloatPoint(inVertex[0], inVertex[1]));
+            internal_gluTessVertex(tess, inVertex, reinterpret_cast<void*>(i));
         }
         internal_gluTessEndContour(tess);
     }
     internal_gluTessEndPolygon(tess);
     internal_gluDeleteTess(tess);
 
-    m_context->graphicsContext3D()->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, *vertexBuffer);
+    m_context->graphicsContext3D()->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_pathVertexBuffer);
     checkGLError("createVertexBufferFromPath, bindBuffer ARRAY_BUFFER");
-    m_context->graphicsContext3D()->bufferData(GraphicsContext3D::ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GraphicsContext3D::STREAM_DRAW);
+    m_context->graphicsContext3D()->bufferData(GraphicsContext3D::ARRAY_BUFFER, vertices.size() * 2 * sizeof(float), vertices.data(), GraphicsContext3D::STREAM_DRAW);
     checkGLError("createVertexBufferFromPath, bufferData ARRAY_BUFFER");
 
-    m_context->graphicsContext3D()->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, *indexBuffer);
+    m_context->graphicsContext3D()->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, m_pathIndexBuffer);
     checkGLError("createVertexBufferFromPath, bindBuffer ELEMENT_ARRAY_BUFFER");
     m_context->graphicsContext3D()->bufferData(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(short), indices.data(), GraphicsContext3D::STREAM_DRAW);
     checkGLError("createVertexBufferFromPath, bufferData ELEMENT_ARRAY_BUFFER");
-    *count = indices.size();
+
+    m_context->useFillSolidProgram(matrix, color);
+    m_context->graphicsContext3D()->drawElements(GraphicsContext3D::TRIANGLES, indices.size(), GraphicsContext3D::UNSIGNED_SHORT, 0);
 }
 
 void GLES2Canvas::fillPathInternal(const Path& path, const Color& color)
@@ -723,29 +735,7 @@ void GLES2Canvas::fillPathInternal(const Path& path, const Color& color)
         m_context->useLoopBlinnInteriorProgram(byteSizeOfVertices + byteSizeOfTexCoords, matrix, color);
         m_context->drawArrays(GraphicsContext3D::TRIANGLES, 0, m_pathCache.numberOfInteriorVertices());
     } else {
-        int count;
-        unsigned vertexBuffer, indexBuffer;
-        createVertexBufferFromPath(path, &count, &vertexBuffer, &indexBuffer);
-
-        AffineTransform matrix(m_flipMatrix);
-        matrix *= m_state->m_ctm;
-
-        m_context->graphicsContext3D()->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, vertexBuffer);
-        checkGLError("bindBuffer");
-        m_context->graphicsContext3D()->bindBuffer(GraphicsContext3D::ELEMENT_ARRAY_BUFFER, indexBuffer);
-        checkGLError("bindBuffer");
-
-        m_context->useFillSolidProgram(matrix, color);
-        checkGLError("useFillSolidProgram");
-
-        m_context->graphicsContext3D()->drawElements(GraphicsContext3D::TRIANGLES, count, GraphicsContext3D::UNSIGNED_SHORT, 0);
-        checkGLError("drawArrays");
-
-        m_context->graphicsContext3D()->deleteBuffer(vertexBuffer);
-        checkGLError("deleteBuffer");
-
-        m_context->graphicsContext3D()->deleteBuffer(indexBuffer);
-        checkGLError("deleteBuffer");
+        tesselateAndFillPath(path, color);
     }
 }
 

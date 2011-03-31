@@ -72,7 +72,7 @@ void TexShader::use(const AffineTransform& transform, const AffineTransform& tex
     m_context->uniform1i(m_samplerLocation, sampler);
     m_context->uniform1f(m_alphaLocation, alpha);
 
-    m_context->vertexAttribPointer(m_positionLocation, 3, GraphicsContext3D::FLOAT, false, 0, 0);
+    m_context->vertexAttribPointer(m_positionLocation, 2, GraphicsContext3D::FLOAT, false, 0, 0);
 
     m_context->enableVertexAttribArray(m_positionLocation);
 

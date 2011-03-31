@@ -1,3 +1,66 @@
+2011-03-31  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Speed up accelerated path drawing.
+        https://bugs.webkit.org/show_bug.cgi?id=57371
+        This CL does three things:  re-uses the same vertex and index buffer
+        for all path draws, converts all vertex layouts from vec3 to vec2, and
+        does a convexity check for polygons before passing them to the
+        tesselator.
+
+        Covered by canvas/philip/tests/2d.path.bezierCurveTo.*, and others.
+
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        Replace the Vector<double> for interpolated curves with a
+        Vector<FloatPoint>.
+        (WebCore::Cubic::evaluate):
+        Inline the evaluation function (as Quadratic does).
+        (WebCore::GLES2Canvas::GLES2Canvas):
+        Initialize the m_pathIndexBuffer.
+        (WebCore::GLES2Canvas::~GLES2Canvas):
+        Delete the path vertex and index buffers on destruction.
+        (WebCore::interpolateQuadratic):
+        (WebCore::interpolateCubic):
+        Interpolate directly to a Vector<FloatPoint>, rather than
+        Vector<double>.
+        (WebCore::PolygonData::PolygonData):
+        (WebCore::combineData):
+        Replace the DoubleVector with a FloatPointVector.
+        (WebCore::GLES2Canvas::tesselateAndFillPath):
+        Move curve drawing into this function, and rename it to reflect the
+        new behaviour.  Re-use the common vertex and index buffers.  If the
+        curve consists of a single convex polygon, draw the curve as a single
+        triangle fan.  Otherwise, convert it to doubles and pass it to the
+        tesselator.
+        (WebCore::GLES2Canvas::fillPathInternal):
+        * platform/graphics/chromium/GLES2Canvas.h:
+        Rename createVertexBufferFromPath() -> tesselateAndFillPath().
+        Add a persistent index buffer for all path draws.
+        * platform/graphics/gpu/BicubicShader.cpp:
+        (WebCore::BicubicShader::create):
+        (WebCore::BicubicShader::use):
+        * platform/graphics/gpu/ConvolutionShader.cpp:
+        (WebCore::ConvolutionShader::create):
+        (WebCore::ConvolutionShader::use):
+        Use vec2s instead of vec3s for all vertex data.
+        * platform/graphics/gpu/LoopBlinnMathUtils.cpp:
+        (WebCore::LoopBlinnMathUtils::convexCompare):
+        (WebCore::LoopBlinnMathUtils::convexCross):
+        (WebCore::LoopBlinnMathUtils::convexCheckTriple):
+        (WebCore::LoopBlinnMathUtils::isConvex):
+        * platform/graphics/gpu/LoopBlinnMathUtils.h:
+        Implement a convexity check, based on the code in Graphics Gems IV.
+        * platform/graphics/gpu/Shader.cpp:
+        (WebCore::Shader::generateVertex):
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::useQuadVertices):
+        * platform/graphics/gpu/SolidFillShader.cpp:
+        (WebCore::SolidFillShader::use):
+        * platform/graphics/gpu/TexShader.cpp:
+        (WebCore::TexShader::use):
+        Use vec2s instead of vec3s for all vertex data.
+
 2011-03-31  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

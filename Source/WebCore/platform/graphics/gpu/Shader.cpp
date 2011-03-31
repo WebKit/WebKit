@@ -140,7 +140,7 @@ String Shader::generateVertex(Shader::VertexType vertexType, Shader::FillType fi
     case TwoDimensional:
         builder.append(
             "uniform mat3 matrix;\n"
-            "attribute vec3 position;\n");
+            "attribute vec2 position;\n");
         break;
     case LoopBlinnInterior:
         builder.append(
@@ -167,7 +167,7 @@ String Shader::generateVertex(Shader::VertexType vertexType, Shader::FillType fi
 
     if (vertexType == TwoDimensional) {
         builder.append(
-            "gl_Position = vec4(matrix * position, 1.0);\n");
+            "gl_Position = vec4(matrix * vec3(position, 1.0), 1.0);\n");
     } else {
         builder.append(
             "gl_Position = worldViewProjection * vec4(position, 0.0, 1.0);\n");
@@ -179,7 +179,7 @@ String Shader::generateVertex(Shader::VertexType vertexType, Shader::FillType fi
 
     if (fillType == TextureFill) {
         builder.append(
-            "texCoord = texMatrix * position;\n");
+            "texCoord = texMatrix * vec3(position, 1.0);\n");
     }
 
     builder.append(

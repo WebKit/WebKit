@@ -346,10 +346,10 @@ void SharedGraphicsContext3D::enableStencil(bool enable)
 void SharedGraphicsContext3D::useQuadVertices()
 {
     if (!m_quadVertices) {
-        float vertices[] = { 0.0f, 0.0f, 1.0f,
-                             1.0f, 0.0f, 1.0f,
-                             0.0f, 1.0f, 1.0f,
-                             1.0f, 1.0f, 1.0f };
+        float vertices[] = { 0.0f, 0.0f,
+                             1.0f, 0.0f,
+                             0.0f, 1.0f,
+                             1.0f, 1.0f };
         m_quadVertices = m_context->createBuffer();
         m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_quadVertices);
         m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, sizeof(vertices), vertices, GraphicsContext3D::STATIC_DRAW);
