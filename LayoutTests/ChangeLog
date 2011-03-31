@@ -1,3 +1,44 @@
+2011-03-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Remove unnecessary Qt specific fast/canvas expected files after r82521.
+
+        * platform/qt/fast/canvas/arc360-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvas-before-css-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvas-composite-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvas-empty-image-pattern-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvas-incremental-repaint-2-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvas-resize-reset-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvas-text-alignment-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvas-text-baseline-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvas-transform-identity-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvas-transform-infinity-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvas-transform-multiply-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvas-transform-nan-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvas-transform-non-invertible-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvas-transform-skewed-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvas-transforms-during-path-expected.txt: Removed.
+        * platform/qt/fast/canvas/canvasDrawingIntoSelf-expected.txt: Removed.
+        * platform/qt/fast/canvas/drawImage-expected.txt: Removed.
+        * platform/qt/fast/canvas/drawImage-with-globalAlpha-expected.txt: Removed.
+        * platform/qt/fast/canvas/fill-stroke-clip-reset-path-expected.txt: Removed.
+        * platform/qt/fast/canvas/fillrect-gradient-zero-stops-expected.txt: Removed.
+        * platform/qt/fast/canvas/fillrect_gradient-expected.txt: Removed.
+        * platform/qt/fast/canvas/gradient-add-second-start-end-stop-expected.txt: Removed.
+        * platform/qt/fast/canvas/image-object-in-canvas-expected.txt: Removed.
+        * platform/qt/fast/canvas/image-pattern-rotate-expected.txt: Removed.
+        * platform/qt/fast/canvas/patternfill-repeat-expected.txt: Removed.
+        * platform/qt/fast/canvas/quadraticCurveTo-expected.txt: Removed.
+        * platform/qt/fast/canvas/setWidthResetAfterForcedRender-expected.txt: Removed.
+        * platform/qt/fast/canvas/shadow-offset-1-expected.txt: Removed.
+        * platform/qt/fast/canvas/shadow-offset-2-expected.txt: Removed.
+        * platform/qt/fast/canvas/shadow-offset-3-expected.txt: Removed.
+        * platform/qt/fast/canvas/shadow-offset-4-expected.txt: Removed.
+        * platform/qt/fast/canvas/shadow-offset-5-expected.txt: Removed.
+        * platform/qt/fast/canvas/shadow-offset-6-expected.txt: Removed.
+        * platform/qt/fast/canvas/shadow-offset-7-expected.txt: Removed.
+        * platform/qt/fast/canvas/toDataURL-alpha-expected.txt: Removed.
+        * platform/qt/fast/canvas/zero-size-fill-rect-expected.txt: Removed.
+
 2011-03-30  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Dimitri Glazkov.
