@@ -1,3 +1,9 @@
+2011-03-30  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, remove Chromium test expectations for two bugs that are known to be fixed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove unnecessary Qt specific fast/canvas expected files after r82521.
