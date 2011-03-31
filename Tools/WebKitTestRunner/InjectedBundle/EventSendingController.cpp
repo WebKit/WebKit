@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
 #include "JSEventSendingController.h"
-#include <WebKit2/WKBundlePage.h>
+#include <WebKit2/WKBundleFrame.h>
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKBundlePrivate.h>
 
@@ -37,12 +37,67 @@ namespace WTR {
 
 static const float ZoomMultiplierRatio = 1.2f;
 
+static bool operator==(const WKPoint& a, const WKPoint& b)
+{
+    return a.x == b.x && a.y == b.y;
+}
+
+static WKEventModifiers parseModifier(JSStringRef modifier)
+{
+    if (JSStringIsEqualToUTF8CString(modifier, "ctrlKey"))
+        return kWKEventModifiersControlKey;
+    if (JSStringIsEqualToUTF8CString(modifier, "shiftKey") || JSStringIsEqualToUTF8CString(modifier, "rangeSelectionKey"))
+        return kWKEventModifiersShiftKey;
+    if (JSStringIsEqualToUTF8CString(modifier, "altKey"))
+        return kWKEventModifiersAltKey;
+    if (JSStringIsEqualToUTF8CString(modifier, "metaKey") || JSStringIsEqualToUTF8CString(modifier, "addSelectionKey"))
+        return kWKEventModifiersMetaKey;
+    return 0;
+}
+
+static unsigned arrayLength(JSContextRef context, JSObjectRef array)
+{
+    JSRetainPtr<JSStringRef> lengthString(Adopt, JSStringCreateWithUTF8CString("length"));
+    JSValueRef lengthValue = JSObjectGetProperty(context, array, lengthString.get(), 0);
+    if (!lengthValue)
+        return 0;
+    return static_cast<unsigned>(JSValueToNumber(context, lengthValue, 0));
+}
+
+static WKEventModifiers parseModifierArray(JSContextRef context, JSValueRef arrayValue)
+{
+    if (!arrayValue)
+        return 0;
+    if (!JSValueIsObject(context, arrayValue))
+        return 0;
+    JSObjectRef array = const_cast<JSObjectRef>(arrayValue);
+    unsigned length = arrayLength(context, array);
+    WKEventModifiers modifiers = 0;
+    for (unsigned i = 0; i < length; i++) {
+        JSValueRef exception = 0;
+        JSValueRef value = JSObjectGetPropertyAtIndex(context, array, i, &exception);
+        if (exception)
+            continue;
+        JSRetainPtr<JSStringRef> string(Adopt, JSValueToStringCopy(context, value, &exception));
+        if (exception)
+            continue;
+        modifiers |= parseModifier(string.get());
+    }
+    return modifiers;
+}
+
 PassRefPtr<EventSendingController> EventSendingController::create()
 {
     return adoptRef(new EventSendingController);
 }
 
 EventSendingController::EventSendingController()
+    : m_time(0)
+    , m_position()
+    , m_clickCount(0)
+    , m_clickTime(0)
+    , m_clickPosition()
+    , m_clickButton(kWKEventMouseButtonNoButton)
 {
 }
 
@@ -55,40 +110,50 @@ JSClassRef EventSendingController::wrapperClass()
     return JSEventSendingController::eventSendingControllerClass();
 }
 
-static void setExceptionForString(JSContextRef context, JSValueRef* exception, const char* string)
+void EventSendingController::mouseDown(int button, JSValueRef modifierArray)
 {
-    JSRetainPtr<JSStringRef> exceptionString(Adopt, JSStringCreateWithUTF8CString(string));
-    *exception = JSValueMakeString(context, exceptionString.get());
+    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    WKBundleFrameRef frame = WKBundlePageGetMainFrame(page);
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(frame);
+    WKEventModifiers modifiers = parseModifierArray(context, modifierArray);
+    updateClickCount(button);
+    WKBundlePageSimulateMouseDown(page, button, m_position, m_clickCount, modifiers, m_time);
 }
 
-void EventSendingController::mouseDown(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+void EventSendingController::mouseUp(int button, JSValueRef modifierArray)
 {
-    setExceptionForString(context, exception, "EventSender.mouseDown is not yet supported.");
+    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    WKBundleFrameRef frame = WKBundlePageGetMainFrame(page);
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(frame);
+    WKEventModifiers modifiers = parseModifierArray(context, modifierArray);
+    updateClickCount(button);
+    WKBundlePageSimulateMouseUp(page, button, m_position, m_clickCount, modifiers, m_time);
 }
 
-void EventSendingController::mouseUp(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+void EventSendingController::mouseMoveTo(int x, int y)
 {
-    setExceptionForString(context, exception, "EventSender.mouseUp is not yet supported.");
+    m_position.x = x;
+    m_position.y = y;
+    WKBundlePageSimulateMouseMotion(InjectedBundle::shared().page()->page(), m_position, m_time);
 }
 
-void EventSendingController::mouseMoveTo(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+void EventSendingController::leapForward(int milliseconds)
 {
-    setExceptionForString(context, exception, "EventSender.mouseMoveTo is not yet supported.");
+    m_time += milliseconds / 1000.0;
 }
 
-void EventSendingController::keyDown(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+void EventSendingController::updateClickCount(WKEventMouseButton button)
 {
-    setExceptionForString(context, exception, "EventSender.keyDown is not yet supported.");
-}
+    if (m_time - m_clickTime < 1 && m_position == m_clickPosition && button == m_clickButton) {
+        ++m_clickCount;
+        m_clickTime = m_time;
+        return;
+    }
 
-void EventSendingController::contextClick(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    setExceptionForString(context, exception, "EventSender.contextClick is not yet supported.");
-}
-
-void EventSendingController::leapForward(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    setExceptionForString(context, exception, "EventSender.leapForward is not yet supported.");
+    m_clickCount = 1;
+    m_clickTime = m_time;
+    m_clickPosition = m_position;
+    m_clickButton = button;
 }
 
 void EventSendingController::textZoomIn()

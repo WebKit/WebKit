@@ -373,6 +373,10 @@ public:
     void handleCorrectionPanelResult(const String&);
 #endif
 
+    void simulateMouseDown(int button, WebCore::IntPoint, int clickCount, WKEventModifiers, double time);
+    void simulateMouseUp(int button, WebCore::IntPoint, int clickCount, WKEventModifiers, double time);
+    void simulateMouseMotion(WebCore::IntPoint, double time);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

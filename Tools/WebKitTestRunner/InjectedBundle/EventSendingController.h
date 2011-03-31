@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,8 @@
 #define EventSendingController_h
 
 #include "JSWrappable.h"
+#include <WebKit2/WKEvent.h>
+#include <WebKit2/WKGeometry.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WTR {
@@ -41,12 +43,10 @@ public:
     // JSWrappable
     virtual JSClassRef wrapperClass();
 
-    void mouseDown(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    void mouseUp(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    void mouseMoveTo(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    void keyDown(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    void contextClick(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    void leapForward(JSContextRef context, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
+    void mouseDown(int button, JSValueRef modifierArray);
+    void mouseUp(int button, JSValueRef modifierArray);
+    void mouseMoveTo(int x, int y);
+    void leapForward(int milliseconds);
 
     // Zoom functions.
     void textZoomIn();
@@ -56,6 +56,16 @@ public:
 
 private:
     EventSendingController();
+
+    void updateClickCount(WKEventMouseButton);
+
+    double m_time;
+    WKPoint m_position;
+
+    int m_clickCount;
+    double m_clickTime;
+    WKPoint m_clickPosition;
+    WKEventMouseButton m_clickButton;
 };
 
 } // namespace WTR

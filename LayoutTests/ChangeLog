@@ -1,3 +1,14 @@
+2011-03-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement mouseDown, mouseUp, and mouseMoveTo in WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=57573
+
+        * platform/mac-wk2/Skipped: Removed now-passing tests. Resorted
+        the section under eventSender, and expanded directories to list
+        the individual tests in that section.
+
 2011-03-31  Adam Barth  <abarth@webkit.org>
 
         Update Chromium expected results for Hyatt's change.  I haven't
