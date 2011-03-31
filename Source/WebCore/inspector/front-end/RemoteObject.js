@@ -107,12 +107,17 @@ WebInspector.RemoteObject.prototype = {
         return this._type === "error";
     },
 
-    getOwnProperties: function(abbreviate, callback)
+    getOwnProperties: function(callback)
     {
-        this.getProperties(false, abbreviate, callback);
+        this._getProperties(false, callback);
     },
 
-    getProperties: function(ignoreHasOwnProperty, abbreviate, callback)
+    getAllProperties: function(callback)
+    {
+        this._getProperties(true, callback);
+    },
+
+    _getProperties: function(ignoreHasOwnProperty, callback)
     {
         if (!this._objectId) {
             callback([]);
@@ -126,7 +131,7 @@ WebInspector.RemoteObject.prototype = {
                 properties[i].value = WebInspector.RemoteObject.fromPayload(properties[i].value);
             callback(properties);
         }
-        RuntimeAgent.getProperties(this._objectId, !!ignoreHasOwnProperty, abbreviate, remoteObjectBinder);
+        RuntimeAgent.getProperties(this._objectId, !!ignoreHasOwnProperty, remoteObjectBinder);
     },
 
     setPropertyValue: function(name, value, callback)
@@ -237,12 +242,12 @@ WebInspector.LocalJSONObject.prototype = {
         return typeof this._value === "object" && this._value !== null && Object.keys(this._value).length;
     },
 
-    getOwnProperties: function(abbreviate, callback)
+    getOwnProperties: function(callback)
     {
-        return this.getProperties(false, abbreviate, callback);
+        callback(this._children());
     },
 
-    getProperties: function(ignoreHasOwnProperty, abbreviate, callback)
+    getAllProperties: function(callback)
     {
         callback(this._children());
     },

@@ -56,7 +56,7 @@ public:
     void evaluate(ErrorString*, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result);
     void evaluateOn(ErrorString*, const String& objectId, const String& expression, RefPtr<InspectorObject>* result);
     void releaseObject(ErrorString*, const String& objectId);
-    void getProperties(ErrorString*, const String& objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorArray>* result);
+    void getProperties(ErrorString*, const String& objectId, bool ignoreHasOwnProperty, RefPtr<InspectorArray>* result);
     void setPropertyValue(ErrorString*, const String& objectId, const String& propertyName, const String& expression);
     void releaseObjectGroup(ErrorString*, const String& objectGroup);
 

@@ -57,7 +57,7 @@ WebInspector.PropertiesSidebarPane.prototype = {
             if (error || !objectPayload)
                 return;
             var object = WebInspector.RemoteObject.fromPayload(objectPayload);
-            object.getOwnProperties(false, fillSection.bind(this));
+            object.getOwnProperties(fillSection.bind(this));
         }
 
         function fillSection(prototypes)

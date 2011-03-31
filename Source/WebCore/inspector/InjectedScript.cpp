@@ -75,12 +75,11 @@ void InjectedScript::evaluateOnCallFrame(ErrorString* errorString, const String&
     makeObjectCall(errorString, function, result);
 }
 
-void InjectedScript::getProperties(ErrorString* errorString, const String& objectId, bool ignoreHasOwnProperty, bool abbreviate, RefPtr<InspectorArray>* properties)
+void InjectedScript::getProperties(ErrorString* errorString, const String& objectId, bool ignoreHasOwnProperty, RefPtr<InspectorArray>* properties)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "getProperties");
     function.appendArgument(objectId);
     function.appendArgument(ignoreHasOwnProperty);
-    function.appendArgument(abbreviate);
 
     RefPtr<InspectorValue> result; 
     makeCall(function, &result);

@@ -94,7 +94,7 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.getProperties(<string>,false,false)
+RuntimeAgent.getProperties(<string>,false)
 
 request:
 {
@@ -104,7 +104,6 @@ request:
     arguments : {
         objectId : <string>
         ignoreHasOwnProperty : false
-        abbreviate : false
     }
 }
 

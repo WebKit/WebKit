@@ -1,3 +1,14 @@
+2011-03-31  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: disable properties abbreviation.
+        https://bugs.webkit.org/show_bug.cgi?id=57525
+
+        * inspector/console/console-dir-global.html:
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/protocol/runtime-agent.html:
+
 2011-03-31  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Benjamin Poulain.

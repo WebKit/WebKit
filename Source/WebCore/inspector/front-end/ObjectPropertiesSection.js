@@ -45,12 +45,16 @@ WebInspector.ObjectPropertiesSection.prototype = {
     update: function()
     {
         var self = this;
-        var callback = function(properties) {
+        function callback(properties)
+        {
             if (!properties)
                 return;
             self.updateProperties(properties);
-        };
-        this.object.getProperties(this.ignoreHasOwnProperty, true, callback);
+        }
+        if (this.ignoreHasOwnProperty)
+            this.object.getAllProperties(callback);
+        else
+            this.object.getOwnProperties(callback);
     },
 
     updateProperties: function(properties, rootTreeElementConstructor, rootPropertyComparer)
@@ -155,7 +159,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
                 this.appendChild(new this.treeOutline.section.treeElementConstructor(properties[i]));
             }
         };
-        this.property.value.getOwnProperties(true, callback.bind(this));
+        this.property.value.getOwnProperties(callback.bind(this));
     },
 
     ondblclick: function(event)
@@ -183,9 +187,14 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
         var description = this.property.value.description;
         // Render \n as a nice unicode cr symbol.
-        if (this.property.value.type === "string" && typeof description === "string")
-            description = "\"" + description.replace(/\n/g, "\u21B5") + "\"";
-        this.valueElement.textContent = description;
+        if (this.property.value.type === "string" && typeof description === "string") {
+            this.valueElement.textContent = "\"" + description.replace(/\n/g, "\u21B5") + "\"";
+            this.valueElement._originalTextContent = "\"" + description + "\"";
+        } else if (this.property.value.type === "function" && typeof description === "string") {
+            this.valueElement.textContent = /.*/.exec(description)[0].replace(/ +$/g, "");
+            this.valueElement._originalTextContent = description;
+        } else
+            this.valueElement.textContent = description;
 
         if (this.property.isGetter)
             this.valueElement.addStyleClass("dimmed");
@@ -242,6 +251,10 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         this.hasChildren = false;
 
         this.listItemElement.addStyleClass("editing-sub-part");
+
+        // Edit original source.
+        if (typeof this.valueElement._originalTextContent === "string")
+            this.valueElement.textContent = this.valueElement._originalTextContent;
 
         WebInspector.startEditing(this.valueElement, {
             context: context,

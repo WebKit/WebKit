@@ -160,7 +160,6 @@
                 "parameters": [
                     { "name": "objectId", "type": "string" },
                     { "name": "ignoreHasOwnProperty", "type": "boolean" },
-                    { "name": "abbreviate", "type": "boolean" }
                 ],
                 "returns": [
                     { "name": "result", "type": "array", "items": { "$ref" : "RuntimeProperty"} }

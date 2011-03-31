@@ -22,7 +22,7 @@ function test()
             ["RuntimeAgent", "evaluateOn", result.objectId, 'this.assignedByEvaluateOn = "evaluateOn function works fine";'],
             ["RuntimeAgent", "setPropertyValue", result.objectId, 'assignedBySetPropertyValue', 'true'],
             ["RuntimeAgent", "setPropertyValue", result.objectId, 'removedBySetPropertyValue', ''],
-            ["RuntimeAgent", "getProperties", result.objectId, false, false],
+            ["RuntimeAgent", "getProperties", result.objectId, false],
             ["RuntimeAgent", "releaseObject", result.objectId],
             ["RuntimeAgent", "releaseObjectGroup", 'test']];
 

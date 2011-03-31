@@ -362,7 +362,7 @@ WebInspector.ConsoleView.prototype = {
         {
             if (!result)
                 return;
-            result.getProperties(true, false, evaluatedProperties.bind(this));
+            result.getAllProperties(evaluatedProperties.bind(this));
         }
 
         function evaluatedProperties(properties)
@@ -623,7 +623,7 @@ WebInspector.ConsoleView.prototype = {
 
     _formatarray: function(arr, elem)
     {
-        arr.getOwnProperties(false, this._printArray.bind(this, elem));
+        arr.getOwnProperties(this._printArray.bind(this, elem));
     },
 
     _formatstring: function(output, elem)

@@ -1,3 +1,40 @@
+2011-03-31  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: disable properties abbreviation.
+        https://bugs.webkit.org/show_bug.cgi?id=57525
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::getProperties):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        ():
+        * inspector/Inspector.json:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::getProperties):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.completions.evaluated):
+        (WebInspector.ConsoleView.prototype._formatarray):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection.prototype.update.callback):
+        (WebInspector.ObjectPropertiesSection.prototype.update):
+        (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate):
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        (WebInspector.ObjectPropertyTreeElement.prototype.startEditing):
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update.nodePrototypesReady):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.getOwnProperties):
+        (WebInspector.RemoteObject.prototype.getAllProperties):
+        (WebInspector.RemoteObject.prototype._getProperties):
+        (WebInspector.LocalJSONObject.prototype.getOwnProperties):
+        (WebInspector.LocalJSONObject.prototype.getAllProperties):
+        * inspector/front-end/inspector.css:
+        (.console-formatted-string, .console-formatted-regexp):
+
 2011-03-31  Adam Roben  <aroben@apple.com>
 
         Update WKCACFViewLayerTreeHost for changes to WKCACFView API
