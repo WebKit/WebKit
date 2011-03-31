@@ -91,6 +91,9 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/assembler/MacroAssemblerX86_64.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerX86Common.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerX86.h \
+	Source/JavaScriptCore/assembler/MacroAssemblerSH4.h \
+	Source/JavaScriptCore/assembler/MacroAssemblerSH4.cpp \
+	Source/JavaScriptCore/assembler/SH4Assembler.h \
 	Source/JavaScriptCore/assembler/RepatchBuffer.h \
 	Source/JavaScriptCore/assembler/X86Assembler.h \
 	Source/JavaScriptCore/bytecode/CodeBlock.cpp \

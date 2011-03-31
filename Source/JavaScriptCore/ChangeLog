@@ -1,3 +1,19 @@
+2011-03-31  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
+
+        Reviewed by Oliver Hunt.
+
+        SH4 JIT SUPPORT.
+        https://bugs.webkit.org/show_bug.cgi?id=44329
+
+        Add YARR support for SH4 platforms (disabled by default).
+
+        * GNUmakefile.am:
+        * assembler/MacroAssembler.h:
+        * assembler/MacroAssemblerSH4.cpp: Added.
+        * assembler/MacroAssemblerSH4.h: Added.
+        * assembler/SH4Assembler.h: Added.
+        * yarr/YarrJIT.cpp:
+
 2011-03-30  Adam Roben  <aroben@apple.com>
 
         Clean build fix

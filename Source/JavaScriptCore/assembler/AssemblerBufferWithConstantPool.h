@@ -85,7 +85,14 @@ namespace JSC {
 template <int maxPoolSize, int barrierSize, int maxInstructionSize, class AssemblerType>
 class AssemblerBufferWithConstantPool: public AssemblerBuffer {
     typedef SegmentedVector<uint32_t, 512> LoadOffsets;
+    using AssemblerBuffer::putIntegral;
+    using AssemblerBuffer::putIntegralUnchecked;
 public:
+    typedef struct {
+        short high;
+        short low;
+    } TwoShorts;
+
     enum {
         UniqueConst,
         ReusableConst,
@@ -169,6 +176,19 @@ public:
     {
         AssemblerBuffer::putInt64Unchecked(value);
         correctDeltas(8);
+    }
+
+    void putIntegral(TwoShorts value)
+    {
+        if (m_size > m_capacity - sizeof(TwoShorts))
+            grow();
+        putIntegralUnchecked(value);
+    }
+
+    void putIntegralUnchecked(TwoShorts value)
+    {
+        putIntegralUnchecked(value.high);
+        putIntegralUnchecked(value.low);
     }
 
     int size()

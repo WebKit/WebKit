@@ -59,6 +59,16 @@ class YarrGenerator : private MacroAssembler {
     static const RegisterID regT1 = MIPSRegisters::t5;
 
     static const RegisterID returnRegister = MIPSRegisters::v0;
+#elif CPU(SH4)
+    static const RegisterID input = SH4Registers::r4;
+    static const RegisterID index = SH4Registers::r5;
+    static const RegisterID length = SH4Registers::r6;
+    static const RegisterID output = SH4Registers::r7;
+
+    static const RegisterID regT0 = SH4Registers::r0;
+    static const RegisterID regT1 = SH4Registers::r1;
+
+    static const RegisterID returnRegister = SH4Registers::r0;
 #elif CPU(X86)
     static const RegisterID input = X86Registers::eax;
     static const RegisterID index = X86Registers::edx;
@@ -2179,6 +2189,9 @@ class YarrGenerator : private MacroAssembler {
         push(ARMRegisters::r8); // scratch register
 #endif
         move(ARMRegisters::r3, output);
+#elif CPU(SH4)
+        push(SH4Registers::r11);
+        push(SH4Registers::r13);
 #elif CPU(MIPS)
         // Do nothing.
 #endif
@@ -2201,6 +2214,9 @@ class YarrGenerator : private MacroAssembler {
         pop(ARMRegisters::r6);
         pop(ARMRegisters::r5);
         pop(ARMRegisters::r4);
+#elif CPU(SH4)
+        pop(SH4Registers::r13);
+        pop(SH4Registers::r11);
 #elif CPU(MIPS)
         // Do nothing
 #endif
