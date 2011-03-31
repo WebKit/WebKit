@@ -5993,13 +5993,13 @@ Vector<OwnPtr<CSSParserSelector> >* CSSParser::createFloatingSelectorVector()
     return selectorVector;
 }
 
-Vector<OwnPtr<CSSParserSelector> >* CSSParser::sinkFloatingSelectorVector(Vector<OwnPtr<CSSParserSelector> >* selectorVector)
+PassOwnPtr<Vector<OwnPtr<CSSParserSelector> > > CSSParser::sinkFloatingSelectorVector(Vector<OwnPtr<CSSParserSelector> >* selectorVector)
 {
     if (selectorVector) {
         ASSERT(m_floatingSelectorVectors.contains(selectorVector));
         m_floatingSelectorVectors.remove(selectorVector);
     }
-    return selectorVector;
+    return adoptPtr(selectorVector);
 }
 
 CSSParserValueList* CSSParser::createFloatingValueList()

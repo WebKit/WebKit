@@ -186,7 +186,7 @@ namespace WebCore {
         PassOwnPtr<CSSParserSelector> sinkFloatingSelector(CSSParserSelector*);
 
         Vector<OwnPtr<CSSParserSelector> >* createFloatingSelectorVector();
-        Vector<OwnPtr<CSSParserSelector> >* sinkFloatingSelectorVector(Vector<OwnPtr<CSSParserSelector> >*);
+        PassOwnPtr<Vector<OwnPtr<CSSParserSelector> > > sinkFloatingSelectorVector(Vector<OwnPtr<CSSParserSelector> >*);
 
         CSSParserValueList* createFloatingValueList();
         CSSParserValueList* sinkFloatingValueList(CSSParserValueList*);
