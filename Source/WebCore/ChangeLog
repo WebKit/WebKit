@@ -1,3 +1,18 @@
+2011-03-31  Adam Roben  <aroben@apple.com>
+
+        Update WKCACFViewLayerTreeHost for changes to WKCACFView API
+
+        This should not result in any change in behavior.
+
+        Fixes <http://webkit.org/b/57560> WKCACFViewLayerTreeHost needs to tell WKCACFView where to
+        render
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp: Updated API declarations.
+        (WebCore::WKCACFViewLayerTreeHost::WKCACFViewLayerTreeHost): Tell WKCACFView it should
+        render into the window we give it.
+
 2011-03-31  Marius Storm-Olsen  <marius.storm-olsen@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
