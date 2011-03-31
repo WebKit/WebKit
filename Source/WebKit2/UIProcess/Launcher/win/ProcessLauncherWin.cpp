@@ -76,7 +76,9 @@ void ProcessLauncher::launchProcess()
 
     // FIXME: It would be nice if we could just create a CommandLine object and output a command line vector from it.
     Vector<UChar> commandLineVector;
+    append(commandLineVector, "\"");
     append(commandLineVector, commandLine);
+    append(commandLineVector, "\"");
     append(commandLineVector, " -type webprocess");
     append(commandLineVector, " -clientIdentifier ");
     append(commandLineVector, String::number(reinterpret_cast<uintptr_t>(clientIdentifier)));
