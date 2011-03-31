@@ -94,7 +94,7 @@ void InspectorResourceAgent::restore()
 void InspectorResourceAgent::resourceContent(ErrorString* errorString, Frame* frame, const KURL& url, String* result)
 {
     if (!frame) {
-        *errorString = "No frame to get resource content for."; 
+        *errorString = "No frame to get resource content for"; 
         return;
     }
 
@@ -108,7 +108,7 @@ void InspectorResourceAgent::resourceContent(ErrorString* errorString, Frame* fr
         *result = encoding.decode(buffer->data(), buffer->size());
         return;
     }
-    *errorString = "No resource with given URL found."; 
+    *errorString = "No resource with given URL found"; 
 }
 
 void InspectorResourceAgent::resourceContentBase64(ErrorString* errorString, Frame* frame, const KURL& url, String* result)
@@ -117,7 +117,7 @@ void InspectorResourceAgent::resourceContentBase64(ErrorString* errorString, Fra
     RefPtr<SharedBuffer> data = InspectorResourceAgent::resourceData(frame, url, &textEncodingName);
     if (!data) {
         *result = String();
-        *errorString = "No resource with given URL found."; 
+        *errorString = "No resource with given URL found"; 
         return;
     }
 
@@ -493,7 +493,7 @@ void InspectorResourceAgent::getResourceContent(ErrorString* errorString, const 
 {
     Frame* frame = frameForId(frameId);
     if (!frame) {
-        *errorString = "No frame for given id found.";
+        *errorString = "No frame for given id found";
         return;
     }
     if (base64Encode)

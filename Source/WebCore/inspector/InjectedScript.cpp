@@ -85,7 +85,7 @@ void InjectedScript::getProperties(ErrorString* errorString, const String& objec
     RefPtr<InspectorValue> result; 
     makeCall(function, &result);
     if (!result || result->type() != InspectorValue::TypeArray) {
-        *errorString = "Internal error.";
+        *errorString = "Internal error";
         return;
     }
     *properties = result->asArray();
@@ -209,7 +209,7 @@ void InjectedScript::makeObjectCall(ErrorString* errorString, ScriptFunctionCall
     }
 
     if (!result || result->type() != InspectorValue::TypeObject) {
-        *errorString = "Internal error.";
+        *errorString = "Internal error";
         return;
     }
     *objectResult = result->asObject();

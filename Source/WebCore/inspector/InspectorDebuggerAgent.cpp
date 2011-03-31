@@ -301,7 +301,7 @@ void InspectorDebuggerAgent::setPauseOnExceptionsState(ErrorString* errorString,
 {
     scriptDebugServer().setPauseOnExceptionsState(static_cast<ScriptDebugServer::PauseOnExceptionsState>(pauseState));
     if (scriptDebugServer().pauseOnExceptionsState() != pauseState)
-        *errorString = "Internal error. Could not change pause on exceptions state.";
+        *errorString = "Internal error. Could not change pause on exceptions state";
 }
 
 void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString* errorString, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result)

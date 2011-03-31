@@ -397,7 +397,7 @@ Node* InspectorDOMAgent::assertNode(ErrorString* errorString, int nodeId)
 {
     Node* node = nodeForId(nodeId);
     if (!node) {
-        *errorString = "Could not find node with given id.";
+        *errorString = "Could not find node with given id";
         return 0;
     }
     return node;
@@ -410,7 +410,7 @@ Element* InspectorDOMAgent::assertElement(ErrorString* errorString, int nodeId)
         return 0;
 
     if (node->nodeType() != Node::ELEMENT_NODE) {
-        *errorString = "Node is not an Element.";
+        *errorString = "Node is not an Element";
         return 0;
     }
     return toElement(node);
@@ -424,7 +424,7 @@ HTMLElement* InspectorDOMAgent::assertHTMLElement(ErrorString* errorString, int 
         return 0;
 
     if (!element->isHTMLElement()) {
-        *errorString = "Node is not an HTML Element.";
+        *errorString = "Node is not an HTML Element";
         return 0;
     }
     return toHTMLElement(element);
@@ -512,7 +512,7 @@ void InspectorDOMAgent::querySelector(ErrorString* errorString, int nodeId, cons
     ExceptionCode ec = 0;
     RefPtr<Element> element = node->querySelector(selectors, ec);
     if (ec) {
-        *errorString = "DOM Error while querying.";
+        *errorString = "DOM Error while querying";
         return;
     }
 
@@ -529,7 +529,7 @@ void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, c
     ExceptionCode ec = 0;
     RefPtr<NodeList> nodes = node->querySelectorAll(selectors, ec);
     if (ec) {
-        *errorString = "DOM Error while querying.";
+        *errorString = "DOM Error while querying";
         return;
     }
 
@@ -595,7 +595,7 @@ void InspectorDOMAgent::setAttribute(ErrorString* errorString, int elementId, co
         ExceptionCode ec = 0;
         element->setAttribute(name, value, ec);
         if (ec)
-            *errorString = "Exception while setting attribute value.";
+            *errorString = "Exception while setting attribute value";
     }
 }
 
@@ -606,7 +606,7 @@ void InspectorDOMAgent::removeAttribute(ErrorString* errorString, int elementId,
         ExceptionCode ec = 0;
         element->removeAttribute(name, ec);
         if (ec)
-            *errorString = "Exception while removing attribute.";
+            *errorString = "Exception while removing attribute";
     }
 }
 
@@ -618,14 +618,14 @@ void InspectorDOMAgent::removeNode(ErrorString* errorString, int nodeId)
 
     ContainerNode* parentNode = node->parentNode();
     if (!parentNode) {
-        *errorString = "Can not remove detached node.";
+        *errorString = "Can not remove detached node";
         return;
     }
 
     ExceptionCode ec = 0;
     parentNode->removeChild(node, ec);
     if (ec)
-        *errorString = "Could not remove node due to DOM exception.";
+        *errorString = "Could not remove node due to DOM exception";
 }
 
 void InspectorDOMAgent::setNodeName(ErrorString*, int nodeId, const String& tagName, int* newId)
@@ -716,7 +716,7 @@ void InspectorDOMAgent::setNodeValue(ErrorString* errorString, int nodeId, const
         return;
 
     if (node->nodeType() != Node::TEXT_NODE) {
-        *errorString = "Can only set value of text nodes.";
+        *errorString = "Can only set value of text nodes";
         return;
     }
 
@@ -724,7 +724,7 @@ void InspectorDOMAgent::setNodeValue(ErrorString* errorString, int nodeId, const
     ExceptionCode ec = 0;
     textNode->replaceWholeText(value, ec);
     if (ec)
-        *errorString = "DOM Error while setting the node value.";
+        *errorString = "DOM Error while setting the node value";
 }
 
 void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>* listenersArray)

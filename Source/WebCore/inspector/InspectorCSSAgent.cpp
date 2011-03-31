@@ -408,11 +408,11 @@ Element* InspectorCSSAgent::elementForId(ErrorString* errorString, int nodeId)
 {
     Node* node = m_domAgent->nodeForId(nodeId);
     if (!node) {
-        *errorString = "No node with given id found.";
+        *errorString = "No node with given id found";
         return 0;
     }
     if (node->nodeType() != Node::ELEMENT_NODE) {
-        *errorString = "Not an element node.";
+        *errorString = "Not an element node";
         return 0;
     }
     return static_cast<Element*>(node);
@@ -475,7 +475,7 @@ InspectorStyleSheet* InspectorCSSAgent::styleSheetForId(ErrorString* errorString
 {
     IdToInspectorStyleSheet::iterator it = m_idToInspectorStyleSheet.find(styleSheetId);
     if (it == m_idToInspectorStyleSheet.end()) {
-        *errorString = "No style sheet with given id found.";
+        *errorString = "No style sheet with given id found";
         return 0;
     }
     return it->second.get();
