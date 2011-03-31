@@ -1,3 +1,38 @@
+2011-03-31  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        PreloadScanner doesn&apos;t find image while executing script in head
+        https://bugs.webkit.org/show_bug.cgi?id=45072
+
+        Previously, while parsing the head, no resources in the body would be
+        preloaded. After this patch, we will preload scripts and styles in the
+        body, although we continue to hold off on all images until the page is 
+        first rendered.
+
+        To evaluate this change, I've recorded a sampling of 45 of alexa's top
+        sites and replayed them under simulated bandwidth conditions, loading
+        each 5-15 times until stddev is small enough.
+
+        Time to the load event improved at the overall average by 3%.
+        Most sites are unchanged, but sites with certain blocking patterns had
+        big wins -- ebay 19% (331ms), microsoft 15% (226ms), conduit 15% (277ms)
+        nytimes 7% (182ms).
+
+        Time to DOM content loaded event improved by 6% with some even bigger
+        individual wins.
+
+        First paint time held steady.
+
+        Note that I originally wanted to allow preloading of images while in the
+        head, but that regressed first paint time (even though it was better for
+        overall load time).
+
+        Test: fast/preloader/scan-body-from-head.html
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::preload):
+
 2011-03-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82616.

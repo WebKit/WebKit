@@ -592,10 +592,14 @@ int CachedResourceLoader::requestCount()
     
 void CachedResourceLoader::preload(CachedResource::Type type, const String& url, const String& charset, bool referencedFromBody)
 {
+    // FIXME: Rip this out when we are sure it is no longer necessary (even for mobile).
+    UNUSED_PARAM(referencedFromBody);
+
     bool hasRendering = m_document->body() && m_document->body()->renderer();
-    if (!hasRendering && (referencedFromBody || type == CachedResource::ImageResource)) {
-        // Don't preload images or body resources before we have something to draw. This prevents
-        // preloads from body delaying first display when bandwidth is limited.
+    bool canBlockParser = type == CachedResource::Script || type == CachedResource::CSSStyleSheet;
+    if (!hasRendering && !canBlockParser) {
+        // Don't preload subresources that can't block the parser before we have something to draw.
+        // This helps prevent preloads from delaying first display when bandwidth is limited.
         PendingPreload pendingPreload = { type, url, charset };
         m_pendingPreloads.append(pendingPreload);
         return;
