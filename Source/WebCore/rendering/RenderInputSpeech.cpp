@@ -57,6 +57,10 @@ void RenderInputSpeech::adjustInputFieldSpeechButtonStyle(CSSStyleSelector*, Ren
 
 bool RenderInputSpeech::paintInputFieldSpeechButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
+    Element* element = object->node()->isElementNode() ? toElement(object->node()) : 0;
+    if (!element || !element->isInputFieldSpeechButtonElement())
+        return false;
+
     // Get the renderer of <input> element.
     Node* input = object->node()->shadowAncestorNode();
     if (!input->renderer()->isBox())
@@ -84,7 +88,7 @@ bool RenderInputSpeech::paintInputFieldSpeechButton(RenderObject* object, const 
     DEFINE_STATIC_LOCAL(RefPtr<Image>, imageStateRecording, (Image::loadPlatformResource("inputSpeechRecording")));
     DEFINE_STATIC_LOCAL(RefPtr<Image>, imageStateWaiting, (Image::loadPlatformResource("inputSpeechWaiting")));
 
-    InputFieldSpeechButtonElement* speechButton = reinterpret_cast<InputFieldSpeechButtonElement*>(object->node());
+    InputFieldSpeechButtonElement* speechButton = toInputFieldSpeechButtonElement(element);
     Image* image = imageStateNormal.get();
     if (speechButton->state() == InputFieldSpeechButtonElement::Recording)
         image = imageStateRecording.get();

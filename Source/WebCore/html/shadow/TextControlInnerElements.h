@@ -133,6 +133,7 @@ public:
 
     virtual void detach();
     virtual void defaultEventHandler(Event*);
+    virtual bool isInputFieldSpeechButtonElement() const { return true; }
     SpeechInputState state() const { return m_state; }
 
     // SpeechInputListener methods.
@@ -150,6 +151,12 @@ private:
     int m_listenerId;
     SpeechInputResultArray m_results;
 };
+
+inline InputFieldSpeechButtonElement* toInputFieldSpeechButtonElement(Element* element)
+{
+    ASSERT(!element || element->isInputFieldSpeechButtonElement());
+    return static_cast<InputFieldSpeechButtonElement*>(element);
+}
 
 #endif // ENABLE(INPUT_SPEECH)
 

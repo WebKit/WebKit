@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<style>
+.speechButton {
+  -webkit-appearance: -webkit-input-speech-button;
+}
+</style>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+
+<!-- Test a few HTML elements with the speech button style to check that they don't result in a crash. -->
+<div class='speechButton'>Test</div>
+<p class='speechButton'>Test</p>
+<span class='speechButton'>Test</span>
+<button class='speechButton'>Test</button>
+
+<script type="text/javascript">
+description('Test for speech button style applied on non-input elements.');
+window.successfullyParsed = true;
+</script>
+
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

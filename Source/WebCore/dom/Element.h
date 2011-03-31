@@ -303,6 +303,10 @@ public:
     static bool isMathMLElement() { return false; }
 #endif
 
+#if ENABLE(INPUT_SPEECH)
+    virtual bool isInputFieldSpeechButtonElement() const { return false; }
+#endif
+
     virtual bool isFormControlElement() const { return false; }
     virtual bool isEnabledFormControl() const { return true; }
     virtual bool isReadOnlyFormControl() const { return false; }
