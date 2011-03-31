@@ -1,5 +1,12 @@
 2011-03-31  Adam Barth  <abarth@webkit.org>
 
+        Hyatt says these are also progressions.
+
+        * platform/gtk/fast/inline-block/inline-block-vertical-align-expected.txt:
+        * platform/gtk/fast/multicol/layers-in-multicol-expected.txt:
+
+2011-03-31  Adam Barth  <abarth@webkit.org>
+
         Hyatt says this is a progression.
 
         * platform/qt/fast/multicol/layers-in-multicol-expected.txt:
