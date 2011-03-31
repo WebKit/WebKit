@@ -1,3 +1,10 @@
+2011-03-30  Adam Roben  <aroben@apple.com>
+
+        Clean build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln: Serialized project dependencies so projects
+        don't try to build in parallel (which doesn't mesh with our buildfailed mechanism).
+
 2011-03-30  Oliver Hunt  <oliver@apple.com>
 
         Rollout r82500

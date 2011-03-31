@@ -3,18 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCore", "JavaScriptCore\JavaScriptCore.vcproj", "{011D10F1-B656-4A1B-A0C3-3842F02122C5}"
 	ProjectSection(ProjectDependencies) = postProject
-		{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A} = {4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}
+		{AA8A5A85-592B-4357-BC60-E0E91E026AF6} = {AA8A5A85-592B-4357-BC60-E0E91E026AF6}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsc", "jsc\jsc.vcproj", "{C59E5129-B453-49B7-A52B-1E104715F76E}"
 	ProjectSection(ProjectDependencies) = postProject
-		{AA8A5A85-592B-4357-BC60-E0E91E026AF6} = {AA8A5A85-592B-4357-BC60-E0E91E026AF6}
 		{011D10F1-B656-4A1B-A0C3-3842F02122C5} = {011D10F1-B656-4A1B-A0C3-3842F02122C5}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WTF", "WTF\WTF.vcproj", "{AA8A5A85-592B-4357-BC60-E0E91E026AF6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A} = {4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FindSafari", "..\..\..\Tools\FindSafari\FindSafari.vcproj", "{DA31DA52-6675-48D4-89E0-333A7144397C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C59E5129-B453-49B7-A52B-1E104715F76E} = {C59E5129-B453-49B7-A52B-1E104715F76E}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCoreGenerated", "JavaScriptCore\JavaScriptCoreGenerated.vcproj", "{4FF5BA11-59EC-4C24-8F52-F235C2E7D43A}"
 EndProject
