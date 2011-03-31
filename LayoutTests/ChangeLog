@@ -1,3 +1,35 @@
+2011-03-31  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for tests added in r82303, r82419,
+        r82400 and r82411.
+
+        * platform/gtk/fast/block/float/float-forced-below-other-floats-expected.checksum: Added.
+        * platform/gtk/fast/block/float/float-forced-below-other-floats-expected.png: Added.
+        * platform/gtk/fast/block/float/float-forced-below-other-floats-expected.txt: Added.
+        * platform/gtk/fast/borders/border-radius-inline-flow-expected.checksum: Added.
+        * platform/gtk/fast/borders/border-radius-inline-flow-expected.png: Added.
+        * platform/gtk/fast/borders/rtl-border-01-expected.checksum: Added.
+        * platform/gtk/fast/borders/rtl-border-01-expected.png: Added.
+        * platform/gtk/fast/borders/rtl-border-01-expected.txt: Added.
+        * platform/gtk/fast/borders/rtl-border-02-expected.checksum: Added.
+        * platform/gtk/fast/borders/rtl-border-02-expected.png: Added.
+        * platform/gtk/fast/borders/rtl-border-02-expected.txt: Added.
+        * platform/gtk/fast/borders/rtl-border-03-expected.checksum: Added.
+        * platform/gtk/fast/borders/rtl-border-03-expected.png: Added.
+        * platform/gtk/fast/borders/rtl-border-03-expected.txt: Added.
+        * platform/gtk/fast/borders/rtl-border-04-expected.checksum: Added.
+        * platform/gtk/fast/borders/rtl-border-04-expected.png: Added.
+        * platform/gtk/fast/borders/rtl-border-04-expected.txt: Added.
+        * platform/gtk/fast/borders/rtl-border-05-expected.checksum: Added.
+        * platform/gtk/fast/borders/rtl-border-05-expected.png: Added.
+        * platform/gtk/fast/borders/rtl-border-05-expected.txt: Added.
+        * platform/gtk/fast/css/h1-in-section-elements-expected.checksum: Added.
+        * platform/gtk/fast/css/h1-in-section-elements-expected.png: Added.
+        * platform/gtk/fast/css/h1-in-section-elements-expected.txt: Added.
+        * platform/gtk/svg/text/bidi-embedded-direction-expected.checksum: Added.
+        * platform/gtk/svg/text/bidi-embedded-direction-expected.png: Added.
+        * platform/gtk/svg/text/bidi-embedded-direction-expected.txt: Added.
+
 2011-03-31  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: follow up to XMLViewer change with expectations update.
