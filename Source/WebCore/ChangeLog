@@ -1,3 +1,15 @@
+2011-03-31  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Warnings happening because of unhandled switch cases in AccessibilityObjectWrapperAtk
+        https://bugs.webkit.org/show_bug.cgi?id=57534
+
+        Fix compilation warnings.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (getAttributeSetForAccessibilityObject): Add unhandled cases.
+
 2011-03-30  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

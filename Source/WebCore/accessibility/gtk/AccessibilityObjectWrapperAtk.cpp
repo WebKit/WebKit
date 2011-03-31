@@ -1348,6 +1348,8 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
 
     switch (style->textAlign()) {
     case TAAUTO:
+    case TASTART:
+    case TAEND:
         break;
     case LEFT:
     case WEBKIT_LEFT:
