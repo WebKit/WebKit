@@ -219,7 +219,7 @@ void PluginProcess::platformInitialize(const PluginProcessCreationParameters& pa
 {
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
 
-    NSString *applicationName = [NSString stringWithFormat:UI_STRING("%@ (%@ Internet plug-in)",
+    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ (%@ Internet plug-in)",
                                                                      "visible name of the plug-in host process. The first argument is the plug-in name "
                                                                      "and the second argument is the application name."),
                                  [[(NSString *)parameters.pluginPath lastPathComponent] stringByDeletingPathExtension], 

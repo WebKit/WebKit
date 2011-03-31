@@ -195,8 +195,8 @@ namespace WebCore {
     String validationMessageStepMismatchText(const String& base, const String& step);
 
 
-#define UI_STRING(string, description) WebCore::localizedString(string)
-#define UI_STRING_KEY(string, key, description) WebCore::localizedString(key)
+#define WEB_UI_STRING(string, description) WebCore::localizedString(string)
+#define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(key)
 
     String localizedString(const char* key);
 

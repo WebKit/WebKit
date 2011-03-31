@@ -135,7 +135,7 @@ void WebInspectorProxy::platformClose()
 
 void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
 {
-    NSString *title = [NSString stringWithFormat:UI_STRING("Web Inspector — %@", "Web Inspector window title"), (NSString *)urlString];
+    NSString *title = [NSString stringWithFormat:WEB_UI_STRING("Web Inspector — %@", "Web Inspector window title"), (NSString *)urlString];
     [m_inspectorWindow.get() setTitle:title];
 }
 
