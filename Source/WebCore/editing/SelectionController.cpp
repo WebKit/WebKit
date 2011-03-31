@@ -681,8 +681,6 @@ VisiblePosition SelectionController::modifyMovingLeft(TextGranularity granularit
             pos = VisiblePosition(m_selection.extent(), m_selection.affinity()).left(true);
         break;
     case WordGranularity:
-        pos = leftWordPosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
-        break;
     case SentenceGranularity:
     case LineGranularity:
     case ParagraphGranularity:

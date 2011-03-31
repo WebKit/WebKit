@@ -1,3 +1,10 @@
+2011-03-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r82588. Reverted unintentional change.
+
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::modifyMovingLeft):
+
 2011-03-31  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.
