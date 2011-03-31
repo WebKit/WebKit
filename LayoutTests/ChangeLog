@@ -1,3 +1,16 @@
+2011-03-31  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57574
+        Preload scanner fails to pick up resources from document.write() output
+
+        * fast/preloader/document-write-2-expected.txt: Added.
+        * fast/preloader/document-write-2.html: Added.
+        * fast/preloader/document-write-expected.txt: Added.
+        * fast/preloader/document-write.html: Added.
+        * fast/preloader/resources/document-write-plaintext.js: Added.
+
 2011-03-31  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Darin Adler.

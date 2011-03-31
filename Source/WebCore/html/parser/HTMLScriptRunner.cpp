@@ -169,12 +169,17 @@ bool HTMLScriptRunner::execute(PassRefPtr<Element> scriptElement, const TextPosi
     ASSERT(scriptElement);
     // FIXME: If scripting is disabled, always just return true;
 
+    bool hadPreloadScanner = m_host->hasPreloadScanner();
+
     // Try to execute the script given to us.
     runScript(scriptElement.get(), scriptStartPosition);
 
     if (haveParsingBlockingScript()) {
         if (m_scriptNestingLevel)
             return false; // Block the parser.  Unwind to the outermost HTMLScriptRunner::execute before continuing parsing.
+        // If preload scanner got created, it is missing the source after the current insertion point. Append it and scan.
+        if (!hadPreloadScanner && m_host->hasPreloadScanner())
+            m_host->appendCurrentInputStreamToPreloadScannerAndScan();
         if (!executeParsingBlockingScripts())
             return false; // We still have a parsing blocking script, block the parser.
     }

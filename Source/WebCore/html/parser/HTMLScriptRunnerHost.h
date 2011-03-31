@@ -45,6 +45,10 @@ public:
     virtual void stopWatchingForLoad(CachedResource*) = 0;
 
     virtual HTMLInputStream& inputStream() = 0;
+
+    virtual bool hasPreloadScanner() const = 0;
+    virtual void appendCurrentInputStreamToPreloadScannerAndScan() = 0;
+    
 };
 
 }

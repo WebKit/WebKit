@@ -323,6 +323,14 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
     excludedLineNumberSource.setExcludeLineNumbers();
     m_input.insertAtCurrentInsertionPoint(excludedLineNumberSource);
     pumpTokenizerIfPossible(ForceSynchronous);
+    
+    if (m_treeBuilder->isPaused()) {
+        // Check the document.write() output with a separate preload scanner as
+        // the main scanner can't deal with insertions.
+        HTMLPreloadScanner preloadScanner(document());
+        preloadScanner.appendToEnd(source);
+        preloadScanner.scan();
+    }
 
     endIfDelayed();
 }
@@ -476,6 +484,13 @@ void HTMLDocumentParser::watchForLoad(CachedResource* cachedScript)
 void HTMLDocumentParser::stopWatchingForLoad(CachedResource* cachedScript)
 {
     cachedScript->removeClient(this);
+}
+    
+void HTMLDocumentParser::appendCurrentInputStreamToPreloadScannerAndScan()
+{
+    ASSERT(m_preloadScanner);
+    m_preloadScanner->appendToEnd(m_input.current());
+    m_preloadScanner->scan();
 }
 
 void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)
