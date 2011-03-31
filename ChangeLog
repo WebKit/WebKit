@@ -1,5 +1,11 @@
 2011-03-30  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Typo fix, remove an accidentally added line.
+
+        * Source/WebKit.pri:
+
+2011-03-30  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Rollout r82240 and r82232, because they broke 2 plugin tests.
 
         * Source/WebKit.pri:
