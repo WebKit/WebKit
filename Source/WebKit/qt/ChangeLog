@@ -1,3 +1,18 @@
+2011-03-31  Nancy Piedra  <nancy.piedra@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] ChromeClientQt.h has coding-style errors
+        https://bugs.webkit.org/show_bug.cgi?id=40239
+
+        * WebCoreSupport/ChromeClientQt.h:
+        (WebCore::ChromeClientQt::scrollbarsModeDidChange):
+        (WebCore::ChromeClientQt::needTouchEvents):
+        (WebCore::ChromeClientQt::formStateDidChange):
+        (WebCore::ChromeClientQt::scrollRectIntoView):
+        (WebCore::ChromeClientQt::requestGeolocationPermissionForFrame):
+        (WebCore::ChromeClientQt::cancelGeolocationPermissionRequestForFrame):
+
 2011-03-31  Evan Martin  <evan@chromium.org>
 
         Build fix from previous change.
