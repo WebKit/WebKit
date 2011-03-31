@@ -122,24 +122,17 @@ private:
     friend class MainThreadFileSystemCallbacks;
 
     // Methods that dispatch WebFileSystemCallbacks on the worker threads.
-    // They release a selfRef of the WorkerFileSystemCallbacksBridge.
     static void didFailOnWorkerThread(WebCore::ScriptExecutionContext*, WorkerFileSystemCallbacksBridge*, WebFileError);
     static void didOpenFileSystemOnWorkerThread(WebCore::ScriptExecutionContext*, WorkerFileSystemCallbacksBridge*, const String& name, const String& rootPath);
     static void didSucceedOnWorkerThread(WebCore::ScriptExecutionContext*, WorkerFileSystemCallbacksBridge*);
     static void didReadMetadataOnWorkerThread(WebCore::ScriptExecutionContext*, WorkerFileSystemCallbacksBridge*, const WebFileInfo&);
     static void didReadDirectoryOnWorkerThread(WebCore::ScriptExecutionContext*, WorkerFileSystemCallbacksBridge*, const WebVector<WebFileSystemEntry>&, bool hasMore);
 
-    // For early-exist; this deref's selfRef and returns true if the worker is already null.
-    bool derefIfWorkerIsStopped();
-
-    static void runTaskOnMainThread(WebCore::ScriptExecutionContext*, WorkerFileSystemCallbacksBridge*, PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
+    static void runTaskOnMainThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileSystemCallbacksBridge>, PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
     static void runTaskOnWorkerThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileSystemCallbacksBridge>, PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
 
     void dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
     void mayPostTaskToWorker(PassOwnPtr<WebCore::ScriptExecutionContext::Task>, const String& mode);
-
-    // m_selfRef keeps a reference to itself while there's a pending callback on the main thread.
-    RefPtr<WorkerFileSystemCallbacksBridge> m_selfRef;
 
     Mutex m_mutex;
     WebWorkerBase* m_worker;

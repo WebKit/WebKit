@@ -1,3 +1,27 @@
+2011-03-30  David Levin  <levin@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        UnlockNonLocked condition reached in WorkerFileSystemsCallbackBridge::mayPostTaskToWorker
+        https://bugs.webkit.org/show_bug.cgi?id=57382
+
+        There were two issues to address:
+        1. The use of a non-thread safe class (RefPtr) in a ThreadSafeRefCounted class.
+           The problem was that this RefPtr could be changed on either thread.
+        2. Keeping WorkerFileSystemCallbacksBridge alive for while it was being used
+           including while its mutex was in use.
+
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        (WebKit::WorkerFileSystemCallbacksBridge::runTaskOnMainThread):
+        Changed to take a PassRefPtr and leak the ref count as opposed to relying on
+        dispatchTaskToMainThread to store the pointer in m_selfRef.
+        (WebKit::WorkerFileSystemCallbacksBridge::dispatchTaskToMainThread): Remove the
+        m_selfRef and hand off a PassRefPtr instead.
+        (WebKit::WorkerFileSystemCallbacksBridge::mayPostTaskToWorker): Balance out the leaked ref
+        and ensure that WorkerFileSystemCallbacksBridge stays alive while the mutex is held.
+        * src/WorkerFileSystemCallbacksBridge.h: Removed m_selfRef and derefIfWorkerIsStopped which
+          was simply due to m_selfRef.
+
 2011-03-29  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Tony Chang.

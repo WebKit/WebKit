@@ -45,6 +45,7 @@
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
+#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -337,26 +338,14 @@ void WorkerFileSystemCallbacksBridge::didReadDirectoryOnWorkerThread(ScriptExecu
     bridge->m_callbacksOnWorkerThread->didReadDirectory(entries, hasMore);
 }
 
-bool WorkerFileSystemCallbacksBridge::derefIfWorkerIsStopped()
-{
-    WebWorkerBase* worker = 0;
-    {
-        MutexLocker locker(m_mutex);
-        worker = m_worker;
-    }
 
-    if (!worker) {
-        m_selfRef.clear();
-        return true;
-    }
-    return false;
-}
-
-void WorkerFileSystemCallbacksBridge::runTaskOnMainThread(WebCore::ScriptExecutionContext* scriptExecutionContext, WorkerFileSystemCallbacksBridge* bridge, PassOwnPtr<WebCore::ScriptExecutionContext::Task> taskToRun)
+void WorkerFileSystemCallbacksBridge::runTaskOnMainThread(WebCore::ScriptExecutionContext* scriptExecutionContext, PassRefPtr<WorkerFileSystemCallbacksBridge> bridge, PassOwnPtr<WebCore::ScriptExecutionContext::Task> taskToRun)
 {
     ASSERT(isMainThread());
-    if (bridge->derefIfWorkerIsStopped())
-        return;
+
+    // Every task run will result in one call to mayPostTaskToWorker, which is where this ref is released.
+    WorkerFileSystemCallbacksBridge* leaked = bridge.leakRef();
+    UNUSED_PARAM(leaked);
     taskToRun->performTask(scriptExecutionContext);
 }
 
@@ -372,19 +361,22 @@ void WorkerFileSystemCallbacksBridge::runTaskOnWorkerThread(WebCore::ScriptExecu
 
 void WorkerFileSystemCallbacksBridge::dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task> task)
 {
-    ASSERT(!m_selfRef);
     ASSERT(m_worker);
     ASSERT(m_workerContext->isContextThread());
-    m_selfRef = this;
-    m_worker->dispatchTaskToMainThread(createCallbackTask(&runTaskOnMainThread, this, task));
+    m_worker->dispatchTaskToMainThread(createCallbackTask(&runTaskOnMainThread, RefPtr<WorkerFileSystemCallbacksBridge>(this).release(), task));
 }
 
 void WorkerFileSystemCallbacksBridge::mayPostTaskToWorker(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
 {
     ASSERT(isMainThread());
+
+    // Balancing out the ref() done in runTaskOnMainThread. (Since m_mutex is a member and the deref may result
+    // in the destruction of WorkerFileSystemCallbacksBridge, the ordering of the RefPtr and the MutexLocker
+    // is very important, to ensure that the m_mutex is still valid when it gets unlocked.)
+    RefPtr<WorkerFileSystemCallbacksBridge> bridge = adoptRef(this);
     MutexLocker locker(m_mutex);
     if (m_worker)
-        m_worker->postTaskForModeToWorkerContext(createCallbackTask(&runTaskOnWorkerThread, m_selfRef.release(), task), mode);
+        m_worker->postTaskForModeToWorkerContext(createCallbackTask(&runTaskOnWorkerThread, bridge, task), mode);
 }
 
 } // namespace WebCore
