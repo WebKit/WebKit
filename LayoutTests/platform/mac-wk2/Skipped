@@ -1452,14 +1452,11 @@ editing/style/iframe-onload-crash-win.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42691>
 fast/loader/stop-provisional-loads.html
 
-# WebKitTestRunner needs layoutTestController.setAllowUniversalAccessFromFileURLs
-# <https://bugs.webkit.org/show_bug.cgi?id=42692>
-fast/forms/formmethod-attribute-button-html.html
-fast/forms/formmethod-attribute-input-html.html
-fast/forms/formtarget-attribute-button-html.html
-fast/forms/formtarget-attribute-input-html.html
+# WebKitTestRunner needs layoutTestController.setAllowFileAccessFromFileURLs
+# <https://bugs.webkit.org/show_bug.cgi?id=57572>
 fast/frames/location-change-no-file-access.html
 fast/xmlhttprequest/xmlhttprequest-no-file-access.html
+
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 
 # WebKitTestRunner needs layoutTestController.setPrinting
