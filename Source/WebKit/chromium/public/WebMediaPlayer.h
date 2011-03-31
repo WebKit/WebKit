@@ -79,6 +79,12 @@ public:
         LiveStream,
     };
 
+    enum Preload {
+        None,
+        MetaData,
+        Auto,
+    };
+
     virtual ~WebMediaPlayer() {}
 
     virtual void load(const WebURL&) = 0;
@@ -94,7 +100,7 @@ public:
     virtual void setRate(float) = 0;
     virtual void setVolume(float) = 0;
     virtual void setVisible(bool) = 0;
-    virtual bool setAutoBuffer(bool) = 0;
+    virtual void setPreload(Preload) { };
     virtual bool totalBytesKnown() = 0;
     virtual const WebTimeRanges& buffered() = 0;
     virtual float maxTimeSeekable() const = 0;

@@ -189,12 +189,18 @@ void WebMediaPlayerClientImpl::playbackStateChanged()
     m_mediaPlayer->playbackStateChanged();
 }
 
+WebMediaPlayer::Preload WebMediaPlayerClientImpl::preload() const
+{
+    if (m_mediaPlayer)
+        return static_cast<WebMediaPlayer::Preload>(m_mediaPlayer->preload());
+    return static_cast<WebMediaPlayer::Preload>(m_preload);
+}
+
 // MediaPlayerPrivateInterface -------------------------------------------------
 
 void WebMediaPlayerClientImpl::load(const String& url)
 {
-    Frame* frame = static_cast<HTMLMediaElement*>(
-        m_mediaPlayer->mediaPlayerClient())->document()->frame();
+    m_url = url;
 
     // Video frame object is owned by WebMediaPlayer. Before destroying
     // WebMediaPlayer all frames need to be released.
@@ -203,9 +209,19 @@ void WebMediaPlayerClientImpl::load(const String& url)
         m_videoLayer->releaseCurrentFrame();
 #endif
 
+    if (m_preload == MediaPlayer::None) {
+        m_webMediaPlayer.clear();
+        m_delayingLoad = true;
+    } else
+        loadInternal();
+}
+
+void WebMediaPlayerClientImpl::loadInternal()
+{
+    Frame* frame = static_cast<HTMLMediaElement*>(m_mediaPlayer->mediaPlayerClient())->document()->frame();
     m_webMediaPlayer.set(createWebMediaPlayer(this, frame));
     if (m_webMediaPlayer.get())
-        m_webMediaPlayer->load(KURL(ParsedURLString, url));
+        m_webMediaPlayer->load(KURL(ParsedURLString, m_url));
 }
 
 void WebMediaPlayerClientImpl::cancelLoad()
@@ -240,6 +256,12 @@ void WebMediaPlayerClientImpl::pause()
 {
     if (m_webMediaPlayer.get())
         m_webMediaPlayer->pause();
+}
+
+void WebMediaPlayerClientImpl::prepareToPlay()
+{
+    if (m_delayingLoad)
+        startDelayedLoad();
 }
 
 IntSize WebMediaPlayerClientImpl::naturalSize() const
@@ -438,10 +460,15 @@ void WebMediaPlayerClientImpl::paintCurrentFrameInContext(GraphicsContext* conte
     }
 }
 
-void WebMediaPlayerClientImpl::setAutobuffer(bool autoBuffer)
+void WebMediaPlayerClientImpl::setPreload(MediaPlayer::Preload preload)
 {
+    m_preload = preload;
+
     if (m_webMediaPlayer.get())
-        m_webMediaPlayer->setAutoBuffer(autoBuffer);
+        m_webMediaPlayer->setPreload(static_cast<WebMediaPlayer::Preload>(preload));
+
+    if (m_delayingLoad && m_preload != MediaPlayer::None)
+        startDelayedLoad();
 }
 
 bool WebMediaPlayerClientImpl::hasSingleSecurityOrigin() const
@@ -566,8 +593,20 @@ MediaPlayer::SupportsType WebMediaPlayerClientImpl::supportsType(const String& t
     return MediaPlayer::IsNotSupported;
 }
 
+void WebMediaPlayerClientImpl::startDelayedLoad()
+{
+    ASSERT(m_delayingLoad);
+    ASSERT(!m_webMediaPlayer.get());
+
+    m_delayingLoad = false;
+
+    loadInternal();
+}
+
 WebMediaPlayerClientImpl::WebMediaPlayerClientImpl()
     : m_mediaPlayer(0)
+    , m_delayingLoad(false)
+    , m_preload(MediaPlayer::MetaData)
 #if USE(ACCELERATED_COMPOSITING)
     , m_videoLayer(0)
     , m_supportsAcceleratedCompositing(false)

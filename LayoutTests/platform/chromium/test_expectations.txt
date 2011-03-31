@@ -827,10 +827,6 @@ BUGCR28301 SKIP : media/media-captions.html = TIMEOUT
 BUGCR33099 SKIP : media/video-reverse-play-duration.html = TIMEOUT
 BUGCR33099 SKIP : media/video-timeupdate-reverse-play.html = TIMEOUT
 
-// We haven't implemented video preloading and it passing is a false positive.
-// UNIMPLEMENTED
-BUGWK16482 SKIP : media/video-preload.html = PASS FAIL
-
 // Does not display courier for the letters, as the test requests.
 BUGCR10278 LINUX : fast/css/font-face-implicit-local-font.html = FAIL
 BUGCR10278 LINUX : fast/css/font-face-unicode-range.html = FAIL

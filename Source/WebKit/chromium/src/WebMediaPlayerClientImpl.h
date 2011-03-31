@@ -77,6 +77,7 @@ public:
     virtual void sawUnsupportedTracks();
     virtual float volume() const;
     virtual void playbackStateChanged();
+    virtual WebMediaPlayer::Preload preload() const;
 
     // MediaPlayerPrivateInterface methods:
     virtual void load(const WTF::String& url);
@@ -87,6 +88,7 @@ public:
     virtual WebCore::PlatformMedia platformMedia() const;
     virtual void play();
     virtual void pause();
+    virtual void prepareToPlay();
     virtual bool supportsFullscreen() const;
     virtual bool supportsSave() const;
     virtual WebCore::IntSize naturalSize() const;
@@ -106,13 +108,13 @@ public:
     virtual float maxTimeSeekable() const;
     virtual WTF::PassRefPtr<WebCore::TimeRanges> buffered() const;
     virtual int dataRate() const;
-    virtual void setAutobuffer(bool);
     virtual bool totalBytesKnown() const;
     virtual unsigned totalBytes() const;
     virtual unsigned bytesLoaded() const;
     virtual void setSize(const WebCore::IntSize&);
     virtual void paint(WebCore::GraphicsContext*, const WebCore::IntRect&);
     virtual void paintCurrentFrameInContext(WebCore::GraphicsContext*, const WebCore::IntRect&);
+    virtual void setPreload(WebCore::MediaPlayer::Preload);
     virtual bool hasSingleSecurityOrigin() const;
     virtual WebCore::MediaPlayer::MovieLoadType movieLoadType() const;
     virtual unsigned decodedFrameCount() const;
@@ -129,6 +131,8 @@ public:
 
 private:
     WebMediaPlayerClientImpl();
+    void startDelayedLoad();
+    void loadInternal();
 
     static WebCore::MediaPlayerPrivateInterface* create(WebCore::MediaPlayer*);
     static void getSupportedTypes(WTF::HashSet<WTF::String>&);
@@ -140,6 +144,9 @@ private:
 
     WebCore::MediaPlayer* m_mediaPlayer;
     OwnPtr<WebMediaPlayer> m_webMediaPlayer;
+    String m_url;
+    bool m_delayingLoad;
+    WebCore::MediaPlayer::Preload m_preload;
 #if USE(ACCELERATED_COMPOSITING)
     RefPtr<WebCore::VideoLayerChromium> m_videoLayer;
     bool m_supportsAcceleratedCompositing;
