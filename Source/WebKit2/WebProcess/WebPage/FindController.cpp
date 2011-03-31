@@ -38,6 +38,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Page.h>
 
+using namespace std;
 using namespace WebCore;
 
 namespace WebKit {
@@ -64,9 +65,16 @@ FindController::~FindController()
 
 void FindController::countStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
 {
-    unsigned matchCount = m_webPage->corePage()->markAllMatchesForText(string, core(options), false, maxMatchCount);
+    if (maxMatchCount == numeric_limits<unsigned>::max())
+        --maxMatchCount;
+    
+    unsigned matchCount = m_webPage->corePage()->markAllMatchesForText(string, core(options), false, maxMatchCount + 1);
     m_webPage->corePage()->unmarkAllTextMatches();
 
+    // Check if we have more matches than allowed.
+    if (matchCount > maxMatchCount)
+        matchCount = static_cast<unsigned>(kWKMoreThanMaximumMatchCount);
+    
     m_webPage->send(Messages::WebPageProxy::DidCountStringMatches(string, matchCount));
 }
 
@@ -102,6 +110,9 @@ void FindController::findString(const String& string, FindOptions options, unsig
         shouldShowOverlay = options & FindOptionsShowOverlay;
 
         if (shouldShowOverlay) {
+            if (maxMatchCount == numeric_limits<unsigned>::max())
+                --maxMatchCount;
+            
             unsigned matchCount = m_webPage->corePage()->markAllMatchesForText(string, core(options), false, maxMatchCount + 1);
 
             // Check if we have more matches than allowed.
