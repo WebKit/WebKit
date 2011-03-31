@@ -1,3 +1,19 @@
+2011-03-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9005982> Flash of white when a WKView with composited content moves on-screen
+        https://bugs.webkit.org/show_bug.cgi?id=57522
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::exitAcceleratedCompositingMode): Invalidate the current
+        backing store state, so that we get an update as soon as the page enters compositing mode
+        next.
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::sendDidUpdateBackingStoreState): Added a call to
+        LayerTreeHost::forceRepaint() in order to flush and synchronize the layers
+        before sending the update message to the UI process.
+
 2011-03-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

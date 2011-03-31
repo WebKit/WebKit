@@ -318,6 +318,7 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
             // message back to the UI process, but the updated layer tree context
             // will be sent back in the DidUpdateBackingStoreState message.
             m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(false);
+            m_layerTreeHost->forceRepaint();
         }
     }
 

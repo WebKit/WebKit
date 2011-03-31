@@ -306,6 +306,7 @@ void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
 
     m_layerTreeContext = LayerTreeContext();    
     m_webPageProxy->exitAcceleratedCompositingMode();
+    backingStoreStateDidChange(DoNotRespondImmediately);
 }
 #endif
 
