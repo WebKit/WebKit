@@ -1,3 +1,20 @@
+2011-03-30  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Adds layoutTestController.shadowRoot accessor to Mac DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=57415
+
+        Updates the keygen test to exercise new DRT functionality; skips
+        on other ports for now.
+
+        * fast/dom/HTMLKeygenElement/keygen-expected.txt:
+        * fast/dom/HTMLKeygenElement/keygen.html:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-03-30  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -1068,6 +1068,14 @@ void LayoutTestController::setEditingBehavior(const char* editingBehavior)
     [editingBehaviorNS release];
 }
 
+JSValueRef LayoutTestController::shadowRoot(JSContextRef context, JSValueRef jsElement)
+{
+    DOMElement *element = [DOMElement _DOMElementFromJSContext:context value:jsElement];
+    if (!element)
+        return JSValueMakeUndefined(context);
+    return [element _shadowRoot:context];
+}
+
 void LayoutTestController::abortModal()
 {
     [NSApp abortModal];

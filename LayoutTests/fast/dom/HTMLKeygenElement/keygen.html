@@ -1,27 +1,26 @@
+<!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="../../js/resources/js-test-style.css">
 <script src="../../js/resources/js-test-pre.js"></script>
 </head>
 <body>
 <keygen id="keys" />
+<pre id="console">
+This tests the keygen element.
 
-<p id="description"></p>
-<div id="console"></div>
-
+</pre>
 <script>
-if (window.layoutTestController)
-    layoutTestController.dumpAsText();
+var keygen = document.getElementById('keys');
+shouldBe('keygen.options', 'undefined');  // keygen is not a select
 
-function test(elementId)
-{
-    description('Tests the keygen element.');
-
-    shouldBe('document.getElementById("keys").options', 'undefined');    
+if (window.layoutTestController) {
+  var shadow = layoutTestController.shadowRoot(keygen);
+  shouldBe('shadow.tagName', '"SELECT"');
+  shouldBe('layoutTestController.shadowRoot(shadow)', 'null');
 }
 
-test("keys");
+var successfullyParsed = true;
 </script>
-
+<script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>

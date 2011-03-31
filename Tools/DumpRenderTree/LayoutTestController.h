@@ -122,6 +122,7 @@ public:
     void setSpatialNavigationEnabled(bool enable);
     void setScrollbarPolicy(JSStringRef orientation, JSStringRef policy);
     void setEditingBehavior(const char* editingBehavior);
+    JSValueRef shadowRoot(JSContextRef, JSValueRef);
 
     void waitForPolicyDelegate();
     size_t webHistoryItemCount();

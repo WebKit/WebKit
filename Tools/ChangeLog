@@ -1,3 +1,19 @@
+2011-03-30  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Adds layoutTestController.shadowRoot accessor to Mac DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=57415
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (shadowRootCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::shadowRoot):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::shadowRoot):
+
 2011-03-30  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Chris Marrin.

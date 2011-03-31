@@ -1441,6 +1441,12 @@ void LayoutTestController::setEditingBehavior(const char* editingBehavior)
         preferences->setEditingBehavior(WebKitEditingUnixBehavior);
 }
 
+JSValueRef LayoutTestController::shadowRoot(JSContextRef context, JSValueRef jsElement)
+{
+    // FIXME: Implement this.
+    return JSValueMakeUndefined(context);
+}
+
 void LayoutTestController::abortModal()
 {
 }

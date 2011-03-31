@@ -3279,6 +3279,9 @@ BUGXXX GPU MAC SNOWLEOPARD : compositing/self-painting-layers.html = FAIL
 // Chrome doesn't load favicons in DRT tests.
 BUGWK57259 : http/tests/misc/link-rel-icon-beforeload.html = FAIL PASS
 
+// Unskip when Chromium DRT layoutTestController implements shadowRoot accessor
+BUGWK56573 : fast/dom/HTMLKeygenElement/keygen.html = FAIL
+
 // r82419.
 BUGWK57442 : fast/box-shadow/basic-shadows.html = IMAGE
 

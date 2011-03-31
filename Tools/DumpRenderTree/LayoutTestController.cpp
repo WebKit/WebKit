@@ -1687,6 +1687,14 @@ static JSValueRef setAsynchronousSpellCheckingEnabledCallback(JSContextRef conte
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef shadowRootCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount != 1)
+        return JSValueMakeUndefined(context);
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    return controller->shadowRoot(context, arguments[0]);
+}
+
 static JSValueRef showWebInspectorCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
@@ -2264,6 +2272,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "setJavaScriptCanAccessClipboard", setJavaScriptCanAccessClipboardCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setXSSAuditorEnabled", setXSSAuditorEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAsynchronousSpellCheckingEnabled", setAsynchronousSpellCheckingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "shadowRoot", shadowRootCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "showWebInspector", showWebInspectorCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "testOnscreen", testOnscreenCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "testRepaint", testRepaintCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
