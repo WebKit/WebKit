@@ -24,7 +24,7 @@ layer at (0,0) size 800x600
           text run at (0,17) width 64: "1 "
         RenderRuby (inline) {RUBY} at (0,0) size 160x33
           RenderRubyRun (anonymous) at (64,0) size 160x50
-            RenderRubyText {RT} at (0,0) size 160x0
+            RenderRubyText {RT} at (0,17) size 160x0
             RenderRubyBase (anonymous) at (0,0) size 160x50
               RenderInline {RB} at (0,0) size 160x33
                 RenderText {#text} at (0,17) size 96x33

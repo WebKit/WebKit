@@ -1,5 +1,12 @@
 2011-03-31  Adam Barth  <abarth@webkit.org>
 
+        One more results update.  This change is just 1px off from the result
+        Hyatt landed.
+
+        * platform/gtk/fast/text/emphasis-avoid-ruby-expected.txt:
+
+2011-03-31  Adam Barth  <abarth@webkit.org>
+
         Hyatt says these are also progressions.
 
         * platform/gtk/fast/inline-block/inline-block-vertical-align-expected.txt:
