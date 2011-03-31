@@ -2,6 +2,31 @@
 
         Reviewed by Sam Weinig.
 
+        Clean up the sandbox parameter code
+        https://bugs.webkit.org/show_bug.cgi?id=57518
+
+        * Shared/WebProcessCreationParameters.h:
+        Make nsURLCachePath and uiProcessBundleResourcePath Strings to match the other paths we send over.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        nsURLCachePath and uiProcessBundleResourcePath are now Strings.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::appendSandboxParameterPathInternal):
+        (WebKit::appendReadwriteConfDirectory):
+        (WebKit::appendReadonlySandboxDirectory):
+        (WebKit::appendReadwriteSandboxDirectory):
+        (WebKit::initializeSandbox):
+        Make it more clear whether the directories we're adding are readonly or readwrite. No functionality change.
+        
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        nsURLCachePath is now a string.
+
+2011-03-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Downloading a file fails due to a sandbox violation if the destination path is a symlink
         https://bugs.webkit.org/show_bug.cgi?id=57517
         <rdar://problem/8943865>

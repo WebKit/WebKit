@@ -30,6 +30,7 @@
 #import "SandboxExtension.h"
 #import "WebPage.h"
 #import "WebProcessCreationParameters.h"
+#import <WebCore/FileSystem.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/PageCache.h>
 #import <WebKitSystemInterface.h>
@@ -122,7 +123,7 @@ bool WebProcess::fullKeyboardAccessEnabled()
 }
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
-static void appendSandboxParameterPath(Vector<const char*>& vector, const char* name, const char* path)
+static void appendSandboxParameterPathInternal(Vector<const char*>& vector, const char* name, const char* path)
 {
     char normalizedPath[PATH_MAX];
     if (!realpath(path, normalizedPath))
@@ -132,14 +133,25 @@ static void appendSandboxParameterPath(Vector<const char*>& vector, const char* 
     vector.append(fastStrDup(normalizedPath));
 }
 
-static void appendSandboxParameterConfPath(Vector<const char*>& vector, const char* name, int confID)
+static void appendReadwriteConfDirectory(Vector<const char*>& vector, const char* name, int confID)
 {
     char path[PATH_MAX];
     if (confstr(confID, path, PATH_MAX) <= 0)
         path[0] = '\0';
 
-    appendSandboxParameterPath(vector, name, path);
+    appendSandboxParameterPathInternal(vector, name, path);
 }
+
+static void appendReadonlySandboxDirectory(Vector<const char*>& vector, const char* name, NSString *path)
+{
+    appendSandboxParameterPathInternal(vector, name, [(NSString *)path fileSystemRepresentation]);
+}
+
+static void appendReadwriteSandboxDirectory(Vector<const char*>& vector, const char* name, NSString *path)
+{
+    appendSandboxParameterPathInternal(vector, name, [(NSString *)path fileSystemRepresentation]);
+}
+
 #endif
 
 static void initializeSandbox(const WebProcessCreationParameters& parameters)
@@ -152,14 +164,20 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
 
     Vector<const char*> sandboxParameters;
 
-    appendSandboxParameterPath(sandboxParameters, "HOME_DIR", [NSHomeDirectory() fileSystemRepresentation]);
-    appendSandboxParameterPath(sandboxParameters, "WEBKIT2_FRAMEWORK_DIR", [[[[NSBundle bundleForClass:NSClassFromString(@"WKView")] bundlePath] stringByDeletingLastPathComponent] fileSystemRepresentation]);
-    appendSandboxParameterConfPath(sandboxParameters, "DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);
-    appendSandboxParameterConfPath(sandboxParameters, "DARWIN_USER_CACHE_DIR", _CS_DARWIN_USER_CACHE_DIR);
-    appendSandboxParameterPath(sandboxParameters, "WEBKIT_DATABASE_DIR", [(NSString *)parameters.databaseDirectory fileSystemRepresentation]);
-    appendSandboxParameterPath(sandboxParameters, "WEBKIT_LOCALSTORAGE_DIR", [(NSString *)parameters.localStorageDirectory fileSystemRepresentation]);
-    appendSandboxParameterPath(sandboxParameters, "NSURL_CACHE_DIR", parameters.nsURLCachePath.data());
-    appendSandboxParameterPath(sandboxParameters, "UI_PROCESS_BUNDLE_RESOURCE_DIR", parameters.uiProcessBundleResourcePath.data());
+    // These are read-only.
+    appendReadonlySandboxDirectory(sandboxParameters, "WEBKIT2_FRAMEWORK_DIR", [[[NSBundle bundleForClass:NSClassFromString(@"WKView")] bundlePath] stringByDeletingLastPathComponent]);
+    appendReadonlySandboxDirectory(sandboxParameters, "UI_PROCESS_BUNDLE_RESOURCE_DIR", parameters.uiProcessBundleResourcePath);
+
+    // These are read-write getconf paths.
+    appendReadwriteConfDirectory(sandboxParameters, "DARWIN_USER_TEMP_DIR", _CS_DARWIN_USER_TEMP_DIR);
+    appendReadwriteConfDirectory(sandboxParameters, "DARWIN_USER_CACHE_DIR", _CS_DARWIN_USER_CACHE_DIR);
+
+    // These are read-write paths.
+    appendReadwriteSandboxDirectory(sandboxParameters, "HOME_DIR", NSHomeDirectory());
+    appendReadwriteSandboxDirectory(sandboxParameters, "WEBKIT_DATABASE_DIR", parameters.databaseDirectory);
+    appendReadwriteSandboxDirectory(sandboxParameters, "WEBKIT_LOCALSTORAGE_DIR", parameters.localStorageDirectory);
+    appendReadwriteSandboxDirectory(sandboxParameters, "NSURL_CACHE_DIR", parameters.nsURLCachePath);
+
     sandboxParameters.append(static_cast<const char*>(0));
 
     const char* profilePath = [[[NSBundle mainBundle] pathForResource:@"com.apple.WebProcess" ofType:@"sb"] fileSystemRepresentation];
@@ -201,8 +219,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
         NSUInteger cacheMemoryCapacity = parameters.nsURLCacheMemoryCapacity;
         NSUInteger cacheDiskCapacity = parameters.nsURLCacheDiskCapacity;
 
-        NSString *nsCachePath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:parameters.nsURLCachePath.data() length:strlen(parameters.nsURLCachePath.data())];
-        RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:nsCachePath]);
+        RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:parameters.nsURLCachePath]);
         [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
     }
 

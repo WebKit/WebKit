@@ -88,13 +88,14 @@ struct WebProcessCreationParameters {
     pid_t presenterApplicationPid;
 
     // FIXME: These should be merged with CFURLCache counterparts below.
-    CString nsURLCachePath;
+    String nsURLCachePath;
     uint64_t nsURLCacheMemoryCapacity;
     uint64_t nsURLCacheDiskCapacity;
 
     CoreIPC::MachPort acceleratedCompositingPort;
 
-    CString uiProcessBundleResourcePath;
+    String uiProcessBundleResourcePath;
+
 #elif PLATFORM(WIN)
     String cfURLCachePath;
     uint64_t cfURLCacheDiskCapacity;

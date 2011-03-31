@@ -84,12 +84,11 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     NSURLCache *urlCache = [NSURLCache sharedURLCache];
 
     parameters.parentProcessName = [[NSProcessInfo processInfo] processName];    
-    parameters.nsURLCachePath = fileSystemRepresentation([(NSString *)cachePath.get() stringByStandardizingPath]);
+    parameters.nsURLCachePath = [(NSString *)cachePath.get() stringByStandardizingPath];
     parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
     parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];
 
-    ASSERT(strlen(parameters.nsURLCachePath.data()));
-    ASSERT(parameters.nsURLCachePath.data()[strlen(parameters.nsURLCachePath.data()) - 1] != '/'); // Necessary for NSURLCache to find the cache file.
+    ASSERT(!parameters.nsURLCachePath.isEmpty());
 
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
     mach_port_t renderServerPort = WKInitializeRenderServer();
@@ -98,7 +97,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
     // FIXME: This should really be configurable; we shouldn't just blindly allow read access to the UI process bundle.
-    parameters.uiProcessBundleResourcePath = fileSystemRepresentation([[NSBundle mainBundle] resourcePath]);
+    parameters.uiProcessBundleResourcePath = [[NSBundle mainBundle] resourcePath];
 
 #if USE(CFURLSTORAGESESSIONS)
     parameters.uiProcessBundleIdentifier = String([[NSBundle mainBundle] bundleIdentifier]);
