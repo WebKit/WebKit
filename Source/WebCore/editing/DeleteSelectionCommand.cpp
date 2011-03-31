@@ -335,6 +335,15 @@ static void updatePositionForNodeRemoval(Node* node, Position& position)
     }
 }
 
+static Position firstEditablePositionInNode(Node* node)
+{
+    ASSERT(node);
+    Node* next = node;
+    while (next && !next->rendererIsEditable())
+        next = next->traverseNextNode(node);
+    return next ? firstPositionInOrBeforeNode(next) : Position();
+}
+
 void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
 {
     if (!node)
@@ -372,11 +381,14 @@ void DeleteSelectionCommand::removeNode(PassRefPtr<Node> node)
             removeNode(remove);
         }
         
-        // make sure empty cell has some height
+        // Make sure empty cell has some height, if a placeholder can be inserted.
         updateLayout();
         RenderObject *r = node->renderer();
-        if (r && r->isTableCell() && toRenderTableCell(r)->contentHeight() <= 0)
-            insertBlockPlaceholder(firstPositionInNode(node.get()));
+        if (r && r->isTableCell() && toRenderTableCell(r)->contentHeight() <= 0) {
+            Position firstEditablePosition = firstEditablePositionInNode(node.get());
+            if (firstEditablePosition.isNotNull())
+                insertBlockPlaceholder(firstEditablePosition);
+        }
         return;
     }
     

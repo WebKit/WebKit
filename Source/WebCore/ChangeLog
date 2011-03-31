@@ -1,3 +1,20 @@
+2011-03-31  Benjamin Kalman  <kalman@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        DeleteSelectionCommand::removeNode tries to insert block placeholder in non-editable table cell positions
+        https://bugs.webkit.org/show_bug.cgi?id=57079
+
+        Test: editing/execCommand/delete-table-with-empty-contents.html
+
+        This bug results in an ASSERT fail in CompositeEditCommand::insertNodeAt, so is only observable in debug builds
+        of WebKit.
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::firstEditablePositionInNode):
+        (WebCore::DeleteSelectionCommand::removeNode): Use firstEditablePositionInNode rather than firstPositionInNode
+        to find anchor node for the placeholder's position, if any.
+
 2011-03-30  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction after r82496. (Part 3)
