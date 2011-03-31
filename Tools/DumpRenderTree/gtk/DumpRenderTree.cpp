@@ -1048,6 +1048,9 @@ static void frameCreatedCallback(WebKitWebView* webView, WebKitWebFrame* webFram
 
 static void willSendRequestCallback(WebKitWebView* webView, WebKitWebFrame*, WebKitWebResource*, WebKitNetworkRequest* request, WebKitNetworkResponse*)
 {
+    if (!done && gLayoutTestController->willSendRequestReturnsNull())
+        return;
+
     SoupMessage* soupMessage = webkit_network_request_get_message(request);
     SoupURI* uri = soup_uri_new(webkit_network_request_get_uri(request));
 

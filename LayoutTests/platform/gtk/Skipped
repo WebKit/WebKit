@@ -680,9 +680,11 @@ fast/cookies/local-file-can-set-cookies.html
 # Fails on the release bot because of, apparently, rouding errors
 svg/custom/path-getTotalLength.svg
 
-# GTK+ does not have layoutTestController.setWillSendRequestReturnsNull.
+# Fail due to an extra "CONSOLE MESSAGE: line 1: SyntaxError: Parse error"
 fast/loader/onload-willSendRequest-null-for-script.html
 fast/loader/willSendRequest-null-for-preload.html
+
+# Requires willSendRequestReturnsNullOnRedirect + willSendRequest + didFinishLoading
 http/tests/misc/will-send-request-returns-null-on-redirect.html
 
 # GTK+ does not have layoutTestController.setDomainRelaxationForbiddenForURLScheme
@@ -1367,6 +1369,3 @@ plugins/embed-prefers-plugins-for-images.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=57346
 fast/text/justify-ideograph-leading-expansion.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=57362
-fast/loader/onload-willSendRequest-null-for-frame.html
