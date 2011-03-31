@@ -170,7 +170,15 @@ static Node* deepFocusableNode(FocusDirection direction, Node* node, KeyboardEve
 
 bool FocusController::setInitialFocus(FocusDirection direction, KeyboardEvent* event)
 {
-    return advanceFocus(direction, event, true);
+    bool didAdvanceFocus = advanceFocus(direction, event, true);
+    
+    // If focus is being set initially, accessibility needs to be informed that system focus has moved 
+    // into the web area again, even if focus did not change within WebCore. PostNotification is called instead
+    // of handleFocusedUIElementChanged, because this will send the notification even if the element is the same.
+    if (AXObjectCache::accessibilityEnabled())
+        focusedOrMainFrame()->document()->axObjectCache()->postNotification(focusedOrMainFrame()->document()->renderer(), AXObjectCache::AXFocusedUIElementChanged, true);
+
+    return didAdvanceFocus;
 }
 
 bool FocusController::advanceFocus(FocusDirection direction, KeyboardEvent* event, bool initialFocus)

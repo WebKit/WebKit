@@ -1,3 +1,19 @@
+2011-03-30  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Regression: VO cursor doesn't follow KB focus back into HTML view
+        https://bugs.webkit.org/show_bug.cgi?id=57509
+
+        In WK2, because the web area never believes focus leave the area, sending the initial
+        focus change when moving back into the web area, does not trigger a notification.
+
+        That behavior needs to be overridden by explicitly posting a focused UI element change
+        at the appropriate time. This is only used in WK2, hence the absence of a layout test for now.
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setInitialFocus):
+
 2011-03-30  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Simon Fraser.
