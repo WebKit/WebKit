@@ -92,7 +92,14 @@
     BOOL hadMarkedText = [_inputTextView hasMarkedText];
  
     *string = nil;
-    
+
+    // Let TSM know that a bottom input window would be created for marked text.
+    EventRef carbonEvent = (EventRef)[event eventRef];
+    if (carbonEvent) {
+        Boolean ignorePAH = true;
+        SetEventParameter(carbonEvent, 'iPAH', typeBoolean, sizeof(ignorePAH), &ignorePAH);
+    }
+
     if (![[_inputTextView inputContext] handleEvent:event])
         return NO;
     
