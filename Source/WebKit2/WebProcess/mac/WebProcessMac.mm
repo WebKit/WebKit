@@ -149,6 +149,12 @@ static void appendReadonlySandboxDirectory(Vector<const char*>& vector, const ch
 
 static void appendReadwriteSandboxDirectory(Vector<const char*>& vector, const char* name, NSString *path)
 {
+    NSError *error = nil;
+
+    // This is very unlikely to fail, but in case it actually happens, we'd like some sort of output in the console.
+    if (![[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:&error])
+        NSLog(@"could not create \"%@\", error %@", path, error);
+
     appendSandboxParameterPathInternal(vector, name, [(NSString *)path fileSystemRepresentation]);
 }
 
