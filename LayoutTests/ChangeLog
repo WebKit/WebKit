@@ -1,3 +1,169 @@
+2011-03-30  Mihai Parparita  <mihaip@chromium.org>
+
+        Fix expected svg/ failures for Chromium Snow Leopard.
+
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/animate-elem-36-t-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.checksum.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png.
+        * platform/chromium-mac-leopard/svg/custom/dynamic-svg-document-creation-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/dynamic-svg-document-creation-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/feComponentTransfer-Discrete-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/feComponentTransfer-Discrete-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/feComponentTransfer-Gamma-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/feComponentTransfer-Gamma-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/feComponentTransfer-Linear-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/feComponentTransfer-Linear-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/feComponentTransfer-Table-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/feComponentTransfer-Table-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/foreign-object-skew-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/foreign-object-skew-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/glyph-transformation-with-hkern-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/glyph-transformation-with-hkern-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/gradient-rotated-bbox-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/gradient-rotated-bbox-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/grayscale-gradient-mask-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/grayscale-gradient-mask-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/js-late-gradient-creation-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/js-late-gradient-creation-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/js-late-pattern-and-object-creation-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/js-late-pattern-and-object-creation-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/js-late-pattern-creation-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/js-late-pattern-creation-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/non-scaling-stroke-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/non-scaling-stroke-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/pattern-skew-transformed-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/pattern-skew-transformed-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/pattern-with-transformation-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/pattern-with-transformation-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/preserve-aspect-ratio-syntax-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/preserve-aspect-ratio-syntax-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/resource-invalidate-on-target-update-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/resource-invalidate-on-target-update-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/shapes-supporting-markers-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/shapes-supporting-markers-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/svg-curve-with-relative-cordinates-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/custom/svg-curve-with-relative-cordinates-expected.checksum.
+        * platform/chromium-mac-leopard/svg/custom/svg-curve-with-relative-cordinates-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/custom/svg-curve-with-relative-cordinates-expected.png.
+        * platform/chromium-mac-leopard/svg/custom/svg-fonts-with-no-element-reference-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/svg-fonts-with-no-element-reference-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/use-on-clip-path-with-transformation-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/use-on-clip-path-with-transformation-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/viewbox-syntax-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/custom/viewbox-syntax-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.checksum.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.checksum.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.checksum.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.checksum.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.checksum.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.checksum.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png.
+        * platform/chromium-mac-leopard/svg/filters/feDisplacementMap-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/filters/feDisplacementMap-expected.checksum.
+        * platform/chromium-mac-leopard/svg/filters/feDisplacementMap-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/filters/feDisplacementMap-expected.png.
+        * platform/chromium-mac-leopard/svg/hixie/mixed/006-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/hixie/mixed/006-expected.checksum.
+        * platform/chromium-mac-leopard/svg/hixie/mixed/006-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/hixie/mixed/006-expected.png.
+        * platform/chromium-mac-leopard/svg/hixie/mixed/008-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/hixie/mixed/008-expected.checksum.
+        * platform/chromium-mac-leopard/svg/hixie/mixed/008-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/hixie/mixed/008-expected.png.
+        * platform/chromium-mac-leopard/svg/hixie/mixed/011-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/hixie/mixed/011-expected.checksum.
+        * platform/chromium-mac-leopard/svg/hixie/mixed/011-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/hixie/mixed/011-expected.png.
+        * platform/chromium-mac-leopard/svg/text/text-intro-05-t-expected.checksum: Copied from LayoutTests/platform/chromium-mac/svg/text/text-intro-05-t-expected.checksum.
+        * platform/chromium-mac-leopard/svg/text/text-intro-05-t-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/text/text-intro-05-t-expected.png.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-foreignObject-expected.checksum: Added.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-foreignObject-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.checksum:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png:
+        * platform/chromium-mac/svg/custom/dynamic-svg-document-creation-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/dynamic-svg-document-creation-expected.png: Added.
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Discrete-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Discrete-expected.png: Added.
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Gamma-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Gamma-expected.png: Added.
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Linear-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Linear-expected.png: Added.
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Table-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/feComponentTransfer-Table-expected.png: Added.
+        * platform/chromium-mac/svg/custom/foreign-object-skew-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/foreign-object-skew-expected.png: Added.
+        * platform/chromium-mac/svg/custom/glyph-transformation-with-hkern-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/glyph-transformation-with-hkern-expected.png: Added.
+        * platform/chromium-mac/svg/custom/gradient-rotated-bbox-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/gradient-rotated-bbox-expected.png: Added.
+        * platform/chromium-mac/svg/custom/grayscale-gradient-mask-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/grayscale-gradient-mask-expected.png: Added.
+        * platform/chromium-mac/svg/custom/inline-svg-in-xhtml-expected.checksum:
+        * platform/chromium-mac/svg/custom/inline-svg-in-xhtml-expected.png:
+        * platform/chromium-mac/svg/custom/js-late-gradient-and-object-creation-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/js-late-gradient-and-object-creation-expected.png: Added.
+        * platform/chromium-mac/svg/custom/js-late-gradient-creation-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/js-late-gradient-creation-expected.png: Added.
+        * platform/chromium-mac/svg/custom/js-late-pattern-and-object-creation-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/js-late-pattern-and-object-creation-expected.png: Added.
+        * platform/chromium-mac/svg/custom/js-late-pattern-creation-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/js-late-pattern-creation-expected.png: Added.
+        * platform/chromium-mac/svg/custom/non-scaling-stroke-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/non-scaling-stroke-expected.png: Added.
+        * platform/chromium-mac/svg/custom/pattern-skew-transformed-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/pattern-skew-transformed-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/filters/feDisplacementMap-expected.png.
+        * platform/chromium-mac/svg/custom/pattern-with-transformation-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/pattern-with-transformation-expected.png: Added.
+        * platform/chromium-mac/svg/custom/preserve-aspect-ratio-syntax-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/preserve-aspect-ratio-syntax-expected.png: Added.
+        * platform/chromium-mac/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png: Added.
+        * platform/chromium-mac/svg/custom/resource-invalidate-on-target-update-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/resource-invalidate-on-target-update-expected.png: Added.
+        * platform/chromium-mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.checksum:
+        * platform/chromium-mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/chromium-mac/svg/custom/shapes-supporting-markers-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/shapes-supporting-markers-expected.png: Added.
+        * platform/chromium-mac/svg/custom/svg-curve-with-relative-cordinates-expected.checksum:
+        * platform/chromium-mac/svg/custom/svg-curve-with-relative-cordinates-expected.png:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.checksum:
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-mac/svg/custom/svg-fonts-with-no-element-reference-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/svg-fonts-with-no-element-reference-expected.png: Added.
+        * platform/chromium-mac/svg/custom/text-rotated-gradient-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/text-rotated-gradient-expected.png: Added.
+        * platform/chromium-mac/svg/custom/use-detach-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/use-detach-expected.png: Added.
+        * platform/chromium-mac/svg/custom/use-on-clip-path-with-transformation-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/use-on-clip-path-with-transformation-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/filters/feDisplacementMap-expected.png.
+        * platform/chromium-mac/svg/custom/viewbox-syntax-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/viewbox-syntax-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.checksum:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop-expected.png:
+        * platform/chromium-mac/svg/filters/feDisplacementMap-expected.checksum:
+        * platform/chromium-mac/svg/filters/feDisplacementMap-expected.png:
+        * platform/chromium-mac/svg/hixie/mixed/003-expected.checksum:
+        * platform/chromium-mac/svg/hixie/mixed/003-expected.png:
+        * platform/chromium-mac/svg/hixie/mixed/006-expected.checksum:
+        * platform/chromium-mac/svg/hixie/mixed/006-expected.png:
+        * platform/chromium-mac/svg/hixie/mixed/008-expected.checksum:
+        * platform/chromium-mac/svg/hixie/mixed/008-expected.png:
+        * platform/chromium-mac/svg/hixie/mixed/011-expected.checksum:
+        * platform/chromium-mac/svg/hixie/mixed/011-expected.png:
+        * platform/chromium-mac/svg/text/text-intro-05-t-expected.checksum:
+        * platform/chromium-mac/svg/text/text-intro-05-t-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-foreignObject-expected.checksum: Added.
+        * platform/chromium-mac/svg/zoom/page/zoom-foreignObject-expected.png: Added.
+        * platform/chromium-mac/svg/zoom/page/zoom-mask-with-percentages-expected.checksum: Added.
+        * platform/chromium-mac/svg/zoom/page/zoom-mask-with-percentages-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-03-30  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Chris Marrin.
