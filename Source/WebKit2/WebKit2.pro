@@ -308,6 +308,7 @@ SOURCES += \
     Platform/qt/SharedMemoryQt.cpp \
     Platform/qt/WorkQueueQt.cpp \
     Shared/Plugins/Netscape/NetscapePluginModule.cpp \
+    Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
     Shared/ShareableBitmap.cpp \
     Shared/Plugins/NPRemoteObjectMap.cpp \
@@ -466,6 +467,7 @@ SOURCES += \
     WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp \
     WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp \
     WebProcess/Plugins/Netscape/NetscapePlugin.cpp \
+    WebProcess/Plugins/Netscape/NetscapePluginNone.cpp \
     WebProcess/Plugins/Netscape/NetscapePluginStream.cpp \
     WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp \
     WebProcess/Plugins/Netscape/qt/PluginProxyQt.cpp \

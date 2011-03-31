@@ -32,10 +32,6 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 
-#if !PLUGIN_ARCHITECTURE(MAC) && !PLUGIN_ARCHITECTURE(WIN) && !PLUGIN_ARCHITECTURE(X11)
-#error Unknown plug-in architecture
-#endif
-
 namespace WebKit {
 
 static Vector<NetscapePluginModule*>& initializedNetscapePluginModules()

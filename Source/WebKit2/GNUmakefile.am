@@ -212,6 +212,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Shared/PrintInfo.h \
 	Source/WebKit2/Shared/Plugins/Netscape/NetscapePluginModule.cpp \
 	Source/WebKit2/Shared/Plugins/Netscape/NetscapePluginModule.h \
+	Source/WebKit2/Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
 	Source/WebKit2/Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
 	Source/WebKit2/Shared/Plugins/NPIdentifierData.cpp \
 	Source/WebKit2/Shared/Plugins/NPIdentifierData.h \
@@ -588,6 +589,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapePlugin.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapePlugin.h \
+	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapePluginNone.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapePluginStream.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NetscapePluginStream.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NPJSObject.cpp \

@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+#if PLUGIN_ARCHITECTURE(X11)
+
 #include "NetscapePluginModule.h"
 
 #include "PluginDatabase.h"
@@ -98,3 +100,5 @@ void NetscapePluginModule::determineQuirks()
 }
 
 } // namespace WebKit
+
+#endif // PLUGIN_ARCHITECTURE(X11)
