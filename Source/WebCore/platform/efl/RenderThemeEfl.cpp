@@ -34,7 +34,6 @@
 #include "NotImplemented.h"
 #include "PaintInfo.h"
 #include "Page.h"
-#include "PlatformContextCairo.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "RenderProgress.h"
