@@ -1,5 +1,23 @@
 2011-03-30  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        Simplify HTMLFormElement::validateInteractively() for asynchronous scroll event
+        https://bugs.webkit.org/show_bug.cgi?id=57424
+
+        Remove interactive-validation-lost-focusable.html because it has no
+        sense since r75555.
+
+        * fast/forms/interactive-validation-lost-focusable-expected.txt: Removed.
+        * fast/forms/interactive-validation-lost-focusable.html: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
+2011-03-30  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Darin Adler.
 
         REGRESSION (r74895): Crash if input.type = 'file' twice

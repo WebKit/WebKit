@@ -1120,7 +1120,6 @@ editing/pasteboard/files-during-page-drags.html
 
 # The feature was disabled due to a compatibility issue.
 # https://bugs.webkit.org/show_bug.cgi?id=40520
-fast/forms/interactive-validation-lost-focusable.html
 fast/forms/interactive-validation-prevented.html
 fast/forms/interactive-validation-attach-assertion.html
 fast/forms/interactive-validation-assertion-by-validate-twice.html

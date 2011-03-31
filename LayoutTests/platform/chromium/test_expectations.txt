@@ -775,8 +775,6 @@ BUGCR20226 : fast/forms/datalist.html = TEXT
 BUGCR20226 : fast/forms/input-list.html = FAIL
 BUGCR20226 : fast/forms/input-selectedoption.html = FAIL
 
-// The feature was disabled due to a compatibility issue.
-BUGWK40520 : fast/forms/interactive-validation-lost-focusable.html = TEXT
 // Needs to call Settings::setValidationMessageTimerMagnification(-1).
 BUGWK57290 : fast/forms/validation-message-appearance.html = PASS FAIL
 

@@ -236,17 +236,11 @@ bool HTMLFormElement::validateInteractively(Event* event)
         FormAssociatedElement* unhandledAssociatedElement = unhandledInvalidControls[i].get();
         HTMLElement* unhandled = toHTMLElement(unhandledAssociatedElement);
         if (unhandled->isFocusable() && unhandled->inDocument()) {
-            RefPtr<Document> originalDocument(unhandled->document());
             unhandled->scrollIntoViewIfNeeded(false);
-            // scrollIntoViewIfNeeded() dispatches events, so the state
-            // of 'unhandled' might be changed so it's no longer focusable or
-            // moved to another document.
-            if (unhandled->isFocusable() && unhandled->inDocument() && originalDocument == unhandled->document()) {
-                unhandled->focus();
-                if (unhandled->isFormControlElement())
-                    static_cast<HTMLFormControlElement*>(unhandled)->updateVisibleValidationMessage();
-                break;
-            }
+            unhandled->focus();
+            if (unhandled->isFormControlElement())
+                static_cast<HTMLFormControlElement*>(unhandled)->updateVisibleValidationMessage();
+            break;
         }
     }
     // Warn about all of unfocusable controls.

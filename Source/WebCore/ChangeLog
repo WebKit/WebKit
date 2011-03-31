@@ -1,5 +1,18 @@
 2011-03-30  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        Simplify HTMLFormElement::validateInteractively() for asynchronous scroll event
+        https://bugs.webkit.org/show_bug.cgi?id=57424
+
+        r75555 made 'scroll' event asynchronous. So we don't need to worry about
+        deleting or moving a target node in scrollIntoViewIfNeeded().
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::validateInteractively): Remove unnecessary code.
+
+2011-03-30  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Darin Adler.
 
         REGRESSION (r74895): Crash if input.type = 'file' twice
