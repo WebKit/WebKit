@@ -1,3 +1,16 @@
+2011-03-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Assertion failure in -[WebHTMLView _handleStyleKeyEquivalent:]
+        https://bugs.webkit.org/show_bug.cgi?id=26667
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _handleStyleKeyEquivalent:]): Handle the case where WebView is
+        nil rather than asserting that it is non-nil. One case where WebView will be nil
+        is when the frame is closed, but in any case where it is nil, the correct thing
+        to do is to not try to handle the style key.
+
 2011-03-31  Alexey Proskuryakov  <ap@apple.com>
 
         Patch by John Harvey, reviewed and tweaked by me.

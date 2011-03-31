@@ -4370,8 +4370,11 @@ static BOOL isInPasswordField(Frame* coreFrame)
 
 - (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event
 {
-    ASSERT([self _webView]);
-    if (![[[self _webView] preferences] respectStandardStyleKeyEquivalents])
+    WebView *webView = [self _webView];
+    if (!webView)
+        return NO;
+
+    if (![[webView preferences] respectStandardStyleKeyEquivalents])
         return NO;
     
     if (![self _canEdit])
