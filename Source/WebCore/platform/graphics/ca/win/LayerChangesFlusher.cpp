@@ -80,9 +80,8 @@ LRESULT LayerChangesFlusher::hookFired(int code, WPARAM wParam, LPARAM lParam)
     ASSERT(m_hook);
 
     // Calling out to the hosts can cause m_hostsWithChangesToFlush to be modified, so we copy it
-    // into a Vector first. We have to hold a reference to them because otherwise they could be
-    // destroyed while we're calling out to them.
-    Vector<RefPtr<CACFLayerTreeHost> > hosts;
+    // into a Vector first.
+    Vector<CACFLayerTreeHost*> hosts;
     copyToVector(m_hostsWithChangesToFlush, hosts);
     m_hostsWithChangesToFlush.clear();
 

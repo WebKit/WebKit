@@ -1,3 +1,28 @@
+2011-03-31  Adam Roben  <aroben@apple.com>
+
+        Don't ref CACFLayerTreeHosts when telling them to flush layer changes
+
+        LayerChangesFlusher was reffing CACFLayerTreeHosts before calling out to them. This would
+        have protected us if calling out to one CACFLayerTreeHost could cause a different
+        CACFLayerTreeHost to be destroyed. But that isn't possible; each CACFLayerTreeHost is
+        associated with its own page, and flushing layer changes doesn't touch any other page. So it
+        isn't possible for a CACFLayerTreeHost to be deleted while another one is flushing layer
+        changes.
+
+        One benefit of this change is that it will make it easier to make LayerChangesFlusher
+        interact with a forthcoming abstract base class, rather than with CACFLayerTreeHost itself.
+
+        This should cause no change in behavior.
+
+        Fixes <http://webkit.org/b/57590> LayerChangesFlusher unnecessarily refs CACFLayerTreeHost
+        before calling out to it
+
+        Reviewed by Darin Adler.
+
+        * platform/graphics/ca/win/LayerChangesFlusher.cpp:
+        (WebCore::LayerChangesFlusher::hookFired): Just store bare pointers to the
+        CACFLayerTreeHosts.
+
 2011-03-31  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver Hunt.
