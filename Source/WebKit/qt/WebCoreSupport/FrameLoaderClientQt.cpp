@@ -805,7 +805,7 @@ void FrameLoaderClientQt::updateGlobalHistory()
     if (dumpHistoryCallbacks) {
         printf("WebView navigated to url \"%s\" with title \"%s\" with HTTP equivalent method \"%s\".  The navigation was %s and was %s%s.\n",
             qPrintable(drtDescriptionSuitableForTestResult(loader->urlForHistory())),
-            qPrintable(QString(loader->title())),
+            qPrintable(QString(loader->title().string())),
             qPrintable(QString(loader->request().httpMethod())),
             ((loader->substituteData().isValid() || (loader->response().httpStatusCode() >= 400)) ? "a failure" : "successful"),
             ((!loader->clientRedirectSourceForHistory().isEmpty()) ? "a client redirect from " : "not a client redirect"),
