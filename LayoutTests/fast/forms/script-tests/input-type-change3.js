@@ -17,6 +17,9 @@ function check(value, expected)
 
 // The type is not specified explicitly.  We can change it to "file".
 check("file", "file");
+// http://webkit.org/b/57343
+check("file", "file");
+check("FILE", "file");
 
 check("text", "text");
 check("TEXT", "text");  // input.type must return a lower case value according to DOM Level 2.

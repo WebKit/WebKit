@@ -435,21 +435,18 @@ void HTMLInputElement::setType(const String& type)
 
 void HTMLInputElement::updateType()
 {
-    const AtomicString& typeString = fastGetAttribute(typeAttr);
+    OwnPtr<InputType> newType = InputType::create(this, fastGetAttribute(typeAttr));
+    bool hadType = m_hasType;
+    m_hasType = true;
+    if (m_inputType->formControlType() == newType->formControlType())
+        return;
 
-    OwnPtr<InputType> newType = InputType::create(this, typeString);
-
-    if (m_hasType && !newType->canChangeFromAnotherType()) {
+    if (hadType && !newType->canChangeFromAnotherType()) {
         // Set the attribute back to the old value.
         // Useful in case we were called from inside parseMappedAttribute.
         setAttribute(typeAttr, type());
         return;
     }
-
-    m_hasType = true;
-
-    if (m_inputType->formControlType() == newType->formControlType())
-        return;
 
     checkedRadioButtons().removeButton(this);
 

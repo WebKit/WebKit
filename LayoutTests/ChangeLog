@@ -1,3 +1,13 @@
+2011-03-30  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r74895): Crash if input.type = 'file' twice
+        https://bugs.webkit.org/show_bug.cgi?id=57343
+
+        * fast/forms/input-type-change3-expected.txt:
+        * fast/forms/script-tests/input-type-change3.js: Add a new test.
+
 2011-03-30  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.
