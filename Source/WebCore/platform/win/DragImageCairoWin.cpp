@@ -43,12 +43,13 @@ typedef struct _cairo* CairoContextRef;
 
 namespace WebCore {
 
-void deallocContext(CairoContextRef target)
+void deallocContext(PlatformContextCairo* target)
 {
-    cairo_destroy(target);
+    if (target)
+        delete *target;
 }
 
-HBITMAP allocImage(HDC dc, IntSize size, CairoContextRef* targetRef)
+HBITMAP allocImage(HDC dc, IntSize size, PlatformContextCairo** targetRef)
 {
     BitmapInfo bmpInfo = BitmapInfo::create(size);
 
@@ -72,7 +73,7 @@ HBITMAP allocImage(HDC dc, IntSize size, CairoContextRef* targetRef)
         return 0;
     }
 
-    *targetRef = cairo_create (bitmapContext);
+    *targetRef = (PlatformGraphicsContext*)cairo_create (bitmapContext);
     cairo_surface_destroy (bitmapContext);
 
     // At this point, we have a Cairo surface that points to a Windows DIB.  The DIB interprets

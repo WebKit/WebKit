@@ -1,3 +1,13 @@
+2011-03-30  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction after r82496. (Part 2)
+
+        Revise DragImageCairoWin to address new PlatformGraphicsContext.
+
+        * platform/win/DragImageCairoWin.cpp:
+        (WebCore::deallocContext):
+        (WebCore::allocImage):
+
 2011-03-30  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Roben.
