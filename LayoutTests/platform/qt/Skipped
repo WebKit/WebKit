@@ -602,11 +602,9 @@ media/audio-delete-while-step-button-clicked.html
 media/audio-mpeg-supported.html
 media/audio-mpeg4-supported.html
 media/audio-no-installed-engines.html
-media/audio-play-event.html
 media/before-load-member-access.html
 media/broken-video.html
 media/media-can-play-mpeg-audio.html
-media/constructors.html
 media/controls-after-reload.html
 media/controls-css-overload.html
 media/controls-drag-timebar.html
@@ -639,8 +637,6 @@ media/video-controls-transformed.html
 media/video-controls-visible-audio-only.html
 media/video-controls-with-mutation-event-handler.html
 media/video-controls-zoomed.html
-media/video-currentTime.html
-media/video-currentTime-set2.html
 media/video-currentTime-set.html
 media/video-display-aspect-ratio.html
 media/video-display-none-crash.html
@@ -657,9 +653,7 @@ media/video-layer-crash.html
 media/video-load-networkState.html
 media/video-load-readyState.html
 media/video-loop.html
-media/video-muted.html
 media/video-no-audio.html
-media/video-no-autoplay.html
 media/video-pause-empty-events.html
 media/video-pause-immediately.html
 media/video-played-collapse.html
@@ -668,12 +662,8 @@ media/video-played-reset.html
 media/video-play-empty-events.html
 media/video-play-pause-events.html
 media/video-play-pause-exception.html
-media/video-poster.html
-media/video-poster-scale.html
-media/video-preload.html
 media/video-replaces-poster.html
 media/video-reverse-play-duration.html
-media/video-seekable.html
 media/video-seeking.html
 media/video-seek-no-src-exception.html
 media/video-seek-past-end-paused.html
