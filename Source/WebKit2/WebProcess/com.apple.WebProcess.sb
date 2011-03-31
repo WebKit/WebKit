@@ -48,9 +48,11 @@
 
     ;; FIXME: These should be removed when <rdar://problem/9217757> is fixed.
     (subpath (string-append (param "HOME_DIR") "/Library/Audio/Plug-Ins/Components"))
+    (subpath (string-append (param "HOME_DIR") "/Library/Preferences/QuickTime Preferences"))
     (subpath "/Library/Audio/Plug-Ins/Components")
     (subpath "/Library/Audio/Plug-Ins/HAL")
     (subpath "/Library/Video/Plug-Ins")
+    (subpath "/Library/QuickTime")
 
     ;; Extensions from UIProcess
     (extension)

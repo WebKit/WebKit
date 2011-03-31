@@ -1,5 +1,13 @@
 2011-03-31  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Add some more media related things to the sandbox profile.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
+2011-03-31  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Tabbed pages redraw unnecessarily when activated
