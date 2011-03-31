@@ -1688,11 +1688,9 @@ bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Node* dragTa
         return false;
 
     view->resetDeferredRepaintDelay();
-    IntPoint contentsPos = view->windowToContents(event.pos());
-
     RefPtr<MouseEvent> me = MouseEvent::create(eventType,
         true, true, m_frame->document()->defaultView(),
-        0, event.globalX(), event.globalY(), contentsPos.x(), contentsPos.y(),
+        0, event.globalX(), event.globalY(), event.x(), event.y(),
         event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(),
         0, 0, clipboard);
 

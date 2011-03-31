@@ -74,18 +74,43 @@ static int contentsY(AbstractView* abstractView)
     return frameView->scrollY() / frame->pageZoomFactor();
 }
 
-MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, PassRefPtr<AbstractView> viewArg,
-                                     int detail, int screenX, int screenY, int pageX, int pageY,
+MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, PassRefPtr<AbstractView> abstractView,
+                                     int detail, int screenX, int screenY, int windowX, int windowY,
                                      bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated)
-    : UIEventWithKeyState(eventType, canBubble, cancelable, viewArg, detail, ctrlKey, altKey, shiftKey, metaKey)
+    : UIEventWithKeyState(eventType, canBubble, cancelable, abstractView, detail, ctrlKey, altKey, shiftKey, metaKey)
     , m_screenX(screenX)
     , m_screenY(screenY)
-    , m_clientX(pageX - contentsX(view()))
-    , m_clientY(pageY - contentsY(view()))
-    , m_pageX(pageX)
-    , m_pageY(pageY)
+    , m_clientX(0)
+    , m_clientY(0)
+    , m_pageX(0)
+    , m_pageY(0)
     , m_isSimulated(isSimulated)
 {
+    IntPoint adjustedPageLocation;
+    IntPoint scrollPosition;
+
+    Frame* frame = view() ? view()->frame() : 0;
+    if (frame && !isSimulated) {
+        if (FrameView* frameView = frame->view()) {
+            scrollPosition = frameView->scrollPosition();
+            adjustedPageLocation = frameView->windowToContents(IntPoint(windowX, windowY));
+            float pageZoom = frame->pageZoomFactor();
+            if (pageZoom != 1.0f) {
+                // Adjust our pageX and pageY to account for the page zoom.
+                adjustedPageLocation.setX(lroundf(adjustedPageLocation.x() / pageZoom));
+                adjustedPageLocation.setY(lroundf(adjustedPageLocation.y() / pageZoom));
+                scrollPosition.setX(scrollPosition.x() / pageZoom);
+                scrollPosition.setY(scrollPosition.y() / pageZoom);
+            }
+        }
+    }
+
+    IntPoint clientLocation(adjustedPageLocation - scrollPosition);
+    m_clientX = clientLocation.x();
+    m_clientY = clientLocation.y();
+    m_pageX = adjustedPageLocation.x();
+    m_pageY = adjustedPageLocation.y();
+
     initCoordinates();
 }
 

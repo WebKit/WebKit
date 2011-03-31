@@ -46,7 +46,7 @@ class PlatformMouseEvent;
             return adoptRef(new MouseEvent(type, canBubble, cancelable, view, detail, screenX, screenY, pageX, pageY,
                 ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, clipboard, isSimulated));
         }
-        static PassRefPtr<MouseEvent> create(const AtomicString& eventType, PassRefPtr<AbstractView>, const PlatformMouseEvent&, const IntPoint&, int detail, PassRefPtr<Node> relatedTarget);
+        static PassRefPtr<MouseEvent> create(const AtomicString& eventType, PassRefPtr<AbstractView>, const PlatformMouseEvent&, int detail, PassRefPtr<Node> relatedTarget);
 
         virtual ~MouseEvent();
 

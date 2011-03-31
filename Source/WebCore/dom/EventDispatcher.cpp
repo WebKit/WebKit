@@ -137,26 +137,9 @@ void EventDispatcher::dispatchWheelEvent(Node* node, PlatformWheelEvent& event)
 
     EventDispatcher dispatcher(node);
 
-    if (!dispatcher.m_view)
-        return;
-
-    IntPoint position = dispatcher.m_view->windowToContents(event.pos());
-
-    int adjustedPageX = position.x();
-    int adjustedPageY = position.y();
-    if (Frame* frame = node->document()->frame()) {
-        float pageZoom = frame->pageZoomFactor();
-        if (pageZoom != 1.0f) {
-            adjustedPageX = lroundf(position.x() / pageZoom);
-            adjustedPageY = lroundf(position.y() / pageZoom);
-        }
-    }
-
     RefPtr<WheelEvent> wheelEvent = WheelEvent::create(event.wheelTicksX(), event.wheelTicksY(), event.deltaX(), event.deltaY(), granularity(event),
-        node->document()->defaultView(), event.globalX(), event.globalY(), adjustedPageX, adjustedPageY,
+        node->document()->defaultView(), event.globalX(), event.globalY(), event.x(), event.y(),
         event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey());
-
-    wheelEvent->setAbsoluteLocation(position);
 
     if (!dispatcher.dispatchEvent(wheelEvent) || wheelEvent->defaultHandled())
         event.accept();
@@ -326,22 +309,7 @@ bool EventDispatcher::dispatchMouseEvent(Node* node, const PlatformMouseEvent& e
     // Attempting to dispatch with a non-EventTarget relatedTarget causes the relatedTarget to be silently ignored.
     RefPtr<Node> relatedTarget = pullOutOfShadow(relatedTargetArg);
 
-    IntPoint contentsPosition;
-    if (FrameView* view = node->document()->view())
-        contentsPosition = view->windowToContents(event.pos());
-
-    IntPoint adjustedPagePosition = contentsPosition;
-    if (Frame* frame = node->document()->frame()) {
-        float pageZoom = frame->pageZoomFactor();
-        if (pageZoom != 1.0f) {
-            // Adjust our pageX and pageY to account for the page zoom.
-            adjustedPagePosition.setX(lroundf(contentsPosition.x() / pageZoom));
-            adjustedPagePosition.setY(lroundf(contentsPosition.y() / pageZoom));
-        }
-    }
-
-    RefPtr<MouseEvent> mouseEvent = MouseEvent::create(eventType, node->document()->defaultView(), event, adjustedPagePosition, detail, relatedTarget);
-    mouseEvent->setAbsoluteLocation(contentsPosition);
+    RefPtr<MouseEvent> mouseEvent = MouseEvent::create(eventType, node->document()->defaultView(), event, detail, relatedTarget);
 
     bool swallowEvent = false;
 
@@ -355,7 +323,7 @@ bool EventDispatcher::dispatchMouseEvent(Node* node, const PlatformMouseEvent& e
     // of the DOM specs, but is used for compatibility with the ondblclick="" attribute. This is treated
     // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
     if (eventType == eventNames().clickEvent && detail == 2) {
-        RefPtr<Event> doubleClickEvent = MouseEvent::create(eventNames().dblclickEvent, node->document()->defaultView(), event, adjustedPagePosition, detail, relatedTarget);
+        RefPtr<Event> doubleClickEvent = MouseEvent::create(eventNames().dblclickEvent, node->document()->defaultView(), event, detail, relatedTarget);
         if (defaultHandled)
             doubleClickEvent->setDefaultHandled();
         dispatcher.dispatchEvent(doubleClickEvent);
