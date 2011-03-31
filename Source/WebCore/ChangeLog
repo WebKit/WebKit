@@ -1,3 +1,65 @@
+2011-03-31  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        <title> should support dir attribute
+        https://bugs.webkit.org/show_bug.cgi?id=50961
+
+        Introduce a new StringWithDirection object that carries a String along
+        with the TextDirection associated with the String.  Use this object for
+        document titles used within WebCore, because in HTML the direction of
+        a title can be set with the 'dir' attribute.
+
+        Put FIXMEs at the WebKit level to expose the new direction information
+        to clients.
+
+        No behavioral change intended, so no new tests.  A follow-up will expose
+        the title direction and hopefully can be accompanied by tests that
+        verify it is correct.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::updateTitle):
+        (WebCore::Document::setTitle):
+        (WebCore::Document::removeTitle):
+        * dom/Document.h:
+        (WebCore::Document::title):
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::HTMLTitleElement):
+        (WebCore::HTMLTitleElement::childrenChanged):
+        (WebCore::HTMLTitleElement::text):
+        (WebCore::HTMLTitleElement::textWithDirection):
+        * html/HTMLTitleElement.h:
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setTitle):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::title):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebCore::EmptyFrameLoaderClient::setTitle):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+        (WebCore::FrameLoader::commitProvisionalLoad):
+        (WebCore::FrameLoader::setTitle):
+        * loader/FrameLoader.h:
+        * loader/FrameLoaderClient.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::updateForBackForwardNavigation):
+        (WebCore::HistoryController::updateForReload):
+        (WebCore::HistoryController::updateForRedirectWithLockedBackForwardList):
+        (WebCore::HistoryController::updateForClientRedirect):
+        (WebCore::HistoryController::updateForCommit):
+        (WebCore::HistoryController::setCurrentItemTitle):
+        (WebCore::HistoryController::initializeItem):
+        * loader/HistoryController.h:
+        * platform/text/StringWithDirection.h: Added.
+        (WebCore::StringWithDirection::StringWithDirection):
+        (WebCore::StringWithDirection::operator==):
+        (WebCore::StringWithDirection::operator!=):
+        * svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::insertedIntoDocument):
+        (WebCore::SVGTitleElement::childrenChanged):
+
 2011-03-31  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

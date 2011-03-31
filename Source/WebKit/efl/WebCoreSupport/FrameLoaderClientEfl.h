@@ -102,7 +102,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void dispatchWillClose();
     virtual void dispatchDidReceiveIcon();
     virtual void dispatchDidStartProvisionalLoad();
-    virtual void dispatchDidReceiveTitle(const String&);
+    virtual void dispatchDidReceiveTitle(const StringWithDirection&);
     virtual void dispatchDidChangeIcons();
     virtual void dispatchDidCommitLoad();
     virtual void dispatchDidFailProvisionalLoad(const ResourceError&);
@@ -193,7 +193,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void prepareForDataSourceReplacement();
 
     virtual WTF::PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&);
-    virtual void setTitle(const String& title, const KURL&);
+    virtual void setTitle(const StringWithDirection& title, const KURL&);
 
     virtual String userAgent(const KURL&);
 

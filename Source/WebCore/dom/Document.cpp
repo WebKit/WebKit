@@ -389,8 +389,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_containsValidityStyleRules(false)
     , m_updateFocusAppearanceRestoresSelection(false)
     , m_ignoreDestructiveWriteCount(0)
-    , m_title("")
-    , m_rawTitle("")
     , m_titleSetExplicitly(false)
     , m_updateFocusAppearanceTimer(this, &Document::updateFocusAppearanceTimerFired)
     , m_startTime(currentTime())
@@ -1271,8 +1269,9 @@ Element* Document::getElementByAccessKey(const String& key) const
  *  2. Trim leading and trailing spaces
  *  3. Collapse internal whitespace.
  */
-static inline String canonicalizedTitle(Document* document, const String& title)
+static inline StringWithDirection canonicalizedTitle(Document* document, const StringWithDirection& titleWithDirection)
 {
+    const String& title = titleWithDirection.string();
     const UChar* characters = title.characters();
     unsigned length = title.length();
     unsigned i;
@@ -1288,7 +1287,7 @@ static inline String canonicalizedTitle(Document* document, const String& title)
     }
 
     if (i == length)
-        return "";
+        return StringWithDirection();
 
     // Replace control characters with spaces, and backslashes with currency symbols, and collapse whitespace.
     bool previousCharWasWS = false;
@@ -1313,17 +1312,17 @@ static inline String canonicalizedTitle(Document* document, const String& title)
     }
 
     if (!builderIndex && buffer[builderIndex] == ' ')
-        return "";
+        return StringWithDirection();
 
     buffer.shrink(builderIndex + 1);
 
     // Replace the backslashes with currency symbols if the encoding requires it.
     document->displayBufferModifiedByEncoding(buffer.characters(), buffer.length());
     
-    return String::adopt(buffer);
+    return StringWithDirection(String::adopt(buffer), titleWithDirection.direction());
 }
 
-void Document::updateTitle(const String& title)
+void Document::updateTitle(const StringWithDirection& title)
 {
     if (m_rawTitle == title)
         return;
@@ -1349,16 +1348,17 @@ void Document::setTitle(const String& title)
         }
     }
 
-    updateTitle(title);
+    // The DOM API has no method of specifying direction, so assume LTR.
+    updateTitle(StringWithDirection(title, LTR));
 
     if (m_titleElement) {
         ASSERT(m_titleElement->hasTagName(titleTag));
         if (m_titleElement->hasTagName(titleTag))
-            static_cast<HTMLTitleElement*>(m_titleElement.get())->setText(m_title);
+            static_cast<HTMLTitleElement*>(m_titleElement.get())->setText(title);
     }
 }
 
-void Document::setTitleElement(const String& title, Element* titleElement)
+void Document::setTitleElement(const StringWithDirection& title, Element* titleElement)
 {
     if (titleElement != m_titleElement) {
         if (m_titleElement || m_titleSetExplicitly)
@@ -1383,13 +1383,13 @@ void Document::removeTitle(Element* titleElement)
         for (Node* e = headElement->firstChild(); e; e = e->nextSibling())
             if (e->hasTagName(titleTag)) {
                 HTMLTitleElement* titleElement = static_cast<HTMLTitleElement*>(e);
-                setTitleElement(titleElement->text(), titleElement);
+                setTitleElement(titleElement->textWithDirection(), titleElement);
                 break;
             }
     }
 
     if (!m_titleElement)
-        updateTitle("");
+        updateTitle(StringWithDirection());
 }
 
 String Document::nodeName() const

@@ -266,7 +266,7 @@ public:
     virtual void dispatchWillClose() { }
     virtual void dispatchDidReceiveIcon() { }
     virtual void dispatchDidStartProvisionalLoad() { }
-    virtual void dispatchDidReceiveTitle(const String&) { }
+    virtual void dispatchDidReceiveTitle(const StringWithDirection&) { }
     virtual void dispatchDidChangeIcons() { }
     virtual void dispatchDidCommitLoad() { }
     virtual void dispatchDidFailProvisionalLoad(const ResourceError&) { }
@@ -334,7 +334,7 @@ public:
     virtual void prepareForDataSourceReplacement() { }
 
     virtual PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData) { return DocumentLoader::create(request, substituteData); }
-    virtual void setTitle(const String&, const KURL&) { }
+    virtual void setTitle(const StringWithDirection&, const KURL&) { }
 
     virtual String userAgent(const KURL&) { return ""; }
 

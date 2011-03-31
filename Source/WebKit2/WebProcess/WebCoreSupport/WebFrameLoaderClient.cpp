@@ -403,7 +403,7 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     webPage->send(Messages::WebPageProxy::DidStartProvisionalLoadForFrame(m_frame->frameID(), url, unreachableURL, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)
+void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& title)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
@@ -412,10 +412,11 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)
     RefPtr<APIObject> userData;
 
     // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didReceiveTitleForFrame(webPage, title, m_frame, userData);
+    // FIXME: use direction of title.
+    webPage->injectedBundleLoaderClient().didReceiveTitleForFrame(webPage, title.string(), m_frame, userData);
 
     // Notify the UIProcess.
-    webPage->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), title, InjectedBundleUserMessageEncoder(userData.get())));
+    webPage->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), title.string(), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDidChangeIcons()
@@ -846,7 +847,8 @@ void WebFrameLoaderClient::updateGlobalHistory()
 
     WebNavigationDataStore data;
     data.url = loader->urlForHistory().string();
-    data.title = loader->title();
+    // FIXME: use direction of title.
+    data.title = loader->title().string();
 
     WebProcess::shared().connection()->send(Messages::WebContext::DidNavigateWithNavigationData(webPage->pageID(), data, m_frame->frameID()), 0);
 }
@@ -1061,14 +1063,15 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const Reso
     return DocumentLoader::create(request, data);
 }
 
-void WebFrameLoaderClient::setTitle(const String& title, const KURL& url)
+void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const KURL& url)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return;
 
+    // FIXME: use direction of title.
     WebProcess::shared().connection()->send(Messages::WebContext::DidUpdateHistoryTitle(webPage->pageID(),
-        title, url.string(), m_frame->frameID()), 0);
+        title.string(), url.string(), m_frame->frameID()), 0);
 }
 
 String WebFrameLoaderClient::userAgent(const KURL&)

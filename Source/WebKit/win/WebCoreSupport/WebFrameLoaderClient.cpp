@@ -364,12 +364,13 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
         frameLoadDelegate->didStartProvisionalLoadForFrame(webView, m_webFrame);
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)
+void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& title)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebFrameLoadDelegate> frameLoadDelegate;
     if (SUCCEEDED(webView->frameLoadDelegate(&frameLoadDelegate)))
-        frameLoadDelegate->didReceiveTitle(webView, BString(title), m_webFrame);
+        // FIXME: use direction of title.
+        frameLoadDelegate->didReceiveTitle(webView, BString(title.string()), m_webFrame);
 }
 
 void WebFrameLoaderClient::dispatchDidChangeIcons()
@@ -542,7 +543,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
         COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(loader->originalRequestCopy()));
         
         COMPtr<IWebNavigationData> navigationData(AdoptCOM, WebNavigationData::createInstance(
-            loader->urlForHistory(), loader->title(), urlRequest.get(), urlResponse.get(), loader->substituteData().isValid(), loader->clientRedirectSourceForHistory()));
+            loader->urlForHistory(), loader->title().string(), urlRequest.get(), urlResponse.get(), loader->substituteData().isValid(), loader->clientRedirectSourceForHistory()));
 
         historyDelegate->didNavigateWithNavigationData(webView, navigationData.get(), m_webFrame);
         return;
@@ -552,7 +553,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
     if (!history)
         return;
 
-    history->visitedURL(loader->urlForHistory(), loader->title(), loader->originalRequestCopy().httpMethod(), loader->urlForHistoryReflectsFailure(), !loader->clientRedirectSourceForHistory());
+    history->visitedURL(loader->urlForHistory(), loader->title().string(), loader->originalRequestCopy().httpMethod(), loader->urlForHistoryReflectsFailure(), !loader->clientRedirectSourceForHistory());
 }
 
 void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
@@ -672,13 +673,13 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const Reso
     return loader.release();
 }
 
-void WebFrameLoaderClient::setTitle(const String& title, const KURL& url)
+void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const KURL& url)
 {
     WebView* webView = m_webFrame->webView();
     COMPtr<IWebHistoryDelegate> historyDelegate;
     webView->historyDelegate(&historyDelegate);
     if (historyDelegate) {
-        BString titleBSTR(title);
+        BString titleBSTR(title.string());
         BString urlBSTR(url.string());
         historyDelegate->updateHistoryTitle(webView, titleBSTR, urlBSTR);
         return;
@@ -704,7 +705,7 @@ void WebFrameLoaderClient::setTitle(const String& title, const KURL& url)
     if (!itemPrivate)
         return;
 
-    itemPrivate->setTitle(BString(title));
+    itemPrivate->setTitle(BString(title.string()));
 }
 
 void WebFrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)

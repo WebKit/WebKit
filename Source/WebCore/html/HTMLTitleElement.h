@@ -23,6 +23,7 @@
 #define HTMLTitleElement_h
 
 #include "HTMLElement.h"
+#include "StringWithDirection.h"
 
 namespace WebCore {
 
@@ -33,6 +34,8 @@ public:
     String text() const;
     void setText(const String&);
 
+    StringWithDirection textWithDirection();
+
 private:
     HTMLTitleElement(const QualifiedName&, Document*);
 
@@ -40,7 +43,7 @@ private:
     virtual void removedFromDocument();
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
-    String m_title;
+    StringWithDirection m_title;
 };
 
 } //namespace

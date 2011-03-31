@@ -949,14 +949,15 @@ void FrameLoaderClient::dispatchDidStartProvisionalLoad()
     notifyStatus(m_frame, WEBKIT_LOAD_PROVISIONAL);
 }
 
-void FrameLoaderClient::dispatchDidReceiveTitle(const String& title)
+void FrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& title)
 {
     if (m_loadingErrorPage)
         return;
 
     WebKitWebFramePrivate* priv = m_frame->priv;
     g_free(priv->title);
-    priv->title = g_strdup(title.utf8().data());
+    // FIXME: use direction of title.
+    priv->title = g_strdup(title.string().utf8().data());
 
     g_signal_emit_by_name(m_frame, "title-changed", priv->title);
     g_object_notify(G_OBJECT(m_frame), "title");
@@ -1119,11 +1120,12 @@ void FrameLoaderClient::prepareForDataSourceReplacement()
     notImplemented();
 }
 
-void FrameLoaderClient::setTitle(const String& title, const KURL& url)
+void FrameLoaderClient::setTitle(const StringWithDirection& title, const KURL& url)
 {
     WebKitWebFramePrivate* frameData = m_frame->priv;
     g_free(frameData->title);
-    frameData->title = g_strdup(title.utf8().data());
+    // FIXME: use direction of title.
+    frameData->title = g_strdup(title.string().utf8().data());
 }
 
 void FrameLoaderClient::dispatchDidReceiveContentLength(WebCore::DocumentLoader*, unsigned long identifier, int lengthReceived)

@@ -265,7 +265,7 @@ void HistoryController::updateForBackForwardNavigation()
 {
 #if !LOG_DISABLED
     if (m_frame->loader()->documentLoader())
-        LOG(History, "WebCoreHistory: Updating History for back/forward navigation in frame %s", m_frame->loader()->documentLoader()->title().utf8().data());
+        LOG(History, "WebCoreHistory: Updating History for back/forward navigation in frame %s", m_frame->loader()->documentLoader()->title().string().utf8().data());
 #endif
 
     // Must grab the current scroll position before disturbing it
@@ -281,7 +281,7 @@ void HistoryController::updateForReload()
 {
 #if !LOG_DISABLED
     if (m_frame->loader()->documentLoader())
-        LOG(History, "WebCoreHistory: Updating History for reload in frame %s", m_frame->loader()->documentLoader()->title().utf8().data());
+        LOG(History, "WebCoreHistory: Updating History for reload in frame %s", m_frame->loader()->documentLoader()->title().string().utf8().data());
 #endif
 
     if (m_currentItem) {
@@ -343,7 +343,7 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
 {
 #if !LOG_DISABLED
     if (m_frame->loader()->documentLoader())
-        LOG(History, "WebCoreHistory: Updating History for redirect load in frame %s", m_frame->loader()->documentLoader()->title().utf8().data());
+        LOG(History, "WebCoreHistory: Updating History for redirect load in frame %s", m_frame->loader()->documentLoader()->title().string().utf8().data());
 #endif
     
     Settings* settings = m_frame->settings();
@@ -385,7 +385,7 @@ void HistoryController::updateForClientRedirect()
 {
 #if !LOG_DISABLED
     if (m_frame->loader()->documentLoader())
-        LOG(History, "WebCoreHistory: Updating History for client redirect in frame %s", m_frame->loader()->documentLoader()->title().utf8().data());
+        LOG(History, "WebCoreHistory: Updating History for client redirect in frame %s", m_frame->loader()->documentLoader()->title().string().utf8().data());
 #endif
 
     // Clear out form data so we don't try to restore it into the incoming page.  Must happen after
@@ -410,7 +410,7 @@ void HistoryController::updateForCommit()
     FrameLoader* frameLoader = m_frame->loader();
 #if !LOG_DISABLED
     if (frameLoader->documentLoader())
-        LOG(History, "WebCoreHistory: Updating History for commit in frame %s", frameLoader->documentLoader()->title().utf8().data());
+        LOG(History, "WebCoreHistory: Updating History for commit in frame %s", frameLoader->documentLoader()->title().string().utf8().data());
 #endif
     FrameLoadType type = frameLoader->loadType();
     if (isBackForwardLoadType(type)
@@ -526,10 +526,11 @@ void HistoryController::setCurrentItem(HistoryItem* item)
     m_currentItem = item;
 }
 
-void HistoryController::setCurrentItemTitle(const String& title)
+void HistoryController::setCurrentItemTitle(const StringWithDirection& title)
 {
     if (m_currentItem)
-        m_currentItem->setTitle(title);
+        // FIXME: make use of title.direction() as well.
+        m_currentItem->setTitle(title.string());
 }
 
 bool HistoryController::currentItemShouldBeReplaced() const
@@ -576,12 +577,13 @@ void HistoryController::initializeItem(HistoryItem* item)
     
     Frame* parentFrame = m_frame->tree()->parent();
     String parent = parentFrame ? parentFrame->tree()->uniqueName() : "";
-    String title = documentLoader->title();
+    StringWithDirection title = documentLoader->title();
 
     item->setURL(url);
     item->setTarget(m_frame->tree()->uniqueName());
     item->setParent(parent);
-    item->setTitle(title);
+    // FIXME: should store title directionality in history as well.
+    item->setTitle(title.string());
     item->setOriginalURLString(originalURL.string());
 
     if (!unreachableURL.isEmpty() || documentLoader->response().httpStatusCode() >= 400)

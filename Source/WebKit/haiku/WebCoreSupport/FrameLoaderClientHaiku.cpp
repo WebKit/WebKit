@@ -237,13 +237,13 @@ void FrameLoaderClientHaiku::dispatchDidStartProvisionalLoad()
     }
 }
 
-void FrameLoaderClientHaiku::dispatchDidReceiveTitle(const String& title)
+void FrameLoaderClientHaiku::dispatchDidReceiveTitle(const StringWithTitle& title)
 {
     if (m_webView) {
-        m_webView->SetPageTitle(title);
-
+        // FIXME: use direction of title.
+        m_webView->SetPageTitle(title.m_string());
         BMessage message(TITLE_CHANGED);
-        message.AddString("title", title);
+        message.AddString("title", title.string());
         m_messenger->SendMessage(&message);
     }
 }

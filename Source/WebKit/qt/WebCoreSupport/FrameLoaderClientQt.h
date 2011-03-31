@@ -110,7 +110,7 @@ public:
     virtual void dispatchWillClose();
     virtual void dispatchDidReceiveIcon();
     virtual void dispatchDidStartProvisionalLoad();
-    virtual void dispatchDidReceiveTitle(const String& title);
+    virtual void dispatchDidReceiveTitle(const StringWithDirection&);
     virtual void dispatchDidChangeIcons();
     virtual void dispatchDidCommitLoad();
     virtual void dispatchDidFailProvisionalLoad(const ResourceError&);
@@ -186,7 +186,7 @@ public:
     virtual void prepareForDataSourceReplacement();
 
     virtual WTF::PassRefPtr<WebCore::DocumentLoader> createDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
-    virtual void setTitle(const String& title, const KURL&);
+    virtual void setTitle(const StringWithDirection&, const KURL&);
 
     virtual String userAgent(const WebCore::KURL&);
 

@@ -576,9 +576,10 @@ void FrameLoaderClientEfl::dispatchDidStartProvisionalLoad()
         ewk_view_load_provisional(m_view);
 }
 
-void FrameLoaderClientEfl::dispatchDidReceiveTitle(const String& title)
+void FrameLoaderClientEfl::dispatchDidReceiveTitle(const StringWithDirection& title)
 {
-    CString cs = title.utf8();
+    // FIXME: use direction of title.
+    CString cs = title.string().utf8();
     ewk_frame_title_set(m_frame, cs.data());
 
     if (ewk_view_frame_main_get(m_view) != m_frame)
@@ -709,7 +710,7 @@ void FrameLoaderClientEfl::prepareForDataSourceReplacement()
     notImplemented();
 }
 
-void FrameLoaderClientEfl::setTitle(const String& title, const KURL& url)
+void FrameLoaderClientEfl::setTitle(const StringWithDirection& title, const KURL& url)
 {
     // no need for, dispatchDidReceiveTitle is the right callback
 }

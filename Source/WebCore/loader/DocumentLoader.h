@@ -36,6 +36,7 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "StringWithDirection.h"
 #include "SubstituteData.h"
 #include "Timer.h"
 #include <wtf/HashSet.h>
@@ -121,7 +122,7 @@ namespace WebCore {
         bool wasOnloadHandled() { return m_wasOnloadHandled; }
         bool isLoadingInAPISense() const;
         void setPrimaryLoadComplete(bool);
-        void setTitle(const String&);
+        void setTitle(const StringWithDirection&);
         void setIconURL(const String&);
         const String& overrideEncoding() const { return m_overrideEncoding; }
 
@@ -168,7 +169,7 @@ namespace WebCore {
         const ResourceRequest& lastCheckedRequest()  { return m_lastCheckedRequest; }
 
         void stopRecordingResponses();
-        const String& title() const { return m_pageTitle; }
+        const StringWithDirection& title() const { return m_pageTitle; }
         const String& iconURL() const { return m_pageIconURL; }
 
         KURL urlForHistory() const;
@@ -298,7 +299,7 @@ namespace WebCore {
         bool m_isClientRedirect;
         bool m_wasOnloadHandled;
 
-        String m_pageTitle;
+        StringWithDirection m_pageTitle;
         String m_pageIconURL;
 
         String m_overrideEncoding;

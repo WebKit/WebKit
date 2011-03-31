@@ -649,7 +649,7 @@ void DocumentLoader::stopRecordingResponses()
     m_stopRecordingResponses = true;
 }
 
-void DocumentLoader::setTitle(const String& title)
+void DocumentLoader::setTitle(const StringWithDirection& title)
 {
     if (title.isEmpty())
         return;

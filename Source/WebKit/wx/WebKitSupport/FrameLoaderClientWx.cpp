@@ -295,12 +295,13 @@ void FrameLoaderClientWx::dispatchDidStartProvisionalLoad()
 }
 
 
-void FrameLoaderClientWx::dispatchDidReceiveTitle(const String& title)
+void FrameLoaderClientWx::dispatchDidReceiveTitle(const StringWithDirection& title)
 {
     if (m_webView) {
-        m_webView->SetPageTitle(title);
+        // FIXME: use direction of title.
+        m_webView->SetPageTitle(title.string());
         wxWebViewReceivedTitleEvent wkEvent(m_webView);
-        wkEvent.SetTitle(title);
+        wkEvent.SetTitle(title.string());
         m_webView->GetEventHandler()->ProcessEvent(wkEvent);
     }
 }
@@ -525,7 +526,7 @@ void FrameLoaderClientWx::prepareForDataSourceReplacement()
 }
 
 
-void FrameLoaderClientWx::setTitle(const String& title, const KURL&)
+void FrameLoaderClientWx::setTitle(const StringWithDirection& title, const KURL&)
 {
     notImplemented();
 }

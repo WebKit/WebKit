@@ -624,12 +624,13 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
         CallFrameLoadDelegate(implementations->didStartProvisionalLoadForFrameFunc, webView, @selector(webView:didStartProvisionalLoadForFrame:), m_webFrame.get());
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)
+void WebFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& title)
 {
     WebView *webView = getWebView(m_webFrame.get());   
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
     if (implementations->didReceiveTitleForFrameFunc)
-        CallFrameLoadDelegate(implementations->didReceiveTitleForFrameFunc, webView, @selector(webView:didReceiveTitle:forFrame:), (NSString *)title, m_webFrame.get());
+        // FIXME: use direction of title.
+        CallFrameLoadDelegate(implementations->didReceiveTitleForFrameFunc, webView, @selector(webView:didReceiveTitle:forFrame:), (NSString *)title.string(), m_webFrame.get());
 }
 
 void WebFrameLoaderClient::dispatchDidChangeIcons()
@@ -893,7 +894,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
         WebHistoryDelegateImplementationCache* implementations = WebViewGetHistoryDelegateImplementations(view);
         if (implementations->navigatedFunc) {
             WebNavigationData *data = [[WebNavigationData alloc] initWithURLString:loader->urlForHistory()
-                                                                             title:loader->title()
+                                                                             title:loader->title().string()
                                                                    originalRequest:loader->originalRequestCopy().nsURLRequest()
                                                                           response:loader->response().nsURLResponse()
                                                                  hasSubstituteData:loader->substituteData().isValid()
@@ -907,7 +908,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
     }
 
     [[WebHistory optionalSharedHistory] _visitedURL:loader->urlForHistory() 
-                                          withTitle:loader->title()
+                                          withTitle:loader->title().string()
                                              method:loader->originalRequestCopy().httpMethod()
                                          wasFailure:loader->urlForHistoryReflectsFailure()
                                  increaseVisitCount:!loader->clientRedirectSourceForHistory()]; // Do not increase visit count due to navigations that were not initiated by the user directly, avoiding growth from programmatic reloads.
@@ -1179,7 +1180,7 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const Reso
     return loader.release();
 }
 
-void WebFrameLoaderClient::setTitle(const String& title, const KURL& url)
+void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const KURL& url)
 {
     WebView* view = getWebView(m_webFrame.get());
     
@@ -1188,7 +1189,8 @@ void WebFrameLoaderClient::setTitle(const String& title, const KURL& url)
         if (!implementations->setTitleFunc)
             return;
             
-        CallHistoryDelegate(implementations->setTitleFunc, view, @selector(webView:updateHistoryTitle:forURL:), (NSString *)title, (NSString *)url);
+        // FIXME: use direction of title.
+        CallHistoryDelegate(implementations->setTitleFunc, view, @selector(webView:updateHistoryTitle:forURL:), (NSString *)title.string(), (NSString *)url);
         return;
     }
     
@@ -1196,7 +1198,7 @@ void WebFrameLoaderClient::setTitle(const String& title, const KURL& url)
     nsURL = [nsURL _webkit_canonicalize];
     if(!nsURL)
         return;
-    NSString *titleNSString = title;
+    NSString *titleNSString = title.string();
        
     [[[WebHistory optionalSharedHistory] itemForURL:nsURL] setTitle:titleNSString];
 }
@@ -1285,7 +1287,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
         // like the ones that Safari uses for bookmarks it is the only way the DocumentLoader
         // will get the proper title.
         if (DocumentLoader* documentLoader = [dataSource _documentLoader])
-            documentLoader->setTitle([dataSource pageTitle]);
+            documentLoader->setTitle(StringWithDirection([dataSource pageTitle], LTR));
     }
 
     if (HTMLFrameOwnerElement* owner = coreFrame->ownerElement())

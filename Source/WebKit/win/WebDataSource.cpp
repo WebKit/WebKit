@@ -246,7 +246,7 @@ HRESULT STDMETHODCALLTYPE WebDataSource::isLoading(
 HRESULT STDMETHODCALLTYPE WebDataSource::pageTitle( 
     /* [retval][out] */ BSTR* title)
 {
-    *title = BString(m_loader->title()).release();
+    *title = BString(m_loader->title().string()).release();
     return S_OK;
 }
 

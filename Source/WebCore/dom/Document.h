@@ -37,6 +37,7 @@
 #include "DocumentTiming.h"
 #include "QualifiedName.h"
 #include "ScriptExecutionContext.h"
+#include "StringWithDirection.h"
 #include "Timer.h"
 #include "ViewportArguments.h"
 #include <wtf/FixedArray.h>
@@ -811,9 +812,11 @@ public:
     // Returns 0 if this is the top level document.
     HTMLFrameOwnerElement* ownerElement() const;
 
-    String title() const { return m_title; }
+    // Used by DOM bindings; no direction known.
+    String title() const { return m_title.string(); }
     void setTitle(const String&);
-    void setTitleElement(const String& title, Element* titleElement);
+
+    void setTitleElement(const StringWithDirection&, Element* titleElement);
     void removeTitle(Element* titleElement);
 
     String cookie(ExceptionCode&) const;
@@ -1158,7 +1161,7 @@ private:
 
     String encoding() const;
 
-    void updateTitle(const String& title);
+    void updateTitle(const StringWithDirection&);
     void updateFocusAppearanceTimerFired(Timer<Document>*);
     void updateBaseURL();
 
@@ -1295,8 +1298,8 @@ private:
     // http://www.whatwg.org/specs/web-apps/current-work/#ignore-destructive-writes-counter
     unsigned m_ignoreDestructiveWriteCount;
 
-    String m_title;
-    String m_rawTitle;
+    StringWithDirection m_title;
+    StringWithDirection m_rawTitle;
     bool m_titleSetExplicitly;
     RefPtr<Element> m_titleElement;
 

@@ -447,15 +447,16 @@ void FrameLoaderClientQt::dispatchDidStartProvisionalLoad()
 }
 
 
-void FrameLoaderClientQt::dispatchDidReceiveTitle(const String& title)
+void FrameLoaderClientQt::dispatchDidReceiveTitle(const StringWithDirection& title)
 {
+    // FIXME: use direction of title.
     if (dumpFrameLoaderCallbacks)
-        printf("%s - didReceiveTitle: %s\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)), qPrintable(QString(title)));
+        printf("%s - didReceiveTitle: %s\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)), qPrintable(QString(title.string())));
 
     if (!m_webFrame)
         return;
 
-    emit titleChanged(title);
+    emit titleChanged(title.string());
 }
 
 
@@ -709,16 +710,17 @@ void FrameLoaderClientQt::prepareForDataSourceReplacement()
 {
 }
 
-void FrameLoaderClientQt::setTitle(const String& title, const KURL& url)
+void FrameLoaderClientQt::setTitle(const StringWithDirection& title, const KURL& url)
 {
     // Used by Apple WebKit to update the title of an existing history item.
     // QtWebKit doesn't accomodate this on history items. If it ever does,
     // it should be privateBrowsing-aware.For now, we are just passing
     // globalhistory layout tests.
+    // FIXME: use direction of title.
     if (dumpHistoryCallbacks) {
         printf("WebView updated the title for history URL \"%s\" to \"%s\".\n",
             qPrintable(drtDescriptionSuitableForTestResult(url)),
-            qPrintable(QString(title)));
+            qPrintable(QString(title.string())));
     }
 }
 

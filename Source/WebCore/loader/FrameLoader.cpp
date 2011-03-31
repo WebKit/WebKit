@@ -610,7 +610,7 @@ void FrameLoader::receivedFirstData()
     dispatchDidClearWindowObjectsInAllWorlds();
     
     if (m_documentLoader) {
-        String ptitle = m_documentLoader->title();
+        StringWithDirection ptitle = m_documentLoader->title();
         // If we have a title let the WebView know about it.
         if (!ptitle.isNull())
             m_client->dispatchDidReceiveTitle(ptitle);
@@ -1924,9 +1924,9 @@ void FrameLoader::commitProvisionalLoad()
         dispatchDidCommitLoad();
 
         // If we have a title let the WebView know about it. 
-        String title = m_documentLoader->title();
-        if (!title.isNull()) 
-            m_client->dispatchDidReceiveTitle(title);         
+        StringWithDirection title = m_documentLoader->title();
+        if (!title.isNull())
+            m_client->dispatchDidReceiveTitle(title);
 
         checkCompleted();
     } else {        
@@ -3375,7 +3375,7 @@ bool FrameLoader::canAuthenticateAgainstProtectionSpace(ResourceLoader* loader, 
 }
 #endif
 
-void FrameLoader::setTitle(const String& title)
+void FrameLoader::setTitle(const StringWithDirection& title)
 {
     documentLoader()->setTitle(title);
 }

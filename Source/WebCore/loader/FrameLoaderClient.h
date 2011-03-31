@@ -84,6 +84,7 @@ namespace WebCore {
     class ResourceResponse;
     class SecurityOrigin;
     class SharedBuffer;
+    class StringWithDirection;
     class SubstituteData;
     class Widget;
 
@@ -139,7 +140,7 @@ namespace WebCore {
         virtual void dispatchWillClose() = 0;
         virtual void dispatchDidReceiveIcon() = 0;
         virtual void dispatchDidStartProvisionalLoad() = 0;
-        virtual void dispatchDidReceiveTitle(const String& title) = 0;
+        virtual void dispatchDidReceiveTitle(const StringWithDirection&) = 0;
         virtual void dispatchDidChangeIcons() = 0;
         virtual void dispatchDidCommitLoad() = 0;
         virtual void dispatchDidFailProvisionalLoad(const ResourceError&) = 0;
@@ -227,7 +228,7 @@ namespace WebCore {
         virtual void prepareForDataSourceReplacement() = 0;
 
         virtual PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest&, const SubstituteData&) = 0;
-        virtual void setTitle(const String& title, const KURL&) = 0;
+        virtual void setTitle(const StringWithDirection&, const KURL&) = 0;
 
         virtual String userAgent(const KURL&) = 0;
         

@@ -4844,6 +4844,7 @@
             'platform/text/RegularExpression.cpp',
             'platform/text/SegmentedString.cpp',
             'platform/text/String.cpp',
+            'platform/text/StringWithDirection.h',
             'platform/text/SuffixTree.h',
             'platform/text/TextBoundaries.cpp',
             'platform/text/TextBreakIteratorICU.cpp',

@@ -40,7 +40,8 @@ void SVGTitleElement::insertedIntoDocument()
 {
     SVGStyledElement::insertedIntoDocument();
     if (firstChild())
-        document()->setTitleElement(textContent(), this);
+        // FIXME: does SVG have a title text direction?
+        document()->setTitleElement(StringWithDirection(textContent(), LTR), this);
 }
 
 void SVGTitleElement::removedFromDocument()
@@ -53,7 +54,8 @@ void SVGTitleElement::childrenChanged(bool changedByParser, Node* beforeChange, 
 {
     SVGElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     if (inDocument())
-        document()->setTitleElement(textContent(), this);
+        // FIXME: does SVG have title text direction?
+        document()->setTitleElement(StringWithDirection(textContent(), LTR), this);
 }
 
 AttributeToPropertyTypeMap& SVGTitleElement::attributeToPropertyTypeMap()

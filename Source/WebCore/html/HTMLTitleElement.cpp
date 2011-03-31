@@ -25,6 +25,7 @@
 
 #include "Document.h"
 #include "HTMLNames.h"
+#include "RenderStyle.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -33,7 +34,6 @@ using namespace HTMLNames;
 
 inline HTMLTitleElement::HTMLTitleElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
-    , m_title("")
 {
     ASSERT(hasTagName(titleTag));
 }
@@ -57,7 +57,7 @@ void HTMLTitleElement::removedFromDocument()
 
 void HTMLTitleElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    m_title = text();
+    m_title = textWithDirection();
     if (inDocument())
         document()->setTitleElement(m_title, this);
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
@@ -71,8 +71,18 @@ String HTMLTitleElement::text() const
         if (n->isTextNode())
             val += static_cast<Text*>(n)->data();
     }
-    
+
     return val;
+}
+
+StringWithDirection HTMLTitleElement::textWithDirection()
+{
+    TextDirection direction = LTR;
+    if (RenderStyle* style = computedStyle())
+        direction = style->direction();
+    else if (RefPtr<RenderStyle> style = styleForRenderer())
+        direction = style->direction();
+    return StringWithDirection(text(), direction);
 }
 
 void HTMLTitleElement::setText(const String &value)

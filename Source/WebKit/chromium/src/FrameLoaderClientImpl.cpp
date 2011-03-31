@@ -734,10 +734,11 @@ void FrameLoaderClientImpl::dispatchDidStartProvisionalLoad()
     }
 }
 
-void FrameLoaderClientImpl::dispatchDidReceiveTitle(const String& title)
+void FrameLoaderClientImpl::dispatchDidReceiveTitle(const StringWithDirection& title)
 {
+    // FIXME: use direction of title.
     if (m_webFrame->client())
-        m_webFrame->client()->didReceiveTitle(m_webFrame, title);
+        m_webFrame->client()->didReceiveTitle(m_webFrame, title.string());
 }
 
 void FrameLoaderClientImpl::dispatchDidChangeIcons()
@@ -1328,7 +1329,7 @@ PassRefPtr<DocumentLoader> FrameLoaderClientImpl::createDocumentLoader(
     return ds.release();
 }
 
-void FrameLoaderClientImpl::setTitle(const String& title, const KURL& url)
+void FrameLoaderClientImpl::setTitle(const StringWithDirection& title, const KURL& url)
 {
     // FIXME: inform consumer of changes to the title.
 }

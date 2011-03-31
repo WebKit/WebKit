@@ -371,7 +371,7 @@ void FrameLoaderClientWinCE::dispatchDidStartProvisionalLoad()
     notImplemented();
 }
 
-void FrameLoaderClientWinCE::dispatchDidReceiveTitle(const String&)
+void FrameLoaderClientWinCE::dispatchDidReceiveTitle(const StringWithDirection&)
 {
     notImplemented();
 }
@@ -490,7 +490,7 @@ void FrameLoaderClientWinCE::prepareForDataSourceReplacement()
     notImplemented();
 }
 
-void FrameLoaderClientWinCE::setTitle(const String&, const KURL&)
+void FrameLoaderClientWinCE::setTitle(const StringWithDirection&, const KURL&)
 {
     notImplemented();
 }

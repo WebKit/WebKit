@@ -102,7 +102,7 @@ namespace WebCore {
         virtual void dispatchWillClose();
         virtual void dispatchDidReceiveIcon();
         virtual void dispatchDidStartProvisionalLoad();
-        virtual void dispatchDidReceiveTitle(const String& title);
+        virtual void dispatchDidReceiveTitle(const StringWithDirection& title);
         virtual void dispatchDidCommitLoad();
         virtual void dispatchDidFinishDocumentLoad();
         virtual void dispatchDidFinishLoad();
@@ -143,7 +143,7 @@ namespace WebCore {
         virtual void addHistoryItemForFragmentScroll();
         virtual void didFinishLoad();
         virtual void prepareForDataSourceReplacement();
-        virtual void setTitle(const String& title, const KURL&);
+        virtual void setTitle(const StringWithDirection&, const KURL&);
 
         virtual String userAgent(const KURL&);
 

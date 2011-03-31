@@ -82,7 +82,8 @@ void WebDataSourceImpl::redirectChain(WebVector<WebURL>& result) const
 
 WebString WebDataSourceImpl::pageTitle() const
 {
-    return title();
+    // FIXME: use direction of title as well.
+    return title().string();
 }
 
 WebNavigationType WebDataSourceImpl::navigationType() const
