@@ -3285,3 +3285,6 @@ BUGXXX : media/video-delay-load-event.html = PASS TEXT
 
 // Started to crash in r82507:r82517
 BUGWK57539 : http/tests/local/fileapi/send-sliced-dragged-file.html = PASS CRASH
+
+BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-strokePath-gradient-shadow.html = TIMEOUT
+BUGWK57547 WIN LINUX GPU : fast/canvas/canvas-strokeRect-gradient-shadow.html = TIMEOUT
