@@ -84,7 +84,7 @@ private:
     TransformationMatrix m_replicaDrawTransform;
     TransformationMatrix m_originTransform;
     IntRect m_scissorRect;
-    Vector<CCLayerImpl*> m_layerList;
+    Vector<RefPtr<CCLayerImpl> > m_layerList;
 };
 
 }

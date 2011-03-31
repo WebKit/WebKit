@@ -132,16 +132,18 @@ public:
     String layerTreeAsText() const;
 
 private:
+    typedef Vector<RefPtr<CCLayerImpl> > LayerList;
+
     explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D>, PassOwnPtr<TilePaintInterface> contentPaint, PassOwnPtr<TilePaintInterface> scrollbarPaint);
 
-    void updateLayers(Vector<CCLayerImpl*>& renderSurfaceLayerList);
+    void updateLayers(LayerList& renderSurfaceLayerList);
     void updateRootLayerContents();
     void updateRootLayerScrollbars();
-    void updatePropertiesAndRenderSurfaces(LayerChromium*, const TransformationMatrix& parentMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList);
+    void updatePropertiesAndRenderSurfaces(LayerChromium*, const TransformationMatrix& parentMatrix, LayerList& renderSurfaceLayerList, LayerList& layers);
     void paintContentsRecursive(LayerChromium*);
     void updateCompositorResourcesRecursive(LayerChromium*);
 
-    void drawLayers(const Vector<CCLayerImpl*>& renderSurfaceLayerList);
+    void drawLayers(const LayerList& renderSurfaceLayerList);
     void drawLayer(CCLayerImpl*, RenderSurfaceChromium*);
 
     void drawRootLayer();
@@ -156,7 +158,7 @@ private:
 
     bool makeContextCurrent();
 
-    static bool compareLayerZ(const CCLayerImpl*, const CCLayerImpl*);
+    static bool compareLayerZ(const RefPtr<CCLayerImpl>&, const RefPtr<CCLayerImpl>&);
 
     void dumpRenderSurfaces(TextStream&, int indent, LayerChromium*) const;
 

@@ -96,7 +96,7 @@ void VideoLayerChromium::cleanupResources()
 
 void VideoLayerChromium::updateCompositorResources()
 {
-    if (!m_contentsDirty)
+    if (!m_contentsDirty || !m_owner)
         return;
 
     RenderLayerBacking* backing = static_cast<RenderLayerBacking*>(m_owner->client());

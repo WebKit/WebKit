@@ -88,7 +88,7 @@ static bool isScaleOrTranslation(const TransformationMatrix& m)
 
 }
 
-bool LayerRendererChromium::compareLayerZ(const CCLayerImpl* a, const CCLayerImpl* b)
+bool LayerRendererChromium::compareLayerZ(const RefPtr<CCLayerImpl>& a, const RefPtr<CCLayerImpl>& b)
 {
     return a->drawDepth() < b->drawDepth();
 }
@@ -268,7 +268,7 @@ void LayerRendererChromium::updateAndDrawLayers()
 
     updateRootLayerScrollbars();
 
-    Vector<CCLayerImpl*> renderSurfaceLayerList;
+    LayerList renderSurfaceLayerList;
     updateLayers(renderSurfaceLayerList);
 
     drawLayers(renderSurfaceLayerList);
@@ -277,7 +277,7 @@ void LayerRendererChromium::updateAndDrawLayers()
         copyOffscreenTextureToDisplay();
 }
 
-void LayerRendererChromium::updateLayers(Vector<CCLayerImpl*>& renderSurfaceLayerList)
+void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
 {
     TRACE_EVENT("LayerRendererChromium::updateLayers", this, 0);
     m_rootLayer->createCCLayerImplIfNeeded();
@@ -312,7 +312,7 @@ void LayerRendererChromium::updateLayers(Vector<CCLayerImpl*>& renderSurfaceLaye
     updateCompositorResourcesRecursive(m_rootLayer.get());
 }
 
-void LayerRendererChromium::drawLayers(const Vector<CCLayerImpl*>& renderSurfaceLayerList)
+void LayerRendererChromium::drawLayers(const LayerList& renderSurfaceLayerList)
 {
     TRACE_EVENT("LayerRendererChromium::drawLayers", this, 0);
     CCLayerImpl* rootDrawLayer = m_rootLayer->ccLayerImpl();
@@ -353,7 +353,7 @@ void LayerRendererChromium::drawLayers(const Vector<CCLayerImpl*>& renderSurface
     // back to front to guarantee that nested render surfaces get rendered in the
     // correct order.
     for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
-        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex];
+        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
         ASSERT(renderSurfaceLayer->renderSurface());
 
         // Render surfaces whose drawable area has zero width or height
@@ -369,10 +369,10 @@ void LayerRendererChromium::drawLayers(const Vector<CCLayerImpl*>& renderSurface
                 GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
             }
 
-            Vector<CCLayerImpl*>& layerList = renderSurfaceLayer->renderSurface()->m_layerList;
+            LayerList& layerList = renderSurfaceLayer->renderSurface()->m_layerList;
             ASSERT(layerList.size());
             for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex)
-                drawLayer(layerList[layerIndex], renderSurfaceLayer->renderSurface());
+                drawLayer(layerList[layerIndex].get(), renderSurfaceLayer->renderSurface());
         }
     }
 
@@ -473,7 +473,7 @@ bool LayerRendererChromium::isLayerVisible(LayerChromium* layer, const Transform
 
 // Recursively walks the layer tree starting at the given node and computes all the
 // necessary transformations, scissor rectangles, render surfaces, etc.
-void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* layer, const TransformationMatrix& parentMatrix, Vector<CCLayerImpl*>& renderSurfaceLayerList, Vector<CCLayerImpl*>& layerList)
+void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* layer, const TransformationMatrix& parentMatrix, LayerList& renderSurfaceLayerList, LayerList& layerList)
 {
     // Make sure we have CCLayerImpls for this subtree.
     layer->createCCLayerImplIfNeeded();
@@ -659,7 +659,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     // M[s] = M * Tr[-center]
     sublayerMatrix.translate3d(-bounds.width() * 0.5, -bounds.height() * 0.5, 0);
 
-    Vector<CCLayerImpl*>& descendants = (drawLayer->renderSurface() ? drawLayer->renderSurface()->m_layerList : layerList);
+    LayerList& descendants = (drawLayer->renderSurface() ? drawLayer->renderSurface()->m_layerList : layerList);
     descendants.append(drawLayer);
     unsigned thisLayerIndex = descendants.size() - 1;
 
@@ -861,6 +861,9 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
         return;
     }
 
+    if (!layer->drawsContent())
+        return;
+
     if (layer->bounds().isEmpty()) {
         layer->unreserveContentsTexture();
         return;
@@ -894,8 +897,7 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
         }
     }
 
-    if (layer->drawsContent())
-        layer->draw();
+    layer->draw();
 
     // Draw the debug border if there is one.
     layer->drawDebugBorder();

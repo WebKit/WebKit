@@ -1,3 +1,30 @@
+2011-03-31  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Fix ownership semantics for LayerChromium/CCLayerImpl
+        https://bugs.webkit.org/show_bug.cgi?id=57577
+
+        LayerRendererChromium now uses a RefPtr to preserve ownership of all
+        of the CCLayerImpl layers that it is using during the update/draw
+        pass.  Addtionally, when a LayerChromium is destroyed, the weak
+        owner pointer from its CCLayerImpl is correctly unset.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::compareLayerZ):
+        (WebCore::LayerRendererChromium::updateAndDrawLayers):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+        (WebCore::LayerRendererChromium::drawLayer):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::drawsContent):
+        (WebCore::CCLayerImpl::cleanupResources):
+
 2011-03-31  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
