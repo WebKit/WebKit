@@ -1,3 +1,9 @@
+2011-03-31  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, mark send-sliced-dragged-file.html as crash pass in chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-29  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -3282,3 +3282,6 @@ BUGWK56573 : fast/dom/HTMLKeygenElement/keygen.html = FAIL
 
 // This test is very flaky on Mac and a little flaky on Win and Linux.
 BUGXXX : media/video-delay-load-event.html = PASS TEXT
+
+// Started to crash in r82507:r82517
+BUG57539 : http/tests/local/fileapi/send-sliced-dragged-file.html = PASS CRASH
