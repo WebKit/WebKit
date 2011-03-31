@@ -13,18 +13,6 @@
         (WebCore::RootInlineBox::getLogicalEndBoxWithNode): Ditto.
         * rendering/RootInlineBox.h:
 
-2011-03-31  Jaehun Lim  <ljaehun.lim@samsung.com>
-
-        Unreviewed build fix for EFL
-
-        After r55150, EFL build has failed.
-        PlatformContextCairo.cpp is added into CMakeListsEfl.txt
-        https://bugs.webkit.org/show_bug.cgi?id=57526
-
-        No need to test
-
-        * CMakeListsEfl.txt: Add PlatformContextCairo.cpp
-
 2011-03-31  Benjamin Kalman  <kalman@chromium.org>
 
         Reviewed by Ojan Vafai.
@@ -42,29 +30,6 @@
         (WebCore::DeleteSelectionCommand::removeNode): Use firstEditablePositionInNode rather than firstPositionInNode
         to find anchor node for the placeholder's position, if any.
 
-2011-03-30  Brent Fulgham  <bfulgham@webkit.org>
-
-        Unreviewed build correction after r82496. (Part 3)
-
-        Revise DragImageCairoWin to address new PlatformGraphicsContext
-        and object lifecycle.
-
-        * platform/win/DragImageCairoWin.cpp:
-        (WebCore::deallocContext):
-        (WebCore::allocImage):
-        (WebCore::scaleDragImage):
-        (WebCore::createDragImageFromImage):
-
-2011-03-30  Brent Fulgham  <bfulgham@webkit.org>
-
-        Unreviewed build correction after r82496. (Part 2)
-
-        Revise DragImageCairoWin to address new PlatformGraphicsContext.
-
-        * platform/win/DragImageCairoWin.cpp:
-        (WebCore::deallocContext):
-        (WebCore::allocImage):
-
 2011-03-30  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Adam Roben.
@@ -76,28 +41,6 @@
         * css/CSSParser.cpp:
         (WebCore::CSSParser::sinkFloatingSelectorVector):
         * css/CSSParser.h:
-
-2011-03-30  Brent Fulgham  <bfulgham@webkit.org>
-
-        Unreviewed build correction after r82496.
-
-        * WebCore.vcproj/WebCore.vcproj: Add new PlatformContextCairo
-        files to WinCairo build.  Exclude from standard Apple build.
-
-2011-03-30  Ryuan Choi  <ryuan.choi@samsung.com>
-
-        Reviewed by Martin Robinson.
-
-        [GTK] Fix leaked pointer in FontGtk.cpp
-        https://bugs.webkit.org/show_bug.cgi?id=57307
-
-        Fix a memory leak.
-
-        No new functionality, so no new tests.
-
-        * platform/graphics/gtk/FontGtk.cpp:
-        (WebCore::utf16ToUtf8): Rename utf16_to_utf8 and fix indentation.
-        (WebCore::convertUniCharToUTF8):
 
 2011-03-30  Dominic Cooney  <dominicc@google.com>
 
@@ -232,13 +175,6 @@
 
         * platform/graphics/cg/ImageBufferCG.cpp:
 
-2011-03-30  Martin Robinson  <mrobinson@igalia.com>
-
-        Try to fix the WinCairo build.
-
-        * platform/graphics/win/GraphicsContextCairoWin.cpp:
-        (WebCore::GraphicsContext::platformInit): Fix misspelling of GraphicsContextPlatformPrivateToplevel.
-
 2011-03-30  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
@@ -267,13 +203,6 @@
         These files don't add new functionality, so don't need extra tests.
 
         * ForwardingHeaders/wtf/DynamicAnnotations.h: Added.
-
-2011-03-30  Martin Robinson  <mrobinson@igalia.com>
-
-        Try to fix the EFL build.
-
-        * platform/efl/RenderThemeEfl.cpp:
-        (WebCore::RenderThemeEfl::paintThemePart): Use the new cairo_t accessor on the platform context.
 
 2011-03-30  Abhishek Arya  <inferno@chromium.org>
 
@@ -367,44 +296,6 @@
 
         * html/HTMLAnchorElement.idl:
         * html/HTMLAreaElement.idl:
-
-2011-03-30  Martin Robinson  <mrobinson@igalia.com>
-
-        Reviewed by Dirk Schulze.
-
-        [Cairo] Better separate the concerns of GraphicsContextCairo
-        https://bugs.webkit.org/show_bug.cgi?id=55150
-
-        Add a PlatformContextCairo which right now stores the cairo_t* for a
-        GraphicsContextCairo. Later patches will move logic for tracking ContextShadow
-        and image masking layers into this PlatformContextCairo class.
-
-        No new tests. This patch is only a code cleanup.
-
-        * GNUmakefile.am:
-        * platform/graphics/GraphicsContext.h: The platform context is no longer a
-        cairo_t, but our new class the PlatformContextCairo.
-        * platform/graphics/cairo/ContextShadowCairo.cpp: Updated to reflect new class.j
-        * platform/graphics/cairo/FontCairo.cpp: Ditto.
-        * platform/graphics/cairo/GradientCairo.cpp: Ditto.
-        * platform/graphics/cairo/GraphicsContextCairo.cpp: Mostly mechanical
-        changes which now reference platformContext()->cr() to get the cairo_t.
-        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h: Now hold the
-        PlatformContextCairo instead of the cairo_t.
-        * platform/graphics/cairo/ImageBufferCairo.cpp: Update to reflect new class.
-        * platform/graphics/cairo/ImageCairo.cpp: Ditto.
-        * platform/graphics/cairo/PathCairo.cpp: Ditto.
-        * platform/graphics/cairo/PlatformContextCairo.cpp: Added.
-        * platform/graphics/cairo/PlatformContextCairo.h: Added.
-        * platform/graphics/gtk/FontGtk.cpp: Update to reflect new class.
-        * platform/graphics/gtk/IconGtk.cpp: Ditto.
-        * platform/graphics/win/GraphicsContextCairoWin.cpp: Now fill out
-        m_data with a private section containing the platform context instead of
-        just a cairo_t.
-        * platform/gtk/RenderThemeGtk.cpp: Update to reflect new class.
-        * platform/gtk/WidgetRenderingContext.cpp: Ditto.
-        (WebCore::WidgetRenderingContext::~WidgetRenderingContext): Ditto.
-        * plugins/gtk/PluginViewGtk.cpp: Ditto.
 
 2011-03-30  Patrick Gansterer  <paroga@webkit.org>
 

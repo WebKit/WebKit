@@ -35,10 +35,8 @@
 
 #include "CairoUtilities.h"
 #include "ContextShadow.h"
-#include "GOwnPtr.h"
 #include "GraphicsContext.h"
 #include "NotImplemented.h"
-#include "PlatformContextCairo.h"
 #include "SimpleFontData.h"
 #include "TextRun.h"
 #include <cairo.h>
@@ -85,71 +83,75 @@ IntRect getPangoRegionExtents(PangoRegionType region)
 #define IS_HIGH_SURROGATE(u)  ((UChar)(u) >= (UChar)0xd800 && (UChar)(u) <= (UChar)0xdbff)
 #define IS_LOW_SURROGATE(u)  ((UChar)(u) >= (UChar)0xdc00 && (UChar)(u) <= (UChar)0xdfff)
 
-static gchar* utf16ToUtf8(const UChar* aText, gint aLength, gint &length)
+static void utf16_to_utf8(const UChar* aText, gint aLength, char* &text, gint &length)
 {
-    gboolean needCopy = FALSE;
+  gboolean need_copy = FALSE;
+  int i;
 
-    for (int i = 0; i < aLength; i++) {
-        if (!aText[i] || IS_LOW_SURROGATE(aText[i])) {
-            needCopy = TRUE;
-            break;
-        } 
+  for (i = 0; i < aLength; i++) {
+    if (!aText[i] || IS_LOW_SURROGATE(aText[i])) {
+      need_copy = TRUE;
+      break;
+    }
+    else if (IS_HIGH_SURROGATE(aText[i])) {
+      if (i < aLength - 1 && IS_LOW_SURROGATE(aText[i+1]))
+        i++;
+      else {
+        need_copy = TRUE;
+        break;
+      }
+    }
+  }
 
-        if (IS_HIGH_SURROGATE(aText[i])) {
-            if (i < aLength - 1 && IS_LOW_SURROGATE(aText[i+1]))
-                i++;
-            else {
-                needCopy = TRUE;
-                break;
-            }
-        }
+  if (need_copy) {
+
+    /* Pango doesn't correctly handle nuls.  We convert them to 0xff. */
+    /* Also "validate" UTF-16 text to make sure conversion doesn't fail. */
+
+    UChar* p = (UChar*)g_memdup(aText, aLength * sizeof(aText[0]));
+
+    /* don't need to reset i */
+    for (i = 0; i < aLength; i++) {
+      if (!p[i] || IS_LOW_SURROGATE(p[i]))
+        p[i] = 0xFFFD;
+      else if (IS_HIGH_SURROGATE(p[i])) {
+        if (i < aLength - 1 && IS_LOW_SURROGATE(aText[i+1]))
+          i++;
+        else
+          p[i] = 0xFFFD;
+      }
     }
 
-    GOwnPtr<UChar> copiedString;
-    if (needCopy) {
-        /* Pango doesn't correctly handle nuls.  We convert them to 0xff. */
-        /* Also "validate" UTF-16 text to make sure conversion doesn't fail. */
+    aText = p;
+  }
 
-        copiedString.set(static_cast<UChar*>(g_memdup(aText, aLength * sizeof(aText[0]))));
-        UChar* p = copiedString.get();
+  glong items_written;
+  text = g_utf16_to_utf8(reinterpret_cast<const gunichar2*>(aText), aLength, NULL, &items_written, NULL);
+  length = items_written;
 
-        /* don't need to reset i */
-        for (int i = 0; i < aLength; i++) {
-            if (!p[i] || IS_LOW_SURROGATE(p[i]))
-                p[i] = 0xFFFD;
-            else if (IS_HIGH_SURROGATE(p[i])) {
-                if (i < aLength - 1 && IS_LOW_SURROGATE(aText[i+1]))
-                    i++;
-                else
-                    p[i] = 0xFFFD;
-            }
-        }
+  if (need_copy)
+    g_free((gpointer)aText);
 
-        aText = p;
-    }
-
-    gchar* utf8Text;
-    glong itemsWritten;
-    utf8Text = g_utf16_to_utf8(static_cast<const gunichar2*>(aText), aLength, 0, &itemsWritten, 0);
-    length = itemsWritten;
-
-    return utf8Text;
 }
 
 static gchar* convertUniCharToUTF8(const UChar* characters, gint length, int from, int to)
 {
-    gint newLength = 0;
-    GOwnPtr<gchar> utf8Text(utf16ToUtf8(characters, length, newLength));
-    if (!utf8Text)
-        return 0;
+    gchar* utf8 = 0;
+    gint new_length = 0;
+    utf16_to_utf8(characters, length, utf8, new_length);
+    if (!utf8)
+        return NULL;
 
-    gchar* pos = utf8Text.get();
     if (from > 0) {
         // discard the first 'from' characters
         // FIXME: we should do this before the conversion probably
-        pos = g_utf8_offset_to_pointer(utf8Text.get(), from);
+        gchar* str_left = g_utf8_offset_to_pointer(utf8, from);
+        gchar* tmp = g_strdup(str_left);
+        g_free(utf8);
+        utf8 = tmp;
     }
 
+    gchar* pos = utf8;
     gint len = strlen(pos);
     GString* ret = g_string_new_len(NULL, len);
 
@@ -218,7 +220,7 @@ bool Font::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
-static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint& point, PangoLayoutLine* layoutLine, PangoRegionType renderRegion)
+static void drawGlyphsShadow(GraphicsContext* graphicsContext, cairo_t* context, const FloatPoint& point, PangoLayoutLine* layoutLine, PangoRegionType renderRegion)
 {
     ContextShadow* shadow = graphicsContext->contextShadow();
     ASSERT(shadow);
@@ -230,7 +232,6 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint&
 
     // Optimize non-blurry shadows, by just drawing text without the ContextShadow.
     if (!shadow->mustUseContextShadow(graphicsContext)) {
-        cairo_t* context = graphicsContext->platformContext()->cr();
         cairo_save(context);
         cairo_translate(context, totalOffset.x(), totalOffset.y());
 
@@ -254,7 +255,6 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint&
         // because we don't want any bits and pieces of characters out of range to be
         // drawn. Since ContextShadow expects a consistent transform, we have to undo the
         // translation before calling endShadowLayer as well.
-        cairo_t* context = graphicsContext->platformContext()->cr();
         cairo_save(context);
         cairo_translate(context, totalOffset.x(), totalOffset.y());
         gdk_cairo_region(context, renderRegion);
@@ -275,7 +275,7 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
     }
 #endif
 
-    cairo_t* cr = context->platformContext()->cr();
+    cairo_t* cr = context->platformContext();
     PangoLayout* layout = pango_cairo_create_layout(cr);
     setPangoAttributes(this, run, layout);
 
@@ -294,7 +294,7 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
     int ranges[] = {start - utf8, end - utf8};
     partialRegion = gdk_pango_layout_line_get_clip_region(layoutLine, 0, 0, ranges, 1);
 
-    drawGlyphsShadow(context, point, layoutLine, partialRegion);
+    drawGlyphsShadow(context, cr, point, layoutLine, partialRegion);
 
     cairo_save(cr);
     cairo_translate(cr, point.x(), point.y());

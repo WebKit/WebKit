@@ -31,7 +31,6 @@
 #include "GraphicsContext.h"
 
 #include "ContextShadow.h"
-#include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
 #include <math.h>
@@ -68,8 +67,8 @@ private:
 
 class GraphicsContextPlatformPrivate {
 public:
-    GraphicsContextPlatformPrivate(PlatformContextCairo* newPlatformContext)
-        : platformContext(newPlatformContext)
+    GraphicsContextPlatformPrivate()
+        : cr(0)
 #if PLATFORM(GTK)
         , expose(0)
 #elif PLATFORM(WIN)
@@ -83,6 +82,7 @@ public:
 
     ~GraphicsContextPlatformPrivate()
     {
+        cairo_destroy(cr);
     }
 
 #if PLATFORM(WIN)
@@ -99,7 +99,7 @@ public:
     void setCTM(const AffineTransform&);
     void beginTransparencyLayer() { m_transparencyCount++; }
     void endTransparencyLayer() { m_transparencyCount--; }
-    void syncContext(cairo_t* cr);
+    void syncContext(PlatformGraphicsContext* cr);
 #else
     // On everything else, we do nothing.
     void save() {}
@@ -114,11 +114,12 @@ public:
     void setCTM(const AffineTransform&) {}
     void beginTransparencyLayer() {}
     void endTransparencyLayer() {}
-    void syncContext(cairo_t* cr) {}
+    void syncContext(PlatformGraphicsContext* cr) {}
 #endif
 
-    PlatformContextCairo* platformContext;
+    cairo_t* cr;
     Vector<float> layers;
+
     ContextShadow shadow;
     Vector<ContextShadow> shadowStack;
     Vector<ImageMaskInformation> maskImageStack;
@@ -131,23 +132,6 @@ public:
     bool m_shouldIncludeChildWindows;
 #endif
 };
-
-// This is a specialized private section for the Cairo GraphicsContext, which knows how
-// to clean up the heap allocated PlatformContextCairo that we must use for the top-level
-// GraphicsContext.
-class GraphicsContextPlatformPrivateToplevel : public GraphicsContextPlatformPrivate {
-public:
-    GraphicsContextPlatformPrivateToplevel(PlatformContextCairo* platformContext)
-        : GraphicsContextPlatformPrivate(platformContext)
-    {
-    }
-
-    ~GraphicsContextPlatformPrivateToplevel()
-    {
-        delete platformContext;
-    }
-};
-
 
 } // namespace WebCore
 

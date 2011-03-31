@@ -62,10 +62,7 @@ typedef struct OpaqueJSValue* JSObjectRef;
 #if PLATFORM(CG)
 typedef struct CGContext PlatformGraphicsContext;
 #elif PLATFORM(CAIRO)
-namespace WebCore {
-class PlatformContextCairo;
-}
-typedef class WebCore::PlatformContextCairo PlatformGraphicsContext;
+typedef struct _cairo PlatformGraphicsContext;
 #endif
 
 class WebFrame;

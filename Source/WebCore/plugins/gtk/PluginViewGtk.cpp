@@ -48,7 +48,6 @@
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "Page.h"
-#include "PlatformContextCairo.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
 #include "PluginDebug.h"
@@ -218,7 +217,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
             // avoid drawing artifacts.
 
             // This Would not work without double buffering, but we always use it.
-            cairo_set_source_surface(cr.get(), cairo_get_group_target(context->platformContext()->cr()),
+            cairo_set_source_surface(cr.get(), cairo_get_group_target(context->platformContext()),
                                      -m_windowRect.x(), -m_windowRect.y());
             cairo_set_operator(cr.get(), CAIRO_OPERATOR_SOURCE);
         } else
@@ -245,7 +244,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     if (syncX)
         XSync(m_pluginDisplay, false); // sync changes by plugin
 
-    cairo_t* cr = context->platformContext()->cr();
+    cairo_t* cr = context->platformContext();
     cairo_save(cr);
 
     cairo_set_source_surface(cr, drawableSurface.get(), frameRect().x(), frameRect().y());
