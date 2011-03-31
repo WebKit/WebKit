@@ -1,3 +1,9 @@
+2011-03-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Try once more to fix the EFL build.
+
+        * platform/efl/RenderThemeEfl.cpp:
+
 2011-03-30  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
