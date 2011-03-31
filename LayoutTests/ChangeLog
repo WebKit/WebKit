@@ -1,3 +1,13 @@
+2011-03-30  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove actual test output from test tree.
+        https://bugs.webkit.org/show_bug.cgi?id=57503
+
+        * platform/chromium-linux/websocket/tests/bad-sub-protocol-actual.txt: Removed.
+        * platform/chromium-linux/websocket/tests/url-parsing-actual.txt: Removed.
+
 2011-03-30  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, remove Chromium test expectations for two bugs that are known to be fixed.
