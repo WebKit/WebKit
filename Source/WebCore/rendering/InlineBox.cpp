@@ -159,7 +159,7 @@ void InlineBox::adjustPosition(float dx, float dy)
         toRenderBox(m_renderer)->move(dx, dy); 
 }
 
-void InlineBox::paint(PaintInfo& paintInfo, int tx, int ty)
+void InlineBox::paint(PaintInfo& paintInfo, int tx, int ty, int /* lineTop */, int /*lineBottom*/)
 {
     if (!paintInfo.shouldPaintWithinRoot(renderer()) || (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection))
         return;
@@ -187,7 +187,7 @@ void InlineBox::paint(PaintInfo& paintInfo, int tx, int ty)
     }
 }
 
-bool InlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty)
+bool InlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, int /* lineTop */, int /*lineBottom*/)
 {
     // Hit test all phases of replaced elements atomically, as though the replaced element established its
     // own stacking context.  (See Appendix E.2, section 6.4 on inline block/table elements in the CSS2.1
@@ -281,6 +281,13 @@ float InlineBox::placeEllipsisBox(bool, float, float, float, bool&)
 {
     // Use -1 to mean "we didn't set the position."
     return -1;
+}
+
+void InlineBox::clearKnownToHaveNoOverflow()
+{ 
+    m_knownToHaveNoOverflow = false;
+    if (parent() && parent()->knownToHaveNoOverflow())
+        parent()->clearKnownToHaveNoOverflow();
 }
 
 FloatPoint InlineBox::locationIncludingFlipping()

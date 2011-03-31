@@ -46,7 +46,7 @@ public:
     virtual float positionForOffset(int offset) const;
 
     void paintSelectionBackground(PaintInfo&);
-    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paint(PaintInfo&, int tx, int ty, int lineTop, int lineBottom);
     virtual IntRect selectionRect(int absx, int absy, int startPosition, int endPosition);
 
     bool mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment&, int& startPosition, int& endPosition) const;

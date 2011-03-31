@@ -41,7 +41,7 @@ public:
     void setLogicalHeight(int h) { m_logicalHeight = h; }
 
     void paintSelectionBackground(PaintInfo&);
-    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paint(PaintInfo&, int tx, int ty, int lineTop, int lineBottom);
 
     virtual IntRect calculateBoundaries() const;
 

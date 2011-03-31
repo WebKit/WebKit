@@ -105,8 +105,8 @@ public:
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int w, int h, CompositeOperator = CompositeSourceOver);
     void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, int tx, int ty, int w, int h, CompositeOperator = CompositeSourceOver);
     void paintBoxShadow(GraphicsContext*, RenderStyle*, ShadowStyle, int tx, int ty, int w, int h);
-    virtual void paint(PaintInfo&, int tx, int ty);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
+    virtual void paint(PaintInfo&, int tx, int ty, int lineTop, int lineBottom);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, int lineTop, int lineBottom);
 
     virtual RenderLineBoxList* rendererLineBoxes() const;
 
@@ -176,7 +176,7 @@ public:
     int computeOverAnnotationAdjustment(int allowedPosition) const;
     int computeUnderAnnotationAdjustment(int allowedPosition) const;
 
-    void computeOverflow(int lineTop, int lineBottom, bool strictMode, GlyphOverflowAndFallbackFontsMap&);
+    void computeOverflow(int lineTop, int lineBottom, GlyphOverflowAndFallbackFontsMap&);
     
     void removeChild(InlineBox* child);
 
@@ -194,44 +194,74 @@ public:
     // Line visual and layout overflow are in the coordinate space of the block.  This means that they aren't purely physical directions.
     // For horizontal-tb and vertical-lr they will match physical directions, but for horizontal-bt and vertical-rl, the top/bottom and left/right
     // respectively are flipped when compared to their physical counterparts.  For example minX is on the left in vertical-lr, but it is on the right in vertical-rl.
-    int minYLayoutOverflow() const { return m_overflow ? m_overflow->minYLayoutOverflow() : m_y; }
-    int maxYLayoutOverflow() const { return m_overflow ? m_overflow->maxYLayoutOverflow() : ceilf(m_y + height()); }
-    int minXLayoutOverflow() const { return m_overflow ? m_overflow->minXLayoutOverflow() : m_x; }
-    int maxXLayoutOverflow() const { return m_overflow ? m_overflow->maxXLayoutOverflow() : ceilf(m_x + width()); }
-    IntRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : enclosingIntRect(FloatRect(m_x, m_y, width(), height())); }
-    int logicalLeftLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? minXLayoutOverflow() : minYLayoutOverflow(); }
-    int logicalRightLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? maxXLayoutOverflow() : maxYLayoutOverflow(); }
-    int logicalTopLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? minYVisualOverflow() : minXVisualOverflow(); }
-    int logicalBottomLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? maxYLayoutOverflow() : maxXLayoutOverflow(); }
-    IntRect logicalLayoutOverflowRect() const
+    IntRect layoutOverflowRect(int lineTop, int lineBottom) const
+    { 
+        return m_overflow ? m_overflow->layoutOverflowRect() : enclosingIntRect(frameRectIncludingLineHeight(lineTop, lineBottom));
+    }
+    int logicalLeftLayoutOverflow() const { return m_overflow ? (isHorizontal() ? m_overflow->minXLayoutOverflow() : m_overflow->minYLayoutOverflow()) : logicalLeft(); }
+    int logicalRightLayoutOverflow() const { return m_overflow ? (isHorizontal() ? m_overflow->maxXLayoutOverflow() : m_overflow->maxYLayoutOverflow()) : ceilf(logicalRight()); }
+    int logicalTopLayoutOverflow(int lineTop) const
     {
-        IntRect result = layoutOverflowRect();
-        if (!renderer()->style()->isHorizontalWritingMode())
+        if (m_overflow)
+            return isHorizontal() ? m_overflow->minYLayoutOverflow() : m_overflow->minXLayoutOverflow();
+        return lineTop;
+    }
+    int logicalBottomLayoutOverflow(int lineBottom) const
+    {
+        if (m_overflow)
+            return isHorizontal() ? m_overflow->maxYLayoutOverflow() : m_overflow->maxXLayoutOverflow();
+        return lineBottom;
+    }
+    IntRect logicalLayoutOverflowRect(int lineTop, int lineBottom) const
+    {
+        IntRect result = layoutOverflowRect(lineTop, lineBottom);
+        if (!renderer()->isHorizontalWritingMode())
             result = result.transposedRect();
         return result;
     }
 
-    int minYVisualOverflow() const { return m_overflow ? m_overflow->minYVisualOverflow() : m_y; }
-    int maxYVisualOverflow() const { return m_overflow ? m_overflow->maxYVisualOverflow() : ceilf(m_y + height()); }
-    int minXVisualOverflow() const { return m_overflow ? m_overflow->minXVisualOverflow() : m_x; }
-    int maxXVisualOverflow() const { return m_overflow ? m_overflow->maxXVisualOverflow() : ceilf(m_x + width()); }
-    IntRect visualOverflowRect() const { return m_overflow ? m_overflow->visualOverflowRect() : enclosingIntRect(FloatRect(m_x, m_y, width(), height())); }
-    int logicalLeftVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? minXVisualOverflow() : minYVisualOverflow(); }
-    int logicalRightVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? maxXVisualOverflow() : maxYVisualOverflow(); }
-    int logicalTopVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? minYVisualOverflow() : minXVisualOverflow(); }
-    int logicalBottomVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? maxYVisualOverflow() : maxXVisualOverflow(); }
-    IntRect logicalVisualOverflowRect() const
+    IntRect visualOverflowRect(int lineTop, int lineBottom) const
+    { 
+        return m_overflow ? m_overflow->visualOverflowRect() : enclosingIntRect(frameRectIncludingLineHeight(lineTop, lineBottom));
+    }
+    int logicalLeftVisualOverflow() const { return m_overflow ? (isHorizontal() ? m_overflow->minXVisualOverflow() : m_overflow->minYVisualOverflow()) : logicalLeft(); }
+    int logicalRightVisualOverflow() const { return m_overflow ? (isHorizontal() ? m_overflow->maxXVisualOverflow() : m_overflow->maxYVisualOverflow()) : ceilf(logicalRight()); }
+    int logicalTopVisualOverflow(int lineTop) const
     {
-        IntRect result = visualOverflowRect();
-        if (!renderer()->style()->isHorizontalWritingMode())
+        if (m_overflow)
+            return isHorizontal() ? m_overflow->minYVisualOverflow() : m_overflow->minXVisualOverflow();
+        return lineTop;
+    }
+    int logicalBottomVisualOverflow(int lineBottom) const
+    {
+        if (m_overflow)
+            return isHorizontal() ? m_overflow->maxYVisualOverflow() : m_overflow->maxXVisualOverflow();
+        return lineBottom;
+    }
+    IntRect logicalVisualOverflowRect(int lineTop, int lineBottom) const
+    {
+        IntRect result = visualOverflowRect(lineTop, lineBottom);
+        if (!renderer()->isHorizontalWritingMode())
             result = result.transposedRect();
         return result;
     }
 
-    void setOverflowFromLogicalRects(const IntRect& logicalLayoutOverflow, const IntRect& logicalVisualOverflow);
-    void setLayoutOverflow(const IntRect&);
-    void setVisualOverflow(const IntRect&);
+    void setOverflowFromLogicalRects(const IntRect& logicalLayoutOverflow, const IntRect& logicalVisualOverflow, int lineTop, int lineBottom);
+    void setLayoutOverflow(const IntRect&, int lineTop, int lineBottom);
+    void setVisualOverflow(const IntRect&, int lineTop, int lineBottom);
 
+    FloatRect frameRectIncludingLineHeight(int lineTop, int lineBottom) const
+    {
+        if (isHorizontal())
+            return FloatRect(m_x, lineTop, width(), lineBottom - lineTop);
+        return FloatRect(lineTop, m_y, lineBottom - lineTop, height());
+    }
+    
+    FloatRect logicalFrameRectIncludingLineHeight(int lineTop, int lineBottom) const
+    {
+        return FloatRect(logicalLeft(), lineTop, logicalWidth(), lineBottom - lineTop);
+    }
+    
     bool descendantsHaveSameLineHeightAndBaseline() const { return m_descendantsHaveSameLineHeightAndBaseline; }
     void clearDescendantsHaveSameLineHeightAndBaseline()
     { 

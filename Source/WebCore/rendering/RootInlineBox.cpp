@@ -133,11 +133,11 @@ float RootInlineBox::placeEllipsisBox(bool ltr, float blockLeftEdge, float block
     return result;
 }
 
-void RootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, int tx, int ty) const
+void RootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, int tx, int ty, int lineTop, int lineBottom) const
 {
     if (hasEllipsisBox() && paintInfo.shouldPaintWithinRoot(renderer()) && renderer()->style()->visibility() == VISIBLE
             && paintInfo.phase == PaintPhaseForeground)
-        ellipsisBox()->paint(paintInfo, tx, ty);
+        ellipsisBox()->paint(paintInfo, tx, ty, lineTop, lineBottom);
 }
 
 #if PLATFORM(MAC)
@@ -154,7 +154,7 @@ void RootInlineBox::addHighlightOverflow()
     // Highlight acts as a selection inflation.
     FloatRect rootRect(0, selectionTop(), logicalWidth(), selectionHeight());
     IntRect inflatedRect = enclosingIntRect(page->chrome()->client()->customHighlightRect(renderer()->node(), renderer()->style()->highlight(), rootRect));
-    setOverflowFromLogicalRects(inflatedRect, inflatedRect);
+    setOverflowFromLogicalRects(inflatedRect, inflatedRect, lineTop(), lineBottom());
 }
 
 void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, int tx, int ty, const AtomicString& highlightType)
@@ -178,10 +178,10 @@ void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, int tx, int ty, c
 
 #endif
 
-void RootInlineBox::paint(PaintInfo& paintInfo, int tx, int ty)
+void RootInlineBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int lineBottom)
 {
-    InlineFlowBox::paint(paintInfo, tx, ty);
-    paintEllipsisBox(paintInfo, tx, ty);
+    InlineFlowBox::paint(paintInfo, tx, ty, lineTop, lineBottom);
+    paintEllipsisBox(paintInfo, tx, ty, lineTop, lineBottom);
 #if PLATFORM(MAC)
     RenderStyle* styleToUse = renderer()->style(m_firstLine);
     if (styleToUse->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
@@ -189,15 +189,15 @@ void RootInlineBox::paint(PaintInfo& paintInfo, int tx, int ty)
 #endif
 }
 
-bool RootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty)
+bool RootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, int lineTop, int lineBottom)
 {
     if (hasEllipsisBox() && visibleToHitTesting()) {
-        if (ellipsisBox()->nodeAtPoint(request, result, x, y, tx, ty)) {
+        if (ellipsisBox()->nodeAtPoint(request, result, x, y, tx, ty, lineTop, lineBottom)) {
             renderer()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
             return true;
         }
     }
-    return InlineFlowBox::nodeAtPoint(request, result, x, y, tx, ty);
+    return InlineFlowBox::nodeAtPoint(request, result, x, y, tx, ty, lineTop, lineBottom);
 }
 
 void RootInlineBox::adjustPosition(float dx, float dy)
@@ -529,7 +529,7 @@ void RootInlineBox::attachLineBoxToRenderObject()
 
 IntRect RootInlineBox::paddedLayoutOverflowRect(int endPadding) const
 {
-    IntRect lineLayoutOverflow = layoutOverflowRect();
+    IntRect lineLayoutOverflow = layoutOverflowRect(lineTop(), lineBottom());
     if (!endPadding)
         return lineLayoutOverflow;
     

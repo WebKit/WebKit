@@ -607,13 +607,18 @@ IntRect RenderInline::linesVisualOverflowBoundingBox() const
         logicalRightSide = max(logicalRightSide, static_cast<float>(curr->logicalRightVisualOverflow()));
     }
 
-    bool isHorizontal = style()->isHorizontalWritingMode();
-        
-    float x = isHorizontal ? logicalLeftSide : firstLineBox()->minXVisualOverflow();
-    float y = isHorizontal ? firstLineBox()->minYVisualOverflow() : logicalLeftSide;
-    float width = isHorizontal ? logicalRightSide - logicalLeftSide : lastLineBox()->maxXVisualOverflow() - firstLineBox()->minXVisualOverflow();
-    float height = isHorizontal ? lastLineBox()->maxYVisualOverflow() - firstLineBox()->minYVisualOverflow() : logicalRightSide - logicalLeftSide;
-    return enclosingIntRect(FloatRect(x, y, width, height));
+    RootInlineBox* firstRootBox = firstLineBox()->root();
+    RootInlineBox* lastRootBox = lastLineBox()->root();
+    
+    float logicalLeft = firstLineBox()->logicalLeftVisualOverflow();
+    float logicalTop = firstLineBox()->logicalTopVisualOverflow(firstRootBox->lineTop());
+    float logicalWidth = logicalRightSide - logicalLeftSide;
+    float logicalHeight = lastLineBox()->logicalBottomVisualOverflow(lastRootBox->lineBottom()) - logicalTop;
+    
+    IntRect rect = enclosingIntRect(FloatRect(logicalLeft, logicalTop, logicalWidth, logicalHeight));
+    if (!style()->isHorizontalWritingMode())
+        rect = rect.transposedRect();
+    return rect;
 }
 
 IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)

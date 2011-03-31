@@ -1,3 +1,22 @@
+2011-03-31  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57565
+
+        Optimize overflow computations on lines to avoid allocating RenderOverflows in nearly all cases and to avoid even having
+        to check the line for overflow in the first place.
+        
+        Updated results for tests that progressed.
+
+        * fast/text/emphasis-avoid-ruby-expected.txt:
+        * platform/mac/fast/inline-block/inline-block-vertical-align-expected.checksum:
+        * platform/mac/fast/inline-block/inline-block-vertical-align-expected.png:
+        * platform/mac/fast/inline-block/inline-block-vertical-align-expected.txt:
+        * platform/mac/fast/multicol/layers-in-multicol-expected.checksum:
+        * platform/mac/fast/multicol/layers-in-multicol-expected.png:
+        * platform/mac/fast/multicol/layers-in-multicol-expected.txt:
+
 2011-03-31  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -314,7 +314,7 @@ bool InlineTextBox::isLineBreak() const
     return renderer()->isBR() || (renderer()->style()->preserveNewline() && len() == 1 && (*textRenderer()->text())[start()] == '\n');
 }
 
-bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, int x, int y, int tx, int ty)
+bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, int x, int y, int tx, int ty, int /* lineTop */, int /*lineBottom*/)
 {
     if (isLineBreak())
         return false;
@@ -435,7 +435,7 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
         : AffineTransform(0, -1, 1, 0, boxRect.x() - boxRect.maxY(), boxRect.x() + boxRect.maxY());
 }
 
-void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
+void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int lineBottom)
 {
     if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE ||
         m_truncation == cFullTruncation || paintInfo.phase == PaintPhaseOutline || !m_len)
@@ -443,10 +443,15 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
 
     ASSERT(paintInfo.phase != PaintPhaseSelfOutline && paintInfo.phase != PaintPhaseChildOutlines);
 
-    // FIXME: Technically we're potentially incorporating other visual overflow that had nothing to do with us.
-    // Would it be simpler to just check our own shadow and stroke overflow by hand here?
-    int logicalLeftOverflow = parent()->logicalLeft() - parent()->logicalLeftVisualOverflow();
-    int logicalRightOverflow = parent()->logicalRightVisualOverflow() - (parent()->logicalLeft() + parent()->logicalWidth());
+    int logicalLeftOverflow = 0;
+    int logicalRightOverflow = 0;
+    if (!knownToHaveNoOverflow()) {
+        // FIXME: Technically we're potentially incorporating other visual overflow that had nothing to do with us.
+        // Would it be simpler to just check our own shadow and stroke overflow by hand here?
+        IntRect parentVisualOverflow = parent()->logicalVisualOverflowRect(lineTop, lineBottom);
+        logicalLeftOverflow = parent()->logicalLeft() - parentVisualOverflow.x();
+        logicalRightOverflow = parentVisualOverflow.maxX() - parent()->logicalRight();
+    }
     int logicalStart = logicalLeft() - logicalLeftOverflow + (isHorizontal() ? tx : ty);
     int logicalExtent = logicalWidth() + logicalLeftOverflow + logicalRightOverflow;
     

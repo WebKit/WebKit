@@ -2097,7 +2097,7 @@ void RenderBlock::simplifiedNormalFlowLayout()
         GlyphOverflowAndFallbackFontsMap textBoxDataMap;                  
         for (ListHashSet<RootInlineBox*>::const_iterator it = lineBoxes.begin(); it != lineBoxes.end(); ++it) {
             RootInlineBox* box = *it;
-            box->computeOverflow(box->lineTop(), box->lineBottom(), document()->inNoQuirksMode(), textBoxDataMap);
+            box->computeOverflow(box->lineTop(), box->lineBottom(), textBoxDataMap);
         }
     } else {
         for (RenderBox* box = firstChildBox(); box; box = box->nextSiblingBox()) {
@@ -2590,7 +2590,7 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
             yPos = ty + curr->y();
             h = curr->logicalHeight();
             if (curr->ellipsisBox() && yPos < paintInfo.rect.maxY() && yPos + h > paintInfo.rect.y())
-                curr->paintEllipsisBox(paintInfo, tx, ty);
+                curr->paintEllipsisBox(paintInfo, tx, ty, curr->lineTop(), curr->lineBottom());
         }
     }
 }
@@ -6065,8 +6065,9 @@ void RenderBlock::adjustLinePositionForPagination(RootInlineBox* lineBox, int& d
     // line and all following lines.
     LayoutState* layoutState = view()->layoutState();
     int pageLogicalHeight = layoutState->m_pageLogicalHeight;
-    int logicalOffset = lineBox->logicalTopVisualOverflow();
-    int lineHeight = lineBox->logicalBottomVisualOverflow() - logicalOffset;
+    IntRect logicalVisualOverflow = lineBox->logicalVisualOverflowRect(lineBox->lineTop(), lineBox->lineBottom());
+    int logicalOffset = logicalVisualOverflow.y();
+    int lineHeight = logicalVisualOverflow.maxY() - logicalOffset;
     if (layoutState->m_columnInfo)
         layoutState->m_columnInfo->updateMinimumColumnHeight(lineHeight);
     logicalOffset += delta;

@@ -54,6 +54,7 @@ public:
         , m_isHorizontal(true)
         , m_endsWithBreak(false)
         , m_hasSelectedChildrenOrCanHaveLeadingExpansion(false)
+        , m_knownToHaveNoOverflow(true)
         , m_hasEllipsisBoxOrHyphen(false)
         , m_dirOverride(false)
         , m_isText(false)
@@ -87,7 +88,8 @@ public:
 #endif
         , m_isHorizontal(isHorizontal)
         , m_endsWithBreak(false)
-        , m_hasSelectedChildrenOrCanHaveLeadingExpansion(false)   
+        , m_hasSelectedChildrenOrCanHaveLeadingExpansion(false)
+        , m_knownToHaveNoOverflow(true)  
         , m_hasEllipsisBoxOrHyphen(false)
         , m_dirOverride(false)
         , m_isText(false)
@@ -128,8 +130,8 @@ public:
             adjustPosition(delta, 0);
     }
 
-    virtual void paint(PaintInfo&, int tx, int ty);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
+    virtual void paint(PaintInfo&, int tx, int ty, int lineTop, int lineBottom);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, int lineTop, int lineBottom);
 
     InlineBox* next() const { return m_next; }
 
@@ -261,6 +263,8 @@ public:
     // The logical height is our extent in the block flow direction, i.e., height for horizontal text and width for vertical text.
     int logicalHeight() const;
 
+    FloatRect logicalFrameRect() const { return isHorizontal() ? IntRect(m_x, m_y, m_logicalWidth, logicalHeight()) : IntRect(m_y, m_x, logicalHeight(), m_logicalWidth); }
+
     virtual int baselinePosition(FontBaseline baselineType) const { return boxModelObject()->baselinePosition(baselineType, m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine); }
     virtual int lineHeight() const { return boxModelObject()->lineHeight(m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine); }
     
@@ -310,6 +314,9 @@ public:
     void flipForWritingMode(IntRect&);
     IntPoint flipForWritingMode(const IntPoint&);
 
+    bool knownToHaveNoOverflow() const { return m_knownToHaveNoOverflow; }
+    void clearKnownToHaveNoOverflow();
+
 private:
     InlineBox* m_next; // The next element on the same line as us.
     InlineBox* m_prev; // The previous element on the same line as us.
@@ -342,6 +349,7 @@ protected:
     bool m_endsWithBreak : 1;  // Whether the line ends with a <br>.
     // shared between RootInlineBox and InlineTextBox
     bool m_hasSelectedChildrenOrCanHaveLeadingExpansion : 1; // Whether we have any children selected (this bit will also be set if the <br> that terminates our line is selected).
+    bool m_knownToHaveNoOverflow : 1;
     bool m_hasEllipsisBoxOrHyphen : 1;
 
     // for InlineTextBox

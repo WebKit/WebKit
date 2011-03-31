@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-void EllipsisBox::paint(PaintInfo& paintInfo, int tx, int ty)
+void EllipsisBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int lineBottom)
 {
     GraphicsContext* context = paintInfo.context;
     RenderStyle* style = m_renderer->style(m_firstLine);
@@ -66,7 +66,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, int tx, int ty)
         // Paint the markup box
         tx += m_x + m_logicalWidth - m_markupBox->x();
         ty += m_y + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->fontMetrics().ascent());
-        m_markupBox->paint(paintInfo, tx, ty);
+        m_markupBox->paint(paintInfo, tx, ty, lineTop, lineBottom);
     }
 }
 
@@ -99,7 +99,7 @@ void EllipsisBox::paintSelection(GraphicsContext* context, int tx, int ty, Rende
     context->restore();
 }
 
-bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty)
+bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, int lineTop, int lineBottom)
 {
     tx += m_x;
     ty += m_y;
@@ -109,7 +109,7 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         RenderStyle* style = m_renderer->style(m_firstLine);
         int mtx = tx + m_logicalWidth - m_markupBox->x();
         int mty = ty + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->fontMetrics().ascent());
-        if (m_markupBox->nodeAtPoint(request, result, x, y, mtx, mty)) {
+        if (m_markupBox->nodeAtPoint(request, result, x, y, mtx, mty, lineTop, lineBottom)) {
             renderer()->updateHitTestResult(result, IntPoint(x - mtx, y - mty));
             return true;
         }

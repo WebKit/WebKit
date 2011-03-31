@@ -1,3 +1,115 @@
+2011-03-31  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57565
+
+        Optimize overflow computations on lines to avoid allocating RenderOverflows in nearly all cases and to avoid even having
+        to check the line for overflow in the first place.
+        
+        For the purposes of overflow computation, an inline object's default containment box for overflow is now assumed to extend
+        all the way from lineTop to lineBottom instead of snugly fitting the inline object's own block dimensions. This allows
+        replaced objects to be inside spans without triggering overflow allocation.
+        
+        The overflow accessors on InlineFlowBox have been changed to require passing in the lineTop and lineBottom so that the block
+        dimensions can be forced to those values. Because these values are checked during painting and hit testing of lines, the
+        lineTop and lineBottom are now passed as arguments to the painting and hit testing functions to avoid repeatedly crawling
+        back up to the root box to fetch them.
+        
+        Added a new boolean flag to all InlineBoxes, knownToHaveNoOverflow(), and optimized for common cases where no overflow can
+        possibly be present.  When the bit is set, computeOverflow will just immediately return.
+ 
+        This change speeds up line layout by ~10%.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/EllipsisBox.h:
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::paint):
+        (WebCore::InlineBox::nodeAtPoint):
+        (WebCore::InlineBox::clearKnownToHaveNoOverflow):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        (WebCore::InlineBox::logicalFrameRect):
+        (WebCore::InlineBox::knownToHaveNoOverflow):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        (WebCore::InlineFlowBox::placeBoxesInInlineDirection):
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::addBoxShadowVisualOverflow):
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        (WebCore::InlineFlowBox::addReplacedChildOverflow):
+        (WebCore::InlineFlowBox::computeOverflow):
+        (WebCore::InlineFlowBox::setLayoutOverflow):
+        (WebCore::InlineFlowBox::setVisualOverflow):
+        (WebCore::InlineFlowBox::setOverflowFromLogicalRects):
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        (WebCore::InlineFlowBox::paint):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::layoutOverflowRect):
+        (WebCore::InlineFlowBox::logicalLeftLayoutOverflow):
+        (WebCore::InlineFlowBox::logicalRightLayoutOverflow):
+        (WebCore::InlineFlowBox::logicalTopLayoutOverflow):
+        (WebCore::InlineFlowBox::logicalBottomLayoutOverflow):
+        (WebCore::InlineFlowBox::logicalLayoutOverflowRect):
+        (WebCore::InlineFlowBox::visualOverflowRect):
+        (WebCore::InlineFlowBox::logicalLeftVisualOverflow):
+        (WebCore::InlineFlowBox::logicalRightVisualOverflow):
+        (WebCore::InlineFlowBox::logicalTopVisualOverflow):
+        (WebCore::InlineFlowBox::logicalBottomVisualOverflow):
+        (WebCore::InlineFlowBox::logicalVisualOverflowRect):
+        (WebCore::InlineFlowBox::frameRectIncludingLineHeight):
+        (WebCore::InlineFlowBox::logicalFrameRectIncludingLineHeight):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::nodeAtPoint):
+        (WebCore::InlineTextBox::paint):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::simplifiedNormalFlowLayout):
+        (WebCore::RenderBlock::paintEllipsisBoxes):
+        (WebCore::RenderBlock::adjustLinePositionForPagination):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::matchedEndLine):
+        (WebCore::RenderBlock::addOverflowFromInlineChildren):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::hasRenderOverflow):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::linesVisualOverflowBoundingBox):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::anyLineIntersectsRect):
+        (WebCore::RenderLineBoxList::lineIntersectsDirtyRect):
+        (WebCore::RenderLineBoxList::paint):
+        (WebCore::RenderLineBoxList::hitTest):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paintEllipsisBox):
+        (WebCore::RootInlineBox::addHighlightOverflow):
+        (WebCore::RootInlineBox::paint):
+        (WebCore::RootInlineBox::nodeAtPoint):
+        (WebCore::RootInlineBox::paddedLayoutOverflowRect):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::logicalTopVisualOverflow):
+        (WebCore::RootInlineBox::logicalBottomVisualOverflow):
+        (WebCore::RootInlineBox::logicalTopLayoutOverflow):
+        (WebCore::RootInlineBox::logicalBottomLayoutOverflow):
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::paint):
+        * rendering/svg/SVGInlineFlowBox.h:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paint):
+        * rendering/svg/SVGInlineTextBox.h:
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint):
+        * rendering/svg/SVGRootInlineBox.h:
+
 2011-03-31  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

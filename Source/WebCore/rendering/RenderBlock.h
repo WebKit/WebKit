@@ -504,10 +504,6 @@ private:
     void computeBlockDirectionPositionsForLine(RootInlineBox*, BidiRun*, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
     void deleteEllipsisLineBoxes();
     void checkLinesForTextOverflow();
-    int beforeSideVisualOverflowForLine(RootInlineBox*) const;
-    int afterSideVisualOverflowForLine(RootInlineBox*) const;
-    int beforeSideLayoutOverflowForLine(RootInlineBox*) const;
-    int afterSideLayoutOverflowForLine(RootInlineBox*) const;
     // End of functions defined in RenderBlockLineLayout.cpp.
 
     void paintFloats(PaintInfo&, int tx, int ty, bool preservePhase = false);

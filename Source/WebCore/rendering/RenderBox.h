@@ -398,6 +398,8 @@ public:
     IntRect logicalLayoutOverflowRectForPropagation(RenderStyle*) const;
     IntRect layoutOverflowRectForPropagation(RenderStyle*) const;
 
+    RenderOverflow* hasRenderOverflow() const { return m_overflow.get(); }
+
 protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
