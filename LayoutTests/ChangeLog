@@ -1,3 +1,32 @@
+2011-03-30  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        <meter> can only support horizontal indicator
+        https://bugs.webkit.org/show_bug.cgi?id=56001
+        
+        - Simpflied some test cases which had vertical indicators.
+        - Updated expectations due to shadow structure change
+
+        * fast/dom/HTMLMeterElement/meter-element.html:
+        * fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html:
+        * fast/dom/HTMLMeterElement/meter-styles.html:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-boundary-values-expected.checksum:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-element-expected.checksum:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-element-expected.png:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-element-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.checksum:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.checksum:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+
 2011-03-30  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Ryosuke Niwa.

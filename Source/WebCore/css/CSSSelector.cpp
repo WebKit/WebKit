@@ -161,31 +161,19 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     case PseudoOuterSpinButton:
         return OUTER_SPIN_BUTTON;
 #if ENABLE(METER_TAG)
-    case PseudoMeterHorizontalBar:
-        return METER_HORIZONTAL_BAR;
-    case PseudoMeterHorizontalOptimum:
-        return METER_HORIZONTAL_OPTIMUM;
-    case PseudoMeterHorizontalSuboptimal:
-        return METER_HORIZONTAL_SUBOPTIMAL;
-    case PseudoMeterHorizontalEvenLessGood:
-        return METER_HORIZONTAL_EVEN_LESS_GOOD;
-    case PseudoMeterVerticalBar:
-        return METER_VERTICAL_BAR;
-    case PseudoMeterVerticalOptimum:
-        return METER_VERTICAL_OPTIMUM;
-    case PseudoMeterVerticalSuboptimal:
-        return METER_VERTICAL_SUBOPTIMAL;
-    case PseudoMeterVerticalEvenLessGood:
-        return METER_VERTICAL_EVEN_LESS_GOOD;
+    case PseudoMeterBar:
+        return METER_BAR;
+    case PseudoMeterOptimum:
+        return METER_OPTIMUM;
+    case PseudoMeterSuboptimal:
+        return METER_SUBOPTIMAL;
+    case PseudoMeterEvenLessGood:
+        return METER_EVEN_LESS_GOOD;
 #else
-    case PseudoMeterHorizontalBar:
-    case PseudoMeterHorizontalOptimum:
-    case PseudoMeterHorizontalSuboptimal:
-    case PseudoMeterHorizontalEvenLessGood:
-    case PseudoMeterVerticalBar:
-    case PseudoMeterVerticalOptimum:
-    case PseudoMeterVerticalSuboptimal:
-    case PseudoMeterVerticalEvenLessGood:
+    case PseudoMeterBar:
+    case PseudoMeterOptimum:
+    case PseudoMeterSuboptimal:
+    case PseudoMeterEvenLessGood:
         ASSERT_NOT_REACHED();
         return NOPSEUDO;
 #endif
@@ -316,14 +304,10 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, optional, ("optional"));
     DEFINE_STATIC_LOCAL(AtomicString, outerSpinButton, ("-webkit-outer-spin-button"));
 #if ENABLE(METER_TAG)
-    DEFINE_STATIC_LOCAL(AtomicString, meterHorizontalBar, ("-webkit-meter-horizontal-bar"));
-    DEFINE_STATIC_LOCAL(AtomicString, meterHorizontalOptimumValue, ("-webkit-meter-horizontal-optimum-value"));
-    DEFINE_STATIC_LOCAL(AtomicString, meterHorizontalSuboptimalValue, ("-webkit-meter-horizontal-suboptimal-value"));
-    DEFINE_STATIC_LOCAL(AtomicString, meterHorizontalEvenLessGoodValue, ("-webkit-meter-horizontal-even-less-good-value"));
-    DEFINE_STATIC_LOCAL(AtomicString, meterVerticalBar, ("-webkit-meter-vertical-bar"));
-    DEFINE_STATIC_LOCAL(AtomicString, meterVerticalOptimumValue, ("-webkit-meter-vertical-optimum-value"));
-    DEFINE_STATIC_LOCAL(AtomicString, meterVerticalSuboptimalValue, ("-webkit-meter-vertical-suboptimal-value"));
-    DEFINE_STATIC_LOCAL(AtomicString, meterVerticalEvenLessGoodValue, ("-webkit-meter-vertical-even-less-good-value"));
+    DEFINE_STATIC_LOCAL(AtomicString, meterBar, ("-webkit-meter-bar"));
+    DEFINE_STATIC_LOCAL(AtomicString, meterOptimumValue, ("-webkit-meter-optimum-value"));
+    DEFINE_STATIC_LOCAL(AtomicString, meterSuboptimalValue, ("-webkit-meter-suboptimal-value"));
+    DEFINE_STATIC_LOCAL(AtomicString, meterEvenLessGoodValue, ("-webkit-meter-even-less-good-value"));
 #endif
 
     DEFINE_STATIC_LOCAL(AtomicString, required, ("required"));
@@ -414,14 +398,10 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(nthLastOfType.impl(), CSSSelector::PseudoNthLastOfType);
         nameToPseudoType->set(outerSpinButton.impl(), CSSSelector::PseudoOuterSpinButton);
 #if ENABLE(METER_TAG)
-        nameToPseudoType->set(meterHorizontalBar.impl(), CSSSelector::PseudoMeterHorizontalBar);
-        nameToPseudoType->set(meterHorizontalOptimumValue.impl(), CSSSelector::PseudoMeterHorizontalOptimum);
-        nameToPseudoType->set(meterHorizontalSuboptimalValue.impl(), CSSSelector::PseudoMeterHorizontalSuboptimal);
-        nameToPseudoType->set(meterHorizontalEvenLessGoodValue.impl(), CSSSelector::PseudoMeterHorizontalEvenLessGood);
-        nameToPseudoType->set(meterVerticalBar.impl(), CSSSelector::PseudoMeterVerticalBar);
-        nameToPseudoType->set(meterVerticalOptimumValue.impl(), CSSSelector::PseudoMeterVerticalOptimum);
-        nameToPseudoType->set(meterVerticalSuboptimalValue.impl(), CSSSelector::PseudoMeterVerticalSuboptimal);
-        nameToPseudoType->set(meterVerticalEvenLessGoodValue.impl(), CSSSelector::PseudoMeterVerticalEvenLessGood);
+        nameToPseudoType->set(meterBar.impl(), CSSSelector::PseudoMeterBar);
+        nameToPseudoType->set(meterOptimumValue.impl(), CSSSelector::PseudoMeterOptimum);
+        nameToPseudoType->set(meterSuboptimalValue.impl(), CSSSelector::PseudoMeterSuboptimal);
+        nameToPseudoType->set(meterEvenLessGoodValue.impl(), CSSSelector::PseudoMeterEvenLessGood);
 #endif
         nameToPseudoType->set(root.impl(), CSSSelector::PseudoRoot);
         nameToPseudoType->set(windowInactive.impl(), CSSSelector::PseudoWindowInactive);
@@ -497,14 +477,10 @@ void CSSSelector::extractPseudoType() const
     case PseudoInputSpeechButton:
 #endif
     case PseudoInnerSpinButton:
-    case PseudoMeterHorizontalBar:
-    case PseudoMeterHorizontalOptimum:
-    case PseudoMeterHorizontalSuboptimal:
-    case PseudoMeterHorizontalEvenLessGood:
-    case PseudoMeterVerticalBar:
-    case PseudoMeterVerticalOptimum:
-    case PseudoMeterVerticalSuboptimal:
-    case PseudoMeterVerticalEvenLessGood:
+    case PseudoMeterBar:
+    case PseudoMeterOptimum:
+    case PseudoMeterSuboptimal:
+    case PseudoMeterEvenLessGood:
     case PseudoOuterSpinButton:
     case PseudoResizer:
     case PseudoScrollbar:
