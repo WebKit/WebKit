@@ -136,8 +136,7 @@ static DWORD accessRights(SharedMemory::Protection protection)
     case SharedMemory::ReadOnly:
         return FILE_MAP_READ;
     case SharedMemory::ReadWrite:
-        // FILE_MAP_WRITE implies read access, too.
-        return FILE_MAP_WRITE;
+        return FILE_MAP_READ | FILE_MAP_WRITE;
     }
 
     ASSERT_NOT_REACHED();

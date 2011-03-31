@@ -1,5 +1,23 @@
 2011-03-31  Adam Roben  <aroben@apple.com>
 
+        Specify both FILE_MAP_READ and FILE_MAP_WRITE when creating a read-write SharedMemory object
+
+        When passed to ::MapViewOfFile, FILE_MAP_WRITE implies FILE_MAP_READ, but other file mapping
+        APIs don't work that way. This bug wasn't causing any problems in practice, but it would
+        have prevented us from creating a DIB that wraps a SharedMemory object (which I noticed
+        while working on another bug).
+
+        Fixes <http://webkit.org/b/57576> File mappings used by read-write SharedMemory objects
+        aren't correctly marked as read-write after being sent over a CoreIPC::Connection
+
+        Reviewed by Brian Weinstein.
+
+        * Platform/win/SharedMemoryWin.cpp:
+        (WebKit::accessRights): Specify FILE_MAP_READ in addition to FILE_MAP_WRITE for read-write
+        SharedMemory.
+
+2011-03-31  Adam Roben  <aroben@apple.com>
+
         Quote the executable path we pass to ::CreateProcessW
 
         This will ensure that spaces in the path will be interpreted correctly.
