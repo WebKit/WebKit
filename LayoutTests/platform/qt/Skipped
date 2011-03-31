@@ -596,6 +596,7 @@ media/audio-constructor.html
 media/audio-constructor-preload.html
 media/audio-constructor-src.html
 media/audio-controls-rendering.html
+media/video-currentTime.html
 media/audio-data-url.html
 media/audio-delete-while-slider-thumb-clicked.html
 media/audio-delete-while-step-button-clicked.html
