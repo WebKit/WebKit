@@ -1,3 +1,16 @@
+2011-03-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9199518> Crash when focusing a styled editable element
+
+        Test: editing/deleting/delete-button-background-image-none.html
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::isDeletableElement): Check all background layers for background images.
+        * rendering/style/RenderStyle.h: Removed backgroundImage() as it was only used, incorrectly,
+        in the above function.
+
 2011-03-30  Martin Robinson  <mrobinson@igalia.com>
 
         Try once more to fix the EFL build.

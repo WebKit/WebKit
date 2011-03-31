@@ -563,7 +563,6 @@ public:
         return wordBreak() == BreakWordBreak || wordWrap() == BreakWordWrap;
     }
 
-    StyleImage* backgroundImage() const { return m_background->background().image(); }
     EFillRepeat backgroundRepeatX() const { return static_cast<EFillRepeat>(m_background->background().repeatX()); }
     EFillRepeat backgroundRepeatY() const { return static_cast<EFillRepeat>(m_background->background().repeatY()); }
     CompositeOperator backgroundComposite() const { return static_cast<CompositeOperator>(m_background->background().composite()); }

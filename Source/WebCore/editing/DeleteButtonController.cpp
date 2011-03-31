@@ -112,8 +112,12 @@ static bool isDeletableElement(const Node* node)
             return false;
 
         // Allow blocks that have background images
-        if (style->hasBackgroundImage() && style->backgroundImage()->canRender(1.0f))
-            return true;
+        if (style->hasBackgroundImage()) {
+            for (const FillLayer* background = style->backgroundLayers(); background; background = background->next()) {
+                if (background->image() && background->image()->canRender(1))
+                    return true;
+            }
+        }
 
         // Allow blocks with a minimum number of non-transparent borders
         unsigned visibleBorders = style->borderTop().isVisible() + style->borderBottom().isVisible() + style->borderLeft().isVisible() + style->borderRight().isVisible();
