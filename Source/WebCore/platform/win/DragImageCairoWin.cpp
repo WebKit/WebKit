@@ -46,7 +46,7 @@ namespace WebCore {
 void deallocContext(PlatformContextCairo* target)
 {
     if (target)
-        delete *target;
+        delete target;
 }
 
 HBITMAP allocImage(HDC dc, IntSize size, PlatformContextCairo** targetRef)
@@ -84,7 +84,7 @@ HBITMAP allocImage(HDC dc, IntSize size, PlatformContextCairo** targetRef)
     // before they get written to the internal buffer.
     cairo_matrix_t matrix;
     cairo_matrix_init(&matrix, 1.0, 0.0, 0.0, -1.0, 0.0, size.height());
-    cairo_set_matrix(*targetRef, &matrix);
+    cairo_set_matrix((*targetRef)->cr(), &matrix);
 
     return hbmp;
 }
@@ -122,25 +122,31 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
     if (!dstDC)
         goto exit;
 
-    CairoContextRef targetContext;
+    PlatformContextCairo* targetContext = 0;
     hbmp = allocImage(dstDC, dstSize, &targetContext);
     if (!hbmp)
         goto exit;
+
+    if (!targetContext) {
+        ::DeleteObject(hbmp);
+        hbmp = 0;
+        goto exit;
+    }
 
     cairo_surface_t* srcImage = createCairoContextFromBitmap(image);
 
     // Scale the target surface to the new image size, and flip it
     // so that when we set the srcImage as the surface it will draw
     // right-side-up.
-    cairo_translate(targetContext, 0, dstSize.height());
-    cairo_scale(targetContext, scale.width(), -scale.height());
-    cairo_set_source_surface (targetContext, srcImage, 0.0, 0.0);
+    cairo_translate(targetContext->cr(), 0, dstSize.height());
+    cairo_scale(targetContext->cr(), scale.width(), -scale.height());
+    cairo_set_source_surface (targetContext->cr(), srcImage, 0.0, 0.0);
 
     // Now we can paint and get the correct result
-    cairo_paint(targetContext);
+    cairo_paint(targetContext->cr());
 
     cairo_surface_destroy (srcImage);
-    cairo_destroy(targetContext);
+    delete targetContext;
     ::DeleteObject(image);
     image = 0;
 
@@ -161,7 +167,7 @@ DragImageRef createDragImageFromImage(Image* img)
     if (!workingDC)
         goto exit;
 
-    CairoContextRef drawContext = 0;
+    PlatformGraphicsContext* drawContext = 0;
     hbmp = allocImage(workingDC, img->size(), &drawContext);
     if (!hbmp)
         goto exit;
@@ -171,16 +177,16 @@ DragImageRef createDragImageFromImage(Image* img)
         hbmp = 0;
     }
 
-    cairo_set_source_rgb (drawContext, 1.0, 0.0, 1.0);
-    cairo_fill_preserve (drawContext);
+    cairo_set_source_rgb (drawContext->cr(), 1.0, 0.0, 1.0);
+    cairo_fill_preserve (drawContext->cr());
 
     cairo_surface_t* srcImage = img->nativeImageForCurrentFrame();
 
     // Draw the image.
-    cairo_set_source_surface(drawContext, srcImage, 0.0, 0.0);
-    cairo_paint(drawContext);
+    cairo_set_source_surface(drawContext->cr(), srcImage, 0.0, 0.0);
+    cairo_paint(drawContext->cr());
 
-    cairo_destroy (drawContext);
+    delete drawContext;
 
 exit:
     if (workingDC)
