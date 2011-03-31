@@ -109,7 +109,7 @@ public:
     // Not transform-friendly
     void textRects(Vector<IntRect>&, bool useSelectionHeight = false);
     // Transform-friendly
-    void textQuads(Vector<FloatQuad>&, bool useSelectionHeight = false);
+    void textQuads(Vector<FloatQuad>&, bool useSelectionHeight = false) const;
     void getBorderAndTextQuads(Vector<FloatQuad>&) const;
     FloatRect boundingRect() const;
 

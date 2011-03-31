@@ -1620,7 +1620,7 @@ void Range::textRects(Vector<IntRect>& rects, bool useSelectionHeight)
     }
 }
 
-void Range::textQuads(Vector<FloatQuad>& quads, bool useSelectionHeight)
+void Range::textQuads(Vector<FloatQuad>& quads, bool useSelectionHeight) const
 {
     Node* startContainer = m_start.container();
     Node* endContainer = m_end.container();

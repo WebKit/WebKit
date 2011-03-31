@@ -1,3 +1,25 @@
+2011-03-30  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Autocorrection panel isn't positioned correctly in Safari (mac) when the zooming is not 1x.
+        https://bugs.webkit.org/show_bug.cgi?id=57353
+        <rdar://problem/9163983>
+
+        We use Range::textQuads() instead of Range::boundingRect() to compute the position of correction
+        panel. The latter function compensates for zooming, which we don't need in this case. We also
+        dismiss correction panel when zooming factor is changed. This is done in Frame::setPageAndTextZoomFactors().
+
+        * WebCore.exp.in:
+        * dom/Range.cpp:
+        (WebCore::Range::textQuads):
+        * dom/Range.h:
+        * editing/Editor.cpp:
+        (WebCore::Editor::windowRectForRange):
+        * editing/Editor.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setPageAndTextZoomFactors):
+
 2011-03-30  Chris Guillory  <chris.guillory@google.com>
 
         Reviewed by Dimitri Glazkov.

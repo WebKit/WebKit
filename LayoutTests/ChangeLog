@@ -1,3 +1,16 @@
+2011-03-30  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Autocorrection panel isn't positioned correctly in Safari (mac) when the zooming is not 1x.
+        https://bugs.webkit.org/show_bug.cgi?id=57353
+        <rdar://problem/9163983>
+
+        Updated following test in response to recent change in AppKit spell checker.
+
+        * platform/mac/editing/spelling/delete-autocorrected-word-1-expected.txt:
+        * platform/mac/editing/spelling/delete-autocorrected-word-1.html:
+
 2011-03-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
