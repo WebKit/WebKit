@@ -1,3 +1,63 @@
+2011-03-31  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, remove stale chromium-gpu canvas expectations (see r82521).
+
+        * platform/chromium-gpu-linux/fast/canvas/arc360-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/canvas-before-css-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/canvas-composite-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/canvas-resize-reset-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/canvas-transforms-during-path-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/canvasDrawingIntoSelf-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/drawImage-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/drawImage-with-globalAlpha-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/fill-stroke-clip-reset-path-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/fillrect-gradient-zero-stops-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/fillrect_gradient-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/image-object-in-canvas-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/image-pattern-rotate-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/patternfill-repeat-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/quadraticCurveTo-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/shadow-offset-1-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/shadow-offset-2-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/shadow-offset-3-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/shadow-offset-4-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/shadow-offset-5-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/shadow-offset-6-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/shadow-offset-7-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/toDataURL-alpha-expected.txt: Removed.
+        * platform/chromium-gpu-linux/fast/canvas/zero-size-fill-rect-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/arc360-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/canvas-before-css-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/canvas-composite-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/canvas-empty-image-pattern-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/canvas-resize-reset-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/canvas-transform-identity-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/canvas-transform-infinity-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/canvas-transform-multiply-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/canvas-transform-nan-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/canvas-transform-non-invertible-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/canvas-transform-skewed-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/canvas-transforms-during-path-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/canvasDrawingIntoSelf-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/drawImage-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/drawImage-with-globalAlpha-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/fill-stroke-clip-reset-path-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/fillrect-gradient-zero-stops-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/fillrect_gradient-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/image-object-in-canvas-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/image-pattern-rotate-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/patternfill-repeat-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/quadraticCurveTo-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/shadow-offset-1-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/shadow-offset-2-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/shadow-offset-3-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/shadow-offset-4-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/shadow-offset-5-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/shadow-offset-6-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/shadow-offset-7-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/toDataURL-alpha-expected.txt: Removed.
+        * platform/chromium-gpu-win/fast/canvas/zero-size-fill-rect-expected.txt: Removed.
+
 2011-03-31  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, remove GTK-specific fast/canvas baselines after r82521.
