@@ -213,7 +213,7 @@ protected:
     WTF::Unicode::Direction m_direction;
     Iterator endOfLine;
     bool m_reachedEndOfLine;
-    Iterator lastBeforeET;
+    Iterator m_lastBeforeET; // Before a EuropeanNumberTerminator
     bool m_emptyRun;
 
     Run* m_firstRun;
@@ -818,7 +818,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                                 // Terminate the EN run.
                                 appendRun();
                                 // Make an R run.
-                                m_eor = m_status.last == EuropeanNumberTerminator ? lastBeforeET : m_last;
+                                m_eor = m_status.last == EuropeanNumberTerminator ? m_lastBeforeET : m_last;
                                 m_direction = RightToLeft;
                                 appendRun();
                                 // Begin a new EN run.
@@ -829,7 +829,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                             appendRun();
                             if (m_status.lastStrong == RightToLeft || context()->dir() == RightToLeft) {
                                 // Make an R run.
-                                m_eor = m_status.last == EuropeanNumberTerminator ? lastBeforeET : m_last;
+                                m_eor = m_status.last == EuropeanNumberTerminator ? m_lastBeforeET : m_last;
                                 m_direction = RightToLeft;
                                 appendRun();
                                 // Begin a new EN run.
@@ -837,7 +837,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                             }
                         } else if (m_status.lastStrong == RightToLeft) {
                             // Extend the R run to include the neutrals.
-                            m_eor = m_status.last == EuropeanNumberTerminator ? lastBeforeET : m_last;
+                            m_eor = m_status.last == EuropeanNumberTerminator ? m_lastBeforeET : m_last;
                             m_direction = RightToLeft;
                             appendRun();
                             // Begin a new EN run.
@@ -905,7 +905,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                 m_eor = m_current;
                 m_status.eor = dirCurrent;
             } else if (m_status.last != EuropeanNumberTerminator)
-                lastBeforeET = m_emptyRun ? m_eor : m_last;
+                m_lastBeforeET = m_emptyRun ? m_eor : m_last;
             break;
 
         // boundary neutrals should be ignored
@@ -951,7 +951,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
             m_eor = stateAtEnd.m_eor;
             m_last = stateAtEnd.m_last;
             m_reachedEndOfLine = stateAtEnd.m_reachedEndOfLine;
-            lastBeforeET = stateAtEnd.lastBeforeET;
+            m_lastBeforeET = stateAtEnd.m_lastBeforeET;
             m_emptyRun = stateAtEnd.m_emptyRun;
             m_direction = OtherNeutral;
             break;
@@ -975,7 +975,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
                 m_eor = stateAtEnd.m_eor;
                 m_last = stateAtEnd.m_last;
                 m_reachedEndOfLine = stateAtEnd.m_reachedEndOfLine;
-                lastBeforeET = stateAtEnd.lastBeforeET;
+                m_lastBeforeET = stateAtEnd.m_lastBeforeET;
                 m_emptyRun = stateAtEnd.m_emptyRun;
                 m_direction = OtherNeutral;
                 break;
@@ -990,7 +990,7 @@ void BidiResolver<Iterator, Run>::createBidiRunsForLine(const Iterator& end, Vis
             stateAtEnd.m_eor = m_eor;
             stateAtEnd.m_last = m_last;
             stateAtEnd.m_reachedEndOfLine = m_reachedEndOfLine;
-            stateAtEnd.lastBeforeET = lastBeforeET;
+            stateAtEnd.m_lastBeforeET = m_lastBeforeET;
             stateAtEnd.m_emptyRun = m_emptyRun;
             endOfLine = m_last;
             pastEnd = true;
