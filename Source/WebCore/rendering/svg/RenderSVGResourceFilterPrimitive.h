@@ -43,6 +43,8 @@ public:
     {
     }
 
+    virtual void styleDidChange(StyleDifference, const RenderStyle*);
+
     virtual const char* renderName() const { return "RenderSVGResourceFilterPrimitive"; }
     virtual bool isSVGResourceFilterPrimitive() const { return true; }
 

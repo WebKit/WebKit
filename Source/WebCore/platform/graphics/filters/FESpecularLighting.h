@@ -34,7 +34,7 @@ public:
     virtual ~FESpecularLighting();
 
     Color lightingColor() const;
-    void setLightingColor(const Color&);
+    bool setLightingColor(const Color&);
 
     float surfaceScale() const;
     bool setSurfaceScale(float);
