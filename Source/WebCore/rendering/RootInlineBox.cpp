@@ -785,7 +785,7 @@ bool RootInlineBox::includesRootLineBoxFontOrLeading() const
     return (lineBoxContain & LineBoxContainBlock) || (lineBoxContain & LineBoxContainInline) || (lineBoxContain & LineBoxContainFont);
 }
 
-Node* RootInlineBox::getLogicalStartBoxWithNode(InlineBox*& startBox)
+Node* RootInlineBox::getLogicalStartBoxWithNode(InlineBox*& startBox) const
 {
     Vector<InlineBox*> leafBoxesInLogicalOrder;
     collectLeafBoxesInLogicalOrder(leafBoxesInLogicalOrder);
@@ -799,7 +799,7 @@ Node* RootInlineBox::getLogicalStartBoxWithNode(InlineBox*& startBox)
     return 0;
 }
     
-Node* RootInlineBox::getLogicalEndBoxWithNode(InlineBox*& endBox)
+Node* RootInlineBox::getLogicalEndBoxWithNode(InlineBox*& endBox) const
 {
     Vector<InlineBox*> leafBoxesInLogicalOrder;
     collectLeafBoxesInLogicalOrder(leafBoxesInLogicalOrder);

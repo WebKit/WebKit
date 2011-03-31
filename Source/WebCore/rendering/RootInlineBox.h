@@ -142,8 +142,8 @@ public:
     bool fitsToGlyphs() const;
     bool includesRootLineBoxFontOrLeading() const;
 
-    Node* getLogicalStartBoxWithNode(InlineBox*&);
-    Node* getLogicalEndBoxWithNode(InlineBox*&);
+    Node* getLogicalStartBoxWithNode(InlineBox*&) const;
+    Node* getLogicalEndBoxWithNode(InlineBox*&) const;
 private:
     bool hasEllipsisBox() const { return m_hasEllipsisBoxOrHyphen; }
     void setHasEllipsisBox(bool hasEllipsisBox) { m_hasEllipsisBoxOrHyphen = hasEllipsisBox; }

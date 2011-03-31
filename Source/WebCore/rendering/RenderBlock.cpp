@@ -52,7 +52,6 @@
 #include "Settings.h"
 #include "TextRun.h"
 #include "TransformState.h"
-#include "visible_units.h"
 #include <wtf/StdLibExtras.h>
 
 using namespace std;

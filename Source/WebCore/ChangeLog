@@ -1,3 +1,18 @@
+2011-03-31  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Clean up from r82447.
+        https://bugs.webkit.org/attachment.cgi?bugid=57532
+
+        No new tests since this doesn't change behavior.
+
+        * rendering/RenderBlock.cpp: Removing unnecessary visible_units.h include.
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::getLogicalStartBoxWithNode): Making const.
+        (WebCore::RootInlineBox::getLogicalEndBoxWithNode): Ditto.
+        * rendering/RootInlineBox.h:
+
 2011-03-31  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed build fix for EFL
