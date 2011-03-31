@@ -56,15 +56,19 @@ static NodeCallbackQueue* s_postAttachCallbackQueue;
 static size_t s_attachDepth;
 static bool s_shouldReEnableMemoryCacheCallsAfterAttach;
 
+static inline void collectNodes(Node* node, NodeVector& nodes)
+{
+    for (Node* child = node->firstChild(); child; child = child->nextSibling())
+        nodes.append(child);
+}
+
 static void collectTargetNodes(Node* node, NodeVector& nodes)
 {
     if (node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE) {
         nodes.append(node);
         return;
     }
-
-    for (Node* child = node->firstChild(); child; child = child->nextSibling())
-        nodes.append(child);
+    collectNodes(node, nodes);
 }
 
 void ContainerNode::removeAllChildren()
@@ -75,8 +79,7 @@ void ContainerNode::removeAllChildren()
 void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 {
     NodeVector children;
-    for (Node* child = oldParent->firstChild(); child; child = child->nextSibling())
-        children.append(child);
+    collectNodes(oldParent, children);
     oldParent->removeAllChildren();
 
     for (unsigned i = 0; i < children.size(); ++i) {
@@ -384,8 +387,7 @@ static void willRemoveChildren(ContainerNode* container)
     container->document()->incDOMTreeVersion();
 
     NodeVector children;
-    for (Node* n = container->firstChild(); n; n = n->nextSibling())
-        children.append(n);
+    collectNodes(container, children);
 
     for (NodeVector::const_iterator it = children.begin(); it != children.end(); it++) {
         Node* child = it->get();
@@ -735,8 +737,16 @@ void ContainerNode::insertedIntoDocument()
 {
     Node::insertedIntoDocument();
     insertedIntoTree(false);
-    for (Node* child = m_firstChild; child && inDocument(); child = child->nextSibling())
+
+    // Determine set of children before operating on any of them.
+    NodeVector children;
+    collectNodes(this, children);
+
+    NodeVector::iterator it;
+    for (it = children.begin(); it != children.end() && inDocument(); ++it) {
+        Node* child = it->get();
         child->insertedIntoDocument();
+    }
 }
 
 void ContainerNode::removedFromDocument()
