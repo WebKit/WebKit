@@ -1,3 +1,22 @@
+2011-03-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Downloading a file fails due to a sandbox violation if the destination path is a symlink
+        https://bugs.webkit.org/show_bug.cgi?id=57517
+        <rdar://problem/8943865>
+
+        Make sure to resolve any symlinks in the given path when creating a sandbox extension handle.
+        Note that we can't use realpath or -[NSString stringByResolvingSymlinksInPath], because those calls
+        will fail if the pointed to file doesn't exist.
+
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::resolveSymlinksInPath):
+        New function that resolves all the symlinks in the given path.
+
+        (WebKit::SandboxExtension::createHandle):
+        Call resolveSymlinksInPath on the resulting path.
+
 2011-03-30  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the GTK+ WebKit2 build.

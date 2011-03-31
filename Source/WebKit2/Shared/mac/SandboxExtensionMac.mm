@@ -33,6 +33,7 @@
 #import "DataReference.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
+#import <sys/stat.h>
 #import <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -108,12 +109,55 @@ static WKSandboxExtensionType wkSandboxExtensionType(SandboxExtension::Type type
     return WKSandboxExtensionTypeReadOnly;
 }
 
+static CString resolveSymlinksInPath(const CString& path)
+{
+    struct stat statBuf;
+
+    // Check if this file exists.
+    if (!stat(path.data(), &statBuf)) {
+        char resolvedName[PATH_MAX];
+
+        return realpath(path.data(), resolvedName);
+    }
+
+    char* slashPtr = strrchr(path.data(), '/');
+    if (slashPtr == path.data())
+        return path;
+
+    size_t parentDirectoryLength = slashPtr - path.data();
+    if (parentDirectoryLength >= PATH_MAX)
+        return CString();
+
+    // Get the parent directory.
+    char parentDirectory[PATH_MAX];
+    memcpy(parentDirectory, path.data(), parentDirectoryLength);
+    parentDirectory[parentDirectoryLength] = '\0';
+
+    // Resolve it.
+    CString resolvedParentDirectory = resolveSymlinksInPath(CString(parentDirectory));
+    if (resolvedParentDirectory.isNull())
+        return CString();
+
+    size_t lastPathComponentLength = path.length() - parentDirectoryLength;
+    size_t resolvedPathLength = resolvedParentDirectory.length() + lastPathComponentLength;
+    if (resolvedPathLength >= PATH_MAX)
+        return CString();
+
+    // Combine the resolved parent directory with the last path component.
+    char* resolvedPathBuffer;
+    CString resolvedPath = CString::newUninitialized(resolvedPathLength, resolvedPathBuffer);
+    memcpy(resolvedPathBuffer, resolvedParentDirectory.data(), resolvedParentDirectory.length());
+    memcpy(resolvedPathBuffer + resolvedParentDirectory.length(), slashPtr, lastPathComponentLength);
+
+    return resolvedPath;
+}
+
 void SandboxExtension::createHandle(const String& path, Type type, Handle& handle)
 {
     ASSERT(!handle.m_sandboxExtension);
 
-    NSString *standardizedPath = [(NSString *)path stringByStandardizingPath];
-    handle.m_sandboxExtension = WKSandboxExtensionCreate([standardizedPath fileSystemRepresentation], wkSandboxExtensionType(type));
+    CString standardizedPath = resolveSymlinksInPath([[(NSString *)path stringByStandardizingPath] fileSystemRepresentation]);
+    handle.m_sandboxExtension = WKSandboxExtensionCreate(standardizedPath.data(), wkSandboxExtensionType(type));
 }
     
 String SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type type, Handle& handle)
