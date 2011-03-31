@@ -2,6 +2,17 @@
 
         Reviewed by Darin Adler.
 
+        WebHTMLView shouldn't resend noop: commands
+        https://bugs.webkit.org/show_bug.cgi?id=57504
+        <rdar://problem/9209390>
+
+        * WebView/WebHTMLView.mm: (-[WebHTMLView _executeSavedEditingCommands]): Filter out NOOPs,
+        which we get e.g. when handling Cmd-key combos.
+
+2011-03-30  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
         REGRESSION (r82320): Spacebar no longer pages down
         https://bugs.webkit.org/show_bug.cgi?id=57423
         <rdar://problem/9207702>

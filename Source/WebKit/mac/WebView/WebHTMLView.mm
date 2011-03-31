@@ -5443,6 +5443,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     for (size_t i = 0; i < commands.size(); ++i) {
         if (commands[i].commandName == "insertText:")
             [self insertText:commands[i].text];
+        else if (commands[i].commandName == "noop:")
+            ; // Do nothing. This case can be removed once <rdar://problem/9025012> is fixed.
         else
             [self doCommandBySelector:NSSelectorFromString(commands[i].commandName)];
     }
