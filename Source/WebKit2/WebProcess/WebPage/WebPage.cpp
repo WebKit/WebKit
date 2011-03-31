@@ -1907,8 +1907,7 @@ static bool shouldReuseCommittedSandboxExtension(WebFrame* frame)
     if (!documentLoader || !provisionalDocumentLoader)
         return false;
 
-    if (documentLoader->url().isLocalFile() && provisionalDocumentLoader->url().isLocalFile() 
-        && provisionalDocumentLoader->triggeringAction().type() == NavigationTypeLinkClicked)
+    if (documentLoader->url().isLocalFile() && provisionalDocumentLoader->url().isLocalFile())
         return true;
 
     return false;

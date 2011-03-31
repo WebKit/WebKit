@@ -1,3 +1,16 @@
+2011-03-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Sandbox violations if you navigate a file URL via something other than a click
+        <rdar://problem/9016086>
+        https://bugs.webkit.org/show_bug.cgi?id=57519
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::shouldReuseCommittedSandboxExtension):
+        Remove unnecessary restriction on extension reuse. Any type of file to file navigation
+        should be allowed.
+
 2011-03-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
