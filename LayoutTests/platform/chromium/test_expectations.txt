@@ -874,8 +874,6 @@ BUGCR23463 WIN LINUX : svg/W3C-SVG-1.1/struct-symbol-01-b.svg = IMAGE+TEXT TEXT
 BUGCR23463 WIN LINUX : svg/W3C-SVG-1.1/struct-use-01-t.svg = IMAGE IMAGE+TEXT PASS
 BUGCR23463 WIN LINUX : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE+TEXT
 
-BUGCR75234 : svg/W3C-SVG-1.1/struct-image-07-t.svg = IMAGE
-
 // Merge 39744:39829 - regression
 BUGCR10284 MAC : svg/custom/path-bad-data.svg = FAIL
 
@@ -1904,8 +1902,7 @@ BUGCR42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html =
 
 // might have been flaky
 BUGJAMESR WIN LINUX : svg/filters/filter-clip.svg = IMAGE
-BUGJAMESR WIN : svg/filters/filter-source-position.svg = IMAGE
-BUGJAMESR MAC LINUX : svg/filters/filter-source-position.svg = IMAGE
+BUGJAMESR WIN LINUX : svg/filters/filter-source-position.svg = IMAGE
 BUGJAMESR BUGCR30048 BUGCR29737 WIN LINUX : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
 
 // New layoutTestController function added at r57993
@@ -3110,7 +3107,6 @@ BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TE
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
 BUGCR75424 MAC LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
-BUGCR75424 MAC LEOPARD : fast/blockflow/broken-ideographic-font.html = IMAGE
 BUGCR75424 MAC LEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
 
 // WebKit roll 80564:80631: vertical text fallout - these probably just need rebaseline:
@@ -3208,9 +3204,9 @@ BUGCR77494 : fast/block/positioning/auto/vertical-lr/005.html = FAIL
 BUGCR77494 : fast/block/positioning/auto/vertical-lr/006.html = FAIL
 BUGCR77494 : fast/block/positioning/auto/vertical-rl/005.html = FAIL
 BUGCR77494 : fast/block/positioning/auto/vertical-rl/006.html = FAIL
-BUGCR77494 : fast/block/positioning/fixed-positioning-scrollbar-bug.html = FAIL
+BUGCR77494 WIN LINUX : fast/block/positioning/fixed-positioning-scrollbar-bug.html = FAIL
 BUGCR77494 : fast/block/positioning/inline-block-relposition.html = FAIL
-BUGCR77494 : fast/block/positioning/relative-overflow-block.html = FAIL
+BUGCR77494 WIN LINUX : fast/block/positioning/relative-overflow-block.html = FAIL
 BUGCR77494 : fast/block/positioning/trailing-space-test.html = FAIL
 BUGCR77494 : fast/clip/001.html = FAIL
 BUGCR77494 : fast/clip/004.html = FAIL
@@ -3232,7 +3228,6 @@ BUGCR77494 : fast/repaint/layout-state-scrolloffset2.html = FAIL
 BUGCR77494 : fast/repaint/layout-state-scrolloffset3.html = FAIL
 BUGCR77494 : tables/mozilla/bugs/bug51140.html = FAIL
 // Not included in tests modified by 81992, but started failing at same time:
-BUGCR77494 : fast/block/positioning/absolute-in-inline-rtl-4.html = FAIL
 BUGCR77494 WIN LINUX : fast/repaint/transform-replaced-shadows.html = IMAGE
 BUGCR77494 : media/audio-repaint.html = FAIL
 
