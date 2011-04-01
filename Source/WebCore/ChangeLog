@@ -1,3 +1,21 @@
+2011-03-31  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: inspected page crashes on attempt to log object with broken .toString
+        https://bugs.webkit.org/show_bug.cgi?id=57557
+
+        If ScriptValue.toString causes a JavaScript exception, the exception is cleared
+        before returning from the toString method.
+
+        Test: inspector/console/console-log-toString-object.html
+
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::ScriptValue::toString):
+        * bindings/js/ScriptValue.h:
+        * bindings/v8/ScriptValue.cpp:
+        (WebCore::ScriptValue::toString):
+
 2011-03-31  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

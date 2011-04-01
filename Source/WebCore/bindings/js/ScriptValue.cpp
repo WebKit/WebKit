@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (c) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +54,15 @@ bool ScriptValue::getString(ScriptState* scriptState, String& result) const
         return false;
     result = ustringToString(ustring);
     return true;
+}
+
+String ScriptValue::toString(ScriptState* scriptState) const
+{
+    String result = ustringToString(m_value.get().toString(scriptState));
+    // Handle the case where an exception is thrown as part of invoking toString on the object.
+    if (scriptState->hadException())
+        scriptState->clearException();
+    return result;
 }
 
 bool ScriptValue::isEqual(ScriptState* scriptState, const ScriptValue& anotherValue) const

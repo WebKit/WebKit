@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -64,7 +64,12 @@ bool ScriptValue::getString(String& result) const
 
 String ScriptValue::toString(ScriptState*) const
 {
-    return toWebCoreString(m_value);
+    v8::TryCatch block;
+    v8::Handle<v8::String> s = m_value->ToString();
+    // Handle the case where an exception is thrown as part of invoking toString on the object.
+    if (block.HasCaught())
+        return String();
+    return v8StringToWebCoreString<String>(s, DoNotExternalize);
 }
 
 #if ENABLE(INSPECTOR)
