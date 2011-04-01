@@ -236,17 +236,19 @@ bool HTMLObjectElement::hasFallbackContent() const
     return false;
 }
     
-inline bool HTMLObjectElement::hasValidClassId()
+bool HTMLObjectElement::hasValidClassId()
 {
+#if PLATFORM(QT)
+    if (equalIgnoringCase(serviceType(), "application/x-qt-plugin") || equalIgnoringCase(serviceType(), "application/x-qt-styled-widget"))
+        return true;
+#endif
+
+    if (MIMETypeRegistry::isJavaAppletMIMEType(serviceType()) && classId().startsWith("java:", false))
+        return true;
+
     // HTML5 says that fallback content should be rendered if a non-empty
     // classid is specified for which the UA can't find a suitable plug-in.
-    // WebKit supports no classids, with the exception of Qt plug-ins, which use
-    // classid to specify which QObject to load.
-#if PLATFORM(QT)
-    return classId().isEmpty() || equalIgnoringCase(serviceType(), "application/x-qt-plugin") || equalIgnoringCase(serviceType(), "application/x-qt-styled-widget");
-#else
     return classId().isEmpty();
-#endif
 }
 
 // FIXME: This should be unified with HTMLEmbedElement::updateWidget and

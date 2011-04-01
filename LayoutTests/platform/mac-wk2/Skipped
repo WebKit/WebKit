@@ -936,6 +936,7 @@ http/tests/navigation/ping-cross-origin.html
 http/tests/navigation/ping-same-origin.html
 loader/go-back-to-different-window-size.html
 media/restore-from-page-cache.html
+java/embedding-java-with-object.html
 
 # execCommand("undo") doesn't work in WebKit2
 # <rdar://problem/8862023>
