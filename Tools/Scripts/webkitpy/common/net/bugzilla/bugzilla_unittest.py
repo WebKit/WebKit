@@ -203,7 +203,7 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
 
         '''
 
-        self.assertEquals(None, parse_bug_id_from_changelog(commit_text))
+        self.assertEquals(56988, parse_bug_id_from_changelog(commit_text))
 
         commit_text = '''
 2011-03-23  Ojan Vafai  <ojan@chromium.org>
@@ -217,6 +217,25 @@ ZEZpbmlzaExvYWRXaXRoUmVhc29uOnJlYXNvbl07Cit9CisKIEBlbmQKIAogI2VuZGlmCg==
         '''
 
         self.assertEquals(12345, parse_bug_id_from_changelog(commit_text))
+
+        commit_text = '''
+2011-03-31  Adam Roben  <aroben@apple.com>
+
+        Quote the executable path we pass to ::CreateProcessW
+
+        This will ensure that spaces in the path will be interpreted correctly.
+
+        Fixes <http://webkit.org/b/57569> Web process sometimes fails to launch when there are
+        spaces in its path
+
+        Reviewed by Steve Falkenburg.
+
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Surround the executable path in quotes.
+
+        '''
+
+        self.assertEquals(57569, parse_bug_id_from_changelog(commit_text))
 
 
     # FIXME: This should move to a central location and be shared by more unit tests.

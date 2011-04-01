@@ -1,3 +1,19 @@
+2011-03-31  Adam Roben  <aroben@apple.com>
+
+        Prefer (but don't require) bug URLs to be on their own line when parsing bug numbers from ChangeLogs
+
+        Fixes <http://webkit.org/b/57579> webkit-patch is too strict about bug URL formatting
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        (parse_bug_id_from_changelog): Fall back to parse_bug_id if we weren't able to find a bug
+        URL on its own line.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla_unittest.py:
+        (BugzillaTest.test_parse_bug_id_from_changelog): Updated expected results for test
+        progression, and added a new test that uses a short bug URL while I was at it.
+
 2011-04-01  Adam Roben  <aroben@apple.com>
 
         Mark .vcproj/.vsprops/.sln files as being Windows-only

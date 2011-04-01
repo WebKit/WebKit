@@ -74,7 +74,9 @@ def parse_bug_id_from_changelog(message):
     match = re.search("^\s*" + Bugzilla.bug_url_long + "$", message, re.MULTILINE)
     if match:
         return int(match.group('bug_id'))
-    return None
+    # We weren't able to find a bug URL in the format used by prepare-ChangeLog. Fall back to the
+    # first bug URL found anywhere in the message.
+    return parse_bug_id(message)
 
 def timestamp():
     return datetime.now().strftime("%Y%m%d%H%M%S")
