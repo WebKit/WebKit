@@ -1,3 +1,15 @@
+2011-04-01  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] editing/deleting/5408255.html results are incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=53644
+
+        Unskip this test and update the results, it appears to be passing now without any issue.
+
+        * platform/gtk/Skipped: Unskip a test.
+        * platform/gtk/editing/deleting/5408255-expected.checksum:
+        * platform/gtk/editing/deleting/5408255-expected.png:
+        * platform/gtk/editing/deleting/5408255-expected.txt:
+
 2011-04-01  Adam Barth  <abarth@webkit.org>
 
         Update expected results to document more passes.
