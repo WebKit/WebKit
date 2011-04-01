@@ -1574,10 +1574,6 @@ transitions/default-timing-function.html
 # http://webkit.org/b/56530
 http/tests/inspector/resource-har-conversion.html
 
-# Sometimes times out
-# http://webkit.org/b/56584
-inspector/debugger/debug-inlined-scripts.html
-
 # WebKitTestRunner needs support for interactive validation tests
 # http://webkit.org/b/57450
 fast/forms/interactive-validation-assertion-by-validate-twice.html

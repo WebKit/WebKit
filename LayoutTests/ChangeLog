@@ -1,3 +1,13 @@
+2011-04-01  Adam Roben  <aroben@apple.com>
+
+        Disable inspector/debugger/debug-inlined-scripts.html
+
+        It is flaky. The flakiness is tracked by <http://webkit.org/b/56584>.
+
+        * inspector/debugger/debug-inlined-scripts.html-disabled: Renamed from LayoutTests/inspector/debugger/debug-inlined-scripts.html.
+
+        * platform/mac-wk2/Skipped: Removed the now-disabled test.
+
 2011-04-01  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
