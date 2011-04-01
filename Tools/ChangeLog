@@ -1,5 +1,15 @@
 2011-04-01  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Fix leak noticed by Adam Roben in LayoutTestController::shadowRoot.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::shadowRoot):
+        Make judicious use of adoptWK().
+
+2011-04-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Timothy Hatcher.
 
         Fix extract-localizable-strings for macro change from UI_STRING -> WEB_UI_STRING.

@@ -331,11 +331,11 @@ JSValueRef LayoutTestController::shadowRoot(JSValueRef element)
     if (!element || !JSValueIsObject(context, element))
         return JSValueMakeNull(context);
 
-    WKRetainPtr<WKBundleNodeHandleRef> domElement(AdoptWK, WKBundleNodeHandleCreate(context, const_cast<JSObjectRef>(element)));
+    WKRetainPtr<WKBundleNodeHandleRef> domElement = adoptWK(WKBundleNodeHandleCreate(context, const_cast<JSObjectRef>(element)));
     if (!domElement)
         return JSValueMakeNull(context);
 
-    WKRetainPtr<WKBundleNodeHandleRef> shadowRootDOMElement(WKBundleNodeHandleCopyElementShadowRoot(domElement.get()));
+    WKRetainPtr<WKBundleNodeHandleRef> shadowRootDOMElement = adoptWK(WKBundleNodeHandleCopyElementShadowRoot(domElement.get()));
     if (!shadowRootDOMElement)
         return JSValueMakeNull(context);
 
