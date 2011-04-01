@@ -1,3 +1,11 @@
+2011-04-01  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Update mac new-run-webkit-tests expectations with SLOW tests.
+
+        * platform/mac/test_expectations.txt:
+
 2011-04-01  Adam Barth  <abarth@webkit.org>
 
         Skip platform/mac/plugins/convert-point.html because it relies on code

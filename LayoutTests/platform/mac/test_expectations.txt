@@ -58,5 +58,5 @@
 // -CRASH tests cannot be WONTFIX
 
 // Our slow tests, in alphabetical order.
-SLOW BUGXXX : tables/mozilla/other/slashlogo.html = PASS
-SLOW BUGXXX : http/tests/websocket/tests/frame-lengths.html = PASS
+SLOW BUGWK57672 : http/tests/local/fileapi/send-sliced-dragged-file.html = PASS
+SLOW BUGWK57678 : fast/workers/dedicated-worker-lifecycle.html = PASS
