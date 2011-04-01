@@ -44,8 +44,7 @@ private:
 public:
     static PassRefPtr<AccessibilityARIAGrid> create(RenderObject*);
     virtual ~AccessibilityARIAGrid();
-
-    virtual AccessibilityRole roleValue() const;
+    
     virtual bool isAriaTable() const { return true; }    
     
     virtual void addChildren();

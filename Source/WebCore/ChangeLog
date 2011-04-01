@@ -1,3 +1,18 @@
+2011-04-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r82687.
+        http://trac.webkit.org/changeset/82687
+        https://bugs.webkit.org/show_bug.cgi?id=57643
+
+        This patch broke accessibility aria-treegrid test in Mac
+        (Requested by msanchez on #webkit).
+
+        * accessibility/AccessibilityARIAGrid.cpp:
+        * accessibility/AccessibilityARIAGrid.h:
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (atkRole):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+
 2011-03-31  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Andreas Kling.

@@ -172,13 +172,5 @@ AccessibilityTableCell* AccessibilityARIAGrid::cellForColumnAndRow(unsigned colu
 
     return 0;
 }
-
-AccessibilityRole AccessibilityARIAGrid::roleValue() const
-{
-    if (!isAccessibilityTable())
-        return AccessibilityRenderObject::roleValue();
-
-    return GridRole;
-}
-
+    
 } // namespace WebCore
