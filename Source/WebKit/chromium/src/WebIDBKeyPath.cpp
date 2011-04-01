@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -67,7 +67,7 @@ void WebIDBKeyPath::reset()
     m_private.reset(0);
 }
 
-WebIDBKeyPath::operator const WTF::Vector<WebCore::IDBKeyPathElement, 0>&() const
+WebIDBKeyPath::operator const WTF::Vector<IDBKeyPathElement, 0>&() const
 {
     return *m_private.get();
 }

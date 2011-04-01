@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,28 +35,28 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore {
+namespace WebKit {
 
-class IDBCursorBackendProxy : public IDBCursorBackendInterface {
+class IDBCursorBackendProxy : public WebCore::IDBCursorBackendInterface {
 public:
-    static PassRefPtr<IDBCursorBackendInterface> create(PassOwnPtr<WebKit::WebIDBCursor>);
+    static PassRefPtr<WebCore::IDBCursorBackendInterface> create(PassOwnPtr<WebIDBCursor>);
     virtual ~IDBCursorBackendProxy();
 
     virtual unsigned short direction() const;
-    virtual PassRefPtr<IDBKey> key() const;
-    virtual PassRefPtr<IDBKey> primaryKey() const;
-    virtual PassRefPtr<SerializedScriptValue> value() const;
-    virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    virtual void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
-    virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);
+    virtual PassRefPtr<WebCore::IDBKey> key() const;
+    virtual PassRefPtr<WebCore::IDBKey> primaryKey() const;
+    virtual PassRefPtr<WebCore::SerializedScriptValue> value() const;
+    virtual void update(PassRefPtr<WebCore::SerializedScriptValue>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&);
+    virtual void continueFunction(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&);
+    virtual void deleteFunction(PassRefPtr<WebCore::IDBCallbacks>, WebCore::ExceptionCode&);
 
 private:
-    IDBCursorBackendProxy(PassOwnPtr<WebKit::WebIDBCursor>);
+    IDBCursorBackendProxy(PassOwnPtr<WebIDBCursor>);
 
-    OwnPtr<WebKit::WebIDBCursor> m_idbCursor;
+    OwnPtr<WebIDBCursor> m_idbCursor;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif
 

@@ -26,30 +26,29 @@
 #ifndef IDBDatabaseCallbacksProxy_h
 #define IDBDatabaseCallbacksProxy_h
 
-#include "IDBDatabaseCallbacks.h"
-
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabaseCallbacks.h"
 #include <wtf/PassOwnPtr.h>
 
-namespace WebKit { class WebIDBDatabaseCallbacks; }
+namespace WebKit {
 
-namespace WebCore {
+class WebIDBDatabaseCallbacks;
 
-class IDBDatabaseCallbacksProxy : public IDBDatabaseCallbacks {
+class IDBDatabaseCallbacksProxy : public WebCore::IDBDatabaseCallbacks {
 public:
-    static PassRefPtr<IDBDatabaseCallbacksProxy> create(PassOwnPtr<WebKit::WebIDBDatabaseCallbacks>);
+    static PassRefPtr<IDBDatabaseCallbacksProxy> create(PassOwnPtr<WebIDBDatabaseCallbacks>);
     virtual ~IDBDatabaseCallbacksProxy();
 
     virtual void onVersionChange(const String& requestedVersion);
 
 private:
-    IDBDatabaseCallbacksProxy(PassOwnPtr<WebKit::WebIDBDatabaseCallbacks>);
+    IDBDatabaseCallbacksProxy(PassOwnPtr<WebIDBDatabaseCallbacks>);
 
-    OwnPtr<WebKit::WebIDBDatabaseCallbacks> m_callbacks;
+    OwnPtr<WebIDBDatabaseCallbacks> m_callbacks;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif
 

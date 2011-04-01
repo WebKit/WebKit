@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,9 @@
  */
 
 #include "config.h"
-#include "IDBObjectStoreProxy.h"
+#include "IDBObjectStoreBackendProxy.h"
+
+#if ENABLE(INDEXED_DATABASE)
 
 #include "DOMStringList.h"
 #include "IDBCallbacks.h"
@@ -39,40 +41,40 @@
 #include "WebIDBTransactionImpl.h"
 #include "WebSerializedScriptValue.h"
 
-#if ENABLE(INDEXED_DATABASE)
+using namespace WebCore;
 
-namespace WebCore {
+namespace WebKit {
 
-PassRefPtr<IDBObjectStoreBackendInterface> IDBObjectStoreProxy::create(PassOwnPtr<WebKit::WebIDBObjectStore> objectStore)
+PassRefPtr<IDBObjectStoreBackendInterface> IDBObjectStoreBackendProxy::create(PassOwnPtr<WebIDBObjectStore> objectStore)
 {
-    return adoptRef(new IDBObjectStoreProxy(objectStore));
+    return adoptRef(new IDBObjectStoreBackendProxy(objectStore));
 }
 
-IDBObjectStoreProxy::IDBObjectStoreProxy(PassOwnPtr<WebKit::WebIDBObjectStore> objectStore)
+IDBObjectStoreBackendProxy::IDBObjectStoreBackendProxy(PassOwnPtr<WebIDBObjectStore> objectStore)
     : m_webIDBObjectStore(objectStore)
 {
 }
 
-IDBObjectStoreProxy::~IDBObjectStoreProxy()
+IDBObjectStoreBackendProxy::~IDBObjectStoreBackendProxy()
 {
 }
 
-String IDBObjectStoreProxy::name() const
+String IDBObjectStoreBackendProxy::name() const
 {
     return m_webIDBObjectStore->name();
 }
 
-String IDBObjectStoreProxy::keyPath() const
+String IDBObjectStoreBackendProxy::keyPath() const
 {
     return m_webIDBObjectStore->keyPath();
 }
 
-PassRefPtr<DOMStringList> IDBObjectStoreProxy::indexNames() const
+PassRefPtr<DOMStringList> IDBObjectStoreBackendProxy::indexNames() const
 {
     return m_webIDBObjectStore->indexNames();
 }
 
-void IDBObjectStoreProxy::get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+void IDBObjectStoreBackendProxy::get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
     // all implementations of IDB interfaces are proxy objects.
@@ -80,15 +82,15 @@ void IDBObjectStoreProxy::get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> c
     m_webIDBObjectStore->get(key, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction(), ec);
 }
 
-void IDBObjectStoreProxy::put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+void IDBObjectStoreBackendProxy::put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
     // all implementations of IDB interfaces are proxy objects.
     IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
-    m_webIDBObjectStore->put(value, key, static_cast<WebKit::WebIDBObjectStore::PutMode>(putMode), new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction(), ec);
+    m_webIDBObjectStore->put(value, key, static_cast<WebIDBObjectStore::PutMode>(putMode), new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction(), ec);
 }
 
-void IDBObjectStoreProxy::deleteFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+void IDBObjectStoreBackendProxy::deleteFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
     // all implementations of IDB interfaces are proxy objects.
@@ -96,7 +98,7 @@ void IDBObjectStoreProxy::deleteFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBC
     m_webIDBObjectStore->deleteFunction(key, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction(), ec);
 }
 
-void IDBObjectStoreProxy::clear(PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+void IDBObjectStoreBackendProxy::clear(PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
     // all implementations of IDB interfaces are proxy objects.
@@ -104,26 +106,26 @@ void IDBObjectStoreProxy::clear(PassRefPtr<IDBCallbacks> callbacks, IDBTransacti
     m_webIDBObjectStore->clear(new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction(), ec);
 }
 
-PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreProxy::createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendProxy::createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
     // all implementations of IDB interfaces are proxy objects.
     IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
-    WebKit::WebIDBIndex* index = m_webIDBObjectStore->createIndex(name, keyPath, unique, *transactionProxy->getWebIDBTransaction(), ec);
+    WebIDBIndex* index = m_webIDBObjectStore->createIndex(name, keyPath, unique, *transactionProxy->getWebIDBTransaction(), ec);
     if (!index)
         return 0;
     return IDBIndexBackendProxy::create(index);
 }
 
-PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreProxy::index(const String& name, ExceptionCode& ec)
+PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendProxy::index(const String& name, ExceptionCode& ec)
 {
-    WebKit::WebIDBIndex* index = m_webIDBObjectStore->index(name, ec);
+    WebIDBIndex* index = m_webIDBObjectStore->index(name, ec);
     if (!index)
         return 0;
     return IDBIndexBackendProxy::create(index);
 }
 
-void IDBObjectStoreProxy::deleteIndex(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+void IDBObjectStoreBackendProxy::deleteIndex(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
     // all implementations of IDB interfaces are proxy objects.
@@ -131,7 +133,7 @@ void IDBObjectStoreProxy::deleteIndex(const String& name, IDBTransactionBackendI
     m_webIDBObjectStore->deleteIndex(name, *transactionProxy->getWebIDBTransaction(), ec);
 }
 
-void IDBObjectStoreProxy::openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+void IDBObjectStoreBackendProxy::openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks> callbacks, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
     // all implementations of IDB interfaces are proxy objects.
@@ -139,6 +141,6 @@ void IDBObjectStoreProxy::openCursor(PassRefPtr<IDBKeyRange> range, unsigned sho
     m_webIDBObjectStore->openCursor(range, direction, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction(), ec);
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

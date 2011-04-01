@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #ifndef WebIDBObjectStoreImpl_h
 #define WebIDBObjectStoreImpl_h
+
+#if ENABLE(INDEXED_DATABASE)
 
 #include "WebCommon.h"
 #include "WebIDBObjectStore.h"
@@ -63,5 +65,7 @@ public:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(INDEXED_DATABASE)
 
 #endif // WebIDBObjectStoreImpl_h

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -31,14 +31,14 @@
 #include "config.h"
 #include "WebIDBFactoryImpl.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "DOMStringList.h"
 #include "IDBCallbacksProxy.h"
 #include "IDBFactoryBackendImpl.h"
 #include "SecurityOrigin.h"
 #include "WebIDBDatabaseError.h"
 #include <wtf/OwnPtr.h>
-
-#if ENABLE(INDEXED_DATABASE)
 
 using namespace WebCore;
 
@@ -50,7 +50,7 @@ WebIDBFactory* WebIDBFactory::create()
 }
 
 WebIDBFactoryImpl::WebIDBFactoryImpl()
-    : m_idbFactoryBackend(WebCore::IDBFactoryBackendImpl::create())
+    : m_idbFactoryBackend(IDBFactoryBackendImpl::create())
 {
 }
 

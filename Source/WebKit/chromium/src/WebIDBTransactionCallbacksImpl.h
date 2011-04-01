@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,24 +32,24 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore {
+namespace WebCore { class IDBTransactionCallbacks; }
 
-class IDBTransactionCallbacks;
+namespace WebKit {
 
-class WebIDBTransactionCallbacksImpl : public WebKit::WebIDBTransactionCallbacks {
+class WebIDBTransactionCallbacksImpl : public WebIDBTransactionCallbacks {
 public:
-    WebIDBTransactionCallbacksImpl(PassRefPtr<IDBTransactionCallbacks>);
+    WebIDBTransactionCallbacksImpl(PassRefPtr<WebCore::IDBTransactionCallbacks>);
     virtual ~WebIDBTransactionCallbacksImpl();
 
     virtual void onAbort();
     virtual void onComplete();
 
 private:
-    RefPtr<IDBTransactionCallbacks> m_callbacks;
+    RefPtr<WebCore::IDBTransactionCallbacks> m_callbacks;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE)
 
 #endif // WebIDBTransactionCallbacksImpl_h

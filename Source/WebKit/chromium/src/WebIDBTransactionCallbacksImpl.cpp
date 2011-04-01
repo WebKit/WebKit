@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,9 @@
 
 #include "IDBTransactionCallbacks.h"
 
-namespace WebCore {
+using namespace WebCore;
+
+namespace WebKit {
 
 WebIDBTransactionCallbacksImpl::WebIDBTransactionCallbacksImpl(PassRefPtr<IDBTransactionCallbacks> callbacks)
     : m_callbacks(callbacks)
@@ -51,6 +53,6 @@ void WebIDBTransactionCallbacksImpl::onComplete()
     m_callbacks->onComplete();
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

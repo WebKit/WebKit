@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #ifndef WebIDBCursorImpl_h
 #define WebIDBCursorImpl_h
+
+#if ENABLE(INDEXED_DATABASE)
 
 #include "WebCommon.h"
 #include "WebExceptionCode.h"
@@ -55,5 +57,7 @@ public:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(INDEXED_DATABASE)
 
 #endif // WebIDBCursorImpl_h

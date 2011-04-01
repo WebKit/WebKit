@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,19 +26,19 @@
 #ifndef IDBIndexBackendProxy_h
 #define IDBIndexBackendProxy_h
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "IDBIndexBackendInterface.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
-#if ENABLE(INDEXED_DATABASE)
+namespace WebKit {
 
-namespace WebKit { class WebIDBIndex; }
+class WebIDBIndex;
 
-namespace WebCore {
-
-class IDBIndexBackendProxy : public IDBIndexBackendInterface {
+class IDBIndexBackendProxy : public WebCore::IDBIndexBackendInterface {
 public:
-    static PassRefPtr<IDBIndexBackendInterface> create(PassOwnPtr<WebKit::WebIDBIndex>);
+    static PassRefPtr<IDBIndexBackendInterface> create(PassOwnPtr<WebIDBIndex>);
     virtual ~IDBIndexBackendProxy();
 
     virtual String name();
@@ -46,18 +46,18 @@ public:
     virtual String keyPath();
     virtual bool unique();
 
-    virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void openKeyCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void get(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void getKey(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
+    virtual void openCursor(PassRefPtr<WebCore::IDBKeyRange>, unsigned short direction, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
+    virtual void openKeyCursor(PassRefPtr<WebCore::IDBKeyRange>, unsigned short direction, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
+    virtual void get(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
+    virtual void getKey(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBCallbacks>, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
 
 private:
-    IDBIndexBackendProxy(PassOwnPtr<WebKit::WebIDBIndex>);
+    IDBIndexBackendProxy(PassOwnPtr<WebIDBIndex>);
 
-    OwnPtr<WebKit::WebIDBIndex> m_webIDBIndex;
+    OwnPtr<WebIDBIndex> m_webIDBIndex;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif
 

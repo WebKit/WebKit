@@ -1,3 +1,108 @@
+2011-03-30  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Clean up IndexedDB WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=57507
+
+        Rename the backend proxy files that didn't have Backend in their name.
+        Everything in WebKit should be in the WebKit namespace.
+        Put everything behind the feature flag so we're consistient.
+        Put the feature flag #if above includes.
+
+        * WebKit.gyp:
+        * src/IDBCallbacksProxy.cpp:
+        (WebKit::IDBCallbacksProxy::create):
+        (WebKit::IDBCallbacksProxy::IDBCallbacksProxy):
+        (WebKit::IDBCallbacksProxy::onError):
+        (WebKit::IDBCallbacksProxy::onSuccess):
+        * src/IDBCallbacksProxy.h:
+        * src/IDBCursorBackendProxy.cpp:
+        (WebKit::IDBCursorBackendProxy::create):
+        (WebKit::IDBCursorBackendProxy::IDBCursorBackendProxy):
+        * src/IDBCursorBackendProxy.h:
+        * src/IDBDatabaseBackendProxy.cpp:
+        (WebKit::IDBDatabaseBackendProxy::create):
+        (WebKit::IDBDatabaseBackendProxy::IDBDatabaseBackendProxy):
+        (WebKit::IDBDatabaseBackendProxy::~IDBDatabaseBackendProxy):
+        (WebKit::IDBDatabaseBackendProxy::name):
+        (WebKit::IDBDatabaseBackendProxy::version):
+        (WebKit::IDBDatabaseBackendProxy::objectStoreNames):
+        (WebKit::IDBDatabaseBackendProxy::createObjectStore):
+        (WebKit::IDBDatabaseBackendProxy::deleteObjectStore):
+        (WebKit::IDBDatabaseBackendProxy::setVersion):
+        (WebKit::IDBDatabaseBackendProxy::transaction):
+        (WebKit::IDBDatabaseBackendProxy::close):
+        (WebKit::IDBDatabaseBackendProxy::open):
+        * src/IDBDatabaseCallbacksProxy.cpp:
+        (WebKit::IDBDatabaseCallbacksProxy::create):
+        (WebKit::IDBDatabaseCallbacksProxy::IDBDatabaseCallbacksProxy):
+        * src/IDBDatabaseCallbacksProxy.h:
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::IDBFactoryBackendProxy):
+        (WebKit::IDBFactoryBackendProxy::open):
+        * src/IDBFactoryBackendProxy.h:
+        * src/IDBIndexBackendProxy.cpp:
+        (WebKit::IDBIndexBackendProxy::create):
+        (WebKit::IDBIndexBackendProxy::IDBIndexBackendProxy):
+        * src/IDBIndexBackendProxy.h:
+        * src/IDBObjectStoreBackendProxy.cpp:
+        (WebKit::IDBObjectStoreBackendProxy::create):
+        (WebKit::IDBObjectStoreBackendProxy::IDBObjectStoreBackendProxy):
+        (WebKit::IDBObjectStoreBackendProxy::~IDBObjectStoreBackendProxy):
+        (WebKit::IDBObjectStoreBackendProxy::name):
+        (WebKit::IDBObjectStoreBackendProxy::keyPath):
+        (WebKit::IDBObjectStoreBackendProxy::indexNames):
+        (WebKit::IDBObjectStoreBackendProxy::get):
+        (WebKit::IDBObjectStoreBackendProxy::put):
+        (WebKit::IDBObjectStoreBackendProxy::deleteFunction):
+        (WebKit::IDBObjectStoreBackendProxy::clear):
+        (WebKit::IDBObjectStoreBackendProxy::createIndex):
+        (WebKit::IDBObjectStoreBackendProxy::index):
+        (WebKit::IDBObjectStoreBackendProxy::deleteIndex):
+        (WebKit::IDBObjectStoreBackendProxy::openCursor):
+        * src/IDBObjectStoreBackendProxy.h: Added.
+        * src/IDBObjectStoreProxy.h: Removed.
+        * src/IDBTransactionBackendProxy.cpp:
+        (WebKit::IDBTransactionBackendProxy::create):
+        (WebKit::IDBTransactionBackendProxy::IDBTransactionBackendProxy):
+        (WebKit::IDBTransactionBackendProxy::objectStore):
+        * src/IDBTransactionBackendProxy.h:
+        (WebKit::IDBTransactionBackendProxy::getWebIDBTransaction):
+        * src/IDBTransactionCallbacksProxy.cpp:
+        (WebKit::IDBTransactionCallbacksProxy::create):
+        (WebKit::IDBTransactionCallbacksProxy::IDBTransactionCallbacksProxy):
+        * src/IDBTransactionCallbacksProxy.h:
+        * src/WebIDBCallbacksImpl.cpp:
+        (WebKit::WebIDBCallbacksImpl::onError):
+        (WebKit::WebIDBCallbacksImpl::onSuccess):
+        * src/WebIDBCallbacksImpl.h:
+        * src/WebIDBCursorImpl.cpp:
+        * src/WebIDBCursorImpl.h:
+        * src/WebIDBDatabaseCallbacksImpl.cpp:
+        (WebKit::WebIDBDatabaseCallbacksImpl::onVersionChange):
+        * src/WebIDBDatabaseCallbacksImpl.h:
+        * src/WebIDBDatabaseError.cpp:
+        * src/WebIDBDatabaseImpl.cpp:
+        * src/WebIDBDatabaseImpl.h:
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::WebIDBFactoryImpl):
+        * src/WebIDBFactoryImpl.h:
+        * src/WebIDBIndexImpl.cpp:
+        * src/WebIDBIndexImpl.h:
+        * src/WebIDBKey.cpp:
+        (WebKit::WebIDBKey::createFromValueAndKeyPath):
+        (WebKit::WebIDBKey::injectIDBKeyIntoSerializedValue):
+        * src/WebIDBKeyPath.cpp:
+        (WebKit::WebIDBKeyPath::operator const WTF::Vector<IDBKeyPathElement, 0>&):
+        * src/WebIDBKeyRange.cpp:
+        * src/WebIDBObjectStoreImpl.cpp:
+        * src/WebIDBObjectStoreImpl.h:
+        * src/WebIDBTransactionCallbacksImpl.cpp:
+        * src/WebIDBTransactionCallbacksImpl.h:
+        * src/WebIDBTransactionImpl.cpp:
+        * src/WebIDBTransactionImpl.h:
+
 2011-03-30  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

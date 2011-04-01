@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebIDBObjectStoreImpl.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "DOMStringList.h"
 #include "IDBCallbacksProxy.h"
 #include "IDBIndexBackendInterface.h"
@@ -36,8 +38,6 @@
 #include "WebIDBKeyRange.h"
 #include "WebIDBTransaction.h"
 #include "WebSerializedScriptValue.h"
-
-#if ENABLE(INDEXED_DATABASE)
 
 using namespace WebCore;
 
@@ -113,6 +113,6 @@ void WebIDBObjectStoreImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned 
     m_objectStore->openCursor(keyRange, direction, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

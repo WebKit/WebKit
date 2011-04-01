@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,19 +26,19 @@
 #ifndef WebIDBDatabaseImpl_h
 #define WebIDBDatabaseImpl_h
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "WebCommon.h"
 #include "WebExceptionCode.h"
 #include "WebIDBDatabase.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore {
-class IDBDatabaseBackendInterface;
-class IDBDatabaseCallbacksProxy;
-}
+namespace WebCore { class IDBDatabaseBackendInterface; }
 
 namespace WebKit {
 
+class IDBDatabaseCallbacksProxy;
 class WebIDBDatabaseCallbacks;
 class WebIDBObjectStore;
 class WebIDBTransaction;
@@ -63,9 +63,11 @@ public:
 
 private:
     WTF::RefPtr<WebCore::IDBDatabaseBackendInterface> m_databaseBackend;
-    WTF::RefPtr<WebCore::IDBDatabaseCallbacksProxy> m_databaseCallbacks;
+    WTF::RefPtr<IDBDatabaseCallbacksProxy> m_databaseCallbacks;
 };
 
 } // namespace WebKit
 
 #endif // WebIDBDatabaseImpl_h
+
+#endif // ENABLE(INDEXED_DATABASE)

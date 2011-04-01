@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,10 @@
 #include "config.h"
 #include "IDBCallbacksProxy.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
+#include "IDBDatabaseBackendProxy.h"
 #include "IDBDatabaseError.h"
-#include "IDBDatabaseProxy.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBCursorImpl.h"
 #include "WebIDBDatabaseImpl.h"
@@ -39,16 +41,16 @@
 #include "WebIDBTransactionImpl.h"
 #include "WebSerializedScriptValue.h"
 
-#if ENABLE(INDEXED_DATABASE)
+using namespace WebCore;
 
-namespace WebCore {
+namespace WebKit {
 
-PassRefPtr<IDBCallbacksProxy> IDBCallbacksProxy::create(PassOwnPtr<WebKit::WebIDBCallbacks> callbacks)
+PassRefPtr<IDBCallbacksProxy> IDBCallbacksProxy::create(PassOwnPtr<WebIDBCallbacks> callbacks)
 {
     return adoptRef(new IDBCallbacksProxy(callbacks));
 }
 
-IDBCallbacksProxy::IDBCallbacksProxy(PassOwnPtr<WebKit::WebIDBCallbacks> callbacks)
+IDBCallbacksProxy::IDBCallbacksProxy(PassOwnPtr<WebIDBCallbacks> callbacks)
     : m_callbacks(callbacks)
 {
 }
@@ -59,32 +61,32 @@ IDBCallbacksProxy::~IDBCallbacksProxy()
 
 void IDBCallbacksProxy::onError(PassRefPtr<IDBDatabaseError> idbDatabaseError)
 {
-    m_callbacks->onError(WebKit::WebIDBDatabaseError(idbDatabaseError));
+    m_callbacks->onError(WebIDBDatabaseError(idbDatabaseError));
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBCursorBackendInterface> idbCursorBackend)
 {
-    m_callbacks->onSuccess(new WebKit::WebIDBCursorImpl(idbCursorBackend));
+    m_callbacks->onSuccess(new WebIDBCursorImpl(idbCursorBackend));
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend)
 {
-    m_callbacks->onSuccess(new WebKit::WebIDBDatabaseImpl(backend));
+    m_callbacks->onSuccess(new WebIDBDatabaseImpl(backend));
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBKey> idbKey)
 {
-    m_callbacks->onSuccess(WebKit::WebIDBKey(idbKey));
+    m_callbacks->onSuccess(WebIDBKey(idbKey));
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBTransactionBackendInterface> backend)
 {
-    m_callbacks->onSuccess(new WebKit::WebIDBTransactionImpl(backend));
+    m_callbacks->onSuccess(new WebIDBTransactionImpl(backend));
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptValue)
 {
-    m_callbacks->onSuccess(WebKit::WebSerializedScriptValue(serializedScriptValue));
+    m_callbacks->onSuccess(WebSerializedScriptValue(serializedScriptValue));
 }
 
 void IDBCallbacksProxy::onBlocked()
@@ -92,6 +94,6 @@ void IDBCallbacksProxy::onBlocked()
     m_callbacks->onBlocked();
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

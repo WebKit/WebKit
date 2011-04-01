@@ -31,7 +31,9 @@
 #include "IDBDatabaseCallbacks.h"
 #include "WebString.h"
 
-namespace WebCore {
+using namespace WebCore;
+
+namespace WebKit {
 
 WebIDBDatabaseCallbacksImpl::WebIDBDatabaseCallbacksImpl(PassRefPtr<IDBDatabaseCallbacks> callbacks)
     : m_callbacks(callbacks)
@@ -42,11 +44,11 @@ WebIDBDatabaseCallbacksImpl::~WebIDBDatabaseCallbacksImpl()
 {
 }
 
-void WebIDBDatabaseCallbacksImpl::onVersionChange(const WebKit::WebString& version)
+void WebIDBDatabaseCallbacksImpl::onVersionChange(const WebString& version)
 {
     m_callbacks->onVersionChange(version);
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

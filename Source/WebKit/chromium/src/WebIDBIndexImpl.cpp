@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +26,14 @@
 #include "config.h"
 #include "WebIDBIndexImpl.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "IDBCallbacksProxy.h"
 #include "IDBIndex.h"
 #include "IDBKeyRange.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBKey.h"
 #include "WebIDBKeyRange.h"
-
-#if ENABLE(INDEXED_DATABASE)
 
 using namespace WebCore;
 
@@ -88,6 +88,6 @@ void WebIDBIndexImpl::getKey(const WebIDBKey& keyRange, WebIDBCallbacks* callbac
     m_backend->getKey(keyRange, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)
