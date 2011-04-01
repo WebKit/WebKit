@@ -35,6 +35,7 @@ WebInspector.DebuggerPresentationModel = function()
     this._presentationBreakpoints = {};
     this._presentationCallFrames = [];
     this._selectedCallFrameIndex = 0;
+    this._formatter = new WebInspector.ScriptFormatter();
 
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasEnabled, this._debuggerWasEnabled, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
@@ -180,8 +181,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
     toggleFormatSourceFiles: function()
     {
         this._formatSourceFiles = !this._formatSourceFiles;
-        if (this._formatSourceFiles && !this._formatter)
-            this._formatter = new WebInspector.ScriptFormatter();
 
         var messages = this._messages;
         this._sourceFiles = {};

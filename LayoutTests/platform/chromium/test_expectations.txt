@@ -161,6 +161,7 @@ WONTFIX SKIP : http/tests/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/xmlhttprequest/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/eventsource/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/websocket/tests/workers/ = PASS TIMEOUT FAIL
+WONTFIX SKIP : inspector/debugger/script-formatter.html = PASS TIMEOUT FAIL
 
 // Page Cache - based tests. Chromium disables page cache because the WebKit page cache keeps previously
 // loaded pages alive in memory to be able to quickly substitute them when user clicks History buttons.

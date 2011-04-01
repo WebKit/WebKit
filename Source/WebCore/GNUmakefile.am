@@ -5194,6 +5194,7 @@ dist_webinspector_DATA = \
 	$(WebCore)/English.lproj/localizedStrings.js \
 	DerivedSources/WebCore/InspectorBackendStub.js \
 	$(shell ls $(WebCore)/inspector/front-end/*.js) \
+	$(shell ls $(WebCore)/inspector/front-end/UglifyJS/*.js) \
 	$(shell ls $(WebCore)/inspector/front-end/*.html) \
 	$(shell ls $(WebCore)/inspector/front-end/*.css)
 
@@ -5207,6 +5208,7 @@ dist_webinspectorimages_DATA = \
 noinst_DATA = ${GENSOURCES_INSPECTOR}/inspector.html
 ${GENSOURCES_INSPECTOR}/inspector.html: $(WebCore)/inspector/front-end/*.html \
 		$(WebCore)/inspector/front-end/*.js \
+		$(WebCore)/inspector/front-end/UglifyJS/*.js \
 		$(WebCore)/inspector/front-end/*.css \
 		$(WebCore)/inspector/front-end/Images/* \
 		DerivedSources/WebCore/InspectorBackendStub.js \

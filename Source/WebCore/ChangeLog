@@ -2,6 +2,20 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: add test for script formatter worker.
+        https://bugs.webkit.org/show_bug.cgi?id=57447
+
+        Test: inspector/debugger/script-formatter.html
+
+        * GNUmakefile.am:
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype.toggleFormatSourceFiles):
+
+2011-03-30  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector: [chromium] script formatting doesn't work when all scripts are concatenated.
         https://bugs.webkit.org/show_bug.cgi?id=57446
 
