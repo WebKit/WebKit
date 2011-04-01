@@ -1,5 +1,12 @@
 2011-04-01  Alexey Proskuryakov  <ap@apple.com>
 
+        32-bit Mac build fix.
+
+        * dom/KeyboardEvent.h: (WebCore::KeypressCommand::KeypressCommand): Use 0U to index a String
+        to avoid ambiguity.
+
+2011-04-01  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Darin Adler.
 
         Make WebKit2 text input handling more like WebKit1
