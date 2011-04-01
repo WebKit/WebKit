@@ -1077,6 +1077,9 @@ void WebPageProxy::viewScaleFactorDidChange(double scaleFactor)
 
 void WebPageProxy::setMemoryCacheClientCallsEnabled(bool memoryCacheClientCallsEnabled)
 {
+    if (!isValid())
+        return;
+
     if (m_areMemoryCacheClientCallsEnabled == memoryCacheClientCallsEnabled)
         return;
 

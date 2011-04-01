@@ -1,3 +1,15 @@
+2011-04-01  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Crash when calling WebPageProxy::setMemoryCacheClientCallsEnabled with an invalid Web Process
+        https://bugs.webkit.org/show_bug.cgi?id=57680
+        <rdar://problem/9202909>
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setMemoryCacheClientCallsEnabled): Add an isValid check before sending
+            the message.
+
 2011-03-31  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Dan Bernstein.
