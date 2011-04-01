@@ -52,6 +52,7 @@ messages -> WebPage {
     LoadPlainTextString(WTF::String string)
     LoadURL(WTF::String url, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
     LoadURLRequest(WebCore::ResourceRequest request, WebKit::SandboxExtension::Handle sandboxExtensionHandle)
+    LinkClicked(WTF::String url, WebKit::WebMouseEvent event)
     Reload(bool reloadFromOrigin)
     StopLoading()
 

@@ -79,16 +79,20 @@
 #include <WebCore/DragData.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/FormState.h>
 #include <WebCore/Frame.h>
+#include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/HTMLFormElement.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/MouseEvent.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PrintContext.h>
-#include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderLayer.h>
+#include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/ReplaceSelectionCommand.h>
 #include <WebCore/ResourceRequest.h>
@@ -439,6 +443,20 @@ void WebPage::loadPlainTextString(const String& string)
 {
     RefPtr<SharedBuffer> sharedBuffer = SharedBuffer::create(reinterpret_cast<const char*>(string.characters()), string.length() * sizeof(UChar));
     loadData(sharedBuffer, "text/plain", "utf-16", blankURL(), KURL());
+}
+
+void WebPage::linkClicked(const String& url, const WebMouseEvent& event)
+{
+    Frame* frame = m_page->mainFrame();
+    if (!frame)
+        return;
+
+    RefPtr<Event> coreEvent;
+    if (event.type() != WebEvent::NoType)
+        coreEvent = MouseEvent::create(eventNames().clickEvent, frame->document()->defaultView(), platform(event), 0, 0);
+
+    frame->loader()->loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(url)), 
+        false, false, coreEvent.get(), 0, SendReferrer);
 }
 
 void WebPage::stopLoadingFrame(uint64_t frameID)

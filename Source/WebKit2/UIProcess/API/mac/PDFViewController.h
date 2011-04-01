@@ -64,6 +64,7 @@ public:
     NSPrintOperation *makePrintOperation(NSPrintInfo *);
     void openPDFInFinder();
     void savePDFToDownloadsFolder();
+    void linkClicked(const String& url);
 
 private:
     explicit PDFViewController(WKView *wkView);

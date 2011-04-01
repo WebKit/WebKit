@@ -1,3 +1,30 @@
+2011-04-01  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Link from PDF opens in a new tab instead of in the same tab
+        https://bugs.webkit.org/show_bug.cgi?id=57528
+
+        Notify the WebProcess that a link has been clicked so that the normal policy
+        lookup can occur.
+
+        * Shared/WebEvent.cpp:
+        (WebKit::WebEvent::WebEvent): Initialize ivars in the default constructor.
+        * Shared/WebEvent.h: Add WebEvent::NoType to Type enum.
+        * Shared/WebMouseEvent.cpp: 
+        (WebKit::WebMouseEvent::WebMouseEvent): Ditto.
+        * UIProcess/API/mac/PDFViewController.mm:
+        (-[WKPDFView PDFViewWillClickOnLink:withURL:]): Handle the delegate
+            function and override the PDFView default behavior.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent): Handle the new WebEvent::NoType enum.
+        (WebKit::WebPageProxy::linkClicked): Added.  Send event through to WebPage.
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::linkClicked): Added.  Call loadFrameRequest().
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Added LinkClicked.
+
 2011-04-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam "Keyword Slasher" Roben.

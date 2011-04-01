@@ -1,3 +1,12 @@
+2011-04-01  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Link from PDF opens in a new tab instead of in the same tab
+        https://bugs.webkit.org/show_bug.cgi?id=57528
+
+        * WebCore.exp.in: Export MouseEvent::create().
+
 2011-04-01  John Bauman  <jbauman@chromium.org>
 
         Reviewed by Kenneth Russell.

@@ -475,6 +475,8 @@ public:
 
     void saveDataToFileInDownloadsFolder(const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData*);
 
+    void linkClicked(const String&, const WebMouseEvent&);
+ 
 private:
     WebPageProxy(PageClient*, WebContext*, WebPageGroup*, uint64_t pageID);
 

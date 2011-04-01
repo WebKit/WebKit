@@ -417,6 +417,7 @@ private:
     void loadHTMLString(const String& htmlString, const String& baseURL);
     void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL);
     void loadPlainTextString(const String&);
+    void linkClicked(const String& url, const WebMouseEvent&);
     void reload(bool reloadFromOrigin);
     void goForward(uint64_t, const SandboxExtension::Handle&);
     void goBack(uint64_t, const SandboxExtension::Handle&);

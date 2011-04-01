@@ -33,6 +33,19 @@ using namespace WebCore;
 
 namespace WebKit {
 
+WebMouseEvent::WebMouseEvent()
+    : WebEvent()
+    , m_button(static_cast<uint32_t>(NoButton))
+    , m_deltaX(0)
+    , m_deltaY(0)
+    , m_deltaZ(0)
+    , m_clickCount(0)
+#if PLATFORM(WIN)
+    , m_didActivateWebView(false)
+#endif
+{
+}
+
 WebMouseEvent::WebMouseEvent(Type type, Button button, const IntPoint& position, const IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers modifiers, double timestamp)
     : WebEvent(type, modifiers, timestamp)
     , m_button(button)

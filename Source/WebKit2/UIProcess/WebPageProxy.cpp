@@ -2364,6 +2364,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     WebEvent::Type type = static_cast<WebEvent::Type>(opaqueType);
 
     switch (type) {
+    case WebEvent::NoType:
     case WebEvent::MouseMove:
         break;
 
@@ -2383,6 +2384,8 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     }
 
     switch (type) {
+    case WebEvent::NoType:
+        break;
     case WebEvent::MouseMove:
         m_processingMouseMoveEvent = false;
         if (m_nextMouseMoveEvent) {
@@ -2809,6 +2812,11 @@ Color WebPageProxy::backingStoreUpdatesFlashColor()
 void WebPageProxy::saveDataToFileInDownloadsFolder(const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData* data)
 {
     m_uiClient.saveDataToFileInDownloadsFolder(this, suggestedFilename, mimeType, originatingURLString, data);
+}
+
+void WebPageProxy::linkClicked(const String& url, const WebMouseEvent& event)
+{
+    process()->send(Messages::WebPage::LinkClicked(url, event), m_pageID, 0);
 }
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)

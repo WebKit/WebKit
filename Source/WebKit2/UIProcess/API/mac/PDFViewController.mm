@@ -30,6 +30,7 @@
 #import "WKAPICast.h"
 #import "WKView.h"
 #import "WebData.h"
+#import "WebEventFactory.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
@@ -182,6 +183,11 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
 }
 
 // PDFView delegate methods
+
+- (void)PDFViewWillClickOnLink:(PDFView *)sender withURL:(NSURL *)URL
+{
+    _pdfViewController->linkClicked([URL absoluteString]);
+}
 
 - (void)PDFViewOpenPDFInNativeApplication:(PDFView *)sender
 {
@@ -414,6 +420,26 @@ NSString *PDFViewController::pathToPDFOnDisk()
 
     m_pathToPDFOnDisk.adoptNS([path copy]);
     return path;
+}
+
+void PDFViewController::linkClicked(const String& url)
+{
+    NSEvent* nsEvent = [NSApp currentEvent];
+    WebMouseEvent event;
+    switch ([nsEvent type]) {
+    case NSLeftMouseUp:
+    case NSRightMouseUp:
+    case NSOtherMouseUp:
+        event = WebEventFactory::createWebMouseEvent(nsEvent, m_pdfView);
+    default:
+        // For non mouse-clicks or for keyboard events, pass an empty WebMouseEvent
+        // through.  The event is only used by the WebFrameLoaderClient to determine
+        // the modifier keys and which mouse button is down.  These queries will be
+        // valid with an empty event.
+        break;
+    }
+    
+    page()->linkClicked(url, event);
 }
 
 } // namespace WebKit

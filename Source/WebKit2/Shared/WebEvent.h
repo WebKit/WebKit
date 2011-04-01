@@ -43,6 +43,8 @@ namespace WebKit {
 class WebEvent {
 public:
     enum Type {
+        NoType = -1,
+        
         // WebMouseEvent
         MouseDown,
         MouseUp,
@@ -91,7 +93,7 @@ public:
     double timestamp() const { return m_timestamp; }
 
 protected:
-    WebEvent() { }
+    WebEvent();
 
     WebEvent(Type, Modifiers, double timestamp);
 
@@ -114,7 +116,7 @@ public:
         RightButton
     };
 
-    WebMouseEvent() { }
+    WebMouseEvent();
 
     WebMouseEvent(Type, Button, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers, double timestamp);
 #if PLATFORM(WIN)
