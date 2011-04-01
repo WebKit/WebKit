@@ -1,3 +1,10 @@
+2011-04-01 MORITA Hajime  <morrita@google.com>
+
+        Unreviewed unskipping. This will make some tests fail on GTK port, whoese
+        results should be updated using layout-test-results.zip compiled by the buildbot.
+        
+        * platform/gtk/Skipped:
+
 2011-04-01  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectation/skip update that follows r82686.
