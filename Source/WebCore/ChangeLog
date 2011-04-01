@@ -1,3 +1,14 @@
+2011-03-31  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove refcounting of CSSStyleApplyProperty singleton
+        https://bugs.webkit.org/show_bug.cgi?id=57592
+
+        No new tests required as no functionality changes.
+
+        * css/CSSStyleApplyProperty.h:
+
 2011-03-31  Anantanarayanan G Iyengar  <ananta@chromium.org>
 
         Reviewed by Adam Barth.

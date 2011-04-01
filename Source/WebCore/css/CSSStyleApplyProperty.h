@@ -44,7 +44,7 @@ public:
     virtual void value(CSSStyleSelector*, CSSValue*) const = 0;
 };
 
-class CSSStyleApplyProperty : public RefCounted<CSSStyleApplyProperty> {
+class CSSStyleApplyProperty {
 public:
     static const CSSStyleApplyProperty& sharedCSSStyleApplyProperty();
 
