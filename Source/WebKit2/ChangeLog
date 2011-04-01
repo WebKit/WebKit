@@ -1,3 +1,17 @@
+2011-04-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Assertion failure (type == event.type()) after a web process crash
+        https://bugs.webkit.org/show_bug.cgi?id=56228
+        <rdar://problem/8806106>
+
+        This partially un-confuses the UI process about key processing state after a web process
+        crash. It may not be pefect yet - sending a KeyUp to a new process that never saw a KeyDown
+        seems weird.
+
+        * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::processDidCrash):
+
 2011-04-01  Adam Roben  <aroben@apple.com>
 
         Cairo build fix

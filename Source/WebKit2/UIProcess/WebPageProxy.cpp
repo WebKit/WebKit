@@ -2601,6 +2601,9 @@ void WebPageProxy::processDidCrash()
 
     m_pageClient->processDidCrash();
     m_loaderClient.processDidCrash(this);
+
+    // Can't expect DidReceiveEvent notifications from a crashed web process.
+    m_keyEventQueue.clear();
 }
 
 WebPageCreationParameters WebPageProxy::creationParameters() const
