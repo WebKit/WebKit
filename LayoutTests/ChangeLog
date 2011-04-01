@@ -1,3 +1,9 @@
+2011-04-01  Adam Barth  <abarth@webkit.org>
+
+        Mark failing test as failing.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-01  Martin Robinson  <mrobinson@igalia.com>
 
         Unreviewed, rolling out r82708.
