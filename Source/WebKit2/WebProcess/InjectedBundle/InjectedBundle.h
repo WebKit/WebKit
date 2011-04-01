@@ -101,6 +101,9 @@ public:
     void removeUserStyleSheets(WebPageGroupProxy*, InjectedBundleScriptWorld*);
     void removeAllUserContent(WebPageGroupProxy*);
 
+    // Local storage API
+    void clearAllDatabases();
+
     // Garbage collection API
     void garbageCollectJavaScriptObjects();
     void garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(bool waitUntilDone);

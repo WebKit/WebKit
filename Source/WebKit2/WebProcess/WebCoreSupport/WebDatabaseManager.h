@@ -47,6 +47,9 @@ public:
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
+public:
+    void deleteAllDatabases() const;
+
 private:
     WebDatabaseManager();
     virtual ~WebDatabaseManager();
@@ -58,7 +61,6 @@ private:
     void getDatabaseOrigins(uint64_t callbackID) const;
     void deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, const String& originIdentifier) const;
     void deleteDatabasesForOrigin(const String& originIdentifier) const;
-    void deleteAllDatabases() const;
     void setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const;
 
     // WebCore::DatabaseTrackerClient

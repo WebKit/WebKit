@@ -286,6 +286,11 @@ bool LayoutTestController::findString(JSStringRef target, JSValueRef optionsArra
     return WKBundlePageFindString(InjectedBundle::shared().page()->page(), toWK(target).get(), options);
 }
 
+void LayoutTestController::clearAllDatabases()
+{
+    WKBundleClearAllDatabases(InjectedBundle::shared().bundle());
+}
+
 bool LayoutTestController::isCommandEnabled(JSStringRef name)
 {
     return WKBundlePageIsEditingCommandEnabled(InjectedBundle::shared().page()->page(), toWK(name).get());

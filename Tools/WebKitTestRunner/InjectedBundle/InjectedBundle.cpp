@@ -172,6 +172,8 @@ void InjectedBundle::beginTesting()
     WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);
 
     page()->reset();
+
+    WKBundleClearAllDatabases(m_bundle);
 }
 
 void InjectedBundle::done()

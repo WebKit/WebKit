@@ -137,3 +137,8 @@ void WKBundleReportException(JSContextRef context, JSValueRef exception)
 {
     InjectedBundle::reportException(context, exception);
 }
+
+void WKBundleClearAllDatabases(WKBundleRef bundleRef)
+{
+    toImpl(bundleRef)->clearAllDatabases();
+}

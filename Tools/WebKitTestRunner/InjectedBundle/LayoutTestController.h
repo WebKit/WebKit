@@ -106,6 +106,9 @@ public:
     // Text search testing.
     bool findString(JSStringRef, JSValueRef optionsArray);
 
+    // Local storage
+    void clearAllDatabases();
+
     enum WhatToDump { RenderTree, MainFrameText, AllFramesText };
     WhatToDump whatToDump() const { return m_whatToDump; }
 

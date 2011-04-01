@@ -1201,26 +1201,13 @@ fast/frames/flattening/iframe-flattening-fixed-width.html
 fast/frames/flattening/iframe-flattening-offscreen.html
 fast/frames/flattening/iframe-flattening-simple.html
 
-# WebKitTestRunner needs layoutTestController.clearAllDatabases
-# <https://bugs.webkit.org/show_bug.cgi?id=42540>
-storage/change-version.html
-storage/executesql-accepts-only-one-statement.html
-storage/hash-change-with-xhr.html
-storage/null-callbacks.html
+# WebKitTestRunner needs layoutTestController.setDatabaseQuota
+# <https://bugs.webkit.org/show_bug.cgi?id=57568>
 storage/open-database-creation-callback.html
-storage/open-database-over-quota.html
-storage/open-database-set-empty-version.html
+
+# WebKitTestRunner needs layoutTestController.dumpDatabaseCallbacks
+# <https://bugs.webkit.org/show_bug.cgi?id=57570>
 storage/quota-tracking.html
-storage/sql-error-codes.html
-storage/statement-error-callback.html
-storage/success-callback.html
-storage/transaction-error-callback.html
-storage/open-database-creation-callback-isolated-world.html
-storage/statement-error-callback-isolated-world.html
-storage/statement-success-callback-isolated-world.html
-storage/transaction-callback-isolated-world.html
-storage/transaction-error-callback-isolated-world.html
-storage/transaction-success-callback-isolated-world.html
 
 # WebKitTestRunner needs layoutTestController.pathToLocalResource
 # <https://bugs.webkit.org/show_bug.cgi?id=42541>
