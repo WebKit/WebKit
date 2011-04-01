@@ -20,8 +20,8 @@ function runTests()
     log("Test disallow frame resize via noResize IDL attribute:");
     shouldDisallowFrameResizeAfterProcessingFrame(function(frame) { frame.noResize = true });
 
-    log("\nTest allow frame resize when noResize IDL attribute has value undefined:");
-    shouldAllowFrameResizeAfterProcessingFrame(function(frame) { frame.noResize = undefined });
+    log("\nTest allow frame resize when noResize IDL attribute has value false:");
+    shouldAllowFrameResizeAfterProcessingFrame(function(frame) { frame.noResize = false });
 
     log("\nTest allow frame resize when noResize IDL attribute has value null:");
     shouldAllowFrameResizeAfterProcessingFrame(function(frame) { frame.noResize = null });

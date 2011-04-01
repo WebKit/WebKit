@@ -1,3 +1,20 @@
+2011-04-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Daniel Bates.
+
+        Test assigning false to noResize instead of undefined
+        https://bugs.webkit.org/show_bug.cgi?id=57668
+
+        Apparently the V8 bindings have a bug when assigning undefined to a
+        boolean attribute.  I've filed
+        https://bugs.webkit.org/show_bug.cgi?id=57669 about that issue, which
+        I'll address in another patch (obviously with a test).  In the
+        meantime, this patch changes this test to test "false" instead of
+        "undefined".
+
+        * fast/frames/frame-programmatic-noresize-expected.txt:
+        * fast/frames/frame-programmatic-noresize.html:
+
 2011-04-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

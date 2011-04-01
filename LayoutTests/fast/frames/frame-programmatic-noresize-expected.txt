@@ -13,7 +13,7 @@ This tests that frame resizing is allowed and disallowed when programmatically r
 Test disallow frame resize via noResize IDL attribute:
 PASS document.getElementById("testFrame").width is 200
 
-Test allow frame resize when noResize IDL attribute has value undefined:
+Test allow frame resize when noResize IDL attribute has value false:
 PASS document.getElementById("testFrame").width is 210
 
 Test allow frame resize when noResize IDL attribute has value null:
