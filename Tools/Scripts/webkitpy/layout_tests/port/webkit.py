@@ -69,10 +69,6 @@ class WebKitPort(base.Port):
         return self._filesystem.join(self._webkit_baseline_path(self._name),
                                      'test_expectations.txt')
 
-    # Only needed by ports which maintain versioned test expectations (like mac-tiger vs. mac-leopard)
-    def version(self):
-        return ''
-
     def _build_driver(self):
         configuration = self.get_option('configuration')
         return self._config.build_dumprendertree(configuration)

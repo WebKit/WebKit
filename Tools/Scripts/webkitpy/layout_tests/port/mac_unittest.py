@@ -84,6 +84,10 @@ svg/batik/text/smallFonts.svg
                            os_version_string=os_version_string)
         self.assertEquals(expected, port.name())
 
+    def test_version(self):
+        port = mac.MacPort()
+        self.assertTrue(port.version())
+
     def test_versions(self):
         port = self.make_port()
         if port:

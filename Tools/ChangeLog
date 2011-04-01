@@ -1,3 +1,16 @@
+2011-04-01  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests: remove spurious port version override in webkit.py
+        base.py provides a default implementation so this is just
+        breaking things.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57667
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+
 2011-04-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Adam Roben.
