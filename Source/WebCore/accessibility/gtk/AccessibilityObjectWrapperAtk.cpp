@@ -447,7 +447,7 @@ static AtkRole atkRole(AccessibilityRole role)
         return ATK_ROLE_SCROLL_BAR;
     case ScrollAreaRole:
         return ATK_ROLE_SCROLL_PANE;
-    case GridRole: // Is this right?
+    case GridRole:
     case TableRole:
         return ATK_ROLE_TABLE;
     case ApplicationRole:

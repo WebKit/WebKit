@@ -1243,7 +1243,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { LinkRole, NSAccessibilityLinkRole },
 #ifndef BUILDING_ON_TIGER        
         { DisclosureTriangleRole, NSAccessibilityDisclosureTriangleRole },
-        { GridRole, NSAccessibilityGridRole },
+        { GridRole, NSAccessibilityTableRole },
 #endif
         { WebCoreLinkRole, NSAccessibilityLinkRole }, 
         { ImageMapLinkRole, NSAccessibilityLinkRole },

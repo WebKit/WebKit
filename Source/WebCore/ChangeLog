@@ -1,3 +1,25 @@
+2011-04-01  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        ARIA Grid tables should return GridRole in roleValue() method
+        https://bugs.webkit.org/show_bug.cgi?id=57614
+
+        This change does not need any test since it doesn't change anything
+        from the point of view of the consumers (Assistive Technoglogies).
+        It's just an internal change to simplify identifying HTML and ARIA
+        tables by calling to the AccessibilityObject::roleValue method.
+
+        * accessibility/AccessibilityARIAGrid.h:
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::roleValue): Return GridRole.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (atkRole): Removed unneeded comment.
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm: Map GridRole to
+        NSAccessibilityTableRole, to keep the same behaviour.
+
 2011-04-01  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
