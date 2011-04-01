@@ -1,3 +1,14 @@
+2011-03-31  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix the chromium-mac-leopard baselines for these tests.  For
+        some reason, the automatic tools were unable to fix these, so I created
+        them manually.
+
+        * platform/chromium-mac-leopard/fast/multicol/nested-columns-expected.checksum:
+        * platform/chromium-mac-leopard/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-mac-leopard/fast/repaint/list-marker-expected.checksum:
+        * platform/chromium-mac-leopard/fast/repaint/list-marker-expected.png:
+
 2011-03-31  Anantanarayanan G Iyengar  <ananta@chromium.org>
 
         Reviewed by Adam Barth.
