@@ -108,7 +108,7 @@ PassOwnPtr<ResourceResponse> ResourceResponseBase::adopt(PassOwnPtr<CrossThreadR
     response->setHTTPStatusCode(data->m_httpStatusCode);
     response->setHTTPStatusText(data->m_httpStatusText);
 
-    response->lazyInit(AllFields);
+    response->lazyInit();
     response->m_httpHeaderFields.adopt(data->m_httpHeaders.release());
     response->setLastModifiedDate(data->m_lastModifiedDate);
     response->setResourceLoadTiming(data->m_resourceLoadTiming.release());
@@ -135,7 +135,7 @@ PassOwnPtr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() con
 
 bool ResourceResponseBase::isHTTP() const
 {
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
 
     String protocol = m_url.protocol();
 
@@ -144,140 +144,126 @@ bool ResourceResponseBase::isHTTP() const
 
 const KURL& ResourceResponseBase::url() const
 {
-    lazyInit(CommonFieldsOnly);
-
+    lazyInit();
+    
     return m_url; 
 }
 
 void ResourceResponseBase::setURL(const KURL& url)
 {
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
     m_isNull = false;
-
+    
     m_url = url; 
 }
 
 const String& ResourceResponseBase::mimeType() const
 {
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
 
     return m_mimeType; 
 }
 
 void ResourceResponseBase::setMimeType(const String& mimeType)
 {
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
     m_isNull = false;
-
+    
     m_mimeType = mimeType; 
 }
 
 long long ResourceResponseBase::expectedContentLength() const 
 {
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
 
     return m_expectedContentLength;
 }
 
 void ResourceResponseBase::setExpectedContentLength(long long expectedContentLength)
 {
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
     m_isNull = false;
-
+    
     m_expectedContentLength = expectedContentLength; 
 }
 
 const String& ResourceResponseBase::textEncodingName() const
 {
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
 
     return m_textEncodingName;
 }
 
 void ResourceResponseBase::setTextEncodingName(const String& encodingName)
 {
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
     m_isNull = false;
-
+    
     m_textEncodingName = encodingName; 
 }
 
 // FIXME should compute this on the fly
 const String& ResourceResponseBase::suggestedFilename() const
 {
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
 
     return m_suggestedFilename;
 }
 
 void ResourceResponseBase::setSuggestedFilename(const String& suggestedName)
 {
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
     m_isNull = false;
-
+    
     m_suggestedFilename = suggestedName; 
 }
 
 int ResourceResponseBase::httpStatusCode() const
 {
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
 
     return m_httpStatusCode;
 }
 
 void ResourceResponseBase::setHTTPStatusCode(int statusCode)
 {
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
 
     m_httpStatusCode = statusCode;
 }
 
 const String& ResourceResponseBase::httpStatusText() const 
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     return m_httpStatusText; 
 }
 
 void ResourceResponseBase::setHTTPStatusText(const String& statusText) 
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     m_httpStatusText = statusText; 
 }
 
 String ResourceResponseBase::httpHeaderField(const AtomicString& name) const
 {
-    lazyInit(CommonFieldsOnly);
-
-    // If we already have the header, just return it instead of consuming memory by grabing all headers.
-    String value = m_httpHeaderFields.get(name);
-    if (!value.isEmpty())        
-        return value;
-
-    lazyInit(AllFields);
+    lazyInit();
 
     return m_httpHeaderFields.get(name); 
 }
 
 String ResourceResponseBase::httpHeaderField(const char* name) const
 {
-    lazyInit(CommonFieldsOnly);
-
-    // If we already have the header, just return it instead of consuming memory by grabing all headers.
-    String value = m_httpHeaderFields.get(name);
-    if (!value.isEmpty())
-        return value;
-
-    lazyInit(AllFields);
+    lazyInit();
 
     return m_httpHeaderFields.get(name); 
 }
 
 void ResourceResponseBase::setHTTPHeaderField(const AtomicString& name, const String& value)
 {
-    lazyInit(AllFields);
-
+    lazyInit();
+    
     DEFINE_STATIC_LOCAL(const AtomicString, ageHeader, ("age"));
     DEFINE_STATIC_LOCAL(const AtomicString, cacheControlHeader, ("cache-control"));
     DEFINE_STATIC_LOCAL(const AtomicString, dateHeader, ("date"));
@@ -300,7 +286,7 @@ void ResourceResponseBase::setHTTPHeaderField(const AtomicString& name, const St
 
 const HTTPHeaderMap& ResourceResponseBase::httpHeaderFields() const
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     return m_httpHeaderFields;
 }
@@ -309,7 +295,7 @@ void ResourceResponseBase::parseCacheControlDirectives() const
 {
     ASSERT(!m_haveParsedCacheControlHeader);
 
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
 
     m_haveParsedCacheControlHeader = true;
 
@@ -346,14 +332,13 @@ void ResourceResponseBase::parseCacheControlDirectives() const
             }
         }
     }
-
+        
     if (!m_cacheControlContainsNoCache) {
         // Handle Pragma: no-cache
         // This is deprecated and equivalent to Cache-control: no-cache
         // Don't bother tokenizing the value, it is not important
         DEFINE_STATIC_LOCAL(const AtomicString, pragmaHeader, ("pragma"));
         String pragmaValue = m_httpHeaderFields.get(pragmaHeader);
-
         m_cacheControlContainsNoCache = pragmaValue.lower().contains(noCacheDirective);
     }
 }
@@ -377,15 +362,6 @@ bool ResourceResponseBase::cacheControlContainsMustRevalidate() const
     if (!m_haveParsedCacheControlHeader)
         parseCacheControlDirectives();
     return m_cacheControlContainsMustRevalidate;
-}
-
-bool ResourceResponseBase::hasCacheValidatorFields() const
-{
-    lazyInit(CommonFieldsOnly);
-
-    DEFINE_STATIC_LOCAL(const AtomicString, lastModifiedHeader, ("last-modified"));
-    DEFINE_STATIC_LOCAL(const AtomicString, eTagHeader, ("etag"));
-    return !m_httpHeaderFields.get(lastModifiedHeader).isEmpty() || !m_httpHeaderFields.get(eTagHeader).isEmpty();
 }
 
 double ResourceResponseBase::cacheControlMaxAge() const
@@ -412,7 +388,7 @@ static double parseDateValueInHeader(const HTTPHeaderMap& headers, const AtomicS
 
 double ResourceResponseBase::date() const
 {
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
 
     if (!m_haveParsedDateHeader) {
         DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("date"));
@@ -424,8 +400,8 @@ double ResourceResponseBase::date() const
 
 double ResourceResponseBase::age() const
 {
-    lazyInit(CommonFieldsOnly);
-
+    lazyInit();
+    
     if (!m_haveParsedAgeHeader) {
         DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("age"));
         String headerValue = m_httpHeaderFields.get(headerName);
@@ -440,7 +416,7 @@ double ResourceResponseBase::age() const
 
 double ResourceResponseBase::expires() const
 {
-    lazyInit(CommonFieldsOnly);
+    lazyInit();
 
     if (!m_haveParsedExpiresHeader) {
         DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("expires"));
@@ -452,8 +428,8 @@ double ResourceResponseBase::expires() const
 
 double ResourceResponseBase::lastModified() const
 {
-    lazyInit(CommonFieldsOnly);
-
+    lazyInit();
+    
     if (!m_haveParsedLastModifiedHeader) {
         DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("last-modified"));
         m_lastModified = parseDateValueInHeader(m_httpHeaderFields, headerName);
@@ -464,7 +440,7 @@ double ResourceResponseBase::lastModified() const
 
 bool ResourceResponseBase::isAttachment() const
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     DEFINE_STATIC_LOCAL(const AtomicString, headerName, ("content-disposition"));
     String value = m_httpHeaderFields.get(headerName);
@@ -478,21 +454,21 @@ bool ResourceResponseBase::isAttachment() const
   
 void ResourceResponseBase::setLastModifiedDate(time_t lastModifiedDate)
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     m_lastModifiedDate = lastModifiedDate;
 }
 
 time_t ResourceResponseBase::lastModifiedDate() const
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     return m_lastModifiedDate;
 }
 
 bool ResourceResponseBase::wasCached() const
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     return m_wasCached;
 }
@@ -504,65 +480,65 @@ void ResourceResponseBase::setWasCached(bool value)
 
 bool ResourceResponseBase::connectionReused() const
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     return m_connectionReused;
 }
 
 void ResourceResponseBase::setConnectionReused(bool connectionReused)
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     m_connectionReused = connectionReused;
 }
 
 unsigned ResourceResponseBase::connectionID() const
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     return m_connectionID;
 }
 
 void ResourceResponseBase::setConnectionID(unsigned connectionID)
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     m_connectionID = connectionID;
 }
 
 ResourceLoadTiming* ResourceResponseBase::resourceLoadTiming() const
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     return m_resourceLoadTiming.get();
 }
 
 void ResourceResponseBase::setResourceLoadTiming(PassRefPtr<ResourceLoadTiming> resourceLoadTiming)
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     m_resourceLoadTiming = resourceLoadTiming;
 }
 
 PassRefPtr<ResourceLoadInfo> ResourceResponseBase::resourceLoadInfo() const
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     return m_resourceLoadInfo.get();
 }
 
 void ResourceResponseBase::setResourceLoadInfo(PassRefPtr<ResourceLoadInfo> loadInfo)
 {
-    lazyInit(AllFields);
+    lazyInit();
 
     m_resourceLoadInfo = loadInfo;
 }
 
-void ResourceResponseBase::lazyInit(InitLevel initLevel) const
+void ResourceResponseBase::lazyInit() const
 {
-    const_cast<ResourceResponse*>(static_cast<const ResourceResponse*>(this))->platformLazyInit(initLevel);
+    const_cast<ResourceResponse*>(static_cast<const ResourceResponse*>(this))->platformLazyInit();
 }
-    
+
 bool ResourceResponseBase::compare(const ResourceResponse& a, const ResourceResponse& b)
 {
     if (a.isNull() != b.isNull())

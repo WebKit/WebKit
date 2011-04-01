@@ -93,7 +93,6 @@ public:
     bool cacheControlContainsNoCache() const;
     bool cacheControlContainsNoStore() const;
     bool cacheControlContainsMustRevalidate() const;
-    bool hasCacheValidatorFields() const;
     double cacheControlMaxAge() const;
     double date() const;
     double age() const;
@@ -125,19 +124,13 @@ public:
     static bool compare(const ResourceResponse&, const ResourceResponse&);
 
 protected:
-    enum InitLevel {
-        Uninitialized,
-        CommonFieldsOnly,
-        AllFields
-    };
-
     ResourceResponseBase();
     ResourceResponseBase(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename);
 
-    void lazyInit(InitLevel) const;
+    void lazyInit() const;
 
     // The ResourceResponse subclass may "shadow" this method to lazily initialize platform specific fields
-    void platformLazyInit(InitLevel) { }
+    void platformLazyInit() { }
 
     // The ResourceResponse subclass may "shadow" this method to compare platform specific fields
     static bool platformCompare(const ResourceResponse&, const ResourceResponse&) { return true; }
