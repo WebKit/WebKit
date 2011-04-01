@@ -71,11 +71,12 @@ namespace JSC {
         {
             m_error = 0;
             m_code = m_codeStart + offset;
-            m_current = *m_code;
             m_buffer8.resize(0);
             m_buffer16.resize(0);
-            if (UNLIKELY(m_code == m_codeEnd))
-                m_current = -1;
+            // Faster than an if-else sequence
+            m_current = -1;
+            if (LIKELY(m_code < m_codeEnd))
+                m_current = *m_code;
         }
         void setLineNumber(int line)
         {

@@ -1,3 +1,17 @@
+2011-04-01  Adam Roben  <aroben@apple.com>
+
+        Maintain the invariant that Lexer::m_current is set to -1 when at the end of the code buffer
+
+        Covered by existing tests.
+
+        Fixes <http://webkit.org/b/56699>.
+
+        Reviewed by Oliver Hunt.
+
+        * parser/Lexer.h:
+        (JSC::Lexer::setOffset): Copied code from Lexer::shift to update m_current, because
+        supposedly the idiom that function uses is fast.
+
 2011-03-31  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
 
         Reviewed by Oliver Hunt.
