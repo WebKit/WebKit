@@ -1179,12 +1179,14 @@ editing/pasteboard/onpaste-text-html-types.html
 # DataTransferItems is not yet implemented.
 editing/pasteboard/data-transfer-items.html
 
-# Needs rebaseline
+# Needs expectation update
 fast/dom/HTMLMeterElement/meter-element.html
 fast/dom/HTMLMeterElement/meter-boundary-values.html
 fast/dom/HTMLMeterElement/meter-optimums.html
 fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html
 fast/dom/HTMLMeterElement/meter-styles.html
+fast/dom/HTMLMeterElement/meter-appearances-capacity.html
+fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=56167
 http/tests/media/reload-after-dialog.html
