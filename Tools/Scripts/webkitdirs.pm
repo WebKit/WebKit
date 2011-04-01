@@ -1645,7 +1645,6 @@ sub buildQMakeProject($@)
                 if ($result ne 0) {
                     die "Failed while running $qmakebin to generate derived sources for Tools!\n";
                 }
-                push @subdirs, "MiniBrowser";
                 push @subdirs, "WebKitTestRunner";
             }
         }

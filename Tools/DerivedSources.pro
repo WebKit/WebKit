@@ -2,7 +2,6 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 SUBDIRS += \
-    MiniBrowser/DerivedSources.pro \
     WebKitTestRunner/DerivedSources.pro
 
 for(subpro, SUBDIRS) {
