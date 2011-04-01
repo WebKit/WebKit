@@ -1,3 +1,15 @@
+2011-04-01  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Unreviewed build fix.
+
+        Fix build break when font backend is Pango.
+        Pango is missed in changeset 80589.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57609
+
+        * platform/graphics/pango/FontPlatformData.h:
+        (WebCore::FontPlatformData::setOrientation):
+
 2011-04-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82687.
