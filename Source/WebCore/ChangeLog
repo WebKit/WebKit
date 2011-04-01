@@ -1,3 +1,15 @@
+2011-04-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Valgrind error in _ZN7WebCore8Document11updateTitleERKNS_19StringWithDirectionE
+        https://bugs.webkit.org/show_bug.cgi?id=57656
+
+        We should initialize memory when constructing objects.
+
+        * platform/text/StringWithDirection.h:
+        (WebCore::StringWithDirection::StringWithDirection):
+
 2011-04-01  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

@@ -46,8 +46,16 @@ namespace WebCore {
 // to the string.
 class StringWithDirection {
 public:
-    StringWithDirection() {}
-    StringWithDirection(const String& string, TextDirection dir) : m_string(string), m_direction(dir) {}
+    StringWithDirection()
+        : m_direction(LTR)
+    {
+    }
+
+    StringWithDirection(const String& string, TextDirection dir)
+        : m_string(string)
+        , m_direction(dir)
+    {
+    }
 
     const String& string() const { return m_string; }
     TextDirection direction() const { return m_direction; }
