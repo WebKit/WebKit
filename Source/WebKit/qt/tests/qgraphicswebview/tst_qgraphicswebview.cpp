@@ -21,6 +21,7 @@
 #include <QtTest/QtTest>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
+#include <QStyleOptionGraphicsItem>
 #include <qgraphicswebview.h>
 #include <qwebpage.h>
 #include <qwebframe.h>
@@ -43,7 +44,9 @@ private slots:
     void setPalette_data();
     void setPalette();
     void renderHints();
-
+#if defined(ENABLE_TILED_BACKING_STORE) && ENABLE_TILED_BACKING_STORE
+    void bug56929();
+#endif
 #if defined(ENABLE_WEBGL) && ENABLE_WEBGL
     void webglSoftwareFallbackVerticalOrientation();
     void webglSoftwareFallbackHorizontalOrientation();
@@ -190,6 +193,38 @@ void tst_QGraphicsWebView::widgetsRenderingThroughCache()
 
     QCOMPARE(referencePixmap.toImage(), viewWithTiling.toImage());
 }
+
+#if defined(ENABLE_TILED_BACKING_STORE) && ENABLE_TILED_BACKING_STORE
+void tst_QGraphicsWebView::bug56929()
+{
+    // When rendering from tiles sychronous layout should not be triggered
+    // and scrollbars should be in sync with the size of the document in the displayed state.
+
+    QGraphicsWebView* webView = new QGraphicsWebView();
+    webView->setGeometry(QRectF(0.0, 0.0, 100.0, 100.0));
+    QGraphicsView view(new QGraphicsScene());
+    view.scene()->setParent(&view);
+    view.scene()->addItem(webView);
+    webView->settings()->setAttribute(QWebSettings::TiledBackingStoreEnabled, true);
+    QUrl url("qrc:///resources/56929.html");
+    webView->load(url);
+    QVERIFY(waitForSignal(webView, SIGNAL(loadFinished(bool))));
+    QStyleOptionGraphicsItem option;
+    option.exposedRect = webView->geometry();
+    QImage img(option.exposedRect.width(), option.exposedRect.height(), QImage::Format_ARGB32_Premultiplied);
+    QPainter painter(&img);
+    // This will not paint anything as the tiles are not ready, yet.
+    webView->paint(&painter, &option);
+    QApplication::processEvents();
+    webView->paint(&painter, &option);
+    QCOMPARE(img.pixel(option.exposedRect.width() - 2, option.exposedRect.height() / 2), qRgba(255, 255, 255, 255));
+    painter.fillRect(option.exposedRect, Qt::black);
+    QCOMPARE(img.pixel(option.exposedRect.width() - 2, option.exposedRect.height() / 2), qRgba(0, 0, 0, 255));
+    webView->page()->mainFrame()->evaluateJavaScript(QString("resizeDiv();"));
+    webView->paint(&painter, &option);
+    QCOMPARE(img.pixel(option.exposedRect.width() - 2, option.exposedRect.height() / 2), qRgba(255, 255, 255, 255));
+}
+#endif
 
 void tst_QGraphicsWebView::microFocusCoordinates()
 {

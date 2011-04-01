@@ -96,14 +96,15 @@ public:
     static WebCore::Frame* core(const QWebFrame*);
     static QWebFrame* kit(const WebCore::Frame*);
 
-    void renderRelativeCoords(WebCore::GraphicsContext*, QWebFrame::RenderLayer, const QRegion& clip);
+    void renderRelativeCoords(WebCore::GraphicsContext*, QFlags<QWebFrame::RenderLayer>, const QRegion& clip);
 #if ENABLE(TILED_BACKING_STORE)
     void renderFromTiledBackingStore(WebCore::GraphicsContext*, const QRegion& clip);
 #endif
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-    void renderCompositedLayers(WebCore::GraphicsContext* context, const WebCore::IntRect& clip);
+    void renderCompositedLayers(WebCore::GraphicsContext*, const WebCore::IntRect& clip);
 #endif
+    void renderFrameExtras(WebCore::GraphicsContext*, QFlags<QWebFrame::RenderLayer>, const QRegion& clip);
     QWebFrame *q;
     Qt::ScrollBarPolicy horizontalScrollBarPolicy;
     Qt::ScrollBarPolicy verticalScrollBarPolicy;

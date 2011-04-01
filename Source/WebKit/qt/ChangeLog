@@ -1,3 +1,20 @@
+2011-04-01  Carol Szabo  <carol.szabo@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        Changed QWebFramePrivate::renderFromTiledBackingStore to call directly into
+        Scrollbar/PanIcon rendering, bypassing the potential relayout in renderRelativeCoords.
+
+        Tiled painting still causes synchronous layout when
+        accelerated compositing and texture mapper are enabled
+        https://bugs.webkit.org/show_bug.cgi?id=56929
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::renderFromTiledBackingStore):
+        (QWebFramePrivate::renderRelativeCoords):
+        (QWebFramePrivate::renderFrameWidgets):
+        * Api/qwebframe_p.h:
+
 2011-04-01  Nancy Piedra  <nancy.piedra@nokia.com>
 
         Reviewed by Benjamin Poulain.

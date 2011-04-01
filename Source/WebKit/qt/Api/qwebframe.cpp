@@ -313,7 +313,7 @@ void QWebFramePrivate::renderFromTiledBackingStore(GraphicsContext* context, con
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
     renderCompositedLayers(context, IntRect(clip.boundingRect()));
-    renderRelativeCoords(context, (QWebFrame::RenderLayer)(QWebFrame::ScrollBarLayer | QWebFrame::PanIconLayer), clip);
+    renderFrameExtras(context, QFlags<QWebFrame::RenderLayer>(QWebFrame::ScrollBarLayer) | QWebFrame::PanIconLayer, clip);
 #endif
 }
 #endif
@@ -342,7 +342,7 @@ void QWebFramePrivate::renderCompositedLayers(GraphicsContext* context, const In
 }
 #endif
 
-void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame::RenderLayer layer, const QRegion& clip)
+void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QFlags<QWebFrame::RenderLayer> layers, const QRegion& clip)
 {
     if (!frame->view() || !frame->contentRenderer())
         return;
@@ -356,7 +356,7 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame:
     WebCore::FrameView* view = frame->view();
     view->updateLayoutAndStyleIfNeededRecursive();
 
-    if (layer & QWebFrame::ContentsLayer) {
+    if (layers & QWebFrame::ContentsLayer) {
         for (int i = 0; i < vector.size(); ++i) {
             const QRect& clipRect = vector.at(i);
 
@@ -385,37 +385,44 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame:
         renderCompositedLayers(context, IntRect(clip.boundingRect()));
 #endif
     }
-    if (layer & (QWebFrame::PanIconLayer | QWebFrame::ScrollBarLayer)) {
-        for (int i = 0; i < vector.size(); ++i) {
-            const QRect& clipRect = vector.at(i);
+    renderFrameExtras(context, layers, clip);
+}
 
-            QRect intersectedRect = clipRect.intersected(view->frameRect());
+void QWebFramePrivate::renderFrameExtras(GraphicsContext* context, QFlags<QWebFrame::RenderLayer> layers, const QRegion& clip)
+{
+    if (!(layers & (QWebFrame::PanIconLayer | QWebFrame::ScrollBarLayer)))
+        return;
+    QPainter* painter = context->platformContext();
+    WebCore::FrameView* view = frame->view();
+    QVector<QRect> vector = clip.rects();
+    for (int i = 0; i < vector.size(); ++i) {
+        const QRect& clipRect = vector.at(i);
 
-            painter->save();
-            painter->setClipRect(clipRect, Qt::IntersectClip);
+        QRect intersectedRect = clipRect.intersected(view->frameRect());
 
-            int x = view->x();
-            int y = view->y();
+        painter->save();
+        painter->setClipRect(clipRect, Qt::IntersectClip);
 
-            if (layer & QWebFrame::ScrollBarLayer
-                && !view->scrollbarsSuppressed()
-                && (view->horizontalScrollbar() || view->verticalScrollbar())) {
-                QRect rect = intersectedRect;
-                context->translate(x, y);
-                rect.translate(-x, -y);
+        int x = view->x();
+        int y = view->y();
 
-                view->paintScrollbars(context, rect);
+        if (layers & QWebFrame::ScrollBarLayer
+            && !view->scrollbarsSuppressed()
+            && (view->horizontalScrollbar() || view->verticalScrollbar())) {
 
-                context->translate(-x, -y);
-            }
+            QRect rect = intersectedRect;
+            context->translate(x, y);
+            rect.translate(-x, -y);
+            view->paintScrollbars(context, rect);
+            context->translate(-x, -y);
+        }
 
 #if ENABLE(PAN_SCROLLING)
-            if (layer & QWebFrame::PanIconLayer)
-                view->paintPanScrollIcon(context);
+        if (layers & QWebFrame::PanIconLayer)
+            view->paintPanScrollIcon(context);
 #endif
 
-            painter->restore();
-        }
+        painter->restore();
     }
 }
 
