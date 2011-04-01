@@ -1,3 +1,13 @@
+2011-03-30  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [chromium] script formatting doesn't work when all scripts are concatenated.
+        https://bugs.webkit.org/show_bug.cgi?id=57446
+
+        * WebKit.gyp:
+        * scripts/inline_js_imports.py: Added.
+
 2011-03-31  Victoria Kirst  <vrk@google.com>
 
         Reviewed by Eric Carlson.

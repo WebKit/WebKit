@@ -28,9 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var parse = loadModule("parse-js.js");
-var process = loadModule("process.js");
-
 onmessage = function(event) {
     var source = event.data;
     var formattedSource = beautify(source);
@@ -69,18 +66,15 @@ function buildMapping(source, formattedSource)
     return mapping;
 }
 
-function loadModule(src)
-{
-    var request = new XMLHttpRequest();
-    request.open("GET", src, false);
-    request.send();
-
-    var exports = {};
-    eval(request.responseText);
-    return exports;
-}
-
 function require()
 {
     return parse;
 }
+
+var exports = {};
+importScripts("parse-js.js");
+var parse = exports;
+
+var exports = {};
+importScripts("process.js");
+var process = exports;

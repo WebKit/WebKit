@@ -695,6 +695,7 @@
             'conditions': [
                 ['debug_devtools==0', {
                     'dependencies': ['concatenated_devtools_js',
+                                     'concatenated_script_formatter_worker_js',
                                      'concatenated_devtools_css'],
                 }],
             ],
@@ -747,6 +748,7 @@
             'conditions': [
                 ['debug_devtools==0', {
                     'dependencies': ['concatenated_devtools_js',
+                                     'concatenated_script_formatter_worker_js',
                                      'concatenated_devtools_css'],
                 },{
                     # If we're not concatenating devtools files, we want to
@@ -761,6 +763,7 @@
                 'input_pages': [
                     '<(PRODUCT_DIR)/resources/inspector/devtools.html',
                     '<(PRODUCT_DIR)/resources/inspector/DevTools.js',
+                    '<(PRODUCT_DIR)/resources/inspector/ScriptFormatterWorker.js',
                     '<(PRODUCT_DIR)/resources/inspector/devTools.css',
                 ],
                 'images': [
@@ -1164,6 +1167,22 @@
                         ],
                         'outputs': ['<(PRODUCT_DIR)/resources/inspector/DevTools.js'],
                         'action': ['python', '<@(_script_name)', '<@(_input_page)', '<@(_search_path)', '<@(_outputs)'],
+                    }],
+                },
+                {
+                    'target_name': 'concatenated_script_formatter_worker_js',
+                    'type': 'none',
+                    'actions': [{
+                        'action_name': 'concatenate_script_formatter_worker_js',
+                        'script_name': 'scripts/inline_js_imports.py',
+                        'input_file': '../../WebCore/inspector/front-end/ScriptFormatterWorker.js',
+                        'inputs': [
+                            '<@(_script_name)',
+                            '<@(webinspector_files)'
+                        ],
+                        'search_path': '../../WebCore/inspector/front-end/UglifyJS',
+                        'outputs': ['<(PRODUCT_DIR)/resources/inspector/ScriptFormatterWorker.js'],
+                        'action': ['python', '<@(_script_name)', '<@(_input_file)', '<@(_search_path)', '<@(_outputs)'],
                     }],
                 },
                 {

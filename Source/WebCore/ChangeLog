@@ -1,3 +1,12 @@
+2011-03-30  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [chromium] script formatting doesn't work when all scripts are concatenated.
+        https://bugs.webkit.org/show_bug.cgi?id=57446
+
+        * inspector/front-end/ScriptFormatterWorker.js:
+
 2011-04-01  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
