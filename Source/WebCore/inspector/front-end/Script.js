@@ -54,5 +54,16 @@ WebInspector.Script.prototype = {
             callback(this._source);
         }
         DebuggerAgent.getScriptSource(this.sourceID, didGetScriptSource.bind(this));
+    },
+
+    editSource: function(newSource, callback)
+    {
+        function didEditScriptSource(error, callFrames)
+        {
+            if (!error)
+                this._source = newSource;
+            callback(error, callFrames);
+        }
+        DebuggerAgent.editScriptSource(this.sourceID, newSource, didEditScriptSource.bind(this));
     }
 }

@@ -1,3 +1,17 @@
+2011-04-01  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: make editScriptSource a Script's method.
+        https://bugs.webkit.org/show_bug.cgi?id=57615
+
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.editScriptSource):
+        (WebInspector.DebuggerModel.prototype._didEditScriptSource):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.requestSource):
+        (WebInspector.Script.prototype.editSource):
+
 2011-04-01  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
