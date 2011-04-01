@@ -380,6 +380,13 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availabl
     }
 }
 
+void RenderFrameSet::notifyFrameEdgeInfoChanged()
+{
+    // FIXME: We should only recompute the edge info with respect to the frame that changed
+    // and its adjacent frame(s) instead of recomputing the edge info for the entire frameset.
+    computeEdgeInfo();
+}
+
 void RenderFrameSet::fillFromEdgeInfo(const FrameEdgeInfo& edgeInfo, int r, int c)
 {
     if (edgeInfo.allowBorder(LeftFrameEdge))
