@@ -1760,6 +1760,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         // NSPrintOperation takes ownership of the view.
         NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:printingView.get()];
         [printOperation setCanSpawnSeparateThread:YES];
+        [printOperation setJobTitle:toImpl(frameRef)->title()];
         printingView->_printOperation = printOperation;
         return printOperation;
     }
