@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "JavaClassV8.h"
+#include "JavaClassJobjectV8.h"
 
 #if ENABLE(JAVA_BRIDGE)
 
@@ -33,7 +33,7 @@
 
 using namespace JSC::Bindings;
 
-JavaClass::JavaClass(jobject anInstance)
+JavaClassJobject::JavaClassJobject(jobject anInstance)
 {
     jobject aClass = callJNIMethod<jobject>(anInstance, "getClass", "()Ljava/lang/Class;");
 
@@ -42,13 +42,12 @@ JavaClass::JavaClass(jobject anInstance)
         return;
     }
 
-    int i;
     JNIEnv* env = getJNIEnv();
 
     // Get the fields
     jarray fields = static_cast<jarray>(callJNIMethod<jobject>(aClass, "getFields", "()[Ljava/lang/reflect/Field;"));
     int numFields = env->GetArrayLength(fields);
-    for (i = 0; i < numFields; i++) {
+    for (int i = 0; i < numFields; i++) {
         jobject aJField = env->GetObjectArrayElement(static_cast<jobjectArray>(fields), i);
         JavaField* aField = new JavaFieldJobject(env, aJField); // deleted in the JavaClass destructor
         m_fields.set(aField->name(), aField);
@@ -58,16 +57,13 @@ JavaClass::JavaClass(jobject anInstance)
     // Get the methods
     jarray methods = static_cast<jarray>(callJNIMethod<jobject>(aClass, "getMethods", "()[Ljava/lang/reflect/Method;"));
     int numMethods = env->GetArrayLength(methods);
-    for (i = 0; i < numMethods; i++) {
+    for (int i = 0; i < numMethods; i++) {
         jobject aJMethod = env->GetObjectArrayElement(static_cast<jobjectArray>(methods), i);
         JavaMethod* aMethod = new JavaMethodJobject(env, aJMethod); // deleted in the JavaClass destructor
-        MethodList* methodList;
-        {
-            methodList = m_methods.get(aMethod->name());
-            if (!methodList) {
-                methodList = new MethodList();
-                m_methods.set(aMethod->name(), methodList);
-            }
+        MethodList* methodList = m_methods.get(aMethod->name());
+        if (!methodList) {
+            methodList = new MethodList();
+            m_methods.set(aMethod->name(), methodList);
         }
         methodList->append(aMethod);
         env->DeleteLocalRef(aJMethod);
@@ -77,7 +73,7 @@ JavaClass::JavaClass(jobject anInstance)
     env->DeleteLocalRef(aClass);
 }
 
-JavaClass::~JavaClass()
+JavaClassJobject::~JavaClassJobject()
 {
     deleteAllValues(m_fields);
     m_fields.clear();
@@ -91,7 +87,7 @@ JavaClass::~JavaClass()
     m_methods.clear();
 }
 
-MethodList JavaClass::methodsNamed(const char* name) const
+MethodList JavaClassJobject::methodsNamed(const char* name) const
 {
     MethodList* methodList = m_methods.get(name);
 
@@ -100,7 +96,7 @@ MethodList JavaClass::methodsNamed(const char* name) const
     return MethodList();
 }
 
-JavaField* JavaClass::fieldNamed(const char* name) const
+JavaField* JavaClassJobject::fieldNamed(const char* name) const
 {
     return m_fields.get(name);
 }

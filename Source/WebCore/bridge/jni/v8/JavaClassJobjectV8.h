@@ -23,32 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JavaClassV8_h
-#define JavaClassV8_h
+#ifndef JavaClassJobjectV8_h
+#define JavaClassJobjectV8_h
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include <wtf/HashMap.h>
-#include <wtf/Vector.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
+#include "JNIUtility.h"
+#include "JavaClassV8.h"
 
 namespace JSC {
 
 namespace Bindings {
 
-class JavaField;
-class JavaMethod;
-
-typedef Vector<JavaMethod*> MethodList;
-typedef HashMap<WTF::String, JavaField*> FieldMap;
-
-class JavaClass {
+class JavaClassJobject : public JavaClass {
 public:
-    virtual ~JavaClass() {}
+    JavaClassJobject(jobject);
+    virtual ~JavaClassJobject();
 
-    virtual MethodList methodsNamed(const char* name) const = 0;
-    virtual JavaField* fieldNamed(const char* name) const = 0;
+    // JavaClass implementation
+    virtual MethodList methodsNamed(const char* name) const;
+    virtual JavaField* fieldNamed(const char* name) const;
+
+private:
+    typedef HashMap<WTF::String, MethodList*> MethodListMap;
+    MethodListMap m_methods;
+    FieldMap m_fields;
 };
 
 } // namespace Bindings
@@ -57,4 +56,4 @@ public:
 
 #endif // ENABLE(JAVA_BRIDGE)
 
-#endif // JavaClassV8_h
+#endif // JavaClassJobjectV8_h

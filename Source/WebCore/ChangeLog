@@ -1,3 +1,33 @@
+2011-04-01  Steve Block  <steveblock@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        JavaClass should be an interface and free of JNI types
+        https://bugs.webkit.org/show_bug.cgi?id=57533
+
+        This patch fixes JavaClass for V8 only.
+
+        It factors out a JavaClass interface which does not use JNI types.
+        This will allow the Java bridge to be used with objects that
+        don't use JNI directly. The existing jobject-backed
+        implementation is moved to a new JavaClassJobject class which
+        implements the interface.
+
+        No new tests, refactoring only.
+
+        * Android.v8bindings.mk:
+        * WebCore.gypi:
+        * bridge/jni/v8/JavaClassJobjectV8.cpp:
+        (JavaClassJobject::JavaClassJobject):
+        (JavaClassJobject::~JavaClassJobject):
+        (JavaClassJobject::methodsNamed):
+        (JavaClassJobject::fieldNamed):
+        * bridge/jni/v8/JavaClassJobjectV8.h: Copied from Source/WebCore/bridge/jni/v8/JavaClassV8.h.
+        * bridge/jni/v8/JavaClassV8.h:
+        (JSC::Bindings::JavaClass::~JavaClass):
+        * bridge/jni/v8/JavaInstanceV8.cpp:
+        (JavaInstance::getClass):
+
 2011-04-01  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Unreviewed build fix.

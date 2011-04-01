@@ -30,7 +30,7 @@
 #if ENABLE(JAVA_BRIDGE)
 
 #include "JNIUtilityPrivate.h"
-#include "JavaClassV8.h"
+#include "JavaClassJobjectV8.h"
 #include "JavaFieldV8.h"
 #include "JavaMethod.h"
 
@@ -66,7 +66,7 @@ void JavaInstance::virtualEnd()
 JavaClass* JavaInstance::getClass() const
 {
     if (!m_class)
-        m_class = new JavaClass(javaInstance());
+        m_class = new JavaClassJobject(javaInstance());
     return m_class;
 }
 
