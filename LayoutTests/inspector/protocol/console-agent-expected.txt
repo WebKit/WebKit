@@ -59,7 +59,7 @@ event ConsoleAgent.consoleMessage
     type : "event"
     domain : "Console"
     event : "consoleMessage"
-    body : {
+    data : {
         messageObj : {
             source : 3
             type : 0
@@ -84,7 +84,7 @@ event ConsoleAgent.consoleMessageRepeatCountUpdated
     type : "event"
     domain : "Console"
     event : "consoleMessageRepeatCountUpdated"
-    body : {
+    data : {
         count : 2
     }
 }
@@ -117,7 +117,7 @@ event ConsoleAgent.consoleMessagesCleared
     type : "event"
     domain : "Console"
     event : "consoleMessagesCleared"
-    body : {
+    data : {
     }
 }
 

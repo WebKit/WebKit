@@ -389,10 +389,10 @@ sub generateFrontendFunction
     push(@function, "    ${functionName}Message->setString(\"type\", \"event\");");
     push(@function, "    ${functionName}Message->setString(\"domain\", \"$domain\");");
     push(@function, "    ${functionName}Message->setString(\"event\", \"$functionName\");");
-    push(@function, "    RefPtr<InspectorObject> bodyObject = InspectorObject::create();");
-    my @pushArguments = map("    bodyObject->set" . typeTraits($_->type, "JSONType") . "(\"" . $_->name . "\", " . $_->name . ");", @argsFiltered);
+    push(@function, "    RefPtr<InspectorObject> dataObject = InspectorObject::create();");
+    my @pushArguments = map("    dataObject->set" . typeTraits($_->type, "JSONType") . "(\"" . $_->name . "\", " . $_->name . ");", @argsFiltered);
     push(@function, @pushArguments);
-    push(@function, "    ${functionName}Message->setObject(\"body\", bodyObject);");
+    push(@function, "    ${functionName}Message->setObject(\"data\", dataObject);");
     push(@function, "    m_inspectorClient->sendMessageToFrontend(${functionName}Message->toJSONString());");
     push(@function, "}");
     push(@function, "");
@@ -852,14 +852,15 @@ InspectorBackendStub.prototype = {
 
         var messageObject = (typeof message === "string") ? JSON.parse(message) : message;
 
-        var arguments = [];
-        if (messageObject.body)
-            for (var key in messageObject.body)
-                arguments.push(messageObject.body[key]);
-
         if ("requestId" in messageObject) { // just a response for some request
             if (messageObject.protocolErrors)
                 this.reportProtocolError(messageObject);
+
+            var arguments = [];
+            if (messageObject.body) {
+                for (var key in messageObject.body)
+                    arguments.push(messageObject.body[key]);
+            }
 
             var callback = this._callbacks[messageObject.requestId];
             if (callback) {
@@ -886,6 +887,12 @@ InspectorBackendStub.prototype = {
             if (!(messageObject.event in dispatcher)) {
                 console.error("Protocol Error: Attempted to dispatch an unimplemented method '" + messageObject.domain + "." + messageObject.event + "'");
                 return;
+            }
+
+            var arguments = [];
+            if (messageObject.data) {
+                for (var key in messageObject.data)
+                    arguments.push(messageObject.data[key]);
             }
 
             dispatcher[messageObject.event].apply(dispatcher, arguments);
