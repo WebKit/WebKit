@@ -10,5 +10,13 @@ Call stack:
 Script execution resumed.
 
 Running: testPauseOnAnyXHR
+Script execution paused.
+Script execution resumed.
+Script execution paused.
+Script execution resumed.
+
+Running: testDisableBreakpoint
+Script execution paused.
+Script execution resumed.
 Debugger was disabled.
 

@@ -1,3 +1,13 @@
+2011-04-01  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: checkboxes are broken in xhr breakpoints sidebar pane.
+        https://bugs.webkit.org/show_bug.cgi?id=57610
+
+        * inspector/debugger/xhr-breakpoints-expected.txt:
+        * inspector/debugger/xhr-breakpoints.html:
+
 2011-04-01  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

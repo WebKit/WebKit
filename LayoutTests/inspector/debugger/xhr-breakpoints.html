@@ -41,14 +41,16 @@ function test()
 
         function testPauseOnAnyXHR(next)
         {
-            pane._setBreakpoint("");
-            InspectorTest.evaluateInPage("sendRequest('/foo?a=b')", pausedFoo);
+            pane._setBreakpoint("", true);
+            InspectorTest.waitUntilPaused(pausedFoo);
+            InspectorTest.evaluateInPageWithTimeout("sendRequest('/foo?a=b')");
 
             function pausedFoo(callFrames)
             {
                 function resumed()
                 {
-                    InspectorTest.evaluateInPage("sendRequest('/bar?a=b')", pausedBar);
+                    InspectorTest.waitUntilPaused(pausedBar);
+                    InspectorTest.evaluateInPage("sendRequest('/bar?a=b')");
                 }
                 InspectorTest.resumeExecution(resumed);
             }
@@ -61,6 +63,30 @@ function test()
                     InspectorTest.evaluateInPage("sendRequest('/baz?a=b')", next);
                 }
                 InspectorTest.resumeExecution(resumed);
+            }
+        },
+
+        function testDisableBreakpoint(next)
+        {
+            pane._setBreakpoint("", true);
+            InspectorTest.waitUntilPaused(paused);
+            InspectorTest.evaluateInPage("sendRequest('/foo')");
+
+            function paused(callFrames)
+            {
+                function resumed()
+                {
+                    pane._breakpointElements[""]._checkboxElement.click();
+                    InspectorTest.waitUntilPaused(pausedAgain);
+                    InspectorTest.evaluateInPage("sendRequest('/foo')", next);
+                }
+                InspectorTest.resumeExecution(resumed);
+            }
+
+            function pausedAgain(callFrames)
+            {
+                InspectorTest.addResult("Fail, paused again after breakpoint was removed.");
+                next();
             }
         }
     ]);

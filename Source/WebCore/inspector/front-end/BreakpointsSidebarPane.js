@@ -377,9 +377,9 @@ WebInspector.XHRBreakpointsSidebarPane.prototype = {
     _checkboxClicked: function(url, event)
     {
         if (event.target.checked)
-            WebInspector.breakpointManager.setXHRBreakpoint(url);
+            BrowserDebuggerAgent.setXHRBreakpoint(url);
         else
-            WebInspector.breakpointManager.removeXHRBreakpoint(url);
+            BrowserDebuggerAgent.removeXHRBreakpoint(url);
         this._saveBreakpoints();
     },
 
