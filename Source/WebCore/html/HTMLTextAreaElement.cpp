@@ -339,12 +339,6 @@ String HTMLTextAreaElement::defaultValue() const
             value += static_cast<Text*>(n)->data();
     }
 
-    UChar firstCharacter = value[0];
-    if (firstCharacter == '\r' && value[1] == '\n')
-        value.remove(0, 2);
-    else if (firstCharacter == '\r' || firstCharacter == '\n')
-        value.remove(0, 1);
-
     return value;
 }
 
@@ -363,13 +357,9 @@ void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
         removeChild(textNodes[i].get(), ec);
 
     // Normalize line endings.
-    // Add an extra line break if the string starts with one, since
-    // the code to read default values from the DOM strips the leading one.
     String value = defaultValue;
     value.replace("\r\n", "\n");
     value.replace('\r', '\n');
-    if (value[0] == '\n')
-        value = "\n" + value;
 
     insertBefore(document()->createTextNode(value), firstChild(), ec);
 
