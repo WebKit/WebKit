@@ -199,7 +199,7 @@
             },
             {
                 "name": "disable"
-           },
+            },
             {
                 "name": "clearConsoleMessages"
             },
@@ -223,7 +223,7 @@
                     { "name": "messageObj", "$ref": "ConsoleMessage" }
                 ]
             },
-           {
+            {
                 "name": "consoleMessageRepeatCountUpdated",
                 "parameters": [
                     { "name": "count", "type": "integer" }
@@ -678,7 +678,6 @@
                 "parameters": [
                     { "name": "nodeId", "type": "integer", "description": "Id of the node to query upon." },
                     { "name": "selectors", "type": "string", "description": "Selector string." },
-                    { "name": "documentWide", "type": "boolean", "description": "Set to true to start querying from the node's document." }
                 ],
                 "returns": [
                     { "name": "elementId", "type": "integer", "description": "Query selector result." }
@@ -690,17 +689,16 @@
                 "parameters": [
                     { "name": "nodeId", "type": "integer", "description": "Id of the node to query upon." },
                     { "name": "selectors", "type": "string", "description": "Selector string." },
-                    { "name": "documentWide", "type": "boolean", "description": "Set to true to start querying from the node's document." }
                 ],
                 "returns": [
-                    { "name": "nodeIds", "type": "array", "items": { "type": "integer" }, "description": "Query selector result."  }
+                    { "name": "nodeIds", "type": "array", "items": { "type": "integer" }, "description": "Query selector result." }
                 ],
                 "description": "Executes <code>querySelectorAll</code> on a given node. Setting <code>documentWide</code> to true starts selecting from the document node."
             },
             {
                 "name": "setNodeName",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node to set name for."  },
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node to set name for." },
                     { "name": "name", "type": "string", "description": "New node's name." }
                 ],
                 "returns": [

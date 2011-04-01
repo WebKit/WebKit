@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2009-2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2009 Joseph Pecoraro
  *
  * Redistribution and use in source and binary forms, with or without
@@ -430,24 +430,6 @@ HTMLElement* InspectorDOMAgent::assertHTMLElement(ErrorString* errorString, int 
     return toHTMLElement(element);
 }
 
-Node* InspectorDOMAgent::nodeToSelectOn(ErrorString* errorString, int nodeId, bool documentWide)
-{
-    Node* node;
-    if (!nodeId) {
-        node = m_document.get();
-        if (!node)
-            *errorString = "No document to query on.";
-    } else
-        node = assertNode(errorString, nodeId);
-
-    if (!node)
-        return 0;
-
-    if (documentWide && nodeId)
-        node = node->ownerDocument();
-    return node;
-}
-
 void InspectorDOMAgent::getDocument(ErrorString*, RefPtr<InspectorObject>* root)
 {
     m_inspectorState->setBoolean(DOMAgentState::documentRequested, true);
@@ -502,10 +484,10 @@ void InspectorDOMAgent::getChildNodes(ErrorString*, int nodeId)
     pushChildNodesToFrontend(nodeId);
 }
 
-void InspectorDOMAgent::querySelector(ErrorString* errorString, int nodeId, const String& selectors, bool documentWide, int* elementId)
+void InspectorDOMAgent::querySelector(ErrorString* errorString, int nodeId, const String& selectors, int* elementId)
 {
     *elementId = 0;
-    Node* node = nodeToSelectOn(errorString, nodeId, documentWide);
+    Node* node = assertNode(errorString, nodeId);
     if (!node)
         return;
 
@@ -520,9 +502,9 @@ void InspectorDOMAgent::querySelector(ErrorString* errorString, int nodeId, cons
         *elementId = pushNodePathToFrontend(element.get());
 }
 
-void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, const String& selectors, bool documentWide, RefPtr<InspectorArray>* result)
+void InspectorDOMAgent::querySelectorAll(ErrorString* errorString, int nodeId, const String& selectors, RefPtr<InspectorArray>* result)
 {
-    Node* node = nodeToSelectOn(errorString, nodeId, documentWide);
+    Node* node = assertNode(errorString, nodeId);
     if (!node)
         return;
 

@@ -328,7 +328,7 @@ WebInspector.DOMAgent.prototype = {
             return;
         }
 
-        function mycallback(error, root)
+        function onDocumentAvailable(error, root)
         {
             if (!error)
                 this._setDocument(root);
@@ -336,44 +336,49 @@ WebInspector.DOMAgent.prototype = {
             if (callback)
                 callback(this._document);
         }
-        DOMAgent.getDocument(mycallback.bind(this));
+        DOMAgent.getDocument(onDocumentAvailable.bind(this));
     },
 
     pushNodeToFrontend: function(objectId, callback)
     {
-        function callbackWrapper(error, nodeId)
-        {
-            if (callback)
-                callback(error ? 0 : nodeId);
-        }
-
-        function mycallback()
-        {
-            if (this._document)
-                DOMAgent.pushNodeToFrontend(objectId, callbackWrapper);
-            else
-                callbackWrapper("No document");
-        }
-
-        this.requestDocument(mycallback.bind(this));
+        this._dispatchWhenDocumentAvailable(DOMAgent.pushNodeToFrontend.bind(DOMAgent), objectId, callback);
     },
 
     pushNodeByPathToFrontend: function(path, callback)
     {
-        function callbackWrapper(error, nodeId)
-        {
-            if (callback)
-                callback(error ? 0 : nodeId);
-        }
+        this._dispatchWhenDocumentAvailable(DOMAgent.pushNodeByPathToFrontend.bind(DOMAgent), path, callback);
+    },
 
-        function mycallback()
+    _wrapClientCallback: function(callback)
+    {
+        if (!callback)
+            return;
+        return function(error, result)
+        {
+            callback(error ? null : result);
+        }
+    },
+
+    _dispatchWhenDocumentAvailable: function(action)
+    {
+        var requestArguments = Array.prototype.slice.call(arguments, 1);
+        var callbackWrapper;
+
+        if (typeof requestArguments[requestArguments.length - 1] === "function") {
+            var callback = requestArguments.pop();
+            callbackWrapper = this._wrapClientCallback(callback);
+            requestArguments.push(callbackWrapper);
+        }
+        function onDocumentAvailable()
         {
             if (this._document)
-                DOMAgent.pushNodeByPathToFrontend(path, callbackWrapper);
-            else
-                callbackWrapper("No document");
+                action.apply(null, requestArguments);
+            else {
+                if (callbackWrapper)
+                    callbackWrapper("No document");
+            }
         }
-        this.requestDocument(mycallback.bind(this));
+        this.requestDocument(onDocumentAvailable.bind(this));
     },
 
     _attributesUpdated: function(nodeId, attrsArray)
@@ -488,6 +493,16 @@ WebInspector.DOMAgent.prototype = {
     {
         delete this._searchResultCollector;
         DOMAgent.cancelSearch();
+    },
+
+    querySelector: function(nodeId, selectors, callback)
+    {
+        DOMAgent.querySelector(nodeId, selectors, this._wrapClientCallback(callback));
+    },
+
+    querySelectorAll: function(nodeId, selectors, callback)
+    {
+        DOMAgent.querySelectorAll(nodeId, selectors, this._wrapClientCallback(callback));
     }
 }
 

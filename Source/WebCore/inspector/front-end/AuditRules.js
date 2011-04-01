@@ -721,20 +721,21 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
                 doneCallback();
         }
 
-        function getStyles(error, nodeIds)
+        function getStyles(nodeIds)
         {
-            if (error)
+            if (!nodeIds) {
+                console.error("Failed to get styles");
                 return;
+            }
             for (var i = 0; i < nodeIds.length; ++i)
                 WebInspector.cssModel.getStylesAsync(nodeIds[i], imageStylesReady.bind(this, nodeIds[i], i === nodeIds.length - 1));
         }
-
-        function getImages()
+        function onDocumentAvailable(root)
         {
-            DOMAgent.querySelectorAll(0, "img[src]", true, getStyles);
+            WebInspector.domAgent.querySelectorAll(root.id, "img[src]", getStyles);
         }
+        WebInspector.domAgent.requestDocument(onDocumentAvailable);
 
-        WebInspector.domAgent.requestDocument(getImages);
     }
 }
 

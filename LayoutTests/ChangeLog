@@ -1,3 +1,12 @@
+2011-03-31  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: provide front-end wrappers for DOMAgent.querySelector[All]() that take care of fetching the document
+        https://bugs.webkit.org/show_bug.cgi?id=57466
+
+        * inspector/elements/dom-agent-query-selector.html: removed documentWide parameter to querySelectorAll 
+
 2011-03-31  Adam Barth  <abarth@webkit.org>
 
         Add two more preloader tests to the WebKit2 Skipped list.

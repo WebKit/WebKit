@@ -1,3 +1,41 @@
+2011-03-31  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        - removed documentWide parameter to querySelector[All]() (user document node id instead)
+        - factor out document request logic within DOMAgent into separate method
+        - add querySelector() and querySelectorAll() to DOMAgent.js, assure we have document before calling back-end
+        - use the above wrappers for querySelector() and querySelectorAll(), do not call backend directly
+        - minor style fixes in Inspector.json
+        - more error logging
+
+        Web Inspector: provide front-end wrappers for DOMAgent.querySelector[All]() that take care of fetching the document
+        https://bugs.webkit.org/show_bug.cgi?id=57466
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::querySelector):
+        (WebCore::InspectorDOMAgent::querySelectorAll):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun.getStyles):
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector.callback):
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector):
+        (WebInspector.CSSStyleModel.prototype.addRule.callback):
+        (WebInspector.CSSStyleModel.prototype.addRule):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype.requestDocument.onDocumentAvailable):
+        (WebInspector.DOMAgent.prototype.requestDocument):
+        (WebInspector.DOMAgent.prototype.pushNodeToFrontend):
+        (WebInspector.DOMAgent.prototype.pushNodeByPathToFrontend):
+        (WebInspector.DOMAgent.prototype._dispatchWhenDocumentAvailable.onDocumentAvailable):
+        (WebInspector.DOMAgent.prototype._dispatchWhenDocumentAvailable):
+        (WebInspector.DOMAgent.prototype.cancelSearch):
+        (WebInspector.DOMAgent.prototype.querySelector):
+        (WebInspector.DOMAgent.prototype.querySelectorAll):
+
 2011-04-01  Kent Tamura  <tkent@chromium.org>
 
         Apply sort-Xcode-project-file.
