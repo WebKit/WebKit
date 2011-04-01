@@ -1157,6 +1157,9 @@ print HTML htmlForResultsSection(@{$tests{webProcessCrash}}, "Tests that caused 
 print HTML htmlForResultsSection(@{$tests{error}}, "Tests that had stderr output", \&linksForErrorTest);
 print HTML htmlForResultsSection(@{$tests{new}}, "Tests that had no expected results (probably new)", \&linksForNewTest);
 
+print HTML "<p>httpd access log: <a href=\"access_log.txt\">access_log.txt</a></p>\n";
+print HTML "<p>httpd error log: <a href=\"error_log.txt\">error_log.txt</a></p>\n";
+
 print HTML "</body>\n";
 print HTML "</html>\n";
 close HTML;

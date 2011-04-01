@@ -1,3 +1,13 @@
+2011-04-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Make view results on waterfall direct link to results.html
+        https://bugs.webkit.org/show_bug.cgi?id=57671
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Add "/results.html" to the URL.
+        * Scripts/old-run-webkit-tests: Add links to httpd access and error logs.
+
 2011-04-01  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.
