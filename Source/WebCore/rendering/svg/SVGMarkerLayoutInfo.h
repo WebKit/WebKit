@@ -57,6 +57,7 @@ public:
     RenderSVGResourceMarker* midMarker() const { return m_midMarker; }
     int& elementIndex() { return m_elementIndex; }
     void addLayoutedMarker(RenderSVGResourceMarker*, const FloatPoint& origin, float angle);
+    void clear();
 
 private:
     RenderSVGResourceMarker* m_midMarker;

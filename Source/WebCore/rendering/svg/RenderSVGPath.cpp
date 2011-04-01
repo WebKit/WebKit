@@ -128,8 +128,10 @@ void RenderSVGPath::layout()
         updateCachedBoundariesInParents = true;
 
     // Invalidate all resources of this client if our layout changed.
-    if (m_everHadLayout && selfNeedsLayout())
+    if (m_everHadLayout && selfNeedsLayout()) {
         SVGResourcesCache::clientLayoutChanged(this);
+        m_markerLayoutInfo.clear();
+    }
 
     // At this point LayoutRepainter already grabbed the old bounds,
     // recalculate them now so repaintAfterLayout() uses the new bounds.

@@ -98,6 +98,15 @@ FloatRect SVGMarkerLayoutInfo::calculateBoundaries(RenderSVGResourceMarker* star
     return bounds;
 }
 
+void SVGMarkerLayoutInfo::clear()
+{
+    m_midMarker = 0;
+    m_elementIndex = 0;
+    m_strokeWidth = 0;
+    m_markerData.updateTypeAndMarker(SVGMarkerData::Unknown, 0);
+    m_layout.clear();
+}
+
 void SVGMarkerLayoutInfo::drawMarkers(PaintInfo& paintInfo)
 {
     if (m_layout.isEmpty())
