@@ -1,3 +1,18 @@
+2011-04-01  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKitTestRunner needs layoutTestController.setDatabaseQuota
+        https://bugs.webkit.org/show_bug.cgi?id=57568
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetDatabaseQuota):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setDatabaseQuota):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/WebCoreSupport/WebDatabaseManager.h:
+
 2011-04-01  Timothy Hatcher  <timothy@apple.com>
 
         Make momentum scroll event latching work in WebKit2 on Mac.

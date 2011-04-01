@@ -142,3 +142,8 @@ void WKBundleClearAllDatabases(WKBundleRef bundleRef)
 {
     toImpl(bundleRef)->clearAllDatabases();
 }
+
+void WKBundleSetDatabaseQuota(WKBundleRef bundleRef, uint64_t quota)
+{
+    toImpl(bundleRef)->setDatabaseQuota(quota);
+}

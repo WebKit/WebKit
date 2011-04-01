@@ -125,6 +125,11 @@ void InjectedBundle::clearAllDatabases()
     WebDatabaseManager::shared().deleteAllDatabases();
 }
 
+void InjectedBundle::setDatabaseQuota(uint64_t quota)
+{
+    WebDatabaseManager::shared().setQuotaForOrigin("file:///", quota);
+}
+
 static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* patterns)
 {
     if (!patterns)

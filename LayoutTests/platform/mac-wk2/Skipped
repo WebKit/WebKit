@@ -1201,12 +1201,9 @@ fast/frames/flattening/iframe-flattening-fixed-width.html
 fast/frames/flattening/iframe-flattening-offscreen.html
 fast/frames/flattening/iframe-flattening-simple.html
 
-# WebKitTestRunner needs layoutTestController.setDatabaseQuota
-# <https://bugs.webkit.org/show_bug.cgi?id=57568>
-storage/open-database-creation-callback.html
-
 # WebKitTestRunner needs layoutTestController.dumpDatabaseCallbacks
 # <https://bugs.webkit.org/show_bug.cgi?id=57570>
+storage/open-database-creation-callback.html
 storage/quota-tracking.html
 
 # WebKitTestRunner needs layoutTestController.pathToLocalResource

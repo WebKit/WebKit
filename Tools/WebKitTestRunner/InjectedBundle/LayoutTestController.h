@@ -108,6 +108,7 @@ public:
 
     // Local storage
     void clearAllDatabases();
+    void setDatabaseQuota(uint64_t);
 
     enum WhatToDump { RenderTree, MainFrameText, AllFramesText };
     WhatToDump whatToDump() const { return m_whatToDump; }

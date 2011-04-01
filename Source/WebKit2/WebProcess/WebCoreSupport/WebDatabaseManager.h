@@ -46,6 +46,7 @@ public:
     static void initialize(const String& databaseDirectory);
 
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    void setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const;
 
 public:
     void deleteAllDatabases() const;
@@ -61,7 +62,6 @@ private:
     void getDatabaseOrigins(uint64_t callbackID) const;
     void deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, const String& originIdentifier) const;
     void deleteDatabasesForOrigin(const String& originIdentifier) const;
-    void setQuotaForOrigin(const String& originIdentifier, unsigned long long quota) const;
 
     // WebCore::DatabaseTrackerClient
     virtual void dispatchDidModifyOrigin(WebCore::SecurityOrigin*);

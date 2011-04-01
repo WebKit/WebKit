@@ -103,6 +103,7 @@ public:
 
     // Local storage API
     void clearAllDatabases();
+    void setDatabaseQuota(uint64_t);
 
     // Garbage collection API
     void garbageCollectJavaScriptObjects();

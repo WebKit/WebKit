@@ -291,6 +291,11 @@ void LayoutTestController::clearAllDatabases()
     WKBundleClearAllDatabases(InjectedBundle::shared().bundle());
 }
 
+void LayoutTestController::setDatabaseQuota(uint64_t quota)
+{
+    return WKBundleSetDatabaseQuota(InjectedBundle::shared().bundle(), quota);
+}
+
 bool LayoutTestController::isCommandEnabled(JSStringRef name)
 {
     return WKBundlePageIsEditingCommandEnabled(InjectedBundle::shared().page()->page(), toWK(name).get());
