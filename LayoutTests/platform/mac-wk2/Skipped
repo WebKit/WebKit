@@ -1234,6 +1234,8 @@ fast/preloader/image.html
 fast/preloader/input.html
 fast/preloader/link.html
 fast/preloader/noscript.html
+fast/preloader/scan-body-from-head-import.html
+fast/preloader/scan-body-from-head-script.html
 fast/preloader/script.html
 fast/preloader/style.html
 http/tests/loading/preload-slow-loading.php

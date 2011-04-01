@@ -1,5 +1,11 @@
 2011-03-31  Adam Barth  <abarth@webkit.org>
 
+        Add two more preloader tests to the WebKit2 Skipped list.
+
+        * platform/mac-wk2/Skipped:
+
+2011-03-31  Adam Barth  <abarth@webkit.org>
+
         Rebaseline my own test on Linux!  The great JavaScript MIME type war
         claims another victim.
 
