@@ -1,3 +1,18 @@
+2011-04-01  Adam Roben  <aroben@apple.com>
+
+        Mark .vcproj/.vsprops/.sln files as being Windows-only
+
+        Fixes <http://webkit.org/b/57489> Mac builders built 82512, but shouldn't have
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitpy/common/config/build.py:
+        (_should_file_trigger_build): Added patterns to mark .vcproj/.vsprops/.sln files and .vcproj
+        directories as Windows-only.
+
+        * Scripts/webkitpy/common/config/build_unittest.py:
+        (ShoulBuildTest): Added test cases for the above.
+
 2011-04-01  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         Reviewed by Laszlo Gombos.

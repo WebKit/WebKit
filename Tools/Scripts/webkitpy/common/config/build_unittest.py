@@ -32,6 +32,7 @@ class ShouldBuildTest(unittest.TestCase):
         (["Websites/bugs.webkit.org/foo", "Source/WebCore/bar"], ["*"]),
         (["Websites/bugs.webkit.org/foo"], []),
         (["Source/JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-leopard", "mac-snowleopard"]),
+        (["Source/JavaScriptCore/JavaScriptCore.vcproj/foo", "Source/WebKit2/win/WebKit2.vcproj", "Source/WebKit/win/WebKit.sln", "Tools/WebKitTestRunner/Configurations/WebKitTestRunnerCommon.vsprops"], ["win"]),
         (["Source/JavaScriptGlue/foo", "Source/WebCore/bar"], ["*"]),
         (["Source/JavaScriptGlue/foo"], ["mac-leopard", "mac-snowleopard"]),
         (["LayoutTests/foo"], ["*"]),

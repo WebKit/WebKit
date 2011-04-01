@@ -97,10 +97,12 @@ def _should_file_trigger_build(target_platform, file):
         (r"(?:^|/)GNUmakefile\.am$", ["gtk"]),
         (r"/\w+Chromium\w*\.(?:cpp|h|mm)$", ["chromium"]),
         (r"Mac\.(?:cpp|h|mm)$", ["mac"]),
+        (r"\.(?:vcproj|vsprops|sln)$", ["win"]),
         (r"\.exp(?:\.in)?$", ["mac"]),
         (r"\.gypi?", ["chromium"]),
         (r"\.order$", ["mac"]),
         (r"\.pr[io]$", ["qt"]),
+        (r"\.vcproj/", ["win"]),
         (r"\.xcconfig$", ["mac"]),
         (r"\.xcodeproj/", ["mac"]),
     ]
