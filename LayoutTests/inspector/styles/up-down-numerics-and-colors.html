@@ -1,0 +1,66 @@
+<html>
+<head>
+
+<style>
+h1 {
+    color: #FF2;
+    opacity: .5;
+}
+</style>
+
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    var section;
+
+    InspectorTest.runTestSuite([
+        function testInit1(next)
+        {
+            InspectorTest.selectNodeWithId("inspected", next);
+        },
+
+        function testInit2(next)
+        {
+            section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2];
+            section.expand();
+            InspectorTest.runAfterPendingDispatches(next);
+        },
+
+        function testAlterColor(next)
+        {
+            var colorTreeElement = section.findTreeElementWithName("color");
+            colorTreeElement.startEditing(colorTreeElement.valueElement);
+
+            // Most significant digit increment ('F') should not change the value.
+            colorTreeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("PageUp", false, false, true));
+            colorTreeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("Up"));
+            colorTreeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("PageDown"));
+            colorTreeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("PageDown", false, false, true));
+            InspectorTest.addResult(colorTreeElement.listItemElement.textContent);
+            next();
+        },
+
+        function testAlterNumber()
+        {
+            var opacityTreeElement = section.findTreeElementWithName("opacity");
+            opacityTreeElement.startEditing(opacityTreeElement.valueElement);
+            opacityTreeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("Up"));
+            opacityTreeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("PageUp"));
+            InspectorTest.addResult(opacityTreeElement.listItemElement.textContent);
+            InspectorTest.completeTest();
+        }
+    ]);
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that numeric and color values are incremented/decremented correctly.
+</p>
+<h1 id="inspected">Inspect Me</h1>
+</body>
+</html>

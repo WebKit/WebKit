@@ -157,10 +157,10 @@ InspectorTest.runAfterPendingDispatches = function(callback)
     InspectorBackend.runAfterPendingDispatches(callback);
 }
 
-InspectorTest.createKeyEvent = function(keyIdentifier)
+InspectorTest.createKeyEvent = function(keyIdentifier, ctrlKey, altKey, shiftKey, metaKey)
 {
     var evt = document.createEvent("KeyboardEvent");
-    evt.initKeyboardEvent("keydown", true /* can bubble */, true /* can cancel */, null /* view */, keyIdentifier, "");
+    evt.initKeyboardEvent("keydown", true /* can bubble */, true /* can cancel */, null /* view */, keyIdentifier, "", ctrlKey, altKey, shiftKey, metaKey);
     return evt;
 }
 

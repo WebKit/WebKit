@@ -1643,47 +1643,29 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, WebInspector.StylesSidebarPane.StyleValueDelimiters, this.valueElement);
         var wordString = wordRange.toString();
-        var replacementString = wordString;
+        var replacementString;
+        var prefix, suffix, number;
 
-        var matches = /(.*?)(-?\d+(?:\.\d+)?)(.*)/.exec(wordString);
+        var matches;
+        matches = /(.*#)([\da-fA-F]+)(.*)/.exec(wordString);
         if (matches && matches.length) {
-            var prefix = matches[1];
-            var number = parseFloat(matches[2]);
-            var suffix = matches[3];
-
-            // If the number is near zero or the number is one and the direction will take it near zero.
-            var numberNearZero = (number < 1 && number > -1);
-            if (number === 1 && event.keyIdentifier === "Down")
-                numberNearZero = true;
-            else if (number === -1 && event.keyIdentifier === "Up")
-                numberNearZero = true;
-
-            if (numberNearZero && event.altKey && arrowKeyPressed) {
-                if (event.keyIdentifier === "Down")
-                    number = Math.ceil(number - 1);
-                else
-                    number = Math.floor(number + 1);
-            } else {
-                // Jump by 10 when shift is down or jump by 0.1 when near zero or Alt/Option is down.
-                // Also jump by 10 for page up and down, or by 100 if shift is held with a page key.
-                var changeAmount = 1;
-                if (event.shiftKey && pageKeyPressed)
-                    changeAmount = 100;
-                else if (event.shiftKey || pageKeyPressed)
-                    changeAmount = 10;
-                else if (event.altKey || numberNearZero)
-                    changeAmount = 0.1;
-
-                if (event.keyIdentifier === "Down" || event.keyIdentifier === "PageDown")
-                    changeAmount *= -1;
-
-                // Make the new number and constrain it to a precision of 6, this matches numbers the engine returns.
-                // Use the Number constructor to forget the fixed precision, so 1.100000 will print as 1.1.
-                number = Number((number + changeAmount).toFixed(6));
-            }
+            prefix = matches[1];
+            suffix = matches[3];
+            number = this._alteredHexNumber(matches[2], event);
 
             replacementString = prefix + number + suffix;
+        } else {
+            matches = /(.*?)(-?(?:\d+(?:\.\d+)?|\.\d+))(.*)/.exec(wordString);
+            if (matches && matches.length) {
+                prefix = matches[1];
+                suffix = matches[3];
+                number = this._alteredFloatNumber(parseFloat(matches[2]), event);
 
+                replacementString = prefix + number + suffix;
+            }
+        }
+
+        if (replacementString) {
             var replacementTextNode = document.createTextNode(replacementString);
 
             wordRange.deleteContents();
@@ -1708,6 +1690,75 @@ WebInspector.StylePropertyTreeElement.prototype = {
             // Synthesize property text disregarding any comments, custom whitespace etc.
             this.applyStyleText(this.nameElement.textContent + ": " + this.valueElement.textContent);
         }
+    },
+
+    _alteredFloatNumber: function(number, event)
+    {
+        var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
+        // If the number is near zero or the number is one and the direction will take it near zero.
+        var numberNearZero = (number < 1 && number > -1);
+        if (number === 1 && event.keyIdentifier === "Down")
+            numberNearZero = true;
+        else if (number === -1 && event.keyIdentifier === "Up")
+            numberNearZero = true;
+
+        var result;
+        if (numberNearZero && event.altKey && arrowKeyPressed) {
+            if (event.keyIdentifier === "Down")
+                result = Math.ceil(number - 1);
+            else
+                result = Math.floor(number + 1);
+        } else {
+            // Jump by 10 when shift is down or jump by 0.1 when near zero or Alt/Option is down.
+            // Also jump by 10 for page up and down, or by 100 if shift is held with a page key.
+            var changeAmount = 1;
+            if (event.shiftKey && !arrowKeyPressed)
+                changeAmount = 100;
+            else if (event.shiftKey || !arrowKeyPressed)
+                changeAmount = 10;
+            else if (event.altKey || numberNearZero)
+                changeAmount = 0.1;
+
+            if (event.keyIdentifier === "Down" || event.keyIdentifier === "PageDown")
+                changeAmount *= -1;
+
+            // Make the new number and constrain it to a precision of 6, this matches numbers the engine returns.
+            // Use the Number constructor to forget the fixed precision, so 1.100000 will print as 1.1.
+            result = Number((number + changeAmount).toFixed(6));
+        }
+
+        return result;
+    },
+
+    _alteredHexNumber: function(hexString, event)
+    {
+        var number = parseInt(hexString, 16);
+        if (isNaN(number) || !isFinite(number))
+            return hexString;
+
+        var maxValue = Math.pow(16, hexString.length) - 1;
+        var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
+
+        var delta;
+        if (arrowKeyPressed)
+            delta = (event.keyIdentifier === "Up") ? 1 : -1;
+        else
+            delta = (event.keyIdentifier === "PageUp") ? 16 : -16;
+
+        if (event.shiftKey)
+            delta *= 16;
+
+        var result = number + delta;
+        if (result < 0)
+            result = 0; // Color hex values are never negative, so clamp to 0.
+        else if (result > maxValue)
+            return hexString;
+
+        // Ensure the result length is the same as the original hex value.
+        var resultString = result.toString(16).toUpperCase();
+        for (var i = 0, lengthDelta = hexString.length - resultString.length; i < lengthDelta; ++i)
+            resultString = "0" + resultString;
+        return resultString;
     },
 
     editingEnded: function(context)

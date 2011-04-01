@@ -1,3 +1,17 @@
+2011-04-01  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: up/down keys are not treating hex numbers properly while editing styles.
+        https://bugs.webkit.org/show_bug.cgi?id=40522
+
+        Drive-by: fix inc/dec for numbers like ".5"
+
+        Test: inspector/styles/up-down-numerics-and-colors.html
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype):
+
 2011-03-30  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

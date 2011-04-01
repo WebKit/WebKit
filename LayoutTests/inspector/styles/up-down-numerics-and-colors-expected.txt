@@ -1,0 +1,15 @@
+Tests that numeric and color values are incremented/decremented correctly.
+
+Inspect Me
+
+
+Running: testInit1
+
+Running: testInit2
+
+Running: testAlterColor
+color: #EE3;
+
+Running: testAlterNumber
+opacity: 10.6;
+
