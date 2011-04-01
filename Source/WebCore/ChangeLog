@@ -1,3 +1,18 @@
+2011-03-30  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove dead code from Script.js.
+        https://bugs.webkit.org/show_bug.cgi?id=57454
+
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype._parsedScriptSource):
+        (WebInspector.DebuggerModel.prototype._failedToParseScriptSource):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script):
+        (WebInspector.Script.prototype.requestSource.didGetScriptSource):
+        (WebInspector.Script.prototype.requestSource):
+
 2011-04-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82667.

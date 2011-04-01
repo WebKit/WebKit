@@ -182,7 +182,7 @@ WebInspector.DebuggerModel.prototype = {
     _didEditScriptSource: function(sourceID, newSource, callback, error, callFrames)
     {
         if (!error) {
-            this._scripts[sourceID].source = newSource;
+            this._scripts[sourceID]._source = newSource;
             if (callFrames && callFrames.length)
                 this._debuggerPausedDetails.callFrames = callFrames;
         }
@@ -213,14 +213,14 @@ WebInspector.DebuggerModel.prototype = {
 
     _parsedScriptSource: function(sourceID, sourceURL, lineOffset, columnOffset, length, scriptWorldType)
     {
-        var script = new WebInspector.Script(sourceID, sourceURL, "", lineOffset, columnOffset, length, undefined, undefined, scriptWorldType);
+        var script = new WebInspector.Script(sourceID, sourceURL, lineOffset, columnOffset, length, undefined, undefined, scriptWorldType);
         this._scripts[sourceID] = script;
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.ParsedScriptSource, script);
     },
 
     _failedToParseScriptSource: function(sourceURL, source, startingLine, errorLine, errorMessage)
     {
-        var script = new WebInspector.Script(null, sourceURL, source, startingLine, errorLine, errorMessage, undefined);
+        var script = new WebInspector.Script(null, sourceURL, startingLine, errorLine, errorMessage, undefined);
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, script);
     }
 }
