@@ -3278,6 +3278,8 @@ BUGWK56573 : fast/dom/HTMLKeygenElement/keygen.html = FAIL
 
 // This test is very flaky on Mac and a little flaky on Win and Linux.
 BUGXXX : media/video-delay-load-event.html = PASS TEXT
+// This test appears to timeout every 10 or 20 runs.
+BUGXXX : fast/encoding/parser-tests-20.html = PASS TIMEOUT
 
 // Started to crash after chrome r79905
 BUGWK57539 DEBUG : http/tests/local/fileapi/send-sliced-dragged-file.html = PASS TEXT CRASH

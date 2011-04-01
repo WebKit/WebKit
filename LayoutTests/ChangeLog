@@ -1,3 +1,9 @@
+2011-03-31  Adam Barth  <abarth@webkit.org>
+
+        Note another flaky test.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-03-31  Andy Estes  <aestes@apple.com>
 
         Reviewed by Alexey Proskuryakov.
