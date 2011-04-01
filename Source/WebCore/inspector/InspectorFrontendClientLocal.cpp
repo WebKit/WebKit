@@ -44,6 +44,7 @@
 #include "PlatformString.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -67,6 +68,7 @@ InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* 
     , m_frontendScriptState(0)
     , m_settings(settings)
 {
+    m_frontendPage->settings()->setAllowFileAccessFromFileURLs(true);
 }
 
 InspectorFrontendClientLocal::~InspectorFrontendClientLocal()

@@ -1,3 +1,13 @@
+2011-04-01  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: allow file access from inspector page so inspector can use workers.
+        https://bugs.webkit.org/show_bug.cgi?id=57339
+
+        * inspector/InspectorFrontendClientLocal.cpp:
+        (WebCore::InspectorFrontendClientLocal::InspectorFrontendClientLocal):
+
 2011-03-31  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
