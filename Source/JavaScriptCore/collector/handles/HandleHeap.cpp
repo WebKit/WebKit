@@ -68,12 +68,12 @@ void HandleHeap::clearWeakPointers()
 #if !ASSERT_DISABLED
     m_handlingFinalizers = true;
 #endif
+
     Node* end = m_weakList.end();
-    for (Node* node = m_weakList.begin(); node != end;) {
-        Node* current = node;
-        node = current->next();
-        
-        JSValue value = *current->slot();
+    for (Node* node = m_weakList.begin(); node != end; node = m_nextToFinalize) {
+        m_nextToFinalize = node->next();
+
+        JSValue value = *node->slot();
         if (!value || !value.isCell())
             continue;
         
@@ -85,24 +85,19 @@ void HandleHeap::clearWeakPointers()
 #endif
         if (Heap::isMarked(cell))
             continue;
-        
-        if (Finalizer* finalizer = current->finalizer()) {
-            m_nextToFinalize = node;
-            finalizer->finalize(Handle<Unknown>::wrapSlot(current->slot()), current->finalizerContext());
-            node = m_nextToFinalize;
-            m_nextToFinalize = 0;
-        } 
-        
-        if (current->isSelfDestroying()) {
-            ASSERT(node != current);
-            ASSERT(current->next() == node);
-            deallocate(toHandle(current));
-        } else if (current->next() == node) { // if current->next() != node, then current has been deallocated
-            SentinelLinkedList<Node>::remove(current);
-            *current->slot() = JSValue();
-            m_immediateList.push(current);
-        }
+
+        m_nextToFinalize = node->next();
+        if (Finalizer* finalizer = node->finalizer())
+            finalizer->finalize(Handle<Unknown>::wrapSlot(node->slot()), node->finalizerContext());
+
+        if (m_nextToFinalize != node->next()) // Finalizer deallocated node.
+            continue;
+
+        *node->slot() = JSValue();
+        SentinelLinkedList<Node>::remove(node);
+        m_immediateList.push(node);
     }
+
 #if !ASSERT_DISABLED
     m_handlingFinalizers = false;
 #endif
@@ -137,4 +132,4 @@ unsigned HandleHeap::protectedGlobalObjectCount()
     return count;
 }
 
-}
+} // namespace JSC

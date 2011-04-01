@@ -52,9 +52,8 @@ public:
 
     HandleSlot allocate();
     void deallocate(HandleSlot);
-    
-    void makeWeak(HandleSlot, Finalizer*, void* context);
-    void makeSelfDestroying(HandleSlot, Finalizer*, void* context);
+
+    void makeWeak(HandleSlot, Finalizer* = 0, void* context = 0);
 
     void markStrongHandles(HeapRootMarker&);
     void updateAfterMark();
@@ -72,10 +71,8 @@ public:
 #endif
 
     unsigned protectedGlobalObjectCount();
-    
+
 private:
-    typedef uintptr_t HandleHeapWithFlags;
-    enum { FlagsMask = 3, WeakFlag = 1, SelfDestroyingFlag = 2 };
     class Node {
     public:
         Node(WTF::SentinelTag);
@@ -84,7 +81,9 @@ private:
         HandleSlot slot();
         HandleHeap* handleHeap();
 
-        void setFinalizer(Finalizer*, void* context);
+        void makeWeak(Finalizer*, void* context);
+        bool isWeak();
+        
         Finalizer* finalizer();
         void* finalizerContext();
 
@@ -94,15 +93,11 @@ private:
         void setNext(Node*);
         Node* next();
 
-        bool isWeak();
-        void makeWeak();
-        
-        bool isSelfDestroying();
-        void makeSelfDestroying();
-
     private:
+        Finalizer* noFinalizer();
+
         JSValue m_value;
-        HandleHeapWithFlags m_handleHeapWithFlags;
+        HandleHeap* m_handleHeap;
         Finalizer* m_finalizer;
         void* m_finalizerContext;
         Node* m_prev;
@@ -169,30 +164,22 @@ inline void HandleHeap::makeWeak(HandleSlot handle, Finalizer* finalizer, void* 
 {
     Node* node = toNode(handle);
     SentinelLinkedList<Node>::remove(node);
-    node->setFinalizer(finalizer, context);
-    node->makeWeak();
+    node->makeWeak(finalizer, context);
     if (handle->isCell() && *handle)
         m_weakList.push(node);
     else
         m_immediateList.push(node);
 }
 
-inline void HandleHeap::makeSelfDestroying(HandleSlot handle, Finalizer* finalizer, void* context)
-{
-    makeWeak(handle, finalizer, context);
-    Node* node = toNode(handle);
-    node->makeSelfDestroying();
-}
-
 inline HandleHeap::Node::Node(HandleHeap* handleHeap)
-    : m_handleHeapWithFlags(reinterpret_cast<uintptr_t>(handleHeap))
+    : m_handleHeap(handleHeap)
     , m_finalizer(0)
     , m_finalizerContext(0)
 {
 }
 
 inline HandleHeap::Node::Node(WTF::SentinelTag)
-    : m_handleHeapWithFlags(0)
+    : m_handleHeap(0)
     , m_finalizer(0)
     , m_finalizerContext(0)
 {
@@ -205,46 +192,28 @@ inline HandleSlot HandleHeap::Node::slot()
 
 inline HandleHeap* HandleHeap::Node::handleHeap()
 {
-    return reinterpret_cast<HandleHeap*>(m_handleHeapWithFlags & ~FlagsMask);
+    return m_handleHeap;
 }
 
-inline void HandleHeap::Node::setFinalizer(Finalizer* finalizer, void* context)
+inline void HandleHeap::Node::makeWeak(Finalizer* finalizer, void* context)
 {
-    m_finalizer = finalizer;
+    m_finalizer = finalizer ? finalizer : noFinalizer();
     m_finalizerContext = context;
-}
-
-inline void HandleHeap::Node::makeWeak()
-{
-    ASSERT(!(m_handleHeapWithFlags & WeakFlag));
-    m_handleHeapWithFlags |= WeakFlag;
 }
 
 inline bool HandleHeap::Node::isWeak()
 {
-    return !!(m_handleHeapWithFlags & WeakFlag);
-}
-
-inline void HandleHeap::Node::makeSelfDestroying()
-{
-    ASSERT(m_handleHeapWithFlags & WeakFlag);
-    ASSERT(!(m_handleHeapWithFlags & SelfDestroyingFlag));
-    m_handleHeapWithFlags |= SelfDestroyingFlag;
-}
-
-inline bool HandleHeap::Node::isSelfDestroying()
-{
-    return !!(m_handleHeapWithFlags & SelfDestroyingFlag);
+    return m_finalizer; // True for noFinalizer().
 }
 
 inline Finalizer* HandleHeap::Node::finalizer()
 {
-    return m_finalizer;
+    return m_finalizer == noFinalizer() ? 0 : m_finalizer;
 }
 
 inline void* HandleHeap::Node::finalizerContext()
 {
-    ASSERT(m_finalizer);
+    ASSERT(finalizer());
     return m_finalizerContext;
 }
 
@@ -266,6 +235,11 @@ inline void HandleHeap::Node::setNext(Node* next)
 inline HandleHeap::Node* HandleHeap::Node::next()
 {
     return m_next;
+}
+
+inline Finalizer* HandleHeap::Node::noFinalizer()
+{
+    return reinterpret_cast<Finalizer*>(-1); // Sentinel to indicate a node is weak but has no real finalizer.
 }
 
 }

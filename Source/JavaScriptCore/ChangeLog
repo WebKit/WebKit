@@ -2,6 +2,35 @@
 
         Reviewed by Oliver Hunt.
 
+        Removed some complexity from HandleHeap
+        https://bugs.webkit.org/show_bug.cgi?id=57650
+        
+        Eliminated pointer-tagging flags.
+        
+        Tied being weak to having a finalizer (or at least a finalizer sentinel).
+
+        * collector/handles/HandleHeap.cpp:
+        (JSC::HandleHeap::clearWeakPointers): Removed the special self-destroying
+        flag. It was unused. If we bring it back, we'll probably use a shared
+        autodeallocating finalizer instead.
+
+        * collector/handles/HandleHeap.h:
+        (JSC::HandleHeap::makeWeak): makeWeak and adding a finalizer are now
+        a single, atomic operation -- this makes the relationship between
+        finalizers and weak pointers clearer, and impossible to get wrong.
+
+        (JSC::HandleHeap::Node::Node):
+        (JSC::HandleHeap::Node::handleHeap): No more flags.
+
+        (JSC::HandleHeap::Node::makeWeak):
+        (JSC::HandleHeap::Node::isWeak): Ditto above. We use a special sentienl
+        value in the finalizer slot to indicate that a handle is weak but doesn't
+        require an external function call for finalization.
+
+2011-04-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Removed WeakGCMap::deprecatedRemove because it was deprecated and unused
         https://bugs.webkit.org/show_bug.cgi?id=57648
 
