@@ -1,3 +1,12 @@
+2011-04-01  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][WK2] Build Webkit2 using "-2" option on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=55074
+
+        * Scripts/build-webkit:
+
 2011-04-01  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
