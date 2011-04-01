@@ -1,3 +1,22 @@
+2011-03-31  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Tony Gentilcore.
+
+        fast/preloader/scan-body-from-head.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=57594
+
+        This test was flaky because the script and the import load would race.
+        By breaking down this test into two pieces, we can still see that the
+        parse-blocking loads happen before the non-blocking load (the img) but
+        we don't suffer flakiness.
+
+        * fast/preloader/scan-body-from-head-expected.txt: Removed.
+        * fast/preloader/scan-body-from-head-import-expected.txt: Added.
+        * fast/preloader/scan-body-from-head-import.html: Added.
+        * fast/preloader/scan-body-from-head-script-expected.txt: Added.
+        * fast/preloader/scan-body-from-head-script.html: Added.
+        * fast/preloader/scan-body-from-head.html-disabled: Removed.
+
 2011-03-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82652.

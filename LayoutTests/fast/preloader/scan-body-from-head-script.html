@@ -1,15 +1,19 @@
-style1.css has MIME type text/css
-script1.js has MIME type application/x-javascript
-image1.png has MIME type image/png
-
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpResourceResponseMIMETypes();
+}
+</script>
+<script src=resources/non-existant.js></script>
+</head>
+<body>
+<script>document.write("<plaintext>");</script>
 This tests that resources in the body which block parsing (script, css) are preloaded
 ahead of other resources (images). It requires DumpRenderTree to see the log of what
 resources are loaded.
 <img src=resources/image1.png>
 <script src=resources/script1.js></script>
-<style>
-  @import "resources/style1.css";
-</style>
 </body>
 </html>
-
