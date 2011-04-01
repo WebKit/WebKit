@@ -1,3 +1,25 @@
+2011-04-01  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, rebaseline chromium expectations for HTMLMeterElement tests updated in r82686.
+
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.checksum:
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png:
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-styles-expected.checksum:
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-expected.checksum:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-expected.png:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-expected.txt: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.checksum:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.png:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-expected.checksum:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+
 2011-04-01 MORITA Hajime  <morrita@google.com>
 
         Unreviewed unskipping. This will make some tests fail on GTK port, whoese

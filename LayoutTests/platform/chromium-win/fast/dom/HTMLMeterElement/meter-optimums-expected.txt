@@ -20,8 +20,6 @@ layer at (0,0) size 800x600
           RenderMeter {METER} at (71,2) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 20x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,12) size 80x4
         RenderListItem {LI} at (40,20) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 71x19
@@ -29,8 +27,6 @@ layer at (0,0) size 800x600
           RenderMeter {METER} at (71,2) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 36x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,9) size 80x7
         RenderListItem {LI} at (40,40) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 71x19
@@ -38,8 +34,6 @@ layer at (0,0) size 800x600
           RenderMeter {METER} at (71,2) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 60x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,4) size 80x12
         RenderListItem {LI} at (40,60) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 55x19
@@ -47,15 +41,11 @@ layer at (0,0) size 800x600
           RenderMeter {METER} at (55,2) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 0x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,16) size 80x0
         RenderListItem {LI} at (40,80) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 79x19
             text run at (0,0) width 79: "value=1000: "
           RenderMeter {METER} at (79,2) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
       RenderBlock {H2} at (0,262) size 784x27
@@ -69,8 +59,6 @@ layer at (0,0) size 800x600
           RenderMeter {METER} at (71,2) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 20x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,12) size 80x4
         RenderListItem {LI} at (40,20) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 71x19
@@ -78,8 +66,6 @@ layer at (0,0) size 800x600
           RenderMeter {METER} at (71,2) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 36x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,9) size 80x7
         RenderListItem {LI} at (40,40) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 71x19
@@ -87,8 +73,6 @@ layer at (0,0) size 800x600
           RenderMeter {METER} at (71,2) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 60x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,4) size 80x12
         RenderListItem {LI} at (40,60) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 55x19
@@ -96,15 +80,11 @@ layer at (0,0) size 800x600
           RenderMeter {METER} at (55,2) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 0x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,16) size 80x0
         RenderListItem {LI} at (40,80) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 79x19
             text run at (0,0) width 79: "value=1000: "
           RenderMeter {METER} at (79,2) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
       RenderBlock {H2} at (0,427) size 784x27
@@ -118,8 +98,6 @@ layer at (0,0) size 800x600
           RenderMeter {METER} at (71,2) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 20x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,12) size 80x4
         RenderListItem {LI} at (40,20) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 71x19
@@ -127,8 +105,6 @@ layer at (0,0) size 800x600
           RenderMeter {METER} at (71,2) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 36x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,9) size 80x7
         RenderListItem {LI} at (40,40) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 71x19
@@ -136,8 +112,6 @@ layer at (0,0) size 800x600
           RenderMeter {METER} at (71,2) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 60x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,4) size 80x12
         RenderListItem {LI} at (40,60) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 55x19
@@ -145,14 +119,10 @@ layer at (0,0) size 800x600
           RenderMeter {METER} at (55,2) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 0x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,16) size 80x0
         RenderListItem {LI} at (40,80) size 744x20
           RenderListMarker at (-18,0) size 7x19: bullet
           RenderText {#text} at (0,0) size 79x19
             text run at (0,0) width 79: "value=1000: "
           RenderMeter {METER} at (79,2) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
-            RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
             RenderBlock {DIV} at (0,0) size 80x16
