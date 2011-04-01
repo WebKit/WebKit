@@ -1,3 +1,14 @@
+2011-04-01  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Martin Robinson.
+
+        Add layoutTestController.shadowRoot to GTK DumpRenderTree.
+        https://bugs.webkit.org/show_bug.cgi?id=57551
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::shadowRoot):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+
 2011-03-31  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
