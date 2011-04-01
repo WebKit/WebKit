@@ -136,10 +136,12 @@ void DrawingAreaProxyImpl::visibilityDidChange()
     // Resume painting.
     m_webPageProxy->process()->send(Messages::DrawingArea::ResumePainting(), m_webPageProxy->pageID());
 
+#if USE(ACCELERATED_COMPOSITING)
     // If we don't have a backing store, go ahead and mark the backing store as being changed so
     // that when paint we'll actually wait for something to paint and not flash white.
     if (!m_backingStore && m_layerTreeContext.isEmpty())
         backingStoreStateDidChange(DoNotRespondImmediately);
+#endif
 }
 
 void DrawingAreaProxyImpl::setPageIsVisible(bool)
