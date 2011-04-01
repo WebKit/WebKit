@@ -1,3 +1,23 @@
+2011-04-01  Adam Roben  <aroben@apple.com>
+
+        Remove the WebView's "this" pointer from its HWND when WM_DESTROY is received
+
+        This will ensure we don't try to process any window messages after the window has been
+        destroyed.
+
+        Covered by existing tests.
+
+        Fixes <http://webkit.org/b/55054>.
+
+        Reviewed by Steve Falkenburg and John Sullivan.
+
+        * WebView.cpp:
+        (WebView::setIsBeingDestroyed): Moved here from the header file, and added a call to clear
+        out the this pointer from the HWND.
+        (WebView::WebViewWndProc): Changed a runtime check into an assertion.
+
+        * WebView.h: Moved setIsBeingDestroyed from here to the .cpp file.
+
 2011-03-31  Evan Martin  <evan@chromium.org>
 
         Reviewed by Eric Seidel.

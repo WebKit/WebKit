@@ -883,7 +883,7 @@ public:
 
     static WTF::String standardUserAgentWithApplicationName(const WTF::String&);
 
-    void setIsBeingDestroyed() { m_isBeingDestroyed = true; }
+    void setIsBeingDestroyed();
     bool isBeingDestroyed() const { return m_isBeingDestroyed; }
 
     const char* interpretKeyEvent(const WebCore::KeyboardEvent*);

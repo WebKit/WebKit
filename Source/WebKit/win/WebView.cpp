@@ -2015,6 +2015,15 @@ bool WebView::keyPress(WPARAM charCode, LPARAM keyData, bool systemKeyDown)
     return frame->eventHandler()->keyEvent(keyEvent);
 }
 
+void WebView::setIsBeingDestroyed()
+{
+    m_isBeingDestroyed = true;
+
+    // Remove our this pointer from the window so we won't try to handle any more window messages.
+    // See <http://webkit.org/b/55054>.
+    ::SetWindowLongPtrW(m_viewWindow, 0, 0);
+}
+
 bool WebView::registerWebViewWindowClass()
 {
     static bool haveRegisteredWindowClass = false;
@@ -2061,8 +2070,12 @@ LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam,
     LONG_PTR longPtr = GetWindowLongPtr(hWnd, 0);
     WebView* webView = reinterpret_cast<WebView*>(longPtr);
     WebFrame* mainFrameImpl = webView ? webView->topLevelFrame() : 0;
-    if (!mainFrameImpl || webView->isBeingDestroyed())
+    if (!mainFrameImpl)
         return DefWindowProc(hWnd, message, wParam, lParam);
+
+    // We shouldn't be trying to handle any window messages after WM_DESTROY.
+    // See <http://webkit.org/b/55054>.
+    ASSERT(!webView->isBeingDestroyed());
 
     // hold a ref, since the WebView could go away in an event handler.
     COMPtr<WebView> protector(webView);
