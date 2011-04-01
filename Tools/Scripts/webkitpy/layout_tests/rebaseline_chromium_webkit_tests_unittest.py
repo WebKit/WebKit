@@ -98,6 +98,9 @@ def test_zip_factory():
             'layout-test-results/failures/expected/image-actual.txt': 'new-image-txt',
             'layout-test-results/failures/expected/image-actual.checksum': 'new-image-checksum',
             'layout-test-results/failures/expected/image-actual.png': 'new-image-png',
+            'layout-test-results/failures/expected/image_checksum-actual.txt': 'png-comment-txt',
+            'layout-test-results/failures/expected/image_checksum-actual.checksum': '0123456789',
+            'layout-test-results/failures/expected/image_checksum-actual.png': 'tEXtchecksum\x000123456789',
         },
         ARCHIVE_URL + '/Webkit_Win/1/layout-test-results.zip': {
             'layout-test-results/failures/expected/image-actual.txt': 'win-image-txt',
@@ -162,7 +165,7 @@ class TestRebaseliner(unittest.TestCase):
 
         url_fetcher = test_url_fetcher(filesystem)
         zip_factory = test_zip_factory()
-        mock_scm = mocktool.MockSCM()
+        mock_scm = mocktool.MockSCM(filesystem)
         rebaseliner = rebaseline_chromium_webkit_tests.Rebaseliner(host_port_obj,
             target_port_obj, platform, options, url_fetcher, zip_factory, mock_scm)
         return rebaseliner, filesystem
@@ -220,6 +223,40 @@ class TestRebaseliner(unittest.TestCase):
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.checksum'], 'new-image-checksum')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.png'], 'new-image-png')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.txt'], 'new-image-txt')
+
+    def test_png_file_with_comment(self):
+        rebaseliner, filesystem = self.make_rebaseliner(
+            "BUGX REBASELINE MAC : failures/expected/image_checksum.html = IMAGE")
+        compile_success = rebaseliner._compile_rebaselining_tests()
+        self.assertTrue(compile_success)
+        self.assertEqual(set(['failures/expected/image_checksum.html']), rebaseliner.get_rebaselining_tests())
+        rebaseliner.run(False)
+        # There is one less file written than |test_one_platform| because we only
+        # write 2 expectations (the png and the txt file).
+        self.assertEqual(len(filesystem.written_files), 11)
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], '')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.png'], 'tEXtchecksum\x000123456789')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
+        self.assertFalse(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.checksum', None))
+
+    def test_png_file_with_comment_remove_old_checksum(self):
+        rebaseliner, filesystem = self.make_rebaseliner(
+            "BUGX REBASELINE MAC : failures/expected/image_checksum.html = IMAGE")
+        filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.png'] = 'old'
+        filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.checksum'] = 'old'
+        filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.txt'] = 'old'
+
+        compile_success = rebaseliner._compile_rebaselining_tests()
+        self.assertTrue(compile_success)
+        self.assertEqual(set(['failures/expected/image_checksum.html']), rebaseliner.get_rebaselining_tests())
+        rebaseliner.run(False)
+        # There is one more file written than |test_png_file_with_comment_remove_old_checksum|
+        # because we also delete the old checksum.
+        self.assertEqual(len(filesystem.written_files), 12)
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], '')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.png'], 'tEXtchecksum\x000123456789')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
+        self.assertEqual(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.checksum', None), None)
 
     def test_diff_baselines_txt(self):
         rebaseliner, filesystem = self.make_rebaseliner("")

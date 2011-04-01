@@ -458,13 +458,14 @@ class MockSCM(Mock):
 
     fake_checkout_root = os.path.realpath("/tmp") # realpath is needed to allow for Mac OS X's /private/tmp
 
-    def __init__(self):
+    def __init__(self, filesystem=None):
         Mock.__init__(self)
         # FIXME: We should probably use real checkout-root detection logic here.
         # os.getcwd() can't work here because other parts of the code assume that "checkout_root"
         # will actually be the root.  Since getcwd() is wrong, use a globally fake root for now.
         self.checkout_root = self.fake_checkout_root
         self.added_paths = set()
+        self._filesystem = filesystem
 
     def add(self, destination_path, return_exit_code=False):
         self.added_paths.add(destination_path)
@@ -501,6 +502,12 @@ class MockSCM(Mock):
 
     def svn_revision_from_commit_text(self, commit_text):
         return "49824"
+
+    def delete(self, path):
+        if not self._filesystem:
+            return
+        if self._filesystem.exists(path):
+            self._filesystem.remove(path)
 
 
 class MockDEPS(object):

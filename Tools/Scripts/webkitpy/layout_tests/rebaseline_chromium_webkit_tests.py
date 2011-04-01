@@ -41,6 +41,8 @@ The script does the following for each platform specified:
 At the end, the script generates a html that compares old and new baselines.
 """
 
+from __future__ import with_statement
+
 import copy
 import logging
 import optparse
@@ -55,6 +57,7 @@ from webkitpy.common.system import urlfetcher
 from webkitpy.common.system.executive import ScriptError
 
 from webkitpy.layout_tests import port
+from webkitpy.layout_tests import read_checksum_from_png
 from webkitpy.layout_tests.layout_package import test_expectations
 
 _log = logging.getLogger(__name__)
@@ -232,8 +235,7 @@ class Rebaseliner(object):
           False if reftests are wrongly marked as 'needs rebaselining' or True
         """
 
-        self._rebaselining_tests = \
-            self._test_expectations.get_rebaselining_failures()
+        self._rebaselining_tests = self._test_expectations.get_rebaselining_failures()
         if not self._rebaselining_tests:
             _log.warn('No tests found that need rebaselining.')
             return True
@@ -392,6 +394,11 @@ class Rebaseliner(object):
                 self._delete_baseline(expected_fullpath)
                 continue
 
+            if suffix == '.checksum' and self._png_has_same_checksum(temp_name, expected_fullpath):
+                # If an old checksum exists, delete it.
+                self._delete_baseline(expected_fullpath)
+                continue
+
             self._filesystem.maybe_make_directory(self._filesystem.dirname(expected_fullpath))
             self._filesystem.move(temp_name, expected_fullpath)
 
@@ -419,8 +426,25 @@ class Rebaseliner(object):
         tempfile.close()
         return temp_name
 
-    def _is_dup_baseline(self, new_baseline, baseline_path, test, suffix,
-                         platform):
+    def _png_has_same_checksum(self, checksum_path, checksum_expected_fullpath):
+        """Returns True if the png file next to |checksum_expected_fullpath|
+        contains the same checksum."""
+        fs = self._filesystem
+        png_fullpath = fs.splitext(checksum_expected_fullpath)[0] + '.png'
+        if not fs.exists(png_fullpath):
+            _log.error('  Checksum without png file found! Expected %s to exist.' % png_fullpath)
+            return False
+
+        with fs.open_binary_file_for_reading(png_fullpath) as filehandle:
+            checksum_in_png = read_checksum_from_png.read_checksum(filehandle)
+            checksum_in_text_file = fs.read_text_file(checksum_path)
+            if checksum_in_png and checksum_in_png != checksum_in_text_file:
+                _log.error("  checksum in %s and %s don't match!  Continuing"
+                           " to copy but please investigate." % (
+                           checksum_expected_fullpath, png_fullpath))
+            return checksum_in_text_file == checksum_in_png
+
+    def _is_dup_baseline(self, new_baseline, baseline_path, test, suffix, platform):
         """Check whether a baseline is duplicate and can fallback to same
            baseline for another platform. For example, if a test has same
            baseline on linux and windows, then we only store windows
