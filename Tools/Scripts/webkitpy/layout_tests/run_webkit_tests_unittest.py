@@ -616,9 +616,9 @@ class RebaselineTest(unittest.TestCase):
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEqual(len(file_list), 6)
         self.assertBaselines(file_list,
-            "/platform/test-mac/passes/image")
+            "/platform/test-mac-leopard/passes/image")
         self.assertBaselines(file_list,
-            "/platform/test-mac/failures/expected/missing_image")
+            "/platform/test-mac-leopard/failures/expected/missing_image")
 
 
 class DryrunTest(unittest.TestCase):

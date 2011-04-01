@@ -70,7 +70,8 @@ def test_options():
                                 target_platform='chromium',
                                 verbose=False,
                                 quiet=False,
-                                platforms='mac,win,win-xp',
+                                all_platforms=rebaseline_chromium_webkit_tests.REBASELINE_WEBKIT_CANARY_ORDER,
+                                platforms=None,
                                 gpu=False)
 
 
@@ -86,8 +87,12 @@ def test_host_port_and_filesystem(options, expectations):
 
 def test_url_fetcher(filesystem):
     urls = {
+        ARCHIVE_URL + '/Webkit_Mac10_6/': '<a href="4/">',
         ARCHIVE_URL + '/Webkit_Mac10_5/': '<a href="1/"><a href="2/">',
+        ARCHIVE_URL + '/Webkit_Win7/': '<a href="1/">',
+        ARCHIVE_URL + '/Webkit_Vista/': '<a href="1/">',
         ARCHIVE_URL + '/Webkit_Win/': '<a href="1/">',
+        ARCHIVE_URL + '/Webkit_Linux/': '<a href="1/">',
     }
     return urlfetcher_mock.make_fetcher_cls(urls)(filesystem)
 
@@ -102,7 +107,27 @@ def test_zip_factory():
             'layout-test-results/failures/expected/image_checksum-actual.checksum': '0123456789',
             'layout-test-results/failures/expected/image_checksum-actual.png': 'tEXtchecksum\x000123456789',
         },
-        ARCHIVE_URL + '/Webkit_Win/1/layout-test-results.zip': {
+        ARCHIVE_URL + '/Webkit_Mac10_6/4/layout-test-results.zip': {
+            'layout-test-results/failures/expected/image-actual.txt': 'new-image-txt',
+            'layout-test-results/failures/expected/image-actual.checksum': 'new-image-checksum',
+            'layout-test-results/failures/expected/image-actual.png': 'new-image-png',
+        },
+         ARCHIVE_URL + '/Webkit_Vista/1/layout-test-results.zip': {
+            'layout-test-results/failures/expected/image-actual.txt': 'win-image-txt',
+            'layout-test-results/failures/expected/image-actual.checksum': 'win-image-checksum',
+            'layout-test-results/failures/expected/image-actual.png': 'win-image-png',
+        },
+          ARCHIVE_URL + '/Webkit_Win7/1/layout-test-results.zip': {
+            'layout-test-results/failures/expected/image-actual.txt': 'win-image-txt',
+            'layout-test-results/failures/expected/image-actual.checksum': 'win-image-checksum',
+            'layout-test-results/failures/expected/image-actual.png': 'win-image-png',
+        },
+          ARCHIVE_URL + '/Webkit_Win/1/layout-test-results.zip': {
+            'layout-test-results/failures/expected/image-actual.txt': 'win-image-txt',
+            'layout-test-results/failures/expected/image-actual.checksum': 'win-image-checksum',
+            'layout-test-results/failures/expected/image-actual.png': 'win-image-png',
+        },
+          ARCHIVE_URL + '/Webkit_Linux/1/layout-test-results.zip': {
             'layout-test-results/failures/expected/image-actual.txt': 'win-image-txt',
             'layout-test-results/failures/expected/image-actual.checksum': 'win-image-checksum',
             'layout-test-results/failures/expected/image-actual.png': 'win-image-png',
@@ -182,14 +207,14 @@ class TestRebaseliner(unittest.TestCase):
             "BUGX REBASELINE MAC : failures/expected/image.html = IMAGE")
         compile_success = rebaseliner._compile_rebaselining_tests()
         self.assertTrue(compile_success)
-        self.assertEqual(set(['failures/expected/image.html']), rebaseliner.get_rebaselining_tests())
+        self.assertEqual(set(['failures/expected/image.html']), rebaseliner._rebaselining_tests)
 
     def test_rebaselining_tests_should_ignore_reftests(self):
         rebaseliner, filesystem = self.make_rebaseliner(
             "BUGX REBASELINE : failures/expected/reftest.html = IMAGE")
         compile_success = rebaseliner._compile_rebaselining_tests()
         self.assertFalse(compile_success)
-        self.assertFalse(rebaseliner.get_rebaselining_tests())
+        self.assertFalse(rebaseliner._rebaselining_tests)
 
     def test_one_platform(self):
         rebaseliner, filesystem = self.make_rebaseliner(
@@ -204,10 +229,9 @@ class TestRebaseliner(unittest.TestCase):
         #    create image diffs (FIXME?) and don't display the checksums.
         # *) 1 updated test_expectations file
         self.assertEqual(len(filesystem.written_files), 12)
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], '')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.checksum'], 'new-image-checksum')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.png'], 'new-image-png')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.txt'], 'new-image-txt')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.checksum'], 'new-image-checksum')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.png'], 'new-image-png')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.txt'], 'new-image-txt')
 
     def test_all_platforms(self):
         rebaseliner, filesystem = self.make_rebaseliner(
@@ -217,46 +241,43 @@ class TestRebaseliner(unittest.TestCase):
         # Note that even though the rebaseline is marked for all platforms, each
         # rebaseliner only ever does one.
         self.assertEqual(len(filesystem.written_files), 12)
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'],
-            'BUGX REBASELINE WIN : failures/expected/image.html = IMAGE\n'
-            'BUGX REBASELINE WIN-XP : failures/expected/image.html = IMAGE\n')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.checksum'], 'new-image-checksum')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.png'], 'new-image-png')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image-expected.txt'], 'new-image-txt')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.checksum'], 'new-image-checksum')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.png'], 'new-image-png')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image-expected.txt'], 'new-image-txt')
 
     def test_png_file_with_comment(self):
         rebaseliner, filesystem = self.make_rebaseliner(
             "BUGX REBASELINE MAC : failures/expected/image_checksum.html = IMAGE")
         compile_success = rebaseliner._compile_rebaselining_tests()
         self.assertTrue(compile_success)
-        self.assertEqual(set(['failures/expected/image_checksum.html']), rebaseliner.get_rebaselining_tests())
+        self.assertEqual(set(['failures/expected/image_checksum.html']), rebaseliner._rebaselining_tests)
         rebaseliner.run(False)
         # There is one less file written than |test_one_platform| because we only
         # write 2 expectations (the png and the txt file).
         self.assertEqual(len(filesystem.written_files), 11)
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], '')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.png'], 'tEXtchecksum\x000123456789')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
-        self.assertFalse(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.checksum', None))
+        #self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], '')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.png'], 'tEXtchecksum\x000123456789')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
+        self.assertFalse(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum', None))
 
     def test_png_file_with_comment_remove_old_checksum(self):
         rebaseliner, filesystem = self.make_rebaseliner(
             "BUGX REBASELINE MAC : failures/expected/image_checksum.html = IMAGE")
-        filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.png'] = 'old'
-        filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.checksum'] = 'old'
-        filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.txt'] = 'old'
+        filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.png'] = 'old'
+        filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum'] = 'old'
+        filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt'] = 'old'
 
         compile_success = rebaseliner._compile_rebaselining_tests()
         self.assertTrue(compile_success)
-        self.assertEqual(set(['failures/expected/image_checksum.html']), rebaseliner.get_rebaselining_tests())
+        self.assertEqual(set(['failures/expected/image_checksum.html']), rebaseliner._rebaselining_tests)
         rebaseliner.run(False)
         # There is one more file written than |test_png_file_with_comment_remove_old_checksum|
         # because we also delete the old checksum.
         self.assertEqual(len(filesystem.written_files), 12)
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], '')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.png'], 'tEXtchecksum\x000123456789')
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
-        self.assertEqual(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac/failures/expected/image_checksum-expected.checksum', None), None)
+        #self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], '')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.png'], 'tEXtchecksum\x000123456789')
+        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
+        self.assertEqual(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum', None), None)
 
     def test_diff_baselines_txt(self):
         rebaseliner, filesystem = self.make_rebaseliner("")
@@ -280,6 +301,7 @@ class TestRealMain(unittest.TestCase):
         expectations = "BUGX REBASELINE : failures/expected/image.html = IMAGE"
 
         options = test_options()
+        options.platforms = ','.join(options.all_platforms)
 
         host_port_obj, filesystem = test_host_port_and_filesystem(options, expectations)
         url_fetcher = test_url_fetcher(filesystem)
@@ -287,17 +309,19 @@ class TestRealMain(unittest.TestCase):
         mock_scm = mocktool.MockSCM()
         oc = outputcapture.OutputCapture()
         oc.capture_output()
-        rebaseline_chromium_webkit_tests.real_main(options, options, host_port_obj,
-            host_port_obj, url_fetcher, zip_factory, mock_scm)
+        res = rebaseline_chromium_webkit_tests.real_main(options, options,
+            host_port_obj, host_port_obj, url_fetcher, zip_factory, mock_scm)
         oc.restore_output()
 
-        # We expect to have written 35 files over the course of this rebaseline:
-        # *) 11 files * 3 ports for the new baselines and the diffs (see breakdown
-        #    under test_one_platform, above)
-        # *) the updated test_expectations file
-        # *) the rebaseline results html file
-        self.assertEqual(len(filesystem.written_files), 35)
-        self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], '')
+        # We expect to have written 36 files over the course of this rebaseline:
+        # *) 6*3 files in /__im_tmp/ for the archived members of the 6 ports
+        # *) 2*3 files in /test.checkout for actually differing baselines
+        # *) 1 file in /test.checkout for the updated test_expectations file
+        # *) 2*4 files in /tmp for the old/new baselines for the two actual ports
+        # *) 2 files in /tmp for the text diffs for the two ports
+        # *) 1 file in /tmp for the rebaseline results html file
+        self.assertEqual(res, 0)
+        self.assertEqual(len(filesystem.written_files), 36)
 
 
 class TestHtmlGenerator(unittest.TestCase):

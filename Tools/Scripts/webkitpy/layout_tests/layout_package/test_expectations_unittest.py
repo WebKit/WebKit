@@ -377,43 +377,10 @@ BUG_TEST WIN-XP : passes/text.html = TEXT
 
 class RebaseliningTest(Base):
     """Test rebaselining-specific functionality."""
-    def assertRemove(self, platform, input_expectations, expected_expectations):
-        self.parse_exp(input_expectations)
-        test = self.get_test('failures/expected/text.html')
-        actual_expectations = self._exp.remove_platform_from_expectations(
-            test, platform)
-        self.assertEqual(expected_expectations, actual_expectations)
-
+    # FIXME: add in tests once we are actually deleting lines again.
     def test_no_get_rebaselining_failures(self):
         self.parse_exp(self.get_basic_expectations())
         self.assertEqual(len(self._exp.get_rebaselining_failures()), 0)
-
-    def test_get_rebaselining_failures_expand(self):
-        self.parse_exp("""
-BUG_TEST REBASELINE : failures/expected/text.html = TEXT
-""")
-        self.assertEqual(len(self._exp.get_rebaselining_failures()), 1)
-
-    def test_remove_expand(self):
-        self.assertRemove('mac',
-            'BUGX REBASELINE : failures/expected/text.html = TEXT\n',
-            'BUGX REBASELINE WIN : failures/expected/text.html = TEXT\n'
-            'BUGX REBASELINE WIN-XP : failures/expected/text.html = TEXT\n')
-
-    def test_remove_mac_win(self):
-        self.assertRemove('mac',
-            'BUGX REBASELINE MAC WIN : failures/expected/text.html = TEXT\n',
-            'BUGX REBASELINE WIN : failures/expected/text.html = TEXT\n')
-
-    def test_remove_mac_mac(self):
-        self.assertRemove('mac',
-            'BUGX REBASELINE MAC : failures/expected/text.html = TEXT\n',
-            '')
-
-    def test_remove_nothing(self):
-        self.assertRemove('mac',
-            '\n\n',
-            '\n\n')
 
 
 class ModifierTests(unittest.TestCase):

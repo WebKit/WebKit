@@ -266,7 +266,9 @@ class ChromiumPort(base.Port):
                 for test in expectations.get_tests_with_result_type(test_expectations.SKIP)]
 
     def test_platform_names(self):
-        return ('mac', 'win', 'linux', 'win-xp', 'win-vista', 'win-7')
+        return ('mac-leopard', 'mac-snowleopard',
+                'win-xp', 'win-vista', 'win-win7',
+                'linux')
 
     def test_platform_name_to_name(self, test_platform_name):
         if test_platform_name in self.test_platform_names():

@@ -1,3 +1,28 @@
+2011-04-01  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        rebaseline-chromium-webkit-tests does not work correctly with
+        version-specific baselines. This patch updates the tool to use
+        all of the version-specific bots on the canaries, and will now
+        attempt to rebaseline all of the versions by default, although
+        it will not update both GPU and CPU versions.
+        
+        Also, it will no longer modify the test_expectations.txt file
+        *at all*. You will have to manually delete the REBASELINE lines
+        after running the tool and determining that it did what you
+        wanted it to do. This should be fixed in a separate bug - see
+        webkit bug #55191.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55608
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py:
+
 2011-03-31  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.

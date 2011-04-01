@@ -232,7 +232,7 @@ class TestPort(base.Port):
             user = mocktool.MockUser()
 
         if not port_name or port_name == 'test':
-            port_name = 'test-mac'
+            port_name = 'test-mac-leopard'
 
         self._expectations_path = LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt'
         base.Port.__init__(self, port_name=port_name, filesystem=filesystem, user=user,
@@ -248,7 +248,15 @@ class TestPort(base.Port):
         return self._filesystem.join(self.layout_tests_dir(), 'platform', self.name())
 
     def baseline_search_path(self):
-        return [self.baseline_path()]
+        search_paths = {
+            'test-mac-snowleopard': ['test-mac-snowleopard'],
+            'test-mac-leopard': ['test-mac-leopard', 'test-mac-snowleopard'],
+            'test-win-win7': ['test-win-win7'],
+            'test-win-vista': ['test-win-vista', 'test-win-win7'],
+            'test-win-xp': ['test-win-xp', 'test-win-vista', 'test-win-win7'],
+            'test-linux': ['test-linux', 'test-win-win7'],
+        }
+        return [self._webkit_baseline_path(d) for d in search_paths[self.name()]]
 
     def default_child_processes(self):
         return 1
@@ -304,23 +312,18 @@ class TestPort(base.Port):
         return self._expectations_path
 
     def test_platform_name(self):
-        name_map = {
-            'test-mac': 'mac',
-            'test-win': 'win',
-            'test-win-xp': 'win-xp',
-        }
-        return name_map[self._name]
+        return self.name()[5:]
 
     def test_platform_names(self):
-        return ('mac', 'win', 'win-xp')
+        return ('mac-leopard', 'mac-snowleopard',
+                'win-xp', 'win-vista', 'win-win7',
+                'linux')
 
     def test_platform_name_to_name(self, test_platform_name):
-        name_map = {
-            'mac': 'test-mac',
-            'win': 'test-win',
-            'win-xp': 'test-win-xp',
-        }
-        return name_map[test_platform_name]
+        if test_platform_name in self.test_platform_names():
+            return 'test-' + test_platform_name
+        raise ValueError('Unsupported test_platform_name: %s' %
+                         test_platform_name)
 
     # FIXME: These next two routines are copied from base.py with
     # the calls to path.abspath_to_uri() removed. We shouldn't have
@@ -383,8 +386,11 @@ class TestPort(base.Port):
     def version(self):
         version_map = {
             'test-win-xp': 'xp',
-            'test-win': 'win7',
-            'test-mac': 'leopard',
+            'test-win-win7': 'win7',
+            'test-win-vista': 'vista',
+            'test-mac-leopard': 'leopard',
+            'test-mac-snowleopard': 'snowleopard',
+            'test-linux': '',
         }
         return version_map[self._name]
 
