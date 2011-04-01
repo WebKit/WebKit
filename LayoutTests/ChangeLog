@@ -1,3 +1,16 @@
+2011-04-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed, rolling out r82708.
+        http://trac.webkit.org/changeset/82708
+        https://bugs.webkit.org/show_bug.cgi?id=53644
+
+        This tests fails consistently when run along with other tests
+
+        * platform/gtk/Skipped:
+        * platform/gtk/editing/deleting/5408255-expected.checksum:
+        * platform/gtk/editing/deleting/5408255-expected.png:
+        * platform/gtk/editing/deleting/5408255-expected.txt:
+
 2011-04-01  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.
