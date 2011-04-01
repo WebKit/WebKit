@@ -1,3 +1,11 @@
+2011-04-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Fix extract-localizable-strings for macro change from UI_STRING -> WEB_UI_STRING.
+
+        * Scripts/extract-localizable-strings:
+
 2011-02-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
@@ -16,7 +24,6 @@
         * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
         * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
 
-<<<<<<< .mine
 2011-04-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
@@ -44,7 +51,6 @@
         (ConvertPoint::testConvert):
         (ConvertPoint::NPP_New):
 
-=======
 2011-04-01  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Martin Robinson.
@@ -55,7 +61,6 @@
         * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
         (LayoutTestController::shadowRoot):
 
->>>>>>> .r82722
 2011-04-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
