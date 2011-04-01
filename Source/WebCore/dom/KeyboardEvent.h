@@ -36,10 +36,10 @@ namespace WebCore {
 #if PLATFORM(MAC)
     struct KeypressCommand {
         KeypressCommand() { }
-        KeypressCommand(const String& commandName) : commandName(commandName) { }
-        KeypressCommand(const String& commandName, const String& text) : commandName(commandName), text(text) { }
+        KeypressCommand(const String& commandName) : commandName(commandName) { ASSERT(isASCIILower(commandName[0])); }
+        KeypressCommand(const String& commandName, const String& text) : commandName(commandName), text(text) { ASSERT(commandName == "insertText:"); }
 
-        String commandName;
+        String commandName; // Actually, a selector name - it may have a trailing colon, and a name that can be different from an editor command name.
         String text;
     };
 #endif
@@ -108,7 +108,8 @@ namespace WebCore {
         unsigned m_keyLocation;
         bool m_altGraphKey : 1;
 
-#if PLATFORM(MAC)        
+#if PLATFORM(MAC)
+        // Commands that were sent by AppKit when interpreting the event. Doesn't include input method commands.
         Vector<KeypressCommand> m_keypressCommands;
 #endif
     };

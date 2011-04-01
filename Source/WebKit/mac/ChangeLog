@@ -1,3 +1,27 @@
+2011-04-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Make WebKit2 text input handling more like WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=57649
+
+        * WebView/WebFrameInternal.h: Expose _convertToDOMRange for use in WebHTMLView.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _executeSavedKeypressCommands]): Renamed, since these are not editor commands.
+        (-[WebHTMLView _interpretKeyEvent:savingCommands:]): Updated for the renamed _executeSavedKeypressCommands.
+        (-[WebHTMLView characterIndexForPoint:]): Ditto.
+        (-[WebHTMLView firstRectForCharacterRange:]): Ditto.
+        (-[WebHTMLView selectedRange]): Ditto.
+        (-[WebHTMLView markedRange]): Ditto.
+        (-[WebHTMLView attributedSubstringFromRange:]): Ditto.
+        (-[WebHTMLView hasMarkedText]): Ditto.
+        (-[WebHTMLView unmarkText]): Ditto.
+        (-[WebHTMLView setMarkedText:selectedRange:]): Ditto. Changed the comment about the argument
+        type into an assertion. Removed resetting interpretKeyEventsParameters to 0, as we shouldn't
+        be able to call text input protocol methods from here (and we didn't even reset it back on
+        return). Changed to retrieve all data before starting to apply actions to better match WK2 code.
+        (-[WebHTMLView insertText:]): Ditto.
+
 2011-04-01  Timothy Hatcher  <timothy@apple.com>
 
         Make momentum scroll event latching work in WebKit2 on Mac.

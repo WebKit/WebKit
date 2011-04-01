@@ -401,7 +401,7 @@ template<> struct ArgumentCoder<WebCore::KeypressCommand> {
 template<> struct ArgumentCoder<WebCore::CompositionUnderline> {
     static void encode(ArgumentEncoder* encoder, const WebCore::CompositionUnderline& underline)
     {
-        encoder->encode(CoreIPC::In(underline.startOffset, underline.endOffset, underline.thick, underline.color.rgb()));
+        encoder->encode(CoreIPC::In(underline.startOffset, underline.endOffset, underline.thick, underline.color));
     }
     
     static bool decode(ArgumentDecoder* decoder, WebCore::CompositionUnderline& underline)

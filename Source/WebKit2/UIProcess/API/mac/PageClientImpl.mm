@@ -291,10 +291,9 @@ void PageClientImpl::clearAllEditCommands()
     [[m_wkView undoManager] removeAllActionsWithTarget:m_undoTarget.get()];
 }
 
-void PageClientImpl::interceptKeyEvent(const NativeWebKeyboardEvent& event, Vector<WebCore::KeypressCommand>& commandsList, uint32_t selectionStart, uint32_t selectionEnd, Vector<WebCore::CompositionUnderline>& underlines)
+bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, const TextInputState& state, Vector<WebCore::KeypressCommand>& commands)
 {
-    commandsList = [m_wkView _interceptKeyEvent:event.nativeEvent()];
-    [m_wkView _getTextInputState:selectionStart selectionEnd:selectionEnd underlines:underlines];
+    return [m_wkView _interpretKeyEvent:event.nativeEvent() withCachedTextInputState:state savingCommandsTo:commands];
 }
 
 void PageClientImpl::setDragImage(const IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag)

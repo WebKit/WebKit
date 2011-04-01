@@ -1,3 +1,14 @@
+2011-04-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Make WebKit2 text input handling more like WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=57649
+
+        * dom/KeyboardEvent.h: (WebCore::KeypressCommand::KeypressCommand): Put back the assertions
+        we used to have. It is dangerous to confuse editor commands and selector names - besides the
+        presence of a semicolon, they sometimes have different names, and WebKit2 failed to map those.
+
 2011-04-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82711.

@@ -71,7 +71,7 @@ private:
 
     virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
     virtual void clearAllEditCommands();
-    virtual void interceptKeyEvent(const NativeWebKeyboardEvent& event, Vector<WebCore::KeypressCommand>& commandName, uint32_t selectionStart, uint32_t selectionEnd, Vector<WebCore::CompositionUnderline>& underlines);
+    virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, const TextInputState&, Vector<WebCore::KeypressCommand>&);
     virtual void setDragImage(const WebCore::IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag);
 
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);

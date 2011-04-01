@@ -31,6 +31,7 @@
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
 #import "TextChecker.h"
+#import "TextInputState.h"
 #import "WebPageMessages.h"
 #import "WebProcessProxy.h"
 #import <wtf/text/StringConcatenate.h>
@@ -134,11 +135,33 @@ void WebPageProxy::windowAndViewFramesChanged(const IntRect& windowFrameInScreen
     process()->send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates), m_pageID);
 }
 
+void WebPageProxy::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, TextInputState& newState)
+{
+    process()->sendSync(Messages::WebPage::SetComposition(text, underlines, selectionStart, selectionEnd, replacementRangeStart, replacementRangeEnd), Messages::WebPage::SetComposition::Reply(newState), m_pageID);
+}
+
+void WebPageProxy::confirmComposition(TextInputState& newState)
+{
+    process()->sendSync(Messages::WebPage::ConfirmComposition(), Messages::WebPage::ConfirmComposition::Reply(newState), m_pageID);
+}
+
+bool WebPageProxy::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, TextInputState& newState)
+{
+    bool handled;
+    process()->sendSync(Messages::WebPage::InsertText(text, replacementRangeStart, replacementRangeEnd), Messages::WebPage::InsertText::Reply(handled, newState), m_pageID);
+    return handled;
+}
+
 void WebPageProxy::getMarkedRange(uint64_t& location, uint64_t& length)
 {
     process()->sendSync(Messages::WebPage::GetMarkedRange(), Messages::WebPage::GetMarkedRange::Reply(location, length), m_pageID);
 }
-    
+
+void WebPageProxy::getSelectedRange(uint64_t& location, uint64_t& length)
+{
+    process()->sendSync(Messages::WebPage::GetSelectedRange(), Messages::WebPage::GetSelectedRange::Reply(location, length), m_pageID);
+}
+
 uint64_t WebPageProxy::characterIndexForPoint(const IntPoint point)
 {
     uint64_t result;
@@ -152,7 +175,14 @@ WebCore::IntRect WebPageProxy::firstRectForCharacterRange(uint64_t location, uin
     process()->sendSync(Messages::WebPage::FirstRectForCharacterRange(location, length), Messages::WebPage::FirstRectForCharacterRange::Reply(resultRect), m_pageID);
     return resultRect;
 }
-    
+
+bool WebPageProxy::executeKeypressCommands(const Vector<WebCore::KeypressCommand>& commands, TextInputState& newState)
+{
+    bool result;
+    process()->sendSync(Messages::WebPage::ExecuteKeypressCommands(commands), Messages::WebPage::ExecuteKeypressCommands::Reply(result, newState), m_pageID);
+    return result;
+}
+
 bool WebPageProxy::writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes)
 {
     bool result;
@@ -186,9 +216,9 @@ void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& 
     process()->send(Messages::WebPage::PerformDictionaryLookupAtLocation(point), m_pageID); 
 }
 
-void WebPageProxy::interpretKeyEvent(uint32_t type, Vector<KeypressCommand>& commandsList, uint32_t selectionStart, uint32_t selectionEnd, Vector<CompositionUnderline>& underlines)
+void WebPageProxy::interpretQueuedKeyEvent(const TextInputState& state, bool& handled, Vector<WebCore::KeypressCommand>& commands)
 {
-    m_pageClient->interceptKeyEvent(m_keyEventQueue.first(), commandsList, selectionStart, selectionEnd, underlines);
+    handled = m_pageClient->interpretKeyEvent(m_keyEventQueue.first(), state, commands);
 }
 
 // Complex text input support for plug-ins.

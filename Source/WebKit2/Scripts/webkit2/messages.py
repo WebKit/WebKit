@@ -270,6 +270,7 @@ def struct_or_class(namespace, type):
         'WebKit::SecurityOriginData',
         'WebKit::SelectionState',
         'WebKit::TextCheckerState',
+        'WebKit::TextInputState',
         'WebKit::WebNavigationDataStore',
         'WebKit::WebOpenPanelParameters::Data',
         'WebKit::WebPageCreationParameters',

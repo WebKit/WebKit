@@ -97,6 +97,7 @@ class WebWheelEvent;
 struct DictionaryPopupInfo;
 struct PlatformPopupMenuData;
 struct PrintInfo;
+struct TextInputState;
 struct WebPageCreationParameters;
 struct WebPopupItem;
 
@@ -251,9 +252,16 @@ public:
 #if PLATFORM(MAC)
     void updateWindowIsVisible(bool windowIsVisible);
     void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates, const WebCore::IntPoint& accessibilityViewCoordinates);
+
+    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, TextInputState& newState);
+    void confirmComposition(TextInputState& newState);
+    bool insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, TextInputState& newState);
     void getMarkedRange(uint64_t& location, uint64_t& length);
+    void getSelectedRange(uint64_t& location, uint64_t& length);
     uint64_t characterIndexForPoint(const WebCore::IntPoint);
     WebCore::IntRect firstRectForCharacterRange(uint64_t, uint64_t);
+    bool executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, TextInputState& newState);
+
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
     CGContextRef containingWindowGraphicsContext();
 #endif
@@ -581,7 +589,7 @@ private:
 
     // Keyboard handling
 #if PLATFORM(MAC)
-    void interpretKeyEvent(uint32_t eventType, Vector<WebCore::KeypressCommand>&, uint32_t selectionStart, uint32_t selectionEnd, Vector<WebCore::CompositionUnderline>& underlines);
+    void interpretQueuedKeyEvent(const TextInputState&, bool& handled, Vector<WebCore::KeypressCommand>&);
 #endif
     
     // Find.

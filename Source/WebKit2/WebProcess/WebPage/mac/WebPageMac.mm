@@ -29,6 +29,7 @@
 #import "AccessibilityWebPageObject.h"
 #import "DataReference.h"
 #import "PluginView.h"
+#import "TextInputState.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebEvent.h"
 #import "WebFrame.h"
@@ -52,6 +53,8 @@
 using namespace WebCore;
 
 namespace WebKit {
+
+static PassRefPtr<Range> convertToRange(Frame*, NSRange);
 
 void WebPage::platformInitialize()
 {
@@ -77,68 +80,129 @@ void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
 {
 }
 
-bool WebPage::interceptEditingKeyboardEvent(KeyboardEvent* evt, bool shouldSaveCommand)
+typedef HashMap<String, String> SelectorNameMap;
+
+// Map selectors into Editor command names.
+// This is not needed for any selectors that have the same name as the Editor command.
+static const SelectorNameMap* createSelectorExceptionMap()
 {
-    Node* node = evt->target()->toNode();
+    SelectorNameMap* map = new HashMap<String, String>;
+
+    map->add("insertNewlineIgnoringFieldEditor:", "InsertNewline");
+    map->add("insertParagraphSeparator:", "InsertNewline");
+    map->add("insertTabIgnoringFieldEditor:", "InsertTab");
+    map->add("pageDown:", "MovePageDown");
+    map->add("pageDownAndModifySelection:", "MovePageDownAndModifySelection");
+    map->add("pageUp:", "MovePageUp");
+    map->add("pageUpAndModifySelection:", "MovePageUpAndModifySelection");
+
+    return map;
+}
+
+static String commandNameForSelectorName(const String& selectorName)
+{
+    // Check the exception map first.
+    static const SelectorNameMap* exceptionMap = createSelectorExceptionMap();
+    SelectorNameMap::const_iterator it = exceptionMap->find(selectorName);
+    if (it != exceptionMap->end())
+        return it->second;
+
+    // Remove the trailing colon.
+    // No need to capitalize the command name since Editor command names are not case sensitive.
+    size_t selectorNameLength = selectorName.length();
+    if (selectorNameLength < 2 || selectorName[selectorNameLength - 1] != ':')
+        return String();
+    return selectorName.left(selectorNameLength - 1);
+}
+
+static TextInputState currentTextInputState(Frame* frame)
+{
+    TextInputState state;
+    state.hasMarkedText = frame->editor()->hasComposition();
+    state.selectionIsEditable = !frame->selection()->isNone() && frame->selection()->isContentEditable();
+    return state;
+}
+
+static Frame* frameForEvent(KeyboardEvent* event)
+{
+    Node* node = event->target()->toNode();
     ASSERT(node);
     Frame* frame = node->document()->frame();
     ASSERT(frame);
+    return frame;
+}
+
+bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>& commands, KeyboardEvent* event)
+{
+    Frame* frame = frameForEvent(event);
+    ASSERT(frame->page() == corePage());
+
+    bool eventWasHandled = false;
+    for (size_t i = 0; i < commands.size(); ++i) {
+        if (commands[i].commandName == "insertText:") {
+            ASSERT(!frame->editor()->hasComposition());
+
+            if (!frame->editor()->canEdit())
+                continue;
+
+            // An insertText: might be handled by other responders in the chain if we don't handle it.
+            // One example is space bar that results in scrolling down the page.
+            eventWasHandled |= frame->editor()->insertText(commands[i].text, event);
+        } else {
+            Editor::Command command = frame->editor()->command(commandNameForSelectorName(commands[i].commandName));
+            if (command.isSupported())
+                eventWasHandled |= command.execute(event);
+            // FIXME: WebHTMLView sends the event up the responder chain with WebResponderChainSink if it's not supported by the editor. Should we do the same?
+        }
+    }
+    return eventWasHandled;
+}
+
+bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event, bool saveCommands)
+{
+    ASSERT(!saveCommands || event->keypressCommands().isEmpty()); // Save commands once for each event.
+
+    Frame* frame = frameForEvent(event);
     
-    const PlatformKeyboardEvent* keyEvent = evt->keyEvent();
-    if (!keyEvent)
+    const PlatformKeyboardEvent* platformEvent = event->keyEvent();
+    if (!platformEvent)
         return false;
-    const Vector<KeypressCommand>& commands = evt->keypressCommands();
-    bool hasKeypressCommand = !commands.isEmpty();
-    
+    Vector<KeypressCommand>& commands = event->keypressCommands();
+
+    if ([platformEvent->macEvent() type] == NSFlagsChanged)
+        return false;
+
     bool eventWasHandled = false;
     
-    if (shouldSaveCommand || !hasKeypressCommand) {
-        Vector<KeypressCommand> commandsList;  
-        Vector<CompositionUnderline> underlines;
-        unsigned start;
-        unsigned end;
-        if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(keyEvent->type()), 
-                                                         Messages::WebPageProxy::InterpretKeyEvent::Reply(commandsList, start, end, underlines),
-                                                         m_pageID, CoreIPC::Connection::NoTimeout))
+    if (saveCommands) {
+        KeyboardEvent* oldEvent = m_keyboardEventBeingInterpreted;
+        m_keyboardEventBeingInterpreted = event;
+        bool sendResult = WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::InterpretQueuedKeyEvent(currentTextInputState(frame)), 
+            Messages::WebPageProxy::InterpretQueuedKeyEvent::Reply(eventWasHandled, commands), m_pageID);
+        m_keyboardEventBeingInterpreted = oldEvent;
+        if (!sendResult)
             return false;
-        if (commandsList.isEmpty())
-            return eventWasHandled;
-        
-        if (commandsList[0].commandName == "setMarkedText") {
-            frame->editor()->setComposition(commandsList[0].text, underlines, start, end);
-            eventWasHandled = true;
-        } else if (commandsList[0].commandName == "insertText" && frame->editor()->hasComposition()) {
-            frame->editor()->confirmComposition(commandsList[0].text);
-            eventWasHandled = true;
-        } else if (commandsList[0].commandName == "unmarkText") {
-            frame->editor()->confirmComposition();
-            eventWasHandled = true;
-        } else {
-            for (size_t i = 0; i < commandsList.size(); i++)
-                evt->keypressCommands().append(commandsList[i]);
-        }
+
+        // An input method may make several actions per keypress. For example, pressing Return with Korean IM both confirms it and sends a newline.
+        // IM-like actions are handled immediately (so the return value from UI process is true), but there are saved commands that
+        // should be handled like normal text input after DOM event dispatch.
+        if (!event->keypressCommands().isEmpty())
+            return false;
     } else {
-        size_t size = commands.size();
-        // Are there commands that would just cause text insertion if executed via Editor?
+        // Are there commands that could just cause text insertion if executed via Editor?
         // WebKit doesn't have enough information about mode to decide how they should be treated, so we leave it upon WebCore
         // to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
         // (e.g. Tab that inserts a Tab character, or Enter).
         bool haveTextInsertionCommands = false;
-        for (size_t i = 0; i < size; ++i) {
-            if (frame->editor()->command(commands[i].commandName).isTextInsertion())
+        for (size_t i = 0; i < commands.size(); ++i) {
+            if (frame->editor()->command(commandNameForSelectorName(commands[i].commandName)).isTextInsertion())
                 haveTextInsertionCommands = true;
         }
-        if (!haveTextInsertionCommands || keyEvent->type() == PlatformKeyboardEvent::Char) {
-            for (size_t i = 0; i < size; ++i) {
-                if (commands[i].commandName == "insertText") {
-                    // Don't insert null or control characters as they can result in unexpected behaviour
-                    if (evt->charCode() < ' ')
-                        return false;
-                    eventWasHandled = frame->editor()->insertText(commands[i].text, evt);
-                } else
-                    if (frame->editor()->command(commands[i].commandName).isSupported())
-                        eventWasHandled = frame->editor()->command(commands[i].commandName).execute(evt);
-            }
+        // If there are no text insertion commands, default keydown handler is the right time to execute the commands.
+        // Keypress (Char event) handler is the latest opportunity to execute.
+        if (!haveTextInsertionCommands || platformEvent->type() == PlatformKeyboardEvent::Char) {
+            eventWasHandled = executeKeypressCommandsInternal(event->keypressCommands(), event);
+            event->keypressCommands().clear();
         }
     }
     return eventWasHandled;
@@ -152,6 +216,54 @@ void WebPage::sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdenti
     }
 }
 
+void WebPage::setComposition(const String& text, Vector<CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, TextInputState& newState)
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+
+    if (frame->selection()->isContentEditable()) {
+        RefPtr<Range> replacementRange;
+        if (replacementRangeStart != NSNotFound) {
+            replacementRange = convertToRange(frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
+            frame->selection()->setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
+        }
+
+        frame->editor()->setComposition(text, underlines, selectionStart, selectionEnd);
+    }
+
+    newState = currentTextInputState(frame);
+}
+
+void WebPage::confirmComposition(TextInputState& newState)
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+
+    frame->editor()->confirmComposition();
+
+    newState = currentTextInputState(frame);
+}
+
+void WebPage::insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, bool& handled, TextInputState& newState)
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+
+    RefPtr<Range> replacementRange;
+    if (replacementRangeStart != NSNotFound) {
+        replacementRange = convertToRange(frame, NSMakeRange(replacementRangeStart, replacementRangeEnd - replacementRangeStart));
+        frame->selection()->setSelection(VisibleSelection(replacementRange.get(), SEL_DEFAULT_AFFINITY));
+    }
+
+    if (!frame->editor()->hasComposition()) {
+        // An insertText: might be handled by other responders in the chain if we don't handle it.
+        // One example is space bar that results in scrolling down the page.
+        handled = frame->editor()->insertText(text, m_keyboardEventBeingInterpreted);
+    } else {
+        handled = true;
+        frame->editor()->confirmComposition(text);
+    }
+
+    newState = currentTextInputState(frame);
+}
+
 void WebPage::getMarkedRange(uint64_t& location, uint64_t& length)
 {
     location = NSNotFound;
@@ -163,6 +275,16 @@ void WebPage::getMarkedRange(uint64_t& location, uint64_t& length)
     getLocationAndLengthFromRange(frame->editor()->compositionRange().get(), location, length);
 }
 
+void WebPage::getSelectedRange(uint64_t& location, uint64_t& length)
+{
+    location = NSNotFound;
+    length = 0;
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+    
+    getLocationAndLengthFromRange(frame->selection()->toNormalizedRange().get(), location, length);
+}
 
 static PassRefPtr<Range> characterRangeAtPositionForPoint(Frame* frame, const VisiblePosition& position, const IntPoint& point)
 {
@@ -211,7 +333,7 @@ void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
     getLocationAndLengthFromRange(range.get(), index, length);
 }
 
-static PassRefPtr<Range> convertToRange(Frame* frame, NSRange nsrange)
+PassRefPtr<Range> convertToRange(Frame* frame, NSRange nsrange)
 {
     if (nsrange.location > INT_MAX)
         return 0;
@@ -244,6 +366,15 @@ void WebPage::firstRectForCharacterRange(uint64_t location, uint64_t length, Web
      
     IntRect rect = frame->editor()->firstRectForRange(range.get());
     resultRect = frame->view()->contentsToWindow(rect);
+}
+
+void WebPage::executeKeypressCommands(const Vector<WebCore::KeypressCommand>& commands, bool& handled, TextInputState& newState)
+{
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+
+    handled = executeKeypressCommandsInternal(commands, m_keyboardEventBeingInterpreted);
+
+    newState = currentTextInputState(frame);
 }
 
 static bool isPositionInRange(const VisiblePosition& position, Range* range)
@@ -388,7 +519,8 @@ bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboard
     if (keyboardEvent.type() != WebEvent::KeyDown)
         return false;
 
-    // FIXME: This should be in WebCore.
+    // FIXME: Most of these are already handled by system key bindings, why are we hardcoding them here?
+    // FIXME: Common behaviors like scrolling down on Space should probably be implemented in WebCore.
 
     switch (keyboardEvent.windowsVirtualKeyCode()) {
     case VK_BACK:

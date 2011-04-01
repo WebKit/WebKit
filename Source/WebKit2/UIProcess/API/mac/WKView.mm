@@ -41,6 +41,7 @@
 #import "RunLoop.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
+#import "TextInputState.h"
 #import "WKAPICast.h"
 #import "WKFullScreenWindowController.h"
 #import "WKPrintingView.h"
@@ -83,7 +84,7 @@
 
 extern "C" {
     // Need to declare this attribute name because AppKit exports it but does not make it available in API or SPI headers.
-    // <rdar://problem/8631468> tracks the request to make it available. This code should be removed when the bug is closed.
+    // FIXME: We wouldn't need this if we implemented NSTextInputClient protocol instead of deprecated NSTextInput.
     extern NSString *NSTextInputReplacementRangeAttributeName;
 }
 
@@ -97,6 +98,13 @@ typedef Vector<RetainPtr<ValidationItem> > ValidationVector;
 typedef HashMap<String, ValidationVector> ValidationMap;
 
 }
+
+struct WKViewInterpretKeyEventsParameters {
+    TextInputState cachedTextInputState;
+    bool eventInterpretationHadSideEffects;
+    bool consumedByIM;
+    Vector<KeypressCommand>* commands;
+};
 
 @interface WKViewData : NSObject {
 @public
@@ -122,17 +130,12 @@ typedef HashMap<String, ValidationVector> ValidationMap;
     // the application to distinguish the case of a new event from one 
     // that has been already sent to WebCore.
     RetainPtr<NSEvent> _keyDownEventBeingResent;
-    bool _isInInterpretKeyEvents;
-    Vector<KeypressCommand> _commandsList;
+    WKViewInterpretKeyEventsParameters* _interpretKeyEventsParameters;
 
     NSSize _resizeScrollOffset;
 
     // The identifier of the plug-in we want to send complex text input to, or 0 if there is none.
     uint64_t _pluginComplexTextInputIdentifier;
-
-    Vector<CompositionUnderline> _underlines;
-    unsigned _selectionStart;
-    unsigned _selectionEnd;
 
     bool _inBecomeFirstResponder;
     bool _inResignFirstResponder;
@@ -1018,46 +1021,67 @@ static const short kIOHIDEventTypeScroll = 6;
 {
     LOG(TextInput, "doCommandBySelector:\"%s\"", sel_getName(selector));
 
-    if (!_data->_isInInterpretKeyEvents) {
+    WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
+    if (parameters)
+        parameters->consumedByIM = false;
+
+    // As in insertText:, we assume that the call comes from an input method if there is marked text.
+    bool isFromInputMethod = parameters && parameters->cachedTextInputState.hasMarkedText;
+
+    if (parameters && !isFromInputMethod)
+        parameters->commands->append(KeypressCommand(NSStringFromSelector(selector)));
+    else {
+        // FIXME: Send the command to Editor synchronously.
         [super doCommandBySelector:selector];
-        return;
     }
-    if (selector != @selector(noop:))
-        _data->_commandsList.append(KeypressCommand(commandNameForSelector(selector)));
 }
 
 - (void)insertText:(id)string
 {
-    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]]; // Otherwise, NSString
-    
+    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
+    ASSERT(isAttributedString || [string isKindOfClass:[NSString class]]);
+
     LOG(TextInput, "insertText:\"%@\"", isAttributedString ? [string string] : string);
+    WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
+    if (parameters)
+        parameters->consumedByIM = false;
+
     NSString *text;
-    bool isFromInputMethod = _data->_page->selectionState().hasComposition;
+    NSRange replacementRange = { NSNotFound, 0 };
+    bool isFromInputMethod = parameters && parameters->cachedTextInputState.hasMarkedText;
 
     if (isAttributedString) {
+        // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
+        // It does not look like any input methods ever use insertText: with attributes other than NSTextInputReplacementRangeAttributeName.
         text = [string string];
-        // We deal with the NSTextInputReplacementRangeAttributeName attribute from NSAttributedString here
-        // simply because it is used by at least one Input Method -- it corresonds to the kEventParamTextInputSendReplaceRange
-        // event in TSM.  This behaviour matches that of -[WebHTMLView setMarkedText:selectedRange:] when it receives an
-        // NSAttributedString
-        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:NULL inRange:NSMakeRange(0, [text length])];
+        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:0 inRange:NSMakeRange(0, [text length])];
         LOG(TextInput, "ReplacementRange: %@", rangeString);
-        if (rangeString)
-            isFromInputMethod = YES;
+        if (rangeString) {
+            replacementRange = NSRangeFromString(rangeString);
+            isFromInputMethod = true;
+        }
     } else
         text = string;
 
-    String eventText = text;
-    
-    // We'd need a different code path here if we wanted to be able to handle this
-    // outside of interpretKeyEvents.
-    ASSERT(_data->_isInInterpretKeyEvents);
+    // insertText can be called for several reasons:
+    // - If it's from normal key event processing (including key bindings), we may need to save the action to perform it later.
+    // - If it's from an input method, then we should go ahead and insert the text now. We assume it's from the input method if we have marked text.
+    // FIXME: In theory, this could be wrong for some input methods, so we should try to find another way to determine if the call is from the input method.
+    // - If it's sent outside of keyboard event processing (e.g. from Character Viewer, or when confirming an inline input area with a mouse),
+    // then we also execute it immediately, as there will be no other chance.
+    if (parameters && !isFromInputMethod) {
+        parameters->commands->append(KeypressCommand("insertText:", text));
+        return;
+    }
 
-    if (!isFromInputMethod)
-        _data->_commandsList.append(KeypressCommand("insertText", text));
-    else {
-        eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
-        _data->_commandsList.append(KeypressCommand("insertText", eventText));
+    TextInputState newTextInputState;
+    String eventText = text;
+    eventText.replace(NSBackTabCharacter, NSTabCharacter); // same thing is done in KeyEventMac.mm in WebCore
+    bool eventHandled = _data->_page->insertText(eventText, replacementRange.location, NSMaxRange(replacementRange), newTextInputState);
+
+    if (parameters) {
+        parameters->eventInterpretationHadSideEffects |= eventHandled;
+        parameters->cachedTextInputState = newTextInputState;
     }
 }
 
@@ -1130,9 +1154,6 @@ static const short kIOHIDEventTypeScroll = 6;
         }
     }
 
-    _data->_underlines.clear();
-    _data->_selectionStart = 0;
-    _data->_selectionEnd = 0;
     // We could be receiving a key down from AppKit if we have re-sent an event
     // that maps to an action that is currently unavailable (for example a copy when
     // there is no range selection).
@@ -1144,8 +1165,22 @@ static const short kIOHIDEventTypeScroll = 6;
     _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
 }
 
-- (NSTextInputContext *)inputContext {
-    if (_data->_pluginComplexTextInputIdentifier && !_data->_isInInterpretKeyEvents)
+- (void)_executeSavedKeypressCommands
+{
+    WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
+    if (!parameters || parameters->commands->isEmpty())
+        return;
+
+    TextInputState newTextInputState;
+    parameters->eventInterpretationHadSideEffects |= _data->_page->executeKeypressCommands(*parameters->commands, newTextInputState);
+    parameters->cachedTextInputState = newTextInputState;
+    parameters->commands->clear();
+}
+
+
+- (NSTextInputContext *)inputContext
+{
+    if (_data->_pluginComplexTextInputIdentifier && !_data->_interpretKeyEventsParameters)
         return [[WKTextInputWindowController sharedTextInputWindowController] inputContext];
 
     return [super inputContext];
@@ -1153,28 +1188,59 @@ static const short kIOHIDEventTypeScroll = 6;
 
 - (NSRange)selectedRange
 {
-    if (_data->_page->selectionState().isNone || !_data->_page->selectionState().isContentEditable)
-        return NSMakeRange(NSNotFound, 0);
-    
-    LOG(TextInput, "selectedRange -> (%u, %u)", _data->_page->selectionState().selectedRangeStart, _data->_page->selectionState().selectedRangeLength);
-    return NSMakeRange(_data->_page->selectionState().selectedRangeStart, _data->_page->selectionState().selectedRangeLength);
+    [self _executeSavedKeypressCommands];
+
+    uint64_t selectionStart;
+    uint64_t selectionLength;
+    _data->_page->getSelectedRange(selectionStart, selectionLength);
+
+    NSRange result = NSMakeRange(selectionStart, selectionLength);
+    if (result.location == NSNotFound)
+        LOG(TextInput, "selectedRange -> (NSNotFound, %u)", result.length);
+    else
+        LOG(TextInput, "selectedRange -> (%u, %u)", result.location, result.length);
+
+    return result;
 }
 
 - (BOOL)hasMarkedText
 {
-    LOG(TextInput, "hasMarkedText -> %u", _data->_page->selectionState().hasComposition);
-    return _data->_page->selectionState().hasComposition;
+    [self _executeSavedKeypressCommands];
+
+    WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
+
+    BOOL result;
+    if (parameters)
+        result = parameters->cachedTextInputState.hasMarkedText;
+    else {
+        uint64_t location;
+        uint64_t length;
+        _data->_page->getMarkedRange(location, length);
+        result = location != NSNotFound;
+    }
+
+    LOG(TextInput, "hasMarkedText -> %u", result);
+    return result;
 }
 
 - (void)unmarkText
 {
+    [self _executeSavedKeypressCommands];
+
     LOG(TextInput, "unmarkText");
 
-    // We'd need a different code path here if we wanted to be able to handle this
-    // outside of interpretKeyEvents.
-    ASSERT(_data->_isInInterpretKeyEvents);
+    // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
+    WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
 
-    _data->_commandsList.append(KeypressCommand("unmarkText"));
+    if (parameters) {
+        parameters->eventInterpretationHadSideEffects = true;
+        parameters->consumedByIM = false;
+    }
+
+    TextInputState newTextInputState;
+    _data->_page->confirmComposition(newTextInputState);
+    if (parameters)
+        parameters->cachedTextInputState = newTextInputState;
 }
 
 - (NSArray *)validAttributesForMarkedText
@@ -1217,38 +1283,61 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
 {
-    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]]; // Otherwise, NSString
-    
+    [self _executeSavedKeypressCommands];
+
+    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
+    ASSERT(isAttributedString || [string isKindOfClass:[NSString class]]);
+
     LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u)", isAttributedString ? [string string] : string, newSelRange.location, newSelRange.length);
-    
-    NSString *text = string;
-    
-    if (isAttributedString) {
-        text = [string string];
-        extractUnderlines(string, _data->_underlines);
+
+    // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
+    WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
+
+    if (parameters) {
+        parameters->eventInterpretationHadSideEffects = true;
+        parameters->consumedByIM = false;
     }
     
-    // We'd need a different code path here if we wanted to be able to handle this
-    // outside of interpretKeyEvents.
-    ASSERT(_data->_isInInterpretKeyEvents);
+    Vector<CompositionUnderline> underlines;
+    NSString *text;
+    NSRange replacementRange = { NSNotFound, 0 };
 
-    _data->_commandsList.append(KeypressCommand("setMarkedText", text));
-    _data->_selectionStart = newSelRange.location;
-    _data->_selectionEnd = NSMaxRange(newSelRange);
+    if (isAttributedString) {
+        // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
+        text = [string string];
+        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:0 inRange:NSMakeRange(0, [text length])];
+        LOG(TextInput, "    ReplacementRange: %@", rangeString);
+        // The AppKit adds a 'secret' property to the string that contains the replacement range.
+        // The replacement range is the range of the the text that should be replaced with the new string.
+        if (rangeString)
+            replacementRange = NSRangeFromString(rangeString);
+
+        extractUnderlines(string, underlines);
+    } else
+        text = string;
+
+    TextInputState newTextInputState;
+    _data->_page->setComposition(text, underlines, newSelRange.location, NSMaxRange(newSelRange), replacementRange.location, NSMaxRange(replacementRange), newTextInputState);
+    if (parameters)
+        parameters->cachedTextInputState = newTextInputState;
 }
 
 - (NSRange)markedRange
 {
+    [self _executeSavedKeypressCommands];
+
     uint64_t location;
     uint64_t length;
-
     _data->_page->getMarkedRange(location, length);
+
     LOG(TextInput, "markedRange -> (%u, %u)", location, length);
     return NSMakeRange(location, length);
 }
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)nsRange
 {
+    [self _executeSavedKeypressCommands];
+
     // This is not implemented for now. Need to figure out how to serialize the attributed string across processes.
     LOG(TextInput, "attributedSubstringFromRange");
     return nil;
@@ -1256,6 +1345,8 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (NSUInteger)characterIndexForPoint:(NSPoint)thePoint
 {
+    [self _executeSavedKeypressCommands];
+
     NSWindow *window = [self window];
     
     if (window)
@@ -1269,6 +1360,8 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
 { 
+    [self _executeSavedKeypressCommands];
+
     // Just to match NSTextView's behavior. Regression tests cannot detect this;
     // to reproduce, use a test application from http://bugs.webkit.org/show_bug.cgi?id=4682
     // (type something; try ranges (1, -1) and (2, -1).
@@ -1744,27 +1837,31 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_keyDownEventBeingResent = nullptr;
 }
 
-- (Vector<KeypressCommand>&)_interceptKeyEvent:(NSEvent *)theEvent 
+- (BOOL)_interpretKeyEvent:(NSEvent *)event withCachedTextInputState:(const TextInputState&)cachedTextInputState savingCommandsTo:(Vector<WebCore::KeypressCommand>&)commands
 {
-    ASSERT(!_data->_isInInterpretKeyEvents);
+    ASSERT(!_data->_interpretKeyEventsParameters);
+    ASSERT(commands.isEmpty());
 
-    _data->_isInInterpretKeyEvents = true;
-    _data->_commandsList.clear();
+    WKViewInterpretKeyEventsParameters parameters;
+    parameters.cachedTextInputState = cachedTextInputState;
+    parameters.eventInterpretationHadSideEffects = false;
+    // We assume that an input method has consumed the event, and only change this assumption if one of the NSTextInput methods is called.
+    // We assume the IM will *not* consume hotkey sequences.
+    parameters.consumedByIM = !([event modifierFlags] & NSCommandKeyMask);
+    parameters.commands = &commands;
+    _data->_interpretKeyEventsParameters = &parameters;
 
-    // Calling interpretKeyEvents will trigger one or more calls to doCommandBySelector and insertText
-    // that will populate the commandsList vector.
-    [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+    [self interpretKeyEvents:[NSArray arrayWithObject:event]];
 
-    _data->_isInInterpretKeyEvents = false;
+    _data->_interpretKeyEventsParameters = 0;
 
-    return _data->_commandsList;
-}
+    // An input method may consume an event and not tell us (e.g. when displaying a candidate window),
+    // in which case we should not bubble the event up the DOM.
+    if (parameters.consumedByIM)
+        return YES;
 
-- (void)_getTextInputState:(unsigned)start selectionEnd:(unsigned)end underlines:(Vector<CompositionUnderline>&)lines
-{
-    start = _data->_selectionStart;
-    end = _data->_selectionEnd;
-    lines = _data->_underlines;
+    // If we have already executed all or some of the commands, the event is "handled". Note that there are additional checks on web process side.
+    return parameters.eventInterpretationHadSideEffects;
 }
 
 - (NSRect)_convertToDeviceSpace:(NSRect)rect

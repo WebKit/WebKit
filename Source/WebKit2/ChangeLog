@@ -1,3 +1,84 @@
+2011-04-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Make WebKit2 text input handling more like WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=57649
+
+        We now send more sync messages from UI process to Web process for NSTextInput protocol
+        methods. Some of the exchanges are avoided by pre-calculating the responses before asking
+        UI process to interpret key events, and also with each sync message sent during
+        interpretation, and which could change the state.
+
+        * Platform/CoreIPC/HandleMessage.h: (CoreIPC::callMemberFunction): Added a missing
+        specialization for a function with 6 arguments and 2 returned values.
+
+        * Scripts/webkit2/messages.py: Added TextInputState to struct list.
+
+        * Shared/WebCoreArgumentCoders.h: Fixed a bug in CompositionUnderline encoding, which only
+        encoded a part of Color field, and didn't match decoder.
+
+        * Shared/mac/TextInputState.h: Added. This is state that's needed for IM machinery and that
+        we don't want to send sync messages for. This is similar to SelectionState, but the latter
+        is only updated asynchronously, and is thus less reliable.
+
+        * UIProcess/API/mac/PageClientImpl.h: We don't "intercept", we "interpret".
+
+        * UIProcess/API/mac/PageClientImpl.mm: (WebKit::PageClientImpl::interpretKeyEvent): Pass
+        current text input state, and don't expect anything input method related in return, as input
+        methods are now sync.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView doCommandBySelector:]):
+        (-[WKView insertText:]):
+        (-[WKView keyDown:]):
+        (-[WKView _executeSavedKeypressCommands]):
+        (-[WKView inputContext]):
+        (-[WKView selectedRange]):
+        (-[WKView hasMarkedText]):
+        (-[WKView unmarkText]):
+        (-[WKView setMarkedText:selectedRange:]):
+        (-[WKView markedRange]):
+        (-[WKView attributedSubstringFromRange:]):
+        (-[WKView characterIndexForPoint:]):
+        (-[WKView firstRectForCharacterRange:]):
+        (-[WKView _interpretKeyEvent:withCachedTextInputState:savingCommandsTo:WebCore::]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setComposition):
+        (WebKit::WebPageProxy::confirmComposition):
+        (WebKit::WebPageProxy::insertText):
+        (WebKit::WebPageProxy::getSelectedRange):
+        (WebKit::WebPageProxy::executeKeypressCommands):
+        (WebKit::WebPageProxy::interpretQueuedKeyEvent):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        (WebKit::WebEditorClient::handleInputMethodKeydown):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::viewFrameInWindowCoordinates):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::createSelectorExceptionMap):
+        (WebKit::commandNameForSelectorName):
+        (WebKit::currentTextInputState):
+        (WebKit::frameForEvent):
+        (WebKit::WebPage::executeKeypressCommandsInternal):
+        (WebKit::WebPage::handleEditingKeyboardEvent):
+        (WebKit::WebPage::setComposition):
+        (WebKit::WebPage::confirmComposition):
+        (WebKit::WebPage::insertText):
+        (WebKit::WebPage::getSelectedRange):
+        (WebKit::convertToRange):
+        (WebKit::WebPage::executeKeypressCommands):
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+        Rewrote to be more like WebKit1.
+
 2011-04-01  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Darin Adler.

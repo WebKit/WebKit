@@ -81,6 +81,7 @@ namespace WebCore {
     class ResourceRequest;
     class SharedBuffer;
     class VisibleSelection;
+    struct KeypressCommand;
 }
 
 namespace WebKit {
@@ -104,6 +105,7 @@ class WebPageGroupProxy;
 class WebPopupMenu;
 class WebWheelEvent;
 struct PrintInfo;
+struct TextInputState;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
@@ -159,7 +161,9 @@ public:
     void layoutIfNeeded();
 
     // -- Called from WebCore clients.
-#if !PLATFORM(MAC)
+#if PLATFORM(MAC)
+    bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*, bool saveCommands);
+#else
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
 #endif
     void show();
@@ -240,7 +244,6 @@ public:
     bool windowIsVisible() const { return m_windowIsVisible; }
     const WebCore::IntRect& windowFrameInScreenCoordinates() const { return m_windowFrameInScreenCoordinates; }
     const WebCore::IntRect& viewFrameInWindowCoordinates() const { return m_viewFrameInWindowCoordinates; }
-    bool interceptEditingKeyboardEvent(WebCore::KeyboardEvent*, bool);
 #elif PLATFORM(WIN)
     HWND nativeWindow() const { return m_nativeWindow; }
 #endif
@@ -305,9 +308,14 @@ public:
     
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
 
+    void setComposition(const String& text, Vector<WebCore::CompositionUnderline> underlines, uint64_t selectionStart, uint64_t selectionEnd, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, TextInputState& newState);
+    void confirmComposition(TextInputState& newState);
+    void insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, bool& handled, TextInputState& newState);
     void getMarkedRange(uint64_t& location, uint64_t& length);
+    void getSelectedRange(uint64_t& location, uint64_t& length);
     void characterIndexForPoint(const WebCore::IntPoint point, uint64_t& result);
     void firstRectForCharacterRange(uint64_t location, uint64_t length, WebCore::IntRect& resultRect);
+    void executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, bool& handled, TextInputState& newState);
     void writeSelectionToPasteboard(const WTF::String& pasteboardName, const WTF::Vector<WTF::String>& pasteboardTypes, bool& result);
     void readSelectionFromPasteboard(const WTF::String& pasteboardName, bool& result);
 #elif PLATFORM(WIN)
@@ -387,8 +395,14 @@ private:
     void didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     CoreIPC::SyncReplyMode didReceiveSyncWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
+#if !PLATFORM(MAC)
     static const char* interpretKeyEvent(const WebCore::KeyboardEvent*);
+#endif
     bool performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&);
+
+#if PLATFORM(MAC)
+    bool executeKeypressCommandsInternal(const Vector<WebCore::KeypressCommand>&, WebCore::KeyboardEvent*);
+#endif
 
     String sourceForFrame(WebFrame*);
 
@@ -549,6 +563,9 @@ private:
     RetainPtr<AccessibilityWebPageObject> m_mockAccessibilityElement;
 
     RetainPtr<NSObject> m_dragSource;
+
+    WebCore::KeyboardEvent* m_keyboardEventBeingInterpreted;
+
 #elif PLATFORM(WIN)
     // Our view's window (in the UI process).
     HWND m_nativeWindow;

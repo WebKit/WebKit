@@ -5431,7 +5431,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     [self _updateMouseoverWithFakeEvent];
 }
 
-- (void)_executeSavedEditingCommands
+- (void)_executeSavedKeypressCommands
 {
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
     if (!parameters || parameters->event->keypressCommands().isEmpty())
@@ -5506,7 +5506,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         // If there are no text insertion commands, default keydown handler is the right time to execute the commands.
         // Keypress (Char event) handler is the latest opportunity to execute.
         if (!haveTextInsertionCommands || platformEvent->type() == PlatformKeyboardEvent::Char)
-            [self _executeSavedEditingCommands];
+            [self _executeSavedKeypressCommands];
     }
     _private->interpretKeyEventsParameters = 0;
 
@@ -5751,7 +5751,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (NSUInteger)characterIndexForPoint:(NSPoint)thePoint
 {
-    [self _executeSavedEditingCommands];
+    [self _executeSavedKeypressCommands];
 
     NSWindow *window = [self window];
     WebFrame *frame = [self _frame];
@@ -5773,7 +5773,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
 {
-    [self _executeSavedEditingCommands];
+    [self _executeSavedKeypressCommands];
 
     WebFrame *frame = [self _frame];
     
@@ -5805,7 +5805,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (NSRange)selectedRange
 {
-    [self _executeSavedEditingCommands];
+    [self _executeSavedKeypressCommands];
 
     if (!isTextInput(core([self _frame]))) {
         LOG(TextInput, "selectedRange -> (NSNotFound, 0)");
@@ -5819,7 +5819,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (NSRange)markedRange
 {
-    [self _executeSavedEditingCommands];
+    [self _executeSavedKeypressCommands];
 
     WebFrame *webFrame = [self _frame];
     Frame* coreFrame = core(webFrame);
@@ -5833,7 +5833,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)nsRange
 {
-    [self _executeSavedEditingCommands];
+    [self _executeSavedKeypressCommands];
 
     WebFrame *frame = [self _frame];
     Frame* coreFrame = core(frame);
@@ -5876,7 +5876,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (BOOL)hasMarkedText
 {
-    [self _executeSavedEditingCommands];
+    [self _executeSavedKeypressCommands];
 
     Frame* coreFrame = core([self _frame]);
     BOOL result = coreFrame && coreFrame->editor()->hasComposition();
@@ -5886,13 +5886,12 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (void)unmarkText
 {
-    [self _executeSavedEditingCommands];
+    [self _executeSavedKeypressCommands];
 
     LOG(TextInput, "unmarkText");
 
     // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
-    _private->interpretKeyEventsParameters = 0;
 
     if (parameters) {
         parameters->eventInterpretationHadSideEffects = true;
@@ -5925,15 +5924,15 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
 {
-    [self _executeSavedEditingCommands];
+    [self _executeSavedKeypressCommands];
 
-    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]]; // Otherwise, NSString
+    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
+    ASSERT(isAttributedString || [string isKindOfClass:[NSString class]]);
 
     LOG(TextInput, "setMarkedText:\"%@\" selectedRange:(%u, %u)", isAttributedString ? [string string] : string, newSelRange.location, newSelRange.length);
 
     // Use pointer to get parameters passed to us by the caller of interpretKeyEvents.
     WebHTMLViewInterpretKeyEventsParameters* parameters = _private->interpretKeyEventsParameters;
-    _private->interpretKeyEventsParameters = 0;
 
     if (parameters) {
         parameters->eventInterpretationHadSideEffects = true;
@@ -5948,20 +5947,25 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         return;
 
     Vector<CompositionUnderline> underlines;
-    NSString *text = string;
+    NSString *text;
+    NSRange replacementRange = { NSNotFound, 0 };
 
     if (isAttributedString) {
-        unsigned markedTextLength = [(NSString *)string length];
-        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:0 inRange:NSMakeRange(0, markedTextLength)];
+        // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
+        text = [string string];
+        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:0 inRange:NSMakeRange(0, [text length])];
         LOG(TextInput, "    ReplacementRange: %@", rangeString);
         // The AppKit adds a 'secret' property to the string that contains the replacement range.
         // The replacement range is the range of the the text that should be replaced with the new string.
         if (rangeString)
-            [[self _frame] _selectNSRange:NSRangeFromString(rangeString)];
+            replacementRange = NSRangeFromString(rangeString);
 
-        text = [string string];
         extractUnderlines(string, underlines);
-    }
+    } else
+        text = string;
+
+    if (replacementRange.location != NSNotFound)
+        [[self _frame] _selectNSRange:replacementRange];
 
     coreFrame->editor()->setComposition(text, underlines, newSelRange.location, NSMaxRange(newSelRange));
 }
@@ -6023,7 +6027,8 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
 - (void)insertText:(id)string
 {
-    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]]; // Otherwise, NSString
+    BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
+    ASSERT(isAttributedString || [string isKindOfClass:[NSString class]]);
 
     LOG(TextInput, "insertText:\"%@\"", isAttributedString ? [string string] : string);
 
@@ -6031,20 +6036,19 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (parameters)
         parameters->consumedByIM = false;
 
-    // We don't support inserting an attributed string but input methods don't appear to require this.
     RefPtr<Frame> coreFrame = core([self _frame]);
     NSString *text;
+    NSRange replacementRange = { NSNotFound, 0 };
     bool isFromInputMethod = coreFrame && coreFrame->editor()->hasComposition();
+
     if (isAttributedString) {
+        // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
+        // It does not look like any input methods ever use insertText: with attributes other than NSTextInputReplacementRangeAttributeName.
         text = [string string];
-        // We deal with the NSTextInputReplacementRangeAttributeName attribute from NSAttributedString here
-        // simply because it is used by at least one Input Method -- it corresonds to the kEventParamTextInputSendReplaceRange
-        // event in TSM. This behavior matches that of -[WebHTMLView setMarkedText:selectedRange:] when it receives an
-        // NSAttributedString
         NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:0 inRange:NSMakeRange(0, [text length])];
         LOG(TextInput, "    ReplacementRange: %@", rangeString);
         if (rangeString) {
-            [[self _frame] _selectNSRange:NSRangeFromString(rangeString)];
+            replacementRange = NSRangeFromString(rangeString);
             isFromInputMethod = true;
         }
     } else
@@ -6066,6 +6070,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     if (!coreFrame || !coreFrame->editor()->canEdit())
         return;
+
+    if (replacementRange.location != NSNotFound)
+        [[self _frame] _selectNSRange:replacementRange];
 
     bool eventHandled = false;
     String eventText = text;
