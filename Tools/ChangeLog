@@ -1,3 +1,25 @@
+2011-04-01  Adam Roben  <aroben@apple.com>
+
+        Retrieve revision numbers from the build's got_revision property in Leaks Viewer
+
+        Previously, we were getting the revision of the first revision that triggered a build.
+        Choosing the last revision would have been more accurate. But got_revision is what is used
+        everywhere else on build.webkit.org, and should work even when there were no changes that
+        triggered a build (e.g., if someone clicked the Force Build button).
+
+        Fixes <http://webkit.org/b/57630> Leaks viewer gets some revision numbers wrong in the
+        recent builds list
+
+        Reviewed by Anders Carlsson.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/RecentBuildsLoader.js:
+        (RecentBuildsLoader.prototype.start): Pull the revision number out of the got_revision
+        property, rather than out of the first (i.e., earliest) change in the sourceStamp object.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/Utilities.js:
+        (Array.prototype.first): Added this helper function to return the first element in an array
+        that matches the given predicate, or null if no such element exists.
+
 2011-03-31  Adam Roben  <aroben@apple.com>
 
         Prefer (but don't require) bug URLs to be on their own line when parsing bug numbers from ChangeLogs

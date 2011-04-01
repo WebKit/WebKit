@@ -39,7 +39,7 @@ RecentBuildsLoader.prototype = {
                 var build = data[buildNumber];
 
                 var buildInfo = {
-                    revision: build.sourceStamp.changes[0].rev,
+                    revision: parseInt(build.properties.first(function(property) { return property[0] === "got_revision"; })[1], 10),
                     leakCount: 0,
                     url: null,
                 };
