@@ -23,23 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef DragClientQt_h
+#define DragClientQt_h
+
 #include "DragClient.h"
+
 class QWebPage;
+
 namespace WebCore {
 
 class DragClientQt : public DragClient {
 public:
     DragClientQt(QWebPage* webPage) : m_webPage(webPage) {};
-    virtual void willPerformDragDestinationAction(DragDestinationAction,
-                                                  DragData*);
-    virtual WebCore::DragDestinationAction actionMaskForDrag(DragData*);
+    virtual void willPerformDragDestinationAction(DragDestinationAction, DragData*);
+    virtual DragDestinationAction actionMaskForDrag(DragData*);
     virtual void dragControllerDestroyed();
     virtual DragSourceAction dragSourceActionMaskForPoint(const IntPoint&);
     virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*);    
-    virtual void startDrag(DragImageRef dragImage, const IntPoint& dragImageOrigin, const IntPoint& eventPos, Clipboard*, Frame*, bool linkDrag = false);
+    virtual void startDrag(DragImageRef, const IntPoint& dragImageOrigin, const IntPoint& eventPos, Clipboard*, Frame*, bool linkDrag = false);
 private:
     QWebPage* m_webPage;
 };
 
 }
 
+#endif
