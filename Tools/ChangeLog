@@ -1,3 +1,50 @@
+2011-02-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Repro crash with Sony Google TV ad at Gizmodo
+        https://bugs.webkit.org/show_bug.cgi?id=54150
+        <rdar://problem/8782346>
+
+        Add a new plug-in test that runs JavaScript that destroys the plug-in from within its NPN_DestroyStream callback.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/EvaluateJSDestroyingPluginFromDestroyStream.cpp: Added.
+        (EvaluateJSDestroyingPluginFromDestroyStream::EvaluateJSDestroyingPluginFromDestroyStream):
+        (EvaluateJSDestroyingPluginFromDestroyStream::NPP_Destroy):
+        (EvaluateJSDestroyingPluginFromDestroyStream::NPP_DestroyStream):
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+
+<<<<<<< .mine
+2011-04-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Shockwave plug-in doesn't accept mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=57653
+        <rdar://problem/8483273>
+
+        Add a plug-in test.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::indicateTestFailure):
+        Move code from NPDeallocateCalledBeforeNPShutdown::TestObject::~TestObject here.
+
+        (PluginTest::NPN_ConvertPoint):
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NPDeallocateCalledBeforeNPShutdown.cpp:
+        (NPDeallocateCalledBeforeNPShutdown::TestObject::~TestObject):
+        Call indicateTestFailure.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/mac: Added.
+        * DumpRenderTree/TestNetscapePlugIn/Tests/mac/ConvertPoint.cpp: Added.
+        (ConvertPoint::ConvertPoint):
+        (ConvertPoint::testConvert):
+        (ConvertPoint::NPP_New):
+
+=======
 2011-04-01  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Martin Robinson.
@@ -8,6 +55,7 @@
         * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
         (LayoutTestController::shadowRoot):
 
+>>>>>>> .r82722
 2011-04-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

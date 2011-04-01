@@ -42,16 +42,8 @@ private:
     public:
         ~TestObject() 
         {
-            // This should really be an assert, but there's no way for the test framework
-            // to know that the plug-in process crashed, so we'll just sleep for a while
-            // to ensure that the test times out.
-            if (wasShutdownCalled) {
-#if defined(XP_WIN)
-                ::Sleep(100000);
-#else
-                sleep(1000);
-#endif
-            }
+            if (wasShutdownCalled)
+                indicateTestFailure();
         }
     };
 

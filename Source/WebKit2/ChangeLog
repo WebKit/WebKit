@@ -1,3 +1,16 @@
+2011-04-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Shockwave plug-in doesn't accept mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=57653
+        <rdar://problem/8483273>
+
+        Add a missing break.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::convertPoint):
+
 2011-04-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -857,8 +857,13 @@ String WebHaltablePlugin::pluginName() const
                  toX:(double *)destX andY:(double *)destY space:(NPCoordinateSpace)destSpace
 {
     // Nothing to do
-    if (sourceSpace == destSpace)
-        return TRUE;
+    if (sourceSpace == destSpace) {
+        if (destX)
+            *destX = sourceX;
+        if (destY)
+            *destY = sourceY;
+        return YES;
+    }
     
     NSPoint sourcePoint = NSMakePoint(sourceX, sourceY);
     

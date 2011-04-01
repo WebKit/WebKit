@@ -1,3 +1,17 @@
+2011-04-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Shockwave plug-in doesn't accept mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=57653
+        <rdar://problem/8483273>
+
+        Fix an unrelated bug found by the added test.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView convertFromX:andY:space:toX:andY:space:]):
+        Make sure to always set destX and destY.
+
 2011-04-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

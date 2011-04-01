@@ -124,6 +124,7 @@ NPBool NetscapePlugin::convertPoint(double sourceX, double sourceY, NPCoordinate
     case NPCoordinateSpaceFlippedScreen:
         sourceXInScreenSpace = sourceX;
         sourceYInScreenSpace = flipScreenYCoordinate(sourceY);
+        break;
     default:
         return false;
     }
