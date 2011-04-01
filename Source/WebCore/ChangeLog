@@ -1,3 +1,17 @@
+2011-04-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r82667.
+        http://trac.webkit.org/changeset/82667
+        https://bugs.webkit.org/show_bug.cgi?id=57612
+
+        Breaks Leopard layout tests (Requested by podivilov on
+        #webkit).
+
+        * GNUmakefile.am:
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype.toggleFormatSourceFiles):
+
 2011-03-30  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
