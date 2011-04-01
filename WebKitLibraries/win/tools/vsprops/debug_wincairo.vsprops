@@ -7,10 +7,11 @@
 	<Tool
 		Name="VCCLCompilerTool"
 		Optimization="0"
+		AdditionalIncludeDirectories="&quot;$(WebKitLibrariesDir)\include\cairo&quot;"
+		PreprocessorDefinitions="DEBUG_ALL"
 		MinimalRebuild="true"
 		BasicRuntimeChecks="3"
 		RuntimeLibrary="2"
-		AdditionalIncludeDirectories="&quot;$(WebKitLibrariesDir)\include\cairo&quot;"
 	/>
 	<Tool
 		Name="VCLinkerTool"

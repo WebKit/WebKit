@@ -1,3 +1,12 @@
+2011-04-01  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build fix.
+
+        Define DEBUG_ALL for WinCairo debug builds so that the correct
+        labeled DLLs ("*_debug.dll") are linked for testing runs.
+
+        * win/tools/vsprops/debug_wincairo.vsprops:
+
 2011-04-01  Timothy Hatcher  <timothy@apple.com>
 
         Make momentum scroll event latching work in WebKit2 on Mac.
