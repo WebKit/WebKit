@@ -77,7 +77,7 @@ TEST(WebKit2, HitTestResultNodeHandle)
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());
 
-    WKPageLoadURL(webView.page(), Util::adoptWK(Util::createURLForResource("simple", "html")).get());
+    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple", "html")).get());
     Util::run(&didFinishLoad);
     didFinishLoad = false;
 

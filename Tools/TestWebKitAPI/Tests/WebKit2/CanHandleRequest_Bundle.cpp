@@ -47,7 +47,7 @@ CanHandleRequestTest::CanHandleRequestTest(const std::string& identifier)
 
 static bool canHandleURL(const char* url)
 {
-    return WKBundlePageCanHandleRequest(Util::adoptWK(WKURLRequestCreateWithWKURL(Util::adoptWK(WKURLCreateWithUTF8CString(url)).get())).get());
+    return WKBundlePageCanHandleRequest(adoptWK(WKURLRequestCreateWithWKURL(adoptWK(WKURLCreateWithUTF8CString(url)).get())).get());
 }
 
 static bool runTest()
@@ -60,7 +60,7 @@ void CanHandleRequestTest::didReceiveMessage(WKBundleRef bundle, WKStringRef mes
     if (!WKStringIsEqualToUTF8CString(messageName, "CheckCanHandleRequest"))
         return;
 
-    WKBundlePostMessage(bundle, Util::toWK("DidCheckCanHandleRequest").get(), Util::adoptWK(WKBooleanCreate(runTest())).get());
+    WKBundlePostMessage(bundle, Util::toWK("DidCheckCanHandleRequest").get(), adoptWK(WKBooleanCreate(runTest())).get());
 }
 
 } // namespace TestWebKitAPI

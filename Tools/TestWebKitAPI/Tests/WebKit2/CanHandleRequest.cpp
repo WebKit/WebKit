@@ -55,14 +55,14 @@ static void setInjectedBundleClient(WKContextRef context)
 
 TEST(WebKit2, CanHandleRequest)
 {
-    WKRetainPtr<WKContextRef> context = Util::adoptWK(Util::createContextForInjectedBundleTest("CanHandleRequestTest"));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("CanHandleRequestTest"));
     setInjectedBundleClient(context.get());
 
     _WKContextRegisterURLSchemeAsEmptyDocument(context.get(), Util::toWK("emptyscheme").get());
 
     PlatformWebView webView(context.get());
 
-    WKPageLoadURL(webView.page(), Util::adoptWK(Util::createURLForResource("simple", "html")).get());
+    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple", "html")).get());
 
     WKContextPostMessageToInjectedBundle(context.get(), Util::toWK("CheckCanHandleRequest").get(), 0);
     Util::run(&didReceiveMessage);

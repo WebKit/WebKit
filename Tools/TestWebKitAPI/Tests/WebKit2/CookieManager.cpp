@@ -80,7 +80,7 @@ TEST(WebKit2, CookieManager)
     loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
     WKPageSetPageLoaderClient(webView.page(), &loaderClient);
 
-    WKPageLoadURL(webView.page(), Util::adoptWK(WKURLCreateWithUTF8CString("about:blank")).get());
+    WKPageLoadURL(webView.page(), adoptWK(WKURLCreateWithUTF8CString("about:blank")).get());
 
     Util::run(&testDone);
 }

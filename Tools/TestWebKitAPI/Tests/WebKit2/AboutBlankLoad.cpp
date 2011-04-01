@@ -43,7 +43,7 @@ static void decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef resp
 
 TEST(WebKit2, AboutBlankLoad)
 {
-    WKRetainPtr<WKContextRef> context = Util::adoptWK(WKContextCreate());
+    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
     PlatformWebView webView(context.get());
 
     WKPagePolicyClient policyClient;
@@ -52,7 +52,7 @@ TEST(WebKit2, AboutBlankLoad)
     policyClient.decidePolicyForResponse = decidePolicyForResponse;
     WKPageSetPagePolicyClient(webView.page(), &policyClient);
 
-    WKPageLoadURL(webView.page(), Util::adoptWK(WKURLCreateWithUTF8CString("about:blank")).get());
+    WKPageLoadURL(webView.page(), adoptWK(WKURLCreateWithUTF8CString("about:blank")).get());
 
     Util::run(&done);
 }

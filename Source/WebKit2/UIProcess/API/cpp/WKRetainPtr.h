@@ -204,9 +204,15 @@ template<typename T, typename U> inline bool operator!=(T* a, const WKRetainPtr<
     return a != b.get(); 
 }
 
+template<typename T> static inline WKRetainPtr<T> adoptWK(T o)
+{
+    return WKRetainPtr<T>(AdoptWK, o);
+}
+
 } // namespace WebKit
 
 using WebKit::WKRetainPtr;
 using WebKit::AdoptWK;
+using WebKit::adoptWK;
 
 #endif // WKRetainPtr_h

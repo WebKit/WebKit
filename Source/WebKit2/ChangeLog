@@ -1,3 +1,15 @@
+2011-04-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add adoptWK to WKRetainPtr.h
+        https://bugs.webkit.org/show_bug.cgi?id=57670
+
+        * UIProcess/API/cpp/WKRetainPtr.h:
+        (WebKit::adoptWK):
+        Add shared implementation of adoptWK. Previously both WebKitTestRunner
+        and TestWebKitAPI had separate versions of it.
+
 2011-04-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

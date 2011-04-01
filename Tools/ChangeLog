@@ -2,6 +2,26 @@
 
         Reviewed by Adam Roben.
 
+        Add adoptWK to WKRetainPtr.h
+        https://bugs.webkit.org/show_bug.cgi?id=57670
+
+        * TestWebKitAPI/PlatformUtilities.h:
+        * TestWebKitAPI/Tests/WebKit2/AboutBlankLoad.cpp:
+        * TestWebKitAPI/Tests/WebKit2/CanHandleRequest.cpp:
+        * TestWebKitAPI/Tests/WebKit2/CanHandleRequest_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/CookieManager.cpp:
+        * TestWebKitAPI/Tests/WebKit2/HitTestResultNodeHandle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/PageLoadDidChangeLocationWithinPageForFrame.cpp:
+        * TestWebKitAPI/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly.cpp:
+        * TestWebKitAPI/Tests/WebKit2/RestoreSessionStateContainingFormData.cpp:
+        (TestWebKitAPI::createSessionStateContainingFormData):
+        * WebKitTestRunner/StringFunctions.h:
+        Replace custom versions of adoptWK with the API on in WebKit2/WKRetainPtr.h.
+
+2011-04-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
         Fix leak noticed by Adam Roben in LayoutTestController::shadowRoot.
 
         * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:

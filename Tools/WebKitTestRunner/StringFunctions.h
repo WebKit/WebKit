@@ -44,11 +44,6 @@ namespace WTR {
 
 // Conversion functions
 
-template<typename T> static inline WKRetainPtr<T> adoptWK(const T item)
-{
-    return WKRetainPtr<T>(AdoptWK, item);
-}
-
 inline WKRetainPtr<WKStringRef> toWK(JSStringRef string)
 {
     return adoptWK(WKStringCreateWithJSString(string));

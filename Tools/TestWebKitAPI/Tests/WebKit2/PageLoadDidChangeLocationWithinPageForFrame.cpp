@@ -72,12 +72,12 @@ TEST(WebKit2, PageLoadDidChangeLocationWithinPageForFrame)
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&didFinishLoad);
 
-    WKRetainPtr<WKURLRef> initialURL = Util::adoptWK(WKFrameCopyURL(WKPageGetMainFrame(webView.page())));
+    WKRetainPtr<WKURLRef> initialURL = adoptWK(WKFrameCopyURL(WKPageGetMainFrame(webView.page())));
 
     WKPageRunJavaScriptInMainFrame(webView.page(), Util::toWK("clickLink()").get(), 0, nullJavaScriptCallback);
     Util::run(&didChangeLocationWithinPage);
 
-    WKRetainPtr<WKURLRef> urlAfterAnchorClick = Util::adoptWK(WKFrameCopyURL(WKPageGetMainFrame(webView.page())));
+    WKRetainPtr<WKURLRef> urlAfterAnchorClick = adoptWK(WKFrameCopyURL(WKPageGetMainFrame(webView.page())));
 
     TEST_ASSERT(!WKURLIsEqual(initialURL.get(), urlAfterAnchorClick.get()));
 }

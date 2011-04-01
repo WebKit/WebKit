@@ -75,13 +75,13 @@ static void setPageLoaderClient(WKPageRef page)
 
 TEST(WebKit2, ResponsivenessTimerDoesntFireEarly)
 {
-    WKRetainPtr<WKContextRef> context = Util::adoptWK(Util::createContextForInjectedBundleTest("ResponsivenessTimerDoesntFireEarlyTest"));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("ResponsivenessTimerDoesntFireEarlyTest"));
     setInjectedBundleClient(context.get());
 
     PlatformWebView webView(context.get());
     setPageLoaderClient(webView.page());
 
-    WKPageLoadURL(webView.page(), Util::adoptWK(Util::createURLForResource("simple", "html")).get());
+    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple", "html")).get());
     Util::run(&didFinishLoad);
 
     WKContextPostMessageToInjectedBundle(context.get(), Util::toWK("BrieflyPause").get(), 0);

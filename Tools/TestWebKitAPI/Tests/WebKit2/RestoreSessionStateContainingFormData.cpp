@@ -53,7 +53,7 @@ static WKRetainPtr<WKDataRef> createSessionStateContainingFormData(WKContextRef 
     PlatformWebView webView(context);
     setPageLoaderClient(webView.page());
 
-    WKPageLoadURL(webView.page(), Util::adoptWK(Util::createURLForResource("simple-form", "html")).get());
+    WKPageLoadURL(webView.page(), adoptWK(Util::createURLForResource("simple-form", "html")).get());
     Util::run(&didFinishLoad);
     didFinishLoad = false;
 
@@ -61,7 +61,7 @@ static WKRetainPtr<WKDataRef> createSessionStateContainingFormData(WKContextRef 
     Util::run(&didFinishLoad);
     didFinishLoad = false;
 
-    return Util::adoptWK(WKPageCopySessionState(webView.page(), 0, 0));
+    return adoptWK(WKPageCopySessionState(webView.page(), 0, 0));
 }
 
 TEST(WebKit2, RestoreSessionStateContainingFormData)
