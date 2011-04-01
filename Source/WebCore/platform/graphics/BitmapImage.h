@@ -156,6 +156,7 @@ public:
 #endif
 
     virtual NativeImagePtr nativeImageForCurrentFrame() { return frameAtIndex(currentFrame()); }
+    bool frameHasAlphaAtIndex(size_t); 
 
 protected:
     enum RepetitionCountStatus {
@@ -186,7 +187,6 @@ protected:
     NativeImagePtr frameAtIndex(size_t);
     bool frameIsCompleteAtIndex(size_t);
     float frameDurationAtIndex(size_t);
-    bool frameHasAlphaAtIndex(size_t); 
 
     // Decodes and caches a frame. Never accessed except internally.
     void cacheFrame(size_t index);

@@ -29,8 +29,9 @@
 #if ENABLE(WEBGL)
 
 #include "GraphicsContext3D.h"
-#include "GraphicsContextCG.h"
 
+#include "BitmapImage.h"
+#include "GraphicsContextCG.h"
 #include "Image.h"
 
 #include <CoreGraphics/CGBitmapContext.h>
@@ -99,7 +100,8 @@ bool GraphicsContext3D::getImageData(Image* image,
         return false;
     CGImageRef cgImage;
     RetainPtr<CGImageRef> decodedImage;
-    if (image->data()) {
+    bool hasAlpha = image->isBitmapImage() ? static_cast<BitmapImage*>(image)->frameHasAlphaAtIndex(0) : true;
+    if ((ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && image->data()) {
         ImageSource decoder(ImageSource::AlphaNotPremultiplied,
                             ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
         decoder.setData(image->data(), true);
@@ -196,11 +198,6 @@ bool GraphicsContext3D::getImageData(Image* image,
     AlphaFormat alphaFormat = AlphaFormatNone;
     switch (CGImageGetAlphaInfo(cgImage)) {
     case kCGImageAlphaPremultipliedFirst:
-        // This is a special case for texImage2D with HTMLCanvasElement input,
-        // in which case image->data() should be null, or indexed color models,
-        // where we need premultiplied alpha to create the bitmap context
-        // successfully.
-        ASSERT(!image->data() || model == kCGColorSpaceModelIndexed);
         if (!premultiplyAlpha)
             neededAlphaOp = AlphaDoUnmultiply;
         alphaFormat = AlphaFormatFirst;
@@ -216,9 +213,6 @@ bool GraphicsContext3D::getImageData(Image* image,
         alphaFormat = AlphaFormatFirst;
         break;
     case kCGImageAlphaPremultipliedLast:
-        // This is a special case for texImage2D with HTMLCanvasElement input,
-        // in which case image->data() should be null.
-        ASSERT(!image->data());
         if (!premultiplyAlpha)
             neededAlphaOp = AlphaDoUnmultiply;
         alphaFormat = AlphaFormatLast;
