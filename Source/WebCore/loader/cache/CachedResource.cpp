@@ -504,10 +504,7 @@ bool CachedResource::canUseCacheValidator() const
 
     if (m_response.cacheControlContainsNoStore())
         return false;
-
-    DEFINE_STATIC_LOCAL(const AtomicString, lastModifiedHeader, ("last-modified"));
-    DEFINE_STATIC_LOCAL(const AtomicString, eTagHeader, ("etag"));
-    return !m_response.httpHeaderField(lastModifiedHeader).isEmpty() || !m_response.httpHeaderField(eTagHeader).isEmpty();
+    return m_response.hasCacheValidatorFields();
 }
 
 bool CachedResource::mustRevalidateDueToCacheHeaders(CachePolicy cachePolicy) const

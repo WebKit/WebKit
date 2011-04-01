@@ -1,3 +1,57 @@
+2011-04-01  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Cached Resource Overhead Space Usage and Accounting Inaccurate
+        https://bugs.webkit.org/show_bug.cgi?id=57488
+
+        Changed the fixed overhead value for ResourceResponse to 3800 bytes.
+        Modified ResourceResponse::platformLazyInit() to handle "base" level
+        attributes or all attributes.  The base attributes, like URL, status
+        code, mime type and a few header fields (mostly cache related) are
+        suitable for most resources.  This reduces the per resource memory
+        needs by over 1K bytes per resource thus saving memory in the cache.
+        Collectively, these two changes bring the overhead memory calculation
+        in line with reality.
+
+        No new tests added due to existing tests cover areas of change and
+        there is no functional change.  The change is limited to reducing 
+        memory usage along existing paths.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::canUseCacheValidator):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::isHTTP):
+        (WebCore::ResourceResponseBase::url):
+        (WebCore::ResourceResponseBase::setURL):
+        (WebCore::ResourceResponseBase::mimeType):
+        (WebCore::ResourceResponseBase::setMimeType):
+        (WebCore::ResourceResponseBase::expectedContentLength):
+        (WebCore::ResourceResponseBase::setExpectedContentLength):
+        (WebCore::ResourceResponseBase::textEncodingName):
+        (WebCore::ResourceResponseBase::setTextEncodingName):
+        (WebCore::ResourceResponseBase::suggestedFilename):
+        (WebCore::ResourceResponseBase::setSuggestedFilename):
+        (WebCore::ResourceResponseBase::httpStatusCode):
+        (WebCore::ResourceResponseBase::setHTTPStatusCode):
+        (WebCore::ResourceResponseBase::httpHeaderField):
+        (WebCore::ResourceResponseBase::setHTTPHeaderField):
+        (WebCore::ResourceResponseBase::parseCacheControlDirectives):
+        (WebCore::ResourceResponseBase::hasCacheValidatorFields):
+        (WebCore::ResourceResponseBase::date):
+        (WebCore::ResourceResponseBase::age):
+        (WebCore::ResourceResponseBase::expires):
+        (WebCore::ResourceResponseBase::lastModified):
+        (WebCore::ResourceResponseBase::lazyInit):
+        * platform/network/ResourceResponseBase.h:
+        (WebCore::ResourceResponseBase::platformLazyInit):
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        (WebCore::ResourceResponse::memoryUsage):
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::platformLazyInit):
+
 2011-04-01  Timothy Hatcher  <timothy@apple.com>
 
         Make momentum scroll event latching work in WebKit2 on Mac.
