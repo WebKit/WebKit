@@ -1,5 +1,15 @@
 2011-04-01  Adam Barth  <abarth@webkit.org>
 
+        Skip platform/mac/plugins/convert-point.html because it relies on code
+        that only exists in the test plugin for Apple's Mac port.  We generally
+        ignore most of the tests in platform/mac, although we do run them to
+        detect crashes.  In this case, however, the test does crash, but it
+        crashes in the test plug-in, which doesn't matter to us.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-01  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Daniel Bates.
 
         Test assigning false to noResize instead of undefined

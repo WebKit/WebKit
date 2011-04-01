@@ -410,6 +410,9 @@ WONTFIX BUGCR21840 MAC LINUX : http/tests/loading/basic-auth-resend-wrong-creden
 WONTFIX BUGCR21840 WIN : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL TIMEOUT
 WONTFIX BUGCR21840 : http/tests/loading/basic-credentials-sent-automatically.html = FAIL
 
+// This test relies on code in the test plugin that only exists in Apple's Mac port.
+WONTFIX SKIP : platform/mac/plugins/convert-point.html = CRASH
+
 // This checks the IDN behavior of WebKit/WebKit on Mac, not WebKit/WebCore or
 // WebKit/JavaScriptCore. Chrome doesn't use WebKit/WebKit, and Chrome's IDN
 // security model is different from it.
