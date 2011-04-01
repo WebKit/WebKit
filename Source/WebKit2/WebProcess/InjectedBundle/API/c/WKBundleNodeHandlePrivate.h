@@ -42,9 +42,11 @@ WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCopyDocument(WKBundleNodeHandl
 
 /* Additional DOM Operations */
 
-WK_EXPORT WKRect WKBundleNodeHandleGetElementBounds(WKBundleNodeHandleRef nodeHandle);
 WK_EXPORT WKRect WKBundleNodeHandleGetRenderRect(WKBundleNodeHandleRef nodeHandle, bool* isReplaced);
 
+/* Element Specific Operations */
+WK_EXPORT WKRect WKBundleNodeHandleGetElementBounds(WKBundleNodeHandleRef elementHandle);
+WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCopyElementShadowRoot(WKBundleNodeHandleRef elementHandle);
 
 /* HTMLInputElement Specific Operations */
 WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHandleRef htmlInputElementHandle, WKStringRef value);

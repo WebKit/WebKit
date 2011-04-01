@@ -34,9 +34,10 @@
 #include <WebKit2/WKBundleFrame.h>
 #include <WebKit2/WKBundleFramePrivate.h>
 #include <WebKit2/WKBundleInspector.h>
+#include <WebKit2/WKBundleNodeHandlePrivate.h>
 #include <WebKit2/WKBundlePagePrivate.h>
-#include <WebKit2/WKBundleScriptWorld.h>
 #include <WebKit2/WKBundlePrivate.h>
+#include <WebKit2/WKBundleScriptWorld.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WebKit2.h>
 #include <wtf/HashMap.h>
@@ -320,6 +321,25 @@ void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
 unsigned LayoutTestController::windowCount()
 {
     return InjectedBundle::shared().pageCount();
+}
+
+JSValueRef LayoutTestController::shadowRoot(JSValueRef element)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+
+    if (!element || !JSValueIsObject(context, element))
+        return JSValueMakeNull(context);
+
+    WKRetainPtr<WKBundleNodeHandleRef> domElement(AdoptWK, WKBundleNodeHandleCreate(context, const_cast<JSObjectRef>(element)));
+    if (!domElement)
+        return JSValueMakeNull(context);
+
+    WKRetainPtr<WKBundleNodeHandleRef> shadowRootDOMElement(WKBundleNodeHandleCopyElementShadowRoot(domElement.get()));
+    if (!shadowRootDOMElement)
+        return JSValueMakeNull(context);
+
+    return WKBundleFrameGetJavaScriptWrapperForNodeForWorld(mainFrame, shadowRootDOMElement.get(), WKBundleScriptWorldNormalWorld());
 }
 
 void LayoutTestController::clearBackForwardList()

@@ -84,6 +84,7 @@ public:
     bool isCommandEnabled(JSStringRef name);
     JSRetainPtr<JSStringRef> markerTextForListItem(JSValueRef element);
     unsigned windowCount();
+    JSValueRef shadowRoot(JSValueRef element);
 
     // Repaint testing.
     void testRepaint() { m_testRepaint = true; }

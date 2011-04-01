@@ -1818,9 +1818,6 @@ storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html
 fast/forms/input-autofilled.html
 fast/forms/reset-autofilled.html
 
-# WebKitTestRunner needs layoutTestController.shadowRoot
-fast/dom/HTMLKeygenElement/keygen.html
-
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

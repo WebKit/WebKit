@@ -1,3 +1,20 @@
+2011-04-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKitTestRunner needs layoutTestController.shadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=57661
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleGetRenderRect):
+        (WKBundleNodeHandleGetElementBounds):
+        (WKBundleNodeHandleCopyElementShadowRoot):
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::elementShadowRoot):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+        Add accessor for the shadowRoot of an element in the bundle.
+
 2011-04-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

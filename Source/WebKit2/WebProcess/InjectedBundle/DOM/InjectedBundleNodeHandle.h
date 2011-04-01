@@ -68,6 +68,8 @@ public:
     
     PassRefPtr<InjectedBundleNodeHandle> htmlTableCellElementCellAbove();
 
+    PassRefPtr<InjectedBundleNodeHandle> elementShadowRoot();
+
     PassRefPtr<WebFrame> documentFrame();
     PassRefPtr<WebFrame> htmlFrameElementContentFrame();
     PassRefPtr<WebFrame> htmlIFrameElementContentFrame();

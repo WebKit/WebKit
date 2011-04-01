@@ -1,3 +1,16 @@
+2011-04-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKitTestRunner needs layoutTestController.shadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=57661
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::shadowRoot):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        Implement layoutTestController.shadowRoot for WebKit2.
+
 2011-04-01  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Darin Adler.

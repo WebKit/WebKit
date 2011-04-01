@@ -165,6 +165,14 @@ PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::htmlTableCellElem
     return getOrCreate(static_cast<HTMLTableCellElement*>(m_node.get())->cellAbove());
 }
 
+PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::elementShadowRoot()
+{
+    if (!m_node->isElementNode())
+        return 0;
+
+    return getOrCreate(static_cast<Element*>(m_node.get())->shadowRoot());
+}
+
 PassRefPtr<WebFrame> InjectedBundleNodeHandle::documentFrame()
 {
     if (!m_node->isDocumentNode())
