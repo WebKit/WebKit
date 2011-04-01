@@ -65,14 +65,9 @@ def test_options():
                                 html_directory='/tmp',
                                 archive_url=ARCHIVE_URL,
                                 force_archive_url=None,
-                                webkit_canary=True,
-                                use_drt=False,
-                                target_platform='chromium',
                                 verbose=False,
                                 quiet=False,
-                                all_platforms=rebaseline_chromium_webkit_tests.REBASELINE_WEBKIT_CANARY_ORDER,
-                                platforms=None,
-                                gpu=False)
+                                platforms=None)
 
 
 def test_host_port_and_filesystem(options, expectations):
@@ -136,6 +131,14 @@ def test_zip_factory():
     return zipfileset_mock.make_factory(ziphashes)
 
 
+def test_archive(orig_archive_dict):
+    new_archive_dict = {}
+    for platform, dirname in orig_archive_dict.iteritems():
+        platform = platform.replace('chromium', 'test')
+        new_archive_dict[platform] = dirname
+    return new_archive_dict
+
+
 class TestGetHostPortObject(unittest.TestCase):
     def assert_result(self, release_present, debug_present, valid_port_obj):
         # Tests whether we get a valid port object returned when we claim
@@ -178,6 +181,14 @@ class TestOptions(unittest.TestCase):
 
 
 class TestRebaseliner(unittest.TestCase):
+    def setUp(self):
+        if not hasattr(self, '_orig_archive'):
+            self._orig_archive = rebaseline_chromium_webkit_tests.ARCHIVE_DIR_NAME_DICT
+            rebaseline_chromium_webkit_tests.ARCHIVE_DIR_NAME_DICT = test_archive(self._orig_archive)
+
+    def tearDown(self):
+        rebaseline_chromium_webkit_tests.ARCHIVE_DIR_NAME_DICT = self._orig_archive
+
     def make_rebaseliner(self, expectations):
         options = test_options()
         host_port_obj, filesystem = test_host_port_and_filesystem(options, expectations)
@@ -186,7 +197,7 @@ class TestRebaseliner(unittest.TestCase):
         target_port_obj = port.get('test', target_options,
                                    filesystem=filesystem)
         target_port_obj._expectations = expectations
-        platform = target_port_obj.test_platform_name()
+        platform = target_port_obj.name()
 
         url_fetcher = test_url_fetcher(filesystem)
         zip_factory = test_zip_factory()
@@ -199,7 +210,7 @@ class TestRebaseliner(unittest.TestCase):
         # this method tests that was can at least instantiate an object, even
         # if there is nothing to do.
         rebaseliner, filesystem = self.make_rebaseliner("")
-        rebaseliner.run(False)
+        rebaseliner.run()
         self.assertEqual(len(filesystem.written_files), 1)
 
     def test_rebaselining_tests(self):
@@ -219,7 +230,7 @@ class TestRebaseliner(unittest.TestCase):
     def test_one_platform(self):
         rebaseliner, filesystem = self.make_rebaseliner(
             "BUGX REBASELINE MAC : failures/expected/image.html = IMAGE")
-        rebaseliner.run(False)
+        rebaseliner.run()
         # We expect to have written 12 files over the course of this rebaseline:
         # *) 3 files in /__im_tmp for the extracted archive members
         # *) 3 new baselines under '/test.checkout/LayoutTests'
@@ -236,7 +247,7 @@ class TestRebaseliner(unittest.TestCase):
     def test_all_platforms(self):
         rebaseliner, filesystem = self.make_rebaseliner(
             "BUGX REBASELINE : failures/expected/image.html = IMAGE")
-        rebaseliner.run(False)
+        rebaseliner.run()
         # See comment in test_one_platform for an explanation of the 12 written tests.
         # Note that even though the rebaseline is marked for all platforms, each
         # rebaseliner only ever does one.
@@ -251,11 +262,10 @@ class TestRebaseliner(unittest.TestCase):
         compile_success = rebaseliner._compile_rebaselining_tests()
         self.assertTrue(compile_success)
         self.assertEqual(set(['failures/expected/image_checksum.html']), rebaseliner._rebaselining_tests)
-        rebaseliner.run(False)
+        rebaseliner.run()
         # There is one less file written than |test_one_platform| because we only
         # write 2 expectations (the png and the txt file).
         self.assertEqual(len(filesystem.written_files), 11)
-        #self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], '')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.png'], 'tEXtchecksum\x000123456789')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
         self.assertFalse(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum', None))
@@ -270,11 +280,10 @@ class TestRebaseliner(unittest.TestCase):
         compile_success = rebaseliner._compile_rebaselining_tests()
         self.assertTrue(compile_success)
         self.assertEqual(set(['failures/expected/image_checksum.html']), rebaseliner._rebaselining_tests)
-        rebaseliner.run(False)
+        rebaseliner.run()
         # There is one more file written than |test_png_file_with_comment_remove_old_checksum|
         # because we also delete the old checksum.
         self.assertEqual(len(filesystem.written_files), 12)
-        #self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test/test_expectations.txt'], '')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.png'], 'tEXtchecksum\x000123456789')
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
         self.assertEqual(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum', None), None)
@@ -297,12 +306,18 @@ class TestRebaseliner(unittest.TestCase):
 
 
 class TestRealMain(unittest.TestCase):
+    def setUp(self):
+        if not hasattr(self, '_orig_archive'):
+            self._orig_archive = rebaseline_chromium_webkit_tests.ARCHIVE_DIR_NAME_DICT
+            rebaseline_chromium_webkit_tests.ARCHIVE_DIR_NAME_DICT = test_archive(self._orig_archive)
+
+    def tearDown(self):
+        rebaseline_chromium_webkit_tests.ARCHIVE_DIR_NAME_DICT = self._orig_archive
+
     def test_all_platforms(self):
         expectations = "BUGX REBASELINE : failures/expected/image.html = IMAGE"
 
         options = test_options()
-        options.platforms = ','.join(options.all_platforms)
-
         host_port_obj, filesystem = test_host_port_and_filesystem(options, expectations)
         url_fetcher = test_url_fetcher(filesystem)
         zip_factory = test_zip_factory()
@@ -329,7 +344,7 @@ class TestHtmlGenerator(unittest.TestCase):
         options = mocktool.MockOptions(configuration=None, html_directory='/tmp')
         host_port = port.get('test', options, filesystem=port.unit_test_filesystem(files))
         generator = rebaseline_chromium_webkit_tests.HtmlGenerator(host_port,
-            target_port=None, options=options, platforms=['mac'], rebaselining_tests=tests)
+            target_port=None, options=options, platforms=['test-mac-leopard'], rebaselining_tests=tests)
         return generator, host_port
 
     def test_generate_baseline_links(self):

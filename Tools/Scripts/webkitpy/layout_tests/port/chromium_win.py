@@ -63,34 +63,21 @@ class ChromiumWinPort(chromium.ChromiumPort):
         'xp': ['chromium-win-xp', 'chromium-win-vista', 'chromium-win', 'chromium', 'win', 'mac'],
         'vista': ['chromium-win-vista', 'chromium-win', 'chromium', 'win', 'mac'],
         'win7': ['chromium-win', 'chromium', 'win', 'mac'],
-        '': ['chromium-win', 'chromium', 'win', 'mac'],
     }
 
-    def __init__(self, port_name=None, windows_version=None, rebaselining=False, **kwargs):
+    def __init__(self, port_name=None, windows_version=None, **kwargs):
         # We're a little generic here because this code is reused by the
         # 'google-chrome' port as well as the 'mock-' and 'dryrun-' ports.
         port_name = port_name or 'chromium-win'
-
+        chromium.ChromiumPort.__init__(self, port_name=port_name, **kwargs)
         if port_name.endswith('-win'):
-            # FIXME: The rebaselining flag is an ugly hack that lets us create an
-            # "chromium-win" port that is not version-specific. It should only be
-            # used by rebaseline-chromium-webkit-tests to explicitly put files into
-            # the generic directory. In theory we shouldn't need this, because
-            # the newest win port should be using 'chromium-win' as the baseline
-            # directory. However, we also don't have stable Win 7 bots :(
-            #
-            # When we remove this FIXME, we also need to remove '' as a valid
-            # fallback key in self.FALLBACK_PATHS.
-            if rebaselining:
-                self._version = ''
-            else:
-                self._version = os_version(windows_version)
-                port_name = port_name + '-' + self._version
+            self._version = os_version(windows_version)
+            self._name = port_name + '-' + self._version
         else:
             self._version = port_name[port_name.index('-win-') + 5:]
             assert self._version in self.SUPPORTED_VERSIONS
 
-        chromium.ChromiumPort.__init__(self, port_name=port_name, **kwargs)
+        self._operating_system = 'win'
 
     def setup_environ_for_server(self):
         env = chromium.ChromiumPort.setup_environ_for_server(self)
@@ -136,17 +123,6 @@ class ChromiumWinPort(chromium.ChromiumPort):
     def relative_test_filename(self, filename):
         path = filename[len(self.layout_tests_dir()) + 1:]
         return path.replace('\\', '/')
-
-    def test_platform_name(self):
-        # We return 'win-xp', not 'chromium-win-xp' here, for convenience.
-
-        # FIXME: Get rid of this method after rebaseline_chromium_webkit_tests dies.
-        if self.version() == '':
-            return 'win'
-        return 'win-' + self.version()
-
-    def version(self):
-        return self._version
 
     #
     # PROTECTED ROUTINES

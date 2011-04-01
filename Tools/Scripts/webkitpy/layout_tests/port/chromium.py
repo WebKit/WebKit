@@ -51,6 +51,12 @@ _log = logging.getLogger("webkitpy.layout_tests.port.chromium")
 # FIXME: This function doesn't belong in this package.
 class ChromiumPort(base.Port):
     """Abstract base class for Chromium implementations of the Port class."""
+    ALL_BASELINE_VARIANTS = [
+        'chromium-mac-snowleopard', 'chromium-mac-leopard',
+        'chromium-win-win7', 'chromium-win-vista', 'chromium-win-xp',
+        'chromium-linux', 'chromium-linux-x86_64',
+        'chromium-gpu-mac-leopard', 'chromium-gpu-win-xp', 'chromium-gpu-linux',
+    ]
 
     def __init__(self, **kwargs):
         base.Port.__init__(self, **kwargs)
@@ -230,6 +236,9 @@ class ChromiumPort(base.Port):
             # http://bugs.python.org/issue1731717
             self._helper.wait()
 
+    def all_baseline_variants(self):
+        return self.ALL_BASELINE_VARIANTS
+
     def test_expectations(self):
         """Returns the test expectations for this port.
 
@@ -251,7 +260,6 @@ class ChromiumPort(base.Port):
     def skipped_layout_tests(self, extra_test_files=None):
         expectations_str = self.test_expectations()
         overrides_str = self.test_expectations_overrides()
-        test_platform_name = self.test_platform_name()
         is_debug_mode = False
 
         all_test_files = self.tests([])
@@ -264,17 +272,6 @@ class ChromiumPort(base.Port):
         tests_dir = self.layout_tests_dir()
         return [self.relative_test_filename(test)
                 for test in expectations.get_tests_with_result_type(test_expectations.SKIP)]
-
-    def test_platform_names(self):
-        return ('mac-leopard', 'mac-snowleopard',
-                'win-xp', 'win-vista', 'win-win7',
-                'linux')
-
-    def test_platform_name_to_name(self, test_platform_name):
-        if test_platform_name in self.test_platform_names():
-            return 'chromium-' + test_platform_name
-        raise ValueError('Unsupported test_platform_name: %s' %
-                         test_platform_name)
 
     def test_repository_paths(self):
         # Note: for JSON file's backward-compatibility we use 'chrome' rather

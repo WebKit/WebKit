@@ -90,18 +90,24 @@ class Port(object):
                  config=None,
                  **kwargs):
         self._name = port_name
+
+        # These are default values that should be overridden in a subclasses.
+        # FIXME: These should really be passed in.
+        self._operating_system = 'mac'
+        self._version = ''
         self._architecture = 'x86'
-        self._options = options
-        if self._options is None:
-            # FIXME: Ideally we'd have a package-wide way to get a
-            # well-formed options object that had all of the necessary
-            # options defined on it.
-            self._options = DummyOptions()
+        self._graphics_type = 'cpu'
+
+        # FIXME: Ideally we'd have a package-wide way to get a
+        # well-formed options object that had all of the necessary
+        # options defined on it.
+        self._options = options or DummyOptions()
+
         self._executive = executive or Executive()
         self._user = user or User()
         self._filesystem = filesystem or system.filesystem.FileSystem()
-        self._config = config or port_config.Config(self._executive,
-                                                    self._filesystem)
+        self._config = config or port_config.Config(self._executive, self._filesystem)
+
         self._helper = None
         self._http_server = None
         self._webkit_base_dir = None
@@ -481,16 +487,27 @@ class Port(object):
         self._filesystem.maybe_make_directory(*path)
 
     def name(self):
-        """Return the name of the port (e.g., 'mac', 'chromium-win-xp').
-
-        Note that this is different from the test_platform_name(), which
-        may be different (e.g., 'win-xp' instead of 'chromium-win-xp'."""
+        """Return the name of the port (e.g., 'mac', 'chromium-win-xp')."""
         return self._name
+
+    def operating_system(self):
+        return self._operating_system
+
+    def version(self):
+        """Returns a string indicating the version of a given platform, e.g.
+        'leopard' or 'xp'.
+
+        This is used to help identify the exact port when parsing test
+        expectations, determining search paths, and logging information."""
+        return self._version
 
     def graphics_type(self):
         """Returns whether the port uses accelerated graphics ('gpu') or not
         ('cpu')."""
-        return 'cpu'
+        return self._graphics_type
+
+    def architecture(self):
+        return self._architecture
 
     def real_name(self):
         """Returns the actual name of the port, not the delegate's."""
@@ -631,6 +648,14 @@ class Port(object):
     def all_test_configurations(self):
         return self.test_configuration().all_test_configurations()
 
+    def all_baseline_variants(self):
+        """Returns a list of platform names sufficient to cover all the baselines.
+
+        The list should be sorted so that a later platform  will reuse
+        an earlier platform's baselines if they are the same (e.g.,
+        'snowleopard' should precede 'leopard')."""
+        raise NotImplementedError
+
     def test_expectations(self):
         """Returns the test expectations for this port.
 
@@ -646,39 +671,6 @@ class Port(object):
         temporarily override the "upstream" expectations until the port can
         sync up the two repos."""
         return None
-
-    def test_platform_name(self):
-        """Returns the string that corresponds to the given platform name
-        in the test expectations. This may be the same as name(), or it
-        may be different. For example, chromium returns 'mac' for
-        'chromium-mac'."""
-        raise NotImplementedError('Port.test_platform_name')
-
-    def test_platforms(self):
-        """Returns the list of test platform identifiers as used in the
-        test_expectations and on dashboards, the rebaselining tool, etc.
-
-        Note that this is not necessarily the same as the list of ports,
-        which must be globally unique (e.g., both 'chromium-mac' and 'mac'
-        might return 'mac' as a test_platform name'."""
-        raise NotImplementedError('Port.platforms')
-
-    def test_platform_name_to_name(self, test_platform_name):
-        """Returns the Port platform name that corresponds to the name as
-        referenced in the expectations file. E.g., "mac" returns
-        "chromium-mac" on the Chromium ports."""
-        raise NotImplementedError('Port.test_platform_name_to_name')
-
-    def architecture(self):
-        return self._architecture
-
-    def version(self):
-        """Returns a string indicating the version of a given platform, e.g.
-        'leopard' or 'xp'.
-
-        This is used to help identify the exact port when parsing test
-        expectations, determining search paths, and logging information."""
-        raise NotImplementedError('Port.version')
 
     def test_repository_paths(self):
         """Returns a list of (repository_name, repository_path) tuples
@@ -956,15 +948,8 @@ class Driver:
 class TestConfiguration(object):
     def __init__(self, port=None, os=None, version=None, architecture=None,
                  build_type=None, graphics_type=None):
-
-        # FIXME: We can get the O/S and version from test_platform_name()
-        # and version() for now, but those should go away and be cleaned up
-        # with more generic methods like operation_system() and os_version()
-        # or something.
-        if port:
-            port_version = port.version()
-        self.os = os or port.test_platform_name().replace('-' + port_version, '')
-        self.version = version or port_version
+        self.os = os or port.operating_system()
+        self.version = version or port.version()
         self.architecture = architecture or port.architecture()
         self.build_type = build_type or port._options.configuration.lower()
         self.graphics_type = graphics_type or port.graphics_type()

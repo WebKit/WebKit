@@ -1,5 +1,50 @@
 2011-04-01  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Tony Chang.
+
+        This patch completes the cleanup of
+        rebaseline-chromium-webkit-tests to work with all of the
+        variants of a platform (we can now rebaseline gpu- and non-gpu
+        files at the same time).
+
+        When the rebaselining is complete, any lines declared as
+        REBASELINE in the expectations file that matches a test that was
+        actually rebaselined will be deleted, even if only one of the
+        variants was actually rebaselined. This may cause odd problems,
+        but is better than where we're at today.
+
+        This change removes the -g flag and deprecates -w. The -g flag is gone
+        because GPU baselines are handled just like any other variant.
+        The -w flag is deprecated because this tool now only works
+        against the canaries, since that's the only place we have a full
+        set of bots. It will be trivial to change this to
+        build.webkit.org if we decide that's where we want them to be.
+
+        Also, this patch deletes a lot of cruft that is no longer needed
+        in the test_expectations code and the port-specific code.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55191
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py:
+
+2011-04-01  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Adam Barth.
 
         rebaseline-chromium-webkit-tests does not work correctly with

@@ -38,9 +38,11 @@ _log = logging.getLogger("webkitpy.layout_tests.port.win")
 class WinPort(WebKitPort):
     """WebKit Win implementation of the Port class."""
 
-    def __init__(self, **kwargs):
-        kwargs.setdefault('port_name', 'win')
-        WebKitPort.__init__(self, **kwargs)
+    def __init__(self, port_name=None, **kwargs):
+        port_name = port_name or 'win'
+        WebKitPort.__init__(self, port_name=port_name, **kwargs)
+        self._version = 'win7'
+        self._operating_system = 'win'
 
     def baseline_search_path(self):
         # Based on code from old-run-webkit-tests expectedDirectoryForTest()

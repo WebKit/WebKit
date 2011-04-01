@@ -47,19 +47,17 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         'x86': ['chromium-linux', 'chromium-win', 'chromium', 'win', 'mac'],
     }
 
-    def __init__(self, port_name=None, rebaselining=False, **kwargs):
+    def __init__(self, port_name=None, **kwargs):
         port_name = port_name or 'chromium-linux'
         chromium.ChromiumPort.__init__(self, port_name=port_name, **kwargs)
 
         # We re-set the port name once the base object is fully initialized
         # in order to be able to find the DRT binary properly.
-        if port_name.endswith('-linux') and not rebaselining:
+        if port_name.endswith('-linux'):
             self._architecture = self._determine_architecture()
             # FIXME: this is an ugly hack to avoid renaming the GPU port.
             if port_name == 'chromium-linux':
                 port_name = port_name + '-' + self._architecture
-        elif rebaselining:
-            self._architecture = 'x86'
         else:
             base, arch = port_name.rsplit('-', 1)
             assert base in ('chromium-linux', 'chromium-gpu-linux')
@@ -68,6 +66,9 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         assert port_name in ('chromium-linux', 'chromium-gpu-linux',
                              'chromium-linux-x86', 'chromium-linux-x86_64')
         self._name = port_name
+        self._operating_system = 'linux'
+        # FIXME: add support for 'lucid'
+        self._version = 'hardy'
 
     def _determine_architecture(self):
         driver_path = self._path_to_driver()
@@ -113,14 +114,6 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
             _log.error('    http://code.google.com/p/chromium/wiki/'
                        'LinuxBuildInstructions')
         return result
-
-    def test_platform_name(self):
-        # We use 'linux' instead of 'chromium-linux' in test_expectations.txt.
-        return 'linux'
-
-    def version(self):
-        # FIXME: add support for Lucid.
-        return 'hardy'
 
     #
     # PROTECTED METHODS

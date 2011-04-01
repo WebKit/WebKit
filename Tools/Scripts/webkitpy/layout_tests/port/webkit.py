@@ -327,12 +327,6 @@ class WebKitPort(base.Port):
         tests_to_skip.update(self._tests_for_disabled_features())
         return tests_to_skip
 
-    def test_platform_name(self):
-        return self._name + self.version()
-
-    def test_platform_names(self):
-        return ('mac', 'win', 'mac-tiger', 'mac-leopard', 'mac-snowleopard')
-
     def _build_path(self, *comps):
         return self._filesystem.join(self._config.build_directory(
             self.get_option('configuration')), *comps)

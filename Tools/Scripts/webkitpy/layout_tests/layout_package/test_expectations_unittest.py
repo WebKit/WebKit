@@ -377,7 +377,19 @@ BUG_TEST WIN-XP : passes/text.html = TEXT
 
 class RebaseliningTest(Base):
     """Test rebaselining-specific functionality."""
-    # FIXME: add in tests once we are actually deleting lines again.
+    def assertRemove(self, input_expectations, tests, expected_expectations):
+        self.parse_exp(input_expectations)
+        actual_expectations = self._exp.remove_rebaselined_tests(tests)
+        self.assertEqual(expected_expectations, actual_expectations)
+
+    def test_remove(self):
+        self.assertRemove('BUGX REBASELINE : failures/expected/text.html = TEXT\n'
+                          'BUGY : failures/expected/image.html = IMAGE\n'
+                          'BUGZ REBASELINE : failures/expected/crash.html = CRASH\n',
+                          ['failures/expected/text.html'],
+                          'BUGY : failures/expected/image.html = IMAGE\n'
+                          'BUGZ REBASELINE : failures/expected/crash.html = CRASH\n')
+
     def test_no_get_rebaselining_failures(self):
         self.parse_exp(self.get_basic_expectations())
         self.assertEqual(len(self._exp.get_rebaselining_failures()), 0)

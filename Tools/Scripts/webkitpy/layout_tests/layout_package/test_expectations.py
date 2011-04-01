@@ -166,6 +166,9 @@ class TestExpectations:
     def has_modifier(self, test, modifier):
         return self._expected_failures.has_modifier(test, modifier)
 
+    def remove_rebaselined_tests(self, tests):
+        return self._expected_failures.remove_rebaselined_tests(tests)
+
 
 def strip_comments(line):
     """Strips comments from a line and return None if the line is empty
@@ -431,6 +434,15 @@ class TestExpectationsFile:
 
     def get_non_fatal_errors(self):
         return self._non_fatal_errors
+
+    def remove_rebaselined_tests(self, tests):
+        """Returns a copy of the expectations with the tests removed."""
+        lines = []
+        for (lineno, line) in enumerate(self._get_iterable_expectations(self._expectations)):
+            test, options, _ = self.parse_expectations_line(line, lineno)
+            if not (test and test in tests and 'rebaseline' in options):
+                lines.append(line)
+        return ''.join(lines)
 
     def parse_expectations_line(self, line, lineno):
         """Parses a line from test_expectations.txt and returns a tuple

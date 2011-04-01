@@ -127,16 +127,6 @@ class ChromiumWinTest(port_testcase.PortTestCase):
         self.assertRaises(KeyError, self.assert_name, None, (5, 2), 'chromium-win-xp')
         self.assertRaises(KeyError, self.assert_name, None, (7, 1), 'chromium-win-xp')
 
-    def test_generic_rebaselining_port(self):
-        port = chromium_win.ChromiumWinPort(rebaselining=True)
-        self.assertEquals(port.name(), 'chromium-win')
-        self.assertEquals(port.version(), '')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path(port.name()))
-
-        port = chromium_win.ChromiumWinPort(port_name='chromium-win-xp', rebaselining=True)
-        self.assertEquals(port.name(), 'chromium-win-xp')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path(port.name()))
-
     def test_baseline_path(self):
         port = chromium_win.ChromiumWinPort(port_name='chromium-win-xp')
         self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-win-xp'))

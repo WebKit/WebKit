@@ -64,34 +64,16 @@ _log = logging.getLogger(__name__)
 
 BASELINE_SUFFIXES = ('.txt', '.png', '.checksum')
 
-# Only the WebKit canaries have a full complement of bots. The GPU
-# bots don't have version-specific baselines yet. We only have the three
-# main Deps bots.
-
-# By running the test in this order we ensure that if a later test is a
-# duplicate of any earlier one, we'll notice it and only keep one copy.
-REBASELINE_GPU_ORDER = ['mac', 'win', 'linux']
-REBASELINE_WEBKIT_CANARY_ORDER = ['mac-snowleopard', 'mac-leopard',
-                                  'win-win7', 'win-vista', 'win-xp',
-                                  'linux']
-REBASELINE_PLATFORM_ORDER = ['mac', 'win', 'linux']
-
-ARCHIVE_DIR_NAME_DICT = {'win': 'Webkit_Win__deps_',
-                         'win-vista': 'webkit-dbg-vista',
-                         'win-xp': 'Webkit_Win__deps_',
-                         'mac': 'Webkit_Mac10_5__deps_',
-                         'linux': 'Webkit_Linux__deps_',
-
-                         'win-win7-canary': 'Webkit_Win7',
-                         'win-vista-canary': 'Webkit_Vista',
-                         'win-xp-canary': 'Webkit_Win',
-                         'mac-leopard-canary': 'Webkit_Mac10_5',
-                         'mac-snowleopard-canary': 'Webkit_Mac10_6',
-                         'linux-canary': 'Webkit_Linux',
-
-                         'gpu-mac-canary': 'Webkit_Mac10_5_-_GPU',
-                         'gpu-win-canary': 'Webkit_Win_-_GPU',
-                         'gpu-linux-canary': 'Webkit_Linux_-_GPU',
+ARCHIVE_DIR_NAME_DICT = {
+    'chromium-win-win7': 'Webkit_Win7',
+    'chromium-win-vista': 'Webkit_Vista',
+    'chromium-win-xp': 'Webkit_Win',
+    'chromium-mac-leopard': 'Webkit_Mac10_5',
+    'chromium-mac-snowleopard': 'Webkit_Mac10_6',
+    'chromium-linux': 'Webkit_Linux',
+    'chromium-gpu-mac-leopard': 'Webkit_Mac10_5_-_GPU',
+    'chromium-gpu-win-xp': 'Webkit_Win_-_GPU',
+    'chromium-gpu-linux': 'Webkit_Linux_-_GPU',
 }
 
 
@@ -182,11 +164,7 @@ class Rebaseliner(object):
         self._filesystem = running_port._filesystem
         self._target_port = target_port
 
-        # FIXME: See the comments in chromium_{win,mac}.py about why we need
-        # the 'rebaselining' keyword.
-        self._rebaseline_port = port.get(
-            self._target_port.test_platform_name_to_name(platform), options,
-            filesystem=self._filesystem, rebaselining=True)
+        self._rebaseline_port = port.get(platform, options, filesystem=self._filesystem)
         self._rebaselining_tests = set()
         self._rebaselined_tests = []
 
@@ -201,7 +179,7 @@ class Rebaseliner(object):
         self._zip_factory = zip_factory
         self._scm = scm
 
-    def run(self, backup):
+    def run(self):
         """Run rebaseline process."""
 
         log_dashed_string('Compiling rebaselining tests', self._platform)
@@ -236,7 +214,7 @@ class Rebaseliner(object):
 
         return True
 
-    def remove_rebaselined_tests_from_expectations(self, tests, backup):
+    def remove_rebaselining_expectations(self, tests, backup):
         """if backup is True, we backup the original test expectations file."""
         new_expectations = self._test_expectations.remove_rebaselined_tests(tests)
         path = self._target_port.path_to_test_expectations_file()
@@ -335,13 +313,7 @@ class Rebaseliner(object):
         if self._options.force_archive_url:
             return self._options.force_archive_url
 
-        platform = self._platform
-        if self._options.webkit_canary:
-            platform += '-canary'
-        if self._options.gpu:
-            platform = 'gpu-' + platform
-
-        dir_name = self._get_archive_dir_name(platform)
+        dir_name = self._get_archive_dir_name(self._platform)
         if not dir_name:
             return None
 
@@ -377,8 +349,7 @@ class Rebaseliner(object):
         for name in zip_namelist:
             _log.debug('  ' + name)
 
-        platform = self._rebaseline_port.test_platform_name_to_name(self._platform)
-        _log.debug('Platform dir: "%s"', platform)
+        _log.debug('Platform dir: "%s"', self._platform)
 
         self._rebaselined_tests = []
         for test_no, test in enumerate(self._rebaselining_tests):
@@ -815,10 +786,6 @@ def parse_options(args):
                              action='store_true',
                              help='Suppress result HTML viewing')
 
-    option_parser.add_option('-g', '--gpu',
-                            action='store_true', default=False,
-                            help='Rebaseline the GPU versions')
-
     option_parser.add_option('-p', '--platforms',
                              default=None,
                              help=('Comma delimited list of platforms '
@@ -832,12 +799,6 @@ def parse_options(args):
     option_parser.add_option('-U', '--force_archive_url',
                              help=('Url of result zip file. This option is for debugging '
                                    'purposes'))
-
-    option_parser.add_option('-w', '--webkit_canary',
-                             action='store_true',
-                             default=False,
-                             help=('If True, pull baselines from webkit.org '
-                                   'canary bot.'))
 
     option_parser.add_option('-b', '--backup',
                              action='store_true',
@@ -856,21 +817,21 @@ def parse_options(args):
                              help=('Use ImageDiff from DumpRenderTree instead '
                                    'of image_diff for pixel tests.'))
 
+    option_parser.add_option('-w', '--webkit_canary',
+                             action='store_true',
+                             default=False,
+                             help=('DEPRECATED. This flag no longer has any effect.'
+                                   '  The canaries are always used.'))
+
     option_parser.add_option('', '--target-platform',
                              default='chromium',
                              help=('The target platform to rebaseline '
                                    '("mac", "chromium", "qt", etc.). Defaults '
                                    'to "chromium".'))
-    options = option_parser.parse_args(args)[0]
-    if options.gpu:
-        options.all_platforms = REBASELINE_GPU_ORDER
-    elif options.webkit_canary:
-        options.all_platforms = REBASELINE_WEBKIT_CANARY_ORDER
-    else:
-        options.all_platforms = REBASELINE_PLATFORM_ORDER
 
-    if options.platforms == None:
-        options.platforms = ','.join(options.all_platforms)
+    options = option_parser.parse_args(args)[0]
+    if options.webkit_canary:
+        print "-w/--webkit-canary is no longer necessary, ignoring."
 
     target_options = copy.copy(options)
     if options.target_platform == 'chromium':
@@ -933,30 +894,21 @@ def real_main(options, target_options, host_port_obj, target_port_obj, url_fetch
             the archives.
         scm_obj: object used to add new baselines to the source control system.
     """
-    # Verify 'platforms' option is valid.
-    if not options.platforms:
-        _log.error('Invalid "platforms" option. --platforms must be '
-                   'specified in order to rebaseline.')
-        return 1
-    platforms = [p.strip().lower() for p in options.platforms.split(',')]
-    for platform in platforms:
-        if not platform in options.all_platforms:
-            _log.error('Invalid platform: "%s"' % (platform))
-            return 1
-
-    # Adjust the platform order so rebaseline tool is running at the order of
-    # 'mac', 'win' and 'linux'. This is in same order with layout test baseline
-    # search paths. It simplifies how the rebaseline tool detects duplicate
-    # baselines. Check _IsDupBaseline method for details.
-    rebaseline_platforms = []
-    for platform in options.all_platforms:
-        if platform in platforms:
-            rebaseline_platforms.append(platform)
-
     options.html_directory = setup_html_directory(host_port_obj._filesystem, options.html_directory)
+    all_platforms = target_port_obj.all_baseline_variants()
+    if options.platforms:
+        bail = False
+        for platform in options.platforms:
+            if not platform in all_platforms:
+                _log.error('Invalid platform: "%s"' % (platform))
+                bail = True
+        if bail:
+            return 1
+        rebaseline_platforms = options.platforms
+    else:
+        rebaseline_platforms = all_platforms
 
     rebaselined_tests = set()
-    backup = options.backup
     for platform in rebaseline_platforms:
         rebaseliner = Rebaseliner(host_port_obj, target_port_obj,
                                   platform, options, url_fetcher, zip_factory,
@@ -964,17 +916,16 @@ def real_main(options, target_options, host_port_obj, target_port_obj, url_fetch
 
         _log.info('')
         log_dashed_string('Rebaseline started', platform)
-        if rebaseliner.run(backup):
+        if rebaseliner.run():
             log_dashed_string('Rebaseline done', platform)
         else:
             log_dashed_string('Rebaseline failed', platform, logging.ERROR)
 
         rebaselined_tests |= set(rebaseliner.get_rebaselined_tests())
 
-    # FIXME: need to reenable this after we are correctly running all
-    # configurations.
-    #if rebaselined_tests:
-    #    rebaseliner.remove_rebaselined_tests_from_expectations(rebaselined_tests, backup)
+    if rebaselined_tests:
+        rebaseliner.remove_rebaselining_expectations(rebaselined_tests,
+                                                     options.backup)
 
     _log.info('')
     log_dashed_string('Rebaselining result comparison started', None)

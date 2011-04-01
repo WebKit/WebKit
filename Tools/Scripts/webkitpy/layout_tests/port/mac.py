@@ -73,15 +73,15 @@ class MacPort(WebKitPort):
 
     def __init__(self, port_name=None, os_version_string=None, **kwargs):
         port_name = port_name or 'mac'
-
+        WebKitPort.__init__(self, port_name=port_name, **kwargs)
         if port_name == 'mac':
             self._version = os_version(os_version_string)
-            port_name = port_name + '-' + self._version
+            self._name = port_name + '-' + self._version
         else:
             self._version = port_name[4:]
             assert self._version in self.SUPPORTED_VERSIONS
 
-        WebKitPort.__init__(self, port_name=port_name, **kwargs)
+        self._operating_system = 'mac'
 
     def default_child_processes(self):
         # FIXME: new-run-webkit-tests is unstable on Mac running more than
@@ -114,12 +114,6 @@ class MacPort(WebKitPort):
         skipped_files.append(self._filesystem.join(self._webkit_baseline_path('mac'),
                                           'Skipped'))
         return skipped_files
-
-    def test_platform_name(self):
-        return 'mac-' + self.version()
-
-    def version(self):
-        return self._version
 
     def _build_java_test_support(self):
         java_tests_path = self._filesystem.join(self.layout_tests_dir(), "java")

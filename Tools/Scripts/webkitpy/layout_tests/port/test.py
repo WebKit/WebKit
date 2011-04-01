@@ -220,23 +220,40 @@ WONTFIX SKIP : failures/expected/exception.html = CRASH
 
 class TestPort(base.Port):
     """Test implementation of the Port interface."""
+    ALL_BASELINE_VARIANTS = (
+        'test-mac-snowleopard', 'test-mac-leopard',
+        'test-win-win7', 'test-win-vista', 'test-win-xp',
+        'test-linux',
+    )
 
     def __init__(self, port_name=None, user=None, filesystem=None, **kwargs):
-        if not filesystem:
-            filesystem = unit_test_filesystem()
+        if not port_name or port_name == 'test':
+            port_name = 'test-mac-leopard'
+        user = user or mocktool.MockUser()
+        filesystem = filesystem or unit_test_filesystem()
+        base.Port.__init__(self, port_name=port_name, filesystem=filesystem, user=user,
+                           **kwargs)
 
         assert filesystem._tests
         self._tests = filesystem._tests
 
-        if not user:
-            user = mocktool.MockUser()
+        self._operating_system = 'mac'
+        if port_name.startswith('test-win'):
+            self._operating_system = 'win'
+        elif port_name.startswith('test-linux'):
+            self._operating_system = 'linux'
 
-        if not port_name or port_name == 'test':
-            port_name = 'test-mac-leopard'
+        version_map = {
+            'test-win-xp': 'xp',
+            'test-win-win7': 'win7',
+            'test-win-vista': 'vista',
+            'test-mac-leopard': 'leopard',
+            'test-mac-snowleopard': 'snowleopard',
+            'test-linux': '',
+        }
+        self._version = version_map[port_name]
 
         self._expectations_path = LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt'
-        base.Port.__init__(self, port_name=port_name, filesystem=filesystem, user=user,
-                           **kwargs)
 
     def _path_to_driver(self):
         # This routine shouldn't normally be called, but it is called by
@@ -311,19 +328,8 @@ class TestPort(base.Port):
     def path_to_test_expectations_file(self):
         return self._expectations_path
 
-    def test_platform_name(self):
-        return self.name()[5:]
-
-    def test_platform_names(self):
-        return ('mac-leopard', 'mac-snowleopard',
-                'win-xp', 'win-vista', 'win-win7',
-                'linux')
-
-    def test_platform_name_to_name(self, test_platform_name):
-        if test_platform_name in self.test_platform_names():
-            return 'test-' + test_platform_name
-        raise ValueError('Unsupported test_platform_name: %s' %
-                         test_platform_name)
+    def all_baseline_variants(self):
+        return self.ALL_BASELINE_VARIANTS
 
     # FIXME: These next two routines are copied from base.py with
     # the calls to path.abspath_to_uri() removed. We shouldn't have
@@ -383,22 +389,6 @@ class TestPort(base.Port):
 
         raise NotImplementedError('unknown url type: %s' % uri)
 
-    def version(self):
-        version_map = {
-            'test-win-xp': 'xp',
-            'test-win-win7': 'win7',
-            'test-win-vista': 'vista',
-            'test-mac-leopard': 'leopard',
-            'test-mac-snowleopard': 'snowleopard',
-            'test-linux': '',
-        }
-        return version_map[self._name]
-
-    def test_configuration(self):
-        if not self._test_configuration:
-            self._test_configuration = TestTestConfiguration(self)
-        return self._test_configuration
-
 
 class TestDriver(base.Driver):
     """Test/Dummy implementation of the DumpRenderTree interface."""
@@ -432,10 +422,3 @@ class TestDriver(base.Driver):
 
     def stop(self):
         pass
-
-
-class TestTestConfiguration(base.TestConfiguration):
-    def all_systems(self):
-        return (('mac', 'leopard', 'x86'),
-                ('win', 'xp', 'x86'),
-                ('win', 'win7', 'x86'))

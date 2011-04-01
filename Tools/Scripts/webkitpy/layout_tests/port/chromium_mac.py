@@ -60,38 +60,20 @@ class ChromiumMacPort(chromium.ChromiumPort):
             'mac-snowleopard',
             'mac',
         ],
-        '': [
-            'chromium-mac',
-            'chromium',
-            'mac',
-        ],
     }
 
-    def __init__(self, port_name=None, os_version_string=None, rebaselining=False, **kwargs):
+    def __init__(self, port_name=None, os_version_string=None, **kwargs):
         # We're a little generic here because this code is reused by the
         # 'google-chrome' port as well as the 'mock-' and 'dryrun-' ports.
         port_name = port_name or 'chromium-mac'
-
+        chromium.ChromiumPort.__init__(self, port_name=port_name, **kwargs)
         if port_name.endswith('-mac'):
-            # FIXME: The rebaselining flag is an ugly hack that lets us create an
-            # "chromium-mac" port that is not version-specific. It should only be
-            # used by rebaseline-chromium-webkit-tests to explicitly put files into
-            # the generic directory. In theory we shouldn't need this, because
-            # the newest mac port should be using 'chromium-mac' as the baseline
-            # directory. However, we also don't have stable SL bots :(
-            #
-            # When we remove this FIXME, we also need to remove '' as a valid
-            # fallback key in self.FALLBACK_PATHS.
-            if rebaselining:
-                self._version = ''
-            else:
-                self._version = mac.os_version(os_version_string, self.SUPPORTED_OS_VERSIONS)
-                port_name = port_name + '-' + self._version
+            self._version = mac.os_version(os_version_string, self.SUPPORTED_OS_VERSIONS)
+            self._name = port_name + '-' + self._version
         else:
             self._version = port_name[port_name.index('-mac-') + 5:]
             assert self._version in self.SUPPORTED_OS_VERSIONS
-
-        chromium.ChromiumPort.__init__(self, port_name=port_name, **kwargs)
+        self._operating_system = 'mac'
 
     def baseline_path(self):
         if self.version() == 'snowleopard':
@@ -122,15 +104,6 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
     def driver_name(self):
         return "DumpRenderTree"
-
-    def test_platform_name(self):
-        # We use 'mac' instead of 'chromium-mac'
-
-        # FIXME: Get rid of this method after rebaseline_chromium_webkit_tests dies.
-        return 'mac'
-
-    def version(self):
-        return self._version
 
     #
     # PROTECTED METHODS
