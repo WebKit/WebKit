@@ -1,3 +1,26 @@
+2011-04-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r82712, r82729, and r82746.
+        http://trac.webkit.org/changeset/82712
+        http://trac.webkit.org/changeset/82729
+        http://trac.webkit.org/changeset/82746
+        https://bugs.webkit.org/show_bug.cgi?id=57682
+
+        fast/frames/frame-programmatic-noresize.html is failing on
+        Windows bots. Will look into this offline. (Requested by dydx
+        on #webkit).
+
+        * fast/frames/frame-inherit-noresize-from-frameset-expected.txt: Removed.
+        * fast/frames/frame-inherit-noresize-from-frameset.html: Removed.
+        * fast/frames/frame-programmatic-noresize-expected.txt: Removed.
+        * fast/frames/frame-programmatic-noresize.html: Removed.
+        * fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize-expected.txt: Removed.
+        * fast/frames/frame-with-noresize-can-be-resized-after-removal-of-noresize.html: Removed.
+        * fast/frames/frame-with-noresize-can-be-resized-after-setting-noResize-to-false-expected.txt: Removed.
+        * fast/frames/frame-with-noresize-can-be-resized-after-setting-noResize-to-false.html: Removed.
+        * fast/frames/resources/frame-programmatic-resize.js: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-01  Adam Barth  <abarth@webkit.org>
 
         Mark failing test as failing.

@@ -29,7 +29,6 @@ namespace WebCore {
 
 class HTMLFrameSetElement;
 class MouseEvent;
-class RenderFrame;
 
 enum FrameEdge { LeftFrameEdge, RightFrameEdge, TopFrameEdge, BottomFrameEdge };
 
@@ -70,8 +69,6 @@ public:
 
     bool canResizeRow(const IntPoint&) const;
     bool canResizeColumn(const IntPoint&) const;
-
-    void notifyFrameEdgeInfoChanged();
 
 private:
     static const int noSplit = -1;

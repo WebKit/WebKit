@@ -34,7 +34,7 @@ public:
 
     bool hasFrameBorder() const { return m_frameBorder; }
 
-    bool noResize() const;
+    bool noResize() const { return m_noResize; }
 
 private:
     HTMLFrameElement(const QualifiedName&, Document*);
@@ -48,6 +48,8 @@ private:
 
     bool m_frameBorder;
     bool m_frameBorderSet;
+
+    bool m_noResize;
 };
 
 } // namespace WebCore

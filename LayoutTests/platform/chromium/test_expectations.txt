@@ -3290,7 +3290,3 @@ BUGWK57547 WIN GPU : fast/canvas/canvas-fillPath-pattern-shadow.html = TIMEOUT
 // Flaky since creation because we lack layoutTestController.setSerializeHTTPLoads
 BUGWK57593 : fast/preloader/document-write-2.html = TEXT
 BUGWK57593 : fast/preloader/document-write.html = TEXT
-
-// This test is failing.  The plan is to rollout the change that introduced the
-// test shortly, but I'm marking the test here for the time being.
-BUG_DBATES WIN : fast/frames/frame-programmatic-noresize.html = TEXT
