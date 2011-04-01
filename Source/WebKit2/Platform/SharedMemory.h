@@ -82,6 +82,10 @@ public:
     // Create a shared memory object from the given handle and the requested protection. Will return 0 on failure.
     static PassRefPtr<SharedMemory> create(const Handle&, Protection);
     
+#if PLATFORM(WIN)
+    static PassRefPtr<SharedMemory> adopt(HANDLE, size_t, Protection);
+#endif
+
     ~SharedMemory();
 
     bool createHandle(Handle&, Protection);

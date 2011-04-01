@@ -145,23 +145,32 @@ static DWORD accessRights(SharedMemory::Protection protection)
 
 PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection protection)
 {
-    if (handle.isNull())
+    RefPtr<SharedMemory> memory = adopt(handle.m_handle, handle.m_size, protection);
+    if (!memory)
+        return 0;
+
+    // The SharedMemory object now owns the HANDLE.
+    handle.m_handle = 0;
+
+    return memory.release();
+}
+
+PassRefPtr<SharedMemory> SharedMemory::adopt(HANDLE handle, size_t size, Protection protection)
+{
+    if (!handle)
         return 0;
 
     DWORD desiredAccess = accessRights(protection);
 
-    void* baseAddress = ::MapViewOfFile(handle.m_handle, desiredAccess, 0, 0, handle.m_size);
+    void* baseAddress = ::MapViewOfFile(handle, desiredAccess, 0, 0, size);
     ASSERT_WITH_MESSAGE(baseAddress, "::MapViewOfFile failed with error %lu", ::GetLastError());
     if (!baseAddress)
         return 0;
 
     RefPtr<SharedMemory> memory = adoptRef(new SharedMemory);
-    memory->m_size = handle.m_size;
+    memory->m_size = size;
     memory->m_data = baseAddress;
-
-    // Adopt the HANDLE.
-    memory->m_handle = handle.m_handle;
-    handle.m_handle = 0;
+    memory->m_handle = handle;
 
     return memory.release();
 }
