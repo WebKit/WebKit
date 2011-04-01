@@ -159,7 +159,6 @@ extern void (*wkSetHTTPPipeliningPriority)(NSMutableURLRequest *, int priority);
 extern void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
 extern void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 extern CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL);
-extern BOOL (*wkIsLatchingWheelEvent)(NSEvent *);
 
 #ifndef BUILDING_ON_TIGER
 extern void (*wkGetGlyphsForCharacters)(CGFontRef, const UniChar[], CGGlyph[], size_t);
@@ -187,6 +186,15 @@ extern BOOL (*wkUseSharedMediaUI)();
 extern void* wkGetHyphenationLocationBeforeIndex;
 #else
 extern CFIndex (*wkGetHyphenationLocationBeforeIndex)(CFStringRef string, CFIndex index);
+
+typedef enum {
+    wkEventPhaseNone = 0,
+    wkEventPhaseBegan = 1,
+    wkEventPhaseChanged = 2,
+    wkEventPhaseEnded = 3,
+} wkEventPhase;
+
+extern int (*wkGetNSEventMomentumPhase)(NSEvent *);
 #endif
 
 extern CTLineRef (*wkCreateCTLineWithUniCharProvider)(const UniChar* (*provide)(CFIndex stringIndex, CFIndex* charCount, CFDictionaryRef* attributes, void*), void (*dispose)(const UniChar* chars, void*), void*);

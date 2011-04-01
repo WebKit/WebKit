@@ -35,8 +35,9 @@ namespace WebCore {
 
 static PlatformWheelEventPhase momentumPhaseForEvent(NSEvent *event)
 {
+    uint32_t phase = PlatformWheelEventPhaseNone;
+
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    uint32_t phase = PlatformWheelEventPhaseNone; 
     if ([event momentumPhase] & NSEventPhaseBegan)
         phase |= PlatformWheelEventPhaseBegan;
     if ([event momentumPhase] & NSEventPhaseStationary)
@@ -47,11 +48,24 @@ static PlatformWheelEventPhase momentumPhaseForEvent(NSEvent *event)
         phase |= PlatformWheelEventPhaseEnded;
     if ([event momentumPhase] & NSEventPhaseCancelled)
         phase |= PlatformWheelEventPhaseCancelled;
-    return static_cast<PlatformWheelEventPhase>(phase);
 #else
-    UNUSED_PARAM(event);
-    return PlatformWheelEventPhaseNone;
+    switch (wkGetNSEventMomentumPhase(event)) {
+    case wkEventPhaseNone:
+        phase = PlatformWheelEventPhaseNone;
+        break;
+    case wkEventPhaseBegan:
+        phase = PlatformWheelEventPhaseBegan;
+        break;
+    case wkEventPhaseChanged:
+        phase = PlatformWheelEventPhaseChanged;
+        break;
+    case wkEventPhaseEnded:
+        phase = PlatformWheelEventPhaseEnded;
+        break;
+    }
 #endif
+
+    return static_cast<PlatformWheelEventPhase>(phase);
 }
 
 static PlatformWheelEventPhase phaseForEvent(NSEvent *event)

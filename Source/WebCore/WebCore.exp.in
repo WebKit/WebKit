@@ -1343,7 +1343,6 @@ _wkGetWheelEventDeltas
 _wkHTTPCookiesForURL
 _wkHitTestMediaUIPart
 _wkInitializeMaximumHTTPConnectionCountPerHost
-_wkIsLatchingWheelEvent
 _wkMeasureMediaUIPart
 _wkMediaControllerThemeAvailable
 _wkPopupMenu
@@ -1425,6 +1424,8 @@ _wkSetScrollbarPainterTrackAlpha
 _wkVerticalScrollbarPainterForController
 _wkWillEndLiveResize
 _wkWillStartLiveResize
+#else
+_wkGetNSEventMomentumPhase
 #endif
 
 _wkUnregisterUniqueIdForElement

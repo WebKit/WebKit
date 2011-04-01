@@ -113,8 +113,6 @@ bool EventHandler::wheelEvent(NSEvent *event)
 
     CurrentEventScope scope(event);
 
-    m_useLatchedWheelEventNode = wkIsLatchingWheelEvent(event);
-    
     PlatformWheelEvent wheelEvent(event, page->chrome()->platformPageClient());
     handleWheelEvent(wheelEvent);
 

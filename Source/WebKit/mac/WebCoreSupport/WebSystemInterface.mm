@@ -68,7 +68,6 @@ void InitWebCoreSystemInterface(void)
     INIT(GetWheelEventDeltas);
     INIT(HitTestMediaUIPart);
     INIT(InitializeMaximumHTTPConnectionCountPerHost);
-    INIT(IsLatchingWheelEvent);
     INIT(MeasureMediaUIPart);
     INIT(MediaControllerThemeAvailable);
     INIT(PopupMenu);
@@ -119,9 +118,11 @@ void InitWebCoreSystemInterface(void)
 
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
     INIT(GetHyphenationLocationBeforeIndex);
+    INIT(GetNSEventMomentumPhase);
 #endif
 
     INIT(CreateCTLineWithUniCharProvider);
+
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     INIT(IOSurfaceContextCreate);
     INIT(IOSurfaceContextCreateImage);

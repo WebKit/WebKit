@@ -1,3 +1,16 @@
+2011-04-01  Timothy Hatcher  <timothy@apple.com>
+
+        Make momentum scroll event latching work in WebKit2 on Mac.
+
+        <rdar://problem/8751861>
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::momentumPhaseForEvent): Return a phase on older Mac system by using WKGetNSEventMomentumPhase.
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Remove IsLatchingWheelEvent, add GetNSEventMomentumPhase.
+
 2011-04-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -2041,6 +2041,10 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
     HitTestResult result(vPoint);
     doc->renderView()->layer()->hitTest(request, result);
 
+#if PLATFORM(MAC)
+    m_useLatchedWheelEventNode = e.momentumPhase() == PlatformWheelEventPhaseBegan || e.momentumPhase() == PlatformWheelEventPhaseChanged;
+#endif
+
     if (m_useLatchedWheelEventNode) {
         if (!m_latchedWheelEventNode) {
             m_latchedWheelEventNode = result.innerNode();

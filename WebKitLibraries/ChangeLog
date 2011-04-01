@@ -1,3 +1,15 @@
+2011-04-01  Timothy Hatcher  <timothy@apple.com>
+
+        Make momentum scroll event latching work in WebKit2 on Mac.
+
+        <rdar://problem/8751861>
+
+        Reviewed by Darin Adler.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a: Updated to remove WKIsLatchingWheelEvent and add WKGetNSEventMomentumPhase.
+        * libWebKitSystemInterfaceSnowLeopard.a: Ditto.
+
 2011-03-30  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

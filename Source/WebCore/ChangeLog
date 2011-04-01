@@ -1,3 +1,23 @@
+2011-04-01  Timothy Hatcher  <timothy@apple.com>
+
+        Make momentum scroll event latching work in WebKit2 on Mac.
+
+        <rdar://problem/8751861>
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in: Remove _wkIsLatchingWheelEvent, add _wkGetNSEventMomentumPhase.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent): Set m_useLatchedWheelEventNode based on the
+        event's momentumPhase.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::wheelEvent): Remove the setting of m_useLatchedWheelEventNode.
+        It is now done in EventHandler::handleWheelEvent.
+        * platform/mac/WebCoreSystemInterface.h: Remove wkIsLatchingWheelEvent, add wkGetNSEventMomentumPhase.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+        * platform/mac/WheelEventMac.mm:
+        (WebCore::momentumPhaseForEvent): Return a phase on older Mac system by using wkGetNSEventMomentumPhase.
+
 2011-04-01  Steve Block  <steveblock@google.com>
 
         Reviewed by Jeremy Orlow.

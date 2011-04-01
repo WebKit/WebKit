@@ -65,7 +65,6 @@ void InitWebCoreSystemInterface(void)
         INIT(GetWheelEventDeltas);
         INIT(HitTestMediaUIPart);
         INIT(InitializeMaximumHTTPConnectionCountPerHost);
-        INIT(IsLatchingWheelEvent);
         INIT(MeasureMediaUIPart);
         INIT(MediaControllerThemeAvailable);
         INIT(PopupMenu);
@@ -138,6 +137,7 @@ void InitWebCoreSystemInterface(void)
         INIT(ScrollbarPainterUsesOverlayScrollers);
 #else
         INIT(GetHyphenationLocationBeforeIndex);
+        INIT(GetNSEventMomentumPhase);
 #endif
         
         INIT(GetAXTextMarkerTypeID);

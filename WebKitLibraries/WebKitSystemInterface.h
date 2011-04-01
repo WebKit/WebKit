@@ -358,7 +358,16 @@ void WKSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumber
 void WKSetCONNECTProxyAuthorizationForStream(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 CFHTTPMessageRef WKCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseURL);
 
-BOOL WKIsLatchingWheelEvent(NSEvent *);
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+typedef enum {
+    WKEventPhaseNone = 0,
+    WKEventPhaseBegan = 1,
+    WKEventPhaseChanged = 2,
+    WKEventPhaseEnded = 3,
+} WKEventPhase;
+
+int WKGetNSEventMomentumPhase(NSEvent *);
+#endif
 
 #ifndef BUILDING_ON_TIGER
 void WKWindowSetAlpha(NSWindow *window, float alphaValue);
@@ -447,6 +456,10 @@ void WKContentAreaDidShow(WKScrollbarPainterControllerRef);
 void WKContentAreaDidHide(WKScrollbarPainterControllerRef);
 
 bool WKScrollbarPainterUsesOverlayScrollers(void);
+
+NSRange WKExtractWordDefinitionTokenRangeFromContextualString(NSString *contextString, NSRange range, NSDictionary **options);
+void WKShowWordDefinitionWindow(NSAttributedString *term, NSPoint screenPoint, NSDictionary *options);
+void WKHideWordDefinitionWindow(void);
 
 #endif
 

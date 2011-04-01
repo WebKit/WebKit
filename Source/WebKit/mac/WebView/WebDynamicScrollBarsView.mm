@@ -515,7 +515,8 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     BOOL isContinuous;
     WKGetWheelEventDeltas(event, &deltaX, &deltaY, &isContinuous);
 
-    BOOL isLatchingEvent = WKIsLatchingWheelEvent(event);
+    int momentumPhase = WKGetNSEventMomentumPhase(event);
+    BOOL isLatchingEvent = momentumPhase == WKEventPhaseBegan || momentumPhase == WKEventPhaseChanged;
 
     if (fabsf(deltaY) > fabsf(deltaX)) {
         if (![self allowsVerticalScrolling]) {
