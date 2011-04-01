@@ -1,3 +1,13 @@
+2011-04-01  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed expectations update which follows r82693.
+
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-element-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/gtk/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+
 2011-04-01  Darin Adler  <darin@apple.com>
 
         * http/tests/local/formdata/form-data-with-unknown-file-extension-expected.txt: Removed property svn:executable.
