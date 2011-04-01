@@ -827,14 +827,14 @@ WebInspector.NetworkPanel.prototype = {
             this._appendResource(resourcesToPreserve[i]);
     },
 
-    canShowSourceLine: function(url, line)
+    canShowAnchorLocation: function(anchor)
     {
-        return !!this._resourcesByURL[url];
+        return !!this._resourcesByURL[anchor.href];
     },
 
-    showSourceLine: function(url, line)
+    showAnchorLocation: function(anchor)
     {
-        this._showResource(this._resourcesByURL[url], line);
+        this._showResource(this._resourcesByURL[anchor.href], anchor.getAttribute("line_number") - 1);
     },
 
     _showResource: function(resource, line)

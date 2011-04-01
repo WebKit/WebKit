@@ -365,23 +365,23 @@ WebInspector.ResourcesPanel.prototype = {
         }
     },
 
-    canShowSourceLine: function(url, line)
+    canShowAnchorLocation: function(anchor)
     {
-        return !!WebInspector.resourceForURL(url);
+        return !!WebInspector.resourceForURL(anchor.href);
     },
 
-    showSourceLine: function(url, line)
+    showAnchorLocation: function(anchor)
     {
-        var resource = WebInspector.resourceForURL(url);
+        var resource = WebInspector.resourceForURL(anchor.href);
         if (resource.type === WebInspector.Resource.Type.XHR) {
             // Show XHRs in the network panel only.
-            if (WebInspector.panels.network && WebInspector.panels.network.canShowSourceLine(url, line)) {
+            if (WebInspector.panels.network && WebInspector.panels.network.canShowAnchorLocation(anchor)) {
                 WebInspector.currentPanel = WebInspector.panels.network;
-                WebInspector.panels.network.showSourceLine(url, line);
+                WebInspector.panels.network.showAnchorLocation(anchor);
             }
             return;
         }
-        this.showResource(WebInspector.resourceForURL(url), line);
+        this.showResource(resource, anchor.getAttribute("line_number") - 1);
     },
 
     showResource: function(resource, line)
@@ -392,10 +392,8 @@ WebInspector.ResourcesPanel.prototype = {
             resourceTreeElement.select();
         }
 
-        if (line) {
+        if (line !== undefined) {
             var view = WebInspector.ResourceView.resourceViewForResource(resource);
-            if (view.revealLine)
-                view.revealLine(line);
             if (view.highlightLine)
                 view.highlightLine(line);
         }

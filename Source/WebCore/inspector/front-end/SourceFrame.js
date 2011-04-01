@@ -109,14 +109,6 @@ WebInspector.SourceFrame.prototype = {
             this._updateDiffDecorations();
     },
 
-    revealLine: function(lineNumber)
-    {
-        if (this._textViewer)
-            this._textViewer.revealLine(lineNumber - 1, 0);
-        else
-            this._lineNumberToReveal = lineNumber;
-    },
-
     addMessage: function(msg)
     {
         this._messages.push(msg);
@@ -158,7 +150,7 @@ WebInspector.SourceFrame.prototype = {
     highlightLine: function(line)
     {
         if (this._textViewer)
-            this._textViewer.highlightLine(line - 1);
+            this._textViewer.highlightLine(line);
         else
             this._lineToHighlight = line;
     },
@@ -258,11 +250,6 @@ WebInspector.SourceFrame.prototype = {
 
         if (typeof this._executionLineNumber === "number")
             this.setExecutionLine(this._executionLineNumber);
-
-        if (this._lineNumberToReveal) {
-            this.revealLine(this._lineNumberToReveal);
-            delete this._lineNumberToReveal;
-        }
 
         if (this._lineToHighlight) {
             this.highlightLine(this._lineToHighlight);

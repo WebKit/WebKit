@@ -624,16 +624,8 @@ WebInspector.documentClick = function(event)
 
     function followLink()
     {
-        // FIXME: support webkit-html-external-link links here.
-        if (WebInspector.canShowSourceLine(anchor.href, anchor.getAttribute("line_number"), anchor.getAttribute("preferred_panel"))) {
-            if (anchor.hasStyleClass("webkit-html-external-link")) {
-                anchor.removeStyleClass("webkit-html-external-link");
-                anchor.addStyleClass("webkit-html-resource-link");
-            }
-
-            WebInspector.showSourceLine(anchor.href, anchor.getAttribute("line_number"), anchor.getAttribute("preferred_panel"));
+        if (WebInspector._showAnchorLocation(anchor))
             return;
-        }
 
         const profileMatch = WebInspector.ProfileType.URLRegExp.exec(anchor.href);
         if (profileMatch) {
@@ -1225,30 +1217,31 @@ WebInspector.displayNameForURL = function(url)
     return url.trimURL(WebInspector.mainResource.domain);
 }
 
-WebInspector._choosePanelToShowSourceLine = function(url, line, preferredPanel)
+WebInspector._showAnchorLocation = function(anchor)
 {
-    preferredPanel = preferredPanel || "resources";
-
-    var panel = this.panels[preferredPanel];
-    if (panel && panel.canShowSourceLine(url, line))
-        return panel;
-    panel = this.panels.resources;
-    return panel.canShowSourceLine(url, line) ? panel : null;
+    var preferedPanel = this.panels[anchor.getAttribute("preferred_panel") || "resources"];
+    if (WebInspector._showAnchorLocationInPanel(anchor, preferedPanel))
+        return true;
+    if (preferedPanel !== this.panels.resources && WebInspector._showAnchorLocationInPanel(anchor, this.panels.resources))
+        return true;
+    return false;
 }
 
-WebInspector.canShowSourceLine = function(url, line, preferredPanel)
+WebInspector._showAnchorLocationInPanel = function(anchor, panel)
 {
-    return !!this._choosePanelToShowSourceLine(url, line, preferredPanel);
-}
-
-WebInspector.showSourceLine = function(url, line, preferredPanel)
-{
-    this.currentPanel = this._choosePanelToShowSourceLine(url, line, preferredPanel);
-    if (!this.currentPanel)
+    if (!panel.canShowAnchorLocation(anchor))
         return false;
+
+    // FIXME: support webkit-html-external-link links here.
+    if (anchor.hasStyleClass("webkit-html-external-link")) {
+        anchor.removeStyleClass("webkit-html-external-link");
+        anchor.addStyleClass("webkit-html-resource-link");
+    }
+
+    this.currentPanel = panel;
     if (this.drawer)
         this.drawer.immediatelyFinishAnimation();
-    this.currentPanel.showSourceLine(url, line);
+    this.currentPanel.showAnchorLocation(anchor);
     return true;
 }
 

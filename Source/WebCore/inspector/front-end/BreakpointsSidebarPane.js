@@ -23,11 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.JavaScriptBreakpointsSidebarPane = function(model)
+WebInspector.JavaScriptBreakpointsSidebarPane = function(model, showSourceLineDelegate)
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Breakpoints"));
 
     this._model = model;
+    this._showSourceLineDelegate = showSourceLineDelegate;
 
     this.listElement = document.createElement("ol");
     this.listElement.className = "breakpoint-list";
@@ -123,7 +124,7 @@ WebInspector.JavaScriptBreakpointsSidebarPane.prototype = {
 
     _breakpointClicked: function(breakpoint, event)
     {
-        WebInspector.panels.scripts.showSourceLine(breakpoint.sourceFileId, breakpoint.lineNumber + 1);
+        this._showSourceLineDelegate(breakpoint.sourceFileId, breakpoint.lineNumber);
     },
 
     _breakpointCheckboxClicked: function(breakpoint, event)

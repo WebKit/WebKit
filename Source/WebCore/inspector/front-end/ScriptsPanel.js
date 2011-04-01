@@ -142,7 +142,7 @@ WebInspector.ScriptsPanel = function()
     this.sidebarPanes.watchExpressions = new WebInspector.WatchExpressionsSidebarPane();
     this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane(this._presentationModel);
     this.sidebarPanes.scopechain = new WebInspector.ScopeChainSidebarPane();
-    this.sidebarPanes.jsBreakpoints = new WebInspector.JavaScriptBreakpointsSidebarPane(this._presentationModel);
+    this.sidebarPanes.jsBreakpoints = new WebInspector.JavaScriptBreakpointsSidebarPane(this._presentationModel, this._showSourceLine.bind(this));
     if (Preferences.nativeInstrumentationEnabled) {
         this.sidebarPanes.domBreakpoints = WebInspector.createDOMBreakpointsSidebarPane();
         this.sidebarPanes.xhrBreakpoints = new WebInspector.XHRBreakpointsSidebarPane();
@@ -478,17 +478,26 @@ WebInspector.ScriptsPanel.prototype = {
             x.show(this.viewsContainerElement);
     },
 
-    canShowSourceLine: function(url, line)
+    canShowAnchorLocation: function(anchor)
     {
-        return this._debuggerEnabled && (url in this._sourceFileIdToFilesSelectOption);
+        return this._debuggerEnabled && this._presentationModel.sourceFileForScriptURL(anchor.href);
     },
 
-    showSourceLine: function(url, line)
+    showAnchorLocation: function(anchor)
     {
-        if (!(url in this._sourceFileIdToFilesSelectOption))
-            return;
-        var sourceFrame = this._showSourceFrameAndAddToHistory(url);
-        sourceFrame.highlightLine(line);
+        function didRequestSourceMapping(mapping)
+        {
+            var location = mapping.scriptLocationToSourceLocation(anchor.getAttribute("line_number") - 1, 0);
+            this._showSourceLine(sourceFile.id, location.lineNumber);
+        }
+        var sourceFile = this._presentationModel.sourceFileForScriptURL(anchor.href);
+        sourceFile.requestSourceMapping(didRequestSourceMapping.bind(this));
+    },
+
+    _showSourceLine: function(sourceFileId, lineNumber)
+    {
+        var sourceFrame = this._showSourceFrameAndAddToHistory(sourceFileId);
+        sourceFrame.highlightLine(lineNumber);
     },
 
     handleShortcut: function(event)

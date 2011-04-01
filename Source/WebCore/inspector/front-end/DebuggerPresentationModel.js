@@ -67,6 +67,11 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return this._sourceFiles[sourceFileId];
     },
 
+    sourceFileForScriptURL: function(scriptURL)
+    {
+        return this._sourceFiles[scriptURL];
+    },
+
     requestSourceFileContent: function(sourceFileId, callback)
     {
         this._sourceFiles[sourceFileId].requestContent(callback);

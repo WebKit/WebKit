@@ -384,12 +384,12 @@ WebInspector.Panel.prototype = {
             visibleView.resize();
     },
 
-    canShowSourceLine: function(url, line)
+    canShowAnchorLocation: function(anchor)
     {
         return false;
     },
 
-    showSourceLine: function(url, line)
+    showAnchorLocation: function(anchor)
     {
         return false;
     },
