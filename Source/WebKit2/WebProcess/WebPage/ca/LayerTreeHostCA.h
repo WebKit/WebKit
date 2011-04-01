@@ -31,35 +31,36 @@
 #include <WebCore/GraphicsLayerClient.h>
 #include <wtf/OwnPtr.h>
 
-#if PLATFORM(MAC)
-#include <wtf/RetainPtr.h>
-#endif
-
-#if PLATFORM(MAC)
-typedef struct __WKCARemoteLayerClientRef* WKCARemoteLayerClientRef;
-#endif
-
 namespace WebKit {
 
 class LayerTreeHostCA : public LayerTreeHost, WebCore::GraphicsLayerClient {
 public:
-    static PassRefPtr<LayerTreeHostCA> create(WebPage*);
-    ~LayerTreeHostCA();
+    virtual ~LayerTreeHostCA();
     
-private:
+protected:
     explicit LayerTreeHostCA(WebPage*);
 
+    WebCore::GraphicsLayer* rootLayer() const { return m_rootLayer.get(); }
+
+    void initialize();
+    void performScheduledLayerFlush();
+
+    // LayerTreeHost.
+    virtual void invalidate();
+    virtual void sizeDidChange(const WebCore::IntSize& newSize);
+    virtual void forceRepaint();
+
+    // LayerTreeHostCA
+    virtual void didPerformScheduledLayerFlush();
+
+private:
     // LayerTreeHost.
     virtual const LayerTreeContext& layerTreeContext();
-    virtual void scheduleLayerFlush();
     virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool);
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
-    virtual void invalidate();
 
     virtual void setNonCompositedContentsNeedDisplay(const WebCore::IntRect&);
     virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
-    virtual void sizeDidChange(const WebCore::IntSize& newSize);
-    virtual void forceRepaint();
 
     virtual void didInstallPageOverlay();
     virtual void didUninstallPageOverlay();
@@ -72,22 +73,13 @@ private:
     virtual bool showDebugBorders() const;
     virtual bool showRepaintCounter() const;
 
-    void platformInitialize();
-    void platformInvalidate();
-    void platformSizeDidChange();
-    void platformForceRepaint();
+    // LayerTreeHostCA
+    virtual void platformInitialize(LayerTreeContext&) = 0;
 
-    void performScheduledLayerFlush();
-    void didPerformScheduledLayerFlush();
-    void platformDidPerformScheduledLayerFlush();
     bool flushPendingLayerChanges();
 
     void createPageOverlayLayer();
     void destroyPageOverlayLayer();
-
-#if PLATFORM(MAC)
-    static void flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
-#endif
 
     // The context for this layer tree.
     LayerTreeContext m_layerTreeContext;
@@ -107,11 +99,6 @@ private:
 
     // The page overlay layer. Will be null if there's no page overlay.
     OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
-
-#if PLATFORM(MAC)
-    RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
-    RetainPtr<CFRunLoopObserverRef> m_flushPendingLayerChangesRunLoopObserver;
-#endif
 };
 
 } // namespace WebKit

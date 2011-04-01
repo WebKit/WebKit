@@ -24,43 +24,36 @@
  */
 
 #include "config.h"
-#include "LayerTreeHostCA.h"
+#include "LayerTreeHostCAWin.h"
 
 #include <WebCore/NotImplemented.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
-void LayerTreeHostCA::platformInitialize()
+PassRefPtr<LayerTreeHostCAWin> LayerTreeHostCAWin::create(WebPage* webPage)
+{
+    RefPtr<LayerTreeHostCAWin> host = adoptRef(new LayerTreeHostCAWin(webPage));
+    host->initialize();
+    return host.release();
+}
+
+LayerTreeHostCAWin::LayerTreeHostCAWin(WebPage* webPage)
+    : LayerTreeHostCA(webPage)
+{
+}
+
+LayerTreeHostCAWin::~LayerTreeHostCAWin()
+{
+}
+
+void LayerTreeHostCAWin::platformInitialize(LayerTreeContext&)
 {
     // FIXME: <http://webkit.org/b/45567> Implement this!
     notImplemented();
 }
 
-void LayerTreeHostCA::scheduleLayerFlush()
-{
-    // FIXME: <http://webkit.org/b/45567> Implement this!
-    notImplemented();
-}
-
-void LayerTreeHostCA::platformInvalidate()
-{
-    // FIXME: <http://webkit.org/b/45567> Implement this!
-    notImplemented();
-}
-
-void LayerTreeHostCA::platformSizeDidChange()
-{
-    // FIXME: <http://webkit.org/b/45567> Implement this!
-    notImplemented();
-}
-
-void LayerTreeHostCA::platformForceRepaint()
-{
-    // FIXME: <http://webkit.org/b/45567> Implement this!
-    notImplemented();
-}
-
-void LayerTreeHostCA::platformDidPerformScheduledLayerFlush()
+void LayerTreeHostCAWin::scheduleLayerFlush()
 {
     // FIXME: <http://webkit.org/b/45567> Implement this!
     notImplemented();

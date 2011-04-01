@@ -24,12 +24,14 @@
  */
 
 #import "config.h"
-#import "LayerTreeHostCA.h"
+#import "LayerTreeHostCAMac.h"
 
 #import "WebProcess.h"
 #import <QuartzCore/CATransaction.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebKitSystemInterface.h>
+
+using namespace WebCore;
 
 @interface CATransaction (Details)
 + (void)synchronize;
@@ -37,19 +39,37 @@
 
 namespace WebKit {
 
-void LayerTreeHostCA::platformInitialize()
+PassRefPtr<LayerTreeHostCAMac> LayerTreeHostCAMac::create(WebPage* webPage)
+{
+    RefPtr<LayerTreeHostCAMac> host = adoptRef(new LayerTreeHostCAMac(webPage));
+    host->initialize();
+    return host.release();
+}
+
+LayerTreeHostCAMac::LayerTreeHostCAMac(WebPage* webPage)
+    : LayerTreeHostCA(webPage)
+{
+}
+
+LayerTreeHostCAMac::~LayerTreeHostCAMac()
+{
+    ASSERT(!m_flushPendingLayerChangesRunLoopObserver);
+    ASSERT(!m_remoteLayerClient);
+}
+
+void LayerTreeHostCAMac::platformInitialize(LayerTreeContext& layerTreeContext)
 {
     mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
     m_remoteLayerClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
 
-    [m_rootLayer->platformLayer() setGeometryFlipped:YES];
+    [rootLayer()->platformLayer() setGeometryFlipped:YES];
 
-    WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), m_rootLayer->platformLayer());
+    WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), rootLayer()->platformLayer());
 
-    m_layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());
+    layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());
 }
 
-void LayerTreeHostCA::scheduleLayerFlush()
+void LayerTreeHostCAMac::scheduleLayerFlush()
 {
     CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
     
@@ -67,7 +87,7 @@ void LayerTreeHostCA::scheduleLayerFlush()
     CFRunLoopAddObserver(currentRunLoop, m_flushPendingLayerChangesRunLoopObserver.get(), kCFRunLoopCommonModes);
 }
 
-void LayerTreeHostCA::platformInvalidate()
+void LayerTreeHostCAMac::invalidate()
 {
     if (m_flushPendingLayerChangesRunLoopObserver) {
         CFRunLoopObserverInvalidate(m_flushPendingLayerChangesRunLoopObserver.get());
@@ -76,34 +96,40 @@ void LayerTreeHostCA::platformInvalidate()
 
     WKCARemoteLayerClientInvalidate(m_remoteLayerClient.get());
     m_remoteLayerClient = nullptr;
+
+    LayerTreeHostCA::invalidate();
 }
 
-void LayerTreeHostCA::platformSizeDidChange()
+void LayerTreeHostCAMac::sizeDidChange(const IntSize& newSize)
 {
+    LayerTreeHostCA::sizeDidChange(newSize);
     [CATransaction flush];
     [CATransaction synchronize];
 }
 
-void LayerTreeHostCA::platformForceRepaint()
+void LayerTreeHostCAMac::forceRepaint()
 {
+    LayerTreeHostCA::forceRepaint();
     [CATransaction flush];
     [CATransaction synchronize];
 }    
 
-void LayerTreeHostCA::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
+void LayerTreeHostCAMac::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
 {
     // This gets called outside of the normal event loop so wrap in an autorelease pool
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    static_cast<LayerTreeHostCA*>(context)->performScheduledLayerFlush();
+    static_cast<LayerTreeHostCAMac*>(context)->performScheduledLayerFlush();
     [pool drain];
 }
 
-void LayerTreeHostCA::platformDidPerformScheduledLayerFlush()
+void LayerTreeHostCAMac::didPerformScheduledLayerFlush()
 {
     // We successfully flushed the pending layer changes, remove the run loop observer.
     ASSERT(m_flushPendingLayerChangesRunLoopObserver);
     CFRunLoopObserverInvalidate(m_flushPendingLayerChangesRunLoopObserver.get());
     m_flushPendingLayerChangesRunLoopObserver = 0;
+
+    LayerTreeHostCA::didPerformScheduledLayerFlush();
 }
 
 } // namespace WebKit

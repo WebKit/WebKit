@@ -23,37 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LayerTreeHost.h"
+#ifndef LayerTreeHostCAMac_h
+#define LayerTreeHostCAMac_h
 
-#if PLATFORM(MAC)
-#include "LayerTreeHostCAMac.h"
-#elif PLATFORM(WIN)
-#include "LayerTreeHostCAWin.h"
-#else
-#error "This class is not ready for use by other ports yet."
-#endif
+#include "LayerTreeHostCA.h"
+#include <wtf/RetainPtr.h>
 
-using namespace WebCore;
+typedef struct __WKCARemoteLayerClientRef* WKCARemoteLayerClientRef;
 
 namespace WebKit {
 
-PassRefPtr<LayerTreeHost> LayerTreeHost::create(WebPage* webPage)
-{
-#if PLATFORM(MAC)
-    return LayerTreeHostCAMac::create(webPage);
-#elif PLATFORM(WIN)
-    return LayerTreeHostCAWin::create(webPage);
-#endif
-}
+class LayerTreeHostCAMac : public LayerTreeHostCA {
+public:
+    static PassRefPtr<LayerTreeHostCAMac> create(WebPage*);
+    virtual ~LayerTreeHostCAMac();
 
-LayerTreeHost::LayerTreeHost(WebPage* webPage)
-    : m_webPage(webPage)
-{
-}
+private:
+    explicit LayerTreeHostCAMac(WebPage*);
 
-LayerTreeHost::~LayerTreeHost()
-{
-}
+    // LayerTreeHost.
+    virtual void scheduleLayerFlush();
+    virtual void invalidate();
+    virtual void sizeDidChange(const WebCore::IntSize& newSize);
+    virtual void forceRepaint();
+
+    // LayerTreeHostCA
+    virtual void platformInitialize(LayerTreeContext&);
+    virtual void didPerformScheduledLayerFlush();
+
+    static void flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*);
+
+    RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
+    RetainPtr<CFRunLoopObserverRef> m_flushPendingLayerChangesRunLoopObserver;
+};
 
 } // namespace WebKit
+
+#endif // LayerTreeHostCAMac_h

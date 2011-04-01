@@ -38,24 +38,22 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<LayerTreeHostCA> LayerTreeHostCA::create(WebPage* webPage)
-{
-    return adoptRef(new LayerTreeHostCA(webPage));
-}
-
 LayerTreeHostCA::LayerTreeHostCA(WebPage* webPage)
     : LayerTreeHost(webPage)
     , m_isValid(true)
     , m_notifyAfterScheduledLayerFlush(false)
 {
+}
 
+void LayerTreeHostCA::initialize()
+{
     // Create a root layer.
     m_rootLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
     m_rootLayer->setName("LayerTreeHost root layer");
 #endif
     m_rootLayer->setDrawsContent(false);
-    m_rootLayer->setSize(webPage->size());
+    m_rootLayer->setSize(m_webPage->size());
 
     m_nonCompositedContentLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
@@ -63,7 +61,7 @@ LayerTreeHostCA::LayerTreeHostCA(WebPage* webPage)
 #endif
     m_nonCompositedContentLayer->setDrawsContent(true);
     m_nonCompositedContentLayer->setContentsOpaque(m_webPage->drawsBackground() && !m_webPage->drawsTransparentBackground());
-    m_nonCompositedContentLayer->setSize(webPage->size());
+    m_nonCompositedContentLayer->setSize(m_webPage->size());
     if (m_webPage->corePage()->settings()->acceleratedDrawingEnabled())
         m_nonCompositedContentLayer->setAcceleratesDrawing(true);
 
@@ -72,7 +70,7 @@ LayerTreeHostCA::LayerTreeHostCA(WebPage* webPage)
     if (m_webPage->hasPageOverlay())
         createPageOverlayLayer();
 
-    platformInitialize();
+    platformInitialize(m_layerTreeContext);
 
     scheduleLayerFlush();
 }
@@ -81,10 +79,6 @@ LayerTreeHostCA::~LayerTreeHostCA()
 {
     ASSERT(!m_isValid);
     ASSERT(!m_rootLayer);
-#if PLATFORM(MAC)
-    ASSERT(!m_flushPendingLayerChangesRunLoopObserver);
-    ASSERT(!m_remoteLayerClient);
-#endif
 }
 
 const LayerTreeContext& LayerTreeHostCA::layerTreeContext()
@@ -109,7 +103,6 @@ void LayerTreeHostCA::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 void LayerTreeHostCA::invalidate()
 {
     ASSERT(m_isValid);
-    platformInvalidate();
     m_rootLayer = nullptr;
     m_isValid = false;
 }
@@ -138,16 +131,12 @@ void LayerTreeHostCA::sizeDidChange(const IntSize& newSize)
 
     scheduleLayerFlush();
     flushPendingLayerChanges();
-
-    platformSizeDidChange();
 }
 
 void LayerTreeHostCA::forceRepaint()
 {
     scheduleLayerFlush();
     flushPendingLayerChanges();
-
-    platformForceRepaint();
 }    
 
 void LayerTreeHostCA::didInstallPageOverlay()
@@ -218,8 +207,6 @@ void LayerTreeHostCA::performScheduledLayerFlush()
 
 void LayerTreeHostCA::didPerformScheduledLayerFlush()
 {
-    platformDidPerformScheduledLayerFlush();
-
     if (m_notifyAfterScheduledLayerFlush) {
         // Let the drawing area know that we've done a flush of the layer changes.
         static_cast<DrawingAreaImpl*>(m_webPage->drawingArea())->layerHostDidFlushLayers();

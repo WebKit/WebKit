@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(ProjectDir)..\WebProcess\WebPage\ca&quot;"
+		AdditionalIncludeDirectories="&quot;$(ProjectDir)..\WebProcess\WebPage\ca&quot;;&quot;$(ProjectDir)..\WebProcess\WebPage\ca\win&quot;"
 	/>
 	<Tool
 		Name="VCLinkerTool"

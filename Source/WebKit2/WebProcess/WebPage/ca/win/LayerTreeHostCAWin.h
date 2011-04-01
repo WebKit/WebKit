@@ -23,37 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LayerTreeHost.h"
+#ifndef LayerTreeHostCAWin_h
+#define LayerTreeHostCAWin_h
 
-#if PLATFORM(MAC)
-#include "LayerTreeHostCAMac.h"
-#elif PLATFORM(WIN)
-#include "LayerTreeHostCAWin.h"
-#else
-#error "This class is not ready for use by other ports yet."
-#endif
-
-using namespace WebCore;
+#include "LayerTreeHostCA.h"
 
 namespace WebKit {
 
-PassRefPtr<LayerTreeHost> LayerTreeHost::create(WebPage* webPage)
-{
-#if PLATFORM(MAC)
-    return LayerTreeHostCAMac::create(webPage);
-#elif PLATFORM(WIN)
-    return LayerTreeHostCAWin::create(webPage);
-#endif
-}
+class LayerTreeHostCAWin : public LayerTreeHostCA {
+public:
+    static PassRefPtr<LayerTreeHostCAWin> create(WebPage*);
+    virtual ~LayerTreeHostCAWin();
 
-LayerTreeHost::LayerTreeHost(WebPage* webPage)
-    : m_webPage(webPage)
-{
-}
+private:
+    explicit LayerTreeHostCAWin(WebPage*);
 
-LayerTreeHost::~LayerTreeHost()
-{
-}
+    // LayerTreeHost
+    virtual void scheduleLayerFlush();
+
+    // LayerTreeHostCA
+    virtual void platformInitialize(LayerTreeContext&);
+};
 
 } // namespace WebKit
+
+#endif // LayerTreeHostCAWin_h

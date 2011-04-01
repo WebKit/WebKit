@@ -1,3 +1,71 @@
+2011-03-31  Adam Roben  <aroben@apple.com>
+
+        Split LayerTreeHostCA into a base class and derived Mac and Win classes
+
+        This will make it easier to customize the Mac and Windows implementations without adding too
+        many #ifdefs.
+
+        Fixes <http://webkit.org/b/57606> Windows and Mac should use separate LayerTreeHost classes
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added LayerTreeHostCAMac.h.
+
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create): Create a LayerTreeHostCAMac on Mac, and LayerTreeHostCAWin
+        on Windows.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+        (WebKit::LayerTreeHostCA::LayerTreeHostCA): Moved some code from here...
+        (WebKit::LayerTreeHostCA::initialize): ...to here. This function will be called after the
+        constructor returns, and thus can safely call functions that are pure virtual in this class
+        and its base class. We now pass our LayerTreeContext to platformInitialize so that our
+        derived classes can initialize it.
+        (WebKit::LayerTreeHostCA::~LayerTreeHostCA): Removed Mac-specific code.
+
+        (WebKit::LayerTreeHostCA::invalidate):
+        (WebKit::LayerTreeHostCA::sizeDidChange):
+        (WebKit::LayerTreeHostCA::forceRepaint):
+        (WebKit::LayerTreeHostCA::didPerformScheduledLayerFlush):
+        Removed platform* calls. Derived classes can just override these functions to do what they
+        need.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.h: Removed Mac-specific pieces. Made some functions
+        virtual so that derived classes can override them.
+
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.h: Added.
+
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.mm:
+        (WebKit::LayerTreeHostCAMac::create): Create and initialize a host.
+        (WebKit::LayerTreeHostCAMac::LayerTreeHostCAMac): Simple constructor.
+        (WebKit::LayerTreeHostCAMac::~LayerTreeHostCAMac): Moved code here from LayerTreeHostCA
+        destructor.
+        (WebKit::LayerTreeHostCAMac::platformInitialize): Removed direct uses of LayerTreeHostCA
+        data members.
+
+        (WebKit::LayerTreeHostCAMac::invalidate):
+        (WebKit::LayerTreeHostCAMac::sizeDidChange):
+        (WebKit::LayerTreeHostCAMac::forceRepaint):
+        (WebKit::LayerTreeHostCAMac::didPerformScheduledLayerFlush):
+        Renamed from platform*. Now call up to the base class.
+
+        (WebKit::LayerTreeHostCAMac::flushPendingLayerChangesRunLoopObserverCallback): Updated type.
+
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.cpp:
+        (WebKit::LayerTreeHostCAWin::create): Create and initialize a host.
+
+        (WebKit::LayerTreeHostCAWin::LayerTreeHostCAWin):
+        (WebKit::LayerTreeHostCAWin::~LayerTreeHostCAWin):
+        (WebKit::LayerTreeHostCAWin::platformInitialize):
+        (WebKit::LayerTreeHostCAWin::scheduleLayerFlush):
+        Stubbed out.
+
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.h: Added.
+
+        * win/WebKit2.vcproj: Added LayerTreeHostCAWin.h
+
+        * win/WebKit2Apple.vsprops: Added WebProcess/WebPage/ca/win to the include path.
+
 2011-03-31  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed WinCairo build fix after r82632.
