@@ -1,5 +1,14 @@
 2011-04-01  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Adam "Keyword Slasher" Roben.
+
+        Remove unnecessary static keyword.
+
+        * UIProcess/API/cpp/WKRetainPtr.h:
+        (WebKit::adoptWK):
+
+2011-04-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Roben.
 
         Add adoptWK to WKRetainPtr.h
