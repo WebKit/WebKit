@@ -1,3 +1,8 @@
+2011-04-01  Darin Adler  <darin@apple.com>
+
+        * http/tests/local/formdata/form-data-with-unknown-file-extension-expected.txt: Removed property svn:executable.
+        * http/tests/local/formdata/form-data-with-unknown-file-extension.html: Removed property svn:executable.
+
 2011-04-01  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, rebaseline chromium expectations for HTMLMeterElement tests updated in r82686.
