@@ -1,5 +1,11 @@
 2011-03-31  Adam Barth  <abarth@webkit.org>
 
+        Fix name of test.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-03-31  Adam Barth  <abarth@webkit.org>
+
         Update chromium-win expectations for these baseline changes from
         Mr. Hyatt.
 
