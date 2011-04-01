@@ -1,5 +1,14 @@
 2011-04-01  Sam Weinig  <sam@webkit.org>
 
+        Fix windows build.
+
+        * TestWebKitAPI/Tests/WebKit2/win/HideFindIndicator.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/win/ResizeViewWhileHidden.cpp:
+        (TestWebKitAPI::flushMessages):
+
+2011-04-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Roben.
 
         Add adoptWK to WKRetainPtr.h

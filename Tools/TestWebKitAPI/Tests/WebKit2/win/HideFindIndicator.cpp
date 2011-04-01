@@ -63,7 +63,7 @@ TEST(WebKit2, HideFindIndicator)
     PlatformWebView webView(context.get());
     initialize(webView);
 
-    WKRetainPtr<WKURLRef> url = Util::adoptWK(Util::createURLForResource("find", "html"));
+    WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("find", "html"));
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&didFinishLoad);
     didFinishLoad = false;

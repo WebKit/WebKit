@@ -55,7 +55,7 @@ static void flushMessages(WKPageRef page)
 
     setPageLoaderClient(page);
 
-    WKPageLoadURL(page, Util::adoptWK(Util::createURLForResource("simple", "html")).get());
+    WKPageLoadURL(page, adoptWK(Util::createURLForResource("simple", "html")).get());
     Util::run(&didFinishLoad);
     didFinishLoad = false;
 
