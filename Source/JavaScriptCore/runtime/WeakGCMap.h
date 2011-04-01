@@ -113,22 +113,6 @@ public:
 
     size_t size() { return m_map.size(); }
 
-    bool deprecatedRemove(const KeyType& key, ExternalType value)
-    {
-        // This only exists in order to allow some semblance of correctness to
-        // the JSWeakObjectMapClear API
-        typename MapType::iterator iter = m_map.find(key);
-        if (iter == m_map.end())
-            return false;
-        HandleSlot slot = iter->second;
-        ExternalType inmap = HandleTypes<MappedType>::getFromSlot(slot);
-        if (inmap && inmap != value)
-            return false;
-        m_map.remove(iter);
-        HandleHeap::heapFor(slot)->deallocate(slot);
-        return true;        
-    }
-
     iterator begin() { return iterator(m_map.begin()); }
     iterator end() { return iterator(m_map.end()); }
     
