@@ -29,7 +29,7 @@
 
 #include "PlatformCALayer.h"
 
-#include "CACFLayerTreeHost.h"
+#include "AbstractCACFLayerTreeHost.h"
 #include "Font.h"
 #include "GraphicsContext.h"
 #include "PlatformCALayerWinInternal.h"
@@ -65,14 +65,14 @@ static CFStringRef toCACFFilterType(PlatformCALayer::FilterType type)
     }
 }
 
-static CACFLayerTreeHost* layerTreeHostForLayer(const PlatformCALayer* layer)
+static AbstractCACFLayerTreeHost* layerTreeHostForLayer(const PlatformCALayer* layer)
 {
-    // We need the CACFLayerTreeHost associated with this layer, which is stored in the UserData of the CACFContext
+    // We need the AbstractCACFLayerTreeHost associated with this layer, which is stored in the UserData of the CACFContext
     void* userData = wkCACFLayerGetContextUserData(layer->platformLayer());
     if (!userData)
         return 0;
 
-    return static_cast<CACFLayerTreeHost*>(userData);
+    return static_cast<AbstractCACFLayerTreeHost*>(userData);
 }
 
 static PlatformCALayerWinInternal* intern(const PlatformCALayer* layer)
@@ -156,7 +156,7 @@ PlatformLayer* PlatformCALayer::platformLayer() const
 
 PlatformCALayer* PlatformCALayer::rootLayer() const
 {
-    CACFLayerTreeHost* host = layerTreeHostForLayer(this);
+    AbstractCACFLayerTreeHost* host = layerTreeHostForLayer(this);
     return host ? host->rootLayer() : 0;
 }
 
@@ -167,7 +167,7 @@ void PlatformCALayer::setNeedsDisplay(const FloatRect* dirtyRect)
     
 void PlatformCALayer::setNeedsCommit()
 {
-    CACFLayerTreeHost* host = layerTreeHostForLayer(this);
+    AbstractCACFLayerTreeHost* host = layerTreeHostForLayer(this);
     if (host)
         host->layerTreeDidChange();
 }
@@ -270,7 +270,7 @@ void PlatformCALayer::addAnimationForKey(const String& key, PlatformCAAnimation*
     setNeedsCommit();
 
     // Tell the host about it so we can fire the start animation event
-    CACFLayerTreeHost* host = layerTreeHostForLayer(this);
+    AbstractCACFLayerTreeHost* host = layerTreeHostForLayer(this);
     if (host)
         host->addPendingAnimatedLayer(this);
 }
@@ -283,7 +283,7 @@ void PlatformCALayer::removeAnimationForKey(const String& key)
     RetainPtr<CFStringRef> s(AdoptCF, key.createCFString());
     CACFLayerRemoveAnimation(m_layer.get(), s.get());
 
-    // We don't "remove" a layer from CACFLayerTreeHost when it loses an animation.
+    // We don't "remove" a layer from AbstractCACFLayerTreeHost when it loses an animation.
     // There may be other active animations on the layer and if an animation
     // callback is fired on a layer without any animations no harm is done.
 

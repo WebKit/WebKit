@@ -25786,19 +25786,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\DragData.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\DragData.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\DefaultLocalizationStrategy.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\platform\DefaultLocalizationStrategy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\DragData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\DragData.h"
 				>
 			</File>
 			<File
@@ -29146,6 +29146,10 @@
 					<Filter
 						Name="win"
 						>
+						<File
+							RelativePath="..\platform\graphics\ca\win\AbstractCACFLayerTreeHost.h"
+							>
+						</File>
 						<File
 							RelativePath="..\platform\graphics\ca\win\CACFLayerTreeHost.cpp"
 							>
@@ -63201,6 +63205,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\PageScriptDebugServer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\ScheduledAction.cpp"
 					>
 					<FileConfiguration
@@ -64031,10 +64039,6 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\bindings\js\PageScriptDebugServer.h"
-					>
 				</File>
 			</Filter>
 			<Filter
@@ -66494,15 +66498,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorProfilerAgent.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorPageAgent.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorPageAgent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorProfilerAgent.cpp"
 				>
 			</File>
 			<File

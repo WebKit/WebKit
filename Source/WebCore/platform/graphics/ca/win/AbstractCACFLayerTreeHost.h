@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerChangesFlusher_h
-#define LayerChangesFlusher_h
+#ifndef AbstractCACFLayerTreeHost_h
+#define AbstractCACFLayerTreeHost_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include <windows.h>
-#include <wtf/HashSet.h>
-#include <wtf/Noncopyable.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
-class AbstractCACFLayerTreeHost;
+class PlatformCALayer;
 
-class LayerChangesFlusher {
-    WTF_MAKE_NONCOPYABLE(LayerChangesFlusher);
+class AbstractCACFLayerTreeHost {
 public:
-    static LayerChangesFlusher& shared();
+    virtual PlatformCALayer* rootLayer() const = 0;
+    virtual void addPendingAnimatedLayer(PassRefPtr<PlatformCALayer>) = 0;
+    virtual void layerTreeDidChange() = 0;
+    virtual void flushPendingLayerChangesNow() = 0;
 
-    void flushPendingLayerChangesSoon(AbstractCACFLayerTreeHost*);
-    void cancelPendingFlush(AbstractCACFLayerTreeHost*);
-
-private:
-    LayerChangesFlusher();
-    ~LayerChangesFlusher();
-
-    static LRESULT CALLBACK hookCallback(int code, WPARAM, LPARAM);
-    LRESULT hookFired(int code, WPARAM, LPARAM);
-    void setHook();
-    void removeHook();
-
-    HashSet<AbstractCACFLayerTreeHost*> m_hostsWithChangesToFlush;
-    HHOOK m_hook;
-    bool m_isCallingHosts;
+protected:
+    virtual ~AbstractCACFLayerTreeHost() { }
 };
 
-} // namespace WebCore
+}
 
 #endif // USE(ACCELERATED_COMPOSITING)
 
-#endif // LayerChangesFlusher_h
+#endif // AbstractCACFLayerTreeHost_h

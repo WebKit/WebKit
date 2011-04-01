@@ -28,6 +28,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "AbstractCACFLayerTreeHost.h"
 #include "COMPtr.h"
 #include "Timer.h"
 
@@ -50,9 +51,7 @@ namespace WebCore {
 class CACFLayerTreeHostClient;
 class PlatformCALayer;
 
-class CACFLayerTreeHost : public RefCounted<CACFLayerTreeHost> {
-    friend PlatformCALayer;
-
+class CACFLayerTreeHost : public RefCounted<CACFLayerTreeHost>, private AbstractCACFLayerTreeHost {
 public:
     static PassRefPtr<CACFLayerTreeHost> create();
     virtual ~CACFLayerTreeHost();
@@ -66,15 +65,19 @@ public:
     virtual void paint();
     virtual void resize() = 0;
     void flushPendingGraphicsLayerChangesSoon();
-    void flushPendingLayerChangesNow();
+
+    // AbstractCACFLayerTreeHost
+    virtual void flushPendingLayerChangesNow();
 
 protected:
     CACFLayerTreeHost();
 
     CGRect bounds() const;
-    PlatformCALayer* rootLayer() const;
     HWND window() const { return m_window; }
     void notifyAnimationsStarted();
+
+    // AbstractCACFLayerTreeHost
+    virtual PlatformCALayer* rootLayer() const;
 
     virtual bool createRenderer() = 0;
     virtual void destroyRenderer();
@@ -82,8 +85,11 @@ protected:
 
 private:
     void initialize();
-    void addPendingAnimatedLayer(PassRefPtr<PlatformCALayer>);
-    void layerTreeDidChange();
+
+    // AbstractCACFLayerTreeHost
+    virtual void addPendingAnimatedLayer(PassRefPtr<PlatformCALayer>);
+    virtual void layerTreeDidChange();
+
 
     virtual void flushContext() = 0;
     virtual CFTimeInterval lastCommitTime() const = 0;

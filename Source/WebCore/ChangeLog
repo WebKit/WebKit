@@ -1,3 +1,40 @@
+2011-03-31  Adam Roben  <aroben@apple.com>
+
+        Add a new AbstractCACFLayerTreeHost base class
+
+        This class exposes the interface that LayerChangesFlusher and PlatformCALayer rely on.
+        CACFLayerTreeHost now derives from AbstractCACFLayerTreeHost. In the future, WebKit2's
+        LayerTreeHostCA will also derive from it (on Windows).
+
+        This should cause no change in behavior.
+
+        Fixes <http://webkit.org/b/57598> Coupling between CACFLayerTreeHost and other CACF-related
+        code is too high
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.vcproj/WebCore.vcproj: Added AbstractCACFLayerTreeHost, and let VS reorder files.
+
+        * platform/graphics/ca/win/AbstractCACFLayerTreeHost.h: Added.
+
+        * platform/graphics/ca/win/CACFLayerTreeHost.h: Changed to derive from
+        AbstractCACFLayerTreeHost, and annotated the overrides of its functions.
+        AbstractCACFLayerTreeHost also allows us to get rid of the friend relationship with
+        PlatformCALayer.
+
+        * platform/graphics/ca/win/LayerChangesFlusher.cpp:
+        (WebCore::LayerChangesFlusher::flushPendingLayerChangesSoon):
+        (WebCore::LayerChangesFlusher::cancelPendingFlush):
+        (WebCore::LayerChangesFlusher::hookFired):
+        * platform/graphics/ca/win/LayerChangesFlusher.h:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        (layerTreeHostForLayer):
+        (PlatformCALayer::rootLayer):
+        (PlatformCALayer::setNeedsCommit):
+        (PlatformCALayer::addAnimationForKey):
+        (PlatformCALayer::removeAnimationForKey):
+        Changed to use AbstractCACFLayerTreeHost instead of using CACFLayerTreeHost directly.
+
 2011-03-31  Andy Estes  <aestes@apple.com>
 
         Reviewed by Alexey Proskuryakov.
