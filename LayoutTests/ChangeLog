@@ -1,5 +1,12 @@
 2011-03-31  Adam Barth  <abarth@webkit.org>
 
+        Rebaseline my own test on Linux!  The great JavaScript MIME type war
+        claims another victim.
+
+        * platform/chromium-linux/fast/preloader/scan-body-from-head-script-expected.txt: Added.
+
+2011-03-31  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Tony Gentilcore.
 
         fast/preloader/scan-body-from-head.html is flaky
