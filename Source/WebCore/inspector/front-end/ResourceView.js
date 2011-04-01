@@ -144,8 +144,7 @@ WebInspector.SourceFrameDelegateForResourcesPanel.prototype = {
         function contentLoaded(text)
         {
             var mimeType = WebInspector.SourceFrameDelegateForResourcesPanel.DefaultMIMETypeForResourceType[this._resource.type] || this._resource.mimeType;
-            var sourceMapping = new WebInspector.IdenticalSourceMapping();
-            callback(mimeType, new WebInspector.SourceFrameContent(text, sourceMapping, []));
+            callback(mimeType, text);
         }
         this._resource.requestContent(contentLoaded.bind(this));
     }

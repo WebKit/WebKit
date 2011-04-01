@@ -232,7 +232,7 @@ WebInspector.SourceFrame.prototype = {
     _createTextViewer: function(mimeType, content)
     {
         this._content = content;
-        this._textModel.setText(null, content.text);
+        this._textModel.setText(null, content);
 
         this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url);
         this._textViewer.startEditingListener = this._startEditing.bind(this);
@@ -809,21 +809,6 @@ WebInspector.SourceFrame.prototype = {
     {
         if (this._textViewer)
             this._textViewer.resize();
-    },
-
-    formatSource: function()
-    {
-        if (!this._content)
-            return;
-
-        function didFormat(formattedContent)
-        {
-            this._content = formattedContent;
-            this._textModel.setText(null, formattedContent.text);
-            this._setTextViewerDecorations();
-        }
-        var formatter = new WebInspector.ScriptFormatter();
-        formatter.formatContent(this._content, didFormat.bind(this))
     },
 
     _registerShortcuts: function()

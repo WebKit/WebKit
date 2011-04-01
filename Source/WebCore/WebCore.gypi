@@ -6215,7 +6215,6 @@
             'inspector/front-end/SourceCSSTokenizer.js',
             'inspector/front-end/SourceFile.js',
             'inspector/front-end/SourceFrame.js',
-            'inspector/front-end/SourceFrameContent.js',
             'inspector/front-end/SourceHTMLTokenizer.js',
             'inspector/front-end/SourceJavaScriptTokenizer.js',
             'inspector/front-end/SourceTokenizer.js',

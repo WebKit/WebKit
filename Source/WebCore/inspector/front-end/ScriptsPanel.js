@@ -1008,11 +1008,7 @@ WebInspector.SourceFrameDelegateForScriptsPanel = function(model, sourceFileId)
 WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
     requestContent: function(callback)
     {
-        function didRequestSourceFileContent(mimeType, text)
-        {
-            callback(mimeType, { text: text });
-        }
-        this._model.requestSourceFileContent(this._sourceFileId, didRequestSourceFileContent.bind(this));
+        this._model.requestSourceFileContent(this._sourceFileId, callback);
     },
 
     debuggingSupported: function()

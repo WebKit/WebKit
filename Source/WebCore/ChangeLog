@@ -2,6 +2,25 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: remove unused SourceFrameContent class.
+        https://bugs.webkit.org/show_bug.cgi?id=57453
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.SourceFrameDelegateForResourcesPanel.prototype.requestContent):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.requestContent):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._createTextViewer):
+        * inspector/front-end/SourceFrameContent.js: Removed.
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
+2011-03-30  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector: add test for script formatter worker.
         https://bugs.webkit.org/show_bug.cgi?id=57447
 
