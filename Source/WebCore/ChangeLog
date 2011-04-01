@@ -1,3 +1,19 @@
+2011-04-01  Rob Buis  <rwlbuis@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55750
+        SVG <image> referenced by <use> is displayed incorrectly
+
+        Reintroduce old behaviour for valid base URI, for invalid
+        keep using document base URI.
+        Fixes regression of W3C-SVG-1.1/struct-image-07-t.svg.
+
+        Test: svg/custom/image-base-uri.svg
+
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::sourceURI):
+
 2011-04-01  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.
