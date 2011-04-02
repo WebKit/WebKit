@@ -1219,3 +1219,6 @@ fast/js/array-sort-modifying-tostring.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=56573
 fast/dom/HTMLKeygenElement/keygen.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=57693
+plugins/windowless_plugin_paint_test.html
