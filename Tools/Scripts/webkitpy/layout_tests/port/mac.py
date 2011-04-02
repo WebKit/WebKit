@@ -134,23 +134,12 @@ class MacPort(WebKitPort):
     def _check_port_build(self):
         return self._build_java_test_support()
 
-    def _tests_for_other_platforms(self):
-        # The original run-webkit-tests builds up a "whitelist" of tests to
-        # run, and passes that to DumpRenderTree. new-run-webkit-tests assumes
-        # we run *all* tests and test_expectations.txt functions as a
-        # blacklist.
-        # FIXME: This list could be dynamic based on platform name and
-        # pushed into base.Port.
-        return [
-            "platform/chromium",
-            "platform/gtk",
-            "platform/qt",
-            "platform/win",
-        ]
-
     def _path_to_apache_config_file(self):
         return self._filesystem.join(self.layout_tests_dir(), 'http', 'conf',
                                      'apache2-httpd.conf')
+
+    def _path_to_webcore_library(self):
+        return self._build_path('WebCore.framework/Versions/A/WebCore')
 
     # FIXME: This doesn't have anything to do with WebKit.
     def _shut_down_http_server(self, server_pid):

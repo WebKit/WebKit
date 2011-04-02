@@ -1,3 +1,20 @@
+2011-04-01  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        new-run-webkit-tests: fix feature detection, skipped platform lists on mac
+
+        We apparently never implemented the code to skip tests based on
+        what was compiled into DRT. Also, change the logic used to skip
+        platform directories to match what old-run-webkit-tests does: 
+        skip every test not in a directory in the baseline search path.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57662
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-03-29  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Jon Honeycutt.

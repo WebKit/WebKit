@@ -84,6 +84,14 @@ svg/batik/text/smallFonts.svg
                            os_version_string=os_version_string)
         self.assertEquals(expected, port.name())
 
+    def test_tests_for_other_platforms(self):
+        port = mac.MacPort(port_name='mac-snowleopard')
+        dirs_to_skip = port._tests_for_other_platforms()
+        self.assertTrue('platform/chromium-linux' in dirs_to_skip)
+        self.assertTrue('platform/mac-tiger' in dirs_to_skip)
+        self.assertFalse('platform/mac' in dirs_to_skip)
+        self.assertFalse('platform/mac-snowleopard' in dirs_to_skip)
+
     def test_version(self):
         port = mac.MacPort()
         self.assertTrue(port.version())
