@@ -1795,6 +1795,7 @@ java
 
 # WebKitTestRunner needs layoutTestController.displayInvalidatedRegion
 plugins/invalidate_rect.html
+plugins/windowless_plugin_paint_test.html
 
 # WebKitTestRunner needs layoutTestController.setMinimumTimerInterval
 fast/dom/timer-increase-min-interval-and-reset-part-1.html

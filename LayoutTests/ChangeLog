@@ -1,3 +1,10 @@
+2011-04-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Skip the test landed in r82758, since WebKitTestRunner doesn't implement
+        displayInvalidatedRegion.
+
+        * platform/mac-wk2/Skipped: Skipped the test.
+
 2011-04-01  Adam Barth  <abarth@webkit.org>
 
         This test fails by timing out.
