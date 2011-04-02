@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        Remove AbstractStep._run_script and move script names to ports.py
+        https://bugs.webkit.org/show_bug.cgi?id=57704
+
+        Replace deprecated _run_script with _tool.executive.run_and_throw_if_fail.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/roll_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        * Scripts/webkitpy/tool/steps/preparechangelogfordepsroll.py:
+        * Scripts/webkitpy/tool/steps/preparechangelogforrevert.py:
+
+2011-04-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Emulate shebang on Win32
         https://bugs.webkit.org/show_bug.cgi?id=55927
 

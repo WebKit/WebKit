@@ -36,7 +36,6 @@ class RollCommandsTest(CommandsTest):
     def test_update_chromium_deps(self):
         expected_stderr = """Updating Chromium DEPS to 6764
 MOCK: MockDEPS.write_variable(chromium_rev, 6764)
-Running prepare-ChangeLog
 MOCK: user.open_url: file://...
 Was that diff correct?
 Committed r49824: <http://trac.webkit.org/changeset/49824>

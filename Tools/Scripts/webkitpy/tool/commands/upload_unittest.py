@@ -59,8 +59,7 @@ class UploadCommandsTest(CommandsTest):
         options.request_commit = False
         options.review = True
         options.suggest_reviewers = False
-        expected_stderr = """Running check-webkit-style
-MOCK: user.open_url: file://...
+        expected_stderr = """MOCK: user.open_url: file://...
 Was that diff correct?
 Obsoleting 2 old patches on bug 42
 MOCK add_patch_to_bug: bug_id=42, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False
@@ -107,8 +106,7 @@ extra comment
         options.request_commit = False
         options.review = True
         options.suggest_reviewers = False
-        expected_stderr = """Running check-webkit-style
-MOCK: user.open_url: file://...
+        expected_stderr = """MOCK: user.open_url: file://...
 Was that diff correct?
 Obsoleting 2 old patches on bug 42
 MOCK add_patch_to_bug: bug_id=42, description=MOCK description, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False

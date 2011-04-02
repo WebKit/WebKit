@@ -123,7 +123,7 @@ class DownloadCommandsTest(CommandsTest):
         self.assert_execute_outputs(Land(), [42], options=self._default_options(), expected_stderr=expected_stderr, tool=mock_tool)
 
     def test_check_style(self):
-        expected_stderr = "Processing 1 patch from 1 bug.\nUpdating working directory\nProcessing patch 197 from bug 42.\nRunning check-webkit-style\n"
+        expected_stderr = "Processing 1 patch from 1 bug.\nUpdating working directory\nProcessing patch 197 from bug 42.\n"
         self.assert_execute_outputs(CheckStyle(), [197], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_build_attachment(self):
@@ -171,7 +171,7 @@ Not closing bug 42 as attachment 197 has review=+.  Assuming there are more patc
         self.assert_execute_outputs(LandFromBug(), [42], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_prepare_rollout(self):
-        expected_stderr = "Preparing rollout for bug 42.\nUpdating working directory\nRunning prepare-ChangeLog\n"
+        expected_stderr = "Preparing rollout for bug 42.\nUpdating working directory\n"
         self.assert_execute_outputs(PrepareRollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_create_rollout(self):
@@ -184,7 +184,6 @@ Reason
 component: MOCK component
 cc: MOCK cc
 blocked: 42
-Running prepare-ChangeLog
 MOCK add_patch_to_bug: bug_id=78, description=ROLLOUT of r852, mark_for_review=False, mark_for_commit_queue=True, mark_for_landing=False
 -- Begin comment --
 Any committer can land this patch automatically by marking it commit-queue+.  The commit-queue will build and test the patch before landing to ensure that the rollout will be successful.  This process takes approximately 15 minutes.
@@ -202,7 +201,6 @@ where ATTACHMENT_ID is the ID of this attachment.
     def test_rollout(self):
         expected_stderr = """Preparing rollout for bug 42.
 Updating working directory
-Running prepare-ChangeLog
 MOCK: user.open_url: file://...
 Was that diff correct?
 Building WebKit

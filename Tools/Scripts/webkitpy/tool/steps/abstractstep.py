@@ -26,7 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.config.ports import WebKitPort
 from webkitpy.tool.steps.options import Options
@@ -36,14 +35,6 @@ class AbstractStep(object):
     def __init__(self, tool, options):
         self._tool = tool
         self._options = options
-
-    # FIXME: This should use tool.port()
-    def _run_script(self, script_name, args=None, quiet=False, port=WebKitPort):
-        log("Running %s" % script_name)
-        command = port.script_shell_command(script_name)
-        if args:
-            command.extend(args)
-        self._tool.executive.run_and_throw_if_fail(command, quiet)
 
     def _changed_files(self, state):
         return self.cached_lookup(state, "changed_files")

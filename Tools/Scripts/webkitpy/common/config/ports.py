@@ -90,6 +90,14 @@ class WebKitPort(object):
         return cls.script_shell_command("update-webkit")
 
     @classmethod
+    def check_webkit_style_command(cls):
+        return cls.script_shell_command("check-webkit-style")
+
+    @classmethod
+    def prepare_changelog_command(cls):
+        return cls.script_shell_command("prepare-ChangeLog")
+
+    @classmethod
     def build_webkit_command(cls, build_style=None):
         command = cls.script_shell_command("build-webkit")
         if build_style == "debug":
