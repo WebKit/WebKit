@@ -31,7 +31,7 @@
 #ifndef InspectorPageAgent_h
 #define InspectorPageAgent_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+#if ENABLE(INSPECTOR)
 
 #include "PlatformString.h"
 #include <wtf/RefCounted.h>
@@ -90,6 +90,6 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(JAVASCRIPT_DEBUGGER) && ENABLE(INSPECTOR)
+#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InspectorPageAgent_h)

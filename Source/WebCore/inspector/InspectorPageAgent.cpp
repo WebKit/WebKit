@@ -32,7 +32,7 @@
 
 #include "InspectorPageAgent.h"
 
-#if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)
+#if ENABLE(INSPECTOR)
 
 #include "CachedResourceLoader.h"
 #include "Cookie.h"
@@ -255,4 +255,4 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
 
 } // namespace WebCore
 
-#endif // ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)
+#endif // ENABLE(INSPECTOR)
