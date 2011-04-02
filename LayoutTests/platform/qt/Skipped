@@ -737,6 +737,7 @@ loader/go-back-to-different-window-size.html
 
 # Missing layoutTestController.displayInvalidatedRegion()
 plugins/invalidate_rect.html
+plugins/windowless_plugin_paint_test.html
 
 # Missing layoutTestController.findString() http://webkit.org/b/50236
 editing/text-iterator/findString.html

@@ -1,3 +1,21 @@
+2011-04-01  Anantanarayanan G Iyengar  <ananta@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45855
+        Windowless plugins added dynamically to the DOM should receive paint events.
+        This is done by ensuring that the plugin widget is marked for painting when
+        it is added. Added a layout test which verifies that a dynamically added plugin
+        receives a paint event. This test has to be skipped on chromium mac/linux and
+        on gtk and qt as it relies on support for the displayInvalidatedRegion function
+        in the LayoutTestController
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * plugins/windowless_plugin_paint_test-expected.txt: Added.
+        * plugins/windowless_plugin_paint_test.html: Added.
+
 2011-04-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82721.

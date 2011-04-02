@@ -2967,6 +2967,7 @@ BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE
 BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
 BUGWK54051 MAC LINUX : plugins/invalidate_rect.html = TEXT
+BUGWK54051 MAC LINUX : plugins/windowless_plugin_paint_test.html = TEXT
 
 // Snow Leopard-only failures (generally just need updated pixel results)
 BUGWK54322 MAC SNOWLEOPARD : animations/3d/matrix-transform-type-animation.html = IMAGE

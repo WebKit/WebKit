@@ -1,3 +1,17 @@
+2011-04-01  Anantanarayanan G Iyengar  <ananta@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=45855
+        Windowless plugins added dynamically to the DOM should receive paint events.
+        This is done by ensuring that the plugin widget is marked for painting when
+        it is added.
+
+        Test: plugins/windowless_plugin_paint_test.html
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidget):
+
 2011-04-01  Mike Reed  <reed@google.com>
 
         Reviewed by James Robinson.

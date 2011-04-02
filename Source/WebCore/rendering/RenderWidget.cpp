@@ -207,8 +207,10 @@ void RenderWidget::setWidget(PassRefPtr<Widget> widget)
                 setWidgetGeometry(IntRect(localToAbsoluteQuad(FloatQuad(contentBoxRect())).boundingBox()), contentBoxRect().size());
             if (style()->visibility() != VISIBLE)
                 m_widget->hide();
-            else
+            else {
                 m_widget->show();
+                repaint();
+            }
         }
         moveWidgetToParentSoon(m_widget.get(), m_frameView);
     }
