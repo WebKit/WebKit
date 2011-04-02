@@ -1,3 +1,13 @@
+2011-04-02  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Martin Robinson.
+
+        Add layoutTestController.shadowRoot to GTK DumpRenderTree.
+        https://bugs.webkit.org/show_bug.cgi?id=57551
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::shadowRoot):
+
 2011-04-02  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Eric Seidel.

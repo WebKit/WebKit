@@ -917,10 +917,9 @@ void LayoutTestController::setEditingBehavior(const char* editingBehavior)
         g_object_set(G_OBJECT(settings), "editing-behavior", WEBKIT_EDITING_BEHAVIOR_UNIX, NULL);
 }
 
-JSValueRef LayoutTestController::shadowRoot(JSContextRef context, JSValueRef jsElement)
+JSValueRef LayoutTestController::shadowRoot(JSContextRef context, JSValueRef element)
 {
-    // FIXME: Implement this.
-    return JSValueMakeUndefined(context);
+    return DumpRenderTreeSupportGtk::shadowRoot(context, element);
 }
 
 void LayoutTestController::abortModal()

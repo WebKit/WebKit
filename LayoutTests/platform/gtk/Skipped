@@ -478,10 +478,6 @@ fast/canvas/patternfill-repeat.html
 # https://bugs.webkit.org/show_bug.cgi?id=54136
 fast/html/keygen.html
 
-# layoutTestController does not implement shadowRoot accessor
-# See https://bugs.webkit.org/show_bug.cgi?id=56573
-fast/dom/HTMLKeygenElement/keygen.html
-
 # [GTK] GTK+ does not support hyphenation
 # https://bugs.webkit.org/show_bug.cgi?id=44478
 fast/text/hyphenate-character.html

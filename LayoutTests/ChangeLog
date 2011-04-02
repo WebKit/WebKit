@@ -1,3 +1,12 @@
+2011-04-02  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Martin Robinson.
+
+        Add layoutTestController.shadowRoot to GTK DumpRenderTree.
+        https://bugs.webkit.org/show_bug.cgi?id=57551
+
+        * platform/gtk/Skipped: unskip test that accesses shadowRoot
+
 2011-04-01  Anantanarayanan G Iyengar  <ananta@chromium.org>
 
         Reviewed by Eric Seidel.
