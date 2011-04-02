@@ -44,21 +44,21 @@ namespace WebCore {
 class ResourceResponse : public ResourceResponseBase {
 public:
     ResourceResponse()
-        : m_isUpToDate(true)
+        : m_initLevel(AllFields)
     {
     }
 
 #if USE(CFNETWORK)
     ResourceResponse(CFURLResponseRef cfResponse)
         : m_cfResponse(cfResponse)
-        , m_isUpToDate(false)
+        , m_initLevel(Uninitialized)
     {
         m_isNull = !cfResponse;
     }
 #else
     ResourceResponse(NSURLResponse* nsResponse)
         : m_nsResponse(nsResponse)
-        , m_isUpToDate(false)
+        , m_initLevel(Uninitialized)
     {
         m_isNull = !nsResponse;
     }
@@ -66,15 +66,15 @@ public:
 
     ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
         : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename)
-        , m_isUpToDate(true)
+        , m_initLevel(AllFields)
     {
     }
 
     unsigned memoryUsage() const
     {
         // FIXME: Find some programmatic lighweight way to calculate ResourceResponse and associated classes.
-        // This is a rough estimate of resource overhead based on stats collected from the stress test.
-        return 3072;
+        // This is a rough estimate of resource overhead based on stats collected from memory usage tests.
+        return 3800;
         /*  1280 * 2 +                // average size of ResourceResponse. Doubled to account for the WebCore copy and the CF copy.
                                       // Mostly due to the size of the hash maps, the Header Map strings and the URL.
             256 * 2                   // Overhead from ResourceRequest, doubled to account for WebCore copy and CF copy.
@@ -91,7 +91,7 @@ public:
 private:
     friend class ResourceResponseBase;
 
-    void platformLazyInit();
+    void platformLazyInit(InitLevel);
     PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData> data) const { return data; }
     void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>) { }
 
@@ -102,7 +102,7 @@ private:
 #else
     mutable RetainPtr<NSURLResponse> m_nsResponse;
 #endif
-    bool m_isUpToDate;
+    InitLevel m_initLevel;
 };
 
 struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {
