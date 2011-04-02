@@ -39,7 +39,6 @@ _log = logging.getLogger("webkitpy.layout_tests.port.mac")
 
 
 def os_version(os_version_string=None, supported_versions=None):
-    # We only support Tiger, Leopard, and Snow Leopard.
     if not os_version_string:
         if hasattr(platform, 'mac_ver') and platform.mac_ver()[0]:
             os_version_string = platform.mac_ver()[0]
@@ -52,7 +51,8 @@ def os_version(os_version_string=None, supported_versions=None):
         5: 'leopard',
         6: 'snowleopard',
     }
-    version_string = version_strings[release_version]
+    assert release_version >= min(version_strings.keys())
+    version_string = version_strings.get(release_version, 'future')
     if supported_versions:
         assert version_string in supported_versions
     return version_string
@@ -62,12 +62,13 @@ class MacPort(WebKitPort):
     """WebKit Mac implementation of the Port class."""
     # FIXME: 'wk2' probably shouldn't be a version, it should probably be
     # a modifier, like 'chromium-gpu' is to 'chromium'.
-    SUPPORTED_VERSIONS = ('tiger', 'leopard', 'snowleopard', 'wk2')
+    SUPPORTED_VERSIONS = ('tiger', 'leopard', 'snowleopard', 'future', 'wk2')
 
     FALLBACK_PATHS = {
         'tiger': ['mac-tiger', 'mac-leopard', 'mac-snowleopard', 'mac'],
         'leopard': ['mac-leopard', 'mac-snowleopard', 'mac'],
         'snowleopard': ['mac-snowleopard', 'mac'],
+        'future': ['mac'],
         'wk2': ['mac-wk2', 'mac'],
     }
 
@@ -96,6 +97,13 @@ class MacPort(WebKitPort):
         if self._multiprocessing_is_available:
             return 'processes'
         return 'threads'
+
+    def baseline_path(self):
+        if self.version() != 'future':
+            return WebKitPort.baseline_path(self)
+
+        assert(self._name[-7:] == '-future')
+        return self._webkit_baseline_path(self._name[:-7])
 
     def baseline_search_path(self):
         return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])

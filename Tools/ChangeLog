@@ -1,3 +1,16 @@
+2011-03-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        <http://webkit.org/b/56730> new-run-webkit-tests fails on Lion seed
+
+        Teach new-run-webkit-tests about the concept of an unreleased version of Mac OS X.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+
 2011-04-01  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

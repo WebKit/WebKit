@@ -43,7 +43,7 @@ _log = logging.getLogger("webkitpy.layout_tests.port.chromium_mac")
 
 class ChromiumMacPort(chromium.ChromiumPort):
     """Chromium Mac implementation of the Port class."""
-    SUPPORTED_OS_VERSIONS = ('leopard', 'snowleopard')
+    SUPPORTED_OS_VERSIONS = ('leopard', 'snowleopard', 'future')
 
     FALLBACK_PATHS = {
         'leopard': [
@@ -58,6 +58,11 @@ class ChromiumMacPort(chromium.ChromiumPort):
             'chromium-mac',
             'chromium',
             'mac-snowleopard',
+            'mac',
+        ],
+        'future': [
+            'chromium-mac',
+            'chromium',
             'mac',
         ],
     }
@@ -76,7 +81,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
         self._operating_system = 'mac'
 
     def baseline_path(self):
-        if self.version() == 'snowleopard':
+        if self.version() in ('snowleopard', 'future'):
             # We treat Snow Leopard as the newest version of mac,
             # so it gets the base dir.
             return self._webkit_baseline_path('chromium-mac')

@@ -91,7 +91,7 @@ svg/batik/text/smallFonts.svg
     def test_versions(self):
         port = self.make_port()
         if port:
-            self.assertTrue(port.name() in ('mac-tiger', 'mac-leopard', 'mac-snowleopard'))
+            self.assertTrue(port.name() in ('mac-tiger', 'mac-leopard', 'mac-snowleopard', 'mac-future'))
 
         self.assert_name(None, '10.4.8', 'mac-tiger')
         self.assert_name('mac', '10.4.8', 'mac-tiger')
@@ -111,8 +111,16 @@ svg/batik/text/smallFonts.svg
         self.assert_name('mac-snowleopard', '10.5.3', 'mac-snowleopard')
         self.assert_name('mac-snowleopard', '10.6.3', 'mac-snowleopard')
 
-        self.assertRaises(KeyError, self.assert_name, None, '10.7.1', 'mac-leopard')
-        self.assertRaises(KeyError, self.assert_name, None, '10.3.1', 'mac-leopard')
+        self.assert_name(None, '10.7', 'mac-future')
+        self.assert_name(None, '10.7.3', 'mac-future')
+        self.assert_name(None, '10.8', 'mac-future')
+        self.assert_name('mac', '10.7.3', 'mac-future')
+        self.assert_name('mac-future', '10.4.3', 'mac-future')
+        self.assert_name('mac-future', '10.5.3', 'mac-future')
+        self.assert_name('mac-future', '10.6.3', 'mac-future')
+        self.assert_name('mac-future', '10.7.3', 'mac-future')
+
+        self.assertRaises(AssertionError, self.assert_name, None, '10.3.1', 'should-raise-assertion-so-this-value-does-not-matter')
 
 
 if __name__ == '__main__':
