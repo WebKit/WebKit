@@ -481,7 +481,7 @@ sub generateBackendFunction
     push(@function, "");
 
     # declare local variables for out arguments.
-    push(@function, map("    " . typeTraits($_->type, "variable") . " " . $_->name . " = " . typeTraits($_->type, "defaultValue") . ";", @outArgs));
+    push(@function, map("    " . typeTraits($_->type, "variable") . " out_" . $_->name . " = " . typeTraits($_->type, "defaultValue") . ";", @outArgs));
     push(@function, "");
     push(@function, "    ErrorString error;");
     push(@function, "");
@@ -494,13 +494,13 @@ sub generateBackendFunction
             my $name = $parameter->name;
             my $type = $parameter->type;
             my $typeString = camelCase($parameter->type);
-            push(@function, "        " . typeTraits($type, "variable") . " $name = get$typeString(argumentsContainer.get(), \"$name\", protocolErrors.get());");
+            push(@function, "        " . typeTraits($type, "variable") . " in_$name = get$typeString(argumentsContainer.get(), \"$name\", protocolErrors.get());");
         }
         push(@function, "");
         $indent = "    ";
     }
 
-    my $args = join(", ", ("&error", map($_->name, @inArgs), map("&" . $_->name, @outArgs)));
+    my $args = join(", ", ("&error", map("in_" . $_->name, @inArgs), map("&out_" . $_->name, @outArgs)));
     push(@function, "$indent    if (!protocolErrors->length())");
     push(@function, "$indent        $domainAccessor->$functionName($args);");
     if (scalar(@inArgs)) {
@@ -521,7 +521,7 @@ sub generateBackendFunction
         push(@function, "            if (error.length())");
         push(@function, "                responseMessage->setString(\"error\", error);");
         push(@function, "            RefPtr<InspectorObject> responseBody = InspectorObject::create();");
-        push(@function, map("            responseBody->set" . typeTraits($_->type, "JSONType") . "(\"" . $_->name . "\", " . $_->name . ");", @outArgs));
+        push(@function, map("            responseBody->set" . typeTraits($_->type, "JSONType") . "(\"" . $_->name . "\", out_" . $_->name . ");", @outArgs));
         push(@function, "            responseMessage->setObject(\"body\", responseBody);");
         push(@function, "        }");
     }

@@ -680,7 +680,7 @@
                     { "name": "selectors", "type": "string", "description": "Selector string." },
                 ],
                 "returns": [
-                    { "name": "elementId", "type": "integer", "description": "Query selector result." }
+                    { "name": "nodeId", "type": "integer", "description": "Query selector result." }
                 ],
                 "description": "Executes <code>querySelector</code> on a given node. Setting <code>documentWide</code> to true starts selecting from the document node."
             },
