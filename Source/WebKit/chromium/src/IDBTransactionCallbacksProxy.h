@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,32 +29,33 @@
 #ifndef IDBTransactionCallbacksProxy_h
 #define IDBTransactionCallbacksProxy_h
 
+#include "IDBTransactionCallbacks.h"
+
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBTransactionCallbacks.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
-namespace WebKit {
+namespace WebKit { class WebIDBTransactionCallbacks; }
 
-class WebIDBTransactionCallbacks;
+namespace WebCore {
 
-class IDBTransactionCallbacksProxy : public WebCore::IDBTransactionCallbacks {
+class IDBTransactionCallbacksProxy : public IDBTransactionCallbacks {
 public:
-    static PassRefPtr<IDBTransactionCallbacksProxy> create(PassOwnPtr<WebIDBTransactionCallbacks>);
+    static PassRefPtr<IDBTransactionCallbacksProxy> create(PassOwnPtr<WebKit::WebIDBTransactionCallbacks>);
     virtual ~IDBTransactionCallbacksProxy();
 
     virtual void onAbort();
     virtual void onComplete();
 
 private:
-    IDBTransactionCallbacksProxy(PassOwnPtr<WebIDBTransactionCallbacks>);
+    IDBTransactionCallbacksProxy(PassOwnPtr<WebKit::WebIDBTransactionCallbacks>);
 
-    OwnPtr<WebIDBTransactionCallbacks> m_callbacks;
+    OwnPtr<WebKit::WebIDBTransactionCallbacks> m_callbacks;
 };
 
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif
 

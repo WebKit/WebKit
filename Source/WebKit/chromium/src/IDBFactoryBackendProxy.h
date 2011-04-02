@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,32 +29,32 @@
 #ifndef IDBFactoryBackendProxy_h
 #define IDBFactoryBackendProxy_h
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBFactoryBackendInterface.h"
 
-namespace WebCore { class DOMStringList; }
+#if ENABLE(INDEXED_DATABASE)
 
-namespace WebKit {
+namespace WebKit { class WebIDBFactory; }
 
-class WebIDBFactory;
+namespace WebCore {
 
-class IDBFactoryBackendProxy : public WebCore::IDBFactoryBackendInterface {
+class DOMStringList;
+
+class IDBFactoryBackendProxy : public IDBFactoryBackendInterface {
 public:
-    static PassRefPtr<WebCore::IDBFactoryBackendInterface> create();
+    static PassRefPtr<IDBFactoryBackendInterface> create();
     virtual ~IDBFactoryBackendProxy();
 
-    PassRefPtr<WebCore::DOMStringList> databases(void) const;
-    virtual void open(const String& name, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType);
+    PassRefPtr<DOMStringList> databases(void) const;
+    virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType);
 
 private:
     IDBFactoryBackendProxy();
 
     // We don't own this pointer (unlike all the other proxy classes which do).
-    WebIDBFactory* m_webIDBFactory;
+    WebKit::WebIDBFactory* m_webIDBFactory;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif
 

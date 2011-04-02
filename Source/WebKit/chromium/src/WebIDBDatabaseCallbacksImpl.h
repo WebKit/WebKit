@@ -34,23 +34,23 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore { class IDBDatabaseCallbacks; }
+namespace WebCore {
 
-namespace WebKit {
+class IDBDatabaseCallbacks;
 
-class WebIDBDatabaseCallbacksImpl : public WebIDBDatabaseCallbacks {
+class WebIDBDatabaseCallbacksImpl : public WebKit::WebIDBDatabaseCallbacks {
 public:
-    WebIDBDatabaseCallbacksImpl(PassRefPtr<WebCore::IDBDatabaseCallbacks>);
+    WebIDBDatabaseCallbacksImpl(PassRefPtr<IDBDatabaseCallbacks>);
     virtual ~WebIDBDatabaseCallbacksImpl();
 
-    virtual void onVersionChange(const WebString& version);
+    virtual void onVersionChange(const WebKit::WebString& version);
 
 private:
-    RefPtr<WebCore::IDBDatabaseCallbacks> m_callbacks;
+    RefPtr<IDBDatabaseCallbacks> m_callbacks;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif
 
 #endif // WebIDBDatabaseCallbacksImpl_h

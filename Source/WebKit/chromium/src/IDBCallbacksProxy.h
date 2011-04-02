@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,37 +29,40 @@
 #ifndef IDBCallbacksProxy_h
 #define IDBCallbacksProxy_h
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBCallbacks.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
+#if ENABLE(INDEXED_DATABASE)
+
 namespace WebKit {
-
 class WebIDBCallbacks;
+}
 
-class IDBCallbacksProxy : public WebCore::IDBCallbacks {
+namespace WebCore {
+
+class IDBCallbacksProxy : public IDBCallbacks {
 public:
-    static PassRefPtr<IDBCallbacksProxy> create(PassOwnPtr<WebIDBCallbacks>);
+    static PassRefPtr<IDBCallbacksProxy> create(PassOwnPtr<WebKit::WebIDBCallbacks>);
     virtual ~IDBCallbacksProxy();
 
-    virtual void onError(PassRefPtr<WebCore::IDBDatabaseError>);
-    virtual void onSuccess(PassRefPtr<WebCore::IDBCursorBackendInterface>);
-    virtual void onSuccess(PassRefPtr<WebCore::IDBDatabaseBackendInterface>);
-    virtual void onSuccess(PassRefPtr<WebCore::IDBKey>);
-    virtual void onSuccess(PassRefPtr<WebCore::IDBTransactionBackendInterface>);
-    virtual void onSuccess(PassRefPtr<WebCore::SerializedScriptValue>);
+    virtual void onError(PassRefPtr<IDBDatabaseError>);
+    virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>);
+    virtual void onSuccess(PassRefPtr<IDBDatabaseBackendInterface>);
+    virtual void onSuccess(PassRefPtr<IDBKey>);
+    virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>);
+    virtual void onSuccess(PassRefPtr<SerializedScriptValue>);
     virtual void onBlocked();
 
 private:
-    IDBCallbacksProxy(PassOwnPtr<WebIDBCallbacks>);
+    IDBCallbacksProxy(PassOwnPtr<WebKit::WebIDBCallbacks>);
 
-    OwnPtr<WebIDBCallbacks> m_callbacks;
+    OwnPtr<WebKit::WebIDBCallbacks> m_callbacks;
 };
 
-} // namespace WebKit
+
+} // namespace WebCore
 
 #endif
 

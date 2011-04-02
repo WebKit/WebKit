@@ -23,42 +23,48 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBIndexBackendProxy_h
-#define IDBIndexBackendProxy_h
+#ifndef IDBObjectStoreProxy_h
+#define IDBObjectStoreProxy_h
 
-#include "IDBIndexBackendInterface.h"
+#include "IDBObjectStoreBackendInterface.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
-namespace WebKit { class WebIDBIndex; }
+namespace WebKit { class WebIDBObjectStore; }
 
 namespace WebCore {
 
-class IDBIndexBackendProxy : public IDBIndexBackendInterface {
+class IDBObjectStoreProxy : public IDBObjectStoreBackendInterface {
 public:
-    static PassRefPtr<IDBIndexBackendInterface> create(PassOwnPtr<WebKit::WebIDBIndex>);
-    virtual ~IDBIndexBackendProxy();
+    static PassRefPtr<IDBObjectStoreBackendInterface> create(PassOwnPtr<WebKit::WebIDBObjectStore>);
+    virtual ~IDBObjectStoreProxy();
 
-    virtual String name();
-    virtual String storeName();
-    virtual String keyPath();
-    virtual bool unique();
+    virtual String name() const;
+    virtual String keyPath() const;
+    virtual PassRefPtr<DOMStringList> indexNames() const;
+
+    virtual void get(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
+    virtual void put(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
+    virtual void deleteFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
+    virtual void clear(PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
+
+    PassRefPtr<IDBIndexBackendInterface> createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface*, ExceptionCode&);
+    PassRefPtr<IDBIndexBackendInterface> index(const String& name, ExceptionCode&);
+    void deleteIndex(const String& name, IDBTransactionBackendInterface*, ExceptionCode&);
 
     virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void openKeyCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void get(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
-    virtual void getKey(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
 private:
-    IDBIndexBackendProxy(PassOwnPtr<WebKit::WebIDBIndex>);
+    IDBObjectStoreProxy(PassOwnPtr<WebKit::WebIDBObjectStore>);
 
-    OwnPtr<WebKit::WebIDBIndex> m_webIDBIndex;
+    OwnPtr<WebKit::WebIDBObjectStore> m_webIDBObjectStore;
 };
 
 } // namespace WebCore
 
 #endif
 
-#endif // IDBIndexBackendProxy_h
+#endif // IDBObjectStoreProxy_h

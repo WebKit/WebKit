@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,16 +36,14 @@
 #include "WebIDBKey.h"
 #include "WebSerializedScriptValue.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
-
-PassRefPtr<IDBCursorBackendInterface> IDBCursorBackendProxy::create(PassOwnPtr<WebIDBCursor> idbCursor)
+PassRefPtr<IDBCursorBackendInterface> IDBCursorBackendProxy::create(PassOwnPtr<WebKit::WebIDBCursor> idbCursor)
 {
     return adoptRef(new IDBCursorBackendProxy(idbCursor));
 }
 
-IDBCursorBackendProxy::IDBCursorBackendProxy(PassOwnPtr<WebIDBCursor> idbCursor)
+IDBCursorBackendProxy::IDBCursorBackendProxy(PassOwnPtr<WebKit::WebIDBCursor> idbCursor)
     : m_idbCursor(idbCursor)
 {
 }
@@ -89,6 +87,6 @@ void IDBCursorBackendProxy::deleteFunction(PassRefPtr<IDBCallbacks> callbacks, E
     m_idbCursor->deleteFunction(new WebIDBCallbacksImpl(callbacks), ec);
 }
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

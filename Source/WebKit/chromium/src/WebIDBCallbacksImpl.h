@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,35 +26,35 @@
 #ifndef WebIDBCallbacksImpl_h
 #define WebIDBCallbacksImpl_h
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "WebIDBCallbacks.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore { class IDBCallbacks; }
+#if ENABLE(INDEXED_DATABASE)
 
-namespace WebKit {
+namespace WebCore {
 
-class WebIDBCallbacksImpl : public WebIDBCallbacks {
+class IDBCallbacks;
+
+class WebIDBCallbacksImpl : public WebKit::WebIDBCallbacks {
 public:
-    WebIDBCallbacksImpl(PassRefPtr<WebCore::IDBCallbacks>);
+    WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks>);
     virtual ~WebIDBCallbacksImpl();
 
-    virtual void onError(const WebIDBDatabaseError&);
-    virtual void onSuccess(WebIDBCursor*);
-    virtual void onSuccess(WebIDBDatabase*);
-    virtual void onSuccess(const WebIDBKey&);
-    virtual void onSuccess(WebIDBTransaction*);
-    virtual void onSuccess(const WebSerializedScriptValue&);
+    virtual void onError(const WebKit::WebIDBDatabaseError&);
+    virtual void onSuccess(WebKit::WebIDBCursor*);
+    virtual void onSuccess(WebKit::WebIDBDatabase*);
+    virtual void onSuccess(const WebKit::WebIDBKey&);
+    virtual void onSuccess(WebKit::WebIDBTransaction*);
+    virtual void onSuccess(const WebKit::WebSerializedScriptValue&);
     virtual void onBlocked();
 
 private:
-    RefPtr<WebCore::IDBCallbacks> m_callbacks;
+    RefPtr<IDBCallbacks> m_callbacks;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
-#endif // ENABLE(INDEXED_DATABASE)
+#endif
 
 #endif // WebIDBCallbacksImpl_h

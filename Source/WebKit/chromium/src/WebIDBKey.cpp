@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -80,12 +80,12 @@ WebIDBKey WebIDBKey::createFromValueAndKeyPath(const WebSerializedScriptValue& s
 {
     if (serializedScriptValue.isNull())
         return WebIDBKey::createInvalid();
-    return createIDBKeyFromSerializedValueAndKeyPath(serializedScriptValue, idbKeyPath);
+    return WebCore::createIDBKeyFromSerializedValueAndKeyPath(serializedScriptValue, idbKeyPath);
 }
 
 WebSerializedScriptValue WebIDBKey::injectIDBKeyIntoSerializedValue(const WebIDBKey& key, const WebSerializedScriptValue& value, const WebIDBKeyPath& path)
 {
-    return injectIDBKeyIntoSerializedValue(key, value, path);
+    return WebCore::injectIDBKeyIntoSerializedValue(key, value, path);
 }
 
 void WebIDBKey::assign(const WebIDBKey& value)

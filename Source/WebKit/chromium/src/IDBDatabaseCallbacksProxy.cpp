@@ -30,16 +30,14 @@
 
 #include "WebIDBDatabaseCallbacks.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
-
-PassRefPtr<IDBDatabaseCallbacksProxy> IDBDatabaseCallbacksProxy::create(PassOwnPtr<WebIDBDatabaseCallbacks> callbacks)
+PassRefPtr<IDBDatabaseCallbacksProxy> IDBDatabaseCallbacksProxy::create(PassOwnPtr<WebKit::WebIDBDatabaseCallbacks> callbacks)
 {
     return adoptRef(new IDBDatabaseCallbacksProxy(callbacks));
 }
 
-IDBDatabaseCallbacksProxy::IDBDatabaseCallbacksProxy(PassOwnPtr<WebIDBDatabaseCallbacks> callbacks)
+IDBDatabaseCallbacksProxy::IDBDatabaseCallbacksProxy(PassOwnPtr<WebKit::WebIDBDatabaseCallbacks> callbacks)
     : m_callbacks(callbacks)
 {
 }
@@ -53,6 +51,6 @@ void IDBDatabaseCallbacksProxy::onVersionChange(const String& requestedVersion)
     m_callbacks->onVersionChange(requestedVersion);
 }
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)

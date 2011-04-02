@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,23 +28,21 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBObjectStoreBackendProxy.h"
+#include "IDBObjectStoreProxy.h"
 #include "IDBTransactionCallbacks.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBObjectStore.h"
 #include "WebIDBTransaction.h"
 #include "WebIDBTransactionCallbacksImpl.h"
 
-using namespace WebCore;
+namespace WebCore {
 
-namespace WebKit {
-
-PassRefPtr<IDBTransactionBackendInterface> IDBTransactionBackendProxy::create(PassOwnPtr<WebIDBTransaction> transaction)
+PassRefPtr<IDBTransactionBackendInterface> IDBTransactionBackendProxy::create(PassOwnPtr<WebKit::WebIDBTransaction> transaction)
 {
     return adoptRef(new IDBTransactionBackendProxy(transaction));
 }
 
-IDBTransactionBackendProxy::IDBTransactionBackendProxy(PassOwnPtr<WebIDBTransaction> transaction)
+IDBTransactionBackendProxy::IDBTransactionBackendProxy(PassOwnPtr<WebKit::WebIDBTransaction> transaction)
     : m_webIDBTransaction(transaction)
 {
     ASSERT(m_webIDBTransaction);
@@ -56,10 +54,10 @@ IDBTransactionBackendProxy::~IDBTransactionBackendProxy()
 
 PassRefPtr<IDBObjectStoreBackendInterface> IDBTransactionBackendProxy::objectStore(const String& name, ExceptionCode& ec)
 {
-    WebIDBObjectStore* objectStore = m_webIDBTransaction->objectStore(name, ec);
+    WebKit::WebIDBObjectStore* objectStore = m_webIDBTransaction->objectStore(name, ec);
     if (!objectStore)
         return 0;
-    return IDBObjectStoreBackendProxy::create(objectStore);
+    return IDBObjectStoreProxy::create(objectStore);
 }
 
 unsigned short IDBTransactionBackendProxy::mode() const
@@ -90,6 +88,6 @@ void IDBTransactionBackendProxy::setCallbacks(IDBTransactionCallbacks* callbacks
     m_webIDBTransaction->setCallbacks(new WebIDBTransactionCallbacksImpl(callbacks));
 }
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
