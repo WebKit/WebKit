@@ -28,7 +28,6 @@
 #include "AnimationController.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
-#include "Element.h"
 #include "FocusController.h"
 #include "FrameLoaderClientGtk.h"
 #include "FrameTree.h"
@@ -635,16 +634,6 @@ void DumpRenderTreeSupportGtk::clearOpener(WebKitWebFrame* frame)
     Frame* coreFrame = core(frame);
     if (coreFrame)
         coreFrame->loader()->setOpener(0);
-}
-
-JSValueRef DumpRenderTreeSupportGtk::shadowRoot(JSContextRef context, JSValueRef value)
-{
-    JSC::ExecState* exec = toJS(context);
-    Element* element = toElement(toJS(exec, value));
-    if (!element)
-      return JSValueMakeNull(context);
-
-    return toRef(exec, toJS(exec, element->shadowRoot()));
 }
 
 unsigned int DumpRenderTreeSupportGtk::workerThreadCount()

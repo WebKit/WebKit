@@ -61,8 +61,6 @@ public:
 
     static void clearOpener(WebKitWebFrame*);
 
-    static JSValueRef shadowRoot(JSContextRef, JSValueRef);
-
     // FIXME: Move these to webkitwebframe.h once their API has been discussed.
     static GSList* getFrameChildren(WebKitWebFrame*);
     static WTF::CString getInnerText(WebKitWebFrame*);
