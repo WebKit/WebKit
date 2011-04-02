@@ -63,6 +63,9 @@ WK_EXPORT WKRect WKBundleFrameGetVisibleContentBounds(WKBundleFrameRef frame);
 WK_EXPORT WKRect WKBundleFrameGetVisibleContentBoundsExcludingScrollbars(WKBundleFrameRef frame);
 WK_EXPORT WKSize WKBundleFrameGetScrollOffset(WKBundleFrameRef frame);
 
+WK_EXPORT bool WKBundleFrameHasHorizontalScrollbar(WKBundleFrameRef frame);
+WK_EXPORT bool WKBundleFrameHasVerticalScrollbar(WKBundleFrameRef frame);
+
 WK_EXPORT bool WKBundleFrameGetDocumentBackgroundColor(WKBundleFrameRef frame, double* red, double* green, double* blue, double* alpha);
 
 WK_EXPORT WKStringRef WKBundleFrameCopySuggestedFilenameForResourceWithURL(WKBundleFrameRef frame, WKURLRef url);

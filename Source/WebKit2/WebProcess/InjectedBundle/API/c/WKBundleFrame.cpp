@@ -201,6 +201,16 @@ WKSize WKBundleFrameGetScrollOffset(WKBundleFrameRef frameRef)
     return toAPI(toImpl(frameRef)->scrollOffset());
 }
 
+bool WKBundleFrameHasHorizontalScrollbar(WKBundleFrameRef frameRef)
+{
+    return toImpl(frameRef)->hasHorizontalScrollbar();
+}
+
+bool WKBundleFrameHasVerticalScrollbar(WKBundleFrameRef frameRef)
+{
+    return toImpl(frameRef)->hasVerticalScrollbar();
+}
+
 bool WKBundleFrameGetDocumentBackgroundColor(WKBundleFrameRef frameRef, double* red, double* green, double* blue, double* alpha)
 {
     return toImpl(frameRef)->getDocumentBackgroundColor(red, green, blue, alpha);

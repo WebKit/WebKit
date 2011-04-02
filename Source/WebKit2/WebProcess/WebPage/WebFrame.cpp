@@ -512,6 +512,30 @@ IntSize WebFrame::scrollOffset() const
     return view->scrollOffset();
 }
 
+bool WebFrame::hasHorizontalScrollbar() const
+{
+    if (!m_coreFrame)
+        return false;
+
+    FrameView* view = m_coreFrame->view();
+    if (!view)
+        return false;
+
+    return view->horizontalScrollbar();
+}
+
+bool WebFrame::hasVerticalScrollbar() const
+{
+    if (!m_coreFrame)
+        return false;
+
+    FrameView* view = m_coreFrame->view();
+    if (!view)
+        return false;
+
+    return view->verticalScrollbar();
+}
+
 bool WebFrame::getDocumentBackgroundColor(double* red, double* green, double* blue, double* alpha)
 {
     if (!m_coreFrame)

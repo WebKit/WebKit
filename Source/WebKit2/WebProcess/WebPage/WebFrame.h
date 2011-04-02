@@ -93,6 +93,8 @@ public:
     WebCore::IntRect visibleContentBounds() const;
     WebCore::IntRect visibleContentBoundsExcludingScrollbars() const;
     WebCore::IntSize scrollOffset() const;
+    bool hasHorizontalScrollbar() const;
+    bool hasVerticalScrollbar() const;
     bool getDocumentBackgroundColor(double* red, double* green, double* blue, double* alpha);
 
     static WebFrame* frameForContext(JSContextRef);
