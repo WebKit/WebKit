@@ -45,6 +45,7 @@ import sys
 import time
 
 from webkitpy.common.system.deprecated_logging import tee
+from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.python24 import versioning
 
 
@@ -178,6 +179,22 @@ class Executive(object):
         # This quantity is a lie but probably a reasonable guess for modern
         # machines.
         return 2
+
+    @staticmethod
+    def interpreter_for_script(script_path, fs=FileSystem()):
+        lines = fs.read_text_file(script_path).splitlines()
+        if not len(lines):
+            return None
+        first_line = lines[0]
+        if not first_line.startswith('#!'):
+            return None
+        if first_line.find('python') > -1:
+            return sys.executable
+        if first_line.find('perl') > -1:
+            return 'perl'
+        if first_line.find('ruby') > -1:
+            return 'ruby'
+        return None
 
     def kill_process(self, pid):
         """Attempts to kill the given pid.

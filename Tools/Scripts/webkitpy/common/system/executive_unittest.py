@@ -34,6 +34,7 @@ import sys
 import unittest
 
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.test import cat, echo
 
 
@@ -64,6 +65,33 @@ def never_ending_command():
 
 
 class ExecutiveTest(unittest.TestCase):
+
+    def assert_interpreter_for_content(self, intepreter, content):
+        fs = MockFileSystem()
+        file_path = None
+        file_interpreter = None
+
+        tempfile, temp_name = fs.open_binary_tempfile('')
+        tempfile.write(content)
+        tempfile.close()
+        file_interpreter = Executive.interpreter_for_script(temp_name, fs)
+
+        self.assertEqual(file_interpreter, intepreter)
+
+    def test_interpreter_for_script(self):
+        self.assert_interpreter_for_content(None, '')
+        self.assert_interpreter_for_content(None, 'abcd\nefgh\nijklm')
+        self.assert_interpreter_for_content(None, '##/usr/bin/perl')
+        self.assert_interpreter_for_content('perl', '#!/usr/bin/env perl')
+        self.assert_interpreter_for_content('perl', '#!/usr/bin/env perl\nfirst\nsecond')
+        self.assert_interpreter_for_content('perl', '#!/usr/bin/perl')
+        self.assert_interpreter_for_content('perl', '#!/usr/bin/perl -w')
+        self.assert_interpreter_for_content(sys.executable, '#!/usr/bin/env python')
+        self.assert_interpreter_for_content(sys.executable, '#!/usr/bin/env python\nfirst\nsecond')
+        self.assert_interpreter_for_content(sys.executable, '#!/usr/bin/python')
+        self.assert_interpreter_for_content('ruby', '#!/usr/bin/env ruby')
+        self.assert_interpreter_for_content('ruby', '#!/usr/bin/env ruby\nfirst\nsecond')
+        self.assert_interpreter_for_content('ruby', '#!/usr/bin/ruby')
 
     def test_run_command_with_bad_command(self):
         def run_bad_command():

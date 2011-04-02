@@ -1,3 +1,17 @@
+2011-04-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Emulate shebang on Win32
+        https://bugs.webkit.org/show_bug.cgi?id=55927
+
+        Scripts on Windows work only if they are called with the explicit interpreter.
+        Read the first line of scripts to detect the correct executable.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/common/system/executive.py: Added interpreter_for_script().
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+
 2011-04-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
