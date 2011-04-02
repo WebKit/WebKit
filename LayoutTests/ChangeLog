@@ -1,3 +1,9 @@
+2011-04-01  Adam Barth  <abarth@webkit.org>
+
+        This test fails by timing out.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-01  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.
