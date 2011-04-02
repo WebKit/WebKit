@@ -1,3 +1,12 @@
+2011-04-01  Keith Kyzivat  <keith.kyzivat@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] [WK2] MiniBrowser.qrc not found - regression from rev 82671
+        https://bugs.webkit.org/show_bug.cgi?id=57666
+
+        * MiniBrowser/qt/MiniBrowser.qrc: Renamed from Tools/MiniBrowser/MiniBrowser.qrc.
+
 2011-04-01  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.
