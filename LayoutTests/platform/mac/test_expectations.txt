@@ -59,7 +59,7 @@
 
 // Our slow tests, in alphabetical order.
 BUGWK57672 SLOW : http/tests/local/fileapi/send-sliced-dragged-file.html = PASS
-BUGWK57678 SLOW : fast/workers/dedicated-worker-lifecycle.html = PASS
+BUGWK57678 SKIP : fast/workers/dedicated-worker-lifecycle.html = PASS TIMEOUT
 
 // Flaky tests that appear to be fail depending on which earlier tests
 // run in the same process
