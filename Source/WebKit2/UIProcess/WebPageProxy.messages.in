@@ -166,7 +166,10 @@ messages -> WebPageProxy {
     # PopupMenu messages
     ShowPopupMenu(WebCore::IntRect rect, uint64_t textDirection, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex, WebKit::PlatformPopupMenuData data)
     HidePopupMenu()
-    
+#if PLATFORM(WIN)
+    SetPopupMenuSelectedIndex(int32_t selectedIndex)
+#endif
+
     # ContextMenu messages
     ShowContextMenu(WebCore::IntPoint menuLocation, WebKit::ContextMenuState state, Vector<WebKit::WebContextMenuItemData> items, WebKit::InjectedBundleUserMessageEncoder userData)
 

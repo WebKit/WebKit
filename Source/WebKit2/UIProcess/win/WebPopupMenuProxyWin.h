@@ -51,6 +51,8 @@ public:
     virtual void showPopupMenu(const WebCore::IntRect&, WebCore::TextDirection, double scaleFactor, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex);
     virtual void hidePopupMenu();
 
+    bool setFocusedIndex(int index, bool hotTracking = false);
+
     void hide() { hidePopupMenu(); }
 
 private:
@@ -107,7 +109,6 @@ private:
     void paint(const WebCore::IntRect& damageRect, HDC = 0);
     int visibleItems() const;
     int listIndexAtPoint(const WebCore::IntPoint&) const;
-    bool setFocusedIndex(int index, bool hotTracking = false);
     int focusedIndex() const;
     void focusFirst();
     void focusLast();

@@ -1,3 +1,19 @@
+2011-04-01  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Type-to-select doesn't work in open <select> menu (53023)
+        https://bugs.webkit.org/show_bug.cgi?id=53023
+        <rdar://problem/8907678>
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: adding new setPopupMenuSelectedIndex message for windows platform
+        * UIProcess/win/WebPageProxyWin.cpp:
+        (WebKit::WebPageProxy::setPopupMenuSelectedIndex):
+        * UIProcess/win/WebPopupMenuProxyWin.h: moving setFocusedIndex() into public method
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::updateFromElement): send message back to UIProcess to update the selected element
+
 2011-04-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

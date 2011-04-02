@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WebPageProxy.h"
+#include "WebPopupMenuProxyWin.h"
 
 #include "resource.h"
 #include <tchar.h>
@@ -52,6 +53,14 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
     DEFINE_STATIC_LOCAL(String, webKitVersion, (userVisibleWebKitVersionString()));
 
     return makeString("Mozilla/5.0 (", osVersion, ") AppleWebKit/", webKitVersion, " (KHTML, like Gecko)", applicationNameForUserAgent.isEmpty() ? "" : " ", applicationNameForUserAgent);
+}
+
+void WebPageProxy::setPopupMenuSelectedIndex(int32_t selectedIndex)
+{
+    if (!m_activePopupMenu)
+        return;
+
+    static_cast<WebPopupMenuProxyWin*>(m_activePopupMenu.get())->setFocusedIndex(selectedIndex);
 }
 
 } // namespace WebKit
