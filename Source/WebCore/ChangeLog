@@ -1,5 +1,13 @@
 2011-04-02  Dan Bernstein  <mitz@apple.com>
 
+        Reverted r82775 due to changes in <details> test results, which are
+        likely progressions.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine): Removed a
+
+2011-04-02  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Dave Hyatt.
 
         Remove an unnecessary extra computeLogicalWidth() from line layout
