@@ -620,7 +620,11 @@ bool PlatformContextSkia::isPrinting()
 
 bool PlatformContextSkia::isNativeFontRenderingAllowed()
 {
+#if ENABLE(SKIA_GPU)
+    return false;
+#else
     return m_canvas->getTopPlatformDevice().IsNativeFontRenderingAllowed();
+#endif
 }
 
 void PlatformContextSkia::getImageResamplingHint(IntSize* srcSize, FloatSize* dstSize) const
