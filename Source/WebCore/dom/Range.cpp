@@ -1893,16 +1893,24 @@ PassRefPtr<ClientRect> Range::getBoundingClientRect() const
     return rect.isEmpty() ? 0 : ClientRect::create(rect);
 }
 
-static void adjustFloatQuadsForScrollAndAbsoluteZoom(Vector<FloatQuad>& quads, Document* document, RenderObject* renderer)
+static void adjustFloatQuadsForScrollAndAbsoluteZoomAndPageScale(Vector<FloatQuad>& quads, Document* document, RenderObject* renderer)
 {
     FrameView* view = document->view();
     if (!view)
         return;
 
+    float pageScale = 1;
+    if (Page* page = document->page()) {
+        if (Frame* frame = page->mainFrame())
+            pageScale = frame->pageScaleFactor();
+    }
+
     IntRect visibleContentRect = view->visibleContentRect();
     for (size_t i = 0; i < quads.size(); ++i) {
         quads[i].move(-visibleContentRect.x(), -visibleContentRect.y());
         adjustFloatQuadForAbsoluteZoom(quads[i], renderer);
+        if (pageScale != 1)
+            adjustFloatQuadForPageScale(quads[i], pageScale);
     }
 }
 
@@ -1924,7 +1932,7 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
                 if (RenderBoxModelObject* renderBoxModelObject = static_cast<Element*>(node)->renderBoxModelObject()) {
                     Vector<FloatQuad> elementQuads;
                     renderBoxModelObject->absoluteQuads(elementQuads);
-                    adjustFloatQuadsForScrollAndAbsoluteZoom(elementQuads, m_ownerDocument.get(), renderBoxModelObject);
+                    adjustFloatQuadsForScrollAndAbsoluteZoomAndPageScale(elementQuads, m_ownerDocument.get(), renderBoxModelObject);
 
                     quads.append(elementQuads);
                 }
@@ -1937,7 +1945,7 @@ void Range::getBorderAndTextQuads(Vector<FloatQuad>& quads) const
                 
                 Vector<FloatQuad> textQuads;
                 renderText->absoluteQuadsForRange(textQuads, startOffset, endOffset);
-                adjustFloatQuadsForScrollAndAbsoluteZoom(textQuads, m_ownerDocument.get(), renderText);
+                adjustFloatQuadsForScrollAndAbsoluteZoomAndPageScale(textQuads, m_ownerDocument.get(), renderText);
 
                 quads.append(textQuads);
             }

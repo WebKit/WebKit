@@ -543,11 +543,19 @@ PassRefPtr<ClientRectList> Element::getClientRects() const
     Vector<FloatQuad> quads;
     renderBoxModelObject->absoluteQuads(quads);
 
+    float pageScale = 1;
+    if (Page* page = document()->page()) {
+        if (Frame* frame = page->mainFrame())
+            pageScale = frame->pageScaleFactor();
+    }
+
     if (FrameView* view = document()->view()) {
         IntRect visibleContentRect = view->visibleContentRect();
         for (size_t i = 0; i < quads.size(); ++i) {
             quads[i].move(-visibleContentRect.x(), -visibleContentRect.y());
             adjustFloatQuadForAbsoluteZoom(quads[i], renderBoxModelObject);
+            if (pageScale != 1)
+                adjustFloatQuadForPageScale(quads[i], pageScale);
         }
     }
 
@@ -587,6 +595,11 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect() const
     }
 
     adjustFloatRectForAbsoluteZoom(result, renderer());
+    if (Page* page = document()->page()) {
+        if (Frame* frame = page->mainFrame())
+            adjustFloatRectForPageScale(result, frame->pageScaleFactor());
+    }
+
     return ClientRect::create(result);
 }
     
