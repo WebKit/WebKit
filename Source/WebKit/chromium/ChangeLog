@@ -1,3 +1,15 @@
+2011-04-01  Adam Barth  <abarth@webkit.org>
+
+        Move these files back to their old locations.  I'm not sure why the
+        rollout didn't move them properly.
+
+        * src/IDBDatabaseBackendProxy.cpp: Removed.
+        * src/IDBDatabaseBackendProxy.h: Removed.
+        * src/IDBDatabaseProxy.cpp: Copied from Source/WebKit/chromium/src/IDBDatabaseBackendProxy.cpp.
+        * src/IDBDatabaseProxy.h: Copied from Source/WebKit/chromium/src/IDBDatabaseBackendProxy.h.
+        * src/IDBObjectStoreBackendProxy.cpp: Removed.
+        * src/IDBObjectStoreProxy.cpp: Copied from Source/WebKit/chromium/src/IDBObjectStoreBackendProxy.cpp.
+
 2011-04-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82738.
