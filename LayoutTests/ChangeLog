@@ -5,7 +5,7 @@
         Suppress some flaky bidi- and editing-related test failures on
         SL Mac NRWT runs. See:
 
-        https://bugs.webkit.org/show_bug.cgi?id=57662
+        https://bugs.webkit.org/show_bug.cgi?id=57688
 
         * platform/mac/test_expectations.txt:
 
