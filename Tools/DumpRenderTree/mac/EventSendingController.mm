@@ -135,6 +135,7 @@ BOOL replayingSavedEvents;
             || aSelector == @selector(textZoomOut)
             || aSelector == @selector(zoomPageIn)
             || aSelector == @selector(zoomPageOut)
+            || aSelector == @selector(scalePageBy:atX:andY:)
             || aSelector == @selector(mouseScrollByX:andY:)
             || aSelector == @selector(continuousMouseScrollByX:andY:))
         return NO;
@@ -174,6 +175,8 @@ BOOL replayingSavedEvents;
         return @"mouseScrollBy";
     if (aSelector == @selector(continuousMouseScrollByX:andY:))
         return @"continuousMouseScrollBy";
+    if (aSelector == @selector(scalePageBy:atX:andY:))
+        return @"scalePageBy";
     return nil;
 }
 
@@ -359,6 +362,11 @@ static int buildModifierFlags(const WebScriptObject* modifiers)
 - (void)zoomPageOut
 {
     [[mainFrame webView] zoomPageOut:self];
+}
+
+- (void)scalePageBy:(float)scale atX:(float)x andY:(float)y
+{
+    [[mainFrame webView] _scaleWebView:scale atOrigin:NSMakePoint(x, y)];
 }
 
 - (void)mouseUp:(int)buttonNumber withModifiers:(WebScriptObject*)modifiers

@@ -1,3 +1,25 @@
+2011-04-01  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57605
+        Frame::pageScaleFactor() should not affect getBoundingClientRect() or 
+        getClientRects()
+        -and corresponding-
+        <rdar://problem/9194541>
+
+        * fast/dom/Element/scale-page-bounding-client-rect-expected.txt: Added.
+        * fast/dom/Element/scale-page-bounding-client-rect.html: Added.
+        * fast/dom/Element/scale-page-client-rects-expected.txt: Added.
+        * fast/dom/Element/scale-page-client-rects.html: Added.
+        * fast/dom/Range/scale-page-bounding-client-rect-expected.txt: Added.
+        * fast/dom/Range/scale-page-bounding-client-rect.html: Added.
+        * fast/dom/Range/scale-page-client-rects-expected.txt: Added.
+        * fast/dom/Range/scale-page-client-rects.html: Added.
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-04-02  Dan Bernstein  <mitz@apple.com>
 
         Reverted r82775 due to changes in <details> test results, which are

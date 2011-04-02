@@ -158,6 +158,11 @@ void WKBundlePageSetPageZoomFactor(WKBundlePageRef pageRef, double zoomFactor)
     toImpl(pageRef)->setPageZoomFactor(zoomFactor);
 }
 
+void WKBundlePageSetScaleAtOrigin(WKBundlePageRef pageRef, double scale, WKPoint origin)
+{
+    toImpl(pageRef)->scaleWebView(scale, toIntPoint(origin));
+}
+
 WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef pageRef)
 {
     return toAPI(toImpl(pageRef)->backForwardList());

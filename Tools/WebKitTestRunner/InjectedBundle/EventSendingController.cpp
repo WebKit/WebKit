@@ -192,6 +192,12 @@ void EventSendingController::zoomPageOut()
     WKBundlePageSetPageZoomFactor(InjectedBundle::shared().page()->page(), zoomFactor / ZoomMultiplierRatio);
 }
 
+void EventSendingController::scalePageBy(double scale, double x, double y)
+{
+    WKPoint origin = { x, y };
+    WKBundlePageSetScaleAtOrigin(InjectedBundle::shared().page()->page(), scale, origin);
+}
+
 // Object Creation
 
 void EventSendingController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)

@@ -1,5 +1,20 @@
 2011-04-02  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Beth Dakin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57605
+        Frame::pageScaleFactor() should not affect getBoundingClientRect() or 
+        getClientRects()
+        -and corresponding-
+        <rdar://problem/9194541>
+
+        Add DRT support for the scaleWebView SPI.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetScaleAtOrigin):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
+2011-04-02  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Oliver Hunt.
 
         "Search in Spotlight" broken in WebKit2

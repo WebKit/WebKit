@@ -53,6 +53,7 @@ public:
     void textZoomOut();
     void zoomPageIn();
     void zoomPageOut();
+    void scalePageBy(double scale, double x, double y);
 
 private:
     EventSendingController();
