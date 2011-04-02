@@ -125,17 +125,6 @@ messages -> WebPageProxy {
     ValidateCommandCallback(WTF::String command, bool isEnabled, int32_t state, uint64_t callbackID)
 
     ViewScaleFactorDidChange(double scaleFactor)
-
-#if PLATFORM(MAC)
-    # Dictionary support.
-    DidPerformDictionaryLookup(WTF::String text, WebKit::DictionaryPopupInfo dictionaryPopupInfo)
-
-    # Keyboard input support messages
-    InterpretQueuedKeyEvent(WebKit::TextInputState state) -> (bool handled, Vector<WebCore::KeypressCommand> savedCommands)
-    
-    # Remote accessibility messages
-    RegisterWebProcessAccessibilityToken(CoreIPC::DataReference data)
-#endif
     
     # BackForward messages
     BackForwardAddItem(uint64_t itemID)
@@ -152,7 +141,6 @@ messages -> WebPageProxy {
     
     # Selection messages
     SelectionStateChanged(WebKit::SelectionState selectionState)
-
 #if PLATFORM(WIN)
     DidChangeCompositionSelection(bool hasChanged)
 #endif
@@ -183,18 +171,6 @@ messages -> WebPageProxy {
     # Geolocation messages
     RequestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, WTF::String originIdentifier)
 
-#if PLATFORM(MAC)
-    # Plug-in complex text input support messages
-    SetComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled)
-#endif
-
-#if PLATFORM(MAC)
-    # Speech messages
-    GetIsSpeaking() -> (bool isSpeaking)
-    Speak(WTF::String string)
-    StopSpeaking()
-#endif
-
     # Spelling and grammar messages
     CheckTextOfParagraph(WTF::String text, uint64_t checkingTypes) -> (Vector<WebCore::TextCheckingResult> results)
     UpdateSpellingUIWithMisspelledWord(WTF::String misspelledWord)
@@ -210,6 +186,28 @@ messages -> WebPageProxy {
 #endif
 #if PLATFORM(WIN)
     StartDragDrop(WebCore::IntPoint imagePoint, WebCore::IntPoint dragPoint, uint64_t okEffect, HashMap<UINT,Vector<String> > dataMap, WebCore::IntSize dragImageSize, WebKit::SharedMemory::Handle dragImage, bool linkDrag)
+#endif
+
+#if PLATFORM(MAC)
+    # Dictionary support.
+    DidPerformDictionaryLookup(WTF::String text, WebKit::DictionaryPopupInfo dictionaryPopupInfo)
+
+    # Keyboard input support messages
+    InterpretQueuedKeyEvent(WebKit::TextInputState state) -> (bool handled, Vector<WebCore::KeypressCommand> savedCommands)
+    
+    # Remote accessibility messages
+    RegisterWebProcessAccessibilityToken(CoreIPC::DataReference data)
+
+    # Plug-in complex text input support messages
+    SetComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled)
+
+    # Speech messages
+    GetIsSpeaking() -> (bool isSpeaking)
+    Speak(WTF::String string)
+    StopSpeaking()
+
+    # Spotlight
+    SearchWithSpotlight(WTF::String string)
 #endif
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)

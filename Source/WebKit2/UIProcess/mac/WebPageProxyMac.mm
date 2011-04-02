@@ -30,6 +30,7 @@
 #import "DictionaryPopupInfo.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PageClient.h"
+#import "PageClientImpl.h"
 #import "TextChecker.h"
 #import "TextInputState.h"
 #import "WebPageMessages.h"
@@ -106,13 +107,17 @@ void WebPageProxy::getIsSpeaking(bool& isSpeaking)
 
 void WebPageProxy::speak(const String& string)
 {
-    NSString *convertedString = string;
-    [NSApp speakString:convertedString];
+    [NSApp speakString:nsStringFromWebCoreString(string)];
 }
 
 void WebPageProxy::stopSpeaking()
 {
     [NSApp stopSpeaking:nil];
+}
+
+void WebPageProxy::searchWithSpotlight(const String& string)
+{
+    [[NSWorkspace sharedWorkspace] showSearchResultsForQueryString:nsStringFromWebCoreString(string)];
 }
 
 CGContextRef WebPageProxy::containingWindowGraphicsContext()

@@ -1,3 +1,26 @@
+2011-04-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        "Search in Spotlight" broken in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=57712
+
+        Proxy spotlight searching to the UIProcess.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Add new message. Re-organize messages to put all mac specific ones together.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::speak):
+        (WebKit::WebPageProxy::searchWithSpotlight):
+        Moved code to trigger spotlight here. Use WTF::String -> NSString conversion function
+        instead of relying on the built in conversion since it doesn't always work in the UIProcess.
+
+        * WebProcess/WebCoreSupport/mac/WebContextMenuClientMac.mm:
+        (WebKit::WebContextMenuClient::searchWithSpotlight):
+        Post message to the UIProcess to do the searching.
+
 2011-04-02  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Dan Bernstein.

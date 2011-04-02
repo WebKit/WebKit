@@ -616,6 +616,9 @@ private:
     void speak(const String&);
     void stopSpeaking();
 
+    // Spotlight.
+    void searchWithSpotlight(const String&);
+
     // Dictionary.
     void didPerformDictionaryLookup(const String&, const DictionaryPopupInfo&);
 #endif

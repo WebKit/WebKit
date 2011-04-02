@@ -80,9 +80,7 @@ void WebContextMenuClient::searchWithSpotlight()
     if (selectedString.isEmpty())
         return;
 
-    NSString *convertedSelectedString = selectedString;
-
-    [[NSWorkspace sharedWorkspace] showSearchResultsForQueryString:convertedSelectedString];
+    m_page->send(Messages::WebPageProxy::SearchWithSpotlight(selectedString));
 }
 
 } // namespace WebKit
