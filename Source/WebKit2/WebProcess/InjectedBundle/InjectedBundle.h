@@ -82,7 +82,7 @@ public:
     void postSynchronousMessage(const String&, APIObject*, RefPtr<APIObject>& returnData);
 #if PLATFORM(WIN)
     void setHostAllowsAnyHTTPSCertificate(const String&);
-    void setClientCertificate(const String&, const WebCertificateInfo*);
+    void setClientCertificate(const String& host, const String& certificateSystemStoreName, const WebCertificateInfo*);
 #endif
 
     // TestRunner only SPI

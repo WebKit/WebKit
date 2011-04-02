@@ -37,7 +37,7 @@ void WKBundleSetHostAllowsAnyHTTPSCertificate(WKBundleRef bundleRef, WKStringRef
     toImpl(bundleRef)->setHostAllowsAnyHTTPSCertificate(toWTFString(host));
 }
 
-void WKBundleSetClientCertificate(WKBundleRef bundleRef, WKStringRef host, WKCertificateInfoRef certificateInfoRef)
+void WKBundleSetClientCertificate(WKBundleRef bundleRef, WKStringRef host, WKStringRef certificateSystemStoreName, WKCertificateInfoRef certificateInfoRef)
 {
-    toImpl(bundleRef)->setClientCertificate(toWTFString(host), toImpl(certificateInfoRef));
+    toImpl(bundleRef)->setClientCertificate(toWTFString(host), toWTFString(certificateSystemStoreName), toImpl(certificateInfoRef));
 }

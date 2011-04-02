@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
 WK_EXPORT void WKBundleSetHostAllowsAnyHTTPSCertificate(WKBundleRef bundle, WKStringRef host);
-WK_EXPORT void WKBundleSetClientCertificate(WKBundleRef bundle, WKStringRef host, WKCertificateInfoRef certificateInfo);
+WK_EXPORT void WKBundleSetClientCertificate(WKBundleRef bundle, WKStringRef host, WKStringRef certificateSystemStoreName, WKCertificateInfoRef certificateInfo);
 
 #ifdef __cplusplus
 }

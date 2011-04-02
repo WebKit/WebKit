@@ -1,3 +1,21 @@
+2011-04-02  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2: Specify the certificate store in WKBundleSetClientCertificate()
+        https://bugs.webkit.org/show_bug.cgi?id=57707
+
+        Include the name of the system certificate store that the client certificate came from in WKBundleSetClientCertificate().
+
+        The PCCERT_CONTEXT for the client certificate we create from the message from the UI process doesn't contain enough information to actually use it in a request, we need to get the real certificate from the certificate store (which is typically the "MY" store).
+
+        * WebProcess/InjectedBundle/API/c/win/WKBundlePrivateWin.cpp:
+        (WKBundleSetClientCertificate): Add certificateSystemStoreName to parameters.
+        * WebProcess/InjectedBundle/API/c/win/WKBundlePrivateWin.h: Add certificateSystemStoreName to WKBundleSetClientCertificate() parameters.
+        * WebProcess/InjectedBundle/InjectedBundle.h: Add certificateSystemStoreName to setClientCertificate() parameters.
+        * WebProcess/InjectedBundle/win/InjectedBundleWin.cpp:
+        (WebKit::InjectedBundle::setClientCertificate): Read the real certificate from the certificate store.
+
 2011-04-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
