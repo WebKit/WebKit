@@ -5876,10 +5876,15 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
 - (BOOL)hasMarkedText
 {
-    [self _executeSavedKeypressCommands];
-
     Frame* coreFrame = core([self _frame]);
     BOOL result = coreFrame && coreFrame->editor()->hasComposition();
+
+    if (result) {
+        // A saved command can confirm a composition, but it cannot start a new one.
+        [self _executeSavedKeypressCommands];
+        result = coreFrame->editor()->hasComposition();
+    }
+
     LOG(TextInput, "hasMarkedText -> %u", result);
     return result;
 }

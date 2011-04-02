@@ -1205,14 +1205,17 @@ static const short kIOHIDEventTypeScroll = 6;
 
 - (BOOL)hasMarkedText
 {
-    [self _executeSavedKeypressCommands];
-
     WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
 
     BOOL result;
-    if (parameters)
+    if (parameters) {
         result = parameters->cachedTextInputState.hasMarkedText;
-    else {
+        if (result) {
+            // A saved command can confirm a composition, but it cannot start a new one.
+            [self _executeSavedKeypressCommands];
+            result = parameters->cachedTextInputState.hasMarkedText;
+        }
+    } else {
         uint64_t location;
         uint64_t length;
         _data->_page->getMarkedRange(location, length);

@@ -1,3 +1,13 @@
+2011-04-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: Assertion failure when executing a complex custom key binding
+        https://bugs.webkit.org/show_bug.cgi?id=57681
+
+        * WebView/WebHTMLView.mm: (-[WebHTMLView hasMarkedText]): There is no need to execute saved
+        commands when they can't possibly change the result.
+
 2011-04-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
