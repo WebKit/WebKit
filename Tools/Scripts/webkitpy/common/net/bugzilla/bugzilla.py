@@ -46,7 +46,7 @@ from webkitpy.common.config import committers
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.user import User
 from webkitpy.thirdparty.autoinstalled.mechanize import Browser
-from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
+from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, BeautifulStoneSoup, SoupStrainer
 
 
 # FIXME: parse_bug_id should not be a free function.
@@ -272,7 +272,7 @@ class Bugzilla(object):
 
     def _string_contents(self, soup):
         # WebKit's bugzilla instance uses UTF-8.
-        # BeautifulSoup always returns Unicode strings, however
+        # BeautifulStoneSoup always returns Unicode strings, however
         # the .string method returns a (unicode) NavigableString.
         # NavigableString can confuse other parts of the code, so we
         # convert from NavigableString to a real unicode() object using unicode().
@@ -319,7 +319,7 @@ class Bugzilla(object):
         return [Bug(self._parse_bug_dictionary_from_xml(unicode(bug_xml)), self) for bug_xml in soup('bug')]
 
     def _parse_bug_dictionary_from_xml(self, page):
-        soup = BeautifulSoup(page)
+        soup = BeautifulStoneSoup(page, convertEntities=BeautifulStoneSoup.XML_ENTITIES)
         bug = {}
         bug["id"] = int(soup.find("bug_id").string)
         bug["title"] = self._string_contents(soup.find("short_desc"))
