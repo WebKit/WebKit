@@ -1,5 +1,41 @@
 2011-04-01  Adam Barth  <abarth@webkit.org>
 
+        Attempt to fix the Chromium build using the great and powerful git.
+        This patch should be the remaining part of reverting Jeremy's ill-fated
+        refactoring.
+
+        * src/IDBDatabaseProxy.cpp:
+        (WebCore::IDBDatabaseProxy::create):
+        (WebCore::IDBDatabaseProxy::IDBDatabaseProxy):
+        (WebCore::IDBDatabaseProxy::~IDBDatabaseProxy):
+        (WebCore::IDBDatabaseProxy::name):
+        (WebCore::IDBDatabaseProxy::version):
+        (WebCore::IDBDatabaseProxy::objectStoreNames):
+        (WebCore::IDBDatabaseProxy::createObjectStore):
+        (WebCore::IDBDatabaseProxy::deleteObjectStore):
+        (WebCore::IDBDatabaseProxy::setVersion):
+        (WebCore::IDBDatabaseProxy::transaction):
+        (WebCore::IDBDatabaseProxy::close):
+        (WebCore::IDBDatabaseProxy::open):
+        * src/IDBDatabaseProxy.h:
+        * src/IDBObjectStoreProxy.cpp:
+        (WebCore::IDBObjectStoreProxy::create):
+        (WebCore::IDBObjectStoreProxy::IDBObjectStoreProxy):
+        (WebCore::IDBObjectStoreProxy::~IDBObjectStoreProxy):
+        (WebCore::IDBObjectStoreProxy::name):
+        (WebCore::IDBObjectStoreProxy::keyPath):
+        (WebCore::IDBObjectStoreProxy::indexNames):
+        (WebCore::IDBObjectStoreProxy::get):
+        (WebCore::IDBObjectStoreProxy::put):
+        (WebCore::IDBObjectStoreProxy::deleteFunction):
+        (WebCore::IDBObjectStoreProxy::clear):
+        (WebCore::IDBObjectStoreProxy::createIndex):
+        (WebCore::IDBObjectStoreProxy::index):
+        (WebCore::IDBObjectStoreProxy::deleteIndex):
+        (WebCore::IDBObjectStoreProxy::openCursor):
+
+2011-04-01  Adam Barth  <abarth@webkit.org>
+
         Move these files back to their old locations.  I'm not sure why the
         rollout didn't move them properly.
 

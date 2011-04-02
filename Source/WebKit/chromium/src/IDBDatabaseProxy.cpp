@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,14 +24,12 @@
  */
 
 #include "config.h"
-#include "IDBDatabaseBackendProxy.h"
-
-#if ENABLE(INDEXED_DATABASE)
+#include "IDBDatabaseProxy.h"
 
 #include "DOMStringList.h"
 #include "IDBCallbacks.h"
 #include "IDBDatabaseCallbacks.h"
-#include "IDBObjectStoreBackendProxy.h"
+#include "IDBObjectStoreProxy.h"
 #include "IDBTransactionBackendProxy.h"
 #include "WebDOMStringList.h"
 #include "WebFrameImpl.h"
@@ -42,51 +40,51 @@
 #include "WebIDBObjectStore.h"
 #include "WebIDBTransaction.h"
 
-using namespace WebCore;
+#if ENABLE(INDEXED_DATABASE)
 
-namespace WebKit {
+namespace WebCore {
 
-PassRefPtr<IDBDatabaseBackendInterface> IDBDatabaseBackendProxy::create(PassOwnPtr<WebIDBDatabase> database)
+PassRefPtr<IDBDatabaseBackendInterface> IDBDatabaseProxy::create(PassOwnPtr<WebKit::WebIDBDatabase> database)
 {
-    return adoptRef(new IDBDatabaseBackendProxy(database));
+    return adoptRef(new IDBDatabaseProxy(database));
 }
 
-IDBDatabaseBackendProxy::IDBDatabaseBackendProxy(PassOwnPtr<WebIDBDatabase> database)
+IDBDatabaseProxy::IDBDatabaseProxy(PassOwnPtr<WebKit::WebIDBDatabase> database)
     : m_webIDBDatabase(database)
 {
 }
 
-IDBDatabaseBackendProxy::~IDBDatabaseBackendProxy()
+IDBDatabaseProxy::~IDBDatabaseProxy()
 {
 }
 
-String IDBDatabaseBackendProxy::name() const
+String IDBDatabaseProxy::name() const
 {
     return m_webIDBDatabase->name();
 }
 
-String IDBDatabaseBackendProxy::version() const
+String IDBDatabaseProxy::version() const
 {
     return m_webIDBDatabase->version();
 }
 
-PassRefPtr<DOMStringList> IDBDatabaseBackendProxy::objectStoreNames() const
+PassRefPtr<DOMStringList> IDBDatabaseProxy::objectStoreNames() const
 {
     return m_webIDBDatabase->objectStoreNames();
 }
 
-PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendProxy::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseProxy::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
     // all implementations of IDB interfaces are proxy objects.
     IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
-    WebIDBObjectStore* objectStore = m_webIDBDatabase->createObjectStore(name, keyPath, autoIncrement, *transactionProxy->getWebIDBTransaction(), ec);
+    WebKit::WebIDBObjectStore* objectStore = m_webIDBDatabase->createObjectStore(name, keyPath, autoIncrement, *transactionProxy->getWebIDBTransaction(), ec);
     if (!objectStore)
         return 0;
-    return IDBObjectStoreBackendProxy::create(objectStore);
+    return IDBObjectStoreProxy::create(objectStore);
 }
 
-void IDBDatabaseBackendProxy::deleteObjectStore(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
+void IDBDatabaseProxy::deleteObjectStore(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
     // all implementations of IDB interfaces are proxy objects.
@@ -94,15 +92,15 @@ void IDBDatabaseBackendProxy::deleteObjectStore(const String& name, IDBTransacti
     m_webIDBDatabase->deleteObjectStore(name, *transactionProxy->getWebIDBTransaction(), ec);
 }
 
-void IDBDatabaseBackendProxy::setVersion(const String& version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, ExceptionCode& ec)
+void IDBDatabaseProxy::setVersion(const String& version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, ExceptionCode& ec)
 {
     m_webIDBDatabase->setVersion(version, new WebIDBCallbacksImpl(callbacks), ec);
 }
 
-PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendProxy::transaction(DOMStringList* storeNames, unsigned short mode, ExceptionCode& ec)
+PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseProxy::transaction(DOMStringList* storeNames, unsigned short mode, ExceptionCode& ec)
 {
-    WebDOMStringList names(storeNames);
-    WebIDBTransaction* transaction = m_webIDBDatabase->transaction(names, mode, ec);
+    WebKit::WebDOMStringList names(storeNames);
+    WebKit::WebIDBTransaction* transaction = m_webIDBDatabase->transaction(names, mode, ec);
     if (!transaction) {
         ASSERT(ec);
         return 0;
@@ -110,16 +108,16 @@ PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendProxy::transaction(
     return IDBTransactionBackendProxy::create(transaction);
 }
 
-void IDBDatabaseBackendProxy::close(PassRefPtr<IDBDatabaseCallbacks>)
+void IDBDatabaseProxy::close(PassRefPtr<IDBDatabaseCallbacks>)
 {
     m_webIDBDatabase->close();
 }
 
-void IDBDatabaseBackendProxy::open(PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
+void IDBDatabaseProxy::open(PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
 {
     m_webIDBDatabase->open(new WebIDBDatabaseCallbacksImpl(databaseCallbacks));
 }
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // ENABLE(INDEXED_DATABASE)
