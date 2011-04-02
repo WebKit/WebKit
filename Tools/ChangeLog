@@ -1,3 +1,13 @@
+2011-04-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix.
+
+        [Qt][WK2] Build Webkit2 using "-2" option on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=55074
+
+        * Scripts/build-webkit: Ensure that "-2" isn't passed to qmake.
+        (The isWK2() function removes it from @ARGV, but not from @options.)
+
 2011-04-01  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         Reviewed by Csaba Osztrogonác.
