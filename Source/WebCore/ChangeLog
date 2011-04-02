@@ -1,3 +1,18 @@
+2011-04-02  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Fix leaked pointer in FontGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=57307
+
+        Fix a memory leak.
+
+        No new functionality, so no new tests.
+
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::utf16ToUtf8): Rename utf16_to_utf8 and fix indentation.
+        (WebCore::convertUniCharToUTF8):
+
 2011-04-02  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
