@@ -1,5 +1,12 @@
 2011-04-02  Dan Bernstein  <mitz@apple.com>
 
+        Updated results showing a progression after r82787. The current time display
+        is now correctly collapsed because the timeline container is not wide enough.
+
+        * platform/gtk/media/video-zoom-controls-expected.txt:
+
+2011-04-02  Dan Bernstein  <mitz@apple.com>
+
         Updated platform-specific results after r82787.
 
         * platform/gtk/fast/table/colspanMinWidth-vertical-expected.txt:
