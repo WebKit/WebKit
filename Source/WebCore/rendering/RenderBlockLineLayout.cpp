@@ -629,6 +629,59 @@ static bool reachedEndOfTextRenderer(InlineBidiResolver& resolver)
     return false;
 }
     
+inline BidiRun* RenderBlock::handleTrailingSpaces(InlineBidiResolver& resolver)
+{
+    if (!resolver.runCount()
+        || !resolver.logicallyLastRun()->m_object->style()->breakOnlyAfterWhiteSpace()
+        || !resolver.logicallyLastRun()->m_object->style()->autoWrap())
+        return 0;
+
+    BidiRun* trailingSpaceRun = resolver.logicallyLastRun();
+    RenderObject* lastObject = trailingSpaceRun->m_object;
+    if (!lastObject->isText())
+        return 0;
+
+    RenderText* lastText = toRenderText(lastObject);
+    const UChar* characters = lastText->characters();
+    int firstSpace = trailingSpaceRun->stop();
+    while (firstSpace > trailingSpaceRun->start()) {
+        UChar current = characters[firstSpace - 1];
+        if (!isCollapsibleSpace(current, lastText))
+            break;
+        firstSpace--;
+    }
+    if (firstSpace == trailingSpaceRun->stop())
+        return 0;
+
+    TextDirection direction = style()->direction();
+    bool shouldReorder = trailingSpaceRun != (direction == LTR ? resolver.lastRun() : resolver.firstRun());
+    if (firstSpace != trailingSpaceRun->start()) {
+        BidiContext* baseContext = resolver.context();
+        while (BidiContext* parent = baseContext->parent())
+            baseContext = parent;
+
+        BidiRun* newTrailingRun = new (renderArena()) BidiRun(firstSpace, trailingSpaceRun->m_stop, trailingSpaceRun->m_object, baseContext, OtherNeutral);
+        trailingSpaceRun->m_stop = firstSpace;
+        if (direction == LTR)
+            resolver.addRun(newTrailingRun);
+        else
+            resolver.prependRun(newTrailingRun);
+        trailingSpaceRun = newTrailingRun;
+        return trailingSpaceRun;
+    }
+    if (!shouldReorder)
+        return trailingSpaceRun;
+
+    if (direction == LTR) {
+        resolver.moveRunToEnd(trailingSpaceRun);
+        trailingSpaceRun->m_level = 0;
+    } else {
+        resolver.moveRunToBeginning(trailingSpaceRun);
+        trailingSpaceRun->m_level = 1;
+    }
+    return trailingSpaceRun;
+}
+
 void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogicalTop, int& repaintLogicalBottom)
 {
     bool useRepaintBounds = false;
@@ -800,53 +853,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                 resolver.createBidiRunsForLine(end, override, previousLineBrokeCleanly);
                 ASSERT(resolver.position() == end);
 
-                BidiRun* trailingSpaceRun = 0;
-                if (!previousLineBrokeCleanly && resolver.runCount() && resolver.logicallyLastRun()->m_object->style()->breakOnlyAfterWhiteSpace()
-                        && resolver.logicallyLastRun()->m_object->style()->autoWrap()) {
-                    trailingSpaceRun = resolver.logicallyLastRun();
-                    RenderObject* lastObject = trailingSpaceRun->m_object;
-                    if (lastObject->isText()) {
-                        RenderText* lastText = toRenderText(lastObject);
-                        const UChar* characters = lastText->characters();
-                        int firstSpace = trailingSpaceRun->stop();
-                        while (firstSpace > trailingSpaceRun->start()) {
-                            UChar current = characters[firstSpace - 1];
-                            if (!isCollapsibleSpace(current, lastText))
-                                break;
-                            firstSpace--;
-                        }
-                        if (firstSpace == trailingSpaceRun->stop())
-                            trailingSpaceRun = 0;
-                        else {
-                            TextDirection direction = style()->direction();
-                            bool shouldReorder = trailingSpaceRun != (direction == LTR ? resolver.lastRun() : resolver.firstRun());
-                            if (firstSpace != trailingSpaceRun->start()) {
-                                BidiContext* baseContext = resolver.context();
-                                while (BidiContext* parent = baseContext->parent())
-                                    baseContext = parent;
-
-                                BidiRun* newTrailingRun = new (renderArena()) BidiRun(firstSpace, trailingSpaceRun->m_stop, trailingSpaceRun->m_object, baseContext, OtherNeutral);
-                                trailingSpaceRun->m_stop = firstSpace;
-                                if (direction == LTR)
-                                    resolver.addRun(newTrailingRun);
-                                else
-                                    resolver.prependRun(newTrailingRun);
-                                trailingSpaceRun = newTrailingRun;
-                                shouldReorder = false;
-                            }
-                            if (shouldReorder) {
-                                if (direction == LTR) {
-                                    resolver.moveRunToEnd(trailingSpaceRun);
-                                    trailingSpaceRun->m_level = 0;
-                                } else {
-                                    resolver.moveRunToBeginning(trailingSpaceRun);
-                                    trailingSpaceRun->m_level = 1;
-                                }
-                            }
-                        }
-                    } else
-                        trailingSpaceRun = 0;
-                }
+                BidiRun* trailingSpaceRun = !previousLineBrokeCleanly ? handleTrailingSpaces(resolver) : 0;
 
                 // Now that the runs have been ordered, we create the line boxes.
                 // At the same time we figure out where border/padding/margin should be applied for

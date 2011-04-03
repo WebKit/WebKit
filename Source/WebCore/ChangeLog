@@ -1,3 +1,20 @@
+2011-04-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Split out handling of trailing spaces from layoutInlineChildren
+        https://bugs.webkit.org/show_bug.cgi?id=57432
+
+        There is much more we could split out from this function, but this is a start.
+
+        I suspect this is very hot code.  Hopefully the compiler will do the right thing.
+        If it doesn't the Chromium PLT bots will tell us.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::handleTrailingSpaces):
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2011-03-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
