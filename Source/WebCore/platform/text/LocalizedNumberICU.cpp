@@ -41,18 +41,18 @@ using namespace std;
 
 namespace WebCore {
 
-static PassOwnPtr<NumberFormat> createFormatterForCurrentLocale()
+static PassOwnPtr<icu::NumberFormat> createFormatterForCurrentLocale()
 {
     UErrorCode status = U_ZERO_ERROR;
-    OwnPtr<NumberFormat> formatter = adoptPtr(NumberFormat::createInstance(status));
+    OwnPtr<icu::NumberFormat> formatter = adoptPtr(icu::NumberFormat::createInstance(status));
     return U_SUCCESS(status) ? formatter.release() : 0;
 }
 
 // This might return 0.
-static NumberFormat* numberFormatter()
+static icu::NumberFormat* numberFormatter()
 {
     ASSERT(isMainThread());
-    static NumberFormat* formatter = createFormatterForCurrentLocale().leakPtr();
+    static icu::NumberFormat* formatter = createFormatterForCurrentLocale().leakPtr();
     return formatter;
 }
 
@@ -60,12 +60,12 @@ double parseLocalizedNumber(const String& numberString)
 {
     if (numberString.isEmpty())
         return numeric_limits<double>::quiet_NaN();
-    NumberFormat* formatter = numberFormatter();
+    icu::NumberFormat* formatter = numberFormatter();
     if (!formatter)
         return numeric_limits<double>::quiet_NaN();
-    UnicodeString numberUnicodeString(numberString.characters(), numberString.length());
-    Formattable result;
-    ParsePosition position(0);
+    icu::UnicodeString numberUnicodeString(numberString.characters(), numberString.length());
+    icu::Formattable result;
+    icu::ParsePosition position(0);
     formatter->parse(numberUnicodeString, result, position);
     if (position.getIndex() != numberUnicodeString.length())
         return numeric_limits<double>::quiet_NaN();
@@ -76,10 +76,10 @@ double parseLocalizedNumber(const String& numberString)
 
 String formatLocalizedNumber(double number, unsigned fractionDigits)
 {
-    NumberFormat* formatter = numberFormatter();
+    icu::NumberFormat* formatter = numberFormatter();
     if (!formatter)
         return String();
-    UnicodeString result;
+    icu::UnicodeString result;
     formatter->setMaximumFractionDigits(clampToInteger(fractionDigits));
     formatter->format(number, result);
     return String(result.getBuffer(), result.length());

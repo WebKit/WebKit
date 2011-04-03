@@ -1,3 +1,23 @@
+2011-04-02  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Explicitly use icu namespace for ports building with U_USING_ICU_NAMESPACE=0
+
+        By default, ICU includes |using namespace icu;| in its header files
+        for backwards compatibility. Clients can define
+        U_USING_ICU_NAMESPACE=0 to tell ICU to not do this. Prefixing all ICU
+        classes with |icu::| makes this file compile no matter what
+        U_USING_ICU_NAMESPACE is set to.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57715
+
+        * platform/text/LocalizedNumberICU.cpp:
+        (WebCore::createFormatterForCurrentLocale):
+        (WebCore::numberFormatter):
+        (WebCore::parseLocalizedNumber):
+        (WebCore::formatLocalizedNumber):
+
 2011-04-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
