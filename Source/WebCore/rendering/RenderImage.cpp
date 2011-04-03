@@ -352,7 +352,12 @@ void RenderImage::paintAreaElementFocusRing(PaintInfo& paintInfo)
     // FIXME: Do we need additional code to clip the path to the image's bounding box?
 
     RenderStyle* areaElementStyle = areaElement->computedStyle();
-    paintInfo.context->drawFocusRing(path, areaElementStyle->outlineWidth(), areaElementStyle->outlineOffset(),
+    unsigned short outlineWidth = areaElementStyle->outlineWidth();
+    if (!outlineWidth)
+        return;
+
+    paintInfo.context->drawFocusRing(path, outlineWidth,
+        areaElementStyle->outlineOffset(),
         areaElementStyle->visitedDependentColor(CSSPropertyOutlineColor));
 }
 

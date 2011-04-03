@@ -1,3 +1,15 @@
+2011-04-02  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION (r69237): Black border around map elements while using an image map on Mac platform
+        https://bugs.webkit.org/show_bug.cgi?id=52518
+
+        Test: fast/images/imagemap-focus-ring-zero-outline-width.html
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintAreaElementFocusRing): Return early if outlineWidth is 0.
+
 2011-04-02  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
