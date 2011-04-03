@@ -1026,7 +1026,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [(EditingDelegate *)[webView editingDelegate] setAcceptsEditing:YES];
     [webView makeTextStandardSize:nil];
     [webView resetPageZoom:nil];
-    [webView _scaleWebView:1.0 atOrigin:NSMakePoint(0, 0)];
+    [webView _scaleWebView:1.0 atOrigin:NSZeroPoint];
     [webView setTabKeyCyclesThroughElements:YES];
     [webView setPolicyDelegate:nil];
     [policyDelegate setPermissive:NO];

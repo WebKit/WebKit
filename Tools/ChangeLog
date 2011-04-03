@@ -2,6 +2,14 @@
 
         Rubber-stamped by Geoff Garen.
 
+        For Dan!
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+
+2011-04-02  Beth Dakin  <bdakin@apple.com>
+
+        Rubber-stamped by Geoff Garen.
+
         Need to reset the scale, much like zoom.
         * DumpRenderTree/mac/DumpRenderTree.mm:
         (resetWebViewToConsistentStateBeforeTesting):
