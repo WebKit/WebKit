@@ -1,5 +1,19 @@
 2011-04-02  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        Remove an unnecessary extra computeLogicalWidth() from line layout
+        https://bugs.webkit.org/show_bug.cgi?id=57711
+
+        Changes in behavior (MathML progression) covered by existing layout tests.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine): Removed a
+        call to computeLogicalWidth(). Because of <http://webkit.org/b/57700>, this
+        actually prevents MathML rows from reverting to an incorrect width.
+
+2011-04-02  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Beth Dakin.
 
         <details> marker loses its margin
