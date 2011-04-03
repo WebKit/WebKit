@@ -1,3 +1,21 @@
+2011-04-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        fast/images/extra-image-in-image-document.html crashes when run after embed-image.html
+        https://bugs.webkit.org/show_bug.cgi?id=57733
+
+        The crash happens because resetting the page scale as part of preparing the WebView for the
+        next test triggered layout, which in turn caused a plug-in to make a resource request, and
+        DumpRenderTree’s delegate to be dispatched. The delegate doesn’t expect to be called between
+        tests, and it references the layout test controller, which is null.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::scalePage): Avoid an unnecessary layout if the page scale isn’t changing. This
+        is more efficient, and has the side effect of avoiding the crash in DumpRenderTree, although
+        DumpRenderTree could still crash when after a test with disabled plug-ins and a non-1 page scale.
+        I think there are currently no such tests, so I am not fixing DumpRenderTree.
+
 2011-04-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.

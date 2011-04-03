@@ -997,16 +997,18 @@ void Frame::scalePage(float scale, const IntPoint& origin)
     if (!document)
         return;
 
-    m_pageScaleFactor = scale;
+    if (scale != m_pageScaleFactor) {
+        m_pageScaleFactor = scale;
 
-    if (document->renderer())
-        document->renderer()->setNeedsLayout(true);
+        if (document->renderer())
+            document->renderer()->setNeedsLayout(true);
 
-    document->recalcStyle(Node::Force);
+        document->recalcStyle(Node::Force);
 
 #if USE(ACCELERATED_COMPOSITING)
-    updateContentsScale(scale);
+        updateContentsScale(scale);
 #endif
+    }
 
     if (FrameView* view = this->view()) {
         if (document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())
