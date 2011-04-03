@@ -1,5 +1,11 @@
 2011-04-02  Dan Bernstein  <mitz@apple.com>
 
+        Updated platform-specific results after r82787.
+
+        * platform/gtk/fast/table/colspanMinWidth-vertical-expected.txt:
+
+2011-04-02  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Dave Hyatt.
 
         Remove an unnecessary extra computeLogicalWidth() from line layout
