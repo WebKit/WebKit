@@ -34,15 +34,15 @@ namespace WebCore {
 class InlineIterator {
 public:
     InlineIterator()
-        : m_block(0)
+        : m_root(0)
         , m_obj(0)
         , m_pos(0)
         , m_nextBreakablePosition(-1)
     {
     }
 
-    InlineIterator(RenderBlock* b, RenderObject* o, unsigned p)
-        : m_block(b)
+    InlineIterator(RenderObject* root, RenderObject* o, unsigned p)
+        : m_root(root)
         , m_obj(o)
         , m_pos(p)
         , m_nextBreakablePosition(-1)
@@ -63,13 +63,19 @@ public:
         m_nextBreakablePosition = nextBreak;
     }
 
-    void increment(InlineBidiResolver* resolver = 0);
+    RenderObject* root() const { return m_root; }
+
+    void increment(InlineBidiResolver* = 0);
     bool atEnd() const;
 
     UChar current() const;
     ALWAYS_INLINE WTF::Unicode::Direction direction() const;
 
-    RenderBlock* m_block;
+private:
+    RenderObject* m_root;
+
+    // FIXME: These should be private.
+public:
     RenderObject* m_obj;
     unsigned m_pos;
     int m_nextBreakablePosition;
@@ -117,7 +123,7 @@ static inline void notifyResolverWillExitObject(InlineBidiResolver* resolver, Re
 // FIXME: This function is misleadingly named. It has little to do with bidi.
 // This function will iterate over inlines within a block, optionally notifying
 // a bidi resolver as it enters/exits inlines (so it can push/pop embedding levels).
-static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, InlineBidiResolver* resolver = 0, bool skipInlines = true, bool* endOfInlinePtr = 0)
+static inline RenderObject* bidiNext(RenderObject* root, RenderObject* current, InlineBidiResolver* resolver = 0, bool skipInlines = true, bool* endOfInlinePtr = 0)
 {
     RenderObject* next = 0;
     bool oldEndOfInline = endOfInlinePtr ? *endOfInlinePtr : false;
@@ -137,7 +143,7 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
                 break;
             }
 
-            while (current && current != block) {
+            while (current && current != root) {
                 notifyResolverWillExitObject(resolver, current);
 
                 next = current->nextSibling();
@@ -147,7 +153,7 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
                 }
 
                 current = current->parent();
-                if (!skipInlines && current && current != block && current->isRenderInline()) {
+                if (!skipInlines && current && current != root && current->isRenderInline()) {
                     next = current;
                     endOfInline = true;
                     break;
@@ -171,16 +177,16 @@ static inline RenderObject* bidiNext(RenderBlock* block, RenderObject* current, 
     return next;
 }
 
-static inline RenderObject* bidiFirst(RenderBlock* block, InlineBidiResolver* resolver, bool skipInlines = true)
+static inline RenderObject* bidiFirst(RenderObject* root, InlineBidiResolver* resolver, bool skipInlines = true)
 {
-    if (!block->firstChild())
+    if (!root->firstChild())
         return 0;
 
-    RenderObject* o = block->firstChild();
+    RenderObject* o = root->firstChild();
     if (o->isRenderInline()) {
         notifyResolverEnteredObject(resolver, o);
         if (skipInlines && o->firstChild())
-            o = bidiNext(block, o, resolver, skipInlines);
+            o = bidiNext(root, o, resolver, skipInlines);
         else {
             // Never skip empty inlines.
             if (resolver)
@@ -190,7 +196,7 @@ static inline RenderObject* bidiFirst(RenderBlock* block, InlineBidiResolver* re
     }
 
     if (o && !o->isText() && !o->isReplaced() && !o->isFloating() && !o->isPositioned())
-        o = bidiNext(block, o, resolver, skipInlines);
+        o = bidiNext(root, o, resolver, skipInlines);
 
     if (resolver)
         resolver->commitExplicitEmbedding();
@@ -207,7 +213,7 @@ inline void InlineIterator::increment(InlineBidiResolver* resolver)
             return;
     }
     // bidiNext can return 0, so use moveTo instead of moveToStartOf
-    moveTo(bidiNext(m_block, m_obj, resolver), 0);
+    moveTo(bidiNext(m_root, m_obj, resolver), 0);
 }
 
 inline bool InlineIterator::atEnd() const
@@ -253,7 +259,7 @@ inline void InlineBidiResolver::appendRun()
         while (obj && obj != m_eor.m_obj && obj != endOfLine.m_obj) {
             RenderBlock::appendRunsForObject(start, obj->length(), obj, *this);        
             start = 0;
-            obj = bidiNext(m_sor.m_block, obj);
+            obj = bidiNext(m_sor.root(), obj);
         }
         if (obj) {
             unsigned pos = obj == m_eor.m_obj ? m_eor.m_pos : UINT_MAX;

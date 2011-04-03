@@ -1,5 +1,26 @@
 2011-04-03  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Ryosuke Niwa.
+
+        Teach InlineIterator how to work from any root, not just a RenderBlock
+        https://bugs.webkit.org/show_bug.cgi?id=57726
+
+        For implementing bidi-unicode: isolate, we need to be able to run the
+        bidi algorithm over a subtree of inlines, not just from a block root.
+        This is the first step in making this possible.
+
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::InlineIterator):
+        (WebCore::InlineIterator::root):
+        (WebCore::bidiNext):
+        (WebCore::bidiFirst):
+        (WebCore::InlineIterator::increment):
+        (WebCore::InlineBidiResolver::appendRun):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::findNextLineBreak):
+
+2011-04-03  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Split out handling of trailing spaces from layoutInlineChildren
