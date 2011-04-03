@@ -33,8 +33,6 @@ class RenderDetails : public RenderBlock {
 public:
     explicit RenderDetails(Node*);
 
-    virtual const char* renderName() const { return "RenderDetails"; }
-    virtual bool isDetails() const { return true; }
 
     bool isOpen() const;
     IntRect interactiveArea() const { return m_interactiveArea; }
@@ -42,6 +40,11 @@ public:
     void summaryDestroyed(RenderObject*);
 
 private:
+    virtual const char* renderName() const { return "RenderDetails"; }
+    virtual bool isDetails() const { return true; }
+
+    virtual void destroy();
+
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0);
@@ -52,7 +55,7 @@ private:
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 
     virtual void layout();
-    virtual void destroy();
+    virtual void computePreferredLogicalWidths();
 
     void createDefaultSummary();
     void replaceMainSummary(RenderObject*);

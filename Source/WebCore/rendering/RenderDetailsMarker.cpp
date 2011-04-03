@@ -61,8 +61,12 @@ void RenderDetailsMarker::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    m_minPreferredLogicalWidth = 2 * style()->fontMetrics().ascent() / 3;
+    int ascent = style()->fontMetrics().ascent();
+    m_minPreferredLogicalWidth = 2 * ascent / 3;
     m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth;
+
+    style()->setMarginStart(Length(0, Fixed));
+    style()->setMarginEnd(Length(ascent - m_minPreferredLogicalWidth + 1, Fixed));
 
     setPreferredLogicalWidthsDirty(false);
 }
@@ -74,8 +78,14 @@ void RenderDetailsMarker::layout()
     setLogicalWidth(minPreferredLogicalWidth());
     setLogicalHeight(style()->fontMetrics().height());
 
-    setMarginStart(0);
-    setMarginEnd(style()->fontMetrics().ascent() - minPreferredLogicalWidth() + 1);
+    Length startMargin = style()->marginStart();
+    Length endMargin = style()->marginEnd();
+
+    ASSERT(startMargin.isFixed());
+    setMarginStart(startMargin.value());
+
+    ASSERT(endMargin.isFixed());
+    setMarginEnd(endMargin.value());
 
     setNeedsLayout(false);
 }

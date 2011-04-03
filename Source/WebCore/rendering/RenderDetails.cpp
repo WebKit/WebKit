@@ -332,5 +332,12 @@ void RenderDetails::updateMarkerLocation()
     }
 }
 
-} // namespace WebCore
+void RenderDetails::computePreferredLogicalWidths()
+{
+    ASSERT(preferredLogicalWidthsDirty());
 
+    updateMarkerLocation();
+    RenderBlock::computePreferredLogicalWidths();
+}
+
+} // namespace WebCore
