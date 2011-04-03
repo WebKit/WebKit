@@ -1,3 +1,24 @@
+2011-03-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        editing commands shouldn't run when there's no body
+        https://bugs.webkit.org/show_bug.cgi?id=56771
+
+        Added tests to ensure WebKit does not crash when attempted to execute editing commands
+        in an empty document. Also added a test to ensure WebKit does not crash when InsertImage
+        is executed with selection endpoints being document. WebKit should ignore such attempts
+        and should not crash.
+
+        * editing/editability/empty-document-delete-expected.txt: Added.
+        * editing/editability/empty-document-delete.html: Added.
+        * editing/editability/empty-document-justify-right-expected.txt: Added.
+        * editing/editability/empty-document-justify-right.html: Added.
+        * editing/editability/empty-document-stylewithcss-expected.txt: Added.
+        * editing/editability/empty-document-stylewithcss.html: Added.
+        * editing/execCommand/insert-image-with-selecting-document-expected.txt: Added.
+        * editing/execCommand/insert-image-with-selecting-document.html: Added.
+
 2011-04-02  Dan Bernstein  <mitz@apple.com>
 
         Updated results showing a progression after r82787. The current time display

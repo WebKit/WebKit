@@ -1,3 +1,47 @@
+2011-03-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        editing commands shouldn't run when there's no body
+        https://bugs.webkit.org/show_bug.cgi?id=56771
+
+        The bug was caused by WebKit's not checking the existence of root editable element
+        in enabled* functions. Although isContentEditable returns true whenever we're in design mode,
+        we should not run editing commands in a document without a body element editable because
+        doing so results in appending a non-body element to the document node.
+
+        Fixed the bug by modifying various enabled* functions to ensure we have a root editable element.
+        New behavior tries to match that of Firefox except StyleWithCSS, which Firefox seems to ignore
+        when there are no body element. Since StyleWithCSS is a document's state or property, we allow
+        execCommand('StyleWithCSS') even in a document without a body element.
+
+        WebKit's and Firefox's behaviors also deviate in insert-image-with-selecting-document.html.
+        Whereas WebKit respects selection set by script and ignores execCommand, Firefox modifies
+        the selection when document.write("x") is ran and successfully inserts image.
+
+        Thus, empty-document-delete.html and empty-document-justify-right.html both pass on Firefox
+        while empty-document-stylewithcss.html and insert-image-with-selecting-document.html both fail.
+
+        Since Internet Explorer does not allow execCommand to run under design mode properly, we could
+        not test its behavior.
+
+        Tests: editing/editability/empty-document-delete.html
+               editing/editability/empty-document-justify-right.html
+               editing/editability/empty-document-stylewithcss.html
+               editing/execCommand/insert-image-with-selecting-document.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::canEdit): Verify that the root editable element exists
+        instead of just checking that selection endpoints are editable because
+        selection endpoints could be document node without a body element in design mode
+        and we don't want to consider such a document editable.
+        (WebCore::Editor::canDelete): Ditto.
+        * editing/EditorCommand.cpp:
+        (WebCore::enabledInEditableText): Ditto.
+        (WebCore::enabledInRichlyEditableText): Ditto.
+        (WebCore::enabledDelete): Call enabledCut and enabledInEditableText instead
+        of duplicating the code in order to fix the same bug.
+
 2011-04-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

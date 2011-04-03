@@ -1196,25 +1196,25 @@ static bool enabledCut(Frame* frame, Event*, EditorCommandSource)
     return frame->editor()->canDHTMLCut() || frame->editor()->canCut();
 }
 
+static bool enabledInEditableText(Frame* frame, Event* event, EditorCommandSource)
+{
+    return frame->editor()->selectionForCommand(event).rootEditableElement();
+}
+
 static bool enabledDelete(Frame* frame, Event* event, EditorCommandSource source)
 {
     switch (source) {
     case CommandFromMenuOrKeyBinding:
         // "Delete" from menu only affects selected range, just like Cut but without affecting pasteboard
-        return frame->editor()->canDHTMLCut() || frame->editor()->canCut();
+        return enabledCut(frame, event, source);
     case CommandFromDOM:
     case CommandFromDOMWithUserInterface:
         // "Delete" from DOM is like delete/backspace keypress, affects selected range if non-empty,
         // otherwise removes a character
-        return frame->editor()->selectionForCommand(event).isContentEditable();
+        return enabledInEditableText(frame, event, source);
     }
     ASSERT_NOT_REACHED();
     return false;
-}
-
-static bool enabledInEditableText(Frame* frame, Event* event, EditorCommandSource)
-{
-    return frame->editor()->selectionForCommand(event).isContentEditable();
 }
 
 static bool enabledInEditableTextOrCaretBrowsing(Frame* frame, Event* event, EditorCommandSource)
@@ -1225,7 +1225,7 @@ static bool enabledInEditableTextOrCaretBrowsing(Frame* frame, Event* event, Edi
 
 static bool enabledInRichlyEditableText(Frame* frame, Event*, EditorCommandSource)
 {
-    return frame->selection()->isCaretOrRange() && frame->selection()->isContentRichlyEditable();
+    return frame->selection()->isCaretOrRange() && frame->selection()->isContentRichlyEditable() && frame->selection()->rootEditableElement();
 }
 
 static bool enabledPaste(Frame* frame, Event*, EditorCommandSource)

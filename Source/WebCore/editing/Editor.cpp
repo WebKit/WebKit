@@ -210,7 +210,7 @@ bool Editor::handleTextEvent(TextEvent* event)
 
 bool Editor::canEdit() const
 {
-    return m_frame->selection()->isContentEditable();
+    return m_frame->selection()->rootEditableElement();
 }
 
 bool Editor::canEditRichly() const
@@ -278,7 +278,7 @@ bool Editor::canPaste() const
 bool Editor::canDelete() const
 {
     SelectionController* selection = m_frame->selection();
-    return selection->isRange() && selection->isContentEditable();
+    return selection->isRange() && selection->rootEditableElement();
 }
 
 bool Editor::canDeleteRange(Range* range) const
