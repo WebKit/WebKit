@@ -7,8 +7,8 @@ layer at (0,0) size 800x584
         RenderBlock (anonymous) at (0,0) size 784x21
           RenderBlock (anonymous) at (0,0) size 784x21
             RenderDetailsMarker at (0,0) size 10x21: right
-            RenderText at (10,0) size 46x21
-              text run at (10,0) width 46: "Details"
+            RenderText at (17,0) size 46x21
+              text run at (17,0) width 46: "Details"
         RenderBlock (anonymous) at (0,21) size 784x0
       RenderDetails {DETAILS} at (0,21) size 784x21
         RenderBlock (anonymous) at (0,0) size 784x21
@@ -17,8 +17,8 @@ layer at (0,0) size 800x584
         RenderBlock (anonymous) at (0,0) size 784x21
           RenderBlock (anonymous) at (0,0) size 784x21
             RenderDetailsMarker at (0,0) size 10x21: right
-            RenderText at (10,0) size 46x21
-              text run at (10,0) width 46: "Details"
+            RenderText at (17,0) size 46x21
+              text run at (17,0) width 46: "Details"
         RenderBlock (anonymous) at (0,21) size 784x0
 layer at (50,150) size 33x21
   RenderSummary {SUMMARY} at (50,150) size 33x21
@@ -27,8 +27,8 @@ layer at (50,150) size 33x21
 layer at (158,179) size 784x21
   RenderSummary {SUMMARY} at (0,0) size 784x21
     RenderDetailsMarker at (0,0) size 10x21: right
-    RenderText {#text} at (10,0) size 50x21
-      text run at (10,0) width 50: "relative"
+    RenderText {#text} at (17,0) size 50x21
+      text run at (17,0) width 50: "relative"
 layer at (250,150) size 56x21
   RenderSummary {SUMMARY} at (250,150) size 56x21
     RenderText {#text} at (0,0) size 56x21

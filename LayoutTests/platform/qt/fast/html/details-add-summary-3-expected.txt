@@ -7,6 +7,6 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (0,0) size 784x21
           RenderSummary {SUMMARY} at (0,0) size 784x21
             RenderDetailsMarker at (0,0) size 10x21: right
-            RenderText {#text} at (10,0) size 40x21
-              text run at (10,0) width 40: "new 2"
+            RenderText {#text} at (17,0) size 40x21
+              text run at (17,0) width 40: "new 2"
         RenderBlock (anonymous) at (0,21) size 784x0
