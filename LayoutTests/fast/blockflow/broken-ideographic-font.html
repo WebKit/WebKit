@@ -55,11 +55,6 @@ p {
 }
 
 </style>
-  
-<script type="text/javascript">
-
-</script>
-  
 </head>
 <body>
 
@@ -67,6 +62,14 @@ p {
 <div class="basic d0"><p>第一段落 paragraph 1</p><p>第二段落 paragraph 2</p></div>
 <div class="basic d1 vert"><p>第一段落 paragraph 1</p><p>第二段落 paragraph 2</p></div>
 </div>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
 
+    document.body.offsetTop;
+    var image = new Image();
+    image.addEventListener("error", function() { if (layoutTestController) layoutTestController.notifyDone(); });
+    image.src = "resources/MakibaFont13.ttf";
+</script>
 </body>
 </html>

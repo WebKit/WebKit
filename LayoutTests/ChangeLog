@@ -1,3 +1,10 @@
+2011-04-03  Dan Bernstein  <mitz@apple.com>
+
+        Try to make this test more robust.
+
+        * fast/blockflow/broken-ideographic-font.html: Ensure that the font has been loaded before
+        letting the test finish.
+
 2011-03-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
