@@ -1055,6 +1055,9 @@ void RenderMediaControlTimeDisplay::layout()
 {
     RenderFlexibleBox::layout();
     RenderBox* timelineContainerBox = parentBox();
+    while (timelineContainerBox && timelineContainerBox->isAnonymous())
+        timelineContainerBox = timelineContainerBox->parentBox();
+
     if (timelineContainerBox && timelineContainerBox->width() < minWidthToDisplayTimeDisplays)
         setWidth(0);
 }

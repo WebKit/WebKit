@@ -1,3 +1,20 @@
+2011-04-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION (r82786): Media controls render incorrectly on GTK and Qt
+        https://bugs.webkit.org/show_bug.cgi?id=57719
+
+        r82786 exposed an incorrect assumption inRenderMediaControlTimeDisplay::layout()
+        that the timeline container is the parent of the time display. This is not true
+        with the GTK media style, where the current time display is an inline box, and
+        thus wrapped in an anonymous flexible box. The code was incorrectly considering
+        the width of the anonymous box and deciding to hide the time display. Prior to
+        r82786, this mistake was corrected by the call to computeLogicalWidth() in line layout.
+
+        * rendering/MediaControlElements.cpp:
+        (WebCore::RenderMediaControlTimeDisplay::layout): Changed to skip past anonymous ancestors.
+
 2011-04-02  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Adam Barth.
