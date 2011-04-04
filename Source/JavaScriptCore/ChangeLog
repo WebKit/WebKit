@@ -1,3 +1,16 @@
+2011-04-04  Adam Roben  <aroben@apple.com>
+
+        Delete mt.dep files when doing a clean build due to .vsprops file changes
+
+        Apparently this is yet another file that Visual Studio can't figure out it needs to rebuild.
+
+        Fixes <http://webkit.org/b/57777> r82850 failed to build on Windows Debug (Build)
+
+        Reviewed by Brian Weinstein.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/react-to-vsprops-changes.py:
+        (main): Added dep to the list of extensions we look for when choosing files to delete.
+
 2011-04-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

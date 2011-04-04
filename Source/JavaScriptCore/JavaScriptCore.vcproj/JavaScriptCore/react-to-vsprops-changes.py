@@ -21,7 +21,7 @@ def main():
     # Visual Studio isn't smart enough to figure out it needs to rebuild these file types when
     # .vsprops files change (even if we touch wtf/Platform.h below), so we delete them to force them
     # to be rebuilt.
-    for extension in ('manifest', 'pch', 'res'):
+    for extension in ('dep', 'manifest', 'pch', 'res'):
         for filepath in glob.iglob(os.path.join(obj_directory, '*', '*.%s' % extension)):
             delete_if_older_than(filepath, newest_vsprops_time)
 
