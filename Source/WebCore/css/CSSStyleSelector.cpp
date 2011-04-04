@@ -3633,13 +3633,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
     // check lookup table for implementations and use when available
     if (m_applyProperty.implements(property)) {
-      if (isInherit)
-          m_applyProperty.inherit(property, this);
-      else if (isInitial)
-          m_applyProperty.initial(property, this);
-      else
-          m_applyProperty.value(property, this, value);
-      return;
+        if (isInherit)
+            m_applyProperty.inherit(property, this);
+        else if (isInitial)
+            m_applyProperty.initial(property, this);
+        else
+            m_applyProperty.value(property, this, value);
+        return;
     }
 
     // What follows is a list that maps the CSS properties into their corresponding front-end

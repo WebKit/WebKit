@@ -1,5 +1,18 @@
 2011-04-03  Luke Macpherson   <macpherson@chromium.org>
 
+        Reviewed by Darin Adler.
+
+        Fix 2-space indentation introduced in bug 54706.
+        https://bugs.webkit.org/show_bug.cgi?id=57740
+
+        No new tests - whitespace changes only.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Convert 2-space indentation to 4-space indentation.
+
+2011-04-03  Luke Macpherson   <macpherson@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Make CSSStyleApplyProperty non-copyable
