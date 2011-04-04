@@ -218,7 +218,7 @@ WebInspector.TextViewer.prototype = {
             return;
 
         var mainChunk = this._mainPanel.chunkForLine(lineNumber);
-        if (mainChunk.linesCount === 1) {
+        if (mainChunk.linesCount === 1 && mainChunk.decorated) {
             var gutterChunk = this._gutterPanel.makeLineAChunk(lineNumber);
             var height = mainChunk.height;
             if (height)
@@ -271,7 +271,7 @@ WebInspector.TextEditorChunkedPanel.prototype = {
         if (lineNumber >= this._textModel.linesCount)
             return;
 
-        var chunk = this.makeLineAChunk(lineNumber);
+        var chunk = this.chunkForLine(lineNumber);
         chunk.removeDecoration(decoration);
     },
 
@@ -308,8 +308,14 @@ WebInspector.TextEditorChunkedPanel.prototype = {
         if (oldChunk.linesCount === 1)
             return oldChunk;
 
+        return this._splitChunkOnALine(lineNumber, chunkNumber);
+    },
+
+    _splitChunkOnALine: function(lineNumber, chunkNumber)
+    {
         this.beginDomUpdates();
 
+        var oldChunk = this._textChunks[chunkNumber];
         var wasExpanded = oldChunk.expanded;
         oldChunk.expanded = false;
 
@@ -805,10 +811,10 @@ WebInspector.TextEditorMainPanel.prototype = {
         this._cachedRows = [];
     },
 
-    makeLineAChunk: function(lineNumber)
+    _splitChunkOnALine: function(lineNumber, chunkNumber)
     {
         var selection = this._getSelection();
-        var chunk = WebInspector.TextEditorChunkedPanel.prototype.makeLineAChunk.call(this, lineNumber);
+        var chunk = WebInspector.TextEditorChunkedPanel.prototype._splitChunkOnALine.call(this, lineNumber, chunkNumber);
         this._restoreSelection(selection);
         return chunk;
     },

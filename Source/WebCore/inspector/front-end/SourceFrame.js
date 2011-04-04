@@ -47,6 +47,8 @@ WebInspector.SourceFrame = function(delegate, url)
     this._rowMessages = {};
     this._messageBubbles = {};
 
+    this._breakpoints = {};
+
     this._registerShortcuts();
     this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
 }
@@ -169,7 +171,8 @@ WebInspector.SourceFrame.prototype = {
             textModelContent: this._textModel.text,
             executionLineNumber: this._executionLineNumber,
             messages: this._messages,
-            diffLines: this._diffLines
+            diffLines: this._diffLines,
+            breakpoints: this._breakpoints
         };
     },
 
@@ -187,6 +190,19 @@ WebInspector.SourceFrame.prototype = {
             this.clearExecutionLine();
             this.setExecutionLine(this._viewerState.executionLineNumber);
         }
+
+        var oldBreakpoints = this._breakpoints;
+        this._breakpoints = {};
+        for (var lineNumber in oldBreakpoints)
+            this.removeBreakpoint(Number(lineNumber));
+
+        var newBreakpoints = this._viewerState.breakpoints;
+        for (var lineNumber in newBreakpoints) {
+            lineNumber = Number(lineNumber);
+            var breakpoint = newBreakpoints[lineNumber];
+            this.addBreakpoint(lineNumber, breakpoint.resolved, breakpoint.conditional, breakpoint.enabled);
+        }
+
         delete this._viewerState;
     },
 
@@ -205,20 +221,39 @@ WebInspector.SourceFrame.prototype = {
     {
         // Adjust execution line number.
         if (typeof this._executionLineNumber === "number") {
-            var lineNumber = this._executionLineNumber;
-            var shiftOffset = lineNumber <= oldRange.startLine ? 0 : newRange.linesCount - oldRange.linesCount;
-
-            // Special case of editing the execution line itself. We should decide whether the execution line number should move below or not.
-            if (lineNumber === oldRange.startLine && lineNumber + 1 <= newRange.endLine && this._textModel.lineLength(lineNumber) < this._textModel.lineLength(lineNumber + 1))
-                shiftOffset = 1;
-
-            var newExecutionLineNumber = Math.max(0, lineNumber + shiftOffset);
-            if (oldRange.startLine < lineNumber && lineNumber < oldRange.endLine)
-                newExecutionLineNumber = oldRange.startLine;
-
+            var newExecutionLineNumber = this._lineNumberAfterEditing(this._executionLineNumber, oldRange, newRange);
             this.clearExecutionLine();
             this.setExecutionLine(newExecutionLineNumber, true);
         }
+
+        // Adjust breakpoints.
+        var oldBreakpoints = this._breakpoints;
+        this._breakpoints = {};
+        for (var lineNumber in oldBreakpoints) {
+            lineNumber = Number(lineNumber);
+            var breakpoint = oldBreakpoints[lineNumber];
+            var newLineNumber = this._lineNumberAfterEditing(lineNumber, oldRange, newRange);
+            if (lineNumber === newLineNumber)
+                this._breakpoints[lineNumber] = breakpoint;
+            else {
+                this.removeBreakpoint(lineNumber);
+                this.addBreakpoint(newLineNumber, breakpoint.resolved, breakpoint.conditional, breakpoint.enabled);
+            }
+        }
+    },
+
+    _lineNumberAfterEditing: function(lineNumber, oldRange, newRange)
+    {
+        var shiftOffset = lineNumber <= oldRange.startLine ? 0 : newRange.linesCount - oldRange.linesCount;
+
+        // Special case of editing the line itself. We should decide whether the line number should move below or not.
+        if (lineNumber === oldRange.startLine && lineNumber + 1 <= newRange.endLine && this._textModel.lineLength(lineNumber) < this._textModel.lineLength(lineNumber + 1))
+            shiftOffset = 1;
+
+        var newLineNumber = Math.max(0, lineNumber + shiftOffset);
+        if (oldRange.startLine < lineNumber && lineNumber < oldRange.endLine)
+            newLineNumber = oldRange.startLine;
+        return newLineNumber;
     },
 
     _createTextViewer: function(mimeType, content)
@@ -501,6 +536,11 @@ WebInspector.SourceFrame.prototype = {
 
     addBreakpoint: function(lineNumber, resolved, conditional, enabled)
     {
+        this._breakpoints[lineNumber] = {
+            resolved: resolved,
+            conditional: conditional,
+            enabled: enabled
+        };
         this._textViewer.beginUpdates();
         this._textViewer.addDecoration(lineNumber, "webkit-breakpoint");
         if (!enabled)
@@ -512,6 +552,7 @@ WebInspector.SourceFrame.prototype = {
 
     removeBreakpoint: function(lineNumber)
     {
+        delete this._breakpoints[lineNumber];
         this._textViewer.beginUpdates();
         this._textViewer.removeDecoration(lineNumber, "webkit-breakpoint");
         this._textViewer.removeDecoration(lineNumber, "webkit-breakpoint-disabled");

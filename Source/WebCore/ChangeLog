@@ -1,3 +1,26 @@
+2011-04-04  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Breakpoints in the gutter stay static while editing the text
+        https://bugs.webkit.org/show_bug.cgi?id=57616
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype._saveViewerState):
+        (WebInspector.SourceFrame.prototype._restoreViewerState):
+        (WebInspector.SourceFrame.prototype._endEditing):
+        (WebInspector.SourceFrame.prototype._lineNumberAfterEditing):
+        (WebInspector.SourceFrame.prototype.addBreakpoint):
+        (WebInspector.SourceFrame.prototype.removeBreakpoint):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._syncDecorationsForLine):
+        (WebInspector):
+        (WebInspector.TextEditorChunkedPanel.prototype.removeDecoration):
+        (WebInspector.TextEditorChunkedPanel.prototype.makeLineAChunk):
+        (WebInspector.TextEditorChunkedPanel.prototype._splitChunkOnALine):
+        (WebInspector.TextEditorMainPanel.prototype._splitChunkOnALine):
+
 2011-04-04  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
