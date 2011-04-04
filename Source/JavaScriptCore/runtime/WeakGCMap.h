@@ -34,7 +34,7 @@ namespace JSC {
 
 // A HashMap for GC'd values that removes entries when the associated value
 // dies.
-template<typename KeyType, typename MappedType> class WeakGCMap : private Finalizer {
+template<typename KeyType, typename MappedType> class WeakGCMap : private WeakHandleOwner {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WeakGCMap);
 

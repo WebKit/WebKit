@@ -75,7 +75,7 @@ void RegisterFile::setGlobalObject(JSGlobalObject* globalObject)
     m_globalObject.set(globalObject->globalData(), globalObject, RegisterFile::globalObjectCollectedNotifier());
 }
 
-class GlobalObjectNotifier : public Finalizer {
+class GlobalObjectNotifier : public WeakHandleOwner {
 public:
     void finalize(Handle<Unknown> value, void*)
     {
@@ -84,7 +84,7 @@ public:
     }
 };
 
-Finalizer* RegisterFile::globalObjectCollectedNotifier()
+WeakHandleOwner* RegisterFile::globalObjectCollectedNotifier()
 {
     // This will leak alas, but we only create one of them, and it doesn't
     // take up any significant amount of space.

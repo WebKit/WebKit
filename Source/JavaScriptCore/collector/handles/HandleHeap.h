@@ -38,10 +38,10 @@ class JSGlobalData;
 class JSValue;
 class HeapRootMarker;
 
-class Finalizer {
+class WeakHandleOwner {
 public:
     virtual void finalize(Handle<Unknown>, void*) = 0;
-    virtual ~Finalizer() {}
+    virtual ~WeakHandleOwner() {}
 };
 
 class HandleHeap {
@@ -53,7 +53,7 @@ public:
     HandleSlot allocate();
     void deallocate(HandleSlot);
 
-    void makeWeak(HandleSlot, Finalizer* = 0, void* context = 0);
+    void makeWeak(HandleSlot, WeakHandleOwner* = 0, void* context = 0);
 
     void markStrongHandles(HeapRootMarker&);
     void updateAfterMark();
@@ -64,10 +64,7 @@ public:
     void writeBarrier(HandleSlot, const JSValue&);
 
 #if !ASSERT_DISABLED
-    Finalizer* getFinalizer(HandleSlot handle)
-    {
-        return toNode(handle)->finalizer();
-    }
+    bool hasWeakOwner(HandleSlot, WeakHandleOwner*);
 #endif
 
     unsigned protectedGlobalObjectCount();
@@ -81,11 +78,11 @@ private:
         HandleSlot slot();
         HandleHeap* handleHeap();
 
-        void makeWeak(Finalizer*, void* context);
+        void makeWeak(WeakHandleOwner*, void* context);
         bool isWeak();
         
-        Finalizer* finalizer();
-        void* finalizerContext();
+        WeakHandleOwner* weakOwner();
+        void* weakOwnerContext();
 
         void setPrev(Node*);
         Node* prev();
@@ -94,12 +91,12 @@ private:
         Node* next();
 
     private:
-        Finalizer* noFinalizer();
+        WeakHandleOwner* emptyWeakOwner();
 
         JSValue m_value;
         HandleHeap* m_handleHeap;
-        Finalizer* m_finalizer;
-        void* m_finalizerContext;
+        WeakHandleOwner* m_weakOwner;
+        void* m_weakOwnerContext;
         Node* m_prev;
         Node* m_next;
     };
@@ -160,28 +157,35 @@ inline void HandleHeap::deallocate(HandleSlot handle)
     m_freeList.push(node);
 }
 
-inline void HandleHeap::makeWeak(HandleSlot handle, Finalizer* finalizer, void* context)
+inline void HandleHeap::makeWeak(HandleSlot handle, WeakHandleOwner* weakOwner, void* context)
 {
     Node* node = toNode(handle);
     SentinelLinkedList<Node>::remove(node);
-    node->makeWeak(finalizer, context);
+    node->makeWeak(weakOwner, context);
     if (handle->isCell() && *handle)
         m_weakList.push(node);
     else
         m_immediateList.push(node);
 }
 
+#if !ASSERT_DISABLED
+inline bool HandleHeap::hasWeakOwner(HandleSlot handle, WeakHandleOwner* weakOwner)
+{
+    return toNode(handle)->weakOwner() == weakOwner;
+}
+#endif
+
 inline HandleHeap::Node::Node(HandleHeap* handleHeap)
     : m_handleHeap(handleHeap)
-    , m_finalizer(0)
-    , m_finalizerContext(0)
+    , m_weakOwner(0)
+    , m_weakOwnerContext(0)
 {
 }
 
 inline HandleHeap::Node::Node(WTF::SentinelTag)
     : m_handleHeap(0)
-    , m_finalizer(0)
-    , m_finalizerContext(0)
+    , m_weakOwner(0)
+    , m_weakOwnerContext(0)
 {
 }
 
@@ -195,26 +199,26 @@ inline HandleHeap* HandleHeap::Node::handleHeap()
     return m_handleHeap;
 }
 
-inline void HandleHeap::Node::makeWeak(Finalizer* finalizer, void* context)
+inline void HandleHeap::Node::makeWeak(WeakHandleOwner* weakOwner, void* context)
 {
-    m_finalizer = finalizer ? finalizer : noFinalizer();
-    m_finalizerContext = context;
+    m_weakOwner = weakOwner ? weakOwner : emptyWeakOwner();
+    m_weakOwnerContext = context;
 }
 
 inline bool HandleHeap::Node::isWeak()
 {
-    return m_finalizer; // True for noFinalizer().
+    return m_weakOwner; // True for emptyWeakOwner().
 }
 
-inline Finalizer* HandleHeap::Node::finalizer()
+inline WeakHandleOwner* HandleHeap::Node::weakOwner()
 {
-    return m_finalizer == noFinalizer() ? 0 : m_finalizer;
+    return m_weakOwner == emptyWeakOwner() ? 0 : m_weakOwner; // 0 for emptyWeakOwner().
 }
 
-inline void* HandleHeap::Node::finalizerContext()
+inline void* HandleHeap::Node::weakOwnerContext()
 {
-    ASSERT(finalizer());
-    return m_finalizerContext;
+    ASSERT(weakOwner());
+    return m_weakOwnerContext;
 }
 
 inline void HandleHeap::Node::setPrev(Node* prev)
@@ -237,9 +241,11 @@ inline HandleHeap::Node* HandleHeap::Node::next()
     return m_next;
 }
 
-inline Finalizer* HandleHeap::Node::noFinalizer()
+// Sentinel to indicate that a node is weak, but its owner has no meaningful
+// callbacks. This allows us to optimize by skipping such nodes.
+inline WeakHandleOwner* HandleHeap::Node::emptyWeakOwner()
 {
-    return reinterpret_cast<Finalizer*>(-1); // Sentinel to indicate a node is weak but has no real finalizer.
+    return reinterpret_cast<WeakHandleOwner*>(-1);
 }
 
 }

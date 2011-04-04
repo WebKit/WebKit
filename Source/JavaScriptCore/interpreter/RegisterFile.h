@@ -135,7 +135,7 @@ namespace JSC {
         static size_t committedByteCount();
         static void initializeThreading();
 
-        static Finalizer* globalObjectCollectedNotifier();
+        static WeakHandleOwner* globalObjectCollectedNotifier();
 
         Register* const * addressOfEnd() const
         {

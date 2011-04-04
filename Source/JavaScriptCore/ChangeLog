@@ -1,3 +1,40 @@
+2011-04-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Renamed Finalizer => WeakHandleOwner (in preparation for adding a reachability callback)
+        https://bugs.webkit.org/show_bug.cgi?id=57775
+        
+        Also renamed noFinalizer => emptyWeakOwner, since this is really an
+        optimization for a weak owner with empty callbacks.
+
+        * collector/handles/HandleHeap.cpp:
+        (JSC::HandleHeap::clearWeakPointers): Updated for renames. Removed
+        redundant initialization of m_nextToFinalize. Moved deletion check inside
+        weak owner check, since the weak owner can't delete the node if there is
+        no weak owner!
+
+        * collector/handles/HandleHeap.h:
+        (JSC::WeakHandleOwner::~WeakHandleOwner):
+        (JSC::HandleHeap::makeWeak): Updated for renames.
+
+        (JSC::HandleHeap::hasWeakOwner): Changed getFinalizer to hasWeakOwner,
+        to clarify this function's role in assertions.
+
+        (JSC::HandleHeap::Node::Node):
+        (JSC::HandleHeap::Node::makeWeak):
+        (JSC::HandleHeap::Node::isWeak):
+        (JSC::HandleHeap::Node::weakOwner):
+        (JSC::HandleHeap::Node::weakOwnerContext):
+        (JSC::HandleHeap::Node::emptyWeakOwner):
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::globalObjectCollectedNotifier):
+        * interpreter/RegisterFile.h:
+        * runtime/WeakGCMap.h:
+        * runtime/WeakGCPtr.h:
+        (JSC::WeakGCPtr::WeakGCPtr):
+        (JSC::WeakGCPtr::set): Updated for renames.
+
 2011-04-04  Oliver Hunt  <oliver@apple.com>
 
         Fix WinCE build.

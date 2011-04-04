@@ -86,12 +86,11 @@ void HandleHeap::clearWeakPointers()
         if (Heap::isMarked(cell))
             continue;
 
-        m_nextToFinalize = node->next();
-        if (Finalizer* finalizer = node->finalizer())
-            finalizer->finalize(Handle<Unknown>::wrapSlot(node->slot()), node->finalizerContext());
-
-        if (m_nextToFinalize != node->next()) // Finalizer deallocated node.
-            continue;
+        if (WeakHandleOwner* weakOwner = node->weakOwner()) {
+            weakOwner->finalize(Handle<Unknown>::wrapSlot(node->slot()), node->weakOwnerContext());
+            if (m_nextToFinalize != node->next()) // Owner deallocated node.
+                continue;
+        }
 
         *node->slot() = JSValue();
         SentinelLinkedList<Node>::remove(node);
