@@ -1,3 +1,10 @@
+2011-04-04  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Adam Roben.
+
+        Add WKIconDatabase* headers to the WebKit2 export for Windows:
+        * win/WebKit2Generated.make:
+
 2011-04-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
