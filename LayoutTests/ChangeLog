@@ -1,5 +1,12 @@
 2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, remove chromium expectations added by mistake in r82815.
+
+        * platform/chromium-linux-x86_64/fast/table/colspanMinWidth-vertical-expected.png: Removed.
+        * platform/chromium-win-vista/fast/table/colspanMinWidth-vertical-expected.checksum: Removed.
+
+2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, delete duplicate baselines added in r82812.
 
         * platform/chromium-linux/fast/html/details-add-summary-1-and-click-expected.checksum: Removed.
