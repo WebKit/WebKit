@@ -566,7 +566,10 @@ WebInspector.Resource.prototype = {
         // If status is an error, content is likely to be of an inconsistent type,
         // as it's going to be an error message. We do not want to emit a warning
         // for this, though, as this will already be reported as resource loading failure.
-        if (this.statusCode >= 400)
+        // Also, if a URL like http://localhost/wiki/load.php?debug=true&lang=en produces text/css and gets reloaded,
+        // it is 304 Not Modified and its guessed mime-type is text/php, which is wrong.
+        // Don't check for mime-types in 304-resources.
+        if (this.statusCode >= 400 || this.statusCode === 304)
             return true;
 
         if (typeof this.type === "undefined"
