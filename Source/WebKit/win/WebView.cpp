@@ -1935,8 +1935,6 @@ bool WebView::handleEditingKeyboardEvent(KeyboardEvent* evt)
 bool WebView::keyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
-    if (virtualKeyCode == VK_CAPITAL)
-        frame->eventHandler()->capsLockStateMayHaveChanged();
 
     PlatformKeyboardEvent keyEvent(m_viewWindow, virtualKeyCode, keyData, PlatformKeyboardEvent::RawKeyDown, systemKeyDown);
     bool handled = frame->eventHandler()->keyEvent(keyEvent);

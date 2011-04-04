@@ -1165,6 +1165,22 @@ static const short kIOHIDEventTypeScroll = 6;
     _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
 }
 
+- (void)flagsChanged:(NSEvent *)theEvent
+{
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[theEvent retain] autorelease];
+
+    unsigned short keyCode = [theEvent keyCode];
+
+    // Don't make an event from the num lock and function keys
+    if (!keyCode || keyCode == 10 || keyCode == 63)
+        return;
+
+    _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
+}
+
 - (void)_executeSavedKeypressCommands
 {
     WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
@@ -1176,7 +1192,6 @@ static const short kIOHIDEventTypeScroll = 6;
     parameters->cachedTextInputState = newTextInputState;
     parameters->commands->clear();
 }
-
 
 - (NSTextInputContext *)inputContext
 {
@@ -1845,6 +1860,9 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 {
     ASSERT(!_data->_interpretKeyEventsParameters);
     ASSERT(commands.isEmpty());
+
+    if ([event type] == NSFlagsChanged)
+        return NO;
 
     WKViewInterpretKeyEventsParameters parameters;
     parameters.cachedTextInputState = cachedTextInputState;

@@ -76,6 +76,7 @@
 #include "UserGestureIndicator.h"
 #include "UserTypingGestureIndicator.h"
 #include "WheelEvent.h"
+#include "WindowsKeyboardCodes.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 
@@ -2378,6 +2379,9 @@ bool EventHandler::needsKeyboardEventDisambiguationQuirks() const
 bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 {
     RefPtr<FrameView> protector(m_frame->view()); 
+
+    if (initialKeyEvent.windowsVirtualKeyCode() == VK_CAPITAL)
+        capsLockStateMayHaveChanged();
 
 #if ENABLE(PAN_SCROLLING)
     if (Page* page = m_frame->page()) {

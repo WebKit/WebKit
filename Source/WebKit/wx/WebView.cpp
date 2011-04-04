@@ -895,9 +895,6 @@ void wxWebView::OnKeyEvents(wxKeyEvent& event)
     if (!(frame && frame->view()))
         return;
 
-    if (event.GetKeyCode() == WXK_CAPITAL)
-        frame->eventHandler()->capsLockStateMayHaveChanged();
-
     WebCore::PlatformKeyboardEvent wkEvent(event);
 
     if (frame->eventHandler()->keyEvent(wkEvent))

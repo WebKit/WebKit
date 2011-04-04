@@ -4163,15 +4163,12 @@ static BOOL isInPasswordField(Frame* coreFrame)
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
     [[event retain] autorelease];
 
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame)
-        coreFrame->eventHandler()->capsLockStateMayHaveChanged();
-    
     RetainPtr<WebHTMLView> selfProtector = self;
 
+    Frame* coreFrame = core([self _frame]);
     unsigned short keyCode = [event keyCode];
 
-    //Don't make an event from the num lock and function keys
+    // Don't make an event from the num lock and function keys.
     if (coreFrame && keyCode != 0 && keyCode != 10 && keyCode != 63) {
         coreFrame->eventHandler()->keyEvent(PlatformKeyboardEvent(event));
         return;

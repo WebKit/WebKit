@@ -1,3 +1,14 @@
+2011-04-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (WebKit2): Caps-Lock indicator sometimes doesn't appear in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=51230
+        <rdar://problem/8780989>
+
+        * WebView.cpp: (wxWebView::OnKeyEvents): Moved Caps Lock handling from
+        WebKits to WebCore, because WebKit shouldn't be smart.
+
 2011-03-31  Evan Martin  <evan@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -620,11 +620,6 @@ bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
     }
 #endif // OS(WINDOWS) || OS(LINUX) || OS(FREEBSD)
 
-    // It's not clear if we should continue after detecting a capslock keypress.
-    // I'll err on the side of continuing, which is the pre-existing behaviour.
-    if (event.windowsKeyCode == VKEY_CAPITAL)
-        handler->capsLockStateMayHaveChanged();
-
     PlatformKeyboardEventBuilder evt(event);
 
     if (handler->keyEvent(evt)) {

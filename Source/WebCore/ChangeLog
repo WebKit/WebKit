@@ -1,3 +1,16 @@
+2011-04-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (WebKit2): Caps-Lock indicator sometimes doesn't appear in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=51230
+        <rdar://problem/8780989>
+
+        <rdar://problem/9015250> REGRESSION (WebKit2): Key events not fired for modifier keys
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::keyEvent): Moved Caps Lock handling from
+        WebKits to WebCore, because WebKit shouldn't be smart.
+
 2011-04-04  Steve Falkenburg  <sfalken@apple.com>
 
         Fix Windows build warning.
@@ -492,11 +505,11 @@
 
         The crash happens because resetting the page scale as part of preparing the WebView for the
         next test triggered layout, which in turn caused a plug-in to make a resource request, and
-        DumpRenderTree’s delegate to be dispatched. The delegate doesn’t expect to be called between
+        DumpRenderTree's delegate to be dispatched. The delegate doesn‚Äôt expect to be called between
         tests, and it references the layout test controller, which is null.
 
         * page/Frame.cpp:
-        (WebCore::Frame::scalePage): Avoid an unnecessary layout if the page scale isn’t changing. This
+        (WebCore::Frame::scalePage): Avoid an unnecessary layout if the page scale isn‚Äôt changing. This
         is more efficient, and has the side effect of avoiding the crash in DumpRenderTree, although
         DumpRenderTree could still crash when after a test with disabled plug-ins and a non-1 page scale.
         I think there are currently no such tests, so I am not fixing DumpRenderTree.

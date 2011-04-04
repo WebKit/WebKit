@@ -1,3 +1,18 @@
+2011-04-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (WebKit2): Caps-Lock indicator sometimes doesn't appear in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=51230
+        <rdar://problem/8780989>
+
+        <rdar://problem/9015250> REGRESSION (WebKit2): Key events not fired for modifier keys
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView flagsChanged:]): Ported from WebHTMLView.
+        (-[WKView _interpretKeyEvent:withCachedTextInputState:savingCommandsTo:WebCore::]):
+        AppKit isn't happy about attempts to interpret NSFlagsChanged, but WK2 lacked the check.
+
 2011-04-04  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

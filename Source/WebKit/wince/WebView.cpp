@@ -347,8 +347,6 @@ bool WebView::handleMouseWheel(HWND hWnd, WPARAM wParam, LPARAM lParam, bool isH
 bool WebView::handleKeyDown(WPARAM virtualKeyCode, LPARAM keyData, bool systemKeyDown)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
-    if (virtualKeyCode == VK_CAPITAL)
-        frame->eventHandler()->capsLockStateMayHaveChanged();
 
     PlatformKeyboardEvent keyEvent(m_windowHandle, virtualKeyCode, keyData, PlatformKeyboardEvent::RawKeyDown, systemKeyDown);
     bool handled = frame->eventHandler()->keyEvent(keyEvent);
