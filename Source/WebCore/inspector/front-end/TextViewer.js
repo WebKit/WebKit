@@ -774,14 +774,25 @@ WebInspector.TextEditorMainPanel.prototype = {
     {
         if (this._rangeToMark) {
             var markedLine = this._rangeToMark.startLine;
-            this._rangeToMark = null;
-            this._paintLines(markedLine, markedLine + 1);
+            delete this._rangeToMark;
+            // Remove the marked region immediately.
+            if (!this._dirtyLines) {
+                this.beginDomUpdates();
+                var chunk = this.chunkForLine(markedLine);
+                var wasExpanded = chunk.expanded;
+                chunk.expanded = false;
+                chunk.updateCollapsedLineRow();
+                chunk.expanded = wasExpanded;
+                this.endDomUpdates();
+            } else
+                this._paintLines(markedLine, markedLine + 1);
         }
 
         if (range) {
             this._rangeToMark = range;
             this.revealLine(range.startLine);
-            this._paintLines(range.startLine, range.startLine + 1);
+            var chunk = this.makeLineAChunk(range.startLine);
+            this._paintLine(chunk.element);
             if (this._markedRangeElement)
                 this._markedRangeElement.scrollIntoViewIfNeeded();
         }
@@ -963,19 +974,21 @@ WebInspector.TextEditorMainPanel.prototype = {
     _paintLine: function(lineRow)
     {
         var lineNumber = lineRow.lineNumber;
-        if (this._dirtyLines || this._scheduledPaintLines || this._paintLinesOperationsCredit < 0) {
+        if (this._dirtyLines) {
             this._schedulePaintLines(lineNumber, lineNumber + 1);
             return;
         }
 
         this.beginDomUpdates();
         try {
-            var highlight = this._textModel.getAttribute(lineNumber, "highlight");
-            if (!highlight) {
-                if (this._rangeToMark && this._rangeToMark.startLine === lineNumber)
-                    this._markedRangeElement = highlightSearchResult(lineRow, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
+            if (this._scheduledPaintLines || this._paintLinesOperationsCredit < 0) {
+                this._schedulePaintLines(lineNumber, lineNumber + 1);
                 return;
             }
+
+            var highlight = this._textModel.getAttribute(lineNumber, "highlight");
+            if (!highlight)
+                return;
 
             lineRow.removeChildren();
             var line = this._textModel.line(lineNumber);
@@ -1010,11 +1023,11 @@ WebInspector.TextEditorMainPanel.prototype = {
                 this._appendTextNode(lineRow, line.substring(plainTextStart, line.length));
                 --this._paintLinesOperationsCredit;
             }
-            if (this._rangeToMark && this._rangeToMark.startLine === lineNumber)
-                this._markedRangeElement = highlightSearchResult(lineRow, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
             if (lineRow.decorationsElement)
                 lineRow.appendChild(lineRow.decorationsElement);
         } finally {
+            if (this._rangeToMark && this._rangeToMark.startLine === lineNumber)
+                this._markedRangeElement = highlightSearchResult(lineRow, this._rangeToMark.startColumn, this._rangeToMark.endColumn - this._rangeToMark.startColumn);
             this.endDomUpdates();
         }
     },
