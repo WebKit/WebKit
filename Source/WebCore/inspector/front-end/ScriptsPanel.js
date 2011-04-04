@@ -204,9 +204,9 @@ WebInspector.ScriptsPanel = function()
 
 // Keep these in sync with WebCore::ScriptDebugServer
 WebInspector.ScriptsPanel.PauseOnExceptionsState = {
-    DontPauseOnExceptions : 0,
-    PauseOnAllExceptions : 1,
-    PauseOnUncaughtExceptions: 2
+    DontPauseOnExceptions : "none",
+    PauseOnAllExceptions : "all",
+    PauseOnUncaughtExceptions: "uncaught"
 };
 
 WebInspector.ScriptsPanel.prototype = {
@@ -414,7 +414,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _debuggerWasEnabled: function()
     {
-        this._setPauseOnExceptions(WebInspector.settings.pauseOnExceptionState);
+        this._setPauseOnExceptions(WebInspector.settings.pauseOnExceptionStateString);
 
         if (this._debuggerEnabled)
             return;
@@ -681,6 +681,7 @@ WebInspector.ScriptsPanel.prototype = {
 
     _setPauseOnExceptions: function(pauseOnExceptionsState)
     {
+        pauseOnExceptionsState = pauseOnExceptionsState || WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions;
         function callback(error)
         {
             if (error)
@@ -693,9 +694,9 @@ WebInspector.ScriptsPanel.prototype = {
                 this._pauseOnExceptionButton.title = WebInspector.UIString("Pause on uncaught exceptions.\nClick to Not pause on exceptions.");
 
             this._pauseOnExceptionButton.state = pauseOnExceptionsState;
-            WebInspector.settings.pauseOnExceptionState = pauseOnExceptionsState;
+            WebInspector.settings.pauseOnExceptionStateString = pauseOnExceptionsState;
         }
-        DebuggerAgent.setPauseOnExceptionsState(pauseOnExceptionsState, callback.bind(this));
+        DebuggerAgent.setPauseOnExceptions(pauseOnExceptionsState, callback.bind(this));
     },
 
     _updateDebuggerButtons: function()
@@ -810,7 +811,12 @@ WebInspector.ScriptsPanel.prototype = {
 
     _togglePauseOnExceptions: function()
     {
-        this._setPauseOnExceptions((this._pauseOnExceptionButton.state + 1) % this._pauseOnExceptionButton.states);
+        var nextStateMap = {};
+        var stateEnum = WebInspector.ScriptsPanel.PauseOnExceptionsState;
+        nextStateMap[stateEnum.DontPauseOnExceptions] = stateEnum.PauseOnAllExceptions;  
+        nextStateMap[stateEnum.PauseOnAllExceptions] = stateEnum.PauseOnUncaughtExceptions;  
+        nextStateMap[stateEnum.PauseOnUncaughtExceptions] = stateEnum.DontPauseOnExceptions;
+        this._setPauseOnExceptions(nextStateMap[this._pauseOnExceptionButton.state]);
     },
 
     _togglePause: function()

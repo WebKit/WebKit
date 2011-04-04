@@ -484,13 +484,13 @@ void InspectorInstrumentation::resourceRetrievedByXMLHttpRequestImpl(InspectorAg
 {
     inspectorAgent->consoleAgent()->resourceRetrievedByXMLHttpRequest(url, sendURL, sendLineNumber);
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
-        resourceAgent->setInitialContent(identifier, sourceString, "XHR");
+        resourceAgent->setInitialXHRContent(identifier, sourceString);
 }
 
 void InspectorInstrumentation::scriptImportedImpl(InspectorAgent* inspectorAgent, unsigned long identifier, const String& sourceString)
 {
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))
-        resourceAgent->setInitialContent(identifier, sourceString, "Script");
+        resourceAgent->setInitialScriptContent(identifier, sourceString);
 }
 
 void InspectorInstrumentation::domContentLoadedEventFiredImpl(InspectorAgent* inspectorAgent, Frame* frame, const KURL& url)

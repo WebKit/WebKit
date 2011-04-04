@@ -1,3 +1,26 @@
+2011-04-04  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add support for the enumerated types in the protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=57761
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setPauseOnExceptions):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::resourceRetrievedByXMLHttpRequestImpl):
+        (WebCore::InspectorInstrumentation::scriptImportedImpl):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::cachedResourceTypeString):
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::setInitialScriptContent):
+        (WebCore::InspectorResourceAgent::setInitialXHRContent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/generate-inspector-idl:
+
 2011-04-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

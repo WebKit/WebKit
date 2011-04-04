@@ -74,6 +74,17 @@ static const char resourceAgentEnabled[] = "resourceAgentEnabled";
 static const char extraRequestHeaders[] = "extraRequestHeaders";
 }
 
+namespace ResourceType {
+static const char document[] = "Document";
+static const char stylesheet[] = "Stylesheet";
+static const char image[] = "Image";
+static const char font[] = "Font";
+static const char script[] = "Script";
+static const char xhr[] = "XHR";
+static const char websocket[] = "WebSocket";
+static const char other[] = "Other";
+}
+
 void InspectorResourceAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend->network();
@@ -236,21 +247,21 @@ static String cachedResourceTypeString(const CachedResource& cachedResource)
 {
     switch (cachedResource.type()) {
     case CachedResource::ImageResource:
-        return "Image";
+        return ResourceType::image;
     case CachedResource::FontResource:
-        return "Font";
+        return ResourceType::font;
     case CachedResource::CSSStyleSheet:
         // Fall through.
 #if ENABLE(XSLT)
     case CachedResource::XSLStyleSheet:
 #endif
-        return "Stylesheet";
+        return ResourceType::stylesheet;
     case CachedResource::Script:
-        return "Script";
+        return ResourceType::script;
     default:
         break;
     }
-    return "Other";
+    return ResourceType::other;
 }
 
 static PassRefPtr<InspectorObject> buildObjectForCachedResource(const CachedResource& cachedResource)
@@ -314,9 +325,9 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
                 resourceResponse->setString("mimeType", cachedResource->response().mimeType());
         }
         if (equalIgnoringFragmentIdentifier(response.url(), loader->frameLoader()->iconURL()))
-            type = "Image";
+            type = ResourceType::image;
         else if (equalIgnoringFragmentIdentifier(response.url(), loader->url()) && type == "Other")
-            type = "Document";
+            type = ResourceType::document;
     }
     m_frontend->responseReceived(static_cast<int>(identifier), currentTime(), type, resourceResponse);
     // If we revalidated the resource and got Not modified, send content length following didReceiveResponse
@@ -348,9 +359,14 @@ void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* load
     m_frontend->resourceLoadedFromMemoryCache(pointerAsId(loader->frame()), pointerAsId(loader), loader->url().string(), currentTime(), buildObjectForCachedResource(*resource));
 }
 
-void InspectorResourceAgent::setInitialContent(unsigned long identifier, const String& sourceString, const String& type)
+void InspectorResourceAgent::setInitialScriptContent(unsigned long identifier, const String& sourceString)
 {
-    m_frontend->initialContentSet(static_cast<int>(identifier), sourceString, type);
+    m_frontend->initialContentSet(static_cast<int>(identifier), sourceString, ResourceType::script);
+}
+
+void InspectorResourceAgent::setInitialXHRContent(unsigned long identifier, const String& sourceString)
+{
+    m_frontend->initialContentSet(static_cast<int>(identifier), sourceString, ResourceType::xhr);
 }
 
 static PassRefPtr<InspectorObject> buildObjectForFrame(Frame* frame)

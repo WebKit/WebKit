@@ -18,7 +18,7 @@ function test()
 
     function step1()
     {
-        DebuggerAgent.setPauseOnExceptionsState(WebInspector.ScriptsPanel.PauseOnExceptionsState.PauseOnUncaughtExceptions);
+        DebuggerAgent.setPauseOnExceptions(WebInspector.ScriptsPanel.PauseOnExceptionsState.PauseOnUncaughtExceptions);
         InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
         InspectorTest.evaluateInPage("loadIframe()");
     }

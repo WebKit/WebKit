@@ -95,7 +95,8 @@ public:
     void didFinishLoading(unsigned long identifier, double finishTime);
     void didFailLoading(unsigned long identifier, const ResourceError&);
     void didLoadResourceFromMemoryCache(DocumentLoader*, const CachedResource*);
-    void setInitialContent(unsigned long identifier, const String& sourceString, const String& type);
+    void setInitialScriptContent(unsigned long identifier, const String& sourceString);
+    void setInitialXHRContent(unsigned long identifier, const String& sourceString);
     void didCommitLoad(DocumentLoader*);
     void frameDetachedFromParent(Frame*);
 

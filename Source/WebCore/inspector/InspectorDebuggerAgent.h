@@ -94,7 +94,7 @@ public:
     void stepOver(ErrorString*);
     void stepInto(ErrorString*);
     void stepOut(ErrorString*);
-    void setPauseOnExceptionsState(ErrorString*, int pauseState);
+    void setPauseOnExceptions(ErrorString*, const String& pauseState);
     void evaluateOnCallFrame(ErrorString*, const String& callFrameId, const String& expression, const String& objectGroup, const bool* const optionalIncludeCommandLineAPI, RefPtr<InspectorObject>* result);
 
     class Listener {

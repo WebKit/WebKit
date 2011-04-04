@@ -81,6 +81,8 @@ type_traits = {
     "object": "Object"
 }
 
+ref_types = {}
+
 macro_traits = {
     "Database": "DATABASE",
     "DOMStorage": "DOM_STORAGE",
@@ -92,18 +94,26 @@ macro_traits = {
 
 def param_type(param):
     if "type" in param:
-        return type_traits[param["type"]];
+        return type_traits[param["type"]]
     if "$ref" in param:
-        return "Object"
+        type_id = param["$ref"]
+        if type_id in ref_types:
+            ref_type = ref_types[type_id]
+            return type_traits[ref_type["type"]]
+        else:
+            return "Object"
 
 for domain in json_api:
     domain_name = domain["domain"]
     if domain_name in macro_traits:
         output_file.write("\n#if defined(ENABLE_%s) && ENABLE_%s" % (macro_traits[domain_name], macro_traits[domain_name]))
     output_file.write("\n    interface [Conditional=INSPECTOR] %s {" % domain_name)
+    if "types" in domain:
+        for type in domain["types"]:
+            ref_types[type["id"]] = type
     if "commands" in domain:
         for command in domain["commands"]:
-            params = [];
+            params = []
             if ("parameters" in command):
                 for in_param in command["parameters"]:
                     if ("optional" in in_param):
@@ -117,7 +127,7 @@ for domain in json_api:
             output_file.write("\n        void %s(%s);" % (command["name"], ", ".join(params)))
     if "events" in domain:
         for event in domain["events"]:
-            params = [];
+            params = []
             if ("parameters" in event):
                 for in_param in event["parameters"]:
                     params.append("out %s %s" % (param_type(in_param), in_param["name"]))

@@ -301,8 +301,19 @@ void InspectorDebuggerAgent::stepOut(ErrorString*)
     scriptDebugServer().stepOutOfFunction();
 }
 
-void InspectorDebuggerAgent::setPauseOnExceptionsState(ErrorString* errorString, int pauseState)
+void InspectorDebuggerAgent::setPauseOnExceptions(ErrorString* errorString, const String& stringPauseState)
 {
+    ScriptDebugServer::PauseOnExceptionsState pauseState;
+    if (stringPauseState == "none")
+        pauseState = ScriptDebugServer::DontPauseOnExceptions;
+    else if (stringPauseState == "all")
+        pauseState = ScriptDebugServer::PauseOnAllExceptions;
+    else if (stringPauseState == "uncaught")
+        pauseState = ScriptDebugServer::PauseOnUncaughtExceptions;
+    else {
+        *errorString = "Unknown pause on exceptions mode: " + stringPauseState;
+        return;
+    }
     scriptDebugServer().setPauseOnExceptionsState(static_cast<ScriptDebugServer::PauseOnExceptionsState>(pauseState));
     if (scriptDebugServer().pauseOnExceptionsState() != pauseState)
         *errorString = "Internal error. Could not change pause on exceptions state";

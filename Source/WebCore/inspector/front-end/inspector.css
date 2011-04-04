@@ -493,14 +493,6 @@ button.status-bar-item.toggled-on .glyph {
     background-color: rgb(66, 129, 235);
 }
 
-button.status-bar-item.toggled-1 .glyph {
-    background-color: rgb(66, 129, 235);
-}
-
-button.status-bar-item.toggled-2 .glyph {
-    background-color: purple;   
-}
-
 button.status-bar-item:disabled {
     opacity: 0.5;
     background-position: 0 0 !important;
@@ -2518,6 +2510,14 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 
 .scripts-pause-on-exceptions-status-bar-item .glyph {
     -webkit-mask-image: url(Images/pauseOnExceptionButtonGlyph.png);
+}
+
+.scripts-pause-on-exceptions-status-bar-item.toggled-all .glyph {
+    background-color: rgb(66, 129, 235);
+}
+
+.scripts-pause-on-exceptions-status-bar-item.toggled-uncaught .glyph {
+    background-color: purple;   
 }
 
 #scripts-status-bar {
