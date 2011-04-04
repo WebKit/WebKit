@@ -1,3 +1,28 @@
+2011-04-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: InjectedScriptManager should not try to access inspected window in case of workers
+        https://bugs.webkit.org/show_bug.cgi?id=57637
+
+        * bindings/js/JSInjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::injectedScriptFor):
+        * bindings/v8/custom/V8InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::injectedScriptFor):
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::InjectedScript):
+        (WebCore::InjectedScript::canAccessInspectedWindow):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::createForPage):
+        (WebCore::InjectedScriptManager::createForWorker):
+        (WebCore::InjectedScriptManager::InjectedScriptManager): access check function is passed as a parameter to the constructor
+        and it depends on which type of context we're inspecting(worker or page).
+        (WebCore::InjectedScriptManager::canAccessInspectedWorkerContext):
+        * inspector/InjectedScriptManager.h:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+
 2011-04-04  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Eric Seidel.

@@ -139,13 +139,13 @@ InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState* inspectedSc
     v8::Handle<v8::String> key = V8HiddenPropertyName::devtoolsInjectedScript();
     v8::Local<v8::Value> val = global->GetHiddenValue(key);
     if (!val.IsEmpty() && val->IsObject())
-        return InjectedScript(ScriptObject(inspectedScriptState, v8::Local<v8::Object>::Cast(val)));
+        return InjectedScript(ScriptObject(inspectedScriptState, v8::Local<v8::Object>::Cast(val)), m_inspectedStateAccessCheck);
 
-    if (!canAccessInspectedWindow(inspectedScriptState))
+    if (!m_inspectedStateAccessCheck(inspectedScriptState))
         return InjectedScript();
 
     pair<long, ScriptObject> injectedScript = injectScript(injectedScriptSource(), inspectedScriptState);
-    InjectedScript result(injectedScript.second);
+    InjectedScript result(injectedScript.second, m_inspectedStateAccessCheck);
     m_idToInjectedScript.set(injectedScript.first, result);
     global->SetHiddenValue(key, injectedScript.second.v8Object());
     return result;

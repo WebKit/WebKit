@@ -55,7 +55,7 @@
 namespace WebCore {
 
 InspectorController::InspectorController(Page* page, InspectorClient* inspectorClient)
-    : m_injectedScriptManager(InjectedScriptManager::create())
+    : m_injectedScriptManager(InjectedScriptManager::createForPage())
     , m_inspectorAgent(new InspectorAgent(page, inspectorClient, m_injectedScriptManager.get()))
     , m_inspectorClient(inspectorClient)
     , m_openingFrontend(false)

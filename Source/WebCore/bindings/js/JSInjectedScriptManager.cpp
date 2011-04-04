@@ -85,14 +85,14 @@ InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState* scriptState
     JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(scriptState->lexicalGlobalObject());
     JSObject* injectedScript = globalObject->injectedScript();
     if (injectedScript)
-        return InjectedScript(ScriptObject(scriptState, injectedScript));
+        return InjectedScript(ScriptObject(scriptState, injectedScript), m_inspectedStateAccessCheck);
 
-    if (!canAccessInspectedWindow(scriptState))
+    if (!m_inspectedStateAccessCheck(scriptState))
         return InjectedScript();
 
     pair<long, ScriptObject> injectedScriptObject = injectScript(injectedScriptSource(), scriptState);
     globalObject->setInjectedScript(injectedScriptObject.second.jsObject());
-    InjectedScript result(injectedScriptObject.second);
+    InjectedScript result(injectedScriptObject.second, m_inspectedStateAccessCheck);
     m_idToInjectedScript.set(injectedScriptObject.first, result);
     return result;
 }

@@ -50,7 +50,7 @@ typedef String ErrorString;
 
 class InjectedScript {
 public:
-    InjectedScript() { }
+    InjectedScript();
     ~InjectedScript() { }
 
     bool hasNoValue() const { return m_injectedScriptObject.hasNoValue(); }
@@ -75,7 +75,8 @@ public:
 
 private:
     friend InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState*);
-    explicit InjectedScript(ScriptObject);
+    typedef bool (*InspectedStateAccessCheck)(ScriptState*);
+    InjectedScript(ScriptObject, InspectedStateAccessCheck);
 
     bool canAccessInspectedWindow();
     void makeCall(ScriptFunctionCall&, RefPtr<InspectorValue>* result);
@@ -83,6 +84,7 @@ private:
     ScriptValue nodeAsScriptValue(Node*);
 
     ScriptObject m_injectedScriptObject;
+    InspectedStateAccessCheck m_inspectedStateAccessCheck;
 };
 
 } // namespace WebCore

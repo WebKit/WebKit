@@ -44,14 +44,20 @@ using namespace std;
 
 namespace WebCore {
 
-PassOwnPtr<InjectedScriptManager> InjectedScriptManager::create()
+PassOwnPtr<InjectedScriptManager> InjectedScriptManager::createForPage()
 {
-    return adoptPtr(new InjectedScriptManager());
+    return adoptPtr(new InjectedScriptManager(&InjectedScriptManager::canAccessInspectedWindow));
 }
 
-InjectedScriptManager::InjectedScriptManager()
+PassOwnPtr<InjectedScriptManager> InjectedScriptManager::createForWorker()
+{
+    return adoptPtr(new InjectedScriptManager(&InjectedScriptManager::canAccessInspectedWorkerContext));
+}
+
+InjectedScriptManager::InjectedScriptManager(InspectedStateAccessCheck accessCheck)
     : m_nextInjectedScriptId(1)
     , m_injectedScriptHost(InjectedScriptHost::create())
+    , m_inspectedStateAccessCheck(accessCheck)
 {
 }
 
@@ -93,6 +99,11 @@ void InjectedScriptManager::discardInjectedScripts()
     for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != end; ++it)
         discardInjectedScript(it->second.scriptState());
     m_idToInjectedScript.clear();
+}
+
+bool InjectedScriptManager::canAccessInspectedWorkerContext(ScriptState*)
+{
+    return true;
 }
 
 void InjectedScriptManager::releaseObjectGroup(const String& objectGroup)

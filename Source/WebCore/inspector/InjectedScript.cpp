@@ -43,8 +43,14 @@
 
 namespace WebCore {
 
-InjectedScript::InjectedScript(ScriptObject injectedScriptObject)
+InjectedScript::InjectedScript()
+    : m_inspectedStateAccessCheck(0)
+{
+}
+
+InjectedScript::InjectedScript(ScriptObject injectedScriptObject, InspectedStateAccessCheck accessCheck)
     : m_injectedScriptObject(injectedScriptObject)
+    , m_inspectedStateAccessCheck(accessCheck)
 {
 }
 
@@ -178,7 +184,7 @@ void InjectedScript::releaseObjectGroup(const String& objectGroup)
 
 bool InjectedScript::canAccessInspectedWindow()
 {
-    return InjectedScriptManager::canAccessInspectedWindow(m_injectedScriptObject.scriptState());
+    return m_inspectedStateAccessCheck(m_injectedScriptObject.scriptState());
 }
 
 void InjectedScript::makeCall(ScriptFunctionCall& function, RefPtr<InspectorValue>* result)

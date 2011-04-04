@@ -46,7 +46,8 @@ class ScriptObject;
 class InjectedScriptManager {
     WTF_MAKE_NONCOPYABLE(InjectedScriptManager);
 public:
-    static PassOwnPtr<InjectedScriptManager> create();
+    static PassOwnPtr<InjectedScriptManager> createForPage();
+    static PassOwnPtr<InjectedScriptManager> createForWorker();
     ~InjectedScriptManager();
 
     void disconnect();
@@ -60,19 +61,23 @@ public:
     void discardInjectedScripts();
     void releaseObjectGroup(const String& objectGroup);
 
-    static bool canAccessInspectedWindow(ScriptState*);
 
 private:
-    InjectedScriptManager();
+    typedef bool (*InspectedStateAccessCheck)(ScriptState*);
+    explicit InjectedScriptManager(InspectedStateAccessCheck);
 
     String injectedScriptSource();
     ScriptObject createInjectedScript(const String& source, ScriptState*, long id);
     void discardInjectedScript(ScriptState*);
 
+    static bool canAccessInspectedWindow(ScriptState*);
+    static bool canAccessInspectedWorkerContext(ScriptState*);
+
     long m_nextInjectedScriptId;
     typedef HashMap<long, InjectedScript> IdToInjectedScriptMap;
     IdToInjectedScriptMap m_idToInjectedScript;
     RefPtr<InjectedScriptHost> m_injectedScriptHost;
+    InspectedStateAccessCheck m_inspectedStateAccessCheck;
 };
 
 } // namespace WebCore
