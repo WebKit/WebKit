@@ -66,6 +66,16 @@ function dumpSidebarContent(message, port)
 }
 InspectorTest.dispatchOnMessage("dump-sidebar-content", dumpSidebarContent, true);
 
+function showPanel(message, port)
+{
+    var panelId = message.panelId;
+    if (panelId === "extension")
+        panelId = WebInspector.panelOrder[WebInspector.panelOrder.length - 1].name;
+    WebInspector.showPanel(panelId);
+    port.postMessage("");
+}
+InspectorTest.dispatchOnMessage("show-panel", showPanel, true);
+
 function reloadPage(data, port)
 {
     InspectorTest.reloadPage(function() {

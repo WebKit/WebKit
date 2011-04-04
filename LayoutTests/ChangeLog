@@ -1,3 +1,19 @@
+2011-04-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Extensions API] add notifications on panels shown/hidden
+        https://bugs.webkit.org/show_bug.cgi?id=57752
+
+        * http/tests/inspector/extensions-test.js:
+        (initialize_ExtensionsTest.showPanel):
+        * http/tests/inspector/resources/extension-main.js:
+        (showPanel):
+        * inspector/extensions/extensions-api-expected.txt:
+        * inspector/extensions/extensions-events-expected.txt:
+        * inspector/extensions/extensions-events.html:
+        * inspector/extensions/extensions-expected.txt:
+
 2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, mark xhr-breakpoints as CRASH PASS on chromium win debug.

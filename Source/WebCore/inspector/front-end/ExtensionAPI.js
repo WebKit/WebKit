@@ -182,6 +182,8 @@ Panels.prototype = {
 function PanelImpl(id)
 {
     this._id = id;
+    this.onShown = new EventSink("panel-shown-" + id);
+    this.onHidden = new EventSink("panel-hidden-" + id);
 }
 
 function PanelWithSidebarImpl(id)

@@ -4,9 +4,16 @@ Started extension.
 Running tests...
 RUNNING TEST: extension_testOnResourceFinished
 onFinished fired
+RUNNING TEST: extension_testOnSelectionChanged
+onSelectionChanged fired
 RUNNING TEST: extension_testPageLoadEvents
 Page reloaded.
 onDOMContentLoaded fired: number
 onLoaded fired: number
+RUNNING TEST: extension_testPanelShowHide
+Got onHidden event for panel elements
+Got onShown event for panel extension
+Got onHidden event for panel extension
+Got onShown event for panel elements
 All tests done.
 

@@ -74,6 +74,7 @@ WebInspector.Panel.prototype = {
 
         this.restoreSidebarWidth();
         this._restoreScrollPositions();
+        WebInspector.extensionServer.notifyPanelShown(this.name);
     },
 
     hide: function()
@@ -86,6 +87,7 @@ WebInspector.Panel.prototype = {
         delete this._statusBarItemContainer;
         if ("_toolbarItem" in this)
             this._toolbarItem.removeStyleClass("toggled-on");
+        WebInspector.extensionServer.notifyPanelHidden(this.name);
     },
 
     reset: function()

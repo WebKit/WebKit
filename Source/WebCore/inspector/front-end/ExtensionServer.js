@@ -59,11 +59,6 @@ WebInspector.ExtensionServer = function()
 }
 
 WebInspector.ExtensionServer.prototype = {
-    notifyPanelShown: function(panelName)
-    {
-        this._postNotification("panel-shown-" + panelName);
-    },
-
     notifyObjectSelected: function(panelId, objectId)
     {
         this._postNotification("panel-objectSelected-" + panelId, objectId);
@@ -72,6 +67,16 @@ WebInspector.ExtensionServer.prototype = {
     notifySearchAction: function(panelId, action, searchString)
     {
         this._postNotification("panel-search-" + panelId, action, searchString);
+    },
+
+    notifyPanelShown: function(panelId)
+    {
+        this._postNotification("panel-shown-" + panelId);
+    },
+
+    notifyPanelHidden: function(panelId)
+    {
+        this._postNotification("panel-hidden-" + panelId);
     },
 
     notifyPageLoaded: function(milliseconds)

@@ -62,6 +62,11 @@ function dispatchOnFrontend(message, callback)
     top.postMessage(message, [ channel.port2 ], "*");
 }
 
+function showPanel(panelId, callback)
+{
+    dispatchOnFrontend({ command: "show-panel", panelId: panelId }, callback);
+}
+
 function callbackAndNextTest(callback, nextTest)
 {
     function callbackWrapper()

@@ -1,3 +1,19 @@
+2011-04-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Extensions API] add notifications on panels shown/hidden
+        https://bugs.webkit.org/show_bug.cgi?id=57752
+
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI.PanelImpl):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype.notifyPanelShown):
+        (WebInspector.ExtensionServer.prototype.notifyPanelHidden):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.show):
+        (WebInspector.Panel.prototype.hide):
+
 2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

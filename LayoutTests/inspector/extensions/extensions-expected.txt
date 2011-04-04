@@ -6,6 +6,14 @@ RUNNING TEST: extension_testCreatePanel
 done createPanel
 Panel created
 {
+    onShown : {
+        addListener : <function>
+        removeListener : <function>
+    }
+    onHidden : {
+        addListener : <function>
+        removeListener : <function>
+    }
     onSearch : {
         addListener : <function>
         removeListener : <function>

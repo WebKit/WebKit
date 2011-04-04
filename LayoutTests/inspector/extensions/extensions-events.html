@@ -4,8 +4,6 @@
 <script src="../../http/tests/inspector/extensions-test.js"></script>
 <script type="text/javascript">
 
-/*
-FIXME: test should not depend on the sources (use them as testing data).
 function extension_testOnSelectionChanged(nextTest)
 {
     function onSelectionChanged()
@@ -17,7 +15,6 @@ function extension_testOnSelectionChanged(nextTest)
     webInspector.panels.elements.onSelectionChanged.addListener(onSelectionChanged);
     webInspector.inspectedWindow.eval("inspect(document.body.children[0])");
 }
-*/
 
 function extension_testOnResourceFinished(nextTest)
 {
@@ -57,6 +54,45 @@ function extension_testPageLoadEvents(nextTest)
         queueOutputAndContinue("onLoaded fired: " + typeof time);
     });
     dispatchOnFrontend({ command: "reload" }, queueOutputAndContinue);
+}
+
+function extension_testPanelShowHide(nextTest)
+{
+    var listenersToCleanup = [];
+    function onPanelEvent(type, panelId)
+    {
+        output("Got " + type + " event for panel " + panelId);
+        if (type !== "onShown")
+            return;
+        if (panelId === "extension") {
+            addListener(webInspector.panels.elements, "elements", "onShown");
+            showPanel("elements");
+        } else if (panelId === "elements") {
+            cleanupListeners();
+            nextTest();
+        }
+    }
+    function addListener(panel, panelId, type)
+    {
+        var listener = bind(onPanelEvent, null, type, panelId);
+        var event = panel[type];
+        listenersToCleanup.push({ event: event, listener: listener });
+        event.addListener(listener);
+    }
+    function cleanupListeners()
+    {
+        for (var i = 0; i < listenersToCleanup.length; ++i)
+            listenersToCleanup[i].event.removeListener(listenersToCleanup[i].listener);
+    }
+    function onPanelCreated(panel)
+    {
+        addListener(panel, "extension", "onShown");
+        addListener(panel, "extension", "onHidden");
+        addListener(webInspector.panels.elements, "elements", "onHidden");
+        showPanel("extension");
+    }
+    showPanel("elements");
+    webInspector.panels.create("Test Panel", "extension-panel.png", "extension-panel.html", onPanelCreated);
 }
 
 </script>
