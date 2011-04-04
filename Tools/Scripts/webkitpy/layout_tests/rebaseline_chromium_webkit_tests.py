@@ -854,10 +854,7 @@ def main(args):
                                 '%(levelname)s %(message)s'),
                         datefmt='%y%m%d %H:%M:%S')
 
-    target_port_name = None
-    if options.gpu and options.target_platform == 'chromium':
-        target_port_name = 'chromium-gpu'
-    target_port_obj = port.get(target_port_name, target_options)
+    target_port_obj = port.get(None, target_options)
     host_port_obj = get_host_port_object(options)
     if not host_port_obj or not target_port_obj:
         return 1
