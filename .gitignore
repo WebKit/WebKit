@@ -7,6 +7,8 @@ build/
 /WebKitBuild/
 autoinstall.cache.d
 Tools/Scripts/webkitpy/thirdparty/autoinstalled
+project.xcworkspace
+xcuserdata
 
 # Ignore common tool auto-generated files.
 .gdb_history
