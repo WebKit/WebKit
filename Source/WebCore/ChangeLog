@@ -1,3 +1,18 @@
+2011-04-04  Malcolm MacLeod  <mmacleod@webmail.co.za>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Implement support for temporary files.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=57772
+
+        * platform/FileSystem.h:
+        * platform/wx/FileSystemWx.cpp:
+        (WebCore::getFileModificationTime):
+        (WebCore::openTemporaryFile):
+        (WebCore::closeFile):
+        (WebCore::writeToFile):
+
 2011-04-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

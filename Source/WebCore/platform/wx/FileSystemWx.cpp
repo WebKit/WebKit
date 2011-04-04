@@ -78,8 +78,11 @@ bool getFileSize(const String& path, long long& resultSize)
 
 bool getFileModificationTime(const String& path, time_t& t)
 {
-    t = wxFileName(path).GetModificationTime().GetTicks();
-    return true;
+    if (wxFileExists(path)) {
+        t = wxFileName(path).GetModificationTime().GetTicks();
+        return true;
+    }
+    return false;
 }
 
 bool makeAllDirectories(const String& path)
@@ -107,22 +110,26 @@ String directoryName(const String& path)
     return wxFileName(path).GetPath();
 }
 
-String openTemporaryFile(const String&, PlatformFileHandle& handle)
+String openTemporaryFile(const String& prefix, PlatformFileHandle& handle)
 {
-    notImplemented();
-    handle = invalidPlatformFileHandle;
-    return String();
+    wxString sFilename = wxFileName::CreateTempFileName(prefix);
+    wxFile* temp = new wxFile();
+    temp->Open(sFilename.c_str(), wxFile::read_write);
+    handle = temp;
+    return String(sFilename);
 }
 
-void closeFile(PlatformFileHandle&)
+void closeFile(PlatformFileHandle& handle)
 {
-    notImplemented();
+    if (handle)
+        delete handle;
 }
 
-int writeToFile(PlatformFileHandle, const char* data, int length)
+int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
-    notImplemented();
-    return 0;
+    if (handle)
+        return handle->Write(data, length);
+    return -1;
 }
 
 bool unloadModule(PlatformModule mod)

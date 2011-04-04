@@ -47,6 +47,11 @@
 #endif
 #endif
 
+#if PLATFORM(WX)
+#include <wx/defs.h>
+#include <wx/file.h>
+#endif
+
 #if USE(CF) || (PLATFORM(QT) && defined(Q_WS_MAC))
 typedef struct __CFBundle* CFBundleRef;
 typedef const struct __CFData* CFDataRef;
@@ -127,6 +132,9 @@ typedef IFile* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
 #elif PLATFORM(GTK)
 typedef GFileIOStream* PlatformFileHandle;
+const PlatformFileHandle invalidPlatformFileHandle = 0;
+#elif PLATFORM(WX)
+typedef wxFile* PlatformFileHandle;
 const PlatformFileHandle invalidPlatformFileHandle = 0;
 #else
 typedef int PlatformFileHandle;
