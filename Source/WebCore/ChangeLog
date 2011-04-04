@@ -1,3 +1,9 @@
+2011-04-04  Andy Estes  <aestes@apple.com>
+
+        Fix the Mac build.
+
+        * WebCore.exp.in:
+
 2011-04-04  David Dorwin  <ddorwin@chromium.org>
 
         Reviewed by David Levin.
