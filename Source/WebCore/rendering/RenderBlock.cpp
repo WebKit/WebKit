@@ -933,6 +933,9 @@ static bool canMergeContiguousAnonymousBlocks(RenderObject* oldChild, RenderObje
     if (oldChild->documentBeingDestroyed() || oldChild->isInline() || oldChild->virtualContinuation())
         return false;
 
+    if (oldChild->parent() && oldChild->parent()->isDetails())
+        return false;
+
     if ((prev && (!prev->isAnonymousBlock() || !prev->isRenderBlock() || toRenderBlock(prev)->continuation() || toRenderBlock(prev)->beingDestroyed()))
         || (next && (!next->isAnonymousBlock() || !next->isRenderBlock() || toRenderBlock(next)->continuation() || toRenderBlock(next)->beingDestroyed())))
         return false;
