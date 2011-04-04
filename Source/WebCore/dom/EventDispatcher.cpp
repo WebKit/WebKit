@@ -53,12 +53,10 @@ namespace WebCore {
 
 static HashSet<Node*>* gNodesDispatchingSimulatedClicks = 0;
 
-bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<Event> prpEvent)
+bool EventDispatcher::dispatchEvent(Node* node, const EventDispatchMediator& mediator)
 {
-    RefPtr<Event> event = prpEvent;
-
     EventDispatcher dispatcher(node);
-    return event->dispatch(&dispatcher);
+    return mediator.dispatchEvent(&dispatcher);
 }
 
 static EventTarget* findElementInstance(Node* referenceNode)

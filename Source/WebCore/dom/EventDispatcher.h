@@ -33,6 +33,7 @@ namespace WebCore {
 
 class Event;
 class EventContext;
+class EventDispatchMediator;
 class EventTarget;
 class FrameView;
 class Node;
@@ -47,7 +48,7 @@ enum EventDispatchBehavior {
 
 class EventDispatcher {
 public:
-    static bool dispatchEvent(Node*, PassRefPtr<Event>);
+    static bool dispatchEvent(Node*, const EventDispatchMediator&);
     static void dispatchScopedEvent(Node*, PassRefPtr<Event>);
 
     static bool dispatchMouseEvent(Node*, const PlatformMouseEvent&, const AtomicString& eventType, int clickCount = 0, Node* relatedTarget = 0);

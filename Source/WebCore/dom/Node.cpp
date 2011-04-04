@@ -2613,7 +2613,7 @@ void Node::dispatchScopedEvent(PassRefPtr<Event> event)
 
 bool Node::dispatchEvent(PassRefPtr<Event> event)
 {
-    return EventDispatcher::dispatchEvent(this, event);
+    return EventDispatcher::dispatchEvent(this, EventDispatchMediator(event));
 }
 
 void Node::dispatchSubtreeModifiedEvent()
@@ -2645,7 +2645,7 @@ void Node::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr
 
 bool Node::dispatchKeyEvent(const PlatformKeyboardEvent& event)
 {
-    return EventDispatcher::dispatchEvent(this, KeyboardEvent::create(event, document()->defaultView()));
+    return EventDispatcher::dispatchEvent(this, KeyboardEventDispatchMediator(KeyboardEvent::create(event, document()->defaultView())));
 }
 
 bool Node::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType,

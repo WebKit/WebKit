@@ -1,3 +1,30 @@
+2011-04-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Introduce EventDispatchMediator abstraction, which encapsulate all
+        non-trivial logic around firing a specific type of an event.
+        https://bugs.webkit.org/show_bug.cgi?id=57562
+
+        Refactoring, covered by existing tests.
+
+        * dom/Event.cpp:
+        (WebCore::EventDispatchMediator::EventDispatchMediator): Added.
+        (WebCore::EventDispatchMediator::~EventDispatchMediator): Added.
+        (WebCore::EventDispatchMediator::dispatchEvent): Added.
+        (WebCore::EventDispatchMediator::event): Added.
+        * dom/Event.h: Added decl.
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent): Changed to use EventDispatchMediator.
+        * dom/EventDispatcher.h: Updated decls.
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEventDispatchMediator::KeyboardEventDispatchMediator): Added.
+        (WebCore::KeyboardEventDispatchMediator::dispatchEvent): Added.
+        * dom/KeyboardEvent.h: Updated decls
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchEvent): Changed to use EventDispatchMediator.
+        (WebCore::Node::dispatchKeyEvent): Changed to use KeyboardEventDispatchMediator.
+
 2011-04-04  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

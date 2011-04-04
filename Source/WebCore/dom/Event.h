@@ -166,7 +166,6 @@ namespace WebCore {
 
         virtual Clipboard* clipboard() const { return 0; }
 
-        virtual bool dispatch(EventDispatcher*);
 
     protected:
         Event();
@@ -193,6 +192,17 @@ namespace WebCore {
 
         RefPtr<Event> m_underlyingEvent;
     };
+
+class EventDispatchMediator {
+public:
+    explicit EventDispatchMediator(PassRefPtr<Event>);
+    virtual ~EventDispatchMediator();
+
+    virtual bool dispatchEvent(EventDispatcher*) const;
+    Event* event() const;
+private:
+    RefPtr<Event> m_event;
+};
 
 } // namespace WebCore
 

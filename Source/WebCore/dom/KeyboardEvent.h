@@ -101,7 +101,6 @@ namespace WebCore {
         KeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*,
                       const String& keyIdentifier, unsigned keyLocation,
                       bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey);
-        virtual bool dispatch(EventDispatcher*);
 
         OwnPtr<PlatformKeyboardEvent> m_keyEvent;
         String m_keyIdentifier;
@@ -115,6 +114,14 @@ namespace WebCore {
     };
 
     KeyboardEvent* findKeyboardEvent(Event*);
+
+class KeyboardEventDispatchMediator : public EventDispatchMediator {
+public:
+    explicit KeyboardEventDispatchMediator(PassRefPtr<KeyboardEvent>);
+
+private:
+    virtual bool dispatchEvent(EventDispatcher*) const;
+};
 
 } // namespace WebCore
 
