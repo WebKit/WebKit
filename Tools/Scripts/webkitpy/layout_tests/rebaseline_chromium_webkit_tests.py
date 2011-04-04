@@ -391,7 +391,8 @@ class Rebaseliner(object):
                 self._delete_baseline(expected_fullpath)
                 continue
 
-            if suffix == '.checksum' and self._png_has_same_checksum(temp_name, expected_fullpath):
+            if suffix == '.checksum' and self._png_has_same_checksum(temp_name, test, expected_fullpath):
+                self._filesystem.remove(temp_name)
                 # If an old checksum exists, delete it.
                 self._delete_baseline(expected_fullpath)
                 continue
@@ -423,11 +424,12 @@ class Rebaseliner(object):
         tempfile.close()
         return temp_name
 
-    def _png_has_same_checksum(self, checksum_path, checksum_expected_fullpath):
-        """Returns True if the png file next to |checksum_expected_fullpath|
+    def _png_has_same_checksum(self, checksum_path, test, checksum_expected_fullpath):
+        """Returns True if the fallback png for |checksum_expected_fullpath|
         contains the same checksum."""
         fs = self._filesystem
-        png_fullpath = fs.splitext(checksum_expected_fullpath)[0] + '.png'
+        png_fullpath = self._first_fallback_png_for_test(test)
+
         if not fs.exists(png_fullpath):
             _log.error('  Checksum without png file found! Expected %s to exist.' % png_fullpath)
             return False
@@ -441,6 +443,12 @@ class Rebaseliner(object):
                            checksum_expected_fullpath, png_fullpath))
             return checksum_in_text_file == checksum_in_png
 
+    def _first_fallback_png_for_test(self, test):
+        test_filepath = self._filesystem.join(self._target_port.layout_tests_dir(), test)
+        all_baselines = self._rebaseline_port.expected_baselines(
+            test_filepath, '.png', True)
+        return self._filesystem.join(all_baselines[0][0], all_baselines[0][1])
+
     def _is_dup_baseline(self, new_baseline, baseline_path, test, suffix, platform):
         """Check whether a baseline is duplicate and can fallback to same
            baseline for another platform. For example, if a test has same
@@ -448,7 +456,8 @@ class Rebaseliner(object):
            baseline and linux baseline will fallback to the windows version.
 
         Args:
-          expected_filename: baseline expectation file name.
+          new_baseline: temp filename containing the new baseline results
+          baseline_path: baseline expectation file name.
           test: test name.
           suffix: file suffix of the expected results, including dot;
                   e.g. '.txt' or '.png'.

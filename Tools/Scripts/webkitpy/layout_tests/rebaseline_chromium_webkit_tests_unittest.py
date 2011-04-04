@@ -288,6 +288,20 @@ class TestRebaseliner(unittest.TestCase):
         self.assertEqual(filesystem.files['/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt'], 'png-comment-txt')
         self.assertEqual(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum', None), None)
 
+    def test_png_file_with_comment_as_duplicate(self):
+        rebaseliner, filesystem = self.make_rebaseliner(
+            "BUGX REBASELINE MAC : failures/expected/image_checksum.html = IMAGE")
+        filesystem.files['/test.checkout/LayoutTests/platform/test-mac-snowleopard/failures/expected/image_checksum-expected.png'] = 'tEXtchecksum\x000123456789'
+        filesystem.files['/test.checkout/LayoutTests/platform/test-mac-snowleopard/failures/expected/image_checksum-expected.txt'] = 'png-comment-txt'
+
+        compile_success = rebaseliner._compile_rebaselining_tests()
+        self.assertTrue(compile_success)
+        self.assertEqual(set(['failures/expected/image_checksum.html']), rebaseliner._rebaselining_tests)
+        rebaseliner.run()
+        self.assertEqual(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.png', None), None)
+        self.assertEqual(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.txt', None), None)
+        self.assertEqual(filesystem.files.get('/test.checkout/LayoutTests/platform/test-mac-leopard/failures/expected/image_checksum-expected.checksum', None), None)
+
     def test_diff_baselines_txt(self):
         rebaseliner, filesystem = self.make_rebaseliner("")
         port = rebaseliner._port
