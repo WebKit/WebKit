@@ -1,3 +1,18 @@
+2011-04-04  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Prefer a using directive over qualified names in LocalizedNumberICU.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=57742
+
+        Requested by ap in https://bugs.webkit.org/show_bug.cgi?id=57715
+
+        * platform/text/LocalizedNumberICU.cpp:
+        (WebCore::createFormatterForCurrentLocale):
+        (WebCore::numberFormatter):
+        (WebCore::parseLocalizedNumber):
+        (WebCore::formatLocalizedNumber):
+
 2011-04-04  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Yury Semikhatsky.

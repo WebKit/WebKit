@@ -37,22 +37,23 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 
+using namespace icu;
 using namespace std;
 
 namespace WebCore {
 
-static PassOwnPtr<icu::NumberFormat> createFormatterForCurrentLocale()
+static PassOwnPtr<NumberFormat> createFormatterForCurrentLocale()
 {
     UErrorCode status = U_ZERO_ERROR;
-    OwnPtr<icu::NumberFormat> formatter = adoptPtr(icu::NumberFormat::createInstance(status));
+    OwnPtr<NumberFormat> formatter = adoptPtr(NumberFormat::createInstance(status));
     return U_SUCCESS(status) ? formatter.release() : 0;
 }
 
 // This might return 0.
-static icu::NumberFormat* numberFormatter()
+static NumberFormat* numberFormatter()
 {
     ASSERT(isMainThread());
-    static icu::NumberFormat* formatter = createFormatterForCurrentLocale().leakPtr();
+    static NumberFormat* formatter = createFormatterForCurrentLocale().leakPtr();
     return formatter;
 }
 
@@ -60,12 +61,12 @@ double parseLocalizedNumber(const String& numberString)
 {
     if (numberString.isEmpty())
         return numeric_limits<double>::quiet_NaN();
-    icu::NumberFormat* formatter = numberFormatter();
+    NumberFormat* formatter = numberFormatter();
     if (!formatter)
         return numeric_limits<double>::quiet_NaN();
-    icu::UnicodeString numberUnicodeString(numberString.characters(), numberString.length());
-    icu::Formattable result;
-    icu::ParsePosition position(0);
+    UnicodeString numberUnicodeString(numberString.characters(), numberString.length());
+    Formattable result;
+    ParsePosition position(0);
     formatter->parse(numberUnicodeString, result, position);
     if (position.getIndex() != numberUnicodeString.length())
         return numeric_limits<double>::quiet_NaN();
@@ -76,10 +77,10 @@ double parseLocalizedNumber(const String& numberString)
 
 String formatLocalizedNumber(double number, unsigned fractionDigits)
 {
-    icu::NumberFormat* formatter = numberFormatter();
+    NumberFormat* formatter = numberFormatter();
     if (!formatter)
         return String();
-    icu::UnicodeString result;
+    UnicodeString result;
     formatter->setMaximumFractionDigits(clampToInteger(fractionDigits));
     formatter->format(number, result);
     return String(result.getBuffer(), result.length());
