@@ -52,7 +52,7 @@ struct DictionaryPopupInfo {
     WebCore::FloatPoint origin;
     FontInfo fontInfo;
     Type type;
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
     RetainPtr<CFDictionaryRef> options;
 #endif
 };

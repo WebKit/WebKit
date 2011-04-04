@@ -1,5 +1,14 @@
 2011-04-03  Dan Bernstein  <mitz@apple.com>
 
+        Build fix.
+
+        * Shared/DictionaryPopupInfo.cpp:
+        (WebKit::DictionaryPopupInfo::encode):
+        (WebKit::DictionaryPopupInfo::decode):
+        * Shared/DictionaryPopupInfo.h:
+
+2011-04-03  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         <rdar://problem/9227839> REGRESSION: Reproducible crash in Snow Leopard when trying to show the Dictionary panel or application
