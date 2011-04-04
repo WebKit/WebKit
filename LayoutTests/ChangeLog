@@ -1,3 +1,13 @@
+2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, udpate chromium test expectations after r82786.
+
+        * platform/chromium-linux-x86_64/fast/table/colspanMinWidth-vertical-expected.png: Added.
+        * platform/chromium-win-vista/fast/table/colspanMinWidth-vertical-expected.checksum: Added.
+        * platform/chromium-win/fast/table/colspanMinWidth-vertical-expected.checksum: Removed.
+        * platform/chromium-win/fast/table/colspanMinWidth-vertical-expected.png:
+        * platform/chromium-win/fast/table/colspanMinWidth-vertical-expected.txt:
+
 2011-04-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Followup to an incomplete commit in r82806.
