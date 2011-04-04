@@ -70,6 +70,7 @@ static bool haveVImageRoundingErrorFix()
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
 static const int maxIOSurfaceDimension = 4096;
+static const int minIOSurfaceArea = 50 * 100;
 
 static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
 {
@@ -131,7 +132,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, Render
     if (size.width() < 0 || size.height() < 0)
         return;
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    if (size.width() >= maxIOSurfaceDimension || size.height() >= maxIOSurfaceDimension)
+    if (size.width() >= maxIOSurfaceDimension || size.height() >= maxIOSurfaceDimension || size.width() * size.height() < minIOSurfaceArea)
         m_accelerateRendering = false;
 #else
     ASSERT(renderingMode == Unaccelerated);
