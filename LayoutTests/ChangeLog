@@ -1,5 +1,18 @@
 2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, add chromium test expectations for tests added in r82780. 
+
+        * platform/chromium-mac/fast/dom/Element/scale-page-bounding-client-rect-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/Element/scale-page-client-rects-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/Range/scale-page-bounding-client-rect-expected.txt: Added.
+        * platform/chromium-mac/fast/dom/Range/scale-page-client-rects-expected.txt: Added.
+        * platform/chromium-win/fast/dom/Element/scale-page-bounding-client-rect-expected.txt: Added.
+        * platform/chromium-win/fast/dom/Element/scale-page-client-rects-expected.txt: Added.
+        * platform/chromium-win/fast/dom/Range/scale-page-bounding-client-rect-expected.txt: Added.
+        * platform/chromium-win/fast/dom/Range/scale-page-client-rects-expected.txt: Added.
+
+2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, rebaseline chromium tests after r82783.
 
         * platform/chromium-linux-x86_64/fast/html/details-add-summary-1-and-click-expected.png: Copied from LayoutTests/platform/chromium-win/fast/html/details-add-summary-4-and-click-expected.png.
