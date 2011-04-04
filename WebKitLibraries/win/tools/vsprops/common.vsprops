@@ -59,10 +59,6 @@
 		Name="ConfigurationBuildDir"
 		Value="$(WebKitOutputDir)\$(ConfigurationName)"
 	/>
-  <UserMacro
-		Name="AnalyzeWithLargeStack"
-		Value=""
-	/>
 	<UserMacro
 		Name="ProductionBuild"
 		Value="0"

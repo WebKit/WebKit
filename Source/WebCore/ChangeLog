@@ -1,3 +1,17 @@
+2011-04-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Remove unused AnalyzeWithLargeStack code from Windows build files
+        https://bugs.webkit.org/show_bug.cgi?id=57771
+        
+        This was used for us to build with prefast automatically,
+        but it is out-of-date and hasn't been used for some time.
+        Removing completely for now.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/WebCorePreBuild.cmd:
+
 2011-04-01  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

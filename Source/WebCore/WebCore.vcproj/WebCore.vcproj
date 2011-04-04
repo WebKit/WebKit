@@ -26743,54 +26743,6 @@
 				<File
 					RelativePath="..\platform\graphics\Font.cpp"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Cairo_CFLite|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release_Cairo_CFLite|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_All|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Production|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\platform\graphics\Font.h"
@@ -27250,54 +27202,6 @@
 					<File
 						RelativePath="..\platform\graphics\win\FontWin.cpp"
 						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalOptions="$(AnalyzeWithLargeStack)"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalOptions="$(AnalyzeWithLargeStack)"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalOptions="$(AnalyzeWithLargeStack)"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalOptions="$(AnalyzeWithLargeStack)"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Debug_All|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalOptions="$(AnalyzeWithLargeStack)"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Production|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								AdditionalOptions="$(AnalyzeWithLargeStack)"
-							/>
-						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\GlyphPageTreeNodeCairoWin.cpp"
@@ -30595,54 +30499,6 @@
 				<File
 					RelativePath="..\platform\text\TextCodecICU.cpp"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Cairo_CFLite|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release_Cairo_CFLite|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_All|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Production|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							AdditionalOptions="$(AnalyzeWithLargeStack)"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\platform\text\TextCodecICU.h"
