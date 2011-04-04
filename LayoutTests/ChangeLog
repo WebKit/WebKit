@@ -1,5 +1,12 @@
 2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, udpate chromium-linux test expectations after r82786.
+
+        * platform/chromium-linux/fast/table/colspanMinWidth-vertical-expected.checksum: Removed.
+        * platform/chromium-linux/fast/table/colspanMinWidth-vertical-expected.png:
+
+2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, add chromium-linux expectation for the new test added in r82781.
 
         * platform/chromium-linux/fast/images/imagemap-focus-ring-zero-outline-width-expected.png: Added.
