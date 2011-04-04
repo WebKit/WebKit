@@ -61,7 +61,7 @@ template<> void refIfNotNull(cairo_font_face_t* ptr)
 template<> void derefIfNotNull(cairo_font_face_t* ptr)
 {
     if (LIKELY(ptr != 0))
-        cairo_font_face_reference(ptr);
+        cairo_font_face_destroy(ptr);
 }
 
 template<> void refIfNotNull(cairo_scaled_font_t* ptr)

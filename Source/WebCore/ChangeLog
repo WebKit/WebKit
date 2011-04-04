@@ -1,3 +1,15 @@
+2011-04-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Cairo] Memory leak in RefPtrCairo
+        https://bugs.webkit.org/show_bug.cgi?id=57758
+
+        No new tests. This just fixes a memory leak.
+
+        * platform/graphics/cairo/RefPtrCairo.cpp:
+        (WTF::derefIfNotNull): Deref should unref the cairo_font_fact_t, not reference it.
+
 2011-04-04  Adrienne Walker  <enne@google.com>
 
         Unreviewed, rolling out r82880.
