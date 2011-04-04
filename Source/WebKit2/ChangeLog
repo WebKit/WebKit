@@ -1,3 +1,12 @@
+2011-04-04  Jade Han  <jade.han@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Symbian build fix.
+        https://bugs.webkit.org/show_bug.cgi?id=54977
+
+        * config.h:
+
 2011-04-04  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Adam Roben.
