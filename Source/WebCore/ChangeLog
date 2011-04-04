@@ -1,3 +1,22 @@
+2011-04-01  Sergey Vorobyev  <sergeyvorobyev@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Separate sendMessageToFrontend function
+        from InspectorClient to individual interface.
+        https://bugs.webkit.org/show_bug.cgi?id=57548
+
+        Refactoring - covered with existing inspector tests.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InspectorClient.h:
+        * inspector/InspectorFrontendChannel.h: Added.
+        (WebCore::InspectorFrontendChannel::~InspectorFrontendChannel):
+
 2011-04-04  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Eric Seidel.

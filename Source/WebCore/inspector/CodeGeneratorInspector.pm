@@ -90,12 +90,12 @@ $typeTransform{"Frontend"} = {
     "forward" => "InspectorFrontend",
     "header" => "InspectorFrontend.h",
 };
-$typeTransform{"InspectorClient"} = {
-    "forward" => "InspectorClient",
-    "header" => "InspectorClient.h",
-};
 $typeTransform{"PassRefPtr"} = {
     "forwardHeader" => "wtf/PassRefPtr.h",
+};
+$typeTransform{"InspectorFrontendChannel"} = {
+    "forward" => "InspectorFrontendChannel",
+    "header" => "InspectorFrontendChannel.h",
 };
 $typeTransform{"Object"} = {
     "param" => "PassRefPtr<InspectorObject>",
@@ -261,17 +261,17 @@ sub GenerateModule
     $namespace =~ s/core/WebCore/;
 
     $frontendClassName = "InspectorFrontend";
-    $frontendConstructor = "    ${frontendClassName}(InspectorClient*);";
+    $frontendConstructor = "    ${frontendClassName}(InspectorFrontendChannel*);";
     push(@frontendFooter, "private:");
-    push(@frontendFooter, "    InspectorClient* m_inspectorClient;");
+    push(@frontendFooter, "    InspectorFrontendChannel* m_inspectorFrontendChannel;");
     $frontendTypes{"String"} = 1;
-    $frontendTypes{"InspectorClient"} = 1;
+    $frontendTypes{"InspectorFrontendChannel"} = 1;
     $frontendTypes{"PassRefPtr"} = 1;
 
     $backendClassName = "InspectorBackendDispatcher";
     $backendJSStubName = "InspectorBackendStub";
     $backendTypes{"Inspector"} = 1;
-    $backendTypes{"InspectorClient"} = 1;
+    $backendTypes{"InspectorFrontendChannel"} = 1;
     $backendTypes{"PassRefPtr"} = 1;
     $backendTypes{"Object"} = 1;
 }
@@ -300,10 +300,12 @@ sub generateAgentDeclaration
     my $agentName = $interface->name;
     push(@frontendMethods, "    class ${agentName} {");
     push(@frontendMethods, "    public:");
-    push(@frontendMethods, "        ${agentName}(InspectorClient* inspectorClient) : m_inspectorClient(inspectorClient) { }");
+    push(@frontendMethods, "        ${agentName}(InspectorFrontendChannel* inspectorFrontendChannel) : m_inspectorFrontendChannel(inspectorFrontendChannel) { }");
     push(@frontendMethods, @{$agent->{methodDeclarations}});
+    push(@frontendMethods, "        void setInspectorFrontendChannel(InspectorFrontendChannel* inspectorFrontendChannel) { m_inspectorFrontendChannel = inspectorFrontendChannel; }");
+    push(@frontendMethods, "        InspectorFrontendChannel* getInspectorFrontendChannel() { return m_inspectorFrontendChannel; }");
     push(@frontendMethods, "    private:");
-    push(@frontendMethods, "        InspectorClient* m_inspectorClient;");
+    push(@frontendMethods, "        InspectorFrontendChannel* m_inspectorFrontendChannel;");
     push(@frontendMethods, "    };");
     push(@frontendMethods, "");
 
@@ -319,10 +321,10 @@ sub generateAgentDeclaration
 sub generateFrontendConstructorImpl
 {
     my @frontendConstructorImpl;
-    push(@frontendConstructorImpl, "${frontendClassName}::${frontendClassName}(InspectorClient* inspectorClient)");
-    push(@frontendConstructorImpl, "    : m_inspectorClient(inspectorClient)");
+    push(@frontendConstructorImpl, "${frontendClassName}::${frontendClassName}(InspectorFrontendChannel* inspectorFrontendChannel)");
+    push(@frontendConstructorImpl, "    : m_inspectorFrontendChannel(inspectorFrontendChannel)");
     foreach my $agentField (@frontendAgentFields) {
-        push(@frontendConstructorImpl, "    , ${agentField}(inspectorClient)");
+        push(@frontendConstructorImpl, "    , ${agentField}(inspectorFrontendChannel)");
     }
     push(@frontendConstructorImpl, "{");
     push(@frontendConstructorImpl, "}");
@@ -374,7 +376,7 @@ sub generateFrontendFunction
     my @pushArguments = map("    dataObject->set" . typeTraits($_->type, "JSONType") . "(\"" . $_->name . "\", " . $_->name . ");", @argsFiltered);
     push(@function, @pushArguments);
     push(@function, "    ${functionName}Message->setObject(\"data\", dataObject);");
-    push(@function, "    m_inspectorClient->sendMessageToFrontend(${functionName}Message->toJSONString());");
+    push(@function, "    m_inspectorFrontendChannel->sendMessageToFrontend(${functionName}Message->toJSONString());");
     push(@function, "}");
     push(@function, "");
     push(@frontendMethodsImpl, @function);
@@ -474,7 +476,7 @@ sub generateBackendFunction
         push(@function, "            responseMessage->setObject(\"body\", responseBody);");
         push(@function, "        }");
     }
-    push(@function, "        m_inspectorClient->sendMessageToFrontend(responseMessage->toJSONString());");
+    push(@function, "        m_inspectorFrontendChannel->sendMessageToFrontend(responseMessage->toJSONString());");
     push(@function, "    }");
 
 
@@ -494,7 +496,7 @@ void ${backendClassName}::reportProtocolError(const long callId, const String& e
     RefPtr<InspectorArray> errors = InspectorArray::create();
     errors->pushString(errorText);
     message->setArray("protocolErrors", errors);
-    m_inspectorClient->sendMessageToFrontend(message->toJSONString());
+    m_inspectorFrontendChannel->sendMessageToFrontend(message->toJSONString());
 }
 EOF
     return split("\n", $reportProtocolError);
@@ -930,9 +932,9 @@ sub generateBackendAgentFieldsAndConstructor
     my @arguments;
     my @fieldInitializers;
 
-    push(@arguments, "InspectorClient* inspectorClient");
-    push(@fieldInitializers, "        : m_inspectorClient(inspectorClient)");
-    push(@backendFooter, "    InspectorClient* m_inspectorClient;");
+    push(@arguments, "InspectorFrontendChannel* inspectorFrontendChannel");
+    push(@fieldInitializers, "        : m_inspectorFrontendChannel(inspectorFrontendChannel)");
+    push(@backendFooter, "    InspectorFrontendChannel* m_inspectorFrontendChannel;");
 
     foreach my $domain (sort keys %backendDomains) {
         # Add agent field declaration to the footer.

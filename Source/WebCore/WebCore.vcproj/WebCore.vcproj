@@ -66470,6 +66470,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorFrontendChannel.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorFrontendClient.h"
 				>
 			</File>

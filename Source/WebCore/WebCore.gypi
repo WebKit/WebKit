@@ -3213,6 +3213,7 @@
             'inspector/InspectorDatabaseResource.h',
             'inspector/InspectorDebuggerAgent.cpp',
             'inspector/InspectorDebuggerAgent.h',
+            'inspector/InspectorFrontendChannel.h',
             'inspector/InspectorFrontendClientLocal.cpp',
             'inspector/InspectorFrontendHost.cpp',
             'inspector/InspectorFrontendHost.h',

@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,37 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InspectorClient_h
-#define InspectorClient_h
+#ifndef InspectorFrontendChannel_h
+#define InspectorFrontendChannel_h
 
-#include "InspectorFrontendChannel.h"
+#if ENABLE(INSPECTOR)
+
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class InspectorController;
-class Node;
-class Page;
-
-class InspectorClient : public InspectorFrontendChannel {
+class InspectorFrontendChannel {
 public:
-    virtual ~InspectorClient() { }
-
-    virtual void inspectorDestroyed() = 0;
-
-    virtual void openInspectorFrontend(InspectorController*) = 0;
-
-    virtual void highlight(Node*) = 0;
-    virtual void hideHighlight() = 0;
-
-    // Navigation can cause some WebKit implementations to change the view / page / inspector controller instance.
-    // However, there are some inspector controller states that should survive navigation (such as tracking resources
-    // or recording timeline). Following callbacks allow embedders to track these states.
-    virtual void updateInspectorStateCookie(const String&) { };
-
-    bool doDispatchMessageOnFrontendPage(Page* frontendPage, const String& message);
+    virtual ~InspectorFrontendChannel() { }
+    virtual bool sendMessageToFrontend(const String& message) = 0;
 };
 
 } // namespace WebCore
 
-#endif // !defined(InspectorClient_h)
+#endif // ENABLE(INSPECTOR)
+
+#endif // !defined(InspectorFrontendChannel_h)
