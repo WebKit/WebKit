@@ -223,6 +223,28 @@ WebInspector.DOMNode.prototype = {
         return path.join(",");
     },
 
+    appropriateSelectorFor: function(justSelector)
+    {
+        var lowerCaseName = this.localName() || node.nodeName().toLowerCase();
+
+        var id = this.getAttribute("id");
+        if (id) {
+            var selector = "#" + id;
+            return (justSelector ? selector : lowerCaseName + selector);
+        }
+
+        var className = this.getAttribute("class");
+        if (className) {
+            var selector = "." + className.replace(/\s+/, ".");
+            return (justSelector ? selector : lowerCaseName + selector);
+        }
+
+        if (lowerCaseName === "input" && this.getAttribute("type"))
+            return lowerCaseName + "[type=\"" + this.getAttribute("type") + "\"]";
+
+        return lowerCaseName;
+    },
+
     _setAttributesPayload: function(attrs)
     {
         this._attributes = [];

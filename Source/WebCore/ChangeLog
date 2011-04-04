@@ -1,3 +1,20 @@
+2011-04-01  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: appropriateSelectorForNode() invokes the "localName" getter on DOMNode rather than function
+        https://bugs.webkit.org/show_bug.cgi?id=57632
+
+        Moved the affected method onto the DOMNode.prototype as "appropriateSelectorFor".
+
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype.appropriateSelectorFor):
+        * inspector/front-end/EventListenersSidebarPane.js:
+        ():
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.addBlankSection):
+        * inspector/front-end/utilities.js:
+
 2011-04-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Followup to an incomplete commit in r82806.

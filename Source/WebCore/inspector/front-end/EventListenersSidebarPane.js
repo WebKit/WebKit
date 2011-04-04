@@ -214,7 +214,7 @@ WebInspector.EventListenerBar.prototype = {
         }
 
         if (node.id === this._nodeId) {
-            this.titleElement.textContent = appropriateSelectorForNode(node);
+            this.titleElement.textContent = node.appropriateSelectorFor();
             return;
         }
 
