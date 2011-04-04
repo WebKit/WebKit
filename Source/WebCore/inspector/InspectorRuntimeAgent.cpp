@@ -36,20 +36,12 @@
 #include "InjectedScript.h"
 #include "InjectedScriptManager.h"
 #include "InspectorValues.h"
-#include "Page.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-PassOwnPtr<InspectorRuntimeAgent> InspectorRuntimeAgent::create(InjectedScriptManager* injectedScriptManager, Page* inspectedPage)
-{
-    return adoptPtr(new InspectorRuntimeAgent(injectedScriptManager, inspectedPage));
-}
-
-InspectorRuntimeAgent::InspectorRuntimeAgent(InjectedScriptManager* injectedScriptManager, Page* inspectedPage)
+InspectorRuntimeAgent::InspectorRuntimeAgent(InjectedScriptManager* injectedScriptManager)
     : m_injectedScriptManager(injectedScriptManager)
-    , m_inspectedPage(inspectedPage)
 {
 }
 
@@ -59,8 +51,7 @@ InspectorRuntimeAgent::~InspectorRuntimeAgent()
 
 void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, const bool* const optionalIncludeCommandLineAPI, RefPtr<InspectorObject>* result)
 {
-    ScriptState* scriptState = mainWorldScriptState(m_inspectedPage->mainFrame());
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(getDefaultInspectedState());
     if (!injectedScript.hasNoValue())
         injectedScript.evaluate(errorString, expression, objectGroup, optionalIncludeCommandLineAPI ? *optionalIncludeCommandLineAPI : false, result);
 }

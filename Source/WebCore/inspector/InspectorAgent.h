@@ -177,9 +177,6 @@ private:
     void showPanel(const String& panel);
     void unbindAllResources();
 
-    void releaseFrontendLifetimeAgents();
-    void createFrontendLifetimeAgents();
-
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     void toggleRecordButton(bool);
 #endif

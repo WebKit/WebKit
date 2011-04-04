@@ -89,6 +89,22 @@ static const char scriptsPanelName[] = "scripts";
 static const char consolePanelName[] = "console";
 static const char profilesPanelName[] = "profiles";
 
+namespace {
+
+class PageRuntimeAgent : public InspectorRuntimeAgent {
+public:
+    PageRuntimeAgent(InjectedScriptManager* injectedScriptManager, Page* page)
+        : InspectorRuntimeAgent(injectedScriptManager)
+        , m_inspectedPage(page) { }
+    virtual ~PageRuntimeAgent() { }
+
+private:
+    virtual ScriptState* getDefaultInspectedState() { return mainWorldScriptState(m_inspectedPage->mainFrame()); }
+    Page* m_inspectedPage;
+};
+
+}
+
 InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScriptManager* injectedScriptManager)
     : m_inspectedPage(page)
     , m_client(client)
@@ -110,6 +126,7 @@ InspectorAgent::InspectorAgent(Page* page, InspectorClient* client, InjectedScri
     , m_applicationCacheAgent(new InspectorApplicationCacheAgent(m_instrumentingAgents.get(), page))
 #endif
     , m_resourceAgent(InspectorResourceAgent::create(m_instrumentingAgents.get(), page, m_state.get()))
+    , m_runtimeAgent(adoptPtr(new PageRuntimeAgent(m_injectedScriptManager, page)))
     , m_consoleAgent(new InspectorConsoleAgent(m_instrumentingAgents.get(), this, m_state.get(), injectedScriptManager, m_domAgent.get()))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerAgent(PageDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, injectedScriptManager))
@@ -162,7 +179,6 @@ void InspectorAgent::inspectedPageDestroyed()
     InspectorInstrumentation::unbindInspectorAgent(m_inspectedPage);
     m_inspectedPage = 0;
 
-    releaseFrontendLifetimeAgents();
     m_injectedScriptManager->disconnect();
 
     m_client->inspectorDestroyed();
@@ -201,7 +217,6 @@ void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
     m_state->unmute();
 
     m_frontend = inspectorFrontend;
-    createFrontendLifetimeAgents();
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     m_applicationCacheAgent->setFrontend(m_frontend);
@@ -272,18 +287,6 @@ void InspectorAgent::disconnectFrontend()
     m_domStorageAgent->clearFrontend();
 #endif
     m_pageAgent->clearFrontend();
-
-    releaseFrontendLifetimeAgents();
-}
-
-void InspectorAgent::createFrontendLifetimeAgents()
-{
-    m_runtimeAgent = InspectorRuntimeAgent::create(m_injectedScriptManager, m_inspectedPage);
-}
-
-void InspectorAgent::releaseFrontendLifetimeAgents()
-{
-    m_runtimeAgent.clear();
 }
 
 void InspectorAgent::didCommitLoad()

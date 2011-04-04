@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "ScriptState.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
@@ -42,15 +43,13 @@ class InjectedScriptManager;
 class InspectorArray;
 class InspectorObject;
 class InspectorValue;
-class Page;
 
 typedef String ErrorString;
 
 class InspectorRuntimeAgent {
     WTF_MAKE_NONCOPYABLE(InspectorRuntimeAgent);
 public:
-    static PassOwnPtr<InspectorRuntimeAgent> create(InjectedScriptManager*, Page*);
-    ~InspectorRuntimeAgent();
+    virtual ~InspectorRuntimeAgent();
 
     // Part of the protocol.
     void evaluate(ErrorString*, const String& expression, const String& objectGroup, const bool* const optionalIncludeCommandLineAPI, RefPtr<InspectorObject>* result);
@@ -60,11 +59,12 @@ public:
     void setPropertyValue(ErrorString*, const String& objectId, const String& propertyName, const String& expression);
     void releaseObjectGroup(ErrorString*, const String& objectGroup);
 
-private:
-    InspectorRuntimeAgent(InjectedScriptManager*, Page*);
+protected:
+    explicit InspectorRuntimeAgent(InjectedScriptManager*);
+    virtual ScriptState* getDefaultInspectedState() = 0;
 
+private:
     InjectedScriptManager* m_injectedScriptManager;
-    Page* m_inspectedPage;
 };
 
 } // namespace WebCore
