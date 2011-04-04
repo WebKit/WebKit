@@ -26,8 +26,6 @@
 #ifndef InspectorFrontendChannel_h
 #define InspectorFrontendChannel_h
 
-#if ENABLE(INSPECTOR)
-
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -39,7 +37,5 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InspectorFrontendChannel_h)

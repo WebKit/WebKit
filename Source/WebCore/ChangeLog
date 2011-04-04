@@ -1,3 +1,9 @@
+2011-04-04  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Qt minimal build.
+
+        * inspector/InspectorFrontendChannel.h:
+
 2011-04-01  Sergey Vorobyev  <sergeyvorobyev@google.com>
 
         Reviewed by Yury Semikhatsky.
