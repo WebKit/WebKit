@@ -11,14 +11,21 @@ Panel created
         removeListener : <function>
     }
 }
-RUNNING TEST: extension_testCreateSidebar
+RUNNING TEST: extension_testSidebarPage
 Sidebar created
 {
+    onUpdated : {
+        addListener : <function>
+        removeListener : <function>
+    }
     setHeight : <function>
+    setExpression : <function>
+    setObject : <function>
+    setPage : <function>
 }
-RUNNING TEST: extension_testExtensionWatchSidebarExpression
+RUNNING TEST: extension_testSidebarWatchExpression
 Sidebar content: titlef0: "expression"f1: undefinedf2: nullf3: Objectf4: Array[0]f5: Array[3]f6: Objectf7: 42f8: Locationf9: HTMLCollection[2]f10: function () {}__proto__: Object
-RUNNING TEST: extension_testExtensionWatchSidebarObject
+RUNNING TEST: extension_testSidebarWatchObject
 Watch sidebar created, callback arguments dump follows:
 {
     0 : {
@@ -26,9 +33,10 @@ Watch sidebar created, callback arguments dump follows:
             addListener : <function>
             removeListener : <function>
         }
+        setHeight : <function>
         setExpression : <function>
         setObject : <function>
-        setHeight : <function>
+        setPage : <function>
     }
 }
 Sidebar content: f0: "object"f1: undefinedf2: nullf3: {}f4: []f5: [aa, bb, cc]f6: {f60:42, f61:foo, f62:[]}f7: 42

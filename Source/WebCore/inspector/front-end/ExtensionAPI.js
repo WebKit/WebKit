@@ -197,8 +197,7 @@ PanelWithSidebarImpl.prototype = {
             command: "createSidebarPane",
             panel: this._id,
             id: id,
-            title: title,
-            url: expandURL(url)
+            title: title
         };
         function callbackWrapper()
         {
@@ -265,7 +264,12 @@ WatchExpressionSidebarPaneImpl.prototype = {
 
     setObject: function(jsonObject, rootTitle)
     {
-        extensionServer.sendRequest({ command: "setWatchSidebarContent", id: this._id, expression: jsonObject, rootTitle: rootTitle });
+        extensionServer.sendRequest({ command: "setSidebarContent", id: this._id, expression: jsonObject, rootTitle: rootTitle });
+    },
+
+    setPage: function(url)
+    {
+        extensionServer.sendRequest({ command: "setSidebarPage", id: this._id, url: expandURL(url) });
     }
 }
 

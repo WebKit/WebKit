@@ -19,11 +19,6 @@
                 "description": "A text that is displayed in sidebar caption."
               },
               {
-                "name": "url",
-                "type": "string",
-                "description": "An URL of the page that represents the sidebar."
-              },
-              {
                 "name": "callback",
                 "type": "function",
                 "description": "A callback invoked when sidebar is created",
@@ -32,30 +27,6 @@
                     "name": "result",
                     "description": "An ExtensionSidebarPane object for created sidebar pane",
                     "$ref": "ExtensionSidebarPane"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "name": "createWatchExpressionSidebarPane",
-            "type": "function",
-            "description": "Creates a pane with an object property tree (similar to a watch sidebar pane).",
-            "parameters": [
-              {
-                "name": "title",
-                "type": "string",
-                "description": "A text that is displayed in sidebar caption."
-              },
-              {
-                "name": "callback",
-                "type": "function",
-                "description": "A callback invoked when sidebar is created",
-                "parameters": [
-                  {
-                    "name": "result",
-                    "description": "A WatchExpressionSidebarPane object for created sidebar pane",
-                    "$ref": "WatchExpressionSidebarPane"
                   }
                 ]
               }
@@ -116,25 +87,6 @@
                 "description": "A CSS-like size specification, e.g. '10px' or '12pt'"
               }
             ]
-          }
-        ]
-      },
-      {
-        "id": "WatchExpressionSidebarPane",
-        "type": "object",
-        "description": "A sidebar created by the extension.",
-        "functions": [
-          {
-            "name": "setHeight",
-            "type": "function",
-            "description": "Sets the height of the sidebar.",
-            "parameters": [
-              {
-                "name": "height",
-                "type": "string",
-                "description": "A CSS-like size specification, e.g. '10px' or '12pt'"
-              }
-            ]
           },
           {
             "name": "setExpression",
@@ -169,6 +121,18 @@
                 "type": "string",
                 "optional": true,
                 "description": "An optional title for the root of the expression tree."
+              }
+            ]
+          },
+          {
+            "name": "setPage",
+            "type": "function",
+            "description": "Sets an HTML page to be displayed in the sidebar pane.",
+            "parameters": [
+              {
+                "name": "url",
+                "type": "string",
+                "description": "An URL of an extension page to display within the sidebar."
               }
             ]
           }

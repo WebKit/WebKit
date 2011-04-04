@@ -22,7 +22,7 @@ function extension_testCreateSidebar(nextTest)
         output("Sidebar created");
         dumpObject(sidebar);
     }
-    webInspector.panels.elements.createSidebarPane("Test Sidebar", "extension-sidebar.html", callbackAndNextTest(onSidebarCreated, nextTest));
+    webInspector.panels.elements.createSidebarPane("Test Sidebar", onSidebarCreated);
 }
 
 function extension_dumpSidebarContent(nextTest)

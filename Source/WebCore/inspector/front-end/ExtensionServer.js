@@ -259,6 +259,14 @@ WebInspector.ExtensionServer.prototype = {
             sidebar.setObject(message.expression, message.rootTitle);
     },
 
+    _onSetSidebarPage: function(message)
+    {
+        var sidebar = this._clientObjects[message.id];
+        if (!sidebar)
+            return this._status.E_NOTFOUND(message.id);
+        sidebar.setPage(message.url);
+    },
+
     _onLog: function(message)
     {
         WebInspector.log(message.message);
