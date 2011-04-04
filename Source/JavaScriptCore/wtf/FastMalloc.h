@@ -103,9 +103,25 @@ namespace WTF {
             AllocTypeNew,                   // Encompasses global operator new.
             AllocTypeNewArray               // Encompasses global operator new[].
         };
+
+        enum {
+            ValidationPrefix = 0xf00df00d,
+            ValidationSuffix = 0x0badf00d
+        };
+
+        typedef unsigned ValidationTag;
+
+        struct ValidationHeader {
+            AllocType m_type;
+            unsigned m_size;
+            ValidationTag m_prefix;
+            unsigned m_alignment;
+        };
+
+        static const int ValidationBufferSize = sizeof(ValidationHeader) + sizeof(ValidationTag);
     }
 
-#if ENABLE(FAST_MALLOC_MATCH_VALIDATION)
+#if ENABLE(WTF_MALLOC_VALIDATION)
 
     // Malloc validation is a scheme whereby a tag is attached to an
     // allocation which identifies how it was originally allocated.
@@ -120,29 +136,35 @@ namespace WTF {
     // is implemented.
 
     namespace Internal {
+    
+        // Handle a detected alloc/free mismatch. By default this calls CRASH().
+        void fastMallocMatchFailed(void* p);
 
-        // Return the AllocType tag associated with the allocated block p.
-        inline AllocType fastMallocMatchValidationType(const void* p)
+        inline ValidationHeader* fastMallocValidationHeader(void* p)
         {
-            const AllocAlignmentInteger* type = static_cast<const AllocAlignmentInteger*>(p) - 1;
-            return static_cast<AllocType>(*type);
+            return reinterpret_cast<ValidationHeader*>(static_cast<char*>(p) - sizeof(ValidationHeader));
         }
 
-        // Return the address of the AllocType tag associated with the allocated block p.
-        inline AllocAlignmentInteger* fastMallocMatchValidationValue(void* p)
+        inline ValidationTag* fastMallocValidationSuffix(void* p)
         {
-            return reinterpret_cast<AllocAlignmentInteger*>(static_cast<char*>(p) - sizeof(AllocAlignmentInteger));
+            ValidationHeader* header = fastMallocValidationHeader(p);
+            if (header->m_prefix != static_cast<unsigned>(ValidationPrefix))
+                fastMallocMatchFailed(p);
+            
+            return reinterpret_cast<ValidationTag*>(static_cast<char*>(p) + header->m_size);
+        }
+
+        // Return the AllocType tag associated with the allocated block p.
+        inline AllocType fastMallocMatchValidationType(void* p)
+        {
+            return fastMallocValidationHeader(p)->m_type;
         }
 
         // Set the AllocType tag to be associaged with the allocated block p.
         inline void setFastMallocMatchValidationType(void* p, AllocType allocType)
         {
-            AllocAlignmentInteger* type = static_cast<AllocAlignmentInteger*>(p) - 1;
-            *type = static_cast<AllocAlignmentInteger>(allocType);
+            fastMallocValidationHeader(p)->m_type = allocType;
         }
-
-        // Handle a detected alloc/free mismatch. By default this calls CRASH().
-        void fastMallocMatchFailed(void* p);
 
     } // namespace Internal
 
@@ -156,14 +178,32 @@ namespace WTF {
     }
 
     // This is a higher level function which is used by FastMalloc-using code.
-    inline void fastMallocMatchValidateFree(void* p, Internal::AllocType allocType)
+    inline void fastMallocMatchValidateFree(void* p, Internal::AllocType)
     {
         if (!p)
             return;
-
-        if (Internal::fastMallocMatchValidationType(p) != allocType)
+    
+        Internal::ValidationHeader* header = Internal::fastMallocValidationHeader(p);
+        if (header->m_prefix != static_cast<unsigned>(Internal::ValidationPrefix))
             Internal::fastMallocMatchFailed(p);
+
+        if (*Internal::fastMallocValidationSuffix(p) != Internal::ValidationSuffix)
+            Internal::fastMallocMatchFailed(p);
+
         Internal::setFastMallocMatchValidationType(p, Internal::AllocTypeMalloc);  // Set it to this so that fastFree thinks it's OK.
+    }
+
+    inline void fastMallocValidate(void* p)
+    {
+        if (!p)
+            return;
+        
+        Internal::ValidationHeader* header = Internal::fastMallocValidationHeader(p);
+        if (header->m_prefix != static_cast<unsigned>(Internal::ValidationPrefix))
+            Internal::fastMallocMatchFailed(p);
+        
+        if (*Internal::fastMallocValidationSuffix(p) != Internal::ValidationSuffix)
+            Internal::fastMallocMatchFailed(p);
     }
 
 #else
