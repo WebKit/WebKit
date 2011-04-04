@@ -1,3 +1,12 @@
+2011-04-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: remove obsolete doc generating code from CodeGenerator.
+        https://bugs.webkit.org/show_bug.cgi?id=57748
+
+        * inspector/CodeGeneratorInspector.pm:
+
 2011-04-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

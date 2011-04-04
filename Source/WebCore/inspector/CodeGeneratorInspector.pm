@@ -105,7 +105,6 @@ $typeTransform{"Object"} = {
     "header" => "InspectorValues.h",
     "JSONType" => "Object",
     "JSType" => "object",
-    "DocType" => "%s"
 };
 $typeTransform{"Array"} = {
     "param" => "PassRefPtr<InspectorArray>",
@@ -115,7 +114,6 @@ $typeTransform{"Array"} = {
     "header" => "InspectorValues.h",
     "JSONType" => "Array",
     "JSType" => "object",
-    "DocType" => "array of %s"
 };
 $typeTransform{"Value"} = {
     "param" => "PassRefPtr<InspectorValue>",
@@ -125,7 +123,6 @@ $typeTransform{"Value"} = {
     "header" => "InspectorValues.h",
     "JSONType" => "Value",
     "JSType" => "",
-    "DocType" => "value"
 };
 $typeTransform{"String"} = {
     "param" => "const String&",
@@ -236,9 +233,6 @@ my @frontendConstantDeclarations;
 my @frontendConstantDefinitions;
 my @frontendFooter;
 
-my @documentationToc;
-my @documentationLines;
-
 # Default constructor
 sub new
 {
@@ -348,19 +342,6 @@ sub generateFunctions
         }
     }
 
-    push(@documentationToc, "<li><a href='#" . $interface->name . "'>" . $interface->name . "</a></li>");
-    push(@documentationLines, "<h2 id='" . $interface->name . "'><a name=" . $interface->name . "></a>" . $interface->name . "</h2>");
-
-    push(@documentationLines, "<h3>Events</h3>");
-    foreach my $function (grep($_->signature->extendedAttributes->{"event"}, @{$interface->functions}) ) {
-        generateDocumentationEvent($interface, $function);
-    }
-
-    push(@documentationLines, "<h3>Commands</h3>");
-    foreach my $function (grep(!$_->signature->extendedAttributes->{"event"}, @{$interface->functions})) {
-        generateDocumentationCommand($interface, $function);
-    }
-
     collectBackendJSStubFunctions($interface);
 }
 
@@ -397,44 +378,6 @@ sub generateFrontendFunction
     push(@function, "}");
     push(@function, "");
     push(@frontendMethodsImpl, @function);
-}
-
-sub generateDocumentationEvent
-{
-    my $interface = shift;
-    my $function = shift;
-
-    my $functionName = $function->signature->name;
-    my $domain = $interface->name;
-
-    my @argsFiltered = grep($_->direction eq "out", @{$function->parameters});
-
-    my @lines;
-    push(@lines, "<h4>" . $interface->name . "." . ${functionName} . "</h4>");
-    my $doc = $function->signature->extendedAttributes->{"doc"};
-    if ($doc) {
-        push(@lines, $doc);
-    }
-
-    push(@lines, "<pre style='background: lightGrey; padding: 10px'>");
-    push(@lines, "{");
-    push(@lines, "    type: \"event\",");
-    push(@lines, "    domain: \"$domain\",");
-    if (scalar(@argsFiltered)) {
-        push(@lines, "    event: \"${functionName}\",");
-        push(@lines, "    data: {");
-        my @parameters;
-        foreach my $parameter (@argsFiltered) {
-            push(@parameters, "        " . parameterDocLine($parameter));
-        }
-        push(@lines, join(",\n", @parameters));
-        push(@lines, "    }");
-    } else {
-        push(@lines, "    event: \"${functionName}\"");
-    }
-    push(@lines, "}");
-    push(@lines, "</pre>");
-    push(@documentationLines, @lines);
 }
 
 sub camelCase
@@ -538,64 +481,6 @@ sub generateBackendFunction
     push(@function, "}");
     push(@function, "");
     push(@backendMethodsImpl, @function);
-}
-
-sub generateDocumentationCommand
-{
-    my $interface = shift;
-    my $function = shift;
-
-    my $functionName = $function->signature->name;
-    my $domain = $interface->name;
-
-    my @lines;
-
-    push(@lines, "<h4>" . $interface->name . "." . ${functionName} . "</h4>");
-    my $doc = $function->signature->extendedAttributes->{"doc"};
-    if ($doc) {
-        push(@lines, $doc);
-    }
-
-    my @inArgs = grep($_->direction eq "in" && !($_->name eq "callId") , @{$function->parameters});
-    push(@lines, "<pre style='background: lightGrey; padding: 10px'>");
-    push(@lines, "request: {");
-    push(@lines, "    id: &lt;number&gt;,");
-    push(@lines, "    type: \"request\",");
-    push(@lines, "    domain: \"" . $interface->name . "\",");
-    if (scalar(@inArgs)) {
-        push(@lines, "    command: \"${functionName}\",");
-        push(@lines, "    arguments: {");
-        my @parameters;
-        foreach my $parameter (@inArgs) {
-            push(@parameters, "        " . parameterDocLine($parameter));
-        }
-        push(@lines, join(",\n", @parameters));
-        push(@lines, "    }");
-    } else {
-        push(@lines, "    command: \"${functionName}\"");
-    }
-    push(@lines, "}");
-
-    my @outArgs = grep($_->direction eq "out", @{$function->parameters});    
-    push(@lines, "");
-    push(@lines, "response: {");
-    push(@lines, "    requestId: &lt;number&gt;,");
-    if (scalar(@outArgs)) {
-        push(@lines, "    type: \"response\",");
-        push(@lines, "    body: {");
-            my @parameters;
-            foreach my $parameter (@outArgs) {
-                push(@parameters, "        " . parameterDocLine($parameter));
-            }
-            push(@lines, join(",\n", @parameters));
-        push(@lines, "    }");
-    } else {
-        push(@lines, "    type: \"response\"");
-    }
-    push(@lines, "}");
-    push(@lines, "</pre>");
-
-    push(@documentationLines, @lines);
 }
 
 sub generateBackendReportProtocolError
@@ -1040,36 +925,6 @@ sub typeTraits
     return $typeTransform{$type}->{$trait};
 }
 
-sub parameterDocType
-{
-    my $parameter = shift;
-    my $subtype = $parameter->extendedAttributes->{"type"};
-    if ($subtype) {
-        my $pattern = typeTraits($parameter->type, "DocType");
-        return sprintf($pattern, "&lt;$subtype&gt;");
-    }
-
-    my $subtypeRef = $parameter->extendedAttributes->{"typeRef"};
-    if ($subtypeRef) {
-        my $pattern = typeTraits($parameter->type, "DocType");
-        return sprintf($pattern, "&lt;<a href='#$subtypeRef'>" . $subtypeRef . "</a>&gt;");
-    }
-
-    return "&lt;" . typeTraits($parameter->type, "JSType") . "&gt;";
-}
-
-sub parameterDocLine
-{
-    my $parameter = shift;
-
-    my $result = $parameter->name . ": " . parameterDocType($parameter);
-    my $doc = $parameter->extendedAttributes->{"doc"};
-    if ($doc) {
-        $result = $result . " // " . $doc;
-    }
-    return $result;
-}
-
 sub generateBackendAgentFieldsAndConstructor
 {
     my @arguments;
@@ -1151,14 +1006,6 @@ sub finish
     print $JS_STUB join("\n", generateBackendStubJS());
     close($JS_STUB);
     undef($JS_STUB);
-
-    open(my $DOCS, ">$outputDir/WebInspectorProtocol.html") || die "Couldn't open file $outputDir/WebInspectorProtocol.html";
-    print $DOCS "<ol class='toc' style='list-style: none; padding: 0'>";
-    print $DOCS join("\n", @documentationToc);
-    print $DOCS "</ol>";
-    print $DOCS join("\n", @documentationLines);
-    close($DOCS);
-    undef($DOCS);
 }
 
 1;
