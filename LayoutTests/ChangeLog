@@ -1,5 +1,11 @@
 2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, mark filesystem-reference.html as CRASH PASS on chromium.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, remove gradientLimit.svg and 2d.text.draw.align.end.ltr.html from test expectations.
 
         * platform/chromium/test_expectations.txt:
