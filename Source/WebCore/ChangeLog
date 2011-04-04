@@ -1,3 +1,10 @@
+2011-04-04  Adam Roben  <aroben@apple.com>
+
+        Attempted Mac build fix, part II
+
+        * WebCore.xcodeproj/project.pbxproj: Marked PlatformCALayerClient.h and
+        PlatformCAAnimation.h as private so that WebKit2 can #include them (transitively).
+
 2011-04-04  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

@@ -1033,7 +1033,7 @@
 		490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */; };
 		490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */; };
 		492863991253B8FC00F792D6 /* ResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 492863981253B8FC00F792D6 /* ResourceLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		493E5E0912D6420500020081 /* PlatformCALayerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 493E5E0812D6420500020081 /* PlatformCALayerClient.h */; };
+		493E5E0912D6420500020081 /* PlatformCALayerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 493E5E0812D6420500020081 /* PlatformCALayerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB3102CF23C00187DD3 /* CanvasGradient.cpp */; };
 		49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */ = {isa = PBXBuildFile; fileRef = 49484FB4102CF23C00187DD3 /* CanvasGradient.h */; };
 		49484FC4102CF23C00187DD3 /* CanvasPattern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49484FB6102CF23C00187DD3 /* CanvasPattern.cpp */; };
@@ -1079,7 +1079,7 @@
 		499B3EC5128CCC4700E726C2 /* PlatformCALayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3EC3128CCC4700E726C2 /* PlatformCALayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		499B3ED6128CD31400E726C2 /* GraphicsLayerCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */; };
 		499B3ED7128CD31400E726C2 /* GraphicsLayerCA.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		499B3EDD128DB50200E726C2 /* PlatformCAAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */; };
+		499B3EDD128DB50200E726C2 /* PlatformCAAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49B69E5E1254FEED007D57EB /* LoopBlinnClassifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49B69E551254FEED007D57EB /* LoopBlinnClassifier.cpp */; };
 		49B69E5F1254FEED007D57EB /* LoopBlinnClassifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B69E561254FEED007D57EB /* LoopBlinnClassifier.h */; };
 		49B69E601254FEED007D57EB /* LoopBlinnConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B69E571254FEED007D57EB /* LoopBlinnConstants.h */; };
