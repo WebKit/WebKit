@@ -1332,7 +1332,7 @@ sub buildWafProject
         chomp($wafCommand);
     }
     if ($shouldClean) {
-        return system $wafCommand, "clean", "distclean";
+        return system $wafCommand, "uninstall", "clean", "distclean";
     }
     
     return system $wafCommand, 'configure', 'build', 'install', @options;

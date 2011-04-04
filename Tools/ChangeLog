@@ -1,3 +1,10 @@
+2011-04-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix, run uninstall when cleaning to remove built files
+        from WebKitBuild.
+
+        * Scripts/webkitdirs.pm:
+
 2011-04-04  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
