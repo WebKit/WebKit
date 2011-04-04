@@ -423,8 +423,6 @@ SET(WebCore_IDL_FILES
 )
 
 SET(WebCore_SOURCES
-    ${DERIVED_SOURCES_DIR}/JSWebSocket.cpp
-
     accessibility/AXObjectCache.cpp
     accessibility/AccessibilityARIAGrid.cpp
     accessibility/AccessibilityARIAGridCell.cpp
@@ -1882,7 +1880,6 @@ ENDIF()
 
 IF (ENABLE_VIDEO)
     LIST(APPEND WebCore_SOURCES
-        ${DERIVED_SOURCES_DIR}/JSTimeRanges.cpp
         bindings/js/JSAudioConstructor.cpp
         html/HTMLAudioElement.cpp
         html/HTMLMediaElement.cpp
