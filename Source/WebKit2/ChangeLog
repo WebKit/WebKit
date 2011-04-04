@@ -1,3 +1,29 @@
+2011-04-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Main loop sources are leaked in RunLoopGtk
+        https://bugs.webkit.org/show_bug.cgi?id=57618
+
+        * Platform/RunLoop.h:
+        (RunLoop::TimerBase::isRepeating):
+        * Platform/gtk/RunLoopGtk.cpp:
+        (RunLoop::~RunLoop): Make sure main loop is currently running
+        before calling g_main_loop_quit(), RunLoop::stop() might have been
+        called.
+        (RunLoop::wakeUp): Use an idle source with default priority
+        instead of a timeout one with a 0 interval.
+        (RunLoop::TimerBase::clearTimerSource): New method to clear the
+        timer.
+        (RunLoop::TimerBase::destroyNotifyCallback): Destroy notify
+        callback called when the source is destroyed to clear the timer.
+        (RunLoop::TimerBase::timerFiredCallback): Use the same callback for
+        repeating and no repeating timers.
+        (RunLoop::TimerBase::start): g_source_attach() increments the
+        source reference counter, so use GRefPtr to make sure the source
+        is freed.
+        (RunLoop::TimerBase::stop): Use clearTimerSource().
+
 2011-04-03  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

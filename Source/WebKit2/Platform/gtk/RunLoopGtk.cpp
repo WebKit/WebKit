@@ -41,7 +41,8 @@ RunLoop::RunLoop()
 RunLoop::~RunLoop()
 {
     if (m_runLoopMain) {
-        g_main_loop_quit(m_runLoopMain);
+        if (g_main_loop_is_running(m_runLoopMain))
+            g_main_loop_quit(m_runLoopMain);
         g_main_loop_unref(m_runLoopMain);
     }
 
@@ -72,9 +73,10 @@ gboolean RunLoop::queueWork(RunLoop* runLoop)
 
 void RunLoop::wakeUp()
 {
-    GSource* source = g_timeout_source_new(0);
-    g_source_set_callback(source, reinterpret_cast<GSourceFunc>(&RunLoop::queueWork), this, 0);
-    g_source_attach(source, m_runLoopContext);
+    GRefPtr<GSource> source = adoptGRef(g_idle_source_new());
+    g_source_set_priority(source.get(), G_PRIORITY_DEFAULT);
+    g_source_set_callback(source.get(), reinterpret_cast<GSourceFunc>(&RunLoop::queueWork), this, 0);
+    g_source_attach(source.get(), m_runLoopContext);
 
     g_main_context_wakeup(m_runLoopContext);
 }
@@ -90,22 +92,20 @@ RunLoop::TimerBase::~TimerBase()
     stop();
 }
 
-void RunLoop::TimerBase::resetTimerSource()
+void RunLoop::TimerBase::clearTimerSource()
 {
     m_timerSource = 0;
 }
 
-gboolean RunLoop::TimerBase::oneShotTimerFired(RunLoop::TimerBase* timer)
+void RunLoop::TimerBase::destroyNotifyCallback(RunLoop::TimerBase* timer)
 {
-    timer->fired();
-    timer->resetTimerSource();
-    return FALSE;
+    timer->clearTimerSource();
 }
 
-gboolean RunLoop::TimerBase::repeatingTimerFired(RunLoop::TimerBase* timer)
+gboolean RunLoop::TimerBase::timerFiredCallback(RunLoop::TimerBase* timer)
 {
     timer->fired();
-    return TRUE;
+    return timer->isRepeating();
 }
 
 void RunLoop::TimerBase::start(double fireInterval, bool repeat)
@@ -113,12 +113,11 @@ void RunLoop::TimerBase::start(double fireInterval, bool repeat)
     if (m_timerSource)
         stop();
 
-    m_timerSource = g_timeout_source_new(static_cast<guint>(fireInterval));
-    if (repeat)
-        g_source_set_callback(m_timerSource, reinterpret_cast<GSourceFunc>(&RunLoop::TimerBase::repeatingTimerFired), this, 0);
-    else
-        g_source_set_callback(m_timerSource, reinterpret_cast<GSourceFunc>(&RunLoop::TimerBase::oneShotTimerFired), this, 0);
-    g_source_attach(m_timerSource, m_runLoop->m_runLoopContext);
+    m_timerSource = adoptGRef(g_timeout_source_new(static_cast<guint>(fireInterval * 1000)));
+    m_isRepeating = repeat;
+    g_source_set_callback(m_timerSource.get(), reinterpret_cast<GSourceFunc>(&RunLoop::TimerBase::timerFiredCallback), this,
+                          reinterpret_cast<GDestroyNotify>(&RunLoop::TimerBase::destroyNotifyCallback));
+    g_source_attach(m_timerSource.get(), m_runLoop->m_runLoopContext);
 }
 
 void RunLoop::TimerBase::stop()
@@ -126,8 +125,8 @@ void RunLoop::TimerBase::stop()
     if (!m_timerSource)
         return;
 
-    g_source_destroy(m_timerSource);
-    m_timerSource = 0;
+    g_source_destroy(m_timerSource.get());
+    clearTimerSource();
 }
 
 bool RunLoop::TimerBase::isActive() const

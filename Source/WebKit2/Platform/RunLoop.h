@@ -34,6 +34,7 @@
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #if PLATFORM(GTK)
+#include <wtf/gobject/GRefPtr.h>
 typedef struct _GSource GSource;
 typedef struct _GMainLoop GMainLoop;
 typedef struct _GMainContext GMainContext;
@@ -86,10 +87,12 @@ public:
         int m_ID;
         bool m_isRepeating;
 #elif PLATFORM(GTK)
-        static gboolean oneShotTimerFired(RunLoop::TimerBase*);
-        static gboolean repeatingTimerFired(RunLoop::TimerBase*);
-        void resetTimerSource();
-        GSource* m_timerSource;
+        static gboolean timerFiredCallback(RunLoop::TimerBase*);
+        static void destroyNotifyCallback(RunLoop::TimerBase*);
+        gboolean isRepeating() const { return m_isRepeating; }
+        void clearTimerSource();
+        GRefPtr<GSource> m_timerSource;
+        gboolean m_isRepeating;
 #endif
     };
 
