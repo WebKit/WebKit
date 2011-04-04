@@ -1,3 +1,10 @@
+2011-04-04  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed. Unskipped test and added GTK-specific new baseline.
+
+        * platform/gtk/Skipped: Skipped passing test.
+        * platform/gtk/accessibility/aria-roles-expected.txt: Added.
+
 2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, remove chromium expectations added by mistake in r82815.
