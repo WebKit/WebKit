@@ -1,3 +1,17 @@
+2011-04-04  David Dorwin  <ddorwin@chromium.org>
+
+        Reviewed by David Levin.
+
+        Chromium Mac crashes when entering fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=57483
+
+        Override extraFullScreenStyleSheet in RenderThemeChromiumMac to avoid hitting the ASSERT_NOT_REACHED in RenderThemeMac.
+
+        * WebCore.gyp/WebCore.gyp:
+        * rendering/RenderThemeChromiumMac.h:
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::extraFullScreenStyleSheet):
+
 2011-04-04  Adam Roben  <aroben@apple.com>
 
         Attempted Mac build fix, part II

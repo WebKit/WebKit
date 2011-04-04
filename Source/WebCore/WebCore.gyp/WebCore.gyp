@@ -639,6 +639,7 @@
             '../css/mediaControls.css',
             '../css/mediaControlsChromium.css',
             '../css/fullscreen.css',
+            # Skip fullscreenQuickTime.
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/UserAgentStyleSheets.h',
