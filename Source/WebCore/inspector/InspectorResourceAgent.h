@@ -112,7 +112,7 @@ public:
     void enable(ErrorString*);
     void disable(ErrorString*);
     void getCachedResources(ErrorString*, RefPtr<InspectorObject>*);
-    void getResourceContent(ErrorString*, const String& frameId, const String& url, bool base64Encode, String* content);
+    void getResourceContent(ErrorString*, const String& frameId, const String& url, const bool* const base64Encode, String* content);
     void setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject>);
 
 private:

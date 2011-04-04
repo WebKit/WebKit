@@ -494,13 +494,19 @@ sub generateBackendFunction
             my $name = $parameter->name;
             my $type = $parameter->type;
             my $typeString = camelCase($parameter->type);
-            push(@function, "        " . typeTraits($type, "variable") . " in_$name = get$typeString(argumentsContainer.get(), \"$name\", protocolErrors.get());");
+            my $optional = $parameter->extendedAttributes->{"optional"} ? "true" : "false";
+            push(@function, "        " . typeTraits($type, "variable") . " in_$name = get$typeString(argumentsContainer.get(), \"$name\", $optional, protocolErrors.get());");
         }
         push(@function, "");
         $indent = "    ";
     }
 
-    my $args = join(", ", ("&error", map("in_" . $_->name, @inArgs), map("&out_" . $_->name, @outArgs)));
+
+    my $args = join(", ",
+                    ("&error",
+                     map(($_->extendedAttributes->{"optional"} ? "&" : "") . "in_" . $_->name, @inArgs),
+                     map("&out_" . $_->name, @outArgs)));
+
     push(@function, "$indent    if (!protocolErrors->length())");
     push(@function, "$indent        $domainAccessor->$functionName($args);");
     if (scalar(@inArgs)) {
@@ -618,10 +624,10 @@ sub generateArgumentGetters
     my $return  = typeTraits($type, "return") ? typeTraits($type, "return") : typeTraits($type, "param");
 
     my $typeString = camelCase($type);
-    push(@backendConstantDeclarations, "    $return get$typeString(InspectorObject* object, const String& name, InspectorArray* protocolErrors);");
+    push(@backendConstantDeclarations, "    $return get$typeString(InspectorObject* object, const String& name, bool optional, InspectorArray* protocolErrors);");
     my $getterBody = << "EOF";
 
-$return InspectorBackendDispatcher::get$typeString(InspectorObject* object, const String& name, InspectorArray* protocolErrors)
+$return InspectorBackendDispatcher::get$typeString(InspectorObject* object, const String& name, bool optional, InspectorArray* protocolErrors)
 {
     ASSERT(object);
     ASSERT(protocolErrors);
@@ -630,12 +636,14 @@ $return InspectorBackendDispatcher::get$typeString(InspectorObject* object, cons
     InspectorObject::const_iterator end = object->end();
     InspectorObject::const_iterator valueIterator = object->find(name);
 
-    if (valueIterator == end)
-        protocolErrors->pushString(String::format("Protocol Error: Argument '\%s' with type '$json' was not found.", name.utf8().data()));
-    else {
-        if (!valueIterator->second->as$json(&value))
-            protocolErrors->pushString(String::format("Protocol Error: Argument '\%s' has wrong type. It should be '$json'.", name.utf8().data()));
+    if (valueIterator == end) {
+        if (!optional)
+            protocolErrors->pushString(String::format("Protocol Error: Argument '\%s' with type '$json' was not found.", name.utf8().data()));
+        return value;
     }
+
+    if (!valueIterator->second->as$json(&value))
+        protocolErrors->pushString(String::format("Protocol Error: Argument '\%s' has wrong type. It should be '$json'.", name.utf8().data()));
     return value;
 }
 EOF
@@ -761,7 +769,13 @@ sub collectBackendJSStubFunctions
 
     foreach my $function (@functions) {
         my $name = $function->signature->name;
-        my $argumentNames = join(",", map("\"" . $_->name . "\": \"" . typeTraits($_->type, "JSType") . "\"", grep($_->direction eq "in", @{$function->parameters})));
+        my $argumentNames = join(
+            ",",
+            map("\"" . $_->name . "\": {"
+                . "\"optional\": " . ($_->extendedAttributes->{"optional"} ? "true " : "false") . ", "
+                . "\"type\": \"" . typeTraits($_->type, "JSType") . "\""
+                . "}",
+                grep($_->direction eq "in", @{$function->parameters})));
         push(@backendJSStubs, "    this._registerDelegate('{" .
             "\"id\": 0, " .
             "\"domain\": \"$domain\", " .
@@ -807,27 +821,36 @@ InspectorBackendStub.prototype = {
     {
         var args = Array.prototype.slice.call(arguments);
         var request = JSON.parse(args.shift());
+        var callback = (args.length && typeof args[args.length - 1] === "function") ? args.pop() : 0;
 
         for (var key in request.arguments) {
-            if (args.length === 0) {
+            var typeName = request.arguments[key].type;
+            var optionalFlag = request.arguments[key].optional;
+
+            if (args.length === 0 && !optionalFlag) {
                 console.error("Protocol Error: Invalid number of arguments for '" + request.domain + "Agent." + request.command + "' call. It should have the next arguments '" + JSON.stringify(request.arguments) + "'.");
                 return;
             }
+
             var value = args.shift();
-            if (request.arguments[key] && typeof value !== request.arguments[key]) {
-                console.error("Protocol Error: Invalid type of argument '" + key + "' for '" + request.domain + "Agent." + request.command + "' call. It should be '" + request.arguments[key] + "' but it is '" + typeof value + "'.");
+            if (optionalFlag && typeof value === "undefined") {
+                delete request.arguments[key];
+                continue;
+            }
+
+            if (typeof value !== typeName) {
+                console.error("Protocol Error: Invalid type of argument '" + key + "' for '" + request.domain + "Agent." + request.command + "' call. It should be '" + typeName + "' but it is '" + typeof value + "'.");
                 return;
             }
+
             request.arguments[key] = value;
         }
 
-        var callback;
-        if (args.length === 1) {
-            if (typeof args[0] !== "function" && typeof args[0] !== "undefined") {
+        if (args.length === 1 && !callback) {
+            if (typeof args[0] !== "undefined") {
                 console.error("Protocol Error: Optional callback argument for '" + request.domain + "Agent." + request.command + "' call should be a function but its type is '" + typeof args[0] + "'.");
                 return;
             }
-            callback = args[0];
         }
         request.id = this._wrap(callback || function() {});
 

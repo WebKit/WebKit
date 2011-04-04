@@ -58,7 +58,7 @@ public:
     // Page API for InspectorFrontend
     void addScriptToEvaluateOnLoad(ErrorString*, const String& source);
     void removeAllScriptsToEvaluateOnLoad(ErrorString*);
-    void reloadPage(ErrorString*, bool ignoreCache);
+    void reloadPage(ErrorString*, const bool* const optionalIgnoreCache);
     void openInInspectedWindow(ErrorString*, const String& url);
     void setUserAgentOverride(ErrorString*, const String& userAgent);
     void getCookies(ErrorString*, RefPtr<InspectorArray>* cookies, WTF::String* cookiesString);
@@ -92,4 +92,4 @@ private:
 
 #endif // ENABLE(INSPECTOR)
 
-#endif // !defined(InspectorPageAgent_h)
+#endif // !defined(InspectorPagerAgent_h)

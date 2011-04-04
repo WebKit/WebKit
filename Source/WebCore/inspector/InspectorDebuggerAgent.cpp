@@ -141,8 +141,12 @@ void InspectorDebuggerAgent::inspectedURLChanged(const String&)
     m_breakpointIdToDebugServerBreakpointIds.clear();
 }
 
-void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString*, const String& url, int lineNumber, int columnNumber, const String& condition, bool enabled, String* outBreakpointId, RefPtr<InspectorArray>* locations)
+void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString*, const String& url, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, const bool* const optionalEnabled, String* outBreakpointId, RefPtr<InspectorArray>* locations)
 {
+    int columnNumber = optionalColumnNumber ? *optionalColumnNumber : 0;
+    String condition = optionalCondition ? *optionalCondition : "";
+    bool enabled = optionalEnabled ? *optionalEnabled : true;
+
     String breakpointId = makeString(url, ":", String::number(lineNumber), ":", String::number(columnNumber));
     RefPtr<InspectorObject> breakpointsCookie = m_inspectorState->getObject(DebuggerAgentState::javaScriptBreakpoints);
     if (breakpointsCookie->find(breakpointId) != breakpointsCookie->end())
@@ -172,8 +176,12 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString*, const String& url,
     *outBreakpointId = breakpointId;
 }
 
-void InspectorDebuggerAgent::setBreakpoint(ErrorString*, const String& sourceId, int lineNumber, int columnNumber, const String& condition, bool enabled, String* outBreakpointId, int* actualLineNumber, int* actualColumnNumber)
+void InspectorDebuggerAgent::setBreakpoint(ErrorString*, const String& sourceId, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, const bool* const optionalEnabled, String* outBreakpointId, int* actualLineNumber, int* actualColumnNumber)
 {
+    int columnNumber = optionalColumnNumber ? *optionalColumnNumber : 0;
+    String condition = optionalCondition ? *optionalCondition : "";
+    bool enabled = optionalEnabled ? *optionalEnabled : true;
+
     String breakpointId = makeString(sourceId, ":", String::number(lineNumber), ":", String::number(columnNumber));
     if (m_breakpointIdToDebugServerBreakpointIds.find(breakpointId) != m_breakpointIdToDebugServerBreakpointIds.end())
         return;
@@ -300,8 +308,10 @@ void InspectorDebuggerAgent::setPauseOnExceptionsState(ErrorString* errorString,
         *errorString = "Internal error. Could not change pause on exceptions state";
 }
 
-void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString* errorString, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result)
+void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString* errorString, const String& callFrameId, const String& expression, const String& objectGroup, const bool* const optionalIncludeCommandLineAPI, RefPtr<InspectorObject>* result)
 {
+    bool includeCommandLineAPI = optionalIncludeCommandLineAPI ? *optionalIncludeCommandLineAPI : false;
+
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(callFrameId);
     if (!injectedScript.hasNoValue())
         injectedScript.evaluateOnCallFrame(errorString, callFrameId, expression, objectGroup, includeCommandLineAPI, result);

@@ -29,6 +29,33 @@ response:
 }
 
 -----------------------------------------------------------
+RuntimeAgent.evaluate("testObject","test")
+
+request:
+{
+    id : <number>
+    domain : "Runtime"
+    command : "evaluate"
+    arguments : {
+        expression : "testObject"
+        objectGroup : "test"
+    }
+}
+
+response:
+{
+    requestId : <number>
+    body : {
+        result : {
+            objectId : <string>
+            hasChildren : true
+            type : "object"
+            description : "TestObject"
+        }
+    }
+}
+
+-----------------------------------------------------------
 RuntimeAgent.evaluateOn(<string>,"this.assignedByEvaluateOn = \"evaluateOn function works fine\";")
 
 request:

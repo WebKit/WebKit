@@ -19,6 +19,7 @@ function test()
         var invalidObjectId = {id: -1, injectedScriptId: result.objectId.injectedScriptId};
         var testSuite = [
             ["RuntimeAgent", "evaluate", 'testObject', 'test', false],
+            ["RuntimeAgent", "evaluate", 'testObject', 'test'],
             ["RuntimeAgent", "evaluateOn", result.objectId, 'this.assignedByEvaluateOn = "evaluateOn function works fine";'],
             ["RuntimeAgent", "setPropertyValue", result.objectId, 'assignedBySetPropertyValue', 'true'],
             ["RuntimeAgent", "setPropertyValue", result.objectId, 'removedBySetPropertyValue', ''],

@@ -79,8 +79,8 @@ public:
     // Part of the protocol.
     void setBreakpointsActive(ErrorString*, bool active);
 
-    void setBreakpointByUrl(ErrorString*, const String& url, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, RefPtr<InspectorArray>* locations);
-    void setBreakpoint(ErrorString*, const String& sourceId, int lineNumber, int columnNumber, const String& condition, bool enabled, String* breakpointId, int* actualLineNumber, int* actualColumnNumber);
+    void setBreakpointByUrl(ErrorString*, const String& url, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, const bool* const optionalEnabled, String* breakpointId, RefPtr<InspectorArray>* locations);
+    void setBreakpoint(ErrorString*, const String& sourceId, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, const bool* const optionalEnabled, String* breakpointId, int* actualLineNumber, int* actualColumnNumber);
     void removeBreakpoint(ErrorString*, const String& breakpointId);
     void continueToLocation(ErrorString*, const String& sourceId, int lineNumber, int columnNumber);
 
@@ -95,7 +95,7 @@ public:
     void stepInto(ErrorString*);
     void stepOut(ErrorString*);
     void setPauseOnExceptionsState(ErrorString*, int pauseState);
-    void evaluateOnCallFrame(ErrorString*, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result);
+    void evaluateOnCallFrame(ErrorString*, const String& callFrameId, const String& expression, const String& objectGroup, const bool* const optionalIncludeCommandLineAPI, RefPtr<InspectorObject>* result);
 
     class Listener {
     public:

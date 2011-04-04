@@ -1,3 +1,26 @@
+2011-04-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: introduce support of 'optional' flag for command arguments.
+        https://bugs.webkit.org/show_bug.cgi?id=57698
+
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/protocol/runtime-agent.html:
+        * inspector/report-API-errors-expected.txt:
+        * inspector/report-API-errors.html:
+        * inspector/report-protocol-errors-expected.txt:
+
+2011-04-01  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: introduce support of 'optional' flag for command arguments.
+        https://bugs.webkit.org/show_bug.cgi?id=57698
+
+        * inspector/report-API-errors-expected.txt:
+        * inspector/report-protocol-errors-expected.txt:
+
 2011-04-03  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

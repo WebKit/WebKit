@@ -79,7 +79,7 @@
             {
                 "name": "reloadPage",
                 "parameters": [
-                    { "name": "ignoreCache", "type": "boolean" }
+                    { "name": "ignoreCache", "type": "boolean", "optional": true }
                 ]
             },
             {
@@ -139,7 +139,7 @@
                 "parameters": [
                     { "name": "expression", "type": "string" },
                     { "name": "objectGroup", "type": "string" },
-                    { "name": "includeCommandLineAPI", "type": "boolean" }
+                    { "name": "includeCommandLineAPI", "type": "boolean", "optional": true }
                 ],
                 "returns": [
                     { "name": "result", "$ref": "RuntimeObject" }
@@ -631,6 +631,7 @@
                     "nodeName": { "type": "string", "description": "<code>Node</code>'s nodeName." },
                     "localName": { "type": "string", "description": "<code>Node</code>'s localName." },
                     "nodeValue": { "type": "string", "description": "<code>Node</code>'s nodeValue." },
+
                     "childNodeCount": { "type": "integer", "optional": true, "description": "Child count for <code>Container</code> nodes." },
                     "children": { "type": "array", "optional": true, "items": { "$ref" : "DOMNode" }, "description": "Child nodes of this node when requested with children." },
                     "attributes": { "type": "array", "optional": true, "items": { "type" : "string" }, "description": "Attributes of the <code>Element</code> node in the form of flat array <code>[name1, value1, name2, value2]</code>." },

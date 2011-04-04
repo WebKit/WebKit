@@ -1,3 +1,28 @@
+2011-04-04  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: introduce support of 'optional' flag for command arguments.
+        https://bugs.webkit.org/show_bug.cgi?id=57698
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDebuggerAgent::evaluateOnCallFrame):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::reloadPage):
+        * inspector/InspectorPageAgent.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::getResourceContent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::evaluate):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/generate-inspector-idl:
+
 2011-04-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

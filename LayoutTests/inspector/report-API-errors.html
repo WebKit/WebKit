@@ -15,6 +15,9 @@ function test()
     ConsoleAgent.setMonitoringXHREnabled();
     ConsoleAgent.setMonitoringXHREnabled(false, "not a function");
     ConsoleAgent.setMonitoringXHREnabled(false, undefined);
+    RuntimeAgent.evaluate("true", "test");
+    RuntimeAgent.evaluate("true", "test", function(){});
+    RuntimeAgent.evaluate("true", "test", undefined, function(){});
     InspectorBackend.dispatch('{"type": "event", "domain": "wrongDomain", "event": "something-strange", "data": {}}');
     InspectorBackend.dispatch('{"type": "event", "domain": "Inspector", "event": "something-strange", "data": {}}');
 

@@ -489,14 +489,14 @@ void InspectorResourceAgent::getCachedResources(ErrorString*, RefPtr<InspectorOb
     *object = buildObjectForFrameTree(m_page->mainFrame());
 }
 
-void InspectorResourceAgent::getResourceContent(ErrorString* errorString, const String& frameId, const String& url, bool base64Encode, String* content)
+void InspectorResourceAgent::getResourceContent(ErrorString* errorString, const String& frameId, const String& url, const bool* const optionalBase64Encode, String* content)
 {
     Frame* frame = frameForId(frameId);
     if (!frame) {
         *errorString = "No frame for given id found";
         return;
     }
-    if (base64Encode)
+    if (optionalBase64Encode ? *optionalBase64Encode : false)
         InspectorResourceAgent::resourceContentBase64(errorString, frame, KURL(ParsedURLString, url), content);
     else
         InspectorResourceAgent::resourceContent(errorString, frame, KURL(ParsedURLString, url), content);

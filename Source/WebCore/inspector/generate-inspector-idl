@@ -106,7 +106,11 @@ for domain in json_api:
             params = [];
             if ("parameters" in command):
                 for in_param in command["parameters"]:
-                    params.append("in %s %s" % (param_type(in_param), in_param["name"]))
+                    if ("optional" in in_param):
+                        optional = " [optional]"
+                    else:
+                        optional = ""
+                    params.append("in%s %s %s" % (optional, param_type(in_param), in_param["name"]))
             if ("returns" in command):
                 for out_param in command["returns"]:
                     params.append("out %s %s" % (param_type(out_param), out_param["name"]))

@@ -57,12 +57,12 @@ InspectorRuntimeAgent::~InspectorRuntimeAgent()
 {
 }
 
-void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result)
+void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, const bool* const optionalIncludeCommandLineAPI, RefPtr<InspectorObject>* result)
 {
     ScriptState* scriptState = mainWorldScriptState(m_inspectedPage->mainFrame());
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
     if (!injectedScript.hasNoValue())
-        injectedScript.evaluate(errorString, expression, objectGroup, includeCommandLineAPI, result);
+        injectedScript.evaluate(errorString, expression, objectGroup, optionalIncludeCommandLineAPI ? *optionalIncludeCommandLineAPI : false, result);
 }
 
 void InspectorRuntimeAgent::evaluateOn(ErrorString* errorString, const String& objectId, const String& expression, RefPtr<InspectorObject>* result)
