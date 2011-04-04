@@ -1,5 +1,13 @@
 2011-04-04  Jessie Berlin  <jberlin@apple.com>
 
+        Remove a test from the win-wk2 skipped list that does not exist.
+
+        fast/js/navigator-mimeTypes-length.html was changed and moved to plugins in r71651.
+
+        * platform/win-wk2/Skipped:
+
+2011-04-04  Jessie Berlin  <jberlin@apple.com>
+
         [Windows 7 WebKit2 Release Tests] 6 tests failing since being removed from the mac-wk2
         skipped list in r82625.
         https://bugs.webkit.org/show_bug.cgi?id=57705
