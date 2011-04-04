@@ -73,11 +73,11 @@ void WebCookieManagerProxy::getHostnamesWithCookies(PassRefPtr<ArrayCallback> pr
     ASSERT(m_webContext);
 
     RefPtr<ArrayCallback> callback = prpCallback;
-    m_webContext->relaunchProcessIfNecessary();
-    
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
-    m_webContext->process()->send(Messages::WebCookieManager::GetHostnamesWithCookies(callbackID), 0);
+
+    // FIXME (Multi-WebProcess): Cookies shouldn't be stored in the web process.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::GetHostnamesWithCookies(callbackID));
 }
     
 void WebCookieManagerProxy::didGetHostnamesWithCookies(const Vector<String>& hostnameList, uint64_t callbackID)
@@ -141,11 +141,12 @@ void WebCookieManagerProxy::getHTTPCookieAcceptPolicy(PassRefPtr<HTTPCookieAccep
     ASSERT(m_webContext);
 
     RefPtr<HTTPCookieAcceptPolicyCallback> callback = prpCallback;
-    m_webContext->relaunchProcessIfNecessary();
 
     uint64_t callbackID = callback->callbackID();
     m_httpCookieAcceptPolicyCallbacks.set(callbackID, callback.release());
-    m_webContext->process()->send(Messages::WebCookieManager::GetHTTPCookieAcceptPolicy(callbackID), 0);
+
+    // FIXME (Multi-WebProcess): Cookies shouldn't be stored in the web process.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::GetHTTPCookieAcceptPolicy(callbackID));
 }
 
 void WebCookieManagerProxy::didGetHTTPCookieAcceptPolicy(uint32_t policy, uint64_t callbackID)

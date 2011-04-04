@@ -163,17 +163,19 @@ void VisitedLinkProvider::pendingVisitedLinksTimerFired()
         if (!m_table.sharedMemory()->createHandle(handle, SharedMemory::ReadOnly))
             return;
 
-        m_context->process()->send(Messages::WebProcess::SetVisitedLinkTable(handle), 0);
+        // FIXME (Multi-WebProcess): Encoding a handle will null it out so we need to create a new
+        // handle for every process. Maybe the ArgumentEncoder should handle this.
+        m_context->sendToAllProcesses(Messages::WebProcess::SetVisitedLinkTable(handle));
     }
     
     // We now need to let the web process know that we've added links.
     if (m_webProcessHasVisitedLinkState && addedVisitedLinks.size() <= 20) {
-        m_context->process()->send(Messages::WebProcess::VisitedLinkStateChanged(addedVisitedLinks), 0);
+        m_context->sendToAllProcesses(Messages::WebProcess::VisitedLinkStateChanged(addedVisitedLinks));
         return;
     }
     
     // Just recalculate all the visited links.
-    m_context->process()->send(Messages::WebProcess::AllVisitedLinkStateChanged(), 0);
+    m_context->sendToAllProcesses(Messages::WebProcess::AllVisitedLinkStateChanged());
     m_webProcessHasVisitedLinkState = true;
 }
 

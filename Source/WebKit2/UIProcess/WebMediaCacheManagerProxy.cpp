@@ -64,11 +64,12 @@ void WebMediaCacheManagerProxy::didReceiveMessage(CoreIPC::Connection* connectio
 void WebMediaCacheManagerProxy::getHostnamesWithMediaCache(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;
-    m_webContext->relaunchProcessIfNecessary();
-    
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
-    m_webContext->process()->send(Messages::WebMediaCacheManager::GetHostnamesWithMediaCache(callbackID), 0);
+
+    // FIXME (Multi-WebProcess): When we're sending this to multiple processes, we need to aggregate the
+    // callback data when it comes back.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebMediaCacheManager::GetHostnamesWithMediaCache(callbackID));
 }
     
 void WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache(const Vector<String>& hostnameList, uint64_t callbackID)
@@ -90,14 +91,12 @@ void WebMediaCacheManagerProxy::didGetHostnamesWithMediaCache(const Vector<Strin
 
 void WebMediaCacheManagerProxy::clearCacheForHostname(const String& hostname)
 {
-    m_webContext->relaunchProcessIfNecessary();
-    m_webContext->process()->send(Messages::WebMediaCacheManager::ClearCacheForHostname(hostname), 0);
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebMediaCacheManager::ClearCacheForHostname(hostname));
 }
 
 void WebMediaCacheManagerProxy::clearCacheForAllHostnames()
 {
-    m_webContext->relaunchProcessIfNecessary();
-    m_webContext->process()->send(Messages::WebMediaCacheManager::ClearCacheForAllHostnames(), 0);
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebMediaCacheManager::ClearCacheForAllHostnames());
 }
 
 } // namespace WebKit

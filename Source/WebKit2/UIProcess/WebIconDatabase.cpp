@@ -155,7 +155,8 @@ void WebIconDatabase::getLoadDecisionForIconURL(const String& iconURL, uint64_t 
         return;
 
     if (!m_iconDatabaseImpl || !m_iconDatabaseImpl->isOpen() || iconURL.isEmpty()) {
-        m_webContext->process()->send(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision(static_cast<int>(IconLoadNo), callbackID), 0);
+        // FIXME (Multi-WebProcess): We need to know which connection to send this message to.
+        m_webContext->sendToAllProcesses(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision(static_cast<int>(IconLoadNo), callbackID));
         return;
     }
     
@@ -168,8 +169,9 @@ void WebIconDatabase::getLoadDecisionForIconURL(const String& iconURL, uint64_t 
         m_pendingLoadDecisionURLMap.set(callbackID, iconURL);
         return;    
     }
-    
-    m_webContext->process()->send(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision((int)decision, callbackID), 0);
+
+    // FIXME (Multi-WebProcess): We need to know which connection to send this message to.
+    m_webContext->sendToAllProcesses(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision((int)decision, callbackID));
 }
 
 Image* WebIconDatabase::imageForPageURL(const String& pageURL)
@@ -243,7 +245,8 @@ void WebIconDatabase::didFinishURLImport()
         // Decisions should never be unknown after the inital import is complete
         ASSERT(decision != IconLoadUnknown);
 
-        m_webContext->process()->send(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision(static_cast<int>(decision), i->first), 0);
+        // FIXME (Multi-WebProcess): We need to know which connection to send this message to.
+        m_webContext->sendToAllProcesses(Messages::WebIconDatabaseProxy::ReceivedIconLoadDecision(static_cast<int>(decision), i->first));
     }
     
     m_pendingLoadDecisionURLMap.clear();

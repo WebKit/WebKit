@@ -61,8 +61,7 @@ void WebGeolocationManagerProxy::providerDidChangePosition(WebGeolocationPositio
     if (!m_context)
         return;
 
-    // FIXME: Should this check for a valid process?
-    m_context->process()->send(Messages::WebGeolocationManager::DidChangePosition(position->data()), 0);
+    m_context->sendToAllProcesses(Messages::WebGeolocationManager::DidChangePosition(position->data()));
 }
 
 void WebGeolocationManagerProxy::providerDidFailToDeterminePosition()
@@ -70,8 +69,7 @@ void WebGeolocationManagerProxy::providerDidFailToDeterminePosition()
     if (!m_context)
         return;
 
-    // FIXME: Should this check for a valid process?
-    m_context->process()->send(Messages::WebGeolocationManager::DidFailToDeterminePosition(), 0);
+    m_context->sendToAllProcesses(Messages::WebGeolocationManager::DidFailToDeterminePosition());
 }
 
 void WebGeolocationManagerProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)

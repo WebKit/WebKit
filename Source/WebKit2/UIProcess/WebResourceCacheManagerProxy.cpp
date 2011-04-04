@@ -67,7 +67,9 @@ void WebResourceCacheManagerProxy::getCacheOrigins(PassRefPtr<ArrayCallback> prp
     m_webContext->relaunchProcessIfNecessary();
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
-    m_webContext->process()->send(Messages::WebResourceCacheManager::GetCacheOrigins(callbackID), 0);
+
+    // FIXME (Multi-WebProcess): When multi-process is enabled, we need to aggregate the callback data from all processes.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::GetCacheOrigins(callbackID));
 }
 
 void WebResourceCacheManagerProxy::didGetCacheOrigins(const Vector<SecurityOriginData>& origins, uint64_t callbackID)
@@ -78,19 +80,17 @@ void WebResourceCacheManagerProxy::didGetCacheOrigins(const Vector<SecurityOrigi
 
 void WebResourceCacheManagerProxy::clearCacheForOrigin(WebSecurityOrigin* origin)
 {
-    m_webContext->relaunchProcessIfNecessary();
-
     SecurityOriginData securityOrigin;
     securityOrigin.protocol = origin->protocol();
     securityOrigin.host = origin->host();
     securityOrigin.port = origin->port();
-    m_webContext->process()->send(Messages::WebResourceCacheManager::ClearCacheForOrigin(securityOrigin), 0);
+
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForOrigin(securityOrigin));
 }
 
 void WebResourceCacheManagerProxy::clearCacheForAllOrigins()
 {
-    m_webContext->relaunchProcessIfNecessary();
-    m_webContext->process()->send(Messages::WebResourceCacheManager::ClearCacheForAllOrigins(), 0);
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForAllOrigins());
 }
 
 } // namespace WebKit

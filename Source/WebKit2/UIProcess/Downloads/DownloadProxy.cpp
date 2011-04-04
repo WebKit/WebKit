@@ -65,7 +65,8 @@ void DownloadProxy::cancel()
     if (!m_webContext)
         return;
 
-    m_webContext->process()->send(Messages::WebProcess::CancelDownload(m_downloadID), 0);
+    // FIXME (Multi-WebProcess): Downloads shouldn't be handled in the web process.
+    m_webContext->sendToAllProcesses(Messages::WebProcess::CancelDownload(m_downloadID));
 }
 
 void DownloadProxy::invalidate()

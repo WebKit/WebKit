@@ -116,12 +116,12 @@ void WebDatabaseManagerProxy::initializeClient(const WKDatabaseManagerClient* cl
 void WebDatabaseManagerProxy::getDatabasesByOrigin(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;
-    m_webContext->relaunchProcessIfNecessary();
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
-    m_webContext->process()->send(Messages::WebDatabaseManager::GetDatabasesByOrigin(callbackID), 0);
-}
 
+    // FIXME (Multi-WebProcess): Databases shouldn't be stored in the web process.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebDatabaseManager::GetDatabasesByOrigin(callbackID));
+}
 
 void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndDatabases>& originAndDatabasesVector, uint64_t callbackID)
 {
@@ -169,10 +169,11 @@ void WebDatabaseManagerProxy::didGetDatabasesByOrigin(const Vector<OriginAndData
 void WebDatabaseManagerProxy::getDatabaseOrigins(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;
-    m_webContext->relaunchProcessIfNecessary();
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
-    m_webContext->process()->send(Messages::WebDatabaseManager::GetDatabaseOrigins(callbackID), 0);
+
+    // FIXME (Multi-WebProcess): Databases shouldn't be stored in the web process.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebDatabaseManager::GetDatabaseOrigins(callbackID));
 }
 
 void WebDatabaseManagerProxy::didGetDatabaseOrigins(const Vector<String>& originIdentifiers, uint64_t callbackID)
@@ -194,26 +195,26 @@ void WebDatabaseManagerProxy::didGetDatabaseOrigins(const Vector<String>& origin
 
 void WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin(const String& databaseIdentifier, WebSecurityOrigin* origin)
 {
-    m_webContext->relaunchProcessIfNecessary();
-    m_webContext->process()->send(Messages::WebDatabaseManager::DeleteDatabaseWithNameForOrigin(databaseIdentifier, origin->databaseIdentifier()), 0);
+    // FIXME (Multi-WebProcess): Databases shouldn't be stored in the web process.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebDatabaseManager::DeleteDatabaseWithNameForOrigin(databaseIdentifier, origin->databaseIdentifier()));
 }
 
 void WebDatabaseManagerProxy::deleteDatabasesForOrigin(WebSecurityOrigin* origin)
 {
-    m_webContext->relaunchProcessIfNecessary();
-    m_webContext->process()->send(Messages::WebDatabaseManager::DeleteDatabasesForOrigin(origin->databaseIdentifier()), 0);
+    // FIXME (Multi-WebProcess): Databases shouldn't be stored in the web process.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebDatabaseManager::DeleteDatabasesForOrigin(origin->databaseIdentifier()));
 }
 
 void WebDatabaseManagerProxy::deleteAllDatabases()
 {
-    m_webContext->relaunchProcessIfNecessary();
-    m_webContext->process()->send(Messages::WebDatabaseManager::DeleteAllDatabases(), 0);
+    // FIXME (Multi-WebProcess): Databases shouldn't be stored in the web process.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebDatabaseManager::DeleteAllDatabases());
 }
 
 void WebDatabaseManagerProxy::setQuotaForOrigin(WebSecurityOrigin* origin, uint64_t quota)
 {
-    m_webContext->relaunchProcessIfNecessary();
-    m_webContext->process()->send(Messages::WebDatabaseManager::SetQuotaForOrigin(origin->databaseIdentifier(), quota), 0);
+    // FIXME (Multi-WebProcess): Databases shouldn't be stored in the web process.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebDatabaseManager::SetQuotaForOrigin(origin->databaseIdentifier(), quota));
 }
 
 void WebDatabaseManagerProxy::didModifyOrigin(const String& originIdentifier)

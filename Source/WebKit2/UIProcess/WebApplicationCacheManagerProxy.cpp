@@ -65,11 +65,12 @@ void WebApplicationCacheManagerProxy::didReceiveMessage(CoreIPC::Connection* con
 void WebApplicationCacheManagerProxy::getApplicationCacheOrigins(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;
-    m_webContext->relaunchProcessIfNecessary();
     
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
-    m_webContext->process()->send(Messages::WebApplicationCacheManager::GetApplicationCacheOrigins(callbackID), 0);
+
+    // FIXME (Multi-WebProcess): The application cache shouldn't be stored in the web process.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebApplicationCacheManager::GetApplicationCacheOrigins(callbackID));
 }
     
 void WebApplicationCacheManagerProxy::didGetApplicationCacheOrigins(const Vector<SecurityOriginData>& originDatas, uint64_t callbackID)
@@ -80,20 +81,19 @@ void WebApplicationCacheManagerProxy::didGetApplicationCacheOrigins(const Vector
 
 void WebApplicationCacheManagerProxy::deleteEntriesForOrigin(WebSecurityOrigin* origin)
 {
-    m_webContext->relaunchProcessIfNecessary();
-    
     SecurityOriginData securityOriginData;
     securityOriginData.protocol = origin->protocol();
     securityOriginData.host = origin->host();
     securityOriginData.port = origin->port();
 
-    m_webContext->process()->send(Messages::WebApplicationCacheManager::DeleteEntriesForOrigin(securityOriginData), 0);
+    // FIXME (Multi-WebProcess): The application cache shouldn't be stored in the web process.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebApplicationCacheManager::DeleteEntriesForOrigin(securityOriginData));
 }
 
 void WebApplicationCacheManagerProxy::deleteAllEntries()
 {
-    m_webContext->relaunchProcessIfNecessary();
-    m_webContext->process()->send(Messages::WebApplicationCacheManager::DeleteAllEntries(), 0);
+    // FIXME (Multi-WebProcess): The application cache shouldn't be stored in the web process.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebApplicationCacheManager::DeleteAllEntries());
 }
 
 } // namespace WebKit

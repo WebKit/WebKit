@@ -65,11 +65,11 @@ void WebKeyValueStorageManagerProxy::didReceiveMessage(CoreIPC::Connection* conn
 void WebKeyValueStorageManagerProxy::getKeyValueStorageOrigins(PassRefPtr<ArrayCallback> prpCallback)
 {
     RefPtr<ArrayCallback> callback = prpCallback;
-    m_webContext->relaunchProcessIfNecessary();
-    
     uint64_t callbackID = callback->callbackID();
     m_arrayCallbacks.set(callbackID, callback.release());
-    m_webContext->process()->send(Messages::WebKeyValueStorageManager::GetKeyValueStorageOrigins(callbackID), 0);
+
+    // FIXME (Multi-WebProcess): Should key-value storage be handled in the web process?
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebKeyValueStorageManager::GetKeyValueStorageOrigins(callbackID));
 }
     
 void WebKeyValueStorageManagerProxy::didGetKeyValueStorageOrigins(const Vector<SecurityOriginData>& originDatas, uint64_t callbackID)
@@ -80,20 +80,19 @@ void WebKeyValueStorageManagerProxy::didGetKeyValueStorageOrigins(const Vector<S
 
 void WebKeyValueStorageManagerProxy::deleteEntriesForOrigin(WebSecurityOrigin* origin)
 {
-    m_webContext->relaunchProcessIfNecessary();
-    
     SecurityOriginData securityOriginData;
     securityOriginData.protocol = origin->protocol();
     securityOriginData.host = origin->host();
     securityOriginData.port = origin->port();
 
-    m_webContext->process()->send(Messages::WebKeyValueStorageManager::DeleteEntriesForOrigin(securityOriginData), 0);
+    // FIXME (Multi-WebProcess): Should key-value storage be handled in the web process?
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebKeyValueStorageManager::DeleteEntriesForOrigin(securityOriginData));
 }
 
 void WebKeyValueStorageManagerProxy::deleteAllEntries()
 {
-    m_webContext->relaunchProcessIfNecessary();
-    m_webContext->process()->send(Messages::WebKeyValueStorageManager::DeleteAllEntries(), 0);
+    // FIXME (Multi-WebProcess): Should key-value storage be handled in the web process?
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebKeyValueStorageManager::DeleteAllEntries());
 }
 
 } // namespace WebKit

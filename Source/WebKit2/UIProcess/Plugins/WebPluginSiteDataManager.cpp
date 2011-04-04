@@ -167,8 +167,10 @@ void WebPluginSiteDataManager::getSitesWithData(PassRefPtr<ArrayCallback> prpCal
 
     Vector<String> pluginPaths;
     m_webContext->pluginInfoStore()->getPluginPaths(pluginPaths);
-    m_webContext->ensureWebProcess();    
-    m_webContext->process()->send(Messages::WebProcess::GetSitesWithPluginData(pluginPaths, callbackID), 0);
+
+    // FIXME (Multi-WebProcess): When multi-process is enabled, we must always use a plug-in process for this,
+    // so this code should just be removed.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebProcess::GetSitesWithPluginData(pluginPaths, callbackID));
 #endif
 }
 
@@ -226,8 +228,10 @@ void WebPluginSiteDataManager::clearSiteData(ImmutableArray* sites, uint64_t fla
     m_webContext->relaunchProcessIfNecessary();
     Vector<String> pluginPaths;
     m_webContext->pluginInfoStore()->getPluginPaths(pluginPaths);
-    m_webContext->ensureWebProcess();    
-    m_webContext->process()->send(Messages::WebProcess::ClearPluginSiteData(pluginPaths, sitesVector, flags, maxAgeInSeconds, callbackID), 0);
+
+    // FIXME (Multi-WebProcess): When multi-process is enabled, we must always use a plug-in process for this,
+    // so this code should just be removed.
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebProcess::ClearPluginSiteData(pluginPaths, sitesVector, flags, maxAgeInSeconds, callbackID));
 #endif
 }
 
