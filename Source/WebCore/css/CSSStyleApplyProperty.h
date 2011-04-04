@@ -45,6 +45,7 @@ public:
 };
 
 class CSSStyleApplyProperty {
+    WTF_MAKE_NONCOPYABLE(CSSStyleApplyProperty);
 public:
     static const CSSStyleApplyProperty& sharedCSSStyleApplyProperty();
 

@@ -1,3 +1,15 @@
+2011-04-03  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Make CSSStyleApplyProperty non-copyable
+        https://bugs.webkit.org/show_bug.cgi?id=57738
+
+        No new functionality added so no new tests required.
+
+        * css/CSSStyleApplyProperty.h:
+        Added WTF_MAKE_NONCOPYABLE(CSSStyleApplyProperty) to ensure singleton stays single.
+
 2011-04-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.
