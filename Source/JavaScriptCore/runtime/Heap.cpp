@@ -82,7 +82,7 @@ void Heap::destroy()
     delete m_markListSet;
     m_markListSet = 0;
     m_markedSpace.clearMarks();
-    m_handleHeap.clearWeakPointers();
+    m_handleHeap.updateWeakHandles();
     m_markedSpace.destroy();
 
     m_globalData = 0;
@@ -249,7 +249,7 @@ void Heap::markRoots()
     markStack.drain();
     markStack.compact();
     
-    m_handleHeap.updateAfterMark();
+    m_handleHeap.updateWeakHandles();
 
     m_operationInProgress = NoOperation;
 }

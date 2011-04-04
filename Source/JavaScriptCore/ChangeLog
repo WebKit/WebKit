@@ -2,6 +2,24 @@
 
         Reviewed by Oliver Hunt.
 
+        Renamed clearWeakPointers => updateWeakHandles and removed misleading comment
+        https://bugs.webkit.org/show_bug.cgi?id=57790
+
+        * collector/handles/HandleHeap.cpp:
+        (JSC::HandleHeap::updateWeakHandles): Updated for rename.
+
+        * collector/handles/HandleHeap.h: Removed comment claiming that this
+        function should only be called during teardown, because it's actually
+        called after every GC pass.
+
+        * runtime/Heap.cpp:
+        (JSC::Heap::destroy):
+        (JSC::Heap::markRoots): Updated for rename.
+
+2011-04-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Standardized handling of handles for immediate values
         https://bugs.webkit.org/show_bug.cgi?id=57788
 

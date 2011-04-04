@@ -56,10 +56,7 @@ public:
     void makeWeak(HandleSlot, WeakHandleOwner* = 0, void* context = 0);
 
     void markStrongHandles(HeapRootMarker&);
-    void updateAfterMark();
-    
-    // Should only be called during teardown.
-    void clearWeakPointers();
+    void updateWeakHandles();
 
     void writeBarrier(HandleSlot, const JSValue&);
 

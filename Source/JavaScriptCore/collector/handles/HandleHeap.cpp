@@ -55,12 +55,7 @@ void HandleHeap::markStrongHandles(HeapRootMarker& heapRootMarker)
         heapRootMarker.mark(node->slot());
 }
 
-void HandleHeap::updateAfterMark()
-{
-    clearWeakPointers();
-}
-
-void HandleHeap::clearWeakPointers()
+void HandleHeap::updateWeakHandles()
 {
     Node* end = m_weakList.end();
     for (Node* node = m_weakList.begin(); node != end; node = m_nextToFinalize) {
