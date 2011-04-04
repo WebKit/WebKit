@@ -67,15 +67,14 @@ void HandleHeap::clearWeakPointers()
         m_nextToFinalize = node->next();
 
         JSValue value = *node->slot();
-        if (!value || !value.isCell())
-            continue;
-        
+        ASSERT(value);
+
         JSCell* cell = value.asCell();
-        ASSERT(!cell || cell->structure());
-        
+        ASSERT(cell && cell->structure());
 #if ENABLE(JSC_ZOMBIES)
         ASSERT(!cell->isZombie());
 #endif
+
         if (Heap::isMarked(cell))
             continue;
 
@@ -97,18 +96,22 @@ void HandleHeap::writeBarrier(HandleSlot slot, const JSValue& value)
 {
     ASSERT(!m_nextToFinalize); // Forbid assignment to handles during the finalization phase, since it would violate many GC invariants.
 
-    if (slot->isCell() == value.isCell() && !value == !*slot)
+    if (!value == !*slot && slot->isCell() == value.isCell())
         return;
+
     Node* node = toNode(slot);
     SentinelLinkedList<Node>::remove(node);
-    if (!value.isCell() || !value) {
+    if (!value || !value.isCell()) {
         m_immediateList.push(node);
         return;
     }
-    if (node->isWeak())
+
+    if (node->isWeak()) {
         m_weakList.push(node);
-    else
-        m_strongList.push(node);
+        return;
+    }
+
+    m_strongList.push(node);
 }
 
 unsigned HandleHeap::protectedGlobalObjectCount()

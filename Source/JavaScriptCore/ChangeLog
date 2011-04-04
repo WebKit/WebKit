@@ -1,5 +1,24 @@
 2011-04-04  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Standardized handling of handles for immediate values
+        https://bugs.webkit.org/show_bug.cgi?id=57788
+
+        * collector/handles/HandleHeap.cpp:
+        (JSC::HandleHeap::clearWeakPointers): Don't check for null or non-cell
+        values here, because our write barrier guarantees that such values are
+        not in the weak list.
+
+        (JSC::HandleHeap::writeBarrier): Standardized on checking for null before
+        checking for cell, and on using early return instead of if/else.
+
+        * collector/handles/HandleHeap.h:
+        (JSC::HandleHeap::deallocate):
+        (JSC::HandleHeap::makeWeak): Ditto.
+
+2011-04-04  Geoffrey Garen  <ggaren@apple.com>
+
         Not reviewed.
 
         Removed a redundant variable from HandleHeap

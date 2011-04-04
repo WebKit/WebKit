@@ -145,10 +145,11 @@ inline HandleSlot HandleHeap::allocate()
 inline void HandleHeap::deallocate(HandleSlot handle)
 {
     Node* node = toNode(handle);
-    if (m_nextToFinalize == node) {
+    if (node == m_nextToFinalize) {
         m_nextToFinalize = node->next();
         ASSERT(m_nextToFinalize->next());
     }
+
     SentinelLinkedList<Node>::remove(node);
     m_freeList.push(node);
 }
@@ -156,12 +157,15 @@ inline void HandleHeap::deallocate(HandleSlot handle)
 inline void HandleHeap::makeWeak(HandleSlot handle, WeakHandleOwner* weakOwner, void* context)
 {
     Node* node = toNode(handle);
-    SentinelLinkedList<Node>::remove(node);
     node->makeWeak(weakOwner, context);
-    if (handle->isCell() && *handle)
-        m_weakList.push(node);
-    else
+
+    SentinelLinkedList<Node>::remove(node);
+    if (!*handle || !handle->isCell()) {
         m_immediateList.push(node);
+        return;
+    }
+
+    m_weakList.push(node);
 }
 
 #if !ASSERT_DISABLED
