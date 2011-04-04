@@ -56357,14 +56357,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\html\shadow\MeterShadowElement.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\html\shadow\MeterShadowElement.h"
-					>
-				</File>
-				<File
 					RelativePath="..\html\shadow\ProgressBarValueElement.h"
 					>
 				</File>

@@ -1,3 +1,17 @@
+2011-04-04  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, rolling out r82880.
+        http://trac.webkit.org/changeset/82880
+        https://bugs.webkit.org/show_bug.cgi?id=50661
+
+        Meter elements not rendered in Chromium Linux layout tests.
+
+        * fast/dom/HTMLMeterElement/meter-styles.html:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.checksum:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+        * platform/mac/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+
 2011-04-04  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

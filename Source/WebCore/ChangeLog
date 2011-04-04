@@ -1,3 +1,59 @@
+2011-04-04  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, rolling out r82880.
+        http://trac.webkit.org/changeset/82880
+        https://bugs.webkit.org/show_bug.cgi?id=50661
+
+        Meter elements not rendered in Chromium Linux layout tests
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSMutableStyleDeclaration.cpp:
+        * css/CSSMutableStyleDeclaration.h:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::nameToPseudoTypeMap):
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        * css/html.css:
+        (meter):
+        (meter::-webkit-meter):
+        (meter::-webkit-meter-bar):
+        (meter::-webkit-meter-optimum-value):
+        (meter::-webkit-meter-suboptimal-value):
+        (meter::-webkit-meter-even-less-good-value):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::create):
+        (WebCore::HTMLMeterElement::parseMappedAttribute):
+        (WebCore::HTMLMeterElement::attach):
+        * html/HTMLMeterElement.h:
+        * html/shadow/MeterShadowElement.cpp: Removed.
+        * html/shadow/MeterShadowElement.h: Removed.
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::RenderMeter):
+        (WebCore::RenderMeter::~RenderMeter):
+        (WebCore::RenderMeter::createPart):
+        (WebCore::RenderMeter::updateFromElement):
+        (WebCore::RenderMeter::layoutParts):
+        (WebCore::RenderMeter::styleDidChange):
+        (WebCore::RenderMeter::shouldHaveParts):
+        (WebCore::RenderMeter::valueRatio):
+        (WebCore::RenderMeter::barPartRect):
+        (WebCore::RenderMeter::valuePartRect):
+        (WebCore::RenderMeter::valuePseudoId):
+        (WebCore::RenderMeter::barPseudoId):
+        (WebCore::RenderMeter::detachShadows):
+        (WebCore::RenderMeter::updateShadows):
+        * rendering/RenderMeter.h:
+        (WebCore::RenderMeter::renderName):
+        (WebCore::RenderMeter::isMeter):
+        (WebCore::RenderMeter::shadowAttached):
+
 2011-04-04  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Ryosuke Niwa.
