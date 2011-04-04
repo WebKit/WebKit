@@ -1,3 +1,19 @@
+2011-04-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9227839> REGRESSION: Reproducible crash in Snow Leopard when trying to show the Dictionary panel or application
+        https://bugs.webkit.org/show_bug.cgi?id=57739
+
+        * Shared/DictionaryPopupInfo.cpp:
+        (WebKit::DictionaryPopupInfo::encode): Do not encode the options dictionary on Snow Leopard.
+        (WebKit::DictionaryPopupInfo::decode): Do not decode the options dictionary on Snow Leopard.
+        * Shared/DictionaryPopupInfo.h: Removed the options member variable on Snow Leopard.
+        * Shared/Plugins/PluginQuirks.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupForRange): Do not set the options member variable on
+        Snow Leopard.
+
 2011-04-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.

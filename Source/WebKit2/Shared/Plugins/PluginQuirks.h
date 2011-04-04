@@ -49,7 +49,7 @@ public:
         MakeTransparentIfBackgroundAttributeExists,
 
 #ifndef NP_NO_QUICKDRAW
-        // Allow the plug-in to use the QuickDraw drawing model, since wek now that the plug-in
+        // Allow the plug-in to use the QuickDraw drawing model, since we know that the plug-in
         // will never paint or receive events. Used by the AppleConnect plug-in.
         AllowHalfBakedQuickDrawSupport,
 #endif
