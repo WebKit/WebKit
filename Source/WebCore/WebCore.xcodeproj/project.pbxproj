@@ -316,6 +316,8 @@
 		14CF78A609F58CD800EB3665 /* JSCSSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CF78A509F58CD800EB3665 /* JSCSSValue.h */; };
 		14CF7B3309F6ECD700EB3665 /* JSCSSRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */; };
 		14CF7B3409F6ECD700EB3665 /* JSCSSRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */; };
+		14D64B5C134A5B6B00E58FDA /* TreeScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D64B5A134A5B6B00E58FDA /* TreeScope.cpp */; };
+		14D64B5D134A5B6B00E58FDA /* TreeScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D64B5B134A5B6B00E58FDA /* TreeScope.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14D823520AF92A790004F057 /* Chrome.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D823500AF92A790004F057 /* Chrome.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14D8238B0AF92DF60004F057 /* Chrome.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D8238A0AF92DF60004F057 /* Chrome.cpp */; };
 		14D824080AF93AEB0004F057 /* ChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D824060AF93AEB0004F057 /* ChromeClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6695,6 +6697,8 @@
 		14CF7B3109F6ECD700EB3665 /* JSCSSRule.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSRule.cpp; sourceTree = "<group>"; };
 		14CF7B3209F6ECD700EB3665 /* JSCSSRule.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCSSRule.h; sourceTree = "<group>"; };
 		14CF7C2009F7110600EB3665 /* KeyboardEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = KeyboardEvent.idl; sourceTree = "<group>"; };
+		14D64B5A134A5B6B00E58FDA /* TreeScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TreeScope.cpp; sourceTree = "<group>"; };
+		14D64B5B134A5B6B00E58FDA /* TreeScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeScope.h; sourceTree = "<group>"; };
 		14D823500AF92A790004F057 /* Chrome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Chrome.h; sourceTree = "<group>"; };
 		14D8238A0AF92DF60004F057 /* Chrome.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Chrome.cpp; sourceTree = "<group>"; };
 		14D824060AF93AEB0004F057 /* ChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChromeClient.h; sourceTree = "<group>"; };
@@ -19437,6 +19441,8 @@
 				854FE72C0A2297BE0058D7AD /* Traversal.cpp */,
 				854FE72D0A2297BE0058D7AD /* Traversal.h */,
 				37FD4297118368460093C029 /* TreeDepthLimit.h */,
+				14D64B5A134A5B6B00E58FDA /* TreeScope.cpp */,
+				14D64B5B134A5B6B00E58FDA /* TreeScope.h */,
 				854FE72E0A2297BE0058D7AD /* TreeWalker.cpp */,
 				854FE72F0A2297BE0058D7AD /* TreeWalker.h */,
 				1A750D3C0A90DE35000FF215 /* TreeWalker.idl */,
@@ -21208,7 +21214,6 @@
 				B885E8D511E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h in Headers */,
 				4F707A9A11EF679400ACDA69 /* InspectorBackendDispatcher.h in Headers */,
 				F3D4C47912E07663003DA150 /* InspectorBrowserDebuggerAgent.h in Headers */,
-				227777601345DEA9008EA455 /* InspectorFrontendChannel.h in Headers */,
 				1C81B95C0E97330800266E07 /* InspectorClient.h in Headers */,
 				F3335BF912E07DC300D33011 /* InspectorConsoleAgent.h in Headers */,
 				F3F5CF1112ED81A80084C569 /* InspectorConsoleInstrumentation.h in Headers */,
@@ -21221,6 +21226,7 @@
 				7A24587C1021EAF4000A00AA /* InspectorDOMAgent.h in Headers */,
 				7A74ECBB101839A600BF939E /* InspectorDOMStorageAgent.h in Headers */,
 				41F061740F5F00AC00A07EAC /* InspectorDOMStorageResource.h in Headers */,
+				227777601345DEA9008EA455 /* InspectorFrontendChannel.h in Headers */,
 				F344C7141125B82C00F26EEE /* InspectorFrontendClient.h in Headers */,
 				F344C75311294D9D00F26EEE /* InspectorFrontendClientLocal.h in Headers */,
 				7A0E770F10C00A8800A0276E /* InspectorFrontendHost.h in Headers */,
@@ -22596,6 +22602,7 @@
 				49E911D20EF86D47009D0CAF /* TranslateTransformOperation.h in Headers */,
 				854FE7370A2297BE0058D7AD /* Traversal.h in Headers */,
 				37FD4298118368460093C029 /* TreeDepthLimit.h in Headers */,
+				14D64B5D134A5B6B00E58FDA /* TreeScope.h in Headers */,
 				1419D2C50CEA6F6100FF507A /* TreeShared.h in Headers */,
 				854FE7390A2297BE0058D7AD /* TreeWalker.h in Headers */,
 				6E96BB1D11986EE2007D94CD /* TypedArrayBase.h in Headers */,
@@ -25304,6 +25311,7 @@
 				0F500AB10F54DB3100EEF928 /* TransformState.cpp in Sources */,
 				49E911D10EF86D47009D0CAF /* TranslateTransformOperation.cpp in Sources */,
 				854FE7360A2297BE0058D7AD /* Traversal.cpp in Sources */,
+				14D64B5C134A5B6B00E58FDA /* TreeScope.cpp in Sources */,
 				854FE7380A2297BE0058D7AD /* TreeWalker.cpp in Sources */,
 				93309E19099E64920056E581 /* TypingCommand.cpp in Sources */,
 				85031B4D0A44EFC700F992E0 /* UIEvent.cpp in Sources */,

@@ -614,6 +614,7 @@ SET(WebCore_SOURCES
     dom/TouchList.cpp
     dom/TransformSourceLibxslt.cpp
     dom/Traversal.cpp
+    dom/TreeScope.cpp
     dom/TreeWalker.cpp
     dom/UIEvent.cpp
     dom/UIEventWithKeyState.cpp

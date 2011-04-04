@@ -37,8 +37,8 @@
 
 namespace WebCore {
 
-class Document;
 class Element;
+class TreeScope;
 
 class DocumentOrderedMap {
 public:
@@ -49,14 +49,14 @@ public:
     bool contains(AtomicStringImpl*) const;
     bool containsMultiple(AtomicStringImpl*) const;
     // concrete instantiations of the get<>() method template
-    Element* getElementById(AtomicStringImpl*, const Document*) const;
-    Element* getElementByMapName(AtomicStringImpl*, const Document*) const;
-    Element* getElementByLowercasedMapName(AtomicStringImpl*, const Document*) const;
+    Element* getElementById(AtomicStringImpl*, const TreeScope*) const;
+    Element* getElementByMapName(AtomicStringImpl*, const TreeScope*) const;
+    Element* getElementByLowercasedMapName(AtomicStringImpl*, const TreeScope*) const;
 
     void checkConsistency() const;
 
 private:
-    template<bool keyMatches(AtomicStringImpl*, Element*)> Element* get(AtomicStringImpl*, const Document*) const;
+    template<bool keyMatches(AtomicStringImpl*, Element*)> Element* get(AtomicStringImpl*, const TreeScope*) const;
 
     typedef HashMap<AtomicStringImpl*, Element*> Map;
 

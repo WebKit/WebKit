@@ -406,7 +406,7 @@ Node::~Node()
         m_next->setPreviousSibling(0);
 
     if (m_document)
-        m_document->selfOnlyDeref();
+        m_document->guardDeref();
 }
 
 #ifdef NDEBUG
@@ -442,7 +442,7 @@ void Node::setDocument(Document* document)
     if (inDocument() || m_document == document)
         return;
 
-    document->selfOnlyRef();
+    document->guardRef();
 
     setWillMoveToNewOwnerDocumentWasCalled(false);
     willMoveToNewOwnerDocument();
@@ -460,7 +460,7 @@ void Node::setDocument(Document* document)
 
     if (m_document) {
         m_document->moveNodeIteratorsToNewDocument(this, document);
-        m_document->selfOnlyDeref();
+        m_document->guardDeref();
     }
 
     m_document = document;
@@ -794,24 +794,24 @@ bool Node::hasNonEmptyBoundingBox() const
     return false;
 }
 
-void Node::setDocumentRecursively(Document* document)
+void Node::setDocumentRecursively(Document* newDocument)
 {
-    if (this->document() == document)
+    if (document() == newDocument)
         return;
 
     // If an element is moved from a document and then eventually back again the collection cache for
     // that element may contain stale data as changes made to it will have updated the DOMTreeVersion
     // of the document it was moved to. By increasing the DOMTreeVersion of the donating document here
     // we ensure that the collection cache will be invalidated as needed when the element is moved back.
-    if (this->document())
-        this->document()->incDOMTreeVersion();
+    if (document())
+        document()->incDOMTreeVersion();
 
     for (Node* node = this; node; node = node->traverseNextNode(this)) {
-        node->setDocument(document);
+        node->setDocument(newDocument);
         if (!node->isElementNode())
             continue;
         if (Node* shadow = toElement(node)->shadowRoot())
-            shadow->setDocumentRecursively(document);
+            shadow->setDocumentRecursively(newDocument);
     }
 }
 

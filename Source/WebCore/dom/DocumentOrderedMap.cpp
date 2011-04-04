@@ -34,6 +34,7 @@
 #include "Element.h"
 #include "HTMLMapElement.h"
 #include "HTMLNames.h"
+#include "TreeScope.h"
 
 namespace WebCore {
 
@@ -104,7 +105,7 @@ void DocumentOrderedMap::remove(AtomicStringImpl* key, Element* element)
 }
 
 template<bool keyMatches(AtomicStringImpl*, Element*)>
-inline Element* DocumentOrderedMap::get(AtomicStringImpl* key, const Document* document) const
+inline Element* DocumentOrderedMap::get(AtomicStringImpl* key, const TreeScope* scope) const
 {
     ASSERT(key);
 
@@ -116,7 +117,7 @@ inline Element* DocumentOrderedMap::get(AtomicStringImpl* key, const Document* d
 
     if (m_duplicateCounts.contains(key)) {
         // We know there's at least one node that matches; iterate to find the first one.
-        for (Node* node = document->firstChild(); node; node = node->traverseNextNode()) {
+        for (Node* node = scope->firstChild(); node; node = node->traverseNextNode()) {
             if (!node->isElementNode())
                 continue;
             element = static_cast<Element*>(node);
@@ -132,19 +133,19 @@ inline Element* DocumentOrderedMap::get(AtomicStringImpl* key, const Document* d
     return 0;
 }
 
-Element* DocumentOrderedMap::getElementById(AtomicStringImpl* key, const Document* document) const
+Element* DocumentOrderedMap::getElementById(AtomicStringImpl* key, const TreeScope* scope) const
 {
-    return get<keyMatchesId>(key, document);
+    return get<keyMatchesId>(key, scope);
 }
 
-Element* DocumentOrderedMap::getElementByMapName(AtomicStringImpl* key, const Document* document) const
+Element* DocumentOrderedMap::getElementByMapName(AtomicStringImpl* key, const TreeScope* scope) const
 {
-    return get<keyMatchesMapName>(key, document);
+    return get<keyMatchesMapName>(key, scope);
 }
 
-Element* DocumentOrderedMap::getElementByLowercasedMapName(AtomicStringImpl* key, const Document* document) const
+Element* DocumentOrderedMap::getElementByLowercasedMapName(AtomicStringImpl* key, const TreeScope* scope) const
 {
-    return get<keyMatchesLowercasedMapName>(key, document);
+    return get<keyMatchesLowercasedMapName>(key, scope);
 }
 
 } // namespace WebCore

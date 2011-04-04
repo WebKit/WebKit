@@ -109,11 +109,7 @@ public:
     bool m_inRemovedLastRefFunction;
 #endif
 
-private:
-#ifndef NDEBUG
-    friend void adopted<>(TreeShared<T>*);
-#endif
-
+protected:
     virtual void removedLastRef()
     {
 #ifndef NDEBUG
@@ -121,6 +117,11 @@ private:
 #endif
         delete this;
     }
+
+private:
+#ifndef NDEBUG
+    friend void adopted<>(TreeShared<T>*);
+#endif
 
     int m_refCount;
     T* m_parent;

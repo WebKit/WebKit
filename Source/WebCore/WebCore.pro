@@ -544,6 +544,7 @@ SOURCES += \
     dom/TouchEvent.cpp \
     dom/TouchList.cpp \
     dom/Traversal.cpp \
+    dom/TreeScope.cpp \
     dom/TreeWalker.cpp \
     dom/UIEvent.cpp \
     dom/UIEventWithKeyState.cpp \
@@ -1507,6 +1508,7 @@ HEADERS += \
     dom/TransformSource.h \
     dom/Traversal.h \
     dom/TreeDepthLimit.h \
+    dom/TreeScope.h \
     dom/TreeWalker.h \
     dom/UIEvent.h \
     dom/UIEventWithKeyState.h \

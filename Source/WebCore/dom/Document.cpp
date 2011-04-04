@@ -377,7 +377,7 @@ private:
 uint64_t Document::s_globalTreeVersion = 0;
 
 Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
-    : ContainerNode(0)
+    : TreeScope(0)
     , m_compatibilityMode(NoQuirksMode)
     , m_compatibilityModeLocked(false)
     , m_domTreeVersion(++s_globalTreeVersion)
@@ -399,7 +399,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_xmlStandalone(false)
     , m_savedRenderer(0)
     , m_designMode(inherit)
-    , m_selfOnlyRefCount(0)
 #if ENABLE(SVG)
     , m_svgExtensions(0)
 #endif
@@ -407,7 +406,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_hasDashboardRegions(false)
     , m_dashboardRegionsDirty(false)
 #endif
-    , m_accessKeyMapValid(false)
     , m_createRenderers(true)
     , m_inPageCache(false)
     , m_useSecureKeyboardEntryWhenActive(false)
@@ -415,7 +413,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_isHTML(isHTML)
     , m_usesViewSourceStyles(false)
     , m_sawElementsInKnownNamespaces(false)
-    , m_numNodeListCaches(0)
 #if USE(JSC)
     , m_normalWorldWrapperCache(0)
 #endif
@@ -511,55 +508,38 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 #endif
 }
 
-void Document::removedLastRef()
+void Document::destroyScope()
 {
     ASSERT(!m_deletionHasBegun);
-    if (m_selfOnlyRefCount) {
-        // If removing a child removes the last self-only ref, we don't
-        // want the document to be destructed until after
-        // removeAllChildren returns, so we guard ourselves with an
-        // extra self-only ref.
-        selfOnlyRef();
 
-        // We must make sure not to be retaining any of our children through
-        // these extra pointers or we will create a reference cycle.
-        m_docType = 0;
-        m_focusedNode = 0;
-        m_hoverNode = 0;
-        m_activeNode = 0;
-        m_titleElement = 0;
-        m_documentElement = 0;
+    // We must make sure not to be retaining any of our children through
+    // these extra pointers or we will create a reference cycle.
+    m_docType = 0;
+    m_focusedNode = 0;
+    m_hoverNode = 0;
+    m_activeNode = 0;
+    m_titleElement = 0;
+    m_documentElement = 0;
 #if ENABLE(FULLSCREEN_API)
-        m_fullScreenElement = 0;
+    m_fullScreenElement = 0;
 #endif
 
-        // removeAllChildren() doesn't always unregister IDs, do it upfront to avoid having stale references in the map.
-        m_elementsById.clear();
+    TreeScope::destroyScope();
 
-        removeAllChildren();
+    m_markers->detach();
 
-        m_markers->detach();
+    detachParser();
 
-        detachParser();
-
-        m_cssCanvasElements.clear();
+    m_cssCanvasElements.clear();
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-        // FIXME: consider using ActiveDOMObject.
-        m_scriptedAnimationController = 0;
+    // FIXME: consider using ActiveDOMObject.
+    m_scriptedAnimationController = 0;
 #endif
 
 #ifndef NDEBUG
-        m_inRemovedLastRefFunction = false;
+    m_inRemovedLastRefFunction = false;
 #endif
-
-        selfOnlyDeref();
-    } else {
-#ifndef NDEBUG
-        m_deletionHasBegun = true;
-#endif
-        delete this;
-    }
 }
 
 Document::~Document()
@@ -619,6 +599,11 @@ Document::~Document()
 
     if (m_implementation)
         m_implementation->ownerDocumentDestroyed();
+}
+
+Element* Document::getElementById(const AtomicString& id) const
+{
+    return TreeScope::getElementById(id);
 }
 
 MediaQueryMatcher* Document::mediaQueryMatcher()
@@ -709,7 +694,7 @@ DOMImplementation* Document::implementation()
 
 void Document::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
+    TreeScope::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     
     // Invalidate the document element we have cached in case it was replaced.
     m_documentElement = 0;
@@ -1002,13 +987,6 @@ PassRefPtr<Element> Document::createElementNS(const String& namespaceURI, const 
     return createElement(qName, false);
 }
 
-Element* Document::getElementById(const AtomicString& elementId) const
-{
-    if (elementId.isEmpty())
-        return 0;
-    return m_elementsById.getElementById(elementId.impl(), this);
-}
-
 String Document::readyState() const
 {
     DEFINE_STATIC_LOCAL(const String, loading, ("loading"));
@@ -1235,34 +1213,6 @@ PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
     return Range::create(this, rangeCompliantPosition, rangeCompliantPosition);
 }
 
-void Document::addElementById(const AtomicString& elementId, Element* element)
-{
-    m_elementsById.add(elementId.impl(), element);
-}
-
-void Document::removeElementById(const AtomicString& elementId, Element* element)
-{
-    m_elementsById.remove(elementId.impl(), element);
-}
-
-Element* Document::getElementByAccessKey(const String& key) const
-{
-    if (key.isEmpty())
-        return 0;
-    if (!m_accessKeyMapValid) {
-        for (Node* n = firstChild(); n; n = n->traverseNextNode()) {
-            if (!n->isElementNode())
-                continue;
-            Element* element = static_cast<Element*>(n);
-            const AtomicString& accessKey = element->getAttribute(accesskeyAttr);
-            if (!accessKey.isEmpty())
-                m_elementsByAccessKey.set(accessKey.impl(), element);
-        }
-        m_accessKeyMapValid = true;
-    }
-    return m_elementsByAccessKey.get(key.impl());
-}
-
 /*
  * Performs three operations:
  *  1. Convert control characters to spaces
@@ -1460,10 +1410,7 @@ void Document::scheduleStyleRecalc()
     documentsThatNeedStyleRecalc->add(this);
     
     // FIXME: Why on earth is this here? This is clearly misplaced.
-    if (m_accessKeyMapValid) {
-        m_accessKeyMapValid = false;
-        m_elementsByAccessKey.clear();
-    }
+    invalidateAccessKeyMap();
     
     m_styleRecalcTimer.startOneShot(0);
 }
@@ -1755,7 +1702,7 @@ void Document::attach()
     RenderObject* render = renderer();
     setRenderer(0);
 
-    ContainerNode::attach();
+    TreeScope::attach();
 
     setRenderer(render);
 }
@@ -1812,7 +1759,7 @@ void Document::detach()
     m_focusedNode = 0;
     m_activeNode = 0;
 
-    ContainerNode::detach();
+    TreeScope::detach();
 
     unscheduleStyleRecalc();
 
@@ -3895,33 +3842,6 @@ bool Document::parseQualifiedName(const String& qualifiedName, String& prefix, S
     return true;
 }
 
-void Document::addImageMap(HTMLMapElement* imageMap)
-{
-    AtomicStringImpl* name = imageMap->getName().impl();
-    if (!name)
-        return;
-    m_imageMapsByName.add(name, imageMap);
-}
-
-void Document::removeImageMap(HTMLMapElement* imageMap)
-{
-    AtomicStringImpl* name = imageMap->getName().impl();
-    if (!name)
-        return;
-    m_imageMapsByName.remove(name, imageMap);
-}
-
-HTMLMapElement* Document::getImageMap(const String& url) const
-{
-    if (url.isNull())
-        return 0;
-    size_t hashPos = url.find('#');
-    String name = (hashPos == notFound ? url : url.substring(hashPos + 1)).impl();
-    if (isHTMLDocument())
-        return static_cast<HTMLMapElement*>(m_imageMapsByName.getElementByLowercasedMapName(AtomicString(name.lower()).impl(), this));
-    return static_cast<HTMLMapElement*>(m_imageMapsByName.getElementByMapName(AtomicString(name).impl(), this));
-}
-
 void Document::setDecoder(PassRefPtr<TextResourceDecoder> decoder)
 {
     m_decoder = decoder;
@@ -4768,29 +4688,6 @@ void Document::resumeScriptedAnimationControllerCallbacks()
     if (m_scriptedAnimationController)
         m_scriptedAnimationController->resume();
 #endif
-}
-
-Element* Document::findAnchor(const String& name)
-{
-    if (name.isEmpty())
-        return 0;
-    if (Element* element = getElementById(name))
-        return element;
-    for (Node* node = this; node; node = node->traverseNextNode()) {
-        if (node->hasTagName(aTag)) {
-            HTMLAnchorElement* anchor = static_cast<HTMLAnchorElement*>(node);
-            if (inQuirksMode()) {
-                // Quirks mode, case insensitive comparison of names.
-                if (equalIgnoringCase(anchor->name(), name))
-                    return anchor;
-            } else {
-                // Strict mode, names need to match exactly.
-                if (anchor->name() == name)
-                    return anchor;
-            }
-        }
-    }
-    return 0;
 }
 
 String Document::displayStringModifiedByEncoding(const String& str) const

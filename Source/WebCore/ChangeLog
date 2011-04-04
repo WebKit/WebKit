@@ -1,3 +1,51 @@
+2011-04-04  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 57689 - Extract scoping functionality from Document
+        https://bugs.webkit.org/show_bug.cgi?id=57689
+
+        Moved selfOnlyRef (renamed to guardRef), element ID, image map
+        and accesss key functionalities from Document to a new base
+        class TreeScope.
+
+        TreeShared: made removedLastRef protected
+
+        No new tests. (refactoring)
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::destroyScope):
+        (WebCore::Document::getElementById):
+        (WebCore::Document::childrenChanged):
+        (WebCore::Document::scheduleStyleRecalc):
+        (WebCore::Document::attach):
+        (WebCore::Document::detach):
+        * dom/Document.h:
+        (WebCore::Node::Node):
+        * dom/DocumentOrderedMap.cpp:
+        (WebCore::DocumentOrderedMap::get):
+        (WebCore::DocumentOrderedMap::getElementById):
+        (WebCore::DocumentOrderedMap::getElementByMapName):
+        (WebCore::DocumentOrderedMap::getElementByLowercasedMapName):
+        * dom/DocumentOrderedMap.h:
+        * dom/DOMAllInOne.cpp:
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        (WebCore::Node::setDocument):
+        * dom/Node.h:
+        * dom/TreeScope.cpp: Added.
+        * dom/TreeScope.h: Added.
+        * platform/TreeShared.h:
+        (WebCore::TreeShared::removedLastRef): made protected
+
 2011-04-04  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

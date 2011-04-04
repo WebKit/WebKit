@@ -2545,6 +2545,8 @@
             'dom/Traversal.cpp',
             'dom/Traversal.h',
             'dom/TreeDepthLimit.h',
+            'dom/TreeScope.cpp',
+            'dom/TreeScope.h',
             'dom/TreeWalker.cpp',
             'dom/TreeWalker.h',
             'dom/UIEvent.cpp',

@@ -121,6 +121,7 @@
 #include "TouchList.cpp"
 #include "TransformSourceLibxslt.cpp"
 #include "Traversal.cpp"
+#include "TreeScope.cpp"
 #include "TreeWalker.cpp"
 #include "UIEvent.cpp"
 #include "UIEventWithKeyState.cpp"
