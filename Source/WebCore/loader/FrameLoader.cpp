@@ -1466,6 +1466,11 @@ void FrameLoader::load(DocumentLoader* newDocumentLoader)
     // shouldn't a more explicit type of reload be defined, that means roughly 
     // "load without affecting history" ? 
     if (shouldReloadToHandleUnreachableURL(newDocumentLoader)) {
+        // shouldReloadToHandleUnreachableURL() returns true only when the original load type is back-forward.
+        // In this case we should save the document state now. Otherwise the state can be lost because load type is
+        // changed and updateForBackForwardNavigation() will not be called when loading is committed.
+        history()->saveDocumentAndScrollState();
+
         ASSERT(type == FrameLoadTypeStandard);
         type = FrameLoadTypeReload;
     }

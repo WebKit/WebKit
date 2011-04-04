@@ -1,3 +1,16 @@
+2011-04-04  Yong Li  <yoli@rim.com>
+
+        Reviewed by Antonio Gomes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55969
+        Add a test that verifies history scroll position is restored
+        when WebKit goes forward from an unreachable URL error page.
+        (Error page handling is only supported by Qt DRT.)
+
+        * platform/qt/fast/history/back-to-unreachable-url-then-forward-expected.txt: Added.
+        * platform/qt/fast/history/back-to-unreachable-url-then-forward.html: Added.
+        * platform/qt/fast/history/resources/check-scroll-position.html: Added.
+
 2011-04-04  Jessie Berlin  <jberlin@apple.com>
 
         Remove a test from the win-wk2 skipped list that does not exist.
