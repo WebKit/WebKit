@@ -1,3 +1,11 @@
+2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, add chromium expectations for the new test added in r82781.
+
+        * platform/chromium-mac-leopard/fast/images/imagemap-focus-ring-zero-outline-width-expected.png: Added.
+        * platform/chromium-win/fast/images/imagemap-focus-ring-zero-outline-width-expected.png: Added.
+        * platform/chromium-win/fast/images/imagemap-focus-ring-zero-outline-width-expected.txt: Added.
+
 2011-04-04  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed. Unskipped test and added GTK-specific new baseline.
