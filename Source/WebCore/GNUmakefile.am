@@ -2719,6 +2719,7 @@ webcore_sources += \
 	Source/WebCore/platform/text/TextStream.h \
 	Source/WebCore/platform/text/transcoder/FontTranscoder.cpp \
 	Source/WebCore/platform/text/transcoder/FontTranscoder.h \
+	Source/WebCore/platform/text/UnicodeBidi.h \
 	Source/WebCore/platform/text/UnicodeRange.cpp \
 	Source/WebCore/platform/text/UnicodeRange.h \
 	Source/WebCore/platform/ThemeTypes.h \

@@ -42,6 +42,7 @@
 #include "TextOrientation.h"
 #include "TextRenderingMode.h"
 #include "ThemeTypes.h"
+#include "UnicodeBidi.h"
 
 namespace WebCore {
 

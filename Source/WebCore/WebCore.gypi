@@ -921,6 +921,7 @@
             'platform/text/TextEncodingRegistry.h',
             'platform/text/TextOrientation.h',
             'platform/text/TextStream.h',
+            'platform/text/UnicodeBidi.h',
             'platform/text/UnicodeRange.h',
             'platform/text/mac/CharsetData.h',
             'plugins/PluginData.h',

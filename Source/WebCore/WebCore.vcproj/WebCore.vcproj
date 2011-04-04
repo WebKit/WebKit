@@ -30717,6 +30717,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\UnicodeBidi.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\UnicodeRange.cpp"
 					>
 				</File>

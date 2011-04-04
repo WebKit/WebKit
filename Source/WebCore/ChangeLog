@@ -1,3 +1,20 @@
+2011-04-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Split out UnicodeBidi enum into its own header (to allow use in platform)
+        https://bugs.webkit.org/show_bug.cgi?id=57722
+
+        unicode-bidi is a CSS concept.  However the same concept is really needed throughout
+        the bidi code in platform as well.  So I'm moving the enum to platform.
+        The only part of the enum which doesn't make much sense to platform/ is "normal".
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSPrimitiveValueMappings.h:
+        * platform/text/UnicodeBidi.h: Added.
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+
 2011-04-04  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Yury Semikhatsky.

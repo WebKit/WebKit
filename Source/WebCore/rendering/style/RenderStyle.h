@@ -62,6 +62,7 @@
 #include "TextOrientation.h"
 #include "ThemeTypes.h"
 #include "TransformOperations.h"
+#include "UnicodeBidi.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
