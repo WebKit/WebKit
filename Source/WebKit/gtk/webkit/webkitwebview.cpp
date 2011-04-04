@@ -381,84 +381,43 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
     return TRUE;
 }
 
-static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
+static const int gContextMenuMargin = 1;
+static IntPoint getLocationForKeyboardGeneratedContextMenu(Frame* frame)
 {
-    static const int contextMenuMargin = 1;
+    SelectionController* selection = frame->selection();
+    if (!selection->selection().isNonOrphanedCaretOrRange()
+         || (selection->selection().isCaret() && !selection->selection().isContentEditable())) {
+        if (Node* focusedNode = getFocusedNode(frame))
+            return focusedNode->getRect().location();
 
-    // The context menu event was generated from the keyboard, so show the context menu by the current selection.
-    Page* page = core(WEBKIT_WEB_VIEW(widget));
-    Frame* frame = page->focusController()->focusedOrMainFrame();
-    FrameView* view = frame->view();
-    if (!view)
-        return FALSE;    
-
-    Position start = frame->selection()->selection().start();
-    Position end = frame->selection()->selection().end();
-
-    int rightAligned = FALSE;
-    IntPoint location;
-
-    if (!start.deprecatedNode() || !end.deprecatedNode()
-        || (frame->selection()->selection().isCaret() && !frame->selection()->selection().isContentEditable())) {
-        // If there's a focused elment, use its location.
-        if (Node* focusedNode = getFocusedNode(frame)) {
-            IntRect focusedNodeRect = focusedNode->getRect();
-            location = IntPoint(rightAligned ? focusedNodeRect.maxX() : focusedNodeRect.x(), focusedNodeRect.maxY());
-        } else
-            location = IntPoint(rightAligned ? view->contentsWidth() - contextMenuMargin : contextMenuMargin, contextMenuMargin);
-    } else {
-        RenderObject* renderer = start.deprecatedNode()->renderer();
-        if (!renderer)
-            return FALSE;
-
-        // Calculate the rect of the first line of the selection (cribbed from -[WebCoreFrameBridge firstRectForDOMRange:],
-        // now Frame::firstRectForRange(), which perhaps this should call).
-        int extraWidthToEndOfLine = 0;
-
-        InlineBox* startInlineBox;
-        int startCaretOffset;
-        start.getInlineBoxAndOffset(DOWNSTREAM, startInlineBox, startCaretOffset);
-        IntRect startCaretRect = renderer->localCaretRect(startInlineBox, startCaretOffset, &extraWidthToEndOfLine);
-        if (startCaretRect != IntRect())
-            startCaretRect = renderer->localToAbsoluteQuad(FloatRect(startCaretRect)).enclosingBoundingBox();
-
-        InlineBox* endInlineBox;
-        int endCaretOffset;
-        end.getInlineBoxAndOffset(UPSTREAM, endInlineBox, endCaretOffset);
-        IntRect endCaretRect = renderer->localCaretRect(endInlineBox, endCaretOffset);
-        if (endCaretRect != IntRect())
-            endCaretRect = renderer->localToAbsoluteQuad(FloatRect(endCaretRect)).enclosingBoundingBox();
-
-        IntRect firstRect;
-        if (startCaretRect.y() == endCaretRect.y())
-            firstRect = IntRect(MIN(startCaretRect.x(), endCaretRect.x()),
-                                startCaretRect.y(),
-                                abs(endCaretRect.x() - startCaretRect.x()),
-                                MAX(startCaretRect.height(), endCaretRect.height()));
-        else
-            firstRect = IntRect(startCaretRect.x(),
-                                startCaretRect.y(),
-                                startCaretRect.width() + extraWidthToEndOfLine,
-                                startCaretRect.height());
-
-        location = IntPoint(rightAligned ? firstRect.maxX() : firstRect.x(), firstRect.maxY());
+        // There was no selection and no focused node, so just put the context
+        // menu into the corner of the view, offset slightly.
+        return IntPoint(gContextMenuMargin, gContextMenuMargin);
     }
 
-    // FIXME: The IntSize(0, -1) is a hack to get the hit-testing to result in the selected element.
-    // Ideally we'd have the position of a context menu event be separate from its target node.
-    location = view->contentsToWindow(location) + IntSize(0, -1);
-    if (location.y() < 0)
-        location.setY(contextMenuMargin);
-    else if (location.y() > view->height())
-        location.setY(view->height() - contextMenuMargin);
-    if (location.x() < 0)
-        location.setX(contextMenuMargin);
-    else if (location.x() > view->width())
-        location.setX(view->width() - contextMenuMargin);
-    IntPoint global(globalPointForClientPoint(gtk_widget_get_window(widget), location));
+    // selection->selection().firstRange can return 0 here, but if that was the case
+    // selection->selection().isNonOrphanedCaretOrRange() would have returned false
+    // above, so we do not have to check it.
+    IntRect firstRect = frame->editor()->firstRectForRange(selection->selection().firstRange().get());
+    return IntPoint(firstRect.x(), firstRect.maxY());
+}
 
-    PlatformMouseEvent event(location, global, RightButton, MouseEventPressed, 0, false, false, false, false, gtk_get_current_event_time());
+static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
+{
+    Frame* frame = core(WEBKIT_WEB_VIEW(widget))->focusController()->focusedOrMainFrame();
+    IntPoint location = getLocationForKeyboardGeneratedContextMenu(frame);
 
+    FrameView* view = frame->view();
+    if (!view)
+        return FALSE;
+
+    // Never let the context menu touch the very edge of the view.
+    location = view->contentsToWindow(location);
+    location.expandedTo(IntPoint(gContextMenuMargin, gContextMenuMargin));
+    location.shrunkTo(IntPoint(view->width() - gContextMenuMargin, view->height() - gContextMenuMargin));
+
+    IntPoint globalPoint(globalPointForClientPoint(gtk_widget_get_window(widget), location));
+    PlatformMouseEvent event(location, globalPoint, RightButton, MouseEventPressed, 0, false, false, false, false, gtk_get_current_event_time());
     return webkit_web_view_forward_context_menu_event(WEBKIT_WEB_VIEW(widget), event);
 }
 

@@ -1,3 +1,19 @@
+2011-04-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Gtk] webkit_web_view_popup_menu_handler should call SelectionController::localCaretRect
+        https://bugs.webkit.org/show_bug.cgi?id=54633
+
+        Remove use of legacy editing positions when positioning keyboard-driven context
+        menus. Simplify the code greatly.
+
+        * webkit/webkitwebview.cpp:
+        (getLocationForKeyboardGeneratedContextMenu): Added this helper which calculates
+        the context menu position.
+        (webkit_web_view_popup_menu_handler): Simplify code preventing the menu from bumping
+        into the edges of the view. Remove (0,-1) hack as it no longer seems to be important.
+
 2011-04-02  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Martin Robinson.
