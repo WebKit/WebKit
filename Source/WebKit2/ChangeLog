@@ -1,5 +1,12 @@
 2011-04-04  Anders Carlsson  <andersca@apple.com>
 
+        Attempt to fix the Windows build.
+
+        * UIProcess/win/WebContextWin.cpp:
+        (WebKit::WebContext::setShouldPaintNativeControls):
+
+2011-04-04  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Make it easier to send a message to all processes in a context

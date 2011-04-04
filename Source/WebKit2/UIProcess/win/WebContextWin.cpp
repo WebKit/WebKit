@@ -48,9 +48,7 @@ void WebContext::setShouldPaintNativeControls(bool b)
 {
     m_shouldPaintNativeControls = b;
 
-    if (!hasValidProcess())
-        return;
-    m_process->send(Messages::WebProcess::SetShouldPaintNativeControls(m_shouldPaintNativeControls), 0);
+    sendToAllProcesses(Messages::WebProcess::SetShouldPaintNativeControls(m_shouldPaintNativeControls));
 }
 
 void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
