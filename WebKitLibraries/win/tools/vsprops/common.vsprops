@@ -63,5 +63,9 @@
 		Name="AnalyzeWithLargeStack"
 		Value=""
 	/>
+	<UserMacro
+		Name="ProductionBuild"
+		Value="0"
+	/>
 </VisualStudioPropertySheet>
 

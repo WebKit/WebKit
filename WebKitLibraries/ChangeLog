@@ -1,3 +1,12 @@
+2011-04-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Brian Weinstein.
+
+        Fix Windows build warning.
+        https://bugs.webkit.org/show_bug.cgi?id=57767
+
+        * win/tools/vsprops/common.vsprops:
+
 2011-04-01  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build fix.
