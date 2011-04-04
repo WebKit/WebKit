@@ -31,7 +31,9 @@
 #include "WebProcess.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/GraphicsLayerCA.h>
 #include <WebCore/Page.h>
+#include <WebCore/PlatformCALayer.h>
 #include <WebCore/Settings.h>
 
 using namespace WebCore;
@@ -54,6 +56,7 @@ void LayerTreeHostCA::initialize()
 #endif
     m_rootLayer->setDrawsContent(false);
     m_rootLayer->setSize(m_webPage->size());
+    static_cast<GraphicsLayerCA*>(m_rootLayer.get())->platformCALayer()->setGeometryFlipped(true);
 
     m_nonCompositedContentLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG

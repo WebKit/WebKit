@@ -62,8 +62,6 @@ void LayerTreeHostCAMac::platformInitialize(LayerTreeContext& layerTreeContext)
     mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
     m_remoteLayerClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
 
-    [rootLayer()->platformLayer() setGeometryFlipped:YES];
-
     WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), rootLayer()->platformLayer());
 
     layerTreeContext.contextID = WKCARemoteLayerClientGetClientId(m_remoteLayerClient.get());

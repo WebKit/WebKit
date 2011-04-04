@@ -1,3 +1,17 @@
+2011-04-04  Adam Roben  <aroben@apple.com>
+
+        Move a teensy bit of non-Mac-specific code up to LayerTreeHostCA
+
+        Fixes <http://webkit.org/b/57774> LayerTreeHostCA should know how to flip the root layer
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+        (WebKit::LayerTreeHostCA::initialize): Cross-platformized and moved some code here...
+
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.mm:
+        (WebKit::LayerTreeHostCAMac::platformInitialize): ...from here.
+
 2011-04-01  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
