@@ -1,3 +1,12 @@
+2011-04-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Adjust the list of flaky tests based on NRWT on webkit mac using
+        a 35 second timeout by default.
+
+        * platform/mac/test_expectations.txt:
+
 2011-04-04  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Ryosuke Niwa.
