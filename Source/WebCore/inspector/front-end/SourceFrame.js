@@ -63,10 +63,7 @@ WebInspector.SourceFrame.prototype = {
     {
         WebInspector.View.prototype.show.call(this, parentElement);
 
-        if (!this._contentRequested) {
-            this._contentRequested = true;
-            this._delegate.requestContent(this._createTextViewer.bind(this));
-        }
+        this._ensureContentLoaded();
 
         if (this._textViewer) {
             if (this._scrollTop)
@@ -99,6 +96,14 @@ WebInspector.SourceFrame.prototype = {
     hasContent: function()
     {
         return true;
+    },
+
+    _ensureContentLoaded: function()
+    {
+        if (!this._contentRequested) {
+            this._contentRequested = true;
+            this._delegate.requestContent(this._createTextViewer.bind(this));
+        }
     },
 
     markDiff: function(diffData)
@@ -346,6 +351,7 @@ WebInspector.SourceFrame.prototype = {
         else
             this._delayedFindSearchMatches = doFindSearchMatches.bind(this, query);
 
+        this._ensureContentLoaded();
     },
 
     searchCanceled: function()

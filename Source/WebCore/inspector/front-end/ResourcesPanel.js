@@ -693,7 +693,7 @@ WebInspector.ResourcesPanel.prototype = {
         var views = [];
 
         const visibleView = this.visibleView;
-        if (visibleView.performSearch)
+        if (visibleView && visibleView.performSearch)
             views.push(visibleView);
 
         function callback(resourceTreeElement)

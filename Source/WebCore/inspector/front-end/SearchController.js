@@ -84,7 +84,7 @@ WebInspector.SearchController.prototype = {
                     var isFindKey = event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey;
 
                 if (isFindKey) {
-                    this._focusSearchField();
+                    this.focusSearchField();
                     event.handled = true;
                 }
                 break;
@@ -92,7 +92,7 @@ WebInspector.SearchController.prototype = {
 
             case "F3":
                 if (!isMac) {
-                    this._focusSearchField();
+                    this.focusSearchField();
                     event.handled = true;
                 }
                 break;
@@ -157,7 +157,7 @@ WebInspector.SearchController.prototype = {
         WebInspector.toolbar.resize();
     },
 
-    _focusSearchField: function()
+    focusSearchField: function()
     {
         this.element.focus();
         this.element.select();

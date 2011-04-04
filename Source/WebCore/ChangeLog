@@ -1,3 +1,24 @@
+2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: search in resources panel is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=57631
+
+        Search in resources panel should trigger source frame content load.
+
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.jumpToNextSearchResult):
+        (WebInspector.Panel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/ResourcesPanel.js:
+        * inspector/front-end/SearchController.js:
+        (WebInspector.SearchController.prototype.handleShortcut):
+        (WebInspector.SearchController.prototype.focusSearchField):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.show):
+        (WebInspector.SourceFrame.prototype._ensureContentLoaded):
+        (WebInspector.SourceFrame.prototype.performSearch):
+
 2011-04-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.

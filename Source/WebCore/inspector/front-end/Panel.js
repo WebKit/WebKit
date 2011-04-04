@@ -235,7 +235,7 @@ WebInspector.Panel.prototype = {
 
         if (currentView !== this.visibleView) {
             this.showView(currentView);
-            WebInspector.focusSearchField();
+            WebInspector.searchController.focusSearchField();
         }
 
         if (showFirstResult)
@@ -268,7 +268,7 @@ WebInspector.Panel.prototype = {
 
         if (currentView !== this.visibleView) {
             this.showView(currentView);
-            WebInspector.focusSearchField();
+            WebInspector.searchController.focusSearchField();
         }
 
         if (showLastResult)
