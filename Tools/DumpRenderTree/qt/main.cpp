@@ -54,7 +54,7 @@
 #include <limits.h>
 #include <signal.h>
 
-#if defined(__GLIBC__)
+#if defined(__GLIBC__) && !defined(__UCLIBC__)
 #include <execinfo.h>
 #endif
 
@@ -97,7 +97,7 @@ void printUsage()
 QString get_backtrace() {
     QString s;
 
-#if defined(__GLIBC__)
+#if defined(__GLIBC__) && !defined(__UCLIBC__)
     void* array[256];
     size_t size; /* number of stack frames */
 

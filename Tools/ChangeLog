@@ -1,3 +1,13 @@
+2011-04-04  Keith Kyzivat  <keith.kyzivat@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] DumpRenderTree breaks compilation in some uClibc environments
+        https://bugs.webkit.org/show_bug.cgi?id=57602
+
+        * DumpRenderTree/qt/main.cpp:
+        (get_backtrace):
+
 2011-04-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix, add new LayoutTestController method stub to wx.
