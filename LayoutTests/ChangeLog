@@ -1,5 +1,11 @@
 2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, mark xhr-breakpoints as CRASH PASS on chromium win debug.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, udpate chromium-linux test expectations after r82786.
 
         * platform/chromium-linux/fast/table/colspanMinWidth-vertical-expected.checksum: Removed.
