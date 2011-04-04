@@ -27056,6 +27056,14 @@
 					Name="win"
 					>
 					<File
+						RelativePath="..\platform\graphics\win\DIBPixelData.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\win\DIBPixelData.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\win\FontCacheWin.cpp"
 						>
 					</File>
@@ -27609,14 +27617,6 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\win\UniscribeController.h"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\win\DIBPixelData.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\win\DIBPixelData.h"
 						>
 					</File>
 					<File
@@ -44282,6 +44282,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool

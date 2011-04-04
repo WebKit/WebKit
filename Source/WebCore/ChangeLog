@@ -1,3 +1,9 @@
+2011-04-04  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix Windows build warning.
+
+        * WebCore.vcproj/WebCore.vcproj: Exclude EventQueue.cpp in Debug_All build.
+
 2011-04-04  Adam Roben  <aroben@apple.com>
 
         Attempted Mac build fix, part III
