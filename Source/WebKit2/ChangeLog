@@ -1,3 +1,20 @@
+2011-03-30  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        WebKit2: No "open in preview" contextual menu item for PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=57527
+
+        Add support for opening a PDF in the associated application from the
+        context menu.
+
+        * UIProcess/API/mac/PDFViewController.mm:
+        (_applicationInfoForMIMEType): Added, copied from WebKit/WebPDFView.mm
+        (-[WKPDFView _openWithFinder:]): Added.
+        (-[WKPDFView hitTest:]): Added, copied from WebKit/WebPDFView.mm.
+        (-[WKPDFView menuForEvent:]): Added, adapted from WebKit/WebPDFVie.mm.
+        (-[WKPDFView validateUserInterfaceItem:]): Added.
+
 2011-04-04  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Darin Adler.

@@ -52,7 +52,30 @@ using namespace WebKit;
 @end
 
 extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
+
+// MARK: C UTILITY FUNCTIONS
+
+static void _applicationInfoForMIMEType(NSString *type, NSString **name, NSImage **image)
+{
+    ASSERT(name);
+    ASSERT(image);
     
+    CFURLRef appURL = 0;
+
+    OSStatus error = LSCopyApplicationForMIMEType((CFStringRef)type, kLSRolesAll, &appURL);
+    if (error != noErr)
+        return;
+
+    NSString *appPath = [(NSURL *)appURL path];
+    if (appURL)
+        CFRelease(appURL);
+
+    *image = [[NSWorkspace sharedWorkspace] iconForFile:appPath];
+    [*image setSize:NSMakeSize(16, 16)];
+
+    *name = [[NSFileManager defaultManager] displayNameAtPath:appPath];
+}
+
 @interface WKPDFView : NSView
 {
     PDFViewController* _pdfViewController;
@@ -160,6 +183,13 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
         [self _updatePreferencesSoon];
 }
 
+- (void)_openWithFinder:(id)sender
+{
+    _pdfViewController->openPDFInFinder();
+}
+
+// MARK: NSView overrides
+
 - (void)viewDidMoveToWindow
 {
     if (![self window])
@@ -182,7 +212,66 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
     [notificationCenter removeObserver:self name:_webkit_PDFViewPageChangedNotification object:_pdfView];
 }
 
-// PDFView delegate methods
+- (NSView *)hitTest:(NSPoint)point
+{
+    // Override hitTest so we can override menuForEvent.
+    NSEvent *event = [NSApp currentEvent];
+    NSEventType type = [event type];
+    if (type == NSRightMouseDown || (type == NSLeftMouseDown && ([event modifierFlags] & NSControlKeyMask)))
+        return self;
+
+    return [super hitTest:point];
+}
+
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent
+{
+    NSMenu *menu = [[NSMenu alloc] initWithTitle:@""];
+
+    NSEnumerator *menuItemEnumerator = [[[_pdfView menuForEvent:theEvent] itemArray] objectEnumerator];
+    while (NSMenuItem *item = [menuItemEnumerator nextObject]) {
+        NSMenuItem *itemCopy = [item copy];
+        [menu addItem:itemCopy];
+        [itemCopy release];
+
+        if ([item action] != @selector(copy:))
+            continue;
+
+        // Add in an "Open with <default PDF viewer>" item
+        NSString *appName = nil;
+        NSImage *appIcon = nil;
+
+        _applicationInfoForMIMEType(@"application/pdf", &appName, &appIcon);
+        if (!appName) {
+            // FIXME: Localize this.
+            appName = @"Finder";
+        }
+
+        // To match the PDFKit style, we'll add Open with Preview even when there's no document yet to view, and
+        // disable it using validateUserInterfaceItem.
+        // FIXME: Localize this.
+        NSString *title = [NSString stringWithFormat:@"Open with %@", appName];
+        item = [[NSMenuItem alloc] initWithTitle:title action:@selector(_openWithFinder:) keyEquivalent:@""];
+        if (appIcon)
+            [item setImage:appIcon];
+        [menu addItem:[NSMenuItem separatorItem]];
+        [menu addItem:item];
+        [item release];
+    }
+
+    return [menu autorelease];
+}
+
+// MARK: NSUserInterfaceValidations PROTOCOL IMPLEMENTATION
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+{
+    SEL action = [item action];
+    if (action == @selector(_openWithFinder:))
+        return [_pdfView document] != nil;
+    return YES;
+}
+
+// MARK: PDFView delegate methods
 
 - (void)PDFViewWillClickOnLink:(PDFView *)sender withURL:(NSURL *)URL
 {
