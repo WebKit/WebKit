@@ -1,3 +1,50 @@
+2011-04-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57683
+        Flesh out WK2 Icon Database API
+
+        For now the new API will add a client interface where the WK1 version used NSNotifications.
+
+        If we decide we'd like the granularity of specific callback functions later, 
+        they can easily be added on.
+
+        Project file nonsense:
+        * GNUmakefile.am:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
+        Add a WKIconDatabaseClient and some new API:
+        * UIProcess/API/C/WKIconDatabase.cpp:
+        (WKIconDatabaseSetIconDatabaseClient):
+        (WKIconDatabaseRemoveAllIcons):
+        (WKIconDatabaseCheckIntegrityBeforeOpening):
+        * UIProcess/API/C/WKIconDatabase.h:
+        * UIProcess/API/C/cg/WKIconDatabaseCG.cpp:
+        (WKIconDatabaseTryGetCGImageForURL): Renamed to "try" for subtle clarification.
+        * UIProcess/API/C/cg/WKIconDatabaseCG.h:
+
+        Implementations for the new APIs:
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::retainIconForPageURL): Remove excessive logging.
+        (WebKit::WebIconDatabase::releaseIconForPageURL): Ditto.
+        (WebKit::WebIconDatabase::imageForPageURL):
+        (WebKit::WebIconDatabase::removeAllIcons):
+        (WebKit::WebIconDatabase::checkIntegrityBeforeOpening):
+        (WebKit::WebIconDatabase::initializeIconDatabaseClient):
+        (WebKit::WebIconDatabase::didImportIconURLForPageURL): Dispatch a client callback,
+          much like the WK1 API uses notifications.
+        (WebKit::WebIconDatabase::didImportIconDataForPageURL): Ditto.
+        (WebKit::WebIconDatabase::didChangeIconForPageURL): Ditto.
+        (WebKit::WebIconDatabase::didRemoveAllIcons): Ditto.
+        * UIProcess/WebIconDatabase.h:
+        * UIProcess/WebIconDatabaseClient.cpp: Added.
+        (WebKit::WebIconDatabaseClient::didChangeIconForPageURL):
+        (WebKit::WebIconDatabaseClient::didRemoveAllIcons):
+        * UIProcess/WebIconDatabaseClient.h: Added.
+
 2011-04-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

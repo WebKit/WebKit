@@ -36,6 +36,13 @@ WKTypeID WKIconDatabaseGetTypeID()
     return toAPI(WebIconDatabase::APIType);
 }
 
+void WKIconDatabaseSetIconDatabaseClient(WKIconDatabaseRef iconDatabaseRef, const WKIconDatabaseClient* wkClient)
+{
+    if (wkClient && wkClient->version)
+        return;
+    toImpl(iconDatabaseRef)->initializeIconDatabaseClient(wkClient);
+}
+
 void WKIconDatabaseRetainIconForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef pageURLRef)
 {
     toImpl(iconDatabaseRef)->retainIconForPageURL(toWTFString(pageURLRef));
@@ -49,4 +56,14 @@ void WKIconDatabaseReleaseIconForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef
 void WKIconDatabaseEnableDatabaseCleanup(WKIconDatabaseRef iconDatabaseRef)
 {
     toImpl(iconDatabaseRef)->enableDatabaseCleanup();
+}
+
+void WKIconDatabaseRemoveAllIcons(WKIconDatabaseRef iconDatabaseRef)
+{
+    toImpl(iconDatabaseRef)->removeAllIcons();
+}
+
+void WKIconDatabaseCheckIntegrityBeforeOpening(WKIconDatabaseRef iconDatabaseRef)
+{
+    toImpl(iconDatabaseRef)->checkIntegrityBeforeOpening();
 }

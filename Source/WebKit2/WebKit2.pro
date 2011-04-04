@@ -207,6 +207,7 @@ HEADERS += \
     UIProcess/WebGeolocationProvider.h \
     UIProcess/WebHistoryClient.h \
     UIProcess/WebIconDatabase.h \
+    UIProcess/WebIconDatabaseClient.h \
     UIProcess/WebInspectorProxy.h \
     UIProcess/WebKeyValueStorageManagerProxy.h \
     UIProcess/WebLoaderClient.h \
@@ -404,6 +405,7 @@ SOURCES += \
     UIProcess/WebGeolocationProvider.cpp \
     UIProcess/WebHistoryClient.cpp \
     UIProcess/WebIconDatabase.cpp \
+    UIProcess/WebIconDatabaseClient.cpp \
     UIProcess/WebInspectorProxy.cpp \
     UIProcess/WebKeyValueStorageManagerProxy.cpp \
     UIProcess/WebLoaderClient.cpp \

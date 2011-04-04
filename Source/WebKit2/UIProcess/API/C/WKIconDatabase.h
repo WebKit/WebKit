@@ -32,11 +32,28 @@
 extern "C" {
 #endif
 
+// IconDatabase Client.
+typedef void (*WKIconDatabaseDidChangeIconForPageURLCallback)(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
+typedef void (*WKIconDatabaseDidRemoveAllIconsCallback)(WKIconDatabaseRef iconDatabase, const void* clientInfo);
+
+struct WKIconDatabaseClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+    WKIconDatabaseDidChangeIconForPageURLCallback                       didChangeIconForPageURL;
+    WKIconDatabaseDidRemoveAllIconsCallback                             didRemoveAllIcons;
+};
+typedef struct WKIconDatabaseClient WKIconDatabaseClient;
+
 WK_EXPORT WKTypeID WKIconDatabaseGetTypeID();
+
+WK_EXPORT void WKIconDatabaseSetIconDatabaseClient(WKIconDatabaseRef iconDatabase, const WKIconDatabaseClient* client);
 
 WK_EXPORT void WKIconDatabaseRetainIconForURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL);
 WK_EXPORT void WKIconDatabaseReleaseIconForURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL);
 WK_EXPORT void WKIconDatabaseEnableDatabaseCleanup(WKIconDatabaseRef iconDatabase);
+
+WK_EXPORT void WKIconDatabaseRemoveAllIcons(WKIconDatabaseRef iconDatabase);
+WK_EXPORT void WKIconDatabaseCheckIntegrityBeforeOpening(WKIconDatabaseRef iconDatabase);
 
 #ifdef __cplusplus
 }

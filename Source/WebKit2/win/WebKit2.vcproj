@@ -2767,6 +2767,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebIconDatabaseClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebIconDatabaseClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebIconDatabase.messages.in"
 				>
 			</File>

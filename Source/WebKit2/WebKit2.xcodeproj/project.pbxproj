@@ -323,6 +323,8 @@
 		51578B831209ECEF00A37C4A /* WebData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51578B821209ECEF00A37C4A /* WebData.h */; };
 		5160BFE113381DF900918999 /* Logging.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5160BFE013381DF900918999 /* Logging.mac.mm */; };
 		516A4A5D120A2CCD00C05B7F /* WebError.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A4A5B120A2CCD00C05B7F /* WebError.h */; };
+		51834592134532E90092B696 /* WebIconDatabaseClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51834590134532E80092B696 /* WebIconDatabaseClient.cpp */; };
+		51834593134532E90092B696 /* WebIconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51834591134532E80092B696 /* WebIconDatabaseClient.h */; };
 		51871B5B127CB89D00F76232 /* WebContextMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51871B59127CB89D00F76232 /* WebContextMenu.cpp */; };
 		51871B5C127CB89D00F76232 /* WebContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 51871B5A127CB89D00F76232 /* WebContextMenu.h */; };
 		518ACAEA12AEE6BB00B04B83 /* WKProtectionSpaceTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 518ACAE912AEE6BB00B04B83 /* WKProtectionSpaceTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1206,6 +1208,8 @@
 		516A4A5B120A2CCD00C05B7F /* WebError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebError.h; sourceTree = "<group>"; };
 		517A33B3130B308C00F80CB5 /* WKApplicationCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKApplicationCacheManager.cpp; sourceTree = "<group>"; };
 		517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKApplicationCacheManager.h; sourceTree = "<group>"; };
+		51834590134532E80092B696 /* WebIconDatabaseClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIconDatabaseClient.cpp; sourceTree = "<group>"; };
+		51834591134532E80092B696 /* WebIconDatabaseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconDatabaseClient.h; sourceTree = "<group>"; };
 		5184BC4A132E907A006B9E28 /* WebIconDatabase.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebIconDatabase.messages.in; sourceTree = "<group>"; };
 		51871B59127CB89D00F76232 /* WebContextMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContextMenu.cpp; sourceTree = "<group>"; };
 		51871B5A127CB89D00F76232 /* WebContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenu.h; sourceTree = "<group>"; };
@@ -2553,6 +2557,8 @@
 				511B24A8132E097200065A0C /* WebIconDatabase.cpp */,
 				511B24A9132E097200065A0C /* WebIconDatabase.h */,
 				5184BC4A132E907A006B9E28 /* WebIconDatabase.messages.in */,
+				51834590134532E80092B696 /* WebIconDatabaseClient.cpp */,
+				51834591134532E80092B696 /* WebIconDatabaseClient.h */,
 				1C8E28331275D73800BC7BD0 /* WebInspectorProxy.cpp */,
 				1C8E28321275D73800BC7BD0 /* WebInspectorProxy.h */,
 				1C77C1951288A872006A742F /* WebInspectorProxy.messages.in */,
@@ -3657,6 +3663,7 @@
 				C064504A133BE709003470E2 /* LayerTreeHostCA.h in Headers */,
 				5110AE0D133C16CB0072717A /* WKIconDatabase.h in Headers */,
 				5123CF1C133D260A0056F800 /* WKIconDatabaseCG.h in Headers */,
+				51834593134532E90092B696 /* WebIconDatabaseClient.h in Headers */,
 				E1839349134297A5001842EC /* TextInputState.h in Headers */,
 				C0FA52431345694A0028E8C2 /* LayerTreeHostCAMac.h in Headers */,
 			);
@@ -4283,6 +4290,7 @@
 				5123CF1B133D260A0056F800 /* WKIconDatabaseCG.cpp in Sources */,
 				F6A90813133C20510082C3F4 /* WebCookieManagerMac.mm in Sources */,
 				F6D632BC133D198200743D77 /* WebCookieManagerProxyMac.mm in Sources */,
+				51834592134532E90092B696 /* WebIconDatabaseClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

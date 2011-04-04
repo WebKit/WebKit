@@ -23,20 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKIconDatabaseCG_h
-#define WKIconDatabaseCG_h
+#ifndef WebIconDatabaseClient_h
+#define WebIconDatabaseClient_h
 
-#include <CoreGraphics/CGImage.h>
-#include <WebKit2/WKBase.h>
+#include "APIClient.h"
+#include "WKIconDatabase.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+namespace WebKit {
 
-WK_EXPORT CGImageRef WKIconDatabaseTryGetCGImageForURL(WKIconDatabaseRef iconDatabase, WKURLRef urlString);
+class APIObject;
+class WebIconDatabase;
+class WebURL;
 
-#ifdef __cplusplus
-}
-#endif
+class WebIconDatabaseClient : public APIClient<WKIconDatabaseClient> {
+public:
+    void didChangeIconForPageURL(WebIconDatabase*, WebURL*);
+    void didRemoveAllIcons(WebIconDatabase*);
+};
 
-#endif /* WKIconDatabaseCG_h */
+} // namespace WebKit
+
+#endif // WebIconDatabaseClient_h
