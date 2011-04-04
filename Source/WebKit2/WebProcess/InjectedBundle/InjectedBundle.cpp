@@ -120,6 +120,17 @@ void InjectedBundle::overrideAllowUniversalAccessFromFileURLsForTestRunner(WebPa
         (*iter)->settings()->setAllowUniversalAccessFromFileURLs(enabled);
 }
 
+void InjectedBundle::setAllowFileAccessFromFileURLs(WebPageGroupProxy* pageGroup, bool enabled)
+{
+    // Override the preference for all future pages.
+    WebPreferencesStore::overrideAllowFileAccessFromFileURLsForTestRunner(enabled);
+
+    // Change the setting for existing ones.
+    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
+    for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
+        (*iter)->settings()->setAllowFileAccessFromFileURLs(enabled);
+}
+
 void InjectedBundle::clearAllDatabases()
 {
     WebDatabaseManager::shared().deleteAllDatabases();

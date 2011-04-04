@@ -1439,13 +1439,6 @@ editing/style/iframe-onload-crash-win.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42691>
 fast/loader/stop-provisional-loads.html
 
-# WebKitTestRunner needs layoutTestController.setAllowFileAccessFromFileURLs
-# <https://bugs.webkit.org/show_bug.cgi?id=57572>
-fast/frames/location-change-no-file-access.html
-fast/xmlhttprequest/xmlhttprequest-no-file-access.html
-
-fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
-
 # WebKitTestRunner needs layoutTestController.setPrinting
 # <https://bugs.webkit.org/show_bug.cgi?id=42693>
 printing/compositing-layer-printing.html
@@ -1945,6 +1938,8 @@ fast/overflow/overflow_hidden.html
 fast/workers/storage/interrupt-database-sync.html
 fast/workers/storage/interrupt-database.html
 fast/workers/storage/use-same-database-in-page-and-workers.html
+fast/xmlhttprequest/xmlhttprequest-no-file-access.html
+fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 http/tests/appcache/different-https-origin-resource-main.html
 http/tests/appcache/fallback.html
 http/tests/cache/subresource-expiration-1.html

@@ -75,6 +75,7 @@ public:
     void setCloseRemainingWindowsWhenComplete(bool value) { m_shouldCloseExtraWindows = value; }
     void setXSSAuditorEnabled(bool);
     void setAllowUniversalAccessFromFileURLs(bool);
+    void setAllowFileAccessFromFileURLs(bool);
 
     // Special DOM functions.
     JSValueRef computedStyleIncludingVisitedInfo(JSValueRef element);

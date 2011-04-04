@@ -318,6 +318,11 @@ void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
     WKBundleOverrideAllowUniversalAccessFromFileURLsForTestRunner(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
 }
 
+void LayoutTestController::setAllowFileAccessFromFileURLs(bool enabled)
+{
+    WKBundleSetAllowFileAccessFromFileURLs(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+}
+
 unsigned LayoutTestController::windowCount()
 {
     return InjectedBundle::shared().pageCount();

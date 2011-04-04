@@ -133,6 +133,11 @@ void WKBundleOverrideAllowUniversalAccessFromFileURLsForTestRunner(WKBundleRef b
     toImpl(bundleRef)->overrideAllowUniversalAccessFromFileURLsForTestRunner(toImpl(pageGroupRef), enabled);
 }
 
+void WKBundleSetAllowFileAccessFromFileURLs(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
+{
+    toImpl(bundleRef)->setAllowFileAccessFromFileURLs(toImpl(pageGroupRef), enabled);
+}
+
 void WKBundleReportException(JSContextRef context, JSValueRef exception)
 {
     InjectedBundle::reportException(context, exception);

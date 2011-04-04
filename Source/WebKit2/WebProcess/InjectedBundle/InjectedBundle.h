@@ -91,6 +91,7 @@ public:
     void activateMacFontAscentHack();
     void overrideXSSAuditorEnabledForTestRunner(WebPageGroupProxy* pageGroup, bool enabled);
     void overrideAllowUniversalAccessFromFileURLsForTestRunner(WebPageGroupProxy*, bool);
+    void setAllowFileAccessFromFileURLs(WebPageGroupProxy*, bool);
 
     // UserContent API
     void addUserScript(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime, WebCore::UserContentInjectedFrames);

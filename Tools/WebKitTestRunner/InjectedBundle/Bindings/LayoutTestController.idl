@@ -47,6 +47,7 @@ module WTR {
         void setCloseRemainingWindowsWhenComplete(in boolean value);
         void setXSSAuditorEnabled(in boolean value);
         void setAllowUniversalAccessFromFileURLs(in boolean value);
+        void setAllowFileAccessFromFileURLs(in boolean value);
 
         // Special DOM functions.
         void clearBackForwardList();

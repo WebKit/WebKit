@@ -66,6 +66,7 @@ WK_EXPORT void WKBundleRemoveAllUserContent(WKBundleRef bundle, WKBundlePageGrou
 // Will make WebProcess ignore this preference until a preferences change notification, only for WebKitTestRunner use.
 WK_EXPORT void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleOverrideAllowUniversalAccessFromFileURLsForTestRunner(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
+WK_EXPORT void WKBundleSetAllowFileAccessFromFileURLs(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleClearAllDatabases(WKBundleRef bundle);
 WK_EXPORT void WKBundleSetDatabaseQuota(WKBundleRef bundle, uint64_t);
 
