@@ -250,7 +250,8 @@ void* fastMalloc(size_t n)
 #if ENABLE(WTF_MALLOC_VALIDATION)
     TryMallocReturnValue returnValue = tryFastMalloc(n);
     void* result;
-    returnValue.getValue(result);
+    if (!returnValue.getValue(result))
+        CRASH();
 #else
     void* result = malloc(n);
 #endif
@@ -296,7 +297,8 @@ void* fastCalloc(size_t n_elements, size_t element_size)
 #if ENABLE(WTF_MALLOC_VALIDATION)
     TryMallocReturnValue returnValue = tryFastCalloc(n_elements, element_size);
     void* result;
-    returnValue.getValue(result);
+    if (!returnValue.getValue(result))
+        CRASH();
 #else
     void* result = calloc(n_elements, element_size);
 #endif
@@ -363,7 +365,8 @@ void* fastRealloc(void* p, size_t n)
 #if ENABLE(WTF_MALLOC_VALIDATION)
     TryMallocReturnValue returnValue = tryFastRealloc(p, n);
     void* result;
-    returnValue.getValue(result);
+    if (!returnValue.getValue(result))
+        CRASH();
 #else
     void* result = realloc(p, n);
 #endif

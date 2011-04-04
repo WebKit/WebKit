@@ -1,5 +1,14 @@
 2011-04-04  Oliver Hunt  <oliver@apple.com>
 
+        Fix clang build.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::fastMalloc):
+        (WTF::fastCalloc):
+        (WTF::fastRealloc):
+
+2011-04-04  Oliver Hunt  <oliver@apple.com>
+
         Remove accidental change to Platform.h
 
         * wtf/Platform.h:
