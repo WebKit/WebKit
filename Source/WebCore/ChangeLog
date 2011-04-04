@@ -1,3 +1,10 @@
+2011-04-04  Adam Roben  <aroben@apple.com>
+
+        Attempted Mac build fix
+
+        * WebCore.xcodeproj/project.pbxproj: Marked PlatformCALayer.h and GraphicsLayerCA.h private
+        so that WebKit can #include them.
+
 2011-04-04  Malcolm MacLeod  <mmacleod@webmail.co.za>
 
         Reviewed by Kevin Ollivier.
