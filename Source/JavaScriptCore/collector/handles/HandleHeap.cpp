@@ -34,9 +34,6 @@ namespace JSC {
 HandleHeap::HandleHeap(JSGlobalData* globalData)
     : m_globalData(globalData)
     , m_nextToFinalize(0)
-#if !ASSERT_DISABLED
-    , m_handlingFinalizers(false)
-#endif
 {
     grow();
 }
@@ -65,10 +62,6 @@ void HandleHeap::updateAfterMark()
 
 void HandleHeap::clearWeakPointers()
 {
-#if !ASSERT_DISABLED
-    m_handlingFinalizers = true;
-#endif
-
     Node* end = m_weakList.end();
     for (Node* node = m_weakList.begin(); node != end; node = m_nextToFinalize) {
         m_nextToFinalize = node->next();
@@ -96,15 +89,14 @@ void HandleHeap::clearWeakPointers()
         SentinelLinkedList<Node>::remove(node);
         m_immediateList.push(node);
     }
-
-#if !ASSERT_DISABLED
-    m_handlingFinalizers = false;
-#endif
+    
+    m_nextToFinalize = 0;
 }
 
 void HandleHeap::writeBarrier(HandleSlot slot, const JSValue& value)
 {
-    ASSERT(!m_handlingFinalizers);
+    ASSERT(!m_nextToFinalize); // Forbid assignment to handles during the finalization phase, since it would violate many GC invariants.
+
     if (slot->isCell() == value.isCell() && !value == !*slot)
         return;
     Node* node = toNode(slot);
