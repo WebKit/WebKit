@@ -1,3 +1,21 @@
+2011-04-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fixed a weak-handle-related leak in RegisterFile
+        https://bugs.webkit.org/show_bug.cgi?id=57793
+
+        * interpreter/RegisterFile.cpp: Nixed leaky GlobalObjectNotifier.
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::GlobalObjectOwner::finalize):
+        (JSC::RegisterFile::RegisterFile): Replaced GlobalObjectNotifier with
+        a per-RegisterFile weak handle owner, which does not leak.
+
+        * runtime/WeakGCPtr.h:
+        (JSC::WeakGCPtr::set): Allow set() to take a context argument, since
+        RegisterFile now needs this. (Seems like it was an accidental omission
+        all along.)
+
 2011-04-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

@@ -72,24 +72,7 @@ void RegisterFile::releaseExcessCapacity()
 
 void RegisterFile::setGlobalObject(JSGlobalObject* globalObject)
 {
-    m_globalObject.set(globalObject->globalData(), globalObject, RegisterFile::globalObjectCollectedNotifier());
-}
-
-class GlobalObjectNotifier : public WeakHandleOwner {
-public:
-    void finalize(Handle<Unknown> value, void*)
-    {
-        JSGlobalObject* globalObject = asGlobalObject(value.get());
-        globalObject->globalData().interpreter->registerFile().setNumGlobals(0);
-    }
-};
-
-WeakHandleOwner* RegisterFile::globalObjectCollectedNotifier()
-{
-    // This will leak alas, but we only create one of them, and it doesn't
-    // take up any significant amount of space.
-    static GlobalObjectNotifier* notifier = new GlobalObjectNotifier;
-    return notifier;
+    m_globalObject.set(globalObject->globalData(), globalObject, &m_globalObjectOwner, this);
 }
 
 JSGlobalObject* RegisterFile::globalObject()

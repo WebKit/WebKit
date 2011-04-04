@@ -77,11 +77,11 @@ public:
         HandleHeap::heapFor(m_slot)->deallocate(m_slot);
     }
 
-    void set(JSGlobalData& globalData, ExternalType value, WeakHandleOwner* weakOwner)
+    void set(JSGlobalData& globalData, ExternalType value, WeakHandleOwner* weakOwner = 0, void* context = 0)
     {
         if (!this->m_slot) {
             this->m_slot = globalData.allocateGlobalHandle();
-            HandleHeap::heapFor(this->m_slot)->makeWeak(this->m_slot, weakOwner);
+            HandleHeap::heapFor(this->m_slot)->makeWeak(this->m_slot, weakOwner, context);
         }
         ASSERT(HandleHeap::heapFor(this->m_slot)->hasWeakOwner(this->m_slot, weakOwner));
         this->internalSet(value);

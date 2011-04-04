@@ -135,8 +135,6 @@ namespace JSC {
         static size_t committedByteCount();
         static void initializeThreading();
 
-        static WeakHandleOwner* globalObjectCollectedNotifier();
-
         Register* const * addressOfEnd() const
         {
             return &m_end;
@@ -155,6 +153,12 @@ namespace JSC {
         PageReservation m_reservation;
 
         WeakGCPtr<JSGlobalObject> m_globalObject; // The global object whose vars are currently stored in the register file.
+        class GlobalObjectOwner : public WeakHandleOwner {
+            virtual void finalize(Handle<Unknown>, void* context)
+            {
+                static_cast<RegisterFile*>(context)->setNumGlobals(0);
+            }
+        } m_globalObjectOwner;
     };
 
     inline RegisterFile::RegisterFile(JSGlobalData& globalData, size_t capacity, size_t maxGlobals)
@@ -163,7 +167,7 @@ namespace JSC {
         , m_start(0)
         , m_end(0)
         , m_max(0)
-        , m_globalObject(globalData, RegisterFile::globalObjectCollectedNotifier())
+        , m_globalObject(globalData, &m_globalObjectOwner, this)
     {
         ASSERT(maxGlobals && isPageAligned(maxGlobals));
         ASSERT(capacity && isPageAligned(capacity));
