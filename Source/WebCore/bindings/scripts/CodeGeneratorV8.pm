@@ -2348,6 +2348,7 @@ sub GenerateCallbackImplementation
     push(@implFixedHeader, GenerateImplementationContentHeader($dataNode));
          
     $implIncludes{"ScriptExecutionContext.h"} = 1;
+    $implIncludes{"V8Binding.h"} = 1;
     $implIncludes{"V8CustomVoidCallback.h"} = 1;
     $implIncludes{"V8Proxy.h"} = 1;
 
