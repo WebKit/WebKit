@@ -1,3 +1,9 @@
+2011-04-04  Adam Roben  <aroben@apple.com>
+
+        Attempted Mac build fix, part III
+
+        * WebCore.exp.in: Export PlatformCALayer::setGeometryFlipped. Also resorted some symbols.
+
 2011-04-04  Andy Estes  <aestes@apple.com>
 
         Fix the Mac build.
