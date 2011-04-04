@@ -42,13 +42,15 @@
 #include "Int32Array.h"
 #include "NotImplemented.h"
 #include "Uint8Array.h"
+#include <cstring>
+#include <wtf/UnusedParam.h>
+#include <wtf/text/CString.h>
 
 #if PLATFORM(MAC)
 #include <OpenGL/gl.h>
+#elif PLATFORM(GTK)
+#include "OpenGLShims.h"
 #endif
-
-#include <wtf/UnusedParam.h>
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -163,7 +165,7 @@ PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData()
 
 void GraphicsContext3D::reshape(int width, int height)
 {
-    if (!m_contextObj)
+    if (!platformGraphicsContext3D())
         return;
 
     if (width == m_currentWidth && height == m_currentHeight)

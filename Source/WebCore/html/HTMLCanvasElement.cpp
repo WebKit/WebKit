@@ -175,7 +175,7 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
 #if ENABLE(WEBGL)    
     Settings* settings = document()->settings();
     if (settings && settings->webGLEnabled()
-#if !PLATFORM(CHROMIUM)
+#if !PLATFORM(CHROMIUM) && !PLATFORM(GTK)
         && settings->acceleratedCompositingEnabled()
 #endif
         ) {

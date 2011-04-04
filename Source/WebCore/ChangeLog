@@ -1,3 +1,67 @@
+2011-04-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] WebGL support
+        https://bugs.webkit.org/show_bug.cgi?id=31517
+
+        Add WebGL support for the GTK+ bits of WebCore.
+
+        No new tests. This will be covered by the existing WebGL tests once
+        the bots are capable of running WebGL tests.
+
+        * GNUmakefile.am: Added new files required for WebGL support.
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext): Extend #ifdef to cover GTK+ as well, which does not
+        yet support accelerated compositing.
+        * platform/graphics/ANGLEWebKitBridge.h: Update to reflect the fact that ANGLE isn't compiled as
+        a framework for GTK+.
+        * platform/graphics/GraphicsContext3D.h:
+        (WebCore::GraphicsContext3D::platformTexture): Added a declaration of this method for Cairo.
+        (WebCore::GraphicsContext3D::paintsIntoCanvasBuffer): Ditto.
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp: Added.
+        (WebCore::GraphicsContext3D::getImageData): Added.
+        (WebCore::GraphicsContext3D::paintToCanvas): Added.
+        * platform/graphics/cairo/OpenGLShims.cpp: Added. This file controls loading of GL extension
+        functions dynamically. They have different names across the different vendors' GL implementations.
+        (WebCore::lookupOpenGLFunctionAddress): Added
+        (WebCore::openGLFunctionTable): Added
+        (WebCore::initializeOpenGLShims): Added
+        * platform/graphics/cairo/OpenGLShims.h: Added.
+        * platform/graphics/gtk/DrawingBufferGtk.cpp: Added.
+        (WebCore::DrawingBuffer::DrawingBuffer): Very generic implementation for Cairo.
+        (WebCore::DrawingBuffer::~DrawingBuffer): Ditto.
+        (WebCore::DrawingBuffer::didReset): Ditto.
+        (WebCore::DrawingBuffer::platformColorBuffer): Ditto.
+        * platform/graphics/gtk/GraphicsContext3DGtk.cpp: Added.
+        (WebCore::GraphicsContext3D::create): Initial implementation.
+        (WebCore::GraphicsContext3D::GraphicsContext3D): Ditto.
+        (WebCore::GraphicsContext3D::~GraphicsContext3D): Ditto.
+        (WebCore::GraphicsContext3D::makeContextCurrent): Ditto.
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D): Ditto.
+        (WebCore::GraphicsContext3D::isGLES2Compliant): Ditto.
+        * platform/graphics/gtk/GraphicsContext3DInternal.cpp: Added.
+        (sharedDisplay): Added this shared display which is required by some
+        display drivers.
+        (WebCore::activeGraphicsContexts): This method keeps track of all active GraphicsContext3D
+        contexts, in order to clean them up at exit. This prevents crashes on certain OpenGL drivers.
+        (WebCore::GraphicsContext3DInternal::addActiveGraphicsContext): Ditto.
+        (WebCore::GraphicsContext3DInternal::removeActiveGraphicsContext): Ditto.
+        (WebCore::GraphicsContext3DInternal::cleanupActiveContextsAtExit): Ditto.
+        (WebCore::GraphicsContext3DInternal::create): Figure out the best way to create an OpenGL
+        context given the current environment.
+        (WebCore::GraphicsContext3DInternal::createPbufferContext): Pbuffer context initializer.
+        (WebCore::GraphicsContext3DInternal::createPixmapContext): Pixmap context initializer.
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal): Initial implementation.
+        (WebCore::GraphicsContext3DInternal::~GraphicsContext3DInternal): Ditto.
+        (WebCore::GraphicsContext3DInternal::makeContextCurrent): Ditto.
+        * platform/graphics/gtk/GraphicsContext3DInternal.h: Added.
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp: Added generic implementation.
+        (WebCore::Extensions3DOpenGL::ensureEnabled): Ditto.
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::reshape): Test for the context using the public API rather than
+        the private bits that are specific to the Apple port.
+
 2011-04-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

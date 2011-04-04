@@ -1,3 +1,20 @@
+2011-04-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] WebGL support
+        https://bugs.webkit.org/show_bug.cgi?id=31517
+
+        Add support for toggling WebGL at runtime when it's enabled.
+
+        * webkit/webkitwebsettings.cpp: Add the enable-webgl property. When ENABLE_WEBGL
+        is not enabled, it's a no-op.
+        (webkit_web_settings_class_init): Update to support enable-webgl.
+        (webkit_web_settings_set_property): Ditto.
+        (webkit_web_settings_get_property): Ditto.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings): Ditto.
+
 2011-04-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

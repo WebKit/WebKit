@@ -3248,7 +3248,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
         enableXSSAuditor, enableSpatialNavigation, enableFrameFlattening, javascriptCanOpenWindows,
         javaScriptCanAccessClipboard, enableOfflineWebAppCache,
         enableUniversalAccessFromFileURI, enableFileAccessFromFileURI,
-        enableDOMPaste, tabKeyCyclesThroughElements,
+        enableDOMPaste, tabKeyCyclesThroughElements, enableWebGL,
         enableSiteSpecificQuirks, usePageCache, enableJavaApplet,
         enableHyperlinkAuditing, enableFullscreen, enableDNSPrefetching;
 
@@ -3292,6 +3292,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "spell-checking-languages", &defaultSpellCheckingLanguages,
                  "enable-fullscreen", &enableFullscreen,
                  "enable-dns-prefetching", &enableDNSPrefetching,
+                 "enable-webgl", &enableWebGL,
                  NULL);
 
     settings->setDefaultTextEncodingName(defaultEncoding);
@@ -3329,14 +3330,20 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     settings->setUsesPageCache(usePageCache);
     settings->setJavaEnabled(enableJavaApplet);
     settings->setHyperlinkAuditingEnabled(enableHyperlinkAuditing);
+    settings->setDNSPrefetchingEnabled(enableDNSPrefetching);
+
 #if ENABLE(FULLSCREEN_API)
     settings->setFullScreenEnabled(enableFullscreen);
 #endif
+
 #if ENABLE(SPELLCHECK)
     WebKit::EditorClient* client = static_cast<WebKit::EditorClient*>(core(webView)->editorClient());
     static_cast<WebKit::TextCheckerClientEnchant*>(client->textChecker())->updateSpellCheckingLanguage(defaultSpellCheckingLanguages);
 #endif
-    settings->setDNSPrefetchingEnabled(enableDNSPrefetching);
+
+#if ENABLE(WEBGL)
+    settings->setWebGLEnabled(enableWebGL);
+#endif
 
     Page* page = core(webView);
     if (page)
@@ -3454,12 +3461,19 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setJavaEnabled(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-hyperlink-auditing"))
         settings->setHyperlinkAuditingEnabled(g_value_get_boolean(&value));
+
 #if ENABLE(SPELLCHECK)
     else if (name == g_intern_string("spell-checking-languages")) {
         WebKit::EditorClient* client = static_cast<WebKit::EditorClient*>(core(webView)->editorClient());
         static_cast<WebKit::TextCheckerClientEnchant*>(client->textChecker())->updateSpellCheckingLanguage(g_value_get_string(&value));
     }
 #endif
+
+#if ENABLE(WEBGL)
+    else if (name == g_intern_string("enable-webgl"))
+        settings->setWebGLEnabled(g_value_get_boolean(&value));
+#endif
+
     else if (!g_object_class_find_property(G_OBJECT_GET_CLASS(webSettings), name))
         g_warning("Unexpected setting '%s'", name);
     g_value_unset(&value);

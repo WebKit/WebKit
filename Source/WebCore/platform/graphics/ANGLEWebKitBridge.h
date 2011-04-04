@@ -26,10 +26,14 @@
 #ifndef ANGLEWebKitBridge_h
 #define ANGLEWebKitBridge_h
 
-#include "ANGLE/ShaderLang.h"
 #include "PlatformString.h"
-
 #include <wtf/text/CString.h>
+
+#if !PLATFORM(GTK)
+#include "ANGLE/ShaderLang.h"
+#else
+#include "ShaderLang.h"
+#endif
 
 namespace WebCore {
 

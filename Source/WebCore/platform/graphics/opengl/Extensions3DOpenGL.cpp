@@ -35,6 +35,8 @@
 #if PLATFORM(MAC)
 #include "ANGLE/ShaderLang.h"
 #include <OpenGL/gl.h>
+#elif PLATFORM(GTK)
+#include "OpenGLShims.h"
 #endif
 
 namespace WebCore {
@@ -134,7 +136,7 @@ void Extensions3DOpenGL::renderbufferStorageMultisample(unsigned long target, un
 Platform3DObject Extensions3DOpenGL::createVertexArrayOES()
 {
     m_context->makeContextCurrent();
-#if defined GL_APPLE_vertex_array_object && GL_APPLE_vertex_array_object
+#if !PLATFORM(GTK) && defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
     GLuint array = 0;
     glGenVertexArraysAPPLE(1, &array);
     return array;
@@ -149,7 +151,7 @@ void Extensions3DOpenGL::deleteVertexArrayOES(Platform3DObject array)
         return;
     
     m_context->makeContextCurrent();
-#if defined GL_APPLE_vertex_array_object && GL_APPLE_vertex_array_object
+#if !PLATFORM(GTK) && defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
     glDeleteVertexArraysAPPLE(1, &array);
 #endif
 }
@@ -160,7 +162,7 @@ GC3Dboolean Extensions3DOpenGL::isVertexArrayOES(Platform3DObject array)
         return GL_FALSE;
     
     m_context->makeContextCurrent();
-#if defined GL_APPLE_vertex_array_object && GL_APPLE_vertex_array_object
+#if !PLATFORM(GTK) && defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
     return glIsVertexArrayAPPLE(array);
 #else
     return GL_FALSE;
@@ -173,7 +175,7 @@ void Extensions3DOpenGL::bindVertexArrayOES(Platform3DObject array)
         return;
 
     m_context->makeContextCurrent();
-#if defined GL_APPLE_vertex_array_object && GL_APPLE_vertex_array_object
+#if !PLATFORM(GTK) && defined(GL_APPLE_vertex_array_object) && GL_APPLE_vertex_array_object
     glBindVertexArrayAPPLE(array);
 #endif
 }

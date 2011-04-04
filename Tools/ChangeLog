@@ -1,3 +1,15 @@
+2011-04-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] WebGL support
+        https://bugs.webkit.org/show_bug.cgi?id=31517
+
+        Add support to the DRT for turning on WebGL when a layout tests requests it.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::overridePreference): Allow turning on WebGL from tests.
+
 2011-04-04  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Darin Adler.

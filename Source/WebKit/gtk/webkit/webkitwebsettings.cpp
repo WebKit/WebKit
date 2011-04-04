@@ -113,6 +113,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean enable_hyperlink_auditing;
     gboolean enable_fullscreen;
     gboolean enable_dns_prefetching;
+    gboolean enable_webgl;
 };
 
 #define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
@@ -166,7 +167,8 @@ enum {
     PROP_ENABLE_JAVA_APPLET,
     PROP_ENABLE_HYPERLINK_AUDITING,
     PROP_ENABLE_FULLSCREEN,
-    PROP_ENABLE_DNS_PREFETCHING
+    PROP_ENABLE_DNS_PREFETCHING,
+    PROP_ENABLE_WEBGL
 };
 
 // Create a default user agent string
@@ -912,6 +914,22 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          _("Whether the Mozilla style API should be enabled."),
                                                          FALSE,
                                                          flags));
+    /**
+    * WebKitWebSettings:enable-webgl:
+    *
+    * Enable or disable support for WebGL on pages. WebGL is an experimental
+    * proposal for allowing web pages to use OpenGL ES-like calls directly. The
+    * standard is currently a work-in-progress by the Khronos Group.
+    *
+    * Since: 1.3.14
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ENABLE_WEBGL,
+                                    g_param_spec_boolean("enable-webgl",
+                                                         _("Enable WebGL"),
+                                                         _("Whether WebGL content should be rendered"),
+                                                         FALSE,
+                                                         flags));
 
     /**
     * WebKitWebSettings:enable-dns-prefetching
@@ -1117,6 +1135,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_ENABLE_DNS_PREFETCHING:
         priv->enable_dns_prefetching = g_value_get_boolean(value);
         break;
+    case PROP_ENABLE_WEBGL:
+        priv->enable_webgl = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -1269,6 +1290,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
         break;
     case PROP_ENABLE_DNS_PREFETCHING:
         g_value_set_boolean(value, priv->enable_dns_prefetching);
+        break;
+    case PROP_ENABLE_WEBGL:
+        g_value_set_boolean(value, priv->enable_webgl);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
