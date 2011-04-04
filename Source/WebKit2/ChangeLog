@@ -1,3 +1,24 @@
+2011-04-01  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WK2: Reproducible crash when dragging out of or over Safari window.
+        https://bugs.webkit.org/show_bug.cgi?id=57654
+        <rdar://problem/9139755>
+        
+        AppKit does not retain the owner given to the pasteboard, therefore we
+        need to give the ownership of the retained pointer to NSPasteboard.
+        Also, dragImage will release the NSFilePromiseDragSource object, therefore
+        we retain it before calling dragImage to be able to control its lifetime.
+        
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteDragImage): Passing ownership
+        of the pointer to AppKit when providing the owner pointer to the NSPasteboard
+        object.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformDragEnded): Retaining the NSFilePromiseDragSource
+        since dragImage will release it.
+
 2011-03-30  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Dan Bernstein.

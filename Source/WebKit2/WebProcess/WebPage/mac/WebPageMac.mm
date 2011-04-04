@@ -682,6 +682,8 @@ void WebPage::setDragSource(NSObject *dragSource)
 
 void WebPage::platformDragEnded()
 {
+    // The draggedImage method releases its responder; we retain here to balance that.
+    [m_dragSource.get() retain];
     // The drag source we care about here is NSFilePromiseDragSource, which doesn't look at
     // the arguments. It's OK to just pass arbitrary constant values, so we just pass all zeroes.
     [m_dragSource.get() draggedImage:nil endedAt:NSZeroPoint operation:NSDragOperationNone];

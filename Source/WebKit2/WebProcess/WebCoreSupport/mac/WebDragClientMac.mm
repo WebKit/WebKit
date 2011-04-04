@@ -152,7 +152,7 @@ void WebDragClient::declareAndWriteDragImage(NSPasteboard *pasteboard, DOMElemen
     RetainPtr<WKPasteboardFilePromiseOwner> filePromiseOwner(AdoptNS, [(WKPasteboardFilePromiseOwner *)[WKPasteboardFilePromiseOwner alloc] initWithSource:pasteboardOwner.get()]);
     m_page->setDragSource(filePromiseOwner.get());
 
-    [pasteboard declareTypes:types.get() owner:pasteboardOwner.get()];    
+    [pasteboard declareTypes:types.get() owner:pasteboardOwner.leakRef()];    
 
     [pasteboard setPropertyList:[NSArray arrayWithObject:extension] forType:NSFilesPromisePboardType];
 
@@ -252,6 +252,7 @@ static CachedResourceClient* promisedDataClient()
 - (void)pasteboardChangedOwner:(NSPasteboard *)pasteboard
 {
     [self clearImage];
+    CFRelease(self); // Balanced by the leakRef that WebDragClient::declareAndWriteDragImage does when making this pasteboard owner.
 }
 
 static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension)
