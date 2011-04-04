@@ -42,15 +42,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (0,0) size 10x19: right
-                      RenderText {#text} at (10,0) size 54x19
-                        text run at (10,0) width 54: "summary"
+                      RenderText {#text} at (16,0) size 54x19
+                        text run at (16,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (0,0) size 10x19: down
-                      RenderText {#text} at (10,0) size 54x19
-                        text run at (10,0) width 54: "summary"
+                      RenderText {#text} at (16,0) size 54x19
+                        text run at (16,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
             RenderTableCell {TD} at (229,104) size 124x124 [border: (1px solid #000000)] [r=3 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
@@ -58,15 +58,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (0,0) size 10x19: right
-                      RenderText {#text} at (10,0) size 54x19
-                        text run at (10,0) width 54: "summary"
+                      RenderText {#text} at (16,0) size 54x19
+                        text run at (16,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (0,0) size 10x19: up
-                      RenderText {#text} at (10,0) size 54x19
-                        text run at (10,0) width 54: "summary"
+                      RenderText {#text} at (16,0) size 54x19
+                        text run at (16,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
             RenderTableCell {TD} at (355,104) size 124x124 [border: (1px solid #000000)] [r=3 c=4 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
@@ -74,15 +74,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,0) size 19x10: down
-                      RenderText {#text} at (0,10) size 19x54
-                        text run at (0,10) width 54: "summary"
+                      RenderText {#text} at (0,16) size 19x54
+                        text run at (0,16) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,0) size 19x10: right
-                      RenderText {#text} at (0,10) size 19x54
-                        text run at (0,10) width 54: "summary"
+                      RenderText {#text} at (0,16) size 19x54
+                        text run at (0,16) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
             RenderTableCell {TD} at (481,104) size 124x124 [border: (1px solid #000000)] [r=3 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
@@ -90,15 +90,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,0) size 19x10: down
-                      RenderText {#text} at (0,10) size 19x54
-                        text run at (0,10) width 54: "summary"
+                      RenderText {#text} at (0,16) size 19x54
+                        text run at (0,16) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,0) size 19x10: left
-                      RenderText {#text} at (0,10) size 19x54
-                        text run at (0,10) width 54: "summary"
+                      RenderText {#text} at (0,16) size 19x54
+                        text run at (0,16) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
           RenderTableRow {TR} at (0,230) size 607x124
             RenderTableCell {TH} at (74,276) size 27x32 [border: (1px inset #808080)] [r=4 c=1 rs=1 cs=1]
@@ -110,15 +110,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (110,0) size 10x19: left
-                      RenderText {#text} at (56,0) size 54x19
-                        text run at (56,0) width 54: "summary"
+                      RenderText {#text} at (50,0) size 54x19
+                        text run at (50,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (110,0) size 10x19: down
-                      RenderText {#text} at (56,0) size 54x19
-                        text run at (56,0) width 54: "summary"
+                      RenderText {#text} at (50,0) size 54x19
+                        text run at (50,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
             RenderTableCell {TD} at (229,230) size 124x124 [border: (1px solid #000000)] [r=4 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
@@ -126,15 +126,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (110,0) size 10x19: left
-                      RenderText {#text} at (56,0) size 54x19
-                        text run at (56,0) width 54: "summary"
+                      RenderText {#text} at (50,0) size 54x19
+                        text run at (50,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (110,0) size 10x19: up
-                      RenderText {#text} at (56,0) size 54x19
-                        text run at (56,0) width 54: "summary"
+                      RenderText {#text} at (50,0) size 54x19
+                        text run at (50,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
             RenderTableCell {TD} at (355,230) size 124x124 [border: (1px solid #000000)] [r=4 c=4 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
@@ -142,15 +142,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,110) size 19x10: up
-                      RenderText {#text} at (0,56) size 19x54
-                        text run at (0,56) width 54: "summary"
+                      RenderText {#text} at (0,50) size 19x54
+                        text run at (0,50) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,110) size 19x10: right
-                      RenderText {#text} at (0,56) size 19x54
-                        text run at (0,56) width 54: "summary"
+                      RenderText {#text} at (0,50) size 19x54
+                        text run at (0,50) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
             RenderTableCell {TD} at (481,230) size 124x124 [border: (1px solid #000000)] [r=4 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
@@ -158,15 +158,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,110) size 19x10: up
-                      RenderText {#text} at (0,56) size 19x54
-                        text run at (0,56) width 54: "summary"
+                      RenderText {#text} at (0,50) size 19x54
+                        text run at (0,50) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,110) size 19x10: left
-                      RenderText {#text} at (0,56) size 19x54
-                        text run at (0,56) width 54: "summary"
+                      RenderText {#text} at (0,50) size 19x54
+                        text run at (0,50) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
       RenderBlock (anonymous) at (0,358) size 769x20
         RenderBR {BR} at (0,0) size 0x19
@@ -209,15 +209,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (0,0) size 10x19: right
-                      RenderText {#text} at (10,0) size 54x19
-                        text run at (10,0) width 54: "summary"
+                      RenderText {#text} at (16,0) size 54x19
+                        text run at (16,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (0,0) size 10x19: down
-                      RenderText {#text} at (10,0) size 54x19
-                        text run at (10,0) width 54: "summary"
+                      RenderText {#text} at (16,0) size 54x19
+                        text run at (16,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
             RenderTableCell {TD} at (229,104) size 124x124 [border: (1px solid #000000)] [r=3 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
@@ -225,15 +225,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (0,0) size 10x19: right
-                      RenderText {#text} at (10,0) size 54x19
-                        text run at (10,0) width 54: "summary"
+                      RenderText {#text} at (16,0) size 54x19
+                        text run at (16,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (0,0) size 10x19: up
-                      RenderText {#text} at (10,0) size 54x19
-                        text run at (10,0) width 54: "summary"
+                      RenderText {#text} at (16,0) size 54x19
+                        text run at (16,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
             RenderTableCell {TD} at (355,104) size 124x124 [border: (1px solid #000000)] [r=3 c=4 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
@@ -241,15 +241,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,0) size 19x10: down
-                      RenderText {#text} at (0,10) size 19x54
-                        text run at (0,10) width 54: "summary"
+                      RenderText {#text} at (0,16) size 19x54
+                        text run at (0,16) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,0) size 19x10: right
-                      RenderText {#text} at (0,10) size 19x54
-                        text run at (0,10) width 54: "summary"
+                      RenderText {#text} at (0,16) size 19x54
+                        text run at (0,16) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
             RenderTableCell {TD} at (481,104) size 124x124 [border: (1px solid #000000)] [r=3 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
@@ -257,15 +257,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,0) size 19x10: down
-                      RenderText {#text} at (0,10) size 19x54
-                        text run at (0,10) width 54: "summary"
+                      RenderText {#text} at (0,16) size 19x54
+                        text run at (0,16) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,0) size 19x10: left
-                      RenderText {#text} at (0,10) size 19x54
-                        text run at (0,10) width 54: "summary"
+                      RenderText {#text} at (0,16) size 19x54
+                        text run at (0,16) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
           RenderTableRow {TR} at (0,230) size 607x124
             RenderTableCell {TH} at (74,276) size 27x32 [border: (1px inset #808080)] [r=4 c=1 rs=1 cs=1]
@@ -276,14 +276,14 @@ layer at (0,0) size 785x1508
                 RenderDetails {DETAILS} at (0,0) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (54,0) size 10x19: left
+                      RenderDetailsMarker at (60,0) size 10x19: left
                       RenderText {#text} at (0,0) size 54x19
                         text run at (0,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (54,0) size 10x19: down
+                      RenderDetailsMarker at (60,0) size 10x19: down
                       RenderText {#text} at (0,0) size 54x19
                         text run at (0,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
@@ -292,14 +292,14 @@ layer at (0,0) size 785x1508
                 RenderDetails {DETAILS} at (0,0) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (54,0) size 10x19: left
+                      RenderDetailsMarker at (60,0) size 10x19: left
                       RenderText {#text} at (0,0) size 54x19
                         text run at (0,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (54,0) size 10x19: up
+                      RenderDetailsMarker at (60,0) size 10x19: up
                       RenderText {#text} at (0,0) size 54x19
                         text run at (0,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
@@ -308,14 +308,14 @@ layer at (0,0) size 785x1508
                 RenderDetails {DETAILS} at (0,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,54) size 19x10: up
+                      RenderDetailsMarker at (0,60) size 19x10: up
                       RenderText {#text} at (0,0) size 19x54
                         text run at (0,0) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,54) size 19x10: right
+                      RenderDetailsMarker at (0,60) size 19x10: right
                       RenderText {#text} at (0,0) size 19x54
                         text run at (0,0) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
@@ -324,14 +324,14 @@ layer at (0,0) size 785x1508
                 RenderDetails {DETAILS} at (0,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,54) size 19x10: up
+                      RenderDetailsMarker at (0,60) size 19x10: up
                       RenderText {#text} at (0,0) size 19x54
                         text run at (0,0) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,54) size 19x10: left
+                      RenderDetailsMarker at (0,60) size 19x10: left
                       RenderText {#text} at (0,0) size 19x54
                         text run at (0,0) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
@@ -375,64 +375,64 @@ layer at (0,0) size 785x1508
                 RenderDetails {DETAILS} at (0,0) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (28,0) size 10x19: right
-                      RenderText {#text} at (38,0) size 54x19
-                        text run at (38,0) width 54: "summary"
+                      RenderDetailsMarker at (25,0) size 10x19: right
+                      RenderText {#text} at (41,0) size 54x19
+                        text run at (41,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (28,0) size 10x19: down
-                      RenderText {#text} at (38,0) size 54x19
-                        text run at (38,0) width 54: "summary"
+                      RenderDetailsMarker at (25,0) size 10x19: down
+                      RenderText {#text} at (41,0) size 54x19
+                        text run at (41,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
             RenderTableCell {TD} at (229,104) size 124x124 [border: (1px solid #000000)] [r=3 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderDetails {DETAILS} at (0,0) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (28,0) size 10x19: right
-                      RenderText {#text} at (38,0) size 54x19
-                        text run at (38,0) width 54: "summary"
+                      RenderDetailsMarker at (25,0) size 10x19: right
+                      RenderText {#text} at (41,0) size 54x19
+                        text run at (41,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (28,0) size 10x19: up
-                      RenderText {#text} at (38,0) size 54x19
-                        text run at (38,0) width 54: "summary"
+                      RenderDetailsMarker at (25,0) size 10x19: up
+                      RenderText {#text} at (41,0) size 54x19
+                        text run at (41,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
             RenderTableCell {TD} at (355,104) size 124x124 [border: (1px solid #000000)] [r=3 c=4 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderDetails {DETAILS} at (0,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,28) size 19x10: down
-                      RenderText {#text} at (0,38) size 19x54
-                        text run at (0,38) width 54: "summary"
+                      RenderDetailsMarker at (0,25) size 19x10: down
+                      RenderText {#text} at (0,41) size 19x54
+                        text run at (0,41) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,28) size 19x10: right
-                      RenderText {#text} at (0,38) size 19x54
-                        text run at (0,38) width 54: "summary"
+                      RenderDetailsMarker at (0,25) size 19x10: right
+                      RenderText {#text} at (0,41) size 19x54
+                        text run at (0,41) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
             RenderTableCell {TD} at (481,104) size 124x124 [border: (1px solid #000000)] [r=3 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderDetails {DETAILS} at (0,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,28) size 19x10: down
-                      RenderText {#text} at (0,38) size 19x54
-                        text run at (0,38) width 54: "summary"
+                      RenderDetailsMarker at (0,25) size 19x10: down
+                      RenderText {#text} at (0,41) size 19x54
+                        text run at (0,41) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,28) size 19x10: left
-                      RenderText {#text} at (0,38) size 19x54
-                        text run at (0,38) width 54: "summary"
+                      RenderDetailsMarker at (0,25) size 19x10: left
+                      RenderText {#text} at (0,41) size 19x54
+                        text run at (0,41) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
           RenderTableRow {TR} at (0,230) size 607x124
             RenderTableCell {TH} at (74,276) size 27x32 [border: (1px inset #808080)] [r=4 c=1 rs=1 cs=1]
@@ -443,64 +443,64 @@ layer at (0,0) size 785x1508
                 RenderDetails {DETAILS} at (0,0) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (82,0) size 10x19: left
-                      RenderText {#text} at (28,0) size 54x19
-                        text run at (28,0) width 54: "summary"
+                      RenderDetailsMarker at (85,0) size 10x19: left
+                      RenderText {#text} at (25,0) size 54x19
+                        text run at (25,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (82,0) size 10x19: down
-                      RenderText {#text} at (28,0) size 54x19
-                        text run at (28,0) width 54: "summary"
+                      RenderDetailsMarker at (85,0) size 10x19: down
+                      RenderText {#text} at (25,0) size 54x19
+                        text run at (25,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
             RenderTableCell {TD} at (229,230) size 124x124 [border: (1px solid #000000)] [r=4 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderDetails {DETAILS} at (0,0) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (82,0) size 10x19: left
-                      RenderText {#text} at (28,0) size 54x19
-                        text run at (28,0) width 54: "summary"
+                      RenderDetailsMarker at (85,0) size 10x19: left
+                      RenderText {#text} at (25,0) size 54x19
+                        text run at (25,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (82,0) size 10x19: up
-                      RenderText {#text} at (28,0) size 54x19
-                        text run at (28,0) width 54: "summary"
+                      RenderDetailsMarker at (85,0) size 10x19: up
+                      RenderText {#text} at (25,0) size 54x19
+                        text run at (25,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
             RenderTableCell {TD} at (355,230) size 124x124 [border: (1px solid #000000)] [r=4 c=4 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderDetails {DETAILS} at (0,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,82) size 19x10: up
-                      RenderText {#text} at (0,28) size 19x54
-                        text run at (0,28) width 54: "summary"
+                      RenderDetailsMarker at (0,85) size 19x10: up
+                      RenderText {#text} at (0,25) size 19x54
+                        text run at (0,25) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,82) size 19x10: right
-                      RenderText {#text} at (0,28) size 19x54
-                        text run at (0,28) width 54: "summary"
+                      RenderDetailsMarker at (0,85) size 19x10: right
+                      RenderText {#text} at (0,25) size 19x54
+                        text run at (0,25) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
             RenderTableCell {TD} at (481,230) size 124x124 [border: (1px solid #000000)] [r=4 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
                 RenderDetails {DETAILS} at (0,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,82) size 19x10: up
-                      RenderText {#text} at (0,28) size 19x54
-                        text run at (0,28) width 54: "summary"
+                      RenderDetailsMarker at (0,85) size 19x10: up
+                      RenderText {#text} at (0,25) size 19x54
+                        text run at (0,25) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,82) size 19x10: left
-                      RenderText {#text} at (0,28) size 19x54
-                        text run at (0,28) width 54: "summary"
+                      RenderDetailsMarker at (0,85) size 19x10: left
+                      RenderText {#text} at (0,25) size 19x54
+                        text run at (0,25) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
       RenderBlock (anonymous) at (0,1114) size 769x20
         RenderBR {BR} at (0,0) size 0x19
@@ -542,14 +542,14 @@ layer at (0,0) size 785x1508
                 RenderDetails {DETAILS} at (0,0) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (56,0) size 10x19: right
+                      RenderDetailsMarker at (50,0) size 10x19: right
                       RenderText {#text} at (66,0) size 54x19
                         text run at (66,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (56,0) size 10x19: down
+                      RenderDetailsMarker at (50,0) size 10x19: down
                       RenderText {#text} at (66,0) size 54x19
                         text run at (66,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
@@ -558,14 +558,14 @@ layer at (0,0) size 785x1508
                 RenderDetails {DETAILS} at (0,0) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (56,0) size 10x19: right
+                      RenderDetailsMarker at (50,0) size 10x19: right
                       RenderText {#text} at (66,0) size 54x19
                         text run at (66,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
-                      RenderDetailsMarker at (56,0) size 10x19: up
+                      RenderDetailsMarker at (50,0) size 10x19: up
                       RenderText {#text} at (66,0) size 54x19
                         text run at (66,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
@@ -574,14 +574,14 @@ layer at (0,0) size 785x1508
                 RenderDetails {DETAILS} at (0,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,56) size 19x10: down
+                      RenderDetailsMarker at (0,50) size 19x10: down
                       RenderText {#text} at (0,66) size 19x54
                         text run at (0,66) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,56) size 19x10: right
+                      RenderDetailsMarker at (0,50) size 19x10: right
                       RenderText {#text} at (0,66) size 19x54
                         text run at (0,66) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
@@ -590,14 +590,14 @@ layer at (0,0) size 785x1508
                 RenderDetails {DETAILS} at (0,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,56) size 19x10: down
+                      RenderDetailsMarker at (0,50) size 19x10: down
                       RenderText {#text} at (0,66) size 19x54
                         text run at (0,66) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
-                      RenderDetailsMarker at (0,56) size 19x10: left
+                      RenderDetailsMarker at (0,50) size 19x10: left
                       RenderText {#text} at (0,66) size 19x54
                         text run at (0,66) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
@@ -611,15 +611,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (110,0) size 10x19: left
-                      RenderText {#text} at (56,0) size 54x19
-                        text run at (56,0) width 54: "summary"
+                      RenderText {#text} at (50,0) size 54x19
+                        text run at (50,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (110,0) size 10x19: down
-                      RenderText {#text} at (56,0) size 54x19
-                        text run at (56,0) width 54: "summary"
+                      RenderText {#text} at (50,0) size 54x19
+                        text run at (50,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
             RenderTableCell {TD} at (229,230) size 124x124 [border: (1px solid #000000)] [r=4 c=3 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
@@ -627,15 +627,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (110,0) size 10x19: left
-                      RenderText {#text} at (56,0) size 54x19
-                        text run at (56,0) width 54: "summary"
+                      RenderText {#text} at (50,0) size 54x19
+                        text run at (50,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
                 RenderDetails {DETAILS} at (0,20) size 120x20
                   RenderBlock (anonymous) at (0,0) size 120x20
                     RenderSummary {SUMMARY} at (0,0) size 120x20
                       RenderDetailsMarker at (110,0) size 10x19: up
-                      RenderText {#text} at (56,0) size 54x19
-                        text run at (56,0) width 54: "summary"
+                      RenderText {#text} at (50,0) size 54x19
+                        text run at (50,0) width 54: "summary"
                   RenderBlock (anonymous) at (0,20) size 120x0
             RenderTableCell {TD} at (355,230) size 124x124 [border: (1px solid #000000)] [r=4 c=4 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
@@ -643,15 +643,15 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,110) size 19x10: up
-                      RenderText {#text} at (0,56) size 19x54
-                        text run at (0,56) width 54: "summary"
+                      RenderText {#text} at (0,50) size 19x54
+                        text run at (0,50) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,110) size 19x10: right
-                      RenderText {#text} at (0,56) size 19x54
-                        text run at (0,56) width 54: "summary"
+                      RenderText {#text} at (0,50) size 19x54
+                        text run at (0,50) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
             RenderTableCell {TD} at (481,230) size 124x124 [border: (1px solid #000000)] [r=4 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 120x120
@@ -659,13 +659,13 @@ layer at (0,0) size 785x1508
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,110) size 19x10: up
-                      RenderText {#text} at (0,56) size 19x54
-                        text run at (0,56) width 54: "summary"
+                      RenderText {#text} at (0,50) size 19x54
+                        text run at (0,50) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
                 RenderDetails {DETAILS} at (20,0) size 20x120
                   RenderBlock (anonymous) at (0,0) size 20x120
                     RenderSummary {SUMMARY} at (0,0) size 20x120
                       RenderDetailsMarker at (0,110) size 19x10: left
-                      RenderText {#text} at (0,56) size 19x54
-                        text run at (0,56) width 54: "summary"
+                      RenderText {#text} at (0,50) size 19x54
+                        text run at (0,50) width 54: "summary"
                   RenderBlock (anonymous) at (20,0) size 0x120
