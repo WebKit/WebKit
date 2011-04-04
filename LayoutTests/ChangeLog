@@ -1,3 +1,27 @@
+2011-04-04  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows 7 WebKit2 Release Tests] 6 tests failing since being removed from the mac-wk2
+        skipped list in r82625.
+        https://bugs.webkit.org/show_bug.cgi?id=57705
+
+        Unreviewed, addd win-wk2 expected results for the tests in order to get the bots green.
+
+        * platform/win-wk2/editing: Added.
+        * platform/win-wk2/editing/selection: Added.
+        * platform/win-wk2/editing/selection/after-line-break-expected.txt: Added.
+        * platform/win-wk2/editing/selection/caret-ltr-right-expected.checksum: Added.
+        * platform/win-wk2/editing/selection/caret-ltr-right-expected.png: Added.
+        * platform/win-wk2/editing/selection/caret-ltr-right-expected.txt: Added.
+        * platform/win-wk2/editing/selection/caret-rtl-2-left-expected.checksum: Added.
+        * platform/win-wk2/editing/selection/caret-rtl-2-left-expected.png: Added.
+        * platform/win-wk2/editing/selection/caret-rtl-2-left-expected.txt: Added.
+        * platform/win-wk2/editing/selection/drag-text-delay-expected.txt: Added.
+        * platform/win-wk2/fast/repaint: Added.
+        * platform/win-wk2/fast/repaint/japanese-rl-selection-clear-expected.txt: Added.
+        Apparently the pixel results are similar enough to the win expected pixel results that no
+        special pixel results need to be added for win-wk2.
+        * platform/win-wk2/plugins/resize-from-plugin-expected.txt: Added.
+
 2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, mark filesystem-reference.html as CRASH PASS on chromium.
