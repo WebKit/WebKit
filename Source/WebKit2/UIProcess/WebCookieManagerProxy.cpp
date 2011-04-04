@@ -100,30 +100,25 @@ void WebCookieManagerProxy::didGetHostnamesWithCookies(const Vector<String>& hos
 void WebCookieManagerProxy::deleteCookiesForHostname(const String& hostname)
 {
     ASSERT(m_webContext);
-    m_webContext->relaunchProcessIfNecessary();
-    m_webContext->process()->send(Messages::WebCookieManager::DeleteCookiesForHostname(hostname), 0);
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::DeleteCookiesForHostname(hostname));
 }
 
 void WebCookieManagerProxy::deleteAllCookies()
 {
     ASSERT(m_webContext);
-    m_webContext->relaunchProcessIfNecessary();
-    m_webContext->process()->send(Messages::WebCookieManager::DeleteAllCookies(), 0);
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::DeleteAllCookies());
 }
 
 void WebCookieManagerProxy::startObservingCookieChanges()
 {
     ASSERT(m_webContext);
-    m_webContext->relaunchProcessIfNecessary();
-    m_webContext->process()->send(Messages::WebCookieManager::StartObservingCookieChanges(), 0);
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::StartObservingCookieChanges());
 }
 
 void WebCookieManagerProxy::stopObservingCookieChanges()
 {
     ASSERT(m_webContext);
-    if (!m_webContext->hasValidProcess())
-        return;
-    m_webContext->process()->send(Messages::WebCookieManager::StopObservingCookieChanges(), 0);
+    m_webContext->sendToAllProcesses(Messages::WebCookieManager::StopObservingCookieChanges());
 }
 
 void WebCookieManagerProxy::cookiesDidChange()
@@ -134,11 +129,11 @@ void WebCookieManagerProxy::cookiesDidChange()
 void WebCookieManagerProxy::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
     ASSERT(m_webContext);
-    m_webContext->relaunchProcessIfNecessary();
 #if PLATFORM(MAC)
     persistHTTPCookieAcceptPolicy(policy);
 #endif
-    m_webContext->process()->send(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy), 0);
+
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebCookieManager::SetHTTPCookieAcceptPolicy(policy));
 }
 
 void WebCookieManagerProxy::getHTTPCookieAcceptPolicy(PassRefPtr<HTTPCookieAcceptPolicyCallback> prpCallback)

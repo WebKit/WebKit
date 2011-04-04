@@ -75,8 +75,10 @@ public:
 
     ProcessModel processModel() const { return m_processModel; }
     WebProcessProxy* process() const { return m_process.get(); }
-    bool hasValidProcess() const { return m_process && m_process->isValid(); }
 
+    template<typename U> bool sendToAllProcesses(const U& message);
+    template<typename U> bool sendToAllProcessesRelaunchingThemIfNecessary(const U& message);
+    
     void processDidFinishLaunching(WebProcessProxy*);
 
     // Disconnect the process from the context.
@@ -205,7 +207,7 @@ private:
 
     String localStorageDirectory() const;
     String platformDefaultLocalStorageDirectory() const;
-    
+
     ProcessModel m_processModel;
     
     // FIXME: In the future, this should be one or more WebProcessProxies.
@@ -264,6 +266,21 @@ private:
     String m_overrideIconDatabasePath;
     String m_overrideLocalStorageDirectory;
 };
+
+template<typename U> inline bool WebContext::sendToAllProcesses(const U& message)
+{
+    if (!m_process || !m_process->canSendMessage())
+        return false;
+
+    return m_process->send(message, 0);
+}
+
+template<typename U> bool WebContext::sendToAllProcessesRelaunchingThemIfNecessary(const U& message)
+{
+    relaunchProcessIfNecessary();
+
+    return m_process->send(message, 0);
+}
 
 } // namespace WebKit
 

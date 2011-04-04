@@ -1,3 +1,50 @@
+2011-04-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Make it easier to send a message to all processes in a context
+        https://bugs.webkit.org/show_bug.cgi?id=57776
+
+        Add WebContext::sendToAllProcesses and WebContext::sendToAllProcessesRelaunchingThemIfNecessary
+        as a first step towards getting rid of WebContext::process() and getting rid of a class of crashers
+        where WebContext::process() is null.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::initializeHistoryClient):
+        (WebKit::WebContext::languageChanged):
+        (WebKit::WebContext::setAlwaysUsesComplexTextCodePath):
+        (WebKit::WebContext::registerURLSchemeAsEmptyDocument):
+        (WebKit::WebContext::registerURLSchemeAsSecure):
+        (WebKit::WebContext::setDomainRelaxationForbiddenForURLScheme):
+        (WebKit::WebContext::setCacheModel):
+        (WebKit::WebContext::setDefaultRequestTimeoutInterval):
+        (WebKit::WebContext::clearResourceCaches):
+        (WebKit::WebContext::clearApplicationCache):
+        (WebKit::WebContext::setEnhancedAccessibility):
+        (WebKit::WebContext::startMemorySampler):
+        Use sendToAllProcesses.
+
+        (WebKit::WebContext::stopMemorySampler):
+        Use sendToAllProcesses. This is a slight policy change where we now create a sandbox extension even
+        if there's no process around. Since this is a debugging tool it seems OK to do this.
+
+        * UIProcess/WebContext.h:
+        Get rid of hasValidProcess.
+
+        (WebKit::WebContext::sendToAllProcesses):
+        If we have a process and we can send messages to it, then do so.
+
+        (WebKit::WebContext::sendToAllProcessesRelaunchingThemIfNecessary):
+        Relaunch the web process and send the message.
+
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::deleteCookiesForHostname):
+        (WebKit::WebCookieManagerProxy::deleteAllCookies):
+        (WebKit::WebCookieManagerProxy::startObservingCookieChanges):
+        (WebKit::WebCookieManagerProxy::stopObservingCookieChanges):
+        (WebKit::WebCookieManagerProxy::setHTTPCookieAcceptPolicy):
+        Use sendToAllProcesses and sendToAllProcessesRelaunchingThemIfNecessary.
+
 2011-04-04  Adam Roben  <aroben@apple.com>
 
         Move a teensy bit of non-Mac-specific code up to LayerTreeHostCA

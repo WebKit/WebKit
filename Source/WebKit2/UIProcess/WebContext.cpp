@@ -193,11 +193,8 @@ void WebContext::initializeInjectedBundleClient(const WKContextInjectedBundleCli
 void WebContext::initializeHistoryClient(const WKContextHistoryClient* client)
 {
     m_historyClient.initialize(client);
-    
-    if (!hasValidProcess())
-        return;
-        
-    m_process->send(Messages::WebProcess::SetShouldTrackVisitedLinks(m_historyClient.shouldTrackVisitedLinks()), 0);
+
+    sendToAllProcesses(Messages::WebProcess::SetShouldTrackVisitedLinks(m_historyClient.shouldTrackVisitedLinks()));
 }
 
 void WebContext::initializeDownloadClient(const WKContextDownloadClient* client)
@@ -212,10 +209,7 @@ void WebContext::languageChanged(void* context)
 
 void WebContext::languageChanged()
 {
-    if (!hasValidProcess())
-        return;
-
-    m_process->send(Messages::WebProcess::LanguageChanged(defaultLanguage()), 0);
+    sendToAllProcesses(Messages::WebProcess::LanguageChanged(defaultLanguage()));
 }
 
 void WebContext::ensureWebProcess()
@@ -463,58 +457,36 @@ void WebContext::setAdditionalPluginsDirectory(const String& directory)
 void WebContext::setAlwaysUsesComplexTextCodePath(bool alwaysUseComplexText)
 {
     m_alwaysUsesComplexTextCodePath = alwaysUseComplexText;
-
-    if (!hasValidProcess())
-        return;
-
-    m_process->send(Messages::WebProcess::SetAlwaysUsesComplexTextCodePath(alwaysUseComplexText), 0);
+    sendToAllProcesses(Messages::WebProcess::SetAlwaysUsesComplexTextCodePath(alwaysUseComplexText));
 }
 
 void WebContext::registerURLSchemeAsEmptyDocument(const String& urlScheme)
 {
     m_schemesToRegisterAsEmptyDocument.add(urlScheme);
-
-    if (!hasValidProcess())
-        return;
-
-    m_process->send(Messages::WebProcess::RegisterURLSchemeAsEmptyDocument(urlScheme), 0);
+    sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsEmptyDocument(urlScheme));
 }
 
 void WebContext::registerURLSchemeAsSecure(const String& urlScheme)
 {
     m_schemesToRegisterAsSecure.add(urlScheme);
-
-    if (!hasValidProcess())
-        return;
-
-    m_process->send(Messages::WebProcess::RegisterURLSchemeAsSecure(urlScheme), 0);
+    sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsSecure(urlScheme));
 }
 
 void WebContext::setDomainRelaxationForbiddenForURLScheme(const String& urlScheme)
 {
     m_schemesToSetDomainRelaxationForbiddenFor.add(urlScheme);
-
-    if (!hasValidProcess())
-        return;
-
-    m_process->send(Messages::WebProcess::SetDomainRelaxationForbiddenForURLScheme(urlScheme), 0);
+    sendToAllProcesses(Messages::WebProcess::SetDomainRelaxationForbiddenForURLScheme(urlScheme));
 }
 
 void WebContext::setCacheModel(CacheModel cacheModel)
 {
     m_cacheModel = cacheModel;
-
-    if (!hasValidProcess())
-        return;
-    m_process->send(Messages::WebProcess::SetCacheModel(static_cast<uint32_t>(m_cacheModel)), 0);
+    sendToAllProcesses(Messages::WebProcess::SetCacheModel(static_cast<uint32_t>(m_cacheModel)));
 }
 
 void WebContext::setDefaultRequestTimeoutInterval(double timeoutInterval)
 {
-    if (!hasValidProcess())
-        return;
-
-    m_process->send(Messages::WebProcess::SetDefaultRequestTimeoutInterval(timeoutInterval), 0);
+    sendToAllProcesses(Messages::WebProcess::SetDefaultRequestTimeoutInterval(timeoutInterval));
 }
 
 void WebContext::addVisitedLink(const String& visitedURL)
@@ -702,10 +674,8 @@ CoreIPC::SyncReplyMode WebContext::didReceiveSyncMessage(CoreIPC::Connection* co
 
 void WebContext::clearResourceCaches(ResourceCachesToClear cachesToClear)
 {
-    if (hasValidProcess()) {
-        m_process->send(Messages::WebProcess::ClearResourceCaches(cachesToClear), 0);
+    if (sendToAllProcesses(Messages::WebProcess::ClearResourceCaches(cachesToClear)))
         return;
-    }
 
     if (cachesToClear == InMemoryResourceCachesOnly)
         return;
@@ -718,23 +688,18 @@ void WebContext::clearResourceCaches(ResourceCachesToClear cachesToClear)
 
 void WebContext::clearApplicationCache()
 {
-    if (!hasValidProcess()) {
-        // FIXME <rdar://problem/8727879>: Setting this flag ensures that the next time a WebProcess is created, this request to
-        // clear the application cache will be respected. But if the user quits the application before another WebProcess is created,
-        // their request will be ignored.
-        m_clearApplicationCacheForNewWebProcess = true;
+    if (sendToAllProcesses(Messages::WebProcess::ClearApplicationCache()))
         return;
-    }
 
-    m_process->send(Messages::WebProcess::ClearApplicationCache(), 0);
+    // FIXME <rdar://problem/8727879>: Setting this flag ensures that the next time a WebProcess is created, this request to
+    // clear the application cache will be respected. But if the user quits the application before another WebProcess is created,
+    // their request will be ignored.
+    m_clearApplicationCacheForNewWebProcess = true;
 }
    
 void WebContext::setEnhancedAccessibility(bool flag)
 {
-    if (!hasValidProcess())
-        return;
-    
-    m_process->send(Messages::WebProcess::SetEnhancedAccessibility(flag), 0);
+    sendToAllProcesses(Messages::WebProcess::SetEnhancedAccessibility(flag));
 }
     
 void WebContext::startMemorySampler(const double interval)
@@ -748,16 +713,13 @@ void WebContext::startMemorySampler(const double interval)
     WebMemorySampler::shared()->start(interval);
 #endif
     
-    if (!hasValidProcess())
-        return;
-    
     // For WebProcess
     SandboxExtension::Handle sampleLogSandboxHandle;    
     double now = WTF::currentTime();
     String sampleLogFilePath = String::format("WebProcess%llu", static_cast<uint64_t>(now));
     sampleLogFilePath = SandboxExtension::createHandleForTemporaryFile(sampleLogFilePath, SandboxExtension::WriteOnly, sampleLogSandboxHandle);
     
-    m_process->send(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, interval), 0);
+    sendToAllProcesses(Messages::WebProcess::StartMemorySampler(sampleLogSandboxHandle, sampleLogFilePath, interval));
 }
 
 void WebContext::stopMemorySampler()
@@ -769,11 +731,8 @@ void WebContext::stopMemorySampler()
 #if ENABLE(MEMORY_SAMPLER)
     WebMemorySampler::shared()->stop();
 #endif
-    
-    if (!hasValidProcess())
-        return;
-    
-    m_process->send(Messages::WebProcess::StopMemorySampler(), 0);
+
+    sendToAllProcesses(Messages::WebProcess::StopMemorySampler());
 }
 
 String WebContext::databaseDirectory() const
