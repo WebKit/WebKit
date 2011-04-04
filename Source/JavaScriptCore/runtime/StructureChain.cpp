@@ -32,7 +32,8 @@
 
 namespace JSC {
 
-StructureChain::StructureChain(Structure* head)
+StructureChain::StructureChain(NonNullPassRefPtr<Structure> structure, Structure* head)
+    : JSCell(structure.releaseRef())
 {
     size_t size = 0;
     for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
@@ -44,6 +45,17 @@ StructureChain::StructureChain(Structure* head)
     for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
         m_vector[i++] = current;
     m_vector[i] = 0;
+}
+
+StructureChain::~StructureChain()
+{
+}
+
+void StructureChain::markChildren(MarkStack& markStack)
+{
+    size_t i = 0;
+    while (m_vector[i])
+        m_vector[i++]->markAggregate(markStack);
 }
 
 } // namespace JSC

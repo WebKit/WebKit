@@ -3537,10 +3537,9 @@ skip_id_custom_self:
            to ptr, using pointer equality.
          */
         int src = vPC[1].u.operand;
-        JSValue ptr = JSValue(vPC[2].u.jsCell);
         int target = vPC[3].u.operand;
         JSValue srcValue = callFrame->r(src).jsValue();
-        if (srcValue != ptr) {
+        if (srcValue != vPC[2].u.jsCell.get()) {
             vPC += target;
             NEXT_INSTRUCTION();
         }

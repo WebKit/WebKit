@@ -367,7 +367,7 @@ PassRefPtr<Structure> Structure::addPropertyTransitionToExistingStructure(Struct
     return 0;
 }
 
-PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset)
+PassRefPtr<Structure> Structure::addPropertyTransition(JSGlobalData& globalData, Structure* structure, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset)
 {
     // If we have a specific function, we may have got to this point if there is
     // already a transition with the correct property name and attributes, but
@@ -399,7 +399,7 @@ PassRefPtr<Structure> Structure::addPropertyTransition(Structure* structure, con
 
     RefPtr<Structure> transition = create(structure);
 
-    transition->m_cachedPrototypeChain = structure->m_cachedPrototypeChain;
+    transition->m_cachedPrototypeChain.set(globalData, structure->m_cachedPrototypeChain.get(), 0);
     transition->m_previous = structure;
     transition->m_nameInPrevious = propertyName.impl();
     transition->m_attributesInPrevious = attributes;

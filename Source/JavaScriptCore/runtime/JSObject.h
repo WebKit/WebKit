@@ -645,7 +645,7 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
     if (!isExtensible())
         return false;
 
-    RefPtr<Structure> structure = Structure::addPropertyTransition(m_structure, propertyName, attributes, specificFunction, offset);
+    RefPtr<Structure> structure = Structure::addPropertyTransition(globalData, m_structure, propertyName, attributes, specificFunction, offset);
 
     if (currentCapacity != structure->propertyStorageCapacity())
         allocatePropertyStorage(currentCapacity, structure->propertyStorageCapacity());
@@ -815,7 +815,7 @@ ALWAYS_INLINE void JSObject::markChildrenDirect(MarkStack& markStack)
 {
     JSCell::markChildren(markStack);
 
-    markStack.append(m_structure->storedPrototypeSlot());
+    m_structure->markAggregate(markStack);
     PropertyStorage storage = propertyStorage();
     size_t storageSize = m_structure->propertyStorageSize();
     markStack.appendValues(storage, storageSize);

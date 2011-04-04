@@ -77,15 +77,14 @@ namespace JSC {
             prototypeStructure->ref();
         }
 
-        void initGetByIdChain(Structure* baseObjectStructure, StructureChain* chain)
+        void initGetByIdChain(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure, StructureChain* chain)
         {
             accessType = access_get_by_id_chain;
 
             u.getByIdChain.baseObjectStructure = baseObjectStructure;
             baseObjectStructure->ref();
 
-            u.getByIdChain.chain = chain;
-            chain->ref();
+            u.getByIdChain.chain.set(globalData, owner, chain);
         }
 
         void initGetByIdSelfList(PolymorphicAccessStructureList* structureList, int listSize)
@@ -106,7 +105,7 @@ namespace JSC {
 
         // PutById*
 
-        void initPutByIdTransition(Structure* previousStructure, Structure* structure, StructureChain* chain)
+        void initPutByIdTransition(JSGlobalData& globalData, JSCell* owner, Structure* previousStructure, Structure* structure, StructureChain* chain)
         {
             accessType = access_put_by_id_transition;
 
@@ -116,8 +115,7 @@ namespace JSC {
             u.putByIdTransition.structure = structure;
             structure->ref();
 
-            u.putByIdTransition.chain = chain;
-            chain->ref();
+            u.putByIdTransition.chain.set(globalData, owner, chain);
         }
 
         void initPutByIdReplace(Structure* baseObjectStructure)
@@ -129,6 +127,7 @@ namespace JSC {
         }
 
         void deref();
+        void markAggregate(MarkStack&);
 
         bool seenOnce()
         {
@@ -153,7 +152,7 @@ namespace JSC {
             } getByIdProto;
             struct {
                 Structure* baseObjectStructure;
-                StructureChain* chain;
+                WriteBarrierBase<StructureChain> chain;
             } getByIdChain;
             struct {
                 PolymorphicAccessStructureList* structureList;
@@ -166,7 +165,7 @@ namespace JSC {
             struct {
                 Structure* previousStructure;
                 Structure* structure;
-                StructureChain* chain;
+                WriteBarrierBase<StructureChain> chain;
             } putByIdTransition;
             struct {
                 Structure* baseObjectStructure;

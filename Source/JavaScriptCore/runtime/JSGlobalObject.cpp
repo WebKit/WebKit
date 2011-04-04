@@ -86,8 +86,8 @@ template <typename T> static inline void markIfNeeded(MarkStack& markStack, Writ
 
 static inline void markIfNeeded(MarkStack& markStack, const RefPtr<Structure>& s)
 {
-    if (s && s->storedPrototype())
-        markStack.append(s->storedPrototypeSlot());
+    if (s)
+        s->markAggregate(markStack);
 }
 
 JSGlobalObject::~JSGlobalObject()

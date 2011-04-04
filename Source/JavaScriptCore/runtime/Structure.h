@@ -32,7 +32,6 @@
 #include "PropertyMapHashTable.h"
 #include "PropertyNameArray.h"
 #include "Protect.h"
-#include "StructureChain.h"
 #include "StructureTransitionTable.h"
 #include "JSTypeInfo.h"
 #include "UString.h"
@@ -46,6 +45,7 @@ namespace JSC {
     class MarkStack;
     class PropertyNameArray;
     class PropertyNameArrayData;
+    class StructureChain;
 
     struct ClassInfo;
 
@@ -73,7 +73,7 @@ namespace JSC {
 
         static void dumpStatistics();
 
-        static PassRefPtr<Structure> addPropertyTransition(Structure*, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset);
+        static PassRefPtr<Structure> addPropertyTransition(JSGlobalData&, Structure*, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset);
         static PassRefPtr<Structure> addPropertyTransitionToExistingStructure(Structure*, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset);
         static PassRefPtr<Structure> removePropertyTransition(Structure*, const Identifier& propertyName, size_t& offset);
         static PassRefPtr<Structure> changePrototypeTransition(Structure*, JSValue prototype);
@@ -104,9 +104,13 @@ namespace JSC {
         const TypeInfo& typeInfo() const { return m_typeInfo; }
 
         JSValue storedPrototype() const { return m_prototype.get(); }
-        DeprecatedPtr<Unknown>* storedPrototypeSlot() { return &m_prototype; }
         JSValue prototypeForLookup(ExecState*) const;
         StructureChain* prototypeChain(ExecState*) const;
+        void markAggregate(MarkStack& markStack)
+        {
+            if (m_prototype)
+                markStack.append(&m_prototype);
+        }
 
         Structure* previousID() const { return m_previous.get(); }
 
@@ -210,7 +214,7 @@ namespace JSC {
         TypeInfo m_typeInfo;
 
         DeprecatedPtr<Unknown> m_prototype;
-        mutable RefPtr<StructureChain> m_cachedPrototypeChain;
+        mutable WeakGCPtr<StructureChain> m_cachedPrototypeChain;
 
         RefPtr<Structure> m_previous;
         RefPtr<StringImpl> m_nameInPrevious;

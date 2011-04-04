@@ -78,7 +78,7 @@ void MarkedBlock::sweep()
         if (!cell->isZombie()) {
             const ClassInfo* info = cell->classInfo();
             cell->~JSCell();
-            new (cell) JSZombie(info, JSZombie::leakedZombieStructure());
+            new (cell) JSZombie(info, JSZombie::leakedZombieStructure(*m_heap->globalData()));
             m_marks.set(i);
         }
 #else

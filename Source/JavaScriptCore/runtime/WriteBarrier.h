@@ -94,9 +94,21 @@ public:
     COMPILE_ASSERT(!JSValueChecker<T>::IsJSValue, WriteBarrier_JSValue_is_invalid__use_unknown);
     void set(JSGlobalData&, const JSCell*, T* value) { this->m_cell = reinterpret_cast<JSCell*>(value); }
     
-    T* get() const { return reinterpret_cast<T*>(m_cell); }
-    T* operator*() const { return static_cast<T*>(m_cell); }
-    T* operator->() const { return static_cast<T*>(m_cell); }
+    T* get() const
+    {
+        return reinterpret_cast<T*>(m_cell);
+    }
+
+    T* operator*() const
+    {
+        return static_cast<T*>(m_cell);
+    }
+
+    T* operator->() const
+    {
+        return static_cast<T*>(m_cell);
+    }
+
     void clear() { m_cell = 0; }
     
     JSCell** slot() { return &m_cell; }
@@ -116,7 +128,13 @@ template <> class WriteBarrierBase<Unknown> {
 public:
     void set(JSGlobalData&, const JSCell*, JSValue value) { m_value = JSValue::encode(value); }
     void setWithoutWriteBarrier(JSValue value) { m_value = JSValue::encode(value); }
-    JSValue get() const { return JSValue::decode(m_value); }
+    JSValue get() const
+    {
+#if ENABLE(JSC_ZOMBIES)
+        ASSERT(!JSValue::decode(m_value) || !JSValue::decode(m_value).isZombie());
+#endif
+        return JSValue::decode(m_value);
+    }
     void clear() { m_value = JSValue::encode(JSValue()); }
     void setUndefined() { m_value = JSValue::encode(jsUndefined()); }
     bool isNumber() const { return get().isNumber(); }

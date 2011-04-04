@@ -104,10 +104,35 @@ template <> struct HandleTypes<Unknown> {
 };
 
 template <typename Base, typename T> struct HandleConverter {
-    T* operator->() { return static_cast<Base*>(this)->get(); }
-    const T* operator->() const { return static_cast<const Base*>(this)->get(); }
-    T* operator*() { return static_cast<Base*>(this)->get(); }
-    const T* operator*() const { return static_cast<const Base*>(this)->get(); }
+    T* operator->()
+    {
+#if ENABLE(JSC_ZOMBIES)
+        ASSERT(!static_cast<const Base*>(this)->get() || !static_cast<const Base*>(this)->get()->isZombie());
+#endif
+        return static_cast<Base*>(this)->get();
+    }
+    const T* operator->() const
+    {
+#if ENABLE(JSC_ZOMBIES)
+        ASSERT(!static_cast<const Base*>(this)->get() || !static_cast<const Base*>(this)->get()->isZombie());
+#endif
+        return static_cast<const Base*>(this)->get();
+    }
+
+    T* operator*()
+    {
+#if ENABLE(JSC_ZOMBIES)
+        ASSERT(!static_cast<const Base*>(this)->get() || !static_cast<const Base*>(this)->get()->isZombie());
+#endif
+        return static_cast<Base*>(this)->get();
+    }
+    const T* operator*() const
+    {
+#if ENABLE(JSC_ZOMBIES)
+        ASSERT(!static_cast<const Base*>(this)->get() || !static_cast<const Base*>(this)->get()->isZombie());
+#endif
+        return static_cast<const Base*>(this)->get();
+    }
 };
 
 template <typename Base> struct HandleConverter<Base, Unknown> {
@@ -118,7 +143,13 @@ template <typename Base> struct HandleConverter<Base, Unknown> {
     bool isUndefinedOrNull() const { return jsValue().isUndefinedOrNull(); }
 
 private:
-    JSValue jsValue() const { return static_cast<const Base*>(this)->get(); }
+    JSValue jsValue() const
+    {
+#if ENABLE(JSC_ZOMBIES)
+        ASSERT(!static_cast<const Base*>(this)->get() || !static_cast<const Base*>(this)->get().isZombie());
+#endif
+        return static_cast<const Base*>(this)->get();
+    }
 };
 
 template <typename T> class Handle : public HandleBase, public HandleConverter<Handle<T>, T> {

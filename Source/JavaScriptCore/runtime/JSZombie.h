@@ -41,7 +41,7 @@ public:
     }
 
     virtual bool isZombie() const { return true; }
-    static Structure* leakedZombieStructure();
+    static Structure* leakedZombieStructure(JSGlobalData&);
 
     virtual bool isGetterSetter() const { ASSERT_NOT_REACHED(); return false; }
     virtual bool isAPIValueWrapper() const { ASSERT_NOT_REACHED(); return false; }

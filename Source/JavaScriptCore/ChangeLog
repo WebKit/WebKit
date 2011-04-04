@@ -1,3 +1,92 @@
+2011-04-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make StructureChain GC allocated
+        https://bugs.webkit.org/show_bug.cgi?id=56695
+
+        Make StructureChain GC allocated, and make the various owners
+        mark it correctly.
+
+        * JavaScriptCore.exp:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::derefStructures):
+        (JSC::CodeBlock::refStructures):
+        (JSC::CodeBlock::markAggregate):
+        * bytecode/Instruction.h:
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::set):
+        (JSC::PolymorphicAccessStructureList::PolymorphicAccessStructureList):
+        (JSC::PolymorphicAccessStructureList::derefStructures):
+        (JSC::PolymorphicAccessStructureList::markAggregate):
+        (JSC::Instruction::Instruction):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::markAggregate):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::initGetByIdChain):
+        (JSC::StructureStubInfo::initPutByIdTransition):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionCall):
+        (JSC::BytecodeGenerator::emitJumpIfNotFunctionApply):
+        * collector/handles/Handle.h:
+        (JSC::HandleConverter::operator->):
+        (JSC::HandleConverter::operator*):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_jneq_ptr):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_jneq_ptr):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompileGetByIdChainList):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompileGetByIdChainList):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::getPolymorphicAccessStructureListSlot):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSCell.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::markIfNeeded):
+        * runtime/JSGlobalObject.h:
+        (JSC::Structure::prototypeChain):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::markChildrenDirect):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+        (JSC::JSPropertyNameIterator::get):
+        (JSC::JSPropertyNameIterator::markChildren):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::setCachedPrototypeChain):
+        * runtime/JSZombie.cpp:
+        (JSC::JSZombie::leakedZombieStructure):
+        * runtime/JSZombie.h:
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::append):
+        * runtime/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweep):
+        * runtime/Structure.cpp:
+        (JSC::Structure::addPropertyTransition):
+        * runtime/Structure.h:
+        (JSC::Structure::markAggregate):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::StructureChain):
+        (JSC::StructureChain::~StructureChain):
+        (JSC::StructureChain::markChildren):
+        * runtime/StructureChain.h:
+        (JSC::StructureChain::create):
+        (JSC::StructureChain::createStructure):
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::get):
+        (JSC::WriteBarrierBase::operator*):
+        (JSC::WriteBarrierBase::operator->):
+
 2011-04-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
