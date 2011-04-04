@@ -1566,9 +1566,6 @@ BUGCR18116 : svg/custom/global-constructors.html = TEXT
 BUGCR18656 MAC RELEASE : fast/dom/Window/window-lookup-precedence.html = FAIL
 BUGCR18656 MAC DEBUG : fast/dom/Window/window-lookup-precedence.html = FAIL
 
-// Test failures caused by re-enabling skia asserts.
-BUGCR18896 WIN LINUX DEBUG : svg/batik/paints/gradientLimit.svg = TIMEOUT FAIL CRASH
-
 // Test failures from WebKit merge 46894 to 46977
 BUGCR26737 : fast/js/prototypes.html = FAIL
 
@@ -3148,8 +3145,6 @@ BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
 BUGCR75992 GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
 
 BUGWK56608 WIN : fast/dom/Window/window-lookup-precedence.html = TEXT
-
-BUGCR76020 GPU WIN : canvas/philip/tests/2d.text.draw.align.end.ltr.html = TEXT
 
 // Skip an overly restrictive cross-origin HTTPS test
 BUGCR69594 SKIP : http/tests/appcache/different-https-origin-resource-main.html = FAIL
