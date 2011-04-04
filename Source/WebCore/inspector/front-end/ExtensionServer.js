@@ -42,15 +42,15 @@ WebInspector.ExtensionServer = function()
     this._registerHandler("addAuditCategory", this._onAddAuditCategory.bind(this));
     this._registerHandler("addAuditResult", this._onAddAuditResult.bind(this));
     this._registerHandler("createPanel", this._onCreatePanel.bind(this));
-    this._registerHandler("createSidebarPane", this._onCreateSidebar.bind(this));
-    this._registerHandler("createWatchExpressionSidebarPane", this._onCreateWatchExpressionSidebarPane.bind(this));
+    this._registerHandler("createSidebarPane", this._onCreateSidebarPane.bind(this));
     this._registerHandler("evaluateOnInspectedPage", this._onEvaluateOnInspectedPage.bind(this));
     this._registerHandler("getHAR", this._onGetHAR.bind(this));
     this._registerHandler("getResourceContent", this._onGetResourceContent.bind(this));
     this._registerHandler("log", this._onLog.bind(this));
     this._registerHandler("reload", this._onReload.bind(this));
     this._registerHandler("setSidebarHeight", this._onSetSidebarHeight.bind(this));
-    this._registerHandler("setWatchSidebarContent", this._onSetWatchSidebarContent.bind(this));
+    this._registerHandler("setSidebarContent", this._onSetSidebarContent.bind(this));
+    this._registerHandler("setSidebarPage", this._onSetSidebarPage.bind(this));
     this._registerHandler("stopAuditCategoryRun", this._onStopAuditCategoryRun.bind(this));
     this._registerHandler("subscribe", this._onSubscribe.bind(this));
     this._registerHandler("unsubscribe", this._onUnsubscribe.bind(this));
@@ -94,9 +94,9 @@ WebInspector.ExtensionServer.prototype = {
         this._postNotification("reset");
     },
 
-    notifyExtensionWatchSidebarUpdated: function(id)
+    notifyExtensionSidebarUpdated: function(id)
     {
-        this._postNotification("watch-sidebar-updated-" + id);
+        this._postNotification("sidebar-updated-" + id);
     },
 
     startAuditRun: function(category, auditRun)
@@ -195,27 +195,12 @@ WebInspector.ExtensionServer.prototype = {
         WebInspector.panels[id] = panel;
         WebInspector.addPanel(panel);
 
-        var iframe = this._createClientIframe(panel.element, message.url);
+        var iframe = this.createClientIframe(panel.element, message.url);
         iframe.style.height = "100%";
         return this._status.OK();
     },
 
-    _onCreateSidebar: function(message)
-    {
-        var sidebar = this._createSidebar(message, WebInspector.SidebarPane);
-        if (sidebar.isError)
-            return sidebar;
-        this._createClientIframe(sidebar.bodyElement, message.url);
-        return this._status.OK();
-    },
-
-    _onCreateWatchExpressionSidebarPane: function(message)
-    {
-        var sidebar = this._createSidebar(message, WebInspector.ExtensionWatchSidebarPane);
-        return sidebar.isError ? sidebar : this._status.OK();
-    },
-
-    _createSidebar: function(message, constructor)
+    _onCreateSidebarPane: function(message, constructor)
     {
         var panel = WebInspector.panels[message.panel];
         if (!panel)
@@ -223,15 +208,15 @@ WebInspector.ExtensionServer.prototype = {
         if (!panel.sidebarElement || !panel.sidebarPanes)
             return this._status.E_NOTSUPPORTED();
         var id = message.id;
-        var sidebar = new constructor(message.title, message.id);
+        var sidebar = new WebInspector.ExtensionSidebarPane(message.title, message.id);
         this._clientObjects[id] = sidebar;
         panel.sidebarPanes[id] = sidebar;
         panel.sidebarElement.appendChild(sidebar.element);
 
-        return sidebar;
+        return this._status.OK();
     },
 
-    _createClientIframe: function(parent, url, requestId, port)
+    createClientIframe: function(parent, url)
     {
         var iframe = document.createElement("iframe");
         iframe.src = url;
@@ -248,7 +233,7 @@ WebInspector.ExtensionServer.prototype = {
         sidebar.bodyElement.firstChild.style.height = message.height;
     },
 
-    _onSetWatchSidebarContent: function(message)
+    _onSetSidebarContent: function(message)
     {
         var sidebar = this._clientObjects[message.id];
         if (!sidebar)

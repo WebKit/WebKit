@@ -15,12 +15,14 @@ function extension_testCreatePanel(nextTest)
     output("done createPanel");
 }
 
-function extension_testCreateSidebar(nextTest)
+function extension_testSidebarPage(nextTest)
 {
     function onSidebarCreated(sidebar)
     {
         output("Sidebar created");
         dumpObject(sidebar);
+        sidebar.onUpdated.addListener(nextTest);
+        sidebar.setPage("extension-sidebar.html");
     }
     webInspector.panels.elements.createSidebarPane("Test Sidebar", onSidebarCreated);
 }
@@ -30,7 +32,7 @@ function extension_dumpSidebarContent(nextTest)
     dispatchOnFrontend({ command: "dump-sidebar-content" }, nextTest);
 }
 
-function extension_testExtensionWatchSidebarObject(nextTest)
+function extension_testSidebarWatchObject(nextTest)
 {
     function onSidebarCreated(sidebar)
     {
@@ -48,10 +50,10 @@ function extension_testExtensionWatchSidebarObject(nextTest)
             f7: 42
         });
     }
-    webInspector.panels.elements.createWatchExpressionSidebarPane("Watch Test: Object", onSidebarCreated);
+    webInspector.panels.elements.createSidebarPane("Watch Test: Object", onSidebarCreated);
 }
 
-function extension_testExtensionWatchSidebarExpression(nextTest)
+function extension_testSidebarWatchExpression(nextTest)
 {
     function onSidebarCreated(sidebar)
     {
@@ -74,7 +76,7 @@ function extension_testExtensionWatchSidebarExpression(nextTest)
         }
         sidebar.setExpression("(" + expression.toString() + ")();", "title");
     }
-    webInspector.panels.elements.createWatchExpressionSidebarPane("Watch Test: Expression", onSidebarCreated);
+    webInspector.panels.elements.createSidebarPane("Watch Test: Expression", onSidebarCreated);
 }
 
 </script>

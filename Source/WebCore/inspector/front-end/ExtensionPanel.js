@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -81,13 +81,13 @@ WebInspector.ExtensionPanel.prototype = {
 
 WebInspector.ExtensionPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
-WebInspector.ExtensionWatchSidebarPane = function(title, id)
+WebInspector.ExtensionSidebarPane = function(title, id)
 {
     WebInspector.SidebarPane.call(this, title);
     this._id = id;
 }
 
-WebInspector.ExtensionWatchSidebarPane.prototype = {
+WebInspector.ExtensionSidebarPane.prototype = {
     setObject: function(object, title)
     {
         this._setObject(WebInspector.RemoteObject.fromLocalObject(object), title);
@@ -96,6 +96,14 @@ WebInspector.ExtensionWatchSidebarPane.prototype = {
     setExpression: function(expression, title)
     {
         RuntimeAgent.evaluate(expression, "extension-watch", false, this._onEvaluate.bind(this, title));
+    },
+
+    setPage: function(url)
+    {
+        this.bodyElement.removeChildren();
+        WebInspector.extensionServer.createClientIframe(this.bodyElement, url);
+        // TODO: Consider doing this upon load event.
+        WebInspector.extensionServer.notifyExtensionSidebarUpdated(this._id);
     },
 
     _onEvaluate: function(title, error, result)
@@ -112,8 +120,8 @@ WebInspector.ExtensionWatchSidebarPane.prototype = {
             section.headerElement.addStyleClass("hidden");
         section.expanded = true;
         this.bodyElement.appendChild(section.element);
-        WebInspector.extensionServer.notifyExtensionWatchSidebarUpdated(this._id);
+        WebInspector.extensionServer.notifyExtensionSidebarUpdated(this._id);
     }
 }
 
-WebInspector.ExtensionWatchSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
+WebInspector.ExtensionSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;

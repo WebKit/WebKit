@@ -1,3 +1,9 @@
+2011-04-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Followup to an incomplete commit in r82806.
+
+        * inspector/extensions/extensions.html:
+
 2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, add chromium test expectations for tests added in r82780. 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -190,7 +190,7 @@ function PanelWithSidebarImpl(id)
 }
 
 PanelWithSidebarImpl.prototype = {
-    createSidebarPane: function(title, url, callback)
+    createSidebarPane: function(title, callback)
     {
         var id = "extension-sidebar-" + extensionServer.nextObjectId();
         var request = {
@@ -202,22 +202,6 @@ PanelWithSidebarImpl.prototype = {
         function callbackWrapper()
         {
             callback(new ExtensionSidebarPane(id));
-        }
-        extensionServer.sendRequest(request, callback && callbackWrapper);
-    },
-
-    createWatchExpressionSidebarPane: function(title, callback)
-    {
-        var id = "watch-sidebar-" + extensionServer.nextObjectId();
-        var request = {
-            command: "createWatchExpressionSidebarPane",
-            panel: this._id,
-            id: id,
-            title: title
-        };
-        function callbackWrapper()
-        {
-            callback(new WatchExpressionSidebarPane(id));
         }
         extensionServer.sendRequest(request, callback && callbackWrapper);
     }
@@ -241,25 +225,18 @@ function ExtensionPanel(id)
 function ExtensionSidebarPaneImpl(id)
 {
     this._id = id;
+    this.onUpdated = new EventSink("sidebar-updated-" + id);
 }
 
 ExtensionSidebarPaneImpl.prototype = {
     setHeight: function(height)
     {
         extensionServer.sendRequest({ command: "setSidebarHeight", id: this._id, height: height });
-    }
-}
+    },
 
-function WatchExpressionSidebarPaneImpl(id)
-{
-    ExtensionSidebarPaneImpl.call(this, id);
-    this.onUpdated = new EventSink("watch-sidebar-updated-" + id);
-}
-
-WatchExpressionSidebarPaneImpl.prototype = {
     setExpression: function(expression, rootTitle)
     {
-        extensionServer.sendRequest({ command: "setWatchSidebarContent", id: this._id, expression: expression, rootTitle: rootTitle, evaluateOnPage: true });
+        extensionServer.sendRequest({ command: "setSidebarContent", id: this._id, expression: expression, rootTitle: rootTitle, evaluateOnPage: true });
     },
 
     setObject: function(jsonObject, rootTitle)
@@ -271,14 +248,6 @@ WatchExpressionSidebarPaneImpl.prototype = {
     {
         extensionServer.sendRequest({ command: "setSidebarPage", id: this._id, url: expandURL(url) });
     }
-}
-
-WatchExpressionSidebarPaneImpl.prototype.__proto__ = ExtensionSidebarPaneImpl.prototype;
-
-function WatchExpressionSidebarPane(id)
-{
-    var impl = new WatchExpressionSidebarPaneImpl(id);
-    ExtensionSidebarPane.call(this, id, impl);
 }
 
 function Audits()
@@ -515,7 +484,6 @@ var ExtensionSidebarPane = declareInterfaceClass(ExtensionSidebarPaneImpl);
 var Panel = declareInterfaceClass(PanelImpl);
 var PanelWithSidebar = declareInterfaceClass(PanelWithSidebarImpl);
 var Resource = declareInterfaceClass(ResourceImpl);
-var WatchExpressionSidebarPane = declareInterfaceClass(WatchExpressionSidebarPaneImpl);
 
 var extensionServer = new ExtensionServerClient();
 

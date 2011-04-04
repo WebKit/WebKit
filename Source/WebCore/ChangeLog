@@ -1,3 +1,25 @@
+2011-04-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Followup to an incomplete commit in r82806.
+
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI.PanelWithSidebarImpl.prototype.createSidebarPane):
+        (WebInspector.injectedExtensionAPI.ExtensionSidebarPaneImpl):
+        (WebInspector.injectedExtensionAPI.ExtensionSidebarPaneImpl.prototype.setHeight):
+        (WebInspector.injectedExtensionAPI.ExtensionSidebarPaneImpl.prototype.setExpression):
+        (WebInspector.injectedExtensionAPI):
+        * inspector/front-end/ExtensionPanel.js:
+        (WebInspector.ExtensionSidebarPane):
+        (WebInspector.ExtensionSidebarPane.prototype.setPage):
+        (WebInspector.ExtensionSidebarPane.prototype._setObject):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer):
+        (WebInspector.ExtensionServer.prototype.notifyExtensionSidebarUpdated):
+        (WebInspector.ExtensionServer.prototype._onCreatePanel):
+        (WebInspector.ExtensionServer.prototype._onCreateSidebarPane):
+        (WebInspector.ExtensionServer.prototype.createClientIframe):
+        (WebInspector.ExtensionServer.prototype._onSetSidebarContent):
+
 2011-04-04  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix Qt minimal build.
