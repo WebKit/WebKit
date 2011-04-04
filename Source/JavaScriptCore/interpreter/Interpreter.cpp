@@ -1259,7 +1259,7 @@ NEVER_INLINE void Interpreter::tryCachePutByID(CallFrame* callFrame, CodeBlock* 
         vPC[0] = getOpcode(op_put_by_id_transition);
         vPC[4] = structure->previousID();
         vPC[5] = structure;
-        vPC[6] = structure->prototypeChain(callFrame);
+        vPC[6] = Instruction(callFrame->globalData(), codeBlock->ownerExecutable(), structure->prototypeChain(callFrame));
         vPC[7] = slot.cachedOffset();
         codeBlock->refStructures(vPC);
         return;
@@ -1412,7 +1412,7 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         break;
     }
     vPC[4] = structure;
-    vPC[5] = structure->prototypeChain(callFrame);
+    vPC[5] = Instruction(callFrame->globalData(), codeBlock->ownerExecutable(), structure->prototypeChain(callFrame));
     vPC[6] = count;
     codeBlock->refStructures(vPC);
 }

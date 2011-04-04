@@ -176,6 +176,9 @@ namespace JSC {
             PolymorphicAccessStructureList* polymorphicStructures;
             PropertySlot::GetValueFunc getterFunc;
         } u;
+        
+    private:
+        Instruction(StructureChain*);
     };
 
 } // namespace JSC

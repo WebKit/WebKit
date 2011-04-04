@@ -1,3 +1,12 @@
+2011-04-04  Oliver Hunt  <oliver@apple.com>
+
+        Fix WinCE build.
+
+        * bytecode/Instruction.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCachePutByID):
+        (JSC::Interpreter::tryCacheGetByID):
+
 2011-04-04  Adam Roben  <aroben@apple.com>
 
         Delete mt.dep files when doing a clean build due to .vsprops file changes
