@@ -657,11 +657,6 @@ bool HTMLElement::supportsFocus() const
     return Element::supportsFocus() || (rendererIsEditable() && parentNode() && !parentNode()->rendererIsEditable());
 }
 
-bool HTMLElement::isContentEditable() const
-{
-    return rendererIsEditable();
-}
-
 String HTMLElement::contentEditable() const
 {
     const AtomicString& value = fastGetAttribute(contenteditableAttr);

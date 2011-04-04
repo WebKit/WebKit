@@ -1268,7 +1268,7 @@ void WebViewImpl::setFocus(bool enable)
                 Element* element = static_cast<Element*>(focusedNode);
                 if (element->isTextFormControl())
                     element->updateFocusAppearance(true);
-                else if (focusedNode->rendererIsEditable()) {
+                else if (focusedNode->isContentEditable()) {
                     // updateFocusAppearance() selects all the text of
                     // contentseditable DIVs. So we set the selection explicitly
                     // instead. Note that this has the side effect of moving the
@@ -1330,7 +1330,7 @@ bool WebViewImpl::setComposition(
     PassRefPtr<Range> range = editor->compositionRange();
     if (range) {
         const Node* node = range->startContainer();
-        if (!node || !node->rendererIsEditable())
+        if (!node || !node->isContentEditable())
             return false;
     }
 
@@ -1379,7 +1379,7 @@ bool WebViewImpl::confirmComposition(const WebString& text)
     PassRefPtr<Range> range = editor->compositionRange();
     if (range) {
         const Node* node = range->startContainer();
-        if (!node || !node->rendererIsEditable())
+        if (!node || !node->isContentEditable())
             return false;
     }
 

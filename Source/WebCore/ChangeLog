@@ -1,3 +1,28 @@
+2011-04-04  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        setContentEditable with true/false/inherit string is not working properly
+        https://bugs.webkit.org/show_bug.cgi?id=52058
+
+        Move isContentEditable from HTMLElement to Node. Thus, Node provides two functions for
+        checking editability: rendererIsEditable and isContentEdiable. The former is a fast path,
+        which does NOT trigger layout and only checks the render style of usermodify. The latter
+        updates the layout first to make sure the render style syncs with DOM contenteditable 
+        attribute. Certain call sites that need to call isContentEditable rather than rendererIsEditable
+        are also updated in the patch. But a complete fix will follow up in bug 57244.
+
+        This patch fixes all the failed layout tests related to set contenteditable.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isReadOnly):
+        * dom/Node.cpp:
+        (WebCore::Node::isContentEditable):
+        (WebCore::Node::shouldUseInputMethod):
+        * dom/Node.h:
+        * html/HTMLElement.cpp:
+        * html/HTMLElement.h:
+
 2011-04-04  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Dimitri Glazkov.

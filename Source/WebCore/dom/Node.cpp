@@ -709,6 +709,12 @@ void Node::deprecatedParserAddChild(PassRefPtr<Node>)
 {
 }
 
+bool Node::isContentEditable() const
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+    return rendererIsEditable(Editable);
+}
+
 bool Node::rendererIsEditable(EditableLevel editableLevel) const
 {
     if (document()->inDesignMode() || (document()->frame() && document()->frame()->page() && document()->frame()->page()->isEditable()))
@@ -738,7 +744,7 @@ bool Node::rendererIsEditable(EditableLevel editableLevel) const
 
 bool Node::shouldUseInputMethod() const
 {
-    return rendererIsEditable();
+    return isContentEditable();
 }
 
 RenderBox* Node::renderBox() const

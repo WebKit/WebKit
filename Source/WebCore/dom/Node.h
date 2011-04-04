@@ -319,10 +319,8 @@ public:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
 
-#if PLATFORM(MAC)
-    // Objective-C extensions
-    bool isContentEditable() const { return rendererIsEditable(Editable); }
-#endif
+    bool isContentEditable() const;
+
     bool rendererIsEditable() const { return rendererIsEditable(Editable); }
     bool rendererIsRichlyEditable() const { return rendererIsEditable(RichlyEditable); }
     virtual bool shouldUseInputMethod() const;
