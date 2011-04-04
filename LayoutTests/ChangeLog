@@ -1,5 +1,11 @@
 2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, add chromium-linux expectation for the new test added in r82781.
+
+        * platform/chromium-linux/fast/images/imagemap-focus-ring-zero-outline-width-expected.png: Added.
+
+2011-04-04  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, rebaseline chromium-linux test expectations after r82783.
 
         * platform/chromium-linux/fast/html/details-add-summary-1-and-click-expected.png: Added.
