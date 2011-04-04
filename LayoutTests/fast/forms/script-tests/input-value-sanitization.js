@@ -20,7 +20,19 @@ input.value = ':)';
 input.type = 'range';
 shouldBe('input.value', '"50"');
 
+debug('');
+debug('Text:');
+var container = document.createElement('div');
+document.body.appendChild(container);
+container.innerHTML = '<input type="text" id="text" value="\n\r foo bar \n\r\n">';
+input = document.getElementById('text');
+shouldBe('input.value', '"   foo bar   "');
+input.focus();
+document.execCommand('SelectAll');
+shouldBe('document.getSelection().toString()', '"   foo bar   "');
+
 // FIXME: Add more sanitization tests.
 // https://bugs.webkit.org/show_bug.cgi?id=37024
 
+container.innerHTML = '';
 var successfullyParsed = true;

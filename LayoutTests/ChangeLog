@@ -1,3 +1,13 @@
+2011-04-03  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Adding a test of value sanitization for <input type=text>
+        https://bugs.webkit.org/show_bug.cgi?id=57737
+
+        * fast/forms/input-value-sanitization-expected.txt:
+        * fast/forms/script-tests/input-value-sanitization.js: Add tests for type=text.
+
 2011-04-03  Dan Bernstein  <mitz@apple.com>
 
         Try to make this test more robust.

@@ -11,6 +11,10 @@ PASS input.value = ""; input.value is ""
 
 Range:
 PASS input.value is "50"
+
+Text:
+PASS input.value is "   foo bar   "
+PASS document.getSelection().toString() is "   foo bar   "
 PASS successfullyParsed is true
 
 TEST COMPLETE
