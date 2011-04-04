@@ -114,10 +114,6 @@ private:
     SentinelLinkedList<Node> m_immediateList;
     SinglyLinkedList<Node> m_freeList;
     Node* m_nextToFinalize;
-
-#if !ASSERT_DISABLED
-    bool m_handlingFinalizers;
-#endif
 };
 
 inline HandleHeap* HandleHeap::heapFor(HandleSlot handle)
