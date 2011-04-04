@@ -605,6 +605,15 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, int value, bool imp
     return true;
 }
 
+bool CSSMutableStyleDeclaration::setProperty(int propertyID, double value, CSSPrimitiveValue::UnitTypes unit, bool important, bool notifyChanged)
+{
+    CSSProperty property(propertyID, CSSPrimitiveValue::create(value, unit), important);
+    setPropertyInternal(property);
+    if (notifyChanged)
+        setNeedsStyleRecalc();
+    return true;
+}
+
 void CSSMutableStyleDeclaration::setStringProperty(int propertyId, const String &value, CSSPrimitiveValue::UnitTypes type, bool important)
 {
     ASSERT(!m_iteratorCount);

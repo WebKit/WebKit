@@ -1,3 +1,66 @@
+2011-04-04  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Convert <meter> shadow DOM to a DOM-based shadow.
+        https://bugs.webkit.org/show_bug.cgi?id=50661
+        
+        Eliminated a large part of <meter> custom layout code,
+        which is replaced by a shadow tree.
+        Note that the shadow tree is created on construction time and
+        will remain during the host HTMLMeterElement lifecycle.
+        
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setProperty):
+        * css/CSSMutableStyleDeclaration.h:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::nameToPseudoTypeMap):
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h:
+        * css/html.css:
+        (meter):
+        (meter::-webkit-meter-bar):
+        (meter::-webkit-meter-optimum-value):
+        (meter::-webkit-meter-suboptimum-value):
+        (meter::-webkit-meter-even-less-good-value):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::~HTMLMeterElement):
+        (WebCore::HTMLMeterElement::parseMappedAttribute):
+        (WebCore::HTMLMeterElement::attach):
+        (WebCore::HTMLMeterElement::valueRatio):
+        (WebCore::HTMLMeterElement::didElementStateChange):
+        (WebCore::HTMLMeterElement::createShadowSubtree):
+        * html/HTMLMeterElement.h:
+        * html/shadow/MeterShadowElement.cpp: Added.
+        (WebCore::MeterShadowElement::MeterShadowElement):        
+        (WebCore::MeterShadowElement::meterElement):
+        (WebCore::MeterShadowElement::rendererIsNeeded):
+        (WebCore::MeterBarElement::shadowPseudoId):
+        (WebCore::MeterValueElement::shadowPseudoId):
+        (WebCore::MeterValueElement::setWidthPercentage):
+        * html/shadow/MeterShadowElement.h: Added.
+        (WebCore::MeterBarElement::MeterBarElement):
+        (WebCore::MeterBarElement::create):
+        (WebCore::MeterValueElement::MeterValueElement):
+        (WebCore::MeterValueElement::create):
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::RenderMeter):
+        (WebCore::RenderMeter::~RenderMeter):
+        (WebCore::RenderMeter::valueRatio):
+        * rendering/RenderMeter.h:
+        (WebCore::RenderMeter::renderName):
+        (WebCore::RenderMeter::isMeter):
+        (WebCore::RenderMeter::requiresForcedStyleRecalcPropagation):
+        (WebCore::RenderMeter::canHaveChildren):
+
 2011-04-04  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

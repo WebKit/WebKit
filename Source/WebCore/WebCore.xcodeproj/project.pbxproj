@@ -3216,6 +3216,8 @@
 		A77B41A012E675A90054343D /* TextEventInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = A77B419F12E675A90054343D /* TextEventInputType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A77D0012133B0AEB00D6658C /* TextChecking.h in Headers */ = {isa = PBXBuildFile; fileRef = A77D0011133B0AEB00D6658C /* TextChecking.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A784941A0B5FE507001E237A /* Clipboard.cpp */; };
+		A78E526F1346BD1700AD9C31 /* MeterShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A78E526D1346BD1700AD9C31 /* MeterShadowElement.cpp */; };
+		A78E52701346BD1700AD9C31 /* MeterShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A78E526E1346BD1700AD9C31 /* MeterShadowElement.h */; };
 		A78FE13B12366B1000ACE8D0 /* SpellChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A78FE13912366B1000ACE8D0 /* SpellChecker.cpp */; };
 		A78FE13C12366B1000ACE8D0 /* SpellChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = A78FE13A12366B1000ACE8D0 /* SpellChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A795463E0B5C4C80007B438F /* DragDataMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A795463D0B5C4C80007B438F /* DragDataMac.mm */; };
@@ -9728,6 +9730,8 @@
 		A77B419F12E675A90054343D /* TextEventInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEventInputType.h; sourceTree = "<group>"; };
 		A77D0011133B0AEB00D6658C /* TextChecking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextChecking.h; sourceTree = "<group>"; };
 		A784941A0B5FE507001E237A /* Clipboard.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Clipboard.cpp; sourceTree = "<group>"; };
+		A78E526D1346BD1700AD9C31 /* MeterShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeterShadowElement.cpp; sourceTree = "<group>"; };
+		A78E526E1346BD1700AD9C31 /* MeterShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeterShadowElement.h; sourceTree = "<group>"; };
 		A78FE13912366B1000ACE8D0 /* SpellChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpellChecker.cpp; sourceTree = "<group>"; };
 		A78FE13A12366B1000ACE8D0 /* SpellChecker.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = SpellChecker.h; sourceTree = "<group>"; };
 		A795463D0B5C4C80007B438F /* DragDataMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DragDataMac.mm; sourceTree = "<group>"; };
@@ -13409,6 +13413,8 @@
 			children = (
 				4157AF7F12F1FB0400A8C6F5 /* MediaControls.cpp */,
 				4157AF7E12F1FB0400A8C6F5 /* MediaControls.h */,
+				A78E526D1346BD1700AD9C31 /* MeterShadowElement.cpp */,
+				A78E526E1346BD1700AD9C31 /* MeterShadowElement.h */,
 				A7FE819B12FA677700850C1E /* ProgressBarValueElement.h */,
 				4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */,
 				4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */,
@@ -21826,6 +21832,7 @@
 				41BF700C0FE86F49005E8DEC /* MessagePortChannel.h in Headers */,
 				89878569122CA064003AABDA /* Metadata.h in Headers */,
 				8987856A122CA064003AABDA /* MetadataCallback.h in Headers */,
+				A78E52701346BD1700AD9C31 /* MeterShadowElement.h in Headers */,
 				BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */,
 				C6D74AD509AA282E000B0A52 /* ModifySelectionListLevel.h in Headers */,
 				F55B3DC61251F12D003EF269 /* MonthInputType.h in Headers */,
@@ -24709,6 +24716,7 @@
 				75793E830D0CE0B3007FC0AC /* MessageEvent.cpp in Sources */,
 				E1ADECC00E76ACF1004A1A5E /* MessagePort.cpp in Sources */,
 				41BF700B0FE86F49005E8DEC /* MessagePortChannel.cpp in Sources */,
+				A78E526F1346BD1700AD9C31 /* MeterShadowElement.cpp in Sources */,
 				BC772C4E0C4EB3040083285F /* MIMETypeRegistry.cpp in Sources */,
 				BC772C5E0C4EB3440083285F /* MIMETypeRegistryMac.mm in Sources */,
 				C6D74AE409AA290A000B0A52 /* ModifySelectionListLevel.cpp in Sources */,

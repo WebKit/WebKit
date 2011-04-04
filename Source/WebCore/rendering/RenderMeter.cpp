@@ -36,27 +36,12 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderMeter::RenderMeter(HTMLMeterElement* element)
-    : RenderIndicator(element)
+    : RenderBlock(element)
 {
 }
 
 RenderMeter::~RenderMeter()
 {
-    detachShadows();
-}
-
-PassRefPtr<ShadowBlockElement> RenderMeter::createPart(PseudoId pseudoId)
-{
-    RefPtr<ShadowBlockElement> element = ShadowBlockElement::createForPart(toHTMLElement(node()), pseudoId);
-    if (element->renderer())
-        addChild(element->renderer());
-    return element;
-}
-
-void RenderMeter::updateFromElement()
-{
-    updateShadows();
-    RenderIndicator::updateFromElement();
 }
 
 void RenderMeter::computeLogicalWidth()
@@ -71,105 +56,9 @@ void RenderMeter::computeLogicalHeight()
     setHeight(theme()->meterSizeForBounds(this, frameRect()).height());
 }
 
-void RenderMeter::layoutParts()
-{
-    if (shadowAttached()) {
-        m_barPart->layoutAsPart(barPartRect());
-        m_valuePart->layoutAsPart(valuePartRect());
-    }
-}
-
-void RenderMeter::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderBlock::styleDidChange(diff, oldStyle);
-
-    if (!oldStyle)
-        return;
-
-    if (oldStyle->appearance() != style()->appearance()) {
-        detachShadows();
-        updateShadows();
-    }
-}
-
-bool RenderMeter::shouldHaveParts() const
-{
-    return !theme()->supportsMeter(style()->appearance());
-}
-
 double RenderMeter::valueRatio() const
 {
-    HTMLMeterElement* element = static_cast<HTMLMeterElement*>(node());
-    double min = element->min();
-    double max = element->max();
-    double value = element->value();
-
-    if (max <= min)
-        return 0;
-    return (value - min) / (max - min);
-}
-
-IntRect RenderMeter::barPartRect() const
-{
-    return IntRect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), lround(width() - borderLeft() - paddingLeft() - borderRight() - paddingRight()), height()  - borderTop() - paddingTop() - borderBottom() - paddingBottom());
-}
-
-IntRect RenderMeter::valuePartRect() const
-{
-    IntRect rect = barPartRect();
-    int width = static_cast<int>(rect.width()*valueRatio());
-    if (!style()->isLeftToRightDirection()) {
-        rect.setX(rect.x() + (rect.width() - width));
-        rect.setWidth(width);
-    } else
-        rect.setWidth(width);
-
-    return rect;
-}
-
-PseudoId RenderMeter::valuePseudoId() const
-{
-    HTMLMeterElement* element = static_cast<HTMLMeterElement*>(node());
-
-    switch (element->gaugeRegion()) {
-    case HTMLMeterElement::GaugeRegionOptimum:
-        return METER_OPTIMUM;
-    case HTMLMeterElement::GaugeRegionSuboptimal:
-        return METER_SUBOPTIMAL;
-    case HTMLMeterElement::GaugeRegionEvenLessGood:
-        return METER_EVEN_LESS_GOOD;
-    }
-
-    ASSERT_NOT_REACHED();
-    return NOPSEUDO;
-}
-
-PseudoId RenderMeter::barPseudoId() const
-{
-    return METER_BAR;
-}
-
-void RenderMeter::detachShadows()
-{
-    if (shadowAttached()) {
-        m_valuePart->detach();
-        m_valuePart = 0;
-        m_barPart->detach();
-        m_barPart = 0;
-    }
-}
-
-void RenderMeter::updateShadows()
-{
-    if (!shadowAttached() && shouldHaveParts()) {
-        m_barPart = createPart(barPseudoId());
-        m_valuePart = createPart(valuePseudoId());
-    }
-
-    if (shadowAttached()) {
-        m_barPart->updateStyleForPart(barPseudoId());
-        m_valuePart->updateStyleForPart(valuePseudoId());
-    }
+    return static_cast<HTMLMeterElement*>(node())->valueRatio();
 }
 
 } // namespace WebCore

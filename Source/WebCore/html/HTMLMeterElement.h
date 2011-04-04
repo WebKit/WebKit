@@ -26,6 +26,8 @@
 
 namespace WebCore {
 
+class MeterValueElement;
+
 class HTMLMeterElement : public HTMLFormControlElement {
 public:
     static PassRefPtr<HTMLMeterElement> create(const QualifiedName&, Document*, HTMLFormElement*);
@@ -54,19 +56,23 @@ public:
     double optimum() const;
     void setOptimum(double, ExceptionCode&);
 
+    double valueRatio() const;
     GaugeRegion gaugeRegion() const;
+
 private:
     HTMLMeterElement(const QualifiedName&, Document*, HTMLFormElement*);
+    virtual ~HTMLMeterElement();
 
     virtual bool recalcWillValidate() const { return false; }
-
     virtual const AtomicString& formControlType() const;
-
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-
     virtual void parseMappedAttribute(Attribute*);
-
     virtual void attach();
+
+    void didElementStateChange();
+    void createShadowSubtree();
+
+    RefPtr<MeterValueElement> m_value;
 };
 
 } // namespace

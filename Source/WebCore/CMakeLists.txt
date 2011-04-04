@@ -873,6 +873,7 @@ SET(WebCore_SOURCES
     html/parser/XSSFilter.cpp
 
     html/shadow/MediaControls.cpp
+    html/shadow/MeterShadowElement.cpp
     html/shadow/SliderThumbElement.cpp
     html/shadow/TextControlInnerElements.cpp
 
