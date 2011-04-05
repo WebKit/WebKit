@@ -1,3 +1,16 @@
+2011-04-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Grant the web process access to ~/Library/Preferences/com.apple.universalaccess.plist
+        https://bugs.webkit.org/show_bug.cgi?id=57879
+
+        The web process needs access to the unviersal access preferences to determine if full keyboard
+        access is enabled. I've filed <rdar://problem/9237619> which tracks reading this preference in the UI
+        process and sending it over to the web process whenever it changes.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-04-05  Dean Jackson  <dino@apple.com>
 
         Reviewed by Simon Fraser.

@@ -55,6 +55,9 @@
     (subpath "/Library/Video/Plug-Ins")
     (subpath "/Library/QuickTime")
 
+    ;; FIXME: This should be removed when <rdar://problem/9237619> is fixed.
+    (subpath (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.universalaccess.plist"))
+
     ;; Extensions from UIProcess
     (extension)
 )
