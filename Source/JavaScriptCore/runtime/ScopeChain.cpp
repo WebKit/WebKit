@@ -51,6 +51,8 @@ void ScopeChainNode::print()
 
 #endif
 
+const ClassInfo ScopeChainNode::s_info = { "ScopeChainNode", 0, 0, 0 };
+
 int ScopeChainNode::localDepth()
 {
     int scopeDepth = 0;

@@ -46,12 +46,13 @@ namespace JSC {
         RefPtr<Structure>* head() { return m_vector.get(); }
         void markChildren(MarkStack&);
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype) { return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesMarkChildren), 0, 0); }
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype) { return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesMarkChildren), 0, &s_info); }
 
     private:
         StructureChain(NonNullPassRefPtr<Structure>, Structure* head);
         ~StructureChain();
         OwnArrayPtr<RefPtr<Structure> > m_vector;
+        static ClassInfo s_info;
     };
 
 } // namespace JSC

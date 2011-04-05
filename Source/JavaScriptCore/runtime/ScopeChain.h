@@ -65,10 +65,11 @@ namespace JSC {
         void print();
 #endif
         
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, 0); }
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(CompoundType, StructureFlags), AnonymousSlotCount, &s_info); }
         virtual void markChildren(MarkStack&);
     private:
         static const unsigned StructureFlags = OverridesMarkChildren;
+        static const ClassInfo s_info;
     };
 
     inline ScopeChainNode* ScopeChainNode::push(JSObject* o)

@@ -318,10 +318,11 @@ inline const char* TypeCounter::typeName(JSCell* cell)
         return "API wrapper";
     if (cell->isPropertyNameIterator())
         return "For-in iterator";
+    if (const ClassInfo* info = cell->classInfo())
+        return info->className;
     if (!cell->isObject())
         return "[empty cell]";
-    const ClassInfo* info = cell->classInfo();
-    return info ? info->className : "Object";
+    return "Object";
 }
 
 inline void TypeCounter::operator()(JSCell* cell)

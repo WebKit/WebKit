@@ -157,6 +157,7 @@ namespace JSC {
         RefPtr<Structure> apiWrapperStructure;
         RefPtr<Structure> scopeChainNodeStructure;
         RefPtr<Structure> executableStructure;
+        RefPtr<Structure> nativeExecutableStructure;
         RefPtr<Structure> evalExecutableStructure;
         RefPtr<Structure> programExecutableStructure;
         RefPtr<Structure> functionExecutableStructure;

@@ -40,6 +40,10 @@
 
 namespace JSC {
 
+const ClassInfo ExecutableBase::s_info = { "Executable", 0, 0, 0 };
+
+const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase::s_info, 0, 0 };
+
 NativeExecutable::~NativeExecutable()
 {
 }
@@ -47,6 +51,8 @@ NativeExecutable::~NativeExecutable()
 VPtrHackExecutable::~VPtrHackExecutable()
 {
 }
+
+const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::s_info, 0, 0 };
 
 EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext)
     : ScriptExecutable(exec->globalData().evalExecutableStructure.get(), exec, source, inStrictContext)
@@ -57,6 +63,8 @@ EvalExecutable::~EvalExecutable()
 {
 }
 
+const ClassInfo ProgramExecutable::s_info = { "ProgramExecutable", &ScriptExecutable::s_info, 0, 0 };
+
 ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
     : ScriptExecutable(exec->globalData().programExecutableStructure.get(), exec, source, false)
 {
@@ -65,6 +73,8 @@ ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
 ProgramExecutable::~ProgramExecutable()
 {
 }
+
+const ClassInfo FunctionExecutable::s_info = { "FunctionExecutable", &ScriptExecutable::s_info, 0, 0 };
 
 FunctionExecutable::FunctionExecutable(JSGlobalData* globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext, int firstLine, int lastLine)
     : ScriptExecutable(globalData->functionExecutableStructure.get(), globalData, source, inStrictContext)

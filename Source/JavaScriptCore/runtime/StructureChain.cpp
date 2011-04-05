@@ -31,6 +31,8 @@
 #include <wtf/RefPtr.h>
 
 namespace JSC {
+    
+ClassInfo StructureChain::s_info = { "StructureChain", 0, 0, 0 };
 
 StructureChain::StructureChain(NonNullPassRefPtr<Structure> structure, Structure* head)
     : JSCell(structure.releaseRef())

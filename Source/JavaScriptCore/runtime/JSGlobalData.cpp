@@ -180,6 +180,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     apiWrapperStructure = JSAPIValueWrapper::createStructure(*this, jsNull());
     scopeChainNodeStructure = ScopeChainNode::createStructure(*this, jsNull());
     executableStructure = ExecutableBase::createStructure(*this, jsNull());
+    nativeExecutableStructure = NativeExecutable::createStructure(*this, jsNull());
     evalExecutableStructure = EvalExecutable::createStructure(*this, jsNull());
     programExecutableStructure = ProgramExecutable::createStructure(*this, jsNull());
     functionExecutableStructure = FunctionExecutable::createStructure(*this, jsNull());
