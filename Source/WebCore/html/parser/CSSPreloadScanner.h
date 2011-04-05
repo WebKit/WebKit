@@ -53,7 +53,8 @@ private:
         Rule,
         AfterRule,
         RuleValue,
-        AfterRuleValue
+        AfterRuleValue,
+        DoneParsingImportRules,
     };
 
     inline void tokenize(UChar c);

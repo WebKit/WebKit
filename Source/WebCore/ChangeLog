@@ -1,3 +1,22 @@
+2011-04-05  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Stop preload scanning CSS when it&apos;s impossible to have another @import.
+        https://bugs.webkit.org/show_bug.cgi?id=57664
+
+        @import statements are only allowed at the beginning of a CSS file.
+        Only comments or @charset can precede them. After seeing anything else,
+        abort early so that we:
+        - don't have to parse the rest of the CSS.
+        - don't preload something that the regular parser won't load.
+
+        * html/parser/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::scan): Terminate early if we're done with @imports.
+        (WebCore::CSSPreloadScanner::tokenize): Terminate early if we see a {} or any style rule.
+        (WebCore::CSSPreloadScanner::emitRule): Only @charset or @import are allowed to precede @import.
+        * html/parser/CSSPreloadScanner.h: Add DoneParsingImportRules state.
+
 2011-04-05  Takayoshi Kochi <kochi@chromium.org>
 
         Reviewed by Tony Chang.

@@ -54,7 +54,7 @@ void CSSPreloadScanner::scan(const HTMLToken& token, bool scanningBody)
     m_scanningBody = scanningBody;
 
     const HTMLToken::DataVector& characters = token.characters();
-    for (HTMLToken::DataVector::const_iterator iter = characters.begin(); iter != characters.end(); ++iter)
+    for (HTMLToken::DataVector::const_iterator iter = characters.begin(); iter != characters.end() && m_state != DoneParsingImportRules; ++iter)
         tokenize(*iter);
 }
 
@@ -64,10 +64,14 @@ inline void CSSPreloadScanner::tokenize(UChar c)
     // Searching for other types of resources is probably low payoff.
     switch (m_state) {
     case Initial:
+        if (isHTMLSpace(c))
+            break;
         if (c == '@')
             m_state = RuleStart;
         else if (c == '/')
             m_state = MaybeComment;
+        else
+            m_state = DoneParsingImportRules;
         break;
     case MaybeComment:
         if (c == '*')
@@ -80,10 +84,10 @@ inline void CSSPreloadScanner::tokenize(UChar c)
             m_state = MaybeCommentEnd;
         break;
     case MaybeCommentEnd:
+        if (c == '*')
+            break;
         if (c == '/')
             m_state = Initial;
-        else if (c == '*')
-            ;
         else
             m_state = Comment;
         break;
@@ -106,9 +110,11 @@ inline void CSSPreloadScanner::tokenize(UChar c)
         break;
     case AfterRule:
         if (isHTMLSpace(c))
-            ;
-        else if (c == ';')
+            break;
+        if (c == ';')
             m_state = Initial;
+        else if (c == '{')
+            m_state = DoneParsingImportRules;
         else {
             m_state = RuleValue;
             m_ruleValue.append(c);
@@ -117,22 +123,25 @@ inline void CSSPreloadScanner::tokenize(UChar c)
     case RuleValue:
         if (isHTMLSpace(c))
             m_state = AfterRuleValue;
-        else if (c == ';') {
+        else if (c == ';')
             emitRule();
-            m_state = Initial;
-        } else 
+        else
             m_ruleValue.append(c);
         break;
     case AfterRuleValue:
         if (isHTMLSpace(c))
-            ;
-        else if (c == ';') {
+            break;
+        if (c == ';')
             emitRule();
-            m_state = Initial;
-        } else {
+        else if (c == '{')
+            m_state = DoneParsingImportRules;
+        else {
             // FIXME: media rules
             m_state = Initial;
         }
+        break;
+    case DoneParsingImportRules:
+        ASSERT_NOT_REACHED();
         break;
     }
 }
@@ -187,7 +196,11 @@ void CSSPreloadScanner::emitRule()
         String value = parseCSSStringOrURL(m_ruleValue.data(), m_ruleValue.size());
         if (!value.isEmpty())
             m_document->cachedResourceLoader()->preload(CachedResource::CSSStyleSheet, value, String(), m_scanningBody);
-    }
+        m_state = Initial;
+    } else if (equalIgnoringCase("charset", m_rule.data(), m_rule.size()))
+        m_state = Initial;
+    else
+        m_state = DoneParsingImportRules;
     m_rule.clear();
     m_ruleValue.clear();
 }

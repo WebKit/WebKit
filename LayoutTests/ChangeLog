@@ -1,3 +1,13 @@
+2011-04-05  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Stop preload scanning CSS when it&apos;s impossible to have another @import.
+        https://bugs.webkit.org/show_bug.cgi?id=57664
+
+        * fast/preloader/style-expected.txt:
+        * fast/preloader/style.html: Updated to test invalid @import statements.
+
 2011-04-05  Kent Tamura  <tkent@chromium.org>
 
         Update a test affected by the behavior change of r82908.
