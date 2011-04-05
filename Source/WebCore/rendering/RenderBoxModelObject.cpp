@@ -559,7 +559,7 @@ int RenderBoxModelObject::paddingEnd(bool) const
     return padding.calcMinValue(w);
 }
 
-void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& c, const FillLayer* bgLayer, int tx, int ty, int w, int h, InlineFlowBox* box, CompositeOperator op, RenderObject* backgroundObject)
+void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& color, const FillLayer* bgLayer, int tx, int ty, int w, int h, InlineFlowBox* box, CompositeOperator op, RenderObject* backgroundObject)
 {
     GraphicsContext* context = paintInfo.context;
     if (context->paintingDisabled())
@@ -567,13 +567,54 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
 
     bool includeLeftEdge = box ? box->includeLogicalLeftEdge() : true;
     bool includeRightEdge = box ? box->includeLogicalRightEdge() : true;
-    int bLeft = includeLeftEdge ? borderLeft() : 0;
-    int bRight = includeRightEdge ? borderRight() : 0;
-    int pLeft = includeLeftEdge ? paddingLeft() : 0;
-    int pRight = includeRightEdge ? paddingRight() : 0;
+
+    bool hasRoundedBorder = style()->hasBorderRadius() && (includeLeftEdge || includeRightEdge);
+    bool clippedWithLocalScrolling = hasOverflowClip() && bgLayer->attachment() == LocalBackgroundAttachment;
+    bool isBorderFill = bgLayer->clip() == BorderFillBox;
+    bool isRoot = this->isRoot();
+
+    Color bgColor = color;
+    StyleImage* bgImage = bgLayer->image();
+    bool shouldPaintBackgroundImage = bgImage && bgImage->canRender(style()->effectiveZoom());
+    
+    // When this style flag is set, change existing background colors and images to a solid white background.
+    // If there's no bg color or image, leave it untouched to avoid affecting transparency.
+    // We don't try to avoid loading the background images, because this style flag is only set
+    // when printing, and at that point we've already loaded the background images anyway. (To avoid
+    // loading the background images we'd have to do this check when applying styles rather than
+    // while rendering.)
+    if (style()->forceBackgroundsToWhite()) {
+        // Note that we can't reuse this variable below because the bgColor might be changed
+        bool shouldPaintBackgroundColor = !bgLayer->next() && bgColor.isValid() && bgColor.alpha() > 0;
+        if (shouldPaintBackgroundImage || shouldPaintBackgroundColor) {
+            bgColor = Color::white;
+            shouldPaintBackgroundImage = false;
+        }
+    }
+
+    bool colorVisible = bgColor.isValid() && bgColor.alpha() > 0;
+    
+    // Fast path for drawing simple color backgrounds.
+    if (!isRoot && !clippedWithLocalScrolling && !shouldPaintBackgroundImage && isBorderFill) {
+        if (!colorVisible)
+            return;
+
+        IntRect borderRect(tx, ty, w, h);
+        if (borderRect.isEmpty())
+            return;
+
+        if (hasRoundedBorder) {
+            RoundedIntRect border = style()->getRoundedBorderFor(borderRect);
+            border.excludeLogicalEdges(box && box->isHorizontal(), !includeLeftEdge, !includeRightEdge);
+            context->fillRoundedRect(border, bgColor, style()->colorSpace());
+        } else
+            context->fillRect(borderRect, bgColor, style()->colorSpace());
+        
+        return;
+    }
 
     bool clippedToBorderRadius = false;
-    if (style()->hasBorderRadius() && (includeLeftEdge || includeRightEdge)) {
+    if (hasRoundedBorder) {
         IntRect borderRect(tx, ty, w, h);
 
         if (borderRect.isEmpty())
@@ -586,8 +627,12 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         context->addRoundedRectClip(border);
         clippedToBorderRadius = true;
     }
+    
+    int bLeft = includeLeftEdge ? borderLeft() : 0;
+    int bRight = includeRightEdge ? borderRight() : 0;
+    int pLeft = includeLeftEdge ? paddingLeft() : 0;
+    int pRight = includeRightEdge ? paddingRight() : 0;
 
-    bool clippedWithLocalScrolling = hasOverflowClip() && bgLayer->attachment() == LocalBackgroundAttachment;
     if (clippedWithLocalScrolling) {
         // Clip to the overflow area.
         context->save();
@@ -642,27 +687,6 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         context->clipToImageBuffer(maskImage.get(), maskRect);
     }
     
-    StyleImage* bg = bgLayer->image();
-    bool shouldPaintBackgroundImage = bg && bg->canRender(style()->effectiveZoom());
-    Color bgColor = c;
-
-    // When this style flag is set, change existing background colors and images to a solid white background.
-    // If there's no bg color or image, leave it untouched to avoid affecting transparency.
-    // We don't try to avoid loading the background images, because this style flag is only set
-    // when printing, and at that point we've already loaded the background images anyway. (To avoid
-    // loading the background images we'd have to do this check when applying styles rather than
-    // while rendering.)
-    if (style()->forceBackgroundsToWhite()) {
-        // Note that we can't reuse this variable below because the bgColor might be changed
-        bool shouldPaintBackgroundColor = !bgLayer->next() && bgColor.isValid() && bgColor.alpha() > 0;
-        if (shouldPaintBackgroundImage || shouldPaintBackgroundColor) {
-            bgColor = Color::white;
-            shouldPaintBackgroundImage = false;
-        }
-    }
-
-    bool isRoot = this->isRoot();
-
     // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
     // no background in the child document should show the parent's background.
     bool isOpaqueRoot = false;
@@ -727,18 +751,16 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             phase += destRect.location() - destOrigin;
             CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
             RenderObject* clientForBackgroundImage = backgroundObject ? backgroundObject : this;
-            RefPtr<Image> image = bg->image(clientForBackgroundImage, tileSize);
+            RefPtr<Image> image = bgImage->image(clientForBackgroundImage, tileSize);
             bool useLowQualityScaling = shouldPaintAtLowQuality(context, image.get(), bgLayer, tileSize);
             context->drawTiledImage(image.get(), style()->colorSpace(), destRect, phase, tileSize, compositeOp, useLowQualityScaling);
         }
     }
 
-    if (bgLayer->clip() != BorderFillBox)
-        // Undo the background clip
+    if (!isBorderFill) // Undo the background clip
         context->restore();
 
-    if (clippedToBorderRadius)
-        // Undo the border radius clip
+    if (clippedToBorderRadius) // Undo the border radius clip
         context->restore();
         
     if (clippedWithLocalScrolling) // Undo the clip for local background attachments.

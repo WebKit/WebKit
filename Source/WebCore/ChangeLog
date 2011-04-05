@@ -1,3 +1,19 @@
+2011-04-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Add a fast path for simple color backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=57773
+
+        Add a fast path for drawing simple color backgrounds. It's
+        faster to fill a path or rect than it is to set up a clip,
+        and then paint the rect.
+        
+        No visible behavior change so no new tests.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+
 2011-04-05  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed EFL build fix for r82962.
