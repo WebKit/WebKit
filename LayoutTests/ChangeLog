@@ -1,3 +1,11 @@
+2011-04-05  Chang Shu  <cshu@webkit.org>
+
+        Unreviewed.
+
+        Unskip passed tests after bugs 57572, 57568, 42540, 42692 have been resolved.
+
+        * platform/qt-wk2/Skipped:
+
 2011-04-05  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, add chromium-linux expectation for fast/ruby/overhang-vertical.html (the test changed in r82903).
