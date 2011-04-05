@@ -2,6 +2,18 @@
 
         Reviewed by Andreas Kling.
 
+        Switch from Vector<UChar> to StringBuilder in bindings/
+        https://bugs.webkit.org/show_bug.cgi?id=57838
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::cssPropertyName):
+        * bindings/v8/custom/V8CSSStyleDeclarationCustom.cpp:
+        (WebCore::cssPropertyInfo):
+
+2011-04-05  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Andreas Kling.
+
         Switch from Vector<UChar> to StringBuilder in accessibility/
         https://bugs.webkit.org/show_bug.cgi?id=57837
 

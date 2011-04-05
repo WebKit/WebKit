@@ -34,6 +34,8 @@
 #include <runtime/StringPrototype.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/AtomicString.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenate.h>
 
 using namespace JSC;
 using namespace WTF;
@@ -94,8 +96,8 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
     if (!length)
         return String();
 
-    Vector<UChar> name;
-    name.reserveInitialCapacity(length);
+    StringBuilder builder;
+    builder.reserveCapacity(length);
 
     unsigned i = 0;
 
@@ -112,25 +114,23 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
     } else if (hasCSSPropertyNamePrefix(propertyName, "webkit")
             || hasCSSPropertyNamePrefix(propertyName, "khtml")
             || hasCSSPropertyNamePrefix(propertyName, "apple"))
-        name.append('-');
+        builder.append('-');
     else {
         if (isASCIIUpper(propertyName.characters()[0]))
             return String();
     }
 
-    name.append(toASCIILower(propertyName.characters()[i++]));
+    builder.append(toASCIILower(propertyName.characters()[i++]));
 
     for (; i < length; ++i) {
         UChar c = propertyName.characters()[i];
         if (!isASCIIUpper(c))
-            name.append(c);
-        else {
-            name.append('-');
-            name.append(toASCIILower(c));
-        }
+            builder.append(c);
+        else
+            builder.append(makeString('-', toASCIILower(c)));
     }
 
-    return String::adopt(name);
+    return builder.toString();
 }
 
 static bool isCSSPropertyName(const Identifier& propertyName)

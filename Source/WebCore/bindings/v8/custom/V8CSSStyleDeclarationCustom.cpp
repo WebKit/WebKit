@@ -40,6 +40,8 @@
 #include "V8Binding.h"
 #include "V8Proxy.h"
 
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenate.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -107,8 +109,8 @@ static CSSPropertyInfo* cssPropertyInfo(v8::Handle<v8::String>v8PropertyName)
         if (!length)
             return 0;
 
-        Vector<UChar> name;
-        name.reserveCapacity(length);
+        StringBuilder builder;
+        builder.reserveCapacity(length);
 
         unsigned i = 0;
 
@@ -123,23 +125,21 @@ static CSSPropertyInfo* cssPropertyInfo(v8::Handle<v8::String>v8PropertyName)
         } else if (hasCSSPropertyNamePrefix(propertyName, "webkit")
                 || hasCSSPropertyNamePrefix(propertyName, "khtml")
                 || hasCSSPropertyNamePrefix(propertyName, "apple"))
-            name.append('-');
+            builder.append('-');
         else if (WTF::isASCIIUpper(propertyName[0]))
             return 0;
 
-        name.append(WTF::toASCIILower(propertyName[i++]));
+        builder.append(WTF::toASCIILower(propertyName[i++]));
 
         for (; i < length; ++i) {
             UChar c = propertyName[i];
             if (!WTF::isASCIIUpper(c))
-                name.append(c);
-            else {
-                name.append('-');
-                name.append(WTF::toASCIILower(c));
-            }
+                builder.append(c);
+            else
+                builder.append(makeString('-', toASCIILower(c)));
         }
 
-        String propName = String::adopt(name);
+        String propName = builder.toString();
         int propertyID = cssPropertyID(propName);
         if (propertyID) {
             propInfo = new CSSPropertyInfo();
