@@ -1,3 +1,14 @@
+2011-04-05  Brian Weinstein  <bweinstein@apple.com>
+
+        [Windows]  fast/blockflow/Kusa-Makura-background-canvas.html failing since introduction in r82903
+        https://bugs.webkit.org/show_bug.cgi?id=57880
+        
+        Update Windows expected results (with pixel tests) to greenify the bots.
+
+        * platform/win/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum:
+        * platform/win/fast/blockflow/Kusa-Makura-background-canvas-expected.png:
+        * platform/win/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
+
 2011-04-05  Jessie Berlin  <jberlin@apple.com>
 
         [Windows Tests] fast/dom/Window/window-property-descriptors.html failing since r82925.
