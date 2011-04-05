@@ -1,3 +1,10 @@
+2011-04-05  Anders Carlsson  <andersca@apple.com>
+
+        Didn't mean to land this.
+
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView getVariable:value:]):
+
 2011-04-04  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/57384> CFNetwork and WebCore load priorities should match

@@ -2063,7 +2063,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 #ifdef BUILDING_ON_TIGER
             *(NPBool *)value = FALSE;
 #else
-            *(NPBool *)value = FALSE;
+            *(NPBool *)value = TRUE;
 #endif
             return NPERR_NO_ERROR;
         }
