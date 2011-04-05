@@ -109,6 +109,7 @@ public:
     virtual PassRefPtr<CSSMutableStyleDeclaration> copy() const;
 
     bool setProperty(int propertyID, int value, bool important = false, bool notifyChanged = true);
+    bool setProperty(int propertyId, double value, CSSPrimitiveValue::UnitTypes, bool important = false, bool notifyChanged = true);
     bool setProperty(int propertyID, const String& value, bool important = false, bool notifyChanged = true);
 
     String removeProperty(int propertyID, bool notifyChanged = true, bool returnText = false);
@@ -117,7 +118,7 @@ public:
     void setLengthProperty(int propertyId, const String& value, bool important, bool multiLength = false);
     void setStringProperty(int propertyId, const String& value, CSSPrimitiveValue::UnitTypes, bool important = false); // parsed string value
     void setImageProperty(int propertyId, const String& url, bool important = false);
- 
+
     // The following parses an entire new style declaration.
     void parseDeclaration(const String& styleDeclaration);
 

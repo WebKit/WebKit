@@ -673,34 +673,35 @@ output {
 
 meter {
     -webkit-appearance: meter;
-    display: inline-block;
+    -webkit-box-sizing: border-box;
+    display: inline-box;
     height: 1em;
     width: 5em;
     vertical-align: -0.2em;
 }
 
-meter::-webkit-meter {
-    -webkit-appearance: meter;
-}
-
 meter::-webkit-meter-bar {
-    -webkit-appearance: meter;
     background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#ddd), color-stop(0.20, #eee), color-stop(0.45, #ccc), color-stop(0.55, #ccc));
+    height: 100%;
+    -webkit-box-sizing: border-box;
 }
 
 meter::-webkit-meter-optimum-value {
-    -webkit-appearance: meter;
     background: -webkit-gradient(linear, left top, left bottom, from(#ad7), to(#ad7), color-stop(0.20, #cea), color-stop(0.45, #7a3), color-stop(0.55, #7a3));
+    height: 100%;
+    -webkit-box-sizing: border-box;
 }
 
-meter::-webkit-meter-suboptimal-value {
-    -webkit-appearance: meter;
+meter::-webkit-meter-suboptimum-value {
     background: -webkit-gradient(linear, left top, left bottom, from(#fe7), to(#fe7), color-stop(0.20, #ffc), color-stop(0.45, #db3), color-stop(0.55, #db3));
+    height: 100%;
+    -webkit-box-sizing: border-box;
 }
 
 meter::-webkit-meter-even-less-good-value {
-    -webkit-appearance: meter;
     background: -webkit-gradient(linear, left top, left bottom, from(#f77), to(#f77), color-stop(0.20, #fcc), color-stop(0.45, #d44), color-stop(0.55, #d44));
+    height: 100%;
+    -webkit-box-sizing: border-box;
 }
 
 /* progress */

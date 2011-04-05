@@ -32,36 +32,21 @@ namespace WebCore {
 class HTMLMeterElement;
 class ShadowBlockElement;
 
-class RenderMeter : public RenderIndicator {
+class RenderMeter : public RenderBlock {
 public:
     RenderMeter(HTMLMeterElement*);
     virtual ~RenderMeter();
 
 private:
-    virtual const char* renderName() const { return "RenderMeter"; }
-    virtual bool isMeter() const { return true; }
-    virtual void updateFromElement();
     virtual void computeLogicalWidth();
     virtual void computeLogicalHeight();
 
-    virtual void layoutParts();
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-
-    void updateShadows();
-    void detachShadows();
-
-    bool shadowAttached() const { return m_barPart; }
-    IntRect valuePartRect() const;
-    PseudoId valuePseudoId() const;
-    IntRect barPartRect() const;
-    PseudoId barPseudoId() const;
+    virtual const char* renderName() const { return "RenderMeter"; }
+    virtual bool isMeter() const { return true; }
+    virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+    virtual bool canHaveChildren() const { return false; }
 
     double valueRatio() const;
-    bool shouldHaveParts() const;
-    PassRefPtr<ShadowBlockElement> createPart(PseudoId);
-
-    RefPtr<ShadowBlockElement> m_barPart;
-    RefPtr<ShadowBlockElement> m_valuePart;
 };
 
 inline RenderMeter* toRenderMeter(RenderObject* object)

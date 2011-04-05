@@ -182,10 +182,6 @@ namespace WebCore {
             PseudoSearchDecoration,
             PseudoSearchResultsDecoration,
             PseudoSearchResultsButton,
-            PseudoMeterBar,
-            PseudoMeterOptimum,
-            PseudoMeterSuboptimal,
-            PseudoMeterEvenLessGood,
             PseudoInputListButton,
 #if ENABLE(INPUT_SPEECH)
             PseudoInputSpeechButton,

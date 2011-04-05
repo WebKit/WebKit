@@ -3147,6 +3147,8 @@
             'html/parser/XSSFilter.h',
             'html/shadow/MediaControls.cpp',
             'html/shadow/MediaControls.h',
+            'html/shadow/MeterShadowElement.cpp',
+            'html/shadow/MeterShadowElement.h',
             'html/shadow/ProgressBarValueElement.h',
             'html/shadow/SliderThumbElement.cpp',
             'html/shadow/SliderThumbElement.h',

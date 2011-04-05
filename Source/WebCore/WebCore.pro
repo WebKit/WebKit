@@ -801,6 +801,7 @@ SOURCES += \
     html/parser/TextViewSourceParser.cpp \
     html/parser/XSSFilter.cpp \
     html/shadow/MediaControls.cpp \
+    html/shadow/MeterShadowElement.cpp \
     html/shadow/SliderThumbElement.cpp \
     html/shadow/TextControlInnerElements.cpp \
     inspector/ConsoleMessage.cpp \
