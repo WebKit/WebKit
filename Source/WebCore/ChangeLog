@@ -1,3 +1,39 @@
+2011-04-04  Steve Block  <steveblock@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        JavaInstance should be a pure interface
+        https://bugs.webkit.org/show_bug.cgi?id=55383
+
+        This patch fixes JavaInstance for V8 only.
+
+        It factors out a JavaInstance interface which does not use JNI
+        types. This will allow the Java bridge to be used with objects
+        that don't use JNI directly. The existing jobject-backed
+        implementation is moved to a new JavaInstanceJobject class which
+        implements the interface.
+
+        No new tests, refactoring only.
+
+        * Android.v8bindings.mk:
+        * WebCore.gypi:
+        * bridge/jni/JobjectWrapper.h:
+        * bridge/jni/v8/JNIUtilityPrivate.cpp:
+        (JSC::Bindings::jvalueToJavaValue):
+        (JSC::Bindings::javaValueToJvalue):
+        * bridge/jni/v8/JavaInstanceJobjectV8.cpp:
+        (JavaInstanceJobject::JavaInstanceJobject):
+        (JavaInstanceJobject::~JavaInstanceJobject):
+        (JavaInstanceJobject::begin):
+        (JavaInstanceJobject::end):
+        (JavaInstanceJobject::getClass):
+        (JavaInstanceJobject::invokeMethod):
+        (JavaInstanceJobject::getField):
+        * bridge/jni/v8/JavaInstanceJobjectV8.h: Copied from Source/WebCore/bridge/jni/v8/JavaInstanceV8.h.
+        (JSC::Bindings::JavaInstanceJobject::javaInstance):
+        * bridge/jni/v8/JavaInstanceV8.h:
+        (JSC::Bindings::JavaInstance::~JavaInstance):
+
 2011-04-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
        Reviewed by Darin Adler.

@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "JavaInstanceV8.h"
+#include "JavaInstanceJobjectV8.h"
 
 #if ENABLE(JAVA_BRIDGE)
 
@@ -35,42 +35,36 @@
 #include "JavaMethod.h"
 
 #include <wtf/OwnArrayPtr.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 
 using namespace JSC::Bindings;
 
-JavaInstance::JavaInstance(jobject instance)
+JavaInstanceJobject::JavaInstanceJobject(jobject instance)
+    : m_instance(new JobjectWrapper(instance))
 {
-    m_instance = new JobjectWrapper(instance);
-    m_class = 0;
-}
-
-JavaInstance::~JavaInstance()
-{
-    m_instance = 0;
-    delete m_class;
 }
 
 #define NUM_LOCAL_REFS 64
 
-void JavaInstance::virtualBegin()
+void JavaInstanceJobject::begin()
 {
     getJNIEnv()->PushLocalFrame(NUM_LOCAL_REFS);
 }
 
-void JavaInstance::virtualEnd()
+void JavaInstanceJobject::end()
 {
     getJNIEnv()->PopLocalFrame(0);
 }
 
-JavaClass* JavaInstance::getClass() const
+JavaClass* JavaInstanceJobject::getClass() const
 {
     if (!m_class)
-        m_class = new JavaClassJobject(javaInstance());
-    return m_class;
+        m_class = adoptPtr(new JavaClassJobject(javaInstance()));
+    return m_class.get();
 }
 
-JavaValue JavaInstance::invokeMethod(const JavaMethod* method, JavaValue* args)
+JavaValue JavaInstanceJobject::invokeMethod(const JavaMethod* method, JavaValue* args)
 {
     ASSERT(getClass()->methodsNamed(method->name().utf8().data()).find(method) != notFound);
     unsigned int numParams = method->numParameters();
@@ -81,7 +75,7 @@ JavaValue JavaInstance::invokeMethod(const JavaMethod* method, JavaValue* args)
     return jvalueToJavaValue(result, method->returnType());
 }
 
-JavaValue JavaInstance::getField(const JavaField* field)
+JavaValue JavaInstanceJobject::getField(const JavaField* field)
 {
     ASSERT(getClass()->fieldNamed(field->name().utf8().data()) == field);
     return jvalueToJavaValue(getJNIField(javaInstance(), field->type(), field->name().utf8().data(), field->typeClassName()), field->type());

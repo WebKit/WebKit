@@ -24,13 +24,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JavaInstanceV8_h
-#define JavaInstanceV8_h
+#ifndef JavaInstanceJobjectV8_h
+#define JavaInstanceJobjectV8_h
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JavaValueV8.h"
-#include <wtf/RefCounted.h>
+#include "JNIUtility.h"
+#include "JavaInstanceV8.h"
+#include "JobjectWrapper.h"
+
+#include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
 
 using namespace WTF;
 
@@ -38,25 +42,22 @@ namespace JSC {
 
 namespace Bindings {
 
-class JavaClass;
-class JavaField;
-class JavaMethod;
-
-class JavaInstance : public RefCounted<JavaInstance> {
+class JavaInstanceJobject : public JavaInstance {
 public:
-    virtual ~JavaInstance() {}
+    JavaInstanceJobject(jobject instance);
 
-    virtual JavaClass* getClass() const = 0;
-    // args must be an array of length greater than or equal to the number of
-    // arguments expected by the method.
-    virtual JavaValue invokeMethod(const JavaMethod*, JavaValue* args) = 0;
-    virtual JavaValue getField(const JavaField*) = 0;
+    // JavaInstance implementation
+    virtual JavaClass* getClass() const;
+    virtual JavaValue invokeMethod(const JavaMethod*, JavaValue* args);
+    virtual JavaValue getField(const JavaField*);
+    virtual void begin();
+    virtual void end();
 
-    // These functions are called before and after the main entry points into
-    // the native implementations.  They can be used to establish and cleanup
-    // any needed state.
-    virtual void begin() = 0;
-    virtual void end() = 0;
+    jobject javaInstance() const { return m_instance->m_instance; }
+
+protected:
+    RefPtr<JobjectWrapper> m_instance;
+    mutable OwnPtr<JavaClass> m_class;
 };
 
 } // namespace Bindings
@@ -65,4 +66,4 @@ public:
 
 #endif // ENABLE(JAVA_BRIDGE)
 
-#endif // JavaInstanceV8_h
+#endif // JavaInstanceJobjectV8_h
