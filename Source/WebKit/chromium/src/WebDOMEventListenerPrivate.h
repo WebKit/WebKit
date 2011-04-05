@@ -39,8 +39,6 @@ namespace WebCore {
 class Node;
 }
 
-using namespace WebCore;
-
 namespace WebKit {
 
 class EventListenerWrapper;
@@ -52,12 +50,12 @@ public:
     ~WebDOMEventListenerPrivate();
 
     EventListenerWrapper* createEventListenerWrapper(
-        const WebString& eventType, bool useCapture, Node* node);
+        const WebString& eventType, bool useCapture, WebCore::Node*);
 
     // Gets the ListenerEventWrapper for a specific node.
     // Used by WebNode::removeDOMEventListener().
     EventListenerWrapper* getEventListenerWrapper(
-        const WebString& eventType, bool useCapture, Node* node);
+        const WebString& eventType, bool useCapture, WebCore::Node*);
 
     // Called by the WebDOMEventListener when it is about to be deleted.
     void webDOMEventListenerDeleted();
@@ -68,7 +66,7 @@ public:
     struct ListenerInfo {
         ListenerInfo(const WebString& eventType, bool useCapture,
                      EventListenerWrapper* eventListenerWrapper,
-                     Node* node)
+                     WebCore::Node* node)
             : eventType(eventType)
             , useCapture(useCapture)
             , eventListenerWrapper(eventListenerWrapper)
@@ -79,7 +77,7 @@ public:
         WebString eventType;
         bool useCapture;
         EventListenerWrapper* eventListenerWrapper;
-        Node* node;
+        WebCore::Node* node;
     };
 
 private:

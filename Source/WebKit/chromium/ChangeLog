@@ -1,3 +1,18 @@
+2011-04-05  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Don't have 'using namespace' declarations in header files
+        https://bugs.webkit.org/show_bug.cgi?id=57882
+
+        * src/EventListenerWrapper.cpp:
+        * src/EventListenerWrapper.h:
+        * src/VideoFrameChromiumImpl.h:
+        * src/WebDOMEventListener.cpp:
+        * src/WebDOMEventListenerPrivate.cpp:
+        * src/WebDOMEventListenerPrivate.h:
+        (WebKit::WebDOMEventListenerPrivate::ListenerInfo::ListenerInfo):
+
 2011-04-05  Zelidrag Hornung  <zelidrag@chromium.org>
 
         Reviewed by David Levin.

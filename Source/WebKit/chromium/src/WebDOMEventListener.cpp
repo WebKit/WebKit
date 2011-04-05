@@ -33,6 +33,8 @@
 
 #include "WebDOMEventListenerPrivate.h"
 
+using namespace WebCore;
+
 namespace WebKit {
 
 WebDOMEventListener::WebDOMEventListener()

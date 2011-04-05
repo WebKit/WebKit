@@ -34,16 +34,14 @@
 #include "VideoFrameChromium.h"
 #include "WebVideoFrame.h"
 
-using namespace WebCore;
-
 namespace WebKit {
 
 // A wrapper class for WebKit::WebVideoFrame. Objects can be created in WebKit
 // and used in WebCore because of the VideoFrameChromium interface.
-class VideoFrameChromiumImpl : public VideoFrameChromium {
+class VideoFrameChromiumImpl : public WebCore::VideoFrameChromium {
 public:
     // Converts a WebCore::VideoFrameChromium to a WebKit::WebVideoFrame.
-    static WebVideoFrame* toWebVideoFrame(VideoFrameChromium*);
+    static WebVideoFrame* toWebVideoFrame(WebCore::VideoFrameChromium*);
 
     // Creates a VideoFrameChromiumImpl object to wrap the given WebVideoFrame.
     // The VideoFrameChromiumImpl does not take ownership of the WebVideoFrame
@@ -59,7 +57,7 @@ public:
     virtual int stride(unsigned plane) const;
     virtual const void* data(unsigned plane) const;
     virtual unsigned texture(unsigned plane) const;
-    virtual const IntSize requiredTextureSize(unsigned plane) const;
+    virtual const WebCore::IntSize requiredTextureSize(unsigned plane) const;
     virtual bool hasPaddingBytes(unsigned plane) const;
 
 private:
