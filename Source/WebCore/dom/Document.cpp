@@ -1460,13 +1460,17 @@ void Document::recalcStyle(StyleChange change)
     m_inStyleRecalc = true;
     suspendPostAttachCallbacks();
     RenderWidget::suspendWidgetHierarchyUpdates();
-    if (view())
-        view()->pauseScheduledEvents();
     
+    RefPtr<FrameView> frameView = view();
+    if (frameView) {
+        frameView->pauseScheduledEvents();
+        frameView->beginDeferredRepaints();
+    }
+
     ASSERT(!renderer() || renderArena());
     if (!renderer() || !renderArena())
         goto bail_out;
-    
+
     if (m_pendingStyleRecalcShouldForce)
         change = Force;
 
@@ -1506,8 +1510,10 @@ bail_out:
         m_usesLinkRules = m_styleSelector->usesLinkRules();
     }
 
-    if (view())
-        view()->resumeScheduledEvents();
+    if (frameView) {
+        frameView->resumeScheduledEvents();
+        frameView->endDeferredRepaints();
+    }
     RenderWidget::resumeWidgetHierarchyUpdates();
     resumePostAttachCallbacks();
     m_inStyleRecalc = false;

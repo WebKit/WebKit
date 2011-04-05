@@ -1,3 +1,17 @@
+2011-04-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Defer repaints during style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=57886
+
+        This reduces the need to do (often expensive) platform surface invalidation.
+        We already do this during layout but style recalculation may trigger
+        invalidation as well.
+    
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+
 2011-04-05  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
