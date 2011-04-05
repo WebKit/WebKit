@@ -77,6 +77,7 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
@@ -1176,25 +1177,21 @@ static String accessibleNameForNode(Node* node)
 
 String AccessibilityRenderObject::accessibilityDescriptionForElements(Vector<Element*> &elements) const
 {
-    Vector<UChar> ariaLabel;
+    StringBuilder builder;
     unsigned size = elements.size();
     for (unsigned i = 0; i < size; ++i) {
         Element* idElement = elements[i];
-        
-        String nameFragment = accessibleNameForNode(idElement);
-        ariaLabel.append(nameFragment.characters(), nameFragment.length());
-        for (Node* n = idElement->firstChild(); n; n = n->traverseNextNode(idElement)) {
-            nameFragment = accessibleNameForNode(n);
-            ariaLabel.append(nameFragment.characters(), nameFragment.length());
-        }
-            
+
+        builder.append(accessibleNameForNode(idElement));
+        for (Node* n = idElement->firstChild(); n; n = n->traverseNextNode(idElement))
+            builder.append(accessibleNameForNode(n));
+
         if (i != size - 1)
-            ariaLabel.append(' ');
+            builder.append(' ');
     }
-    return String::adopt(ariaLabel);
+    return builder.toString();
 }
 
-    
 void AccessibilityRenderObject::elementsFromAttribute(Vector<Element*>& elements, const QualifiedName& attribute) const
 {
     Node* node = m_renderer->node();

@@ -52,6 +52,8 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringConcatenate.h>
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
@@ -430,12 +432,7 @@ String AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const V
     // Append text, plus the period that follows the text.
     // FIXME: Not all list marker styles are followed by a period, but this
     // sounds much better when there is a synthesized pause because of a period.
-    Vector<UChar> resultVector;
-    resultVector.append(markerText.characters(), markerText.length());
-    resultVector.append('.');
-    resultVector.append(' ');
-    
-    return String::adopt(resultVector);
+    return makeString(markerText, ". ");
 }
     
 String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
@@ -443,7 +440,7 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
     if (visiblePositionRange.isNull())
         return String();
 
-    Vector<UChar> resultVector;
+    StringBuilder builder;
     RefPtr<Range> range = makeRange(visiblePositionRange.start, visiblePositionRange.end);
     for (TextIterator it(range.get()); !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
@@ -451,9 +448,9 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
             // Add a textual representation for list marker text
             String listMarkerText = listMarkerTextForNodeAndPosition(it.node(), visiblePositionRange.start);
             if (!listMarkerText.isEmpty())
-                resultVector.append(listMarkerText.characters(), listMarkerText.length());
-                
-            resultVector.append(it.characters(), it.length());
+                builder.append(listMarkerText);
+
+            builder.append(it.characters(), it.length());
         } else {
             // locate the node and starting offset for this replaced range
             int exception = 0;
@@ -462,11 +459,11 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
             int offset = it.range()->startOffset(exception);
 
             if (replacedNodeNeedsCharacter(node->childNode(offset)))
-                resultVector.append(objectReplacementCharacter);
+                builder.append(objectReplacementCharacter);
         }
     }
 
-    return String::adopt(resultVector);
+    return builder.toString();
 }
 
 int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const

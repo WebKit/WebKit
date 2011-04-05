@@ -1,3 +1,16 @@
+2011-04-05  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Andreas Kling.
+
+        Switch from Vector<UChar> to StringBuilder in accessibility/
+        https://bugs.webkit.org/show_bug.cgi?id=57837
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::listMarkerTextForNodeAndPosition):
+        (WebCore::AccessibilityObject::stringForVisiblePositionRange):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityDescriptionForElements):
+
 2011-04-05  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.
