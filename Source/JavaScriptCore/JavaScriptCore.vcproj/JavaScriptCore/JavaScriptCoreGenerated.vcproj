@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			ConfigurationType="0"
-			InheritedPropertySheets=".\JavaScriptCoreGeneratedCommon.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreGeneratedDebug.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"
@@ -27,7 +27,7 @@
 		<Configuration
 			Name="Debug_All|Win32"
 			ConfigurationType="0"
-			InheritedPropertySheets=".\JavaScriptCoreGeneratedCommon.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreGeneratedDebugAll.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"
@@ -36,7 +36,7 @@
 		<Configuration
 			Name="Release|Win32"
 			ConfigurationType="0"
-			InheritedPropertySheets=".\JavaScriptCoreGeneratedCommon.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreGeneratedRelease.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"
@@ -45,7 +45,7 @@
 		<Configuration
 			Name="Production|Win32"
 			ConfigurationType="0"
-			InheritedPropertySheets=".\JavaScriptCoreGeneratedCommon.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreGeneratedProduction.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"
@@ -54,7 +54,7 @@
 		<Configuration
 			Name="Release_Cairo_CFLite|Win32"
 			ConfigurationType="0"
-			InheritedPropertySheets=".\JavaScriptCoreGeneratedCommon.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreGeneratedReleaseCairoCFLite.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"
@@ -63,7 +63,7 @@
 		<Configuration
 			Name="Debug_Cairo_CFLite|Win32"
 			ConfigurationType="0"
-			InheritedPropertySheets=".\JavaScriptCoreGeneratedCommon.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreGeneratedDebugCairoCFLite.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"
@@ -72,7 +72,7 @@
 		<Configuration
 			Name="Release_PGO|Win32"
 			ConfigurationType="0"
-			InheritedPropertySheets=".\JavaScriptCoreGeneratedCommon.vsprops"
+			InheritedPropertySheets=".\JavaScriptCoreGeneratedReleasePGO.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"

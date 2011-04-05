@@ -1,3 +1,18 @@
+2011-04-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.vcproj: Add per-configuration vsprops files.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedCommon.vsprops: Removed inheritance from common.vsprops.
+        Set production environment variable before calling make.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedDebug.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedDebugAll.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedDebugCairoCFLite.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedProduction.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedRelease.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedReleaseCairoCFLite.vsprops: Added.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGeneratedReleasePGO.vsprops: Added.
+
 2011-04-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
