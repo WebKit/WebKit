@@ -100,6 +100,7 @@ void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
 void WebResourceCacheManager::clearCacheForOrigin(SecurityOriginData originData, uint32_t cachesToClear) const
 {
     ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);
+    UNUSED_PARAM(resourceCachesToClear);
 
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create(originData.protocol, originData.host, originData.port);
     if (!origin)
