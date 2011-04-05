@@ -1,3 +1,12 @@
+2011-04-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Follow-up Windows build fix.
+        Don't skip react-to-vsprops-changes.py for all production builds,
+        only those initiated via JavaScriptCore.make.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.make:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+
 2011-04-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

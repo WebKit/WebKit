@@ -1,7 +1,7 @@
 all:
     touch "%ConfigurationBuildDir%\buildfailed"
     bash build-generated-files.sh "%ConfigurationBuildDir%" "$(WEBKITLIBRARIESDIR)"
-!IF "$(PRODUCTION)"!="1"
+!IF "$(OFFICIAL_BUILD)"!="1"
     bash -c "python react-to-vsprops-changes.py"
 !ENDIF
     -mkdir 2>NUL "%ConfigurationBuildDir%\include\JavaScriptCore"

@@ -5,6 +5,7 @@ BUILDSTYLE=Release_PGO
 !ENDIF
 
 install:
+    set OFFICIAL_BUILD=1
     set WebKitLibrariesDir=$(SRCROOT)\AppleInternal
     set WebKitOutputDir=$(OBJROOT)
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)
