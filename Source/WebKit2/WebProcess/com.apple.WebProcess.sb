@@ -11,6 +11,7 @@
 ;; Read-only preferences and data
 (allow file-read*
     ;; Basic system paths
+    (subpath "/Library/Dictionaries")
     (subpath "/Library/Fonts")
     (subpath "/Library/Frameworks")
     (subpath "/Library/Keychains")
@@ -117,6 +118,7 @@
    (global-name "com.apple.audio.coreaudiod")
    (global-name "com.apple.cookied")
    (global-name "com.apple.cvmsServ")
+   (global-name "com.apple.networkd")
    (global-name "com.apple.dock.server")
    (global-name "com.apple.ocspd")
    (global-name "com.apple.pasteboard.1")
