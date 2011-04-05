@@ -33,7 +33,7 @@ import unittest
 
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system import executive_mock
-from webkitpy.common.system import filesystem
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system import outputcapture
 from webkitpy.common.system.path import abspath_to_uri
 from webkitpy.thirdparty.mock import Mock
@@ -232,6 +232,33 @@ class PortTest(unittest.TestCase):
         port = base.Port(port_name='foo')
         self.assertEqual(port.name(), 'foo')
 
+    def test_baseline_search_path(self):
+        filesystem = MockFileSystem()
+        options, args = optparse.OptionParser().parse_args([])
+        port = base.Port(port_name='foo', filesystem=filesystem, options=options)
+        port.baseline_search_path = lambda: []
+        layout_test_dir = port.layout_tests_dir()
+        test_file = filesystem.join(layout_test_dir, 'fast', 'test.html')
+
+        # No baseline search path
+        self.assertEqual(
+            port.expected_baselines(test_file, '.txt'),
+            [(None, 'fast/test-expected.txt')])
+
+        # Simple search path
+        options.baseline_search_path = ['/tmp/local-baselines']
+        filesystem.files = {
+            '/tmp/local-baselines/fast/test-expected.txt': 'foo',
+        }
+        self.assertEqual(
+            port.expected_baselines(test_file, '.txt'),
+            [('/tmp/local-baselines', 'fast/test-expected.txt')])
+
+        # Multiple entries in search path
+        options.baseline_search_path = ['/foo', '/tmp/local-baselines']
+        self.assertEqual(
+            port.expected_baselines(test_file, '.txt'),
+            [('/tmp/local-baselines', 'fast/test-expected.txt')])
 
 class VirtualTest(unittest.TestCase):
     """Tests that various methods expected to be virtual are."""

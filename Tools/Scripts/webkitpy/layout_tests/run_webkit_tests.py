@@ -165,6 +165,16 @@ def _set_up_derived_options(port_obj, options):
             options.time_out_ms = str(test_runner.TestRunner.DEFAULT_TEST_TIMEOUT_MS)
 
     options.slow_time_out_ms = str(5 * int(options.time_out_ms))
+
+    if options.baseline_search_path:
+        normalized_search_paths = []
+        for path in options.baseline_search_path:
+            if not port_obj._filesystem.isabs(path):
+                warnings.append("--baseline-search-path=%s is ignored since it is not absolute" % path)
+                continue
+            normalized_search_paths.append(port_obj._filesystem.normpath(path))
+        options.baseline_search_path = normalized_search_paths
+
     return warnings
 
 
@@ -288,6 +298,10 @@ def parse_args(args=None):
         optparse.make_option("--reset-results", action="store_true",
             default=False, help="Reset any existing baselines to the "
                  "generated results"),
+        optparse.make_option("--baseline-search-path", action="append",
+            default=[], help="Additional directory where to look for test "
+                 "baselines (will take precendence over platform baselines). "
+                 "Specify multiple times to add multiple search path entries."),
         optparse.make_option("--no-show-results", action="store_false",
             default=True, dest="show_results",
             help="Don't launch a browser with results after the tests "

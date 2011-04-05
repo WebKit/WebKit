@@ -196,13 +196,13 @@ class MainTest(unittest.TestCase):
             self.assertTrue(len(batch) <= 2, '%s had too many tests' % ', '.join(batch))
 
     def test_child_process_1(self):
-        (res, buildbot_output, regular_output, user) = logging_run(
+        res, buildbot_output, regular_output, user = logging_run(
              ['--print', 'config', '--worker-model', 'threads', '--child-processes', '1'])
         self.assertTrue('Running one DumpRenderTree\n'
                         in regular_output.get())
 
     def test_child_processes_2(self):
-        (res, buildbot_output, regular_output, user) = logging_run(
+        res, buildbot_output, regular_output, user = logging_run(
              ['--print', 'config', '--worker-model', 'threads', '--child-processes', '2'])
         self.assertTrue('Running 2 DumpRenderTrees in parallel\n'
                         in regular_output.get())
@@ -252,8 +252,8 @@ class MainTest(unittest.TestCase):
         fs = port.unit_test_filesystem()
         # We do a logging run here instead of a passing run in order to
         # suppress the output from the json generator.
-        (res, buildbot_output, regular_output, user) = logging_run(['--clobber-old-results'], record_results=True, filesystem=fs)
-        (res, buildbot_output, regular_output, user) = logging_run(
+        res, buildbot_output, regular_output, user = logging_run(['--clobber-old-results'], record_results=True, filesystem=fs)
+        res, buildbot_output, regular_output, user = logging_run(
             ['--print-last-failures'], filesystem=fs)
         self.assertEqual(regular_output.get(), ['\n\n'])
         self.assertEqual(buildbot_output.get(), [])
@@ -371,7 +371,7 @@ class MainTest(unittest.TestCase):
 
     def test_exit_after_n_failures_upload(self):
         fs = port.unit_test_filesystem()
-        (res, buildbot_output, regular_output, user) = logging_run([
+        res, buildbot_output, regular_output, user = logging_run([
                 'failures/unexpected/text-image-checksum.html',
                 'passes/text.html',
                 '--exit-after-n-failures', '1',
@@ -571,6 +571,17 @@ class MainTest(unittest.TestCase):
         tests_run = get_tests_run(['passes/mismatch.html'], tests_included=True, flatten_batches=True,
                                   include_reference_html=True)
         self.assertEquals(['passes/mismatch.html', 'passes/mismatch-expected-mismatch.html'], tests_run)
+
+    def test_baseline_search_path(self):
+        self.assertTrue(passing_run(['--baseline-search-path', '/tmp/foo']))
+        self.assertTrue(passing_run(['--baseline-search-path', '/tmp/../foo']))
+        self.assertTrue(passing_run(['--baseline-search-path', '/tmp/foo',
+            '--baseline-search-path', '/tmp/bar']))
+
+        res, buildbot_output, regular_output, user = logging_run(
+             ['--baseline-search-path', 'foo'])
+        self.assertTrue('--baseline-search-path=foo is ignored since it is not absolute\n'
+                        in regular_output.get())
 
 
 MainTest = skip_if(MainTest, sys.platform == 'cygwin' and compare_version(sys, '2.6')[0] < 0, 'new-run-webkit-tests tests hang on Cygwin Python 2.5.2')

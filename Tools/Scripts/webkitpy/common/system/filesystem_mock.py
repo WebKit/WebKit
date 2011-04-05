@@ -216,7 +216,9 @@ class MockFileSystem(object):
         self.written_files[source] = None
 
     def normpath(self, path):
-        return path
+        # Like join(), relies on os.path functionality but normalizes the
+        # path separator to the mock one.
+        return re.sub(re.escape(os.path.sep), self.sep, os.path.normpath(path))
 
     def open_binary_tempfile(self, suffix=''):
         path = self._mktemp(suffix)
