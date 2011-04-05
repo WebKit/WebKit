@@ -34,8 +34,17 @@ namespace WebKit {
 
 PlatformLayer* PluginProxy::pluginLayer()
 {
-    if (!m_pluginLayer && m_remoteLayerClientID)
-        m_pluginLayer = WKMakeRenderLayer(m_remoteLayerClientID);
+    if (!m_pluginLayer && m_remoteLayerClientID) {
+        CALayer *renderLayer = WKMakeRenderLayer(m_remoteLayerClientID);
+
+        // Create a layer with flipped geometry and add the real plug-in layer as a sublayer
+        // so the coordinate system will match the event coordinate system.
+        m_pluginLayer.adoptNS([[CALayer alloc] init]);
+        [m_pluginLayer.get() setGeometryFlipped:YES];
+        
+        [renderLayer setAutoresizingMask:kCALayerWidthSizable | kCALayerHeightSizable];
+        [m_pluginLayer.get() addSublayer:renderLayer];
+    }
 
     return m_pluginLayer.get();
 }

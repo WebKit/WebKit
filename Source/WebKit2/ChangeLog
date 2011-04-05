@@ -1,5 +1,21 @@
 2011-04-05  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Some plug-in content is displayed upside down in Unity plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=57895
+        <rdar://problem/9212003>
+
+        Create the flipped geometry layer in the web process instead of the plug-in process,
+        which matches what we do in WebKit1.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        * WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm:
+        (WebKit::PluginProxy::pluginLayer):
+
+2011-04-05  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Assertion failure when navigating quickly between file URLs
