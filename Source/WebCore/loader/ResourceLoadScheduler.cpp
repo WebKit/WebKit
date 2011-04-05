@@ -183,7 +183,7 @@ void ResourceLoadScheduler::servePendingRequests(HostInformation* host, Resource
     LOG(ResourceLoading, "ResourceLoadScheduler::servePendingRequests HostInformation.m_name='%s'", host->name().latin1().data());
 
     for (int priority = ResourceLoadPriorityHighest; priority >= minimumPriority; --priority) {
-        HostInformation::RequestQueue& requestsPending = host->requestsPending((ResourceLoadPriority) priority);
+        HostInformation::RequestQueue& requestsPending = host->requestsPending(ResourceLoadPriority(priority));
 
         while (!requestsPending.isEmpty()) {
             RefPtr<ResourceLoader> resourceLoader = requestsPending.first();
@@ -193,7 +193,7 @@ void ResourceLoadScheduler::servePendingRequests(HostInformation* host, Resource
             // and we don't know all stylesheets yet.
             Document* document = resourceLoader->frameLoader() ? resourceLoader->frameLoader()->frame()->document() : 0;
             bool shouldLimitRequests = !host->name().isNull() || (document && (document->parsing() || !document->haveStylesheetsLoaded()));
-            if (shouldLimitRequests && host->limitRequests())
+            if (shouldLimitRequests && host->limitRequests(ResourceLoadPriority(priority)))
                 return;
 
             requestsPending.removeFirst();
@@ -283,8 +283,10 @@ bool ResourceLoadScheduler::HostInformation::hasRequests() const
     return false;
 }
 
-bool ResourceLoadScheduler::HostInformation::limitRequests() const 
-{ 
+bool ResourceLoadScheduler::HostInformation::limitRequests(ResourceLoadPriority priority) const 
+{
+    if (priority == ResourceLoadPriorityVeryLow && !m_requestsLoading.isEmpty())
+        return true;
     return m_requestsLoading.size() >= (resourceLoadScheduler()->isSerialLoadingEnabled() ? 1 : m_maxRequestsInFlight);
 }
 

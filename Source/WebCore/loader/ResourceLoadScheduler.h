@@ -82,7 +82,7 @@ private:
         void addLoadInProgress(ResourceLoader*);
         void remove(ResourceLoader*);
         bool hasRequests() const;
-        bool limitRequests() const;
+        bool limitRequests(ResourceLoadPriority) const;
 
         typedef Deque<RefPtr<ResourceLoader> > RequestQueue;
         RequestQueue& requestsPending(ResourceLoadPriority priority) { return m_requestsPending[priority]; }

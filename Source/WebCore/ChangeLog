@@ -1,3 +1,21 @@
+2011-04-04  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Print stylesheet on nytimes.com loads too early
+        https://bugs.webkit.org/show_bug.cgi?id=57814
+
+        Don't load resources with Very Low priority until there are no other resources to 
+        load for the host (or until document is complete enough that we stop limiting requests).
+
+        No tests, this is  difficult to observe reliably with our current testing infrastructure.
+        Verified working with Wireshark.
+
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::servePendingRequests):
+        (WebCore::ResourceLoadScheduler::HostInformation::limitRequests):
+        * loader/ResourceLoadScheduler.h:
+
 2011-04-04  Steve Block  <steveblock@google.com>
 
         Reviewed by Dimitri Glazkov.
