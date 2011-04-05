@@ -1,3 +1,14 @@
+2011-04-05  John Mellor  <johnme@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Minor cleanup: simplify WebFrameImpl by using contentsToWindow instead of convertToContainingWindow.
+        https://bugs.webkit.org/show_bug.cgi?id=55681
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::find):
+        (WebKit::WebFrameImpl::scopeStringMatches):
+
 2011-04-05  Adam Barth  <abarth@webkit.org>
 
         Roll Chromium DEPS.

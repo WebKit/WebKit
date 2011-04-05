@@ -1482,12 +1482,8 @@ bool WebFrameImpl::find(int identifier,
                     m_activeMatchIndex = m_lastMatchCount - 1;
             }
             if (selectionRect) {
-                WebRect rect = frame()->view()->convertToContainingWindow(currSelectionRect);
-                rect.x -= frameView()->scrollOffset().width();
-                rect.y -= frameView()->scrollOffset().height();
-                *selectionRect = rect;
-
-                reportFindInPageSelection(rect, m_activeMatchIndex + 1, identifier);
+                *selectionRect = frameView()->contentsToWindow(currSelectionRect);
+                reportFindInPageSelection(*selectionRect, m_activeMatchIndex + 1, identifier);
             }
         }
     } else {
@@ -1624,10 +1620,8 @@ void WebFrameImpl::scopeStringMatches(int identifier,
                 m_locatingActiveRect = false;
 
                 // Notify browser of new location for the selected rectangle.
-                resultBounds.move(-frameView()->scrollOffset().width(),
-                                  -frameView()->scrollOffset().height());
                 reportFindInPageSelection(
-                    frame()->view()->convertToContainingWindow(resultBounds),
+                    frameView()->contentsToWindow(resultBounds),
                     m_activeMatchIndex + 1,
                     identifier);
             }
