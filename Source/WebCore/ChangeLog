@@ -1,3 +1,18 @@
+2011-04-05  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        DeleteButtonController is given invalid style
+        https://bugs.webkit.org/show_bug.cgi?id=57853
+
+        DeleteButtonController was assigned an invalid style that can lead to assertions
+        in debug builds. This matches up the code with its intent.
+
+        No new tests as this changes nothing on release builds.
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+
 2011-04-05  Anders Bakken  <agbakken@gmail.com>
 
         Reviewed by Laszlo Gombos.

@@ -192,7 +192,7 @@ void DeleteButtonController::createDeletionUI()
     CSSMutableStyleDeclaration* style = container->getInlineStyleDecl();
     style->setProperty(CSSPropertyWebkitUserDrag, CSSValueNone);
     style->setProperty(CSSPropertyWebkitUserSelect, CSSValueNone);
-    style->setProperty(CSSPropertyWebkitUserModify, CSSValueNone);
+    style->setProperty(CSSPropertyWebkitUserModify, CSSValueReadOnly);
     style->setProperty(CSSPropertyVisibility, CSSValueHidden);
     style->setProperty(CSSPropertyPosition, CSSValueAbsolute);
     style->setProperty(CSSPropertyCursor, CSSValueDefault);
