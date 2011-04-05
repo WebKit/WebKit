@@ -26,11 +26,20 @@
 #ifndef LayerTreeHostCAWin_h
 #define LayerTreeHostCAWin_h
 
+#include "HeaderDetection.h"
+
+#if HAVE(WKQCA)
+
 #include "LayerTreeHostCA.h"
+#include <WebCore/AbstractCACFLayerTreeHost.h>
+#include <wtf/HashSet.h>
+#include <wtf/RetainPtr.h>
+
+typedef struct _WKCACFView* WKCACFViewRef;
 
 namespace WebKit {
 
-class LayerTreeHostCAWin : public LayerTreeHostCA {
+class LayerTreeHostCAWin : public LayerTreeHostCA, private WebCore::AbstractCACFLayerTreeHost {
 public:
     static PassRefPtr<LayerTreeHostCAWin> create(WebPage*);
     virtual ~LayerTreeHostCAWin();
@@ -38,13 +47,36 @@ public:
 private:
     explicit LayerTreeHostCAWin(WebPage*);
 
+    static void contextDidChangeCallback(WKCACFViewRef, void* info);
+    void contextDidChange();
+
     // LayerTreeHost
+    virtual void invalidate();
+    virtual void forceRepaint();
+    virtual void sizeDidChange(const WebCore::IntSize& newSize);
     virtual void scheduleLayerFlush();
+    virtual bool participatesInDisplay();
+    virtual bool needsDisplay();
+    virtual double timeUntilNextDisplay();
+    virtual void display(UpdateInfo&);
 
     // LayerTreeHostCA
     virtual void platformInitialize(LayerTreeContext&);
+
+    // AbstractCACFLayerTreeHost
+    virtual WebCore::PlatformCALayer* rootLayer() const;
+    virtual void addPendingAnimatedLayer(PassRefPtr<WebCore::PlatformCALayer>);
+    virtual void layerTreeDidChange();
+    virtual void flushPendingLayerChangesNow();
+
+    RetainPtr<WKCACFViewRef> m_view;
+    HashSet<RefPtr<WebCore::PlatformCALayer> > m_pendingAnimatedLayers;
+    bool m_isFlushingLayerChanges;
+    double m_nextDisplayTime;
 };
 
 } // namespace WebKit
+
+#endif // HAVE(WKQCA)
 
 #endif // LayerTreeHostCAWin_h

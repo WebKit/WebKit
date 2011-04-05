@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 VPATH = \
+    $(WebKit2) \
     $(WebKit2)/PluginProcess \
     $(WebKit2)/Shared/Plugins \
     $(WebKit2)/WebProcess/ApplicationCache \
@@ -100,3 +101,16 @@ all : \
 %Messages.h : %.messages.in $(SCRIPTS)
 	@echo Generating message receiver for $*...
 	@python $(WebKit2)/Scripts/generate-messages-header.py $< > $@
+
+# ------------------------
+
+# Windows-specific rules
+
+ifeq ($(OS),Windows_NT)
+
+all : HeaderDetection.h
+
+HeaderDetection.h : DerivedSources.make
+	if [ -f "$(WEBKITLIBRARIESDIR)/include/WebKitQuartzCoreAdditions/WebKitQuartzCoreAdditionsBase.h" ]; then echo "#define HAVE_WKQCA 1" > $@; else echo > $@; fi
+
+endif # Windows_NT

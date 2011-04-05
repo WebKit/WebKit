@@ -192,6 +192,13 @@ void DrawingAreaImpl::setPageOverlayNeedsDisplay(const IntRect& rect)
     setNeedsDisplay(rect);
 }
 
+void DrawingAreaImpl::setLayerHostNeedsDisplay()
+{
+    ASSERT(m_layerTreeHost);
+    ASSERT(m_layerTreeHost->participatesInDisplay());
+    scheduleDisplay();
+}
+
 void DrawingAreaImpl::layerHostDidFlushLayers()
 {
     ASSERT(m_layerTreeHost);

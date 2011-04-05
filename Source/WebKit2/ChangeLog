@@ -1,3 +1,78 @@
+2011-04-05  Adam Roben  <aroben@apple.com>
+
+        Make accelerated compositing work in WebKit2 on Windows
+
+        LayerTreeHostCAWin uses WKCACFView to render each frame to an image, then has
+        DrawingAreaImpl send that image over to the UI process (just like it does for
+        non-accelerated rendering). It's unfortunate that this requires reading every frame back
+        from the GPU into system memory. More efficient solutions can be explored in the future.
+
+        Fixes <http://webkit.org/b/45567>.
+
+        Reviewed by Anders Carlsson.
+
+        * DerivedSources.make: Added $(WebKit2) to the VPATH so that DerivedSources.make can be
+        found when used as a target dependency. Added rules to generate a HeaderDetection.h file on
+        Windows. If we can find WebKitQuartzCoreAdditions headers, we define HAVE_WKQCA in
+        HeaderDetection.h.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setLayerHostNeedsDisplay):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        Added setLayerHostNeedsDisplay. Lets the layer host tell the DrawingAreaImpl that it has a
+        new frame to render. This should only be called by layer hosts that participate in
+        DrawingAreaImpl's display mechanism.
+
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create): Only try to instantiate LayerTreeHostCAWin if we have
+        WebKitQuartzCoreAdditions, since it depends on that library.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Removed code that forced accelerated compositing to be
+        disabled on Windows.
+
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.cpp:
+        (WebKit::registerDummyWindowClass): Registers the window class we use for the dummy window.
+        (WebKit::createDummyWindow): Creates the dummy window we pass to WKCACFView so that D3D can
+        determine the display mode, etc. (The window is never shown on screen.)
+        (WebKit::LayerTreeHostCAWin::LayerTreeHostCAWin): Initialize new members.
+        (WebKit::LayerTreeHostCAWin::platformInitialize): Create our dummy window and view and
+        associate the two. We set ourselves as the view's context's user data so that
+        PlatformCALayer can get our AbstractCACFLayerTreeHost pointer as needed.
+        (WebKit::LayerTreeHostCAWin::invalidate): Cancel any pending flushes, tear down our view,
+        and destroy the dummy window if no other layer host is using it.
+        (WebKit::LayerTreeHostCAWin::scheduleLayerFlush): Ask LayerChangesFlusher to call us back
+        soon to perform the flush.
+        (WebKit::LayerTreeHostCAWin::participatesInDisplay): Added. Returns true, since we render
+        each frame to an image.
+        (WebKit::LayerTreeHostCAWin::needsDisplay): Added. Returns true if it's now time to
+        displayReturns true if it's now time to display.
+        (WebKit::LayerTreeHostCAWin::timeUntilNextDisplay): Added. Returns how many seconds remain
+        before we need to display again.
+        (WebKit::size): Added. Helper function to get the size of a WKCACFImage.
+        (WebKit::toShareableBitmap): Added. Helper function to convert a WKCACFImage to a
+        ShareableBitmap.
+        (WebKit::LayerTreeHostCAWin::display): Added. Renders the next frame to an image and stuffs
+        the image into the UpdateInfo struct.
+        (WebKit::LayerTreeHostCAWin::sizeDidChange): Added. Tells the view about the new size.
+        (WebKit::LayerTreeHostCAWin::forceRepaint): Added. Flushes any pending changes to the view.
+        (WebKit::LayerTreeHostCAWin::contextDidChangeCallback): Added. WKCACFView calls this
+        whenever any changes made to the view or its layer tree have been flushed. Just calls
+        through to contextDidChange.
+        (WebKit::LayerTreeHostCAWin::contextDidChange): Added. Tells layers that they've started
+        animating, and tells the DrawingAreaImpl that we need to display again.
+        (WebKit::LayerTreeHostCAWin::rootLayer): Added. Gets the root layer's PlatformCALayer.
+        (WebKit::LayerTreeHostCAWin::addPendingAnimatedLayer): Added. Stores the layer so that we
+        can tell it animations have started the next time we get a contextDidChange callback.
+        (WebKit::LayerTreeHostCAWin::layerTreeDidChange): Added. Schedules a flush, unless we're
+        already in the process of flushing. This code came from WebCore::WKCACFViewLayerTreeHost.
+        (WebKit::LayerTreeHostCAWin::flushPendingLayerChangesNow): Added. Performs the flush. This
+        code was adapted from WebCore::WKCACFViewLayerTreeHost.
+
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.h: Wrapped this whole header in HAVE(WKQCA),
+        since this class only works when WebKitQuartzCoreAdditions is available. Added a bunch of
+        new members.
+
 2011-04-04  Adam Roben  <aroben@apple.com>
 
         Add a way for LayerTreeHost to participate in DrawingAreaImpl's normal display mechanism

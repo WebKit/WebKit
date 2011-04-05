@@ -44,12 +44,10 @@ namespace WebKit {
 
 PassRefPtr<LayerTreeHost> LayerTreeHost::create(WebPage* webPage)
 {
-#if PLATFORM(CA)
 #if PLATFORM(MAC)
     return LayerTreeHostCAMac::create(webPage);
-#elif PLATFORM(WIN)
+#elif PLATFORM(WIN) && HAVE(WKQCA)
     return LayerTreeHostCAWin::create(webPage);
-#endif
 #else
     return 0;
 #endif
