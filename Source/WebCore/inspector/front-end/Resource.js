@@ -716,6 +716,11 @@ WebInspector.Resource.prototype = {
             image.src = this.url;
     },
 
+    isDataURL: function()
+    {
+        return this.url.match(/^data:/i);
+    },
+    
     _contentURL: function()
     {
         const maxDataUrlSize = 1024 * 1024;

@@ -1520,8 +1520,11 @@ WebInspector.NetworkDataGridNode.prototype = {
             this._appendSubtitle(this._statusCell, this._resource.statusText);
             this._statusCell.title = this._resource.statusCode + " " + this._resource.statusText;
         } else {
+            if (this._resource.isDataURL() && this._resource.finished)
+                this._statusCell.textContent = WebInspector.UIString("(data url)");
+            else
+                this._statusCell.textContent = WebInspector.UIString("Pending");
             this._statusCell.addStyleClass("network-dim-cell");
-            this._statusCell.textContent = WebInspector.UIString("Pending");
         }
     },
 
