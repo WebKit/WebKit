@@ -27,6 +27,8 @@
 
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSStyleSelector.h"
+#include "Document.h"
+#include "Element.h"
 #include "RenderStyle.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
@@ -134,6 +136,23 @@ protected:
     Color (*m_initialValue)();
 };
 
+// CSSPropertyDirection
+class ApplyPropertyDirection : public ApplyPropertyDefault<TextDirection> {
+public:
+    ApplyPropertyDirection(TextDirection (RenderStyle::*getter)() const, void (RenderStyle::*setter)(TextDirection), TextDirection (*initial)())
+        : ApplyPropertyDefault<TextDirection>(getter, setter, initial)
+    {
+    }
+
+    virtual void value(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        ApplyPropertyDefault<TextDirection>::value(selector, value);
+        Element* element = selector->element();
+        if (element && selector->element() == element->document()->documentElement())
+            element->document()->setDirectionSetOnDocumentElement(true);
+    }
+};
+
 const CSSStyleApplyProperty& CSSStyleApplyProperty::sharedCSSStyleApplyProperty()
 {
     DEFINE_STATIC_LOCAL(CSSStyleApplyProperty, cssStyleApplyPropertyInstance, ());
@@ -147,6 +166,7 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
        m_propertyMap[i] = 0;
 
     setPropertyValue(CSSPropertyColor, new ApplyPropertyColor(&RenderStyle::color, &RenderStyle::setColor, RenderStyle::initialColor));
+    setPropertyValue(CSSPropertyDirection, new ApplyPropertyDirection(&RenderStyle::direction, &RenderStyle::setDirection, RenderStyle::initialDirection));
     setPropertyValue(CSSPropertyBackgroundColor, new ApplyPropertyColorBase(&RenderStyle::backgroundColor, 0, &RenderStyle::setBackgroundColor));
     setPropertyValue(CSSPropertyBorderBottomColor, new ApplyPropertyColorBase(&RenderStyle::borderBottomColor, &RenderStyle::color, &RenderStyle::setBorderBottomColor));
     setPropertyValue(CSSPropertyBorderLeftColor, new ApplyPropertyColorBase(&RenderStyle::borderLeftColor, &RenderStyle::color, &RenderStyle::setBorderLeftColor));

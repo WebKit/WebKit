@@ -1,3 +1,19 @@
+2011-04-05  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement CSSPropertyDirection in CSSStyleApplyProperty
+        https://bugs.webkit.org/show_bug.cgi?id=57608
+
+        No new tests required as no new functionality introduced.
+
+        * css/CSSStyleApplyProperty.cpp:
+        Add implementation class for CSSPropertyDirection
+        * css/CSSStyleSelector.cpp:
+        Remove existing implementation for CSSPropertyDirection
+        * css/CSSStyleSelector.h:
+        Add getter for element
+
 2011-04-05  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Steve Block.

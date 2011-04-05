@@ -3722,11 +3722,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyClear:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(clear, Clear)
         return;
-    case CSSPropertyDirection:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(direction, Direction)
-        if (!isInherit && !isInitial && m_element && m_element == m_element->document()->documentElement())
-            m_element->document()->setDirectionSetOnDocumentElement(true);
-        return;
     case CSSPropertyDisplay:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(display, Display)
 #if ENABLE(WCSS)
@@ -6197,6 +6192,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
     // These properties are implemented in the CSSStyleApplyProperty lookup table.
     case CSSPropertyColor:
+    case CSSPropertyDirection:
     case CSSPropertyBackgroundColor:
     case CSSPropertyBorderBottomColor:
     case CSSPropertyBorderLeftColor:

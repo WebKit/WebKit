@@ -115,6 +115,7 @@ public:
 
         RenderStyle* style() const { return m_style.get(); }
         RenderStyle* parentStyle() const { return m_parentStyle; }
+        Element* element() const { return m_element; }
 
     private:
         void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);
