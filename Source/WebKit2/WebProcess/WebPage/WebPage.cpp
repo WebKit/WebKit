@@ -1965,7 +1965,6 @@ void WebPage::SandboxExtensionTracker::didFailProvisionalLoad(WebFrame* frame)
     if (!frame->isMainFrame())
         return;
 
-    ASSERT(!m_pendingProvisionalSandboxExtension);
     if (!m_provisionalSandboxExtension)
         return;
 
