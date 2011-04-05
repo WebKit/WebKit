@@ -46,8 +46,7 @@ void WebFileChooserCompletionImpl::didChooseFile(const WebVector<WebString>& fil
 {
     if (fileNames.size() == 1)
         m_fileChooser->chooseFile(fileNames[0]);
-    else {
-        // This clause handles a case of file_names.size()==0 too.
+    else if (fileNames.size() > 0) {
         Vector<WTF::String> paths;
         for (size_t i = 0; i < fileNames.size(); ++i)
             paths.append(fileNames[i]);

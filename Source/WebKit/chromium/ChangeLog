@@ -1,3 +1,13 @@
+2011-04-05  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Don't clear existing files if the user cancels the file chooser dialog.
+        https://bugs.webkit.org/show_bug.cgi?id=55200
+
+        * src/WebFileChooserCompletionImpl.cpp:
+        (WebKit::WebFileChooserCompletionImpl::didChooseFile):
+
 2011-04-05  John Mellor  <johnme@chromium.org>
 
         Reviewed by Darin Fisher.
