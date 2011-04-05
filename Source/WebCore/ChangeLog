@@ -1,3 +1,17 @@
+2011-04-05  Takayoshi Kochi <kochi@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Specify 'sans-serif' as a fallback to the default UI font
+        'Arial' for non-latin UI scripts (e.g. CJK).
+        https://bugs.webkit.org/show_bug.cgi?id=55035
+
+        No new tests, because it may still fail if the system is not configured
+        properly to resolve 'sans-serif' to existing real font file, thus even
+        manual test is hard to systematically tell it is working properly.
+
+        * rendering/RenderThemeChromiumSkia.cpp
+
 2011-04-05  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

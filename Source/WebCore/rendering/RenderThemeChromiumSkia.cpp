@@ -76,10 +76,12 @@ static const float defaultSearchFieldResultsButtonWidth = 18;
 //
 // FIXME: The only case where we know we don't match IE is for ANSI encodings.
 // IE uses MS Shell Dlg there, which we render incorrectly at certain pixel
-// sizes (e.g. 15px). So, for now we just use Arial.
+// sizes (e.g. 15px). So, for now we just use Arial. For other non-latin
+// scripts (e.g. CJK) that Arial does not cover, we specify sans-serif as a
+// fallback.
 const String& RenderThemeChromiumSkia::defaultGUIFont()
 {
-    DEFINE_STATIC_LOCAL(String, fontFace, ("Arial"));
+    DEFINE_STATIC_LOCAL(String, fontFace, ("Arial, sans-serif"));
     return fontFace;
 }
 
