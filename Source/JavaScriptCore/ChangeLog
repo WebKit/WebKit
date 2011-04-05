@@ -1,5 +1,27 @@
 2011-04-04  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Antti Koivisto.
+
+        Stop JSCell.h from including Structure.h
+        https://bugs.webkit.org/show_bug.cgi?id=57809
+
+        * runtime/GetterSetter.h:
+        * runtime/JSAPIValueWrapper.h:
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSValue::toThisObject):
+        * runtime/JSString.h:
+        * runtime/ScopeChain.h:
+        * runtime/Structure.h:
+        (JSC::JSCell::isObject):
+        (JSC::JSCell::isString):
+        (JSC::JSCell::classInfo):
+        (JSC::JSCell::createDummyStructure):
+        (JSC::JSValue::needsThisConversion):
+        (JSC::MarkStack::internalAppend):
+        * runtime/StructureChain.h:
+
+2011-04-04  Oliver Hunt  <oliver@apple.com>
+
         Fix clang build.
 
         * wtf/FastMalloc.cpp:

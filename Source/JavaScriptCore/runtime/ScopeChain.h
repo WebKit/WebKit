@@ -22,6 +22,7 @@
 #define ScopeChain_h
 
 #include "JSCell.h"
+#include "Structure.h"
 #include <wtf/FastAllocBase.h>
 
 namespace JSC {

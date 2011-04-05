@@ -27,6 +27,7 @@
 #define StructureChain_h
 
 #include "JSCell.h"
+#include "Structure.h"
 
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassRefPtr.h>

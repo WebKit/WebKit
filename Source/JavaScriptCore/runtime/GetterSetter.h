@@ -26,6 +26,7 @@
 #include "JSCell.h"
 
 #include "CallFrame.h"
+#include "Structure.h"
 
 namespace JSC {
 

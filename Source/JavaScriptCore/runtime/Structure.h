@@ -27,6 +27,7 @@
 #define Structure_h
 
 #include "Identifier.h"
+#include "JSCell.h"
 #include "JSType.h"
 #include "JSValue.h"
 #include "PropertyMapHashTable.h"
@@ -260,6 +261,43 @@ namespace JSC {
         PropertyMapEntry* entry = m_propertyTable->find(propertyName.impl()).first;
         ASSERT(!entry || entry->offset >= m_anonymousSlotCount);
         return entry ? entry->offset : notFound;
+    }
+
+    inline bool JSCell::isObject() const
+    {
+        return m_structure->typeInfo().type() == ObjectType;
+    }
+
+    inline bool JSCell::isString() const
+    {
+        return m_structure->typeInfo().type() == StringType;
+    }
+
+    inline const ClassInfo* JSCell::classInfo() const
+    {
+        return m_structure->classInfo();
+    }
+
+    inline PassRefPtr<Structure> JSCell::createDummyStructure(JSGlobalData& globalData)
+    {
+        return Structure::create(globalData, jsNull(), TypeInfo(UnspecifiedType), AnonymousSlotCount, 0);
+    }
+
+    inline bool JSValue::needsThisConversion() const
+    {
+        if (UNLIKELY(!isCell()))
+            return true;
+        return asCell()->structure()->typeInfo().needsThisConversion();
+    }
+
+    ALWAYS_INLINE void MarkStack::internalAppend(JSCell* cell)
+    {
+        ASSERT(!m_isCheckingForDefaultMarkViolation);
+        ASSERT(cell);
+        if (Heap::testAndSetMarked(cell))
+            return;
+        if (cell->structure()->typeInfo().type() >= CompoundType)
+            m_values.append(cell);
     }
 
 } // namespace JSC

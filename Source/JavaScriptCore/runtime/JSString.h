@@ -30,6 +30,7 @@
 #include "PropertyDescriptor.h"
 #include "PropertySlot.h"
 #include "RopeImpl.h"
+#include "Structure.h"
 
 namespace JSC {
 
