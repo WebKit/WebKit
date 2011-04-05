@@ -129,6 +129,11 @@ bool HTMLVideoElement::supportsFullscreen() const
         return false;
 
     // Check with the platform client.
+#if ENABLE(FULLSCREEN_API)
+    if (page->chrome()->client()->supportsFullScreenForElement(this, false))
+        return true;
+#endif
+
     return page->chrome()->client()->supportsFullscreenForNode(this);
 }
 

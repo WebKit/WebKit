@@ -1,3 +1,14 @@
+2011-04-05  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        HTML5 Player Has no Fullscreen Mode
+        https://bugs.webkit.org/show_bug.cgi?id=57795
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::supportsFullscreen): Call the new ChromeClient API
+            supportsFullScreenForElement() before the old supportsFullScreenForNode() API.
+
 2011-04-05  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
