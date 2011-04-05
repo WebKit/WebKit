@@ -1,3 +1,15 @@
+2011-04-05  Jade Han  <jade.han@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] [Symbian] Disable WebKitTestRunner for Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=54977
+
+        This change is a preparation to enable building webkit2 for Symbian.
+        Bug 57834 is filed to fix and enable WebKitTestRunner for Symbian.
+
+        * Tools.pro:
+
 2011-04-05  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Andreas Kling.
