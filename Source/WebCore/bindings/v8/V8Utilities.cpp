@@ -127,4 +127,9 @@ ScriptExecutionContext* getScriptExecutionContext()
     return 0;
 }
 
+void throwTypeMismatchException()
+{
+    V8Proxy::throwError(V8Proxy::GeneralError, "TYPE_MISMATCH_ERR: DOM Exception 17");
+}
+
 } // namespace WebCore

@@ -33,51 +33,12 @@
 #include "V8Binding.h"
 #include "V8CustomPositionCallback.h"
 #include "V8CustomPositionErrorCallback.h"
-#include "V8Proxy.h"
+#include "V8Utilities.h"
 
 using namespace std;
 using namespace WTF;
 
 namespace WebCore {
-
-static const char typeMismatchError[] = "TYPE_MISMATCH_ERR: DOM Exception 17";
-
-static void throwTypeMismatchException()
-{
-    V8Proxy::throwError(V8Proxy::GeneralError, typeMismatchError);
-}
-
-static PassRefPtr<PositionCallback> createPositionCallback(v8::Local<v8::Value> value, bool& succeeded)
-{
-    succeeded = true;
-
-    // The spec specifies 'FunctionOnly' for this object.
-    if (!value->IsFunction()) {
-        succeeded = false;
-        throwTypeMismatchException();
-        return 0;
-    }
-
-    return V8CustomPositionCallback::create(value, getScriptExecutionContext());
-}
-
-static PassRefPtr<PositionErrorCallback> createPositionErrorCallback(v8::Local<v8::Value> value, bool& succeeded)
-{
-    succeeded = true;
-
-    // Argument is optional (hence undefined is allowed), and null is allowed.
-    if (isUndefinedOrNull(value))
-        return 0;
-
-    // The spec specifies 'FunctionOnly' for this object.
-    if (!value->IsFunction()) {
-        succeeded = false;
-        throwTypeMismatchException();
-        return 0;
-    }
-
-    return V8CustomPositionErrorCallback::create(value, getScriptExecutionContext());
-}
 
 static PassRefPtr<PositionOptions> createPositionOptions(v8::Local<v8::Value> value, bool& succeeded)
 {
@@ -172,12 +133,13 @@ v8::Handle<v8::Value> V8Geolocation::getCurrentPositionCallback(const v8::Argume
 
     bool succeeded = false;
 
-    RefPtr<PositionCallback> positionCallback = createPositionCallback(args[0], succeeded);
+    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<V8CustomPositionCallback>(args[0], CallbackAllowFunction, succeeded);
     if (!succeeded)
         return v8::Undefined();
     ASSERT(positionCallback);
 
-    RefPtr<PositionErrorCallback> positionErrorCallback = createPositionErrorCallback(args[1], succeeded);
+    // Argument is optional (hence undefined is allowed), and null is allowed.
+    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<V8CustomPositionErrorCallback>(args[1], CallbackAllowUndefined | CallbackAllowNull, succeeded);
     if (!succeeded)
         return v8::Undefined();
 
@@ -197,12 +159,13 @@ v8::Handle<v8::Value> V8Geolocation::watchPositionCallback(const v8::Arguments& 
 
     bool succeeded = false;
 
-    RefPtr<PositionCallback> positionCallback = createPositionCallback(args[0], succeeded);
+    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<V8CustomPositionCallback>(args[0], CallbackAllowFunction, succeeded);
     if (!succeeded)
         return v8::Undefined();
     ASSERT(positionCallback);
 
-    RefPtr<PositionErrorCallback> positionErrorCallback = createPositionErrorCallback(args[1], succeeded);
+    // Argument is optional (hence undefined is allowed), and null is allowed.
+    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<V8CustomPositionErrorCallback>(args[1], CallbackAllowUndefined | CallbackAllowNull, succeeded);
     if (!succeeded)
         return v8::Undefined();
 

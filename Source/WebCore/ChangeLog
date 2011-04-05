@@ -1,3 +1,23 @@
+2011-04-05  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Factoring the creation of 'FunctionOnly' callbacks in V8.
+        https://bugs.webkit.org/show_bug.cgi?id=57760
+
+        This method creates a template from an existing functionality in V8GeolocationCustom.cpp
+        to V8Utilities to be used by the custom bindings of both Geolocation and the Media Stream API.
+
+        No new tests. LayoutTests/fast/dom/Geolocation/argument-types.html
+
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::throwTypeMismatchException):
+        * bindings/v8/V8Utilities.h:
+        (WebCore::createFunctionOnlyCallback):
+        * bindings/v8/custom/V8GeolocationCustom.cpp:
+        (WebCore::V8Geolocation::getCurrentPositionCallback):
+        (WebCore::V8Geolocation::watchPositionCallback):
+
 2011-04-05  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Andreas Kling.
