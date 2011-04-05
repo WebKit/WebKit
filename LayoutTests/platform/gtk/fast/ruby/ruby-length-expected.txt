@@ -21,13 +21,13 @@ layer at (0,0) size 800x600
               text run at (0,0) width 184: "Hypertext Markup Language"
       RenderText {#text} at (339,67) size 31x19
         text run at (339,67) width 31: " and "
-      RenderRuby (inline) {RUBY} at (0,0) size 75x19
-        RenderRubyRun (anonymous) at (370,67) size 75x19
+      RenderRuby (inline) {RUBY} at (0,0) size 67x19
+        RenderRubyRun (anonymous) at (366,67) size 75x19
           RenderRubyText {RT} at (0,-10) size 75x10
             RenderText {#text} at (0,0) size 75x10
               text run at (0,0) width 75: "Cascading Style Sheets"
           RenderRubyBase (anonymous) at (0,0) size 75x19
             RenderText {#text} at (19,0) size 37x19
               text run at (19,0) width 37: "CSS3"
-      RenderText {#text} at (445,67) size 42x19
-        text run at (445,67) width 42: " specs."
+      RenderText {#text} at (437,67) size 42x19
+        text run at (437,67) width 42: " specs."

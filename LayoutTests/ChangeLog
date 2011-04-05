@@ -1,3 +1,22 @@
+2011-04-05  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r82903.
+
+        * platform/gtk/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
+        * platform/gtk/fast/ruby/ruby-beforeafter-expected.txt:
+        * platform/gtk/fast/ruby/ruby-length-expected.txt:
+        * platform/gtk/fast/ruby/ruby-run-break-expected.txt:
+        * platform/gtk/fast/ruby/ruby-runs-expected.txt:
+        * platform/gtk/fast/ruby/ruby-runs-spans-expected.txt:
+        * platform/gtk/fast/ruby/ruby-trailing-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-insert-rt-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-insert-text1-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-insert-text2-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-insert-text3-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-remove-rt1-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-remove-rt2-expected.txt:
+        * platform/gtk/fast/ruby/rubyDOM-remove-text1-expected.txt:
+
 2011-04-05  Nancy Piedra  <nancy.piedra@nokia.com>
 
         Reviewed by Alexey Proskuryakov.
