@@ -1,3 +1,12 @@
+2011-04-05  Nancy Piedra  <nancy.piedra@nokia.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Improper use of &quot in video-can-play-type layout test
+        https://bugs.webkit.org/show_bug.cgi?id=57728
+
+        * media/video-can-play-type.html:
+
 2011-04-05  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
