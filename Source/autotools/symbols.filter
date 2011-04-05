@@ -9,6 +9,7 @@ _ZN3WTF16fastZeroedMallocEm;
 _ZN3WTF20fastMallocStatisticsEv;
 _ZN3WTF8fastFreeEPv;
 _ZN3WTF13freeOwnedGPtrI7_GErrorEEvPT_;
+_ZN3WTF8Internal21fastMallocMatchFailedEPv;
 _ZN3WTF3MD58addBytes*;
 _ZN3WTF3MD58checksum*;
 _ZN3WTF3MD5C1Ev;

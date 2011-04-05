@@ -1,5 +1,12 @@
 2011-04-04  Martin Robinson  <mrobinson@igalia.com>
 
+        Build fix for GTK+ after r82876.
+
+        * Source/autotools/symbols.filter: Update the symbol filter to include new symbols
+        from WTF that DRT uses.
+
+2011-04-04  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Gustavo Noronha Silva.
 
         [GTK] WebGL support
