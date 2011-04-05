@@ -38,6 +38,7 @@ namespace WebCore {
 namespace WebKit {
 
 class LayerTreeContext;
+class UpdateInfo;
 class WebPage;
 
 class LayerTreeHost : public RefCounted<LayerTreeHost> {
@@ -59,6 +60,13 @@ public:
     virtual void didInstallPageOverlay() = 0;
     virtual void didUninstallPageOverlay() = 0;
     virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) = 0;
+
+    // If a derived class overrides this function to return true, the derived class must also
+    // override the functions beneath it.
+    virtual bool participatesInDisplay() { return false; }
+    virtual bool needsDisplay() { ASSERT_NOT_REACHED(); return false; }
+    virtual double timeUntilNextDisplay() { ASSERT_NOT_REACHED(); return 0; }
+    virtual void display(UpdateInfo&) { ASSERT_NOT_REACHED(); }
 
 protected:
     explicit LayerTreeHost(WebPage*);

@@ -1,3 +1,59 @@
+2011-04-04  Adam Roben  <aroben@apple.com>
+
+        Add a way for LayerTreeHost to participate in DrawingAreaImpl's normal display mechanism
+
+        When LayerTreeHost participates in display, it renders each frame into a bitmap.
+        DrawingAreaImpl sends the bitmap to the UI process in an Update message, just like in
+        non-accelerated compositing mode. The UI process never knows that accelerated compositing is
+        going on. (When LayerTreeHost does not participate in display, as on Mac, it is responsible
+        for getting bits from the web process to the UI process.)
+
+        No LayerTreeHost uses this mechanism (yet). This patch should cause no change in behavior.
+
+        Fixes <http://webkit.org/b/57792> LayerTreeHost needs a way to render frames to a bitmap
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::forceRepaint): If the layer tree host participates in display,
+        perform a display (like in the non-accelerated case).
+        (WebKit::DrawingAreaImpl::layerHostDidFlushLayers): Don't send an
+        EnterAcceleratedCompositing message to the UI process if the layer tree host participates in
+        display. In that case, the UI process doesn't even need to know we're using accelerated
+        compositing in the web process.
+        (WebKit::DrawingAreaImpl::sendDidUpdateBackingStoreState): Go through the normal display
+        mechanism if we have a layer tree host that participates in display.
+        (WebKit::DrawingAreaImpl::didUpdate): Don't ignore DidUpdate messages when we have a layer
+        tree host that participates in display.
+        (WebKit::DrawingAreaImpl::enterAcceleratedCompositingMode): If the new layer tree host
+        participates in display, let the display timer continue to run and continue to expect
+        DidUpdate messages so that we don't interrupt the normal display mechanism. We still clear
+        out m_dirtyRegion, m_scrollRect, and m_scrollOffset, though, because the layer tree host is
+        still responsible for keeping track of those things even when it participates in display.
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode): If the outgoing layer tree host
+        was participating in display, just send another Update message instead of an
+        ExitAcceleratedCompositing message, since the UI process never even knew we were using
+        accelerated compositing.
+        (WebKit::DrawingAreaImpl::displayTimerFired): If we have a layer tree host that's
+        participating in display, ask it when it next needs to display when scheduling our timer.
+
+        (WebKit::DrawingAreaImpl::scheduleDisplay):
+        (WebKit::DrawingAreaImpl::display):
+        If we have a layer tree host that's participating in display, it will keep track of its own
+        dirty region, so ask it if it needs display rather than checking our own dirty region.
+
+        (WebKit::DrawingAreaImpl::display): If we have a layer tree host that's participating in
+        display, don't bail out. Instead, tell it to display rather than asking the page to paint.
+        Moved the setting of updateInfo.viewSize earlier so that it will be set even when the layer
+        tree host is displaying. Other changes are just due to indentation.
+
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::participatesInDisplay):
+        (WebKit::LayerTreeHost::needsDisplay):
+        (WebKit::LayerTreeHost::timeUntilNextDisplay):
+        (WebKit::LayerTreeHost::display):
+        Stubbed out these functions. Derived classes can override them to participate in display.
+
 2011-04-04  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.
