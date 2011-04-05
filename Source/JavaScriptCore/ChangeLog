@@ -1,3 +1,17 @@
+2011-04-05  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Andreas Kling.
+
+        Cleanup StringConcatenate
+        https://bugs.webkit.org/show_bug.cgi?id=57836
+
+        Don't use PassRefPtr in local variables, properly store in RefPtrs and release on return.
+        Add a makeString() variant taking 9 arguments, needed by a follow-up patch.
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::tryMakeString):
+        (WTF::makeString):
+
 2011-04-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r82876.

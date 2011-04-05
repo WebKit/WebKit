@@ -204,7 +204,7 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2)
     sumWithOverflow(length, adapter2.length(), overflow);
     if (overflow)
         return 0;
-    PassRefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+    RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;
 
@@ -213,7 +213,7 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2)
     result += adapter1.length();
     adapter2.writeTo(result);
 
-    return resultImpl;
+    return resultImpl.release();
 }
 
 template<typename StringType1, typename StringType2, typename StringType3>
@@ -230,7 +230,7 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     sumWithOverflow(length, adapter3.length(), overflow);
     if (overflow)
         return 0;
-    PassRefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+    RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;
 
@@ -241,7 +241,7 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     result += adapter2.length();
     adapter3.writeTo(result);
 
-    return resultImpl;
+    return resultImpl.release();
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4>
@@ -260,7 +260,7 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     sumWithOverflow(length, adapter4.length(), overflow);
     if (overflow)
         return 0;
-    PassRefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+    RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;
 
@@ -273,7 +273,7 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     result += adapter3.length();
     adapter4.writeTo(result);
 
-    return resultImpl;
+    return resultImpl.release();
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5>
@@ -294,7 +294,7 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     sumWithOverflow(length, adapter5.length(), overflow);
     if (overflow)
         return 0;
-    PassRefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+    RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;
 
@@ -309,7 +309,7 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     result += adapter4.length();
     adapter5.writeTo(result);
 
-    return resultImpl;
+    return resultImpl.release();
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6>
@@ -332,7 +332,7 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     sumWithOverflow(length, adapter6.length(), overflow);
     if (overflow)
         return 0;
-    PassRefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+    RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;
 
@@ -349,7 +349,7 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     result += adapter5.length();
     adapter6.writeTo(result);
 
-    return resultImpl;
+    return resultImpl.release();
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7>
@@ -374,7 +374,7 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     sumWithOverflow(length, adapter7.length(), overflow);
     if (overflow)
         return 0;
-    PassRefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+    RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;
 
@@ -393,7 +393,7 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     result += adapter6.length();
     adapter7.writeTo(result);
 
-    return resultImpl;
+    return resultImpl.release();
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7, typename StringType8>
@@ -420,7 +420,7 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     sumWithOverflow(length, adapter8.length(), overflow);
     if (overflow)
         return 0;
-    PassRefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+    RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
     if (!resultImpl)
         return 0;
 
@@ -441,8 +441,61 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     result += adapter7.length();
     adapter8.writeTo(result);
 
-    return resultImpl;
+    return resultImpl.release();
 }
+
+template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7, typename StringType8, typename StringType9>
+PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7, StringType8 string8, StringType9 string9)
+{
+    StringTypeAdapter<StringType1> adapter1(string1);
+    StringTypeAdapter<StringType2> adapter2(string2);
+    StringTypeAdapter<StringType3> adapter3(string3);
+    StringTypeAdapter<StringType4> adapter4(string4);
+    StringTypeAdapter<StringType5> adapter5(string5);
+    StringTypeAdapter<StringType6> adapter6(string6);
+    StringTypeAdapter<StringType7> adapter7(string7);
+    StringTypeAdapter<StringType8> adapter8(string8);
+    StringTypeAdapter<StringType9> adapter9(string9);
+
+    UChar* buffer;
+    bool overflow = false;
+    unsigned length = adapter1.length();
+    sumWithOverflow(length, adapter2.length(), overflow);
+    sumWithOverflow(length, adapter3.length(), overflow);
+    sumWithOverflow(length, adapter4.length(), overflow);
+    sumWithOverflow(length, adapter5.length(), overflow);
+    sumWithOverflow(length, adapter6.length(), overflow);
+    sumWithOverflow(length, adapter7.length(), overflow);
+    sumWithOverflow(length, adapter8.length(), overflow);
+    sumWithOverflow(length, adapter9.length(), overflow);
+    if (overflow)
+        return 0;
+    RefPtr<StringImpl> resultImpl = StringImpl::tryCreateUninitialized(length, buffer);
+    if (!resultImpl)
+        return 0;
+
+    UChar* result = buffer;
+    adapter1.writeTo(result);
+    result += adapter1.length();
+    adapter2.writeTo(result);
+    result += adapter2.length();
+    adapter3.writeTo(result);
+    result += adapter3.length();
+    adapter4.writeTo(result);
+    result += adapter4.length();
+    adapter5.writeTo(result);
+    result += adapter5.length();
+    adapter6.writeTo(result);
+    result += adapter6.length();
+    adapter7.writeTo(result);
+    result += adapter7.length();
+    adapter8.writeTo(result);
+    result += adapter8.length();
+    adapter9.writeTo(result);
+
+    return resultImpl.release();
+}
+
 
 // Convenience only.
 template<typename StringType1>
@@ -454,64 +507,73 @@ String makeString(StringType1 string1)
 template<typename StringType1, typename StringType2>
 String makeString(StringType1 string1, StringType2 string2)
 {
-    PassRefPtr<StringImpl> resultImpl = tryMakeString(string1, string2);
+    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2);
     if (!resultImpl)
         CRASH();
-    return resultImpl;
+    return resultImpl.release();
 }
 
 template<typename StringType1, typename StringType2, typename StringType3>
 String makeString(StringType1 string1, StringType2 string2, StringType3 string3)
 {
-    PassRefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3);
+    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3);
     if (!resultImpl)
         CRASH();
-    return resultImpl;
+    return resultImpl.release();
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4>
 String makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4)
 {
-    PassRefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4);
+    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4);
     if (!resultImpl)
         CRASH();
-    return resultImpl;
+    return resultImpl.release();
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5>
 String makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5)
 {
-    PassRefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4, string5);
+    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4, string5);
     if (!resultImpl)
         CRASH();
-    return resultImpl;
+    return resultImpl.release();
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6>
 String makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6)
 {
-    PassRefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4, string5, string6);
+    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4, string5, string6);
     if (!resultImpl)
         CRASH();
-    return resultImpl;
+    return resultImpl.release();
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7>
 String makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7)
 {
-    PassRefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4, string5, string6, string7);
+    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4, string5, string6, string7);
     if (!resultImpl)
         CRASH();
-    return resultImpl;
+    return resultImpl.release();
 }
 
 template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7, typename StringType8>
 String makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7, StringType8 string8)
 {
-    PassRefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4, string5, string6, string7, string8);
+    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4, string5, string6, string7, string8);
     if (!resultImpl)
         CRASH();
-    return resultImpl;
+    return resultImpl.release();
+}
+
+template<typename StringType1, typename StringType2, typename StringType3, typename StringType4, typename StringType5, typename StringType6, typename StringType7, typename StringType8, typename StringType9>
+String makeString(StringType1 string1, StringType2 string2, StringType3 string3, StringType4 string4, StringType5 string5, StringType6 string6, StringType7 string7, StringType8 string8, StringType9 string9)
+{
+    RefPtr<StringImpl> resultImpl = tryMakeString(string1, string2, string3, string4, string5, string6, string7, string8, string9);
+    if (!resultImpl)
+        CRASH();
+    return resultImpl.release();
 }
 
 } // namespace WTF
