@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,18 +29,20 @@
 #include "config.h"
 #include "IDBTransactionCallbacksProxy.h"
 
-#include "WebIDBTransactionCallbacks.h"
-
 #if ENABLE(INDEXED_DATABASE)
 
-namespace WebCore {
+#include "WebIDBTransactionCallbacks.h"
 
-PassRefPtr<IDBTransactionCallbacksProxy> IDBTransactionCallbacksProxy::create(PassOwnPtr<WebKit::WebIDBTransactionCallbacks> callbacks)
+using namespace WebCore;
+
+namespace WebKit {
+
+PassRefPtr<IDBTransactionCallbacksProxy> IDBTransactionCallbacksProxy::create(PassOwnPtr<WebIDBTransactionCallbacks> callbacks)
 {
     return adoptRef(new IDBTransactionCallbacksProxy(callbacks));
 }
 
-IDBTransactionCallbacksProxy::IDBTransactionCallbacksProxy(PassOwnPtr<WebKit::WebIDBTransactionCallbacks> callbacks)
+IDBTransactionCallbacksProxy::IDBTransactionCallbacksProxy(PassOwnPtr<WebIDBTransactionCallbacks> callbacks)
     : m_callbacks(callbacks)
 {
 }
@@ -59,6 +61,6 @@ void IDBTransactionCallbacksProxy::onComplete()
     m_callbacks->onComplete();
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

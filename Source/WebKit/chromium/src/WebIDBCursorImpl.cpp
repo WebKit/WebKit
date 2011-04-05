@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "WebIDBCursorImpl.h"
+
+#if ENABLE(INDEXED_DATABASE)
 
 #include "IDBAny.h"
 #include "IDBCallbacksProxy.h"
@@ -80,4 +82,6 @@ void WebIDBCursorImpl::deleteFunction(WebIDBCallbacks* callbacks, WebExceptionCo
     m_idbCursorBackend->deleteFunction(IDBCallbacksProxy::create(callbacks), ec);
 }
 
-} // namespace WebCore
+} // namespace WebKit
+
+#endif // ENABLE(INDEXED_DATABASE)

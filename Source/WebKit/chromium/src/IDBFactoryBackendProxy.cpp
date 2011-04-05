@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,9 +29,11 @@
 #include "config.h"
 #include "IDBFactoryBackendProxy.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "DOMStringList.h"
+#include "IDBDatabaseBackendProxy.h"
 #include "IDBDatabaseError.h"
-#include "IDBDatabaseProxy.h"
 #include "WebFrameImpl.h"
 #include "WebIDBCallbacksImpl.h"
 #include "WebIDBDatabase.h"
@@ -41,9 +43,9 @@
 #include "WebKitClient.h"
 #include "WebVector.h"
 
-#if ENABLE(INDEXED_DATABASE)
+using namespace WebCore;
 
-namespace WebCore {
+namespace WebKit {
 
 PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendProxy::create()
 {
@@ -51,7 +53,7 @@ PassRefPtr<IDBFactoryBackendInterface> IDBFactoryBackendProxy::create()
 }
 
 IDBFactoryBackendProxy::IDBFactoryBackendProxy()
-    : m_webIDBFactory(WebKit::webKitClient()->idbFactory())
+    : m_webIDBFactory(webKitClient()->idbFactory())
 {
 }
 
@@ -61,10 +63,10 @@ IDBFactoryBackendProxy::~IDBFactoryBackendProxy()
 
 void IDBFactoryBackendProxy::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> origin, Frame* frame, const String& dataDir, int64_t maximumSize, BackingStoreType backingStoreType)
 {
-    WebKit::WebFrame* webFrame = WebKit::WebFrameImpl::fromFrame(frame);
-    m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir, maximumSize, static_cast<WebKit::WebIDBFactory::BackingStoreType>(backingStoreType));
+    WebFrame* webFrame = WebFrameImpl::fromFrame(frame);
+    m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir, maximumSize, static_cast<WebIDBFactory::BackingStoreType>(backingStoreType));
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

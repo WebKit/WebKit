@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,14 +37,16 @@
 #include "WebIDBKey.h"
 #include "WebIDBKeyRange.h"
 
-namespace WebCore {
+using namespace WebCore;
 
-PassRefPtr<IDBIndexBackendInterface> IDBIndexBackendProxy::create(PassOwnPtr<WebKit::WebIDBIndex> index)
+namespace WebKit {
+
+PassRefPtr<IDBIndexBackendInterface> IDBIndexBackendProxy::create(PassOwnPtr<WebIDBIndex> index)
 {
     return adoptRef(new IDBIndexBackendProxy(index));
 }
 
-IDBIndexBackendProxy::IDBIndexBackendProxy(PassOwnPtr<WebKit::WebIDBIndex> index)
+IDBIndexBackendProxy::IDBIndexBackendProxy(PassOwnPtr<WebIDBIndex> index)
     : m_webIDBIndex(index)
 {
 }
@@ -105,6 +107,6 @@ void IDBIndexBackendProxy::getKey(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallback
     m_webIDBIndex->getKey(key, new WebIDBCallbacksImpl(callbacks), *transactionProxy->getWebIDBTransaction(), ec);
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

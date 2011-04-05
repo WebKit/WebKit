@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebIDBDatabaseImpl.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "DOMStringList.h"
 #include "IDBCallbacksProxy.h"
 #include "IDBDatabaseBackendInterface.h"
@@ -35,8 +37,6 @@
 #include "WebIDBDatabaseCallbacks.h"
 #include "WebIDBObjectStoreImpl.h"
 #include "WebIDBTransactionImpl.h"
-
-#if ENABLE(INDEXED_DATABASE)
 
 using namespace WebCore;
 
@@ -112,6 +112,6 @@ void WebIDBDatabaseImpl::open(WebIDBDatabaseCallbacks* callbacks)
     m_databaseBackend->open(m_databaseCallbacks);
 }
 
-} // namespace WebCore
+} // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

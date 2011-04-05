@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +26,13 @@
 #include "config.h"
 #include "WebIDBKeyRange.h"
 
+#if ENABLE(INDEXED_DATABASE)
+
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
 #include "WebIDBKey.h"
 
-using WebCore::IDBKeyRange;
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -93,3 +95,5 @@ WebIDBKeyRange::operator PassRefPtr<IDBKeyRange>() const
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(INDEXED_DATABASE)
