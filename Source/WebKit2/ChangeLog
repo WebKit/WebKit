@@ -1,5 +1,37 @@
 2011-04-05  Adam Roben  <aroben@apple.com>
 
+        Disable accelerated compositing on Windows machines that don't support it
+
+        This includes machines without the necessary graphics hardware, and machines without
+        WebKitQuartzCoreAdditions (like the Windows 7 Release (WebKit2 Tests) bots).
+
+        Fixes <http://webkit.org/b/57870> REGRESSION (r82960): Lots of tests crashing in
+        DrawingAreaImpl::enterAcceleratedCompositingMode on Windows 7 Release (WebKit2 Tests)
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::supportsAcceleratedCompositing): Added. On platforms other than
+        Windows, this always returns true.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Only enable accelerated compositing-related
+        preferences if the machine supports accelerated compositing.
+
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.cpp:
+        (WebKit::LayerTreeHostCAWin::supportsAcceleratedCompositing): Added. Creates a view, asks it
+        if it can draw, and returns the result.
+
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.h: Added supportsAcceleratedCompositing.
+
+        * WebProcess/WebPage/win/LayerTreeHostWin.cpp: Added.
+        (WebKit::LayerTreeHost::supportsAcceleratedCompositing): Added. Calls through to
+        LayerTreeHostCAWin in configurations that support that class. Otherwise just returns false.
+
+        * win/WebKit2.vcproj: Added LayerTreeHostWin.cpp. Let VS reorder some other files.
+
+2011-04-05  Adam Roben  <aroben@apple.com>
+
         Make accelerated compositing work in WebKit2 on Windows
 
         LayerTreeHostCAWin uses WKCACFView to render each frame to an image, then has

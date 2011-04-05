@@ -1905,6 +1905,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\WebProcess\WebPage\win\LayerTreeHostWin.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\WebProcess\WebPage\win\WebInspectorWin.cpp"
 						>
 					</File>
@@ -2767,15 +2771,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebIconDatabase.messages.in"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebIconDatabaseClient.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\UIProcess\WebIconDatabaseClient.h"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\WebIconDatabase.messages.in"
 				>
 			</File>
 			<File

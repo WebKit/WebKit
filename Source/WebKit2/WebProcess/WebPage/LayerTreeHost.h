@@ -46,6 +46,8 @@ public:
     static PassRefPtr<LayerTreeHost> create(WebPage*);
     virtual ~LayerTreeHost();
 
+    static bool supportsAcceleratedCompositing();
+
     virtual const LayerTreeContext& layerTreeContext() = 0;
     virtual void scheduleLayerFlush() = 0;
     virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool) = 0;
@@ -73,6 +75,13 @@ protected:
 
     WebPage* m_webPage;
 };
+
+#if !PLATFORM(WIN)
+inline bool LayerTreeHost::supportsAcceleratedCompositing()
+{
+    return true;
+}
+#endif
 
 } // namespace WebKit
 

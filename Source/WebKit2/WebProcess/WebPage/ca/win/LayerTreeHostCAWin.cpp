@@ -76,6 +76,29 @@ static HWND createDummyWindow()
     return ::CreateWindowW(dummyWindowClass, 0, WS_POPUP, 0, 0, 10, 10, 0, 0, instanceHandle(), 0);
 }
 
+bool LayerTreeHostCAWin::supportsAcceleratedCompositing()
+{
+    static bool initialized;
+    static bool supportsAcceleratedCompositing;
+    if (initialized)
+        return supportsAcceleratedCompositing;
+    initialized = true;
+
+    ASSERT(!dummyWindow);
+    dummyWindow = createDummyWindow();
+    RetainPtr<WKCACFViewRef> view(AdoptCF, WKCACFViewCreate(kWKCACFViewDrawingDestinationImage));
+    CGRect fakeBounds = CGRectMake(0, 0, 10, 10);
+    WKCACFViewUpdate(view.get(), dummyWindow, &fakeBounds);
+
+    supportsAcceleratedCompositing = WKCACFViewCanDraw(view.get());
+
+    WKCACFViewUpdate(view.get(), 0, 0);
+    ::DestroyWindow(dummyWindow);
+    dummyWindow = 0;
+
+    return supportsAcceleratedCompositing;
+}
+
 PassRefPtr<LayerTreeHostCAWin> LayerTreeHostCAWin::create(WebPage* webPage)
 {
     RefPtr<LayerTreeHostCAWin> host = adoptRef(new LayerTreeHostCAWin(webPage));

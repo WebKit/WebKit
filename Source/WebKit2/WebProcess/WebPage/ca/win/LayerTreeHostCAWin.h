@@ -41,6 +41,8 @@ namespace WebKit {
 
 class LayerTreeHostCAWin : public LayerTreeHostCA, private WebCore::AbstractCACFLayerTreeHost {
 public:
+    static bool supportsAcceleratedCompositing();
+
     static PassRefPtr<LayerTreeHostCAWin> create(WebPage*);
     virtual ~LayerTreeHostCAWin();
 
