@@ -1009,7 +1009,7 @@ BUGCR10317 LINUX : fast/css/shadow-multiple.html = FAIL
 // Problems with getImageData and toDataURL.
 // This test requires us to do alpha blending exactly the way CG does it,
 // which Skia may never do (see bug).
-BUGCR22700 CPU LINUX WIN : fast/canvas/canvas-getImageData.html = FAIL TIMEOUT
+BUGCR22700 CPU WIN-WIN7 : fast/canvas/canvas-getImageData.html = FAIL TIMEOUT
 
 // We're much closer now. To fully pass this we need encoders for jpg
 // and gif, which is a low priority.
@@ -2546,8 +2546,6 @@ BUGCR61739 DEBUG : animations/suspend-resume-animation-events.html = CRASH TEXT 
 // See https://bugs.webkit.org/show_bug.cgi?id=51982 for more info.
 BUGWK52509 : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
-BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-gradient-shadow.html = TEXT
-BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-pattern-shadow.html = TEXT
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-strokeRect-alpha-shadow.html = TEXT
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-strokePath-alpha-shadow.html = TEXT
