@@ -59,6 +59,7 @@ void StructureStubInfo::deref()
     }
     case access_put_by_id_transition:
         u.putByIdTransition.previousStructure->deref();
+        u.putByIdTransition.structure->deref();
         return;
     case access_put_by_id_replace:
         u.putByIdReplace.baseObjectStructure->deref();
