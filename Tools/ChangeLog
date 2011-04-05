@@ -1,5 +1,14 @@
 2011-04-05  Zoltan Horvath  <zoltan@webkit.org>
 
+        [Qt] Linux Release minimal build fix after r82919.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::loadURLListFromFile):
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::loadURLListFromFile):
+
+2011-04-05  Zoltan Horvath  <zoltan@webkit.org>
+
         Reviewed by Andreas Kling.
 
         [Qt] Make URL loader accessible from testbrowser's menus

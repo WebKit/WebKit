@@ -341,8 +341,11 @@ void BrowserWindow::showUserAgentDialog()
 
 void BrowserWindow::loadURLListFromFile()
 {
-    QString selectedFile = QFileDialog::getOpenFileName(this, tr("Load URL list from file")
+    QString selectedFile;
+#ifndef QT_NO_FILEDIALOG
+    selectedFile = QFileDialog::getOpenFileName(this, tr("Load URL list from file")
                                                        , QString(), tr("Text Files (*.txt);;All Files (*)"));
+#endif
     if (selectedFile.isEmpty())
        return;
 
