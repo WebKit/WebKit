@@ -703,8 +703,7 @@ void wxWebView::OnSize(wxSizeEvent& event)
 { 
     if (m_isInitialized && m_mainFrame) {
         WebCore::Frame* frame = m_mainFrame->GetFrame();
-        frame->view()->setFrameRect(wxRect(wxPoint(0,0), event.GetSize()));
-        frame->view()->forceLayout();
+        frame->view()->resize(event.GetSize());
         frame->view()->adjustViewSize();
     }
       

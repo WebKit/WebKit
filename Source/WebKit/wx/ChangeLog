@@ -1,3 +1,14 @@
+2011-04-04  Malcolm MacLeod  <mmacleod@webmail.co.za>
+
+        Reviewed by Kevin Ollivier.
+
+        Move to using FrameView::resize to handle changes in view size.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=57805
+
+        * WebView.cpp:
+        (wxWebView::OnSize):
+
 2011-04-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.
