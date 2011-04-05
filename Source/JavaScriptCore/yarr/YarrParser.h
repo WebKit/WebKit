@@ -78,6 +78,7 @@ private:
             : m_delegate(delegate)
             , m_err(err)
             , m_state(Empty)
+            , m_character(0)
         {
         }
 

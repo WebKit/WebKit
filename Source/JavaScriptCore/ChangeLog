@@ -1,3 +1,13 @@
+2011-04-05  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Build fix for YarrParser.h
+        https://bugs.webkit.org/show_bug.cgi?id=57822
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::CharacterClassParserDelegate):
+
 2011-04-05  Steve Falkenburg  <sfalken@apple.com>
 
         Follow-up Windows build fix.
