@@ -1,3 +1,11 @@
+2011-04-04  Kent Tamura  <tkent@chromium.org>
+
+        Add a case label which was unexpectedly removed in r82899.
+        https://bugs.webkit.org/show_bug.cgi?id=50661
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::extractPseudoType):
+
 2011-04-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

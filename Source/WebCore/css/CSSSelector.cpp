@@ -446,6 +446,7 @@ void CSSSelector::extractPseudoType() const
     case PseudoInputSpeechButton:
 #endif
     case PseudoInnerSpinButton:
+    case PseudoOuterSpinButton: 
     case PseudoResizer:
     case PseudoScrollbar:
     case PseudoScrollbarCorner:
