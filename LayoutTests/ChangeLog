@@ -1,3 +1,77 @@
+2011-04-05  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, update fast/ruby/* chromium expectations after r82903.
+
+        * platform/chromium-linux/fast/ruby/ruby-beforeafter-expected.png:
+        * platform/chromium-linux/fast/ruby/ruby-length-expected.png:
+        * platform/chromium-linux/fast/ruby/ruby-run-break-expected.png:
+        * platform/chromium-linux/fast/ruby/ruby-runs-expected.png:
+        * platform/chromium-linux/fast/ruby/ruby-runs-spans-expected.png:
+        * platform/chromium-linux/fast/ruby/ruby-trailing-expected.png:
+        * platform/chromium-linux/fast/ruby/rubyDOM-insert-rt-expected.png:
+        * platform/chromium-linux/fast/ruby/rubyDOM-insert-text1-expected.png:
+        * platform/chromium-linux/fast/ruby/rubyDOM-insert-text2-expected.png:
+        * platform/chromium-linux/fast/ruby/rubyDOM-insert-text3-expected.png:
+        * platform/chromium-linux/fast/ruby/rubyDOM-remove-rt1-expected.png:
+        * platform/chromium-linux/fast/ruby/rubyDOM-remove-rt2-expected.png:
+        * platform/chromium-linux/fast/ruby/rubyDOM-remove-text1-expected.png:
+        * platform/chromium-mac/fast/ruby/ruby-beforeafter-expected.png: Added.
+        * platform/chromium-mac/fast/ruby/ruby-length-expected.png: Added.
+        * platform/chromium-mac/fast/ruby/ruby-run-break-expected.png: Added.
+        * platform/chromium-mac/fast/ruby/ruby-runs-expected.png: Added.
+        * platform/chromium-mac/fast/ruby/ruby-runs-spans-expected.png: Added.
+        * platform/chromium-mac/fast/ruby/ruby-trailing-expected.png: Added.
+        * platform/chromium-mac/fast/ruby/rubyDOM-insert-rt-expected.png: Added.
+        * platform/chromium-mac/fast/ruby/rubyDOM-insert-text1-expected.png: Added.
+        * platform/chromium-mac/fast/ruby/rubyDOM-insert-text2-expected.png: Added.
+        * platform/chromium-mac/fast/ruby/rubyDOM-insert-text3-expected.png: Added.
+        * platform/chromium-mac/fast/ruby/rubyDOM-remove-rt1-expected.png: Added.
+        * platform/chromium-mac/fast/ruby/rubyDOM-remove-rt2-expected.png: Added.
+        * platform/chromium-mac/fast/ruby/rubyDOM-remove-text1-expected.png: Added.
+        * platform/chromium-win/fast/blockflow/english-lr-text-expected.checksum: Removed.
+        * platform/chromium-win/fast/blockflow/english-lr-text-expected.png:
+        * platform/chromium-win/fast/ruby/overhang-horizontal-expected.png: Added.
+        * platform/chromium-win/fast/ruby/overhang-vertical-expected.png: Added.
+        * platform/chromium-win/fast/ruby/ruby-beforeafter-expected.checksum: Removed.
+        * platform/chromium-win/fast/ruby/ruby-beforeafter-expected.png:
+        * platform/chromium-win/fast/ruby/ruby-beforeafter-expected.txt:
+        * platform/chromium-win/fast/ruby/ruby-length-expected.checksum: Removed.
+        * platform/chromium-win/fast/ruby/ruby-length-expected.png:
+        * platform/chromium-win/fast/ruby/ruby-length-expected.txt:
+        * platform/chromium-win/fast/ruby/ruby-run-break-expected.checksum: Removed.
+        * platform/chromium-win/fast/ruby/ruby-run-break-expected.png:
+        * platform/chromium-win/fast/ruby/ruby-run-break-expected.txt:
+        * platform/chromium-win/fast/ruby/ruby-runs-expected.checksum: Removed.
+        * platform/chromium-win/fast/ruby/ruby-runs-expected.png:
+        * platform/chromium-win/fast/ruby/ruby-runs-expected.txt:
+        * platform/chromium-win/fast/ruby/ruby-runs-spans-expected.checksum: Removed.
+        * platform/chromium-win/fast/ruby/ruby-runs-spans-expected.png:
+        * platform/chromium-win/fast/ruby/ruby-runs-spans-expected.txt:
+        * platform/chromium-win/fast/ruby/ruby-trailing-expected.checksum: Removed.
+        * platform/chromium-win/fast/ruby/ruby-trailing-expected.png:
+        * platform/chromium-win/fast/ruby/ruby-trailing-expected.txt:
+        * platform/chromium-win/fast/ruby/rubyDOM-insert-rt-expected.checksum: Removed.
+        * platform/chromium-win/fast/ruby/rubyDOM-insert-rt-expected.png:
+        * platform/chromium-win/fast/ruby/rubyDOM-insert-rt-expected.txt:
+        * platform/chromium-win/fast/ruby/rubyDOM-insert-text1-expected.checksum: Removed.
+        * platform/chromium-win/fast/ruby/rubyDOM-insert-text1-expected.png:
+        * platform/chromium-win/fast/ruby/rubyDOM-insert-text1-expected.txt:
+        * platform/chromium-win/fast/ruby/rubyDOM-insert-text2-expected.checksum: Removed.
+        * platform/chromium-win/fast/ruby/rubyDOM-insert-text2-expected.png:
+        * platform/chromium-win/fast/ruby/rubyDOM-insert-text2-expected.txt:
+        * platform/chromium-win/fast/ruby/rubyDOM-insert-text3-expected.checksum: Removed.
+        * platform/chromium-win/fast/ruby/rubyDOM-insert-text3-expected.png:
+        * platform/chromium-win/fast/ruby/rubyDOM-insert-text3-expected.txt:
+        * platform/chromium-win/fast/ruby/rubyDOM-remove-rt1-expected.checksum: Removed.
+        * platform/chromium-win/fast/ruby/rubyDOM-remove-rt1-expected.png:
+        * platform/chromium-win/fast/ruby/rubyDOM-remove-rt1-expected.txt:
+        * platform/chromium-win/fast/ruby/rubyDOM-remove-rt2-expected.checksum: Removed.
+        * platform/chromium-win/fast/ruby/rubyDOM-remove-rt2-expected.png:
+        * platform/chromium-win/fast/ruby/rubyDOM-remove-rt2-expected.txt:
+        * platform/chromium-win/fast/ruby/rubyDOM-remove-text1-expected.checksum: Removed.
+        * platform/chromium-win/fast/ruby/rubyDOM-remove-text1-expected.png:
+        * platform/chromium-win/fast/ruby/rubyDOM-remove-text1-expected.txt:
+
 2011-04-05  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Adam Barth.
