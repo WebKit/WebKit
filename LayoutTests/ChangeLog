@@ -1,5 +1,14 @@
 2011-04-05  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, rebaseline Kusa-Makura-background-canvas.html on chromium-mac after r82903.
+
+        * platform/chromium-mac-leopard/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/blockflow/Kusa-Makura-background-canvas-expected.png:
+        * platform/chromium-mac/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum: Removed.
+        * platform/chromium-mac/fast/blockflow/Kusa-Makura-background-canvas-expected.png:
+
+2011-04-05  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, remove unnecessary checksum files for fast/ruby tests.
 
         * platform/chromium-linux/fast/blockflow/english-lr-text-expected.checksum: Removed.
