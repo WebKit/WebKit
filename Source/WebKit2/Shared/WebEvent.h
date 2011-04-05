@@ -79,6 +79,7 @@ public:
         ControlKey  = 1 << 1,
         AltKey      = 1 << 2,
         MetaKey     = 1 << 3,
+        CapsLockKey = 1 << 4,
     };
 
     Type type() const { return static_cast<Type>(m_type); }
@@ -87,6 +88,7 @@ public:
     bool controlKey() const { return m_modifiers & ControlKey; }
     bool altKey() const { return m_modifiers & AltKey; }
     bool metaKey() const { return m_modifiers & MetaKey; }
+    bool capsLockKey() const { return m_modifiers & CapsLockKey; }
 
     Modifiers modifiers() const { return static_cast<Modifiers>(m_modifiers); }
 

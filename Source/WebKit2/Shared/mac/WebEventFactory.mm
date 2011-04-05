@@ -1030,6 +1030,8 @@ static inline bool isKeyUpEvent(NSEvent *event)
 static inline WebEvent::Modifiers modifiersForEvent(NSEvent *event)
 {
     unsigned modifiers = 0;
+    if ([event modifierFlags] & NSAlphaShiftKeyMask)
+        modifiers |= WebEvent::CapsLockKey;
     if ([event modifierFlags] & NSShiftKeyMask)
         modifiers |= WebEvent::ShiftKey;
     if ([event modifierFlags] & NSControlKeyMask)

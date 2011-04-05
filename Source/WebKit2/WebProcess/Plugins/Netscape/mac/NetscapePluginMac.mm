@@ -647,6 +647,8 @@ static unsigned modifierFlags(const WebKeyboardEvent& keyboardEvent)
 {
     unsigned modifierFlags = 0;
 
+    if (keyboardEvent.capsLockKey())
+        modifierFlags |= NSAlphaShiftKeyMask;
     if (keyboardEvent.shiftKey())
         modifierFlags |= NSShiftKeyMask;
     if (keyboardEvent.controlKey())
@@ -659,20 +661,46 @@ static unsigned modifierFlags(const WebKeyboardEvent& keyboardEvent)
     return modifierFlags;
 }
 
+static bool isFlagsChangedEvent(const WebKeyboardEvent& keyboardEvent)
+{
+    switch (keyboardEvent.nativeVirtualKeyCode()) {
+    case 54: // Right Command
+    case 55: // Left Command
+
+    case 57: // Capslock
+
+    case 56: // Left Shift
+    case 60: // Right Shift
+
+    case 58: // Left Alt
+    case 61: // Right Alt
+            
+    case 59: // Left Ctrl
+    case 62: // Right Ctrl
+        return true;
+    }
+
+    return false;
+}
+
 static NPCocoaEvent initializeKeyboardEvent(const WebKeyboardEvent& keyboardEvent)
 {
     NPCocoaEventType eventType;
-    
-    switch (keyboardEvent.type()) {
-        case WebEvent::KeyDown:
-            eventType = NPCocoaEventKeyDown;
-            break;
-        case WebEvent::KeyUp:
-            eventType = NPCocoaEventKeyUp;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            return NPCocoaEvent();
+
+    if (isFlagsChangedEvent(keyboardEvent))
+        eventType = NPCocoaEventFlagsChanged;
+    else {
+        switch (keyboardEvent.type()) {
+            case WebEvent::KeyDown:
+                eventType = NPCocoaEventKeyDown;
+                break;
+            case WebEvent::KeyUp:
+                eventType = NPCocoaEventKeyUp;
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+                return NPCocoaEvent();
+        }
     }
 
     NPCocoaEvent event = initializeEvent(eventType);

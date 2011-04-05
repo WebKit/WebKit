@@ -2,6 +2,32 @@
 
         Reviewed by Darin Adler.
 
+        Send NPCocoaEventFlagsChanged events
+        https://bugs.webkit.org/show_bug.cgi?id=57811
+        <rdar://problem/9215600>
+
+        * Shared/WebEvent.h:
+        (WebKit::WebEvent::capsLockKey):
+        Add CapsLock modifier and getter.
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::modifiersForEvent):
+        Check for NSAlphaShiftKeyMask and set the CapsLockKey modifier.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::modifierFlags):
+        Check for CapsLockKey and set NSAlphaShiftKeyMask.
+
+        (WebKit::isFlagsChangedEvent):
+        Return whether a given event is a Cocoa flags changed event.
+
+        (WebKit::initializeKeyboardEvent):
+        If this is a flags changed event, set the event type to NPCocoaEventFlagsChanged.
+
+2011-04-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
         Don't discard the backing stores of WKViews in the key window
         https://bugs.webkit.org/show_bug.cgi?id=57808
         <rdar://problem/9110793>
