@@ -1,3 +1,14 @@
+2011-04-05  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] MiniBrowser defaultUrl does not work
+        https://bugs.webkit.org/show_bug.cgi?id=57021
+
+        Match the behavior and coding of MiniBrowser to QtTestBrowser.
+        * MiniBrowser/qt/main.cpp:
+        (main):
+
 2011-04-05  Jade Han  <jade.han@nokia.com>
 
         Reviewed by Laszlo Gombos.
