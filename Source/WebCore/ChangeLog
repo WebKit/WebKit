@@ -1,3 +1,15 @@
+2011-04-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Rename variables in border drawing code for readability
+        https://bugs.webkit.org/show_bug.cgi?id=57894
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::drawLineForBoxSide):
+        (WebCore::RenderObject::drawBoxSideFromPath):
+        (WebCore::RenderObject::drawArcForBoxSide):
+
 2011-04-05  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin Adler.
