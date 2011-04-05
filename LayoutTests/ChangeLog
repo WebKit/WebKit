@@ -1,3 +1,12 @@
+2011-04-05  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, removing the chromium-win results causes this test to
+        start passing on chromium win and linux.
+
+        * platform/chromium-win/fast/images/svg-as-tiled-background-expected.checksum: Removed.
+        * platform/chromium-win/fast/images/svg-as-tiled-background-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-05  David Levin  <levin@chromium.org>
 
         Reviewed by Jian Li.

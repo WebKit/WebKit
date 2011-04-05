@@ -1822,10 +1822,6 @@ BUGCR35064 : fast/forms/restore-selection-after-layout.html = TEXT PASS
 // WebKit roll 54493 to 54530: new tests.
 BUGCR35114 : fast/js/parser-syntax-check.html = TEXT
 
-// Started failing during roll from 54848 -> 54898
-// Started failing with 54865. No rebaselines upstream but they don't run pixel tests.
-BUGCR36019 WIN LINUX : fast/images/svg-as-tiled-background.html = IMAGE
-
 // WebKit roll 55250 to 55339
 BUGCR36966 : fast/loader/about-blank-hash-kept.html = FAIL
 
