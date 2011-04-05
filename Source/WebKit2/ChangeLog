@@ -1,3 +1,9 @@
+2011-04-05  Alejandro G. Castro  <alex@igalia.com>
+
+        Fix compilation error after r82929.
+
+        * WebProcess/WebPage/WebPage.h:
+
 2011-04-05  Amruth Raj  <amruthraj@motorola.com>, Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com> and Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

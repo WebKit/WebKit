@@ -161,9 +161,12 @@ public:
     void layoutIfNeeded();
 
     // -- Called from WebCore clients.
-#if !PLATFORM(GTK) && !PLATFORM(MAC)
+#if PLATFORM(MAC)
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*, bool saveCommands);
+#elif !PLATFORM(GTK)
+    bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
 #endif
+
     void show();
     String userAgent() const { return m_userAgent; }
     WebCore::IntRect windowResizerRect() const;
