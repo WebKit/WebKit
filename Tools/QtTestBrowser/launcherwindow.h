@@ -165,6 +165,8 @@ protected slots:
     /* void dumpPlugins() */
     void dumpHtml();
 
+    void loadURLListFromFile();
+
     void setTouchMocking(bool on);
     void toggleWebView(bool graphicsBased);
     void toggleAcceleratedCompositing(bool toggle);
@@ -216,6 +218,8 @@ private:
 private:
     static QVector<int> m_zoomLevels;
     int m_currentZoom;
+
+    UrlLoader* m_urlLoader;
 
     QWidget* m_view;
     WebInspector* m_inspector;

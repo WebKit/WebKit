@@ -28,6 +28,7 @@
 
 #include "BrowserWindow.h"
 
+#include "UrlLoader.h"
 #include "qwkpreferences.h"
 
 static QWKPage* newPageFunction(QWKPage* page)
@@ -41,6 +42,7 @@ QVector<qreal> BrowserWindow::m_zoomLevels;
 BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
     : m_isZoomTextOnly(false)
     , m_currentZoom(1)
+    , m_urlLoader(0)
     , m_context(context)
 {
     if (options)
@@ -106,6 +108,8 @@ BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
     toggleFrameFlattening->setChecked(false);
     toolsMenu->addSeparator();
     toolsMenu->addAction("Change User Agent", this, SLOT(showUserAgentDialog()));
+    toolsMenu->addSeparator();
+    toolsMenu->addAction("Load URLs from file", this, SLOT(loadURLListFromFile()));
 
     QMenu* settingsMenu = menuBar()->addMenu("&Settings");
     QAction* toggleAutoLoadImages = settingsMenu->addAction("Disable Auto Load Images", this, SLOT(toggleAutoLoadImages(bool)));
@@ -335,6 +339,17 @@ void BrowserWindow::showUserAgentDialog()
         page()->setCustomUserAgent(combo->currentText());
 }
 
+void BrowserWindow::loadURLListFromFile()
+{
+    QString selectedFile = QFileDialog::getOpenFileName(this, tr("Load URL list from file")
+                                                       , QString(), tr("Text Files (*.txt);;All Files (*)"));
+    if (selectedFile.isEmpty())
+       return;
+
+    m_urlLoader = new UrlLoader(this, selectedFile, 0, 0);
+    m_urlLoader->loadNext();
+}
+
 void BrowserWindow::printURL(const QUrl& url)
 {
     QTextStream output(stdout);
@@ -380,6 +395,7 @@ void BrowserWindow::applyZoom()
 
 BrowserWindow::~BrowserWindow()
 {
+    delete m_urlLoader;
     delete m_addressBar;
     delete m_browser;
 }

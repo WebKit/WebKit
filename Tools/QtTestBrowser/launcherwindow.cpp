@@ -31,6 +31,7 @@
  */
 
 #include "launcherwindow.h"
+#include "urlloader.h"
 
 const int gExitClickArea = 80;
 QVector<int> LauncherWindow::m_zoomLevels;
@@ -38,6 +39,7 @@ QVector<int> LauncherWindow::m_zoomLevels;
 LauncherWindow::LauncherWindow(WindowOptions* data, QGraphicsScene* sharedScene)
     : MainWindow()
     , m_currentZoom(100)
+    , m_urlLoader(0)
     , m_view(0)
     , m_inspector(0)
     , m_formatMenuAction(0)
@@ -56,6 +58,7 @@ LauncherWindow::LauncherWindow(WindowOptions* data, QGraphicsScene* sharedScene)
 LauncherWindow::~LauncherWindow()
 {
     grabZoomKeys(false);
+    delete m_urlLoader;
 }
 
 void LauncherWindow::init()
@@ -287,6 +290,8 @@ void LauncherWindow::createChrome()
     QAction* showInspectorAction = toolsMenu->addAction("Show Web Inspector", m_inspector, SLOT(setVisible(bool)), QKeySequence(Qt::CTRL | Qt::ALT | Qt::Key_I));
     showInspectorAction->setCheckable(true);
     showInspectorAction->connect(m_inspector, SIGNAL(visibleChanged(bool)), SLOT(setChecked(bool)));
+    toolsMenu->addSeparator();
+    toolsMenu->addAction("Load URLs from file", this, SLOT(loadURLListFromFile()));
 
     // GraphicsView sub menu.
     QAction* toggleAcceleratedCompositing = graphicsViewMenu->addAction("Toggle Accelerated Compositing", this, SLOT(toggleAcceleratedCompositing(bool)));
@@ -898,6 +903,17 @@ void LauncherWindow::showUserAgentDialog()
 #endif
 
     delete dialog;
+}
+
+void LauncherWindow::loadURLListFromFile()
+{
+    QString selectedFile = QFileDialog::getOpenFileName(this, tr("Load URL list from file")
+                                                       , QString(), tr("Text Files (*.txt);;All Files (*)"));
+    if (selectedFile.isEmpty())
+       return;
+
+    m_urlLoader = new UrlLoader(this->page()->mainFrame(), selectedFile, 0, 0);
+    m_urlLoader->loadNext();
 }
 
 void LauncherWindow::printURL(const QUrl& url)

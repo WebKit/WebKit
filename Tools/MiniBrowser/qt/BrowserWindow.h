@@ -35,6 +35,8 @@
 #include <QStringList>
 #include <QtGui>
 
+class UrlLoader;
+
 class BrowserWindow : public QMainWindow {
     Q_OBJECT
 
@@ -69,6 +71,8 @@ protected slots:
     void toggleFrameFlattening(bool);
     void showUserAgentDialog();
 
+    void loadURLListFromFile();
+
     void printURL(const QUrl&);
 
     void toggleAutoLoadImages(bool);
@@ -83,6 +87,7 @@ private:
     bool m_isZoomTextOnly;
     qreal m_currentZoom;
 
+    UrlLoader* m_urlLoader;
     QWKContext* m_context;
     WindowOptions m_windowOptions;
     BrowserView* m_browser;
