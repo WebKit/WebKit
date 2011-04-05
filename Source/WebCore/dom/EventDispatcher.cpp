@@ -55,6 +55,8 @@ static HashSet<Node*>* gNodesDispatchingSimulatedClicks = 0;
 
 bool EventDispatcher::dispatchEvent(Node* node, const EventDispatchMediator& mediator)
 {
+    ASSERT(!eventDispatchForbidden());
+
     EventDispatcher dispatcher(node);
     return mediator.dispatchEvent(&dispatcher);
 }
@@ -146,8 +148,15 @@ void EventDispatcher::dispatchWheelEvent(Node* node, PlatformWheelEvent& event)
 
 // FIXME: Once https://bugs.webkit.org/show_bug.cgi?id=52963 lands, this should
 // be greatly improved. See https://bugs.webkit.org/show_bug.cgi?id=54025.
-static Node* pullOutOfShadow(Node* node)
+PassRefPtr<EventTarget> EventDispatcher::adjustRelatedTarget(PassRefPtr<EventTarget> relatedTarget)
 {
+    if (!relatedTarget)
+        return 0;
+
+    Node* node = relatedTarget->toNode();
+    if (!node)
+        return relatedTarget;
+
     Node* outermostShadowBoundary = node;
     for (Node* n = node; n; n = n->parentOrHostNode()) {
         if (n->isShadowRoot())
@@ -290,47 +299,7 @@ doneWithDefault:
 
     return !event->defaultPrevented();
 }
-bool EventDispatcher::dispatchMouseEvent(Node* node, const PlatformMouseEvent& event, const AtomicString& eventType,
-    int detail, Node* relatedTargetArg)
-{
-    ASSERT(!eventDispatchForbidden());
-    ASSERT(event.eventType() == MouseEventMoved || event.button() != NoButton);
 
-    if (node->disabled()) // Don't even send DOM events for disabled controls..
-        return true;
-
-    if (eventType.isEmpty())
-        return false; // Shouldn't happen.
-
-    EventDispatcher dispatcher(node);
-
-    // Attempting to dispatch with a non-EventTarget relatedTarget causes the relatedTarget to be silently ignored.
-    RefPtr<Node> relatedTarget = pullOutOfShadow(relatedTargetArg);
-
-    RefPtr<MouseEvent> mouseEvent = MouseEvent::create(eventType, node->document()->defaultView(), event, detail, relatedTarget);
-
-    bool swallowEvent = false;
-
-    dispatcher.dispatchEvent(mouseEvent);
-    bool defaultHandled = mouseEvent->defaultHandled();
-    bool defaultPrevented = mouseEvent->defaultPrevented();
-    if (defaultHandled || defaultPrevented)
-        swallowEvent = true;
-
-    // Special case: If it's a double click event, we also send the dblclick event. This is not part
-    // of the DOM specs, but is used for compatibility with the ondblclick="" attribute. This is treated
-    // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
-    if (eventType == eventNames().clickEvent && detail == 2) {
-        RefPtr<Event> doubleClickEvent = MouseEvent::create(eventNames().dblclickEvent, node->document()->defaultView(), event, detail, relatedTarget);
-        if (defaultHandled)
-            doubleClickEvent->setDefaultHandled();
-        dispatcher.dispatchEvent(doubleClickEvent);
-        if (doubleClickEvent->defaultHandled() || doubleClickEvent->defaultPrevented())
-            swallowEvent = true;
-    }
-
-    return swallowEvent;
-}
 
 const EventContext* EventDispatcher::topEventContext()
 {

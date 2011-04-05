@@ -1,3 +1,29 @@
+2011-04-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
+       Reviewed by Darin Adler.
+
+        Move MouseEvent-dispatching logic into MouseEventDispatchMediator.
+        https://bugs.webkit.org/show_bug.cgi?id=57639
+
+        Refactoring, covered by existing tests.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent): Moved useful assertion here
+            from dispatchMouseEvent.
+        (WebCore::EventDispatcher::adjustRelatedTarget): Converted into a method.
+        * dom/EventDispatcher.h: Adjusted decls.
+        (WebCore::EventDispatcher::node): Added.
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create): Moved useful assertion here from
+            dispatchMouseEvent.
+        (WebCore::MouseEventDispatchMediator::MouseEventDispatchMediator): Added.
+        (WebCore::MouseEventDispatchMediator::event): Added.
+        (WebCore::MouseEventDispatchMediator::dispatchEvent): Added.
+        * dom/MouseEvent.h:
+        (WebCore::MouseEvent::setRelatedTarget): Added.
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchMouseEvent): Changed to use MouseEventDispatchMediator.
+
 2011-04-05  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Adam Roben & Dirk Schulze.

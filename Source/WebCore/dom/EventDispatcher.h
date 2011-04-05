@@ -51,11 +51,13 @@ public:
     static bool dispatchEvent(Node*, const EventDispatchMediator&);
     static void dispatchScopedEvent(Node*, PassRefPtr<Event>);
 
-    static bool dispatchMouseEvent(Node*, const PlatformMouseEvent&, const AtomicString& eventType, int clickCount = 0, Node* relatedTarget = 0);
     static void dispatchSimulatedClick(Node*, PassRefPtr<Event> underlyingEvent, bool sendMouseEvents, bool showPressedLook);
     static void dispatchWheelEvent(Node*, PlatformWheelEvent&);
 
     bool dispatchEvent(PassRefPtr<Event>);
+    PassRefPtr<EventTarget> adjustRelatedTarget(PassRefPtr<EventTarget>);
+    Node* node() const;
+
 private:
     EventDispatcher(Node*);
 
@@ -64,15 +66,16 @@ private:
     const EventContext* topEventContext();
     bool ancestorsInitialized() const;
 
-    bool dispatchMouseEvent(const AtomicString& eventType, int button, int detail,
-        int pageX, int pageY, int screenX, int screenY, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
-        bool isSimulated, Node* relatedTargetArg, PassRefPtr<Event> underlyingEvent);
-
     Vector<EventContext> m_ancestors;
     RefPtr<Node> m_node;
     RefPtr<EventTarget> m_originalTarget;
     RefPtr<FrameView> m_view;
 };
+
+inline Node* EventDispatcher::node() const
+{
+    return m_node.get();
+}
 
 }
 

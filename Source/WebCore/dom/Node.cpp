@@ -2651,7 +2651,7 @@ bool Node::dispatchKeyEvent(const PlatformKeyboardEvent& event)
 bool Node::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType,
     int detail, Node* relatedTarget)
 {
-    return EventDispatcher::dispatchMouseEvent(this, event, eventType, detail, relatedTarget);
+    return EventDispatcher::dispatchEvent(this, MouseEventDispatchMediator(MouseEvent::create(eventType, document()->defaultView(), event, detail, relatedTarget)));
 }
 
 void Node::dispatchSimulatedClick(PassRefPtr<Event> event, bool sendMouseEvents, bool showPressedLook)

@@ -23,15 +23,18 @@
 #include "config.h"
 #include "MouseEvent.h"
 
+#include "EventDispatcher.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "EventNames.h"
 #include "PlatformMouseEvent.h"
 
 namespace WebCore {
 
 PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& eventType, PassRefPtr<AbstractView> view, const PlatformMouseEvent& event, int detail, PassRefPtr<Node> relatedTarget)
 {
+    ASSERT(event.eventType() == MouseEventMoved || event.button() != NoButton);
+
     bool isCancelable = eventType != eventNames().mousemoveEvent;
 
     return MouseEvent::create(eventType, true, isCancelable, view,
@@ -147,6 +150,49 @@ SimulatedMouseEvent::SimulatedMouseEvent(const AtomicString& eventType, PassRefP
         m_metaKey = keyStateEvent->metaKey();
     }
     setUnderlyingEvent(underlyingEvent);
+}
+
+MouseEventDispatchMediator::MouseEventDispatchMediator(PassRefPtr<MouseEvent> mouseEvent)
+    : EventDispatchMediator(mouseEvent)
+{
+}
+
+MouseEvent* MouseEventDispatchMediator::event() const
+{
+    return static_cast<MouseEvent*>(EventDispatchMediator::event());
+}
+
+bool MouseEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
+{
+    if (dispatcher->node()->disabled()) // Don't even send DOM events for disabled controls..
+        return true;
+
+    if (event()->type().isEmpty())
+        return false; // Shouldn't happen.
+
+    RefPtr<EventTarget> relatedTarget = dispatcher->adjustRelatedTarget(event()->relatedTarget());
+    event()->setRelatedTarget(relatedTarget);
+
+    dispatcher->dispatchEvent(event());
+    bool swallowEvent = event()->defaultHandled() || event()->defaultPrevented();
+
+    // Special case: If it's a double click event, we also send the dblclick event. This is not part
+    // of the DOM specs, but is used for compatibility with the ondblclick="" attribute. This is treated
+    // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
+    if (event()->type() == eventNames().clickEvent && event()->detail() == 2) {
+        RefPtr<MouseEvent> doubleClickEvent = MouseEvent::create();
+        doubleClickEvent->initMouseEvent(eventNames().dblclickEvent, event()->bubbles(), event()->cancelable(), event()->view(),
+                event()->detail(), event()->screenX(), event()->screenY(), event()->clientX(), event()->clientY(),
+                event()->ctrlKey(), event()->altKey(), event()->shiftKey(), event()->metaKey(),
+                event()->button(), relatedTarget);
+        if (event()->defaultHandled())
+            doubleClickEvent->setDefaultHandled();
+        dispatcher->dispatchEvent(doubleClickEvent);
+        if (doubleClickEvent->defaultHandled() || doubleClickEvent->defaultPrevented())
+            swallowEvent = true;
+    }
+
+    return swallowEvent;
 }
 
 } // namespace WebCore
