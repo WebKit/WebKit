@@ -51,7 +51,34 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
     if (!document)
         return throwError("AudioContext constructor associated document is unavailable", V8Proxy::ReferenceError);
 
-    RefPtr<AudioContext> audioContext = AudioContext::create(document);
+    RefPtr<AudioContext> audioContext;
+    
+    if (!args.Length()) {
+        // Constructor for default AudioContext which talks to audio hardware.
+        audioContext = AudioContext::create(document);
+    } else {
+        // Constructor for offline (render-target) AudioContext which renders into an AudioBuffer.
+        // new AudioContext(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
+        if (args.Length() < 3)
+            return throwError("Not enough arguments", V8Proxy::SyntaxError);
+
+        bool ok = false;
+
+        unsigned numberOfChannels = toInt32(args[0], ok);
+        if (!ok)
+            return throwError("Invalid number of channels", V8Proxy::SyntaxError);
+
+        unsigned numberOfFrames = toInt32(args[1], ok);
+        if (!ok)
+            return throwError("Invalid number of frames", V8Proxy::SyntaxError);
+
+        float sampleRate = toFloat(args[2]);
+
+        audioContext = AudioContext::createOfflineContext(document, numberOfChannels, numberOfFrames, sampleRate);
+    }
+
+    if (!audioContext.get())
+        return throwError("Error creating AudioContext", V8Proxy::SyntaxError);
     
     // Transform the holder into a wrapper object for the audio context.
     V8DOMWrapper::setDOMWrapper(args.Holder(), &info, audioContext.get());

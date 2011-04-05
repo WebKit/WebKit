@@ -131,6 +131,7 @@ namespace WebCore {
 #endif
 #if ENABLE(WEB_AUDIO)
         virtual bool isAudioProcessingEvent() const;
+        virtual bool isOfflineAudioCompletionEvent() const;
 #endif
         virtual bool isErrorEvent() const;
 #if ENABLE(TOUCH_EVENTS)

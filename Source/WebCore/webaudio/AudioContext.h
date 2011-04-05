@@ -28,6 +28,8 @@
 #include "ActiveDOMObject.h"
 #include "AudioBus.h"
 #include "AudioDestinationNode.h"
+#include "EventListener.h"
+#include "EventTarget.h"
 #include "HRTFDatabaseLoader.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -59,13 +61,19 @@ class JavaScriptAudioNode;
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
 // For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism. 
 
-class AudioContext : public ActiveDOMObject, public RefCounted<AudioContext> {
+class AudioContext : public ActiveDOMObject, public RefCounted<AudioContext>, public EventTarget {
 public:
+    // Create an AudioContext for rendering to the audio hardware.
     static PassRefPtr<AudioContext> create(Document*);
+
+    // Create an AudioContext for offline (non-realtime) rendering.
+    static PassRefPtr<AudioContext> createOfflineContext(Document*, unsigned numberOfChannels, size_t numberOfFrames, double sampleRate);
 
     virtual ~AudioContext();
 
     bool isInitialized() const;
+    
+    bool isOfflineContext() { return m_isOfflineContext; }
 
     // Returns true when initialize() was called AND all asynchronous initialization has completed.
     bool isRunnable() const;
@@ -73,7 +81,7 @@ public:
     // Document notification
     virtual void stop();
 
-    Document* document(); // ASSERTs if document no longer exists.
+    Document* document() const; // ASSERTs if document no longer exists.
     bool hasDocument();
 
     AudioDestinationNode* destination() { return m_destinationNode.get(); }
@@ -180,9 +188,27 @@ public:
     // Only accessed when the graph lock is held.
     void markAudioNodeInputDirty(AudioNodeInput*);
     void markAudioNodeOutputDirty(AudioNodeOutput*);
+
+    // EventTarget
+    virtual ScriptExecutionContext* scriptExecutionContext() const;
+    virtual AudioContext* toAudioContext();
+    virtual EventTargetData* eventTargetData() { return &m_eventTargetData; }
+    virtual EventTargetData* ensureEventTargetData() { return &m_eventTargetData; }
+
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);
+
+    // Reconcile ref/deref which are defined both in AudioNode and EventTarget.
+    using RefCounted<AudioContext>::ref;
+    using RefCounted<AudioContext>::deref;
+
+    void startRendering();
+    void fireCompletionEvent();
     
 private:
     AudioContext(Document*);
+    AudioContext(Document*, unsigned numberOfChannels, size_t numberOfFrames, double sampleRate);
+    void constructCommon();
+
     void lazyInitialize();
     void uninitialize();
     
@@ -252,6 +278,15 @@ private:
     
     // HRTF Database loader
     RefPtr<HRTFDatabaseLoader> m_hrtfDatabaseLoader;
+
+    // EventTarget
+    virtual void refEventTarget() { ref(); }
+    virtual void derefEventTarget() { deref(); }
+    EventTargetData m_eventTargetData;
+
+    RefPtr<AudioBuffer> m_renderTarget;
+    
+    bool m_isOfflineContext;
 };
 
 } // WebCore

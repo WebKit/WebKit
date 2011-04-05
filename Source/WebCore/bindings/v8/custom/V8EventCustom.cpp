@@ -70,6 +70,7 @@
 
 #if ENABLE(WEB_AUDIO)
 #include "V8AudioProcessingEvent.h"
+#include "V8OfflineAudioCompletionEvent.h"
 #endif
 
 namespace WebCore {
@@ -169,6 +170,8 @@ v8::Handle<v8::Value> toV8(Event* impl)
 #if ENABLE(WEB_AUDIO)
     if (impl->isAudioProcessingEvent())
         return toV8(static_cast<AudioProcessingEvent*>(impl));
+    if (impl->isOfflineAudioCompletionEvent())
+        return toV8(static_cast<OfflineAudioCompletionEvent*>(impl));
 #endif
 #if ENABLE(INPUT_SPEECH)
     if (impl->isSpeechInputEvent())

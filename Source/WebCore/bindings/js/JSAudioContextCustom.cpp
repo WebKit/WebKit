@@ -54,8 +54,28 @@ EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(
 
     Document* document = static_cast<Document*>(scriptExecutionContext);
 
-    RefPtr<AudioContext> context = AudioContext::create(document);
-    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), context.get())));
+    RefPtr<AudioContext> audioContext;
+    
+    if (!exec->argumentCount()) {
+        // Constructor for default AudioContext which talks to audio hardware.
+        audioContext = AudioContext::create(document);
+    } else {
+        // Constructor for offline (render-target) AudioContext which renders into an AudioBuffer.
+        // new AudioContext(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
+        if (exec->argumentCount() < 3)
+            return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
+
+        unsigned numberOfChannels = exec->argument(0).toInt32(exec);
+        unsigned numberOfFrames = exec->argument(1).toInt32(exec);
+        float sampleRate = exec->argument(2).toFloat(exec);
+
+        audioContext = AudioContext::createOfflineContext(document, numberOfChannels, numberOfFrames, sampleRate);
+    }
+
+    if (!audioContext.get())
+        return throwError(exec, createReferenceError(exec, "Error creating AudioContext"));
+
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), audioContext.get())));
 }
 
 JSValue JSAudioContext::createBuffer(ExecState* exec)

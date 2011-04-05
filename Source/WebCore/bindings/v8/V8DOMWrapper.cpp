@@ -84,6 +84,7 @@
 #endif
 
 #if ENABLE(WEB_AUDIO)
+#include "V8AudioContext.h"
 #include "V8JavaScriptAudioNode.h"
 #endif
 
@@ -444,6 +445,8 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
 #if ENABLE(WEB_AUDIO)
     if (JavaScriptAudioNode* jsAudioNode = target->toJavaScriptAudioNode())
         return toV8(jsAudioNode);
+    if (AudioContext* audioContext = target->toAudioContext())
+        return toV8(audioContext);
 #endif    
 
     ASSERT(0);

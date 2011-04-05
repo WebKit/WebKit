@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2011, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,42 +22,40 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioDestinationNode_h
-#define AudioDestinationNode_h
+#ifndef DefaultAudioDestinationNode_h
+#define DefaultAudioDestinationNode_h
 
-#include "AudioBuffer.h"
-#include "AudioNode.h"
-#include "AudioSourceProvider.h"
+#include "AudioDestination.h"
+#include "AudioDestinationNode.h"
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class AudioBus;
 class AudioContext;
     
-class AudioDestinationNode : public AudioNode, public AudioSourceProvider {
+class DefaultAudioDestinationNode : public AudioDestinationNode {
 public:
-    AudioDestinationNode(AudioContext*, double sampleRate);
-    virtual ~AudioDestinationNode();
+    static PassRefPtr<DefaultAudioDestinationNode> create(AudioContext* context)
+    {
+        return adoptRef(new DefaultAudioDestinationNode(context));     
+    }
+
+    virtual ~DefaultAudioDestinationNode();
     
     // AudioNode   
-    virtual void process(size_t) { }; // we're pulled by hardware so this is never called
-    virtual void reset() { m_currentTime = 0.0; };
+    virtual void initialize();
+    virtual void uninitialize();
     
-    // The audio hardware calls here periodically to gets its input stream.
-    virtual void provideInput(AudioBus*, size_t numberOfFrames);
+    double sampleRate() const { return m_destination->sampleRate(); }
 
-    double currentTime() { return m_currentTime; }
-
-    virtual double sampleRate() const = 0;
-
-    virtual unsigned numberOfChannels() const { return 2; } // FIXME: update when multi-channel (more than stereo) is supported
-
-    virtual void startRendering() = 0;
+    virtual void startRendering();
     
-protected:
-    double m_currentTime;
+private:
+    DefaultAudioDestinationNode(AudioContext*);
+
+    OwnPtr<AudioDestination> m_destination;
 };
 
 } // namespace WebCore
 
-#endif // AudioDestinationNode_h
+#endif // DefaultAudioDestinationNode_h

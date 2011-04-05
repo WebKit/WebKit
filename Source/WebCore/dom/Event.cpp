@@ -229,6 +229,11 @@ bool Event::isAudioProcessingEvent() const
 {
     return false;
 }
+
+bool Event::isOfflineAudioCompletionEvent() const
+{
+    return false;
+}
 #endif
 
 #if ENABLE(INPUT_SPEECH)

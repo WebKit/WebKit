@@ -119,6 +119,11 @@ SVGElementInstance* EventTarget::toSVGElementInstance()
 #endif
 
 #if ENABLE(WEB_AUDIO)
+AudioContext* EventTarget::toAudioContext()
+{
+    return 0;
+}
+
 JavaScriptAudioNode* EventTarget::toJavaScriptAudioNode()
 {
     return 0;

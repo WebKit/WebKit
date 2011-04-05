@@ -5762,6 +5762,8 @@
 		FABE72FD1059C21100D999DD /* MathMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72FB1059C21100D999DD /* MathMLElementFactory.cpp */; };
 		FABE72FE1059C21100D999DD /* MathMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABE72FC1059C21100D999DD /* MathMLNames.cpp */; };
 		FBC220DF1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBC220DE1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp */; };
+		FD06DFA5134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD06DFA3134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp */; };
+		FD06DFA6134A4DEF006F5D7D /* DefaultAudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD06DFA4134A4DEF006F5D7D /* DefaultAudioDestinationNode.h */; };
 		FD2DBF1212B048A300ED98C6 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */; };
 		FD2DBF1312B048A300ED98C6 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF0F12B048A300ED98C6 /* AudioToolbox.framework */; };
 		FD2DBF1412B048A300ED98C6 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FD2DBF1012B048A300ED98C6 /* AudioUnit.framework */; };
@@ -5920,11 +5922,17 @@
 		FDA15ECE12B03F61003A583A /* JSJavaScriptAudioNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15ECC12B03F61003A583A /* JSJavaScriptAudioNode.h */; };
 		FDA15ED112B03F94003A583A /* JSDelayNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15ECF12B03F94003A583A /* JSDelayNode.cpp */; };
 		FDA15ED212B03F94003A583A /* JSDelayNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15ED012B03F94003A583A /* JSDelayNode.h */; };
+		FDA3E959134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA3E955134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp */; };
+		FDA3E95A134A49EF008D4B5A /* OfflineAudioCompletionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA3E956134A49EF008D4B5A /* OfflineAudioCompletionEvent.h */; };
+		FDA3E95B134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA3E957134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp */; };
+		FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA3E958134A49EF008D4B5A /* OfflineAudioDestinationNode.h */; };
 		FDEAAAF312B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */; };
 		FDEAAAF412B02EE400DCF33B /* JSAudioContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */; };
 		FDEAAAF512B02EE400DCF33B /* JSAudioNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAF112B02EE400DCF33B /* JSAudioNodeCustom.cpp */; };
 		FDEAAAF612B02EE400DCF33B /* JSConvolverNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAF212B02EE400DCF33B /* JSConvolverNodeCustom.cpp */; };
 		FDEAAAFE12B02F4900DCF33B /* JSJavaScriptAudioNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAFD12B02F4900DCF33B /* JSJavaScriptAudioNodeCustom.cpp */; };
+		FDF6BAF8134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */; };
+		FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */; };
 		FE6FD4880F676E5700092873 /* Coordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD4850F676E5700092873 /* Coordinates.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE6FD48B0F676E9300092873 /* JSCoordinates.cpp */; };
 		FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD48C0F676E9300092873 /* JSCoordinates.h */; };
@@ -12279,6 +12287,8 @@
 		FABE72FB1059C21100D999DD /* MathMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLElementFactory.cpp; sourceTree = "<group>"; };
 		FABE72FC1059C21100D999DD /* MathMLNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MathMLNames.cpp; sourceTree = "<group>"; };
 		FBC220DE1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DOpenGL.cpp; sourceTree = "<group>"; };
+		FD06DFA3134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultAudioDestinationNode.cpp; sourceTree = "<group>"; };
+		FD06DFA4134A4DEF006F5D7D /* DefaultAudioDestinationNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultAudioDestinationNode.h; sourceTree = "<group>"; };
 		FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
 		FD2DBF0F12B048A300ED98C6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		FD2DBF1012B048A300ED98C6 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
@@ -12457,11 +12467,18 @@
 		FDA15ECC12B03F61003A583A /* JSJavaScriptAudioNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSJavaScriptAudioNode.h; sourceTree = "<group>"; };
 		FDA15ECF12B03F94003A583A /* JSDelayNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDelayNode.cpp; sourceTree = "<group>"; };
 		FDA15ED012B03F94003A583A /* JSDelayNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDelayNode.h; sourceTree = "<group>"; };
+		FDA3E955134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineAudioCompletionEvent.cpp; sourceTree = "<group>"; };
+		FDA3E956134A49EF008D4B5A /* OfflineAudioCompletionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineAudioCompletionEvent.h; sourceTree = "<group>"; };
+		FDA3E957134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineAudioDestinationNode.cpp; sourceTree = "<group>"; };
+		FDA3E958134A49EF008D4B5A /* OfflineAudioDestinationNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineAudioDestinationNode.h; sourceTree = "<group>"; };
+		FDA3E95D134A49FF008D4B5A /* OfflineAudioCompletionEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OfflineAudioCompletionEvent.idl; sourceTree = "<group>"; };
 		FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBufferSourceNodeCustom.cpp; sourceTree = "<group>"; };
 		FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioContextCustom.cpp; sourceTree = "<group>"; };
 		FDEAAAF112B02EE400DCF33B /* JSAudioNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioNodeCustom.cpp; sourceTree = "<group>"; };
 		FDEAAAF212B02EE400DCF33B /* JSConvolverNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConvolverNodeCustom.cpp; sourceTree = "<group>"; };
 		FDEAAAFD12B02F4900DCF33B /* JSJavaScriptAudioNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSJavaScriptAudioNodeCustom.cpp; sourceTree = "<group>"; };
+		FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOfflineAudioCompletionEvent.cpp; sourceTree = "<group>"; };
+		FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOfflineAudioCompletionEvent.h; sourceTree = "<group>"; };
 		FE49EF970DC51462004266E1 /* DashboardSupportCSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DashboardSupportCSSPropertyNames.in; sourceTree = "<group>"; };
 		FE6FD4850F676E5700092873 /* Coordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coordinates.h; sourceTree = "<group>"; };
 		FE6FD4860F676E5700092873 /* Coordinates.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Coordinates.idl; sourceTree = "<group>"; };
@@ -19562,6 +19579,8 @@
 				FD315FDE12B0267600C1A359 /* ConvolverNode.cpp */,
 				FD315FDF12B0267600C1A359 /* ConvolverNode.h */,
 				FD315FE012B0267600C1A359 /* ConvolverNode.idl */,
+				FD06DFA3134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp */,
+				FD06DFA4134A4DEF006F5D7D /* DefaultAudioDestinationNode.h */,
 				FD315FE112B0267600C1A359 /* DelayDSPKernel.cpp */,
 				FD315FE212B0267600C1A359 /* DelayDSPKernel.h */,
 				FD315FE312B0267600C1A359 /* DelayNode.cpp */,
@@ -19578,6 +19597,11 @@
 				FD315FEE12B0267600C1A359 /* LowPass2FilterNode.cpp */,
 				FD315FEF12B0267600C1A359 /* LowPass2FilterNode.h */,
 				FD315FF012B0267600C1A359 /* LowPass2FilterNode.idl */,
+				FDA3E955134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp */,
+				FDA3E956134A49EF008D4B5A /* OfflineAudioCompletionEvent.h */,
+				FDA3E95D134A49FF008D4B5A /* OfflineAudioCompletionEvent.idl */,
+				FDA3E957134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp */,
+				FDA3E958134A49EF008D4B5A /* OfflineAudioDestinationNode.h */,
 				FD315FF112B0267600C1A359 /* RealtimeAnalyser.cpp */,
 				FD315FF212B0267600C1A359 /* RealtimeAnalyser.h */,
 				FD315FF312B0267600C1A359 /* RealtimeAnalyserNode.cpp */,
@@ -19703,6 +19727,8 @@
 				FDA15ECC12B03F61003A583A /* JSJavaScriptAudioNode.h */,
 				FDA15EC312B03F3B003A583A /* JSLowPass2FilterNode.cpp */,
 				FDA15EC412B03F3B003A583A /* JSLowPass2FilterNode.h */,
+				FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */,
+				FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */,
 				FDA15EC712B03F50003A583A /* JSRealtimeAnalyserNode.cpp */,
 				FDA15EC812B03F50003A583A /* JSRealtimeAnalyserNode.h */,
 			);
@@ -22788,6 +22814,10 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
+				FDA3E95A134A49EF008D4B5A /* OfflineAudioCompletionEvent.h in Headers */,
+				FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */,
+				FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */,
+				FD06DFA6134A4DEF006F5D7D /* DefaultAudioDestinationNode.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25468,6 +25498,10 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
+				FDA3E959134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp in Sources */,
+				FDA3E95B134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp in Sources */,
+				FDF6BAF8134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp in Sources */,
+				FD06DFA5134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

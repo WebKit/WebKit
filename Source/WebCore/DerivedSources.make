@@ -73,6 +73,7 @@ DOM_CLASSES = \
     HighPass2FilterNode \
     JavaScriptAudioNode \
     LowPass2FilterNode \
+    OfflineAudioCompletionEvent \
     RealtimeAnalyserNode \
     BarInfo \
     BeforeLoadEvent \

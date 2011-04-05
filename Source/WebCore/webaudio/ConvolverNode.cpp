@@ -29,6 +29,7 @@
 #include "ConvolverNode.h"
 
 #include "AudioBuffer.h"
+#include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "Reverb.h"
@@ -131,7 +132,8 @@ void ConvolverNode::setBuffer(AudioBuffer* buffer)
         bufferBus.setChannelMemory(i, buffer->getChannelData(i)->data(), bufferLength);
     
     // Create the reverb with the given impulse response.
-    OwnPtr<Reverb> reverb = adoptPtr(new Reverb(&bufferBus, AudioNode::ProcessingSizeInFrames, MaxFFTSize, 2, true));
+    bool useBackgroundThreads = !context()->isOfflineContext();
+    OwnPtr<Reverb> reverb = adoptPtr(new Reverb(&bufferBus, AudioNode::ProcessingSizeInFrames, MaxFFTSize, 2, useBackgroundThreads));
 
     {
         // Synchronize with process().

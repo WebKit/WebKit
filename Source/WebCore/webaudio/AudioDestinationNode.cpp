@@ -32,50 +32,21 @@
 #include "AudioContext.h"
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
-#include <wtf/Threading.h>
 
 namespace WebCore {
-
-AudioDestinationNode::AudioDestinationNode(AudioContext* context)
-    : AudioNode(context, AudioDestination::hardwareSampleRate())
+    
+AudioDestinationNode::AudioDestinationNode(AudioContext* context, double sampleRate)
+    : AudioNode(context, sampleRate)
     , m_currentTime(0.0)
 {
     addInput(adoptPtr(new AudioNodeInput(this)));
     
     setType(NodeTypeDestination);
-    
-    initialize();
 }
 
 AudioDestinationNode::~AudioDestinationNode()
 {
     uninitialize();
-}
-
-void AudioDestinationNode::initialize()
-{
-    if (isInitialized())
-        return;
-
-    double hardwareSampleRate = AudioDestination::hardwareSampleRate();
-#ifndef NDEBUG    
-    fprintf(stderr, ">>>> hardwareSampleRate = %f\n", hardwareSampleRate);
-#endif
-    
-    m_destination = AudioDestination::create(*this, hardwareSampleRate);
-    m_destination->start();
-    
-    AudioNode::initialize();
-}
-
-void AudioDestinationNode::uninitialize()
-{
-    if (!isInitialized())
-        return;
-
-    m_destination->stop();
-
-    AudioNode::uninitialize();
 }
 
 // The audio hardware calls us back here to gets its input stream.

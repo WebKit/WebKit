@@ -39,6 +39,7 @@
 #include "AudioNodeOutput.h"
 #include "AudioPannerNode.h"
 #include "ConvolverNode.h"
+#include "DefaultAudioDestinationNode.h"
 #include "DelayNode.h"
 #include "Document.h"
 #include "FFTFrame.h"
@@ -47,6 +48,8 @@
 #include "HighPass2FilterNode.h"
 #include "JavaScriptAudioNode.h"
 #include "LowPass2FilterNode.h"
+#include "OfflineAudioCompletionEvent.h"
+#include "OfflineAudioDestinationNode.h"
 #include "PlatformString.h"
 #include "RealtimeAnalyserNode.h"
 
@@ -66,6 +69,12 @@ PassRefPtr<AudioContext> AudioContext::create(Document* document)
     return adoptRef(new AudioContext(document));
 }
 
+PassRefPtr<AudioContext> AudioContext::createOfflineContext(Document* document, unsigned numberOfChannels, size_t numberOfFrames, double sampleRate)
+{
+    return adoptRef(new AudioContext(document, numberOfChannels, numberOfFrames, sampleRate));
+}
+
+// Constructor for rendering to the audio hardware.
 AudioContext::AudioContext(Document* document)
     : ActiveDOMObject(document, this)
     , m_isInitialized(false)
@@ -75,6 +84,46 @@ AudioContext::AudioContext(Document* document)
     , m_connectionCount(0)
     , m_audioThread(0)
     , m_graphOwnerThread(UndefinedThreadIdentifier)
+    , m_isOfflineContext(false)
+{
+    constructCommon();
+
+    m_destinationNode = DefaultAudioDestinationNode::create(this);
+
+    // This sets in motion an asynchronous loading mechanism on another thread.
+    // We can check m_hrtfDatabaseLoader->isLoaded() to find out whether or not it has been fully loaded.
+    // It's not that useful to have a callback function for this since the audio thread automatically starts rendering on the graph
+    // when this has finished (see AudioDestinationNode).
+    m_hrtfDatabaseLoader = HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(sampleRate());
+
+    // FIXME: for now default AudioContext does not need an explicit startRendering() call.
+    // We may want to consider requiring it for symmetry with OfflineAudioContext
+    m_destinationNode->startRendering();
+}
+
+// Constructor for offline (non-realtime) rendering.
+AudioContext::AudioContext(Document* document, unsigned numberOfChannels, size_t numberOfFrames, double sampleRate)
+    : ActiveDOMObject(document, this)
+    , m_isInitialized(false)
+    , m_isAudioThreadFinished(false)
+    , m_document(document)
+    , m_destinationNode(0)
+    , m_connectionCount(0)
+    , m_audioThread(0)
+    , m_graphOwnerThread(UndefinedThreadIdentifier)
+    , m_isOfflineContext(true)
+{
+    constructCommon();
+
+    // FIXME: the passed in sampleRate MUST match the hardware sample-rate since HRTFDatabaseLoader is a singleton.
+    m_hrtfDatabaseLoader = HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(sampleRate);
+
+    // Create a new destination for offline rendering.
+    m_renderTarget = AudioBuffer::create(numberOfChannels, numberOfFrames, sampleRate);
+    m_destinationNode = OfflineAudioDestinationNode::create(this, m_renderTarget.get());
+}
+
+void AudioContext::constructCommon()
 {
     // Note: because adoptRef() won't be called until we leave this constructor, but code in this constructor needs to reference this context,
     // relax the check.
@@ -82,16 +131,9 @@ AudioContext::AudioContext(Document* document)
     
     FFTFrame::initialize();
     
-    m_destinationNode = AudioDestinationNode::create(this);
     m_listener = AudioListener::create();
     m_temporaryMonoBus = adoptPtr(new AudioBus(1, AudioNode::ProcessingSizeInFrames));
     m_temporaryStereoBus = adoptPtr(new AudioBus(2, AudioNode::ProcessingSizeInFrames));
-
-    // This sets in motion an asynchronous loading mechanism on another thread.
-    // We can check m_hrtfDatabaseLoader->isLoaded() to find out whether or not it has been fully loaded.
-    // It's not that useful to have a callback function for this since the audio thread automatically starts rendering on the graph
-    // when this has finished (see AudioDestinationNode).
-    m_hrtfDatabaseLoader = HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(sampleRate());
 }
 
 AudioContext::~AudioContext()
@@ -167,7 +209,7 @@ void AudioContext::stop()
     uninitialize();
 }
 
-Document* AudioContext::document()
+Document* AudioContext::document() const
 {
     ASSERT(m_document);
     return m_document;
@@ -526,6 +568,39 @@ void AudioContext::handleDirtyAudioNodeOutputs()
     m_dirtyAudioNodeOutputs.clear();
 }
 
+ScriptExecutionContext* AudioContext::scriptExecutionContext() const
+{
+    return document();
+}
+
+AudioContext* AudioContext::toAudioContext()
+{
+    return this;
+}
+
+void AudioContext::startRendering()
+{
+    destination()->startRendering();
+}
+
+void AudioContext::fireCompletionEvent()
+{
+    ASSERT(isMainThread());
+    if (!isMainThread())
+        return;
+        
+    AudioBuffer* renderedBuffer = m_renderTarget.get();
+
+    ASSERT(renderedBuffer);
+    if (!renderedBuffer)
+        return;
+
+    // Avoid firing the event if the document has already gone away.
+    if (hasDocument()) {
+        // Call the offline rendering completion event listener.
+        dispatchEvent(OfflineAudioCompletionEvent::create(renderedBuffer));
+    }
+}
 
 } // namespace WebCore
 

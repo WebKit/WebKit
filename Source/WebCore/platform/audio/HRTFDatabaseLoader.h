@@ -46,11 +46,18 @@ public:
     // Must be called from the main thread.
     static PassRefPtr<HRTFDatabaseLoader> createAndLoadAsynchronouslyIfNecessary(double sampleRate);
 
+    // Returns the singleton HRTFDatabaseLoader.
+    static HRTFDatabaseLoader* loader() { return s_loader; }
+    
     // Both constructor and destructor must be called from the main thread.
     ~HRTFDatabaseLoader();
     
     // Returns true once the default database has been completely loaded.
     bool isLoaded() const;
+
+    // May not be called on the main thread.
+    // This is so a different background thread may synchronize with the loader thread.
+    void waitForLoaderThreadCompletion();
     
     HRTFDatabase* database() { return m_hrtfDatabase.get(); }
     

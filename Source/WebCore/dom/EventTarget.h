@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+    class AudioContext;
     class AbstractWorker;
     class DedicatedWorkerContext;
     class DOMApplicationCache;
@@ -122,6 +123,7 @@ namespace WebCore {
 #endif
 
 #if ENABLE(WEB_AUDIO)
+        virtual AudioContext* toAudioContext();
         virtual JavaScriptAudioNode* toJavaScriptAudioNode();
 #endif
 

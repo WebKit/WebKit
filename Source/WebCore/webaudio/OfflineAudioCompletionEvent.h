@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2011, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,42 +22,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioDestinationNode_h
-#define AudioDestinationNode_h
+#ifndef OfflineAudioCompletionEvent_h
+#define OfflineAudioCompletionEvent_h
 
 #include "AudioBuffer.h"
-#include "AudioNode.h"
-#include "AudioSourceProvider.h"
+#include "Event.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class AudioBus;
-class AudioContext;
+class AudioBuffer;
     
-class AudioDestinationNode : public AudioNode, public AudioSourceProvider {
+class OfflineAudioCompletionEvent : public Event {
 public:
-    AudioDestinationNode(AudioContext*, double sampleRate);
-    virtual ~AudioDestinationNode();
+    static PassRefPtr<OfflineAudioCompletionEvent> create(PassRefPtr<AudioBuffer> renderedBuffer);
     
-    // AudioNode   
-    virtual void process(size_t) { }; // we're pulled by hardware so this is never called
-    virtual void reset() { m_currentTime = 0.0; };
-    
-    // The audio hardware calls here periodically to gets its input stream.
-    virtual void provideInput(AudioBus*, size_t numberOfFrames);
+    virtual ~OfflineAudioCompletionEvent();
 
-    double currentTime() { return m_currentTime; }
+    virtual bool isOfflineAudioCompletionEvent() const;
 
-    virtual double sampleRate() const = 0;
+    AudioBuffer* renderedBuffer() { return m_renderedBuffer.get(); }
 
-    virtual unsigned numberOfChannels() const { return 2; } // FIXME: update when multi-channel (more than stereo) is supported
+private:
+    OfflineAudioCompletionEvent(PassRefPtr<AudioBuffer> renderedBuffer);
 
-    virtual void startRendering() = 0;
-    
-protected:
-    double m_currentTime;
+    RefPtr<AudioBuffer> m_renderedBuffer;
 };
 
 } // namespace WebCore
 
-#endif // AudioDestinationNode_h
+#endif // OfflineAudioCompletionEvent_h

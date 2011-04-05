@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2011, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,42 +22,57 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioDestinationNode_h
-#define AudioDestinationNode_h
+#ifndef OfflineAudioDestinationNode_h
+#define OfflineAudioDestinationNode_h
 
 #include "AudioBuffer.h"
-#include "AudioNode.h"
-#include "AudioSourceProvider.h"
+#include "AudioDestinationNode.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
 class AudioBus;
 class AudioContext;
     
-class AudioDestinationNode : public AudioNode, public AudioSourceProvider {
+class OfflineAudioDestinationNode : public AudioDestinationNode {
 public:
-    AudioDestinationNode(AudioContext*, double sampleRate);
-    virtual ~AudioDestinationNode();
+    static PassRefPtr<OfflineAudioDestinationNode> create(AudioContext* context, AudioBuffer* renderTarget)
+    {
+        return adoptRef(new OfflineAudioDestinationNode(context, renderTarget));     
+    }
+
+    virtual ~OfflineAudioDestinationNode();
     
     // AudioNode   
-    virtual void process(size_t) { }; // we're pulled by hardware so this is never called
-    virtual void reset() { m_currentTime = 0.0; };
+    virtual void initialize();
+    virtual void uninitialize();
     
-    // The audio hardware calls here periodically to gets its input stream.
-    virtual void provideInput(AudioBus*, size_t numberOfFrames);
+    double sampleRate() const { return m_renderTarget->sampleRate(); }
 
-    double currentTime() { return m_currentTime; }
-
-    virtual double sampleRate() const = 0;
-
-    virtual unsigned numberOfChannels() const { return 2; } // FIXME: update when multi-channel (more than stereo) is supported
-
-    virtual void startRendering() = 0;
+    void startRendering();
     
-protected:
-    double m_currentTime;
+private:
+    OfflineAudioDestinationNode(AudioContext*, AudioBuffer* renderTarget);
+
+    // This AudioNode renders into this AudioBuffer.
+    RefPtr<AudioBuffer> m_renderTarget;
+    
+    // Temporary AudioBus for each render quantum.
+    OwnPtr<AudioBus> m_renderBus;
+    
+    // Rendering thread.
+    volatile ThreadIdentifier m_renderThread;
+    bool m_startedRendering;
+    static void* renderEntry(void* threadData);
+    void render();
+    
+    // For completion callback on main thread.
+    static void notifyCompleteDispatch(void* userData);
+    void notifyComplete();
 };
 
 } // namespace WebCore
 
-#endif // AudioDestinationNode_h
+#endif // OfflineAudioDestinationNode_h

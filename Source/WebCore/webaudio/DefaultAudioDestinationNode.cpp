@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2011, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,42 +22,57 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioDestinationNode_h
-#define AudioDestinationNode_h
+#include "config.h"
 
-#include "AudioBuffer.h"
-#include "AudioNode.h"
-#include "AudioSourceProvider.h"
+#if ENABLE(WEB_AUDIO)
+
+#include "DefaultAudioDestinationNode.h"
 
 namespace WebCore {
-
-class AudioBus;
-class AudioContext;
     
-class AudioDestinationNode : public AudioNode, public AudioSourceProvider {
-public:
-    AudioDestinationNode(AudioContext*, double sampleRate);
-    virtual ~AudioDestinationNode();
+DefaultAudioDestinationNode::DefaultAudioDestinationNode(AudioContext* context)
+    : AudioDestinationNode(context, AudioDestination::hardwareSampleRate())
+{
+    initialize();
+}
+
+DefaultAudioDestinationNode::~DefaultAudioDestinationNode()
+{
+    uninitialize();
+}
+
+void DefaultAudioDestinationNode::initialize()
+{
+    if (isInitialized())
+        return;
+
+    double hardwareSampleRate = AudioDestination::hardwareSampleRate();
+#ifndef NDEBUG    
+    fprintf(stderr, ">>>> hardwareSampleRate = %f\n", hardwareSampleRate);
+#endif
     
-    // AudioNode   
-    virtual void process(size_t) { }; // we're pulled by hardware so this is never called
-    virtual void reset() { m_currentTime = 0.0; };
+    m_destination = AudioDestination::create(*this, hardwareSampleRate);
     
-    // The audio hardware calls here periodically to gets its input stream.
-    virtual void provideInput(AudioBus*, size_t numberOfFrames);
+    AudioNode::initialize();
+}
 
-    double currentTime() { return m_currentTime; }
+void DefaultAudioDestinationNode::uninitialize()
+{
+    if (!isInitialized())
+        return;
 
-    virtual double sampleRate() const = 0;
+    m_destination->stop();
 
-    virtual unsigned numberOfChannels() const { return 2; } // FIXME: update when multi-channel (more than stereo) is supported
+    AudioNode::uninitialize();
+}
 
-    virtual void startRendering() = 0;
-    
-protected:
-    double m_currentTime;
-};
+void DefaultAudioDestinationNode::startRendering()
+{
+    ASSERT(isInitialized());
+    if (isInitialized())
+        m_destination->start();
+}
 
 } // namespace WebCore
 
-#endif // AudioDestinationNode_h
+#endif // ENABLE(WEB_AUDIO)

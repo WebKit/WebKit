@@ -1,3 +1,91 @@
+2011-04-05  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add support for offline audio rendering to AudioContext API
+        https://bugs.webkit.org/show_bug.cgi?id=57676
+
+        No new tests since audio API is not yet implemented.
+
+        * DerivedSources.make:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContextConstructor::constructJSAudioContext):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        * bindings/v8/custom/V8AudioContextCustom.cpp:
+        (WebCore::V8AudioContext::constructorCallback):
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+        * dom/Event.cpp:
+        (WebCore::Event::isOfflineAudioCompletionEvent):
+        * dom/Event.h:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toAudioContext):
+        * dom/EventTarget.h:
+        * platform/audio/HRTFDatabaseLoader.cpp:
+        (WebCore::HRTFDatabaseLoader::waitForLoaderThreadCompletion):
+        * platform/audio/HRTFDatabaseLoader.h:
+        (WebCore::HRTFDatabaseLoader::loader):
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createOfflineContext):
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::constructCommon):
+        (WebCore::AudioContext::document):
+        (WebCore::AudioContext::scriptExecutionContext):
+        (WebCore::AudioContext::toAudioContext):
+        (WebCore::AudioContext::startRendering):
+        (WebCore::AudioContext::fireCompletionEvent):
+        * webaudio/AudioContext.h:
+        (WebCore::AudioContext::isOfflineContext):
+        (WebCore::AudioContext::eventTargetData):
+        (WebCore::AudioContext::ensureEventTargetData):
+        (WebCore::AudioContext::refEventTarget):
+        (WebCore::AudioContext::derefEventTarget):
+        * webaudio/AudioContext.idl:
+        * webaudio/AudioDestinationNode.cpp:
+        (WebCore::AudioDestinationNode::AudioDestinationNode):
+        * webaudio/AudioDestinationNode.h:
+        (WebCore::AudioDestinationNode::reset):
+        (WebCore::AudioDestinationNode::numberOfChannels):
+        * webaudio/ConvolverNode.cpp:
+        (WebCore::ConvolverNode::setBuffer):
+        * webaudio/DefaultAudioDestinationNode.cpp: Added.
+        (WebCore::DefaultAudioDestinationNode::DefaultAudioDestinationNode):
+        (WebCore::DefaultAudioDestinationNode::~DefaultAudioDestinationNode):
+        (WebCore::DefaultAudioDestinationNode::initialize):
+        (WebCore::DefaultAudioDestinationNode::uninitialize):
+        (WebCore::DefaultAudioDestinationNode::startRendering):
+        * webaudio/DefaultAudioDestinationNode.h: Added.
+        (WebCore::DefaultAudioDestinationNode::create):
+        (WebCore::DefaultAudioDestinationNode::sampleRate):
+        * webaudio/OfflineAudioCompletionEvent.cpp: Added.
+        (WebCore::OfflineAudioCompletionEvent::create):
+        (WebCore::OfflineAudioCompletionEvent::OfflineAudioCompletionEvent):
+        (WebCore::OfflineAudioCompletionEvent::~OfflineAudioCompletionEvent):
+        (WebCore::OfflineAudioCompletionEvent::isOfflineAudioCompletionEvent):
+        * webaudio/OfflineAudioCompletionEvent.h: Added.
+        (WebCore::OfflineAudioCompletionEvent::renderedBuffer):
+        * webaudio/OfflineAudioCompletionEvent.idl: Added.
+        * webaudio/OfflineAudioDestinationNode.cpp: Added.
+        (WebCore::OfflineAudioDestinationNode::OfflineAudioDestinationNode):
+        (WebCore::OfflineAudioDestinationNode::~OfflineAudioDestinationNode):
+        (WebCore::OfflineAudioDestinationNode::initialize):
+        (WebCore::OfflineAudioDestinationNode::uninitialize):
+        (WebCore::OfflineAudioDestinationNode::startRendering):
+        (WebCore::OfflineAudioDestinationNode::renderEntry):
+        (WebCore::OfflineAudioDestinationNode::render):
+        (WebCore::OfflineAudioDestinationNode::notifyCompleteDispatch):
+        (WebCore::OfflineAudioDestinationNode::notifyComplete):
+        * webaudio/OfflineAudioDestinationNode.h: Added.
+        (WebCore::OfflineAudioDestinationNode::create):
+        (WebCore::OfflineAudioDestinationNode::sampleRate):
+
 2011-04-05  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.

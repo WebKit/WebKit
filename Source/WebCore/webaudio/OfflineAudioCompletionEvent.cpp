@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2011, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,42 +22,37 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioDestinationNode_h
-#define AudioDestinationNode_h
+#include "config.h"
+
+#if ENABLE(WEB_AUDIO)
+
+#include "OfflineAudioCompletionEvent.h"
 
 #include "AudioBuffer.h"
-#include "AudioNode.h"
-#include "AudioSourceProvider.h"
+#include "EventNames.h"
 
 namespace WebCore {
 
-class AudioBus;
-class AudioContext;
-    
-class AudioDestinationNode : public AudioNode, public AudioSourceProvider {
-public:
-    AudioDestinationNode(AudioContext*, double sampleRate);
-    virtual ~AudioDestinationNode();
-    
-    // AudioNode   
-    virtual void process(size_t) { }; // we're pulled by hardware so this is never called
-    virtual void reset() { m_currentTime = 0.0; };
-    
-    // The audio hardware calls here periodically to gets its input stream.
-    virtual void provideInput(AudioBus*, size_t numberOfFrames);
+PassRefPtr<OfflineAudioCompletionEvent> OfflineAudioCompletionEvent::create(PassRefPtr<AudioBuffer> renderedBuffer)
+{
+    return adoptRef(new OfflineAudioCompletionEvent(renderedBuffer));
+}
 
-    double currentTime() { return m_currentTime; }
+OfflineAudioCompletionEvent::OfflineAudioCompletionEvent(PassRefPtr<AudioBuffer> renderedBuffer)
+    : Event(eventNames().completeEvent, true, false)
+    , m_renderedBuffer(renderedBuffer)
+{
+}
 
-    virtual double sampleRate() const = 0;
+OfflineAudioCompletionEvent::~OfflineAudioCompletionEvent()
+{
+}
 
-    virtual unsigned numberOfChannels() const { return 2; } // FIXME: update when multi-channel (more than stereo) is supported
-
-    virtual void startRendering() = 0;
-    
-protected:
-    double m_currentTime;
-};
+bool OfflineAudioCompletionEvent::isOfflineAudioCompletionEvent() const
+{
+    return true;
+}
 
 } // namespace WebCore
 
-#endif // AudioDestinationNode_h
+#endif // ENABLE(WEB_AUDIO)

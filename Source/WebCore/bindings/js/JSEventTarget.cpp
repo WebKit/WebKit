@@ -84,6 +84,8 @@
 #endif
 
 #if ENABLE(WEB_AUDIO)
+#include "AudioContext.h"
+#include "JSAudioContext.h"
 #include "JSJavaScriptAudioNode.h"
 #include "JavaScriptAudioNode.h"
 #endif
@@ -173,6 +175,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
 #if ENABLE(WEB_AUDIO)
     if (JavaScriptAudioNode* jsAudioNode = target->toJavaScriptAudioNode())
         return toJS(exec, globalObject, jsAudioNode);
+    if (AudioContext* audioContext = target->toAudioContext())
+        return toJS(exec, globalObject, audioContext);
 #endif
 
 #if ENABLE(WEB_SOCKETS)

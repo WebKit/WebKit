@@ -120,6 +120,14 @@ bool HRTFDatabaseLoader::isLoaded() const
     return m_hrtfDatabase.get();
 }
 
+
+void HRTFDatabaseLoader::waitForLoaderThreadCompletion()
+{
+    ASSERT(!isMainThread());
+    ASSERT(m_databaseLoaderThread);
+    waitForThreadCompletion(m_databaseLoaderThread, 0);    
+}
+
 HRTFDatabase* HRTFDatabaseLoader::defaultHRTFDatabase()
 {
     if (!s_loader)

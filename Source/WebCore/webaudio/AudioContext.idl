@@ -27,7 +27,10 @@ module webaudio {
         Conditional=WEB_AUDIO,
         CanBeConstructed,
         CustomConstructFunction,
-        V8CustomConstructor
+        V8CustomConstructor,
+#if defined(V8_BINDING) && V8_BINDING
+        EventTarget
+#endif        
     ] AudioContext {
         // All rendered audio ultimately connects to destination, which represents the audio hardware.
         readonly attribute AudioDestinationNode destination;
@@ -62,5 +65,11 @@ module webaudio {
         // Channel splitting and merging
         AudioChannelSplitter createChannelSplitter();
         AudioChannelMerger createChannelMerger();
+        
+        // Offline rendering
+        // void prepareOfflineBufferRendering(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
+        attribute EventListener oncomplete;
+        void startRendering();
+        
     };
 }
