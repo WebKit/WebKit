@@ -84,6 +84,7 @@ void InitWebCoreSystemInterface(void)
         INIT(SetCONNECTProxyForStream);
         INIT(SetCookieStoragePrivateBrowsingEnabled);
         INIT(SetDragImage);
+        INIT(SetHTTPPipeliningMaximumPriority);
         INIT(SetHTTPPipeliningPriority);
         INIT(SetNSURLConnectionDefersCallbacks);
         INIT(SetNSURLRequestShouldContentSniff);

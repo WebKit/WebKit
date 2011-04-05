@@ -155,6 +155,7 @@ extern void (*wkSignalCFReadStreamError)(CFReadStreamRef stream, CFStreamError *
 extern void (*wkSignalCFReadStreamHasBytes)(CFReadStreamRef stream);
 extern unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConnectionCount);
 extern int (*wkGetHTTPPipeliningPriority)(NSURLRequest *);
+extern void (*wkSetHTTPPipeliningMaximumPriority)(int maximumPriority);
 extern void (*wkSetHTTPPipeliningPriority)(NSMutableURLRequest *, int priority);
 extern void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
 extern void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);

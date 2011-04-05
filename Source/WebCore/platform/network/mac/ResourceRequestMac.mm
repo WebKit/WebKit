@@ -71,7 +71,7 @@ void ResourceRequest::doUpdateResourceRequest()
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     if (isHTTPPipeliningEnabled() && !shouldForceHTTPPipeliningPriorityHigh())
-        m_priority = mapHTTPPipeliningPriorityToResourceLoadPriority(wkGetHTTPPipeliningPriority(m_nsRequest.get()));
+        m_priority = toResourceLoadPriority(wkGetHTTPPipeliningPriority(m_nsRequest.get()));
 #endif
 
     NSDictionary *headers = [m_nsRequest.get() allHTTPHeaderFields];
@@ -121,8 +121,8 @@ void ResourceRequest::doUpdatePlatformRequest()
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     if (isHTTPPipeliningEnabled()) {
-        int priority = mapResourceLoadPriorityToHTTPPipeliningPriority(m_priority);
-        wkSetHTTPPipeliningPriority(nsRequest, shouldForceHTTPPipeliningPriorityHigh() ? 2 : priority);
+        int priority = toHTTPPipeliningPriority(shouldForceHTTPPipeliningPriorityHigh() ? ResourceLoadPriorityHigh : m_priority);
+        wkSetHTTPPipeliningPriority(nsRequest, priority);
     }
 #endif
 

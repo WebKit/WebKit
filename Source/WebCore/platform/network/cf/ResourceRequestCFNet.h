@@ -41,34 +41,37 @@ void getResourceRequest(ResourceRequest&, CFURLRequestRef);
 CFURLRequestRef cfURLRequest(const ResourceRequest&);
 #endif
 
-inline ResourceLoadPriority mapHTTPPipeliningPriorityToResourceLoadPriority(int priority)
+inline ResourceLoadPriority toResourceLoadPriority(int priority)
 {
     switch (priority) {
-    case 0:
-        return ResourceLoadPriorityLow;
-    case 1:
-        return ResourceLoadPriorityMedium;
-    case 2:
-        return ResourceLoadPriorityHigh;
-    case 3:
+    case -1:
         return ResourceLoadPriorityUnresolved;
+    case 0:
+        return ResourceLoadPriorityVeryLow;
+    case 1:
+        return ResourceLoadPriorityLow;
+    case 2:
+        return ResourceLoadPriorityMedium;
+    case 3:
+        return ResourceLoadPriorityHigh;
     default:
         ASSERT_NOT_REACHED();
         return ResourceLoadPriorityLowest;
     }
 }
 
-inline int mapResourceLoadPriorityToHTTPPipeliningPriority(ResourceLoadPriority priority)
+inline int toHTTPPipeliningPriority(ResourceLoadPriority priority)
 {
     switch (priority) {
-    case ResourceLoadPriorityVeryLow:
-    case ResourceLoadPriorityLow:
-        return 0;
-    case ResourceLoadPriorityMedium:
-        return 1;
-    case ResourceLoadPriorityHigh:
-        return 2;
     case ResourceLoadPriorityUnresolved:
+        return -1;
+    case ResourceLoadPriorityVeryLow:
+        return 0;
+    case ResourceLoadPriorityLow:
+        return 1;
+    case ResourceLoadPriorityMedium:
+        return 2;
+    case ResourceLoadPriorityHigh:
         return 3;
     }
 

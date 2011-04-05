@@ -1,3 +1,13 @@
+2011-04-04  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/57384> CFNetwork and WebCore load priorities should match
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Added initialization for
+        wkSetHTTPPipeliningMaximumPriority().
+
 2011-04-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

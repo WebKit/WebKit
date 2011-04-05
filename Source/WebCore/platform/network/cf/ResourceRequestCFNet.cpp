@@ -29,6 +29,7 @@
 #include "ResourceRequest.h"
 
 #if PLATFORM(MAC)
+#include "ResourceLoadPriority.h"
 #include "WebCoreSystemInterface.h"
 #endif
 
@@ -218,6 +219,7 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
 
 #if PLATFORM(MAC)
     if (isHTTPPipeliningEnabled()) {
+        wkSetHTTPPipeliningMaximumPriority(ResourceLoadPriorityHighest);
         // When pipelining do not rate-limit requests sent from WebCore since CFNetwork handles that.
         return unlimitedConnectionCount;
     }

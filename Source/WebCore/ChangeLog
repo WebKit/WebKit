@@ -1,3 +1,35 @@
+2011-04-04  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/57384> CFNetwork and WebCore load priorities should match
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCore.exp.in: Export wkSetHTTPPipeliningMaximumPriority().
+        * platform/mac/WebCoreSystemInterface.h:
+        (wkSetHTTPPipeliningMaximumPriority): Added function pointer
+        declaration.
+        * platform/mac/WebCoreSystemInterface.mm:
+        (wkSetHTTPPipeliningMaximumPriority): Added function pointer.
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost): Call
+        wkSetHTTPPipeliningMaximumPriority() to set the maximum HTTP
+        pipelining priority.
+        * platform/network/cf/ResourceRequestCFNet.h:
+        (WebCore::toResourceLoadPriority): Renamed from
+        mapHTTPPipeliningPriorityToResourceLoadPriority().  Updated to
+        to handle Unresolved case.
+        (WebCore::toHTTPPipeliningPriority): Renamed from
+        mapResourceLoadPriorityToHTTPPipeliningPriority().  Updated to
+        handle Unresolved case.
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest): Switched to
+        use toResourceLoadPriority().
+        (WebCore::ResourceRequest::doUpdatePlatformRequest): Switched to
+        use toHTTPPipeliningPriority().  Moved
+        shouldForceHTTPPipeliningPriorityHigh() check into the argument
+        of toHTTPPipeliningPriority() instead of hard-coding a
+        now-incorrect value.
+
 2011-04-04  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

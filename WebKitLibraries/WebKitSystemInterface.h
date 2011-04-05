@@ -352,6 +352,7 @@ void WKSetCAAnimationValueFunction(CAPropertyAnimation*, NSString* function);
 
 unsigned WKInitializeMaximumHTTPConnectionCountPerHost(unsigned preferredConnectionCount);
 int WKGetHTTPPipeliningPriority(NSURLRequest *);
+void WKSetHTTPPipeliningMaximumPriority(int maximumPriority);
 void WKSetHTTPPipeliningPriority(NSMutableURLRequest *, int priority);
 
 void WKSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);

@@ -1,3 +1,18 @@
+2011-04-04  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/57384> CFNetwork and WebCore load priorities should match
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebKitSystemInterface.h:
+        (WKSetHTTPPipeliningMaximumPriority): Added declaration.
+        (WKExtractWordDefinitionTokenRangeFromContextualString): Added
+        missing declaration from r81890.
+        (WKShowWordDefinitionWindow): Ditto.
+        (WKHideWordDefinitionWindow): Ditto.
+        * libWebKitSystemInterfaceLeopard.a: Updated.
+        * libWebKitSystemInterfaceSnowLeopard.a: Updated.
+
 2011-04-04  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.
