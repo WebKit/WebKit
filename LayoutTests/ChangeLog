@@ -1,5 +1,11 @@
 2011-04-05  Pavel Podivilov  <podivilov@chromium.org>
 
+        Unreviewed, add chromium-linux expectation for fast/ruby/overhang-vertical.html (the test changed in r82903).
+
+        * platform/chromium-linux/fast/ruby/overhang-vertical-expected.png: Added.
+
+2011-04-05  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, revert bad rebaseline of english-lr-text-expected.html in r82918.
 
         * platform/chromium-linux/fast/blockflow/english-lr-text-expected.checksum: Added.
