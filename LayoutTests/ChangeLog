@@ -1,3 +1,13 @@
+2011-04-05  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows Tests] fast/dom/Window/window-property-descriptors.html failing since r82925.
+        https://bugs.webkit.org/show_bug.cgi?id=57881
+
+        Update the Windows-specific results to get the bots green.
+
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+        onformchange and onforminput were removed in r82925.
+
 2011-04-05  Tony Chang  <tony@chromium.org>
 
         Unreviewed, removing the chromium-win results causes this test to
