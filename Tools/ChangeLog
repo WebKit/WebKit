@@ -1,5 +1,17 @@
 2011-04-05  Zoltan Horvath  <zoltan@webkit.org>
 
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix timeoutTimer of MiniBrowser's UrlLoader
+        https://bugs.webkit.org/show_bug.cgi?id=57832
+
+        Only QWKPage has loadFinished signal so connect to it instead of BrowserWindow.
+
+        * MiniBrowser/qt/UrlLoader.cpp:
+        (UrlLoader::UrlLoader):
+
+2011-04-05  Zoltan Horvath  <zoltan@webkit.org>
+
         [Qt] Linux Release minimal build fix after r82919.
 
         * MiniBrowser/qt/BrowserWindow.cpp:

@@ -47,7 +47,7 @@ UrlLoader::UrlLoader(BrowserWindow* browserWindow, const QString& inputFileName,
     if (timeoutSeconds) {
         m_timeoutTimer.setInterval(timeoutSeconds * 1000);
         m_timeoutTimer.setSingleShot(true);
-        connect(m_browserWindow, SIGNAL(loadStarted()), &m_timeoutTimer, SLOT(start()));
+        connect(m_browserWindow->page(), SIGNAL(loadStarted()), &m_timeoutTimer, SLOT(start()));
         connect(&m_timeoutTimer, SIGNAL(timeout()), this, SLOT(loadNext()));
     }
     if (extraTimeSeconds) {
