@@ -161,10 +161,8 @@ public:
     void layoutIfNeeded();
 
     // -- Called from WebCore clients.
-#if PLATFORM(MAC)
+#if !PLATFORM(GTK) && !PLATFORM(MAC)
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*, bool saveCommands);
-#else
-    bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
 #endif
     void show();
     String userAgent() const { return m_userAgent; }

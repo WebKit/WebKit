@@ -27,12 +27,20 @@
 #include "config.h"
 #include "WebPageProxy.h"
 
+#include "NativeWebKeyboardEvent.h"
+#include "PageClient.h"
+
 namespace WebKit {
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
     // FIXME: This should not be hard coded.
     return "Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.7 (KHTML, like Gecko) Version/5.0 Safari/534.7";
+}
+
+void WebPageProxy::getEditorCommandsForKeyEvent(Vector<WTF::String>& commandsList)
+{
+    m_pageClient->getEditorCommandsForKeyEvent(m_keyEventQueue.first(), commandsList);
 }
 
 } // namespace WebKit

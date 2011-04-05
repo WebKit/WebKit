@@ -594,7 +594,11 @@ private:
 #if PLATFORM(MAC)
     void interpretQueuedKeyEvent(const TextInputState&, bool& handled, Vector<WebCore::KeypressCommand>&);
 #endif
-    
+
+#if PLATFORM(GTK)
+    void getEditorCommandsForKeyEvent(Vector<WTF::String>&);
+#endif
+
     // Find.
     void didCountStringMatches(const String&, uint32_t matchCount);
     void setFindIndicator(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, const ShareableBitmap::Handle& contentImageHandle, bool fadeOut);

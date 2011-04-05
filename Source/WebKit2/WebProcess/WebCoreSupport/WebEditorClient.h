@@ -123,6 +123,11 @@ private:
     virtual void toggleAutomaticSpellingCorrection();
 #endif
 
+#if PLATFORM(GTK)
+    bool executePendingEditorCommands(WebCore::Frame*, Vector<WTF::String>, bool);
+    void getEditorCommandsForKeyEvent(const WebCore::KeyboardEvent*, Vector<WTF::String>&);
+#endif
+
     TextCheckerClient* textChecker() { return this; }
 
     virtual void ignoreWordInSpellDocument(const String&);

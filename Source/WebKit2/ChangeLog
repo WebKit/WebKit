@@ -1,3 +1,53 @@
+2011-04-05  Amruth Raj  <amruthraj@motorola.com>, Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com> and Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement WebPage class for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=54230
+
+        Added functions to handle the generation of commands from the
+        keycodes.
+
+        * GNUmakefile.am:
+        * Scripts/webkit2/messages.py:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::getEditorCommandsForKeyEvent):
+        * UIProcess/gtk/WebView.cpp:
+        (WebKit::backspaceCallback):
+        (WebKit::selectAllCallback):
+        (WebKit::cutClipboardCallback):
+        (WebKit::copyClipboardCallback):
+        (WebKit::pasteClipboardCallback):
+        (WebKit::toggleOverwriteCallback):
+        (WebKit::popupMenuCallback):
+        (WebKit::showHelpCallback):
+        (WebKit::deleteFromCursorCallback):
+        (WebKit::moveCursorCallback):
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::getEditorCommandsForKeyEvent):
+        * UIProcess/gtk/WebView.h:
+        (WebKit::WebView::addPendingEditorCommand):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp: Added.
+        (WebKit::WebEditorClient::getEditorCommandsForKeyEvent):
+        (WebKit::WebEditorClient::executePendingEditorCommands):
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        (WebKit::WebEditorClient::handleInputMethodKeydown):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/gtk/WebPageGtk.cpp: Added.
+        (WebKit::WebPage::platformInitialize):
+        (WebKit::WebPage::platformPreferencesDidChange):
+        (WebKit::scroll):
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+        (WebKit::WebPage::platformHasLocalDataForURL):
+        (WebKit::WebPage::cachedResponseMIMETypeForURL):
+        (WebKit::WebPage::platformCanHandleRequest):
+
 2011-04-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Remove duplicate API from WKContext

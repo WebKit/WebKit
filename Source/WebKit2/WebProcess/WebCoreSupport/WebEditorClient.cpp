@@ -283,7 +283,7 @@ void WebEditorClient::redo()
     notImplemented();
 }
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(GTK) && !PLATFORM(MAC)
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
     if (m_page->handleEditingKeyboardEvent(event))

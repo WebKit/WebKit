@@ -1460,7 +1460,7 @@ WebFullScreenManager* WebPage::fullScreenManager()
 }
 #endif
 
-#if !PLATFORM(MAC)
+#if !PLATFORM(GTK) && !PLATFORM(MAC)
 bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 {
     Node* node = evt->target()->toNode();

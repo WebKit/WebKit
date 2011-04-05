@@ -106,6 +106,9 @@ public:
 #if PLATFORM(WIN)
     virtual void compositionSelectionChanged(bool) = 0;
 #endif
+#if PLATFORM(GTK)
+    virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, Vector<WTF::String>&) = 0;
+#endif
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) = 0;
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) = 0;
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) = 0;
