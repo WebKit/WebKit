@@ -1,3 +1,15 @@
+2011-04-05  David Levin  <levin@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [chromium] send-sliced-dragged-file.html started to crash on chromium bots
+        https://bugs.webkit.org/show_bug.cgi?id=57539
+
+        * platform/chromium/test_expectations.txt: Removed passing test
+          as it has been fixed in the chromium network stack as of chromium r80114
+          and it was introduced in r79905 so no need to change the chromium deps
+          since it is before the regression.
+
 2011-04-05  Adrienne Walker  <enne@google.com>
 
        Unreviewed, mark unexpectedly passing Linux Chromium tests as such.
