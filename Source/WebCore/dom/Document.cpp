@@ -4823,8 +4823,8 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
         m_fullScreenRenderer->setAnimating(true);
 #if USE(ACCELERATED_COMPOSITING)
         view()->updateCompositingLayers();
-        ASSERT(m_fullScreenRenderer->layer()->backing());
-        page()->chrome()->client()->setRootFullScreenLayer(m_fullScreenRenderer->layer()->backing()->graphicsLayer());
+        if (m_fullScreenRenderer->layer()->isComposited())
+            page()->chrome()->client()->setRootFullScreenLayer(m_fullScreenRenderer->layer()->backing()->graphicsLayer());
 #endif
     }
 }
@@ -4835,7 +4835,6 @@ void Document::webkitDidEnterFullScreenForElement(Element*)
         m_fullScreenRenderer->setAnimating(false);
 #if USE(ACCELERATED_COMPOSITING)
         view()->updateCompositingLayers();
-        ASSERT(!m_fullScreenRenderer->layer()->backing());
         page()->chrome()->client()->setRootFullScreenLayer(0);
 #endif
     }
@@ -4849,8 +4848,8 @@ void Document::webkitWillExitFullScreenForElement(Element*)
         m_fullScreenRenderer->setAnimating(true);
 #if USE(ACCELERATED_COMPOSITING)
         view()->updateCompositingLayers();
-        ASSERT(m_fullScreenRenderer->layer()->backing());
-        page()->chrome()->client()->setRootFullScreenLayer(m_fullScreenRenderer->layer()->backing()->graphicsLayer());
+        if (m_fullScreenRenderer->layer()->isComposited())
+            page()->chrome()->client()->setRootFullScreenLayer(m_fullScreenRenderer->layer()->backing()->graphicsLayer());
 #endif
     }
 }

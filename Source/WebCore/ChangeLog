@@ -1,3 +1,20 @@
+2011-04-05  David Dorwin  <ddorwin@chromium.org>
+
+        Reviewed by David Levin.
+
+        Fullscreen code assumes all layers use GPU compositing when USE(ACCELERATED_COMPOSITING)
+        https://bugs.webkit.org/show_bug.cgi?id=57400
+
+        Check whether the full screen renderer layer is being composited by the GPU before assuming that the backing is valid. 
+        Accelerated compositing may be compiled in but disabled at runtime or for some elements.
+
+        Tests: Fullscreen layout tests on Chromium.
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitWillEnterFullScreenForElement):
+        (WebCore::Document::webkitDidEnterFullScreenForElement):
+        (WebCore::Document::webkitWillExitFullScreenForElement):
+
 2011-04-05  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
