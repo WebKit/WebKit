@@ -489,7 +489,9 @@ WebInspector.SourceFrame.prototype = {
     addMessageToSource: function(lineNumber, msg)
     {
         if (lineNumber >= this._textModel.linesCount)
-            return;
+            lineNumber = this._textModel.linesCount - 1;
+        if (lineNumber < 0)
+            lineNumber = 0;
 
         var messageBubbleElement = this._messageBubbles[lineNumber];
         if (!messageBubbleElement || messageBubbleElement.nodeType !== Node.ELEMENT_NODE || !messageBubbleElement.hasStyleClass("webkit-html-message-bubble")) {

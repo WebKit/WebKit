@@ -1,3 +1,13 @@
+2011-04-05  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Scripts with syntax errors are cropped in the UI
+        https://bugs.webkit.org/show_bug.cgi?id=57828
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.addMessageToSource):
+
 2011-04-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
