@@ -359,6 +359,24 @@ public:
             GroupId groupId = calculateGroupId(cssStyleDeclaration);
             m_grouper.append(GrouperItem(groupId, wrapper));
 
+            // Keep alive "dirty" primitive values (i.e. the ones that
+            // have user-added properties) by creating implicit
+            // references between the style declaration and the values
+            // in it.
+            if (cssStyleDeclaration->isMutableStyleDeclaration()) {
+                CSSMutableStyleDeclaration* cssMutableStyleDeclaration = static_cast<CSSMutableStyleDeclaration*>(cssStyleDeclaration);
+                Vector<v8::Persistent<v8::Value> > values;
+                values.reserveCapacity(cssMutableStyleDeclaration->length());
+                CSSMutableStyleDeclaration::const_iterator end = cssMutableStyleDeclaration->end();
+                for (CSSMutableStyleDeclaration::const_iterator it = cssMutableStyleDeclaration->begin(); it != end; ++it) {
+                    v8::Persistent<v8::Object> value = store->domObjectMap().get(it->value());
+                    if (!value.IsEmpty() && value->IsDirty())
+                        values.append(value);
+                }
+                if (!values.isEmpty())
+                    v8::V8::AddImplicitReferences(wrapper, values.data(), values.size());
+            }
+
         } else if (typeInfo->isSubclass(&V8CSSRuleList::info)) {
             CSSRuleList* cssRuleList = static_cast<CSSRuleList*>(object);
             GroupId groupId(cssRuleList);

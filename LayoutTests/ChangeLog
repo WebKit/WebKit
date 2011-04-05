@@ -1,3 +1,13 @@
+2011-04-04  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Keep dirty primitive CSS values alive.
+        https://bugs.webkit.org/show_bug.cgi?id=57810
+
+        * platform/chromium/test_expectations.txt: Mark
+        fast/dom/StyleSheet/gc-inline-style-cssvalues.html as passing.
+
 2011-04-05  Brian Weinstein  <bweinstein@apple.com>
 
         [Windows]  fast/blockflow/Kusa-Makura-background-canvas.html failing since introduction in r82903
