@@ -415,11 +415,14 @@ sub unlinkZeroFiles()
 # Check that all the project directories are there.
 my @projects = ("Source/JavaScriptCore", "Source/WebCore", "Source/WebKit");
 
-my @otherDirs = ("WebKitLibraries");
-for my $dir (@projects, @otherDirs) {
+for my $dir (@projects) {
     if (! -d $dir) {
         die "Error: No $dir directory found. Please do a fresh checkout.\n";
     }
+}
+
+if (!isQt() && !-d "WebKitLibraries") {
+    die "Error: No WebKitLibraries directory found. Please do a fresh checkout.\n";
 }
 
 # Generate the generate project files from .gyp files
