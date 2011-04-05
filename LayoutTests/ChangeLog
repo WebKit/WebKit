@@ -1,3 +1,11 @@
+2011-04-05  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, revert bad rebaseline of english-lr-text-expected.html in r82918.
+
+        * platform/chromium-linux/fast/blockflow/english-lr-text-expected.checksum: Added.
+        * platform/chromium-win/fast/blockflow/english-lr-text-expected.checksum: Added.
+        * platform/chromium-win/fast/blockflow/english-lr-text-expected.png:
+
 2011-04-05  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
