@@ -63,6 +63,8 @@ public:
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();
 
+    void getOverhang(bool firstLine, RenderObject* startRenderer, RenderObject* endRenderer, int& startOverhang, int& endOverhang) const;
+
     static RenderRubyRun* staticCreateRubyRun(const RenderObject* parentRuby);
 
 protected:
@@ -74,6 +76,20 @@ private:
     virtual bool createsAnonymousWrapper() const { return true; }
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
 };
+
+inline RenderRubyRun* toRenderRubyRun(RenderObject* object)
+{
+    ASSERT(!object || object->isRubyRun());
+    return static_cast<RenderRubyRun*>(object);
+}
+
+inline const RenderRubyRun* toRenderRubyRun(const RenderObject* object)
+{
+    ASSERT(!object || object->isBox());
+    return static_cast<const RenderRubyRun*>(object);
+}
+
+void toRenderRubyRun(const RenderRubyRun*);
 
 } // namespace WebCore
 

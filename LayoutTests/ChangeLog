@@ -1,3 +1,63 @@
+2011-04-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7709452> Implement Default Ruby Overhang Behavior
+        https://bugs.webkit.org/show_bug.cgi?id=49334
+
+        * fast/ruby/overhang-horizontal-expected.checksum: Added.
+        * fast/ruby/overhang-horizontal-expected.png: Added.
+        * fast/ruby/overhang-horizontal-expected.txt: Added.
+        * fast/ruby/overhang-horizontal.html: Added.
+        * fast/ruby/overhang-vertical-expected.checksum: Added.
+        * fast/ruby/overhang-vertical-expected.png: Added.
+        * fast/ruby/overhang-vertical-expected.txt: Added.
+        * fast/ruby/overhang-vertical.html: Added.
+        * platform/mac/fast/blockflow/Kusa-Makura-background-canvas-expected.checksum:
+        * platform/mac/fast/blockflow/Kusa-Makura-background-canvas-expected.png:
+        * platform/mac/fast/blockflow/Kusa-Makura-background-canvas-expected.txt:
+        * platform/mac/fast/blockflow/english-lr-text-expected.checksum:
+        * platform/mac/fast/blockflow/english-lr-text-expected.png:
+        * platform/mac/fast/ruby/ruby-beforeafter-expected.checksum:
+        * platform/mac/fast/ruby/ruby-beforeafter-expected.png:
+        * platform/mac/fast/ruby/ruby-beforeafter-expected.txt:
+        * platform/mac/fast/ruby/ruby-length-expected.checksum:
+        * platform/mac/fast/ruby/ruby-length-expected.png:
+        * platform/mac/fast/ruby/ruby-length-expected.txt:
+        * platform/mac/fast/ruby/ruby-run-break-expected.checksum:
+        * platform/mac/fast/ruby/ruby-run-break-expected.png:
+        * platform/mac/fast/ruby/ruby-run-break-expected.txt:
+        * platform/mac/fast/ruby/ruby-runs-expected.checksum:
+        * platform/mac/fast/ruby/ruby-runs-expected.png:
+        * platform/mac/fast/ruby/ruby-runs-expected.txt:
+        * platform/mac/fast/ruby/ruby-runs-spans-expected.checksum:
+        * platform/mac/fast/ruby/ruby-runs-spans-expected.png:
+        * platform/mac/fast/ruby/ruby-runs-spans-expected.txt:
+        * platform/mac/fast/ruby/ruby-trailing-expected.checksum:
+        * platform/mac/fast/ruby/ruby-trailing-expected.png:
+        * platform/mac/fast/ruby/ruby-trailing-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-insert-rt-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-insert-rt-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-insert-rt-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-insert-text1-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-insert-text1-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-insert-text1-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-insert-text2-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-insert-text2-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-insert-text2-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-insert-text3-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-insert-text3-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-insert-text3-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-remove-rt1-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-remove-rt1-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-remove-rt1-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-remove-rt2-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-remove-rt2-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-remove-rt2-expected.txt:
+        * platform/mac/fast/ruby/rubyDOM-remove-text1-expected.checksum:
+        * platform/mac/fast/ruby/rubyDOM-remove-text1-expected.png:
+        * platform/mac/fast/ruby/rubyDOM-remove-text1-expected.txt:
+
 2011-04-04  Adrienne Walker  <enne@google.com>
 
         Unreviewed, Chromium expectations update for tests broken after r82899.

@@ -32,6 +32,7 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListMarker.h"
+#include "RenderRubyRun.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "TextBreakIterator.h"
@@ -392,6 +393,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
     unsigned expansionOpportunityCount = 0;
     bool isAfterExpansion = true;
     Vector<unsigned, 16> expansionOpportunities;
+    RenderObject* previousObject = 0;
 
     for (BidiRun* r = firstRun; r; r = r->next()) {
         if (!r->m_box || r->m_object->isPositioned() || r->m_box->isLineBreak())
@@ -454,12 +456,27 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             isAfterExpansion = false;
             if (!r->m_object->isRenderInline()) {
                 RenderBox* renderBox = toRenderBox(r->m_object);
+                if (renderBox->isRubyRun()) {
+                    int startOverhang;
+                    int endOverhang;
+                    RenderObject* nextObject = 0;
+                    for (BidiRun* runWithNextObject = r->next(); runWithNextObject; runWithNextObject = runWithNextObject->next()) {
+                        if (!runWithNextObject->m_object->isPositioned() && !runWithNextObject->m_box->isLineBreak()) {
+                            nextObject = runWithNextObject->m_object;
+                            break;
+                        }
+                    }
+                    toRenderRubyRun(renderBox)->getOverhang(firstLine, renderBox->style()->isLeftToRightDirection() ? previousObject : nextObject, renderBox->style()->isLeftToRightDirection() ? nextObject : previousObject, startOverhang, endOverhang);
+                    setMarginStartForChild(renderBox, -startOverhang);
+                    setMarginEndForChild(renderBox, -endOverhang);
+                }
                 r->m_box->setLogicalWidth(logicalWidthForChild(renderBox));
                 totalLogicalWidth += marginStartForChild(renderBox) + marginEndForChild(renderBox);
             }
         }
 
         totalLogicalWidth += r->m_box->logicalWidth();
+        previousObject = r->m_object;
     }
 
     if (isAfterExpansion && !expansionOpportunities.isEmpty()) {
@@ -1465,7 +1482,7 @@ static bool shouldSkipWhitespaceAfterStartObject(RenderBlock* block, RenderObjec
     return false;
 }
 
-void RenderBlock::fitBelowFloats(float widthToFit, bool firstLine, float& availableWidth)
+void RenderBlock::fitBelowFloats(float widthToFit, float totalOverhangWidth, bool firstLine, float& availableWidth)
 {
     ASSERT(widthToFit > availableWidth);
 
@@ -1485,7 +1502,7 @@ void RenderBlock::fitBelowFloats(float widthToFit, bool firstLine, float& availa
 
     if (newLineWidth > availableWidth) {
         setLogicalHeight(lastFloatLogicalBottom);
-        availableWidth = newLineWidth;
+        availableWidth = newLineWidth + totalOverhangWidth;
     }
 }
 
@@ -1558,6 +1575,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
     float width = max(0, lineRightOffset - lineLeftOffset);
     float w = 0;
     float tmpW = 0;
+    // The amount by which |width| has been inflated to account for possible contraction due to ruby overhang.
+    float totalOverhangWidth = 0;
 
     if (resolver.position().atEnd())
         return resolver.position();
@@ -1601,6 +1620,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
     EWhiteSpace currWS = style()->whiteSpace();
     EWhiteSpace lastWS = currWS;
     while (o) {
+        RenderObject* next = bidiNext(this, o);
+
         currWS = o->isReplaced() ? o->parent()->style()->whiteSpace() : o->style()->whiteSpace();
         lastWS = last->isReplaced() ? last->parent()->style()->whiteSpace() : last->style()->whiteSpace();
         
@@ -1646,7 +1667,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 // it after moving to next line (in newLine() func)
                 if (floatsFitOnLine && logicalWidthForFloat(f) + w + tmpW <= width) {
                     positionNewFloatOnLine(f, lastFloatFromPreviousLine, firstLine, lineLeftOffset, lineRightOffset);
-                    width = max(0, lineRightOffset - lineLeftOffset);
+                    width = max(0, lineRightOffset - lineLeftOffset) + totalOverhangWidth;
                     if (lBreak.m_obj == o) {
                         ASSERT(!lBreak.m_pos);
                         lBreak.increment();
@@ -1744,6 +1765,18 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     tmpW += replacedLogicalWidth;
             } else
                 tmpW += replacedLogicalWidth;
+            if (o->isRubyRun()) {
+                RenderRubyRun* rubyRun = toRenderRubyRun(o);
+                int startOverhang;
+                int endOverhang;
+                rubyRun->getOverhang(firstLine, last, next, startOverhang, endOverhang);
+                startOverhang = min<int>(startOverhang, w);
+                totalOverhangWidth += startOverhang;
+                width += startOverhang;
+                endOverhang = max(min<int>(endOverhang, width - (w + tmpW)), 0);
+                totalOverhangWidth += endOverhang;
+                width += endOverhang;
+            }
         } else if (o->isText()) {
             if (!pos)
                 appliedStartWidth = false;
@@ -1868,7 +1901,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     applyWordSpacing =  wordSpacing && currentCharacterIsSpace && !previousCharacterIsSpace;
 
                     if (!w && autoWrap && tmpW > width)
-                        fitBelowFloats(tmpW, firstLine, width);
+                        fitBelowFloats(tmpW, totalOverhangWidth, firstLine, width);
 
                     if (autoWrap || breakWords) {
                         // If we break only after white-space, consider the current character
@@ -2012,7 +2045,6 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
         } else
             ASSERT_NOT_REACHED();
 
-        RenderObject* next = bidiNext(this, o);
         bool checkForBreak = autoWrap;
         if (w && w + tmpW > width && lBreak.m_obj && currWS == NOWRAP)
             checkForBreak = true;
@@ -2034,7 +2066,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                         checkForBreak = true;
                     bool willFitOnLine = w + tmpW <= width;
                     if (!willFitOnLine && !w) {
-                        fitBelowFloats(tmpW, firstLine, width);
+                        fitBelowFloats(tmpW, totalOverhangWidth, firstLine, width);
                         willFitOnLine = tmpW <= width;
                     }
                     bool canPlaceOnLine = willFitOnLine || !autoWrapWasEverTrueOnLine;
@@ -2057,7 +2089,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             if (w)
                 goto end;
 
-            fitBelowFloats(tmpW, firstLine, width);
+            fitBelowFloats(tmpW, totalOverhangWidth, firstLine, width);
 
             // |width| may have been adjusted because we got shoved down past a float (thus
             // giving us more room), so we need to retest, and only jump to

@@ -268,4 +268,41 @@ void RenderRubyRun::layout()
     computeOverflow(clientLogicalBottom());
 }
 
+void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, RenderObject* endRenderer, int& startOverhang, int& endOverhang) const
+{
+    ASSERT(!needsLayout());
+
+    startOverhang = 0;
+    endOverhang = 0;
+
+    RenderRubyBase* rubyBase = this->rubyBase();
+    RenderRubyText* rubyText = this->rubyText();
+
+    if (!rubyBase || !rubyText)
+        return;
+
+    if (!rubyBase->firstRootBox())
+        return;
+
+    int logicalWidth = this->logicalWidth();
+
+    // No more than half a ruby is allowed to overhang.
+    int logicalLeftOverhang = rubyText->style(firstLine)->fontSize() / 2;
+    int logicalRightOverhang = logicalLeftOverhang;
+
+    for (RootInlineBox* rootInlineBox = rubyBase->firstRootBox(); rootInlineBox; rootInlineBox = rootInlineBox->nextRootBox()) {
+        logicalLeftOverhang = min<int>(logicalLeftOverhang, rootInlineBox->logicalLeft());
+        logicalRightOverhang = min<int>(logicalRightOverhang, logicalWidth - rootInlineBox->logicalRight());
+    }
+
+    startOverhang = style()->isLeftToRightDirection() ? logicalLeftOverhang : logicalRightOverhang;
+    endOverhang = style()->isLeftToRightDirection() ? logicalRightOverhang : logicalLeftOverhang;
+
+    if (!startRenderer || !startRenderer->isText() || startRenderer->style(firstLine)->fontSize() > rubyBase->style(firstLine)->fontSize())
+        startOverhang = 0;
+
+    if (!endRenderer || !endRenderer->isText() || endRenderer->style(firstLine)->fontSize() > rubyBase->style(firstLine)->fontSize())
+        endOverhang = 0;
+}
+
 } // namespace WebCore

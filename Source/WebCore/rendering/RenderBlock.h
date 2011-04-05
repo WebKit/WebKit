@@ -494,7 +494,7 @@ private:
 
     void skipTrailingWhitespace(InlineIterator&, bool isLineEmpty, bool previousLineBrokeCleanly);
     void skipLeadingWhitespace(InlineBidiResolver&, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly, FloatingObject* lastFloatFromPreviousLine, int& lineLeftOffset, int& lineRightOffset);
-    void fitBelowFloats(float widthToFit, bool firstLine, float& availableWidth);
+    void fitBelowFloats(float widthToFit, float totalOverhangWidth, bool firstLine, float& availableWidth);
     typedef std::pair<RenderText*, LazyLineBreakIterator> LineBreakIteratorInfo;
     InlineIterator findNextLineBreak(InlineBidiResolver&, bool firstLine, bool& isLineEmpty, LineBreakIteratorInfo&, bool& previousLineBrokeCleanly, bool& hyphenated,
                                      EClear*, FloatingObject* lastFloatFromPreviousLine, Vector<RenderBox*>& positionedObjects);

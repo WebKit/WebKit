@@ -1,3 +1,33 @@
+2011-04-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/7709452> Implement Default Ruby Overhang Behavior
+        https://bugs.webkit.org/show_bug.cgi?id=49334
+
+        Tests: fast/ruby/overhang-horizontal.html
+               fast/ruby/overhang-vertical.html
+
+        This is a first cut at ruby overhang. It allows ruby text to hang over other
+        text of equal or smaller size. Two notable omissions are that max preferred
+        width computation was not patched, so it will overshoot, and that overhang
+        ignores the width of the adjoining text runs.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine): Adjust margins
+        of ruby runs for overhang.
+        (WebCore::RenderBlock::fitBelowFloats): Maintain the increase in line width to
+        compensate for overhang.
+        (WebCore::RenderBlock::findNextLineBreak): When encountering
+        a ruby run, increase the line width to account for the fact that overhang will be
+        collapsed.
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::getOverhang): Added. Allows ruby to overhang if
+        the adjoining renderer is text with equal or smaller font size.
+        * rendering/RenderRubyRun.h:
+        (WebCore::toRenderRubyRun):
+
 2011-04-04  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/57384> CFNetwork and WebCore load priorities should match
