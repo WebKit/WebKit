@@ -1,3 +1,16 @@
+2011-04-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Add Web Inspector stack trace, pause on exception and window.onerror
+        screenshots.
+
+        * blog-files/inspector/stack-traces-img/1.png: Added.
+        * blog-files/inspector/stack-traces-img/2.png: Added.
+        * blog-files/inspector/stack-traces-img/3.png: Added.
+        * blog-files/inspector/stack-traces-img/4.png: Added.
+        * blog-files/inspector/stack-traces-img/5.png: Added.
+        * blog-files/inspector/stack-traces-img/6.png: Added.
+        * blog-files/inspector/stack-traces-img/button.png: Added.
+
 2011-02-26  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Adler.
