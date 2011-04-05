@@ -320,7 +320,7 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
 #if USE(ACCELERATED_COMPOSITING)
     LayerTreeContext layerTreeContext;
 
-    if (m_isPaintingSuspended || m_layerTreeHost && !m_layerTreeHost->participatesInDisplay()) {
+    if (m_isPaintingSuspended || (m_layerTreeHost && !m_layerTreeHost->participatesInDisplay())) {
         updateInfo.viewSize = m_webPage->size();
 
         if (m_layerTreeHost) {
