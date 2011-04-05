@@ -54,6 +54,7 @@ private:
     virtual void sizeDidChange();
     virtual void visibilityDidChange();
     virtual void setPageIsVisible(bool);
+    virtual void setBackingStoreIsDiscardable(bool);
 
     // CoreIPC message handlers
     virtual void update(uint64_t backingStoreStateID, const UpdateInfo&);
@@ -98,6 +99,7 @@ private:
     // Used to throttle UpdateBackingStoreState messages so we don't send them faster than the Web process can handle.
     bool m_isWaitingForDidUpdateBackingStoreState;
 
+    bool m_isBackingStoreDiscardable;
     OwnPtr<BackingStore> m_backingStore;
 
     RunLoop::Timer<DrawingAreaProxyImpl> m_discardBackingStoreTimer;

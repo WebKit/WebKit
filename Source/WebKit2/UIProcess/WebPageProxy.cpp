@@ -609,6 +609,9 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
             process()->send(Messages::WebPage::SetIsInWindow(isInWindow), m_pageID);
         }
     }
+
+    if (flags & (ViewWindowIsActive | ViewIsVisible))
+        m_drawingArea->setBackingStoreIsDiscardable(!m_pageClient->isViewWindowActive() || !isViewVisible());
 }
 
 IntSize WebPageProxy::viewSize() const

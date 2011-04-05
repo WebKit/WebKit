@@ -1,3 +1,35 @@
+2011-04-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Don't discard the backing stores of WKViews in the key window
+        https://bugs.webkit.org/show_bug.cgi?id=57808
+        <rdar://problem/9110793>
+        <rdar://problem/9194284>
+        <rdar://problem/9222216>
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::setBackingStoreIsDiscardable):
+        Add empty stub.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::DrawingAreaProxyImpl):
+        Initialize m_isBackingStoreDiscardable to true.
+
+        (WebKit::DrawingAreaProxyImpl::setBackingStoreIsDiscardable):
+        Set m_isBackingStoreDiscardable and schedule or stop the discard backing store timer.
+
+        (WebKit::DrawingAreaProxyImpl::discardBackingStoreSoon):
+        Don't start the timer if m_isBackingStoreDiscardable is false.
+
+        * UIProcess/DrawingAreaProxyImpl.h:
+        Add m_isBackingStoreDiscardable.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange):
+        Mark the backing store as discardable if the view is hidden or if the containing window
+        is not active.
+
 2011-04-04  Jade Han  <jade.han@nokia.com>
 
         Reviewed by Csaba Osztrogonác.

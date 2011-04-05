@@ -240,6 +240,7 @@ public:
 
     WebCore::IntSize viewSize() const;
     bool isViewVisible() const { return m_isVisible; }
+    bool isViewWindowActive() const;
 
     void executeEditCommand(const String& commandName);
     void validateCommand(const String& commandName, PassRefPtr<ValidateCommandCallback>);

@@ -52,6 +52,7 @@ DrawingAreaProxyImpl::DrawingAreaProxyImpl(WebPageProxy* webPageProxy)
     , m_currentBackingStoreStateID(0)
     , m_nextBackingStoreStateID(0)
     , m_isWaitingForDidUpdateBackingStoreState(false)
+    , m_isBackingStoreDiscardable(true)
     , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyImpl::discardBackingStore)
 {
 }
@@ -146,6 +147,18 @@ void DrawingAreaProxyImpl::visibilityDidChange()
 
 void DrawingAreaProxyImpl::setPageIsVisible(bool)
 {
+}
+
+void DrawingAreaProxyImpl::setBackingStoreIsDiscardable(bool isBackingStoreDiscardable)
+{
+    if (m_isBackingStoreDiscardable == isBackingStoreDiscardable)
+        return;
+
+    m_isBackingStoreDiscardable = isBackingStoreDiscardable;
+    if (m_isBackingStoreDiscardable)
+        discardBackingStoreSoon();
+    else
+        m_discardBackingStoreTimer.stop();
 }
 
 void DrawingAreaProxyImpl::update(uint64_t backingStoreStateID, const UpdateInfo& updateInfo)
@@ -318,6 +331,9 @@ void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
 
 void DrawingAreaProxyImpl::discardBackingStoreSoon()
 {
+    if (!m_isBackingStoreDiscardable)
+        return;
+
     // We'll wait this many seconds after the last paint before throwing away our backing store to save memory.
     // FIXME: It would be smarter to make this delay based on how expensive painting is. See <http://webkit.org/b/55733>.
     static const double discardBackingStoreDelay = 5;

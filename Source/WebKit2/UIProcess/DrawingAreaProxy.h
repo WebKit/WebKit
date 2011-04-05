@@ -83,9 +83,10 @@ public:
 
     virtual void sizeDidChange() = 0;
 
-    // FIXME: visibilityDidChange() should be pure virtual.
+    // FIXME: These should be pure virtual.
     virtual void visibilityDidChange() { }
-
+    virtual void setBackingStoreIsDiscardable(bool) { }
+    
     virtual void setPageIsVisible(bool isVisible) = 0;
 
     const WebCore::IntSize& size() const { return m_size; }
