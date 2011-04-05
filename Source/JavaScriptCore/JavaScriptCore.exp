@@ -492,7 +492,6 @@ __ZN3WTF7xmlAtomE
 __ZN3WTF8Collator18setOrderLowerFirstEb
 __ZN3WTF8CollatorC1EPKc
 __ZN3WTF8CollatorD1Ev
-__ZN3WTF8Internal21fastMallocMatchFailedEPv
 __ZN3WTF8fastFreeEPv
 __ZN3WTF8msToYearEd
 __ZN3WTF8nullAtomE

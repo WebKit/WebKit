@@ -875,12 +875,8 @@
 
 /* fastMalloc match validation allows for runtime verification that
    new is matched by delete, fastMalloc is matched by fastFree, etc. */
-#if !defined(ENABLE_WTF_MALLOC_VALIDATION)
-#ifndef NDEBUG
-#define ENABLE_WTF_MALLOC_VALIDATION 1
-#else
-#define ENABLE_WTF_MALLOC_VALIDATION 0
-#endif
+#if !defined(ENABLE_FAST_MALLOC_MATCH_VALIDATION)
+#define ENABLE_FAST_MALLOC_MATCH_VALIDATION 0
 #endif
 
 #if !defined(ENABLE_ICONDATABASE)
