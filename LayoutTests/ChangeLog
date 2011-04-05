@@ -1,3 +1,13 @@
+2011-04-05  Jessie Berlin  <jberlin@apple.com>
+
+        3 tests fail on apple-macpro-6 (due to different JS MIME type) but not any other Leopard
+        slaves.
+        https://bugs.webkit.org/show_bug.cgi?id=56564
+
+        Skip fast/preloader/scan-body-from-head-script.html on Leopard to get the bots green.
+
+        * platform/mac-leopard/Skipped:
+
 2011-04-04  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Adam Barth.

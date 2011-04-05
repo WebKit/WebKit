@@ -219,3 +219,4 @@ platform/mac/fast/loader/file-url-mimetypes-2.html
 http/tests/inspector/resource-har-conversion.html
 fast/preloader/document-write.html
 fast/preloader/document-write-2.html
+fast/preloader/scan-body-from-head-script.html
