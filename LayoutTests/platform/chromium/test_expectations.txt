@@ -3306,3 +3306,6 @@ BUGWK50661 MAC LEOPARD : fast/speech/input-appearance-numberandspeech.html = IMA
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS
 
+// Need rebaselines on all platforms.
+BUGENNE : svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg = IMAGE+TEXT
+BUGENNE : svg/text/text-midpoint-split-bug.svg = IMAGE+TEXT
