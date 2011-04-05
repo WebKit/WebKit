@@ -1,3 +1,19 @@
+2011-04-05  Adam Roben  <aroben@apple.com>
+
+        Strip off /results.html from results URLs before trying to load leaks files from them
+
+        r82734 changed build.webkit.org's "view results" URLs to point straight to the results.html
+        files, rather than pointing to the directory that contains them. This is more convenient for
+        people browsing build.webkit.org, but confused Leaks Viewer.
+
+        Fixes <http://webkit.org/b/57869> REGRESSION (r82734): Links in Leaks Viewer's Recent Builds
+        list don't work
+
+        Reviewed by Joseph Pecoraro.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/RecentBuildsLoader.js:
+        (RecentBuildsLoader.prototype.start): Strip off "/results.html" from the results URL.
+
 2011-04-05  Carol Szabo  <carol@webkit.org>
 
         Unreviewed.

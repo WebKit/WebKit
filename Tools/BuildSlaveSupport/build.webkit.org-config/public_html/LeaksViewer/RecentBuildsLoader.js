@@ -61,7 +61,8 @@ RecentBuildsLoader.prototype = {
                             return;
                         if (!("view results" in step.urls))
                             return;
-                        buildInfo.url = self._buildbotBaseURL + step.urls["view results"] + "/";
+                        var url = step.urls["view results"];
+                        buildInfo.url = self._buildbotBaseURL + url.replace(/\/results\.html$/, "") + "/";
                     }
 
                     if (buildInfo.leakCount && buildInfo.url) {
