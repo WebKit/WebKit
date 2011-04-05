@@ -1,3 +1,15 @@
+2011-04-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Don't use Exception.message because it's deprecated
+        https://bugs.webkit.org/show_bug.cgi?id=57892
+
+        Suppress the warning for now.  When we move to Python 3, we might need
+        to something more dramatic.
+
+        * Scripts/webkitpy/common/system/executive.py:
+
 2011-04-05  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Ojan Vafai.

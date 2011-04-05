@@ -43,6 +43,7 @@ import signal
 import subprocess
 import sys
 import time
+import warnings
 
 from webkitpy.common.system.deprecated_logging import tee
 from webkitpy.common.system.filesystem import FileSystem
@@ -82,9 +83,11 @@ class ScriptError(Exception):
         self.cwd = cwd
 
     def __str__(self):
-        if self.output:
-            return self.message + "\n" + self.output
-        return self.message
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            if self.output:
+                return self.message + "\n" + self.output
+            return self.message
 
     def message_with_output(self, output_limit=500):
         if self.output:
