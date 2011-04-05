@@ -1,3 +1,11 @@
+2011-04-05  Kent Tamura  <tkent@chromium.org>
+
+        Update a test affected by the behavior change of r82908.
+        https://bugs.webkit.org/show_bug.cgi?id=57636
+
+        * fast/forms/ValidityState-tooLong-textarea-expected.txt:
+        * fast/forms/script-tests/ValidityState-tooLong-textarea.js:
+
 2011-04-05  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r82903.

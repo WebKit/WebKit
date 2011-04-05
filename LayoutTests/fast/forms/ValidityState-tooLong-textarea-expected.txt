@@ -31,8 +31,8 @@ PASS textarea.validity.tooLong is true
 PASS textarea.value is "abc"
 PASS textarea.validity.tooLong is false
 PASS textarea.validity.tooLong is true
-PASS textarea.value is "abcdef"
-PASS textarea.validity.tooLong is false
+PASS textarea.value is "def"
+PASS textarea.validity.tooLong is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

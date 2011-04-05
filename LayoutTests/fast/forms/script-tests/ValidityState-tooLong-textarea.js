@@ -76,7 +76,7 @@ textarea = parent.firstChild;
 textarea.value = 'def';
 shouldBeTrue('textarea.validity.tooLong');
 parent.firstChild.innerHTML = 'abcdef';
-shouldBe('textarea.value', '"abcdef"');
-shouldBeFalse('textarea.validity.tooLong');
+shouldBe('textarea.value', '"def"');
+shouldBeTrue('textarea.validity.tooLong');
 
 var successfullyParsed = true;
