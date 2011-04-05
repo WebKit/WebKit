@@ -1,3 +1,14 @@
+2011-04-05  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Add builders.js to dashboard file list
+        https://bugs.webkit.org/show_bug.cgi?id=57899
+
+        Add file added by http://crrev.com/80538 to dashboard file list.
+
+        * TestResultServer/handlers/dashboardhandler.py:
+
 2011-04-05  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Adam Barth.

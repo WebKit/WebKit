@@ -89,6 +89,7 @@ class UpdateDashboardFile(webapp.RequestHandler):
         if not files:
             # FIXME: Just grab the entire dashboards directory.
             files = ["aggregate_results.html",
+                     "builders.js",
                      "dashboard_base.js",
                      "dygraph-combined.js",
                      "flakiness_dashboard.html",
