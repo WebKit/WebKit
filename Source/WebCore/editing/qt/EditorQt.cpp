@@ -31,9 +31,9 @@
 #include "ClipboardQt.h"
 #include "Document.h"
 #include "Element.h"
-#include "VisibleSelection.h"
 #include "SelectionController.h"
 #include "TextIterator.h"
+#include "VisibleSelection.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 
