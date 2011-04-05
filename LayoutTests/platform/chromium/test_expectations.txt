@@ -3290,3 +3290,18 @@ BUGWK57593 : fast/preloader/document-write.html = TEXT
 BUGWK57754 WIN DEBUG : inspector/debugger/xhr-breakpoints.html = CRASH PASS
 
 BUGCR78326 : fast/filesystem/filesystem-reference.html = CRASH PASS
+
+BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = TEXT PASS
+BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html = TEXT PASS
+BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-boundary-values.html = TEXT PASS
+BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-optimums.html = TEXT PASS
+BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = TEXT PASS
+BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-disabled-readonly.html = TEXT PASS
+BUGWK50661 MAC : fast/forms/input-appearance-spinbutton-disabled-readonly.html = IMAGE+TEXT PASS
+BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-layer.html = IMAGE+TEXT TEXT PASS
+BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-visibility.html = TEXT PASS
+BUGWK50661 MAC : fast/forms/input-appearance-spinbutton-visibility.html = IMAGE+TEXT PASS
+BUGWK50661 WIN LINUX : fast/speech/input-appearance-numberandspeech.html = TEXT PASS
+BUGWK50661 MAC : fast/speech/input-appearance-numberandspeech.html = IMAGE PASS
+BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = IMAGE+TEXT PASS
+BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS

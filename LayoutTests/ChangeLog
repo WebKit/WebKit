@@ -1,3 +1,9 @@
+2011-04-04  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, Chromium expectations update for tests broken after r82899.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-04 MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectations update following r82899.
