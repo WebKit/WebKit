@@ -1,3 +1,45 @@
+2011-04-05  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Adam Roben & Dirk Schulze.
+
+        text-tspan-02-b.svg from SVG 1.1 2nd edition fails
+        https://bugs.webkit.org/show_bug.cgi?id=57831
+
+        We were not spanning rotation values correcty accross text children, which resulted in text-span-02-b.svg misrendering.
+        While rewriting the rotation specific code, it came apparent that the LayoutScope concept is flawed in general and
+        should be replaced by a global list of x/y/dx/dy/rotate values for the whole text subtree. This makes it much simpler
+        to implement the demand that the last rotation value spans the whole scope. A follow-up patch will optimize the
+        required memory.
+
+        Example:
+        <text rotate="10,20,999,50">AB<tspan rotate="30">CDE</>FGH</text>
+    
+        text:   A  B  C  D  E  F  G  H
+        rotate="10 20 30 30 30 50 50 50"
+
+        Tests: svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg
+               svg/text/text-midpoint-split-bug.svg
+
+        * rendering/RenderBlockLineLayout.cpp:     Move SVG specific midpoint creation after the non-SVG specific code that may mutate the midpoints. otherwhise we end up in an
+        (WebCore::RenderBlock::findNextLineBreak): inconsistent state. We were intereferring with the ignoreSpaces code resulting in wrong truncations - covered by new testcase.
+        * rendering/svg/SVGTextLayoutAttributes.cpp:
+        (WebCore::SVGTextLayoutAttributes::reserveCapacity): Also reserveCapacity for the text metrics list (minor optimization).
+        (WebCore::SVGTextLayoutAttributes::fillWithEmptyValue): Added helper function for use from SVGTextLayoutAttributesBuilder.
+        (WebCore::SVGTextLayoutAttributes::appendEmptyValue): Ditto.
+        (WebCore::safeValueAtPosition): Ditto. (Inline helper)
+        (WebCore::SVGTextLayoutAttributes::appendSingleValueFromAttribute): Ditto.
+        * rendering/svg/SVGTextLayoutAttributes.h: Ditto.
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp: Rewrite code, see explaination above.
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextSubtree):
+        (WebCore::processRenderSVGInlineText):
+        (WebCore::SVGTextLayoutAttributesBuilder::collectTextPositioningElements):
+        (WebCore::SVGTextLayoutAttributesBuilder::buildLayoutAttributesForAllCharacters):
+        (WebCore::SVGTextLayoutAttributesBuilder::propagateLayoutAttributes):
+        (WebCore::fillListAtPosition):
+        (WebCore::SVGTextLayoutAttributesBuilder::fillAttributesAtPosition):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.h:
+        (WebCore::SVGTextLayoutAttributesBuilder::TextPosition::TextPosition):
+
 2011-04-05  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.

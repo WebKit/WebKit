@@ -1,5 +1,5 @@
 /*
- * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010-2011. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,6 +28,7 @@ namespace WebCore {
 
 class RenderObject;
 class RenderSVGText;
+class SVGTextPositioningElement;
 
 // SVGTextLayoutAttributesBuilder performs the first layout phase for SVG text.
 //
@@ -45,37 +46,27 @@ public:
     void buildLayoutAttributesForTextSubtree(RenderSVGText*);
 
 private:
-    struct LayoutScope {
-        LayoutScope()
-            : textContentStart(0)
-            , textContentLength(0)
+    struct TextPosition {
+        TextPosition(SVGTextPositioningElement* newElement = 0, unsigned newStart = 0, unsigned newLength = 0)
+            : element(newElement)
+            , start(newStart)
+            , length(newLength)
         {
         }
 
-        unsigned textContentStart;
-        unsigned textContentLength;
-        SVGTextLayoutAttributes attributes;
+        SVGTextPositioningElement* element;
+        unsigned start;
+        unsigned length;
     };
 
-    void buildLayoutScope(LayoutScope&, RenderObject*, unsigned textContentStart, unsigned textContentLength) const;
-    void buildLayoutScopes(RenderObject*, unsigned& atCharacter, UChar& lastCharacter);
-    void buildOutermostLayoutScope(RenderSVGText*, unsigned textLength);
+    void collectTextPositioningElements(RenderObject*, unsigned& atCharacter, UChar& lastCharacter);
+    void buildLayoutAttributesForAllCharacters(RenderSVGText*, unsigned textLength);
     void propagateLayoutAttributes(RenderObject*, Vector<SVGTextLayoutAttributes>& allAttributes, unsigned& atCharacter, UChar& lastCharacter) const;
-
-    enum LayoutValueType {
-        XValueAttribute,
-        YValueAttribute,
-        DxValueAttribute,
-        DyValueAttribute,
-        RotateValueAttribute
-    };
-
-    float nextLayoutValue(LayoutValueType, unsigned atCharacter) const;
-    void assignLayoutAttributesForCharacter(SVGTextLayoutAttributes&, SVGTextMetrics&, unsigned valueListPosition) const;
-    void assignEmptyLayoutAttributesForCharacter(SVGTextLayoutAttributes&) const;
+    void fillAttributesAtPosition(const TextPosition&);
 
 private:
-    Vector<LayoutScope> m_scopes;
+    Vector<TextPosition> m_textPositions;
+    SVGTextLayoutAttributes::PositioningLists m_positioningLists;
 };
 
 } // namespace WebCore

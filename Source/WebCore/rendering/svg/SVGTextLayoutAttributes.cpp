@@ -34,11 +34,44 @@ SVGTextLayoutAttributes::SVGTextLayoutAttributes(RenderSVGInlineText* context)
 
 void SVGTextLayoutAttributes::reserveCapacity(unsigned length)
 {
-    m_xValues.reserveCapacity(length);
-    m_yValues.reserveCapacity(length);
-    m_dxValues.reserveCapacity(length);
-    m_dyValues.reserveCapacity(length);
-    m_rotateValues.reserveCapacity(length);
+    m_positioningLists.xValues.reserveCapacity(length);
+    m_positioningLists.yValues.reserveCapacity(length);
+    m_positioningLists.dxValues.reserveCapacity(length);
+    m_positioningLists.dyValues.reserveCapacity(length);
+    m_positioningLists.rotateValues.reserveCapacity(length);
+    m_textMetricsValues.reserveCapacity(length);
+}
+
+void SVGTextLayoutAttributes::PositioningLists::fillWithEmptyValues(unsigned length)
+{
+    xValues.fill(SVGTextLayoutAttributes::emptyValue(), length);
+    yValues.fill(SVGTextLayoutAttributes::emptyValue(), length);
+    dxValues.fill(SVGTextLayoutAttributes::emptyValue(), length);
+    dyValues.fill(SVGTextLayoutAttributes::emptyValue(), length);
+    rotateValues.fill(SVGTextLayoutAttributes::emptyValue(), length);
+}
+
+void SVGTextLayoutAttributes::PositioningLists::appendEmptyValues()
+{
+    xValues.append(SVGTextLayoutAttributes::emptyValue());
+    yValues.append(SVGTextLayoutAttributes::emptyValue());
+    dxValues.append(SVGTextLayoutAttributes::emptyValue());
+    dyValues.append(SVGTextLayoutAttributes::emptyValue());
+    rotateValues.append(SVGTextLayoutAttributes::emptyValue());
+}
+
+static inline float safeValueAtPosition(const Vector<float>& values, unsigned position)
+{
+    return position < values.size() ? values[position] : SVGTextLayoutAttributes::emptyValue();
+}
+
+void SVGTextLayoutAttributes::PositioningLists::appendValuesFromPosition(const PositioningLists& source, unsigned position)
+{
+    xValues.append(safeValueAtPosition(source.xValues, position));
+    yValues.append(safeValueAtPosition(source.yValues, position));
+    dxValues.append(safeValueAtPosition(source.dxValues, position));
+    dyValues.append(safeValueAtPosition(source.dyValues, position));
+    rotateValues.append(safeValueAtPosition(source.rotateValues, position));
 }
 
 float SVGTextLayoutAttributes::emptyValue()
@@ -69,23 +102,23 @@ void SVGTextLayoutAttributes::dump() const
     fprintf(stderr, "context: %p\n", m_context);
 
     fprintf(stderr, "x values: ");
-    dumpLayoutVector(m_xValues);
+    dumpLayoutVector(m_positioningLists.xValues);
     fprintf(stderr, "\n");
 
     fprintf(stderr, "y values: ");
-    dumpLayoutVector(m_yValues);
+    dumpLayoutVector(m_positioningLists.yValues);
     fprintf(stderr, "\n");
 
     fprintf(stderr, "dx values: ");
-    dumpLayoutVector(m_dxValues);
+    dumpLayoutVector(m_positioningLists.dxValues);
     fprintf(stderr, "\n");
 
     fprintf(stderr, "dy values: ");
-    dumpLayoutVector(m_dyValues);
+    dumpLayoutVector(m_positioningLists.dyValues);
     fprintf(stderr, "\n");
 
     fprintf(stderr, "rotate values: ");
-    dumpLayoutVector(m_rotateValues);
+    dumpLayoutVector(m_positioningLists.rotateValues);
     fprintf(stderr, "\n");
 
     fprintf(stderr, "character data values:\n");

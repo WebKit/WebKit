@@ -1839,18 +1839,6 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     tmpW += hyphenWidth;
                 }
 
-#if ENABLE(SVG)
-                if (isSVGText) {
-                    RenderSVGInlineText* svgInlineText = static_cast<RenderSVGInlineText*>(t);
-                    if (pos > 0) {
-                        if (svgInlineText->characterStartsNewTextChunk(pos)) {
-                            addMidpoint(lineMidpointState, InlineIterator(0, o, pos - 1));
-                            addMidpoint(lineMidpointState, InlineIterator(0, o, pos));
-                        }
-                    }
-                }
-#endif
-
                 bool applyWordSpacing = false;
                 
                 currentCharacterIsWS = currentCharacterIsSpace || (breakNBSP && c == noBreakSpace);
@@ -2004,6 +1992,16 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     lastSpace = pos; // e.g., "Foo    goo", don't add in any of the ignored spaces.
                     addMidpoint(lineMidpointState, InlineIterator(0, o, pos));
                 }
+
+#if ENABLE(SVG)
+                if (isSVGText && pos > 0) {
+                    // Force creation of new InlineBoxes for each absolute positioned character (those that start new text chunks).
+                    if (static_cast<RenderSVGInlineText*>(t)->characterStartsNewTextChunk(pos)) {
+                        addMidpoint(lineMidpointState, InlineIterator(0, o, pos - 1));
+                        addMidpoint(lineMidpointState, InlineIterator(0, o, pos));
+                    }
+                }
+#endif
 
                 if (currentCharacterIsSpace && !previousCharacterIsSpace) {
                     ignoreStart.m_obj = o;
