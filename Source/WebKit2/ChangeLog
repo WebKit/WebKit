@@ -1,5 +1,11 @@
 2011-04-05  Alejandro G. Castro  <alex@igalia.com>
 
+        Another compilation fix after r82929 horrible patch merge.
+
+        * UIProcess/WebPageProxy.messages.in:
+
+2011-04-05  Alejandro G. Castro  <alex@igalia.com>
+
         Fix compilation error after r82929.
 
         * WebProcess/WebPage/WebPage.h:
