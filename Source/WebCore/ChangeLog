@@ -1,3 +1,19 @@
+2011-04-05  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Regression: Invalid write in SVGTextLayoutEngine
+        https://bugs.webkit.org/show_bug.cgi?id=57721
+
+        Properly stop layout if all metrics object refer to zero-width/height characters,
+        which can happen for instance when using <text font-size="0">.
+
+        Test: svg/text/font-size-null-assertion.svg
+
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::currentLogicalCharacterAttributes):
+        (WebCore::SVGTextLayoutEngine::currentLogicalCharacterMetrics):
+
 2011-04-04 MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.

@@ -344,6 +344,9 @@ void SVGTextLayoutEngine::finalizeTransformMatrices(Vector<SVGInlineTextBox*>& b
 
 bool SVGTextLayoutEngine::currentLogicalCharacterAttributes(SVGTextLayoutAttributes& logicalAttributes)
 {
+    if (m_layoutAttributes.isEmpty())
+        return false;
+
     logicalAttributes = m_layoutAttributes.first();
     if (m_logicalCharacterOffset != logicalAttributes.xValues().size())
         return true;
@@ -374,6 +377,8 @@ bool SVGTextLayoutEngine::currentLogicalCharacterMetrics(SVGTextLayoutAttributes
             continue;
         }
 
+        ASSERT(textMetricsSize);
+        ASSERT(m_logicalMetricsListOffset < textMetricsSize);
         logicalMetrics = textMetricsValues.at(m_logicalMetricsListOffset);
         if (logicalMetrics == SVGTextMetrics::emptyMetrics() || (!logicalMetrics.width() && !logicalMetrics.height())) {
             advanceToNextLogicalCharacter(logicalMetrics);
