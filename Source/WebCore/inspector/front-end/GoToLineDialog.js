@@ -118,9 +118,9 @@ WebInspector.GoToLineDialog.prototype = {
     _highlightSelectedLine: function()
     {
         var value = this._input.value;
-        var lineNumber = parseInt(value, 10);
-        if (!isNaN(lineNumber) && lineNumber > 0) {
-            lineNumber = Math.min(lineNumber, this._view.textModel.linesCount);
+        var lineNumber = parseInt(value, 10) - 1;
+        if (!isNaN(lineNumber) && lineNumber >= 0) {
+            lineNumber = Math.min(lineNumber, this._view.textModel.linesCount - 1);
             this._view.highlightLine(lineNumber);
         }
     }
