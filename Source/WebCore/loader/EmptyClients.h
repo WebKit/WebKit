@@ -407,11 +407,11 @@ public:
     virtual void checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*) { }
 
 #if USE(UNIFIED_TEXT_CHECKING)
-    virtual void checkTextOfParagraph(const UChar*, int, uint64_t, Vector<TextCheckingResult>&) { };
+    virtual void checkTextOfParagraph(const UChar*, int, TextCheckingTypeMask, Vector<TextCheckingResult>&) { };
 #endif
 
     virtual void getGuessesForWord(const String&, const String&, Vector<String>&) { }
-    virtual void requestCheckingOfString(SpellChecker*, int, const String&) { }
+    virtual void requestCheckingOfString(SpellChecker*, int, TextCheckingTypeMask, const String&) { }
 };
 
 class EmptyEditorClient : public EditorClient {

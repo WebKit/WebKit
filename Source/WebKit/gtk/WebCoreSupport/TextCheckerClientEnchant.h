@@ -49,7 +49,7 @@ class TextCheckerClientEnchant : public WebCore::TextCheckerClient {
         virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&);
         virtual void checkGrammarOfString(const UChar*, int length, WTF::Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength);
         virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses);
-        virtual void requestCheckingOfString(WebCore::SpellChecker*, int, const WTF::String&) {}
+        virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&) {}
 
         void updateSpellCheckingLanguage(const char*);
         static void freeSpellCheckingLanguage(gpointer, gpointer);

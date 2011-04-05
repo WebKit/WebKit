@@ -34,16 +34,31 @@
 #include "SpellChecker.h"
 #include "WebTextCheckingResult.h"
 #include "WebVector.h"
+#include <wtf/Assertions.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-static Vector<SpellCheckingResult> toCoreResults(const WebVector<WebTextCheckingResult>& results)
+static TextCheckingType toCoreCheckingType(WebTextCheckingResult::Error error)
 {
-    Vector<SpellCheckingResult> coreResults;
-    for (size_t i = 0; i < results.size(); ++i)
-        coreResults.append(SpellCheckingResult(static_cast<DocumentMarker::MarkerType>(results[i].error), results[i].position, results[i].length));
+    if (error == WebTextCheckingResult::ErrorSpelling)
+        return TextCheckingTypeSpelling;
+    ASSERT(error == WebTextCheckingResult::ErrorGrammar);
+    return TextCheckingTypeGrammar;
+}
+
+static Vector<TextCheckingResult> toCoreResults(const WebVector<WebTextCheckingResult>& results)
+{
+    Vector<TextCheckingResult> coreResults;
+    for (size_t i = 0; i < results.size(); ++i) { 
+        TextCheckingResult coreResult;
+        coreResult.type = toCoreCheckingType(results[i].error);
+        coreResult.location = results[i].position;
+        coreResult.length = results[i].length;
+        coreResults.append(coreResult);
+    }
+
     return coreResults;
 }
 

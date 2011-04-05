@@ -240,7 +240,7 @@ void WebEditorClient::toggleAutomaticSpellingCorrection()
     notImplemented();
 }
 
-void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, uint64_t checkingTypes, Vector<TextCheckingResult>& results)
+void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, WebCore::TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results)
 {
     // FIXME: It would be nice if we wouldn't have to copy the text here.
     m_page->sendSync(Messages::WebPageProxy::CheckTextOfParagraph(String(text, length), checkingTypes), Messages::WebPageProxy::CheckTextOfParagraph::Reply(results));

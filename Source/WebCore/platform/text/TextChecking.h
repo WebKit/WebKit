@@ -42,6 +42,18 @@ namespace WebCore {
 #define WTF_USE_AUTOMATIC_TEXT_REPLACEMENT 1
 #endif
 
+enum TextCheckingType {
+    TextCheckingTypeSpelling    = 1 << 1,
+    TextCheckingTypeGrammar     = 1 << 2,
+    TextCheckingTypeLink        = 1 << 5,
+    TextCheckingTypeQuote       = 1 << 6,
+    TextCheckingTypeDash        = 1 << 7,
+    TextCheckingTypeReplacement = 1 << 8,
+    TextCheckingTypeCorrection  = 1 << 9
+};
+
+typedef unsigned TextCheckingTypeMask;
+
 }
 
 #endif // TextChecking_h

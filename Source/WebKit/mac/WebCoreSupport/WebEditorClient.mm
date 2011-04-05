@@ -790,12 +790,11 @@ void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector
 #endif
 }
 
-void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, uint64_t checkingTypes, Vector<TextCheckingResult>& results)
-{
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-    NSString *textString = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO];
-    NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString range:NSMakeRange(0, [textString length]) types:(checkingTypes|NSTextCheckingTypeOrthography) options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:NULL wordCount:NULL];
-    [textString release];
+static Vector<TextCheckingResult> core(NSArray *incomingResults, TextCheckingTypeMask checkingTypes)
+{
+    Vector<TextCheckingResult> results;
+
     for (NSTextCheckingResult *incomingResult in incomingResults) {
         NSRange resultRange = [incomingResult range];
         NSTextCheckingType resultType = [incomingResult resultType];
@@ -867,6 +866,18 @@ void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, uint64
             results.append(result);
         }
     }
+
+    return results;
+}
+#endif
+
+void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results)
+{
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    NSString *textString = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO];
+    NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString range:NSMakeRange(0, [textString length]) types:(checkingTypes|NSTextCheckingTypeOrthography) options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:NULL wordCount:NULL];
+    [textString release];
+    results = core(incomingResults, checkingTypes);
 #endif
 }
 
@@ -965,58 +976,35 @@ void WebEditorClient::setInputMethodState(bool)
 {
     WebCore::SpellChecker* _sender;
     int _sequence;
+    TextCheckingTypeMask _types;
     RetainPtr<NSArray> _results;
 }
-- (id)initWithSender:(WebCore::SpellChecker*)sender sequence:(int)sequence results:(NSArray*)results;
+- (id)initWithSender:(WebCore::SpellChecker*)sender sequence:(int)sequence types:(WebCore::TextCheckingTypeMask)types results:(NSArray*)results;
 - (void)perform;
-- (WTF::Vector<WebCore::SpellCheckingResult>) _coreResults;
 @end
 
 @implementation WebEditorSpellCheckResponder
-- (id)initWithSender:(WebCore::SpellChecker*)sender sequence:(int)sequence results:(NSArray*)results
+- (id)initWithSender:(WebCore::SpellChecker*)sender sequence:(int)sequence types:(WebCore::TextCheckingTypeMask)types results:(NSArray*)results
 {
     self = [super init];
     if (!self)
         return nil;
     _sender = sender;
     _sequence = sequence;
+    _types = types;
     _results = results;
     return self;
 }
 
 - (void)perform
 {
-    _sender->didCheck(_sequence, [self _coreResults]);
-}
-
-static SpellCheckingResult toCoreSpellingResult(NSTextCheckingResult* result)
-{
-    NSTextCheckingType type = [result resultType];
-    NSRange range = [result range];
-    DocumentMarker::MarkerType coreType;
-    if (type & NSTextCheckingTypeSpelling)
-        coreType = DocumentMarker::Spelling;
-    else if (type & NSTextCheckingTypeGrammar)
-        coreType = DocumentMarker::Grammar;
-    else
-        coreType = DocumentMarker::AllMarkers;
-
-    return SpellCheckingResult(coreType, range.location, range.length);
-}
-
-- (WTF::Vector<WebCore::SpellCheckingResult>)_coreResults
-{
-    WTF::Vector<WebCore::SpellCheckingResult> coreResults;
-    coreResults.reserveCapacity([_results.get() count]);
-    for (NSTextCheckingResult* result in _results.get())
-        coreResults.append(toCoreSpellingResult(result));
-    return coreResults;
+    _sender->didCheck(_sequence, core(_results.get(), _types));
 }
 
 @end
 #endif
 
-void WebEditorClient::requestCheckingOfString(WebCore::SpellChecker* sender, int sequence, const String& text)
+void WebEditorClient::requestCheckingOfString(WebCore::SpellChecker* sender, int sequence, WebCore::TextCheckingTypeMask checkingTypes, const String& text)
 {
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
     NSRange range = NSMakeRange(0, text.length());
@@ -1024,7 +1012,7 @@ void WebEditorClient::requestCheckingOfString(WebCore::SpellChecker* sender, int
     [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:text range:range types:NSTextCheckingAllSystemTypes options:0 inSpellDocumentWithTag:0 
                                          completionHandler:^(NSInteger, NSArray* results, NSOrthography*, NSInteger) {
             [currentLoop performSelector:@selector(perform) 
-                                  target:[[[WebEditorSpellCheckResponder alloc] initWithSender:sender sequence:sequence results:results] autorelease]
+                                  target:[[[WebEditorSpellCheckResponder alloc] initWithSender:sender sequence:sequence types:checkingTypes results:results] autorelease]
                                 argument:nil order:0 modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
         }];
 #endif

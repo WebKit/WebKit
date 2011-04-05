@@ -223,6 +223,15 @@ public:
     void markMisspellings(const VisibleSelection&, RefPtr<Range>& firstMisspellingRange);
     void markBadGrammar(const VisibleSelection&);
     void markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection);
+
+    enum TextCheckingOptionFlags {
+        MarkSpelling = 1 << 0,
+        MarkGrammar = 1 << 1,
+        PerformReplacement = 1 << 2,
+        ShowCorrectionPanel = 1 << 3,
+    };
+    typedef unsigned TextCheckingOptions;
+
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
     void uppercaseWord();
     void lowercaseWord();
@@ -241,14 +250,6 @@ public:
     bool isAutomaticSpellingCorrectionEnabled();
     void toggleAutomaticSpellingCorrection();
 #endif
-
-    enum TextCheckingOptionFlags {
-        MarkSpelling = 1 << 0,
-        MarkGrammar = 1 << 1,
-        PerformReplacement = 1 << 2,
-        ShowCorrectionPanel = 1 << 3,
-    };
-    typedef unsigned TextCheckingOptions;
 
     void markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions, Range* spellingRange, Range* grammarRange);
     void changeBackToReplacedString(const String& replacedString);
@@ -414,6 +415,7 @@ private:
     void writeSelectionToPasteboard(Pasteboard*);
     void revealSelectionAfterEditingOperation();
     void markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling, RefPtr<Range>& firstMisspellingRange);
+    TextCheckingTypeMask textCheckingTypeMaskFor(TextCheckingOptions);
 
     void selectComposition();
     void confirmComposition(const String&, bool preserveSelection);

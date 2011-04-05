@@ -111,7 +111,7 @@ class EditorClientHaiku : public EditorClient, public TextCheckerClient {
         virtual void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses);
         virtual void willSetInputMethodState();
         virtual void setInputMethodState(bool enabled);
-        virtual void requestCheckingOfString(SpellChecker*, int, const String&) {}
+        virtual void requestCheckingOfString(SpellChecker*, int, WebCore::TextCheckingTypeMask, const String&) {}
         virtual TextCheckerClient* textChecker() { return this; }
 
         bool isEditing() const;

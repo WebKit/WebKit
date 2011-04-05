@@ -1,3 +1,13 @@
+2011-04-04  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        [Refactoring] SpellCheckingResult should be replaced with TextCheckingResult
+        https://bugs.webkit.org/show_bug.cgi?id=56085
+
+        * WebKitSupport/EditorClientWx.h:
+        (WebCore::EditorClientWx::requestCheckingOfString):
+
 2011-04-04  Malcolm MacLeod  <mmacleod@webmail.co.za>
 
         Reviewed by Kevin Ollivier.

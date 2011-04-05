@@ -27,6 +27,7 @@
 #define SpellChecker_h
 
 #include "DocumentMarker.h"
+#include "TextCheckerClient.h"
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -34,25 +35,6 @@ namespace WebCore {
 class TextCheckerClient;
 class Frame;
 class Node;
-
-class SpellCheckingResult {
-public:
-    explicit SpellCheckingResult(DocumentMarker::MarkerType type = DocumentMarker::Spelling, int location = 0, int length = 0)
-        : m_type(type)
-        , m_location(location)
-        , m_length(length)
-    {
-    }
-
-    DocumentMarker::MarkerType type() const { return m_type; } 
-    int location() const { return m_location; }
-    int length() const { return m_length; }
-
-private:
-    DocumentMarker::MarkerType m_type;
-    int m_location;
-    int m_length;
-};
 
 class SpellChecker {
     WTF_MAKE_NONCOPYABLE(SpellChecker);
@@ -65,8 +47,8 @@ public:
     bool isBusy() const;
     bool isValid(int sequence) const;
     bool isCheckable(Node*) const;
-    void requestCheckingFor(Node*);
-    void didCheck(int sequence, const Vector<SpellCheckingResult>&);
+    void requestCheckingFor(TextCheckingTypeMask, Node*);
+    void didCheck(int sequence, const Vector<TextCheckingResult>&);
 
 private:
     bool initRequest(Node*);

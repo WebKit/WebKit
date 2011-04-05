@@ -130,7 +130,7 @@ public:
     virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);
     virtual WTF::String getAutoCorrectSuggestionForMisspelledWord(const WTF::String&);
     virtual void checkGrammarOfString(const UChar*, int length, WTF::Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength);
-    virtual void checkTextOfParagraph(const UChar* text, int length, uint64_t checkingTypes, WTF::Vector<WebCore::TextCheckingResult>& results);
+    virtual void checkTextOfParagraph(const UChar* text, int length, WebCore::TextCheckingTypeMask checkingTypes, WTF::Vector<WebCore::TextCheckingResult>& results);
     virtual void updateSpellingUIWithGrammarString(const WTF::String&, const WebCore::GrammarDetail&);
     virtual void updateSpellingUIWithMisspelledWord(const WTF::String&);
     virtual void showSpellingUI(bool show);
@@ -138,7 +138,7 @@ public:
     virtual void getGuessesForWord(const WTF::String& word, const WTF::String& context, WTF::Vector<WTF::String>& guesses);
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
-    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, const WTF::String&);
+    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&);
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel);

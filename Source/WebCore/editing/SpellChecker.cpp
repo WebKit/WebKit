@@ -100,13 +100,13 @@ bool SpellChecker::isCheckable(Node* node) const
     return node && node->renderer();
 }
 
-void SpellChecker::requestCheckingFor(Node* node)
+void SpellChecker::requestCheckingFor(TextCheckingTypeMask mask, Node* node)
 {
     ASSERT(canCheckAsynchronously(node));
 
     if (!initRequest(node))
         return;
-    m_client->requestCheckingOfString(this, m_requestSequence, m_requestText);
+    m_client->requestCheckingOfString(this, m_requestSequence, mask, m_requestText);
 }
 
 static bool forwardIterator(PositionIterator& iterator, int distance)
@@ -131,7 +131,16 @@ static bool forwardIterator(PositionIterator& iterator, int distance)
     return false;    
 }
 
-void SpellChecker::didCheck(int sequence, const Vector<SpellCheckingResult>& results)
+static DocumentMarker::MarkerType toMarkerType(TextCheckingType type)
+{
+    if (type == TextCheckingTypeSpelling)
+        return DocumentMarker::Spelling;
+    ASSERT(type == TextCheckingTypeGrammar);
+    return DocumentMarker::Grammar;
+}
+
+// Currenntly ignoring TextCheckingResult::details but should be handled. See Bug 56368.
+void SpellChecker::didCheck(int sequence, const Vector<TextCheckingResult>& results)
 {
     if (!isValid(sequence))
         return;
@@ -144,16 +153,16 @@ void SpellChecker::didCheck(int sequence, const Vector<SpellCheckingResult>& res
     int startOffset = 0;
     PositionIterator start = firstPositionInOrBeforeNode(m_requestNode.get());
     for (size_t i = 0; i < results.size(); ++i) {
-        if (results[i].type() != DocumentMarker::Spelling && results[i].type() != DocumentMarker::Grammar)
+        if (results[i].type != TextCheckingTypeSpelling && results[i].type != TextCheckingTypeGrammar)
             continue;
 
         // To avoid moving the position backward, we assume the given results are sorted with
         // startOffset as the ones returned by [NSSpellChecker requestCheckingOfString:].
-        ASSERT(startOffset <= results[i].location());
-        if (!forwardIterator(start, results[i].location() - startOffset))
+        ASSERT(startOffset <= results[i].location);
+        if (!forwardIterator(start, results[i].location - startOffset))
             break;
         PositionIterator end = start;
-        if (!forwardIterator(end, results[i].length()))
+        if (!forwardIterator(end, results[i].length))
             break;
 
         // Users or JavaScript applications may change text while a spell-checker checks its
@@ -163,11 +172,11 @@ void SpellChecker::didCheck(int sequence, const Vector<SpellCheckingResult>& res
         RefPtr<Range> range = Range::create(m_requestNode->document(), start, end);
         // FIXME: Use textContent() compatible string conversion.
         String destination = range->text();
-        String source = m_requestText.substring(results[i].location(), results[i].length());
+        String source = m_requestText.substring(results[i].location, results[i].length);
         if (destination == source)
-            m_requestNode->document()->markers()->addMarker(range.get(), results[i].type());
+            m_requestNode->document()->markers()->addMarker(range.get(), toMarkerType(results[i].type));
 
-        startOffset = results[i].location();
+        startOffset = results[i].location;
     }
 
     clearRequest();

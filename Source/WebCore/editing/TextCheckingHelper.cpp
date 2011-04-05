@@ -274,7 +274,7 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
                 unsigned grammarDetailIndex = 0;
                 
                 Vector<TextCheckingResult> results;
-                uint64_t checkingTypes = checkGrammar ? (TextCheckingTypeSpelling | TextCheckingTypeGrammar) : TextCheckingTypeSpelling;
+                TextCheckingTypeMask checkingTypes = checkGrammar ? (TextCheckingTypeSpelling | TextCheckingTypeGrammar) : TextCheckingTypeSpelling;
                 m_client->textChecker()->checkTextOfParagraph(paragraphString.characters(), paragraphString.length(), checkingTypes, results);
                 
                 for (unsigned i = 0; i < results.size(); i++) {
@@ -524,7 +524,7 @@ Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool
         return guesses;
 
     Vector<TextCheckingResult> results;
-    uint64_t checkingTypes = checkGrammar ? (TextCheckingTypeSpelling | TextCheckingTypeGrammar) : TextCheckingTypeSpelling;
+    TextCheckingTypeMask checkingTypes = checkGrammar ? (TextCheckingTypeSpelling | TextCheckingTypeGrammar) : TextCheckingTypeSpelling;
     m_client->textChecker()->checkTextOfParagraph(paragraph.textCharacters(), paragraph.textLength(), checkingTypes, results);
     
     for (unsigned i = 0; i < results.size(); i++) {

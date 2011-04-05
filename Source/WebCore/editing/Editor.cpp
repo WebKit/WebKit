@@ -64,7 +64,6 @@
 #include "NodeList.h"
 #include "Page.h"
 #include "Pasteboard.h"
-#include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
 #include "RemoveFormatCommand.h"
 #include "RenderBlock.h"
@@ -440,7 +439,7 @@ void Editor::replaceSelectionWithFragment(PassRefPtr<DocumentFragment> fragment,
 
     Node* nodeToCheck = m_frame->selection()->rootEditableElement();
     if (m_spellChecker->canCheckAsynchronously(nodeToCheck))
-        m_spellChecker->requestCheckingFor(nodeToCheck);
+        m_spellChecker->requestCheckingFor(textCheckingTypeMaskFor(MarkSpelling | MarkGrammar), nodeToCheck);
 }
 
 void Editor::replaceSelectionWithText(const String& text, bool selectReplacement, bool smartReplace)
@@ -2257,31 +2256,12 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
     }
 
     Vector<TextCheckingResult> results;
-    uint64_t checkingTypes = 0;
-    if (shouldMarkSpelling)
-        checkingTypes |= TextCheckingTypeSpelling;
     if (shouldMarkGrammar)
-        checkingTypes |= TextCheckingTypeGrammar;
-    if (shouldShowCorrectionPanel)
-        checkingTypes |= TextCheckingTypeCorrection;
-    if (shouldPerformReplacement) {
-#if USE(AUTOMATIC_TEXT_REPLACEMENT)
-        if (isAutomaticLinkDetectionEnabled())
-            checkingTypes |= TextCheckingTypeLink;
-        if (isAutomaticQuoteSubstitutionEnabled())
-            checkingTypes |= TextCheckingTypeQuote;
-        if (isAutomaticDashSubstitutionEnabled())
-            checkingTypes |= TextCheckingTypeDash;
-        if (isAutomaticTextReplacementEnabled())
-            checkingTypes |= TextCheckingTypeReplacement;
-        if (shouldMarkSpelling && isAutomaticSpellingCorrectionEnabled())
-            checkingTypes |= TextCheckingTypeCorrection;
-#endif
-    }
-    if (shouldMarkGrammar)
-        textChecker()->checkTextOfParagraph(grammarParagraph.textCharacters(), grammarParagraph.textLength(), checkingTypes, results);
+        textChecker()->checkTextOfParagraph(grammarParagraph.textCharacters(), grammarParagraph.textLength(), 
+                                            textCheckingTypeMaskFor(textCheckingOptions), results);
     else
-        textChecker()->checkTextOfParagraph(spellingParagraph.textCharacters(), spellingParagraph.textLength(), checkingTypes, results);
+        textChecker()->checkTextOfParagraph(spellingParagraph.textCharacters(), spellingParagraph.textLength(), 
+                                            textCheckingTypeMaskFor(textCheckingOptions), results);
         
 
 #if SUPPORT_AUTOCORRECTION_PANEL
@@ -3603,5 +3583,38 @@ FloatRect Editor::windowRectForRange(const Range* range) const
         boundingRect.unite(textQuads[i].boundingBox());
     return view->contentsToWindow(IntRect(boundingRect));
 }        
+
+TextCheckingTypeMask Editor::textCheckingTypeMaskFor(TextCheckingOptions textCheckingOptions)
+{
+    bool shouldMarkSpelling = textCheckingOptions & MarkSpelling;
+    bool shouldMarkGrammar = textCheckingOptions & MarkGrammar;
+    bool shouldShowCorrectionPanel = textCheckingOptions & ShowCorrectionPanel;
+
+    TextCheckingTypeMask checkingTypes = 0;
+    if (shouldMarkSpelling)
+        checkingTypes |= TextCheckingTypeSpelling;
+    if (shouldMarkGrammar)
+        checkingTypes |= TextCheckingTypeGrammar;
+    if (shouldShowCorrectionPanel)
+        checkingTypes |= TextCheckingTypeCorrection;
+
+#if USE(AUTOMATIC_TEXT_REPLACEMENT)
+    bool shouldPerformReplacement = textCheckingOptions & PerformReplacement;
+    if (shouldPerformReplacement) {
+        if (isAutomaticLinkDetectionEnabled())
+            checkingTypes |= TextCheckingTypeLink;
+        if (isAutomaticQuoteSubstitutionEnabled())
+            checkingTypes |= TextCheckingTypeQuote;
+        if (isAutomaticDashSubstitutionEnabled())
+            checkingTypes |= TextCheckingTypeDash;
+        if (isAutomaticTextReplacementEnabled())
+            checkingTypes |= TextCheckingTypeReplacement;
+        if (shouldMarkSpelling && isAutomaticSpellingCorrectionEnabled())
+            checkingTypes |= TextCheckingTypeCorrection;
+    }
+#endif
+
+    return checkingTypes;
+}
 
 } // namespace WebCore

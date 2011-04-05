@@ -1,3 +1,16 @@
+2011-04-04  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        [Refactoring] SpellCheckingResult should be replaced with TextCheckingResult
+        https://bugs.webkit.org/show_bug.cgi?id=56085
+
+        Followed the signature change.
+        
+        * src/EditorClientImpl.h:
+        * src/EditorClientImpl.cpp:
+        * src/WebTextCheckingCompletionImpl.cpp
+
 2011-04-05  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Adam Barth

@@ -110,7 +110,7 @@ public:
 
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool);
-    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, const WTF::String&) {}
+    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&) {}
     virtual WebCore::TextCheckerClient* textChecker() { return this; }
 
 private:

@@ -136,7 +136,7 @@ private:
     virtual String getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord);
     virtual void checkGrammarOfString(const UChar*, int length, Vector<WebCore::GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength);
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-    virtual void checkTextOfParagraph(const UChar* text, int length, uint64_t checkingTypes, Vector<WebCore::TextCheckingResult>& results);
+    virtual void checkTextOfParagraph(const UChar* text, int length, WebCore::TextCheckingTypeMask checkingTypes, Vector<WebCore::TextCheckingResult>& results);
 #endif
     virtual void updateSpellingUIWithGrammarString(const String&, const WebCore::GrammarDetail& detail);
     virtual void updateSpellingUIWithMisspelledWord(const String&);
@@ -145,7 +145,7 @@ private:
     virtual void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses);
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
-    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, const WTF::String&);
+    virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&);
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
     virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel);
