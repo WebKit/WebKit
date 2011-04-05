@@ -1,3 +1,23 @@
+2011-04-05  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, remove unnecessary checksum files for fast/ruby tests.
+
+        * platform/chromium-linux/fast/blockflow/english-lr-text-expected.checksum: Removed.
+        * platform/chromium-linux/fast/ruby/ruby-beforeafter-expected.checksum: Removed.
+        * platform/chromium-linux/fast/ruby/ruby-length-expected.checksum: Removed.
+        * platform/chromium-linux/fast/ruby/ruby-run-break-expected.checksum: Removed.
+        * platform/chromium-linux/fast/ruby/ruby-runs-expected.checksum: Removed.
+        * platform/chromium-linux/fast/ruby/ruby-runs-spans-expected.checksum: Removed.
+        * platform/chromium-linux/fast/ruby/ruby-trailing-expected.checksum: Removed.
+        * platform/chromium-linux/fast/ruby/rubyDOM-insert-rt-expected.checksum: Removed.
+        * platform/chromium-linux/fast/ruby/rubyDOM-insert-text1-expected.checksum: Removed.
+        * platform/chromium-linux/fast/ruby/rubyDOM-insert-text2-expected.checksum: Removed.
+        * platform/chromium-linux/fast/ruby/rubyDOM-insert-text3-expected.checksum: Removed.
+        * platform/chromium-linux/fast/ruby/rubyDOM-remove-rt1-expected.checksum: Removed.
+        * platform/chromium-linux/fast/ruby/rubyDOM-remove-rt2-expected.checksum: Removed.
+        * platform/chromium-linux/fast/ruby/rubyDOM-remove-text1-expected.checksum: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-05  Csaba Osztrogonác  <ossy@webkit.org>
 
        [Qt] fast/ruby/overhang* tests fail
