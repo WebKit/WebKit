@@ -1,3 +1,28 @@
+2011-04-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Invalidate callbacks if the WebPageProxy is no longer valid
+        https://bugs.webkit.org/show_bug.cgi?id=57873
+        <rdar://problem/9059717>
+
+        Audit all function calls that take callbacks and make sure to invalidate the callbacks
+        if the web page is no longer valid.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptInMainFrame):
+        (WebKit::WebPageProxy::getRenderTreeExternalRepresentation):
+        (WebKit::WebPageProxy::getSourceForFrame):
+        (WebKit::WebPageProxy::getContentsAsString):
+        (WebKit::WebPageProxy::getSelectionOrContentsAsString):
+        (WebKit::WebPageProxy::getMainResourceDataOfFrame):
+        (WebKit::WebPageProxy::getResourceDataFromFrame):
+        (WebKit::WebPageProxy::getWebArchiveOfFrame):
+        (WebKit::WebPageProxy::forceRepaint):
+        (WebKit::WebPageProxy::computePagesForPrinting):
+        (WebKit::WebPageProxy::drawRectToPDF):
+        (WebKit::WebPageProxy::drawPagesToPDF):
+
 2011-04-05  Adam Roben  <aroben@apple.com>
 
         Disable accelerated compositing on Windows machines that don't support it

@@ -1108,6 +1108,11 @@ void WebPageProxy::countStringMatches(const String& string, FindOptions options,
 void WebPageProxy::runJavaScriptInMainFrame(const String& script, PassRefPtr<ScriptValueCallback> prpCallback)
 {
     RefPtr<ScriptValueCallback> callback = prpCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+
     uint64_t callbackID = callback->callbackID();
     m_scriptValueCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::RunJavaScriptInMainFrame(script, callbackID), m_pageID);
@@ -1116,6 +1121,11 @@ void WebPageProxy::runJavaScriptInMainFrame(const String& script, PassRefPtr<Scr
 void WebPageProxy::getRenderTreeExternalRepresentation(PassRefPtr<StringCallback> prpCallback)
 {
     RefPtr<StringCallback> callback = prpCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+    
     uint64_t callbackID = callback->callbackID();
     m_stringCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::GetRenderTreeExternalRepresentation(callbackID), m_pageID);
@@ -1124,6 +1134,11 @@ void WebPageProxy::getRenderTreeExternalRepresentation(PassRefPtr<StringCallback
 void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, PassRefPtr<StringCallback> prpCallback)
 {
     RefPtr<StringCallback> callback = prpCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+    
     uint64_t callbackID = callback->callbackID();
     m_loadDependentStringCallbackIDs.add(callbackID);
     m_stringCallbacks.set(callbackID, callback.get());
@@ -1133,6 +1148,11 @@ void WebPageProxy::getSourceForFrame(WebFrameProxy* frame, PassRefPtr<StringCall
 void WebPageProxy::getContentsAsString(PassRefPtr<StringCallback> prpCallback)
 {
     RefPtr<StringCallback> callback = prpCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+    
     uint64_t callbackID = callback->callbackID();
     m_loadDependentStringCallbackIDs.add(callbackID);
     m_stringCallbacks.set(callbackID, callback.get());
@@ -1142,6 +1162,11 @@ void WebPageProxy::getContentsAsString(PassRefPtr<StringCallback> prpCallback)
 void WebPageProxy::getSelectionOrContentsAsString(PassRefPtr<StringCallback> prpCallback)
 {
     RefPtr<StringCallback> callback = prpCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+    
     uint64_t callbackID = callback->callbackID();
     m_stringCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::GetSelectionOrContentsAsString(callbackID), m_pageID);
@@ -1150,6 +1175,11 @@ void WebPageProxy::getSelectionOrContentsAsString(PassRefPtr<StringCallback> prp
 void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, PassRefPtr<DataCallback> prpCallback)
 {
     RefPtr<DataCallback> callback = prpCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+    
     uint64_t callbackID = callback->callbackID();
     m_dataCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::GetMainResourceDataOfFrame(frame->frameID(), callbackID), m_pageID);
@@ -1158,6 +1188,11 @@ void WebPageProxy::getMainResourceDataOfFrame(WebFrameProxy* frame, PassRefPtr<D
 void WebPageProxy::getResourceDataFromFrame(WebFrameProxy* frame, WebURL* resourceURL, PassRefPtr<DataCallback> prpCallback)
 {
     RefPtr<DataCallback> callback = prpCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+    
     uint64_t callbackID = callback->callbackID();
     m_dataCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::GetResourceDataFromFrame(frame->frameID(), resourceURL->string(), callbackID), m_pageID);
@@ -1166,6 +1201,11 @@ void WebPageProxy::getResourceDataFromFrame(WebFrameProxy* frame, WebURL* resour
 void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, PassRefPtr<DataCallback> prpCallback)
 {
     RefPtr<DataCallback> callback = prpCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+    
     uint64_t callbackID = callback->callbackID();
     m_dataCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::GetWebArchiveOfFrame(frame->frameID(), callbackID), m_pageID);
@@ -1174,7 +1214,6 @@ void WebPageProxy::getWebArchiveOfFrame(WebFrameProxy* frame, PassRefPtr<DataCal
 void WebPageProxy::forceRepaint(PassRefPtr<VoidCallback> prpCallback)
 {
     RefPtr<VoidCallback> callback = prpCallback;
-
     if (!isValid()) {
         callback->invalidate();
         return;
@@ -2776,8 +2815,14 @@ void WebPageProxy::endPrinting()
     process()->send(Messages::WebPage::EndPrinting(), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 
-void WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, PassRefPtr<ComputedPagesCallback> callback)
+void WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo& printInfo, PassRefPtr<ComputedPagesCallback> prpCallback)
 {
+    RefPtr<ComputedPagesCallback> callback = prpCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+
     uint64_t callbackID = callback->callbackID();
     m_computedPagesCallbacks.set(callbackID, callback.get());
     m_isInPrintingMode = true;
@@ -2785,15 +2830,27 @@ void WebPageProxy::computePagesForPrinting(WebFrameProxy* frame, const PrintInfo
 }
 
 #if PLATFORM(MAC) || PLATFORM(WIN)
-void WebPageProxy::drawRectToPDF(WebFrameProxy* frame, const IntRect& rect, PassRefPtr<DataCallback> callback)
+void WebPageProxy::drawRectToPDF(WebFrameProxy* frame, const IntRect& rect, PassRefPtr<DataCallback> prpCallback)
 {
+    RefPtr<DataCallback> callback = prpCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+    
     uint64_t callbackID = callback->callbackID();
     m_dataCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::DrawRectToPDF(frame->frameID(), rect, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
 }
 
-void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, uint32_t first, uint32_t count, PassRefPtr<DataCallback> callback)
+void WebPageProxy::drawPagesToPDF(WebFrameProxy* frame, uint32_t first, uint32_t count, PassRefPtr<DataCallback> prpCallback)
 {
+    RefPtr<DataCallback> callback = prpCallback;
+    if (!isValid()) {
+        callback->invalidate();
+        return;
+    }
+    
     uint64_t callbackID = callback->callbackID();
     m_dataCallbacks.set(callbackID, callback.get());
     process()->send(Messages::WebPage::DrawPagesToPDF(frame->frameID(), first, count, callbackID), m_pageID, m_isPerformingDOMPrintOperation ? CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply : 0);
