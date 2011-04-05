@@ -1,5 +1,11 @@
 2011-04-05  Adrienne Walker  <enne@google.com>
 
+       Unreviewed, mark unexpectedly passing Linux Chromium tests as such.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-05  Adrienne Walker  <enne@google.com>
+
        Unreviewed, mark some unexpectedly passing Chromium tests as such.
 
         * platform/chromium/test_expectations.txt:

@@ -2473,22 +2473,12 @@ BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
 BUGCR65877 LINUX WIN : fast/blockflow/border-vertical-lr.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/japanese-lr-selection.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/japanese-rl-selection.html = IMAGE+TEXT
-BUGCR65877 LINUX RELEASE : fast/blockflow/japanese-lr-text.html = IMAGE
-BUGCR65877 LINUX : fast/blockflow/japanese-rl-text.html = IMAGE
-BUGCR65877 LINUX RELEASE : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
 BUGCR65877 WIN : fast/blockflow/broken-ideographic-font.html = IMAGE
 BUGCR65877 LINUX : fast/blockflow/broken-ideographic-font.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
 BUGCR65877 LINUX WIN : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
 BUGCR65877 WIN : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
-BUGCR65877 LINUX : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
-BUGCR65877 LINUX RELEASE : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-BUGCR65877 LINUX RELEASE : fast/blockflow/vertical-align-table-baseline.html = IMAGE
-BUGCR65877 LINUX : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUGCR65877 LINUX : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-BUGCR65877 LINUX RELEASE : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
-BUGCR65877 LINUX : fast/ruby/base-shorter-than-text.html = FAIL
 BUGWK53451 LINUX : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
 
 // New test, introduced by http://trac.webkit.org/changeset/70813 with only platform/mac baselines.
