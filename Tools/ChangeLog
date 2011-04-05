@@ -1,3 +1,12 @@
+2011-04-05  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch should print git's stderr when git svn dcommit fail
+        http://webkit.org/b/57861
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
 2011-04-05  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.

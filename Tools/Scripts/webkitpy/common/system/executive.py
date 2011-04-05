@@ -81,6 +81,11 @@ class ScriptError(Exception):
         self.output = output
         self.cwd = cwd
 
+    def __str__(self):
+        if self.output:
+            return self.message + "\n" + self.output
+        return self.message
+
     def message_with_output(self, output_limit=500):
         if self.output:
             if output_limit and len(self.output) > output_limit:
