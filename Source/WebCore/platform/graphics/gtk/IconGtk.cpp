@@ -33,9 +33,9 @@
 #include "GraphicsContext.h"
 #include "MIMETypeRegistry.h"
 #include "PassRefPtr.h"
-#include <wtf/text/CString.h>
-
+#include "PlatformContextCairo.h"
 #include <gtk/gtk.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -117,7 +117,7 @@ void Icon::paint(GraphicsContext* context, const IntRect& rect)
         return;
 
     // TODO: Scale/clip the image if necessary.
-    cairo_t* cr = context->platformContext();
+    cairo_t* cr = context->platformContext()->cr();
     cairo_save(cr);
     gdk_cairo_set_source_pixbuf(cr, m_icon, rect.x(), rect.y());
     cairo_paint(cr);

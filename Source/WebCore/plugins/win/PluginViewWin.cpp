@@ -83,6 +83,7 @@
 #endif
 
 #if PLATFORM(CAIRO)
+#include "PlatformContextCairo.h"
 #include <cairo-win32.h>
 #endif
 
@@ -572,8 +573,7 @@ void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const 
     // Must flush drawings up to this point to the backing metafile, otherwise the
     // plugin region will be overwritten with any clear regions specified in the
     // cairo-controlled portions of the rendering.
-    PlatformGraphicsContext* ctx = context->platformContext();
-    cairo_show_page(ctx);
+    cairo_show_page(context->platformContext()->cr());
 #endif
 
     HDC hdc = windowsContext.hdc();

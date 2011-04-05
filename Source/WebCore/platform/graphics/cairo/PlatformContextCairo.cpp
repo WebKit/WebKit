@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,28 +20,19 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ImageBufferData_h
-#define ImageBufferData_h
-
+#include "config.h"
 #include "PlatformContextCairo.h"
 
-typedef struct _cairo_surface cairo_surface_t;
+#include <cairo.h>
 
 namespace WebCore {
 
-class IntSize;
+PlatformContextCairo::PlatformContextCairo(cairo_t* cr)
+    : m_cr(cr)
+{
+}
 
-class ImageBufferData {
-public:
-    ImageBufferData(const IntSize&);
-
-    cairo_surface_t* m_surface;
-    PlatformContextCairo m_platformContext;
-};
-
-}  // namespace WebCore
-
-#endif  // ImageBufferData_h
+} // namespace WebCore

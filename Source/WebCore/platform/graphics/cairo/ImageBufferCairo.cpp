@@ -37,7 +37,9 @@
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "Pattern.h"
+#include "PlatformContextCairo.h"
 #include "PlatformString.h"
+#include "RefPtrCairo.h"
 #include <cairo.h>
 #include <wtf/Vector.h>
 
@@ -66,6 +68,7 @@ namespace WebCore {
 
 ImageBufferData::ImageBufferData(const IntSize& size)
     : m_surface(0)
+    , m_platformContext(0)
 {
 }
 
@@ -80,9 +83,9 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode, bool& s
     if (cairo_surface_status(m_data.m_surface) != CAIRO_STATUS_SUCCESS)
         return;  // create will notice we didn't set m_initialized and fail.
 
-    cairo_t* cr = cairo_create(m_data.m_surface);
-    m_context.set(new GraphicsContext(cr));
-    cairo_destroy(cr);  // The context is now owned by the GraphicsContext.
+    RefPtr<cairo_t> cr = adoptRef(cairo_create(m_data.m_surface));
+    m_data.m_platformContext.setCr(cr.get());
+    m_context.set(new GraphicsContext(&m_data.m_platformContext));
     success = true;
 }
 
@@ -301,7 +304,7 @@ static cairo_status_t writeFunction(void* closure, const unsigned char* data, un
 
 String ImageBuffer::toDataURL(const String& mimeType, const double*) const
 {
-    cairo_surface_t* image = cairo_get_target(context()->platformContext());
+    cairo_surface_t* image = cairo_get_target(context()->platformContext()->cr());
     if (!image)
         return "data:,";
 

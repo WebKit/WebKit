@@ -1,3 +1,41 @@
+2011-04-05  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Cairo] Better separate the concerns of GraphicsContextCairo
+        https://bugs.webkit.org/show_bug.cgi?id=55150
+
+        Add a PlatformContextCairo which right now stores the cairo_t* for a
+        GraphicsContextCairo. Later patches will move logic for tracking ContextShadow
+        and image masking layers into this PlatformContextCairo class.
+
+        No new tests. This patch is only a code cleanup.
+
+        * GNUmakefile.am:
+        * platform/graphics/GraphicsContext.h: The platform context is no longer a
+        cairo_t, but our new class the PlatformContextCairo.
+        * platform/graphics/cairo/ContextShadowCairo.cpp: Updated to reflect new class.j
+        * platform/graphics/cairo/FontCairo.cpp: Ditto.
+        * platform/graphics/cairo/GradientCairo.cpp: Ditto.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp: Mostly mechanical
+        changes which now reference platformContext()->cr() to get the cairo_t.
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h: Now hold the
+        PlatformContextCairo instead of the cairo_t.
+        * platform/graphics/cairo/ImageBufferCairo.cpp: Update to reflect new class.
+        * platform/graphics/cairo/ImageCairo.cpp: Ditto.
+        * platform/graphics/cairo/PathCairo.cpp: Ditto.
+        * platform/graphics/cairo/PlatformContextCairo.cpp: Added.
+        * platform/graphics/cairo/PlatformContextCairo.h: Added.
+        * platform/graphics/gtk/FontGtk.cpp: Update to reflect new class.
+        * platform/graphics/gtk/IconGtk.cpp: Ditto.
+        * platform/graphics/win/GraphicsContextCairoWin.cpp: Now fill out
+        m_data with a private section containing the platform context instead of
+        just a cairo_t.
+        * platform/gtk/RenderThemeGtk.cpp: Update to reflect new class.
+        * platform/gtk/WidgetRenderingContext.cpp: Ditto.
+        (WebCore::WidgetRenderingContext::~WidgetRenderingContext): Ditto.
+        * plugins/gtk/PluginViewGtk.cpp: Ditto.
+
 2011-04-05  David Dorwin  <ddorwin@chromium.org>
 
         Reviewed by David Levin.

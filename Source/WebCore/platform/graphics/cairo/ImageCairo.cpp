@@ -36,6 +36,7 @@
 #include "ContextShadow.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
+#include "PlatformContextCairo.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "RefPtrCairo.h"
@@ -114,7 +115,7 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
 
     IntSize selfSize = size();
 
-    cairo_t* cr = context->platformContext();
+    cairo_t* cr = context->platformContext()->cr();
     context->save();
 
     // Set the compositing operation.
@@ -169,8 +170,7 @@ void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, con
     if (!image) // If it's too early we won't have an image yet.
         return;
 
-    cairo_t* cr = context->platformContext();
-
+    cairo_t* cr = context->platformContext()->cr();
     drawPatternToCairoContext(cr, image, size(), tileRect, patternTransform, phase, toCairoOperator(op), destRect);
 
     if (imageObserver())

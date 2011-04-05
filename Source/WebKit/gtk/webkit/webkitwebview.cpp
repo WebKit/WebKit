@@ -669,8 +669,8 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
         frame->view()->updateLayoutAndStyleIfNeededRecursive();
 
         RefPtr<cairo_t> cr = adoptRef(gdk_cairo_create(event->window));
-        GraphicsContext ctx(cr.get());
-        ctx.setGdkExposeEvent(event);
+        GraphicsContext gc(cr.get());
+        gc.setGdkExposeEvent(event);
 
         int rectCount;
         GOwnPtr<GdkRectangle> rects;
@@ -679,7 +679,7 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
         for (int i = 0; i < rectCount; i++)
             paintRects.append(IntRect(rects.get()[i]));
 
-        paintWebView(frame, priv->transparent, ctx, static_cast<IntRect>(event->area), paintRects);
+        paintWebView(frame, priv->transparent, gc, static_cast<IntRect>(event->area), paintRects);
     }
 
     return FALSE;
@@ -696,7 +696,7 @@ static gboolean webkit_web_view_draw(GtkWidget* widget, cairo_t* cr)
 
     Frame* frame = core(webView)->mainFrame();
     if (frame->contentRenderer() && frame->view()) {
-        GraphicsContext ctx(cr);
+        GraphicsContext gc(cr);
         IntRect rect = clipRect;
         cairo_rectangle_list_t* rectList = cairo_copy_clip_rectangle_list(cr);
 
@@ -707,7 +707,7 @@ static gboolean webkit_web_view_draw(GtkWidget* widget, cairo_t* cr)
             for (int i = 0; i < rectList->num_rectangles; i++)
                 rects.append(enclosingIntRect(FloatRect(rectList->rectangles[i])));
         }
-        paintWebView(frame, priv->transparent, ctx, rect, rects);
+        paintWebView(frame, priv->transparent, gc, rect, rects);
 
         cairo_rectangle_list_destroy(rectList);
     }

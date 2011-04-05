@@ -1,3 +1,17 @@
+2011-04-05  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Cairo] Better separate the concerns of GraphicsContextCairo
+        https://bugs.webkit.org/show_bug.cgi?id=55150
+
+        * WebFrame.cpp:
+        (hdcFromContext): Modify this method to take PlatformContextCairo
+        instead of a cairo_t.
+        (WebFrame::spoolPage): Update to reflect new platform context.
+        (WebFrame::spoolPages): Ditto.
+        * WebFrame.h: Ditto.
+
 2011-04-04  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.

@@ -29,6 +29,7 @@
 
 #include "CSSParser.h"
 #include "GraphicsContext.h"
+#include "PlatformContextCairo.h"
 #include <cairo.h>
 
 namespace WebCore {
@@ -87,7 +88,7 @@ void Gradient::setPlatformGradientSpaceTransform(const AffineTransform& gradient
 
 void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
 {
-    cairo_t* cr = context->platformContext();
+    cairo_t* cr = context->platformContext()->cr();
 
     context->save();
     cairo_set_source(cr, platformGradient());
