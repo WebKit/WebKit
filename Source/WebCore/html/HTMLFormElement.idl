@@ -43,9 +43,6 @@ module html {
 #endif
         void reset();
         boolean checkValidity();
-
-        void dispatchFormInput();
-        void dispatchFormChange();
     };
 
 }

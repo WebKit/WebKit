@@ -50,7 +50,6 @@ public:
     virtual bool isFormControlElement() const { return false; }
 
     virtual bool isEnumeratable() const { return true; }
-    virtual bool isResettable() const { return false; }
     virtual bool appendFormData(FormDataList&, bool);
 
     // Implementations of constraint validation API.

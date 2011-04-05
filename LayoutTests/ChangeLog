@@ -1,3 +1,20 @@
+2011-04-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Remove onformchange and onforminput events/event handlers
+        https://bugs.webkit.org/show_bug.cgi?id=55755
+        <rdar://problem/9087969>
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/forms/formchange-event-expected.txt: Removed.
+        * fast/forms/formchange-event.html: Removed.
+        * fast/forms/forminput-event-expected.txt: Removed.
+        * fast/forms/forminput-event.html: Removed.
+        * fast/forms/script-tests/formchange-event.js: Removed.
+        * fast/forms/script-tests/forminput-event.js: Removed.
+
 2011-04-05  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, rebaseline Kusa-Makura-background-canvas.html on chromium-mac after r82903.

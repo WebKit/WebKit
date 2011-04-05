@@ -63,7 +63,6 @@ public:
 
     virtual bool isFocusable() const;
     virtual bool isEnumeratable() const { return false; }
-    virtual bool isResettable() const { return false; }
 
     // Determines whether or not a control will be automatically focused.
     virtual bool autofocus() const;

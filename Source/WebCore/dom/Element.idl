@@ -155,8 +155,6 @@ module core {
         attribute [DontEnum] EventListener ondrop;
         attribute [DontEnum] EventListener onerror;
         attribute [DontEnum] EventListener onfocus;
-        attribute [DontEnum] EventListener onformchange;
-        attribute [DontEnum] EventListener onforminput;
         attribute [DontEnum] EventListener oninput;
         attribute [DontEnum] EventListener oninvalid;
         attribute [DontEnum] EventListener onkeydown;

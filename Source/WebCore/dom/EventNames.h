@@ -67,8 +67,6 @@ namespace WebCore {
     macro(focus) \
     macro(focusin) \
     macro(focusout) \
-    macro(formchange) \
-    macro(forminput) \
     macro(hashchange) \
     macro(input) \
     macro(invalid) \

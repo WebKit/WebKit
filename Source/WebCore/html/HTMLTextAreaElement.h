@@ -82,7 +82,6 @@ private:
     virtual void defaultEventHandler(Event*);
 
     virtual bool isEnumeratable() const { return true; }
-    virtual bool isResettable() const { return true; }
 
     virtual const AtomicString& formControlType() const;
 

@@ -46,7 +46,6 @@ public:
 
     virtual bool isFormControlElement() const = 0;
     virtual bool isEnumeratable() const = 0;
-    virtual bool isResettable() const = 0;
 
     const AtomicString& name() const { return formControlName(); }
 

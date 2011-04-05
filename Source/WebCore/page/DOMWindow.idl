@@ -267,8 +267,6 @@ module window {
         attribute EventListener onended;
         attribute EventListener onerror;
         attribute EventListener onfocus;
-        attribute EventListener onformchange;
-        attribute EventListener onforminput;
         attribute EventListener onhashchange;
         attribute EventListener oninput;
         attribute EventListener oninvalid;
