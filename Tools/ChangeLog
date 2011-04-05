@@ -1,3 +1,11 @@
+2011-04-05  Carol Szabo  <carol@webkit.org>
+
+        Unreviewed.
+
+        Updated my info in committers.py
+
+        Scripts\webkitpy\common\config\committers.py 
+
 2011-04-05  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Laszlo Gombos.
