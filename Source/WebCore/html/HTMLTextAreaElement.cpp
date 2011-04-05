@@ -104,7 +104,8 @@ void HTMLTextAreaElement::restoreFormControlState(const String& state)
 
 void HTMLTextAreaElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
-    setNonDirtyValue(defaultValue());
+    if (!m_isDirty)
+        setNonDirtyValue(defaultValue());
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 }
     
@@ -363,7 +364,8 @@ void HTMLTextAreaElement::setDefaultValue(const String& defaultValue)
 
     insertBefore(document()->createTextNode(value), firstChild(), ec);
 
-    setNonDirtyValue(value);
+    if (!m_isDirty)
+        setNonDirtyValue(value);
 }
 
 int HTMLTextAreaElement::maxLength() const

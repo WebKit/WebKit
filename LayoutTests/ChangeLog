@@ -1,3 +1,13 @@
+2011-04-05  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Setting defaultValue on a textarea with a modified value still clobbers the value
+        https://bugs.webkit.org/show_bug.cgi?id=57636
+
+        * fast/forms/textarea-set-defaultvalue-after-value-expected.txt: Added.
+        * fast/forms/textarea-set-defaultvalue-after-value.html: Added.
+
 2011-04-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.
