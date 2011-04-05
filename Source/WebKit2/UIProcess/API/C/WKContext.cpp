@@ -148,16 +148,6 @@ void WKContextSetDomainRelaxationForbiddenForURLScheme(WKContextRef contextRef, 
     toImpl(contextRef)->setDomainRelaxationForbiddenForURLScheme(toImpl(urlScheme)->string());
 }
 
-void WKContextClearResourceCaches(WKContextRef contextRef, WKResourceCachesToClear cachesToClear)
-{
-    toImpl(contextRef)->clearResourceCaches(toResourceCachesToClear(cachesToClear));
-}
-
-void WKContextClearApplicationCache(WKContextRef contextRef)
-{
-    toImpl(contextRef)->clearApplicationCache();
-}
-
 WKCookieManagerRef WKContextGetCookieManager(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->cookieManagerProxy());

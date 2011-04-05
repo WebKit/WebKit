@@ -119,7 +119,7 @@ public:
     // Geolocation
     WebGeolocationManager& geolocationManager() { return m_geolocationManager; }
 
-    void clearResourceCaches(uint32_t cachesToClear = AllResourceCaches);
+    void clearResourceCaches(ResourceCachesToClear = AllResourceCaches);
     
     const String& localStorageDirectory() const { return m_localStorageDirectory; }
 

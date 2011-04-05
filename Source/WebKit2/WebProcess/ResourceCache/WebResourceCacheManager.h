@@ -27,6 +27,7 @@
 #define WebResourceCacheManager_h
 
 #include "Arguments.h"
+#include "ResourceCachesToClear.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -56,8 +57,8 @@ private:
     void didReceiveWebResourceCacheManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
     void getCacheOrigins(uint64_t callbackID) const;
-    void clearCacheForOrigin(SecurityOriginData origin) const;
-    void clearCacheForAllOrigins() const;
+    void clearCacheForOrigin(SecurityOriginData, uint32_t cachesToClear) const;
+    void clearCacheForAllOrigins(uint32_t cachesToClear) const;
 
 #if USE(CFURLCACHE)
     static RetainPtr<CFArrayRef> cfURLCacheHostNames();

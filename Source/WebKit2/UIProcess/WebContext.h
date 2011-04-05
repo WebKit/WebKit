@@ -122,8 +122,6 @@ public:
 
     void setCacheModel(CacheModel);
     CacheModel cacheModel() const { return m_cacheModel; }
-    void clearResourceCaches(ResourceCachesToClear);
-    void clearApplicationCache();
 
     void setDefaultRequestTimeoutInterval(double);
 
@@ -236,9 +234,6 @@ private:
 
     WebDownloadClient m_downloadClient;
     HashMap<uint64_t, RefPtr<DownloadProxy> > m_downloads;
-
-    bool m_clearResourceCachesForNewWebProcess;
-    bool m_clearApplicationCacheForNewWebProcess;
     
     bool m_memorySamplerEnabled;
     double m_memorySamplerInterval;

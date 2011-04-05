@@ -37,6 +37,7 @@
 #include "WKPage.h"
 #include "WKPreferencesPrivate.h"
 #include "WKProtectionSpaceTypes.h"
+#include "WKResourceCacheManager.h"
 #include "WKSharedAPICast.h"
 #include <WebCore/CookieJar.h>
 #include <WebCore/Credential.h>
@@ -246,9 +247,9 @@ inline WebCore::CredentialPersistence toCredentialPersistence(WKCredentialPersis
 inline ResourceCachesToClear toResourceCachesToClear(WKResourceCachesToClear wkResourceCachesToClear)
 {
     switch (wkResourceCachesToClear) {
-    case kWKAllResourceCaches:
+    case WKResourceCachesToClearAll:
         return AllResourceCaches;
-    case kWKInMemoryResourceCachesOnly:
+    case WKResourceCachesToClearInMemoryOnly:
         return InMemoryResourceCachesOnly;
     }
 

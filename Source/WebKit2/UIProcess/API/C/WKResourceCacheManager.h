@@ -32,13 +32,19 @@
 extern "C" {
 #endif
 
+enum {
+    WKResourceCachesToClearAll = 0,
+    WKResourceCachesToClearInMemoryOnly = 1
+};
+typedef uint32_t WKResourceCachesToClear;
+
 WK_EXPORT WKTypeID WKResourceCacheManagerGetTypeID();
 
 typedef void (*WKResourceCacheManagerGetCacheOriginsFunction)(WKArrayRef, WKErrorRef, void*);
 WK_EXPORT void WKResourceCacheManagerGetCacheOrigins(WKResourceCacheManagerRef contextRef, void* context, WKResourceCacheManagerGetCacheOriginsFunction function);
 
-WK_EXPORT void WKResourceCacheManagerClearCacheForOrigin(WKResourceCacheManagerRef cacheManger, WKSecurityOriginRef origin);
-WK_EXPORT void WKResourceCacheManagerClearCacheForAllOrigins(WKResourceCacheManagerRef cacheManager);
+WK_EXPORT void WKResourceCacheManagerClearCacheForOrigin(WKResourceCacheManagerRef cacheManger, WKSecurityOriginRef origin, WKResourceCachesToClear cachesToClear);
+WK_EXPORT void WKResourceCacheManagerClearCacheForAllOrigins(WKResourceCacheManagerRef cacheManager, WKResourceCachesToClear cachesToClear);
 
 #ifdef __cplusplus
 }

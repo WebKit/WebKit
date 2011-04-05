@@ -41,12 +41,12 @@ void WKResourceCacheManagerGetCacheOrigins(WKResourceCacheManagerRef cacheManage
     toImpl(cacheManagerRef)->getCacheOrigins(ArrayCallback::create(context, callback));
 }
 
-void WKResourceCacheManagerClearCacheForOrigin(WKResourceCacheManagerRef cacheManagerRef, WKSecurityOriginRef originRef)
+void WKResourceCacheManagerClearCacheForOrigin(WKResourceCacheManagerRef cacheManagerRef, WKSecurityOriginRef originRef, WKResourceCachesToClear cachesToClear)
 {
-    toImpl(cacheManagerRef)->clearCacheForOrigin(toImpl(originRef));
+    toImpl(cacheManagerRef)->clearCacheForOrigin(toImpl(originRef), toResourceCachesToClear(cachesToClear));
 }
 
-void WKResourceCacheManagerClearCacheForAllOrigins(WKResourceCacheManagerRef cacheManagerRef)
+void WKResourceCacheManagerClearCacheForAllOrigins(WKResourceCacheManagerRef cacheManagerRef, WKResourceCachesToClear cachesToClear)
 {
-    toImpl(cacheManagerRef)->clearCacheForAllOrigins();    
+    toImpl(cacheManagerRef)->clearCacheForAllOrigins(toResourceCachesToClear(cachesToClear));
 }

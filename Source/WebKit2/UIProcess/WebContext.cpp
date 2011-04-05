@@ -111,8 +111,6 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_visitedLinkProvider(this)
     , m_alwaysUsesComplexTextCodePath(false)
     , m_cacheModel(CacheModelDocumentViewer)
-    , m_clearResourceCachesForNewWebProcess(false)
-    , m_clearApplicationCacheForNewWebProcess(false)
     , m_memorySamplerEnabled(false)
     , m_memorySamplerInterval(1400.0)
     , m_applicationCacheManagerProxy(WebApplicationCacheManagerProxy::create(this))
@@ -235,14 +233,9 @@ void WebContext::ensureWebProcess()
     parameters.applicationCacheDirectory = applicationCacheDirectory();
     parameters.databaseDirectory = databaseDirectory();
     parameters.localStorageDirectory = localStorageDirectory();
-    parameters.clearResourceCaches = m_clearResourceCachesForNewWebProcess;
-    parameters.clearApplicationCache = m_clearApplicationCacheForNewWebProcess;
 #if PLATFORM(MAC)
     parameters.presenterApplicationPid = getpid();
 #endif
-
-    m_clearResourceCachesForNewWebProcess = false;
-    m_clearApplicationCacheForNewWebProcess = false;
     
     copyToVector(m_schemesToRegisterAsEmptyDocument, parameters.urlSchemesRegistererdAsEmptyDocument);
     copyToVector(m_schemesToRegisterAsSecure, parameters.urlSchemesRegisteredAsSecure);
@@ -672,31 +665,6 @@ CoreIPC::SyncReplyMode WebContext::didReceiveSyncMessage(CoreIPC::Connection* co
     return CoreIPC::AutomaticReply;
 }
 
-void WebContext::clearResourceCaches(ResourceCachesToClear cachesToClear)
-{
-    if (sendToAllProcesses(Messages::WebProcess::ClearResourceCaches(cachesToClear)))
-        return;
-
-    if (cachesToClear == InMemoryResourceCachesOnly)
-        return;
-
-    // FIXME <rdar://problem/8727879>: Setting this flag ensures that the next time a WebProcess is created, this request to
-    // clear the resource cache will be respected. But if the user quits the application before another WebProcess is created,
-    // their request will be ignored.
-    m_clearResourceCachesForNewWebProcess = true;
-}
-
-void WebContext::clearApplicationCache()
-{
-    if (sendToAllProcesses(Messages::WebProcess::ClearApplicationCache()))
-        return;
-
-    // FIXME <rdar://problem/8727879>: Setting this flag ensures that the next time a WebProcess is created, this request to
-    // clear the application cache will be respected. But if the user quits the application before another WebProcess is created,
-    // their request will be ignored.
-    m_clearApplicationCacheForNewWebProcess = true;
-}
-   
 void WebContext::setEnhancedAccessibility(bool flag)
 {
     sendToAllProcesses(Messages::WebProcess::SetEnhancedAccessibility(flag));

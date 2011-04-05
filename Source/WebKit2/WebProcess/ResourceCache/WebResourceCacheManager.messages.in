@@ -22,6 +22,6 @@
 
 messages -> WebResourceCacheManager {
     void GetCacheOrigins(uint64_t callbackID)
-    void ClearCacheForOrigin(WebKit::SecurityOriginData originIdentifier)
-    void ClearCacheForAllOrigins()
+    void ClearCacheForOrigin(WebKit::SecurityOriginData originIdentifier, uint32_t cachesToClear)
+    void ClearCacheForAllOrigins(uint32_t cachesToClear)
 }

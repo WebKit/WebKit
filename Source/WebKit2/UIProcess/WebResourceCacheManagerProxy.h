@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "Arguments.h"
 #include "GenericCallback.h"
+#include "ResourceCachesToClear.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 
@@ -58,8 +59,8 @@ public:
     void clearContext() { m_webContext = 0; }
 
     void getCacheOrigins(PassRefPtr<ArrayCallback>);
-    void clearCacheForOrigin(WebSecurityOrigin*);
-    void clearCacheForAllOrigins();
+    void clearCacheForOrigin(WebSecurityOrigin*, ResourceCachesToClear);
+    void clearCacheForAllOrigins(ResourceCachesToClear);
 
     void didReceiveWebResourceCacheManagerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 

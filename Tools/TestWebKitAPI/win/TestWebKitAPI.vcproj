@@ -492,10 +492,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Tests\WebKit2\SendingMessagesToTheWebProcessBeforeItIsValid.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\Tests\WebKit2\simple-accelerated-compositing.html"
 					>
 				</File>

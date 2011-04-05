@@ -214,11 +214,6 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
     for (size_t i = 0; i < parameters.mimeTypesWithCustomRepresentation.size(); ++i)
         m_mimeTypesWithCustomRepresentations.add(parameters.mimeTypesWithCustomRepresentation[i]);
-
-    if (parameters.clearResourceCaches)
-        clearResourceCaches();
-    if (parameters.clearApplicationCache)
-        clearApplicationCache();
     
 #if PLATFORM(MAC)
     m_presenterApplicationPid = parameters.presenterApplicationPid;
@@ -702,10 +697,8 @@ WebPageGroupProxy* WebProcess::webPageGroup(const WebPageGroupData& pageGroupDat
     return result.first->second.get();
 }
 
-void WebProcess::clearResourceCaches(uint32_t cachesToClear)
+void WebProcess::clearResourceCaches(ResourceCachesToClear resourceCachesToClear)
 {
-    ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);
-
     platformClearResourceCaches(resourceCachesToClear);
 
     // Toggling the cache model like this forces the cache to evict all its in-memory resources.

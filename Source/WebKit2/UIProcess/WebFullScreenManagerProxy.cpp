@@ -31,7 +31,6 @@
 #include "WebContext.h"
 #include "WebFullScreenManagerMessages.h"
 #include "WebFullScreenManagerProxyMessages.h"
-#include "WebProcess.h"
 
 namespace WebKit {
 

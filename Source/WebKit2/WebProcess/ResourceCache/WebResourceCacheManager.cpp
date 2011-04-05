@@ -28,6 +28,7 @@
 
 #include "Connection.h"
 #include "MessageID.h"
+#include "ResourceCachesToClear.h"
 #include "SecurityOriginData.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebResourceCacheManagerProxyMessages.h"
@@ -96,8 +97,10 @@ void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
     WebProcess::shared().terminateIfPossible();
 }
 
-void WebResourceCacheManager::clearCacheForOrigin(SecurityOriginData originData) const
+void WebResourceCacheManager::clearCacheForOrigin(SecurityOriginData originData, uint32_t cachesToClear) const
 {
+    ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);
+
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create(originData.protocol, originData.host, originData.port);
     if (!origin)
         return;
@@ -105,18 +108,22 @@ void WebResourceCacheManager::clearCacheForOrigin(SecurityOriginData originData)
     memoryCache()->removeResourcesWithOrigin(origin.get());
 
 #if USE(CFURLCACHE)
-    RetainPtr<CFMutableArrayRef> hostArray(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
-    RetainPtr<CFStringRef> host(AdoptCF, origin->host().createCFString());
-    CFArrayAppendValue(hostArray.get(), host.get());
+    if (resourceCachesToClear != InMemoryResourceCachesOnly) { 
+        RetainPtr<CFMutableArrayRef> hostArray(AdoptCF, CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
+        RetainPtr<CFStringRef> host(AdoptCF, origin->host().createCFString());
+        CFArrayAppendValue(hostArray.get(), host.get());
 
-    clearCFURLCacheForHostNames(hostArray.get());
+        clearCFURLCacheForHostNames(hostArray.get());
+    }
 #endif
     WebProcess::shared().terminateIfPossible();
 }
 
-void WebResourceCacheManager::clearCacheForAllOrigins() const
+void WebResourceCacheManager::clearCacheForAllOrigins(uint32_t cachesToClear) const
 {
-    WebProcess::shared().clearResourceCaches();
+    ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);
+
+    WebProcess::shared().clearResourceCaches(resourceCachesToClear);
     WebProcess::shared().terminateIfPossible();
 }
 

@@ -78,19 +78,19 @@ void WebResourceCacheManagerProxy::didGetCacheOrigins(const Vector<SecurityOrigi
     performAPICallbackWithSecurityOriginDataVector(origins, callback.get());
 }
 
-void WebResourceCacheManagerProxy::clearCacheForOrigin(WebSecurityOrigin* origin)
+void WebResourceCacheManagerProxy::clearCacheForOrigin(WebSecurityOrigin* origin, ResourceCachesToClear cachesToClear)
 {
     SecurityOriginData securityOrigin;
     securityOrigin.protocol = origin->protocol();
     securityOrigin.host = origin->host();
     securityOrigin.port = origin->port();
 
-    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForOrigin(securityOrigin));
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForOrigin(securityOrigin, cachesToClear));
 }
 
-void WebResourceCacheManagerProxy::clearCacheForAllOrigins()
+void WebResourceCacheManagerProxy::clearCacheForAllOrigins(ResourceCachesToClear cachesToClear)
 {
-    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForAllOrigins());
+    m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForAllOrigins(cachesToClear));
 }
 
 } // namespace WebKit
