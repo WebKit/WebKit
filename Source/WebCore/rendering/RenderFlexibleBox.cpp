@@ -970,7 +970,7 @@ void RenderFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutC
         // Get ellipsis width, and if the last child is an anchor, it will go after the ellipsis, so add in a space and the anchor width too 
         int totalWidth;
         InlineBox* anchorBox = lastLine->lastChild();
-        if (anchorBox && anchorBox->renderer()->node() && anchorBox->renderer()->node()->isLink())
+        if (anchorBox && anchorBox->renderer()->style()->isLink())
             totalWidth = anchorBox->logicalWidth() + font.width(TextRun(ellipsisAndSpace, 2));
         else {
             anchorBox = 0;

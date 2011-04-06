@@ -1,3 +1,17 @@
+2011-04-06  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57975
+
+        The "More..." link for line clamping no longer shows up in Safari RSS. Fix the isLink() check
+        to just look at the style, so that it can find the InlineTextBox and not care that it's a child
+        of the link element and not the line box for the link element itself (since that line box got
+        culled).
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::applyLineClamp):
+
 2011-04-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.
