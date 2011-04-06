@@ -1,5 +1,11 @@
 2011-04-06  Adam Roben  <aroben@apple.com>
 
+        Build fix after r83056
+
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd: Added property svn:executable.
+
+2011-04-06  Adam Roben  <aroben@apple.com>
+
         Move JavaScriptCoreGenerated's file-copying logic out to a new script
 
         Hopefully this will make it easier to modify this logic in the future. I also made the
