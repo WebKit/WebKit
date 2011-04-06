@@ -353,6 +353,7 @@ public:
     virtual void setAccessibleName(String&) { }
     
     virtual Node* node() const { return 0; }
+    virtual RenderObject* renderer() const { return 0; }
     virtual bool accessibilityIsIgnored() const  { return true; }
 
     virtual int headingLevel() const { return 0; }
@@ -404,6 +405,7 @@ public:
     virtual void linkedUIElements(AccessibilityChildrenVector&) const { }
     virtual AccessibilityObject* titleUIElement() const { return 0; }
     virtual bool exposesTitleUIElement() const { return true; }
+    virtual AccessibilityObject* correspondingLabelForControlElement() const { return 0; }
     virtual AccessibilityObject* correspondingControlForLabelElement() const { return 0; }
     virtual AccessibilityObject* scrollBar(AccessibilityOrientation) const { return 0; }
     

@@ -37,11 +37,6 @@ AccessibilityMenuList::AccessibilityMenuList(RenderMenuList* renderer)
 {
 }
 
-RenderMenuList* AccessibilityMenuList::renderer() const
-{
-    return toRenderMenuList(AccessibilityRenderObject::renderer());
-}
-
 bool AccessibilityMenuList::press() const
 {
     RenderMenuList* menuList = static_cast<RenderMenuList*>(m_renderer);

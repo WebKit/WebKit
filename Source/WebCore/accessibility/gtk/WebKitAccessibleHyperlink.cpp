@@ -25,7 +25,6 @@
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
 #include "AccessibilityObjectWrapperAtk.h"
-#include "AccessibilityRenderObject.h"
 #include "NotImplemented.h"
 #include "Position.h"
 #include "Range.h"
@@ -215,7 +214,7 @@ static gint getRangeLengthForObject(AccessibilityObject* obj, Range* range)
     if (!markerObj)
         return baseLength;
 
-    RenderObject* renderer = static_cast<const AccessibilityRenderObject*>(markerObj)->renderer();
+    RenderObject* renderer = markerObj->renderer();
     if (!renderer || !renderer->isListMarker())
         return baseLength;
 

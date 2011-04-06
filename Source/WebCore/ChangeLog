@@ -1,3 +1,62 @@
+2011-04-06  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] Do not reference AccessibilityRenderObject from platform dependent code
+        https://bugs.webkit.org/show_bug.cgi?id=57955
+
+        Do not reference AccessibilityRenderObject from platform specific code
+
+        Added new virtual functions to AccessibilityObject.h and removed
+        explicit references to AccessibilityRenderObject from GTK code.
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::renderer): New virtual method,
+        returning 0 by default. Overriden by AccessibilityRenderObject.
+        (WebCore::AccessibilityObject::correspondingLabelForControlElement):
+        New virtual method, returning 0 by default. It complements the
+        already present method correspondingControlForLabelElement().
+
+        * accessibility/AccessibilityRenderObject.h:
+        (WebCore::AccessibilityRenderObject::renderer): Made virtual.
+
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (WebCore::emitTextChanged): Reference  AccessibilityObject,
+        instead of AccessibilityRenderObject.
+        (WebCore::AXObjectCache::nodeTextChangePlatformNotification):
+        Ditto.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (webkit_accessible_get_name): Do not reference
+        AccessibilityRenderObject.
+        (webkit_accessible_get_description): Ditto.
+        (setAtkRelationSetFromCoreObject): Ditto.
+        (optionFromList): Ditto.
+        (optionFromSelection): Ditto.
+        (webkit_accessible_selection_clear_selection): Ditto.
+        (webkit_accessible_selection_get_selection_count): Ditto.
+        (webkit_accessible_selection_select_all_selection): Ditto.
+        (textForObject): Ditto.
+        (webkit_accessible_text_get_text): Ditto.
+        (getPangoLayoutForAtk): Ditto.
+        (webkit_accessible_text_get_caret_offset): Ditto.
+        (baselinePositionForRenderObject): Ditto.
+        (getAttributeSetForAccessibilityObject): Ditto.
+        (accessibilityObjectLength): Ditto.
+        (getSelectionOffsetsForObject): Ditto.
+        (webkit_accessible_text_set_selection): Ditto.
+        (webkit_accessible_text_set_caret_offset): Ditto.
+        (webkit_accessible_table_get_caption): Ditto.
+        (getInterfaceMaskFromObject): Ditto.
+
+        * accessibility/gtk/WebKitAccessibleHyperlink.cpp:
+        (getRangeLengthForObject): Ditto.
+
+        Removed unused renderer() method from AccessibilityMenuList.
+
+        * accessibility/AccessibilityMenuList.h: Removed unused method.
+        * accessibility/AccessibilityMenuList.cpp: Removed unused method.
+
 2011-04-06  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -161,7 +161,7 @@ public:
     virtual IntPoint clickPoint() const;
     
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
-    RenderObject* renderer() const { return m_renderer; }
+    virtual RenderObject* renderer() const { return m_renderer; }
     RenderBoxModelObject* renderBoxModelObject() const;
     virtual Node* node() const;
 

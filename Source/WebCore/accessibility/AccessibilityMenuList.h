@@ -42,8 +42,6 @@ public:
     virtual bool isCollapsed() const;
     virtual bool press() const;
 
-    RenderMenuList* renderer() const;
-
 private:
     AccessibilityMenuList(RenderMenuList*);
 

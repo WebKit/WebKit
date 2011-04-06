@@ -37,7 +37,6 @@
 #include "AccessibilityList.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilityListBoxOption.h"
-#include "AccessibilityRenderObject.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableCell.h"
 #include "AccessibilityTableColumn.h"
@@ -171,9 +170,8 @@ static const gchar* webkit_accessible_get_name(AtkObject* object)
     if (!coreObject->isAccessibilityRenderObject())
         return returnString(coreObject->stringValue());
 
-    AccessibilityRenderObject* renderObject = static_cast<AccessibilityRenderObject*>(coreObject);
     if (coreObject->isControl()) {
-        AccessibilityObject* label = renderObject->correspondingLabelForControlElement();
+        AccessibilityObject* label = coreObject->correspondingLabelForControlElement();
         if (label) {
             AtkObject* atkObject = label->wrapper();
             if (ATK_IS_TEXT(atkObject))
@@ -181,13 +179,13 @@ static const gchar* webkit_accessible_get_name(AtkObject* object)
         }
 
         // Try text under the node.
-        String textUnder = renderObject->textUnderElement();
+        String textUnder = coreObject->textUnderElement();
         if (textUnder.length())
             return returnString(textUnder);
     }
 
-    if (renderObject->isImage() || renderObject->isInputImage()) {
-        Node* node = renderObject->renderer()->node();
+    if (coreObject->isImage() || coreObject->isInputImage()) {
+        Node* node = coreObject->node();
         if (node && node->isHTMLElement()) {
             // Get the attribute rather than altText String so as not to fall back on title.
             String alt = toHTMLElement(node)->getAttribute(HTMLNames::altAttr);
@@ -197,7 +195,7 @@ static const gchar* webkit_accessible_get_name(AtkObject* object)
     }
 
     // Fallback for the webArea object: just return the document's title.
-    if (renderObject->isWebArea()) {
+    if (coreObject->isWebArea()) {
         Document* document = coreObject->document();
         if (document)
             return returnString(document->title());
@@ -211,7 +209,7 @@ static const gchar* webkit_accessible_get_description(AtkObject* object)
     AccessibilityObject* coreObject = core(object);
     Node* node = 0;
     if (coreObject->isAccessibilityRenderObject())
-        node = static_cast<AccessibilityRenderObject*>(coreObject)->renderer()->node();
+        node = coreObject->node();
     if (!node || !node->isHTMLElement() || coreObject->ariaRoleAttribute() != UnknownRole)
         return returnString(coreObject->accessibilityDescription());
 
@@ -233,13 +231,12 @@ static const gchar* webkit_accessible_get_description(AtkObject* object)
 
 static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, AtkRelationSet* relationSet)
 {
-    AccessibilityRenderObject* accObject = static_cast<AccessibilityRenderObject*>(coreObject);
-    if (accObject->isControl()) {
-        AccessibilityObject* label = accObject->correspondingLabelForControlElement();
+    if (coreObject->isControl()) {
+        AccessibilityObject* label = coreObject->correspondingLabelForControlElement();
         if (label)
             atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABELLED_BY, label->wrapper());
     } else {
-        AccessibilityObject* control = accObject->correspondingControlForLabelElement();
+        AccessibilityObject* control = coreObject->correspondingControlForLabelElement();
         if (control)
             atk_relation_set_add_relation_by_type(relationSet, ATK_RELATION_LABEL_FOR, control->wrapper());
     }
@@ -823,7 +820,7 @@ static AccessibilityObject* optionFromList(AtkSelection* selection, gint i)
     if (!listObject)
         return 0;
 
-    AccessibilityRenderObject::AccessibilityChildrenVector options = listObject->children();
+    AccessibilityObject::AccessibilityChildrenVector options = listObject->children();
     if (i < static_cast<gint>(options.size()))
         return options.at(i).get();
 
@@ -838,11 +835,11 @@ static AccessibilityObject* optionFromSelection(AtkSelection* selection, gint i)
     if (!coreSelection || !coreSelection->isAccessibilityRenderObject() || i < 0)
         return 0;
 
-    AccessibilityRenderObject::AccessibilityChildrenVector selectedItems;
+    AccessibilityObject::AccessibilityChildrenVector selectedItems;
     if (coreSelection->isListBox())
         coreSelection->selectedChildren(selectedItems);
     else if (coreSelection->isMenuList()) {
-        RenderObject* renderer = toAccessibilityRenderObject(coreSelection)->renderer();
+        RenderObject* renderer = coreSelection->renderer();
         if (!renderer)
             return 0;
 
@@ -883,7 +880,7 @@ static gboolean webkit_accessible_selection_clear_selection(AtkSelection* select
     if (!coreSelection)
         return false;
 
-    AccessibilityRenderObject::AccessibilityChildrenVector selectedItems;
+    AccessibilityObject::AccessibilityChildrenVector selectedItems;
     if (coreSelection->isListBox() || coreSelection->isMenuList()) {
         // Set the list of selected items to an empty list; then verify that it worked.
         AccessibilityListBox* listBox = static_cast<AccessibilityListBox*>(coreSelection);
@@ -913,13 +910,13 @@ static gint webkit_accessible_selection_get_selection_count(AtkSelection* select
         return 0;
 
     if (coreSelection->isListBox()) {
-        AccessibilityRenderObject::AccessibilityChildrenVector selectedItems;
+        AccessibilityObject::AccessibilityChildrenVector selectedItems;
         coreSelection->selectedChildren(selectedItems);
         return static_cast<gint>(selectedItems.size());
     }
 
     if (coreSelection->isMenuList()) {
-        RenderObject* renderer = toAccessibilityRenderObject(coreSelection)->renderer();
+        RenderObject* renderer = coreSelection->renderer();
         if (!renderer)
             return 0;
 
@@ -968,11 +965,11 @@ static gboolean webkit_accessible_selection_select_all_selection(AtkSelection* s
     if (!coreSelection || !coreSelection->isMultiSelectable())
         return false;
 
-    AccessibilityRenderObject::AccessibilityChildrenVector children = coreSelection->children();
+    AccessibilityObject::AccessibilityChildrenVector children = coreSelection->children();
     if (coreSelection->isListBox()) {
         AccessibilityListBox* listBox = static_cast<AccessibilityListBox*>(coreSelection);
         listBox->setSelectedChildren(children);
-        AccessibilityRenderObject::AccessibilityChildrenVector selectedItems;
+        AccessibilityObject::AccessibilityChildrenVector selectedItems;
         listBox->selectedChildren(selectedItems);
         return selectedItems.size() == children.size();
     }
@@ -1089,26 +1086,26 @@ gchar* textForRenderer(RenderObject* renderer)
     return g_string_free(resultText, FALSE);
 }
 
-gchar* textForObject(AccessibilityRenderObject* accObject)
+gchar* textForObject(AccessibilityObject* coreObject)
 {
     GString* str = g_string_new(0);
 
     // For text controls, we can get the text line by line.
-    if (accObject->isTextControl()) {
-        unsigned textLength = accObject->textLength();
+    if (coreObject->isTextControl()) {
+        unsigned textLength = coreObject->textLength();
         int lineNumber = 0;
-        PlainTextRange range = accObject->doAXRangeForLine(lineNumber);
+        PlainTextRange range = coreObject->doAXRangeForLine(lineNumber);
         while (range.length) {
             // When a line of text wraps in a text area, the final space is removed.
             if (range.start + range.length < textLength)
                 range.length -= 1;
-            String lineText = accObject->doAXStringForRange(range);
+            String lineText = coreObject->doAXStringForRange(range);
             g_string_append(str, lineText.utf8().data());
             g_string_append(str, "\n");
-            range = accObject->doAXRangeForLine(++lineNumber);
+            range = coreObject->doAXRangeForLine(++lineNumber);
         }
-    } else if (accObject->isAccessibilityRenderObject()) {
-        GOwnPtr<gchar> rendererText(textForRenderer(accObject->renderer()));
+    } else if (coreObject->isAccessibilityRenderObject()) {
+        GOwnPtr<gchar> rendererText(textForRenderer(coreObject->renderer()));
         g_string_append(str, rendererText.get());
     }
 
@@ -1137,14 +1134,14 @@ static gchar* webkit_accessible_text_get_text(AtkText* text, gint startOffset, g
 
     if (!ret.length()) {
         // This can happen at least with anonymous RenderBlocks (e.g. body text amongst paragraphs)
-        ret = String(textForObject(toAccessibilityRenderObject(coreObject)));
+        ret = String(textForObject(coreObject));
         if (!end)
             end = ret.length();
     }
 
     // Prefix a item number/bullet if needed
     if (coreObject->roleValue() == ListItemRole) {
-        RenderObject* objRenderer = static_cast<AccessibilityRenderObject*>(coreObject)->renderer();
+        RenderObject* objRenderer = coreObject->renderer();
         if (objRenderer && objRenderer->isListItem()) {
             String markerText = toRenderListItem(objRenderer)->markerTextWithSuffix();
             ret = objRenderer->style()->direction() == LTR ? markerText + ret : ret + markerText;
@@ -1180,12 +1177,8 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
     if (!webView)
         return 0;
 
-    AccessibilityRenderObject* accObject = static_cast<AccessibilityRenderObject*>(coreObject);
-    if (!accObject)
-        return 0;
-
     // Create a string with the layout as it appears on the screen
-    PangoLayout* layout = gtk_widget_create_pango_layout(static_cast<GtkWidget*>(webView), textForObject(accObject));
+    PangoLayout* layout = gtk_widget_create_pango_layout(static_cast<GtkWidget*>(webView), textForObject(coreObject));
     g_object_set_data_full(G_OBJECT(textObject), "webkit-accessible-pango-layout", layout, g_object_unref);
     return layout;
 }
@@ -1231,7 +1224,7 @@ static gint webkit_accessible_text_get_caret_offset(AtkText* text)
     if (!objectAndOffsetUnignored(focusedObject, offset, !coreObject->isLink()))
         return 0;
 
-    RenderObject* renderer = toAccessibilityRenderObject(coreObject)->renderer();
+    RenderObject* renderer = coreObject->renderer();
     if (renderer && renderer->isListItem()) {
         String markerText = toRenderListItem(renderer)->markerTextWithSuffix();
 
@@ -1243,7 +1236,7 @@ static gint webkit_accessible_text_get_caret_offset(AtkText* text)
     return offset;
 }
 
-static int baselinePositionForAccessibilityRenderObject(RenderObject* renderObject)
+static int baselinePositionForRenderObject(RenderObject* renderObject)
 {
     // FIXME: This implementation of baselinePosition originates from RenderObject.cpp and was
     // removed in r70072. The implementation looks incorrect though, because this is not the
@@ -1257,7 +1250,7 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
     if (!object->isAccessibilityRenderObject())
         return 0;
 
-    RenderObject* renderer = static_cast<const AccessibilityRenderObject*>(object)->renderer();
+    RenderObject* renderer = object->renderer();
     RenderStyle* style = renderer->style();
 
     AtkAttributeSet* result = 0;
@@ -1282,10 +1275,10 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
     bool includeRise = true;
     switch (style->verticalAlign()) {
     case SUB:
-        baselinePosition = -1 * baselinePositionForAccessibilityRenderObject(renderer);
+        baselinePosition = -1 * baselinePositionForRenderObject(renderer);
         break;
     case SUPER:
-        baselinePosition = baselinePositionForAccessibilityRenderObject(renderer);
+        baselinePosition = baselinePositionForRenderObject(renderer);
         break;
     case BASELINE:
         baselinePosition = 0;
@@ -1431,7 +1424,7 @@ static guint accessibilityObjectLength(const AccessibilityObject* object)
     // Technologies, we need to have a way to measure their length
     // for those cases when it's needed to take it into account
     // separately (as in getAccessibilityObjectForOffset)
-    RenderObject* renderer = static_cast<const AccessibilityRenderObject*>(object)->renderer();
+    RenderObject* renderer = object->renderer();
     if (renderer && renderer->isListMarker()) {
         RenderListMarker* marker = toRenderListMarker(renderer);
         return marker->text().length() + marker->suffix().length();
@@ -1630,7 +1623,7 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     startOffset = TextIterator::rangeLength(rangeInParent.get());
 
     // We need to adjust the offsets for the list item marker.
-    RenderObject* renderer = toAccessibilityRenderObject(coreObject)->renderer();
+    RenderObject* renderer = coreObject->renderer();
     if (renderer && renderer->isListItem()) {
         String markerText = toRenderListItem(renderer)->markerTextWithSuffix();
         startOffset += markerText.length();
@@ -1704,7 +1697,7 @@ static gboolean webkit_accessible_text_set_selection(AtkText* text, gint selecti
         endOffset = textCount;
 
     // We need to adjust the offsets for the list item marker.
-    RenderObject* renderer = toAccessibilityRenderObject(coreObject)->renderer();
+    RenderObject* renderer = coreObject->renderer();
     if (renderer && renderer->isListItem()) {
         String markerText = toRenderListItem(renderer)->markerTextWithSuffix();
         int markerLength = markerText.length();
@@ -1747,7 +1740,7 @@ static gboolean webkit_accessible_text_set_caret_offset(AtkText* text, gint offs
     if (!coreObject->isAccessibilityRenderObject())
         return FALSE;
 
-    RenderObject* renderer = toAccessibilityRenderObject(coreObject)->renderer();
+    RenderObject* renderer = coreObject->renderer();
     if (renderer && renderer->isListItem()) {
         String markerText = toRenderListItem(renderer)->markerTextWithSuffix();
         int markerLength = markerText.length();
@@ -2117,7 +2110,7 @@ static AtkObject* webkit_accessible_table_get_caption(AtkTable* table)
 {
     AccessibilityObject* accTable = core(table);
     if (accTable->isAccessibilityRenderObject()) {
-        Node* node = static_cast<AccessibilityRenderObject*>(accTable)->renderer()->node();
+        Node* node = accTable->node();
         if (node && node->hasTagName(HTMLNames::tableTag)) {
             HTMLTableCaptionElement* caption = static_cast<HTMLTableElement*>(node)->caption();
             if (caption)
@@ -2472,7 +2465,7 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
             // Add the TEXT interface for list items whose
             // first accessible child has a text renderer
             if (role == ListItemRole) {
-                AccessibilityObject::AccessibilityChildrenVector children = axRenderObject->children();
+                AccessibilityObject::AccessibilityChildrenVector children = coreObject->children();
                 if (children.size()) {
                     AccessibilityObject* axRenderChild = children.at(0).get();
                     interfaceMask |= getInterfaceMaskFromObject(axRenderChild);

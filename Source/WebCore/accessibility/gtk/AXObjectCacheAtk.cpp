@@ -22,7 +22,6 @@
 
 #include "AccessibilityObject.h"
 #include "AccessibilityObjectWrapperAtk.h"
-#include "AccessibilityRenderObject.h"
 #include "GOwnPtr.h"
 #include "Range.h"
 #include "SelectElement.h"
@@ -157,7 +156,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* coreObject, AX
     }
 }
 
-static void emitTextChanged(AccessibilityRenderObject* object, AXObjectCache::AXTextChange textChange, unsigned offset, unsigned count)
+static void emitTextChanged(AccessibilityObject* object, AXObjectCache::AXTextChange textChange, unsigned offset, unsigned count)
 {
     // Get the axObject for the parent object
     AtkObject* wrapper = object->parentObjectUnignored()->wrapper();
@@ -187,7 +186,7 @@ void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* obje
 
     Node* node = object->node();
     RefPtr<Range> range = Range::create(node->document(),  Position(node->parentNode(), 0), Position(node, 0));
-    emitTextChanged(toAccessibilityRenderObject(object), textChange, offset + TextIterator::rangeLength(range.get()), count);
+    emitTextChanged(object, textChange, offset + TextIterator::rangeLength(range.get()), count);
 }
 
 void AXObjectCache::handleFocusedUIElementChanged(RenderObject* oldFocusedRender, RenderObject* newFocusedRender)
