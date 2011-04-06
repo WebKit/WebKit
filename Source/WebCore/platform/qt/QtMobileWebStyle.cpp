@@ -87,8 +87,10 @@ void QtMobileWebStyle::drawRadio(QPainter* painter, const QSize& size, bool chec
 {
     painter->setRenderHint(QPainter::Antialiasing, true);
 
+    // get minor size to do not paint a wide elipse
+    qreal squareSize = qMin(size.width(), size.height());
     // deflate one pixel
-    QRect rect = QRect(QPoint(1, 1), QSize(size.width() - 2, size.height() - 2));
+    QRect rect = QRect(QPoint(1, 1), QSize(squareSize - 2, squareSize - 2));
     const QPoint centerGradient(rect.bottomRight() * 0.7);
 
     QRadialGradient radialGradient(centerGradient, centerGradient.x() - 1);
