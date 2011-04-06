@@ -1388,16 +1388,6 @@ static inline bool shouldCollapseWhiteSpace(const RenderStyle* style, bool isLin
     return style->collapseWhiteSpace() || (style->whiteSpace() == PRE_WRAP && (!isLineEmpty || !previousLineBrokeCleanly));
 }
 
-static inline bool shouldPreserveNewline(RenderObject* object)
-{
-#if ENABLE(SVG)
-    if (object->isSVGInlineText())
-        return false;
-#endif
-
-    return object->style()->preserveNewline();
-}
-
 static bool inlineFlowRequiresLineBox(RenderInline* flow)
 {
     // FIXME: Right now, we only allow line boxes for inlines that are truly empty.
@@ -1418,7 +1408,7 @@ bool RenderBlock::requiresLineBox(const InlineIterator& it, bool isLineEmpty, bo
         return true;
 
     UChar current = it.current();
-    return current != ' ' && current != '\t' && current != softHyphen && (current != '\n' || shouldPreserveNewline(it.m_obj)) 
+    return current != ' ' && current != '\t' && current != softHyphen && (current != '\n' || it.m_obj->preservesNewline()) 
             && !skipNonBreakingSpace(it, isLineEmpty, previousLineBrokeCleanly);
 }
 
@@ -1914,7 +1904,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                                 if (hyphenated)
                                     goto end;
                             }
-                            if (lBreak.m_obj && shouldPreserveNewline(lBreak.m_obj) && lBreak.m_obj->isText() && toRenderText(lBreak.m_obj)->textLength() && !toRenderText(lBreak.m_obj)->isWordBreak() && toRenderText(lBreak.m_obj)->characters()[lBreak.m_pos] == '\n') {
+                            if (lBreak.atTextParagraphSeparator()) {
                                 if (!stoppedIgnoringSpaces && pos > 0) {
                                     // We need to stop right before the newline and then start up again.
                                     addMidpoint(lineMidpointState, InlineIterator(0, o, pos - 1)); // Stop
@@ -2055,7 +2045,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     RenderText* nextText = toRenderText(next);
                     if (nextText->textLength()) {
                         UChar c = nextText->characters()[0];
-                        if (c == ' ' || c == '\t' || (c == '\n' && !shouldPreserveNewline(next)))
+                        if (c == ' ' || c == '\t' || (c == '\n' && !next->preservesNewline()))
                             // If the next item on the line is text, and if we did not end with
                             // a space, then the next text run continues our word (and so it needs to
                             // keep adding to |tmpW|.  Just update and continue.

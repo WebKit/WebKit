@@ -433,6 +433,7 @@ public:
     bool hasTransform() const { return m_hasTransform; }
     bool hasMask() const { return style() && style()->hasMask(); }
 
+    inline bool preservesNewline() const;
     void drawLineForBoxSide(GraphicsContext*, int x1, int y1, int x2, int y2, BoxSide,
                             Color, EBorderStyle, int adjbw1, int adjbw2);
 #if HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
@@ -1035,6 +1036,16 @@ inline void RenderObject::markContainingBlocksForLayout(bool scheduleRelayout, R
 
     if (scheduleRelayout)
         last->scheduleRelayout();
+}
+
+inline bool RenderObject::preservesNewline() const
+{
+#if ENABLE(SVG)
+    if (isSVGInlineText())
+        return false;
+#endif
+        
+    return style()->preserveNewline();
 }
 
 inline void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)

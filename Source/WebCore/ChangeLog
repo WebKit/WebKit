@@ -1,3 +1,25 @@
+2011-04-06  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add member functions for determining line/paragraph separation to InlineIterator
+        https://bugs.webkit.org/show_bug.cgi?id=57938
+
+        Adding atTextParagraphSeparator and atParagraphSeparator inline convenience functions to
+        InlineIterator, where it makes far more sense for them to be. Also moving
+        shouldPreserveNewline to RenderObject and renaming it preservesNewline.
+
+        No new tests as this provides no new functionality.
+
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::atTextParagraphSeparator):
+        (WebCore::InlineIterator::atParagraphSeparator):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::requiresLineBox):
+        (WebCore::RenderBlock::findNextLineBreak):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::preservesNewline):
+
 2011-04-05  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

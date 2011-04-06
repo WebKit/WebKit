@@ -68,6 +68,17 @@ public:
     void increment(InlineBidiResolver* = 0);
     bool atEnd() const;
 
+    inline bool atTextParagraphSeparator()
+    {
+        return m_obj && m_obj->preservesNewline() && m_obj->isText() && toRenderText(m_obj)->textLength()
+            && !toRenderText(m_obj)->isWordBreak() && toRenderText(m_obj)->characters()[m_pos] == '\n';
+    }
+    
+    inline bool atParagraphSeparator()
+    {
+        return (m_obj && m_obj->isBR()) || atTextParagraphSeparator();
+    }
+
     UChar current() const;
     ALWAYS_INLINE WTF::Unicode::Direction direction() const;
 
