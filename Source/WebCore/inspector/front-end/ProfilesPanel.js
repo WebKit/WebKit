@@ -478,8 +478,6 @@ WebInspector.ProfilesPanel.prototype = {
         if (!profile || profile._loaded || !profile._is_loading)
             return;
 
-        var callbacks = profile._callbacks;
-        delete profile._callbacks;
         profile.sideBarElement.subtitle = WebInspector.UIString("Parsing…");
         window.setTimeout(doParse, 0);
 
@@ -488,6 +486,8 @@ WebInspector.ProfilesPanel.prototype = {
             var loadedSnapshot = JSON.parse(profile._json);
             delete profile._json;
             delete profile._is_loading;
+            var callbacks = profile._callbacks;
+            delete profile._callbacks;
             profile._loaded = true;
             profile.sideBarElement.subtitle = "";
 

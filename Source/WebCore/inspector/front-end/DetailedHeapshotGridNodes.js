@@ -51,14 +51,14 @@ WebInspector.HeapSnapshotGridNode.prototype = {
 
         function doPopulate()
         {
+            this.removeEventListener("populate", this._populate, this);
             this._provider.sort(this.comparator());
             this._provider.first();
             this.populateChildren();
-            this.removeEventListener("populate", this._populate, this);
         }
     },
 
-    populateChildren: function(provider, howMany, atIndex)
+    populateChildren: function(provider, howMany, atIndex, suppressNotifyAboutCompletion)
     {
         if (!howMany && provider) {
             howMany = provider.instanceCount;
@@ -88,6 +88,8 @@ WebInspector.HeapSnapshotGridNode.prototype = {
         }
         if (provider.hasNext())
             this.insertChild(new WebInspector.ShowMoreDataGridNode(this.populateChildren.bind(this, provider), this._defaultPopulateCount, provider.length), atIndex++);
+        if (!suppressNotifyAboutCompletion)
+            this.dispatchEventToListeners("populate complete");
     },
 
     _saveChildren: function()
@@ -100,7 +102,7 @@ WebInspector.HeapSnapshotGridNode.prototype = {
         }
     },
 
-    sort: function()
+    sort: function(suppressNotifyAboutCompletion)
     {
         var comparator = this.comparator();
         WebInspector.PleaseWaitMessage.prototype.startAction(this.dataGrid.element, doSort.bind(this));
@@ -118,6 +120,8 @@ WebInspector.HeapSnapshotGridNode.prototype = {
                 if (child.expanded)
                     child.sort();
             }
+            if (!suppressNotifyAboutCompletion)
+                this.dispatchEventToListeners("sorting complete");
         }
     }
 };
@@ -579,10 +583,10 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
     populateChildren: function(provider, howMany, atIndex)
     {
         if (!provider && !howMany) {
-            WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, this._provider._it1, this._defaultPopulateCount);
+            WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, this._provider._it1, this._defaultPopulateCount, null, true);
             WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, this._provider._it2, this._defaultPopulateCount);
         } else if (!howMany) {
-            WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, this._provider._it1);
+            WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, this._provider._it1, null, null, true);
             WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, this._provider._it2);
         } else
             WebInspector.HeapSnapshotGridNode.prototype.populateChildren.call(this, provider, howMany, atIndex);

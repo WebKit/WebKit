@@ -1,3 +1,27 @@
+2011-04-05  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Add layout test for Summary view of detailed heap snapshots.
+        https://bugs.webkit.org/show_bug.cgi?id=57856
+
+        Test: inspector/profiler/detailed-heapshots-summary.html
+
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid):
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGridNode.prototype._populate.doPopulate):
+        (WebInspector.HeapSnapshotGridNode.prototype._populate):
+        (WebInspector.HeapSnapshotGridNode.prototype.populateChildren):
+        (WebInspector.HeapSnapshotGridNode.prototype.sort.doSort):
+        (WebInspector.HeapSnapshotGridNode.prototype.sort):
+        (WebInspector.HeapSnapshotDiffNode.prototype.populateChildren):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotSortableDataGrid.prototype.sortingChanged):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._finishHeapSnapshot.doParse):
+        (WebInspector.ProfilesPanel.prototype._finishHeapSnapshot):
+
 2011-04-06  Anders Bakken  <agbakken@gmail.com>
 
         Reviewed by David Levin.

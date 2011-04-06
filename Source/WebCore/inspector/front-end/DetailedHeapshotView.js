@@ -85,6 +85,7 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
         }
 
         this._performSorting(SortByTwoFields);
+        this.dispatchEventToListeners("sorting complete");
     },
 
     _performSorting: function(sortFunction)

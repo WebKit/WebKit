@@ -133,6 +133,7 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
     this._columnsArray = [];
     for (var columnIdentifier in columns) {
         columns[columnIdentifier].ordinal = this._columnsArray.length;
+        columns[columnIdentifier].identifier = columnIdentifier;
         this._columnsArray.push(columns[columnIdentifier]);
     }
 

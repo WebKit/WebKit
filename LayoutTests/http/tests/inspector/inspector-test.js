@@ -240,6 +240,31 @@ InspectorTest.addSniffer = function(receiver, methodName, override, opt_sticky)
     };
 }
 
+InspectorTest.override = function(receiver, methodName, override, opt_sticky)
+{
+    override = InspectorTest.safeWrap(override);
+
+    var original = receiver[methodName];
+    if (typeof original !== "function")
+        throw ("Cannot find method to override: " + methodName);
+
+    receiver[methodName] = function(var_args) {
+        try {
+            try {
+                var result = override.apply(this, arguments);
+            } catch (e) {
+                throw ("Exception in overriden method '" + methodName + "': " + e);
+            }
+        } finally {
+            if (!opt_sticky)
+                receiver[methodName] = original;
+        }
+        return result;
+    };
+
+    return original;
+}
+
 InspectorTest.textContentWithLineBreaks = function(node)
 {
     var buffer = "";
