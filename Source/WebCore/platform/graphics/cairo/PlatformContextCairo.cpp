@@ -59,7 +59,7 @@ void PlatformContextCairo::pushImageMask(cairo_surface_t* surface, const FloatRe
 {
     // We must call savePlatformState at least once before we can use image masking,
     // since we actually apply the mask in restorePlatformState.
-    ASSERT(!m_data->maskImageStack.isEmpty());
+    ASSERT(!m_maskImageStack.isEmpty());
     m_maskImageStack.last().update(surface, rect);
 
     // Cairo doesn't support the notion of an image clip, so we push a group here
