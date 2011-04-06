@@ -1,3 +1,15 @@
+2011-04-05  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by David Levin.
+
+        [Qt] DragControllerQt.cpp has coding-style errors
+        https://bugs.webkit.org/show_bug.cgi?id=40258
+
+        This patch does not require new test cases.
+
+        * page/qt/DragControllerQt.cpp:
+        (WebCore::DragController::dragOperation):
+
 2011-04-05  Steve VanDeBogart  <vandebo@chromium.org>
 
         Reviewed by David Levin.
