@@ -1,3 +1,24 @@
+2011-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bundle lineLeftOffset and lineRightOffset as a class
+        https://bugs.webkit.org/show_bug.cgi?id=57851
+
+        Added a new class LineOffsets that encapsulates lineLeftOffset and lineRightOffset.
+        The patch makes clear that lineLeftOffset and lineRightOffset are never read individually
+        and only the difference is used to compute the width.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::skipLeadingWhitespace): Takes LineOffsets instead of two integers.
+        (WebCore::LineOffsets::LineOffsets): Added.
+        (WebCore::LineOffsets::width): Added.
+        (WebCore::LineOffsets::setLeft): Added.
+        (WebCore::LineOffsets::setRight): Added.
+        (WebCore::RenderBlock::findNextLineBreak): Calls skipLeadingWhitespace and positionNewFloatOnLine.
+        (WebCore::RenderBlock::positionNewFloatOnLine): Takes LineOffsets instead of two integers.
+
 2011-04-06  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

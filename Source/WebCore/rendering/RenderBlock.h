@@ -36,6 +36,7 @@ class ColumnInfo;
 class InlineIterator;
 class LayoutStateMaintainer;
 class LazyLineBreakIterator;
+class LineOffsets;
 class RenderInline;
 
 struct BidiRun;
@@ -493,7 +494,7 @@ private:
                         RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop);
 
     void skipTrailingWhitespace(InlineIterator&, bool isLineEmpty, bool previousLineBrokeCleanly);
-    void skipLeadingWhitespace(InlineBidiResolver&, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly, FloatingObject* lastFloatFromPreviousLine, int& lineLeftOffset, int& lineRightOffset);
+    void skipLeadingWhitespace(InlineBidiResolver&, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly, FloatingObject* lastFloatFromPreviousLine, LineOffsets&);
     void fitBelowFloats(float widthToFit, float totalOverhangWidth, bool firstLine, float& availableWidth);
     typedef std::pair<RenderText*, LazyLineBreakIterator> LineBreakIteratorInfo;
     InlineIterator findNextLineBreak(InlineBidiResolver&, bool firstLine, bool& isLineEmpty, LineBreakIteratorInfo&, bool& previousLineBrokeCleanly, bool& hyphenated,
@@ -508,7 +509,7 @@ private:
 
     // Positions new floats and also adjust all floats encountered on the line if any of them
     // have to move to the next page/column.
-    bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, bool firstLine, int& lineLeftOffset, int& lineRightOffset);
+    bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, bool firstLine, LineOffsets&);
 
     // End of functions defined in RenderBlockLineLayout.cpp.
 

@@ -1456,12 +1456,12 @@ void RenderBlock::skipTrailingWhitespace(InlineIterator& iterator, bool isLineEm
 }
 
 void RenderBlock::skipLeadingWhitespace(InlineBidiResolver& resolver, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly,
-                                       FloatingObject* lastFloatFromPreviousLine, int& lineLeftOffset, int& lineRightOffset)
+    FloatingObject* lastFloatFromPreviousLine, LineOffsets& lineOffsets)
 {
     while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), isLineEmpty, previousLineBrokeCleanly)) {
         RenderObject* object = resolver.position().m_obj;
         if (object->isFloating())
-            positionNewFloatOnLine(insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, firstLine, lineLeftOffset, lineRightOffset);
+            positionNewFloatOnLine(insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, firstLine, lineOffsets);
         else if (object->isPositioned())
             setStaticPositions(this, toRenderBox(object));
         resolver.increment();
@@ -1562,6 +1562,21 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
     hyphenated = true;
 }
 
+class LineOffsets {
+public:
+    LineOffsets(int leftOffset, int rightOffset)
+    : m_left(leftOffset)
+    , m_right(rightOffset)
+    {
+    }
+    int width() const { return max(0, m_right - m_left); }
+    void setLeft(int left) { m_left = left; }
+    void setRight(int right) { m_right = right; }
+private:
+    int m_left;
+    int m_right;
+};
+
 InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool firstLine, bool& isLineEmpty, LineBreakIteratorInfo& lineBreakIteratorInfo, bool& previousLineBrokeCleanly, 
                                               bool& hyphenated, EClear* clear, FloatingObject* lastFloatFromPreviousLine, Vector<RenderBox*>& positionedBoxes)
 {
@@ -1571,12 +1586,11 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
     LineMidpointState& lineMidpointState = resolver.midpointState();
     
     int blockOffset = logicalHeight();
-    int lineLeftOffset = logicalLeftOffsetForLine(blockOffset, firstLine);
-    int lineRightOffset = logicalRightOffsetForLine(blockOffset, firstLine);
-    
-    skipLeadingWhitespace(resolver, firstLine, isLineEmpty, previousLineBrokeCleanly, lastFloatFromPreviousLine, lineLeftOffset, lineRightOffset);
+    LineOffsets lineOffsets(logicalLeftOffsetForLine(blockOffset, firstLine), logicalRightOffsetForLine(blockOffset, firstLine));
 
-    float width = max(0, lineRightOffset - lineLeftOffset);
+    skipLeadingWhitespace(resolver, firstLine, isLineEmpty, previousLineBrokeCleanly, lastFloatFromPreviousLine, lineOffsets);
+
+    float width = lineOffsets.width();
     float w = 0;
     float tmpW = 0;
     // The amount by which |width| has been inflated to account for possible contraction due to ruby overhang.
@@ -1670,8 +1684,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 // If it does, position it now, otherwise, position
                 // it after moving to next line (in newLine() func)
                 if (floatsFitOnLine && logicalWidthForFloat(f) + w + tmpW <= width) {
-                    positionNewFloatOnLine(f, lastFloatFromPreviousLine, firstLine, lineLeftOffset, lineRightOffset);
-                    width = max(0, lineRightOffset - lineLeftOffset) + totalOverhangWidth;
+                    positionNewFloatOnLine(f, lastFloatFromPreviousLine, firstLine, lineOffsets);
+                    width = lineOffsets.width() + totalOverhangWidth;
                     if (lBreak.m_obj == o) {
                         ASSERT(!lBreak.m_pos);
                         lBreak.increment();
@@ -2257,7 +2271,7 @@ void RenderBlock::checkLinesForTextOverflow()
     }
 }
 
-bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, bool firstLine, int& lineLeftOffset, int& lineRightOffset)
+bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, bool firstLine, LineOffsets& lineOffsets)
 {
     bool didPosition = positionNewFloats();
     if (!didPosition)
@@ -2266,9 +2280,9 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
     int blockOffset = logicalHeight();
     if (blockOffset >= logicalTopForFloat(newFloat) && blockOffset < logicalBottomForFloat(newFloat)) {
         if (newFloat->type() == FloatingObject::FloatLeft)
-            lineLeftOffset = logicalRightForFloat(newFloat);
+            lineOffsets.setLeft(logicalRightForFloat(newFloat));
         else
-            lineRightOffset = logicalLeftForFloat(newFloat);
+            lineOffsets.setRight(logicalLeftForFloat(newFloat));
     }
 
     if (!newFloat->m_paginationStrut)
@@ -2304,8 +2318,8 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
     }
 
     setLogicalHeight(blockOffset + paginationStrut);
-    lineLeftOffset = logicalLeftOffsetForLine(logicalHeight(), firstLine);
-    lineRightOffset = logicalRightOffsetForLine(logicalHeight(), firstLine);
+    lineOffsets.setLeft(logicalLeftOffsetForLine(logicalHeight(), firstLine));
+    lineOffsets.setRight(logicalRightOffsetForLine(logicalHeight(), firstLine));
 
     return didPosition;
 }
