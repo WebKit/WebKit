@@ -1,3 +1,17 @@
+2011-04-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Stop JSObject::isUsingInlineStorage() from using the structure
+        https://bugs.webkit.org/show_bug.cgi?id=57986
+
+        Make the isUsingInlineStorage() implementation just look at
+        whether the property storage is inside the object.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::isUsingInlineStorage):
+        (JSC::JSObject::JSObject):
+
 2011-04-06  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Geoff Garen.

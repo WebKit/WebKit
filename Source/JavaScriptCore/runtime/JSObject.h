@@ -220,7 +220,7 @@ namespace JSC {
         virtual ComplType exceptionType() const { return Throw; }
 
         void allocatePropertyStorage(size_t oldSize, size_t newSize);
-        bool isUsingInlineStorage() const { return m_structure->isUsingInlineStorage(); }
+        bool isUsingInlineStorage() const { return static_cast<const void*>(m_propertyStorage) == static_cast<const void*>(this + 1); }
 
         static const unsigned baseExternalStorageCapacity = 16;
 
@@ -401,6 +401,7 @@ inline JSObject::JSObject(NonNullPassRefPtr<Structure> structure, PropertyStorag
     ASSERT(m_structure->propertyStorageCapacity() < baseExternalStorageCapacity);
     ASSERT(m_structure->isEmpty());
     ASSERT(prototype().isNull() || Heap::heap(this) == Heap::heap(prototype()));
+    ASSERT(static_cast<void*>(inlineStorage) == static_cast<void*>(this + 1));
 }
 
 inline JSObject::~JSObject()
