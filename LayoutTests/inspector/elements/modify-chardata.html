@@ -10,6 +10,19 @@ function modifyChars()
     node.firstChild.textContent = "Bar";
 }
 
+function modifyViaRange()
+{
+    var range = document.createRange();
+    var referenceNode = document.getElementById("rangenode").firstChild;
+    range.selectNode(referenceNode);
+    range.setStart(referenceNode, 9);
+    range.setEnd(referenceNode, 9 + 5);
+    range.deleteContents();
+    var span = range.startContainer.ownerDocument.createElement("span");
+    span.innerHTML = "test";
+    range.insertNode(span);
+}
+
 function test()
 {
     var targetNode;
@@ -20,7 +33,7 @@ function test()
             function callback(node)
             {
                 targetNode = node;
-                InspectorTest.addResult("========= Original ========");
+                InspectorTest.addResult("========= Original for normal mutation ========");
                 InspectorTest.dumpElementsTree(targetNode);
                 next();
             }
@@ -36,6 +49,28 @@ function test()
                 next();
             }
             InspectorTest.evaluateInPage("modifyChars()", callback);
+        },
+
+        function testModifyViaRange(next)
+        {
+            function callback()
+            {
+                InspectorTest.addResult("===== Contents modified via Range =====");
+                InspectorTest.dumpElementsTree(targetNode);
+                next();
+            }
+            function expandCallback()
+            {
+                InspectorTest.expandElementsTree(callback);
+            }
+            function selectCallback(node)
+            {
+                targetNode = node;
+                InspectorTest.addResult("========= Original for Range mutation ========");
+                InspectorTest.dumpElementsTree(targetNode);
+                InspectorTest.evaluateInPage("modifyViaRange()", expandCallback);
+            }
+            InspectorTest.selectNodeWithId("rangenode", selectCallback);
         }
     ]);
 }
@@ -49,6 +84,7 @@ Tests that elements panel updates dom tree structure upon changes to characters.
 </p>
 
 <div id="node">Foo</div>
+<div id="rangenode">Lorem ipsum dolor sit amet</div>
 
 </body>
 </html>

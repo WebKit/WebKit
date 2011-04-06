@@ -1,3 +1,13 @@
+2011-04-05  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Range insertNode function does not update content in the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=57829
+
+        * inspector/elements/modify-chardata-expected.txt:
+        * inspector/elements/modify-chardata.html:
+
 2011-04-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

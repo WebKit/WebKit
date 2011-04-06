@@ -456,7 +456,6 @@ void InspectorDOMAgent::pushChildNodesToFrontend(int nodeId)
 
     NodeToIdMap* nodeMap = m_idToNodesMap.get(nodeId);
     RefPtr<InspectorArray> children = buildArrayForContainerChildren(node, 1, nodeMap);
-    m_childrenRequested.add(nodeId);
     m_frontend->setChildNodes(nodeId, children.release());
 }
 
@@ -1090,13 +1089,14 @@ PassRefPtr<InspectorArray> InspectorDOMAgent::buildArrayForContainerChildren(Nod
     Node* child = innerFirstChild(container);
 
     if (depth == 0) {
-        // Special case the_only text child.
+        // Special-case the only text child - pretend that container's children have been requested.
         if (child && child->nodeType() == Node::TEXT_NODE && !innerNextSibling(child))
-            children->pushObject(buildObjectForNode(child, 0, nodesMap));
+            return buildArrayForContainerChildren(container, 1, nodesMap);
         return children.release();
-    } else if (depth > 0) {
-        depth--;
     }
+
+    depth--;
+    m_childrenRequested.add(bind(container, nodesMap));
 
     while (child) {
         children->pushObject(buildObjectForNode(child, depth, nodesMap));

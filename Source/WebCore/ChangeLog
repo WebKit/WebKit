@@ -1,3 +1,14 @@
+2011-04-05  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Range insertNode function does not update content in the inspector
+        https://bugs.webkit.org/show_bug.cgi?id=57829
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::pushChildNodesToFrontend):
+        (WebCore::InspectorDOMAgent::buildArrayForContainerChildren):
+
 2011-04-06  Alejandro G. Castro  <alex@igalia.com>
 
         Fix GTK3 compilation after r82962.
