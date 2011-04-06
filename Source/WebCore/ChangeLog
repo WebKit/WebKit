@@ -2,6 +2,16 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: Javascipt warning link expand and overlap with icons in js console
+        https://bugs.webkit.org/show_bug.cgi?id=57939
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.linkifyURLAsNode):
+
+2011-04-06  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector: Beautify parameter names in Inspector.json (CSS domain)
         https://bugs.webkit.org/show_bug.cgi?id=57931
 

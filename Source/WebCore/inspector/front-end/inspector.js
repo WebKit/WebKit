@@ -1306,6 +1306,7 @@ WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal, too
     else if (typeof tooltipText !== "string" || tooltipText.length)
         a.title = tooltipText;
     a.textContent = linkText;
+    a.style.maxWidth = "100%";
 
     return a;
 }
