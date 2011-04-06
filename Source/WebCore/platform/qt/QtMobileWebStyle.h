@@ -29,6 +29,7 @@ public:
 
     void drawControl(ControlElement, const QStyleOption*, QPainter*, const QWidget*) const;
     void drawComplexControl(ComplexControl, const QStyleOptionComplex*, QPainter*, const QWidget*) const;
+    void drawPrimitive(PrimitiveElement, const QStyleOption*, QPainter*, const QWidget*) const;
 
 private:
     void drawChecker(QPainter* painter, int size, QColor color) const;

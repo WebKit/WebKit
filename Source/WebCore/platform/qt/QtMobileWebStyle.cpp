@@ -34,12 +34,13 @@ static inline void drawRectangularControlBackground(QPainter* painter, const QPe
 {
     QPen oldPen = painter->pen();
     QBrush oldBrush = painter->brush();
+    painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setPen(pen);
     painter->setBrush(brush);
 
     int line = 1;
-    painter->drawRect(rect.adjusted(line, line, -line, -line));
-
+    painter->drawRoundedRect(rect.adjusted(line, line, -line, -line),
+            /* xRadius */ 5.0, /* yRadious */ 5.0);
     painter->setPen(oldPen);
     painter->setBrush(oldBrush);
 }
@@ -146,7 +147,9 @@ void QtMobileWebStyle::drawControl(ControlElement element, const QStyleOption* o
             linearGradient.setColorAt(0.5, Qt::white);
         }
 
-        drawRectangularControlBackground(painter, QPen(disabled ? Qt::lightGray : Qt::darkGray), rect, linearGradient);
+        painter->setPen(QPen(disabled ? Qt::lightGray : Qt::darkGray));
+        painter->setBrush(linearGradient);
+        painter->drawRect(rect);
         rect.adjust(1, 1, -1, -1);
 
         if (option->state & State_Off)
@@ -169,8 +172,56 @@ void QtMobileWebStyle::drawControl(ControlElement element, const QStyleOption* o
         painter->drawPixmap(option->rect.x(), option->rect.y(), radio);
         break;
     }
+    case CE_PushButton: {
+        QRect rect = option->rect;
+        QPen pen(Qt::darkGray, 1.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+        painter->setPen(pen);
+
+        const bool sunken = (option->state & State_Sunken);
+        if (sunken) {
+            drawRectangularControlBackground(painter, pen, rect, QBrush(Qt::darkGray));
+            break;
+        }
+
+        QLinearGradient linearGradient(rect.bottomLeft(), QPoint(rect.bottomLeft().x(), rect.bottomLeft().y() - /* offset limit for gradient */ 20));
+        linearGradient.setColorAt(0.0, Qt::gray);
+        linearGradient.setColorAt(0.4, Qt::white);
+        drawRectangularControlBackground(painter, pen, rect, linearGradient);
+        break;
+    }
     default:
         QWindowsStyle::drawControl(element, option, painter, widget);
+    }
+}
+void QtMobileWebStyle::drawPrimitive(PrimitiveElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const
+{
+    switch (element) {
+    case QStyle::PE_PanelLineEdit: {
+        const bool disabled = !(option->state & State_Enabled);
+        const bool sunken = (option->state & State_Sunken);
+        QRect rect = option->rect;
+        QPen pen(Qt::darkGray, 1.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+        painter->setPen(pen);
+
+        if (sunken) {
+            drawRectangularControlBackground(painter, pen, rect, QBrush(Qt::darkGray));
+            break;
+        }
+
+        QLinearGradient linearGradient(rect.topLeft(), QPoint(rect.topLeft().x(), rect.topLeft().y() + 20));
+        if (disabled) {
+            linearGradient.setColorAt(0.0, Qt::lightGray);
+            linearGradient.setColorAt(0.3, Qt::white);
+        } else {
+            linearGradient.setColorAt(0.0, Qt::darkGray);
+            linearGradient.setColorAt(0.35, Qt::white);
+        }
+
+        drawRectangularControlBackground(painter, pen, rect, linearGradient);
+        break;
+    }
+    default:
+        QWindowsStyle::drawPrimitive(element, option, painter, widget);
     }
 }
 
@@ -253,7 +304,6 @@ void QtMobileWebStyle::drawComplexControl(ComplexControl control, const QStyleOp
 {
     switch (control) {
     case CC_ComboBox: {
-
         bool multiple = false;
         const bool disabled = !(option->state & State_Enabled);
 
@@ -274,7 +324,15 @@ void QtMobileWebStyle::drawComplexControl(ComplexControl control, const QStyleOp
         if (!(cmb->subControls & SC_ComboBoxArrow))
             break;
 
-        QRect rect = subControlRect(CC_ComboBox, cmb, SC_ComboBoxArrow, widget);
+        QRect rect = option->rect;
+        QLinearGradient linearGradient(rect.bottomLeft(), QPoint(rect.bottomLeft().x(), rect.bottomLeft().y() - /* offset limit for gradient */ 20));
+        linearGradient.setColorAt(0.0, Qt::gray);
+        linearGradient.setColorAt(0.4, Qt::white);
+        QPen pen(Qt::darkGray, 1.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+        painter->setPen(pen);
+        drawRectangularControlBackground(painter, pen, rect, linearGradient);
+
+        rect = subControlRect(CC_ComboBox, cmb, SC_ComboBoxArrow, widget);
         QPixmap pic = findComboButton(rect.size(), multiple, disabled);
 
         if (pic.isNull())
@@ -293,3 +351,4 @@ void QtMobileWebStyle::drawComplexControl(ComplexControl control, const QStyleOp
         QWindowsStyle::drawComplexControl(control, option, painter, widget);
     }
 }
+

@@ -78,7 +78,6 @@
 #include <QStyleOptionSlider>
 #include <QWidget>
 
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -198,10 +197,13 @@ bool RenderThemeQt::isControlStyled(const RenderStyle* style, const BorderData& 
     case PushButtonPart:
     case ButtonPart:
     case MenulistPart:
-    // FIXME: Need to add SearchFieldPart if it should be style-able.
+    case SearchFieldPart:
     case TextFieldPart:
     case TextAreaPart:
-        return true;
+        // Test the style to see if the UA border and background match.
+        return (style->border() != border
+                || *style->backgroundLayers() != fill
+                || style->visitedDependentColor(CSSPropertyBackgroundColor) != backgroundColor);
     case CheckboxPart:
     case RadioPart:
         return false;
@@ -257,9 +259,6 @@ String RenderThemeQt::extraDefaultStyleSheet()
     String result = RenderTheme::extraDefaultStyleSheet();
 #if ENABLE(NO_LISTBOX_RENDERING)
     result += String(themeQtNoListboxesUserAgentStyleSheet, sizeof(themeQtNoListboxesUserAgentStyleSheet));
-#endif
-#if USE(QT_MOBILE_THEME)
-    result += String(themeQtMobileUserAgentStyleSheet, sizeof(themeQtMobileUserAgentStyleSheet));
 #endif
     return result;
 }
@@ -448,7 +447,6 @@ void RenderThemeQt::computeSizeBasedOnStyle(RenderStyle* renderStyle) const
     case SearchFieldPart:
     case TextFieldPart: {
         int padding = findFrameLineWidth(style);
-
         renderStyle->setPaddingLeft(Length(padding, Fixed));
         renderStyle->setPaddingRight(Length(padding, Fixed));
         renderStyle->setPaddingTop(Length(padding, Fixed));
@@ -458,7 +456,6 @@ void RenderThemeQt::computeSizeBasedOnStyle(RenderStyle* renderStyle) const
     default:
         break;
     }
-
     // If the width and height are both specified, then we have nothing to do.
     if (!renderStyle->width().isIntrinsicOrAuto() && !renderStyle->height().isAuto())
         return;
@@ -480,6 +477,7 @@ void RenderThemeQt::computeSizeBasedOnStyle(RenderStyle* renderStyle) const
         size = QSize(radioWidth, radioWidth);
         break;
     }
+#if !USE(QT_MOBILE_THEME)
     case PushButtonPart:
     case ButtonPart: {
         QStyleOptionButton styleOption;
@@ -509,6 +507,7 @@ void RenderThemeQt::computeSizeBasedOnStyle(RenderStyle* renderStyle) const
         size.setHeight(menuListSize.height());
         break;
     }
+#endif
     default:
         break;
     }
@@ -564,13 +563,14 @@ void RenderThemeQt::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* s
     fontDescription.setComputedSize(style->fontSize());
 #endif
 
+#if !USE(QT_MOBILE_THEME)
     FontFamily fontFamily;
     fontFamily.setFamily(m_buttonFontFamily);
     fontDescription.setFamily(fontFamily);
     style->setFontDescription(fontDescription);
     style->font().update(selector->fontSelector());
+#endif
     style->setLineHeight(RenderStyle::initialLineHeight());
-
     setButtonSize(style);
     setButtonPadding(style);
 }
@@ -580,6 +580,7 @@ void RenderThemeQt::setButtonSize(RenderStyle* style) const
     computeSizeBasedOnStyle(style);
 }
 
+#if !USE(QT_MOBILE_THEME)
 void RenderThemeQt::setButtonPadding(RenderStyle* style) const
 {
     QStyleOptionButton styleOption;
@@ -609,12 +610,22 @@ void RenderThemeQt::setButtonPadding(RenderStyle* style) const
         // Can't use this right now because we don't have the baseline to compensate
         // paddingBottom = layoutRect.bottom() - contentsRect.bottom();
     }
-
     style->setPaddingLeft(Length(paddingLeft, Fixed));
     style->setPaddingRight(Length(paddingRight, Fixed));
     style->setPaddingTop(Length(paddingTop, Fixed));
     style->setPaddingBottom(Length(paddingBottom, Fixed));
 }
+#else
+void RenderThemeQt::setButtonPadding(RenderStyle* style) const
+{
+    if (!style)
+        return;
+    style->setPaddingLeft(Length(18, Fixed));
+    style->setPaddingRight(Length(18, Fixed));
+    style->setPaddingTop(Length(2, Fixed));
+    style->setPaddingBottom(Length(3, Fixed));
+}
+#endif
 
 bool RenderThemeQt::paintButton(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {
@@ -662,7 +673,8 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const PaintInfo& i, const In
     initStyleOption(p.widget, panel);
     panel.rect = r;
     panel.lineWidth = findFrameLineWidth(qStyle());
-    panel.state |= QStyle::State_Sunken;
+    if (isPressed(o))
+        panel.state |= QStyle::State_Sunken;
     panel.features = QStyleOptionFrameV2::None;
 
     // Get the correct theme data for a text field
