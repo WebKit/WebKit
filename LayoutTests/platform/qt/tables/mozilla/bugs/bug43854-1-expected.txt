@@ -3,11 +3,11 @@ layer at (0,0) size 942x584
 layer at (0,0) size 800x584
   RenderBlock {HTML} at (0,0) size 800x584
     RenderBody {BODY} at (0,0) size 800x584 [color=#FFFF00] [bgcolor=#000000]
-      RenderBlock {P} at (40,40) size 720x20
+      RenderBlock {P} at (40,40) size 720x21
         RenderInline {B} at (0,0) size 285x20
           RenderText {#text} at (0,0) size 285x20
             text run at (0,0) width 285: "All cell borders should look the same."
-      RenderTable {TABLE} at (40,76) size 902x206 [border: (1px outset #808080)]
+      RenderTable {TABLE} at (40,77) size 902x206 [border: (1px outset #808080)]
         RenderTableCol {COLGROUP} at (0,0) size 0x0
           RenderTableCol {COL} at (0,0) size 0x0
         RenderTableSection {TBODY} at (1,1) size 900x204

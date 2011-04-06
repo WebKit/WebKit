@@ -1,3 +1,34 @@
+2011-04-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Update platform specific expected results after r83075.
+
+        * platform/qt/editing/pasteboard/paste-text-011-expected.checksum:
+        * platform/qt/editing/pasteboard/paste-text-011-expected.png:
+        * platform/qt/editing/pasteboard/paste-text-011-expected.txt:
+        * platform/qt/fast/css-generated-content/014-expected.checksum:
+        * platform/qt/fast/css-generated-content/014-expected.png:
+        * platform/qt/fast/css-generated-content/014-expected.txt:
+        * platform/qt/fast/css/word-space-extra-expected.checksum:
+        * platform/qt/fast/css/word-space-extra-expected.png:
+        * platform/qt/fast/css/word-space-extra-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug16252-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug2123-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug2123-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug2123-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug43854-1-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug43854-1-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug43854-1-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug4523-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug4523-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug4523-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug57828-2-expected.checksum:
+        * platform/qt/tables/mozilla/bugs/bug57828-2-expected.png:
+        * platform/qt/tables/mozilla/bugs/bug57828-2-expected.txt:
+        * platform/qt/tables/mozilla/core/bloomberg-expected.checksum:
+        * platform/qt/tables/mozilla/core/bloomberg-expected.png:
+        * platform/qt/tables/mozilla/core/bloomberg-expected.txt:
+        * platform/qt/tables/mozilla/marvin/backgr_index-expected.txt:
+
 2011-04-06  Adrienne Walker  <enne@google.com>
 
         Unreviewed, mark Chromium expectations for line-clamp.html to be a known regression.
