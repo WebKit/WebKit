@@ -1,3 +1,24 @@
+2011-04-06  Adam Roben  <aroben@apple.com>
+
+        Add a "view leaks" link to builds on SnowLeopard Intel Leaks
+
+        Fixes <http://webkit.org/b/56032> Leaks viewer should be linked from leaks bot results page
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (ExtractTestResults.resultDirectoryURL): Added. Moved code to calculate the URL for the
+        build's results directory here...
+        (ExtractTestResults.finished): ...from here.
+        (ExtractTestResultsAndLeaks): New class that's used by the leaks builder
+        (ExtractTestResultsAndLeaks.finished): Calls up to the base class, but also adds a "view
+        leaks" link to point to Leaks Viewer for this build.
+        (TestFactory): Added ExtractTestResultsClass abstraction. This isn't overridden anywhere,
+        but it seemed good to add for consistency with BuildAndTestFactory.
+        (BuildAndTestFactory): Added ExtractTestResultsClass abstraction.
+        (BuildAndTestLeaksFactory): Use ExtractTestResultsAndLeaks as our ExtractTestResultsClass so
+        that we'll get a "view leaks" link.
+
 2011-04-06  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Eric Seidel.
