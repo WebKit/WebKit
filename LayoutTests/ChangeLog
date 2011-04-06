@@ -1,3 +1,15 @@
+2011-04-06  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, rebaseline Chromium Win tests after r83075.
+
+        * platform/chromium-win/fast/multicol/nested-columns-expected.checksum: Removed.
+        * platform/chromium-win/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-lr/nested-columns-expected.checksum: Removed.
+        * platform/chromium-win/fast/multicol/vertical-lr/nested-columns-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-rl/nested-columns-expected.checksum: Removed.
+        * platform/chromium-win/fast/multicol/vertical-rl/nested-columns-expected.png:
+        * platform/chromium-win/fast/text/capitalize-empty-generated-string-expected.txt:
+
 2011-04-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Update platform specific expected results after r83075.
