@@ -1,3 +1,26 @@
+2011-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION (r46914, r48764): When typing in Mail, line wrapping frequently occurs in the middle of words
+        https://bugs.webkit.org/show_bug.cgi?id=57872
+
+        r46914 initially introduced a regression by replacing calls to styleAtPosition by editingStyleAtPosition
+        because editingStyleAtPosition did not avoid tab span to obtain the computed style unlike styleAtPosition.
+
+        r46914 also introduced a regression by cloning hierarchy under new block at the insertion position without
+        avoiding the tab span.
+
+        Fixed the both regressions by avoiding tab spans when computing the editing style and when cloning hierarchy.
+
+        Test: editing/inserting/insert-paragraph-separator-tab-span.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::init): Always avoid a tab span when computing the editing style.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Avoid cloning tab spans and inserting a paragraph
+        separator into a paragraph separator.
+
 2011-04-06  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Ryosuke Niwa.

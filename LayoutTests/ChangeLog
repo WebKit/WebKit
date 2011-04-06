@@ -1,3 +1,16 @@
+2011-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION (r46914, r48764): When typing in Mail, line wrapping frequently occurs in the middle of words
+        https://bugs.webkit.org/show_bug.cgi?id=57872
+
+        Added a test insert a paragraph separator and text around tab spans. WebKit should not apply the tab span's
+        style to the paragraph separator or the text.
+
+        * editing/inserting/insert-paragraph-separator-tab-span-expected.txt: Added.
+        * editing/inserting/insert-paragraph-separator-tab-span.html: Added.
+
 2011-04-05  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
