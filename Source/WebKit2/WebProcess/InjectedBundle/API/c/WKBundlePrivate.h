@@ -70,6 +70,7 @@ WK_EXPORT void WKBundleSetAllowFileAccessFromFileURLs(WKBundleRef bundle, WKBund
 WK_EXPORT void WKBundleClearAllDatabases(WKBundleRef bundle);
 WK_EXPORT void WKBundleSetDatabaseQuota(WKBundleRef bundle, uint64_t);
 WK_EXPORT int WKBundleNumberOfPages(WKBundleRef bundle, WKBundleFrameRef frameRef, double pageWidthInPixels, double pageHeightInPixels);
+WK_EXPORT int WKBundlePageNumberForElementById(WKBundleRef bundle, WKBundleFrameRef frameRef, WKStringRef idRef, double pageWidthInPixels, double pageHeightInPixels);
 
 #ifdef __cplusplus
 }

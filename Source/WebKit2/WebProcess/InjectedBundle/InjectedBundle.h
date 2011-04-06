@@ -94,6 +94,7 @@ public:
     void overrideAllowUniversalAccessFromFileURLsForTestRunner(WebPageGroupProxy*, bool);
     void setAllowFileAccessFromFileURLs(WebPageGroupProxy*, bool);
     int numberOfPages(WebFrame*, double, double);
+    int pageNumberForElementById(WebFrame*, const String&, double, double);
 
     // UserContent API
     void addUserScript(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime, WebCore::UserContentInjectedFrames);

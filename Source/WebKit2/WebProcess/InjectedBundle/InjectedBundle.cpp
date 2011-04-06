@@ -158,6 +158,24 @@ int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, dou
     return PrintContext::numberOfPages(coreFrame, FloatSize(pageWidthInPixels, pageHeightInPixels));
 }
 
+int InjectedBundle::pageNumberForElementById(WebFrame* frame, const String& id, double pageWidthInPixels, double pageHeightInPixels)
+{
+    Frame* coreFrame = frame ? frame->coreFrame() : 0;
+    if (!coreFrame)
+        return -1;
+
+    Element* element = coreFrame->document()->getElementById(AtomicString(id));
+    if (!element)
+        return -1;
+
+    if (!pageWidthInPixels)
+        pageWidthInPixels = coreFrame->view()->width();
+    if (!pageHeightInPixels)
+        pageHeightInPixels = coreFrame->view()->height();
+
+    return PrintContext::pageNumberForElement(element, FloatSize(pageWidthInPixels, pageHeightInPixels));
+}
+
 static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* patterns)
 {
     if (!patterns)

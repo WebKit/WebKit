@@ -1008,34 +1008,6 @@ webarchive/test-xml-stylesheet.xml
 # <https://bugs.webkit.org/show_bug.cgi?id=42328>
 fast/profiler
 
-# WebKitTestRunner needs to support layoutTestController.pageNumberForElementById
-# <https://bugs.webkit.org/show_bug.cgi?id=42329>
-printing/page-count-percentage-height.html
-printing/allowed-page-breaks.html
-printing/css2.1/page-break-after-000.html
-printing/css2.1/page-break-after-001.html
-printing/css2.1/page-break-after-002.html
-printing/css2.1/page-break-after-003.html
-printing/css2.1/page-break-after-004.html
-printing/css2.1/page-break-before-000.html
-printing/css2.1/page-break-before-001.html
-printing/css2.1/page-break-before-002.html
-printing/css2.1/page-break-inside-000.html
-printing/no-content-empty-pages.html
-printing/page-break-after-avoid.html
-printing/page-break-always.html
-printing/page-break-avoid.html
-printing/page-break-before-avoid.html
-printing/page-break-display-none.html
-printing/page-break-inside-avoid.html
-printing/page-break-margin-collapsed.html
-printing/page-break-orphans-and-widows.html
-printing/page-break-orphans.html
-printing/page-break-widows.html
-printing/pageNumerForElementById.html
-printing/return-from-printing-mode.html
-printing/page-count-layout-overflow.html
-
 # WebKitTestRunner needs layoutTestController.waitForPolicyDelegate
 # <https://bugs.webkit.org/show_bug.cgi?id=42330>
 fast/encoding/mailto-always-utf-8.html

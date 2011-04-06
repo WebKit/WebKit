@@ -331,6 +331,12 @@ int LayoutTestController::numberOfPages(double pageWidthInPixels, double pageHei
     return WKBundleNumberOfPages(InjectedBundle::shared().bundle(), mainFrame, pageWidthInPixels, pageHeightInPixels);
 }
 
+int LayoutTestController::pageNumberForElementById(JSStringRef id, double pageWidthInPixels, double pageHeightInPixels)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    return WKBundlePageNumberForElementById(InjectedBundle::shared().bundle(), mainFrame, toWK(id).get(), pageWidthInPixels, pageHeightInPixels);
+}
+
 unsigned LayoutTestController::windowCount()
 {
     return InjectedBundle::shared().pageCount();

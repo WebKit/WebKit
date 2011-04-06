@@ -157,3 +157,8 @@ int WKBundleNumberOfPages(WKBundleRef bundleRef, WKBundleFrameRef frameRef, doub
 {
     return toImpl(bundleRef)->numberOfPages(toImpl(frameRef), pageWidthInPixels, pageHeightInPixels);
 }
+
+int WKBundlePageNumberForElementById(WKBundleRef bundleRef, WKBundleFrameRef frameRef, WKStringRef idRef, double pageWidthInPixels, double pageHeightInPixels)
+{
+    return toImpl(bundleRef)->pageNumberForElementById(toImpl(frameRef), toImpl(idRef)->string(), pageWidthInPixels, pageHeightInPixels);
+}

@@ -66,6 +66,7 @@ module WTR {
 
         // Printing
         int numberOfPages(in double pageWidthInPixels, in double pageHeightInPixels);
+        int pageNumberForElementById(in DOMString id, in double pageWidthInPixels, in double pageHeightInPixels);
 
         // Animation testing.
         int numberOfActiveAnimations();
