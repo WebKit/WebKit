@@ -1,3 +1,15 @@
+2011-04-06  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: inline script imports in ScriptFormatterWorker.js so it works in Safari release.
+        https://bugs.webkit.org/show_bug.cgi?id=57641
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * gyp/streamline-inspector-source.sh:
+        * inspector/combine-javascript-resources.pl: Renamed from Source/WebCore/combine-javascript-resources.
+        * inspector/inline-javascript-imports.py: Added.
+
 2011-04-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
