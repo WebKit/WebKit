@@ -505,6 +505,11 @@ private:
     void computeBlockDirectionPositionsForLine(RootInlineBox*, BidiRun*, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
     void deleteEllipsisLineBoxes();
     void checkLinesForTextOverflow();
+
+    // Positions new floats and also adjust all floats encountered on the line if any of them
+    // have to move to the next page/column.
+    bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, bool firstLine, int& lineLeftOffset, int& lineRightOffset);
+
     // End of functions defined in RenderBlockLineLayout.cpp.
 
     void paintFloats(PaintInfo&, int tx, int ty, bool preservePhase = false);
@@ -523,10 +528,6 @@ private:
     // Called from lineWidth, to position the floats added in the last line.
     // Returns true if and only if it has positioned any floats.
     bool positionNewFloats();
-    
-    // Positions new floats and also adjust all floats encountered on the line if any of them
-    // have to move to the next page/column.
-    bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, bool firstLine, int& lineLeftOffset, int& lineRightOffset);
 
     void clearFloats();
     int getClearDelta(RenderBox* child, int yPos);

@@ -1,3 +1,9 @@
+2011-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Moved the declaration of positionNewFloatOnLine in RenderBlock.h after r83042.
+
+        * rendering/RenderBlock.h:
+
 2011-03-27  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
