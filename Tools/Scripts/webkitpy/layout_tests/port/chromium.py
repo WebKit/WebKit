@@ -54,7 +54,7 @@ class ChromiumPort(base.Port):
     ALL_BASELINE_VARIANTS = [
         'chromium-mac-snowleopard', 'chromium-mac-leopard',
         'chromium-win-win7', 'chromium-win-vista', 'chromium-win-xp',
-        'chromium-linux', 'chromium-linux-x86_64',
+        'chromium-linux-x86', 'chromium-linux-x86_64',
         'chromium-gpu-mac-leopard', 'chromium-gpu-win-xp', 'chromium-gpu-linux',
     ]
 
