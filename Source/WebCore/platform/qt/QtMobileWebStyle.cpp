@@ -71,8 +71,8 @@ QPixmap QtMobileWebStyle::findChecker(const QRect& rect, bool disabled) const
 {
     int size = qMin(rect.width(), rect.height());
     QPixmap result;
-    static const QString prefix = "$qt-maemo5-" + QLatin1String(metaObject()->className()) + "-checker-";
-    QString key = prefix + QString::number(size) + "-" + (disabled ? "disabled" : "enabled");
+    static const QString prefix = QLatin1String("$qt-maemo5-") + QLatin1String(metaObject()->className())+ QLatin1String("-checker-");
+    QString key = prefix + QString::number(size) + QLatin1String("-") + (disabled ? QLatin1String("disabled") : QLatin1String("enabled"));
     if (!QPixmapCache::find(key, result)) {
         result = QPixmap(size, size);
         result.fill(Qt::transparent);
@@ -115,9 +115,9 @@ void QtMobileWebStyle::drawRadio(QPainter* painter, const QSize& size, bool chec
 QPixmap QtMobileWebStyle::findRadio(const QSize& size, bool checked, bool disabled) const
 {
     QPixmap result;
-    static const QString prefix = "$qt-maemo5-" + QLatin1String(metaObject()->className()) + "-radio-";
-    QString key = prefix + QString::number(size.width()) + "-" + QString::number(size.height()) +
-                   + "-" + (disabled ? "disabled" : "enabled") + (checked ? "-checked" : "");
+    static const QString prefix = QLatin1String("$qt-maemo5-") + QLatin1String(metaObject()->className()) + QLatin1String("-radio-");
+    QString key = prefix + QString::number(size.width()) + QLatin1String("-") + QString::number(size.height()) + QLatin1String("-")
+        + (disabled ? QLatin1String("disabled") : QLatin1String("enabled")) + (checked ? QLatin1String("-checked") : QLatin1String(""));
     if (!QPixmapCache::find(key, result)) {
         result = QPixmap(size);
         result.fill(Qt::transparent);
@@ -230,10 +230,10 @@ QPixmap QtMobileWebStyle::findComboButton(const QSize& size, bool multiple, bool
 
     if (imageSize.isNull())
         return QPixmap();
-    static const QString prefix = "$qt-maemo5-" + QLatin1String(metaObject()->className()) + "-combo-";
-    QString key = prefix + (multiple ? "multiple-" : "simple-") +
-                  QString::number(imageSize.width()) + "-" + QString::number(imageSize.height()) +
-                   + "-" + (disabled ? "disabled" : "enabled");
+    static const QString prefix = QLatin1String("$qt-maemo5-") + QLatin1String(metaObject()->className()) + QLatin1String("-combo-");
+    QString key = prefix + (multiple ? QLatin1String("multiple-") : QLatin1String("simple-"))
+        + QString::number(imageSize.width()) + QLatin1String("-") + QString::number(imageSize.height())
+        + QLatin1String("-") + (disabled ? QLatin1String("disabled") : QLatin1String("enabled"));
     if (!QPixmapCache::find(key, result)) {
         result = QPixmap(imageSize);
         result.fill(Qt::transparent);

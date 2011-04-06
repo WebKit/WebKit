@@ -1,3 +1,15 @@
+2011-04-05  Diego Gonzalez  <diegohcg@webkit.org>
+
+        Buildfix after r82125.
+
+        [Qt] QtWebKit will not compile with QT_ASCII_CAST_WARNINGS enabled
+        https://bugs.webkit.org/show_bug.cgi?id=57087
+
+        * platform/qt/QtMobileWebStyle.cpp:
+        (QtMobileWebStyle::findChecker):
+        (QtMobileWebStyle::findRadio):
+        (QtMobileWebStyle::findComboButton):
+
 2011-04-06  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
