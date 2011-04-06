@@ -80,6 +80,18 @@ LIBCURL_URL="http://curl.haxx.se/download/$LIBCURL_TARBALL"
 
 export MAC_OS_X_DEPLOYMENT_TARGET=10.4
 
+ARCH_FLAGS="-arch i386 -arch ppc -arch x86_64"
+SDK="/Developer/SDKs/MacOSX10.4u.sdk"
+
+if [ ! -d $SDK ]; then
+    SDK="/Developer/SDKs/MacOSX10.5.sdk"
+fi
+
+if [ "${OSTYPE:0:6}" == "darwin" ]; then  
+    export CC="gcc-4.0"
+    export CXX="g++-4.0"
+fi
+
 cd $DL_DIR
 # build ICU
 if [ `which icu-config >/dev/null 2>&1` ]; then
@@ -92,8 +104,8 @@ if [ `which icu-config >/dev/null 2>&1` ]; then
 
   if [ "${OSTYPE:0:6}" == "darwin" ]; then  
     ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
-    make CFLAGS="-O -g -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" \
-    LDFLAGS="-arch i386 -arch ppc"
+    make CFLAGS="-O -g -isysroot $SDK $ARCH_FLAGS" \
+    LDFLAGS=$ARCH_FLAGS
     make install
   else
     ./configure --prefix=$DEPS_PREFIX
@@ -115,8 +127,8 @@ if [ ! -f $DEPS_PREFIX/lib/libiconv.$DLLEXT ]; then
 
   if [ "${OSTYPE:0:6}" == "darwin" ]; then  
     ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
-    make CFLAGS="-O -g -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" \
-    LDFLAGS="-arch i386 -arch ppc"
+    make CFLAGS="-O -g -isysroot $SDK $ARCH_FLAGS" \
+    LDFLAGS="$ARCH_FLAGS"
     make install
   else
     ./configure --prefix=$DEPS_PREFIX
@@ -139,8 +151,8 @@ if [ ! -f $DEPS_PREFIX/lib/libjpeg.a ]; then
 
   if [ "${OSTYPE:0:6}" == "darwin" ]; then
     ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
-    make CFLAGS="-O -g -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" \
-    LDFLAGS="-arch i386 -arch ppc"
+    make CFLAGS="-O -g -isysroot $SDK $ARCH_FLAGS" \
+    LDFLAGS="$ARCH_FLAGS"
     make install
   else
     ./configure --prefix=$DEPS_PREFIX
@@ -163,8 +175,8 @@ if [ ! -f $DEPS_PREFIX/lib/libpng.a ]; then
 
   if [ "${OSTYPE:0:6}" == "darwin" ]; then
     ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
-    make CFLAGS="-O -g -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" \
-    LDFLAGS="-arch i386 -arch ppc"
+    make CFLAGS="-O -g -isysroot $SDK $ARCH_FLAGS" \
+    LDFLAGS="$ARCH_FLAGS"
     make install
   else
     ./configure --prefix=$DEPS_PREFIX
@@ -184,9 +196,40 @@ if [ ! -f $DEPS_PREFIX/lib/libcurl.$DLLEXT ]; then
   cd $DL_DIR/curl-$LIBCURL_VERSION
 
   if [ "${OSTYPE:0:6}" == "darwin" ]; then
+    # CURL creates different build headers for 32 and 64 bit, so to get a universal build,
+    # we must first create a 32 bit version of the header, then a 64 bit version, and
+    # have the original header simply decide which to use.
+    export CFLAGS="-O -g -isysroot $SDK -mmacosx-version-min=10.4 -arch i386 -arch ppc"
     ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
-    make CFLAGS="-O -g -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" \
-    LDFLAGS="-arch i386 -arch ppc"
+    
+    mkdir -p $DEPS_PREFIX/include/curl
+    
+    cp include/curl/curlbuild.h include/curl/curlbuild32.h
+    cp include/curl/curlbuild.h $DEPS_PREFIX/include/curl/curlbuild32.h
+    
+    make distclean
+    
+    export CFLAGS="-O -g -isysroot $SDK -mmacosx-version-min=10.4 -arch x86_64 -arch ppc64"
+    ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
+    
+    cp include/curl/curlbuild.h include/curl/curlbuild64.h
+    cp include/curl/curlbuild.h $DEPS_PREFIX/include/curl/curlbuild64.h
+    
+    make distclean
+    
+    export CFLAGS="-O -g -isysroot $SDK -mmacosx-version-min=10.4 $ARCH_FLAGS"
+    ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
+    
+    cat > include/curl/curlbuild.h <<EOF
+#ifdef __LP64__
+#include "curlbuild64.h"
+#else
+#include "curlbuild32.h"
+#endif 
+EOF
+
+    make CFLAGS="-O -g -isysroot $SDK $ARCH_FLAGS" \
+    LDFLAGS="$ARCH_FLAGS"
     make install
   else
     ./configure --prefix=$DEPS_PREFIX
