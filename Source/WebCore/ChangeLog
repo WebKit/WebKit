@@ -1,3 +1,14 @@
+2011-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move RenderBlock::positionNewFloatOnLine to RenderBlockLineLayout.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=57943
+
+        * rendering/RenderBlock.cpp: Removed positionNewFloatOnLine.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::positionNewFloatOnLine): Moved from RenderBlock.cpp
+
 2011-04-05  Diego Gonzalez  <diegohcg@webkit.org>
 
         Buildfix after r82125.

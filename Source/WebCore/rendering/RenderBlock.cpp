@@ -3320,59 +3320,6 @@ bool RenderBlock::positionNewFloats()
     return true;
 }
 
-bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, bool firstLine, int& lineLeftOffset, int& lineRightOffset)
-{
-    bool didPosition = positionNewFloats();
-    if (!didPosition)
-        return didPosition;
-
-    int blockOffset = logicalHeight();
-    if (blockOffset >= logicalTopForFloat(newFloat) && blockOffset < logicalBottomForFloat(newFloat)) {
-        if (newFloat->type() == FloatingObject::FloatLeft)
-            lineLeftOffset = logicalRightForFloat(newFloat);
-        else
-            lineRightOffset = logicalLeftForFloat(newFloat);
-    }
-    
-    if (!newFloat->m_paginationStrut)
-        return didPosition;
-     
-    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-    ASSERT(floatingObjectSet.last() == newFloat);
-
-    int floatLogicalTop = logicalTopForFloat(newFloat);
-    int paginationStrut = newFloat->m_paginationStrut;
-    
-    if (floatLogicalTop - paginationStrut != logicalHeight())
-        return didPosition;
-
-    FloatingObjectSetIterator it = floatingObjectSet.end();
-    --it; // Last float is newFloat, skip that one.
-    FloatingObjectSetIterator begin = floatingObjectSet.begin();
-    while (it != begin) {
-        --it;
-        FloatingObject* f = *it;
-        if (f == lastFloatFromPreviousLine)
-            break;
-        if (logicalTopForFloat(f) == logicalHeight()) {
-            ASSERT(!f->m_paginationStrut);
-            f->m_paginationStrut = paginationStrut;
-            RenderBox* o = f->m_renderer;
-            setLogicalTopForChild(o, logicalTopForChild(o) + marginBeforeForChild(o) + paginationStrut);
-            if (o->isRenderBlock())
-                toRenderBlock(o)->setChildNeedsLayout(true, false);
-            o->layoutIfNeeded();
-            setLogicalTopForFloat(f, logicalTopForFloat(f) + f->m_paginationStrut);
-        }
-    }
-        
-    setLogicalHeight(blockOffset + paginationStrut);
-    lineLeftOffset = logicalLeftOffsetForLine(logicalHeight(), firstLine);
-    lineRightOffset = logicalRightOffsetForLine(logicalHeight(), firstLine);
-
-    return didPosition;
-}
-
 void RenderBlock::newLine(EClear clear)
 {
     positionNewFloats();
