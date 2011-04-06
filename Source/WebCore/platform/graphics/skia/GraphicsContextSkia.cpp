@@ -853,6 +853,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect,
 
     SkPaint paint;
     platformContext()->setupPaintForFilling(&paint);
+    paint.setColor(color.rgb());
     platformContext()->canvas()->drawPath(path, paint);
 }
 
