@@ -1,3 +1,15 @@
+2011-04-06  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Invalid color #{predefined colorName} is accepted by the CSS parser.
+        https://bugs.webkit.org/show_bug.cgi?id=15360
+
+        * editing/execCommand/16049.html: Correct testcase which relies on parsing an invalid color value as valid.
+        * fast/css/invalid-predefined-color-expected.txt: Added.
+        * fast/css/invalid-predefined-color.html: Added.
+        * fast/css/script-tests/invalid-predefined-color.js: Added.
+
 2011-03-30  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

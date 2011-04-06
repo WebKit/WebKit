@@ -15,7 +15,6 @@ string1         \"([\t !#$%&(-~]|\\{nl}|\'|{nonascii}|{escape})*\"
 string2         \'([\t !#$%&(-~]|\\{nl}|\"|{nonascii}|{escape})*\'
 
 ident           -?{nmstart}{nmchar}*
-name            {nmchar}+
 num             [0-9]+|[0-9]*"."[0-9]+
 intnum          [0-9]+
 string          {string1}|{string2}
@@ -46,8 +45,8 @@ nth             [\+-]?{intnum}*n([\t\r\n ]*[\+-][\t\r\n ]*{intnum})?
 {ident}                 {yyTok = IDENT; return yyTok;}
 {nth}                   {yyTok = NTH; return yyTok;}
 
+"#"{h}+                 {yyTok = HEX; return yyTok;}
 "#"{ident}              {yyTok = IDSEL; return yyTok;}
-"#"{name}               {yyTok = HEX; return yyTok;}
 
 "@import"               {BEGIN(mediaquery); yyTok = IMPORT_SYM; return yyTok;}
 "@page"                 {yyTok = PAGE_SYM; return yyTok;}

@@ -1,3 +1,15 @@
+2011-04-06  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Invalid color #{predefined colorName} is accepted by the CSS parser.
+        https://bugs.webkit.org/show_bug.cgi?id=15360
+
+        Test: fast/css/invalid-predefined-color.html
+
+        * css/CSSGrammar.y: Remove superfluous hexcolor production.
+        * css/tokenizer.flex: A hexadecimal number should consist of [a-fA-F0-9] values ({h}).
+
 2011-03-30  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
