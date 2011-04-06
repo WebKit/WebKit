@@ -34,6 +34,7 @@
 #include "MediaControlElements.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "PlatformContextCairo.h"
 #include "RenderObject.h"
 #include "TextDirection.h"
 #include "UserAgentStyleSheets.h"
@@ -216,16 +217,16 @@ static void paintToggle(const RenderThemeGtk* theme, GType widgetType, RenderObj
     gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
 
     if (widgetType == GTK_TYPE_CHECK_BUTTON)
-        gtk_render_check(context, paintInfo.context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
+        gtk_render_check(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
     else
-        gtk_render_option(context, paintInfo.context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
+        gtk_render_option(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
 
     if (theme->isFocused(renderObject)) {
         IntRect indicatorRect(rect);
         gint indicatorSpacing;
         gtk_style_context_get_style(context, "indicator-spacing", &indicatorSpacing, NULL);
         indicatorRect.inflate(indicatorSpacing);
-        gtk_render_focus(context, paintInfo.context->platformContext(), indicatorRect.x(), indicatorRect.y(),
+        gtk_render_focus(context, paintInfo.context->platformContext()->cr(), indicatorRect.x(), indicatorRect.y(),
                          indicatorRect.width(), indicatorRect.height());
     }
 
@@ -284,8 +285,8 @@ static void renderButton(RenderTheme* theme, GtkStyleContext* context, RenderObj
         gtk_style_context_add_class(context, GTK_STYLE_CLASS_DEFAULT);
     }
 
-    gtk_render_background(context, paintInfo.context->platformContext(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
-    gtk_render_frame(context, paintInfo.context->platformContext(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+    gtk_render_background(context, paintInfo.context->platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+    gtk_render_frame(context, paintInfo.context->platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
 
     if (theme->isFocused(renderObject)) {
         gint focusWidth, focusPad;
@@ -317,7 +318,7 @@ static void renderButton(RenderTheme* theme, GtkStyleContext* context, RenderObj
             buttonRect.move(childDisplacementX, childDisplacementY);
         }
 
-        gtk_render_focus(context, paintInfo.context->platformContext(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+        gtk_render_focus(context, paintInfo.context->platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
     }
 }
 bool RenderThemeGtk::paintButton(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
@@ -423,7 +424,7 @@ int RenderThemeGtk::popupInternalPaddingBottom(RenderStyle* style) const
 
 bool RenderThemeGtk::paintMenuList(RenderObject* renderObject, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    cairo_t* cairoContext = paintInfo.context->platformContext();
+    cairo_t* cairoContext = paintInfo.context->platformContext()->cr();
     GtkTextDirection direction = static_cast<GtkTextDirection>(gtkTextDirection(renderObject->style()->direction()));
 
     // Paint the button.
@@ -568,8 +569,8 @@ bool RenderThemeGtk::paintTextField(RenderObject* renderObject, const PaintInfo&
         flags |= GTK_STATE_FLAG_FOCUSED;
     gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
 
-    gtk_render_background(context, paintInfo.context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
-    gtk_render_frame(context, paintInfo.context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_background(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_frame(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
 
     if (isFocused(renderObject) && isEnabled(renderObject)) {
         gboolean interiorFocus;
@@ -582,7 +583,7 @@ bool RenderThemeGtk::paintTextField(RenderObject* renderObject, const PaintInfo&
         if (!interiorFocus) {
             IntRect focusRect(rect);
             focusRect.inflate(focusWidth + focusPad);
-            gtk_render_focus(context, paintInfo.context->platformContext(),
+            gtk_render_focus(context, paintInfo.context->platformContext()->cr(),
                              focusRect.x(), focusRect.y(), focusRect.width(), focusRect.height());
         }
     }
@@ -607,9 +608,9 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInf
     if (!isEnabled(renderObject) || isReadOnlyControl(renderObject))
         gtk_style_context_set_state(context, GTK_STATE_FLAG_INSENSITIVE);
 
-    gtk_render_background(context, paintInfo.context->platformContext(),
+    gtk_render_background(context, paintInfo.context->platformContext()->cr(),
                           rect.x(), rect.y(), rect.width(), rect.height());
-    gtk_render_frame(context, paintInfo.context->platformContext(),
+    gtk_render_frame(context, paintInfo.context->platformContext()->cr(),
                      rect.x(), rect.y(), rect.width(), rect.height());
 
     if (isFocused(renderObject)) {
@@ -619,7 +620,7 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInf
                                     "focus-padding", &focusPad, NULL);
         IntRect focusRect(rect);
         focusRect.inflate(focusWidth + focusPad);
-        gtk_render_focus(context, paintInfo.context->platformContext(),
+        gtk_render_focus(context, paintInfo.context->platformContext()->cr(),
                          focusRect.x(), focusRect.y(), focusRect.width(), focusRect.height());
     }
 
@@ -654,7 +655,7 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* renderObject, const PaintInf
         flags |= GTK_STATE_FLAG_ACTIVE;
     gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
 
-    gtk_render_slider(context, paintInfo.context->platformContext(), sliderRect.x(), sliderRect.y(), sliderRect.width(), sliderRect.height(),
+    gtk_render_slider(context, paintInfo.context->platformContext()->cr(), sliderRect.x(), sliderRect.y(), sliderRect.width(), sliderRect.height(),
                       part == SliderThumbHorizontalPart ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL);
 
     gtk_style_context_restore(context);
@@ -698,8 +699,8 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
 
     gtk_style_context_add_class(context, GTK_STYLE_CLASS_TROUGH);
 
-    gtk_render_background(context, paintInfo.context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
-    gtk_render_frame(context, paintInfo.context->platformContext(), rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_background(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
+    gtk_render_frame(context, paintInfo.context->platformContext()->cr(), rect.x(), rect.y(), rect.width(), rect.height());
 
     gtk_style_context_restore(context);
 
@@ -715,7 +716,7 @@ bool RenderThemeGtk::paintProgressBar(RenderObject* renderObject, const PaintInf
     progressRect = RenderThemeGtk::calculateProgressRect(renderObject, progressRect);
 
     if (!progressRect.isEmpty())
-        gtk_render_activity(context, paintInfo.context->platformContext(), progressRect.x(), progressRect.y(), progressRect.width(), progressRect.height());
+        gtk_render_activity(context, paintInfo.context->platformContext()->cr(), progressRect.x(), progressRect.y(), progressRect.width(), progressRect.height());
 
     gtk_style_context_restore(context);
     return false;
@@ -777,8 +778,8 @@ static void paintSpinArrowButton(RenderTheme* theme, GtkStyleContext* context, R
     buttonRect.setHeight(rect.height() / 2);
     gtk_style_context_set_junction_sides(context, static_cast<GtkJunctionSides>(junction));
 
-    gtk_render_background(context, paintInfo.context->platformContext(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
-    gtk_render_frame(context, paintInfo.context->platformContext(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+    gtk_render_background(context, paintInfo.context->platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
+    gtk_render_frame(context, paintInfo.context->platformContext()->cr(), buttonRect.x(), buttonRect.y(), buttonRect.width(), buttonRect.height());
 
     // Paint arrow centered inside button.
     // This code is based on gtkspinbutton.c code.
@@ -804,7 +805,7 @@ static void paintSpinArrowButton(RenderTheme* theme, GtkStyleContext* context, R
     gint height = (width + 1) / 2;
 
     arrowRect.move((arrowRect.width() - width) / 2, (arrowRect.height() - height) / 2);
-    gtk_render_arrow(context, paintInfo.context->platformContext(), angle, arrowRect.x(), arrowRect.y(), width);
+    gtk_render_arrow(context, paintInfo.context->platformContext()->cr(), angle, arrowRect.x(), arrowRect.y(), width);
 
     gtk_style_context_restore(context);
 }

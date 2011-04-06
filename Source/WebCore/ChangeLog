@@ -1,3 +1,22 @@
+2011-04-06  Alejandro G. Castro  <alex@igalia.com>
+
+        Fix GTK3 compilation after r82962.
+
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::paintToggle):
+        (WebCore::renderButton):
+        (WebCore::RenderThemeGtk::paintMenuList):
+        (WebCore::RenderThemeGtk::paintTextField):
+        (WebCore::RenderThemeGtk::paintSliderTrack):
+        (WebCore::RenderThemeGtk::paintSliderThumb):
+        (WebCore::RenderThemeGtk::paintProgressBar):
+        (WebCore::paintSpinArrowButton):
+        * platform/gtk/ScrollbarThemeGtk3.cpp:
+        (WebCore::ScrollbarThemeGtk::paintTrackBackground):
+        (WebCore::ScrollbarThemeGtk::paintScrollbarBackground):
+        (WebCore::ScrollbarThemeGtk::paintThumb):
+        (WebCore::ScrollbarThemeGtk::paintButton):
+
 2011-04-06  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
