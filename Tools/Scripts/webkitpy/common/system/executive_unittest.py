@@ -199,18 +199,3 @@ class ExecutiveTest(unittest.TestCase):
         self.assertTrue(executive.check_running_pid(os.getpid()))
         # Maximum pid number on Linux is 32768 by default
         self.assertFalse(executive.check_running_pid(100000))
-
-
-class ScriptErrorTest(unittest.TestCase):
-
-    def test_str_with_message(self):
-        try:
-            raise ScriptError(message="message")
-        except ScriptError, e:
-            self.assertEqual(str(e), "message")
-
-    def test_str_without_message(self):
-        try:
-            raise ScriptError(script_args=["echo", "hello"], exit_code=1, cwd="./", output="Out")
-        except ScriptError, e:
-            self.assertEqual(str(e), "Failed to run \"['echo', 'hello']\" exit_code: 1 cwd: ./\nOut""")

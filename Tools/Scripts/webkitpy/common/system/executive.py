@@ -27,8 +27,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import with_statement
-
 try:
     # This API exists only in Python 2.6 and higher.  :(
     import multiprocessing
@@ -45,7 +43,6 @@ import signal
 import subprocess
 import sys
 import time
-import warnings
 
 from webkitpy.common.system.deprecated_logging import tee
 from webkitpy.common.system.filesystem import FileSystem
@@ -83,13 +80,6 @@ class ScriptError(Exception):
         self.exit_code = exit_code
         self.output = output
         self.cwd = cwd
-
-    def __str__(self):
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            if self.output:
-                return self.message + "\n" + self.output
-            return self.message
 
     def message_with_output(self, output_limit=500):
         if self.output:
