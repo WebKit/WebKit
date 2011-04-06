@@ -105,30 +105,37 @@ void PluginProcessProxy::setFullscreenWindowIsShowing(bool fullscreenWindowIsSho
 
 void PluginProcessProxy::enterFullscreen()
 {
-    [NSMenu setMenuBarVisible:NO];
+    // Get the current presentation options.
+    m_preFullscreenAppPresentationOptions = [NSApp presentationOptions];
 
+    // Figure out which presentation options to use.
+    unsigned presentationOptions = m_preFullscreenAppPresentationOptions & ~(NSApplicationPresentationAutoHideDock | NSApplicationPresentationAutoHideMenuBar);
+    presentationOptions |= NSApplicationPresentationHideDock | NSApplicationPresentationHideMenuBar;
+
+    [NSApp setPresentationOptions:presentationOptions];
     makePluginProcessTheFrontProcess();
 }
 
 void PluginProcessProxy::exitFullscreen()
 {
-    [NSMenu setMenuBarVisible:YES];
-
     // If the plug-in host is the current application then we should bring ourselves to the front when it exits full-screen mode.
-
     ProcessSerialNumber frontProcessSerialNumber;
     GetFrontProcess(&frontProcessSerialNumber);
-    Boolean isSameProcess = 0;
+
+    // The UI process must be the front process in order to change the presentation mode.
+    makeUIProcessTheFrontProcess();
+    [NSApp setPresentationOptions:m_preFullscreenAppPresentationOptions];
 
     ProcessSerialNumber pluginProcessSerialNumber;
     if (!getPluginProcessSerialNumber(pluginProcessSerialNumber))
         return;
 
-    SameProcess(&frontProcessSerialNumber, &pluginProcessSerialNumber, &isSameProcess);
-    if (!isSameProcess)
-        return;
-
-    makeUIProcessTheFrontProcess();
+    // If the plug-in process was not the front process, switch back to the previous front process.
+    // (Otherwise we'll keep the UI process as the front process).
+    Boolean isPluginProcessFrontProcess;
+    SameProcess(&frontProcessSerialNumber, &pluginProcessSerialNumber, &isPluginProcessFrontProcess);
+    if (!isPluginProcessFrontProcess)
+        SetFrontProcess(&frontProcessSerialNumber);
 }
 
 void PluginProcessProxy::setModalWindowIsShowing(bool modalWindowIsShowing)

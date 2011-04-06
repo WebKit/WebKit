@@ -143,6 +143,7 @@ private:
     RetainPtr<WKPlaceholderModalWindow *> m_placeholderWindow;
     bool m_modalWindowIsShowing;
     bool m_fullscreenWindowIsShowing;
+    unsigned m_preFullscreenAppPresentationOptions;
 #endif
 };
 

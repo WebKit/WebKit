@@ -1,3 +1,33 @@
+2011-04-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Dock stays in front of Hulu.com full screen video output
+        https://bugs.webkit.org/show_bug.cgi?id=57988
+        <rdar://problem/9216260>
+
+        Instead of using -[NSMenu setMenuBarVisible:] to toggle full screen, use
+        -[NSApp setPresentationOptions:]. Also, make the UI process the front most app before
+        setting the presentation options when exiting full screen, otherwise the dock won't
+        be restored correctly.
+
+        * PluginProcess/mac/PluginProcessShim.mm:
+        Remove some shim functions that aren't needed.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::PluginProcessProxy):
+        Initialize m_preFullscreenAppPresentationOptions.
+
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        Add m_preFullscreenAppPresentationOptions.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::enterFullscreen):
+        Change the presentation options for the app.
+
+        (WebKit::PluginProcessProxy::exitFullscreen):
+        Restore the presentation options.
+
 2011-04-06  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

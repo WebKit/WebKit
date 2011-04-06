@@ -121,32 +121,6 @@ static void shimHideWindow(WindowRef window)
     HideWindow(window);
 }
 
-static bool isMenuBarVisible = true;
-
-static void shimShowMenuBar(void)
-{
-    isMenuBarVisible = true;
-
-    ShowMenuBar();
-}
-
-static void shimHideMenuBar(void)
-{
-    isMenuBarVisible = false;
-
-    // Make sure to make ourselves the front process
-    ProcessSerialNumber psn;
-    GetCurrentProcess(&psn);
-    SetFrontProcess(&psn);
-    
-    HideMenuBar();
-}
-
-static Boolean shimIsMenuBarVisible(void)
-{
-    return isMenuBarVisible;
-}
-
 DYLD_INTERPOSE(shimDebugger, Debugger);
 DYLD_INTERPOSE(shimGetCurrentEventButtonState, GetCurrentEventButtonState);
 DYLD_INTERPOSE(shimIsWindowActive, IsWindowActive);
@@ -154,9 +128,6 @@ DYLD_INTERPOSE(shimModalDialog, ModalDialog);
 DYLD_INTERPOSE(shimAlert, Alert);
 DYLD_INTERPOSE(shimShowWindow, ShowWindow);
 DYLD_INTERPOSE(shimHideWindow, HideWindow);
-DYLD_INTERPOSE(shimShowMenuBar, ShowMenuBar)
-DYLD_INTERPOSE(shimHideMenuBar, HideMenuBar)
-DYLD_INTERPOSE(shimIsMenuBarVisible, IsMenuBarVisible);
 
 #endif
 

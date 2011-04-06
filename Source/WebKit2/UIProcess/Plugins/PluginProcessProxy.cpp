@@ -51,6 +51,7 @@ PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManage
 #if PLATFORM(MAC)
     , m_modalWindowIsShowing(false)
     , m_fullscreenWindowIsShowing(false)
+    , m_preFullscreenAppPresentationOptions(0)
 #endif
 {
     ProcessLauncher::LaunchOptions launchOptions;
