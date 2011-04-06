@@ -133,13 +133,13 @@ v8::Handle<v8::Value> V8Geolocation::getCurrentPositionCallback(const v8::Argume
 
     bool succeeded = false;
 
-    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<V8CustomPositionCallback>(args[0], CallbackAllowFunction, succeeded);
+    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<V8CustomPositionCallback>(args[0], succeeded);
     if (!succeeded)
         return v8::Undefined();
     ASSERT(positionCallback);
 
     // Argument is optional (hence undefined is allowed), and null is allowed.
-    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<V8CustomPositionErrorCallback>(args[1], CallbackAllowUndefined | CallbackAllowNull, succeeded);
+    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<V8CustomPositionErrorCallback>(args[1], succeeded, CallbackAllowUndefined | CallbackAllowNull);
     if (!succeeded)
         return v8::Undefined();
 
@@ -159,13 +159,13 @@ v8::Handle<v8::Value> V8Geolocation::watchPositionCallback(const v8::Arguments& 
 
     bool succeeded = false;
 
-    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<V8CustomPositionCallback>(args[0], CallbackAllowFunction, succeeded);
+    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<V8CustomPositionCallback>(args[0], succeeded);
     if (!succeeded)
         return v8::Undefined();
     ASSERT(positionCallback);
 
     // Argument is optional (hence undefined is allowed), and null is allowed.
-    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<V8CustomPositionErrorCallback>(args[1], CallbackAllowUndefined | CallbackAllowNull, succeeded);
+    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<V8CustomPositionErrorCallback>(args[1], succeeded, CallbackAllowUndefined | CallbackAllowNull);
     if (!succeeded)
         return v8::Undefined();
 

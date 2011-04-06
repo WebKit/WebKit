@@ -1,3 +1,18 @@
+2011-04-06  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Make the style of createFunctionOnlyCallback in V8 consistent with the JavaScriptCore version.
+        https://bugs.webkit.org/show_bug.cgi?id=57963
+
+        No new tests. LayoutTests/fast/dom/Geolocation/argument-types.html
+
+        * bindings/v8/V8Utilities.h:
+        (WebCore::createFunctionOnlyCallback):
+        * bindings/v8/custom/V8GeolocationCustom.cpp:
+        (WebCore::V8Geolocation::getCurrentPositionCallback):
+        (WebCore::V8Geolocation::watchPositionCallback):
+
 2011-04-06  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

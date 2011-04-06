@@ -58,7 +58,6 @@ namespace WebCore {
     void throwTypeMismatchException();
 
     enum CallbackAllowedValueFlag {
-        CallbackAllowFunction = 0,
         CallbackAllowUndefined = 1,
         CallbackAllowNull = 1 << 1
     };
@@ -67,12 +66,14 @@ namespace WebCore {
 
     // 'FunctionOnly' is assumed for the created callback.
     template <typename V8CallbackType>
-    PassRefPtr<V8CallbackType> createFunctionOnlyCallback(v8::Local<v8::Value> value, CallbackAllowedValueFlags acceptedValues, bool& succeeded)
+    PassRefPtr<V8CallbackType> createFunctionOnlyCallback(v8::Local<v8::Value> value, bool& succeeded, CallbackAllowedValueFlags acceptedValues = 0)
     {
         succeeded = true;
 
-        if ((value->IsUndefined() && (acceptedValues & CallbackAllowUndefined))
-            || (value->IsNull() && (acceptedValues & CallbackAllowNull)))
+        if (value->IsUndefined() && (acceptedValues & CallbackAllowUndefined))
+            return 0;
+
+        if (value->IsNull() && (acceptedValues & CallbackAllowNull))
             return 0;
 
         if (!value->IsFunction()) {
