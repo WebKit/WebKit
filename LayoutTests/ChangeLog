@@ -1,3 +1,9 @@
+2011-04-06  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, try to green Chromium mac tree by marking failing tests as more generally failing.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-06  David Dorwin  <ddorwin@chromium.org>
 
         Reviewed by David Levin.

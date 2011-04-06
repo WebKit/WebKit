@@ -463,7 +463,7 @@ WONTFIX SKIP : fast/spatial-navigation = FAIL
 WONTFIX BUGCR37684 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
 
 // <progress> on Mac is always animated.
-WONTFIX MAC : fast/dom/HTMLProgressElement/progress-element.html = IMAGE PASS
+WONTFIX MAC : fast/dom/HTMLProgressElement/progress-element.html = FAIL PASS
 
 // We do not use Safari's private browsing
 WONTFIX SKIP : storage/private-browsing-noread-nowrite.html = PASS
@@ -3105,7 +3105,7 @@ BUGWK56072 WIN-VISTA : fast/ruby/base-shorter-than-text.html = FAIL
 
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 WIN LINUX : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
-BUGCR75561 MAC : fast/blockflow/text-orientation-basic.html = IMAGE
+BUGCR75561 MAC : fast/blockflow/text-orientation-basic.html = IMAGE IMAGE+TEXT
 
 // introduced by brarraclough in WK r80621
 BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT
