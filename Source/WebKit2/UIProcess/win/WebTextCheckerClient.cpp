@@ -68,4 +68,20 @@ void WebTextCheckerClient::setGrammarCheckingEnabled(bool enabled)
     m_client.setGrammarCheckingEnabled(enabled, m_client.clientInfo);
 }
 
+uint64_t WebTextCheckerClient::uniqueSpellDocumentTag()
+{
+    if (!m_client.uniqueSpellDocumentTag)
+        return 0;
+
+    return m_client.uniqueSpellDocumentTag(m_client.clientInfo);
+}
+
+void WebTextCheckerClient::closeSpellDocumentWithTag(uint64_t tag)
+{
+    if (!m_client.closeSpellDocumentWithTag)
+        return;
+
+    m_client.closeSpellDocumentWithTag(tag, m_client.clientInfo);
+}
+
 } // namespace WebKit

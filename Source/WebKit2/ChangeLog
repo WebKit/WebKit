@@ -1,3 +1,21 @@
+2011-04-06  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Implement TextChecker on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57862
+
+        Part 2: Implement uniqueSpellDocumentTag and closeSpellDocumentWithTag.
+
+        * UIProcess/API/C/win/WKTextChecker.h:
+        * UIProcess/win/TextCheckerWin.cpp:
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        (WebKit::TextChecker::closeSpellDocumentWithTag):
+        * UIProcess/win/WebTextCheckerClient.cpp:
+        (WebKit::WebTextCheckerClient::uniqueSpellDocumentTag):
+        (WebKit::WebTextCheckerClient::closeSpellDocumentWithTag):
+        * UIProcess/win/WebTextCheckerClient.h:
+
 2011-04-06  Robert Sesek  <rsesek@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

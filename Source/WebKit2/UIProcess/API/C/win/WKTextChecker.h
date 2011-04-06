@@ -38,6 +38,8 @@ typedef bool (*WKTextCheckerContinousSpellCheckingEnabled)(const void *clientInf
 typedef void (*WKTextCheckerSetContinousSpellCheckingEnabled)(bool enabled, const void *clientInfo);
 typedef bool (*WKTextCheckerGrammarCheckingEnabled)(const void *clientInfo);
 typedef void (*WKTextCheckerSetGrammarCheckingEnabled)(bool enabled, const void *clientInfo);
+typedef uint64_t (*WKTextCheckerUniqueSpellDocumentTag)(const void *clientInfo);
+typedef void (*WKTextCheckerCloseSpellDocumentWithTag)(uint64_t tag, const void *clientInfo);
 
 struct WKTextCheckerClient {
     int                                                                     version;
@@ -47,6 +49,8 @@ struct WKTextCheckerClient {
     WKTextCheckerSetContinousSpellCheckingEnabled                           setContinuousSpellCheckingEnabled;
     WKTextCheckerGrammarCheckingEnabled                                     grammarCheckingEnabled;
     WKTextCheckerSetGrammarCheckingEnabled                                  setGrammarCheckingEnabled;
+    WKTextCheckerUniqueSpellDocumentTag                                     uniqueSpellDocumentTag;
+    WKTextCheckerCloseSpellDocumentWithTag                                  closeSpellDocumentWithTag;
 };
 typedef struct WKTextCheckerClient WKTextCheckerClient;
 

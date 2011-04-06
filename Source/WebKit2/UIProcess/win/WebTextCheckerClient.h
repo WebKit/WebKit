@@ -39,6 +39,8 @@ public:
     void setContinuousSpellCheckingEnabled(bool);
     bool grammarCheckingEnabled();
     void setGrammarCheckingEnabled(bool);
+    uint64_t uniqueSpellDocumentTag();
+    void closeSpellDocumentWithTag(uint64_t);
 };
 
 } // namespace WebKit
