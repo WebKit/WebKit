@@ -2980,7 +2980,6 @@ BUGWK54322 MAC SNOWLEOPARD : fast/forms/search-transformed.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/forms/slider-padding.html = IMAGE
 BUGWK54322 MAC SNOWLEOPARD : fast/images/favicon-as-image.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/inline/inline-box-background-long-image.html = IMAGE
-BUGCR74719 MAC SNOWLEOPARD : fast/layers/video-layer.html = TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/media/mq-transform-02.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/media/mq-transform-03.html = IMAGE+TEXT
 BUGWK54322 MAC SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE

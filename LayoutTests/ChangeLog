@@ -1,3 +1,16 @@
+2011-04-06  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        fast/layer/video_layer.html has the same text output for all chromium mac platforms.
+
+        [chromium] Fix fast/layers/video_layer.html expectations
+        https://bugs.webkit.org/show_bug.cgi?id=57386
+
+        * platform/chromium-mac-leopard/fast/layers/video-layer-expected.txt: Removed.
+        * platform/chromium-mac/fast/layers/video-layer-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-06  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
