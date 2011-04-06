@@ -97,6 +97,24 @@ void FloatRect::unite(const FloatRect& other)
     setLocationAndSizeFromEdges(l, t, r, b);
 }
 
+void FloatRect::uniteIfNonZero(const FloatRect& other)
+{
+    // Handle empty special cases first.
+    if (!other.width() && !other.height())
+        return;
+    if (!width() && !height()) {
+        *this = other;
+        return;
+    }
+
+    float left = min(x(), other.x());
+    float top = min(y(), other.y());
+    float right = max(maxX(), other.maxX());
+    float bottom = max(maxY(), other.maxY());
+
+    setLocationAndSizeFromEdges(left, top, right, bottom);
+}
+
 void FloatRect::scale(float sx, float sy)
 {
     m_location.setX(x() * sx);

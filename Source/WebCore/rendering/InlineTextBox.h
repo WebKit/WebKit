@@ -51,6 +51,8 @@ public:
     {
     }
 
+    virtual void destroy(RenderArena*);
+
     InlineTextBox* prevTextBox() const { return m_prevTextBox; }
     InlineTextBox* nextTextBox() const { return m_nextTextBox; }
     void setNextTextBox(InlineTextBox* n) { m_nextTextBox = n; }
@@ -80,6 +82,13 @@ public:
 
     bool getEmphasisMarkPosition(RenderStyle*, TextEmphasisPosition&) const;
 
+    IntRect logicalOverflowRect() const;
+    void setLogicalOverflowRect(const IntRect&);
+    int logicalTopVisualOverflow() const { return logicalOverflowRect().y(); }
+    int logicalBottomVisualOverflow() const { return logicalOverflowRect().maxY(); }
+    int logicalLeftVisualOverflow() const { return logicalOverflowRect().x(); }
+    int logicalRightVisualOverflow() const { return logicalOverflowRect().maxX(); }
+    
 private:
     int selectionTop();
     int selectionBottom();

@@ -96,6 +96,27 @@ void IntRect::unite(const IntRect& other)
     m_size.setHeight(b - t);
 }
 
+void IntRect::uniteIfNonZero(const IntRect& other)
+{
+    // Handle empty special cases first.
+    if (!other.width() && !other.height())
+        return;
+    if (!width() && !height()) {
+        *this = other;
+        return;
+    }
+
+    int left = min(x(), other.x());
+    int top = min(y(), other.y());
+    int right = max(maxX(), other.maxX());
+    int bottom = max(maxY(), other.maxY());
+
+    m_location.setX(left);
+    m_location.setY(top);
+    m_size.setWidth(right - left);
+    m_size.setHeight(bottom - top);
+}
+
 void IntRect::scale(float s)
 {
     m_location.setX((int)(x() * s));

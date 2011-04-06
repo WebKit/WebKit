@@ -597,6 +597,9 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
     Node* focusedNode = focusedDocument->focusedNode();
     Node* container = focusedDocument;
 
+    if (container->isDocumentNode())
+        static_cast<Document*>(container)->updateLayoutIgnorePendingStylesheets();
+        
     // Figure out the starting rect.
     IntRect startingRect;
     if (focusedNode) {
@@ -612,11 +615,11 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
 
     bool consumed = false;
     do {
-        if (container->isDocumentNode())
-            static_cast<Document*>(container)->updateLayoutIgnorePendingStylesheets();
         consumed = advanceFocusDirectionallyInContainer(container, startingRect, direction, event);
         startingRect = nodeRectInAbsoluteCoordinates(container, true /* ignore border */);
         container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, container);
+        if (container && container->isDocumentNode())
+            static_cast<Document*>(container)->updateLayoutIgnorePendingStylesheets();
     } while (!consumed && container);
 
     return consumed;

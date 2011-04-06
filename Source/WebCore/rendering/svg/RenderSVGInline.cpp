@@ -33,6 +33,7 @@ namespace WebCore {
 RenderSVGInline::RenderSVGInline(Node* n)
     : RenderInline(n)
 {
+    setAlwaysCreateLineBoxes();
 }
 
 InlineFlowBox* RenderSVGInline::createInlineFlowBox()

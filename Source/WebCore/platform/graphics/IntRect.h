@@ -144,6 +144,7 @@ public:
 
     void intersect(const IntRect&);
     void unite(const IntRect&);
+    void uniteIfNonZero(const IntRect&);
 
     void inflateX(int dx)
     {

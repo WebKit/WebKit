@@ -85,6 +85,7 @@ public:
                            float& minW, float& maxW, bool& stripFrontSpaces);
 
     virtual IntRect linesBoundingBox() const;
+    IntRect linesVisualOverflowBoundingBox() const;
 
     FloatPoint firstRunOrigin() const;
     float firstRunX() const;
@@ -126,6 +127,8 @@ public:
     bool isAllCollapsibleWhitespace();
     
     bool knownToHaveNoOverflowAndNoFallbackFonts() const { return m_knownToHaveNoOverflowAndNoFallbackFonts; }
+
+    void removeAndDestroyTextBoxes();
 
 protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle*) { }

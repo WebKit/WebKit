@@ -32,6 +32,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "RenderImage.h"
+#include "RenderInline.h"
 #include "Scrollbar.h"
 #include "SelectionController.h"
 
@@ -544,6 +545,20 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, int x, int y, const
     node = node->shadowAncestorNode();
     mutableRectBasedTestResult().add(node);
 
+    if (node->renderer()->isInline()) {
+        for (RenderObject* curr = node->renderer()->parent(); curr; curr = curr->parent()) {
+            if (!curr->isRenderInline())
+                break;
+            
+            // We need to make sure the nodes for culled inlines get included.
+            RenderInline* currInline = toRenderInline(curr);
+            if (currInline->alwaysCreateLineBoxes())
+                break;
+            
+            if (currInline->visibleToHitTesting() && currInline->node())
+                mutableRectBasedTestResult().add(currInline->node()->shadowAncestorNode());
+        }
+    }
     return !rect.contains(rectForPoint(x, y));
 }
 
@@ -561,6 +576,20 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, int x, int y, const
     node = node->shadowAncestorNode();
     mutableRectBasedTestResult().add(node);
 
+    if (node->renderer()->isInline()) {
+        for (RenderObject* curr = node->renderer()->parent(); curr; curr = curr->parent()) {
+            if (!curr->isRenderInline())
+                break;
+            
+            // We need to make sure the nodes for culled inlines get included.
+            RenderInline* currInline = toRenderInline(curr);
+            if (currInline->alwaysCreateLineBoxes())
+                break;
+            
+            if (currInline->visibleToHitTesting() && currInline->node())
+                mutableRectBasedTestResult().add(currInline->node()->shadowAncestorNode());
+        }
+    }
     return !rect.contains(rectForPoint(x, y));
 }
 

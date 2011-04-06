@@ -96,6 +96,11 @@ public:
     int lineGap() const { return lroundf(m_lineGap); }
     int lineSpacing() const { return lroundf(m_lineSpacing); }
 
+    bool hasIdenticalAscentDescentAndLineGap(const FontMetrics& other) const
+    {
+        return ascent() == other.ascent() && descent() == other.descent() && lineGap() == other.lineGap();
+    }
+
 private:
     friend class SimpleFontData;
 

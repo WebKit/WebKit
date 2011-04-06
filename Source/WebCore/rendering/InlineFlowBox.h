@@ -272,7 +272,7 @@ public:
 
 private:
     void addBoxShadowVisualOverflow(IntRect& logicalVisualOverflow);
-    void addTextBoxVisualOverflow(const InlineTextBox*, GlyphOverflowAndFallbackFontsMap&, IntRect& logicalVisualOverflow);
+    void addTextBoxVisualOverflow(InlineTextBox*, GlyphOverflowAndFallbackFontsMap&, IntRect& logicalVisualOverflow);
     void addReplacedChildOverflow(const InlineBox*, IntRect& logicalLayoutOverflow, IntRect& logicalVisualOverflow);
 
 protected:

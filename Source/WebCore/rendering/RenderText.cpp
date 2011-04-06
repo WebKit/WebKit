@@ -177,7 +177,7 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     }
 }
 
-void RenderText::destroy()
+void RenderText::removeAndDestroyTextBoxes()
 {
     if (!documentBeingDestroyed()) {
         if (firstTextBox()) {
@@ -192,6 +192,11 @@ void RenderText::destroy()
             parent()->dirtyLinesFromChangedChild(this);
     }
     deleteTextBoxes();
+}
+
+void RenderText::destroy()
+{
+    removeAndDestroyTextBoxes();
     RenderObject::destroy();
 }
 
@@ -268,7 +273,7 @@ PassRefPtr<StringImpl> RenderText::originalText() const
 void RenderText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-        rects.append(IntRect(tx + box->x(), ty + box->y(), box->logicalWidth(), box->logicalHeight()));
+        rects.append(enclosingIntRect(FloatRect(tx + box->x(), ty + box->y(), box->width(), box->height())));
 }
 
 void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, unsigned end, bool useSelectionHeight)
@@ -1298,6 +1303,29 @@ IntRect RenderText::linesBoundingBox() const
     }
 
     return result;
+}
+
+IntRect RenderText::linesVisualOverflowBoundingBox() const
+{
+    if (!firstTextBox())
+        return IntRect();
+
+    // Return the width of the minimal left side and the maximal right side.
+    int logicalLeftSide = numeric_limits<int>::max();
+    int logicalRightSide = numeric_limits<int>::min();
+    for (InlineTextBox* curr = firstTextBox(); curr; curr = curr->nextTextBox()) {
+        logicalLeftSide = min(logicalLeftSide, curr->logicalLeftVisualOverflow());
+        logicalRightSide = max(logicalRightSide, curr->logicalRightVisualOverflow());
+    }
+    
+    int logicalTop = firstTextBox()->logicalTopVisualOverflow();
+    int logicalWidth = logicalRightSide - logicalLeftSide;
+    int logicalHeight = lastTextBox()->logicalBottomVisualOverflow() - logicalTop;
+    
+    IntRect rect(logicalLeftSide, logicalTop, logicalWidth, logicalHeight);
+    if (!style()->isHorizontalWritingMode())
+        rect = rect.transposedRect();
+    return rect;
 }
 
 IntRect RenderText::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)

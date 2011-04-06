@@ -5326,7 +5326,7 @@ void RenderBlock::updateFirstLetter()
             view()->disableLayoutState();
             while (RenderObject* child = firstLetter->firstChild()) {
                 if (child->isText())
-                    toRenderText(child)->dirtyLineBoxes(true);
+                    toRenderText(child)->removeAndDestroyTextBoxes();
                 firstLetter->removeChild(child);
                 newFirstLetter->addChild(child, 0);
             }

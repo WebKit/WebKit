@@ -97,7 +97,8 @@ void InlineFlowBox::addToLine(InlineBox* child)
     child->setFirstLineStyleBit(m_firstLine);
     child->setIsHorizontal(isHorizontal());
     if (child->isText()) {
-        m_hasTextChildren = true;
+        if (child->renderer()->parent() == renderer())
+            m_hasTextChildren = true;
         m_hasTextDescendants = true;
     } else if (child->isInlineFlowBox()) {
         if (static_cast<InlineFlowBox*>(child)->hasTextDescendants())
@@ -111,12 +112,13 @@ void InlineFlowBox::addToLine(InlineBox* child)
         if (child->renderer()->isReplaced())
             shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
         else if (child->isText()) {
-            if (child->renderer()->isBR()) {
-                if (parentStyle->font().fontMetrics().ascent() != childStyle->font().fontMetrics().ascent()
-                    || parentStyle->font().fontMetrics().descent() != childStyle->font().fontMetrics().descent() || parentStyle->lineHeight() != childStyle->lineHeight()
+            if (child->renderer()->isBR() || child->renderer()->parent() != renderer()) {
+                if (!parentStyle->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle->font().fontMetrics())
+                    || parentStyle->lineHeight() != childStyle->lineHeight()
                     || (parentStyle->verticalAlign() != BASELINE && !isRootInlineBox()) || childStyle->verticalAlign() != BASELINE)
                     shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
-            } else if (childStyle->hasTextCombine() || childStyle->textEmphasisMark() != TextEmphasisMarkNone)
+            }
+            if (childStyle->hasTextCombine() || childStyle->textEmphasisMark() != TextEmphasisMarkNone)
                 shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
         } else {
             if (child->renderer()->isBR()) {
@@ -127,8 +129,9 @@ void InlineFlowBox::addToLine(InlineBox* child)
                 ASSERT(isInlineFlowBox());
                 InlineFlowBox* childFlowBox = static_cast<InlineFlowBox*>(child);
                 // Check the child's bit, and then also check for differences in font, line-height, vertical-align
-                if (!childFlowBox->descendantsHaveSameLineHeightAndBaseline() || parentStyle->font().fontMetrics().ascent() != childStyle->font().fontMetrics().ascent()
-                    || parentStyle->font().fontMetrics().descent() != childStyle->font().fontMetrics().descent() || parentStyle->lineHeight() != childStyle->lineHeight()
+                if (!childFlowBox->descendantsHaveSameLineHeightAndBaseline()
+                    || !parentStyle->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle->font().fontMetrics())
+                    || parentStyle->lineHeight() != childStyle->lineHeight()
                     || (parentStyle->verticalAlign() != BASELINE && !isRootInlineBox()) || childStyle->verticalAlign() != BASELINE
                     || childStyle->hasBorder() || childStyle->hasPadding() || childStyle->hasTextCombine())
                     shouldClearDescendantsHaveSameLineHeightAndBaseline = true;
@@ -732,12 +735,12 @@ inline void InlineFlowBox::addBoxShadowVisualOverflow(IntRect& logicalVisualOver
                                     logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
 }
 
-inline void InlineFlowBox::addTextBoxVisualOverflow(const InlineTextBox* textBox, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, IntRect& logicalVisualOverflow)
+inline void InlineFlowBox::addTextBoxVisualOverflow(InlineTextBox* textBox, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, IntRect& logicalVisualOverflow)
 {
     if (textBox->knownToHaveNoOverflow())
         return;
 
-    RenderStyle* style = renderer()->style(m_firstLine);
+    RenderStyle* style = textBox->renderer()->style(m_firstLine);
     
     GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.find(textBox);
     GlyphOverflow* glyphOverflow = it == textBoxDataMap.end() ? 0 : &it->second.second;
@@ -788,6 +791,8 @@ inline void InlineFlowBox::addTextBoxVisualOverflow(const InlineTextBox* textBox
     
     logicalVisualOverflow = IntRect(logicalLeftVisualOverflow, logicalTopVisualOverflow,
                                     logicalRightVisualOverflow - logicalLeftVisualOverflow, logicalBottomVisualOverflow - logicalTopVisualOverflow);
+                                    
+    textBox->setLogicalOverflowRect(logicalVisualOverflow);
 }
 
 inline void InlineFlowBox::addReplacedChildOverflow(const InlineBox* inlineBox, IntRect& logicalLayoutOverflow, IntRect& logicalVisualOverflow)
@@ -835,7 +840,9 @@ void InlineFlowBox::computeOverflow(int lineTop, int lineBottom, GlyphOverflowAn
             RenderText* rt = toRenderText(text->renderer());
             if (rt->isBR())
                 continue;
-            addTextBoxVisualOverflow(text, textBoxDataMap, logicalVisualOverflow);
+            IntRect textBoxOverflow(enclosingIntRect(text->logicalFrameRect()));
+            addTextBoxVisualOverflow(text, textBoxDataMap, textBoxOverflow);
+            logicalVisualOverflow.unite(textBoxOverflow);
         } else  if (curr->renderer()->isRenderInline()) {
             InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
             flow->computeOverflow(lineTop, lineBottom, textBoxDataMap);

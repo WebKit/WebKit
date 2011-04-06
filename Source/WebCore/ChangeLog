@@ -1,3 +1,186 @@
+2011-04-06  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57916
+        
+        Implement an optimization to the line box tree to cull out most of the intermediate
+        line boxes that can occur between the root line box and the leaves of the tree (images
+        and text).
+
+        RenderInlines now have a boolean member, m_alwaysCreateLineBoxes,
+        that starts off as false. Only if it gets flipped to true will there be any line boxes
+        created for that RenderInline.
+        
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusDirectionally):
+        Adjust the ordering of updateLayout calls to make sure rects aren't queried unless layout
+        is up to date.
+
+        * page/SpatialNavigation.cpp:
+        (WebCore::hasOffscreenRect):
+        (WebCore::nodeRectInAbsoluteCoordinates):
+        Add asserts in spatial navigation code to catch any future bad queries that might be made
+        for rectangles without layout being up to date.
+
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::FloatRect::uniteIfNonZero):
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/IntRect.cpp:
+        (WebCore::IntRect::uniteIfNonZero):
+        * platform/graphics/IntRect.h:
+        Add a new unite function that is useful for the render tree to FloatRect and IntRect.  This
+        version allows rect unites to happen if either width or height is nonzero.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::addNodeToRectBasedTestResult):
+        Make sure rect-based hit testing properly adds in culled inline ancestors to the set of nodes
+        if content inside those inlines is hit.
+
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::logicalFrameRect):
+        Fix a bug in this function for obtaining the logical frame rect of an inline box.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::addToLine):
+        addToLine now also checks line gap in the line box tree optimization checks.
+    
+        (WebCore::InlineFlowBox::addTextBoxVisualOverflow):
+        (WebCore::InlineFlowBox::computeOverflow):
+        * rendering/InlineFlowBox.h:
+        Rewritten to add the text box overflow to the text box itself.
+
+         * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::destroy):
+        Destroy has been changed to call a helper function to remove and destroy the line boxes that
+        is now called from one additional spot.
+
+        (WebCore::InlineTextBox::logicalOverflowRect):
+        (WebCore::InlineTextBox::setLogicalOverflowRect):
+        Text boxes now cache their own overflow in a global hash table.
+
+        (WebCore::InlineTextBox::baselinePosition):
+        (WebCore::InlineTextBox::lineHeight):
+        Changed to not assume that the parent line box's renderer is the RenderText's immediate
+        parent, since intermediate line boxes may have been culled.
+
+        (WebCore::InlineTextBox::paint):
+        Paint now properly checks only the text box overflow instead of the parent line box's overflow.
+
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::logicalTopVisualOverflow):
+        (WebCore::InlineTextBox::logicalBottomVisualOverflow):
+        (WebCore::InlineTextBox::logicalLeftVisualOverflow):
+        (WebCore::InlineTextBox::logicalRightVisualOverflow):
+        New accessors to obtain overflow for inline text boxes.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateFirstLetter):
+        updateFirstLetter now removes text boxes from the line box tree before it destroys them, since those
+        text boxes may not have anything in between them and the block that contains the inline first letter
+        container.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::createLineBoxes):
+        The culling optimization is done here.  Only if the RenderInline says that boxes are allowed will they
+        be created.
+
+        (WebCore::RenderBlock::layoutInlineChildren):
+        The state of the RenderInline is updated here, in case it is discovered that line boxes are now needed.
+        This is done before any lines are built.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::RenderInline):
+        The new m_alwaysCreateLineBoxes flag has been added to the constructor.
+
+        (WebCore::RenderInline::styleDidChange):
+        An initial update of the m_alwaysCreateLineBoxes happens here for things that can be checked immediately
+        (like having a layer, borders, padding, margins or backgrounds).  Some checks that depend on examining
+        the RenderInline's parent (including first line styles) happen later in layoutInlineChildren.
+
+        (WebCore::RenderInline::updateAlwaysCreateLineBoxes):
+        The function called by layoutInlineChildren to check parent and child style differences (e.g., font,
+        vertical alignment, line height, etc.).
+
+        (WebCore::RenderInline::absoluteRects):
+        (WebCore::RenderInline::culledInlineAbsoluteRects):
+        absoluteRects calls culledInlineAbsoluteRects when m_alwaysCreateLineBoxes is false.
+
+        (WebCore::RenderInline::absoluteQuads):
+        (WebCore::RenderInline::culledInlineAbsoluteQuads):
+        absoluteQuads calls culledInlineAbsoluteQuads when m_alwaysCreateLineBoxes is false.
+
+        (WebCore::RenderInline::offsetLeft):
+        (WebCore::RenderInline::offsetTop):
+        offsetLeft and offsetTop now check descendant renderers when m_alwaysCreateLineBoxes is false.
+
+        (WebCore::RenderInline::linesBoundingBox):
+        (WebCore::RenderInline::culledInlineBoundingBox):
+        lineBoundingBox calls culledInlineBoundingBox when m_alwaysCreateLineBoxes is false.
+
+        (WebCore::RenderInline::culledInlineFirstLineBox):
+        (WebCore::RenderInline::culledInlineLastLineBox):
+        Helpers that return the first and last line box descendants. Used by firstLineBoxIncludingCulling and
+        lastLineBoxIncludingCulling (which are in turn called by offsetLeft and offsetTop).
+
+        (WebCore::RenderInline::culledInlineVisualOverflowBoundingBox):
+        (WebCore::RenderInline::linesVisualOverflowBoundingBox):
+        linesVisualOverflowBoundingBox calls culledInlineVisualOverflowBoundingBox when m_alwaysCreateLineBoxes is false.
+
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        The initial bailout check is now done using firstLineBoxIncludingCulling instead of just firstLineBox.
+
+        (WebCore::RenderInline::dirtyLineBoxes):
+        dirtyLineBoxes now crawls into descendants to figure out which root lines to dirty when
+        m_alwaysCreateLineBoxes is false.
+
+        (WebCore::RenderInline::createAndAppendInlineFlowBox):
+        Clear the m_alwaysCreateLineBoxes if a box gets added anyway. This happens for leaf inline flows and also
+        when line-box-contain is set to an unusual value.
+
+        (WebCore::RenderInline::addFocusRingRects):
+        Used culledInlineAbsoluteRects in place of the line box walk when m_alwaysCreateLineBoxes is false.
+
+        * rendering/RenderInline.h:
+        (WebCore::RenderInline::firstLineBoxIncludingCulling):
+        (WebCore::RenderInline::lastLineBoxIncludingCulling):
+        Helpers used in a few places (like offsetLeft and offsetTop), mostly in places where the existence of a box
+        is all that needs checking.
+
+        (WebCore::RenderInline::alwaysCreateLineBoxes):
+        (WebCore::RenderInline::setAlwaysCreateLineBoxes):
+        Functions for getting and setting the m_alwaysCreateLineBoxes flag.
+
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+        Modified to use firstLineBoxIncludingCulling and lastLineBoxIncludingCulling to ensure the right set of
+        lines get dirtied.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::removeAndDestroyTextBoxes):
+        New helper invoked by destroy and also from updateFirstLetter.
+
+        (WebCore::RenderText::destroy):
+        Changed to call removeAndDestroyTextBoxes.
+
+        (WebCore::RenderText::absoluteRects):
+        Fixed to be properly physical instead of logical.
+
+        (WebCore::RenderText::linesVisualOverflowBoundingBox):
+        New implementation for RenderText that gives the bounding box of the text boxes including overflow from
+        shadows, glyphs, text-stroke, etc.  Used by RenderInline::culledInlineVisualOverflowBoundingBox.
+
+        * rendering/RenderText.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::RenderSVGInline):
+        RenderSVGInline always sets m_alwaysCreateLineBoxes to true so that SVG is unaffected by this optimization.
+
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::layoutCharactersInTextBoxes):
+        (WebCore::SVGRootInlineBox::layoutChildBoxes):
+        Move the isInlineFlowBox asserts to after the generated content skips, since the generated content boxes are
+        now InlineTextBoxes (the enclosing InlineFlowBoxes got culled).
+
 2011-04-05  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

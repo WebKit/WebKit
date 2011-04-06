@@ -317,8 +317,11 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderObject* container, Rend
     if (!container->parent() || (container->isRenderBlock() && (container->selfNeedsLayout() || !container->isBlockFlow())))
         return;
 
+    RenderInline* inlineContainer = container->isRenderInline() ? toRenderInline(container) : 0;
+    InlineBox* firstBox = inlineContainer ? inlineContainer->firstLineBoxIncludingCulling() : firstLineBox();
+
     // If we have no first line box, then just bail early.
-    if (!firstLineBox()) {
+    if (!firstBox) {
         // For an empty inline, go ahead and propagate the check up to our parent, unless the parent
         // is already dirty.
         if (container->isInline() && !container->parent()->selfNeedsLayout())
@@ -344,16 +347,16 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderObject* container, Rend
             if (textBox)
                 box = textBox->root();
         } else if (curr->isRenderInline()) {
-            InlineFlowBox* flowBox = toRenderInline(curr)->lastLineBox();
-            if (flowBox)
-                box = flowBox->root();
+            InlineBox* lastSiblingBox = toRenderInline(curr)->lastLineBoxIncludingCulling();
+            if (lastSiblingBox)
+                box = lastSiblingBox->root();
         }
 
         if (box)
             break;
     }
     if (!box)
-        box = firstLineBox()->root();
+        box = firstBox->root();
 
     // If we found a line box, then dirty it.
     if (box) {

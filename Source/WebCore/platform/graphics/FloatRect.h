@@ -112,6 +112,7 @@ public:
 
     void intersect(const FloatRect&);
     void unite(const FloatRect&);
+    void uniteIfNonZero(const FloatRect&);
 
     // Note, this doesn't match what IntRect::contains(IntPoint&) does; the int version
     // is really checking for containment of 1x1 rect, but that doesn't make sense with floats.

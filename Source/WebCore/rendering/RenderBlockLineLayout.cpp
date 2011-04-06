@@ -213,8 +213,10 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine, I
     do {
         ASSERT(obj->isRenderInline() || obj == this);
         
+        RenderInline* inlineFlow = (obj != this) ? toRenderInline(obj) : 0;
+
         // Get the last box we made for this render object.
-        parentBox = obj->isRenderInline() ? toRenderInline(obj)->lastLineBox() : toRenderBlock(obj)->lastLineBox();
+        parentBox = inlineFlow ? inlineFlow->lastLineBox() : toRenderBlock(obj)->lastLineBox();
 
         // If this box or its ancestor is constructed then it is from a previous line, and we need
         // to make a new box for our line.  If this box or its ancestor is unconstructed but it has
@@ -222,7 +224,9 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine, I
         // as well.  In this situation our inline has actually been split in two on
         // the same line (this can happen with very fancy language mixtures).
         bool constructedNewBox = false;
-        if (!parentBox || parentIsConstructedOrHaveNext(parentBox)) {
+        bool allowedToConstructNewBox = !hasDefaultLineBoxContain || !inlineFlow || inlineFlow->alwaysCreateLineBoxes();
+        bool canUseExistingParentBox = parentBox && !parentIsConstructedOrHaveNext(parentBox);
+        if (allowedToConstructNewBox && !canUseExistingParentBox) {
             // We need to make a new box for this render object.  Once
             // made, we need to place it at the end of the current line.
             InlineBox* newBox = createInlineBoxForRenderer(obj, obj == this);
@@ -235,19 +239,21 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine, I
             constructedNewBox = true;
         }
 
-        if (!result)
-            result = parentBox;
+        if (constructedNewBox || canUseExistingParentBox) {
+            if (!result)
+                result = parentBox;
 
-        // If we have hit the block itself, then |box| represents the root
-        // inline box for the line, and it doesn't have to be appended to any parent
-        // inline.
-        if (childBox)
-            parentBox->addToLine(childBox);
+            // If we have hit the block itself, then |box| represents the root
+            // inline box for the line, and it doesn't have to be appended to any parent
+            // inline.
+            if (childBox)
+                parentBox->addToLine(childBox);
 
-        if (!constructedNewBox || obj == this)
-            break;
+            if (!constructedNewBox || obj == this)
+                break;
 
-        childBox = parentBox;        
+            childBox = parentBox;        
+        }
 
         // If we've exceeded our line depth, then jump straight to the root and skip all the remaining
         // intermediate inline flows.
@@ -760,6 +766,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                     o->layoutIfNeeded();
                 }
             } else if (o->isText() || (o->isRenderInline() && !endOfInline)) {
+                if (!o->isText())
+                    toRenderInline(o)->updateAlwaysCreateLineBoxes();
                 if (fullLayout || o->selfNeedsLayout())
                     dirtyLineBoxesForRenderer(o, fullLayout);
                 o->setNeedsLayout(false);

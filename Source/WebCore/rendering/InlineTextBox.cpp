@@ -48,20 +48,49 @@ using namespace std;
 
 namespace WebCore {
 
+typedef WTF::HashMap<const InlineTextBox*, IntRect> InlineTextBoxOverflowMap;
+static InlineTextBoxOverflowMap* gTextBoxesWithOverflow;
+
+void InlineTextBox::destroy(RenderArena* arena)
+{
+    if (!m_knownToHaveNoOverflow && gTextBoxesWithOverflow)
+        gTextBoxesWithOverflow->remove(this);
+    InlineBox::destroy(arena);
+}
+
+IntRect InlineTextBox::logicalOverflowRect() const
+{
+    if (m_knownToHaveNoOverflow || !gTextBoxesWithOverflow)
+        return enclosingIntRect(logicalFrameRect());
+    return gTextBoxesWithOverflow->get(this);
+}
+
+void InlineTextBox::setLogicalOverflowRect(const IntRect& rect)
+{
+    ASSERT(!m_knownToHaveNoOverflow);
+    if (!gTextBoxesWithOverflow)
+        gTextBoxesWithOverflow = new InlineTextBoxOverflowMap;
+    gTextBoxesWithOverflow->add(this, rect);
+}
+
 int InlineTextBox::baselinePosition(FontBaseline baselineType) const
 {
     if (!isText() || !parent())
         return 0;
-    return parent()->baselinePosition(baselineType);
+    if (parent()->renderer() == renderer()->parent())
+        return parent()->baselinePosition(baselineType);
+    return toRenderBoxModelObject(renderer()->parent())->baselinePosition(baselineType, m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
     
 int InlineTextBox::lineHeight() const
 {
-    if (!isText() || !parent())
+    if (!isText() || !renderer()->parent())
         return 0;
     if (m_renderer->isBR())
         return toRenderBR(m_renderer)->lineHeight(m_firstLine);
-    return parent()->lineHeight();
+    if (parent()->renderer() == renderer()->parent())
+        return parent()->lineHeight();
+    return toRenderBoxModelObject(renderer()->parent())->lineHeight(m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
 
 int InlineTextBox::selectionTop()
@@ -435,7 +464,7 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
         : AffineTransform(0, -1, 1, 0, boxRect.x() - boxRect.maxY(), boxRect.x() + boxRect.maxY());
 }
 
-void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int lineBottom)
+void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int /*lineTop*/, int /*lineBottom*/)
 {
     if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE ||
         m_truncation == cFullTruncation || paintInfo.phase == PaintPhaseOutline || !m_len)
@@ -443,17 +472,10 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int
 
     ASSERT(paintInfo.phase != PaintPhaseSelfOutline && paintInfo.phase != PaintPhaseChildOutlines);
 
-    int logicalLeftOverflow = 0;
-    int logicalRightOverflow = 0;
-    if (!knownToHaveNoOverflow()) {
-        // FIXME: Technically we're potentially incorporating other visual overflow that had nothing to do with us.
-        // Would it be simpler to just check our own shadow and stroke overflow by hand here?
-        IntRect parentVisualOverflow = parent()->logicalVisualOverflowRect(lineTop, lineBottom);
-        logicalLeftOverflow = parent()->logicalLeft() - parentVisualOverflow.x();
-        logicalRightOverflow = parentVisualOverflow.maxX() - parent()->logicalRight();
-    }
-    int logicalStart = logicalLeft() - logicalLeftOverflow + (isHorizontal() ? tx : ty);
-    int logicalExtent = logicalWidth() + logicalLeftOverflow + logicalRightOverflow;
+    int logicalLeftSide = logicalLeftVisualOverflow();
+    int logicalRightSide = logicalRightVisualOverflow();
+    int logicalStart = logicalLeftSide + (isHorizontal() ? tx : ty);
+    int logicalExtent = logicalRightSide - logicalLeftSide;
     
     int paintEnd = isHorizontal() ? paintInfo.rect.maxX() : paintInfo.rect.maxY();
     int paintStart = isHorizontal() ? paintInfo.rect.x() : paintInfo.rect.y();

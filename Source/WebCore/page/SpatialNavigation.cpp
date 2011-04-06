@@ -300,6 +300,8 @@ bool hasOffscreenRect(Node* node, FocusDirection direction)
     if (!frameView)
         return true;
 
+    ASSERT(!frameView->needsLayout());
+
     IntRect containerViewportRect = frameView->visibleContentRect();
     // We want to select a node if it is currently off screen, but will be
     // exposed after we scroll. Adjust the viewport to post-scrolling position.
@@ -517,7 +519,7 @@ static IntRect rectToAbsoluteCoordinates(Frame* initialFrame, const IntRect& ini
 
 IntRect nodeRectInAbsoluteCoordinates(Node* node, bool ignoreBorder)
 {
-    ASSERT(node && node->renderer());
+    ASSERT(node && node->renderer() && !node->document()->view()->needsLayout());
 
     if (node->isDocumentNode())
         return frameRectInAbsoluteCoordinates(static_cast<Document*>(node)->frame());

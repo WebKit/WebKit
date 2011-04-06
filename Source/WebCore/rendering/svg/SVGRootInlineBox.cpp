@@ -103,12 +103,12 @@ void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGText
             SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(child);
             characterLayout.layoutInlineTextBox(textBox);
         } else {
-            ASSERT(child->isInlineFlowBox());
-
             // Skip generated content.
             Node* node = child->renderer()->node();
             if (!node)
                 continue;
+
+            ASSERT(child->isInlineFlowBox());
 
             SVGInlineFlowBox* flowBox = static_cast<SVGInlineFlowBox*>(child);
             bool isTextPath = node->hasTagName(SVGNames::textPathTag);
@@ -146,11 +146,11 @@ void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start)
             textBox->setLogicalWidth(boxRect.width());
             textBox->setLogicalHeight(boxRect.height());
         } else {
-            ASSERT(child->isInlineFlowBox());
-
             // Skip generated content.
             if (!child->renderer()->node())
                 continue;
+
+            ASSERT(child->isInlineFlowBox());
 
             SVGInlineFlowBox* flowBox = static_cast<SVGInlineFlowBox*>(child);
             layoutChildBoxes(flowBox);

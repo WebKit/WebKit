@@ -23,6 +23,7 @@
 #ifndef RenderInline_h
 #define RenderInline_h
 
+#include "InlineFlowBox.h"
 #include "RenderBoxModelObject.h"
 #include "RenderLineBoxList.h"
 
@@ -64,6 +65,8 @@ public:
 
     InlineFlowBox* firstLineBox() const { return m_lineBoxes.firstLineBox(); }
     InlineFlowBox* lastLineBox() const { return m_lineBoxes.lastLineBox(); }
+    InlineBox* firstLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? firstLineBox() : culledInlineFirstLineBox(); }
+    InlineBox* lastLineBoxIncludingCulling() const { return alwaysCreateLineBoxes() ? lastLineBox() : culledInlineLastLineBox(); }
 
     virtual RenderBoxModelObject* virtualContinuation() const { return continuation(); }
     RenderInline* inlineElementContinuation() const;
@@ -78,6 +81,10 @@ public:
     using RenderBoxModelObject::continuation;
     using RenderBoxModelObject::setContinuation;
 
+    bool alwaysCreateLineBoxes() const { return m_alwaysCreateLineBoxes; }
+    void setAlwaysCreateLineBoxes() { m_alwaysCreateLineBoxes = true; }
+    void updateAlwaysCreateLineBoxes();
+
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
@@ -90,6 +97,13 @@ private:
     virtual const char* renderName() const;
 
     virtual bool isRenderInline() const { return true; }
+
+    FloatRect culledInlineBoundingBox(const RenderInline* container) const;
+    IntRect culledInlineVisualOverflowBoundingBox() const;
+    InlineBox* culledInlineFirstLineBox() const;
+    InlineBox* culledInlineLastLineBox() const;
+    void culledInlineAbsoluteRects(const RenderInline* container, Vector<IntRect>&, const IntSize&);
+    void culledInlineAbsoluteQuads(const RenderInline* container, Vector<FloatQuad>&);
 
     void addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild);
     virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = 0);
@@ -154,7 +168,8 @@ private:
     RenderObjectChildList m_children;
     RenderLineBoxList m_lineBoxes;   // All of the line boxes created for this inline flow.  For example, <i>Hello<br>world.</i> will have two <i> line boxes.
 
-    mutable int m_lineHeight;
+    mutable int m_lineHeight : 31;
+    bool m_alwaysCreateLineBoxes : 1;
 };
 
 inline RenderInline* toRenderInline(RenderObject* object)

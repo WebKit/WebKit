@@ -263,7 +263,7 @@ public:
     // The logical height is our extent in the block flow direction, i.e., height for horizontal text and width for vertical text.
     int logicalHeight() const;
 
-    FloatRect logicalFrameRect() const { return isHorizontal() ? IntRect(m_x, m_y, m_logicalWidth, logicalHeight()) : IntRect(m_y, m_x, logicalHeight(), m_logicalWidth); }
+    FloatRect logicalFrameRect() const { return isHorizontal() ? IntRect(m_x, m_y, m_logicalWidth, logicalHeight()) : IntRect(m_y, m_x, m_logicalWidth, logicalHeight()); }
 
     virtual int baselinePosition(FontBaseline baselineType) const { return boxModelObject()->baselinePosition(baselineType, m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine); }
     virtual int lineHeight() const { return boxModelObject()->lineHeight(m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine); }

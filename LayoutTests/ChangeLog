@@ -1,3 +1,20 @@
+2011-04-06  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57916
+        
+        Implement an optimization to the line box tree to cull out most of the intermediate
+        line boxes that can occur between the root line box and the leaves of the tree (images
+        and text).
+
+        RenderInlines now have a boolean member, m_alwaysCreateLineBoxes,
+        that starts off as false. Only if it gets flipped to true will there be any line boxes
+        created for that RenderInline.
+
+        * platform/mac/fast/blockflow/text-orientation-basic-expected.txt:
+        * platform/mac/fast/text/capitalize-empty-generated-string-expected.txt:
+
 2011-04-06  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectations udpate for gtk port that follows r83065.
