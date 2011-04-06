@@ -239,7 +239,7 @@ void InsertParagraphSeparatorCommand::doApply()
         // Recreate the same structure in the new paragraph.
         
         Vector<Element*> ancestors;
-        getAncestorsInsideBlock(positionBeforeTabSpan(insertionPosition).deprecatedNode(), startBlock, ancestors);      
+        getAncestorsInsideBlock(insertionPosition.deprecatedNode(), startBlock, ancestors);      
         RefPtr<Element> parent = cloneHierarchyUnderNewBlock(ancestors, blockToInsert);
         
         appendBlockPlaceholder(parent);
@@ -254,9 +254,6 @@ void InsertParagraphSeparatorCommand::doApply()
     // similar case where previous position is in another, presumeably nested, block.
     if (isFirstInBlock || !inSameBlock(visiblePos, visiblePos.previous())) {
         Node *refNode;
-        
-        insertionPosition = positionBeforeTabSpan(insertionPosition);
-
         if (isFirstInBlock && !nestNewBlock)
             refNode = startBlock;
         else if (insertionPosition.deprecatedNode() == startBlock && nestNewBlock) {
@@ -273,7 +270,7 @@ void InsertParagraphSeparatorCommand::doApply()
         // Recreate the same structure in the new paragraph.
 
         Vector<Element*> ancestors;
-        getAncestorsInsideBlock(positionAvoidingSpecialElementBoundary(positionBeforeTabSpan(insertionPosition)).deprecatedNode(), startBlock, ancestors);
+        getAncestorsInsideBlock(positionAvoidingSpecialElementBoundary(insertionPosition).deprecatedNode(), startBlock, ancestors);
         
         appendBlockPlaceholder(cloneHierarchyUnderNewBlock(ancestors, blockToInsert));
         
@@ -306,7 +303,7 @@ void InsertParagraphSeparatorCommand::doApply()
 
     // Build up list of ancestors in between the start node and the start block.
     Vector<Element*> ancestors;
-    getAncestorsInsideBlock(positionBeforeTabSpan(insertionPosition).deprecatedNode(), startBlock, ancestors);
+    getAncestorsInsideBlock(insertionPosition.deprecatedNode(), startBlock, ancestors);
 
     // Make sure we do not cause a rendered space to become unrendered.
     // FIXME: We need the affinity for pos, but pos.downstream() does not give it

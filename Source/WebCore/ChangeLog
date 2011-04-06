@@ -1,3 +1,17 @@
+2011-04-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r83039.
+        http://trac.webkit.org/changeset/83039
+        https://bugs.webkit.org/show_bug.cgi?id=57978
+
+        introduced a new regression in conjunction to
+        ReplaceSelectionCommand (Requested by rniwa on #webkit).
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::init):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+
 2011-04-06  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by David Levin.
