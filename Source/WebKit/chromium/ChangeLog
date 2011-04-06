@@ -1,3 +1,13 @@
+2011-04-06  Asanka Herath  <asanka@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add new TargetType: TargetIsFavicon
+
+        https://bugs.webkit.org/show_bug.cgi?id=57659
+
+        * public/WebURLRequest.h:
+
 2011-04-06  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by Eric Seidel.

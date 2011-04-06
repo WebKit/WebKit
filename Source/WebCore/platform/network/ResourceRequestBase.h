@@ -65,6 +65,7 @@ namespace WebCore {
             TargetIsWorker,
             TargetIsSharedWorker,
             TargetIsPrefetch,
+            TargetIsFavicon,
         };
 
         static PassOwnPtr<ResourceRequest> adopt(PassOwnPtr<CrossThreadResourceRequestData>);
