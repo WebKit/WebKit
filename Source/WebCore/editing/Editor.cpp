@@ -108,6 +108,7 @@ static const Vector<DocumentMarker::MarkerType>& markerTypesForAutocorrection()
         markerTypesForAutoCorrection.append(DocumentMarker::Replacement);
         markerTypesForAutoCorrection.append(DocumentMarker::CorrectionIndicator);
         markerTypesForAutoCorrection.append(DocumentMarker::SpellCheckingExemption);
+        markerTypesForAutoCorrection.append(DocumentMarker::Autocorrected);
     }
     return markerTypesForAutoCorrection;
 }
@@ -121,6 +122,21 @@ static const Vector<DocumentMarker::MarkerType>& markerTypesForReplacement()
     }
     return markerTypesForReplacement;
 }
+
+#if SUPPORT_AUTOCORRECTION_PANEL
+static bool markersHaveIdenticalDescription(const Vector<DocumentMarker>& markers)
+{
+    if (markers.isEmpty())
+        return true;
+
+    const String& description = markers[0].description;
+    for (size_t i = 1; i < markers.size(); ++i) {
+        if (description != markers[i].description)
+            return false;
+    }
+    return true;
+}
+#endif
 
 // When an event handler has moved the selection outside of a text control
 // we should use the target control's selection for this editing operation.
@@ -2212,6 +2228,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
     bool shouldMarkGrammar = textCheckingOptions & MarkGrammar;
     bool shouldPerformReplacement = textCheckingOptions & PerformReplacement;
     bool shouldShowCorrectionPanel = textCheckingOptions & ShowCorrectionPanel;
+    bool shouldCheckForCorrection = shouldShowCorrectionPanel || (textCheckingOptions & CheckForCorrection);
 
     // This function is called with selections already expanded to word boundaries.
     ExceptionCode ec = 0;
@@ -2239,7 +2256,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
     if (shouldMarkGrammar ? (spellingParagraph.isRangeEmpty() && grammarParagraph.isEmpty()) : spellingParagraph.isEmpty())
         return;
 
-    if (shouldPerformReplacement || shouldMarkSpelling) {
+    if (shouldPerformReplacement || shouldMarkSpelling || shouldCheckForCorrection) {
         if (m_frame->selection()->selectionType() == VisibleSelection::CaretSelection) {
             // Attempt to save the caret position so we can restore it later if needed
             Position caretPosition = m_frame->selection()->end();
@@ -2302,7 +2319,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
                     grammarRange->startContainer(ec)->document()->markers()->addMarker(badGrammarRange.get(), DocumentMarker::Grammar, detail->userDescription);
                 }
             }
-        } else if ((shouldPerformReplacement || shouldShowCorrectionPanel) && resultLocation + resultLength <= spellingRangeEndOffset && resultLocation + resultLength >= spellingParagraph.checkingStart()
+        } else if (resultLocation + resultLength <= spellingRangeEndOffset && resultLocation + resultLength >= spellingParagraph.checkingStart()
                     && (result->type == TextCheckingTypeLink
                     || result->type == TextCheckingTypeQuote
                     || result->type == TextCheckingTypeDash
@@ -2328,25 +2345,20 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
             if (result->type == TextCheckingTypeLink && selectionOffset > resultLocation + resultLength + 1)
                 continue;
 
+            String replacedString;
+
             // Don't correct spelling in an already-corrected word.
             if (result->type == TextCheckingTypeCorrection) {
-                Node* node = rangeToReplace->startContainer();
-                int startOffset = rangeToReplace->startOffset();
-                int endOffset = startOffset + replacementLength;
-                Vector<DocumentMarker> markers = node->document()->markers()->markersForNode(node);
-                size_t markerCount = markers.size();
-                for (size_t i = 0; i < markerCount; ++i) {
-                    const DocumentMarker& marker = markers[i];
-                    if ((marker.type == DocumentMarker::Replacement || marker.type == DocumentMarker::RejectedCorrection) && static_cast<int>(marker.startOffset) < endOffset && static_cast<int>(marker.endOffset) > startOffset) {
-                        doReplacement = false;
-                        break;
-                    }
-                    if (static_cast<int>(marker.startOffset) >= endOffset)
-                        break;
-                }
+                replacedString = plainText(rangeToReplace.get());
+                DocumentMarkerController* markers = m_frame->document()->markers();
+                if (markers->hasMarkers(rangeToReplace.get(), DocumentMarker::Replacement)) {
+                    doReplacement = false;
+                    recordSpellcheckerResponseForModifiedCorrection(rangeToReplace.get(), replacedString, result->replacement);
+                } else if (markers->hasMarkers(rangeToReplace.get(), DocumentMarker::RejectedCorrection))
+                    doReplacement = false;
             }
 
-            if (!doReplacement)
+            if (!(shouldPerformReplacement || shouldShowCorrectionPanel) || !doReplacement)
                 continue;
 
 #if SUPPORT_AUTOCORRECTION_PANEL
@@ -2380,10 +2392,6 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
                 if (canEditRichly())
                     applyCommand(CreateLinkCommand::create(m_frame->document(), result->replacement));
             } else if (canEdit() && shouldInsertText(result->replacement, rangeToReplace.get(), EditorInsertActionTyped)) {
-                String replacedString;
-                if (result->type == TextCheckingTypeCorrection)
-                    replacedString = plainText(rangeToReplace.get());
-
                 bool useSpellingCorrectionCommand = false;
 #if SUPPORT_AUTOCORRECTION_PANEL
                 if (result->type == TextCheckingTypeCorrection)
@@ -2412,9 +2420,15 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
                 if (result->type == TextCheckingTypeCorrection) {
                     // Add a marker so that corrections can easily be undone and won't be re-corrected.
                     RefPtr<Range> replacedRange = spellingParagraph.subrange(resultLocation, replacementLength);
-                    replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::Replacement, replacedString);
-                    replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::CorrectionIndicator);
-                    replacedRange->startContainer()->document()->markers()->addMarker(replacedRange.get(), DocumentMarker::SpellCheckingExemption);
+                    Vector<DocumentMarker::MarkerType> markerTypesToAdd = markerTypesForAutocorrection();
+                    DocumentMarkerController* markers = replacedRange->startContainer()->document()->markers();
+                    for (size_t i = 0; i < markerTypesToAdd.size(); ++i) {
+                        DocumentMarker::MarkerType markerType = markerTypesToAdd[i];
+                        if (markerType == DocumentMarker::Replacement || markerType == DocumentMarker::Autocorrected)
+                            markers->addMarker(replacedRange.get(), markerType, replacedString);
+                        else
+                            markers->addMarker(replacedRange.get(), markerType);
+                    }
                 }
             }
         }
@@ -2442,6 +2456,30 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
 #endif // USE(UNIFIED_TEXT_CHECKING)
 }
 
+void Editor::recordSpellcheckerResponseForModifiedCorrection(Range* rangeOfCorrection, const String& corrected, const String& correction)
+{
+#if SUPPORT_AUTOCORRECTION_PANEL
+    if (!rangeOfCorrection)
+        return;
+    DocumentMarkerController* markers = rangeOfCorrection->startContainer()->document()->markers();
+    Vector<DocumentMarker> correctedOnceMarkers = markers->markersInRange(rangeOfCorrection, DocumentMarker::Autocorrected);
+    if (correctedOnceMarkers.isEmpty())
+        return;
+    
+    // Spelling corrected text has been edited. We need to determine whether user has reverted it to original text or
+    // edited it to something else, and notify spellchecker accordingly.
+    if (markersHaveIdenticalDescription(correctedOnceMarkers) && correctedOnceMarkers[0].description == corrected)
+        client()->recordAutocorrectionResponse(EditorClient::AutocorrectionReverted, corrected, correction);
+    else
+        client()->recordAutocorrectionResponse(EditorClient::AutocorrectionEdited, corrected, correction);
+    markers->removeMarkers(rangeOfCorrection, DocumentMarker::Autocorrected, DocumentMarkerController::RemovePartiallyOverlappingMarker);
+#else
+    UNUSED_PARAM(rangeOfCorrection);
+    UNUSED_PARAM(corrected);
+    UNUSED_PARAM(correction);
+#endif
+}
+
 void Editor::changeBackToReplacedString(const String& replacedString)
 {
 #if USE(UNIFIED_TEXT_CHECKING)
@@ -2461,6 +2499,7 @@ void Editor::changeBackToReplacedString(const String& replacedString)
     RefPtr<Range> changedRange = paragraph.subrange(paragraph.checkingStart(), replacedString.length());
     changedRange->startContainer()->document()->markers()->addMarker(changedRange.get(), DocumentMarker::Replacement, String());
 #if SUPPORT_AUTOCORRECTION_PANEL
+    changedRange->startContainer()->document()->markers()->removeMarkers(changedRange.get(), DocumentMarker::Autocorrected, DocumentMarkerController::RemovePartiallyOverlappingMarker);
     changedRange->startContainer()->document()->markers()->addMarker(changedRange.get(), DocumentMarker::SpellCheckingExemption);
 #endif
 #else
@@ -2475,7 +2514,7 @@ void Editor::markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelec
 #if USE(UNIFIED_TEXT_CHECKING)
     if (!isContinuousSpellCheckingEnabled())
         return;
-    TextCheckingOptions textCheckingOptions = MarkSpelling;
+    TextCheckingOptions textCheckingOptions = MarkSpelling | CheckForCorrection;
     if (markGrammar && isGrammarCheckingEnabled())
         textCheckingOptions |= MarkGrammar;
     markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, spellingSelection.toNormalizedRange().get(), grammarSelection.toNormalizedRange().get());
@@ -2732,10 +2771,11 @@ void Editor::applyCorrectionPanelInfo(const Vector<DocumentMarker::MarkerType>& 
     DocumentMarkerController* markers = replacementRange->startContainer()->document()->markers();
     size_t size = markerTypesToAdd.size();
     for (size_t i = 0; i < size; ++i) {
-        if (m_correctionPanelInfo.panelType == CorrectionPanelInfo::PanelTypeReversion)
-            markers->addMarker(replacementRange.get(), markerTypesToAdd[i]);
-        else
-            markers->addMarker(replacementRange.get(), markerTypesToAdd[i], m_correctionPanelInfo.replacedString);
+        DocumentMarker::MarkerType markerType = markerTypesToAdd[i];
+        String description;
+        if (m_correctionPanelInfo.panelType != CorrectionPanelInfo::PanelTypeReversion && (markerType == DocumentMarker::Replacement || markerType == DocumentMarker::Autocorrected))
+            description = m_correctionPanelInfo.replacedString;
+        markers->addMarker(replacementRange.get(), markerType, description);
     }
 #else // SUPPORT_AUTOCORRECTION_PANEL
     UNUSED_PARAM(markerTypesToAdd);
@@ -2772,7 +2812,7 @@ void Editor::unappliedSpellCorrection(const VisibleSelection& selectionOfCorrect
     RefPtr<Range> range = Range::create(m_frame->document(), m_frame->selection()->selection().start(), m_frame->selection()->selection().end());
 
     DocumentMarkerController* markers = m_frame->document()->markers();
-    markers->removeMarkers(range.get(), DocumentMarker::Spelling);
+    markers->removeMarkers(range.get(), DocumentMarker::Spelling | DocumentMarker::Autocorrected, DocumentMarkerController::RemovePartiallyOverlappingMarker);
     markers->addMarker(range.get(), DocumentMarker::Replacement);
     markers->addMarker(range.get(), DocumentMarker::SpellCheckingExemption);
 #else // SUPPORT_AUTOCORRECTION_PANEL
@@ -3594,13 +3634,14 @@ TextCheckingTypeMask Editor::textCheckingTypeMaskFor(TextCheckingOptions textChe
     bool shouldMarkSpelling = textCheckingOptions & MarkSpelling;
     bool shouldMarkGrammar = textCheckingOptions & MarkGrammar;
     bool shouldShowCorrectionPanel = textCheckingOptions & ShowCorrectionPanel;
+    bool shouldCheckForCorrection = shouldShowCorrectionPanel || (textCheckingOptions & CheckForCorrection);
 
     TextCheckingTypeMask checkingTypes = 0;
     if (shouldMarkSpelling)
         checkingTypes |= TextCheckingTypeSpelling;
     if (shouldMarkGrammar)
         checkingTypes |= TextCheckingTypeGrammar;
-    if (shouldShowCorrectionPanel)
+    if (shouldCheckForCorrection)
         checkingTypes |= TextCheckingTypeCorrection;
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)

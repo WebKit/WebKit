@@ -317,6 +317,35 @@ Vector<DocumentMarker> DocumentMarkerController::markersForNode(Node* node)
     return Vector<DocumentMarker>();
 }
 
+Vector<DocumentMarker> DocumentMarkerController::markersInRange(Range* range, DocumentMarker::MarkerType markerType)
+{
+    if (!possiblyHasMarkers(markerType))
+        return Vector<DocumentMarker>();
+
+    Vector<DocumentMarker> foundMarkers;
+
+    Node* startContainer = range->startContainer();
+    ASSERT(startContainer);
+    Node* endContainer = range->endContainer();
+    ASSERT(endContainer);
+
+    Node* pastLastNode = range->pastLastNode();
+    for (Node* node = range->firstNode(); node != pastLastNode; node = node->traverseNextNode()) {
+        Vector<DocumentMarker> markers = markersForNode(node);
+        Vector<DocumentMarker>::const_iterator end = markers.end();
+        for (Vector<DocumentMarker>::const_iterator it = markers.begin(); it != end; ++it) {
+            if (!(markerType & it->type))
+                continue;
+            if (node == startContainer && it->endOffset <= static_cast<unsigned>(range->startOffset()))
+                continue;
+            if (node == endContainer && it->startOffset >= static_cast<unsigned>(range->endOffset()))
+                continue;
+            foundMarkers.append(*it);
+        }
+    }
+    return foundMarkers;
+}
+
 Vector<IntRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMarker::MarkerType markerType)
 {
     Vector<IntRect> result;
@@ -602,20 +631,11 @@ bool DocumentMarkerController::hasMarkers(Range* range, DocumentMarker::MarkerTy
         for (Vector<DocumentMarker>::const_iterator it = markers.begin(); it != end; ++it) {
             if (!(markerTypes & it->type))
                 continue;
-            if (node == startContainer && node == endContainer) {
-                // The range spans only one node.
-                if (it->endOffset > static_cast<unsigned>(range->startOffset()) && it->startOffset < static_cast<unsigned>(range->endOffset()))
-                    return true;
-            } else {
-                if (node == startContainer) {
-                    if (it->endOffset > static_cast<unsigned>(range->startOffset()))
-                        return true;
-                } else if (node == endContainer) {
-                    if (it->startOffset < static_cast<unsigned>(range->endOffset()))
-                        return true;
-                } else
-                    return true;
-            }
+            if (node == startContainer && it->endOffset <= static_cast<unsigned>(range->startOffset()))
+                continue;
+            if (node == endContainer && it->startOffset >= static_cast<unsigned>(range->endOffset()))
+                continue;
+            return true;
         }
     }
     return false;

@@ -1,3 +1,43 @@
+2011-04-06  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        [Mac] WebCore need to notify AppKit spell checker after user has modified autocorrected text.
+        https://bugs.webkit.org/show_bug.cgi?id=57665
+        <rdar://problem/7350477>
+
+        We need to track how user modified an autocorrected word. If he changed it back to original
+        text, we want to record AutocorrectionReverted response. And if he changed it to something
+        else, we want to record AutocorrectionEdited response.
+
+        To achieve this, we need to distringuish between text replacement caused by autocorrection
+        from that due to other causes, such as reversion, text substitution, etc. So we added a new
+        marker type "Autocorrected". We also need to be able to check for correction, even when we
+        don't intend to actually carry out replacement. For this, we introduced a new TextCheckingOption
+        value, "CheckForCorrection".
+
+        We also added DocumentMarkerController::markersInRange() to retrieve a vector of markers in
+        specified range, and of specified type.
+
+        * dom/DocumentMarker.h:
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::markersInRange):
+        (WebCore::DocumentMarkerController::hasMarkers):
+        * dom/DocumentMarkerController.h:
+        * editing/Editor.cpp:
+        (WebCore::markerTypesForAutocorrection):
+        (WebCore::markersHaveIdenticalDescription):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::recordSpellcheckerResponseForModifiedCorrection):
+        (WebCore::Editor::changeBackToReplacedString):
+        (WebCore::Editor::markMisspellingsAndBadGrammar):
+        (WebCore::Editor::applyCorrectionPanelInfo):
+        (WebCore::Editor::unappliedSpellCorrection):
+        (WebCore::Editor::textCheckingTypeMaskFor):
+        * editing/Editor.h:
+        * editing/SpellingCorrectionCommand.cpp:
+        (WebCore::SpellingCorrectionCommand::doApply):
+
 2011-04-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r83045.

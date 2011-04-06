@@ -229,6 +229,7 @@ public:
         MarkGrammar = 1 << 1,
         PerformReplacement = 1 << 2,
         ShowCorrectionPanel = 1 << 3,
+        CheckForCorrection = 1 << 4,
     };
     typedef unsigned TextCheckingOptions;
 
@@ -416,6 +417,7 @@ private:
     void revealSelectionAfterEditingOperation();
     void markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling, RefPtr<Range>& firstMisspellingRange);
     TextCheckingTypeMask textCheckingTypeMaskFor(TextCheckingOptions);
+    void recordSpellcheckerResponseForModifiedCorrection(Range*, const String& corrected, const String& correction);
 
     void selectComposition();
     void confirmComposition(const String&, bool preserveSelection);
