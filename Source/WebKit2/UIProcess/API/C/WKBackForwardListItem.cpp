@@ -45,3 +45,8 @@ WKStringRef WKBackForwardListItemCopyTitle(WKBackForwardListItemRef itemRef)
 {
     return toCopiedAPI(toImpl(itemRef)->title());
 }
+
+WKURLRef WKBackForwardListItemCopyOriginalURL(WKBackForwardListItemRef itemRef)
+{
+    return toCopiedURLAPI(toImpl(itemRef)->originalURL());
+}
