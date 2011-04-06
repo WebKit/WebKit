@@ -27,8 +27,8 @@ class QtMobileWebStyle : public QWindowsStyle {
 public:
     QtMobileWebStyle();
 
-    void drawControl(ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget = 0) const;
-    void drawComplexControl(ComplexControl cc, const QStyleOptionComplex* option, QPainter* painter, const QWidget* widget = 0) const;
+    void drawControl(ControlElement, const QStyleOption*, QPainter*, const QWidget*) const;
+    void drawComplexControl(ComplexControl, const QStyleOptionComplex*, QPainter*, const QWidget*) const;
 
 private:
     void drawChecker(QPainter* painter, int size, QColor color) const;
