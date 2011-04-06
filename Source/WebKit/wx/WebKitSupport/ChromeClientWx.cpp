@@ -460,9 +460,10 @@ void ChromeClientWx::chooseIconForFiles(const Vector<String>& filenames, FileCho
     chooser->iconLoaded(Icon::createIconForFiles(filenames));
 }
 
-void ChromeClientWx::setCursor(const Cursor&)
+void ChromeClientWx::setCursor(const Cursor& cursor)
 {
-    notImplemented();
+    if (m_webView)
+        m_webView->SetCursor(*cursor.impl());
 }
 
 void ChromeClientWx::requestGeolocationPermissionForFrame(Frame*, Geolocation*)

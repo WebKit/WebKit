@@ -27,8 +27,10 @@
 
 #include "Cursor.h"
 #include "GraphicsContext.h"
+#include "HostWindow.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
+#include "ScrollView.h"
 
 #include <wx/defs.h>
 #include <wx/scrolwin.h>
@@ -54,8 +56,10 @@ void Widget::setFocus(bool focused)
 
 void Widget::setCursor(const Cursor& cursor)
 {
-    if (platformWidget() && cursor.impl())
-        platformWidget()->SetCursor(*cursor.impl());
+    ScrollView* view = root();
+    if (!view)
+        return;
+    view->hostWindow()->setCursor(cursor);
 }
 
 void Widget::show()

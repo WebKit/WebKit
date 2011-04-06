@@ -1,3 +1,14 @@
+2011-04-06  Malcolm MacLeod  <malcolm.macleod@tshwanedje.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Fix cursor handling so that we always call the chrome to set it.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=57972
+
+        * platform/wx/WidgetWx.cpp:
+        (WebCore::Widget::setCursor):
+
 2011-04-06  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
