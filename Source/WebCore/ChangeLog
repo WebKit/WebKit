@@ -1,3 +1,17 @@
+2011-04-06  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41445
+        
+        Visited links painting with black background. Make sure that if the visited style has
+        the initial background color (transparent) set that we just use the unvisited color.
+
+        Added fast/history/visited-link-background-color.html
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::visitedDependentColor):
+
 2011-04-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed Qt buildfix after r83079.
