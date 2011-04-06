@@ -2,6 +2,13 @@
 
         Try to fix Leopard bots.
 
+        * platform/mac/HTMLConverter.mm: Fix #if back the way Alexey seems
+        to have intended it.
+
+2011-04-05  Darin Adler  <darin@apple.com>
+
+        Try to fix Leopard bots.
+
         * platform/mac/HTMLConverter.mm: Move declarations of new functions
         inside the appropriate #if.
 

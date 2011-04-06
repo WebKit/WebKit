@@ -47,10 +47,10 @@
 using namespace WebCore;
 using namespace HTMLNames;
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-
 static NSFileWrapper *fileWrapperForURL(DocumentLoader *, NSURL *);
 static NSFileWrapper *fileWrapperForElement(Element*);
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 
 // Additional control Unicode characters
 const unichar WebNextLineCharacter = 0x0085;
@@ -96,7 +96,11 @@ static NSFont *WebDefaultFont()
     return defaultFont;
 }
 
+#endif
+
 @implementation WebHTMLConverter
+
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 
 static NSFont *_fontForNameAndSize(NSString *fontName, CGFloat size, NSMutableDictionary *cache)
 {
