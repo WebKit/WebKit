@@ -1,5 +1,11 @@
 2011-04-05  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Who likes export files? I do!
+
+2011-04-05  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Introduced the concept of opaque roots, in preparation for marking the DOM with them
