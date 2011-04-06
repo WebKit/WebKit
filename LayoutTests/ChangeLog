@@ -1,5 +1,11 @@
 2011-04-06  Adrienne Walker  <enne@google.com>
 
+       Unreviewed, update Chromium expectations for set-unloaded-frame-location.html as a flaky crasher.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-06  Adrienne Walker  <enne@google.com>
+
        Unreviewed, rebaseline Chromium linux tests after r83075.
 
         * platform/chromium-linux/fast/multicol/nested-columns-expected.checksum: Removed.

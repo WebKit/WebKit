@@ -3295,3 +3295,5 @@ BUGENNE : svg/text/text-midpoint-split-bug.svg = FAIL
 BUGWK57926 GPU : media/video-display-toggle.html = IMAGE
 BUGWK57926 GPU : media/video-no-audio.html = IMAGE
 BUGWK57926 GPU : media/video-volume-slider.html = IMAGE
+
+BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = CRASH PASS
