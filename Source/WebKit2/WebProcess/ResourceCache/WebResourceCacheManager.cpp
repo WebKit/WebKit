@@ -99,8 +99,11 @@ void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
 
 void WebResourceCacheManager::clearCacheForOrigin(SecurityOriginData originData, uint32_t cachesToClear) const
 {
+#if USE(CFURLCACHE)
     ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);
-    UNUSED_PARAM(resourceCachesToClear);
+#else
+    UNUSED_PARAM(cachesToClear);
+#endif
 
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create(originData.protocol, originData.host, originData.port);
     if (!origin)

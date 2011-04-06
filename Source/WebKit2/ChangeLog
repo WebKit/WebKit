@@ -1,3 +1,13 @@
+2011-04-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix using UNUSED_PARAM introduced in r82907
+        https://bugs.webkit.org/show_bug.cgi?id=57940
+
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+        (WebKit::WebResourceCacheManager::clearCacheForOrigin):
+
 2011-04-06  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Anders Carlsson.
