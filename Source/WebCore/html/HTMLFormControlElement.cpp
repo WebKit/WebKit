@@ -201,14 +201,14 @@ void HTMLFormControlElement::setChangedSinceLastFormControlChangeEvent(bool chan
 
 void HTMLFormControlElement::dispatchFormControlChangeEvent()
 {
-    HTMLElement::dispatchChangeEvents();
+    HTMLElement::dispatchChangeEvent();
     setChangedSinceLastFormControlChangeEvent(false);
 }
 
 void HTMLFormControlElement::dispatchFormControlInputEvent()
 {
     setChangedSinceLastFormControlChangeEvent(true);
-    HTMLElement::dispatchInputEvents();
+    HTMLElement::dispatchInputEvent();
 }
 
 void HTMLFormControlElement::setDisabled(bool b)
@@ -638,7 +638,7 @@ void HTMLTextFormControlElement::select()
 void HTMLTextFormControlElement::dispatchFormControlChangeEvent()
 {
     if (m_textAsOfLastFormControlChangeEvent != value()) {
-        HTMLElement::dispatchChangeEvents();
+        HTMLElement::dispatchChangeEvent();
         setTextAsOfLastFormControlChangeEvent(value());
     }
     setChangedSinceLastFormControlChangeEvent(false);

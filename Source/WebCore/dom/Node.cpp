@@ -2674,12 +2674,12 @@ void Node::dispatchBlurEvent()
     dispatchEvent(Event::create(eventNames().blurEvent, false, false));
 }
 
-void Node::dispatchChangeEvents()
+void Node::dispatchChangeEvent()
 {
     dispatchEvent(Event::create(eventNames().changeEvent, true, false));
 }
 
-void Node::dispatchInputEvents()
+void Node::dispatchInputEvent()
 {
     dispatchEvent(Event::create(eventNames().inputEvent, true, false));
 }
@@ -2741,7 +2741,7 @@ void Node::defaultEventHandler(Event* event)
             if (Frame* frame = document()->frame())
                 frame->eventHandler()->defaultWheelEventHandler(startNode, wheelEvent);
     } else if (event->type() == eventNames().webkitEditableContentChangedEvent) {
-        dispatchInputEvents();
+        dispatchInputEvent();
     }
 }
 

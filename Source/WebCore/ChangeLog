@@ -1,3 +1,23 @@
+2011-04-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Rename event dispatching functions after form event removal
+        https://bugs.webkit.org/show_bug.cgi?id=57908
+
+        * dom/InputElement.cpp:
+        (WebCore::InputElement::setValueFromRenderer):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchChangeEvent):
+        (WebCore::Node::dispatchInputEvent):
+        (WebCore::Node::defaultEventHandler):
+        * dom/Node.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::dispatchFormControlChangeEvent):
+        (WebCore::HTMLFormControlElement::dispatchFormControlInputEvent):
+        (WebCore::HTMLTextFormControlElement::dispatchFormControlChangeEvent):
+        Renamed "events" to "event", since there is only one event to dispatch now.
+
 2011-04-05  Anders Bakken  <agbakken@gmail.com>
 
         Reviewed by David Levin.
