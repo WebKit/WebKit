@@ -1,3 +1,10 @@
+2011-04-06  James Kozianski  <koz@chromium.org>
+
+        [chromium] Add expectations for failing GPU tests.
+        https://bugs.webkit.org/show_bug.cgi?id=57926
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-06  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Ryosuke Niwa.

@@ -2928,8 +2928,8 @@ BUGCR74982 GPU : media/controls-strict.html = IMAGE
 BUGCR74982 GPU : media/controls-styling.html = IMAGE
 BUGCR74982 GPU : media/controls-without-preload.html = IMAGE
 BUGCR74982 GPU : media/video-aspect-ratio.html = IMAGE
-BUGCR74982 GPU WIN : media/video-transformed.html = IMAGE
-BUGCR74982 GPU LINUX : media/video-transformed.html = IMAGE
+BUGCR74982 GPU WIN LINUX : media/video-transformed.html = IMAGE
+BUGCR74982 GPU MAC SNOWLEOPARD : media/video-transformed.html = IMAGE
 BUGCR74982 GPU : media/video-zoom-controls.html = IMAGE
 
 BUGWK55708 BUGCR75345 GPU MAC : media/video-controls-rendering.html = CRASH
@@ -3288,3 +3288,7 @@ BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT 
 BUGENNE : svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg = FAIL
 BUGENNE : svg/text/text-midpoint-split-bug.svg = FAIL
 
+
+BUGWK57926 GPU : media/video-display-toggle.html = IMAGE
+BUGWK57926 GPU : media/video-no-audio.html = IMAGE
+BUGWK57926 GPU : media/video-volume-slider.html = IMAGE
