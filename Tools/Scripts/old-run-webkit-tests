@@ -2109,12 +2109,12 @@ sub recordActualResultsAndDiff($$)
     mkpath(dirname($actualResultsPath));
     writeToFile("$actualResultsPath", $actualResults);
 
-    if (-f $expectedResultPath) {
-        copy("$expectedResultPath", "$copiedExpectedResultsPath");
-    } else {
-        open EMPTY, ">$copiedExpectedResultsPath";
-        close EMPTY;
+    # We don't need diff and pretty diff for tests without expected file.
+    if ( !-f $expectedResultPath) {
+        return;
     }
+
+    copy("$expectedResultPath", "$copiedExpectedResultsPath");
 
     my $diffOuputBasePath = File::Spec->catfile($testResultsDirectory, $base);
     my $diffOutputPath = "$diffOuputBasePath-$diffsTag.txt";

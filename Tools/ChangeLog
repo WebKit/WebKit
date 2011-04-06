@@ -1,3 +1,12 @@
+2011-04-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        ORWT shouldn't generate diff files for tests without expected files
+        https://bugs.webkit.org/show_bug.cgi?id=57846
+
+        * Scripts/old-run-webkit-tests:
+
 2011-04-05  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Mac build fix. Handle cases where 10.4 SDK is not installed, and also add x86_64 arch
