@@ -1,5 +1,12 @@
 2011-04-06  Adrienne Walker  <enne@google.com>
 
+        Unreviewed, rebaseline more Chromium mac tests after r83075.
+
+        * platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png: Added.
+
+2011-04-06  Adrienne Walker  <enne@google.com>
+
         Unreviewed, try to green Chromium mac tree by marking failing tests as more generally failing.
 
         * platform/chromium/test_expectations.txt:
