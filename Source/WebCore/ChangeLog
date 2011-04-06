@@ -1,3 +1,31 @@
+2011-04-06  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [Cairo] Hide the details of image masking in PlatformContextCairo
+        https://bugs.webkit.org/show_bug.cgi?id=57878
+
+        No new tests. This is just a refactor.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::savePlatformState): Call into PlatformContextCairo now to
+        do the actual cairo_save. Remove information about image masking.
+        (WebCore::GraphicsContext::restorePlatformState): Call into PlatformContextCairo now to
+        do the actual cairo_restore. Remove information about image masking.
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::clip): Use PlatformContextCairo here now.
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::restore): Added.
+        (WebCore::PlatformContextCairo::save): Added.
+        (WebCore::PlatformContextCairo::pushImageMask): Added.
+        * platform/graphics/cairo/PlatformContextCairo.h:
+        (WebCore::ImageMaskInformation::update): Moved from GraphicsContextPlatformPrivateCairo.h.
+        (WebCore::ImageMaskInformation::isValid): Ditto.
+        (WebCore::ImageMaskInformation::maskSurface): Ditto.
+        (WebCore::ImageMaskInformation::maskRect): Ditto.
+
 2011-04-02  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

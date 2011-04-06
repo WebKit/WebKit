@@ -117,7 +117,7 @@ PassRefPtr<Image> ImageBuffer::copyImage() const
 
 void ImageBuffer::clip(GraphicsContext* context, const FloatRect& maskRect) const
 {
-    context->pushImageMask(m_data.m_surface, maskRect);
+    context->platformContext()->pushImageMask(m_data.m_surface, maskRect);
 }
 
 void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,

@@ -492,7 +492,6 @@ namespace WebCore {
 
 #if PLATFORM(CAIRO)
         GraphicsContext(cairo_t*);
-        void pushImageMask(cairo_surface_t*, const FloatRect&);
 #endif
 
 #if PLATFORM(GTK)

@@ -47,25 +47,6 @@ typedef struct _GdkExposeEvent GdkExposeEvent;
 
 namespace WebCore {
 
-// In Cairo image masking is immediate, so to emulate image clipping we must save masking
-// details as part of the context state and apply it during platform restore.
-class ImageMaskInformation {
-public:
-    void update(cairo_surface_t* maskSurface, const FloatRect& maskRect)
-    {
-        m_maskSurface = maskSurface;
-        m_maskRect = maskRect;
-    }
-
-    bool isValid() const { return m_maskSurface; }
-    cairo_surface_t* maskSurface() const { return m_maskSurface.get(); }
-    const FloatRect& maskRect() const { return m_maskRect; }
-
-private:
-    RefPtr<cairo_surface_t> m_maskSurface;
-    FloatRect m_maskRect;
-};
-
 class GraphicsContextPlatformPrivate {
 public:
     GraphicsContextPlatformPrivate(PlatformContextCairo* newPlatformContext)
@@ -121,7 +102,6 @@ public:
     Vector<float> layers;
     ContextShadow shadow;
     Vector<ContextShadow> shadowStack;
-    Vector<ImageMaskInformation> maskImageStack;
 
 #if PLATFORM(GTK)
     GdkEventExpose* expose;

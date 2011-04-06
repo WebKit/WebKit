@@ -35,4 +35,51 @@ PlatformContextCairo::PlatformContextCairo(cairo_t* cr)
 {
 }
 
+void PlatformContextCairo::restore()
+{
+    const ImageMaskInformation& maskInformation = m_maskImageStack.last();
+    if (maskInformation.isValid()) {
+        const FloatRect& maskRect = maskInformation.maskRect();
+        cairo_pop_group_to_source(m_cr.get());
+        cairo_mask_surface(m_cr.get(), maskInformation.maskSurface(), maskRect.x(), maskRect.y());
+    }
+    m_maskImageStack.removeLast();
+
+    cairo_restore(m_cr.get());
+}
+
+void PlatformContextCairo::save()
+{
+    m_maskImageStack.append(ImageMaskInformation());
+
+    cairo_save(m_cr.get());
+}
+
+void PlatformContextCairo::pushImageMask(cairo_surface_t* surface, const FloatRect& rect)
+{
+    // We must call savePlatformState at least once before we can use image masking,
+    // since we actually apply the mask in restorePlatformState.
+    ASSERT(!m_data->maskImageStack.isEmpty());
+    m_maskImageStack.last().update(surface, rect);
+
+    // Cairo doesn't support the notion of an image clip, so we push a group here
+    // and then paint it to the surface with an image mask (which is an immediate
+    // operation) during restorePlatformState.
+
+    // We want to allow the clipped elements to composite with the surface as it
+    // is now, but they are isolated in another group. To make this work, we're
+    // going to blit the current surface contents onto the new group once we push it.
+    cairo_surface_t* currentTarget = cairo_get_target(m_cr.get());
+    cairo_surface_flush(currentTarget);
+
+    // Pushing a new group ensures that only things painted after this point are clipped.
+    cairo_push_group(m_cr.get());
+    cairo_set_operator(m_cr.get(), CAIRO_OPERATOR_SOURCE);
+
+    cairo_set_source_surface(m_cr.get(), currentTarget, 0, 0);
+    cairo_rectangle(m_cr.get(), rect.x(), rect.y(), rect.width(), rect.height());
+    cairo_fill(m_cr.get());
+}
+
+
 } // namespace WebCore
