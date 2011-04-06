@@ -50,7 +50,7 @@ class Page;
 struct FrameLoadRequest;
 class QtAbstractWebPopup;
 struct ViewportArguments;
-#if ENABLE(VIDEO) && ENABLE(QT_MULTIMEDIA)
+#if ENABLE(VIDEO)
 class FullScreenVideoQt;
 #endif
 
@@ -163,7 +163,7 @@ public:
     virtual void needTouchEvents(bool) { }
 #endif
  
-#if ENABLE(VIDEO) && ENABLE(QT_MULTIMEDIA)
+#if ENABLE(VIDEO)
     virtual bool supportsFullscreenForNode(const Node*);
     virtual void enterFullscreenForNode(Node*);
     virtual void exitFullscreenForNode(Node*);
@@ -202,7 +202,7 @@ public:
     bool menuBarVisible;
     QEventLoop* m_eventLoop;
 
-#if ENABLE(VIDEO) && ENABLE(QT_MULTIMEDIA)
+#if ENABLE(VIDEO)
     FullScreenVideoQt* m_fullScreenVideo;
 #endif
 

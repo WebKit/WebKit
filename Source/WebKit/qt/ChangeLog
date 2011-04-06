@@ -1,3 +1,41 @@
+2011-04-06  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Implement fullscreen playback for the GStreamer backend.
+        https://bugs.webkit.org/show_bug.cgi?id=56826
+
+        Implement support for fullscreen playback when building the
+        Qt port with the GStreamer backend (DEFINES+=USE_GSTREAMER=1).
+        The implementation is done in FullScreenVideoQt alongside with
+        the Qt Multimedia support.
+
+        No new tests because layout tests cover it. They are not yet activated
+        but will be any time soon.
+
+        * QtWebKit.pro:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::ChromeClientQt):
+        (WebCore::ChromeClientQt::~ChromeClientQt):
+        (WebCore::ChromeClientQt::enterFullscreenForNode):
+        (WebCore::ChromeClientQt::exitFullscreenForNode):
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/FullScreenVideoQt.cpp:
+        (WebCore::GStreamerFullScreenVideoHandler::GStreamerFullScreenVideoHandler):
+        (WebCore::GStreamerFullScreenVideoHandler::setVideoElement):
+        (WebCore::GStreamerFullScreenVideoHandler::enterFullScreen):
+        (WebCore::GStreamerFullScreenVideoHandler::windowClosed):
+        (WebCore::GStreamerFullScreenVideoHandler::exitFullScreen):
+        (WebCore::DefaultFullScreenVideoHandler::DefaultFullScreenVideoHandler):
+        (WebCore::FullScreenVideoQt::FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::~FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::enterFullScreenForNode):
+        (WebCore::FullScreenVideoQt::exitFullScreenForNode):
+        (WebCore::FullScreenVideoQt::requiresFullScreenForVideoPlayback):
+        (WebCore::FullScreenVideoQt::isValid):
+        * WebCoreSupport/FullScreenVideoQt.h:
+        (WebCore::GStreamerFullScreenVideoHandler::~GStreamerFullScreenVideoHandler):
+
 2011-04-06  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

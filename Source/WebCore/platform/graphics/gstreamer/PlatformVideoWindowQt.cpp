@@ -20,6 +20,7 @@
 #include "config.h"
 #include "PlatformVideoWindow.h"
 
+#include "HTMLVideoElement.h"
 #include "PlatformVideoWindowPrivate.h"
 
 #include <QApplication>
@@ -28,34 +29,80 @@
 #include <QPalette>
 using namespace WebCore;
 
+static const int gHideMouseCursorDelay = 3000;
+
 FullScreenVideoWindow::FullScreenVideoWindow()
     : QWidget(0, Qt::Window)
+    , m_mediaElement(0)
 {
     setAttribute(Qt::WA_NativeWindow);
-    // Setting these values ensures smooth resizing since it
-    // will prevent the system from clearing the background.
+    setWindowModality(Qt::ApplicationModal);
     setAttribute(Qt::WA_NoSystemBackground, true);
     setAttribute(Qt::WA_PaintOnScreen, true);
+
+    m_cursorTimer.setSingleShot(true);
+    connect(&m_cursorTimer, SIGNAL(timeout()), this, SLOT(hideCursor()));
+}
+
+void FullScreenVideoWindow::setVideoElement(HTMLVideoElement* element)
+{
+    m_mediaElement = element;
+}
+
+void FullScreenVideoWindow::closeEvent(QCloseEvent*)
+{
+    m_cursorTimer.stop();
+    setMouseTracking(false);
+    releaseMouse();
+    QApplication::restoreOverrideCursor();
 }
 
 void FullScreenVideoWindow::keyPressEvent(QKeyEvent* ev)
 {
-    if (ev->key() == Qt::Key_Escape) {
-        close();
+    if (m_mediaElement && ev->key() == Qt::Key_Space) {
+        if (!m_mediaElement->paused())
+            m_mediaElement->pause(true);
+        else
+            m_mediaElement->play(true);
+    } else if (ev->key() == Qt::Key_Escape)
         emit closed();
-    }
+    QWidget::keyPressEvent(ev);
 }
 
 bool FullScreenVideoWindow::event(QEvent* ev)
 {
     switch (ev->type()) {
+    case QEvent::MouseMove:
+        showCursor();
+        ev->accept();
+        return true;
     case QEvent::MouseButtonDblClick:
-        close();
+        emit closed();
         ev->accept();
         return true;
     default:
         return QWidget::event(ev);
     }
+}
+
+void FullScreenVideoWindow::showFullScreen()
+{
+    QWidget::showFullScreen();
+    setMouseTracking(true);
+    raise();
+    setFocus();
+    hideCursor();
+}
+
+void FullScreenVideoWindow::hideCursor()
+{
+    QApplication::setOverrideCursor(QCursor(Qt::BlankCursor));
+}
+
+void FullScreenVideoWindow::showCursor()
+{
+    QApplication::restoreOverrideCursor();
+    m_cursorTimer.start(gHideMouseCursorDelay);
 }
 
 

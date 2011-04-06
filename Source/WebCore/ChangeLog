@@ -1,3 +1,29 @@
+2011-04-06  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Implement fullscreen playback for the GStreamer backend.
+        https://bugs.webkit.org/show_bug.cgi?id=56826
+
+        Implement support for fullscreen playback when building the
+        Qt port with the GStreamer backend (DEFINES+=USE_GSTREAMER=1).
+        The implementation is done in FullScreenVideoQt alongside with
+        the Qt Multimedia support.
+
+        No new tests because layout tests cover it. They are not yet activated
+        but will be any time soon.
+
+        * platform/graphics/gstreamer/PlatformVideoWindowPrivate.h:
+        * platform/graphics/gstreamer/PlatformVideoWindowQt.cpp:
+        (FullScreenVideoWindow::FullScreenVideoWindow):
+        (FullScreenVideoWindow::setVideoElement):
+        (FullScreenVideoWindow::closeEvent):
+        (FullScreenVideoWindow::keyPressEvent):
+        (FullScreenVideoWindow::event):
+        (FullScreenVideoWindow::showFullScreen):
+        (FullScreenVideoWindow::hideCursor):
+        (FullScreenVideoWindow::showCursor):
+
 2011-04-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Dimitri Glazkov.

@@ -22,6 +22,7 @@
 
 #include "qwebkitplatformplugin.h"
 #include <QObject>
+#include <wtf/Platform.h>
 
 QT_BEGIN_NAMESPACE
 class QGraphicsVideoItem;
@@ -34,8 +35,35 @@ class ChromeClientQt;
 class FullScreenVideoWidget;
 class HTMLVideoElement;
 class Node;
+#if ENABLE(QT_MULTIMEDIA)
 class MediaPlayerPrivateQt;
+#endif
 
+// We do not use ENABLE or USE because moc does not expand these macros.
+#if defined(WTF_USE_GSTREAMER) && WTF_USE_GSTREAMER
+class FullScreenVideoWindow;
+
+class GStreamerFullScreenVideoHandler : public QObject {
+    Q_OBJECT
+public:
+    GStreamerFullScreenVideoHandler();
+    ~GStreamerFullScreenVideoHandler() { }
+    void setVideoElement(HTMLVideoElement*);
+
+    void enterFullScreen();
+    void exitFullScreen();
+
+public Q_SLOTS:
+    void windowClosed();
+
+private:
+    HTMLVideoElement* m_videoElement;
+    FullScreenVideoWindow* m_fullScreenWidget;
+};
+#endif
+
+// We do not use ENABLE or USE because moc does not expand these macros.
+#if defined(ENABLE_QT_MULTIMEDIA) && ENABLE_QT_MULTIMEDIA
 class DefaultFullScreenVideoHandler : public QWebFullScreenVideoHandler {
     Q_OBJECT
 public:
@@ -51,6 +79,7 @@ private:
     static bool s_shouldForceFullScreenVideoPlayback;
     FullScreenVideoWidget *m_fullScreenWidget;
 };
+#endif
 
 class FullScreenVideoQt : public QObject {
     Q_OBJECT
@@ -61,11 +90,12 @@ public:
     virtual void enterFullScreenForNode(Node*);
     virtual void exitFullScreenForNode(Node*);
     bool requiresFullScreenForVideoPlayback();
-    bool isValid() const {  return m_FullScreenVideoHandler; }
+    bool isValid() const;
 
 private:
+#if ENABLE(QT_MULTIMEDIA)
     MediaPlayerPrivateQt* mediaPlayer();
-    MediaPlayerPrivateQt* mediaPlayerForNode(Node* = 0);
+#endif
 
 private slots:
     void aboutToClose();
@@ -73,7 +103,12 @@ private slots:
 private:
     ChromeClientQt* m_chromeClient;
     HTMLVideoElement* m_videoElement;
+#if ENABLE(QT_MULTIMEDIA)
     QWebFullScreenVideoHandler* m_FullScreenVideoHandler;
+#endif
+#if USE(GSTREAMER)
+    GStreamerFullScreenVideoHandler* m_FullScreenVideoHandlerGStreamer;
+#endif
 };
 
 }

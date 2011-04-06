@@ -22,18 +22,71 @@
 #include "FullScreenVideoQt.h"
 
 #include "ChromeClientQt.h"
+#if ENABLE(QT_MULTIMEDIA)
 #include "FullScreenVideoWidget.h"
+#include "MediaPlayerPrivateQt.h"
+#endif
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
-#include "MediaPlayerPrivateQt.h"
 #include "Node.h"
 
+#if USE(GSTREAMER)
+#include "GStreamerGWorld.h"
+#include "PlatformVideoWindowPrivate.h"
+#endif
 
+#if ENABLE(QT_MULTIMEDIA)
 #include <QGraphicsVideoItem>
 #include <QMediaPlayer>
+#endif
+#include <QWidget>
 
 namespace WebCore {
 
+#if USE(GSTREAMER)
+GStreamerFullScreenVideoHandler::GStreamerFullScreenVideoHandler()
+    : m_videoElement(0)
+    , m_fullScreenWidget(0)
+{
+}
+
+void GStreamerFullScreenVideoHandler::setVideoElement(HTMLVideoElement* element)
+{
+    m_videoElement = element;
+}
+
+void GStreamerFullScreenVideoHandler::enterFullScreen()
+{
+    if (m_videoElement->platformMedia().type != WebCore::PlatformMedia::GStreamerGWorldType)
+        return;
+
+    GStreamerGWorld* gstreamerGWorld = m_videoElement->platformMedia().media.gstreamerGWorld;
+
+    if (!gstreamerGWorld->enterFullscreen())
+        return;
+
+    m_fullScreenWidget = reinterpret_cast<FullScreenVideoWindow*>(gstreamerGWorld->platformVideoWindow()->window());
+    m_fullScreenWidget->setVideoElement(m_videoElement);
+    connect(m_fullScreenWidget, SIGNAL(closed()), this, SLOT(windowClosed()));
+    m_fullScreenWidget->showFullScreen();
+}
+
+void GStreamerFullScreenVideoHandler::windowClosed()
+{
+    m_videoElement->exitFullscreen();
+}
+
+void GStreamerFullScreenVideoHandler::exitFullScreen()
+{
+    if (m_videoElement->platformMedia().type == WebCore::PlatformMedia::GStreamerGWorldType)
+        m_videoElement->platformMedia().media.gstreamerGWorld->exitFullscreen();
+
+    m_fullScreenWidget->setVideoElement(0);
+    m_fullScreenWidget->close();
+}
+#endif
+
+#if ENABLE(QT_MULTIMEDIA)
 bool DefaultFullScreenVideoHandler::s_shouldForceFullScreenVideoPlayback = false;
 
 DefaultFullScreenVideoHandler::DefaultFullScreenVideoHandler()
@@ -42,6 +95,8 @@ DefaultFullScreenVideoHandler::DefaultFullScreenVideoHandler()
 {
     connect(m_fullScreenWidget, SIGNAL(didExitFullScreen()), this, SIGNAL(fullScreenClosed()));
     m_fullScreenWidget->hide();
+
+    m_fullScreenWidget->close();
 }
 
 DefaultFullScreenVideoHandler::~DefaultFullScreenVideoHandler()
@@ -72,24 +127,36 @@ void DefaultFullScreenVideoHandler::exitFullScreen()
 {
     m_fullScreenWidget->close();
 }
+#endif
 
 FullScreenVideoQt::FullScreenVideoQt(ChromeClientQt* chromeClient)
     : m_chromeClient(chromeClient)
     , m_videoElement(0)
 {
     Q_ASSERT(m_chromeClient);
-    m_FullScreenVideoHandler = m_chromeClient->m_platformPlugin.createFullScreenVideoHandler();
 
+#if ENABLE(QT_MULTIMEDIA)
+    m_FullScreenVideoHandler = m_chromeClient->m_platformPlugin.createFullScreenVideoHandler();
     if (!m_FullScreenVideoHandler)
         m_FullScreenVideoHandler = new DefaultFullScreenVideoHandler;
 
     if (m_FullScreenVideoHandler)
         connect(m_FullScreenVideoHandler, SIGNAL(fullScreenClosed()), this, SLOT(aboutToClose()));
+#endif
+
+#if USE(GSTREAMER)
+    m_FullScreenVideoHandlerGStreamer = new GStreamerFullScreenVideoHandler;
+#endif
 }
 
 FullScreenVideoQt::~FullScreenVideoQt()
 {
+#if ENABLE(QT_MULTIMEDIA)
     delete m_FullScreenVideoHandler;
+#endif
+#if USE(GSTREAMER)
+    delete m_FullScreenVideoHandlerGStreamer;
+#endif
 }
 
 void FullScreenVideoQt::enterFullScreenForNode(Node* node)
@@ -97,25 +164,54 @@ void FullScreenVideoQt::enterFullScreenForNode(Node* node)
     Q_ASSERT(node);
     Q_ASSERT(m_FullScreenVideoHandler);
 
+    m_videoElement = static_cast<HTMLVideoElement*>(node);
+
+#if ENABLE(QT_MULTIMEDIA)
+    HTMLVideoElement* videoElement = static_cast<HTMLVideoElement*>(node);
+    PlatformMedia platformMedia = videoElement->platformMedia();
+
+    ASSERT(platformMedia.type == PlatformMedia::QtMediaPlayerType);
+    if (platformMedia.type != PlatformMedia::QtMediaPlayerType)
+        return;
+
     if (!m_FullScreenVideoHandler)
         return;
 
-    MediaPlayerPrivateQt* mediaPlayerQt = mediaPlayerForNode(node);
+    MediaPlayerPrivateQt* mediaPlayerQt = mediaPlayer();
     mediaPlayerQt->removeVideoItem();
     m_FullScreenVideoHandler->enterFullScreen(mediaPlayerQt->mediaPlayer());
+#endif
+
+#if USE(GSTREAMER)
+    m_FullScreenVideoHandlerGStreamer->setVideoElement(m_videoElement);
+    m_FullScreenVideoHandlerGStreamer->enterFullScreen();
+#endif
 }
 
 void FullScreenVideoQt::exitFullScreenForNode(Node* node)
 {
     Q_ASSERT(node);
+
+#if ENABLE(QT_MULTIMEDIA)
+    HTMLVideoElement* videoElement = static_cast<HTMLVideoElement*>(node);
+    PlatformMedia platformMedia = videoElement->platformMedia();
+
+    ASSERT(platformMedia.type == PlatformMedia::QtMediaPlayerType);
+    if (platformMedia.type != PlatformMedia::QtMediaPlayerType)
+        return;
+
     Q_ASSERT(m_FullScreenVideoHandler);
 
     if (!m_FullScreenVideoHandler)
         return;
 
     m_FullScreenVideoHandler->exitFullScreen();
-    MediaPlayerPrivateQt* mediaPlayerQt = mediaPlayerForNode(node);
+    MediaPlayerPrivateQt* mediaPlayerQt = mediaPlayer();
     mediaPlayerQt->restoreVideoItem();
+#endif
+#if USE(GSTREAMER)
+    m_FullScreenVideoHandlerGStreamer->exitFullScreen();
+#endif
 }
 
 void FullScreenVideoQt::aboutToClose()
@@ -124,24 +220,33 @@ void FullScreenVideoQt::aboutToClose()
     m_videoElement->exitFullscreen();
 }
 
+#if ENABLE(QT_MULTIMEDIA)
 MediaPlayerPrivateQt* FullScreenVideoQt::mediaPlayer()
 {
     Q_ASSERT(m_videoElement);
     PlatformMedia platformMedia = m_videoElement->platformMedia();
     return static_cast<MediaPlayerPrivateQt*>(platformMedia.media.qtMediaPlayer);
 }
-
-MediaPlayerPrivateQt* FullScreenVideoQt::mediaPlayerForNode(Node* node)
-{
-    Q_ASSERT(node);
-    if (node)
-        m_videoElement = static_cast<HTMLVideoElement*>(node);
-    return mediaPlayer();
-}
+#endif
 
 bool FullScreenVideoQt::requiresFullScreenForVideoPlayback()
 {
+#if ENABLE(QT_MULTIMEDIA)
     return m_FullScreenVideoHandler ? m_FullScreenVideoHandler->requiresFullScreenForVideoPlayback() : false;
+#endif
+#if USE(GSTREAMER)
+    return false;
+#endif
+}
+
+bool FullScreenVideoQt::isValid() const
+{
+#if ENABLE(QT_MULTIMEDIA)
+    return m_FullScreenVideoHandler;
+#endif
+#if USE(GSTREAMER)
+    return m_FullScreenVideoHandlerGStreamer;
+#endif
 }
 
 }

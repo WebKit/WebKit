@@ -211,13 +211,13 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
 
 contains(DEFINES, ENABLE_VIDEO=1) {
     !contains(DEFINES, USE_GSTREAMER=1):contains(MOBILITY_CONFIG, multimedia) {
-        HEADERS += \
-            $$PWD/WebCoreSupport/FullScreenVideoQt.h \
-            $$PWD/WebCoreSupport/FullScreenVideoWidget.h
+        HEADERS += $$PWD/WebCoreSupport/FullScreenVideoWidget.h
+        SOURCES += $$PWD/WebCoreSupport/FullScreenVideoWidget.cpp
+    }
 
-        SOURCES += \
-            $$PWD/WebCoreSupport/FullScreenVideoQt.cpp \
-            $$PWD/WebCoreSupport/FullScreenVideoWidget.cpp
+    contains(DEFINES, USE_GSTREAMER=1) | contains(MOBILITY_CONFIG, multimedia) {
+        HEADERS += $$PWD/WebCoreSupport/FullScreenVideoQt.h
+        SOURCES += $$PWD/WebCoreSupport/FullScreenVideoQt.cpp
     }
 }
 

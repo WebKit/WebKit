@@ -20,21 +20,37 @@
 #ifndef PlatformVideoWindowPrivate_h
 #define PlatformVideoWindowPrivate_h
 
+#include <QTimer>
 #include <QWidget>
 
 class QKeyEvent;
 
 namespace WebCore {
 
+class HTMLVideoElement;
+
 class FullScreenVideoWindow: public QWidget {
 Q_OBJECT
 public:
     FullScreenVideoWindow();
+    void setVideoElement(HTMLVideoElement*);
 signals:
     void closed();
 protected:
-    void keyPressEvent(QKeyEvent* ev);
-    bool event(QEvent* ev);
+    void closeEvent(QCloseEvent*);
+    void keyPressEvent(QKeyEvent*);
+    bool event(QEvent*);
+
+public slots:
+    void showFullScreen();
+
+private slots:
+    void hideCursor();
+
+private:
+    void showCursor();
+    QTimer m_cursorTimer;
+    HTMLVideoElement* m_mediaElement;
 };
 
 
