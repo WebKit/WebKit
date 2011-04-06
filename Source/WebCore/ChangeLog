@@ -1,3 +1,29 @@
+2011-04-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Move attributedStringFromRange down to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=57905
+
+        No change in behavior, so no new tests.
+
+        Also tweaked HTMLConverter to not use methods defined in WebKit.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/HTMLConverter.h:
+        * platform/mac/HTMLConverter.mm:
+        (-[WebHTMLConverter _newTabForElement:]):
+        (-[WebHTMLConverter _addAttachmentForElement:URL:needsParagraph:usePlaceholder:]):
+        (+[WebHTMLConverter editingAttributedStringFromRange:]):
+        (fileWrapperForURL):
+        (fileWrapperForElement):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection):
+        * platform/mac/WebNSAttributedStringExtras.h: Copied from Source/WebKit/mac/Misc/WebNSAttributedStringExtras.h.
+        * platform/mac/WebNSAttributedStringExtras.mm: Copied from Source/WebKit/mac/Misc/WebNSAttributedStringExtras.mm.
+        (WebCore::attributedStringByStrippingAttachmentCharacters):
+
 2011-04-05  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

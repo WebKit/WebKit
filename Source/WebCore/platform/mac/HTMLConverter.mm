@@ -27,20 +27,28 @@
 #import "HTMLConverter.h"
 
 #import "ArchiveResource.h"
+#import "ColorMac.h"
 #import "Document.h"
 #import "DocumentLoader.h"
 #import "DOMDocumentInternal.h"
 #import "DOMElementInternal.h"
 #import "DOMHTMLTableCellElement.h"
 #import "DOMPrivate.h"
+#import "DOMRangeInternal.h"
 #import "Element.h"
 #import "Frame.h"
 #import "HTMLNames.h"
 #import "HTMLParserIdioms.h"
+#import "LoaderNSURLExtras.h"
+#import "RenderImage.h"
+#import "TextIterator.h"
 #import <wtf/ASCIICType.h>
 
 using namespace WebCore;
 using namespace HTMLNames;
+
+static NSFileWrapper *fileWrapperForURL(DocumentLoader *, NSURL *);
+static NSFileWrapper *fileWrapperForElement(Element*);
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 // Additional control Unicode characters
@@ -56,10 +64,8 @@ const unichar WebNextLineCharacter = 0x0085;
 @end
 
 @interface NSURL (WebDataURL)
-+ (NSURL *)_web_uniqueWebDataURL;
-+ (NSURL *)_web_uniqueWebDataURLWithRelativeString:(NSString *)string;
+// FIXME: What is the reason to use this Foundation method, and not +[NSURL URLWithString:relativeToURL:]?
 + (NSURL *)_web_URLWithString:(NSString *)string relativeToURL:(NSURL *)baseURL;
-- (NSString *)_web_suggestedFilenameWithMIMEType:(NSString *)MIMEType;
 @end
 
 @interface WebHTMLConverter(WebHTMLConverterPrivate)
@@ -769,39 +775,6 @@ static inline NSShadow *_shadowForShadowStyle(NSString *shadowStyle)
     [string release];
     _flags.isSoft = YES;
 }
-
-static NSFileWrapper *fileWrapperForURL(DocumentLoader *dataSource, NSURL *URL)
-{
-    if ([URL isFileURL]) {
-        NSString *path = [[URL path] stringByResolvingSymlinksInPath];
-        return [[[NSFileWrapper alloc] initWithPath:path] autorelease];
-    }
-    
-    RefPtr<ArchiveResource> resource = dataSource->subresource(URL);
-    if (resource) {
-        NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[resource->data()->createNSData() autorelease]] autorelease];
-        NSString *filename = resource->response().suggestedFilename();
-        if (!filename || ![filename length]) {
-            NSURL *URL = resource->url();
-            filename = [URL _web_suggestedFilenameWithMIMEType:resource->mimeType()];
-        }
-        [wrapper setPreferredFilename:filename];
-        return wrapper;
-    }
-    
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
-
-    NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
-    [request release];
-    
-    if (cachedResponse) {
-        NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[cachedResponse data]] autorelease];
-        [wrapper setPreferredFilename:[[cachedResponse response] suggestedFilename]];
-        return wrapper;
-    }
-    
-    return nil;
-}
     
 - (BOOL)_addAttachmentForElement:(DOMElement *)element URL:(NSURL *)url needsParagraph:(BOOL)needsParagraph usePlaceholder:(BOOL)flag
 {
@@ -823,7 +796,7 @@ static NSFileWrapper *fileWrapperForURL(DocumentLoader *dataSource, NSURL *URL)
         if (flag && resource && [@"text/html" isEqual:resource->mimeType()]) notFound = YES;
         if (resource && !notFound) {
             fileWrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[resource->data()->createNSData() autorelease]] autorelease];
-            [fileWrapper setPreferredFilename:[url _web_suggestedFilenameWithMIMEType:resource->mimeType()]];
+            [fileWrapper setPreferredFilename:suggestedFilenameWithMIMEType(url, resource->mimeType())];
         }
     }
     if (!fileWrapper && !notFound) {
@@ -1672,11 +1645,120 @@ static NSInteger _colCompare(id block1, id block2, void *)
     return self;
 }
 
+// This function supports more HTML features than the editing variant below, such as tables.
 - (NSAttributedString *)attributedString
 {
     [self _loadFromDOMRange];
     return (0 == _errorCode) ? [[_attrStr retain] autorelease] : nil;
 }
 
+#endif // !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+
+// This function uses TextIterator, which makes offsets in its result compatible with HTML editing.
++ (NSAttributedString *)editingAttributedStringFromRange:(DOMRange *)domRange
+{
+    Range *range = core(domRange);
+    NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
+    NSUInteger stringLength = 0;
+    RetainPtr<NSMutableDictionary> attrs(AdoptNS, [[NSMutableDictionary alloc] init]);
+
+    for (TextIterator it(range); !it.atEnd(); it.advance()) {
+        RefPtr<Range> currentTextRange = it.range();
+        ExceptionCode ec = 0;
+        Node* startContainer = currentTextRange->startContainer(ec);
+        Node* endContainer = currentTextRange->endContainer(ec);
+        int startOffset = currentTextRange->startOffset(ec);
+        int endOffset = currentTextRange->endOffset(ec);
+        
+        if (startContainer == endContainer && (startOffset == endOffset - 1)) {
+            Node* node = startContainer->childNode(startOffset);
+            if (node && node->hasTagName(imgTag)) {
+                NSFileWrapper *fileWrapper = fileWrapperForElement(static_cast<Element*>(node));
+                NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
+                [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:attachment]];
+                [attachment release];
+            }
+        }
+
+        int currentTextLength = it.length();
+        if (!currentTextLength)
+            continue;
+
+        RenderObject* renderer = startContainer->renderer();
+        ASSERT(renderer);
+        if (!renderer)
+            continue;
+        RenderStyle* style = renderer->style();
+        NSFont *font = style->font().primaryFont()->getNSFont();
+        [attrs.get() setObject:font forKey:NSFontAttributeName];
+        if (style->visitedDependentColor(CSSPropertyColor).alpha())
+            [attrs.get() setObject:nsColor(style->visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];
+        else
+            [attrs.get() removeObjectForKey:NSForegroundColorAttributeName];
+        if (style->visitedDependentColor(CSSPropertyBackgroundColor).alpha())
+            [attrs.get() setObject:nsColor(style->visitedDependentColor(CSSPropertyBackgroundColor)) forKey:NSBackgroundColorAttributeName];
+        else
+            [attrs.get() removeObjectForKey:NSBackgroundColorAttributeName];
+
+        RetainPtr<NSString> substring(AdoptNS, [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(it.characters()) length:currentTextLength freeWhenDone:NO]);
+        [string replaceCharactersInRange:NSMakeRange(stringLength, 0) withString:substring.get()];
+        [string setAttributes:attrs.get() range:NSMakeRange(stringLength, currentTextLength)];
+        stringLength += currentTextLength;
+    }
+
+    return [string autorelease];
+}
+
 @end
-#endif
+
+static NSFileWrapper *fileWrapperForURL(DocumentLoader *dataSource, NSURL *URL)
+{
+    if ([URL isFileURL]) {
+        NSString *path = [[URL path] stringByResolvingSymlinksInPath];
+        return [[[NSFileWrapper alloc] initWithPath:path] autorelease];
+    }
+    
+    RefPtr<ArchiveResource> resource = dataSource->subresource(URL);
+    if (resource) {
+        NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[resource->data()->createNSData() autorelease]] autorelease];
+        NSString *filename = resource->response().suggestedFilename();
+        if (!filename || ![filename length])
+            filename = suggestedFilenameWithMIMEType(resource->url(), resource->mimeType());
+        [wrapper setPreferredFilename:filename];
+        return wrapper;
+    }
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
+
+    NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
+    [request release];
+    
+    if (cachedResponse) {
+        NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[cachedResponse data]] autorelease];
+        [wrapper setPreferredFilename:[[cachedResponse response] suggestedFilename]];
+        return wrapper;
+    }
+    
+    return nil;
+}
+
+static NSFileWrapper *fileWrapperForElement(Element* element)
+{
+    NSFileWrapper *wrapper = nil;
+    
+    const AtomicString& attr = element->getAttribute(srcAttr);
+    if (!attr.isEmpty()) {
+        NSURL *URL = element->document()->completeURL(attr);
+        wrapper = fileWrapperForURL(element->document()->loader(), URL);
+    }
+    if (!wrapper) {
+        RenderImage* renderer = toRenderImage(element->renderer());
+        if (renderer->cachedImage() && !renderer->cachedImage()->errorOccurred()) {
+            wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:(NSData *)(renderer->cachedImage()->image()->getTIFFRepresentation())];
+            [wrapper setPreferredFilename:@"image.tiff"];
+            [wrapper autorelease];
+        }
+    }
+
+    return wrapper;
+}

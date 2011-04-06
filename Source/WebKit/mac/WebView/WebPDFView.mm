@@ -39,7 +39,6 @@
 #import "WebFrameView.h"
 #import "WebLocalizableStringsInternal.h"
 #import "WebNSArrayExtras.h"
-#import "WebNSAttributedStringExtras.h"
 #import "WebNSPasteboardExtras.h"
 #import "WebNSViewExtras.h"
 #import "WebPDFRepresentation.h"
@@ -61,6 +60,7 @@
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/WebNSAttributedStringExtras.h>
 #import <wtf/Assertions.h>
 
 using namespace WebCore;
@@ -924,7 +924,7 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     
     if ([types containsObject:NSRTFPboardType]) {
         if ([attributedString containsAttachments])
-            attributedString = [attributedString _web_attributedStringByStrippingAttachmentCharacters];
+            attributedString = attributedStringByStrippingAttachmentCharacters(attributedString);
 
         NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
         [pasteboard setData:RTFData forType:NSRTFPboardType];

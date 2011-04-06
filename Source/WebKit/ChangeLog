@@ -1,3 +1,12 @@
+2011-04-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Move attributedStringFromRange down to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=57905
+
+        * WebKit.xcodeproj/project.pbxproj: Removed WebNSAttributedStringExtras, which is now in WebCore.
+
 2011-03-29  Timothy Hatcher  <timothy@apple.com>
 
         Update WebKit Localizable.strings to only contain WebKit/win strings.

@@ -38,9 +38,7 @@
 #import "FrameLoaderClient.h"
 #import "HitTestResult.h"
 #import "HTMLAnchorElement.h"
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 #import "HTMLConverter.h"
-#endif
 #import "htmlediting.h"
 #import "HTMLNames.h"
 #import "Image.h"
@@ -52,6 +50,7 @@
 #import "RenderImage.h"
 #import "Text.h"
 #import "WebCoreNSStringExtras.h"
+#import "WebNSAttributedStringExtras.h"
 #import "markup.h"
 #import <wtf/StdLibExtras.h>
 #import <wtf/RetainPtr.h>
@@ -129,19 +128,6 @@ void Pasteboard::clear()
     [m_pasteboard.get() declareTypes:[NSArray array] owner:nil];
 }
 
-static NSAttributedString *stripAttachmentCharacters(NSAttributedString *string)
-{
-    const unichar attachmentCharacter = NSAttachmentCharacter;
-    DEFINE_STATIC_LOCAL(RetainPtr<NSString>, attachmentCharacterString, ([NSString stringWithCharacters:&attachmentCharacter length:1]));
-    NSMutableAttributedString *result = [[string mutableCopy] autorelease];
-    NSRange attachmentRange = [[result string] rangeOfString:attachmentCharacterString.get()];
-    while (attachmentRange.location != NSNotFound) {
-        [result replaceCharactersInRange:attachmentRange withString:@""];
-        attachmentRange = [[result string] rangeOfString:attachmentCharacterString.get()];
-    }
-    return result;
-}
-
 void Pasteboard::writeSelection(NSPasteboard* pasteboard, NSArray* pasteboardTypes, Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
     if (!WebArchivePboardType)
@@ -207,7 +193,7 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, NSArray* pasteboardTyp
     }
     if ([types containsObject:NSRTFPboardType]) {
         if ([attributedString containsAttachments])
-            attributedString = stripAttachmentCharacters(attributedString);
+            attributedString = attributedStringByStrippingAttachmentCharacters(attributedString);
         NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
         [pasteboard setData:RTFData forType:NSRTFPboardType];
     }

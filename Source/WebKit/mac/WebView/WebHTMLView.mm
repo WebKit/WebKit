@@ -53,7 +53,6 @@
 #import "WebKitNSStringExtras.h"
 #import "WebKitVersionChecks.h"
 #import "WebLocalizableStringsInternal.h"
-#import "WebNSAttributedStringExtras.h"
 #import "WebNSEventExtras.h"
 #import "WebNSFileManagerExtras.h"
 #import "WebNSImageExtras.h"
@@ -94,6 +93,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
@@ -112,6 +112,7 @@
 #import <WebCore/Text.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebFontCache.h>
+#import <WebCore/WebNSAttributedStringExtras.h>
 #import <WebCore/markup.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
@@ -1041,12 +1042,10 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         [pasteboard setData:RTFDData forType:NSRTFDPboardType];
     }        
     if ([types containsObject:NSRTFPboardType]) {
-        if (attributedString == nil) {
+        if (!attributedString)
             attributedString = [self selectedAttributedString];
-        }
-        if ([attributedString containsAttachments]) {
-            attributedString = [attributedString _web_attributedStringByStrippingAttachmentCharacters];
-        }
+        if ([attributedString containsAttachments])
+            attributedString = attributedStringByStrippingAttachmentCharacters(attributedString);
         NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
         [pasteboard setData:RTFData forType:NSRTFPboardType];
     }
@@ -5844,9 +5843,9 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         return nil;
     }
 
-    NSAttributedString *result = [NSAttributedString _web_attributedStringFromRange:core(domRange)];
+    NSAttributedString *result = [WebHTMLConverter editingAttributedStringFromRange:domRange];
     
-    // [NSAttributedString(WebKitExtras) _web_attributedStringFromRange:]  insists on inserting a trailing 
+    // [WebHTMLConverter editingAttributedStringFromRange:]  insists on inserting a trailing 
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
     // To work around this we truncate the resultant string to the correct length.
     if ([result length] > nsRange.length) {
@@ -6228,7 +6227,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[document _documentRange]];
     if (!attributedString) {
         Document* coreDocument = core(document);
-        attributedString = [NSAttributedString _web_attributedStringFromRange:Range::create(coreDocument, coreDocument, 0, coreDocument, coreDocument->childNodeCount()).get()];
+        attributedString = [WebHTMLConverter editingAttributedStringFromRange:kit(Range::create(coreDocument, coreDocument, 0, coreDocument, coreDocument->childNodeCount()).get())];
     }
     return attributedString;
 }
@@ -6245,7 +6244,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         Frame* coreFrame = core([self _frame]);
         if (coreFrame) {
             RefPtr<Range> range = coreFrame->selection()->selection().toNormalizedRange();
-            attributedString = [NSAttributedString _web_attributedStringFromRange:range.get()];
+            attributedString = [WebHTMLConverter editingAttributedStringFromRange:kit(range.get())];
         }
     }
     return attributedString;

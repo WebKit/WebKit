@@ -38,7 +38,6 @@
 #import "WebFrameInternal.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
-#import "WebNSAttributedStringExtras.h"
 #import "WebNSObjectExtras.h"
 #import "WebTypesInternal.h"
 #import "WebView.h"
@@ -48,6 +47,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
+#import <WebCore/HTMLConverter.h>
 #import <WebCore/HTMLFormControlElement.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLInputElement.h>
@@ -277,7 +277,7 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset
 {
-    return [NSAttributedString _web_attributedStringFromRange:Range::create(core(startNode)->document(), core(startNode), startOffset, core(endNode), endOffset).get()];
+    return [WebHTMLConverter editingAttributedStringFromRange:kit(Range::create(core(startNode)->document(), core(startNode), startOffset, core(endNode), endOffset).get())];
 }
 
 static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
