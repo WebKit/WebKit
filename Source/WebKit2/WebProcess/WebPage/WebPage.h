@@ -322,6 +322,10 @@ public:
     void setComposition(const WTF::String& compositionString, const WTF::Vector<WebCore::CompositionUnderline>& underlines, uint64_t cursorPosition);
     void firstRectForCharacterInSelectedRange(const uint64_t characterPosition, WebCore::IntRect& resultRect);
     void getSelectedText(WTF::String&);
+
+    void gestureWillBegin(const WebCore::IntPoint& point, bool& canBeginPanning);
+    void gestureDidScroll(const WebCore::IntSize& size);
+    void gestureDidEnd();
 #endif
 
     // FIXME: This a dummy message, to avoid breaking the build for platforms that don't require
@@ -569,6 +573,8 @@ private:
 #elif PLATFORM(WIN)
     // Our view's window (in the UI process).
     HWND m_nativeWindow;
+
+    RefPtr<WebCore::Node> m_gestureTargetNode;
 #endif
     
     HashMap<uint64_t, RefPtr<WebEditCommand> > m_editCommandMap;

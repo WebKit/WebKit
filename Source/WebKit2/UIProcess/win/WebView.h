@@ -97,6 +97,8 @@ private:
     LRESULT onWheelEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onHorizontalScroll(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onVerticalScroll(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
+    LRESULT onGestureNotify(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
+    LRESULT onGesture(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onKeyEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onPaintEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
     LRESULT onPrintClientEvent(HWND hWnd, UINT message, WPARAM, LPARAM, bool& handled);
@@ -219,6 +221,9 @@ private:
     // Thus, on return from DoDragDrop we have the correct pdwEffect for the drag-and-drop operation.
     // (see https://bugs.webkit.org/show_bug.cgi?id=29264)
     DWORD m_lastDropEffect;
+
+    int m_lastPanX;
+    int m_lastPanY;
 };
 
 } // namespace WebKit

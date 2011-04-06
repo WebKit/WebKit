@@ -272,6 +272,10 @@ public:
     void setComposition(const String&, Vector<WebCore::CompositionUnderline>&, int);
     WebCore::IntRect firstRectForCharacterInSelectedRange(int);
     String getSelectedText();
+
+    bool gestureWillBegin(const WebCore::IntPoint&);
+    void gestureDidScroll(const WebCore::IntSize&);
+    void gestureDidEnd();
 #endif
 #if ENABLE(TILED_BACKING_STORE)
     void setActualVisibleContentRect(const WebCore::IntRect& rect);

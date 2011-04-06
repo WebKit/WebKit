@@ -1,3 +1,16 @@
+2011-04-06  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Support Windows 7 Gestures
+        https://bugs.webkit.org/show_bug.cgi?id=49824
+        <rdar://problem/8689728>
+        
+        Move WindowTouch.h from WebKit/win, so it can be used in both WebKit and WebKit2.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/win/WindowsTouch.h: Copied from WebKit/win/WindowsTouch.h.
+
 2011-04-06  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.

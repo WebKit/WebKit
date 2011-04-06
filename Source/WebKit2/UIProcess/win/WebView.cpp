@@ -51,6 +51,7 @@
 #include <WebCore/SoftLinking.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>
+#include <WebCore/WindowsTouch.h>
 #include <wtf/text/WTFString.h>
 
 namespace Ime {
@@ -66,6 +67,12 @@ SOFT_LINK(IMM32, ImmSetOpenStatus, BOOL, WINAPI, (HIMC hIMC, BOOL fOpen), (hIMC,
 SOFT_LINK(IMM32, ImmNotifyIME, BOOL, WINAPI, (HIMC hIMC, DWORD dwAction, DWORD dwIndex, DWORD dwValue), (hIMC, dwAction, dwIndex, dwValue))
 SOFT_LINK(IMM32, ImmAssociateContextEx, BOOL, WINAPI, (HWND hWnd, HIMC hIMC, DWORD dwFlags), (hWnd, hIMC, dwFlags))
 };
+
+// Soft link functions for gestures and panning.
+SOFT_LINK_LIBRARY(USER32);
+SOFT_LINK_OPTIONAL(USER32, GetGestureInfo, BOOL, WINAPI, (HGESTUREINFO, PGESTUREINFO));
+SOFT_LINK_OPTIONAL(USER32, SetGestureConfig, BOOL, WINAPI, (HWND, DWORD, UINT, PGESTURECONFIG, UINT));
+SOFT_LINK_OPTIONAL(USER32, CloseGestureInfoHandle, BOOL, WINAPI, (HGESTUREINFO));
 
 using namespace WebCore;
 
@@ -156,6 +163,12 @@ LRESULT WebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_VSCROLL:
         lResult = onVerticalScroll(hWnd, message, wParam, lParam, handled);
+        break;
+    case WM_GESTURENOTIFY:
+        lResult = onGestureNotify(hWnd, message, wParam, lParam, handled);
+        break;
+    case WM_GESTURE:
+        lResult = onGesture(hWnd, message, wParam, lParam, handled);
         break;
     case WM_SYSKEYDOWN:
     case WM_KEYDOWN:
@@ -254,6 +267,8 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
     , m_inIMEComposition(0)
     , m_findIndicatorCallback(0)
     , m_findIndicatorCallbackContext(0)
+    , m_lastPanX(0)
+    , m_lastPanY(0)
 {
     registerWebViewWindowClass();
 
@@ -477,6 +492,92 @@ LRESULT WebView::onVerticalScroll(HWND hWnd, UINT message, WPARAM wParam, LPARAM
     m_page->scrollBy(direction, granularity);
 
     handled = true;
+    return 0;
+}
+
+LRESULT WebView::onGestureNotify(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
+{
+    // We shouldn't be getting any gesture messages without SetGestureConfig soft-linking correctly.
+    ASSERT(SetGestureConfigPtr());
+
+    GESTURENOTIFYSTRUCT* gn = reinterpret_cast<GESTURENOTIFYSTRUCT*>(lParam);
+
+    POINT localPoint = { gn->ptsLocation.x, gn->ptsLocation.y };
+    ::ScreenToClient(m_window, &localPoint);
+
+    bool canPan = m_page->gestureWillBegin(localPoint);
+
+    DWORD dwPanWant = GC_PAN | GC_PAN_WITH_INERTIA | GC_PAN_WITH_GUTTER;
+    DWORD dwPanBlock = GC_PAN_WITH_SINGLE_FINGER_HORIZONTALLY;
+    if (canPan)
+        dwPanWant |= GC_PAN_WITH_SINGLE_FINGER_VERTICALLY;
+    else
+        dwPanBlock |= GC_PAN_WITH_SINGLE_FINGER_VERTICALLY;
+
+    GESTURECONFIG gc = { GID_PAN, dwPanWant, dwPanBlock };
+    return SetGestureConfigPtr()(m_window, 0, 1, &gc, sizeof(gc));
+}
+
+LRESULT WebView::onGesture(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
+{
+    ASSERT(GetGestureInfoPtr());
+    ASSERT(CloseGestureInfoHandlePtr());
+
+    if (!GetGestureInfoPtr() || !CloseGestureInfoHandlePtr()) {
+        handled = false;
+        return 0;
+    }
+
+    HGESTUREINFO gestureHandle = reinterpret_cast<HGESTUREINFO>(lParam);
+    GESTUREINFO gi = {0};
+    gi.cbSize = sizeof(GESTUREINFO);
+
+    if (!GetGestureInfoPtr()(gestureHandle, &gi)) {
+        handled = false;
+        return 0;
+    }
+
+    switch (gi.dwID) {
+    case GID_BEGIN:
+        m_lastPanX = gi.ptsLocation.x;
+        m_lastPanY = gi.ptsLocation.y;
+        break;
+    case GID_END:
+        m_page->gestureDidEnd();
+        break;
+    case GID_PAN: {
+        int currentX = gi.ptsLocation.x;
+        int currentY = gi.ptsLocation.y;
+
+        // Reverse the calculations because moving your fingers up should move the screen down, and
+        // vice-versa.
+        int deltaX = m_lastPanX - currentX;
+        int deltaY = m_lastPanY - currentY;
+
+        m_lastPanX = currentX;
+        m_lastPanY = currentY;
+
+        m_page->gestureDidScroll(IntSize(deltaX, deltaY));
+
+        // FIXME <rdar://problem/9244367>: Support window bounce (both horizontal and vertical), 
+        // if the uesr has scrolled past the end of the document. scollByPanGesture would need to 
+        // be a sync message to support this, because we would need to know how far we scrolled 
+        // past the end of the document.
+
+        CloseGestureInfoHandlePtr()(gestureHandle);
+
+        handled = true;
+        return 0;
+    }
+    default:
+        break;
+    }
+
+    // If we get to this point, the gesture has not been handled. We forward
+    // the call to DefWindowProc by returning false, and we don't need to 
+    // to call CloseGestureInfoHandle. 
+    // http://msdn.microsoft.com/en-us/library/dd353228(VS.85).aspx
+    handled = false;
     return 0;
 }
 

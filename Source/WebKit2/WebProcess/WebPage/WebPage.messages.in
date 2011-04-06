@@ -201,6 +201,10 @@ messages -> WebPage {
     SetComposition(WTF::String compositionString, WTF::Vector<WebCore::CompositionUnderline> underlines, uint64_t cursorPosition)
     FirstRectForCharacterInSelectedRange(uint64_t characterPosition) -> (WebCore::IntRect resultRect)
     GetSelectedText() -> (WTF::String text)
+
+    GestureWillBegin(WebCore::IntPoint point) -> (bool canBeginPanning)
+    GestureDidScroll(WebCore::IntSize size)
+    GestureDidEnd()
 #endif
 #if PLATFORM(QT)
     FindZoomableAreaForPoint(WebCore::IntPoint point)

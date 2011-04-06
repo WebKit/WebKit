@@ -1,3 +1,46 @@
+2011-04-06  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Support Windows 7 Gestures
+        https://bugs.webkit.org/show_bug.cgi?id=49824
+        <rdar://problem/8689728>
+        
+        Port code from WebKit1 -> WebKit2 to handle Windows 7 gestures.
+        
+        The UIProcess gets a WM_GESTURENOTIFY message, it sends a sync message to the WebProcess to ask
+        if we should allow panning. The WebProcess checks if we're in a scrollable area, and the mouse
+        isn't over a scrollbar.
+
+        The UIProcess then gets a WM_GESTURE message, and if it is a pan gesture, it sends a message to
+        the WebProcess to scroll by the amount fingers have moved since the last WM_GESTURE messeage. The
+        X and Y are reversed because panning up -> moving the page down, and vice versa.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::gestureWillBegin): Send a sync message to the WebProcess
+            to initialize the gesture. The WebProcess returns whether or not we can start a pan
+            gesture from where we are.
+        (WebKit::WebPageProxy::gestureDidScroll): Send a message to the WebProcess to scroll by
+            pan gesture.
+        (WebKit::WebPageProxy::gestureDidEnd): Send a message to the WebProcess that the gesture has ended.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::wndProc): Add WM_GESTURE and WM_GESTURENOTIFY handlers.
+        (WebKit::WebView::WebView): Initialize two new variables.
+        (WebKit::WebView::onGestureNotify): Figure out which gestures we should support based on where
+            the gesture is beginning.
+        (WebKit::WebView::onGesture): Support starting a gesture, ending a gesture, and panning.
+        * UIProcess/win/WebView.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: Add messages needed for gestures.
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::gestureWillBegin): Set the node that the gesture started on (so we 
+            know which layer to scroll if the user pans), and determine whether or not we should allow
+            panning. If the page can't scroll, or the user is on a scrollbar, disallow panning.
+        (WebKit::WebPage::gestureDidScroll): Scroll the enclosing layer of the element the gesture
+            started on.
+        (WebKit::WebPage::gestureDidEnd): Clear the node the gesture started on.
+
 2011-04-06  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adam Roben.

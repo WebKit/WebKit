@@ -667,6 +667,23 @@ String WebPageProxy::getSelectedText()
     process()->sendSync(Messages::WebPage::GetSelectedText(), Messages::WebPage::GetSelectedText::Reply(text), m_pageID);
     return text;
 }
+
+bool WebPageProxy::gestureWillBegin(const IntPoint& point)
+{
+    bool canBeginPanning;
+    process()->sendSync(Messages::WebPage::GestureWillBegin(point), Messages::WebPage::GestureWillBegin::Reply(canBeginPanning), m_pageID);
+    return canBeginPanning;
+}
+
+void WebPageProxy::gestureDidScroll(const IntSize& size)
+{
+    process()->send(Messages::WebPage::GestureDidScroll(size), m_pageID);
+}
+
+void WebPageProxy::gestureDidEnd()
+{
+    process()->send(Messages::WebPage::GestureDidEnd(), m_pageID);
+}
 #endif
 
 #if ENABLE(TILED_BACKING_STORE)

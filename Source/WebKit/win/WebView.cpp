@@ -58,7 +58,6 @@
 #include "WebPluginHalterClient.h"
 #include "WebPreferences.h"
 #include "WebScriptWorld.h"
-#include "WindowsTouch.h"
 #include "resource.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/InitializeThreading.h>
@@ -131,6 +130,7 @@
 #include <WebCore/SystemInfo.h>
 #include <WebCore/TypingCommand.h>
 #include <WebCore/WindowMessageBroadcaster.h>
+#include <WebCore/WindowsTouch.h>
 #include <wtf/Threading.h>
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)

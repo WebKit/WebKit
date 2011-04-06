@@ -699,10 +699,6 @@
 				RelativePath="..\WebWorkersPrivate.h"
 				>
 			</File>
-			<File
-				RelativePath="..\WindowsTouch.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Classes"

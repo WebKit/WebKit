@@ -26568,6 +26568,10 @@
 					RelativePath="..\platform\win\WindowMessageListener.h"
 					>
 				</File>
+				<File
+					RelativePath="..\platform\win\WindowsTouch.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="cf"
