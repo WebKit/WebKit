@@ -27,6 +27,7 @@
 #include "TextChecker.h"
 
 #include "TextCheckerState.h"
+#include "WebTextChecker.h"
 #include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
@@ -37,26 +38,48 @@ static TextCheckerState textCheckerState;
 
 const TextCheckerState& TextChecker::state()
 {
-    notImplemented();
+    static bool didInitializeState;
+    if (didInitializeState)
+        return textCheckerState;
+
+    WebTextCheckerClient& client = WebTextChecker::shared()->client();
+    textCheckerState.isContinuousSpellCheckingEnabled = client.continuousSpellCheckingEnabled();
+    textCheckerState.isGrammarCheckingEnabled =  client.grammarCheckingEnabled();
+
+    didInitializeState = true;
 
     return textCheckerState;
 }
   
 bool TextChecker::isContinuousSpellCheckingAllowed()
 {
-    notImplemented();
-
-    return false;
+    return WebTextChecker::shared()->client().continuousSpellCheckingAllowed();
 }
 
 void TextChecker::setContinuousSpellCheckingEnabled(bool isContinuousSpellCheckingEnabled)
 {
-    notImplemented();
+    if (state().isContinuousSpellCheckingEnabled == isContinuousSpellCheckingEnabled)
+        return;
+    textCheckerState.isContinuousSpellCheckingEnabled = isContinuousSpellCheckingEnabled;
+    WebTextChecker::shared()->client().setContinuousSpellCheckingEnabled(isContinuousSpellCheckingEnabled);
 }
 
 void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
 {
-    notImplemented();
+    if (state().isGrammarCheckingEnabled == isGrammarCheckingEnabled)
+        return;
+    textCheckerState.isGrammarCheckingEnabled = isGrammarCheckingEnabled;
+    WebTextChecker::shared()->client().setGrammarCheckingEnabled(isGrammarCheckingEnabled);
+}
+
+void TextChecker::continuousSpellCheckingEnabledStateChanged(bool enabled)
+{
+    textCheckerState.isContinuousSpellCheckingEnabled = enabled;
+}
+
+void TextChecker::grammarCheckingEnabledStateChanged(bool enabled)
+{
+    textCheckerState.isGrammarCheckingEnabled = enabled;
 }
 
 int64_t TextChecker::uniqueSpellDocumentTag()

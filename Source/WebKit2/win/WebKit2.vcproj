@@ -3252,6 +3252,14 @@
 							>
 						</File>
 						<File
+							RelativePath="..\UIProcess\API\C\win\WKTextChecker.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\UIProcess\API\C\win\WKTextChecker.h"
+							>
+						</File>
+						<File
 							RelativePath="..\UIProcess\API\C\win\WKView.cpp"
 							>
 						</File>
@@ -3419,6 +3427,22 @@
 				</File>
 				<File
 					RelativePath="..\UIProcess\win\WebPopupMenuProxyWin.h"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\win\WebTextChecker.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\win\WebTextChecker.h"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\win\WebTextCheckerClient.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\win\WebTextCheckerClient.h"
 					>
 				</File>
 				<File

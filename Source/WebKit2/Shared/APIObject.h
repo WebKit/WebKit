@@ -105,7 +105,8 @@ public:
 
         // Platform specific
         TypeView,
-        TypeEditCommandProxy
+        TypeEditCommandProxy,
+        TypeTextChecker
     };
 
     virtual ~APIObject()

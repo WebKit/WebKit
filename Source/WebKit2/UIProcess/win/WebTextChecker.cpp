@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKAPICastWin_h
-#define WKAPICastWin_h
+#include "config.h"
+#include "WebTextChecker.h"
 
-#ifndef WKAPICast_h
-#error "Please #include \"WKAPICast.h\" instead of this file directly."
-#endif
+#include "TextChecker.h"
+#include "WebContext.h"
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
-class WebView;
-class WebEditCommandProxy;
-class WebTextChecker;
-
-WK_ADD_API_MAPPING(WKViewRef, WebView)
-WK_ADD_API_MAPPING(WKEditCommandRef, WebEditCommandProxy)
-WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
-
+WebTextChecker* WebTextChecker::shared()
+{
+    static WebTextChecker* textChecker = adoptRef(new WebTextChecker).leakRef();
+    return textChecker;
 }
 
-#endif // WKAPICastWin_h
+WebTextChecker::WebTextChecker()
+{
+}
+
+void WebTextChecker::setClient(const WKTextCheckerClient* client)
+{
+    m_client.initialize(client);
+}
+
+static void updateStateForAllWebProcesses()
+{
+    const Vector<WebContext*>& contexts = WebContext::allContexts();
+    for (size_t i = 0; i < contexts.size(); ++i) {
+        WebProcessProxy* webProcess = contexts[i]->process();
+        if (!webProcess)
+            continue;
+        webProcess->updateTextCheckerState();
+    }
+}
+
+void WebTextChecker::continuousSpellCheckingEnabledStateChanged(bool enabled)
+{
+    TextChecker::continuousSpellCheckingEnabledStateChanged(enabled);
+    updateStateForAllWebProcesses();
+}
+
+void WebTextChecker::grammarCheckingEnabledStateChanged(bool enabled)
+{
+    TextChecker::grammarCheckingEnabledStateChanged(enabled);
+    updateStateForAllWebProcesses();
+}
+
+} // namespace WebKit

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKAPICastWin_h
-#define WKAPICastWin_h
+#include "config.h"
+#include "WKTextChecker.h"
 
-#ifndef WKAPICast_h
-#error "Please #include \"WKAPICast.h\" instead of this file directly."
-#endif
+#include "WKAPICast.h"
+#include "WebTextChecker.h"
 
-namespace WebKit {
+using namespace WebKit;
 
-class WebView;
-class WebEditCommandProxy;
-class WebTextChecker;
-
-WK_ADD_API_MAPPING(WKViewRef, WebView)
-WK_ADD_API_MAPPING(WKEditCommandRef, WebEditCommandProxy)
-WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
-
+void WKTextCheckerSetClient(const WKTextCheckerClient* wkClient)
+{
+    if (wkClient && wkClient->version)
+        return;
+    WebTextChecker::shared()->setClient(wkClient);
 }
 
-#endif // WKAPICastWin_h
+void WKTextCheckerContinuousSpellCheckingEnabledStateChanged(bool enabled)
+{
+    WebTextChecker::shared()->continuousSpellCheckingEnabledStateChanged(enabled);
+}
+
+void WKTextCheckerGrammarCheckingEnabledStateChanged(bool enabled)
+{
+    WebTextChecker::shared()->grammarCheckingEnabledStateChanged(enabled);
+}

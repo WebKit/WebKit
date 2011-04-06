@@ -32,5 +32,6 @@
 
 typedef const struct OpaqueWKView* WKViewRef;
 typedef const struct OpaqueWKEditCommand* WKEditCommandRef;
+typedef const struct OpaqueWKTextChecker* WKTextCheckerRef;
 
 #endif /* WKBaseWin_h */

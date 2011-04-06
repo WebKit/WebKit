@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKAPICastWin_h
-#define WKAPICastWin_h
-
-#ifndef WKAPICast_h
-#error "Please #include \"WKAPICast.h\" instead of this file directly."
-#endif
+#include "config.h"
+#include "WebTextCheckerClient.h"
 
 namespace WebKit {
 
-class WebView;
-class WebEditCommandProxy;
-class WebTextChecker;
+bool WebTextCheckerClient::continuousSpellCheckingAllowed()
+{
+    if (!m_client.continuousSpellCheckingAllowed)
+        return false;
 
-WK_ADD_API_MAPPING(WKViewRef, WebView)
-WK_ADD_API_MAPPING(WKEditCommandRef, WebEditCommandProxy)
-WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
-
+    return m_client.continuousSpellCheckingAllowed(m_client.clientInfo);
 }
 
-#endif // WKAPICastWin_h
+bool WebTextCheckerClient::continuousSpellCheckingEnabled()
+{
+    if (!m_client.continuousSpellCheckingEnabled)
+        return false;
+
+    return m_client.continuousSpellCheckingEnabled(m_client.clientInfo);
+}
+
+void WebTextCheckerClient::setContinuousSpellCheckingEnabled(bool enabled)
+{
+    if (!m_client.setContinuousSpellCheckingEnabled)
+        return;
+
+    m_client.setContinuousSpellCheckingEnabled(enabled, m_client.clientInfo);
+}
+
+bool WebTextCheckerClient::grammarCheckingEnabled()
+{
+    if (!m_client.grammarCheckingEnabled)
+        return false;
+
+    return m_client.grammarCheckingEnabled(m_client.clientInfo);
+}
+
+void WebTextCheckerClient::setGrammarCheckingEnabled(bool enabled)
+{
+    if (!m_client.setGrammarCheckingEnabled)
+        return;
+
+    m_client.setGrammarCheckingEnabled(enabled, m_client.clientInfo);
+}
+
+} // namespace WebKit
