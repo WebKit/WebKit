@@ -24,6 +24,7 @@
 #if ENABLE(DATABASE)
 
 #include "ScriptExecutionContext.h"
+#include "V8Binding.h"
 #include "V8Class1.h"
 #include "V8Class2.h"
 #include "V8CustomVoidCallback.h"
