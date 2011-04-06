@@ -1671,6 +1671,8 @@
             'bindings/gobject/WebKitHTMLElementWrapperFactory.cpp',
             'bindings/gobject/WebKitHTMLElementWrapperFactory.h',
             'bindings/js/CachedScriptSourceProvider.h',
+            'bindings/js/CallbackFunction.cpp',
+            'bindings/js/CallbackFunction.h',
             'bindings/js/DOMObjectHashTableMap.cpp',
             'bindings/js/DOMWrapperWorld.cpp',
             'bindings/js/GCController.cpp',

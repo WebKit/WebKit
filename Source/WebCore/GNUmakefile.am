@@ -717,6 +717,8 @@ webcore_sources += \
 	Source/WebCore/bindings/generic/RuntimeEnabledFeatures.cpp \
 	Source/WebCore/bindings/generic/RuntimeEnabledFeatures.h \
 	Source/WebCore/bindings/js/CachedScriptSourceProvider.h \
+	Source/WebCore/bindings/js/CallbackFunction.cpp \
+	Source/WebCore/bindings/js/CallbackFunction.h \
 	Source/WebCore/bindings/js/DOMObjectHashTableMap.cpp \
 	Source/WebCore/bindings/js/DOMObjectHashTableMap.h \
 	Source/WebCore/bindings/js/DOMWrapperWorld.cpp \

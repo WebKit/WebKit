@@ -56,6 +56,7 @@ BINDING_C_INCLUDES := \
 	$(base_intermediates)/Source/WebCore/xml
 
 LOCAL_SRC_FILES += \
+	bindings/js/CallbackFunction.cpp \
 	bindings/js/GCController.cpp \
 	bindings/js/IDBBindingUtilities.cpp \
 	bindings/js/JSAttrCustom.cpp \

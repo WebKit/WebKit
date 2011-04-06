@@ -4096,6 +4096,8 @@
 		B0149E7E11A4B21500196A7B /* AsyncImageResizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */; };
 		B0149E7F11A4B21500196A7B /* ImageResizerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0149E7B11A4B21500196A7B /* ImageResizerThread.cpp */; };
 		B0149E8011A4B21500196A7B /* ImageResizerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = B0149E7C11A4B21500196A7B /* ImageResizerThread.h */; };
+		B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1827492134CA4C100B98C2D /* CallbackFunction.cpp */; };
+		B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */; };
 		B20111070AB7740500DB0E68 /* JSSVGAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */; };
 		B20111080AB7740500DB0E68 /* JSSVGAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B20111060AB7740500DB0E68 /* JSSVGAElement.h */; };
 		B22279620D00BF220071B782 /* ColorDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277CB0D00BF1F0071B782 /* ColorDistance.cpp */; };
@@ -10373,6 +10375,8 @@
 		B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncImageResizer.h; sourceTree = "<group>"; };
 		B0149E7B11A4B21500196A7B /* ImageResizerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageResizerThread.cpp; sourceTree = "<group>"; };
 		B0149E7C11A4B21500196A7B /* ImageResizerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageResizerThread.h; sourceTree = "<group>"; };
+		B1827492134CA4C100B98C2D /* CallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackFunction.cpp; sourceTree = "<group>"; };
+		B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackFunction.h; sourceTree = "<group>"; };
 		B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAElement.cpp; sourceTree = "<group>"; };
 		B20111060AB7740500DB0E68 /* JSSVGAElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAElement.h; sourceTree = "<group>"; };
 		B22277CB0D00BF1F0071B782 /* ColorDistance.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ColorDistance.cpp; sourceTree = "<group>"; };
@@ -17992,6 +17996,8 @@
 				BC4EDEF70C08F414007EDD49 /* Custom */,
 				14DFB33F0A7DF7630018F769 /* Derived Sources */,
 				BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */,
+				B1827492134CA4C100B98C2D /* CallbackFunction.cpp */,
+				B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */,
 				93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */,
 				BC53DA61114314BD000D817E /* DOMObjectHashTableMap.cpp */,
 				BC53DA5F1143141A000D817E /* DOMObjectHashTableMap.h */,
@@ -22830,6 +22836,7 @@
 				FD06DFA6134A4DEF006F5D7D /* DefaultAudioDestinationNode.h in Headers */,
 				E1A3162D134BC32D007C9A4F /* WebNSAttributedStringExtras.h in Headers */,
 				E1A31663134BCAE8007C9A4F /* HTMLConverter.h in Headers */,
+				B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25518,6 +25525,7 @@
 				FDF6BAF8134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp in Sources */,
 				FD06DFA5134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp in Sources */,
 				E1A3162E134BC32D007C9A4F /* WebNSAttributedStringExtras.mm in Sources */,
+				B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

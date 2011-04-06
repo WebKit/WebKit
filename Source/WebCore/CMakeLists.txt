@@ -451,6 +451,8 @@ SET(WebCore_SOURCES
     bindings/generic/ActiveDOMCallback.cpp
     bindings/generic/RuntimeEnabledFeatures.cpp
 
+    bindings/js/CallbackFunction.cpp
+
     css/CSSBorderImageValue.cpp
     css/CSSCanvasValue.cpp
     css/CSSCharsetRule.cpp

@@ -1269,6 +1269,8 @@ v8 {
 } else {
     HEADERS += \
         bindings/js/CachedScriptSourceProvider.h \
+        bindings/js/CallbackFunction.cpp \
+        bindings/js/CallbackFunction.h \
         bindings/js/GCController.h \
         bindings/js/DOMObjectHashTableMap.h \
         bindings/js/DOMWrapperWorld.h \

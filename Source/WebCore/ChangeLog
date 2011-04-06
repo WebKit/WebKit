@@ -1,3 +1,32 @@
+2011-04-06  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Factoring the creation of 'FunctionOnly' callbacks in JavaScriptCore.
+        https://bugs.webkit.org/show_bug.cgi?id=57770
+
+        Create a template from an existing functionality in JSGeolocationCustom.cpp
+        to be used by the custom bindings of both Geolocation and the Media Stream API.
+        V8 version of this bug: https://bugs.webkit.org/show_bug.cgi?id=57760
+
+        No new tests. LayoutTests/fast/dom/Geolocation/argument-types.html
+
+        * Android.jscbindings.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/CallbackFunction.cpp: Added.
+        (WebCore::checkFunctionOnlyCallback):
+        * bindings/js/CallbackFunction.h: Added.
+        (WebCore::createFunctionOnlyCallback):
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSGeolocationCustom.cpp:
+        (WebCore::JSGeolocation::getCurrentPosition):
+        (WebCore::JSGeolocation::watchPosition):
+
 2011-04-06  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.
