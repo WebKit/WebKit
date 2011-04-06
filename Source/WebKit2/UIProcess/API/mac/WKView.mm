@@ -1473,6 +1473,16 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return YES;
 }
 
+// This code is needed to support drag and drop when the drag types cannot be matched.
+// This is the case for elements that do not place content
+// in the drag pasteboard automatically when the drag start (i.e. dragging a DIV element).
+- (NSView *)_hitTest:(NSPoint *)point dragTypes:(NSSet *)types
+{
+    if ([[self superview] mouse:*point inRect:[self frame]])
+        return self;
+    return nil;
+}
+
 - (void)_updateWindowVisibility
 {
     _data->_page->updateWindowIsVisible(![[self window] isMiniaturized]);

@@ -1,3 +1,18 @@
+2011-04-05  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: Drag & Drop Gmail Attachments doesn't work.
+        https://bugs.webkit.org/show_bug.cgi?id=57909
+        <rdar://problem/9103220>
+
+        Added _hitTest method to support drag and drop when the drag types cannot be matched.
+        This is the case for elements that do not place content
+        in the drag pasteboard automatically when the drag start (i.e. dragging a DIV element).
+               
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _hitTest:dragTypes:]): Added.
+
 2011-04-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Darin Adler.

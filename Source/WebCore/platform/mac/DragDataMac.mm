@@ -104,7 +104,7 @@ String DragData::asPlainText(Frame *frame) const
 
 Color DragData::asColor() const
 {
-    NSColor *color = [NSColor colorFromPasteboard:[m_platformDragData draggingPasteboard]];
+    NSColor *color = [NSColor colorFromPasteboard:m_pasteboard.get()];
     return makeRGBA((int)([color redComponent] * 255.0 + 0.5), (int)([color greenComponent] * 255.0 + 0.5), 
                     (int)([color blueComponent] * 255.0 + 0.5), (int)([color alphaComponent] * 255.0 + 0.5));
 }
@@ -141,7 +141,7 @@ String DragData::asURL(Frame* frame, FilenameConversionPolicy filenamePolicy, St
     (void)filenamePolicy;
 
     if (title) {
-        if (NSString *URLTitleString = [[m_platformDragData draggingPasteboard] stringForType:WebURLNamePboardType])
+        if (NSString *URLTitleString = [m_pasteboard.get() stringForType:WebURLNamePboardType])
             *title = URLTitleString;
     }
     Pasteboard pasteboard(m_pasteboard.get());

@@ -1,3 +1,25 @@
+2011-04-05  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: Drag & Drop Gmail Attachments doesn't work.
+        https://bugs.webkit.org/show_bug.cgi?id=57909
+        <rdar://problem/9103220>
+
+        In WebKit2 we cannot rely on the value returned by platformData() that
+        on Mac returns an NSDraggingInfo object. This is available only in the UI
+        process. Therefore we should use m_pasteboard instead.
+        We cannot change what platformData() returns on Mac, since there are
+        delegate methods that receive a NSDraggingInfo object (only in WebKit).
+        
+        * platform/DragData.h:
+        (WebCore::DragData::pasteboard): Added.
+        * platform/mac/ClipboardMac.mm:
+        (WebCore::Clipboard::create): Changed to use pasteboard() instead of platformData().
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::asColor): Replaced references to m_platformData with m_pasteboard.
+        (WebCore::DragData::asURL): Same as above.
+
 2011-04-06  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Darin Adler.
