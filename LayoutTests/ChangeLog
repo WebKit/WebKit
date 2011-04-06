@@ -1,3 +1,157 @@
+2011-04-05  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update expectation images for a Skia rounded rectangle change (r83002).
+        https://bugs.webkit.org/show_bug.cgi?id=57907
+
+        * platform/chromium-linux/fast/blockflow/border-radius-clipping-vertical-lr-expected.checksum: Removed.
+        * platform/chromium-linux/fast/blockflow/border-radius-clipping-vertical-lr-expected.png:
+        * platform/chromium-linux/fast/blockflow/box-shadow-horizontal-bt-expected.checksum: Removed.
+        * platform/chromium-linux/fast/blockflow/box-shadow-horizontal-bt-expected.png:
+        * platform/chromium-linux/fast/blockflow/box-shadow-vertical-lr-expected.checksum: Removed.
+        * platform/chromium-linux/fast/blockflow/box-shadow-vertical-lr-expected.png:
+        * platform/chromium-linux/fast/blockflow/box-shadow-vertical-rl-expected.checksum: Removed.
+        * platform/chromium-linux/fast/blockflow/box-shadow-vertical-rl-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-huge-assert-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusAllStylesAllCorners-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusArcs01-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDashed01-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusDashed01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDashed02-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusDashed02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDashed03-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusDashed03-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDotted01-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusDotted01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDotted02-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusDotted02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDotted03-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusDotted03-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDouble01-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusDouble01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDouble02-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusDouble02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDouble03-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusDouble03-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusGroove01-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusGroove01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusGroove02-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusInset01-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusInset01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusInvalidColor-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusInvalidColor-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusOutset01-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusOutset01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusRidge01-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusRidge01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusSolid01-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusSolid01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusSolid02-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusSolid02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusSolid03-expected.checksum: Removed.
+        * platform/chromium-linux/fast/borders/borderRadiusSolid03-expected.png:
+        * platform/chromium-linux/fast/box-shadow/border-radius-big-expected.checksum: Removed.
+        * platform/chromium-linux/fast/box-shadow/border-radius-big-expected.png:
+        * platform/chromium-linux/fast/box-shadow/inset-expected.checksum: Removed.
+        * platform/chromium-linux/fast/box-shadow/inset-expected.png:
+        * platform/chromium-linux/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.checksum: Removed.
+        * platform/chromium-linux/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png:
+        * platform/chromium-linux/fast/box-shadow/spread-expected.checksum: Removed.
+        * platform/chromium-linux/fast/box-shadow/spread-expected.png:
+        * platform/chromium-linux/fast/box-shadow/spread-multiple-inset-expected.checksum: Removed.
+        * platform/chromium-linux/fast/box-shadow/spread-multiple-inset-expected.png:
+        * platform/chromium-linux/fast/box-shadow/spread-multiple-normal-expected.checksum: Removed.
+        * platform/chromium-linux/fast/box-shadow/spread-multiple-normal-expected.png:
+        * platform/chromium-linux/fast/forms/basic-selects-expected.checksum: Removed.
+        * platform/chromium-linux/fast/forms/basic-selects-expected.png:
+        * platform/chromium-linux/fast/overflow/border-radius-clipping-expected.checksum: Removed.
+        * platform/chromium-linux/fast/overflow/border-radius-clipping-expected.png:
+        * platform/chromium-linux/fast/repaint/border-radius-repaint-expected.checksum: Removed.
+        * platform/chromium-linux/fast/repaint/border-radius-repaint-expected.png:
+        * platform/chromium-linux/fast/replaced/border-radius-clip-expected.checksum: Removed.
+        * platform/chromium-linux/fast/replaced/border-radius-clip-expected.png:
+        * platform/chromium-linux/fast/transforms/shadows-expected.checksum: Removed.
+        * platform/chromium-linux/fast/transforms/shadows-expected.png:
+        * platform/chromium-linux/svg/custom/svg-fonts-in-html-expected.checksum: Removed.
+        * platform/chromium-linux/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-win/fast/blockflow/border-radius-clipping-vertical-lr-expected.checksum: Removed.
+        * platform/chromium-win/fast/blockflow/border-radius-clipping-vertical-lr-expected.png:
+        * platform/chromium-win/fast/blockflow/box-shadow-horizontal-bt-expected.checksum: Removed.
+        * platform/chromium-win/fast/blockflow/box-shadow-horizontal-bt-expected.png:
+        * platform/chromium-win/fast/blockflow/box-shadow-vertical-lr-expected.checksum: Removed.
+        * platform/chromium-win/fast/blockflow/box-shadow-vertical-lr-expected.png:
+        * platform/chromium-win/fast/blockflow/box-shadow-vertical-rl-expected.checksum: Removed.
+        * platform/chromium-win/fast/blockflow/box-shadow-vertical-rl-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-huge-assert-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusAllStylesAllCorners-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusArcs01-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDashed01-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusDashed01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDashed02-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusDashed02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDashed03-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusDashed03-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDotted01-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusDotted01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDotted02-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusDotted02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDotted03-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusDotted03-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDouble01-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusDouble01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDouble02-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusDouble02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDouble03-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusDouble03-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusGroove01-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusGroove01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusGroove02-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusInset01-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusInset01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusInvalidColor-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusInvalidColor-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusOutset01-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusOutset01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusRidge01-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusRidge01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusSolid01-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusSolid01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusSolid02-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusSolid02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusSolid03-expected.checksum: Removed.
+        * platform/chromium-win/fast/borders/borderRadiusSolid03-expected.png:
+        * platform/chromium-win/fast/box-shadow/border-radius-big-expected.checksum: Removed.
+        * platform/chromium-win/fast/box-shadow/border-radius-big-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-expected.checksum: Removed.
+        * platform/chromium-win/fast/box-shadow/inset-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.checksum: Removed.
+        * platform/chromium-win/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png:
+        * platform/chromium-win/fast/box-shadow/spread-expected.checksum: Removed.
+        * platform/chromium-win/fast/box-shadow/spread-expected.png:
+        * platform/chromium-win/fast/box-shadow/spread-multiple-inset-expected.checksum: Removed.
+        * platform/chromium-win/fast/box-shadow/spread-multiple-inset-expected.png:
+        * platform/chromium-win/fast/box-shadow/spread-multiple-normal-expected.checksum: Removed.
+        * platform/chromium-win/fast/box-shadow/spread-multiple-normal-expected.png:
+        * platform/chromium-win/fast/forms/basic-selects-expected.checksum: Removed.
+        * platform/chromium-win/fast/forms/basic-selects-expected.png:
+        * platform/chromium-win/fast/overflow/border-radius-clipping-expected.checksum: Removed.
+        * platform/chromium-win/fast/overflow/border-radius-clipping-expected.png:
+        * platform/chromium-win/fast/repaint/border-radius-repaint-expected.checksum: Removed.
+        * platform/chromium-win/fast/repaint/border-radius-repaint-expected.png:
+        * platform/chromium-win/fast/replaced/border-radius-clip-expected.checksum: Removed.
+        * platform/chromium-win/fast/replaced/border-radius-clip-expected.png:
+        * platform/chromium-win/fast/transforms/shadows-expected.checksum: Removed.
+        * platform/chromium-win/fast/transforms/shadows-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.checksum: Removed.
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.png:
+
 2011-04-05  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Darin Adler.
