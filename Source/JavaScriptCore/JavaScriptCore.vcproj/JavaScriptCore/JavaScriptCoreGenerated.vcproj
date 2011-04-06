@@ -87,6 +87,10 @@
 			>
 		</File>
 		<File
+			RelativePath=".\copy-files.cmd"
+			>
+		</File>
+		<File
 			RelativePath="..\..\DerivedSources.make"
 			>
 		</File>

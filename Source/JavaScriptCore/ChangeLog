@@ -1,3 +1,25 @@
+2011-04-06  Adam Roben  <aroben@apple.com>
+
+        Move JavaScriptCoreGenerated's file-copying logic out to a new script
+
+        Hopefully this will make it easier to modify this logic in the future. I also made the
+        script much quieter than the old logic, since it didn't seem helpful to see long lists of
+        filenames during the copying phase.
+
+        If we like this new style, we could copy it for our other projects.
+
+        Fixes <http://webkit.org/b/57950> JavaScriptCoreGenerated's file-copying logic is hard to
+        modify and noisy
+
+        Reviewed by Steve Falkenburg.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make: Moved logic to copy
+        files from here...
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd: ...to here. (Added.)
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.vcproj: Added copy-files.cmd
+        for convenience.
+
 2011-04-05  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the Windows build.
