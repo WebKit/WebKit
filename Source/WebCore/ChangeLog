@@ -1,3 +1,16 @@
+2011-04-06  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        ClipboardWin has unused variables "ExceptionCode ec"
+        https://bugs.webkit.org/show_bug.cgi?id=57952
+
+        Remove the unused variable.
+
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::declareAndWriteDragImage):
+        (WebCore::ClipboardWin::writePlainText):
+
 2011-04-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Dimitri Glazkov.

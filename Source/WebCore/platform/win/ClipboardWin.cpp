@@ -703,7 +703,6 @@ void ClipboardWin::declareAndWriteDragImage(Element* element, const KURL& url, c
         return;
     STGMEDIUM medium = {0};
     medium.tymed = TYMED_HGLOBAL;
-    ExceptionCode ec = 0;
 
     // Put img tag on the clipboard referencing the image
     Vector<char> data;
@@ -791,7 +790,6 @@ void ClipboardWin::writePlainText(const String& text)
     
     STGMEDIUM medium = {0};
     medium.tymed = TYMED_HGLOBAL;
-    ExceptionCode ec = 0;
     
     String str = text;
     replaceNewlinesWithWindowsStyleNewlines(str);
