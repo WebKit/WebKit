@@ -30,7 +30,7 @@
 #define PageAllocatorSymbian_h
 
 #include <e32std.h>
-#include <wtf/BitMap.h>
+#include <wtf/Bitmap.h>
 
 namespace WTF { 
 

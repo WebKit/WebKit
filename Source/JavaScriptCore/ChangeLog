@@ -1,3 +1,13 @@
+2011-04-06  Liang Qi  <liang.qi@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        Correct a include file name.
+        https://bugs.webkit.org/show_bug.cgi?id=57839
+
+        * wtf/PageAllocatorSymbian.h: It should be case sensitive. This fix 
+        builds on Unix hosts.
+
 2011-04-06  Adam Roben  <aroben@apple.com>
 
         Build fix after r83056
