@@ -70,6 +70,74 @@ namespace WebCore {
 
 static const DOMTimeStamp typeAheadTimeout = 1000;
 
+enum SkipDirection {
+    SkipBackwards = -1,
+    SkipForwards = 1
+};
+
+// Returns the 1st valid item |skip| items from |listIndex| in direction |direction| if there is one.
+// Otherwise, it returns the valid item closest to that boundary which is past |listIndex| if there is one.
+// Otherwise, it returns |listIndex|.
+// Valid means that it is enabled and an option element.
+static int nextValidIndex(const Vector<Element*>& listItems, int listIndex, SkipDirection direction, int skip)
+{
+    ASSERT(direction == -1 || direction == 1);
+    int lastGoodIndex = listIndex;
+    int size = listItems.size();
+    for (listIndex += direction; listIndex >= 0 && listIndex < size; listIndex += direction) {
+        --skip;
+        if (!listItems[listIndex]->disabled() && isOptionElement(listItems[listIndex])) {
+            lastGoodIndex = listIndex;
+            if (skip <= 0)
+                break;
+        }
+    }
+    return lastGoodIndex;
+}
+
+static int nextSelectableListIndex(SelectElementData& data, Element* element, int startIndex)
+{
+    return nextValidIndex(data.listItems(element), startIndex, SkipForwards, 1);
+}
+
+static int previousSelectableListIndex(SelectElementData& data, Element* element, int startIndex)
+{
+    if (startIndex == -1)
+        startIndex = data.listItems(element).size();
+    return nextValidIndex(data.listItems(element), startIndex, SkipBackwards, 1);
+}
+
+static int firstSelectableListIndex(SelectElementData& data, Element* element)
+{
+    const Vector<Element*>& items = data.listItems(element);
+    int index = nextValidIndex(items, items.size(), SkipBackwards, INT_MAX);
+    if (static_cast<unsigned>(index) == items.size())
+        return -1;
+    return index;
+}
+
+static int lastSelectableListIndex(SelectElementData& data, Element* element)
+{
+    return nextValidIndex(data.listItems(element), -1, SkipForwards, INT_MAX);
+}
+
+// Returns the index of the next valid item one page away from |startIndex| in direction |direction|.
+static int nextSelectableListIndexPageAway(SelectElementData& data, Element* element, int startIndex, SkipDirection direction)
+{
+    const Vector<Element*>& items = data.listItems(element);
+    // Can't use data->size() because renderer forces a minimum size.
+    int pageSize = 0;
+    if (element->renderer()->isListBox())
+        pageSize = toRenderListBox(element->renderer())->size() - 1; // -1 so we still show context
+
+    // One page away, but not outside valid bounds.
+    // If there is a valid option item one page away, the index is chosen.
+    // If there is no exact one page away valid option, returns startIndex or the most far index.
+    int edgeIndex = (direction == SkipForwards) ? 0 : (items.size() - 1);
+    int skipAmount = pageSize + ((direction == SkipForwards) ? startIndex : (edgeIndex - startIndex));
+    return nextValidIndex(items, edgeIndex, direction, skipAmount);
+}
+
 void SelectElement::selectAll(SelectElementData& data, Element* element)
 {
     ASSERT(!data.usesMenuList());
@@ -102,30 +170,6 @@ void SelectElement::saveLastSelection(SelectElementData& data, Element* element)
         OptionElement* optionElement = toOptionElement(items[i]);
         lastOnChangeSelection.append(optionElement && optionElement->selected());
     }
-}
-
-int SelectElement::nextSelectableListIndex(SelectElementData& data, Element* element, int startIndex)
-{
-    const Vector<Element*>& items = data.listItems(element);
-    int index = startIndex + 1;
-    while (index >= 0 && (unsigned) index < items.size() && (!isOptionElement(items[index]) || items[index]->disabled()))
-        ++index;
-    if ((unsigned) index == items.size())
-        return startIndex;
-    return index;
-}
-
-int SelectElement::previousSelectableListIndex(SelectElementData& data, Element* element, int startIndex)
-{
-    const Vector<Element*>& items = data.listItems(element);
-    if (startIndex == -1)
-        startIndex = items.size();
-    int index = startIndex - 1;
-    while (index >= 0 && (unsigned) index < items.size() && (!isOptionElement(items[index]) || items[index]->disabled()))
-        --index;
-    if (index == -1)
-        return startIndex;
-    return index;
 }
 
 void SelectElement::setActiveSelectionAnchorIndex(SelectElementData& data, Element* element, int index)
@@ -515,27 +559,6 @@ void SelectElement::reset(SelectElementData& data, Element* element)
     setOptionsChangedOnRenderer(data, element);
     element->setNeedsStyleRecalc();
 }
-    
-enum SkipDirection {
-    SkipBackwards = -1,
-    SkipForwards = 1
-};
-
-// Returns the index of the next valid list item |skip| items past |listIndex| in direction |direction|.
-static int nextValidIndex(const Vector<Element*>& listItems, int listIndex, SkipDirection direction, int skip)
-{
-    int lastGoodIndex = listIndex;
-    int size = listItems.size();
-    for (listIndex += direction; listIndex >= 0 && listIndex < size; listIndex += direction) {
-        --skip;
-        if (!listItems[listIndex]->disabled() && isOptionElement(listItems[listIndex])) {
-            lastGoodIndex = listIndex;
-            if (skip <= 0)
-                break;
-        }
-    }
-    return lastGoodIndex;
-}
 
 void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element* element, Event* event, HTMLFormElement* htmlForm)
 {
@@ -594,8 +617,8 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
             listIndex = nextValidIndex(listItems, listItems.size(), SkipBackwards, 1);
             handled = true;
         }
-        
-        if (handled && listIndex >= 0 && (unsigned)listIndex < listItems.size())
+
+        if (handled && listIndex >= 0 && static_cast<unsigned>(listIndex) < listItems.size())
             setSelectedIndex(data, element, listToOptionIndex(data, element, listIndex));
 
         if (handled)
@@ -760,19 +783,47 @@ void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element*
             return;
         const String& keyIdentifier = static_cast<KeyboardEvent*>(event)->keyIdentifier();
 
-        int endIndex = 0;        
+        bool handled = false;
+        int endIndex = 0;
         if (data.activeSelectionEndIndex() < 0) {
             // Initialize the end index
-            if (keyIdentifier == "Down")
-                endIndex = nextSelectableListIndex(data, element, lastSelectedListIndex(data, element));
-            else if (keyIdentifier == "Up")
-                endIndex = previousSelectableListIndex(data, element, optionToListIndex(data, element, selectedIndex(data, element)));
+            if (keyIdentifier == "Down" || keyIdentifier == "PageDown") {
+                int startIndex = lastSelectedListIndex(data, element);
+                handled = true;
+                if (keyIdentifier == "Down")
+                    endIndex = nextSelectableListIndex(data, element, startIndex);
+                else
+                    endIndex = nextSelectableListIndexPageAway(data, element, startIndex, SkipForwards);
+            } else if (keyIdentifier == "Up" || keyIdentifier == "PageUp") {
+                int startIndex = optionToListIndex(data, element, selectedIndex(data, element));
+                handled = true;
+                if (keyIdentifier == "Up")
+                    endIndex = previousSelectableListIndex(data, element, startIndex);
+                else
+                    endIndex = nextSelectableListIndexPageAway(data, element, startIndex, SkipBackwards);
+            }
         } else {
             // Set the end index based on the current end index
-            if (keyIdentifier == "Down")
+            if (keyIdentifier == "Down") {
                 endIndex = nextSelectableListIndex(data, element, data.activeSelectionEndIndex());
-            else if (keyIdentifier == "Up")
-                endIndex = previousSelectableListIndex(data, element, data.activeSelectionEndIndex());    
+                handled = true;
+            } else if (keyIdentifier == "Up") {
+                endIndex = previousSelectableListIndex(data, element, data.activeSelectionEndIndex());
+                handled = true;
+            } else if (keyIdentifier == "PageDown") {
+                endIndex = nextSelectableListIndexPageAway(data, element, data.activeSelectionEndIndex(), SkipForwards);
+                handled = true;
+            } else if (keyIdentifier == "PageUp") {
+                endIndex = nextSelectableListIndexPageAway(data, element, data.activeSelectionEndIndex(), SkipBackwards);
+                handled = true;
+            }
+        }
+        if (keyIdentifier == "Home") {
+            endIndex = firstSelectableListIndex(data, element);
+            handled = true;
+        } else if (keyIdentifier == "End") {
+            endIndex = lastSelectableListIndex(data, element);
+            handled = true;
         }
 
         if (isSpatialNavigationEnabled(element->document()->frame()))
@@ -780,13 +831,13 @@ void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element*
             if (keyIdentifier == "Left" || keyIdentifier == "Right" || ((keyIdentifier == "Down" || keyIdentifier == "Up") && endIndex == data.activeSelectionEndIndex()))
                 return;
 
-        if (keyIdentifier == "Down" || keyIdentifier == "Up") {
+        if (endIndex >= 0 && handled) {
             // Save the selection so it can be compared to the new selection when dispatching change events immediately after making the new selection.
             saveLastSelection(data, element);
 
-            ASSERT_UNUSED(listItems, !listItems.size() || (endIndex >= 0 && (unsigned) endIndex < listItems.size()));
+            ASSERT_UNUSED(listItems, !listItems.size() || (endIndex >= 0 && static_cast<unsigned>(endIndex) < listItems.size()));
             setActiveSelectionEndIndex(data, endIndex);
-            
+
             bool selectNewItem = !data.multiple() || static_cast<KeyboardEvent*>(event)->shiftKey() || !isSpatialNavigationEnabled(element->document()->frame());
             if (selectNewItem)
                 data.setActiveSelectionState(true);

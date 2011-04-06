@@ -53,6 +53,8 @@ public:
 
     int scrollToward(const IntPoint&); // Returns the new index or -1 if no scroll occurred
 
+    int size() const;
+
 private:
     virtual const char* renderName() const { return "RenderListBox"; }
 
@@ -125,7 +127,6 @@ private:
     
     int itemHeight() const;
     void valueChanged(unsigned listIndex);
-    int size() const;
     int numVisibleItems() const;
     int numItems() const;
     int listHeight() const;

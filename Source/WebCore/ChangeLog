@@ -1,3 +1,30 @@
+2011-04-06  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by David Levin.
+
+        Webkit ignores PgUp/PgDown/Home/End in SELECT tag objects
+        https://bugs.webkit.org/show_bug.cgi?id=27658
+
+        Test: fast/events/select-element.html
+
+        * dom/SelectElement.cpp:
+        (WebCore::nextValidIndex): Moved from elsewhere in the file to be used by other routines.
+        (WebCore::nextSelectableListIndexPageAway): Returns a selectable index one page away from the given index.
+        (WebCore::nextSelectableListIndex): Implemented with nextValidIndex.
+        And converted to a normal static function from a private function of SelectElement.
+        (WebCore::previousSelectableListIndex): Implemented with nextValidIndex.
+        And converted to a normal static function from a private function of SelectElement.
+        (WebCore::firstSelectableListIndex): Returns the first selectable index.
+        (WebCore::lastSelectableListIndex): Returns the last selectable index.
+        (WebCore::SelectElement::menuListDefaultEventHandler): Converted from C cast to C++ cast.
+        (WebCore::SelectElement::listBoxDefaultEventHandler): Adds support for PageUp/PageDown/Home/End with both single and multiple selection.
+
+        * dom/SelectElement.h:
+        (WebCore::SelectElement::): Remove nextSelectableListIndex() and previousSelectableListIndex().
+
+        * rendering/RenderListBox.h: Makes RenderListBox::size public so that PageUp/PageDown behavior can use the actual list size rather than that specified in HTML.
+        They can differ due to the minimum size imposed by RenderListBox.
+
 2011-04-06  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

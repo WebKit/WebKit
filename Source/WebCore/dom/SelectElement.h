@@ -72,8 +72,6 @@ protected:
 
     static void selectAll(SelectElementData&, Element*);
     static void saveLastSelection(SelectElementData&, Element*);
-    static int nextSelectableListIndex(SelectElementData&, Element*, int startIndex);
-    static int previousSelectableListIndex(SelectElementData&, Element*, int startIndex);
     static void setActiveSelectionAnchorIndex(SelectElementData&, Element*, int index);
     static void setActiveSelectionEndIndex(SelectElementData&, int index);
     static void updateListBoxSelection(SelectElementData&, Element*, bool deselectOtherOptions);
