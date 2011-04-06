@@ -118,6 +118,7 @@ public:
 
     enum AXNotification {
         AXActiveDescendantChanged,
+        AXAutocorrectionOccured,
         AXCheckedStateChanged,
         AXChildrenChanged,
         AXFocusedUIElementChanged,

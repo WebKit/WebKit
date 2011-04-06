@@ -76,6 +76,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         // descendant and send the AXFocusedUIElementChanged notification.
         handleFocusedUIElementChanged(0, obj->document()->focusedNode()->renderer());
         break;
+    case AXAutocorrectionOccured:
     case AXCheckedStateChanged:
     case AXChildrenChanged:
     case AXFocusedUIElementChanged:

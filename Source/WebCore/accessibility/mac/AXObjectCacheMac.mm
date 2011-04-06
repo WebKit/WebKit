@@ -70,6 +70,13 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
             else
                 macNotification = NSAccessibilityFocusedUIElementChangedNotification;                
             break;
+        case AXAutocorrectionOccured:
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+            macNotification = @"AXAutocorrectionOccurred";
+            break;
+#else
+            return;
+#endif
         case AXFocusedUIElementChanged:
             macNotification = NSAccessibilityFocusedUIElementChangedNotification;
             break;

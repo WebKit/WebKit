@@ -2385,7 +2385,7 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
                     replacedString = plainText(rangeToReplace.get());
 
                 bool useSpellingCorrectionCommand = false;
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if SUPPORT_AUTOCORRECTION_PANEL
                 if (result->type == TextCheckingTypeCorrection)
                     useSpellingCorrectionCommand = true;
 #endif
@@ -2394,6 +2394,11 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingOptions textCh
                 else {
                     m_frame->selection()->setSelection(selectionToReplace);
                     replaceSelectionWithText(result->replacement, false, false);
+                }
+
+                if (AXObjectCache::accessibilityEnabled()) {
+                    if (Element* root = m_frame->selection()->selection().rootEditableElement())
+                        m_frame->document()->axObjectCache()->postNotification(root->renderer(), AXObjectCache::AXAutocorrectionOccured, true);
                 }
 
                 selectionChanged = true;
