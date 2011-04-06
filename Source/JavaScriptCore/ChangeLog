@@ -1,3 +1,52 @@
+2011-04-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Introduced the concept of opaque roots, in preparation for marking the DOM with them
+        https://bugs.webkit.org/show_bug.cgi?id=57903
+
+        * JavaScriptCore.exp: Who likes export files? I do!
+
+        * collector/handles/HandleHeap.cpp:
+        (JSC::isValidWeakHandle): Factored out a helper function for ASSERTs.
+
+        (JSC::WeakHandleOwner::~WeakHandleOwner): Moved from header to avoid
+        weak linkage problems.
+
+        (JSC::WeakHandleOwner::isReachableFromOpaqueRoots): New callback.
+        Currently unused.
+
+        (JSC::WeakHandleOwner::finalize): Switched from pure virtual to a
+        default empty implementation, since not all clients necessarily want
+        or need non-trivial finalizers.
+
+        (JSC::HandleHeap::markWeakHandles): Split updateWeakHandles into two
+        passes. The first pass marks all reachable weak handles. The second pass
+        finalizes all unreachable weak handles. This must be two passes because
+        we don't know the set of finalizable weak handles until we're done
+        marking all weak handles.
+
+        (JSC::HandleHeap::finalizeWeakHandles): Use new helper function.
+
+        * collector/handles/HandleHeap.h: Ditto.
+
+        * runtime/Heap.cpp: 
+        (JSC::Heap::destroy):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::reset): Split out handle marking from handle finalization.
+
+        * runtime/MarkStack.cpp:
+        (JSC::MarkStack::reset):
+        * runtime/MarkStack.h:
+        (JSC::MarkStack::addOpaqueRoot):
+        (JSC::MarkStack::containsOpaqueRoot):
+        (JSC::MarkStack::opaqueRootCount):
+        (JSC::HeapRootMarker::markStack): New helper functions for managing the
+        set of opaque roots.
+
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::finalize): Renamed to match parent class declaration.
+
 2011-04-05  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Darin Adler.

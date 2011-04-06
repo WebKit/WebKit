@@ -122,9 +122,9 @@ public:
     }
     
 private:
-    virtual void finalize(Handle<Unknown>, void* key)
+    virtual void finalize(Handle<Unknown>, void* context)
     {
-        HandleSlot slot = m_map.take(static_cast<KeyType>(key));
+        HandleSlot slot = m_map.take(static_cast<KeyType>(context));
         ASSERT(slot);
         HandleHeap::heapFor(slot)->deallocate(slot);
     }

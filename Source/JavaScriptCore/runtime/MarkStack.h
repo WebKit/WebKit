@@ -29,6 +29,7 @@
 #include "JSValue.h"
 #include "Register.h"
 #include "WriteBarrier.h"
+#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OSAllocator.h>
@@ -81,8 +82,12 @@ namespace JSC {
         
         void append(ConservativeRoots&);
 
+        bool addOpaqueRoot(void* root) { return m_opaqueRoots.add(root).second; }
+        bool containsOpaqueRoot(void* root) { return m_opaqueRoots.contains(root); }
+        int opaqueRootCount() { return m_opaqueRoots.size(); }
+
         void drain();
-        void compact();
+        void reset();
 
     private:
         friend class HeapRootMarker; // Allowed to mark a JSValue* or JSCell** directly.
@@ -198,6 +203,7 @@ namespace JSC {
         MarkStackArray<MarkSet> m_markSets;
         MarkStackArray<JSCell*> m_values;
         static size_t s_pageSize;
+        HashSet<void*> m_opaqueRoots; // Handle-owning data structures not visible to the garbage collector.
 
 #if !ASSERT_DISABLED
     public:
@@ -274,6 +280,8 @@ namespace JSC {
         void mark(JSValue*, size_t);
         void mark(JSString**);
         void mark(JSCell**);
+        
+        MarkStack& markStack();
 
     private:
         MarkStack& m_markStack;
@@ -302,6 +310,11 @@ namespace JSC {
     inline void HeapRootMarker::mark(JSCell** slot)
     {
         m_markStack.append(slot);
+    }
+
+    inline MarkStack& HeapRootMarker::markStack()
+    {
+        return m_markStack;
     }
 
 } // namespace JSC

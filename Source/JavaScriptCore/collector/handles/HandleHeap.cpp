@@ -24,12 +24,44 @@
  */
 
 #include "config.h"
-
 #include "HandleHeap.h"
 
 #include "JSObject.h"
 
 namespace JSC {
+
+#if !ASSERT_DISABLED
+static inline bool isValidWeakHandle(HandleSlot handle)
+{
+    JSValue value = *handle;
+    if (!value || !value.isCell())
+        return false;
+
+    JSCell* cell = value.asCell();
+    if (!cell || !cell->structure())
+        return false;
+
+#if ENABLE(JSC_ZOMBIES)
+    if (cell->isZombie())
+        return false;
+#endif
+
+    return true;
+}
+#endif
+
+WeakHandleOwner::~WeakHandleOwner()
+{
+}
+
+bool WeakHandleOwner::isReachableFromOpaqueRoots(Handle<Unknown>, void*, MarkStack&)
+{
+    return false;
+}
+
+void WeakHandleOwner::finalize(Handle<Unknown>, void*)
+{
+}
 
 HandleHeap::HandleHeap(JSGlobalData* globalData)
     : m_globalData(globalData)
@@ -55,21 +87,41 @@ void HandleHeap::markStrongHandles(HeapRootMarker& heapRootMarker)
         heapRootMarker.mark(node->slot());
 }
 
-void HandleHeap::updateWeakHandles()
+void HandleHeap::markWeakHandles(HeapRootMarker& heapRootMarker)
+{
+    MarkStack& markStack = heapRootMarker.markStack();
+
+    int oldCount;
+    do {
+        oldCount = markStack.opaqueRootCount();
+
+        Node* end = m_weakList.end();
+        for (Node* node = m_weakList.begin(); node != end; node = node->next()) {
+            ASSERT(isValidWeakHandle(node->slot()));
+            JSCell* cell = node->slot()->asCell();
+            if (Heap::isMarked(cell))
+                continue;
+
+            WeakHandleOwner* weakOwner = node->weakOwner();
+            if (!weakOwner)
+                continue;
+
+            if (!weakOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(node->slot()), node->weakOwnerContext(), markStack))
+                continue;
+
+            heapRootMarker.mark(node->slot());
+        }
+    } while (oldCount != markStack.opaqueRootCount()); // If the set of opaque roots has grown, more handles may have become reachable.
+}
+
+void HandleHeap::finalizeWeakHandles()
 {
     Node* end = m_weakList.end();
     for (Node* node = m_weakList.begin(); node != end; node = m_nextToFinalize) {
         m_nextToFinalize = node->next();
 
-        JSValue value = *node->slot();
-        ASSERT(value);
-
-        JSCell* cell = value.asCell();
-        ASSERT(cell && cell->structure());
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!cell->isZombie());
-#endif
-
+        ASSERT(isValidWeakHandle(node->slot()));
+        JSCell* cell = node->slot()->asCell();
         if (Heap::isMarked(cell))
             continue;
 

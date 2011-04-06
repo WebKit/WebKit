@@ -82,7 +82,7 @@ void Heap::destroy()
     delete m_markListSet;
     m_markListSet = 0;
     m_markedSpace.clearMarks();
-    m_handleHeap.updateWeakHandles();
+    m_handleHeap.finalizeWeakHandles();
     m_markedSpace.destroy();
 
     m_globalData = 0;
@@ -242,14 +242,15 @@ void Heap::markRoots()
     m_handleHeap.markStrongHandles(heapRootMarker);
     m_handleStack.mark(heapRootMarker);
 
+    m_handleHeap.markWeakHandles(heapRootMarker);
+    markStack.drain();
+
     // Mark the small strings cache last, since it will clear itself if nothing
     // else has marked it.
     m_globalData->smallStrings.markChildren(heapRootMarker);
-
     markStack.drain();
-    markStack.compact();
     
-    m_handleHeap.updateWeakHandles();
+    markStack.reset();
 
     m_operationInProgress = NoOperation;
 }
@@ -369,6 +370,7 @@ void Heap::reset(SweepToggle sweepToggle)
     JAVASCRIPTCORE_GC_BEGIN();
 
     markRoots();
+    m_handleHeap.finalizeWeakHandles();
 
     JAVASCRIPTCORE_GC_MARKED();
 
