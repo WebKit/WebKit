@@ -1,3 +1,11 @@
+2011-04-06  Adrienne Walker  <enne@google.com>
+
+       Unreviewed, modify Chromium test expectations from r83065.  They need
+       rebaselines, but in the meantime they should fail more generally so as
+       not to trip the bots.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-06  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Benjamin Poulain.
