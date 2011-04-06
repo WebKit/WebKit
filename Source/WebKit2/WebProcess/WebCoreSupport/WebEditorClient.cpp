@@ -43,6 +43,7 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
+#include <WebCore/TextIterator.h>
 #include <WebCore/UserTypingGestureIndicator.h>
 
 using namespace WebCore;
@@ -196,7 +197,15 @@ void WebEditorClient::respondToChangedSelection()
     selectionState.isInPasswordField = frame->selection()->isInPasswordField();
     selectionState.hasComposition = frame->editor()->hasComposition();
 
-    WebPage::getLocationAndLengthFromRange(frame->selection()->toNormalizedRange().get(), selectionState.selectedRangeStart, selectionState.selectedRangeLength);
+    Range* range = frame->selection()->toNormalizedRange().get();
+    if (range) {
+        size_t location;
+        size_t length;
+        if (!TextIterator::locationAndLengthFromRange(range, location, length))
+            return;
+        selectionState.selectedRangeStart = static_cast<uint64_t>(location);
+        selectionState.selectedRangeLength = static_cast<uint64_t>(length);
+    }
 
     m_page->send(Messages::WebPageProxy::SelectionStateChanged(selectionState));
 

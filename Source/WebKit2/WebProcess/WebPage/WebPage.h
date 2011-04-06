@@ -300,8 +300,6 @@ public:
 
     SandboxExtensionTracker& sandboxExtensionTracker() { return m_sandboxExtensionTracker; }
 
-    static void getLocationAndLengthFromRange(WebCore::Range*, uint64_t& location, uint64_t& length);
-
 #if PLATFORM(MAC)
     void registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elemenToken, const CoreIPC::DataReference& windowToken);
     AccessibilityWebPageObject* accessibilityRemoteObject();

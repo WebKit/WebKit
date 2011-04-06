@@ -670,30 +670,15 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (NSRange)_convertToNSRange:(Range *)range
 {
-    if (!range || !range->startContainer())
+    if (!range)
         return NSMakeRange(NSNotFound, 0);
 
-    Element* selectionRoot = _private->coreFrame->selection()->rootEditableElement();
-    Element* scope = selectionRoot ? selectionRoot : _private->coreFrame->document()->documentElement();
-    
-    // Mouse events may cause TSM to attempt to create an NSRange for a portion of the view
-    // that is not inside the current editable region.  These checks ensure we don't produce
-    // potentially invalid data when responding to such requests.
-    if (range->startContainer() != scope && !range->startContainer()->isDescendantOf(scope))
+    size_t location;
+    size_t length;
+    if (!TextIterator::locationAndLengthFromRange(range, location, length))
         return NSMakeRange(NSNotFound, 0);
-    if (range->endContainer() != scope && !range->endContainer()->isDescendantOf(scope))
-        return NSMakeRange(NSNotFound, 0);
-    
-    RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
-    ASSERT(testRange->startContainer() == scope);
-    int startPosition = TextIterator::rangeLength(testRange.get());
 
-    ExceptionCode ec;
-    testRange->setEnd(range->endContainer(), range->endOffset(), ec);
-    ASSERT(testRange->startContainer() == scope);
-    int endPosition = TextIterator::rangeLength(testRange.get());
-
-    return NSMakeRange(startPosition, endPosition - startPosition);
+    return NSMakeRange(location, length);
 }
 
 - (PassRefPtr<Range>)_convertToDOMRange:(NSRange)nsrange
@@ -820,27 +805,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (DOMRange *)_characterRangeAtPoint:(NSPoint)point
 {
-    VisiblePosition position = [self _visiblePositionForPoint:point];
-    if (position.isNull())
-        return nil;
-    
-    VisiblePosition previous = position.previous();
-    if (previous.isNotNull()) {
-        DOMRange *previousCharacterRange = kit(makeRange(previous, position).get());
-        NSRect rect = [self _firstRectForDOMRange:previousCharacterRange];
-        if (NSPointInRect(point, rect))
-            return previousCharacterRange;
-    }
-
-    VisiblePosition next = position.next();
-    if (next.isNotNull()) {
-        DOMRange *nextCharacterRange = kit(makeRange(position, next).get());
-        NSRect rect = [self _firstRectForDOMRange:nextCharacterRange];
-        if (NSPointInRect(point, rect))
-            return nextCharacterRange;
-    }
-    
-    return nil;
+    return kit(_private->coreFrame->rangeForPoint(IntPoint(point)).get());
 }
 
 - (DOMCSSStyleDeclaration *)_typingStyle

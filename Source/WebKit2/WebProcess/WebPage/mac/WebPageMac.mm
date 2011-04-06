@@ -276,8 +276,14 @@ void WebPage::getMarkedRange(uint64_t& location, uint64_t& length)
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     if (!frame)
         return;
-    
-    getLocationAndLengthFromRange(frame->editor()->compositionRange().get(), location, length);
+
+    Range* range = frame->editor()->compositionRange().get();
+    size_t locationSize;
+    size_t lengthSize;
+    if (range && TextIterator::locationAndLengthFromRange(range, locationSize, lengthSize)) {
+        location = static_cast<uint64_t>(locationSize);
+        length = static_cast<uint64_t>(lengthSize);
+    }
 }
 
 void WebPage::getSelectedRange(uint64_t& location, uint64_t& length)
@@ -287,37 +293,13 @@ void WebPage::getSelectedRange(uint64_t& location, uint64_t& length)
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
     if (!frame)
         return;
-    
-    getLocationAndLengthFromRange(frame->selection()->toNormalizedRange().get(), location, length);
-}
 
-static PassRefPtr<Range> characterRangeAtPositionForPoint(Frame* frame, const VisiblePosition& position, const IntPoint& point)
-{
-    if (position.isNull())
-        return 0;
-
-    VisiblePosition previous = position.previous();
-    if (previous.isNotNull()) {
-        RefPtr<Range> previousCharacterRange = makeRange(previous, position);
-        IntRect rect = frame->editor()->firstRectForRange(previousCharacterRange.get());
-        if (rect.contains(point))
-            return previousCharacterRange.release();
+    size_t locationSize;
+    size_t lengthSize;
+    if (TextIterator::locationAndLengthFromRange(frame->selection()->toNormalizedRange().get(), locationSize, lengthSize)) {
+        location = static_cast<uint64_t>(locationSize);
+        length = static_cast<uint64_t>(lengthSize);
     }
-    
-    VisiblePosition next = position.next();
-    if (next.isNotNull()) {
-        RefPtr<Range> nextCharacterRange = makeRange(position, next);
-        IntRect rect = frame->editor()->firstRectForRange(nextCharacterRange.get());
-        if (rect.contains(point))
-            return nextCharacterRange.release();
-    }
-    
-    return 0;
-}
-
-static PassRefPtr<Range> characterRangeAtPoint(Frame* frame, const IntPoint& point)
-{
-    return characterRangeAtPositionForPoint(frame, frame->visiblePositionForPoint(point), point);
 }
 
 void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
@@ -330,12 +312,14 @@ void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
     HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(point, false);
     frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController()->focusedOrMainFrame();
     
-    RefPtr<Range> range = characterRangeAtPoint(frame, result.point());
+    RefPtr<Range> range = frame->rangeForPoint(result.point());
     if (!range)
         return;
 
-    uint64_t length;
-    getLocationAndLengthFromRange(range.get(), index, length);
+    size_t location;
+    size_t length;
+    if (TextIterator::locationAndLengthFromRange(range.get(), location, length))
+        index = static_cast<uint64_t>(location);
 }
 
 PassRefPtr<Range> convertToRange(Frame* frame, NSRange nsrange)
@@ -420,12 +404,12 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController()->focusedOrMainFrame();
 
     IntPoint translatedPoint = frame->view()->windowToContents(point);
-    VisiblePosition position = frame->visiblePositionForPoint(translatedPoint);
 
     // Don't do anything if there is no character at the point.
-    if (!characterRangeAtPositionForPoint(frame, position, translatedPoint))
+    if (!frame->rangeForPoint(translatedPoint))
         return;
 
+    VisiblePosition position = frame->visiblePositionForPoint(translatedPoint);
     VisibleSelection selection = m_page->focusController()->focusedOrMainFrame()->selection()->selection();
     if (shouldUseSelection(position, selection)) {
         performDictionaryLookupForSelection(DictionaryPopupInfo::HotKey, frame, selection);

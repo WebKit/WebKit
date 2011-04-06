@@ -804,6 +804,31 @@ Document* Frame::documentAtPoint(const IntPoint& point)
     return result.innerNode() ? result.innerNode()->document() : 0;
 }
 
+PassRefPtr<Range> Frame::rangeForPoint(const IntPoint& framePoint)
+{
+    VisiblePosition position = visiblePositionForPoint(framePoint);
+    if (position.isNull())
+        return 0;
+
+    VisiblePosition previous = position.previous();
+    if (previous.isNotNull()) {
+        RefPtr<Range> previousCharacterRange = makeRange(previous, position);
+        IntRect rect = editor()->firstRectForRange(previousCharacterRange.get());
+        if (rect.contains(framePoint))
+            return previousCharacterRange.release();
+    }
+
+    VisiblePosition next = position.next();
+    if (next.isNotNull()) {
+        RefPtr<Range> nextCharacterRange = makeRange(position, next);
+        IntRect rect = editor()->firstRectForRange(nextCharacterRange.get());
+        if (rect.contains(framePoint))
+            return nextCharacterRange.release();
+    }
+
+    return 0;
+}
+
 void Frame::createView(const IntSize& viewportSize,
                        const Color& backgroundColor, bool transparent,
                        const IntSize& fixedLayoutSize, bool useFixedLayout,

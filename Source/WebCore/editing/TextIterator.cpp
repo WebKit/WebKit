@@ -28,6 +28,7 @@
 #include "TextIterator.h"
 
 #include "Document.h"
+#include "Frame.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "htmlediting.h"
@@ -2367,6 +2368,38 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(Element* scope, int r
     }
     
     return resultRange.release();
+}
+
+bool TextIterator::locationAndLengthFromRange(const Range* range, size_t& location, size_t& length)
+{
+    location = notFound;
+    length = 0;
+
+    if (!range->startContainer())
+        return false;
+
+    Element* selectionRoot = range->ownerDocument()->frame()->selection()->rootEditableElement();
+    Element* scope = selectionRoot ? selectionRoot : range->ownerDocument()->documentElement();
+
+    // The critical assumption is that this only gets called with ranges that
+    // concentrate on a given area containing the selection root. This is done
+    // because of text fields and textareas. The DOM for those is not
+    // directly in the document DOM, so ensure that the range does not cross a
+    // boundary of one of those.
+    if (range->startContainer() != scope && !range->startContainer()->isDescendantOf(scope))
+        return false;
+    if (range->endContainer() != scope && !range->endContainer()->isDescendantOf(scope))
+        return false;
+
+    RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
+    ASSERT(testRange->startContainer() == scope);
+    location = TextIterator::rangeLength(testRange.get());
+    
+    ExceptionCode ec;
+    testRange->setEnd(range->endContainer(), range->endOffset(), ec);
+    ASSERT(testRange->startContainer() == scope);
+    length = TextIterator::rangeLength(testRange.get()) - location;
+    return true;
 }
 
 // --------

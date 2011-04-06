@@ -824,35 +824,6 @@ WebContextMenu* WebPage::contextMenu()
     return m_contextMenu.get();
 }
 
-void WebPage::getLocationAndLengthFromRange(Range* range, uint64_t& location, uint64_t& length)
-{
-    location = notFound;
-    length = 0;
-
-    if (!range || !range->startContainer())
-        return;
-
-    Element* selectionRoot = range->ownerDocument()->frame()->selection()->rootEditableElement();
-    Element* scope = selectionRoot ? selectionRoot : range->ownerDocument()->documentElement();
-    
-    // Mouse events may cause TSM to attempt to create an NSRange for a portion of the view
-    // that is not inside the current editable region.  These checks ensure we don't produce
-    // potentially invalid data when responding to such requests.
-    if (range->startContainer() != scope && !range->startContainer()->isDescendantOf(scope))
-        return;
-    if (range->endContainer() != scope && !range->endContainer()->isDescendantOf(scope))
-        return;
-
-    RefPtr<Range> testRange = Range::create(scope->document(), scope, 0, range->startContainer(), range->startOffset());
-    ASSERT(testRange->startContainer() == scope);
-    location = TextIterator::rangeLength(testRange.get());
-    
-    ExceptionCode ec;
-    testRange->setEnd(range->endContainer(), range->endOffset(), ec);
-    ASSERT(testRange->startContainer() == scope);
-    length = TextIterator::rangeLength(testRange.get()) - location;
-}
-
 // Events 
 
 static const WebEvent* g_currentEvent = 0;

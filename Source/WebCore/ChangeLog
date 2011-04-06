@@ -1,3 +1,18 @@
+2011-04-06  Robert Sesek  <rsesek@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Move code duplicated between the WebKit/mac and WebKit2 down to WebCore because Chromium will need it too
+        https://bugs.webkit.org/show_bug.cgi?id=54969
+
+        No change in behavior; no new tests.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::locationAndLengthFromRange): New method from duplicated code in WebKits
+        * editing/TextIterator.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::rangeForPoint): New method from duplicated code in WebKits
+
 2011-04-06  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Steve Block.
