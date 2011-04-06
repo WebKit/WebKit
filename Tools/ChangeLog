@@ -1,3 +1,16 @@
+2011-04-06  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] DumpRenderTree: do not try to free NULL SoupURIs
+        https://bugs.webkit.org/show_bug.cgi?id=57932
+
+        Some Layout tests have invalid URIs that do not generate valid
+        SoupURI instances. Do not try to free those NULL SoupURIs.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (willSendRequestCallback):
+
 2011-04-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Andreas Kling.

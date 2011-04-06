@@ -1061,8 +1061,8 @@ static void willSendRequestCallback(WebKitWebView* webView, WebKitWebFrame*, Web
         soup_uri_free(uri);
         return;
     }
-    soup_uri_free(uri);
-
+    if (uri)
+        soup_uri_free(uri);
 
     if (soupMessage) {
         const set<string>& clearHeaders = gLayoutTestController->willSendRequestClearHeaders();
