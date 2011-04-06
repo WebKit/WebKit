@@ -43,7 +43,10 @@ namespace WebCore {
 
 CompositeAnimation::~CompositeAnimation()
 {
-    // Toss the refs to all animations
+    // Toss the refs to all animations, but make sure we remove them from
+    // any waiting lists first.
+
+    clearRenderer();
     m_transitions.clear();
     m_keyframeAnimations.clear();
 }
