@@ -1,3 +1,16 @@
+2011-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Split getBorderPaddingMargin into two functions
+        https://bugs.webkit.org/show_bug.cgi?id=57947
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::borderPaddingMarginStart): Extracted from getBorderPaddingMargin.
+        (WebCore::borderPaddingMarginEnd): Ditto.
+        (WebCore::inlineLogicalWidth): Calls borderPaddingMarginStart and borderPaddingMarginEnd.
+        (WebCore::RenderBlock::findNextLineBreak): Ditto.
+
 2011-04-06  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

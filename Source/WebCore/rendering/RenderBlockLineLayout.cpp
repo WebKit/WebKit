@@ -60,11 +60,15 @@ namespace WebCore {
 // We don't let our line box tree for a single line get any deeper than this.
 const unsigned cMaxLineDepth = 200;
 
-static int getBorderPaddingMargin(RenderBoxModelObject* child, bool endOfInline)
+static inline int borderPaddingMarginStart(RenderBoxModelObject* child)
 {
-    if (endOfInline)
-        return child->marginEnd() + child->paddingEnd() + child->borderEnd();
+    // FIXME: Should we call marginStartForChild instead?
     return child->marginStart() + child->paddingStart() + child->borderStart();
+}
+
+static inline int borderPaddingMarginEnd(RenderBoxModelObject* child)
+{
+    return child->marginEnd() + child->paddingEnd() + child->borderEnd();
 }
 
 static int inlineLogicalWidth(RenderObject* child, bool start = true, bool end = true)
@@ -73,10 +77,12 @@ static int inlineLogicalWidth(RenderObject* child, bool start = true, bool end =
     int extraWidth = 0;
     RenderObject* parent = child->parent();
     while (parent->isInline() && !parent->isInlineBlockOrInlineTable() && lineDepth++ < cMaxLineDepth) {
+        RenderBoxModelObject* parentAsBoxModelObject = toRenderBoxModelObject(parent);
+        ASSERT(parentAsBoxModelObject);
         if (start && !child->previousSibling())
-            extraWidth += getBorderPaddingMargin(toRenderBoxModelObject(parent), false);
+            extraWidth += borderPaddingMarginStart(parentAsBoxModelObject);
         if (end && !child->nextSibling())
-            extraWidth += getBorderPaddingMargin(toRenderBoxModelObject(parent), true);
+            extraWidth += borderPaddingMarginEnd(parentAsBoxModelObject);
         child = parent;
         parent = child->parent();
     }
@@ -1718,8 +1724,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 }
             }
 
-            tmpW += flowBox->marginStart() + flowBox->borderStart() + flowBox->paddingStart() +
-                    flowBox->marginEnd() + flowBox->borderEnd() + flowBox->paddingEnd();
+            tmpW += borderPaddingMarginStart(flowBox) + borderPaddingMarginEnd(flowBox);
         } else if (o->isReplaced()) {
             RenderBox* replacedBox = toRenderBox(o);
 
