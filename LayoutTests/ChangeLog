@@ -1,3 +1,15 @@
+2011-04-06  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, rebaseline Chromium Mac tests after r83075.
+
+        * platform/chromium-mac-leopard/fast/multicol/nested-columns-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-mac/fast/multicol/nested-columns-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/vertical-lr/nested-columns-expected.checksum: Removed.
+        * platform/chromium-mac/fast/multicol/vertical-lr/nested-columns-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/vertical-rl/nested-columns-expected.checksum: Removed.
+        * platform/chromium-mac/fast/multicol/vertical-rl/nested-columns-expected.png: Removed.
+
 2011-04-06  Vincent Scheib  <scheib@chromium.org>
 
         Fixed GPU expectations for r80867
