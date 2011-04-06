@@ -35,7 +35,7 @@ class ChromeClientQt;
 class FullScreenVideoWidget;
 class HTMLVideoElement;
 class Node;
-#if ENABLE(QT_MULTIMEDIA)
+#if USE(QT_MULTIMEDIA)
 class MediaPlayerPrivateQt;
 #endif
 
@@ -63,7 +63,7 @@ private:
 #endif
 
 // We do not use ENABLE or USE because moc does not expand these macros.
-#if defined(ENABLE_QT_MULTIMEDIA) && ENABLE_QT_MULTIMEDIA
+#if defined(WTF_USE_QT_MULTIMEDIA) && WTF_USE_QT_MULTIMEDIA
 class DefaultFullScreenVideoHandler : public QWebFullScreenVideoHandler {
     Q_OBJECT
 public:
@@ -93,7 +93,7 @@ public:
     bool isValid() const;
 
 private:
-#if ENABLE(QT_MULTIMEDIA)
+#if USE(QT_MULTIMEDIA)
     MediaPlayerPrivateQt* mediaPlayer();
 #endif
 
@@ -103,7 +103,7 @@ private slots:
 private:
     ChromeClientQt* m_chromeClient;
     HTMLVideoElement* m_videoElement;
-#if ENABLE(QT_MULTIMEDIA)
+#if USE(QT_MULTIMEDIA)
     QWebFullScreenVideoHandler* m_FullScreenVideoHandler;
 #endif
 #if USE(GSTREAMER)

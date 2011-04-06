@@ -2,6 +2,41 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] We should use USE(QT_MULTIMEDIA) rather than ENABLE(QT_MULTIMEDIA).
+        https://bugs.webkit.org/show_bug.cgi?id=57974
+
+        We should use USE(QT_MULTIMEDIA) rather than ENABLE(QT_MULTIMEDIA).
+
+        No new tests needed, just a config flag rename.
+
+        * Api/qwebkitplatformplugin.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::mediaContentUrlByElementId):
+        * WebCoreSupport/FullScreenVideoQt.cpp:
+        (WebCore::FullScreenVideoQt::FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::~FullScreenVideoQt):
+        (WebCore::FullScreenVideoQt::enterFullScreenForNode):
+        (WebCore::FullScreenVideoQt::exitFullScreenForNode):
+        (WebCore::FullScreenVideoQt::requiresFullScreenForVideoPlayback):
+        (WebCore::FullScreenVideoQt::isValid):
+        * WebCoreSupport/FullScreenVideoQt.h:
+        * WebCoreSupport/QtPlatformPlugin.cpp:
+        * WebCoreSupport/QtPlatformPlugin.h:
+        * examples/platformplugin/WebPlugin.cpp:
+        (WebPlugin::supportsExtension):
+        (WebPlugin::createExtension):
+        * examples/platformplugin/WebPlugin.h:
+        * examples/platformplugin/platformplugin.pro:
+        * examples/platformplugin/qwebkitplatformplugin.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::loadHtml5Video):
+        * tests/tests.pri:
+
+2011-04-06  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
         [Qt] Implement fullscreen playback for the GStreamer backend.
         https://bugs.webkit.org/show_bug.cgi?id=56826
 

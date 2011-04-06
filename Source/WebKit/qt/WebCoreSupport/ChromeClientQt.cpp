@@ -80,7 +80,7 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLVideoElement.h"
-#if ENABLE(QT_MULTIMEDIA)
+#if USE(QT_MULTIMEDIA)
 #include "MediaPlayerPrivateQt.h"
 #endif
 #endif

@@ -434,7 +434,7 @@ void tst_QWebPage::userStyleSheet()
 
 void tst_QWebPage::loadHtml5Video()
 {
-#if defined(ENABLE_QT_MULTIMEDIA) && ENABLE_QT_MULTIMEDIA
+#if defined(WTF_USE_QT_MULTIMEDIA) && WTF_USE_QT_MULTIMEDIA
     QByteArray url("http://does.not/exist?a=1%2Cb=2");
     m_view->setHtml("<p><video id ='video' src='" + url + "' autoplay/></p>");
     QTest::qWait(2000);

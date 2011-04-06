@@ -210,7 +210,7 @@ MultipleSelectionPopup::MultipleSelectionPopup(const QWebSelectData& data)
     resize(size().width(), visibleItemCount * gMaemoListItemSize);
 }
 
-#if defined(ENABLE_QT_MULTIMEDIA) && ENABLE_QT_MULTIMEDIA
+#if defined(WTF_USE_QT_MULTIMEDIA) && WTF_USE_QT_MULTIMEDIA
 FullScreenVideoWidget::FullScreenVideoWidget(QMediaPlayer* player)
     : QVideoWidget()
     , m_mediaPlayer(player)
@@ -286,7 +286,7 @@ bool WebPlugin::supportsExtension(Extension extension) const
 #endif
     case TouchInteraction:
         return true;
-#if defined(ENABLE_QT_MULTIMEDIA) && ENABLE_QT_MULTIMEDIA
+#if defined(WTF_USE_QT_MULTIMEDIA) && WTF_USE_QT_MULTIMEDIA
     case FullScreenVideoPlayer:
         return true;
 #endif
@@ -306,7 +306,7 @@ QObject* WebPlugin::createExtension(Extension extension) const
 #endif
     case TouchInteraction:
         return new TouchModifier();
-#if defined(ENABLE_QT_MULTIMEDIA) && ENABLE_QT_MULTIMEDIA
+#if defined(WTF_USE_QT_MULTIMEDIA) && WTF_USE_QT_MULTIMEDIA
     case FullScreenVideoPlayer:
         return new FullScreenVideoHandler();
 #endif

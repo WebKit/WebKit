@@ -127,7 +127,7 @@ QWebTouchModifier* QtPlatformPlugin::createTouchModifier()
     return p ? static_cast<QWebTouchModifier*>(p->createExtension(QWebKitPlatformPlugin::TouchInteraction)) : 0;
 }
 
-#if ENABLE(VIDEO) && ENABLE(QT_MULTIMEDIA)
+#if ENABLE(VIDEO) && USE(QT_MULTIMEDIA)
 QWebFullScreenVideoHandler* QtPlatformPlugin::createFullScreenVideoHandler()
 {
     QWebKitPlatformPlugin* p = plugin();

@@ -10,8 +10,8 @@ ELSE { TARGET = tst_$$TARGET }
 load(mobilityconfig, true)
 contains(MOBILITY_CONFIG, multimedia) {
     # This define is used by tests depending on Qt Multimedia
-    DEFINES -= ENABLE_QT_MULTIMEDIA=0
-    DEFINES += ENABLE_QT_MULTIMEDIA=1
+    DEFINES -= WTF_USE_QT_MULTIMEDIA=0
+    DEFINES += WTF_USE_QT_MULTIMEDIA=1
 }
 
 SOURCES += $${TARGET}.cpp

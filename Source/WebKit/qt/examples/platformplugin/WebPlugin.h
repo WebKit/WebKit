@@ -24,7 +24,7 @@
 #include "WebNotificationPresenter.h"
 
 #include <QDialog>
-#if defined(ENABLE_QT_MULTIMEDIA) && ENABLE_QT_MULTIMEDIA
+#if defined(WTF_USE_QT_MULTIMEDIA) && WTF_USE_QT_MULTIMEDIA
 #include <QVideoWidget>
 #endif
 
@@ -97,7 +97,7 @@ public:
     }
 };
 
-#if defined(ENABLE_QT_MULTIMEDIA) && ENABLE_QT_MULTIMEDIA
+#if defined(WTF_USE_QT_MULTIMEDIA) && WTF_USE_QT_MULTIMEDIA
 class FullScreenVideoWidget : public QVideoWidget {
     Q_OBJECT
 public:

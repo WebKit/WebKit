@@ -14,8 +14,8 @@ load(mobilityconfig, true)
         MOBILITY += multimedia
         DEFINES -= ENABLE_VIDEO=0
         DEFINES += ENABLE_VIDEO=1
-        DEFINES -= ENABLE_QT_MULTIMEDIA=0
-        DEFINES += ENABLE_QT_MULTIMEDIA=1
+        DEFINES -= WTF_USE_QT_MULTIMEDIA=0
+        DEFINES += WTF_USE_QT_MULTIMEDIA=1
     }
 }
 

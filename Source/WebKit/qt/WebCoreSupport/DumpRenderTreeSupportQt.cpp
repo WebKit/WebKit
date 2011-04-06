@@ -82,7 +82,7 @@
 #include "qwebpage_p.h"
 #include "qwebscriptworld.h"
 
-#if ENABLE(VIDEO) && ENABLE(QT_MULTIMEDIA)
+#if ENABLE(VIDEO) && USE(QT_MULTIMEDIA)
 #include "HTMLVideoElement.h"
 #include "MediaPlayerPrivateQt.h"
 #endif
@@ -1014,7 +1014,7 @@ QUrl DumpRenderTreeSupportQt::mediaContentUrlByElementId(QWebFrame* frame, const
 {
     QUrl res;
 
-#if ENABLE(VIDEO) && ENABLE(QT_MULTIMEDIA)
+#if ENABLE(VIDEO) && USE(QT_MULTIMEDIA)
     Frame* coreFrame = QWebFramePrivate::core(frame);
     if (!coreFrame)
         return res;
