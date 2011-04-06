@@ -1,3 +1,15 @@
+2011-04-06  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57981
+        
+        Update the column count and width computation algorithm for CSS3 multi-column layout 
+        to match the revised pseudo-algorithm in the latest draft of the spec.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::calcColumnWidth):
+
 2011-04-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

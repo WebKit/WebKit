@@ -4208,34 +4208,15 @@ void RenderBlock::calcColumnWidth()
     int colWidth = max(1, static_cast<int>(style()->columnWidth()));
     int colCount = max(1, static_cast<int>(style()->columnCount()));
 
-    if (style()->hasAutoColumnWidth()) {
-        if ((colCount - 1) * colGap < availWidth) {
-            desiredColumnCount = colCount;
-            desiredColumnWidth = (availWidth - (desiredColumnCount - 1) * colGap) / desiredColumnCount;
-        } else if (colGap < availWidth) {
-            desiredColumnCount = availWidth / colGap;
-            if (desiredColumnCount < 1)
-                desiredColumnCount = 1;
-            desiredColumnWidth = (availWidth - (desiredColumnCount - 1) * colGap) / desiredColumnCount;
-        }
-    } else if (style()->hasAutoColumnCount()) {
-        if (colWidth < availWidth) {
-            desiredColumnCount = (availWidth + colGap) / (colWidth + colGap);
-            if (desiredColumnCount < 1)
-                desiredColumnCount = 1;
-            desiredColumnWidth = (availWidth - (desiredColumnCount - 1) * colGap) / desiredColumnCount;
-        }
+    if (style()->hasAutoColumnWidth() && !style()->hasAutoColumnCount()) {
+        desiredColumnCount = colCount;
+        desiredColumnWidth = max<int>(0, (availWidth - ((desiredColumnCount - 1) * colGap)) / desiredColumnCount);
+    } else if (!style()->hasAutoColumnWidth() && style()->hasAutoColumnCount()) {
+        desiredColumnCount = max<int>(1, (float)(availWidth + colGap) / (colWidth + colGap));
+        desiredColumnWidth = ((availWidth + colGap) / desiredColumnCount) - colGap;
     } else {
-        // Both are set.
-        if (colCount * colWidth + (colCount - 1) * colGap <= availWidth) {
-            desiredColumnCount = colCount;
-            desiredColumnWidth = colWidth;
-        } else if (colWidth < availWidth) {
-            desiredColumnCount = (availWidth + colGap) / (colWidth + colGap);
-            if (desiredColumnCount < 1)
-                desiredColumnCount = 1;
-            desiredColumnWidth = (availWidth - (desiredColumnCount - 1) * colGap) / desiredColumnCount;
-        }
+        desiredColumnCount = min<int>(colCount, (float)(availWidth + colGap) / (colWidth + colGap));
+        desiredColumnWidth = ((availWidth + colGap) / desiredColumnCount) - colGap;
     }
     setDesiredColumnCountAndWidth(desiredColumnCount, desiredColumnWidth);
 }
