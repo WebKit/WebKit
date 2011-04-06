@@ -36,33 +36,6 @@ class HTMLMapElement;
 
 class TreeScope : public ContainerNode {
 public:
-    // Nodes belonging to this scope hold guard references -
-    // these are enough to keep the scope from being destroyed, but
-    // not enough to keep it from removing its children. This allows a
-    // node that outlives its scope to still have a valid scope
-    // pointer without introducing reference cycles.
-
-    void guardRef()
-    {
-        ASSERT(!m_deletionHasBegun);
-        ++m_guardRefCount;
-    }
-
-    void guardDeref()
-    {
-        ASSERT(!m_deletionHasBegun);
-        --m_guardRefCount;
-        if (!m_guardRefCount && !refCount()) {
-#ifndef NDEBUG
-            m_deletionHasBegun = true;
-#endif
-            delete this;
-        }
-    }
-
-    virtual void removedLastRef();
-    virtual void destroyScope();
-
     Element* getElementById(const AtomicString&) const;
     bool hasElementWithId(AtomicStringImpl* id) const;
     bool containsMultipleElementsWithId(const AtomicString& id) const;
@@ -90,9 +63,9 @@ public:
 protected:
     TreeScope(Document*, ConstructionType = CreateContainer);
 
-private:
-    int m_guardRefCount;
+    void destroyTreeScopeData();
 
+private:
     DocumentOrderedMap m_elementsById;
     DocumentOrderedMap m_imageMapsByName;
 

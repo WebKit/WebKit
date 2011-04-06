@@ -1,3 +1,21 @@
+2011-04-06  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 57994 - Move guardRef functionality back to Document
+        https://bugs.webkit.org/show_bug.cgi?id=57994
+
+        Move the relevant code parts from TreeScope back into Document.
+
+        No new tests. (no new functionality)
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+        * dom/Document.h:
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::destroyTreeScopeData):
+        * dom/TreeScope.h:
+
 2011-04-06  Ian Henderson  <ianh@apple.com>
 
         Reviewed by Simon Fraser, Antti Koivisto.

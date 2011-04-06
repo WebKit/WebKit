@@ -37,32 +37,16 @@ using namespace HTMLNames;
 
 TreeScope::TreeScope(Document* document, ConstructionType constructionType)
     : ContainerNode(document, constructionType)
-    , m_guardRefCount(0)
     , m_accessKeyMapValid(false)
     , m_numNodeListCaches(0)
 {
 }
 
-void TreeScope::removedLastRef()
+void TreeScope::destroyTreeScopeData()
 {
-    ASSERT(!m_deletionHasBegun);
-    if (m_guardRefCount) {
-        // If removing a child removes the last self-only ref, we don't
-        // want the scope to be destructed until after
-        // removeAllChildren returns, so we guard ourselves with an
-        // extra self-only ref.
-        guardRef();
-        destroyScope();
-        guardDeref();
-    } else
-        ContainerNode::removedLastRef();
-}
-
-void TreeScope::destroyScope()
-{
-    // removeAllChildren() doesn't always unregister IDs, do it upfront to avoid having stale references in the map.
     m_elementsById.clear();
-    removeAllChildren();
+    m_imageMapsByName.clear();
+    m_elementsByAccessKey.clear();
 }
 
 Element* TreeScope::getElementById(const AtomicString& elementId) const

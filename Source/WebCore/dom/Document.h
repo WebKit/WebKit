@@ -222,6 +222,31 @@ public:
     using TreeScope::ref;
     using TreeScope::deref;
 
+    // Nodes belonging to this document hold guard references -
+    // these are enough to keep the document from being destroyed, but
+    // not enough to keep it from removing its children. This allows a
+    // node that outlives its document to still have a valid document
+    // pointer without introducing reference cycles.
+    void guardRef()
+    {
+        ASSERT(!m_deletionHasBegun);
+        ++m_guardRefCount;
+    }
+
+    void guardDeref()
+    {
+        ASSERT(!m_deletionHasBegun);
+        --m_guardRefCount;
+        if (!m_guardRefCount && !refCount()) {
+#ifndef NDEBUG
+            m_deletionHasBegun = true;
+#endif
+            delete this;
+        }
+    }
+
+    virtual void removedLastRef();
+
     Element* getElementById(const AtomicString& id) const;
 
     // DOM methods & attributes for Document
@@ -1083,8 +1108,6 @@ public:
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 
-    virtual void destroyScope();
-
     void clearXMLVersion() { m_xmlVersion = String(); }
 
 private:
@@ -1126,6 +1149,8 @@ private:
     PassRefPtr<NodeList> handleZeroPadding(const HitTestRequest&, HitTestResult&) const;
 
     void loadEventDelayTimerFired(Timer<Document>*);
+
+    int m_guardRefCount;
 
     OwnPtr<CSSStyleSelector> m_styleSelector;
     bool m_didCalculateStyleSelector;

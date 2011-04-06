@@ -378,6 +378,7 @@ uint64_t Document::s_globalTreeVersion = 0;
 
 Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     : TreeScope(0)
+    , m_guardRefCount(0)
     , m_compatibilityMode(NoQuirksMode)
     , m_compatibilityModeLocked(false)
     , m_domTreeVersion(++s_globalTreeVersion)
@@ -508,40 +509,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 #endif
 }
 
-void Document::destroyScope()
-{
-    ASSERT(!m_deletionHasBegun);
-
-    // We must make sure not to be retaining any of our children through
-    // these extra pointers or we will create a reference cycle.
-    m_docType = 0;
-    m_focusedNode = 0;
-    m_hoverNode = 0;
-    m_activeNode = 0;
-    m_titleElement = 0;
-    m_documentElement = 0;
-#if ENABLE(FULLSCREEN_API)
-    m_fullScreenElement = 0;
-#endif
-
-    TreeScope::destroyScope();
-
-    m_markers->detach();
-
-    detachParser();
-
-    m_cssCanvasElements.clear();
-
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    // FIXME: consider using ActiveDOMObject.
-    m_scriptedAnimationController = 0;
-#endif
-
-#ifndef NDEBUG
-    m_inRemovedLastRefFunction = false;
-#endif
-}
-
 Document::~Document()
 {
     ASSERT(!renderer());
@@ -599,6 +566,57 @@ Document::~Document()
 
     if (m_implementation)
         m_implementation->ownerDocumentDestroyed();
+}
+
+void Document::removedLastRef()
+{
+    ASSERT(!m_deletionHasBegun);
+    if (m_guardRefCount) {
+        // If removing a child removes the last self-only ref, we don't
+        // want the scope to be destructed until after
+        // removeAllChildren returns, so we guard ourselves with an
+        // extra self-only ref.
+        guardRef();
+
+        // We must make sure not to be retaining any of our children through
+        // these extra pointers or we will create a reference cycle.
+        m_docType = 0;
+        m_focusedNode = 0;
+        m_hoverNode = 0;
+        m_activeNode = 0;
+        m_titleElement = 0;
+        m_documentElement = 0;
+#if ENABLE(FULLSCREEN_API)
+        m_fullScreenElement = 0;
+#endif
+
+        // removeAllChildren() doesn't always unregister IDs,
+        // so tear down scope information upfront to avoid having stale references in the map.
+        destroyTreeScopeData();
+        removeAllChildren();
+
+        m_markers->detach();
+
+        detachParser();
+
+        m_cssCanvasElements.clear();
+
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+        // FIXME: consider using ActiveDOMObject.
+        m_scriptedAnimationController = 0;
+#endif
+
+#ifndef NDEBUG
+        m_inRemovedLastRefFunction = false;
+#endif
+
+        guardDeref();
+    } else {
+#ifndef NDEBUG
+        m_deletionHasBegun = true;
+#endif
+        delete this;
+    }
 }
 
 Element* Document::getElementById(const AtomicString& id) const
