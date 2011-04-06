@@ -1,3 +1,22 @@
+2011-04-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Extensions API] remove inspectedPage.* events
+        https://bugs.webkit.org/show_bug.cgi?id=57763
+
+        - Removed webInspector.inspectedPage.* events
+        - moved onNavigated to webInspector.resources
+
+        * http/tests/inspector/extensions-test.js:
+        (initialize_ExtensionsTest.runWhenPageLoads):
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.runWhenPageLoads.chainedCallback):
+        (initialize_InspectorTest.InspectorTest.runWhenPageLoads):
+        * inspector/extensions/extensions-api-expected.txt:
+        * inspector/extensions/extensions-events-expected.txt:
+        * inspector/extensions/extensions-events.html:
+
 2011-04-05  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

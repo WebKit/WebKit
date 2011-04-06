@@ -1,3 +1,24 @@
+2011-04-06  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Extensions API] remove inspectedPage.* events
+        https://bugs.webkit.org/show_bug.cgi?id=57763
+
+        - Removed webInspector.inspectedPage.* events
+        - moved onNavigated to webInspector.resources
+
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI):
+        (WebInspector.injectedExtensionAPI.InspectedWindow):
+        * inspector/front-end/ExtensionAPISchema.json:
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype.notifyInspectedURLChanged):
+        * inspector/front-end/inspector.js:
+        (WebInspector.domContentEventFired):
+        (WebInspector.loadEventFired):
+        (WebInspector.inspectedURLChanged):
+
 2011-04-06  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Antti Koivisto.

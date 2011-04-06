@@ -79,19 +79,9 @@ WebInspector.ExtensionServer.prototype = {
         this._postNotification("panel-hidden-" + panelId);
     },
 
-    notifyPageLoaded: function(milliseconds)
+    notifyInspectedURLChanged: function(url)
     {
-        this._postNotification("inspectedPageLoaded", milliseconds);
-    },
-
-    notifyPageDOMContentLoaded: function(milliseconds)
-    {
-        this._postNotification("inspectedPageDOMContentLoaded", milliseconds);
-    },
-
-    notifyInspectedURLChanged: function()
-    {
-        this._postNotification("inspectedURLChanged");
+        this._postNotification("inspectedURLChanged", url);
     },
 
     notifyInspectorReset: function()

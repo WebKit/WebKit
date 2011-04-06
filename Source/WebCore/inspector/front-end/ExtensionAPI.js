@@ -111,6 +111,7 @@ function Resources()
         this._fire(resource);
     }
     this.onFinished = new EventSink("resource-finished", resourceDispatch);
+    this.onNavigated = new EventSink("inspectedURLChanged");
 }
 
 Resources.prototype = {
@@ -356,9 +357,6 @@ AuditResultNode.prototype = {
 
 function InspectedWindow()
 {
-    this.onDOMContentLoaded = new EventSink("inspectedPageDOMContentLoaded");
-    this.onLoaded = new EventSink("inspectedPageLoaded");
-    this.onNavigated = new EventSink("inspectedURLChanged");
 }
 
 InspectedWindow.prototype = {

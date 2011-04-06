@@ -28,32 +28,39 @@ function extension_testOnResourceFinished(nextTest)
     webInspector.inspectedWindow.eval("var xhr = new XMLHttpRequest(); xhr.open('GET', '" + location.href + "', false); xhr.send(null);");
 }
 
-function extension_testPageLoadEvents(nextTest)
+function extension_testOnNavigated(nextTest)
 {
-    var queuedOutput = [];
+    var urls = [];
+    var loadCount = 0;
 
-    // Logging on onLoaded is tricky due to race conditions with output("Page reloaded") in page initialization code.
-    // So only log when we're sure all handlers are called and reload is done.
-    function queueOutputAndContinue(message)
+    function onLoad()
     {
-        queuedOutput.push(message);
-        if (queuedOutput.length != 3)
-            return;
-        for (i = 0; i < queuedOutput.length; ++i) {
-            if (queuedOutput[i])
-                output(queuedOutput[i]);
-        }
-        nextTest();
+        ++loadCount;
+        processEvent();
     }
-
-    webInspector.inspectedWindow.onDOMContentLoaded.addListener(function(time) {
-        queueOutputAndContinue("onDOMContentLoaded fired: " + typeof time);
-    });
-
-    webInspector.inspectedWindow.onLoaded.addListener(function(time) {
-        queueOutputAndContinue("onLoaded fired: " + typeof time);
-    });
-    dispatchOnFrontend({ command: "reload" }, queueOutputAndContinue);
+    function processEvent()
+    {
+        if (loadCount !== urls.length)
+            return;
+        if (loadCount === 1) {
+            dispatchOnFrontend({ command: "run-when-page-loads" }, onLoad);
+            webInspector.inspectedWindow.eval("location.href = location.origin + location.pathname");
+        }
+        else {
+            webInspector.resources.onNavigated.removeListener(onNavigated);
+            for (var i = 0; i < urls.length; ++i)
+                output("Navigated to: " + urls[i]);
+            nextTest();
+        }
+    }
+    function onNavigated(url)
+    {
+        urls.push(url.replace(/^(.*\/)*/, ""));
+        processEvent();
+    }
+    webInspector.resources.onNavigated.addListener(onNavigated);
+    dispatchOnFrontend({ command: "run-when-page-loads" }, onLoad);
+    webInspector.inspectedWindow.eval("location.href = location.href + '?navigated'");
 }
 
 function extension_testPanelShowHide(nextTest)

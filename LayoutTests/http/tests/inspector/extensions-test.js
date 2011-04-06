@@ -84,6 +84,14 @@ function reloadPage(data, port)
 }
 InspectorTest.dispatchOnMessage("reload", reloadPage, true);
 
+function runWhenPageLoads(data, port)
+{
+    InspectorTest.runWhenPageLoads(function() {
+        port.postMessage("");
+    });
+}
+InspectorTest.dispatchOnMessage("run-when-page-loads", runWhenPageLoads, true);
+
 }
 
 var test = function()

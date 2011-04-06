@@ -151,6 +151,18 @@ InspectorTest.pageReloaded = function()
     }
 }
 
+InspectorTest.runWhenPageLoads = function(callback)
+{
+    var oldCallback = InspectorTest._reloadPageCallback;
+    function chainedCallback()
+    {
+        if (oldCallback)
+            oldCallback();
+        callback();
+    }
+    InspectorTest._reloadPageCallback = InspectorTest.safeWrap(chainedCallback);
+}
+
 InspectorTest.runAfterPendingDispatches = function(callback)
 {
     callback = InspectorTest.safeWrap(callback);

@@ -989,7 +989,6 @@ WebInspector.domContentEventFired = function(time)
     this.panels.audits.mainResourceDOMContentTime = time;
     if (this.panels.network)
         this.panels.network.mainResourceDOMContentTime = time;
-    this.extensionServer.notifyPageDOMContentLoaded((time - WebInspector.mainResource.startTime) * 1000);
     this.mainResourceDOMContentTime = time;
 }
 
@@ -998,7 +997,6 @@ WebInspector.loadEventFired = function(time)
     this.panels.audits.mainResourceLoadTime = time;
     this.panels.network.mainResourceLoadTime = time;
     this.panels.resources.loadEventFired();
-    this.extensionServer.notifyPageLoaded((time - WebInspector.mainResource.startTime) * 1000);
     this.mainResourceLoadTime = time;
 }
 
@@ -1038,7 +1036,7 @@ WebInspector.inspectedURLChanged = function(url)
 {
     InspectorFrontendHost.inspectedURLChanged(url);
     this.settings.inspectedURLChanged(url);
-    this.extensionServer.notifyInspectedURLChanged();
+    this.extensionServer.notifyInspectedURLChanged(url);
 }
 
 WebInspector.didCreateWorker = function()

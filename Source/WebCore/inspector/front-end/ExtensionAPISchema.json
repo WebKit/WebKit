@@ -165,12 +165,20 @@
             "name": "pageURL",
             "type": "string",
             "description": "An URL of the page that represents this panel."
+          },
+          {
+            "name": "callback",
+            "type": "function",
+            "description": "A function that is called upon request completion.",
+            "parameters": [
+              {
+                "name": "panel",
+                "description": "An ExtensionPanel object representing the created panel.",
+                "$ref": "ExtensionPanel"
+              }
+            ]
           }
-        ],
-        "returns" : {
-          "$ref": "ExtensionPanel",
-          "description": "A panel that was created."
-        }
+        ]
       }
     ]
   },
@@ -237,6 +245,18 @@
         "description": "Fired when a resource request is finished and all resource data are available.",
         "parameters": [
           { "name": "resource", "$ref": "Resource" }
+        ]
+      },
+      {
+        "name": "onNavigation",
+        "type": "function",
+        "description": "Fired when an inspected window navigates to a new URL.",
+        "parameters": [
+          {
+            "name": "url",
+            "type": "stirng",
+            "description": "URL of the new page."
+          }
         ]
       }
     ]
