@@ -1435,7 +1435,7 @@ void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
 {
     ASSERT(!m_frame->ownerElement());
 
-    double delay = adjustedDeferredRepaintDelay();
+    double delay = m_deferringRepaints ? 0 : adjustedDeferredRepaintDelay();
     if ((m_deferringRepaints || m_deferredRepaintTimer.isActive() || delay) && !immediate) {
         IntRect paintRect = r;
         if (clipsRepaints() && !paintsEntireContents())
@@ -1587,6 +1587,7 @@ void FrameView::resetDeferredRepaintDelay()
 
 double FrameView::adjustedDeferredRepaintDelay() const
 {
+    ASSERT(!m_deferringRepaints);
     if (!m_deferredRepaintDelay)
         return 0;
     double timeSinceLastPaint = currentTime() - m_lastPaintTime;

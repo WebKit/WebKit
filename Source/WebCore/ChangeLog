@@ -1,3 +1,16 @@
+2011-04-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Avoid calling currentTime() from FrameView::adjustedDeferredRepaintDelay() when repaints are deferred
+        https://bugs.webkit.org/show_bug.cgi?id=57914
+
+        Don't call adjustedDeferredRepaintDelay unnecessarily.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::adjustedDeferredRepaintDelay):
+
 2011-04-05  Steve VanDeBogart  <vandebo@chromium.org>
 
         Reviewed by David Levin.
