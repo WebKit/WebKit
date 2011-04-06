@@ -64,7 +64,6 @@
             'tests/TilingDataTest.cpp',
             'tests/TreeTestHelpers.cpp',
             'tests/TreeTestHelpers.h',
-            'tests/WebFrameTest.cpp',
         ],
     },
 }

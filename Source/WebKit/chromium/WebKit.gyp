@@ -815,10 +815,11 @@
                     'conditions': [
                         ['OS=="win"', {
                             'sources': [
-                                # FIXME: Port PopupMenuTest to Linux and Mac.
+                                # FIXME: Port PopupMenuTest and WebFrameTest to Linux and Mac.
                                 'tests/PopupMenuTest.cpp',
                                 'tests/TransparencyWinTest.cpp',
                                 'tests/UniscribeHelperTest.cpp',
+                                'tests/WebFrameTest.cpp',
                                 'tests/WebPageSerializerTest.cpp',
                             ],
                         }],

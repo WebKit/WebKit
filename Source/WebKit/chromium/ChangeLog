@@ -1,3 +1,22 @@
+2011-04-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r83007.
+        http://trac.webkit.org/changeset/83007
+        https://bugs.webkit.org/show_bug.cgi?id=57920
+
+        Broke WebFrameTest.FrameForEnteredContext on Chromium-win and
+        Chromium-mac (Requested by tkent on #webkit).
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        * tests/WebFrameTest.cpp:
+        (WebKit::WebFrameTest::WebFrameTest):
+        (WebKit::WebFrameTest::registerMockedURLLoad):
+        (WebKit::WebFrameTest::serveRequests):
+        (WebKit::TEST_F):
+
 2011-04-05  James Kozianski  <koz@chromium.org>
 
         Unreviewed, rolling out r82976.
