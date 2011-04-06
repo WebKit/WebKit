@@ -1,3 +1,9 @@
+2011-04-05  Adrienne Walker  <enne@google.com>
+
+       Unreviewed, temporarily mark two tests as more generally failing.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-05  Jessie Berlin  <jberlin@apple.com>
 
         3 tests fail on apple-macpro-6 (due to different JS MIME type) but not any other Leopard
