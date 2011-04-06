@@ -1,3 +1,12 @@
+2011-04-05  Steve VanDeBogart  <vandebo@chromium.org>
+
+        Reviewed by David Levin.
+
+        Update deprecated include: platform_canvas_win.h to platform_canvas.h.
+        https://bugs.webkit.org/show_bug.cgi?id=57896
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+
 2011-04-05  Darin Adler  <darin@apple.com>
 
         Try to fix Leopard bots.

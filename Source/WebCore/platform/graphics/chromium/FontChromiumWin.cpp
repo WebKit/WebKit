@@ -43,7 +43,7 @@
 #include "TransparencyWin.h"
 #include "UniscribeHelperTextRun.h"
 
-#include "skia/ext/platform_canvas_win.h"
+#include "skia/ext/platform_canvas.h"
 #include "skia/ext/skia_utils_win.h"  // FIXME: remove this dependency.
 
 #include <windows.h>
