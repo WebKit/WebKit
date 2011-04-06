@@ -1,3 +1,11 @@
+2011-04-06  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        Skip tests not passing in the Qt bot.
+
+        * platform/qt/Skipped:
+
 2011-04-06  Zan Dobersek  <zandobersek@gmail.com>
 
         Reviewed by Eric Seidel.

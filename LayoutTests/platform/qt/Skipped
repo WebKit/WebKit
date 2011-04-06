@@ -598,8 +598,12 @@ media/audio-only-video-intrinsic-size.html
 media/controls-without-preload.html
 
 media/audio-controls-rendering.html
+media/video-currentTime.html
 media/audio-data-url.html
+media/audio-delete-while-slider-thumb-clicked.html
 media/audio-delete-while-step-button-clicked.html
+media/audio-mpeg-supported.html
+media/audio-mpeg4-supported.html
 media/audio-no-installed-engines.html
 media/controls-after-reload.html
 media/controls-drag-timebar.html
@@ -634,6 +638,7 @@ media/video-load-networkState.html
 media/video-loop.html
 media/video-no-audio.html
 media/video-pause-empty-events.html
+media/video-pause-immediately.html
 media/video-played-collapse.html
 media/video-played-ranges-1.html
 media/video-played-reset.html
