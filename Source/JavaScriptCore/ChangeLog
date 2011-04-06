@@ -1,3 +1,9 @@
+2011-04-06  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        cmake: Fix build for ARMv7
+
+        * CMakeLists.txt: add missing file.
+
 2011-04-06  Liang Qi  <liang.qi@nokia.com>
 
         Reviewed by Benjamin Poulain.

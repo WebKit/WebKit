@@ -219,6 +219,7 @@ ADD_SOURCE_DEPENDENCIES(${JAVASCRIPTCORE_DIR}/yarr/YarrPattern.cpp ${DERIVED_SOU
 IF (WTF_CPU_ARM)
     LIST(APPEND JavaScriptCore_SOURCES
         assembler/ARMAssembler.cpp
+        assembler/ARMv7Assembler.cpp
         assembler/MacroAssemblerARM.cpp
     )
 ELSEIF (WTF_CPU_MIPS)
