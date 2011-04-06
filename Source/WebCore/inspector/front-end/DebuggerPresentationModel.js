@@ -105,7 +105,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         if (!this._formatSourceFiles)
             sourceFile = new WebInspector.SourceFile(sourceFileId, script, contentChanged.bind(this));
         else
-            sourceFile = new WebInspector.FormattedSourceFile(sourceFileId, script, contentChanged.bind(this), this._formatter());
+            sourceFile = new WebInspector.FormattedSourceFile(sourceFileId, script, contentChanged.bind(this), this._formatter);
         this._sourceFiles[sourceFileId] = sourceFile;
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileAdded, sourceFile);
     },
@@ -185,6 +185,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
     toggleFormatSourceFiles: function()
     {
         this._formatSourceFiles = !this._formatSourceFiles;
+        if (this._formatSourceFiles && !this._formatter)
+            this._formatter = new WebInspector.ScriptFormatter();
 
         var messages = this._messages;
         this._sourceFiles = {};
@@ -202,13 +204,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         if (WebInspector.debuggerModel.callFrames)
             this._debuggerPaused();
-    },
-
-    _formatter: function()
-    {
-        if (!this._scriptFormatter)
-            this._scriptFormatter = new WebInspector.ScriptFormatter();
-        return this._scriptFormatter;
     },
 
     addConsoleMessage: function(message)

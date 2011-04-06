@@ -1,5 +1,0 @@
-Tests the script formatting functionality.
-
-
-Running: testScriptFormatterWorker
-
