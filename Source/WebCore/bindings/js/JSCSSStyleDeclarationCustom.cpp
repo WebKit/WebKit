@@ -133,11 +133,11 @@ static String cssPropertyName(const Identifier& propertyName, bool* hadPixelOrPo
     return builder.toString();
 }
 
-static bool isCSSPropertyName(const Identifier& propertyName)
+static bool isCSSPropertyName(const Identifier& propertyIdentifier)
 {
     // FIXME: This mallocs a string for the property name and then throws it
     // away.  This shows up on peacekeeper's domDynamicCreationCreateElement.
-    return CSSStyleDeclaration::isPropertyName(cssPropertyName(propertyName));
+    return CSSStyleDeclaration::isPropertyName(cssPropertyName(propertyIdentifier));
 }
 
 bool JSCSSStyleDeclaration::canGetItemsForName(ExecState*, CSSStyleDeclaration*, const Identifier& propertyName)
@@ -178,11 +178,11 @@ JSValue JSCSSStyleDeclaration::nameGetter(ExecState* exec, JSValue slotBase, con
 
 bool JSCSSStyleDeclaration::putDelegate(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot&)
 {
-    if (!isCSSPropertyName(propertyName))
-        return false;
-
     bool pixelOrPos;
     String prop = cssPropertyName(propertyName, &pixelOrPos);
+    if (!CSSStyleDeclaration::isPropertyName(prop))
+        return false;
+
     String propValue = valueToStringWithNullCheck(exec, value);
     if (pixelOrPos)
         propValue += "px";

@@ -1,3 +1,23 @@
+2011-04-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Some minor style resolution optimizations
+        https://bugs.webkit.org/show_bug.cgi?id=57996
+
+        A couple of minor optimizations to style-related code.
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::isCSSPropertyName):
+        (WebCore::JSCSSStyleDeclaration::putDelegate):
+        Avoid calling cssPropertyName() twice when setting style on an element.
+        
+        * css/CSSStyleSelector.cpp:
+        (WebCore::useSVGZoomRules):
+        (WebCore::CSSStyleSelector::applyProperty):
+        Avoid calling isSVGElement() for every property, since only a two properties
+        care about it.
+
 2011-04-06  Ian Henderson  <ianh@apple.com>
 
         Reviewed by Antti Koivisto.

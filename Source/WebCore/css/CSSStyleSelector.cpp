@@ -3596,6 +3596,19 @@ inline bool isValidVisitedLinkProperty(int id)
     return false;
 }
 
+// SVG handles zooming in a different way compared to CSS. The whole document is scaled instead
+// of each individual length value in the render style / tree. CSSPrimitiveValue::computeLength*()
+// multiplies each resolved length with the zoom multiplier - so for SVG we need to disable that.
+// Though all CSS values that can be applied to outermost <svg> elements (width/height/border/padding...)
+// need to respect the scaling. RenderBox (the parent class of RenderSVGRoot) grabs values like
+// width/height/border/padding/... from the RenderStyle -> for SVG these values would never scale,
+// if we'd pass a 1.0 zoom factor everyhwere. So we only pass a zoom factor of 1.0 for specific
+// properties that are NOT allowed to scale within a zoomed SVG document (letter/word-spacing/font-size).
+static inline bool useSVGZoomRules(const Element* e)
+{
+    return e && e->isSVGElement();
+}
+
 void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 {
     CSSPrimitiveValue* primitiveValue = 0;
@@ -3603,16 +3616,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         primitiveValue = static_cast<CSSPrimitiveValue*>(value);
 
     float zoomFactor = m_style->effectiveZoom();
-
-    // SVG handles zooming in a different way compared to CSS. The whole document is scaled instead
-    // of each individual length value in the render style / tree. CSSPrimitiveValue::computeLength*()
-    // multiplies each resolved length with the zoom multiplier - so for SVG we need to disable that.
-    // Though all CSS values that can be applied to outermost <svg> elements (width/height/border/padding...)
-    // need to respect the scaling. RenderBox (the parent class of RenderSVGRoot) grabs values like
-    // width/height/border/padding/... from the RenderStyle -> for SVG these values would never scale,
-    // if we'd pass a 1.0 zoom factor everyhwere. So we only pass a zoom factor of 1.0 for specific
-    // properties that are NOT allowed to scale within a zoomed SVG document (letter/word-spacing/font-size).
-    bool useSVGZoomRules = m_element && m_element->isSVGElement();
 
     Length l;
     bool apply = false;
@@ -4170,7 +4173,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyLetterSpacing:
     case CSSPropertyWordSpacing:
     {
-        
         if (isInherit) {
             HANDLE_INHERIT_COND(CSSPropertyLetterSpacing, letterSpacing, LetterSpacing)
             HANDLE_INHERIT_COND(CSSPropertyWordSpacing, wordSpacing, WordSpacing)
@@ -4188,7 +4190,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         } else {
             if (!primitiveValue)
                 return;
-            width = primitiveValue->computeLengthInt(style(), m_rootElementStyle, useSVGZoomRules ? 1.0f : zoomFactor);
+            width = primitiveValue->computeLengthInt(style(), m_rootElementStyle, useSVGZoomRules(m_element) ? 1.0f : zoomFactor);
         }
         switch (id) {
         case CSSPropertyLetterSpacing:
@@ -5140,7 +5142,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 fontDescription.setUsePrinterFont(m_checker.m_document->printing());
            
                 // Handle the zoom factor.
-                fontDescription.setComputedSize(getComputedSizeFromSpecifiedSize(m_checker.m_document, m_style.get(), fontDescription.isAbsoluteSize(), fontDescription.specifiedSize(), useSVGZoomRules));
+                fontDescription.setComputedSize(getComputedSizeFromSpecifiedSize(m_checker.m_document, m_style.get(), fontDescription.isAbsoluteSize(), fontDescription.specifiedSize(), useSVGZoomRules(m_element)));
                 if (m_style->setFontDescription(fontDescription))
                     m_fontDirty = true;
             }
