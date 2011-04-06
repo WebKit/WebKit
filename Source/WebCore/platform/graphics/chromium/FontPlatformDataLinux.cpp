@@ -122,7 +122,7 @@ int FontPlatformData::emSizeInFontUnits() const
     if (m_emSizeInFontUnits)
         return m_emSizeInFontUnits;
 
-    SkAdvancedTypefaceMetrics* metrics = m_typeface->getAdvancedTypefaceMetrics(false);
+    SkAdvancedTypefaceMetrics* metrics = m_typeface->getAdvancedTypefaceMetrics(SkAdvancedTypefaceMetrics::kNo_PerGlyphInfo);
     m_emSizeInFontUnits = metrics->fEmSize;
     metrics->unref();
     return m_emSizeInFontUnits;
