@@ -3122,8 +3122,6 @@ BUGCR75632 LINUX : svg/W3C-SVG-1.1/text-text-03-b.svg = CRASH PASS
 // Test changed in Wk r80743, throws an exception rather than returning 'true'
 BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
 
-BUGCR75992 GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
-
 BUGWK56608 WIN : fast/dom/Window/window-lookup-precedence.html = TEXT
 
 // Skip an overly restrictive cross-origin HTTPS test

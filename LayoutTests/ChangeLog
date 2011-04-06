@@ -1,3 +1,11 @@
+2011-04-06  Vincent Scheib  <scheib@chromium.org>
+
+        Fixed GPU expectations for r80867
+
+        * platform/chromium-gpu-mac/platform/chromium/compositing/huge-layer-rotated-expected.png: Added.
+        * platform/chromium-gpu-win/platform/chromium/compositing/huge-layer-rotated-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] media tests are flakey
