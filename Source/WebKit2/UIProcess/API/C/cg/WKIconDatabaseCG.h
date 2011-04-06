@@ -28,12 +28,13 @@
 
 #include <CoreGraphics/CGImage.h>
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKGeometry.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WK_EXPORT CGImageRef WKIconDatabaseTryGetCGImageForURL(WKIconDatabaseRef iconDatabase, WKURLRef urlString);
+WK_EXPORT CGImageRef WKIconDatabaseTryGetCGImageForURL(WKIconDatabaseRef iconDatabase, WKURLRef urlString, WKSize size);
 
 #ifdef __cplusplus
 }

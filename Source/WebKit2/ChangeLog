@@ -1,3 +1,15 @@
+2011-04-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57973 and https://bugs.webkit.org/show_bug.cgi?id=57973
+        WK2 icon database should be able to get a CGImage of a specific size
+
+        * UIProcess/API/C/cg/WKIconDatabaseCG.cpp:
+        (WKIconDatabaseTryGetCGImageForURL): Change this API to take a requested size, and find the first matching
+          CGImage in the icon.
+        * UIProcess/API/C/cg/WKIconDatabaseCG.h:
+
 2011-04-06  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Anders Carlsson.

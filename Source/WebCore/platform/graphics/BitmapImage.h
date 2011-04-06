@@ -141,6 +141,7 @@ public:
     
 #if PLATFORM(CG)
     virtual CGImageRef getCGImageRef();
+    virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&);
 #endif
 
 #if PLATFORM(WIN) || (PLATFORM(QT) && OS(WINDOWS))

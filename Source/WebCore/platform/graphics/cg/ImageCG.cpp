@@ -154,6 +154,18 @@ CGImageRef BitmapImage::getCGImageRef()
     return frameAtIndex(0);
 }
 
+CGImageRef BitmapImage::getFirstCGImageRefOfSize(const IntSize& size)
+{
+    for (size_t i = 0; i < m_frames.size(); ++i) {
+        CGImageRef cgImage = frameAtIndex(i);
+        if (IntSize(CGImageGetWidth(cgImage), CGImageGetHeight(cgImage)) == size)
+            return cgImage;
+    }
+
+    // Fallback to the default CGImageRef if we can't find the right size
+    return getCGImageRef();
+}
+
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp)
 {
     startAnimation();

@@ -1,3 +1,18 @@
+2011-04-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57973 and https://bugs.webkit.org/show_bug.cgi?id=57973
+        WK2 icon database should be able to get a CGImage of a specific size
+
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        (WebCore::Image::getFirstCGImageRefOfSize):
+        
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::getFirstCGImageRefOfSize): Walk the frames of the image until reaching the
+          first frame of the requested size.
+
 2011-04-06  Malcolm MacLeod  <malcolm.macleod@tshwanedje.com>
 
         Reviewed by Kevin Ollivier.

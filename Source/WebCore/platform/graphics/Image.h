@@ -138,6 +138,7 @@ public:
 
 #if PLATFORM(CG)
     virtual CGImageRef getCGImageRef() { return 0; }
+    virtual CGImageRef getFirstCGImageRefOfSize(const IntSize&) { return 0; }
 #endif
 
 #if PLATFORM(WIN)

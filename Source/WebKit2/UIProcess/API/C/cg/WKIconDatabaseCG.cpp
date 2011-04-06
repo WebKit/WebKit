@@ -34,8 +34,8 @@
 using namespace WebKit;
 using namespace WebCore;
 
-CGImageRef WKIconDatabaseTryGetCGImageForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef urlRef)
+CGImageRef WKIconDatabaseTryGetCGImageForURL(WKIconDatabaseRef iconDatabaseRef, WKURLRef urlRef, WKSize size)
 {
     Image* image = toImpl(iconDatabaseRef)->imageForPageURL(toWTFString(urlRef));
-    return image ? image->getCGImageRef() : 0;
+    return image ? image->getFirstCGImageRefOfSize(IntSize(static_cast<int>(size.width), static_cast<int>(size.height))) : 0;
 }
