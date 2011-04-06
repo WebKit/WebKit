@@ -57,6 +57,9 @@ public:
 
     bool isNull() const { return m_string.isNull(); }
     bool isEmpty() const { return m_string.isEmpty(); }
+    
+    size_t length() const { return m_string.length(); }
+    const UChar* characters() const { return m_string.characters(); }
 
     size_t maximumUTF8CStringSize() const { return m_string.length() * 3 + 1; }
     size_t getUTF8CString(char* buffer, size_t bufferSize)

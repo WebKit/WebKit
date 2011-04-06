@@ -47,6 +47,17 @@ bool WKStringIsEmpty(WKStringRef stringRef)
     return toImpl(stringRef)->isEmpty();
 }
 
+size_t WKStringGetLength(WKStringRef stringRef)
+{
+    return toImpl(stringRef)->length();
+}
+
+const WKChar* WKStringGetCharactersPtr(WKStringRef stringRef)
+{
+    COMPILE_ASSERT(sizeof(WKChar) == sizeof(UChar), WKStringGetCharactersPtr_sizeof_WKChar_matches_UChar);
+    return reinterpret_cast<const WKChar*>(toImpl(stringRef)->characters());
+}
+
 size_t WKStringGetMaximumUTF8CStringSize(WKStringRef stringRef)
 {
     return toImpl(stringRef)->maximumUTF8CStringSize();

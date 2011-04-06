@@ -1,3 +1,20 @@
+2011-04-06  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add WKStringGetCharactersPtr() and WKStringGetLength() to WebKit2 C API
+        https://bugs.webkit.org/show_bug.cgi?id=57989
+        
+        Note that WKChar, which is returned by WKStringGetCharactersPtr(), is defined the same way we define JSChar in JSStringRef.h.
+
+        * Shared/API/c/WKString.cpp:
+        (WKStringGetLength): Added.
+        (WKStringGetCharactersPtr): Added.
+        * Shared/API/c/WKString.h: Define WKChar and added WKStringGetLength() and WKStringGetCharactersPtr().
+        * Shared/WebString.h:
+        (WebKit::WebString::length): Added.
+        (WebKit::WebString::characters): Added.
+
 2011-04-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver Hunt.
