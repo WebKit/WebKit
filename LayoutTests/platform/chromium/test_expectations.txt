@@ -2284,9 +2284,6 @@ BUGCR53554 MAC LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = PASS I
 // New test, need to verify if it's safe to rebaseline.
 BUGWK44770 WIN LINUX : svg/repaint/filter-repaint.svg = IMAGE+TEXT CRASH
 
-// Full Screen JS API is not yet enabled.
-BUGWK44797 SKIP : fullscreen = PASS FAIL TIMEOUT
-
 // Not focusing an anchor when tab is pressed.
 BUGWK45061 : fast/forms/focus2.html = FAIL TIMEOUT
 

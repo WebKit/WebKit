@@ -1,3 +1,14 @@
+2011-04-06  David Dorwin  <ddorwin@chromium.org>
+
+        Reviewed by David Levin.
+
+        Enable fullscreen layout tests for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=55726
+
+        Remove test_expectations override for fullscreen tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-06  Adrienne Walker  <enne@google.com>
 
         Unreviewed, rebaseline Chromium Mac tests after r83075.
