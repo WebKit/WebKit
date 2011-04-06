@@ -1,3 +1,9 @@
+2011-04-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed Qt buildfix after r83079.
+
+        * WebCore.pro:
+
 2011-04-06  Dean Jackson  <dino@apple.com>
 
         Reviewed by Chris Marrin.

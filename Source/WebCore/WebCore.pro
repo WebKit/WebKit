@@ -229,6 +229,7 @@ v8 {
 } else {
     SOURCES += \
         bindings/ScriptControllerBase.cpp \
+        bindings/js/CallbackFunction.cpp \
         bindings/js/DOMObjectHashTableMap.cpp \
         bindings/js/DOMWrapperWorld.cpp \
         bindings/js/GCController.cpp \
@@ -1269,7 +1270,6 @@ v8 {
 } else {
     HEADERS += \
         bindings/js/CachedScriptSourceProvider.h \
-        bindings/js/CallbackFunction.cpp \
         bindings/js/CallbackFunction.h \
         bindings/js/GCController.h \
         bindings/js/DOMObjectHashTableMap.h \
