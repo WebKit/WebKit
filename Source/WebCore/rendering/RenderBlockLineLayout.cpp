@@ -60,13 +60,12 @@ namespace WebCore {
 // We don't let our line box tree for a single line get any deeper than this.
 const unsigned cMaxLineDepth = 200;
 
-static inline int borderPaddingMarginStart(RenderBoxModelObject* child)
+static inline int borderPaddingMarginStart(RenderInline* child)
 {
-    // FIXME: Should we call marginStartForChild instead?
     return child->marginStart() + child->paddingStart() + child->borderStart();
 }
 
-static inline int borderPaddingMarginEnd(RenderBoxModelObject* child)
+static inline int borderPaddingMarginEnd(RenderInline* child)
 {
     return child->marginEnd() + child->paddingEnd() + child->borderEnd();
 }
@@ -76,13 +75,12 @@ static int inlineLogicalWidth(RenderObject* child, bool start = true, bool end =
     unsigned lineDepth = 1;
     int extraWidth = 0;
     RenderObject* parent = child->parent();
-    while (parent->isInline() && !parent->isInlineBlockOrInlineTable() && lineDepth++ < cMaxLineDepth) {
-        RenderBoxModelObject* parentAsBoxModelObject = toRenderBoxModelObject(parent);
-        ASSERT(parentAsBoxModelObject);
+    while (parent->isRenderInline() && lineDepth++ < cMaxLineDepth) {
+        RenderInline* parentAsRenderInline = toRenderInline(parent);
         if (start && !child->previousSibling())
-            extraWidth += borderPaddingMarginStart(parentAsBoxModelObject);
+            extraWidth += borderPaddingMarginStart(parentAsRenderInline);
         if (end && !child->nextSibling())
-            extraWidth += borderPaddingMarginEnd(parentAsBoxModelObject);
+            extraWidth += borderPaddingMarginEnd(parentAsRenderInline);
         child = parent;
         parent = child->parent();
     }
