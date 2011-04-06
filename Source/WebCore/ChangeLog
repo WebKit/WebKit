@@ -1,3 +1,58 @@
+2011-04-06  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Refactoring] <progress> should not have manual layout code.
+        https://bugs.webkit.org/show_bug.cgi?id=57801
+
+        - Simplified RenderProgress, removing its custom layout code
+        - Introducing ProgressValueElement and ProgressBarElement, replacing
+          ProgressBarValueElement. 
+        
+        Now the structure is almost identical to <meter>, 
+        other than:
+        - RenderProgress has animated painting, thus manages its own timer.
+        - Both ProgressValueElement and ProgressBarElement has pseudo classes
+          which don't changes during its lifetime.
+       
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/html.css:
+        (progress):
+        (progress::-webkit-progress-bar):
+        (progress::-webkit-progress-value):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::~HTMLProgressElement):
+        (WebCore::HTMLProgressElement::create):
+        (WebCore::HTMLProgressElement::attach):
+        (WebCore::HTMLProgressElement::didElementStateChange):
+        (WebCore::HTMLProgressElement::createShadowSubtree):
+        * html/HTMLProgressElement.h:
+        * html/shadow/ProgressShadowElement.cpp: Copied from Source/WebCore/html/shadow/ProgressBarValueElement.h.
+        (WebCore::ProgressShadowElement::ProgressShadowElement):
+        (WebCore::ProgressShadowElement::progressElement):
+        (WebCore::ProgressShadowElement::rendererIsNeeded):
+        (WebCore::ProgressBarElement::shadowPseudoId):
+        (WebCore::ProgressValueElement::shadowPseudoId):
+        (WebCore::ProgressValueElement::setWidthPercentage):
+        * html/shadow/ProgressShadowElement.h: Renamed from Source/WebCore/html/shadow/ProgressBarValueElement.h.
+        (WebCore::ProgressBarElement::ProgressBarElement):
+        (WebCore::ProgressBarElement::create):
+        (WebCore::ProgressValueElement::ProgressValueElement):
+        (WebCore::ProgressValueElement::create):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::RenderProgress):
+        (WebCore::RenderProgress::updateFromElement):
+        (WebCore::RenderProgress::animationTimerFired):
+        * rendering/RenderProgress.h:
+        (WebCore::RenderProgress::requiresForcedStyleRecalcPropagation):
+        (WebCore::RenderProgress::canHaveChildren):
+
 2011-04-06  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

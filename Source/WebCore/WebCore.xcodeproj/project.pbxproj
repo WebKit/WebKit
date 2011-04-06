@@ -3197,6 +3197,8 @@
 		A622A8FD122C44A600A785B3 /* BindingSecurityBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F7122C44A600A785B3 /* BindingSecurityBase.h */; };
 		A622A8FF122C44A600A785B3 /* GenericBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F9122C44A600A785B3 /* GenericBinding.h */; };
 		A7151BD812F1558F005A0F64 /* TextCheckerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A7151BD712F1558F005A0F64 /* TextCheckerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A715E652134BBBEC00D8E713 /* ProgressShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A715E650134BBBEC00D8E713 /* ProgressShadowElement.cpp */; };
+		A715E653134BBBEC00D8E713 /* ProgressShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A715E651134BBBEC00D8E713 /* ProgressShadowElement.h */; };
 		A718760E0B2A120100A16ECE /* DragActions.h in Headers */ = {isa = PBXBuildFile; fileRef = A718760D0B2A120100A16ECE /* DragActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
 		A73F95FE12C97BFE0031AAF9 /* RoundedIntRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73F95FC12C97BFE0031AAF9 /* RoundedIntRect.cpp */; };
@@ -3250,7 +3252,6 @@
 		A7DBF8DE1276919C006B6008 /* TextCheckingHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A7DBF8DC1276919C006B6008 /* TextCheckingHelper.h */; };
 		A7F338A311C0EFCA00A320A7 /* ShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F338A111C0EFCA00A320A7 /* ShadowElement.cpp */; };
 		A7F338A411C0EFCA00A320A7 /* ShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F338A211C0EFCA00A320A7 /* ShadowElement.h */; };
-		A7FE819C12FA677700850C1E /* ProgressBarValueElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FE819B12FA677700850C1E /* ProgressBarValueElement.h */; };
 		A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */; };
 		A80D67080E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h in Headers */ = {isa = PBXBuildFile; fileRef = A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */; };
 		A80E6CE40A1989CA007FB8C5 /* CSSValueList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */; };
@@ -9722,6 +9723,8 @@
 		A622A8F7122C44A600A785B3 /* BindingSecurityBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindingSecurityBase.h; path = generic/BindingSecurityBase.h; sourceTree = "<group>"; };
 		A622A8F9122C44A600A785B3 /* GenericBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericBinding.h; path = generic/GenericBinding.h; sourceTree = "<group>"; };
 		A7151BD712F1558F005A0F64 /* TextCheckerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerClient.h; sourceTree = "<group>"; };
+		A715E650134BBBEC00D8E713 /* ProgressShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgressShadowElement.cpp; sourceTree = "<group>"; };
+		A715E651134BBBEC00D8E713 /* ProgressShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressShadowElement.h; sourceTree = "<group>"; };
 		A718760D0B2A120100A16ECE /* DragActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragActions.h; sourceTree = "<group>"; };
 		A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragControllerMac.mm; sourceTree = "<group>"; };
 		A71A70C911AFB02000989D6D /* HTMLMeterElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMeterElement.idl; sourceTree = "<group>"; };
@@ -9778,7 +9781,6 @@
 		A7DBF8DC1276919C006B6008 /* TextCheckingHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckingHelper.h; sourceTree = "<group>"; };
 		A7F338A111C0EFCA00A320A7 /* ShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowElement.cpp; sourceTree = "<group>"; };
 		A7F338A211C0EFCA00A320A7 /* ShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowElement.h; sourceTree = "<group>"; };
-		A7FE819B12FA677700850C1E /* ProgressBarValueElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressBarValueElement.h; sourceTree = "<group>"; };
 		A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PatternCG.cpp; sourceTree = "<group>"; };
 		A80D67070E9E9DEB00E420F0 /* GraphicsContextPlatformPrivateCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContextPlatformPrivateCG.h; sourceTree = "<group>"; };
 		A80E6CBA0A1989CA007FB8C5 /* CSSValueList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSValueList.cpp; sourceTree = "<group>"; };
@@ -13441,7 +13443,8 @@
 				4157AF7E12F1FB0400A8C6F5 /* MediaControls.h */,
 				A78E526D1346BD1700AD9C31 /* MeterShadowElement.cpp */,
 				A78E526E1346BD1700AD9C31 /* MeterShadowElement.h */,
-				A7FE819B12FA677700850C1E /* ProgressBarValueElement.h */,
+				A715E650134BBBEC00D8E713 /* ProgressShadowElement.cpp */,
+				A715E651134BBBEC00D8E713 /* ProgressShadowElement.h */,
 				4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */,
 				4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */,
 				142B97C713138943008BEF4B /* TextControlInnerElements.cpp */,
@@ -22002,8 +22005,8 @@
 				FE80D7D10E9C1F25000D6F75 /* PositionOptions.h in Headers */,
 				B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */,
 				A8EA7EBC0A1945D000A8EF5F /* ProcessingInstruction.h in Headers */,
-				A7FE819C12FA677700850C1E /* ProgressBarValueElement.h in Headers */,
 				E44613EC0CD681B500FADA75 /* ProgressEvent.h in Headers */,
+				A715E653134BBBEC00D8E713 /* ProgressShadowElement.h in Headers */,
 				1A2A68240B5BEDE70002A480 /* ProgressTracker.h in Headers */,
 				514C76750CE923A1007EF3CD /* ProtectionSpace.h in Headers */,
 				51A052561058874000CC9E95 /* ProtectionSpaceHash.h in Headers */,
@@ -24859,6 +24862,7 @@
 				B776D43D1104527500BEB0EC /* PrintContext.cpp in Sources */,
 				A8EA7EBD0A1945D000A8EF5F /* ProcessingInstruction.cpp in Sources */,
 				E44613EB0CD681B400FADA75 /* ProgressEvent.cpp in Sources */,
+				A715E652134BBBEC00D8E713 /* ProgressShadowElement.cpp in Sources */,
 				1A2A68230B5BEDE70002A480 /* ProgressTracker.cpp in Sources */,
 				514C76740CE923A1007EF3CD /* ProtectionSpace.cpp in Sources */,
 				1AF8E13312565A4400230FF7 /* ProxyServer.cpp in Sources */,

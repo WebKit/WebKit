@@ -56405,6 +56405,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\shadow\ProgressShadowElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\ProgressShadowElement.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\shadow\SliderThumbElement.cpp"
 					>
 				</File>

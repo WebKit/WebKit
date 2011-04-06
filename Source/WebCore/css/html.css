@@ -708,16 +708,24 @@ meter::-webkit-meter-even-less-good-value {
 
 progress {
     -webkit-appearance: progress-bar;
+    -webkit-box-sizing: border-box;
     display: inline-block;
     height: 1em;
     width: 10em;
     vertical-align: -0.2em;
-    background-color: gray;
 }
 
-progress::-webkit-progress-bar-value {
-    -webkit-appearance: progress-bar;
+progress::-webkit-progress-bar {
+    background-color: gray;
+    height: 100%;
+    -webkit-box-sizing: border-box;
+}
+
+progress::-webkit-progress-value {
     background-color: green;
+    height: 100%;
+    width: 50%; /* should be removed later */
+    -webkit-box-sizing: border-box;
 }
 
 /* datagrid */

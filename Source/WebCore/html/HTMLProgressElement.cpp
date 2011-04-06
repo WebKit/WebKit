@@ -30,7 +30,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "ProgressBarValueElement.h"
+#include "ProgressShadowElement.h"
 #include "RenderProgress.h"
 #include <wtf/StdLibExtras.h>
 
@@ -44,9 +44,15 @@ HTMLProgressElement::HTMLProgressElement(const QualifiedName& tagName, Document*
     ASSERT(hasTagName(progressTag));
 }
 
+HTMLProgressElement::~HTMLProgressElement()
+{
+}
+
 PassRefPtr<HTMLProgressElement> HTMLProgressElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
 {
-    return adoptRef(new HTMLProgressElement(tagName, document, form));
+    RefPtr<HTMLProgressElement> progress = adoptRef(new HTMLProgressElement(tagName, document, form));
+    progress->createShadowSubtree();
+    return progress;
 }
 
 RenderObject* HTMLProgressElement::createRenderer(RenderArena* arena, RenderStyle*)
@@ -72,7 +78,6 @@ void HTMLProgressElement::parseMappedAttribute(Attribute* attribute)
 
 void HTMLProgressElement::attach()
 {
-    createShadowSubtreeIfNeeded();
     HTMLFormControlElement::attach();
     didElementStateChange();
 }
@@ -123,15 +128,18 @@ double HTMLProgressElement::position() const
 
 void HTMLProgressElement::didElementStateChange()
 {
+    m_value->setWidthPercentage(position()*100);
     if (renderer())
         renderer()->updateFromElement();
 }
 
-void HTMLProgressElement::createShadowSubtreeIfNeeded()
+void HTMLProgressElement::createShadowSubtree()
 {
-    if (shadowRoot())
-        return;
-    setShadowRoot(ProgressBarValueElement::create(document()).get());
+    RefPtr<ProgressBarElement> bar = ProgressBarElement::create(document());
+    m_value = ProgressValueElement::create(document());
+    ExceptionCode e = 0;
+    bar->appendChild(m_value, e);
+    setShadowRoot(bar);
 }
 
 } // namespace

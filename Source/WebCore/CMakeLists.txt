@@ -875,6 +875,7 @@ SET(WebCore_SOURCES
 
     html/shadow/MediaControls.cpp
     html/shadow/MeterShadowElement.cpp
+    html/shadow/ProgressShadowElement.cpp
     html/shadow/SliderThumbElement.cpp
     html/shadow/TextControlInnerElements.cpp
 

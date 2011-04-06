@@ -1,38 +1,29 @@
 <html>
 <head><script>
 window.onload = function() {
-    document.getElementById("toChangeStyle").setAttribute("style", "border:3px red dotted; background-color:cyan;");
-    document.getElementById("toAddStyle").setAttribute("style", "border:3px red dotted; background-color:cyan; -webkit-appearance: none;");
+    document.getElementById("removingAppearanceDynamically").setAttribute("style", "-webkit-appearance: none;");
+    document.getElementById("givingProgressStyleDynamically").setAttribute("style", "background-color: lightblue;");
 }
 </script>
 <style>
 .styled { -webkit-appearance: none; }
-.styled::-webkit-progress-bar-value { background-color: lightgray; }
-#toAddStyle::-webkit-progress-bar-value {background-color:darkblue;}
+.transparent-bar::-webkit-progress-bar { background-color: transparent; }
+.transparent-value::-webkit-progress-value { background-color: transparent; }
+.progress-style { border:3px solid #006; background-color: blue; }
+.bar-style::-webkit-progress-bar { background-color: red; border:3px solid #900; }
+.value-style::-webkit-progress-value { background-color: yellow; border:3px solid #990; }
 </style>
 </head>
 <body>
   <ul>
-    <li>
-      Giving style statically : background-color: 
-      <progress class="styled" max=100 value=70 style="width:300px; height:50px; background-color:blue; " >
-    </li>
-    <li>
-      Giving style statically : border:
-      <progress class="styled" style="border:3px solid red;" value=0.5>
-    </li>
-    <li>
-      Giving style statically, only for -webkit-progress-bar-value:
-      <progress class="styled" value=0.5></progress>
-    </li>
-    <li>
-      Adding style dynamically:
-      <progress value=0.5 id="toAddStyle"></progress>
-    </li>
-    <li>
-      Changing style dynamically:
-      <progress class="styled" max=100 value=70 dir="rtl" id="toChangeStyle"></progress>
-    </li>
+    <li>Default style: <progress value=0.1 style="-webkit-appearance: none;" ></li>
+    <li>Progress style: <progress class="styled transparent-bar progress-style" value=0.2>
+    <li>Progress style (size): <progress class="styled" style="width: 300px; height: 30px;" value=0.3>
+    <li>Bar style: <progress class="styled bar-style" value=0.4>
+    <li>Value style: <progress class="styled value-style" value=0.5>
+    <li>Styling for all three elements: <progress class="styled progress-style bar-style value-style" style="height:30px" value=0.6>
+    <li>Removing appearance dynamically: <progress id="removingAppearanceDynamically" value=0.7>
+    <li>Giving progress style change dynamically: <progress id="givingProgressStyleDynamically" class="styled transparent-bar" value=0.8>
   </ul>
 </body>
 </html>

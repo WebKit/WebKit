@@ -26,6 +26,8 @@
 
 namespace WebCore {
 
+class ProgressValueElement;
+
 class HTMLProgressElement : public HTMLFormControlElement {
 public:
     static PassRefPtr<HTMLProgressElement> create(const QualifiedName&, Document*, HTMLFormElement*);
@@ -40,6 +42,7 @@ public:
 
 private:
     HTMLProgressElement(const QualifiedName&, Document*, HTMLFormElement*);
+    virtual ~HTMLProgressElement();
 
     virtual bool recalcWillValidate() const { return false; }
 
@@ -52,7 +55,9 @@ private:
     virtual void attach();
 
     void didElementStateChange();
-    void createShadowSubtreeIfNeeded();
+    void createShadowSubtree();
+
+    RefPtr<ProgressValueElement> m_value;
 };
 
 } // namespace

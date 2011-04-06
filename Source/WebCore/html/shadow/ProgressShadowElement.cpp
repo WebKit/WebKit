@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,45 +28,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ProgressBarValueElement_h
-#define ProgressBarValueElement_h
+#include "config.h"
+#if ENABLE(PROGRESS_TAG)
+#include "ProgressShadowElement.h"
 
-#include "HTMLDivElement.h"
 #include "HTMLNames.h"
-#include "RenderProgress.h"
-#include <wtf/Forward.h>
+#include "HTMLProgressElement.h"
+#include "RenderObject.h"
 
 namespace WebCore {
 
-class ProgressBarValueElement : public HTMLDivElement {
-public:
-    ProgressBarValueElement(Document* document) 
-        : HTMLDivElement(HTMLNames::divTag, document)
-    {
-    }
+using namespace HTMLNames;
 
-    virtual const AtomicString& shadowPseudoId() const;
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    static PassRefPtr<ProgressBarValueElement> create(Document*);
-
-};
-
-inline const AtomicString& ProgressBarValueElement::shadowPseudoId() const
+ProgressShadowElement::ProgressShadowElement(Document* document) 
+    : HTMLDivElement(HTMLNames::divTag, document)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-progress-bar-value"));
+}
+
+HTMLProgressElement* ProgressShadowElement::progressElement() const
+{
+    Node* node = const_cast<ProgressShadowElement*>(this)->shadowAncestorNode();
+    ASSERT(!node || progressTag == toElement(node)->tagQName());
+    return static_cast<HTMLProgressElement*>(node);
+}
+
+bool ProgressShadowElement::rendererIsNeeded(RenderStyle* style)
+{
+    RenderObject* progressRenderer = progressElement()->renderer();
+    return progressRenderer && !progressRenderer->style()->hasAppearance() && HTMLDivElement::rendererIsNeeded(style);
+}
+
+const AtomicString& ProgressBarElement::shadowPseudoId() const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-progress-bar"));
     return pseudId;
 }
 
-inline RenderObject* ProgressBarValueElement::createRenderer(RenderArena* arena, RenderStyle*)
+
+const AtomicString& ProgressValueElement::shadowPseudoId() const
 {
-    return new (arena) RenderProgressBarValuePart(this);
+    DEFINE_STATIC_LOCAL(AtomicString, pseudId, ("-webkit-progress-value"));
+    return pseudId;
 }
 
-inline PassRefPtr<ProgressBarValueElement> ProgressBarValueElement::create(Document* document)
+void ProgressValueElement::setWidthPercentage(double width)
 {
-    return adoptRef(new ProgressBarValueElement(document));
+    getInlineStyleDecl()->setProperty(CSSPropertyWidth, width, CSSPrimitiveValue::CSS_PERCENTAGE);
 }
 
 }
-
 #endif
+

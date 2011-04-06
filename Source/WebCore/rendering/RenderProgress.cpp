@@ -36,18 +36,8 @@ using namespace std;
 
 namespace WebCore {
 
-IntRect RenderProgressBarValuePart::preferredFrameRect()
-{
-    return toRenderProgress(parent())->valuePartRect();
-}
-
-bool RenderProgressBarValuePart::shouldBeHidden()
-{
-    return !toRenderProgress(parent())->shouldHaveParts();
-}
-
 RenderProgress::RenderProgress(HTMLProgressElement* element)
-    : RenderIndicator(element)
+    : RenderBlock(element)
     , m_position(-1)
     , m_animationStartTime(0)
     , m_animationRepeatInterval(0)
@@ -69,7 +59,7 @@ void RenderProgress::updateFromElement()
     m_position = element->position();
 
     updateAnimationState();
-    RenderIndicator::updateFromElement();
+    RenderBlock::updateFromElement();
 }
 
 double RenderProgress::animationProgress() const
@@ -85,30 +75,8 @@ bool RenderProgress::isDeterminate() const
 void RenderProgress::animationTimerFired(Timer<RenderProgress>*)
 {
     repaint();
-}
-
-void RenderProgress::paint(PaintInfo& paintInfo, int tx, int ty)
-{
-    if (paintInfo.phase == PaintPhaseBlockBackground) {
-        if (!m_animationTimer.isActive() && m_animating)
-            m_animationTimer.startOneShot(m_animationRepeatInterval);
-    }
-
-    RenderIndicator::paint(paintInfo, tx, ty);
-}
-
-void RenderProgress::layoutParts()
-{
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-        child->layout();
-    updateAnimationState();
-}
-
-bool RenderProgress::shouldHaveParts() const
-{
-    if (!style()->hasAppearance())
-        return true;
-    return false;
+    if (!m_animationTimer.isActive() && m_animating)
+        m_animationTimer.startOneShot(m_animationRepeatInterval);
 }
 
 void RenderProgress::updateAnimationState()
@@ -126,14 +94,6 @@ void RenderProgress::updateAnimationState()
         m_animationTimer.startOneShot(m_animationRepeatInterval);
     } else
         m_animationTimer.stop();
-}
-
-IntRect RenderProgress::valuePartRect() const
-{
-    IntRect rect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), lround((width() - borderLeft() - paddingLeft() - borderRight() - paddingRight()) * position()), height()  - borderTop() - paddingTop() - borderBottom() - paddingBottom());
-    if (!style()->isLeftToRightDirection())
-        rect.setX(width() - borderRight() - paddingRight() - rect.width());
-    return rect;
 }
 
 HTMLProgressElement* RenderProgress::progressElement() const
