@@ -107,10 +107,13 @@ bool CSSStyleDeclaration::isPropertyImplicit(const String& propertyName)
 void CSSStyleDeclaration::setProperty(const String& propertyName, const String& value, ExceptionCode& ec)
 {
     size_t important = value.find("!important", 0, false);
+    int propertyID = cssPropertyID(propertyName);
+    if (!propertyID)
+        return;
     if (important == notFound)
-        setProperty(propertyName, value, "", ec);
+        setProperty(propertyID, value, false, ec);
     else
-        setProperty(propertyName, value.left(important - 1), "important", ec);
+        setProperty(propertyID, value.left(important - 1), true, ec);
 }
 
 void CSSStyleDeclaration::setProperty(const String& propertyName, const String& value, const String& priority, ExceptionCode& ec)

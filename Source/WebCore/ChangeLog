@@ -1,3 +1,16 @@
+2011-04-06  Ian Henderson  <ianh@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Unnecessary string allocation in CSSStyleDeclaration::setProperty
+        https://bugs.webkit.org/show_bug.cgi?id=57995
+
+        Pass the bool representing the property's importance directly instead
+        of constructing a string.
+
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::setProperty):
+
 2011-04-06  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Steve Block.
