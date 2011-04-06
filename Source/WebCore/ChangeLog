@@ -1,3 +1,14 @@
+2011-04-06  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Add <head> to the simpleUserAgentStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=57915
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::elementCanUseSimpleDefaultStyle): add head to the
+        simple stylesheet, display:none.
+
 2011-04-05  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
