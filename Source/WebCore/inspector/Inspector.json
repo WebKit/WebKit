@@ -1087,7 +1087,7 @@
             {
                 "name": "getAllStyleSheets",
                 "returns": [
-                    { "name": "styleSheetInfos", "type": "array", "items": { "$ref": "CSSStyleSheetHeader" }, "description": "Descriptor entries for all available stylesheets." }
+                    { "name": "headers", "type": "array", "items": { "$ref": "CSSStyleSheetHeader" }, "description": "Descriptor entries for all available stylesheets." }
                 ],
                 "description": "Returns metainfo entries for all known stylesheets."
             },
