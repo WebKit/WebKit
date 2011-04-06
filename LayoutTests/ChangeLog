@@ -1,3 +1,13 @@
+2011-04-06  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        REGRESSION(r81328): Null pointer crash in canAppendNewLineFeed when selection isn't inside an editable element
+        https://bugs.webkit.org/show_bug.cgi?id=57755
+
+        * editing/execCommand/insert-line-break-onload-expected.txt: Added.
+        * editing/execCommand/insert-line-break-onload.html: Added to check calling InsertLineBreak without any crash.
+
 2011-04-05  James Kozianski  <koz@chromium.org>
 
         [chromium] Rebaseline images after r82969

@@ -49,9 +49,13 @@ using namespace HTMLNames;
 
 static bool canAppendNewLineFeed(const VisibleSelection& selection)
 {
-    ExceptionCode ec = 0;
+    Node* node = selection.rootEditableElement();
+    if (!node)
+        return false;
+
     RefPtr<BeforeTextInsertedEvent> event = BeforeTextInsertedEvent::create(String("\n"));
-    selection.rootEditableElement()->dispatchEvent(event, ec);
+    ExceptionCode ec = 0;
+    node->dispatchEvent(event, ec);
     return event->text().length();
 }
 
