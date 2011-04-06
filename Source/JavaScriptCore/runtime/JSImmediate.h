@@ -54,51 +54,8 @@ namespace JSC {
     }
 
     /*
-     * A JSValue* is either a pointer to a cell (a heap-allocated object) or an immediate (a type-tagged 
-     * value masquerading as a pointer). The low two bits in a JSValue* are available for type tagging
-     * because allocator alignment guarantees they will be 00 in cell pointers.
-     *
-     * For example, on a 32 bit system:
-     *
-     * JSCell*:             XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     00
-     *                      [ high 30 bits: pointer address ]  [ low 2 bits -- always 0 ]
-     * JSImmediate:         XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     TT
-     *                      [ high 30 bits: 'payload' ]             [ low 2 bits -- tag ]
-     *
-     * Where the bottom two bits are non-zero they either indicate that the immediate is a 31 bit signed
-     * integer, or they mark the value as being an immediate of a type other than integer, with a secondary
-     * tag used to indicate the exact type.
-     *
-     * Where the lowest bit is set (TT is equal to 01 or 11) the high 31 bits form a 31 bit signed int value.
-     * Where TT is equal to 10 this indicates this is a type of immediate other than an integer, and the next
-     * two bits will form an extended tag.
-     *
-     * 31 bit signed int:   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     X1
-     *                      [ high 30 bits of the value ]      [ high bit part of value ]
-     * Other:               YYYYYYYYYYYYYYYYYYYYYYYYYYYY      ZZ               10
-     *                      [ extended 'payload' ]  [  extended tag  ]  [  tag 'other'  ]
-     *
-     * Where the first bit of the extended tag is set this flags the value as being a boolean, and the following
-     * bit would flag the value as undefined.  If neither bits are set, the value is null.
-     *
-     * Other:               YYYYYYYYYYYYYYYYYYYYYYYYYYYY      UB               10
-     *                      [ extended 'payload' ]  [ undefined | bool ]  [ tag 'other' ]
-     *
-     * For boolean value the lowest bit in the payload holds the value of the bool, all remaining bits are zero.
-     * For undefined or null immediates the payload is zero.
-     *
-     * Boolean:             000000000000000000000000000V      01               10
-     *                      [ boolean value ]              [ bool ]       [ tag 'other' ]
-     * Undefined:           0000000000000000000000000000      10               10
-     *                      [ zero ]                    [ undefined ]     [ tag 'other' ]
-     * Null:                0000000000000000000000000000      00               10
-     *                      [ zero ]                       [ zero ]       [ tag 'other' ]
-     */
-
-    /*
-     * On 64-bit platforms, we support an alternative encoding form for immediates, if
-     * USE(JSVALUE64) is defined.  When this format is used, double precision
-     * floating point values may also be encoded as JSImmediates.
+     * On 64-bit platforms USE(JSVALUE64) should be defined, and we use a NaN-encoded
+     * form for immediates.
      *
      * The encoding makes use of unused NaN space in the IEEE754 representation.  Any value
      * with the top 13 bits set represents a QNaN (with the sign bit set).  QNaN values
@@ -107,25 +64,44 @@ namespace JSC {
      * pointer and integer values.  Since any 64-bit bit pattern where the top 15 bits are
      * all set represents a NaN with a non-zero payload, we can use this space in the NaN
      * ranges to encode other values (however there are also other ranges of NaN space that
-     * could have been selected).  This range of NaN space is represented by 64-bit numbers
-     * begining with the 16-bit hex patterns 0xFFFE and 0xFFFF - we rely on the fact that no
-     * valid double-precision numbers will begin fall in these ranges.
+     * could have been selected).
      *
-     * The scheme we have implemented encodes double precision values by adding 2^48 to the
-     * 64-bit integer representation of the number.  After this manipulation, no encoded
-     * double-precision value will begin with the pattern 0x0000 or 0xFFFF.
+     * This range of NaN space is represented by 64-bit numbers begining with the 16-bit
+     * hex patterns 0xFFFE and 0xFFFF - we rely on the fact that no valid double-precision
+     * numbers will begin fall in these ranges.
      *
      * The top 16-bits denote the type of the encoded JSImmediate:
      *
-     * Pointer: 0000:PPPP:PPPP:PPPP
-     *          0001:****:****:****
-     * Double:{         ...
-     *          FFFE:****:****:****
-     * Integer: FFFF:0000:IIII:IIII
+     *     Pointer {  0000:PPPP:PPPP:PPPP
+     *              / 0001:****:****:****
+     *     Double  {         ...
+     *              \ FFFE:****:****:****
+     *     Integer {  FFFF:0000:IIII:IIII
      *
-     * 32-bit signed integers are marked with the 16-bit tag 0xFFFF.  The tag 0x0000
-     * denotes a pointer, or another form of tagged immediate.  Boolean, null and undefined
-     * values are encoded in the same manner as the default format.
+     * The scheme we have implemented encodes double precision values by performing a
+     * 64-bit integer addition of the value 2^48 to the number. After this manipulation
+     * no encoded double-precision value will begin with the pattern 0x0000 or 0xFFFF.
+     * Values must be decoded by reversing this operation before subsequent floating point
+     * operations my be peformed.
+     *
+     * 32-bit signed integers are marked with the 16-bit tag 0xFFFF.
+     *
+     * The tag 0x0000 denotes a pointer, or another form of tagged immediate. Boolean,
+     * null and undefined values are represented by specific, invalid pointer values:
+     *
+     *     False:     0x06
+     *     True:      0x16
+     *     Undefined: 0x0a
+     *     Null:      0x02
+     *
+     * These values have the following properties:
+     * - Bit 1 (TagBitTypeOther) is set for all four values, allowing real pointers to be
+     *   quickly distinguished from all immediate values, including these invalid pointers.
+     * - With bit 3 is masked out (ExtendedTagBitUndefined) Undefined and Null share the
+     *   same value, allowing null & undefined to be quickly detected.
+     *
+     * No valid JSValue will have the bit pattern 0x0, this is used to represent array
+     * holes, and as a C++ 'no value' result (e.g. JSValue() has an internal value of 0).
      */
 
     class JSImmediate {

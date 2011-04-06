@@ -1,3 +1,12 @@
+2011-04-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Geoff Garen.
+
+        Update comments documenting JSVALUE64/JSVALUE32_64 JSValue representations.
+
+        * runtime/JSImmediate.h:
+        * runtime/JSValue.h:
+
 2011-04-06  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         cmake: Fix build for ARMv7

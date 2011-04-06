@@ -253,6 +253,24 @@ namespace JSC {
         JSObject* synthesizeObject(ExecState*) const;
 
 #if USE(JSVALUE32_64)
+        /*
+         * On 32-bit platforms USE(JSVALUE32_64) should be defined, and we use a NaN-encoded
+         * form for immediates.
+         *
+         * The encoding makes use of unused NaN space in the IEEE754 representation.  Any value
+         * with the top 13 bits set represents a QNaN (with the sign bit set).  QNaN values
+         * can encode a 51-bit payload.  Hardware produced and C-library payloads typically
+         * have a payload of zero.  We assume that non-zero payloads are available to encode
+         * pointer and integer values.  Since any 64-bit bit pattern where the top 15 bits are
+         * all set represents a NaN with a non-zero payload, we can use this space in the NaN
+         * ranges to encode other values (however there are also other ranges of NaN space that
+         * could have been selected).
+         *
+         * For JSValues that do not contain a double value, the high 32 bits contain the tag
+         * values listed in the enums below, which all correspond to NaN-space. In the case of
+         * cell and integer values the lower 32 bits (the 'payload') contain the pointer or
+         * integer value; in the case of all other tags the payload is 0.
+         */
         enum { NullTag =         0xffffffff };
         enum { UndefinedTag =    0xfffffffe };
         enum { Int32Tag =        0xfffffffd };
