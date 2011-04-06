@@ -63,7 +63,7 @@ namespace WebCore {
         void parseSheet(CSSStyleSheet*, const String&, int startLineNumber = 0, StyleRuleRangeMap* ruleRangeMap = 0);
         PassRefPtr<CSSRule> parseRule(CSSStyleSheet*, const String&);
         PassRefPtr<CSSRule> parseKeyframeRule(CSSStyleSheet*, const String&);
-        bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important);
+        static bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important, bool strict);
         static bool parseColor(RGBA32& color, const String&, bool strict = false);
         static bool parseSystemColor(RGBA32& color, const String&, Document*);
         bool parseColor(CSSMutableStyleDeclaration*, const String&);
@@ -290,6 +290,8 @@ namespace WebCore {
 
         bool isGeneratedImageValue(CSSParserValue*) const;
         bool parseGeneratedImage(RefPtr<CSSValue>&);
+
+        bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important);
 
         enum SizeParameterType {
             None,

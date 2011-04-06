@@ -571,8 +571,7 @@ bool CSSMutableStyleDeclaration::setProperty(int propertyID, const String& value
 
     // When replacing an existing property value, this moves the property to the end of the list.
     // Firefox preserves the position, and MSIE moves the property to the beginning.
-    CSSParser parser(useStrictParsing());
-    bool success = parser.parseValue(this, propertyID, value, important);
+    bool success = CSSParser::parseValue(this, propertyID, value, important, useStrictParsing());
     if (!success) {
         // CSS DOM requires raising SYNTAX_ERR here, but this is too dangerous for compatibility,
         // see <http://bugs.webkit.org/show_bug.cgi?id=7296>.

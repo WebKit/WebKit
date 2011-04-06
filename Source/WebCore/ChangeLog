@@ -1,3 +1,35 @@
+2011-04-06  Ian Henderson  <ianh@apple.com>
+
+        Reviewed by Simon Fraser, Antti Koivisto.
+
+        Fast path for parsing simple CSS values
+        https://bugs.webkit.org/show_bug.cgi?id=57964
+
+        Add functions to parse simple color or dimension values, skipping the
+        overhead of full CSS parsing.
+
+        Change parseValue to a static method to avoid unnecessary allocation
+        of a CSSParser in the fast case.
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setProperty):
+        Changed to use the new, static parseValue method.
+        * css/CSSParser.cpp:
+        (WebCore::isColorPropertyID):
+        (WebCore::parseColorValue):
+        Parses any color accepted by the existing parseColor() static method.
+        We must handle color identifiers separately, since parseColor() will
+        change 'red' into 'rgb(255, 0, 0)'.
+        (WebCore::isSimpleLengthPropertyID):
+        (WebCore::parseSimpleLengthValue):
+        Parses a value of the form 'NNpx', 'NN%', or 'NN' (when strict is
+        false, or 'NN' is '0').  Returns false to fall back to the slow path.
+        (WebCore::CSSParser::parseValue):
+        * css/CSSParser.h:
+        * css/WebKitCSSMatrix.cpp:
+        (WebCore::WebKitCSSMatrix::setMatrixValue):
+        Changed to use the new, static parseValue method.
+
 2011-04-06  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.

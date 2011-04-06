@@ -259,14 +259,171 @@ PassRefPtr<CSSRule> CSSParser::parseKeyframeRule(CSSStyleSheet *sheet, const Str
     return m_keyframe.release();
 }
 
-bool CSSParser::parseValue(CSSMutableStyleDeclaration* declaration, int id, const String& string, bool important)
+static inline bool isColorPropertyID(int propertyId)
+{
+    switch (propertyId) {
+    case CSSPropertyColor:
+    case CSSPropertyBackgroundColor:
+    case CSSPropertyBorderBottomColor:
+    case CSSPropertyBorderLeftColor:
+    case CSSPropertyBorderRightColor:
+    case CSSPropertyBorderTopColor:
+    case CSSPropertyOutlineColor:
+    case CSSPropertyTextLineThroughColor:
+    case CSSPropertyTextOverlineColor:
+    case CSSPropertyTextUnderlineColor:
+    case CSSPropertyWebkitBorderAfterColor:
+    case CSSPropertyWebkitBorderBeforeColor:
+    case CSSPropertyWebkitBorderEndColor:
+    case CSSPropertyWebkitBorderStartColor:
+    case CSSPropertyWebkitColumnRuleColor:
+    case CSSPropertyWebkitTextEmphasisColor:
+    case CSSPropertyWebkitTextFillColor:
+    case CSSPropertyWebkitTextStrokeColor:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool parseColorValue(CSSMutableStyleDeclaration* declaration, int propertyId, const String& string, bool important, bool strict)
+{
+    if (!string.length())
+        return false;
+    if (!isColorPropertyID(propertyId))
+        return false;
+    CSSParserString cssString;
+    cssString.characters = const_cast<UChar*>(string.characters());
+    cssString.length = string.length();
+    int valueID = cssValueKeywordID(cssString);
+    bool validPrimitive = false;
+    if (valueID == CSSValueWebkitText)
+        validPrimitive = true;
+    else if (valueID == CSSValueCurrentcolor)
+        validPrimitive = true;
+    else if ((valueID >= CSSValueAqua && valueID <= CSSValueWindowtext) || valueID == CSSValueMenu
+             || (valueID >= CSSValueWebkitFocusRingColor && valueID < CSSValueWebkitText && !strict)) {
+        validPrimitive = true;
+    }
+
+    CSSStyleSheet* stylesheet = static_cast<CSSStyleSheet*>(declaration->stylesheet());
+    if (!stylesheet || !stylesheet->document())
+        return false;
+    if (validPrimitive) {
+        CSSProperty property(propertyId, stylesheet->document()->cssPrimitiveValueCache()->createIdentifierValue(valueID), important);
+        declaration->addParsedProperty(property);
+        return true;
+    }
+    RGBA32 color;
+    if (!CSSParser::parseColor(string, color, strict && string[0] != '#'))
+        return false;
+    CSSProperty property(propertyId, stylesheet->document()->cssPrimitiveValueCache()->createColorValue(color), important);
+    declaration->addParsedProperty(property);
+    return true;
+}
+
+static inline bool isSimpleLengthPropertyID(int propertyId, bool& acceptsNegativeNumbers)
+{
+    switch (propertyId) {
+    case CSSPropertyFontSize:
+    case CSSPropertyHeight:
+    case CSSPropertyWidth:
+    case CSSPropertyMinHeight:
+    case CSSPropertyMinWidth:
+    case CSSPropertyPaddingBottom:
+    case CSSPropertyPaddingLeft:
+    case CSSPropertyPaddingRight: 
+    case CSSPropertyPaddingTop:
+    case CSSPropertyWebkitLogicalWidth:
+    case CSSPropertyWebkitLogicalHeight:
+    case CSSPropertyWebkitMinLogicalWidth:
+    case CSSPropertyWebkitMinLogicalHeight:
+    case CSSPropertyWebkitPaddingAfter:
+    case CSSPropertyWebkitPaddingBefore:
+    case CSSPropertyWebkitPaddingEnd:
+    case CSSPropertyWebkitPaddingStart:
+        acceptsNegativeNumbers = false;
+        return true;
+    case CSSPropertyBottom:
+    case CSSPropertyLeft:
+    case CSSPropertyMarginBottom:
+    case CSSPropertyMarginLeft: 
+    case CSSPropertyMarginRight: 
+    case CSSPropertyMarginTop:
+    case CSSPropertyRight:
+    case CSSPropertyTextIndent:
+    case CSSPropertyTop:
+    case CSSPropertyWebkitMarginAfter:
+    case CSSPropertyWebkitMarginBefore:
+    case CSSPropertyWebkitMarginEnd:
+    case CSSPropertyWebkitMarginStart:
+        acceptsNegativeNumbers = true;
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool parseSimpleLengthValue(CSSMutableStyleDeclaration* declaration, int propertyId, const String& string, bool important, bool strict)
+{
+    const UChar* characters = string.characters();
+    unsigned length = string.length();
+    if (!characters || !length)
+        return false;
+    bool acceptsNegativeNumbers;
+    if (!isSimpleLengthPropertyID(propertyId, acceptsNegativeNumbers))
+        return false;
+
+    CSSPrimitiveValue::UnitTypes unit = CSSPrimitiveValue::CSS_NUMBER;
+    if (length > 2 && characters[length - 2] == 'p' && characters[length - 1] == 'x') {
+        length -= 2;
+        unit = CSSPrimitiveValue::CSS_PX;
+    } else if (length > 1 && characters[length - 1] == '%') {
+        length -= 1;
+        unit = CSSPrimitiveValue::CSS_PERCENTAGE;
+    }
+
+    // We rely on charactersToDouble for validation as well. The function
+    // will set "ok" to "false" if the entire passed-in character range does
+    // not represent a double.
+    bool ok;
+    double number = charactersToDouble(characters, length, &ok);
+    if (!ok)
+        return false;
+    if (unit == CSSPrimitiveValue::CSS_NUMBER) {
+        if (number && strict)
+            return false;
+        unit = CSSPrimitiveValue::CSS_PX;
+    }
+    if (number < 0 && !acceptsNegativeNumbers)
+        return false;
+
+    CSSStyleSheet* stylesheet = static_cast<CSSStyleSheet*>(declaration->stylesheet());
+    if (!stylesheet || !stylesheet->document())
+        return false;
+    CSSProperty property(propertyId, stylesheet->document()->cssPrimitiveValueCache()->createValue(number, unit), important);
+    declaration->addParsedProperty(property);
+    return true;
+}
+
+bool CSSParser::parseValue(CSSMutableStyleDeclaration* declaration, int propertyId, const String& string, bool important, bool strict)
+{
+    if (parseSimpleLengthValue(declaration, propertyId, string, important, strict))
+        return true;
+    if (parseColorValue(declaration, propertyId, string, important, strict))
+        return true;
+    CSSParser parser(strict);
+    return parser.parseValue(declaration, propertyId, string, important);
+}
+
+bool CSSParser::parseValue(CSSMutableStyleDeclaration* declaration, int propertyId, const String& string, bool important)
 {
     ASSERT(!declaration->stylesheet() || declaration->stylesheet()->isCSSStyleSheet());
     setStyleSheet(static_cast<CSSStyleSheet*>(declaration->stylesheet()));
 
     setupParser("@-webkit-value{", string, "} ");
 
-    m_id = id;
+    m_id = propertyId;
     m_important = important;
 
     cssyyparse(this);
