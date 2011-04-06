@@ -1,3 +1,94 @@
+2011-04-05  Shane Stephens  <shanestephens@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        [Chromium] Greening the Mac 10.5 and 10.6 trees.
+        https://bugs.webkit.org/show_bug.cgi?id=57924
+
+        Rebaselines a bunch of tests with differences due to text anti-aliasing.
+        (Prepared using rebaseline script)
+
+        * platform/chromium-mac/fast/box-shadow/spread-multiple-inset-expected.checksum: Removed.
+        * platform/chromium-mac/fast/box-shadow/spread-multiple-inset-expected.png: Removed.
+        * platform/chromium-mac/fast/dom/HTMLMeterElement/meter-boundary-values-expected.png: Added.
+        * platform/chromium-mac/fast/html/details-add-summary-1-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-1-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-10-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-10-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-2-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-2-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-3-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-3-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-4-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-4-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-5-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-5-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-6-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-6-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-7-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-7-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-8-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-8-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-9-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-add-summary-9-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-no-summary1-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-no-summary2-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-no-summary3-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-no-summary4-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-open-javascript-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-open1-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-open2-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-open3-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-open4-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-open5-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-open6-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-position-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-remove-summary-1-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-remove-summary-1-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-remove-summary-2-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-remove-summary-2-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-remove-summary-3-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-remove-summary-3-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-remove-summary-4-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-remove-summary-4-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-remove-summary-5-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-remove-summary-5-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-remove-summary-6-and-click-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-remove-summary-6-expected.png: Removed.
+        * platform/chromium-mac/fast/html/details-writing-mode-expected.png: Removed.
+        * platform/chromium-mac/fast/inline-block/inline-block-vertical-align-expected.checksum: Removed.
+        * platform/chromium-mac/fast/inline-block/inline-block-vertical-align-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/layers-in-multicol-expected.checksum: Removed.
+        * platform/chromium-mac/fast/multicol/layers-in-multicol-expected.png: Removed.
+        * platform/chromium-mac/fast/multicol/nested-columns-expected.checksum: Removed.
+        * platform/chromium-mac/fast/multicol/nested-columns-expected.png:
+        * platform/chromium-mac/fast/repaint/list-marker-expected.checksum: Removed.
+        * platform/chromium-mac/fast/repaint/list-marker-expected.png:
+        * platform/chromium-mac/fast/ruby/ruby-beforeafter-expected.png: Removed.
+        * platform/chromium-mac/fast/ruby/ruby-length-expected.png: Removed.
+        * platform/chromium-mac/fast/ruby/ruby-run-break-expected.png: Removed.
+        * platform/chromium-mac/fast/ruby/ruby-runs-expected.png: Removed.
+        * platform/chromium-mac/fast/ruby/ruby-runs-spans-expected.png: Removed.
+        * platform/chromium-mac/fast/ruby/ruby-trailing-expected.png: Removed.
+        * platform/chromium-mac/fast/ruby/rubyDOM-insert-rt-expected.png: Removed.
+        * platform/chromium-mac/fast/ruby/rubyDOM-insert-text1-expected.png: Removed.
+        * platform/chromium-mac/fast/ruby/rubyDOM-insert-text2-expected.png: Removed.
+        * platform/chromium-mac/fast/ruby/rubyDOM-insert-text3-expected.png: Removed.
+        * platform/chromium-mac/fast/ruby/rubyDOM-remove-rt1-expected.png: Removed.
+        * platform/chromium-mac/fast/ruby/rubyDOM-remove-rt2-expected.png: Removed.
+        * platform/chromium-mac/fast/ruby/rubyDOM-remove-text1-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/css/background-clip-values-expected.checksum: Added.
+        * platform/mac/fast/css/background-clip-values-expected.png: Added.
+        * platform/mac/fast/css/bidi-override-in-anonymous-block-expected.checksum: Added.
+        * platform/mac/fast/css/bidi-override-in-anonymous-block-expected.png: Added.
+        * platform/mac/fast/gradients/gradient-after-transparent-border-expected.checksum: Added.
+        * platform/mac/fast/gradients/gradient-after-transparent-border-expected.png: Added.
+        * platform/mac/fast/images/gray-scale-jpeg-with-color-profile-expected.checksum: Added.
+        * platform/mac/fast/images/gray-scale-jpeg-with-color-profile-expected.png: Added.
+        * platform/mac/media/controls-without-preload-expected.checksum: Added.
+        * platform/mac/media/controls-without-preload-expected.png: Added.
+
 2011-04-05  James Kozianski  <koz@chromium.org>
 
         Rebaseline images after r82969

@@ -3271,7 +3271,7 @@ BUGCR78326 : fast/filesystem/filesystem-reference.html = CRASH PASS
 
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-appearances-capacity.html = TEXT PASS
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html = TEXT PASS
-BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-boundary-values.html = TEXT PASS
+BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-boundary-values.html = TEXT
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-optimums.html = TEXT PASS
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html = TEXT PASS
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-disabled-readonly.html = TEXT PASS
@@ -3287,3 +3287,4 @@ BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT 
 // Need rebaselines on all platforms.
 BUGENNE : svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg = FAIL
 BUGENNE : svg/text/text-midpoint-split-bug.svg = FAIL
+
