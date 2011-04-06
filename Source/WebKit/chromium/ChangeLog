@@ -1,3 +1,14 @@
+2011-04-05  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add ability to get frame from v8 context to chromium WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=57516
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrame::frameForV8Context):
+
 2011-04-05  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Dimitri Glazkov.
