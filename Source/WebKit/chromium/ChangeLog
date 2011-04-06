@@ -1,3 +1,19 @@
+2011-04-06  Alok Priyadarshi  <alokp@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] Add settings API to enable accelerated drawing
+        https://bugs.webkit.org/show_bug.cgi?id=57863
+        
+        If accelerated drawing is enabled we try to render content and
+        root layers using GPU. Please note that this setting is ignored if
+        accelerated compositing is disabled.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setAcceleratedDrawingEnabled):
+        * src/WebSettingsImpl.h:
+
 2011-04-05  Zelidrag Hornung  <zelidrag@chromium.org>
 
         Reviewed by David Levin.

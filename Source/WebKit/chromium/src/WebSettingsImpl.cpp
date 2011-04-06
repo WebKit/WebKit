@@ -343,6 +343,11 @@ void WebSettingsImpl::setAcceleratedCompositingForAnimationEnabled(bool enabled)
     m_settings->setAcceleratedCompositingForAnimationEnabled(enabled);
 }
 
+void WebSettingsImpl::setAcceleratedDrawingEnabled(bool enabled)
+{
+    m_settings->setAcceleratedDrawingEnabled(enabled);
+}
+
 void WebSettingsImpl::setAccelerated2dCanvasEnabled(bool enabled)
 {
     m_settings->setAccelerated2dCanvasEnabled(enabled);
