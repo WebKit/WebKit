@@ -1,3 +1,15 @@
+2011-04-05  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKitTestRunner needs layoutTestController.numberOfPages
+        https://bugs.webkit.org/show_bug.cgi?id=42694
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::numberOfPages):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+
 2011-04-05  Tony Chang  <tony@chromium.org>
 
         Reviewed by Mihai Parparita.

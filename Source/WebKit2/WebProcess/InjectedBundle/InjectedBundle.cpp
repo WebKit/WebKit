@@ -36,15 +36,19 @@
 #include "WebContextMessageKinds.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManager.h"
+#include "WebFrame.h"
 #include "WebPage.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSLock.h>
+#include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/GCController.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
+#include <WebCore/PrintContext.h>
 #include <WebCore/Settings.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
@@ -139,6 +143,19 @@ void InjectedBundle::clearAllDatabases()
 void InjectedBundle::setDatabaseQuota(uint64_t quota)
 {
     WebDatabaseManager::shared().setQuotaForOrigin("file:///", quota);
+}
+
+int InjectedBundle::numberOfPages(WebFrame* frame, double pageWidthInPixels, double pageHeightInPixels)
+{
+    Frame* coreFrame = frame ? frame->coreFrame() : 0;
+    if (!coreFrame)
+        return -1;
+    if (!pageWidthInPixels)
+        pageWidthInPixels = coreFrame->view()->width();
+    if (!pageHeightInPixels)
+        pageHeightInPixels = coreFrame->view()->height();
+
+    return PrintContext::numberOfPages(coreFrame, FloatSize(pageWidthInPixels, pageHeightInPixels));
 }
 
 static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* patterns)

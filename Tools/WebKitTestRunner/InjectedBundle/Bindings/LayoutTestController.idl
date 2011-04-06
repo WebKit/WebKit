@@ -64,6 +64,9 @@ module WTR {
         void repaintSweepHorizontally();
         void display();
 
+        // Printing
+        int numberOfPages(in double pageWidthInPixels, in double pageHeightInPixels);
+
         // Animation testing.
         int numberOfActiveAnimations();
         boolean pauseAnimationAtTimeOnElementWithId(in DOMString animationName, in double time, in DOMString elementId);

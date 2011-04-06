@@ -60,6 +60,7 @@ typedef void* PlatformBundle;
 class ImmutableArray;
 class InjectedBundleScriptWorld;
 class WebCertificateInfo;
+class WebFrame;
 class WebPage;
 class WebPageGroupProxy;
 
@@ -92,6 +93,7 @@ public:
     void overrideXSSAuditorEnabledForTestRunner(WebPageGroupProxy* pageGroup, bool enabled);
     void overrideAllowUniversalAccessFromFileURLsForTestRunner(WebPageGroupProxy*, bool);
     void setAllowFileAccessFromFileURLs(WebPageGroupProxy*, bool);
+    int numberOfPages(WebFrame*, double, double);
 
     // UserContent API
     void addUserScript(WebPageGroupProxy*, InjectedBundleScriptWorld*, const String& source, const String& url, ImmutableArray* whitelist, ImmutableArray* blacklist, WebCore::UserScriptInjectionTime, WebCore::UserContentInjectedFrames);

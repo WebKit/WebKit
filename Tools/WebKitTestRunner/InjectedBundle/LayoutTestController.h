@@ -112,6 +112,9 @@ public:
     void clearAllDatabases();
     void setDatabaseQuota(uint64_t);
 
+    // Printing
+    int numberOfPages(double pageWidthInPixels, double pageHeightInPixels);
+
     enum WhatToDump { RenderTree, MainFrameText, AllFramesText };
     WhatToDump whatToDump() const { return m_whatToDump; }
 

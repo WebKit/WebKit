@@ -69,6 +69,7 @@ WK_EXPORT void WKBundleOverrideAllowUniversalAccessFromFileURLsForTestRunner(WKB
 WK_EXPORT void WKBundleSetAllowFileAccessFromFileURLs(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
 WK_EXPORT void WKBundleClearAllDatabases(WKBundleRef bundle);
 WK_EXPORT void WKBundleSetDatabaseQuota(WKBundleRef bundle, uint64_t);
+WK_EXPORT int WKBundleNumberOfPages(WKBundleRef bundle, WKBundleFrameRef frameRef, double pageWidthInPixels, double pageHeightInPixels);
 
 #ifdef __cplusplus
 }

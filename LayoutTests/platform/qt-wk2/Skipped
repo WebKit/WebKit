@@ -1834,11 +1834,6 @@ printing/media-queries-print.html
 printing/page-rule-in-media-query.html
 printing/setPrinting.html
 
-# WebKitTestRunner needs layoutTestController.numberOfPages
-# <https://bugs.webkit.org/show_bug.cgi?id=42694>
-printing/numberOfPages.html
-printing/stretch-to-view-height.html
-
 # WebKitTestRunner needs layoutTestController.isPageBoxVisible
 # <https://bugs.webkit.org/show_bug.cgi?id=42695>
 printing/page-format-data.html

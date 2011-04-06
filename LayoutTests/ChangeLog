@@ -1,3 +1,15 @@
+2011-04-05  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKitTestRunner needs layoutTestController.numberOfPages
+        https://bugs.webkit.org/show_bug.cgi?id=42694
+
+        Unskip passed tests.
+
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+
 2011-04-05  Adrienne Walker  <enne@google.com>
 
        Unreviewed, temporarily mark two tests as more generally failing.

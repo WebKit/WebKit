@@ -1,3 +1,17 @@
+2011-04-05  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKitTestRunner needs layoutTestController.numberOfPages
+        https://bugs.webkit.org/show_bug.cgi?id=42694
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleNumberOfPages):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::numberOfPages):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2011-04-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey Proskuryakov.

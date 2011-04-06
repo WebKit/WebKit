@@ -29,7 +29,9 @@
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
 #include "JSLayoutTestController.h"
+#include "PlatformWebView.h"
 #include "StringFunctions.h"
+#include "TestController.h"
 #include <WebKit2/WKBundleBackForwardList.h>
 #include <WebKit2/WKBundleFrame.h>
 #include <WebKit2/WKBundleFramePrivate.h>
@@ -321,6 +323,12 @@ void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)
 void LayoutTestController::setAllowFileAccessFromFileURLs(bool enabled)
 {
     WKBundleSetAllowFileAccessFromFileURLs(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+}
+
+int LayoutTestController::numberOfPages(double pageWidthInPixels, double pageHeightInPixels)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    return WKBundleNumberOfPages(InjectedBundle::shared().bundle(), mainFrame, pageWidthInPixels, pageHeightInPixels);
 }
 
 unsigned LayoutTestController::windowCount()
