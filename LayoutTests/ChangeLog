@@ -1,3 +1,10 @@
+2011-04-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] media tests are flakey
+        https://bugs.webkit.org/show_bug.cgi?id=57983
+
+        * platform/qt/Skipped: Disable all media tests until fix.
+
 2011-04-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r83039.

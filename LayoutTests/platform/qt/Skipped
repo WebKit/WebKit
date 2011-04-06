@@ -584,6 +584,10 @@ fast/workers/shared-worker-frame-lifecycle.html
 # failing media tests
 # =========================================================================== #
 
+# [Qt] media tests are flakey
+# https://bugs.webkit.org/show_bug.cgi?id=57983
+media
+
 # https://bugs.webkit.org/show_bug.cgi?id=38376
 media/media-document-audio-size.html
 
