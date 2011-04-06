@@ -1,3 +1,10 @@
+2011-04-06  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, mark Chromium expectations for line-clamp.html to be a known regression.
+        https://bugs.webkit.org/show_bug.cgi?id=57975
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-06  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
