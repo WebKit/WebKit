@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,20 +52,24 @@
 @end
 
 using namespace WebCore;
+using namespace WebKit;
 
-@interface WebEditCommandObjC : NSObject
+@interface WKEditCommandObjC : NSObject
 {
-    RefPtr<WebKit::WebEditCommandProxy> m_command;
+    RefPtr<WebEditCommandProxy> m_command;
 }
-
-- (id)initWithWebEditCommandProxy:(PassRefPtr<WebKit::WebEditCommandProxy>)command;
-- (WebKit::WebEditCommandProxy*)command;
-
+- (id)initWithWebEditCommandProxy:(PassRefPtr<WebEditCommandProxy>)command;
+- (WebEditCommandProxy*)command;
 @end
 
-@implementation WebEditCommandObjC
+@interface WKEditorUndoTargetObjC : NSObject
+- (void)undoEditing:(id)sender;
+- (void)redoEditing:(id)sender;
+@end
 
-- (id)initWithWebEditCommandProxy:(PassRefPtr<WebKit::WebEditCommandProxy>)command
+@implementation WKEditCommandObjC
+
+- (id)initWithWebEditCommandProxy:(PassRefPtr<WebEditCommandProxy>)command
 {
     self = [super init];
     if (!self)
@@ -75,31 +79,24 @@ using namespace WebCore;
     return self;
 }
 
-- (WebKit::WebEditCommandProxy*)command
+- (WebEditCommandProxy*)command
 {
     return m_command.get();
 }
 
 @end
 
-@interface WebEditorUndoTargetObjC : NSObject
-
-- (void)undoEditing:(id)sender;
-- (void)redoEditing:(id)sender;
-
-@end
-
-@implementation WebEditorUndoTargetObjC
+@implementation WKEditorUndoTargetObjC
 
 - (void)undoEditing:(id)sender
 {
-    ASSERT([sender isKindOfClass:[WebEditCommandObjC class]]);
+    ASSERT([sender isKindOfClass:[WKEditCommandObjC class]]);
     [sender command]->unapply();
 }
 
 - (void)redoEditing:(id)sender
 {
-    ASSERT([sender isKindOfClass:[WebEditCommandObjC class]]);
+    ASSERT([sender isKindOfClass:[WKEditCommandObjC class]]);
     [sender command]->reapply();
 }
 
@@ -119,7 +116,7 @@ PassOwnPtr<PageClientImpl> PageClientImpl::create(WKView* wkView)
 
 PageClientImpl::PageClientImpl(WKView* wkView)
     : m_wkView(wkView)
-    , m_undoTarget(AdoptNS, [[WebEditorUndoTargetObjC alloc] init])
+    , m_undoTarget(AdoptNS, [[WKEditorUndoTargetObjC alloc] init])
 {
 }
 
@@ -277,7 +274,7 @@ void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpComm
 {
     RefPtr<WebEditCommandProxy> command = prpCommand;
 
-    RetainPtr<WebEditCommandObjC> commandObjC(AdoptNS, [[WebEditCommandObjC alloc] initWithWebEditCommandProxy:command]);
+    RetainPtr<WKEditCommandObjC> commandObjC(AdoptNS, [[WKEditCommandObjC alloc] initWithWebEditCommandProxy:command]);
     NSString *actionName = nameForEditAction(command->editAction());
 
     NSUndoManager *undoManager = [m_wkView undoManager];
@@ -481,6 +478,11 @@ float PageClientImpl::userSpaceScaleFactor() const
         return [window userSpaceScaleFactor];
     return [[NSScreen mainScreen] userSpaceScaleFactor];
 #endif
+}
+
+bool PageClientImpl::executeSavedCommandBySelector(const String& selectorString)
+{
+    return [m_wkView _executeSavedCommandBySelector:NSSelectorFromString(selectorString)];
 }
 
 } // namespace WebKit

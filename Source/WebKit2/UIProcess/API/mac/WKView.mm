@@ -70,23 +70,26 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
-@interface NSApplication (WebNSApplicationDetails)
+@interface NSApplication (WKNSApplicationDetails)
 - (void)speakString:(NSString *)string;
 - (void)_setCurrentEvent:(NSEvent *)event;
 @end
 
-@interface NSWindow (WebNSWindowDetails)
+@interface NSObject (WKNSTextInputContextDetails)
+- (BOOL)wantsToHandleMouseEvents;
+- (BOOL)handleMouseEvent:(NSEvent *)event;
+@end
+
+@interface NSWindow (WKNSWindowDetails)
 - (NSRect)_growBoxRect;
 - (id)_growBoxOwner;
 - (void)_setShowOpaqueGrowBoxForOwner:(id)owner;
 - (BOOL)_updateGrowBoxForWindowFrameChange;
 @end
 
-extern "C" {
-    // Need to declare this attribute name because AppKit exports it but does not make it available in API or SPI headers.
-    // FIXME: We wouldn't need this if we implemented NSTextInputClient protocol instead of deprecated NSTextInput.
-    extern NSString *NSTextInputReplacementRangeAttributeName;
-}
+// Declare this attribute name because AppKit exports it but does not make it available in API or SPI headers.
+// FIXME: We wouldn't need this if we implemented the NSTextInputClient protocol instead of the deprecated NSTextInput.
+extern "C" NSString *NSTextInputReplacementRangeAttributeName;
 
 using namespace WebKit;
 using namespace WebCore;
@@ -156,12 +159,16 @@ struct WKViewInterpretKeyEventsParameters {
 }
 @end
 
-@implementation WKViewData
+@interface WKResponderChainSink : NSResponder {
+    NSResponder *_lastResponderInChain;
+    bool _didReceiveUnhandledCommand;
+}
+- (id)initWithResponderChain:(NSResponder *)chain;
+- (void)detach;
+- (bool)didReceiveUnhandledCommand;
 @end
 
-@interface NSObject (NSTextInputContextDetails)
-- (BOOL)wantsToHandleMouseEvents;
-- (BOOL)handleMouseEvent:(NSEvent *)event;
+@implementation WKViewData
 @end
 
 @implementation WKView
@@ -1031,7 +1038,8 @@ static const short kIOHIDEventTypeScroll = 6;
     if (parameters && !isFromInputMethod)
         parameters->commands->append(KeypressCommand(NSStringFromSelector(selector)));
     else {
-        // FIXME: Send the command to Editor synchronously.
+        // FIXME: Send the command to Editor synchronously and only send it along the
+        // responder chain if it's a selector that does not correspond to an editing command.
         [super doCommandBySelector:selector];
     }
 }
@@ -2172,6 +2180,16 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 }
 #endif
 
+- (bool)_executeSavedCommandBySelector:(SEL)selector
+{
+    // The sink does two things: 1) Tells us if the responder went unhandled, and
+    // 2) prevents any NSBeep; we don't ever want to beep here.
+    RetainPtr<WKResponderChainSink> sink(AdoptNS, [[WKResponderChainSink alloc] initWithResponderChain:self]);
+    [super doCommandBySelector:selector];
+    [sink.get() detach];
+    return ![sink.get() didReceiveUnhandledCommand];
+}
+
 @end
 
 @implementation WKView (Private)
@@ -2220,3 +2238,45 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 @end
 
+@implementation WKResponderChainSink
+
+- (id)initWithResponderChain:(NSResponder *)chain
+{
+    self = [super init];
+    if (!self)
+        return nil;
+    _lastResponderInChain = chain;
+    while (NSResponder *next = [_lastResponderInChain nextResponder])
+        _lastResponderInChain = next;
+    [_lastResponderInChain setNextResponder:self];
+    return self;
+}
+
+- (void)detach
+{
+    [_lastResponderInChain setNextResponder:nil];
+    _lastResponderInChain = nil;
+}
+
+- (bool)didReceiveUnhandledCommand
+{
+    return _didReceiveUnhandledCommand;
+}
+
+- (void)noResponderFor:(SEL)selector
+{
+    _didReceiveUnhandledCommand = true;
+}
+
+- (void)doCommandBySelector:(SEL)selector
+{
+    _didReceiveUnhandledCommand = true;
+}
+
+- (BOOL)tryToPerform:(SEL)action with:(id)object
+{
+    _didReceiveUnhandledCommand = true;
+    return YES;
+}
+
+@end

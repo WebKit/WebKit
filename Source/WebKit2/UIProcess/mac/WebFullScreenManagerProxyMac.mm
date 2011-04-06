@@ -23,11 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebFullScreenManagerProxy.h"
-#include "LayerTreeContext.h"
-#include "WKFullScreenWindowController.h"
-#include "WKViewInternal.h"
+#import "config.h"
+#import "WebFullScreenManagerProxy.h"
+
+#import "LayerTreeContext.h"
+#import "WKFullScreenWindowController.h"
+#import "WKViewInternal.h"
+#import <WebCore/IntRect.h>
 
 #if ENABLE(FULLSCREEN_API)
 

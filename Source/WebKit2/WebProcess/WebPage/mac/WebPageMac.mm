@@ -152,7 +152,12 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
             Editor::Command command = frame->editor()->command(commandNameForSelectorName(commands[i].commandName));
             if (command.isSupported())
                 eventWasHandled |= command.execute(event);
-            // FIXME: WebHTMLView sends the event up the responder chain with WebResponderChainSink if it's not supported by the editor. Should we do the same?
+            else {
+                bool eventWasHandledByUIProcess = false;
+                WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::ExecuteSavedCommandBySelector(commands[i].commandName), 
+                    Messages::WebPageProxy::ExecuteSavedCommandBySelector::Reply(eventWasHandledByUIProcess), m_pageID);
+                eventWasHandled |= eventWasHandledByUIProcess;
+            }
         }
     }
     return eventWasHandled;

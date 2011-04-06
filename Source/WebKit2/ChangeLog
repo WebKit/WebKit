@@ -1,3 +1,54 @@
+2011-04-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [Mac] WebKit2: Escape key does not stop page loads when focus is on the web page
+        https://bugs.webkit.org/show_bug.cgi?id=57893
+        <rdar://problem/9130486>
+
+        * UIProcess/API/mac/PageClientImpl.h: Added executeSavedCommandBySelector.
+        * UIProcess/API/mac/PageClientImpl.mm: Renamed internal Objective-C classes to use
+        the WebKit2 Objective-C class prefix, WK, rather than the WebKit1 Objective-C class
+        prefix, Web. Removed some unneeded explicit WebKit namespace prefixes.
+        (-[WKEditCommandObjC initWithWebEditCommandProxy:]): Removed unneeded WebKit
+        namespace prefix.
+        (-[WKEditCommandObjC command]): Ditto.
+        (-[WKEditorUndoTargetObjC undoEditing:]): Updated for new class name.
+        (-[WKEditorUndoTargetObjC redoEditing:]): Ditto.
+        (WebKit::PageClientImpl::PageClientImpl): Ditto.
+        (WebKit::PageClientImpl::registerEditCommand): Ditto.
+        (WebKit::PageClientImpl::executeSavedCommandBySelector): Added.
+
+        * UIProcess/API/mac/WKView.mm: Renamed internal Objective-C categories to use the
+        WebKit2 Objective-C prefix, WK, rather than the WebKit1 Objective-C prefix, Web,
+        or no prefix at all. Tweaked use of extern "C" a little.
+        (-[WKView doCommandBySelector:]): Tweaked the comment.
+        (-[WKView _executeSavedCommandBySelector:]): Added. For use when command is not handled
+        by WebCore.
+        (-[WKResponderChainSink initWithResponderChain:]): Added. Based on the
+        WebResponderChainSink class in WebKit1.
+        (-[WKResponderChainSink detach]): Added.
+        (-[WKResponderChainSink didReceiveUnhandledCommand]): Added.
+        (-[WKResponderChainSink noResponderFor:]): Added.
+        (-[WKResponderChainSink doCommandBySelector:]): Added.
+        (-[WKResponderChainSink tryToPerform:with:]): Added.
+
+        * UIProcess/API/mac/WKViewInternal.h: Added declaration of _executeSavedCommandBySelector:
+        method. Also removed unneeded includes.
+
+        * UIProcess/PageClient.h: Added executeSavedCommandBySelector.
+        * UIProcess/WebPageProxy.h: Added executeSavedCommandBySelector.
+        * UIProcess/WebPageProxy.messages.in: Added ExecuteSavedCommandBySelector.
+
+        * UIProcess/mac/WebFullScreenManagerProxyMac.mm: Updated includes.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::executeSavedCommandBySelector): Added.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::executeKeypressCommandsInternal): Send the synchronous
+        ExecuteSavedCommandBySelector message when a command is not handled by WebCore.
+
 2011-04-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Alexey Proskuryakov.

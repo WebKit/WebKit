@@ -24,11 +24,15 @@
  */
 
 #import "WKView.h"
-#import <WebCore/Editor.h>
-#import <WebCore/KeyboardEvent.h>
+#import <wtf/Forward.h>
+#import <wtf/Vector.h>
 
 namespace CoreIPC {
     class DataReference;
+}
+
+namespace WebCore {
+    struct KeypressCommand;
 }
 
 namespace WebKit {
@@ -38,9 +42,7 @@ namespace WebKit {
     struct TextInputState;
 }
 
-#if ENABLE(FULLSCREEN_API)
 @class WKFullScreenWindowController;
-#endif
 
 @interface WKView (Internal)
 - (PassOwnPtr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
@@ -54,6 +56,7 @@ namespace WebKit {
 - (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState;
 - (BOOL)_interpretKeyEvent:(NSEvent *)theEvent withCachedTextInputState:(const WebKit::TextInputState&)cachedTextInputState savingCommandsTo:(Vector<WebCore::KeypressCommand>&)commands;
 - (void)_resendKeyDownEvent:(NSEvent *)event;
+- (bool)_executeSavedCommandBySelector:(SEL)selector;
 - (NSRect)_convertToDeviceSpace:(NSRect)rect;
 - (NSRect)_convertToUserSpace:(NSRect)rect;
 - (void)_setFindIndicator:(PassRefPtr<WebKit::FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut;

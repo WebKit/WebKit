@@ -593,10 +593,11 @@ private:
     // Keyboard handling
 #if PLATFORM(MAC)
     void interpretQueuedKeyEvent(const TextInputState&, bool& handled, Vector<WebCore::KeypressCommand>&);
+    void executeSavedCommandBySelector(const String& selector, bool& handled);
 #endif
 
 #if PLATFORM(GTK)
-    void getEditorCommandsForKeyEvent(Vector<WTF::String>&);
+    void getEditorCommandsForKeyEvent(Vector<String>&);
 #endif
 
     // Find.

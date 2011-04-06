@@ -283,4 +283,9 @@ void WebPageProxy::setComplexTextInputEnabled(uint64_t pluginComplexTextInputIde
     m_pageClient->setComplexTextInputEnabled(pluginComplexTextInputIdentifier, complexTextInputEnabled);
 }
 
+void WebPageProxy::executeSavedCommandBySelector(const String& selector, bool& handled)
+{
+    handled = m_pageClient->executeSavedCommandBySelector(selector);
+}
+
 } // namespace WebKit

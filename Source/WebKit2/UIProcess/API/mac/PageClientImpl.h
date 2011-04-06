@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -72,6 +72,7 @@ private:
     virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
     virtual void clearAllEditCommands();
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, const TextInputState&, Vector<WebCore::KeypressCommand>&);
+    virtual bool executeSavedCommandBySelector(const String& selector);
     virtual void setDragImage(const WebCore::IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag);
 
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);

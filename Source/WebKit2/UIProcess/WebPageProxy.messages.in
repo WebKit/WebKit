@@ -199,7 +199,8 @@ messages -> WebPageProxy {
 
     # Keyboard input support messages
     InterpretQueuedKeyEvent(WebKit::TextInputState state) -> (bool handled, Vector<WebCore::KeypressCommand> savedCommands)
-    
+    ExecuteSavedCommandBySelector(WTF::String selector) -> (bool handled)
+
     # Remote accessibility messages
     RegisterWebProcessAccessibilityToken(CoreIPC::DataReference data)
 
