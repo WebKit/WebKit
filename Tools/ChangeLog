@@ -1,5 +1,11 @@
 2011-04-05  Adam Barth  <abarth@webkit.org>
 
+        Silly with statement, from the future!
+
+        * Scripts/webkitpy/common/system/executive.py:
+
+2011-04-05  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Tony Chang.
 
         Don't use Exception.message because it's deprecated
