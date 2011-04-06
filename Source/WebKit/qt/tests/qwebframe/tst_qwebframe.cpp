@@ -614,6 +614,7 @@ private slots:
     void urlChange();
     void domCycles();
     void requestedUrl();
+    void requestedUrlAfterSetAndLoadFailures();
     void javaScriptWindowObjectCleared_data();
     void javaScriptWindowObjectCleared();
     void javaScriptWindowObjectClearedOnEvaluate();
@@ -649,10 +650,14 @@ private slots:
     void setContent();
     void setCacheLoadControlAttribute();
     void setUrlWithPendingLoads();
+    void setUrlWithFragment_data();
     void setUrlWithFragment();
     void setUrlToEmpty();
     void setUrlToInvalid();
     void setUrlHistory();
+    void setUrlSameUrl();
+    void setUrlThenLoads_data();
+    void setUrlThenLoads();
 
 private:
     QString  evalJS(const QString&s) {
@@ -2309,7 +2314,7 @@ public:
         else if (request.url() == QUrl("qrc:/fake-ssl-error.html"))
             setError(QNetworkReply::SslHandshakeFailedError, tr("Fake error !")); // force a ssl error
 #endif
-        else if (request.url() == QUrl("http://abcdef.abcdef/"))
+        else if (request.url().host() == QLatin1String("abcdef.abcdef"))
             setError(QNetworkReply::HostNotFoundError, tr("Invalid URL"));
 
         open(QIODevice::ReadOnly);
@@ -2411,6 +2416,30 @@ void tst_QWebFrame::requestedUrl()
     QCOMPARE(frame->requestedUrl(), QUrl("qrc:/fake-ssl-error.html"));
     QCOMPARE(frame->url(), QUrl("qrc:/fake-ssl-error.html"));
 #endif
+}
+
+void tst_QWebFrame::requestedUrlAfterSetAndLoadFailures()
+{
+    QWebPage page;
+    QWebFrame* frame = page.mainFrame();
+
+    QSignalSpy spy(frame, SIGNAL(loadFinished(bool)));
+
+    const QUrl first("http://abcdef.abcdef/");
+    frame->setUrl(first);
+    ::waitForSignal(frame, SIGNAL(loadFinished(bool)));
+    QCOMPARE(frame->url(), first);
+    QCOMPARE(frame->requestedUrl(), first);
+    QVERIFY(!spy.at(0).first().toBool());
+
+    const QUrl second("http://abcdef.abcdef/another_page.html");
+    QVERIFY(first != second);
+
+    frame->load(second);
+    ::waitForSignal(frame, SIGNAL(loadFinished(bool)));
+    QCOMPARE(frame->url(), first);
+    QCOMPARE(frame->requestedUrl(), second);
+    QVERIFY(!spy.at(1).first().toBool());
 }
 
 void tst_QWebFrame::javaScriptWindowObjectCleared_data()
@@ -3323,24 +3352,43 @@ void tst_QWebFrame::setUrlWithPendingLoads()
     page.mainFrame()->setUrl(QUrl("about:blank"));
 }
 
+void tst_QWebFrame::setUrlWithFragment_data()
+{
+    QTest::addColumn<QUrl>("previousUrl");
+    QTest::newRow("empty") << QUrl();
+    QTest::newRow("same URL no fragment") << QUrl("qrc:/test1.html");
+    // See comments in setUrlSameUrl about using setUrl() with the same url().
+    QTest::newRow("same URL with same fragment") << QUrl("qrc:/test1.html#");
+    QTest::newRow("same URL with different fragment") << QUrl("qrc:/test1.html#anotherFragment");
+    QTest::newRow("another URL") << QUrl("qrc:/test2.html");
+}
+
+// Based on bug report https://bugs.webkit.org/show_bug.cgi?id=32723
 void tst_QWebFrame::setUrlWithFragment()
 {
     QSKIP("Bug https://bugs.webkit.org/show_bug.cgi?id=32723", SkipAll);
+    QFETCH(QUrl, previousUrl);
 
-    // Based on bug report https://bugs.webkit.org/show_bug.cgi?id=32723
     QWebPage page;
-    QSignalSpy spy(&page, SIGNAL(loadFinished(bool)));
+    QWebFrame* frame = page.mainFrame();
 
+    if (!previousUrl.isEmpty()) {
+        frame->load(previousUrl);
+        ::waitForSignal(frame, SIGNAL(loadFinished(bool)));
+        QCOMPARE(frame->url(), previousUrl);
+    }
+
+    QSignalSpy spy(frame, SIGNAL(loadFinished(bool)));
     const QUrl url("qrc:/test1.html#");
     QVERIFY(!url.fragment().isNull());
 
-    page.mainFrame()->setUrl(url);
-    ::waitForSignal(&page, SIGNAL(loadFinished(bool)));
+    frame->setUrl(url);
+    ::waitForSignal(frame, SIGNAL(loadFinished(bool)));
 
     QCOMPARE(spy.count(), 1);
-    QVERIFY(!page.mainFrame()->toPlainText().isEmpty());
-    QCOMPARE(page.mainFrame()->requestedUrl(), url);
-    QCOMPARE(page.mainFrame()->url(), url);
+    QVERIFY(!frame->toPlainText().isEmpty());
+    QCOMPARE(frame->requestedUrl(), url);
+    QCOMPARE(frame->url(), url);
 }
 
 void tst_QWebFrame::setUrlToEmpty()
@@ -3484,6 +3532,111 @@ void tst_QWebFrame::setUrlHistory()
     QCOMPARE(frame->url(), url);
     QCOMPARE(frame->requestedUrl(), url);
     QCOMPARE(m_page->history()->count(), 2);
+}
+
+void tst_QWebFrame::setUrlSameUrl()
+{
+    const QUrl url1("qrc:/test1.html");
+    const QUrl url2("qrc:/test2.html");
+
+    QWebPage page;
+    QWebFrame* frame = page.mainFrame();
+    FakeNetworkManager* networkManager = new FakeNetworkManager(&page);
+    page.setNetworkAccessManager(networkManager);
+
+    QSignalSpy spy(frame, SIGNAL(loadFinished(bool)));
+
+    frame->setUrl(url1);
+    waitForSignal(frame, SIGNAL(loadFinished(bool)));
+    QVERIFY(frame->url() != url1); // Nota bene: our QNAM redirects url1 to url2
+    QCOMPARE(frame->url(), url2);
+    QCOMPARE(spy.count(), 1);
+
+    frame->setUrl(url1);
+    waitForSignal(frame, SIGNAL(loadFinished(bool)));
+    QVERIFY(frame->url() != url1);
+    QCOMPARE(frame->url(), url2);
+    QCOMPARE(spy.count(), 2);
+
+    // Now a case without redirect. The existing behavior we have for setUrl()
+    // is more like a "clear(); load()", so the page will be loaded again, even
+    // if urlToBeLoaded == url(). This test should be changed if we want to
+    // make setUrl() early return in this case.
+    frame->setUrl(url2);
+    waitForSignal(frame, SIGNAL(loadFinished(bool)));
+    QCOMPARE(frame->url(), url2);
+    QCOMPARE(spy.count(), 3);
+
+    frame->setUrl(url1);
+    waitForSignal(frame, SIGNAL(loadFinished(bool)));
+    QCOMPARE(frame->url(), url2);
+    QCOMPARE(spy.count(), 4);
+}
+
+static inline QUrl extractBaseUrl(const QUrl& url)
+{
+    return url.resolved(QUrl());
+}
+
+void tst_QWebFrame::setUrlThenLoads_data()
+{
+    QTest::addColumn<QUrl>("url");
+    QTest::addColumn<QUrl>("baseUrl");
+
+    QTest::newRow("resource file") << QUrl("qrc:/test1.html") << extractBaseUrl(QUrl("qrc:/test1.html"));
+    QTest::newRow("base specified in HTML") << QUrl("data:text/html,<head><base href=\"http://different.base/\"></head>") << QUrl("http://different.base/");
+}
+
+void tst_QWebFrame::setUrlThenLoads()
+{
+    QFETCH(QUrl, url);
+    QFETCH(QUrl, baseUrl);
+    QWebFrame* frame = m_page->mainFrame();
+    QSignalSpy urlChangedSpy(frame, SIGNAL(urlChanged(QUrl)));
+    QSignalSpy startedSpy(frame, SIGNAL(loadStarted()));
+    QSignalSpy finishedSpy(frame, SIGNAL(loadFinished(bool)));
+
+    frame->setUrl(url);
+    QCOMPARE(startedSpy.count(), 1);
+    ::waitForSignal(frame, SIGNAL(urlChanged(QUrl)));
+    QCOMPARE(urlChangedSpy.count(), 1);
+    QVERIFY(finishedSpy.at(0).first().toBool());
+    QCOMPARE(frame->url(), url);
+    QCOMPARE(frame->requestedUrl(), url);
+    QCOMPARE(frame->baseUrl(), baseUrl);
+
+    const QUrl urlToLoad1("qrc:/test2.html");
+    const QUrl urlToLoad2("qrc:/test1.html");
+
+    // Just after first load. URL didn't changed yet.
+    frame->load(urlToLoad1);
+    QCOMPARE(startedSpy.count(), 2);
+    QCOMPARE(frame->url(), url);
+    QCOMPARE(frame->requestedUrl(), urlToLoad1);
+    QCOMPARE(frame->baseUrl(), baseUrl);
+
+    // After first URL changed.
+    ::waitForSignal(frame, SIGNAL(urlChanged(QUrl)));
+    QCOMPARE(urlChangedSpy.count(), 2);
+    QVERIFY(finishedSpy.at(1).first().toBool());
+    QCOMPARE(frame->url(), urlToLoad1);
+    QCOMPARE(frame->requestedUrl(), urlToLoad1);
+    QCOMPARE(frame->baseUrl(), extractBaseUrl(urlToLoad1));
+
+    // Just after second load. URL didn't changed yet.
+    frame->load(urlToLoad2);
+    QCOMPARE(startedSpy.count(), 3);
+    QCOMPARE(frame->url(), urlToLoad1);
+    QCOMPARE(frame->requestedUrl(), urlToLoad2);
+    QCOMPARE(frame->baseUrl(), extractBaseUrl(urlToLoad1));
+
+    // After second URL changed.
+    ::waitForSignal(frame, SIGNAL(urlChanged(QUrl)));
+    QCOMPARE(urlChangedSpy.count(), 3);
+    QVERIFY(finishedSpy.at(2).first().toBool());
+    QCOMPARE(frame->url(), urlToLoad2);
+    QCOMPARE(frame->requestedUrl(), urlToLoad2);
+    QCOMPARE(frame->baseUrl(), extractBaseUrl(urlToLoad2));
 }
 
 QTEST_MAIN(tst_QWebFrame)

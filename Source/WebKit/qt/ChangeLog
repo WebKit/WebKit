@@ -1,3 +1,30 @@
+2011-04-06  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Improve tests for QWebFrame::url() and related methods
+        https://bugs.webkit.org/show_bug.cgi?id=57865
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (FakeReply::FakeReply): make more URLs reply HostNotFound. We needed two different URLs in the test.
+        (tst_QWebFrame::requestedUrlAfterSetAndLoadFailures): check the properties after an setUrl()
+        that fails and a load() that fails (for a different URL).
+
+        (tst_QWebFrame::setUrlWithFragment_data):
+        (tst_QWebFrame::setUrlWithFragment): add other test cases similar to the original, but changing
+        the URL in the frame before the test starts.
+
+        (tst_QWebFrame::setUrlSameUrl): document existing behavior of calling setUrl() twice with
+        the same URL as argument.
+
+        (extractBaseUrl):
+        (tst_QWebFrame::setUrlThenLoads_data):
+        (tst_QWebFrame::setUrlThenLoads): check the URL related properties of the frame after a
+        sequence of set and loads. Those tests are interesting because the properties
+        react different to setUrl() and load(): 'requestedUrl' always change, 'url' only when setUrl()
+        is used or after the load() is committed and baseUrl() is similar to url() but also depends
+        on the contents of the page when it loads.
+
 2011-04-04  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.
