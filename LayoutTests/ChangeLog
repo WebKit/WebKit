@@ -1,3 +1,14 @@
+2011-04-06  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Gtk] plugins/set-status.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=57844
+
+        Unskip a newly-passing test.
+
+        * platform/gtk/Skipped:
+
 2011-04-06  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

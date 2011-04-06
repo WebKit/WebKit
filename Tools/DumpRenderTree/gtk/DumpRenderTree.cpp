@@ -941,10 +941,8 @@ static void webViewStatusBarTextChanged(WebKitWebView* view, const gchar* messag
 {
     // Are we doing anything wrong? One test that does not call
     // dumpStatusCallbacks gets true here
-    if (gLayoutTestController->dumpStatusCallbacks()) {
-        if (message && strcmp(message, ""))
-            printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", message);
-    }
+    if (gLayoutTestController->dumpStatusCallbacks())
+        printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", message);
 }
 
 static gboolean webViewClose(WebKitWebView* view)

@@ -1,3 +1,15 @@
+2011-04-06  Zan Dobersek  <zandobersek@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Gtk] plugins/set-status.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=57844
+
+        Allow an empty status text to be dumped.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewStatusBarTextChanged):
+
 2011-04-06  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Darin Adler.
