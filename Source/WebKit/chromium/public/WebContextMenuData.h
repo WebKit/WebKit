@@ -39,6 +39,8 @@
 #include "WebURL.h"
 #include "WebVector.h"
 
+#define WEBCONTEXT_MEDIATYPEFILE_DEFINED
+
 namespace WebKit {
 
 // This struct is passed to WebViewClient::ShowContextMenu.
@@ -52,6 +54,8 @@ struct WebContextMenuData {
         MediaTypeVideo,
         // An audio node is selected.
         MediaTypeAudio,
+        // A file node is selected.
+        MediaTypeFile,
         // A plugin node is selected.
         MediaTypePlugin,
     };
