@@ -92,6 +92,12 @@ bool EventQueue::cancelEvent(Event* event)
     return found;
 }
 
+void EventQueue::cancelQueuedEvents()
+{
+    m_pendingEventTimer->stop();
+    m_queuedEvents.clear();
+}
+
 void EventQueue::pendingEventTimerFired()
 {
     ASSERT(!m_pendingEventTimer->isActive());
