@@ -600,7 +600,7 @@ BUGCR24195 WIN LINUX : fast/repaint/bugzilla-6473.html = IMAGE+TEXT
 BUGCR24195 MAC : fast/repaint/bugzilla-6473.html = IMAGE
 
 // -----------------------------------------------------------------
-// Tests requiring features not currently in test_shell.
+// Tests requiring features not currently in DumpRenderTree.
 // -----------------------------------------------------------------
 
 // Implement layoutTestController.display()
@@ -625,6 +625,9 @@ BUGCR8630 WIN LINUX : fast/text/font-initial.html = FAIL
 // the message is dumped after the #EOF, which causes an additional
 // error in the header of the following test.
 BUGCR24197 SKIP : fast/css/disabled-author-styles.html = FAIL
+
+// Needs eventSender.scalePageBy().
+BUG58013 : fast/repaint/scale-page-shrink.html = IMAGE+TEXT
 
 // -----------------------------------------------------------------
 // Inspector tests
