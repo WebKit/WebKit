@@ -1,3 +1,9 @@
+2011-04-07  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed, now that bug 57975 is fixed, mark test as passing.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-07  Brian Weinstein  <bweinstein@apple.com>
 
         Update Leopard expected results after r83075 to greenify the bots.
