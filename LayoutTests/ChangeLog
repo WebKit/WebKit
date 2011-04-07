@@ -1,3 +1,9 @@
+2011-04-07  Brian Weinstein  <bweinstein@apple.com>
+
+        Update Leopard expected results after r83075 to greenify the bots.
+
+        * platform/mac-leopard/fast/blockflow/text-orientation-basic-expected.txt:
+
 2011-04-07  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, rebaseline tests changed in r82947.
