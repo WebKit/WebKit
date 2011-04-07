@@ -650,6 +650,13 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         commit_text = self.scm.commit_with_message("yet another test commit", username)
         self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '0')
 
+    def test_commit_in_subdir(self, username=None):
+        write_into_file_at_path('test_dir/test_file3', 'more test content')
+        os.chdir("test_dir")
+        commit_text = self.scm.commit_with_message("another test commit", username)
+        os.chdir("..")
+        self.assertEqual(self.scm.svn_revision_from_commit_text(commit_text), '6')
+
     def test_commit_text_parsing(self):
         self._shared_test_commit_with_message()
 

@@ -577,8 +577,7 @@ class SVN(SCM):
             # Return a string which looks like a commit so that things which parse this output will succeed.
             return "Dry run, no commit.\nCommitted revision 0."
 
-        # FIXME: Should this use cwd=self.checkout_root?
-        return self.run(svn_commit_args, error_handler=commit_error_handler)
+        return self.run(svn_commit_args, cwd=self.checkout_root, error_handler=commit_error_handler)
 
     def svn_commit_log(self, svn_revision):
         svn_revision = self.strip_r_from_svn_revision(svn_revision)
