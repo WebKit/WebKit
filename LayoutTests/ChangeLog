@@ -1,5 +1,11 @@
 2011-04-07  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Fix a duplicated entry.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-07  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Spinbuttons become unclickable if right padding is large.

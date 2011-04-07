@@ -3310,7 +3310,6 @@ BUGWK56298 : fast/forms/input-appearance-spinbutton-disabled-readonly-expected.t
 BUGWK56298 : fast/forms/input-appearance-spinbutton-expected.txt = TEXT
 BUGWK56298 : fast/forms/input-appearance-spinbutton-layer-expected.txt = TEXT
 BUGWK56298 : fast/forms/input-appearance-spinbutton-visibility-expected.txt = TEXT
-BUGWK56298 : fast/speech/input-appearance-numberandspeech.html = TEXT
 
 BUGWK58010 WIN LINUX DEBUG : inspector/profiler/detailed-heapshots-summary.html = PASS TIMEOUT
 BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = CRASH PASS
