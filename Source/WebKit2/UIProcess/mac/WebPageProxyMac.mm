@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebPageProxy.h"
 
+#import "AttributedString.h"
 #import "DataReference.h"
 #import "DictionaryPopupInfo.h"
 #import "NativeWebKeyboardEvent.h"
@@ -165,6 +166,11 @@ void WebPageProxy::getMarkedRange(uint64_t& location, uint64_t& length)
 void WebPageProxy::getSelectedRange(uint64_t& location, uint64_t& length)
 {
     process()->sendSync(Messages::WebPage::GetSelectedRange(), Messages::WebPage::GetSelectedRange::Reply(location, length), m_pageID);
+}
+
+void WebPageProxy::getAttributedSubstringFromRange(uint64_t location, uint64_t length, AttributedString& result)
+{
+    process()->sendSync(Messages::WebPage::GetAttributedSubstringFromRange(location, length), Messages::WebPage::GetAttributedSubstringFromRange::Reply(result), m_pageID);
 }
 
 uint64_t WebPageProxy::characterIndexForPoint(const IntPoint point)

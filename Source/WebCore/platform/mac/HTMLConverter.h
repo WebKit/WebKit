@@ -27,7 +27,8 @@
 @class DOMRange;
 
 namespace WebCore {
-class DocumentLoader;
+    class DocumentLoader;
+    class Range;
 }
 
 @interface WebHTMLConverter : NSObject {
@@ -85,6 +86,6 @@ class DocumentLoader;
 - (NSAttributedString *)attributedString;
 #endif
 
-+ (NSAttributedString *)editingAttributedStringFromRange:(DOMRange *)range;
++ (NSAttributedString *)editingAttributedStringFromRange:(WebCore::Range*)range;
 @end
 

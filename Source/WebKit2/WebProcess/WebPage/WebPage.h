@@ -104,6 +104,7 @@ class WebOpenPanelResultListener;
 class WebPageGroupProxy;
 class WebPopupMenu;
 class WebWheelEvent;
+struct AttributedString;
 struct PrintInfo;
 struct TextInputState;
 struct WebPageCreationParameters;
@@ -312,6 +313,7 @@ public:
     void insertText(const String& text, uint64_t replacementRangeStart, uint64_t replacementRangeEnd, bool& handled, TextInputState& newState);
     void getMarkedRange(uint64_t& location, uint64_t& length);
     void getSelectedRange(uint64_t& location, uint64_t& length);
+    void getAttributedSubstringFromRange(uint64_t location, uint64_t length, AttributedString&);
     void characterIndexForPoint(const WebCore::IntPoint point, uint64_t& result);
     void firstRectForCharacterRange(uint64_t location, uint64_t length, WebCore::IntRect& resultRect);
     void executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, bool& handled, TextInputState& newState);

@@ -5837,13 +5837,13 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> nil", nsRange.location, nsRange.length);
         return nil;
     }
-    DOMRange *domRange = [frame _convertNSRangeToDOMRange:nsRange];
-    if (!domRange) {
+    RefPtr<Range> range = [frame _convertToDOMRange:nsRange];
+    if (!range) {
         LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> nil", nsRange.location, nsRange.length);
         return nil;
     }
 
-    NSAttributedString *result = [WebHTMLConverter editingAttributedStringFromRange:domRange];
+    NSAttributedString *result = [WebHTMLConverter editingAttributedStringFromRange:range.get()];
     
     // [WebHTMLConverter editingAttributedStringFromRange:]  insists on inserting a trailing 
     // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
@@ -6227,7 +6227,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[document _documentRange]];
     if (!attributedString) {
         Document* coreDocument = core(document);
-        attributedString = [WebHTMLConverter editingAttributedStringFromRange:kit(Range::create(coreDocument, coreDocument, 0, coreDocument, coreDocument->childNodeCount()).get())];
+        attributedString = [WebHTMLConverter editingAttributedStringFromRange:Range::create(coreDocument, coreDocument, 0, coreDocument, coreDocument->childNodeCount()).get()];
     }
     return attributedString;
 }
@@ -6244,7 +6244,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
         Frame* coreFrame = core([self _frame]);
         if (coreFrame) {
             RefPtr<Range> range = coreFrame->selection()->selection().toNormalizedRange();
-            attributedString = [WebHTMLConverter editingAttributedStringFromRange:kit(range.get())];
+            attributedString = [WebHTMLConverter editingAttributedStringFromRange:range.get()];
         }
     }
     return attributedString;

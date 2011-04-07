@@ -277,7 +277,7 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset
 {
-    return [WebHTMLConverter editingAttributedStringFromRange:kit(Range::create(core(startNode)->document(), core(startNode), startOffset, core(endNode), endOffset).get())];
+    return [WebHTMLConverter editingAttributedStringFromRange:Range::create(core(startNode)->document(), core(startNode), startOffset, core(endNode), endOffset).get()];
 }
 
 static HTMLFormElement* formElementFromDOMElement(DOMElement *element)

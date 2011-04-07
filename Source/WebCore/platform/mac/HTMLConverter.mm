@@ -55,7 +55,7 @@ static NSFileWrapper *fileWrapperForElement(Element*);
 // Additional control Unicode characters
 const unichar WebNextLineCharacter = 0x0085;
 
-@interface NSTextList (TextListPrivate)
+@interface NSTextList (WebCoreNSTextListDetails)
 + (NSDictionary *)_standardMarkerAttributesForAttributes:(NSDictionary *)attrs;
 @end
 
@@ -64,12 +64,12 @@ const unichar WebNextLineCharacter = 0x0085;
 - (BOOL)ignoresOrientation;
 @end
 
-@interface NSURL (WebDataURL)
+@interface NSURL (WebCoreNSURLDetails)
 // FIXME: What is the reason to use this Foundation method, and not +[NSURL URLWithString:relativeToURL:]?
 + (NSURL *)_web_URLWithString:(NSString *)string relativeToURL:(NSURL *)baseURL;
 @end
 
-@interface WebHTMLConverter(WebHTMLConverterPrivate)
+@interface WebHTMLConverter(WebHTMLConverterInternal)
 
 - (NSString *)_stringForNode:(DOMNode *)node property:(NSString *)key;
 - (NSColor *)_colorForNode:(DOMNode *)node property:(NSString *)key;
@@ -1660,9 +1660,8 @@ static NSInteger _colCompare(id block1, id block2, void *)
 #endif // !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
 
 // This function uses TextIterator, which makes offsets in its result compatible with HTML editing.
-+ (NSAttributedString *)editingAttributedStringFromRange:(DOMRange *)domRange
++ (NSAttributedString *)editingAttributedStringFromRange:(Range*)range
 {
-    Range *range = core(domRange);
     NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
     NSUInteger stringLength = 0;
     RetainPtr<NSMutableDictionary> attrs(AdoptNS, [[NSMutableDictionary alloc] init]);

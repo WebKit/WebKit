@@ -262,6 +262,7 @@ def struct_or_class(namespace, type):
         'WebCore::PrintInfo',
         'WebCore::ViewportArguments',
         'WebCore::WindowFeatures',
+        'WebKit::AttributedString',
         'WebKit::ContextMenuState',
         'WebKit::DictionaryPopupInfo',
         'WebKit::DrawingAreaInfo',

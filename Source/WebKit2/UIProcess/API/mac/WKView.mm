@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WKView.h"
 
+#import "AttributedString.h"
 #import "ChunkedUpdateDrawingAreaProxy.h"
 #import "DataReference.h"
 #import "DrawingAreaProxyImpl.h"
@@ -1364,9 +1365,17 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 {
     [self _executeSavedKeypressCommands];
 
-    // This is not implemented for now. Need to figure out how to serialize the attributed string across processes.
-    LOG(TextInput, "attributedSubstringFromRange");
-    return nil;
+    WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
+    if (parameters && !parameters->cachedTextInputState.selectionIsEditable) {
+        LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> nil", nsRange.location, nsRange.length);
+        return nil;
+    }
+
+    AttributedString result;
+    _data->_page->getAttributedSubstringFromRange(nsRange.location, NSMaxRange(nsRange), result);
+
+    LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> \"%@\"", nsRange.location, nsRange.length, [result.string.get() string]);
+    return [[result.string.get() retain] autorelease];
 }
 
 - (NSUInteger)characterIndexForPoint:(NSPoint)thePoint

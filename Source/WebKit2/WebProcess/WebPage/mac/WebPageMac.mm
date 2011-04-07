@@ -27,6 +27,7 @@
 #import "WebPage.h"
 
 #import "AccessibilityWebPageObject.h"
+#import "AttributedString.h"
 #import "DataReference.h"
 #import "PluginView.h"
 #import "TextInputState.h"
@@ -40,6 +41,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HitTestResult.h>
+#import <WebCore/HTMLConverter.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
@@ -299,6 +301,34 @@ void WebPage::getSelectedRange(uint64_t& location, uint64_t& length)
     if (TextIterator::locationAndLengthFromRange(frame->selection()->toNormalizedRange().get(), locationSize, lengthSize)) {
         location = static_cast<uint64_t>(locationSize);
         length = static_cast<uint64_t>(lengthSize);
+    }
+}
+
+void WebPage::getAttributedSubstringFromRange(uint64_t location, uint64_t length, AttributedString& result)
+{
+    NSRange nsRange = NSMakeRange(location, length - location);
+
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    if (frame->selection()->isNone() || !frame->selection()->isContentEditable() || frame->selection()->isInPasswordField())
+        return;
+
+    RefPtr<Range> range = convertToRange(frame, nsRange);
+    if (!range)
+        return;
+
+    result.string = [WebHTMLConverter editingAttributedStringFromRange:range.get()];
+    NSAttributedString* attributedString = result.string.get();
+    
+    // [WebHTMLConverter editingAttributedStringFromRange:] insists on inserting a trailing 
+    // whitespace at the end of the string which breaks the ATOK input method.  <rdar://problem/5400551>
+    // To work around this we truncate the resultant string to the correct length.
+    if ([attributedString length] > nsRange.length) {
+        ASSERT([attributedString length] == nsRange.length + 1);
+        ASSERT([[attributedString string] characterAtIndex:nsRange.length] == '\n' || [[attributedString string] characterAtIndex:nsRange.length] == ' ');
+        result.string = [attributedString attributedSubstringFromRange:NSMakeRange(0, nsRange.length)];
     }
 }
 

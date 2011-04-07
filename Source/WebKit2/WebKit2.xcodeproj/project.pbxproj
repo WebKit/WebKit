@@ -785,8 +785,12 @@
 		D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */; };
 		E134F01712EA5D33004EC58D /* WKPrintingView.h in Headers */ = {isa = PBXBuildFile; fileRef = E134F01512EA5D11004EC58D /* WKPrintingView.h */; };
 		E134F01A12EA5D99004EC58D /* WKPrintingView.mm in Sources */ = {isa = PBXBuildFile; fileRef = E134F01912EA5D99004EC58D /* WKPrintingView.mm */; };
+		E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E179FD9B134D38060015B883 /* ArgumentCodersMac.h */; };
+		E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */; };
 		E1839349134297A5001842EC /* TextInputState.h in Headers */ = {isa = PBXBuildFile; fileRef = E1839348134297A5001842EC /* TextInputState.h */; };
 		E18C92F412DB9E7100CF2AEB /* PrintInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */; };
+		E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A31731134CEA6C007C9A4F /* AttributedString.h */; };
+		E1A31735134CEA80007C9A4F /* AttributedString.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1A31734134CEA80007C9A4F /* AttributedString.mm */; };
 		E1BB16A413201B9B00F49431 /* FullKeyboardAccessWatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = E1BB1688132018BA00F49431 /* FullKeyboardAccessWatcher.h */; };
 		E1BB16A513201B9B00F49431 /* FullKeyboardAccessWatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1BB1689132018BA00F49431 /* FullKeyboardAccessWatcher.mm */; };
 		E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = E1CC1B8E12D7EADF00625838 /* PrintInfo.h */; };
@@ -1705,8 +1709,12 @@
 		D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSearchPopupMenu.h; sourceTree = "<group>"; };
 		E134F01512EA5D11004EC58D /* WKPrintingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPrintingView.h; sourceTree = "<group>"; };
 		E134F01912EA5D99004EC58D /* WKPrintingView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPrintingView.mm; sourceTree = "<group>"; };
+		E179FD9B134D38060015B883 /* ArgumentCodersMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersMac.h; sourceTree = "<group>"; };
+		E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ArgumentCodersMac.mm; sourceTree = "<group>"; };
 		E1839348134297A5001842EC /* TextInputState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInputState.h; sourceTree = "<group>"; };
 		E18C92F312DB9E7100CF2AEB /* PrintInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintInfo.cpp; sourceTree = "<group>"; };
+		E1A31731134CEA6C007C9A4F /* AttributedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributedString.h; sourceTree = "<group>"; };
+		E1A31734134CEA80007C9A4F /* AttributedString.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedString.mm; sourceTree = "<group>"; };
 		E1BB1688132018BA00F49431 /* FullKeyboardAccessWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FullKeyboardAccessWatcher.h; sourceTree = "<group>"; };
 		E1BB1689132018BA00F49431 /* FullKeyboardAccessWatcher.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = FullKeyboardAccessWatcher.mm; sourceTree = "<group>"; };
 		E1CC1B8E12D7EADF00625838 /* PrintInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintInfo.h; sourceTree = "<group>"; };
@@ -2759,6 +2767,10 @@
 		BC111B5A112F628200337BAB /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				E179FD9B134D38060015B883 /* ArgumentCodersMac.h */,
+				E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */,
+				E1A31731134CEA6C007C9A4F /* AttributedString.h */,
+				E1A31734134CEA80007C9A4F /* AttributedString.mm */,
 				1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */,
 				1A9639F512F38ECD0078A062 /* CoreAnimationRenderer.h */,
 				1A9639F612F38ECD0078A062 /* CoreAnimationRenderer.mm */,
@@ -3666,6 +3678,8 @@
 				51834593134532E90092B696 /* WebIconDatabaseClient.h in Headers */,
 				E1839349134297A5001842EC /* TextInputState.h in Headers */,
 				C0FA52431345694A0028E8C2 /* LayerTreeHostCAMac.h in Headers */,
+				E1A31732134CEA6C007C9A4F /* AttributedString.h in Headers */,
+				E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4291,6 +4305,8 @@
 				F6A90813133C20510082C3F4 /* WebCookieManagerMac.mm in Sources */,
 				F6D632BC133D198200743D77 /* WebCookieManagerProxyMac.mm in Sources */,
 				51834592134532E90092B696 /* WebIconDatabaseClient.cpp in Sources */,
+				E1A31735134CEA80007C9A4F /* AttributedString.mm in Sources */,
+				E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

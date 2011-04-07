@@ -1,3 +1,41 @@
+2011-04-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        REGRESSION (WebKit2): Reverse conversion doesn't work in Kotoeri
+        https://bugs.webkit.org/show_bug.cgi?id=58066
+        <rdar://problem/8965302>
+
+        * Scripts/webkit2/messages.py:
+        * Shared/mac/AttributedString.h: Added.
+        * Shared/mac/AttributedString.mm: Added.
+        (WebKit::AttributedString::encode):
+        (WebKit::AttributedString::decode):
+        Added an class that wraps NSAttributedString. As far as I can tell, one can't pass a CF
+        or NS object to another process without wrapping it in a C++ one.
+        
+        * Shared/mac/ArgumentCodersMac.h: Added.
+        * Shared/mac/ArgumentCodersMac.mm: Added.
+        Added coders for Foundation objects, similar to ArgumentCodersCF. There are two reasons why
+        these are needed:
+        1) Even though most Foundation objects are toll free bridged with CF, CFGetTypeID() doesn't
+        work properly for them (I've been just getting 1).
+        2) NSColor isn't toll free bridged to CF.
+        This adds just the types necessary for editing NSAttributedString (and I don't yet know what
+        happens with attachments).
+
+        * UIProcess/API/mac/WKView.mm: (-[WKView attributedSubstringFromRange:]):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::getAttributedSubstringFromRange):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Boilerplate code for making a sync call to web process.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm: (WebKit::WebPage::getAttributedSubstringFromRange):
+        Ported from WebHTMLView.
+
 2011-04-07  Jeff Miller  <jeffm@apple.com>
 
         Mac build fix.
