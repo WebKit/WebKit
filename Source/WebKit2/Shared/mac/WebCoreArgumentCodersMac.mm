@@ -188,6 +188,7 @@ bool decodeResourceError(ArgumentDecoder* decoder, ResourceError& resourceError)
     NSError *nsError = [[NSError alloc] initWithDomain:nsString(domain) code:code userInfo:userInfo];
 
     resourceError = ResourceError(nsError);
+    [nsError release];
     return true;
 }
 

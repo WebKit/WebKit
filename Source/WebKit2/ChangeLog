@@ -1,3 +1,16 @@
+2011-04-07  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Memory leak in decodeResourceError
+        https://bugs.webkit.org/show_bug.cgi?id=58004
+
+        Release the local NSError after it is used to create a ResourceError
+        object assigned to the reference argument.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (CoreIPC::decodeResourceError):
+
 2011-04-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam Barth.
