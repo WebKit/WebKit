@@ -457,6 +457,17 @@ void WebView::clearAllEditCommands()
     notImplemented();
 }
 
+bool WebView::canUndoRedo(WebPageProxy::UndoOrRedo)
+{
+    notImplemented();
+    return false;
+}
+
+void WebView::executeUndoRedo(WebPageProxy::UndoOrRedo)
+{
+    notImplemented();
+}
+
 FloatRect WebView::convertToDeviceSpace(const FloatRect& viewRect)
 {
     notImplemented();

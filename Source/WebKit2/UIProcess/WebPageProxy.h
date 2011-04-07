@@ -593,6 +593,8 @@ private:
     // Undo management
     void registerEditCommandForUndo(uint64_t commandID, uint32_t editAction);
     void clearAllEditCommands();
+    void canUndoRedo(uint32_t action, bool& result);
+    void executeUndoRedo(uint32_t action, bool& result);
 
     // Keyboard handling
 #if PLATFORM(MAC)

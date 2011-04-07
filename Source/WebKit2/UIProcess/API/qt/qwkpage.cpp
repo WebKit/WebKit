@@ -217,6 +217,15 @@ void QWKPagePrivate::clearAllEditCommands()
 {
 }
 
+bool QWKPagePrivate::canUndoRedo(WebPageProxy::UndoOrRedo)
+{
+    return false;
+}
+
+void QWKPagePrivate::executeUndoRedo(WebPageProxy::UndoOrRedo)
+{
+}
+
 FloatRect QWKPagePrivate::convertToDeviceSpace(const FloatRect& rect)
 {
     return rect;

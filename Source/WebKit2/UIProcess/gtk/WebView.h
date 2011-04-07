@@ -95,6 +95,8 @@ private:
     virtual void setViewportArguments(const WebCore::ViewportArguments&);
     virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
     virtual void clearAllEditCommands();
+    virtual bool canUndoRedo(WebPageProxy::UndoOrRedo);
+    virtual void executeUndoRedo(WebPageProxy::UndoOrRedo);
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&);

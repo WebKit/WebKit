@@ -30,6 +30,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebFrameLoaderClient.h"
 #include "WebPage.h"
+#include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/ArchiveResource.h>
@@ -272,24 +273,28 @@ bool WebEditorClient::canPaste(bool defaultValue) const
 
 bool WebEditorClient::canUndo() const
 {
-    notImplemented();
-    return false;
+    bool result = false;
+    m_page->sendSync(Messages::WebPageProxy::CanUndoRedo(static_cast<uint32_t>(WebPageProxy::Undo)), Messages::WebPageProxy::CanUndoRedo::Reply(result));
+    return result;
 }
 
 bool WebEditorClient::canRedo() const
 {
-    notImplemented();
-    return false;
+    bool result = false;
+    m_page->sendSync(Messages::WebPageProxy::CanUndoRedo(static_cast<uint32_t>(WebPageProxy::Redo)), Messages::WebPageProxy::CanUndoRedo::Reply(result));
+    return result;
 }
 
 void WebEditorClient::undo()
 {
-    notImplemented();
+    bool result = false;
+    m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(static_cast<uint32_t>(WebPageProxy::Undo)), Messages::WebPageProxy::ExecuteUndoRedo::Reply(result));
 }
 
 void WebEditorClient::redo()
 {
-    notImplemented();
+    bool result = false;
+    m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(static_cast<uint32_t>(WebPageProxy::Redo)), Messages::WebPageProxy::ExecuteUndoRedo::Reply(result));
 }
 
 #if !PLATFORM(GTK) && !PLATFORM(MAC)

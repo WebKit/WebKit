@@ -98,6 +98,8 @@ public:
 
     virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo) = 0;
     virtual void clearAllEditCommands() = 0;
+    virtual bool canUndoRedo(WebPageProxy::UndoOrRedo) = 0;
+    virtual void executeUndoRedo(WebPageProxy::UndoOrRedo) = 0;
 #if PLATFORM(MAC)
     virtual void accessibilityWebProcessTokenReceived(const CoreIPC::DataReference&) = 0;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, const TextInputState&, Vector<WebCore::KeypressCommand>&) = 0;

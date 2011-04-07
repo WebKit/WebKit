@@ -288,6 +288,16 @@ void PageClientImpl::clearAllEditCommands()
     [[m_wkView undoManager] removeAllActionsWithTarget:m_undoTarget.get()];
 }
 
+bool PageClientImpl::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
+{
+    return (undoOrRedo == WebPageProxy::Undo) ? [[m_wkView undoManager] canUndo] : [[m_wkView undoManager] canRedo];
+}
+
+void PageClientImpl::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
+{
+    return (undoOrRedo == WebPageProxy::Undo) ? [[m_wkView undoManager] undo] : [[m_wkView undoManager] redo];
+}
+
 bool PageClientImpl::interpretKeyEvent(const NativeWebKeyboardEvent& event, const TextInputState& state, Vector<WebCore::KeypressCommand>& commands)
 {
     return [m_wkView _interpretKeyEvent:event.nativeEvent() withCachedTextInputState:state savingCommandsTo:commands];

@@ -2116,6 +2116,17 @@ void WebPageProxy::registerEditCommandForUndo(uint64_t commandID, uint32_t editA
     registerEditCommand(WebEditCommandProxy::create(commandID, static_cast<EditAction>(editAction), this), Undo);
 }
 
+void WebPageProxy::canUndoRedo(uint32_t action, bool& result)
+{
+    result = m_pageClient->canUndoRedo(static_cast<UndoOrRedo>(action));
+}
+
+void WebPageProxy::executeUndoRedo(uint32_t action, bool& result)
+{
+    m_pageClient->executeUndoRedo(static_cast<UndoOrRedo>(action));
+    result = true;
+}
+
 void WebPageProxy::clearAllEditCommands()
 {
     m_pageClient->clearAllEditCommands();

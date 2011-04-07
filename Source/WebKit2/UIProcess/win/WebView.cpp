@@ -1030,6 +1030,15 @@ void WebView::clearAllEditCommands()
     m_undoClient.clearAllEditCommands(this);
 }
 
+bool WebView::canUndoRedo(WebPageProxy::UndoOrRedo)
+{
+    return false;
+}
+
+void WebView::executeUndoRedo(WebPageProxy::UndoOrRedo)
+{
+}
+    
 void WebView::reapplyEditCommand(WebEditCommandProxy* command)
 {
     if (!m_page->isValid() || !m_page->isValidEditCommand(command))

@@ -76,6 +76,8 @@ public:
     virtual void toolTipChanged(const WTF::String&, const WTF::String&);
     virtual void registerEditCommand(PassRefPtr<WebKit::WebEditCommandProxy>, WebKit::WebPageProxy::UndoOrRedo);
     virtual void clearAllEditCommands();
+    virtual bool canUndoRedo(WebPageProxy::UndoOrRedo);
+    virtual void executeUndoRedo(WebPageProxy::UndoOrRedo);
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&);

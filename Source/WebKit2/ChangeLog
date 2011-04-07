@@ -1,3 +1,49 @@
+2011-04-07  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION(WebKit2): execCommand('undo') doesn't work (Mac).
+        https://bugs.webkit.org/show_bug.cgi?id=58055
+        <rdar://problem/8862023>
+        
+        Adding support for execCommand('undo') and execCommand('redo')
+        in WebKit2 for Mac.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::canUndoRedo): Added interaction with undomanager.
+        (WebKit::PageClientImpl::executeUndoRedo): Added interaction with undomanager.
+        
+        Added new empty PageClient methods for other platforms.
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::canUndoRedo):
+        (QWKPagePrivate::executeUndoRedo):
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/gtk/WebView.cpp:
+        (WebKit::WebView::canUndoRedo):
+        (WebKit::WebView::executeUndoRedo):
+        * UIProcess/gtk/WebView.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::canUndoRedo):
+        (WebKit::WebView::executeUndoRedo):
+        * UIProcess/win/WebView.h:
+
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::unapply): Added flag to allow dispatching
+        of asychronous messages while waiting for a sync message reply.
+        (WebKit::WebEditCommandProxy::reapply): Same as above.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::canUndoRedo):
+        (WebKit::WebPageProxy::executeUndoRedo):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp: Added missing implementation.
+        (WebKit::WebEditorClient::canUndo):
+        (WebKit::WebEditorClient::canRedo):
+        (WebKit::WebEditorClient::undo):
+        (WebKit::WebEditorClient::redo):
+
 2011-04-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak.

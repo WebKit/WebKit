@@ -143,6 +143,8 @@ messages -> WebPageProxy {
     # Undo/Redo messages
     RegisterEditCommandForUndo(uint64_t commandID, uint32_t editAction)
     ClearAllEditCommands()
+    CanUndoRedo(uint32_t action) -> (bool result)
+    ExecuteUndoRedo(uint32_t action) -> (bool result)
     
     # Selection messages
     SelectionStateChanged(WebKit::SelectionState selectionState)

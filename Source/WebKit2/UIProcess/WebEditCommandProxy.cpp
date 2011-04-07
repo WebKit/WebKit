@@ -53,7 +53,7 @@ void WebEditCommandProxy::unapply()
     if (!m_page || !m_page->isValid())
         return;
 
-    m_page->process()->send(Messages::WebPage::UnapplyEditCommand(m_commandID), m_page->pageID());
+    m_page->process()->send(Messages::WebPage::UnapplyEditCommand(m_commandID), m_page->pageID(), CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
     m_page->registerEditCommand(this, WebPageProxy::Redo);
 }
 
@@ -62,7 +62,7 @@ void WebEditCommandProxy::reapply()
     if (!m_page || !m_page->isValid())
         return;
 
-    m_page->process()->send(Messages::WebPage::ReapplyEditCommand(m_commandID), m_page->pageID());
+    m_page->process()->send(Messages::WebPage::ReapplyEditCommand(m_commandID), m_page->pageID(), CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
     m_page->registerEditCommand(this, WebPageProxy::Undo);
 }
 
