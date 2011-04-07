@@ -100,6 +100,7 @@ enum MediaPlayerAVFoundationObservationContext {
 -(void)playableKnown;
 -(void)metadataLoaded;
 -(void)timeChanged:(double)time;
+-(void)seekCompleted:(BOOL)finished;
 -(void)didEnd:(NSNotification *)notification;
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(MediaPlayerAVFoundationObservationContext)context;
 @end
@@ -408,14 +409,10 @@ void MediaPlayerPrivateAVFoundationObjC::seekToTime(float time)
     // setCurrentTime generates several event callbacks, update afterwards.
     setDelayCallbacks(true);
 
-    float now = currentTime();
-    if (time != now)
-        [m_avPlayerItem.get() seekToTime:CMTimeMakeWithSeconds(time, 600) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
-    else {
-        // Force a call to the "time changed" notifier manually because a seek to the current time is a noop 
-        // so the seek will never seem to complete.
-        [m_objcObserver.get() timeChanged:now];
-    }
+    WebCoreAVFMovieObserver *observer = m_objcObserver.get();
+    [m_avPlayerItem.get() seekToTime:CMTimeMakeWithSeconds(time, 600) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
+        [observer seekCompleted:finished];
+    }];
 
     setDelayCallbacks(false);
 }
@@ -763,6 +760,14 @@ NSArray* itemKVOProperties()
         return;
 
     m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::PlayerTimeChanged, time);
+}
+
+- (void)seekCompleted:(BOOL)finished
+{
+    if (!m_callback)
+        return;
+    
+    m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::SeekCompleted, static_cast<bool>(finished));
 }
 
 - (void)didEnd:(NSNotification *)unusedNotification

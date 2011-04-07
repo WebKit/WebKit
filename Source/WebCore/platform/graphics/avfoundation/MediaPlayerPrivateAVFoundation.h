@@ -48,6 +48,7 @@ public:
     virtual void loadedTimeRangesChanged();
     virtual void seekableTimeRangesChanged();
     virtual void timeChanged(double);
+    virtual void seekCompleted(bool);
     virtual void didEnd();
 
     class Notification {
@@ -66,31 +67,45 @@ public:
             AssetMetadataLoaded,
             AssetPlayabilityKnown,
             PlayerRateChanged,
-            PlayerTimeChanged
+            PlayerTimeChanged,
+            SeekCompleted,
         };
         
         Notification()
             : m_type(None)
             , m_time(0)
+            , m_finished(false)
         {
         }
 
         Notification(Type type, double time)
             : m_type(type)
             , m_time(time)
+            , m_finished(false)
+        {
+        }
+        
+        Notification(Type type, bool finished)
+        : m_type(type)
+        , m_time(0)
+        , m_finished(finished)
         {
         }
         
         Type type() { return m_type; }
         bool isValid() { return m_type != None; }
         double time() { return m_time; }
+        bool finished() { return m_finished; }
         
     private:
         Type m_type;
         double m_time;
+        bool m_finished;
     };
 
+    void scheduleMainThreadNotification(Notification);
     void scheduleMainThreadNotification(Notification::Type, double time = 0);
+    void scheduleMainThreadNotification(Notification::Type, bool completed);
     void dispatchNotification();
     void clearMainThreadPendingFlag();
 

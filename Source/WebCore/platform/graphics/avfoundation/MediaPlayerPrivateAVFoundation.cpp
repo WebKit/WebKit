@@ -568,6 +568,14 @@ void MediaPlayerPrivateAVFoundation::timeChanged(double time)
     }
 }
 
+void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
+{
+    LOG(Media, "MediaPlayerPrivateAVFoundation::seekCompleted(%p) - finished = %d", this, finished);
+    
+    if (finished)
+        m_seekTo = invalidTime;
+}
+
 void MediaPlayerPrivateAVFoundation::didEnd()
 {
     // Hang onto the current time and use it as duration from now on since we are definitely at
@@ -631,12 +639,22 @@ void MediaPlayerPrivateAVFoundation::clearMainThreadPendingFlag()
 
 void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification::Type type, double time)
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(%p) - notification %d", this, static_cast<int>(type));
+    scheduleMainThreadNotification(Notification(type, time));
+}
+
+void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification::Type type, bool finished)
+{
+    scheduleMainThreadNotification(Notification(type, finished));
+}
+
+void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification notification)
+{
+    LOG(Media, "MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(%p) - notification %d", this, static_cast<int>(notification.type()));
     m_queueMutex.lock();
 
     // It is important to always process the properties in the order that we are notified, 
     // so always go through the queue because notifications happen on different threads.
-    m_queuedNotifications.append(Notification(type, time));
+    m_queuedNotifications.append(notification);
 
     bool delayDispatch = m_delayCallbacks || !isMainThread();
     if (delayDispatch && !m_mainThreadCallPending) {
@@ -715,6 +733,9 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
         break;
     case Notification::PlayerTimeChanged:
         timeChanged(notification.time());
+        break;
+    case Notification::SeekCompleted:
+        seekCompleted(notification.finished());
         break;
     case Notification::AssetMetadataLoaded:
         metadataLoaded();

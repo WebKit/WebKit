@@ -1,3 +1,27 @@
+2011-04-06  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        AVF: MediaPlayerPrivateAVFoundation never reaches playable state.
+        https://bugs.webkit.org/show_bug.cgi?id=57962
+
+        Add support for a new AVPlayerItem API which will notify clients when their
+        seek completes.  This requires a new Notification type to be passed to the main
+        thread in MediaPlayerPrivateAVFoundation.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted): Added.
+        (WebCore::MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification): Added two new
+            overloaded functions which take a Notification; and a Notification::Type and boolean.
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification): Support new SeekCompleted 
+            Notification type.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::Notification::Notification): Added one new constructor.
+        (WebCore::MediaPlayerPrivateAVFoundation::Notification::finished): Added ivar and accessor.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekToTime): Call new AVPlayerItem API.
+        (-[WebCoreAVFMovieObserver seekCompleted:]): Added.
+
 2011-04-07  Nancy Piedra  <nancy.piedra@nokia.com>
 
         Reviewed by Eric Carlson.
