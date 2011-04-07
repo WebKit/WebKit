@@ -782,8 +782,12 @@ void LayoutTestController::setGeolocationPermission(bool allow)
 
 int LayoutTestController::numberOfPendingGeolocationPermissionRequests()
 {
-    // FIXME: Implement for Geolocation layout tests.
-    return -1;
+    int pendingPermissionCount = 0;
+    QList<WebCore::WebPage*> pages = m_drt->getAllPages();
+    foreach (WebCore::WebPage* page, pages)
+        pendingPermissionCount += DumpRenderTreeSupportQt::numberOfPendingGeolocationPermissionRequests(page);
+
+    return pendingPermissionCount;
 }
 
 void LayoutTestController::setGeolocationPermissionCommon(bool allow)

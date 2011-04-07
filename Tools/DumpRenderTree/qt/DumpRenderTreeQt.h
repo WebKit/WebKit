@@ -100,6 +100,7 @@ public:
     void switchFocus(bool focused);
 
     WebPage *webPage() const { return m_page; }
+    QList<WebPage*> getAllPages() const;
 
 #if defined(Q_WS_X11)
     static void initializeFonts();

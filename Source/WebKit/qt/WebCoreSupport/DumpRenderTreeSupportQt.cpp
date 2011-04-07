@@ -822,6 +822,17 @@ void DumpRenderTreeSupportQt::setMockGeolocationError(QWebPage* page, int errorC
 #endif
 }
 
+int DumpRenderTreeSupportQt::numberOfPendingGeolocationPermissionRequests(QWebPage* page)
+{
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    Page* corePage = QWebPagePrivate::core(page);
+    GeolocationClientMock* mockClient = toGeolocationClientMock(corePage->geolocationController()->client());
+    return mockClient->numberOfPendingPermissionRequests();
+#else
+    return -1;
+#endif
+}
+
 bool DumpRenderTreeSupportQt::isTargetItem(const QWebHistoryItem& historyItem)
 {
     QWebHistoryItem it = historyItem;

@@ -1136,6 +1136,17 @@ void DumpRenderTree::switchFocus(bool focused)
 
 }
 
+QList<WebPage*> DumpRenderTree::getAllPages() const
+{
+    QList<WebPage*> pages;
+    pages.append(m_page);
+    foreach (QObject* widget, windows) {
+        if (WebPage* page = widget->findChild<WebPage*>())
+            pages.append(page);
+    }
+    return pages;
+}
+
 #if defined(Q_WS_X11)
 void DumpRenderTree::initializeFonts()
 {
