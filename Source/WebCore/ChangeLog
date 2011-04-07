@@ -1,3 +1,19 @@
+2011-04-07  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Mask the QStyle::State_Horizontal hint for vertical scrollbars.
+
+        When initializing a QStyleOptionSlider from a widget, the State_Horizontal
+        hint may get set depending on how that widget is laid out in its parent.
+        If this happens when drawing a vertical scrollbar, the hint is never
+        cleared and we end up painting a vertical scrollbar with horizontal arrows.
+
+        Covered by pixel tests which should no longer paint silly scrollbars.
+
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::styleOptionSlider):
+
 2011-04-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
