@@ -1,3 +1,14 @@
+2011-04-07  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Add a layout test to ensure that mousemove is fired from a subframe
+        https://bugs.webkit.org/show_bug.cgi?id=58094
+
+        * fast/events/iframe-onmousemove-expected.txt: Added.
+        * fast/events/iframe-onmousemove.html: Added.
+        * fast/events/resources/iframe-onmousemove.html: Added.
+
 2011-04-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Decrease flakiness of test results.
