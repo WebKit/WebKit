@@ -3257,7 +3257,7 @@ BUGWK57547 WIN GPU : fast/canvas/canvas-fillPath-pattern-shadow.html = TIMEOUT
 BUGWK57593 : fast/preloader/document-write-2.html = TEXT
 BUGWK57593 : fast/preloader/document-write.html = TEXT
 
-BUGWK57754 WIN DEBUG : inspector/debugger/xhr-breakpoints.html = CRASH PASS
+BUGWK57754 WIN DEBUG : inspector/debugger/xhr-breakpoints.html = CRASH PASS TIMEOUT
 
 BUGCR78326 : fast/filesystem/filesystem-reference.html = CRASH PASS
 
@@ -3299,8 +3299,7 @@ BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-CS-after-AN.html = IMA
 BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
 BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-neutral-run.html = IMAGE+TEXT
 
+BUGWK58010 WIN LINUX DEBUG : inspector/profiler/detailed-heapshots-summary.html = PASS TIMEOUT
 BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = CRASH PASS
-
 BUGWK57975 : fast/overflow/line-clamp.html = IMAGE
-
 BUGWK58005 MAC : editing/inserting/editable-inline-element.html = IMAGE

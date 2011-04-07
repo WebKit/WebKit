@@ -1,3 +1,10 @@
+2011-04-06  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update test expectation.
+        xhr-breakpoints.html and detailed-heapshots-summary.html are flaky.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
