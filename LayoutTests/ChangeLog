@@ -1,3 +1,19 @@
+2011-04-07  Kent Tamura  <tkent@chromium.org>
+
+        Update spinbutton test results for r83145.
+
+        * platform/chromium-linux/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/chromium-linux/fast/forms/input-appearance-spinbutton-layer-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/input-appearance-spinbutton-visibility-expected.txt: Removed.
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-numberandspeech-expected.txt: Added.
+        * platform/chromium-win/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-spinbutton-layer-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-appearance-spinbutton-visibility-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/win/Skipped:
+
 2011-04-07  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline after r83145. Also skip
