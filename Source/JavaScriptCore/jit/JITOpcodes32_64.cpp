@@ -553,7 +553,7 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     // Optimistically load the result true, and start looping.
     // Initially, regT1 still contains proto and regT2 still contains value.
     // As we loop regT2 will be updated with its prototype, recursively walking the prototype chain.
-    move(TrustedImm32(JSValue::TrueTag), regT0);
+    move(TrustedImm32(1), regT0);
     Label loop(this);
 
     // Load the prototype of the cell in regT2.  If this is equal to regT1 - WIN!
@@ -564,7 +564,7 @@ void JIT::emit_op_instanceof(Instruction* currentInstruction)
     branchTest32(NonZero, regT2).linkTo(loop, this);
 
     // We get here either by dropping out of the loop, or if value was not an Object.  Result is false.
-    move(TrustedImm32(JSValue::FalseTag), regT0);
+    move(TrustedImm32(0), regT0);
 
     // isInstance jumps right down to here, to skip setting the result to false (it has already set true).
     isInstance.link(this);
@@ -829,9 +829,9 @@ void JIT::emit_op_not(Instruction* currentInstruction)
 
     emitLoadTag(src, regT0);
 
-    xor32(TrustedImm32(JSValue::FalseTag), regT0);
-    addSlowCase(branchTest32(NonZero, regT0, TrustedImm32(~1)));
-    xor32(TrustedImm32(JSValue::TrueTag), regT0);
+    emitLoad(src, regT1, regT0);
+    addSlowCase(branch32(NotEqual, regT1, TrustedImm32(JSValue::BooleanTag)));
+    xor32(TrustedImm32(1), regT0);
 
     emitStoreBool(dst, regT0, (dst == src));
 }
@@ -855,25 +855,9 @@ void JIT::emit_op_jfalse(Instruction* currentInstruction)
 
     emitLoad(cond, regT1, regT0);
 
-    Jump isTrue = branch32(Equal, regT1, TrustedImm32(JSValue::TrueTag));
-    addJump(branch32(Equal, regT1, TrustedImm32(JSValue::FalseTag)), target);
-
-    Jump isNotInteger = branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag));
-    Jump isTrue2 = branch32(NotEqual, regT0, TrustedImm32(0));
-    addJump(jump(), target);
-
-    if (supportsFloatingPoint()) {
-        isNotInteger.link(this);
-
-        addSlowCase(branch32(Above, regT1, TrustedImm32(JSValue::LowestTag)));
-
-        emitLoadDouble(cond, fpRegT0);
-        addJump(branchDoubleZeroOrNaN(fpRegT0, fpRegT1), target);
-    } else
-        addSlowCase(isNotInteger);
-
-    isTrue.link(this);
-    isTrue2.link(this);
+    ASSERT((JSValue::BooleanTag + 1 == JSValue::Int32Tag) && !(JSValue::Int32Tag + 1));
+    addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::BooleanTag)));
+    addJump(branchTest32(Zero, regT0), target);
 }
 
 void JIT::emitSlow_op_jfalse(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -882,6 +866,18 @@ void JIT::emitSlow_op_jfalse(Instruction* currentInstruction, Vector<SlowCaseEnt
     unsigned target = currentInstruction[2].u.operand;
 
     linkSlowCase(iter);
+
+    if (supportsFloatingPoint()) {
+        // regT1 contains the tag from the hot path.
+        Jump notNumber = branch32(Above, regT1, Imm32(JSValue::LowestTag));
+
+        emitLoadDouble(cond, fpRegT0);
+        emitJumpSlowToHot(branchDoubleZeroOrNaN(fpRegT0, fpRegT1), target);
+        emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jfalse));
+
+        notNumber.link(this);
+    }
+
     JITStubCall stubCall(this, cti_op_jtrue);
     stubCall.addArgument(cond);
     stubCall.call();
@@ -895,25 +891,9 @@ void JIT::emit_op_jtrue(Instruction* currentInstruction)
 
     emitLoad(cond, regT1, regT0);
 
-    Jump isFalse = branch32(Equal, regT1, TrustedImm32(JSValue::FalseTag));
-    addJump(branch32(Equal, regT1, TrustedImm32(JSValue::TrueTag)), target);
-
-    Jump isNotInteger = branch32(NotEqual, regT1, TrustedImm32(JSValue::Int32Tag));
-    Jump isFalse2 = branch32(Equal, regT0, TrustedImm32(0));
-    addJump(jump(), target);
-
-    if (supportsFloatingPoint()) {
-        isNotInteger.link(this);
-
-        addSlowCase(branch32(Above, regT1, TrustedImm32(JSValue::LowestTag)));
-
-        emitLoadDouble(cond, fpRegT0);
-        addJump(branchDoubleNonZero(fpRegT0, fpRegT1), target);
-    } else
-        addSlowCase(isNotInteger);
-
-    isFalse.link(this);
-    isFalse2.link(this);
+    ASSERT((JSValue::BooleanTag + 1 == JSValue::Int32Tag) && !(JSValue::Int32Tag + 1));
+    addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::BooleanTag)));
+    addJump(branchTest32(NonZero, regT0), target);
 }
 
 void JIT::emitSlow_op_jtrue(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -922,6 +902,18 @@ void JIT::emitSlow_op_jtrue(Instruction* currentInstruction, Vector<SlowCaseEntr
     unsigned target = currentInstruction[2].u.operand;
 
     linkSlowCase(iter);
+
+    if (supportsFloatingPoint()) {
+        // regT1 contains the tag from the hot path.
+        Jump notNumber = branch32(Above, regT1, Imm32(JSValue::LowestTag));
+
+        emitLoadDouble(cond, fpRegT0);
+        emitJumpSlowToHot(branchDoubleNonZero(fpRegT0, fpRegT1), target);
+        emitJumpSlowToHot(jump(), OPCODE_LENGTH(op_jtrue));
+
+        notNumber.link(this);
+    }
+
     JITStubCall stubCall(this, cti_op_jtrue);
     stubCall.addArgument(cond);
     stubCall.call();
@@ -946,8 +938,9 @@ void JIT::emit_op_jeq_null(Instruction* currentInstruction)
     // Now handle the immediate cases - undefined & null
     isImmediate.link(this);
 
-    ASSERT((JSValue::UndefinedTag + 1 == JSValue::NullTag) && !(JSValue::NullTag + 1));
-    addJump(branch32(AboveOrEqual, regT1, TrustedImm32(JSValue::UndefinedTag)), target);
+    ASSERT((JSValue::UndefinedTag + 1 == JSValue::NullTag) && (JSValue::NullTag & 0x1));
+    or32(TrustedImm32(1), regT1);
+    addJump(branch32(Equal, regT1, TrustedImm32(JSValue::NullTag)), target);
 
     wasNotImmediate.link(this);
 }
@@ -970,8 +963,9 @@ void JIT::emit_op_jneq_null(Instruction* currentInstruction)
     // Now handle the immediate cases - undefined & null
     isImmediate.link(this);
 
-    ASSERT((JSValue::UndefinedTag + 1 == JSValue::NullTag) && !(JSValue::NullTag + 1));
-    addJump(branch32(Below, regT1, TrustedImm32(JSValue::UndefinedTag)), target);
+    ASSERT((JSValue::UndefinedTag + 1 == JSValue::NullTag) && (JSValue::NullTag & 0x1));
+    or32(TrustedImm32(1), regT1);
+    addJump(branch32(NotEqual, regT1, TrustedImm32(JSValue::NullTag)), target);
 
     wasNotImmediate.link(this);
 }
@@ -1012,8 +1006,7 @@ void JIT::emit_op_eq(Instruction* currentInstruction)
     addSlowCase(branch32(Equal, regT1, TrustedImm32(JSValue::CellTag)));
     addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::LowestTag)));
 
-    set8Compare32(Equal, regT0, regT2, regT0);
-    or32(TrustedImm32(JSValue::FalseTag), regT0);
+    set32Compare32(Equal, regT0, regT2, regT0);
 
     emitStoreBool(dst, regT0);
 }
@@ -1049,7 +1042,6 @@ void JIT::emitSlow_op_eq(Instruction* currentInstruction, Vector<SlowCaseEntry>:
     stubCallEq.call(regT0);
 
     storeResult.link(this);
-    or32(TrustedImm32(JSValue::FalseTag), regT0);
     emitStoreBool(dst, regT0);
 }
 
@@ -1064,8 +1056,7 @@ void JIT::emit_op_neq(Instruction* currentInstruction)
     addSlowCase(branch32(Equal, regT1, TrustedImm32(JSValue::CellTag)));
     addSlowCase(branch32(Below, regT1, TrustedImm32(JSValue::LowestTag)));
 
-    set8Compare32(NotEqual, regT0, regT2, regT0);
-    or32(TrustedImm32(JSValue::FalseTag), regT0);
+    set32Compare32(NotEqual, regT0, regT2, regT0);
 
     emitStoreBool(dst, regT0);
 }
@@ -1100,7 +1091,6 @@ void JIT::emitSlow_op_neq(Instruction* currentInstruction, Vector<SlowCaseEntry>
 
     storeResult.link(this);
     xor32(TrustedImm32(0x1), regT0);
-    or32(TrustedImm32(JSValue::FalseTag), regT0);
     emitStoreBool(dst, regT0);
 }
 
@@ -1121,11 +1111,9 @@ void JIT::compileOpStrictEq(Instruction* currentInstruction, CompileOpStrictEqTy
     addSlowCase(branch32(AboveOrEqual, regT2, TrustedImm32(JSValue::CellTag)));
 
     if (type == OpStrictEq)
-        set8Compare32(Equal, regT0, regT1, regT0);
+        set32Compare32(Equal, regT0, regT1, regT0);
     else
-        set8Compare32(NotEqual, regT0, regT1, regT0);
-
-    or32(TrustedImm32(JSValue::FalseTag), regT0);
+        set32Compare32(NotEqual, regT0, regT1, regT0);
 
     emitStoreBool(dst, regT0);
 }
@@ -1185,13 +1173,11 @@ void JIT::emit_op_eq_null(Instruction* currentInstruction)
 
     isImmediate.link(this);
 
-    set8Compare32(Equal, regT1, TrustedImm32(JSValue::NullTag), regT2);
-    set8Compare32(Equal, regT1, TrustedImm32(JSValue::UndefinedTag), regT1);
+    set32Compare32(Equal, regT1, TrustedImm32(JSValue::NullTag), regT2);
+    set32Compare32(Equal, regT1, TrustedImm32(JSValue::UndefinedTag), regT1);
     or32(regT2, regT1);
 
     wasNotImmediate.link(this);
-
-    or32(TrustedImm32(JSValue::FalseTag), regT1);
 
     emitStoreBool(dst, regT1);
 }
@@ -1211,13 +1197,11 @@ void JIT::emit_op_neq_null(Instruction* currentInstruction)
 
     isImmediate.link(this);
 
-    set8Compare32(NotEqual, regT1, TrustedImm32(JSValue::NullTag), regT2);
-    set8Compare32(NotEqual, regT1, TrustedImm32(JSValue::UndefinedTag), regT1);
+    set32Compare32(NotEqual, regT1, TrustedImm32(JSValue::NullTag), regT2);
+    set32Compare32(NotEqual, regT1, TrustedImm32(JSValue::UndefinedTag), regT1);
     and32(regT2, regT1);
 
     wasNotImmediate.link(this);
-
-    or32(TrustedImm32(JSValue::FalseTag), regT1);
 
     emitStoreBool(dst, regT1);
 }

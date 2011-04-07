@@ -1,3 +1,42 @@
+2011-04-07  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        Mapping booleans the same way as integers
+        https://bugs.webkit.org/show_bug.cgi?id=56913
+
+        Instead of having a seperate tag field for booleans,
+        the logical values are stored in the payload field
+        (for JSValue32_64 representation).
+
+        1.007x speedup on SunSpider.
+
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitStoreBool):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_instanceof):
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emit_op_jfalse):
+        (JSC::JIT::emitSlow_op_jfalse):
+        (JSC::JIT::emit_op_jtrue):
+        (JSC::JIT::emitSlow_op_jtrue):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_eq):
+        (JSC::JIT::emitSlow_op_eq):
+        (JSC::JIT::emit_op_neq):
+        (JSC::JIT::emitSlow_op_neq):
+        (JSC::JIT::compileOpStrictEq):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        * jit/JSInterfaceJIT.h:
+        * runtime/JSValue.h:
+        (JSC::JSValue::JSValue):
+        (JSC::JSValue::isTrue):
+        (JSC::JSValue::isFalse):
+        (JSC::JSValue::getBoolean):
+
 2011-04-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

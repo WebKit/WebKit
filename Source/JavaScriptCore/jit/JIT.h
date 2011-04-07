@@ -311,7 +311,7 @@ namespace JSC {
         void emitStoreInt32(unsigned index, RegisterID payload, bool indexIsInt32 = false);
         void emitStoreInt32(unsigned index, TrustedImm32 payload, bool indexIsInt32 = false);
         void emitStoreCell(unsigned index, RegisterID payload, bool indexIsCell = false);
-        void emitStoreBool(unsigned index, RegisterID tag, bool indexIsBool = false);
+        void emitStoreBool(unsigned index, RegisterID payload, bool indexIsBool = false);
         void emitStoreDouble(unsigned index, FPRegisterID value);
 
         bool isLabeled(unsigned bytecodeOffset);

@@ -160,7 +160,7 @@ namespace JSC {
 
 #if USE(JSVALUE32_64)
         // Can't just propogate JSValue::Int32Tag as visual studio doesn't like it
-        static const unsigned Int32Tag = 0xfffffffd;
+        static const unsigned Int32Tag = 0xffffffff;
         COMPILE_ASSERT(Int32Tag == JSValue::Int32Tag, Int32Tag_out_of_sync);
 #else
         static const unsigned Int32Tag = JSImmediate::TagTypeNumber >> 32;

@@ -268,18 +268,17 @@ namespace JSC {
          *
          * For JSValues that do not contain a double value, the high 32 bits contain the tag
          * values listed in the enums below, which all correspond to NaN-space. In the case of
-         * cell and integer values the lower 32 bits (the 'payload') contain the pointer or
-         * integer value; in the case of all other tags the payload is 0.
+         * cell, integer and bool values the lower 32 bits (the 'payload') contain the pointer
+         * integer or boolean value; in the case of all other tags the payload is 0.
          */
-        enum { NullTag =         0xffffffff };
-        enum { UndefinedTag =    0xfffffffe };
-        enum { Int32Tag =        0xfffffffd };
-        enum { CellTag =         0xfffffffc };
-        enum { TrueTag =         0xfffffffb };
-        enum { FalseTag =        0xfffffffa };
-        enum { EmptyValueTag =   0xfffffff9 };
-        enum { DeletedValueTag = 0xfffffff8 };
-        
+        enum { Int32Tag =        0xffffffff };
+        enum { BooleanTag =      0xfffffffe };
+        enum { NullTag =         0xfffffffd };
+        enum { UndefinedTag =    0xfffffffc };
+        enum { CellTag =         0xfffffffb };
+        enum { EmptyValueTag =   0xfffffffa };
+        enum { DeletedValueTag = 0xfffffff9 };
+
         enum { LowestTag =  DeletedValueTag };
 
         uint32_t tag() const;
@@ -443,13 +442,13 @@ namespace JSC {
     
     inline JSValue::JSValue(JSTrueTag)
     {
-        u.asBits.tag = TrueTag;
-        u.asBits.payload = 0;
+        u.asBits.tag = BooleanTag;
+        u.asBits.payload = 1;
     }
     
     inline JSValue::JSValue(JSFalseTag)
     {
-        u.asBits.tag = FalseTag;
+        u.asBits.tag = BooleanTag;
         u.asBits.payload = 0;
     }
 
@@ -536,12 +535,12 @@ namespace JSC {
 
     inline bool JSValue::isTrue() const
     {
-        return tag() == TrueTag;
+        return tag() == BooleanTag && payload();
     }
 
     inline bool JSValue::isFalse() const
     {
-        return tag() == FalseTag;
+        return tag() == BooleanTag && !payload();
     }
 
     inline uint32_t JSValue::tag() const
@@ -691,7 +690,7 @@ namespace JSC {
     inline bool JSValue::getBoolean() const
     {
         ASSERT(isBoolean());
-        return tag() == TrueTag;
+        return payload();
     }
 
     inline double JSValue::uncheckedGetNumber() const

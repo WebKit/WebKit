@@ -453,11 +453,11 @@ inline void JIT::emitStoreCell(unsigned index, RegisterID payload, bool indexIsC
         store32(TrustedImm32(JSValue::CellTag), tagFor(index, callFrameRegister));
 }
 
-inline void JIT::emitStoreBool(unsigned index, RegisterID tag, bool indexIsBool)
+inline void JIT::emitStoreBool(unsigned index, RegisterID payload, bool indexIsBool)
 {
+    store32(payload, payloadFor(index, callFrameRegister));
     if (!indexIsBool)
-        store32(TrustedImm32(0), payloadFor(index, callFrameRegister));
-    store32(tag, tagFor(index, callFrameRegister));
+        store32(TrustedImm32(JSValue::BooleanTag), tagFor(index, callFrameRegister));
 }
 
 inline void JIT::emitStoreDouble(unsigned index, FPRegisterID value)
