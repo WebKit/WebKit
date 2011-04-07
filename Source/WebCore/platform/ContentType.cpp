@@ -45,11 +45,17 @@ String ContentType::parameter(const String& parameterName) const
     if (semi != notFound) {
         size_t start = strippedType.find(parameterName, semi + 1, false);
         if (start != notFound) {
-            start = strippedType.find('=', start + 6);
+            start = strippedType.find('=', start + parameterName.length());
             if (start != notFound) {
-                size_t end = strippedType.find(';', start + 6);
-                if (end == notFound)
-                    end = strippedType.length();
+                size_t quote = strippedType.find('\"', start + 1);
+                size_t end = strippedType.find('\"', start + 2);
+                if (quote != notFound && end != notFound)
+                    start = quote;
+                else {
+                    end = strippedType.find(';', start + 1);
+                    if (end == notFound)
+                        end = strippedType.length();
+                }
                 parameterValue = strippedType.substring(start + 1, end - (start + 1)).stripWhiteSpace();
             }
         }

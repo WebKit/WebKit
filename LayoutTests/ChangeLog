@@ -1,3 +1,13 @@
+2011-04-07  Nancy Piedra  <nancy.piedra@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        Add tests for parsing codecs parameter in video-can-play-type.html
+        https://bugs.webkit.org/show_bug.cgi?id=53275
+
+        * media/video-can-play-type-expected.txt:
+        * media/video-can-play-type.html:
+
 2011-04-07  Jessie Berlin  <jberlin@apple.com>
 
         [WebKit2 Tests] fast/events/select-element.html failing since introduction in r83096

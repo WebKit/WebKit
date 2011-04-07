@@ -1,3 +1,16 @@
+2011-04-07  Nancy Piedra  <nancy.piedra@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        Parse quotes from content type parameters
+        https://bugs.webkit.org/show_bug.cgi?id=53275
+
+        This functionality is tested in video-can-play-type.html layout test
+        where I've added codecs parameter with good and bad formatting.
+
+        * platform/ContentType.cpp:
+        (WebCore::ContentType::parameter):
+
 2011-04-07  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
