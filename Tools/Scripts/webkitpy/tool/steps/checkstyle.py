@@ -56,7 +56,7 @@ class CheckStyle(AbstractStep):
         args.extend(self._changed_files(state))
 
         try:
-            self._tool.executive.run_and_throw_if_fail(self._tool.port().check_webkit_style_command())
+            self._tool.executive.run_and_throw_if_fail(self._tool.port().check_webkit_style_command() + args)
         except ScriptError, e:
             if self._options.non_interactive:
                 # We need to re-raise the exception here to have the

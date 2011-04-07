@@ -693,6 +693,13 @@ class MockPort(Mock):
     def layout_tests_results_path(self):
         return "/mock/results.html"
 
+    def check_webkit_style_command(self):
+        return ["mock-check-webkit-style"]
+
+    def update_webkit_command(self):
+        return ["mock-update-webkit"]
+
+
 class MockTestPort1(object):
 
     def skips_layout_test(self, test_name):

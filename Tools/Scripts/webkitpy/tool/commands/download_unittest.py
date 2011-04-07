@@ -123,8 +123,13 @@ class DownloadCommandsTest(CommandsTest):
         self.assert_execute_outputs(Land(), [42], options=self._default_options(), expected_stderr=expected_stderr, tool=mock_tool)
 
     def test_check_style(self):
-        expected_stderr = "Processing 1 patch from 1 bug.\nUpdating working directory\nProcessing patch 197 from bug 42.\n"
-        self.assert_execute_outputs(CheckStyle(), [197], options=self._default_options(), expected_stderr=expected_stderr)
+        expected_stderr = """Processing 1 patch from 1 bug.
+Updating working directory
+MOCK run_and_throw_if_fail: ['mock-update-webkit']
+Processing patch 197 from bug 42.
+MOCK run_and_throw_if_fail: ['mock-check-webkit-style', '--git-commit', 'MOCK git commit', '--diff-files', 'MockFile1']
+"""
+        self.assert_execute_outputs(CheckStyle(), [197], options=self._default_options(), expected_stderr=expected_stderr, tool=MockTool(log_executive=True))
 
     def test_build_attachment(self):
         expected_stderr = "Processing 1 patch from 1 bug.\nUpdating working directory\nProcessing patch 197 from bug 42.\nBuilding WebKit\n"

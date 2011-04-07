@@ -1,3 +1,17 @@
+2011-04-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        webkit-patch shouldn't state the whole working copy when calling check-webkit-style
+        https://bugs.webkit.org/show_bug.cgi?id=58022
+
+        Previously, we were ignoring the args variable!  This patch fixes the
+        regression introduced in http://trac.webkit.org/changeset/82771.
+
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+
 2011-04-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Adam Barth.
