@@ -1,5 +1,11 @@
 2011-04-07  Adam Roben  <aroben@apple.com>
 
+        Build fix
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Added a missing import.
+
+2011-04-07  Adam Roben  <aroben@apple.com>
+
         Move ExtractTestResults[AndLeaks]'s summarizing code back from commandComplete() to finished()
 
         commandComplete() is never called for MasterShellCommands like ExtractTestResults[AndLeaks].
