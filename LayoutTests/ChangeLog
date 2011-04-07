@@ -1,3 +1,18 @@
+2011-04-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        script-src should block inline script
+        https://bugs.webkit.org/show_bug.cgi?id=58012
+
+        Test that script-src blocks inline script.  This test uses a different
+        approach than the existing tests for variety.
+
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/document-write-alert-fail.js: Added.
+        * http/tests/security/contentSecurityPolicy/resources/dump-as-text.js: Added.
+
 2011-04-07  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update Linux x86-64 results for the Skia rounding rect change.

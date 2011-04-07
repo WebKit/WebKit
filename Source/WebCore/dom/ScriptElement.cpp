@@ -257,6 +257,9 @@ void ScriptElement::executeScript(const ScriptSourceCode& sourceCode)
     if (sourceCode.isEmpty())
         return;
 
+    if (!m_isExternalScript && !m_element->document()->contentSecurityPolicy()->allowInlineScript())
+        return;
+
     RefPtr<Document> document = m_element->document();
     ASSERT(document);
     if (Frame* frame = document->frame()) {

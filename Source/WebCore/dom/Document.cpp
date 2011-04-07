@@ -2640,7 +2640,8 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
                 frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
             }
         }
-    }
+    } else if (equalIgnoringCase(equiv, "x-webkit-csp"))
+        contentSecurityPolicy()->didReceiveHeader(content);
 }
 
 // Though isspace() considers \t and \v to be whitespace, Win IE doesn't.
