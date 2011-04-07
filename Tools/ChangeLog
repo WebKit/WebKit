@@ -1,5 +1,27 @@
 2011-04-07  Adam Roben  <aroben@apple.com>
 
+        Move ExtractTestResults[AndLeaks]'s summarizing code back from commandComplete() to finished()
+
+        commandComplete() is never called for MasterShellCommands like ExtractTestResults[AndLeaks].
+        (Unfortunately the buildbot documentation does not make this clear.) finished() is the only
+        hook we have, so we have to do our work there. I added a new addCustomURLs method which can
+        be overridden by subclasses to provide extra URLs before we call up to the base class (after
+        which adding more URLs is no longer possible).
+
+        Really hopefully fixes <http://webkit.org/b/56032> Leaks viewer should be linked from leaks
+        bot results page
+
+        Reviewed by John Sullivan.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (ExtractTestResults.addCustomURLs): Moved code to add the "view results" URL here...
+        (ExtractTestResults.finished): ...from here. This replaces commandComplete, since that
+        method is never called for MasterShellCommands.
+        (ExtractTestResultsAndLeaks.addCustomURLs): Replaced commandComplete (which is never called)
+        with this method (which is).
+
+2011-04-07  Adam Roben  <aroben@apple.com>
+
         Move ExtractTestResults[AndLeaks]'s summarizing code from finished() to commandComplete()
 
         This matches how most of our other build steps work, so is good just for improving
