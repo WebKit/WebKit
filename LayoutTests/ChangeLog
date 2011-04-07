@@ -1,5 +1,22 @@
 2011-04-07  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK baselines for 4 new tests.
+
+        * platform/gtk/fast/history/visited-link-background-color-expected.checksum: Added.
+        * platform/gtk/fast/history/visited-link-background-color-expected.png: Added.
+        * platform/gtk/fast/history/visited-link-background-color-expected.txt: Added.
+        * platform/gtk/fast/images/imagemap-focus-ring-zero-outline-width-expected.checksum: Added.
+        * platform/gtk/fast/images/imagemap-focus-ring-zero-outline-width-expected.png: Added.
+        * platform/gtk/fast/images/imagemap-focus-ring-zero-outline-width-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.checksum: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt: Added.
+        * platform/gtk/svg/text/text-midpoint-split-bug-expected.checksum: Added.
+        * platform/gtk/svg/text/text-midpoint-split-bug-expected.png: Added.
+        * platform/gtk/svg/text/text-midpoint-split-bug-expected.txt: Added.
+
+2011-04-07  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK rebaseline after r83075.
 
         * platform/gtk/fast/blockflow/text-orientation-basic-expected.txt:
