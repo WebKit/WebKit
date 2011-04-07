@@ -1,3 +1,25 @@
+2011-04-06  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        CSP object-src should block plugin loads
+        https://bugs.webkit.org/show_bug.cgi?id=57283
+
+        This change is pretty straight-forward.  It's slighly unclear to me
+        whether this patch is correct w.r.t. the code in DocumentWriter.  I've
+        added a FIXME comment, and I'll investigate that case more in the future.
+
+        Test: http/tests/security/contentSecurityPolicy/object-src-none.html
+
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::requestPlugin):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::allowObjectFromSource):
+        (WebCore::ContentSecurityPolicy::addDirective):
+        * page/ContentSecurityPolicy.h:
+
 2011-04-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.

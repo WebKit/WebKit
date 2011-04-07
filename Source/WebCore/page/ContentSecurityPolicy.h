@@ -48,6 +48,7 @@ public:
     bool allowJavaScriptURLs() const;
     bool allowInlineEventHandlers() const;
     bool allowScriptFromSource(const KURL&) const;
+    bool allowObjectFromSource(const KURL&) const;
 
 private:
     explicit ContentSecurityPolicy(SecurityOrigin*);
@@ -59,6 +60,7 @@ private:
     bool m_havePolicy;
     RefPtr<SecurityOrigin> m_origin;
     OwnPtr<CSPDirective> m_scriptSrc;
+    OwnPtr<CSPDirective> m_objectSrc;
 };
 
 }

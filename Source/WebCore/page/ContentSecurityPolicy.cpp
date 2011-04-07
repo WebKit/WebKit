@@ -440,6 +440,11 @@ bool ContentSecurityPolicy::allowScriptFromSource(const KURL& url) const
     return !m_scriptSrc || m_scriptSrc->allows(url);
 }
 
+bool ContentSecurityPolicy::allowObjectFromSource(const KURL& url) const
+{
+    return !m_objectSrc || m_objectSrc->allows(url);
+}
+
 // policy            = directive-list
 // directive-list    = [ directive *( ";" [ directive ] ) ]
 //
@@ -514,11 +519,14 @@ bool ContentSecurityPolicy::parseDirective(const UChar* begin, const UChar* end,
 void ContentSecurityPolicy::addDirective(const String& name, const String& value)
 {
     DEFINE_STATIC_LOCAL(String, scriptSrc, ("script-src"));
+    DEFINE_STATIC_LOCAL(String, objectSrc, ("object-src"));
 
     ASSERT(!name.isEmpty());
 
     if (!m_scriptSrc && equalIgnoringCase(name, scriptSrc))
         m_scriptSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
+    else if (!m_objectSrc && equalIgnoringCase(name, objectSrc))
+        m_objectSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
 }
 
 }

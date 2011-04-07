@@ -33,6 +33,7 @@
 #include "config.h"
 #include "SubframeLoader.h"
 
+#include "ContentSecurityPolicy.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "HTMLAppletElement.h"
@@ -109,8 +110,12 @@ bool SubframeLoader::requestPlugin(HTMLPlugInImageElement* ownerElement, const K
         || (!settings->isJavaEnabled() && MIMETypeRegistry::isJavaAppletMIMEType(mimeType)))
         return false;
 
-    if (m_frame->document() && m_frame->document()->securityOrigin()->isSandboxed(SandboxPlugins))
-        return false;
+    if (m_frame->document()) {
+        if (m_frame->document()->securityOrigin()->isSandboxed(SandboxPlugins))
+            return false;
+        if (!m_frame->document()->contentSecurityPolicy()->allowObjectFromSource(url))
+            return false;
+    }
 
     ASSERT(ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag));
     return loadPlugin(ownerElement, url, mimeType, paramNames, paramValues, useFallback);

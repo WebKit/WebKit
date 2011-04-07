@@ -121,6 +121,8 @@ void DocumentWriter::begin(const KURL& url, bool dispatch, SecurityOrigin* origi
     if (document->isPluginDocument() && m_frame->loader()->isSandboxed(SandboxPlugins))
         document = SinkDocument::create(m_frame, url);
 
+    // FIXME: Do we need to consult the content security policy here about blocked plug-ins?
+
     bool resetScripting = !(m_frame->loader()->stateMachine()->isDisplayingInitialEmptyDocument() && m_frame->document()->securityOrigin()->isSecureTransitionTo(url));
     m_frame->loader()->clear(resetScripting, resetScripting);
     clear();
