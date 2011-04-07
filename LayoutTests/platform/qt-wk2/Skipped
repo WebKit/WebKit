@@ -1808,10 +1808,6 @@ printing/media-queries-print.html
 printing/page-rule-in-media-query.html
 printing/setPrinting.html
 
-# WebKitTestRunner needs layoutTestController.isPageBoxVisible
-# <https://bugs.webkit.org/show_bug.cgi?id=42695>
-printing/page-format-data.html
-
 # WebKitTestRunner needs layoutTestController.elementDoesAutoCompleteForElementWithId
 # <https://bugs.webkit.org/show_bug.cgi?id=42696>
 security/set-form-autocomplete-attribute.html

@@ -185,6 +185,15 @@ String InjectedBundle::pageSizeAndMarginsInPixels(WebFrame* frame, int pageIndex
     return PrintContext::pageSizeAndMarginsInPixels(coreFrame, pageIndex, width, height, marginTop, marginRight, marginBottom, marginLeft);
 }
 
+bool InjectedBundle::isPageBoxVisible(WebFrame* frame, int pageIndex)
+{
+    Frame* coreFrame = frame ? frame->coreFrame() : 0;
+    if (!coreFrame)
+        return false;
+
+    return PrintContext::isPageBoxVisible(coreFrame, pageIndex);
+}
+
 static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* patterns)
 {
     if (!patterns)

@@ -167,3 +167,8 @@ WKStringRef WKBundlePageSizeAndMarginsInPixels(WKBundleRef bundleRef, WKBundleFr
 {
     return toCopiedAPI(toImpl(bundleRef)->pageSizeAndMarginsInPixels(toImpl(frameRef), pageIndex, width, height, marginTop, marginRight, marginBottom, marginLeft));
 }
+
+WK_EXPORT bool WKBundleIsPageBoxVisible(WKBundleRef bundleRef, WKBundleFrameRef frameRef, int pageIndex)
+{
+    return toImpl(bundleRef)->isPageBoxVisible(toImpl(frameRef), pageIndex);
+}
