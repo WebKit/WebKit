@@ -6,9 +6,10 @@ use File::stat;
 $query = new CGI;
 $name = $query->param('name');
 $stallAt = $query->param('stallAt');
+$mimeType = $query->param('mimeType');
 
 my $filesize = stat($name)->size;
-print "Content-type: video/mp4\n"; 
+print "Content-type: " . $mimeType . "\n"; 
 print "Content-Length: " . $filesize . "\n\n";
 
 open FILE, $name or die;

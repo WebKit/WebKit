@@ -1,5 +1,6 @@
 <video></video>
 <p>Test that stalling very early, while loading meta-data, stops delaying the load event.</p>
+<script src=../../media-resources/media-file.js></script>
 <script src=../../media-resources/video-test.js></script>
 <script>
 
@@ -15,7 +16,11 @@
        endTest();
     };
 
+    // Find a supported media file.
+    var mediaFile = findMediaFile("video", "content/test");
+    var mimeType = mimeTypeForFile(mediaFile);
+
     // Load should stall very early in the loading process.
-    video.src = "http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/content/test.mp4&stallAt=1";
+    video.src = "http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/" + mediaFile + "&mimeType=" + mimeType + "&stallAt=1";
 
 </script>

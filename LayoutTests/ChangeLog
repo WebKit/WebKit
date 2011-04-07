@@ -1,3 +1,23 @@
+2011-04-07  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Make various video layout tests platform independent by selecting an appropriate media file.
+
+        Various layout tests depend on mp4 files.
+        https://bugs.webkit.org/show_bug.cgi?id=57804
+
+        * http/tests/media/remove-while-loading.html:
+        * http/tests/media/video-load-and-stall.cgi:
+        * http/tests/media/video-play-stall-before-meta-data.html:
+        * http/tests/media/video-play-stall-seek.html:
+        * http/tests/media/video-play-stall.html:
+        * http/tests/media/video-seekable-stall.html:
+        * media/media-file.js:
+        (mimeTypeForFile):
+        (stripExtension):
+        * platform/chromium/test_expectations.txt:
+
 2011-04-07  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Reviewed by Dimitri Glazkov.

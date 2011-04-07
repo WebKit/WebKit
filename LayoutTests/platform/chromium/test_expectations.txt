@@ -787,13 +787,15 @@ BUGCR20226 : fast/forms/input-selectedoption.html = FAIL
 // Needs to call Settings::setValidationMessageTimerMagnification(-1).
 BUGWK57290 : fast/forms/validation-message-appearance.html = PASS FAIL
 
-// These tests need to be changed to be platform independent.
-// These tests are skipped since they hang DRT and test_shell.
-// BUGCR62964 : we should either enable or delete these testsvi
-BUGCR54465 BUGCR62964 SKIP : http/tests/media/remove-while-loading.html = TIMEOUT
-BUGCR54465 BUGCR62964 SKIP : http/tests/media/video-play-stall-seek.html = TIMEOUT
-BUGCR54465 BUGCR62964 SKIP : http/tests/media/video-play-stall.html = TIMEOUT
-BUGCR54465 BUGCR62964 SKIP : http/tests/media/video-seekable-stall.html = TIMEOUT
+// Timing out.
+BUGCR78376 SKIP : http/tests/media/video-play-stall-seek.html = TIMEOUT
+
+// video.seekable returning unexpected results.
+BUGCR78375 SKIP : http/tests/media/video-seekable-stall.html = TIMEOUT
+
+// canplaythrough event is sent too early.
+BUGCR73609 SKIP : http/tests/media/video-play-stall.html = TEXT
+
 // UNIMPLEMENTED : * we don't have test-par-16-9.ogv generated in WebKit * we don't handle aspect ratio correctly.
 BUGCR59635 SKIP : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
 

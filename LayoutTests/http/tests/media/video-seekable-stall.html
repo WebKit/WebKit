@@ -1,5 +1,6 @@
 <video></video>
 <p>Test seekable range when video load is incomplete.</p>
+<script src=../../media-resources/media-file.js></script>
 <script src=../../media-resources/video-test.js></script>
 <script>
 waitForEvent('canplay', function () {
@@ -10,6 +11,11 @@ waitForEvent('canplay', function () {
     test("video.seekable.end(0) < video.duration - 1");
     endTest();
 } );
-video.src = "http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/content/test.mp4&stallAt=100000";
+
+// Find a supported media file.
+var mediaFile = findMediaFile("video", "content/test");
+var mimeType = mimeTypeForFile(mediaFile);
+
+video.src = "http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/" + mediaFile + "&mimeType=" + mimeType + "&stallAt=100000";
 video.load();
 </script>

@@ -1,5 +1,6 @@
 <video controls></video>
 <p>Test that playback can be resumed by seeking backwards after load stalls.</p>
+<script src=../../media-resources/media-file.js></script>
 <script src=../../media-resources/video-test.js></script>
 <script>
 
@@ -26,6 +27,10 @@
         run("video.currentTime = 0.1");
     } );
 
-    video.src = "http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/content/test.mp4&stallAt=100000";
+    // Find a supported media file.
+    var mediaFile = findMediaFile("video", "content/test");
+    var mimeType = mimeTypeForFile(mediaFile);
+
+    video.src = "http://127.0.0.1:8000/media/video-load-and-stall.cgi?name=../../../media/" + mediaFile + "&mimeType=" + mimeType + "&stallAt=100000";
     run("video.play()");
 </script>
