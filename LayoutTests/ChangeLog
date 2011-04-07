@@ -1,3 +1,29 @@
+2011-04-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9084761> REGRESSION (r73993): Default Arabic line spacing has gotten very loose when the specified font is not Arabic
+        https://bugs.webkit.org/show_bug.cgi?id=58002
+
+        * platform/mac/fast/dom/52776-expected.checksum:
+        * platform/mac/fast/dom/52776-expected.png:
+        * platform/mac/fast/dom/52776-expected.txt:
+        * platform/mac/fast/text/complex-text-opacity-expected.txt:
+        * platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt:
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.checksum:
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.png:
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.txt:
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.checksum:
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.png:
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.txt:
+        * platform/mac/fast/text/international/bidi-CS-after-AN-expected.txt:
+        * platform/mac/fast/text/international/bidi-mirror-he-ar-expected.txt:
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.checksum:
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.png:
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.txt:
+        * platform/mac/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.checksum:
+        * platform/mac/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.png:
+
 2011-04-06  Adrienne Walker  <enne@google.com>
 
         Unreviewed, update expectations for Chromium visited link test.

@@ -241,6 +241,7 @@ void SimpleFontData::platformInit()
     NSString *familyName = [m_platformData.font() familyName];
     if ([familyName isEqualToString:@"Times"] || [familyName isEqualToString:@"Helvetica"] || [familyName isEqualToString:@"Courier"])
         ascent += floorf(((ascent + descent) * 0.15f) + 0.5f);
+#if defined(BUILDING_ON_LEOPARD)
     else if ([familyName isEqualToString:@"Geeza Pro"]) {
         // Geeza Pro has glyphs that draw slightly above the ascent or far below the descent. Adjust
         // those vertical metrics to better match reality, so that diacritics at the bottom of one line
@@ -248,6 +249,7 @@ void SimpleFontData::platformInit()
         ascent *= 1.08f;
         descent *= 2.f;
     }
+#endif
 
     // Compute and store line spacing, before the line metrics hacks are applied.
     m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));

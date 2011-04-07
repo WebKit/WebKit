@@ -1,3 +1,17 @@
+2011-04-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9084761> REGRESSION (r73993): Default Arabic line spacing has gotten very loose when the specified font is not Arabic
+        https://bugs.webkit.org/show_bug.cgi?id=58002
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit): The version of Geeza Pro in Snow Leopard
+        does not require the vertical metrics tweaks that were needed in Leopard. That the
+        tweaks were being applied went mostly unnoticed until r73993, because until then it
+        only affected cases where Geeza Pro was specified, not when it occurred as a fallback
+        font.
+
 2011-04-06  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Dimitri Glazkov.

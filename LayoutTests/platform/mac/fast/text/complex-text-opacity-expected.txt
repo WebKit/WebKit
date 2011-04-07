@@ -37,7 +37,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (484,0) size 6x29
           text run at (484,0) width 6: " "
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,74) size 784x44
+      RenderBlock {DIV} at (0,74) size 784x37
         RenderInline {SPAN} at (0,0) size 50x29
           RenderText {#text} at (560,2) size 50x29
             text run at (560,2) width 50 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
