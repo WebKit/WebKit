@@ -1,3 +1,12 @@
+2011-04-07  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed; Add the media/media-fullscreen-inline.html test to the mac-snowleopard Skipped list.
+
+        The legacy full screen API now redirects to the new full screen API, breaking the media-fullscreen-inline.html
+        test.
+
+        * platform/mac-snowleopard/Skipped:
+
 2011-04-06  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Reviewed by Nate Chapin.
