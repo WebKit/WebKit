@@ -1,3 +1,11 @@
+2011-04-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Decrease flakiness of test results.
+
+        * platform/qt-wk2/Skipped:
+         - Add canvas tests not to break css2.1 tests.
+         - Remove passing css2.1 tests.
+
 2011-04-07  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed; Add failing legacy full screen tests to the gtk/Skipped list.
