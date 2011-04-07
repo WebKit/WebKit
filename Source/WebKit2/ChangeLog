@@ -1,3 +1,14 @@
+2011-04-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Brian Weinstein.
+
+        REGRESSION (r83081): Use of deallocated memory in WebEditorClient::respondToChangedSelection()
+        https://bugs.webkit.org/show_bug.cgi?id=58082
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp: (WebKit::WebEditorClient::respondToChangedSelection):
+        Now that the Range is used outside the full expression where it's created, it needs to be
+        protected with RefPtr.
+
 2011-04-07  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

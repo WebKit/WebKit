@@ -198,11 +198,11 @@ void WebEditorClient::respondToChangedSelection()
     selectionState.isInPasswordField = frame->selection()->isInPasswordField();
     selectionState.hasComposition = frame->editor()->hasComposition();
 
-    Range* range = frame->selection()->toNormalizedRange().get();
+    RefPtr<Range> range = frame->selection()->toNormalizedRange();
     if (range) {
         size_t location;
         size_t length;
-        if (!TextIterator::locationAndLengthFromRange(range, location, length))
+        if (!TextIterator::locationAndLengthFromRange(range.get(), location, length))
             return;
         selectionState.selectedRangeStart = static_cast<uint64_t>(location);
         selectionState.selectedRangeLength = static_cast<uint64_t>(length);
