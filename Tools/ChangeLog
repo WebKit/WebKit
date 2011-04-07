@@ -1,3 +1,27 @@
+2011-04-07  Adam Roben  <aroben@apple.com>
+
+        Move ExtractTestResults[AndLeaks]'s summarizing code from finished() to commandComplete()
+
+        This matches how most of our other build steps work, so is good just for improving
+        consistency between build steps. It should also make it possible for
+        ExtractTestResultsAndLeaks to successfully add a URL to Leaks Viewer. (Previously we were
+        trying to do this in finished() after we had called up to the base class, but that was
+        apparently too late to add more URLs.)
+
+        Hopefully fixes <http://webkit.org/b/56032> Leaks viewer should be linked from leaks bot
+        results page
+
+        Reviewed by John Sullivan.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (ExtractTestResults): Added a descriptionDone property so that we don't have to manually
+        call setText to get the right text to show up for this step. This matches how most of our
+        other build steps work.
+        (ExtractTestResults.commandComplete): Replaced our override of finished with this function.
+        This is how most of our other build steps work.
+        (ExtractTestResultsAndLeaks.commandComplete): Replaced our override of finished with this
+        function, to match the base class.
+
 2011-04-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.
