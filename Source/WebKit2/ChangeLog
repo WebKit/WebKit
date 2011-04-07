@@ -1,5 +1,14 @@
 2011-04-07  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Adam Barth.
+
+        Remove temporary WebProcess sandbox rules that are unnecessary now that plugins are in their own process
+        https://bugs.webkit.org/show_bug.cgi?id=58023
+
+        * WebProcess/com.apple.WebProcess.sb:
+
+2011-04-07  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Remove some no longer needed WebProcess sandbox allowances

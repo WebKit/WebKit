@@ -138,21 +138,6 @@
    (remote tcp)
 )
 
-;; FIXME: These rules are required until plug-ins are moved out of the web process.
-(allow file-read*
-   (regex (string-append "^" (param "HOME_DIR") "/Library/Preferences/ByHost/com\.apple\.ist\."))
-   (literal (string-append (param "HOME_DIR") "/Library/Preferences/edu.mit.Kerberos"))
-   (literal "/Library/Preferences/edu.mit.Kerberos")
-)
-
-(allow mach-lookup
-   (global-name "org.h5l.kcm")
-   (global-name "com.apple.tsm.uiserver")
-   (global-name-regex #"^com\.apple\.ist")
-)
-
-(allow network-outbound (remote ip))
-
 ;; FIXME: Once <rdar://problem/8900275> has been fixed, these rules can be removed.
 (allow mach-lookup (global-name "com.apple.pubsub.ipc"))
 (allow network-outbound (regex #"^/private/tmp/launch-[^/]+/Render"))
