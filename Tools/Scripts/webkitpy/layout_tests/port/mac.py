@@ -81,8 +81,9 @@ class MacPort(WebKitPort):
         else:
             self._version = port_name[4:]
             assert self._version in self.SUPPORTED_VERSIONS
-
         self._operating_system = 'mac'
+        if not hasattr(self._options, 'time-out-ms') or self._options.time_out_ms is None:
+            self._options.time_out_ms = 35000
 
     def default_child_processes(self):
         # FIXME: new-run-webkit-tests is unstable on Mac running more than

@@ -1,3 +1,14 @@
+2011-04-06  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Adjust the apple webkit port's default timeout to match
+        old-run-webkit-tests at 35 seconds.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37738
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+
 2011-04-06  Scott Cameron  <sccameron@rim.com>
 
         Reviewed by Eric Seidel.
