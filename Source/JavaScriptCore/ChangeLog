@@ -1,3 +1,25 @@
+2011-04-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+        Bug 58057 - Store boolean payload in low bit of JSImmediate
+
+        And remove some uncalled functions from JSImmediate.h
+
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitTagAsBoolImmediate):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_not):
+        * runtime/JSImmediate.h:
+        (JSC::JSImmediate::makeInt):
+        (JSC::JSImmediate::makeBool):
+        (JSC::JSImmediate::intValue):
+        (JSC::JSImmediate::boolValue):
+        (JSC::JSImmediate::asInt32):
+        (JSC::JSImmediate::toDouble):
+        (JSC::JSValue::asInt32):
+        (JSC::JSValue::isUInt32):
+        (JSC::JSValue::asUInt32):
+
 2011-04-07  Liang Qi  <liang.qi@nokia.com>
 
         Reviewed by Laszlo Gombos.

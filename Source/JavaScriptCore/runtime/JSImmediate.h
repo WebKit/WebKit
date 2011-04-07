@@ -90,7 +90,7 @@ namespace JSC {
      * null and undefined values are represented by specific, invalid pointer values:
      *
      *     False:     0x06
-     *     True:      0x16
+     *     True:      0x07
      *     Undefined: 0x0a
      *     Null:      0x02
      *
@@ -137,25 +137,19 @@ namespace JSC {
         // This value is 2^48, used to encode doubles such that the encoded value will begin
         // with a 16-bit pattern within the range 0x0001..0xFFFE.
         static const intptr_t DoubleEncodeOffset = 0x1000000000000ll;
-        static const intptr_t TagBitTypeOther   = 0x2; // second bit set indicates immediate other than an integer
-        static const intptr_t TagMask           = TagTypeNumber | TagBitTypeOther;
+        // The second bit set indicates immediate other than an number (bool, null, undefined).
+        static const intptr_t TagBitTypeOther = 0x2;
+        // TagMask is used to check for any immediate values (number or other).
+        static const intptr_t TagMask = TagTypeNumber | TagBitTypeOther;
 
-        static const intptr_t ExtendedTagMask         = 0xC; // extended tag holds a further two bits
         static const intptr_t ExtendedTagBitBool      = 0x4;
         static const intptr_t ExtendedTagBitUndefined = 0x8;
 
-        static const intptr_t FullTagTypeMask      = TagMask | ExtendedTagMask;
-        static const intptr_t FullTagTypeBool      = TagBitTypeOther | ExtendedTagBitBool;
+        static const intptr_t FullTagTypeFalse      = TagBitTypeOther | ExtendedTagBitBool | false;
+        static const intptr_t FullTagTypeTrue      = TagBitTypeOther | ExtendedTagBitBool | true;
         static const intptr_t FullTagTypeUndefined = TagBitTypeOther | ExtendedTagBitUndefined;
         static const intptr_t FullTagTypeNull      = TagBitTypeOther;
 
-        static const int32_t IntegerPayloadShift  = 0;
-        static const int32_t ExtendedPayloadShift = 4;
-
-        static const intptr_t ExtendedPayloadBitBoolValue = 1 << ExtendedPayloadShift;
-
-        static const int32_t signBit = 0x80000000;
- 
         static ALWAYS_INLINE bool isImmediate(JSValue v)
         {
             return rawValue(v) & TagMask;
@@ -176,15 +170,9 @@ namespace JSC {
             return isNumber(v) && !isIntegerNumber(v);
         }
 
-        static ALWAYS_INLINE bool isPositiveIntegerNumber(JSValue v)
-        {
-            // A single mask to check for the sign bit and the number tag all at once.
-            return (rawValue(v) & (signBit | TagTypeNumber)) == TagTypeNumber;
-        }
-        
         static ALWAYS_INLINE bool isBoolean(JSValue v)
         {
-            return (rawValue(v) & FullTagTypeMask) == FullTagTypeBool;
+            return (rawValue(v) & ~1) == FullTagTypeFalse;
         }
         
         static ALWAYS_INLINE bool isUndefinedOrNull(JSValue v)
@@ -224,12 +212,9 @@ namespace JSC {
         static double toDouble(JSValue);
         static bool toBoolean(JSValue);
 
-        static bool getUInt32(JSValue, uint32_t&);
-        static bool getTruncatedInt32(JSValue, int32_t&);
-        static bool getTruncatedUInt32(JSValue, uint32_t&);
+        static bool asInt32(JSValue, int32_t&);
 
-        static int32_t getTruncatedInt32(JSValue);
-        static uint32_t getTruncatedUInt32(JSValue);
+        static int32_t asInt32(JSValue);
 
         static JSValue trueImmediate();
         static JSValue falseImmediate();
@@ -251,9 +236,9 @@ namespace JSC {
         // With USE(JSVALUE64) we want the argument to be zero extended, so the
         // integer doesn't interfere with the tag bits in the upper word.  In the default encoding,
         // if intptr_t id larger then int32_t we sign extend the value through the upper word.
-        static ALWAYS_INLINE JSValue makeInt(uint32_t value)
+        static ALWAYS_INLINE JSValue makeInt(int32_t value)
         {
-            return makeValue((static_cast<intptr_t>(value) << IntegerPayloadShift) | TagTypeNumber);
+            return makeValue(static_cast<intptr_t>(static_cast<uint32_t>(value)) | TagTypeNumber);
         }
         
         static ALWAYS_INLINE JSValue makeDouble(double value)
@@ -263,7 +248,7 @@ namespace JSC {
         
         static ALWAYS_INLINE JSValue makeBool(bool b)
         {
-            return makeValue((static_cast<intptr_t>(b) << ExtendedPayloadShift) | FullTagTypeBool);
+            return makeValue(static_cast<intptr_t>(b) | FullTagTypeFalse);
         }
         
         static ALWAYS_INLINE JSValue makeUndefined()
@@ -286,17 +271,12 @@ namespace JSC {
 
         static ALWAYS_INLINE int32_t intValue(JSValue v)
         {
-            return static_cast<int32_t>(rawValue(v) >> IntegerPayloadShift);
-        }
-        
-        static ALWAYS_INLINE uint32_t uintValue(JSValue v)
-        {
-            return static_cast<uint32_t>(rawValue(v) >> IntegerPayloadShift);
+            return static_cast<int32_t>(rawValue(v));
         }
         
         static ALWAYS_INLINE bool boolValue(JSValue v)
         {
-            return rawValue(v) & ExtendedPayloadBitBoolValue;
+            return rawValue(v) & 1;
         }
         
         static ALWAYS_INLINE intptr_t rawValue(JSValue v)
@@ -322,13 +302,6 @@ namespace JSC {
         ASSERT(isImmediate(v));
         return isNumber(v) ? isIntegerNumber(v) ? v != zeroImmediate()
             : doubleToBoolean(doubleValue(v)) : v == trueImmediate();
-    }
-
-    ALWAYS_INLINE uint32_t JSImmediate::getTruncatedUInt32(JSValue v)
-    {
-        // FIXME: should probably be asserting isPositiveIntegerNumber here.
-        ASSERT(isIntegerNumber(v));
-        return intValue(v);
     }
 
     template<typename T>
@@ -413,7 +386,7 @@ namespace JSC {
         return from(intVal);
     }
 
-    ALWAYS_INLINE int32_t JSImmediate::getTruncatedInt32(JSValue v)
+    ALWAYS_INLINE int32_t JSImmediate::asInt32(JSValue v)
     {
         ASSERT(isIntegerNumber(v));
         return intValue(v);
@@ -435,24 +408,13 @@ namespace JSC {
             return nonInlineNaN();
 
         ASSERT(JSImmediate::isBoolean(v) || (v == JSImmediate::nullImmediate()));
-        return rawValue(v) >> ExtendedPayloadShift;
+        return boolValue(v);
     }
 
-    ALWAYS_INLINE bool JSImmediate::getUInt32(JSValue v, uint32_t& i)
-    {
-        i = uintValue(v);
-        return isPositiveIntegerNumber(v);
-    }
-
-    ALWAYS_INLINE bool JSImmediate::getTruncatedInt32(JSValue v, int32_t& i)
+    ALWAYS_INLINE bool JSImmediate::asInt32(JSValue v, int32_t& i)
     {
         i = intValue(v);
         return isIntegerNumber(v);
-    }
-
-    ALWAYS_INLINE bool JSImmediate::getTruncatedUInt32(JSValue v, uint32_t& i)
-    {
-        return getUInt32(v, i);
     }
 
     inline JSValue::JSValue(JSNullTag)
@@ -523,18 +485,18 @@ namespace JSC {
     inline int32_t JSValue::asInt32() const
     {
         ASSERT(isInt32());
-        return JSImmediate::getTruncatedInt32(asValue());
+        return JSImmediate::asInt32(asValue());
     }
 
     inline bool JSValue::isUInt32() const
     {
-        return JSImmediate::isPositiveIntegerNumber(asValue());
+        return isInt32() && asInt32() > -1;
     }
 
     inline uint32_t JSValue::asUInt32() const
     {
         ASSERT(isUInt32());
-        return JSImmediate::getTruncatedUInt32(asValue());
+        return asInt32();
     }
 
 } // namespace JSC

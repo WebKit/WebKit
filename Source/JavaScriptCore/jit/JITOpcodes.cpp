@@ -695,9 +695,14 @@ void JIT::emitSlow_op_resolve_global(Instruction* currentInstruction, Vector<Slo
 void JIT::emit_op_not(Instruction* currentInstruction)
 {
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
-    xorPtr(TrustedImm32(static_cast<int32_t>(JSImmediate::FullTagTypeBool)), regT0);
-    addSlowCase(branchTestPtr(NonZero, regT0, TrustedImm32(static_cast<int32_t>(~JSImmediate::ExtendedPayloadBitBoolValue))));
-    xorPtr(TrustedImm32(static_cast<int32_t>(JSImmediate::FullTagTypeBool | JSImmediate::ExtendedPayloadBitBoolValue)), regT0);
+
+    // Invert agains JSValue(false); if the value was tagged as a boolean, when all bits will be
+    // clear other than the low bit (which will be 0 or 1 for false or true inputs respectively).
+    // Then invert against JSValue(truee), which will add the tag back in, and flip the low bit.
+    xorPtr(TrustedImm32(static_cast<int32_t>(JSImmediate::FullTagTypeFalse)), regT0);
+    addSlowCase(branchTestPtr(NonZero, regT0, TrustedImm32(static_cast<int32_t>(~1))));
+    xorPtr(TrustedImm32(static_cast<int32_t>(JSImmediate::FullTagTypeTrue)), regT0);
+
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
@@ -1374,7 +1379,7 @@ void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCas
 void JIT::emitSlow_op_not(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
     linkSlowCase(iter);
-    xorPtr(TrustedImm32(static_cast<int32_t>(JSImmediate::FullTagTypeBool)), regT0);
+    xorPtr(TrustedImm32(static_cast<int32_t>(JSImmediate::FullTagTypeFalse)), regT0);
     JITStubCall stubCall(this, cti_op_not);
     stubCall.addArgument(regT0);
     stubCall.call(currentInstruction[1].u.operand);
