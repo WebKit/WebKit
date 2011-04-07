@@ -1,3 +1,13 @@
+2011-04-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Removed a redundant line of code.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::updateAlwaysCreateLineBoxes): No need to compare line gap values, as
+        this is covered by the earlier hasIdenticalAscentDescentAndLineGap() check.
+
 2011-04-07  Liang Qi  <liang.qi@nokia.com>
 
         Reviewed by Laszlo Gombos.

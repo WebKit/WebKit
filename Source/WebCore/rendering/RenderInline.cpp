@@ -184,7 +184,6 @@ void RenderInline::updateAlwaysCreateLineBoxes()
         parentStyle = parent()->style(true);
         RenderStyle* childStyle = style(true);
         alwaysCreateLineBoxes = !parentStyle->font().fontMetrics().hasIdenticalAscentDescentAndLineGap(childStyle->font().fontMetrics())
-        || parentStyle->font().fontMetrics().lineGap() != childStyle->font().fontMetrics().lineGap()
         || childStyle->verticalAlign() != BASELINE
         || parentStyle->lineHeight() != childStyle->lineHeight();
     }
