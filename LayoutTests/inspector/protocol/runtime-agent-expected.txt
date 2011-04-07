@@ -5,20 +5,18 @@ RuntimeAgent.evaluate("testObject","test",false)
 
 request:
 {
-    id : <number>
-    domain : "Runtime"
-    command : "evaluate"
-    arguments : {
+    method : "Runtime.evaluate"
+    params : {
         expression : "testObject"
         objectGroup : "test"
         includeCommandLineAPI : false
     }
+    id : <number>
 }
 
 response:
 {
-    requestId : <number>
-    body : {
+    result : {
         result : {
             objectId : <string>
             hasChildren : true
@@ -26,6 +24,7 @@ response:
             description : "TestObject"
         }
     }
+    id : <number>
 }
 
 -----------------------------------------------------------
@@ -33,19 +32,17 @@ RuntimeAgent.evaluate("testObject","test")
 
 request:
 {
-    id : <number>
-    domain : "Runtime"
-    command : "evaluate"
-    arguments : {
+    method : "Runtime.evaluate"
+    params : {
         expression : "testObject"
         objectGroup : "test"
     }
+    id : <number>
 }
 
 response:
 {
-    requestId : <number>
-    body : {
+    result : {
         result : {
             objectId : <string>
             hasChildren : true
@@ -53,6 +50,7 @@ response:
             description : "TestObject"
         }
     }
+    id : <number>
 }
 
 -----------------------------------------------------------
@@ -60,24 +58,23 @@ RuntimeAgent.evaluateOn(<string>,"this.assignedByEvaluateOn = \"evaluateOn funct
 
 request:
 {
-    id : <number>
-    domain : "Runtime"
-    command : "evaluateOn"
-    arguments : {
+    method : "Runtime.evaluateOn"
+    params : {
         objectId : <string>
         expression : "this.assignedByEvaluateOn = "evaluateOn function works fine";"
     }
+    id : <number>
 }
 
 response:
 {
-    requestId : <number>
-    body : {
+    result : {
         result : {
             type : "undefined"
             description : "undefined"
         }
     }
+    id : <number>
 }
 
 -----------------------------------------------------------
@@ -85,19 +82,20 @@ RuntimeAgent.setPropertyValue(<string>,"assignedBySetPropertyValue","true")
 
 request:
 {
-    id : <number>
-    domain : "Runtime"
-    command : "setPropertyValue"
-    arguments : {
+    method : "Runtime.setPropertyValue"
+    params : {
         objectId : <string>
         propertyName : "assignedBySetPropertyValue"
         expression : "true"
     }
+    id : <number>
 }
 
 response:
 {
-    requestId : <number>
+    result : {
+    }
+    id : <number>
 }
 
 -----------------------------------------------------------
@@ -105,19 +103,20 @@ RuntimeAgent.setPropertyValue(<string>,"removedBySetPropertyValue","")
 
 request:
 {
-    id : <number>
-    domain : "Runtime"
-    command : "setPropertyValue"
-    arguments : {
+    method : "Runtime.setPropertyValue"
+    params : {
         objectId : <string>
         propertyName : "removedBySetPropertyValue"
         expression : ""
     }
+    id : <number>
 }
 
 response:
 {
-    requestId : <number>
+    result : {
+    }
+    id : <number>
 }
 
 -----------------------------------------------------------
@@ -125,19 +124,17 @@ RuntimeAgent.getProperties(<string>,false)
 
 request:
 {
-    id : <number>
-    domain : "Runtime"
-    command : "getProperties"
-    arguments : {
+    method : "Runtime.getProperties"
+    params : {
         objectId : <string>
         ignoreHasOwnProperty : false
     }
+    id : <number>
 }
 
 response:
 {
-    requestId : <number>
-    body : {
+    result : {
         result : {
             0 : {
                 name : "assignedByEvaluateOn"
@@ -164,6 +161,7 @@ response:
             }
         }
     }
+    id : <number>
 }
 
 -----------------------------------------------------------
@@ -171,17 +169,18 @@ RuntimeAgent.releaseObject(<string>)
 
 request:
 {
-    id : <number>
-    domain : "Runtime"
-    command : "releaseObject"
-    arguments : {
+    method : "Runtime.releaseObject"
+    params : {
         objectId : <string>
     }
+    id : <number>
 }
 
 response:
 {
-    requestId : <number>
+    result : {
+    }
+    id : <number>
 }
 
 -----------------------------------------------------------
@@ -189,17 +188,18 @@ RuntimeAgent.releaseObjectGroup("test")
 
 request:
 {
-    id : <number>
-    domain : "Runtime"
-    command : "releaseObjectGroup"
-    arguments : {
+    method : "Runtime.releaseObjectGroup"
+    params : {
         objectGroup : "test"
     }
+    id : <number>
 }
 
 response:
 {
-    requestId : <number>
+    result : {
+    }
+    id : <number>
 }
 
 ===========================================================

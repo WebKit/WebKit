@@ -1,3 +1,29 @@
+2011-04-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: migrate Inspector protocol messages format to JSON-RPC.
+        https://bugs.webkit.org/show_bug.cgi?id=57957
+
+        There is not a significant difference between  inspector messages spec and and JSON-RPC 2.0 messages spec.
+        Also JSON-RPC has a pretty clear specification for error descriptions which we haven't.
+        It was decided that we will use it.
+
+        the list of renames:
+        1) type-> /dev/null
+        2) domain + '.' + event => method // for events
+        3) domain + '.' + command => method // for requests
+        4) requestId => id // for responses
+        5) arguments => params // for requests
+        6) data => params // for events
+        7) body => result // for responses
+
+        protocolErrors and error properties will be converted to JSON-RPC error format.
+        The order of properties in messages also will be adjusted.
+        The only thing that looks unnecessary is jsonrpc property.
+
+        * inspector/CodeGeneratorInspector.pm:
+
 2011-04-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

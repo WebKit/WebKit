@@ -7,16 +7,15 @@ ConsoleAgent.disable()
 
 request:
 {
+    method : "Console.disable"
     id : <number>
-    domain : "Console"
-    command : "disable"
-    arguments : {
-    }
 }
 
 response:
 {
-    requestId : <number>
+    result : {
+    }
+    id : <number>
 }
 
 -----------------------------------------------------------
@@ -24,19 +23,16 @@ ConsoleAgent.enable()
 
 request:
 {
+    method : "Console.enable"
     id : <number>
-    domain : "Console"
-    command : "enable"
-    arguments : {
-    }
 }
 
 response:
 {
-    requestId : <number>
-    body : {
+    result : {
         expiredMessagesCount : 0
     }
+    id : <number>
 }
 
 -----------------------------------------------------------
@@ -44,22 +40,19 @@ RuntimeAgent.evaluate("console.info('test'); console.info('test')","test-group",
 
 request:
 {
-    id : <number>
-    domain : "Runtime"
-    command : "evaluate"
-    arguments : {
+    method : "Runtime.evaluate"
+    params : {
         expression : "console.info('test'); console.info('test')"
         objectGroup : "test-group"
         includeCommandLineAPI : false
     }
+    id : <number>
 }
 
 event ConsoleAgent.consoleMessage
 {
-    type : "event"
-    domain : "Console"
-    event : "consoleMessage"
-    data : {
+    method : "Console.consoleMessage"
+    params : {
         messageObj : {
             source : 3
             type : 0
@@ -81,23 +74,21 @@ event ConsoleAgent.consoleMessage
 
 event ConsoleAgent.consoleMessageRepeatCountUpdated
 {
-    type : "event"
-    domain : "Console"
-    event : "consoleMessageRepeatCountUpdated"
-    data : {
+    method : "Console.consoleMessageRepeatCountUpdated"
+    params : {
         count : 2
     }
 }
 
 response:
 {
-    requestId : <number>
-    body : {
+    result : {
         result : {
             type : "undefined"
             description : "undefined"
         }
     }
+    id : <number>
 }
 
 -----------------------------------------------------------
@@ -105,25 +96,20 @@ ConsoleAgent.clearConsoleMessages()
 
 request:
 {
+    method : "Console.clearConsoleMessages"
     id : <number>
-    domain : "Console"
-    command : "clearConsoleMessages"
-    arguments : {
-    }
 }
 
 event ConsoleAgent.consoleMessagesCleared
 {
-    type : "event"
-    domain : "Console"
-    event : "consoleMessagesCleared"
-    data : {
-    }
+    method : "Console.consoleMessagesCleared"
 }
 
 response:
 {
-    requestId : <number>
+    result : {
+    }
+    id : <number>
 }
 
 -----------------------------------------------------------
@@ -131,17 +117,18 @@ ConsoleAgent.setMonitoringXHREnabled(true)
 
 request:
 {
-    id : <number>
-    domain : "Console"
-    command : "setMonitoringXHREnabled"
-    arguments : {
+    method : "Console.setMonitoringXHREnabled"
+    params : {
         enabled : true
     }
+    id : <number>
 }
 
 response:
 {
-    requestId : <number>
+    result : {
+    }
+    id : <number>
 }
 
 -----------------------------------------------------------
@@ -149,17 +136,18 @@ ConsoleAgent.setMonitoringXHREnabled(false)
 
 request:
 {
-    id : <number>
-    domain : "Console"
-    command : "setMonitoringXHREnabled"
-    arguments : {
+    method : "Console.setMonitoringXHREnabled"
+    params : {
         enabled : false
     }
+    id : <number>
 }
 
 response:
 {
-    requestId : <number>
+    result : {
+    }
+    id : <number>
 }
 
 -----------------------------------------------------------
@@ -167,17 +155,18 @@ ConsoleAgent.addInspectedNode(<number>)
 
 request:
 {
-    id : <number>
-    domain : "Console"
-    command : "addInspectedNode"
-    arguments : {
+    method : "Console.addInspectedNode"
+    params : {
         nodeId : 1
     }
+    id : <number>
 }
 
 response:
 {
-    requestId : <number>
+    result : {
+    }
+    id : <number>
 }
 
 ===========================================================

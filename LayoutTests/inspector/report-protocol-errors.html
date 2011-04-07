@@ -8,14 +8,14 @@ function test()
     var messages = [
         'some wrong string',
         '{}',
-        '{"command":1}',
-        '{"domain":"Network","command":"resourceContent"}',
-        '{"id":"not a number","domain":"Network","command":"resourceContent"}',
-        '{"id":1,"domain":"DOM","command":"test"}',
-        '{"id":2,"domain":"Network","command":"getResourceContent"}',
-        '{"id":3,"domain":"Network","command":"getResourceContent","arguments":[]}',
-        '{"id":4,"domain":"Network","command":"getResourceContent","arguments":{}}',
-        '{"id":5,"domain":"Network","command":"getResourceContent","arguments":{"frameId":"not a number"}}',
+        '{"method":1}',
+        '{"method":"resourceContent"}',
+        '{"id":"not a number","method":"Network.resourceContent"}',
+        '{"id":1,"method":"DOM.test"}',
+        '{"id":2,"method":"Network.getResourceContent"}',
+        '{"id":3,"method":"Network.getResourceContent","params":[]}',
+        '{"id":4,"method":"Network.getResourceContent","params":{}}',
+        '{"id":5,"method":"Network.getResourceContent","params":{"frameId":"not a number"}}',
     ];
     var numberOfReports = 0;
 

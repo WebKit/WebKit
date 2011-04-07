@@ -1,64 +1,104 @@
 Tests that InspectorBackendDispatcher is catching incorrect messages.
 
 {
-    requestId : 0
-    protocolErrors : {
-        0 : "Protocol Error: Invalid message format. Message should be in JSON format."
+    error : {
+        code : -32700
+        message : "Parse error."
+        data : {
+            0 : "Message should be in JSON format."
+        }
     }
+    id : 0
 }
 {
-    requestId : 0
-    protocolErrors : {
-        0 : "Protocol Error: Invalid message format. 'command' property wasn't found."
+    error : {
+        code : -32600
+        message : "Invalid Request."
+        data : {
+            0 : "Invalid message format. 'method' property wasn't found."
+        }
     }
+    id : 0
 }
 {
-    requestId : 0
-    protocolErrors : {
-        0 : "Protocol Error: Invalid message format. The type of 'command' property should be string."
+    error : {
+        code : -32600
+        message : "Invalid Request."
+        data : {
+            0 : "Invalid message format. The type of 'method' property should be string."
+        }
     }
+    id : 0
 }
 {
-    requestId : 0
-    protocolErrors : {
-        0 : "Protocol Error: Invalid message format. 'id' property was not found in the request."
+    error : {
+        code : -32600
+        message : "Invalid Request."
+        data : {
+            0 : "Invalid message format. 'id' property was not found in the request."
+        }
     }
+    id : 0
 }
 {
-    requestId : 0
-    protocolErrors : {
-        0 : "Protocol Error: Invalid message format. The type of 'id' property should be number."
+    error : {
+        code : -32600
+        message : "Invalid Request."
+        data : {
+            0 : "Invalid message format. The type of 'id' property should be number."
+        }
     }
+    id : 0
 }
 {
-    requestId : 1
-    protocolErrors : {
-        0 : "Protocol Error: Invalid command was received. 'test' wasn't found in domain DOM."
+    error : {
+        code : -32601
+        message : "Method not found."
+        data : {
+            0 : "Invalid method name was received. 'DOM.test' wasn't found."
+        }
     }
+    id : 1
 }
 {
-    requestId : 2
-    protocolErrors : {
-        0 : "Protocol Error: 'arguments' property with type 'object' was not found."
+    error : {
+        code : -32602
+        message : "Invalid params."
+        data : {
+            0 : "'params' property with type 'object' was not found."
+        }
     }
+    id : 2
 }
 {
-    requestId : 3
-    protocolErrors : {
-        0 : "Protocol Error: 'arguments' property with type 'object' was not found."
+    error : {
+        code : -32602
+        message : "Invalid params."
+        data : {
+            0 : "'params' property with type 'object' was not found."
+        }
     }
+    id : 3
 }
 {
-    requestId : 4
-    protocolErrors : {
-        0 : "Protocol Error: Argument 'frameId' with type 'String' was not found."
-        1 : "Protocol Error: Argument 'url' with type 'String' was not found."
+    error : {
+        code : -32602
+        message : "Invalid params."
+        data : {
+            0 : "Parameter 'frameId' with type 'String' was not found."
+            1 : "Parameter 'url' with type 'String' was not found."
+        }
     }
+    id : 4
 }
 {
-    requestId : 5
-    protocolErrors : {
-        0 : "Protocol Error: Argument 'url' with type 'String' was not found."
+    error : {
+        code : -32602
+        message : "Invalid params."
+        data : {
+            0 : "Parameter 'url' with type 'String' was not found."
+        }
     }
+    id : 5
 }
 
