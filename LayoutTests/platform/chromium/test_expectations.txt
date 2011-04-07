@@ -3283,10 +3283,6 @@ BUGWK50661 MAC LEOPARD : fast/speech/input-appearance-numberandspeech.html = IMA
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS
 
-// Need rebaselines
-BUGMORRITA WIN LINUX : fast/dom/HTMLProgressElement/progress-element.html = FAIL
-BUGMORRITA WIN LINUX MAC : fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html = FAIL
-
 BUGWK57926 GPU : media/video-display-toggle.html = IMAGE
 BUGWK57926 GPU : media/video-no-audio.html = IMAGE
 BUGWK57926 GPU : media/video-volume-slider.html = IMAGE

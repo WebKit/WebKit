@@ -1,3 +1,16 @@
+2011-04-07  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed, rebaseline progress element tests.
+
+        * platform/chromium-linux/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.checksum: Removed.
+        * platform/chromium-linux/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.png:
+        * platform/chromium-mac-leopard/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.png: Added.
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.checksum: Removed.
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.png:
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-element-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-07  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed; rebaseline expected results in platform/mac-wk2.
