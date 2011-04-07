@@ -1,3 +1,9 @@
+2011-04-07  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: rolling chromium DEPS 80421:80767.
+
+        * DEPS:
+
 2011-04-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
