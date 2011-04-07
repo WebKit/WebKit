@@ -1278,7 +1278,7 @@
                 ],
                 "returns": [
                     { "name": "breakpointId", "type": "string", "description": "Id of the created breakpoint for further manipulations." },
-                    { "name": "locations", "type": "array", "items": { "$ref" : "Location"}, "description": "List of the locations this breakpoint resolved into."  }
+                    { "name": "locations", "type": "array", "items": { "$ref" : "Location"}, "description": "List of the locations this breakpoint resolved into." }
                 ],
                 "description": "Sets JavaScript breakpoint at a given location specified by URL. This breakpoint will survive page reload."
             },
@@ -1293,8 +1293,7 @@
                 ],
                 "returns": [
                     { "name": "breakpointId", "type": "string", "description": "Id of the created breakpoint for further manipulations." },
-                    { "name": "actualLineNumber", "type": "integer", "description": "Line number in the script." },
-                    { "name": "actualColumnNumber", "type": "integer", "description": "Column number in the script." }
+                    { "name": "location", "$ref" : "Location", "description": "Location this breakpoint resolved into." }
                 ],
                 "description": "Sets JavaScript breakpoint at a given location."
             },
@@ -1412,9 +1411,7 @@
                 "name": "breakpointResolved",
                 "parameters": [
                     { "name": "breakpointId", "type": "string", "description": "Breakpoint unique identifier." },
-                    { "name": "sourceId", "type": "string", "description": "Identifier of the script breakpoint is set in." },
-                    { "name": "lineNumber", "type": "integer", "description": "Line number of the statement breakpoint is set on." },
-                    { "name": "columnNumber", "type": "integer", "description": "Column offset of the statement breakpoint is set on." }
+                    { "name": "location", "$ref": "Location", "description": "Actual breakpoint location." }
                 ],
                 "description": "Fired when breakpoint is resolved to an actual script and location."
             },

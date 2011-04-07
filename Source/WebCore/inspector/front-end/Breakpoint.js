@@ -40,10 +40,3 @@ WebInspector.Breakpoint = function(id, url, sourceID, lineNumber, columnNumber, 
     this.enabled = enabled;
     this.locations = [];
 }
-
-WebInspector.Breakpoint.prototype = {
-    addLocation: function(sourceID, lineNumber, columnNumber)
-    {
-        this.locations.push({ sourceID: sourceID, lineNumber: lineNumber, columnNumber: columnNumber });
-    }
-}

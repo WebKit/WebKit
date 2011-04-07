@@ -1,3 +1,24 @@
+2011-04-06  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: migrate debugger domain to the unified breakpoint location notion.
+        https://bugs.webkit.org/show_bug.cgi?id=57928
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::buildObjectForBreakpointCookie):
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDebuggerAgent::resolveBreakpoint):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/Breakpoint.js:
+        (WebInspector.Breakpoint):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.setBreakpointBySourceId):
+        (WebInspector.DebuggerModel.prototype._breakpointResolved):
+
 2011-04-07  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Benjamin Poulain.

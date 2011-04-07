@@ -39,6 +39,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
@@ -80,7 +81,7 @@ public:
     void setBreakpointsActive(ErrorString*, bool active);
 
     void setBreakpointByUrl(ErrorString*, const String& url, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, const bool* const optionalEnabled, String* breakpointId, RefPtr<InspectorArray>* locations);
-    void setBreakpoint(ErrorString*, const String& sourceId, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, const bool* const optionalEnabled, String* breakpointId, int* actualLineNumber, int* actualColumnNumber);
+    void setBreakpoint(ErrorString*, const String& sourceId, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, const bool* const optionalEnabled, String* breakpointId, RefPtr<InspectorObject>* location);
     void removeBreakpoint(ErrorString*, const String& breakpointId);
     void continueToLocation(ErrorString*, const String& sourceId, int lineNumber, int columnNumber);
 
@@ -123,7 +124,7 @@ private:
     virtual void didPause(ScriptState*);
     virtual void didContinue();
 
-    bool resolveBreakpoint(const String& breakpointId, const String& sourceId, const ScriptBreakpoint&, int* actualLineNumber, int* actualColumnNumber);
+    PassRefPtr<InspectorObject> resolveBreakpoint(const String& breakpointId, const String& sourceId, const ScriptBreakpoint&);
     void clear();
 
     class Script {

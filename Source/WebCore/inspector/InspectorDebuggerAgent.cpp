@@ -141,6 +141,17 @@ void InspectorDebuggerAgent::inspectedURLChanged(const String&)
     m_breakpointIdToDebugServerBreakpointIds.clear();
 }
 
+static PassRefPtr<InspectorObject> buildObjectForBreakpointCookie(const String& url, int lineNumber, int columnNumber, const String& condition, bool enabled)
+{
+    RefPtr<InspectorObject> breakpointObject = InspectorObject::create();
+    breakpointObject->setString("url", url);
+    breakpointObject->setNumber("lineNumber", lineNumber);
+    breakpointObject->setNumber("columnNumber", columnNumber);
+    breakpointObject->setString("condition", condition);
+    breakpointObject->setBoolean("enabled", enabled);
+    return breakpointObject;
+}
+
 void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString*, const String& url, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, const bool* const optionalEnabled, String* outBreakpointId, RefPtr<InspectorArray>* locations)
 {
     int columnNumber = optionalColumnNumber ? *optionalColumnNumber : 0;
@@ -151,32 +162,21 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString*, const String& url,
     RefPtr<InspectorObject> breakpointsCookie = m_inspectorState->getObject(DebuggerAgentState::javaScriptBreakpoints);
     if (breakpointsCookie->find(breakpointId) != breakpointsCookie->end())
         return;
-    RefPtr<InspectorObject> breakpointObject = InspectorObject::create();
-    breakpointObject->setString("url", url);
-    breakpointObject->setNumber("lineNumber", lineNumber);
-    breakpointObject->setNumber("columnNumber", columnNumber);
-    breakpointObject->setString("condition", condition);
-    breakpointObject->setBoolean("enabled", enabled);
-    breakpointsCookie->setObject(breakpointId, breakpointObject);
+    breakpointsCookie->setObject(breakpointId, buildObjectForBreakpointCookie(url, lineNumber, columnNumber, condition, enabled));
     m_inspectorState->setObject(DebuggerAgentState::javaScriptBreakpoints, breakpointsCookie);
 
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, condition, enabled);
     for (ScriptsMap::iterator it = m_scripts.begin(); it != m_scripts.end(); ++it) {
         if (it->second.url != url)
             continue;
-        int actualLineNumber = 0, actualColumnNumber = 0;
-        if (!resolveBreakpoint(breakpointId, it->first, breakpoint, &actualLineNumber, &actualColumnNumber))
-            continue;
-        RefPtr<InspectorObject> location = InspectorObject::create();
-        location->setString("sourceID", it->first);
-        location->setNumber("lineNumber", actualLineNumber);
-        location->setNumber("columnNumber", actualColumnNumber);
-        locations->get()->pushObject(location);
+        RefPtr<InspectorObject> location = resolveBreakpoint(breakpointId, it->first, breakpoint);
+        if (location)
+            (*locations)->pushObject(location);
     }
     *outBreakpointId = breakpointId;
 }
 
-void InspectorDebuggerAgent::setBreakpoint(ErrorString*, const String& sourceId, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, const bool* const optionalEnabled, String* outBreakpointId, int* actualLineNumber, int* actualColumnNumber)
+void InspectorDebuggerAgent::setBreakpoint(ErrorString* errorString, const String& sourceId, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, const bool* const optionalEnabled, String* outBreakpointId, RefPtr<InspectorObject>* location)
 {
     int columnNumber = optionalColumnNumber ? *optionalColumnNumber : 0;
     String condition = optionalCondition ? *optionalCondition : "";
@@ -186,9 +186,11 @@ void InspectorDebuggerAgent::setBreakpoint(ErrorString*, const String& sourceId,
     if (m_breakpointIdToDebugServerBreakpointIds.find(breakpointId) != m_breakpointIdToDebugServerBreakpointIds.end())
         return;
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, condition, enabled);
-    if (!resolveBreakpoint(breakpointId, sourceId, breakpoint, actualLineNumber, actualColumnNumber))
-        return;
-    *outBreakpointId = breakpointId;
+    *location = resolveBreakpoint(breakpointId, sourceId, breakpoint);
+    if (*location)
+        *outBreakpointId = breakpointId;
+    else
+        *errorString = "Could not resolve breakpoint";
 }
 
 void InspectorDebuggerAgent::removeBreakpoint(ErrorString*, const String& breakpointId)
@@ -216,14 +218,14 @@ void InspectorDebuggerAgent::continueToLocation(ErrorString* error, const String
     resume(error);
 }
 
-bool InspectorDebuggerAgent::resolveBreakpoint(const String& breakpointId, const String& sourceId, const ScriptBreakpoint& breakpoint, int* actualLineNumber, int* actualColumnNumber)
+PassRefPtr<InspectorObject> InspectorDebuggerAgent::resolveBreakpoint(const String& breakpointId, const String& sourceId, const ScriptBreakpoint& breakpoint)
 {
     ScriptsMap::iterator scriptIterator = m_scripts.find(sourceId);
     if (scriptIterator == m_scripts.end())
-        return false;
+        return 0;
     Script& script = scriptIterator->second;
     if (breakpoint.lineNumber < script.lineOffset)
-        return false;
+        return 0;
     if (!script.linesCount) {
         script.linesCount = 1;
         for (size_t i = 0; i < script.data.length(); ++i) {
@@ -232,18 +234,24 @@ bool InspectorDebuggerAgent::resolveBreakpoint(const String& breakpointId, const
         }
     }
     if (breakpoint.lineNumber >= script.lineOffset + script.linesCount)
-        return false;
+        return 0;
 
-    String debugServerBreakpointId = scriptDebugServer().setBreakpoint(sourceId, breakpoint, actualLineNumber, actualColumnNumber);
+    int actualLineNumber;
+    int actualColumnNumber;
+    String debugServerBreakpointId = scriptDebugServer().setBreakpoint(sourceId, breakpoint, &actualLineNumber, &actualColumnNumber);
     if (debugServerBreakpointId.isEmpty())
-        return false;
+        return 0;
 
     BreakpointIdToDebugServerBreakpointIdsMap::iterator debugServerBreakpointIdsIterator = m_breakpointIdToDebugServerBreakpointIds.find(breakpointId);
     if (debugServerBreakpointIdsIterator == m_breakpointIdToDebugServerBreakpointIds.end())
         debugServerBreakpointIdsIterator = m_breakpointIdToDebugServerBreakpointIds.set(breakpointId, Vector<String>()).first;
     debugServerBreakpointIdsIterator->second.append(debugServerBreakpointId);
 
-    return true;
+    RefPtr<InspectorObject> location = InspectorObject::create();
+    location->setString("sourceID", sourceId);
+    location->setNumber("lineNumber", actualLineNumber);
+    location->setNumber("columnNumber", actualColumnNumber);
+    return location;
 }
 
 void InspectorDebuggerAgent::editScriptSource(ErrorString* error, const String& sourceID, const String& newContent, RefPtr<InspectorArray>* newCallFrames)
@@ -364,9 +372,9 @@ void InspectorDebuggerAgent::didParseSource(const String& sourceID, const String
         breakpointObject->getNumber("columnNumber", &breakpoint.columnNumber);
         breakpointObject->getString("condition", &breakpoint.condition);
         breakpointObject->getBoolean("enabled", &breakpoint.enabled);
-        int actualLineNumber = 0, actualColumnNumber = 0;
-        if (resolveBreakpoint(it->first, sourceID, breakpoint, &actualLineNumber, &actualColumnNumber))
-            m_frontend->breakpointResolved(it->first, sourceID, actualLineNumber, actualColumnNumber);
+        RefPtr<InspectorObject> location = resolveBreakpoint(it->first, sourceID, breakpoint);
+        if (location)
+            m_frontend->breakpointResolved(it->first, location);
     }
 }
 

@@ -102,12 +102,12 @@ WebInspector.DebuggerModel.prototype = {
 
     setBreakpointBySourceId: function(sourceID, lineNumber, columnNumber, condition, enabled, callback)
     {
-        function didSetBreakpoint(error, breakpointId, actualLineNumber, actualColumnNumber)
+        function didSetBreakpoint(error, breakpointId, location)
         {
             var breakpoint;
             if (!error && breakpointId) {
                 breakpoint = new WebInspector.Breakpoint(breakpointId, "", sourceID, lineNumber, columnNumber, condition, enabled);
-                breakpoint.addLocation(sourceID, actualLineNumber, actualColumnNumber);
+                breakpoint.locations.push(location);
                 this._breakpoints[breakpointId] = breakpoint;
             }
             if (callback)
@@ -122,10 +122,10 @@ WebInspector.DebuggerModel.prototype = {
         delete this._breakpoints[breakpointId];
     },
 
-    _breakpointResolved: function(breakpointId, sourceID, lineNumber, columnNumber)
+    _breakpointResolved: function(breakpointId, location)
     {
         var breakpoint = this._breakpoints[breakpointId];
-        breakpoint.addLocation(sourceID, lineNumber, columnNumber);
+        breakpoint.locations.push(location);
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, breakpoint);
     },
 
