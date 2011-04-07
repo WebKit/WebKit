@@ -39,6 +39,8 @@ class WebUndoClient : public APIClient<WKViewUndoClient> {
 public:
     void registerEditCommand(WebView*, PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
     void clearAllEditCommands(WebView*);
+    bool canUndoRedo(WebView*, WebPageProxy::UndoOrRedo);
+    void executeUndoRedo(WebView*, WebPageProxy::UndoOrRedo);
 };
 
 } // namespace WebKit

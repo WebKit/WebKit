@@ -43,12 +43,16 @@ typedef uint32_t WKViewUndoType;
 
 typedef void (*WKViewRegisterEditCommandCallback)(WKViewRef, WKEditCommandRef, WKViewUndoType undoOrRedo, const void *clientInfo);
 typedef void (*WKViewClearAllEditCommandsCallback)(WKViewRef, const void *clientInfo);
+typedef bool (*WKViewCanUndoRedoCallback)(WKViewRef, WKViewUndoType undoOrRedo, const void *clientInfo);
+typedef void (*WKViewExecuteUndoRedoCallback)(WKViewRef, WKViewUndoType undoOrRedo, const void *clientInfo);
 
 struct WKViewUndoClient {
     int                                                                 version;
     const void *                                                        clientInfo;
     WKViewRegisterEditCommandCallback                                   registerEditCommand;
     WKViewClearAllEditCommandsCallback                                  clearAllEditCommands;
+    WKViewCanUndoRedoCallback                                           canUndoRedo;
+    WKViewExecuteUndoRedoCallback                                       executeUndoRedo;
 };
 typedef struct WKViewUndoClient WKViewUndoClient;
 

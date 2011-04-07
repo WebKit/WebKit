@@ -1,3 +1,23 @@
+2011-04-07  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION(WebKit2): execCommand('undo') doesn't work (Windows).
+        https://bugs.webkit.org/show_bug.cgi?id=58056
+        <rdar://problem/8862023>
+        
+        Adding support for execCommand('undo') and execCommand('redo')
+        in WebKit2 for Windows.
+
+        * UIProcess/API/C/win/WKView.h:
+        * UIProcess/win/WebUndoClient.cpp:
+        (WebKit::WebUndoClient::canUndoRedo):
+        (WebKit::WebUndoClient::executeUndoRedo):
+        * UIProcess/win/WebUndoClient.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::canUndoRedo):
+        (WebKit::WebView::executeUndoRedo):
+
 2011-04-07  Andrew Scherkus  <scherkus@chromium.org>
 
         Revert ENABLE_TRACK patch due to compile failures.

@@ -49,5 +49,21 @@ void WebUndoClient::clearAllEditCommands(WebView* view)
     m_client.clearAllEditCommands(toAPI(view), m_client.clientInfo);
 }
 
+bool WebUndoClient::canUndoRedo(WebView* view, WebPageProxy::UndoOrRedo undoOrRedo)
+{
+    if (!m_client.canUndoRedo)
+        return false;
+    
+    return m_client.canUndoRedo(toAPI(view), undoOrRedo, m_client.clientInfo);
+}
+
+void WebUndoClient::executeUndoRedo(WebView* view, WebPageProxy::UndoOrRedo undoOrRedo)
+{
+    if (!m_client.executeUndoRedo)
+        return;
+    
+    m_client.executeUndoRedo(toAPI(view), undoOrRedo, m_client.clientInfo);
+}
+
 } // namespace WebKit
 
