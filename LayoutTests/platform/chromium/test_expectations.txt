@@ -3295,3 +3295,5 @@ BUGWK57926 GPU : media/video-volume-slider.html = IMAGE
 BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = CRASH PASS
 
 BUGWK57975 : fast/overflow/line-clamp.html = IMAGE
+
+BUGWK58005 MAC : editing/inserting/editable-inline-element.html = IMAGE

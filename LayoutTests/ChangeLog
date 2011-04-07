@@ -1,3 +1,9 @@
+2011-04-06  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, update Chromium expectations for failing test from r83075.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
