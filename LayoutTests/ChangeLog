@@ -1,3 +1,14 @@
+2011-04-06  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKitTestRunner needs layoutTestController.pageSizeAndMarginsInPixels
+        https://bugs.webkit.org/show_bug.cgi?id=57984
+
+        Unskip passed tests.
+
+        * platform/mac-wk2/Skipped:
+
 2011-04-06  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

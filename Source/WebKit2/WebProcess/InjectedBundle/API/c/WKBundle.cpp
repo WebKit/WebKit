@@ -162,3 +162,8 @@ int WKBundlePageNumberForElementById(WKBundleRef bundleRef, WKBundleFrameRef fra
 {
     return toImpl(bundleRef)->pageNumberForElementById(toImpl(frameRef), toImpl(idRef)->string(), pageWidthInPixels, pageHeightInPixels);
 }
+
+WKStringRef WKBundlePageSizeAndMarginsInPixels(WKBundleRef bundleRef, WKBundleFrameRef frameRef, int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
+{
+    return toCopiedAPI(toImpl(bundleRef)->pageSizeAndMarginsInPixels(toImpl(frameRef), pageIndex, width, height, marginTop, marginRight, marginBottom, marginLeft));
+}

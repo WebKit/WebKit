@@ -176,6 +176,15 @@ int InjectedBundle::pageNumberForElementById(WebFrame* frame, const String& id, 
     return PrintContext::pageNumberForElement(element, FloatSize(pageWidthInPixels, pageHeightInPixels));
 }
 
+String InjectedBundle::pageSizeAndMarginsInPixels(WebFrame* frame, int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
+{
+    Frame* coreFrame = frame ? frame->coreFrame() : 0;
+    if (!coreFrame)
+        return String();
+
+    return PrintContext::pageSizeAndMarginsInPixels(coreFrame, pageIndex, width, height, marginTop, marginRight, marginBottom, marginLeft);
+}
+
 static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* patterns)
 {
     if (!patterns)

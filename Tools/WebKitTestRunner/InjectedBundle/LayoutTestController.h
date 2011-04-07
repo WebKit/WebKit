@@ -115,6 +115,7 @@ public:
     // Printing
     int numberOfPages(double pageWidthInPixels, double pageHeightInPixels);
     int pageNumberForElementById(JSStringRef, double pageWidthInPixels, double pageHeightInPixels);
+    JSRetainPtr<JSStringRef> pageSizeAndMarginsInPixels(int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft);
 
     enum WhatToDump { RenderTree, MainFrameText, AllFramesText };
     WhatToDump whatToDump() const { return m_whatToDump; }

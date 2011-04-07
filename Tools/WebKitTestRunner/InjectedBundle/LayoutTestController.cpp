@@ -337,6 +337,12 @@ int LayoutTestController::pageNumberForElementById(JSStringRef id, double pageWi
     return WKBundlePageNumberForElementById(InjectedBundle::shared().bundle(), mainFrame, toWK(id).get(), pageWidthInPixels, pageHeightInPixels);
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int pageIndex, int width, int height, int marginTop, int marginRight, int marginBottom, int marginLeft)
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    return toJS(WKBundlePageSizeAndMarginsInPixels(InjectedBundle::shared().bundle(), mainFrame, pageIndex, width, height, marginTop, marginRight, marginBottom, marginLeft));
+}
+
 unsigned LayoutTestController::windowCount()
 {
     return InjectedBundle::shared().pageCount();

@@ -1,3 +1,15 @@
+2011-04-06  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebKitTestRunner needs layoutTestController.pageSizeAndMarginsInPixels
+        https://bugs.webkit.org/show_bug.cgi?id=57984
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::pageSizeAndMarginsInPixels):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+
 2011-04-06  Chris Rogers  <crogers@google.com>
 
         Reviewed by Tony Chang.
