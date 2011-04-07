@@ -233,6 +233,7 @@ fast/events/remove-child-onscroll.html
 fast/events/right-click-focus.html
 fast/events/scroll-after-click-on-tab-index.html
 fast/events/scrollbar-double-click.html
+fast/events/select-element.html
 fast/events/select-onchange-crash.html
 fast/events/selectionchange-user-initiated.html
 fast/events/selectstart-during-autoscroll.html

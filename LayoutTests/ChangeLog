@@ -1,3 +1,12 @@
+2011-04-07  Jessie Berlin  <jberlin@apple.com>
+
+        [WebKit2 Tests] fast/events/select-element.html failing since introduction in r83096
+        https://bugs.webkit.org/show_bug.cgi?id=58059
+
+        Adding this test to the mac-wk2 skipped list to get the bots green.
+
+        * platform/mac-wk2/Skipped:
+
 2011-04-07  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, now that bug 57975 is fixed, mark test as passing.
