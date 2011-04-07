@@ -73,7 +73,7 @@ WebInspector.DebuggerModel.prototype = {
         DebuggerAgent.continueToLocation(sourceID, lineNumber, columnNumber);
     },
 
-    setBreakpoint: function(url, lineNumber, columnNumber, condition, enabled, callback)
+    setBreakpoint: function(url, lineNumber, columnNumber, condition, callback)
     {
         // Adjust column if needed.
         var minColumnNumber = 0;
@@ -89,22 +89,22 @@ WebInspector.DebuggerModel.prototype = {
             if (callback)
                 callback(error ? null : breakpointId, locations);
         }
-        DebuggerAgent.setBreakpointByUrl(url, lineNumber, columnNumber, condition, enabled, didSetBreakpoint.bind(this));
+        DebuggerAgent.setBreakpointByUrl(url, lineNumber, columnNumber, condition, didSetBreakpoint.bind(this));
     },
 
-    setBreakpointBySourceId: function(sourceID, lineNumber, columnNumber, condition, enabled, callback)
+    setBreakpointBySourceId: function(sourceID, lineNumber, columnNumber, condition, callback)
     {
         function didSetBreakpoint(error, breakpointId, location)
         {
             if (callback)
                 callback(error ? null : breakpointId, [location]);
         }
-        DebuggerAgent.setBreakpoint(sourceID, lineNumber, columnNumber, condition, enabled, didSetBreakpoint.bind(this));
+        DebuggerAgent.setBreakpoint(sourceID, lineNumber, columnNumber, condition, didSetBreakpoint.bind(this));
     },
 
-    removeBreakpoint: function(breakpointId)
+    removeBreakpoint: function(breakpointId, callback)
     {
-        DebuggerAgent.removeBreakpoint(breakpointId);
+        DebuggerAgent.removeBreakpoint(breakpointId, callback);
     },
 
     _breakpointResolved: function(breakpointId, location)

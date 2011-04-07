@@ -92,8 +92,6 @@ DebuggerScript._formatScript = function(script)
 DebuggerScript.setBreakpoint = function(execState, args)
 {
     var breakId = Debug.setScriptBreakPointById(args.scriptId, args.lineNumber, args.columnNumber, args.condition);
-    if (!args.enabled)
-        Debug.disableScriptBreakPoint(breakId);
 
     var locations = Debug.findBreakPointActualLocations(breakId);
     if (!locations.length)

@@ -1273,8 +1273,7 @@
                     { "name": "url", "type": "string", "description": "URL of the resource to set breakpoint on." },
                     { "name": "lineNumber", "type": "integer", "description": "Line number to set breakpoint at." },
                     { "name": "columnNumber", "type": "integer", "optional": true, "description": "Offset in the line to set breakpoint at." },
-                    { "name": "condition", "type": "string", "optional": true, "description": "Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true." },
-                    { "name": "enabled", "type": "boolean", "optional": true, "description": "Determines initial state for the breakpoint." }
+                    { "name": "condition", "type": "string", "optional": true, "description": "Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true." }
                 ],
                 "returns": [
                     { "name": "breakpointId", "type": "string", "description": "Id of the created breakpoint for further manipulations." },
@@ -1288,8 +1287,7 @@
                     { "name": "sourceId", "type": "string", "description": "Source ID of the resource to set breakpoint on (as reported by <code>scriptParsed</code>)." },
                     { "name": "lineNumber", "type": "integer", "description": "Line number to set breakpoint at." },
                     { "name": "columnNumber", "type": "integer", "optional": true, "description": "Offset in the line to set breakpoint at." },
-                    { "name": "condition", "type": "string", "optional": true, "description": "Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true." },
-                    { "name": "enabled", "type": "boolean", "optional": true, "description": "Determines initial state for the breakpoint." }
+                    { "name": "condition", "type": "string", "optional": true, "description": "Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true." }
                 ],
                 "returns": [
                     { "name": "breakpointId", "type": "string", "description": "Id of the created breakpoint for further manipulations." },

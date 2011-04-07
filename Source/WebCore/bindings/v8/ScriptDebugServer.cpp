@@ -71,7 +71,6 @@ String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBrea
     args->Set(v8::String::New("lineNumber"), v8::Integer::New(scriptBreakpoint.lineNumber));
     args->Set(v8::String::New("columnNumber"), v8::Integer::New(scriptBreakpoint.columnNumber));
     args->Set(v8::String::New("condition"), v8String(scriptBreakpoint.condition));
-    args->Set(v8::String::New("enabled"), v8::Boolean::New(scriptBreakpoint.enabled));
 
     v8::Handle<v8::Function> setBreakpointFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setBreakpoint")));
     v8::Handle<v8::Value> breakpointId = v8::Debug::Call(setBreakpointFunction, args);

@@ -1,3 +1,51 @@
+2011-04-07  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: remove "enabled" from the setBreakpoint protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=58047
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::hasBreakpoint):
+        * bindings/v8/DebuggerScript.js:
+        ():
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::buildObjectForBreakpointCookie):
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        (WebCore::InspectorDebuggerAgent::continueToLocation):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/ScriptBreakpoint.h:
+        (WebCore::ScriptBreakpoint::ScriptBreakpoint):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerModel.prototype.setBreakpointBySourceId):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype._restoreBreakpoints):
+        (WebInspector.DebuggerPresentationModel.prototype._updateBreakpointsAfterLiveEdit):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpoint.callback):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype._setBreakpointInDebugger):
+        (WebInspector.DebuggerPresentationModel.prototype._setBreakpointInDebugger.didRequestSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype._removeBreakpointFromDebugger):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpointEnabled.afterUpdate):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpointEnabled):
+        (WebInspector.DebuggerPresentationModel.prototype.updateBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype.removeBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded.didRequestSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointRemoved):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointResolved):
+        (WebInspector.DebuggerPresentationModel.prototype._restoreBreakpointsFromSettings):
+        (WebInspector.DebuggerPresentationModel.prototype._saveBreakpoints):
+        (WebInspector.DebuggerPresentationModel.prototype._reset):
+        (WebInspector.PresentationBreakpoint):
+
 2011-04-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

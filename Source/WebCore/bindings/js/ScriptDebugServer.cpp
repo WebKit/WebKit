@@ -112,7 +112,7 @@ bool ScriptDebugServer::hasBreakpoint(intptr_t sourceID, const TextPosition0& po
     if (lineNumber <= 0)
         return false;
     LineToBreakpointMap::const_iterator breakIt = it->second.find(lineNumber);
-    if (breakIt == it->second.end() || !breakIt->second.enabled)
+    if (breakIt == it->second.end())
         return false;
 
     // An empty condition counts as no condition which is equivalent to "true".
