@@ -35,14 +35,9 @@
         (WebCore::RenderObject::setNeedsSimplifiedNormalFlowLayout):
         Changed these methods to only set their respective flags and not to try to be clever about avoiding propagation.
 
-2011-04-07  Anna Cavender  <annacc@chromium.org>
+2011-04-07  Andrew Scherkus  <scherkus@chromium.org>
 
-        Reviewed by Eric Carlson.
-
-        Setup ENABLE(TRACK) feature define + initial HTMLTrackElement
-        https://bugs.webkit.org/show_bug.cgi?id=53556
-
-        No new tests. No real functionality added just yet.
+        Revert ENABLE_TRACK patch due to compile failures.
 
         * CMakeLists.txt:
         * Configurations/FeatureDefines.xcconfig:
@@ -53,24 +48,9 @@
         * features.pri:
         * html/HTMLAttributeNames.in:
         * html/HTMLTagNames.in:
-        * html/HTMLTrackElement.cpp: Added.
-        (WebCore::HTMLTrackElement::HTMLTrackElement):
-        (WebCore::HTMLTrackElement::create):
-        (WebCore::HTMLTrackElement::insertedIntoTree):
-        (WebCore::HTMLTrackElement::willRemove):
-        (WebCore::HTMLTrackElement::src):
-        (WebCore::HTMLTrackElement::setSrc):
-        (WebCore::HTMLTrackElement::kind):
-        (WebCore::HTMLTrackElement::setKind):
-        (WebCore::HTMLTrackElement::srclang):
-        (WebCore::HTMLTrackElement::setSrclang):
-        (WebCore::HTMLTrackElement::label):
-        (WebCore::HTMLTrackElement::setLabel):
-        (WebCore::HTMLTrackElement::isDefault):
-        (WebCore::HTMLTrackElement::setIsDefault):
-        (WebCore::HTMLTrackElement::isURLAttribute):
-        * html/HTMLTrackElement.h: Added.
-        * html/HTMLTrackElement.idl: Added.
+        * html/HTMLTrackElement.cpp: Removed.
+        * html/HTMLTrackElement.h: Removed.
+        * html/HTMLTrackElement.idl: Removed.
 
 2011-04-07  Dan Bernstein  <mitz@apple.com>
 
