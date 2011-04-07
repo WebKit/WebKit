@@ -226,6 +226,8 @@ private:
 
     int m_lastPanX;
     int m_lastPanY;
+
+    int m_overPanY;
 };
 
 } // namespace WebKit

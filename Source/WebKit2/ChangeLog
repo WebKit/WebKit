@@ -1,3 +1,32 @@
+2011-04-07  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Support window bounce when panning.
+        https://bugs.webkit.org/show_bug.cgi?id=58065
+        <rdar://problem/9244367>
+        
+        Make gestureDidScroll synchronous, as once we scroll, we need to know
+        whether or not we are at the beginning or end of the scrollable document.
+        
+        If we are at either end of the scrollable document, we call the Windows 7
+        API to bounce the window to give an indication that you are past an end
+        of the document.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::gestureDidScroll): Pass a boolean for the reply, and return it.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView): Inititalize a new variable.
+        (WebKit::WebView::onGesture): Once we send the message to scroll, check if have gone to
+            an end of the document, and if we have, bounce the window.
+        * UIProcess/win/WebView.h:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in: GestureDidScroll is now sync.
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::gestureDidScroll): When we are done scrolling, check if we have a vertical
+            scrollbar and if we are at the beginning or the end of the scrollable document.
+
 2011-04-07  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Darin Adler.

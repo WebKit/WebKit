@@ -74,6 +74,11 @@ SOFT_LINK_OPTIONAL(USER32, GetGestureInfo, BOOL, WINAPI, (HGESTUREINFO, PGESTURE
 SOFT_LINK_OPTIONAL(USER32, SetGestureConfig, BOOL, WINAPI, (HWND, DWORD, UINT, PGESTURECONFIG, UINT));
 SOFT_LINK_OPTIONAL(USER32, CloseGestureInfoHandle, BOOL, WINAPI, (HGESTUREINFO));
 
+SOFT_LINK_LIBRARY(Uxtheme);
+SOFT_LINK_OPTIONAL(Uxtheme, BeginPanningFeedback, BOOL, WINAPI, (HWND));
+SOFT_LINK_OPTIONAL(Uxtheme, EndPanningFeedback, BOOL, WINAPI, (HWND, BOOL));
+SOFT_LINK_OPTIONAL(Uxtheme, UpdatePanningFeedback, BOOL, WINAPI, (HWND, LONG, LONG, BOOL));
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -269,6 +274,7 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
     , m_findIndicatorCallbackContext(0)
     , m_lastPanX(0)
     , m_lastPanY(0)
+    , m_overPanY(0)
 {
     registerWebViewWindowClass();
 
@@ -522,8 +528,11 @@ LRESULT WebView::onGesture(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 {
     ASSERT(GetGestureInfoPtr());
     ASSERT(CloseGestureInfoHandlePtr());
+    ASSERT(UpdatePanningFeedbackPtr());
+    ASSERT(BeginPanningFeedbackPtr());
+    ASSERT(EndPanningFeedbackPtr());
 
-    if (!GetGestureInfoPtr() || !CloseGestureInfoHandlePtr()) {
+    if (!GetGestureInfoPtr() || !CloseGestureInfoHandlePtr() || !UpdatePanningFeedbackPtr() || !BeginPanningFeedbackPtr() || !EndPanningFeedbackPtr()) {
         handled = false;
         return 0;
     }
@@ -557,12 +566,24 @@ LRESULT WebView::onGesture(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
         m_lastPanX = currentX;
         m_lastPanY = currentY;
 
-        m_page->gestureDidScroll(IntSize(deltaX, deltaY));
+        // Calculate the overpan for window bounce.
+        m_overPanY -= deltaY;
 
-        // FIXME <rdar://problem/9244367>: Support window bounce (both horizontal and vertical), 
-        // if the uesr has scrolled past the end of the document. scollByPanGesture would need to 
-        // be a sync message to support this, because we would need to know how far we scrolled 
-        // past the end of the document.
+        bool shouldBounceWindow = m_page->gestureDidScroll(IntSize(deltaX, deltaY));
+
+        if (gi.dwFlags & GF_BEGIN) {
+            BeginPanningFeedbackPtr()(m_window);
+            m_overPanY = 0;
+        } else if (gi.dwFlags & GF_END) {
+            EndPanningFeedbackPtr()(m_window, true);
+            m_overPanY = 0;
+        }
+
+        // FIXME: Support horizontal window bounce - <http://webkit.org/b/58068>.
+        // FIXME: Window Bounce doesn't undo until user releases their finger - <http://webkit.org/b/58069>.
+
+        if (shouldBounceWindow)
+            UpdatePanningFeedbackPtr()(m_window, 0, m_overPanY, gi.dwFlags & GF_INERTIA);
 
         CloseGestureInfoHandlePtr()(gestureHandle);
 

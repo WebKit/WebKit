@@ -274,7 +274,7 @@ public:
     String getSelectedText();
 
     bool gestureWillBegin(const WebCore::IntPoint&);
-    void gestureDidScroll(const WebCore::IntSize&);
+    bool gestureDidScroll(const WebCore::IntSize&);
     void gestureDidEnd();
 #endif
 #if ENABLE(TILED_BACKING_STORE)

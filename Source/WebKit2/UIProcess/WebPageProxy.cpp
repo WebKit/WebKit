@@ -670,14 +670,16 @@ String WebPageProxy::getSelectedText()
 
 bool WebPageProxy::gestureWillBegin(const IntPoint& point)
 {
-    bool canBeginPanning;
+    bool canBeginPanning = false;
     process()->sendSync(Messages::WebPage::GestureWillBegin(point), Messages::WebPage::GestureWillBegin::Reply(canBeginPanning), m_pageID);
     return canBeginPanning;
 }
 
-void WebPageProxy::gestureDidScroll(const IntSize& size)
+bool WebPageProxy::gestureDidScroll(const IntSize& size)
 {
-    process()->send(Messages::WebPage::GestureDidScroll(size), m_pageID);
+    bool atBeginningOrEndOfScrollableDocument = false;
+    process()->sendSync(Messages::WebPage::GestureDidScroll(size), Messages::WebPage::GestureDidScroll::Reply(atBeginningOrEndOfScrollableDocument), m_pageID);
+    return atBeginningOrEndOfScrollableDocument;
 }
 
 void WebPageProxy::gestureDidEnd()

@@ -323,8 +323,8 @@ public:
     void firstRectForCharacterInSelectedRange(const uint64_t characterPosition, WebCore::IntRect& resultRect);
     void getSelectedText(WTF::String&);
 
-    void gestureWillBegin(const WebCore::IntPoint& point, bool& canBeginPanning);
-    void gestureDidScroll(const WebCore::IntSize& size);
+    void gestureWillBegin(const WebCore::IntPoint&, bool& canBeginPanning);
+    void gestureDidScroll(const WebCore::IntSize&, bool& atBeginningOrEndOfDocument);
     void gestureDidEnd();
 #endif
 
