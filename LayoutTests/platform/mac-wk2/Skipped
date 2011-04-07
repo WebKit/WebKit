@@ -2012,6 +2012,9 @@ platform/mac/editing/pasteboard/text-precomposed.html
 fast/loader/onload-willSendRequest-null-for-frame.html
 plugins/plugin-document-willSendRequest-null.html
 
+# An empty layer is missing.
+platform/mac/fast/forms/input-appearance-spinbutton-up.html
+
 ### END OF (3) Unclassified failures
 ########################################
 

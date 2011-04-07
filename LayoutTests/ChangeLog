@@ -1,5 +1,12 @@
 2011-04-07  Kent Tamura  <tkent@chromium.org>
 
+        Skip platform/mac/fast/forms/input-appearance-spinbutton-up.html on Mac WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=56298
+
+        * platform/mac-wk2/Skipped:
+
+2011-04-07  Kent Tamura  <tkent@chromium.org>
+
         Update spinbutton test results for r83145.
 
         * platform/chromium-linux/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
