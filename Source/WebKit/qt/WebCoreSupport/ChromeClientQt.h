@@ -163,7 +163,7 @@ public:
     virtual void needTouchEvents(bool) { }
 #endif
  
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && (USE(GSTREAMER) || USE(QT_MULTIMEDIA))
     virtual bool supportsFullscreenForNode(const Node*);
     virtual void enterFullscreenForNode(Node*);
     virtual void exitFullscreenForNode(Node*);
@@ -202,7 +202,7 @@ public:
     bool menuBarVisible;
     QEventLoop* m_eventLoop;
 
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && (USE(GSTREAMER) || USE(QT_MULTIMEDIA))
     FullScreenVideoQt* m_fullScreenVideo;
 #endif
 

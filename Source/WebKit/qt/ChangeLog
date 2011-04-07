@@ -1,3 +1,14 @@
+2011-04-07  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Build fix when using Phonon as a backend for the multimedia support.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::ChromeClientQt):
+        (WebCore::ChromeClientQt::~ChromeClientQt):
+        * WebCoreSupport/ChromeClientQt.h:
+
 2011-04-06  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
