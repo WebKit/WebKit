@@ -587,15 +587,19 @@ bool toASCII(short*, size_t);
 </pre>
 </li>
 
-<li>Leave meaningless variable names out of function declarations.
+<li>Leave meaningless variable names out of function declarations. A good rule of thumb is if the parameter type name contains the parameter name (without trailing numbers or pluralization), then the parameter name isn't needed.  Usually, there should be a parameter name for bools, strings, and numerical types.
 <h4 class="right">Right:</h4>
 <pre class="code">
 void setCount(size_t);
+
+void doSomething(ScriptExecutionContext*);
 </pre>
 
 <h4 class="wrong">Wrong:</h4>
 <pre class="code">
 void setCount(size_t count);
+
+void doSomething(ScriptExecutionContext* context);
 </pre>
 </li>
 

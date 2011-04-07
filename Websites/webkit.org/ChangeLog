@@ -1,3 +1,12 @@
+2011-04-06  David Levin  <levin@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Augment style guidelines about meaningless parameters from text the unwritten rules email.
+        https://bugs.webkit.org/show_bug.cgi?id=55275
+
+        * coding/coding-style.html:
+
 2011-04-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Add Web Inspector stack trace, pause on exception and window.onerror
