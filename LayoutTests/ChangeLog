@@ -1,3 +1,15 @@
+2011-04-07  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Move Leopard-specific images to chromium-mac-leopard, and
+        unify text results common in chromium-mac.
+
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-numberandspeech-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-numberandspeech-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-numberandspeech-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-searchandspeech-expected.checksum: Added.
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-searchandspeech-expected.png: Added.
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.txt:
+
 2011-04-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
