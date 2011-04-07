@@ -1,3 +1,12 @@
+2011-04-07  Enrica Casucci  <enrica@apple.com>
+
+        Unreviewed.
+        Adding to skipped list for Windows (WK2) the
+        tests relative to undo removed from the skipped list
+        for Mac where execCommand('undo') is now supported.
+
+        * platform/win-wk2/Skipped:
+
 2011-04-07  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, rebaseline progress element tests.

@@ -66,6 +66,36 @@ platform/win/fast/events/panScroll-nested-divs.html
 platform/win/fast/events/panScroll-no-iframe-jump.html
 platform/win/fast/events/panScroll-preventDefault.html
 
+# execCommand("undo") doesn't work in WebKit2 
+# <rdar://problem/8862023> 
+editing/undo/undo-paste-when-caret-is-not-in-range.html
+fast/forms/input-paste-undo.html
+editing/pasteboard/undoable-fragment-removes.html
+fast/forms/plaintext-mode-1.html
+editing/deleting/delete-and-undo.html
+editing/execCommand/format-block-multiple-paragraphs-in-pre.html
+editing/execCommand/convert-style-elements-to-spans.html
+editing/inserting/redo.html
+editing/style/stylewithcss-without-selection.html
+editing/undo/replace-by-span-then-remove.html
+editing/undo/remove-css-property-and-remove-style.html
+editing/undo/4063751.html
+editing/undo/5378473.html
+editing/undo/redo-split-text-node.html
+editing/undo/redo-split-text-with-removal.html
+editing/undo/redo-style.html
+editing/undo/redo-typing-001.html
+editing/undo/undo-combined-delete-boundary.html
+editing/undo/undo-combined-delete.html
+editing/undo/undo-delete-boundary.html
+editing/undo/undo-delete.html
+editing/undo/undo-forward-delete-boundary.html
+editing/undo/undo-forward-delete.html
+editing/undo/undo-iframe-location-change.html
+editing/undo/undo-indent.html
+editing/undo/undo-misspellings.html
+editing/undo/undo-typing-001.htm
+
 # Storage tests fail in WebKitTestRunner
 # <https://bugs.webkit.org/show_bug.cgi?id=44084>
 fast/workers/storage
