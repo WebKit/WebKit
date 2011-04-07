@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class CSPDirective;
+class CSPOptions;
 class KURL;
 class SecurityOrigin;
 
@@ -54,6 +55,8 @@ public:
 private:
     explicit ContentSecurityPolicy(SecurityOrigin*);
 
+    bool protectAgainstXSS() const;
+
     void parse(const String&);
     bool parseDirective(const UChar* begin, const UChar* end, String& name, String& value);
     void addDirective(const String& name, const String& value);
@@ -62,6 +65,7 @@ private:
     RefPtr<SecurityOrigin> m_origin;
     OwnPtr<CSPDirective> m_scriptSrc;
     OwnPtr<CSPDirective> m_objectSrc;
+    OwnPtr<CSPOptions> m_options;
 };
 
 }

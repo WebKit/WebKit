@@ -1,3 +1,15 @@
+2011-04-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement CSP's options directive
+        https://bugs.webkit.org/show_bug.cgi?id=58014
+
+        * http/tests/security/contentSecurityPolicy/inline-script-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/inline-script-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-goofy-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/inline-script-blocked-goofy.html: Added.
+
 2011-04-07  Enrica Casucci  <enrica@apple.com>
 
         Unreviewed.

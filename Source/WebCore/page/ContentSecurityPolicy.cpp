@@ -57,6 +57,11 @@ bool isHostCharacter(UChar c)
     return isASCIIAlphanumeric(c) || c == '-';
 }
 
+bool isOptionValueCharacter(UChar c)
+{
+    return isASCIIAlphanumeric(c) || c == '-';
+}
+
 bool isSchemeContinuationCharacter(UChar c)
 {
     return isASCIIAlphanumeric(c) || c == '+' || c == '-' || c == '.';
@@ -406,6 +411,55 @@ private:
     CSPSourceList m_sourceList;
 };
 
+class CSPOptions {
+public:
+    explicit CSPOptions(const String& value)
+        : m_disableXSSProtection(false)
+        , m_evalScript(false)
+    {
+        parse(value);
+    }
+
+    bool disableXSSProtection() const { return m_disableXSSProtection; }
+    bool evalScript() const { return m_evalScript; }
+
+private:
+    void parse(const String&);
+
+    bool m_disableXSSProtection;
+    bool m_evalScript;
+};
+
+// options           = "options" *( 1*WSP option-value ) *WSP
+// option-value      = 1*( ALPHA / DIGIT / "-" )
+//
+void CSPOptions::parse(const String& value)
+{
+    DEFINE_STATIC_LOCAL(String, disableXSSProtection, ("disable-xss-protection"));
+    DEFINE_STATIC_LOCAL(String, evalScript, ("eval-script"));
+
+    const UChar* position = value.characters();
+    const UChar* end = position + value.length();
+
+    while (position < end) {
+        skipWhile<isASCIISpace>(position, end);
+
+        const UChar* optionsValueBegin = position;
+
+        if (!skipExactly<isOptionValueCharacter>(position, end))
+            return;
+
+        skipWhile<isOptionValueCharacter>(position, end);
+
+        String optionsValue(optionsValueBegin, position - optionsValueBegin);
+
+        if (equalIgnoringCase(optionsValue, disableXSSProtection))
+            m_disableXSSProtection = true;
+        else if (equalIgnoringCase(optionsValue, evalScript))
+            m_evalScript = true;
+    }
+}
+
 ContentSecurityPolicy::ContentSecurityPolicy(SecurityOrigin* origin)
     : m_havePolicy(false)
     , m_origin(origin)
@@ -425,19 +479,24 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header)
     m_havePolicy = true;
 }
 
+bool ContentSecurityPolicy::protectAgainstXSS() const
+{
+    return m_scriptSrc && (!m_options || !m_options->disableXSSProtection());
+}
+
 bool ContentSecurityPolicy::allowJavaScriptURLs() const
 {
-    return !m_scriptSrc;
+    return !protectAgainstXSS();
 }
 
 bool ContentSecurityPolicy::allowInlineEventHandlers() const
 {
-    return !m_scriptSrc;
+    return !protectAgainstXSS();
 }
 
 bool ContentSecurityPolicy::allowInlineScript() const
 {
-    return !m_scriptSrc;
+    return !protectAgainstXSS();
 }
 
 bool ContentSecurityPolicy::allowScriptFromSource(const KURL& url) const
@@ -525,6 +584,7 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
 {
     DEFINE_STATIC_LOCAL(String, scriptSrc, ("script-src"));
     DEFINE_STATIC_LOCAL(String, objectSrc, ("object-src"));
+    DEFINE_STATIC_LOCAL(String, options, ("options"));
 
     ASSERT(!name.isEmpty());
 
@@ -532,6 +592,8 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
         m_scriptSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
     else if (!m_objectSrc && equalIgnoringCase(name, objectSrc))
         m_objectSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
+    else if (!m_options && equalIgnoringCase(name, options))
+        m_options = adoptPtr(new CSPOptions(value));
 }
 
 }
