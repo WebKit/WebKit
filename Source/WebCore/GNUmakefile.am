@@ -4226,6 +4226,14 @@ webcore_built_sources += \
 endif # END ENABLE_FILE_SYSTEM
 
 # ----
+# Quota support
+# ----
+if ENABLE_QUOTA
+FEATURE_DEFINES += ENABLE_QUOTA=1
+webcore_cppflags += -DENABLE_QUOTA=1
+endif # END ENABLE_QUOTA
+
+# ----
 # Speech Input API support
 # ----
 if ENABLE_INPUT_SPEECH

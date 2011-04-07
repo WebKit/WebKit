@@ -642,6 +642,14 @@ AC_ARG_ENABLE(file_system,
               [], [enable_file_system="no"])
 AC_MSG_RESULT([$enable_file_system])
 
+# check whether to enable Quota API support
+AC_MSG_CHECKING([whether to enable Quota API support])
+AC_ARG_ENABLE(quota,
+              AC_HELP_STRING([--enable-quota],
+                             [enable support for Quota API [default=no]]),
+              [], [enable_quota="no"])
+AC_MSG_RESULT([$enable_quota])
+
 # turn off svg features if --disable-svg is requested
 if test "$enable_svg" = "no"; then
    enable_svg_animation=no
@@ -1039,6 +1047,7 @@ AM_CONDITIONAL([ENABLE_DATALIST],[test "$enable_datalist" = "yes"])
 AM_CONDITIONAL([ENABLE_EVENTSOURCE],[test "$enable_eventsource" = "yes"])
 AM_CONDITIONAL([ENABLE_FAST_MOBILE_SCROLLING],[test "$enable_fast_mobile_scrolling" = "yes"])
 AM_CONDITIONAL([ENABLE_FILE_SYSTEM],[test "$enable_file_system" = "yes"])
+AM_CONDITIONAL([ENABLE_QUOTA],[test "$enable_quota" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
 AM_CONDITIONAL([ENABLE_IMAGE_RESIZER],[test "$enable_image_resizer" = "yes"])
 AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
@@ -1140,6 +1149,7 @@ Features:
  HTML5 datagrid support                                   : $enable_datagrid
  HTML5 data transfer items support                        : $enable_data_transfer_items
  HTML5 FileSystem API support                             : $enable_file_system
+ Quota API support                                        : $enable_quota
  HTML5 sandboxed iframe support                           : $enable_sandbox
  HTML5 server-sent events support                         : $enable_eventsource
  HTML5 video element support                              : $enable_video

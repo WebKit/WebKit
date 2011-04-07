@@ -97,6 +97,7 @@ my (
     $offlineWebApplicationSupport,
     $orientationEventsSupport,
     $progressTagSupport,
+    $quotaSupport,
     $registerProtocolHandlerSupport,
     $sharedWorkersSupport,
     $svgSupport,
@@ -227,6 +228,9 @@ my @features = (
 
     { option => "progress-tag", desc => "Progress Tag support",
       define => "ENABLE_PROGRESS_TAG", default => 1, value => \$progressTagSupport },
+
+    { option => "quota", desc => "Toggle Quota support",
+      define => "ENABLE_QUOTA", default => 0, value => \$quotaSupport },
 
     { option => "register-protocol-handler", desc => "Register Protocol Handler support",
       define => "ENABLE_REGISTER_PROTOCOL_HANDLER", default => 0, value => \$registerProtocolHandlerSupport },

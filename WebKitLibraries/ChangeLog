@@ -1,3 +1,13 @@
+2011-04-06  Dai Mikurube  <dmikurube@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add QUOTA build flag for unified quota API
+        https://bugs.webkit.org/show_bug.cgi?id=57918
+
+        * win/tools/vsprops/FeatureDefines.vsprops: Added QUOTA build flag
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops: Added QUOTA build flag
+
 2011-04-04  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/57384> CFNetwork and WebCore load priorities should match
