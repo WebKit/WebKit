@@ -3366,7 +3366,6 @@ void tst_QWebFrame::setUrlWithFragment_data()
 // Based on bug report https://bugs.webkit.org/show_bug.cgi?id=32723
 void tst_QWebFrame::setUrlWithFragment()
 {
-    QSKIP("Bug https://bugs.webkit.org/show_bug.cgi?id=32723", SkipAll);
     QFETCH(QUrl, previousUrl);
 
     QWebPage page;

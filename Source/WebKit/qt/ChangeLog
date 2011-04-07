@@ -1,3 +1,45 @@
+2011-04-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] QWebFrame::setUrl works only from second time if url fragment is present
+        https://bugs.webkit.org/show_bug.cgi?id=32723
+
+        When clearing the frame, instead of using the URL passed to QWebFrame::setUrl(),
+        use an invalid URL (the begin() without arguments). Clearing the document
+        with the same URL was causing problems when we had a fragment because it assume that
+        only scrolling was enough and did not loaded the document again.
+
+        When setUrl() is called but fails, url() is expected to return the requested value. The
+        begin(url) guaranteed that before. This patch adds a member to track the URL, which is
+        updated when the URL changes and also when setUrl() is called.
+
+        KURL was used for the member so that when setUrl() is called, and then url() is checked
+        before the page gets loaded, we perform the same conversion that will be performed by a
+        successful load, e.g. add trailing '/' to an address. This behavior is checked by
+        tst_QWebFrame::requestedUrl() test.
+
+        For the record: the second QWebPage::setUrl() worked because the load was considered a
+        FrameLoadTypeSame, and because of that, was not fit for just scrolling, a reload was
+        needed. See FrameLoader::shouldScrollToAnchor() for details on this classification.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::emitUrlChanged): update our URL member and emit the signal.
+        (clearCoreFrame):
+        (isCoreFrameClear):
+        (QWebFrame::setUrl):
+        (QWebFrame::url):
+        (QWebFrame::baseUrl): look in the document for the baseURL since its contents can change
+        the baseURL, e.g. by using the <base> tag.
+        * Api/qwebframe_p.h:
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidChangeLocationWithinPage):
+        (WebCore::FrameLoaderClientQt::dispatchDidCommitLoad):
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::setUrlWithFragment): unskip test.
+
 2011-04-07  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

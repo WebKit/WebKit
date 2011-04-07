@@ -426,6 +426,12 @@ void QWebFramePrivate::renderFrameExtras(GraphicsContext* context, QFlags<QWebFr
     }
 }
 
+void QWebFramePrivate::emitUrlChanged()
+{
+    url = frame->document()->url();
+    emit q->urlChanged(url);
+}
+
 void QWebFrame::orientationChanged()
 {
 #if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
@@ -736,6 +742,17 @@ QMultiMap<QString, QString> QWebFrame::metaData() const
     return map;
 }
 
+static inline void clearCoreFrame(WebCore::Frame* frame)
+{
+    frame->loader()->activeDocumentLoader()->writer()->begin();
+    frame->loader()->activeDocumentLoader()->writer()->end();
+}
+
+static inline bool isCoreFrameClear(WebCore::Frame* frame)
+{
+    return frame->document()->url().isEmpty();
+}
+
 static inline QUrl ensureAbsoluteUrl(const QUrl &url)
 {
     if (!url.isValid() || !url.isRelative())
@@ -765,15 +782,15 @@ static inline QUrl ensureAbsoluteUrl(const QUrl &url)
 
 void QWebFrame::setUrl(const QUrl &url)
 {
+    clearCoreFrame(d->frame);
     const QUrl absolute = ensureAbsoluteUrl(url);
-    d->frame->loader()->activeDocumentLoader()->writer()->begin(absolute);
-    d->frame->loader()->activeDocumentLoader()->writer()->end();
+    d->url = absolute;
     load(absolute);
 }
 
 QUrl QWebFrame::url() const
 {
-    return d->frame->document()->url();
+    return d->url;
 }
 
 /*!
@@ -798,7 +815,9 @@ QUrl QWebFrame::requestedUrl() const
 
 QUrl QWebFrame::baseUrl() const
 {
-    return d->frame->loader()->baseURL();
+    if (isCoreFrameClear(d->frame))
+        return QUrl(d->url).resolved(QUrl());
+    return d->frame->document()->baseURL();
 }
 
 /*!

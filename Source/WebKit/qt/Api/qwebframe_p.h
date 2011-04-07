@@ -105,12 +105,15 @@ public:
     void renderCompositedLayers(WebCore::GraphicsContext*, const WebCore::IntRect& clip);
 #endif
     void renderFrameExtras(WebCore::GraphicsContext*, QFlags<QWebFrame::RenderLayer>, const QRegion& clip);
+    void emitUrlChanged();
+
     QWebFrame *q;
     Qt::ScrollBarPolicy horizontalScrollBarPolicy;
     Qt::ScrollBarPolicy verticalScrollBarPolicy;
     WebCore::FrameLoaderClientQt *frameLoaderClient;
     WebCore::Frame *frame;
     QWebPage *page;
+    WebCore::KURL url;
 
     bool allowsScrolling;
     int marginWidth;

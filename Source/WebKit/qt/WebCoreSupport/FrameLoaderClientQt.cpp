@@ -386,7 +386,7 @@ void FrameLoaderClientQt::dispatchDidChangeLocationWithinPage()
     if (!m_webFrame)
         return;
 
-    emit m_webFrame->urlChanged(m_webFrame->url());
+    m_webFrame->d->emitUrlChanged();
     m_webFrame->page()->d->updateNavigationActions();
 }
 
@@ -480,7 +480,7 @@ void FrameLoaderClientQt::dispatchDidCommitLoad()
     if (m_frame->tree()->parent() || !m_webFrame)
         return;
 
-    emit m_webFrame->urlChanged(m_webFrame->url());
+    m_webFrame->d->emitUrlChanged();
     m_webFrame->page()->d->updateNavigationActions();
 
     // We should assume first the frame has no title. If it has, then the above dispatchDidReceiveTitle()
