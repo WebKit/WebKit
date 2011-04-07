@@ -1,3 +1,9 @@
+2011-04-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the WebKit2 GTK+ build for older versions of GTK+.
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp: Include the GtkVersioning.h header.
+
 2011-04-07   Amruth Raj  <amruthraj@motorola.com> and Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -40,6 +40,7 @@
 #include <QX11Info>
 #elif PLATFORM(GTK)
 #include <gdk/gdkx.h>
+#include <WebCore/GtkVersioning.h>
 #endif
 
 using namespace WebCore;
