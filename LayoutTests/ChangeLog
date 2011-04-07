@@ -1,3 +1,9 @@
+2011-04-07  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, unskip a fast/xmlhttprequest test passing on GTK.
+
+        * platform/gtk/Skipped:
+
 2011-04-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Add always failing tets to the Skipped list.
