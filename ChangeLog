@@ -1,3 +1,15 @@
+2011-04-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add stub support for generating Gtk build system from gyp
+        https://bugs.webkit.org/show_bug.cgi?id=58086
+
+        This adds support for a new --port argument and plumbs through
+        the necessary paths to allow generating for a port other than Mac.
+
+        * Source/gyp/configure:
+
 2011-04-07  Andrew Scherkus  <scherkus@chromium.org>
 
         Revert ENABLE_TRACK patch due to compile failures.

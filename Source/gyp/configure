@@ -40,6 +40,7 @@ def chdir_to_source():
 def gyp():
     return os.path.join('ThirdParty', 'gyp', 'gyp')
 
+
 class Project:
     def __init__(self, name):
         self._name = name
@@ -47,44 +48,77 @@ class Project:
     def name(self):
         return self._name
 
-    def inputs(self):
+    def _gyp_directory(self):
+        return os.path.join(self._name, 'gyp')
+
+    def _gyp_file_for_port(self, port):
+        # Gyp uses the gyp file name as the XCode proj file name, so for now "apple-mac" must be ProjectName.gyp
+        if port == "mac":
+            return '%s.gyp' % self._name
+        return "%s.gyp" % port
+
+    def inputs(self, port):
         return [
-            os.path.join(self._name, 'gyp', self._name + '.gyp'),
+            os.path.join(self._gyp_directory(), self._gyp_file_for_port(port)),
             os.path.join(self._name, self._name + '.gypi'),
             os.path.join('gyp', 'common.gypi'),
         ]
 
-    def output(self):
-        return os.path.join(self._name, 'gyp', self._name + '.xcodeproj', 'project.pbxproj')
+    def _output_for_port(self, port):
+        format = format_for_port(port)
+        return {
+            'filelist': '%s.am' % port,
+            'xcode': os.path.join(self._name + '.xcodeproj', 'project.pbxproj'),
+        }[format]
 
-    def should_generate(self):
-        if not os.path.exists(self.output()):
+    def output(self, port):
+        return os.path.join(self._gyp_directory(), self._output_for_port(port))
+
+    def should_generate(self, port):
+        if not os.path.exists(self.output(port)):
             return True
-        return os.path.getmtime(self.output()) < self._newest(self.inputs())
+        return os.path.getmtime(self.output(port)) < self._newest(self.inputs(port))
 
-    def generate(self):
-        subprocess.call([
+    def _extra_args_for_format(self, format):
+        if format == "xcode":
+            return ['-G', 'xcode_list_excluded_files=0']
+        return []
+
+    def generate(self, port):
+        args = [
             gyp(),
-            self.inputs()[0],
-            '-G',
-            'xcode_list_excluded_files=0',
+            self.inputs(port)[0],
             '--depth=.',
-        ])
+        ]
+        format = format_for_port(port)
+        args.append('--format=%s' % format)
+        args += self._extra_args_for_format(format)
+
+        subprocess.call(args)
         # GYP doesn't always touch the output file, but we want to touch the
         # file so that we don't keep trying to regenerate it.
-        os.utime(self.output(), None)
+        os.utime(self.output(port), None)
 
     @staticmethod
     def _newest(paths):
         return max([os.path.getmtime(path) for path in paths])
+
+
+def format_for_port(port):
+    return {
+        'mac': 'xcode',
+        'gtk': 'filelist',
+        'win': 'msvs',
+    }[port] # Valid port is required.
+
 
 PROJECTS = [
     Project("JavaScriptCore"),
     Project("WebCore"),
 ]
 
-def projects_to_generate():
-    should_generate = [project for project in PROJECTS if project.should_generate()]
+def projects_to_generate(port):
+    should_generate = [project for project in PROJECTS if project.should_generate(port)]
     already_generated = [project.name() for project in set(PROJECTS) - set(should_generate)]
 
     if already_generated:
@@ -93,11 +127,13 @@ def projects_to_generate():
 
     return should_generate
 
+
 def main():
     chdir_to_source()
 
     parser = OptionParser()
-    # FIXME: The user should be able to pass which port on the command line.
+    parser.add_option("--port", dest="port", action="store", default="mac", # Default to Mac for now
+                      help="Which port to generate for.")
     parser.add_option("--regenerate-projects", dest="regenerate_projects",
                       default=False, action="store_true",
                       help="Generate all project files even if they appear to be up to date.")
@@ -105,11 +141,12 @@ def main():
 
     projects = PROJECTS
     if not options.regenerate_projects:
-        projects = projects_to_generate()
+        projects = projects_to_generate(options.port)
 
     for project in projects:
         print "Generating %s." % project.name()
-        project.generate()
+        project.generate(options.port)
+
 
 if __name__ == "__main__":
     main()

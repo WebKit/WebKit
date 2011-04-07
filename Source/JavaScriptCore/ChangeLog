@@ -1,3 +1,17 @@
+2011-04-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add stub support for generating Gtk build system from gyp
+        https://bugs.webkit.org/show_bug.cgi?id=58086
+
+        This does not produce a buildable JavaScriptCore, but it
+        does allow running gyp/configure --port=gtk and having
+        it generate a gtk.Makefile which we can use for testing
+        the rest of the plumbing.
+
+        * gyp/gtk.gyp: Added.
+
 2011-04-07  Andrew Scherkus  <scherkus@chromium.org>
 
         Revert ENABLE_TRACK patch due to compile failures.
