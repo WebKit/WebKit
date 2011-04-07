@@ -1,3 +1,13 @@
+2011-04-06  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        MediaPlayerPrivateAVFoundation does not change rate due to setRate().
+        https://bugs.webkit.org/show_bug.cgi?id=57919
+
+        * media/video-set-rate-from-pause-expected.txt: Added.
+        * media/video-set-rate-from-pause.html: Added.
+
 2011-04-06  Dan Bernstein  <mitz@apple.com>
 
         Correct results for the Geeza Pro metrics change.

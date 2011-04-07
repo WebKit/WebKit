@@ -93,6 +93,7 @@ private:
     virtual MediaPlayerPrivateAVFoundation::AVAssetStatus assetStatus() const;
 
     virtual void checkPlayability();
+    virtual void updateRate();
     virtual float rate() const;
     virtual void seekToTime(float time);
     virtual unsigned totalBytes() const;

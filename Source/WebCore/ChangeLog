@@ -1,3 +1,24 @@
+2011-04-06  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        MediaPlayerPrivateAVFoundation does not change rate due to setRate().
+        https://bugs.webkit.org/show_bug.cgi?id=57919
+
+        Test: media/video-set-rate-from-pause.html
+
+        The base class of MediaPlayerPrivateAVFoundation does not actually change the rate
+        of the media; instead a subclass must do that work.  So when setRate() is called, 
+        inform a subclass through a new pure virtual updateRate() function that there's 
+        work to be done.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::setRate): Call updateRate()
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateRate): Added.  Set the requested rate.
+
 2011-04-06  Dai Mikurube  <dmikurube@chromium.org>
 
         Reviewed by David Levin.

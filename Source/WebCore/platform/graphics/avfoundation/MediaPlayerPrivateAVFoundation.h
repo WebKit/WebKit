@@ -170,6 +170,7 @@ protected:
     virtual AVAssetStatus assetStatus() const = 0;
 
     virtual void checkPlayability() = 0;
+    virtual void updateRate() = 0;
     virtual float rate() const = 0;
     virtual void seekToTime(float time) = 0;
     virtual unsigned totalBytes() const = 0;

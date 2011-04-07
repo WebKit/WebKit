@@ -285,6 +285,8 @@ void MediaPlayerPrivateAVFoundation::setRate(float rate)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::setRate(%p) - seting to %f", this, rate);
     m_requestedRate = rate;
+
+    updateRate();
 }
 
 bool MediaPlayerPrivateAVFoundation::paused() const

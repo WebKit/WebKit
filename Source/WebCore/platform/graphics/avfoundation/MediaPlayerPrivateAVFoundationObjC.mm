@@ -437,6 +437,13 @@ void MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible(bool closedCap
     [m_avPlayer.get() setClosedCaptionDisplayEnabled:closedCaptionsVisible];
 }
 
+void MediaPlayerPrivateAVFoundationObjC::updateRate()
+{
+    setDelayCallbacks(true);
+    [m_avPlayer.get() setRate:requestedRate()];
+    setDelayCallbacks(false);
+}
+
 float MediaPlayerPrivateAVFoundationObjC::rate() const
 {
     if (!metaDataAvailable())
