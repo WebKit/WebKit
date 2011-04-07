@@ -1,3 +1,23 @@
+2011-04-07  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Spinbuttons become unclickable if right padding is large.
+        https://bugs.webkit.org/show_bug.cgi?id=56298
+
+        Add a test, and skip on platforms which has no inner-spin-button implementation.
+
+        * fast/forms/input-number-large-padding-expected.txt: Added.
+        * fast/forms/input-number-large-padding.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/Skipped:
+        * platform/mac/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-layer-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-up-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-visibility-expected.txt:
+        * platform/qt/Skipped:
+
 2011-04-06  Kent Tamura  <tkent@chromium.org>
 
         Fixed an error in the previous commit.

@@ -446,12 +446,16 @@ input::-webkit-input-list-button {
 input::-webkit-inner-spin-button {
     -webkit-appearance: inner-spin-button;
     display: inline-block;
+    position: relative;
+    cursor: default;
     -webkit-user-select: none;
 }
 
 input::-webkit-outer-spin-button {
     -webkit-appearance: outer-spin-button;
     display: inline-block;
+    position: relative;
+    cursor: default;
     margin-left: 2px;
     -webkit-user-select: none;
 }

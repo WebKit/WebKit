@@ -2969,6 +2969,7 @@ fast/forms/input-appearance-spinbutton-disabled-readonly.html
 fast/forms/input-appearance-spinbutton-layer.html
 fast/forms/input-number-events.html
 fast/forms/input-spinbutton-capturing.html
+fast/forms/input-number-large-padding.html
 
 # Speech input is not yet enabled.
 fast/speech

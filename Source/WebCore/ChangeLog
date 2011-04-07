@@ -1,3 +1,28 @@
+2011-04-07  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Spinbuttons become unclickable if right padding is large.
+        https://bugs.webkit.org/show_bug.cgi?id=56298
+
+        An inner-spin-button is put on the right border and ignores right
+        padding in RenderTextControlSingleLine::layout(), but forwardEvent()
+        checks if a point is in an area just right of an internal text block.
+        This inconsistency caused a bug that an inner-spin-button with large
+        padding didn't receive mouse events.
+
+        To fix this bug, we render spin buttons as layers, and remove manual
+        event forwarding code.
+
+        Test: fast/forms/input-number-large-padding.html
+
+        * css/html.css: Add "position:relative" to make a spin-button a layer.
+        (input::-webkit-inner-spin-button):
+        (input::-webkit-outer-spin-button):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::forwardEvent):
+          Remove manual event forwarding code.
+
 2011-04-06  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
