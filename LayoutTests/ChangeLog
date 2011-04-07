@@ -1,5 +1,16 @@
 2011-04-07  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK rebaseline after r83145. Also skip
+        fast/forms/input-number-large-padding.html which fails. See bug
+        58020.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-layer-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-spinbutton-visibility-expected.txt:
+
+2011-04-07  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK baselines for 4 new tests.
 
         * platform/gtk/fast/history/visited-link-background-color-expected.checksum: Added.
