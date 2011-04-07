@@ -137,9 +137,9 @@ namespace JSC {
         // This value is 2^48, used to encode doubles such that the encoded value will begin
         // with a 16-bit pattern within the range 0x0001..0xFFFE.
         static const intptr_t DoubleEncodeOffset = 0x1000000000000ll;
-        // The second bit set indicates immediate other than an number (bool, null, undefined).
+        // The second bit set indicates an immediate other than a number (bool, null, undefined).
         static const intptr_t TagBitTypeOther = 0x2;
-        // TagMask is used to check for any immediate values (number or other).
+        // TagMask is used to check for all types of immediate values (either number or 'other').
         static const intptr_t TagMask = TagTypeNumber | TagBitTypeOther;
 
         static const intptr_t ExtendedTagBitBool      = 0x4;

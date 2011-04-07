@@ -1,3 +1,11 @@
+2011-04-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Fix a couple of typos in comments that Darin spotted.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_not):
+        * runtime/JSImmediate.h:
+
 2011-04-06  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

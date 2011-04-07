@@ -696,9 +696,9 @@ void JIT::emit_op_not(Instruction* currentInstruction)
 {
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
 
-    // Invert agains JSValue(false); if the value was tagged as a boolean, when all bits will be
+    // Invert against JSValue(false); if the value was tagged as a boolean, then all bits will be
     // clear other than the low bit (which will be 0 or 1 for false or true inputs respectively).
-    // Then invert against JSValue(truee), which will add the tag back in, and flip the low bit.
+    // Then invert against JSValue(true), which will add the tag back in, and flip the low bit.
     xorPtr(TrustedImm32(static_cast<int32_t>(JSImmediate::FullTagTypeFalse)), regT0);
     addSlowCase(branchTestPtr(NonZero, regT0, TrustedImm32(static_cast<int32_t>(~1))));
     xorPtr(TrustedImm32(static_cast<int32_t>(JSImmediate::FullTagTypeTrue)), regT0);
