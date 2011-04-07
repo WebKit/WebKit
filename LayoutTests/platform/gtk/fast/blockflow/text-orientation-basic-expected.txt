@@ -26,7 +26,7 @@ layer at (0,0) size 784x708
           RenderInline {SPAN} at (0,0) size 41x173
             RenderText {#text} at (42,1) size 41x173
               text run at (42,1) width 173: "Hello world"
-          RenderBR {BR} at (62,174) size 0x0
+          RenderBR {BR} at (50,174) size 0x0
           RenderInline {SPAN} at (0,0) size 41x173
             RenderText {#text} at (83,1) size 41x173
               text run at (83,1) width 173: "Hello world"
@@ -34,9 +34,9 @@ layer at (0,0) size 784x708
           RenderInline {SPAN} at (0,0) size 41x173
             RenderText {#text} at (124,1) size 41x173
               text run at (124,1) width 173: "Hello world"
-          RenderBR {BR} at (144,174) size 0x0
-        RenderText {#text} at (13,175) size 41x9
-          text run at (13,175) width 9: " "
+          RenderBR {BR} at (132,174) size 0x0
+        RenderText {#text} at (1,175) size 41x9
+          text run at (1,175) width 9: " "
         RenderBlock {DIV} at (0,184) size 166x175 [border: (1px solid #008000)]
           RenderInline {SPAN} at (0,0) size 41x173
             RenderText {#text} at (1,1) size 41x173
@@ -45,7 +45,7 @@ layer at (0,0) size 784x708
           RenderInline {SPAN} at (0,0) size 41x173
             RenderText {#text} at (42,1) size 41x173
               text run at (42,1) width 173: "Hello world"
-          RenderBR {BR} at (62,174) size 0x0
+          RenderBR {BR} at (50,174) size 0x0
           RenderInline {SPAN} at (0,0) size 41x173
             RenderText {#text} at (83,1) size 41x173
               text run at (83,1) width 173: "Hello world"
@@ -53,5 +53,5 @@ layer at (0,0) size 784x708
           RenderInline {SPAN} at (0,0) size 41x173
             RenderText {#text} at (124,1) size 41x173
               text run at (124,1) width 173: "Hello world"
-          RenderBR {BR} at (144,174) size 0x0
+          RenderBR {BR} at (132,174) size 0x0
         RenderText {#text} at (0,0) size 0x0

@@ -1,3 +1,10 @@
+2011-04-07  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline after r83075.
+
+        * platform/gtk/fast/blockflow/text-orientation-basic-expected.txt:
+        * platform/gtk/fast/text/capitalize-empty-generated-string-expected.txt:
+
 2011-04-07  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Fix a duplicated entry.
