@@ -73,6 +73,9 @@ webkit_web_plugin_get_name        (WebKitWebPlugin*);
 WEBKIT_API const char*
 webkit_web_plugin_get_description (WebKitWebPlugin*);
 
+WEBKIT_API const char*
+webkit_web_plugin_get_path        (WebKitWebPlugin*);
+
 WEBKIT_API GSList*
 webkit_web_plugin_get_mimetypes   (WebKitWebPlugin*);
 
