@@ -1,3 +1,17 @@
+2011-04-07  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed, rebaseline tests changed in r82947.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png: Added.
+        * platform/chromium-linux/svg/text/text-midpoint-split-bug-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt: Added.
+        * platform/chromium-win/svg/text/text-midpoint-split-bug-expected.png: Added.
+        * platform/chromium-win/svg/text/text-midpoint-split-bug-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-07  Vincent Scheib  <scheib@chromium.org>
 
         Flagging platform/chromium/compositing/huge-layer-rotated.html a bug.
