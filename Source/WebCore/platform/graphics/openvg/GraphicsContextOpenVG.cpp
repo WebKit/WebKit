@@ -257,7 +257,7 @@ void GraphicsContext::drawLineForTextChecking(const IntPoint& origin, int width,
     UNUSED_PARAM(style);
 }
 
-FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
+FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode)
 {
     if (paintingDisabled())
         return FloatRect();

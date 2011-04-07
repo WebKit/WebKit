@@ -416,7 +416,7 @@ void GraphicsContext::scale(const FloatSize& scale)
 }
 
 
-FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
+FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect, RoundingMode)
 {
     FloatRect result;
 

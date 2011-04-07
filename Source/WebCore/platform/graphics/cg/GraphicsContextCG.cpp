@@ -1167,7 +1167,7 @@ AffineTransform GraphicsContext::getCTM() const
     return AffineTransform(t.a, t.b, t.c, t.d, t.tx, t.ty);
 }
 
-FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
+FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode roundingMode)
 {
     // It is not enough just to round to pixels in device space. The rotation part of the
     // affine transform matrix to device space can mess with this conversion if we have a
@@ -1192,8 +1192,13 @@ FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
 
     deviceOrigin.x = roundf(deviceOrigin.x);
     deviceOrigin.y = roundf(deviceOrigin.y);
-    deviceLowerRight.x = roundf(deviceLowerRight.x);
-    deviceLowerRight.y = roundf(deviceLowerRight.y);
+    if (roundingMode == RoundAllSides) {
+        deviceLowerRight.x = roundf(deviceLowerRight.x);
+        deviceLowerRight.y = roundf(deviceLowerRight.y);
+    } else {
+        deviceLowerRight.x = deviceOrigin.x + roundf(rect.width() * deviceScaleX);
+        deviceLowerRight.y = deviceOrigin.y + roundf(rect.height() * deviceScaleY);
+    }
 
     // Don't let the height or width round to 0 unless either was originally 0
     if (deviceOrigin.y == deviceLowerRight.y && rect.height())
@@ -1232,7 +1237,7 @@ void GraphicsContext::drawLineForText(const FloatPoint& point, float width, bool
         // We try to round all parameters to integer boundaries in device space. If rounding pixels in device space
         // makes our thickness more than double, then there must be a shrinking-scale factor and rounding to pixels
         // in device space will make the underlines too thick.
-        CGRect lineRect = roundToDevicePixels(FloatRect(x, y, lineLength, adjustedThickness));
+        CGRect lineRect = roundToDevicePixels(FloatRect(x, y, lineLength, adjustedThickness), RoundOriginAndDimensions);
         if (lineRect.size.height < thickness * 2.0) {
             x = lineRect.origin.x;
             y = lineRect.origin.y;

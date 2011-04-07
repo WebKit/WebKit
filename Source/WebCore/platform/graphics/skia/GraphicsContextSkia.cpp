@@ -868,7 +868,7 @@ AffineTransform GraphicsContext::getCTM() const
                            SkScalarToDouble(m.getTranslateY()));
 }
 
-FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect)
+FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& rect, RoundingMode)
 {
     return rect;
 }

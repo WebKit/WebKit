@@ -900,7 +900,7 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint&, float, TextChec
     notImplemented();
 }
 
-FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
+FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect, RoundingMode)
 {
     // It is not enough just to round to pixels in device space. The rotation part of the
     // affine transform matrix to device space can mess with this conversion if we have a

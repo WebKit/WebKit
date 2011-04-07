@@ -1300,7 +1300,7 @@ void GraphicsContext::drawRoundCorner(bool needsNewClip, RECT clipRect, RECT rec
 }
 
 
-FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
+FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect, RoundingMode)
 {
     notImplemented();
     return frect;
