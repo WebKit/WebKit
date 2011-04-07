@@ -1,3 +1,13 @@
+2011-04-07  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt][WK2][Symbian] Temporary build fix until native Symbian IPC is done. Implement fake socketpair() as it's not available. 
+        https://bugs.webkit.org/show_bug.cgi?id=57877
+
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::socketpair): socketpair() which returns -1
+
 2011-04-07  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Maciej Stachowiak.

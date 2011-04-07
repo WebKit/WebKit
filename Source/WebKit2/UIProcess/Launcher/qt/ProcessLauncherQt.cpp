@@ -83,6 +83,16 @@ void QtWebProcess::setupChildProcess()
 #endif
 }
 
+#if OS(SYMBIAN)
+// FIXME: Symbian's POSIX layer doesn't have a socketpair(), so
+// the following is just to fix the build until a pure Symbian
+// IPC implementation lands on trunk
+static int socketpair(int, int, int , int[2])
+{
+    return -1;
+}
+#endif
+
 void ProcessLauncher::launchProcess()
 {
     QString applicationPath = QLatin1String("%1 %2");
