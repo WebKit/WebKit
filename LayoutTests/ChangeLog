@@ -1,5 +1,16 @@
 2011-04-07  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Update Linux x86-64 results for the Skia rounding rect change.
+
+        * platform/chromium-linux-x86_64/fast/borders/borderRadiusGroove01-expected.checksum: Removed.
+        * platform/chromium-linux-x86_64/fast/borders/borderRadiusGroove01-expected.png:
+        * platform/chromium-linux-x86_64/fast/borders/borderRadiusGroove02-expected.checksum: Removed.
+        * platform/chromium-linux-x86_64/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/chromium-linux-x86_64/fast/borders/borderRadiusRidge01-expected.checksum: Removed.
+        * platform/chromium-linux-x86_64/fast/borders/borderRadiusRidge01-expected.png:
+
+2011-04-07  Kent Tamura  <tkent@chromium.org>
+
         Skip platform/mac/fast/forms/input-appearance-spinbutton-up.html on Mac WebKit2.
         https://bugs.webkit.org/show_bug.cgi?id=56298
 
