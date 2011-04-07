@@ -124,8 +124,7 @@ void AssociatedURLLoader::ClientAdapter::didReceiveData(const char* data, int da
     if (!m_client)
         return;
 
-    // FIXME(vsevik): add -1 to params once migrated.
-    m_client->didReceiveData(m_loader, data, dataLength);
+    m_client->didReceiveData2(m_loader, data, dataLength, -1);
     m_downloadLength += dataLength;
 }
 

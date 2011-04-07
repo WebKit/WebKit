@@ -1,3 +1,15 @@
+2011-04-07  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Migrate didReceiveData in upstream for plugins as part of enabling transfer size support.
+        https://bugs.webkit.org/show_bug.cgi?id=58034
+
+        Migrated didReceiveData to support new lengthReceived parameter.
+
+        * src/AssociatedURLLoader.cpp:
+        (WebKit::AssociatedURLLoader::ClientAdapter::didReceiveData):
+
 2011-04-06  Asanka Herath  <asanka@chromium.org>
 
         Reviewed by Darin Fisher.
