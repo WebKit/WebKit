@@ -50,7 +50,7 @@ WK_EXPORT WKStringRef WKStringCreateWithUTF8CString(const char* string);
 WK_EXPORT bool WKStringIsEmpty(WKStringRef string);
 
 WK_EXPORT size_t WKStringGetLength(WKStringRef string);
-WK_EXPORT const WKChar* WKStringGetCharactersPtr(WKStringRef string);
+WK_EXPORT size_t WKStringGetCharacters(WKStringRef string, WKChar* buffer, size_t bufferLength);
 
 WK_EXPORT size_t WKStringGetMaximumUTF8CStringSize(WKStringRef string);
 WK_EXPORT size_t WKStringGetUTF8CString(WKStringRef string, char* buffer, size_t bufferSize);

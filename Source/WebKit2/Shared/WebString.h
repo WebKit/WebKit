@@ -59,7 +59,14 @@ public:
     bool isEmpty() const { return m_string.isEmpty(); }
     
     size_t length() const { return m_string.length(); }
-    const UChar* characters() const { return m_string.characters(); }
+    size_t getCharacters(UChar* buffer, size_t bufferLength) const
+    {
+        if (!bufferLength)
+            return 0;
+        bufferLength = std::min(bufferLength, m_string.length());
+        memcpy(buffer, m_string.characters(), bufferLength * sizeof(UChar));
+        return bufferLength;
+    }
 
     size_t maximumUTF8CStringSize() const { return m_string.length() * 3 + 1; }
     size_t getUTF8CString(char* buffer, size_t bufferSize)

@@ -52,10 +52,10 @@ size_t WKStringGetLength(WKStringRef stringRef)
     return toImpl(stringRef)->length();
 }
 
-const WKChar* WKStringGetCharactersPtr(WKStringRef stringRef)
+size_t WKStringGetCharacters(WKStringRef stringRef, WKChar* buffer, size_t bufferLength)
 {
-    COMPILE_ASSERT(sizeof(WKChar) == sizeof(UChar), WKStringGetCharactersPtr_sizeof_WKChar_matches_UChar);
-    return reinterpret_cast<const WKChar*>(toImpl(stringRef)->characters());
+    COMPILE_ASSERT(sizeof(WKChar) == sizeof(UChar), WKStringGetCharacters_sizeof_WKChar_matches_UChar);
+    return (toImpl(stringRef)->getCharacters(static_cast<UChar*>(buffer), bufferLength));
 }
 
 size_t WKStringGetMaximumUTF8CStringSize(WKStringRef stringRef)

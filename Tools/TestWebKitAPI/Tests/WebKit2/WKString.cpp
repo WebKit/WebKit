@@ -46,6 +46,27 @@ TEST(WebKit2, WKString)
 
     delete[] buffer;
     
+    maxSize = WKStringGetLength(string);
+    TEST_ASSERT(maxSize == 5);
+
+    // Allocate a buffer one character larger than we need.
+    WKChar* uniBuffer = new WKChar[maxSize+1];
+    actualSize = WKStringGetCharacters(string, uniBuffer, maxSize);
+    TEST_ASSERT(actualSize == 5);
+    
+    WKChar helloBuffer[] = { 'h', 'e', 'l', 'l', 'o' };
+    TEST_ASSERT(!memcmp(uniBuffer, helloBuffer, 10));
+    
+    // Test passing a buffer length < the string length.
+    actualSize = WKStringGetCharacters(string, uniBuffer, maxSize-1);
+    TEST_ASSERT(actualSize == 4);
+    
+    // Test passing a buffer length > the string length.
+    actualSize = WKStringGetCharacters(string, uniBuffer, maxSize+1);
+    TEST_ASSERT(actualSize == 5);
+    
+    delete[] uniBuffer;
+    
     WKRelease(string);
 }
 

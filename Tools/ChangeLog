@@ -1,3 +1,13 @@
+2011-04-07  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Replace WKStringGetCharactersPtr() with WKStringGetCharacters()
+        https://bugs.webkit.org/show_bug.cgi?id=58058
+
+        * TestWebKitAPI/Tests/WebKit2/WKString.cpp:
+        (TestWebKitAPI::TEST): Add tests for  WKStringGetLength() and WKStringGetCharactersPtr().
+
 2011-04-07  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Darin Adler.

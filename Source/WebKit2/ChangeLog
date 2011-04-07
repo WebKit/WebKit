@@ -1,3 +1,18 @@
+2011-04-07  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Replace WKStringGetCharactersPtr() with WKStringGetCharacters()
+        https://bugs.webkit.org/show_bug.cgi?id=58058
+        
+        WKStringGetCharactersPtr() exposes the internal implementation of WKString, so change this to WKStringGetCharacters(), which makes a UTF-16 copy.
+
+        * Shared/API/c/WKString.cpp:
+        (WKStringGetCharacters): Added, replaces WKStringGetCharactersPtr().
+        * Shared/API/c/WKString.h: Replaced WKStringGetCharactersPtr() with WKStringGetCharacters().
+        * Shared/WebString.h:
+        (WebKit::WebString::getCharacters): Added.
+
 2011-04-07  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
