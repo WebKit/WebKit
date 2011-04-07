@@ -124,7 +124,7 @@ void AssociatedURLLoader::ClientAdapter::didReceiveData(const char* data, int da
     if (!m_client)
         return;
 
-    m_client->didReceiveData2(m_loader, data, dataLength, -1);
+    m_client->didReceiveData(m_loader, data, dataLength, -1);
     m_downloadLength += dataLength;
 }
 

@@ -58,11 +58,7 @@ public:
     virtual void didDownloadData(WebURLLoader*, int dataLength) { }
 
     // Called when a chunk of response data is received.
-    // FIXME(vsevik): rename once original didReceiveData() is removed.
-    virtual void didReceiveData2(WebURLLoader*, const char* data, int dataLength, int lengthReceived) { }
-
-    // FIXME(vsevik): remove once not used downstream
-    virtual void didReceiveData(WebURLLoader*, const char* data, int dataLength) { }
+    virtual void didReceiveData(WebURLLoader*, const char* data, int dataLength, int lengthReceived) { }
 
     // Called when a chunk of renderer-generated metadata is received from the cache.
     virtual void didReceiveCachedMetadata(WebURLLoader*, const char* data, int dataLength) { }

@@ -72,10 +72,7 @@ public:
     virtual void didSendData(
         WebURLLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void didReceiveResponse(WebURLLoader*, const WebURLResponse&);
-    virtual void didReceiveData2(WebURLLoader*, const char* data, int dataLength, int lengthReceived);
-
-    // FIXME(vsevik): remove once not used downstream
-    virtual void didReceiveData(WebURLLoader*, const char* data, int dataLength);
+    virtual void didReceiveData(WebURLLoader*, const char* data, int dataLength, int lengthReceived);
 
     virtual void didReceiveCachedMetadata(WebURLLoader*, const char* data, int dataLength);
     virtual void didFinishLoading(WebURLLoader*, double finishTime);
@@ -163,13 +160,7 @@ void ResourceHandleInternal::didReceiveResponse(WebURLLoader*, const WebURLRespo
     m_client->didReceiveResponse(m_owner, response.toResourceResponse());
 }
 
-// FIXME(vsevik): remove once not used
-void ResourceHandleInternal::didReceiveData(WebURLLoader* webURLLoader, const char* data, int dataLength)
-{
-    didReceiveData2(webURLLoader, data, dataLength, -1);
-}
-
-void ResourceHandleInternal::didReceiveData2(WebURLLoader*, const char* data, int dataLength, int lengthReceived)
+void ResourceHandleInternal::didReceiveData(WebURLLoader*, const char* data, int dataLength, int lengthReceived)
 {
     ASSERT(m_client);
     if (m_state != ConnectionStateReceivedResponse && m_state != ConnectionStateReceivingData)
