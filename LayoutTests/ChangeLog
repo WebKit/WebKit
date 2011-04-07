@@ -1,3 +1,21 @@
+2011-04-07  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57736
+        
+        Crash on openstreetmap.org while using the map. Fix a bad interaction between the positioned movement layout
+        optimization and the simplified layout optimization that could lead to blocks remaining marked as dirty when
+        layout finished. This would eventually lead to an inability to properly determine the correct layout root and
+        would cause a deleted root to be used later on.
+
+        Added fast/block/positioning/complex-positioned-movement.html.
+
+        * fast/block/positioning/complex-positioned-movement.html: Added.
+        * platform/mac/fast/block/positioning/complex-positioned-movement-expected.checksum: Added.
+        * platform/mac/fast/block/positioning/complex-positioned-movement-expected.png: Added.
+        * platform/mac/fast/block/positioning/complex-positioned-movement-expected.txt: Added.
+
 2011-04-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Simon Fraser.

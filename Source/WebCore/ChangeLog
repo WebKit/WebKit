@@ -1,3 +1,40 @@
+2011-04-07  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57736
+        
+        Crash on openstreetmap.org while using the map. Fix a bad interaction between the positioned movement layout
+        optimization and the simplified layout optimization that could lead to blocks remaining marked as dirty when
+        layout finished. This would eventually lead to an inability to properly determine the correct layout root and
+        would cause a deleted root to be used later on.
+
+        Added fast/block/positioning/complex-positioned-movement.html.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scheduleRelayoutOfSubtree):
+        Add asserts to catch cases in the future where a layout root is set that has a dirty containing block.
+    
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::simplifiedLayout):
+        Change simplified layout so that the positioned movement optimization no longer clears the other layout
+        flags. This will ensure that we still lay out our descendants if they need it.
+        
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        Changed to clear our layout flags now if the positioned movement is successful, since tryLayoutDoingPositionedMovementOnly
+        no longer does the clear.
+    
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::tryLayoutDoingPositionedMovementOnly):
+        tryLayoutDoingPositionedMovementOnly now returns a boolean indicating success or failure.  On success it no longer
+        does setNeedsLayout(false), but instead will let the caller take care of it. This way the caller can still look at
+        the other flags in case other kinds of layout are still needed.
+    
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::setNeedsPositionedMovementLayout):
+        (WebCore::RenderObject::setNeedsSimplifiedNormalFlowLayout):
+        Changed these methods to only set their respective flags and not to try to be clever about avoiding propagation.
+
 2011-04-07  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Eric Carlson.

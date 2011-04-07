@@ -959,8 +959,9 @@ inline void RenderObject::setChildNeedsLayout(bool b, bool markParents)
 
 inline void RenderObject::setNeedsPositionedMovementLayout()
 {
-    bool alreadyNeededLayout = needsLayout();
+    bool alreadyNeededLayout = m_needsPositionedMovementLayout;
     m_needsPositionedMovementLayout = true;
+    ASSERT(!isSetNeedsLayoutForbidden());
     if (!alreadyNeededLayout) {
         markContainingBlocksForLayout();
         if (hasLayer())
@@ -970,8 +971,9 @@ inline void RenderObject::setNeedsPositionedMovementLayout()
 
 inline void RenderObject::setNeedsSimplifiedNormalFlowLayout()
 {
-    bool alreadyNeededLayout = needsLayout();
+    bool alreadyNeededLayout = m_needsSimplifiedNormalFlowLayout;
     m_needsSimplifiedNormalFlowLayout = true;
+    ASSERT(!isSetNeedsLayoutForbidden());
     if (!alreadyNeededLayout) {
         markContainingBlocksForLayout();
         if (hasLayer())

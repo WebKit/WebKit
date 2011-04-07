@@ -1672,10 +1672,12 @@ void FrameView::scheduleRelayoutOfSubtree(RenderObject* relayoutRoot)
             if (isObjectAncestorContainerOf(m_layoutRoot, relayoutRoot)) {
                 // Keep the current root
                 relayoutRoot->markContainingBlocksForLayout(false, m_layoutRoot);
+                ASSERT(!m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout());
             } else if (m_layoutRoot && isObjectAncestorContainerOf(relayoutRoot, m_layoutRoot)) {
                 // Re-root at relayoutRoot
                 m_layoutRoot->markContainingBlocksForLayout(false, relayoutRoot);
                 m_layoutRoot = relayoutRoot;
+                ASSERT(!m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout());
             } else {
                 // Just do a full relayout
                 if (m_layoutRoot)
@@ -1687,6 +1689,7 @@ void FrameView::scheduleRelayoutOfSubtree(RenderObject* relayoutRoot)
     } else if (m_layoutSchedulingEnabled) {
         int delay = m_frame->document()->minimumLayoutDelay();
         m_layoutRoot = relayoutRoot;
+        ASSERT(!m_layoutRoot->container() || !m_layoutRoot->container()->needsLayout());
         m_delayedLayout = delay != 0;
         m_layoutTimer.startOneShot(delay * 0.001);
     }

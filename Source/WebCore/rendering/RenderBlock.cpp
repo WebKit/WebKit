@@ -2114,11 +2114,8 @@ bool RenderBlock::simplifiedLayout()
 
     LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), hasColumns() || hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
     
-    if (needsPositionedMovementLayout()) {
-        tryLayoutDoingPositionedMovementOnly();
-        if (needsLayout())
-            return false;
-    }
+    if (needsPositionedMovementLayout() && !tryLayoutDoingPositionedMovementOnly())
+        return false;
 
     // Lay out positioned descendants or objects that just need to recompute overflow.
     if (needsSimplifiedNormalFlowLayout())
@@ -2174,8 +2171,8 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
 
         // We don't have to do a full layout.  We just have to update our position. Try that first. If we have shrink-to-fit width
         // and we hit the available width constraint, the layoutIfNeeded() will catch it and do a full layout.
-        if (r->needsPositionedMovementLayoutOnly())
-            r->tryLayoutDoingPositionedMovementOnly();
+        if (r->needsPositionedMovementLayoutOnly() && r->tryLayoutDoingPositionedMovementOnly())
+            r->setNeedsLayout(false);
         r->layoutIfNeeded();
     }
     
