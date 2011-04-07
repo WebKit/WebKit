@@ -302,6 +302,11 @@ media/media-captions.html
 # DataTransferItems is not yet implemented.
 editing/pasteboard/data-transfer-items.html
 
+# Legacy full screen API tests are now obsolete.
+media/context-menu-actions.html
+media/media-fullscreen-inline.html
+media/media-fullscreen-not-in-document.html
+
 ###############################################################################
 # TESTS FAILING
 ###############################################################################

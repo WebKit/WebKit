@@ -1,3 +1,9 @@
+2011-04-07  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed; Add failing legacy full screen tests to the gtk/Skipped list.
+
+        * platform/gtk/Skipped:
+
 2011-04-07  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
