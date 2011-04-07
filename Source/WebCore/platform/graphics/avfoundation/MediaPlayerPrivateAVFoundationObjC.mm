@@ -327,9 +327,9 @@ MediaPlayerPrivateAVFoundation::ItemStatus MediaPlayerPrivateAVFoundationObjC::p
         return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusFailed;
     if ([m_avPlayerItem.get() isPlaybackLikelyToKeepUp])
         return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusPlaybackLikelyToKeepUp;
-    if ([m_avPlayerItem.get() isPlaybackBufferFull])
+    if (buffered()->contain(duration()))
         return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusPlaybackBufferFull;
-    if ([m_avPlayerItem.get() isPlaybackBufferEmpty])
+    if (buffered()->contain(currentTime()))
         return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusPlaybackBufferEmpty;
 
     return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusReadyToPlay;

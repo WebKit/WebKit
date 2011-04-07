@@ -1,5 +1,17 @@
 2011-04-06  Jer Noble  <jer.noble@apple.com>
 
+        Reviewed by Darin Adler.
+
+        AVF: MediaPlayerPrivateAVFoundationObjC should not use -[AVPlayerItem isPlaybackBufferEmpty]
+        https://bugs.webkit.org/show_bug.cgi?id=57982
+
+        Query our cached loaded time array instead of asking AVPlayerItem if its buffer is empty.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playerItemStatus):
+
+2011-04-06  Jer Noble  <jer.noble@apple.com>
+
         Reviewed by Eric Carlson.
 
         MediaPlayerPrivateAVFoundation does not change rate due to setRate().
