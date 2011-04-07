@@ -1,3 +1,9 @@
+2011-04-07  Adam Barth  <abarth@webkit.org>
+
+        Fix whitespace in GNUmakefile.am.
+
+        * GNUmakefile.am:
+
 2011-04-07  Gavin Barraclough  <barraclough@apple.com>
 
         Fix a couple of typos in comments that Darin spotted.
