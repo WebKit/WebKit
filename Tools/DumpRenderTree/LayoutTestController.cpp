@@ -44,6 +44,7 @@
 
 LayoutTestController::LayoutTestController(const std::string& testPathOrURL, const std::string& expectedPixelHash)
     : m_dumpApplicationCacheDelegateCallbacks(false)
+    , m_dumpAsAudio(false)
     , m_dumpAsPDF(false)
     , m_dumpAsText(false)
     , m_dumpBackForwardList(false)
@@ -312,6 +313,25 @@ static JSValueRef setCloseRemainingWindowsWhenCompleteCallback(JSContextRef cont
 
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
     controller->setCloseRemainingWindowsWhenComplete(JSValueToBoolean(context, arguments[0]));
+    return JSValueMakeUndefined(context);
+}
+
+static JSValueRef setEncodedAudioDataCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount < 1)
+        return JSValueMakeUndefined(context);
+
+    JSRetainPtr<JSStringRef> encodedAudioData(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+    ASSERT(!*exception);
+    
+    size_t maxLength = JSStringGetMaximumUTF8CStringSize(encodedAudioData.get());
+    OwnArrayPtr<char> encodedAudioDataBuffer = adoptArrayPtr(new char[maxLength + 1]);
+    JSStringGetUTF8CString(encodedAudioData.get(), encodedAudioDataBuffer.get(), maxLength + 1);
+
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->setEncodedAudioData(encodedAudioDataBuffer.get());
+    controller->setDumpAsAudio(true);
+    
     return JSValueMakeUndefined(context);
 }
 
@@ -2221,6 +2241,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "setAlwaysAcceptCookies", setAlwaysAcceptCookiesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAppCacheMaximumSize", setAppCacheMaximumSizeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setApplicationCacheOriginQuota", setApplicationCacheOriginQuotaCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setEncodedAudioData", setEncodedAudioDataCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAuthenticationPassword", setAuthenticationPasswordCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAuthenticationUsername", setAuthenticationUsernameCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setAuthorAndUserStylesEnabled", setAuthorAndUserStylesEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

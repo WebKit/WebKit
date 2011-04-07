@@ -1,3 +1,23 @@
+2011-04-06  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Tony Chang.
+
+        Add web audio support to DumpRenderTree (mac port)
+        https://bugs.webkit.org/show_bug.cgi?id=57969
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (setEncodedAudioDataCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::dumpAsAudio):
+        (LayoutTestController::setDumpAsAudio):
+        (LayoutTestController::encodedAudioData):
+        (LayoutTestController::setEncodedAudioData):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpAudio):
+        (dump):
+
 2011-04-06  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

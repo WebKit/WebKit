@@ -734,6 +734,14 @@ static NSInteger compareHistoryItems(id item1, id item2, void *context)
     return [[item1 target] caseInsensitiveCompare:[item2 target]];
 }
 
+static NSData *dumpAudio()
+{
+    const char *encodedAudioData = gLayoutTestController->encodedAudioData().c_str();
+    
+    NSData *data = [NSData dataWithBytes:encodedAudioData length:gLayoutTestController->encodedAudioData().length()];
+    return data;
+}
+
 static void dumpHistoryItem(WebHistoryItem *item, int indent, BOOL current)
 {
     int start = 0;
@@ -937,7 +945,10 @@ void dump()
             gLayoutTestController->setDumpAsText(true);
             gLayoutTestController->setGeneratePixelResults(false);
         }
-        if (gLayoutTestController->dumpAsText()) {
+        if (gLayoutTestController->dumpAsAudio()) {
+            resultData = dumpAudio();
+            resultMimeType = @"audio/wav";
+        } else if (gLayoutTestController->dumpAsText()) {
             resultString = dumpFramesAsText(mainFrame);
         } else if (gLayoutTestController->dumpAsPDF()) {
             resultData = dumpFrameAsPDF(mainFrame);
@@ -960,6 +971,9 @@ void dump()
 
         printf("Content-Type: %s\n", [resultMimeType UTF8String]);
 
+        if (gLayoutTestController->dumpAsAudio())
+            printf("Content-Transfer-Encoding: base64\n");            
+        
         if (resultData) {
             fwrite([resultData bytes], 1, [resultData length], stdout);
 

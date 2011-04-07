@@ -134,6 +134,9 @@ public:
 
     bool elementDoesAutoCompleteForElementWithId(JSStringRef id);
 
+    bool dumpAsAudio() const { return m_dumpAsAudio; }
+    void setDumpAsAudio(bool dumpAsAudio) { m_dumpAsAudio = dumpAsAudio; }
+    
     bool dumpAsPDF() const { return m_dumpAsPDF; }
     void setDumpAsPDF(bool dumpAsPDF) { m_dumpAsPDF = dumpAsPDF; }
 
@@ -263,6 +266,9 @@ public:
 
     const std::string& testPathOrURL() const { return m_testPathOrURL; }
     const std::string& expectedPixelHash() const { return m_expectedPixelHash; }
+
+    const std::string& encodedAudioData() const { return m_encodedAudioData; }
+    void setEncodedAudioData(const std::string& encodedAudioData) { m_encodedAudioData = encodedAudioData; }
     
     bool pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId);
     bool pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId);
@@ -334,6 +340,7 @@ private:
     void setGeolocationPermissionCommon(bool allow);
 
     bool m_dumpApplicationCacheDelegateCallbacks;
+    bool m_dumpAsAudio;
     bool m_dumpAsPDF;
     bool m_dumpAsText;
     bool m_dumpBackForwardList;
@@ -382,6 +389,9 @@ private:
     std::string m_expectedPixelHash;    // empty string if no hash
 
     std::set<std::string> m_willSendRequestClearHeaders;
+    
+    // base64 encoded WAV audio data is stored here.
+    std::string m_encodedAudioData;
     
     // origins which have been granted desktop notification access
     std::vector<JSStringRef> m_desktopNotificationAllowedOrigins;
