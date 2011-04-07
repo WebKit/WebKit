@@ -1,3 +1,18 @@
+2011-04-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        editing/inserting/6633727.html should be renamed and converted into a dump-as-markup test
+        https://bugs.webkit.org/show_bug.cgi?id=58037
+
+        Renamed 6633727.html to insert-paragraph-at-end-of-line.html and converted it to a dump-as-markup test.
+
+        * editing/inserting/6633727-expected.txt: Removed.
+        * editing/inserting/6633727.html: Removed.
+        * editing/inserting/insert-paragraph-at-end-of-line-expected.txt: Added.
+        * editing/inserting/insert-paragraph-at-end-of-line.html: Copied from LayoutTests/editing/inserting/6633727.html.
+        * editing/inserting/script-tests/6633727.js: Removed.
+
 2011-04-07  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
