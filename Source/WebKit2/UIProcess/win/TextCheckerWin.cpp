@@ -92,10 +92,9 @@ void TextChecker::closeSpellDocumentWithTag(int64_t tag)
     WebTextChecker::shared()->client().closeSpellDocumentWithTag(tag);
 }
 
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, const UChar* text, int length, uint64_t checkingTypes)
+void TextChecker::checkSpellingOfString(int64_t spellDocumentTag, const UChar* text, uint32_t length, int32_t& misspellingLocation, int32_t& misspellingLength)
 {
-    notImplemented();
-    return Vector<WebCore::TextCheckingResult>();
+    WebTextChecker::shared()->client().checkSpellingOfString(spellDocumentTag, String(text, length), misspellingLocation, misspellingLength);
 }
 
 void TextChecker::updateSpellingUIWithMisspelledWord(const String& misspelledWord)

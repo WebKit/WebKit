@@ -28,6 +28,7 @@
 
 #include "APIClient.h"
 #include "WKTextChecker.h"
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -41,6 +42,7 @@ public:
     void setGrammarCheckingEnabled(bool);
     uint64_t uniqueSpellDocumentTag();
     void closeSpellDocumentWithTag(uint64_t);
+    void checkSpellingOfString(uint64_t tag, const String& text, int32_t& misspellingLocation, int32_t& misspellingLength);
 };
 
 } // namespace WebKit

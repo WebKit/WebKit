@@ -26,6 +26,9 @@
 #include "config.h"
 #include "WebTextCheckerClient.h"
 
+#include "WKAPICast.h"
+#include <wtf/text/WTFString.h>
+
 namespace WebKit {
 
 bool WebTextCheckerClient::continuousSpellCheckingAllowed()
@@ -82,6 +85,14 @@ void WebTextCheckerClient::closeSpellDocumentWithTag(uint64_t tag)
         return;
 
     m_client.closeSpellDocumentWithTag(tag, m_client.clientInfo);
+}
+
+void WebTextCheckerClient::checkSpellingOfString(uint64_t tag, const String& text, int32_t& misspellingLocation, int32_t& misspellingLength)
+{
+    if (!m_client.checkSpellingOfString)
+        return;
+
+    m_client.checkSpellingOfString(tag, toAPI(text.impl()), &misspellingLocation, &misspellingLength, m_client.clientInfo);
 }
 
 } // namespace WebKit

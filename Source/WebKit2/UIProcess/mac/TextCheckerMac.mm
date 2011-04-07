@@ -27,6 +27,7 @@
 #import "TextChecker.h"
 
 #import "TextCheckerState.h"
+#import <WebCore/NotImplemented.h>
 #import <wtf/RetainPtr.h>
 
 #ifndef BUILDING_ON_SNOW_LEOPARD
@@ -205,6 +206,8 @@ void TextChecker::closeSpellDocumentWithTag(int64_t tag)
     [[NSSpellChecker sharedSpellChecker] closeSpellDocumentWithTag:tag];
 }
 
+#if USE(UNIFIED_TEXT_CHECKING)
+
 Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, const UChar* text, int length, uint64_t checkingTypes)
 {
     Vector<TextCheckingResult> results;
@@ -290,6 +293,13 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
     }
 
     return results;
+}
+
+#endif
+
+void TextChecker::checkSpellingOfString(int64_t, const UChar*, uint32_t, int32_t&, int32_t&)
+{
+    notImplemented();
 }
 
 void TextChecker::updateSpellingUIWithMisspelledWord(const String& misspelledWord)

@@ -1,3 +1,58 @@
+2011-04-07  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Implement TextChecker on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57862
+ 
+        Part 3: Implement checkSpellingOfString
+
+        In WebCore, checkTextOfParagraph is only defined and used on platforms where
+        WTF_USE_UNIFIED_TEXT_CHECKING is defined (which right now is only non-Leopard and non-Tiger
+        Mac builds).
+ 
+        On other platforms, checkSpellingOfString and checkGrammarOfString (coming in a separate
+        patch in an attempt to keep things easier to review) are used.
+
+        * UIProcess/API/C/win/WKTextChecker.h:
+        * UIProcess/TextChecker.h:
+        Surround checkTextOfParagraph by #if USE(UNIFIED_TEXT_CHECKING) and add
+        checkSpellingOfString.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::checkTextOfParagraph):
+        Surround this by #if USE(UNIFIED_TEXT_CHECKING).
+        (WebKit::WebPageProxy::checkSpellingOfString):
+        Call through to the client.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        Surround checkTextOfParagraph by #if USE(UNIFIED_TEXT_CHECKING) and add
+        checkSpellingOfString.
+
+        * UIProcess/win/TextCheckerWin.cpp:
+        (WebKit::TextChecker::checkSpellingOfString):
+        Call through to the WebTextCheckerClient.
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::checkTextOfParagraph):
+        Surround this by #if USE(UNIFIED_TEXT_CHECKING) for clarity.
+        (WebKit::TextChecker::checkSpellingOfString):
+        Add a call to notImplemented.
+        * UIProcess/qt/TextCheckerQt.cpp:
+        (WebKit::TextChecker::checkSpellingOfString):
+        Ditto, and remove the implementation for checkTextOfParagraph.
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::checkSpellingOfString):
+        Ditto.
+
+        * UIProcess/win/WebTextCheckerClient.cpp:
+        (WebKit::WebTextCheckerClient::checkSpellingOfString):
+        * UIProcess/win/WebTextCheckerClient.h:
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::checkSpellingOfString):
+        Send a sync message to the UI Process (similar to the sync message used for
+        checkTextOfParagraph).
+
 2011-04-07  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.

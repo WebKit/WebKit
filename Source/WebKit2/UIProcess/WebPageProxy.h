@@ -635,7 +635,10 @@ private:
 
     // Spelling and grammar.
     int64_t spellDocumentTag();
+#if USE(UNIFIED_TEXT_CHECKING)
     void checkTextOfParagraph(const String& text, uint64_t checkingTypes, Vector<WebCore::TextCheckingResult>& results);
+#endif
+    void checkSpellingOfString(const String& text, int32_t& misspellingLocation, int32_t& misspellingLength);
     void updateSpellingUIWithMisspelledWord(const String& misspelledWord);
     void updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const WebCore::GrammarDetail&);
     void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses);

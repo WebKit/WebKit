@@ -70,10 +70,9 @@ void TextChecker::closeSpellDocumentWithTag(int64_t)
     notImplemented();
 }
 
-Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, const UChar* text, int length, uint64_t checkingTypes)
+void TextChecker::checkSpellingOfString(int64_t, const UChar*, uint32_t, int32_t&, int32_t&)
 {
     notImplemented();
-    return Vector<WebCore::TextCheckingResult>();
 }
 
 void TextChecker::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
