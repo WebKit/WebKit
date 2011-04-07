@@ -1,3 +1,20 @@
+2011-04-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58009
+        Frame::scalePage() results in visual artifacts with scale factors less than 1
+        -and corresponding-
+        <rdar://problem/8683230>
+
+        * fast/repaint/scale-page-shrink.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/fast/repaint/scale-page-shrink-expected.checksum: Added.
+        * platform/mac/fast/repaint/scale-page-shrink-expected.png: Added.
+        * platform/mac/fast/repaint/scale-page-shrink-expected.txt: Added.
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-04-06  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Darin Adler.

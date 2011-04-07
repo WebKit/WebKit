@@ -219,13 +219,17 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int, int)
         RenderBox* rootBox = rootRenderer->isBox() ? toRenderBox(rootRenderer) : 0;
         rootFillsViewport = rootBox && !rootBox->x() && !rootBox->y() && rootBox->width() >= width() && rootBox->height() >= height();
     }
-    
+
+    float pageScaleFactor = 1;
+    if (Frame* frame = m_frameView->frame())
+        pageScaleFactor = frame->pageScaleFactor();
+
     // If painting will entirely fill the view, no need to fill the background.
-    if (rootFillsViewport && rendererObscuresBackground(firstChild()))
+    if (rootFillsViewport && rendererObscuresBackground(firstChild()) && pageScaleFactor >= 1)
         return;
 
     // This code typically only executes if the root element's visibility has been set to hidden,
-    // or there is a transform on the <html>.
+    // if there is a transform on the <html>, or if there is a page scale factor less than 1.
     // Only fill with the base background color (typically white) if we're the root document, 
     // since iframes/frames with no background in the child document should show the parent's background.
     if (frameView()->isTransparent()) // FIXME: This needs to be dynamic.  We should be able to go back to blitting if we ever stop being transparent.

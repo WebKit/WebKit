@@ -1369,3 +1369,4 @@ fast/dom/Element/scale-page-bounding-client-rect.html
 fast/dom/Element/scale-page-client-rects.html
 fast/dom/Range/scale-page-bounding-client-rect.html
 fast/dom/Range/scale-page-client-rects.html
+fast/repaint/scale-page-shrink.html
