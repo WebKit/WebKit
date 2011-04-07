@@ -66705,10 +66705,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\Breakpoint.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\BreakpointManager.js"
 					>
 				</File>

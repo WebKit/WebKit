@@ -31,8 +31,9 @@
 
 WebInspector.ResourceTreeModel = function(networkManager)
 {
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.FrameDetached, this._onFrameDetachedFromParent, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.FrameCommittedLoad, this._onCommitLoad, this);
 
@@ -129,6 +130,13 @@ WebInspector.ResourceTreeModel.prototype = {
         var frameId = event.data;
         this._clearChildFramesAndResources(frameId, 0);
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, frameId);
+    },
+
+    _onResourceStarted: function(event)
+    {
+        if (!this._cachedResourcesProcessed)
+            return;
+        this._bindResourceURL(event.data);
     },
 
     _onResourceUpdated: function(event)

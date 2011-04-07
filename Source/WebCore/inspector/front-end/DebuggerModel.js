@@ -31,7 +31,6 @@
 WebInspector.DebuggerModel = function()
 {
     this._debuggerPausedDetails = {};
-    this._breakpoints = {};
     this._scripts = {};
 
     InspectorBackend.registerDomainDispatcher("Debugger", new WebInspector.DebuggerDispatcher(this));
@@ -66,7 +65,6 @@ WebInspector.DebuggerModel.prototype = {
 
     _debuggerWasDisabled: function()
     {
-        this._breakpoints = {};
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerWasDisabled);
     },
 
@@ -88,14 +86,8 @@ WebInspector.DebuggerModel.prototype = {
 
         function didSetBreakpoint(error, breakpointId, locations)
         {
-            var breakpoint;
-            if (!error && breakpointId) {
-                breakpoint = new WebInspector.Breakpoint(breakpointId, url, "", lineNumber, columnNumber, condition, enabled);
-                breakpoint.locations = locations;
-                this._breakpoints[breakpointId] = breakpoint;
-            }
             if (callback)
-                callback(breakpoint);
+                callback(error ? null : breakpointId, locations);
         }
         DebuggerAgent.setBreakpointByUrl(url, lineNumber, columnNumber, condition, enabled, didSetBreakpoint.bind(this));
     },
@@ -104,14 +96,8 @@ WebInspector.DebuggerModel.prototype = {
     {
         function didSetBreakpoint(error, breakpointId, location)
         {
-            var breakpoint;
-            if (!error && breakpointId) {
-                breakpoint = new WebInspector.Breakpoint(breakpointId, "", sourceID, lineNumber, columnNumber, condition, enabled);
-                breakpoint.locations.push(location);
-                this._breakpoints[breakpointId] = breakpoint;
-            }
             if (callback)
-                callback(breakpoint);
+                callback(error ? null : breakpointId, [location]);
         }
         DebuggerAgent.setBreakpoint(sourceID, lineNumber, columnNumber, condition, enabled, didSetBreakpoint.bind(this));
     },
@@ -119,31 +105,16 @@ WebInspector.DebuggerModel.prototype = {
     removeBreakpoint: function(breakpointId)
     {
         DebuggerAgent.removeBreakpoint(breakpointId);
-        delete this._breakpoints[breakpointId];
     },
 
     _breakpointResolved: function(breakpointId, location)
     {
-        var breakpoint = this._breakpoints[breakpointId];
-        breakpoint.locations.push(location);
-        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, breakpoint);
-    },
-
-    get breakpoints()
-    {
-        return this._breakpoints;
+        this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, {breakpointId: breakpointId, location: location});
     },
 
     reset: function()
     {
         this._debuggerPausedDetails = {};
-        for (var id in this._breakpoints) {
-            var breakpoint = this._breakpoints[id];
-            if (!breakpoint.url)
-                delete this._breakpoints[id];
-            else
-                breakpoint.locations = [];
-        }
         this._scripts = {};
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.Reset);
     },
