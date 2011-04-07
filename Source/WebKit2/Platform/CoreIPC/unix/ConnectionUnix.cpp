@@ -32,13 +32,18 @@
 #include "WorkItem.h"
 #include "SharedMemory.h"
 #include "WebProcessProxy.h"
-#include <QApplication>
-#include <QSocketNotifier>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <wtf/Assertions.h>
+
+#if PLATFORM(QT)
+#include <QApplication>
+#include <QSocketNotifier>
+#elif PLATFORM(GTK)
+#include <glib.h>
+#endif
 
 using namespace std;
 
@@ -48,7 +53,7 @@ static const size_t messageMaxSize = 4096;
 static const size_t attachmentMaxAmount = 255;
 
 enum {
-    MessageBodyIsOOL = 1U << 31
+    MessageBodyIsOOL = 1 << 31
 };
 
 class MessageInfo {
@@ -88,9 +93,12 @@ private:
 void Connection::platformInitialize(Identifier identifier)
 {
     m_socketDescriptor = identifier;
-    m_socketNotifier = 0;
     m_readBuffer.resize(messageMaxSize);
     m_currentMessageSize = 0;
+
+#if PLATFORM(QT)
+    m_socketNotifier = 0;
+#endif
 }
 
 void Connection::platformInvalidate()
@@ -101,12 +109,20 @@ void Connection::platformInvalidate()
     if (!m_isConnected)
         return;
 
+#if PLATFORM(GTK)
+    m_connectionQueue.unregisterEventSourceHandler(m_socketDescriptor);
+#endif
+
+#if PLATFORM(QT)
     delete m_socketNotifier;
     m_socketNotifier = 0;
+#endif
+
     m_socketDescriptor = -1;
     m_isConnected = false;
 }
 
+#if PLATFORM(QT)
 class SocketNotifierResourceGuard {
 public:
     SocketNotifierResourceGuard(QSocketNotifier* socketNotifier)
@@ -123,6 +139,7 @@ public:
 private:
     QSocketNotifier* const m_socketNotifier;
 };
+#endif
 
 template<class T, class iterator>
 class AttachmentResourceGuard {
@@ -144,17 +161,19 @@ private:
 void Connection::readyReadHandler()
 {
     Deque<Attachment> attachments;
+#if PLATFORM(QT)
     SocketNotifierResourceGuard socketNotifierEnabler(m_socketNotifier);
+#endif
     AttachmentResourceGuard<Deque<Attachment>, Deque<Attachment>::iterator> attachementDisposer(attachments);
 
-    OwnArrayPtr<char> attachmentDescriptorBuffer = adoptArrayPtr(new char[CMSG_SPACE(sizeof(int) * (attachmentMaxAmount))]);
+    char attachmentDescriptorBuffer[CMSG_SPACE(sizeof(int) * (attachmentMaxAmount))];
     struct msghdr message;
     memset(&message, 0, sizeof(message));
 
     struct iovec iov[1];
     memset(&iov, 0, sizeof(iov));
 
-    message.msg_control = attachmentDescriptorBuffer.get();
+    message.msg_control = attachmentDescriptorBuffer;
     message.msg_controllen = CMSG_SPACE(sizeof(int) * (attachmentMaxAmount));
 
     iov[0].iov_base = m_readBuffer.data();
@@ -184,13 +203,13 @@ void Connection::readyReadHandler()
 
     if (messageInfo.attachmentCount()) {
         if (controlMessage && controlMessage->cmsg_level == SOL_SOCKET && controlMessage->cmsg_type == SCM_RIGHTS) {
-            OwnArrayPtr<size_t> attachmentSizes = adoptArrayPtr(new size_t[messageInfo.attachmentCount()]);
-            memcpy(attachmentSizes.get(), messageData, sizeof(size_t) * messageInfo.attachmentCount());
+            size_t attachmentSizes[messageInfo.attachmentCount()];
+            memcpy(attachmentSizes, messageData, sizeof(attachmentSizes));
 
             messageData += sizeof(attachmentSizes);
 
-            OwnArrayPtr<int> fileDescriptors = adoptArrayPtr(new int[messageInfo.attachmentCount()]);
-            memcpy(fileDescriptors.get(), CMSG_DATA(controlMessage), sizeof(int) * messageInfo.attachmentCount());
+            int fileDescriptors[messageInfo.attachmentCount()];
+            memcpy(fileDescriptors, CMSG_DATA(controlMessage), sizeof(fileDescriptors));
 
             int attachmentCount = messageInfo.attachmentCount();
 
@@ -253,7 +272,10 @@ void Connection::readyReadHandler()
 
 bool Connection::open()
 {
+#if PLATFORM(QT)
     ASSERT(!m_socketNotifier);
+#endif
+
     int flags = fcntl(m_socketDescriptor, F_GETFL, 0);
     while (fcntl(m_socketDescriptor, F_SETFL, flags | O_NONBLOCK) == -1) {
         if (errno != EINTR) {
@@ -263,7 +285,12 @@ bool Connection::open()
     }
 
     m_isConnected = true;
+#if PLATFORM(QT)
     m_socketNotifier = m_connectionQueue.registerSocketEventHandler(m_socketDescriptor, QSocketNotifier::Read, WorkItem::create(this, &Connection::readyReadHandler));
+#elif PLATFORM(GTK)
+    m_connectionQueue.registerEventSourceHandler(m_socketDescriptor, (G_IO_HUP | G_IO_ERR), WorkItem::create(this, &Connection::connectionDidClose));
+    m_connectionQueue.registerEventSourceHandler(m_socketDescriptor, G_IO_IN, WorkItem::create(this, &Connection::readyReadHandler));
+#endif
 
     // Schedule a call to readyReadHandler. Data may have arrived before installation of the signal
     // handler.
@@ -274,12 +301,15 @@ bool Connection::open()
 
 bool Connection::platformCanSendOutgoingMessages() const
 {
-    return m_socketNotifier;
+    return m_isConnected;
 }
 
 bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEncoder> arguments)
 {
+#if PLATFORM(QT)
     ASSERT(m_socketNotifier);
+#endif
+
     COMPILE_ASSERT(sizeof(MessageInfo) + attachmentMaxAmount * sizeof(size_t) <= messageMaxSize, AttachmentsFitToMessageInline);
 
     Vector<Attachment> attachments = arguments->releaseAttachments();
@@ -320,12 +350,12 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
     iov[0].iov_base = reinterpret_cast<void*>(&messageInfo);
     iov[0].iov_len = sizeof(messageInfo);
 
-    OwnArrayPtr<char> attachmentFDBuffer = adoptArrayPtr(new char[CMSG_SPACE(sizeof(int) * attachments.size())]);
-    OwnArrayPtr<size_t> attachmentSizes = adoptArrayPtr(new size_t[attachments.size()]);
+    char attachmentFDBuffer[CMSG_SPACE(sizeof(int) * (attachments.size()))];
+    size_t attachmentSizes[attachments.size()];
 
     if (!attachments.isEmpty()) {
-        message.msg_control = attachmentFDBuffer.get();
-        message.msg_controllen = sizeof(char) * CMSG_SPACE(sizeof(int) * attachments.size());
+        message.msg_control = attachmentFDBuffer;
+        message.msg_controllen = sizeof(attachmentFDBuffer);
 
         struct cmsghdr* cmsg = CMSG_FIRSTHDR(&message);
         cmsg->cmsg_level = SOL_SOCKET;
@@ -333,15 +363,15 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
         cmsg->cmsg_len = CMSG_LEN(sizeof(int) * attachments.size());
 
         int* fdptr = reinterpret_cast<int*>(CMSG_DATA(cmsg));
-        for (int i = 0; i < attachments.size(); ++i) {
+        for (size_t i = 0; i < attachments.size(); ++i) {
             attachmentSizes[i] = attachments[i].size();
             fdptr[i] = attachments[i].fileDescriptor();
         }
 
         message.msg_controllen = cmsg->cmsg_len;
 
-        iov[iovLength].iov_base = attachmentSizes.get();
-        iov[iovLength].iov_len = sizeof(size_t) * attachments.size();
+        iov[iovLength].iov_base = attachmentSizes;
+        iov[iovLength].iov_len = sizeof(attachmentSizes);
         ++iovLength;
     }
 
@@ -361,9 +391,11 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
     return true;
 }
 
+#if PLATFORM(QT)
 void Connection::setShouldCloseConnectionOnProcessTermination(WebKit::PlatformProcessIdentifier process)
 {
     m_connectionQueue.scheduleWorkOnTermination(process, WorkItem::create(this, &Connection::connectionDidClose));
 }
+#endif
 
 } // namespace CoreIPC

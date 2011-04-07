@@ -305,23 +305,17 @@ private:
     OwnPtr<ArgumentEncoder> m_pendingWriteArguments;
     OVERLAPPED m_writeState;
     HANDLE m_connectionPipe;
-#elif PLATFORM(QT)
+#elif PLATFORM(QT) || PLATFORM(GTK)
     // Called on the connection queue.
     void readyReadHandler();
 
     Vector<uint8_t> m_readBuffer;
     size_t m_currentMessageSize;
-    QSocketNotifier* m_socketNotifier;
     int m_socketDescriptor;
-#elif PLATFORM(GTK)
-    void readEventHandler();
-    void processCompletedMessage();
-    bool messageProcessingCompleted() { return !m_currentMessageSize; }
 
-    int m_socket;
-    Vector<uint8_t> m_readBuffer;
-    size_t m_currentMessageSize;
-    size_t m_pendingBytes;
+#if PLATFORM(QT)
+    QSocketNotifier* m_socketNotifier;
+#endif
 #endif
 };
 

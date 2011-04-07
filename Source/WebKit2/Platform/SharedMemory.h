@@ -30,7 +30,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
-#if PLATFORM(QT)
+#if PLATFORM(QT) || PLATFORM(GTK)
 #include "Attachment.h"
 #include <wtf/text/WTFString.h>
 #endif
@@ -60,7 +60,7 @@ public:
         void encode(CoreIPC::ArgumentEncoder*) const;
         static bool decode(CoreIPC::ArgumentDecoder*, Handle&);
 
-#if PLATFORM(QT)
+#if PLATFORM(QT) || PLATFORM(GTK)
         CoreIPC::Attachment releaseToAttachment() const;
         void adoptFromAttachment(int fileDescriptor, size_t);
 #endif
@@ -70,7 +70,7 @@ public:
         mutable mach_port_t m_port;
 #elif PLATFORM(WIN)
         mutable HANDLE m_handle;
-#elif PLATFORM(QT)
+#elif PLATFORM(QT) || PLATFORM(GTK)
         mutable int m_fileDescriptor;
 #endif
         size_t m_size;
@@ -103,7 +103,7 @@ private:
     mach_port_t m_port;
 #elif PLATFORM(WIN)
     HANDLE m_handle;
-#elif PLATFORM(QT)
+#elif PLATFORM(QT) || PLATFORM(GTK)
     int m_fileDescriptor;
 #endif
 };

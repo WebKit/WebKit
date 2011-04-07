@@ -49,7 +49,7 @@ void ProcessLauncher::launchProcess()
     pid_t pid = 0;
 
     int sockets[2];
-    if (socketpair(AF_UNIX, SOCK_STREAM, 0, sockets) < 0) {
+    if (socketpair(AF_UNIX, SOCK_DGRAM, 0, sockets) < 0) {
         fprintf(stderr, "Creation of socket failed with errno %d.\n", errno);
         ASSERT_NOT_REACHED();
         return;

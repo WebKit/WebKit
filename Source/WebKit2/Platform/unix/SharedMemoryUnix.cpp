@@ -31,7 +31,6 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "WebCoreArgumentCoders.h"
-#include <QDir>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -41,6 +40,12 @@
 #include <unistd.h>
 #include <wtf/Assertions.h>
 #include <wtf/CurrentTime.h>
+
+#if PLATFORM(QT)
+#include <QDir>
+#elif PLATFORM(GTK)
+#include <wtf/gobject/GOwnPtr.h>
+#endif
 
 namespace WebKit {
 
@@ -101,9 +106,14 @@ void SharedMemory::Handle::adoptFromAttachment(int fileDescriptor, size_t size)
 
 PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 {
+#if PLATFORM(QT)
     QString tempName = QDir::temp().filePath(QLatin1String("qwkshm.XXXXXX"));
     QByteArray tempNameCSTR = tempName.toLocal8Bit();
     char* tempNameC = tempNameCSTR.data();
+#elif PLATFORM(GTK)
+    GOwnPtr<gchar> tempName(g_build_filename(g_get_tmp_dir(), "WK2SharedMemoryXXXXXX", NULL));
+    gchar* tempNameC = tempName.get();
+#endif
 
     int fileDescriptor;
     while ((fileDescriptor = mkstemp(tempNameC)) == -1) {

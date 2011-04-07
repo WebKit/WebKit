@@ -93,13 +93,13 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Platform/CoreIPC/CoreIPCMessageKinds.h \
 	Source/WebKit2/Platform/CoreIPC/DataReference.cpp \
 	Source/WebKit2/Platform/CoreIPC/DataReference.h \
-	Source/WebKit2/Platform/CoreIPC/gtk/ConnectionGtk.cpp \
 	Source/WebKit2/Platform/CoreIPC/HandleMessage.h \
 	Source/WebKit2/Platform/CoreIPC/MessageID.h \
 	Source/WebKit2/Platform/CoreIPC/MessageSender.h \
+	Source/WebKit2/Platform/CoreIPC/unix/AttachmentUnix.cpp \
+	Source/WebKit2/Platform/CoreIPC/unix/ConnectionUnix.cpp \
 	Source/WebKit2/Platform/gtk/ModuleGtk.cpp \
 	Source/WebKit2/Platform/gtk/RunLoopGtk.cpp \
-	Source/WebKit2/Platform/gtk/SharedMemoryGtk.cpp \
 	Source/WebKit2/Platform/gtk/WorkQueueGtk.cpp \
 	Source/WebKit2/Platform/Logging.cpp \
 	Source/WebKit2/Platform/Logging.h \
@@ -109,6 +109,7 @@ libWebKit2_la_SOURCES = \
 	Source/WebKit2/Platform/RunLoop.cpp \
 	Source/WebKit2/Platform/RunLoop.h \
 	Source/WebKit2/Platform/SharedMemory.h \
+	Source/WebKit2/Platform/unix/SharedMemoryUnix.cpp \
 	Source/WebKit2/Platform/WorkItem.h \
 	Source/WebKit2/Platform/WorkQueue.cpp \
 	Source/WebKit2/Platform/WorkQueue.h \

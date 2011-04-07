@@ -1,3 +1,29 @@
+2011-04-07   Amruth Raj  <amruthraj@motorola.com> and Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [GTK] Implement SharedMemory for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=49791
+
+        Share the SharedMemory, Attachment and Connection implementations with the Qt port.
+        Both implementation are, in fact, general Unix implementations using standard Unix
+        domain sockets and sendmsg / recvmsg. This should reduce the amount of duplicated code
+        greatly and lay the groundwork for GTK+/Qt implementations for other operating systems.
+
+        * GNUmakefile.am: Replaced GTK+ versions of files with the Unix ones.
+        * Platform/CoreIPC/ArgumentDecoder.cpp: Extended Qt #ifdefs to include GTK.
+        (CoreIPC::ArgumentDecoder::~ArgumentDecoder):
+        * Platform/CoreIPC/ArgumentEncoder.cpp: Ditto.
+        (CoreIPC::ArgumentEncoder::~ArgumentEncoder):
+        * Platform/CoreIPC/Attachment.h: Ditto.
+        * Platform/CoreIPC/Connection.h: Combined the GTK+ and Qt sections.
+        * Platform/CoreIPC/unix/AttachmentUnix.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/qt/AttachmentQt.cpp.
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp: Renamed from Source/WebKit2/Platform/CoreIPC/qt/ConnectionQt.cpp.
+        * Platform/unix/SharedMemoryUnix.cpp: Renamed from Source/WebKit2/Platform/qt/SharedMemoryQt.cpp.
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Use SOCK_DGRAM instead of SOCK_STREAM to match Qt.
+        * WebKit2.pro: Updated source list to reflect file renaming.
+
 2011-04-07  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brian Weinstein.

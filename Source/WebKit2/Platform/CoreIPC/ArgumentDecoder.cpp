@@ -47,7 +47,7 @@ ArgumentDecoder::~ArgumentDecoder()
 {
     ASSERT(m_buffer);
     fastFree(m_buffer);
-#if !PLATFORM(QT)
+#if !PLATFORM(QT) && !PLATFORM(GTK)
     // FIXME: We need to dispose of the mach ports in cases of failure.
 #else
     Deque<Attachment>::iterator end = m_attachments.end();

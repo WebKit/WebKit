@@ -298,16 +298,16 @@ SOURCES += \
     Platform/CoreIPC/BinarySemaphore.cpp \
     Platform/CoreIPC/Connection.cpp \
     Platform/CoreIPC/DataReference.cpp \
-    Platform/CoreIPC/qt/AttachmentQt.cpp \
-    Platform/CoreIPC/qt/ConnectionQt.cpp \
+    Platform/CoreIPC/unix/AttachmentUnix.cpp \
+    Platform/CoreIPC/unix/ConnectionUnix.cpp \
     Platform/Logging.cpp \
     Platform/Module.cpp \
     Platform/RunLoop.cpp \
     Platform/WorkQueue.cpp \
     Platform/qt/ModuleQt.cpp \
     Platform/qt/RunLoopQt.cpp \
-    Platform/qt/SharedMemoryQt.cpp \
     Platform/qt/WorkQueueQt.cpp \
+    Platform/unix/SharedMemoryUnix.cpp \
     Shared/Plugins/Netscape/NetscapePluginModule.cpp \
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
