@@ -1,3 +1,17 @@
+2011-04-07  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: build mapping for formatted scripts based on keywords positions.
+        https://bugs.webkit.org/show_bug.cgi?id=57936
+
+        Mapping based on [\$\.\w]+ was not accurate because string literals representation
+        may be different in original and formatted scripts.
+
+        * inspector/front-end/ScriptFormatterWorker.js:
+        (buildMapping.regexp.b):
+        (buildMapping):
+
 2011-04-07  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

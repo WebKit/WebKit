@@ -50,18 +50,16 @@ function beautify(source)
 function buildMapping(source, formattedSource)
 {
     var mapping = { original: [], formatted: [] };
-    var lastCodePosition = 0;
-    var regexp = /[\$\.\w]+|{|}/g;
+    var lastFormattedPosition = 0;
+    var regexp = /\b(?:function|var|const|try|catch|throw|new|switch|break|continue|if|for|while|do|return|with|null|undefined)\b/g;
     while (true) {
-        var match = regexp.exec(formattedSource);
+        var match = regexp.exec(source);
         if (!match)
             break;
-        var position = source.indexOf(match[0], lastCodePosition);
-        if (position === -1)
-            continue;
-        mapping.original.push(position);
-        mapping.formatted.push(match.index);
-        lastCodePosition = position + match[0].length;
+        var formattedPosition = formattedSource.indexOf(match[0], lastFormattedPosition);
+        mapping.original.push(match.index);
+        mapping.formatted.push(formattedPosition);
+        lastFormattedPosition = formattedPosition + match[0].length;
     }
     return mapping;
 }
