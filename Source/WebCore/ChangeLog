@@ -1,3 +1,17 @@
+2011-04-07  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        HTMLVideoElement::webkitEnterFullscreen does not use new Full Screen API when available.
+        https://bugs.webkit.org/show_bug.cgi?id=58070
+
+        Make the HTMLMediaElement full screen functions call into the new Full Screen API when
+        FULLSCREEN_API is enabled.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        (WebCore::HTMLMediaElement::exitFullscreen):
+
 2011-04-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

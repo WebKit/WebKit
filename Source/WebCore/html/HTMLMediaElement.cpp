@@ -2448,7 +2448,12 @@ bool HTMLMediaElement::isFullscreen() const
 void HTMLMediaElement::enterFullscreen()
 {
     LOG(Media, "HTMLMediaElement::enterFullscreen");
-
+#if ENABLE(FULLSCREEN_API)
+    if (document()->settings() && document()->settings()->fullScreenEnabled()) {
+        webkitRequestFullScreen(0);
+        return;
+    }
+#endif
     ASSERT(!m_isFullscreen);
     m_isFullscreen = true;
     if (document() && document()->page()) {
@@ -2460,7 +2465,13 @@ void HTMLMediaElement::enterFullscreen()
 void HTMLMediaElement::exitFullscreen()
 {
     LOG(Media, "HTMLMediaElement::exitFullscreen");
-
+#if ENABLE(FULLSCREEN_API)
+    if (document()->settings() && document()->settings()->fullScreenEnabled() 
+        && document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == this) {
+        document()->webkitCancelFullScreen();
+        return;
+    }
+#endif
     ASSERT(m_isFullscreen);
     m_isFullscreen = false;
     if (document() && document()->page()) {
