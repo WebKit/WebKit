@@ -1,3 +1,14 @@
+2011-04-07  Liang Qi  <liang.qi@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt][Symbian] Enable webkit build with GCCE on Symbian.
+        https://bugs.webkit.org/show_bug.cgi?id=57841
+
+        * WebCore.pri: Thanks for Norbert Leser  <norbert.leser@nokia.com> who checked RVCT part.
+        --rw-base value in QMAKE_LFLAGS.ARMCC and -Tdata value in QMAKE_LFLAGS.GCCE are updated
+        to 0x1000000 together. They need to be updated in the future when WebKit grows.
+
 2011-04-06  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

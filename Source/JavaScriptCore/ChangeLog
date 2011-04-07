@@ -1,3 +1,12 @@
+2011-04-07  Liang Qi  <liang.qi@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt][Symbian] Enable webkit build with GCCE on Symbian.
+        https://bugs.webkit.org/show_bug.cgi?id=57841
+
+        * wtf/MathExtras.h: GCCE compiler doesn't support those std static functions.
+
 2011-04-06  Dai Mikurube  <dmikurube@chromium.org>
 
         Reviewed by David Levin.
