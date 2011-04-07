@@ -49,9 +49,9 @@ request:
     id : <number>
 }
 
-event ConsoleAgent.consoleMessage
+event ConsoleAgent.messageAdded
 {
-    method : "Console.consoleMessage"
+    method : "Console.messageAdded"
     params : {
         messageObj : {
             source : 3
@@ -72,9 +72,9 @@ event ConsoleAgent.consoleMessage
     }
 }
 
-event ConsoleAgent.consoleMessageRepeatCountUpdated
+event ConsoleAgent.messageRepeatCountUpdated
 {
-    method : "Console.consoleMessageRepeatCountUpdated"
+    method : "Console.messageRepeatCountUpdated"
     params : {
         count : 2
     }
@@ -100,9 +100,9 @@ request:
     id : <number>
 }
 
-event ConsoleAgent.consoleMessagesCleared
+event ConsoleAgent.messagesCleared
 {
-    method : "Console.consoleMessagesCleared"
+    method : "Console.messagesCleared"
 }
 
 response:
@@ -177,8 +177,8 @@ Coverage for ConsoleAgent
     clearConsoleMessages : "checked"
     setMonitoringXHREnabled : "checked"
     addInspectedNode : "checked"
-    consoleMessage : "checked"
-    consoleMessageRepeatCountUpdated : "checked"
-    consoleMessagesCleared : "checked"
+    messageAdded : "checked"
+    messageRepeatCountUpdated : "checked"
+    messagesCleared : "checked"
 }
 

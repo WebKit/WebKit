@@ -105,7 +105,7 @@ WebInspector.ConsoleView.prototype = {
     _registerConsoleDomainDispatcher: function() {
         var console = this;
         var dispatcher = {
-            consoleMessage: function(payload)
+            messageAdded: function(payload)
             {
                 var consoleMessage = new WebInspector.ConsoleMessage(
                     payload.source,
@@ -121,7 +121,7 @@ WebInspector.ConsoleView.prototype = {
                 console.addMessage(consoleMessage);
             },
 
-            consoleMessageRepeatCountUpdated: function(count)
+            messageRepeatCountUpdated: function(count)
             {
                 var msg = console.previousMessage;
                 var prevRepeatCount = msg.totalRepeatCount;
@@ -140,7 +140,7 @@ WebInspector.ConsoleView.prototype = {
                 }
             },
 
-            consoleMessagesCleared: function()
+            messagesCleared: function()
             {
                 console.clearMessages();
             },

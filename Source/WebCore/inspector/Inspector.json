@@ -218,19 +218,19 @@
         ],
         "events": [
             {
-                "name": "consoleMessage",
+                "name": "messageAdded",
                 "parameters": [
                     { "name": "messageObj", "$ref": "ConsoleMessage" }
                 ]
             },
             {
-                "name": "consoleMessageRepeatCountUpdated",
+                "name": "messageRepeatCountUpdated",
                 "parameters": [
                     { "name": "count", "type": "integer" }
                 ]
             },
             {
-                "name": "consoleMessagesCleared"
+                "name": "messagesCleared"
             }
         ]
     },

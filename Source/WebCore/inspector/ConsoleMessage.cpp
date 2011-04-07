@@ -115,12 +115,12 @@ void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, Injecte
     }
     if (m_callStack)
         jsonObj->setArray("stackTrace", m_callStack->buildInspectorArray());
-    frontend->consoleMessage(jsonObj);
+    frontend->messageAdded(jsonObj);
 }
 
 void ConsoleMessage::updateRepeatCountInConsole(InspectorFrontend::Console* frontend)
 {
-    frontend->consoleMessageRepeatCountUpdated(m_repeatCount);
+    frontend->messageRepeatCountUpdated(m_repeatCount);
 }
 
 bool ConsoleMessage::isEqual(ConsoleMessage* msg) const

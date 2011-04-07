@@ -103,7 +103,7 @@ void InspectorConsoleAgent::clearConsoleMessages(ErrorString*)
     m_injectedScriptManager->releaseObjectGroup("console");
     m_inspectorDOMAgent->releaseDanglingNodes();
     if (m_frontend)
-        m_frontend->consoleMessagesCleared();
+        m_frontend->messagesCleared();
 }
 
 void InspectorConsoleAgent::reset()
