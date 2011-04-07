@@ -1,3 +1,13 @@
+2011-04-07  Anna Cavender  <annacc@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Setup ENABLE(TRACK) feature define
+        https://bugs.webkit.org/show_bug.cgi?id=53556
+
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-04-07  Adam Barth  <abarth@webkit.org>
 
         Fix whitespace in GNUmakefile.am.
