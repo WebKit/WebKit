@@ -319,7 +319,7 @@ static gboolean webkit_web_view_forward_context_menu_event(WebKitWebView* webVie
         IntPoint point = mainFrame->view()->windowToContents(event.pos());
         MouseEventWithHitTestResults mev = mainFrame->document()->prepareMouseEvent(request, point, event);
 
-        Frame* targetFrame = EventHandler::subframeForTargetNode(mev.targetNode());
+        Frame* targetFrame = EventHandler::subframeForHitTestResult(mev);
         if (!targetFrame)
             targetFrame = mainFrame;
 

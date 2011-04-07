@@ -61,7 +61,7 @@ bool EventHandler::passMousePressEventToSubframe(MouseEventWithHitTestResults& m
     IntPoint p = m_frame->view()->windowToContents(mev.event().pos());
     if (m_frame->selection()->contains(p)) {
         VisiblePosition visiblePos(
-            mev.targetNode()->renderer()->positionForPoint(mev.localPoint()));
+            targetNode(mev)->renderer()->positionForPoint(mev.localPoint()));
         VisibleSelection newSelection(visiblePos);
         if (m_frame->selection()->shouldChangeSelection(newSelection))
             m_frame->selection()->setSelection(newSelection);
@@ -103,9 +103,9 @@ bool EventHandler::passWheelEventToWidget(PlatformWheelEvent& wheelEvent, Widget
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
 {
     // Figure out which view to send the event to.
-    if (!event.targetNode() || !event.targetNode()->renderer() || !event.targetNode()->renderer()->isWidget())
+    if (!targetNode(event) || !targetNode(event)->renderer() || !targetNode(event)->renderer()->isWidget())
         return false;
-    return passMouseDownEventToWidget(toRenderWidget(event.targetNode()->renderer())->widget());
+    return passMouseDownEventToWidget(toRenderWidget(targetNode(event)->renderer())->widget());
 }
 
 bool EventHandler::passMouseDownEventToWidget(Widget* widget)

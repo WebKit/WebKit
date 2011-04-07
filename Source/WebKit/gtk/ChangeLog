@@ -1,3 +1,15 @@
+2011-04-07  Alice Boxhall  <aboxhall@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Move the MouseEventWithHitTestResults::targetNode() method on to EventHandler.
+        https://bugs.webkit.org/show_bug.cgi?id=57921
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_forward_context_menu_event):
+        Call subframeForHitTestResult rather than subframeForTargetNode as the targetNode()
+        method has moved on to EventHandler.
+
 2011-04-05  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.

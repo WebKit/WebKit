@@ -1,3 +1,55 @@
+2011-04-07  Alice Boxhall  <aboxhall@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Move the MouseEventWithHitTestResults::targetNode() method on to EventHandler.
+        https://bugs.webkit.org/show_bug.cgi?id=57921
+
+        Moves the MouseEventWithHitTestResults::targetNode() method on to EventHandler, so
+        that the same logic can be used for a HitTestResult.
+
+        No visible changes, just cleanup, so no tests.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectClosestWordFromMouseEvent):
+        (WebCore::EventHandler::selectClosestWordOrLinkFromMouseEvent):
+        (WebCore::EventHandler::handleMousePressEventTripleClick):
+        (WebCore::EventHandler::handleMousePressEventSingleClick):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::subframeForHitTestResult):
+        Made public static member, so that it can access targetNode(), and be accessed by
+        webkitwebview in gtk.
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::EventHandler::targetNode):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::updateDragAndDrop):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        * page/EventHandler.h:
+        * page/MouseEventWithHitTestResults.cpp:
+        (WebCore::MouseEventWithHitTestResults::MouseEventWithHitTestResults):
+        * page/MouseEventWithHitTestResults.h:
+        * page/android/EventHandlerAndroid.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * page/brew/EventHandlerBrew.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * page/chromium/EventHandlerChromium.cpp:
+        (WebCore::EventHandler::passMousePressEventToSubframe):
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * page/efl/EventHandlerEfl.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * page/haiku/EventHandlerHaiku.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+        (WebCore::EventHandler::passSubframeEventToSubframe):
+        * page/wx/EventHandlerWx.cpp:
+        (WebCore::EventHandler::passWidgetMouseDownEventToWidget):
+
 2011-04-07  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

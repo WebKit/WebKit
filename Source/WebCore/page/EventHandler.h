@@ -143,6 +143,7 @@ public:
     void setIgnoreWheelEvents(bool);
 
     static Frame* subframeForTargetNode(Node*);
+    static Frame* subframeForHitTestResult(const MouseEventWithHitTestResults&);
 
     bool scrollOverflow(ScrollDirection, ScrollGranularity, Node* startingNode = 0);
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
@@ -261,12 +262,15 @@ private:
     
     PassRefPtr<Clipboard> createDraggingClipboard() const;
 #endif // ENABLE(DRAG_SUPPORT)
-    
+
     bool eventActivatedView(const PlatformMouseEvent&) const;
     void selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults&);
     void selectClosestWordOrLinkFromMouseEvent(const MouseEventWithHitTestResults&);
 
     bool handleMouseDoubleClickEvent(const PlatformMouseEvent&);
+
+    static Node* targetNode(const MouseEventWithHitTestResults&);
+    static Node* targetNode(const HitTestResult&);
 
     bool handleMousePressEvent(const MouseEventWithHitTestResults&);
     bool handleMousePressEventSingleClick(const MouseEventWithHitTestResults&);

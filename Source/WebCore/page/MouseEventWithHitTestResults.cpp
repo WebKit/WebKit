@@ -32,21 +32,6 @@ MouseEventWithHitTestResults::MouseEventWithHitTestResults(const PlatformMouseEv
     , m_hitTestResult(hitTestResult)
 {
 }
-        
-Node* MouseEventWithHitTestResults::targetNode() const
-{
-    Node* node = m_hitTestResult.innerNode();
-    if (!node)
-        return 0;
-    if (node->inDocument())
-        return node;
-
-    Element* element = node->parentElement();
-    if (element && element->inDocument())
-        return element;
-
-    return node;
-}
 
 const IntPoint MouseEventWithHitTestResults::localPoint() const
 {
