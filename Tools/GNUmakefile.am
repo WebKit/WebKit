@@ -56,6 +56,8 @@ Programs_DumpRenderTree_SOURCES = \
 	Tools/DumpRenderTree/AccessibilityTextMarker.h \
 	Tools/DumpRenderTree/AccessibilityUIElement.cpp \
 	Tools/DumpRenderTree/AccessibilityUIElement.h \
+	Tools/DumpRenderTree/CyclicRedundancyCheck.cpp \
+	Tools/DumpRenderTree/CyclicRedundancyCheck.h \
 	Tools/DumpRenderTree/GCController.cpp \
 	Tools/DumpRenderTree/GCController.h \
 	Tools/DumpRenderTree/JavaScriptThreading.h \

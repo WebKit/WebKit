@@ -1,3 +1,36 @@
+2011-04-07  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        update DRT to embed checksums in png files
+        https://bugs.webkit.org/show_bug.cgi?id=57871
+
+        We insert the bytes for the comment in printPNG rather than at encode
+        time because each platform does its own PNG encoding (either using CG
+        or cairo).  Putting this in pringPNG avoids having to duplicate this
+        code, although it's not as clean as doing it at encoding time.
+
+        We insert the comment right after the IHDR chunk of the PNG.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/CyclicRedundancyCheck.cpp: Added.
+        (makeCrcTable): Ported from LayoutTests/fast/canvas/webgl/resources/pnglib.js
+        (computeCrc): Ported from LayoutTests/fast/canvas/webgl/resources/pnglib.js
+        * DumpRenderTree/CyclicRedundancyCheck.h: Added.
+        * DumpRenderTree/PixelDumpSupport.cpp:
+        (dumpWebViewAsPixelsAndCompareWithExpected):
+        (convertChecksumToPNGComment): Generate the bytes to insert.
+        (printPNG): Insert the png comment before the first IDAT section.
+        * DumpRenderTree/PixelDumpSupport.h:
+        * DumpRenderTree/cairo/PixelDumpSupportCairo.cpp:
+        (printPNG):
+        (dumpBitmap):
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        (printPNG):
+        (dumpBitmap):
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+        * GNUmakefile.am:
+
 2011-04-07  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adam Roben.

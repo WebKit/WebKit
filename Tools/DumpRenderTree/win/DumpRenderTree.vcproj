@@ -515,6 +515,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\CyclicRedundancyCheck.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\CyclicRedundancyCheck.h"
+			>
+		</File>
+		<File
 			RelativePath=".\DraggingInfo.h"
 			>
 		</File>

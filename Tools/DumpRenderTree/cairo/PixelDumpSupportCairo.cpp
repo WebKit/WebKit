@@ -49,7 +49,7 @@ static cairo_status_t writeFunction(void* closure, const unsigned char* data, un
     return CAIRO_STATUS_SUCCESS;
 }
 
-static void printPNG(cairo_surface_t* image)
+static void printPNG(cairo_surface_t* image, const char* checksum)
 {
     Vector<unsigned char> pixelData;
     // Only PNG output is supported for now.
@@ -58,7 +58,7 @@ static void printPNG(cairo_surface_t* image)
     const size_t dataLength = pixelData.size();
     const unsigned char* data = pixelData.data();
 
-    printPNG(data, dataLength);
+    printPNG(data, dataLength, checksum);
 }
 
 void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashString[33])
@@ -86,8 +86,8 @@ void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashStrin
         hash[8], hash[9], hash[10], hash[11], hash[12], hash[13], hash[14], hash[15]);
 }
 
-void dumpBitmap(BitmapContext* context)
+void dumpBitmap(BitmapContext* context, const char* checksum)
 {
     cairo_surface_t* surface = cairo_get_target(context->cairoContext());
-    printPNG(surface);
+    printPNG(surface, checksum);
 }

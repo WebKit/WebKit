@@ -29,11 +29,13 @@
 #include "config.h"
 #include "PixelDumpSupport.h"
 
+#include "CyclicRedundancyCheck.h"
 #include "DumpRenderTree.h"
 #include "LayoutTestController.h"
 #include <cstdio>
 #include <wtf/Assertions.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 #if PLATFORM(CG)
 #include "PixelDumpSupportCG.h"
@@ -69,16 +71,60 @@ void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)
     }
     
     if (dumpImage)
-      dumpBitmap(context.get());
+      dumpBitmap(context.get(), actualHash);
 }
 
-void printPNG(const unsigned char* data, const size_t dataLength)
+static void appendIntToVector(int number, Vector<unsigned char>& vector)
 {
+    size_t offset = vector.size();
+    vector.grow(offset + 4);
+    vector[offset] = ((number >> 24) & 0xff);
+    vector[offset + 1] = ((number >> 16) & 0xff);
+    vector[offset + 2] = ((number >> 8) & 0xff);
+    vector[offset + 3] = (number & 0xff);
+}
+
+static void convertChecksumToPNGComment(const char* checksum, Vector<unsigned char>& bytesToAdd)
+{
+    // Chunks of PNG files are <length>, <type>, <data>, <crc>.
+    static const char textCommentPrefix[] = "\x00\x00\x00\x29tEXtchecksum\x00";
+    static const size_t prefixLength = sizeof(textCommentPrefix) - 1; // The -1 is for the null at the end of the char[].
+    static const size_t checksumLength = 32;
+
+    bytesToAdd.append(textCommentPrefix, prefixLength);
+    bytesToAdd.append(checksum, checksumLength);
+
+    Vector<unsigned char> dataToCrc;
+    dataToCrc.append(textCommentPrefix + 4, prefixLength - 4); // Don't include the chunk length in the crc.
+    dataToCrc.append(checksum, checksumLength);
+    unsigned long crc32 = computeCrc(dataToCrc);
+
+    appendIntToVector(crc32, bytesToAdd);
+}
+
+static size_t offsetAfterIHDRChunk(const unsigned char* data, const size_t dataLength)
+{
+    const int pngHeaderLength = 8;
+    const int pngIHDRChunkLength = 25; // chunk length + "IHDR" + 13 bytes of data + checksum
+    return pngHeaderLength + pngIHDRChunkLength;
+}
+
+void printPNG(const unsigned char* data, const size_t dataLength, const char* checksum)
+{
+    Vector<unsigned char> bytesToAdd;
+    convertChecksumToPNGComment(checksum, bytesToAdd);
+
     printf("Content-Type: %s\n", "image/png");
-    printf("Content-Length: %lu\n", static_cast<unsigned long>(dataLength));
+    printf("Content-Length: %lu\n", static_cast<unsigned long>(dataLength + bytesToAdd.size()));
+
+    size_t insertOffset = offsetAfterIHDRChunk(data, dataLength);
+
+    fwrite(data, 1, insertOffset, stdout);
+    fwrite(bytesToAdd.data(), 1, bytesToAdd.size(), stdout);
 
     const size_t bytesToWriteInOneChunk = 1 << 15;
-    size_t dataRemainingToWrite = dataLength;
+    data += insertOffset;
+    size_t dataRemainingToWrite = dataLength - insertOffset;
     while (dataRemainingToWrite) {
         size_t bytesToWriteInThisChunk = std::min(dataRemainingToWrite, bytesToWriteInOneChunk);
         size_t bytesWritten = fwrite(data, 1, bytesToWriteInThisChunk, stdout);

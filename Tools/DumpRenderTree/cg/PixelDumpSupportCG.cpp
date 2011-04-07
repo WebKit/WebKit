@@ -55,7 +55,7 @@ using namespace std;
 static const CFStringRef kUTTypePNG = CFSTR("public.png");
 #endif
 
-static void printPNG(CGImageRef image)
+static void printPNG(CGImageRef image, const char* checksum)
 {
     RetainPtr<CFMutableDataRef> imageData(AdoptCF, CFDataCreateMutable(0, 0));
     RetainPtr<CGImageDestinationRef> imageDest(AdoptCF, CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
@@ -65,7 +65,7 @@ static void printPNG(CGImageRef image)
     const UInt8* data = CFDataGetBytePtr(imageData.get());
     CFIndex dataLength = CFDataGetLength(imageData.get());
 
-    printPNG(static_cast<const unsigned char*>(data), static_cast<size_t>(dataLength));
+    printPNG(static_cast<const unsigned char*>(data), static_cast<size_t>(dataLength), checksum);
 }
 
 void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashString[33])
@@ -106,8 +106,8 @@ void computeMD5HashStringForBitmapContext(BitmapContext* context, char hashStrin
         snprintf(hashString, 33, "%s%02x", hashString, hash[i]);
 }
 
-void dumpBitmap(BitmapContext* context)
+void dumpBitmap(BitmapContext* context, const char* checksum)
 {
     RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(context->cgContext()));
-    printPNG(image.get());
+    printPNG(image.get(), checksum);
 }
