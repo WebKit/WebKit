@@ -63,7 +63,7 @@ public:
     {
         if (!bufferLength)
             return 0;
-        bufferLength = std::min(bufferLength, m_string.length());
+        bufferLength = std::min(bufferLength, static_cast<size_t>(m_string.length()));
         memcpy(buffer, m_string.characters(), bufferLength * sizeof(UChar));
         return bufferLength;
     }

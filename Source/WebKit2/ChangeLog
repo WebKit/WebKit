@@ -1,5 +1,12 @@
 2011-04-07  Jeff Miller  <jeffm@apple.com>
 
+        Mac build fix.
+
+        * Shared/WebString.h:
+        (WebKit::WebString::getCharacters): Add explict cast when using std::min().
+
+2011-04-07  Jeff Miller  <jeffm@apple.com>
+
         Reviewed by Adam Roben.
 
         Replace WKStringGetCharactersPtr() with WKStringGetCharacters()
