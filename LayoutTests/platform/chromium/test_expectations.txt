@@ -2611,8 +2611,6 @@ BUGCR58212 LINUX : http/tests/appcache/main-resource-redirect.html = PASS TIMEOU
 // Flaky on Linux with test_shell, fails consistently on Mac and Linux DRT
 BUGWK49265 MAC LINUX : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edgeMode-prop.html = IMAGE PASS
 
-BUGWK49406 MAC : svg/animations/animVal-basics.html = TIMEOUT
-
 // Not investigated.
 BUG_DRT MAC : fast/css/line-height-determined-by-primary-font.html = IMAGE
 BUG_DRT MAC : fast/dom/Window/Plug-ins.html = TIMEOUT PASS
@@ -3212,7 +3210,6 @@ BUGCR77582 BUG_DRT WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation
 
 // Regression since r82001.
 BUGCR77619 MAC SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
-BUGCR77628 MAC : fast/images/move-image-to-new-document.html = TIMEOUT
 
 // New test in r82013.
 BUGWK82013 WIN LINUX : fast/text/justify-ideograph-leading-expansion.html = IMAGE+TEXT
@@ -3291,6 +3288,16 @@ BUGENNE : svg/text/text-midpoint-split-bug.svg = FAIL
 BUGWK57926 GPU : media/video-display-toggle.html = IMAGE
 BUGWK57926 GPU : media/video-no-audio.html = IMAGE
 BUGWK57926 GPU : media/video-volume-slider.html = IMAGE
+
+// We need to skipe Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.
+// http://trac.webkit.org/changeset/83126
+BUGWK58008 MAC SNOWLEOPARD : fast/dom/52776.html = IMAGE+TEXT
+BUGWK58008 MAC SNOWLEOPARD : fast/text/complex-text-opacity.html = IMAGE+TEXT
+BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-AN-after-L.html = IMAGE+TEXT
+BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-AN-after-empty-run.html = IMAGE+TEXT
+BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-CS-after-AN.html = IMAGE+TEXT
+BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
+BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-neutral-run.html = IMAGE+TEXT
 
 BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = CRASH PASS
 
