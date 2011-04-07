@@ -1,3 +1,43 @@
+2011-04-07  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r64712): Microsoft Outlook 2011: original message contents
+        not included when replying to an email.
+        https://bugs.webkit.org/show_bug.cgi?id=57794
+        
+        Outlook populates a reply message by creating an empty WebView and
+        using DOM API to populate the WebView's empty document with content
+        from the original message. It expects the initial empty document to
+        simply be "<html></html>", and it proceeds to dynamically create and
+        append a BODY node and add the original message content as a child of
+        that node. Outlook then takes the innerHTML of the frame's first body
+        element and copies it into a *new* document that is displayed and
+        edited in the reply message window.
+        
+        Due to implementing the HTML5 tree building algorithm in r64712,
+        initial empty documents went from being "<html></html>" to being
+        "<html><head></head><body></body></html>". Outlook still dynamically
+        creates a BODY node to parent the original message content, but this
+        BODY node duplicates the one created by the tree builder. When Outlook
+        then takes the innerHTML of the first body element to populate the
+        reply message window it gets the empty body element created by the
+        parser, not the one it created with the original message content.
+        
+        Fix this by injecting a user script into the initial empty document
+        that removes the HEAD and BODY nodes created by the parser. This
+        ensures that the BODY created by Outlook is the only BODY in the
+        document.
+
+        * Misc/OutlookQuirksUserScript.js: Added.
+        * WebView/WebView.mm:
+        (leakMailQuirksUserScriptContents):
+        (-[WebView _injectMailQuirksScript]):
+        (needsOutlookQuirksScript):
+        (leakOutlookQuirksUserScriptContents):
+        (-[WebView _injectOutlookQuirksScript]):
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+
 2011-04-06  Dai Mikurube  <dmikurube@chromium.org>
 
         Reviewed by David Levin.

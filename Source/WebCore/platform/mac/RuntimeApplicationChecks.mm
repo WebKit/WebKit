@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,12 @@ bool applicationIsMicrosoftMyDay()
 {
     static bool isMicrosoftMyDay = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.microsoft.myday"];
     return isMicrosoftMyDay;
+}
+    
+bool applicationIsMicrosoftOutlook()
+{
+    static bool isMicrosoftOutlook = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.microsoft.Outlook"];
+    return isMicrosoftOutlook;
 }
 
 } // namespace WebCore

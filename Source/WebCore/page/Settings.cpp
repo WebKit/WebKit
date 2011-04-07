@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -172,6 +172,7 @@ Settings::Settings(Page* page)
     , m_crossOriginCheckInGetMatchedCSSRulesDisabled(false)
     , m_useQuickLookResourceCachingQuirks(false)
     , m_forceCompositingMode(false)
+    , m_shouldInjectUserScriptsInInitialEmptyDocument(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.

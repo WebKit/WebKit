@@ -1,3 +1,31 @@
+2011-04-07  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r64712): Microsoft Outlook 2011: original message contents
+        not included when replying to an email.
+        https://bugs.webkit.org/show_bug.cgi?id=57794
+        
+        * WebCore.exp.in:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::finishedParsing): Call Frame::injectUserScripts()
+        before checking if the FrameLoader is parsing the initial empty document.
+        This allows user scripts to be injected at the end of document parsing
+        (if the setting is enabled).
+        * page/Frame.cpp:
+        (WebCore::Frame::injectUserScripts): Do not inject scripts if this
+        feature is disabled on the initial empty document.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h: Add a setting for injecting user scripts into the
+        initial empty document (defaults to false).
+        (WebCore::Settings::setInjectUserScriptsInInitialEmptyDocument):
+        (WebCore::Settings::injectUserScriptsInInitialEmptyDocument):
+        * platform/mac/RuntimeApplicationChecks.h:
+        * platform/mac/RuntimeApplicationChecks.mm:
+        (WebCore::applicationIsMicrosoftOutlook): Check if the embedding
+        application is Microsoft Outlook.
+
 2011-04-06  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

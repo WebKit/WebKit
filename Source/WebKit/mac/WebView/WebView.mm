@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2006 David Smith (catfish.man@gmail.com)
  * Copyright (C) 2010 Igalia S.L
  *
@@ -639,7 +639,7 @@ static bool shouldEnableLoadDeferring()
     return _private->usesDocumentViews;
 }
 
-static NSString *leakMailQuirksUserScriptPath()
+static NSString *leakMailQuirksUserScriptContents()
 {
     NSString *scriptPath = [[NSBundle bundleForClass:[WebView class]] pathForResource:@"MailQuirksUserScript" ofType:@"js"];
     return [[NSString alloc] initWithContentsOfFile:scriptPath];
@@ -647,9 +647,29 @@ static NSString *leakMailQuirksUserScriptPath()
 
 - (void)_injectMailQuirksScript
 {
-    static NSString *mailQuirksScriptPath = leakMailQuirksUserScriptPath();
+    static NSString *mailQuirksScriptContents = leakMailQuirksUserScriptContents();
     core(self)->group().addUserScriptToWorld(core([WebScriptWorld world]),
-        mailQuirksScriptPath, KURL(), 0, 0, InjectAtDocumentEnd, InjectInAllFrames);
+        mailQuirksScriptContents, KURL(), 0, 0, InjectAtDocumentEnd, InjectInAllFrames);
+}
+
+static bool needsOutlookQuirksScript()
+{
+    static bool isOutlookNeedingQuirksScript = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_HTML5_PARSER)
+        && applicationIsMicrosoftOutlook();
+    return isOutlookNeedingQuirksScript;
+}
+
+static NSString *leakOutlookQuirksUserScriptContents()
+{
+    NSString *scriptPath = [[NSBundle bundleForClass:[WebView class]] pathForResource:@"OutlookQuirksUserScript" ofType:@"js"];
+    return [[NSString alloc] initWithContentsOfFile:scriptPath];
+}
+
+-(void)_injectOutlookQuirksScript
+{
+    static NSString *outlookQuirksScriptContents = leakOutlookQuirksUserScriptContents();
+    core(self)->group().addUserScriptToWorld(core([WebScriptWorld world]),
+        outlookQuirksScriptContents, KURL(), 0, 0, InjectAtDocumentEnd, InjectInAllFrames);
 }
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews
@@ -719,6 +739,11 @@ static NSString *leakMailQuirksUserScriptPath()
 
     _private->page->setCanStartMedia([self window]);
     _private->page->settings()->setLocalStorageDatabasePath([[self preferences] _localStorageDatabasePath]);
+
+    if (needsOutlookQuirksScript()) {
+        _private->page->settings()->setShouldInjectUserScriptsInInitialEmptyDocument(true);
+        [self _injectOutlookQuirksScript];
+    }
 
     [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView];
 

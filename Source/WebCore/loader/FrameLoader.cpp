@@ -790,10 +790,10 @@ void FrameLoader::commitIconURLToIconDatabase(const KURL& icon)
 
 void FrameLoader::finishedParsing()
 {
+    m_frame->injectUserScripts(InjectAtDocumentEnd);
+
     if (m_stateMachine.creatingInitialEmptyDocument())
         return;
-
-    m_frame->injectUserScripts(InjectAtDocumentEnd);
 
     // This can be called from the Frame's destructor, in which case we shouldn't protect ourselves
     // because doing so will cause us to re-enter the destructor when protector goes out of scope.
