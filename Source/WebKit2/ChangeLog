@@ -1,3 +1,17 @@
+2011-04-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9250368> and https://bugs.webkit.org/show_bug.cgi?id=58062
+
+        * UIProcess/API/C/WKIconDatabase.cpp:
+        (WKIconDatabaseClose):
+        * UIProcess/API/C/WKIconDatabase.h:
+        
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::close):
+        * UIProcess/WebIconDatabase.h:
+
 2011-04-07  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Adam Roben.

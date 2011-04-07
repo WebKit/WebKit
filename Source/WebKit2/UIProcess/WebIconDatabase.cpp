@@ -194,6 +194,11 @@ void WebIconDatabase::checkIntegrityBeforeOpening()
     IconDatabase::checkIntegrityBeforeOpening();
 }
 
+void WebIconDatabase::close()
+{
+    m_iconDatabaseImpl->close();
+}
+
 void WebIconDatabase::initializeIconDatabaseClient(const WKIconDatabaseClient* client)
 {
     m_iconDatabaseClient.initialize(client);

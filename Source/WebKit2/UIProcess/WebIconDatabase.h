@@ -80,6 +80,7 @@ public:
     
     void removeAllIcons();
     void checkIntegrityBeforeOpening();
+    void close();
 
     void initializeIconDatabaseClient(const WKIconDatabaseClient*);
 

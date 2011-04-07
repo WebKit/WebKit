@@ -55,6 +55,8 @@ WK_EXPORT void WKIconDatabaseEnableDatabaseCleanup(WKIconDatabaseRef iconDatabas
 WK_EXPORT void WKIconDatabaseRemoveAllIcons(WKIconDatabaseRef iconDatabase);
 WK_EXPORT void WKIconDatabaseCheckIntegrityBeforeOpening(WKIconDatabaseRef iconDatabase);
 
+WK_EXPORT void WKIconDatabaseClose(WKIconDatabaseRef iconDatabase);
+
 #ifdef __cplusplus
 }
 #endif

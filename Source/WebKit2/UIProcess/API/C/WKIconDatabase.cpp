@@ -67,3 +67,8 @@ void WKIconDatabaseCheckIntegrityBeforeOpening(WKIconDatabaseRef iconDatabaseRef
 {
     toImpl(iconDatabaseRef)->checkIntegrityBeforeOpening();
 }
+
+void WKIconDatabaseClose(WKIconDatabaseRef iconDatabaseRef)
+{
+    toImpl(iconDatabaseRef)->close();
+}
