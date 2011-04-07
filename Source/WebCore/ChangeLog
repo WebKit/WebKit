@@ -1,3 +1,19 @@
+2011-04-07  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        setHasID() is only called for styled elements
+        https://bugs.webkit.org/show_bug.cgi?id=57267
+
+        Test: fast/dom/non-styled-element-id-crash.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        (WebCore::Element::idAttributeChanged):
+        * dom/Element.h:
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::parseMappedAttribute):
+
 2011-04-07  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

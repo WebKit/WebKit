@@ -726,6 +726,8 @@ PassRefPtr<Attribute> Element::createAttribute(const QualifiedName& name, const 
 
 void Element::attributeChanged(Attribute* attr, bool)
 {
+    if (isIdAttributeName(attr->name()))
+        idAttributeChanged(attr);
     recalcStyleIfNeededAfterAttributeChanged(attr);
     updateAfterAttributeChanged(attr);
 }
@@ -764,6 +766,20 @@ void Element::recalcStyleIfNeededAfterAttributeChanged(Attribute* attr)
         setNeedsStyleRecalc();
 }
 
+void Element::idAttributeChanged(Attribute* attr)
+{
+    setHasID(!attr->isNull());
+    if (attributeMap()) {
+        if (attr->isNull())
+            attributeMap()->setIdForStyleResolution(nullAtom);
+        else if (document()->inQuirksMode())
+            attributeMap()->setIdForStyleResolution(attr->value().lower());
+        else
+            attributeMap()->setIdForStyleResolution(attr->value());
+    }
+    setNeedsStyleRecalc();
+}
+    
 // Returns true is the given attribute is an event handler.
 // We consider an event handler any attribute that begins with "on".
 // It is a simple solution that has the advantage of not requiring any

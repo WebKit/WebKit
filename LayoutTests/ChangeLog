@@ -1,3 +1,14 @@
+2011-04-07  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        setHasID() is only called for styled elements
+        https://bugs.webkit.org/show_bug.cgi?id=57267
+
+        * fast/dom/non-styled-element-id-crash-expected.txt: Added.
+        * fast/dom/non-styled-element-id-crash.html: Added.
+        * svg/custom/embedded-svg-disallowed-in-dashboard.xml: Fix the failing test.
+
 2011-04-07  Brian Weinstein  <bweinstein@apple.com>
 
         Fix a typo in the Skipped list from r83203.

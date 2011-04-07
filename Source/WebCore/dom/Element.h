@@ -366,6 +366,8 @@ protected:
     // They are separated to allow a different flow of control in StyledElement::attributeChanged().
     void recalcStyleIfNeededAfterAttributeChanged(Attribute*);
     void updateAfterAttributeChanged(Attribute*);
+    
+    void idAttributeChanged(Attribute*);
 
 private:
     void scrollByUnits(int units, ScrollGranularity);

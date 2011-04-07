@@ -233,18 +233,9 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
 
 void StyledElement::parseMappedAttribute(Attribute* attr)
 {
-    if (isIdAttributeName(attr->name())) {
-        setHasID(!attr->isNull());
-        if (attributeMap()) {
-            if (attr->isNull())
-                attributeMap()->setIdForStyleResolution(nullAtom);
-            else if (document()->inQuirksMode())
-                attributeMap()->setIdForStyleResolution(attr->value().lower());
-            else
-                attributeMap()->setIdForStyleResolution(attr->value());
-        }
-        setNeedsStyleRecalc();
-    } else if (attr->name() == classAttr)
+    if (isIdAttributeName(attr->name()))
+        idAttributeChanged(attr);
+    else if (attr->name() == classAttr)
         classAttributeChanged(attr->value());
     else if (attr->name() == styleAttr) {
         if (attr->isNull())

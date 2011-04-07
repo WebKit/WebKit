@@ -19,7 +19,7 @@
         </svg>
         <pre id="console"></pre> 
         <script>
-           if(document.getElementById('svgCircleNode'))
+           if(document.getElementById('svgCircleNode') instanceof SVGElement)
                debug("FAIL: Successfully embedded SVG in document");
            else
                debug("PASS: SVG Elements could not be created");
