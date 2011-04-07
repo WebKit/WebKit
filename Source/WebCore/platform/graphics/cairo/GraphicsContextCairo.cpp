@@ -755,7 +755,7 @@ void GraphicsContext::drawLineForTextChecking(const FloatPoint& origin, float wi
     cairo_restore(cr);
 }
 
-FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect)
+FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect, RoundingMode)
 {
     FloatRect result;
     double x = frect.x();

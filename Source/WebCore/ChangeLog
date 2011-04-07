@@ -1,3 +1,10 @@
+2011-04-07  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::roundToDevicePixels):
+
 2011-04-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
