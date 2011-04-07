@@ -1,3 +1,9 @@
+2011-04-07  Brian Weinstein  <bweinstein@apple.com>
+
+        Fix a typo in the Skipped list from r83203.
+
+        * platform/win-wk2/Skipped:
+
 2011-04-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

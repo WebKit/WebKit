@@ -94,7 +94,7 @@ editing/undo/undo-forward-delete.html
 editing/undo/undo-iframe-location-change.html
 editing/undo/undo-indent.html
 editing/undo/undo-misspellings.html
-editing/undo/undo-typing-001.htm
+editing/undo/undo-typing-001.html
 
 # Storage tests fail in WebKitTestRunner
 # <https://bugs.webkit.org/show_bug.cgi?id=44084>
