@@ -54,18 +54,18 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
 {
     ASSERT(m_current == NoCurrentItemIndex || m_current < m_entries.size());
 
-    RetainPtr<CFNumberRef> currentIndex(AdoptCF, CFNumberCreate(0, kCFNumberIntType, &m_current));    
     RetainPtr<CFMutableArrayRef> entries(AdoptCF, CFArrayCreateMutable(0, m_entries.size(), &kCFTypeArrayCallBacks));
-    
-    const void* keys[2] = { SessionHistoryCurrentIndexKey(), SessionHistoryEntriesKey() };
-    const void* values[2] = { currentIndex.get(), entries.get() };
 
-    RetainPtr<CFDictionaryRef> dictionary(AdoptCF, CFDictionaryCreate(0, keys, values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    // We may need to update the current index to account for entries that are filtered by the callback.
+    int currentIndex = m_current;
 
     for (size_t i = 0; i < m_entries.size(); ++i) {
         RefPtr<WebURL> webURL = WebURL::create(m_entries[i]->url());
-        if (filter && !filter(toAPI(m_page), WKPageGetSessionHistoryURLValueType(), toURLRef(m_entries[i]->originalURL().impl()), context))
+        if (filter && !filter(toAPI(m_page), WKPageGetSessionHistoryURLValueType(), toURLRef(m_entries[i]->originalURL().impl()), context)) {
+            if (i <= static_cast<size_t>(currentIndex))
+                currentIndex--;
             continue;
+        }
         
         RetainPtr<CFStringRef> url(AdoptCF, m_entries[i]->url().createCFString());
         RetainPtr<CFStringRef> title(AdoptCF, m_entries[i]->title().createCFString());
@@ -78,8 +78,12 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
         RetainPtr<CFDictionaryRef> entryDictionary(AdoptCF, CFDictionaryCreate(0, keys, values, 4, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
         CFArrayAppendValue(entries.get(), entryDictionary.get());
     }
-    
-    return dictionary.leakRef();
+    RetainPtr<CFNumberRef> currentIndexNumber(AdoptCF, CFNumberCreate(0, kCFNumberIntType, &currentIndex));
+
+    const void* keys[2] = { SessionHistoryCurrentIndexKey(), SessionHistoryEntriesKey() };
+    const void* values[2] = { currentIndexNumber.get(), entries.get() };
+
+    return CFDictionaryCreate(0, keys, values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 }
 
 bool WebBackForwardList::restoreFromCFDictionaryRepresentation(CFDictionaryRef dictionary)
