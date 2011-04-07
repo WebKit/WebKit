@@ -494,7 +494,7 @@ private:
                         RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop);
 
     void skipTrailingWhitespace(InlineIterator&, bool isLineEmpty, bool previousLineBrokeCleanly);
-    void skipLeadingWhitespace(InlineBidiResolver&, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly, FloatingObject* lastFloatFromPreviousLine, LineOffsets&);
+    void skipLeadingWhitespace(InlineBidiResolver&, bool isLineEmpty, bool previousLineBrokeCleanly, FloatingObject* lastFloatFromPreviousLine, LineOffsets&);
     void fitBelowFloats(float widthToFit, float totalOverhangWidth, bool firstLine, float& availableWidth);
     typedef std::pair<RenderText*, LazyLineBreakIterator> LineBreakIteratorInfo;
     InlineIterator findNextLineBreak(InlineBidiResolver&, bool firstLine, bool& isLineEmpty, LineBreakIteratorInfo&, bool& previousLineBrokeCleanly, bool& hyphenated,
@@ -509,7 +509,7 @@ private:
 
     // Positions new floats and also adjust all floats encountered on the line if any of them
     // have to move to the next page/column.
-    bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, bool firstLine, LineOffsets&);
+    bool positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, LineOffsets&);
 
     // End of functions defined in RenderBlockLineLayout.cpp.
 
@@ -784,6 +784,7 @@ private:
     // RenderRubyBase objects need to be able to split and merge, moving their children around
     // (calling moveChildTo, moveAllChildrenTo, and makeChildrenNonInline).
     friend class RenderRubyBase;
+    friend class LineOffsets; // Needs to know FloatingObject
 };
 
 inline RenderBlock* toRenderBlock(RenderObject* object)

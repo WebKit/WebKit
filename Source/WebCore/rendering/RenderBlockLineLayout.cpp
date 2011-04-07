@@ -1453,13 +1453,13 @@ void RenderBlock::skipTrailingWhitespace(InlineIterator& iterator, bool isLineEm
     }
 }
 
-void RenderBlock::skipLeadingWhitespace(InlineBidiResolver& resolver, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly,
+void RenderBlock::skipLeadingWhitespace(InlineBidiResolver& resolver, bool isLineEmpty, bool previousLineBrokeCleanly,
     FloatingObject* lastFloatFromPreviousLine, LineOffsets& lineOffsets)
 {
     while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), isLineEmpty, previousLineBrokeCleanly)) {
         RenderObject* object = resolver.position().m_obj;
         if (object->isFloating())
-            positionNewFloatOnLine(insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, firstLine, lineOffsets);
+            positionNewFloatOnLine(insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, lineOffsets);
         else if (object->isPositioned())
             setStaticPositions(this, toRenderBox(object));
         resolver.increment();
@@ -1562,18 +1562,46 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
 
 class LineOffsets {
 public:
-    LineOffsets(int leftOffset, int rightOffset)
-    : m_left(leftOffset)
-    , m_right(rightOffset)
-    {
-    }
+    LineOffsets(RenderBlock*, bool isFirstLine);
     int width() const { return max(0, m_right - m_left); }
-    void setLeft(int left) { m_left = left; }
-    void setRight(int right) { m_right = right; }
+    void update();
+    void shrinkWidthForNewFloatIfNeeded(RenderBlock::FloatingObject*);
+
 private:
+    RenderBlock* m_block;
     int m_left;
     int m_right;
+    bool m_isFirstLine;
 };
+
+inline LineOffsets::LineOffsets(RenderBlock* block, bool isFirstLine)
+    : m_block(block)
+    , m_left(0)
+    , m_right(0)
+    , m_isFirstLine(isFirstLine)
+{
+    ASSERT(block);
+    update();
+}
+
+inline void LineOffsets::update()
+{
+    int height = m_block->logicalHeight();
+    m_left = m_block->logicalLeftOffsetForLine(height, m_isFirstLine);
+    m_right = m_block->logicalRightOffsetForLine(height, m_isFirstLine);
+}
+
+inline void LineOffsets::shrinkWidthForNewFloatIfNeeded(RenderBlock::FloatingObject* newFloat)
+{
+    int height = m_block->logicalHeight();
+    if (height < m_block->logicalTopForFloat(newFloat) || height >= m_block->logicalBottomForFloat(newFloat))
+        return;
+
+    if (newFloat->type() == RenderBlock::FloatingObject::FloatLeft)
+        m_left = m_block->logicalRightForFloat(newFloat);
+    else
+        m_right = m_block->logicalLeftForFloat(newFloat);
+}
 
 InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool firstLine, bool& isLineEmpty, LineBreakIteratorInfo& lineBreakIteratorInfo, bool& previousLineBrokeCleanly, 
                                               bool& hyphenated, EClear* clear, FloatingObject* lastFloatFromPreviousLine, Vector<RenderBox*>& positionedBoxes)
@@ -1582,11 +1610,10 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 
     bool appliedStartWidth = resolver.position().m_pos > 0;
     LineMidpointState& lineMidpointState = resolver.midpointState();
-    
-    int blockOffset = logicalHeight();
-    LineOffsets lineOffsets(logicalLeftOffsetForLine(blockOffset, firstLine), logicalRightOffsetForLine(blockOffset, firstLine));
 
-    skipLeadingWhitespace(resolver, firstLine, isLineEmpty, previousLineBrokeCleanly, lastFloatFromPreviousLine, lineOffsets);
+    LineOffsets lineOffsets(this, firstLine);
+
+    skipLeadingWhitespace(resolver, isLineEmpty, previousLineBrokeCleanly, lastFloatFromPreviousLine, lineOffsets);
 
     float width = lineOffsets.width();
     float w = 0;
@@ -1682,7 +1709,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 // If it does, position it now, otherwise, position
                 // it after moving to next line (in newLine() func)
                 if (floatsFitOnLine && logicalWidthForFloat(f) + w + tmpW <= width) {
-                    positionNewFloatOnLine(f, lastFloatFromPreviousLine, firstLine, lineOffsets);
+                    positionNewFloatOnLine(f, lastFloatFromPreviousLine, lineOffsets);
                     width = lineOffsets.width() + totalOverhangWidth;
                     if (lBreak.m_obj == o) {
                         ASSERT(!lBreak.m_pos);
@@ -2269,22 +2296,15 @@ void RenderBlock::checkLinesForTextOverflow()
     }
 }
 
-bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, bool firstLine, LineOffsets& lineOffsets)
+bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObject* lastFloatFromPreviousLine, LineOffsets& lineOffsets)
 {
-    bool didPosition = positionNewFloats();
-    if (!didPosition)
-        return didPosition;
+    if (!positionNewFloats())
+        return false;
 
-    int blockOffset = logicalHeight();
-    if (blockOffset >= logicalTopForFloat(newFloat) && blockOffset < logicalBottomForFloat(newFloat)) {
-        if (newFloat->type() == FloatingObject::FloatLeft)
-            lineOffsets.setLeft(logicalRightForFloat(newFloat));
-        else
-            lineOffsets.setRight(logicalLeftForFloat(newFloat));
-    }
+    lineOffsets.shrinkWidthForNewFloatIfNeeded(newFloat);
 
     if (!newFloat->m_paginationStrut)
-        return didPosition;
+        return true;
 
     FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     ASSERT(floatingObjectSet.last() == newFloat);
@@ -2293,7 +2313,7 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
     int paginationStrut = newFloat->m_paginationStrut;
 
     if (floatLogicalTop - paginationStrut != logicalHeight())
-        return didPosition;
+        return true;
 
     FloatingObjectSetIterator it = floatingObjectSet.end();
     --it; // Last float is newFloat, skip that one.
@@ -2315,11 +2335,10 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
         }
     }
 
-    setLogicalHeight(blockOffset + paginationStrut);
-    lineOffsets.setLeft(logicalLeftOffsetForLine(logicalHeight(), firstLine));
-    lineOffsets.setRight(logicalRightOffsetForLine(logicalHeight(), firstLine));
+    setLogicalHeight(logicalHeight() + paginationStrut);
+    lineOffsets.update();
 
-    return didPosition;
+    return true;
 }
 
 }
