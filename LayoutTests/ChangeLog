@@ -1,5 +1,11 @@
 2011-04-06  Kent Tamura  <tkent@chromium.org>
 
+        Fixed an error in the previous commit.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-06  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Update text expectation.
         fast/repaint/scale-page-shrink.html is expected to fail because of no
         eventSender.scalePageBy().

@@ -627,7 +627,7 @@ BUGCR8630 WIN LINUX : fast/text/font-initial.html = FAIL
 BUGCR24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 
 // Needs eventSender.scalePageBy().
-BUG58013 : fast/repaint/scale-page-shrink.html = IMAGE+TEXT
+BUGWK58013 : fast/repaint/scale-page-shrink.html = IMAGE+TEXT
 
 // -----------------------------------------------------------------
 // Inspector tests
