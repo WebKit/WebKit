@@ -1,3 +1,14 @@
+2011-04-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Remove some no longer needed WebProcess sandbox allowances
+        https://bugs.webkit.org/show_bug.cgi?id=58015
+        <rdar://problem/9232592>
+
+        * WebProcess/com.apple.WebProcess.sb: Remove no-longer needed extra network
+        and launching privileges, since the bugs that required them are fixed.
+
 2011-04-06  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Darin Adler.

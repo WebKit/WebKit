@@ -132,10 +132,6 @@
    (global-name-regex #"^com\.apple\.qtkitserver\.")
 )
 
-;; FIXME: These rules are required until <rdar://problem/8448410> is addressed. See <rdar://problem/8349882> for discussion.
-(allow network-outbound)
-(deny network-outbound (regex ""))
-(deny network-outbound (local ip))
 (allow network-outbound
    ;; Local mDNSResponder for DNS, arbitrary outbound TCP
    (literal "/private/var/run/mDNSResponder")
@@ -156,10 +152,6 @@
 )
 
 (allow network-outbound (remote ip))
-
-;; These rules are required while QTKitServer is being launched directly via posix_spawn (<rdar://problem/6912494>).
-(allow process-fork)
-(allow process-exec (literal "/System/Library/Frameworks/QTKit.framework/Versions/A/Resources/QTKitServer") (with no-sandbox))
 
 ;; FIXME: Once <rdar://problem/8900275> has been fixed, these rules can be removed.
 (allow mach-lookup (global-name "com.apple.pubsub.ipc"))
