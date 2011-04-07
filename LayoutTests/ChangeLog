@@ -1,3 +1,9 @@
+2011-04-07  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed; rebaseline expected results in platform/mac-wk2.
+
+        * platform/mac-wk2/media/controls-without-preload-expected.txt:
+
 2011-04-07  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Darin Adler.
