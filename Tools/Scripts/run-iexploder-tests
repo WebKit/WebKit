@@ -114,7 +114,6 @@ sub configureAndOpenHTTPDIfNeeded()
 {
     return if $isHttpdOpen;
     mkdir $iExploderTestDirectory;
-    my $httpdPath = getHTTPDPath();
     my $webkitDirectory = getcwd();
     my $testDirectory = $webkitDirectory . "/LayoutTests";
     my $iExploderDirectory = $webkitDirectory . "/Tools/iExploder/iExploder-1.3.2";

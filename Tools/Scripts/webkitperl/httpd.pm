@@ -63,7 +63,6 @@ $tmpDir = convertMsysPath($tmpDir) if isMsys();
 my $httpdLockPrefix = "WebKitHttpd.lock.";
 my $myLockFile;
 my $exclusiveLockFile = File::Spec->catfile($tmpDir, "WebKit.lock");
-my $httpdPath;
 my $httpdPidDir = File::Spec->catfile($tmpDir, "WebKit");
 my $httpdPidFile = File::Spec->catfile($httpdPidDir, "httpd.pid");
 my $httpdPid;
@@ -76,6 +75,7 @@ $SIG{'TERM'} = 'handleInterrupt';
 
 sub getHTTPDPath
 {
+    my $httpdPath;
     if (isDebianBased()) {
         $httpdPath = "/usr/sbin/apache2";
     } elsif (isMsys()) {
@@ -130,7 +130,7 @@ sub getHTTPDConfigPathForTestDirectory
     my ($testDirectory) = @_;
     die "No test directory has been specified." unless ($testDirectory);
     my $httpdConfig;
-    getHTTPDPath();
+    my $httpdPath = getHTTPDPath();
     if (isCygwin()) {
         my $windowsConfDirectory = "$testDirectory/http/conf/";
         unless (-x "/usr/lib/apache/libphp4.dll") {
@@ -173,7 +173,7 @@ sub openHTTPD(@)
         unlink $httpdPidFile;
     }
 
-    $httpdPath = "/usr/sbin/httpd" unless ($httpdPath);
+    my $httpdPath = getHTTPDPath();
 
     open2(">&1", \*HTTPDIN, $httpdPath, @args);
 

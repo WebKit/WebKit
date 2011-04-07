@@ -1,3 +1,14 @@
+2011-04-06  Scott Cameron  <sccameron@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Remove global variable $httpdPath and replace with the return value of
+        getHTTPDPath().  Also remove unnecessary calls to getHTTPDPath().
+        https://bugs.webkit.org/show_bug.cgi?id=53499
+
+        * Scripts/run-iexploder-tests:
+        * Scripts/webkitperl/httpd.pm:
+
 2011-04-06  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.
