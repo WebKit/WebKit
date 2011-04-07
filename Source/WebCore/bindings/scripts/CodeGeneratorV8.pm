@@ -448,9 +448,7 @@ sub GetInternalFields
         push(@customInternalFields, "eventListenerCacheIndex");
     }
 
-    if (IsSubType($dataNode, "Document")) {
-        push(@customInternalFields, "implementationIndex");
-    } elsif ($name eq "DOMWindow") {
+    if ($name eq "DOMWindow") {
         push(@customInternalFields, "enteredIsolatedWorldIndex");
     }
     return @customInternalFields;

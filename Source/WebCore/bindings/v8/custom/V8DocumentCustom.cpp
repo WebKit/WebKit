@@ -118,34 +118,6 @@ v8::Handle<v8::Value> V8Document::getCSSCanvasContextCallback(const v8::Argument
     return v8::Undefined();
 }
 
-
-// DOMImplementation is a singleton in WebCore. If we use our normal
-// mapping from DOM objects to V8 wrappers, the same wrapper will be
-// shared for all frames in the same process. This is a major
-// security problem. Therefore, we generate a DOMImplementation
-// wrapper per document and store it in an internal field of the
-// document. Since the DOMImplementation object is a singleton, we do
-// not have to do anything to keep the DOMImplementation object alive
-// for the lifetime of the wrapper.
-v8::Handle<v8::Value> V8Document::implementationAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    ASSERT(info.Holder()->InternalFieldCount() >= internalFieldCount);
-
-    // Check if the internal field already contains a wrapper.
-    v8::Local<v8::Value> implementation = info.Holder()->GetInternalField(V8Document::implementationIndex);
-    if (!implementation->IsUndefined())
-        return implementation;
-
-    // Generate a wrapper.
-    Document* document = V8Document::toNative(info.Holder());
-    v8::Handle<v8::Value> wrapper = toV8(document->implementation());
-
-    // Store the wrapper in the internal field.
-    info.Holder()->SetInternalField(implementationIndex, wrapper);
-
-    return wrapper;
-}
-
 v8::Handle<v8::Value> toV8(Document* impl, bool forceNewObject)
 {
     if (!impl)

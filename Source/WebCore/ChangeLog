@@ -1,3 +1,19 @@
+2011-04-06  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [V8] Remove custom DOMImplementation getter on Document.
+        https://bugs.webkit.org/show_bug.cgi?id=57991
+
+        The custom getter is no longer required because DOMImplementation
+        objects are now created per document.
+
+        Test: fast/dom/DOMImplementation/implementation-identity.html
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        * dom/Document.idl:
+
 2011-04-07  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Reviewed by Dimitri Glazkov.

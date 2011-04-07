@@ -29,7 +29,7 @@ module core {
 
         // DOM Level 1 Core
         readonly attribute DocumentType doctype;
-        readonly attribute [V8Custom] DOMImplementation implementation;
+        readonly attribute DOMImplementation implementation;
         readonly attribute Element documentElement;
 
         [ReturnsNew] Element createElement(in [ConvertNullToNullString] DOMString tagName)

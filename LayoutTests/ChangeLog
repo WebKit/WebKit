@@ -1,3 +1,13 @@
+2011-04-06  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        [V8] Remove custom DOMImplementation getter on Document.
+        https://bugs.webkit.org/show_bug.cgi?id=57991
+
+        * fast/dom/DOMImplementation/implementation-identity-expected.txt: Added.
+        * fast/dom/DOMImplementation/implementation-identity.html: Added.
+
 2011-04-07  Steve Lacey  <sjl@chromium.org>
 
         Reviewed by Eric Carlson.
