@@ -1,3 +1,32 @@
+2011-04-06  Dan Bernstein  <mitz@apple.com>
+
+        Correct results for the Geeza Pro metrics change.
+
+        * platform/mac/fast/dom/52776-expected.checksum:
+        * platform/mac/fast/dom/52776-expected.png:
+        * platform/mac/fast/dom/52776-expected.txt:
+        * platform/mac/fast/text/complex-text-opacity-expected.checksum:
+        * platform/mac/fast/text/complex-text-opacity-expected.png:
+        * platform/mac/fast/text/complex-text-opacity-expected.txt:
+        * platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt:
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.checksum:
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.png:
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.txt:
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.checksum:
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.png:
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.txt:
+        * platform/mac/fast/text/international/bidi-CS-after-AN-expected.checksum:
+        * platform/mac/fast/text/international/bidi-CS-after-AN-expected.png:
+        * platform/mac/fast/text/international/bidi-CS-after-AN-expected.txt:
+        * platform/mac/fast/text/international/bidi-mirror-he-ar-expected.checksum:
+        * platform/mac/fast/text/international/bidi-mirror-he-ar-expected.png:
+        * platform/mac/fast/text/international/bidi-mirror-he-ar-expected.txt:
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.checksum:
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.png:
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.txt:
+        * platform/mac/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.checksum:
+        * platform/mac/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.png:
+
 2011-04-06  Adrienne Walker  <enne@google.com>
 
         Unreviewed, update Chromium expectations for failing test from r83075.
