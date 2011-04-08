@@ -3295,3 +3295,4 @@ BUGWK58147 : fast/dom/MediaStream/argument-types.html = TEXT
 BUGWK58147 : fast/dom/MediaStream/enabled.html = TEXT
 
 BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = CRASH
+BUGWK58158 : editing/pasteboard/paste-xml.xhtml = PASS TEXT

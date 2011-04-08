@@ -1,3 +1,12 @@
+2011-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rebaselines and text expectation updates after r83322.
+        The bug is tracked by https://bugs.webkit.org/show_bug.cgi?id=58158
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/editing/pasteboard/paste-xml-expected.txt:
+        * platform/win/editing/pasteboard/paste-xml-expected.txt:
+
 2011-04-08  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Adam Roben.
