@@ -93,12 +93,7 @@ namespace JSC {
     inline void Structure::setEnumerationCache(JSGlobalData& globalData, JSPropertyNameIterator* enumerationCache)
     {
         ASSERT(!isDictionary());
-        m_enumerationCache.set(globalData, enumerationCache, 0);
-    }
-
-    inline void Structure::clearEnumerationCache()
-    {
-        m_enumerationCache.clear();
+        m_enumerationCache.set(globalData, enumerationCache);
     }
 
     inline JSPropertyNameIterator* Structure::enumerationCache()

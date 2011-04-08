@@ -30,26 +30,6 @@
 
 namespace JSC {
 
-#if !ASSERT_DISABLED
-static inline bool isValidWeakHandle(HandleSlot handle)
-{
-    JSValue value = *handle;
-    if (!value || !value.isCell())
-        return false;
-
-    JSCell* cell = value.asCell();
-    if (!cell || !cell->structure())
-        return false;
-
-#if ENABLE(JSC_ZOMBIES)
-    if (cell->isZombie())
-        return false;
-#endif
-
-    return true;
-}
-#endif
-
 WeakHandleOwner::~WeakHandleOwner()
 {
 }
@@ -97,7 +77,7 @@ void HandleHeap::markWeakHandles(HeapRootMarker& heapRootMarker)
 
         Node* end = m_weakList.end();
         for (Node* node = m_weakList.begin(); node != end; node = node->next()) {
-            ASSERT(isValidWeakHandle(node->slot()));
+            ASSERT(isValidWeakNode(node));
             JSCell* cell = node->slot()->asCell();
             if (Heap::isMarked(cell))
                 continue;
@@ -120,7 +100,7 @@ void HandleHeap::finalizeWeakHandles()
     for (Node* node = m_weakList.begin(); node != end; node = m_nextToFinalize) {
         m_nextToFinalize = node->next();
 
-        ASSERT(isValidWeakHandle(node->slot()));
+        ASSERT(isValidWeakNode(node));
         JSCell* cell = node->slot()->asCell();
         if (Heap::isMarked(cell))
             continue;
@@ -172,5 +152,28 @@ unsigned HandleHeap::protectedGlobalObjectCount()
     }
     return count;
 }
+
+#if !ASSERT_DISABLED
+bool HandleHeap::isValidWeakNode(Node* node)
+{
+    if (!node->isWeak())
+        return false;
+
+    JSValue value = *node->slot();
+    if (!value || !value.isCell())
+        return false;
+
+    JSCell* cell = value.asCell();
+    if (!cell || !cell->structure())
+        return false;
+
+#if ENABLE(JSC_ZOMBIES)
+    if (cell->isZombie())
+        return false;
+#endif
+
+    return true;
+}
+#endif
 
 } // namespace JSC

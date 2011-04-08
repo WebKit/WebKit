@@ -36,64 +36,42 @@
 */
 
 namespace JSC {
-template <typename T> class Local;
-}
-
-namespace WTF {
-
-template<typename T> struct VectorTraits<JSC::Local<T> > {
-    static const bool needsDestruction = false;
-    static const bool needsInitialization = true;
-    static const bool canInitializeWithMemset = false;
-    static const bool canMoveWithMemcpy = true;
-    static const bool canCopyWithMemcpy = false;
-    static const bool canFillWithMemset = false;
-    static const bool canCompareWithMemcmp = true;
-};
-
-}
-
-namespace JSC {
 
 template <typename T> class Local : public Handle<T> {
     friend class LocalScope;
+    using Handle<T>::slot;
+
 public:
     typedef typename Handle<T>::ExternalType ExternalType;
+
     Local(JSGlobalData&, ExternalType = ExternalType());
     Local(JSGlobalData&, Handle<T>);
     Local(const Local<T>&); // Adopting constructor. Used to return a Local to a calling function.
 
     Local& operator=(ExternalType);
     Local& operator=(Handle<T>);
-    
-    using Handle<T>::slot;
 
 private:
     Local(HandleSlot, ExternalType); // Used by LocalScope::release() to move a Local to a containing scope.
-    void internalSet(ExternalType value)
-    {
-        JSValue newValue(HandleTypes<T>::toJSValue(value));
-        HandleSlot slot = this->slot();
-        *slot = newValue;
-    }
+    void set(ExternalType);
 };
 
 template <typename T> inline Local<T>::Local(JSGlobalData& globalData, ExternalType value)
     : Handle<T>(globalData.allocateLocalHandle())
 {
-    internalSet(value);
+    set(value);
 }
 
-template <typename T> inline Local<T>::Local(JSGlobalData& globalData, Handle<T> handle)
+template <typename T> inline Local<T>::Local(JSGlobalData& globalData, Handle<T> other)
     : Handle<T>(globalData.allocateLocalHandle())
 {
-    internalSet(handle.get());
+    set(other.get());
 }
 
-template <typename T> inline Local<T>::Local(const Local<T>& o)
-    : Handle<T>(o.slot())
+template <typename T> inline Local<T>::Local(const Local<T>& other)
+    : Handle<T>(other.slot())
 {
-    const_cast<Local<T>&>(o).invalidate(); // Prevent accidental sharing.
+    const_cast<Local<T>&>(other).setSlot(0); // Prevent accidental sharing.
 }
 
 template <typename T> inline Local<T>::Local(HandleSlot slot, ExternalType value)
@@ -103,15 +81,22 @@ template <typename T> inline Local<T>::Local(HandleSlot slot, ExternalType value
 
 template <typename T> inline Local<T>& Local<T>::operator=(ExternalType value)
 {
-    internalSet(value);
+    set(value);
     return *this;
 }
 
-template <typename T> inline Local<T>& Local<T>::operator=(Handle<T> handle)
+template <typename T> inline Local<T>& Local<T>::operator=(Handle<T> other)
 {
-    internalSet(handle.get());
+    set(other.get());
     return *this;
 }
+
+template <typename T> inline void Local<T>::set(ExternalType value)
+{
+    ASSERT(slot());
+    *slot() = value;
+}
+
 
 template <typename T, unsigned inlineCapacity = 0> class LocalStack {
     typedef typename Handle<T>::ExternalType ExternalType;
@@ -150,6 +135,20 @@ private:
     RefPtr<JSGlobalData> m_globalData;
     Vector<Local<T>, inlineCapacity> m_stack;
     unsigned m_count;
+};
+
+}
+
+namespace WTF {
+
+template<typename T> struct VectorTraits<JSC::Local<T> > {
+    static const bool needsDestruction = false;
+    static const bool needsInitialization = true;
+    static const bool canInitializeWithMemset = false;
+    static const bool canMoveWithMemcpy = true;
+    static const bool canCopyWithMemcpy = false;
+    static const bool canFillWithMemset = false;
+    static const bool canCompareWithMemcmp = true;
 };
 
 }

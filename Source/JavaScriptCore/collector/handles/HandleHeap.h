@@ -51,6 +51,8 @@ public:
     static HandleHeap* heapFor(HandleSlot);
 
     HandleHeap(JSGlobalData*);
+    
+    JSGlobalData* globalData();
 
     HandleSlot allocate();
     void deallocate(HandleSlot);
@@ -105,6 +107,10 @@ private:
     static Node* toNode(HandleSlot);
 
     void grow();
+    
+#if !ASSERT_DISABLED
+    bool isValidWeakNode(Node*);
+#endif
 
     JSGlobalData* m_globalData;
     BlockStack<Node> m_blockStack;
@@ -119,6 +125,11 @@ private:
 inline HandleHeap* HandleHeap::heapFor(HandleSlot handle)
 {
     return toNode(handle)->handleHeap();
+}
+
+inline JSGlobalData* HandleHeap::globalData()
+{
+    return m_globalData;
 }
 
 inline HandleSlot HandleHeap::toHandle(Node* node)

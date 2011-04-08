@@ -45,7 +45,7 @@ class SerializedScriptValue;
 
 class ScriptValue {
 public:
-    ScriptValue() : m_value(JSC::Global<JSC::Unknown>::EmptyValue) { }
+    ScriptValue() { }
     ScriptValue(JSC::JSGlobalData& globalData, JSC::JSValue value) : m_value(globalData, value) {}
     virtual ~ScriptValue() {}
 
@@ -57,7 +57,7 @@ public:
     bool isUndefined() const;
     bool isObject() const;
     bool isFunction() const;
-    bool hasNoValue() const { return m_value.isEmpty(); }
+    bool hasNoValue() const { return !m_value; }
 
     bool operator==(const ScriptValue& other) const { return m_value == other.m_value; }
 

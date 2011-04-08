@@ -1,3 +1,88 @@
+2011-04-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Some Handle<T> cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=58109
+
+        * bytecode/SamplingTool.h: Sorted alphabetically because that's the
+        WebKit style. Added a Global.h #include that was previously missing
+        but harmless.
+
+        * collector/handles/Global.h:
+        (JSC::Global::Global): Added a null constructor. No need for a special
+        tag, and the tag is incompatible with some data structures.
+        
+        (JSC::Global::isHashTableDeletedValue):
+        (JSC::Global::~Global):
+        (JSC::Global::set):
+        (JSC::Global::operator=):
+        (JSC::Global::clear):
+        (JSC::Global::hashTableDeletedValue): Reordered constructors to be near
+        each other.
+
+        (JSC::Global::setWithWriteBarrier): Renamed internalSet to
+        setWithWriteBarrier for clarity, and funneled more code into using set
+        and setWithWriteBarrier to reduce duplication.
+
+        * collector/handles/Handle.h:
+        (JSC::HandleBase::operator!):
+        (JSC::HandleBase::HandleBase): Removed isEmpty(), since we already have
+        boolean and ! operators.
+
+        (JSC::HandleBase::slot):
+        (JSC::HandleBase::setSlot):
+        (JSC::Handle::Handle): Added general support for null Handles. This was
+        previously outlawed by ASSERTs, but our code has grown to support and
+        rely on null Handles.
+        
+        * collector/handles/HandleHeap.cpp:
+        (JSC::HandleHeap::markWeakHandles):
+        (JSC::HandleHeap::finalizeWeakHandles):
+        (JSC::HandleHeap::isValidWeakNode): Migrated from isValidWeakHandle,
+        and beefed this up a bit.
+
+        * collector/handles/HandleHeap.h:
+        (JSC::HandleHeap::globalData): Added accessor, used by some new set functions.
+
+        * collector/handles/Local.h: Moved hash traits to the bottom of the file,
+        since this file is about the Local class, not the traits.
+
+        (JSC::::Local): Updated for removal of invalidate().
+
+        (JSC::::operator): Deployed "using" to avoid a lot of this->
+        template funny business.
+
+        (JSC::::setWithSlotCheck): Renamed from internalSet, more specific now.
+
+        * interpreter/RegisterFile.h:
+        (JSC::RegisterFile::RegisterFile): Updated to use null constructor.
+
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::Structure::setEnumerationCache):
+        * runtime/Structure.h: Removed clearEnumerationCache
+        because it was an unused holdover from when the enumeration cache was
+        not a handle.
+
+        * runtime/WeakGCMap.h:
+        (JSC::WeakGCMap::set): Finish initializing our handle before putting it
+        in the table. This seemed more logical, and at one point was required
+        to avoid triggering an ASSERT.
+
+        * runtime/WeakGCPtr.h: Inherit from Handle instead of rolling our own
+        handle-like behavior, to avoid duplication.
+
+        (JSC::WeakGCPtr::WeakGCPtr):
+        (JSC::WeakGCPtr::~WeakGCPtr):
+        (JSC::WeakGCPtr::get):
+        (JSC::WeakGCPtr::clear):
+        (JSC::WeakGCPtr::set):
+        (JSC::WeakGCPtr::setWithWriteBarrier): Removed duplicate code and
+        standardized on Handle idioms.
+
 2011-04-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Martin Robinson.

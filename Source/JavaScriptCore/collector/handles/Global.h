@@ -33,114 +33,108 @@
 
 namespace JSC {
 
-/*
-    A Global is a persistent handle whose lifetime is not limited to any given
-    scope. Use Globals for data members and global variables.
-*/
-
+// A Global is a persistent handle whose lifetime is not limited to any given scope.
 template <typename T> class Global : public Handle<T> {
+    using Handle<T>::slot;
+    using Handle<T>::setSlot;
+
 public:
     typedef typename Handle<T>::ExternalType ExternalType;
-    Global(JSGlobalData& globalData, ExternalType ptr = ExternalType())
+    
+    Global()
+        : Handle<T>()
+    {
+    }
+    
+    Global(JSGlobalData& globalData, ExternalType value = ExternalType())
         : Handle<T>(globalData.allocateGlobalHandle())
     {
-        internalSet(ptr);
+        set(value);
     }
 
     Global(JSGlobalData& globalData, Handle<T> handle)
         : Handle<T>(globalData.allocateGlobalHandle())
     {
-        internalSet(handle.get());
+        set(handle.get());
     }
     
-    enum EmptyValueTag { EmptyValue };
-    Global(EmptyValueTag)
-        : Handle<T>(0, HandleBase::DontNullCheckSlot)
+    Global(const Global& other)
+        : Handle<T>()
+    {
+        if (!other.slot())
+            return;
+        setSlot(HandleHeap::heapFor(other.slot())->allocate());
+        set(other.get());
+    }
+
+    template <typename U> Global(const Global<U>& other)
+        : Handle<T>()
+    {
+        if (!other.slot())
+            return;
+        setSlot(HandleHeap::heapFor(other.slot())->allocate());
+        set(other.get());
+    }
+    
+    enum HashTableDeletedValueTag { HashTableDeletedValue };
+    bool isHashTableDeletedValue() const { return slot() == hashTableDeletedValue(); }
+    Global(HashTableDeletedValueTag)
+        : Handle<T>(hashTableDeletedValue())
     {
     }
 
     ~Global()
     {
-        HandleSlot slot = this->slot();
-        if (slot)
-            HandleHeap::heapFor(slot)->deallocate(slot);
+        clear();
     }
 
     void set(JSGlobalData& globalData, ExternalType value)
     {
-        if (!value) {
-            clear();
-            return;
-        }
-        if (!this->slot())
-            this->setSlot(globalData.allocateGlobalHandle());
-        internalSet(value);
+        if (!slot())
+            setSlot(globalData.allocateGlobalHandle());
+        set(value);
     }
 
-    template <typename U> Global& operator=(const Global<U>& handle)
+    template <typename U> Global& operator=(const Global<U>& other)
     {
-        if (handle.slot()) {
-            if (!this->slot())
-                this->setSlot(HandleHeap::heapFor(handle.slot())->allocate());
-            internalSet(handle.get());
-        } else
+        if (!other.slot()) {
             clear();
-        
+            return *this;
+        }
+
+        set(*HandleHeap::heapFor(other.slot())->globalData(), other.get());
         return *this;
     }
     
-    Global& operator=(const Global& handle)
+    Global& operator=(const Global& other)
     {
-        if (handle.slot()) {
-            if (!this->slot())
-                this->setSlot(HandleHeap::heapFor(handle.slot())->allocate());
-            internalSet(handle.get());
-        } else
+        if (!other.slot()) {
             clear();
-        
+            return *this;
+        }
+
+        set(*HandleHeap::heapFor(other.slot())->globalData(), other.get());
         return *this;
     }
 
     void clear()
     {
-        if (this->slot())
-            internalSet(ExternalType());
+        if (!slot())
+            return;
+        HandleHeap::heapFor(slot())->deallocate(slot());
+        setSlot(0);
     }
 
-    enum HashTableDeletedValueType { HashTableDeletedValue };
-    const static intptr_t HashTableDeletedValueTag = 0x1;
-    Global(HashTableDeletedValueType)
-        : Handle<T>(reinterpret_cast<HandleSlot>(HashTableDeletedValueTag))
-    {
-    }
-    bool isHashTableDeletedValue() const { return slot() == reinterpret_cast<HandleSlot>(HashTableDeletedValueTag); }
+private:
+    static HandleSlot hashTableDeletedValue() { return reinterpret_cast<HandleSlot>(-1); }
 
-    template <typename U> Global(const Global<U>& other)
-        : Handle<T>(other.slot() ? HandleHeap::heapFor(other.slot())->allocate() : 0, Handle<T>::DontNullCheckSlot)
+    void set(ExternalType externalType)
     {
-        if (other.slot())
-            internalSet(other.get());
+        ASSERT(slot());
+        JSValue value = HandleTypes<T>::toJSValue(externalType);
+        HandleHeap::heapFor(slot())->writeBarrier(slot(), value);
+        *slot() = value;
     }
-    
-    Global(const Global& other)
-        : Handle<T>(other.slot() ? HandleHeap::heapFor(other.slot())->allocate() : 0, Handle<T>::DontNullCheckSlot)
-    {
-        if (other.slot())
-            internalSet(other.get());
-    }
-
-protected:
-    void internalSet(ExternalType value)
-    {
-        JSValue newValue(HandleTypes<T>::toJSValue(value));
-        HandleSlot slot = this->slot();
-        ASSERT(slot);
-        HandleHeap::heapFor(slot)->writeBarrier(slot, newValue);
-        *slot = newValue;
-    }
-
-    using Handle<T>::slot;
-    
 };
 
 }
@@ -149,7 +143,7 @@ namespace WTF {
 
 template<typename P> struct HashTraits<JSC::Global<P> > : GenericHashTraits<JSC::Global<P> > {
     static const bool emptyValueIsZero = true;
-    static JSC::Global<P> emptyValue() { return JSC::Global<P>(JSC::Global<P>::EmptyValue); }
+    static JSC::Global<P> emptyValue() { return JSC::Global<P>(); }
     static void constructDeletedValue(JSC::Global<P>& slot) { new (&slot) JSC::Global<P>(JSC::Global<P>::HashTableDeletedValue); }
     static bool isDeletedValue(const JSC::Global<P>& value) { return value.isHashTableDeletedValue(); }
 };

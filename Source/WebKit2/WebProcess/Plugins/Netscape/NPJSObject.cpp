@@ -55,7 +55,6 @@ NPJSObject* NPJSObject::create(JSGlobalData& globalData, NPRuntimeObjectMap* obj
 
 NPJSObject::NPJSObject()
     : m_objectMap(0)
-    , m_jsObject(Global<JSObject>::EmptyValue)
 {
 }
 

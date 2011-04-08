@@ -29,12 +29,12 @@
 #ifndef SamplingTool_h
 #define SamplingTool_h
 
+#include "Global.h"
+#include "Nodes.h"
+#include "Opcode.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/Threading.h>
-
-#include "Nodes.h"
-#include "Opcode.h"
 
 namespace JSC {
 

@@ -94,8 +94,8 @@ public:
         HandleSlot slot = iter.first->second;
         if (iter.second) {
             slot = globalData.allocateGlobalHandle();
-            iter.first->second = slot;
             HandleHeap::heapFor(slot)->makeWeak(slot, this, key);
+            iter.first->second = slot;
         }
         HandleHeap::heapFor(slot)->writeBarrier(slot, value);
         *slot = value;

@@ -29,6 +29,7 @@
 #ifndef JSValueWrapper_h
 #define JSValueWrapper_h
 
+#include <JavaScriptCore/Global.h>
 #include "JSUtils.h"
 #include "JSBase.h"
 #include "JSObject.h"

@@ -26,77 +26,84 @@
 #ifndef WeakGCPtr_h
 #define WeakGCPtr_h
 
-#include "Global.h"
-#include "Heap.h"
+#include "Assertions.h"
+#include "Handle.h"
+#include "HandleHeap.h"
+#include "JSGlobalData.h"
 
 namespace JSC {
-// A smart pointer whose get() function returns 0 for cells that have died
 
-template <typename T> class WeakGCPtr : public HandleConverter<WeakGCPtr<T>, T> {
-    WTF_MAKE_NONCOPYABLE(WeakGCPtr);
+// A smart pointer that becomes 0 when the value it points to is garbage collected.
+template <typename T> class WeakGCPtr : public Handle<T> {
+    using Handle<T>::slot;
+    using Handle<T>::setSlot;
 
 public:
-    typedef typename HandleTypes<T>::ExternalType ExternalType;
-    
+    typedef typename Handle<T>::ExternalType ExternalType;
+
     WeakGCPtr()
-        : m_slot(0)
+        : Handle<T>()
     {
-    }
-    
-    WeakGCPtr(JSGlobalData& globalData, WeakHandleOwner* weakOwner = 0, void* context = 0)
-        : m_slot(globalData.allocateGlobalHandle())
-    {
-        HandleHeap::heapFor(m_slot)->makeWeak(m_slot, weakOwner, context);
-    }
-    
-    WeakGCPtr(JSGlobalData& globalData, ExternalType value, WeakHandleOwner* weakOwner = 0, void* context = 0)
-        : m_slot(globalData.allocateGlobalHandle())
-    {
-        HandleHeap::heapFor(m_slot)->makeWeak(m_slot, weakOwner, context);
-        internalSet(value);
     }
 
-    ExternalType get() const { return  HandleTypes<T>::getFromSlot(m_slot); }
+    WeakGCPtr(JSGlobalData& globalData, ExternalType value = ExternalType(), WeakHandleOwner* weakOwner = 0, void* context = 0)
+        : Handle<T>(globalData.allocateGlobalHandle())
+    {
+        HandleHeap::heapFor(slot())->makeWeak(slot(), weakOwner, context);
+        set(value);
+    }
+
+    WeakGCPtr(const WeakGCPtr& other)
+        : Handle<T>()
+    {
+        if (!other.slot())
+            return;
+        setSlot(HandleHeap::heapFor(other.slot())->allocate());
+        set(other.get());
+    }
+
+    template <typename U> WeakGCPtr(const WeakGCPtr<U>& other)
+        : Handle<T>()
+    {
+        if (!other.slot())
+            return;
+        setSlot(HandleHeap::heapFor(other.slot())->allocate());
+        set(other.get());
+    }
+    
+    ~WeakGCPtr()
+    {
+        clear();
+    }
+
+    ExternalType get() const { return  HandleTypes<T>::getFromSlot(slot()); }
     
     void clear()
     {
-        if (m_slot)
-            internalSet(ExternalType());
+        if (!slot())
+            return;
+        HandleHeap::heapFor(slot())->deallocate(slot());
+        setSlot(0);
     }
     
-    bool operator!() const { return !m_slot || !*m_slot; }
-
-    // This conversion operator allows implicit conversion to bool but not to other integer types.
-    typedef ExternalType (WeakGCPtr::*UnspecifiedBoolType);
-    operator UnspecifiedBoolType*() const { return !*this ? 0 : reinterpret_cast<UnspecifiedBoolType*>(1); }
-
-    ~WeakGCPtr()
-    {
-        if (!m_slot)
-            return;
-        HandleHeap::heapFor(m_slot)->deallocate(m_slot);
-    }
-
     void set(JSGlobalData& globalData, ExternalType value, WeakHandleOwner* weakOwner = 0, void* context = 0)
     {
-        if (!this->m_slot) {
-            this->m_slot = globalData.allocateGlobalHandle();
-            HandleHeap::heapFor(this->m_slot)->makeWeak(this->m_slot, weakOwner, context);
+        if (!slot()) {
+            setSlot(globalData.allocateGlobalHandle());
+            HandleHeap::heapFor(slot())->makeWeak(slot(), weakOwner, context);
         }
-        ASSERT(HandleHeap::heapFor(this->m_slot)->hasWeakOwner(this->m_slot, weakOwner));
-        this->internalSet(value);
+        ASSERT(HandleHeap::heapFor(slot())->hasWeakOwner(slot(), weakOwner));
+        set(value);
     }
 
 private:
-    void internalSet(ExternalType value)
+    void set(ExternalType externalType)
     {
-        ASSERT(m_slot);
-        JSValue newValue(HandleTypes<T>::toJSValue(value));
-        HandleHeap::heapFor(m_slot)->writeBarrier(m_slot, newValue);
-        *m_slot = newValue;
+        ASSERT(slot());
+        JSValue value = HandleTypes<T>::toJSValue(externalType);
+        HandleHeap::heapFor(slot())->writeBarrier(slot(), value);
+        *slot() = value;
     }
-
-    HandleSlot m_slot;
 };
 
 } // namespace JSC

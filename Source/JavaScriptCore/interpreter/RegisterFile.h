@@ -167,7 +167,7 @@ namespace JSC {
         , m_start(0)
         , m_end(0)
         , m_max(0)
-        , m_globalObject(globalData, &m_globalObjectOwner, this)
+        , m_globalObject(globalData, 0, &m_globalObjectOwner, this)
     {
         ASSERT(maxGlobals && isPageAligned(maxGlobals));
         ASSERT(capacity && isPageAligned(capacity));

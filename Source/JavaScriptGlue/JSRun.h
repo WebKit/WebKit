@@ -29,6 +29,7 @@
 #ifndef JSRun_h
 #define JSRun_h
 
+#include <JavaScriptCore/Global.h>
 #include "JSBase.h"
 #include "JSUtils.h"
 

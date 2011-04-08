@@ -1,3 +1,11 @@
+2011-04-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Some Handle<T> cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=58109
+
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::NPJSObject): Updated for new null constructor.
+
 2011-04-07  Jessie Berlin  <jberlin@apple.com>
 
         Max build fix.
