@@ -1,3 +1,14 @@
+2011-04-08  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, added new GTK+ test expectations.
+
+        * platform/gtk/fast/block/positioning/complex-positioned-movement-expected.checksum: Added.
+        * platform/gtk/fast/block/positioning/complex-positioned-movement-expected.png: Added.
+        * platform/gtk/fast/block/positioning/complex-positioned-movement-expected.txt: Added.
+        * platform/gtk/fast/text/decorations-transformed-expected.checksum: Added.
+        * platform/gtk/fast/text/decorations-transformed-expected.png: Added.
+        * platform/gtk/fast/text/decorations-transformed-expected.txt: Added.
+
 2011-04-08  Anton Muhin  <antonm@chromium.org>
 
         Reviewed by Adam Barth.
