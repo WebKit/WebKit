@@ -53,7 +53,6 @@ public:
     }
 
 private:
-    v8::Locker m_locker;
     v8::HandleScope m_scope;
     v8::Persistent<v8::Context> m_context;
 };

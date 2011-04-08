@@ -1,3 +1,15 @@
+2011-04-08  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] Remove unneeded usage of V8::Lockers in IDB tests.
+        https://bugs.webkit.org/show_bug.cgi?id=58110
+        Since they are simple one-thread tests.
+        This code parallels the code in Chromium's idb bindings that uses v8 Lockers in utility process,
+        which is equally not needed since there is only one thread running v8 in that process.
+
+        * tests/IDBBindingUtilitiesTest.cpp:
+
 2011-04-07  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
