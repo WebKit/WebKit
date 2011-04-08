@@ -345,8 +345,11 @@ void HTMLDocumentParser::append(const SegmentedString& source)
     RefPtr<HTMLDocumentParser> protect(this);
 
     m_input.appendToEnd(source);
-    if (m_preloadScanner)
+    if (m_preloadScanner) {
         m_preloadScanner->appendToEnd(source);
+        if (m_treeBuilder->isPaused())
+            m_preloadScanner->scan();
+    }
 
     if (inPumpSession()) {
         // We've gotten data off the network in a nested write.

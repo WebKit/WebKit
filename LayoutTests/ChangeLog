@@ -1,3 +1,14 @@
+2011-04-08  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Tony Gentilcore.
+
+        Incoming source should be preload scanned when the parser is blocked 
+        https://bugs.webkit.org/show_bug.cgi?id=58117
+
+        * http/tests/loading/preload-append-scan-expected.txt: Added.
+        * http/tests/loading/preload-append-scan.php: Added.
+        * http/tests/resources/slow-script.pl: Added.
+
 2011-04-08  Jian Li  <jianli@chromium.org>
 
         Unreviewed, fixed a typo in chromium test expectation list.
@@ -9934,7 +9945,6 @@
         * platform/mac/fast/repaint/layout-state-scrolloffset3-expected.txt:
         * platform/mac/tables/mozilla/bugs/bug51140-expected.txt:
 
->>>>>>> .r82178
 2011-03-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
@@ -13085,7 +13095,6 @@
         * platform/win-wk2/inspector/console: Added.
         * platform/win-wk2/inspector/console/command-line-api-inspect-expected.txt: Added.
 
->>>>>>> .r81488
 2011-03-18  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, suppress editing/deleting/5206311-1.html crashes on Mac Debug
