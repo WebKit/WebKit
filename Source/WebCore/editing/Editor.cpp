@@ -339,7 +339,7 @@ bool Editor::deleteWithDirection(SelectionDirection direction, TextGranularity g
 
     if (m_frame->selection()->isRange()) {
         if (isTypingAction) {
-            TypingCommand::deleteKeyPressed(m_frame->document(), canSmartCopyOrDelete(), granularity);
+            TypingCommand::deleteKeyPressed(m_frame->document(), canSmartCopyOrDelete() ? TypingCommand::SmartDelete : 0, granularity);
             revealSelectionAfterEditingOperation();
         } else {
             if (killRing)
@@ -348,14 +348,19 @@ bool Editor::deleteWithDirection(SelectionDirection direction, TextGranularity g
             // Implicitly calls revealSelectionAfterEditingOperation().
         }
     } else {
+        TypingCommand::Options options = 0;
+        if (canSmartCopyOrDelete())
+            options |= TypingCommand::SmartDelete;
+        if (killRing)
+            options |= TypingCommand::KillRing;
         switch (direction) {
         case DirectionForward:
         case DirectionRight:
-            TypingCommand::forwardDeleteKeyPressed(m_frame->document(), canSmartCopyOrDelete(), granularity, killRing);
+            TypingCommand::forwardDeleteKeyPressed(m_frame->document(), options, granularity);
             break;
         case DirectionBackward:
         case DirectionLeft:
-            TypingCommand::deleteKeyPressed(m_frame->document(), canSmartCopyOrDelete(), granularity, killRing);
+            TypingCommand::deleteKeyPressed(m_frame->document(), options, granularity);
             break;
         }
         revealSelectionAfterEditingOperation();
@@ -1202,7 +1207,7 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
             RefPtr<Document> document = selectionStart->document();
 
             // Insert the text
-            TypingCommand::TypingCommandOptions options = 0;
+            TypingCommand::Options options = 0;
             if (selectInsertedText)
                 options |= TypingCommand::SelectInsertedText;
             if (autocorrectionWasApplied)
@@ -1629,7 +1634,7 @@ void Editor::confirmComposition(const String& text, bool preserveSelection)
     // If text is empty, then delete the old composition here.  If text is non-empty, InsertTextCommand::input
     // will delete the old composition with an optimized replace operation.
     if (text.isEmpty())
-        TypingCommand::deleteSelection(m_frame->document(), false);
+        TypingCommand::deleteSelection(m_frame->document(), 0);
 
     m_compositionNode = 0;
     m_customCompositionUnderlines.clear();
@@ -1697,13 +1702,13 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     // If text is empty, then delete the old composition here.  If text is non-empty, InsertTextCommand::input
     // will delete the old composition with an optimized replace operation.
     if (text.isEmpty())
-        TypingCommand::deleteSelection(m_frame->document(), false);
+        TypingCommand::deleteSelection(m_frame->document(), TypingCommand::PreventSpellChecking);
 
     m_compositionNode = 0;
     m_customCompositionUnderlines.clear();
 
     if (!text.isEmpty()) {
-        TypingCommand::insertText(m_frame->document(), text, true, TypingCommand::TextCompositionUpdate);
+        TypingCommand::insertText(m_frame->document(), text, TypingCommand::SelectInsertedText | TypingCommand::PreventSpellChecking, TypingCommand::TextCompositionUpdate);
 
         // Find out what node has the composition now.
         Position base = m_frame->selection()->base().downstream();

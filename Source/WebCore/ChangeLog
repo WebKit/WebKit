@@ -1,3 +1,39 @@
+2011-04-07  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        [Mac] Editor::setComposition() should not trigger correction panel timer.
+        https://bugs.webkit.org/show_bug.cgi?id=58049
+         <rdar://problem/9226305>
+
+        On Mac OS X that supports autocorrection panel, typing unconfirmed composition (i.e. unconfirmed Japanese or Chinese input)
+        should not start autocorrection timer. We added a member variable, m_shouldPreventSpellChecking, to TypingCommand. 
+        When this value is true, markMisspellingsAfterTyping() will not be called in TypingCommand::typingAddedToOpenCommand().
+        m_shouldPreventSpellChecking is set to true in the TypingCommand objects created by Editor::setComposition().
+
+        No new tests. No deterministically reproducible test case. Patch is based on static code analysis. Testing this also requires firing
+        autocorrection panel timer, which can not be easily done in automated fashion.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::deleteWithDirection):
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::confirmComposition):
+        (WebCore::Editor::setComposition):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeDelete):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::TypingCommand):
+        (WebCore::TypingCommand::deleteSelection):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::insertLineBreak):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        (WebCore::TypingCommand::typingAddedToOpenCommand):
+        * editing/TypingCommand.h:
+        (WebCore::TypingCommand::create):
+        (WebCore::TypingCommand::setShouldPreventSpellChecking):
+
 2011-04-07  John Bauman  <jbauman@chromium.org>
 
         Reviewed by Kenneth Russell.

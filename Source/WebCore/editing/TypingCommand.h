@@ -48,20 +48,22 @@ public:
         TextCompositionConfirm
     };
 
-    enum TypingCommandOption {
+    enum Option {
         SelectInsertedText = 1 << 0,
         KillRing = 1 << 1,
-        RetainAutocorrectionIndicator = 1 << 2
+        RetainAutocorrectionIndicator = 1 << 2,
+        PreventSpellChecking = 1 << 3,
+        SmartDelete = 1 << 4
     };
-    typedef unsigned TypingCommandOptions;
+    typedef unsigned Options;
 
-    static void deleteSelection(Document*, bool smartDelete = false);
-    static void deleteKeyPressed(Document*, bool smartDelete = false, TextGranularity = CharacterGranularity, bool killRing = false);
-    static void forwardDeleteKeyPressed(Document*, bool smartDelete = false, TextGranularity = CharacterGranularity, bool killRing = false);
-    static void insertText(Document*, const String&, TypingCommandOptions, TextCompositionType = TextCompositionNone);
-    static void insertText(Document*, const String&, const VisibleSelection&, TypingCommandOptions, TextCompositionType = TextCompositionNone);
-    static void insertLineBreak(Document*, TypingCommandOptions);
-    static void insertParagraphSeparator(Document*, TypingCommandOptions);
+    static void deleteSelection(Document*, Options = 0);
+    static void deleteKeyPressed(Document*, Options = 0, TextGranularity = CharacterGranularity);
+    static void forwardDeleteKeyPressed(Document*, Options = 0, TextGranularity = CharacterGranularity);
+    static void insertText(Document*, const String&, Options, TextCompositionType = TextCompositionNone);
+    static void insertText(Document*, const String&, const VisibleSelection&, Options, TextCompositionType = TextCompositionNone);
+    static void insertLineBreak(Document*, Options);
+    static void insertParagraphSeparator(Document*, Options);
     static void insertParagraphSeparatorInQuotedContent(Document*);
     static bool isOpenForMoreTypingCommand(const EditCommand*);
     static void closeTyping(EditCommand*);
@@ -80,17 +82,17 @@ public:
     void setCompositionType(TextCompositionType type) { m_compositionType = type; }
 
 private:
-    static PassRefPtr<TypingCommand> create(Document* document, ETypingCommand command, const String& text = "", TypingCommandOptions options = 0, TextGranularity granularity = CharacterGranularity)
+    static PassRefPtr<TypingCommand> create(Document* document, ETypingCommand command, const String& text = "", Options options = 0, TextGranularity granularity = CharacterGranularity)
     {
         return adoptRef(new TypingCommand(document, command, text, options, granularity, TextCompositionNone));
     }
 
-    static PassRefPtr<TypingCommand> create(Document* document, ETypingCommand command, const String& text, TypingCommandOptions options, TextCompositionType compositionType)
+    static PassRefPtr<TypingCommand> create(Document* document, ETypingCommand command, const String& text, Options options, TextCompositionType compositionType)
     {
         return adoptRef(new TypingCommand(document, command, text, options, CharacterGranularity, compositionType));
     }
 
-    TypingCommand(Document*, ETypingCommand, const String& text, TypingCommandOptions, TextGranularity, TextCompositionType);
+    TypingCommand(Document*, ETypingCommand, const String& text, Options, TextGranularity, TextCompositionType);
 
     bool smartDelete() const { return m_smartDelete; }
     void setSmartDelete(bool smartDelete) { m_smartDelete = smartDelete; }
@@ -101,6 +103,7 @@ private:
     virtual bool preservesTypingStyle() const { return m_preservesTypingStyle; }
     virtual bool shouldRetainAutocorrectionIndicator() const { return m_shouldRetainAutocorrectionIndicator; }
     virtual void setShouldRetainAutocorrectionIndicator(bool retain) { m_shouldRetainAutocorrectionIndicator = retain; }
+    void setShouldPreventSpellChecking(bool prevent) { m_shouldPreventSpellChecking = prevent; }
 
     static void updateSelectionIfDifferentFromCurrentSelection(TypingCommand*, Frame*);
 
@@ -125,6 +128,7 @@ private:
     bool m_openedByBackwardDelete;
 
     bool m_shouldRetainAutocorrectionIndicator;
+    bool m_shouldPreventSpellChecking;
 };
 
 } // namespace WebCore
