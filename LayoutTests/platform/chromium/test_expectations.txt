@@ -3296,3 +3296,5 @@ BUGCR780807 : http/tests/misc/webtiming-origins.html = PASS TEXT
 
 BUGWK58147 : fast/dom/MediaStream/argument-types.html = TEXT
 BUGWK58147 : fast/dom/MediaStream/enabled.html = TEXT
+
+BUGCR78835 : plugins/npp-set-window-called-during-destruction.htm = CRASH
