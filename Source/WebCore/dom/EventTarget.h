@@ -84,7 +84,7 @@ namespace WebCore {
     typedef Vector<FiringEventIterator, 1> FiringEventIteratorVector;
 
     typedef Vector<RegisteredEventListener, 1> EventListenerVector;
-    typedef HashMap<AtomicString, OwnPtr<EventListenerVector>> EventListenerMap;
+    typedef HashMap<AtomicString, EventListenerVector*> EventListenerMap;
 
     struct EventTargetData {
         WTF_MAKE_NONCOPYABLE(EventTargetData); WTF_MAKE_FAST_ALLOCATED;

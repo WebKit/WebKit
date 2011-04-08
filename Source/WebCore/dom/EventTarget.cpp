@@ -209,10 +209,10 @@ bool EventTarget::addEventListener(const AtomicString& eventType, PassRefPtr<Eve
     EventTargetData* d = ensureEventTargetData();
 
     pair<EventListenerMap::iterator, bool> result = d->eventListenerMap.add(eventType, 0);
-    OwnPtr<EventListenerVector>& entry = result.first->second;
+    EventListenerVector*& entry = result.first->second;
     const bool isNewEntry = result.second;
     if (isNewEntry)
-        entry = adoptPtr(new EventListenerVector());
+        entry = new EventListenerVector();
 
     RegisteredEventListener registeredListener(listener, useCapture);
     if (!isNewEntry) {
@@ -233,7 +233,7 @@ bool EventTarget::removeEventListener(const AtomicString& eventType, EventListen
     EventListenerMap::iterator result = d->eventListenerMap.find(eventType);
     if (result == d->eventListenerMap.end())
         return false;
-    OwnPtr<EventListenerVector>& entry = result->second;
+    EventListenerVector* entry = result->second;
 
     RegisteredEventListener registeredListener(listener, useCapture);
     size_t index = entry->find(registeredListener);
@@ -241,8 +241,10 @@ bool EventTarget::removeEventListener(const AtomicString& eventType, EventListen
         return false;
 
     entry->remove(index);
-    if (entry->isEmpty())
+    if (entry->isEmpty()) {
+        delete entry;
         d->eventListenerMap.remove(result);
+    }
 
     // Notify firing events planning to invoke the listener at 'index' that
     // they have one less listener to invoke.

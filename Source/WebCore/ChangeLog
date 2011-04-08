@@ -1,3 +1,14 @@
+2011-04-07  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+
+        Rolled out some accidentally-committed changes in my last commit.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::addEventListener):
+        (WebCore::EventTarget::removeEventListener):
+        * dom/EventTarget.h:
+
 2011-04-07  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Alexey Proskuryakov.
