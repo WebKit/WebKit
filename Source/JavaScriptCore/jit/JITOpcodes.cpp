@@ -57,7 +57,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     // Checks out okay! - get the length from the Ustring.
     load32(Address(regT0, OBJECT_OFFSETOF(JSString, m_length)), regT0);
 
-    Jump string_failureCases3 = branch32(Above, regT0, TrustedImm32(JSImmediate::maxImmediateInt));
+    Jump string_failureCases3 = branch32(LessThan, regT0, TrustedImm32(0));
 
     // regT0 contains a 64 bit value (is positive, is zero extended) so we don't need sign extend here.
     emitFastArithIntToImmNoCheck(regT0, regT0);

@@ -697,7 +697,7 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     // Checks out okay! - get the length from the storage
     loadPtr(Address(regT0, JSArray::storageOffset()), regT3);
     load32(Address(regT3, OBJECT_OFFSETOF(ArrayStorage, m_length)), regT2);
-    Jump failureCases2 = branch32(Above, regT2, TrustedImm32(JSImmediate::maxImmediateInt));
+    Jump failureCases2 = branch32(LessThan, regT2, TrustedImm32(0));
 
     emitFastArithIntToImmNoCheck(regT2, regT0);
     Jump success = jump();

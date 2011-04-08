@@ -105,11 +105,7 @@ namespace JSC {
      */
 
     class JSImmediate {
-    private:
-        friend class JIT;
         friend class JSValue;
-        friend class JSInterfaceJIT;
-        friend class SpecializedThunkJIT;
         friend JSValue jsNumber(ExecState* exec, double d);
         friend JSValue jsNumber(ExecState*, char i);
         friend JSValue jsNumber(ExecState*, unsigned char i);
@@ -131,6 +127,7 @@ namespace JSC {
         friend JSValue jsNumber(JSGlobalData* globalData, long long i);
         friend JSValue jsNumber(JSGlobalData* globalData, unsigned long long i);
 
+    public:
         // If all bits in the mask are set, this indicates an integer number,
         // if any but not all are set this value is a double precision number.
         static const intptr_t TagTypeNumber = 0xffff000000000000ll;
@@ -150,6 +147,7 @@ namespace JSC {
         static const intptr_t FullTagTypeUndefined = TagBitTypeOther | ExtendedTagBitUndefined;
         static const intptr_t FullTagTypeNull      = TagBitTypeOther;
 
+    private:
         static ALWAYS_INLINE bool isImmediate(JSValue v)
         {
             return rawValue(v) & TagMask;

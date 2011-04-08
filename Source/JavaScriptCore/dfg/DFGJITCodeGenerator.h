@@ -607,6 +607,26 @@ protected:
         appendCallWithExceptionCheck(operation);
         m_jit.move(JITCompiler::returnValueRegister, JITCompiler::gprToRegisterID(result));
     }
+    void callOperation(Z_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
+    {
+        ASSERT(isFlushed());
+
+        m_jit.move(JITCompiler::gprToRegisterID(arg1), JITCompiler::argumentRegister1);
+        m_jit.move(JITCompiler::callFrameRegister, JITCompiler::argumentRegister0);
+
+        appendCallWithExceptionCheck(operation);
+        m_jit.move(JITCompiler::returnValueRegister, JITCompiler::gprToRegisterID(result));
+    }
+    void callOperation(Z_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    {
+        ASSERT(isFlushed());
+
+        setupStubArguments(arg1, arg2);
+        m_jit.move(JITCompiler::callFrameRegister, JITCompiler::argumentRegister0);
+
+        appendCallWithExceptionCheck(operation);
+        m_jit.move(JITCompiler::returnValueRegister, JITCompiler::gprToRegisterID(result));
+    }
     void callOperation(J_DFGOperation_EJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         ASSERT(isFlushed());

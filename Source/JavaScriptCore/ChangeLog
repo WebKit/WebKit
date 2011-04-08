@@ -1,3 +1,46 @@
+2011-04-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 58154 - Add support for comparison operators to the DFG JIT.
+
+        Add support for <, <=, ==, ===, and also !.  Add support for all corresponding
+        bytecode ops, including the not- and -null forms.  Initially add functionally
+        correct support, we'll revisit the performance.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::constantNull):
+        (JSC::DFG::ByteCodeParser::parse):
+            - Add support for parsing of bytecode opcodes, 
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::callOperation):
+            - Add new operation call types, return bool values.
+        * dfg/DFGNode.h:
+            - Add new node types.
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+            - Add code generation for new nodes.
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationCompareLess):
+        (JSC::DFG::operationCompareLessEq):
+        (JSC::DFG::operationCompareEq):
+        (JSC::DFG::operationCompareStrictEq):
+        (JSC::DFG::dfgConvertJSValueToBoolean):
+        * dfg/DFGOperations.h:
+            - Add operation callbacks to implement new ops.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+            - Add code generation for new nodes.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTIMachineTrampolines):
+            - Switched to a simpler <0 check, rather than relying on an internal value in JSImmediate.
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+            - Switched to a simpler <0 check, rather than relying on an internal value in JSImmediate.
+        * runtime/JSImmediate.h:
+            - Make tag values public, rather than relying on a friend - this matches JSVALUE32_64.
+
 2011-04-07  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Eric Carlson.

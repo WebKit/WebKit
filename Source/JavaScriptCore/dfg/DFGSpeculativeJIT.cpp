@@ -434,6 +434,72 @@ bool SpeculativeJIT::compile(Node& node)
         break;
     }
 
+    case LogicalNot: {
+        JSValueOperand value(this, node.child1);
+        GPRTemporary result(this); // FIXME: We could reuse, but on speculation fail would need recovery to restore tag (akin to add).
+
+        m_jit.move(value.registerID(), result.registerID());
+        m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(JSImmediate::FullTagTypeFalse)), result.registerID());
+        speculationCheck(m_jit.branchTestPtr(JITCompiler::NonZero, result.registerID(), TrustedImm32(static_cast<int32_t>(~1))));
+        m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(JSImmediate::FullTagTypeTrue)), result.registerID());
+
+        // If we add a DataFormatBool, we should use it here.
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case CompareLess: {
+        SpeculateIntegerOperand op1(this, node.child1);
+        SpeculateIntegerOperand op2(this, node.child2);
+        GPRTemporary result(this, op1, op2);
+
+        m_jit.set32Compare32(JITCompiler::LessThan, op1.registerID(), op2.registerID(), result.registerID());
+
+        // If we add a DataFormatBool, we should use it here.
+        m_jit.or32(TrustedImm32(JSImmediate::FullTagTypeFalse), result.registerID());
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case CompareLessEq: {
+        SpeculateIntegerOperand op1(this, node.child1);
+        SpeculateIntegerOperand op2(this, node.child2);
+        GPRTemporary result(this, op1, op2);
+
+        m_jit.set32Compare32(JITCompiler::LessThanOrEqual, op1.registerID(), op2.registerID(), result.registerID());
+
+        // If we add a DataFormatBool, we should use it here.
+        m_jit.or32(TrustedImm32(JSImmediate::FullTagTypeFalse), result.registerID());
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case CompareEq: {
+        SpeculateIntegerOperand op1(this, node.child1);
+        SpeculateIntegerOperand op2(this, node.child2);
+        GPRTemporary result(this, op1, op2);
+
+        m_jit.set32Compare32(JITCompiler::Equal, op1.registerID(), op2.registerID(), result.registerID());
+
+        // If we add a DataFormatBool, we should use it here.
+        m_jit.or32(TrustedImm32(JSImmediate::FullTagTypeFalse), result.registerID());
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case CompareStrictEq: {
+        SpeculateIntegerOperand op1(this, node.child1);
+        SpeculateIntegerOperand op2(this, node.child2);
+        GPRTemporary result(this, op1, op2);
+
+        m_jit.set32Compare32(JITCompiler::Equal, op1.registerID(), op2.registerID(), result.registerID());
+
+        // If we add a DataFormatBool, we should use it here.
+        m_jit.or32(TrustedImm32(JSImmediate::FullTagTypeFalse), result.registerID());
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
     case GetByVal: {
         NodeIndex alias = node.child3;
         if (alias != NoNode) {

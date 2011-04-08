@@ -42,6 +42,8 @@ typedef EncodedJSValue (*J_DFGOperation_EJJ)(ExecState*, EncodedJSValue, Encoded
 typedef EncodedJSValue (*J_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef EncodedJSValue (*J_DFGOperation_EJP)(ExecState*, EncodedJSValue, void*);
 typedef EncodedJSValue (*J_DFGOperation_EJI)(ExecState*, EncodedJSValue, Identifier*);
+typedef bool (*Z_DFGOperation_EJ)(ExecState*, EncodedJSValue);
+typedef bool (*Z_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
 typedef void (*V_DFGOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
 typedef void (*V_DFGOperation_EJJP)(ExecState*, EncodedJSValue, EncodedJSValue, void*);
 typedef void (*V_DFGOperation_EJJI)(ExecState*, EncodedJSValue, EncodedJSValue, Identifier*);
@@ -58,6 +60,10 @@ void operationPutByIdStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSVa
 void operationPutByIdNonStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
 void operationPutByIdDirectStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
 void operationPutByIdDirectNonStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
+bool operationCompareLess(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+bool operationCompareLessEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+bool operationCompareEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+bool operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.
@@ -73,9 +79,10 @@ struct DFGHandler {
 };
 DFGHandler lookupExceptionHandler(ExecState*, ReturnAddressPtr faultLocation);
 
-// These operations implement the implicitly called ToInt32 and ToNumber conversions from ES5.
+// These operations implement the implicitly called ToInt32, ToNumber, and ToBoolean conversions from ES5.
 double dfgConvertJSValueToNumber(ExecState*, EncodedJSValue);
 int32_t dfgConvertJSValueToInt32(ExecState*, EncodedJSValue);
+bool dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue);
 
 } } // namespace JSC::DFG
 

@@ -192,6 +192,26 @@ void operationPutByIdDirectNonStrict(ExecState* exec, EncodedJSValue encodedValu
     JSValue::decode(encodedBase).putDirect(exec, *identifier, JSValue::decode(encodedValue), slot);
 }
 
+bool operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    return jsLess(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
+}
+
+bool operationCompareLessEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    return jsLessEq(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
+}
+
+bool operationCompareEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    return JSValue::equal(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
+}
+
+bool operationCompareStrictEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+{
+    return JSValue::strictEqual(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
+}
+
 DFGHandler lookupExceptionHandler(ExecState* exec, ReturnAddressPtr faultLocation)
 {
     JSValue exceptionValue = exec->exception();
@@ -213,6 +233,11 @@ double dfgConvertJSValueToNumber(ExecState* exec, EncodedJSValue value)
 int32_t dfgConvertJSValueToInt32(ExecState* exec, EncodedJSValue value)
 {
     return JSValue::decode(value).toInt32(exec);
+}
+
+bool dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue encodedOp)
+{
+    return JSValue::decode(encodedOp).toBoolean(exec);
 }
 
 } } // namespace JSC::DFG

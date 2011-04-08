@@ -44,8 +44,9 @@ public:
         , m_codeBlock(codeBlock)
         , m_graph(graph)
         , m_currentIndex(0)
-        , m_noArithmetic(true)
+        , m_regressionGuard(false)
         , m_constantUndefined(UINT_MAX)
+        , m_constantNull(UINT_MAX)
         , m_constant1(UINT_MAX)
     {
         unsigned numberOfConstants = codeBlock->numberOfConstantRegisters();
@@ -327,6 +328,31 @@ private:
         return getJSConstant(m_constantUndefined);
     }
 
+    // This method returns a JSConstant with the value 'null'.
+    NodeIndex constantNull()
+    {
+        // Has m_constantNull been set up yet?
+        if (m_constantNull == UINT_MAX) {
+            // Search the constant pool for null, if we find it, we can just reuse this!
+            unsigned numberOfConstants = m_codeBlock->numberOfConstantRegisters();
+            for (m_constantNull = 0; m_constantNull < numberOfConstants; ++m_constantNull) {
+                JSValue testMe = m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNull);
+                if (testMe.isNull())
+                    return getJSConstant(m_constantNull);
+            }
+
+            // Add null to the CodeBlock's constants, and add a corresponding slot in m_constantRecords.
+            ASSERT(m_constantRecords.size() == numberOfConstants);
+            m_codeBlock->addConstant(jsNull());
+            m_constantRecords.append(ConstantRecord());
+            ASSERT(m_constantRecords.size() == m_codeBlock->numberOfConstantRegisters());
+        }
+
+        // m_constantNull must refer to an entry in the CodeBlock's constant pool that has the value 'null'.
+        ASSERT(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNull).isNull());
+        return getJSConstant(m_constantNull);
+    }
+
     // This method returns a DoubleConstant with the value 1.
     NodeIndex one()
     {
@@ -383,7 +409,7 @@ private:
     unsigned m_currentIndex;
 
     // FIXME: used to temporarily disable arithmetic, until we fix associated performance regressions.
-    bool m_noArithmetic;
+    bool m_regressionGuard;
 
     // We use these values during code generation, and to avoid the need for
     // special handling we make sure they are available as constants in the
@@ -391,6 +417,7 @@ private:
     // UINT_MAX, and lazily updated to hold an index into the CodeBlock's
     // constant pool, as necessary.
     unsigned m_constantUndefined;
+    unsigned m_constantNull;
     unsigned m_constant1;
 
     // A constant in the constant pool may be represented by more than one
@@ -561,7 +588,7 @@ bool ByteCodeParser::parse()
         // === Arithmetic operations ===
 
         case op_add: {
-            m_noArithmetic = false;
+            m_regressionGuard = true;
             NodeIndex op1 = get(currentInstruction[2].u.operand);
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             // If both operands can statically be determined to the numbers, then this is an arithmetic add.
@@ -574,7 +601,7 @@ bool ByteCodeParser::parse()
         }
 
         case op_sub: {
-            m_noArithmetic = false;
+            m_regressionGuard = true;
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithSub, op1, op2));
@@ -582,7 +609,7 @@ bool ByteCodeParser::parse()
         }
 
         case op_mul: {
-            m_noArithmetic = false;
+            m_regressionGuard = true;
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithMul, op1, op2));
@@ -590,7 +617,7 @@ bool ByteCodeParser::parse()
         }
 
         case op_mod: {
-            m_noArithmetic = false;
+            m_regressionGuard = true;
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithMod, op1, op2));
@@ -598,7 +625,7 @@ bool ByteCodeParser::parse()
         }
 
         case op_div: {
-            m_noArithmetic = false;
+            m_regressionGuard = true;
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(ArithDiv, op1, op2));
@@ -611,6 +638,75 @@ bool ByteCodeParser::parse()
             NodeIndex op = get(currentInstruction[2].u.operand);
             set(currentInstruction[1].u.operand, op);
             NEXT_OPCODE(op_mov);
+        }
+
+        case op_not: {
+            m_regressionGuard = true;
+            NodeIndex value = get(currentInstruction[2].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(LogicalNot, value));
+            NEXT_OPCODE(op_not);
+        }
+
+        case op_less: {
+            m_regressionGuard = true;
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            NodeIndex op2 = get(currentInstruction[3].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(CompareLess, op1, op2));
+            NEXT_OPCODE(op_less);
+        }
+
+        case op_lesseq: {
+            m_regressionGuard = true;
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            NodeIndex op2 = get(currentInstruction[3].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(CompareLessEq, op1, op2));
+            NEXT_OPCODE(op_lesseq);
+        }
+
+        case op_eq: {
+            m_regressionGuard = true;
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            NodeIndex op2 = get(currentInstruction[3].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(CompareEq, op1, op2));
+            NEXT_OPCODE(op_eq);
+        }
+
+        case op_eq_null: {
+            m_regressionGuard = true;
+            NodeIndex value = get(currentInstruction[2].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(CompareEq, value, constantNull()));
+            NEXT_OPCODE(op_eq_null);
+        }
+
+        case op_stricteq: {
+            m_regressionGuard = true;
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            NodeIndex op2 = get(currentInstruction[3].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(CompareStrictEq, op1, op2));
+            NEXT_OPCODE(op_stricteq);
+        }
+
+        case op_neq: {
+            m_regressionGuard = true;
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            NodeIndex op2 = get(currentInstruction[3].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareEq, op1, op2)));
+            NEXT_OPCODE(op_neq);
+        }
+
+        case op_neq_null: {
+            m_regressionGuard = true;
+            NodeIndex value = get(currentInstruction[2].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareEq, value, constantNull())));
+            NEXT_OPCODE(op_neq_null);
+        }
+
+        case op_nstricteq: {
+            m_regressionGuard = true;
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            NodeIndex op2 = get(currentInstruction[3].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareStrictEq, op1, op2)));
+            NEXT_OPCODE(op_nstricteq);
         }
 
         // === Property access operations ===
@@ -685,10 +781,10 @@ bool ByteCodeParser::parse()
             m_currentIndex += OPCODE_LENGTH(op_ret);
 #if ENABLE(DFG_JIT_RESTRICTIONS)
             // FIXME: temporarily disabling the DFG JIT for functions containing arithmetic.
-            return m_noArithmetic;
-#else
-            return true;
+            if (m_regressionGuard)
+                return false
 #endif
+            return true;
         }
 
         default:

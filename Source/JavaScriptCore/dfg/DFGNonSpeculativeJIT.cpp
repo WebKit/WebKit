@@ -446,6 +446,80 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         break;
     }
 
+    case LogicalNot: {
+        JSValueOperand arg1(this, node.child1);
+        GPRReg arg1GPR = arg1.gpr();
+        flushRegisters();
+
+        GPRResult result(this);
+        callOperation(dfgConvertJSValueToBoolean, result.gpr(), arg1GPR);
+
+        // If we add a DataFormatBool, we should use it here.
+        m_jit.xor32(TrustedImm32(JSImmediate::FullTagTypeTrue), result.registerID());
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case CompareLess: {
+        JSValueOperand arg1(this, node.child1);
+        JSValueOperand arg2(this, node.child2);
+        GPRReg arg1GPR = arg1.gpr();
+        GPRReg arg2GPR = arg2.gpr();
+        flushRegisters();
+
+        GPRResult result(this);
+        callOperation(operationCompareLess, result.gpr(), arg1GPR, arg2GPR);
+        m_jit.or32(TrustedImm32(JSImmediate::FullTagTypeFalse), result.registerID());
+
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case CompareLessEq: {
+        JSValueOperand arg1(this, node.child1);
+        JSValueOperand arg2(this, node.child2);
+        GPRReg arg1GPR = arg1.gpr();
+        GPRReg arg2GPR = arg2.gpr();
+        flushRegisters();
+
+        GPRResult result(this);
+        callOperation(operationCompareLessEq, result.gpr(), arg1GPR, arg2GPR);
+        m_jit.or32(TrustedImm32(JSImmediate::FullTagTypeFalse), result.registerID());
+
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case CompareEq: {
+        JSValueOperand arg1(this, node.child1);
+        JSValueOperand arg2(this, node.child2);
+        GPRReg arg1GPR = arg1.gpr();
+        GPRReg arg2GPR = arg2.gpr();
+        flushRegisters();
+
+        GPRResult result(this);
+        callOperation(operationCompareEq, result.gpr(), arg1GPR, arg2GPR);
+        m_jit.or32(TrustedImm32(JSImmediate::FullTagTypeFalse), result.registerID());
+
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case CompareStrictEq: {
+        JSValueOperand arg1(this, node.child1);
+        JSValueOperand arg2(this, node.child2);
+        GPRReg arg1GPR = arg1.gpr();
+        GPRReg arg2GPR = arg2.gpr();
+        flushRegisters();
+
+        GPRResult result(this);
+        callOperation(operationCompareStrictEq, result.gpr(), arg1GPR, arg2GPR);
+        m_jit.or32(TrustedImm32(JSImmediate::FullTagTypeFalse), result.registerID());
+
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
     case GetByVal: {
         JSValueOperand arg1(this, node.child1);
         JSValueOperand arg2(this, node.child2);

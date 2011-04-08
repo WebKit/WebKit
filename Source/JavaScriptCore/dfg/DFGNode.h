@@ -115,6 +115,15 @@ typedef uint32_t ExceptionInfo;
     macro(GetGlobalVar, NodeResultJS | NodeMustGenerate) \
     macro(PutGlobalVar, NodeMustGenerate) \
     \
+    /* Nodes for comparison operations. */\
+    macro(CompareLess, NodeResultJS | NodeMustGenerate) \
+    macro(CompareLessEq, NodeResultJS | NodeMustGenerate) \
+    macro(CompareEq, NodeResultJS | NodeMustGenerate) \
+    macro(CompareStrictEq, NodeResultJS) \
+    \
+    /* Nodes for misc operations. */\
+    macro(LogicalNot, NodeResultJS) \
+    \
     macro(Return, NodeMustGenerate)
 
 // This enum generates a monotonically increasing id for all Node types,
