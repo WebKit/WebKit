@@ -1,37 +1,28 @@
-<html> 
-<head>
-
-<style>
-.editing { 
-    border: 2px solid red; 
-    padding: 12px; 
-    font-size: 24px; 
-}
-</style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
-<script>
-
-function editingTest() {
-	extendSelectionForwardByCharacterCommand();
-    copyCommand();
-	moveSelectionForwardByCharacterCommand();
-    pasteCommand();
-    typeCharacterCommand();
-}
-
-</script>
-
-<title>Editing Test</title> 
-</head> 
+<!DOCTYPE html>
+<html>
 <body style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space; ">
-<div contenteditable id="root" class="editing">
+<div contenteditable id="root" style="border: 2px solid red; padding: 12px; font-size: 24px">
 <span id="test">a<span class="Apple-tab-span" style="white-space:pre">			</span>z</span>
 </div>
-
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
-runEditingTest();
-</script>
 
+var test = document.getElementById('test');
+test.focus();
+window.getSelection().setPosition(test, 0);
+
+if (window.layoutTestController)
+    layoutTestController.dumpEditingCallbacks();
+
+extendSelectionForwardByCharacterCommand();
+copyCommand();
+moveSelectionForwardByCharacterCommand();
+pasteCommand();
+typeCharacterCommand();
+
+Markup.dump('root', 'You should see aax\\tz below');
+
+</script>
 </body>
 </html>
