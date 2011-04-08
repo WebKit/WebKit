@@ -153,12 +153,104 @@ public:
     }
 };
 
+template <typename T>
+class ApplyPropertyFillLayer : public ApplyPropertyBase {
+public:
+    ApplyPropertyFillLayer(CSSPropertyID propertyId, EFillLayerType fillLayerType, FillLayer* (RenderStyle::*accessLayers)(),
+                           const FillLayer* (RenderStyle::*layers)() const, bool (FillLayer::*test)() const, T (FillLayer::*get)() const,
+                           void (FillLayer::*set)(T), void (FillLayer::*clear)(), T (*initial)(EFillLayerType),
+                           void (CSSStyleSelector::*mapFill)(CSSPropertyID, FillLayer*, CSSValue*))
+        : m_propertyId(propertyId)
+        , m_fillLayerType(fillLayerType)
+        , m_accessLayers(accessLayers)
+        , m_layers(layers)
+        , m_test(test)
+        , m_get(get)
+        , m_set(set)
+        , m_clear(clear)
+        , m_initial(initial)
+        , m_mapFill(mapFill)
+    {
+    }
+
+    virtual void inherit(CSSStyleSelector* selector) const
+    {
+        FillLayer* currChild = (selector->style()->*m_accessLayers)();
+        FillLayer* prevChild = 0;
+        const FillLayer* currParent = (selector->parentStyle()->*m_layers)();
+        while (currParent && (currParent->*m_test)()) {
+            if (!currChild) {
+                /* Need to make a new layer.*/
+                currChild = new FillLayer(m_fillLayerType);
+                prevChild->setNext(currChild);
+            }
+            (currChild->*m_set)((currParent->*m_get)());
+            prevChild = currChild;
+            currChild = prevChild->next();
+            currParent = currParent->next();
+        }
+
+        while (currChild) {
+            /* Reset any remaining layers to not have the property set. */
+            (currChild->*m_clear)();
+            currChild = currChild->next();
+        }
+    }
+
+    virtual void initial(CSSStyleSelector* selector) const
+    {
+        FillLayer* currChild = (selector->style()->*m_accessLayers)();
+        (currChild->*m_set)((*m_initial)(m_fillLayerType));
+        for (currChild = currChild->next(); currChild; currChild = currChild->next())
+            (currChild->*m_clear)();
+    }
+
+    virtual void value(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        FillLayer* currChild = (selector->style()->*m_accessLayers)();
+        FillLayer* prevChild = 0;
+        if (value->isValueList()) {
+            /* Walk each value and put it into a layer, creating new layers as needed. */
+            CSSValueList* valueList = static_cast<CSSValueList*>(value);
+            for (unsigned int i = 0; i < valueList->length(); i++) {
+                if (!currChild) {
+                    /* Need to make a new layer to hold this value */
+                    currChild = new FillLayer(m_fillLayerType);
+                    prevChild->setNext(currChild);
+                }
+                (selector->*m_mapFill)(m_propertyId, currChild, valueList->itemWithoutBoundsCheck(i));
+                prevChild = currChild;
+                currChild = currChild->next();
+            }
+        } else {
+            (selector->*m_mapFill)(m_propertyId, currChild, value);
+            currChild = currChild->next();
+        }
+        while (currChild) {
+            /* Reset all remaining layers to not have the property set. */
+            (currChild->*m_clear)();
+            currChild = currChild->next();
+        }
+    }
+
+protected:
+    CSSPropertyID m_propertyId;
+    EFillLayerType m_fillLayerType;
+    FillLayer* (RenderStyle::*m_accessLayers)();
+    const FillLayer* (RenderStyle::*m_layers)() const;
+    bool (FillLayer::*m_test)() const;
+    T (FillLayer::*m_get)() const;
+    void (FillLayer::*m_set)(T);
+    void (FillLayer::*m_clear)();
+    T (*m_initial)(EFillLayerType);
+    void (CSSStyleSelector::*m_mapFill)(CSSPropertyID, FillLayer*, CSSValue*);
+};
+
 const CSSStyleApplyProperty& CSSStyleApplyProperty::sharedCSSStyleApplyProperty()
 {
     DEFINE_STATIC_LOCAL(CSSStyleApplyProperty, cssStyleApplyPropertyInstance, ());
     return cssStyleApplyPropertyInstance;
 }
-
 
 CSSStyleApplyProperty::CSSStyleApplyProperty()
 {
@@ -167,6 +259,32 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
 
     setPropertyValue(CSSPropertyColor, new ApplyPropertyColor(&RenderStyle::color, &RenderStyle::setColor, RenderStyle::initialColor));
     setPropertyValue(CSSPropertyDirection, new ApplyPropertyDirection(&RenderStyle::direction, &RenderStyle::setDirection, RenderStyle::initialDirection));
+
+    setPropertyValue(CSSPropertyBackgroundAttachment, new ApplyPropertyFillLayer<EFillAttachment>(CSSPropertyBackgroundAttachment, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+            &FillLayer::isAttachmentSet, &FillLayer::attachment, &FillLayer::setAttachment, &FillLayer::clearAttachment, &FillLayer::initialFillAttachment, &CSSStyleSelector::mapFillAttachment));
+    setPropertyValue(CSSPropertyBackgroundClip, new ApplyPropertyFillLayer<EFillBox>(CSSPropertyBackgroundClip, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+            &FillLayer::isClipSet, &FillLayer::clip, &FillLayer::setClip, &FillLayer::clearClip, &FillLayer::initialFillClip, &CSSStyleSelector::mapFillClip));
+    setPropertyValue(CSSPropertyWebkitBackgroundClip, CSSPropertyBackgroundClip);
+    setPropertyValue(CSSPropertyWebkitBackgroundComposite, new ApplyPropertyFillLayer<CompositeOperator>(CSSPropertyWebkitBackgroundComposite, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+            &FillLayer::isCompositeSet, &FillLayer::composite, &FillLayer::setComposite, &FillLayer::clearComposite, &FillLayer::initialFillComposite, &CSSStyleSelector::mapFillComposite));
+    setPropertyValue(CSSPropertyBackgroundOrigin, new ApplyPropertyFillLayer<EFillBox>(CSSPropertyBackgroundOrigin, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+            &FillLayer::isOriginSet, &FillLayer::origin, &FillLayer::setOrigin, &FillLayer::clearOrigin, &FillLayer::initialFillOrigin, &CSSStyleSelector::mapFillOrigin));
+    setPropertyValue(CSSPropertyWebkitBackgroundOrigin, CSSPropertyBackgroundOrigin);
+    setPropertyValue(CSSPropertyBackgroundSize, new ApplyPropertyFillLayer<FillSize>(CSSPropertyBackgroundSize, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+            &FillLayer::isSizeSet, &FillLayer::size, &FillLayer::setSize, &FillLayer::clearSize, &FillLayer::initialFillSize, &CSSStyleSelector::mapFillSize));
+    setPropertyValue(CSSPropertyWebkitBackgroundSize, CSSPropertyBackgroundSize);
+
+    setPropertyValue(CSSPropertyWebkitMaskAttachment, new ApplyPropertyFillLayer<EFillAttachment>(CSSPropertyWebkitMaskAttachment, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+            &FillLayer::isAttachmentSet, &FillLayer::attachment, &FillLayer::setAttachment, &FillLayer::clearAttachment, &FillLayer::initialFillAttachment, &CSSStyleSelector::mapFillAttachment));
+    setPropertyValue(CSSPropertyWebkitMaskClip, new ApplyPropertyFillLayer<EFillBox>(CSSPropertyWebkitMaskClip, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+            &FillLayer::isClipSet, &FillLayer::clip, &FillLayer::setClip, &FillLayer::clearClip, &FillLayer::initialFillClip, &CSSStyleSelector::mapFillClip));
+    setPropertyValue(CSSPropertyWebkitMaskComposite, new ApplyPropertyFillLayer<CompositeOperator>(CSSPropertyWebkitMaskComposite, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+            &FillLayer::isCompositeSet, &FillLayer::composite, &FillLayer::setComposite, &FillLayer::clearComposite, &FillLayer::initialFillComposite, &CSSStyleSelector::mapFillComposite));
+    setPropertyValue(CSSPropertyWebkitMaskOrigin, new ApplyPropertyFillLayer<EFillBox>(CSSPropertyWebkitMaskOrigin, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+            &FillLayer::isOriginSet, &FillLayer::origin, &FillLayer::setOrigin, &FillLayer::clearOrigin, &FillLayer::initialFillOrigin, &CSSStyleSelector::mapFillOrigin));
+    setPropertyValue(CSSPropertyWebkitMaskSize, new ApplyPropertyFillLayer<FillSize>(CSSPropertyWebkitMaskSize, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+            &FillLayer::isSizeSet, &FillLayer::size, &FillLayer::setSize, &FillLayer::clearSize, &FillLayer::initialFillSize, &CSSStyleSelector::mapFillSize));
+
     setPropertyValue(CSSPropertyBackgroundColor, new ApplyPropertyColorBase(&RenderStyle::backgroundColor, 0, &RenderStyle::setBackgroundColor));
     setPropertyValue(CSSPropertyBorderBottomColor, new ApplyPropertyColorBase(&RenderStyle::borderBottomColor, &RenderStyle::color, &RenderStyle::setBorderBottomColor));
     setPropertyValue(CSSPropertyBorderLeftColor, new ApplyPropertyColorBase(&RenderStyle::borderLeftColor, &RenderStyle::color, &RenderStyle::setBorderLeftColor));

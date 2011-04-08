@@ -3650,39 +3650,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     // are only hit when mapping "inherit" or "initial" into front-end values.
     switch (property) {
 // ident only properties
-    case CSSPropertyBackgroundAttachment:
-        HANDLE_BACKGROUND_VALUE(attachment, Attachment, value)
-        return;
-    case CSSPropertyBackgroundClip:
-    case CSSPropertyWebkitBackgroundClip:
-        HANDLE_BACKGROUND_VALUE(clip, Clip, value)
-        return;
-    case CSSPropertyWebkitBackgroundComposite:
-        HANDLE_BACKGROUND_VALUE(composite, Composite, value)
-        return;
-    case CSSPropertyBackgroundOrigin:
-    case CSSPropertyWebkitBackgroundOrigin:
-        HANDLE_BACKGROUND_VALUE(origin, Origin, value)
-        return;
-    case CSSPropertyBackgroundSize:
-    case CSSPropertyWebkitBackgroundSize:
-        HANDLE_BACKGROUND_VALUE(size, Size, value)
-        return;
-    case CSSPropertyWebkitMaskAttachment:
-        HANDLE_MASK_VALUE(attachment, Attachment, value)
-        return;
-    case CSSPropertyWebkitMaskClip:
-        HANDLE_MASK_VALUE(clip, Clip, value)
-        return;
-    case CSSPropertyWebkitMaskComposite:
-        HANDLE_MASK_VALUE(composite, Composite, value)
-        return;
-    case CSSPropertyWebkitMaskOrigin:
-        HANDLE_MASK_VALUE(origin, Origin, value)
-        return;
-    case CSSPropertyWebkitMaskSize:
-        HANDLE_MASK_VALUE(size, Size, value)
-        return;
     case CSSPropertyBorderCollapse:
         HANDLE_INHERIT_AND_INITIAL(borderCollapse, BorderCollapse)
         if (!primitiveValue)
@@ -6195,6 +6162,19 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     // These properties are implemented in the CSSStyleApplyProperty lookup table.
     case CSSPropertyColor:
     case CSSPropertyDirection:
+    case CSSPropertyBackgroundAttachment:
+    case CSSPropertyBackgroundClip:
+    case CSSPropertyWebkitBackgroundClip:
+    case CSSPropertyWebkitBackgroundComposite:
+    case CSSPropertyBackgroundOrigin:
+    case CSSPropertyWebkitBackgroundOrigin:
+    case CSSPropertyBackgroundSize:
+    case CSSPropertyWebkitBackgroundSize:
+    case CSSPropertyWebkitMaskAttachment:
+    case CSSPropertyWebkitMaskClip:
+    case CSSPropertyWebkitMaskComposite:
+    case CSSPropertyWebkitMaskOrigin:
+    case CSSPropertyWebkitMaskSize:
     case CSSPropertyBackgroundColor:
     case CSSPropertyBorderBottomColor:
     case CSSPropertyBorderLeftColor:

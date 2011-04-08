@@ -91,6 +91,13 @@ private:
         m_propertyMap[index(property)] = value;
     }
 
+    void setPropertyValue(CSSPropertyID newProperty, CSSPropertyID equivalentProperty)
+    {
+        ASSERT(valid(newProperty));
+        ASSERT(valid(equivalentProperty));
+        m_propertyMap[index(newProperty)] = m_propertyMap[index(equivalentProperty)];
+    }
+
     ApplyPropertyBase* propertyValue(CSSPropertyID property) const
     {
         ASSERT(valid(property));
