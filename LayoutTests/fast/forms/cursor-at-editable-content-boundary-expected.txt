@@ -1,0 +1,10 @@
+autowrap text area with dir=rtl. 
+
+nowrap text area with dir=rtl. 
+
+autowrap text area with dir=ltr. 
+
+vertical text.
+
+FAIL test textarea_rtl_no_wrap moving caret in the text, caret is invisible or overlaps with element.
+

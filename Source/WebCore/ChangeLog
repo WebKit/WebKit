@@ -1,3 +1,18 @@
+2011-04-08  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Local caret rectangle calculation should be relative to its containing block.
+        https://bugs.webkit.org/show_bug.cgi?id=49508.
+
+        InlineBox and caret rectangle are positioned relative to its containing block.
+        So its left and right edge value should be relative to its containing block as well. 
+
+        Test: fast/forms/cursor-at-editable-content-boundary.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::localCaretRect):
+
 2011-04-08  MORITA Hajime  <morrita@google.com>
 
         Unreviewed build fix.
