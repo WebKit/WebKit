@@ -66,8 +66,9 @@ platform/win/fast/events/panScroll-nested-divs.html
 platform/win/fast/events/panScroll-no-iframe-jump.html
 platform/win/fast/events/panScroll-preventDefault.html
 
-# execCommand("undo") doesn't work in WebKit2 
-# <rdar://problem/8862023> 
+# WebKitTestRunned needs to implement undo client. 
+# <rdar://problem/9254061> 
+# <https://bugs.webkit.org/show_bug.cgi?id=58103>
 editing/undo/undo-paste-when-caret-is-not-in-range.html
 fast/forms/input-paste-undo.html
 editing/pasteboard/undoable-fragment-removes.html
