@@ -72,8 +72,11 @@ void DragController::cleanupAfterSystemDrag()
     // Drag has ended, dragEnded *should* have been called, however it is possible
     // for the UIDelegate to take over the drag, and fail to send the appropriate
     // drag termination event.  As dragEnded just resets drag variables, we just
-    // call it anyway to be on the safe side
-    dragEnded();
+    // call it anyway to be on the safe side.
+    // We don't want to do this for WebKit2, since the client call to start the drag
+    // is asynchronous.
+    if (m_page->mainFrame()->view()->platformWidget())
+        dragEnded();
 }
 
 } // namespace WebCore

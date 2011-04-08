@@ -1,3 +1,17 @@
+2011-04-08  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Dragging text in a WebKit2 window results in a copy instead of a move.
+        https://bugs.webkit.org/show_bug.cgi?id=56772
+        <rdar://problem/9165140>
+
+        cleanupAfterSystemDrag cannot call dragEnd in WebKit2, since
+        the call to startDrag is asynchronous.
+        
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::cleanupAfterSystemDrag):
+
 2011-04-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
