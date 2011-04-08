@@ -295,7 +295,7 @@ void WebPageSerializerImpl::encodeAndFlushBuffer(
                                        status);
 }
 
-void WebPageSerializerImpl::openTagToString(const Element* element,
+void WebPageSerializerImpl::openTagToString(Element* element,
                                             SerializeDomParam* param)
 {
     // FIXME: use StringBuilder instead of String.
@@ -328,11 +328,13 @@ void WebPageSerializerImpl::openTagToString(const Element* element,
                         result += attrValue;
                     else {
                         // Get the absolute link
-                        String completeURL = param->document->completeURL(attrValue);
+                        WebFrameImpl* subFrame = WebFrameImpl::fromFrameOwnerElement(element);
+                        String completeURL = subFrame ? subFrame->frame()->document()->url() : 
+                                                        param->document->completeURL(attrValue);
                         // Check whether we have local files for those link.
                         if (m_localLinks.contains(completeURL)) {
-                            if (!m_localDirectoryName.isEmpty())
-                                result += "./" + m_localDirectoryName + "/";
+                            if (!param->directoryName.isEmpty())
+                                result += "./" + param->directoryName + "/";
                             result += m_localLinks.get(completeURL);
                         } else
                             result += completeURL;
@@ -360,7 +362,7 @@ void WebPageSerializerImpl::openTagToString(const Element* element,
 }
 
 // Serialize end tag of an specified element.
-void WebPageSerializerImpl::endTagToString(const Element* element,
+void WebPageSerializerImpl::endTagToString(Element* element,
                                            SerializeDomParam* param)
 {
     bool needSkip;
@@ -397,18 +399,18 @@ void WebPageSerializerImpl::endTagToString(const Element* element,
     saveHTMLContentToBuffer(result, param);
 }
 
-void WebPageSerializerImpl::buildContentForNode(const Node* node,
+void WebPageSerializerImpl::buildContentForNode(Node* node,
                                                 SerializeDomParam* param)
 {
     switch (node->nodeType()) {
     case Node::ELEMENT_NODE:
         // Process open tag of element.
-        openTagToString(static_cast<const Element*>(node), param);
+        openTagToString(static_cast<Element*>(node), param);
         // Walk through the children nodes and process it.
-        for (const Node *child = node->firstChild(); child; child = child->nextSibling())
+        for (Node *child = node->firstChild(); child; child = child->nextSibling())
             buildContentForNode(child, param);
         // Process end tag of element.
-        endTagToString(static_cast<const Element*>(node), param);
+        endTagToString(static_cast<Element*>(node), param);
         break;
     case Node::TEXT_NODE:
         saveHTMLContentToBuffer(createMarkup(node), param);

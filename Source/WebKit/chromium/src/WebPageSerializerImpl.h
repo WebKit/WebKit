@@ -174,13 +174,13 @@ private:
                               SerializeDomParam* param,
                               FlushOption);
     // Serialize open tag of an specified element.
-    void openTagToString(const WebCore::Element* element,
+    void openTagToString(WebCore::Element*,
                          SerializeDomParam* param);
     // Serialize end tag of an specified element.
-    void endTagToString(const WebCore::Element* element,
+    void endTagToString(WebCore::Element*,
                         SerializeDomParam* param);
     // Build content for a specified node
-    void buildContentForNode(const WebCore::Node* node,
+    void buildContentForNode(WebCore::Node*,
                              SerializeDomParam* param);
 };
 

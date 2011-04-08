@@ -1,3 +1,26 @@
+2011-04-07  Magnus Danielsson  <public@fuzzac.com>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] WebPageSerializerImpl doesn't serialize sub-frames correctly
+        https://bugs.webkit.org/show_bug.cgi?id=53897
+
+        When serializing a web page using 'save page as', sub-frames and resources gets
+        saved in a sub-directory. However, frame elements didn't get updated to reference
+        these saved sub-frames, but were still referencing the original url. So when opening
+        a saved web page, any sub-frames would get pulled in from the original url rather than 
+        what was saved.
+
+        In addition to this, sub-frames in the sub-directory erroneously had the name of the
+        sub-directory prepended to the path of resources located in the same sub-directory.
+
+        * src/WebPageSerializerImpl.cpp:
+        (WebKit::WebPageSerializerImpl::openTagToStrne: Fixed resource paths in sub-frames. 
+        Also made sure sub-frames are referenced correctly from parent frame.
+        (WebKit::WebPageSerializerImpl::endTagToString): Removed constness from argument.
+        (WebKit::WebPageSerializerImpl::buildContentForNode): Ditto.
+        * src/WebPageSerializerImpl.h:
+
 2011-04-07  Nat Duca  <nduca@chromium.org>
 
         Reviewed by David Levin.
