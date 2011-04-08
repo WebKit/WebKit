@@ -756,9 +756,6 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     if (oldFillColor != color || oldColorSpace != colorSpace)
         setCGFillColor(context, color, colorSpace);
 
-    Path path;
-    path.addRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
-
     bool drawOwnShadow = !isAcceleratedContext() && hasBlurredShadow(m_state) && !m_state.shadowsIgnoreTransforms; // Don't use ShadowBlur for canvas yet.
     if (drawOwnShadow) {
         float shadowBlur = m_state.shadowsUseLegacyRadius ? radiusToLegacyRadius(m_state.shadowBlur) : m_state.shadowBlur;
@@ -771,7 +768,15 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
         contextShadow.drawRectShadow(this, rect, RoundedIntRect::Radii(topLeft, topRight, bottomLeft, bottomRight));
     }
 
-    fillPath(path);
+    bool equalWidths = (topLeft.width() == topRight.width() && topRight.width() == bottomLeft.width() && bottomLeft.width() == bottomRight.width());
+    bool equalHeights = (topLeft.height() == bottomLeft.height() && bottomLeft.height() == topRight.height() && topRight.height() == bottomRight.height());
+    if (equalWidths && equalHeights && topLeft.width() * 2 == rect.width() && topLeft.height() * 2 == rect.height())
+        CGContextFillEllipseInRect(context, rect);
+    else {
+        Path path;
+        path.addRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
+        fillPath(path);
+    }
 
     if (drawOwnShadow)
         CGContextRestoreGState(context);

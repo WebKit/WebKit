@@ -1,3 +1,17 @@
+2011-04-07  Ian Henderson  <ianh@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Optimize filling rounded rects that are actually ellipses
+        https://bugs.webkit.org/show_bug.cgi?id=58098
+
+        In CG, drawing an ellipse directly is faster than constructing and
+        filling a rounded rect path.  Detect when the given rounded rect is
+        actually an ellipse and draw it directly in this case.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillRoundedRect):
+
 2011-04-07  Ned Holbrook  <nholbrook@apple.com>
 
         Reviewed by Dan Bernstein.
