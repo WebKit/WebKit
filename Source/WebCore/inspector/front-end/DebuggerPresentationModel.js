@@ -91,7 +91,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     _addScript: function(script)
     {
-        var sourceFileId = script.sourceURL || script.sourceID;
+        var sourceFileId = this._createSourceFileId(script.sourceURL, script.sourceID);
         var sourceFile = this._sourceFiles[sourceFileId];
         if (sourceFile) {
             sourceFile.addScript(script);
@@ -133,7 +133,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         if (!Preferences.canEditScriptSource)
             return false;
         var script = this._scriptForSourceFileId(sourceFileId);
-        return  !script.lineOffset && !script.columnOffset;
+        return !script.lineOffset && !script.columnOffset;
     },
 
     editScriptSource: function(sourceFileId, newSource, callback)
@@ -196,9 +196,15 @@ WebInspector.DebuggerPresentationModel.prototype = {
     {
         this._formatSourceFiles = !this._formatSourceFiles;
 
+        for (var id in this._sourceFiles) {
+            var sourceFile = this._sourceFiles[id];
+            for (var line in sourceFile.breakpoints)
+                this._removeBreakpointFromDebugger(sourceFile.breakpoints[line]);
+        }
+
         var messages = this._messages;
         this._reset();
-      
+
         var scripts = WebInspector.debuggerModel.scripts;
         for (var id in scripts)
             this._addScript(scripts[id]);
@@ -221,7 +227,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     {
         this._messages.push(message);
 
-        var sourceFile = this._sourceFileForScriptURL(message.url);
+        var sourceFile = this._sourceFileForScript(message.url);
         if (!sourceFile)
             return;
 
@@ -268,7 +274,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     setBreakpoint: function(sourceFileId, lineNumber, condition, enabled, dontSaveBreakpoints)
     {
         var sourceFile = this._sourceFiles[sourceFileId];
-        if (!sourceFile) 
+        if (!sourceFile)
             return;
 
         var breakpoint = new WebInspector.PresentationBreakpoint(sourceFile, lineNumber, condition, enabled);
@@ -496,7 +502,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
             var sourceFile;
             var script = WebInspector.debuggerModel.scriptForSourceID(callFrame.sourceID);
             if (script)
-                sourceFile = this._sourceFileForScript(script);
+                sourceFile = this._sourceFileForScript(script.sourceURL, script.sourceID);
             this._presentationCallFrames.push(new WebInspector.PresenationCallFrame(callFrame, i, sourceFile));
         }
         var details = WebInspector.debuggerModel.debuggerPausedDetails;
@@ -524,23 +530,24 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return this._presentationCallFrames[this._selectedCallFrameIndex];
     },
 
-    _sourceFileForScript: function(script)
+    _sourceFileForScript: function(sourceURL, sourceID)
     {
-        return this._sourceFiles[script.sourceURL || script.sourceID];
-    },
-
-    _sourceFileForScriptURL: function(scriptURL)
-    {
-        return this._sourceFiles[scriptURL];
+        return this._sourceFiles[this._createSourceFileId(sourceURL, sourceID)];
     },
 
     _scriptForSourceFileId: function(sourceFileId)
     {
         function filter(script)
         {
-            return (script.sourceURL || script.sourceID) === sourceFileId;
+            return this._createSourceFileId(script.sourceURL, script.sourceID) === sourceFileId;
         }
-        return WebInspector.debuggerModel.queryScripts(filter)[0];
+        return WebInspector.debuggerModel.queryScripts(filter.bind(this))[0];
+    },
+
+    _createSourceFileId: function(sourceURL, sourceID)
+    {
+        var prefix = this._formatSourceFiles ? "deobfuscated:" : "";
+        return prefix + (sourceURL || sourceID);
     },
 
     _reset: function()
@@ -554,7 +561,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
                     this._breakpointsWithoutSourceFile[sourceFile.id] = breakpoints;
                 }
                 breakpoints.push(sourceFile.breakpoints[line].serialize());
-            } 
+            }
         }
 
         this._sourceFiles = {};
