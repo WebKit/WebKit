@@ -856,6 +856,7 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         this._restorePaintLinesOperationsCredit();
         WebInspector.TextEditorChunkedPanel.prototype._expandChunks.call(this, fromIndex, toIndex);
+        this._adjustPaintLinesOperationsRefreshValue();
 
         this._restoreSelection(selection);
     },
@@ -875,7 +876,7 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         if (!this._scheduledPaintLines) {
             this._scheduledPaintLines = [ { startLine: startLine, endLine: endLine } ];
-            this._paintScheduledLinesTimer = setTimeout(this._paintScheduledLines.bind(this), 10);
+            this._paintScheduledLinesTimer = setTimeout(this._paintScheduledLines.bind(this), 0);
         } else {
             for (var i = 0; i < this._scheduledPaintLines.length; ++i) {
                 var chunk = this._scheduledPaintLines[i];
@@ -910,14 +911,31 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         var scheduledPaintLines = this._scheduledPaintLines;
         delete this._scheduledPaintLines;
-        
+
         this._restorePaintLinesOperationsCredit();
         this._paintLineChunks(scheduledPaintLines, !skipRestoreSelection);
+        this._adjustPaintLinesOperationsRefreshValue();
     },
 
     _restorePaintLinesOperationsCredit: function()
     {
-        this._paintLinesOperationsCredit = 250;
+        if (!this._paintLinesOperationsRefreshValue)
+            this._paintLinesOperationsRefreshValue = 250;
+        this._paintLinesOperationsCredit = this._paintLinesOperationsRefreshValue;
+        this._paintLinesOperationsLastRefresh = Date.now();
+    },
+
+    _adjustPaintLinesOperationsRefreshValue: function()
+    {
+        var operationsDone = this._paintLinesOperationsRefreshValue - this._paintLinesOperationsCredit;
+        if (operationsDone <= 0)
+            return;
+        var timePast = Date.now() - this._paintLinesOperationsLastRefresh;
+        if (timePast <= 0)
+            return;
+        // Make the synchronous CPU chunk for painting the lines 50 msec.
+        var value = Math.floor(operationsDone / timePast * 50);
+        this._paintLinesOperationsRefreshValue = Number.constrain(value, 150, 1500);
     },
 
     _paintLines: function(fromLine, toLine, restoreSelection)

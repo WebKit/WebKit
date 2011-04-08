@@ -1,3 +1,17 @@
+2011-04-08  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Tweak dynamically constants for the async highlighting in text editor
+        https://bugs.webkit.org/show_bug.cgi?id=58035
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorMainPanel.prototype._expandChunks):
+        (WebInspector.TextEditorMainPanel.prototype._schedulePaintLines):
+        (WebInspector.TextEditorMainPanel.prototype._paintScheduledLines):
+        (WebInspector.TextEditorMainPanel.prototype._restorePaintLinesOperationsCredit):
+        (WebInspector.TextEditorMainPanel.prototype._adjustPaintLinesOperationsRefreshValue):
+
 2011-04-08  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
