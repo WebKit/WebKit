@@ -222,13 +222,12 @@ class SingleTestRunner:
 
     def _compare_text(self, actual_text, expected_text):
         failures = []
-        if self._port.compare_text(self._get_normalized_output_text(actual_text),
-                                   # Assuming expected_text is already normalized.
-                                   expected_text):
-            if expected_text == '':
-                failures.append(test_failures.FailureMissingResult())
-            else:
-                failures.append(test_failures.FailureTextMismatch())
+        if (expected_text and actual_text and
+            # Assuming expected_text is already normalized.
+            self._port.compare_text(self._get_normalized_output_text(actual_text), expected_text)):
+            failures.append(test_failures.FailureTextMismatch())
+        elif actual_text and not expected_text:
+            failures.append(test_failures.FailureMissingResult())
         return failures
 
     def _get_normalized_output_text(self, output):

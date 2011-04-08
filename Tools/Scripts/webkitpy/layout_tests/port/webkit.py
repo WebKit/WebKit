@@ -409,7 +409,8 @@ class WebKitDriver(base.Driver):
         have_seen_content_type = False
         actual_image_hash = None
         output = str()  # Use a byte array for output, even though it should be UTF-8.
-        image = str()
+        text = None
+        image = None
 
         timeout = int(driver_input.timeout) / 1000.0
         deadline = time.time() + timeout
@@ -428,6 +429,9 @@ class WebKitDriver(base.Driver):
                 output += line
             line = self._server_process.read_line(timeout)
             timeout = deadline - time.time()
+
+        if output:
+            text = output
 
         # Now read a second block of text for the optional image data
         remaining_length = -1
@@ -458,7 +462,7 @@ class WebKitDriver(base.Driver):
         # FIXME: This seems like the wrong section of code to be doing
         # this reset in.
         self._server_process.error = ""
-        return base.DriverOutput(output, image, actual_image_hash,
+        return base.DriverOutput(text, image, actual_image_hash,
                                  self._server_process.crashed,
                                  time.time() - start_time,
                                  self._server_process.timed_out,
