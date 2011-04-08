@@ -126,6 +126,11 @@ WebInspector.SourceFile.prototype = {
     {
         function didRequestContent(text)
         {
+            if (!text) {
+                this._loadAndConcatenateScriptsContent();
+                return;
+            }
+
             if (resource.type === WebInspector.Resource.Type.Script)
                 this._didRequestContent("text/javascript", text);
             else {
@@ -150,7 +155,11 @@ WebInspector.SourceFile.prototype = {
         function didRequestSource(source)
         {
             sources.push(source);
-            if (sources.length === scripts.length)
+            if (sources.length < scripts.length)
+                return;
+            if (scripts.length === 1 && !scripts[0].lineOffset && !scripts[0].columnOffset)
+                this._didRequestContent("text/javascript", source);
+            else
                 this._concatenateScriptsContent(scripts, sources);
         }
         for (var i = 0; i < scripts.length; ++i)
