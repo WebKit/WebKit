@@ -7,6 +7,11 @@ InspectorTest.HARNondeterministicProperties = {
     receive: 1,
     headers: 1,
     timings: 1,
+    version: 1,
+    startedDateTime: 1,
+    id: 1,
+    onContentLoad: 1,
+    onLoad: 1
 };
 
 // addObject checks own properties only, so make a deep copy rather than use prototype.

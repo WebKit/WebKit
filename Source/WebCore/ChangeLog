@@ -1,3 +1,20 @@
+2011-04-08  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: HAR compliance fixes
+        https://bugs.webkit.org/show_bug.cgi?id=58124
+
+        - Always provide some values for queryString and cookies, even though arrays may be empty
+        - Always provide an empty cache object
+        - Added entire HARLog to test
+        - Workaround in test to avoid custom expectations (favicon.ico appears in log on certain platforms)
+
+        * inspector/front-end/HAREntry.js:
+        (WebInspector.HAREntry.prototype.build):
+        (WebInspector.HAREntry.prototype._buildRequest):
+        (WebInspector.HAREntry.prototype._buildResponse):
+
 2011-04-08  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix the Qt build.

@@ -31,6 +31,9 @@
 // See http://groups.google.com/group/http-archive-specification/web/har-1-2-spec
 // for HAR specification.
 
+// FIXME: Some fields are not yet supported due to back-end limitations.
+// See https://bugs.webkit.org/show_bug.cgi?id=58127 for details.
+
 WebInspector.HAREntry = function(resource)
 {
     this._resource = resource;
@@ -45,7 +48,7 @@ WebInspector.HAREntry.prototype = {
             time: WebInspector.HAREntry._toMilliseconds(this._resource.duration),
             request: this._buildRequest(),
             response: this._buildResponse(),
-            // cache: {...}, -- Not supproted yet.
+            cache: { }, // Not supproted yet.
             timings: this._buildTimings()
         };
     },
@@ -57,33 +60,29 @@ WebInspector.HAREntry.prototype = {
             url: this._resource.url,
             // httpVersion: "HTTP/1.1" -- Not available.
             headers: this._buildHeaders(this._resource.requestHeaders),
+            queryString: this._buildParameters(this._resource.queryParameters || []),
+            cookies: this._buildCookies(this._resource.requestCookies || []),
             headersSize: -1, // Not available.
             bodySize: -1 // Not available.
         };
-        if (this._resource.queryParameters)
-            res.queryString = this._buildParameters(this._resource.queryParameters);
         if (this._resource.requestFormData)
             res.postData = this._buildPostData();
-        if (this._resource.requestCookies)
-            res.cookies = this._buildCookies(this._resource.requestCookies);
         return res;
     },
 
     _buildResponse: function()
     {
-        var res = {
+        return {
             status: this._resource.statusCode,
             statusText: this._resource.statusText,
             // "httpVersion": "HTTP/1.1" -- Not available.
             headers: this._buildHeaders(this._resource.responseHeaders),
+            cookies: this._buildCookies(this._resource.responseCookies || []),
             content: this._buildContent(),
             redirectURL: this._resource.responseHeaderValue("Location") || "",
             headersSize: -1, // Not available.
             bodySize: this._resource.resourceSize
         };
-        if (this._resource.responseCookies)
-            res.cookies = this._buildCookies(this._resource.responseCookies);
-        return res;
     },
 
     _buildContent: function()
