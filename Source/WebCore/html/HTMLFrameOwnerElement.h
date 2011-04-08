@@ -66,7 +66,7 @@ private:
     friend class Frame;
 
     virtual bool isFrameOwnerElement() const { return true; }
-    virtual bool isKeyboardFocusable(KeyboardEvent*) const { return m_contentFrame; }
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
 
     Frame* m_contentFrame;
     SandboxFlags m_sandboxFlags;

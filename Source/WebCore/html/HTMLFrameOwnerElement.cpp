@@ -89,6 +89,11 @@ void HTMLFrameOwnerElement::setSandboxFlags(SandboxFlags flags)
         frame->loader()->ownerElementSandboxFlagsChanged();
 }
 
+bool HTMLFrameOwnerElement::isKeyboardFocusable(KeyboardEvent* event) const
+{
+    return m_contentFrame && HTMLElement::isKeyboardFocusable(event);
+}
+
 #if ENABLE(SVG)
 SVGDocument* HTMLFrameOwnerElement::getSVGDocument(ExceptionCode& ec) const
 {

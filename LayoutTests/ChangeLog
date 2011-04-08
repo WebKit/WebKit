@@ -1,3 +1,13 @@
+2011-04-08  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        IFrame is getting the focus even though it is hidden
+        https://bugs.webkit.org/show_bug.cgi?id=55861
+
+        * fast/dom/hidden-iframe-no-focus-expected.txt: Added.
+        * fast/dom/hidden-iframe-no-focus.html: Added.
+
 2011-04-08  Jeff Timanus  <twiz@chromium.org>
 
         Reviewed by Kenneth Russell.
