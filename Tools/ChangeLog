@@ -1,3 +1,15 @@
+2011-04-07  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Change reference port for Mac GPU baselines from
+        Leopard to SnowLeopard, XP to Win7, and Linux-x86
+        to Linux x86-64.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58099
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2011-04-07  Andrew Scherkus  <scherkus@chromium.org>
 
         Revert ENABLE_TRACK patch due to compile failures.

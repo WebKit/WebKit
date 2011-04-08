@@ -55,7 +55,7 @@ class ChromiumPort(base.Port):
         'chromium-mac-snowleopard', 'chromium-mac-leopard',
         'chromium-win-win7', 'chromium-win-vista', 'chromium-win-xp',
         'chromium-linux-x86', 'chromium-linux-x86_64',
-        'chromium-gpu-mac-leopard', 'chromium-gpu-win-xp', 'chromium-gpu-linux',
+        'chromium-gpu-mac-snowleopard', 'chromium-gpu-win-win7', 'chromium-gpu-linux-x86_64',
     ]
 
     def __init__(self, **kwargs):
