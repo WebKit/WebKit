@@ -64,7 +64,8 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
             self._architecture = arch
         assert self._architecture in self.SUPPORTED_ARCHITECTURES
         assert port_name in ('chromium-linux', 'chromium-gpu-linux',
-                             'chromium-linux-x86', 'chromium-linux-x86_64')
+                             'chromium-linux-x86', 'chromium-linux-x86_64',
+                             'chromium-gpu-linux-x86_64')
         self._name = port_name
         self._operating_system = 'linux'
         # FIXME: add support for 'lucid'

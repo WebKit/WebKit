@@ -1,3 +1,14 @@
+2011-04-08  Vincent Scheib  <scheib@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        add chromium-gpu-linux-x86_64 to the recognized list of ports
+        https://bugs.webkit.org/show_bug.cgi?id=58099
+
+        Add chromium-gpu-linux-x86_64 to fix assert.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+
 2011-04-08  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed, rolling out r83335.
