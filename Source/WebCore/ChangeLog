@@ -1,3 +1,18 @@
+2011-04-07  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Logic error in HTMLMediaElement::exitFullscreen()
+        https://bugs.webkit.org/show_bug.cgi?id=58085
+
+        The new full screen API case could fall through to the legacy API case
+        unintentionally if a script calls exitFullscreen on an element which is
+        not the current full screen element.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        (WebCore::HTMLMediaElement::exitFullscreen):
+
 2011-04-08  Mike Reed  <reed@google.com>
 
         Reviewed by Eric Seidel.
