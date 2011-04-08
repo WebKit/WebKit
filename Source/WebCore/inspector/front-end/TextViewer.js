@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1102,14 +1102,14 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (container === this._container && offset === 1)
             return { line: this._textModel.linesCount - 1, column: this._textModel.lineLength(this._textModel.linesCount - 1) };
 
-        var lineRow = container.enclosingNodeOrSelfWithNodeName("DIV");
+        var lineRow = this._enclosingLineRowOrSelf(container);
         var lineNumber = lineRow.lineNumber;
         if (container === lineRow && offset === 0)
             return { line: lineNumber, column: 0 };
 
         // This may be chunk and chunks may contain \n.
         var column = 0;
-        var node = lineRow.traverseNextTextNode(lineRow);
+        var node = lineRow.nodeType === Node.TEXT_NODE ? lineRow : lineRow.traverseNextTextNode(lineRow);
         while (node && node !== container) {
             var text = node.textContent;
             for (var i = 0; i < text.length; ++i) {
@@ -1153,6 +1153,18 @@ WebInspector.TextEditorMainPanel.prototype = {
                 var rangeBoundary = { container: lineRow, offset: 0 };
         }
         return rangeBoundary;
+    },
+
+    _enclosingLineRowOrSelf: function(element)
+    {
+        var lineRow = element.enclosingNodeOrSelfWithClass("webkit-line-content");
+        if (lineRow)
+            return lineRow;
+        for (var lineRow = element; lineRow; lineRow = lineRow.parentElement) {
+            if (lineRow.parentElement === this._container)
+                return lineRow;
+        }
+        return null;
     },
 
     _appendSpan: function(element, content, className)
@@ -1219,7 +1231,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         if (target === this._container)
             return;
 
-        var lineRow = target.enclosingNodeOrSelfWithClass("webkit-line-content");
+        var lineRow = this._enclosingLineRowOrSelf(target);
         if (!lineRow)
             return;
 
@@ -1247,7 +1259,7 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         var endLine = startLine + 1;
         for (var row = lineRow.nextSibling; row; row = row.nextSibling) {
-            if (typeof row.lineNumber === "number") {
+            if (typeof row.lineNumber === "number" && row.lineNumber > startLine) {
                 endLine = row.lineNumber;
                 break;
             }
@@ -1333,6 +1345,9 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         if (lines.length === 0 && endLine < this._textModel.linesCount) {
             var oldRange = new WebInspector.TextRange(startLine, 0, endLine, 0);
+            var newRange = this._textModel.setText(oldRange, "");
+        } else if (lines.length === 0 && startLine > 0) {
+            var oldRange = new WebInspector.TextRange(startLine - 1, this._textModel.lineLength(startLine - 1), endLine - 1, this._textModel.lineLength(endLine - 1));
             var newRange = this._textModel.setText(oldRange, "");
         } else {
             var oldRange = new WebInspector.TextRange(startLine, 0, endLine - 1, this._textModel.lineLength(endLine - 1));
@@ -1480,7 +1495,7 @@ WebInspector.TextEditorMainPanel.prototype = {
     _collectLinesFromDiv: function(lines, element)
     {
         var textContents = [];
-        var node = element.traverseNextNode(element);
+        var node = element.nodeType === Node.TEXT_NODE ? element : element.traverseNextNode(element);
         while (node) {
             if (element.decorationsElement === node) {
                 node = node.nextSibling;
