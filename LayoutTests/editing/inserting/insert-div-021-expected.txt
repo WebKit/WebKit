@@ -32,7 +32,5 @@ Fix for this bug: <rdar://problem/3924579> REGRESSION (Mail): After deleting, hi
 | <div>
 |   <br>
 | <div>
-|   <span>
-|     id="test"
 |   "<#selection-caret>bar
 "

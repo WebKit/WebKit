@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="test" contenteditable>
+<span class="Apple-tab-span" style="white-space:pre">    hello</span><br>
+<span class="Apple-style-span"><span class="Apple-tab-span" style="white-space: pre; ">    </span>world</span></div>
+<script src="../../resources/dump-as-markup.js"></script>
+<script>
+
+document.body.focus();
+var span = document.getElementsByClassName('Apple-tab-span')[0];
+window.getSelection().setPosition(span, 1);
+document.execCommand('InsertParagraph', false, null);
+
+Markup.description('This test ensures WebKit inserts a paragraph separator properly at the end of a tab span.')
+Markup.dump('test');
+
+</script>
+</body>
+</html>

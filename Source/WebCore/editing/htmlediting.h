@@ -111,7 +111,7 @@ Position previousCandidate(const Position&);
 Position nextVisuallyDistinctCandidate(const Position&);
 Position previousVisuallyDistinctCandidate(const Position&);
 
-Position positionBeforeTabSpan(const Position&);
+Position positionOutsideTabSpan(const Position&);
 Position positionBeforeContainingSpecialElement(const Position&, Node** containingSpecialElement=0);
 Position positionAfterContainingSpecialElement(const Position&, Node** containingSpecialElement=0);
 Position positionOutsideContainingSpecialElement(const Position&, Node** containingSpecialElement=0);

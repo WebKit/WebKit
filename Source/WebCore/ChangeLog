@@ -1,3 +1,37 @@
+2011-04-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION (r46914, r48764): When typing in Mail, line wrapping frequently occurs in the middle of words
+        https://bugs.webkit.org/show_bug.cgi?id=57872
+
+        r46914 initially introduced a regression by replacing calls to styleAtPosition by editingStyleAtPosition
+        because editingStyleAtPosition did not avoid tab span to obtain the computed style unlike styleAtPosition.
+
+        r46914 also introduced a regression by cloning hierarchy under new block at the insertion position without
+        avoiding the tab span.
+
+        Fixed the both regressions by avoiding tab spans when computing the editing style and when cloning hierarchy.
+        Also reverted r46914 for the general code path because re-creating node hierarchy duplicates nodes when
+        we're moving nodes after the paragraph separator. Instead, we now split the tree up until the start block
+        before moving the nodes.
+
+        Tests: editing/inserting/insert-paragraph-after-tab-span-and-text.html
+               editing/inserting/insert-paragraph-separator-tab-span.html
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::saveTypingStyleState): Since EditingStyle's constructor avoids a tab span,
+        no longer calls positionBeforeTabSpan on the position passed to EditingStyle's constructor.
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::init): Always avoid a tab span when computing the editing style.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Avoid cloning tab spans and inserting a paragraph
+        separator into a paragraph separator.
+        * editing/htmlediting.cpp:
+        (WebCore::positionOutsideTabSpan): Renamed from positionBeforeTabSpan. Also returns the position in the parent
+        node after the tab span if the position was at the end of the tab span.
+        * editing/htmlediting.h:
+
 2011-04-07  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.

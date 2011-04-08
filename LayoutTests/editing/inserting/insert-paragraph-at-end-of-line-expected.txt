@@ -18,9 +18,6 @@ If the test has passed, the numbers should be in order, and only "1" should be a
 |   id="anchor"
 |   "1"
 | <div>
-|   <a>
-|     href="#"
-|     id="anchor"
 |   "2<#selection-caret>"
 |   <br>
 |   <div>

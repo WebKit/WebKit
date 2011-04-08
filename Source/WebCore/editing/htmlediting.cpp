@@ -894,14 +894,17 @@ bool isNodeInTextFormControl(Node* node)
     return ancestor->isElementNode() && static_cast<Element*>(ancestor)->isTextFormControl();
 }
     
-Position positionBeforeTabSpan(const Position& pos)
+Position positionOutsideTabSpan(const Position& pos)
 {
-    Node* node = pos.deprecatedNode();
+    Node* node = pos.containerNode();
     if (isTabSpanTextNode(node))
         node = tabSpanNode(node);
     else if (!isTabSpanNode(node))
         return pos;
-    
+
+    if (node && VisiblePosition(pos) == lastPositionInNode(node))
+        return positionInParentAfterNode(node);
+
     return positionInParentBeforeNode(node);
 }
 

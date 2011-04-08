@@ -239,7 +239,7 @@ void InsertParagraphSeparatorCommand::doApply()
         // Recreate the same structure in the new paragraph.
         
         Vector<Element*> ancestors;
-        getAncestorsInsideBlock(insertionPosition.deprecatedNode(), startBlock, ancestors);      
+        getAncestorsInsideBlock(positionOutsideTabSpan(insertionPosition).deprecatedNode(), startBlock, ancestors);      
         RefPtr<Element> parent = cloneHierarchyUnderNewBlock(ancestors, blockToInsert);
         
         appendBlockPlaceholder(parent);
@@ -254,6 +254,9 @@ void InsertParagraphSeparatorCommand::doApply()
     // similar case where previous position is in another, presumeably nested, block.
     if (isFirstInBlock || !inSameBlock(visiblePos, visiblePos.previous())) {
         Node *refNode;
+        
+        insertionPosition = positionOutsideTabSpan(insertionPosition);
+
         if (isFirstInBlock && !nestNewBlock)
             refNode = startBlock;
         else if (insertionPosition.deprecatedNode() == startBlock && nestNewBlock) {
@@ -270,7 +273,7 @@ void InsertParagraphSeparatorCommand::doApply()
         // Recreate the same structure in the new paragraph.
 
         Vector<Element*> ancestors;
-        getAncestorsInsideBlock(positionAvoidingSpecialElementBoundary(insertionPosition).deprecatedNode(), startBlock, ancestors);
+        getAncestorsInsideBlock(positionAvoidingSpecialElementBoundary(positionOutsideTabSpan(insertionPosition)).deprecatedNode(), startBlock, ancestors);
         
         appendBlockPlaceholder(cloneHierarchyUnderNewBlock(ancestors, blockToInsert));
         
@@ -299,11 +302,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // At this point, the insertionPosition's node could be a container, and we want to make sure we include
     // all of the correct nodes when building the ancestor list.  So this needs to be the deepest representation of the position
     // before we walk the DOM tree.
-    insertionPosition = VisiblePosition(insertionPosition).deepEquivalent();
-
-    // Build up list of ancestors in between the start node and the start block.
-    Vector<Element*> ancestors;
-    getAncestorsInsideBlock(insertionPosition.deprecatedNode(), startBlock, ancestors);
+    insertionPosition = positionOutsideTabSpan(VisiblePosition(insertionPosition).deepEquivalent());
 
     // Make sure we do not cause a rendered space to become unrendered.
     // FIXME: We need the affinity for pos, but pos.downstream() does not give it
@@ -335,47 +334,34 @@ void InsertParagraphSeparatorCommand::doApply()
         insertNodeAfter(blockToInsert.get(), startBlock);
 
     updateLayout();
-    
-    // Make clones of ancestors in between the start node and the outer block.
-    RefPtr<Element> parent = cloneHierarchyUnderNewBlock(ancestors, blockToInsert);
 
     // If the paragraph separator was inserted at the end of a paragraph, an empty line must be
     // created.  All of the nodes, starting at visiblePos, are about to be added to the new paragraph 
     // element.  If the first node to be inserted won't be one that will hold an empty line open, add a br.
     if (isEndOfParagraph(visiblePos) && !lineBreakExistsAtVisiblePosition(visiblePos))
         appendNode(createBreakElement(document()).get(), blockToInsert.get());
-        
+
     // Move the start node and the siblings of the start node.
-    if (insertionPosition.deprecatedNode() != startBlock) {
-        Node* n = insertionPosition.deprecatedNode();
-        if (insertionPosition.deprecatedEditingOffset() >= caretMaxOffset(n))
-            n = n->nextSibling();
+    if (VisiblePosition(insertionPosition) != VisiblePosition(positionBeforeNode(blockToInsert.get()))) {
+        Node* n;
+        if (insertionPosition.containerNode() == startBlock)
+            n = insertionPosition.computeNodeAfterPosition();
+        else {
+            splitTreeToNode(insertionPosition.containerNode(), startBlock);
+
+            for (n = startBlock->firstChild(); n; n = n->nextSibling()) {
+                if (comparePositions(VisiblePosition(insertionPosition), positionBeforeNode(n)) <= 0)
+                    break;
+            }
+        }
 
         while (n && n != blockToInsert) {
             Node *next = n->nextSibling();
             removeNode(n);
-            appendNode(n, parent.get());
+            appendNode(n, blockToInsert);
             n = next;
         }
     }            
-
-    // Move everything after the start node.
-    if (!ancestors.isEmpty()) {
-        Element* leftParent = ancestors.first();
-        while (leftParent && leftParent != startBlock) {
-            parent = parent->parentElement();
-            if (!parent)
-                break;
-            Node* n = leftParent->nextSibling();
-            while (n && n != blockToInsert) {
-                Node* next = n->nextSibling();
-                removeNode(n);
-                appendNode(n, parent.get());
-                n = next;
-            }
-            leftParent = leftParent->parentElement();
-        }
-    }
 
     // Handle whitespace that occurs after the split
     if (splitText) {

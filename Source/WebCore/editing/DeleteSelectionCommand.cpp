@@ -281,7 +281,7 @@ void DeleteSelectionCommand::saveTypingStyleState()
         return;
 
     // Figure out the typing style in effect before the delete is done.
-    m_typingStyle = EditingStyle::create(positionBeforeTabSpan(m_selectionToDelete.start()));
+    m_typingStyle = EditingStyle::create(m_selectionToDelete.start());
     m_typingStyle->removeStyleAddedByNode(enclosingAnchorElement(m_selectionToDelete.start()));
 
     // If we're deleting into a Mail blockquote, save the style at end() instead of start()

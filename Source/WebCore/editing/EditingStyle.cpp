@@ -300,6 +300,11 @@ EditingStyle::~EditingStyle()
 
 void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
 {
+    if (isTabSpanTextNode(node))
+        node = tabSpanNode(node)->parentNode();
+    else if (isTabSpanNode(node))
+        node = node->parentNode();
+
     RefPtr<CSSComputedStyleDeclaration> computedStyleAtPosition = computedStyle(node);
     m_mutableStyle = propertiesToInclude == AllProperties && computedStyleAtPosition ? computedStyleAtPosition->copy() : editingStyleFromComputedStyle(computedStyleAtPosition);
 
