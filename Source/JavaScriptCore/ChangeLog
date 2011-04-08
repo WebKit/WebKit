@@ -1,3 +1,11 @@
+2011-04-08  Adam Roben  <aroben@apple.com>
+
+        Clean build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd: Don't try to delete directories that
+        don't exist. Also switched from del /s to rmdir /s, which has the benefit of deleting the
+        directory itself in addition to the files it contains.
+
 2011-04-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

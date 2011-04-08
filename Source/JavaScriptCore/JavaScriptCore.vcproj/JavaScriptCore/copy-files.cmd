@@ -74,6 +74,6 @@ goto :EOF
 :clean
 
 echo Deleting copied files...
-del /s /q "%PublicHeadersDirectory%" >NUL
-del /s /q "%PrivateHeadersDirectory%" >NUL
-del /s /q "%ResourcesDirectory%" >NUL
+if exist "%PublicHeadersDirectory%" rmdir /s /q "%PublicHeadersDirectory%" >NUL
+if exist "%PrivateHeadersDirectory%" rmdir /s /q "%PrivateHeadersDirectory%" >NUL
+if exist "%ResourcesDirectory%" rmdir /s /q "%ResourcesDirectory%" >NUL
