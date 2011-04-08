@@ -1,3 +1,24 @@
+2011-04-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION (r80871): Crash when visiting http://broadband.biglobe.ne.jp/
+        https://bugs.webkit.org/show_bug.cgi?id=56297
+        <rdar://problem/9131597>
+
+        Test: fast/css-generated-content/table-row-after-no-crash.html
+
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::styleDidChange): Factor out generation of before/after
+        content, and only do it if the row already has a parent. For construction of
+        anonymous cells to work correctly, the row needs to already have a parent, so
+        in that case wait a bit.
+        (WebCore::RenderTableRow::updateBeforeAndAfterContent): Factored out to here.
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild): When adding a row, update its
+        before/after content, in case it had any.
+
 2011-04-07  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.

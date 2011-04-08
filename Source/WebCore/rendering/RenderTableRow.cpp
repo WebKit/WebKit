@@ -63,15 +63,21 @@ void RenderTableRow::styleWillChange(StyleDifference diff, const RenderStyle* ne
     RenderBox::styleWillChange(diff, newStyle);
 }
 
-void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderTableRow::updateBeforeAndAfterContent()
 {
-    RenderBox::styleDidChange(diff, oldStyle);
-
-    // Update pseudos for :before and :after now.
     if (!isAnonymous() && document()->usesBeforeAfterRules()) {
         children()->updateBeforeAfterContent(this, BEFORE);
         children()->updateBeforeAfterContent(this, AFTER);
     }
+}
+
+void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBox::styleDidChange(diff, oldStyle);
+
+    if (parent())
+        updateBeforeAndAfterContent();
+
 }
 
 void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
