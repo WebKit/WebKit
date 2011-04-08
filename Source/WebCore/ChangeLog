@@ -1,3 +1,11 @@
+2011-04-08  Jessie Berlin  <jberlin@apple.com>
+
+        Windows build warning fix.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        Since ShadowRoot.cpp is included in the DOMAllInOne.cpp file, it should be excluded from
+        the build.
+
 2011-04-07  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
