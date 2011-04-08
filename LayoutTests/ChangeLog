@@ -1,3 +1,16 @@
+2011-04-08  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57971
+        
+        Rework visited/unvisited links for before/after content. Propagate the bits earlier so that we don't lose
+        them when we throw away the visited style. Don't throw away the visited link style for pseudo elements
+        either, so that the styles are consistent.
+
+        * fast/history/visited-generated-content-test-expected.txt: Added.
+        * fast/history/visited-generated-content-test.html: Added.
+
 2011-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

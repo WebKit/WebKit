@@ -1345,12 +1345,6 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
                 parentStyle = parentVisitedStyle;
         }
         visitedStyle = styleForElement(e, parentStyle, false, false, true);
-        if (visitedStyle) {
-            if (m_elementLinkState == InsideUnvisitedLink)
-                visitedStyle = 0;  // We made the style to avoid timing attacks. Just throw it away now that we did that, since we don't need it.
-            else
-                visitedStyle->setStyleType(VISITED_LINK);
-        }
         initForStyleResolve(e, defaultParent);
     }
 
@@ -1368,6 +1362,20 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         m_style->setInsideLink(m_elementLinkState);
     }
     
+    if (visitedStyle) {
+        // Copy any pseudo bits that the visited style has to the primary style so that
+        // pseudo element styles will continue to work for pseudo elements inside :visited
+        // links.
+        for (unsigned pseudo = FIRST_PUBLIC_PSEUDOID; pseudo < FIRST_INTERNAL_PSEUDOID; ++pseudo) {
+            if (visitedStyle->hasPseudoStyle(static_cast<PseudoId>(pseudo)))
+                m_style->setHasPseudoStyle(static_cast<PseudoId>(pseudo));
+        }
+        if (m_elementLinkState == InsideUnvisitedLink)
+            visitedStyle = 0;  // We made the style to avoid timing attacks. Just throw it away now that we did that, since we don't need it.
+        else
+            visitedStyle->setStyleType(VISITED_LINK);
+    }
+
     if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(e)) {
         loadFullDefaultStyle();
         assertNoSiblingRulesInDefaultStyle();
@@ -1554,14 +1562,6 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         m_style->setUnique();
 
     if (visitedStyle) {
-        // Copy any pseudo bits that the visited style has to the primary style so that
-        // pseudo element styles will continue to work for pseudo elements inside :visited
-        // links.
-        for (unsigned pseudo = FIRST_PUBLIC_PSEUDOID; pseudo < FIRST_INTERNAL_PSEUDOID; ++pseudo) {
-            if (visitedStyle->hasPseudoStyle(static_cast<PseudoId>(pseudo)))
-                m_style->setHasPseudoStyle(static_cast<PseudoId>(pseudo));
-        }
-        
         // Add the visited style off the main style.
         m_style->addCachedPseudoStyle(visitedStyle.release());
     }
@@ -1694,12 +1694,8 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
         // Fetch our parent style with :visited in effect.
         RenderStyle* parentVisitedStyle = parentStyle->getCachedPseudoStyle(VISITED_LINK);
         visitedStyle = pseudoStyleForElement(pseudo, e, parentVisitedStyle ? parentVisitedStyle : parentStyle, true);
-        if (visitedStyle) {
-            if (m_elementLinkState == InsideUnvisitedLink)
-                visitedStyle = 0;  // We made the style to avoid timing attacks. Just throw it away now that we did that.
-            else
-                visitedStyle->setStyleType(VISITED_LINK);
-        }
+        if (visitedStyle)
+            visitedStyle->setStyleType(VISITED_LINK);
     }
 
     initForStyleResolve(e, parentStyle, pseudo);
