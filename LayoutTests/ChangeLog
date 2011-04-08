@@ -1,3 +1,10 @@
+2011-04-07  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed, add baseline pixel images for decorations-transformed.
+
+        * platform/chromium-mac/fast/text/decorations-transformed-expected.png: Added.
+        * platform/chromium-win/fast/text/decorations-transformed-expected.png: Added.
+
 2011-04-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
