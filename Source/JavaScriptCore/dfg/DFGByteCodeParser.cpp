@@ -782,7 +782,7 @@ bool ByteCodeParser::parse()
 #if ENABLE(DFG_JIT_RESTRICTIONS)
             // FIXME: temporarily disabling the DFG JIT for functions containing arithmetic.
             if (m_regressionGuard)
-                return false
+                return false;
 #endif
             return true;
         }

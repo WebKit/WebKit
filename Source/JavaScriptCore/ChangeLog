@@ -1,5 +1,12 @@
 2011-04-08  Gavin Barraclough  <barraclough@apple.com>
 
+        Ooops, typo, build fix.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parse):
+
+2011-04-08  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Bug 58154 - Add support for comparison operators to the DFG JIT.
