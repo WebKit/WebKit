@@ -35,7 +35,11 @@ class Element;
 class HTMLMapElement;
 
 class TreeScope : public ContainerNode {
+    friend class Document;
+
 public:
+    TreeScope* parentTreeScope() const { return m_parentTreeScope; }
+
     Element* getElementById(const AtomicString&) const;
     bool hasElementWithId(AtomicStringImpl* id) const;
     bool containsMultipleElementsWithId(const AtomicString& id) const;
@@ -63,9 +67,15 @@ public:
 protected:
     TreeScope(Document*, ConstructionType = CreateContainer);
 
+    virtual ~TreeScope();
+
     void destroyTreeScopeData();
 
+    void setParentTreeScope(TreeScope*);
+
 private:
+    TreeScope* m_parentTreeScope;
+
     DocumentOrderedMap m_elementsById;
     DocumentOrderedMap m_imageMapsByName;
 
@@ -85,7 +95,7 @@ inline bool TreeScope::containsMultipleElementsWithId(const AtomicString& id) co
 {
     return m_elementsById.containsMultiple(id.impl());
 }
-    
+
 } // namespace WebCore
 
 #endif // TreeScope_h

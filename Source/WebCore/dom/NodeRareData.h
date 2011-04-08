@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class TreeScope;
+
 struct NodeListsNodeData {
     WTF_MAKE_NONCOPYABLE(NodeListsNodeData); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -73,7 +75,8 @@ class NodeRareData {
     WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
 public:    
     NodeRareData()
-        : m_tabIndex(0)
+        : m_treeScope(0)
+        , m_tabIndex(0)
         , m_tabIndexWasSetExplicitly(false)
         , m_isFocused(false)
         , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
@@ -96,11 +99,14 @@ public:
     {
         return rareDataMap().get(node);
     }
+
+    TreeScope* treeScope() const { return m_treeScope; }
+    void setTreeScope(TreeScope* treeScope) { m_treeScope = treeScope; }
     
     void clearNodeLists() { m_nodeLists.clear(); }
     void setNodeLists(PassOwnPtr<NodeListsNodeData> lists) { m_nodeLists = lists; }
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
-    
+
     short tabIndex() const { return m_tabIndex; }
     void setTabIndexExplicitly(short index) { m_tabIndex = index; m_tabIndexWasSetExplicitly = true; }
     bool tabIndexSetExplicitly() const { return m_tabIndexWasSetExplicitly; }
@@ -123,6 +129,7 @@ protected:
     void setNeedsFocusAppearanceUpdateSoonAfterAttach(bool needs) { m_needsFocusAppearanceUpdateSoonAfterAttach = needs; }
 
 private:
+    TreeScope* m_treeScope;
     OwnPtr<NodeListsNodeData> m_nodeLists;
     OwnPtr<EventTargetData> m_eventTargetData;
     short m_tabIndex;

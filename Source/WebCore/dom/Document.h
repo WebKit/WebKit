@@ -1410,12 +1410,13 @@ private:
     RefPtr<ContentSecurityPolicy> m_contentSecurityPolicy;
 };
 
+// Put these methods here, because they require the Document definition, but we really want to inline them.
+
 inline bool Node::isDocumentNode() const
 {
     return this == m_document;
 }
 
-// here because it uses a Document method but we really want to inline it
 inline Node::Node(Document* document, ConstructionType type)
     : m_document(document)
     , m_previous(0)

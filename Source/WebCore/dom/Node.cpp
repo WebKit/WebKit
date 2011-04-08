@@ -470,6 +470,58 @@ void Node::setDocument(Document* document)
     ASSERT(didMoveToNewOwnerDocumentWasCalled);
 }
 
+TreeScope* Node::treeScope() const
+{
+    if (!hasRareData())
+        return document();
+    TreeScope* scope = rareData()->treeScope();
+    // FIXME: Until we land shadow scopes, there should be no non-document scopes.
+    ASSERT(!scope);
+    return scope ? scope : document();
+}
+
+void Node::setTreeScope(TreeScope* newTreeScope)
+{
+    ASSERT(!isDocumentNode());
+    ASSERT(newTreeScope);
+    ASSERT(!inDocument() || treeScope() == newTreeScope);
+
+    if (newTreeScope->isDocumentNode()) {
+        if (hasRareData())
+            rareData()->setTreeScope(0);
+        // Setting the new document scope will be handled implicitly
+        // by setDocument() below.
+    } else {
+        // FIXME: Until we land shadow scopes, this branch should be inert.
+        ASSERT_NOT_REACHED();
+        ensureRareData()->setTreeScope(newTreeScope);
+    }
+
+    setDocument(newTreeScope->document());
+}
+
+void Node::setTreeScopeRecursively(TreeScope* newTreeScope)
+{
+    ASSERT(!isDocumentNode());
+    ASSERT(newTreeScope);
+    if (treeScope() == newTreeScope)
+        return;
+
+    Document* currentDocument = document();
+    Document* newDocument = newTreeScope->document();
+    // If an element is moved from a document and then eventually back again the collection cache for
+    // that element may contain stale data as changes made to it will have updated the DOMTreeVersion
+    // of the document it was moved to. By increasing the DOMTreeVersion of the donating document here
+    // we ensure that the collection cache will be invalidated as needed when the element is moved back.
+    if (currentDocument && currentDocument != newDocument)
+        currentDocument->incDOMTreeVersion();
+
+    for (Node* node = this; node; node = node->traverseNextNode(this)) {
+        node->setTreeScope(newTreeScope);
+        // FIXME: Once shadow scopes are landed, update parent scope, etc.
+    }
+}
+
 NodeRareData* Node::rareData() const
 {
     ASSERT(hasRareData());
@@ -802,15 +854,7 @@ bool Node::hasNonEmptyBoundingBox() const
 
 void Node::setDocumentRecursively(Document* newDocument)
 {
-    if (document() == newDocument)
-        return;
-
-    // If an element is moved from a document and then eventually back again the collection cache for
-    // that element may contain stale data as changes made to it will have updated the DOMTreeVersion
-    // of the document it was moved to. By increasing the DOMTreeVersion of the donating document here
-    // we ensure that the collection cache will be invalidated as needed when the element is moved back.
-    if (document())
-        document()->incDOMTreeVersion();
+    ASSERT(document() != newDocument);
 
     for (Node* node = this; node; node = node->traverseNextNode(this)) {
         node->setDocument(newDocument);

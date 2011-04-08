@@ -72,6 +72,7 @@ class RenderBoxModelObject;
 class RenderObject;
 class RenderStyle;
 class TagNodeList;
+class TreeScope;
 
 typedef int ExceptionCode;
 
@@ -89,6 +90,8 @@ enum StyleChangeType {
 
 class Node : public EventTarget, public TreeShared<ContainerNode>, public ScriptWrappable {
     friend class Document;
+    friend class TreeScope;
+
 public:
     enum NodeType {
         ELEMENT_NODE = 1,
@@ -351,12 +354,14 @@ public:
         return m_document;
     }
 
-    // Do not use this method to change the document of a node until after the node has been
-    // removed from its previous document.
-    void setDocument(Document*);
+    TreeScope* treeScope() const;
+
+    // Do not use this method to change the scope of a node until after the node has been
+    // removed from its previous scope. Do not use to change documents.
+    void setTreeScope(TreeScope*);
 
     // Used by the basic DOM methods (e.g., appendChild()).
-    void setDocumentRecursively(Document*);
+    void setTreeScopeRecursively(TreeScope*);
 
     // Returns true if this node is associated with a document and is in its associated document's
     // node tree, false otherwise.
@@ -632,6 +637,11 @@ protected:
         CreateSVGElement = CreateStyledElement | IsSVGFlag, 
     };
     Node(Document*, ConstructionType);
+
+    // Do not use this method to change the document of a node until after the node has been
+    // removed from its previous document.
+    void setDocument(Document*);
+    void setDocumentRecursively(Document*);
 
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();

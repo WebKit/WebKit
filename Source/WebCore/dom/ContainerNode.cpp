@@ -161,7 +161,8 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         InspectorInstrumentation::willInsertDOMNode(document(), child, this);
 #endif
 
-        child->setDocumentRecursively(document());
+        child->setTreeScopeRecursively(treeScope());
+
         insertBeforeCommon(next.get(), child);
 
         // Send notification about the children change.
@@ -310,7 +311,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
         InspectorInstrumentation::willInsertDOMNode(document(), child.get(), this);
 #endif
 
-        child->setDocumentRecursively(document());
+        child->setTreeScopeRecursively(treeScope());
 
         // Add child after "prev".
         forbidEventDispatch();
@@ -599,7 +600,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
         InspectorInstrumentation::willInsertDOMNode(document(), child, this);
 #endif
 
-        child->setDocumentRecursively(document());
+        child->setTreeScopeRecursively(treeScope());
 
         // Append child to the end of the list
         forbidEventDispatch();

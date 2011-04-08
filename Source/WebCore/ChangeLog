@@ -1,3 +1,49 @@
+2011-04-07  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 58060 - Prepare access to TreeScope from Node, using NodeRareData
+        https://bugs.webkit.org/show_bug.cgi?id=58060
+
+        Add a TreeScope pointer to NodeRareData to allow direct access to the containing tree scope.
+        However, in case the containing scope is the document, this is not set, and the
+        document pointer within Node is used instead.
+
+        In an object derived from TreeScope (currently Document), the tree scope pointer
+        points to itself. Such objects also contain a parent tree scope pointer that
+        points to the containing scope. For Document, this is 0.
+
+        Add new functions setTreeScope[Recursively] that replace setDocument[Recursively]
+        in public usage. setDocument[Recursively] are now only used internally and are
+        thererfore protected.
+
+        No new tests. (no new functionality)
+
+        * dom/ContainerNode.cpp: change DOM manipulation methods to update scope of inserted nodes
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::appendChild):
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::setDocType): Ditto
+        (WebCore::Document::adoptNode): Ditto
+        * dom/Document.h:
+        * dom/Node.cpp:
+        (WebCore::Node::treeScope): use NodeRareData to check if a non-Document scope is set
+        (WebCore::Node::setTreeScope): update NodeRareData depending on whether scope is a document
+        (WebCore::Node::setTreeScopeRecursively):
+        (WebCore::Node::setDocumentRecursively):
+        * dom/Node.h:
+        * dom/NodeRareData.h: add scope pointer
+        (WebCore::NodeRareData::NodeRareData):
+        (WebCore::NodeRareData::treeScope):
+        (WebCore::NodeRareData::setTreeScope):
+        * dom/TreeScope.cpp: add parentTreeScope pointer
+        (WebCore::TreeScope::TreeScope):
+        (WebCore::TreeScope::setParentTreeScope):
+        * dom/TreeScope.h:
+        (WebCore::TreeScope::parentTreeScope):
+
 2011-04-08  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by David Hyatt.
