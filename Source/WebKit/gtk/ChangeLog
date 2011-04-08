@@ -1,3 +1,14 @@
+2011-04-08  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Kent Tamura.
+
+        layoutTestController.shadowRoot should return undefined if its
+        argument is not an element.
+        https://bugs.webkit.org/show_bug.cgi?id=58119
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::shadowRoot):
+
 2011-04-08  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.
