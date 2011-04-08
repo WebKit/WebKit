@@ -225,7 +225,7 @@ WebInspector.SourceFrame.prototype = {
 
     isContentEditable: function()
     {
-        return this._delegate.canEditScriptSource();
+        return this._delegate.canEditScriptSource() && !this._editScriptSourceInProgress;
     },
 
     startEditing: function()
@@ -902,15 +902,33 @@ WebInspector.SourceFrame.prototype = {
 
         function didEditScriptSource(error)
         {
-            if (error && !this._viewerState && this._textModel.text === newSource) {
+            this._editScriptSourceInProgress = false;
+
+            if (error) {
                 this._viewerState = originalViewerState;
                 this._textViewer.readOnly = false;
                 this._delegate.setScriptSourceIsBeingEdited(true);
                 WebInspector.log(error.data[0], WebInspector.ConsoleMessage.MessageLevel.Error);
                 WebInspector.showConsole();
+                return;
+            }
+
+            var newBreakpoints = {};
+            for (var lineNumber in this._breakpoints) {
+                newBreakpoints[lineNumber] = this._breakpoints[lineNumber];
+                this.removeBreakpoint(Number(lineNumber));
+            }
+
+            for (var lineNumber in originalViewerState.breakpoints)
+                this._delegate.removeBreakpoint(Number(lineNumber));
+
+            for (var lineNumber in newBreakpoints) {
+                var breakpoint = newBreakpoints[lineNumber];
+                this._delegate.setBreakpoint(Number(lineNumber), breakpoint.condition, breakpoint.enabled);
             }
         }
         this._delegate.editScriptSource(newSource, didEditScriptSource.bind(this));
+        this._editScriptSourceInProgress = true;
         return true;
     },
 

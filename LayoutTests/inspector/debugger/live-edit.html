@@ -18,8 +18,7 @@ function test()
 
             function didShowScriptSource(sourceFrame)
             {
-                InspectorTest.addSniffer(WebInspector.debuggerModel, "_didEditScriptSource", didEditScriptSource);
-                replaceInSource(sourceFrame, "return 0;", "return \"live-edited string\";");
+                replaceInSource(sourceFrame, "return 0;", "return \"live-edited string\";", didEditScriptSource);
             }
 
             function didEditScriptSource()
@@ -47,8 +46,7 @@ function test()
 
             function paused(callFrames)
             {
-                InspectorTest.addSniffer(WebInspector.debuggerModel, "_didEditScriptSource", didEditScriptSource);
-                replaceInSource(panel.visibleView, "return 1;", "return 2;\n\n\n\n");
+                replaceInSource(panel.visibleView, "return 1;", "return 2;\n\n\n\n", didEditScriptSource);
             }
 
             function didEditScriptSource()
@@ -62,15 +60,52 @@ function test()
                 InspectorTest.assertEquals("3", result.description, "edited function returns wrong result");
                 next();
             }
+        },
+
+        function testBreakpointsUpdated(next)
+        {
+            InspectorTest.showScriptSource("edit-me.js", didShowScriptSource);
+
+            function didShowScriptSource(sourceFrame)
+            {
+                InspectorTest.addSniffer(sourceFrame, "addBreakpoint", breakpointAdded);
+                InspectorTest.setBreakpoint(sourceFrame, 2, "", true);
+            }
+
+            function breakpointAdded()
+            {
+                replaceInSource(panel.visibleView, "function f()", "function newFunctionCreatedWithLiveEdit()\n{\n}\nfunction f()", didEditScriptSource);
+            }
+
+            function didEditScriptSource()
+            {
+                var breakpoints = panel.visibleView._breakpoints;
+                for (var lineNumber in breakpoints)
+                    InspectorTest.assertEquals("5", lineNumber);
+                next();
+            }
         }
     ]);
 
-    function replaceInSource(sourceFrame, string, replacement)
+    function replaceInSource(sourceFrame, string, replacement, callback)
     {
+        InspectorTest.addSniffer(WebInspector.debuggerModel, "_didEditScriptSource", callback);
         sourceFrame._textViewer.readOnly = false;
         sourceFrame.startEditing();
-        var newText = sourceFrame._textModel.text.replace(string, replacement);
-        sourceFrame._textModel.setText(null, newText);
+        var oldRange, newRange;
+        var lines = sourceFrame._textModel._lines;
+        for (var i = 0; i < lines.length; ++i) {
+            var column = lines[i].indexOf(string);
+            if (column === -1)
+                continue;
+            lines[i] = lines[i].replace(string, replacement);
+            var lineEndings = replacement.lineEndings();
+            var lastLineLength = lineEndings[lineEndings.length - 1] - (lineEndings[lineEndings.length - 2] || 0);
+            oldRange = new WebInspector.TextRange(i, column, i, column + string.length);
+            newRange = new WebInspector.TextRange(i, column, i + lineEndings.length - 1, lastLineLength);
+            break;
+        }
+        sourceFrame.endEditing(oldRange, newRange);
         sourceFrame._handleSave();
     }
 };

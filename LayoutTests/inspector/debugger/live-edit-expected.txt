@@ -21,5 +21,7 @@ Call stack:
     4) InjectedScript._evaluateAndWrap (:265)
     5) InjectedScript.evaluate (:245)
 Script execution resumed.
+
+Running: testBreakpointsUpdated
 Debugger was disabled.
 

@@ -68,6 +68,12 @@ WebInspector.SourceFile.prototype = {
         return this._content;
     },
 
+    set content(content)
+    {
+        // FIXME: move live edit implementation to SourceFile and remove this setter.
+        this._content = content;
+    },
+
     requestSourceMapping: function(callback)
     {
         if (!this._mapping)

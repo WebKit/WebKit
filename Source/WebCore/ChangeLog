@@ -1,3 +1,21 @@
+2011-04-07  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: update breakpoints according to source frame decorations after live edit.
+        https://bugs.webkit.org/show_bug.cgi?id=58029
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.editScriptSource.didEditScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype.editScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._updateResourceContent.didEditScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._updateResourceContent):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.SourceFile.prototype.set content):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._handleSave.didEditScriptSource):
+        (WebInspector.SourceFrame.prototype._handleSave):
+
 2011-04-08  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

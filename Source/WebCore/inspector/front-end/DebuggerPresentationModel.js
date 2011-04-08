@@ -143,22 +143,32 @@ WebInspector.DebuggerPresentationModel.prototype = {
         var oldSource = sourceFile.content;
         function didEditScriptSource(error)
         {
-            callback(error);
-            if (error)
-                return;
-
-            this._updateBreakpointsAfterLiveEdit(sourceFileId, oldSource, newSource);
-
-            var resource = WebInspector.resourceForURL(script.sourceURL);
-            if (resource) {
-                var revertHandle = this.editScriptSource.bind(this, sourceFileId, oldSource, sourceFile.reload.bind(sourceFile));
-                resource.setContent(newSource, revertHandle);
+            if (!error) {
+                sourceFile.content = newSource;
+                this._updateResourceContent(sourceFile, oldSource, newSource);
             }
 
-            if (WebInspector.debuggerModel.callFrames)
+            callback(error);
+
+            if (!error && WebInspector.debuggerModel.callFrames)
                 this._debuggerPaused();
         }
         WebInspector.debuggerModel.editScriptSource(script.sourceID, newSource, didEditScriptSource.bind(this));
+    },
+
+    _updateResourceContent: function(sourceFile, oldSource, newSource)
+    {
+        var resource = WebInspector.resourceForURL(sourceFile.url);
+        if (!resource)
+            return;
+
+        function didEditScriptSource(error)
+        {
+            this._updateBreakpointsAfterLiveEdit(sourceFile.id, oldSource, newSource);
+            sourceFile.reload();
+        }
+        var revertHandle = this.editScriptSource.bind(this, sourceFile.id, oldSource, didEditScriptSource.bind(this));
+        resource.setContent(newSource, revertHandle);
     },
 
     _updateBreakpointsAfterLiveEdit: function(sourceFileId, oldSource, newSource)
