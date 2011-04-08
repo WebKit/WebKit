@@ -68,9 +68,9 @@ WebInspector.DebuggerModel.prototype = {
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerWasDisabled);
     },
 
-    continueToLocation: function(sourceID, lineNumber, columnNumber)
+    continueToLocation: function(location)
     {
-        DebuggerAgent.continueToLocation(sourceID, lineNumber, columnNumber);
+        DebuggerAgent.continueToLocation(location);
     },
 
     setBreakpoint: function(url, lineNumber, columnNumber, condition, callback)
@@ -92,14 +92,14 @@ WebInspector.DebuggerModel.prototype = {
         DebuggerAgent.setBreakpointByUrl(url, lineNumber, columnNumber, condition, didSetBreakpoint.bind(this));
     },
 
-    setBreakpointBySourceId: function(sourceID, lineNumber, columnNumber, condition, callback)
+    setBreakpointBySourceId: function(location, condition, callback)
     {
-        function didSetBreakpoint(error, breakpointId, location)
+        function didSetBreakpoint(error, breakpointId, actualLocation)
         {
             if (callback)
-                callback(error ? null : breakpointId, [location]);
+                callback(error ? null : breakpointId, [actualLocation]);
         }
-        DebuggerAgent.setBreakpoint(sourceID, lineNumber, columnNumber, condition, didSetBreakpoint.bind(this));
+        DebuggerAgent.setBreakpoint(location, condition, didSetBreakpoint.bind(this));
     },
 
     removeBreakpoint: function(breakpointId, callback)

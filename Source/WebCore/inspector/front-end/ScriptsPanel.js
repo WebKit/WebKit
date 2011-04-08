@@ -387,14 +387,14 @@ WebInspector.ScriptsPanel.prototype = {
                 status = WebInspector.UIString("Paused on a XMLHttpRequest.");
             }
         } else {
-            function didGetSourceLocation(sourceFileId, lineNumber, columnNumber)
+            function didGetSourceLocation(sourceFileId, lineNumber)
             {
                 if (!sourceFileId || !this._presentationModel.findBreakpoint(sourceFileId, lineNumber))
                     return;
                 this.sidebarPanes.jsBreakpoints.highlightBreakpoint(sourceFileId, lineNumber);
                 status = WebInspector.UIString("Paused on a JavaScript breakpoint.");
             }
-            callFrames[0].sourceLocation(didGetSourceLocation.bind(this));
+            callFrames[0].sourceLine(didGetSourceLocation.bind(this));
         }
         if (status)
             this.sidebarPanes.callstack.setStatus(status);
@@ -487,8 +487,8 @@ WebInspector.ScriptsPanel.prototype = {
     {
         function didRequestSourceMapping(mapping)
         {
-            var location = mapping.scriptLocationToSourceLocation(anchor.getAttribute("line_number") - 1, 0);
-            this._showSourceLine(sourceFile.id, location.lineNumber);
+            var lineNumber = mapping.scriptLocationToSourceLine({lineNumber:anchor.getAttribute("line_number") - 1, columnNumber:0});
+            this._showSourceLine(sourceFile.id, lineNumber);
         }
         var sourceFile = this._presentationModel.sourceFileForScriptURL(anchor.href);
         sourceFile.requestSourceMapping(didRequestSourceMapping.bind(this));
@@ -621,7 +621,7 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.watchExpressions.refreshExpressions();
         this.sidebarPanes.callstack.selectedCallFrame = this._presentationModel.selectedCallFrame;
 
-        function didGetSourceLocation(sourceFileId, lineNumber, columnNumber)
+        function didGetSourceLocation(sourceFileId, lineNumber)
         {
             if (!sourceFileId)
                 return;
@@ -634,7 +634,7 @@ WebInspector.ScriptsPanel.prototype = {
             sourceFrame.setExecutionLine(lineNumber);
             this._executionSourceFrame = sourceFrame;
         }
-        callFrame.sourceLocation(didGetSourceLocation.bind(this));
+        callFrame.sourceLine(didGetSourceLocation.bind(this));
     },
 
     _filesSelectChanged: function()

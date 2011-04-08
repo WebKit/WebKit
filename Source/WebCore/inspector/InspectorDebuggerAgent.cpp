@@ -174,17 +174,35 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString*, const String& url,
     *outBreakpointId = breakpointId;
 }
 
-void InspectorDebuggerAgent::setBreakpoint(ErrorString* errorString, const String& sourceId, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, String* outBreakpointId, RefPtr<InspectorObject>* location)
+static bool parseLocation(ErrorString* errorString, RefPtr<InspectorObject> location, String* sourceId, int* lineNumber, int* columnNumber)
 {
-    int columnNumber = optionalColumnNumber ? *optionalColumnNumber : 0;
+    if (!location->getString("sourceID", sourceId) || !location->getNumber("lineNumber", lineNumber)) {
+        // FIXME: replace with input validation.
+        *errorString = "sourceId and lineNumber are required.";
+        return false;
+    }
+    *columnNumber = 0;
+    location->getNumber("columnNumber", columnNumber);
+    return true;
+}
+
+void InspectorDebuggerAgent::setBreakpoint(ErrorString* errorString, PassRefPtr<InspectorObject> location, const String* const optionalCondition, String* outBreakpointId, RefPtr<InspectorObject>* actualLocation)
+{
+    String sourceId;
+    int lineNumber;
+    int columnNumber;
+
+    if (!parseLocation(errorString, location, &sourceId, &lineNumber, &columnNumber))
+        return;
+
     String condition = optionalCondition ? *optionalCondition : "";
 
     String breakpointId = makeString(sourceId, ":", String::number(lineNumber), ":", String::number(columnNumber));
     if (m_breakpointIdToDebugServerBreakpointIds.find(breakpointId) != m_breakpointIdToDebugServerBreakpointIds.end())
         return;
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, condition);
-    *location = resolveBreakpoint(breakpointId, sourceId, breakpoint);
-    if (*location)
+    *actualLocation = resolveBreakpoint(breakpointId, sourceId, breakpoint);
+    if (*actualLocation)
         *outBreakpointId = breakpointId;
     else
         *errorString = "Could not resolve breakpoint";
@@ -204,15 +222,23 @@ void InspectorDebuggerAgent::removeBreakpoint(ErrorString*, const String& breakp
     m_breakpointIdToDebugServerBreakpointIds.remove(debugServerBreakpointIdsIterator);
 }
 
-void InspectorDebuggerAgent::continueToLocation(ErrorString* error, const String& sourceId, int lineNumber, int columnNumber)
+void InspectorDebuggerAgent::continueToLocation(ErrorString* errorString, PassRefPtr<InspectorObject> location)
 {
     if (!m_continueToLocationBreakpointId.isEmpty()) {
         scriptDebugServer().removeBreakpoint(m_continueToLocationBreakpointId);
         m_continueToLocationBreakpointId = "";
     }
+
+    String sourceId;
+    int lineNumber;
+    int columnNumber;
+
+    if (!parseLocation(errorString, location, &sourceId, &lineNumber, &columnNumber))
+        return;
+
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, "");
     m_continueToLocationBreakpointId = scriptDebugServer().setBreakpoint(sourceId, breakpoint, &lineNumber, &columnNumber);
-    resume(error);
+    resume(errorString);
 }
 
 PassRefPtr<InspectorObject> InspectorDebuggerAgent::resolveBreakpoint(const String& breakpointId, const String& sourceId, const ScriptBreakpoint& breakpoint)

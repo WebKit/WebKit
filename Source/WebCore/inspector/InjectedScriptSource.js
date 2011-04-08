@@ -474,11 +474,8 @@ InjectedScript.RemoteObject.fromObject = function(object, objectId)
 InjectedScript.CallFrameProxy = function(ordinal, callFrame)
 {
     this.id = "{\"ordinal\":" + ordinal + ",\"injectedScriptId\":" + injectedScriptId + "}";
-    this.type = callFrame.type;
-    this.functionName = (this.type === "function" ? callFrame.functionName : "");
-    this.sourceID = callFrame.sourceID;
-    this.line = callFrame.line;
-    this.column = callFrame.column;
+    this.functionName = (callFrame.type === "function" ? callFrame.functionName : "");
+    this.location = { sourceID: callFrame.sourceID, lineNumber: callFrame.line, columnNumber: callFrame.column };
     this.scopeChain = this._wrapScopeChain(callFrame);
 }
 

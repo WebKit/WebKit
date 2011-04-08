@@ -235,7 +235,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         {
             var presentationMessage = {};
             presentationMessage.sourceFileId = sourceFile.id;
-            presentationMessage.lineNumber = mapping.scriptLocationToSourceLocation(message.line - 1, 0).lineNumber;
+            presentationMessage.lineNumber = mapping.scriptLocationToSourceLine({lineNumber:message.line - 1, columnNumber:0});
             presentationMessage.originalMessage = message;
             sourceFile.messages.push(presentationMessage);
             this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ConsoleMessageAdded, presentationMessage);
@@ -254,8 +254,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
     {
         function didRequestSourceMapping(mapping)
         {
-            var location = mapping.sourceLocationToScriptLocation(lineNumber, 0);
-            WebInspector.debuggerModel.continueToLocation(location.scriptId, location.lineNumber, location.columnNumber);
+            var location = mapping.sourceLineToScriptLocation(lineNumber);
+            WebInspector.debuggerModel.continueToLocation(location);
         }
         this._sourceFiles[sourceFileId].requestSourceMapping(didRequestSourceMapping.bind(this));
     },
@@ -308,12 +308,14 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         function didRequestSourceMapping(mapping)
         {
-            var location = mapping.sourceLocationToScriptLocation(breakpoint.lineNumber, 0);
-            var script = WebInspector.debuggerModel.scriptForSourceID(location.scriptId);
+            var location = mapping.sourceLineToScriptLocation(breakpoint.lineNumber);
+            var script = WebInspector.debuggerModel.scriptForSourceID(location.sourceID);
             if (script.sourceURL)
                 WebInspector.debuggerModel.setBreakpoint(script.sourceURL, location.lineNumber, location.columnNumber, breakpoint.condition, didSetBreakpoint.bind(this));
-            else
-                WebInspector.debuggerModel.setBreakpointBySourceId(script.sourceID, location.lineNumber, location.columnNumber, breakpoint.condition, didSetBreakpoint.bind(this));
+            else {
+                location.sourceID = script.sourceID;
+                WebInspector.debuggerModel.setBreakpointBySourceId(location, breakpoint.condition, didSetBreakpoint.bind(this));
+            }
         }
         breakpoint.sourceFile.requestSourceMapping(didRequestSourceMapping.bind(this));
     },
@@ -405,10 +407,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
         function didRequestSourceMapping(mapping)
         {
             // Refine line number based on resolved location.
-            if (breakpoint.location) {
-                var sourceLocation = mapping.scriptLocationToSourceLocation(breakpoint.location.lineNumber, breakpoint.location.columnNumber);
-                breakpoint.lineNumber = sourceLocation.lineNumber;
-            }
+            if (breakpoint.location)
+                breakpoint.lineNumber = mapping.scriptLocationToSourceLine(breakpoint.location);
 
             var existingBreakpoint = this.findBreakpoint(sourceFile.id, breakpoint.lineNumber);
             if (existingBreakpoint) {
@@ -500,7 +500,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         for (var i = 0; i < callFrames.length; ++i) {
             var callFrame = callFrames[i];
             var sourceFile;
-            var script = WebInspector.debuggerModel.scriptForSourceID(callFrame.sourceID);
+            var script = WebInspector.debuggerModel.scriptForSourceID(callFrame.location.sourceID);
             if (script)
                 sourceFile = this._sourceFileForScript(script.sourceURL, script.sourceID);
             this._presentationCallFrames.push(new WebInspector.PresenationCallFrame(callFrame, i, sourceFile));
@@ -633,7 +633,7 @@ WebInspector.PresenationCallFrame = function(callFrame, index, sourceFile)
     this._callFrame = callFrame;
     this._index = index;
     this._sourceFile = sourceFile;
-    this._script = WebInspector.debuggerModel.scriptForSourceID(callFrame.sourceID);
+    this._script = WebInspector.debuggerModel.scriptForSourceID(callFrame.location.sourceID);
 }
 
 WebInspector.PresenationCallFrame.prototype = {
@@ -683,17 +683,16 @@ WebInspector.PresenationCallFrame.prototype = {
         DebuggerAgent.evaluateOnCallFrame(this._callFrame.id, code, objectGroup, includeCommandLineAPI, didEvaluateOnCallFrame.bind(this));
     },
 
-    sourceLocation: function(callback)
+    sourceLine: function(callback)
     {
         if (!this._sourceFile) {
-            callback(undefined, this._callFrame.line, this._callFrame.column);
+            callback(undefined, this._callFrame.location.lineNumber);
             return;
         }
 
         function didRequestSourceMapping(mapping)
         {
-            var sourceLocation = mapping.scriptLocationToSourceLocation(this._callFrame.line, this._callFrame.column);
-            callback(this._sourceFile.id, sourceLocation.lineNumber, sourceLocation.columnNumber);
+            callback(this._sourceFile.id, mapping.scriptLocationToSourceLine(this._callFrame.location));
         }
         this._sourceFile.requestSourceMapping(didRequestSourceMapping.bind(this));
     }

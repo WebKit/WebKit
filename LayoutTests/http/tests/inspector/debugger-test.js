@@ -106,13 +106,13 @@ InspectorTest.captureStackTrace = function(callFrames)
     InspectorTest.addResult("Call stack:");
     for (var i = 0; i < callFrames.length; i++) {
         var frame = callFrames[i];
-        var script = WebInspector.debuggerModel.scriptForSourceID(frame.sourceID);
+        var script = WebInspector.debuggerModel.scriptForSourceID(frame.location.sourceID);
         var url;
         if (script)
             url = WebInspector.displayNameForURL(script.sourceURL);
         else
             url = "(internal script)"
-        var s = "    " + i + ") " + frame.functionName + " (" + url + ":" + (frame.line + 1) + ")";
+        var s = "    " + i + ") " + frame.functionName + " (" + url + ":" + (frame.location.lineNumber + 1) + ")";
         InspectorTest.addResult(s);
     }
 };

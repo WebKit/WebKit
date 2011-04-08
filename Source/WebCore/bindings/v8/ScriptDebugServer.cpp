@@ -67,7 +67,7 @@ String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBrea
     v8::Context::Scope contextScope(debuggerContext);
 
     v8::Local<v8::Object> args = v8::Object::New();
-    args->Set(v8::String::New("scriptId"), v8String(sourceID));
+    args->Set(v8::String::New("sourceID"), v8String(sourceID));
     args->Set(v8::String::New("lineNumber"), v8::Integer::New(scriptBreakpoint.lineNumber));
     args->Set(v8::String::New("columnNumber"), v8::Integer::New(scriptBreakpoint.columnNumber));
     args->Set(v8::String::New("condition"), v8String(scriptBreakpoint.condition));

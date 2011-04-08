@@ -1,3 +1,47 @@
+2011-04-08  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: use "locations" for debugger scripts, "lineNumbers" for the UI elements.
+        https://bugs.webkit.org/show_bug.cgi?id=58118
+
+        This change reuses location for call frames in the protocol + structures script
+        location <-> source lines interaction better. When we need UI columns, we will add
+        them, but we should distinguish between script and UI terms on the type level, not naming.
+
+        * English.lproj/localizedStrings.js:
+        * bindings/v8/DebuggerScript.js:
+        * inspector/InjectedScriptSource.js:
+        * inspector/Inspector.json:
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.update.didGetSourceLine):
+        (WebInspector.CallStackSidebarPane.prototype.update):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.addConsoleMessage.didRequestSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype.addConsoleMessage):
+        (WebInspector.DebuggerPresentationModel.prototype.continueToLine):
+        (WebInspector.DebuggerPresentationModel.prototype._setBreakpointInDebugger.didRequestSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype._setBreakpointInDebugger):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded.didRequestSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded):
+        (WebInspector.PresenationCallFrame):
+        (WebInspector.PresenationCallFrame.prototype.sourceLine.didRequestSourceMapping):
+        (WebInspector.PresenationCallFrame.prototype.sourceLine):
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter.locationToPosition):
+        (WebInspector.ScriptFormatter.lineToPosition):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused.else.didGetSourceLocation):
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused):
+        (WebInspector.ScriptsPanel.prototype.showAnchorLocation):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected.didGetSourceLocation):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.SourceMapping.prototype.scriptLocationToSourceLine):
+        (WebInspector.SourceMapping.prototype.sourceLineToScriptLocation):
+        (WebInspector.FormattedSourceMapping.prototype.scriptLocationToSourceLine):
+        (WebInspector.FormattedSourceMapping.prototype.sourceLineToScriptLocation):
+
 2011-04-08  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

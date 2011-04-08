@@ -36,10 +36,15 @@ WebInspector.ScriptFormatter = function()
     this._tasks = [];
 }
 
-WebInspector.ScriptFormatter.locationToPosition = function(lineEndings, lineNumber, columnNumber)
+WebInspector.ScriptFormatter.locationToPosition = function(lineEndings, location)
 {
-    var position = lineNumber ? lineEndings[lineNumber - 1] + 1 : 0;
-    return position + columnNumber;
+    var position = location.lineNumber ? lineEndings[location.lineNumber - 1] + 1 : 0;
+    return position + location.columnNumber;
+}
+
+WebInspector.ScriptFormatter.lineToPosition = function(lineEndings, lineNumber)
+{
+    return this.locationToPosition(lineEndings, { lineNumber: lineNumber, columnNumber: 0 });
 }
 
 WebInspector.ScriptFormatter.positionToLocation = function(lineEndings, position)
@@ -58,7 +63,7 @@ WebInspector.ScriptFormatter.findScriptRanges = function(lineEndings, scripts)
     var scriptRanges = [];
     for (var i = 0; i < scripts.length; ++i) {
         var start = { lineNumber: scripts[i].lineOffset, columnNumber: scripts[i].columnOffset };
-        start.position = WebInspector.ScriptFormatter.locationToPosition(lineEndings, start.lineNumber, start.columnNumber);
+        start.position = WebInspector.ScriptFormatter.locationToPosition(lineEndings, start);
         var endPosition = start.position + scripts[i].length;
         var end = WebInspector.ScriptFormatter.positionToLocation(lineEndings, endPosition);
         end.position = endPosition;

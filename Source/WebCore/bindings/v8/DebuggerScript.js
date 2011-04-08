@@ -91,7 +91,7 @@ DebuggerScript._formatScript = function(script)
 
 DebuggerScript.setBreakpoint = function(execState, args)
 {
-    var breakId = Debug.setScriptBreakPointById(args.scriptId, args.lineNumber, args.columnNumber, args.condition);
+    var breakId = Debug.setScriptBreakPointById(args.sourceID, args.lineNumber, args.columnNumber, args.condition);
 
     var locations = Debug.findBreakPointActualLocations(breakId);
     if (!locations.length)
@@ -250,7 +250,6 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
         "line": location.line,
         "column": location.column,
         "functionName": functionName,
-        "type": "function",
         "thisObject": thisObject,
         "scopeChain": scopeChain,
         "scopeType": scopeType,

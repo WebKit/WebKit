@@ -81,9 +81,9 @@ public:
     void setBreakpointsActive(ErrorString*, bool active);
 
     void setBreakpointByUrl(ErrorString*, const String& url, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, String* breakpointId, RefPtr<InspectorArray>* locations);
-    void setBreakpoint(ErrorString*, const String& sourceId, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, String* breakpointId, RefPtr<InspectorObject>* location);
+    void setBreakpoint(ErrorString*, PassRefPtr<InspectorObject> location, const String* const optionalCondition, String* breakpointId, RefPtr<InspectorObject>* actualLocation);
     void removeBreakpoint(ErrorString*, const String& breakpointId);
-    void continueToLocation(ErrorString*, const String& sourceId, int lineNumber, int columnNumber);
+    void continueToLocation(ErrorString*, PassRefPtr<InspectorObject> location);
 
     void editScriptSource(ErrorString*, const String& sourceID, const String& newContent, RefPtr<InspectorArray>* newCallFrames);
     void getScriptSource(ErrorString*, const String& sourceID, String* scriptSource);
