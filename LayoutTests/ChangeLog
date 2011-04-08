@@ -1,3 +1,27 @@
+2011-04-07  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        EventSource should only accept UTF-8 charset
+        https://bugs.webkit.org/show_bug.cgi?id=56942
+
+        * ChangeLog-2011-02-16: Corrected previous commit message. Pointed out by Alexey.
+
+        * http/tests/eventsource/eventsource-bad-mime-type-expected.txt: Updated with the new console message.
+
+        * http/tests/eventsource/eventsource-content-type-charset-expected.txt:
+        * http/tests/eventsource/eventsource-content-type-charset.html: Beefed up this test and merged
+        the following test into it. The new tests check that we dispatch a console error if the charset is
+        wrong.
+
+        * http/tests/eventsource/eventsource-content-type-text-event-stream-foobar-expected.txt: Removed.
+        * http/tests/eventsource/eventsource-content-type-text-event-stream-foobar.html: Removed.
+
+        * http/tests/eventsource/resources/response-content-type-charset.php: Return the charset passed
+        in the URL. Also added PHP's magic quotes handling as this would make the test fail on Mac.
+
+        * http/tests/eventsource/resources/response-content-type-event-stream-foobar.php: Removed.
+
 2011-04-07  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update expectations for xsl-blocked.php and pate-text-011.html.

@@ -27400,7 +27400,7 @@
         https://bugs.webkit.org/show_bug.cgi?id=45372
 
         Test that a Content-Type of "text/event-stream; charset=UTF8" works correctly but
-        "text/event-stream" does not work.
+        "text/event-stream-foobar" does not work.
 
         * http/tests/eventsource/eventsource-content-type-charset-expected.txt: Added.
         * http/tests/eventsource/eventsource-content-type-charset.html: Added.

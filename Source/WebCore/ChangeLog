@@ -1,3 +1,20 @@
+2011-04-07  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        EventSource should only accept UTF-8 charset
+        https://bugs.webkit.org/show_bug.cgi?id=56942
+
+        Following the discussion on bug 45372, this change implements the recommended
+        way of handling "charset". We only accept UTF-8 but no other encoding. This matches
+        the encoding of the EventSource and also may fix TomCat that automatically send this
+        charset.
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::didReceiveResponse): We now check the charset attribute and if it is
+        not UTF-8, abort the connection and log the error to the console. Also we log if the MIME type
+        is wrong to the console to help debugging (only in the case of an HTTP 200 response though).
+
 2011-04-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

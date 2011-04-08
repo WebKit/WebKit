@@ -2,6 +2,7 @@
  * Copyright (C) 2009 Ericsson AB
  * All rights reserved.
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, Code Aurora Forum. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +46,7 @@
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
 #include "TextResourceDecoder.h"
@@ -180,7 +182,32 @@ ScriptExecutionContext* EventSource::scriptExecutionContext() const
 void EventSource::didReceiveResponse(const ResourceResponse& response)
 {
     int statusCode = response.httpStatusCode();
-    if (statusCode == 200 && response.mimeType() == "text/event-stream") {
+    bool mimeTypeIsValid = response.mimeType() == "text/event-stream";
+    bool responseIsValid = statusCode == 200 && mimeTypeIsValid;
+    if (responseIsValid) {
+        const String& charset = response.textEncodingName();
+        // If we have a charset, the only allowed value is UTF-8 (case-insensitive). This should match
+        // the updated EventSource standard.
+        responseIsValid = charset.isEmpty() || equalIgnoringCase(charset, "UTF-8");
+        if (!responseIsValid) {
+            String message = "EventSource's response has a charset (\"";
+            message += charset;
+            message += "\") that is not UTF-8. Aborting the connection.";
+            // FIXME: We are missing the source line.
+            scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String(), 0);
+        }
+    } else {
+        // To keep the signal-to-noise ratio low, we only log 200-response with an invalid MIME type.
+        if (statusCode == 200 && !mimeTypeIsValid) {
+            String message = "EventSource's response has a MIME type (\"";
+            message += response.mimeType();
+            message += "\") that is not \"text/event-stream\". Aborting the connection.";
+            // FIXME: We are missing the source line.
+            scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String(), 0);
+        }
+    }
+
+    if (responseIsValid) {
         m_state = OPEN;
         dispatchEvent(Event::create(eventNames().openEvent, false, false));
     } else {
