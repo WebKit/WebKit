@@ -1,3 +1,17 @@
+2011-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Use glib API instead of fork + execl in ProcessLauncherGtk
+        https://bugs.webkit.org/show_bug.cgi?id=57234
+
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::childSetupFunction): close the socket and use prctl()
+        when platform is Linux to kill the child process when the parent
+        finishes.
+        (WebKit::ProcessLauncher::launchProcess): Use g_spawn_async() to
+        launch the web process.
+
 2011-04-07  Geoffrey Garen  <ggaren@apple.com>
 
         Some Handle<T> cleanup
