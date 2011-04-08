@@ -75,46 +75,46 @@ enum ReasonForDismissingCorrectionPanel {
 #if SUPPORT_AUTOCORRECTION_PANEL
 #define UNLESS_ENABLED(functionBody) ;
 #else
-#define UNLESS_ENABLED(functionBody) { functionBody }
+#define UNLESS_ENABLED(functionBody) functionBody
 #endif
 
 class SpellingCorrectionController {
     WTF_MAKE_NONCOPYABLE(SpellingCorrectionController); WTF_MAKE_FAST_ALLOCATED;
 public:
-    SpellingCorrectionController(Frame*) UNLESS_ENABLED()
-    ~SpellingCorrectionController() UNLESS_ENABLED()
+    SpellingCorrectionController(Frame*) UNLESS_ENABLED({})
+    ~SpellingCorrectionController() UNLESS_ENABLED({})
 
-    void startCorrectionPanelTimer(CorrectionPanelInfo::PanelType) UNLESS_ENABLED()
-    void stopCorrectionPanelTimer() UNLESS_ENABLED()
+    void startCorrectionPanelTimer(CorrectionPanelInfo::PanelType) UNLESS_ENABLED({})
+    void stopCorrectionPanelTimer() UNLESS_ENABLED({})
 
-    void dismiss(ReasonForDismissingCorrectionPanel) UNLESS_ENABLED()
-    String dismissSoon(ReasonForDismissingCorrectionPanel) UNLESS_ENABLED(return String();)
-    void show(PassRefPtr<Range> rangeToReplace, const String& replacement) UNLESS_ENABLED(UNUSED_PARAM(rangeToReplace); UNUSED_PARAM(replacement);)
+    void dismiss(ReasonForDismissingCorrectionPanel) UNLESS_ENABLED({})
+    String dismissSoon(ReasonForDismissingCorrectionPanel) UNLESS_ENABLED({ return String(); })
+    void show(PassRefPtr<Range> rangeToReplace, const String& replacement) UNLESS_ENABLED({ UNUSED_PARAM(rangeToReplace); UNUSED_PARAM(replacement); })
 
-    void applyCorrectionPanelInfo(const Vector<DocumentMarker::MarkerType>&) UNLESS_ENABLED()
+    void applyCorrectionPanelInfo(const Vector<DocumentMarker::MarkerType>&) UNLESS_ENABLED({})
     // Return true if correction was applied, false otherwise.
-    bool applyAutocorrectionBeforeTypingIfAppropriate() UNLESS_ENABLED(return false;)
+    bool applyAutocorrectionBeforeTypingIfAppropriate() UNLESS_ENABLED({ return false; })
 
-    void respondToUnappliedSpellCorrection(const VisibleSelection&, const String& corrected, const String& correction) UNLESS_ENABLED(UNUSED_PARAM(corrected); UNUSED_PARAM(correction);)
-    void respondToAppliedEditing(PassRefPtr<EditCommand>) UNLESS_ENABLED()
-    void respondToChangedSelection(const VisibleSelection& oldSelection) UNLESS_ENABLED(UNUSED_PARAM(oldSelection);)
+    void respondToUnappliedSpellCorrection(const VisibleSelection&, const String& corrected, const String& correction) UNLESS_ENABLED({ UNUSED_PARAM(corrected); UNUSED_PARAM(correction); })
+    void respondToAppliedEditing(PassRefPtr<EditCommand>) UNLESS_ENABLED({})
+    void respondToChangedSelection(const VisibleSelection& oldSelection) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })
 
-    void stopPendingCorrection(const VisibleSelection& oldSelection) UNLESS_ENABLED(UNUSED_PARAM(oldSelection);)
-    void applyPendingCorrection(const VisibleSelection& selectionAfterTyping) UNLESS_ENABLED(UNUSED_PARAM(selectionAfterTyping);)
+    void stopPendingCorrection(const VisibleSelection& oldSelection) UNLESS_ENABLED({ UNUSED_PARAM(oldSelection); })
+    void applyPendingCorrection(const VisibleSelection& selectionAfterTyping) UNLESS_ENABLED({ UNUSED_PARAM(selectionAfterTyping); })
 
-    void handleCorrectionPanelResult(const String& correction) UNLESS_ENABLED(UNUSED_PARAM(correction);)
-    void handleCancelOperation() UNLESS_ENABLED()
+    void handleCorrectionPanelResult(const String& correction) UNLESS_ENABLED({ UNUSED_PARAM(correction); })
+    void handleCancelOperation() UNLESS_ENABLED({})
 
-    bool hasPendingCorrection() const UNLESS_ENABLED(return false;)
-    bool isSpellingMarkerAllowed(PassRefPtr<Range> misspellingRange) const UNLESS_ENABLED(UNUSED_PARAM(misspellingRange); return true;)
-    bool isAutomaticSpellingCorrectionEnabled() UNLESS_ENABLED(return false;)
+    bool hasPendingCorrection() const UNLESS_ENABLED({ return false; })
+    bool isSpellingMarkerAllowed(PassRefPtr<Range> misspellingRange) const UNLESS_ENABLED({ UNUSED_PARAM(misspellingRange); return true; })
+    bool isAutomaticSpellingCorrectionEnabled() UNLESS_ENABLED({ return false; })
     bool shouldRemoveMarkersUponEditing() { return REMOVE_MARKERS_UPON_EDITING; }
 
-    void correctionPanelTimerFired(Timer<SpellingCorrectionController>*) UNLESS_ENABLED()
-    void recordAutocorrectionResponseReversed(const String& replacedString, PassRefPtr<Range> replacementRange) UNLESS_ENABLED(UNUSED_PARAM(replacedString); UNUSED_PARAM(replacementRange);)
-    void markReversed(PassRefPtr<Range> changedRange) UNLESS_ENABLED(UNUSED_PARAM(changedRange);)
-    void markCorrection(PassRefPtr<Range> replacedRange, const String& replacedString) UNLESS_ENABLED(UNUSED_PARAM(replacedRange); UNUSED_PARAM(replacedString);)
-    void recordSpellcheckerResponseForModifiedCorrection(Range* rangeOfCorrection, const String& corrected, const String& correction) UNLESS_ENABLED(UNUSED_PARAM(rangeOfCorrection); UNUSED_PARAM(corrected); UNUSED_PARAM(correction);)
+    void correctionPanelTimerFired(Timer<SpellingCorrectionController>*) UNLESS_ENABLED({})
+    void recordAutocorrectionResponseReversed(const String& replacedString, PassRefPtr<Range> replacementRange) UNLESS_ENABLED({ UNUSED_PARAM(replacedString); UNUSED_PARAM(replacementRange); })
+    void markReversed(PassRefPtr<Range> changedRange) UNLESS_ENABLED({ UNUSED_PARAM(changedRange); })
+    void markCorrection(PassRefPtr<Range> replacedRange, const String& replacedString) UNLESS_ENABLED({ UNUSED_PARAM(replacedRange); UNUSED_PARAM(replacedString); })
+    void recordSpellcheckerResponseForModifiedCorrection(Range* rangeOfCorrection, const String& corrected, const String& correction) UNLESS_ENABLED({ UNUSED_PARAM(rangeOfCorrection); UNUSED_PARAM(corrected); UNUSED_PARAM(correction); })
 
 #if SUPPORT_AUTOCORRECTION_PANEL
 private:

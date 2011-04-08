@@ -1,3 +1,10 @@
+2011-04-08 MORITA Hajime  <morrita@google.com>
+
+        Unreviewed windows build fix.
+        
+        * editing/SpellingCorrectionController.h:
+        (WebCore::SpellingCorrectionController::UNLESS_ENABLED):
+
 2011-04-08  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Maciej Stachowiak.
