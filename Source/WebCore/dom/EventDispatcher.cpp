@@ -33,7 +33,6 @@
 #include "InspectorInstrumentation.h"
 #include "MouseEvent.h"
 #include "Node.h"
-#include "PlatformWheelEvent.h"
 #include "ScopedEventQueue.h"
 
 #if ENABLE(SVG)
@@ -44,7 +43,6 @@
 
 #include "UIEvent.h"
 #include "UIEventWithKeyState.h"
-#include "WheelEvent.h"
 #include "WindowEventContext.h"
 
 #include <wtf/RefPtr.h>
@@ -122,28 +120,6 @@ void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> under
     dispatcher.dispatchEvent(SimulatedMouseEvent::create(eventNames().clickEvent, node->document()->defaultView(), underlyingEvent));
 
     gNodesDispatchingSimulatedClicks->remove(node);
-}
-
-inline static WheelEvent::Granularity granularity(const PlatformWheelEvent& event)
-{
-    return event.granularity() == ScrollByPageWheelEvent ? WheelEvent::Page : WheelEvent::Pixel;
-}
-
-void EventDispatcher::dispatchWheelEvent(Node* node, PlatformWheelEvent& event)
-{
-    ASSERT(!eventDispatchForbidden());
-    if (!(event.deltaX() || event.deltaY()))
-        return;
-
-    EventDispatcher dispatcher(node);
-
-    RefPtr<WheelEvent> wheelEvent = WheelEvent::create(event.wheelTicksX(), event.wheelTicksY(), event.deltaX(), event.deltaY(), granularity(event),
-        node->document()->defaultView(), event.globalX(), event.globalY(), event.x(), event.y(),
-        event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey());
-
-    if (!dispatcher.dispatchEvent(wheelEvent) || wheelEvent->defaultHandled())
-        event.accept();
-
 }
 
 // FIXME: Once https://bugs.webkit.org/show_bug.cgi?id=52963 lands, this should

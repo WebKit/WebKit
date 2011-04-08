@@ -23,7 +23,10 @@
 #include "config.h"
 #include "WheelEvent.h"
 
+#include "EventDispatcher.h"
 #include "EventNames.h"
+#include "PlatformWheelEvent.h"
+
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -90,6 +93,34 @@ void WheelEvent::initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<A
 bool WheelEvent::isWheelEvent() const
 {
     return true;
+}
+
+inline static WheelEvent::Granularity granularity(const PlatformWheelEvent& event)
+{
+    return event.granularity() == ScrollByPageWheelEvent ? WheelEvent::Page : WheelEvent::Pixel;
+}
+
+WheelEventDispatchMediator::WheelEventDispatchMediator(const PlatformWheelEvent& event, PassRefPtr<AbstractView> view)
+{
+    if (!(event.deltaX() || event.deltaY()))
+        return;
+
+    setEvent(WheelEvent::create(event.wheelTicksX(), event.wheelTicksY(), event.deltaX(), event.deltaY(), granularity(event),
+        view, event.globalX(), event.globalY(), event.x(), event.y(), event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey()));
+
+}
+
+WheelEvent* WheelEventDispatchMediator::event() const
+{
+    return static_cast<WheelEvent*>(EventDispatchMediator::event());
+}
+
+bool WheelEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
+{
+    if (!event())
+        return true;
+
+    return EventDispatchMediator::dispatchEvent(dispatcher) && !event()->defaultHandled();
 }
 
 } // namespace WebCore

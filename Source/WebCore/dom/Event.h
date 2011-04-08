@@ -200,10 +200,30 @@ public:
     virtual ~EventDispatchMediator();
 
     virtual bool dispatchEvent(EventDispatcher*) const;
+
+protected:
+    EventDispatchMediator();
+
     Event* event() const;
+    void setEvent(PassRefPtr<Event>);
+
 private:
     RefPtr<Event> m_event;
 };
+
+inline EventDispatchMediator::EventDispatchMediator()
+{
+}
+
+inline Event* EventDispatchMediator::event() const
+{
+    return m_event.get();
+}
+
+inline void EventDispatchMediator::setEvent(PassRefPtr<Event> event)
+{
+    m_event = event;
+}
 
 } // namespace WebCore
 

@@ -82,6 +82,15 @@ namespace WebCore {
         Granularity m_granularity;
     };
 
+class WheelEventDispatchMediator : public EventDispatchMediator {
+public:
+    WheelEventDispatchMediator(const PlatformWheelEvent&, PassRefPtr<AbstractView>);
+
+private:
+    WheelEvent* event() const;
+    virtual bool dispatchEvent(EventDispatcher*) const;
+};
+
 } // namespace WebCore
 
 #endif // WheelEvent_h

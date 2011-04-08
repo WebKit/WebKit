@@ -52,7 +52,6 @@ public:
     static void dispatchScopedEvent(Node*, PassRefPtr<Event>);
 
     static void dispatchSimulatedClick(Node*, PassRefPtr<Event> underlyingEvent, bool sendMouseEvents, bool showPressedLook);
-    static void dispatchWheelEvent(Node*, PlatformWheelEvent&);
 
     bool dispatchEvent(PassRefPtr<Event>);
     PassRefPtr<EventTarget> adjustRelatedTarget(PassRefPtr<EventTarget>);

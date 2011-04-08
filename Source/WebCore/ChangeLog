@@ -1,3 +1,34 @@
+2011-04-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Move WheelEvent-dispatching logic into WheelEventDispatchMediator.
+        https://bugs.webkit.org/show_bug.cgi?id=57642
+
+        Covered by existing tests, no functional change.
+
+        * dom/Event.cpp:
+        * dom/Event.h:
+        (WebCore::EventDispatchMediator::EventDispatchMediator): Added default
+            constructor.
+        (WebCore::EventDispatchMediator::event): Inlined.
+        (WebCore::EventDispatchMediator::setEvent): Added.
+        * dom/EventDispatcher.cpp: Removed dispatchWheelEvent.
+        * dom/EventDispatcher.h: Updated decls.
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchWheelEvent): Changed to use the mediator and
+            return a bool, like other dispatch event functions.
+        * dom/Node.h: Changed decl.
+        * dom/WheelEvent.cpp:
+        (WebCore::granularity): Moved from EventDispatcher.
+        (WebCore::WheelEventDispatchMediator::WheelEventDisatchMediator): Added.
+        (WebCore::WheelEventDispatchMediator::event): Added.
+        (WebCore::WheelEventDispatchMediator::dispatchEvent): Added.
+        * dom/WheelEvent.h: Updated decls.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent): Changed to receive and react
+            to the return value.
+
 2011-04-08  Jessie Berlin  <jberlin@apple.com>
 
         Windows build warning fix.

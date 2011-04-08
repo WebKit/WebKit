@@ -2666,9 +2666,9 @@ void Node::dispatchSimulatedClick(PassRefPtr<Event> event, bool sendMouseEvents,
     EventDispatcher::dispatchSimulatedClick(this, event, sendMouseEvents, showPressedLook);
 }
 
-void Node::dispatchWheelEvent(PlatformWheelEvent& e)
+bool Node::dispatchWheelEvent(const PlatformWheelEvent& event)
 {
-    EventDispatcher::dispatchWheelEvent(this, e);
+    return EventDispatcher::dispatchEvent(this, WheelEventDispatchMediator(event, document()->defaultView()));
 }
 
 void Node::dispatchFocusEvent()

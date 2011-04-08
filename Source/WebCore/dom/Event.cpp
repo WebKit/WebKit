@@ -313,9 +313,4 @@ bool EventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
     return dispatcher->dispatchEvent(m_event.get());
 }
 
-Event* EventDispatchMediator::event() const
-{
-    return m_event.get();
-}
-
 } // namespace WebCore

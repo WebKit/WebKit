@@ -536,7 +536,7 @@ public:
     void dispatchSubtreeModifiedEvent();
     void dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr<Event> underlyingEvent);
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
-    void dispatchWheelEvent(PlatformWheelEvent&);
+    bool dispatchWheelEvent(const PlatformWheelEvent&);
     bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomicString& eventType, int clickCount = 0, Node* relatedTarget = 0);
     void dispatchSimulatedClick(PassRefPtr<Event> underlyingEvent, bool sendMouseEvents = false, bool showPressedLook = true);
 
