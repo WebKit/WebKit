@@ -1217,23 +1217,27 @@ Position CompositeEditCommand::positionAvoidingSpecialElementBoundary(const Posi
 
 // Splits the tree parent by parent until we reach the specified ancestor. We use VisiblePositions
 // to determine if the split is necessary. Returns the last split node.
-PassRefPtr<Node> CompositeEditCommand::splitTreeToNode(Node* start, Node* end, bool splitAncestor)
+PassRefPtr<Node> CompositeEditCommand::splitTreeToNode(Node* start, Node* end, bool shouldSplitAncestor)
 {
+    ASSERT(start);
+    ASSERT(end);
     ASSERT(start != end);
 
     RefPtr<Node> node;
-    for (node = start; node && node->parentNode() != end; node = node->parentNode()) {
+    if (shouldSplitAncestor && end->parentNode())
+        end = end->parentNode();
+
+    RefPtr<Node> endNode = end;
+    for (node = start; node && node->parentNode() != endNode; node = node->parentNode()) {
         if (!node->parentNode()->isElementNode())
             break;
-        VisiblePosition positionInParent(firstPositionInNode(node->parentNode()), DOWNSTREAM);
-        VisiblePosition positionInNode(firstPositionInOrBeforeNode(node.get()), DOWNSTREAM);
+        // Do not split a node when doing so introduces an empty node.
+        VisiblePosition positionInParent = firstPositionInNode(node->parentNode());
+        VisiblePosition positionInNode = firstPositionInOrBeforeNode(node.get());
         if (positionInParent != positionInNode)
-            applyCommandToComposite(SplitElementCommand::create(static_cast<Element*>(node->parentNode()), node));
+            splitElement(static_cast<Element*>(node->parentNode()), node);
     }
-    if (splitAncestor) {
-        splitElement(static_cast<Element*>(end), node);
-        return node->parentNode();
-    }
+
     return node.release();
 }
 

@@ -1,0 +1,21 @@
+<pre id="x"><x style="white-space: pre-wrap;"><br></x></pre>
+<script>
+
+// Adding DOCTYPE, html, or body prevents the crash to reproduce.
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var x = document.getElementById("x");
+document.execCommand("selectall",false);
+document.designMode="on";
+document.execCommand("InsertImage");
+document.execCommand("InsertImage");
+document.execCommand("InsertImage");
+
+document.open();
+document.writeln('This test ensures WebKit does not crash.<br><br>PASS');
+
+</script>
+</body>
+</html>

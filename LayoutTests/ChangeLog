@@ -1,3 +1,15 @@
+2011-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang, Darin Adler, and Enrica Casucci.
+
+        REGRESSION(r81887): Crash in SplitElement
+        https://bugs.webkit.org/show_bug.cgi?id=57743
+
+        Added a regression test for a crash in ReplaceSelectionCommand.
+
+        * editing/inserting/insert-images-in-pre-x-crash-expected.txt: Added.
+        * editing/inserting/insert-images-in-pre-x-crash.html: Added.
+
 2011-04-08  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Tony Gentilcore.

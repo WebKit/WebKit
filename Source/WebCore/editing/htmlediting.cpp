@@ -638,7 +638,7 @@ Node* highestEnclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const N
 {
     Node* highest = 0;
     Node* root = rule == CannotCrossEditingBoundary ? highestEditableRoot(p) : 0;
-    for (Node* n = p.deprecatedNode(); n; n = n->parentNode()) {
+    for (Node* n = p.containerNode(); n; n = n->parentNode()) {
         if (root && !n->rendererIsEditable())
             continue;
         if (nodeIsOfType(n))

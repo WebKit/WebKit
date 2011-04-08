@@ -952,20 +952,17 @@ void ReplaceSelectionCommand::doApply()
     // We can skip this optimization for fragments not wrapped in one of
     // our style spans and for positions inside list items
     // since insertAsListItems already does the right thing.
-    if (!m_matchStyle && !enclosingList(insertionPos.anchorNode()) && isStyleSpan(fragment.firstChild())) {
-        Node* parentNode = insertionPos.anchorNode()->parentNode();
-        while (parentNode && parentNode->renderer() && isInlineNodeWithStyle(parentNode)) {
-            // If we are in the middle of a text node, we need to split it before we can
-            // move the insertion position.
-            if (insertionPos.anchorNode()->isTextNode() && insertionPos.anchorType() == Position::PositionIsOffsetInAnchor && insertionPos.offsetInContainerNode() && !insertionPos.atLastEditingPositionForNode())
-                splitTextNodeContainingElement(static_cast<Text*>(insertionPos.anchorNode()), insertionPos.offsetInContainerNode());
-            
-            // If the style element has more than one child, we need to split it.
-            if (parentNode->firstChild()->nextSibling())
-                splitElement(static_cast<Element*>(parentNode), insertionPos.computeNodeAfterPosition());
-            
-            insertionPos = positionInParentBeforeNode(parentNode);
-            parentNode = parentNode->parentNode();
+    if (!m_matchStyle && !enclosingList(insertionPos.containerNode()) && isStyleSpan(fragment.firstChild())) {
+        if (insertionPos.containerNode()->isTextNode() && insertionPos.offsetInContainerNode() && !insertionPos.atLastEditingPositionForNode()) {
+            splitTextNodeContainingElement(static_cast<Text*>(insertionPos.containerNode()), insertionPos.offsetInContainerNode());
+            insertionPos = firstPositionInNode(insertionPos.containerNode());
+        }
+
+        // FIXME: isInlineNodeWithStyle does not check editability.
+        if (RefPtr<Node> nodeToSplitTo = highestEnclosingNodeOfType(insertionPos, isInlineNodeWithStyle)) {
+            if (insertionPos.containerNode() != nodeToSplitTo)
+                nodeToSplitTo = splitTreeToNode(insertionPos.anchorNode(), nodeToSplitTo.get(), true).get();
+            insertionPos = positionInParentBeforeNode(nodeToSplitTo.get());
         }
     }
 

@@ -1,3 +1,28 @@
+2011-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang, Darin Adler, and Enrica Casucci.
+
+        REGRESSION(r81887): Crash in SplitElement
+        https://bugs.webkit.org/show_bug.cgi?id=57743
+
+        The crash was caused by ReplaceSelectionCommand::doApply's calling splitElement with computeNodeAfterPosition
+        even when the position was after the last node in it container. Since all we are doing here is to splitting tree
+        up until the highest ancestor with isInlineNodeWithStyle, replaced the while loop by calls to splitTreeToNode
+        and highestEnclosingNodeOfType.
+
+        Also fixed a bug in splitTreeToNode not to check the difference in visible position when splitting the ancestor,
+        which would have introduced unnecessary nodes when splitting tree and a bug in highestEnclosingNodeOfType that
+        it incorrectly called deprecatedNode instead of containerNode.
+
+        Test: editing/inserting/insert-images-in-pre-x-crash.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::splitTreeToNode):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * editing/htmlediting.cpp:
+        (WebCore::highestEnclosingNodeOfType):
+
 2011-04-08  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Tony Gentilcore.
