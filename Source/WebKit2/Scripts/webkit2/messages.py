@@ -81,9 +81,9 @@ class MessageReceiver(object):
                 elif line.startswith('#endif'):
                     condition = None
                 continue
-            match = re.search(r'([A-Za-z_0-9]+)\((.*?)\)(?:(?:\s+->\s+)\((.*?)\)(?:\s+(delayed))?)?', line)
+            match = re.search(r'([A-Za-z_0-9]+)\((.*?)\)(?:(?:\s+->\s+)\((.*?)\)(?:\s+(.*))?)?', line)
             if match:
-                name, parameters_string, reply_parameters_string, delayed_string = match.groups()
+                name, parameters_string, reply_parameters_string, attributes_string = match.groups()
                 if parameters_string:
                     parameters = parse_parameter_string(parameters_string)
                 else:
@@ -92,7 +92,13 @@ class MessageReceiver(object):
                 for parameter in parameters:
                     parameter.condition = condition
 
-                delayed = delayed_string == 'delayed'
+                if attributes_string:
+                    attributes = frozenset(attributes_string.split())
+                    delayed = "Delayed" in attributes
+                    dispatch_on_connection_queue = "DispatchOnConnectionQueue" in attributes
+                else:
+                    delayed = False
+                    dispatch_on_connection_queue = False
 
                 if reply_parameters_string:
                     reply_parameters = parse_parameter_string(reply_parameters_string)
@@ -101,17 +107,18 @@ class MessageReceiver(object):
                 else:
                     reply_parameters = None
 
-                messages.append(Message(name, parameters, reply_parameters, delayed, condition))
+                messages.append(Message(name, parameters, reply_parameters, delayed, dispatch_on_connection_queue, condition))
         return MessageReceiver(destination, messages, master_condition)
 
 
 class Message(object):
-    def __init__(self, name, parameters, reply_parameters, delayed, condition):
+    def __init__(self, name, parameters, reply_parameters, delayed, dispatch_on_connection_queue, condition):
         self.name = name
         self.parameters = parameters
         self.reply_parameters = reply_parameters
         if self.reply_parameters is not None:
             self.delayed = delayed
+        self.dispatch_on_connection_queue = dispatch_on_connection_queue
         self.condition = condition
         if len(self.parameters) != 0:
             self.is_variadic = parameter_type_is_variadic(self.parameters[-1].type)

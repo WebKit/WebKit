@@ -1,3 +1,16 @@
+2011-04-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Parse 'DispatchOnConnectionQueue' in messages.in files
+        https://bugs.webkit.org/show_bug.cgi?id=58168
+
+        Handle parsing multiple, space-separated attributes in .messages.in files. Keep track of
+        'DispatchOnConnectionQueue' and rename 'delayed' to 'Delayed'.
+
+        * Scripts/webkit2/messages.py:
+        * Scripts/webkit2/messages_unittest.py:
+
 2011-04-08  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed, rolling out r83335.

@@ -65,8 +65,10 @@ messages -> WebPage {
 
     CreatePlugin(uint64_t pluginInstanceID, WebKit::Plugin::Parameters parameters) -> (bool result)
     RunJavaScriptAlert(uint64_t frameID, WTF::String message) -> ()
-    GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins)
-    GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Connection::Handle connectionHandle) delayed
+    GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins) DispatchOnConnectionQueue
+    GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Connection::Handle connectionHandle) Delayed
+
+    TestMultipleAttributes() -> () DispatchOnConnectionQueue Delayed
 
 #if PLATFORM(MAC)
     DidCreateWebProcessConnection(CoreIPC::MachPort connectionIdentifier)
@@ -173,6 +175,14 @@ _expected_results = {
             ),
             'reply_parameters': (
                 ('CoreIPC::Connection::Handle', 'connectionHandle'),
+            ),
+            'condition': None,
+        },
+        {
+            'name': 'TestMultipleAttributes',
+            'parameters': (
+            ),
+            'reply_parameters': (
             ),
             'condition': None,
         },
@@ -293,6 +303,7 @@ enum Kind {
     RunJavaScriptAlertID,
     GetPluginsID,
     GetPluginProcessConnectionID,
+    TestMultipleAttributesID,
 #if PLATFORM(MAC)
     DidCreateWebProcessConnectionID,
 #endif
@@ -420,6 +431,31 @@ struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
         : CoreIPC::Arguments1<const WTF::String&>(pluginPath)
     {
     }
+};
+
+struct TestMultipleAttributes : CoreIPC::Arguments0 {
+    static const Kind messageID = TestMultipleAttributesID;
+    struct DelayedReply {
+        DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::ArgumentDecoder> arguments)
+            : m_connection(connection)
+            , m_arguments(arguments)
+        {
+        }
+
+        bool send()
+        {
+            ASSERT(m_arguments);
+            bool result = m_connection->sendSyncReply(m_arguments.release());
+            m_connection = nullptr;
+            return result;
+        }
+
+    private:
+        RefPtr<CoreIPC::Connection> m_connection;
+        OwnPtr<CoreIPC::ArgumentDecoder> m_arguments;
+    };
+
+    typedef CoreIPC::Arguments0 DecodeType;
 };
 
 #if PLATFORM(MAC)
@@ -565,6 +601,9 @@ CoreIPC::SyncReplyMode WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection
         return CoreIPC::AutomaticReply;
     case Messages::WebPage::GetPluginProcessConnectionID:
         CoreIPC::handleMessage<Messages::WebPage::GetPluginProcessConnection>(arguments, reply, this, &WebPage::getPluginProcessConnection);
+        return CoreIPC::AutomaticReply;
+    case Messages::WebPage::TestMultipleAttributesID:
+        CoreIPC::handleMessage<Messages::WebPage::TestMultipleAttributes>(arguments, reply, this, &WebPage::testMultipleAttributes);
         return CoreIPC::AutomaticReply;
 #if PLATFORM(MAC)
     case Messages::WebPage::InterpretKeyEventID:
