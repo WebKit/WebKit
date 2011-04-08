@@ -147,14 +147,7 @@ static const int blurSumShift = 15;
 
 void ShadowBlur::blurLayerImage(unsigned char* imageData, const IntSize& size, int rowStride)
 {
-    const int channels[4] =
-#if CPU(BIG_ENDIAN)
-        { 0, 3, 2, 0 };
-#elif CPU(MIDDLE_ENDIAN)
-        { 1, 2, 3, 1 };
-#else
-        { 3, 0, 1, 3 };
-#endif
+    const int channels[4] = { 3, 0, 1, 3 };
 
     int diameter;
     if (m_shadowsIgnoreTransforms)
