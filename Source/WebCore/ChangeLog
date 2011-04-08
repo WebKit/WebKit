@@ -1,3 +1,19 @@
+2011-04-08  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Dragging and dropping an image in edit mode does not work
+        https://bugs.webkit.org/show_bug.cgi?id=19385
+
+        When adding an image to the clipboard, we should also include the HTML code of that image so
+        it can be used for internal drag and drop.
+
+        This HTML is expected by all clients of drop events so a fragment can be moved from one browser to
+        another, or inside the same browser.
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+
 2011-04-07  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Eric Carlson.
