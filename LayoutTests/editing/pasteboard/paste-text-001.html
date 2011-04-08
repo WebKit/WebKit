@@ -1,39 +1,30 @@
-<html> 
-<head>
-
-<style>
-.editing { 
-    border: 2px solid red; 
-    padding: 12px; 
-    font-size: 24px; 
-}
-</style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
-<script>
-
-function editingTest() {
-    for (i = 0; i < 4; i++)
-        moveSelectionForwardByCharacterCommand();
-    for (i = 0; i < 3; i++)
-        extendSelectionForwardByCharacterCommand();
-    copyCommand();
-    moveSelectionForwardByCharacterCommand();
-    pasteCommand();
-}
-
-</script>
-
-<title>Editing Test</title> 
-</head> 
+<!DOCTYPE html>
+<html>
 <body>
 <div contenteditable id="root" class="editing">
 <span id="test">foo bar baz</span>
 </div>
-
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
-runEditingTest();
-</script>
 
+var test = document.getElementById('test');
+test.focus();
+window.getSelection().setPosition(root, 0);
+
+if (window.layoutTestController)
+    layoutTestController.dumpEditingCallbacks();
+
+for (i = 0; i < 4; i++)
+    moveSelectionForwardByCharacterCommand();
+for (i = 0; i < 3; i++)
+    extendSelectionForwardByCharacterCommand();
+copyCommand();
+moveSelectionForwardByCharacterCommand();
+pasteCommand();
+
+Markup.dump('root', 'You should see "foo barbar baz" below');
+
+</script>
 </body>
 </html>

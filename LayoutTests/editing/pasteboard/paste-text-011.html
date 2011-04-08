@@ -1,40 +1,36 @@
-
-<html> 
+<!DOCTYPE html>
+<html>
 <head>
-
-<style>
-.editing { 
-    border: 2px solid red; 
-    padding: 12px; 
-    font-size: 24px; 
-}
-</style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
 
-// There was a bug when pasting at the end of the block. The content was inserted at the 
-// start of the block instead of the end. This tests the insert-at-end case.
+Markup.waitUntilDone();
 
 function editingTest() {
+    document.body.focus();
+    window.getSelection().setPosition(document.body, 0);
+
+    if (window.layoutTestController)
+        layoutTestController.dumpEditingCallbacks();
+
+    Markup.description('There was a bug when pasting at the end of the block.\n'+
+    'The content was inserted at the start of the block instead of the end. This tests the insert-at-end case.');
+
     selectAllCommand();
     copyCommand();
     moveSelectionForwardByCharacterCommand();
     insertParagraphCommand();
     pasteCommand();
+
+    Markup.dump(document.body);
+    Markup.notifyDone();
 }
 
 </script>
-
-<title>Editing Test</title> 
 </head> 
-<body contenteditable id="test">
+<body contenteditable id="test" onload="editingTest()">
 <p><font face="Monaco"><b>hello</b></font></p>
 <p><font face="Monaco"><b>there</b></font></p>
- 
-<script>
-runEditingTest();
-</script>
-
 </body>
 </html>
