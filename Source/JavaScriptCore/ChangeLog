@@ -1,3 +1,19 @@
+2011-04-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Martin Robinson.
+
+        Refactor Gtk build system to separate list of files
+        https://bugs.webkit.org/show_bug.cgi?id=58090
+
+        This is the first step towards generating part of the GTK build system
+        using GYP.  In the first iteration, our plan is to just generate the
+        list of files.  This patch is the first step, which is to separate out
+        the part of JavaScriptCore build system that we intend to generate from
+        the rest of the build system.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am: Added.
+
 2011-04-07  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Gavin Barraclough.
