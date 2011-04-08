@@ -2683,10 +2683,13 @@ sub setUpWindowsCrashLogSaving()
 
     my $ntsdPath = File::Spec->catfile(toCygwinPath($ENV{PROGRAMFILES}), "Debugging Tools for Windows (x86)", "ntsd.exe");
     unless (-f $ntsdPath) {
-        $ntsdPath = File::Spec->catfile(toCygwinPath($ENV{SYSTEMROOT}), "system32", "ntsd.exe");
+        $ntsdPath = File::Spec->catfile(toCygwinPath($ENV{ProgramW6432}), "Debugging Tools for Windows (x64)", "ntsd.exe");
         unless (-f $ntsdPath) {
-            print STDERR "Can't find ntsd.exe. Crash logs will not be saved.\nSee <http://trac.webkit.org/wiki/BuildingOnWindows#GettingCrashLogs>.\n";
-            return;
+            $ntsdPath = File::Spec->catfile(toCygwinPath($ENV{SYSTEMROOT}), "system32", "ntsd.exe");
+            unless (-f $ntsdPath) {
+                print STDERR "Can't find ntsd.exe. Crash logs will not be saved.\nSee <http://trac.webkit.org/wiki/BuildingOnWindows#GettingCrashLogs>.\n";
+                return;
+            }
         }
     }
 

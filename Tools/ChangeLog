@@ -1,3 +1,12 @@
+2011-04-08  Pere Martir  <pere.martir4@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Locate NSTD.EXE in 64-bit Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57847
+
+        * Scripts/old-run-webkit-tests:
+
 2011-04-08  Adam Roben  <aroben@apple.com>
 
         Qt build fix
