@@ -110,7 +110,6 @@ my (
     $systemMallocSupport,
     $tiledBackingStoreSupport,
     $touchEventsSupport,
-    $trackSupport,
     $videoSupport,
     $wcssSupport,
     $webAudioSupport,
@@ -268,9 +267,6 @@ my @features = (
 
     { option => "touch-events", desc => "Toggle Touch Events support",
       define => "ENABLE_TOUCH_EVENTS", default => isQt(), value => \$touchEventsSupport },
-
-    { option => "track", desc => "Toggle Track support for captions",
-      define => "ENABLE_TRACK", default => 0, value => \$trackSupport },
 
     { option => "video", desc => "Toggle Video support",
       define => "ENABLE_VIDEO", default => (isAppleWebKit() || isGtk()), value => \$videoSupport },

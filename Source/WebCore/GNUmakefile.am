@@ -332,16 +332,6 @@ webcore_cppflags += -DENABLE_FULLSCREEN_API=1
 endif # END ENABLE_FULLSCREEN_API
 
 # ----
-# Track Support
-# ----
-if ENABLE_TRACK
-FEATURE_DEFINES += ENABLE_TRACK=1
-webcore_cppflags += -DENABLE_TRACK=1
-else
-webcore_cppflags += -DENABLE_TRACK=0
-endif # END ENABLE_TRACK
-
-# ----
 # XHTML-MP Support
 # ----
 if ENABLE_XHTMLMP

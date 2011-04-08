@@ -1,3 +1,13 @@
+2011-04-08  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed, rolling out r83335.
+        http://trac.webkit.org/changeset/83335
+        https://bugs.webkit.org/show_bug.cgi?id=53556
+
+        GTK and QT bots are broken
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-04-08  Gavin Barraclough  <barraclough@apple.com>
 
         Ooops, typo, build fix.

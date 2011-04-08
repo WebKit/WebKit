@@ -207,11 +207,6 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
-		Name="ENABLE_TRACK"
-		Value=""
-		PerformEnvironmentSet="true"
-	/>
-  <UserMacro
 		Name="ENABLE_VIDEO"
 		Value=""
 		PerformEnvironmentSet="true"

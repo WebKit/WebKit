@@ -85,7 +85,6 @@ coords
 data
 datetime
 declare
-default
 defer
 dir
 direction
@@ -119,7 +118,6 @@ incremental
 indeterminate
 ismap
 keytype
-kind
 label
 lang
 language
@@ -276,7 +274,6 @@ x-webkit-speech
 x-webkit-grammar
 spellcheck
 src
-srclang
 standby
 start
 step
