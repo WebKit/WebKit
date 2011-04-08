@@ -68,7 +68,7 @@ function test()
     function replaceInSource(sourceFrame, string, replacement)
     {
         sourceFrame._textViewer.readOnly = false;
-        sourceFrame._startEditing();
+        sourceFrame.startEditing();
         var newText = sourceFrame._textModel.text.replace(string, replacement);
         sourceFrame._textModel.setText(null, newText);
         sourceFrame._handleSave();

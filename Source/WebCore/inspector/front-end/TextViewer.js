@@ -29,12 +29,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.TextViewer = function(textModel, platform, url)
+WebInspector.TextViewer = function(textModel, platform, url, delegate)
 {
+    WebInspector.View.call(this);
+
     this._textModel = textModel;
     this._textModel.changeListener = this._textChanged.bind(this);
+    this._delegate = delegate;
 
-    this.element = document.createElement("div");
     this.element.className = "text-editor monospace";
 
     var enterTextChangeMode = this._enterInternalTextChangeMode.bind(this);
@@ -49,7 +51,9 @@ WebInspector.TextViewer = function(textModel, platform, url)
     // Forward mouse wheel events from the unscrollable gutter to the main panel.
     this._gutterPanel.element.addEventListener("mousewheel", function(e) {
         this._mainPanel.element.dispatchEvent(e);
-    }.bind(this), false)
+    }.bind(this), false);
+
+    this.element.addEventListener("dblclick", this._doubleClick.bind(this), true);
 }
 
 WebInspector.TextViewer.prototype = {
@@ -66,16 +70,6 @@ WebInspector.TextViewer.prototype = {
     get readOnly()
     {
         return this._mainPanel.readOnly;
-    },
-
-    set startEditingListener(startEditingListener)
-    {
-        this._startEditingListener = startEditingListener;
-    },
-
-    set endEditingListener(endEditingListener)
-    {
-        this._endEditingListener = endEditingListener;
     },
 
     get textModel()
@@ -175,8 +169,7 @@ WebInspector.TextViewer.prototype = {
     {
         this._internalTextChangeMode = true;
 
-        if (this._startEditingListener)
-            this._startEditingListener();
+        this._delegate.startEditing();
     },
 
     _exitInternalTextChangeMode: function(oldRange, newRange)
@@ -187,8 +180,7 @@ WebInspector.TextViewer.prototype = {
         this._gutterPanel.textChanged(oldRange, newRange);
         this._updatePanelOffsets();
 
-        if (this._endEditingListener)
-            this._endEditingListener(oldRange, newRange);
+        this._delegate.endEditing(oldRange, newRange);
     },
 
     _updatePanelOffsets: function()
@@ -230,8 +222,48 @@ WebInspector.TextViewer.prototype = {
             if (gutterChunk.linesCount === 1)
                 gutterChunk.element.style.removeProperty("height");
         }
+    },
+
+    _doubleClick: function(event)
+    {
+        if (!this._delegate.isContentEditable())
+            return;
+
+        var lineRow = event.target.enclosingNodeOrSelfWithClass("webkit-line-content");
+        if (!lineRow)
+            return;  // Do not trigger editing from line numbers.
+
+        if (this.readOnly) {
+            this.readOnly = false;
+            window.getSelection().collapseToStart();
+        }
     }
 }
+
+WebInspector.TextViewer.prototype.__proto__ = WebInspector.View.prototype;
+
+WebInspector.TextViewerDelegate = function()
+{
+}
+
+WebInspector.TextViewerDelegate.prototype = {
+    isContentEditable: function()
+    {
+        // Should be implemented by subclasses.
+    },
+
+    startEditing: function()
+    {
+        // Should be implemented by subclasses.
+    },
+
+    endEditing: function(oldRange, newRange)
+    {
+        // Should be implemented by subclasses.
+    }
+}
+
+WebInspector.TextViewerDelegate.prototype.__proto__ = WebInspector.Object.prototype;
 
 WebInspector.TextEditorChunkedPanel = function(textModel)
 {
@@ -1269,7 +1301,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             // Now this will no longer be valid.
             delete lineRow.lineNumber;
         }
- 
+
         if (this._dirtyLines) {
             this._dirtyLines.start = Math.min(this._dirtyLines.start, startLine);
             this._dirtyLines.end = Math.max(this._dirtyLines.end, endLine);

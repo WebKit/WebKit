@@ -30,9 +30,7 @@
 
 WebInspector.SourceFrame = function(delegate, url)
 {
-    WebInspector.View.call(this);
-
-    this.element.addStyleClass("script-view");
+    WebInspector.TextViewerDelegate.call(this);
 
     this._delegate = delegate;
     this._url = url;
@@ -50,7 +48,6 @@ WebInspector.SourceFrame = function(delegate, url)
     this._breakpoints = {};
 
     this._registerShortcuts();
-    this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
 }
 
 WebInspector.SourceFrame.Events = {
@@ -61,7 +58,7 @@ WebInspector.SourceFrame.prototype = {
 
     show: function(parentElement)
     {
-        WebInspector.View.prototype.show.call(this, parentElement);
+        this._parentElement = parentElement;
 
         this._ensureContentLoaded();
 
@@ -70,22 +67,37 @@ WebInspector.SourceFrame.prototype = {
                 this._textViewer.scrollTop = this._scrollTop;
             if (this._scrollLeft)
                 this._textViewer.scrollLeft = this._scrollLeft;
+            this._textViewer.show(parentElement);
             this._textViewer.resize();
         }
     },
 
     hide: function()
     {
+        delete this._parentElement;
+
         if (this._textViewer) {
             this._scrollTop = this._textViewer.scrollTop;
             this._scrollLeft = this._textViewer.scrollLeft;
             this._textViewer.freeCachedElements();
+            this._textViewer.hide();
         }
-
-        WebInspector.View.prototype.hide.call(this);
 
         this._hidePopup();
         this._clearLineHighlight();
+    },
+
+    detach: function()
+    {
+        delete this._parentElement;
+
+        if (this._textViewer)
+            this._textViewer.detach();
+    },
+
+    get element()
+    {
+        return this._textViewer.element;
     },
 
     get loaded()
@@ -211,7 +223,12 @@ WebInspector.SourceFrame.prototype = {
         delete this._viewerState;
     },
 
-    _startEditing: function()
+    isContentEditable: function()
+    {
+        return this._delegate.canEditScriptSource();
+    },
+
+    startEditing: function()
     {
         if (!this._viewerState) {
             this._saveViewerState();
@@ -222,7 +239,7 @@ WebInspector.SourceFrame.prototype = {
         this.clearMessages();
     },
 
-    _endEditing: function(oldRange, newRange)
+    endEditing: function(oldRange, newRange)
     {
         // Adjust execution line number.
         if (typeof this._executionLineNumber === "number") {
@@ -266,22 +283,17 @@ WebInspector.SourceFrame.prototype = {
         this._content = content;
         this._textModel.setText(null, content);
 
-        this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url);
-        this._textViewer.startEditingListener = this._startEditing.bind(this);
-        this._textViewer.endEditingListener = this._endEditing.bind(this);
+        this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url, this);
 
         var element = this._textViewer.element;
+        element.addStyleClass("script-view");
         if (this._delegate.debuggingSupported()) {
             element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
             element.addEventListener("mousedown", this._mouseDown.bind(this), true);
             element.addEventListener("mousemove", this._mouseMove.bind(this), true);
             element.addEventListener("scroll", this._scroll.bind(this), true);
         }
-
-        if (this._delegate.canEditScriptSource())
-            element.addEventListener("dblclick", this._doubleClick.bind(this), true);
-
-        this.element.appendChild(element);
+        element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
 
         this._textViewer.beginUpdates();
 
@@ -304,6 +316,9 @@ WebInspector.SourceFrame.prototype = {
         this.dispatchEventToListeners(WebInspector.SourceFrame.Events.Loaded);
 
         this._textViewer.endUpdates();
+
+        if (this._parentElement)
+            this.show(this._parentElement)
     },
 
     _setTextViewerDecorations: function()
@@ -891,7 +906,7 @@ WebInspector.SourceFrame.prototype = {
                 this._viewerState = originalViewerState;
                 this._textViewer.readOnly = false;
                 this._delegate.setScriptSourceIsBeingEdited(true);
-                WebInspector.log(error, WebInspector.ConsoleMessage.MessageLevel.Error);
+                WebInspector.log(error.data[0], WebInspector.ConsoleMessage.MessageLevel.Error);
                 WebInspector.showConsole();
             }
         }
@@ -908,25 +923,10 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.readOnly = true;
         this._delegate.setScriptSourceIsBeingEdited(false);
         return true;
-    },
-
-    _doubleClick: function(event)
-    {
-        if (!this._delegate.canEditScriptSource())
-            return;
-
-        var lineRow = event.target.enclosingNodeOrSelfWithClass("webkit-line-content");
-        if (!lineRow)
-            return;  // Do not trigger editing from line numbers.
-
-        if (this._textViewer.readOnly) {
-            this._textViewer.readOnly = false;
-            window.getSelection().collapseToStart();
-        }
     }
 }
 
-WebInspector.SourceFrame.prototype.__proto__ = WebInspector.View.prototype;
+WebInspector.SourceFrame.prototype.__proto__ = WebInspector.TextViewerDelegate.prototype;
 
 
 WebInspector.SourceFrameDelegate = function()
