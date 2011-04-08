@@ -534,12 +534,13 @@ void EditorClientQt::handleInputMethodKeydown(KeyboardEvent* event)
 {
 #ifndef QT_NO_SHORTCUT
     const PlatformKeyboardEvent* kevent = event->keyEvent();
-    if (kevent->type() == PlatformKeyboardEvent::RawKeyDown) {
+    if (kevent->type() == PlatformKeyboardEvent::RawKeyDown && !event->defaultPrevented()) {
         QWebPage::WebAction action = QWebPagePrivate::editorActionForKeyEvent(kevent->qtEvent());
         switch (action) {
         case QWebPage::InsertParagraphSeparator:
         case QWebPage::InsertLineSeparator:
             m_page->triggerAction(action);
+            event->setDefaultHandled();
             break;
         default:
             break;

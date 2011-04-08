@@ -1,3 +1,15 @@
+2011-04-08  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt]REGRESSION(r82243): fast/events/onsearch-enter.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=57472
+
+        Avoid to insert new line for both keydown event & keypress event.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleInputMethodKeydown):
+
 2011-04-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Benjamin Poulain.
