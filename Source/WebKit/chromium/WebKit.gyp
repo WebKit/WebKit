@@ -1189,7 +1189,7 @@
                             '<@(_script_name)',
                             '<@(webinspector_files)'
                         ],
-                        'search_path': '../../WebCore/inspector/front-end/UglifyJS',
+                        'search_path': '../../WebCore/inspector/front-end',
                         'outputs': ['<(PRODUCT_DIR)/resources/inspector/ScriptFormatterWorker.js'],
                         'action': ['python', '<@(_script_name)', '<@(_input_file)', '<@(_search_path)', '<@(_outputs)'],
                     }],

@@ -1,3 +1,21 @@
+2011-04-07  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add test for script formatter worker.
+        https://bugs.webkit.org/show_bug.cgi?id=57447
+
+        Test: inspector/debugger/script-formatter.html
+
+        * GNUmakefile.am:
+        * WebCore.xcodeproj/project.pbxproj:
+        * gyp/streamline-inspector-source.sh:
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        (WebInspector.DebuggerPresentationModel.prototype.toggleFormatSourceFiles):
+        (WebInspector.DebuggerPresentationModel.prototype._formatter):
+        * inspector/front-end/ScriptFormatterWorker.js:
+
 2011-04-08  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

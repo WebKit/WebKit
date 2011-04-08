@@ -821,6 +821,10 @@ dist_webinspector_DATA = \
 	$(shell ls $(WebCore)/inspector/front-end/*.html) \
 	$(shell ls $(WebCore)/inspector/front-end/*.css)
 
+webinspectoruglifyjsdir = ${datadir}/webkitgtk-@WEBKITGTK_API_VERSION@/webinspector/UglifyJS
+dist_webinspectoruglifyjs_DATA = \
+	$(shell ls $(WebCore)/inspector/front-end/UglifyJS/*.js)
+
 webinspectorimagesdir = ${datadir}/webkitgtk-@WEBKITGTK_API_VERSION@/webinspector/Images
 dist_webinspectorimages_DATA = \
 	$(shell ls $(WebCore)/inspector/front-end/Images/*.gif) \
@@ -831,12 +835,15 @@ dist_webinspectorimages_DATA = \
 noinst_DATA = ${GENSOURCES_INSPECTOR}/inspector.html
 ${GENSOURCES_INSPECTOR}/inspector.html: $(WebCore)/inspector/front-end/*.html \
 		$(WebCore)/inspector/front-end/*.js \
+		$(WebCore)/inspector/front-end/UglifyJS/*.js \
 		$(WebCore)/inspector/front-end/*.css \
 		$(WebCore)/inspector/front-end/Images/* \
 		DerivedSources/WebCore/InspectorBackendStub.js \
 		$(WebCore)/English.lproj/localizedStrings.js
+	$(AM_V_GEN)mkdir -p ${GENSOURCES_INSPECTOR}/UglifyJS
 	$(AM_V_GEN)mkdir -p ${GENSOURCES_INSPECTOR}/images
 	$(AM_V_at)cp ${dist_webinspector_DATA} ${GENSOURCES_INSPECTOR}
+	$(AM_V_at)cp ${dist_webinspectoruglifyjs_DATA} ${GENSOURCES_INSPECTOR}/UglifyJS
 	$(AM_V_at)cp ${dist_webinspectorimages_DATA} ${GENSOURCES_INSPECTOR}/images
 
 webresourcesdir = ${datadir}/webkitgtk-@WEBKITGTK_API_VERSION@/images

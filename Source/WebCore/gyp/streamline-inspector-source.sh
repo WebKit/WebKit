@@ -9,7 +9,7 @@ fi
 "$SRCROOT/../inspector/combine-javascript-resources.pl" --input-html "${SRCROOT}/../inspector/front-end/inspector.html" --generated-scripts-dir ${BUILT_PRODUCTS_DIR}/DerivedSources/WebCore --output-dir "${DERIVED_FILE_DIR}/WebCore" --output-script-name inspector.js
 
 # Inline script imports in ScriptFormatterWorker.js file.
-"$SRCROOT/../inspector/inline-javascript-imports.py" "${SRCROOT}/../inspector/front-end/ScriptFormatterWorker.js" "${SRCROOT}/../inspector/front-end/UglifyJS" "${DERIVED_FILE_DIR}/WebCore/scriptFormatterWorker.js"
+"$SRCROOT/../inspector/inline-javascript-imports.py" "${SRCROOT}/../inspector/front-end/ScriptFormatterWorker.js" "${SRCROOT}/../inspector/front-end" "${DERIVED_FILE_DIR}/WebCore/scriptFormatterWorker.js"
 
 if [ -d "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector" ]; then
     # Remove any JavaScript files, since they will be replaced with the combined files.

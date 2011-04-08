@@ -70,9 +70,9 @@ function require()
 }
 
 var exports = {};
-importScripts("parse-js.js");
+importScripts("UglifyJS/parse-js.js");
 var parse = exports;
 
 var exports = {};
-importScripts("process.js");
+importScripts("UglifyJS/process.js");
 var process = exports;
