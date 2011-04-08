@@ -1,3 +1,26 @@
+2011-04-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement img-src style-src and font-src
+        https://bugs.webkit.org/show_bug.cgi?id=58018
+
+        Test a bunch of allow/block tests for these new directives.
+
+        * http/tests/security/contentSecurityPolicy/image-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/image-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/image-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/image-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/blue.css: Added.
+        * http/tests/security/contentSecurityPolicy/resources/style.xsl: Added.
+        * http/tests/security/contentSecurityPolicy/style-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/style-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/style-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/style-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-allowed.php: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/xsl-blocked.php: Added.
+
 2011-04-07  Enrica Casucci  <enrica@apple.com>
 
         Unreviewed. Updated comment in skipped list to

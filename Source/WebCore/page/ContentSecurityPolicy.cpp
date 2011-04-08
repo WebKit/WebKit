@@ -509,6 +509,21 @@ bool ContentSecurityPolicy::allowObjectFromSource(const KURL& url) const
     return !m_objectSrc || m_objectSrc->allows(url);
 }
 
+bool ContentSecurityPolicy::allowImageFromSource(const KURL& url) const
+{
+    return !m_imgSrc || m_imgSrc->allows(url);
+}
+
+bool ContentSecurityPolicy::allowStyleFromSource(const KURL& url) const
+{
+    return !m_styleSrc || m_styleSrc->allows(url);
+}
+
+bool ContentSecurityPolicy::allowFontFromSource(const KURL& url) const
+{
+    return !m_fontSrc || m_fontSrc->allows(url);
+}
+
 // policy            = directive-list
 // directive-list    = [ directive *( ";" [ directive ] ) ]
 //
@@ -584,6 +599,9 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
 {
     DEFINE_STATIC_LOCAL(String, scriptSrc, ("script-src"));
     DEFINE_STATIC_LOCAL(String, objectSrc, ("object-src"));
+    DEFINE_STATIC_LOCAL(String, imgSrc, ("img-src"));
+    DEFINE_STATIC_LOCAL(String, styleSrc, ("style-src"));
+    DEFINE_STATIC_LOCAL(String, fontSrc, ("font-src"));
     DEFINE_STATIC_LOCAL(String, options, ("options"));
 
     ASSERT(!name.isEmpty());
@@ -592,6 +610,12 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
         m_scriptSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
     else if (!m_objectSrc && equalIgnoringCase(name, objectSrc))
         m_objectSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
+    else if (!m_imgSrc && equalIgnoringCase(name, imgSrc))
+        m_imgSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
+    else if (!m_styleSrc && equalIgnoringCase(name, styleSrc))
+        m_styleSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
+    else if (!m_fontSrc && equalIgnoringCase(name, fontSrc))
+        m_fontSrc = adoptPtr(new CSPDirective(value, m_origin.get()));
     else if (!m_options && equalIgnoringCase(name, options))
         m_options = adoptPtr(new CSPOptions(value));
 }
