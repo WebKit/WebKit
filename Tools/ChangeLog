@@ -1,3 +1,14 @@
+2011-04-08  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Make WK2 layoutTestController.shadowRoot return undefined, not
+        null, when its argument is not an element.
+        https://bugs.webkit.org/show_bug.cgi?id=58121
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::shadowRoot):
+
 2011-04-07  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Mihai Parparita.

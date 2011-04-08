@@ -360,11 +360,11 @@ JSValueRef LayoutTestController::shadowRoot(JSValueRef element)
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
 
     if (!element || !JSValueIsObject(context, element))
-        return JSValueMakeNull(context);
+        return JSValueMakeUndefined(context);
 
     WKRetainPtr<WKBundleNodeHandleRef> domElement = adoptWK(WKBundleNodeHandleCreate(context, const_cast<JSObjectRef>(element)));
     if (!domElement)
-        return JSValueMakeNull(context);
+        return JSValueMakeUndefined(context);
 
     WKRetainPtr<WKBundleNodeHandleRef> shadowRootDOMElement = adoptWK(WKBundleNodeHandleCopyElementShadowRoot(domElement.get()));
     if (!shadowRootDOMElement)
