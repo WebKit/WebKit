@@ -25,10 +25,10 @@
 #ifndef qwkhistory_h
 #define qwkhistory_h
 
+#include "WebKit2/WKBackForwardListItem.h"
 #include "qwebkitglobal.h"
 #include <QObject>
 #include <QSharedData>
-#include "WKBackForwardListItem.h"
 
 class QWKHistoryPrivate;
 class QWKHistoryItemPrivate;
@@ -49,7 +49,7 @@ public:
     QUrl url() const;
 
 private:
-    QWKHistoryItem(WKBackForwardListItemRef item);
+    QWKHistoryItem(WKBackForwardListItemRef);
 
     QExplicitlySharedDataPointer<QWKHistoryItemPrivate> d;
 

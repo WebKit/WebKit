@@ -1,3 +1,13 @@
+2011-04-08  Jamie Cooley  <james.cooley@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt][WK2] Make sure qwkhistory.h is copied into includes/WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=57945
+
+        * UIProcess/API/qt/WKView.h:
+        * UIProcess/API/qt/qwkhistory.h:
+
 2011-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
