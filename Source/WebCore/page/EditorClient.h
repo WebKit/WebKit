@@ -27,7 +27,7 @@
 #ifndef EditorClient_h
 #define EditorClient_h
 
-#include "CorrectionPanelInfo.h"
+#include "SpellingCorrectionController.h"
 #include "EditorInsertAction.h"
 #include "FloatRect.h"
 #include "PlatformString.h"

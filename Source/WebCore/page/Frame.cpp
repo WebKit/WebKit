@@ -968,7 +968,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
     if (!document)
         return;
 
-    m_editor.dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
+    m_editor.dismissCorrectionPanelAsIgnored();
 
 #if ENABLE(SVG)
     // Respect SVGs zoomAndPan="disabled" property in standalone SVG documents.

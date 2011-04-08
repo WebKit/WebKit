@@ -28,7 +28,6 @@
 
 #include "ClipboardAccessPolicy.h"
 #include "Color.h"
-#include "CorrectionPanelInfo.h"
 #include "DocumentMarker.h"
 #include "EditAction.h"
 #include "EditingBehavior.h"
@@ -51,6 +50,7 @@ namespace WebCore {
 class CSSMutableStyleDeclaration;
 class CSSStyleDeclaration;
 class Clipboard;
+class SpellingCorrectionController;
 class DeleteButtonController;
 class EditCommand;
 class EditorClient;
@@ -325,10 +325,10 @@ public:
 
     void addToKillRing(Range*, bool prepend);
 
-    void startCorrectionPanelTimer(CorrectionPanelInfo::PanelType);
+    void startCorrectionPanelTimer();
     // If user confirmed a correction in the correction panel, correction has non-zero length, otherwise it means that user has dismissed the panel.
     void handleCorrectionPanelResult(const String& correction);
-    void dismissCorrectionPanel(ReasonForDismissingCorrectionPanel);
+    void dismissCorrectionPanelAsIgnored();
 
     void pasteAsFragment(PassRefPtr<DocumentFragment>, bool smartReplace, bool matchStyle);
     void pasteAsPlainText(const String&, bool smartReplace);
@@ -384,7 +384,7 @@ public:
 #endif
 
     bool selectionStartHasMarkerFor(DocumentMarker::MarkerType, int from, int length) const;
-    void removeSpellAndCorrectionMarkersFromWordsToBeEdited(bool doNotRemoveIfSelectionAtWordBoundary);
+    void updateMarkersForWordsAffectedByEditing(bool onlyHandleWordsContainingSelection);
 
 private:
     Frame* m_frame;
@@ -399,10 +399,8 @@ private:
     bool m_shouldStartNewKillRingSequence;
     bool m_shouldStyleWithCSS;
     OwnPtr<KillRing> m_killRing;
-    CorrectionPanelInfo m_correctionPanelInfo;
     OwnPtr<SpellChecker> m_spellChecker;
-    Timer<Editor> m_correctionPanelTimer;
-    bool m_correctionPanelIsDismissedByEditor;
+    OwnPtr<SpellingCorrectionController> m_spellingCorrector;
     VisibleSelection m_mark;
     bool m_areMarkedTextMatchesHighlighted;
 
@@ -417,7 +415,6 @@ private:
     void revealSelectionAfterEditingOperation();
     void markMisspellingsOrBadGrammar(const VisibleSelection&, bool checkSpelling, RefPtr<Range>& firstMisspellingRange);
     TextCheckingTypeMask textCheckingTypeMaskFor(TextCheckingOptions);
-    void recordSpellcheckerResponseForModifiedCorrection(Range*, const String& corrected, const String& correction);
 
     void selectComposition();
     void confirmComposition(const String&, bool preserveSelection);
@@ -428,10 +425,10 @@ private:
     PassRefPtr<Range> nextVisibleRange(Range*, const String&, FindOptions);
 
     void changeSelectionAfterCommand(const VisibleSelection& newSelection, bool closeTyping, bool clearTypingStyle);
-    void correctionPanelTimerFired(Timer<Editor>*);
+
     Node* findEventTargetFromSelection() const;
     void stopCorrectionPanelTimer();
-    String dismissCorrectionPanelSoon(ReasonForDismissingCorrectionPanel);
+
     void applyCorrectionPanelInfo(const Vector<DocumentMarker::MarkerType>& markerTypesToAdd);
     // Return true if correction was applied, false otherwise.
     bool applyAutocorrectionBeforeTypingIfAppropriate();

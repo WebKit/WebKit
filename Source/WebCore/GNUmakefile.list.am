@@ -1382,6 +1382,8 @@ webcore_sources += \
 	Source/WebCore/editing/SmartReplaceICU.cpp \
 	Source/WebCore/editing/SpellChecker.cpp \
 	Source/WebCore/editing/SpellChecker.h \
+	Source/WebCore/editing/SpellingCorrectionController.cpp \
+	Source/WebCore/editing/SpellingCorrectionController.h \
 	Source/WebCore/editing/SpellingCorrectionCommand.h \
 	Source/WebCore/editing/SplitElementCommand.cpp \
 	Source/WebCore/editing/SplitElementCommand.h \

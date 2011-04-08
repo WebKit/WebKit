@@ -154,11 +154,9 @@ void TypingCommand::insertText(Document* document, const String& text, Options o
     Frame* frame = document->frame();
     ASSERT(frame);
 
-#if REMOVE_MARKERS_UPON_EDITING
     if (!text.isEmpty())
-        document->frame()->editor()->removeSpellAndCorrectionMarkersFromWordsToBeEdited(isSpaceOrNewline(text.characters()[0]));
-#endif
-
+        document->frame()->editor()->updateMarkersForWordsAffectedByEditing(isSpaceOrNewline(text.characters()[0]));
+    
     insertText(document, text, frame->selection()->selection(), options, composition);
 }
 
@@ -344,12 +342,8 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
         VisiblePosition p2 = startOfWord(start, LeftWordIfOnBoundary);
         if (p1 != p2)
             document()->frame()->editor()->markMisspellingsAfterTypingToWord(p1, endingSelection());
-#if SUPPORT_AUTOCORRECTION_PANEL
         else if (commandType == TypingCommand::InsertText)
-            document()->frame()->editor()->startCorrectionPanelTimer(CorrectionPanelInfo::PanelTypeCorrection);
-#else
-    UNUSED_PARAM(commandType);
-#endif
+            document()->frame()->editor()->startCorrectionPanelTimer();
     }
 }
 
@@ -468,9 +462,8 @@ bool TypingCommand::makeEditableRootEmpty()
 
 void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 {
-#if REMOVE_MARKERS_UPON_EDITING
-    document()->frame()->editor()->removeSpellAndCorrectionMarkersFromWordsToBeEdited(false);
-#endif
+    document()->frame()->editor()->updateMarkersForWordsAffectedByEditing(false);
+
     VisibleSelection selectionToDelete;
     VisibleSelection selectionAfterUndo;
 
@@ -567,9 +560,8 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
 
 void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool killRing)
 {
-#if REMOVE_MARKERS_UPON_EDITING
-    document()->frame()->editor()->removeSpellAndCorrectionMarkersFromWordsToBeEdited(false);
-#endif
+    document()->frame()->editor()->updateMarkersForWordsAffectedByEditing(false);
+
     VisibleSelection selectionToDelete;
     VisibleSelection selectionAfterUndo;
 

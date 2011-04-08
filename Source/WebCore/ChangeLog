@@ -1,3 +1,95 @@
+2011-04-06  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Darin Adler.
+
+        [Refactoring] Auto correction panel should be handled by its own class.
+        https://bugs.webkit.org/show_bug.cgi?id=55571
+
+        Extracted code inside SUPPORT_AUTOCORRECTION_PANEL into
+        SpellingCorrectionController class.
+        This change also remove some SUPPORT_AUTOCORRECTION_PANEL guard if
+        code paths inside the never reached without autocorrection support.
+        Removing guards reduces unintentional build breakage.
+
+        No new tests, no behavior chagne.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/CorrectionPanelInfo.h: Removed.
+        * editing/EditingAllInOne.cpp:
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedSelection):
+        (WebCore::Editor::respondToChangedContents):
+        (WebCore::Editor::appliedEditing):
+        (WebCore::Editor::Editor):
+        (WebCore::Editor::~Editor):
+        (WebCore::Editor::insertTextWithoutSendingTextEvent):
+        (WebCore::Editor::insertLineBreak):
+        (WebCore::Editor::insertParagraphSeparator):
+        (WebCore::Editor::cut):
+        (WebCore::Editor::paste):
+        (WebCore::Editor::pasteAsPlainText):
+        (WebCore::Editor::isAutomaticSpellingCorrectionEnabled):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::changeBackToReplacedString):
+        (WebCore::Editor::unappliedSpellCorrection):
+        (WebCore::Editor::updateMarkersForWordsAffectedByEditing):
+        (WebCore::Editor::startCorrectionPanelTimer):
+        (WebCore::Editor::handleCorrectionPanelResult):
+        (WebCore::Editor::dismissCorrectionPanelAsIgnored):
+        * editing/Editor.h:
+        * editing/SpellingCorrectionCommand.cpp:
+        * editing/SpellingCorrectionController.cpp: Added.
+        (WebCore::markerTypesForAutocorrection):
+        (WebCore::markerTypesForReplacement):
+        (WebCore::markersHaveIdenticalDescription):
+        (WebCore::SpellingCorrectionController::SpellingCorrectionController):
+        (WebCore::SpellingCorrectionController::~SpellingCorrectionController):
+        (WebCore::SpellingCorrectionController::startCorrectionPanelTimer):
+        (WebCore::SpellingCorrectionController::stopCorrectionPanelTimer):
+        (WebCore::SpellingCorrectionController::stopPendingCorrection):
+        (WebCore::SpellingCorrectionController::applyPendingCorrection):
+        (WebCore::SpellingCorrectionController::hasPendingCorrection):
+        (WebCore::SpellingCorrectionController::isSpellingMarkerAllowed):
+        (WebCore::SpellingCorrectionController::show):
+        (WebCore::SpellingCorrectionController::handleCancelOperation):
+        (WebCore::SpellingCorrectionController::dismiss):
+        (WebCore::SpellingCorrectionController::dismissSoon):
+        (WebCore::SpellingCorrectionController::applyCorrectionPanelInfo):
+        (WebCore::SpellingCorrectionController::applyAutocorrectionBeforeTypingIfAppropriate):
+        (WebCore::SpellingCorrectionController::respondToUnappliedSpellCorrection):
+        (WebCore::SpellingCorrectionController::correctionPanelTimerFired):
+        (WebCore::SpellingCorrectionController::handleCorrectionPanelResult):
+        (WebCore::SpellingCorrectionController::isAutomaticSpellingCorrectionEnabled):
+        (WebCore::SpellingCorrectionController::windowRectForRange):
+        (WebCore::SpellingCorrectionController::respondToChangedSelection):
+        (WebCore::SpellingCorrectionController::respondToAppliedEditing):
+        (WebCore::SpellingCorrectionController::client):
+        (WebCore::SpellingCorrectionController::textChecker):
+        (WebCore::SpellingCorrectionController::recordAutocorrectionResponseReversed):
+        (WebCore::SpellingCorrectionController::markReversed):
+        (WebCore::SpellingCorrectionController::markCorrection):
+        (WebCore::SpellingCorrectionController::recordSpellcheckerResponseForModifiedCorrection):
+        * editing/SpellingCorrectionController.h: Added.
+        (WebCore::SpellingCorrectionController::UNLESS_ENABLED):
+        (WebCore::SpellingCorrectionController::shouldStartTimeFor):
+        (WebCore::SpellingCorrectionController::shouldRemoveMarkersUponEditing):        
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::markMisspellingsAfterTyping):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * editing/htmlediting.h:
+        (WebCore::isAmbiguousBoundaryCharacter):
+        * page/EditorClient.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::setPageAndTextZoomFactors):
+
 2011-04-08  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed, rolling out r83335.

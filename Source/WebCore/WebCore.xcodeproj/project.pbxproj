@@ -3198,6 +3198,8 @@
 		A622A8FF122C44A600A785B3 /* GenericBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F9122C44A600A785B3 /* GenericBinding.h */; };
 		A6D169621346B49B000EB770 /* ShadowRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6D169611346B49B000EB770 /* ShadowRoot.cpp */; };
 		A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = A6D169631346B4C1000EB770 /* ShadowRoot.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A7005CCC1330C4BA000CC0BA /* SpellingCorrectionController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7005CCA1330C4BA000CC0BA /* SpellingCorrectionController.cpp */; };
+		A7005CCD1330C4BA000CC0BA /* SpellingCorrectionController.h in Headers */ = {isa = PBXBuildFile; fileRef = A7005CCB1330C4BA000CC0BA /* SpellingCorrectionController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7151BD812F1558F005A0F64 /* TextCheckerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A7151BD712F1558F005A0F64 /* TextCheckerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A715E652134BBBEC00D8E713 /* ProgressShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A715E650134BBBEC00D8E713 /* ProgressShadowElement.cpp */; };
 		A715E653134BBBEC00D8E713 /* ProgressShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A715E651134BBBEC00D8E713 /* ProgressShadowElement.h */; };
@@ -4808,7 +4810,6 @@
 		B776D43D1104527500BEB0EC /* PrintContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B776D43C1104527500BEB0EC /* PrintContext.cpp */; };
 		B885E8D411E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B885E8D211E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp */; };
 		B885E8D511E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = B885E8D311E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h */; settings = {ATTRIBUTES = (); }; };
-		B8A6A6D5127B338D008673BA /* CorrectionPanelInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = B8A6A6D4127B338D008673BA /* CorrectionPanelInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B8DBDB4B130B0F8A00F5CDB1 /* SetSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B8DBDB47130B0F8A00F5CDB1 /* SetSelectionCommand.cpp */; };
 		B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B8DBDB48130B0F8A00F5CDB1 /* SetSelectionCommand.h */; };
 		B8DBDB4D130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B8DBDB49130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp */; };
@@ -9738,6 +9739,8 @@
 		A622A8F9122C44A600A785B3 /* GenericBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericBinding.h; path = generic/GenericBinding.h; sourceTree = "<group>"; };
 		A6D169611346B49B000EB770 /* ShadowRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowRoot.cpp; sourceTree = "<group>"; };
 		A6D169631346B4C1000EB770 /* ShadowRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowRoot.h; sourceTree = "<group>"; };
+		A7005CCA1330C4BA000CC0BA /* SpellingCorrectionController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpellingCorrectionController.cpp; sourceTree = "<group>"; };
+		A7005CCB1330C4BA000CC0BA /* SpellingCorrectionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpellingCorrectionController.h; sourceTree = "<group>"; };
 		A7151BD712F1558F005A0F64 /* TextCheckerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerClient.h; sourceTree = "<group>"; };
 		A715E650134BBBEC00D8E713 /* ProgressShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgressShadowElement.cpp; sourceTree = "<group>"; };
 		A715E651134BBBEC00D8E713 /* ProgressShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressShadowElement.h; sourceTree = "<group>"; };
@@ -11258,7 +11261,6 @@
 		B776D43C1104527500BEB0EC /* PrintContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrintContext.cpp; sourceTree = "<group>"; };
 		B885E8D211E06DD2009FFBF4 /* InspectorApplicationCacheAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorApplicationCacheAgent.cpp; sourceTree = "<group>"; };
 		B885E8D311E06DD2009FFBF4 /* InspectorApplicationCacheAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorApplicationCacheAgent.h; sourceTree = "<group>"; };
-		B8A6A6D4127B338D008673BA /* CorrectionPanelInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CorrectionPanelInfo.h; sourceTree = "<group>"; };
 		B8DBDB47130B0F8A00F5CDB1 /* SetSelectionCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetSelectionCommand.cpp; sourceTree = "<group>"; };
 		B8DBDB48130B0F8A00F5CDB1 /* SetSelectionCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetSelectionCommand.h; sourceTree = "<group>"; };
 		B8DBDB49130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpellingCorrectionCommand.cpp; sourceTree = "<group>"; };
@@ -15574,7 +15576,6 @@
 				93309D8C099E64910056E581 /* BreakBlockquoteCommand.h */,
 				93309D8D099E64910056E581 /* CompositeEditCommand.cpp */,
 				93309D8E099E64910056E581 /* CompositeEditCommand.h */,
-				B8A6A6D4127B338D008673BA /* CorrectionPanelInfo.h */,
 				D0B0556709C6700100307E43 /* CreateLinkCommand.cpp */,
 				D0B0556609C6700100307E43 /* CreateLinkCommand.h */,
 				1C4C8F630AD8655D009475CE /* DeleteButton.cpp */,
@@ -15656,6 +15657,8 @@
 				A78FE13A12366B1000ACE8D0 /* SpellChecker.h */,
 				B8DBDB49130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp */,
 				B8DBDB4A130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h */,
+				A7005CCA1330C4BA000CC0BA /* SpellingCorrectionController.cpp */,
+				A7005CCB1330C4BA000CC0BA /* SpellingCorrectionController.h */,
 				93309DC2099E64910056E581 /* SplitElementCommand.cpp */,
 				93309DC3099E64910056E581 /* SplitElementCommand.h */,
 				93309DC4099E64910056E581 /* SplitTextNodeCommand.cpp */,
@@ -20018,7 +20021,6 @@
 				33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */,
 				7EE6846412D26E3800E79415 /* CookieStorageCFNet.h in Headers */,
 				FE6FD4880F676E5700092873 /* Coordinates.h in Headers */,
-				B8A6A6D5127B338D008673BA /* CorrectionPanelInfo.h in Headers */,
 				A80E6D040A1989CA007FB8C5 /* Counter.h in Headers */,
 				BC5EB9790E82069200B25965 /* CounterContent.h in Headers */,
 				BC5EB9510E82056B00B25965 /* CounterDirectives.h in Headers */,
@@ -22341,6 +22343,7 @@
 				75415B0012958D5E003AD669 /* SpeechInputResultList.h in Headers */,
 				A78FE13C12366B1000ACE8D0 /* SpellChecker.h in Headers */,
 				B8DBDB4E130B0F8A00F5CDB1 /* SpellingCorrectionCommand.h in Headers */,
+				A7005CCD1330C4BA000CC0BA /* SpellingCorrectionController.h in Headers */,
 				93309E12099E64920056E581 /* SplitElementCommand.h in Headers */,
 				93309E14099E64920056E581 /* SplitTextNodeCommand.h in Headers */,
 				93309E16099E64920056E581 /* SplitTextNodeContainingElementCommand.h in Headers */,
@@ -25166,6 +25169,7 @@
 				75415C29129A9920003AD669 /* SpeechInputResultList.cpp in Sources */,
 				A78FE13B12366B1000ACE8D0 /* SpellChecker.cpp in Sources */,
 				B8DBDB4D130B0F8A00F5CDB1 /* SpellingCorrectionCommand.cpp in Sources */,
+				A7005CCC1330C4BA000CC0BA /* SpellingCorrectionController.cpp in Sources */,
 				93309E11099E64920056E581 /* SplitElementCommand.cpp in Sources */,
 				93309E13099E64920056E581 /* SplitTextNodeCommand.cpp in Sources */,
 				93309E15099E64920056E581 /* SplitTextNodeContainingElementCommand.cpp in Sources */,

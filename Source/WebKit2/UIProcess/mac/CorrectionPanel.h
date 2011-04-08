@@ -28,7 +28,7 @@
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
 #import <AppKit/NSTextChecker.h>
-#import <WebCore/CorrectionPanelInfo.h>
+#import <WebCore/SpellingCorrectionController.h>
 #import <wtf/RetainPtr.h>
 
 @class WKView;

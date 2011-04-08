@@ -26,7 +26,7 @@
 #include "config.h"
 #include "SpellingCorrectionCommand.h"
 
-#include "CorrectionPanelInfo.h"
+#include "SpellingCorrectionController.h"
 #include "DocumentFragment.h"
 #include "Frame.h"
 #include "ReplaceSelectionCommand.h"
