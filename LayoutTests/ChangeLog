@@ -1,3 +1,15 @@
+2011-04-07  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Test for Bug 51465 - chrome.dll!WebCore::RenderLayer::currentTransform
+        ReadAV@NULL (8968fc97874fa23b6799ff8f09c142e4)
+
+        Forgot to add them to the original patch.
+
+        * fast/css/webkit-empty-transform-preserve3d-crash-expected.txt: Added.
+        * fast/css/webkit-empty-transform-preserve3d-crash.html: Added.
+
 2011-04-07  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, add baseline pixel images for decorations-transformed.
