@@ -2520,7 +2520,7 @@ WONTFIX SKIP WIN : platform/win/plugins/draws-gradient.html = IMAGE+TEXT CRASH
 WONTFIX SKIP WIN : platform/win/plugins/get-value-netscape-window.html = TEXT CRASH
 
 // Added in WK r71424
-BUGCR62138 : animations/stop-animation-on-suspend.html = TEXT PASS
+BUGCR62138 : animations/stop-animation-on-suspend.html = TEXT PASS CRASH
 
 // test_shell and DRT do not have LayoutTestController.pageSizeAndMarginsInPixels
 BUGCR62515 : printing/page-format-data-display-none.html = TEXT
@@ -3292,3 +3292,4 @@ BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-neutral-run.html = IMA
 BUGWK58010 WIN LINUX DEBUG : inspector/profiler/detailed-heapshots-summary.html = PASS TIMEOUT
 BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = CRASH PASS
 BUGWK58005 MAC : editing/inserting/editable-inline-element.html = IMAGE
+BUGCR780807 : http/tests/misc/webtiming-origins.html = PASS TEXT
