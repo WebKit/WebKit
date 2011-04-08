@@ -377,10 +377,10 @@ bool paintSkiaText(GraphicsContext* context,
         paint.reset();
         platformContext->setupPaintForStroking(&paint, 0, 0);
         paint.setFlags(SkPaint::kAntiAlias_Flag);
-#if ENABLE(SKIA_TEXT)
-        paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-        setupPaintForFont(hfont, &paint);
-#endif
+        if (!platformContext->isNativeFontRenderingAllowed()) {
+            paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
+            setupPaintForFont(hfont, &paint);
+        }
 
         if (didFill) {
             // If there is a shadow and we filled above, there will already be

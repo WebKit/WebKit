@@ -1,3 +1,15 @@
+2011-04-08  Mike Reed  <reed@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Replace SKIA_TEXT with isNativeFontRenderingAllowed() for print-preview to work
+        https://bugs.webkit.org/show_bug.cgi?id=57782
+
+        No new tests. This change only affects print-preview and build option SKIA_GPU 
+
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::paintSkiaText):
+
 2011-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang, Darin Adler, and Enrica Casucci.
