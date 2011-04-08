@@ -1,3 +1,10 @@
+2011-04-08  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed build fix.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+
 2011-04-08  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Simon Fraser.

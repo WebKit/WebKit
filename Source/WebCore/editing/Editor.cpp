@@ -1986,7 +1986,6 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
         || ((textCheckingOptions & MarkSpelling) && isAutomaticSpellingCorrectionEnabled()))
         textCheckingOptions |= PerformReplacement;
 #endif
-
     if (!textCheckingOptions & (MarkSpelling | PerformReplacement))
         return;
 
@@ -2002,6 +2001,8 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
     }
 
 #else
+    UNUSED_PARAM(selectionAfterTyping);
+
     if (!isContinuousSpellCheckingEnabled())
         return;
 
