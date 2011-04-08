@@ -1,3 +1,16 @@
+2011-04-08  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Improve lifetime management of nodes in ReplaceNodeWithSpanCommand.
+        https://bugs.webkit.org/show_bug.cgi?id=57595
+        <rdar://problem/9222122>
+
+        Test: editing/style/bold-with-dom-changes.html
+
+        * editing/ReplaceNodeWithSpanCommand.cpp:
+        (WebCore::swapInNodePreservingAttributesAndChildren):
+
 2011-04-07  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Dimitri Glazkov.

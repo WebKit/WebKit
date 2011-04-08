@@ -56,8 +56,8 @@ static void swapInNodePreservingAttributesAndChildren(HTMLElement* newNode, HTML
     parentNode->insertBefore(newNode, nodeToReplace, ec);
     ASSERT(!ec);
 
-    Node* nextChild;
-    for (Node* child = nodeToReplace->firstChild(); child; child = nextChild) {
+    RefPtr<Node> nextChild;
+    for (Node* child = nodeToReplace->firstChild(); child; child = nextChild.get()) {
         nextChild = child->nextSibling();
         newNode->appendChild(child, ec);
         ASSERT(!ec);
