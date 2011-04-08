@@ -1,3 +1,10 @@
+2011-04-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaseline after r83246.
+
+        * platform/chromium-win/editing/pasteboard/paste-text-011-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-07  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Alexey Proskuryakov.
