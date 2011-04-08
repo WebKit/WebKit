@@ -1,3 +1,16 @@
+2011-04-08  Anton Muhin  <antonm@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [v8] Change expectations for plugins/netscape-plugin-poperty-access-exception test
+        https://bugs.webkit.org/show_bug.cgi?id=54681
+
+        This a patch which should be landed when fix for exception handling in v8 is landed
+        (see http://codereview.chromium.org/6397011/)
+
+        * platform/chromium-mac/plugins/netscape-plugin-property-access-exception-expected.txt:
+        * platform/chromium-win/plugins/netscape-plugin-property-access-exception-expected.txt:
+
 2011-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

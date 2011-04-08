@@ -6,5 +6,5 @@ SUCCESS: Exception caught: Error: plugin object testThrowExceptionProperty SUCCE
 One could expect exceptions to be raised in the below cases, too - but Firefox doesn't do that in most of these (I do get an exception in the first case, but that's inconsistent with not getting it in the seconfd one).
 Exception caught: Error: Error calling method on NPObject.
 Exception caught: Error: Error calling method on NPObject.
-Exception caught: Error: plugin object testThrowExceptionProperty SUCCESS
-Exception caught: Error: plugin object testThrowExceptionProperty SUCCESS
+No exception caught on getting via testGetBrowserProperty.
+No exception caught on setting via testSetBrowserProperty.
