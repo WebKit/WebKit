@@ -1,3 +1,14 @@
+2011-04-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58155 and part of <rdar://problem/9251767>
+        BitmapImage::getFirstCGImageRefOfSize fails if the frameCount hasn't been initialized from the image source.
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::getFirstCGImageRefOfSize): Call frameCount() instead of accessing m_frames.size() to
+          make sure the frames are properly tallied first.
+
 2011-04-08  Benjamin Poulain  <benjamin.poulain@nokia.com>
 
         Reviewed by Andreas Kling.

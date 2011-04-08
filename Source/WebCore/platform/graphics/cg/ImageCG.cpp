@@ -156,7 +156,8 @@ CGImageRef BitmapImage::getCGImageRef()
 
 CGImageRef BitmapImage::getFirstCGImageRefOfSize(const IntSize& size)
 {
-    for (size_t i = 0; i < m_frames.size(); ++i) {
+    size_t count = frameCount();
+    for (size_t i = 0; i < count; ++i) {
         CGImageRef cgImage = frameAtIndex(i);
         if (IntSize(CGImageGetWidth(cgImage), CGImageGetHeight(cgImage)) == size)
             return cgImage;
