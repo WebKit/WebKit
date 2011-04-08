@@ -1,3 +1,17 @@
+2011-04-08  Jeff Timanus  <twiz@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Fall back to software rendering for Canvas2D when requesting a DrawingBuffer larger than supported by the GL environment.
+        https://bugs.webkit.org/show_bug.cgi?id=57768
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::reset):
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::reset):
+        * platform/graphics/gpu/DrawingBuffer.h:
+
 2011-04-08  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Dmitry Titov.

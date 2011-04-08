@@ -133,7 +133,11 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bo
         m_context3D = p->sharedGraphicsContext3D();
         if (m_context3D) {
             m_drawingBuffer = m_context3D->graphicsContext3D()->createDrawingBuffer(IntSize(canvas->width(), canvas->height()));
-            c->setSharedGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas->width(), canvas->height()));
+            if (!m_drawingBuffer) {
+                c->setSharedGraphicsContext3D(0, 0, IntSize());
+                m_context3D.clear();
+            } else
+                c->setSharedGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas->width(), canvas->height()));
         }
     }
 #endif
@@ -173,13 +177,18 @@ void CanvasRenderingContext2D::reset()
 #if ENABLE(ACCELERATED_2D_CANVAS)
     if (GraphicsContext* c = drawingContext()) {
         if (m_context3D && m_drawingBuffer) {
-            m_drawingBuffer->reset(IntSize(canvas()->width(), canvas()->height()));
-            c->setSharedGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas()->width(), canvas()->height()));
+            if (m_drawingBuffer->reset(IntSize(canvas()->width(), canvas()->height()))) {
+                c->setSharedGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas()->width(), canvas()->height()));
 #if USE(ACCELERATED_COMPOSITING)
-            RenderBox* renderBox = canvas()->renderBox();
-            if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
-                renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
+                RenderBox* renderBox = canvas()->renderBox();
+                if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
+                    renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
 #endif
+            } else {
+                c->setSharedGraphicsContext3D(0, 0, IntSize());
+                m_drawingBuffer.clear();
+                m_context3D.clear();
+            }
         }
     }
 #endif

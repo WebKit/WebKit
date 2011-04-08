@@ -2914,9 +2914,6 @@ BUGCR60965 GPU WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMA
 
 BUGNONE SLOW GPU DEBUG WIN : fast/canvas/canvas-getImageData.html = PASS
 
-// Started failing after r75648 on everything except Snow Leopard
-BUGWK52341 GPU : fast/canvas/canvas-large-dimensions.html = TEXT
-
 BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH
 
 BUGCR74979 GPU MAC: media/video-canvas-alpha.html = IMAGE

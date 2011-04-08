@@ -144,15 +144,22 @@ void DrawingBuffer::resizeDepthStencil(int sampleCount)
     m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, 0);
 }
 
-void DrawingBuffer::reset(const IntSize& newSize)
+bool DrawingBuffer::reset(const IntSize& newSize)
 {
+    if (!m_context)
+        return false;
+
+    m_context->makeContextCurrent();
+
+    int maxTextureSize = 0;
+    m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &maxTextureSize);
+    if (newSize.height() > maxTextureSize || newSize.width() > maxTextureSize) {
+      clear();
+      return false;
+    }
+
     m_size = newSize;
 
-    if (!m_context)
-        return;
-        
-    m_context->makeContextCurrent();
-    
     const GraphicsContext3D::Attributes& attributes = m_context->getContextAttributes();
     unsigned long internalColorFormat, colorFormat, internalRenderbufferFormat;
     if (attributes.alpha) {
@@ -182,7 +189,7 @@ void DrawingBuffer::reset(const IntSize& newSize)
         if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
             // Cleanup
             clear();
-            return;
+            return false;
         }
     }
 
@@ -190,15 +197,18 @@ void DrawingBuffer::reset(const IntSize& newSize)
     m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
 
     m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_colorBuffer);
+    
     m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, internalColorFormat, m_size.width(), m_size.height(), 0, colorFormat, GraphicsContext3D::UNSIGNED_BYTE);
+
     m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_colorBuffer, 0);
     m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0);
+
     if (!multisample())
         resizeDepthStencil(0);
     if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
         // Cleanup
         clear();
-        return;
+        return false;
     }
 
     if (multisample())
@@ -250,6 +260,8 @@ void DrawingBuffer::reset(const IntSize& newSize)
     m_context->flush();
     
     didReset();
+
+    return true;
 }
 
 void DrawingBuffer::commit(long x, long y, long width, long height)

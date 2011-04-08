@@ -60,7 +60,8 @@ public:
     
     ~DrawingBuffer();
 
-    void reset(const IntSize&);
+    // Returns true if the buffer was successfully resized.
+    bool reset(const IntSize&);
     void bind();
     IntSize size() const { return m_size; }
     Platform3DObject colorBuffer() const { return m_colorBuffer; }
