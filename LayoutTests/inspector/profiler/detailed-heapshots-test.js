@@ -23,6 +23,11 @@ InspectorTest.startProfilerTest = function(callback)
 
     function detailedHeapProfilesEnabled()
     {
+        // Reduce the number of populated nodes to speed up testing.
+        WebInspector.HeapSnapshotContainmentDataGrid.prototype._defaultPopulateCount = 10;
+        WebInspector.HeapSnapshotConstructorsDataGrid.prototype._defaultPopulateCount = 10;
+        WebInspector.HeapSnapshotDiffDataGrid.prototype._defaultPopulateCount = 5;
+        WebInspector.HeapSnapshotDominatorsDataGrid.prototype._defaultPopulateCount = 3;
         InspectorTest.addResult("Detailed heap profiles were enabled.");
         InspectorTest.safeWrap(callback)();
     }
@@ -101,17 +106,27 @@ InspectorTest.checkArrayIsSorted = function(contents, sortType, sortOrder)
     }
     function parseSize(size)
     {
-        var amount = parseInt(size, 10);
+        if (size.charAt(0) === ">")
+            size = size.substring(2);
+        var amount = parseFloat(size, 10);
         var multiplier = {
-            "K": 1024,
-            "M": 1024 * 1024
-        }[size.charAt(size.length - 1)];
+            "KB": 1024,
+            "MB": 1024 * 1024
+        }[size.substring(size.length - 2)];
         return multiplier ? amount * multiplier : amount;
+    }
+    function extractName(data)
+    {
+        data = JSON.parse(data);
+        if (!data.name)
+            InspectorTest.addResult("No name field in " + JSON.stringify(data));
+        return parseInt(data.name, 10);
     }
     var comparator = {
         text: simpleComparator,
         number: function (a, b) { return simpleComparator(parseInt(a, 10), parseInt(b, 10)); },
-        size: function (a, b) { return simpleComparator(parseSize(a, 10), parseSize(b, 10)); }
+        size: function (a, b) { return simpleComparator(parseSize(a), parseSize(b)); },
+        name: function (a, b) { return simpleComparator(extractName(a), extractName(b)); }
     }[sortType];
     var acceptableComparisonResult = {
         ascending: -1,
@@ -130,7 +145,7 @@ InspectorTest.checkArrayIsSorted = function(contents, sortType, sortOrder)
     for (var i = 0; i < contents.length - 1; ++i) {
         var result = comparator(contents[i], contents[i + 1]);
         if (result !== 0 && result !== acceptableComparisonResult)
-            InspectorTest.addResult("Elements " + i + " and " + (i + 1) + " are out of order: " + contents[i] + " " + contents[i + 1]);
+            InspectorTest.addResult("Elements " + i + " and " + (i + 1) + " are out of order: " + contents[i] + " " + contents[i + 1] + " (" + sortOrder + ")");
     }
 };
 
@@ -143,8 +158,13 @@ InspectorTest.clickColumn = function(column, callback)
     function sortingComplete()
     {
         this._currentGrid().removeEventListener("sorting complete", sortingComplete, this);
+        InspectorTest.assertEquals(column.identifier, this._currentGrid().sortColumnIdentifier, "unexpected sorting");
         column.sort = this._currentGrid().sortOrder;
-        callback(column);
+        function callCallback()
+        {
+            callback(column);
+        }
+        setTimeout(callCallback, 0);
     }
     this._currentGrid().addEventListener("sorting complete", sortingComplete, this);
     this._currentGrid()._clickInHeaderCell(event);
@@ -157,17 +177,23 @@ InspectorTest.clickShowMoreButton = function(buttonName, row, callback)
     function populateComplete()
     {
         parent.removeEventListener("populate complete", populateComplete, this);
-        callback(parent);
+        function callCallback()
+        {
+            callback(parent);
+        }
+        setTimeout(callCallback, 0);
     }
     parent.addEventListener("populate complete", populateComplete, this);
     row[buttonName].click();
 };
 
-InspectorTest.columnContents = function(column)
+InspectorTest.columnContents = function(column, row)
 {
     var result = [];
-    var parent = this._currentGrid();
+    var parent = row || this._currentGrid();
     for (var node = parent.children[0]; node; node = node.traverseNextNode(true, parent, true)) {
+        if (!node.selectable)
+            continue;
         var data = node.data[column.identifier];
         if (typeof data === "object")
             data = JSON.stringify(data);
@@ -249,11 +275,27 @@ InspectorTest.expandRow = function(row, callback)
     function populateComplete()
     {
         row.removeEventListener("populate complete", populateComplete, this);
-        callback(row);        
+        function callCallback()
+        {
+            callback(row);
+        }
+        setTimeout(callCallback, 0);
     }
     row.addEventListener("populate complete", populateComplete, this);
     row.expand();
 };
+
+InspectorTest.findAndExpandGCRoots = function(callback)
+{
+    callback = InspectorTest.safeWrap(callback);
+    function propertyMatcher(data)
+    {
+        return data.value === "(GC roots) @3";
+    }
+    var gcRoots = InspectorTest.findRow("object", propertyMatcher);
+    InspectorTest.assertEquals(true, !!gcRoots, "GC roots row");
+    InspectorTest.expandRow(gcRoots, callback);
+}
 
 InspectorTest.findButtonsNode = function(row)
 {
@@ -281,10 +323,26 @@ InspectorTest.findRow = function(columnIdentifier, matcher, parent)
 
 InspectorTest.switchToView = function(title, callback)
 {
-    // FIXME: implement when adding tests for other views.
-    InspectorTest.assertEquals("Summary", title);
     callback = InspectorTest.safeWrap(callback);
-    callback();
+    var view = WebInspector.panels.profiles.visibleView;
+    var index = -1;
+    for (var i = 0; i < view.views.length; ++i)
+        if (view.views[i].title === title) {
+            index = i;
+            break;
+        }
+    InspectorTest.assertEquals(true, index >= 0, "View not found: " + title);
+    if (view.views.current === index) {
+        setTimeout(callback, 0);
+        return;
+    }
+    function sortingComplete()
+    {
+        view.views[index].grid.removeEventListener("sorting complete", sortingComplete, this);
+        setTimeout(callback, 0);
+    }
+    view.views[index].grid.addEventListener("sorting complete", sortingComplete, this);
+    view._changeView({target: {selectedIndex: index}});
 };
 
 InspectorTest.takeAndOpenSnapshot = function(generator, callback)

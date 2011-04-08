@@ -1,3 +1,38 @@
+2011-04-08  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Add more tests for detailed heap snapshots UI.
+        https://bugs.webkit.org/show_bug.cgi?id=58010
+        https://bugs.webkit.org/show_bug.cgi?id=58011
+
+        Added tests for "Containment" view. Minor refactorings, bugs fixed.
+        Split one large tests into smaller ones to avoid timing out in debug mode.
+
+        Tests: inspector/profiler/detailed-heapshots-containment-expansion-preserved-when-sorting.html
+               inspector/profiler/detailed-heapshots-containment-show-all.html
+               inspector/profiler/detailed-heapshots-containment-show-next.html
+               inspector/profiler/detailed-heapshots-containment-sorting.html
+               inspector/profiler/detailed-heapshots-summary-expansion-preserved-when-sorting.html
+               inspector/profiler/detailed-heapshots-summary-show-all.html
+               inspector/profiler/detailed-heapshots-summary-show-next.html
+               inspector/profiler/detailed-heapshots-summary-sorting.html
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGridNode):
+        (WebInspector.HeapSnapshotGridNode.prototype.populateChildren):
+        (WebInspector.HeapSnapshotGridNode.prototype.sort.doSort):
+        (WebInspector.HeapSnapshotGridNode.prototype.sort):
+        (WebInspector.HeapSnapshotGenericObjectNode):
+        (WebInspector.HeapSnapshotObjectNode):
+        (WebInspector.HeapSnapshotInstanceNode):
+        (WebInspector.HeapSnapshotConstructorNode):
+        (WebInspector.HeapSnapshotDiffNode):
+        (WebInspector.HeapSnapshotDominatorObjectNode):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotContainmentDataGrid):
+        (WebInspector.HeapSnapshotDominatorsDataGrid):
+
 2011-04-08  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

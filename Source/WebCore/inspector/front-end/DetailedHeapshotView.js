@@ -37,10 +37,11 @@ WebInspector.HeapSnapshotContainmentDataGrid = function()
     };
     WebInspector.DataGrid.call(this, columns);
     this.addEventListener("sorting changed", this.sort, this);
-    this._defaultPopulateCount = 100;
 }
 
 WebInspector.HeapSnapshotContainmentDataGrid.prototype = {
+    _defaultPopulateCount: 100,
+
     setDataSource: function(snapshotView, snapshot)
     {
         this.snapshotView = snapshotView;
@@ -116,6 +117,8 @@ WebInspector.HeapSnapshotConstructorsDataGrid = function()
 }
 
 WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
+    _defaultPopulateCount: 100,
+
     _sortFields: function(sortColumn, sortAscending)
     {
         return {
@@ -161,6 +164,8 @@ WebInspector.HeapSnapshotDiffDataGrid = function()
 }
 
 WebInspector.HeapSnapshotDiffDataGrid.prototype = {
+    _defaultPopulateCount: 50,
+
     _sortFields: function(sortColumn, sortAscending)
     {
         return {
@@ -220,10 +225,11 @@ WebInspector.HeapSnapshotDominatorsDataGrid = function()
     };
     WebInspector.DataGrid.call(this, columns);
     this.addEventListener("sorting changed", this.sort, this);
-    this._defaultPopulateCount = 25;
 }
 
 WebInspector.HeapSnapshotDominatorsDataGrid.prototype = {
+    _defaultPopulateCount: 25,
+
     setDataSource: function(snapshotView, snapshot)
     {
         this.snapshotView = snapshotView;
@@ -420,20 +426,17 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.viewSelectElement.className = "status-bar-item";
     this.viewSelectElement.addEventListener("change", this._changeView.bind(this), false);
 
-    var classesViewOption = document.createElement("option");
-    classesViewOption.label = WebInspector.UIString("Summary");
-    var diffViewOption = document.createElement("option");
-    diffViewOption.label = WebInspector.UIString("Comparison");
-    var containmentViewOption = document.createElement("option");
-    containmentViewOption.label = WebInspector.UIString("Containment");
-    var dominatorsViewOption = document.createElement("option");
-    dominatorsViewOption.label = WebInspector.UIString("Dominators");
-    this.viewSelectElement.appendChild(classesViewOption);
-    this.viewSelectElement.appendChild(diffViewOption);
-    this.viewSelectElement.appendChild(containmentViewOption);
-    this.viewSelectElement.appendChild(dominatorsViewOption);
-    this.views = ["Summary", "Comparison", "Containment", "Dominators"];
+    this.views = [{title: "Summary", view: this.constructorsView, grid: this.constructorsDataGrid},
+                  {title: "Comparison", view: this.diffView, grid: this.diffDataGrid},
+                  {title: "Containment", view: this.containmentView, grid: this.containmentDataGrid},
+                  {title: "Dominators", view: this.dominatorView, grid: this.dominatorDataGrid}];
     this.views.current = 0;
+    for (var i = 0; i < this.views.length; ++i) {
+        var view = this.views[i];
+        var option = document.createElement("option");
+        option.label = WebInspector.UIString(view.title);
+        this.viewSelectElement.appendChild(option);
+    }
 
     this._profileUid = profile.uid;
 
@@ -771,19 +774,9 @@ WebInspector.DetailedHeapshotView.prototype = {
 
         this.views.current = event.target.selectedIndex;
         this.currentView.hide();
-        if (this.views[this.views.current] === "Containment") {
-            this.currentView = this.containmentView;
-            this.dataGrid = this.containmentDataGrid;
-        } else if (this.views[this.views.current] === "Summary") {
-            this.currentView = this.constructorsView;
-            this.dataGrid = this.constructorsDataGrid;
-        } else if (this.views[this.views.current] === "Comparison") {
-            this.currentView = this.diffView;
-            this.dataGrid = this.diffDataGrid;
-        } else if (this.views[this.views.current] === "Dominators") {
-            this.currentView = this.dominatorView;
-            this.dataGrid = this.dominatorDataGrid;
-        }
+        var view = this.views[this.views.current];
+        this.currentView = view.view;
+        this.dataGrid = view.grid;
         this.currentView.show();
         this.refreshVisibleData();
         if (this.currentView === this.diffView) {

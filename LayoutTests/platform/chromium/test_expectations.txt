@@ -3290,7 +3290,6 @@ BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-CS-after-AN.html = IMA
 BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
 BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-neutral-run.html = IMAGE+TEXT
 
-BUGWK58010 WIN LINUX DEBUG : inspector/profiler/detailed-heapshots-summary.html = PASS TIMEOUT
 BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = CRASH PASS
 BUGWK58005 MAC : editing/inserting/editable-inline-element.html = IMAGE
 BUGCR780807 : http/tests/misc/webtiming-origins.html = PASS TEXT
