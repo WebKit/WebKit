@@ -1,3 +1,21 @@
+2011-04-08  Misha Tyutyunik  <michael.tyutyunik@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Plugin is not scrolled together with page content or jumping 
+        when content is rendered using cache (backing store).
+        https://bugs.webkit.org/show_bug.cgi?id=56130
+        
+        This is a Symbian portion of the fix. For Linux it looks like
+        it's enough to call set geometry which should be addressed in
+        https://bugs.webkit.org/show_bug.cgi?id=57179
+
+        No new tests required. This can be tested with manual tests from 
+        WebCore/manual-tests/qt and WebCore/manual-tests/plugins
+
+        * plugins/symbian/PluginViewSymbian.cpp:
+        (WebCore::PluginView::updatePluginWidget):
+
 2011-04-08  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed. Remove accidental printf added in r83306.
