@@ -2978,6 +2978,9 @@ fast/forms/input-number-large-padding.html
 # Speech input is not yet enabled.
 fast/speech
 
+# Media Stream API is not yet enabled.
+fast/dom/MediaStream
+
 # [Qt] fast/dom/beforeload/script-before-load-dynamic.html is crashy-flakey
 # https://bugs.webkit.org/show_bug.cgi?id=41452
 fast/dom/beforeload/remove-video-in-beforeload-listener.html

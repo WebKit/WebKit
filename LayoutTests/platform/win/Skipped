@@ -1047,6 +1047,9 @@ fast/forms/input-spinbutton-capturing.html
 # Speech input is not yet enabled.
 fast/speech
 
+# Media Stream API is not yet enabled.
+fast/dom/MediaStream
+
 # Needs to be fixed at image decoder layer for Safari.
 fast/images/large-size-image-crash.html
 

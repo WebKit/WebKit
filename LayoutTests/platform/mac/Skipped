@@ -196,6 +196,9 @@ http/tests/multipart/policy-ignore-crash.php
 # Speech input is not yet enabled.
 fast/speech
 
+# Media Stream API is not yet enabled.
+fast/dom/MediaStream
+
 # Needs to be fixed at image decoder layer for Safari.
 fast/images/large-size-image-crash.html
 
