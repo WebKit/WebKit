@@ -882,6 +882,15 @@ void WebView::close()
 {
     m_undoClient.initialize(0);
     ::RevokeDragDrop(m_window);
+    if (m_window) {
+        // We can't check IsWindow(m_window) here, because that will return true even while
+        // we're already handling WM_DESTROY. So we check !m_isBeingDestroyed instead.
+        if (!m_isBeingDestroyed)
+            DestroyWindow(m_window);
+        // Either we just destroyed m_window, or it's in the process of being destroyed. Either
+        // way, we clear it out to make sure we don't try to use it later.
+        m_window = 0;
+    }
     setParentWindow(0);
     m_page->close();
 }

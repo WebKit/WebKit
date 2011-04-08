@@ -1,3 +1,17 @@
+2011-04-08  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58151
+        Crash after closing a Webview, in WebKit!WebCore::WindowMessageBroadcaster::SubclassedWndProc
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::close):
+        Resolve a difference between old WebKit WebView and WebKit2 WebView by destroying and clearing
+        out WebKit2 WebView's HWND when closing. Not doing so was causing the WebView to remain in the
+        list of WindowMessageBroadcaster listeners, and after closing the WebView, WindowMessageBroadcaster
+        would message a dead WebView and crash.
+
 2011-04-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
