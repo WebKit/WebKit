@@ -26,7 +26,10 @@
 #include "config.h"
 #include "WebTextCheckerClient.h"
 
+#include "ImmutableArray.h"
 #include "WKAPICast.h"
+#include "WKSharedAPICast.h"
+#include "WebGrammarDetail.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -93,6 +96,20 @@ void WebTextCheckerClient::checkSpellingOfString(uint64_t tag, const String& tex
         return;
 
     m_client.checkSpellingOfString(tag, toAPI(text.impl()), &misspellingLocation, &misspellingLength, m_client.clientInfo);
+}
+
+void WebTextCheckerClient::checkGrammarOfString(uint64_t tag, const String& text, Vector<WebCore::GrammarDetail>& grammarDetails, int32_t& badGrammarLocation, int32_t& badGrammarLength)
+{
+    if (!m_client.checkGrammarOfString)
+        return;
+
+    WKArrayRef wkGrammarDetailsRef = 0;
+    m_client.checkGrammarOfString(tag, toAPI(text.impl()), &wkGrammarDetailsRef, &badGrammarLocation, &badGrammarLength, m_client.clientInfo);
+
+    RefPtr<ImmutableArray> wkGrammarDetails = adoptRef(toImpl(wkGrammarDetailsRef));
+    size_t numGrammarDetails = wkGrammarDetails->size();
+    for (size_t i = 0; i < numGrammarDetails; ++i)
+        grammarDetails.append(wkGrammarDetails->at<WebGrammarDetail>(i)->grammarDetail());
 }
 
 } // namespace WebKit

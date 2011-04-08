@@ -23,30 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTextCheckerClient_h
-#define WebTextCheckerClient_h
+#include "config.h"
+#include "WKGrammarDetail.h"
 
-#include "APIClient.h"
-#include "WKTextChecker.h"
-#include <WebCore/TextCheckerClient.h>
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
+#include "APIObject.h"
+#include "WKAPICast.h"
+#include "WebGrammarDetail.h"
 
-namespace WebKit {
+using namespace WebKit;
 
-class WebTextCheckerClient : public APIClient<WKTextCheckerClient> {
-public:
-    bool continuousSpellCheckingAllowed();
-    bool continuousSpellCheckingEnabled();
-    void setContinuousSpellCheckingEnabled(bool);
-    bool grammarCheckingEnabled();
-    void setGrammarCheckingEnabled(bool);
-    uint64_t uniqueSpellDocumentTag();
-    void closeSpellDocumentWithTag(uint64_t);
-    void checkSpellingOfString(uint64_t tag, const String& text, int32_t& misspellingLocation, int32_t& misspellingLength);
-    void checkGrammarOfString(uint64_t tag, const String& text, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
-};
+WKTypeID WKGrammarDetailGetTypeID()
+{
+    return toAPI(APIObject::TypeGrammarDetail);
+}
 
-} // namespace WebKit
-
-#endif // WebTextCheckerClient_h
+WKGrammarDetailRef WKGrammarDetailCreate(int location, int length, WKArrayRef guesses, WKStringRef userDescription)
+{
+    RefPtr<WebGrammarDetail> detail = WebGrammarDetail::create(location, length, toImpl(guesses), toWTFString(userDescription));
+    return toAPI(detail.release().releaseRef());
+}

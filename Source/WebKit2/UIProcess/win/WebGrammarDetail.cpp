@@ -23,30 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTextCheckerClient_h
-#define WebTextCheckerClient_h
+#include "config.h"
+#include "WebGrammarDetail.h"
 
-#include "APIClient.h"
-#include "WKTextChecker.h"
-#include <WebCore/TextCheckerClient.h>
-#include <wtf/Forward.h>
-#include <wtf/Vector.h>
+#include "ImmutableArray.h"
+#include "WKGrammarDetail.h"
+#include "WebString.h"
 
 namespace WebKit {
 
-class WebTextCheckerClient : public APIClient<WKTextCheckerClient> {
-public:
-    bool continuousSpellCheckingAllowed();
-    bool continuousSpellCheckingEnabled();
-    void setContinuousSpellCheckingEnabled(bool);
-    bool grammarCheckingEnabled();
-    void setGrammarCheckingEnabled(bool);
-    uint64_t uniqueSpellDocumentTag();
-    void closeSpellDocumentWithTag(uint64_t);
-    void checkSpellingOfString(uint64_t tag, const String& text, int32_t& misspellingLocation, int32_t& misspellingLength);
-    void checkGrammarOfString(uint64_t tag, const String& text, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
-};
+PassRefPtr<WebGrammarDetail> WebGrammarDetail::create(int location, int length, ImmutableArray* guesses, const String& userDescription)
+{
+    return adoptRef(new WebGrammarDetail(location, length, guesses, userDescription));
+}
+
+WebGrammarDetail::WebGrammarDetail(int location, int length, ImmutableArray* guesses, const String& userDescription)
+{
+    m_grammarDetail.location = location;
+    m_grammarDetail.length = length;
+
+    size_t numGuesses = guesses->size();
+    m_grammarDetail.guesses.reserveCapacity(numGuesses);
+    for (size_t i = 0; i < numGuesses; ++i)
+        m_grammarDetail.guesses.uncheckedAppend(guesses->at<WebString>(i)->string());
+
+    m_grammarDetail.userDescription = userDescription;
+}
 
 } // namespace WebKit
-
-#endif // WebTextCheckerClient_h

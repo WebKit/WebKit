@@ -23,30 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTextCheckerClient_h
-#define WebTextCheckerClient_h
+#ifndef WebGrammarDetail_h
+#define WebGrammarDetail_h
 
-#include "APIClient.h"
-#include "WKTextChecker.h"
+#include "APIObject.h"
 #include <WebCore/TextCheckerClient.h>
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 
-class WebTextCheckerClient : public APIClient<WKTextCheckerClient> {
+class ImmutableArray;
+
+class WebGrammarDetail : public APIObject {
 public:
-    bool continuousSpellCheckingAllowed();
-    bool continuousSpellCheckingEnabled();
-    void setContinuousSpellCheckingEnabled(bool);
-    bool grammarCheckingEnabled();
-    void setGrammarCheckingEnabled(bool);
-    uint64_t uniqueSpellDocumentTag();
-    void closeSpellDocumentWithTag(uint64_t);
-    void checkSpellingOfString(uint64_t tag, const String& text, int32_t& misspellingLocation, int32_t& misspellingLength);
-    void checkGrammarOfString(uint64_t tag, const String& text, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
+    static const Type APIType = TypeGrammarDetail;
+    static PassRefPtr<WebGrammarDetail> create(int location, int length, ImmutableArray* guesses, const String& userDescription);
+
+    const WebCore::GrammarDetail& grammarDetail() { return m_grammarDetail; }
+
+private:
+    WebGrammarDetail(int location, int length, ImmutableArray* guesses, const String& userDescription);
+
+    virtual Type type() const { return APIType; }
+
+    WebCore::GrammarDetail m_grammarDetail;
 };
 
 } // namespace WebKit
 
-#endif // WebTextCheckerClient_h
+#endif // WebGrammarDetail_h

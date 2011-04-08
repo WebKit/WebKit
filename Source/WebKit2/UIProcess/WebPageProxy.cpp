@@ -2388,6 +2388,11 @@ void WebPageProxy::checkSpellingOfString(const String& text, int32_t& misspellin
     TextChecker::checkSpellingOfString(spellDocumentTag(), text.characters(), text.length(), misspellingLocation, misspellingLength);
 }
 
+void WebPageProxy::checkGrammarOfString(const String& text, Vector<WebCore::GrammarDetail>& grammarDetails, int32_t& badGrammarLocation, int32_t& badGrammarLength)
+{
+    TextChecker::checkGrammarOfString(spellDocumentTag(), text.characters(), text.length(), grammarDetails, badGrammarLocation, badGrammarLength);
+}
+
 void WebPageProxy::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
 {
     TextChecker::updateSpellingUIWithMisspelledWord(misspelledWord);

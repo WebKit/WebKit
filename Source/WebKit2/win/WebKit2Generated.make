@@ -75,6 +75,7 @@ all:
     xcopy /y /d "..\UIProcess\API\C\WKProtectionSpaceTypes.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\WKResourceCacheManager.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\win\WKContextPrivateWin.h" "%ConfigurationBuildDir%\include\WebKit2"
+    xcopy /y /d "..\UIProcess\API\C\win\WKGrammarDetail.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\win\WKTextChecker.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\win\WKView.h" "%ConfigurationBuildDir%\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\C\win\WKViewPrivate.h" "%ConfigurationBuildDir%\include\WebKit2"

@@ -643,6 +643,7 @@ private:
     void checkTextOfParagraph(const String& text, uint64_t checkingTypes, Vector<WebCore::TextCheckingResult>& results);
 #endif
     void checkSpellingOfString(const String& text, int32_t& misspellingLocation, int32_t& misspellingLength);
+    void checkGrammarOfString(const String& text, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
     void updateSpellingUIWithMisspelledWord(const String& misspelledWord);
     void updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const WebCore::GrammarDetail&);
     void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses);

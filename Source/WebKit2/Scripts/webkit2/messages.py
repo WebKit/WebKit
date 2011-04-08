@@ -434,6 +434,7 @@ def headers_for_type(type):
     special_cases = {
         'WTF::String': '<wtf/text/WTFString.h>',
         'WebCore::CompositionUnderline': '<WebCore/Editor.h>',
+        'WebCore::GrammarDetail': '<WebCore/TextCheckerClient.h>',
         'WebCore::KeypressCommand': '<WebCore/KeyboardEvent.h>',
         'WebCore::PluginInfo': '<WebCore/PluginData.h>',
         'WebCore::TextCheckingResult': '<WebCore/TextCheckerClient.h>',

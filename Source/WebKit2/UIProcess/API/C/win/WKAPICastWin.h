@@ -35,10 +35,12 @@ namespace WebKit {
 class WebView;
 class WebEditCommandProxy;
 class WebTextChecker;
+class WebGrammarDetail;
 
 WK_ADD_API_MAPPING(WKViewRef, WebView)
 WK_ADD_API_MAPPING(WKEditCommandRef, WebEditCommandProxy)
 WK_ADD_API_MAPPING(WKTextCheckerRef, WebTextChecker)
+WK_ADD_API_MAPPING(WKGrammarDetailRef, WebGrammarDetail)
 
 }
 

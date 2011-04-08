@@ -3252,6 +3252,14 @@
 							>
 						</File>
 						<File
+							RelativePath="..\UIProcess\API\C\win\WKGrammarDetail.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\UIProcess\API\C\win\WKGrammarDetail.h"
+							>
+						</File>
+						<File
 							RelativePath="..\UIProcess\API\C\win\WKTextChecker.cpp"
 							>
 						</File>
@@ -3411,6 +3419,14 @@
 				</File>
 				<File
 					RelativePath="..\UIProcess\win\WebContextWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\win\WebGrammarDetail.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\win\WebGrammarDetail.h"
 					>
 				</File>
 				<File

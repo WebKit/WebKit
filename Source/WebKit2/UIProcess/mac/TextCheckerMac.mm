@@ -299,6 +299,13 @@ Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocume
 
 void TextChecker::checkSpellingOfString(int64_t, const UChar*, uint32_t, int32_t&, int32_t&)
 {
+    // Mac uses checkTextOfParagraph instead.
+    notImplemented();
+}
+
+void TextChecker::checkGrammarOfString(int64_t, const UChar*, uint32_t, Vector<WebCore::GrammarDetail>&, int32_t&, int32_t&)
+{
+    // Mac uses checkTextOfParagraph instead.
     notImplemented();
 }
 

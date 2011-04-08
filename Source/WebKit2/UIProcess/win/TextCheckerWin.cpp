@@ -97,6 +97,11 @@ void TextChecker::checkSpellingOfString(int64_t spellDocumentTag, const UChar* t
     WebTextChecker::shared()->client().checkSpellingOfString(spellDocumentTag, String(text, length), misspellingLocation, misspellingLength);
 }
 
+void TextChecker::checkGrammarOfString(int64_t spellDocumentTag, const UChar* text, uint32_t length, Vector<WebCore::GrammarDetail>& grammarDetails, int32_t& badGrammarLocation, int32_t& badGrammarLength)
+{
+    WebTextChecker::shared()->client().checkGrammarOfString(spellDocumentTag, String(text, length), grammarDetails, badGrammarLocation, badGrammarLength);
+}
+
 void TextChecker::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
 {
     notImplemented();
