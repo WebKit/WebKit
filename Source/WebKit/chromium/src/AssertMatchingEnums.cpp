@@ -38,6 +38,7 @@
 #include "AsyncFileSystem.h"
 #include "DocumentMarker.h"
 #include "EditorInsertAction.h"
+#include "ExceptionCode.h"
 #include "FileError.h"
 #include "FileMetadata.h"
 #include "FontDescription.h"
@@ -75,6 +76,7 @@
 #include "WebNotificationPresenter.h"
 #include "WebScrollbar.h"
 #include "WebSettings.h"
+#include "WebStorageQuotaError.h"
 #include "WebTextAffinity.h"
 #include "WebTextCaseSensitivity.h"
 #include "WebTextCheckingResult.h"
@@ -413,6 +415,11 @@ COMPILE_ASSERT_MATCHING_ENUM(WebGeolocationError::ErrorPositionUnavailable, Geol
 
 COMPILE_ASSERT_MATCHING_ENUM(WebTextCheckingResult::ErrorSpelling, DocumentMarker::Spelling);
 COMPILE_ASSERT_MATCHING_ENUM(WebTextCheckingResult::ErrorGrammar, DocumentMarker::Grammar);
+
+#if ENABLE(QUOTA)
+COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaErrorNotSupported, NOT_SUPPORTED_ERR);
+COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaErrorAbort, ABORT_ERR);
+#endif
 
 #if OS(DARWIN)
 COMPILE_ASSERT_MATCHING_ENUM(WebThemeEngine::StateDisabled, PlatformBridge::StateDisabled);

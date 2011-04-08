@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -35,6 +35,7 @@
 #include "WebFileSystem.h"
 #include "WebNavigationPolicy.h"
 #include "WebNavigationType.h"
+#include "WebStorageQuotaType.h"
 #include "WebURLError.h"
 
 namespace WebKit {
@@ -51,6 +52,7 @@ class WebNode;
 class WebPlugin;
 class WebSecurityOrigin;
 class WebSharedWorker;
+class WebStorageQuotaCallbacks;
 class WebString;
 class WebURL;
 class WebURLRequest;
@@ -361,6 +363,33 @@ public:
     virtual void openFileSystem(
         WebFrame*, WebFileSystem::Type, long long size,
         bool create, WebFileSystemCallbacks*) { }
+
+    // Quota ---------------------------------------------------------
+
+    // Queries the origin's storage usage and quota information.
+    // WebStorageQuotaCallbacks::didQueryStorageUsageAndQuota will be called
+    // with the current usage and quota information for the origin. When
+    // an error occurs WebStorageQuotaCallbacks::didFail is called with an
+    // error code.
+    // The callbacks object is deleted when the callback method is called
+    // and does not need to be (and should not be) deleted manually.
+    virtual void queryStorageUsageAndQuota(
+        WebFrame*, WebStorageQuotaType, WebStorageQuotaCallbacks*) { }
+
+    // Requests a new quota size for the origin's storage.
+    // |newQuotaInBytes| indicates how much storage space (in bytes) the
+    // caller expects to need.
+    // WebStorageQuotaCallbacks::didGrantStorageQuota will be called when
+    // a new quota is granted. WebStorageQuotaCallbacks::didFail
+    // is called with an error code otherwise.
+    // Note that the requesting quota size may not always be granted and
+    // a smaller amount of quota than requested might be returned.
+    // The callbacks object is deleted when the callback method is called
+    // and does not need to be (and should not be) deleted manually.
+    virtual void requestStorageQuota(
+        WebFrame*, WebStorageQuotaType,
+        unsigned long long newQuotaInBytes,
+        WebStorageQuotaCallbacks*) { }
 
 protected:
     ~WebFrameClient() { }

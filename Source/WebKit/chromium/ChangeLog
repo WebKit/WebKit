@@ -1,3 +1,22 @@
+2011-04-07  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Add WebKit API to query and request unified offline-storage quota
+        https://bugs.webkit.org/show_bug.cgi?id=57849
+        Just adding the API, this does not do anything yet.
+
+        The API is based on the public discussion for unified quota API:
+        http://lists.w3.org/Archives/Public/public-webapps/2011JanMar/0346.html
+        (The detail is not yet fully specified and might be subject to change.)
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::queryStorageUsageAndQuota): Added.
+        (WebKit::WebFrameClient::requestStorageQuota): Added.
+        * public/WebStorageQuotaCallbacks.h: Added.
+        (WebKit::WebStorageQuotaCallbacks::~WebStorageQuotaCallbacks):
+        * public/WebStorageQuotaType.h: Added.
+
 2011-04-07  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Dimitri Glazkov.

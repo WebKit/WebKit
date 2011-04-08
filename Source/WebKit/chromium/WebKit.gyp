@@ -266,6 +266,8 @@
                 'public/WebSpeechInputResult.h',
                 'public/WebStorageArea.h',
                 'public/WebStorageEventDispatcher.h',
+                'public/WebStorageQuotaCallbacks.h',
+                'public/WebStorageQuotaType.h',
                 'public/WebStorageNamespace.h',
                 'public/WebString.h',
                 'public/WebTextAffinity.h',
