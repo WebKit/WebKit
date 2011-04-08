@@ -101,9 +101,7 @@ public:
 #elif PLATFORM(WIN)
     typedef HANDLE Identifier;
     static bool createServerAndClientIdentifiers(Identifier& serverIdentifier, Identifier& clientIdentifier);
-#elif PLATFORM(QT)
-    typedef int Identifier;
-#elif PLATFORM(GTK)
+#elif USE(UNIX_DOMAIN_SOCKETS)
     typedef int Identifier;
 #endif
 
@@ -308,7 +306,7 @@ private:
     OwnPtr<ArgumentEncoder> m_pendingWriteArguments;
     OVERLAPPED m_writeState;
     HANDLE m_connectionPipe;
-#elif PLATFORM(QT) || PLATFORM(GTK)
+#elif USE(UNIX_DOMAIN_SOCKETS)
     // Called on the connection queue.
     void readyReadHandler();
 

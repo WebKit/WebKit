@@ -1,3 +1,12 @@
+2011-04-07  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [WK2][Qt][GTK] Introduce common use flag for the shared UNIX domain socket IPC implementation
+        https://bugs.webkit.org/show_bug.cgi?id=58030
+
+        * wtf/Platform.h: Introduce USE(UNIX_DOMAIN_SOCKETS) for WebKit2.
+
 2011-04-08  Adam Roben  <aroben@apple.com>
 
         Clean build fix

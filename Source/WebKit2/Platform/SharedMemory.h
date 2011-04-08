@@ -60,7 +60,7 @@ public:
         void encode(CoreIPC::ArgumentEncoder*) const;
         static bool decode(CoreIPC::ArgumentDecoder*, Handle&);
 
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if USE(UNIX_DOMAIN_SOCKETS)
         CoreIPC::Attachment releaseToAttachment() const;
         void adoptFromAttachment(int fileDescriptor, size_t);
 #endif
@@ -70,7 +70,7 @@ public:
         mutable mach_port_t m_port;
 #elif PLATFORM(WIN)
         mutable HANDLE m_handle;
-#elif PLATFORM(QT) || PLATFORM(GTK)
+#elif USE(UNIX_DOMAIN_SOCKETS)
         mutable int m_fileDescriptor;
 #endif
         size_t m_size;
@@ -103,7 +103,7 @@ private:
     mach_port_t m_port;
 #elif PLATFORM(WIN)
     HANDLE m_handle;
-#elif PLATFORM(QT) || PLATFORM(GTK)
+#elif USE(UNIX_DOMAIN_SOCKETS)
     int m_fileDescriptor;
 #endif
 };
