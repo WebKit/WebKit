@@ -29,7 +29,7 @@
 @class WKViewData;
 
 WK_EXPORT
-@interface WKView : NSView <NSTextInput> {
+@interface WKView : NSView <NSTextInputClient> {
     WKViewData *_data;
     unsigned _frameSizeUpdatesDisabledCount;
 }

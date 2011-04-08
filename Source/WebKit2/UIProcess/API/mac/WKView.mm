@@ -88,10 +88,6 @@
 - (BOOL)_updateGrowBoxForWindowFrameChange;
 @end
 
-// Declare this attribute name because AppKit exports it but does not make it available in API or SPI headers.
-// FIXME: We wouldn't need this if we implemented the NSTextInputClient protocol instead of the deprecated NSTextInput.
-extern "C" NSString *NSTextInputReplacementRangeAttributeName;
-
 using namespace WebKit;
 using namespace WebCore;
 
@@ -1033,7 +1029,7 @@ static const short kIOHIDEventTypeScroll = 6;
     if (parameters)
         parameters->consumedByIM = false;
 
-    // As in insertText:, we assume that the call comes from an input method if there is marked text.
+    // As in insertText:replacementRange:, we assume that the call comes from an input method if there is marked text.
     bool isFromInputMethod = parameters && parameters->cachedTextInputState.hasMarkedText;
 
     if (parameters && !isFromInputMethod)
@@ -1045,30 +1041,25 @@ static const short kIOHIDEventTypeScroll = 6;
     }
 }
 
-- (void)insertText:(id)string
+- (void)insertText:(id)string replacementRange:(NSRange)replacementRange
 {
     BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
     ASSERT(isAttributedString || [string isKindOfClass:[NSString class]]);
 
-    LOG(TextInput, "insertText:\"%@\"", isAttributedString ? [string string] : string);
+    if (replacementRange.location != NSNotFound)
+        LOG(TextInput, "insertText:\"%@\" replacementRange:(%u, %u)", isAttributedString ? [string string] : string, replacementRange.location, replacementRange.length);
+    else
+        LOG(TextInput, "insertText:\"%@\"", isAttributedString ? [string string] : string);
     WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
     if (parameters)
         parameters->consumedByIM = false;
 
     NSString *text;
-    NSRange replacementRange = { NSNotFound, 0 };
     bool isFromInputMethod = parameters && parameters->cachedTextInputState.hasMarkedText;
 
     if (isAttributedString) {
         // FIXME: We ignore most attributes from the string, so for example inserting from Character Palette loses font and glyph variation data.
-        // It does not look like any input methods ever use insertText: with attributes other than NSTextInputReplacementRangeAttributeName.
         text = [string string];
-        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:0 inRange:NSMakeRange(0, [text length])];
-        LOG(TextInput, "ReplacementRange: %@", rangeString);
-        if (rangeString) {
-            replacementRange = NSRangeFromString(rangeString);
-            isFromInputMethod = true;
-        }
     } else
         text = string;
 
@@ -1079,6 +1070,7 @@ static const short kIOHIDEventTypeScroll = 6;
     // - If it's sent outside of keyboard event processing (e.g. from Character Viewer, or when confirming an inline input area with a mouse),
     // then we also execute it immediately, as there will be no other chance.
     if (parameters && !isFromInputMethod) {
+        ASSERT(replacementRange.location == NSNotFound);
         parameters->commands->append(KeypressCommand("insertText:", text));
         return;
     }
@@ -1276,7 +1268,7 @@ static const short kIOHIDEventTypeScroll = 6;
     if (!validAttributes) {
         validAttributes = [[NSArray alloc] initWithObjects:
                            NSUnderlineStyleAttributeName, NSUnderlineColorAttributeName,
-                           NSMarkedClauseSegmentAttributeName, NSTextInputReplacementRangeAttributeName, nil];
+                           NSMarkedClauseSegmentAttributeName, nil];
         // NSText also supports the following attributes, but it's
         // hard to tell which are really required for text input to
         // work well; I have not seen any input method make use of them yet.
@@ -1308,7 +1300,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     }
 }
 
-- (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
+- (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange replacementRange:(NSRange)replacementRange
 {
     [self _executeSavedKeypressCommands];
 
@@ -1327,18 +1319,10 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     
     Vector<CompositionUnderline> underlines;
     NSString *text;
-    NSRange replacementRange = { NSNotFound, 0 };
 
     if (isAttributedString) {
         // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
         text = [string string];
-        NSString *rangeString = [string attribute:NSTextInputReplacementRangeAttributeName atIndex:0 longestEffectiveRange:0 inRange:NSMakeRange(0, [text length])];
-        LOG(TextInput, "    ReplacementRange: %@", rangeString);
-        // The AppKit adds a 'secret' property to the string that contains the replacement range.
-        // The replacement range is the range of the the text that should be replaced with the new string.
-        if (rangeString)
-            replacementRange = NSRangeFromString(rangeString);
-
         extractUnderlines(string, underlines);
     } else
         text = string;
@@ -1361,7 +1345,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return NSMakeRange(location, length);
 }
 
-- (NSAttributedString *)attributedSubstringFromRange:(NSRange)nsRange
+- (NSAttributedString *)attributedSubstringForProposedRange:(NSRange)nsRange actualRange:(NSRangePointer)actualRange
 {
     [self _executeSavedKeypressCommands];
 
@@ -1373,6 +1357,9 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
     AttributedString result;
     _data->_page->getAttributedSubstringFromRange(nsRange.location, NSMaxRange(nsRange), result);
+
+    if (actualRange)
+        *actualRange = nsRange;
 
     LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> \"%@\"", nsRange.location, nsRange.length, [result.string.get() string]);
     return [[result.string.get() retain] autorelease];
@@ -1393,7 +1380,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return result;
 }
 
-- (NSRect)firstRectForCharacterRange:(NSRange)theRange
+- (NSRect)firstRectForCharacterRange:(NSRange)theRange actualRange:(NSRangePointer)actualRange
 { 
     [self _executeSavedKeypressCommands];
 
@@ -1409,7 +1396,10 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     NSWindow *window = [self window];
     if (window)
         resultRect.origin = [window convertBaseToScreen:resultRect.origin];
-    
+
+    if (actualRange)
+        *actualRange = theRange;
+
     LOG(TextInput, "firstRectForCharacterRange:(%u, %u) -> (%f, %f, %f, %f)", theRange.location, theRange.length, resultRect.origin.x, resultRect.origin.y, resultRect.size.width, resultRect.size.height);
     return resultRect;
 }

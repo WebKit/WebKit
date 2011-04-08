@@ -1,3 +1,21 @@
+2011-04-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Alder.
+
+        REGRESSION (WebKit2): AppKit thinks that web views don't support DocumentAccess
+        https://bugs.webkit.org/show_bug.cgi?id=58102
+        <rdar://problem/9223246>
+
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView doCommandBySelector:]):
+        (-[WKView insertText:replacementRange:]):
+        (-[WKView validAttributesForMarkedText]):
+        (-[WKView setMarkedText:selectedRange:replacementRange:]):
+        (-[WKView attributedSubstringForProposedRange:actualRange:]):
+        (-[WKView firstRectForCharacterRange:actualRange:]):
+        Switch to NSTextInputClient, opting out of optimizations and optional features for now.
+
 2011-04-08  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Martin Robinson.
