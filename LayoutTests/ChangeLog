@@ -1,5 +1,12 @@
 2011-04-08  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed. Adjusted test expectations following r83275.
+
+        * http/tests/inspector/resource-har-conversion-expected.txt:
+        * http/tests/inspector/resource-parameters-expected.txt:
+
+2011-04-08  Andrey Kosyakov  <caseq@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: HAR compliance fixes
