@@ -1,3 +1,25 @@
+2011-04-07  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Make IconSnapshot and PageURLRecord member variables private.
+        https://bugs.webkit.org/show_bug.cgi?id=58080
+
+        No change in functionality so no new tests.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::writeToDatabase): Changed to used the accessor functions.
+        (WebCore::IconDatabase::writeIconSnapshotToSQLDatabase): Ditto.
+        * loader/icon/IconRecord.h:
+        (WebCore::IconSnapshot::IconSnapshot): Changed to use the new member variable names.
+        (WebCore::IconSnapshot::iconURL): Expose the property.
+        (WebCore::IconSnapshot::timestamp): Ditto.
+        (WebCore::IconSnapshot::data): Ditto.
+        * loader/icon/PageURLRecord.h:
+        (WebCore::PageURLSnapshot::PageURLSnapshot): Changed to use the new member variable names.
+        (WebCore::PageURLSnapshot::pageURL): Expose the property.
+        (WebCore::PageURLSnapshot::iconURL): Ditto.
+
 2011-04-07  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

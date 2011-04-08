@@ -1591,17 +1591,17 @@ bool IconDatabase::writeToDatabase()
     
     for (unsigned i = 0; i < iconSnapshots.size(); ++i) {
         writeIconSnapshotToSQLDatabase(iconSnapshots[i]);
-        LOG(IconDatabase, "Wrote IconRecord for IconURL %s with timeStamp of %i to the DB", urlForLogging(iconSnapshots[i].iconURL).ascii().data(), iconSnapshots[i].timestamp);
+        LOG(IconDatabase, "Wrote IconRecord for IconURL %s with timeStamp of %i to the DB", urlForLogging(iconSnapshots[i].iconURL()).ascii().data(), iconSnapshots[i].timestamp());
     }
     
     for (unsigned i = 0; i < pageSnapshots.size(); ++i) {
         // If the icon URL is empty, this page is meant to be deleted
         // ASSERTs are sanity checks to make sure the mappings exist if they should and don't if they shouldn't
-        if (pageSnapshots[i].iconURL.isEmpty())
-            removePageURLFromSQLDatabase(pageSnapshots[i].pageURL);
+        if (pageSnapshots[i].iconURL().isEmpty())
+            removePageURLFromSQLDatabase(pageSnapshots[i].pageURL());
         else
-            setIconURLForPageURLInSQLDatabase(pageSnapshots[i].iconURL, pageSnapshots[i].pageURL);
-        LOG(IconDatabase, "Committed IconURL for PageURL %s to database", urlForLogging(pageSnapshots[i].pageURL).ascii().data());
+            setIconURLForPageURLInSQLDatabase(pageSnapshots[i].iconURL(), pageSnapshots[i].pageURL());
+        LOG(IconDatabase, "Committed IconURL for PageURL %s to database", urlForLogging(pageSnapshots[i].pageURL()).ascii().data());
     }
 
     syncTransaction.commit();
@@ -2024,13 +2024,13 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
 {
     ASSERT_ICON_SYNC_THREAD();
     
-    if (snapshot.iconURL.isEmpty())
+    if (snapshot.iconURL().isEmpty())
         return;
         
     // A nulled out timestamp and data means this icon is destined to be deleted - do that instead of writing it out
-    if (!snapshot.timestamp && !snapshot.data) {
-        LOG(IconDatabase, "Removing %s from on-disk database", urlForLogging(snapshot.iconURL).ascii().data());
-        removeIconFromSQLDatabase(snapshot.iconURL);
+    if (!snapshot.timestamp() && !snapshot.data()) {
+        LOG(IconDatabase, "Removing %s from on-disk database", urlForLogging(snapshot.iconURL()).ascii().data());
+        removeIconFromSQLDatabase(snapshot.iconURL());
         return;
     }
 
@@ -2038,18 +2038,18 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
     // In practice the only caller of this method is always wrapped in a transaction itself so placing another here is unnecessary
         
     // Get the iconID for this url
-    int64_t iconID = getIconIDForIconURLFromSQLDatabase(snapshot.iconURL);
+    int64_t iconID = getIconIDForIconURLFromSQLDatabase(snapshot.iconURL());
     
     // If there is already an iconID in place, update the database.  
     // Otherwise, insert new records
     if (iconID) {    
         readySQLiteStatement(m_updateIconInfoStatement, m_syncDB, "UPDATE IconInfo SET stamp = ?, url = ? WHERE iconID = ?;");
-        m_updateIconInfoStatement->bindInt64(1, snapshot.timestamp);
-        m_updateIconInfoStatement->bindText(2, snapshot.iconURL);
+        m_updateIconInfoStatement->bindInt64(1, snapshot.timestamp());
+        m_updateIconInfoStatement->bindText(2, snapshot.iconURL());
         m_updateIconInfoStatement->bindInt64(3, iconID);
 
         if (m_updateIconInfoStatement->step() != SQLResultDone)
-            LOG_ERROR("Failed to update icon info for url %s", urlForLogging(snapshot.iconURL).ascii().data());
+            LOG_ERROR("Failed to update icon info for url %s", urlForLogging(snapshot.iconURL()).ascii().data());
         
         m_updateIconInfoStatement->reset();
         
@@ -2058,22 +2058,22 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
                 
         // If we *have* image data, bind it to this statement - Otherwise bind "null" for the blob data, 
         // signifying that this icon doesn't have any data    
-        if (snapshot.data && snapshot.data->size())
-            m_updateIconDataStatement->bindBlob(1, snapshot.data->data(), snapshot.data->size());
+        if (snapshot.data() && snapshot.data()->size())
+            m_updateIconDataStatement->bindBlob(1, snapshot.data()->data(), snapshot.data()->size());
         else
             m_updateIconDataStatement->bindNull(1);
         
         if (m_updateIconDataStatement->step() != SQLResultDone)
-            LOG_ERROR("Failed to update icon data for url %s", urlForLogging(snapshot.iconURL).ascii().data());
+            LOG_ERROR("Failed to update icon data for url %s", urlForLogging(snapshot.iconURL()).ascii().data());
 
         m_updateIconDataStatement->reset();
     } else {    
         readySQLiteStatement(m_setIconInfoStatement, m_syncDB, "INSERT INTO IconInfo (url,stamp) VALUES (?, ?);");
-        m_setIconInfoStatement->bindText(1, snapshot.iconURL);
-        m_setIconInfoStatement->bindInt64(2, snapshot.timestamp);
+        m_setIconInfoStatement->bindText(1, snapshot.iconURL());
+        m_setIconInfoStatement->bindInt64(2, snapshot.timestamp());
 
         if (m_setIconInfoStatement->step() != SQLResultDone)
-            LOG_ERROR("Failed to set icon info for url %s", urlForLogging(snapshot.iconURL).ascii().data());
+            LOG_ERROR("Failed to set icon info for url %s", urlForLogging(snapshot.iconURL()).ascii().data());
         
         m_setIconInfoStatement->reset();
         
@@ -2084,13 +2084,13 @@ void IconDatabase::writeIconSnapshotToSQLDatabase(const IconSnapshot& snapshot)
 
         // If we *have* image data, bind it to this statement - Otherwise bind "null" for the blob data, 
         // signifying that this icon doesn't have any data    
-        if (snapshot.data && snapshot.data->size())
-            m_setIconDataStatement->bindBlob(2, snapshot.data->data(), snapshot.data->size());
+        if (snapshot.data() && snapshot.data()->size())
+            m_setIconDataStatement->bindBlob(2, snapshot.data()->data(), snapshot.data()->size());
         else
             m_setIconDataStatement->bindNull(2);
         
         if (m_setIconDataStatement->step() != SQLResultDone)
-            LOG_ERROR("Failed to set icon data for url %s", urlForLogging(snapshot.iconURL).ascii().data());
+            LOG_ERROR("Failed to set icon data for url %s", urlForLogging(snapshot.iconURL()).ascii().data());
 
         m_setIconDataStatement->reset();
     }
