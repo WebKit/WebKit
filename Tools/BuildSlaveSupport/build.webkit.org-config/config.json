@@ -55,7 +55,7 @@
                     { "name": "google-windows-2", "platform": "chromium-win" },
                     { "name": "google-mac-2", "platform": "chromium-mac" },
                     { "name": "google-linux-2", "platform": "chromium-linux" },
-                    { "name": "google-new-tests", "platform": "mac-leopard" },
+                    { "name": "google-new-tests", "platform": "mac-snowleopard" },
 
                     { "name": "wincairo-1", "platform": "wincairo" },
 
@@ -99,6 +99,11 @@
                     { "name": "SnowLeopard Intel Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "snowleopard-intel-release-tests-wk2",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-xserve-7", "test-slave"]
+                    },
+                    {
+                      "name": "SnowLeopard Intel Release (NRWT)", "type": "NewBuildAndTest", "builddir": "google-new-tests",
+                      "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["google-new-tests"]
                     },
                     {
                       "name": "Windows Release (Build)", "type": "Build", "builddir": "win-release",
@@ -197,11 +202,6 @@
                       "slavenames": ["google-linux-2"]
                     },
                     {
-                      "name": "New run-webkit-tests", "type": "NewBuildAndTest", "builddir": "google-new-tests",
-                      "platform": "mac-leopard", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["google-new-tests"]
-                    },
-                    {
                       "name": "WinCairo Debug (Build)", "type": "Build", "builddir": "win-cairo-debug",
                       "platform": "wincairo", "configuration": "debug", "architectures": ["i386"],
                       "slavenames": ["wincairo-1"]
@@ -230,7 +230,7 @@
                       "builderNames": ["Leopard Intel Release (Build)", "Leopard Intel Debug (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-snowleopard", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["SnowLeopard Intel Release (Build)", "SnowLeopard Intel Leaks"]
+                      "builderNames": ["SnowLeopard Intel Release (Build)", "SnowLeopard Intel Leaks", "SnowLeopard Intel Release (NRWT)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Windows Release (Build)", "Windows Debug (Build)"]

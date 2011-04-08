@@ -1,3 +1,15 @@
+2011-04-08  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        new-run-webkit-tests: configure a NRWT test bot for Mac SL
+        https://bugs.webkit.org/show_bug.cgi?id=58114
+
+        This change removes the old new-run-webkit-tests entry and
+        updates it for a new test-only bot.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2011-04-08  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Adam Roben.
