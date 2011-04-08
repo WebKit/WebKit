@@ -2,6 +2,32 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Do not destroy WorkQueue event sources unless they have been cancelled
+        https://bugs.webkit.org/show_bug.cgi?id=57611
+
+        * Platform/WorkQueue.h:
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::EventSource::EventSource): Remove unused member
+        m_dispatchSource.
+        (WorkQueue::EventSource::executeEventSource): Make it return void
+        instead of boolean since we are always ignoring the return value.
+        (WorkQueue::EventSource::performWork): Return FALSE from the
+        callback only when the source has been cancelled (condition = 0)
+        to make sure it's destroyed when the even source handler is
+        unregistered.
+        (WorkQueue::registerEventSourceHandler): Use GRefPtr for the
+        source, to avoid leaking it.
+        (WorkQueue::scheduleWorkOnSource): Receive the source callback as
+        parameter so that it can be used by scheduleWorkOnTermination() too.
+        (WorkQueue::scheduleWork):
+        (WorkQueue::scheduleWorkAfterDelay):
+        (WorkQueue::scheduleWorkOnTermination): Use
+        scheduleWorkOnSource().
+
+2011-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Close connection when web process finishes
         https://bugs.webkit.org/show_bug.cgi?id=57540
 

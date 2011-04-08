@@ -49,6 +49,7 @@ class QThread;
 #include "PlatformProcessIdentifier.h"
 typedef struct _GMainContext GMainContext;
 typedef struct _GMainLoop GMainLoop;
+typedef gboolean (*GSourceFunc) (gpointer data);
 #endif
 
 class WorkQueue {
@@ -167,7 +168,7 @@ private:
 #elif PLATFORM(GTK)
     static void* startWorkQueueThread(WorkQueue*);
     void workQueueThreadBody();
-    void scheduleWorkOnSource(GSource*, PassOwnPtr<WorkItem>);
+    void scheduleWorkOnSource(GSource*, PassOwnPtr<WorkItem>, GSourceFunc);
 
     ThreadIdentifier m_workQueueThread;
     GMainContext* m_eventContext;
