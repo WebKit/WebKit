@@ -10,6 +10,9 @@ Tools/Scripts/webkitpy/thirdparty/autoinstalled
 project.xcworkspace
 xcuserdata
 
+# Ignore auto-generated files by VS2005
+*.vcproj.*.user
+
 # Ignore common tool auto-generated files.
 .gdb_history
 tags

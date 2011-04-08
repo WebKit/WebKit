@@ -1,3 +1,12 @@
+2011-04-08  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by David Levin.
+
+        adding *.vcproj.*.user to .gitignore for Visual Studio development
+        https://bugs.webkit.org/show_bug.cgi?id=58097
+
+        * .gitignore:
+
 2011-04-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
