@@ -1,3 +1,17 @@
+2011-04-08  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Adam Roben.
+
+        layoutTestController.shadowRoot returns null, not undefined, when
+        its argument is invalid.
+        https://bugs.webkit.org/show_bug.cgi?id=58121
+
+        Update the test to expect null and not undefined.
+
+        * fast/dom/HTMLKeygenElement/keygen-expected.txt:
+        * fast/dom/HTMLKeygenElement/keygen.html:
+        * platform/chromium/test_expectations.txt: unskip keygen.html
+
 2011-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaselines after r83291.

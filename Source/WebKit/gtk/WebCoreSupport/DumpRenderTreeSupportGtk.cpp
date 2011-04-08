@@ -643,7 +643,7 @@ JSValueRef DumpRenderTreeSupportGtk::shadowRoot(JSContextRef context, JSValueRef
     JSC::ExecState* exec = toJS(context);
     Element* element = toElement(toJS(exec, value));
     if (!element)
-        return JSValueMakeUndefined(context);
+        return JSValueMakeNull(context);
 
     return toRef(exec, toJS(exec, element->shadowRoot()));
 }

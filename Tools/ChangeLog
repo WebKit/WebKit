@@ -1,3 +1,16 @@
+2011-04-08  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Adam Roben.
+
+        Make layoutTestController.shadowRoot return null, not undefined,
+        when its argument is invalid.
+        https://bugs.webkit.org/show_bug.cgi?id=58121
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::shadowRoot):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::shadowRoot):
+
 2011-04-08  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

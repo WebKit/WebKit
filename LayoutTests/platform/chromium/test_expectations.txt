@@ -3245,9 +3245,6 @@ BUGCR75992 GPU MAC SNOWLEOPARD : platform/chromium/compositing/huge-layer-rotate
 // Chrome doesn't load favicons in DRT tests.
 BUGWK57259 : http/tests/misc/link-rel-icon-beforeload.html = FAIL PASS
 
-// Unskip when Chromium DRT layoutTestController implements shadowRoot accessor
-BUGWK56573 : fast/dom/HTMLKeygenElement/keygen.html = FAIL
-
 // This test is very flaky on Mac and a little flaky on Win and Linux.
 BUGXXX : media/video-delay-load-event.html = PASS TEXT
 // This test appears to timeout every 10 or 20 runs.

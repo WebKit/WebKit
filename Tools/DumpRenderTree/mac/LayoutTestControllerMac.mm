@@ -1072,7 +1072,7 @@ JSValueRef LayoutTestController::shadowRoot(JSContextRef context, JSValueRef jsE
 {
     DOMElement *element = [DOMElement _DOMElementFromJSContext:context value:jsElement];
     if (!element)
-        return JSValueMakeUndefined(context);
+        return JSValueMakeNull(context);
     return [element _shadowRoot:context];
 }
 
