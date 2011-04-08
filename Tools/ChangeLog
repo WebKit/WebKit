@@ -1,3 +1,9 @@
+2011-04-08  Adam Roben  <aroben@apple.com>
+
+        Qt build fix
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.h: Pull in stdarg.h for va_list.
+
 2011-04-07  Adam Roben  <aroben@apple.com>
 
         Test that NPP_SetWindow is passed a null window handle during plugin destruction on non-Mac platforms

@@ -27,6 +27,7 @@
 #define PluginObject_h
 
 #include <WebKit/npfunctions.h>
+#include <stdarg.h>
 
 #if defined(XP_MACOSX)
 #if !defined(MAC_OS_X_VERSION_10_5) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
