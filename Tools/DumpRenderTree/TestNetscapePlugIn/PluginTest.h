@@ -78,6 +78,7 @@ public:
 #endif
 
     void executeScript(const char*);
+    void log(const char* format, ...);
 
     void registerNPShutdownFunction(void (*)());
 

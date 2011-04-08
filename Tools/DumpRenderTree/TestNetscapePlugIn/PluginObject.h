@@ -87,6 +87,7 @@ extern void handleCallback(PluginObject* object, const char *url, NPReason reaso
 extern void notifyStream(PluginObject* object, const char *url, const char *headers);
 extern void testNPRuntime(NPP npp);
 extern void pluginLog(NPP instance, const char* format, ...);
+extern void pluginLogWithArguments(NPP instance, const char* format, va_list args);
 extern bool testDocumentOpen(NPP npp);
 extern bool testWindowOpen(NPP npp);
 

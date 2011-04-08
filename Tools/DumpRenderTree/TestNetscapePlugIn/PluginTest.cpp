@@ -25,6 +25,7 @@
 
 #include "PluginTest.h"
 
+#include "PluginObject.h"
 #include <assert.h>
 #include <string.h>
 
@@ -166,6 +167,14 @@ void PluginTest::executeScript(const char* script)
     NPVariant browserResult;
     browser->evaluate(m_npp, windowScriptObject, &npScript, &browserResult);
     browser->releasevariantvalue(&browserResult);
+}
+
+void PluginTest::log(const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    pluginLogWithArguments(m_npp, format, args);
+    va_end(args);
 }
 
 void PluginTest::waitUntilDone()

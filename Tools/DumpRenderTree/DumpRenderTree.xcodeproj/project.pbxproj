@@ -139,6 +139,7 @@
 		BCD08B3A0E1057EF00A7D0C1 /* AccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */; };
 		BCD08B710E1059D200A7D0C1 /* AccessibilityControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */; };
 		BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF6C64F0C98E9C000AC063E /* GCController.cpp */; };
+		C031182B134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C031182A134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp */; };
 		C06F9ABC1267A7060058E1F6 /* PassDifferentNPPStruct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C06F9ABB1267A7060058E1F6 /* PassDifferentNPPStruct.cpp */; };
 		C0E720751281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0E720741281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp */; };
 		C0EC3C9C12787F0500939164 /* NullNPPGetValuePointer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0EC3C9B12787F0500939164 /* NullNPPGetValuePointer.cpp */; };
@@ -323,6 +324,7 @@
 		BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityController.cpp; sourceTree = "<group>"; };
 		BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityControllerMac.mm; path = mac/AccessibilityControllerMac.mm; sourceTree = "<group>"; };
 		BCF6C64F0C98E9C000AC063E /* GCController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GCController.cpp; sourceTree = "<group>"; };
+		C031182A134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPPSetWindowCalledDuringDestruction.cpp; sourceTree = "<group>"; };
 		C06F9ABB1267A7060058E1F6 /* PassDifferentNPPStruct.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PassDifferentNPPStruct.cpp; sourceTree = "<group>"; };
 		C0E720741281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EvaluateJSAfterRemovingPluginElement.cpp; sourceTree = "<group>"; };
 		C0EC3C9B12787F0500939164 /* NullNPPGetValuePointer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NullNPPGetValuePointer.cpp; sourceTree = "<group>"; };
@@ -487,6 +489,7 @@
 				1A3E28A91311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp */,
 				1AD4CB2012A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp */,
 				1ACF898B132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp */,
+				C031182A134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp */,
 				1A24BAA8120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp */,
 				1AC77DCE120605B6005C19EF /* NPRuntimeRemoveProperty.cpp */,
 				C0EC3C9B12787F0500939164 /* NullNPPGetValuePointer.cpp */,
@@ -793,6 +796,7 @@
 				1A3E28AA1311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp in Sources */,
 				1ACF898D132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp in Sources */,
 				1A31EB3813466AC100017372 /* ConvertPoint.cpp in Sources */,
+				C031182B134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

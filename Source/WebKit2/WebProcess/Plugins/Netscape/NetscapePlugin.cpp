@@ -491,6 +491,11 @@ void NetscapePlugin::destroy()
     // Stop all streams.
     stopAllStreams();
 
+#if !PLUGIN_ARCHITECTURE(MAC)
+    m_npWindow.window = 0;
+    callSetWindow();
+#endif
+
     NPP_Destroy(0);
 
     m_isStarted = false;

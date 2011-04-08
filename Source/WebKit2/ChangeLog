@@ -1,3 +1,18 @@
+2011-04-07  Adam Roben  <aroben@apple.com>
+
+        Pass NPP_SetWindow a null window handle during plugin destruction on non-Mac platforms
+
+        This matches WebKit1.
+
+        Fixes <http://webkit.org/b/47009> WebKit2 needs to call NPP_SetWindow when destroying a
+        plugin
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::destroy): Null out our NPWindow's window handle and pass it to
+        NPP_SetWindow (unless we're on Mac).
+
 2011-04-08  Jamie Cooley  <james.cooley@nokia.com>
 
         Reviewed by Benjamin Poulain.

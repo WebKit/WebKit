@@ -1,3 +1,24 @@
+2011-04-07  Adam Roben  <aroben@apple.com>
+
+        Test that NPP_SetWindow is passed a null window handle during plugin destruction on non-Mac platforms
+
+        Test for <http://webkit.org/b/47009> WebKit2 needs to call NPP_SetWindow when destroying a
+        plugin
+
+        Reviewed by Anders Carlsson.
+
+        * platform/win-wk2/Skipped: Removed a test that no longer crashes thanks to this fix.
+
+        * plugins/npp-set-window-called-during-destruction-expected.txt: Added.
+        * plugins/npp-set-window-called-during-destruction.html: Added.
+
+        * platform/mac/plugins/npp-set-window-called-during-destruction-expected.txt: Added. This is
+        different from the cross-platform results because we don't expect NPP_SetWindow to be called
+        during destruction.
+
+        * platform/win/plugins/npp-set-window-called-during-destruction-expected.txt: Added. This is
+        a copy of the cross-platform results, needed to override the Mac-specific results.
+
 2011-04-08  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Antonio Gomes.

@@ -1,3 +1,49 @@
+2011-04-07  Adam Roben  <aroben@apple.com>
+
+        Test that NPP_SetWindow is passed a null window handle during plugin destruction on non-Mac platforms
+
+        Test for <http://webkit.org/b/47009> WebKit2 needs to call NPP_SetWindow when destroying a
+        plugin
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        (pluginLogWithArguments): Moved code to format and log the message here...
+        (pluginLog): ...from here.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.h: Added pluginLogWithArguments.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::log): Added. Calls through to pluginLogWithArguments.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h: Added log.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NPPSetWindowCalledDuringDestruction.cpp: Added.
+        (NPPSetWindowCalledDuringDestruction::setWillBeDestroyed): Records that destruction is about
+        to begin.
+        (NPPSetWindowCalledDuringDestruction::NPPSetWindowCalledDuringDestruction): Simple
+        constructor.
+        (NPPSetWindowCalledDuringDestruction::NPP_GetValue): Creates and returns a ScriptObject that
+        can be used to invoke our setWillBeDestroyed function.
+        (NPPSetWindowCalledDuringDestruction::NPP_SetWindow): Records what has happened (and logs if
+        anything unexpected happens).
+        (NPPSetWindowCalledDuringDestruction::NPP_Destroy): On Mac, logs a failure message if
+        NPP_SetWindow was called during destruction. On other platforms, logs a failure message if
+        NPP_SetWindow was *not* called during destruction.
+        (NPPSetWindowCalledDuringDestruction::ScriptObject::hasMethod): Return true for our only
+        method, setWillBeDestroyed.
+        (NPPSetWindowCalledDuringDestruction::ScriptObject::invoke): Call through to the PluginTest
+        object.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * GNUmakefile.am:
+        Added new test.
+
+        * Scripts/old-run-webkit-tests: Skip the new test when using out-of-process plugins with
+        WebKit1 on Mac, since it can't work properly due to <http://webkit.org/b/58077>.
+
 2011-04-08  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -600,6 +600,12 @@ if (!checkWebCoreFeatureSupport("XHTMLMP", 0)) {
     $ignoredDirectories{'fast/xhtmlmp'} = 1;
 }
 
+if (isAppleMacWebKit() && $platform ne "mac-wk2" && osXVersion()->{minor} >= 6 && architecture() =~ /x86_64/) {
+    # This test relies on executing JavaScript during NPP_Destroy, which isn't supported with
+    # out-of-process plugins in WebKit1. See <http://webkit.org/b/58077>.
+    $ignoredFiles{'plugins/npp-set-window-called-during-destruction.html'} = 1;
+}
+
 processIgnoreTests(join(',', @ignoreTests), "ignore-tests") if @ignoreTests;
 if (!$ignoreSkipped) {
     if (!$skippedOnly || @ARGV == 0) {

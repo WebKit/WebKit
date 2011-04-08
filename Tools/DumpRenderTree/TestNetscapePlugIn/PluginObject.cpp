@@ -73,14 +73,10 @@ static void pluginLogWithWindowObjectVariableArgs(NPObject* windowObject, NPP in
     pluginLogWithWindowObject(windowObject, instance, message);
 }
              
-// Helper function to log to the console object.
-void pluginLog(NPP instance, const char* format, ...)
+void pluginLogWithArguments(NPP instance, const char* format, va_list args)
 {
-    va_list args;
-    va_start(args, format);
     char message[2048] = "PLUGIN: ";
     vsprintf(message + strlen(message), format, args);
-    va_end(args);
 
     NPObject* windowObject = 0;
     NPError error = browser->getvalue(instance, NPNVWindowNPObject, &windowObject);
@@ -91,6 +87,15 @@ void pluginLog(NPP instance, const char* format, ...)
 
     pluginLogWithWindowObject(windowObject, instance, message);
     browser->releaseobject(windowObject);
+}
+
+// Helper function to log to the console object.
+void pluginLog(NPP instance, const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    pluginLogWithArguments(instance, format, args);
+    va_end(args);
 }
 
 static void pluginInvalidate(NPObject*);

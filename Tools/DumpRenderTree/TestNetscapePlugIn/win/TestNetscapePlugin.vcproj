@@ -410,6 +410,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Tests\NPPSetWindowCalledDuringDestruction.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Tests\NPRuntimeObjectFromDestroyedPlugin.cpp"
 				>
 			</File>
