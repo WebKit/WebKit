@@ -1,3 +1,9 @@
+2011-04-08  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix the Qt build.
+
+        * css/CSSStyleApplyProperty.cpp:
+
 2011-04-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

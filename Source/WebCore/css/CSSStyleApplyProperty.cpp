@@ -27,6 +27,7 @@
 
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSStyleSelector.h"
+#include "CSSValueList.h"
 #include "Document.h"
 #include "Element.h"
 #include "RenderStyle.h"
