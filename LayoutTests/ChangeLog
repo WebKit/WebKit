@@ -1,3 +1,21 @@
+2011-04-07  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update expectations for r83216 and r83235.
+
+        * platform/chromium-linux/svg/custom/foreign-object-skew-expected.png: Added.
+        * platform/chromium-linux/svg/custom/foreign-object-skew-expected.txt: Copied from LayoutTests/platform/chromium-win/svg/custom/foreign-object-skew-expected.txt.
+        * platform/chromium-mac-leopard/svg/custom/foreign-object-skew-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/svg/custom/foreign-object-skew-expected.png:
+        * platform/chromium-mac/svg/custom/foreign-object-skew-expected.checksum: Removed.
+        * platform/chromium-mac/svg/custom/foreign-object-skew-expected.png:
+        * platform/chromium-mac/svg/zoom/text/zoom-foreignObject-expected.png: Copied from LayoutTests/platform/chromium-mac/svg/custom/foreign-object-skew-expected.png.
+        * platform/chromium-win-vista/svg/custom/foreign-object-skew-expected.checksum: Removed.
+        * platform/chromium-win-vista/svg/custom/foreign-object-skew-expected.png:
+        * platform/chromium-win/svg/custom/foreign-object-skew-expected.checksum: Removed.
+        * platform/chromium-win/svg/custom/foreign-object-skew-expected.png:
+        * platform/chromium-win/svg/custom/foreign-object-skew-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-07  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric Seidel.

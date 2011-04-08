@@ -918,7 +918,6 @@ BUGCR10295 MAC : fast/dom/prototype-chain.html = FAIL
 // Font differences, requiring overriden metrics, not a real bug, not fixing for Beta
 BUGCR10296 MAC LEOPARD : fast/text/international/bidi-menulist.html = FAIL
 // Maybe need to be rebaselined - should be looked at in more detail.
-BUGCR10296 LINUX : svg/custom/foreign-object-skew.svg = FAIL
 BUGCR10296 LINUX : svg/batik/text/textLength.svg = FAIL
 
 // No anti-aliasing on the text.
@@ -2175,10 +2174,6 @@ BUGCR49029 WIN LINUX MAC : fast/js/object-literal-syntax.html = TEXT
 
 BUGCR48859 WIN : fast/inline/continuation-outlines-with-layers-2.html = IMAGE+TEXT
 
-// Somehow rebaseline in http://trac.webkit.org/changeset/63196 failed.
-// Need investigation.
-BUGWK38016 WIN : svg/custom/foreign-object-skew.svg = FAIL
-
 // These tests all fail because the expected output is wrong. The
 // reason is that JSC does not currently implement Function.prototype.bind
 // These test has intentionally been marked as FAIL, which makes it easy
@@ -3289,7 +3284,7 @@ BUGWK57926 GPU : media/video-display-toggle.html = IMAGE
 BUGWK57926 GPU : media/video-no-audio.html = IMAGE
 BUGWK57926 GPU : media/video-volume-slider.html = IMAGE
 
-// We need to skipe Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.
+// We need to skip Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.
 // http://trac.webkit.org/changeset/83126
 BUGWK58008 MAC SNOWLEOPARD : fast/dom/52776.html = IMAGE+TEXT
 BUGWK58008 MAC SNOWLEOPARD : fast/text/complex-text-opacity.html = IMAGE+TEXT
@@ -3302,3 +3297,5 @@ BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-neutral-run.html = IMA
 BUGWK58010 WIN LINUX DEBUG : inspector/profiler/detailed-heapshots-summary.html = PASS TIMEOUT
 BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = CRASH PASS
 BUGWK58005 MAC : editing/inserting/editable-inline-element.html = IMAGE
+// Will ask abarth...
+BUGTKENT : http/tests/security/contentSecurityPolicy/xsl-blocked.php = MISSING

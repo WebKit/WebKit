@@ -11,6 +11,6 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 62x19
             text run at (0,0) width 62: "and a link."
         RenderBR {xhtml:br} at (62,0) size 0x19
-        RenderButton {xhtml:input} at (2,22) size 16x22 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {xhtml:input} at (2,22) size 16x22 [bgcolor=#DDDDDD] [border: (2px outset #DDDDDD)]
         RenderText {#text} at (0,0) size 0x0
     RenderSVGPath {rect} at (9,9) size 582x382 [stroke={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=580.00] [height=380.00]
