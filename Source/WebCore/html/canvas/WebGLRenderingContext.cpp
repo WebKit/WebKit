@@ -502,11 +502,11 @@ bool WebGLRenderingContext::clearIfComposited(GC3Dbitfield mask)
     if (isContextLost()) 
         return false;
 
-    RefPtr<WebGLContextAttributes> contextAttributes = getContextAttributes();
-
     if (!m_context->layerComposited() || m_layerCleared
         || m_attributes.preserveDrawingBuffer || m_framebufferBinding)
         return false;
+
+    RefPtr<WebGLContextAttributes> contextAttributes = getContextAttributes();
 
     // Determine if it's possible to combine the clear the user asked for and this clear.
     bool combinedClear = mask && !m_scissorEnabled;

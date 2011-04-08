@@ -1,3 +1,17 @@
+2011-04-07  John Bauman  <jbauman@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        clearIfComposited call is really slow
+        https://bugs.webkit.org/show_bug.cgi?id=57999
+
+        Move getContextAttributes call after the if, so it isn't called nearly as often.
+
+        No new tests.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::clearIfComposited):
+
 2011-04-07  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Dimitri Glazkov.
