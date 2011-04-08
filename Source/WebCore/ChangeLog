@@ -1,3 +1,10 @@
+2011-04-08  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed. Remove accidental printf added in r83306.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendContextMenuEvent):
+
 2011-04-08  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
