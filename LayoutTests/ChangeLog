@@ -1,3 +1,9 @@
+2011-04-08  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, added failed tests to test expectation list in chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r83295.

@@ -3293,3 +3293,6 @@ BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-neutral-run.html = IMA
 BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = CRASH PASS
 BUGWK58005 MAC : editing/inserting/editable-inline-element.html = IMAGE
 BUGCR780807 : http/tests/misc/webtiming-origins.html = PASS TEXT
+
+BUGWK58147 : fast/dom/MediaStream/argument-types.html = TEXT
+BUGWK58147 : fast/dom/MediaStream/enabled.html = TEXT
