@@ -610,7 +610,7 @@
                                 '<(chromium_src_dir)/third_party/ots/ots.gyp:ots',
                                 '<(chromium_src_dir)/third_party/zlib/zlib.gyp:zlib',
                                 '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
-                                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
+                                # We must not add webkit_support here because of cyclic dependency.
                             ],
                             'direct_dependent_settings': {
                                 'defines': [
@@ -627,6 +627,10 @@
                                 'tests/TransparencyWinTest.cpp',
                                 'tests/UniscribeHelperTest.cpp',
                                 'tests/WebUnitTests.cpp'
+                            ],
+                            'sources!' : [
+                                # We should not include files dpending on webkit_support.
+                                'tests/CCThreadTest.cpp',
                             ]
                         }],
                     ],

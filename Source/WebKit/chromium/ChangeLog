@@ -1,5 +1,11 @@
 2011-04-08  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] The second attempt of fixing for Windows (dbg)(shared) build.
+
+        * WebKit.gyp: webkit should not depend on webkit_support.
+
+2011-04-08  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Build fix for Windows (dbg)(shared).
 
         * WebKit.gyp: Add webkit_support dependency, which is required for webkit_unittest_files.
