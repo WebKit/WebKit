@@ -1,3 +1,19 @@
+2011-04-08  Varun Jain  <varunjain@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Need to extend WebKit chromium API to access text selection
+        https://bugs.webkit.org/show_bug.cgi?id=57888
+
+        *  Source/WebKit/chromium/public/WebFrame.h:
+        *  Source/WebKit/chromium/public/WebWidget.h:
+        *  Source/WebKit/chromium/src/WebFrameImpl.cpp:
+        *  Source/WebKit/chromium/src/WebFrameImpl.h:
+        *  Source/WebKit/chromium/src/WebPopupMenuImpl.h:
+        *  Source/WebKit/chromium/src/WebViewImpl.cpp:
+        *  Source/WebKit/chromium/src/WebViewImpl.h:
+        *  Source/WebKit/chromium/tests/PopupMenuTest.cpp:
+
 2011-04-08  Jon Lee  <jonlee@apple.com>
 
         Reviewed by David Levin.

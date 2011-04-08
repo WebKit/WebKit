@@ -67,6 +67,7 @@ class WebURLRequest;
 class WebView;
 struct WebConsoleMessage;
 struct WebFindOptions;
+struct WebPoint;
 struct WebRect;
 struct WebScriptSource;
 struct WebSize;
@@ -407,6 +408,8 @@ public:
     // true. Does nothing and returns false if there is no caret or
     // there is ranged selection.
     virtual bool selectWordAroundCaret() = 0;
+
+    virtual void selectRange(const WebPoint& start, const WebPoint& end) = 0;
 
 
     // Printing ------------------------------------------------------------

@@ -90,6 +90,7 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HitTestResult.h"
 #include "HTMLCollection.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameOwnerElement.h"
@@ -106,6 +107,7 @@
 #include "PluginDocument.h"
 #include "PrintContext.h"
 #include "RenderFrame.h"
+#include "RenderLayer.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
@@ -140,6 +142,7 @@
 #include "WebPerformance.h"
 #include "WebPlugin.h"
 #include "WebPluginContainerImpl.h"
+#include "WebPoint.h"
 #include "WebRange.h"
 #include "WebRect.h"
 #include "WebScriptSource.h"
@@ -1303,6 +1306,39 @@ bool WebFrameImpl::selectWordAroundCaret()
         return false;
     selectWordAroundPosition(frame(), controller->selection().visibleStart());
     return true;
+}
+
+void WebFrameImpl::selectRange(const WebPoint& start, const WebPoint& end)
+{
+    VisibleSelection selection(visiblePositionForWindowPoint(start),
+                               visiblePositionForWindowPoint(end));
+
+    if (frame()->selection()->shouldChangeSelection(selection))
+        frame()->selection()->setSelection(selection, CharacterGranularity,
+                                           MakeNonDirectionalSelection);
+}
+
+VisiblePosition WebFrameImpl::visiblePositionForWindowPoint(const WebPoint& point)
+{
+    HitTestRequest::HitTestRequestType hitType = HitTestRequest::MouseMove;
+    hitType |= HitTestRequest::ReadOnly;
+    hitType |= HitTestRequest::Active;
+    HitTestRequest request(hitType);
+    FrameView* view = frame()->view();
+    HitTestResult result(view->windowToContents(
+        view->convertFromContainingWindow(IntPoint(point.x, point.y))));
+
+    frame()->document()->renderView()->layer()->hitTest(request, result);
+
+    // Matching the logic in MouseEventWithHitTestResults::targetNode()
+    Node* node = result.innerNode();
+    if (!node)
+        return VisiblePosition();
+    Element* element = node->parentElement();
+    if (!node->inDocument() && element && element->inDocument())
+        node = element;
+
+    return node->renderer()->positionForPoint(result.localPoint());
 }
 
 int WebFrameImpl::printBegin(const WebSize& pageSize,

@@ -142,6 +142,7 @@ public:
     virtual bool confirmComposition(const WebString& text) { return true; }
     virtual WebTextInputType textInputType() { return WebKit::WebTextInputTypeNone; }
     virtual WebRect caretOrSelectionBounds() { return WebRect(); }
+    virtual bool selectionRange(WebPoint& start, WebPoint& end) const { return false; }
     virtual void setTextDirection(WebTextDirection) { }
 };
 

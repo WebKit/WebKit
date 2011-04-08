@@ -1454,6 +1454,37 @@ WebRect WebViewImpl::caretOrSelectionBounds()
     return rect;
 }
 
+bool WebViewImpl::selectionRange(WebPoint& start, WebPoint& end) const
+{
+    const Frame* frame = focusedWebCoreFrame();
+    if (!frame)
+        return false;
+    RefPtr<Range> selectedRange = frame->selection()->toNormalizedRange();
+    RefPtr<Range> range(Range::create(selectedRange->startContainer()->document(),
+                                      selectedRange->startContainer(),
+                                      selectedRange->startOffset(),
+                                      selectedRange->startContainer(),
+                                      selectedRange->startOffset()));
+
+    IntRect rect = frame->editor()->firstRectForRange(range.get());
+    start.x = rect.x();
+    start.y = rect.y() + rect.height() - 1;
+
+    range = Range::create(selectedRange->endContainer()->document(),
+                          selectedRange->endContainer(),
+                          selectedRange->endOffset(),
+                          selectedRange->endContainer(),
+                          selectedRange->endOffset());
+
+    rect = frame->editor()->firstRectForRange(range.get());
+    end.x = rect.x() + rect.width() - 1;
+    end.y = rect.y() + rect.height() - 1;
+
+    start = frame->view()->contentsToWindow(start);
+    end = frame->view()->contentsToWindow(end);
+    return true;
+}
+
 void WebViewImpl::setTextDirection(WebTextDirection direction)
 {
     // The Editor::setBaseWritingDirection() function checks if we can change

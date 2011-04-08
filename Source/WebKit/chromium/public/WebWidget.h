@@ -41,6 +41,7 @@ namespace WebKit {
 
 class WebInputEvent;
 class WebString;
+struct WebPoint;
 struct WebRect;
 struct WebSize;
 template <typename T> class WebVector;
@@ -125,6 +126,15 @@ public:
     // Returns the current caret bounds of this WebWidget. The selection bounds
     // will be returned if a selection range is available.
     virtual WebRect caretOrSelectionBounds() = 0;
+
+    // Returns the start and end point for the current selection, aligned to the
+    // bottom of the selected line.
+    // FIXME: make this pure virtual after all downstream classes have
+    // implemented it.
+    virtual bool selectionRange(WebPoint& start, WebPoint& end) const
+    {
+        return false;
+    }
 
     // Changes the text direction of the selected input node.
     virtual void setTextDirection(WebTextDirection) = 0;
