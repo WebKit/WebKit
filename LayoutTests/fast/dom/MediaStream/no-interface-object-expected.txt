@@ -1,0 +1,17 @@
+Tests that the following classes are not manipulable by JavaScript (NoInterfaceObject).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS typeof NavigatorUserMedia is "undefined"
+PASS NavigatorUserMedia.prototype threw exception ReferenceError: NavigatorUserMedia is not defined.
+PASS typeof NavigatorUserMediaError is "undefined"
+PASS NavigatorUserMediaError.prototype threw exception ReferenceError: NavigatorUserMediaError is not defined.
+PASS typeof NavigatorUserMediaSuccessCallback is "undefined"
+PASS NavigatorUserMediaSuccessCallback.prototype threw exception ReferenceError: NavigatorUserMediaSuccessCallback is not defined.
+PASS typeof NavigatorUserMediaErrorCallback is "undefined"
+PASS NavigatorUserMediaErrorCallback.prototype threw exception ReferenceError: NavigatorUserMediaErrorCallback is not defined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

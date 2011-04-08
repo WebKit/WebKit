@@ -325,6 +325,9 @@ IDL_BINDINGS += \
     page/Location.idl \
     page/MemoryInfo.idl \
     page/Navigator.idl \
+    page/NavigatorUserMediaError.idl \
+    page/NavigatorUserMediaErrorCallback.idl \
+    page/NavigatorUserMediaSuccessCallback.idl \
     page/Performance.idl \
     page/PerformanceNavigation.idl \
     page/PerformanceTiming.idl \

@@ -3122,6 +3122,19 @@ contains(DEFINES, ENABLE_GEOLOCATION=1) {
     }
 }
 
+contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
+    HEADERS += \
+        page/NavigatorUserMediaError.h \
+        page/NavigatorUserMediaErrorCallback.h \
+        page/NavigatorUserMediaSuccessCallback.h
+
+    v8 {
+        SOURCES += \
+            bindings/v8/custom/V8NavigatorCustom.cpp
+
+    }
+}
+
 contains(DEFINES, ENABLE_SVG=1) {
     !v8 {
         SOURCES += \

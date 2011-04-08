@@ -1,3 +1,49 @@
+2011-04-08  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Media Stream API: add the getUserMedia method and the Javascript bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=56586
+
+        Add the getUserMedia method to the navigator and its new Javascript types.
+        Current specification: http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#video-conferencing-and-peer-to-peer-communication
+
+        Tests: fast/dom/MediaStream/argument-types.html
+               fast/dom/MediaStream/enabled.html
+               fast/dom/MediaStream/no-interface-object.html
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.v8bindings.mk:
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::JSNavigator::webkitGetUserMedia):
+        * bindings/v8/custom/V8NavigatorCustom.cpp: Added.
+        (WebCore::V8Navigator::webkitGetUserMediaCallback):
+        * page/Navigator.cpp:
+        (WebCore::Navigator::webkitGetUserMedia):
+        * page/Navigator.h:
+        * page/Navigator.idl:
+        * page/NavigatorUserMediaError.h: Added.
+        (WebCore::NavigatorUserMediaError::NavigatorUserMediaError):
+        (WebCore::NavigatorUserMediaError::~NavigatorUserMediaError):
+        (WebCore::NavigatorUserMediaError::code):
+        * page/NavigatorUserMediaError.idl: Added.
+        * page/NavigatorUserMediaErrorCallback.h: Added.
+        (WebCore::NavigatorUserMediaErrorCallback::~NavigatorUserMediaErrorCallback):
+        * page/NavigatorUserMediaErrorCallback.idl: Added.
+        * page/NavigatorUserMediaSuccessCallback.h: Added.
+        (WebCore::NavigatorUserMediaSuccessCallback::~NavigatorUserMediaSuccessCallback):
+        * page/NavigatorUserMediaSuccessCallback.idl: Added.
+
 2011-04-08  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

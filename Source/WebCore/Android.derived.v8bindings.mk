@@ -277,6 +277,9 @@ GEN := \
     $(intermediates)/bindings/V8History.h \
     $(intermediates)/bindings/V8Location.h \
     $(intermediates)/bindings/V8Navigator.h \
+    $(intermediates)/bindings/V8NavigatorUserMediaError.h \
+    $(intermediates)/bindings/V8NavigatorUserMediaErrorCallback.h \
+    $(intermediates)/bindings/V8NavigatorUserMediaSuccessCallback.h \
     $(intermediates)/bindings/V8PositionError.h \
     $(intermediates)/bindings/V8Screen.h \
     $(intermediates)/bindings/V8WebKitAnimation.h \

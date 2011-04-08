@@ -296,6 +296,9 @@ GEN := \
     $(intermediates)/page/JSHistory.h \
     $(intermediates)/page/JSLocation.h \
     $(intermediates)/page/JSNavigator.h \
+    $(intermediates)/page/JSNavigatorUserMediaError.h \
+    $(intermediates)/page/JSNavigatorUserMediaErrorCallback.h \
+    $(intermediates)/page/JSNavigatorUserMediaSuccessCallback.h \
     $(intermediates)/page/JSPositionError.h \
     $(intermediates)/page/JSScreen.h \
     $(intermediates)/page/JSWebKitAnimation.h \

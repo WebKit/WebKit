@@ -379,6 +379,12 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSNamedNodeMap.h \
 	DerivedSources/WebCore/JSNavigator.cpp \
 	DerivedSources/WebCore/JSNavigator.h \
+	DerivedSources/WebCore/JSNavigatorUserMediaError.cpp \
+	DerivedSources/WebCore/JSNavigatorUserMediaError.h \
+	DerivedSources/WebCore/JSNavigatorUserMediaErrorCallback.cpp \
+	DerivedSources/WebCore/JSNavigatorUserMediaErrorCallback.h \
+	DerivedSources/WebCore/JSNavigatorUserMediaSuccessCallback.cpp \
+	DerivedSources/WebCore/JSNavigatorUserMediaSuccessCallback.h \
 	DerivedSources/WebCore/JSNode.cpp \
 	DerivedSources/WebCore/JSNodeFilter.cpp \
 	DerivedSources/WebCore/JSNodeFilter.h \
@@ -2205,6 +2211,9 @@ webcore_sources += \
 	Source/WebCore/page/Navigator.h \
 	Source/WebCore/page/NavigatorBase.cpp \
 	Source/WebCore/page/NavigatorBase.h \
+	Source/WebCore/page/NavigatorUserMediaError.h \
+	Source/WebCore/page/NavigatorUserMediaErrorCallback.h \
+	Source/WebCore/page/NavigatorUserMediaSuccessCallback.h \
 	Source/WebCore/page/OriginAccessEntry.cpp \
 	Source/WebCore/page/OriginAccessEntry.h \
 	Source/WebCore/page/Page.cpp \

@@ -1,0 +1,49 @@
+Tests the acceptable types for arguments to navigator.getUserMedia methods.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS navigator.webkitGetUserMedia() threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia(undefined) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia(null) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia({}) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia(objectThrowingException) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video") threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia(true) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia(42) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia(Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia(-Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia(emptyFunction) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", emptyFunction) did not throw exception.
+PASS navigator.webkitGetUserMedia(undefined, emptyFunction) did not throw exception.
+PASS navigator.webkitGetUserMedia(null, emptyFunction) did not throw exception.
+PASS navigator.webkitGetUserMedia({}, emptyFunction) did not throw exception.
+PASS navigator.webkitGetUserMedia(objectThrowingException, emptyFunction) threw exception Error: toString threw exception.
+PASS navigator.webkitGetUserMedia(true, emptyFunction) did not throw exception.
+PASS navigator.webkitGetUserMedia(42, emptyFunction) did not throw exception.
+PASS navigator.webkitGetUserMedia(Infinity, emptyFunction) did not throw exception.
+PASS navigator.webkitGetUserMedia(-Infinity, emptyFunction) did not throw exception.
+PASS navigator.webkitGetUserMedia(emptyFunction, emptyFunction) did not throw exception.
+PASS navigator.webkitGetUserMedia("video", "video") threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", undefined) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", null) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", {}) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", objectThrowingException) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", true) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", 42) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", -Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", emptyFunction, emptyFunction) did not throw exception.
+PASS navigator.webkitGetUserMedia("video", emptyFunction, undefined) did not throw exception.
+PASS navigator.webkitGetUserMedia("video", emptyFunction, "video") threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", emptyFunction, null) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", emptyFunction, {}) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", emptyFunction, objectThrowingException) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", emptyFunction, true) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", emptyFunction, 42) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", emptyFunction, Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS navigator.webkitGetUserMedia("video", emptyFunction, -Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

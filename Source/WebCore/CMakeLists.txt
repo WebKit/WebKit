@@ -330,6 +330,8 @@ SET(WebCore_IDL_FILES
     page/Location.idl
     page/MemoryInfo.idl
     page/Navigator.idl
+    page/NavigatorUserMediaErrorCallback.idl
+    page/NavigatorUserMediaSuccessCallback.idl
     page/Performance.idl
     page/PerformanceNavigation.idl
     page/PerformanceTiming.idl
@@ -1943,6 +1945,16 @@ ENDIF()
 IF (ENABLE_PROGRESS_TAG)
     LIST(APPEND WebCore_SOURCES
         accessibility/AccessibilityProgressIndicator.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_MEDIA_STREAM)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSNavigatorCustom.cpp
+    )
+
+    LIST(APPEND WebCore_IDL_FILES
+        page/NavigatorUserMediaError.idl
     )
 ENDIF ()
 

@@ -34,6 +34,8 @@
 #include "Geolocation.h"
 #include "KURL.h"
 #include "Language.h"
+#include "NavigatorUserMediaErrorCallback.h"
+#include "NavigatorUserMediaSuccessCallback.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformString.h"
@@ -239,6 +241,15 @@ void Navigator::registerProtocolHandler(const String& scheme, const String& url,
         return;
 
     page->chrome()->registerProtocolHandler(scheme, baseURL, url, m_frame->displayStringModifiedByEncoding(title));
+}
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+void Navigator::webkitGetUserMedia(const String& options,
+                                   PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback,
+                                   PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
+{
+    // FIXME: implement a call to the media stream context when available.
 }
 #endif
 

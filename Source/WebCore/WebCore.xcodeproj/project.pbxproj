@@ -4101,6 +4101,15 @@
 		B0149E8011A4B21500196A7B /* ImageResizerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = B0149E7C11A4B21500196A7B /* ImageResizerThread.h */; };
 		B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1827492134CA4C100B98C2D /* CallbackFunction.cpp */; };
 		B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */; };
+		B1E54599134629C10092A545 /* NavigatorUserMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */; };
+		B1E5459B134629C10092A545 /* NavigatorUserMediaErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458F134629C10092A545 /* NavigatorUserMediaErrorCallback.h */; };
+		B1E5459D134629C10092A545 /* NavigatorUserMediaSuccessCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E54591134629C10092A545 /* NavigatorUserMediaSuccessCallback.h */; };
+		B1E545DF13462B0B0092A545 /* JSNavigatorUserMediaError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E545D113462B0B0092A545 /* JSNavigatorUserMediaError.cpp */; };
+		B1E545E013462B0B0092A545 /* JSNavigatorUserMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E545D213462B0B0092A545 /* JSNavigatorUserMediaError.h */; };
+		B1E545E113462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E545D313462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.cpp */; };
+		B1E545E213462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E545D413462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.h */; };
+		B1E545E313462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E545D513462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.cpp */; };
+		B1E545E413462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E545D613462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.h */; };
 		B20111070AB7740500DB0E68 /* JSSVGAElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */; };
 		B20111080AB7740500DB0E68 /* JSSVGAElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B20111060AB7740500DB0E68 /* JSSVGAElement.h */; };
 		B22279620D00BF220071B782 /* ColorDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22277CB0D00BF1F0071B782 /* ColorDistance.cpp */; };
@@ -10383,6 +10392,18 @@
 		B0149E7C11A4B21500196A7B /* ImageResizerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageResizerThread.h; sourceTree = "<group>"; };
 		B1827492134CA4C100B98C2D /* CallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackFunction.cpp; sourceTree = "<group>"; };
 		B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackFunction.h; sourceTree = "<group>"; };
+		B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaError.h; sourceTree = "<group>"; };
+		B1E5458E134629C10092A545 /* NavigatorUserMediaError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorUserMediaError.idl; sourceTree = "<group>"; };
+		B1E5458F134629C10092A545 /* NavigatorUserMediaErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaErrorCallback.h; sourceTree = "<group>"; };
+		B1E54590134629C10092A545 /* NavigatorUserMediaErrorCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorUserMediaErrorCallback.idl; sourceTree = "<group>"; };
+		B1E54591134629C10092A545 /* NavigatorUserMediaSuccessCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaSuccessCallback.h; sourceTree = "<group>"; };
+		B1E54592134629C10092A545 /* NavigatorUserMediaSuccessCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorUserMediaSuccessCallback.idl; sourceTree = "<group>"; };
+		B1E545D113462B0B0092A545 /* JSNavigatorUserMediaError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorUserMediaError.cpp; sourceTree = "<group>"; };
+		B1E545D213462B0B0092A545 /* JSNavigatorUserMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorUserMediaError.h; sourceTree = "<group>"; };
+		B1E545D313462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorUserMediaErrorCallback.cpp; sourceTree = "<group>"; };
+		B1E545D413462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorUserMediaErrorCallback.h; sourceTree = "<group>"; };
+		B1E545D513462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigatorUserMediaSuccessCallback.cpp; sourceTree = "<group>"; };
+		B1E545D613462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNavigatorUserMediaSuccessCallback.h; sourceTree = "<group>"; };
 		B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAElement.cpp; sourceTree = "<group>"; };
 		B20111060AB7740500DB0E68 /* JSSVGAElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSSVGAElement.h; sourceTree = "<group>"; };
 		B22277CB0D00BF1F0071B782 /* ColorDistance.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ColorDistance.cpp; sourceTree = "<group>"; };
@@ -14280,6 +14301,12 @@
 				A9C6E65D0D746694006442E9 /* Navigator.idl */,
 				E12719C90EEEC21300F61213 /* NavigatorBase.cpp */,
 				E12719C60EEEC16800F61213 /* NavigatorBase.h */,
+				B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */,
+				B1E5458E134629C10092A545 /* NavigatorUserMediaError.idl */,
+				B1E5458F134629C10092A545 /* NavigatorUserMediaErrorCallback.h */,
+				B1E54590134629C10092A545 /* NavigatorUserMediaErrorCallback.idl */,
+				B1E54591134629C10092A545 /* NavigatorUserMediaSuccessCallback.h */,
+				B1E54592134629C10092A545 /* NavigatorUserMediaSuccessCallback.idl */,
 				00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */,
 				00146289103CD1DE000B20DB /* OriginAccessEntry.h */,
 				65FEA86809833ADE00BED4AB /* Page.cpp */,
@@ -18353,6 +18380,12 @@
 				9FFE3EA411B5A4390037874E /* JSMemoryInfo.h */,
 				A9D247F50D757E3300FDF959 /* JSNavigator.cpp */,
 				A9D247F60D757E3300FDF959 /* JSNavigator.h */,
+				B1E545D113462B0B0092A545 /* JSNavigatorUserMediaError.cpp */,
+				B1E545D213462B0B0092A545 /* JSNavigatorUserMediaError.h */,
+				B1E545D313462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.cpp */,
+				B1E545D413462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.h */,
+				B1E545D513462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.cpp */,
+				B1E545D613462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.h */,
 				8A9A587211E84C81008ACFD1 /* JSPerformance.cpp */,
 				8A9A587311E84C81008ACFD1 /* JSPerformance.h */,
 				8A9A586E11E84C35008ACFD1 /* JSPerformanceNavigation.cpp */,
@@ -22852,6 +22885,12 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
+				B1E54599134629C10092A545 /* NavigatorUserMediaError.h in Headers */,
+				B1E5459B134629C10092A545 /* NavigatorUserMediaErrorCallback.h in Headers */,
+				B1E5459D134629C10092A545 /* NavigatorUserMediaSuccessCallback.h in Headers */,
+				B1E545E013462B0B0092A545 /* JSNavigatorUserMediaError.h in Headers */,
+				B1E545E213462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.h in Headers */,
+				B1E545E413462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25546,6 +25585,9 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
+				B1E545DF13462B0B0092A545 /* JSNavigatorUserMediaError.cpp in Sources */,
+				B1E545E113462B0B0092A545 /* JSNavigatorUserMediaErrorCallback.cpp in Sources */,
+				B1E545E313462B0B0092A545 /* JSNavigatorUserMediaSuccessCallback.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

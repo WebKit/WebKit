@@ -308,6 +308,9 @@ DOM_CLASSES = \
     MutationEvent \
     NamedNodeMap \
     Navigator \
+    NavigatorUserMediaError \
+    NavigatorUserMediaErrorCallback \
+    NavigatorUserMediaSuccessCallback \
     Node \
     NodeFilter \
     NodeIterator \

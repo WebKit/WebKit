@@ -1,3 +1,31 @@
+2011-04-08  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Media Stream API: add the getUserMedia method and the Javascript bindings.
+        https://bugs.webkit.org/show_bug.cgi?id=56586
+
+        Test the Javascript behaviour of the getUserMedia method with different types of arguments.
+        Current specification: http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#video-conferencing-and-peer-to-peer-communication
+
+        * fast/dom/MediaStream/argument-types-expected.txt: Added.
+        * fast/dom/MediaStream/argument-types.html: Added.
+        * fast/dom/MediaStream/enabled-expected.txt: Added.
+        * fast/dom/MediaStream/enabled.html: Added.
+        * fast/dom/MediaStream/no-interface-object-expected.txt: Added.
+        * fast/dom/MediaStream/no-interface-object.html: Added.
+        * fast/dom/MediaStream/script-tests/argument-types.js: Added.
+        (shouldNotThrow):
+        (test):
+        (emptyFunction):
+        ():
+        (ObjectThrowingException.prototype.valueOf):
+        (ObjectThrowingException.prototype.toString):
+        * fast/dom/MediaStream/script-tests/enabled.js: Added.
+        (hasGetUserMediaProperty):
+        * fast/dom/MediaStream/script-tests/no-interface-object.js: Added.
+        (test):
+
 2011-04-08  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

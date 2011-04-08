@@ -32,6 +32,8 @@ class DOMMimeTypeArray;
 class DOMPluginArray;
 class Frame;
 class Geolocation;
+class NavigatorUserMediaErrorCallback;
+class NavigatorUserMediaSuccessCallback;
 class PluginData;
 
 typedef int ExceptionCode;
@@ -65,6 +67,11 @@ public:
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
     void registerProtocolHandler(const String& scheme, const String& url, const String& title, ExceptionCode&);
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    virtual void webkitGetUserMedia(const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>,
+                                    PassRefPtr<NavigatorUserMediaErrorCallback> = 0);
 #endif
 
 private:
