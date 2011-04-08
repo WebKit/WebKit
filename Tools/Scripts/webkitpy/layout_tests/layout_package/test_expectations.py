@@ -41,8 +41,8 @@ _log = logging.getLogger("webkitpy.layout_tests.layout_package."
                          "test_expectations")
 
 # Test expectation and modifier constants.
-(PASS, FAIL, TEXT, IMAGE, IMAGE_PLUS_TEXT, TIMEOUT, CRASH, SKIP, WONTFIX,
- SLOW, REBASELINE, MISSING, FLAKY, NOW, NONE) = range(15)
+(PASS, FAIL, TEXT, IMAGE, IMAGE_PLUS_TEXT, AUDIO, TIMEOUT, CRASH, SKIP, WONTFIX,
+ SLOW, REBASELINE, MISSING, FLAKY, NOW, NONE) = range(16)
 
 # Test expectation file update action constants
 (NO_CHANGE, REMOVE_TEST, REMOVE_PLATFORM, ADD_PLATFORMS_EXCEPT_THIS) = range(4)
@@ -120,7 +120,8 @@ class TestExpectations:
                 self._expected_failures.get_test_set(REBASELINE, IMAGE) |
                 self._expected_failures.get_test_set(REBASELINE, TEXT) |
                 self._expected_failures.get_test_set(REBASELINE,
-                                                     IMAGE_PLUS_TEXT))
+                                                     IMAGE_PLUS_TEXT) |
+                self._expected_failures.get_test_set(REBASELINE, AUDIO))
 
     def get_options(self, test):
         return self._expected_failures.get_options(test)
@@ -244,11 +245,11 @@ class TestExpectationsFile:
 
     Notes:
       -A test cannot be both SLOW and TIMEOUT
-      -A test should only be one of IMAGE, TEXT, IMAGE+TEXT, or FAIL. FAIL is
-       a migratory state that currently means either IMAGE, TEXT, or
-       IMAGE+TEXT. Once we have finished migrating the expectations, we will
-       change FAIL to have the meaning of IMAGE+TEXT and remove the IMAGE+TEXT
-       identifier.
+      -A test should only be one of IMAGE, TEXT, IMAGE+TEXT, AUDIO, or FAIL.
+       FAIL is a legacy value that currently means either IMAGE,
+       TEXT, or IMAGE+TEXT. Once we have finished migrating the expectations,
+       we should change FAIL to have the meaning of IMAGE+TEXT and remove the
+       IMAGE+TEXT identifier.
       -A test can be included twice, but not via the same path.
       -If a test is included twice, then the more precise path wins.
       -CRASH tests cannot be WONTFIX
@@ -259,6 +260,7 @@ class TestExpectationsFile:
                     'text': TEXT,
                     'image': IMAGE,
                     'image+text': IMAGE_PLUS_TEXT,
+                    'audio': AUDIO,
                     'timeout': TIMEOUT,
                     'crash': CRASH,
                     'missing': MISSING}
@@ -271,6 +273,7 @@ class TestExpectationsFile:
                                 IMAGE: ('image mismatch', 'image mismatch'),
                                 IMAGE_PLUS_TEXT: ('image and text mismatch',
                                                   'image and text mismatch'),
+                                AUDIO: ('audio mismatch', 'audio mismatch'),
                                 CRASH: ('DumpRenderTree crash',
                                         'DumpRenderTree crashes'),
                                 TIMEOUT: ('test timed out', 'tests timed out'),
@@ -278,7 +281,7 @@ class TestExpectationsFile:
                                           'no expected results found')}
 
     EXPECTATION_ORDER = (PASS, CRASH, TIMEOUT, MISSING, IMAGE_PLUS_TEXT,
-       TEXT, IMAGE, FAIL, SKIP)
+       TEXT, IMAGE, AUDIO, FAIL, SKIP)
 
     BUILD_TYPES = ('debug', 'release')
 
