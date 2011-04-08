@@ -1,5 +1,11 @@
 2011-04-08  Jian Li  <jianli@chromium.org>
 
+        Unreviewed, fixed a typo in chromium test expectation list.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-08  Jian Li  <jianli@chromium.org>
+
         Unreviewed, added one more failed test to test expectation list in chromium.
 
         * platform/chromium/test_expectations.txt:
