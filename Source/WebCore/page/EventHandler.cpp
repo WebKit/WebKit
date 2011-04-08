@@ -2175,6 +2175,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
         selectClosestWordOrLinkFromMouseEvent(mev);
     }
 
+    printf("node: %s\n", targetNode(mev)->nodeName().utf8().data());
     swallowEvent = dispatchMouseEvent(eventNames().contextmenuEvent, targetNode(mev), true, 0, event, false);
     
     return swallowEvent;

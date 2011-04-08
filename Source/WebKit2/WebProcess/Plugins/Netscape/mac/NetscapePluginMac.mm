@@ -508,11 +508,14 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
             // access m_currentMouseEvent afterwards.
             RefPtr<NetscapePlugin> protect(this);
 
-            bool returnValue = NPP_HandleEvent(&event);
+            NPP_HandleEvent(&event);
 
             m_currentMouseEvent = previousMouseEvent;
 
-            return returnValue;
+            // Some plug-ins return false even if the mouse event has been handled.
+            // This leads to bugs such as <rdar://problem/9167611>. Work around this
+            // by always returning true.
+            return true;
         }
 
 #ifndef NP_NO_CARBON
@@ -540,7 +543,12 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
             event.where.h = mouseEvent.globalPosition().x();
             event.where.v = mouseEvent.globalPosition().y();
 
-            return NPP_HandleEvent(&event);
+            NPP_HandleEvent(&event);
+
+            // Some plug-ins return false even if the mouse event has been handled.
+            // This leads to bugs such as <rdar://problem/9167611>. Work around this
+            // by always returning true.
+            return true;
         }
 #endif
 

@@ -1,3 +1,19 @@
+2011-04-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Clicks not recognized on http://www.nibblestutorials.net/ which uses Silverlight
+        https://bugs.webkit.org/show_bug.cgi?id=58108
+        <rdar://problem/9167611>
+
+        Change platformHandleMouseEvent to return true, which means that the plug-in has handled the
+        event. Some plug-ins (like Silverlight) will return false from NPP_HandleEvent even though the
+        event has been handled. In this case it lead to a very subtle bug where the plug-in element would
+        lose focus right after a mouse down even had been sent.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+
 2011-04-07  Adam Roben  <aroben@apple.com>
 
         Pass NPP_SetWindow a null window handle during plugin destruction on non-Mac platforms
