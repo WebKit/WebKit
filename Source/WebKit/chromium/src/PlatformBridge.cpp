@@ -178,6 +178,12 @@ void PlatformBridge::clipboardReadHTML(
     *sourceURL = url;
 }
 
+PassRefPtr<SharedBuffer> PlatformBridge::clipboardReadImage(
+    PasteboardPrivate::ClipboardBuffer buffer)
+{
+    return webKitClient()->clipboard()->readImage(static_cast<WebClipboard::Buffer>(buffer));
+}
+
 void PlatformBridge::clipboardWriteSelection(const String& htmlText,
                                              const KURL& sourceURL,
                                              const String& plainText,

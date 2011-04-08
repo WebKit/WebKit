@@ -1,3 +1,15 @@
+2011-04-08  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        [chromium] Implement image/png support in DataTransferItems
+        https://bugs.webkit.org/show_bug.cgi?id=58106
+
+        Add a reftest to verify that the various bits in the pipeline work as expected.
+
+        * editing/pasteboard/data-transfer-items-image-png-expected.html: Added.
+        * editing/pasteboard/data-transfer-items-image-png.html: Added.
+
 2011-04-08  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Maciej Stachowiak.

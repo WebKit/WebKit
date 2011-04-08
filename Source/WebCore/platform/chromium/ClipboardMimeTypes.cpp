@@ -41,5 +41,6 @@ const char mimeTypeURL[] = "url";
 const char mimeTypeTextURIList[] = "text/uri-list";
 const char mimeTypeDownloadURL[] = "downloadurl";
 const char mimeTypeFiles[] = "Files";
+const char mimeTypeImagePng[] = "image/png";
 
 } // namespace WebCore
