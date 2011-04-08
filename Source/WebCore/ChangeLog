@@ -1,3 +1,15 @@
+2011-04-07  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Probable fix for <rdar://problem/9251443>  Crashing on exception: -
+        [ScrollAnimationHelperDelegate _pixelAlignProposedScrollPosition:]: unrecognized 
+        selector sent to instance ADDRESS.
+
+       Need to implement new delegate method.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollAnimationHelperDelegate _pixelAlignProposedScrollPosition:]):
+
 2011-04-07  Ian Henderson  <ianh@apple.com>
 
         Reviewed by Simon Fraser.

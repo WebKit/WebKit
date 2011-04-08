@@ -100,6 +100,11 @@ static NSSize abs(NSSize size)
     _animator->immediateScrollToPoint(newPosition);
 }
 
+- (NSPoint)_pixelAlignProposedScrollPosition:(NSPoint)newOrigin
+{
+    return newOrigin;
+}
+
 - (NSSize)convertSizeToBase:(NSSize)size
 {
     return abs(size);
