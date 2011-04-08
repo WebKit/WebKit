@@ -2,6 +2,32 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Implement scheduleWorkAfterDelay() in WorkQueueGtk
+        https://bugs.webkit.org/show_bug.cgi?id=57434
+
+        * Platform/WorkQueue.h:
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::EventSource::executeEventSource): This new method
+        contains the common code to execute a work item.
+        (WorkQueue::EventSource::performWorkOnce): Use
+        executeEventSource() to execute the work item.
+        (WorkQueue::EventSource::performWork): Use executeEventSource() to
+        execute the work item.
+        (WorkQueue::registerEventSourceHandler): Use a GSocket instead of
+        a GIOChannel since the API is newer and allows us to pass a
+        cancellable object to be able to cancel the source.
+        (WorkQueue::scheduleWorkOnSource): This new method contains the
+        common code to attach a source to a context. It doesn't use a lock
+        anymore, since g_source_attach() uses its own mutex internally.
+        (WorkQueue::scheduleWork): Use an idle source instead of a timeout
+        one, changing the priority to G_PRIORITY_DEFAULT.
+        (WorkQueue::scheduleWorkAfterDelay): Implement it using a timeout
+        source with the given delay.
+
+2011-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Use glib API instead of fork + execl in ProcessLauncherGtk
         https://bugs.webkit.org/show_bug.cgi?id=57234
 

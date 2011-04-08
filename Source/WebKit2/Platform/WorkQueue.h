@@ -165,6 +165,7 @@ private:
 #elif PLATFORM(GTK)
     static void* startWorkQueueThread(WorkQueue*);
     void workQueueThreadBody();
+    void scheduleWorkOnSource(GSource*, PassOwnPtr<WorkItem>);
 
     ThreadIdentifier m_workQueueThread;
     GMainContext* m_eventContext;

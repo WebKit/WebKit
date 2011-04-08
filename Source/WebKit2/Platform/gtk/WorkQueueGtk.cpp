@@ -29,7 +29,9 @@
 
 #include "WKBase.h"
 #include <WebCore/NotImplemented.h>
+#include <gio/gio.h>
 #include <glib.h>
+#include <wtf/gobject/GRefPtr.h>
 
 // WorkQueue::EventSource
 class WorkQueue::EventSource {
@@ -43,7 +45,7 @@ public:
 
     GSource* dispatchSource() { return m_dispatchSource; }
 
-    static gboolean performWorkOnce(EventSource* eventSource)
+    static gboolean executeEventSource(EventSource* eventSource)
     {
         ASSERT(eventSource);
         WorkQueue* queue = eventSource->m_workQueue;
@@ -54,31 +56,31 @@ public:
         }
 
         eventSource->m_workItem->execute();
+
+        return TRUE;
+    }
+
+    static gboolean performWorkOnce(EventSource* eventSource)
+    {
+        executeEventSource(eventSource);
         return FALSE;
     }
 
-    static gboolean performWork(GIOChannel* channel, GIOCondition condition, EventSource* eventSource) 
+    static gboolean performWork(GSocket* socket, GIOCondition condition, EventSource* eventSource)
     {
-        ASSERT(eventSource);
-
         if (!(condition & G_IO_IN) && !(condition & G_IO_HUP) && !(condition & G_IO_ERR))
             return FALSE;
 
-        WorkQueue* queue = eventSource->m_workQueue;
-        {
-            MutexLocker locker(queue->m_isValidMutex);
-            if (!queue->m_isValid)
-                return FALSE;
-        }
 
-        eventSource->m_workItem->execute();
+        if (!executeEventSource(eventSource))
+            return FALSE;
 
         if ((condition & G_IO_HUP) || (condition & G_IO_ERR))
             return FALSE;
 
         return TRUE;
     }
-    
+
     static void deleteEventSource(EventSource* eventSource) 
     {
         ASSERT(eventSource);
@@ -132,9 +134,9 @@ void WorkQueue::workQueueThreadBody()
 
 void WorkQueue::registerEventSourceHandler(int fileDescriptor, int condition, PassOwnPtr<WorkItem> item)
 {
-    GIOChannel* channel = g_io_channel_unix_new(fileDescriptor);
-    ASSERT(channel);
-    GSource* dispatchSource = g_io_create_watch(channel, static_cast<GIOCondition>(condition));
+    GRefPtr<GSocket> socket = adoptGRef(g_socket_new_from_fd(fileDescriptor, 0));
+    ASSERT(socket);
+    GSource* dispatchSource = g_socket_create_source(socket.get(), static_cast<GIOCondition>(condition), 0);
     ASSERT(dispatchSource);
     EventSource* eventSource = new EventSource(dispatchSource, item, this);
     ASSERT(eventSource);
@@ -154,11 +156,7 @@ void WorkQueue::registerEventSourceHandler(int fileDescriptor, int condition, Pa
         m_eventSources.set(fileDescriptor, sources);
     }
 
-    // Attach the event source to the GMainContext under the mutex since this is shared across multiple threads.
-    {
-        MutexLocker locker(m_eventLoopLock);
-        g_source_attach(dispatchSource, m_eventContext);
-    }
+    g_source_attach(dispatchSource, m_eventContext);
 }
 
 void WorkQueue::unregisterEventSourceHandler(int fileDescriptor)
@@ -180,23 +178,31 @@ void WorkQueue::unregisterEventSourceHandler(int fileDescriptor)
     }
 }
 
-void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
+void WorkQueue::scheduleWorkOnSource(GSource* dispatchSource, PassOwnPtr<WorkItem> item)
 {
-    GSource* dispatchSource = g_timeout_source_new(0);
-    ASSERT(dispatchSource);
     EventSource* eventSource = new EventSource(dispatchSource, item, this);
-    
-    g_source_set_callback(dispatchSource, 
-                          reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnce), 
-                          eventSource, 
+
+    g_source_set_callback(dispatchSource,
+                          reinterpret_cast<GSourceFunc>(&WorkQueue::EventSource::performWorkOnce),
+                          eventSource,
                           reinterpret_cast<GDestroyNotify>(&WorkQueue::EventSource::deleteEventSource));
-    {
-        MutexLocker locker(m_eventLoopLock);
-        g_source_attach(dispatchSource, m_eventContext);
-    }
+
+    g_source_attach(dispatchSource, m_eventContext);
 }
 
-void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem>, double)
+void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
 {
-    notImplemented();
+    GRefPtr<GSource> dispatchSource = adoptGRef(g_idle_source_new());
+    ASSERT(dispatchSource);
+    g_source_set_priority(dispatchSource.get(), G_PRIORITY_DEFAULT);
+
+    scheduleWorkOnSource(dispatchSource.get(), item);
+}
+
+void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem> item, double delay)
+{
+    GRefPtr<GSource> dispatchSource = adoptGRef(g_timeout_source_new(static_cast<guint>(delay * 1000)));
+    ASSERT(dispatchSource);
+
+    scheduleWorkOnSource(dispatchSource.get(), item);
 }
