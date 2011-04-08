@@ -44,6 +44,9 @@
 #include <string>
 #elif PLATFORM(QT)
 class QSocketNotifier;
+#endif
+
+#if PLATFORM(QT) || PLATFORM(GTK)
 #include "PlatformProcessIdentifier.h"
 #endif
 
@@ -110,7 +113,7 @@ public:
 
 #if PLATFORM(MAC)
     void setShouldCloseConnectionOnMachExceptions();
-#elif PLATFORM(QT)
+#elif PLATFORM(QT) || PLATFORM(GTK)
     void setShouldCloseConnectionOnProcessTermination(WebKit::PlatformProcessIdentifier);
 #endif
 

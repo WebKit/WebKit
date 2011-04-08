@@ -2,6 +2,41 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Close connection when web process finishes
+        https://bugs.webkit.org/show_bug.cgi?id=57540
+
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        * Platform/PlatformProcessIdentifier.h: Use GPid as process
+        identifier.
+        * Platform/WorkQueue.h:
+        * Platform/gtk/WorkQueueGtk.cpp:
+        (WorkQueue::EventSource::EventSource): Add cancellable parameter.
+        (WorkQueue::EventSource::cancel): New method to cancel the source.
+        (WorkQueue::EventSource::performWorkOnTermination): New method to
+        execute a work item called when child process has finished.
+        (WorkQueue::registerEventSourceHandler): Create a GCancellable for
+        the socket source.
+        (WorkQueue::unregisterEventSourceHandler): Cancel the source
+        instead of destroying it, this will cause the source to trigger
+        with condition = 0, which makes the callback return FALSE and the
+        source is destroyed.
+        (WorkQueue::scheduleWorkOnSource): Pass NULL as cancellable for
+        idle and timeout sources.
+        (WorkQueue::scheduleWorkOnTermination): Create a child watch
+        source to monitor the child process.
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Use GPid instead of int
+        as process identifier.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didFinishLaunching): Call
+        WorkQueue::scheduleWorkOnTermination() for GTK platform too when
+        web process has been launched.
+
+2011-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Implement scheduleWorkAfterDelay() in WorkQueueGtk
         https://bugs.webkit.org/show_bug.cgi?id=57434
 

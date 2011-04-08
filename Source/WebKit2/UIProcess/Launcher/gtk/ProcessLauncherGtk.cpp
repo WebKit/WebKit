@@ -82,7 +82,7 @@ void ProcessLauncher::launchProcess()
     }
 
     close(sockets[0]);
-    m_processIdentifier = static_cast<pid_t>(pid);
+    m_processIdentifier = pid;
     // We've finished launching the process, message back to the main run loop.
     RunLoop::main()->scheduleWork(WorkItem::create(this, &ProcessLauncher::didFinishLaunchingProcess, m_processIdentifier, sockets[1]));
 }

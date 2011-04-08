@@ -46,6 +46,7 @@
 class QObject;
 class QThread;
 #elif PLATFORM(GTK)
+#include "PlatformProcessIdentifier.h"
 typedef struct _GMainContext GMainContext;
 typedef struct _GMainLoop GMainLoop;
 #endif
@@ -87,6 +88,7 @@ public:
 #elif PLATFORM(GTK)
     void registerEventSourceHandler(int, int, PassOwnPtr<WorkItem>);
     void unregisterEventSourceHandler(int);
+    void scheduleWorkOnTermination(WebKit::PlatformProcessIdentifier, PassOwnPtr<WorkItem>);
 #endif
 
 private:
