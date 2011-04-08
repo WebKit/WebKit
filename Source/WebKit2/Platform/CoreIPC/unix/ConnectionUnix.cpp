@@ -53,7 +53,7 @@ static const size_t messageMaxSize = 4096;
 static const size_t attachmentMaxAmount = 255;
 
 enum {
-    MessageBodyIsOOL = 1 << 31
+    MessageBodyIsOOL = 1U << 31
 };
 
 class MessageInfo {
@@ -166,14 +166,14 @@ void Connection::readyReadHandler()
 #endif
     AttachmentResourceGuard<Deque<Attachment>, Deque<Attachment>::iterator> attachementDisposer(attachments);
 
-    char attachmentDescriptorBuffer[CMSG_SPACE(sizeof(int) * (attachmentMaxAmount))];
+    OwnArrayPtr<char> attachmentDescriptorBuffer = adoptArrayPtr(new char[CMSG_SPACE(sizeof(int) * (attachmentMaxAmount))]);
     struct msghdr message;
     memset(&message, 0, sizeof(message));
 
     struct iovec iov[1];
     memset(&iov, 0, sizeof(iov));
 
-    message.msg_control = attachmentDescriptorBuffer;
+    message.msg_control = attachmentDescriptorBuffer.get();
     message.msg_controllen = CMSG_SPACE(sizeof(int) * (attachmentMaxAmount));
 
     iov[0].iov_base = m_readBuffer.data();
@@ -203,13 +203,13 @@ void Connection::readyReadHandler()
 
     if (messageInfo.attachmentCount()) {
         if (controlMessage && controlMessage->cmsg_level == SOL_SOCKET && controlMessage->cmsg_type == SCM_RIGHTS) {
-            size_t attachmentSizes[messageInfo.attachmentCount()];
-            memcpy(attachmentSizes, messageData, sizeof(attachmentSizes));
+            OwnArrayPtr<size_t> attachmentSizes = adoptArrayPtr(new size_t[messageInfo.attachmentCount()]);
+            memcpy(attachmentSizes.get(), messageData, sizeof(size_t) * messageInfo.attachmentCount());
 
             messageData += sizeof(attachmentSizes);
 
-            int fileDescriptors[messageInfo.attachmentCount()];
-            memcpy(fileDescriptors, CMSG_DATA(controlMessage), sizeof(fileDescriptors));
+            OwnArrayPtr<int> fileDescriptors = adoptArrayPtr(new int[messageInfo.attachmentCount()]);
+            memcpy(fileDescriptors.get(), CMSG_DATA(controlMessage), sizeof(int) * messageInfo.attachmentCount());
 
             int attachmentCount = messageInfo.attachmentCount();
 
@@ -350,12 +350,12 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
     iov[0].iov_base = reinterpret_cast<void*>(&messageInfo);
     iov[0].iov_len = sizeof(messageInfo);
 
-    char attachmentFDBuffer[CMSG_SPACE(sizeof(int) * (attachments.size()))];
-    size_t attachmentSizes[attachments.size()];
+    OwnArrayPtr<char> attachmentFDBuffer = adoptArrayPtr(new char[CMSG_SPACE(sizeof(int) * attachments.size())]);
+    OwnArrayPtr<size_t> attachmentSizes = adoptArrayPtr(new size_t[attachments.size()]);
 
     if (!attachments.isEmpty()) {
-        message.msg_control = attachmentFDBuffer;
-        message.msg_controllen = sizeof(attachmentFDBuffer);
+        message.msg_control = attachmentFDBuffer.get();
+        message.msg_controllen = sizeof(char) * CMSG_SPACE(sizeof(int) * attachments.size());
 
         struct cmsghdr* cmsg = CMSG_FIRSTHDR(&message);
         cmsg->cmsg_level = SOL_SOCKET;
@@ -370,8 +370,8 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
 
         message.msg_controllen = cmsg->cmsg_len;
 
-        iov[iovLength].iov_base = attachmentSizes;
-        iov[iovLength].iov_len = sizeof(attachmentSizes);
+        iov[iovLength].iov_base = attachmentSizes.get();
+        iov[iovLength].iov_len = sizeof(size_t) * attachments.size();
         ++iovLength;
     }
 

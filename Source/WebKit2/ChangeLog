@@ -1,3 +1,17 @@
+2011-04-08  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Qt][WK2][Symbian] Remove use of stack arrays with variable size
+        https://bugs.webkit.org/show_bug.cgi?id=57877
+
+        For better compiler portability, use new/delete for arrays when size
+        isn't known at compile time. Also fix one compiler warning about bitshift
+        operations on signed integer
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::readyReadHandler):
+        (CoreIPC::Connection::sendOutgoingMessage):
+
 2011-04-08  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
