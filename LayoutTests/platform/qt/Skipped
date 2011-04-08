@@ -3245,3 +3245,6 @@ media/video-playbackrate.html
 # [Qt]REGRESSION(r82419): extra border in t0805-c5519-ibrdr-r-00-a.html
 # https://bugs.webkit.org/show_bug.cgi?id=57459
 css2.1/t0805-c5519-ibrdr-r-00-a.html
+
+# [Qt] dumpResourceResponseMIMETypes() does not strip query part
+http/tests/loading/preload-append-scan.php

@@ -1179,6 +1179,7 @@ fast/preloader/scan-body-from-head-script.html
 fast/preloader/script.html
 fast/preloader/style.html
 http/tests/loading/preload-slow-loading.php
+http/tests/loading/preload-append-scan.php
 http/tests/mime/uppercase-mime-type.html
 platform/mac/fast/loader/file-url-mimetypes-2.html
 platform/mac/fast/loader/file-url-mimetypes-3.html

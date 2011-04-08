@@ -1,3 +1,12 @@
+2011-04-08  Antti Koivisto  <antti@apple.com>
+
+        Not reviewed.
+
+        Skip for DRT differences.
+
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+
 2011-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang, Darin Adler, and Enrica Casucci.
