@@ -268,7 +268,7 @@ inline void InlineBidiResolver::appendRun()
         int start = m_sor.m_pos;
         RenderObject* obj = m_sor.m_obj;
         while (obj && obj != m_eor.m_obj && obj != endOfLine.m_obj) {
-            RenderBlock::appendRunsForObject(start, obj->length(), obj, *this);        
+            RenderBlock::appendRunsForObject(m_runs, start, obj->length(), obj, *this);
             start = 0;
             obj = bidiNext(m_sor.root(), obj);
         }
@@ -280,9 +280,9 @@ inline void InlineBidiResolver::appendRun()
             }
             // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
             int end = obj->length() ? pos + 1 : 0;
-            RenderBlock::appendRunsForObject(start, end, obj, *this);
+            RenderBlock::appendRunsForObject(m_runs, start, end, obj, *this);
         }
-        
+
         m_eor.increment();
         m_sor = m_eor;
     }

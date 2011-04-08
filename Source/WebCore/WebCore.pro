@@ -1967,6 +1967,7 @@ HEADERS += \
     platform/KillRing.h \
     platform/KURL.h \
     platform/Length.h \
+    platform/text/BidiRunList.h \
     platform/text/LineEnding.h \
     platform/text/TextCheckerClient.h \
     platform/text/TextChecking.h \

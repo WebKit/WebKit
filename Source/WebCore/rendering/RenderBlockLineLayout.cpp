@@ -117,7 +117,12 @@ static void addMidpoint(LineMidpointState& lineMidpointState, const InlineIterat
     midpoints[lineMidpointState.numMidpoints++] = midpoint;
 }
 
-void RenderBlock::appendRunsForObject(int start, int end, RenderObject* obj, InlineBidiResolver& resolver)
+static inline BidiRun* createRun(int start, int end, RenderObject* obj, InlineBidiResolver& resolver)
+{
+    return new (obj->renderArena()) BidiRun(start, end, obj, resolver.context(), resolver.dir());
+}
+
+void RenderBlock::appendRunsForObject(BidiRunList<BidiRun>& runs, int start, int end, RenderObject* obj, InlineBidiResolver& resolver)
 {
     if (start > end || obj->isFloating() ||
         (obj->isPositioned() && !obj->style()->hasAutoLeftAndRight() && !obj->style()->hasAutoTopAndBottom() && !obj->container()->isRenderInline()))
@@ -137,10 +142,10 @@ void RenderBlock::appendRunsForObject(int start, int end, RenderObject* obj, Inl
         start = nextMidpoint.m_pos;
         lineMidpointState.currentMidpoint++;
         if (start < end)
-            return appendRunsForObject(start, end, obj, resolver);
+            return appendRunsForObject(runs, start, end, obj, resolver);
     } else {
         if (!haveNextMidpoint || (obj != nextMidpoint.m_obj)) {
-            resolver.addRun(new (obj->renderArena()) BidiRun(start, end, obj, resolver.context(), resolver.dir()));
+            runs.addRun(createRun(start, end, obj, resolver));
             return;
         }
 
@@ -151,12 +156,11 @@ void RenderBlock::appendRunsForObject(int start, int end, RenderObject* obj, Inl
             lineMidpointState.currentMidpoint++;
             if (nextMidpoint.m_pos != UINT_MAX) { // UINT_MAX means stop at the object and don't include any of it.
                 if (static_cast<int>(nextMidpoint.m_pos + 1) > start)
-                    resolver.addRun(new (obj->renderArena())
-                        BidiRun(start, nextMidpoint.m_pos + 1, obj, resolver.context(), resolver.dir()));
-                return appendRunsForObject(nextMidpoint.m_pos + 1, end, obj, resolver);
+                    runs.addRun(createRun(start, nextMidpoint.m_pos + 1, obj, resolver));
+                return appendRunsForObject(runs, nextMidpoint.m_pos + 1, end, obj, resolver);
             }
         } else
-           resolver.addRun(new (obj->renderArena()) BidiRun(start, end, obj, resolver.context(), resolver.dir()));
+           runs.addRun(createRun(start, end, obj, resolver));
     }
 }
 
@@ -635,9 +639,9 @@ static void setStaticPositions(RenderBlock* block, RenderBox* child)
     child->layer()->setStaticBlockPosition(blockHeight);
 }
 
-static bool reachedEndOfTextRenderer(InlineBidiResolver& resolver)
+static bool reachedEndOfTextRenderer(const BidiRunList<BidiRun>& bidiRuns)
 {
-    BidiRun* run = resolver.logicallyLastRun();
+    BidiRun* run = bidiRuns.logicallyLastRun();
     if (!run)
         return true;
     unsigned int pos = run->stop();
@@ -656,14 +660,14 @@ static bool reachedEndOfTextRenderer(InlineBidiResolver& resolver)
     return false;
 }
     
-inline BidiRun* RenderBlock::handleTrailingSpaces(InlineBidiResolver& resolver)
+inline BidiRun* RenderBlock::handleTrailingSpaces(BidiRunList<BidiRun>& bidiRuns, BidiContext* currentContext)
 {
-    if (!resolver.runCount()
-        || !resolver.logicallyLastRun()->m_object->style()->breakOnlyAfterWhiteSpace()
-        || !resolver.logicallyLastRun()->m_object->style()->autoWrap())
+    if (!bidiRuns.runCount()
+        || !bidiRuns.logicallyLastRun()->m_object->style()->breakOnlyAfterWhiteSpace()
+        || !bidiRuns.logicallyLastRun()->m_object->style()->autoWrap())
         return 0;
 
-    BidiRun* trailingSpaceRun = resolver.logicallyLastRun();
+    BidiRun* trailingSpaceRun = bidiRuns.logicallyLastRun();
     RenderObject* lastObject = trailingSpaceRun->m_object;
     if (!lastObject->isText())
         return 0;
@@ -681,18 +685,18 @@ inline BidiRun* RenderBlock::handleTrailingSpaces(InlineBidiResolver& resolver)
         return 0;
 
     TextDirection direction = style()->direction();
-    bool shouldReorder = trailingSpaceRun != (direction == LTR ? resolver.lastRun() : resolver.firstRun());
+    bool shouldReorder = trailingSpaceRun != (direction == LTR ? bidiRuns.lastRun() : bidiRuns.firstRun());
     if (firstSpace != trailingSpaceRun->start()) {
-        BidiContext* baseContext = resolver.context();
+        BidiContext* baseContext = currentContext;
         while (BidiContext* parent = baseContext->parent())
             baseContext = parent;
 
         BidiRun* newTrailingRun = new (renderArena()) BidiRun(firstSpace, trailingSpaceRun->m_stop, trailingSpaceRun->m_object, baseContext, OtherNeutral);
         trailingSpaceRun->m_stop = firstSpace;
         if (direction == LTR)
-            resolver.addRun(newTrailingRun);
+            bidiRuns.addRun(newTrailingRun);
         else
-            resolver.prependRun(newTrailingRun);
+            bidiRuns.prependRun(newTrailingRun);
         trailingSpaceRun = newTrailingRun;
         return trailingSpaceRun;
     }
@@ -700,10 +704,10 @@ inline BidiRun* RenderBlock::handleTrailingSpaces(InlineBidiResolver& resolver)
         return trailingSpaceRun;
 
     if (direction == LTR) {
-        resolver.moveRunToEnd(trailingSpaceRun);
+        bidiRuns.moveRunToEnd(trailingSpaceRun);
         trailingSpaceRun->m_level = 0;
     } else {
-        resolver.moveRunToBeginning(trailingSpaceRun);
+        bidiRuns.moveRunToBeginning(trailingSpaceRun);
         trailingSpaceRun->m_level = 1;
     }
     return trailingSpaceRun;
@@ -868,7 +872,10 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
             FloatingObject* lastFloatFromPreviousLine = (m_floatingObjects && !m_floatingObjects->set().isEmpty()) ? m_floatingObjects->set().last() : 0;
             end = findNextLineBreak(resolver, firstLine, isLineEmpty, lineBreakIteratorInfo, previousLineBrokeCleanly, hyphenated, &clear, lastFloatFromPreviousLine, positionedObjects);
             if (resolver.position().atEnd()) {
-                resolver.deleteRuns();
+                // FIXME: We shouldn't be creating any runs in findNextLineBreak to begin with!
+                // Once BidiRunList is separated from BidiResolver this will not be needed.
+                resolver.runs().deleteRuns();
+                resolver.markCurrentRunEmpty(); // FIXME: This can probably be replaced by an ASSERT (or just removed).
                 checkForFloatsFromLastLine = true;
                 break;
             }
@@ -879,10 +886,12 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                     lastRootBox()->setLineBreakInfo(end.m_obj, end.m_pos, resolver.status());
             } else {
                 VisualDirectionOverride override = (style()->visuallyOrdered() ? (style()->direction() == LTR ? VisualLeftToRightOverride : VisualRightToLeftOverride) : NoVisualOverride);
+                // FIXME: This ownership is reversed. We should own the BidiRunList and pass it to createBidiRunsForLine.
+                BidiRunList<BidiRun>& bidiRuns = resolver.runs();
                 resolver.createBidiRunsForLine(end, override, previousLineBrokeCleanly);
                 ASSERT(resolver.position() == end);
 
-                BidiRun* trailingSpaceRun = !previousLineBrokeCleanly ? handleTrailingSpaces(resolver) : 0;
+                BidiRun* trailingSpaceRun = !previousLineBrokeCleanly ? handleTrailingSpaces(bidiRuns, resolver.context()) : 0;
 
                 // Now that the runs have been ordered, we create the line boxes.
                 // At the same time we figure out where border/padding/margin should be applied for
@@ -890,11 +899,12 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
 
                 RootInlineBox* lineBox = 0;
                 int oldLogicalHeight = logicalHeight();
-                if (resolver.runCount()) {
+                if (bidiRuns.runCount()) {
                     if (hyphenated)
-                        resolver.logicallyLastRun()->m_hasHyphen = true;
-                    bool lastLine = end.m_obj && end.m_obj->isText() ? reachedEndOfTextRenderer(resolver) : !end.m_obj;
-                    lineBox = constructLine(resolver.runCount(), resolver.firstRun(), resolver.lastRun(), firstLine, lastLine, end.m_obj && !end.m_pos ? end.m_obj : 0, resolver.logicallyLastRun()->m_object);
+                        bidiRuns.logicallyLastRun()->m_hasHyphen = true;
+                    bool lastLine = end.m_obj && end.m_obj->isText() ? reachedEndOfTextRenderer(bidiRuns) : !end.m_obj;
+                    // FIXME: Clearly constructLine should just take a bidiRuns object.
+                    lineBox = constructLine(bidiRuns.runCount(), bidiRuns.firstRun(), bidiRuns.lastRun(), firstLine, lastLine, end.m_obj && !end.m_pos ? end.m_obj : 0, bidiRuns.logicallyLastRun()->m_object);
                     if (lineBox) {
                         lineBox->setEndsWithBreak(previousLineBrokeCleanly);
 
@@ -908,10 +918,10 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                     
                         // Now we position all of our text runs horizontally.
                         if (!isSVGRootInlineBox)
-                            computeInlineDirectionPositionsForLine(lineBox, firstLine, resolver.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap, verticalPositionCache);
+                            computeInlineDirectionPositionsForLine(lineBox, firstLine, bidiRuns.firstRun(), trailingSpaceRun, end.atEnd(), textBoxDataMap, verticalPositionCache);
 
                         // Now position our text runs vertically.
-                        computeBlockDirectionPositionsForLine(lineBox, resolver.firstRun(), textBoxDataMap, verticalPositionCache);
+                        computeBlockDirectionPositionsForLine(lineBox, bidiRuns.firstRun(), textBoxDataMap, verticalPositionCache);
 
 #if ENABLE(SVG)
                         // SVG text layout code computes vertical & horizontal positions on its own.
@@ -936,7 +946,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                     }
                 }
 
-                resolver.deleteRuns();
+                bidiRuns.deleteRuns();
+                resolver.markCurrentRunEmpty(); // FIXME: This can probably be replaced by an ASSERT (or just removed).
 
                 if (lineBox) {
                     lineBox->setLineBreakInfo(end.m_obj, end.m_pos, resolver.status());

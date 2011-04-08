@@ -397,7 +397,11 @@ void GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const F
     if (paintingDisabled())
         return;
 
+    // FIXME: This ownership should be reversed. We should pass BidiRunList
+    // to BidiResolver in createBidiRunsForLine.
     BidiResolver<TextRunIterator, BidiCharacterRun> bidiResolver;
+    BidiRunList<BidiCharacterRun>& bidiRuns = bidiResolver.runs();
+
     WTF::Unicode::Direction paragraphDirection = run.ltr() ? WTF::Unicode::LeftToRight : WTF::Unicode::RightToLeft;
 
     bidiResolver.setStatus(BidiStatus(paragraphDirection, paragraphDirection, paragraphDirection, BidiContext::create(run.ltr() ? 0 : 1, paragraphDirection, run.directionalOverride())));
@@ -405,11 +409,11 @@ void GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const F
     bidiResolver.setPosition(TextRunIterator(&run, 0));
     bidiResolver.createBidiRunsForLine(TextRunIterator(&run, run.length()));
 
-    if (!bidiResolver.runCount())
+    if (!bidiRuns.runCount())
         return;
 
     FloatPoint currPoint = point;
-    BidiCharacterRun* bidiRun = bidiResolver.firstRun();
+    BidiCharacterRun* bidiRun = bidiRuns.firstRun();
     while (bidiRun) {
 
         TextRun subrun = run;
@@ -425,7 +429,7 @@ void GraphicsContext::drawBidiText(const Font& font, const TextRun& run, const F
             currPoint.move(font.width(subrun), 0);
     }
 
-    bidiResolver.deleteRuns();
+    bidiRuns.deleteRuns();
 }
 
 void GraphicsContext::drawHighlightForText(const Font& font, const TextRun& run, const FloatPoint& point, int h, const Color& backgroundColor, ColorSpace colorSpace, int from, int to)

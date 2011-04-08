@@ -1,3 +1,73 @@
+2011-04-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Split run storage out from BidiResolver into a new BidiRunList class
+        https://bugs.webkit.org/show_bug.cgi?id=57764
+
+        Part of what makes BidiResolver and InlineIterator so difficult to understand
+        (and bug 50912 so difficult to fix) is that BidiResolver is both a state machine
+        for the Unicode Bidi Algorithm (UBA) as well as storage for the resulting
+        BidiRuns from the algorithm.  This patch breaks the storage aspect off
+        into its own class BidiRunList.
+
+        This patch is only a start.  It does not actually fix the problematic ownership
+        relationship, but it does make it possible to fix such in a second patch.
+
+        The run pointers and addRun/prependRun, etc. were already a tightly coupled
+        logical subset of the BidiResolver class, so moving them into their own class
+        was both obvious and easy.  The only piece of logic I had to move was that
+        deleteRuns() had a side-effect of setting the m_emptyRun bit on the resolver.
+
+        I believe this deleteRuns side-effect was only ever used for one place
+        (right after findNextLineBreak) and that it's only needed because
+        findNextLineBreak can sometimes create bidi runs.  Run creation appears to be
+        an unintentional side-effect of how InlineIterator calls through to BidiResolver
+        as part of bidiNext and not a desired effect of the code.  I have added the call
+        to markCurrentRunEmpty to both places deleteRuns was called (where the resolver
+        could get re-used) as a safety precaution.  We could replace both with ASSERTs
+        in a later patch.
+
+        I suspect there may be a small performance win from further refactoring so that
+        findNextLineBreak does not need to create BidiRuns.
+
+        As I commented in the code, callers should own their own BidiRunList which they
+        pass to BidiResolver::createBidiRunsForLine.  I attempted to implement that in
+        an earlier version of this patch, but it was too complicated with the current
+        twisted dependencies between InlineIterator/bidiNext and InlineBidiResolver.
+        raise/lowerExplicitEmbeddingLevel are called unconditionally
+        from commitExplicitEmbedding (which is called by bidiNext) and expect to have
+        access to a runs list even in cases where we don't want any runs (findNextLineBreak).
+
+        I also cleaned up some of the callers to pass around BidiRunList objects instead
+        of InlineBidiResolvers now that they're separate objects.
+
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawBidiText):
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiResolver::BidiResolver):
+        (WebCore::BidiResolver::runs):
+        (WebCore::BidiResolver::markCurrentRunEmpty):
+        (WebCore::::appendRun):
+        (WebCore::::lowerExplicitEmbeddingLevel):
+        (WebCore::::raiseExplicitEmbeddingLevel):
+        (WebCore::::reorderRunsFromLevels):
+        (WebCore::::createBidiRunsForLine):
+        * rendering/InlineIterator.h:
+        (WebCore::InlineBidiResolver::appendRun):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::createRun):
+        (WebCore::RenderBlock::appendRunsForObject):
+        (WebCore::reachedEndOfTextRenderer):
+        (WebCore::RenderBlock::handleTrailingSpaces):
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2011-04-07  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Adam Barth.

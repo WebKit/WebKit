@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class BidiContext;
 class ColumnInfo;
 class InlineIterator;
 class LayoutStateMaintainer;
@@ -43,6 +44,7 @@ struct BidiRun;
 struct PaintInfo;
 
 template <class Iterator, class Run> class BidiResolver;
+template <class Run> class BidiRunList;
 template <class Iterator> struct MidpointState;
 typedef BidiResolver<InlineIterator, BidiRun> InlineBidiResolver;
 typedef MidpointState<InlineIterator> LineMidpointState;
@@ -152,7 +154,7 @@ public:
     RenderBlock* createAnonymousColumnSpanBlock() const;
     RenderBlock* createAnonymousBlockWithSameTypeAs(RenderBlock* otherAnonymousBlock) const;
     
-    static void appendRunsForObject(int start, int end, RenderObject*, InlineBidiResolver&);    
+    static void appendRunsForObject(BidiRunList<BidiRun>&, int start, int end, RenderObject*, InlineBidiResolver&);
     static bool requiresLineBox(const InlineIterator&, bool isLineEmpty = true, bool previousLineBrokeCleanly = true);
 
     ColumnInfo* columnInfo() const;
@@ -350,7 +352,7 @@ private:
 
     void layoutBlockChildren(bool relayoutChildren, int& maxFloatLogicalBottom);
     void layoutInlineChildren(bool relayoutChildren, int& repaintLogicalTop, int& repaintLogicalBottom);
-    BidiRun* handleTrailingSpaces(InlineBidiResolver&);
+    BidiRun* handleTrailingSpaces(BidiRunList<BidiRun>&, BidiContext*);
 
     virtual void borderFitAdjust(int& x, int& w) const; // Shrink the box in which the border paints if border-fit is set.
 

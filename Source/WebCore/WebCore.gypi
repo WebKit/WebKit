@@ -900,6 +900,7 @@
             'platform/sql/SQLiteDatabase.h',
             'platform/sql/SQLiteTransaction.h',
             'platform/text/Base64.h',
+            'platform/text/BidiRunList.h',
             'platform/text/BidiContext.h',
             'platform/text/BidiResolver.h',
             'platform/text/LineEnding.h',

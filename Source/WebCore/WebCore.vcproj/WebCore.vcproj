@@ -30425,6 +30425,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\BidiRunList.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\Hyphenation.h"
 					>
 				</File>
