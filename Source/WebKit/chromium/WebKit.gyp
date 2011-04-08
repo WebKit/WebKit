@@ -610,6 +610,7 @@
                                 '<(chromium_src_dir)/third_party/ots/ots.gyp:ots',
                                 '<(chromium_src_dir)/third_party/zlib/zlib.gyp:zlib',
                                 '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
+                                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
                             ],
                             'direct_dependent_settings': {
                                 'defines': [
