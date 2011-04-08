@@ -100,6 +100,10 @@ public:
     static double defaultMinimumTimerInterval(); // Not really tied to WebView
     static void setMinimumTimerInterval(WebKitWebView*, double);
 
+    // Accessibility
+    static void incrementAccessibilityValue(AtkObject*);
+    static void decrementAccessibilityValue(AtkObject*);
+
     // GC
     static void gcCollectJavascriptObjects();
     static void gcCollectJavascriptObjectsOnAlternateThread(bool waitUntilDone);

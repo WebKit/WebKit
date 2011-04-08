@@ -1,3 +1,20 @@
+2011-04-08  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement increment() and decrement() functions in DRT's AccessibilityUIElement
+        https://bugs.webkit.org/show_bug.cgi?id=58039
+
+        Implemented missing functions in GTK's DRT.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h:
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (modifyAccessibilityValue): Helper function to increment or decrement
+        the current value for an object through the AccessibilityObject's API.
+        (DumpRenderTreeSupportGtk::incrementAccessibilityValue): New function,
+        to be used from GTK's DRT.
+        (DumpRenderTreeSupportGtk::decrementAccessibilityValue): Ditto.
+
 2011-04-06  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Martin Robinson.

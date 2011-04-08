@@ -1,3 +1,16 @@
+2011-04-08  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement increment() and decrement() functions in DRT's AccessibilityUIElement
+        https://bugs.webkit.org/show_bug.cgi?id=58039
+
+        Implement missing functions in GTK's DRT.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::increment): Implemented.
+        (AccessibilityUIElement::decrement): Implemented.
+
 2011-04-08  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Kent Tamura.

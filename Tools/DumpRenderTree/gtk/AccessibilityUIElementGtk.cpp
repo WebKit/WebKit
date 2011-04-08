@@ -26,15 +26,14 @@
 
 #include "config.h"
 #include "AccessibilityUIElement.h"
+
 #include "GOwnPtr.h"
 #include "GRefPtr.h"
-
+#include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
 #include <JavaScriptCore/JSStringRef.h>
-#include <wtf/Assertions.h>
-
 #include <atk/atk.h>
 #include <gtk/gtk.h>
-
+#include <wtf/Assertions.h>
 
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
     : m_element(element)
@@ -572,12 +571,20 @@ bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
 
 void AccessibilityUIElement::increment()
 {
-    // FIXME: implement
+    if (!m_element)
+        return;
+
+    ASSERT(ATK_IS_OBJECT(m_element));
+    DumpRenderTreeSupportGtk::incrementAccessibilityValue(ATK_OBJECT(m_element));
 }
 
 void AccessibilityUIElement::decrement()
 {
-    // FIXME: implement
+    if (!m_element)
+        return;
+
+    ASSERT(ATK_IS_OBJECT(m_element));
+    DumpRenderTreeSupportGtk::decrementAccessibilityValue(ATK_OBJECT(m_element));
 }
 
 void AccessibilityUIElement::press()

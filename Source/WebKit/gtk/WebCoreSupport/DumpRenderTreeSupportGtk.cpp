@@ -679,6 +679,31 @@ void DumpRenderTreeSupportGtk::setMinimumTimerInterval(WebKitWebView* webView, d
     core(webView)->settings()->setMinDOMTimerInterval(interval);
 }
 
+static void modifyAccessibilityValue(AtkObject* axObject, bool increment)
+{
+    if (!axObject || !WEBKIT_IS_ACCESSIBLE(axObject))
+        return;
+
+    AccessibilityObject* coreObject = webkit_accessible_get_accessibility_object(WEBKIT_ACCESSIBLE(axObject));
+    if (!coreObject)
+        return;
+
+    if (increment)
+        coreObject->increment();
+    else
+        coreObject->decrement();
+}
+
+void DumpRenderTreeSupportGtk::incrementAccessibilityValue(AtkObject* axObject)
+{
+    modifyAccessibilityValue(axObject, true);
+}
+
+void DumpRenderTreeSupportGtk::decrementAccessibilityValue(AtkObject* axObject)
+{
+    modifyAccessibilityValue(axObject, false);
+}
+
 void DumpRenderTreeSupportGtk::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
 {
     JSC::ExecState* exec = toJS(context);
