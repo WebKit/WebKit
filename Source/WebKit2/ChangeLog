@@ -2,6 +2,33 @@
 
         Reviewed by Adam Roben.
 
+        Make the drag operations be different functions
+        https://bugs.webkit.org/show_bug.cgi?id=58169
+
+        Since we want performDrag to take a sandbox extension, separate the four
+        drag operations out into different functions. No functionality change.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView draggingEntered:]):
+        (-[WKView draggingUpdated:]):
+        (-[WKView draggingExited:]):
+        (-[WKView performDragOperation:]):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dragEntered):
+        (WebKit::WebPageProxy::dragUpdated):
+        (WebKit::WebPageProxy::dragExited):
+        (WebKit::WebPageProxy::performDrag):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::DragEnter):
+        (WebKit::WebView::DragOver):
+        (WebKit::WebView::DragLeave):
+        (WebKit::WebView::Drop):
+
+2011-04-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Parse 'DispatchOnConnectionQueue' in messages.in files
         https://bugs.webkit.org/show_bug.cgi?id=58168
 

@@ -698,6 +698,26 @@ void WebPageProxy::setActualVisibleContentRect(const IntRect& rect)
 }
 #endif
 
+void WebPageProxy::dragEntered(WebCore::DragData* dragData, const String& dragStorageName)
+{
+    performDragControllerAction(DragControllerActionEntered, dragData, dragStorageName);
+}
+
+void WebPageProxy::dragUpdated(WebCore::DragData* dragData, const String& dragStorageName)
+{
+    performDragControllerAction(DragControllerActionUpdated, dragData, dragStorageName);
+}
+
+void WebPageProxy::dragExited(WebCore::DragData* dragData, const String& dragStorageName)
+{
+    performDragControllerAction(DragControllerActionExited, dragData, dragStorageName);
+}
+
+void WebPageProxy::performDrag(WebCore::DragData* dragData, const String& dragStorageName)
+{
+    performDragControllerAction(DragControllerActionPerformDrag, dragData, dragStorageName);
+}
+
 void WebPageProxy::performDragControllerAction(DragControllerAction action, WebCore::DragData* dragData, const String& dragStorageName)
 {
     if (!isValid())
