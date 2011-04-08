@@ -1,3 +1,24 @@
+2011-04-07  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] Compositor thread infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=56131
+
+        Tests for chrome compositor thread and related infrastructure.
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * tests/CCThreadTaskTest.cpp: Added.
+        (WebCore::TEST):
+        * tests/CCThreadTest.cpp: Added.
+        (WebCore::TEST):
+        (WebCore::PingPongUsingCondition::ping):
+        (WebCore::PingPongTestUsingTasks::ping):
+        (WebCore::PingPongTestUsingTasks::pong):
+        * tests/RunAllTests.cpp:
+        (main):
+
 2011-04-07  Andrew Scherkus  <scherkus@chromium.org>
 
         Revert ENABLE_TRACK patch due to compile failures.

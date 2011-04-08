@@ -1,3 +1,66 @@
+2011-04-07  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] Compositor thread infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=56131
+
+        Introduce chrome compositor thread and related
+        infrastructure.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCMainThread.cpp: Added.
+        (WebCore::CCMainThread::performTask):
+        (WebCore::CCMainThread::postTask):
+        * platform/graphics/chromium/cc/CCMainThread.h: Added.
+        (WebCore::CCMainThread::Task::~Task):
+        (WebCore::CCMainThread::Task::instance):
+        (WebCore::CCMainThread::Task::Task):
+        * platform/graphics/chromium/cc/CCMainThreadTask.h: Added.
+        (WebCore::MainThreadTask0::create):
+        (WebCore::MainThreadTask0::MainThreadTask0):
+        (WebCore::MainThreadTask0::performTask):
+        (WebCore::MainThreadTask1::create):
+        (WebCore::MainThreadTask1::MainThreadTask1):
+        (WebCore::MainThreadTask1::performTask):
+        (WebCore::MainThreadTask2::create):
+        (WebCore::MainThreadTask2::MainThreadTask2):
+        (WebCore::MainThreadTask2::performTask):
+        (WebCore::MainThreadTask3::create):
+        (WebCore::MainThreadTask3::MainThreadTask3):
+        (WebCore::MainThreadTask3::performTask):
+        (WebCore::createMainThreadTask):
+        * platform/graphics/chromium/cc/CCThread.cpp: Added.
+        (WebCore::CCThread::create):
+        (WebCore::CCThread::CCThread):
+        (WebCore::CCThread::~CCThread):
+        (WebCore::CCThread::postTask):
+        (WebCore::CCThread::compositorThreadStart):
+        (WebCore::CCThread::runLoop):
+        * platform/graphics/chromium/cc/CCThread.h: Added.
+        (WebCore::CCThread::Task::~Task):
+        (WebCore::CCThread::Task::instance):
+        (WebCore::CCThread::Task::Task):
+        (WebCore::CCThread::threadID):
+        (WebCore::CCCompletionEvent::CCCompletionEvent):
+        (WebCore::CCCompletionEvent::~CCCompletionEvent):
+        (WebCore::CCCompletionEvent::wait):
+        (WebCore::CCCompletionEvent::signal):
+        * platform/graphics/chromium/cc/CCThreadTask.h: Added.
+        (WebCore::CCThreadTask0::create):
+        (WebCore::CCThreadTask0::CCThreadTask0):
+        (WebCore::CCThreadTask0::performTask):
+        (WebCore::CCThreadTask1::create):
+        (WebCore::CCThreadTask1::CCThreadTask1):
+        (WebCore::CCThreadTask1::performTask):
+        (WebCore::CCThreadTask2::create):
+        (WebCore::CCThreadTask2::CCThreadTask2):
+        (WebCore::CCThreadTask2::performTask):
+        (WebCore::CCThreadTask3::create):
+        (WebCore::CCThreadTask3::CCThreadTask3):
+        (WebCore::CCThreadTask3::performTask):
+        (WebCore::createCCThreadTask):
+
 2011-04-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

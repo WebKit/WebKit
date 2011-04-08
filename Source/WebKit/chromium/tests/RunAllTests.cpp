@@ -39,8 +39,11 @@
 #include "WebUnitTests.h"
 #endif
 
+#include <gmock/gmock.h>
+
 int main(int argc, char** argv)
 {
+    ::testing::InitGoogleMock(&argc, argv);
     TestSuite testSuite(argc, argv);
     // TestSuite must be created before SetUpTestEnvironment so it performs
     // initializations needed by WebKit support.

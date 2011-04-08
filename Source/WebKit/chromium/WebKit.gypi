@@ -53,6 +53,8 @@
         ],
         'webkit_unittest_files': [
             'tests/ArenaTestHelpers.h',
+            'tests/CCThreadTaskTest.cpp',
+            'tests/CCThreadTest.cpp',
             'tests/DragImageTest.cpp',
             'tests/IDBBindingUtilitiesTest.cpp',
             'tests/IDBKeyPathTest.cpp',
