@@ -1,5 +1,15 @@
 2011-04-07  Jessie Berlin  <jberlin@apple.com>
 
+        Max build fix.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::checkSpellingOfString):
+        Do not risk an overflow.
+        (WebKit::WebEditorClient::checkGrammarOfString):
+        Ditto.
+
+2011-04-07  Jessie Berlin  <jberlin@apple.com>
+
         Reviewed by Brian Weinstein.
 
         WebKit2: Implement TextChecker on Windows

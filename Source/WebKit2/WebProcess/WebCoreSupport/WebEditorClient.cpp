@@ -405,7 +405,7 @@ void WebEditorClient::learnWord(const String& word)
 
 void WebEditorClient::checkSpellingOfString(const UChar* text, int length, int* misspellingLocation, int* misspellingLength)
 {
-    int32_t resultLocation = WTF::notFound;
+    int32_t resultLocation = -1;
     int32_t resultLength = 0;
     // FIXME: It would be nice if we wouldn't have to copy the text here.
     m_page->sendSync(Messages::WebPageProxy::CheckSpellingOfString(String(text, length)),
@@ -422,7 +422,7 @@ String WebEditorClient::getAutoCorrectSuggestionForMisspelledWord(const String&)
 
 void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector<WebCore::GrammarDetail>& grammarDetails, int* badGrammarLocation, int* badGrammarLength)
 {
-    int32_t resultLocation = WTF::notFound;
+    int32_t resultLocation = -1;
     int32_t resultLength = 0;
     // FIXME: It would be nice if we wouldn't have to copy the text here.
     m_page->sendSync(Messages::WebPageProxy::CheckGrammarOfString(String(text, length)),
