@@ -1,3 +1,45 @@
+2011-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        dump-as-markup conversion: editing/pasteboard/5065605.html and display-block-on-spans.html
+        https://bugs.webkit.org/show_bug.cgi?id=58074
+
+        Converted 5065605.html and display-block-on-spans.html to dump-as-markup tests.
+
+        * editing/pasteboard/5065605-expected.txt: Added.
+        * editing/pasteboard/5065605.html:
+        * editing/pasteboard/display-block-on-spans-expected.txt: Added.
+        * editing/pasteboard/display-block-on-spans.html:
+        * platform/chromium-linux/editing/pasteboard/5065605-expected.checksum: Removed.
+        * platform/chromium-linux/editing/pasteboard/5065605-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/display-block-on-spans-expected.checksum: Removed.
+        * platform/chromium-linux/editing/pasteboard/display-block-on-spans-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/5065605-expected.checksum: Removed.
+        * platform/chromium-win/editing/pasteboard/5065605-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/5065605-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/display-block-on-spans-expected.checksum: Removed.
+        * platform/chromium-win/editing/pasteboard/display-block-on-spans-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/display-block-on-spans-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/5065605-expected.checksum: Removed.
+        * platform/gtk/editing/pasteboard/5065605-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/5065605-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/display-block-on-spans-expected.checksum: Removed.
+        * platform/gtk/editing/pasteboard/display-block-on-spans-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/display-block-on-spans-expected.txt: Removed.
+        * platform/mac-leopard/editing/pasteboard/5065605-expected.checksum: Removed.
+        * platform/mac-leopard/editing/pasteboard/5065605-expected.png: Removed.
+        * platform/mac-leopard/editing/pasteboard/display-block-on-spans-expected.checksum: Removed.
+        * platform/mac-leopard/editing/pasteboard/display-block-on-spans-expected.png: Removed.
+        * platform/mac/editing/pasteboard/5065605-expected.checksum: Removed.
+        * platform/mac/editing/pasteboard/5065605-expected.png: Removed.
+        * platform/mac/editing/pasteboard/5065605-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/display-block-on-spans-expected.checksum: Removed.
+        * platform/mac/editing/pasteboard/display-block-on-spans-expected.png: Removed.
+        * platform/mac/editing/pasteboard/display-block-on-spans-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/5065605-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/display-block-on-spans-expected.txt: Removed.
+
 2011-04-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Add platform specific expected file after r83235.
