@@ -46,6 +46,10 @@ GdkPixbuf* gdk_pixbuf_get_from_surface(cairo_surface_t* surface, int srcX, int s
 #define gdk_window_get_visual gdk_drawable_get_visual
 #endif // GTK_CHECK_VERSION(2, 23, 0)
 
+#if !GTK_CHECK_VERSION(2, 22, 0)
+cairo_surface_t* gdk_window_create_similar_surface(GdkWindow* window, cairo_content_t content, int width, int height);
+#endif // GTK_CHECK_VERSION(2, 22, 0)
+
 #if !GTK_CHECK_VERSION(2, 21, 2)
 #define gdk_visual_get_depth(visual) (visual)->depth
 #define gdk_visual_get_bits_per_rgb(visual) (visual)->bits_per_rgb

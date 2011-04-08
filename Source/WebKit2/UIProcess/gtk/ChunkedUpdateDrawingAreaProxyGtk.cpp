@@ -32,7 +32,7 @@
 #include "UpdateChunk.h"
 #include "WebProcessProxy.h"
 #include "WebView.h"
-
+#include <WebCore/GtkVersioning.h>
 #include <gdk/gdk.h>
 
 using namespace WebCore;

@@ -271,3 +271,13 @@ gboolean g_signal_accumulator_first_wins(GSignalInvocationHint *invocationHint, 
 }
 #endif
 
+#if !GTK_CHECK_VERSION(2, 22, 0)
+cairo_surface_t *gdk_window_create_similar_surface(GdkWindow *window, cairo_content_t content, int width, int height)
+{
+    cairo_t *cairoContext = gdk_cairo_create(window);
+    cairo_surface_t *cairoSurface = cairo_get_target(cairoContext);
+    cairo_surface_t *newSurface = cairo_surface_create_similar(cairoSurface, content, width, height);
+    cairo_destroy(cairoContext);
+    return newSurface;
+}
+#endif // GTK_CHECK_VERSION(2, 22, 0)

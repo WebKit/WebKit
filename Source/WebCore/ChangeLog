@@ -1,3 +1,16 @@
+2011-04-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Fix the WebKit2 build for older versions of GTK+
+        https://bugs.webkit.org/show_bug.cgi?id=58095
+
+        No new tests. This is just a build fix.
+
+        * platform/gtk/GtkVersioning.c:
+        (gdk_window_create_similar_surface): Reimplement this method for older versions of GDK.
+        * platform/gtk/GtkVersioning.h: Add the new method to the header.
+
 2011-04-08  Misha Tyutyunik  <michael.tyutyunik@nokia.com>
 
         Reviewed by Laszlo Gombos.
