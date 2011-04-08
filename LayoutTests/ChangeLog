@@ -1,3 +1,10 @@
+2011-04-07  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update expectations for xsl-blocked.php and pate-text-011.html.
+
+        * platform/chromium/http/tests/security/contentSecurityPolicy/xsl-blocked-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-07  Dominic Cooney  <dominicc@google.com>
 
         Reviewed by Dimitri Glazkov.

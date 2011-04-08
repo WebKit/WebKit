@@ -3297,5 +3297,5 @@ BUGWK58008 MAC SNOWLEOPARD : fast/text/international/bidi-neutral-run.html = IMA
 BUGWK58010 WIN LINUX DEBUG : inspector/profiler/detailed-heapshots-summary.html = PASS TIMEOUT
 BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = CRASH PASS
 BUGWK58005 MAC : editing/inserting/editable-inline-element.html = IMAGE
-// Will ask abarth...
-BUGTKENT : http/tests/security/contentSecurityPolicy/xsl-blocked.php = MISSING
+
+BUGWK58078 WIN LINUX : editing/pasteboard/paste-text-011.html = TEXT
