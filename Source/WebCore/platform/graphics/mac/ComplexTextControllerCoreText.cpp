@@ -43,33 +43,32 @@ extern const CFStringRef kCTTypesetterOptionForcedEmbeddingLevel;
 namespace WebCore {
 
 ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const SimpleFontData* fontData, const UChar* characters, unsigned stringLocation, size_t stringLength, CFRange runRange)
-    : m_coreTextRun(ctRun)
-    , m_fontData(fontData)
+    : m_fontData(fontData)
     , m_characters(characters)
     , m_stringLocation(stringLocation)
     , m_stringLength(stringLength)
     , m_indexEnd(runRange.location + runRange.length)
     , m_isMonotonic(true)
 {
-    m_glyphCount = CTRunGetGlyphCount(m_coreTextRun.get());
-    m_coreTextIndices = CTRunGetStringIndicesPtr(m_coreTextRun.get());
+    m_glyphCount = CTRunGetGlyphCount(ctRun);
+    m_coreTextIndices = CTRunGetStringIndicesPtr(ctRun);
     if (!m_coreTextIndices) {
         m_coreTextIndicesVector.grow(m_glyphCount);
-        CTRunGetStringIndices(m_coreTextRun.get(), CFRangeMake(0, 0), m_coreTextIndicesVector.data());
+        CTRunGetStringIndices(ctRun, CFRangeMake(0, 0), m_coreTextIndicesVector.data());
         m_coreTextIndices = m_coreTextIndicesVector.data();
     }
 
-    m_glyphs = CTRunGetGlyphsPtr(m_coreTextRun.get());
+    m_glyphs = CTRunGetGlyphsPtr(ctRun);
     if (!m_glyphs) {
         m_glyphsVector.grow(m_glyphCount);
-        CTRunGetGlyphs(m_coreTextRun.get(), CFRangeMake(0, 0), m_glyphsVector.data());
+        CTRunGetGlyphs(ctRun, CFRangeMake(0, 0), m_glyphsVector.data());
         m_glyphs = m_glyphsVector.data();
     }
 
-    m_advances = CTRunGetAdvancesPtr(m_coreTextRun.get());
+    m_advances = CTRunGetAdvancesPtr(ctRun);
     if (!m_advances) {
         m_advancesVector.grow(m_glyphCount);
-        CTRunGetAdvances(m_coreTextRun.get(), CFRangeMake(0, 0), m_advancesVector.data());
+        CTRunGetAdvances(ctRun, CFRangeMake(0, 0), m_advancesVector.data());
         m_advances = m_advancesVector.data();
     }
 }
@@ -158,6 +157,8 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
 
         line.adoptCF(wkCreateCTLineWithUniCharProvider(&provideStringAndAttributes, 0, &info));
     }
+
+    m_coreTextLines.append(line.get());
 
     CFArrayRef runArray = CTLineGetGlyphRuns(line.get());
 

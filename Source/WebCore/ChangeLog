@@ -1,3 +1,15 @@
+2011-04-07  Ned Holbrook  <nholbrook@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        CTLine objects should outlive their CTRuns
+        https://bugs.webkit.org/show_bug.cgi?id=58063
+
+        * platform/graphics/mac/ComplexTextController.h: Add m_coreTextLines, to be destroyed after m_complexTextRuns.
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
+        (WebCore::ComplexTextController::ComplexTextRun::ComplexTextRun): Moot m_coreTextRun.
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersCoreText): Append line to m_coreTextLines.
+
 2011-04-07  Nat Duca  <nduca@chromium.org>
 
         Reviewed by David Levin.

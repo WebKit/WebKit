@@ -116,9 +116,6 @@ private:
         static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector, ATSULineRef, URefCon, void*, ATSULayoutOperationCallbackStatus*);
 #endif
 
-#if USE(CORE_TEXT)
-        RetainPtr<CTRunRef> m_coreTextRun;
-#endif
         unsigned m_glyphCount;
         const SimpleFontData* m_fontData;
         const UChar* m_characters;
@@ -159,6 +156,10 @@ private:
 
     Vector<UChar, 256> m_smallCapsBuffer;
 
+#if USE(CORE_TEXT)
+    // Retain lines rather than their runs for better performance.
+    Vector<RetainPtr<CTLineRef> > m_coreTextLines;
+#endif
     Vector<RefPtr<ComplexTextRun>, 16> m_complexTextRuns;
     Vector<CGSize, 256> m_adjustedAdvances;
     Vector<CGGlyph, 256> m_adjustedGlyphs;
