@@ -1,3 +1,13 @@
+2011-04-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r83295.
+        http://trac.webkit.org/changeset/83295
+        https://bugs.webkit.org/show_bug.cgi?id=58144
+
+        Broke 4 tests in QtWebKit (Requested by tonikitoo on #webkit).
+
+        * platform/qt/Skipped:
+
 2011-04-08  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, looks like the test is working fine now.
