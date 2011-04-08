@@ -1,3 +1,25 @@
+2011-04-08  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update expectations for r82899 and r83253.
+
+        * platform/chromium-mac-leopard/fast/borders/border-radius-huge-assert-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/chromium-mac-leopard/fast/box-shadow/border-radius-big-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/box-shadow/spread-multiple-inset-expected.png:
+        * platform/chromium-mac/fast/borders/border-radius-circle-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-huge-assert-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/border-radius-big-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/spread-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/spread-multiple-inset-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/spread-multiple-normal-expected.png: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-capacity-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-boundary-values-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-optimums-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-changing-pseudo-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Flaky Test: fast/events/tabindex-focus-blur-all.html
