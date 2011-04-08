@@ -35,7 +35,7 @@
 #import "WebNSFileManagerExtras.h"
 #import "WebNSNotificationCenterExtras.h"
 #import "WebNSURLExtras.h"
-#import "WebPreferences.h"
+#import "WebPreferencesPrivate.h"
 #import "WebTypesInternal.h"
 #import <WebCore/IconDatabase.h>
 #import <WebCore/Image.h>
@@ -313,7 +313,7 @@ static WebIconDatabaseClient* defaultClient()
                                                object:NSApp];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(_resetCachedWebPreferences:)
-                                                 name:WebPreferencesChangedNotification
+                                                 name:WebPreferencesChangedInternalNotification
                                                object:nil];
 }
 
@@ -324,7 +324,7 @@ static WebIconDatabaseClient* defaultClient()
                                                     name:NSApplicationWillTerminateNotification
                                                   object:NSApp];
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:WebPreferencesChangedNotification
+                                                    name:WebPreferencesChangedInternalNotification
                                                   object:nil];
 }
 

@@ -1,3 +1,52 @@
+2011-04-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin Adler.
+
+        -[WebView setPreferences:] can take a lot of time if loading lots of webviews at once
+        https://bugs.webkit.org/show_bug.cgi?id=58128
+        <rdar://problem/9244553>
+        
+        The root of the problem here was an O(N^2) issue - each WebView,
+        upon having its preferences initialized, would broadcast a
+        notification that was listened to by all other WebViews sharing
+        its preferences.
+        
+        To maintain the API contract, I split the notification into two,
+        one that is for public API consumption, and the other which is for
+        internal use only. Changes that don't need to be picked up by
+        other WebViews broadcast the public notification only. And we
+        avoid WebView broadcasting a notification just to get itself to
+        update.
+
+        * Misc/WebIconDatabase.mm:
+        (-[WebIconDatabase _startUpIconDatabase]):
+        (-[WebIconDatabase _shutDownIconDatabase]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView viewWillMoveToWindow:]):
+        (-[WebBaseNetscapePluginView viewWillMoveToSuperview:]):
+        (-[WebBaseNetscapePluginView viewDidMoveToWindow]):
+        (-[WebBaseNetscapePluginView viewWillMoveToHostWindow:]):
+        * WebView/WebPreferences.mm:
+        (-[WebPreferences initWithIdentifier:]):
+        (-[WebPreferences _setStringValue:forKey:]):
+        (-[WebPreferences _setIntegerValue:forKey:]):
+        (-[WebPreferences _setFloatValue:forKey:]):
+        (-[WebPreferences _setBoolValue:forKey:]):
+        (-[WebPreferences _setLongLongValue:forKey:]):
+        (-[WebPreferences _setUnsignedLongLongValue:forKey:]):
+        (-[WebPreferences _postPreferencesChangedNotification]):
+        (-[WebPreferences _postPreferencesChangedAPINotification]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        (-[WebView _preferencesChangedNotification:]):
+        (-[WebView _preferencesChanged:]):
+        (-[WebView setUsesPageCache:]):
+        (+[WebView initialize]):
+        (-[WebView setPreferences:]):
+        (-[WebView _keyboardUIMode]):
+        * WebView/WebViewInternal.h:
+
 2011-04-07  Andrew Scherkus  <scherkus@chromium.org>
 
         Revert ENABLE_TRACK patch due to compile failures.

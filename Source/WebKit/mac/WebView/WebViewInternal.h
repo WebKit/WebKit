@@ -183,6 +183,8 @@ namespace WebCore {
 
 - (void)_setInsertionPasteboard:(NSPasteboard *)pasteboard;
 
+- (void)_preferencesChanged:(WebPreferences *)preferences;
+
 #if ENABLE(VIDEO) && defined(__cplusplus)
 - (void)_enterFullscreenForNode:(WebCore::Node*)node;
 - (void)_exitFullscreen;

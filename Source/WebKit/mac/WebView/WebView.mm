@@ -777,10 +777,10 @@ static NSString *leakOutlookQuirksUserScriptContents()
 
     WebPreferences *prefs = [self preferences];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
-                                                 name:WebPreferencesChangedNotification object:prefs];
+                                                 name:WebPreferencesChangedInternalNotification object:prefs];
 
-    // Post a notification so the WebCore settings update.
-    [[self preferences] _postPreferencesChangesNotification];
+    [self _preferencesChanged:[self preferences]];
+    [[self preferences] _postPreferencesChangedAPINotification];
 
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION)) {
         // Originally, we allowed all local loads.
@@ -1441,8 +1441,12 @@ static bool fastDocumentTeardownEnabled()
 - (void)_preferencesChangedNotification:(NSNotification *)notification
 {
     WebPreferences *preferences = (WebPreferences *)[notification object];
+    [self _preferencesChanged:preferences];
+}
+
+- (void)_preferencesChanged:(WebPreferences *)preferences
+{    
     ASSERT(preferences == [self preferences]);
-    
     if (!_private->userAgentOverridden)
         _private->userAgent = String();
 
@@ -2287,8 +2291,9 @@ static inline IMP getMethod(id o, SEL s)
 {
     _private->usesPageCache = usesPageCache;
 
-    // Post a notification so the WebCore settings update.
-    [[self preferences] _postPreferencesChangesNotification];
+    // Update our own settings and post the public notification only
+    [self _preferencesChanged:[self preferences]];
+    [[self preferences] _postPreferencesChangedAPINotification];
 }
 
 - (WebHistoryItem *)_globalHistoryItem
@@ -2873,7 +2878,7 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     WTF::initializeMainThreadToProcessMainThread();
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:) name:WebPreferencesChangedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:) name:WebPreferencesChangedInternalNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesRemovedNotification:) name:WebPreferencesRemovedNotification object:nil];    
 
     continuousSpellCheckingEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebContinuousSpellCheckingEnabled];
@@ -3378,15 +3383,16 @@ static bool needsWebViewInitThreadWorkaround()
 
     WebPreferences *oldPrefs = _private->preferences;
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedNotification object:[self preferences]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedInternalNotification object:[self preferences]];
     [WebPreferences _removeReferenceForIdentifier:[oldPrefs identifier]];
 
     _private->preferences = [prefs retain];
 
     // After registering for the notification, post it so the WebCore settings update.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
-        name:WebPreferencesChangedNotification object:[self preferences]];
-    [[self preferences] _postPreferencesChangesNotification];
+        name:WebPreferencesChangedInternalNotification object:[self preferences]];
+    [self _preferencesChanged:[self preferences]];
+    [[self preferences] _postPreferencesChangedAPINotification];
 
     [oldPrefs didRemoveFromWebView];
     [oldPrefs release];
@@ -5989,7 +5995,7 @@ static inline uint64_t roundUpToPowerOf2(uint64_t num)
 
         [[NSNotificationCenter defaultCenter] 
             addObserver:self selector:@selector(_retrieveKeyboardUIModeFromPreferences:) 
-            name:WebPreferencesChangedNotification object:nil];
+            name:WebPreferencesChangedInternalNotification object:nil];
     }
     return _private->_keyboardUIMode;
 }

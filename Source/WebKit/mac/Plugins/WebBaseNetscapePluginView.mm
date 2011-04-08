@@ -619,9 +619,9 @@ String WebHaltablePlugin::pluginName() const
             // View will have no associated windows.
             [self stop];
             
-            // Stop observing WebPreferencesChangedNotification -- we only need to observe this when installed in the view hierarchy.
+            // Stop observing WebPreferencesChangedInternalNotification -- we only need to observe this when installed in the view hierarchy.
             // When not in the view hierarchy, -viewWillMoveToWindow: and -viewDidMoveToWindow will start/stop the plugin as needed.
-            [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedNotification object:nil];
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedInternalNotification object:nil];
         }
     }
 }
@@ -634,9 +634,9 @@ String WebHaltablePlugin::pluginName() const
         // There is no need to start the plug-in when moving into a superview.  -viewDidMoveToWindow takes care of that.
         [self stop];
         
-        // Stop observing WebPreferencesChangedNotification -- we only need to observe this when installed in the view hierarchy.
+        // Stop observing WebPreferencesChangedInternalNotification -- we only need to observe this when installed in the view hierarchy.
         // When not in the view hierarchy, -viewWillMoveToWindow: and -viewDidMoveToWindow will start/stop the plugin as needed.
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedNotification object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedInternalNotification object:nil];
     }
 }
 
@@ -645,11 +645,11 @@ String WebHaltablePlugin::pluginName() const
     [self resetTrackingRect];
     
     if ([self window]) {
-        // While in the view hierarchy, observe WebPreferencesChangedNotification so that we can start/stop depending
+        // While in the view hierarchy, observe WebPreferencesChangedInternalNotification so that we can start/stop depending
         // on whether plugins are enabled.
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(preferencesHaveChanged:)
-                                                     name:WebPreferencesChangedNotification
+                                                     name:WebPreferencesChangedInternalNotification
                                                    object:nil];
 
         _isPrivateBrowsingEnabled = [[[self webView] preferences] privateBrowsingEnabled];
@@ -677,8 +677,8 @@ String WebHaltablePlugin::pluginName() const
         // View will have no associated windows.
         [self stop];
         
-        // Remove WebPreferencesChangedNotification observer -- we will observe once again when we move back into the window
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedNotification object:nil];
+        // Remove WebPreferencesChangedInternalNotification observer -- we will observe once again when we move back into the window
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:WebPreferencesChangedInternalNotification object:nil];
     }
 }
 

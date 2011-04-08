@@ -42,6 +42,7 @@
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 NSString *WebPreferencesRemovedNotification = @"WebPreferencesRemovedNotification";
+NSString *WebPreferencesChangedInternalNotification = @"WebPreferencesChangedInternalNotification";
 
 #define KEY(x) (_private->identifier ? [_private->identifier stringByAppendingString:(x)] : (x))
 
@@ -232,7 +233,7 @@ static bool useQuickLookQuirks(void)
 
     [[self class] _setInstance:self forIdentifier:_private->identifier];
 
-    [self _postPreferencesChangesNotification];
+    [self _postPreferencesChangedNotification];
 
     return self;
 }
@@ -436,7 +437,7 @@ static bool useQuickLookQuirks(void)
     [_private->values setObject:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setObject:value forKey:_key];
-    [self _postPreferencesChangesNotification];
+    [self _postPreferencesChangedNotification];
 }
 
 - (int)_integerValueForKey:(NSString *)key
@@ -453,7 +454,7 @@ static bool useQuickLookQuirks(void)
     [_private->values _webkit_setInt:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setInteger:value forKey:_key];
-    [self _postPreferencesChangesNotification];
+    [self _postPreferencesChangedNotification];
 }
 
 - (float)_floatValueForKey:(NSString *)key
@@ -470,7 +471,7 @@ static bool useQuickLookQuirks(void)
     [_private->values _webkit_setFloat:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setFloat:value forKey:_key];
-    [self _postPreferencesChangesNotification];
+    [self _postPreferencesChangedNotification];
 }
 
 - (BOOL)_boolValueForKey:(NSString *)key
@@ -486,7 +487,7 @@ static bool useQuickLookQuirks(void)
     [_private->values _webkit_setBool:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setBool:value forKey:_key];
-    [self _postPreferencesChangesNotification];
+    [self _postPreferencesChangedNotification];
 }
 
 - (long long)_longLongValueForKey:(NSString *)key
@@ -503,7 +504,7 @@ static bool useQuickLookQuirks(void)
     [_private->values _webkit_setLongLong:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithLongLong:value] forKey:_key];
-    [self _postPreferencesChangesNotification];
+    [self _postPreferencesChangedNotification];
 }
 
 - (unsigned long long)_unsignedLongLongValueForKey:(NSString *)key
@@ -520,7 +521,7 @@ static bool useQuickLookQuirks(void)
     [_private->values _webkit_setUnsignedLongLong:value forKey:_key];
     if (_private->autosaves)
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithUnsignedLongLong:value] forKey:_key];
-    [self _postPreferencesChangesNotification];
+    [self _postPreferencesChangedNotification];
 }
 
 - (NSString *)standardFontFamily
@@ -1173,16 +1174,25 @@ static bool useQuickLookQuirks(void)
         [self performSelector:@selector(_checkLastReferenceForIdentifier:) withObject:[self _concatenateKeyWithIBCreatorID:ident] afterDelay:0.1];
 }
 
-- (void)_postPreferencesChangesNotification
+- (void)_postPreferencesChangedNotification
 {
     if (!pthread_main_np()) {
         [self performSelectorOnMainThread:_cmd withObject:nil waitUntilDone:NO];
         return;
     }
 
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:WebPreferencesChangedNotification object:self
-                    userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebPreferencesChangedInternalNotification object:self userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebPreferencesChangedNotification object:self userInfo:nil];
+}
+
+- (void)_postPreferencesChangedAPINotification
+{
+    if (!pthread_main_np()) {
+        [self performSelectorOnMainThread:_cmd withObject:nil waitUntilDone:NO];
+        return;
+    }
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebPreferencesChangedNotification object:self userInfo:nil];
 }
 
 + (CFStringEncoding)_systemCFStringEncoding
