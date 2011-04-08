@@ -571,10 +571,10 @@ void PopupContainer::refresh(const IntRect& targetControlRect)
     location.move(0, targetControlRect.height());
 
     listBox()->updateFromElement();
-    // Store the original height to check if we need to request the location.
-    int originalHeight = height();
+    // Store the original size to check if we need to request the location.
+    IntSize originalSize = size();
     IntRect widgetRect = layoutAndCalculateWidgetRect(targetControlRect.height(), location);
-    if (originalHeight != widgetRect.height())
+    if (originalSize != widgetRect.size())
         setFrameRect(widgetRect);
 
     invalidate();

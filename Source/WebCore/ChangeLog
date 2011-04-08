@@ -1,3 +1,20 @@
+2011-04-07  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] Fix relocation problem of popup window which introduces autofill popup sometimes moves to screen's top left corner.
+        https://bugs.webkit.org/show_bug.cgi?id=57911
+        http://code.google.com/p/chromium/issues/detail?id=78073
+
+        Manual test added: manual-tests/autofill-popup-location.html
+
+        Originally only height is checked so that it introduces the bug.
+        So I changed it to check both width and height as size.
+
+        * manual-tests/autofill-popup-location.html: Added.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::refresh): Check window size between original and new before calling setFrameRect().
+
 2011-04-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
