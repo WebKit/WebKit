@@ -1331,6 +1331,8 @@ webcore_sources += \
 	Source/WebCore/dom/SelectElement.h \
 	Source/WebCore/dom/SelectorNodeList.cpp \
 	Source/WebCore/dom/SelectorNodeList.h \
+	Source/WebCore/dom/ShadowRoot.cpp \
+	Source/WebCore/dom/ShadowRoot.h \
 	Source/WebCore/dom/SpaceSplitString.cpp \
 	Source/WebCore/dom/SpaceSplitString.h \
 	Source/WebCore/dom/StaticHashSetNodeList.cpp \

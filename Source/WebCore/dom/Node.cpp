@@ -1402,18 +1402,25 @@ Node *Node::nextLeafNode() const
     return 0;
 }
 
+ContainerNode* Node::parentNodeForRenderingAndStyle() const
+{
+    ContainerNode* parent = parentOrHostNode();
+    return parent && parent->isShadowBoundary() ? parent->shadowHost() : parent;
+}
+
 RenderObject* Node::createRendererAndStyle()
 {
     ASSERT(!renderer());
     ASSERT(document()->shouldCreateRenderers());
 
-    ContainerNode* parent = parentOrHostNode();
+    ContainerNode* parent = parentNodeForRenderingAndStyle();
     ASSERT(parent);
+
     RenderObject* parentRenderer = parent->renderer();
 
     // FIXME: Ignoring canHaveChildren() in a case of isShadowRoot() might be wrong.
     // See https://bugs.webkit.org/show_bug.cgi?id=52423
-    if (!parentRenderer || (!parentRenderer->canHaveChildren() && !isShadowRoot()) || !parent->childShouldCreateRenderer(this))
+    if (!parentRenderer || (!parentRenderer->canHaveChildren() && !(isShadowRoot() || parentNode()->isShadowBoundary())) || !parent->childShouldCreateRenderer(this))
         return 0;
 
     RefPtr<RenderStyle> style = styleForRenderer();
@@ -1465,7 +1472,7 @@ void Node::createRendererIfNeeded()
         return;
 
     // Note: Adding newRenderer instead of renderer(). renderer() may be a child of newRenderer.
-    parentOrHostNode()->renderer()->addChild(newRenderer, nextRenderer());
+    parentNodeForRenderingAndStyle()->renderer()->addChild(newRenderer, nextRenderer());
 }
 
 PassRefPtr<RenderStyle> Node::styleForRenderer()

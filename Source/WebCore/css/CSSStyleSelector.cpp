@@ -893,7 +893,7 @@ inline void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* paren
 {
     m_checker.m_pseudoStyle = pseudoID;
 
-    m_parentNode = e ? e->parentOrHostNode() : 0;
+    m_parentNode = e ? e->parentNodeForRenderingAndStyle() : 0;
 
     if (parentStyle)
         m_parentStyle = parentStyle;

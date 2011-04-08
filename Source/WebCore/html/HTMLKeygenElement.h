@@ -51,7 +51,7 @@ private:
 
     virtual void reset();
 
-    HTMLSelectElement* selectShadow();
+    HTMLSelectElement* shadowSelect() const;
 
     AtomicString m_challenge;
     AtomicString m_keyType;

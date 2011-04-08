@@ -40,6 +40,7 @@
 #include "Page.h"
 #include "RenderObject.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "Text.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -129,12 +130,7 @@ void ValidationMessage::buildBubbleTree(Timer<ValidationMessage>*)
     // contains non-absolute or non-fixed renderers as children.
     m_bubble->getInlineStyleDecl()->setProperty(CSSPropertyPosition, CSSValueAbsolute);
     ExceptionCode ec = 0;
-    // FIXME: We need a way to host multiple shadow roots in a single node, or
-    // to inherit an existing shadow tree.
-    if (host->shadowRoot())
-        host->shadowRoot()->appendChild(m_bubble.get(), ec);
-    else
-        host->setShadowRoot(m_bubble);
+    host->ensureShadowRoot()->appendChild(m_bubble.get(), ec);
 
     RefPtr<HTMLElement> clipper = ElementWithPseudoId::create(doc, "-webkit-validation-bubble-arrow-clipper");
     clipper->appendChild(ElementWithPseudoId::create(doc, "-webkit-validation-bubble-arrow"), ec);
@@ -161,12 +157,8 @@ void ValidationMessage::deleteBubbleTree(Timer<ValidationMessage>*)
     if (m_bubble) {
         m_bubbleMessage = 0;
         HTMLElement* host = toHTMLElement(m_element);
-        if (m_bubble->isShadowRoot())
-            host->setShadowRoot(0);
-        else {
-            ExceptionCode ec;
-            host->shadowRoot()->removeChild(m_bubble.get(), ec);
-        }
+        ExceptionCode ec;
+        host->shadowRoot()->removeChild(m_bubble.get(), ec);
         m_bubble = 0;
     }
     m_message = String();

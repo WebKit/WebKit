@@ -36,9 +36,10 @@ public:
     void parseHTML(const String&, Element* contextElement, FragmentScriptingPermission = FragmentScriptingAllowed);
     bool parseXML(const String&, Element* contextElement, FragmentScriptingPermission = FragmentScriptingAllowed);
 
-private:
+protected:
     DocumentFragment(Document*);
 
+private:
     virtual String nodeName() const;
     virtual NodeType nodeType() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);

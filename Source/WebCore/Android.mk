@@ -175,6 +175,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/ScriptRunner.cpp \
 	dom/SelectElement.cpp \
 	dom/SelectorNodeList.cpp \
+	dom/ShadowRoot.cpp \
 	dom/SpaceSplitString.cpp \
 	dom/StaticHashSetNodeList.cpp \
 	dom/StaticNodeList.cpp \

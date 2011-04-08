@@ -15,8 +15,9 @@ shouldBe('keygen.options', 'undefined');  // keygen is not a select
 
 if (window.layoutTestController) {
   var shadow = layoutTestController.shadowRoot(keygen);
-  shouldBe('shadow.tagName', '"SELECT"');
-  shouldBe('layoutTestController.shadowRoot(shadow)', 'null');
+  shouldBe('shadow.firstChild.tagName', '"SELECT"');
+  shouldBe('layoutTestController.shadowRoot(shadow)', 'undefined');
+  shouldBe('layoutTestController.shadowRoot(shadow.firstChild)', 'null');
 }
 
 var successfullyParsed = true;

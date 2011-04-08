@@ -46446,6 +46446,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\ShadowRoot.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\ShadowRoot.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\SpaceSplitString.cpp"
 				>
 				<FileConfiguration

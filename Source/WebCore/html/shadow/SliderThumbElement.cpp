@@ -105,7 +105,7 @@ void SliderThumbElement::dragFrom(const IntPoint& point)
 
 void SliderThumbElement::setPositionFromPoint(const IntPoint& point)
 {
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
+    HTMLInputElement* input = hostInput();
     ASSERT(input);
 
     if (!input->renderer() || !renderer())
@@ -196,6 +196,12 @@ void SliderThumbElement::detach()
             frame->eventHandler()->setCapturingMouseEventsNode(0);      
     }
     HTMLDivElement::detach();
+}
+
+HTMLInputElement* SliderThumbElement::hostInput()
+{
+    ASSERT(parentNode());
+    return static_cast<HTMLInputElement*>(parentNode()->shadowHost());
 }
 
 const AtomicString& SliderThumbElement::shadowPseudoId() const

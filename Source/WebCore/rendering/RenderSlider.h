@@ -46,8 +46,8 @@ namespace WebCore {
         virtual void layout();
 
         // FIXME: Eventually, the logic of manipulating slider thumb should move to
-        // SliderThumbElement and accessing sliderThumbElement should not be necessary in this class.
-        SliderThumbElement* sliderThumbElement() const;
+        // SliderThumbElement and accessing shadowSliderThumb should not be necessary in this class.
+        SliderThumbElement* shadowSliderThumb() const;
 
         virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
     };

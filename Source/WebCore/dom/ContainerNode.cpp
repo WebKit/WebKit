@@ -104,7 +104,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parentNode());
+    ASSERT(refCount() || parentOrHostNode());
 
     ec = 0;
 
@@ -244,7 +244,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parentNode());
+    ASSERT(refCount() || parentOrHostNode());
 
     ec = 0;
 
@@ -401,7 +401,7 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parentNode());
+    ASSERT(refCount() || parentOrHostNode());
 
     ec = 0;
 
@@ -561,7 +561,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
-    ASSERT(refCount() || parentNode());
+    ASSERT(refCount() || parentOrHostNode());
 
     ec = 0;
 

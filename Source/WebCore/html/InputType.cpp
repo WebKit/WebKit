@@ -55,6 +55,7 @@
 #include "RenderObject.h"
 #include "ResetInputType.h"
 #include "SearchInputType.h"
+#include "ShadowRoot.h"
 #include "SubmitInputType.h"
 #include "TelephoneInputType.h"
 #include "TextInputType.h"
@@ -359,7 +360,7 @@ void InputType::createShadowSubtree()
 
 void InputType::destroyShadowSubtree()
 {
-    element()->setShadowRoot(0);
+    element()->removeShadowRoot();
 }
 
 double InputType::parseToDouble(const String&, double defaultValue) const

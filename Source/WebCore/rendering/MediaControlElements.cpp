@@ -456,7 +456,7 @@ void MediaControlInputElement::attach()
         parentNode()->renderer()->addChild(renderer, sibling ? sibling->renderer() : 0);
     }  
     ContainerNode::attach();
-    // FIXME: Currently, MeidaControlInput circumvents the normal attachment
+    // FIXME: Currently, MediaControlInput circumvents the normal attachment
     // and style recalc cycle and thus we need to add extra logic to be aware of
     // the shadow DOM. Remove this once all media controls are transitioned to use the regular
     // style calculation.
@@ -481,7 +481,7 @@ void MediaControlInputElement::updateStyle()
     else if (renderer())
         renderer()->setStyle(style.get());
 
-    // FIXME: Currently, MeidaControlInput circumvents the normal attachment
+    // FIXME: Currently, MediaControlInput circumvents the normal attachment
     // and style recalc cycle and thus we need to add extra logic to be aware of
     // the shadow DOM. Remove this once all media controls are transitioned to use
     // the new shadow DOM.

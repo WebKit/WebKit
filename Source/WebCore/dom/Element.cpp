@@ -54,6 +54,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "TextIterator.h"
 #include "WebKitAnimationList.h"
 #include "XMLNames.h"
@@ -1065,7 +1066,7 @@ void Element::recalcStyle(StyleChange change)
 {
     // Ref currentStyle in case it would otherwise be deleted when setRenderStyle() is called.
     RefPtr<RenderStyle> currentStyle(renderStyle());
-    bool hasParentStyle = parentOrHostNode() ? parentOrHostNode()->renderStyle() : false;
+    bool hasParentStyle = parentNodeForRenderingAndStyle() ? parentNodeForRenderingAndStyle()->renderStyle() : false;
     bool hasDirectAdjacentRules = currentStyle && currentStyle->childrenAffectedByDirectAdjacentRules();
 
     if ((change > NoChange || needsStyleRecalc())) {
@@ -1147,7 +1148,7 @@ void Element::recalcStyle(StyleChange change)
     }
     // FIXME: This does not care about sibling combinators. Will be necessary in XBL2 world.
     if (Node* shadow = shadowRoot()) {
-        if (change >= Inherit || shadow->isTextNode() || shadow->childNeedsStyleRecalc() || shadow->needsStyleRecalc()) {
+        if (change >= Inherit || shadow->childNeedsStyleRecalc() || shadow->needsStyleRecalc()) {
             parentPusher.push();
             shadow->recalcStyle(change);
         }
@@ -1157,28 +1158,24 @@ void Element::recalcStyle(StyleChange change)
     clearChildNeedsStyleRecalc();
 }
 
-Node* Element::shadowRoot()
+ContainerNode* Element::shadowRoot() const
 {
     return hasRareData() ? rareData()->m_shadowRoot : 0;
 }
 
-void Element::setShadowRoot(PassRefPtr<Node> node)
+ContainerNode* Element::ensureShadowRoot()
 {
-    // FIXME: Because today this is never called from script directly, we don't have to worry
-    // about compromising DOM tree integrity (eg. node being a parent of this). However,
-    // once we implement XBL2, we will have to add integrity checks here.
-    removeShadowRoot();
+    if (ContainerNode* existingRoot = shadowRoot())
+        return existingRoot;
 
-    RefPtr<Node> newRoot = node;
-    if (!newRoot)
-        return;
-
+    RefPtr<ShadowRoot> newRoot = ShadowRoot::create(document());
     ensureRareData()->m_shadowRoot = newRoot.get();
     newRoot->setShadowHost(this);
     if (inDocument())
         newRoot->insertedIntoDocument();
-    if (attached() && !newRoot->attached())
+    if (attached())
         newRoot->lazyAttach();
+    return newRoot.get();
 }
 
 void Element::removeShadowRoot()

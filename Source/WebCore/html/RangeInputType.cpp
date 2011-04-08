@@ -39,6 +39,7 @@
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
 #include "RenderSlider.h"
+#include "ShadowRoot.h"
 #include "SliderThumbElement.h"
 #include "StepRange.h"
 #include <limits>
@@ -148,7 +149,7 @@ void RangeInputType::handleMouseDownEvent(MouseEvent* event)
     if (event->button() != LeftButton || event->target() != element())
         return;
 
-    if (SliderThumbElement* thumb = toSliderThumbElement(element()->shadowRoot()))
+    if (SliderThumbElement* thumb = shadowSliderThumb())
         thumb->dragFrom(event->absoluteLocation());
 }
 
@@ -196,7 +197,8 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 
 void RangeInputType::createShadowSubtree()
 {
-    element()->setShadowRoot(SliderThumbElement::create(element()->document()));
+    ExceptionCode ec = 0;
+    element()->ensureShadowRoot()->appendChild(SliderThumbElement::create(element()->document()), ec);
 }
 
 RenderObject* RangeInputType::createRenderer(RenderArena* arena, RenderStyle*) const
@@ -241,7 +243,7 @@ void RangeInputType::minOrMaxAttributeChanged()
 
 void RangeInputType::valueChanged()
 {
-    toSliderThumbElement(element()->shadowRoot())->setPositionFromValue();
+    shadowSliderThumb()->setPositionFromValue();
 }
 
 String RangeInputType::fallbackValue()
@@ -263,6 +265,12 @@ String RangeInputType::sanitizeValue(const String& proposedValue)
 bool RangeInputType::shouldRespectListAttribute()
 {
     return true;
+}
+
+SliderThumbElement* RangeInputType::shadowSliderThumb() const
+{
+    Node* shadow = element()->shadowRoot();
+    return shadow ? toSliderThumbElement(shadow->firstChild()) : 0;
 }
 
 } // namespace WebCore

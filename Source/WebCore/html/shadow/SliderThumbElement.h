@@ -41,6 +41,7 @@
 namespace WebCore {
 
 class HTMLElement;
+class HTMLInputElement;
 class Event;
 class FloatPoint;
 
@@ -62,6 +63,7 @@ private:
     void startDragging();
     void stopDragging();
     void setPositionFromPoint(const IntPoint&);
+    HTMLInputElement* hostInput();
 
     FloatPoint m_offsetToThumb;
     bool m_inDragMode;

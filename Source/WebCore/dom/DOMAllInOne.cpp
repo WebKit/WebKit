@@ -108,6 +108,7 @@
 #include "ScriptableDocumentParser.cpp"
 #include "SelectElement.cpp"
 #include "SelectorNodeList.cpp"
+#include "ShadowRoot.cpp"
 #include "SpaceSplitString.cpp"
 #include "StaticHashSetNodeList.cpp"
 #include "StaticNodeList.cpp"

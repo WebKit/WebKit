@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+class SliderThumbElement;
+
 class RangeInputType : public InputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
@@ -67,6 +69,8 @@ private:
     virtual String fallbackValue();
     virtual String sanitizeValue(const String& proposedValue);
     virtual bool shouldRespectListAttribute();
+
+    SliderThumbElement* shadowSliderThumb() const;
 };
 
 } // namespace WebCore

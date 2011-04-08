@@ -33,6 +33,7 @@
 #include "HTMLParserIdioms.h"
 #include "MediaControlElements.h"
 #include "MouseEvent.h"
+#include "Node.h"
 #include "RenderLayer.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -101,7 +102,7 @@ void RenderSlider::computePreferredLogicalWidths()
 
 IntRect RenderSlider::thumbRect()
 {
-    SliderThumbElement* thumbElement = sliderThumbElement();
+    SliderThumbElement* thumbElement = shadowSliderThumb();
     if (!thumbElement)
         return IntRect();
 
@@ -128,7 +129,7 @@ void RenderSlider::layout()
 {
     ASSERT(needsLayout());
 
-    SliderThumbElement* thumbElement = sliderThumbElement();
+    SliderThumbElement* thumbElement = shadowSliderThumb();
     RenderBox* thumb = thumbElement ? toRenderBox(thumbElement->renderer()) : 0;
 
     IntSize baseSize(borderAndPaddingWidth(), borderAndPaddingHeight());
@@ -176,14 +177,15 @@ void RenderSlider::layout()
     setNeedsLayout(false);
 }
 
-SliderThumbElement* RenderSlider::sliderThumbElement() const
+SliderThumbElement* RenderSlider::shadowSliderThumb() const
 {
-    return toSliderThumbElement(static_cast<Element*>(node())->shadowRoot());
+    Node* shadow = static_cast<Element*>(node())->shadowRoot();
+    return shadow ? toSliderThumbElement(shadow->firstChild()) : 0;
 }
 
 bool RenderSlider::inDragMode() const
 {
-    SliderThumbElement* thumbElement = sliderThumbElement();
+    SliderThumbElement* thumbElement = shadowSliderThumb();
     return thumbElement && thumbElement->inDragMode();
 }
 

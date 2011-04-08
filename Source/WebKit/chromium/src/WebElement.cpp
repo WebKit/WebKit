@@ -92,7 +92,7 @@ WebString WebElement::innerText() const
 
 WebNode WebElement::shadowRoot()
 {
-    return adoptRef(unwrap<Element>()->shadowRoot());
+    return adoptRef(static_cast<Node*>(unwrap<Element>()->shadowRoot()));
 }
 
 WebString WebElement::computeInheritedLanguage() const

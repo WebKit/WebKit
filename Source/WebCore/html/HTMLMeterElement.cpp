@@ -31,6 +31,7 @@
 #include "HTMLParserIdioms.h"
 #include "MeterShadowElement.h"
 #include "RenderMeter.h"
+#include "ShadowRoot.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -230,7 +231,7 @@ void HTMLMeterElement::createShadowSubtree()
     m_value = MeterValueElement::create(document());
     ExceptionCode ec = 0;
     bar->appendChild(m_value, ec);
-    setShadowRoot(bar);
+    ensureShadowRoot()->appendChild(bar, ec);
 }
 
 } // namespace

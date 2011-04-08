@@ -1,3 +1,90 @@
+2011-04-07  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Let shadow DOM have a list of nodes at the top level of a shadow.
+        https://bugs.webkit.org/show_bug.cgi?id=57813
+
+        Adds ShadowRoot, a list of nodes, to be a parent for top-level
+        shadow children. Forwards rendering through the root and into the
+        host's renderer.
+
+        Covered by existing tests of elements that use this style of shadow.
+
+        * Android.mk: add ShadowRoot.h/cpp
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::initForStyleResolve): proxy style to host
+        * dom/ContainerNode.cpp: parent nodes that are shadow roots are alive
+        (WebCore::ContainerNode::insertBefore):
+        (WebCore::ContainerNode::replaceChild):
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::ContainerNode::appendChild):
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::DocumentFragment):
+        * dom/DocumentFragment.h:
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle): look through ShadowRoots for host's style
+        (WebCore::Element::shadowRoot): should be const
+        (WebCore::Element::ensureShadowRoot): simpler than setShadowRoot
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        * dom/Node.cpp:
+        (WebCore::Node::parentNodeForRenderingAndStyle): indirection so
+          ShadowRoot can forward to the host's renderer
+        (WebCore::Node::createRendererAndStyle):
+        (WebCore::Node::createRendererIfNeeded):
+        * dom/Node.h:
+        (WebCore::Node::isShadowBoundary): temporary, to differentiate
+          old- and new-style, until all roots are ShadowRoot instances
+        * dom/ShadowRoot.cpp: Added.
+        (WebCore::ShadowRoot::ShadowRoot):
+        (WebCore::ShadowRoot::recalcStyle): forward recalc to children
+        * dom/ShadowRoot.h: Added.
+        (WebCore::ShadowRoot::isShadowBoundary):
+        (WebCore::ShadowRoot::create):
+        * html/HTMLKeygenElement.cpp: use ensureShadowRoot
+        (WebCore::HTMLKeygenElement::HTMLKeygenElement):
+        (WebCore::HTMLKeygenElement::parseMappedAttribute):
+        (WebCore::HTMLKeygenElement::appendFormData):
+        (WebCore::HTMLKeygenElement::reset):
+        (WebCore::HTMLKeygenElement::shadowSelect):
+        * html/HTMLKeygenElement.h:
+        * html/HTMLMeterElement.cpp: use ensureShadowRoot
+        (WebCore::HTMLMeterElement::createShadowSubtree):
+        * html/HTMLProgressElement.cpp: use ensureShadowRoot
+        (WebCore::HTMLProgressElement::createShadowSubtree):
+        * html/InputType.cpp: use ensureShadowRoot
+        (WebCore::InputType::destroyShadowSubtree):
+        * html/RangeInputType.cpp: use ensureShadowRoot
+        (WebCore::RangeInputType::handleMouseDownEvent):
+        (WebCore::RangeInputType::createShadowSubtree):
+        (WebCore::RangeInputType::valueChanged):
+        (WebCore::RangeInputType::shadowSliderThumb):
+        * html/RangeInputType.h:
+        * html/ValidationMessage.cpp: use ensureShadowRoot
+        (WebCore::ValidationMessage::buildBubbleTree):
+        (WebCore::ValidationMessage::deleteBubbleTree):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+        (WebCore::SliderThumbElement::hostInput):
+        * html/shadow/SliderThumbElement.h:
+        * rendering/MediaControlElements.cpp: use ensureShadowRoot
+        (WebCore::MediaControlInputElement::attach):
+        (WebCore::MediaControlInputElement::updateStyle):
+        * rendering/RenderSlider.cpp: use ensureShadowRoot
+        (WebCore::RenderSlider::thumbRect):
+        (WebCore::RenderSlider::layout):
+        (WebCore::RenderSlider::shadowSliderThumb):
+        (WebCore::RenderSlider::inDragMode):
+        * rendering/RenderSlider.h:
+
 2011-04-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Simon Fraser.

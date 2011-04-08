@@ -203,6 +203,8 @@ public:
     virtual bool isCharacterDataNode() const { return false; }
     bool isDocumentNode() const;
     bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
+    // FIXME: Remove this when all shadow roots are ShadowRoots.
+    virtual bool isShadowBoundary() const { return false; }
     Node* shadowAncestorNode();
     Node* shadowTreeRootNode();
     bool isInShadowTree();
@@ -444,6 +446,7 @@ public:
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual bool childShouldCreateRenderer(Node*) const { return true; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    ContainerNode* parentNodeForRenderingAndStyle() const;
     
     // Wrapper for nodes that don't have a renderer, but still cache the style (like HTMLOptionElement).
     RenderStyle* renderStyle() const;

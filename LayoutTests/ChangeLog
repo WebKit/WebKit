@@ -1,3 +1,13 @@
+2011-04-07  Dominic Cooney  <dominicc@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Let shadow DOM have a list of nodes at the top level of a shadow.
+        https://bugs.webkit.org/show_bug.cgi?id=57813
+
+        * fast/dom/HTMLKeygenElement/keygen-expected.txt: shadow DOM changed
+        * fast/dom/HTMLKeygenElement/keygen.html: added assertion on shadow
+
 2011-04-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Simon Fraser.

@@ -32,6 +32,7 @@
 #include "HTMLParserIdioms.h"
 #include "ProgressShadowElement.h"
 #include "RenderProgress.h"
+#include "ShadowRoot.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -137,9 +138,9 @@ void HTMLProgressElement::createShadowSubtree()
 {
     RefPtr<ProgressBarElement> bar = ProgressBarElement::create(document());
     m_value = ProgressValueElement::create(document());
-    ExceptionCode e = 0;
-    bar->appendChild(m_value, e);
-    setShadowRoot(bar);
+    ExceptionCode ec = 0;
+    bar->appendChild(m_value, ec);
+    ensureShadowRoot()->appendChild(bar, ec);
 }
 
 } // namespace

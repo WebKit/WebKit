@@ -3196,6 +3196,8 @@
 		A622A8FC122C44A600A785B3 /* BindingSecurityBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A622A8F6122C44A600A785B3 /* BindingSecurityBase.cpp */; };
 		A622A8FD122C44A600A785B3 /* BindingSecurityBase.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F7122C44A600A785B3 /* BindingSecurityBase.h */; };
 		A622A8FF122C44A600A785B3 /* GenericBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = A622A8F9122C44A600A785B3 /* GenericBinding.h */; };
+		A6D169621346B49B000EB770 /* ShadowRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A6D169611346B49B000EB770 /* ShadowRoot.cpp */; };
+		A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = A6D169631346B4C1000EB770 /* ShadowRoot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7151BD812F1558F005A0F64 /* TextCheckerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A7151BD712F1558F005A0F64 /* TextCheckerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A715E652134BBBEC00D8E713 /* ProgressShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A715E650134BBBEC00D8E713 /* ProgressShadowElement.cpp */; };
 		A715E653134BBBEC00D8E713 /* ProgressShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A715E651134BBBEC00D8E713 /* ProgressShadowElement.h */; };
@@ -9725,6 +9727,8 @@
 		A622A8F6122C44A600A785B3 /* BindingSecurityBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BindingSecurityBase.cpp; path = generic/BindingSecurityBase.cpp; sourceTree = "<group>"; };
 		A622A8F7122C44A600A785B3 /* BindingSecurityBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BindingSecurityBase.h; path = generic/BindingSecurityBase.h; sourceTree = "<group>"; };
 		A622A8F9122C44A600A785B3 /* GenericBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericBinding.h; path = generic/GenericBinding.h; sourceTree = "<group>"; };
+		A6D169611346B49B000EB770 /* ShadowRoot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowRoot.cpp; sourceTree = "<group>"; };
+		A6D169631346B4C1000EB770 /* ShadowRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowRoot.h; sourceTree = "<group>"; };
 		A7151BD712F1558F005A0F64 /* TextCheckerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerClient.h; sourceTree = "<group>"; };
 		A715E650134BBBEC00D8E713 /* ProgressShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgressShadowElement.cpp; sourceTree = "<group>"; };
 		A715E651134BBBEC00D8E713 /* ProgressShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressShadowElement.h; sourceTree = "<group>"; };
@@ -19450,6 +19454,8 @@
 				084AEBE30FB505FA0038483E /* SelectElement.h */,
 				BC7FA6800D1F167900DB22A9 /* SelectorNodeList.cpp */,
 				BC7FA67F0D1F167900DB22A9 /* SelectorNodeList.h */,
+				A6D169611346B49B000EB770 /* ShadowRoot.cpp */,
+				A6D169631346B4C1000EB770 /* ShadowRoot.h */,
 				D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */,
 				D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */,
 				CEA3949A11D45CDA003094CF /* StaticHashSetNodeList.cpp */,
@@ -19917,6 +19923,7 @@
 				BCD533640ED6848900887468 /* CachedScriptSourceProvider.h in Headers */,
 				BCB16C280979C3BD00467741 /* CachedXSLStyleSheet.h in Headers */,
 				93F1995008245E59001E9ABC /* CachePolicy.h in Headers */,
+				B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */,
 				6E4E91AD10F7FB3100A2779C /* CanvasContextAttributes.h in Headers */,
 				49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */,
 				49484FC5102CF23C00187DD3 /* CanvasPattern.h in Headers */,
@@ -20078,6 +20085,8 @@
 				A8C228A111D5722E00D5A7D3 /* DecodedDataDocumentParser.h in Headers */,
 				4162A451101145AE00DFF3ED /* DedicatedWorkerContext.h in Headers */,
 				41A3D58F101C152D00316D07 /* DedicatedWorkerThread.h in Headers */,
+				FD06DFA6134A4DEF006F5D7D /* DefaultAudioDestinationNode.h in Headers */,
+				FD06DFA6134A4DEF006F5D7D /* DefaultAudioDestinationNode.h in Headers */,
 				BCC36EB91342AA3F004BEEF7 /* DefaultLocalizationStrategy.h in Headers */,
 				4167EBF6102962BA003D252A /* DefaultSharedWorkerRepository.h in Headers */,
 				FD31602C12B0267600C1A359 /* DelayDSPKernel.h in Headers */,
@@ -21093,6 +21102,7 @@
 				93F199E508245E59001E9ABC /* HTMLCanvasElement.h in Headers */,
 				A8DF3FD0097FA0FC0052981B /* HTMLCollection.h in Headers */,
 				977B3865122883E900B81FF8 /* HTMLConstructionSite.h in Headers */,
+				E1A31663134BCAE8007C9A4F /* HTMLConverter.h in Headers */,
 				BC77CDBC0FEFF1420070887B /* HTMLDataGridCellElement.h in Headers */,
 				BC77CB870FEBF5AF0070887B /* HTMLDataGridColElement.h in Headers */,
 				BC212A1F0FE8333200EC3708 /* HTMLDataGridElement.h in Headers */,
@@ -21584,6 +21594,8 @@
 				9001788112E0370700648462 /* JSOESStandardDerivatives.h in Headers */,
 				6EBF0E7712A9868800DB1709 /* JSOESTextureFloat.h in Headers */,
 				77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */,
+				FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */,
+				FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */,
 				A826E8AE0A1A8F2300CD1BB6 /* JSOptionConstructor.h in Headers */,
 				1A0D57410A5C7867007EDD4C /* JSOverflowEvent.h in Headers */,
 				E1284BB110449FFA00EAEB52 /* JSPageTransitionEvent.h in Headers */,
@@ -21938,6 +21950,10 @@
 				9001774112E0347800648462 /* OESStandardDerivatives.h in Headers */,
 				6EBF0E4912A8926100DB1709 /* OESTextureFloat.h in Headers */,
 				77A17A7212F28182004E02F6 /* OESVertexArrayObject.h in Headers */,
+				FDA3E95A134A49EF008D4B5A /* OfflineAudioCompletionEvent.h in Headers */,
+				FDA3E95A134A49EF008D4B5A /* OfflineAudioCompletionEvent.h in Headers */,
+				FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */,
+				FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */,
 				F4EAF4AF10C742B1009100D3 /* OpenTypeSanitizer.h in Headers */,
 				087281560F26B9B600AFC596 /* OptionElement.h in Headers */,
 				087281580F26B9B600AFC596 /* OptionGroupElement.h in Headers */,
@@ -22255,6 +22271,7 @@
 				0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */,
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
 				A7F338A411C0EFCA00A320A7 /* ShadowElement.h in Headers */,
+				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,
 				A80E6CE80A1989CA007FB8C5 /* ShadowValue.h in Headers */,
 				B2AFFC940D00A5DF0030074D /* ShapeArabic.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
@@ -22723,6 +22740,7 @@
 				494BD7950F55C8EE00747828 /* WebKitPoint.h in Headers */,
 				31C0FF250E4CEB6E007D6FE5 /* WebKitTransitionEvent.h in Headers */,
 				0FCF332F0F2B9A25004B6795 /* WebLayer.h in Headers */,
+				E1A3162D134BC32D007C9A4F /* WebNSAttributedStringExtras.h in Headers */,
 				1CAF34810A6C405200ABE06E /* WebScriptObject.h in Headers */,
 				1A569D1B0D7E2B82007C3983 /* WebScriptObject.h in Headers */,
 				1CAF34830A6C405200ABE06E /* WebScriptObjectPrivate.h in Headers */,
@@ -22834,13 +22852,6 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
-				FDA3E95A134A49EF008D4B5A /* OfflineAudioCompletionEvent.h in Headers */,
-				FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */,
-				FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */,
-				FD06DFA6134A4DEF006F5D7D /* DefaultAudioDestinationNode.h in Headers */,
-				E1A3162D134BC32D007C9A4F /* WebNSAttributedStringExtras.h in Headers */,
-				E1A31663134BCAE8007C9A4F /* HTMLConverter.h in Headers */,
-				B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23253,6 +23264,7 @@
 				D0D141B212B2BF5200E39620 /* CachedResourceRequest.cpp in Sources */,
 				BCB16C230979C3BD00467741 /* CachedScript.cpp in Sources */,
 				BCB16C270979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */,
+				B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */,
 				6E4E91AC10F7FB3100A2779C /* CanvasContextAttributes.cpp in Sources */,
 				49484FC1102CF23C00187DD3 /* CanvasGradient.cpp in Sources */,
 				49484FC4102CF23C00187DD3 /* CanvasPattern.cpp in Sources */,
@@ -23386,6 +23398,8 @@
 				A8C228A211D5722E00D5A7D3 /* DecodedDataDocumentParser.cpp in Sources */,
 				4162A450101145AE00DFF3ED /* DedicatedWorkerContext.cpp in Sources */,
 				41A3D58E101C152D00316D07 /* DedicatedWorkerThread.cpp in Sources */,
+				FD06DFA5134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp in Sources */,
+				FD06DFA5134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp in Sources */,
 				BCC36EB81342AA3F004BEEF7 /* DefaultLocalizationStrategy.cpp in Sources */,
 				4167EBF5102962BA003D252A /* DefaultSharedWorkerRepository.cpp in Sources */,
 				FD31602B12B0267600C1A359 /* DelayDSPKernel.cpp in Sources */,
@@ -24453,6 +24467,8 @@
 				9001788012E0370700648462 /* JSOESStandardDerivatives.cpp in Sources */,
 				6EBF0E7612A9868800DB1709 /* JSOESTextureFloat.cpp in Sources */,
 				77A17AA612F28B2A004E02F6 /* JSOESVertexArrayObject.cpp in Sources */,
+				FDF6BAF8134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp in Sources */,
+				FDF6BAF8134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp in Sources */,
 				A826EC480A1B0CBE00CD1BB6 /* JSOptionConstructor.cpp in Sources */,
 				1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */,
 				E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */,
@@ -24819,6 +24835,10 @@
 				9001774012E0347800648462 /* OESStandardDerivatives.cpp in Sources */,
 				6EBF0E4812A8926100DB1709 /* OESTextureFloat.cpp in Sources */,
 				77A17A7112F28182004E02F6 /* OESVertexArrayObject.cpp in Sources */,
+				FDA3E959134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp in Sources */,
+				FDA3E959134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp in Sources */,
+				FDA3E95B134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp in Sources */,
+				FDA3E95B134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp in Sources */,
 				F4EAF4AE10C742B1009100D3 /* OpenTypeSanitizer.cpp in Sources */,
 				087281550F26B9B600AFC596 /* OptionElement.cpp in Sources */,
 				087281570F26B9B600AFC596 /* OptionGroupElement.cpp in Sources */,
@@ -25069,6 +25089,7 @@
 				0F3DD44F12F5EA1B000D9190 /* ShadowBlur.cpp in Sources */,
 				BC5EB8C30E82031B00B25965 /* ShadowData.cpp in Sources */,
 				A7F338A311C0EFCA00A320A7 /* ShadowElement.cpp in Sources */,
+				A6D169621346B49B000EB770 /* ShadowRoot.cpp in Sources */,
 				A80E6CF40A1989CA007FB8C5 /* ShadowValue.cpp in Sources */,
 				B2AFFC930D00A5DF0030074D /* ShapeArabic.c in Sources */,
 				1A4A954D0B4EDCCB002D8C3C /* SharedBuffer.cpp in Sources */,
@@ -25422,6 +25443,7 @@
 				93F1D5BA12D532C400832BEC /* WebKitLoseContext.cpp in Sources */,
 				31C0FF240E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp in Sources */,
 				0FCF332E0F2B9A25004B6795 /* WebLayer.mm in Sources */,
+				E1A3162E134BC32D007C9A4F /* WebNSAttributedStringExtras.mm in Sources */,
 				1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */,
 				518A34C11026C831001B6896 /* WebSocket.cpp in Sources */,
 				510D4A4E103177A20049EA54 /* WebSocketChannel.cpp in Sources */,
@@ -25524,12 +25546,6 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
-				FDA3E959134A49EF008D4B5A /* OfflineAudioCompletionEvent.cpp in Sources */,
-				FDA3E95B134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp in Sources */,
-				FDF6BAF8134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp in Sources */,
-				FD06DFA5134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp in Sources */,
-				E1A3162E134BC32D007C9A4F /* WebNSAttributedStringExtras.mm in Sources */,
-				B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -229,8 +229,10 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void recalcStyle(StyleChange = NoChange);
 
-    Node* shadowRoot();
-    void setShadowRoot(PassRefPtr<Node>);
+    ContainerNode* shadowRoot() const;
+    ContainerNode* ensureShadowRoot();
+    void removeShadowRoot();
+
     virtual const AtomicString& shadowPseudoId() const;
 
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
@@ -411,7 +413,6 @@ private:
     ElementRareData* ensureRareData();
 
     SpellcheckAttributeState spellcheckAttributeState() const;
-    void removeShadowRoot();
 
 private:
     mutable RefPtr<NamedNodeMap> m_attributeMap;
