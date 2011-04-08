@@ -538,6 +538,14 @@ AC_ARG_ENABLE(fullscreen_api,
               [],[enable_fullscreen_api="yes"])
 AC_MSG_RESULT([$enable_fullscreen_api])
 
+# check whether to enable track support
+AC_MSG_CHECKING([whether to enable track support])
+AC_ARG_ENABLE(track,
+              AC_HELP_STRING([--enable-track],
+                             [enable track support for HTML5 video [default=no]]),
+              [],[enable_track="no"])
+AC_MSG_RESULT([$enable_track])
+
 # check whether to enable XHTML-MP support
 AC_MSG_CHECKING([whether to enable XHTML-MP support])
 AC_ARG_ENABLE(xhtmlmp,
@@ -1062,6 +1070,7 @@ AM_CONDITIONAL([ENABLE_MATHML], [test "$enable_mathml" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
 AM_CONDITIONAL([ENABLE_MEDIA_STATISTICS],[test "$enable_media_statistics" = "yes"])
 AM_CONDITIONAL([ENABLE_FULLSCREEN_API],[test "$enable_fullscreen_api" = "yes"])
+AM_CONDITIONAL([ENABLE_TRACK],[test "$enable_track" = "yes"])
 AM_CONDITIONAL([ENABLE_NOTIFICATIONS],[test "$enable_notifications" = "yes"])
 AM_CONDITIONAL([ENABLE_ORIENTATION_EVENTS],[test "$enable_orientation_events" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
@@ -1153,6 +1162,7 @@ Features:
  HTML5 sandboxed iframe support                           : $enable_sandbox
  HTML5 server-sent events support                         : $enable_eventsource
  HTML5 video element support                              : $enable_video
+ HTML5 track support                                      : $enable_track
  Fullscreen API support                                   : $enable_fullscreen_api
  Icon database support                                    : $enable_icon_database
  Image resizer support                                    : $enable_image_resizer

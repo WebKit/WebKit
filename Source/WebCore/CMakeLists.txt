@@ -270,6 +270,7 @@ SET(WebCore_IDL_FILES
     html/HTMLTableSectionElement.idl
     html/HTMLTextAreaElement.idl
     html/HTMLTitleElement.idl
+    html/HTMLTrackElement.idl
     html/HTMLUListElement.idl
     html/HTMLVideoElement.idl
     html/ImageData.idl
@@ -1898,6 +1899,12 @@ IF (ENABLE_VIDEO)
         rendering/MediaControlElements.cpp
         rendering/RenderMedia.cpp
         rendering/RenderVideo.cpp
+    )
+ENDIF()
+
+IF (ENABLE_TRACK)
+    LIST(APPEND WebCore_SOURCES
+        html/HTMLTrackElement.cpp
     )
 ENDIF()
 

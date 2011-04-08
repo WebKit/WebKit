@@ -4099,6 +4099,7 @@
 		B0149E7E11A4B21500196A7B /* AsyncImageResizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */; };
 		B0149E7F11A4B21500196A7B /* ImageResizerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0149E7B11A4B21500196A7B /* ImageResizerThread.cpp */; };
 		B0149E8011A4B21500196A7B /* ImageResizerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = B0149E7C11A4B21500196A7B /* ImageResizerThread.h */; };
+		B164F82E1345779E00BC777F /* HTMLTrackElement.idl in Resources */ = {isa = PBXBuildFile; fileRef = B164F82D1345779E00BC777F /* HTMLTrackElement.idl */; };
 		B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1827492134CA4C100B98C2D /* CallbackFunction.cpp */; };
 		B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */; };
 		B1E54599134629C10092A545 /* NavigatorUserMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */; };
@@ -10390,6 +10391,7 @@
 		B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncImageResizer.h; sourceTree = "<group>"; };
 		B0149E7B11A4B21500196A7B /* ImageResizerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageResizerThread.cpp; sourceTree = "<group>"; };
 		B0149E7C11A4B21500196A7B /* ImageResizerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageResizerThread.h; sourceTree = "<group>"; };
+		B164F82D1345779E00BC777F /* HTMLTrackElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HTMLTrackElement.idl; path = html/HTMLTrackElement.idl; sourceTree = "<group>"; };
 		B1827492134CA4C100B98C2D /* CallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackFunction.cpp; sourceTree = "<group>"; };
 		B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackFunction.h; sourceTree = "<group>"; };
 		B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaError.h; sourceTree = "<group>"; };
@@ -12666,6 +12668,7 @@
 				034768DFFF38A50411DB9C8B /* Products */,
 				1CDD44660BA9C80000F90147 /* Configurations */,
 				449195900FBE175B00D9F824 /* Exports */,
+				B164F82D1345779E00BC777F /* HTMLTrackElement.idl */,
 			);
 			name = WebKit;
 			sourceTree = "<group>";
@@ -23014,6 +23017,7 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
+				B164F82E1345779E00BC777F /* HTMLTrackElement.idl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
