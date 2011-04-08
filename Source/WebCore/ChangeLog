@@ -1,3 +1,17 @@
+2011-04-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Refactor WebCore/GNUMakefile.am to separate list of files
+        https://bugs.webkit.org/show_bug.cgi?id=58116
+
+        This change is similar to the cooresponding to change to
+        JavaScriptCore.  We hope to generate GNUmakefile.list.am automatically
+        using GYP.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am: Added.
+
 2011-04-07  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
