@@ -448,8 +448,9 @@ void WebEditorClient::showSpellingUI(bool)
 
 bool WebEditorClient::spellingUIIsShowing()
 {
-    notImplemented();
-    return false;
+    bool isShowing = false;
+    m_page->sendSync(Messages::WebPageProxy::SpellingUIIsShowing(), Messages::WebPageProxy::SpellingUIIsShowing::Reply(isShowing));
+    return isShowing;
 }
 
 void WebEditorClient::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses)

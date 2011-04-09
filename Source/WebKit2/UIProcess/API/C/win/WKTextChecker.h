@@ -42,6 +42,8 @@ typedef uint64_t (*WKTextCheckerUniqueSpellDocumentTag)(const void *clientInfo);
 typedef void (*WKTextCheckerCloseSpellDocumentWithTag)(uint64_t tag, const void *clientInfo);
 typedef void (*WKTextCheckerCheckSpellingOfString)(uint64_t tag, WKStringRef text, int32_t* misspellingLocation, int32_t* misspellingLength, const void *clientInfo);
 typedef void (*WKTextCheckerCheckGrammarOfString)(uint64_t tag, WKStringRef text, WKArrayRef* grammarDetails, int32_t* badGrammarLocation, int32_t* badGrammarLength, const void *clientInfo);
+typedef bool (*WKTextCheckerSpellingUIIsShowing)(const void *clientInfo);
+typedef void (*WKTextCheckerToggleSpellingUIIsShowing)(const void *clientInfo);
 
 struct WKTextCheckerClient {
     int                                                                     version;
@@ -55,6 +57,8 @@ struct WKTextCheckerClient {
     WKTextCheckerCloseSpellDocumentWithTag                                  closeSpellDocumentWithTag;
     WKTextCheckerCheckSpellingOfString                                      checkSpellingOfString;
     WKTextCheckerCheckGrammarOfString                                       checkGrammarOfString;
+    WKTextCheckerSpellingUIIsShowing                                        spellingUIIsShowing;
+    WKTextCheckerToggleSpellingUIIsShowing                                  toggleSpellingUIIsShowing;
 };
 typedef struct WKTextCheckerClient WKTextCheckerClient;
 

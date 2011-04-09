@@ -112,4 +112,20 @@ void WebTextCheckerClient::checkGrammarOfString(uint64_t tag, const String& text
         grammarDetails.append(wkGrammarDetails->at<WebGrammarDetail>(i)->grammarDetail());
 }
 
+bool WebTextCheckerClient::spellingUIIsShowing()
+{
+    if (!m_client.spellingUIIsShowing)
+        return false;
+
+    return m_client.spellingUIIsShowing(m_client.clientInfo);
+}
+
+void WebTextCheckerClient::toggleSpellingUIIsShowing()
+{
+    if (!m_client.toggleSpellingUIIsShowing)
+        return;
+
+    return m_client.toggleSpellingUIIsShowing(m_client.clientInfo);
+}
+
 } // namespace WebKit

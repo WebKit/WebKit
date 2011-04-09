@@ -611,7 +611,7 @@ static void validateCommandCallback(WKStringRef commandName, bool isEnabled, int
 
     if (action == @selector(showGuessPanel:)) {
         if (NSMenuItem *menuItem = ::menuItem(item))
-            [menuItem setTitle:contextMenuItemTagShowSpellingPanel([[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible])];
+            [menuItem setTitle:contextMenuItemTagShowSpellingPanel(![[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible])];
         return _data->_page->selectionState().isContentEditable;
     }
 

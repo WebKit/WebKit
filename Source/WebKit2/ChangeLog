@@ -1,3 +1,63 @@
+2011-04-08  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Implement TextChecker on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57862
+
+        Part 5: Implement the code show and hide the Spelling UI via the context menu item (both
+        Windows and Mac).
+
+        * UIProcess/API/C/win/WKTextChecker.h:
+        Add the new WKTextCheckerClient funtions.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]):
+        The title of the context menu item should be opposite of whether or not the spelling panel
+        is visible.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        If the "Show/Hide Spelling and Grammar" item is selected, call toggleSpellingUIIsShowing.
+        (WebKit::WebPageProxy::spellingUIIsShowing):
+        Call through to TextChecker.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/TextChecker.h:
+       * UIProcess/win/TextCheckerWin.cpp:
+        (WebKit::TextChecker::spellingUIIsShowing):
+        Call the TextCheckerClient.
+        (WebKit::TextChecker::toggleSpellingUIIsShowing):
+        Ditto.
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::spellingUIIsShowing):
+        Ask the shared NSSpellChecker if the spellingPanel is visible.
+        (WebKit::TextChecker::toggleSpellingUIIsShowing):
+        Order the spellingPanel out or front (copied from WKView.mm).
+        * UIProcess/qt/TextCheckerQt.cpp:
+        (WebKit::TextChecker::spellingUIIsShowing):
+        Call notImplemented.
+        (WebKit::TextChecker::toggleSpellingUIIsShowing):
+        Ditto.
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::spellingUIIsShowing):
+        Ditto.
+        (WebKit::TextChecker::toggleSpellingUIIsShowing):
+        Ditto.
+ 
+        * UIProcess/win/WebTextCheckerClient.cpp:
+        (WebKit::WebTextCheckerClient::spellingUIIsShowing):
+        Call the client.
+        (WebKit::WebTextCheckerClient::toggleSpellingUIIsShowing):
+        Ditto.
+        * UIProcess/win/WebTextCheckerClient.h:
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::spellingUIIsShowing):
+        Send a sync message to the UI process to find out.
+        It needs to be sync because the Editor code relies on the value returned.
+
 2011-04-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

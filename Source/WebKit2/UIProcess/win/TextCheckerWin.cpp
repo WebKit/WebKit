@@ -102,6 +102,16 @@ void TextChecker::checkGrammarOfString(int64_t spellDocumentTag, const UChar* te
     WebTextChecker::shared()->client().checkGrammarOfString(spellDocumentTag, String(text, length), grammarDetails, badGrammarLocation, badGrammarLength);
 }
 
+bool TextChecker::spellingUIIsShowing()
+{
+    return WebTextChecker::shared()->client().spellingUIIsShowing();
+}
+
+void TextChecker::toggleSpellingUIIsShowing()
+{
+    WebTextChecker::shared()->client().toggleSpellingUIIsShowing();
+}
+
 void TextChecker::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
 {
     notImplemented();

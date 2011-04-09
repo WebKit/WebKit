@@ -184,6 +184,7 @@ messages -> WebPageProxy {
 #endif
     CheckSpellingOfString(WTF::String text) -> (int32_t misspellingLocation, int32_t misspellingLength)
     CheckGrammarOfString(WTF::String text) -> (Vector<WebCore::GrammarDetail> results, int32_t badGrammarLocation, int32_t badGrammarLength)
+    SpellingUIIsShowing() -> (bool isShowing)
     UpdateSpellingUIWithMisspelledWord(WTF::String misspelledWord)
     UpdateSpellingUIWithGrammarString(WTF::String badGrammarPhrase, WebCore::GrammarDetail grammarDetail)
     GetGuessesForWord(WTF::String word, WTF::String context) -> (Vector<WTF::String> guesses)

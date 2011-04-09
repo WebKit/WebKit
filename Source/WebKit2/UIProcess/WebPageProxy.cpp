@@ -2302,6 +2302,10 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         process()->updateTextCheckerState();
         return;
     }
+    if (item.action() == ContextMenuItemTagShowSpellingPanel) {
+        TextChecker::toggleSpellingUIIsShowing();
+        return;
+    }
     if (item.action() == ContextMenuItemTagLearnSpelling || item.action() == ContextMenuItemTagIgnoreSpelling)
         ++m_pendingLearnOrIgnoreWordMessageCount;
 
@@ -2414,6 +2418,11 @@ void WebPageProxy::checkSpellingOfString(const String& text, int32_t& misspellin
 void WebPageProxy::checkGrammarOfString(const String& text, Vector<WebCore::GrammarDetail>& grammarDetails, int32_t& badGrammarLocation, int32_t& badGrammarLength)
 {
     TextChecker::checkGrammarOfString(spellDocumentTag(), text.characters(), text.length(), grammarDetails, badGrammarLocation, badGrammarLength);
+}
+
+void WebPageProxy::spellingUIIsShowing(bool& isShowing)
+{
+    isShowing = TextChecker::spellingUIIsShowing();
 }
 
 void WebPageProxy::updateSpellingUIWithMisspelledWord(const String& misspelledWord)

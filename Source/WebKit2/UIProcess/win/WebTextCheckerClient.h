@@ -45,6 +45,8 @@ public:
     void closeSpellDocumentWithTag(uint64_t);
     void checkSpellingOfString(uint64_t tag, const String& text, int32_t& misspellingLocation, int32_t& misspellingLength);
     void checkGrammarOfString(uint64_t tag, const String& text, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
+    bool spellingUIIsShowing();
+    void toggleSpellingUIIsShowing();
 };
 
 } // namespace WebKit

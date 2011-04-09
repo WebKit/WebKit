@@ -79,6 +79,17 @@ void TextChecker::checkGrammarOfString(int64_t, const UChar*, uint32_t, Vector<W
     notImplemented();
 }
 
+bool TextChecker::spellingUIIsShowing()
+{
+    notImplemented();
+    return false;
+}
+
+void TextChecker::toggleSpellingUIIsShowing()
+{
+    notImplemented();
+}
+
 void TextChecker::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
 {
     notImplemented();

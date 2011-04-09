@@ -309,6 +309,20 @@ void TextChecker::checkGrammarOfString(int64_t, const UChar*, uint32_t, Vector<W
     notImplemented();
 }
 
+bool TextChecker::spellingUIIsShowing()
+{
+    return [[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible];
+}
+
+void TextChecker::toggleSpellingUIIsShowing()
+{
+    NSPanel *spellingPanel = [[NSSpellChecker sharedSpellChecker] spellingPanel];
+    if ([spellingPanel isVisible])
+        [spellingPanel orderOut:nil];
+    else
+        [spellingPanel orderFront:nil];
+}
+
 void TextChecker::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
 {
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithMisspelledWord:misspelledWord];
