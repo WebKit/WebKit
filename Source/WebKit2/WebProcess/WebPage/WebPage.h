@@ -323,6 +323,7 @@ public:
     void executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, bool& handled, TextInputState& newState);
     void writeSelectionToPasteboard(const WTF::String& pasteboardName, const WTF::Vector<WTF::String>& pasteboardTypes, bool& result);
     void readSelectionFromPasteboard(const WTF::String& pasteboardName, bool& result);
+    bool performNonEditingBehaviorForSelector(const String&);
 #elif PLATFORM(WIN)
     void confirmComposition(const String& compositionString);
     void setComposition(const WTF::String& compositionString, const WTF::Vector<WebCore::CompositionUnderline>& underlines, uint64_t cursorPosition);

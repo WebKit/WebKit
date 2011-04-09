@@ -771,6 +771,13 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (void)keyDown:(NSEvent *)event
 {
+    // Implement common browser behaviors for all kinds of content.
+
+    // FIXME: This is not a good time to execute commands for WebHTMLView. We should run these at the time commands sent by key bindings
+    // are executed for consistency.
+    // This doesn't work automatically because most of the keys handled here are translated into moveXXX commands, which are not handled
+    // by Editor when focus is not in editable content.
+
     NSString *characters = [event characters];
     int index, count;
     BOOL callSuper = YES;

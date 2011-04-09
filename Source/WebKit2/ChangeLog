@@ -1,3 +1,29 @@
+2011-04-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebKit2: Safari doesn't respect cmd-arrows (and variations) as custom keyboard shortcuts
+        https://bugs.webkit.org/show_bug.cgi?id=58175
+        <rdar://problem/9060555>
+
+        The problem is that command handling should be different for events that come as keyDown:
+        and those that come as performKeyEquivalent:. WebKit1 only tries custom "key bindings"
+        when handling a keyDown:, letting a performKeyEquivalent: run through the whole responder
+        chain first.
+
+        This would be very difficult to implement in WebKit2 because of how it re-sends the same
+        event after web process handling. Luckily, we can both fix the bug and make the behavior
+        more robust by not hardcoding key combinations.
+
+        * WebProcess/WebPage/WebPage.h: Edit performNonEditingBehaviorForSelector.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::executeKeypressCommandsInternal): When executing commands, also try
+        executing editor commands in their non-editing meaning, which is usually scrolling.
+        (WebKit::WebPage::performNonEditingBehaviorForSelector): Naive implementation with a chain
+        of ifs, which is hopefully ok performance-wise for a dozen check.
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent): Only kept two commands here that I
+        couldn't easily move.
+
 2011-04-08  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Anders Carlsson.

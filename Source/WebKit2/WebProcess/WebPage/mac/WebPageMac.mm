@@ -152,13 +152,18 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
             eventWasHandled |= frame->editor()->insertText(commands[i].text, event);
         } else {
             Editor::Command command = frame->editor()->command(commandNameForSelectorName(commands[i].commandName));
-            if (command.isSupported())
-                eventWasHandled |= command.execute(event);
-            else {
-                bool eventWasHandledByUIProcess = false;
+            if (command.isSupported()) {
+                bool commandExecutedByEditor = command.execute(event);
+                eventWasHandled |= commandExecutedByEditor;
+                if (!commandExecutedByEditor) {
+                    bool performedNonEditingBehavior = event->keyEvent()->type() == PlatformKeyboardEvent::RawKeyDown && performNonEditingBehaviorForSelector(commands[i].commandName);
+                    eventWasHandled |= performedNonEditingBehavior;
+                }
+            } else {
+                bool commandWasHandledByUIProcess = false;
                 WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::ExecuteSavedCommandBySelector(commands[i].commandName), 
-                    Messages::WebPageProxy::ExecuteSavedCommandBySelector::Reply(eventWasHandledByUIProcess), m_pageID);
-                eventWasHandled |= eventWasHandledByUIProcess;
+                    Messages::WebPageProxy::ExecuteSavedCommandBySelector::Reply(commandWasHandledByUIProcess), m_pageID);
+                eventWasHandled |= commandWasHandledByUIProcess;
             }
         }
     }
@@ -535,84 +540,61 @@ void WebPage::performDictionaryLookupForRange(DictionaryPopupInfo::Type type, Fr
     send(Messages::WebPageProxy::DidPerformDictionaryLookup(rangeText, dictionaryPopupInfo));
 }
 
+bool WebPage::performNonEditingBehaviorForSelector(const String& selector)
+{
+    if (selector == "moveUp:")
+        scroll(m_page.get(), ScrollUp, ScrollByLine);
+    else if (selector == "moveToBeginningOfParagraph:")
+        scroll(m_page.get(), ScrollUp, ScrollByPage);
+    else if (selector == "moveToBeginningOfDocument:") {
+        scroll(m_page.get(), ScrollUp, ScrollByDocument);
+        scroll(m_page.get(), ScrollLeft, ScrollByDocument);
+    } else if (selector == "moveDown:")
+        scroll(m_page.get(), ScrollDown, ScrollByLine);
+    else if (selector == "moveToEndOfParagraph:")
+        scroll(m_page.get(), ScrollDown, ScrollByPage);
+    else if (selector == "moveToEndOfDocument:") {
+        scroll(m_page.get(), ScrollDown, ScrollByDocument);
+        scroll(m_page.get(), ScrollLeft, ScrollByDocument);
+    } else if (selector == "moveLeft:")
+        scroll(m_page.get(), ScrollLeft, ScrollByLine);
+    else if (selector == "moveWordLeft:")
+        scroll(m_page.get(), ScrollLeft, ScrollByPage);
+    else if (selector == "moveToLeftEndOfLine:")
+        m_page->goBack();
+    else if (selector == "moveRight:")
+        scroll(m_page.get(), ScrollRight, ScrollByLine);
+    else if (selector == "moveWordRight:")
+        scroll(m_page.get(), ScrollRight, ScrollByPage);
+    else if (selector == "moveToRightEndOfLine:")
+        m_page->goForward();
+    else
+        return false;
+
+    return true;
+}
+
 bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboardEvent)
 {
     if (keyboardEvent.type() != WebEvent::KeyDown)
         return false;
 
-    // FIXME: Most of these are already handled by system key bindings, why are we hardcoding them here?
-    // FIXME: Common behaviors like scrolling down on Space should probably be implemented in WebCore.
-
     switch (keyboardEvent.windowsVirtualKeyCode()) {
     case VK_BACK:
+        // FIXME: Handling Backspace here means that a keypress DOM event will be dispatched when focus
+        // is outside editable content, which is likely wrong. It should be moved to performNonEditingBehaviorForSelector(),
+        // which is complicated by the fact that both Backspace and Shift+Backspace get the same command.
         if (keyboardEvent.shiftKey())
             m_page->goForward();
         else
             m_page->goBack();
         break;
     case VK_SPACE:
+        // Space is not translated to a command by key bindings, so we need to handle it here.
         if (keyboardEvent.shiftKey())
             logicalScroll(m_page.get(), ScrollBlockDirectionBackward, ScrollByPage);
         else
             logicalScroll(m_page.get(), ScrollBlockDirectionForward, ScrollByPage);
-        break;
-    case VK_PRIOR:
-        logicalScroll(m_page.get(), ScrollBlockDirectionBackward, ScrollByPage);
-        break;
-    case VK_NEXT:
-        logicalScroll(m_page.get(), ScrollBlockDirectionForward, ScrollByPage);
-        break;
-    case VK_HOME:
-        logicalScroll(m_page.get(), ScrollBlockDirectionBackward, ScrollByDocument);
-        break;
-    case VK_END:
-        logicalScroll(m_page.get(), ScrollBlockDirectionForward, ScrollByDocument);
-        break;
-    case VK_UP:
-        if (keyboardEvent.shiftKey())
-            return false;
-        if (keyboardEvent.metaKey()) {
-            scroll(m_page.get(), ScrollUp, ScrollByDocument);
-            scroll(m_page.get(), ScrollLeft, ScrollByDocument);
-        } else if (keyboardEvent.altKey() || keyboardEvent.controlKey())
-            scroll(m_page.get(), ScrollUp, ScrollByPage);
-        else
-            scroll(m_page.get(), ScrollUp, ScrollByLine);
-        break;
-    case VK_DOWN:
-        if (keyboardEvent.shiftKey())
-            return false;
-        if (keyboardEvent.metaKey()) {
-            scroll(m_page.get(), ScrollDown, ScrollByDocument);
-            scroll(m_page.get(), ScrollLeft, ScrollByDocument);
-        } else if (keyboardEvent.altKey() || keyboardEvent.controlKey())
-            scroll(m_page.get(), ScrollDown, ScrollByPage);
-        else
-            scroll(m_page.get(), ScrollDown, ScrollByLine);
-        break;
-    case VK_LEFT:
-        if (keyboardEvent.shiftKey())
-            return false;
-        if (keyboardEvent.metaKey())
-            m_page->goBack();
-        else {
-            if (keyboardEvent.altKey() || keyboardEvent.controlKey())
-                scroll(m_page.get(), ScrollLeft, ScrollByPage);
-            else
-                scroll(m_page.get(), ScrollLeft, ScrollByLine);
-        }
-        break;
-    case VK_RIGHT:
-        if (keyboardEvent.shiftKey())
-            return false;
-        if (keyboardEvent.metaKey())
-            m_page->goForward();
-        else {
-            if (keyboardEvent.altKey() || keyboardEvent.controlKey())
-                scroll(m_page.get(), ScrollRight, ScrollByPage);
-            else
-                scroll(m_page.get(), ScrollRight, ScrollByLine);
-        }
         break;
     default:
         return false;
