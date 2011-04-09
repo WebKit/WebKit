@@ -1,3 +1,10 @@
+2011-04-08  Anders Carlsson  <andersca@apple.com>
+
+        Fix the Windows build.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::Drop):
+
 2011-04-08  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Anders Carlsson.

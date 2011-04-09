@@ -1617,7 +1617,9 @@ HRESULT STDMETHODCALLTYPE WebView::Drop(IDataObject* pDataObject, DWORD grfKeySt
     POINTL localpt = pt;
     ::ScreenToClient(m_window, (LPPOINT)&localpt);
     DragData data(pDataObject, IntPoint(localpt.x, localpt.y), IntPoint(pt.x, pt.y), keyStateToDragOperation(grfKeyState));
-    m_page->performDrag(&data);
+
+    SandboxExtension::Handle sandboxExtensionHandle;
+    m_page->performDrag(&data, String(), sandboxExtensionHandle);
     return S_OK;
 }
 
