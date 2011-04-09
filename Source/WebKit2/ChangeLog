@@ -1,3 +1,14 @@
+2011-04-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Fixed a bug where right-to-left frames incorrectly reported that they were pinned to the left
+        when they were actually not.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didChangeScrollOffsetForMainFrame): Do not assume that the minimum scroll offset
+        is zero, because it is not.
+
 2011-04-08  Anders Carlsson  <andersca@apple.com>
 
         Fix the Windows build.

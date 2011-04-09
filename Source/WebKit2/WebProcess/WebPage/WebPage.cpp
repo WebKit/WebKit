@@ -1736,8 +1736,9 @@ void WebPage::didChangeScrollOffsetForMainFrame()
     Frame* frame = m_page->mainFrame();
     IntPoint scrollPosition = frame->view()->scrollPosition();
     IntPoint maximumScrollPosition = frame->view()->maximumScrollPosition();
+    IntPoint minimumScrollPosition = frame->view()->minimumScrollPosition();
 
-    bool isPinnedToLeftSide = (scrollPosition.x() <= 0);
+    bool isPinnedToLeftSide = (scrollPosition.x() <= minimumScrollPosition.x());
     bool isPinnedToRightSide = (scrollPosition.x() >= maximumScrollPosition.x());
 
     if (isPinnedToLeftSide != m_cachedMainFrameIsPinnedToLeftSide || isPinnedToRightSide != m_cachedMainFrameIsPinnedToRightSide) {
