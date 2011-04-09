@@ -1,3 +1,16 @@
+2011-04-09  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Overlay scrollbar flashes in scrollable <textarea> with each keystroke (58180)
+        https://bugs.webkit.org/show_bug.cgi?id=58180
+        <rdar://problem/9047984>
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::immediateScrollToPoint): Check that there is a change before submitting
+        (WebCore::ScrollAnimatorMac::immediateScrollByDeltaX):
+        (WebCore::ScrollAnimatorMac::immediateScrollByDeltaY):
+
 2011-04-09  Sreeram Ramachandran  <sreeram@google.com>
 
         Reviewed by Ryosuke Niwa.

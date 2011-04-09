@@ -580,6 +580,9 @@ void ScrollAnimatorMac::immediateScrollToPoint(const FloatPoint& newPosition)
 {
     FloatPoint adjustedPosition = adjustScrollPositionIfNecessary(newPosition);
  
+    if (adjustedPosition.x() == m_currentPosX && adjustedPosition.y() == m_currentPosY)
+        return;
+    
     m_currentPosX = adjustedPosition.x();
     m_currentPosY = adjustedPosition.y();
     notityPositionChanged();
@@ -587,13 +590,23 @@ void ScrollAnimatorMac::immediateScrollToPoint(const FloatPoint& newPosition)
 
 void ScrollAnimatorMac::immediateScrollByDeltaX(float deltaX)
 {
-    m_currentPosX = adjustScrollXPositionIfNecessary(m_currentPosX + deltaX);
+    float newPosX = adjustScrollXPositionIfNecessary(m_currentPosX + deltaX);
+    
+    if (newPosX == m_currentPosX)
+        return;
+    
+    m_currentPosX = newPosX;
     notityPositionChanged();
 }
 
 void ScrollAnimatorMac::immediateScrollByDeltaY(float deltaY)
 {
-    m_currentPosY = adjustScrollYPositionIfNecessary(m_currentPosY + deltaY);
+    float newPosY = adjustScrollYPositionIfNecessary(m_currentPosY + deltaY);
+    
+    if (newPosY == m_currentPosY)
+        return;
+    
+    m_currentPosY = newPosY;
     notityPositionChanged();
 }
 
