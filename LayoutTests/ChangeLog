@@ -1,3 +1,9 @@
+2011-04-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Make Qt-WK2 buildbot green on http://webkit.sed.hu
+
+        * platform/qt-wk2/Skipped: Add failing tests.
+
 2011-04-08  Jian Li  <jianli@chromium.org>
 
         Unreviewed, rolling out r83348.
