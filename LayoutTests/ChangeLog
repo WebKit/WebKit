@@ -1,5 +1,11 @@
 2011-04-09  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][WK2] One more attempt to make Qt-WK2 bot happy.
+
+        * platform/qt-wk2/Skipped:
+
+2011-04-09  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Make Qt bots happier. :)
 
         * platform/qt-wk2/Skipped: Remove non-existent tests.
