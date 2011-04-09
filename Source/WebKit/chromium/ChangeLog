@@ -1,3 +1,19 @@
+2011-04-09  Sreeram Ramachandran  <sreeram@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Gather data on modal dialogs shown during unload events
+        https://bugs.webkit.org/show_bug.cgi?id=58115
+
+        Implementation of the new API to receive notifications of modal dialogs
+        dispatched during unload events. Count the notifications through a histogram.
+
+        No tests because it's not clear how to test chromium histograms from webkit.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::willRunModalDialogDuringPageDismissal):
+        * src/ChromeClientImpl.h:
+
 2011-04-08  Aaron Boodman  <aa@chromium.org>
 
         Reviewed by Dmitry Titov.

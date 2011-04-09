@@ -280,8 +280,16 @@ void Chrome::closeWindowSoon()
     m_client->closeWindowSoon();
 }
 
+static inline void willRunModalDialog(const Frame* frame, const ChromeClient::DialogType& dialogType, const ChromeClient* client)
+{
+    if (frame->loader()->pageDismissalEventBeingDispatched())
+        client->willRunModalDialogDuringPageDismissal(dialogType);
+}
+
 void Chrome::runJavaScriptAlert(Frame* frame, const String& message)
 {
+    willRunModalDialog(frame, ChromeClient::AlertDialog, m_client);
+
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(m_page, true);
@@ -292,6 +300,8 @@ void Chrome::runJavaScriptAlert(Frame* frame, const String& message)
 
 bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
 {
+    willRunModalDialog(frame, ChromeClient::ConfirmDialog, m_client);
+
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(m_page, true);
@@ -302,6 +312,8 @@ bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
 
 bool Chrome::runJavaScriptPrompt(Frame* frame, const String& prompt, const String& defaultValue, String& result)
 {
+    willRunModalDialog(frame, ChromeClient::PromptDialog, m_client);
+
     // Defer loads in case the client method runs a new event loop that would
     // otherwise cause the load to continue while we're in the middle of executing JavaScript.
     PageGroupLoadDeferrer deferrer(m_page, true);
@@ -545,6 +557,11 @@ void Chrome::showContextMenu()
 bool Chrome::requiresFullscreenForVideoPlayback()
 {
     return m_client->requiresFullscreenForVideoPlayback();
+}
+
+void Chrome::willRunModalHTMLDialog(const Frame* frame) const
+{
+    willRunModalDialog(frame, ChromeClient::HTMLDialog, m_client);
 }
 
 } // namespace WebCore

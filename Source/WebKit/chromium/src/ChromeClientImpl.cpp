@@ -54,6 +54,7 @@
 #include "Node.h"
 #include "NotificationPresenterImpl.h"
 #include "Page.h"
+#include "PlatformBridge.h"
 #include "PopupMenuChromium.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"
@@ -903,6 +904,11 @@ PassRefPtr<PopupMenu> ChromeClientImpl::createPopupMenu(PopupMenuClient* client)
 PassRefPtr<SearchPopupMenu> ChromeClientImpl::createSearchPopupMenu(PopupMenuClient* client) const
 {
     return adoptRef(new SearchPopupMenuChromium(client));
+}
+
+void ChromeClientImpl::willRunModalDialogDuringPageDismissal(const DialogType& dialogType) const
+{
+    PlatformBridge::histogramEnumeration("Renderer.ModalDialogsDuringPageDismissal", static_cast<int>(dialogType), static_cast<int>(NumDialogTypes));
 }
 
 } // namespace WebKit

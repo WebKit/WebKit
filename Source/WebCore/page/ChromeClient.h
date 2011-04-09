@@ -303,6 +303,15 @@ namespace WebCore {
 
         virtual void didCompleteRubberBandForMainFrame(const IntSize&) const { }
 
+        enum DialogType {
+            AlertDialog = 0,
+            ConfirmDialog = 1,
+            PromptDialog = 2,
+            HTMLDialog = 3,
+            NumDialogTypes = 4
+        };
+        virtual void willRunModalDialogDuringPageDismissal(const DialogType&) const { }
+
     protected:
         virtual ~ChromeClient() { }
     };

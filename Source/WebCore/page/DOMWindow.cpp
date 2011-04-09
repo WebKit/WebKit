@@ -1838,6 +1838,9 @@ void DOMWindow::showModalDialog(const String& urlString, const String& dialogFea
     if (!firstFrame)
         return;
 
+    if (m_frame->page())
+        m_frame->page()->chrome()->willRunModalHTMLDialog(m_frame);
+
     if (!canShowModalDialogNow(m_frame) || !firstWindow->allowPopUp())
         return;
 

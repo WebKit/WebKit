@@ -191,6 +191,8 @@ public:
     virtual void showContextMenu() { }
 #endif
 
+    virtual void willRunModalDialogDuringPageDismissal(const DialogType&) const;
+
 private:
     void getPopupMenuInfo(WebCore::PopupContainer*, WebPopupMenuInfo*);
     void setCursor(const WebCursorInfo&);

@@ -1,3 +1,31 @@
+2011-04-09  Sreeram Ramachandran  <sreeram@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Gather data on modal dialogs shown during unload events
+        https://bugs.webkit.org/show_bug.cgi?id=58115
+
+        Add a new method to the ChromeClient API to allow clients to receive
+        notifications of modal dialogs dispatched during page dismissal events.
+        The new method has a default empty definition; only chromium overrides
+        it to keep track of histograms.
+
+        No tests because this is a no-op for all ports except chromium (and it's
+        not clear how to test chromium histograms from webkit).
+
+        * page/Chrome.cpp:
+        (WebCore::isDuringPageDismissal):
+        (WebCore::willRunModalDialog):
+        (WebCore::Chrome::runJavaScriptAlert):
+        (WebCore::Chrome::runJavaScriptConfirm):
+        (WebCore::Chrome::runJavaScriptPrompt):
+        (WebCore::Chrome::willRunModalHTMLDialog):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::willRunModalDialogDuringPageDismissal):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::showModalDialog):
+
 2011-04-08  David Humphrey  <david.humphrey@senecac.on.ca>
 
         Reviewed by Eric Carlson.
