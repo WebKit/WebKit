@@ -700,25 +700,28 @@ void WebPageProxy::setActualVisibleContentRect(const IntRect& rect)
 
 void WebPageProxy::dragEntered(WebCore::DragData* dragData, const String& dragStorageName)
 {
-    performDragControllerAction(DragControllerActionEntered, dragData, dragStorageName);
+    SandboxExtension::Handle sandboxExtensionHandle;
+    performDragControllerAction(DragControllerActionEntered, dragData, dragStorageName, sandboxExtensionHandle);
 }
 
 void WebPageProxy::dragUpdated(WebCore::DragData* dragData, const String& dragStorageName)
 {
-    performDragControllerAction(DragControllerActionUpdated, dragData, dragStorageName);
+    SandboxExtension::Handle sandboxExtensionHandle;
+    performDragControllerAction(DragControllerActionUpdated, dragData, dragStorageName, sandboxExtensionHandle);
 }
 
 void WebPageProxy::dragExited(WebCore::DragData* dragData, const String& dragStorageName)
 {
-    performDragControllerAction(DragControllerActionExited, dragData, dragStorageName);
+    SandboxExtension::Handle sandboxExtensionHandle;
+    performDragControllerAction(DragControllerActionExited, dragData, dragStorageName, sandboxExtensionHandle);
 }
 
-void WebPageProxy::performDrag(WebCore::DragData* dragData, const String& dragStorageName)
+void WebPageProxy::performDrag(WebCore::DragData* dragData, const String& dragStorageName, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
-    performDragControllerAction(DragControllerActionPerformDrag, dragData, dragStorageName);
+    performDragControllerAction(DragControllerActionPerformDrag, dragData, dragStorageName, sandboxExtensionHandle);
 }
 
-void WebPageProxy::performDragControllerAction(DragControllerAction action, WebCore::DragData* dragData, const String& dragStorageName)
+void WebPageProxy::performDragControllerAction(DragControllerAction action, WebCore::DragData* dragData, const String& dragStorageName, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
     if (!isValid())
         return;
@@ -727,7 +730,7 @@ void WebPageProxy::performDragControllerAction(DragControllerAction action, WebC
     process()->send(Messages::WebPage::PerformDragControllerAction(action, dragData->clientPosition(), dragData->globalPosition(),
         dragData->draggingSourceOperationMask(), dragData->dragDataMap(), dragData->flags()), m_pageID);
 #else
-    process()->send(Messages::WebPage::PerformDragControllerAction(action, dragData->clientPosition(), dragData->globalPosition(), dragData->draggingSourceOperationMask(), dragStorageName, dragData->flags()), m_pageID);
+    process()->send(Messages::WebPage::PerformDragControllerAction(action, dragData->clientPosition(), dragData->globalPosition(), dragData->draggingSourceOperationMask(), dragStorageName, dragData->flags(), sandboxExtensionHandle), m_pageID);
 #endif
 }
 

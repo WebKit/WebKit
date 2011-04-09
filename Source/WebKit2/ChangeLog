@@ -1,3 +1,57 @@
+2011-04-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Sandboxing doesn't work if a local file is dropped on the content area
+        https://bugs.webkit.org/show_bug.cgi?id=58177
+        <rdar://problem/9019253>
+
+        When performing a drag and the dragging pasteboard contains a local file, create a
+        sandbox extension and pass it along. If we end up loading the file, the sandbox extension
+        tracker will consume the extension.
+
+        * UIProcess/API/mac/WKView.mm:
+        (maybeCreateSandboxExtensionFromPasteboard):
+        Add helper function.
+
+        (-[WKView performDragOperation:]):
+        Create a sandbox extension handle and pass it to performDrag.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dragEntered):
+        (WebKit::WebPageProxy::dragUpdated):
+        (WebKit::WebPageProxy::dragExited):
+        Pass an empty sandbox extension handle to performDragControllerAction.
+
+        (WebKit::WebPageProxy::performDrag):
+        Pass the sandbox extension handle along to performDragControllerAction.
+
+        (WebKit::WebPageProxy::performDragControllerAction):
+        Send along the sandbox extension handle.
+
+        * WebProcess/WebCoreSupport/WebDragClient.cpp:
+        (WebKit::WebDragClient::willPerformDragDestinationAction):
+        If the destination action is a load action, call WebPage::willPerformLoadDragDestinationAction.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        Create a sandbox extension.
+
+        (WebKit::WebPage::willPerformLoadDragDestinationAction):
+        If we have a sandbox extension, pass it along to the sandbox extension tracker.
+
+        (WebKit::WebPage::SandboxExtensionTracker::willPerformLoadDragDestinationAction):
+        Call setPendingProvisionalSandboxExtension.
+
+        (WebKit::WebPage::SandboxExtensionTracker::beginLoad):
+        Call setPendingProvisionalSandboxExtension.
+
+        (WebKit::WebPage::SandboxExtensionTracker::setPendingProvisionalSandboxExtension):
+        Factor code from beginLoad out into a separate function.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        PerformDragControllerAction now takes a sandbox extension handle.
+
 2011-04-08  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adam Roben.

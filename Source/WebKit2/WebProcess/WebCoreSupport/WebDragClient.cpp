@@ -26,14 +26,16 @@
 #include "config.h"
 #include "WebDragClient.h"
 
-#include <WebCore/NotImplemented.h>
+#include "WebPage.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void WebDragClient::willPerformDragDestinationAction(DragDestinationAction, DragData*)
+void WebDragClient::willPerformDragDestinationAction(DragDestinationAction action, DragData*)
 {
+    if (action == DragDestinationActionLoad)
+        m_page->willPerformLoadDragDestinationAction();
 }
 
 void WebDragClient::willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*)

@@ -1488,7 +1488,7 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
     }
 }
 #else
-void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const String& dragStorageName, uint32_t flags)
+void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint clientPosition, WebCore::IntPoint globalPosition, uint64_t draggingSourceOperationMask, const String& dragStorageName, uint32_t flags, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
     if (!m_page) {
         send(Messages::WebPageProxy::DidPerformDragControllerAction(DragOperationNone));
@@ -1509,10 +1509,23 @@ void WebPage::performDragControllerAction(uint64_t action, WebCore::IntPoint cli
         m_page->dragController()->dragExited(&dragData);
         break;
         
-    case DragControllerActionPerformDrag:
+    case DragControllerActionPerformDrag: {
+        ASSERT(!m_pendingDropSandboxExtension);
+
+        m_pendingDropSandboxExtension = SandboxExtension::create(sandboxExtensionHandle);
+
         m_page->dragController()->performDrag(&dragData);
+
+        // If we started loading a local file, the sandbox extension tracker would have adopted this
+        // pending drop sandbox extension. If not, we'll play it safe and invalidate it.
+        if (m_pendingDropSandboxExtension) {
+            m_pendingDropSandboxExtension->invalidate();
+            m_pendingDropSandboxExtension = nullptr;
+        }
+
         break;
-        
+    }
+
     default:
         ASSERT_NOT_REACHED();
     }
@@ -1532,6 +1545,11 @@ void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint glob
     // FIXME: These are fake modifier keys here, but they should be real ones instead.
     PlatformMouseEvent event(adjustedClientPosition, adjustedGlobalPosition, LeftButton, MouseEventMoved, 0, false, false, false, false, currentTime());
     m_page->mainFrame()->eventHandler()->dragSourceEndedAt(event, (DragOperation)operation);
+}
+
+void WebPage::willPerformLoadDragDestinationAction()
+{
+    m_sandboxExtensionTracker.willPerformLoadDragDestinationAction(m_pendingDropSandboxExtension.release());
 }
 
 WebEditCommand* WebPage::webEditCommand(uint64_t commandID)
@@ -1861,18 +1879,28 @@ void WebPage::SandboxExtensionTracker::invalidate()
     }
 }
 
+void WebPage::SandboxExtensionTracker::willPerformLoadDragDestinationAction(PassRefPtr<SandboxExtension> pendingDropSandboxExtension)
+{
+    setPendingProvisionalSandboxExtension(pendingDropSandboxExtension);
+}
+
 void WebPage::SandboxExtensionTracker::beginLoad(WebFrame* frame, const SandboxExtension::Handle& handle)
 {
     ASSERT(frame->isMainFrame());
 
+    setPendingProvisionalSandboxExtension(SandboxExtension::create(handle));
+}
+
+void WebPage::SandboxExtensionTracker::setPendingProvisionalSandboxExtension(PassRefPtr<SandboxExtension> pendingProvisionalSandboxExtension)
+{
     // If we get two beginLoad calls in succession, without a provisional load starting, then
     // m_pendingProvisionalSandboxExtension will be non-null. Invalidate and null out the extension if that is the case.
     if (m_pendingProvisionalSandboxExtension) {
         m_pendingProvisionalSandboxExtension->invalidate();
         m_pendingProvisionalSandboxExtension = nullptr;
     }
-        
-    m_pendingProvisionalSandboxExtension = SandboxExtension::create(handle);
+    
+    m_pendingProvisionalSandboxExtension = pendingProvisionalSandboxExtension;    
 }
 
 static bool shouldReuseCommittedSandboxExtension(WebFrame* frame)

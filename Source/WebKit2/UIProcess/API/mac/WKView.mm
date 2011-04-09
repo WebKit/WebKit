@@ -1463,12 +1463,40 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     return YES;
 }
 
+// FIXME: This code is more or less copied from Pasteboard::getBestURL.
+// It would be nice to be able to share the code somehow.
+static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, SandboxExtension::Handle& sandboxExtensionHandle)
+{
+    NSArray *types = [pasteboard types];
+    if (![types containsObject:NSFilenamesPboardType])
+        return;
+
+    NSArray *files = [pasteboard propertyListForType:NSFilenamesPboardType];
+    if ([files count] != 1)
+        return;
+
+    NSString *file = [files objectAtIndex:0];
+    BOOL isDirectory;
+    if (![[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDirectory])
+        return;
+
+    if (isDirectory)
+        return;
+
+    SandboxExtension::createHandle("/", SandboxExtension::ReadOnly, sandboxExtensionHandle);
+}
+
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)draggingInfo
 {
     IntPoint client([self convertPoint:[draggingInfo draggingLocation] fromView:nil]);
     IntPoint global(globalPoint([draggingInfo draggingLocation], [self window]));
     DragData dragData(draggingInfo, client, global, static_cast<DragOperation>([draggingInfo draggingSourceOperationMask]), [self applicationFlags:draggingInfo]);
-    _data->_page->performDrag(&dragData, [[draggingInfo draggingPasteboard] name]);
+
+    SandboxExtension::Handle sandboxExtensionHandle;
+    maybeCreateSandboxExtensionFromPasteboard([draggingInfo draggingPasteboard], sandboxExtensionHandle);
+
+    _data->_page->performDrag(&dragData, [[draggingInfo draggingPasteboard] name], sandboxExtensionHandle);
+
     return YES;
 }
 

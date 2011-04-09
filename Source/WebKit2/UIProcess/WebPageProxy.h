@@ -384,7 +384,7 @@ public:
     void dragEntered(WebCore::DragData*, const String& dragStorageName = String());
     void dragUpdated(WebCore::DragData*, const String& dragStorageName = String());
     void dragExited(WebCore::DragData*, const String& dragStorageName = String());
-    void performDrag(WebCore::DragData*, const String& dragStorageName = String());
+    void performDrag(WebCore::DragData*, const String& dragStorageName, const SandboxExtension::Handle&);
 
     void didPerformDragControllerAction(uint64_t resultOperation);
     void dragEnded(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t operation);
@@ -696,7 +696,7 @@ private:
 
     void clearLoadDependentCallbacks();
 
-    void performDragControllerAction(DragControllerAction, WebCore::DragData*, const String& dragStorageName);
+    void performDragControllerAction(DragControllerAction, WebCore::DragData*, const String& dragStorageName, const SandboxExtension::Handle&);
 
     PageClient* m_pageClient;
     WebLoaderClient m_loaderClient;
