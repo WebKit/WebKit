@@ -639,7 +639,7 @@ static void validateCommandCallback(WKStringRef commandName, bool isEnabled, int
 
     if (action == @selector(orderFrontSubstitutionsPanel:)) {
         if (NSMenuItem *menuItem = ::menuItem(item))
-            [menuItem setTitle:contextMenuItemTagShowSubstitutions([[[NSSpellChecker sharedSpellChecker] substitutionsPanel] isVisible])];
+            [menuItem setTitle:contextMenuItemTagShowSubstitutions(![[[NSSpellChecker sharedSpellChecker] substitutionsPanel] isVisible])];
         return _data->_page->selectionState().isContentEditable;
     }
 

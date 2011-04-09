@@ -196,6 +196,21 @@ void TextChecker::setSmartInsertDeleteEnabled(bool flag)
     [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebSmartInsertDeleteEnabled];
 }
 
+bool TextChecker::substitutionsPanelIsShowing()
+{
+    return [[[NSSpellChecker sharedSpellChecker] substitutionsPanel] isVisible];
+}
+
+void TextChecker::toggleSubstitutionsPanelIsShowing()
+{
+    NSPanel *substitutionsPanel = [[NSSpellChecker sharedSpellChecker] substitutionsPanel];
+    if ([substitutionsPanel isVisible]) {
+        [substitutionsPanel orderOut:nil];
+        return;
+    }
+    [substitutionsPanel orderFront:nil];
+}
+
 int64_t TextChecker::uniqueSpellDocumentTag()
 {
     return [NSSpellChecker uniqueSpellDocumentTag];

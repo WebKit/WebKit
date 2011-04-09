@@ -50,6 +50,9 @@ public:
 
     static bool isSmartInsertDeleteEnabled();
     static void setSmartInsertDeleteEnabled(bool);
+
+    static bool substitutionsPanelIsShowing();
+    static void toggleSubstitutionsPanelIsShowing();
 #elif PLATFORM(WIN)
     static void continuousSpellCheckingEnabledStateChanged(bool);
     static void grammarCheckingEnabledStateChanged(bool);

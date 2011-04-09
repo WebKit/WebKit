@@ -688,12 +688,15 @@ private:
 
     void initializeSandboxExtensionHandle(const WebCore::KURL&, SandboxExtension::Handle&);
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC)
+    void substitutionsPanelIsShowing(bool&);
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
     void showCorrectionPanel(int32_t panelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
     void dismissCorrectionPanel(int32_t reason);
     void dismissCorrectionPanelSoon(int32_t reason, String& result);
     void recordAutocorrectionResponse(int32_t responseType, const String& replacedString, const String& replacementString);
-#endif
+#endif // !defined(BUILDING_ON_SNOW_LEOPARD)
+#endif // PLATFORM(MAC)
 
     void clearLoadDependentCallbacks();
 

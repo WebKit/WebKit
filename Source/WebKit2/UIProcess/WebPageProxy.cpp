@@ -2283,6 +2283,10 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         process()->updateTextCheckerState();
         return;        
     }
+    if (item.action() == ContextMenuItemTagShowSubstitutions) {
+        TextChecker::toggleSubstitutionsPanelIsShowing();
+        return;
+    }
 #endif
     if (item.action() == ContextMenuItemTagDownloadImageToDisk) {
         m_context->download(this, KURL(KURL(), m_activeContextMenuState.absoluteImageURLString));
@@ -2958,7 +2962,14 @@ void WebPageProxy::linkClicked(const String& url, const WebMouseEvent& event)
     process()->send(Messages::WebPage::LinkClicked(url, event), m_pageID, 0);
 }
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if PLATFORM(MAC)
+
+void WebPageProxy::substitutionsPanelIsShowing(bool& isShowing)
+{
+    isShowing = TextChecker::substitutionsPanelIsShowing();
+}
+
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
 void WebPageProxy::showCorrectionPanel(int32_t panelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
     m_pageClient->showCorrectionPanel((WebCore::CorrectionPanelInfo::PanelType)panelType, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
@@ -2978,9 +2989,8 @@ void WebPageProxy::recordAutocorrectionResponse(int32_t responseType, const Stri
 {
     m_pageClient->recordAutocorrectionResponse((WebCore::EditorClient::AutocorrectionResponseType)responseType, replacedString, replacementString);
 }
-#endif
+#endif // !defined(BUILDING_ON_SNOW_LEOPARD)
 
-#if PLATFORM(MAC)
 void WebPageProxy::handleCorrectionPanelResult(const String& result)
 {
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
@@ -2988,6 +2998,6 @@ void WebPageProxy::handleCorrectionPanelResult(const String& result)
         process()->send(Messages::WebPage::HandleCorrectionPanelResult(result), m_pageID, 0);
 #endif
 }
-#endif
+#endif // PLATFORM(MAC)
 
 } // namespace WebKit

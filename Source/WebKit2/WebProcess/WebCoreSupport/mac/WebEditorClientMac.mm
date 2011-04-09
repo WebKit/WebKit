@@ -176,8 +176,9 @@ void WebEditorClient::showSubstitutionsPanel(bool)
 
 bool WebEditorClient::substitutionsPanelIsShowing()
 {
-    notImplemented();
-    return false;
+    bool isShowing;
+    m_page->sendSync(Messages::WebPageProxy::SubstitutionsPanelIsShowing(), Messages::WebPageProxy::SubstitutionsPanelIsShowing::Reply(isShowing));
+    return isShowing;
 }
 
 void WebEditorClient::toggleSmartInsertDelete()

@@ -1,3 +1,36 @@
+2011-04-08  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Show the substitutions panel on Mac and make sure the menu items titles are
+        updated correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=58179
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]):
+        The title of the context menu item should be opposite of whether or not the spelling panel
+        is visible.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        If the "Show/Hide" Substitutions item is selected, call toggleSubstitutionsPanelIsShowing.
+        (WebKit::WebPageProxy::substitutionsPanelIsShowing):
+        Ask the TextChecker.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/TextChecker.h:
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::substitutionsPanelIsShowing):
+        As the shared NSSpellChecker if the substitutionsPanel is visible.
+        (WebKit::TextChecker::toggleSubstitutionsPanelIsShowing):
+        Order the substitutionsPanel out or front (copied from WKView.mm).
+
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::substitutionsPanelIsShowing):
+        Send a sync message to the UI process to find out.
+        It needs to be sync because the editor code relies on the value returned.
+
 2011-04-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.
