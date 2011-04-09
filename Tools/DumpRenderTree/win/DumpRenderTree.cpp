@@ -168,12 +168,15 @@ wstring urlSuitableForTestResult(const wstring& urlString)
     return cfStringRefToWString(substringFromIndex(path.get(), CFStringGetLength(basePath.get())).get());
 }
 
-wstring lastPathComponent(const wstring& url)
+wstring lastPathComponent(const wstring& urlString)
 {
-    if (url.empty())
-        return url;
+    if (urlString.empty())
+        return urlString;
 
-    return PathFindFileNameW(url.c_str());
+    RetainPtr<CFURLRef> url(AdoptCF, CFURLCreateWithBytes(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(urlString.c_str()), urlString.length() * sizeof(wstring::value_type), kCFStringEncodingUTF16, 0));
+    RetainPtr<CFStringRef> lastPathComponent(CFURLCopyLastPathComponent(url.get()));
+
+    return cfStringRefToWString(lastPathComponent.get());
 }
 
 static string toUTF8(const wchar_t* wideString, size_t length)

@@ -1,3 +1,15 @@
+2011-04-08  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        http/tests/loading/preload-append-scan.php is failing on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=58178
+
+        Reviewed by Brian Weinstein.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (lastPathComponent):
+        Use CFURL API to find the last path component, rather than
+        PathFindFileName(), because the latter will include the query string.
+
 2011-04-08  Jian Li  <jianli@chromium.org>
 
         Unreviewed, rolling out r83327, r83330 since these patches are very
