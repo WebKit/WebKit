@@ -2137,9 +2137,11 @@ void HTMLMediaElement::updatePlayState()
             if (!m_isFullscreen && isVideo() && document() && document()->page() && document()->page()->chrome()->requiresFullscreenForVideoPlayback())
                 enterFullscreen();
 
-            // Set rate before calling play in case the rate was set before the media engine was setup.
-            // The media engine should just stash the rate since it isn't already playing.
+            // Set rate, muted before calling play in case they were set before the media engine was setup.
+            // The media engine should just stash the rate and muted values since it isn't already playing.
             m_player->setRate(m_playbackRate);
+            m_player->setMuted(m_muted);
+
             m_player->play();
         }
 

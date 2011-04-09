@@ -1,3 +1,17 @@
+2011-04-08  David Humphrey  <david.humphrey@senecac.on.ca>
+
+        Reviewed by Eric Carlson.
+
+        Fix call order of media element muted and play(), such that setting muted before play() works.
+        https://bugs.webkit.org/show_bug.cgi?id=57673
+        https://code.google.com/p/chromium/issues/detail?id=70777
+
+        Manual test added: manual-tests/media-muted.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updatePlayState):
+        * manual-tests/media-muted.html: Added.
+
 2011-04-08  Nat Duca  <nduca@chromium.org>
 
         Reviewed by David Levin.
