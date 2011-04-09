@@ -1,5 +1,12 @@
 2011-04-09  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Make Qt bots happier. :)
+
+        * platform/qt-wk2/Skipped: Remove non-existent tests.
+        * platform/qt/Skipped: Add new tests without Qt specific expected files.
+
+2011-04-09  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][WK2] Make Qt-WK2 buildbot green on http://webkit.sed.hu
 
         * platform/qt-wk2/Skipped: Add failing tests.
