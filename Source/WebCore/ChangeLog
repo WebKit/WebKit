@@ -1,3 +1,16 @@
+2011-04-08  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by David Levin.
+
+        [chromium] Fix windows assertion on ~CCThread
+        https://bugs.webkit.org/show_bug.cgi?id=58153
+
+        Because ~CCThread uses waitForThreadCompletion,
+        calling detachThread is not necessary.
+
+        * platform/graphics/chromium/cc/CCThread.cpp:
+        (WebCore::CCThread::runLoop):
+
 2011-04-08  Jian Li  <jianli@chromium.org>
 
         Unreviewed, rolling out r83348.

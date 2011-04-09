@@ -73,8 +73,6 @@ void* CCThread::runLoop()
     while (OwnPtr<Task> task = m_queue.waitForMessage())
         task->performTask();
 
-    detachThread(m_threadID);
-
     return 0;
 }
 
