@@ -1,3 +1,9 @@
+2011-04-08  Dan Bernstein  <mitz@apple.com>
+
+        No need to compile .js files, that is what the JIT is for.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2011-04-08  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed, rolling out r83335.

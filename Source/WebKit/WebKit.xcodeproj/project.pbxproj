@@ -81,7 +81,6 @@
 		226E9E6A09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 226E9E6809D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h */; };
 		226E9E6B09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c in Sources */ = {isa = PBXBuildFile; fileRef = 226E9E6909D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		29AEF95E134C755400FE5096 /* OutlookQuirksUserScript.js in Sources */ = {isa = PBXBuildFile; fileRef = 29AEF95D134C755400FE5096 /* OutlookQuirksUserScript.js */; };
 		29AEF960134C76FB00FE5096 /* OutlookQuirksUserScript.js in Resources */ = {isa = PBXBuildFile; fileRef = 29AEF95D134C755400FE5096 /* OutlookQuirksUserScript.js */; };
 		37B6FB4E1063530C000FDB3B /* WebPDFDocumentExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 37B6FB4C1063530C000FDB3B /* WebPDFDocumentExtras.h */; };
 		37B6FB4F1063530C000FDB3B /* WebPDFDocumentExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 37B6FB4D1063530C000FDB3B /* WebPDFDocumentExtras.mm */; };
@@ -2020,7 +2019,6 @@
 				3ABB3C7B1309C3B500E93D94 /* WebStorageTrackerClient.mm in Sources */,
 				BC42D34D131ED3880075FA4B /* WebLocalizableStringsInternal.mm in Sources */,
 				B82958D4132707D0000D0E79 /* CorrectionPanel.mm in Sources */,
-				29AEF95E134C755400FE5096 /* OutlookQuirksUserScript.js in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
