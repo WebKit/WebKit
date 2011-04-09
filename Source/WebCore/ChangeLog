@@ -1,3 +1,14 @@
+2011-04-08  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, rolling out r83348.
+        http://trac.webkit.org/changeset/83348
+        https://bugs.webkit.org/show_bug.cgi?id=49508
+
+        Breaks
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::localCaretRect):
+
 2011-04-08  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Simon Fraser.
