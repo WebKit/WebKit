@@ -1,3 +1,15 @@
+2011-04-09  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        new-run-webkit-tests: Mac SL tests failing on the bot
+        https://bugs.webkit.org/show_bug.cgi?id=58192
+
+        Mark tests as needing triage/investigation for failing
+        on NRWT bot.
+
+        * platform/mac/test_expectations.txt:
+
 2011-04-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] One more attempt to make Qt-WK2 bot happy.

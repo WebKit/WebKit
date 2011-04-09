@@ -76,3 +76,21 @@ BUGWK57799 : storage/domstorage/localstorage/storagetracker/storage-tracker-5-de
 BUGWK57688 : fast/text/international/bidi-AN-after-empty-run.html = PASS TEXT
 BUGWK57688 : fast/text/international/bidi-CS-after-AN.html = PASS TEXT
 BUGWK57688 : fast/text/international/thai-line-breaks.html = PASS TEXT
+
+BUGWK58192 : fast/loader/local-CSS-from-local.html = TEXT
+BUGWK58192 : fast/loader/local-JavaScript-from-local.html = TEXT
+BUGWK58192 : fast/loader/local-image-from-local.html = TEXT
+BUGWK58192 : fast/text/international/bold-bengali.html = TEXT
+BUGWK58192 : fast/text/international/khmer-selection.html = TEXT
+BUGWK58192 : http/tests/security/local-user-CSS-from-remote.html = TEXT
+BUGWK58192 : plugins/npp-set-window-called-during-destruction.html = TEXT
+
+// Flaky tests when run multi-process
+BUGWK58192 : fast/dom/frame-loading-via-document-write.html = TEXT PASS
+BUGWK58192 : http/tests/appcache/fail-on-update-2.html = TEXT PASS
+BUGWK58192 : http/tests/appcache/fail-on-update.html = TEXT PASS
+BUGWK58192 : http/tests/inspector/console-websocket-error.html = TEXT PASS
+BUGWK58192 : fast/canvas/webgl/gl-teximage.html = TEXT PASS
+BUGWK58192 : fast/frames/flattening/iframe-flattening-offscreen.html = TEXT PASS
+BUGWK58192 : svg/dom/SVGScriptElement/script-set-href.svg = TEXT PASS
+
