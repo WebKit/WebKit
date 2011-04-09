@@ -1,3 +1,16 @@
+2011-04-08  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Simon Fraser.
+
+        Negative spread should not make a sharp corner rounded
+        https://bugs.webkit.org/show_bug.cgi?id=58162
+
+        Handled inset shadow path for rounded and non-rounded rect
+        differently as normal shadow path is doing.
+        
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+
 2011-04-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Martin Robinson.

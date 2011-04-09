@@ -1738,13 +1738,15 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
             Color fillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), 255);
 
             IntRect outerRect = areaCastingShadowInHole(border.rect(), shadowBlur, shadowSpread, shadowOffset);
+            RoundedIntRect roundedHole(holeRect, border.radii());
+
             context->save();
 
-            Path path;
             if (hasBorderRadius) {
                 Path path;
                 path.addRoundedRect(border.rect(), border.radii().topLeft(), border.radii().topRight(), border.radii().bottomLeft(), border.radii().bottomRight());
                 context->clip(path);
+                roundedHole.shrinkRadii(shadowSpread);
             } else
                 context->clip(border.rect());
 
@@ -1757,8 +1759,6 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
             else
                 context->setShadow(shadowOffset, shadowBlur, shadowColor, s->colorSpace());
 
-            RoundedIntRect roundedHole(holeRect, border.radii());
-            roundedHole.shrinkRadii(shadowSpread);
             context->fillRectWithRoundedHole(outerRect, roundedHole, fillColor, s->colorSpace());
 
             context->restore();
