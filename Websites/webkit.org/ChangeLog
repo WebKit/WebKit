@@ -1,3 +1,12 @@
+2011-04-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Add a diagram, explaning how  an event's relatedTarget interact with shadow DOM boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=58190
+
+        * misc/related-target-and-shadow-dom.svg: Added.
+
 2011-04-06  David Levin  <levin@chromium.org>
 
         Reviewed by Ojan Vafai.
