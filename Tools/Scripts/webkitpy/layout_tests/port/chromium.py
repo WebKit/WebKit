@@ -425,7 +425,7 @@ class ChromiumDriver(base.Driver):
         if png_path and self._port._filesystem.exists(png_path):
             return self._port._filesystem.read_binary_file(png_path)
         else:
-            return None
+            return ''
 
     def _output_image_with_retry(self):
         # Retry a few more times because open() sometimes fails on Windows,
@@ -500,16 +500,11 @@ class ChromiumDriver(base.Driver):
 
             (line, crash) = self._write_command_and_read_line(input=None)
 
-        # FIXME: Add support for audio when we're ready.
-
         run_time = time.time() - start_time
         output_image = self._output_image_with_retry()
-        text = ''.join(output)
-        if not text:
-            text = None
-
-        return base.DriverOutput(text, output_image, actual_checksum, audio=None,
-            crash=crash, test_time=run_time, timeout=timeout, error=''.join(error))
+        assert output_image is not None
+        return base.DriverOutput(''.join(output), output_image, actual_checksum,
+                                 crash, run_time, timeout, ''.join(error))
 
     def stop(self):
         if self._proc:

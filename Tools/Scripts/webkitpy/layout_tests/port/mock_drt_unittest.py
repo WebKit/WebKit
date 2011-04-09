@@ -200,7 +200,7 @@ class MockDRTTest(unittest.TestCase):
                         'ActualHash: checksum-checksum\n',
                         'ExpectedHash: wrong-checksum\n',
                         'Content-Type: image/png\n',
-                        'Content-Length: 13\n',
+                        'Content-Length: 13\n\n',
                         'checksum\x8a-png',
                         '#EOF\n'])
 

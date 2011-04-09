@@ -54,8 +54,7 @@ def determine_result_type(failure_list):
         return test_expectations.TIMEOUT
     elif (FailureMissingResult in failure_types or
           FailureMissingImage in failure_types or
-          FailureMissingImageHash in failure_types or
-          FailureMissingAudio in failure_types):
+          FailureMissingImageHash in failure_types):
         return test_expectations.MISSING
     else:
         is_text_failure = FailureTextMismatch in failure_types
@@ -63,15 +62,12 @@ def determine_result_type(failure_list):
                             FailureImageHashMismatch in failure_types)
         is_reftest_failure = (FailureReftestMismatch in failure_types or
                               FailureReftestMismatchDidNotOccur in failure_types)
-        is_audio_failure = (FailureAudioMismatch in failure_types)
         if is_text_failure and is_image_failure:
             return test_expectations.IMAGE_PLUS_TEXT
         elif is_text_failure:
             return test_expectations.TEXT
         elif is_image_failure or is_reftest_failure:
             return test_expectations.IMAGE
-        elif is_audio_failure:
-            return test_expectations.AUDIO
         else:
             raise ValueError("unclassifiable set of failures: "
                              + str(failure_types))
@@ -333,28 +329,6 @@ class FailureReftestMismatchDidNotOccur(ComparisonTestFailure):
         for text, uri in zip(['-expected-mismatch.html', 'image'], uris):
             links.append("<a href='%s'>%s</a>" % (uri, text))
         return ' '.join(links)
-
-
-class FailureMissingAudio(ComparisonTestFailure):
-    """Actual result image was missing."""
-    OUT_FILENAMES = ("-actual.wav",)
-
-    @staticmethod
-    def message():
-        return "No expected audio found"
-
-    def result_html_output(self, filename):
-        return ("<strong>%s</strong>" % self.message() +
-                self.output_links(filename, self.OUT_FILENAMES))
-
-
-class FailureAudioMismatch(ComparisonTestFailure):
-    """Audio files didn't match."""
-    OUT_FILENAMES = ("-actual.wav", "-expected.wav")
-
-    @staticmethod
-    def message():
-        return "Audio mismatch"
 
 
 # Convenient collection of all failure classes for anything that might

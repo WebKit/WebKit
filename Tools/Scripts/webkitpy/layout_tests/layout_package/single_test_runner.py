@@ -82,7 +82,7 @@ class SingleTestRunner:
             # For example, if 'foo.html' has two expectation files, 'foo-expected.html' and
             # 'foo-expected.txt', we should warn users. One test file must be used exclusively
             # in either layout tests or reftests, but not in both.
-            for suffix in ('.txt', '.checksum', '.png', '.wav'):
+            for suffix in ['.txt', '.checksum', '.png']:
                 expected_filename = self._port.expected_filename(self._filename, suffix)
                 if fs.exists(expected_filename):
                     _log.error('The reftest (%s) can not have an expectation file (%s).'
@@ -91,8 +91,7 @@ class SingleTestRunner:
     def _expected_driver_output(self):
         return base.DriverOutput(self._port.expected_text(self._filename),
                                  self._port.expected_image(self._filename),
-                                 self._port.expected_checksum(self._filename),
-                                 self._port.expected_audio(self._filename))
+                                 self._port.expected_checksum(self._filename))
 
     def _should_fetch_expected_checksum(self):
         return (self._options.pixel_tests and
@@ -143,9 +142,6 @@ class SingleTestRunner:
         # DumpRenderTree may not output utf-8 text (e.g. webarchives).
         self._save_baseline_data(driver_output.text, ".txt",
                                  generate_new_baseline=self._options.new_baseline)
-        if driver_output.audio:
-            self._save_baseline_data(driver_output.audio, '.wav',
-                                     generate_new_baseline=self._options.new_baseline)
         if self._options.pixel_tests and driver_output.image_hash:
             self._save_baseline_data(driver_output.image, ".png",
                                      generate_new_baseline=self._options.new_baseline)
@@ -220,28 +216,19 @@ class SingleTestRunner:
             return TestResult(self._filename, failures, driver_output.test_time)
 
         failures.extend(self._compare_text(driver_output.text, expected_driver_output.text))
-        failures.extend(self._compare_audio(driver_output.audio, expected_driver_output.audio))
         if self._options.pixel_tests:
             failures.extend(self._compare_image(driver_output, expected_driver_output))
         return TestResult(self._filename, failures, driver_output.test_time)
 
     def _compare_text(self, actual_text, expected_text):
         failures = []
-        if (expected_text and actual_text and
-            # Assuming expected_text is already normalized.
-            self._port.compare_text(self._get_normalized_output_text(actual_text), expected_text)):
-            failures.append(test_failures.FailureTextMismatch())
-        elif actual_text and not expected_text:
-            failures.append(test_failures.FailureMissingResult())
-        return failures
-
-    def _compare_audio(self, actual_audio, expected_audio):
-        failures = []
-        if (expected_audio and actual_audio and
-            self._port.compare_audio(actual_audio, expected_audio)):
-            failures.append(test_failures.FailureAudioMismatch())
-        elif actual_audio and not expected_audio:
-            failures.append(test_failures.FailureMissingAudio())
+        if self._port.compare_text(self._get_normalized_output_text(actual_text),
+                                   # Assuming expected_text is already normalized.
+                                   expected_text):
+            if expected_text == '':
+                failures.append(test_failures.FailureMissingResult())
+            else:
+                failures.append(test_failures.FailureTextMismatch())
         return failures
 
     def _get_normalized_output_text(self, output):

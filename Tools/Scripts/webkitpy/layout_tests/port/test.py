@@ -30,7 +30,6 @@
 """Dummy Port implementation used for testing."""
 from __future__ import with_statement
 
-import base64
 import time
 
 from webkitpy.common.system import filesystem_mock
@@ -67,8 +66,6 @@ class TestInstance:
         self.expected_checksum = self.actual_checksum
         self.expected_image = self.actual_image
 
-        self.actual_audio = None
-        self.expected_audio = None
 
 # This is an in-memory list of tests, what we want them to produce, and
 # what we want to claim are the expected results.
@@ -114,20 +111,11 @@ def unit_test_list():
     tests.add('failures/expected/image_checksum.html',
               actual_checksum='image_checksum_fail-checksum',
               actual_image='image_checksum_fail-png')
-    tests.add('failures/expected/audio.html',
-              actual_audio=base64.b64encode('audio_fail-wav'), expected_audio='audio-wav',
-              actual_text=None, expected_text=None,
-              actual_image=None, expected_image=None,
-              actual_checksum=None, expected_checksum=None)
     tests.add('failures/expected/keyboard.html', keyboard=True)
     tests.add('failures/expected/missing_check.html',
               expected_checksum=None,
               expected_image=None)
     tests.add('failures/expected/missing_image.html', expected_image=None)
-    tests.add('failures/expected/missing_audio.html', expected_audio=None,
-              actual_text=None, expected_text=None,
-              actual_image=None, expected_image=None,
-              actual_checksum=None, expected_checksum=None)
     tests.add('failures/expected/missing_text.html', expected_text=None)
     tests.add('failures/expected/newlines_leading.html',
               expected_text="\nfoo\n", actual_text="foo\n")
@@ -146,11 +134,6 @@ def unit_test_list():
     tests.add('http/tests/ssl/text.html')
     tests.add('passes/error.html', error='stuff going to stderr')
     tests.add('passes/image.html')
-    tests.add('passes/audio.html',
-              actual_audio=base64.b64encode('audio-wav'), expected_audio='audio-wav',
-              actual_text=None, expected_text=None,
-              actual_image=None, expected_image=None,
-              actual_checksum=None, expected_checksum=None)
     tests.add('passes/platform_image.html')
     tests.add('passes/checksum_in_image.html',
               expected_checksum=None,
@@ -201,14 +184,9 @@ def unit_test_filesystem(files=None):
         add_file(files, test, '.html', '')
         if test.is_reftest:
             continue
-        if test.actual_audio:
-            add_file(files, test, '-expected.wav', test.expected_audio)
-            continue
-
         add_file(files, test, '-expected.txt', test.expected_text)
         add_file(files, test, '-expected.checksum', test.expected_checksum)
         add_file(files, test, '-expected.png', test.expected_image)
-
 
     # Add the test_expectations file.
     files[LAYOUT_TEST_DIR + '/platform/test/test_expectations.txt'] = """
@@ -216,12 +194,10 @@ WONTFIX : failures/expected/checksum.html = IMAGE
 WONTFIX : failures/expected/crash.html = CRASH
 // This one actually passes because the checksums will match.
 WONTFIX : failures/expected/image.html = PASS
-WONTFIX : failures/expected/audio.html = AUDIO
 WONTFIX : failures/expected/image_checksum.html = IMAGE
 WONTFIX : failures/expected/mismatch.html = IMAGE
 WONTFIX : failures/expected/missing_check.html = MISSING PASS
 WONTFIX : failures/expected/missing_image.html = MISSING PASS
-WONTFIX : failures/expected/missing_audio.html = MISSING PASS
 WONTFIX : failures/expected/missing_text.html = MISSING PASS
 WONTFIX : failures/expected/newlines_leading.html = TEXT
 WONTFIX : failures/expected/newlines_trailing.html = TEXT
@@ -436,13 +412,10 @@ class TestDriver(base.Driver):
             raise ValueError('exception from ' + test_name)
         if test.hang:
             time.sleep((float(test_input.timeout) * 4) / 1000.0)
-
-        audio = None
-        if test.actual_audio:
-            audio = base64.b64decode(test.actual_audio)
         return base.DriverOutput(test.actual_text, test.actual_image,
-            test.actual_checksum, audio, crash=test.crash,
-            test_time=time.time() - start_time, timeout=test.timeout, error=test.error)
+                                 test.actual_checksum, test.crash,
+                                 time.time() - start_time, test.timeout,
+                                 test.error)
 
     def start(self):
         pass
