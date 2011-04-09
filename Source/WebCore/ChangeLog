@@ -1,3 +1,9 @@
+2011-04-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed trivial fix after r83344.
+
+        * WebCore.pro: Update HEADERS list.
+
 2011-04-09  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Beth Dakin.

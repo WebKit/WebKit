@@ -1529,7 +1529,6 @@ HEADERS += \
     editing/ApplyStyleCommand.h \
     editing/BreakBlockquoteCommand.h \
     editing/CompositeEditCommand.h \
-    editing/CorrectionPanelInfo.h \
     editing/CreateLinkCommand.h \
     editing/DeleteButtonController.h \
     editing/DeleteButton.h \
@@ -1565,6 +1564,7 @@ HEADERS += \
     editing/SelectionController.h \
     editing/SetNodeAttributeCommand.h \
     editing/SmartReplace.h \
+    editing/SpellingCorrectionController.h \
     editing/SplitElementCommand.h \
     editing/SplitTextNodeCommand.h \
     editing/SplitTextNodeContainingElementCommand.h \
