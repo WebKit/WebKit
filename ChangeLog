@@ -1,3 +1,12 @@
+2011-04-09  Keith Kyzivat  <keith.kyzivat@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Don't link against fontconfig or X11 if embedded
+        https://bugs.webkit.org/show_bug.cgi?id=58104
+
+        * Source/WebKit.pri: Add qpa=>embedded as it should be across all builds.
+
 2011-04-08  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed, rolling out r83335.

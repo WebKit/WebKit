@@ -34,7 +34,7 @@ DESTDIR = $$OUTPUT_DIR/bin
 QT += network
 macx:QT+=xml
 
-unix:!mac:!symbian {
+unix:!mac:!symbian:!embedded {
     CONFIG += link_pkgconfig
     PKGCONFIG += fontconfig
 }

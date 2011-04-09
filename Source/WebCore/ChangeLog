@@ -1,3 +1,14 @@
+2011-04-09  Keith Kyzivat  <keith.kyzivat@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Don't link against fontconfig or X11 if embedded
+        https://bugs.webkit.org/show_bug.cgi?id=58104
+
+        No functional change so no new tests.
+
+        * WebCore.pri: qpa=>embedded should be done very early so all cases of embedded are uniform.
+
 2011-04-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed trivial fix after r83344.

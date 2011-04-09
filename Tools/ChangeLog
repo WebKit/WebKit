@@ -1,3 +1,15 @@
+2011-04-09  Keith Kyzivat  <keith.kyzivat@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Don't link against fontconfig or X11 if embedded
+        https://bugs.webkit.org/show_bug.cgi?id=58104
+
+        * DumpRenderTree/qt/DumpRenderTree.pro: fontconfig !included in embedded
+        * QtTestBrowser/QtTestBrowser.pro: ditto
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundle.pro: ditto
+        * WebKitTestRunner/qt/WebKitTestRunner.pro: ditto
+
 2011-04-08  Jon Honeycutt  <jhoneycutt@apple.com>
 
         http/tests/loading/preload-append-scan.php is failing on Windows

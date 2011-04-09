@@ -72,7 +72,7 @@ INCLUDEPATH = \
 PREFIX_HEADER = $$PWD/../../WebKitTestRunnerPrefix.h
 *-g++*:QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
 
-unix:!mac:!symbian {
+unix:!mac:!symbian:!embedded {
     CONFIG += link_pkgconfig
     PKGCONFIG += fontconfig
 }

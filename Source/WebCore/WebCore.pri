@@ -10,6 +10,8 @@ QT *= network
 
 SOURCE_DIR = $$replace(PWD, /WebCore, "")
 
+contains(QT_CONFIG, qpa):CONFIG += embedded
+
 # Use a config-specific target to prevent parallel builds file clashes on Mac
 mac: CONFIG(debug, debug|release): WEBCORE_TARGET = webcored
 else: WEBCORE_TARGET = webcore
@@ -281,8 +283,6 @@ contains(DEFINES, ENABLE_SYMBIAN_DIALOG_PROVIDERS) {
         LIBS += -lbrowserdialogsprovider
     }
 }
-
-contains(QT_CONFIG, qpa):CONFIG += embedded
 
 !CONFIG(webkit-debug):CONFIG(QTDIR_build) {
     # Remove the following 2 lines if you want debug information in WebCore

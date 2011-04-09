@@ -13,7 +13,7 @@ INCLUDEPATH += ../../../Source/WebKit/qt/WebCoreSupport
 INCLUDEPATH += $$BASEDIR
 DESTDIR = ../../bin
 
-unix:!mac:!symbian {
+unix:!mac:!symbian:!embedded {
     CONFIG += link_pkgconfig
     PKGCONFIG += fontconfig
 }
