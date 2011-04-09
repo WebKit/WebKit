@@ -35,11 +35,13 @@
 #include <webkit/support/webkit_support.h>
 #include "WebFrame.h"
 #include "WebFrameClient.h"
+#include "WebSettings.h"
 #include "WebString.h"
 #include "WebURL.h"
 #include "WebURLRequest.h"
 #include "WebURLResponse.h"
 #include "WebView.h"
+#include "v8.h"
 
 using namespace WebKit;
 
@@ -47,25 +49,44 @@ namespace {
 
 class WebFrameTest : public testing::Test {
 public:
-    WebFrameTest() {}
+    WebFrameTest()
+        : baseURL("http://www.test.com/")
+    {
+    }
 
     virtual void TearDown()
     {
         webkit_support::UnregisterAllMockedURLs();
     }
 
-    void registerMockedURLLoad(const WebURL& url, const WebURLResponse& response, const WebString& fileName)
+    void registerMockedURLLoad(const std::string& fileName)
     {
+        WebURLResponse response;
+        response.initialize();
+        response.setMIMEType("text/html");
+
         std::string filePath = webkit_support::GetWebKitRootDir().utf8();
-        filePath.append("/Source/WebKit/chromium/tests/data/");
-        filePath.append(fileName.utf8());
-        webkit_support::RegisterMockedURL(url, response, WebString::fromUTF8(filePath));
+        filePath += "/Source/WebKit/chromium/tests/data/";
+        filePath += fileName;
+
+        webkit_support::RegisterMockedURL(WebURL(GURL(baseURL + fileName)), response, WebString::fromUTF8(filePath));
     }
 
     void serveRequests()
     {
         webkit_support::ServeAsynchronousMockedRequests();
     }
+
+    void loadFrame(WebFrame* frame, const std::string& fileName)
+    {
+        WebURLRequest urlRequest;
+        urlRequest.initialize();
+        urlRequest.setURL(WebURL(GURL(baseURL + fileName)));
+        frame->loadRequest(urlRequest);
+    }
+
+protected:
+    std::string baseURL;
 };
 
 class TestWebFrameClient : public WebFrameClient {
@@ -73,31 +94,17 @@ class TestWebFrameClient : public WebFrameClient {
 
 TEST_F(WebFrameTest, ContentText)
 {
-    // Register our resources.
-    WebURLResponse response;
-    response.initialize();
-    response.setMIMEType("text/html");
-    std::string rootURL = "http://www.test.com/";
-    const char* files[] = { "iframes_test.html", "visible_iframe.html",
-                            "invisible_iframe.html", "zero_sized_iframe.html" };
-    for (int i = 0; i < (sizeof(files) / sizeof(char*)); ++i) {
-        WebURL webURL = GURL(rootURL + files[i]);
-        registerMockedURLLoad(webURL, response, WebString::fromUTF8(files[i]));
-    }
+    registerMockedURLLoad("iframes_test.html");
+    registerMockedURLLoad("visible_iframe.html");
+    registerMockedURLLoad("invisible_iframe.html");
+    registerMockedURLLoad("zero_sized_iframe.html");
 
-    // Create and initialize the WebView.    
+    // Create and initialize the WebView.
     TestWebFrameClient webFrameClient;
     WebView* webView = WebView::create(0);
     webView->initializeMainFrame(&webFrameClient);
 
-    // Load the main frame URL.
-    WebURL testURL(GURL(rootURL + files[0]));
-    WebURLRequest urlRequest;
-    urlRequest.initialize();
-    urlRequest.setURL(testURL);
-    webView->mainFrame()->loadRequest(urlRequest);
-
-    // Load all pending asynchronous requests.
+    loadFrame(webView->mainFrame(), "iframes_test.html");
     serveRequests();
 
     // Now retrieve the frames text and test it only includes visible elements.
@@ -107,6 +114,33 @@ TEST_F(WebFrameTest, ContentText)
     EXPECT_EQ(std::string::npos, content.find(" invisible pararaph"));
     EXPECT_EQ(std::string::npos, content.find(" invisible iframe"));
     EXPECT_EQ(std::string::npos, content.find("iframe with zero size"));
+
+    webView->close();
+}
+
+TEST_F(WebFrameTest, FrameForEnteredContext)
+{
+    registerMockedURLLoad("iframes_test.html");
+    registerMockedURLLoad("visible_iframe.html");
+    registerMockedURLLoad("invisible_iframe.html");
+    registerMockedURLLoad("zero_sized_iframe.html");
+
+    // Create and initialize the WebView.
+    TestWebFrameClient webFrameClient;
+    WebView* webView = WebView::create(0);
+    webView->settings()->setJavaScriptEnabled(true);
+    webView->initializeMainFrame(&webFrameClient);
+
+    loadFrame(webView->mainFrame(), "iframes_test.html");
+    serveRequests();
+
+    v8::HandleScope scope;
+    EXPECT_EQ(webView->mainFrame(),
+              WebFrame::frameForContext(
+                  webView->mainFrame()->mainWorldScriptContext()));
+    EXPECT_EQ(webView->mainFrame()->firstChild(),
+              WebFrame::frameForContext(
+                  webView->mainFrame()->firstChild()->mainWorldScriptContext()));
 
     webView->close();
 }

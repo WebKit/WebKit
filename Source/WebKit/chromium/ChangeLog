@@ -1,3 +1,23 @@
+2011-04-08  Aaron Boodman  <aa@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Re-land http://trac.webkit.org/changeset/83007. This works
+        without changes after https://bugs.webkit.org/show_bug.cgi?id=58110.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58096
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrame::frameForContext):
+        * tests/WebFrameTest.cpp:
+        (WebKit::WebFrameTest::WebFrameTest):
+        (WebKit::WebFrameTest::registerMockedURLLoad):
+        (WebKit::WebFrameTest::loadFrame):
+        (WebKit::TEST_F):
+
 2011-04-08  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Dmitry Titov.

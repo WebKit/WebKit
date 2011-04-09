@@ -98,6 +98,13 @@ public:
     WEBKIT_API static WebFrame* frameForEnteredContext();
     WEBKIT_API static WebFrame* frameForCurrentContext();
 
+#if WEBKIT_USING_V8
+    // Returns the frame corresponding to the given context. This can return 0
+    // if the context is detached from the frame, or if the context doesn't
+    // correspond to a frame (e.g., workers).
+    WEBKIT_API static WebFrame* frameForContext(v8::Handle<v8::Context>);
+#endif
+
     // Returns the frame inside a given frame or iframe element. Returns 0 if
     // the given element is not a frame, iframe or if the frame is empty.
     WEBKIT_API static WebFrame* fromFrameOwnerElement(const WebElement&);
