@@ -85,6 +85,32 @@ class ChromiumDriverTest(unittest.TestCase):
         self.driver._proc.stdout.readline = mock_readline
         self._assert_write_command_and_read_line(expected_crash=True)
 
+    def test_stop(self):
+        self.pid = None
+        self.wait_called = False
+        self.driver._proc = Mock()
+        self.driver._proc.pid = 1
+        self.driver._proc.stdin = StringIO.StringIO()
+        self.driver._proc.stdout = StringIO.StringIO()
+        self.driver._proc.stderr = StringIO.StringIO()
+        self.driver._proc.poll = lambda: None
+
+        def fake_wait():
+            self.assertTrue(self.pid is not None)
+            self.wait_called = True
+
+        self.driver._proc.wait = fake_wait
+
+        class FakeExecutive(object):
+            def kill_process(other, pid):
+                self.pid = pid
+                self.driver._proc.poll = lambda: 2
+
+        self.driver._port._executive = FakeExecutive()
+        self.driver.KILL_TIMEOUT = 0.01
+        self.driver.stop()
+        self.assertTrue(self.wait_called)
+        self.assertEquals(self.pid, 1)
 
 class ChromiumPortTest(unittest.TestCase):
     class TestMacPort(chromium_mac.ChromiumMacPort):

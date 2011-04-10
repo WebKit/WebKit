@@ -334,6 +334,7 @@ class ChromiumDriver(base.Driver):
         self._port = port
         self._worker_number = worker_number
         self._image_path = None
+        self.KILL_TIMEOUT = 3.0
         if self._port.get_option('pixel_tests'):
             self._image_path = self._port._filesystem.join(
                 self._port.get_option('results_directory'),
@@ -512,21 +513,18 @@ class ChromiumDriver(base.Driver):
             self._proc.stdout.close()
             if self._proc.stderr:
                 self._proc.stderr.close()
-            if sys.platform not in ('win32', 'cygwin'):
-                # Closing stdin/stdout/stderr hangs sometimes on OS X,
-                # (see __init__(), above), and anyway we don't want to hang
-                # the harness if DRT is buggy, so we wait a couple
-                # seconds to give DRT a chance to clean up, but then
-                # force-kill the process if necessary.
-                KILL_TIMEOUT = 3.0
-                timeout = time.time() + KILL_TIMEOUT
-                # poll() is not threadsafe and can throw OSError due to:
-                # http://bugs.python.org/issue1731717
-                while self._proc.poll() is None and time.time() < timeout:
-                    time.sleep(0.1)
-                # poll() is not threadsafe and can throw OSError due to:
-                # http://bugs.python.org/issue1731717
-                if self._proc.poll() is None:
-                    _log.warning('stopping test driver timed out, '
-                                 'killing it')
-                    self._port._executive.kill_process(self._proc.pid)
+            # Closing stdin/stdout/stderr hangs sometimes on OS X,
+            # (see __init__(), above), and anyway we don't want to hang
+            # the harness if DRT is buggy, so we wait a couple
+            # seconds to give DRT a chance to clean up, but then
+            # force-kill the process if necessary.
+            timeout = time.time() + self.KILL_TIMEOUT
+            while self._proc.poll() is None and time.time() < timeout:
+                time.sleep(0.1)
+            if self._proc.poll() is None:
+                _log.warning('stopping test driver timed out, '
+                                'killing it')
+                self._port._executive.kill_process(self._proc.pid)
+            assert self._proc.poll() is not None
+            self._proc.wait()
+            self._proc = None

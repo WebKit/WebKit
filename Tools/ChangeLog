@@ -1,3 +1,17 @@
+2011-04-09  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        It looks like NRWT has not been stopping DRT/TestShell
+        instances properly on windows, probably for a long time.
+        This would go a long way to explaining why we often have
+        processes lying around :)
+
+        https://bugs.webkit.org/show_bug.cgi?id=57807
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+
 2011-04-09  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         Reviewed by Laszlo Gombos.
