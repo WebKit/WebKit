@@ -81,8 +81,6 @@ jscore_dirs = [
     'API',
     'bytecode',
     'bytecompiler',
-    'collector',
-    'collector/handles',
     'debugger',
     'DerivedSources',
     'heap',

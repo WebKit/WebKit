@@ -1,5 +1,11 @@
 2011-04-10  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Unreviewed build fix. Remove collector dirs from the list of build dirs.
+
+        * wx/build/settings.py:
+
+2011-04-10  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Unreviewed build fix. Add Source/JavaScriptCore/heap to the list of directories.
 
         * wx/build/settings.py:
