@@ -1,3 +1,42 @@
+2011-04-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Implement proper handling of mouseover/mouseout events in regard to shadow DOM boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=55515
+
+        This implements XBL 2.0's specified handling of mouseover/mouseout events:
+        http://dev.w3.org/2006/xbl2/Overview.html#the-mouseover-and-mouseout-events
+
+        To do this, we:
+        1) calculate lowest common ancestor between relatedTarget and target, and
+           the nearest boundaries around them: the outer (common) boundary, and the
+           inner (specific to relatedTarget) boundary. Then, we
+        2) ensure that events only propagate up to the common boundary (or
+           all the way if boundary is not found), while
+        3) updating relatedTarget be the inner boundary.
+
+        We also detect the most common case when no common boundary could exist
+        and provide a fast path to short-circuit most of the boundary detection
+        logic.
+
+        Test: fast/events/shadow-boundary-crossing.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::adjustToShadowBoundaries): Added a helper to determine lowest
+            common ancestor, the boundaries around it, and compute adjustments
+            to relatedTarget and event target ancestor chain.
+        (WebCore::ancestorsCrossShadowBoundaries): Added.
+        (WebCore::EventDispatcher::adjustRelatedTarget): Changed to calculate
+            inner/outer shadow DOM boundaries and adjust ancestors chain accordingly.
+        (WebCore::EventDispatcher::EventDispatcher): Added flag initializer
+        (WebCore::EventDispatcher::ensureEventAncestors): Renamed from getEventAncestors,
+            converted to use initialization flag, rather than testing for empty.
+        * dom/EventDispatcher.h: Adjusted decls.
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEventDispatchMediator::dispatchEvent): Changed to send event
+            to adjustRelatedTarget.
+
 2011-04-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

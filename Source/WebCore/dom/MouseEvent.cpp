@@ -170,7 +170,7 @@ bool MouseEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) cons
     if (event()->type().isEmpty())
         return false; // Shouldn't happen.
 
-    RefPtr<EventTarget> relatedTarget = dispatcher->adjustRelatedTarget(event()->relatedTarget());
+    RefPtr<EventTarget> relatedTarget = dispatcher->adjustRelatedTarget(event(), event()->relatedTarget());
     event()->setRelatedTarget(relatedTarget);
 
     dispatcher->dispatchEvent(event());

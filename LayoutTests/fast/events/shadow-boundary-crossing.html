@@ -19,6 +19,26 @@ function moveOver(element)
     eventSender.mouseMoveTo(x, y);
 }
 
+function moveOverLeftQuarterOf(element)
+{
+    if (!window.eventSender)
+        return;
+
+    var x = element.offsetLeft + element.offsetWidth / 4;
+    var y = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+}
+
+function moveOverRightQuarterOf(element)
+{
+    if (!window.eventSender)
+        return;
+
+    var x = element.offsetLeft + element.offsetWidth * 3 / 4;
+    var y = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+}
+
 function clickOn(element)
 {
     moveOver(element);
@@ -31,9 +51,7 @@ function clickOnLeftQuarterOf(element)
     if (!window.eventSender)
         return;
 
-    var x = element.offsetLeft + element.offsetWidth / 4;
-    var y = element.offsetTop + element.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
+    moveOverLeftQuarterOf(element);
     eventSender.mouseDown();
     eventSender.mouseUp();
 }
@@ -73,6 +91,28 @@ var tests = {
         log('The selectstart event should not propagate out of the shadow DOM', !selectstartEventFired);
         textInput.parentNode.removeChild(textInput);
         document.selectstart = null;
+    },
+    mouseOverAndOutPropagation: function()
+    {
+        var count = 0;
+        var fileInput = document.body.appendChild(document.createElement('input'));
+        fileInput.setAttribute('type', 'file');
+        var countEventDispatch = function()
+        {
+            count++;
+        }
+        moveOverLeftQuarterOf(fileInput);
+
+        document.body.addEventListener('mouseover', countEventDispatch, false);
+        document.body.addEventListener('mouseout', countEventDispatch, false);
+
+        moveOverRightQuarterOf(fileInput);
+
+        log("The mouseover/mouseout event between two elements inside the same shadow subtree should not propagate out of the shadow DOM", count == 0);
+
+        document.body.removeEventListener('mouseover', countEventDispatch, false);
+        document.body.removeEventListener('mouseout', countEventDispatch, false);
+        fileInput.parentNode.removeChild(fileInput);
     },
     labelSyntheticClick: function()
     {

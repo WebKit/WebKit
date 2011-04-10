@@ -54,21 +54,22 @@ public:
     static void dispatchSimulatedClick(Node*, PassRefPtr<Event> underlyingEvent, bool sendMouseEvents, bool showPressedLook);
 
     bool dispatchEvent(PassRefPtr<Event>);
-    PassRefPtr<EventTarget> adjustRelatedTarget(PassRefPtr<EventTarget>);
+    PassRefPtr<EventTarget> adjustRelatedTarget(Event*, PassRefPtr<EventTarget>);
     Node* node() const;
 
 private:
     EventDispatcher(Node*);
 
+    PassRefPtr<EventTarget> adjustToShadowBoundaries(PassRefPtr<Node> relatedTarget, const Vector<Node*> relatedTargetAncestors);
     EventDispatchBehavior determineDispatchBehavior(Event*);
-    void getEventAncestors(EventTarget* originalTarget, EventDispatchBehavior);
+    void ensureEventAncestors(Event*);
     const EventContext* topEventContext();
-    bool ancestorsInitialized() const;
 
     Vector<EventContext> m_ancestors;
     RefPtr<Node> m_node;
     RefPtr<EventTarget> m_originalTarget;
     RefPtr<FrameView> m_view;
+    bool m_ancestorsInitialized;
 };
 
 inline Node* EventDispatcher::node() const

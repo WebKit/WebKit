@@ -122,42 +122,122 @@ void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> under
     gNodesDispatchingSimulatedClicks->remove(node);
 }
 
+PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Node> relatedTarget, const Vector<Node*> relatedTargetAncestors)
+{
+    Vector<EventContext>::const_iterator lowestCommonBoundary = m_ancestors.end();
+    // Assume divergent boundary is the relatedTarget itself (in other words, related target ancestor chain does not cross any shadow DOM boundaries).
+    Vector<Node*>::const_iterator firstDivergentBoundary = relatedTargetAncestors.begin();
+
+    Vector<EventContext>::const_iterator targetAncestor = m_ancestors.end();
+    // Walk down from the top, looking for lowest common ancestor, also monitoring shadow DOM boundaries.
+    bool diverged = false;
+    for (Vector<Node*>::const_iterator i = relatedTargetAncestors.end() - 1; i >= relatedTargetAncestors.begin(); --i) {
+        if (diverged) {
+            if ((*i)->isShadowRoot()) {
+                firstDivergentBoundary = i + 1;
+                break;
+            }
+            continue;
+        }
+
+        if (targetAncestor == m_ancestors.begin()) {
+            diverged = true;
+            continue;
+        }
+
+        targetAncestor--;
+
+        if ((*i)->isShadowRoot())
+            lowestCommonBoundary = targetAncestor;
+
+        if ((*i) != (*targetAncestor).node())
+            diverged = true;
+    }
+
+    if (!diverged) {
+        // The relatedTarget is a parent or shadowHost of the target.
+        if (m_node->isShadowRoot())
+            lowestCommonBoundary = m_ancestors.begin();
+    } else if ((*firstDivergentBoundary) == m_node.get()) {
+        // Since ancestors does not contain target itself, we must account
+        // for the possibility that target is a shadowHost of relatedTarget
+        // and thus serves as the lowestCommonBoundary.
+        // Luckily, in this case the firstDivergentBoundary is target.
+        lowestCommonBoundary = m_ancestors.begin();
+    }
+
+    // Trim ancestors to lowestCommonBoundary to keep events inside of the common shadow DOM subtree.
+    if (lowestCommonBoundary != m_ancestors.end())
+        m_ancestors.shrink(lowestCommonBoundary - m_ancestors.begin());
+    // Set event's related target to the first encountered shadow DOM boundary in the divergent subtree.
+    return firstDivergentBoundary != relatedTargetAncestors.begin() ? *firstDivergentBoundary : relatedTarget;
+}
+
+inline static bool ancestorsCrossShadowBoundaries(const Vector<EventContext>& ancestors)
+{
+    return ancestors.isEmpty() || ancestors.first().node() == ancestors.last().node();
+}
+
 // FIXME: Once https://bugs.webkit.org/show_bug.cgi?id=52963 lands, this should
 // be greatly improved. See https://bugs.webkit.org/show_bug.cgi?id=54025.
-PassRefPtr<EventTarget> EventDispatcher::adjustRelatedTarget(PassRefPtr<EventTarget> relatedTarget)
+PassRefPtr<EventTarget> EventDispatcher::adjustRelatedTarget(Event* event, PassRefPtr<EventTarget> prpRelatedTarget)
 {
+    if (!prpRelatedTarget)
+        return 0;
+
+    RefPtr<Node> relatedTarget = prpRelatedTarget->toNode();
     if (!relatedTarget)
         return 0;
 
-    Node* node = relatedTarget->toNode();
-    if (!node)
-        return relatedTarget;
+    Node* target = m_node.get();
+    if (!target)
+        return prpRelatedTarget;
 
-    Node* outermostShadowBoundary = node;
-    for (Node* n = node; n; n = n->parentOrHostNode()) {
+    ensureEventAncestors(event);
+
+    // Calculate early if the common boundary is even possible by looking at
+    // ancestors size and if the retargeting has occured (indicating the presence of shadow DOM boundaries).
+    // If there are no boundaries detected, the target and related target can't have a common boundary.
+    bool noCommonBoundary = ancestorsCrossShadowBoundaries(m_ancestors);
+
+    Vector<Node*> relatedTargetAncestors;
+    Node* outermostShadowBoundary = relatedTarget.get();
+    for (Node* n = outermostShadowBoundary; n; n = n->parentOrHostNode()) {
         if (n->isShadowRoot())
             outermostShadowBoundary = n->parentOrHostNode();
+        if (!noCommonBoundary)
+            relatedTargetAncestors.append(n);
     }
-    return outermostShadowBoundary;
+
+    // Short-circuit the fast case when we know there is no need to calculate a common boundary.
+    if (noCommonBoundary)
+        return outermostShadowBoundary;
+
+    return adjustToShadowBoundaries(relatedTarget.release(), relatedTargetAncestors);
 }
 
 EventDispatcher::EventDispatcher(Node* node)
     : m_node(node)
+    , m_ancestorsInitialized(false)
 {
     ASSERT(node);
     m_view = node->document()->view();
 }
 
-void EventDispatcher::getEventAncestors(EventTarget* originalTarget, EventDispatchBehavior behavior)
+void EventDispatcher::ensureEventAncestors(Event* event)
 {
+    EventDispatchBehavior behavior = determineDispatchBehavior(event);
+
     if (!m_node->inDocument())
         return;
 
-    if (ancestorsInitialized())
+    if (m_ancestorsInitialized)
         return;
 
-    EventTarget* target = originalTarget;
+    m_ancestorsInitialized = true;
+
     Node* ancestor = m_node.get();
+    EventTarget* target = eventTargetRespectingSVGTargetRules(ancestor);
     bool shouldSkipNextAncestor = false;
     while (true) {
         if (ancestor->isShadowRoot()) {
@@ -192,7 +272,7 @@ bool EventDispatcher::dispatchEvent(PassRefPtr<Event> event)
     ASSERT(!event->type().isNull()); // JavaScript code can create an event with an empty name, but not null.
 
     RefPtr<EventTarget> originalTarget = event->target();
-    getEventAncestors(originalTarget.get(), determineDispatchBehavior(event.get()));
+    ensureEventAncestors(event.get());
 
     WindowEventContext windowContext(event.get(), m_node.get(), topEventContext());
 
@@ -276,15 +356,9 @@ doneWithDefault:
     return !event->defaultPrevented();
 }
 
-
 const EventContext* EventDispatcher::topEventContext()
 {
     return m_ancestors.isEmpty() ? 0 : &m_ancestors.last();
-}
-
-bool EventDispatcher::ancestorsInitialized() const
-{
-    return m_ancestors.size();
 }
 
 EventDispatchBehavior EventDispatcher::determineDispatchBehavior(Event* event)

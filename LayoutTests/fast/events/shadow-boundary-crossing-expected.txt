@@ -4,6 +4,7 @@ See bug 46015 for details.
 
 Mutation events should not propagate out of the shadow DOM: PASS
 The selectstart event should not propagate out of the shadow DOM: PASS
+The mouseover/mouseout event between two elements inside the same shadow subtree should not propagate out of the shadow DOM: PASS
 Label should look beyond shadow boundary to detect if it encloses its associated element: PASS
 Events for default event handler should not be retargeted: PASS
 Event's relatedTarget should be retargeted: PASS
