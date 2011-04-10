@@ -88,8 +88,8 @@ BUGCR24182 SLOW : http/tests/cache/subresource-failover-to-network.html = PASS
 BUGCR24182 WIN DEBUG SLOW : fast/parser/block-nesting-cap.html = PASS
 
 // Usually <1s in release, ~1s in debug, but occasionally >5s in release.
-BUGCR27335 WIN RELEASE : plugins/embed-attributes-setting.html = PASS TIMEOUT
-BUGCR27335 WIN DEBUG SLOW : plugins/embed-attributes-setting.html = PASS
+BUGCR27335 WIN XP RELEASE : plugins/embed-attributes-setting.html = PASS TIMEOUT
+BUGCR27335 WIN XP DEBUG SLOW : plugins/embed-attributes-setting.html = PASS
 
 // --- collecting results for supported-xml-content-types.html ---
 // was slow, started to timeout
@@ -2315,7 +2315,7 @@ BUGWK45652 : fast/viewport/viewport-87.html = MISSING
 BUGWK45652 : fast/viewport/viewport-126.html = MISSING
 BUGWK45652 : fast/viewport/viewport-127.html = MISSING
 BUGWK45652 : fast/viewport/viewport-128.html = TEXT TIMEOUT
-BUGWK45652 : fast/viewport/viewport-129.html = TEXT TIMEOUT
+BUGWK45652 : fast/viewport/viewport-129.html = TEXT TIMEOUT MISSING
 
 
 BUGWK45667 : fast/files/read-file-async.html = CRASH PASS
@@ -2421,7 +2421,7 @@ BUGCR58970 LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
 BUGCR58931 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-17-b.svg = IMAGE PASS
 
 // Failing from around r62021
-BUGCR15797 WIN : fast/dom/object-embed-plugin-scripting.html = TIMEOUT PASS
+BUGCR15797 WIN : fast/dom/object-embed-plugin-scripting.html = TIMEOUT PASS TEXT
 
 // Failing from r69420, mac failing from r71493:r71496
 BUGCR58735 SLOW : http/tests/misc/prefetch-purpose.html = PASS
@@ -2464,7 +2464,8 @@ BUGJAPHET : fast/js/date-parse-test.html = TEXT
 // Have been flaky for a long time.
 BUGWK48143 : svg/dom/altGlyph-dom.xhtml = CRASH PASS
 BUGWK48256 WIN LINUX : fast/multicol/float-multicol.html = IMAGE+TEXT PASS
-BUGWK48341 : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH PASS
+BUGWK48341 WIN XP : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH PASS
+BUGWK58193 WIN WIN7 : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
 BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
 
 // Vertical text needs to be implemented in platforms other than OS X.
@@ -2598,7 +2599,8 @@ BUG_DRT : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE
 BUG_DRT WIN MAC LINUX : http/tests/loading/preload-img-test.html = TEXT TIMEOUT PASS
 
 // Flaky since 2010-09-17?
-BUGCR57950 WIN : svg/batik/text/verticalText.svg = CRASH PASS
+BUGCR57950 WIN XP : svg/batik/text/verticalText.svg = CRASH PASS
+BUGWK58193 WIN WIN7 : svg/batik/text/verticalText.svg = IMAGE+TEXT
 
 // media/video-* flakyness
 BUGCR59665 MAC : media/video-layer-crash.html = CRASH TIMEOUT PASS IMAGE
@@ -3293,3 +3295,103 @@ BUGWK58147 : fast/dom/MediaStream/enabled.html = TEXT
 
 BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = CRASH
 BUGWK58158 : editing/pasteboard/paste-xml.xhtml = PASS TEXT
+
+// Windows 7 failures that need triaging and probably mostly just need
+// new baselines.
+BUGWK58193 WIN WIN7 : fast/css/first-letter-first-line-hover.html = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : fast/forms/search-styled.html = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : fast/text/backslash-to-yen-sign-euc.html = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : fast/text/backslash-to-yen-sign.html = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : fast/text/international/hindi-whitespace.html = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : fast/text/international/khmer-selection.html = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : fast/text/international/plane2.html = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/g-dirLTR-ubNone.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/g-dirLTR-ubOverride.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/g-dirRTL-ubNone.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/g-dirRTL-ubOverride.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-dirLTR-ubNone.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-dirLTR-ubOverride.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-dirRTL-ubNone.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-dirRTL-ubOverride.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/tspan-direction-rtl.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-SVG-1.1-SE/text-intro-05-t.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/W3C-SVG-1.1/animate-elem-31-t.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/batik/masking/maskRegions.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/text/bidi-text-query.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/text/bidi-tspans.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/text/text-fonts-01-t.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/text/text-intro-05-t.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE+TEXT
+BUGWK58193 WIN WIN7 : css2.1/t1202-counter-09-b.html = IMAGE
+BUGWK58193 WIN WIN7 : css2.1/t1202-counters-09-b.html = IMAGE
+BUGWK58193 WIN WIN7 : editing/pasteboard/block-wrappers-necessary.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/block/positioning/auto/vertical-lr/007.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/block/positioning/auto/vertical-rl/007.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/blockflow/english-lr-text.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/blockflow/fallback-orientation.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/blockflow/japanese-lr-text.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/blockflow/japanese-rl-text.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/blockflow/japanese-ruby-horizontal-bt.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/blockflow/vertical-align-table-baseline.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/css/line-height-determined-by-primary-font.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/dom/34176.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/dynamic/text-combine.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/repaint/japanese-rl-selection-clear.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/ruby/base-shorter-than-text.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/ruby/nested-ruby.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/text/atsui-negative-spacing-features.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/text/atsui-spacing-features.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/text/drawBidiText.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/text/international/hebrew-vowels.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/text/international/hindi-spacing.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/text/stroking-decorations.html = IMAGE
+BUGWK58193 WIN WIN7 : fast/text/stroking.html = IMAGE
+BUGWK58193 WIN WIN7 : plugins/embed-attributes-style.html = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/W3C-SVG-1.1/metadata-example-01-b.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/batik/paints/patternRegions-positioned-objects.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/batik/text/textFeatures.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr.html = IMAGE
+BUGWK58193 WIN WIN7 : svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop.html = IMAGE
+BUGWK58193 WIN WIN7 : svg/zoom/page/zoom-foreignObject.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/zoom/text/zoom-foreignObject.svg = IMAGE
+BUGWK58193 WIN WIN7 : svg/custom/circular-marker-reference-1.svg = TEXT
+BUGWK58193 WIN WIN7 : svg/custom/circular-marker-reference-3.svg = TEXT
+BUGWK58193 WIN WIN7 : svg/custom/circular-marker-reference-4.svg = TEXT
+BUGWK58193 WIN WIN7 : userscripts/user-script-video-document.html  = TEXT
+BUGWK58193 WIN WIN7 : fast/filesystem/async-operations.html = TIMEOUT PASS
+BUGWK58193 WIN WIN7 : http/tests/local/fileapi/send-sliced-dragged-file.html = TIMEOUT PASS TEXT
+BUGWK58193 WIN WIN7 : plugins/embed-attributes-setting.html = TEXT

@@ -1,3 +1,13 @@
+2011-04-09  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+        https://bugs.webkit.org/show_bug.cgi?id=58193
+
+        Suppress a whole bunch of Win 7 failures until they can be
+        triaged and/or rebaselined.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Ojan Vafai.
