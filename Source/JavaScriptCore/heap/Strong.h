@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Global_h
-#define Global_h
+#ifndef Strong_h
+#define Strong_h
 
 #include "Assertions.h"
 #include "Handle.h"
@@ -33,32 +33,32 @@
 
 namespace JSC {
 
-// A Global is a persistent handle whose lifetime is not limited to any given scope.
-template <typename T> class Global : public Handle<T> {
+// A strongly referenced handle that prevents the object it points to from being garbage collected.
+template <typename T> class Strong : public Handle<T> {
     using Handle<T>::slot;
     using Handle<T>::setSlot;
 
 public:
     typedef typename Handle<T>::ExternalType ExternalType;
     
-    Global()
+    Strong()
         : Handle<T>()
     {
     }
     
-    Global(JSGlobalData& globalData, ExternalType value = ExternalType())
+    Strong(JSGlobalData& globalData, ExternalType value = ExternalType())
         : Handle<T>(globalData.allocateGlobalHandle())
     {
         set(value);
     }
 
-    Global(JSGlobalData& globalData, Handle<T> handle)
+    Strong(JSGlobalData& globalData, Handle<T> handle)
         : Handle<T>(globalData.allocateGlobalHandle())
     {
         set(handle.get());
     }
     
-    Global(const Global& other)
+    Strong(const Strong& other)
         : Handle<T>()
     {
         if (!other.slot())
@@ -67,7 +67,7 @@ public:
         set(other.get());
     }
 
-    template <typename U> Global(const Global<U>& other)
+    template <typename U> Strong(const Strong<U>& other)
         : Handle<T>()
     {
         if (!other.slot())
@@ -78,12 +78,12 @@ public:
     
     enum HashTableDeletedValueTag { HashTableDeletedValue };
     bool isHashTableDeletedValue() const { return slot() == hashTableDeletedValue(); }
-    Global(HashTableDeletedValueTag)
+    Strong(HashTableDeletedValueTag)
         : Handle<T>(hashTableDeletedValue())
     {
     }
 
-    ~Global()
+    ~Strong()
     {
         clear();
     }
@@ -95,7 +95,7 @@ public:
         set(value);
     }
 
-    template <typename U> Global& operator=(const Global<U>& other)
+    template <typename U> Strong& operator=(const Strong<U>& other)
     {
         if (!other.slot()) {
             clear();
@@ -106,7 +106,7 @@ public:
         return *this;
     }
     
-    Global& operator=(const Global& other)
+    Strong& operator=(const Strong& other)
     {
         if (!other.slot()) {
             clear();
@@ -141,13 +141,13 @@ private:
 
 namespace WTF {
 
-template<typename P> struct HashTraits<JSC::Global<P> > : GenericHashTraits<JSC::Global<P> > {
+template<typename P> struct HashTraits<JSC::Strong<P> > : GenericHashTraits<JSC::Strong<P> > {
     static const bool emptyValueIsZero = true;
-    static JSC::Global<P> emptyValue() { return JSC::Global<P>(); }
-    static void constructDeletedValue(JSC::Global<P>& slot) { new (&slot) JSC::Global<P>(JSC::Global<P>::HashTableDeletedValue); }
-    static bool isDeletedValue(const JSC::Global<P>& value) { return value.isHashTableDeletedValue(); }
+    static JSC::Strong<P> emptyValue() { return JSC::Strong<P>(); }
+    static void constructDeletedValue(JSC::Strong<P>& slot) { new (&slot) JSC::Strong<P>(JSC::Strong<P>::HashTableDeletedValue); }
+    static bool isDeletedValue(const JSC::Strong<P>& value) { return value.isHashTableDeletedValue(); }
 };
 
 }
 
-#endif // Global_h
+#endif // Strong_h

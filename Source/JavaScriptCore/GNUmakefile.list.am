@@ -87,14 +87,15 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecompiler/LabelScope.h \
 	Source/JavaScriptCore/bytecompiler/NodesCodegen.cpp \
 	Source/JavaScriptCore/bytecompiler/RegisterID.h \
-	Source/JavaScriptCore/collector/handles/Global.h \
-	Source/JavaScriptCore/collector/handles/Handle.h \
-	Source/JavaScriptCore/collector/handles/HandleHeap.cpp \
-	Source/JavaScriptCore/collector/handles/HandleHeap.h \
-	Source/JavaScriptCore/collector/handles/HandleStack.cpp \
-	Source/JavaScriptCore/collector/handles/HandleStack.h \
-	Source/JavaScriptCore/collector/handles/Local.h \
-	Source/JavaScriptCore/collector/handles/LocalScope.h \
+	Source/JavaScriptCore/heap/Strong.h \
+	Source/JavaScriptCore/heap/Handle.h \
+	Source/JavaScriptCore/heap/HandleHeap.cpp \
+	Source/JavaScriptCore/heap/HandleHeap.h \
+	Source/JavaScriptCore/heap/HandleStack.cpp \
+	Source/JavaScriptCore/heap/HandleStack.h \
+	Source/JavaScriptCore/heap/Local.h \
+	Source/JavaScriptCore/heap/LocalScope.h \
+	Source/JavaScriptCore/heap/Weak.h \
 	Source/JavaScriptCore/config.h \
 	Source/JavaScriptCore/debugger/DebuggerActivation.cpp \
 	Source/JavaScriptCore/debugger/DebuggerActivation.h \
@@ -396,7 +397,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/UStringBuilder.h \
 	Source/JavaScriptCore/runtime/UStringConcatenate.h \
 	Source/JavaScriptCore/runtime/WeakGCMap.h \
-	Source/JavaScriptCore/runtime/WeakGCPtr.h \
 	Source/JavaScriptCore/runtime/WeakRandom.h \
 	Source/JavaScriptCore/runtime/WriteBarrier.h \
 	Source/JavaScriptCore/wtf/AlwaysInline.h \

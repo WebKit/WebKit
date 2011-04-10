@@ -108,8 +108,8 @@ void ScriptController::destroyWindowShell(DOMWrapperWorld* world)
 JSDOMWindowShell* ScriptController::createWindowShell(DOMWrapperWorld* world)
 {
     ASSERT(!m_windowShells.contains(world));
-    Global<JSDOMWindowShell> windowShell(*world->globalData(), new JSDOMWindowShell(m_frame->domWindow(), world));
-    Global<JSDOMWindowShell> windowShell2(windowShell);
+    Strong<JSDOMWindowShell> windowShell(*world->globalData(), new JSDOMWindowShell(m_frame->domWindow(), world));
+    Strong<JSDOMWindowShell> windowShell2(windowShell);
     m_windowShells.add(world, windowShell);
     world->didCreateWindowShell(this);
     return windowShell.get();

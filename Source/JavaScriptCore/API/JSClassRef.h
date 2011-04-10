@@ -28,10 +28,10 @@
 
 #include "JSObjectRef.h"
 
-#include <runtime/JSObject.h>
-#include <runtime/Protect.h>
-#include <runtime/UString.h>
-#include <runtime/WeakGCPtr.h>
+#include "Weak.h"
+#include "JSObject.h"
+#include "Protect.h"
+#include "UString.h"
 #include <wtf/HashMap.h>
 
 struct StaticValueEntry {
@@ -82,7 +82,7 @@ public:
 
     OpaqueJSClassStaticValuesTable* staticValues;
     OpaqueJSClassStaticFunctionsTable* staticFunctions;
-    JSC::WeakGCPtr<JSC::JSObject> cachedPrototype;
+    JSC::Weak<JSC::JSObject> cachedPrototype;
 };
 
 struct OpaqueJSClass : public ThreadSafeRefCounted<OpaqueJSClass> {

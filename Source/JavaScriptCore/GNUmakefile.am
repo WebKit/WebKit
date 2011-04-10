@@ -7,7 +7,7 @@ javascriptcore_cppflags += \
 	-I$(srcdir)/Source/JavaScriptCore/assembler \
 	-I$(srcdir)/Source/JavaScriptCore/bytecode \
 	-I$(srcdir)/Source/JavaScriptCore/bytecompiler \
-	-I$(srcdir)/Source/JavaScriptCore/collector/handles \
+	-I$(srcdir)/Source/JavaScriptCore/heap \
 	-I$(srcdir)/Source/JavaScriptCore/debugger \
 	-I$(srcdir)/Source/JavaScriptCore/ForwardingHeaders \
 	-I$(srcdir)/Source/JavaScriptCore/interpreter \

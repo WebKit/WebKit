@@ -32,7 +32,7 @@
 #define ScriptWrappable_h
 
 #include "JSDOMWrapper.h"
-#include <runtime/WeakGCPtr.h>
+#include <heap/Weak.h>
 
 namespace WebCore {
 
@@ -53,7 +53,7 @@ public:
     }
 
 private:
-    JSC::WeakGCPtr<DOMObject> m_wrapper;
+    JSC::Weak<DOMObject> m_wrapper;
 };
 
 } // namespace WebCore

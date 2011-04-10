@@ -29,7 +29,7 @@
 #ifndef JSRun_h
 #define JSRun_h
 
-#include <JavaScriptCore/Global.h>
+#include <JavaScriptCore/Strong.h>
 #include "JSBase.h"
 #include "JSUtils.h"
 
@@ -57,7 +57,7 @@ class JSRun : public JSBase {
         JSFlags Flags() const;
     private:
         UString fSource;
-        Global<JSGlobalObject> fGlobalObject;
+        Strong<JSGlobalObject> fGlobalObject;
         JSFlags fFlags;
 };
 

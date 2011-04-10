@@ -513,7 +513,7 @@ namespace JSC {
         bool m_shouldEmitProfileHooks;
         bool m_shouldEmitRichSourceInfo;
 
-        Global<ScopeChainNode> m_scopeChain;
+        Strong<ScopeChainNode> m_scopeChain;
         SymbolTable* m_symbolTable;
 
         ScopeNode* m_scopeNode;

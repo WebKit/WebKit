@@ -32,7 +32,7 @@
 #ifndef ScriptCachedFrameData_h
 #define ScriptCachedFrameData_h
 
-#include <collector/handles/Global.h>
+#include <heap/Strong.h>
 
 namespace WebCore {
     class Frame;
@@ -42,7 +42,7 @@ namespace WebCore {
 
     class ScriptCachedFrameData {
         WTF_MAKE_NONCOPYABLE(ScriptCachedFrameData); WTF_MAKE_FAST_ALLOCATED;
-        typedef HashMap< RefPtr<DOMWrapperWorld>, JSC::Global<JSDOMWindow> > JSDOMWindowSet;
+        typedef HashMap< RefPtr<DOMWrapperWorld>, JSC::Strong<JSDOMWindow> > JSDOMWindowSet;
 
     public:
         ScriptCachedFrameData(Frame*);

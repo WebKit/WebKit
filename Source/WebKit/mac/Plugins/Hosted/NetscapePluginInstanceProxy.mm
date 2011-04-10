@@ -148,7 +148,7 @@ uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(JSGlobalData& 
         objectID = ++m_objectIDCounter;
     } while (!m_objectIDCounter || m_objectIDCounter == static_cast<uint32_t>(-1) || m_idToJSObjectMap.contains(objectID));
 
-    m_idToJSObjectMap.set(objectID, Global<JSObject>(globalData, object));
+    m_idToJSObjectMap.set(objectID, Strong<JSObject>(globalData, object));
     m_jsObjectToIDMap.set(object, make_pair<uint32_t, uint32_t>(objectID, 1));
 
     return objectID;
@@ -188,7 +188,7 @@ bool NetscapePluginInstanceProxy::LocalObjectMap::forget(uint32_t objectID)
         return true;
     }
 
-    HashMap<uint32_t, JSC::Global<JSC::JSObject> >::iterator iter = m_idToJSObjectMap.find(objectID);
+    HashMap<uint32_t, JSC::Strong<JSC::JSObject> >::iterator iter = m_idToJSObjectMap.find(objectID);
     if (iter == m_idToJSObjectMap.end()) {
         LOG_ERROR("NetscapePluginInstanceProxy::LocalObjectMap::forget: local object %u doesn't exist.", objectID);
         return true;
@@ -866,7 +866,7 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
 
     JSLock lock(SilenceAssertionsOnly);
     
-    Global<JSGlobalObject> globalObject(*pluginWorld()->globalData(), frame->script()->globalObject(pluginWorld()));
+    Strong<JSGlobalObject> globalObject(*pluginWorld()->globalData(), frame->script()->globalObject(pluginWorld()));
     ExecState* exec = globalObject->globalExec();
 
     bool oldAllowPopups = frame->script()->allowPopupsFromPlugin();

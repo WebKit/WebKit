@@ -34,7 +34,7 @@
 #include "ScriptState.h"
 #include "ScriptValue.h"
 
-#include <collector/handles/Global.h>
+#include <heap/Strong.h>
 #include <runtime/JSObject.h>
 
 namespace WebCore {

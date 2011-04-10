@@ -30,9 +30,9 @@
 #include "JSGlobalData.h"
 
 /*
-    A Local is a temporary handle whose lifetime is tied to a given LocalScope.
-    Use Locals for local values on the stack. It is an error to create a Local
-    outside of any LocalScope.
+    A strongly referenced handle whose lifetime is temporary, limited to a given
+    LocalScope. Use Locals for local values on the stack. It is an error to
+    create a Local outside of any LocalScope.
 */
 
 namespace JSC {

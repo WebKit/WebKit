@@ -1,3 +1,21 @@
+2011-04-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        A few heap-related renames and file moves.
+        
+        WeakGCPtr<T> => Weak<T>
+        Global<T> => Strong<T>
+        collector/ => heap/
+        collector/* => heap/*
+        runtime/WeakGCPtr.h => heap/Weak.h
+        
+        (Eventually, even more files should move into the heap directory. Like
+        Heap.h and Heap.cpp, for example.)
+
+        * JSRun.h:
+        * JSValueWrapper.h:
+
 2011-04-07  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Maciej Stachowiak.

@@ -31,7 +31,7 @@
 
 #include "JSDOMGlobalObject.h"
 #include "VoidCallback.h"
-#include <collector/handles/Global.h>
+#include <heap/Strong.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

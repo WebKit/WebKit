@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WeakGCPtr_h
-#define WeakGCPtr_h
+#ifndef Weak_h
+#define Weak_h
 
 #include "Assertions.h"
 #include "Handle.h"
@@ -33,27 +33,27 @@
 
 namespace JSC {
 
-// A smart pointer that becomes 0 when the value it points to is garbage collected.
-template <typename T> class WeakGCPtr : public Handle<T> {
+// A weakly referenced handle that becomes 0 when the value it points to is garbage collected.
+template <typename T> class Weak : public Handle<T> {
     using Handle<T>::slot;
     using Handle<T>::setSlot;
 
 public:
     typedef typename Handle<T>::ExternalType ExternalType;
 
-    WeakGCPtr()
+    Weak()
         : Handle<T>()
     {
     }
 
-    WeakGCPtr(JSGlobalData& globalData, ExternalType value = ExternalType(), WeakHandleOwner* weakOwner = 0, void* context = 0)
+    Weak(JSGlobalData& globalData, ExternalType value = ExternalType(), WeakHandleOwner* weakOwner = 0, void* context = 0)
         : Handle<T>(globalData.allocateGlobalHandle())
     {
         HandleHeap::heapFor(slot())->makeWeak(slot(), weakOwner, context);
         set(value);
     }
 
-    WeakGCPtr(const WeakGCPtr& other)
+    Weak(const Weak& other)
         : Handle<T>()
     {
         if (!other.slot())
@@ -62,7 +62,7 @@ public:
         set(other.get());
     }
 
-    template <typename U> WeakGCPtr(const WeakGCPtr<U>& other)
+    template <typename U> Weak(const Weak<U>& other)
         : Handle<T>()
     {
         if (!other.slot())
@@ -71,7 +71,7 @@ public:
         set(other.get());
     }
     
-    ~WeakGCPtr()
+    ~Weak()
     {
         clear();
     }
@@ -108,4 +108,4 @@ private:
 
 } // namespace JSC
 
-#endif // WeakGCPtr_h
+#endif // Weak_h

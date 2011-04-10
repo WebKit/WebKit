@@ -36,7 +36,7 @@
 #include "StructureTransitionTable.h"
 #include "JSTypeInfo.h"
 #include "UString.h"
-#include "WeakGCPtr.h"
+#include "Weak.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -214,7 +214,7 @@ namespace JSC {
         TypeInfo m_typeInfo;
 
         DeprecatedPtr<Unknown> m_prototype;
-        mutable WeakGCPtr<StructureChain> m_cachedPrototypeChain;
+        mutable Weak<StructureChain> m_cachedPrototypeChain;
 
         RefPtr<Structure> m_previous;
         RefPtr<StringImpl> m_nameInPrevious;
@@ -224,7 +224,7 @@ namespace JSC {
 
         StructureTransitionTable m_transitionTable;
 
-        WeakGCPtr<JSPropertyNameIterator> m_enumerationCache;
+        Weak<JSPropertyNameIterator> m_enumerationCache;
 
         OwnPtr<PropertyTable> m_propertyTable;
 

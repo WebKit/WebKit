@@ -29,7 +29,7 @@
 
 #if ENABLE(WORKERS)
 
-#include <collector/handles/Global.h>
+#include <heap/Strong.h>
 #include <wtf/Forward.h>
 #include <wtf/Threading.h>
 
@@ -77,7 +77,7 @@ namespace WebCore {
 
         RefPtr<JSC::JSGlobalData> m_globalData;
         WorkerContext* m_workerContext;
-        JSC::Global<JSWorkerContext> m_workerContextWrapper;
+        JSC::Strong<JSWorkerContext> m_workerContextWrapper;
 
         Mutex m_sharedDataMutex;
         bool m_executionForbidden;

@@ -25,7 +25,7 @@ JAVASCRIPTCORE_INCLUDEPATH = \
     $$PWD/assembler \
     $$PWD/bytecode \
     $$PWD/bytecompiler \
-    $$PWD/collector/handles \
+    $$PWD/heap \
     $$PWD/dfg \
     $$PWD/debugger \
     $$PWD/interpreter \

@@ -65974,16 +65974,12 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="collector"
+				Name="heap"
 				>
-				<Filter
-					Name="handles"
-					>
-					<File
-						RelativePath="..\ForwardingHeaders\collector\handles\Global.h"
-						>
-					</File>
-				</Filter>
+                                    <File
+                                            RelativePath="..\ForwardingHeaders\heap\Strong.h"
+                                            >
+                                    </File>
 			</Filter>
 		</Filter>
 		<Filter

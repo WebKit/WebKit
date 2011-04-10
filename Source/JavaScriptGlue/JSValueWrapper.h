@@ -29,7 +29,7 @@
 #ifndef JSValueWrapper_h
 #define JSValueWrapper_h
 
-#include <JavaScriptCore/Global.h>
+#include <JavaScriptCore/Strong.h>
 #include "JSUtils.h"
 #include "JSBase.h"
 #include "JSObject.h"
@@ -44,7 +44,7 @@ public:
     JSValue GetValue();
 
 private:
-    Global<Unknown> fValue;
+    Strong<Unknown> fValue;
     
     static void JSObjectDispose(void *data);
     static CFArrayRef JSObjectCopyPropertyNames(void *data);

@@ -56,7 +56,7 @@
 #if USE(JSC)
 #include "JSDOMBinding.h"
 #include "JSDOMWindow.h"
-#include <collector/handles/Global.h>
+#include <heap/Strong.h>
 #include <runtime/JSLock.h>
 #endif
 

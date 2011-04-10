@@ -40,7 +40,7 @@
 #include "Debugger.h"
 #include "ExceptionHelpers.h"
 #include "GetterSetter.h"
-#include "Global.h"
+#include "Strong.h"
 #include "JIT.h"
 #include "JSActivation.h"
 #include "JSArray.h"
@@ -3495,7 +3495,7 @@ MacroAssemblerCodePtr JITThunks::ctiStub(JSGlobalData* globalData, ThunkGenerato
 
 NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function)
 {
-    std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap->add(function, Global<NativeExecutable>());
+    std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap->add(function, Strong<NativeExecutable>());
     if (entry.second)
         entry.first->second.set(*globalData, NativeExecutable::create(*globalData, JIT::compileCTINativeCall(globalData, m_executablePool, function), function, ctiNativeConstruct(), callHostFunctionAsConstructor));
     return entry.first->second.get();
@@ -3503,7 +3503,7 @@ NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFu
 
 NativeExecutable* JITThunks::hostFunctionStub(JSGlobalData* globalData, NativeFunction function, ThunkGenerator generator)
 {
-    std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap->add(function, Global<NativeExecutable>());
+    std::pair<HostFunctionStubMap::iterator, bool> entry = m_hostFunctionStubMap->add(function, Strong<NativeExecutable>());
     if (entry.second) {
         MacroAssemblerCodePtr code = globalData->canUseJIT() ? generator(globalData, m_executablePool.get()) : MacroAssemblerCodePtr();
         entry.first->second.set(*globalData, NativeExecutable::create(*globalData, code, function, ctiNativeConstruct(), callHostFunctionAsConstructor));

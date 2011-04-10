@@ -22,7 +22,7 @@
 
 #include "JSDOMBinding.h"
 #include "PlatformString.h"
-#include <collector/handles/Global.h>
+#include <heap/Strong.h>
 #include <runtime/JSCell.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
@@ -63,8 +63,8 @@ namespace WebCore {
         void execute(WorkerContext*);
 #endif
 
-        JSC::Global<JSC::Unknown> m_function;
-        Vector<JSC::Global<JSC::Unknown> > m_args;
+        JSC::Strong<JSC::Unknown> m_function;
+        Vector<JSC::Strong<JSC::Unknown> > m_args;
         String m_code;
         RefPtr<DOMWrapperWorld> m_isolatedWorld;
     };

@@ -74,11 +74,11 @@ void WorkerScriptController::initScript()
     // when we allocate the global object. (Once the global object is fully
     // constructed, it can mark its own prototype.)
     RefPtr<Structure> workerContextPrototypeStructure = JSWorkerContextPrototype::createStructure(*m_globalData, jsNull());
-    Global<JSWorkerContextPrototype> workerContextPrototype(*m_globalData, new (m_globalData.get()) JSWorkerContextPrototype(0, workerContextPrototypeStructure.release()));
+    Strong<JSWorkerContextPrototype> workerContextPrototype(*m_globalData, new (m_globalData.get()) JSWorkerContextPrototype(0, workerContextPrototypeStructure.release()));
 
     if (m_workerContext->isDedicatedWorkerContext()) {
         RefPtr<Structure> dedicatedContextPrototypeStructure = JSDedicatedWorkerContextPrototype::createStructure(*m_globalData, workerContextPrototype.get());
-        Global<JSDedicatedWorkerContextPrototype> dedicatedContextPrototype(*m_globalData, new (m_globalData.get()) JSDedicatedWorkerContextPrototype(0, dedicatedContextPrototypeStructure.release()));
+        Strong<JSDedicatedWorkerContextPrototype> dedicatedContextPrototype(*m_globalData, new (m_globalData.get()) JSDedicatedWorkerContextPrototype(0, dedicatedContextPrototypeStructure.release()));
         RefPtr<Structure> structure = JSDedicatedWorkerContext::createStructure(*m_globalData, dedicatedContextPrototype.get());
 
         m_workerContextWrapper.set(*m_globalData, new (m_globalData.get()) JSDedicatedWorkerContext(structure.release(), m_workerContext->toDedicatedWorkerContext()));
@@ -88,7 +88,7 @@ void WorkerScriptController::initScript()
     } else {
         ASSERT(m_workerContext->isSharedWorkerContext());
         RefPtr<Structure> sharedContextPrototypeStructure = JSSharedWorkerContextPrototype::createStructure(*m_globalData, workerContextPrototype.get());
-        Global<JSSharedWorkerContextPrototype> sharedContextPrototype(*m_globalData, new (m_globalData.get()) JSSharedWorkerContextPrototype(0, sharedContextPrototypeStructure.release()));
+        Strong<JSSharedWorkerContextPrototype> sharedContextPrototype(*m_globalData, new (m_globalData.get()) JSSharedWorkerContextPrototype(0, sharedContextPrototypeStructure.release()));
         RefPtr<Structure> structure = JSSharedWorkerContext::createStructure(*m_globalData, sharedContextPrototype.get());
 
         m_workerContextWrapper.set(*m_globalData, new (m_globalData.get()) JSSharedWorkerContext(structure.release(), m_workerContext->toSharedWorkerContext()));

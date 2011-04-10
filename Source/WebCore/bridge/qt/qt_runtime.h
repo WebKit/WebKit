@@ -22,7 +22,7 @@
 
 #include "BridgeJSC.h"
 #include "Completion.h"
-#include "Global.h"
+#include "Strong.h"
 #include "runtime_method.h"
 
 #include <qbytearray.h>

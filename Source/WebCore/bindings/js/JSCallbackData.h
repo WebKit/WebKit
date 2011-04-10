@@ -32,7 +32,7 @@
 #include "JSDOMBinding.h"
 #include "JSDOMGlobalObject.h"
 #include "ScriptExecutionContext.h"
-#include <collector/handles/Global.h>
+#include <heap/Strong.h>
 #include <runtime/JSObject.h>
 #include <wtf/Threading.h>
 
@@ -66,8 +66,8 @@ public:
     JSC::JSValue invokeCallback(JSC::MarkedArgumentBuffer&, bool* raisedException = 0);
 
 private:
-    JSC::Global<JSC::JSObject> m_callback;
-    JSC::Global<JSDOMGlobalObject> m_globalObject;
+    JSC::Strong<JSC::JSObject> m_callback;
+    JSC::Strong<JSDOMGlobalObject> m_globalObject;
 #ifndef NDEBUG
     ThreadIdentifier m_thread;
 #endif

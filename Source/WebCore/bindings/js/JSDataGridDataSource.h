@@ -29,7 +29,7 @@
 #if ENABLE(DATAGRID)
 
 #include "DataGridDataSource.h"
-#include <collector/handles/Global.h>
+#include <heap/Strong.h>
 #include <runtime/JSValue.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>

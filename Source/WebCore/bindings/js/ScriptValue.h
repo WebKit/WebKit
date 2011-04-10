@@ -34,7 +34,7 @@
 #include "JSDOMBinding.h"
 #include "PlatformString.h"
 #include "ScriptState.h"
-#include <collector/handles/Global.h>
+#include <heap/Strong.h>
 #include <runtime/JSValue.h>
 #include <wtf/PassRefPtr.h>
 
@@ -71,7 +71,7 @@ public:
 #endif
 
 private:
-    JSC::Global<JSC::Unknown> m_value;
+    JSC::Strong<JSC::Unknown> m_value;
 };
 
 } // namespace WebCore

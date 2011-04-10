@@ -32,7 +32,7 @@
 #include "Heap.h"
 #include "ExecutableAllocator.h"
 #include "Register.h"
-#include "WeakGCPtr.h"
+#include "Weak.h"
 #include <stdio.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PageReservation.h>
@@ -152,7 +152,7 @@ namespace JSC {
         Register* m_commitEnd;
         PageReservation m_reservation;
 
-        WeakGCPtr<JSGlobalObject> m_globalObject; // The global object whose vars are currently stored in the register file.
+        Weak<JSGlobalObject> m_globalObject; // The global object whose vars are currently stored in the register file.
         class GlobalObjectOwner : public WeakHandleOwner {
             virtual void finalize(Handle<Unknown>, void* context)
             {

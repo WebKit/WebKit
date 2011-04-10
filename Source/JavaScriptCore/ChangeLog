@@ -1,3 +1,65 @@
+2011-04-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        A few heap-related renames and file moves.
+        
+        WeakGCPtr<T> => Weak<T>
+        Global<T> => Strong<T>
+        collector/ => heap/
+        collector/* => heap/*
+        runtime/WeakGCPtr.h => heap/Weak.h
+        
+        (Eventually, even more files should move into the heap directory. Like
+        Heap.h and Heap.cpp, for example.)
+
+        * API/JSClassRef.h:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd:
+        * JavaScriptCore.vcproj/jsc/jscCommon.vsprops:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/SamplingTool.h:
+        * bytecompiler/BytecodeGenerator.h:
+        * collector: Removed.
+        * collector/handles: Removed.
+        * collector/handles/Global.h: Removed.
+        * collector/handles/Handle.h: Removed.
+        * collector/handles/HandleHeap.cpp: Removed.
+        * collector/handles/HandleHeap.h: Removed.
+        * collector/handles/HandleStack.cpp: Removed.
+        * collector/handles/HandleStack.h: Removed.
+        * collector/handles/Local.h: Removed.
+        * collector/handles/LocalScope.h: Removed.
+        * heap: Copied from collector.
+        * heap/Handle.h: Copied from collector/handles/Handle.h.
+        * heap/HandleHeap.cpp: Copied from collector/handles/HandleHeap.cpp.
+        * heap/HandleHeap.h: Copied from collector/handles/HandleHeap.h.
+        * heap/HandleStack.cpp: Copied from collector/handles/HandleStack.cpp.
+        * heap/HandleStack.h: Copied from collector/handles/HandleStack.h.
+        * heap/Local.h: Copied from collector/handles/Local.h.
+        * heap/LocalScope.h: Copied from collector/handles/LocalScope.h.
+        * heap/Strong.h: Copied from collector/handles/Global.h.
+        (JSC::Strong::Strong):
+        (JSC::Strong::~Strong):
+        (JSC::Strong::operator=):
+        * heap/Weak.h: Copied from runtime/WeakGCPtr.h.
+        (JSC::Weak::Weak):
+        (JSC::Weak::~Weak):
+        * heap/handles: Removed.
+        * interpreter/RegisterFile.h:
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::hostFunctionStub):
+        * jit/JITStubs.h:
+        * runtime/Structure.h:
+        * runtime/WeakGCPtr.h: Removed.
+
 2011-04-08  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed, rolling out r83335.

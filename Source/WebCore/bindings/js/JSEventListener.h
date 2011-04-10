@@ -22,7 +22,7 @@
 
 #include "EventListener.h"
 #include "JSDOMWindow.h"
-#include <runtime/WeakGCPtr.h>
+#include <heap/Weak.h>
 
 namespace WebCore {
 
@@ -66,7 +66,7 @@ namespace WebCore {
 
     private:
         mutable JSC::WriteBarrier<JSC::JSObject> m_jsFunction;
-        mutable JSC::WeakGCPtr<JSC::JSObject> m_wrapper;
+        mutable JSC::Weak<JSC::JSObject> m_wrapper;
 
         bool m_isAttribute;
         RefPtr<DOMWrapperWorld> m_isolatedWorld;

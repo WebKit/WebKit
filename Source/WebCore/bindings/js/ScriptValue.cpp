@@ -36,7 +36,7 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSValueRef.h>
 
-#include <collector/handles/Global.h>
+#include <heap/Strong.h>
 #include <runtime/JSLock.h>
 #include <runtime/UString.h>
 

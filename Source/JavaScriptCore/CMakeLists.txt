@@ -6,7 +6,7 @@ SET(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/assembler"
     "${JAVASCRIPTCORE_DIR}/bytecode"
     "${JAVASCRIPTCORE_DIR}/bytecompiler"
-    "${JAVASCRIPTCORE_DIR}/collector/handles"
+    "${JAVASCRIPTCORE_DIR}/heap"
     "${JAVASCRIPTCORE_DIR}/debugger"
     "${JAVASCRIPTCORE_DIR}/interpreter"
     "${JAVASCRIPTCORE_DIR}/jit"
@@ -41,8 +41,8 @@ SET(JavaScriptCore_SOURCES
     bytecompiler/BytecodeGenerator.cpp
     bytecompiler/NodesCodegen.cpp
 
-    collector/handles/HandleHeap.cpp
-    collector/handles/HandleStack.cpp
+    heap/HandleHeap.cpp
+    heap/HandleStack.cpp
 
     debugger/Debugger.cpp
     debugger/DebuggerActivation.cpp

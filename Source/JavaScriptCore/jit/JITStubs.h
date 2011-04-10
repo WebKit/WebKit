@@ -254,7 +254,7 @@ namespace JSC {
     extern "C" void ctiOpThrowNotCaught();
     extern "C" EncodedJSValue ctiTrampoline(void* code, RegisterFile*, CallFrame*, void* /*unused1*/, Profiler**, JSGlobalData*);
 
-    template <typename T> class Global;
+    template <typename T> class Strong;
 
     class JITThunks {
     public:
@@ -283,7 +283,7 @@ namespace JSC {
     private:
         typedef HashMap<ThunkGenerator, MacroAssemblerCodePtr> CTIStubMap;
         CTIStubMap m_ctiStubMap;
-        typedef HashMap<NativeFunction, Global<NativeExecutable> > HostFunctionStubMap;
+        typedef HashMap<NativeFunction, Strong<NativeExecutable> > HostFunctionStubMap;
         OwnPtr<HostFunctionStubMap> m_hostFunctionStubMap;
         RefPtr<ExecutablePool> m_executablePool;
 

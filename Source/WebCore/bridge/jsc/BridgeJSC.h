@@ -124,7 +124,7 @@ protected:
     RefPtr<RootObject> m_rootObject;
 
 private:
-    WeakGCPtr<RuntimeObject> m_runtimeObject;
+    Weak<RuntimeObject> m_runtimeObject;
 };
 
 class Array {

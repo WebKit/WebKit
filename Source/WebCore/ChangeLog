@@ -1,3 +1,55 @@
+2011-04-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        A few heap-related renames and file moves.
+        
+        WeakGCPtr<T> => Weak<T>
+        Global<T> => Strong<T>
+        collector/ => heap/
+        collector/* => heap/*
+        runtime/WeakGCPtr.h => heap/Weak.h
+        
+        (Eventually, even more files should move into the heap directory. Like
+        Heap.h and Heap.cpp, for example.)
+
+        * CMakeLists.txt:
+        * ForwardingHeaders/collector: Removed.
+        * ForwardingHeaders/heap: Copied from ForwardingHeaders/collector.
+        * ForwardingHeaders/heap/Strong.h: Copied from ForwardingHeaders/collector/handles/Global.h.
+        * ForwardingHeaders/heap/Weak.h: Copied from ForwardingHeaders/runtime/WeakGCPtr.h.
+        * ForwardingHeaders/runtime/WeakGCPtr.h: Removed.
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+        * bindings/js/JSCallbackData.h:
+        * bindings/js/JSCustomVoidCallback.h:
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/JSDataGridDataSource.h:
+        * bindings/js/JSEventListener.h:
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::ScheduledAction):
+        * bindings/js/ScheduledAction.h:
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::ScriptCachedFrameData):
+        * bindings/js/ScriptCachedFrameData.h:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::createWindowShell):
+        * bindings/js/ScriptController.h:
+        * bindings/js/ScriptObject.h:
+        * bindings/js/ScriptState.h:
+        * bindings/js/ScriptValue.cpp:
+        * bindings/js/ScriptValue.h:
+        * bindings/js/ScriptWrappable.h:
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initScript):
+        * bindings/js/WorkerScriptController.h:
+        * bridge/jsc/BridgeJSC.h:
+        * bridge/qt/qt_runtime.h:
+        * bridge/runtime_root.h:
+        * xml/XMLHttpRequest.cpp:
+
 2011-04-09  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         Reviewed by Laszlo Gombos.
