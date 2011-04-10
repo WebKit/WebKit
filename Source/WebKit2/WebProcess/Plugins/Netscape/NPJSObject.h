@@ -26,7 +26,7 @@
 #ifndef NPJSObject_h
 #define NPJSObject_h
 
-#include <JavaScriptCore/Global.h>
+#include <JavaScriptCore/Strong.h>
 #include <WebCore/npruntime_internal.h>
 #include <wtf/Noncopyable.h>
 
@@ -90,7 +90,7 @@ private:
     static bool NP_Construct(NPObject*, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
     
     NPRuntimeObjectMap* m_objectMap;
-    JSC::Global<JSC::JSObject> m_jsObject;
+    JSC::Strong<JSC::JSObject> m_jsObject;
 };
 
 } // namespace WebKit

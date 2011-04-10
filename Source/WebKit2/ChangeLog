@@ -4,6 +4,14 @@
         
         Try recommitting some things svn left out of my last commit.
 
+        * WebProcess/Plugins/Netscape/NPJSObject.h:
+
+2011-04-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+        
+        Try recommitting some things svn left out of my last commit.
+
         * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
         (WebKit::NPRuntimeObjectMap::evaluate):
 
