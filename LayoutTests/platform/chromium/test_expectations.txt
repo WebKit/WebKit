@@ -3450,5 +3450,3 @@ BUGWK58193 WIN VISTA : svg/dynamic-updates/SVGPatternElement-dom-patternContentU
 BUGWK58193 WIN VISTA : svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop.html = IMAGE
 BUGWK58193 WIN VISTA : svg/text/text-fonts-01-t.svg = IMAGE
 BUGWK58193 WIN VISTA : svg/text/text-intro-05-t.svg = IMAGE
-
-BUGWK58205 : media/controls-styling.html = IMAGE

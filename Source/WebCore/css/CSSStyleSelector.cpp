@@ -1842,6 +1842,15 @@ static void addIntrinsicMargins(RenderStyle* style)
     }
 }
 
+static inline bool isAtShadowBoundary(Element* element)
+{
+    if (!element)
+        return false;
+
+    ContainerNode* parentNode = element->parentNode();
+    return parentNode && parentNode->isShadowBoundary();
+}
+
 void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parentStyle, Element *e)
 {
     // Cache our original display.
@@ -1966,7 +1975,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
     // Finally update our text decorations in effect, but don't allow text-decoration to percolate through
     // tables, inline blocks, inline tables, run-ins, or shadow DOM.
     if (style->display() == TABLE || style->display() == INLINE_TABLE || style->display() == RUN_IN
-        || style->display() == INLINE_BLOCK || style->display() == INLINE_BOX || (e && e->isShadowRoot()))
+        || style->display() == INLINE_BLOCK || style->display() == INLINE_BOX || isAtShadowBoundary(e))
         style->setTextDecorationsInEffect(style->textDecoration());
     else
         style->addToTextDecorationsInEffect(style->textDecoration());
