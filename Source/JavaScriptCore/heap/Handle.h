@@ -49,39 +49,21 @@ class HandleBase {
     friend class HandleHeap;
 
 public:
-    bool operator!() const { return isEmpty(); }
+    bool operator!() const { return !m_slot || !*m_slot; }
 
     // This conversion operator allows implicit conversion to bool but not to other integer types.
     typedef JSValue (HandleBase::*UnspecifiedBoolType);
     operator UnspecifiedBoolType*() const { return (m_slot && *m_slot) ? reinterpret_cast<UnspecifiedBoolType*>(1) : 0; }
 
-    bool isEmpty() const { return !m_slot || !*m_slot; }
-
 protected:
     HandleBase(HandleSlot slot)
         : m_slot(slot)
     {
-        ASSERT(slot);
     }
 
-    enum DontNullCheckSlotTag { DontNullCheckSlot };
-    HandleBase(HandleSlot slot, DontNullCheckSlotTag)
-        : m_slot(slot)
-    {
-    }
-    
     HandleSlot slot() const { return m_slot; }
-    void invalidate()
-    {
-        // It is unsafe to use a handle after invalidating it.
-        m_slot = 0;
-    }
-
-    // needed by Global<>::operator= and Global<>::set if it's an empty handle
     void setSlot(HandleSlot slot)
     {
-        ASSERT(!m_slot);
-        ASSERT(slot);
         m_slot = slot;
     }
 
@@ -165,13 +147,8 @@ public:
     ExternalType get() const { return HandleTypes<T>::getFromSlot(this->slot()); }
 
 protected:
-
-    Handle(HandleSlot slot)
+    Handle(HandleSlot slot = 0)
         : HandleBase(slot)
-    {
-    }
-    Handle(HandleSlot slot, HandleBase::DontNullCheckSlotTag)
-        : HandleBase(slot, HandleBase::DontNullCheckSlot)
     {
     }
     
