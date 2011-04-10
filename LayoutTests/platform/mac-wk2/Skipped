@@ -161,6 +161,7 @@ fast/css/user-drag-none.html
 fast/dom/HTMLSelectElement/click-size-zero-no-crash.html
 fast/dom/Window/window-postmessage-clone-frames.html
 fast/dom/Window/window-postmessage-clone.html
+fast/dom/hidden-iframe-no-focus.html
 fast/dom/horizontal-scrollbar-in-rtl.html
 fast/dom/vertical-scrollbar-in-rtl.html
 fast/dynamic/layer-hit-test-crash.html

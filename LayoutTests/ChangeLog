@@ -1,3 +1,13 @@
+2011-04-10  Jessie Berlin  <jberlin@apple.com>
+
+        WebKitTestRunner needs a more-complete implementation of eventSender
+        https://bugs.webkit.org/show_bug.cgi?id=42194
+
+        Add another test that depends on eventSender.keyDown (fast/dom/hidden-iframe-no-focus.html
+        added in r83356) to the mac-wk2 skipped list to get the bots green.
+
+        * platform/mac-wk2/Skipped:
+
 2011-04-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Anders Carlsson.
