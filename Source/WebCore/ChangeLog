@@ -2,6 +2,13 @@
 
         Unreviewed build fix for !ENABLE(XSLT) after r82562.
 
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::doEnd):
+
+2011-04-10  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed build fix for !ENABLE(XSLT) after r82562.
+
         * xml/XMLTreeViewer.cpp: Readded #if ENABLE(XSLT).
 
 2011-04-10  Dimitri Glazkov  <dglazkov@chromium.org>

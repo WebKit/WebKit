@@ -1339,12 +1339,12 @@ void XMLDocumentParser::doEnd()
         }
     }
 
+#if ENABLE(XSLT)
     XMLTreeViewer xmlTreeViewer(document());
     bool xmlViewerMode = !m_sawError && !m_sawCSS && !m_sawXSLTransform && xmlTreeViewer.hasNoStyleInformation();
     if (xmlViewerMode)
         xmlTreeViewer.transformDocumentToTreeView();
 
-#if ENABLE(XSLT)
     if (m_sawXSLTransform) {
         void* doc = xmlDocPtrForString(document()->cachedResourceLoader(), m_originalSourceForTransform, document()->url().string());
         document()->setTransformSource(new TransformSource(doc));
