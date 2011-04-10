@@ -33,6 +33,7 @@
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/SourceCode.h>
+#include <JavaScriptCore/Strong.h>
 #include <WebCore/Frame.h>
 #include <WebCore/NotImplemented.h>
 
@@ -182,7 +183,7 @@ void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue valu
 
 bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String&scriptString, NPVariant* result)
 {
-    Global<JSGlobalObject> globalObject(this->globalObject()->globalData(), this->globalObject());
+    Strong<JSGlobalObject> globalObject(this->globalObject()->globalData(), this->globalObject());
     if (!globalObject)
         return false;
 
