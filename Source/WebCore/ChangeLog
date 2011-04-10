@@ -1,3 +1,13 @@
+2011-04-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+
+        Try recommitting some things svn left out of my last commit.
+
+        * ForwardingHeaders/collector: Removed.
+        * ForwardingHeaders/collector/handles: Removed.
+        * ForwardingHeaders/collector/handles/Global.h: Removed.
+
 2011-04-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Ojan Vafai.
