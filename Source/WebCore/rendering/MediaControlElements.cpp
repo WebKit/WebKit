@@ -67,128 +67,33 @@ static const float cSeekRepeatDelay = 0.1f;
 static const float cStepTime = 0.07f;
 static const float cSeekTime = 0.2f;
 
-inline MediaControlShadowRootElement::MediaControlShadowRootElement(HTMLMediaElement* mediaElement)
-    : HTMLDivElement(divTag, mediaElement->document())
-{
-    setShadowHost(mediaElement);
-}
-
-PassRefPtr<MediaControlShadowRootElement> MediaControlShadowRootElement::create(HTMLMediaElement* mediaElement)
-{
-    RefPtr<MediaControlShadowRootElement> element = adoptRef(new MediaControlShadowRootElement(mediaElement));
-
-    RefPtr<RenderStyle> rootStyle = RenderStyle::create();
-    rootStyle->inheritFrom(mediaElement->renderer()->style());
-    rootStyle->setDisplay(BLOCK);
-    rootStyle->setPosition(RelativePosition);
-
-    RenderMediaControlShadowRoot* renderer = new (mediaElement->renderer()->renderArena()) RenderMediaControlShadowRoot(element.get());
-    renderer->setStyle(rootStyle.release());
-
-    element->setRenderer(renderer);
-    element->setAttached();
-    element->setInDocument();
-
-    return element.release();
-}
-
-void MediaControlShadowRootElement::detach()
-{
-    HTMLDivElement::detach();
-    // FIXME: Remove once shadow DOM uses Element::setShadowRoot().
-    setShadowHost(0);
-}
-
 // ----------------------------
 
 MediaControlElement::MediaControlElement(HTMLMediaElement* mediaElement)
     : HTMLDivElement(divTag, mediaElement->document())
     , m_mediaElement(mediaElement)
 {
-    setInDocument();
 }
 
-void MediaControlElement::attachToParent(Element* parent)
+static const String& displayString()
 {
-    // FIXME: This code seems very wrong.  Why are we magically adding |this| to the DOM here?
-    //        We shouldn't be calling parser API methods outside of the parser!
-    parent->parserAddChild(this);
+    DEFINE_STATIC_LOCAL(String, s, ("display"));
+    return s;
 }
 
-void MediaControlElement::update()
+void MediaControlElement::show()
 {
-    if (renderer())
-        renderer()->updateFromElement();
-    updateStyle();
+    ExceptionCode ec;
+    // FIXME: Make more efficient <http://webkit.org/b/58157>
+    style()->removeProperty(displayString(), ec);
 }
 
-PassRefPtr<RenderStyle> MediaControlElement::styleForElement()
+void MediaControlElement::hide()
 {
-    ASSERT(m_mediaElement->renderer());
-    RefPtr<RenderStyle> style = document()->styleSelector()->styleForElement(this, m_mediaElement->renderer()->style(), true);
-    if (!style)
-        return 0;
-    
-    // text-decoration can't be overrided from CSS. So we do it here.
-    // See https://bugs.webkit.org/show_bug.cgi?id=27015
-    style->setTextDecoration(TDNONE);
-    style->setTextDecorationsInEffect(TDNONE);
-
-    return style;
-}
-
-bool MediaControlElement::rendererIsNeeded(RenderStyle* style)
-{
-    ASSERT(document()->page());
-
-    return HTMLDivElement::rendererIsNeeded(style) && parentNode() && parentNode()->renderer()
-        && (!style->hasAppearance() || document()->page()->theme()->shouldRenderMediaControlPart(style->appearance(), m_mediaElement));
-}
-    
-void MediaControlElement::attach()
-{
-    RefPtr<RenderStyle> style = styleForElement();
-    if (!style)
-        return;
-    bool needsRenderer = rendererIsNeeded(style.get());
-    if (!needsRenderer)
-        return;
-    RenderObject* renderer = createRenderer(m_mediaElement->renderer()->renderArena(), style.get());
-    if (!renderer)
-        return;
-    renderer->setStyle(style.get());
-    setRenderer(renderer);
-    if (parentNode() && parentNode()->renderer()) {
-        // Find next sibling with a renderer to determine where to insert.
-        Node* sibling = nextSibling();
-        while (sibling && !sibling->renderer())
-            sibling = sibling->nextSibling();
-        parentNode()->renderer()->addChild(renderer, sibling ? sibling->renderer() : 0);
-    }
-    ContainerNode::attach();
-}
-
-void MediaControlElement::updateStyle()
-{
-    if (!m_mediaElement || !m_mediaElement->renderer())
-        return;
-
-    RefPtr<RenderStyle> style = styleForElement();
-    if (!style)
-        return;
-
-    bool needsRenderer = rendererIsNeeded(style.get()) && parentNode() && parentNode()->renderer();
-    if (renderer() && !needsRenderer)
-        detach();
-    else if (!renderer() && needsRenderer)
-        attach();
-    else if (renderer()) {
-        renderer()->setStyle(style.get());
-
-        // Make sure that if there is any innerText renderer, it is updated as well.
-        if (firstChild() && firstChild()->renderer())
-            firstChild()->renderer()->setStyle(style.get());
-    }
+    ExceptionCode ec;
+    // FIXME: Make more efficient <http://webkit.org/b/58157>
+    DEFINE_STATIC_LOCAL(String, none, ("none"));
+    style()->setProperty(displayString(), none, ec);
 }
 
 // ----------------------------
@@ -223,20 +128,9 @@ inline MediaControlTimelineContainerElement::MediaControlTimelineContainerElemen
 
 PassRefPtr<MediaControlTimelineContainerElement> MediaControlTimelineContainerElement::create(HTMLMediaElement* mediaElement)
 {
-    return adoptRef(new MediaControlTimelineContainerElement(mediaElement));
-}
-
-bool MediaControlTimelineContainerElement::rendererIsNeeded(RenderStyle* style)
-{
-    if (!MediaControlElement::rendererIsNeeded(style))
-        return false;
-
-    // Always show the timeline if the theme doesn't use status display (MediaControllerThemeClassic, for instance).
-    if (!document()->page()->theme()->usesMediaControlStatusDisplay())
-        return true;
-
-    float duration = mediaElement()->duration();
-    return !isnan(duration) && !isinf(duration);
+    RefPtr<MediaControlTimelineContainerElement> element = adoptRef(new MediaControlTimelineContainerElement(mediaElement));
+    element->hide();
+    return element.release();
 }
 
 MediaControlElementType MediaControlTimelineContainerElement::displayType() const
@@ -286,13 +180,14 @@ void RenderMediaVolumeSliderContainer::layout()
 
 inline MediaControlVolumeSliderContainerElement::MediaControlVolumeSliderContainerElement(HTMLMediaElement* mediaElement)
     : MediaControlElement(mediaElement)
-    , m_isVisible(false)
 {
 }
 
 PassRefPtr<MediaControlVolumeSliderContainerElement> MediaControlVolumeSliderContainerElement::create(HTMLMediaElement* mediaElement)
 {
-    return adoptRef(new MediaControlVolumeSliderContainerElement(mediaElement));
+    RefPtr<MediaControlVolumeSliderContainerElement> element = adoptRef(new MediaControlVolumeSliderContainerElement(mediaElement));
+    element->hide();
+    return element.release();
 }
 
 RenderObject* MediaControlVolumeSliderContainerElement::createRenderer(RenderArena* arena, RenderStyle*)
@@ -300,28 +195,22 @@ RenderObject* MediaControlVolumeSliderContainerElement::createRenderer(RenderAre
     return new (arena) RenderMediaVolumeSliderContainer(this);
 }
 
-PassRefPtr<RenderStyle> MediaControlVolumeSliderContainerElement::styleForElement()
+void MediaControlVolumeSliderContainerElement::defaultEventHandler(Event* event)
 {
-    RefPtr<RenderStyle> style = MediaControlElement::styleForElement();
-    style->setPosition(AbsolutePosition);
-    style->setDisplay(m_isVisible ? BLOCK : NONE);
-    return style;
-}
-
-void MediaControlVolumeSliderContainerElement::setVisible(bool visible)
-{
-    if (visible == m_isVisible)
+    if (!event->isMouseEvent() || event->type() != eventNames().mouseoutEvent)
         return;
-    m_isVisible = visible;
+
+    // Poor man's mouseleave event detection.
+    MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
+    if (!mouseEvent->relatedTarget() || !mouseEvent->relatedTarget()->toNode())
+        return;
+
+    if (this->containsIncludingShadowDOM(mouseEvent->relatedTarget()->toNode()))
+        return;
+
+    hide();
 }
 
-bool MediaControlVolumeSliderContainerElement::hitTest(const IntPoint& absPoint)
-{
-    if (renderer() && renderer()->style()->hasAppearance())
-        return renderer()->theme()->hitTestMediaControlPart(renderer(), absPoint);
-
-    return false;
-}
 
 MediaControlElementType MediaControlVolumeSliderContainerElement::displayType() const
 {
@@ -344,13 +233,13 @@ inline MediaControlStatusDisplayElement::MediaControlStatusDisplayElement(HTMLMe
 
 PassRefPtr<MediaControlStatusDisplayElement> MediaControlStatusDisplayElement::create(HTMLMediaElement* mediaElement)
 {
-    return adoptRef(new MediaControlStatusDisplayElement(mediaElement));
+    RefPtr<MediaControlStatusDisplayElement> element = adoptRef(new MediaControlStatusDisplayElement(mediaElement));
+    element->hide();
+    return element.release();
 }
 
 void MediaControlStatusDisplayElement::update()
 {
-    MediaControlElement::update();
-
     // Get the new state that we'll have to display.
     StateBeingDisplayed newStateToDisplay = Nothing;
 
@@ -359,12 +248,18 @@ void MediaControlStatusDisplayElement::update()
     else if (mediaElement()->movieLoadType() == MediaPlayer::LiveStream)
         newStateToDisplay = LiveBroadcast;
 
-    // Propagate only if needed.
     if (newStateToDisplay == m_stateBeingDisplayed)
         return;
-    m_stateBeingDisplayed = newStateToDisplay;
 
     ExceptionCode e;
+
+    if (m_stateBeingDisplayed == Nothing)
+        show();
+    else if (newStateToDisplay == Nothing)
+        hide();
+
+    m_stateBeingDisplayed = newStateToDisplay;
+
     switch (m_stateBeingDisplayed) {
     case Nothing:
         setInnerText("", e);
@@ -376,14 +271,6 @@ void MediaControlStatusDisplayElement::update()
         setInnerText(mediaElementLiveBroadcastStateText(), e);
         break;
     }
-}
-
-bool MediaControlStatusDisplayElement::rendererIsNeeded(RenderStyle* style)
-{
-    if (!MediaControlElement::rendererIsNeeded(style) || !document()->page()->theme()->usesMediaControlStatusDisplay())
-        return false;
-    float duration = mediaElement()->duration();
-    return (isnan(duration) || isinf(duration));
 }
 
 MediaControlElementType MediaControlStatusDisplayElement::displayType() const
@@ -406,96 +293,19 @@ MediaControlInputElement::MediaControlInputElement(HTMLMediaElement* mediaElemen
 {
 }
 
-void MediaControlInputElement::attachToParent(Element* parent)
+void MediaControlInputElement::show()
 {
-    // FIXME: This code seems very wrong.  Why are we magically adding |this| to the DOM here?
-    //        We shouldn't be calling parser API methods outside of the parser!
-    parent->parserAddChild(this);
+    ExceptionCode ec;
+    style()->removeProperty(displayString(), ec);
 }
 
-void MediaControlInputElement::update()
+void MediaControlInputElement::hide()
 {
-    updateDisplayType();
-    if (renderer())
-        renderer()->updateFromElement();
-    updateStyle();
+    ExceptionCode ec;
+    DEFINE_STATIC_LOCAL(String, none, ("none"));
+    style()->setProperty(displayString(), none, ec);
 }
 
-PassRefPtr<RenderStyle> MediaControlInputElement::styleForElement()
-{
-    return document()->styleSelector()->styleForElement(this, 0, true);
-}
-
-bool MediaControlInputElement::rendererIsNeeded(RenderStyle* style)
-{
-    ASSERT(document()->page());
-
-    return HTMLInputElement::rendererIsNeeded(style) && parentNode() && parentNode()->renderer()
-        && (!style->hasAppearance() || document()->page()->theme()->shouldRenderMediaControlPart(style->appearance(), mediaElement()));
-}
-
-void MediaControlInputElement::attach()
-{
-    RefPtr<RenderStyle> style = styleForElement();
-    if (!style)
-        return;
-    
-    bool needsRenderer = rendererIsNeeded(style.get());
-    if (!needsRenderer)
-        return;
-    RenderObject* renderer = createRenderer(mediaElement()->renderer()->renderArena(), style.get());
-    if (!renderer)
-        return;
-    renderer->setStyle(style.get());
-    setRenderer(renderer);
-    if (parentNode() && parentNode()->renderer()) {
-        // Find next sibling with a renderer to determine where to insert.
-        Node* sibling = nextSibling();
-        while (sibling && !sibling->renderer())
-            sibling = sibling->nextSibling();
-        parentNode()->renderer()->addChild(renderer, sibling ? sibling->renderer() : 0);
-    }  
-    ContainerNode::attach();
-    // FIXME: Currently, MediaControlInput circumvents the normal attachment
-    // and style recalc cycle and thus we need to add extra logic to be aware of
-    // the shadow DOM. Remove this once all media controls are transitioned to use the regular
-    // style calculation.
-    if (Node* shadowNode = shadowRoot())
-        shadowNode->attach();
-}
-
-void MediaControlInputElement::updateStyle()
-{
-    if (!mediaElement() || !mediaElement()->renderer())
-        return;
-    
-    RefPtr<RenderStyle> style = styleForElement();
-    if (!style)
-        return;
-    
-    bool needsRenderer = rendererIsNeeded(style.get()) && parentNode() && parentNode()->renderer();
-    if (renderer() && !needsRenderer)
-        detach();
-    else if (!renderer() && needsRenderer)
-        attach();
-    else if (renderer())
-        renderer()->setStyle(style.get());
-
-    // FIXME: Currently, MediaControlInput circumvents the normal attachment
-    // and style recalc cycle and thus we need to add extra logic to be aware of
-    // the shadow DOM. Remove this once all media controls are transitioned to use
-    // the new shadow DOM.
-    if (Node* shadowNode = shadowRoot())
-        shadowNode->recalcStyle(Node::Force);
-}
-
-bool MediaControlInputElement::hitTest(const IntPoint& absPoint)
-{
-    if (renderer() && renderer()->style()->hasAppearance())
-        return renderer()->theme()->hitTestMediaControlPart(renderer(), absPoint);
-
-    return false;
-}
 
 void MediaControlInputElement::setDisplayType(MediaControlElementType displayType)
 {
@@ -520,7 +330,13 @@ void MediaControlMuteButtonElement::defaultEventHandler(Event* event)
         mediaElement()->setMuted(!mediaElement()->muted());
         event->setDefaultHandled();
     }
+
     HTMLInputElement::defaultEventHandler(event);
+}
+
+void MediaControlMuteButtonElement::changedMute()
+{
+    updateDisplayType();
 }
 
 void MediaControlMuteButtonElement::updateDisplayType()
@@ -530,16 +346,27 @@ void MediaControlMuteButtonElement::updateDisplayType()
 
 // ----------------------------
 
-inline MediaControlPanelMuteButtonElement::MediaControlPanelMuteButtonElement(HTMLMediaElement* mediaElement)
+inline MediaControlPanelMuteButtonElement::MediaControlPanelMuteButtonElement(HTMLMediaElement* mediaElement, MediaControls* controls)
     : MediaControlMuteButtonElement(mediaElement, MediaMuteButton)
+    , m_controls(controls)
 {
 }
 
-PassRefPtr<MediaControlPanelMuteButtonElement> MediaControlPanelMuteButtonElement::create(HTMLMediaElement* mediaElement)
+PassRefPtr<MediaControlPanelMuteButtonElement> MediaControlPanelMuteButtonElement::create(HTMLMediaElement* mediaElement, MediaControls* controls)
 {
-    RefPtr<MediaControlPanelMuteButtonElement> button = adoptRef(new MediaControlPanelMuteButtonElement(mediaElement));
+    ASSERT(controls);
+
+    RefPtr<MediaControlPanelMuteButtonElement> button = adoptRef(new MediaControlPanelMuteButtonElement(mediaElement, controls));
     button->setType("button");
     return button.release();
+}
+
+void MediaControlPanelMuteButtonElement::defaultEventHandler(Event* event)
+{
+    if (event->type() == eventNames().mouseoverEvent)
+        m_controls->showVolumeSlider();
+
+    MediaControlMuteButtonElement::defaultEventHandler(event);
 }
 
 const AtomicString& MediaControlPanelMuteButtonElement::shadowPseudoId() const
@@ -551,7 +378,7 @@ const AtomicString& MediaControlPanelMuteButtonElement::shadowPseudoId() const
 // ----------------------------
 
 inline MediaControlVolumeSliderMuteButtonElement::MediaControlVolumeSliderMuteButtonElement(HTMLMediaElement* mediaElement)
-    : MediaControlMuteButtonElement(mediaElement, MediaVolumeSliderMuteButton)
+    : MediaControlMuteButtonElement(mediaElement, MediaMuteButton)
 {
 }
 
@@ -586,6 +413,7 @@ void MediaControlPlayButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
         mediaElement()->togglePlayState();
+        updateDisplayType();
         event->setDefaultHandled();
     }
     HTMLInputElement::defaultEventHandler(event);
@@ -739,6 +567,7 @@ PassRefPtr<MediaControlReturnToRealtimeButtonElement> MediaControlReturnToRealti
 {
     RefPtr<MediaControlReturnToRealtimeButtonElement> button = adoptRef(new MediaControlReturnToRealtimeButtonElement(mediaElement));
     button->setType("button");
+    button->hide();
     return button.release();
 }
 
@@ -768,6 +597,7 @@ PassRefPtr<MediaControlToggleClosedCaptionsButtonElement> MediaControlToggleClos
 {
     RefPtr<MediaControlToggleClosedCaptionsButtonElement> button = adoptRef(new MediaControlToggleClosedCaptionsButtonElement(mediaElement));
     button->setType("button");
+    button->hide();
     return button.release();
 }
 
@@ -776,8 +606,10 @@ void MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler(Event* e
     if (event->type() == eventNames().clickEvent) {
         mediaElement()->setClosedCaptionsVisible(!mediaElement()->closedCaptionsVisible());
         setChecked(mediaElement()->closedCaptionsVisible());
+        updateDisplayType();
         event->setDefaultHandled();
     }
+
     HTMLInputElement::defaultEventHandler(event);
 }
 
@@ -794,14 +626,17 @@ const AtomicString& MediaControlToggleClosedCaptionsButtonElement::shadowPseudoI
 
 // ----------------------------
 
-MediaControlTimelineElement::MediaControlTimelineElement(HTMLMediaElement* mediaElement)
+MediaControlTimelineElement::MediaControlTimelineElement(HTMLMediaElement* mediaElement, MediaControls* controls)
     : MediaControlInputElement(mediaElement, MediaSlider)
+    , m_controls(controls)
 {
 }
 
-PassRefPtr<MediaControlTimelineElement> MediaControlTimelineElement::create(HTMLMediaElement* mediaElement)
+PassRefPtr<MediaControlTimelineElement> MediaControlTimelineElement::create(HTMLMediaElement* mediaElement, MediaControls* controls)
 {
-    RefPtr<MediaControlTimelineElement> timeline = adoptRef(new MediaControlTimelineElement(mediaElement));
+    ASSERT(controls);
+
+    RefPtr<MediaControlTimelineElement> timeline = adoptRef(new MediaControlTimelineElement(mediaElement, controls));
     timeline->setType("range");
     timeline->setAttribute(precisionAttr, "float");
     return timeline.release();
@@ -826,27 +661,29 @@ void MediaControlTimelineElement::defaultEventHandler(Event* event)
 
     float time = narrowPrecisionToFloat(value().toDouble());
     if (time != mediaElement()->currentTime()) {
+        // FIXME: This is fired 3 times on every click. We should not be doing that <http:/webkit.org/b/58160>.
         ExceptionCode ec;
         mediaElement()->setCurrentTime(time, ec);
     }
 
     RenderSlider* slider = toRenderSlider(renderer());
     if (slider && slider->inDragMode())
-        toRenderMedia(mediaElement()->renderer())->controls()->updateTimeDisplay();
+        m_controls->updateTimeDisplay();
 
     if (event->type() == eventNames().mouseupEvent)
         mediaElement()->endScrubbing();
 }
 
-void MediaControlTimelineElement::update(bool updateDuration) 
+void MediaControlTimelineElement::setPosition(float currentTime) 
 {
-    if (updateDuration) {
-        float duration = mediaElement()->duration();
-        setAttribute(maxAttr, String::number(isfinite(duration) ? duration : 0));
-    }
-    setValue(String::number(mediaElement()->currentTime()));
-    MediaControlInputElement::update();
+    setValue(String::number(currentTime));
 }
+
+void MediaControlTimelineElement::setDuration(float duration)
+{
+    setAttribute(maxAttr, String::number(isfinite(duration) ? duration : 0));
+}
+
 
 const AtomicString& MediaControlTimelineElement::shadowPseudoId() const
 {
@@ -893,12 +730,10 @@ void MediaControlVolumeSliderElement::defaultEventHandler(Event* event)
     }
 }
 
-void MediaControlVolumeSliderElement::update()
+void MediaControlVolumeSliderElement::setVolume(float volume)
 {
-    float volume = mediaElement()->volume();
     if (value().toFloat() != volume)
         setValue(String::number(volume));
-    MediaControlInputElement::update();
 }
 
 const AtomicString& MediaControlVolumeSliderElement::shadowPseudoId() const
@@ -910,7 +745,7 @@ const AtomicString& MediaControlVolumeSliderElement::shadowPseudoId() const
 // ----------------------------
 
 inline MediaControlFullscreenVolumeSliderElement::MediaControlFullscreenVolumeSliderElement(HTMLMediaElement* mediaElement)
-: MediaControlVolumeSliderElement(mediaElement)
+    : MediaControlVolumeSliderElement(mediaElement)
 {
 }
 
@@ -932,15 +767,19 @@ const AtomicString& MediaControlFullscreenVolumeSliderElement::shadowPseudoId() 
 
 // ----------------------------
 
-inline MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(HTMLMediaElement* mediaElement)
+inline MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(HTMLMediaElement* mediaElement, MediaControls* controls)
     : MediaControlInputElement(mediaElement, MediaFullscreenButton)
+    , m_controls(controls)
 {
 }
 
-PassRefPtr<MediaControlFullscreenButtonElement> MediaControlFullscreenButtonElement::create(HTMLMediaElement* mediaElement)
+PassRefPtr<MediaControlFullscreenButtonElement> MediaControlFullscreenButtonElement::create(HTMLMediaElement* mediaElement, MediaControls* controls)
 {
-    RefPtr<MediaControlFullscreenButtonElement> button = adoptRef(new MediaControlFullscreenButtonElement(mediaElement));
+    ASSERT(controls);
+
+    RefPtr<MediaControlFullscreenButtonElement> button = adoptRef(new MediaControlFullscreenButtonElement(mediaElement, controls));
     button->setType("button");
+    button->hide();
     return button.release();
 }
 
@@ -954,10 +793,13 @@ void MediaControlFullscreenButtonElement::defaultEventHandler(Event* event)
         // video implementation without requiring them to implement their own full 
         // screen behavior.
         if (document()->settings() && document()->settings()->fullScreenEnabled()) {
-            if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == mediaElement())
+            if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == mediaElement()) {
                 document()->webkitCancelFullScreen();
-            else
+                m_controls->exitedFullscreen();
+            } else {
                 mediaElement()->webkitRequestFullScreen(0);
+                m_controls->enteredFullscreen();
+            }
         } else
 #endif
             mediaElement()->enterFullscreen();
@@ -975,7 +817,7 @@ const AtomicString& MediaControlFullscreenButtonElement::shadowPseudoId() const
 // ----------------------------
 
 inline MediaControlFullscreenVolumeMinButtonElement::MediaControlFullscreenVolumeMinButtonElement(HTMLMediaElement* mediaElement)
-: MediaControlInputElement(mediaElement, MediaUnMuteButton)
+    : MediaControlInputElement(mediaElement, MediaUnMuteButton)
 {
 }
 

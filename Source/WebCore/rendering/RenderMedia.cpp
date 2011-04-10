@@ -29,22 +29,18 @@
 #include "RenderMedia.h"
 
 #include "HTMLMediaElement.h"
-#include "MediaControlElements.h"
-#include "MediaControls.h"
 #include "RenderView.h"
 
 namespace WebCore {
 
 RenderMedia::RenderMedia(HTMLMediaElement* video)
     : RenderImage(video)
-    , m_controls(new MediaControls(video))
 {
     setImageResource(RenderImageResource::create());
 }
 
 RenderMedia::RenderMedia(HTMLMediaElement* video, const IntSize& intrinsicSize)
     : RenderImage(video)
-    , m_controls(new MediaControls(video))
 {
     setImageResource(RenderImageResource::create());
     setIntrinsicSize(intrinsicSize);
@@ -54,21 +50,9 @@ RenderMedia::~RenderMedia()
 {
 }
 
-void RenderMedia::destroy()
-{
-    m_controls->destroy();
-    RenderImage::destroy();
-}
-
 HTMLMediaElement* RenderMedia::mediaElement() const
 { 
     return static_cast<HTMLMediaElement*>(node()); 
-}
-
-void RenderMedia::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderImage::styleDidChange(diff, oldStyle);
-    m_controls->updateStyle();
 }
 
 void RenderMedia::layout()
@@ -77,9 +61,10 @@ void RenderMedia::layout()
 
     RenderImage::layout();
 
-    RenderBox* controlsRenderer = m_controls->renderBox();
+    RenderBox* controlsRenderer = toRenderBox(m_children.firstChild());
     if (!controlsRenderer)
         return;
+
     IntSize newSize = contentBoxRect().size();
     if (newSize == oldSize && !controlsRenderer->needsLayout())
         return;
@@ -97,11 +82,6 @@ void RenderMedia::layout()
     setChildNeedsLayout(false);
 
     statePusher.pop();
-}
-
-void RenderMedia::updateFromElement()
-{
-    m_controls->update();
 }
 
 } // namespace WebCore

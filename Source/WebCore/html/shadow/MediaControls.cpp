@@ -47,476 +47,404 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const double cOpacityAnimationRepeatDelay = 0.05;
-
 MediaControls::MediaControls(HTMLMediaElement* mediaElement)
-    : m_mediaElement(mediaElement)
-    , m_opacityAnimationTimer(this, &MediaControls::opacityAnimationTimerFired)
-    , m_opacityAnimationStartTime(0)
-    , m_opacityAnimationDuration(0)
-    , m_opacityAnimationFrom(0)
-    , m_opacityAnimationTo(1.0f)
-    , m_mouseOver(false)
+    : HTMLDivElement(divTag, mediaElement->document())
+    , m_mediaElement(mediaElement)
+    , m_rewindButton(0)
+    , m_playButton(0)
+    , m_returnToRealTimeButton(0)
+    , m_statusDisplay(0)
+    , m_currentTimeDisplay(0)
+    , m_timeline(0)
+    , m_timeRemainingDisplay(0)
+    , m_timelineContainer(0)
+    , m_seekBackButton(0)
+    , m_seekForwardButton(0)
+    , m_toggleClosedCaptionsButton(0)
+    , m_panelMuteButton(0)
+    , m_volumeSlider(0)
+    , m_volumeSliderMuteButton(0)
+    , m_volumeSliderContainer(0)
+    , m_fullScreenButton(0)
+    , m_fullScreenMinVolumeButton(0)
+    , m_fullScreenVolumeSlider(0)
+    , m_fullScreenMaxVolumeButton(0)
+    , m_panel(0)
+    , m_opaque(true)
 {
 }
 
-// FIXME: This will turn into the standard element factory method once shadow DOM conversion is complete.
-// (see https://bugs.webkit.org/show_bug.cgi?id=53020)
-PassRefPtr<MediaControlShadowRootElement> MediaControls::create(HTMLMediaElement* mediaElement)
+PassRefPtr<MediaControls> MediaControls::create(HTMLMediaElement* mediaElement)
 {
-    ASSERT(!m_panel);
-    ASSERT(!m_muteButton);
-    ASSERT(!m_playButton);
-    ASSERT(!m_returnToRealtimeButton);
-    ASSERT(!m_statusDisplay);
-    ASSERT(!m_timelineContainer);
-    ASSERT(!m_currentTimeDisplay);
-    ASSERT(!m_timeline);
-    ASSERT(!m_timeRemainingDisplay);
-    ASSERT(!m_seekBackButton);
-    ASSERT(!m_seekForwardButton);
-    ASSERT(!m_toggleClosedCaptionsButton);
-    ASSERT(!m_fullscreenButton);
-    ASSERT(!m_muteButton);
-    ASSERT(!m_volumeSliderContainer);
-    ASSERT(!m_volumeSlider);
-    ASSERT(!m_volumeSliderMuteButton);
-    ASSERT(!m_fullScreenMinVolumeButton);
-    ASSERT(!m_fullScreenMaxVolumeButton);
-    ASSERT(!m_fullScreenVolumeSlider);
+    if (!mediaElement->document()->page())
+        return 0;
 
-    RefPtr<MediaControlShadowRootElement> controls = MediaControlShadowRootElement::create(mediaElement);
+    RefPtr<MediaControls> controls = adoptRef(new MediaControls(mediaElement));
 
-    m_panel = MediaControlPanelElement::create(mediaElement);
+    RefPtr<MediaControlPanelElement> panel = MediaControlPanelElement::create(mediaElement);
 
-    m_rewindButton = MediaControlRewindButtonElement::create(mediaElement);
-    m_rewindButton->attachToParent(m_panel.get());
+    // FIXME: WHAT TO DO WITH ec??!?!?!?!
+    ExceptionCode ec;
 
-    m_playButton = MediaControlPlayButtonElement::create(mediaElement);
-    m_playButton->attachToParent(m_panel.get());
+    RefPtr<MediaControlRewindButtonElement> rewindButton = MediaControlRewindButtonElement::create(mediaElement);
+    controls->m_rewindButton = rewindButton.get();
+    panel->appendChild(rewindButton.release(), ec, true);
+    if (ec)
+        return 0;
 
-    m_returnToRealtimeButton = MediaControlReturnToRealtimeButtonElement::create(mediaElement);
-    m_returnToRealtimeButton->attachToParent(m_panel.get());
+    RefPtr<MediaControlPlayButtonElement> playButton = MediaControlPlayButtonElement::create(mediaElement);
+    controls->m_playButton = playButton.get();
+    panel->appendChild(playButton.release(), ec, true);
+    if (ec)
+        return 0;
 
-    m_statusDisplay = MediaControlStatusDisplayElement::create(mediaElement);
-    m_statusDisplay->attachToParent(m_panel.get());
+    RefPtr<MediaControlReturnToRealtimeButtonElement> returnToRealtimeButton = MediaControlReturnToRealtimeButtonElement::create(mediaElement);
+    controls->m_returnToRealTimeButton = returnToRealtimeButton.get();
+    panel->appendChild(returnToRealtimeButton.release(), ec, true);
+    if (ec)
+        return 0;
 
-    m_timelineContainer = MediaControlTimelineContainerElement::create(mediaElement);
+    if (mediaElement->document()->page()->theme()->usesMediaControlStatusDisplay()) {
+        RefPtr<MediaControlStatusDisplayElement> statusDisplay = MediaControlStatusDisplayElement::create(mediaElement);
+        controls->m_statusDisplay = statusDisplay.get();
+        panel->appendChild(statusDisplay.release(), ec, true);
+        if (ec)
+            return 0;
+    }
 
-    m_currentTimeDisplay = MediaControlCurrentTimeDisplayElement::create(mediaElement);
-    m_currentTimeDisplay->attachToParent(m_timelineContainer.get());
+    RefPtr<MediaControlTimelineContainerElement> timelineContainer = MediaControlTimelineContainerElement::create(mediaElement);
 
-    m_timeline = MediaControlTimelineElement::create(mediaElement);
-    m_timeline->attachToParent(m_timelineContainer.get());
+    RefPtr<MediaControlCurrentTimeDisplayElement> currentTimeDisplay = MediaControlCurrentTimeDisplayElement::create(mediaElement);
+    controls->m_currentTimeDisplay = currentTimeDisplay.get();
+    timelineContainer->appendChild(currentTimeDisplay.release(), ec, true);
+    if (ec)
+        return 0;
 
-    m_timeRemainingDisplay = MediaControlTimeRemainingDisplayElement::create(mediaElement);
-    m_timeRemainingDisplay->attachToParent(m_timelineContainer.get());
+    RefPtr<MediaControlTimelineElement> timeline = MediaControlTimelineElement::create(mediaElement, controls.get());
+    controls->m_timeline = timeline.get();
+    timelineContainer->appendChild(timeline.release(), ec, true);
+    if (ec)
+        return 0;
 
-    m_timelineContainer->attachToParent(m_panel.get());
+    RefPtr<MediaControlTimeRemainingDisplayElement> timeRemainingDisplay = MediaControlTimeRemainingDisplayElement::create(mediaElement);
+    controls->m_timeRemainingDisplay = timeRemainingDisplay.get();
+    timelineContainer->appendChild(timeRemainingDisplay.release(), ec, true);
+    if (ec)
+        return 0;
 
-    m_seekBackButton = MediaControlSeekBackButtonElement::create(mediaElement);
-    m_seekBackButton->attachToParent(m_panel.get());
+    controls->m_timelineContainer = timelineContainer.get();
+    panel->appendChild(timelineContainer.release(), ec, true);
+    if (ec)
+        return 0;
 
-    m_seekForwardButton = MediaControlSeekForwardButtonElement::create(mediaElement);
-    m_seekForwardButton->attachToParent(m_panel.get());
+    // FIXME: Only create when needed <http://webkit.org/b/57163>
+    RefPtr<MediaControlSeekBackButtonElement> seekBackButton = MediaControlSeekBackButtonElement::create(mediaElement);
+    controls->m_seekBackButton = seekBackButton.get();
+    panel->appendChild(seekBackButton.release(), ec, true);
+    if (ec)
+        return 0;
 
-    m_toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(mediaElement);
-    m_toggleClosedCaptionsButton->attachToParent(m_panel.get());
+    // FIXME: Only create when needed <http://webkit.org/b/57163>
+    RefPtr<MediaControlSeekForwardButtonElement> seekForwardButton = MediaControlSeekForwardButtonElement::create(mediaElement);
+    controls->m_seekForwardButton = seekForwardButton.get();
+    panel->appendChild(seekForwardButton.release(), ec, true);
+    if (ec)
+        return 0;
 
-    m_fullscreenButton = MediaControlFullscreenButtonElement::create(mediaElement);
-    m_fullscreenButton->attachToParent(m_panel.get());
+    if (mediaElement->document()->page()->theme()->supportsClosedCaptioning()) {
+        RefPtr<MediaControlToggleClosedCaptionsButtonElement> toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(mediaElement);
+        controls->m_toggleClosedCaptionsButton = toggleClosedCaptionsButton.get();
+        panel->appendChild(toggleClosedCaptionsButton.release(), ec, true);
+        if (ec)
+            return 0;
+    }
 
-    m_muteButton = MediaControlPanelMuteButtonElement::create(mediaElement);
-    m_muteButton->attachToParent(m_panel.get());
+    // FIXME: Only create when needed <http://webkit.org/b/57163>
+    RefPtr<MediaControlFullscreenButtonElement> fullScreenButton = MediaControlFullscreenButtonElement::create(mediaElement, controls.get());
+    controls->m_fullScreenButton = fullScreenButton.get();
+    panel->appendChild(fullScreenButton.release(), ec, true);
 
-    m_volumeSliderContainer = MediaControlVolumeSliderContainerElement::create(mediaElement);
+    RefPtr<MediaControlPanelMuteButtonElement> panelMuteButton = MediaControlPanelMuteButtonElement::create(mediaElement, controls.get());
+    controls->m_panelMuteButton = panelMuteButton.get();
+    panel->appendChild(panelMuteButton.release(), ec, true);
+    if (ec)
+        return 0;
 
-    m_volumeSlider = MediaControlVolumeSliderElement::create(mediaElement);
-    m_volumeSlider->attachToParent(m_volumeSliderContainer.get());
+    if (mediaElement->document()->page()->theme()->usesMediaControlVolumeSlider()) {
+        RefPtr<MediaControlVolumeSliderContainerElement> volumeSliderContainer = MediaControlVolumeSliderContainerElement::create(mediaElement);
 
-    m_volumeSliderMuteButton = MediaControlVolumeSliderMuteButtonElement::create(mediaElement);
-    m_volumeSliderMuteButton->attachToParent(m_volumeSliderContainer.get());
+        RefPtr<MediaControlVolumeSliderElement> slider = MediaControlVolumeSliderElement::create(mediaElement);
+        controls->m_volumeSlider = slider.get();
+        volumeSliderContainer->appendChild(slider.release(), ec, true);
+        if (ec)
+            return 0;
 
-    m_volumeSliderContainer->attachToParent(m_panel.get());
-    
-    // FIXME: These controls, and others, should be created dynamically when needed, instead of 
-    // always created.  <http://webkit.org/b/57163>
-    m_fullScreenMinVolumeButton = MediaControlFullscreenVolumeMinButtonElement::create(mediaElement);
-    m_fullScreenMinVolumeButton->attachToParent(m_panel.get());
-    
-    m_fullScreenVolumeSlider = MediaControlFullscreenVolumeSliderElement::create(mediaElement);
-    m_fullScreenVolumeSlider->attachToParent(m_panel.get());
-    
-    m_fullScreenMaxVolumeButton = MediaControlFullscreenVolumeMaxButtonElement::create(mediaElement);
-    m_fullScreenMaxVolumeButton->attachToParent(m_panel.get());
-    
-    m_panel->attachToParent(controls.get());
+        RefPtr<MediaControlVolumeSliderMuteButtonElement> volumeSliderMuteButton = MediaControlVolumeSliderMuteButtonElement::create(mediaElement);
+        controls->m_volumeSliderMuteButton = volumeSliderMuteButton.get();
+        volumeSliderContainer->appendChild(volumeSliderMuteButton.release(), ec, true);
+        if (ec)
+            return 0;
+
+        controls->m_volumeSliderContainer = volumeSliderContainer.get();
+        panel->appendChild(volumeSliderContainer.release(), ec, true);
+        if (ec)
+            return 0;
+    }
+
+    // FIXME: Only create when needed <http://webkit.org/b/57163>
+    RefPtr<MediaControlFullscreenVolumeMinButtonElement> fullScreenMinVolumeButton = MediaControlFullscreenVolumeMinButtonElement::create(mediaElement);
+    controls->m_fullScreenMinVolumeButton = fullScreenMinVolumeButton.get();
+    panel->appendChild(fullScreenMinVolumeButton.release(), ec, true);
+    if (ec)
+        return 0;
+
+    RefPtr<MediaControlFullscreenVolumeSliderElement> fullScreenVolumeSlider = MediaControlFullscreenVolumeSliderElement::create(mediaElement);
+    controls->m_fullScreenVolumeSlider = fullScreenVolumeSlider.get();
+    panel->appendChild(fullScreenVolumeSlider.release(), ec, true);
+    if (ec)
+        return 0;
+
+    RefPtr<MediaControlFullscreenVolumeMaxButtonElement> fullScreenMaxVolumeButton = MediaControlFullscreenVolumeMaxButtonElement::create(mediaElement);
+    controls->m_fullScreenMaxVolumeButton = fullScreenMaxVolumeButton.get();
+    panel->appendChild(fullScreenMaxVolumeButton.release(), ec, true);
+    if (ec)
+        return 0;
+
+    controls->m_panel = panel.get();
+    controls->appendChild(panel.release(), ec, true);
+    if (ec)
+        return 0;
+
     return controls.release();
+}
+
+void MediaControls::show()
+{
+    m_panel->show();
+}
+
+void MediaControls::hide()
+{
+    m_panel->hide();
+}
+
+static const String& webkitTransitionString()
+{
+    DEFINE_STATIC_LOCAL(String, s, ("-webkit-transition"));
+    return s;
+}
+
+static const String& opacityString()
+{
+    DEFINE_STATIC_LOCAL(String, s, ("opacity"));
+    return s;
+}
+
+void MediaControls::makeOpaque()
+{
+    if (m_opaque)
+        return;
+
+    DEFINE_STATIC_LOCAL(String, transitionValue, ());
+    if (transitionValue.isNull())
+        transitionValue = String::format("opacity %.1gs", document()->page()->theme()->mediaControlsFadeInDuration());
+    DEFINE_STATIC_LOCAL(String, opacityValue, ("1"));
+
+    ExceptionCode ec;
+    // FIXME: Make more efficient <http://webkit.org/b/58157>
+    m_panel->style()->setProperty(webkitTransitionString(), transitionValue, ec);
+    m_panel->style()->setProperty(opacityString(), opacityValue, ec);
+    m_opaque = true;
+}
+
+void MediaControls::makeTransparent()
+{
+    if (!m_opaque)
+        return;
+
+    DEFINE_STATIC_LOCAL(String, transitionValue, ());
+    if (transitionValue.isNull())
+        transitionValue = String::format("opacity %.1gs", document()->page()->theme()->mediaControlsFadeOutDuration());
+    DEFINE_STATIC_LOCAL(String, opacityValue, ("0"));
+
+    ExceptionCode ec;
+    // FIXME: Make more efficient <http://webkit.org/b/58157>
+    m_panel->style()->setProperty(webkitTransitionString(), transitionValue, ec);
+    m_panel->style()->setProperty(opacityString(), opacityValue, ec);
+    m_opaque = false;
 }
 
 void MediaControls::reset()
 {
-    update();
-}
+    Page* page = document()->page();
+    if (!page)
+        return;
 
-void MediaControls::playbackProgressed()
-{
-    if (m_timeline)
-        m_timeline->update(false);
-    updateTimeDisplay();
+    changedNetworkState();
+    float duration = m_mediaElement->duration();
+    if (!isnan(duration) || page->theme()->hasOwnDisabledStateHandlingFor(MediaSliderPart)) {
+        m_timeline->setDuration(duration);
+        m_timelineContainer->show();
+        m_timeline->setPosition(m_mediaElement->currentTime());
+        updateTimeDisplay();
+    } else
+        m_timelineContainer->hide();
+
+    if (m_mediaElement->hasAudio() || page->theme()->hasOwnDisabledStateHandlingFor(MediaMuteButtonPart))
+        m_panelMuteButton->show();
+    else
+        m_panelMuteButton->hide();
+
+    if (m_volumeSlider)
+        m_volumeSlider->setVolume(m_mediaElement->volume());
+
+    if (m_toggleClosedCaptionsButton) {
+        if (m_mediaElement->hasClosedCaptions())
+            m_toggleClosedCaptionsButton->show();
+        else
+            m_toggleClosedCaptionsButton->hide();
+    }
+
+    if (m_mediaElement->movieLoadType() != MediaPlayer::LiveStream) {
+        m_returnToRealTimeButton->hide();
+        m_rewindButton->show();
+    } else {
+        m_returnToRealTimeButton->show();
+        m_rewindButton->hide();
+    }
+
+    makeOpaque();
 }
 
 void MediaControls::playbackStarted()
 {
-    playbackProgressed();
+    m_playButton->updateDisplayType();
+    m_timeline->setPosition(m_mediaElement->currentTime());
+    updateTimeDisplay();
+}
+
+void MediaControls::playbackProgressed()
+{
+    m_timeline->setPosition(m_mediaElement->currentTime());
+    updateTimeDisplay();
 }
 
 void MediaControls::playbackStopped()
 {
-    playbackProgressed();
-}
-
-void MediaControls::changedMute()
-{
-    update();
-}
-
-void MediaControls::changedVolume()
-{
-    update();
-}
-
-void MediaControls::changedClosedCaptionsVisibility()
-{
-    update();
-}
-
-void MediaControls::updateStyle()
-{
-    if (!m_controlsShadowRoot)
-        return;
-
-    if (m_panel)
-        m_panel->updateStyle();
-    if (m_muteButton)
-        m_muteButton->updateStyle();
-    if (m_playButton)
-        m_playButton->updateStyle();
-    if (m_seekBackButton)
-        m_seekBackButton->updateStyle();
-    if (m_seekForwardButton)
-        m_seekForwardButton->updateStyle();
-    if (m_rewindButton)
-        m_rewindButton->updateStyle();
-    if (m_returnToRealtimeButton)
-        m_returnToRealtimeButton->updateStyle();
-    if (m_toggleClosedCaptionsButton)
-        m_toggleClosedCaptionsButton->updateStyle();
-    if (m_statusDisplay)
-        m_statusDisplay->updateStyle();
-    if (m_timelineContainer)
-        m_timelineContainer->updateStyle();
-    if (m_timeline)
-        m_timeline->updateStyle();
-    if (m_fullscreenButton)
-        m_fullscreenButton->updateStyle();
-    if (m_currentTimeDisplay)
-        m_currentTimeDisplay->updateStyle();
-    if (m_timeRemainingDisplay)
-        m_timeRemainingDisplay->updateStyle();
-    if (m_volumeSliderContainer)
-        m_volumeSliderContainer->updateStyle();
-    if (m_volumeSliderMuteButton)
-        m_volumeSliderMuteButton->updateStyle();
-    if (m_volumeSlider)
-        m_volumeSlider->updateStyle();
-    if (m_fullScreenMinVolumeButton)
-        m_fullScreenMinVolumeButton->updateStyle();
-    if (m_fullScreenVolumeSlider)
-        m_fullScreenVolumeSlider->updateStyle();
-    if (m_fullScreenMaxVolumeButton)
-        m_fullScreenMaxVolumeButton->updateStyle();
-}
-
-void MediaControls::destroy()
-{
-    ASSERT(m_mediaElement->renderer());
-
-    if (m_controlsShadowRoot && m_controlsShadowRoot->renderer()) {
-
-        // detach the panel before removing the shadow renderer to prevent a crash in m_controlsShadowRoot->detach() 
-        //  when display: style changes
-        m_panel->detach();
-
-        m_mediaElement->renderer()->removeChild(m_controlsShadowRoot->renderer());
-        m_controlsShadowRoot->detach();
-        m_controlsShadowRoot = 0;
-    }
-}
-
-void MediaControls::update()
-{
-    HTMLMediaElement* media = m_mediaElement;
-    if (!media->controls() || !media->inActiveDocument()) {
-        if (m_controlsShadowRoot) {
-            m_controlsShadowRoot->detach();
-            m_panel = 0;
-            m_muteButton = 0;
-            m_playButton = 0;
-            m_statusDisplay = 0;
-            m_timelineContainer = 0;
-            m_timeline = 0;
-            m_seekBackButton = 0;
-            m_seekForwardButton = 0;
-            m_rewindButton = 0;
-            m_returnToRealtimeButton = 0;
-            m_currentTimeDisplay = 0;
-            m_timeRemainingDisplay = 0;
-            m_fullscreenButton = 0;
-            m_volumeSliderContainer = 0;
-            m_volumeSlider = 0;
-            m_volumeSliderMuteButton = 0;
-            m_controlsShadowRoot = 0;
-            m_toggleClosedCaptionsButton = 0;
-            m_fullScreenMinVolumeButton = 0;
-            m_fullScreenVolumeSlider = 0;
-            m_fullScreenMaxVolumeButton = 0;
-        }
-        m_opacityAnimationTo = 1.0f;
-        m_opacityAnimationTimer.stop();
-        return;
-    }
-
-    if (!m_controlsShadowRoot) {
-        m_controlsShadowRoot = create(m_mediaElement);
-        m_mediaElement->renderer()->addChild(m_controlsShadowRoot->renderer());
-        m_panel->attach();
-    }
-
-    if (m_panel) {
-        // update() might alter the opacity of the element, especially if we are in the middle
-        // of an animation. This is the only element concerned as we animate only this element.
-        float opacityBeforeChangingStyle = m_panel->renderer() ? m_panel->renderer()->style()->opacity() : 0;
-        m_panel->update();
-        changeOpacity(m_panel.get(), opacityBeforeChangingStyle);
-    }
-    if (m_muteButton)
-        m_muteButton->update();
-    if (m_playButton)
-        m_playButton->update();
-    if (m_timelineContainer)
-        m_timelineContainer->update();
-    if (m_volumeSliderContainer)
-        m_volumeSliderContainer->update();
-    if (m_timeline)
-        m_timeline->update();
-    if (m_currentTimeDisplay)
-        m_currentTimeDisplay->update();
-    if (m_timeRemainingDisplay)
-        m_timeRemainingDisplay->update();
-    if (m_seekBackButton)
-        m_seekBackButton->update();
-    if (m_seekForwardButton)
-        m_seekForwardButton->update();
-    if (m_rewindButton)
-        m_rewindButton->update();
-    if (m_returnToRealtimeButton)
-        m_returnToRealtimeButton->update();
-    if (m_toggleClosedCaptionsButton)
-        m_toggleClosedCaptionsButton->update();
-    if (m_statusDisplay)
-        m_statusDisplay->update();
-    if (m_fullscreenButton)
-        m_fullscreenButton->update();
-    if (m_volumeSlider)
-        m_volumeSlider->update();
-    if (m_volumeSliderMuteButton)
-        m_volumeSliderMuteButton->update();
-    if (m_fullScreenMinVolumeButton)
-        m_fullScreenMinVolumeButton->update();
-    if (m_fullScreenVolumeSlider)
-        m_fullScreenVolumeSlider->update();
-    if (m_fullScreenMaxVolumeButton)
-        m_fullScreenMaxVolumeButton->update();
+    m_playButton->updateDisplayType();
+    m_timeline->setPosition(m_mediaElement->currentTime());
     updateTimeDisplay();
-    updateControlVisibility();
+    makeOpaque();
 }
 
 void MediaControls::updateTimeDisplay()
 {
-    ASSERT(m_mediaElement->renderer());
-
-    if (!m_currentTimeDisplay || !m_currentTimeDisplay->renderer() || m_currentTimeDisplay->renderer()->style()->display() == NONE || m_mediaElement->renderer()->style()->visibility() != VISIBLE)
-        return;
-
     float now = m_mediaElement->currentTime();
     float duration = m_mediaElement->duration();
 
-    // Allow the theme to format the time
+    Page* page = document()->page();
+    if (!page)
+        return;
+
+    // Allow the theme to format the time.
     ExceptionCode ec;
-    m_currentTimeDisplay->setInnerText(m_mediaElement->renderer()->theme()->formatMediaControlsCurrentTime(now, duration), ec);
+    m_currentTimeDisplay->setInnerText(page->theme()->formatMediaControlsCurrentTime(now, duration), ec);
     m_currentTimeDisplay->setCurrentValue(now);
-    m_timeRemainingDisplay->setInnerText(m_mediaElement->renderer()->theme()->formatMediaControlsRemainingTime(now, duration), ec);
+    m_timeRemainingDisplay->setInnerText(page->theme()->formatMediaControlsRemainingTime(now, duration), ec);
     m_timeRemainingDisplay->setCurrentValue(now - duration);
 }
 
-RenderBox* MediaControls::renderBox()
+void MediaControls::reportedError()
 {
-    return m_controlsShadowRoot ? m_controlsShadowRoot->renderBox() : 0;
+    Page* page = document()->page();
+    if (!page)
+        return;
+
+    if (!page->theme()->hasOwnDisabledStateHandlingFor(MediaSliderPart))
+        m_timelineContainer->hide();
+
+    if (!page->theme()->hasOwnDisabledStateHandlingFor(MediaMuteButtonPart))
+        m_panelMuteButton->hide();
+
+     m_fullScreenButton->hide();
+
+    if (m_volumeSliderContainer)
+        m_volumeSliderContainer->hide();
+    if (m_toggleClosedCaptionsButton && !page->theme()->hasOwnDisabledStateHandlingFor(MediaToggleClosedCaptionsButtonPart))
+        m_toggleClosedCaptionsButton->hide();
 }
 
-void MediaControls::updateControlVisibility()
+void MediaControls::changedNetworkState()
 {
-    if (!m_panel || !m_panel->renderer())
-        return;
-
-    // Don't fade for audio controls.
-    HTMLMediaElement* media = m_mediaElement;
-    if (!media->hasVideo())
-        return;
-
-    ASSERT(media->renderer());
-
-    // Don't fade if the media element is not visible
-    if (media->renderer()->style()->visibility() != VISIBLE)
-        return;
-    
-    bool shouldHideController = !m_mouseOver && !media->canPlay();
-
-    // Do fading manually, css animations don't work with shadow trees
-
-    float animateFrom = m_panel->renderer()->style()->opacity();
-    float animateTo = shouldHideController ? 0.0f : 1.0f;
-
-    if (animateFrom == animateTo)
-        return;
-
-    if (m_opacityAnimationTimer.isActive()) {
-        if (m_opacityAnimationTo == animateTo)
-            return;
-        m_opacityAnimationTimer.stop();
-    }
-
-    if (animateFrom < animateTo)
-        m_opacityAnimationDuration = m_panel->renderer()->theme()->mediaControlsFadeInDuration();
+    // FIXME: Why are we changing fullscreen button visibility here? <http://webkit.org/b/58163>
+    if (m_mediaElement->supportsFullscreen())
+        m_fullScreenButton->show();
     else
-        m_opacityAnimationDuration = m_panel->renderer()->theme()->mediaControlsFadeOutDuration();
+        m_fullScreenButton->hide();
 
-    m_opacityAnimationFrom = animateFrom;
-    m_opacityAnimationTo = animateTo;
-
-    m_opacityAnimationStartTime = currentTime();
-    m_opacityAnimationTimer.startRepeating(cOpacityAnimationRepeatDelay);
+    if (m_statusDisplay)
+        m_statusDisplay->update();
 }
 
-void MediaControls::changeOpacity(HTMLElement* e, float opacity)
+void MediaControls::loadedMetadata()
 {
-    if (!e || !e->renderer() || !e->renderer()->style())
+    if (m_statusDisplay)
+        m_statusDisplay->hide();
+
+    reset();
+}
+
+void MediaControls::changedClosedCaptionsVisibility()
+{
+    if (m_toggleClosedCaptionsButton)
+        m_toggleClosedCaptionsButton->updateDisplayType();
+}
+
+void MediaControls::changedMute()
+{
+    m_panelMuteButton->changedMute();
+    if (m_volumeSliderMuteButton)
+        m_volumeSliderMuteButton->changedMute();
+}
+
+void MediaControls::changedVolume()
+{
+    if (m_volumeSlider)
+        m_volumeSlider->setVolume(m_mediaElement->volume());
+}
+
+void MediaControls::enteredFullscreen()
+{
+    if (m_mediaElement->movieLoadType() == MediaPlayer::LiveStream || m_mediaElement->movieLoadType() == MediaPlayer::StoredStream) {
+        m_seekBackButton->hide();
+        m_seekForwardButton->hide();
+    } else
+        m_rewindButton->hide();
+}
+
+void MediaControls::exitedFullscreen()
+{
+    // "show" actually means removal of display:none style, so we are just clearing styles
+    // when exiting fullscreen.
+    // FIXME: Clarify naming of show/hide <http://webkit.org/b/58157>
+    m_rewindButton->show();
+    m_seekBackButton->show();
+    m_seekForwardButton->show();
+}
+
+void MediaControls::showVolumeSlider()
+{
+    if (!m_mediaElement->hasAudio())
         return;
-    RefPtr<RenderStyle> s = RenderStyle::clone(e->renderer()->style());
-    s->setOpacity(opacity);
-    // z-index can't be auto if opacity is used
-    s->setZIndex(0);
-    e->renderer()->setStyle(s.release());
+
+    if (m_volumeSliderContainer)
+        m_volumeSliderContainer->show();
 }
 
-void MediaControls::opacityAnimationTimerFired(Timer<MediaControls>*)
+const AtomicString& MediaControls::shadowPseudoId() const
 {
-    double time = currentTime() - m_opacityAnimationStartTime;
-    if (time >= m_opacityAnimationDuration) {
-        time = m_opacityAnimationDuration;
-        m_opacityAnimationTimer.stop();
-    }
-    float opacity = narrowPrecisionToFloat(m_opacityAnimationFrom + (m_opacityAnimationTo - m_opacityAnimationFrom) * time / m_opacityAnimationDuration);
-    changeOpacity(m_panel.get(), opacity);
-}
-
-void MediaControls::updateVolumeSliderContainer(bool visible)
-{
-    if (!m_mediaElement->hasAudio() || !m_volumeSliderContainer || !m_volumeSlider)
-        return;
-
-    if (visible && !m_volumeSliderContainer->isVisible()) {
-        if (!m_muteButton || !m_muteButton->renderer() || !m_muteButton->renderBox())
-            return;
-
-        RefPtr<RenderStyle> s = m_volumeSliderContainer->styleForElement();
-        m_volumeSliderContainer->setVisible(true);
-        m_volumeSliderContainer->update();
-        m_volumeSlider->update();
-    } else if (!visible && m_volumeSliderContainer->isVisible()) {
-        m_volumeSliderContainer->setVisible(false);
-        m_volumeSliderContainer->updateStyle();
-    }
-}
-
-void MediaControls::forwardEvent(Event* event)
-{
-    ASSERT(m_mediaElement->renderer());
-
-    if (event->isMouseEvent() && m_controlsShadowRoot) {
-        MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
-        IntPoint point(mouseEvent->absoluteLocation());
-
-        bool defaultHandled = false;
-        if (m_volumeSliderMuteButton && m_volumeSliderMuteButton->hitTest(point)) {
-            m_volumeSliderMuteButton->defaultEventHandler(event);
-            defaultHandled = event->defaultHandled();
-        }
-
-        bool showVolumeSlider = false;
-        if (!defaultHandled && m_muteButton && m_muteButton->hitTest(point)) {
-            m_muteButton->defaultEventHandler(event);
-            if (event->type() != eventNames().mouseoutEvent)
-                showVolumeSlider = true;
-        }
-
-        if (m_volumeSliderContainer && m_volumeSliderContainer->hitTest(point))
-            showVolumeSlider = true;
-
-        if (m_volumeSlider && m_volumeSlider->hitTest(point)) {
-            m_volumeSlider->defaultEventHandler(event);
-            showVolumeSlider = true;
-        }
-
-        updateVolumeSliderContainer(showVolumeSlider);
-
-        if (m_playButton && m_playButton->hitTest(point))
-            m_playButton->defaultEventHandler(event);
-
-        if (m_seekBackButton && m_seekBackButton->hitTest(point))
-            m_seekBackButton->defaultEventHandler(event);
-
-        if (m_seekForwardButton && m_seekForwardButton->hitTest(point))
-            m_seekForwardButton->defaultEventHandler(event);
-
-        if (m_rewindButton && m_rewindButton->hitTest(point))
-            m_rewindButton->defaultEventHandler(event);
-
-        if (m_returnToRealtimeButton && m_returnToRealtimeButton->hitTest(point))
-            m_returnToRealtimeButton->defaultEventHandler(event);
-
-       if (m_toggleClosedCaptionsButton && m_toggleClosedCaptionsButton->hitTest(point))
-            m_toggleClosedCaptionsButton->defaultEventHandler(event);
-
-        if (m_timeline && m_timeline->hitTest(point))
-            m_timeline->defaultEventHandler(event);
-
-        if (m_fullscreenButton && m_fullscreenButton->hitTest(point))
-            m_fullscreenButton->defaultEventHandler(event);
-
-        if (event->type() == eventNames().mouseoverEvent) {
-            m_mouseOver = true;
-            updateControlVisibility();
-        }
-        if (event->type() == eventNames().mouseoutEvent) {
-            // When the scrollbar thumb captures mouse events, we should treat the mouse as still being over our renderer if the new target is a descendant
-            Node* mouseOverNode = mouseEvent->relatedTarget() ? mouseEvent->relatedTarget()->toNode() : 0;
-            RenderObject* mouseOverRenderer = mouseOverNode ? mouseOverNode->renderer() : 0;
-            m_mouseOver = mouseOverRenderer && mouseOverRenderer->isDescendantOf(m_mediaElement->renderer());
-            updateControlVisibility();
-        }
-    }
+    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls"));
+    return id;
 }
 
 }

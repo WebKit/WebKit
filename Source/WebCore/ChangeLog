@@ -1,3 +1,39 @@
+2011-04-07  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        [Meta] Convert HTMLMediaElement to use the new shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=53020
+
+        This conversion is non-trivial, for several reasons:
+
+        1) Since HTMLMediaElement now hosts the shadow DOM for controls, hiding
+        and showing controls does not result in destroying and re-creating the
+        shadow DOM tree. Instead, the tree is created as needed and shown/hidden
+        using inline styles.
+        
+        2) Instead of detaching/attaching on each style change, the control parts
+        are now using a set of higher fidelity callbacks that notify MediaControls
+        about changes to which it should react. Each reaction results in hiding,
+        showing, or changing the state of the control parts using inline styles
+        and DOM APIs.
+
+        3) Hiding and showing controls is accomplished using inline styles, rather
+        than wiring rendererIsNeeded, because renderers are now re-created less
+        frequently.
+
+        4) Instead of constantly querying RenderTheme about visibility of a particular
+        control part, we let the theme determine which parts are supported and
+        which parts are visible in certain conditions.
+
+        5) Custom hit-testing, event forwarding, and style updates are completely
+        removed, since they are now unnecessary.
+
+        6) Fading controls in/out is now done as CSS animation, since shadow DOM
+        supports it.
+
+        Test: manual-tests/media-controls.html
+
 2011-04-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin.

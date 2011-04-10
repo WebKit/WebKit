@@ -166,8 +166,10 @@ protected:
     virtual String extraFullScreenStyleSheet();
 #endif
 
-    virtual bool shouldRenderMediaControlPart(ControlPart, Element*);
+    virtual bool supportsClosedCaptioning() const { return true; }
+    virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const;
     virtual bool usesMediaControlStatusDisplay();
+    virtual bool usesMediaControlVolumeSlider() const;
     virtual void adjustMediaSliderThumbSize(RenderObject*) const;
     virtual IntPoint volumeSliderOffsetFromMuteButton(RenderBox*, const IntSize&) const;
 #endif

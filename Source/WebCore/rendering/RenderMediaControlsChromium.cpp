@@ -242,28 +242,6 @@ static bool paintMediaTimelineContainer(RenderObject* object, const PaintInfo& p
     return true;
 }
 
-bool RenderMediaControlsChromium::shouldRenderMediaControlPart(ControlPart part, Element* e)
-{
-    UNUSED_PARAM(e);
-
-    switch (part) {
-    case MediaMuteButtonPart:
-    case MediaPlayButtonPart:
-    case MediaSliderPart:
-    case MediaSliderThumbPart:
-    case MediaVolumeSliderContainerPart:
-    case MediaVolumeSliderPart:
-    case MediaVolumeSliderThumbPart:
-    case MediaControlsBackgroundPart:
-    case MediaCurrentTimePart:
-    case MediaTimeRemainingPart:
-        return true;
-    default:
-        ;
-    }
-    return false;
-}
-
 bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType part, RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
     switch (part) {

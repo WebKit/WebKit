@@ -33,7 +33,6 @@
 namespace WebCore {
 
 class HTMLMediaElement;
-class MediaControls;
 
 class RenderMedia : public RenderImage {
 public:
@@ -45,9 +44,6 @@ public:
     RenderObjectChildList* children() { return &m_children; }
 
     HTMLMediaElement* mediaElement() const;
-    MediaControls* controls() const;
-
-    virtual void updateFromElement();
 
 protected:
     virtual void layout();
@@ -56,18 +52,12 @@ private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
 
-    virtual void destroy();
-    
     virtual const char* renderName() const { return "RenderMedia"; }
     virtual bool isMedia() const { return true; }
     virtual bool isImage() const { return false; }
 
-
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 
-    OwnPtr<MediaControls> m_controls;
     RenderObjectChildList m_children;
 };
 
@@ -75,11 +65,6 @@ inline RenderMedia* toRenderMedia(RenderObject* object)
 {
     ASSERT(!object || object->isMedia());
     return static_cast<RenderMedia*>(object);
-}
-
-inline MediaControls* RenderMedia::controls() const
-{
-    return m_controls.get();
 }
 
 // This will catch anyone doing an unnecessary cast.

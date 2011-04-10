@@ -105,11 +105,6 @@ void RenderThemeChromiumMac::adjustMediaSliderThumbSize(RenderObject* o) const
     RenderMediaControlsChromium::adjustMediaSliderThumbSize(o);
 }
 
-bool RenderThemeChromiumMac::shouldRenderMediaControlPart(ControlPart part, Element* e)
-{
-    return RenderMediaControlsChromium::shouldRenderMediaControlPart(part, e);
-}
-
 bool RenderThemeChromiumMac::paintMediaPlayButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
     return RenderMediaControlsChromium::paintMediaControlsPart(MediaPlayButton, object, paintInfo, rect);

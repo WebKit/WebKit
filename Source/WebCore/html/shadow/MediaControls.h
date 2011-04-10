@@ -29,6 +29,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "HTMLDivElement.h"
 #include "Timer.h"
 #include <wtf/RefPtr.h>
 
@@ -38,32 +39,44 @@ class HTMLElement;
 class HTMLInputElement;
 class HTMLMediaElement;
 class Event;
-class MediaControlMuteButtonElement;
+class MediaControlPanelMuteButtonElement;
 class MediaControlPlayButtonElement;
 class MediaControlSeekButtonElement;
-class MediaControlShadowRootElement;
 class MediaControlRewindButtonElement;
 class MediaControlReturnToRealtimeButtonElement;
 class MediaControlToggleClosedCaptionsButtonElement;
+class MediaControlCurrentTimeDisplayElement;
 class MediaControlTimelineElement;
+class MediaControlTimeRemainingDisplayElement;
 class MediaControlVolumeSliderElement;
 class MediaControlFullscreenButtonElement;
 class MediaControlTimeDisplayElement;
 class MediaControlStatusDisplayElement;
 class MediaControlTimelineContainerElement;
+class MediaControlSeekBackButtonElement;
+class MediaControlSeekForwardButtonElement;
+class MediaControlMuteButtonElement;
+class MediaControlVolumeSliderElement;
+class MediaControlVolumeSliderMuteButtonElement;
 class MediaControlVolumeSliderContainerElement;
-class MediaControlElement;
 class MediaControlFullscreenVolumeMinButtonElement;
 class MediaControlFullscreenVolumeSliderElement;
 class MediaControlFullscreenVolumeMaxButtonElement;
+class MediaControlPanelElement;
 class MediaPlayer;
 
 class RenderBox;
 class RenderMedia;
 
-class MediaControls {
+// FIXME: Rename to MediaControlRootElement.
+class MediaControls : public HTMLDivElement {
 public:
-    MediaControls(HTMLMediaElement*);
+    static PassRefPtr<MediaControls> create(HTMLMediaElement*);
+
+    void show();
+    void hide();
+    void makeOpaque();
+    void makeTransparent();
 
     void reset();
 
@@ -73,61 +86,54 @@ public:
 
     void changedMute();
     void changedVolume();
+
+    void enteredFullscreen();
+    void exitedFullscreen();
+
+    void reportedError();
+    void changedNetworkState();
+    void loadedMetadata();
     void changedClosedCaptionsVisibility();
 
-    void destroy();
-    void update();
-    void updateStyle();
-    void forwardEvent(Event*);
+    void showVolumeSlider();
     void updateTimeDisplay();
 
-    // FIXME: This is temporary to allow RenderMedia::layout tweak the position of controls.
-    // Once shadow DOM refactoring is complete, the tweaking will be in MediaControlsShadowRoot and this accessor will no longer be necessary.
-    RenderBox* renderBox();
-
 private:
-    PassRefPtr<MediaControlShadowRootElement> create(HTMLMediaElement*);
+    MediaControls(HTMLMediaElement*);
 
-    void updateControlVisibility();
-    void changeOpacity(HTMLElement*, float opacity);
-    void opacityAnimationTimerFired(Timer<MediaControls>*);
-
-    void updateVolumeSliderContainer(bool visible);
-
-private:
-    RefPtr<MediaControlShadowRootElement> m_controlsShadowRoot;
-    RefPtr<MediaControlElement> m_panel;
-    RefPtr<MediaControlMuteButtonElement> m_muteButton;
-    RefPtr<MediaControlPlayButtonElement> m_playButton;
-    RefPtr<MediaControlSeekButtonElement> m_seekBackButton;
-    RefPtr<MediaControlSeekButtonElement> m_seekForwardButton;
-    RefPtr<MediaControlRewindButtonElement> m_rewindButton;
-    RefPtr<MediaControlReturnToRealtimeButtonElement> m_returnToRealtimeButton;
-    RefPtr<MediaControlToggleClosedCaptionsButtonElement> m_toggleClosedCaptionsButton;
-    RefPtr<MediaControlTimelineElement> m_timeline;
-    RefPtr<MediaControlVolumeSliderElement> m_volumeSlider;
-    RefPtr<MediaControlMuteButtonElement> m_volumeSliderMuteButton;
-    RefPtr<MediaControlFullscreenButtonElement> m_fullscreenButton;
-    RefPtr<MediaControlTimelineContainerElement> m_timelineContainer;
-    RefPtr<MediaControlVolumeSliderContainerElement> m_volumeSliderContainer;
-    RefPtr<MediaControlTimeDisplayElement> m_currentTimeDisplay;
-    RefPtr<MediaControlTimeDisplayElement> m_timeRemainingDisplay;
-    RefPtr<MediaControlStatusDisplayElement> m_statusDisplay;
-    RefPtr<MediaControlFullscreenVolumeMinButtonElement> m_fullScreenMinVolumeButton;
-    RefPtr<MediaControlFullscreenVolumeSliderElement> m_fullScreenVolumeSlider;
-    RefPtr<MediaControlFullscreenVolumeMaxButtonElement> m_fullScreenMaxVolumeButton;
+    virtual const AtomicString& shadowPseudoId() const;
 
     HTMLMediaElement* m_mediaElement;
-    Timer<MediaControls> m_opacityAnimationTimer;
 
-    double m_opacityAnimationStartTime;
-    double m_opacityAnimationDuration;
-    float m_opacityAnimationFrom;
-    float m_opacityAnimationTo;
+    MediaControlRewindButtonElement* m_rewindButton;
+    MediaControlPlayButtonElement* m_playButton;
+    MediaControlReturnToRealtimeButtonElement* m_returnToRealTimeButton;
+    MediaControlStatusDisplayElement* m_statusDisplay;
+    MediaControlCurrentTimeDisplayElement* m_currentTimeDisplay;
+    MediaControlTimelineElement* m_timeline;
+    MediaControlTimeRemainingDisplayElement* m_timeRemainingDisplay;
+    MediaControlTimelineContainerElement* m_timelineContainer;
+    MediaControlSeekBackButtonElement* m_seekBackButton;
+    MediaControlSeekForwardButtonElement* m_seekForwardButton;
+    MediaControlToggleClosedCaptionsButtonElement* m_toggleClosedCaptionsButton;
+    MediaControlPanelMuteButtonElement* m_panelMuteButton;
+    MediaControlVolumeSliderElement* m_volumeSlider;
+    MediaControlVolumeSliderMuteButtonElement* m_volumeSliderMuteButton;
+    MediaControlVolumeSliderContainerElement* m_volumeSliderContainer;
+    MediaControlFullscreenButtonElement* m_fullScreenButton;
+    MediaControlFullscreenVolumeMinButtonElement* m_fullScreenMinVolumeButton;
+    MediaControlFullscreenVolumeSliderElement* m_fullScreenVolumeSlider;
+    MediaControlFullscreenVolumeMaxButtonElement* m_fullScreenMaxVolumeButton;
+    MediaControlPanelElement* m_panel;
 
-    bool m_mouseOver;
+    bool m_opaque;
 };
 
+inline MediaControls* toMediaControls(Node* node)
+{
+    ASSERT(node->isHTMLElement());
+    return static_cast<MediaControls*>(node);
+}
 
 }
 

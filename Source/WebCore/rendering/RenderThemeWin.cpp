@@ -1029,21 +1029,15 @@ String RenderThemeWin::extraMediaControlsStyleSheet()
     return String(mediaControlsQuickTimeUserAgentStyleSheet, sizeof(mediaControlsQuickTimeUserAgentStyleSheet));
 }
 
-bool RenderThemeWin::shouldRenderMediaControlPart(ControlPart part, Element* element)
+bool RenderThemeWin::supportsClosedCaptioning() const
 {
-    if (part == MediaToggleClosedCaptionsButtonPart) {
         // We rely on QuickTime to render captions so only enable the button for a video element.
 #if SAFARI_THEME_VERSION >= 4
-        if (!element->hasTagName(videoTag))
-            return false;
+    return true;
 #else
-        return false;
+    return false;
 #endif
-    }
-
-    return RenderTheme::shouldRenderMediaControlPart(part, element);
 }
-
 
 bool RenderThemeWin::paintMediaFullscreenButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {

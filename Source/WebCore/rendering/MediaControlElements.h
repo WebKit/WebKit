@@ -42,6 +42,7 @@ namespace WebCore {
 
 class Event;
 class Frame;
+class MediaControls;
 
 // Must match WebKitSystemInterface.h
 enum MediaControlElementType {
@@ -71,24 +72,12 @@ enum MediaControlElementType {
 
 HTMLMediaElement* toParentMediaElement(RenderObject*);
 
-class MediaControlShadowRootElement : public HTMLDivElement {
-public:
-    static PassRefPtr<MediaControlShadowRootElement> create(HTMLMediaElement*);
-
-    virtual void detach();
-    
-private:
-    MediaControlShadowRootElement(HTMLMediaElement*);
-};
-
 // ----------------------------
 
 class MediaControlElement : public HTMLDivElement {
 public:
-    virtual void attach();
-    void attachToParent(Element*);
-    void update();
-    void updateStyle();
+    void hide();
+    void show();
 
     virtual MediaControlElementType displayType() const = 0;
 
@@ -96,10 +85,6 @@ public:
 
 protected:
     MediaControlElement(HTMLMediaElement*);
-
-    virtual bool rendererIsNeeded(RenderStyle*);
-
-    virtual PassRefPtr<RenderStyle> styleForElement();
 
 private:
     virtual bool isMediaControlElement() const { return true; }
@@ -119,7 +104,6 @@ private:
     virtual const AtomicString& shadowPseudoId() const;
 };
 
-
 // ----------------------------
 
 class MediaControlTimelineContainerElement : public MediaControlElement {
@@ -128,9 +112,9 @@ public:
 
 private:
     MediaControlTimelineContainerElement(HTMLMediaElement*);
-    virtual MediaControlElementType displayType() const;
-    virtual bool rendererIsNeeded(RenderStyle*);
     virtual const AtomicString& shadowPseudoId() const;
+
+    virtual MediaControlElementType displayType() const;
 };
 
 // ----------------------------
@@ -139,19 +123,12 @@ class MediaControlVolumeSliderContainerElement : public MediaControlElement {
 public:
     static PassRefPtr<MediaControlVolumeSliderContainerElement> create(HTMLMediaElement*);
 
-    virtual PassRefPtr<RenderStyle> styleForElement();
-    void setVisible(bool);
-    bool isVisible() { return m_isVisible; }
-    bool hitTest(const IntPoint& absPoint);
-
 private:
     MediaControlVolumeSliderContainerElement(HTMLMediaElement*);
-
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual void defaultEventHandler(Event*);
     virtual MediaControlElementType displayType() const;
     virtual const AtomicString& shadowPseudoId() const;
-
-    bool m_isVisible;
 };
 
 // ----------------------------
@@ -166,7 +143,6 @@ private:
     MediaControlStatusDisplayElement(HTMLMediaElement*);
 
     virtual MediaControlElementType displayType() const;
-    virtual bool rendererIsNeeded(RenderStyle*);
     virtual const AtomicString& shadowPseudoId() const;
 
     enum StateBeingDisplayed { Nothing, Loading, LiveBroadcast };
@@ -177,11 +153,8 @@ private:
 
 class MediaControlInputElement : public HTMLInputElement {
 public:
-    void attachToParent(Element*);
-    void update();
-    void updateStyle();
-
-    bool hitTest(const IntPoint& absPoint);
+    void hide();
+    void show();
 
     MediaControlElementType displayType() const { return m_displayType; }
 
@@ -193,11 +166,6 @@ protected:
     void setDisplayType(MediaControlElementType);
 
 private:
-    virtual void attach();
-    virtual bool rendererIsNeeded(RenderStyle*);
-
-    virtual PassRefPtr<RenderStyle> styleForElement();
-
     virtual bool isMediaControlElement() const { return true; }
 
     virtual void updateDisplayType() { }
@@ -210,10 +178,12 @@ private:
 
 class MediaControlMuteButtonElement : public MediaControlInputElement {
 public:
-    virtual void defaultEventHandler(Event*);
+    void changedMute();
 
 protected:
     MediaControlMuteButtonElement(HTMLMediaElement*, MediaControlElementType);
+    virtual void defaultEventHandler(Event*);
+
 
 private:
     virtual void updateDisplayType();
@@ -223,12 +193,15 @@ private:
 
 class MediaControlPanelMuteButtonElement : public MediaControlMuteButtonElement {
 public:
-    static PassRefPtr<MediaControlPanelMuteButtonElement> create(HTMLMediaElement*);
+    static PassRefPtr<MediaControlPanelMuteButtonElement> create(HTMLMediaElement*, MediaControls*);
 
 private:
-    MediaControlPanelMuteButtonElement(HTMLMediaElement*);
+    MediaControlPanelMuteButtonElement(HTMLMediaElement*, MediaControls*);
 
+    virtual void defaultEventHandler(Event*);
     virtual const AtomicString& shadowPseudoId() const;
+
+    MediaControls* m_controls;
 };
 
 // ----------------------------
@@ -251,11 +224,11 @@ public:
     static PassRefPtr<MediaControlPlayButtonElement> create(HTMLMediaElement*);
 
     virtual void defaultEventHandler(Event*);
+    virtual void updateDisplayType();
 
 private:
     MediaControlPlayButtonElement(HTMLMediaElement*);
 
-    virtual void updateDisplayType();
     virtual const AtomicString& shadowPseudoId() const;
 };
 
@@ -340,11 +313,11 @@ public:
     static PassRefPtr<MediaControlToggleClosedCaptionsButtonElement> create(HTMLMediaElement*);
 
     virtual void defaultEventHandler(Event*);
+    virtual void updateDisplayType();
 
 private:
     MediaControlToggleClosedCaptionsButtonElement(HTMLMediaElement*);
 
-    virtual void updateDisplayType();
     virtual const AtomicString& shadowPseudoId() const;
 };    
 
@@ -352,15 +325,18 @@ private:
 
 class MediaControlTimelineElement : public MediaControlInputElement {
 public:
-    static PassRefPtr<MediaControlTimelineElement> create(HTMLMediaElement*);
+    static PassRefPtr<MediaControlTimelineElement> create(HTMLMediaElement*, MediaControls*);
 
     virtual void defaultEventHandler(Event*);
-    void update(bool updateDuration = true);
+    void setPosition(float);
+    void setDuration(float);
 
 private:
-    MediaControlTimelineElement(HTMLMediaElement*);
+    MediaControlTimelineElement(HTMLMediaElement*, MediaControls*);
 
     virtual const AtomicString& shadowPseudoId() const;
+
+    MediaControls* m_controls;
 };
 
 // ----------------------------
@@ -370,7 +346,7 @@ public:
     static PassRefPtr<MediaControlVolumeSliderElement> create(HTMLMediaElement*);
 
     virtual void defaultEventHandler(Event*);
-    void update();
+    void setVolume(float);
 
 protected:
     MediaControlVolumeSliderElement(HTMLMediaElement*);
@@ -383,14 +359,16 @@ private:
 
 class MediaControlFullscreenButtonElement : public MediaControlInputElement {
 public:
-    static PassRefPtr<MediaControlFullscreenButtonElement> create(HTMLMediaElement*);
+    static PassRefPtr<MediaControlFullscreenButtonElement> create(HTMLMediaElement*, MediaControls*);
 
     virtual void defaultEventHandler(Event*);
 
 private:
-    MediaControlFullscreenButtonElement(HTMLMediaElement*);
+    MediaControlFullscreenButtonElement(HTMLMediaElement*, MediaControls*);
 
     virtual const AtomicString& shadowPseudoId() const;
+
+    MediaControls* m_controls;
 };
 
 // ----------------------------
@@ -474,15 +452,7 @@ private:
     virtual MediaControlElementType displayType() const;
     virtual const AtomicString& shadowPseudoId() const;
 };
-
-// ----------------------------
-
-class RenderMediaControlShadowRoot : public RenderBlock {
-public:
-    RenderMediaControlShadowRoot(Element* e) : RenderBlock(e) { }
-    void setParent(RenderObject* p) { RenderObject::setParent(p); }
-};
-    
+ 
 // ----------------------------
 
 } //namespace WebCore

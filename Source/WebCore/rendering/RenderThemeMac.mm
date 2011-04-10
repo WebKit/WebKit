@@ -1972,38 +1972,20 @@ String RenderThemeMac::extraFullScreenStyleSheet()
 }
 #endif
 
-bool RenderThemeMac::shouldRenderMediaControlPart(ControlPart part, Element* element)
+bool RenderThemeMac::hasOwnDisabledStateHandlingFor(ControlPart part) const
 {
-    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
-    switch (part) {
-    case MediaVolumeSliderContainerPart:
-    case MediaVolumeSliderPart:
-    case MediaVolumeSliderMuteButtonPart:
-    case MediaVolumeSliderThumbPart: {
-        return mediaControllerTheme() == MediaControllerThemeQuickTime && mediaElement->hasAudio();
-    }
-    case MediaToggleClosedCaptionsButtonPart:
-        // We rely on QTKit to render captions so don't enable the button unless it will be able to do so.
-        if (!element->hasTagName(videoTag))
-            return false;
-        break;
-    case MediaRewindButtonPart:
-        if (mediaElement->isFullscreen())
-            return mediaElement->movieLoadType() == MediaPlayer::LiveStream 
-                || mediaElement->movieLoadType() == MediaPlayer::StoredStream;
-    case MediaSeekForwardButtonPart:
-    case MediaSeekBackButtonPart:
-        if (mediaElement->isFullscreen())
-            return mediaElement->movieLoadType() != MediaPlayer::StoredStream 
-                && mediaElement->movieLoadType() != MediaPlayer::LiveStream;
-    default:
-        break;
-    }
+    if (part == MediaMuteButtonPart)
+        return false;
 
-    return RenderTheme::shouldRenderMediaControlPart(part, element);
+    return mediaControllerTheme() == MediaControllerThemeClassic;
 }
 
 bool RenderThemeMac::usesMediaControlStatusDisplay()
+{
+    return mediaControllerTheme() == MediaControllerThemeQuickTime;
+}
+
+bool RenderThemeMac::usesMediaControlVolumeSlider() const
 {
     return mediaControllerTheme() == MediaControllerThemeQuickTime;
 }

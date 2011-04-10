@@ -481,33 +481,6 @@ bool RenderTheme::paintDecorations(RenderObject* o, const PaintInfo& paintInfo, 
 }
 
 #if ENABLE(VIDEO)
-bool RenderTheme::hitTestMediaControlPart(RenderObject* o, const IntPoint& absPoint)
-{
-    if (!o->isBox())
-        return false;
-
-    FloatPoint localPoint = o->absoluteToLocal(absPoint, false, true);  // respect transforms
-    return toRenderBox(o)->borderBoxRect().contains(roundedIntPoint(localPoint));
-}
-
-bool RenderTheme::shouldRenderMediaControlPart(ControlPart part, Element* e)
-{
-    HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(e);
-    switch (part) {
-    case MediaMuteButtonPart:
-        return mediaElement->hasAudio();
-    case MediaRewindButtonPart:
-        return mediaElement->movieLoadType() != MediaPlayer::LiveStream;
-    case MediaReturnToRealtimeButtonPart:
-        return mediaElement->movieLoadType() == MediaPlayer::LiveStream;
-    case MediaFullscreenButtonPart:
-        return mediaElement->supportsFullscreen();
-    case MediaToggleClosedCaptionsButtonPart:
-        return mediaElement->hasClosedCaptions();
-    default:
-        return true;
-    }
-}
 
 String RenderTheme::formatMediaControlsTime(float time) const
 {

@@ -501,13 +501,6 @@ int RenderThemeChromiumSkia::popupInternalPaddingBottom(RenderStyle* style) cons
     return menuListInternalPadding(style, BottomPadding);
 }
 
-#if ENABLE(VIDEO)
-bool RenderThemeChromiumSkia::shouldRenderMediaControlPart(ControlPart part, Element* e)
-{
-    return RenderMediaControlsChromium::shouldRenderMediaControlPart(part, e);
-}
-#endif
-
 // static
 void RenderThemeChromiumSkia::setDefaultFontSize(int fontSize)
 {
