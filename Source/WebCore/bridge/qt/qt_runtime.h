@@ -229,8 +229,8 @@ private:
     RefPtr<QtInstance> m_instance;
     int m_signalIndex;
     QObject* m_originalObject; // only used as a key, not dereferenced
-    Global<JSObject> m_thisObject;
-    Global<JSObject> m_funcObject;
+    Strong<JSObject> m_thisObject;
+    Strong<JSObject> m_funcObject;
 };
 
 QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type hint, int *distance);
