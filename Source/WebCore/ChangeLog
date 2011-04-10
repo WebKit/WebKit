@@ -1,3 +1,40 @@
+2011-04-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/9215280> Detached canvas draws with incorrect font
+
+        Test: fast/canvas/font-update.html
+
+        The existing mechanism for updating the font in a canvas 2D context was lacking in at least
+        two ways: it neglected to update fonts in all but the topmost state in the stack, and since it
+        was based on HTMLCanvasElemen's attach() and recalcStyle(), it did not work when the element
+        was not attached.
+
+        This change takes the responsibility for font updates away from the canvas element and gives it
+        to the canvas context and its graphics state.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::registerForInvalidationCallbacks): Added. Adds to the set of registered
+        font selector clients.
+        (WebCore::CSSFontSelector::unregisterForInvalidationCallbacks): Added. Removes from the set of
+        registered font selector clients.
+        (WebCore::CSSFontSelector::dispatchInvalidationCallbacks): Calls fontsNeedUpdate() on all registered
+        clients and forces a style recalc on the document.
+        (WebCore::CSSFontSelector::fontLoaded): Changed to call dispatchInvalidationCallbacks().
+        (WebCore::CSSFontSelector::fontCacheInvalidated): Ditto.
+        * css/CSSFontSelector.h:
+        * html/HTMLCanvasElement.cpp: Removed overrides of attach() and recalcStyle().
+        * html/HTMLCanvasElement.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::~State): Added. Unregisters with the font selector.
+        (WebCore::CanvasRenderingContext2D::State::fontsNeedUpdate): Added. Called by the font selector
+        when its fonts need to be updated. Updates the font.
+        (WebCore::CanvasRenderingContext2D::setFont): Registers the state with the font selector.
+        * html/canvas/CanvasRenderingContext2D.h:
+        * platform/graphics/FontSelector.h:
+        (WebCore::FontSelectorClient::~FontSelectorClient):
+
 2011-04-09  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.

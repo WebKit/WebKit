@@ -204,7 +204,6 @@ public:
 
     String font() const;
     void setFont(const String&);
-    void updateFont();
 
     String textAlign() const;
     void setTextAlign(const String&);
@@ -228,8 +227,11 @@ public:
 #endif
 
 private:
-    struct State {
+    struct State : FontSelectorClient {
         State();
+        virtual ~State();
+
+        virtual void fontsNeedUpdate(FontSelector*);
 
         String m_unparsedStrokeColor;
         String m_unparsedFillColor;

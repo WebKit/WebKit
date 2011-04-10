@@ -1,3 +1,14 @@
+2011-04-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/9215280> Detached canvas draws with incorrect font
+
+        * fast/canvas/font-update-expected.checksum: Added.
+        * fast/canvas/font-update-expected.png: Added.
+        * fast/canvas/font-update-expected.txt: Added.
+        * fast/canvas/font-update.html: Added.
+
 2011-04-09  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

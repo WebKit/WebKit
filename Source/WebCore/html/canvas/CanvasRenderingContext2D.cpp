@@ -213,6 +213,20 @@ CanvasRenderingContext2D::State::State()
 {
 }
 
+CanvasRenderingContext2D::State::~State()
+{
+    if (m_realizedFont)
+        m_font.fontSelector()->unregisterForInvalidationCallbacks(this);
+}
+
+void CanvasRenderingContext2D::State::fontsNeedUpdate(FontSelector* fontSelector)
+{
+    ASSERT_ARG(fontSelector, fontSelector == m_font.fontSelector());
+    ASSERT(m_realizedFont);
+
+    m_font.update(fontSelector);
+}
+
 void CanvasRenderingContext2D::save()
 {
     ASSERT(m_stateStack.size() >= 1);
@@ -1690,15 +1704,7 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     state().m_font = newStyle->font();
     state().m_font.update(styleSelector->fontSelector());
     state().m_realizedFont = true;
-}
-
-void CanvasRenderingContext2D::updateFont()
-{
-    if (!state().m_realizedFont)
-        return;
-
-    const Font& font = state().m_font;
-    font.update(font.fontSelector());
+    styleSelector->fontSelector()->registerForInvalidationCallbacks(&state());
 }
 
 String CanvasRenderingContext2D::textAlign() const
