@@ -525,6 +525,7 @@ class ChromiumDriver(base.Driver):
                 _log.warning('stopping test driver timed out, '
                                 'killing it')
                 self._port._executive.kill_process(self._proc.pid)
-            assert self._proc.poll() is not None
-            self._proc.wait()
+            # FIXME: This is sometime none. What is wrong? assert self._proc.poll() is not None
+            if self._proc.poll() is not None:
+                self._proc.wait()
             self._proc = None

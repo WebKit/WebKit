@@ -1,3 +1,13 @@
+2011-04-10  David Levin  <levin@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        REGRESSION(r83384): Change to chromium.py is resulting in failures of the test framework on linux.
+        https://bugs.webkit.org/show_bug.cgi?id=58201
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py: Commented out the assert for now,
+        and filed bug 58202.
+
 2011-04-09  David Levin  <levin@chromium.org>
 
         Unreviewed, rolling out r83394.
