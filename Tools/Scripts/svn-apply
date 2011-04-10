@@ -331,12 +331,6 @@ sub patch($)
             applyPatch($newPatch, $fullPath, ["--fuzz=3"]);
             unlink("${fullPath}.orig") if (! $changeLogDotOrigExisted);
         } else {
-            # Ensure that patches for files with DOS line endings also have DOS line endings.
-            if (basename($fullPath) =~ /\.vcproj$/ || basename($fullPath) =~ /\.vsprops$/) {
-                # Convert all instances of newlines to \r\r\n. Why are there two \r's?
-                # Think of it as escaping. Patch will convert \r\n to \n, so \r\r\n becomes \r\n.
-                $patch =~ s/\r{0,2}\n/\r\r\n/g;
-            }
             applyPatch($patch, $fullPath) if $patch;
         }
     } else {

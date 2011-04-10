@@ -1,5 +1,15 @@
 2011-04-09  David Levin  <levin@chromium.org>
 
+        Unreviewed, rolling out r83394.
+        http://trac.webkit.org/changeset/83394
+        https://bugs.webkit.org/show_bug.cgi?id=53625
+
+        Patch was incorrect as noted in the bug.
+
+        * Scripts/svn-apply:
+
+2011-04-09  David Levin  <levin@chromium.org>
+
         Reviewed by Adam Barth.
 
         svn-apply and/or patch(1) has trouble applying patches that makes changes to files with Windows line endings
