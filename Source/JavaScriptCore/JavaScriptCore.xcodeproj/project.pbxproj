@@ -89,11 +89,11 @@
 		1429D92F0ED22D7000B89619 /* JIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D92D0ED22D7000B89619 /* JIT.cpp */; };
 		1429D9300ED22D7000B89619 /* JIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D92E0ED22D7000B89619 /* JIT.h */; };
 		142D3939103E4560007DCB52 /* NumericStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 142D3938103E4560007DCB52 /* NumericStrings.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		142E3134134FF0A600AFADB5 /* Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E312B134FF0A600AFADB5 /* Handle.h */; };
+		142E3134134FF0A600AFADB5 /* Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E312B134FF0A600AFADB5 /* Handle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142E3135134FF0A600AFADB5 /* HandleHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142E312C134FF0A600AFADB5 /* HandleHeap.cpp */; };
-		142E3136134FF0A600AFADB5 /* HandleHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E312D134FF0A600AFADB5 /* HandleHeap.h */; };
+		142E3136134FF0A600AFADB5 /* HandleHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E312D134FF0A600AFADB5 /* HandleHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142E3137134FF0A600AFADB5 /* HandleStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142E312E134FF0A600AFADB5 /* HandleStack.cpp */; };
-		142E3138134FF0A600AFADB5 /* HandleStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E312F134FF0A600AFADB5 /* HandleStack.h */; };
+		142E3138134FF0A600AFADB5 /* HandleStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E312F134FF0A600AFADB5 /* HandleStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142E3139134FF0A600AFADB5 /* Local.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E3130134FF0A600AFADB5 /* Local.h */; };
 		142E313A134FF0A600AFADB5 /* LocalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E3131134FF0A600AFADB5 /* LocalScope.h */; };
 		142E313B134FF0A600AFADB5 /* Strong.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E3132134FF0A600AFADB5 /* Strong.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2267,6 +2267,8 @@
 				86EC9DCC1328DF82002B2AD7 /* DFGJITCompiler.h in Headers */,
 				86ECA3EA132DEF1C002B2AD7 /* DFGNode.h in Headers */,
 				86EC9DCE1328DF82002B2AD7 /* DFGNonSpeculativeJIT.h in Headers */,
+				142E3136134FF0A600AFADB5 /* HandleHeap.h in Headers */,
+				142E3138134FF0A600AFADB5 /* HandleStack.h in Headers */,
 				86EC9DD01328DF82002B2AD7 /* DFGOperations.h in Headers */,
 				86EC9DD11328DF82002B2AD7 /* DFGRegisterBank.h in Headers */,
 				86ECA3FA132DF25A002B2AD7 /* DFGScoreBoard.h in Headers */,
@@ -2292,15 +2294,13 @@
 				BC18C4050E16F5CD00B34460 /* FunctionPrototype.h in Headers */,
 				DDF7ABD411F60ED200108E36 /* GCActivityCallback.h in Headers */,
 				BC18C4060E16F5CD00B34460 /* GetPtr.h in Headers */,
-				142E3134134FF0A600AFADB5 /* Handle.h in Headers */,
-				142E3136134FF0A600AFADB5 /* HandleHeap.h in Headers */,
-				142E3138134FF0A600AFADB5 /* HandleStack.h in Headers */,
 				BC18C4080E16F5CD00B34460 /* HashCountedSet.h in Headers */,
 				BC18C4090E16F5CD00B34460 /* HashFunctions.h in Headers */,
 				BC18C40A0E16F5CD00B34460 /* HashIterators.h in Headers */,
 				BC18C40B0E16F5CD00B34460 /* HashMap.h in Headers */,
 				BC18C40C0E16F5CD00B34460 /* HashSet.h in Headers */,
 				BC18C40D0E16F5CD00B34460 /* HashTable.h in Headers */,
+				142E3134134FF0A600AFADB5 /* Handle.h in Headers */,
 				BC18C40E0E16F5CD00B34460 /* HashTraits.h in Headers */,
 				140CDE7112DE97B10013CFC5 /* Heap.h in Headers */,
 				7186A6EC13100BA5004479E1 /* HexNumber.h in Headers */,
