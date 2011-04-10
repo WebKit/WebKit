@@ -85,6 +85,7 @@ jscore_dirs = [
     'collector/handles',
     'debugger',
     'DerivedSources',
+    'heap',
     'interpreter',
     'jit',
     'parser',

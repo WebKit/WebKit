@@ -1,3 +1,9 @@
+2011-04-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Add Source/JavaScriptCore/heap to the list of directories.
+
+        * wx/build/settings.py:
+
 2011-04-10  David Levin  <levin@chromium.org>
 
         Reviewed by Dimitri Glazkov.
