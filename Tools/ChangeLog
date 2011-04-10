@@ -1,3 +1,13 @@
+2011-04-09  David Levin  <levin@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        svn-apply and/or patch(1) has trouble applying patches that makes changes to files with Windows line endings
+        https://bugs.webkit.org/show_bug.cgi?id=53625
+
+        * Scripts/svn-apply: Ensure that the portions of patches
+        which are for vcproj/vsprops files has DOS line endings.
+
 2011-04-09  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
