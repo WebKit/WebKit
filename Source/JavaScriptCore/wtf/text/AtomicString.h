@@ -127,6 +127,7 @@ private:
         return addSlowCase(r);
     }
     static PassRefPtr<StringImpl> addSlowCase(StringImpl*);
+    static AtomicString fromUTF8Internal(const char*, const char*);
 };
 
 inline bool operator==(const AtomicString& a, const AtomicString& b) { return a.impl() == b.impl(); }
@@ -154,20 +155,38 @@ inline bool equalIgnoringCase(const String& a, const AtomicString& b) { return e
 // Define external global variables for the commonly used atomic strings.
 // These are only usable from the main thread.
 #ifndef ATOMICSTRING_HIDE_GLOBALS
-    extern const JS_EXPORTDATA AtomicString nullAtom;
-    extern const JS_EXPORTDATA AtomicString emptyAtom;
-    extern const JS_EXPORTDATA AtomicString textAtom;
-    extern const JS_EXPORTDATA AtomicString commentAtom;
-    extern const JS_EXPORTDATA AtomicString starAtom;
-    extern const JS_EXPORTDATA AtomicString xmlAtom;
-    extern const JS_EXPORTDATA AtomicString xmlnsAtom;
+extern const JS_EXPORTDATA AtomicString nullAtom;
+extern const JS_EXPORTDATA AtomicString emptyAtom;
+extern const JS_EXPORTDATA AtomicString textAtom;
+extern const JS_EXPORTDATA AtomicString commentAtom;
+extern const JS_EXPORTDATA AtomicString starAtom;
+extern const JS_EXPORTDATA AtomicString xmlAtom;
+extern const JS_EXPORTDATA AtomicString xmlnsAtom;
+
+inline AtomicString AtomicString::fromUTF8(const char* characters, size_t length)
+{
+    if (!characters)
+        return nullAtom;
+    if (!length)
+        return emptyAtom;
+    return fromUTF8Internal(characters, characters + length);
+}
+
+inline AtomicString AtomicString::fromUTF8(const char* characters)
+{
+    if (!characters)
+        return nullAtom;
+    if (!*characters)
+        return emptyAtom;
+    return fromUTF8Internal(characters, 0);
+}
 #endif
 
-    // AtomicStringHash is the default hash for AtomicString
-    template<typename T> struct DefaultHash;
-    template<> struct DefaultHash<AtomicString> {
-        typedef AtomicStringHash Hash;
-    };
+// AtomicStringHash is the default hash for AtomicString
+template<typename T> struct DefaultHash;
+template<> struct DefaultHash<AtomicString> {
+    typedef AtomicStringHash Hash;
+};
 
 } // namespace WTF
 

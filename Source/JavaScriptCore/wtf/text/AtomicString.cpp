@@ -351,41 +351,14 @@ AtomicString AtomicString::lower() const
     return AtomicString(newImpl);
 }
 
-AtomicString AtomicString::fromUTF8(const char* characters, size_t length)
+AtomicString AtomicString::fromUTF8Internal(const char* charactersStart, const char* charactersEnd)
 {
-    if (!characters)
-        return AtomicString();
-
-    if (!length)
-        return emptyAtom;
-
     HashAndUTF8Characters buffer;
-    buffer.characters = characters;
-    buffer.length = length;
-    buffer.hash = calculateStringHashFromUTF8(characters, characters + length, buffer.utf16Length);
+    buffer.characters = charactersStart;
+    buffer.hash = calculateStringHashAndLengthFromUTF8(charactersStart, charactersEnd, buffer.length, buffer.utf16Length);
 
     if (!buffer.hash)
-        return AtomicString();
-
-    AtomicString atomicString;
-    atomicString.m_string = addToStringTable<HashAndUTF8Characters, HashAndUTF8CharactersTranslator>(buffer);
-    return atomicString;
-}
-
-AtomicString AtomicString::fromUTF8(const char* characters)
-{
-    if (!characters)
-        return AtomicString();
-
-    if (!*characters)
-        return emptyAtom;
-
-    HashAndUTF8Characters buffer;
-    buffer.characters = characters;
-    buffer.hash = calculateStringHashAndLengthFromUTF8(characters, buffer.length, buffer.utf16Length);
-
-    if (!buffer.hash)
-        return AtomicString();
+        return nullAtom;
 
     AtomicString atomicString;
     atomicString.m_string = addToStringTable<HashAndUTF8Characters, HashAndUTF8CharactersTranslator>(buffer);
