@@ -27,6 +27,7 @@
 #include "WKGrammarDetail.h"
 
 #include "APIObject.h"
+#include "ImmutableArray.h"
 #include "WKAPICast.h"
 #include "WebGrammarDetail.h"
 
@@ -41,4 +42,24 @@ WKGrammarDetailRef WKGrammarDetailCreate(int location, int length, WKArrayRef gu
 {
     RefPtr<WebGrammarDetail> detail = WebGrammarDetail::create(location, length, toImpl(guesses), toWTFString(userDescription));
     return toAPI(detail.release().releaseRef());
+}
+
+int WKGrammarDetailGetLocation(WKGrammarDetailRef grammarDetailRef)
+{
+    return toImpl(grammarDetailRef)->location();
+}
+
+int WKGrammarDetailGetLength(WKGrammarDetailRef grammarDetailRef)
+{
+    return toImpl(grammarDetailRef)->length();
+}
+
+WKArrayRef WKGrammarDetailCopyGuesses(WKGrammarDetailRef grammarDetailRef)
+{
+    return toAPI(toImpl(grammarDetailRef)->guesses().leakRef());
+}
+
+WKStringRef WKGrammarDetailCopyUserDescription(WKGrammarDetailRef grammarDetailRef)
+{
+    return toCopiedAPI(toImpl(grammarDetailRef)->userDescription());
 }

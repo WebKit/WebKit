@@ -1,3 +1,93 @@
+2011-04-11  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Implement TextChecker on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57862
+
+        Part 6: Update the Spelling UI with the spelling and grammar mistakes.
+
+        * UIProcess/API/C/win/WKAPICastWin.h:
+        (WebKit::toAPI):
+        Make it possible to go from a WebCore::GrammarDetail to a WebGrammarDetail.
+ 
+        * UIProcess/API/C/win/WKGrammarDetail.cpp:
+        (WKGrammarDetailCreate):
+        (WKGrammarDetailGetLocation):
+        (WKGrammarDetailGetLength):
+        (WKGrammarDetailCopyGuesses):
+        (WKGrammarDetailCopyUserDescription):
+        * UIProcess/API/C/win/WKGrammarDetail.h:
+
+        * UIProcess/API/C/win/WKTextChecker.cpp:
+        (WKTextCheckerCheckSpelling):
+        Tell the WebTextChecker.
+        * UIProcess/API/C/win/WKTextChecker.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        If the show/hide spelling UI is selected and the spelling UI is not showing, make sure to
+        advance to the next misspelling (in this case, the first).
+        This behavior matches that in WebCore and WKView.mm.
+        (WebKit::WebPageProxy::advanceToNextMisspelling):
+        Make this function const since it does not modify the WebPageProxy and making it const
+        allows WebTextChecker::checkSpelling to take a const WebPageProxy.
+        (WebKit::WebPageProxy::spellDocumentTag):
+        (WebKit::WebPageProxy::updateSpellingUIWithMisspelledWord):
+        (WebKit::WebPageProxy::updateSpellingUIWithGrammarString):
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/TextChecker.h:
+        * UIProcess/win/TextCheckerWin.cpp:
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        Tell the TextCheckerClient which WebPageProxy this tag is for.
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        Tell the TextCheckerClient.
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        Ditto.
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        Add the new argument that is unused by this port.
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        Ditto.
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        Ditto.
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        Ditto.
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        Ditto.
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        Ditto.
+        * UIProcess/qt/TextCheckerQt.cpp:
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        Ditto.
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        Ditto.
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        Ditto.
+
+        * UIProcess/win/WebGrammarDetail.cpp:
+        (WebKit::WebGrammarDetail::create):
+        (WebKit::WebGrammarDetail::WebGrammarDetail):
+        (WebKit::WebGrammarDetail::guesses):
+        * UIProcess/win/WebGrammarDetail.h:
+        (WebKit::WebGrammarDetail::location):
+        (WebKit::WebGrammarDetail::length):
+        (WebKit::WebGrammarDetail::userDescription):
+
+        * UIProcess/win/WebTextChecker.cpp:
+        (WebKit::WebTextChecker::checkSpelling):
+        Tell the page to advance to the next misspelling. This matches the WK1 WebView.cpp logic.
+
+        * UIProcess/win/WebTextChecker.h:
+        * UIProcess/win/WebTextCheckerClient.cpp:
+        (WebKit::WebTextCheckerClient::uniqueSpellDocumentTag):
+        (WebKit::WebTextCheckerClient::toggleSpellingUIIsShowing):
+        (WebKit::WebTextCheckerClient::updateSpellingUIWithMisspelledWord):
+        (WebKit::WebTextCheckerClient::updateSpellingUIWithGrammarString):
+        * UIProcess/win/WebTextCheckerClient.h:
+
 2011-04-10  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed.

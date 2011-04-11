@@ -31,6 +31,7 @@
 
 namespace WebKit {
 
+class WebPageProxy;
 struct TextCheckerState;
 
 class TextChecker {
@@ -58,7 +59,7 @@ public:
     static void grammarCheckingEnabledStateChanged(bool);
 #endif
 
-    static int64_t uniqueSpellDocumentTag();
+    static int64_t uniqueSpellDocumentTag(WebPageProxy*);
     static void closeSpellDocumentWithTag(int64_t);
 #if USE(UNIFIED_TEXT_CHECKING)
     static Vector<WebCore::TextCheckingResult> checkTextOfParagraph(int64_t spellDocumentTag, const UChar* text, int length, uint64_t checkingTypes);
@@ -67,8 +68,8 @@ public:
     static void checkGrammarOfString(int64_t spellDocumentTag, const UChar* text, uint32_t length, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
     static bool spellingUIIsShowing();
     static void toggleSpellingUIIsShowing();
-    static void updateSpellingUIWithMisspelledWord(const String& misspelledWord);
-    static void updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const WebCore::GrammarDetail&);
+    static void updateSpellingUIWithMisspelledWord(int64_t spellDocumentTag, const String& misspelledWord);
+    static void updateSpellingUIWithGrammarString(int64_t spellDocumentTag, const String& badGrammarPhrase, const WebCore::GrammarDetail&);
     static void getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, Vector<String>& guesses);
     static void learnWord(const String& word);
     static void ignoreWord(int64_t spellDocumentTag, const String& word);

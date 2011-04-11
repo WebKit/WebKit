@@ -58,7 +58,7 @@ void TextChecker::setGrammarCheckingEnabled(bool isGrammarCheckingEnabled)
     notImplemented();
 }
 
-int64_t TextChecker::uniqueSpellDocumentTag()
+int64_t TextChecker::uniqueSpellDocumentTag(WebPageProxy*)
 {
     notImplemented();
     return 0;
@@ -90,12 +90,12 @@ void TextChecker::toggleSpellingUIIsShowing()
     notImplemented();
 }
 
-void TextChecker::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
+void TextChecker::updateSpellingUIWithMisspelledWord(int64_t, const String&)
 {
     notImplemented();
 }
 
-void TextChecker::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
+void TextChecker::updateSpellingUIWithGrammarString(int64_t, const String&, const GrammarDetail&)
 {
     notImplemented();
 }

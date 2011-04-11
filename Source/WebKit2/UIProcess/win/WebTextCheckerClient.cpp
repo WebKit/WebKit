@@ -30,6 +30,7 @@
 #include "WKAPICast.h"
 #include "WKSharedAPICast.h"
 #include "WebGrammarDetail.h"
+#include "WebPageProxy.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -74,12 +75,12 @@ void WebTextCheckerClient::setGrammarCheckingEnabled(bool enabled)
     m_client.setGrammarCheckingEnabled(enabled, m_client.clientInfo);
 }
 
-uint64_t WebTextCheckerClient::uniqueSpellDocumentTag()
+uint64_t WebTextCheckerClient::uniqueSpellDocumentTag(WebPageProxy* page)
 {
     if (!m_client.uniqueSpellDocumentTag)
         return 0;
 
-    return m_client.uniqueSpellDocumentTag(m_client.clientInfo);
+    return m_client.uniqueSpellDocumentTag(toAPI(page), m_client.clientInfo);
 }
 
 void WebTextCheckerClient::closeSpellDocumentWithTag(uint64_t tag)
@@ -126,6 +127,22 @@ void WebTextCheckerClient::toggleSpellingUIIsShowing()
         return;
 
     return m_client.toggleSpellingUIIsShowing(m_client.clientInfo);
+}
+
+void WebTextCheckerClient::updateSpellingUIWithMisspelledWord(uint64_t tag, const String& misspelledWord)
+{
+    if (!m_client.updateSpellingUIWithMisspelledWord)
+        return;
+
+    m_client.updateSpellingUIWithMisspelledWord(tag, toAPI(misspelledWord.impl()), m_client.clientInfo);
+}
+
+void WebTextCheckerClient::updateSpellingUIWithGrammarString(uint64_t tag, const String& badGrammarPhrase, const WebCore::GrammarDetail& grammarDetail)
+{
+    if (!m_client.updateSpellingUIWithGrammarString)
+        return;
+
+    m_client.updateSpellingUIWithGrammarString(tag, toAPI(badGrammarPhrase.impl()), toAPI(grammarDetail), m_client.clientInfo);
 }
 
 } // namespace WebKit

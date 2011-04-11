@@ -211,7 +211,7 @@ void TextChecker::toggleSubstitutionsPanelIsShowing()
     [substitutionsPanel orderFront:nil];
 }
 
-int64_t TextChecker::uniqueSpellDocumentTag()
+int64_t TextChecker::uniqueSpellDocumentTag(WebPageProxy*)
 {
     return [NSSpellChecker uniqueSpellDocumentTag];
 }
@@ -338,12 +338,12 @@ void TextChecker::toggleSpellingUIIsShowing()
         [spellingPanel orderFront:nil];
 }
 
-void TextChecker::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
+void TextChecker::updateSpellingUIWithMisspelledWord(int64_t, const String& misspelledWord)
 {
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithMisspelledWord:misspelledWord];
 }
 
-void TextChecker::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
+void TextChecker::updateSpellingUIWithGrammarString(int64_t, const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
     RetainPtr<NSMutableArray> corrections(AdoptNS, [[NSMutableArray alloc] init]);
     for (size_t i = 0; i < grammarDetail.guesses.size(); ++i) {

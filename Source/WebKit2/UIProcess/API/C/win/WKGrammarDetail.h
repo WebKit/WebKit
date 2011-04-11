@@ -35,6 +35,11 @@ extern "C" {
 WK_EXPORT WKTypeID WKGrammarDetailGetTypeID();
 WK_EXPORT WKGrammarDetailRef WKGrammarDetailCreate(int location, int length, WKArrayRef guesses, WKStringRef userDescription);
 
+WK_EXPORT int WKGrammarDetailGetLocation(WKGrammarDetailRef grammarDetailRef);
+WK_EXPORT int WKGrammarDetailGetLength(WKGrammarDetailRef grammarDetailRef);
+WK_EXPORT WKArrayRef WKGrammarDetailCopyGuesses(WKGrammarDetailRef grammarDetailRef);
+WK_EXPORT WKStringRef WKGrammarDetailCopyUserDescription(WKGrammarDetailRef grammarDetailRef);
+
 #ifdef __cplusplus
 }
 #endif

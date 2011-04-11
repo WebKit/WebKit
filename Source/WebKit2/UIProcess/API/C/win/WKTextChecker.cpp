@@ -27,6 +27,7 @@
 #include "WKTextChecker.h"
 
 #include "WKAPICast.h"
+#include "WebPageProxy.h"
 #include "WebTextChecker.h"
 
 using namespace WebKit;
@@ -46,4 +47,9 @@ void WKTextCheckerContinuousSpellCheckingEnabledStateChanged(bool enabled)
 void WKTextCheckerGrammarCheckingEnabledStateChanged(bool enabled)
 {
     WebTextChecker::shared()->grammarCheckingEnabledStateChanged(enabled);
+}
+
+void WKTextCheckerCheckSpelling(WKPageRef page, bool startBeforeSelection)
+{
+    WebTextChecker::shared()->checkSpelling(toImpl(page), startBeforeSelection);
 }

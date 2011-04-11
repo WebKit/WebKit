@@ -2307,6 +2307,8 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
         return;
     }
     if (item.action() == ContextMenuItemTagShowSpellingPanel) {
+        if (!TextChecker::spellingUIIsShowing())
+            advanceToNextMisspelling(true);
         TextChecker::toggleSpellingUIIsShowing();
         return;
     }
@@ -2348,7 +2350,7 @@ void WebPageProxy::didCancelForOpenPanel()
     m_openPanelResultListener = 0;
 }
 
-void WebPageProxy::advanceToNextMisspelling(bool startBeforeSelection)
+void WebPageProxy::advanceToNextMisspelling(bool startBeforeSelection) const
 {
     process()->send(Messages::WebPage::AdvanceToNextMisspelling(startBeforeSelection), m_pageID);
 }
@@ -2398,7 +2400,7 @@ bool WebPageProxy::isValidEditCommand(WebEditCommandProxy* command)
 int64_t WebPageProxy::spellDocumentTag()
 {
     if (!m_hasSpellDocumentTag) {
-        m_spellDocumentTag = TextChecker::uniqueSpellDocumentTag();
+        m_spellDocumentTag = TextChecker::uniqueSpellDocumentTag(this);
         m_hasSpellDocumentTag = true;
     }
 
@@ -2431,12 +2433,12 @@ void WebPageProxy::spellingUIIsShowing(bool& isShowing)
 
 void WebPageProxy::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
 {
-    TextChecker::updateSpellingUIWithMisspelledWord(misspelledWord);
+    TextChecker::updateSpellingUIWithMisspelledWord(spellDocumentTag(), misspelledWord);
 }
 
 void WebPageProxy::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
-    TextChecker::updateSpellingUIWithGrammarString(badGrammarPhrase, grammarDetail);
+    TextChecker::updateSpellingUIWithGrammarString(spellDocumentTag(), badGrammarPhrase, grammarDetail);
 }
 
 void WebPageProxy::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses)

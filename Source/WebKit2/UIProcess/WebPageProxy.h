@@ -446,7 +446,7 @@ public:
     void findZoomableAreaForPoint(const WebCore::IntPoint&);
 #endif
 
-    void advanceToNextMisspelling(bool startBeforeSelection);
+    void advanceToNextMisspelling(bool startBeforeSelection) const;
     void changeSpellingToWord(const String& word);
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();

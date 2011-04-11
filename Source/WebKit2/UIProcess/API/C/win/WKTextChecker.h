@@ -38,12 +38,14 @@ typedef bool (*WKTextCheckerContinousSpellCheckingEnabled)(const void *clientInf
 typedef void (*WKTextCheckerSetContinousSpellCheckingEnabled)(bool enabled, const void *clientInfo);
 typedef bool (*WKTextCheckerGrammarCheckingEnabled)(const void *clientInfo);
 typedef void (*WKTextCheckerSetGrammarCheckingEnabled)(bool enabled, const void *clientInfo);
-typedef uint64_t (*WKTextCheckerUniqueSpellDocumentTag)(const void *clientInfo);
+typedef uint64_t (*WKTextCheckerUniqueSpellDocumentTag)(WKPageRef page, const void *clientInfo);
 typedef void (*WKTextCheckerCloseSpellDocumentWithTag)(uint64_t tag, const void *clientInfo);
 typedef void (*WKTextCheckerCheckSpellingOfString)(uint64_t tag, WKStringRef text, int32_t* misspellingLocation, int32_t* misspellingLength, const void *clientInfo);
 typedef void (*WKTextCheckerCheckGrammarOfString)(uint64_t tag, WKStringRef text, WKArrayRef* grammarDetails, int32_t* badGrammarLocation, int32_t* badGrammarLength, const void *clientInfo);
 typedef bool (*WKTextCheckerSpellingUIIsShowing)(const void *clientInfo);
 typedef void (*WKTextCheckerToggleSpellingUIIsShowing)(const void *clientInfo);
+typedef void (*WKTextCheckerUpdateSpellingUIWithMisspelledWord)(uint64_t tag, WKStringRef misspelledWord, const void *clientInfo);
+typedef void (*WKTextCheckerUpdateSpellingUIWithGrammarString)(uint64_t tag, WKStringRef badGrammarPhrase, WKGrammarDetailRef grammarDetail, const void *clientInfo);
 
 struct WKTextCheckerClient {
     int                                                                     version;
@@ -59,6 +61,8 @@ struct WKTextCheckerClient {
     WKTextCheckerCheckGrammarOfString                                       checkGrammarOfString;
     WKTextCheckerSpellingUIIsShowing                                        spellingUIIsShowing;
     WKTextCheckerToggleSpellingUIIsShowing                                  toggleSpellingUIIsShowing;
+    WKTextCheckerUpdateSpellingUIWithMisspelledWord                         updateSpellingUIWithMisspelledWord;
+    WKTextCheckerUpdateSpellingUIWithGrammarString                          updateSpellingUIWithGrammarString;
 };
 typedef struct WKTextCheckerClient WKTextCheckerClient;
 
@@ -66,6 +70,8 @@ WK_EXPORT void WKTextCheckerSetClient(const WKTextCheckerClient* client);
 
 WK_EXPORT void WKTextCheckerContinuousSpellCheckingEnabledStateChanged(bool);
 WK_EXPORT void WKTextCheckerGrammarCheckingEnabledStateChanged(bool);
+
+WK_EXPORT void WKTextCheckerCheckSpelling(WKPageRef page, bool startBeforeSelection);
 
 #ifdef __cplusplus
 }

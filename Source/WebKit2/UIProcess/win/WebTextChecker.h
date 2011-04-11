@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+class WebPageProxy;
+
 class WebTextChecker : public APIObject {
 public:
     static const Type APIType = TypeTextChecker;
@@ -44,6 +46,8 @@ public:
 
     void continuousSpellCheckingEnabledStateChanged(bool);
     void grammarCheckingEnabledStateChanged(bool);
+
+    void checkSpelling(const WebPageProxy*, bool startBeforeSelection);
 
 private:
     WebTextChecker();

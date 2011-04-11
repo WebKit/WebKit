@@ -82,9 +82,9 @@ void TextChecker::grammarCheckingEnabledStateChanged(bool enabled)
     textCheckerState.isGrammarCheckingEnabled = enabled;
 }
 
-int64_t TextChecker::uniqueSpellDocumentTag()
+int64_t TextChecker::uniqueSpellDocumentTag(WebPageProxy* page)
 {
-    return WebTextChecker::shared()->client().uniqueSpellDocumentTag();
+    return WebTextChecker::shared()->client().uniqueSpellDocumentTag(page);
 }
 
 void TextChecker::closeSpellDocumentWithTag(int64_t tag)
@@ -112,14 +112,14 @@ void TextChecker::toggleSpellingUIIsShowing()
     WebTextChecker::shared()->client().toggleSpellingUIIsShowing();
 }
 
-void TextChecker::updateSpellingUIWithMisspelledWord(const String& misspelledWord)
+void TextChecker::updateSpellingUIWithMisspelledWord(int64_t spellDocumentTag, const String& misspelledWord)
 {
-    notImplemented();
+    WebTextChecker::shared()->client().updateSpellingUIWithMisspelledWord(spellDocumentTag, misspelledWord);
 }
 
-void TextChecker::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
+void TextChecker::updateSpellingUIWithGrammarString(int64_t spellDocumentTag, const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
 {
-    notImplemented();
+    WebTextChecker::shared()->client().updateSpellingUIWithGrammarString(spellDocumentTag, badGrammarPhrase, grammarDetail);
 }
 
 void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, Vector<String>& guesses)

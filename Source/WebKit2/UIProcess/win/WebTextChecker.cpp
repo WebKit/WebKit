@@ -70,4 +70,9 @@ void WebTextChecker::grammarCheckingEnabledStateChanged(bool enabled)
     updateStateForAllWebProcesses();
 }
 
+void WebTextChecker::checkSpelling(const WebPageProxy* page, bool startBeforeSelection)
+{
+    page->advanceToNextMisspelling(startBeforeSelection);
+}
+
 } // namespace WebKit
