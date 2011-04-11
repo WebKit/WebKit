@@ -1,3 +1,20 @@
+2011-04-11  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] HTML5 Drag and Drop demos not working
+        https://bugs.webkit.org/show_bug.cgi?id=56486
+
+        Handling the drop with JavaScript was not working with Qt because if the action is ignored
+        in response to DragEnter, no further events are sent to the view.
+
+        Drag and drop is defined and used differently by webpages. The drag move events are determining
+        what action should take place. To adopt this behavior for Qt, we always accept drag enter events
+        on the widget.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::dragEnterEvent):
+
 2011-04-11  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Andreas Kling.

@@ -979,8 +979,7 @@ void QWebPagePrivate::dragEnterEvent(T* ev)
             QCursor::pos(), dropActionToDragOp(ev->possibleActions()));
     Qt::DropAction action = dragOpToDropAction(page->dragController()->dragEntered(&dragData));
     ev->setDropAction(action);
-    if (action != Qt::IgnoreAction)
-        ev->acceptProposedAction();
+    ev->acceptProposedAction();
 #endif
 }
 
