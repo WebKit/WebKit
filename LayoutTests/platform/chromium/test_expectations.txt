@@ -2453,7 +2453,8 @@ BUGJAMESR WIN LINUX : fast/text/international/vertical-text-metrics-test.html = 
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
 
 // Added in Webkit r69707 without expected results.
-BUGJAPHET : platform/gtk/accessibility/aria-table-hierarchy.html = MISSING
+// Expected result file added in r83450. Still no match.
+BUGJAPHET : platform/gtk/accessibility/aria-table-hierarchy.html = TEXT
 
 // Added in WebKit r69824, failed immediately due to KURL/KURLGoogle differences.
 BUGJAPHET : fast/dom/HTMLAnchorElement/set-href-attribute-prevents-rebase.html = TEXT
