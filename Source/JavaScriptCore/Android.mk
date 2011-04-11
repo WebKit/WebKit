@@ -41,6 +41,8 @@ LOCAL_SRC_FILES := \
 	debugger/DebuggerActivation.cpp \
 	debugger/DebuggerCallFrame.cpp \
 	\
+	heap/Heap.cpp \
+	\
 	interpreter/CallFrame.cpp \
 	interpreter/Interpreter.cpp \
 	interpreter/RegisterFile.cpp \
@@ -76,7 +78,6 @@ LOCAL_SRC_FILES := \
 	runtime/CallData.cpp \
 	runtime/MarkedBlock.cpp \
 	runtime/MarkedSpace.cpp \
-	runtime/Heap.cpp \
 	runtime/CommonIdentifiers.cpp \
 	runtime/Completion.cpp \
 	runtime/ConstructData.cpp \

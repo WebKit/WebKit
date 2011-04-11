@@ -1,3 +1,22 @@
+2011-04-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber-stamped by Beth Dakin.
+
+        Moved Heap.h and Heap.cpp to the heap folder, because anything less 
+        would be uncivilized.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.cpp: Copied from JavaScriptCore/runtime/Heap.cpp.
+        * heap/Heap.h: Copied from JavaScriptCore/runtime/Heap.h.
+        * runtime/Heap.cpp: Removed.
+        * runtime/Heap.h: Removed.
+
 2011-04-10  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,13 @@
+2011-04-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber-stamped by Beth Dakin.
+
+        Moved Heap.h and Heap.cpp to the heap folder, because anything less 
+        would be uncivilized.
+
+        * ForwardingHeaders/heap/Heap.h: Copied from WebCore/ForwardingHeaders/runtime/Heap.h.
+        * ForwardingHeaders/runtime/Heap.h: Removed.
+
 2011-04-10  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Simon Fraser.

@@ -742,14 +742,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\Heap.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\Heap.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\Identifier.cpp"
 				>
 			</File>
@@ -1937,6 +1929,14 @@
 		<Filter
 			Name="heap"
 			>
+                            <File
+                                    RelativePath="..\..\heap\Heap.cpp"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\Heap.h"
+                                    >
+                            </File>
                             <File
                                     RelativePath="..\..\heap\Strong.h"
                                     >

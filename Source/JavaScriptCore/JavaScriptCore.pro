@@ -69,6 +69,7 @@ SOURCES += \
     bytecode/StructureStubInfo.cpp \
     bytecompiler/BytecodeGenerator.cpp \
     bytecompiler/NodesCodegen.cpp \
+    heap/Heap.cpp \
     heap/HandleHeap.cpp \
     heap/HandleStack.cpp \
     debugger/DebuggerActivation.cpp \
@@ -117,7 +118,6 @@ SOURCES += \
     runtime/CallData.cpp \
     runtime/MarkedBlock.cpp \
     runtime/MarkedSpace.cpp \
-    runtime/Heap.cpp \
     runtime/CommonIdentifiers.cpp \
     runtime/Completion.cpp \
     runtime/ConstructData.cpp \

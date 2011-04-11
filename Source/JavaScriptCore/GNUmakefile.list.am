@@ -93,6 +93,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/HandleHeap.h \
 	Source/JavaScriptCore/heap/HandleStack.cpp \
 	Source/JavaScriptCore/heap/HandleStack.h \
+	Source/JavaScriptCore/heap/Heap.cpp \
+	Source/JavaScriptCore/heap/Heap.h \
 	Source/JavaScriptCore/heap/Local.h \
 	Source/JavaScriptCore/heap/LocalScope.h \
 	Source/JavaScriptCore/heap/Weak.h \
@@ -223,8 +225,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/MarkedBlock.h \
 	Source/JavaScriptCore/runtime/MarkedSpace.cpp \
 	Source/JavaScriptCore/runtime/MarkedSpace.h \
-	Source/JavaScriptCore/runtime/Heap.cpp \
-	Source/JavaScriptCore/runtime/Heap.h \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.cpp \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.h \
 	Source/JavaScriptCore/runtime/Completion.cpp \

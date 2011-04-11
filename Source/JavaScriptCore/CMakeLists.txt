@@ -41,6 +41,7 @@ SET(JavaScriptCore_SOURCES
     bytecompiler/BytecodeGenerator.cpp
     bytecompiler/NodesCodegen.cpp
 
+    heap/Heap.cpp
     heap/HandleHeap.cpp
     heap/HandleStack.cpp
 
@@ -87,7 +88,6 @@ SET(JavaScriptCore_SOURCES
     runtime/CallData.cpp
     runtime/MarkedBlock.cpp
     runtime/MarkedSpace.cpp
-    runtime/Heap.cpp
     runtime/CommonIdentifiers.cpp
     runtime/Completion.cpp
     runtime/ConstructData.cpp
