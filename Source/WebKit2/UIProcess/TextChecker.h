@@ -71,7 +71,7 @@ public:
     static void updateSpellingUIWithMisspelledWord(int64_t spellDocumentTag, const String& misspelledWord);
     static void updateSpellingUIWithGrammarString(int64_t spellDocumentTag, const String& badGrammarPhrase, const WebCore::GrammarDetail&);
     static void getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, Vector<String>& guesses);
-    static void learnWord(const String& word);
+    static void learnWord(int64_t spellDocumentTag, const String& word);
     static void ignoreWord(int64_t spellDocumentTag, const String& word);
 };
 

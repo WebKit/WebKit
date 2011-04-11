@@ -51,6 +51,9 @@ public:
     void toggleSpellingUIIsShowing();
     void updateSpellingUIWithMisspelledWord(uint64_t tag, const String& misspelledWord);
     void updateSpellingUIWithGrammarString(uint64_t tag, const String& badGrammarPhrase, const WebCore::GrammarDetail&);
+    void guessesForWord(uint64_t tag, const String& word, Vector<String>& guesses);
+    void learnWord(uint64_t tag, const String& word);
+    void ignoreWord(uint64_t tag, const String& word);
 };
 
 } // namespace WebKit

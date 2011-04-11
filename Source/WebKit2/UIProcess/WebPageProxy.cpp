@@ -2369,7 +2369,7 @@ void WebPageProxy::advanceToNextMisspelling(bool startBeforeSelection) const
     process()->send(Messages::WebPage::AdvanceToNextMisspelling(startBeforeSelection), m_pageID);
 }
 
-void WebPageProxy::changeSpellingToWord(const String& word)
+void WebPageProxy::changeSpellingToWord(const String& word) const
 {
     if (word.isEmpty())
         return;
@@ -2465,7 +2465,7 @@ void WebPageProxy::learnWord(const String& word)
     MESSAGE_CHECK(m_pendingLearnOrIgnoreWordMessageCount);
     --m_pendingLearnOrIgnoreWordMessageCount;
 
-    TextChecker::learnWord(word);
+    TextChecker::learnWord(spellDocumentTag(), word);
 }
 
 void WebPageProxy::ignoreWord(const String& word)

@@ -48,6 +48,7 @@ public:
     void grammarCheckingEnabledStateChanged(bool);
 
     void checkSpelling(const WebPageProxy*, bool startBeforeSelection);
+    void changeSpellingToWord(const WebPageProxy*, const String&);
 
 private:
     WebTextChecker();

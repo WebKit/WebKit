@@ -53,3 +53,8 @@ void WKTextCheckerCheckSpelling(WKPageRef page, bool startBeforeSelection)
 {
     WebTextChecker::shared()->checkSpelling(toImpl(page), startBeforeSelection);
 }
+
+void WKTextCheckerChangeSpellingToWord(WKPageRef page, WKStringRef word)
+{
+    WebTextChecker::shared()->changeSpellingToWord(toImpl(page), toWTFString(word));
+}

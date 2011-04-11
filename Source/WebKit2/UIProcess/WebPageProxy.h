@@ -453,7 +453,7 @@ public:
 #endif
 
     void advanceToNextMisspelling(bool startBeforeSelection) const;
-    void changeSpellingToWord(const String& word);
+    void changeSpellingToWord(const String& word) const;
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
 #if PLATFORM(MAC)

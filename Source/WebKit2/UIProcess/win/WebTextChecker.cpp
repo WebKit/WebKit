@@ -27,6 +27,7 @@
 #include "WebTextChecker.h"
 
 #include "TextChecker.h"
+#include "WKAPICast.h"
 #include "WebContext.h"
 #include <wtf/RefPtr.h>
 
@@ -73,6 +74,11 @@ void WebTextChecker::grammarCheckingEnabledStateChanged(bool enabled)
 void WebTextChecker::checkSpelling(const WebPageProxy* page, bool startBeforeSelection)
 {
     page->advanceToNextMisspelling(startBeforeSelection);
+}
+
+void WebTextChecker::changeSpellingToWord(const WebPageProxy* page, const String& text)
+{
+    page->changeSpellingToWord(text);
 }
 
 } // namespace WebKit

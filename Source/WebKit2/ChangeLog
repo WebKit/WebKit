@@ -1,3 +1,52 @@
+2011-04-11  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Implement TextChecker on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=57862
+
+        Part 7: Implement getGuessesForWord, learnWord, and ignoreWord.
+
+        * UIProcess/API/C/win/WKTextChecker.cpp:
+        (WKTextCheckerChangeSpellingToWord):
+        * UIProcess/API/C/win/WKTextChecker.h:
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::changeSpellingToWord):
+        Make this function const since it does not modify the WebPageProxy and making it const
+        allows WebTextChecker::changeSpellingToWord to take a const WebPageProxy.
+        (WebKit::WebPageProxy::learnWord):
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/TextChecker.h:
+        * UIProcess/win/TextCheckerWin.cpp:
+        (WebKit::TextChecker::getGuessesForWord):
+        Ask the TextCheckerClient for the guesses.
+        (WebKit::TextChecker::learnWord):
+        Tell the TextCheckerClient.
+        (WebKit::TextChecker::ignoreWord):
+        Ditto.
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::learnWord):
+        Add an unused param that is necessary for Windows.
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::learnWord):
+        Ditto.
+        * UIProcess/qt/TextCheckerQt.cpp:
+        (WebKit::TextChecker::learnWord):
+        Ditto.
+
+        * UIProcess/win/WebTextChecker.cpp:
+        (WebKit::WebTextChecker::changeSpellingToWord):
+        Tell the page.
+        * UIProcess/win/WebTextChecker.h:
+
+        * UIProcess/win/WebTextCheckerClient.cpp:
+        (WebKit::WebTextCheckerClient::guessesForWord):
+        (WebKit::WebTextCheckerClient::learnWord):
+        (WebKit::WebTextCheckerClient::ignoreWord):
+        * UIProcess/win/WebTextCheckerClient.h:
+
 2011-04-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

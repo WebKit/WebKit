@@ -145,4 +145,31 @@ void WebTextCheckerClient::updateSpellingUIWithGrammarString(uint64_t tag, const
     m_client.updateSpellingUIWithGrammarString(tag, toAPI(badGrammarPhrase.impl()), toAPI(grammarDetail), m_client.clientInfo);
 }
 
+void WebTextCheckerClient::guessesForWord(uint64_t tag, const String& word, Vector<String>& guesses)
+{
+    if (!m_client.guessesForWord)
+        return;
+
+    RefPtr<ImmutableArray> wkGuesses = adoptRef(toImpl(m_client.guessesForWord(tag, toAPI(word.impl()), m_client.clientInfo)));
+    size_t numGuesses = wkGuesses->size();
+    for (size_t i = 0; i < numGuesses; ++i)
+        guesses.append(wkGuesses->at<WebString>(i)->string());
+}
+
+void WebTextCheckerClient::learnWord(uint64_t tag, const String& word)
+{
+    if (!m_client.learnWord)
+        return;
+
+    m_client.learnWord(tag, toAPI(word.impl()), m_client.clientInfo);
+}
+
+void WebTextCheckerClient::ignoreWord(uint64_t tag, const String& word)
+{
+    if (!m_client.ignoreWord)
+        return;
+
+    m_client.ignoreWord(tag, toAPI(word.impl()), m_client.clientInfo);
+}
+
 } // namespace WebKit

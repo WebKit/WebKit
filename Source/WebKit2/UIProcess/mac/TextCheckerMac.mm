@@ -377,7 +377,7 @@ void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word
         guesses.append(guess);
 }
 
-void TextChecker::learnWord(const String& word)
+void TextChecker::learnWord(int64_t, const String& word)
 {
     [[NSSpellChecker sharedSpellChecker] learnWord:word];
 }

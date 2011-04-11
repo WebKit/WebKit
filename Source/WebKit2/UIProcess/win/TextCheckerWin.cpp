@@ -124,17 +124,17 @@ void TextChecker::updateSpellingUIWithGrammarString(int64_t spellDocumentTag, co
 
 void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, Vector<String>& guesses)
 {
-    notImplemented();
+    WebTextChecker::shared()->client().guessesForWord(spellDocumentTag, word, guesses);
 }
 
-void TextChecker::learnWord(const String& word)
+void TextChecker::learnWord(int64_t spellDocumentTag, const String& word)
 {
-    notImplemented();
+    WebTextChecker::shared()->client().learnWord(spellDocumentTag, word);
 }
 
 void TextChecker::ignoreWord(int64_t spellDocumentTag, const String& word)
 {
-    notImplemented();
+    WebTextChecker::shared()->client().ignoreWord(spellDocumentTag, word);
 }
 
 } // namespace WebKit
