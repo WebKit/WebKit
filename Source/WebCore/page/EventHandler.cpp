@@ -2544,6 +2544,8 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
             return;
         if (event->keyIdentifier() == "U+0009")
             defaultTabEventHandler(event);
+        else if (event->keyIdentifier() == "U+0008")
+            defaultBackspaceEventHandler(event);
         else {
             FocusDirection direction = focusDirectionForKey(event->keyIdentifier());
             if (direction != FocusDirectionNone)
@@ -2845,20 +2847,21 @@ void EventHandler::defaultTextInputEventHandler(TextEvent* event)
         event->setDefaultHandled();
 }
 
-#if PLATFORM(QT) || PLATFORM(MAC)
-
-// These two platforms handle the space event in the platform-specific WebKit code.
-// Eventually it would be good to eliminate that and use the code here instead, but
-// the Qt version is inside an ifdef and the Mac version has some extra behavior
-// so we can't unify everything yet.
+#if PLATFORM(QT)
+// Qt handles the space event in platform-specific WebKit code.
+// Eventually it would be good to eliminate that and use the code here instead.
 void EventHandler::defaultSpaceEventHandler(KeyboardEvent*)
 {
 }
-
 #else
 
 void EventHandler::defaultSpaceEventHandler(KeyboardEvent* event)
 {
+    ASSERT(event->type() == eventNames().keypressEvent);
+
+    if (event->ctrlKey() || event->metaKey() || event->altKey() || event->altGraphKey())
+        return;
+
     ScrollLogicalDirection direction = event->shiftKey() ? ScrollBlockDirectionBackward : ScrollBlockDirectionForward;
     if (logicalScrollOverflow(direction, ScrollByPage)) {
         event->setDefaultHandled();
@@ -2875,8 +2878,30 @@ void EventHandler::defaultSpaceEventHandler(KeyboardEvent* event)
 
 #endif
 
+void EventHandler::defaultBackspaceEventHandler(KeyboardEvent* event)
+{
+    ASSERT(event->type() == eventNames().keydownEvent);
+
+    if (event->ctrlKey() || event->metaKey() || event->altKey() || event->altGraphKey())
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    if (event->shiftKey())
+        page->goForward();
+    else
+        page->goBack();
+
+    event->setDefaultHandled();
+}
+
+
 void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, KeyboardEvent* event)
 {
+    ASSERT(event->type() == eventNames().keydownEvent);
+
     if (event->ctrlKey() || event->metaKey() || event->altGraphKey() || event->shiftKey())
         return;
 
@@ -2898,6 +2923,8 @@ void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, Keybo
 
 void EventHandler::defaultTabEventHandler(KeyboardEvent* event)
 {
+    ASSERT(event->type() == eventNames().keydownEvent);
+
     // We should only advance focus on tabs if no special modifier keys are held down.
     if (event->ctrlKey() || event->metaKey() || event->altGraphKey())
         return;

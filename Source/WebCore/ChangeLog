@@ -1,3 +1,23 @@
+2011-04-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Cannot use Ctrl-Delete as a custom keyboard shortcut
+        https://bugs.webkit.org/show_bug.cgi?id=58265
+        <rdar://problem/9221468>
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultKeyboardEventHandler): Handle Backspace.
+        (WebCore::EventHandler::defaultSpaceEventHandler): Enabled this on Mac, and added checks for
+        other modifiers - no one wants to scroll on Ctrl+Alt+Space and such.
+        (WebCore::EventHandler::defaultBackspaceEventHandler): Backspace goes back, Shift-backspace
+        goes forward. All browsers do it.
+        (WebCore::EventHandler::defaultArrowEventHandler): Assert that this function was called
+        for a correct event.
+        (WebCore::EventHandler::defaultTabEventHandler): Ditto.
+
+        * page/EventHandler.h: Added defaultBackspaceEventHandler.
+
 2011-04-11  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Dan Bernstein.

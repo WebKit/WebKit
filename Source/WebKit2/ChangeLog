@@ -1,3 +1,20 @@
+2011-04-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Cannot use Ctrl-Delete as a custom keyboard shortcut
+        https://bugs.webkit.org/show_bug.cgi?id=58265
+        <rdar://problem/9221468>
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::keyEvent): Added a comment explaining that doing work after DOM event
+        dispatch isn't great.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performNonEditingBehaviorForSelector): Added a comment explaining how this
+        might be moved down to WebCore.
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent): This is now empty, since both Space
+        and Backspace behaviors are implemented in WebCore.
+
 2011-04-11  Anders Carlsson  <andersca@apple.com>
 
         Try to fix the Windows build.

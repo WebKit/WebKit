@@ -1,3 +1,14 @@
+2011-04-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Safari doesn't respect cmd-arrows (and variations) as custom keyboard shortcuts
+        https://bugs.webkit.org/show_bug.cgi?id=58175
+        <rdar://problem/9060555>
+
+        * WebView/WebFrameView.mm: (-[WebFrameView keyDown:]): Added a comment explaining how this
+        should be changed to match WebKit2.
+
 2011-04-06  Timothy Hatcher  <timothy@apple.com>
 
         Fix a bug where the context menu does not show in PDF documents if there is no

@@ -542,6 +542,8 @@ void WebPage::performDictionaryLookupForRange(DictionaryPopupInfo::Type type, Fr
 
 bool WebPage::performNonEditingBehaviorForSelector(const String& selector)
 {
+    // FIXME: All these selectors have corresponding Editor commands, but the commands only work in editable content.
+    // Should such non-editing behaviors be implemented in Editor or EventHandler::defaultArrowEventHandler() perhaps?
     if (selector == "moveUp:")
         scroll(m_page.get(), ScrollUp, ScrollByLine);
     else if (selector == "moveToBeginningOfParagraph:")
@@ -574,33 +576,9 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector)
     return true;
 }
 
-bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent& keyboardEvent)
+bool WebPage::performDefaultBehaviorForKeyEvent(const WebKeyboardEvent&)
 {
-    if (keyboardEvent.type() != WebEvent::KeyDown)
-        return false;
-
-    switch (keyboardEvent.windowsVirtualKeyCode()) {
-    case VK_BACK:
-        // FIXME: Handling Backspace here means that a keypress DOM event will be dispatched when focus
-        // is outside editable content, which is likely wrong. It should be moved to performNonEditingBehaviorForSelector(),
-        // which is complicated by the fact that both Backspace and Shift+Backspace get the same command.
-        if (keyboardEvent.shiftKey())
-            m_page->goForward();
-        else
-            m_page->goBack();
-        break;
-    case VK_SPACE:
-        // Space is not translated to a command by key bindings, so we need to handle it here.
-        if (keyboardEvent.shiftKey())
-            logicalScroll(m_page.get(), ScrollBlockDirectionBackward, ScrollByPage);
-        else
-            logicalScroll(m_page.get(), ScrollBlockDirectionForward, ScrollByPage);
-        break;
-    default:
-        return false;
-    }
-
-    return true;
+    return false;
 }
 
 void WebPage::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elementToken, const CoreIPC::DataReference& windowToken)

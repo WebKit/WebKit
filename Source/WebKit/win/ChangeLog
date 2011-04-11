@@ -1,3 +1,14 @@
+2011-04-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Cannot use Ctrl-Delete as a custom keyboard shortcut
+        https://bugs.webkit.org/show_bug.cgi?id=58265
+        <rdar://problem/9221468>
+
+        * WebView.cpp: (WebView::keyDown): Removed special handling of Backspace, which is unnecessary
+        now that WebCore implements it.
+
 2011-04-06  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
