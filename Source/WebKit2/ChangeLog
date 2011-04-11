@@ -52,6 +52,7 @@
 
         Remove the WebContext member variable from WebPageProxy
         https://bugs.webkit.org/show_bug.cgi?id=58271
+        <rdar://problem/9148125>
 
         * UIProcess/API/C/WKPage.cpp:
         (WKPageGetContext):
@@ -110,6 +111,7 @@
 
         First step towards simplifying WebPageProxy/WebProcessProxy/WebContext ownership
         https://bugs.webkit.org/show_bug.cgi?id=58266
+        <rdar://problem/9148125>
 
         With this patch, the WKView holds a strong reference to a WebPageProxy. The 
         WebPageProxy in turn holds a strong reference to its WebProcessProxy. Finally,
