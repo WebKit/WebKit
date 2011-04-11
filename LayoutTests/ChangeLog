@@ -1,3 +1,11 @@
+2011-04-11  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK media tests rebaseline after r83397.
+
+        * platform/gtk/fast/layers/video-layer-expected.txt:
+        * platform/gtk/media/video-empty-source-expected.txt:
+        * platform/gtk/media/video-zoom-controls-expected.txt:
+
 2011-04-11  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] test expectation update
