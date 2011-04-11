@@ -1,3 +1,17 @@
+2011-04-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Assertion failure in CanvasRenderingContext2D::State::fontsNeedUpdate when invalidating the font cache after opening canvas/philip/tests/initial.reset.2dstate.html (occurs on Qt debug test bot)
+        https://bugs.webkit.org/show_bug.cgi?id=58229
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State): Added copy constructor, to register the copy with
+        the font selector if needed.
+        (WebCore::CanvasRenderingContext2D::State::operator=): Added assignment constructor, to handle
+        registration with the font selector as needed.
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2011-04-11  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

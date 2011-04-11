@@ -231,6 +231,9 @@ private:
         State();
         virtual ~State();
 
+        State(const State&);
+        State& operator=(const State&);
+
         virtual void fontsNeedUpdate(FontSelector*);
 
         String m_unparsedStrokeColor;
