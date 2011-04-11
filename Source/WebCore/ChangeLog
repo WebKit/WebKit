@@ -1,5 +1,18 @@
 2011-04-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Reviewed by Martin Robinson.
+
+        REGRESSION(r83397): Most GTK media controls are hidden when no valid source is specified
+        https://bugs.webkit.org/show_bug.cgi?id=58204
+
+        Covered by existing tests.
+
+        * platform/gtk/RenderThemeGtk.h:
+        (WebCore::RenderThemeGtk::hasOwnDisabledStateHandlingFor): Let GTK handle
+            the the state of media controls.
+
+2011-04-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Remove obsolete comment, which was mistakenly landed in r83397.
 
         Though potentially a work of art, the comment lost its functional meaning a long time ago.
