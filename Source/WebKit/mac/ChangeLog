@@ -1,3 +1,18 @@
+2011-04-06  Timothy Hatcher  <timothy@apple.com>
+
+        Fix a bug where the context menu does not show in PDF documents if there is no
+        UI delegate or the UI delegate does not respond to the context menu selector.
+
+        https://webkit.org/b/57958
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebView.mm:
+        (-[WebView _menuForElement:defaultItems:]): CallUIDelegate returns nil
+        if UIDelegate is nil or doesn't respond to the selector. So check that
+        here to distinguish between using defaultMenuItems or the delegate
+        really returning nil to say "no context menu".
+
 2011-04-11  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed; roll out unintentional change to WebFullScreenController.mm.

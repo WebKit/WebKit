@@ -1297,10 +1297,16 @@ static bool fastDocumentTeardownEnabled()
 - (NSMenu *)_menuForElement:(NSDictionary *)element defaultItems:(NSArray *)items
 {
     NSArray *defaultMenuItems = [[WebDefaultUIDelegate sharedUIDelegate] webView:self contextMenuItemsForElement:element defaultMenuItems:items];
+    NSArray *menuItems = defaultMenuItems;
 
-    NSArray *menuItems = CallUIDelegate(self, @selector(webView:contextMenuItemsForElement:defaultMenuItems:), element, defaultMenuItems);
-    if (!menuItems)
-        return nil;
+    // CallUIDelegate returns nil if UIDelegate is nil or doesn't respond to the selector. So we need to check that here
+    // to distinguish between using defaultMenuItems or the delegate really returning nil to say "no context menu".
+    SEL selector = @selector(webView:contextMenuItemsForElement:defaultMenuItems:);
+    if (_private->UIDelegate && [_private->UIDelegate respondsToSelector:selector]) {
+        menuItems = CallUIDelegate(self, selector, element, defaultMenuItems);
+        if (!menuItems)
+            return nil;
+    }
 
     unsigned count = [menuItems count];
     if (!count)
