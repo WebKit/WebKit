@@ -399,9 +399,18 @@ IntRect ChromeClientQt::windowResizerRect() const
 #endif
 }
 
-void ChromeClientQt::invalidateWindow(const IntRect&, bool)
+void ChromeClientQt::invalidateWindow(const IntRect& windowRect, bool)
 {
-    notImplemented();
+#if ENABLE(TILED_BACKING_STORE)
+    if (platformPageClient()) {
+        WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(m_webPage->mainFrame())->tiledBackingStore();
+        if (!backingStore)
+            return;
+        backingStore->invalidate(windowRect);
+    }
+#else
+    Q_UNUSED(windowRect);
+#endif
 }
 
 void ChromeClientQt::invalidateContentsAndWindow(const IntRect& windowRect, bool immediate)
