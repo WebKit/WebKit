@@ -365,6 +365,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         // layer. Note that we call it with temporaryClipRects = true because normally when computing clip rects
         // for a compositing layer, rootLayer is the layer itself.
         IntRect parentClipRect = m_owningLayer->backgroundClipRect(compAncestor, true);
+        ASSERT(parentClipRect != PaintInfo::infiniteRect());
         m_ancestorClippingLayer->setPosition(FloatPoint() + (parentClipRect.location() - graphicsLayerParentLocation));
         m_ancestorClippingLayer->setSize(parentClipRect.size());
 

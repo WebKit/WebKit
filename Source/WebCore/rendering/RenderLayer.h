@@ -185,7 +185,7 @@ public:
     void repaintIncludingNonCompositingDescendants(RenderBoxModelObject* repaintContainer);
 #endif
 
-    void styleChanged(StyleDifference, const RenderStyle*);
+    void styleChanged(StyleDifference, const RenderStyle* oldStyle);
 
     RenderMarquee* marquee() const { return m_marquee; }
 
@@ -683,7 +683,7 @@ protected:
     bool m_has3DTransformedDescendant : 1;  // Set on a stacking context layer that has 3D descendants anywhere
                                             // in a preserves3D hierarchy. Hint to do 3D-aware hit testing.
 #if USE(ACCELERATED_COMPOSITING)
-    bool m_hasCompositingDescendant : 1;
+    bool m_hasCompositingDescendant : 1; // In the z-order tree.
     bool m_mustOverlapCompositedLayers : 1;
 #endif
 

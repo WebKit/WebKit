@@ -1,5 +1,28 @@
 2011-04-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Car model dropdowns at audiusa.com lay out incorrectly with compositing enabled
+        https://bugs.webkit.org/show_bug.cgi?id=56660
+        
+        When overflow on an element changes, we need to inform compositing
+        layers which create and position an "ancestor clipping" layer based
+        on that overflow. Do this by triggering a rebuild of compositing layers
+        when overflow changes on a layer whose stacking context has compositing
+        descendants. (We can't just check whether the layer itself has compositing
+        descendants, because overflow follows the render tree, but compositing
+        follows the z-order tree.)
+
+        Test: compositing/geometry/ancestor-overflow-change.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::styleChanged):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+
+2011-04-10  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Ariya Hidayat.
 
         Allow ShadowBlur to re-use the last buffer if it already contains the correct shadow
