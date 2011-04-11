@@ -195,8 +195,7 @@ void CanvasRenderingContext2D::reset()
 }
 
 CanvasRenderingContext2D::State::State()
-    : FontSelectorClient()
-    , m_strokeStyle(CanvasStyle::createFromRGBA(Color::black))
+    : m_strokeStyle(CanvasStyle::createFromRGBA(Color::black))
     , m_fillStyle(CanvasStyle::createFromRGBA(Color::black))
     , m_lineWidth(1)
     , m_lineCap(ButtCap)
@@ -215,6 +214,7 @@ CanvasRenderingContext2D::State::State()
 }
 
 CanvasRenderingContext2D::State::State(const State& other)
+    : FontSelectorClient()
 {
     m_unparsedStrokeColor = other.m_unparsedStrokeColor;
     m_unparsedFillColor = other.m_unparsedFillColor;

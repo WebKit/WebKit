@@ -1,3 +1,10 @@
+2011-04-11  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State):
+
 2011-04-11  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Tony Gentilcore.
