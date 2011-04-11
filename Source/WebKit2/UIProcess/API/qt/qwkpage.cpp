@@ -467,6 +467,8 @@ QWKPage::QWKPage(QWKContext* context)
         qt_wk_createNewPage,
         qt_wk_showPage,
         qt_wk_close,
+        0,  /* focus */
+        0,  /* unfocus */
         qt_wk_runJavaScriptAlert,
         0,  /* runJavaScriptConfirm */
         0,  /* runJavaScriptPrompt */

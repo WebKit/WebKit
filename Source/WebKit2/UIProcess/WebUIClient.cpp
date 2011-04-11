@@ -84,6 +84,22 @@ void WebUIClient::close(WebPageProxy* page)
     m_client.close(toAPI(page), m_client.clientInfo);
 }
 
+void WebUIClient::focus(WebPageProxy* page)
+{
+    if (!m_client.focus)
+        return;
+    
+    m_client.focus(toAPI(page), m_client.clientInfo);
+}
+
+void WebUIClient::unfocus(WebPageProxy* page)
+{
+    if (!m_client.unfocus)
+        return;
+
+    m_client.unfocus(toAPI(page), m_client.clientInfo);
+}
+
 void WebUIClient::runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame)
 {
     if (!m_client.runJavaScriptAlert)

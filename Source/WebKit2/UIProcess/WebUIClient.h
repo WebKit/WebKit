@@ -56,6 +56,9 @@ public:
     void showPage(WebPageProxy*);
     void close(WebPageProxy*);
 
+    void focus(WebPageProxy*);
+    void unfocus(WebPageProxy*);
+
     void runJavaScriptAlert(WebPageProxy*, const String&, WebFrameProxy*);
     bool runJavaScriptConfirm(WebPageProxy*, const String&, WebFrameProxy*);
     String runJavaScriptPrompt(WebPageProxy*, const String&, const String&, WebFrameProxy*);

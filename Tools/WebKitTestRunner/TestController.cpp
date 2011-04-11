@@ -139,6 +139,8 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKDictionaryRef, WK
         createOtherPage,
         0, // showPage
         closeOtherPage,
+        0, // focus
+        0, // unfocus
         0, // runJavaScriptAlert        
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt
@@ -273,6 +275,8 @@ void TestController::initialize(int argc, const char* argv[])
         createOtherPage,
         0, // showPage
         0, // close
+        0, // focus
+        0, // unfocus
         0, // runJavaScriptAlert        
         0, // runJavaScriptConfirm
         0, // runJavaScriptPrompt

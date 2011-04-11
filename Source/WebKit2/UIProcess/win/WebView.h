@@ -157,7 +157,6 @@ private:
     virtual void didRelaunchProcess();
     virtual void pageClosed();
     virtual void takeFocus(bool direction);
-    virtual void setFocus(bool focused) { }
     virtual void toolTipChanged(const WTF::String&, const WTF::String&);
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setViewportArguments(const WebCore::ViewportArguments&);
