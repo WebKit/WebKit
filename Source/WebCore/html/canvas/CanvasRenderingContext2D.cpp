@@ -195,7 +195,8 @@ void CanvasRenderingContext2D::reset()
 }
 
 CanvasRenderingContext2D::State::State()
-    : m_strokeStyle(CanvasStyle::createFromRGBA(Color::black))
+    : FontSelectorClient()
+    , m_strokeStyle(CanvasStyle::createFromRGBA(Color::black))
     , m_fillStyle(CanvasStyle::createFromRGBA(Color::black))
     , m_lineWidth(1)
     , m_lineCap(ButtCap)
