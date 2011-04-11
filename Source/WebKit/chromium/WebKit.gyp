@@ -631,6 +631,9 @@
                             'sources!' : [
                                 # We should not include files dpending on webkit_support.
                                 'tests/CCThreadTest.cpp',
+                                # WebFrameTest.cpp depends on webkit_support and
+                                # functions defined only in !WEBKIT_IMPLEMENTATION.
+                                'tests/WebFrameTest.cpp',
                             ]
                         }],
                     ],

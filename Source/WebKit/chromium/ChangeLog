@@ -1,5 +1,11 @@
 2011-04-10  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Fix build errors on "Win Shared Builder (dbg)"
+
+        * WebKit.gyp: Exclude WebFrameTest.cpp for WEBKIT_DLL.
+
+2011-04-10  Kent Tamura  <tkent@chromium.org>
+
         Unreviewed, rolling out r83353.
         http://trac.webkit.org/changeset/83353
         https://bugs.webkit.org/show_bug.cgi?id=58106
