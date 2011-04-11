@@ -146,6 +146,7 @@ public:
     // by the current alpha.
     SkColor effectiveStrokeColor() const;
 
+    // Returns the canvas used for painting, NOT guaranteed to be non-null.
     skia::PlatformCanvas* canvas() { return m_canvas; }
 
     InterpolationQuality interpolationQuality() const;
@@ -158,13 +159,6 @@ public:
     void paintSkPaint(const SkRect&, const SkPaint&);
 
     const SkBitmap* bitmap() const;
-
-    // Returns the canvas used for painting, NOT guaranteed to be non-NULL.
-    //
-    // Warning: This function is deprecated so the users are reminded that they
-    // should use this layer of indirection instead of using the canvas
-    // directly. This is to help with the eventual serialization.
-    skia::PlatformCanvas* canvas() const;
 
     // Returns if the context is a printing context instead of a display
     // context. Bitmap shouldn't be resampled when printing to keep the best
