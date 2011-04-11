@@ -100,15 +100,14 @@ WKPageDebugPaintFlags WebPageProxy::s_debugPaintFlags = 0;
 static WTF::RefCountedLeakCounter webPageProxyCounter("WebPageProxy");
 #endif
 
-PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient* pageClient, PassRefPtr<WebProcessProxy> process, WebContext* context, WebPageGroup* pageGroup, uint64_t pageID)
+PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient* pageClient, PassRefPtr<WebProcessProxy> process, WebPageGroup* pageGroup, uint64_t pageID)
 {
-    return adoptRef(new WebPageProxy(pageClient, process, context, pageGroup, pageID));
+    return adoptRef(new WebPageProxy(pageClient, process, pageGroup, pageID));
 }
 
-WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> process, WebContext* context, WebPageGroup* pageGroup, uint64_t pageID)
+WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> process, WebPageGroup* pageGroup, uint64_t pageID)
     : m_pageClient(pageClient)
     , m_process(process)
-    , m_context(context)
     , m_pageGroup(pageGroup)
     , m_mainFrame(0)
     , m_userAgent(standardUserAgent())
@@ -180,7 +179,7 @@ WebPageProxy::~WebPageProxy()
 
 WebProcessProxy* WebPageProxy::process() const
 {
-    return m_context->process();
+    return m_process.get();
 }
 
 bool WebPageProxy::isValid()
@@ -247,7 +246,7 @@ void WebPageProxy::reattachToWebProcess()
 
     m_isValid = true;
 
-    m_process = context()->relaunchProcessIfNecessary();
+    m_process = m_process->context()->relaunchProcessIfNecessary();
     process()->addExistingWebPage(this, m_pageID);
 
     initializeWebPage();
@@ -530,7 +529,7 @@ bool WebPageProxy::canShowMIMEType(const String& mimeType) const
         return !MIMETypeRegistry::isUnsupportedTextMIMEType(mimeType);
 
     String newMimeType = mimeType;
-    PluginInfoStore::Plugin plugin = context()->pluginInfoStore()->findPlugin(newMimeType, KURL());
+    PluginInfoStore::Plugin plugin = m_process->context()->pluginInfoStore()->findPlugin(newMimeType, KURL());
     if (!plugin.path.isNull())
         return true;
 
@@ -914,7 +913,7 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
     uint64_t downloadID = 0;
     if (action == PolicyDownload) {
         // Create a download proxy.
-        downloadID = context()->createDownloadProxy();
+        downloadID = m_process->context()->createDownloadProxy();
     }
 
     // If we received a policy decision while in decidePolicyForMIMEType the decision will 
@@ -1465,7 +1464,7 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const Strin
     clearPendingAPIRequestURL();
 
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1481,7 +1480,7 @@ void WebPageProxy::didStartProvisionalLoadForFrame(uint64_t frameID, const Strin
 void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, const String& url, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1496,7 +1495,7 @@ void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t f
 void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const ResourceError& error, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1524,7 +1523,7 @@ void WebPageProxy::clearLoadDependentCallbacks()
 void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeType, bool frameHasCustomRepresentation, const PlatformCertificateInfo& certificateInfo, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1550,7 +1549,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
 void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1563,7 +1562,7 @@ void WebPageProxy::didFinishDocumentLoadForFrame(uint64_t frameID, CoreIPC::Argu
 void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1578,7 +1577,7 @@ void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, CoreIPC::ArgumentDeco
 void WebPageProxy::didFailLoadForFrame(uint64_t frameID, const ResourceError& error, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1595,7 +1594,7 @@ void WebPageProxy::didFailLoadForFrame(uint64_t frameID, const ResourceError& er
 void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint32_t opaqueSameDocumentNavigationType, const String& url, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1610,7 +1609,7 @@ void WebPageProxy::didSameDocumentNavigationForFrame(uint64_t frameID, uint32_t 
 void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1625,7 +1624,7 @@ void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title
 void WebPageProxy::didFirstLayoutForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1638,7 +1637,7 @@ void WebPageProxy::didFirstLayoutForFrame(uint64_t frameID, CoreIPC::ArgumentDec
 void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1651,7 +1650,7 @@ void WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame(uint64_t frameID, Core
 void WebPageProxy::didRemoveFrameFromHierarchy(uint64_t frameID, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1666,7 +1665,7 @@ void WebPageProxy::didRemoveFrameFromHierarchy(uint64_t frameID, CoreIPC::Argume
 void WebPageProxy::didDisplayInsecureContentForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1679,7 +1678,7 @@ void WebPageProxy::didDisplayInsecureContentForFrame(uint64_t frameID, CoreIPC::
 void WebPageProxy::didRunInsecureContentForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1703,7 +1702,7 @@ void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
 void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t opaqueNavigationType, uint32_t opaqueModifiers, int32_t opaqueMouseButton, const ResourceRequest& request, uint64_t listenerID, CoreIPC::ArgumentDecoder* arguments, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1740,7 +1739,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, uint32_t op
 void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, uint32_t opaqueNavigationType, uint32_t opaqueModifiers, int32_t opaqueMouseButton, const ResourceRequest& request, const String& frameName, uint64_t listenerID, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1759,7 +1758,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(uint64_t frameID, uint32_t opa
 void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceResponse& response, const ResourceRequest& request, uint64_t listenerID, CoreIPC::ArgumentDecoder* arguments, bool& receivedPolicyAction, uint64_t& policyAction, uint64_t& downloadID)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1789,7 +1788,7 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceRespo
 void WebPageProxy::unableToImplementPolicy(uint64_t frameID, const WebCore::ResourceError& error, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
     
@@ -1804,7 +1803,7 @@ void WebPageProxy::unableToImplementPolicy(uint64_t frameID, const WebCore::Reso
 void WebPageProxy::willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, const StringPairVector& textFieldValues, uint64_t listenerID, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -1932,7 +1931,7 @@ void WebPageProxy::setStatusText(const String& text)
 void WebPageProxy::mouseDidMoveOverElement(uint32_t opaqueModifiers, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -2241,7 +2240,7 @@ void WebPageProxy::hidePopupMenu()
 void WebPageProxy::showContextMenu(const IntPoint& menuLocation, const ContextMenuState& contextMenuState, const Vector<WebContextMenuItemData>& proposedItems, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
-    WebContextUserMessageDecoder messageDecoder(userData, context());
+    WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))
         return;
 
@@ -2309,11 +2308,11 @@ void WebPageProxy::contextMenuItemSelected(const WebContextMenuItemData& item)
     }
 #endif
     if (item.action() == ContextMenuItemTagDownloadImageToDisk) {
-        m_context->download(this, KURL(KURL(), m_activeContextMenuState.absoluteImageURLString));
+        m_process->context()->download(this, KURL(KURL(), m_activeContextMenuState.absoluteImageURLString));
         return;    
     }
     if (item.action() == ContextMenuItemTagDownloadLinkToDisk) {
-        m_context->download(this, KURL(KURL(), m_activeContextMenuState.absoluteLinkURLString));
+        m_process->context()->download(this, KURL(KURL(), m_activeContextMenuState.absoluteLinkURLString));
         return;
     }
     if (item.action() == ContextMenuItemTagCheckSpellingWhileTyping) {

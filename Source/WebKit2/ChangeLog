@@ -1,3 +1,47 @@
+2011-04-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Remove the WebContext member variable from WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=58271
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetContext):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::create):
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::process):
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        (WebKit::WebPageProxy::canShowMIMEType):
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        (WebKit::WebPageProxy::didReceiveTitleForFrame):
+        (WebKit::WebPageProxy::didFirstLayoutForFrame):
+        (WebKit::WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame):
+        (WebKit::WebPageProxy::didRemoveFrameFromHierarchy):
+        (WebKit::WebPageProxy::didDisplayInsecureContentForFrame):
+        (WebKit::WebPageProxy::didRunInsecureContentForFrame):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::unableToImplementPolicy):
+        (WebKit::WebPageProxy::willSubmitForm):
+        (WebKit::WebPageProxy::mouseDidMoveOverElement):
+        (WebKit::WebPageProxy::showContextMenu):
+        (WebKit::WebPageProxy::contextMenuItemSelected):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::createWebPage):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
 2011-04-11  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adam Roben.

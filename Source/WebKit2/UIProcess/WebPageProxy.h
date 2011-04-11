@@ -158,7 +158,7 @@ class WebPageProxy : public APIObject, public WebPopupMenuProxy::Client {
 public:
     static const Type APIType = TypePage;
 
-    static PassRefPtr<WebPageProxy> create(PageClient*, PassRefPtr<WebProcessProxy>, WebContext*, WebPageGroup*, uint64_t pageID);
+    static PassRefPtr<WebPageProxy> create(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
     virtual ~WebPageProxy();
 
     uint64_t pageID() const { return m_pageID; }
@@ -421,7 +421,6 @@ public:
     void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo);
 
     WebProcessProxy* process() const;
-    WebContext* context() const { return m_context.get(); }
 
     WebPageGroup* pageGroup() const { return m_pageGroup.get(); }
 
@@ -495,7 +494,7 @@ public:
     void linkClicked(const String&, const WebMouseEvent&);
  
 private:
-    WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebContext*, WebPageGroup*, uint64_t pageID);
+    WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
 
     virtual Type type() const { return APIType; }
 
@@ -713,7 +712,6 @@ private:
 
     OwnPtr<DrawingAreaProxy> m_drawingArea;
     RefPtr<WebProcessProxy> m_process;
-    RefPtr<WebContext> m_context;
     RefPtr<WebPageGroup> m_pageGroup;
     RefPtr<WebFrameProxy> m_mainFrame;
     RefPtr<WebFrameProxy> m_focusedFrame;

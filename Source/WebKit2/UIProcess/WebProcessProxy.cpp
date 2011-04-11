@@ -171,7 +171,7 @@ PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient* pageClient, 
     ASSERT(context->process() == this);
 
     unsigned pageID = generatePageID();
-    RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, this, context, pageGroup, pageID);
+    RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, this, pageGroup, pageID);
     m_pageMap.set(pageID, webPage.get());
     return webPage.release();
 }

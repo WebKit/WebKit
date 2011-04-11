@@ -32,6 +32,7 @@
 #include "WebBackForwardList.h"
 #include "WebData.h"
 #include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 
 #ifdef __BLOCKS__
 #include <Block.h>
@@ -46,7 +47,7 @@ WKTypeID WKPageGetTypeID()
 
 WKContextRef WKPageGetContext(WKPageRef pageRef)
 {
-    return toAPI(toImpl(pageRef)->context());
+    return toAPI(toImpl(pageRef)->process()->context());
 }
 
 WKPageGroupRef WKPageGetPageGroup(WKPageRef pageRef)
