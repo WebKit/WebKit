@@ -41,6 +41,7 @@
 #include "AccessibilityTableCell.h"
 #include "AccessibilityTableColumn.h"
 #include "AccessibilityTableRow.h"
+#include "CharacterNames.h"
 #include "Document.h"
 #include "DocumentType.h"
 #include "Editor.h"
@@ -1053,6 +1054,9 @@ gchar* textForRenderer(RenderObject* renderer)
         if (object->isText())
             renderText = toRenderText(object);
         else {
+            if (object->isReplaced())
+                g_string_append_unichar(resultText, objectReplacementCharacter);
+
             // We need to check children, if any, to consider when
             // current object is not a text object but some of its
             // children are, in order not to miss those portions of
@@ -1063,7 +1067,7 @@ gchar* textForRenderer(RenderObject* renderer)
             continue;
         }
 
-        InlineTextBox* box = renderText->firstTextBox();
+        InlineTextBox* box = renderText ? renderText->firstTextBox() : 0;
         while (box) {
             gchar* text = convertUniCharToUTF8(renderText->characters(), renderText->textLength(), box->start(), box->end());
             g_string_append(resultText, text);
@@ -1622,7 +1626,7 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     RefPtr<Range> rangeInParent = Range::create(node->document(), parentFirstPosition, nodeRangeStart);
 
     // Set values for start and end offsets.
-    startOffset = TextIterator::rangeLength(rangeInParent.get());
+    startOffset = TextIterator::rangeLength(rangeInParent.get(), true);
 
     // We need to adjust the offsets for the list item marker.
     RenderObject* renderer = coreObject->renderer();
@@ -1632,7 +1636,7 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     }
 
     RefPtr<Range> nodeRange = Range::create(node->document(), nodeRangeStart, nodeRangeEnd);
-    endOffset = startOffset + TextIterator::rangeLength(nodeRange.get());
+    endOffset = startOffset + TextIterator::rangeLength(nodeRange.get(), true);
 }
 
 static gint webkit_accessible_text_get_n_selections(AtkText* text)
@@ -2166,14 +2170,14 @@ static AtkHyperlink* webkitAccessibleHypertextGetLink(AtkHypertext* hypertext, g
     gint currentLink = -1;
     for (unsigned i = 0; i < children.size(); i++) {
         AccessibilityObject* coreChild = children.at(i).get();
-        if (!coreChild->accessibilityIsIgnored() && coreChild->isLink()) {
+        if (!coreChild->accessibilityIsIgnored()) {
+            AtkObject* axObject = coreChild->wrapper();
+            if (!axObject || !ATK_IS_HYPERLINK_IMPL(axObject))
+                continue;
+
             currentLink++;
             if (index != currentLink)
                 continue;
-
-            AtkObject* axObject = coreChild->wrapper();
-            if (!axObject || !ATK_IS_HYPERLINK_IMPL(axObject))
-                return 0;
 
             return atk_hyperlink_impl_get_hyperlink(ATK_HYPERLINK_IMPL(axObject));
         }
@@ -2191,8 +2195,11 @@ static gint webkitAccessibleHypertextGetNLinks(AtkHypertext* hypertext)
     gint linksFound = 0;
     for (size_t i = 0; i < children.size(); i++) {
         AccessibilityObject* coreChild = children.at(i).get();
-        if (!coreChild->accessibilityIsIgnored() && coreChild->isLink())
-            linksFound++;
+        if (!coreChild->accessibilityIsIgnored()) {
+            AtkObject* axObject = coreChild->wrapper();
+            if (axObject && ATK_IS_HYPERLINK_IMPL(axObject))
+                linksFound++;
+        }
     }
 
     return linksFound;
@@ -2439,25 +2446,28 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
     // the WebKitAccessible class and let WebCore decide what to do.
     interfaceMask |= 1 << WAI_ACTION;
 
-    // Hyperlink
-    if (coreObject->isLink())
-        interfaceMask |= 1 << WAI_HYPERLINK;
-
     // Selection
     if (coreObject->isListBox() || coreObject->isMenuList())
         interfaceMask |= 1 << WAI_SELECTION;
 
+    // Get renderer if available.
+    RenderObject* renderer = 0;
+    if (coreObject->isAccessibilityRenderObject())
+        renderer = coreObject->renderer();
+
+    // Hyperlink (links and embedded objects).
+    if (coreObject->isLink() || (renderer && renderer->isReplaced()))
+        interfaceMask |= 1 << WAI_HYPERLINK;
+
     // Text & Editable Text
     if (role == StaticTextRole || coreObject->isMenuListOption())
         interfaceMask |= 1 << WAI_TEXT;
-    else if (coreObject->isAccessibilityRenderObject()) {
+    else {
         if (coreObject->isTextControl()) {
             interfaceMask |= 1 << WAI_TEXT;
             if (!coreObject->isReadOnly())
                 interfaceMask |= 1 << WAI_EDITABLE_TEXT;
         } else {
-            AccessibilityRenderObject* axRenderObject = static_cast<AccessibilityRenderObject*>(coreObject);
-            RenderObject* renderer = axRenderObject->renderer();
             if (role != TableRole) {
                 interfaceMask |= 1 << WAI_HYPERTEXT;
                 if (renderer && renderer->childrenInline())
@@ -2605,10 +2615,10 @@ AccessibilityObject* objectAndOffsetUnignored(AccessibilityObject* coreObject, i
             offset = 0;
         else if (!isStartOfLine(endPosition)) {
             RefPtr<Range> range = makeRange(startPosition, endPosition.previous());
-            offset = TextIterator::rangeLength(range.get()) + 1;
+            offset = TextIterator::rangeLength(range.get(), true) + 1;
         } else {
             RefPtr<Range> range = makeRange(startPosition, endPosition);
-            offset = TextIterator::rangeLength(range.get());
+            offset = TextIterator::rangeLength(range.get(), true);
         }
 
     }

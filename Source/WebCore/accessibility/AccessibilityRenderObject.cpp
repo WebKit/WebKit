@@ -1011,6 +1011,19 @@ unsigned AccessibilityRenderObject::hierarchicalLevel() const
     return level;
 }
 
+static TextIteratorBehavior textIteratorBehaviorForTextRange()
+{
+    TextIteratorBehavior behavior = TextIteratorIgnoresStyleVisibility;
+
+#if PLATFORM(GTK)
+    // We need to emit replaced elements for GTK, and present
+    // them with the 'object replacement character' (0xFFFC).
+    behavior = static_cast<TextIteratorBehavior>(behavior | TextIteratorEmitsObjectReplacementCharacters);
+#endif
+
+    return behavior;
+}
+
 String AccessibilityRenderObject::textUnderElement() const
 {
     if (!m_renderer)
@@ -1025,7 +1038,8 @@ String AccessibilityRenderObject::textUnderElement() const
             // catch stale WebCoreAXObject (see <rdar://problem/3960196>)
             if (frame->document() != node->document())
                 return String();
-            return plainText(rangeOfContents(node).get(), TextIteratorIgnoresStyleVisibility);
+
+            return plainText(rangeOfContents(node).get(), textIteratorBehaviorForTextRange());
         }
     }
     
@@ -1139,8 +1153,9 @@ String AccessibilityRenderObject::stringValue() const
         VisiblePosition endVisiblePosition = m_renderer->positionForCoordinates(INT_MAX, INT_MAX);
         if (startVisiblePosition.isNull() || endVisiblePosition.isNull())
             return String();
-        
-        return plainText(makeRange(startVisiblePosition, endVisiblePosition).get(), TextIteratorIgnoresStyleVisibility);
+
+        return plainText(makeRange(startVisiblePosition, endVisiblePosition).get(),
+                         textIteratorBehaviorForTextRange());
     }
     
     if (isTextControl())
@@ -2492,7 +2507,14 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
     RefPtr<Range> range = Range::create(m_renderer->document());
     range->setStart(node, 0, ec);
     range->setEnd(indexPosition.anchorNode(), indexPosition.deprecatedEditingOffset(), ec);
+
+#if PLATFORM(GTK)
+    // We need to consider replaced elements for GTK, as they will be
+    // presented with the 'object replacement character' (0xFFFC).
+    return TextIterator::rangeLength(range.get(), true);
+#else
     return TextIterator::rangeLength(range.get());
+#endif
 }
 
 IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const

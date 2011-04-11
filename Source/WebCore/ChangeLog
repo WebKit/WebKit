@@ -1,3 +1,51 @@
+2011-04-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [Gtk] Implement support for Embedded Objects
+        https://bugs.webkit.org/show_bug.cgi?id=52148
+
+        Expose special OBJECT character for replaced elements, implementing
+        AtkText and AtkHyperlink when required.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::textIteratorBehaviorForTextRange): New helper function,
+        to return the right behavior, depending on the platform, so it
+        ensures that object replacement characters get emitted for GTK.
+        (WebCore::AccessibilityRenderObject::textUnderElement): Use the
+        new helper function textIteratorBehaviorForTextRange.
+        (WebCore::AccessibilityRenderObject::stringValue): Ditto.
+        (WebCore::AccessibilityRenderObject::indexForVisiblePosition):
+        Consider replaced elements when calculating range length in GTK.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (textForRenderer): Ouput the 'object replacement character' for
+        replaced objects.
+        (getSelectionOffsetsForObject): Consider replaced elements when
+        calculating range length in GTK.
+        (webkitAccessibleHypertextGetLink): Remove wrong extra check that
+        were causing only links to be considered.
+        (webkitAccessibleHypertextGetNLinks): Replace wrong 'isLink()'
+        check with the right one, by checking that the right ATK interface
+        is being implemented by the AtkObject.
+        (getInterfaceMaskFromObject): Implement the Hyperlink interface
+        both for links and replaced objects.
+        (objectAndOffsetUnignored): Consider replaced elements when
+        calculating range length in GTK.
+
+        * accessibility/gtk/WebKitAccessibleHyperlink.cpp:
+        (getRangeLengthForObject): Ensure spaces are used for replaced
+        elements when calling to TextIterator::rangeLength().
+
+        * editing/TextIterator.h: New value in the TextIteratorBehavior
+        enumeration (TextIteratorEmitsObjectReplacementCharacters) and new
+        private variable to consider that new option internally.
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator): Initialize the new private
+        attribute m_emitsObjectReplacementCharacters in constructors.
+        (WebCore::TextIterator::handleReplacedElement): Emit the 'object
+        replacement character' when m_emitsObjectReplacementCharacters.
+
 2011-04-11  Jia Pu  <jpu@apple.com>
 
         Reviewed by Adele Peterson.

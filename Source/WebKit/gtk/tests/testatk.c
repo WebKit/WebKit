@@ -50,6 +50,8 @@ static const char* contentsWithExtraneousWhiteSpaces = "<html><head><body><p>Thi
 
 static const char* comboBoxSelector = "<html><body><select><option selected value='foo'>foo</option><option value='bar'>bar</option></select></body></html>";
 
+static const char* embeddedObjects = "<html><body><p>Choose: <input value='foo' type='checkbox'/>foo <input value='bar' type='checkbox'/>bar (pick one)</p><p>Choose: <select name='foo'><option>bar</option><option>baz</option></select> (pick one)</p><p><input name='foobarbutton' value='foobar' type='button'/></p></body></html>";
+
 static const char* formWithTextInputs = "<html><body><form><input type='text' name='entry' /></form></body></html>";
 
 static const char* hypertextAndHyperlinks = "<html><body><p>A paragraph with no links at all</p><p><a href='http://foo.bar.baz/'>A line</a> with <a href='http://bar.baz.foo/'>a link in the middle</a> as well as at the beginning and <a href='http://baz.foo.bar/'>at the end</a></p><ol><li>List item with a <span><a href='http://foo.bar.baz/'>link inside a span node</a></span></li></ol></body></html>";
@@ -477,6 +479,92 @@ static void testWebkitAtkComboBox()
     g_object_unref(menuPopup);
     g_object_unref(item1);
     g_object_unref(item2);
+    g_object_unref(webView);
+}
+
+static void testWebkitAtkEmbeddedObjects()
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation allocation = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &allocation);
+    webkit_web_view_load_string(webView, embeddedObjects, 0, 0, 0);
+
+    /* Wait for the accessible objects to be created. */
+    waitForAccessibleObjects();
+
+    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(object);
+
+    AtkText* paragraph1 = ATK_TEXT(atk_object_ref_accessible_child(object, 0));
+    g_assert(ATK_IS_TEXT(paragraph1));
+    g_assert(ATK_IS_HYPERTEXT(paragraph1));
+
+    const gchar* expectedText = "Choose: \357\277\274foo \357\277\274bar (pick one)";
+    char* text = atk_text_get_text(paragraph1, 0, -1);
+    g_assert_cmpstr(text, ==, expectedText);
+    g_free(text);
+
+    gint nLinks = atk_hypertext_get_n_links(ATK_HYPERTEXT(paragraph1));
+    g_assert_cmpint(nLinks, ==, 2);
+
+    AtkHyperlink* hLink = atk_hypertext_get_link(ATK_HYPERTEXT(paragraph1), 0);
+    g_assert(ATK_HYPERLINK(hLink));
+    AtkObject* hLinkObject = atk_hyperlink_get_object(hLink, 0);
+    g_assert(ATK_OBJECT(hLinkObject));
+    g_assert(atk_object_get_role(hLinkObject) == ATK_ROLE_CHECK_BOX);
+    g_assert_cmpint(atk_hyperlink_get_start_index(hLink), ==, 8);
+    g_assert_cmpint(atk_hyperlink_get_end_index(hLink), ==, 9);
+    g_assert_cmpint(atk_hyperlink_get_n_anchors(hLink), ==, 1);
+    g_assert_cmpstr(atk_hyperlink_get_uri(hLink, 0), ==, 0);
+
+    AtkText* paragraph2 = ATK_TEXT(atk_object_ref_accessible_child(object, 1));
+    g_assert(ATK_IS_TEXT(paragraph2));
+    g_assert(ATK_IS_HYPERTEXT(paragraph2));
+
+    expectedText = "Choose: \357\277\274 (pick one)";
+    text = atk_text_get_text(paragraph2, 0, -1);
+    g_assert_cmpstr(text, ==, expectedText);
+    g_free(text);
+
+    nLinks = atk_hypertext_get_n_links(ATK_HYPERTEXT(paragraph2));
+    g_assert_cmpint(nLinks, ==, 1);
+
+    hLink = atk_hypertext_get_link(ATK_HYPERTEXT(paragraph2), 0);
+    g_assert(ATK_HYPERLINK(hLink));
+    hLinkObject = atk_hyperlink_get_object(hLink, 0);
+    g_assert(ATK_OBJECT(hLinkObject));
+    g_assert(atk_object_get_role(hLinkObject) == ATK_ROLE_COMBO_BOX);
+    g_assert_cmpint(atk_hyperlink_get_start_index(hLink), ==, 8);
+    g_assert_cmpint(atk_hyperlink_get_end_index(hLink), ==, 9);
+    g_assert_cmpint(atk_hyperlink_get_n_anchors(hLink), ==, 1);
+    g_assert_cmpstr(atk_hyperlink_get_uri(hLink, 0), ==, 0);
+
+    AtkText* paragraph3 = ATK_TEXT(atk_object_ref_accessible_child(object, 2));
+    g_assert(ATK_IS_TEXT(paragraph3));
+    g_assert(ATK_IS_HYPERTEXT(paragraph3));
+
+    expectedText = "\357\277\274";
+    text = atk_text_get_text(paragraph3, 0, -1);
+    g_assert_cmpstr(text, ==, expectedText);
+    g_free(text);
+
+    nLinks = atk_hypertext_get_n_links(ATK_HYPERTEXT(paragraph3));
+    g_assert_cmpint(nLinks, ==, 1);
+
+    hLink = atk_hypertext_get_link(ATK_HYPERTEXT(paragraph3), 0);
+    g_assert(ATK_HYPERLINK(hLink));
+    hLinkObject = atk_hyperlink_get_object(hLink, 0);
+    g_assert(ATK_OBJECT(hLinkObject));
+    g_assert(atk_object_get_role(hLinkObject) == ATK_ROLE_PUSH_BUTTON);
+    g_assert_cmpint(atk_hyperlink_get_start_index(hLink), ==, 0);
+    g_assert_cmpint(atk_hyperlink_get_end_index(hLink), ==, 1);
+    g_assert_cmpint(atk_hyperlink_get_n_anchors(hLink), ==, 1);
+    g_assert_cmpstr(atk_hyperlink_get_uri(hLink, 0), ==, 0);
+
+    g_object_unref(paragraph1);
+    g_object_unref(paragraph2);
+    g_object_unref(paragraph3);
     g_object_unref(webView);
 }
 
@@ -1579,6 +1667,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/caretOffsets", testWebkitAtkCaretOffsets);
     g_test_add_func("/webkit/atk/caretOffsetsAndExtranousWhiteSpaces", testWebkitAtkCaretOffsetsAndExtranousWhiteSpaces);
     g_test_add_func("/webkit/atk/comboBox", testWebkitAtkComboBox);
+    g_test_add_func("/webkit/atk/embeddedObjects", testWebkitAtkEmbeddedObjects);
     g_test_add_func("/webkit/atk/getTextAtOffset", testWebkitAtkGetTextAtOffset);
     g_test_add_func("/webkit/atk/getTextAtOffsetForms", testWebkitAtkGetTextAtOffsetForms);
     g_test_add_func("/webkit/atk/getTextAtOffsetNewlines", testWebkitAtkGetTextAtOffsetNewlines);

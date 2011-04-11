@@ -41,7 +41,8 @@ enum TextIteratorBehavior {
     TextIteratorEmitsCharactersBetweenAllVisiblePositions = 1 << 0,
     TextIteratorEntersTextControls = 1 << 1,
     TextIteratorEmitsTextsWithoutTranscoding = 1 << 2,
-    TextIteratorIgnoresStyleVisibility = 1 << 3
+    TextIteratorIgnoresStyleVisibility = 1 << 3,
+    TextIteratorEmitsObjectReplacementCharacters = 1 << 4
 };
     
 // FIXME: Can't really answer this question correctly without knowing the white-space mode.
@@ -179,6 +180,8 @@ private:
     bool m_handledFirstLetter;
     // Used when the visibility of the style should not affect text gathering.
     bool m_ignoresStyleVisibility;
+    // Used when emitting the special 0xFFFC character is required.
+    bool m_emitsObjectReplacementCharacters;
 };
 
 // Iterates through the DOM range, returning all the text, and 0-length boundaries
