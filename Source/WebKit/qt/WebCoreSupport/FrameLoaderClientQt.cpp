@@ -1080,8 +1080,8 @@ void FrameLoaderClientQt::dispatchDidReceiveResponse(WebCore::DocumentLoader*, u
 
     if (dumpResourceResponseMIMETypes) {
         printf("%s has MIME type %s\n",
-               qPrintable(QFileInfo(drtDescriptionSuitableForTestResult(response.url())).fileName()),
-               qPrintable(QString(response.mimeType())));
+               qPrintable(response.url().lastPathComponent()),
+               qPrintable(response.mimeType()));
     }
 }
 

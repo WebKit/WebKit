@@ -1,3 +1,11 @@
+2011-04-11  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] dumpResourceResponseMIMETypes shouldn't strip URL query string.
+
+        * platform/qt/Skipped: Unskip http/tests/loading/preload-append-scan.php
+
 2011-04-11  Alejandro G. Castro  <alex@igalia.com>
 
         Skipped another test that requires dumpResourceResponseMIMETypes.

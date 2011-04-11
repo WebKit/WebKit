@@ -3246,9 +3246,6 @@ media/video-playbackrate.html
 # https://bugs.webkit.org/show_bug.cgi?id=57459
 css2.1/t0805-c5519-ibrdr-r-00-a.html
 
-# [Qt] dumpResourceResponseMIMETypes() does not strip query part
-http/tests/loading/preload-append-scan.php
-
 # New tests without Qt specific expected files. Need investigation.
 animations/3d/matrix-transform-type-animation.html
 fast/backgrounds/background-position-parsing.html

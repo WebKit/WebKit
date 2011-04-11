@@ -1,3 +1,14 @@
+2011-04-11  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] dumpResourceResponseMIMETypes shouldn't strip URL query string.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveResponse): Use KURL::lastPathComponent()
+        for the dumpResourceResponseMIMETypes display string instead of QFileInfo::fileName().
+        This is in line with the Mac port.
+
 2011-04-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r83295.
