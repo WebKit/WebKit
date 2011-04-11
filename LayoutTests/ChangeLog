@@ -1,3 +1,18 @@
+2011-04-11  Chris Marrin  <cmarrin@apple.com>
+
+        Rubberstamped by Dan Bernstein.
+
+        xhr.responseType = 'arraybuffer' works on Mac but not on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=50334
+
+        Unskipped the XHR ArrayBuffer test for Windows. I also got rid of a couple of bogus expected
+        results. These had errors in them for what Windows used to be returning. Now the non-platform
+        specific results files are correct for Windows.
+
+        * platform/win/Skipped:
+        * platform/win/fast/xmlhttprequest/xmlhttprequest-responsetype-abort-expected.txt: Removed.
+        * platform/win/fast/xmlhttprequest/xmlhttprequest-responsetype-arraybuffer-expected.txt: Removed.
+
 2011-02-03  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.

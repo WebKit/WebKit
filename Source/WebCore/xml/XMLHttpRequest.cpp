@@ -271,7 +271,6 @@ Blob* XMLHttpRequest::responseBlob(ExceptionCode& ec) const
 }
 #endif
 
-#if ENABLE(WEBGL) || ENABLE(BLOB)
 ArrayBuffer* XMLHttpRequest::responseArrayBuffer(ExceptionCode& ec)
 {
     if (m_responseTypeCode != ResponseTypeArrayBuffer) {
@@ -292,7 +291,6 @@ ArrayBuffer* XMLHttpRequest::responseArrayBuffer(ExceptionCode& ec)
 
     return 0;
 }
-#endif
 
 void XMLHttpRequest::setResponseType(const String& responseType, ExceptionCode& ec)
 {
@@ -312,9 +310,7 @@ void XMLHttpRequest::setResponseType(const String& responseType, ExceptionCode& 
         m_responseTypeCode = ResponseTypeBlob;
 #endif
     } else if (responseType == "arraybuffer") {
-#if ENABLE(WEBGL) || ENABLE(BLOB)
         m_responseTypeCode = ResponseTypeArrayBuffer;
-#endif
     } else
         ec = SYNTAX_ERR;
 }
@@ -586,7 +582,6 @@ void XMLHttpRequest::send(DOMFormData* body, ExceptionCode& ec)
     createRequest(ec);
 }
 
-#if ENABLE(WEBGL) || ENABLE(BLOB)
 void XMLHttpRequest::send(ArrayBuffer* body, ExceptionCode& ec)
 {
     if (!initSend(ec))
@@ -600,7 +595,6 @@ void XMLHttpRequest::send(ArrayBuffer* body, ExceptionCode& ec)
 
     createRequest(ec);
 }
-#endif
 
 void XMLHttpRequest::createRequest(ExceptionCode& ec)
 {
@@ -739,10 +733,8 @@ void XMLHttpRequest::clearResponseBuffers()
 #if ENABLE(XHR_RESPONSE_BLOB)
     m_responseBlob = 0;
 #endif
-#if ENABLE(WEBGL) || ENABLE(BLOB)
     m_binaryResponseBuilder.clear();
     m_responseArrayBuffer.clear();
-#endif
 }
 
 void XMLHttpRequest::clearRequest()
@@ -1076,14 +1068,12 @@ void XMLHttpRequest::didReceiveData(const char* data, int len)
 
     if (useDecoder)
         m_responseBuilder.append(m_decoder->decode(data, len));
-#if ENABLE(WEBGL) || ENABLE(BLOB)
     else if (responseTypeCode() == ResponseTypeArrayBuffer) {
         // Buffer binary data.
         if (!m_binaryResponseBuilder)
             m_binaryResponseBuilder = SharedBuffer::create();
         m_binaryResponseBuilder->append(data, len);
     }
-#endif
 
     if (!m_error) {
         long long expectedLength = m_response.expectedContentLength();

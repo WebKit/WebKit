@@ -95,9 +95,7 @@ public:
     void send(const String&, ExceptionCode&);
     void send(Blob*, ExceptionCode&);
     void send(DOMFormData*, ExceptionCode&);
-#if ENABLE(WEBGL) || ENABLE(BLOB)
     void send(ArrayBuffer*, ExceptionCode&);
-#endif
     void abort();
     void setRequestHeader(const AtomicString& name, const String& value, ExceptionCode&);
     void overrideMimeType(const String& override);
@@ -115,11 +113,9 @@ public:
     String responseType();
     ResponseTypeCode responseTypeCode() const { return m_responseTypeCode; }
     
-#if ENABLE(WEBGL) || ENABLE(BLOB)
     // response attribute has custom getter.
     ArrayBuffer* responseArrayBuffer(ExceptionCode&);
     ArrayBuffer* optionalResponseArrayBuffer() const { return m_responseArrayBuffer.get(); }
-#endif
 
     void setLastSendLineNumber(unsigned lineNumber) { m_lastSendLineNumber = lineNumber; }
     void setLastSendURL(const String& url) { m_lastSendURL = url; }
@@ -207,10 +203,8 @@ private:
     mutable bool m_createdDocument;
     mutable RefPtr<Document> m_responseXML;
     
-#if ENABLE(WEBGL) || ENABLE(BLOB)
     RefPtr<SharedBuffer> m_binaryResponseBuilder;
     mutable RefPtr<ArrayBuffer> m_responseArrayBuffer;
-#endif
 
     bool m_error;
 

@@ -64,10 +64,8 @@ void JSXMLHttpRequest::markChildren(MarkStack& markStack)
     if (Document* responseDocument = m_impl->optionalResponseXML())
         markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), responseDocument);
 
-#if ENABLE(WEBGL) || ENABLE(BLOB)
     if (ArrayBuffer* responseArrayBuffer = m_impl->optionalResponseArrayBuffer())
         markDOMObjectWrapper(markStack, *Heap::heap(this)->globalData(), responseArrayBuffer);
-#endif
 
 #if ENABLE(XHR_RESPONSE_BLOB)
     if (Blob* responseBlob = m_impl->optionalResponseBlob())
@@ -124,10 +122,8 @@ JSValue JSXMLHttpRequest::send(ExecState* exec)
             impl()->send(toBlob(val), ec);
         else if (val.inherits(&JSDOMFormData::s_info))
             impl()->send(toDOMFormData(val), ec);
-#if ENABLE(WEBGL) || ENABLE(BLOB)
         else if (val.inherits(&JSArrayBuffer::s_info))
             impl()->send(toArrayBuffer(val), ec);
-#endif
         else
             impl()->send(ustringToString(val.toString(exec)), ec);
     }
@@ -189,7 +185,6 @@ JSValue JSXMLHttpRequest::response(ExecState* exec) const
 #endif
 
     case XMLHttpRequest::ResponseTypeArrayBuffer:
-#if ENABLE(WEBGL) || ENABLE(BLOB)
         {
             ExceptionCode ec = 0;
             ArrayBuffer* arrayBuffer = impl()->responseArrayBuffer(ec);
@@ -199,9 +194,6 @@ JSValue JSXMLHttpRequest::response(ExecState* exec) const
             }
             return toJS(exec, globalObject(), arrayBuffer);
         }
-#else
-        return jsUndefined();
-#endif
     }
 
     return jsUndefined();

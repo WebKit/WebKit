@@ -1,3 +1,27 @@
+2011-04-11  Chris Marrin  <cmarrin@apple.com>
+
+        Rubberstamped by Dan Bernstein.
+
+        xhr.responseType = 'arraybuffer' works on Mac but not on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=50334
+
+        Got rid of guards around arraybuffer logic in XHR. ArrayBuffer and friends
+        are always turned on now, so there's not need for the guard. I reenabled the
+        test that was Skipped on Windows and it works now.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::markChildren):
+        (WebCore::JSXMLHttpRequest::send):
+        (WebCore::JSXMLHttpRequest::response):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseArrayBuffer):
+        (WebCore::XMLHttpRequest::setResponseType):
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::clearResponseBuffers):
+        (WebCore::XMLHttpRequest::didReceiveData):
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::optionalResponseArrayBuffer):
+
 2011-04-11  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Eric Carlson.
