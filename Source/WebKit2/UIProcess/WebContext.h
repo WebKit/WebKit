@@ -84,9 +84,9 @@ public:
     // Disconnect the process from the context.
     void disconnectProcess(WebProcessProxy*);
 
-    WebPageProxy* createWebPage(PageClient*, WebPageGroup*);
+    PassRefPtr<WebPageProxy> createWebPage(PageClient*, WebPageGroup*);
 
-    void relaunchProcessIfNecessary();
+    WebProcessProxy* relaunchProcessIfNecessary();
 
     const String& injectedBundlePath() const { return m_injectedBundlePath; }
 

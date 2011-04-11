@@ -100,13 +100,14 @@ WKPageDebugPaintFlags WebPageProxy::s_debugPaintFlags = 0;
 static WTF::RefCountedLeakCounter webPageProxyCounter("WebPageProxy");
 #endif
 
-PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient* pageClient, WebContext* context, WebPageGroup* pageGroup, uint64_t pageID)
+PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient* pageClient, PassRefPtr<WebProcessProxy> process, WebContext* context, WebPageGroup* pageGroup, uint64_t pageID)
 {
-    return adoptRef(new WebPageProxy(pageClient, context, pageGroup, pageID));
+    return adoptRef(new WebPageProxy(pageClient, process, context, pageGroup, pageID));
 }
 
-WebPageProxy::WebPageProxy(PageClient* pageClient, WebContext* context, WebPageGroup* pageGroup, uint64_t pageID)
+WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> process, WebContext* context, WebPageGroup* pageGroup, uint64_t pageID)
     : m_pageClient(pageClient)
+    , m_process(process)
     , m_context(context)
     , m_pageGroup(pageGroup)
     , m_mainFrame(0)
@@ -162,6 +163,9 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, WebContext* context, WebPageG
 
 WebPageProxy::~WebPageProxy()
 {
+    if (!m_isClosed)
+        close();
+
     WebContext::statistics().wkPageCount--;
 
     if (m_hasSpellDocumentTag)
@@ -239,9 +243,11 @@ void WebPageProxy::initializeContextMenuClient(const WKPageContextMenuClient* cl
 
 void WebPageProxy::reattachToWebProcess()
 {
+    ASSERT(!isValid());
+
     m_isValid = true;
 
-    context()->relaunchProcessIfNecessary();
+    m_process = context()->relaunchProcessIfNecessary();
     process()->addExistingWebPage(this, m_pageID);
 
     initializeWebPage();

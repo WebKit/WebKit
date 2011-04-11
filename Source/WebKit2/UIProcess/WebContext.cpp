@@ -335,10 +335,11 @@ void WebContext::disconnectProcess(WebProcessProxy* process)
     m_pluginSiteDataManager->invalidate();
 #endif
 
+    // This can cause the web context to be destroyed.
     m_process = 0;
 }
 
-WebPageProxy* WebContext::createWebPage(PageClient* pageClient, WebPageGroup* pageGroup)
+PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient* pageClient, WebPageGroup* pageGroup)
 {
     ensureWebProcess();
 
@@ -348,9 +349,12 @@ WebPageProxy* WebContext::createWebPage(PageClient* pageClient, WebPageGroup* pa
     return m_process->createWebPage(pageClient, this, pageGroup);
 }
 
-void WebContext::relaunchProcessIfNecessary()
+WebProcessProxy* WebContext::relaunchProcessIfNecessary()
 {
     ensureWebProcess();
+
+    ASSERT(m_process);
+    return m_process.get();
 }
 
 void WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)

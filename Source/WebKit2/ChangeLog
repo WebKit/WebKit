@@ -1,3 +1,56 @@
+2011-04-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        First step towards simplifying WebPageProxy/WebProcessProxy/WebContext ownership
+        https://bugs.webkit.org/show_bug.cgi?id=58266
+
+        With this patch, the WKView holds a strong reference to a WebPageProxy. The 
+        WebPageProxy in turn holds a strong reference to its WebProcessProxy. Finally,
+        The WebProcessProxy holds a strong reference to its WebContext.
+
+        The WebContext holds a strong reference to the running WebProcessProxy which results
+        in a reference cycle that's broken when the web process exits.
+
+        The reason for is to avoid crashes where WebPageProxy::process() returns null if the web process
+        has crashed but has not yet been relaunched.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::disconnectProcess):
+        Add comment.
+
+        (WebKit::WebContext::createWebPage):
+        Return a PassRefPtr.
+
+        (WebKit::WebContext::relaunchProcessIfNecessary):
+        Change this to return a WebPageProxy.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::create):
+        This now takes a PassRefPtr<WebProcessProxy>.
+
+        (WebKit::WebPageProxy::WebPageProxy):
+        Ditto.
+
+        (WebKit::WebPageProxy::~WebPageProxy):
+        Call close() if necessary.
+
+        (WebKit::WebPageProxy::reattachToWebProcess):
+        Replace the current process with the new process.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::create):
+        Take a PassRefPtr<WebContext>.
+        
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        Ditto.
+
+        (WebKit::WebProcessProxy::webPage):
+        Remove .get() now that the page map uses weak references.
+
+        (WebKit::WebProcessProxy::createWebPage):
+        This now returns the created web page proxy.
+
 2011-04-11  Adam Roben  <aroben@apple.com>
 
         Dispatch sent messages to windows owned by the web process when waiting a sync CoreIPC reply

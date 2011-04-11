@@ -59,12 +59,12 @@ static uint64_t generatePageID()
     return uniquePageID++;
 }
 
-PassRefPtr<WebProcessProxy> WebProcessProxy::create(WebContext* context)
+PassRefPtr<WebProcessProxy> WebProcessProxy::create(PassRefPtr<WebContext> context)
 {
     return adoptRef(new WebProcessProxy(context));
 }
 
-WebProcessProxy::WebProcessProxy(WebContext* context)
+WebProcessProxy::WebProcessProxy(PassRefPtr<WebContext> context)
     : m_responsivenessTimer(this)
     , m_context(context)
 {
@@ -163,17 +163,17 @@ void WebProcessProxy::terminate()
 
 WebPageProxy* WebProcessProxy::webPage(uint64_t pageID) const
 {
-    return m_pageMap.get(pageID).get();
+    return m_pageMap.get(pageID);
 }
 
-WebPageProxy* WebProcessProxy::createWebPage(PageClient* pageClient, WebContext* context, WebPageGroup* pageGroup)
+PassRefPtr<WebPageProxy> WebProcessProxy::createWebPage(PageClient* pageClient, WebContext* context, WebPageGroup* pageGroup)
 {
     ASSERT(context->process() == this);
 
     unsigned pageID = generatePageID();
-    RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, context, pageGroup, pageID);
-    m_pageMap.set(pageID, webPage);
-    return webPage.get();
+    RefPtr<WebPageProxy> webPage = WebPageProxy::create(pageClient, this, context, pageGroup, pageID);
+    m_pageMap.set(pageID, webPage.get());
+    return webPage.release();
 }
 
 void WebProcessProxy::addExistingWebPage(WebPageProxy* webPage, uint64_t pageID)

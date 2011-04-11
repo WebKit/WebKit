@@ -56,7 +56,7 @@ public:
     typedef HashMap<uint64_t, RefPtr<WebFrameProxy> > WebFrameProxyMap;
     typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem> > WebBackForwardListItemMap;
 
-    static PassRefPtr<WebProcessProxy> create(WebContext*);
+    static PassRefPtr<WebProcessProxy> create(PassRefPtr<WebContext>);
     ~WebProcessProxy();
 
     void terminate();
@@ -71,12 +71,12 @@ public:
         return m_connection.get(); 
     }
 
-    WebContext* context() const { return m_context; }
+    WebContext* context() const { return m_context.get(); }
 
     PlatformProcessIdentifier processIdentifier() const { return m_processLauncher->processIdentifier(); }
 
     WebPageProxy* webPage(uint64_t pageID) const;
-    WebPageProxy* createWebPage(PageClient*, WebContext*, WebPageGroup*);
+    PassRefPtr<WebPageProxy> createWebPage(PageClient*, WebContext*, WebPageGroup*);
     void addExistingWebPage(WebPageProxy*, uint64_t pageID);
     void removeWebPage(uint64_t pageID);
 
@@ -102,7 +102,7 @@ public:
     template<typename E, typename T> bool deprecatedSend(E messageID, uint64_t destinationID, const T& arguments);
 
 private:
-    explicit WebProcessProxy(WebContext*);
+    explicit WebProcessProxy(PassRefPtr<WebContext>);
 
     // Initializes the process or thread launcher which will begin launching the process.
     void connect();
@@ -155,9 +155,9 @@ private:
     RefPtr<ProcessLauncher> m_processLauncher;
     RefPtr<ThreadLauncher> m_threadLauncher;
 
-    WebContext* m_context;
+    RefPtr<WebContext> m_context;
 
-    HashMap<uint64_t, RefPtr<WebPageProxy> > m_pageMap;
+    HashMap<uint64_t, WebPageProxy*> m_pageMap;
     WebFrameProxyMap m_frameMap;
     WebBackForwardListItemMap m_backForwardListItemMap;
 };
