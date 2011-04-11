@@ -1,3 +1,19 @@
+2011-04-11  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58261
+
+        Fix for layout regression on marketwatch.com. When I converted TrailingFloatsRootInlineBox over
+        to the new overflow model, I messed up the math and passed a bottom value where I should have
+        passed a height value. This patch fixes the code to be logically equivalent to the way it
+        was prior to my changes.
+
+        * fast/overflow/trailing-float-linebox.html: Added.
+        * platform/mac/fast/overflow/trailing-float-linebox-expected.checksum: Added.
+        * platform/mac/fast/overflow/trailing-float-linebox-expected.png: Added.
+        * platform/mac/fast/overflow/trailing-float-linebox-expected.txt: Added.
+
 2011-04-11  Adrienne Walker  <enne@google.com>
 
         Unreviewed, rolling out r83500.

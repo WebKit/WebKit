@@ -1064,8 +1064,9 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                 GlyphOverflowAndFallbackFontsMap textBoxDataMap;
                 VerticalPositionCache verticalPositionCache;
                 trailingFloatsLineBox->alignBoxesInBlockDirection(logicalHeight(), textBoxDataMap, verticalPositionCache);
-                IntRect logicalLayoutOverflow(0, logicalHeight(), 1, bottomLayoutOverflow);
-                IntRect logicalVisualOverflow(0, logicalHeight(), 1, bottomVisualOverflow);
+                int blockLogicalHeight = logicalHeight();
+                IntRect logicalLayoutOverflow(0, blockLogicalHeight, 1, bottomLayoutOverflow - blockLogicalHeight);
+                IntRect logicalVisualOverflow(0, blockLogicalHeight, 1, bottomVisualOverflow - blockLogicalHeight);
                 trailingFloatsLineBox->setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow, trailingFloatsLineBox->lineTop(), trailingFloatsLineBox->lineBottom());
                 trailingFloatsLineBox->setBlockLogicalHeight(logicalHeight());
             }
