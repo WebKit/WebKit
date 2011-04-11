@@ -4212,7 +4212,7 @@ void RenderBlock::calcColumnWidth()
         desiredColumnCount = max<int>(1, (float)(availWidth + colGap) / (colWidth + colGap));
         desiredColumnWidth = ((availWidth + colGap) / desiredColumnCount) - colGap;
     } else {
-        desiredColumnCount = min<int>(colCount, (float)(availWidth + colGap) / (colWidth + colGap));
+        desiredColumnCount = max(min<int>(colCount, (float)(availWidth + colGap) / (colWidth + colGap)), 1);
         desiredColumnWidth = ((availWidth + colGap) / desiredColumnCount) - colGap;
     }
     setDesiredColumnCountAndWidth(desiredColumnCount, desiredColumnWidth);

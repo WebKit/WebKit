@@ -1,3 +1,17 @@
+2011-04-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Divide by zero in calcColumnWidth
+        https://bugs.webkit.org/show_bug.cgi?id=58230
+
+        Test: fast/multicol/huge-column-count.html
+        
+        Make sure we have at least one column, to avoid divide by zero.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::calcColumnWidth):
+
 2011-04-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

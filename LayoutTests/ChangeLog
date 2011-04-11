@@ -1,3 +1,15 @@
+2011-04-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Divide by zero in calcColumnWidth
+        https://bugs.webkit.org/show_bug.cgi?id=58230
+        
+        Testcase for the bug.
+
+        * fast/multicol/huge-column-count.html: Added.
+        * platform/mac/fast/multicol/huge-column-count-expected.txt: Added.
+
 2011-04-11  Csaba Osztrogonác  <ossy@webkit.org>
 
        [Qt][WK2]http/tests/loading/preload-append-scan.php fails
