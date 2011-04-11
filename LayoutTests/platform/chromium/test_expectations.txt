@@ -2947,6 +2947,12 @@ BUGCR74102 GPU WIN : media/video-layer-crash.html = IMAGE
 BUGWK58214 WIN LINUX RELEASE GPU : fast/canvas/font-update.html = TEXT
 BUGWK58214 WIN LINUX DEBUG GPU : fast/canvas/font-update.html = CRASH
 
+// Slight differences.  Need rebaseline?
+BUGCR78999 WIN LINUX GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE+TEXT
+BUGCR78999 MAC GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE
+
+
+
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE
 
 BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT
@@ -3118,7 +3124,7 @@ BUGCR75561 MAC : fast/blockflow/text-orientation-basic.html = IMAGE IMAGE+TEXT
 BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT
 
 BUGWK56060 LINUX X86_64 : http/tests/loading/preload-slow-loading.php = TEXT
-BUGWK56060 LINUX X86_64 : svg/custom/pattern-excessive-malloc.svg = IMAGE+TEXT
+BUGWK56060 LINUX X86_64 : svg/custom/pattern-excessive-malloc.svg = IMAGE
 BUGWK56060 LINUX X86_64 : fast/images/favicon-as-image.html = IMAGE+TEXT
 
 BUGCR75632 LINUX : svg/W3C-SVG-1.1/text-text-03-b.svg = CRASH PASS
@@ -3301,13 +3307,10 @@ BUGWK58147 : fast/dom/MediaStream/enabled.html = TEXT
 BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = CRASH
 BUGWK58158 : editing/pasteboard/paste-xml.xhtml = PASS TEXT
 BUGCR78988 LINUX : svg/zoom/text/absolute-sized-document-no-scrollbars.svg = CRASH PASS
-
-// http://trac.webkit.org/changeset/83422/ smfr is looking.
-BUG_TKENT : svg/custom/mask-excessive-malloc.svg = TEXT
-BUG_TKENT : svg/custom/pattern-excessive-malloc.svg = TEXT
-// Slight differences.  Maybe need rebaseline.
-BUG_TKENT WIN LINUX GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE+TEXT
-BUG_TKENT MAC GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE
+BUGCR78996 DEBUG : fast/css/first-of-type-pseudo-class.html = PASS TEXT
+// http://trac.webkit.org/changeset/83411/ merged some frame tests into one.
+// The merged test is flaky on Chromium since then.
+BUGCR78998 DEBUG : fast/frames/frame-element-name.html = TEXT PASS
 
 // Windows 7 failures that need triaging and probably mostly just need
 // new baselines.

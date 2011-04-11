@@ -1,3 +1,13 @@
+2011-04-11  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] test expectation update
+        - Revert expectations of mask-excessive-malloc.svg and pattern-excessive-malloc.svg.
+        - first-of-type-pseudo-class.html is flaky.
+        - The merged frame-element-name.html is flaky.
+        - ancestor-overflow-change.html is failing on GPU.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-10  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update expectations.
