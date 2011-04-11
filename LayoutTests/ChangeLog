@@ -1,3 +1,11 @@
+2011-04-11  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, chromium expectations change.
+
+        Mark huge-column-count.html as missing in chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-11  Jessie Berlin  <jberlin@apple.com>
 
         [Snow Leopard WebKit2 Release Tests] inspector/styles/styles-add-blank-property.html flakey.

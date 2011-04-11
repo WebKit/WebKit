@@ -3472,3 +3472,6 @@ BUGWK58193 WIN VISTA : svg/custom/circular-marker-reference-1.svg = TEXT
 BUGWK58193 WIN VISTA : svg/custom/circular-marker-reference-3.svg = TEXT
 BUGWK58193 WIN VISTA : svg/custom/circular-marker-reference-4.svg = TEXT
 BUGWK58193 WIN VISTA : svg/zoom/page/zoom-mask-with-percentages.svg = TEXT
+
+// Added in Webkit r83470 without expected results.
+BUGJIANLI : fast/multicol/huge-column-count.html = MISSING
