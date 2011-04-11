@@ -1,3 +1,14 @@
+2011-04-11  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Fix make distcheck
+        https://bugs.webkit.org/show_bug.cgi?id=58224
+
+        Removed a file that is no longer in the source tree.
+
+        * GNUmakefile.list.am:
+
 2011-04-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Martin Robinson.
