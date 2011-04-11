@@ -1,3 +1,10 @@
+2011-04-11  Anders Carlsson  <andersca@apple.com>
+
+        Try to fix the Windows build.
+
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
 2011-04-11  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

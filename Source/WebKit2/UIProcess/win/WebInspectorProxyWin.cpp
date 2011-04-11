@@ -30,6 +30,7 @@
 
 #include "WebKitBundle.h"
 #include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 #include "WebView.h"
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <wtf/PassRefPtr.h>
@@ -155,7 +156,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     ASSERT(!m_inspectorWindow);
 
     RECT emptyRect = { 0 };
-    m_inspectorView = WebView::create(emptyRect, m_page->context(), inspectorPageGroup(), 0);
+    m_inspectorView = WebView::create(emptyRect, m_page->process()->context(), inspectorPageGroup(), 0);
 
     return m_inspectorView->page();
 }
