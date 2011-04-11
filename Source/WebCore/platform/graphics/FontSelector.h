@@ -33,6 +33,7 @@ namespace WebCore {
 
 class FontData;
 class FontDescription;
+class FontSelectorClient;
 
 class FontSelector : public RefCounted<FontSelector> {
 public:
@@ -40,6 +41,16 @@ public:
     virtual FontData* getFontData(const FontDescription&, const AtomicString& familyName) = 0;
 
     virtual void fontCacheInvalidated() { }
+
+    virtual void registerForInvalidationCallbacks(FontSelectorClient*) = 0;
+    virtual void unregisterForInvalidationCallbacks(FontSelectorClient*) = 0;
+};
+
+class FontSelectorClient {
+public:
+    virtual ~FontSelectorClient() { }
+
+    virtual void fontsNeedUpdate(FontSelector*) = 0;
 };
 
 } // namespace WebCore

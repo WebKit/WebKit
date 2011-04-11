@@ -298,27 +298,6 @@ void HTMLCanvasElement::makeRenderingResultsAvailable()
         m_context->paintRenderingResultsToCanvas();
 }
 
-void HTMLCanvasElement::attach()
-{
-    HTMLElement::attach();
-
-    if (m_context && m_context->is2d()) {
-        CanvasRenderingContext2D* ctx = static_cast<CanvasRenderingContext2D*>(m_context.get());
-        ctx->updateFont();
-    }
-}
-
-void HTMLCanvasElement::recalcStyle(StyleChange change)
-{
-    HTMLElement::recalcStyle(change);
-
-    // Update font if needed.
-    if (change == Force && m_context && m_context->is2d()) {
-        CanvasRenderingContext2D* ctx = static_cast<CanvasRenderingContext2D*>(m_context.get());
-        ctx->updateFont();
-    }
-}
-
 void HTMLCanvasElement::setSurfaceSize(const IntSize& size)
 {
     m_size = size;

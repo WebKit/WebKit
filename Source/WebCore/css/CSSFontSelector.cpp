@@ -345,18 +345,37 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
     }
 }
 
-void CSSFontSelector::fontLoaded()
+void CSSFontSelector::registerForInvalidationCallbacks(FontSelectorClient* client)
 {
+    m_clients.add(client);
+}
+
+void CSSFontSelector::unregisterForInvalidationCallbacks(FontSelectorClient* client)
+{
+    m_clients.remove(client);
+}
+
+void CSSFontSelector::dispatchInvalidationCallbacks()
+{
+    Vector<FontSelectorClient*> clients;
+    copyToVector(m_clients, clients);
+    for (size_t i = 0; i < clients.size(); ++i)
+        clients[i]->fontsNeedUpdate(this);
+
+    // FIXME: Make Document a FontSelectorClient so that it can simply register for invalidation callbacks.
     if (!m_document || m_document->inPageCache() || !m_document->renderer())
         return;
     m_document->scheduleForcedStyleRecalc();
 }
 
+void CSSFontSelector::fontLoaded()
+{
+    dispatchInvalidationCallbacks();
+}
+
 void CSSFontSelector::fontCacheInvalidated()
 {
-    if (!m_document || m_document->inPageCache() || !m_document->renderer())
-        return;
-    m_document->scheduleForcedStyleRecalc();
+    dispatchInvalidationCallbacks();
 }
 
 static FontData* fontDataForGenericFamily(Document* document, const FontDescription& fontDescription, const AtomicString& familyName)
