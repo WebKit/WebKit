@@ -37,7 +37,6 @@ module core {
         readonly attribute DOMString type;
 
         void getAsString(in [Callback] StringCallback callback);
-        Blob getAsFile();
     };
 
 }

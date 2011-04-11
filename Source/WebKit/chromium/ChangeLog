@@ -1,3 +1,14 @@
+2011-04-10  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r83353.
+        http://trac.webkit.org/changeset/83353
+        https://bugs.webkit.org/show_bug.cgi?id=58106
+
+        The new test doesn't pass on all Chromium platforms.
+
+        * DEPS:
+        * src/PlatformBridge.cpp:
+
 2011-04-09  Sreeram Ramachandran  <sreeram@google.com>
 
         Reviewed by Ryosuke Niwa.

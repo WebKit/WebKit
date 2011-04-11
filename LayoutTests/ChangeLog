@@ -1,3 +1,14 @@
+2011-04-10  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r83353.
+        http://trac.webkit.org/changeset/83353
+        https://bugs.webkit.org/show_bug.cgi?id=58106
+
+        The new test doesn't pass on all Chromium platforms.
+
+        * editing/pasteboard/data-transfer-items-image-png-expected.html: Removed.
+        * editing/pasteboard/data-transfer-items-image-png.html: Removed.
+
 2011-04-10  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Eric Seidel.

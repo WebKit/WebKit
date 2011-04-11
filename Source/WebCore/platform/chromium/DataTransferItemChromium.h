@@ -51,7 +51,6 @@ public:
     virtual String type() const;
 
     virtual void getAsString(PassRefPtr<StringCallback>);
-    virtual PassRefPtr<Blob> getAsFile();
 
 private:
     enum DataSource {

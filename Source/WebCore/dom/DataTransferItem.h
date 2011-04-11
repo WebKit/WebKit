@@ -38,7 +38,6 @@
 
 namespace WebCore {
 
-class Blob;
 class StringCallback;
 
 class DataTransferItem : public RefCounted<DataTransferItem> {
@@ -52,7 +51,6 @@ public:
     virtual String type() const = 0;
 
     virtual void getAsString(PassRefPtr<StringCallback>) = 0;
-    virtual PassRefPtr<Blob> getAsFile() = 0;
 };
 
 } // namespace WebCore
