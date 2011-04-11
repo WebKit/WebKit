@@ -1,3 +1,18 @@
+2011-04-11  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://problem/9267042> Assertion failure on launch in
+        LayerChangesFlusher::setHook().
+
+        https://bugs.webkit.org/show_bug.cgi?id=58270
+
+        Reviewed by Adam Roben.
+
+        * platform/graphics/ca/win/LayerChangesFlusher.cpp:
+        (WebCore::LayerChangesFlusher::setHook):
+        MSDN says that the HINSTANCE passed in must be null if the thread ID
+        passed is a thread created by this process and the hook procedure is
+        within this process.
+
 2011-04-11  MORITA Hajime  <morrita@google.com>
 
         Unreviewed build fix.

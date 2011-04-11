@@ -29,7 +29,6 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "AbstractCACFLayerTreeHost.h"
-#include "WebCoreInstanceHandle.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -107,7 +106,7 @@ void LayerChangesFlusher::setHook()
 
     DWORD threadID = ::GetCurrentThreadId();
 
-    m_hook = ::SetWindowsHookExW(WH_GETMESSAGE, hookCallback, instanceHandle(), threadID);
+    m_hook = ::SetWindowsHookExW(WH_GETMESSAGE, hookCallback, 0, threadID);
     ASSERT_WITH_MESSAGE(m_hook, "::SetWindowsHookExW failed with error %lu", ::GetLastError());
 
     // Post a message to the message queue to prevent ::GetMessage from blocking, which will ensure
