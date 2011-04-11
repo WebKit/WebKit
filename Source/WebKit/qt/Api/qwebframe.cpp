@@ -432,13 +432,13 @@ void QWebFramePrivate::emitUrlChanged()
     emit q->urlChanged(url);
 }
 
-void QWebFrame::orientationChanged()
+void QWebFramePrivate::_q_orientationChanged()
 {
 #if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
     int orientation;
-    WebCore::Frame* frame = QWebFramePrivate::core(this);
+    WebCore::Frame* frame = core(q);
 
-    switch (d->m_orientation.reading()->orientation()) {
+    switch (m_orientation.reading()->orientation()) {
     case QtMobility::QOrientationReading::TopUp:
         orientation = 0;
         break;
@@ -1939,3 +1939,5 @@ QWebFrame *QWebHitTestResult::frame() const
         return 0;
     return d->frame;
 }
+
+#include "moc_qwebframe.cpp"

@@ -106,6 +106,7 @@ public:
 #endif
     void renderFrameExtras(WebCore::GraphicsContext*, QFlags<QWebFrame::RenderLayer>, const QRegion& clip);
     void emitUrlChanged();
+    void _q_orientationChanged();
 
     QWebFrame *q;
     Qt::ScrollBarPolicy horizontalScrollBarPolicy;
