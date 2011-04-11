@@ -1,3 +1,15 @@
+2011-04-11  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; new chromium baselines.
+
+        New chromium-mac-leopard baseline images for tests affected by r83490.
+
+        * platform/chromium-mac-leopard/svg/custom/foreign-object-skew-expected.png:
+        * platform/chromium-mac-leopard/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-foreignObject-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/svg/zoom/page/zoom-foreignObject-expected.png: Removed.
+
 2011-04-11  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Dan Bernstein.
