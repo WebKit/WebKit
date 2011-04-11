@@ -1,5 +1,21 @@
 2011-04-10  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Update expectations for r83360.
+
+        * platform/chromium-linux/fast/box-shadow/inset-box-shadows-expected.checksum: Removed.
+        * platform/chromium-linux/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-linux/fast/box-shadow/inset-expected.png:
+        * platform/chromium-mac-leopard/fast/box-shadow/inset-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.checksum: Removed.
+        * platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png: Removed.
+        * platform/chromium-mac/fast/box-shadow/inset-expected.checksum: Removed.
+        * platform/chromium-mac/fast/box-shadow/inset-expected.png: Removed.
+        * platform/chromium-win/fast/box-shadow/inset-box-shadows-expected.checksum: Removed.
+        * platform/chromium-win/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-expected.png:
+
+2011-04-10  Kent Tamura  <tkent@chromium.org>
+
         Unreviewed, rolling out r83353.
         http://trac.webkit.org/changeset/83353
         https://bugs.webkit.org/show_bug.cgi?id=58106
