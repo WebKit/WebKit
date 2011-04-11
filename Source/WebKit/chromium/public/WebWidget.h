@@ -129,12 +129,7 @@ public:
 
     // Returns the start and end point for the current selection, aligned to the
     // bottom of the selected line.
-    // FIXME: make this pure virtual after all downstream classes have
-    // implemented it.
-    virtual bool selectionRange(WebPoint& start, WebPoint& end) const
-    {
-        return false;
-    }
+    virtual bool selectionRange(WebPoint& start, WebPoint& end) const = 0;
 
     // Changes the text direction of the selected input node.
     virtual void setTextDirection(WebTextDirection) = 0;
