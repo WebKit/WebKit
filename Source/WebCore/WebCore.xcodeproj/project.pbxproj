@@ -12670,7 +12670,6 @@
 				034768DFFF38A50411DB9C8B /* Products */,
 				1CDD44660BA9C80000F90147 /* Configurations */,
 				449195900FBE175B00D9F824 /* Exports */,
-				B164F82D1345779E00BC777F /* HTMLTrackElement.idl */,
 			);
 			name = WebKit;
 			sourceTree = "<group>";
