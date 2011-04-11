@@ -1,5 +1,14 @@
 2011-04-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix a few builds.
+        
+        Updated a few more build configurations for file moves.
+
+        * CMakeListsEfl.txt:
+        * wscript:
+
+2011-04-11  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: Updated a file name.
 
         * CMakeLists.txt:
