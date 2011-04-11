@@ -29,7 +29,7 @@
 #include "JSDOMWindow.h"
 #include <runtime/JSGlobalData.h>
 #include <runtime/JSLock.h>
-#include <runtime/Heap.h>
+#include <heap/Heap.h>
 #include <wtf/StdLibExtras.h>
 
 #if USE(PTHREADS)

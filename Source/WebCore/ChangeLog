@@ -1,5 +1,12 @@
 2011-04-10  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: Updated for file move.
+
+        * bindings/js/GCController.cpp:
+        * bindings/js/ScriptGCEvent.cpp:
+
+2011-04-10  Geoffrey Garen  <ggaren@apple.com>
+
         Rubber-stamped by Beth Dakin.
 
         Moved Heap.h and Heap.cpp to the heap folder, because anything less 
