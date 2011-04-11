@@ -39,6 +39,7 @@
 #include <WebKitQuartzCoreAdditions/WKCACFImage.h>
 #include <WebKitQuartzCoreAdditions/WKCACFView.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/Threading.h>
 
 #ifdef DEBUG_ALL
 #pragma comment(lib, "WebKitQuartzCoreAdditions_debug")
@@ -224,6 +225,12 @@ void LayerTreeHostCAWin::forceRepaint()
 
 void LayerTreeHostCAWin::contextDidChangeCallback(WKCACFViewRef view, void* info)
 {
+    // This should only be called on a background thread when no changes have actually 
+    // been committed to the context, eg. when a video frame has been added to an image
+    // queue, so return without triggering animations etc.
+    if (!isMainThread())
+        return;
+    
     LayerTreeHostCAWin* host = static_cast<LayerTreeHostCAWin*>(info);
     ASSERT_ARG(view, view == host->m_view);
     host->contextDidChange();
