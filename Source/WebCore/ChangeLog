@@ -1,3 +1,12 @@
+2011-04-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Remove obsolete comment, which was mistakenly landed in r83397.
+
+        Though potentially a work of art, the comment lost its functional meaning a long time ago.
+
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::create): Removed comment.
+
 2011-04-05  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Steve Block.

@@ -83,7 +83,6 @@ PassRefPtr<MediaControls> MediaControls::create(HTMLMediaElement* mediaElement)
 
     RefPtr<MediaControlPanelElement> panel = MediaControlPanelElement::create(mediaElement);
 
-    // FIXME: WHAT TO DO WITH ec??!?!?!?!
     ExceptionCode ec;
 
     RefPtr<MediaControlRewindButtonElement> rewindButton = MediaControlRewindButtonElement::create(mediaElement);
