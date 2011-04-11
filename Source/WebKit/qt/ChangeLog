@@ -1,5 +1,12 @@
 2011-04-11  Andreas Kling  <andreas.kling@nokia.com>
 
+        Build fix after r83436.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveResponse):
+
+2011-04-11  Andreas Kling  <andreas.kling@nokia.com>
+
         Reviewed by Benjamin Poulain.
 
         [Qt] dumpResourceResponseMIMETypes shouldn't strip URL query string.
