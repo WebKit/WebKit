@@ -1,0 +1,12 @@
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="console"></div>
+<script>
+var expectedName = window.location.search.substr("?expectedName=".length);
+shouldBeEqualToString("escape(window.frameElement.name)", expectedName);
+shouldBeEqualToString("escape(window.name)", expectedName);
+</script>
+</body>

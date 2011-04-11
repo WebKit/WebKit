@@ -1,3 +1,23 @@
+2011-04-10  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Add layout test to ensure that window.name returns {"_blank", "_parent", "_self", "_top"}
+        for a frame of the same name
+        https://bugs.webkit.org/show_bug.cgi?id=58189
+
+        Extracted common code from files LayoutTests/fast/frames/resources/frame-element-name-{left, right}.html
+        into LayoutTests/fast/frames/resources/frame-element-name.html so that we can use this logic
+        to test frames with arbitrary names.
+
+        * fast/frames/frame-element-name-expected.txt:
+        * fast/frames/frame-element-name.html: Modified to use resources/frame-element-name.html; Added
+          test cases for "_blank", "_parent", "_self", and "_top".
+        * fast/frames/resources/frame-element-name-left.html: Removed; Instead, pass expectedName to
+          resources/frame-element-name.html
+        * fast/frames/resources/frame-element-name-right.html: Ditto.
+        * fast/frames/resources/frame-element-name.html: Added.
+
 2011-04-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Carlson.
