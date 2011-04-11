@@ -41,8 +41,10 @@ import chromium_linux
 import chromium_mac
 import chromium_win
 
-class ChromiumDriverTest(unittest.TestCase):
+from webkitpy.layout_tests.port import port_testcase
 
+
+class ChromiumDriverTest(unittest.TestCase):
     def setUp(self):
         mock_port = Mock()
         mock_port.get_option = lambda option_name: ''
@@ -112,7 +114,19 @@ class ChromiumDriverTest(unittest.TestCase):
         self.assertTrue(self.wait_called)
         self.assertEquals(self.pid, 1)
 
-class ChromiumPortTest(unittest.TestCase):
+
+class ChromiumPortTest(port_testcase.PortTestCase):
+    def port_maker(self, platform):
+        return chromium.ChromiumPort
+
+    def test_driver_cmd_line(self):
+        # Override this test since ChromiumPort doesn't implement driver_cmd_line().
+        pass
+
+    def test_baseline_search_path(self):
+        # Override this test since ChromiumPort doesn't implement baseline_search_path().
+        pass
+
     class TestMacPort(chromium_mac.ChromiumMacPort):
         def __init__(self, options):
             chromium_mac.ChromiumMacPort.__init__(self,

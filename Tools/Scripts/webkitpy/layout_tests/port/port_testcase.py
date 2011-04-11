@@ -113,6 +113,30 @@ class PortTestCase(unittest.TestCase):
 
         port._filesystem.remove(tmpfile)
 
+    def test_diff_image__missing_both(self):
+        port = self.make_port()
+        if not port:
+            return
+        self.assertFalse(port.diff_image(None, None, None))
+        self.assertFalse(port.diff_image(None, '', None))
+        self.assertFalse(port.diff_image('', None, None))
+        self.assertFalse(port.diff_image('', '', None))
+
+    def test_diff_image__missing_actual(self):
+        port = self.make_port()
+        if not port:
+            return
+        self.assertTrue(port.diff_image(None, 'foo', None))
+        self.assertTrue(port.diff_image('', 'foo', None))
+
+    def test_diff_image__missing_expected(self):
+        port = self.make_port()
+        if not port:
+            return
+        self.assertTrue(port.diff_image('foo', None, None))
+        self.assertTrue(port.diff_image('foo', '', None))
+
+
     def disabled_test_websocket_server(self):
         port = self.make_port()
         if not port:

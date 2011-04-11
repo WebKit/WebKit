@@ -30,6 +30,7 @@ import unittest
 from webkitpy.common.system import filesystem_mock
 
 from webkitpy.layout_tests.port.webkit import WebKitPort
+from webkitpy.layout_tests.port import port_testcase
 
 
 class TestWebKitPort(WebKitPort):
@@ -63,7 +64,18 @@ class TestWebKitPort(WebKitPort):
             return [self.skips_file]
         return []
 
-class WebKitPortTest(unittest.TestCase):
+
+class WebKitPortTest(port_testcase.PortTestCase):
+    def port_maker(self, platform):
+        return WebKitPort
+
+    def test_driver_cmd_line(self):
+        # Routine is not implemented.
+        pass
+
+    def test_baseline_search_path(self):
+        # Routine is not implemented.
+        pass
 
     def test_skipped_directories_for_symbols(self):
         supported_symbols = ["GraphicsLayer", "WebCoreHas3DRendering", "isXHTMLMPDocument", "fooSymbol"]
