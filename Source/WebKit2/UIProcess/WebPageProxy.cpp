@@ -675,16 +675,19 @@ bool WebPageProxy::gestureWillBegin(const IntPoint& point)
     return canBeginPanning;
 }
 
-bool WebPageProxy::gestureDidScroll(const IntSize& size)
+void WebPageProxy::gestureDidScroll(const IntSize& size)
 {
-    bool atBeginningOrEndOfScrollableDocument = false;
-    process()->sendSync(Messages::WebPage::GestureDidScroll(size), Messages::WebPage::GestureDidScroll::Reply(atBeginningOrEndOfScrollableDocument), m_pageID);
-    return atBeginningOrEndOfScrollableDocument;
+    process()->send(Messages::WebPage::GestureDidScroll(size), m_pageID);
 }
 
 void WebPageProxy::gestureDidEnd()
 {
     process()->send(Messages::WebPage::GestureDidEnd(), m_pageID);
+}
+
+void WebPageProxy::setGestureReachedScrollingLimit(bool limitReached)
+{
+    m_pageClient->setGestureReachedScrollingLimit(limitReached);
 }
 #endif
 

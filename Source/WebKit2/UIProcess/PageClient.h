@@ -130,6 +130,7 @@ public:
 
 #if PLATFORM(WIN)
     virtual HWND nativeWindow() = 0;
+    virtual void setGestureReachedScrollingLimit(bool) = 0;
 #endif
 
 #if PLATFORM(MAC)

@@ -331,7 +331,7 @@ public:
     void getSelectedText(WTF::String&);
 
     void gestureWillBegin(const WebCore::IntPoint&, bool& canBeginPanning);
-    void gestureDidScroll(const WebCore::IntSize&, bool& atBeginningOrEndOfDocument);
+    void gestureDidScroll(const WebCore::IntSize&);
     void gestureDidEnd();
 #endif
 
@@ -632,6 +632,10 @@ private:
 
     bool m_cachedMainFrameIsPinnedToLeftSide;
     bool m_cachedMainFrameIsPinnedToRightSide;
+
+#if PLATFORM(WIN)
+    bool m_gestureReachedScrollingLimit;
+#endif
 };
 
 } // namespace WebKit

@@ -233,4 +233,9 @@ messages -> WebPageProxy {
     DismissCorrectionPanelSoon(int32_t reason) -> (String result)
     RecordAutocorrectionResponse(int32_t responseType, String replacedString, String replacementString);
 #endif
+
+#if PLATFORM(WIN)
+    # Windows 7 Gesture Messages
+    SetGestureReachedScrollingLimit(bool limitReached)
+#endif
 }

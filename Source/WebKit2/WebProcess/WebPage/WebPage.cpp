@@ -169,6 +169,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_userSpaceScaleFactor(parameters.userSpaceScaleFactor)
     , m_cachedMainFrameIsPinnedToLeftSide(false)
     , m_cachedMainFrameIsPinnedToRightSide(false)
+#if PLATFORM(WIN)
+    , m_gestureReachedScrollingLimit(false)
+#endif
 {
     ASSERT(m_pageID);
 

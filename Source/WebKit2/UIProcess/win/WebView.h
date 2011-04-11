@@ -191,6 +191,8 @@ private:
 
     virtual HWND nativeWindow();
 
+    virtual void setGestureReachedScrollingLimit(bool limitReached) { m_gestureReachedScrollingLimit = limitReached; }
+
     // WebCore::WindowMessageListener
     virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM);
 
@@ -231,6 +233,8 @@ private:
     int m_lastPanY;
 
     int m_overPanY;
+
+    bool m_gestureReachedScrollingLimit;
 };
 
 } // namespace WebKit

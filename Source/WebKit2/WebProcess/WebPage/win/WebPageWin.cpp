@@ -28,6 +28,7 @@
 
 #include "FontSmoothingLevel.h"
 #include "WebEvent.h"
+#include "WebPageProxyMessages.h"
 #include "WebPreferencesStore.h"
 #include <WebCore/FocusController.h>
 #include <WebCore/FontRenderingMode.h>
@@ -357,6 +358,8 @@ void WebPage::getSelectedText(String& text)
 
 void WebPage::gestureWillBegin(const WebCore::IntPoint& point, bool& canBeginPanning)
 {
+    m_gestureReachedScrollingLimit = false;
+
     bool hitScrollbar = false;
 
     HitTestRequest request(HitTestRequest::ReadOnly);
@@ -401,28 +404,36 @@ void WebPage::gestureWillBegin(const WebCore::IntPoint& point, bool& canBeginPan
     canBeginPanning = false;
 }
 
-void WebPage::gestureDidScroll(const IntSize& size, bool& atBeginningOrEndOfScrollableDocument)
+static bool scrollbarAtTopOrBottomOfDocument(Scrollbar* scrollbar)
 {
-    atBeginningOrEndOfScrollableDocument = false;
+    ASSERT_ARG(scrollbar, scrollbar);
+    return !scrollbar->currentPos() || scrollbar->currentPos() >= scrollbar->maximum();
+}
+
+void WebPage::gestureDidScroll(const IntSize& size)
+{
+    ASSERT_ARG(size, !size.isZero());
 
     if (!m_gestureTargetNode || !m_gestureTargetNode->renderer() || !m_gestureTargetNode->renderer()->enclosingLayer())
         return;
 
+    Scrollbar* verticalScrollbar = 0;
+    if (Frame* frame = m_page->mainFrame()) {
+        if (ScrollView* view = frame->view())
+            verticalScrollbar = view->verticalScrollbar();
+    }
+
     m_gestureTargetNode->renderer()->enclosingLayer()->scrollByRecursively(size.width(), size.height());
+    bool gestureReachedScrollingLimit = verticalScrollbar && scrollbarAtTopOrBottomOfDocument(verticalScrollbar);
 
-    Frame* frame = m_page->mainFrame();
-    if (!frame)
+    // FIXME: We really only want to update this state if the state was updated via scrolling the main frame,
+    // not scrolling something in a main frame when the main frame had already reached its scrolling limit.
+
+    if (gestureReachedScrollingLimit == m_gestureReachedScrollingLimit)
         return;
 
-    ScrollView* view = frame->view();
-    if (!view)
-        return;
-
-    Scrollbar* verticalScrollbar = view->verticalScrollbar();
-    if (!verticalScrollbar)
-        return;
-
-    atBeginningOrEndOfScrollableDocument = !verticalScrollbar->currentPos() || verticalScrollbar->currentPos() >= verticalScrollbar->maximum();
+    send(Messages::WebPageProxy::SetGestureReachedScrollingLimit(gestureReachedScrollingLimit));
+    m_gestureReachedScrollingLimit = gestureReachedScrollingLimit;
 }
 
 void WebPage::gestureDidEnd()

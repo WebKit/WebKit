@@ -204,7 +204,7 @@ messages -> WebPage {
     GetSelectedText() -> (WTF::String text)
 
     GestureWillBegin(WebCore::IntPoint point) -> (bool canBeginPanning)
-    GestureDidScroll(WebCore::IntSize size) -> (bool atBeginningOrEndOfScrollableDocument)
+    GestureDidScroll(WebCore::IntSize size)
     GestureDidEnd()
 #endif
 #if PLATFORM(QT)

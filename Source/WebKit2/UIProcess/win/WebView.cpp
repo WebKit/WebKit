@@ -275,6 +275,7 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
     , m_lastPanX(0)
     , m_lastPanY(0)
     , m_overPanY(0)
+    , m_gestureReachedScrollingLimit(false)
 {
     registerWebViewWindowClass();
 
@@ -569,10 +570,12 @@ LRESULT WebView::onGesture(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
         // Calculate the overpan for window bounce.
         m_overPanY -= deltaY;
 
-        bool shouldBounceWindow = m_page->gestureDidScroll(IntSize(deltaX, deltaY));
+        if (deltaX || deltaY)
+            m_page->gestureDidScroll(IntSize(deltaX, deltaY));
 
         if (gi.dwFlags & GF_BEGIN) {
             BeginPanningFeedbackPtr()(m_window);
+            m_gestureReachedScrollingLimit = false;
             m_overPanY = 0;
         } else if (gi.dwFlags & GF_END) {
             EndPanningFeedbackPtr()(m_window, true);
@@ -582,7 +585,7 @@ LRESULT WebView::onGesture(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
         // FIXME: Support horizontal window bounce - <http://webkit.org/b/58068>.
         // FIXME: Window Bounce doesn't undo until user releases their finger - <http://webkit.org/b/58069>.
 
-        if (shouldBounceWindow)
+        if (m_gestureReachedScrollingLimit)
             UpdatePanningFeedbackPtr()(m_window, 0, m_overPanY, gi.dwFlags & GF_INERTIA);
 
         CloseGestureInfoHandlePtr()(gestureHandle);

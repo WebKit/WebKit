@@ -276,8 +276,10 @@ public:
     String getSelectedText();
 
     bool gestureWillBegin(const WebCore::IntPoint&);
-    bool gestureDidScroll(const WebCore::IntSize&);
+    void gestureDidScroll(const WebCore::IntSize&);
     void gestureDidEnd();
+
+    void setGestureReachedScrollingLimit(bool);
 #endif
 #if ENABLE(TILED_BACKING_STORE)
     void setActualVisibleContentRect(const WebCore::IntRect& rect);

@@ -1,3 +1,37 @@
+2011-04-11  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Windows 7 Gestures Window Bounce shouldn't require a sync message
+        https://bugs.webkit.org/show_bug.cgi?id=58167
+        <rdar://problem/9259813>
+        
+        Instead of making GestureDidScroll sync, have WebPageWin call from WebProcess ->
+        UIProcess when the gesture causes the page to scroll to the beginning or the
+        end of the document.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::gestureDidScroll): Not a sync message anymore.
+        (WebKit::WebPageProxy::setGestureScrollingLimitReached): Tell the page client that the gesture
+            scrolling limnit was reached.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: Add a new message.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView): Initialize new variable.
+        (WebKit::WebView::onGesture): Use the state of the member variable, not the response from
+            the sync message.
+        * UIProcess/win/WebView.h:
+        (WebKit::WebView::setGestureScrollingLimitReached):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::scrollbarAtTopOfBottomOrDocument): Returns whether or not the scrollbar is at the
+            top or bottom of the document.
+        (WebKit::WebPage::gestureDidScroll): Track whether or not we started at the beginning
+            or end of the document, and whether or not we ended at the beginning or end of the document,
+            and send a message if the value changed.
+
 2011-04-04  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.
