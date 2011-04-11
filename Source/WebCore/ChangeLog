@@ -1,3 +1,18 @@
+2011-04-11  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Regression : r83051 Oxygen's lineedits are not rendered properly
+        https://bugs.webkit.org/show_bug.cgi?id=58076
+
+        State_Sunken is more generic than pressed. It is used by items such as frames or
+        line edits because they are "sunken" frames (e.g. QLineEdit). It can be required
+        by some style like Oxygen. Therefore only in the mobile theme we check if the object
+        is pressed.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintTextField):
+
 2011-04-11  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

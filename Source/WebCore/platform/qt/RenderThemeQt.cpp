@@ -673,8 +673,12 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const PaintInfo& i, const In
     initStyleOption(p.widget, panel);
     panel.rect = r;
     panel.lineWidth = findFrameLineWidth(qStyle());
+#if USE(QT_MOBILE_THEME)
     if (isPressed(o))
         panel.state |= QStyle::State_Sunken;
+#else
+    panel.state |= QStyle::State_Sunken;
+#endif
     panel.features = QStyleOptionFrameV2::None;
 
     // Get the correct theme data for a text field
