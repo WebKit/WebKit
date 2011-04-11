@@ -1,3 +1,11 @@
+2011-04-10  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update expectations.
+        - Remove deprecated entry
+        - Add ancestor-overflow-change.html for GPU.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Maciej Stachowiak.

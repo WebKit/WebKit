@@ -3118,7 +3118,7 @@ BUGCR75561 MAC : fast/blockflow/text-orientation-basic.html = IMAGE IMAGE+TEXT
 BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT
 
 BUGWK56060 LINUX X86_64 : http/tests/loading/preload-slow-loading.php = TEXT
-BUGWK56060 LINUX X86_64 : svg/custom/pattern-excessive-malloc.svg = IMAGE
+BUGWK56060 LINUX X86_64 : svg/custom/pattern-excessive-malloc.svg = IMAGE+TEXT
 BUGWK56060 LINUX X86_64 : fast/images/favicon-as-image.html = IMAGE+TEXT
 
 BUGCR75632 LINUX : svg/W3C-SVG-1.1/text-text-03-b.svg = CRASH PASS
@@ -3302,6 +3302,13 @@ BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = CRASH
 BUGWK58158 : editing/pasteboard/paste-xml.xhtml = PASS TEXT
 BUGCR78988 LINUX : svg/zoom/text/absolute-sized-document-no-scrollbars.svg = CRASH PASS
 
+// http://trac.webkit.org/changeset/83422/ smfr is looking.
+BUG_TKENT : svg/custom/mask-excessive-malloc.svg = TEXT
+BUG_TKENT : svg/custom/pattern-excessive-malloc.svg = TEXT
+// Slight differences.  Maybe need rebaseline.
+BUG_TKENT WIN LINUX GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE+TEXT
+BUG_TKENT MAC GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE
+
 // Windows 7 failures that need triaging and probably mostly just need
 // new baselines.
 BUGWK58193 WIN WIN7 : fast/css/first-letter-first-line-hover.html = IMAGE+TEXT
@@ -3419,7 +3426,6 @@ BUGWK58193 WIN VISTA : svg/text/bidi-text-query.svg = IMAGE+TEXT
 BUGWK58193 WIN VISTA : css2.1/t1202-counter-09-b.html = IMAGE
 BUGWK58193 WIN VISTA : css2.1/t1202-counters-09-b.html = IMAGE
 BUGWK58193 WIN VISTA : editing/pasteboard/block-wrappers-necessary.html = IMAGE
-BUGWK58193 WIN VISTA : editing/pasteboard/data-transfer-items-image-png.html = IMAGE
 BUGWK58193 WIN VISTA : fast/blockflow/japanese-ruby-horizontal-bt.html = IMAGE
 BUGWK58193 WIN VISTA : fast/css/line-height-determined-by-primary-font.html = IMAGE
 BUGWK58193 WIN VISTA : fast/dom/34176.html = IMAGE
