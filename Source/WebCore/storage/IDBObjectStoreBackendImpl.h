@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,13 +42,13 @@ class ScriptExecutionContext;
 
 class IDBObjectStoreBackendImpl : public IDBObjectStoreBackendInterface {
 public:
-    static PassRefPtr<IDBObjectStoreBackendImpl> create(IDBBackingStore* backingStore, int64_t id, const String& name, const String& keyPath, bool autoIncrement)
+    static PassRefPtr<IDBObjectStoreBackendImpl> create(IDBBackingStore* backingStore, int64_t databaseId, int64_t id, const String& name, const String& keyPath, bool autoIncrement)
     {
-        return adoptRef(new IDBObjectStoreBackendImpl(backingStore, id, name, keyPath, autoIncrement));
+        return adoptRef(new IDBObjectStoreBackendImpl(backingStore, databaseId, id, name, keyPath, autoIncrement));
     }
-    static PassRefPtr<IDBObjectStoreBackendImpl> create(IDBBackingStore* backingStore, const String& name, const String& keyPath, bool autoIncrement)
+    static PassRefPtr<IDBObjectStoreBackendImpl> create(IDBBackingStore* backingStore, int64_t databaseId, const String& name, const String& keyPath, bool autoIncrement)
     {
-        return adoptRef(new IDBObjectStoreBackendImpl(backingStore, name, keyPath, autoIncrement));
+        return adoptRef(new IDBObjectStoreBackendImpl(backingStore, databaseId, name, keyPath, autoIncrement));
     }
     virtual ~IDBObjectStoreBackendImpl();
 
@@ -59,6 +59,7 @@ public:
         return m_id;
     }
     void setId(int64_t id) { m_id = id; }
+    int64_t databaseId() const { return m_databaseId; }
 
     virtual String name() const { return m_name; }
     virtual String keyPath() const { return m_keyPath; }
@@ -77,8 +78,8 @@ public:
     virtual void openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
 private:
-    IDBObjectStoreBackendImpl(IDBBackingStore*, int64_t id, const String& name, const String& keyPath, bool autoIncrement);
-    IDBObjectStoreBackendImpl(IDBBackingStore*, const String& name, const String& keyPath, bool autoIncrement);
+    IDBObjectStoreBackendImpl(IDBBackingStore*, int64_t databaseId, int64_t id, const String& name, const String& keyPath, bool autoIncrement);
+    IDBObjectStoreBackendImpl(IDBBackingStore*, int64_t databaseId, const String& name, const String& keyPath, bool autoIncrement);
 
     void loadIndexes();
     PassRefPtr<IDBKey> genAutoIncrementKey();
@@ -99,6 +100,7 @@ private:
 
     RefPtr<IDBBackingStore> m_backingStore;
 
+    int64_t m_databaseId;
     int64_t m_id;
     String m_name;
     String m_keyPath;

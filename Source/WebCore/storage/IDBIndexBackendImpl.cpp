@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,8 +40,10 @@
 
 namespace WebCore {
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique)
+IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreBackendImpl* objectStoreBackend, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique)
     : m_backingStore(backingStore)
+    , m_databaseId(databaseId)
+    , m_objectStoreBackend(objectStoreBackend)
     , m_id(id)
     , m_name(name)
     , m_storeName(storeName)
@@ -50,8 +52,10 @@ IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t 
 {
 }
 
-IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, const String& name, const String& storeName, const String& keyPath, bool unique)
+IDBIndexBackendImpl::IDBIndexBackendImpl(IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreBackendImpl* objectStoreBackend, const String& name, const String& storeName, const String& keyPath, bool unique)
     : m_backingStore(backingStore)
+    , m_databaseId(databaseId)
+    , m_objectStoreBackend(objectStoreBackend)
     , m_id(InvalidId)
     , m_name(name)
     , m_storeName(storeName)
@@ -72,10 +76,10 @@ void IDBIndexBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr
 
     switch (cursorType) {
     case IDBCursorBackendInterface::IndexKeyCursor:
-        backingStoreCursor = index->m_backingStore->openIndexKeyCursor(index->id(), range.get(), direction);
+        backingStoreCursor = index->m_backingStore->openIndexKeyCursor(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), range.get(), direction);
         break;
     case IDBCursorBackendInterface::IndexCursor:
-        backingStoreCursor = index->m_backingStore->openIndexCursor(index->id(), range.get(), direction);
+        backingStoreCursor = index->m_backingStore->openIndexCursor(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), range.get(), direction);
         break;
     case IDBCursorBackendInterface::ObjectStoreCursor:
     case IDBCursorBackendInterface::InvalidCursorType:
@@ -120,14 +124,14 @@ void IDBIndexBackendImpl::getInternal(ScriptExecutionContext*, PassRefPtr<IDBInd
 {
     // FIXME: Split getInternal into two functions, getting rid off |getObject|.
     if (getObject) {
-        String value = index->m_backingStore->getObjectViaIndex(index->id(), *key);
+        String value = index->m_backingStore->getObjectViaIndex(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), *key);
         if (value.isNull()) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Key does not exist in the index."));
             return;
         }
         callbacks->onSuccess(SerializedScriptValue::createFromWire(value));
     } else {
-        RefPtr<IDBKey> keyResult = index->m_backingStore->getPrimaryKeyViaIndex(index->id(), *key);
+        RefPtr<IDBKey> keyResult = index->m_backingStore->getPrimaryKeyViaIndex(index->m_databaseId, index->m_objectStoreBackend->id(), index->id(), *key);
         if (!keyResult) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Key does not exist in the index."));
             return;
@@ -159,7 +163,7 @@ bool IDBIndexBackendImpl::addingKeyAllowed(IDBKey* key)
     if (!m_unique)
         return true;
 
-    return !m_backingStore->keyExistsInIndex(m_id, *key);
+    return !m_backingStore->keyExistsInIndex(m_databaseId, m_objectStoreBackend->id(), m_id, *key);
 }
 
 } // namespace WebCore

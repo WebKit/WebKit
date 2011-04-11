@@ -1,3 +1,113 @@
+2011-04-05  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Steve Block.
+
+        IndexedDB: Introduce skeleton for LevelDB backend
+        https://bugs.webkit.org/show_bug.cgi?id=57827
+
+        No new tests: no new functionality (yet).
+
+        * WebCore.gyp/WebCore.gyp:
+            Add dependency on leveldb when ENABLE_LEVELDB=1 in feature_defines.
+        * WebCore.gypi:
+            Add new files.
+        * storage/IDBBackingStore.h:
+        (WebCore::IDBBackingStore::ObjectStoreRecordIdentifier::~ObjectStoreRecordIdentifier):
+            Introduce abstract type ObjectStoreRecordIdentifier. The SQLite
+            backend uses integers to refer to a specific row in a table, but
+            the LevelDB backend will use something else.
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::createObjectStoreInternal):
+        (WebCore::IDBDatabaseBackendImpl::deleteObjectStoreInternal):
+        (WebCore::IDBDatabaseBackendImpl::loadObjectStores):
+            Change functions to pass along the database id for operations that
+            concern object stores. We want to be able to group object stores
+            ids per database.
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::open):
+            Decide which backend to use based on the backingStoreType
+            parameter.
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::IDBIndexBackendImpl):
+        (WebCore::IDBIndexBackendImpl::openCursorInternal):
+        (WebCore::IDBIndexBackendImpl::getInternal):
+        (WebCore::IDBIndexBackendImpl::addingKeyAllowed):
+        * storage/IDBIndexBackendImpl.h:
+        (WebCore::IDBIndexBackendImpl::create):
+            Pass database and object store id to backend functions concerning
+            indexes.
+        * storage/IDBLevelDBBackingStore.cpp: Added.
+        (WebCore::IDBLevelDBBackingStore::IDBLevelDBBackingStore):
+        (WebCore::IDBLevelDBBackingStore::~IDBLevelDBBackingStore):
+        (WebCore::IDBLevelDBBackingStore::open):
+        (WebCore::IDBLevelDBBackingStore::extractIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::setIDBDatabaseMetaData):
+        (WebCore::IDBLevelDBBackingStore::getObjectStores):
+        (WebCore::IDBLevelDBBackingStore::createObjectStore):
+        (WebCore::IDBLevelDBBackingStore::deleteObjectStore):
+        (WebCore::IDBLevelDBBackingStore::getObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::putObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::clearObjectStore):
+        (WebCore::IDBLevelDBBackingStore::deleteObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::nextAutoIncrementNumber):
+        (WebCore::IDBLevelDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBLevelDBBackingStore::forEachObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::getIndexes):
+        (WebCore::IDBLevelDBBackingStore::createIndex):
+        (WebCore::IDBLevelDBBackingStore::deleteIndex):
+        (WebCore::IDBLevelDBBackingStore::putIndexDataForRecord):
+        (WebCore::IDBLevelDBBackingStore::deleteIndexDataForRecord):
+        (WebCore::IDBLevelDBBackingStore::getObjectViaIndex):
+        (WebCore::IDBLevelDBBackingStore::getPrimaryKeyViaIndex):
+        (WebCore::IDBLevelDBBackingStore::keyExistsInIndex):
+        (WebCore::IDBLevelDBBackingStore::openObjectStoreCursor):
+        (WebCore::IDBLevelDBBackingStore::openIndexKeyCursor):
+        (WebCore::IDBLevelDBBackingStore::openIndexCursor):
+        (WebCore::IDBLevelDBBackingStore::createTransaction):
+        * storage/IDBLevelDBBackingStore.h: Added.
+            Add an empty implementation of the LevelDB backend.
+        * storage/IDBObjectStoreBackendImpl.cpp:
+            Keep track of database id, use the new RecordIdentifier.
+        (WebCore::IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl):
+        (WebCore::IDBObjectStoreBackendImpl::getInternal):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::deleteInternal):
+        (WebCore::IDBObjectStoreBackendImpl::clearInternal):
+        (WebCore::populateIndex):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::createIndexInternal):
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndexInternal):
+        (WebCore::IDBObjectStoreBackendImpl::openCursorInternal):
+        (WebCore::IDBObjectStoreBackendImpl::loadIndexes):
+        (WebCore::IDBObjectStoreBackendImpl::genAutoIncrementKey):
+        * storage/IDBObjectStoreBackendImpl.h:
+        (WebCore::IDBObjectStoreBackendImpl::create):
+        (WebCore::IDBObjectStoreBackendImpl::databaseId):
+        * storage/IDBSQLiteBackingStore.cpp:
+        (WebCore::IDBSQLiteBackingStore::open):
+        (WebCore::IDBSQLiteBackingStore::createObjectStore):
+        (WebCore::IDBSQLiteBackingStore::deleteObjectStore):
+        (WebCore::IDBSQLiteBackingStore::getObjectStoreRecord):
+        (WebCore::IDBSQLiteBackingStore::putObjectStoreRecord):
+        (WebCore::IDBSQLiteBackingStore::clearObjectStore):
+        (WebCore::IDBSQLiteBackingStore::deleteObjectStoreRecord):
+        (WebCore::IDBSQLiteBackingStore::nextAutoIncrementNumber):
+        (WebCore::IDBSQLiteBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBSQLiteBackingStore::forEachObjectStoreRecord):
+        (WebCore::IDBSQLiteBackingStore::getIndexes):
+        (WebCore::IDBSQLiteBackingStore::createIndex):
+        (WebCore::IDBSQLiteBackingStore::deleteIndex):
+        (WebCore::IDBSQLiteBackingStore::putIndexDataForRecord):
+        (WebCore::IDBSQLiteBackingStore::deleteIndexDataForRecord):
+        (WebCore::IDBSQLiteBackingStore::getObjectViaIndex):
+        (WebCore::IDBSQLiteBackingStore::getPrimaryKeyViaIndex):
+        (WebCore::IDBSQLiteBackingStore::keyExistsInIndex):
+        (WebCore::IDBSQLiteBackingStore::openObjectStoreCursor):
+        (WebCore::IDBSQLiteBackingStore::openIndexKeyCursor):
+        (WebCore::IDBSQLiteBackingStore::openIndexCursor):
+        * storage/IDBSQLiteBackingStore.h:
+
 2011-04-11  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

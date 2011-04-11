@@ -173,7 +173,7 @@ PassRefPtr<IDBBackingStore> IDBSQLiteBackingStore::open(SecurityOrigin* security
     if (!pathBase.isEmpty()) {
         if (!makeAllDirectories(pathBase)) {
             // FIXME: Is there any other thing we could possibly do to recover at this point? If so, do it rather than just erroring out.
-            LOG_ERROR("Unabled to create LocalStorage database path %s", pathBase.utf8().data());
+            LOG_ERROR("Unable to create Indexed DB database path %s", pathBase.utf8().data());
             return 0;
         }
         path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb");
@@ -263,7 +263,7 @@ void IDBSQLiteBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>&
     }
 }
 
-bool IDBSQLiteBackingStore::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, int64_t databaseId, int64_t& assignedObjectStoreId)
+bool IDBSQLiteBackingStore::createObjectStore(int64_t databaseId, const String& name, const String& keyPath, bool autoIncrement, int64_t& assignedObjectStoreId)
 {
     SQLiteStatement query(m_db, "INSERT INTO ObjectStores (name, keyPath, doAutoIncrement, databaseId) VALUES (?, ?, ?, ?)");
     if (query.prepare() != SQLResultOk)
@@ -291,12 +291,32 @@ static void doDelete(SQLiteDatabase& db, const char* sql, int64_t id)
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
 }
 
-void IDBSQLiteBackingStore::deleteObjectStore(int64_t objectStoreId)
+void IDBSQLiteBackingStore::deleteObjectStore(int64_t, int64_t objectStoreId)
 {
     doDelete(m_db, "DELETE FROM ObjectStores WHERE id = ?", objectStoreId);
     doDelete(m_db, "DELETE FROM ObjectStoreData WHERE objectStoreId = ?", objectStoreId);
     doDelete(m_db, "DELETE FROM IndexData WHERE indexId IN (SELECT id FROM Indexes WHERE objectStoreId = ?)", objectStoreId);
     doDelete(m_db, "DELETE FROM Indexes WHERE objectStoreId = ?", objectStoreId);
+}
+
+namespace {
+class SQLiteRecordIdentifier : public IDBBackingStore::ObjectStoreRecordIdentifier {
+public:
+    static PassRefPtr<SQLiteRecordIdentifier> create() { return adoptRef(new SQLiteRecordIdentifier()); }
+    static PassRefPtr<SQLiteRecordIdentifier> create(int64_t id) { return adoptRef(new SQLiteRecordIdentifier(id)); }
+    virtual bool isValid() const { return m_id != -1; }
+    int64_t id() const { return m_id; }
+    void setId(int64_t id) { m_id = id; }
+private:
+    SQLiteRecordIdentifier() : m_id(-1) { }
+    SQLiteRecordIdentifier(int64_t id) : m_id(id) { }
+    int64_t m_id;
+};
+}
+
+PassRefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> IDBSQLiteBackingStore::createInvalidRecordIdentifier()
+{
+    return SQLiteRecordIdentifier::create();
 }
 
 static String whereSyntaxForKey(const IDBKey& key, String qualifiedTableName = "")
@@ -373,7 +393,7 @@ static String upperCursorWhereFragment(const IDBKey& key, String comparisonOpera
     return "";
 }
 
-String IDBSQLiteBackingStore::getObjectStoreRecord(int64_t objectStoreId, const IDBKey& key)
+String IDBSQLiteBackingStore::getObjectStoreRecord(int64_t, int64_t objectStoreId, const IDBKey& key)
 {
     SQLiteStatement query(m_db, "SELECT keyString, keyDate, keyNumber, value FROM ObjectStoreData WHERE objectStoreId = ? AND " + whereSyntaxForKey(key));
     bool ok = query.prepare() == SQLResultOk;
@@ -422,58 +442,54 @@ static void bindKeyToQueryWithNulls(SQLiteStatement& query, int baseColumn, cons
     }
 }
 
-bool IDBSQLiteBackingStore::putObjectStoreRecord(int64_t objectStoreId, const IDBKey& key, const String& value, int64_t& rowId, bool invalidRowId)
+bool IDBSQLiteBackingStore::putObjectStoreRecord(int64_t, int64_t objectStoreId, const IDBKey& key, const String& value, ObjectStoreRecordIdentifier* recordIdentifier)
 {
-    String sql = !invalidRowId ? "UPDATE ObjectStoreData SET keyString = ?, keyDate = ?, keyNumber = ?, value = ? WHERE id = ?"
-                               : "INSERT INTO ObjectStoreData (keyString, keyDate, keyNumber, value, objectStoreId) VALUES (?, ?, ?, ?, ?)";
+    SQLiteRecordIdentifier* sqliteRecordIdentifier = static_cast<SQLiteRecordIdentifier*>(recordIdentifier);
+
+    String sql = sqliteRecordIdentifier->isValid() ? "UPDATE ObjectStoreData SET keyString = ?, keyDate = ?, keyNumber = ?, value = ? WHERE id = ?"
+                                                   : "INSERT INTO ObjectStoreData (keyString, keyDate, keyNumber, value, objectStoreId) VALUES (?, ?, ?, ?, ?)";
     SQLiteStatement query(m_db, sql);
     if (query.prepare() != SQLResultOk)
         return false;
 
     bindKeyToQueryWithNulls(query, 1, key);
     query.bindBlob(4, value);
-    if (!invalidRowId)
-        query.bindInt64(5, rowId);
+    if (sqliteRecordIdentifier->isValid())
+        query.bindInt64(5, sqliteRecordIdentifier->id());
     else
         query.bindInt64(5, objectStoreId);
 
     if (query.step() != SQLResultDone)
         return false;
 
-    if (invalidRowId)
-        rowId = m_db.lastInsertRowID();
+    if (!sqliteRecordIdentifier->isValid())
+        sqliteRecordIdentifier->setId(m_db.lastInsertRowID());
 
     return true;
 }
 
-void IDBSQLiteBackingStore::clearObjectStore(int64_t objectStoreId)
+void IDBSQLiteBackingStore::clearObjectStore(int64_t, int64_t objectStoreId)
 {
     doDelete(m_db, "DELETE FROM IndexData WHERE objectStoreDataId IN (SELECT id FROM ObjectStoreData WHERE objectStoreId = ?)", objectStoreId);
     doDelete(m_db, "DELETE FROM ObjectStoreData WHERE objectStoreId = ?", objectStoreId);
 }
 
-void IDBSQLiteBackingStore::deleteObjectStoreRecord(int64_t, int64_t objectStoreDataId)
+void IDBSQLiteBackingStore::deleteObjectStoreRecord(int64_t, int64_t objectStoreId, const ObjectStoreRecordIdentifier* recordIdentifier)
 {
+    const SQLiteRecordIdentifier* sqliteRecordIdentifier = static_cast<const SQLiteRecordIdentifier*>(recordIdentifier);
+    ASSERT(sqliteRecordIdentifier->isValid());
+
     SQLiteStatement osQuery(m_db, "DELETE FROM ObjectStoreData WHERE id = ?");
     bool ok = osQuery.prepare() == SQLResultOk;
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
 
-    osQuery.bindInt64(1, objectStoreDataId);
+    osQuery.bindInt64(1, sqliteRecordIdentifier->id());
 
     ok = osQuery.step() == SQLResultDone;
     ASSERT_UNUSED(ok, ok);
-
-    SQLiteStatement indexQuery(m_db, "DELETE FROM IndexData WHERE objectStoreDataId = ?");
-    ok = indexQuery.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
-
-    indexQuery.bindInt64(1, objectStoreDataId);
-
-    ok = indexQuery.step() == SQLResultDone;
-    ASSERT_UNUSED(ok, ok);
 }
 
-double IDBSQLiteBackingStore::nextAutoIncrementNumber(int64_t objectStoreId)
+double IDBSQLiteBackingStore::nextAutoIncrementNumber(int64_t, int64_t objectStoreId)
 {
     SQLiteStatement query(m_db, "SELECT max(keyNumber) + 1 FROM ObjectStoreData WHERE objectStoreId = ? AND keyString IS NULL AND keyDate IS NULL");
     bool ok = query.prepare() == SQLResultOk;
@@ -487,8 +503,10 @@ double IDBSQLiteBackingStore::nextAutoIncrementNumber(int64_t objectStoreId)
     return query.getColumnDouble(0);
 }
 
-bool IDBSQLiteBackingStore::keyExistsInObjectStore(int64_t objectStoreId, const IDBKey& key, int64_t& foundObjectStoreDataId)
+bool IDBSQLiteBackingStore::keyExistsInObjectStore(int64_t, int64_t objectStoreId, const IDBKey& key, ObjectStoreRecordIdentifier* foundRecordIdentifier)
 {
+    SQLiteRecordIdentifier* sqliteRecordIdentifier = static_cast<SQLiteRecordIdentifier*>(foundRecordIdentifier);
+
     String sql = String("SELECT id FROM ObjectStoreData WHERE objectStoreId = ? AND ") + whereSyntaxForKey(key);
     SQLiteStatement query(m_db, sql);
     bool ok = query.prepare() == SQLResultOk;
@@ -500,11 +518,11 @@ bool IDBSQLiteBackingStore::keyExistsInObjectStore(int64_t objectStoreId, const 
     if (query.step() != SQLResultRow)
         return false;
 
-    foundObjectStoreDataId = query.getColumnInt64(0);
+    sqliteRecordIdentifier->setId(query.getColumnInt64(0));
     return true;
 }
 
-bool IDBSQLiteBackingStore::forEachObjectStoreRecord(int64_t objectStoreId, ObjectStoreRecordCallback& callback)
+bool IDBSQLiteBackingStore::forEachObjectStoreRecord(int64_t, int64_t objectStoreId, ObjectStoreRecordCallback& callback)
 {
     SQLiteStatement query(m_db, "SELECT id, value FROM ObjectStoreData WHERE objectStoreId = ?");
     if (query.prepare() != SQLResultOk)
@@ -515,14 +533,15 @@ bool IDBSQLiteBackingStore::forEachObjectStoreRecord(int64_t objectStoreId, Obje
     while (query.step() == SQLResultRow) {
         int64_t objectStoreDataId = query.getColumnInt64(0);
         String value = query.getColumnBlobAsString(1);
-        if (!callback.callback(objectStoreDataId, value))
+        RefPtr<SQLiteRecordIdentifier> recordIdentifier = SQLiteRecordIdentifier::create(objectStoreDataId);
+        if (!callback.callback(recordIdentifier.get(), value))
             return false;
     }
 
     return true;
 }
 
-void IDBSQLiteBackingStore::getIndexes(int64_t objectStoreId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<String>& foundKeyPaths, Vector<bool>& foundUniqueFlags)
+void IDBSQLiteBackingStore::getIndexes(int64_t, int64_t objectStoreId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<String>& foundKeyPaths, Vector<bool>& foundUniqueFlags)
 {
     SQLiteStatement query(m_db, "SELECT id, name, keyPath, isUnique FROM Indexes WHERE objectStoreId = ?");
     bool ok = query.prepare() == SQLResultOk;
@@ -543,7 +562,7 @@ void IDBSQLiteBackingStore::getIndexes(int64_t objectStoreId, Vector<int64_t>& f
     }
 }
 
-bool IDBSQLiteBackingStore::createIndex(int64_t objectStoreId, const String& name, const String& keyPath, bool isUnique, int64_t& indexId)
+bool IDBSQLiteBackingStore::createIndex(int64_t, int64_t objectStoreId, const String& name, const String& keyPath, bool isUnique, int64_t& indexId)
 {
     SQLiteStatement query(m_db, "INSERT INTO Indexes (objectStoreId, name, keyPath, isUnique) VALUES (?, ?, ?, ?)");
     if (query.prepare() != SQLResultOk)
@@ -561,36 +580,41 @@ bool IDBSQLiteBackingStore::createIndex(int64_t objectStoreId, const String& nam
     return true;
 }
 
-void IDBSQLiteBackingStore::deleteIndex(int64_t indexId)
+void IDBSQLiteBackingStore::deleteIndex(int64_t, int64_t, int64_t indexId)
 {
     doDelete(m_db, "DELETE FROM Indexes WHERE id = ?", indexId);
     doDelete(m_db, "DELETE FROM IndexData WHERE indexId = ?", indexId);
 }
 
-bool IDBSQLiteBackingStore::putIndexDataForRecord(int64_t indexId, const IDBKey& key, int64_t objectStoreDataId)
+bool IDBSQLiteBackingStore::putIndexDataForRecord(int64_t, int64_t, int64_t indexId, const IDBKey& key, const ObjectStoreRecordIdentifier* recordIdentifier)
 {
+    const SQLiteRecordIdentifier* sqliteRecordIdentifier = static_cast<const SQLiteRecordIdentifier*>(recordIdentifier);
+
     SQLiteStatement query(m_db, "INSERT INTO IndexData (keyString, keyDate, keyNumber, indexId, objectStoreDataId) VALUES (?, ?, ?, ?, ?)");
     if (query.prepare() != SQLResultOk)
         return false;
 
     bindKeyToQueryWithNulls(query, 1, key);
     query.bindInt64(4, indexId);
-    query.bindInt64(5, objectStoreDataId);
+    query.bindInt64(5, sqliteRecordIdentifier->id());
 
     return query.step() == SQLResultDone;
 }
 
-bool IDBSQLiteBackingStore::deleteIndexDataForRecord(int64_t objectStoreDataId)
+bool IDBSQLiteBackingStore::deleteIndexDataForRecord(int64_t, int64_t, int64_t indexId, const ObjectStoreRecordIdentifier* recordIdentifier)
 {
-    SQLiteStatement query(m_db, "DELETE FROM IndexData WHERE objectStoreDataId = ?");
+    const SQLiteRecordIdentifier* sqliteRecordIdentifier = static_cast<const SQLiteRecordIdentifier*>(recordIdentifier);
+
+    SQLiteStatement query(m_db, "DELETE FROM IndexData WHERE objectStoreDataId = ? AND indexId = ?");
     if (query.prepare() != SQLResultOk)
         return false;
 
-    query.bindInt64(1, objectStoreDataId);
+    query.bindInt64(1, sqliteRecordIdentifier->id());
+    query.bindInt64(2, indexId);
     return query.step() == SQLResultDone;
 }
 
-String IDBSQLiteBackingStore::getObjectViaIndex(int64_t indexId, const IDBKey& key)
+String IDBSQLiteBackingStore::getObjectViaIndex(int64_t, int64_t, int64_t indexId, const IDBKey& key)
 {
     String sql = String("SELECT ")
                  + "ObjectStoreData.value "
@@ -629,7 +653,7 @@ static PassRefPtr<IDBKey> keyFromQuery(SQLiteStatement& query, int baseColumn)
     return IDBKey::createNull();
 }
 
-PassRefPtr<IDBKey> IDBSQLiteBackingStore::getPrimaryKeyViaIndex(int64_t indexId, const IDBKey& key)
+PassRefPtr<IDBKey> IDBSQLiteBackingStore::getPrimaryKeyViaIndex(int64_t, int64_t, int64_t indexId, const IDBKey& key)
 {
     String sql = String("SELECT ")
                  + "ObjectStoreData.keyString, ObjectStoreData.keyDate, ObjectStoreData.keyNumber "
@@ -651,7 +675,7 @@ PassRefPtr<IDBKey> IDBSQLiteBackingStore::getPrimaryKeyViaIndex(int64_t indexId,
     return foundKey.release();
 }
 
-bool IDBSQLiteBackingStore::keyExistsInIndex(int64_t indexId, const IDBKey& key)
+bool IDBSQLiteBackingStore::keyExistsInIndex(int64_t, int64_t, int64_t indexId, const IDBKey& key)
 {
     String sql = String("SELECT id FROM IndexData WHERE indexId = ? AND ") + whereSyntaxForKey(key);
     SQLiteStatement query(m_db, sql);
@@ -682,7 +706,7 @@ public:
     virtual PassRefPtr<IDBKey> key() { return m_currentKey; }
     virtual PassRefPtr<IDBKey> primaryKey() { return m_currentKey; }
     virtual String value() = 0;
-    virtual int64_t objectStoreDataId() = 0;
+    virtual PassRefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> objectStoreRecordIdentifier() = 0;
     virtual int64_t indexDataId() = 0;
 
     virtual void loadCurrentRow() = 0;
@@ -741,7 +765,7 @@ public:
 
     // CursorImplCommon.
     virtual String value() { return m_currentValue; }
-    virtual int64_t objectStoreDataId() { return m_currentId; }
+    virtual PassRefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> objectStoreRecordIdentifier() { return SQLiteRecordIdentifier::create(m_currentId); }
     virtual int64_t indexDataId() { ASSERT_NOT_REACHED(); return 0; }
     virtual void loadCurrentRow();
     virtual bool currentRowExists();
@@ -779,7 +803,7 @@ public:
     // CursorImplCommon
     virtual PassRefPtr<IDBKey> primaryKey() { return m_currentPrimaryKey; }
     virtual String value() { ASSERT_NOT_REACHED(); return String(); }
-    virtual int64_t objectStoreDataId() { ASSERT_NOT_REACHED(); return 0; }
+    virtual PassRefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> objectStoreRecordIdentifier() { ASSERT_NOT_REACHED(); return 0; }
     virtual int64_t indexDataId() { return m_currentId; }
     virtual void loadCurrentRow();
     virtual bool currentRowExists();
@@ -817,7 +841,7 @@ public:
     // CursorImplCommon
     virtual PassRefPtr<IDBKey> primaryKey() { return m_currentPrimaryKey; }
     virtual String value() { return m_currentValue; }
-    virtual int64_t objectStoreDataId() { ASSERT_NOT_REACHED(); return 0; }
+    virtual PassRefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> objectStoreRecordIdentifier() { ASSERT_NOT_REACHED(); return 0; }
     virtual int64_t indexDataId() { return m_currentId; }
     virtual void loadCurrentRow();
     virtual bool currentRowExists();
@@ -849,7 +873,7 @@ bool IndexCursorImpl::currentRowExists()
 
 } // namespace
 
-PassRefPtr<IDBBackingStore::Cursor> IDBSQLiteBackingStore::openObjectStoreCursor(int64_t objectStoreId, const IDBKeyRange* range, IDBCursor::Direction direction)
+PassRefPtr<IDBBackingStore::Cursor> IDBSQLiteBackingStore::openObjectStoreCursor(int64_t, int64_t objectStoreId, const IDBKeyRange* range, IDBCursor::Direction direction)
 {
     bool lowerBound = range && range->lower();
     bool upperBound = range && range->upper();
@@ -886,7 +910,7 @@ PassRefPtr<IDBBackingStore::Cursor> IDBSQLiteBackingStore::openObjectStoreCursor
     return cursor.release();
 }
 
-PassRefPtr<IDBBackingStore::Cursor> IDBSQLiteBackingStore::openIndexKeyCursor(int64_t indexId, const IDBKeyRange* range, IDBCursor::Direction direction)
+PassRefPtr<IDBBackingStore::Cursor> IDBSQLiteBackingStore::openIndexKeyCursor(int64_t, int64_t, int64_t indexId, const IDBKeyRange* range, IDBCursor::Direction direction)
 {
     String sql = String("SELECT IndexData.id, IndexData.keyString, IndexData.keyDate, IndexData.keyNumber, ")
                  + ("ObjectStoreData.keyString, ObjectStoreData.keyDate, ObjectStoreData.keyNumber ")
@@ -926,7 +950,7 @@ PassRefPtr<IDBBackingStore::Cursor> IDBSQLiteBackingStore::openIndexKeyCursor(in
     return cursor.release();
 }
 
-PassRefPtr<IDBBackingStore::Cursor> IDBSQLiteBackingStore::openIndexCursor(int64_t indexId, const IDBKeyRange* range, IDBCursor::Direction direction)
+PassRefPtr<IDBBackingStore::Cursor> IDBSQLiteBackingStore::openIndexCursor(int64_t, int64_t, int64_t indexId, const IDBKeyRange* range, IDBCursor::Direction direction)
 {
     String sql = String("SELECT IndexData.id, IndexData.keyString, IndexData.keyDate, IndexData.keyNumber, ")
                  + ("ObjectStoreData.value, ObjectStoreData.keyString, ObjectStoreData.keyDate, ObjectStoreData.keyNumber ")

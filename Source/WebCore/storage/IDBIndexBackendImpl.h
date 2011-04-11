@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,13 +40,13 @@ class ScriptExecutionContext;
 
 class IDBIndexBackendImpl : public IDBIndexBackendInterface {
 public:
-    static PassRefPtr<IDBIndexBackendImpl> create(IDBBackingStore* backingStore, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique)
+    static PassRefPtr<IDBIndexBackendImpl> create(IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreBackendImpl* objectStoreBackend, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique)
     {
-        return adoptRef(new IDBIndexBackendImpl(backingStore, id, name, storeName, keyPath, unique));
+        return adoptRef(new IDBIndexBackendImpl(backingStore, databaseId, objectStoreBackend, id, name, storeName, keyPath, unique));
     }
-    static PassRefPtr<IDBIndexBackendImpl> create(IDBBackingStore* backingStore, const String& name, const String& storeName, const String& keyPath, bool unique)
+    static PassRefPtr<IDBIndexBackendImpl> create(IDBBackingStore* backingStore, int64_t databaseId, const IDBObjectStoreBackendImpl* objectStoreBackend, const String& name, const String& storeName, const String& keyPath, bool unique)
     {
-        return adoptRef(new IDBIndexBackendImpl(backingStore, name, storeName, keyPath, unique));
+        return adoptRef(new IDBIndexBackendImpl(backingStore, databaseId, objectStoreBackend, name, storeName, keyPath, unique));
     }
     virtual ~IDBIndexBackendImpl();
 
@@ -72,8 +72,8 @@ public:
     virtual void getKey(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
 private:
-    IDBIndexBackendImpl(IDBBackingStore*, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique);
-    IDBIndexBackendImpl(IDBBackingStore*, const String& name, const String& storeName, const String& keyPath, bool unique);
+    IDBIndexBackendImpl(IDBBackingStore*, int64_t databaseId, const IDBObjectStoreBackendImpl*, int64_t id, const String& name, const String& storeName, const String& keyPath, bool unique);
+    IDBIndexBackendImpl(IDBBackingStore*, int64_t databaseId, const IDBObjectStoreBackendImpl*, const String& name, const String& storeName, const String& keyPath, bool unique);
 
     static void openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, unsigned short direction, IDBCursorBackendInterface::CursorType, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
     static void getInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKey>, bool getObject, PassRefPtr<IDBCallbacks>);
@@ -82,6 +82,8 @@ private:
 
     RefPtr<IDBBackingStore> m_backingStore;
 
+    int64_t m_databaseId;
+    const IDBObjectStoreBackendImpl* m_objectStoreBackend;
     int64_t m_id;
     String m_name;
     String m_storeName;

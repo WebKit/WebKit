@@ -23,19 +23,24 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBSQLiteBackingStore_h
-#define IDBSQLiteBackingStore_h
+#ifndef IDBLevelDBBackingStore_h
+#define IDBLevelDBBackingStore_h
 
 #if ENABLE(INDEXED_DATABASE)
+#if ENABLE(LEVELDB)
 
 #include "IDBBackingStore.h"
+#include <wtf/OwnPtr.h>
 
+namespace leveldb {
+class DB;
+}
 namespace WebCore {
 
-class IDBSQLiteBackingStore : public IDBBackingStore {
+class IDBLevelDBBackingStore : public IDBBackingStore {
 public:
     static PassRefPtr<IDBBackingStore> open(SecurityOrigin*, const String& pathBase, int64_t maximumSize, const String& fileIdentifier, IDBFactoryBackendImpl*);
-    virtual ~IDBSQLiteBackingStore();
+    virtual ~IDBLevelDBBackingStore();
 
     virtual bool extractIDBDatabaseMetaData(const String& name, String& foundVersion, int64_t& foundId);
     virtual bool setIDBDatabaseMetaData(const String& name, const String& version, int64_t& rowId, bool invalidRowId);
@@ -69,15 +74,17 @@ public:
     virtual PassRefPtr<Transaction> createTransaction();
 
 private:
-    IDBSQLiteBackingStore(String identifier, IDBFactoryBackendImpl*);
+    IDBLevelDBBackingStore(String identifier, IDBFactoryBackendImpl*, leveldb::DB*);
 
-    SQLiteDatabase m_db;
     String m_identifier;
     RefPtr<IDBFactoryBackendImpl> m_factory;
+    OwnPtr<leveldb::DB> m_db;
 };
 
 } // namespace WebCore
 
-#endif
 
-#endif // IDBSQLiteBackingStore_h
+#endif // ENABLE(LEVELDB)
+#endif // ENABLE(INDEXED_DATABASE)
+
+#endif // IDBLevelDBBackingStore_h

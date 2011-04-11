@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -57,11 +57,7 @@ public:
     };
 
     // The WebKit implementation of open ignores the WebFrame* parameter.
-    // FIXME: Assert not reached when Chromium side is updated.
-    virtual void open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType) { open(name, callbacks, origin, frame, dataDir, maximumSize); }
-
-    // FIXME: Remove this when Chromium side is updated.
-    virtual void open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir, unsigned long long maximumSize) { open(name, callbacks, origin, frame, dataDir, maximumSize, DefaultBackingStore); }
+    virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType) { WEBKIT_ASSERT_NOT_REACHED(); }
 
     virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 };

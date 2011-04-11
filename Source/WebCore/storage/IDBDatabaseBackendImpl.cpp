@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -97,7 +97,7 @@ PassRefPtr<DOMStringList> IDBDatabaseBackendImpl::objectStoreNames() const
     return objectStoreNames.release();
 }
 
-PassRefPtr<IDBObjectStoreBackendInterface>  IDBDatabaseBackendImpl::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
+PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     ASSERT(transactionPtr->mode() == IDBTransaction::VERSION_CHANGE);
 
@@ -106,7 +106,7 @@ PassRefPtr<IDBObjectStoreBackendInterface>  IDBDatabaseBackendImpl::createObject
         return 0;
     }
 
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(m_backingStore.get(), name, keyPath, autoIncrement);
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(m_backingStore.get(), m_id, name, keyPath, autoIncrement);
     ASSERT(objectStore->name() == name);
 
     RefPtr<IDBDatabaseBackendImpl> database = this;
@@ -125,7 +125,7 @@ void IDBDatabaseBackendImpl::createObjectStoreInternal(ScriptExecutionContext*, 
 {
     int64_t objectStoreId;
 
-    if (!database->m_backingStore->createObjectStore(objectStore->name(), objectStore->keyPath(), objectStore->autoIncrement(), database->id(), objectStoreId)) {
+    if (!database->m_backingStore->createObjectStore(database->id(), objectStore->name(), objectStore->keyPath(), objectStore->autoIncrement(), objectStoreId)) {
         transaction->abort();
         return;
     }
@@ -158,7 +158,7 @@ void IDBDatabaseBackendImpl::deleteObjectStore(const String& name, IDBTransactio
 
 void IDBDatabaseBackendImpl::deleteObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
-    database->m_backingStore->deleteObjectStore(objectStore->id());
+    database->m_backingStore->deleteObjectStore(database->id(), objectStore->id());
     transaction->didCompleteTaskEvents();
 }
 
@@ -250,7 +250,7 @@ void IDBDatabaseBackendImpl::loadObjectStores()
     ASSERT(autoIncrementFlags.size() == ids.size());
 
     for (size_t i = 0; i < ids.size(); i++)
-        m_objectStores.set(names[i], IDBObjectStoreBackendImpl::create(m_backingStore.get(), ids[i], names[i], keyPaths[i], autoIncrementFlags[i]));
+        m_objectStores.set(names[i], IDBObjectStoreBackendImpl::create(m_backingStore.get(), m_id, ids[i], names[i], keyPaths[i], autoIncrementFlags[i]));
 }
 
 void IDBDatabaseBackendImpl::removeObjectStoreFromMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore)
