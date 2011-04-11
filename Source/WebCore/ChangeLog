@@ -1,5 +1,15 @@
 2011-04-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Revert the FloatRect.cpp part of r83422, since
+        clampToInteger() is broken for some inputs. I filed
+        https://bugs.webkit.org/show_bug.cgi?id=58216
+
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::safeFloatToInt):
+        (WebCore::enclosingIntRect):
+
+2011-04-10  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Maciej Stachowiak.
 
         Car model dropdowns at audiusa.com lay out incorrectly with compositing enabled
