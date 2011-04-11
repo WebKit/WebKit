@@ -38,6 +38,7 @@ struct _WebKitWebPluginPrivate {
     RefPtr<WebCore::PluginPackage> corePlugin;
     CString name;
     CString description;
+    char* path;
     GSList* mimeTypes;
 };
 

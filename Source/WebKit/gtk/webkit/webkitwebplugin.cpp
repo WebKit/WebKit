@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2010 Igalia S.L.
+ *  Copyright (C) 2011 Gustavo Noronha Silva <gns@gnome.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -61,6 +62,8 @@ static void webkit_web_plugin_finalize(GObject* object)
 {
     WebKitWebPlugin* plugin = WEBKIT_WEB_PLUGIN(object);
     WebKitWebPluginPrivate* priv = plugin->priv;
+
+    g_free(priv->path);
 
     g_slist_foreach(priv->mimeTypes, (GFunc)freeMIMEType, 0);
     g_slist_free(priv->mimeTypes);
@@ -171,6 +174,43 @@ const char* webkit_web_plugin_get_description(WebKitWebPlugin* plugin)
 
     return priv->description.data();
 }
+
+/**
+ * webkit_web_plugin_get_path:
+ * @plugin: a #WebKitWebPlugin
+ *
+ * Returns: the absolute path to @plugin in system filename encoding
+ * or %NULL on failure to convert the filename from UTF-8.
+ *
+ * Since: 1.4.0
+ */
+const char* webkit_web_plugin_get_path(WebKitWebPlugin* plugin)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_PLUGIN(plugin), 0);
+
+    WebKitWebPluginPrivate* priv = plugin->priv;
+
+    if (priv->path)
+        return priv->path;
+
+    GError* error = 0;
+    priv->path = g_filename_from_utf8(priv->corePlugin->path().utf8().data(), -1, 0, 0, &error);
+
+    if (!error)
+        return priv->path;
+
+    // In the unlikely case the convertion fails, report the error and make sure we free
+    // any partial convertion that ended up in the variable.
+    g_free(priv->path);
+    priv->path = 0;
+
+    g_warning("Failed to convert '%s' to system filename encoding: %s", priv->corePlugin->path().utf8().data(), error->message);
+
+    g_clear_error(&error);
+
+    return 0;
+}
+
 
 /**
  * webkit_web_plugin_get_mimetypes:
