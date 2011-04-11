@@ -1,3 +1,13 @@
+2011-04-05  Stephen White  <senorblanco@chromium.org>
+
+        Fix for jittering when animating a rotated image.
+        https://bugs.webkit.org/show_bug.cgi?id=50775
+
+        Make GraphicsContext::roundToDevicePixels a no-op on Chrome/Mac.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::roundToDevicePixels):
+
 2011-04-06  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Ryosuke Niwa.
