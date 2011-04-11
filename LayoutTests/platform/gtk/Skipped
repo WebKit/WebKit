@@ -936,8 +936,10 @@ editing/selection/5354455-2.html
 media/controls-right-click-on-timebar.html
 
 # Gtk doesn't implement dumpResourceResponseMIMETypes which is required for the preloader tests.
+# https://bugs.webkit.org/show_bug.cgi?id=58222
 fast/preloader
 http/tests/mime/uppercase-mime-type.html
+http/tests/loading/preload-append-scan.php
 
 # SVG tests that seem to produce incorrect output
 svg/custom/marker-strokeWidth-changes.svg

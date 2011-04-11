@@ -1,3 +1,9 @@
+2011-04-11  Alejandro G. Castro  <alex@igalia.com>
+
+        Skipped another test that requires dumpResourceResponseMIMETypes.
+
+        * platform/gtk/Skipped:
+
 2011-04-11  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update test expectation.
