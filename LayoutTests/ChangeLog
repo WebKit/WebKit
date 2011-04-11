@@ -1,3 +1,11 @@
+2011-04-11  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        Mark failed tests in chromium that could be caused by r83514 & r83518.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-11  Chris Marrin  <cmarrin@apple.com>
 
         Rubberstamped by Dan Bernstein.

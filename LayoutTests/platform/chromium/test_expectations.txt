@@ -1362,7 +1362,8 @@ BUGCR23473 MAC : fast/repaint/table-two-pass-layout-overpaint.html = IMAGE
 BUGCR23473 MAC : fast/repaint/text-append-dirty-lines.html = IMAGE
 BUGCR23473 MAC : fast/repaint/text-selection-rect-in-overflow-2.html = IMAGE
 BUGCR23473 MAC : fast/repaint/text-selection-rect-in-overflow.html = IMAGE
-BUGCR23473 MAC : fast/repaint/trailing-floats-root-line-box-overflow.html = IMAGE
+// Win/Linux also failed after r83514.
+BUGCR23473 : fast/repaint/trailing-floats-root-line-box-overflow.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-absolute-child.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-absolute-in-positioned-container.html = IMAGE
 BUGCR23473 MAC : fast/repaint/transform-disable-layoutstate.html = IMAGE
@@ -3475,3 +3476,12 @@ BUGWK58193 WIN VISTA : svg/zoom/page/zoom-mask-with-percentages.svg = TEXT
 
 // Added in Webkit r83470 without expected results.
 BUGJIANLI : fast/multicol/huge-column-count.html = MISSING
+
+// Regression caused by r83514.
+BUGCR79110 WIN LINUX : fast/block/float/021.html = TEXT
+BUGCR79110 WIN LINUX : fast/overflow/infiniteRecursionGuard.html = IMAGE+TEXT
+
+// Regression caused by r83518.
+BUGCR79111 GPU WIN LINUX : fast/canvas/DrawImageSinglePixelStretch.html = TEXT
+BUGCR79111 GPU : compositing/framesets/composited-frame-alignment.html = IMAGE
+BUGCR79111 GPU : compositing/objects/composited-object-alignment.html = IMAGE
