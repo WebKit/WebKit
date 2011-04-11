@@ -417,7 +417,7 @@ bool InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* resul
             InspectorStyleProperty p(*it, true, false);
             p.setRawTextFromStyleDeclaration(styleDeclaration);
             result->append(p);
-            sourcePropertyNames.add(it->name);
+            sourcePropertyNames.add(it->name.lower());
         }
     }
 
@@ -428,10 +428,10 @@ bool InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* resul
 
     for (int i = 0, size = m_style->length(); i < size; ++i) {
         String name = m_style->item(i);
-        if (sourcePropertyNames.contains(name))
+        if (sourcePropertyNames.contains(name.lower()))
             continue;
 
-        sourcePropertyNames.add(name);
+        sourcePropertyNames.add(name.lower());
         result->append(InspectorStyleProperty(CSSPropertySourceData(name, m_style->getPropertyValue(name), !m_style->getPropertyPriority(name).isEmpty(), true, SourceRange()), false, false));
     }
 

@@ -1,3 +1,13 @@
+2011-04-11  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Duplicate CSS properties are reported for non-lowercase property names in the Styles sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=58226
+
+        * inspector/styles/get-set-stylesheet-text-expected.txt:
+        * inspector/styles/get-set-stylesheet-text.html:
+
 2011-04-11  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Benjamin Poulain.

@@ -51,7 +51,7 @@ function test()
 
         InspectorTest.addResult("=== Original stylesheet text: ===");
         InspectorTest.addResult(foundStyleSheet.getText());
-        foundStyleSheet.setText("h1 { color: red; }", callback);
+        foundStyleSheet.setText("h1 { COLOR: Red; }", callback);
     }
 
     function testNewElementStyles()
