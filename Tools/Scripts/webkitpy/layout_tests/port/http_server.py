@@ -214,7 +214,7 @@ class Lighttpd(http_server_base.HttpServerBase):
         env = self._port_obj.setup_environ_for_server()
         _log.debug('Starting http server, cmd="%s"' % str(start_cmd))
         # FIXME: Should use Executive.run_command
-        self._process = subprocess.Popen(start_cmd, env=env)
+        self._process = subprocess.Popen(start_cmd, env=env, stdin=subprocess.PIPE)
 
         # Wait for server to start.
         self.mappings = mappings

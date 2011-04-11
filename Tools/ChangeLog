@@ -1,5 +1,20 @@
 2011-04-11  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Adam Roben.
+
+        new-run-webkit-tests: fix crash when running under windows cmd.exe
+        https://bugs.webkit.org/show_bug.cgi?id=58197
+
+        We would intermittently crash when running NRWT directly under
+        cmd.exe on windows because we were sharing the stdin file
+        descriptor between the python process and the http server.
+        cmd.exe really didn't like that, and there was no reason to
+        share the descriptor, so we now use a PIPE instead.
+
+        * Scripts/webkitpy/layout_tests/port/http_server.py:
+
+2011-04-11  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Ojan Vafai.
 
         new-run-webkit-tests: add unit tests for Port.diff_image()
