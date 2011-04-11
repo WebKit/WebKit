@@ -78,4 +78,6 @@ collections {
 #include "widget/slider/slider.edc"
 #include "widget/mediacontrol/playpausebutton/playpause_button.edc"
 #include "widget/mediacontrol/mutebutton/mute_button.edc"
+#include "widget/mediacontrol/seekforwardbutton/seekforward_button.edc"
+#include "widget/mediacontrol/seekbackwardbutton/seekbackward_button.edc"
 }

@@ -606,6 +606,8 @@ const char* RenderThemeEfl::edjeGroupFromFormType(FormType type) const
 #if ENABLE(VIDEO)
         W("mediacontrol/playpause_button"),
         W("mediacontrol/mute_button"),
+        W("mediacontrol/seekforward_button"),
+        W("mediacontrol/seekbackward_button"),
 #endif
 #undef W
         0
@@ -1076,7 +1078,11 @@ bool RenderThemeEfl::emitMediaButtonSignal(FormType formType, MediaControlElemen
         edje_object_signal_emit(entry->o, "mute", "");
     else if (mediaElementType == MediaUnMuteButton)
         edje_object_signal_emit(entry->o, "sound", "");
-    else 
+    else if (mediaElementType == MediaSeekForwardButton)
+        edje_object_signal_emit(entry->o, "seekforward", "");
+    else if (mediaElementType == MediaSeekBackButton)
+        edje_object_signal_emit(entry->o, "seekbackward", "");
+    else
         return false;
 
     return true;
@@ -1107,35 +1113,49 @@ bool RenderThemeEfl::paintMediaMuteButton(RenderObject* object, const PaintInfo&
 
     HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
 
-    if (!emitMediaButtonSignal(MediaMuteUnMuteButton, mediaElement->muted() ? MediaMuteButton : MediaUnMuteButton, rect))
+    if (!emitMediaButtonSignal(MuteUnMuteButton, mediaElement->muted() ? MediaMuteButton : MediaUnMuteButton, rect))
         return false;
 
-    return paintThemePart(object, MediaMuteUnMuteButton, info, rect);
+    return paintThemePart(object, MuteUnMuteButton, info, rect);
 }
 
 bool RenderThemeEfl::paintMediaPlayButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     Node* node = object->node();
-    if (!node)
+    if (!node || !node->isMediaControlElement())
         return false;
 
     MediaControlPlayButtonElement* button = static_cast<MediaControlPlayButtonElement*>(node);
-    if (!emitMediaButtonSignal(MediaPlayPauseButton, button->displayType(), rect))
+    if (!emitMediaButtonSignal(PlayPauseButton, button->displayType(), rect))
         return false;
 
-    return paintThemePart(object, MediaPlayPauseButton, info, rect);
+    return paintThemePart(object, PlayPauseButton, info, rect);
 }
 
 bool RenderThemeEfl::paintMediaSeekBackButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    notImplemented();
-    return false;
+    Node* node = object->node();
+    if (!node || !node->isMediaControlElement())
+        return 0;
+
+    MediaControlSeekButtonElement* button = static_cast<MediaControlSeekButtonElement*>(node);
+    if (!emitMediaButtonSignal(SeekBackwardButton, button->displayType(), rect))
+        return false;
+
+    return paintThemePart(object, SeekBackwardButton, info, rect);
 }
 
 bool RenderThemeEfl::paintMediaSeekForwardButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    notImplemented();
-    return false;
+    Node* node = object->node();
+    if (!node || !node->isMediaControlElement())
+        return 0;
+
+    MediaControlSeekButtonElement* button = static_cast<MediaControlSeekButtonElement*>(node);
+    if (!emitMediaButtonSignal(SeekForwardButton, button->displayType(), rect))
+        return false;
+
+    return paintThemePart(object, SeekForwardButton, info, rect);
 }
 
 bool RenderThemeEfl::paintMediaSliderTrack(RenderObject* object, const PaintInfo& info, const IntRect& rect)

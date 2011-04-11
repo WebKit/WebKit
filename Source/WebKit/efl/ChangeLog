@@ -1,3 +1,18 @@
+2011-04-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Eric Carlson.
+
+        [EFL] Add seek forward / backward buttons to MediaControl UI.
+        https://bugs.webkit.org/show_bug.cgi?id=56810
+
+        Add seek forward / backward buttons to media control.
+
+        * DefaultTheme/default.edc:
+        * DefaultTheme/widget/mediacontrol/seekbackwardbutton/seekbackward_button.edc: Added.
+        * DefaultTheme/widget/mediacontrol/seekbackwardbutton/seekbackwardbutton.png: Added.
+        * DefaultTheme/widget/mediacontrol/seekforwardbutton/seekforward_button.edc: Added.
+        * DefaultTheme/widget/mediacontrol/seekforwardbutton/seekforwardbutton.png: Added.
+
 2011-04-04  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.
