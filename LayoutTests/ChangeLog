@@ -1,3 +1,41 @@
+2011-04-11  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, rolling out r83500.
+        http://trac.webkit.org/changeset/83500
+        https://bugs.webkit.org/show_bug.cgi?id=57113
+
+        Regresses huge-layer-rotated test
+
+        * platform/chromium-gpu-linux/compositing/color-matching/image-color-matching-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/horizontal-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/vertical-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/text-on-large-layer-expected.checksum:
+        * platform/chromium-gpu-linux/compositing/text-on-large-layer-expected.png:
+        * platform/chromium-gpu-mac/compositing/color-matching/image-color-matching-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/horizontal-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/vertical-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-mac/compositing/overflow/overflow-scroll-expected.png:
+        * platform/chromium-gpu-mac/compositing/text-on-large-layer-expected.checksum:
+        * platform/chromium-gpu-mac/compositing/text-on-large-layer-expected.png:
+        * platform/chromium-gpu-win/compositing/color-matching/image-color-matching-expected.checksum:
+        * platform/chromium-gpu-win/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/horizontal-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-win/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/vertical-scroll-composited-expected.checksum:
+        * platform/chromium-gpu-win/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/overflow/overflow-scroll-expected.checksum:
+        * platform/chromium-gpu-win/compositing/overflow/overflow-scroll-expected.png:
+        * platform/chromium-gpu-win/compositing/text-on-large-layer-expected.checksum:
+        * platform/chromium-gpu-win/compositing/text-on-large-layer-expected.png:
+        * platform/chromium-gpu/compositing/tiling/huge-layer-img-expected.checksum: Removed.
+        * platform/chromium-gpu/compositing/tiling/huge-layer-img-expected.png: Removed.
+
 2011-04-11  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; new chromium baselines.

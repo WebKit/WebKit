@@ -35,7 +35,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "LayerChromium.h"
-#include "LayerTilerChromium.h"
+#include "PlatformCanvas.h"
 #include "TextureManager.h"
 
 namespace WebCore {
@@ -46,43 +46,43 @@ class LayerTexture;
 class ContentLayerChromium : public LayerChromium {
     friend class LayerRendererChromium;
 public:
-    enum TilingOption { AlwaysTile, NeverTile, AutoTile };
-
     static PassRefPtr<ContentLayerChromium> create(GraphicsLayerChromium* owner = 0);
 
     virtual ~ContentLayerChromium();
 
-    virtual void paintContentsIfDirty(const IntRect& targetSurfaceRect);
+    virtual void paintContentsIfDirty();
     virtual void updateCompositorResources();
-    virtual void setIsMask(bool);
     virtual void unreserveContentsTexture();
     virtual void bindContentsTexture();
 
-    virtual void draw(const IntRect& targetSurfaceRect);
-    virtual bool drawsContent() const { return m_owner && m_owner->drawsContent() && (!m_tiler || !m_tiler->skipsDraw()); }
+    virtual void draw();
+    virtual bool drawsContent() const { return m_owner && m_owner->drawsContent(); }
+
+    typedef ProgramBinding<VertexShaderPosTex, FragmentShaderTexAlpha> Program;
 
 protected:
     explicit ContentLayerChromium(GraphicsLayerChromium* owner);
 
+    virtual void cleanupResources();
+    bool requiresClippedUpdateRect();
+    void resizeUploadBuffer(const IntSize&);
+
     virtual const char* layerTypeAsString() const { return "ContentLayer"; }
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
-    virtual void setLayerRenderer(LayerRendererChromium*);
+    OwnPtr<LayerTexture> m_contentsTexture;
+    bool m_skipsDraw;
 
-    virtual IntRect layerBounds() const;
+    // The portion of the upload buffer that has a pending update, in the coordinates of the texture.
+    IntRect m_uploadUpdateRect;
 
-    virtual TransformationMatrix tilingTransform();
+    virtual void updateTextureIfNeeded();
+    void updateTexture(const uint8_t* pixels, const IntSize&);
 
-    // For a given render surface rect that this layer will be transformed and
-    // drawn into, return the layer space rect that is visible in that surface.
-    IntRect visibleLayerRect(const IntRect&);
+private:
+    PlatformCanvas m_canvas;
 
-    void updateLayerSize(const IntSize&);
-    void createTilerIfNeeded();
-    void setTilingOption(TilingOption);
-
-    OwnPtr<LayerTilerChromium> m_tiler;
-    TilingOption m_tilingOption;
+    IntRect m_visibleRectInLayerCoords;
 };
 
 }

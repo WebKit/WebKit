@@ -52,7 +52,7 @@ public:
 
     bool prepareContentsTexture();
     void cleanupResources();
-    void draw(const IntRect& targetSurfaceRect);
+    void draw();
 
     String name() const;
     void dumpSurface(TextStream&, int indent) const;

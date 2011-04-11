@@ -59,7 +59,7 @@ public:
     CCLayerImpl* maskLayer() const;
     CCLayerImpl* replicaLayer() const;
 
-    virtual void draw(const IntRect& contentRect);
+    virtual void draw();
     virtual void updateCompositorResources();
     void unreserveContentsTexture();
     void bindContentsTexture();
@@ -205,3 +205,4 @@ private:
 }
 
 #endif // CCLayerImpl_h
+

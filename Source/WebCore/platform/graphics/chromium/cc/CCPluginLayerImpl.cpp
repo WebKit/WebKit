@@ -46,7 +46,7 @@ CCPluginLayerImpl::~CCPluginLayerImpl()
 {
 }
 
-void CCPluginLayerImpl::draw(const IntRect&)
+void CCPluginLayerImpl::draw()
 {
     ASSERT(layerRenderer());
     const CCPluginLayerImpl::Program* program = layerRenderer()->pluginLayerProgram();
@@ -81,3 +81,4 @@ void CCPluginLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)
+

@@ -41,14 +41,6 @@
 #include "RenderLayerBacking.h"
 #include "TextStream.h"
 
-// Maximum size the width or height of this layer can be before enabling tiling
-// when m_tilingOption == AutoTile.
-static int maxUntiledSize = 512;
-// When tiling is enabled, use tiles of this dimension squared.
-static int defaultTileSize = 256;
-
-using namespace std;
-
 namespace WebCore {
 
 PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(GraphicsLayerChromium* owner)
@@ -58,169 +50,240 @@ PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(GraphicsLayerChrom
 
 ContentLayerChromium::ContentLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
-    , m_tilingOption(ContentLayerChromium::AutoTile)
+    , m_contentsTexture(0)
+    , m_skipsDraw(false)
 {
 }
 
 ContentLayerChromium::~ContentLayerChromium()
 {
-    m_tiler.clear();
-    LayerChromium::cleanupResources();
+    cleanupResources();
 }
 
-class ContentLayerPainter : public TilePaintInterface {
-public:
-    explicit ContentLayerPainter(GraphicsLayerChromium* owner)
-        : m_owner(owner)
-    {
-    }
+void ContentLayerChromium::cleanupResources()
+{
+    LayerChromium::cleanupResources();
+    m_contentsTexture.clear();
+}
 
-    virtual void paint(GraphicsContext& context, const IntRect& contentRect)
-    {
-        context.save();
-        context.clearRect(contentRect);
-        context.clip(contentRect);
-        m_owner->paintGraphicsLayerContents(context, contentRect);
-        context.restore();
-    }
-private:
-    GraphicsLayerChromium* m_owner;
-};
+bool ContentLayerChromium::requiresClippedUpdateRect()
+{
+    // To avoid allocating excessively large textures, switch into "large layer mode" if
+    // one of the layer's dimensions is larger than 2000 pixels or the size of
+    // surface it's rendering into. This is a temporary measure until layer tiling is implemented.
+    static const int maxLayerSize = 2000;
+    return (bounds().width() > max(maxLayerSize, ccLayerImpl()->targetRenderSurface()->contentRect().width())
+            || bounds().height() > max(maxLayerSize, ccLayerImpl()->targetRenderSurface()->contentRect().height())
+            || !layerRenderer()->checkTextureSize(bounds()));
+}
 
-void ContentLayerChromium::paintContentsIfDirty(const IntRect& targetSurfaceRect)
+void ContentLayerChromium::paintContentsIfDirty()
 {
     RenderLayerBacking* backing = static_cast<RenderLayerBacking*>(m_owner->client());
     if (!backing || backing->paintingGoesToWindow())
         return;
 
     ASSERT(drawsContent());
+
     ASSERT(layerRenderer());
 
-    createTilerIfNeeded();
+    IntRect dirtyRect;
+    IntRect boundsRect(IntPoint(0, 0), bounds());
+    IntPoint paintingOffset;
 
-    ContentLayerPainter painter(m_owner);
-    updateLayerSize(layerBounds().size());
+    // FIXME: Remove this test when tiled layers are implemented.
+    if (requiresClippedUpdateRect()) {
+        // Calculate the region of this layer that is currently visible.
+        const IntRect clipRect = ccLayerImpl()->targetRenderSurface()->contentRect();
 
-    IntRect layerRect = visibleLayerRect(targetSurfaceRect);
-    if (layerRect.isEmpty())
+        TransformationMatrix layerOriginTransform = ccLayerImpl()->drawTransform();
+        layerOriginTransform.translate3d(-0.5 * bounds().width(), -0.5 * bounds().height(), 0);
+
+        // We compute the visible portion of the layer by back-mapping the current RenderSurface
+        // content area to the layer. To do that, we invert the drawing matrix of the layer
+        // and project the content area rectangle to it. If the layer transform is not invertible
+        // then we skip rendering the layer.
+        if (!layerOriginTransform.isInvertible()) {
+            m_skipsDraw = true;
+            return;
+        }
+        TransformationMatrix targetToLayerMatrix = layerOriginTransform.inverse();
+        FloatQuad mappedClipToLayer = targetToLayerMatrix.projectQuad(FloatRect(clipRect));
+        IntRect visibleRectInLayerCoords = mappedClipToLayer.enclosingBoundingBox();
+        visibleRectInLayerCoords.intersect(IntRect(0, 0, bounds().width(), bounds().height()));
+
+        // If this is still too large to render, then skip the layer completely.
+        if (!layerRenderer()->checkTextureSize(visibleRectInLayerCoords.size())) {
+            m_skipsDraw = true;
+            return;
+        }
+
+        // If we need to resize the upload buffer we have to repaint everything.
+        if (m_canvas.size() != visibleRectInLayerCoords.size()) {
+            resizeUploadBuffer(visibleRectInLayerCoords.size());
+            m_dirtyRect = boundsRect;
+        }
+        // If the visible portion of the layer is different from the last upload.
+        if (visibleRectInLayerCoords != m_visibleRectInLayerCoords)
+            m_dirtyRect = boundsRect;
+        m_visibleRectInLayerCoords = visibleRectInLayerCoords;
+
+        // Calculate the portion of the dirty rectangle that is visible.  m_dirtyRect is in layer space.
+        IntRect visibleDirtyRectInLayerSpace = enclosingIntRect(m_dirtyRect);
+        visibleDirtyRectInLayerSpace.intersect(visibleRectInLayerCoords);
+
+        // What the rectangles mean:
+        //   dirtyRect: The region of this layer that will be updated.
+        //   m_uploadUpdateRect: The region of the layer's texture that will be uploaded into.
+        dirtyRect = visibleDirtyRectInLayerSpace;
+        m_uploadUpdateRect = dirtyRect;
+        IntSize visibleRectOffsetInLayerCoords(visibleRectInLayerCoords.x(), visibleRectInLayerCoords.y());
+        paintingOffset = IntPoint(visibleRectOffsetInLayerCoords);
+        m_uploadUpdateRect.move(-visibleRectOffsetInLayerCoords);
+    } else {
+        dirtyRect = IntRect(m_dirtyRect);
+        // If the texture needs to be reallocated then we must redraw the entire
+        // contents of the layer.
+        if (m_canvas.size() != bounds()) {
+            resizeUploadBuffer(bounds());
+            dirtyRect = boundsRect;
+        } else {
+            // Clip the dirtyRect to the size of the layer to avoid drawing
+            // outside the bounds of the backing texture.
+            dirtyRect.intersect(boundsRect);
+        }
+        m_uploadUpdateRect = dirtyRect;
+    }
+
+    if (dirtyRect.isEmpty())
         return;
-    m_tiler->invalidateRect(enclosingIntRect(m_dirtyRect));
-    m_tiler->update(painter, layerRect);
-    m_dirtyRect = FloatRect();
+
+    PlatformCanvas::Painter painter(&m_canvas);
+    painter.context()->save();
+    painter.context()->translate(-paintingOffset.x(), -paintingOffset.y());
+    painter.context()->clearRect(dirtyRect);
+    painter.context()->clip(dirtyRect);
+
+    m_owner->paintGraphicsLayerContents(*painter.context(), dirtyRect);
+    painter.context()->restore();
 }
 
-void ContentLayerChromium::setLayerRenderer(LayerRendererChromium* layerRenderer)
+void ContentLayerChromium::resizeUploadBuffer(const IntSize& size)
 {
-    LayerChromium::setLayerRenderer(layerRenderer);
-    createTilerIfNeeded();
-    m_tiler->setLayerRenderer(layerRenderer);
+    m_canvas.resize(size);
 }
 
-TransformationMatrix ContentLayerChromium::tilingTransform()
+void ContentLayerChromium::updateTextureIfNeeded()
 {
-    TransformationMatrix transform = ccLayerImpl()->drawTransform();
-    // Tiler draws from the upper left corner. The draw transform
-    // specifies the middle of the layer.
-    IntSize size = bounds();
-    transform.translate(-size.width() / 2.0, -size.height() / 2.0);
-
-    return transform;
+    PlatformCanvas::AutoLocker locker(&m_canvas);
+    updateTexture(locker.pixels(), m_canvas.size());
 }
 
-IntRect ContentLayerChromium::visibleLayerRect(const IntRect& targetSurfaceRect)
+void ContentLayerChromium::updateTexture(const uint8_t* pixels, const IntSize& size)
 {
-    if (targetSurfaceRect.isEmpty())
-        return targetSurfaceRect;
-
-    const IntRect layerBoundRect = layerBounds();
-    const TransformationMatrix transform = tilingTransform();
-
-    // Is this layer fully contained within the target surface?
-    IntRect layerInSurfaceSpace = transform.mapRect(layerBoundRect);
-    if (targetSurfaceRect.contains(layerInSurfaceSpace))
-        return layerBoundRect;
-
-    // Project the corners of the target surface rect into the layer space.
-    // This bounding rectangle may be larger than it needs to be (being
-    // axis-aligned), but is a reasonable filter on the space to consider.
-    // Non-invertible transforms will create an empty rect here.
-    const TransformationMatrix surfaceToLayer = transform.inverse();
-    IntRect layerRect = surfaceToLayer.mapRect(targetSurfaceRect);
-    layerRect.intersect(layerBoundRect);
-    return layerRect;
-}
-
-IntRect ContentLayerChromium::layerBounds() const
-{
-    return IntRect(IntPoint(0, 0), bounds());
-}
-
-void ContentLayerChromium::updateLayerSize(const IntSize& layerSize)
-{
-    if (!m_tiler)
+    if (!pixels)
         return;
 
-    const IntSize tileSize(min(defaultTileSize, layerSize.width()), min(defaultTileSize, layerSize.height()));
-    const bool autoTiled = layerSize.width() > maxUntiledSize || layerSize.height() > maxUntiledSize;
+    GraphicsContext3D* context = layerRendererContext();
+    if (!m_contentsTexture)
+        m_contentsTexture = LayerTexture::create(context, layerRenderer()->textureManager());
 
-    bool isTiled;
-    if (m_tilingOption == AlwaysTile)
-        isTiled = true;
-    else if (m_tilingOption == NeverTile)
-        isTiled = false;
-    else
-        isTiled = autoTiled;
+    // If we have to allocate a new texture we have to upload the full contents.
+    if (!m_contentsTexture->isValid(size, GraphicsContext3D::RGBA))
+        m_uploadUpdateRect = IntRect(IntPoint(0, 0), size);
 
-    m_tiler->setTileSize(isTiled ? tileSize : layerSize);
-}
-
-void ContentLayerChromium::draw(const IntRect& targetSurfaceRect)
-{
-    const TransformationMatrix transform = tilingTransform();
-    IntRect layerRect = visibleLayerRect(targetSurfaceRect);
-    if (!layerRect.isEmpty())
-        m_tiler->draw(layerRect, transform, ccLayerImpl()->drawOpacity());
-    m_tiler->unreserveTextures();
-}
-
-void ContentLayerChromium::createTilerIfNeeded()
-{
-    if (m_tiler)
+    if (!m_contentsTexture->reserve(size, GraphicsContext3D::RGBA)) {
+        m_skipsDraw = true;
         return;
-    m_tiler = LayerTilerChromium::create(layerRenderer(), IntSize(defaultTileSize, defaultTileSize), LayerTilerChromium::HasBorderTexels);
+    }
+
+    IntRect srcRect = IntRect(IntPoint(0, 0), size);
+    if (requiresClippedUpdateRect())
+        srcRect = m_visibleRectInLayerCoords;
+
+    const size_t destStride = m_uploadUpdateRect.width() * 4;
+    const size_t srcStride = srcRect.width() * 4;
+
+    const uint8_t* uploadPixels = pixels + srcStride * m_uploadUpdateRect.y();
+    Vector<uint8_t> uploadBuffer;
+    if (srcStride != destStride || m_uploadUpdateRect.x()) {
+        uploadBuffer.resize(m_uploadUpdateRect.height() * destStride);
+        for (int row = 0; row < m_uploadUpdateRect.height(); ++row) {
+            size_t srcOffset = (m_uploadUpdateRect.y() + row) * srcStride + m_uploadUpdateRect.x() * 4;
+            ASSERT(srcOffset + destStride <= static_cast<size_t>(size.width() * size.height() * 4));
+            size_t destOffset = row * destStride;
+            ASSERT(destOffset  + destStride <= uploadBuffer.size());
+            memcpy(uploadBuffer.data() + destOffset, pixels + srcOffset, destStride);
+        }
+        uploadPixels = uploadBuffer.data();
+    }
+
+    m_contentsTexture->bindTexture();
+    GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0,
+                                        m_uploadUpdateRect.x(), m_uploadUpdateRect.y(), m_uploadUpdateRect.width(), m_uploadUpdateRect.height(),
+                                        GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE,
+                                        uploadPixels));
+
+    m_uploadUpdateRect = IntRect();
+    m_dirtyRect.setSize(FloatSize());
+    // Large layers always stay dirty, because they need to update when the content rect changes.
+    m_contentsDirty = requiresClippedUpdateRect();
+}
+
+void ContentLayerChromium::draw()
+{
+    if (m_skipsDraw)
+        return;
+
+    ASSERT(layerRenderer());
+
+    const ContentLayerChromium::Program* program = layerRenderer()->contentLayerProgram();
+    ASSERT(program && program->initialized());
+    GraphicsContext3D* context = layerRendererContext();
+    GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
+    bindContentsTexture();
+    layerRenderer()->useShader(program->program());
+    GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
+    GLC(context, context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
+
+    if (requiresClippedUpdateRect()) {
+        // Compute the offset between the layer's center point and the center of the visible portion
+        // of the layer.
+        FloatPoint visibleRectCenterOffset = FloatRect(m_visibleRectInLayerCoords).center();
+        visibleRectCenterOffset.move(-0.5 * bounds().width(), -0.5 * bounds().height());
+
+        TransformationMatrix transform = ccLayerImpl()->drawTransform();
+        transform.translate(visibleRectCenterOffset.x(), visibleRectCenterOffset.y());
+
+        drawTexturedQuad(context, layerRenderer()->projectionMatrix(),
+                         transform, m_visibleRectInLayerCoords.width(),
+                         m_visibleRectInLayerCoords.height(), ccLayerImpl()->drawOpacity(),
+                         program->vertexShader().matrixLocation(),
+                         program->fragmentShader().alphaLocation());
+    } else {
+        drawTexturedQuad(context, layerRenderer()->projectionMatrix(),
+                         ccLayerImpl()->drawTransform(), bounds().width(), bounds().height(),
+                         ccLayerImpl()->drawOpacity(), program->vertexShader().matrixLocation(),
+                         program->fragmentShader().alphaLocation());
+    }
+    unreserveContentsTexture();
 }
 
 void ContentLayerChromium::updateCompositorResources()
 {
-    m_tiler->uploadCanvas();
-}
-
-void ContentLayerChromium::setTilingOption(TilingOption option)
-{
-    m_tilingOption = option;
-    updateLayerSize(bounds());
-}
-
-void ContentLayerChromium::bindContentsTexture()
-{
-    // This function is only valid for single texture layers, e.g. masks.
-    ASSERT(m_tilingOption == NeverTile);
-    ASSERT(m_tiler);
-
-    LayerTexture* texture = m_tiler->getSingleTexture();
-    ASSERT(texture);
-
-    texture->bindTexture();
+    updateTextureIfNeeded();
 }
 
 void ContentLayerChromium::unreserveContentsTexture()
 {
-    m_tiler->unreserveTextures();
+    if (!m_skipsDraw && m_contentsTexture)
+        m_contentsTexture->unreserve();
 }
 
-void ContentLayerChromium::setIsMask(bool isMask)
+void ContentLayerChromium::bindContentsTexture()
 {
-    setTilingOption(isMask ? NeverTile : AutoTile);
+    if (!m_skipsDraw && m_contentsTexture)
+        m_contentsTexture->bindTexture();
 }
 
 static void writeIndent(TextStream& ts, int indent)
@@ -233,7 +296,7 @@ void ContentLayerChromium::dumpLayerProperties(TextStream& ts, int indent) const
 {
     LayerChromium::dumpLayerProperties(ts, indent);
     writeIndent(ts, indent);
-    ts << "skipsDraw: " << m_tiler->skipsDraw() << "\n";
+    ts << "skipsDraw: " << m_skipsDraw << "\n";
 }
 
 }

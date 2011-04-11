@@ -1,3 +1,73 @@
+2011-04-11  Adrienne Walker  <enne@google.com>
+
+        Unreviewed, rolling out r83500.
+        http://trac.webkit.org/changeset/83500
+        https://bugs.webkit.org/show_bug.cgi?id=57113
+
+        Regresses huge-layer-rotated test
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::ContentLayerChromium):
+        (WebCore::ContentLayerChromium::~ContentLayerChromium):
+        (WebCore::ContentLayerChromium::cleanupResources):
+        (WebCore::ContentLayerChromium::requiresClippedUpdateRect):
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        (WebCore::ContentLayerChromium::resizeUploadBuffer):
+        (WebCore::ContentLayerChromium::updateTextureIfNeeded):
+        (WebCore::ContentLayerChromium::updateTexture):
+        (WebCore::ContentLayerChromium::draw):
+        (WebCore::ContentLayerChromium::updateCompositorResources):
+        (WebCore::ContentLayerChromium::unreserveContentsTexture):
+        (WebCore::ContentLayerChromium::bindContentsTexture):
+        (WebCore::ContentLayerChromium::dumpLayerProperties):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (WebCore::ContentLayerChromium::drawsContent):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::setMaskLayer):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        (WebCore::ImageLayerChromium::updateTextureIfNeeded):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::draw):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawRootLayer):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::paintContentsRecursive):
+        (WebCore::LayerRendererChromium::copyOffscreenTextureToDisplay):
+        (WebCore::LayerRendererChromium::drawLayer):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::contentLayerProgram):
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::invalidateRect):
+        (WebCore::LayerTilerChromium::update):
+        (WebCore::LayerTilerChromium::updateFromPixels):
+        (WebCore::LayerTilerChromium::draw):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        * platform/graphics/chromium/PlatformCanvas.cpp:
+        (WebCore::PlatformCanvas::AutoLocker::AutoLocker):
+        (WebCore::PlatformCanvas::Painter::Painter):
+        * platform/graphics/chromium/PlatformCanvas.h:
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::draw):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp:
+        (WebCore::CCCanvasLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.h:
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (WebCore::CCPluginLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.h:
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+
 2011-04-11  Jon Honeycutt  <jhoneycutt@apple.com>
 
         <rdar://problem/9267042> Assertion failure on launch in

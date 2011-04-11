@@ -78,9 +78,7 @@ public:
     class Painter {
         WTF_MAKE_NONCOPYABLE(Painter);
     public:
-        enum TextOption { GrayscaleText, SubpixelText };
-
-        Painter(PlatformCanvas*, TextOption);
+        explicit Painter(PlatformCanvas*);
         ~Painter();
 
         GraphicsContext* context() const { return m_context.get(); }

@@ -74,8 +74,7 @@ PlatformCanvas::AutoLocker::AutoLocker(PlatformCanvas* canvas)
     } else
         m_bitmap = 0;
 #elif PLATFORM(CG)
-    if (canvas->m_pixelData)
-        m_pixels = &canvas->m_pixelData[0];
+    m_pixels = &canvas->m_pixelData[0];
 #endif
 }
 
@@ -87,12 +86,13 @@ PlatformCanvas::AutoLocker::~AutoLocker()
 #endif
 }
 
-PlatformCanvas::Painter::Painter(PlatformCanvas* canvas, PlatformCanvas::Painter::TextOption option)
+PlatformCanvas::Painter::Painter(PlatformCanvas* canvas)
 {
 #if USE(SKIA)
     m_skiaContext = adoptPtr(new PlatformContextSkia(canvas->m_skiaCanvas.get()));
 
-    m_skiaContext->setDrawingToImageBuffer(option == GrayscaleText);
+    // This is needed to get text to show up correctly.
+    m_skiaContext->setDrawingToImageBuffer(true);
 
     m_context = adoptPtr(new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(m_skiaContext.get())));
 #elif PLATFORM(CG)
