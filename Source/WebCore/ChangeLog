@@ -1,3 +1,17 @@
+2011-04-11  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Ignore context change callbacks when not on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=58256
+        <rdar://problem/9266090>
+
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp:
+        (WebCore::WKCACFViewLayerTreeHost::contextDidChange): Do nothing when not called
+            on the main thread. This should only happen when no changes have actually 
+            been committed to the context, eg. when a video frame has been added to an image
+            queue, so return without triggering animations etc.
+
 2011-04-11  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Dmitry Titov.

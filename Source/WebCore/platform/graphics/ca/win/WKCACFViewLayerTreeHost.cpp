@@ -31,6 +31,7 @@
 #include "PlatformCALayer.h"
 #include "SoftLinking.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/Threading.h>
 
 typedef struct _CACFLayer* CACFLayerRef;
 
@@ -104,6 +105,12 @@ void WKCACFViewLayerTreeHost::contextDidChangeCallback(WKCACFViewRef view, void*
 
 void WKCACFViewLayerTreeHost::contextDidChange()
 {
+    // This should only be called on a background thread when no changes have actually 
+    // been committed to the context, eg. when a video frame has been added to an image
+    // queue, so return without triggering animations etc.
+    if (!isMainThread())
+        return;
+
     // Tell the WKCACFView to start rendering now that we have some contents to render.
     updateViewIfNeeded();
 
