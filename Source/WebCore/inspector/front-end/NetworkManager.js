@@ -85,7 +85,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     _updateResourceWithResponse: function(resource, response)
     {
-        if (!("status" in response))
+        if (!response)
             return;
 
         resource.mimeType = response.mimeType;

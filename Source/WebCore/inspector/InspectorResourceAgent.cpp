@@ -215,10 +215,10 @@ static PassRefPtr<InspectorObject> buildObjectForResourceRequest(const ResourceR
 
 static PassRefPtr<InspectorObject> buildObjectForResourceResponse(const ResourceResponse& response)
 {
-    RefPtr<InspectorObject> responseObject = InspectorObject::create();
     if (response.isNull())
-        return responseObject;
+        return 0;
 
+    RefPtr<InspectorObject> responseObject = InspectorObject::create();
     responseObject->setNumber("status", response.resourceLoadInfo() ? response.resourceLoadInfo()->httpStatusCode : response.httpStatusCode());
     responseObject->setString("statusText", response.resourceLoadInfo() ? response.resourceLoadInfo()->httpStatusText : response.httpStatusText());
     responseObject->setObject("headers", buildObjectForHeaders(response.resourceLoadInfo() ? response.resourceLoadInfo()->responseHeaders : response.httpHeaderFields()));
@@ -270,7 +270,9 @@ static PassRefPtr<InspectorObject> buildObjectForCachedResource(const CachedReso
     resourceObject->setString("url", cachedResource.url());
     resourceObject->setString("type", cachedResourceTypeString(cachedResource));
     resourceObject->setNumber("bodySize", cachedResource.encodedSize());
-    resourceObject->setObject("response", buildObjectForResourceResponse(cachedResource.response()));
+    RefPtr<InspectorObject> resourceResponse = buildObjectForResourceResponse(cachedResource.response());
+    if (resourceResponse)
+        resourceObject->setObject("response", resourceResponse);
     return resourceObject;
 }
 

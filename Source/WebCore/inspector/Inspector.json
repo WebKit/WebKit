@@ -386,14 +386,14 @@
                     { "name": "loaderId", "type": "string", "description": "Loader identifier." },
                     { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },
                     { "name": "request", "$ref": "ResourceRequest", "description": "Request data." },
-                    { "name": "redirectResponse", "$ref": "ResourceResponse", "description": "Redirect response data." },
+                    { "name": "redirectResponse", "optional": true, "$ref": "ResourceResponse", "description": "Redirect response data." },
                     { "name": "time", "type": "number", "description": "Timestamp." },
                     { "name": "callStack", "type": "array", "items": { "$ref" : "DebuggerStackFrame"}, "description": "JavaScript stack trace upon issuing this request." }
                 ]
             },
             {
                 "name": "resourceMarkedAsCached",
-                "description": "Fired when request is known to be served from memory cache.",
+                "description": "Fired when request is known to be served from disk cache.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." }
                 ]
@@ -1284,7 +1284,7 @@
                 ],
                 "returns": [
                     { "name": "breakpointId", "type": "string", "description": "Id of the created breakpoint for further manipulations." },
-                    { "name": "locations", "type": "array", "items": { "$ref" : "Location"}, "description": "List of the locations this breakpoint resolved into." }
+                    { "name": "locations", "optional": true, "type": "array", "items": { "$ref" : "Location"}, "description": "List of the locations this breakpoint resolved into." }
                 ],
                 "description": "Sets JavaScript breakpoint at a given location specified by URL. This breakpoint will survive page reload."
             },

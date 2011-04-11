@@ -375,8 +375,11 @@ sub generateFrontendFunction
     push(@function, "    ${functionName}Message->setString(\"method\", \"$domain.$functionName\");");
     if (scalar(@argsFiltered)) {
         push(@function, "    RefPtr<InspectorObject> paramsObject = InspectorObject::create();");
-        my @pushArguments = map("    paramsObject->set" . typeTraits($_->type, "JSONType") . "(\"" . $_->name . "\", " . $_->name . ");", @argsFiltered);
-        push(@function, @pushArguments);
+
+        foreach my $parameter (@argsFiltered) {
+            my $optional = $parameter->extendedAttributes->{"optional"} ? "if (" . $parameter->name . ")\n        " : "";
+            push(@function, "    " . $optional . "paramsObject->set" . typeTraits($parameter->type, "JSONType") . "(\"" . $parameter->name . "\", " . $parameter->name . ");");
+        }
         push(@function, "    ${functionName}Message->setObject(\"params\", paramsObject);");
     }
     push(@function, "    m_inspectorFrontendChannel->sendMessageToFrontend(${functionName}Message->toJSONString());");
