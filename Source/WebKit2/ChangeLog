@@ -1,3 +1,13 @@
+2011-04-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: WebProcess spews sandboxing violations for outbound network traffic
+        https://bugs.webkit.org/show_bug.cgi?id=58215
+        <rdar://problem/9251695>
+        
+        * WebProcess/com.apple.WebProcess.sb: Restore some previously removed rules.
+
 2011-04-10  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Eric Seidel.

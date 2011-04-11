@@ -132,11 +132,21 @@
    (global-name-regex #"^com\.apple\.qtkitserver\.")
 )
 
+;; FIXME: <rdar://problem/9263428> These rules are required to avoid
+;; sandbox violation spam, but some narrower rule should be
+;; sufficient.
+(allow network-outbound)
+(deny network-outbound (regex ""))
+(deny network-outbound (local ip))
+
 (allow network-outbound
    ;; Local mDNSResponder for DNS, arbitrary outbound TCP
    (literal "/private/var/run/mDNSResponder")
    (remote tcp)
 )
+
+(allow system-socket)
+(allow network-outbound (control-name "com.apple.network.statistics"))
 
 ;; FIXME: Once <rdar://problem/8900275> has been fixed, these rules can be removed.
 (allow mach-lookup (global-name "com.apple.pubsub.ipc"))
