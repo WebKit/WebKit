@@ -186,21 +186,6 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
     m_pageMap.remove(pageID);
 }
 
-WebProcessProxy::pages_const_iterator WebProcessProxy::pages_begin()
-{
-    return m_pageMap.begin().values();
-}
-
-WebProcessProxy::pages_const_iterator WebProcessProxy::pages_end()
-{
-    return m_pageMap.end().values();
-}
-
-size_t WebProcessProxy::numberOfPages()
-{
-    return m_pageMap.size();
-}
-
 WebBackForwardListItem* WebProcessProxy::webBackForwardItem(uint64_t itemID) const
 {
     return m_backForwardListItemMap.get(itemID).get();

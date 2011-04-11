@@ -2,6 +2,16 @@
 
         Reviewed by Sam Weinig.
 
+        Remove unused WebProcessProxy functions
+        https://bugs.webkit.org/show_bug.cgi?id=58262
+
+        * UIProcess/WebProcessProxy.cpp:
+        * UIProcess/WebProcessProxy.h:
+
+2011-04-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Crash in WebPageProxy::countStringMatches
         https://bugs.webkit.org/show_bug.cgi?id=58255
         <rdar://problem/9243837>

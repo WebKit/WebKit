@@ -53,8 +53,6 @@ struct WebNavigationDataStore;
 
 class WebProcessProxy : public RefCounted<WebProcessProxy>, CoreIPC::Connection::Client, ResponsivenessTimer::Client, ProcessLauncher::Client, ThreadLauncher::Client {
 public:
-    typedef HashMap<uint64_t, RefPtr<WebPageProxy> > WebPageProxyMap;
-    typedef WebPageProxyMap::const_iterator::Values pages_const_iterator;
     typedef HashMap<uint64_t, RefPtr<WebFrameProxy> > WebFrameProxyMap;
     typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem> > WebBackForwardListItemMap;
 
@@ -81,10 +79,6 @@ public:
     WebPageProxy* createWebPage(PageClient*, WebContext*, WebPageGroup*);
     void addExistingWebPage(WebPageProxy*, uint64_t pageID);
     void removeWebPage(uint64_t pageID);
-
-    pages_const_iterator pages_begin();
-    pages_const_iterator pages_end();
-    size_t numberOfPages();
 
     WebBackForwardListItem* webBackForwardItem(uint64_t itemID) const;
 
@@ -160,7 +154,7 @@ private:
 
     WebContext* m_context;
 
-    WebPageProxyMap m_pageMap;
+    HashMap<uint64_t, RefPtr<WebPageProxy> > m_pageMap;
     WebFrameProxyMap m_frameMap;
     WebBackForwardListItemMap m_backForwardListItemMap;
 };
