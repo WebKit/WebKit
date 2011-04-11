@@ -1150,10 +1150,15 @@ void WebPageProxy::hideFindUI()
 
 void WebPageProxy::countStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
 {
-    if (m_mainFrameHasCustomRepresentation)
+    if (m_mainFrameHasCustomRepresentation) {
         m_pageClient->countStringMatchesInCustomRepresentation(string, options, maxMatchCount);
-    else
-        process()->send(Messages::WebPage::CountStringMatches(string, options, maxMatchCount), m_pageID);
+        return;
+    }
+
+    if (!isValid())
+        return;
+
+    process()->send(Messages::WebPage::CountStringMatches(string, options, maxMatchCount), m_pageID);
 }
 
 void WebPageProxy::runJavaScriptInMainFrame(const String& script, PassRefPtr<ScriptValueCallback> prpCallback)

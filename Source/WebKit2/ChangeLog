@@ -1,3 +1,15 @@
+2011-04-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Crash in WebPageProxy::countStringMatches
+        https://bugs.webkit.org/show_bug.cgi?id=58255
+        <rdar://problem/9243837>
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::countStringMatches):
+        Return early if the page is not valid.
+
 2011-04-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
