@@ -74,7 +74,7 @@ void dumpWebViewAsPixelsAndCompareWithExpected(const std::string& expectedHash)
       dumpBitmap(context.get(), actualHash);
 }
 
-static void appendIntToVector(int number, Vector<unsigned char>& vector)
+static void appendIntToVector(unsigned number, Vector<unsigned char>& vector)
 {
     size_t offset = vector.size();
     vector.grow(offset + 4);
@@ -97,7 +97,7 @@ static void convertChecksumToPNGComment(const char* checksum, Vector<unsigned ch
     Vector<unsigned char> dataToCrc;
     dataToCrc.append(textCommentPrefix + 4, prefixLength - 4); // Don't include the chunk length in the crc.
     dataToCrc.append(checksum, checksumLength);
-    unsigned long crc32 = computeCrc(dataToCrc);
+    unsigned crc32 = computeCrc(dataToCrc);
 
     appendIntToVector(crc32, bytesToAdd);
 }

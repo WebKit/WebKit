@@ -33,6 +33,6 @@
 
 #include <wtf/Vector.h>
 
-unsigned long computeCrc(const Vector<unsigned char>&);
+unsigned computeCrc(const Vector<unsigned char>&);
 
 #endif

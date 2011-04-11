@@ -33,10 +33,10 @@
 
 #include <wtf/Vector.h>
 
-static void makeCrcTable(unsigned long crcTable[256])
+static void makeCrcTable(unsigned crcTable[256])
 {
-    for (unsigned long i = 0; i < 256; i++) {
-        unsigned long c = i;
+    for (unsigned i = 0; i < 256; i++) {
+        unsigned c = i;
         for (int k = 0; k < 8; k++) {
             if (c & 1)
                 c = -306674912 ^ ((c >> 1) & 0x7fffffff);
@@ -47,16 +47,16 @@ static void makeCrcTable(unsigned long crcTable[256])
     }
 }
 
-unsigned long computeCrc(const Vector<unsigned char>& buffer)
+unsigned computeCrc(const Vector<unsigned char>& buffer)
 {
-    static unsigned long crcTable[256];
+    static unsigned crcTable[256];
     static bool crcTableComputed = false;
     if (!crcTableComputed) {
         makeCrcTable(crcTable);
         crcTableComputed = true;
     }
 
-    unsigned long crc = 0xffffffffL;
+    unsigned crc = 0xffffffffL;
     for (size_t i = 0; i < buffer.size(); ++i)
         crc = crcTable[(crc ^ buffer[i]) & 0xff] ^ ((crc >> 8) & 0x00ffffffL);
     return crc ^ 0xffffffffL;

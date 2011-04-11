@@ -1,3 +1,20 @@
+2011-04-11  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        fix crc computation on 64 bit machines
+        https://bugs.webkit.org/show_bug.cgi?id=58243
+
+        unsigned long is dependenct on CPU architecture, so use unsigned which is always 32 bits
+
+        * DumpRenderTree/CyclicRedundancyCheck.cpp:
+        (makeCrcTable):
+        (computeCrc):
+        * DumpRenderTree/CyclicRedundancyCheck.h:
+        * DumpRenderTree/PixelDumpSupport.cpp:
+        (appendIntToVector):
+        (convertChecksumToPNGComment):
+
 2011-04-10  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Eric Seidel.
