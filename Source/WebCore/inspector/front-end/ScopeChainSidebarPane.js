@@ -59,40 +59,45 @@ WebInspector.ScopeChainSidebarPane.prototype = {
         var foundLocalScope = false;
         var scopeChain = callFrame.scopeChain;
         for (var i = 0; i < scopeChain.length; ++i) {
-            var scopeObjectProxy = scopeChain[i];
+            var scope = scopeChain[i];
             var title = null;
-            var subtitle = scopeObjectProxy.description;
+            var subtitle = scope.object.description;
             var emptyPlaceholder = null;
             var extraProperties = null;
 
-            if (scopeObjectProxy.isLocal) {
-                foundLocalScope = true;
-                title = WebInspector.UIString("Local");
-                emptyPlaceholder = WebInspector.UIString("No Variables");
-                subtitle = null;
-                if (scopeObjectProxy.thisObject)
-                    extraProperties = [ new WebInspector.RemoteObjectProperty("this", WebInspector.RemoteObject.fromPayload(scopeObjectProxy.thisObject)) ];
-            } else if (scopeObjectProxy.isClosure) {
-                title = WebInspector.UIString("Closure");
-                emptyPlaceholder = WebInspector.UIString("No Variables");
-                subtitle = null;
-            } else if (i === (scopeChain.length - 1))
-                title = WebInspector.UIString("Global");
-            else if (scopeObjectProxy.isElement)
-                title = WebInspector.UIString("Event Target");
-            else if (scopeObjectProxy.isDocument)
-                title = WebInspector.UIString("Event Document");
-            else if (scopeObjectProxy.isWithBlock)
-                title = WebInspector.UIString("With Block");
+            switch (scope.type) {
+                case "local":
+                    foundLocalScope = true;
+                    title = WebInspector.UIString("Local");
+                    emptyPlaceholder = WebInspector.UIString("No Variables");
+                    subtitle = null;
+                    if (scope.this)
+                        extraProperties = [ new WebInspector.RemoteObjectProperty("this", WebInspector.RemoteObject.fromPayload(scope.this)) ];
+                    break;
+                case "closure":
+                    title = WebInspector.UIString("Closure");
+                    emptyPlaceholder = WebInspector.UIString("No Variables");
+                    subtitle = null;
+                    break;
+                case "catch":
+                    title = WebInspector.UIString("Catch");
+                    break;
+                case "with":
+                    title = WebInspector.UIString("With Block");
+                    break;
+                case "global":
+                    title = WebInspector.UIString("Global");
+                    break;
+            }
 
             if (!title || title === subtitle)
                 subtitle = null;
 
-            var section = new WebInspector.ObjectPropertiesSection(WebInspector.RemoteObject.fromPayload(scopeObjectProxy), title, subtitle, emptyPlaceholder, true, extraProperties, WebInspector.ScopeVariableTreeElement);
+            var section = new WebInspector.ObjectPropertiesSection(WebInspector.RemoteObject.fromPayload(scope.object), title, subtitle, emptyPlaceholder, true, extraProperties, WebInspector.ScopeVariableTreeElement);
             section.editInSelectedCallFrameWhenPaused = true;
             section.pane = this;
 
-            if (!foundLocalScope || scopeObjectProxy.isLocal || title in this._expandedSections)
+            if (!foundLocalScope || scope.type === "local" || title in this._expandedSections)
                 section.expanded = true;
 
             this._sections.push(section);

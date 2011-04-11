@@ -299,7 +299,6 @@ InjectedScript.prototype = {
         if (!callFrame)
             return false;
     
-        injectedScript.releaseObjectGroup("backtrace");
         var result = [];
         var depth = 0;
         do {
@@ -487,38 +486,28 @@ InjectedScript.CallFrameProxy.prototype = {
         const WITH_SCOPE = 2;
         const CLOSURE_SCOPE = 3;
         const CATCH_SCOPE = 4;
-    
+
+        var scopeTypeNames = {};
+        scopeTypeNames[GLOBAL_SCOPE] = "global";
+        scopeTypeNames[LOCAL_SCOPE] = "local";
+        scopeTypeNames[WITH_SCOPE] = "with";
+        scopeTypeNames[CLOSURE_SCOPE] = "closure";
+        scopeTypeNames[CATCH_SCOPE] = "catch";
+
         var scopeChain = callFrame.scopeChain;
         var scopeChainProxy = [];
         var foundLocalScope = false;
         for (var i = 0; i < scopeChain.length; i++) {
-            var scopeType = callFrame.scopeType(i);
-            var scopeObject = scopeChain[i];
-            var scopeObjectProxy = injectedScript._wrapObject(scopeObject, "backtrace");
+            var scope = {};
+            scope.object = injectedScript._wrapObject(scopeChain[i], "backtrace");
 
-            switch(scopeType) {
-                case LOCAL_SCOPE: {
-                    foundLocalScope = true;
-                    scopeObjectProxy.isLocal = true;
-                    scopeObjectProxy.thisObject = injectedScript._wrapObject(callFrame.thisObject, "backtrace");
-                    break;
-                }
-                case CLOSURE_SCOPE: {
-                    scopeObjectProxy.isClosure = true;
-                    break;
-                }
-                case WITH_SCOPE:
-                case CATCH_SCOPE: {
-                    if (foundLocalScope && scopeObject instanceof inspectedWindow.Element)
-                        scopeObjectProxy.isElement = true;
-                    else if (foundLocalScope && scopeObject instanceof inspectedWindow.Document)
-                        scopeObjectProxy.isDocument = true;
-                    else
-                        scopeObjectProxy.isWithBlock = true;
-                    break;
-                }
-            }
-            scopeChainProxy.push(scopeObjectProxy);
+            var scopeType = callFrame.scopeType(i);
+            scope.type = scopeTypeNames[scopeType];
+
+            if (scopeType === LOCAL_SCOPE)
+                scope.this = injectedScript._wrapObject(callFrame.thisObject, "backtrace");
+
+            scopeChainProxy.push(scope);
         }
         return scopeChainProxy;
     }

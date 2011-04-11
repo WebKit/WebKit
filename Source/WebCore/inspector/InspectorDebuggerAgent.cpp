@@ -314,6 +314,7 @@ void InspectorDebuggerAgent::pause(ErrorString*)
 
 void InspectorDebuggerAgent::resume(ErrorString*)
 {
+    m_injectedScriptManager->releaseObjectGroup("backtrace");
     scriptDebugServer().continueProgram();
 }
 

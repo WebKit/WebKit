@@ -1240,10 +1240,20 @@
                 "id": "CallFrame",
                 "type": "object",
                 "properties": {
-                    "id": { "type": "string",  "description": "Call frame identifier" },
+                    "id": { "type": "string",  "description": "Call frame identifier." },
                     "functionName": { "type": "string", "description": "Name of the function called on this frame." },
                     "location": { "$ref": "Location", "description": "Location in the source code." },
-                    "scopeChain": { "type": "array", "items": { "type": "object" }, "description": "Scope chain for given call frame. // FIXME" }
+                    "scopeChain": { "type": "array", "items": { "$ref": "Scope" }, "description": "Scope chain for given call frame." }
+                },
+                "description": "Debugger call frame. Array of call frames form call stack."
+            },
+            {
+                "id": "Scope",
+                "type": "object",
+                "properties": {
+                    "type": { "type": "string",  "enum": ["global", "local", "with", "closure", "catch"], "description": "Scope type." },
+                    "object": { "$ref": "RemoteObject", "description": "Object representing the scope." },
+                    "this": { "$ref": "RemoteObject", "optional": true, "description": "<code>this</code> object for local scope." },
                 },
                 "description": "Debugger call frame. Array of call frames form call stack."
             }
