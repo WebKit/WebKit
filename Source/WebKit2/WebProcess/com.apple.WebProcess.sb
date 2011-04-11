@@ -145,9 +145,6 @@
    (remote tcp)
 )
 
-(allow system-socket)
-(allow network-outbound (control-name "com.apple.network.statistics"))
-
 ;; FIXME: Once <rdar://problem/8900275> has been fixed, these rules can be removed.
 (allow mach-lookup (global-name "com.apple.pubsub.ipc"))
 (allow network-outbound (regex #"^/private/tmp/launch-[^/]+/Render"))

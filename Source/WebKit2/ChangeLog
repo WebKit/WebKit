@@ -1,5 +1,13 @@
 2011-04-10  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed.
+
+        Remove extra inadvertantly commiteed changes from last change.
+
+        * WebProcess/com.apple.WebProcess.sb:
+
+2011-04-10  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Dan Bernstein.
 
         REGRESSION: WebProcess spews sandboxing violations for outbound network traffic
