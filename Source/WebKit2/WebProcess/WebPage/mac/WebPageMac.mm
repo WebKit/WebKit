@@ -284,10 +284,10 @@ void WebPage::getMarkedRange(uint64_t& location, uint64_t& length)
     if (!frame)
         return;
 
-    Range* range = frame->editor()->compositionRange().get();
+    RefPtr<Range> range = frame->editor()->compositionRange();
     size_t locationSize;
     size_t lengthSize;
-    if (range && TextIterator::locationAndLengthFromRange(range, locationSize, lengthSize)) {
+    if (range && TextIterator::locationAndLengthFromRange(range.get(), locationSize, lengthSize)) {
         location = static_cast<uint64_t>(locationSize);
         length = static_cast<uint64_t>(lengthSize);
     }
