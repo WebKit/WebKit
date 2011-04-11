@@ -162,5 +162,6 @@ inline ArrayType* binarySearch(ArrayType* array, size_t size, KeyType key)
 } // namespace WTF
 
 using WTF::binarySearch;
+using WTF::bitwise_cast;
 
 #endif // WTF_StdLibExtras_h

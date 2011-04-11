@@ -147,10 +147,8 @@ SOURCES += \
     runtime/JSGlobalData.cpp \
     runtime/JSGlobalObject.cpp \
     runtime/JSGlobalObjectFunctions.cpp \
-    runtime/JSImmediate.cpp \
     runtime/JSLock.cpp \
     runtime/JSNotAnObject.cpp \
-    runtime/JSNumberCell.cpp \
     runtime/JSObject.cpp \
     runtime/JSObjectWithGlobalObject.cpp \
     runtime/JSONObject.cpp \

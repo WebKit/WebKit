@@ -2514,7 +2514,6 @@ sub NativeToJSValue
     }
 
     if ($codeGenerator->IsPrimitiveType($type) or $type eq "DOMTimeStamp") {
-        $implIncludes{"<runtime/JSNumberCell.h>"} = 1;
         return "jsNumber($value)";
     }
 

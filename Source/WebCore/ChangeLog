@@ -1,3 +1,15 @@
+2011-04-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 58198 - Clean up JSValue implementation for JSVALUE64
+
+        JSNumberCell.h has been deprecated.
+
+        * ForwardingHeaders/runtime/JSNumberCell.h: Removed.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/c/c_instance.cpp:
+
 2011-04-11  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

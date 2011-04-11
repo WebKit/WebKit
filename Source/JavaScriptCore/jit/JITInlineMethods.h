@@ -709,7 +709,7 @@ ALWAYS_INLINE JIT::Jump JIT::emitJumpIfJSCell(RegisterID reg)
 #if USE(JSVALUE64)
     return branchTestPtr(Zero, reg, tagMaskRegister);
 #else
-    return branchTest32(Zero, reg, TrustedImm32(JSImmediate::TagMask));
+    return branchTest32(Zero, reg, TrustedImm32(TagMask));
 #endif
 }
 
@@ -730,7 +730,7 @@ ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotJSCell(RegisterID reg)
 #if USE(JSVALUE64)
     return branchTestPtr(NonZero, reg, tagMaskRegister);
 #else
-    return branchTest32(NonZero, reg, TrustedImm32(JSImmediate::TagMask));
+    return branchTest32(NonZero, reg, TrustedImm32(TagMask));
 #endif
 }
 
@@ -771,7 +771,7 @@ ALWAYS_INLINE JIT::Jump JIT::emitJumpIfImmediateInteger(RegisterID reg)
 #if USE(JSVALUE64)
     return branchPtr(AboveOrEqual, reg, tagTypeNumberRegister);
 #else
-    return branchTest32(NonZero, reg, TrustedImm32(JSImmediate::TagTypeNumber));
+    return branchTest32(NonZero, reg, TrustedImm32(TagTypeNumber));
 #endif
 }
 
@@ -780,7 +780,7 @@ ALWAYS_INLINE JIT::Jump JIT::emitJumpIfNotImmediateInteger(RegisterID reg)
 #if USE(JSVALUE64)
     return branchPtr(Below, reg, tagTypeNumberRegister);
 #else
-    return branchTest32(Zero, reg, TrustedImm32(JSImmediate::TagTypeNumber));
+    return branchTest32(Zero, reg, TrustedImm32(TagTypeNumber));
 #endif
 }
 
@@ -809,12 +809,12 @@ ALWAYS_INLINE void JIT::emitJumpSlowCaseIfNotImmediateNumber(RegisterID reg)
 #if USE(JSVALUE32_64)
 ALWAYS_INLINE void JIT::emitFastArithDeTagImmediate(RegisterID reg)
 {
-    subPtr(TrustedImm32(JSImmediate::TagTypeNumber), reg);
+    subPtr(TrustedImm32(TagTypeNumber), reg);
 }
 
 ALWAYS_INLINE JIT::Jump JIT::emitFastArithDeTagImmediateJumpIfZero(RegisterID reg)
 {
-    return branchSubPtr(Zero, TrustedImm32(JSImmediate::TagTypeNumber), reg);
+    return branchSubPtr(Zero, TrustedImm32(TagTypeNumber), reg);
 }
 #endif
 
@@ -825,7 +825,7 @@ ALWAYS_INLINE void JIT::emitFastArithReTagImmediate(RegisterID src, RegisterID d
 #else
     if (src != dest)
         move(src, dest);
-    addPtr(TrustedImm32(JSImmediate::TagTypeNumber), dest);
+    addPtr(TrustedImm32(TagTypeNumber), dest);
 #endif
 }
 
@@ -845,7 +845,7 @@ ALWAYS_INLINE void JIT::emitFastArithIntToImmNoCheck(RegisterID src, RegisterID 
 
 ALWAYS_INLINE void JIT::emitTagAsBoolImmediate(RegisterID reg)
 {
-    or32(TrustedImm32(static_cast<int32_t>(JSImmediate::FullTagTypeFalse)), reg);
+    or32(TrustedImm32(static_cast<int32_t>(FullTagTypeFalse)), reg);
 }
 
 #endif // USE(JSVALUE32_64)

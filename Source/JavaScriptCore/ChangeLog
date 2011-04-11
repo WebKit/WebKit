@@ -1,3 +1,120 @@
+2011-04-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 58198 - Clean up JSValue implementation for JSVALUE64
+
+        Remove JSNumberCell, JSImmediate, unify some methods between JSVALUE32_64/JSVALUE64
+
+        JSNumberCell.h largely just contained the constructors for JSValue on JSVALUE64,
+        which should not have been here.  JSImmediate mostly contained uncalled methods,
+        along with the internal implementation of the JSValue constructors split unnecessarily
+        across a number of layers of function calls. These could largely be merged back
+        together. Many methods and constructors from JSVALUE32_64 and JSVALUE64 can by unified.
+
+        The .cpp files were empty.
+
+        Moving all these methods into JSValue.h seems to be a repro measurable regression, so
+        I have kept these methods in a separate JSValueInlineMethods.h. Adding the 64-bit tag
+        values as static const members of JSValue also measures as a repro regression, so I
+        have made these #defines.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            - Removed JSImmediate.h, JSNumberCell.h.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoad):
+            - Removed class JSImmediate.
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+            - Removed class JSImmediate.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+            - Removed class JSImmediate.
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::compileBinaryArithOpSlowCase):
+            - Removed class JSImmediate.
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitJumpIfJSCell):
+        (JSC::JIT::emitJumpIfNotJSCell):
+        (JSC::JIT::emitJumpIfImmediateInteger):
+        (JSC::JIT::emitJumpIfNotImmediateInteger):
+        (JSC::JIT::emitFastArithDeTagImmediate):
+        (JSC::JIT::emitFastArithDeTagImmediateJumpIfZero):
+        (JSC::JIT::emitFastArithReTagImmediate):
+        (JSC::JIT::emitTagAsBoolImmediate):
+            - Removed class JSImmediate.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emitSlow_op_not):
+            - Removed class JSImmediate.
+        * jit/JSInterfaceJIT.h:
+            - Removed class JSImmediate.
+        * runtime/JSCell.h:
+            - Removed JSImmediate.h, JSNumberCell.h.
+        * runtime/JSImmediate.cpp: Removed.
+        * runtime/JSImmediate.h: Removed.
+        * runtime/JSNumberCell.cpp: Removed.
+        * runtime/JSNumberCell.h: Removed.
+            - Removed.
+        * runtime/JSObject.h:
+            - Removed JSImmediate.h, JSNumberCell.h.
+        * runtime/JSString.h:
+            - Removed JSImmediate.h, JSNumberCell.h.
+        * runtime/JSValue.h:
+            - Added tags for JSVALUE64, moved out some JSVALUE32_64 methods, unified with JSVALUE64.
+        * runtime/JSValueInlineMethods.h: Added.
+        (JSC::JSValue::toInt32):
+        (JSC::JSValue::toUInt32):
+        (JSC::JSValue::isUInt32):
+        (JSC::JSValue::asUInt32):
+        (JSC::JSValue::uncheckedGetNumber):
+        (JSC::JSValue::toJSNumber):
+        (JSC::jsNaN):
+        (JSC::JSValue::getNumber):
+        (JSC::JSValue::getBoolean):
+        (JSC::JSValue::JSValue):
+        (JSC::JSValue::encode):
+        (JSC::JSValue::decode):
+        (JSC::JSValue::operator bool):
+        (JSC::JSValue::operator==):
+        (JSC::JSValue::operator!=):
+        (JSC::JSValue::isUndefined):
+        (JSC::JSValue::isNull):
+        (JSC::JSValue::isUndefinedOrNull):
+        (JSC::JSValue::isCell):
+        (JSC::JSValue::isInt32):
+        (JSC::JSValue::isDouble):
+        (JSC::JSValue::isTrue):
+        (JSC::JSValue::isFalse):
+        (JSC::JSValue::tag):
+        (JSC::JSValue::payload):
+        (JSC::JSValue::asInt32):
+        (JSC::JSValue::asDouble):
+        (JSC::JSValue::asCell):
+        (JSC::JSValue::isNumber):
+        (JSC::JSValue::isBoolean):
+        (JSC::JSValue::makeImmediate):
+        (JSC::JSValue::immediateValue):
+        (JSC::reinterpretDoubleToIntptr):
+        (JSC::reinterpretIntptrToDouble):
+            - Methods moved here from JSImmediate.h/JSNumberCell.h/JSValue.h.
+        * runtime/Operations.h:
+            - Removed JSImmediate.h, JSNumberCell.h.
+        * wtf/StdLibExtras.h:
+            - Export bitwise_cast.
+
 2011-04-11  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
 
         Reviewed by Oliver Hunt.

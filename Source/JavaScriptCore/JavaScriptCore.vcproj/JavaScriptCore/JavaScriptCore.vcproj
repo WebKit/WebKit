@@ -830,14 +830,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSImmediate.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\JSImmediate.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\JSLock.cpp"
 				>
 			</File>
@@ -851,14 +843,6 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\JSNotAnObject.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\JSNumberCell.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\JSNumberCell.h"
 				>
 			</File>
 			<File
@@ -923,6 +907,10 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\JSValue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\JSValueInlineMethods.h"
 				>
 			</File>
 			<File

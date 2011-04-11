@@ -24,9 +24,8 @@
 
 #include "ExceptionHelpers.h"
 #include "Interpreter.h"
-#include "JSImmediate.h"
-#include "JSNumberCell.h"
 #include "JSString.h"
+#include "JSValueInlineMethods.h"
 
 namespace JSC {
 

@@ -43,7 +43,6 @@
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <runtime/JSLock.h>
-#include <runtime/JSNumberCell.h>
 #include <runtime/PropertyNameArray.h>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>

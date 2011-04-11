@@ -26,7 +26,6 @@
 #include "CallFrame.h"
 #include "CommonIdentifiers.h"
 #include "Identifier.h"
-#include "JSNumberCell.h"
 #include "PropertyDescriptor.h"
 #include "PropertySlot.h"
 #include "RopeImpl.h"

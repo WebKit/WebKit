@@ -1103,7 +1103,7 @@ RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, bool b)
 
 RegisterID* BytecodeGenerator::emitLoad(RegisterID* dst, double number)
 {
-    // FIXME: Our hash tables won't hold infinity, so we make a new JSNumberCell each time.
+    // FIXME: Our hash tables won't hold infinity, so we make a new JSValue each time.
     // Later we can do the extra work to handle that like the other cases.  They also don't
     // work correctly with NaN as a key.
     if (isnan(number) || number == HashTraits<double>::emptyValue() || HashTraits<double>::isDeletedValue(number))

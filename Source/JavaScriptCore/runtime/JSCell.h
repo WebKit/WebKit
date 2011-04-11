@@ -27,9 +27,8 @@
 #include "CallFrame.h"
 #include "ConstructData.h"
 #include "Heap.h"
-#include "JSImmediate.h"
 #include "JSLock.h"
-#include "JSValue.h"
+#include "JSValueInlineMethods.h"
 #include "MarkStack.h"
 #include "UString.h"
 #include <wtf/Noncopyable.h>

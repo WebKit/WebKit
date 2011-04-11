@@ -29,7 +29,6 @@
 #include "Completion.h"
 #include "CallFrame.h"
 #include "JSCell.h"
-#include "JSNumberCell.h"
 #include "MarkStack.h"
 #include "PropertySlot.h"
 #include "PutPropertySlot.h"
