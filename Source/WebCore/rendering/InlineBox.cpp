@@ -211,36 +211,6 @@ RootInlineBox* InlineBox::root()
     return static_cast<RootInlineBox*>(this);
 }
 
-bool InlineBox::nextOnLineExists() const
-{
-    if (!m_determinedIfNextOnLineExists) {
-        m_determinedIfNextOnLineExists = true;
-
-        if (!parent())
-            m_nextOnLineExists = false;
-        else if (nextOnLine())
-            m_nextOnLineExists = true;
-        else
-            m_nextOnLineExists = parent()->nextOnLineExists();
-    }
-    return m_nextOnLineExists;
-}
-
-bool InlineBox::prevOnLineExists() const
-{
-    if (!m_determinedIfPrevOnLineExists) {
-        m_determinedIfPrevOnLineExists = true;
-        
-        if (!parent())
-            m_prevOnLineExists = false;
-        else if (prevOnLine())
-            m_prevOnLineExists = true;
-        else
-            m_prevOnLineExists = parent()->prevOnLineExists();
-    }
-    return m_prevOnLineExists;
-}
-
 InlineBox* InlineBox::nextLeafChild() const
 {
     InlineBox* leaf = 0;

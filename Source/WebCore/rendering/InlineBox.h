@@ -58,10 +58,6 @@ public:
         , m_hasEllipsisBoxOrHyphen(false)
         , m_dirOverride(false)
         , m_isText(false)
-        , m_determinedIfNextOnLineExists(false)
-        , m_determinedIfPrevOnLineExists(false)
-        , m_nextOnLineExists(false)
-        , m_prevOnLineExists(false)
         , m_expansion(0)
 #ifndef NDEBUG
         , m_hasBadParent(false)
@@ -93,10 +89,6 @@ public:
         , m_hasEllipsisBoxOrHyphen(false)
         , m_dirOverride(false)
         , m_isText(false)
-        , m_determinedIfNextOnLineExists(false)
-        , m_determinedIfPrevOnLineExists(false)
-        , m_nextOnLineExists(false)
-        , m_prevOnLineExists(false)
         , m_expansion(0)
 #ifndef NDEBUG
         , m_hasBadParent(false)
@@ -201,8 +193,6 @@ public:
         ASSERT(m_parent || !prev);
         m_prev = prev;
     }
-    bool nextOnLineExists() const;
-    bool prevOnLineExists() const;
 
     virtual bool isLeaf() const { return true; }
     
@@ -357,10 +347,6 @@ public:
     bool m_dirOverride : 1;
     bool m_isText : 1; // Whether or not this object represents text with a non-zero height. Includes non-image list markers, text boxes.
 protected:
-    mutable bool m_determinedIfNextOnLineExists : 1;
-    mutable bool m_determinedIfPrevOnLineExists : 1;
-    mutable bool m_nextOnLineExists : 1;
-    mutable bool m_prevOnLineExists : 1;
     int m_expansion : 11; // for justified text
 
 #ifndef NDEBUG
