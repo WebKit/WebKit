@@ -114,8 +114,13 @@ WebInspector.SourceFrame.prototype = {
     {
         if (!this._contentRequested) {
             this._contentRequested = true;
-            this._delegate.requestContent(this._createTextViewer.bind(this));
+            this._requestContent(this._createTextViewer.bind(this));
         }
+    },
+
+    _requestContent: function(callback)
+    {
+        this._delegate.requestContent(callback);
     },
 
     markDiff: function(diffData)
@@ -883,7 +888,7 @@ WebInspector.SourceFrame.prototype = {
 
     _handleSave: function()
     {
-        if (this._textViewer.readOnly || !this._delegate.canEditScriptSource())
+        if (this._textViewer.readOnly || !this.isContentEditable())
             return false;
 
         if (!this._viewerState) {
@@ -927,9 +932,14 @@ WebInspector.SourceFrame.prototype = {
                 this._delegate.setBreakpoint(Number(lineNumber), breakpoint.condition, breakpoint.enabled);
             }
         }
-        this._delegate.editScriptSource(newSource, didEditScriptSource.bind(this));
+        this._editContent(newSource, didEditScriptSource.bind(this));
         this._editScriptSourceInProgress = true;
         return true;
+    },
+
+    _editContent: function(newContent, callback)
+    {
+        this._delegate.editScriptSource(newContent, callback);
     },
 
     _handleRevertEditing: function()

@@ -45,20 +45,13 @@ WebInspector.ResourceView.prototype.__proto__ = WebInspector.View.prototype;
 
 WebInspector.ResourceView.createResourceView = function(resource)
 {
-    function sourceFrameForDelegateAndURL(delegate, url)
-    {
-        var view = new WebInspector.SourceFrame(delegate, url);
-        view.resource = resource;
-        return view;
-    }
-
     switch (resource.category) {
     case WebInspector.resourceCategories.documents:
     case WebInspector.resourceCategories.scripts:
     case WebInspector.resourceCategories.xhr:
-        return sourceFrameForDelegateAndURL(new WebInspector.SourceFrameDelegateForResourcesPanel(resource), resource.url);
+        return new WebInspector.ResourceSourceFrame(resource);
     case WebInspector.resourceCategories.stylesheets:
-        return sourceFrameForDelegateAndURL(new WebInspector.CSSSourceFrameDelegateForResourcesPanel(resource), resource.url);
+        return new WebInspector.CSSSourceFrame(resource);
     case WebInspector.resourceCategories.images:
         return new WebInspector.ImageView(resource);
     case WebInspector.resourceCategories.fonts:
@@ -73,10 +66,11 @@ WebInspector.ResourceView.resourceViewTypeMatchesResource = function(resource)
     var resourceView = resource._resourcesView;
     switch (resource.category) {
     case WebInspector.resourceCategories.documents:
-    case WebInspector.resourceCategories.stylesheets:
     case WebInspector.resourceCategories.scripts:
     case WebInspector.resourceCategories.xhr:
-        return resourceView.__proto__ === WebInspector.SourceFrame.prototype;
+        return resourceView.__proto__ === WebInspector.ResourceSourceFrame.prototype;
+    case WebInspector.resourceCategories.stylesheets:
+        return resourceView.__proto__ === WebInspector.CSSSourceFrame.prototype;
     case WebInspector.resourceCategories.images:
         return resourceView.__proto__ === WebInspector.ImageView.prototype;
     case WebInspector.resourceCategories.fonts:
@@ -124,58 +118,71 @@ WebInspector.ResourceView.existingResourceViewForResource = function(resource)
 }
 
 
-WebInspector.SourceFrameDelegateForResourcesPanel = function(resource)
+WebInspector.ResourceSourceFrame = function(resource)
 {
-    WebInspector.SourceFrameDelegate.call(this);
+    WebInspector.SourceFrame.call(this, new WebInspector.SourceFrameDelegate(), resource.url);
     this._resource = resource;
 }
 
 //This is a map from resource.type to mime types
 //found in WebInspector.SourceTokenizer.Registry.
-WebInspector.SourceFrameDelegateForResourcesPanel.DefaultMIMETypeForResourceType = {
+WebInspector.ResourceSourceFrame.DefaultMIMETypeForResourceType = {
     0: "text/html",
     1: "text/css",
     4: "text/javascript"
 }
 
-WebInspector.SourceFrameDelegateForResourcesPanel.prototype = {
-    requestContent: function(callback)
+WebInspector.ResourceSourceFrame.prototype = {
+    get resource()
+    {
+        return this._resource;
+    },
+
+    isContentEditable: function()
+    {
+        return false;
+    },
+
+    _requestContent: function(callback)
     {
         function contentLoaded(text)
         {
-            var mimeType = WebInspector.SourceFrameDelegateForResourcesPanel.DefaultMIMETypeForResourceType[this._resource.type] || this._resource.mimeType;
+            var mimeType = WebInspector.ResourceSourceFrame.DefaultMIMETypeForResourceType[this._resource.type] || this._resource.mimeType;
             callback(mimeType, text);
         }
         this._resource.requestContent(contentLoaded.bind(this));
     }
 }
 
-WebInspector.SourceFrameDelegateForResourcesPanel.prototype.__proto__ = WebInspector.SourceFrameDelegate.prototype;
+WebInspector.ResourceSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;
 
 
-WebInspector.CSSSourceFrameDelegateForResourcesPanel = function(resource)
+WebInspector.CSSSourceFrame = function(resource)
 {
-    WebInspector.SourceFrameDelegateForResourcesPanel.call(this, resource);
+    WebInspector.ResourceSourceFrame.call(this, resource);
 }
 
-WebInspector.CSSSourceFrameDelegateForResourcesPanel.prototype = {
-    canEditScriptSource: function()
+WebInspector.CSSSourceFrame.prototype = {
+    isContentEditable: function()
     {
         return true;
     },
 
-    editScriptSource: function(newText)
+    _editContent: function(newText, callback)
     {
         function handleStyleSheet(newText, styleSheet)
         {
             this._styleSheet = styleSheet;
-            this._saveStyleSheet(newText);
+            this._saveStyleSheet(newText, callback);
         }
 
         function handleInfos(newText, error, infos)
         {
-            if (error)
+            if (error) {
+                callback(error);
                 return;
+            }
+
             for (var i = 0; i < infos.length; ++i) {
                 var info = infos[i];
                 if (info.sourceURL === this._resource.url) {
@@ -186,21 +193,23 @@ WebInspector.CSSSourceFrameDelegateForResourcesPanel.prototype = {
         }
 
         if (this._styleSheet)
-            this._saveStyleSheet(newText);
+            this._saveStyleSheet(newText, callback);
         else
             CSSAgent.getAllStyleSheets(handleInfos.bind(this, newText));
     },
 
-    _saveStyleSheet: function(newText)
+    _saveStyleSheet: function(newText, callback)
     {
-        function callback(success)
+        function didSetText(success)
         {
+            var error;
             if (!success)
-                console.error("Failed to save modified stylesheet %s", this._resource.url);
+                error = "Failed to save modified stylesheet " + this._resource.url;
+            callback(error);
         }
 
-        this._styleSheet.setText(newText, callback.bind(this));
+        this._styleSheet.setText(newText, didSetText.bind(this));
     }
 }
 
-WebInspector.CSSSourceFrameDelegateForResourcesPanel.prototype.__proto__ = WebInspector.SourceFrameDelegateForResourcesPanel.prototype;
+WebInspector.CSSSourceFrame.prototype.__proto__ = WebInspector.ResourceSourceFrame.prototype;
