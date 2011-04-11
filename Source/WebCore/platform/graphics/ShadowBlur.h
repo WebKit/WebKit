@@ -53,8 +53,7 @@ public:
     void drawInsetShadow(GraphicsContext*, const FloatRect&, const FloatRect& holeRect, const RoundedIntRect::Radii& holeRadii);
 
 private:
-    GraphicsContext* beginShadowLayer(GraphicsContext*, const IntRect& layerRect);
-    void endShadowLayer(GraphicsContext*);
+    void drawShadowBuffer(GraphicsContext*);
 
     void adjustBlurRadius(GraphicsContext*);
     void blurLayerImage(unsigned char*, const IntSize&, int stride);
@@ -75,6 +74,7 @@ private:
     
     void drawLayerPieces(GraphicsContext*, const FloatRect& shadowBounds, const RoundedIntRect::Radii&, float roundedRadius, const IntSize& templateSize, ShadowDirection);
     
+    void blurShadowBuffer(const IntSize& templateSize);
     void blurAndColorShadowBuffer(const IntSize& templateSize);
     
     enum ShadowType {

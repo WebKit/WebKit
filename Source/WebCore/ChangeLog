@@ -1,3 +1,63 @@
+2011-04-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Ariya Hidayat.
+
+        Allow ShadowBlur to re-use the last buffer if it already contains the correct shadow
+        https://bugs.webkit.org/show_bug.cgi?id=58161
+        
+        ShadowBlur already has a singleton scratch buffer that is re-used
+        between shadows. Enhance use of this scratch buffer to avoid drawing
+        and blurring the shadow if the results will match what is already
+        in the buffer.
+        
+        Cleaned up ShadowBlur code to remove beginShadowLayer() and endShadowLayer(),
+        which ended up with little reusable code after adding the re-use logic.
+
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::enclosingIntRect): Replace safeFloatToInt() with the existing
+        clampToInteger() from MathExtras.h
+        
+        * platform/graphics/FloatSize.h:
+        (WebCore::expandedIntSize): New method to safely ceil() the size.
+        
+        * platform/graphics/RoundedIntRect.h:
+        Add operator== for Radii and RoundedIntRect.
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ScratchBuffer::ScratchBuffer):
+        (WebCore::ScratchBuffer::setLastShadowValues):
+        (WebCore::ScratchBuffer::setLastInsetShadowValues):
+        (WebCore::ScratchBuffer::matchesLastShadow):
+        (WebCore::ScratchBuffer::matchesLastInsetShadow):
+        (WebCore::ScratchBuffer::clearScratchBuffer):
+        Have the scratch buffer remember what shadow parameters were used
+        to render the buffer contents.
+        
+        (WebCore::ShadowBlur::drawShadowBuffer):
+        Renamed from endShadowLayer(), and only contains the drawing
+        logic now.
+        
+        (WebCore::ShadowBlur::drawRectShadow):
+        Promote some code from beginShadowLayer().
+        
+        (WebCore::ShadowBlur::drawInsetShadow):
+        Promote some code from beginShadowLayer().
+
+        (WebCore::ShadowBlur::drawRectShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithoutTiling):
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling):
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):
+        These methods now check to see if the buffer already matches
+        their required parameters, and avoid work if it does.
+        
+        (WebCore::ShadowBlur::blurShadowBuffer):
+        Factored some code into this new method.
+        
+        (WebCore::ShadowBlur::blurAndColorShadowBuffer):
+        Minor refactoring.
+
+        * platform/graphics/ShadowBlur.h:
+
 2011-04-10  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: Updated for file move.

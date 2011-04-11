@@ -98,6 +98,17 @@ private:
     Radii m_radii;
 };
 
+inline bool operator==(const RoundedIntRect::Radii& a, const RoundedIntRect::Radii& b)
+{
+    return a.topLeft() == b.topLeft() && a.topRight() == b.topRight() && a.bottomLeft() == b.bottomLeft() && a.bottomRight() == b.bottomRight();
+}
+
+inline bool operator==(const RoundedIntRect& a, const RoundedIntRect& b)
+{
+    return a.rect() == b.rect() && a.radii() == b.radii();
+}
+
+
 } // namespace WebCore
 
 #endif // RoundedIntRect_h
