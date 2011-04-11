@@ -429,9 +429,6 @@ public:
     WebCore::DragOperation dragOperation() { return m_currentDragOperation; }
     void resetDragOperation() { m_currentDragOperation = WebCore::DragOperationNone; }
 
-    // REMOVE: For demo purposes only.
-    const String& urlAtProcessExit() const { return m_urlAtProcessExit; }
-
     void preferencesDidChange();
 
 #if ENABLE(TILED_BACKING_STORE)
@@ -761,9 +758,6 @@ private:
     String m_toolTip;
 
     SelectionState m_selectionState;
-
-    // REMOVE: For demo purposes only.
-    String m_urlAtProcessExit;
 
     double m_textZoomFactor;
     double m_pageZoomFactor;

@@ -2691,30 +2691,26 @@ void WebPageProxy::processDidCrash()
 
     m_isValid = false;
 
-    if (m_mainFrame)
-        m_urlAtProcessExit = m_mainFrame->url();
-
-    m_mainFrame = 0;
-
+    m_mainFrame = nullptr;
     m_drawingArea = nullptr;
 
 #if ENABLE(INSPECTOR)
     if (m_inspector) {
         m_inspector->invalidate();
-        m_inspector = 0;
+        m_inspector = nullptr;
     }
 #endif
 
 #if ENABLE(FULLSCREEN_API)
     if (m_fullScreenManager) {
         m_fullScreenManager->invalidate();
-        m_fullScreenManager = 0;
+        m_fullScreenManager = nullptr;
     }
 #endif
 
     if (m_openPanelResultListener) {
         m_openPanelResultListener->invalidate();
-        m_openPanelResultListener = 0;
+        m_openPanelResultListener = nullptr;
     }
 
     m_geolocationPermissionRequestManager.invalidateRequests();

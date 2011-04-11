@@ -1,5 +1,18 @@
 2011-04-11  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Remove m_urlAtProcessExit from WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=58275
+
+        Get rid of m_urlAtProcessExit and replace some zeros with nullptrs.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processDidCrash):
+        * UIProcess/WebPageProxy.h:
+
+2011-04-11  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Remove the WebContext member variable from WebPageProxy
