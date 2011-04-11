@@ -2003,6 +2003,7 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
 
 #else
     UNUSED_PARAM(selectionAfterTyping);
+    UNUSED_PARAM(doReplacement);
 
     if (!isContinuousSpellCheckingEnabled())
         return;

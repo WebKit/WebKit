@@ -1,3 +1,13 @@
+2011-04-11  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed build fix.
+
+        Changeset 83492 broke Leopard build.
+        https://bugs.webkit.org/show_bug.cgi?id=58268
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+
 2011-03-25  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
