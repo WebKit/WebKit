@@ -3468,3 +3468,7 @@ BUGWK58193 WIN VISTA : svg/dynamic-updates/SVGPatternElement-dom-patternContentU
 BUGWK58193 WIN VISTA : svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop.html = IMAGE
 BUGWK58193 WIN VISTA : svg/text/text-fonts-01-t.svg = IMAGE
 BUGWK58193 WIN VISTA : svg/text/text-intro-05-t.svg = IMAGE
+BUGWK58193 WIN VISTA : svg/custom/circular-marker-reference-1.svg = TEXT
+BUGWK58193 WIN VISTA : svg/custom/circular-marker-reference-3.svg = TEXT
+BUGWK58193 WIN VISTA : svg/custom/circular-marker-reference-4.svg = TEXT
+BUGWK58193 WIN VISTA : svg/zoom/page/zoom-mask-with-percentages.svg = TEXT
