@@ -30,6 +30,7 @@
 #include "AccessibilityARIAGridCell.h"
 
 #include "AccessibilityObject.h"
+#include "AccessibilityTable.h"
 #include "AccessibilityTableRow.h"
 
 using namespace std;
@@ -53,9 +54,15 @@ PassRefPtr<AccessibilityARIAGridCell> AccessibilityARIAGridCell::create(RenderOb
 AccessibilityObject* AccessibilityARIAGridCell::parentTable() const
 {
     AccessibilityObject* parent = parentObjectUnignored();
-    if (!parent || !parent->isTableRow())
+    if (!parent)
         return 0;
     
+    if (parent->isAccessibilityTable())
+        return parent;
+
+    // It could happen that we hadn't reached the parent table yet (in
+    // case objects for rows were not ignoring accessibility) so for
+    // that reason we need to run parentObjectUnignored once again.
     parent = parent->parentObjectUnignored();
     if (!parent || !parent->isAccessibilityTable())
         return 0;
@@ -66,20 +73,42 @@ AccessibilityObject* AccessibilityARIAGridCell::parentTable() const
 void AccessibilityARIAGridCell::rowIndexRange(pair<int, int>& rowRange)
 {
     AccessibilityObject* parent = parentObjectUnignored();
-    if (!parent || !parent->isTableRow())
+    if (!parent)
         return;
 
+    if (parent->isTableRow()) {
+        // We already got a table row, use its API.
+        rowRange.first = static_cast<AccessibilityTableRow*>(parent)->rowIndex();
+    } else if (parent->isAccessibilityTable()) {
+        // We reached the parent table, so we need to inspect its
+        // children to determine the row index for the cell in it.
+        unsigned columnCount = static_cast<AccessibilityTable*>(parent)->columnCount();
+        if (!columnCount)
+            return;
+
+        AccessibilityChildrenVector siblings = parent->children();
+        unsigned childrenSize = siblings.size();
+        for (unsigned k = 0; k < childrenSize; ++k) {
+            if (siblings[k].get() == this) {
+                rowRange.first = k / columnCount;
+                break;
+            }
+        }
+    }
+
     // as far as I can tell, grid cells cannot span rows
-    rowRange.first = static_cast<AccessibilityTableRow*>(parent)->rowIndex();
-    rowRange.second = 1;    
+    rowRange.second = 1;
 }
 
 void AccessibilityARIAGridCell::columnIndexRange(pair<int, int>& columnRange)
 {
     AccessibilityObject* parent = parentObjectUnignored();
-    if (!parent || !parent->isTableRow())
+    if (!parent)
         return;
-    
+
+    if (!parent->isTableRow() && !parent->isAccessibilityTable())
+        return;
+
     AccessibilityChildrenVector siblings = parent->children();
     unsigned childrenSize = siblings.size();
     for (unsigned k = 0; k < childrenSize; ++k) {

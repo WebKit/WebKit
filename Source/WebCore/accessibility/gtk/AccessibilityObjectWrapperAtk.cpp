@@ -452,6 +452,8 @@ static AtkRole atkRole(AccessibilityRole role)
     case GroupRole:
     case RadioGroupRole:
         return ATK_ROLE_PANEL;
+    case RowHeaderRole: // Row headers are cells after all.
+    case ColumnHeaderRole: // Column headers are cells after all.
     case CellRole:
         return ATK_ROLE_TABLE_CELL;
     case LinkRole:

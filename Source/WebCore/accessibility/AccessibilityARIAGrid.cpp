@@ -75,7 +75,14 @@ void AccessibilityARIAGrid::addChild(AccessibilityObject* child, HashSet<Accessi
     
     row->setRowIndex((int)m_rows.size());        
     m_rows.append(row);
-    m_children.append(row);
+
+    // Try adding the row if it's not ignoring accessibility,
+    // otherwise add its children (the cells) as the grid's children.
+    if (!row->accessibilityIsIgnored())
+        m_children.append(row);
+    else
+        m_children.append(row->children());
+
     appendedRows.add(row);
 }
     
@@ -99,17 +106,21 @@ void AccessibilityARIAGrid::addChildren()
     unsigned columnCount = 0;
     for (RefPtr<AccessibilityObject> child = firstChild(); child; child = child->nextSibling()) {
 
-        // in case the render tree doesn't match the expected ARIA hierarchy, look at the children
-        if (child->accessibilityIsIgnored()) {
+        if (child->isTableRow() || child->ariaRoleAttribute() == RowRole)
+            addChild(child.get(), appendedRows, columnCount);
+        else {
+            // in case the render tree doesn't match the expected ARIA hierarchy, look at the children
             if (!child->hasChildren())
                 child->addChildren();
-            
-            AccessibilityChildrenVector children = child->children();
-            unsigned length = children.size();
-            for (unsigned i = 0; i < length; ++i)
-                addChild(children[i].get(), appendedRows, columnCount);
-        } else
-            addChild(child.get(), appendedRows, columnCount);            
+
+            // Do not navigate children through the Accessibility
+            // children vector to let addChild() check the result
+            // of accessibilityIsIgnored() and make the proper
+            // decision (add the objects or their children).
+            AccessibilityObject* grandChild = 0;
+            for (grandChild = child->firstChild(); grandChild; grandChild = grandChild->nextSibling())
+                addChild(grandChild, appendedRows, columnCount);
+        }
     }
     
     // make the columns based on the number of columns in the first body

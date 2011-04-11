@@ -1,3 +1,31 @@
+2011-04-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] ARIA tables not exposing cells as HTML tables do
+        https://bugs.webkit.org/show_bug.cgi?id=57463
+
+        Expose cells for ARIA grids consistently with HTML tables in GTK,
+        keeping the same behaviour for the other platforms.
+
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addChild): Add the row's children
+        to the accessibility hierarchy when accessibility objects for rows
+        are ignoring accessibility, otherwise add the row.
+        (WebCore::AccessibilityARIAGrid::addChildren): Do not check at
+        this point whether every child of the table ignores or not
+        accessibility, letting addChild() make the proper decision later.
+
+        * accessibility/AccessibilityARIAGridCell.cpp:
+        (WebCore::AccessibilityARIAGridCell::parentTable): Consider that
+        rows could be ignoring accessibility, hence the parent could be
+        retrieved in the first call to parentObjectUnignored().
+        (WebCore::AccessibilityARIAGridCell::rowIndexRange): Ditto.
+        (WebCore::AccessibilityARIAGridCell::columnIndexRange): Ditto..
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (atkRole): Map ColumnHeader and RowHeader to ATK_ROLE_TABLE_CELL.
+
 2011-04-11  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.
