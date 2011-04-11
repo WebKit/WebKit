@@ -99,7 +99,6 @@ public:
 
     WebPageGroupProxy* webPageGroup(uint64_t pageGroupID);
     WebPageGroupProxy* webPageGroup(const WebPageGroupData&);
-    static WebCore::PageGroup* sharedPageGroup();
 #if PLATFORM(MAC)
     pid_t presenterApplicationPid() const { return m_presenterApplicationPid; }
 #endif 

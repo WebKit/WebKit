@@ -271,20 +271,24 @@ void WebProcess::setVisitedLinkTable(const SharedMemory::Handle& handle)
     m_visitedLinkTable.setSharedMemory(sharedMemory.release());
 }
 
-PageGroup* WebProcess::sharedPageGroup()
-{
-    return PageGroup::pageGroup("WebKit2Group");
-}
-
 void WebProcess::visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes)
 {
-    for (size_t i = 0; i < linkHashes.size(); ++i)
-        Page::visitedStateChanged(sharedPageGroup(), linkHashes[i]);
+    // FIXME: We may want to track visited links per WebPageGroup rather than per WebContext.
+    for (size_t i = 0; i < linkHashes.size(); ++i) {
+        HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::const_iterator it = m_pageGroupMap.begin();
+        HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::const_iterator end = m_pageGroupMap.end();
+        for (; it != end; ++it)
+            Page::visitedStateChanged(PageGroup::pageGroup(it->second->identifier()), linkHashes[i]);
+    }
 }
 
 void WebProcess::allVisitedLinkStateChanged()
 {
-    Page::allVisitedStateChanged(sharedPageGroup());
+    // FIXME: We may want to track visited links per WebPageGroup rather than per WebContext.
+    HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::const_iterator it = m_pageGroupMap.begin();
+    HashMap<uint64_t, RefPtr<WebPageGroupProxy> >::const_iterator end = m_pageGroupMap.end();
+    for (; it != end; ++it)
+        Page::allVisitedStateChanged(PageGroup::pageGroup(it->second->identifier()));
 }
 
 bool WebProcess::isLinkVisited(LinkHash linkHash) const

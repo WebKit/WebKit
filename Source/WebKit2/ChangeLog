@@ -1,3 +1,18 @@
+2011-04-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: links don’t update to look visited
+        <rdar://problem/8806254>
+        https://bugs.webkit.org/show_bug.cgi?id=58252
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::visitedLinkStateChanged):
+        (WebKit::WebProcess::allVisitedLinkStateChanged):
+        * WebProcess/WebProcess.h:
+        Remove use of vestigial sharedPageGroup and instead iterate set of
+        page groups in use by the process.
+
 2011-04-11  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
