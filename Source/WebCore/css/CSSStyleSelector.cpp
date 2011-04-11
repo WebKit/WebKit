@@ -3642,11 +3642,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     // check lookup table for implementations and use when available
     if (m_applyProperty.implements(property)) {
         if (isInherit)
-            m_applyProperty.inherit(property, this);
+            m_applyProperty.applyInheritValue(property, this);
         else if (isInitial)
-            m_applyProperty.initial(property, this);
+            m_applyProperty.applyInitialValue(property, this);
         else
-            m_applyProperty.value(property, this, value);
+            m_applyProperty.applyValue(property, this, value);
         return;
     }
 

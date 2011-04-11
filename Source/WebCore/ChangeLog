@@ -1,3 +1,19 @@
+2011-04-10  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Rename CSSStyleApplyProperty::inherit,initial,value applyInheritValue,applyInitialValue,applyValue
+        https://bugs.webkit.org/show_bug.cgi?id=58212
+
+        No new tests - function renaming only / no functionality changes.
+
+        * css/CSSStyleApplyProperty.cpp:
+        Rename all instances of inherit, initial and value.
+        * css/CSSStyleApplyProperty.h:
+        Rename all instances of inherit, initial and value.
+        * css/CSSStyleSelector.cpp:
+        Rename all instances of inherit, initial and value.
+
 2011-04-10  Mike Lawther  <mikelawther@chromium.org>
 
         Reviewed by Ojan Vafai.

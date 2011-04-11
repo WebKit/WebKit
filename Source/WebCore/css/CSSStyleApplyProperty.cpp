@@ -40,9 +40,9 @@ namespace WebCore {
 
 class ApplyPropertyNull : public ApplyPropertyBase {
 public:
-    virtual void inherit(CSSStyleSelector*) const {}
-    virtual void initial(CSSStyleSelector*) const {}
-    virtual void value(CSSStyleSelector*, CSSValue*) const {}
+    virtual void applyInheritValue(CSSStyleSelector*) const {}
+    virtual void applyInitialValue(CSSStyleSelector*) const {}
+    virtual void applyValue(CSSStyleSelector*, CSSValue*) const {}
 };
 
 template <typename T>
@@ -55,17 +55,17 @@ public:
     {
     }
 
-    virtual void inherit(CSSStyleSelector* selector) const
+    virtual void applyInheritValue(CSSStyleSelector* selector) const
     {
         (selector->style()->*m_setter)((selector->parentStyle()->*m_getter)());
     }
 
-    virtual void initial(CSSStyleSelector* selector) const
+    virtual void applyInitialValue(CSSStyleSelector* selector) const
     {
         (selector->style()->*m_setter)((*m_initial)());
     }
 
-    virtual void value(CSSStyleSelector* selector, CSSValue* value) const
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
     {
         if (value->isPrimitiveValue())
             (selector->style()->*m_setter)(*(static_cast<CSSPrimitiveValue*>(value)));
@@ -86,7 +86,7 @@ public:
         , m_setter(setter)
     {
     }
-    virtual void inherit(CSSStyleSelector* selector) const
+    virtual void applyInheritValue(CSSStyleSelector* selector) const
     {
         const Color& color = (selector->parentStyle()->*m_getter)();
         if (m_defaultValue && !color.isValid())
@@ -94,12 +94,12 @@ public:
         else
             (selector->style()->*m_setter)(color);
     }
-    virtual void initial(CSSStyleSelector* selector) const
+    virtual void applyInitialValue(CSSStyleSelector* selector) const
     {
         Color color;
         (selector->style()->*m_setter)(color);
     }
-    virtual void value(CSSStyleSelector* selector, CSSValue* value) const
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
     {
         if (value->isPrimitiveValue())
             (selector->style()->*m_setter)(selector->getColorFromPrimitiveValue(static_cast<CSSPrimitiveValue*>(value)));
@@ -118,20 +118,20 @@ public:
     {
     }
 
-    virtual void initial(CSSStyleSelector* selector) const
+    virtual void applyInitialValue(CSSStyleSelector* selector) const
     {
         (selector->style()->*m_setter)(m_initialValue());
     }
 
-    virtual void value(CSSStyleSelector* selector, CSSValue* value) const
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
     {
         if (!value->isPrimitiveValue())
             return;
 
         if ((static_cast<CSSPrimitiveValue*>(value))->getIdent() == CSSValueCurrentcolor)
-            inherit(selector);
+            applyInheritValue(selector);
         else
-            ApplyPropertyColorBase::value(selector, value);
+            ApplyPropertyColorBase::applyValue(selector, value);
     }
 protected:
     Color (*m_initialValue)();
@@ -145,9 +145,9 @@ public:
     {
     }
 
-    virtual void value(CSSStyleSelector* selector, CSSValue* value) const
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
     {
-        ApplyPropertyDefault<TextDirection>::value(selector, value);
+        ApplyPropertyDefault<TextDirection>::applyValue(selector, value);
         Element* element = selector->element();
         if (element && selector->element() == element->document()->documentElement())
             element->document()->setDirectionSetOnDocumentElement(true);
@@ -174,7 +174,7 @@ public:
     {
     }
 
-    virtual void inherit(CSSStyleSelector* selector) const
+    virtual void applyInheritValue(CSSStyleSelector* selector) const
     {
         FillLayer* currChild = (selector->style()->*m_accessLayers)();
         FillLayer* prevChild = 0;
@@ -198,7 +198,7 @@ public:
         }
     }
 
-    virtual void initial(CSSStyleSelector* selector) const
+    virtual void applyInitialValue(CSSStyleSelector* selector) const
     {
         FillLayer* currChild = (selector->style()->*m_accessLayers)();
         (currChild->*m_set)((*m_initial)(m_fillLayerType));
@@ -206,7 +206,7 @@ public:
             (currChild->*m_clear)();
     }
 
-    virtual void value(CSSStyleSelector* selector, CSSValue* value) const
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
     {
         FillLayer* currChild = (selector->style()->*m_accessLayers)();
         FillLayer* prevChild = 0;
