@@ -27,6 +27,7 @@
 #include "WebProcess.h"
 
 #include "WebCookieManager.h"
+#include "WebPage.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/MemoryCache.h>
@@ -135,6 +136,51 @@ void WebProcess::setShouldPaintNativeControls(bool shouldPaintNativeControls)
 #if USE(SAFARI_THEME)
     Settings::setShouldPaintNativeControls(shouldPaintNativeControls);
 #endif
+}
+
+struct EnumWindowsContext {
+    DWORD currentThreadID;
+    Vector<HWND>* windows;
+};
+
+static BOOL CALLBACK addWindowToVectorIfOwnedByCurrentThread(HWND window, LPARAM lParam)
+{
+    EnumWindowsContext* context = reinterpret_cast<EnumWindowsContext*>(lParam);
+
+    if (::GetWindowThreadProcessId(window, 0) != context->currentThreadID)
+        return TRUE;
+
+    context->windows->append(window);
+    return TRUE;
+}
+
+Vector<HWND> WebProcess::windowsToReceiveSentMessagesWhileWaitingForSyncReply()
+{
+    Vector<HWND> windows;
+
+    // Any non-message-only window created by this thread needs to receive sent messages while we
+    // wait for a sync reply. Otherwise we could deadlock with the UI process if, e.g., the focus
+    // window changes. See <http://webkit.org/b/58239>.
+
+    EnumWindowsContext context;
+    context.currentThreadID = ::GetCurrentThreadId();
+    context.windows = &windows;
+
+    // Start out with top-level windows created by this thread (like Flash's hidden
+    // SWFlash_PlaceholderX top-level windows).
+    ::EnumThreadWindows(context.currentThreadID, addWindowToVectorIfOwnedByCurrentThread, reinterpret_cast<LPARAM>(&context));
+
+    // Also include any descendants of those top-level windows.
+    size_t topLevelWindowCount = windows.size();
+    for (size_t i = 0; i < topLevelWindowCount; ++i)
+        ::EnumChildWindows(windows[i], addWindowToVectorIfOwnedByCurrentThread, reinterpret_cast<LPARAM>(&context));
+
+    // Also include any descendants of the WebPages' windows which we've created (e.g., for windowed plugins).
+    HashMap<uint64_t, RefPtr<WebPage> >::const_iterator::Values end = m_pageMap.end();
+    for (HashMap<uint64_t, RefPtr<WebPage> >::const_iterator::Values it = m_pageMap.begin(); it != end; ++it)
+        ::EnumChildWindows((*it)->nativeWindow(), addWindowToVectorIfOwnedByCurrentThread, reinterpret_cast<LPARAM>(&context));
+
+    return windows;
 }
 
 } // namespace WebKit

@@ -128,6 +128,9 @@ private:
     CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
     void didClose(CoreIPC::Connection*);
     void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
+#if PLATFORM(WIN)
+    Vector<HWND> windowsToReceiveSentMessagesWhileWaitingForSyncReply();
+#endif
 
     // ResponsivenessTimer::Client
     void didBecomeUnresponsive(ResponsivenessTimer*);

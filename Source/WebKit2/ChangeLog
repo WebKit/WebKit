@@ -1,3 +1,69 @@
+2011-04-11  Adam Roben  <aroben@apple.com>
+
+        Dispatch sent messages to windows owned by the web process when waiting a sync CoreIPC reply
+
+        On Windows, windowed plugins' HWNDs are created as children of the WKView's window. This
+        creates a cross-process window hierarchy, which in turn attaches the input states of the UI
+        process's and web process's main threads (as if ::AttachThreadInput has been called). Having
+        the input states attached means that changes to the input state (e.g., changing the focus
+        window) can result in synchronous window messages being sent between the processes. This can
+        result in deadlocks if the UI process changes the input state while handling a synchronous
+        CoreIPC message from the web process. Since the web process isn't running its message loop
+        while waiting for the reply, it never processes the messages Windows is sending it from the
+        UI process.
+
+        The solution taken in this patch is to continue to dispatch sent (not posted) messages to
+        windows created by the web process while waiting for a sync CoreIPC reply. Someday we can
+        hopefully reduce the number of cases in which the UI process modifies the thread's input
+        state while handling a synchronous message; see the bug for details.
+
+        Fixes <http://webkit.org/b/58239> <rdar://problem/8769302> REGRESSION (WebKit2): Deadlock
+        clicking Flash plugin
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/BinarySemaphore.h:
+        (CoreIPC::BinarySemaphore::event): Added. Simple getter to expose the underlying event
+        HANDLE.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::SyncMessageState::waitWhileDispatchingSentMessages): New Windows-only
+        function that is used instead of wait() so that sent messages will continue to be
+        dispatched.
+        (CoreIPC::Connection::waitForSyncReply): Use waitWhileDispatchingSentMessages instead of
+        wait on Windows. Our Client gives us the set of windows that need to have windows delivered
+        to them.
+
+        * Platform/CoreIPC/Connection.h: Added new
+        windowsToReceiveSentMessagesWhileWaitingForSyncReply function to Client.
+
+        * Platform/RunLoop.h: Added new dispatchSentMessagesUntil function to be used while waiting
+        for a sync CoreIPC reply.
+
+        * Platform/win/RunLoopWin.cpp:
+        (RunLoop::dispatchSentMessagesUntil): Added. If we have no windows to dispatch messages to,
+        then just wait on the semaphore. Otherwise spin a ::MsgWaitForMultipleObjectsEx loop to
+        detect when the semaphore is signaled, the timeout elapses, or sent messages are available,
+        and handle each case appropriately.
+
+        * UIProcess/WebProcessProxy.h: Added new CoreIPC::Connection::Client function.
+
+        * UIProcess/win/WebProcessProxyWin.cpp: Added.
+        (WebKit::WebProcessProxy::windowsToReceiveSentMessagesWhileWaitingForSyncReply): Just return
+        an empty Vector. The web process never modifies the thread's input state while responding to
+        a synchronous message, so we don't have anything to worry about here.
+
+        * WebProcess/WebProcess.h: Added new CoreIPC::Connection::Client function.
+
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::addWindowToVectorIfOwnedByCurrentThread): New helper function to be called by
+        ::EnumThreadWindows/::EnumChildWindows. Does what it says.
+        (WebKit::WebProcess::windowsToReceiveSentMessagesWhileWaitingForSyncReply): Added. Returns
+        all top-level windows created by this thread, descendants of those windows created by this
+        thread, and descendants of WKViews' windows created by this thread.
+
+        * win/WebKit2.vcproj: Added WebProcessProxyWin.cpp.
+
 2011-04-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Anders Carlsson.

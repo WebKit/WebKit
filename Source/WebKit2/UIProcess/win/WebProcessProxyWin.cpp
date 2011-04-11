@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BinarySemaphore_h
-#define BinarySemaphore_h
+#include "config.h"
+#include "WebProcessProxy.h"
 
-#include <wtf/Noncopyable.h>
-#include <wtf/ThreadingPrimitives.h>
+namespace WebKit {
 
-namespace CoreIPC {
+Vector<HWND> WebProcessProxy::windowsToReceiveSentMessagesWhileWaitingForSyncReply()
+{
+    return Vector<HWND>();
+}
 
-class BinarySemaphore {
-    WTF_MAKE_NONCOPYABLE(BinarySemaphore);
-
-public:
-    BinarySemaphore();
-    ~BinarySemaphore();
-
-    void signal();
-    bool wait(double absoluteTime);
-
-#if PLATFORM(WIN)
-    HANDLE event() const { return m_event; }
-#endif
-
-private:
-#if PLATFORM(WIN)
-    HANDLE m_event;
-#else
-    bool m_isSet;
-
-    Mutex m_mutex;
-    ThreadCondition m_condition;
-#endif
-};
-
-} // namespace CoreIPC
-
-
-#endif // BinarySemaphore_h
+} // namespace WebKit

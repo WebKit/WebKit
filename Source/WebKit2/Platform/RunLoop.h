@@ -43,6 +43,10 @@ typedef int gboolean;
 
 class WorkItem;
 
+namespace CoreIPC {
+    class BinarySemaphore;
+}
+
 class RunLoop {
 public:
     // Must be called from the main thread.
@@ -52,6 +56,14 @@ public:
     static RunLoop* main();
 
     void scheduleWork(PassOwnPtr<WorkItem>);
+
+#if PLATFORM(WIN)
+    // The absoluteTime is in seconds, starting on January 1, 1970. The time is assumed to use the
+    // same time zone as WTF::currentTime(). Dispatches sent (not posted) messages to the passed-in
+    // set of HWNDs until the semaphore is signaled or absoluteTime is reached. Returns true if the
+    // semaphore is signaled, false otherwise.
+    static bool dispatchSentMessagesUntil(const Vector<HWND>& windows, CoreIPC::BinarySemaphore&, double absoluteTime);
+#endif
 
     static void run();
     void stop();

@@ -29,6 +29,7 @@
 #include "BinarySemaphore.h"
 #include "CoreIPCMessageKinds.h"
 #include "RunLoop.h"
+#include "WebProcess.h"
 #include "WorkItem.h"
 #include <wtf/CurrentTime.h>
 
@@ -50,6 +51,13 @@ public:
     {
         return m_waitForSyncReplySemaphore.wait(absoluteTime);
     }
+
+#if PLATFORM(WIN)
+    bool waitWhileDispatchingSentWin32Messages(double absoluteTime, const Vector<HWND>& windowsToReceiveMessages)
+    {
+        return RunLoop::dispatchSentMessagesUntil(windowsToReceiveMessages, m_waitForSyncReplySemaphore, absoluteTime);
+    }
+#endif
 
     // Returns true if this message will be handled on a client thread that is currently
     // waiting for a reply to a synchronous message.
@@ -401,7 +409,11 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
         }
 
         // We didn't find a sync reply yet, keep waiting.
+#if PLATFORM(WIN)
+        timedOut = !m_syncMessageState->waitWhileDispatchingSentWin32Messages(absoluteTime, m_client->windowsToReceiveSentMessagesWhileWaitingForSyncReply());
+#else
         timedOut = !m_syncMessageState->wait(absoluteTime);
+#endif
     }
 
     // We timed out.

@@ -172,6 +172,9 @@ private:
     void didClose(CoreIPC::Connection*);
     void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
     NO_RETURN void didFailToSendSyncMessage(CoreIPC::Connection*);
+#if PLATFORM(WIN)
+    Vector<HWND> windowsToReceiveSentMessagesWhileWaitingForSyncReply();
+#endif
 
     // Implemented in generated WebProcessMessageReceiver.cpp
     void didReceiveWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
