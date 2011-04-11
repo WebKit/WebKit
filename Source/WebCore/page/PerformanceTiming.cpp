@@ -161,7 +161,7 @@ unsigned long long PerformanceTiming::domainLookupStart() const
 {
     ResourceLoadTiming* timing = resourceLoadTiming();
     if (!timing)
-        return 0;
+        return fetchStart();
 
     // This will be -1 when a DNS request is not performed.
     // Rather than exposing a special value that indicates no DNS, we "backfill" with fetchStart.
@@ -176,7 +176,7 @@ unsigned long long PerformanceTiming::domainLookupEnd() const
 {
     ResourceLoadTiming* timing = resourceLoadTiming();
     if (!timing)
-        return 0;
+        return domainLookupStart();
 
     // This will be -1 when a DNS request is not performed.
     // Rather than exposing a special value that indicates no DNS, we "backfill" with domainLookupStart.
@@ -191,11 +191,11 @@ unsigned long long PerformanceTiming::connectStart() const
 {
     DocumentLoader* loader = documentLoader();
     if (!loader)
-        return 0;
+        return domainLookupEnd();
 
     ResourceLoadTiming* timing = loader->response().resourceLoadTiming();
     if (!timing)
-        return 0;
+        return domainLookupEnd();
 
     // connectStart will be -1 when a network request is not made.
     // Rather than exposing a special value that indicates no new connection, we "backfill" with domainLookupEnd.
@@ -215,11 +215,11 @@ unsigned long long PerformanceTiming::connectEnd() const
 {
     DocumentLoader* loader = documentLoader();
     if (!loader)
-        return 0;
+        return connectStart();
 
     ResourceLoadTiming* timing = loader->response().resourceLoadTiming();
     if (!timing)
-        return 0;
+        return connectStart();
 
     // connectEnd will be -1 when a network request is not made.
     // Rather than exposing a special value that indicates no new connection, we "backfill" with connectStart.
@@ -251,7 +251,7 @@ unsigned long long PerformanceTiming::requestStart() const
 {
     ResourceLoadTiming* timing = resourceLoadTiming();
     if (!timing)
-        return 0;
+        return connectEnd();
 
     ASSERT(timing->sendStart >= 0);
     return resourceLoadTimeRelativeToAbsolute(timing->sendStart);
@@ -261,7 +261,7 @@ unsigned long long PerformanceTiming::responseStart() const
 {
     ResourceLoadTiming* timing = resourceLoadTiming();
     if (!timing)
-        return 0;
+        return requestStart();
 
     // FIXME: Response start needs to be the time of the first received byte.
     // However, the ResourceLoadTiming API currently only supports the time
@@ -286,7 +286,7 @@ unsigned long long PerformanceTiming::domLoading() const
 {
     const DocumentTiming* timing = documentTiming();
     if (!timing)
-        return 0;
+        return fetchStart();
 
     return toIntegerMilliseconds(timing->domLoading);
 }

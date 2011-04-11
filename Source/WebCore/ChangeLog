@@ -1,3 +1,21 @@
+2011-04-11  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        PerformanceTiming returns inconsistent values when timing is null.
+        https://bugs.webkit.org/show_bug.cgi?id=58143
+
+        Made PerformanceTiming returned values consistent when there is no timing object.
+
+        * page/PerformanceTiming.cpp:
+        (WebCore::PerformanceTiming::domainLookupStart):
+        (WebCore::PerformanceTiming::domainLookupEnd):
+        (WebCore::PerformanceTiming::connectStart):
+        (WebCore::PerformanceTiming::connectEnd):
+        (WebCore::PerformanceTiming::requestStart):
+        (WebCore::PerformanceTiming::responseStart):
+        (WebCore::PerformanceTiming::domLoading):
+
 2011-04-05  Stephen White  <senorblanco@chromium.org>
 
         Fix for jittering when animating a rotated image.
