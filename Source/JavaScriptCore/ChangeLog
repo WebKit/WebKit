@@ -1,3 +1,21 @@
+2011-04-11  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
+
+        Reviewed by Oliver Hunt.
+
+        SH4 JIT SUPPORT.
+        https://bugs.webkit.org/show_bug.cgi?id=44329
+
+        Add JIT remaining part for SH4 platforms.
+
+        * assembler/MacroAssemblerSH4.h:
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITPropertyAccess32_64.cpp:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * jit/JSInterfaceJIT.h:
+
 2011-04-10  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber-stamped by Beth Dakin.

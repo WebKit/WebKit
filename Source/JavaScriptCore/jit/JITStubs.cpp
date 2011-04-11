@@ -314,7 +314,79 @@ extern "C" {
 #define ENABLE_PROFILER_REFERENCE_OFFSET 96
 #define GLOBAL_DATA_OFFSET         100
 #define STACK_LENGTH               104
+#elif CPU(SH4)
+#define SYMBOL_STRING(name) #name
+/* code (r4), RegisterFile* (r5), CallFrame* (r6), JSValue* exception (r7), Profiler**(sp), JSGlobalData (sp)*/
 
+asm volatile (
+".text\n"
+".globl " SYMBOL_STRING(ctiTrampoline) "\n"
+HIDE_SYMBOL(ctiTrampoline) "\n"
+SYMBOL_STRING(ctiTrampoline) ":" "\n"
+    "mov.l r7, @-r15" "\n"
+    "mov.l r6, @-r15" "\n"
+    "mov.l r5, @-r15" "\n"
+    "mov.l r8, @-r15" "\n"
+    "mov #127, r8" "\n"
+    "mov.l r14, @-r15" "\n"
+    "sts.l pr, @-r15" "\n"
+    "mov.l r13, @-r15" "\n"
+    "mov.l r11, @-r15" "\n"
+    "mov.l r10, @-r15" "\n"
+    "add #-60, r15" "\n"
+    "mov r6, r14" "\n"
+    "jsr @r4" "\n"
+    "nop" "\n"
+    "add #60, r15" "\n"
+    "mov.l @r15+,r10" "\n"
+    "mov.l @r15+,r11" "\n"
+    "mov.l @r15+,r13" "\n"
+    "lds.l @r15+,pr" "\n"
+    "mov.l @r15+,r14" "\n"
+    "mov.l @r15+,r8" "\n"
+    "add #12, r15" "\n"
+    "rts" "\n"
+    "nop" "\n"
+);
+
+asm volatile (
+".globl " SYMBOL_STRING(ctiVMThrowTrampoline) "\n"
+HIDE_SYMBOL(ctiVMThrowTrampoline) "\n"
+SYMBOL_STRING(ctiVMThrowTrampoline) ":" "\n"
+    "mov.l .L2"SYMBOL_STRING(cti_vm_throw)",r0" "\n"
+    "mov r15, r4" "\n"
+    "mov.l @(r0,r12),r11" "\n"
+    "jsr @r11" "\n"
+    "nop" "\n"
+    "add #60, r15" "\n"
+    "mov.l @r15+,r10" "\n"
+    "mov.l @r15+,r11" "\n"
+    "mov.l @r15+,r13" "\n"
+    "lds.l @r15+,pr" "\n"
+    "mov.l @r15+,r14" "\n"
+    "mov.l @r15+,r8" "\n"
+    "add #12, r15" "\n"
+    "rts" "\n"
+    "nop" "\n"
+    ".align 2" "\n"
+    ".L2"SYMBOL_STRING(cti_vm_throw)":.long " SYMBOL_STRING(cti_vm_throw)"@GOT \n"
+);
+
+asm volatile (
+".globl " SYMBOL_STRING(ctiOpThrowNotCaught) "\n"
+HIDE_SYMBOL(ctiOpThrowNotCaught) "\n"
+SYMBOL_STRING(ctiOpThrowNotCaught) ":" "\n"
+    "add #60, r15" "\n"
+    "mov.l @r15+,r10" "\n"
+    "mov.l @r15+,r11" "\n"
+    "mov.l @r15+,r13" "\n"
+    "lds.l @r15+,pr" "\n"
+    "mov.l @r15+,r14" "\n"
+    "mov.l @r15+,r8" "\n"
+    "add #12, r15" "\n"
+    "rts" "\n"
+    "nop" "\n"
+);
 #else
     #error "JIT not supported on this platform."
 #endif
@@ -1156,6 +1228,29 @@ MSVC()
 MSVC_END(    END)
 */
 
+#elif CPU(SH4)
+#define DEFINE_STUB_FUNCTION(rtype, op) \
+    extern "C" { \
+        rtype JITStubThunked_##op(STUB_ARGS_DECLARATION); \
+    }; \
+    asm volatile( \
+    ".align 2" "\n" \
+    ".globl " SYMBOL_STRING(cti_##op) "\n" \
+    SYMBOL_STRING(cti_##op) ":" "\n" \
+    "sts pr, r11" "\n" \
+    "mov.l r11, @(0x38, r15)" "\n" \
+    "mov.l .L2"SYMBOL_STRING(JITStubThunked_##op)",r0" "\n" \
+    "mov.l @(r0,r12),r11" "\n" \
+    "jsr @r11" "\n" \
+    "nop" "\n" \
+    "mov.l @(0x38, r15), r11 " "\n" \
+    "lds r11, pr " "\n" \
+    "rts" "\n" \
+    "nop" "\n" \
+    ".align 2" "\n" \
+    ".L2"SYMBOL_STRING(JITStubThunked_##op)":.long " SYMBOL_STRING(JITStubThunked_##op)"@GOT \n" \
+    ); \
+    rtype JITStubThunked_##op(STUB_ARGS_DECLARATION)
 #else
 #define DEFINE_STUB_FUNCTION(rtype, op) rtype JIT_STUB cti_##op(STUB_ARGS_DECLARATION)
 #endif

@@ -475,7 +475,7 @@ void JIT::compileGetByIdSlowCase(int dst, int base, Identifier* ident, Vector<Sl
     stubCall.addArgument(TrustedImmPtr(ident));
     Call call = stubCall.call(dst);
     
-    END_UNINTERRUPTED_SEQUENCE(sequenceGetByIdSlowCase);
+    END_UNINTERRUPTED_SEQUENCE_FOR_PUT(sequenceGetByIdSlowCase, dst);
     
     ASSERT_JIT_OFFSET(differenceBetween(coldPathBegin, call), patchOffsetGetByIdSlowCaseCall);
     
@@ -624,7 +624,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     add32(TrustedImm32(1), AbsoluteAddress(newStructure->addressOfCount()));
     storePtr(TrustedImmPtr(newStructure), Address(regT0, JSCell::structureOffset()));
     
-#if CPU(MIPS)
+#if CPU(MIPS) || CPU(SH4)
     // For MIPS, we don't add sizeof(void*) to the stack offset.
     load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT3);
     load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT2);

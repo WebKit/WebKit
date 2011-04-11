@@ -154,6 +154,31 @@ namespace JSC {
         static const FPRegisterID fpRegT1 = MIPSRegisters::f6;
         static const FPRegisterID fpRegT2 = MIPSRegisters::f8;
         static const FPRegisterID fpRegT3 = MIPSRegisters::f10;
+#elif CPU(SH4)
+        static const RegisterID timeoutCheckRegister = SH4Registers::r8;
+        static const RegisterID callFrameRegister = SH4Registers::fp;
+
+        static const RegisterID regT0 = SH4Registers::r0;
+        static const RegisterID regT1 = SH4Registers::r1;
+        static const RegisterID regT2 = SH4Registers::r2;
+        static const RegisterID regT3 = SH4Registers::r10;
+        static const RegisterID regT4 = SH4Registers::r4;
+        static const RegisterID regT5 = SH4Registers::r5;
+        static const RegisterID regT6 = SH4Registers::r6;
+        static const RegisterID regT7 = SH4Registers::r7;
+        static const RegisterID firstArgumentRegister =regT4;
+
+        static const RegisterID returnValueRegister = SH4Registers::r0;
+        static const RegisterID cachedResultRegister = SH4Registers::r0;
+
+        static const FPRegisterID fpRegT0  = SH4Registers::fr0;
+        static const FPRegisterID fpRegT1  = SH4Registers::fr2;
+        static const FPRegisterID fpRegT2  = SH4Registers::fr4;
+        static const FPRegisterID fpRegT3  = SH4Registers::fr6;
+        static const FPRegisterID fpRegT4  = SH4Registers::fr8;
+        static const FPRegisterID fpRegT5  = SH4Registers::fr10;
+        static const FPRegisterID fpRegT6  = SH4Registers::fr12;
+        static const FPRegisterID fpRegT7  = SH4Registers::fr14;
 #else
 #error "JIT not supported on this platform."
 #endif

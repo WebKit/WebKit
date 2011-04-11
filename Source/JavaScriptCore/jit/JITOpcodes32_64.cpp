@@ -245,7 +245,26 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     call(Address(regT2, executableOffsetToFunction));
 
     restoreReturnAddressBeforeReturn(regT3);
+#elif CPU(SH4)
+    // Load caller frame's scope chain into this callframe so that whatever we call can
+    // get to its global data.
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT2);
+    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
+    preserveReturnAddressAfterCall(regT3); // Callee preserved
+    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+
+    // Calling convention: f(r0 == regT4, r1 == regT5, ...);
+    // Host function signature: f(ExecState*);
+    move(callFrameRegister, regT4);
+
+    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT5);
+    move(regT2, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
+    loadPtr(Address(regT5, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
+
+    call(Address(regT2, executableOffsetToFunction), regT0);
+    restoreReturnAddressBeforeReturn(regT3);
 #elif CPU(MIPS)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
@@ -394,7 +413,28 @@ JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executa
     addPtr(TrustedImm32(16), stackPointerRegister);
 
     restoreReturnAddressBeforeReturn(regT3);
+#elif CPU(SH4)
+    // Load caller frame's scope chain into this callframe so that whatever we call can
+    // get to its global data.
+    emitGetFromCallFrameHeaderPtr(RegisterFile::CallerFrame, regT2);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1, regT2);
+    emitPutToCallFrameHeader(regT1, RegisterFile::ScopeChain);
 
+    preserveReturnAddressAfterCall(regT3); // Callee preserved
+    emitPutToCallFrameHeader(regT3, RegisterFile::ReturnPC);
+
+    // Calling convention: f(r0 == regT4, r1 == regT5, ...);
+    // Host function signature: f(ExecState*);
+    move(callFrameRegister, regT4);
+
+    emitGetFromCallFrameHeaderPtr(RegisterFile::Callee, regT5);
+    move(regT2, callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
+    loadPtr(Address(regT5, OBJECT_OFFSETOF(JSFunction, m_executable)), regT2);
+
+    // call the function
+    nativeCall = call();
+
+    restoreReturnAddressBeforeReturn(regT3);
 #elif ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
 #error "JIT_OPTIMIZE_NATIVE_CALL not yet supported on this platform."
 #else

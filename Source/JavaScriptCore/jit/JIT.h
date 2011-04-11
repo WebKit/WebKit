@@ -473,6 +473,48 @@ namespace JSC {
         static const int patchOffsetMethodCheckProtoStruct = 52;
         static const int patchOffsetMethodCheckPutFunction = 84;
 #endif
+#elif CPU(SH4)
+       // These architecture specific value are used to enable patching - see comment on op_put_by_id.
+        static const int patchOffsetGetByIdStructure = 6;
+        static const int patchOffsetPutByIdPropertyMapOffset = 24;
+        static const int patchOffsetPutByIdStructure = 6;
+        // These architecture specific value are used to enable patching - see comment on op_get_by_id.
+        static const int patchOffsetGetByIdBranchToSlowCase = 10;
+        static const int patchOffsetGetByIdPropertyMapOffset = 24;
+        static const int patchOffsetGetByIdPutResult = 32;
+
+        // sequenceOpCall
+        static const int sequenceOpCallInstructionSpace = 12;
+        static const int sequenceOpCallConstantSpace = 2;
+        // sequenceMethodCheck
+        static const int sequenceMethodCheckInstructionSpace = 40;
+        static const int sequenceMethodCheckConstantSpace = 6;
+        // sequenceGetByIdHotPath
+        static const int sequenceGetByIdHotPathInstructionSpace = 36;
+        static const int sequenceGetByIdHotPathConstantSpace = 5;
+        // sequenceGetByIdSlowCase
+        static const int sequenceGetByIdSlowCaseInstructionSpace = 26;
+        static const int sequenceGetByIdSlowCaseConstantSpace = 2;
+        // sequencePutById
+        static const int sequencePutByIdInstructionSpace = 36;
+        static const int sequencePutByIdConstantSpace = 5;
+
+        static const int patchOffsetGetByIdPropertyMapOffset1 = 20;
+        static const int patchOffsetGetByIdPropertyMapOffset2 = 26;
+
+        static const int patchOffsetPutByIdPropertyMapOffset1 = 20;
+        static const int patchOffsetPutByIdPropertyMapOffset2 = 26;
+
+#if ENABLE(OPCODE_SAMPLING)
+        static const int patchOffsetGetByIdSlowCaseCall = 0; // FIMXE
+#else
+        static const int patchOffsetGetByIdSlowCaseCall = 22;
+#endif
+        static const int patchOffsetOpCallCompareToJump = 4;
+
+        static const int patchOffsetMethodCheckProtoObj = 12;
+        static const int patchOffsetMethodCheckProtoStruct = 20;
+        static const int patchOffsetMethodCheckPutFunction = 32;
 #else
 #error "JSVALUE32_64 not supported on this platform."
 #endif
@@ -665,14 +707,16 @@ namespace JSC {
 
 #if (defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL)
 #define BEGIN_UNINTERRUPTED_SEQUENCE(name) do { beginUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace); } while (false)
-#define END_UNINTERRUPTED_SEQUENCE(name) do { endUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace); } while (false)
+#define END_UNINTERRUPTED_SEQUENCE_FOR_PUT(name, dst) do { endUninterruptedSequence(name ## InstructionSpace, name ## ConstantSpace, dst); } while (false)
+#define END_UNINTERRUPTED_SEQUENCE(name) END_UNINTERRUPTED_SEQUENCE_FOR_PUT(name, 0)
 
         void beginUninterruptedSequence(int, int);
-        void endUninterruptedSequence(int, int);
+        void endUninterruptedSequence(int, int, int);
 
 #else
 #define BEGIN_UNINTERRUPTED_SEQUENCE(name)  do { beginUninterruptedSequence(); } while (false)
 #define END_UNINTERRUPTED_SEQUENCE(name)  do { endUninterruptedSequence(); } while (false)
+#define END_UNINTERRUPTED_SEQUENCE_FOR_PUT(name, dst) do { endUninterruptedSequence(); } while (false)
 #endif
 
         void emit_op_add(Instruction*);

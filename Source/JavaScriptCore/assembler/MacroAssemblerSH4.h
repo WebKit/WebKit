@@ -1651,6 +1651,14 @@ public:
         return Call(m_assembler.call(target), Call::None);
     }
 
+    void call(Address address, RegisterID target)
+    {
+        load32(address.base, address.offset, target);
+        m_assembler.ensureSpace(m_assembler.maxInstructionSize + 2);
+        m_assembler.branch(JSR_OPCODE, target);
+        m_assembler.nop();
+    }
+
     void breakpoint()
     {
         m_assembler.bkpt();

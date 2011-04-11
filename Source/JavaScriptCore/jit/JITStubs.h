@@ -229,6 +229,27 @@ namespace JSC {
 
         ReturnAddressPtr* returnAddressSlot() { return &thunkReturnAddress; }
     };
+#elif CPU(SH4)
+    struct JITStackFrame {
+        JITStubArg padding; // Unused
+        JITStubArg args[6];
+
+        ReturnAddressPtr thunkReturnAddress;
+        void* savedR10;
+        void* savedR11;
+        void* savedR13;
+        void* savedRPR;
+        void* savedR14;
+        void* savedTimeoutReg;
+
+        RegisterFile* registerFile;
+        CallFrame* callFrame;
+        JSValue* exception;
+        Profiler** enabledProfilerReference;
+        JSGlobalData* globalData;
+
+        ReturnAddressPtr* returnAddressSlot() { return &thunkReturnAddress; }
+    };
 #else
 #error "JITStackFrame not defined for this platform."
 #endif
