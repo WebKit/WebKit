@@ -47,7 +47,7 @@ SET(JavaScriptCore_SOURCES
     heap/MachineStackMarker.cpp
     heap/MarkedBlock.cpp
     heap/MarkedSpace.cpp
-    heap/ConservativeSet.cpp
+    heap/ConservativeRoots.cpp
     heap/MarkStack.cpp
 
     debugger/Debugger.cpp

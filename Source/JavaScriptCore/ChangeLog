@@ -1,5 +1,11 @@
 2011-04-11  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: Updated a file name.
+
+        * CMakeLists.txt:
+
+2011-04-11  Geoffrey Garen  <ggaren@apple.com>
+
         Rubber-stamped by Sam Weinig.
         
         Moved remaining heap implementation files to the heap folder.
