@@ -206,6 +206,10 @@ class Port(object):
         interface so that it can be overriden for testing purposes."""
         return expected_text != actual_text
 
+    def compare_audio(self, expected_audio, actual_audio):
+        """Return whether the two audio files are *not* equal."""
+        return expected_audio != actual_audio
+
     def diff_image(self, expected_contents, actual_contents,
                    diff_filename=None, tolerance=0):
         """Compare two images and produce a delta image file.
@@ -351,15 +355,22 @@ class Port(object):
             return None
         return self._filesystem.read_binary_file(path)
 
+    def expected_audio(self, test):
+        path = self.expected_filename(test, '.wav')
+        if not self.path_exists(path):
+            return None
+        return self._filesystem.read_binary_file(path)
+
     def expected_text(self, test):
-        """Returns the text output we expect the test to produce.
+        """Returns the text output we expect the test to produce, or None
+        if we don't expect there to be any text output.
         End-of-line characters are normalized to '\n'."""
         # FIXME: DRT output is actually utf-8, but since we don't decode the
         # output from DRT (instead treating it as a binary string), we read the
         # baselines as a binary string, too.
         path = self.expected_filename(test, '.txt')
         if not self.path_exists(path):
-            return ''
+            return None
         text = self._filesystem.read_binary_file(path)
         return text.replace("\r\n", "\n")
 
@@ -867,22 +878,24 @@ class DriverInput(object):
 class DriverOutput(object):
     """Groups information about a output from driver for easy passing of data."""
 
-    def __init__(self, text, image, image_hash,
-                 crash=False, test_time=None, timeout=False, error=''):
+    def __init__(self, text, image, image_hash, audio,
+                 crash=False, test_time=0, timeout=False, error=''):
         """Initializes a TestOutput object.
 
         Args:
           text: a text output
           image: an image output
           image_hash: a string containing the checksum of the image
+          audio: contents of an audio stream, if any (in WAV format)
           crash: a boolean indicating whether the driver crashed on the test
-          test_time: a time which the test has taken
+          test_time: the time the test took to execute
           timeout: a boolean indicating whehter the test timed out
           error: any unexpected or additional (or error) text output
         """
         self.text = text
         self.image = image
         self.image_hash = image_hash
+        self.audio = audio
         self.crash = crash
         self.test_time = test_time
         self.timeout = timeout

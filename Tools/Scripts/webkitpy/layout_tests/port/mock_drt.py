@@ -32,6 +32,7 @@ This is an implementation of the Port interface that overrides other
 ports and changes the Driver binary to "MockDRT".
 """
 
+import base64
 import logging
 import optparse
 import os
@@ -206,15 +207,23 @@ class MockDRT(object):
             test_path = test_input.uri
 
         actual_text = port.expected_text(test_path)
+        actual_audio = port.expected_audio(test_path)
         if self._options.pixel_tests and test_input.checksum:
             actual_checksum = port.expected_checksum(test_path)
             actual_image = port.expected_image(test_path)
 
-        self._stdout.write('Content-Type: text/plain\n')
+        if actual_audio:
+            self._stdout.write('Content-Type: audio/wav\n')
+            self._stdout.write('Content-Transfer-Encoding: base64\n')
+            output = base64.b64encode(actual_audio)
+            self._stdout.write('Content-Length: %s\n' % len(output))
+            self._stdout.write(output)
+        else:
+            self._stdout.write('Content-Type: text/plain\n')
+            # FIXME: Note that we don't ensure there is a trailing newline!
+            # This mirrors actual (Mac) DRT behavior but is a bug.
+            self._stdout.write(actual_text)
 
-        # FIXME: Note that we don't ensure there is a trailing newline!
-        # This mirrors actual (Mac) DRT behavior but is a bug.
-        self._stdout.write(actual_text)
         self._stdout.write('#EOF\n')
 
         if self._options.pixel_tests and test_input.checksum:
@@ -223,7 +232,7 @@ class MockDRT(object):
             self._stdout.write('ExpectedHash: %s\n' % test_input.checksum)
             if actual_checksum != test_input.checksum:
                 self._stdout.write('Content-Type: image/png\n')
-                self._stdout.write('Content-Length: %s\n\n' % len(actual_image))
+                self._stdout.write('Content-Length: %s\n' % len(actual_image))
                 self._stdout.write(actual_image)
         self._stdout.write('#EOF\n')
         self._stdout.flush()

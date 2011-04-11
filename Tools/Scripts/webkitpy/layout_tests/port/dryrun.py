@@ -119,29 +119,25 @@ class DryrunDriver(base.Driver):
     def run_test(self, driver_input):
         start_time = time.time()
         fs = self._port._filesystem
-        if fs.exists(self._port.reftest_expected_filename(driver_input.filename)) or \
-            fs.exists(self._port.reftest_expected_mismatch_filename(driver_input.filename)):
-            text_output = 'test-text'
+        if (fs.exists(self._port.reftest_expected_filename(driver_input.filename)) or
+            fs.exists(self._port.reftest_expected_mismatch_filename(driver_input.filename)) or
+            driver_input.filename.endswith('-expected.html')):
+            text = 'test-text'
             image = 'test-image'
-            hash = 'test-checksum'
-        elif driver_input.filename.endswith('-expected.html'):
-            text_output = 'test-text'
-            image = 'test-image'
-            hash = 'test-checksum'
+            checksum = 'test-checksum'
+            audio = None
         elif driver_input.filename.endswith('-expected-mismatch.html'):
-            text_output = 'test-text-mismatch'
+            text = 'test-text-mismatch'
             image = 'test-image-mismatch'
-            hash = 'test-checksum-mismatch'
-        elif driver_input.image_hash is not None:
-            text_output = self._port.expected_text(driver_input.filename)
-            image = self._port.expected_image(driver_input.filename)
-            hash = self._port.expected_checksum(driver_input.filename)
+            checksum = 'test-checksum-mismatch'
+            audio = None
         else:
-            text_output = self._port.expected_text(driver_input.filename)
-            image = None
-            hash = None
-        return base.DriverOutput(text_output, image, hash, False,
-                                 time.time() - start_time, False, '')
+            text = self._port.expected_text(driver_input.filename)
+            image = self._port.expected_image(driver_input.filename)
+            checksum = self._port.expected_checksum(driver_input.filename)
+            audio = self._port.expected_audio(driver_input.filename)
+        return base.DriverOutput(text, image, checksum, audio, crash=False,
+            test_time=time.time() - start_time, timeout=False, error='')
 
     def start(self):
         pass

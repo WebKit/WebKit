@@ -30,7 +30,7 @@
 
 """WebKit implementations of the Port interface."""
 
-
+import base64
 import logging
 import operator
 import os
@@ -109,7 +109,10 @@ class WebKitPort(base.Port):
         image of the two images into |diff_filename| if it is not None."""
 
         # Handle the case where the test didn't actually generate an image.
-        if not actual_contents:
+        # FIXME: need unit tests for this.
+        if not actual_contents and not expected_contents:
+            return False
+        if not actual_contents or not expected_contents:
             return True
 
         sp = self._diff_image_request(expected_contents, actual_contents)
@@ -406,47 +409,24 @@ class WebKitDriver(base.Driver):
         start_time = time.time()
         self._server_process.write(command)
 
-        have_seen_content_type = False
+        text = None
+        image = None
         actual_image_hash = None
-        output = str()  # Use a byte array for output, even though it should be UTF-8.
-        image = str()
+        audio = None
+        deadline = time.time() + int(driver_input.timeout) / 1000.0
 
-        timeout = int(driver_input.timeout) / 1000.0
-        deadline = time.time() + timeout
-        line = self._server_process.read_line(timeout)
-        while (not self._server_process.timed_out
-               and not self._server_process.crashed
-               and line.rstrip() != "#EOF"):
-            if (line.startswith('Content-Type:') and not
-                have_seen_content_type):
-                have_seen_content_type = True
-            else:
-                # Note: Text output from DumpRenderTree is always UTF-8.
-                # However, some tests (e.g. webarchives) spit out binary
-                # data instead of text.  So to make things simple, we
-                # always treat the output as binary.
-                output += line
-            line = self._server_process.read_line(timeout)
-            timeout = deadline - time.time()
+        # First block is either text or audio
+        block = self._read_block(deadline)
+        if block.content_type == 'audio/wav':
+            audio = block.decoded_content
+        else:
+            text = block.decoded_content
 
-        # Now read a second block of text for the optional image data
-        remaining_length = -1
-        HASH_HEADER = 'ActualHash: '
-        LENGTH_HEADER = 'Content-Length: '
-        line = self._server_process.read_line(timeout)
-        while (not self._server_process.timed_out
-               and not self._server_process.crashed
-               and line.rstrip() != "#EOF"):
-            if line.startswith(HASH_HEADER):
-                actual_image_hash = line[len(HASH_HEADER):].strip()
-            elif line.startswith('Content-Type:'):
-                pass
-            elif line.startswith(LENGTH_HEADER):
-                timeout = deadline - time.time()
-                content_length = int(line[len(LENGTH_HEADER):])
-                image = self._server_process.read(timeout, content_length)
-            timeout = deadline - time.time()
-            line = self._server_process.read_line(timeout)
+        # Now read an optional second block of image data
+        block = self._read_block(deadline)
+        if block.content and block.content_type == 'image/png':
+            image = block.decoded_content
+            actual_image_hash = block.content_hash
 
         error_lines = self._server_process.error.splitlines()
         # FIXME: This is a hack.  It is unclear why sometimes
@@ -458,13 +438,59 @@ class WebKitDriver(base.Driver):
         # FIXME: This seems like the wrong section of code to be doing
         # this reset in.
         self._server_process.error = ""
-        return base.DriverOutput(output, image, actual_image_hash,
-                                 self._server_process.crashed,
-                                 time.time() - start_time,
-                                 self._server_process.timed_out,
-                                 error)
+        return base.DriverOutput(text, image, actual_image_hash, audio,
+            crash=self._server_process.crashed, test_time=time.time() - start_time,
+            timeout=self._server_process.timed_out, error=error)
+
+    def _read_block(self, deadline):
+        LENGTH_HEADER = 'Content-Length: '
+        HASH_HEADER = 'ActualHash: '
+        TYPE_HEADER = 'Content-Type: '
+        ENCODING_HEADER = 'Content-Transfer-Encoding: '
+        content_type = None
+        encoding = None
+        content_hash = None
+        content_length = None
+
+        # Content is treated as binary data even though the text output
+        # is usually UTF-8.
+        content = ''
+        timeout = deadline - time.time()
+        line = self._server_process.read_line(timeout)
+        while (not self._server_process.timed_out
+               and not self._server_process.crashed
+               and line.rstrip() != "#EOF"):
+            if line.startswith(TYPE_HEADER) and content_type is None:
+                content_type = line.split()[1]
+            elif line.startswith(ENCODING_HEADER) and encoding is None:
+                encoding = line.split()[1]
+            elif line.startswith(LENGTH_HEADER) and content_length is None:
+                timeout = deadline - time.time()
+                content_length = int(line[len(LENGTH_HEADER):])
+                # FIXME: Technically there should probably be another blank
+                # line here, but DRT doesn't write one.
+                content = self._server_process.read(timeout, content_length)
+            elif line.startswith(HASH_HEADER):
+                content_hash = line.split()[1]
+            else:
+                content += line
+            line = self._server_process.read_line(timeout)
+            timeout = deadline - time.time()
+        return ContentBlock(content_type, encoding, content_hash, content)
 
     def stop(self):
         if self._server_process:
             self._server_process.stop()
             self._server_process = None
+
+
+class ContentBlock(object):
+    def __init__(self, content_type, encoding, content_hash, content):
+        self.content_type = content_type
+        self.encoding = encoding
+        self.content_hash = content_hash
+        self.content = content
+        if self.encoding == 'base64':
+            self.decoded_content = base64.b64decode(content)
+        else:
+            self.decoded_content = content
