@@ -107,7 +107,7 @@ for my $dir (@directoriesToSkip) {
 my @files = ( split "\n", `find $quotedDirectoriesString \\( -name "*.h" -o -name "*.m" -o -name "*.mm" -o -name "*.c" -o -name "*.cpp" \\)` );
 
 for my $file (sort @files) {
-    next if $file =~ /\/\w+LocalizableStrings\w*\.h$/;
+    next if $file =~ /\/\w+LocalizableStrings\w*\.h$/ || $file =~ /\/LocalizedStrings\.h$/;
 
     $file =~ s-^./--;
 
