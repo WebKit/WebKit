@@ -1,3 +1,16 @@
+2011-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Text inserted at the collapsed selection between two BRs following a non-wrapping text that forces overflow
+        https://bugs.webkit.org/show_bug.cgi?id=47806
+
+        Add a regression test since this bug does not reproduce anymore.
+        The test is co-authored by James Robinson and Levi Weintraub.
+
+        * fast/text/text-between-two-brs-in-nowrap-overflow-expected.txt: Added.
+        * fast/text/text-between-two-brs-in-nowrap-overflow.html: Added.
+
 2011-04-06  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Ryosuke Niwa.
