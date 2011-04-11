@@ -1,5 +1,22 @@
 2011-04-11  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Reviewed by Xan Lopez.
+
+        [GTK] Implement AccessibilityUIElement::{row|column}IndexRange in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=57854
+
+        Implement missing features in GTK's DRT.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (indexRangeInTable): New helper function to get the range string
+        for the current cell inside the parent table, either from the
+        point of view of rows or columns.
+        (AccessibilityUIElement::rowIndexRange): Implemented by relying on
+        the new helper function indexRangeInTable().
+        (AccessibilityUIElement::columnIndexRange): Ditto.
+
+2011-04-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Reviewed by Chris Fleizach.
 
         [GTK] Implement AccessibilityUIElement::cellForColumnAndRow in DRT
