@@ -136,7 +136,7 @@ symbian|maemo5|maemo6 {
 
 ####
 
-!contains(QT_CONFIG, uitools)|disable_uitools: DEFINES *= QT_NO_UITOOLS
+disable_uitools: DEFINES *= QT_NO_UITOOLS
 
 isEmpty(QT.phonon.includes) {
     QT.phonon.includes = $$QMAKE_INCDIR_QT/phonon

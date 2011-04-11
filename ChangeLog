@@ -1,3 +1,9 @@
+2011-04-11  Andreas Kling  <andreas.kling@nokia.com>
+
+        Unreviewed Qt build fix, QT_CONFIG doesn't have uitools on bots.
+
+        * Source/WebKit.pri:
+
 2011-04-09  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         Reviewed by Laszlo Gombos.
