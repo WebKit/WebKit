@@ -430,7 +430,7 @@ private:
     [self _document]->setFullScreenRendererBackgroundColor(Color::transparent);
     
     // Cause the document to layout, thus calculating a new fullscreen element size:
-//    [self _document]->updateLayout();
+    [self _document]->updateLayout();
     
     // FIXME: try to use the fullscreen element's calculated x, y, width, and height instead of the
     // renderBox functions:
