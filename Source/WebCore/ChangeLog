@@ -1,3 +1,21 @@
+2011-04-10  Alice Boxhall  <aboxhall@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Change EventHandler::updateSelectionForMouseDrag to take a HitTestResult only.
+        https://bugs.webkit.org/show_bug.cgi?id=57923
+
+        Change EventHandler::updateSelectionForMouseDrag to take a HitTestResult
+        rather than a Node* and an IntPoint&, as the selection may actually not
+        extend into the Node found by the HitTest.
+
+        No new tests. Refactoring only.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+        * page/EventHandler.h:
+
 2011-04-10  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, rolling out r83353.

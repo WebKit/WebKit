@@ -566,9 +566,10 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
         HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
         HitTestResult result(m_mouseDownPos);
         m_frame->document()->renderView()->layer()->hitTest(request, result);
-        updateSelectionForMouseDrag(result.innerNode(), result.localPoint());
+
+        updateSelectionForMouseDrag(result);
     }
-    updateSelectionForMouseDrag(targetNode, event.localPoint());
+    updateSelectionForMouseDrag(event.hitTestResult());
     return true;
 }
     
@@ -618,25 +619,26 @@ void EventHandler::updateSelectionForMouseDrag()
                            HitTestRequest::MouseMove);
     HitTestResult result(view->windowToContents(m_currentMousePosition));
     layer->hitTest(request, result);
-    updateSelectionForMouseDrag(result.innerNode(), result.localPoint());
+    updateSelectionForMouseDrag(result);
 }
 
-void EventHandler::updateSelectionForMouseDrag(Node* targetNode, const IntPoint& localPoint)
+void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResult)
 {
     if (!m_mouseDownMayStartSelect)
         return;
 
-    if (!targetNode)
+    Node* target = targetNode(hitTestResult);
+    if (!target)
         return;
 
-    if (!canMouseDragExtendSelect(targetNode))
+    if (!canMouseDragExtendSelect(target))
         return;
 
-    RenderObject* targetRenderer = targetNode->renderer();
+    RenderObject* targetRenderer = target->renderer();
     if (!targetRenderer)
         return;
 
-    VisiblePosition targetPosition(targetRenderer->positionForPoint(localPoint));
+    VisiblePosition targetPosition = targetRenderer->positionForPoint(hitTestResult.localPoint());
 
     // Don't modify the selection if we're not on a node.
     if (targetPosition.isNull())
@@ -652,7 +654,7 @@ void EventHandler::updateSelectionForMouseDrag(Node* targetNode, const IntPoint&
     if (Node* selectionBaseNode = newSelection.base().deprecatedNode())
         if (RenderObject* selectionBaseRenderer = selectionBaseNode->renderer())
             if (selectionBaseRenderer->isSVGText())
-                if (targetNode->renderer()->containingBlock() != selectionBaseRenderer->containingBlock())
+                if (target->renderer()->containingBlock() != selectionBaseRenderer->containingBlock())
                     return;
 #endif
 

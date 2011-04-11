@@ -360,7 +360,7 @@ private:
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
-    void updateSelectionForMouseDrag(Node* targetNode, const IntPoint& localPoint);
+    void updateSelectionForMouseDrag(const HitTestResult&);
 #endif
 
     void updateLastScrollbarUnderMouse(Scrollbar*, bool);
