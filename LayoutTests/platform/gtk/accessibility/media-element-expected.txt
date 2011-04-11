@@ -1,0 +1,39 @@
+Dump <video> element controller accessibility object tree at 'canplaythrough' event.
+
++++++++++++++++++++++++++++++++++++
+
+State at 'canplaythrough' event:
+
+    description: AXDescription: video element controller
+    role: AXRole: tool bar
+
+
+        description: AXDescription: play
+        role: AXRole: push button
+
+
+        description: AXDescription: 
+        role: AXRole: panel
+
+
+        description: AXDescription: 
+        role: AXRole: slider
+
+
+        description: AXDescription: fast reverse
+        role: AXRole: push button
+
+
+        description: AXDescription: fast forward
+        role: AXRole: push button
+
+
+        description: AXDescription: fullscreen
+        role: AXRole: push button
+
+
+        description: AXDescription: mute
+        role: AXRole: push button
+
+
+

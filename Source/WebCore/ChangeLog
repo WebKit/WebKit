@@ -1,3 +1,22 @@
+2011-04-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] Unskip accessibility/input-slider.html and accessibility/media-element.html
+        https://bugs.webkit.org/show_bug.cgi?id=58040
+
+        Don't expose objects of role SliderThumbRoles in GTK.
+
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySlider::addChildren): Allow the platform
+        make a final decision before including children in the hierarchy.
+        (WebCore::AccessibilitySliderThumb::accessibilityIsIgnored):
+        Implemented by relying on accessibilityPlatformIncludesObject().
+
+        * accessibility/gtk/AccessibilityObjectAtk.cpp:
+        (WebCore::AccessibilityObject::accessibilityPlatformIncludesObject):
+        Ignore accessibility objects with role SliderThumbRole.
+
 2011-04-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

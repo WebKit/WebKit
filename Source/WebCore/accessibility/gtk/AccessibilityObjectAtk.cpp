@@ -40,8 +40,13 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     if (!parent)
         return DefaultBehavior;
 
-    if (roleValue() == SplitterRole)
+    AccessibilityRole role = roleValue();
+    if (role == SplitterRole)
         return IncludeObject;
+
+    // We expose the slider as a whole but not its value indicator.
+    if (role == SliderThumbRole)
+        return IgnoreObject;
 
     // When a list item is made up entirely of children (e.g. paragraphs)
     // the list item gets ignored. We need it.
@@ -51,8 +56,6 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
     // Entries and password fields have extraneous children which we want to ignore.
     if (parent->isPasswordField() || parent->isTextControl())
         return IgnoreObject;
-
-    AccessibilityRole role = roleValue();
 
     // Include all tables, even layout tables. The AT can decide what to do with each.
     if (role == CellRole || role == TableRole)

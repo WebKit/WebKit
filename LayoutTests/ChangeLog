@@ -1,3 +1,22 @@
+2011-04-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] Unskip accessibility/input-slider.html and accessibility/media-element.html
+        https://bugs.webkit.org/show_bug.cgi?id=58040
+
+        Unskip passing tests and update expectations.
+
+        * platform/gtk/Skipped: Unskip passing tests.
+        * platform/gtk/accessibility/input-slider-expected.txt: Added.
+        * platform/gtk/accessibility/input-slider.html: Copied from
+        accessibility/input-slider.html and adjusted accordingly.
+        * platform/gtk/accessibility/media-element-expected.txt: Added.
+        * platform/mac/accessibility/input-slider.html: Moved from
+        accessibility/input-slider.html, since it is platform-specific.
+        * platform/win/Skipped: Unskipped accessibility/input-slider.html,
+        as it's no longer a cross-platform test.
+
 2011-04-11  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.

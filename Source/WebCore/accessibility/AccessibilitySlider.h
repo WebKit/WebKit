@@ -80,9 +80,10 @@ public:
     virtual IntSize size() const;
     virtual IntRect elementRect() const;
 
+    virtual bool accessibilityIsIgnored() const;
+
 private:
     AccessibilitySliderThumb();
-    virtual bool accessibilityIsIgnored() const { return false; }
 
     AccessibilitySlider* m_parentSlider;
 };

@@ -89,9 +89,17 @@ void AccessibilitySlider::addChildren()
     
     m_haveChildren = true;
 
-    AccessibilitySliderThumb* thumb = static_cast<AccessibilitySliderThumb*>(m_renderer->document()->axObjectCache()->getOrCreate(SliderThumbRole));
+    AXObjectCache* cache = m_renderer->document()->axObjectCache();
+
+    AccessibilitySliderThumb* thumb = static_cast<AccessibilitySliderThumb*>(cache->getOrCreate(SliderThumbRole));
     thumb->setParentObject(this);
-    m_children.append(thumb);
+
+    // Before actually adding the value indicator to the hierarchy,
+    // allow the platform to make a final decision about it.
+    if (thumb->accessibilityIsIgnored())
+        cache->remove(thumb->axObjectID());
+    else
+        m_children.append(thumb);
 }
 
 const AtomicString& AccessibilitySlider::getAttribute(const QualifiedName& attribute) const
@@ -179,6 +187,17 @@ IntRect AccessibilitySliderThumb::elementRect() const
 IntSize AccessibilitySliderThumb::size() const
 {
     return elementRect().size();
+}
+
+bool AccessibilitySliderThumb::accessibilityIsIgnored() const
+{
+    AccessibilityObjectInclusion decision = accessibilityPlatformIncludesObject();
+    if (decision == IncludeObject)
+        return false;
+    if (decision == IgnoreObject)
+        return true;
+
+    return false;
 }
 
 } // namespace WebCore
