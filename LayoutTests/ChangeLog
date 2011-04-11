@@ -1,3 +1,10 @@
+2011-04-11  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update test expectation.
+        - http/tests/loading/preload-append-scan.php is flaky.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-11  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK media tests rebaseline after r83397.
