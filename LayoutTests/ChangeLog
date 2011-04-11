@@ -1,3 +1,10 @@
+2011-04-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+       [Qt][WK2]http/tests/loading/preload-append-scan.php fails
+       https://bugs.webkit.org/show_bug.cgi?id=58253
+
+        * platform/qt-wk2/Skipped: Add http/tests/loading/preload-append-scan.php until fix.
+
 2011-04-11  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Xan Lopez.

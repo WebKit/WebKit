@@ -3397,3 +3397,7 @@ transitions/hang-with-bad-transition-list.html
 transitions/remove-transition-style.html
 transitions/repeated-firing-background-color.html
 transitions/zero-duration-with-non-zero-delay-end.html
+
+# [Qt][WK2]http/tests/loading/preload-append-scan.php fails
+# https://bugs.webkit.org/show_bug.cgi?id=58253
+http/tests/loading/preload-append-scan.php
