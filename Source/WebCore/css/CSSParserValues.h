@@ -71,7 +71,9 @@ public:
     ~CSSParserValueList();
     
     void addValue(const CSSParserValue&);
+    void insertValueAt(unsigned, const CSSParserValue&);
     void deleteValueAt(unsigned);
+    void extend(CSSParserValueList&);
 
     unsigned size() const { return m_values.size(); }
     CSSParserValue* current() { return m_current < m_values.size() ? &m_values[m_current] : 0; }

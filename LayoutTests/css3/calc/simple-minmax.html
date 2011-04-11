@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<style>
+.width-test {
+    height: 100px;
+    width: 256px;
+    background-color: red;
+}
+
+.height-test {
+    width: 100px;
+    height: 50px;
+    background-color: red;
+}
+</style>
+
+<p>
+  All boxes below should be 100px * 100px and green.
+</p>
+
+<div id="test">
+
+<div class="width-test" style="width: -webkit-min(100px);">min(100px)</div>
+<div class="width-test" style="width: -webkit-min( 100px );">min( 100px )</div>
+<div class="width-test" style="width: -webkit-min((((100px))));">min((((100px))))</div>
+<div class="width-test" style="width: -webkit-min(150px,100px);">min(150px,100px)</div>
+<div class="width-test" style="width: -webkit-min(150px,100px,200px);">min(150px,100px,200px)</div>
+<div class="width-test" style="width: -webkit-min(  150px ,  100px  ,200px);">min(  150px  ,  100px  ,200px)</div>
+<div class="width-test" style="width: -webkit-min(90px + 50px ,100px);">min(90px + 50px ,100px)</div>
+<div style="width: 200px; background-color: white;" class="wrapper">
+  <div class="width-test" style="width: -webkit-min(100%,100px);">min(100%,100px) - where 100% is 200px</div>
+</div>
+<div style="width: 200px; background-color: white;" class="wrapper">
+  <div class="width-test" style="width: -webkit-min(100px,100%);">min(100px,100%) - where 100% is 200px</div>
+</div>
+
+<div class="width-test" style="width: -webkit-max(100px);">max(100px)</div>
+<div class="width-test" style="width: -webkit-max(50px,100px);">max(50px,100px)</div>
+<div class="width-test" style="width: -webkit-max(50px,100px,20px);">max(50px,100px,20px)</div>
+<div class="width-test" style="width: -webkit-max(120px - 50px,100px);">max(120px - 50px,100px)</div>
+<div style="width: 50px; background-color: white;" class="wrapper">
+  <div class="width-test" style="width: -webkit-max(100%,100px);">max(100%,100px) - where 100% is 50px</div>
+</div>
+<div style="width: 50px; background-color: white;" class="wrapper">
+  <div class="width-test" style="width: -webkit-max(100px,100%);">max(100px,100%) - where 100% is 50px</div>
+</div>
+
+<div class="height-test" style="height: -webkit-min(200px, 100px);">min(200px,100px)</div>
+
+</div>
+
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var test = document.getElementById("test");
+for (var child = test.firstChild; child; child = child.nextSibling) {
+    var element = child;
+    if (element.className == "wrapper") {
+        element = element.firstChild;
+        while (element.tagName != "DIV") element = element.nextSibling;
+    }
+
+    var width = element.offsetWidth;
+    var error = [];
+    if (width != 100)
+        error.push("expected width of 100, but was " + width);
+    var height = element.offsetHeight;
+    if (height != 100)
+        error.push("expected height of 100, but was " + height);
+
+    if (error == "") {
+        element.style.backgroundColor = "green";
+        element.innerHTML += " => PASS";
+    } else
+        element.innerHTML += " => FAIL: " + error.join(", ");
+}
+</script>

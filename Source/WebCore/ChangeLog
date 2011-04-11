@@ -1,3 +1,26 @@
+2011-04-10  Mike Lawther  <mikelawther@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        flex/bison tokens and grammar for CSS calc
+        https://bugs.webkit.org/show_bug.cgi?id=54412
+
+        Tests: css3/calc/calc-errors.html
+               css3/calc/lexer-regression-57581-2.html
+               css3/calc/lexer-regression-57581-3.html
+               css3/calc/lexer-regression-57581.html
+               css3/calc/minmax-errors.html
+               css3/calc/nested-rounded-corners.html
+               css3/calc/simple-calcs.html
+               css3/calc/simple-minmax.html
+
+        * css/CSSGrammar.y:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserValueList::insertValueAt):
+        (WebCore::CSSParserValueList::extend):
+        * css/CSSParserValues.h:
+        * css/tokenizer.flex:
+
 2011-04-10  Alice Boxhall  <aboxhall@chromium.org>
 
         Reviewed by Ryosuke Niwa.
