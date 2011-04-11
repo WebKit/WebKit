@@ -1,3 +1,24 @@
+2011-04-10  ChangSeok Oh  <shivamidow@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Make correspondence of file name related with event to other port.
+        https://bugs.webkit.org/show_bug.cgi?id=57416
+
+        Some file names are changed to make correspondence naming rule.
+        Keyboard, mouse and wheel event file names for GTK port have been different from other ports.
+        This has made user hard to find a specific file related with event for GTK port. 
+
+        No test required. This patch just changes some file names.
+
+        * GNUmakefile.list.am:
+        * platform/gtk/KeyEventGtk.cpp: Removed.
+        * platform/gtk/MouseEventGtk.cpp: Removed.
+        * platform/gtk/PlatformKeyboardEventGtk.cpp: Added.
+        * platform/gtk/PlatformMouseEventGtk.cpp: Added.
+        * platform/gtk/PlatformWheelEventGtk.cpp: Added.
+        * platform/gtk/WheelEventGtk.cpp: Removed.
+
 2011-04-10  Simon Fraser  <simon.fraser@apple.com>
 
         Revert the FloatRect.cpp part of r83422, since

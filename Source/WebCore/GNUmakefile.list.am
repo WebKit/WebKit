@@ -3750,7 +3750,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/GtkPluginWidget.h \
 	Source/WebCore/platform/gtk/GtkVersioning.c \
 	Source/WebCore/platform/gtk/GtkVersioning.h \
-	Source/WebCore/platform/gtk/KeyEventGtk.cpp \
 	Source/WebCore/platform/gtk/KURLGtk.cpp \
 	Source/WebCore/platform/gtk/LanguageGtk.cpp \
 	Source/WebCore/platform/gtk/LocalizedStringsGtk.cpp \
@@ -3758,11 +3757,13 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/MainFrameScrollbarGtk.cpp \
 	Source/WebCore/platform/gtk/MainFrameScrollbarGtk.h \
 	Source/WebCore/platform/gtk/MIMETypeRegistryGtk.cpp \
-	Source/WebCore/platform/gtk/MouseEventGtk.cpp \
 	Source/WebCore/platform/gtk/PasteboardGtk.cpp \
 	Source/WebCore/platform/gtk/PasteboardHelper.cpp \
 	Source/WebCore/platform/gtk/PasteboardHelper.h \
+	Source/WebCore/platform/gtk/PlatformKeyboardEventGtk.cpp \
+	Source/WebCore/platform/gtk/PlatformMouseEventGtk.cpp \
 	Source/WebCore/platform/gtk/PlatformScreenGtk.cpp \
+	Source/WebCore/platform/gtk/PlatformWheelEventGtk.cpp \
 	Source/WebCore/platform/gtk/PopupMenuGtk.cpp \
 	Source/WebCore/platform/gtk/PopupMenuGtk.h \
 	Source/WebCore/platform/gtk/RenderThemeGtk.cpp \
@@ -3780,7 +3781,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/SharedTimerGtk.cpp \
 	Source/WebCore/platform/gtk/SoundGtk.cpp \
 	Source/WebCore/platform/gtk/TemporaryLinkStubs.cpp \
-	Source/WebCore/platform/gtk/WheelEventGtk.cpp \
 	Source/WebCore/platform/gtk/WidgetGtk.cpp \
 	Source/WebCore/platform/gtk/WidgetRenderingContext.cpp \
 	Source/WebCore/platform/gtk/WidgetRenderingContext.h \
