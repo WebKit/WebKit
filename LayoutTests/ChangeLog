@@ -1,3 +1,11 @@
+2011-04-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [GTK] Update expectations after r83445.
+
+        * platform/gtk/fast/layers/video-layer-expected.txt: Updated.
+        * platform/gtk/media/video-empty-source-expected.txt: Updated.
+        * platform/gtk/media/video-no-audio-expected.txt: Updated.
+
 2011-04-11  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
