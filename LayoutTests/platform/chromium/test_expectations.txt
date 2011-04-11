@@ -2942,6 +2942,10 @@ BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html =
 BUGCR74102 GPU WIN LINUX : media/video-controls-rendering.html = IMAGE
 BUGCR74102 GPU WIN : media/video-layer-crash.html = IMAGE
 
+// New test causes an assertion failure.
+BUGWK58214 WIN LINUX RELEASE GPU : fast/canvas/font-update.html = TEXT
+BUGWK58214 WIN LINUX DEBUG GPU : fast/canvas/font-update.html = CRASH
+
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE
 
 BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT
@@ -3295,6 +3299,7 @@ BUGWK58147 : fast/dom/MediaStream/enabled.html = TEXT
 
 BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = CRASH
 BUGWK58158 : editing/pasteboard/paste-xml.xhtml = PASS TEXT
+BUGCR78988 LINUX : svg/zoom/text/absolute-sized-document-no-scrollbars.svg = CRASH PASS
 
 // Windows 7 failures that need triaging and probably mostly just need
 // new baselines.
