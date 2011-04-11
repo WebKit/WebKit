@@ -41,7 +41,13 @@ LOCAL_SRC_FILES := \
 	debugger/DebuggerActivation.cpp \
 	debugger/DebuggerCallFrame.cpp \
 	\
+	heap/ConservativeRoots.cpp \
 	heap/Heap.cpp \
+	heap/MachineStackMarker.cpp \
+	heap/MarkStack.cpp \
+	heap/MarkStackPosix.cpp \
+	heap/MarkedBlock.cpp \
+	heap/MarkedSpace.cpp \
 	\
 	interpreter/CallFrame.cpp \
 	interpreter/Interpreter.cpp \
@@ -76,8 +82,6 @@ LOCAL_SRC_FILES := \
 	runtime/BooleanObject.cpp \
 	runtime/BooleanPrototype.cpp \
 	runtime/CallData.cpp \
-	runtime/MarkedBlock.cpp \
-	runtime/MarkedSpace.cpp \
 	runtime/CommonIdentifiers.cpp \
 	runtime/Completion.cpp \
 	runtime/ConstructData.cpp \
@@ -119,10 +123,6 @@ LOCAL_SRC_FILES := \
 	runtime/JSWrapperObject.cpp \
 	runtime/LiteralParser.cpp \
 	runtime/Lookup.cpp \
-	runtime/MachineStackMarker.cpp \
-	runtime/ConservativeSet.cpp \
-	runtime/MarkStack.cpp \
-	runtime/MarkStackPosix.cpp \
 	runtime/MathObject.cpp \
 	runtime/NativeErrorConstructor.cpp \
 	runtime/NativeErrorPrototype.cpp \

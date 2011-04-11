@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MarkStack.h"
 
-#include "ConservativeSet.h"
+#include "ConservativeRoots.h"
 #include "Heap.h"
 #include "JSArray.h"
 #include "JSCell.h"

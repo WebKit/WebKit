@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ConservativeSet.h"
+#include "ConservativeRoots.h"
 
 namespace JSC {
 

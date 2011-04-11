@@ -44,6 +44,11 @@ SET(JavaScriptCore_SOURCES
     heap/Heap.cpp
     heap/HandleHeap.cpp
     heap/HandleStack.cpp
+    heap/MachineStackMarker.cpp
+    heap/MarkedBlock.cpp
+    heap/MarkedSpace.cpp
+    heap/ConservativeSet.cpp
+    heap/MarkStack.cpp
 
     debugger/Debugger.cpp
     debugger/DebuggerActivation.cpp
@@ -86,8 +91,6 @@ SET(JavaScriptCore_SOURCES
     runtime/BooleanObject.cpp
     runtime/BooleanPrototype.cpp
     runtime/CallData.cpp
-    runtime/MarkedBlock.cpp
-    runtime/MarkedSpace.cpp
     runtime/CommonIdentifiers.cpp
     runtime/Completion.cpp
     runtime/ConstructData.cpp
@@ -131,9 +134,6 @@ SET(JavaScriptCore_SOURCES
     runtime/JSZombie.cpp
     runtime/LiteralParser.cpp
     runtime/Lookup.cpp
-    runtime/MachineStackMarker.cpp
-    runtime/ConservativeSet.cpp
-    runtime/MarkStack.cpp
     runtime/MathObject.cpp
     runtime/NativeErrorConstructor.cpp
     runtime/NativeErrorPrototype.cpp

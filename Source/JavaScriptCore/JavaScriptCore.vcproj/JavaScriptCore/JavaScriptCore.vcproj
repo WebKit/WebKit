@@ -602,14 +602,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\ConservativeSet.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\ConservativeSet.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\ConstructData.cpp"
 				>
 			</File>
@@ -951,42 +943,6 @@
 			</File>
 			<File
 				RelativePath="..\..\runtime\Lookup.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\MachineStackMarker.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\MachineStackMarker.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\MarkedBlock.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\MarkedBlock.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\MarkedSpace.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\MarkedSpace.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\MarkStack.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\MarkStack.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\MarkStackWin.cpp"
 				>
 			</File>
 			<File
@@ -1917,6 +1873,50 @@
 		<Filter
 			Name="heap"
 			>
+                            <File
+                                    RelativePath="..\..\heap\ConservativeRoots.cpp"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\ConservativeRoots.h"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\MachineStackMarker.cpp"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\MachineStackMarker.h"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\MarkedBlock.cpp"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\MarkedBlock.h"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\MarkedSpace.cpp"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\MarkedSpace.h"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\MarkStack.cpp"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\MarkStack.h"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\MarkStackWin.cpp"
+                                    >
+                            </File>
                             <File
                                     RelativePath="..\..\heap\Heap.cpp"
                                     >

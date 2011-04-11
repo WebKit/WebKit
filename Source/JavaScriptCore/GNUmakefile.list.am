@@ -87,7 +87,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecompiler/LabelScope.h \
 	Source/JavaScriptCore/bytecompiler/NodesCodegen.cpp \
 	Source/JavaScriptCore/bytecompiler/RegisterID.h \
-	Source/JavaScriptCore/heap/Strong.h \
+	Source/JavaScriptCore/heap/ConservativeRoots.cpp \
+	Source/JavaScriptCore/heap/ConservativeRoots.h \
 	Source/JavaScriptCore/heap/Handle.h \
 	Source/JavaScriptCore/heap/HandleHeap.cpp \
 	Source/JavaScriptCore/heap/HandleHeap.h \
@@ -97,6 +98,15 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/Heap.h \
 	Source/JavaScriptCore/heap/Local.h \
 	Source/JavaScriptCore/heap/LocalScope.h \
+	Source/JavaScriptCore/heap/MachineStackMarker.cpp \
+	Source/JavaScriptCore/heap/MachineStackMarker.h \
+	Source/JavaScriptCore/heap/MarkStack.cpp \
+	Source/JavaScriptCore/heap/MarkStack.h \
+	Source/JavaScriptCore/heap/MarkedBlock.cpp \
+	Source/JavaScriptCore/heap/MarkedBlock.h \
+	Source/JavaScriptCore/heap/MarkedSpace.cpp \
+	Source/JavaScriptCore/heap/MarkedSpace.h \
+	Source/JavaScriptCore/heap/Strong.h \
 	Source/JavaScriptCore/heap/Weak.h \
 	Source/JavaScriptCore/config.h \
 	Source/JavaScriptCore/debugger/DebuggerActivation.cpp \
@@ -221,10 +231,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/CallData.cpp \
 	Source/JavaScriptCore/runtime/CallData.h \
 	Source/JavaScriptCore/runtime/ClassInfo.h \
-	Source/JavaScriptCore/runtime/MarkedBlock.cpp \
-	Source/JavaScriptCore/runtime/MarkedBlock.h \
-	Source/JavaScriptCore/runtime/MarkedSpace.cpp \
-	Source/JavaScriptCore/runtime/MarkedSpace.h \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.cpp \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.h \
 	Source/JavaScriptCore/runtime/Completion.cpp \
@@ -315,12 +321,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/LiteralParser.h \
 	Source/JavaScriptCore/runtime/Lookup.cpp \
 	Source/JavaScriptCore/runtime/Lookup.h \
-	Source/JavaScriptCore/runtime/MachineStackMarker.cpp \
-	Source/JavaScriptCore/runtime/MachineStackMarker.h \
-	Source/JavaScriptCore/runtime/ConservativeSet.cpp \
-	Source/JavaScriptCore/runtime/ConservativeSet.h \
-	Source/JavaScriptCore/runtime/MarkStack.cpp \
-	Source/JavaScriptCore/runtime/MarkStack.h \
 	Source/JavaScriptCore/runtime/MathObject.cpp \
 	Source/JavaScriptCore/runtime/MathObject.h \
 	Source/JavaScriptCore/runtime/NativeErrorConstructor.cpp \
@@ -559,12 +559,12 @@ javascriptcore_sources += \
 
 if TARGET_WIN32
 javascriptcore_sources += \
-	Source/JavaScriptCore/runtime/MarkStackWin.cpp \
+	Source/JavaScriptCore/heap/MarkStackWin.cpp \
 	Source/JavaScriptCore/wtf/OSAllocatorWin.cpp
 else
 javascriptcore_sources += \
 	Source/JavaScriptCore/jit/ExecutableAllocatorFixedVMPool.cpp \
-	Source/JavaScriptCore/runtime/MarkStackPosix.cpp \
+	Source/JavaScriptCore/heap/MarkStackPosix.cpp \
 	Source/JavaScriptCore/wtf/OSAllocatorPosix.cpp
 endif
 

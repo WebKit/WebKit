@@ -27,7 +27,6 @@
 #define Handle_h
 
 #include "WriteBarrier.h"
-
 #include <wtf/Assertions.h>
 
 namespace JSC {

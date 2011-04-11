@@ -29,7 +29,7 @@
 #include "config.h"
 #include "RegisterFile.h"
 
-#include "ConservativeSet.h"
+#include "ConservativeRoots.h"
 #include "Interpreter.h"
 #include "JSGlobalData.h"
 #include "JSGlobalObject.h"

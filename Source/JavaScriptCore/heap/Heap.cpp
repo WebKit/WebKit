@@ -22,7 +22,7 @@
 #include "Heap.h"
 
 #include "CodeBlock.h"
-#include "ConservativeSet.h"
+#include "ConservativeRoots.h"
 #include "GCActivityCallback.h"
 #include "Interpreter.h"
 #include "JSGlobalData.h"

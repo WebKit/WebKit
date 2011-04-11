@@ -22,7 +22,7 @@
 #include "config.h"
 #include "MachineStackMarker.h"
 
-#include "ConservativeSet.h"
+#include "ConservativeRoots.h"
 #include "Heap.h"
 #include "JSArray.h"
 #include "JSGlobalData.h"

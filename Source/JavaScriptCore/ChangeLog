@@ -1,3 +1,46 @@
+2011-04-11  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+        
+        Moved remaining heap implementation files to the heap folder.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/ConservativeRoots.cpp: Copied from runtime/ConservativeSet.cpp.
+        * heap/ConservativeRoots.h: Copied from runtime/ConservativeSet.h.
+        * heap/Handle.h:
+        * heap/Heap.cpp:
+        * heap/MachineStackMarker.cpp: Copied from runtime/MachineStackMarker.cpp.
+        * heap/MachineStackMarker.h: Copied from runtime/MachineStackMarker.h.
+        * heap/MarkStack.cpp: Copied from runtime/MarkStack.cpp.
+        * heap/MarkStack.h: Copied from runtime/MarkStack.h.
+        * heap/MarkStackPosix.cpp: Copied from runtime/MarkStackPosix.cpp.
+        * heap/MarkStackSymbian.cpp: Copied from runtime/MarkStackSymbian.cpp.
+        * heap/MarkStackWin.cpp: Copied from runtime/MarkStackWin.cpp.
+        * heap/MarkedBlock.cpp: Copied from runtime/MarkedBlock.cpp.
+        * heap/MarkedBlock.h: Copied from runtime/MarkedBlock.h.
+        * heap/MarkedSpace.cpp: Copied from runtime/MarkedSpace.cpp.
+        * heap/MarkedSpace.h: Copied from runtime/MarkedSpace.h.
+        * interpreter/RegisterFile.cpp:
+        * runtime/ConservativeSet.cpp: Removed.
+        * runtime/ConservativeSet.h: Removed.
+        * runtime/MachineStackMarker.cpp: Removed.
+        * runtime/MachineStackMarker.h: Removed.
+        * runtime/MarkStack.cpp: Removed.
+        * runtime/MarkStack.h: Removed.
+        * runtime/MarkStackPosix.cpp: Removed.
+        * runtime/MarkStackSymbian.cpp: Removed.
+        * runtime/MarkStackWin.cpp: Removed.
+        * runtime/MarkedBlock.cpp: Removed.
+        * runtime/MarkedBlock.h: Removed.
+        * runtime/MarkedSpace.cpp: Removed.
+        * runtime/MarkedSpace.h: Removed.
+
 2011-04-11  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix.

@@ -69,9 +69,17 @@ SOURCES += \
     bytecode/StructureStubInfo.cpp \
     bytecompiler/BytecodeGenerator.cpp \
     bytecompiler/NodesCodegen.cpp \
-    heap/Heap.cpp \
+    heap/ConservativeRoots.cpp \
     heap/HandleHeap.cpp \
     heap/HandleStack.cpp \
+    heap/Heap.cpp \
+    heap/MachineStackMarker.cpp \
+    heap/MarkStack.cpp \
+    heap/MarkStackPosix.cpp \
+    heap/MarkStackSymbian.cpp \
+    heap/MarkStackWin.cpp \
+    heap/MarkedBlock.cpp \
+    heap/MarkedSpace.cpp \
     debugger/DebuggerActivation.cpp \
     debugger/DebuggerCallFrame.cpp \
     debugger/Debugger.cpp \
@@ -116,8 +124,6 @@ SOURCES += \
     runtime/BooleanObject.cpp \
     runtime/BooleanPrototype.cpp \
     runtime/CallData.cpp \
-    runtime/MarkedBlock.cpp \
-    runtime/MarkedSpace.cpp \
     runtime/CommonIdentifiers.cpp \
     runtime/Completion.cpp \
     runtime/ConstructData.cpp \
@@ -160,12 +166,6 @@ SOURCES += \
     runtime/JSWrapperObject.cpp \
     runtime/LiteralParser.cpp \
     runtime/Lookup.cpp \
-    runtime/MachineStackMarker.cpp \
-    runtime/MarkStackPosix.cpp \
-    runtime/MarkStackSymbian.cpp \
-    runtime/MarkStackWin.cpp \
-    runtime/ConservativeSet.cpp \
-    runtime/MarkStack.cpp \
     runtime/MathObject.cpp \
     runtime/NativeErrorConstructor.cpp \
     runtime/NativeErrorPrototype.cpp \
