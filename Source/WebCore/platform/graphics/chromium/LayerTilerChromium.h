@@ -56,18 +56,39 @@ public:
 
     ~LayerTilerChromium();
 
+    // Set invalidations to be potentially repainted during update().
     void invalidateRect(const IntRect& contentRect);
     void invalidateEntireLayer();
+
+    // Paint all invalidations and missing tiles needed to draw the contentRect
+    // into the internal canvas.
     void update(TilePaintInterface& painter, const IntRect& contentRect);
+
+    // Reserve and upload tile textures from the internal canvas.
+    void uploadCanvas();
+
+    // Reserve and upload tile textures from an externally painted buffer.
     void updateFromPixels(const IntRect& paintRect, const uint8_t* pixels);
-    void draw(const IntRect& contentRect);
+
+    // Draw all tiles that intersect with the content rect.
+    void draw(const IntRect& contentRect, const TransformationMatrix&, float opacity);
+
+    // If uploadCanvas/updateFromPixels is called, this must be called after
+    // draw() to unreserve any textures that were reserved prior to uploading.
+    void unreserveTextures();
 
     // Set position of this tiled layer in content space.
     void setLayerPosition(const IntPoint& position);
     // Change the tile size.  This may invalidate all the existing tiles.
     void setTileSize(const IntSize& size);
+    void setLayerRenderer(LayerRendererChromium* layerRenderer) { m_layerRenderer = layerRenderer; }
+
+    bool skipsDraw() const { return m_skipsDraw; }
 
     typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderTexAlpha> Program;
+
+    // If this tiler has exactly one tile, return its texture. Otherwise, null.
+    LayerTexture* getSingleTexture();
 
 private:
     LayerTilerChromium(LayerRendererChromium*, const IntSize& tileSize, BorderTexelOption);
@@ -140,6 +161,7 @@ private:
     // Tightly packed set of unused tiles.
     Vector<RefPtr<Tile> > m_unusedTiles;
 
+    IntRect m_paintRect;
     PlatformCanvas m_canvas;
 
     // Cache a tile-sized pixel buffer to draw into.

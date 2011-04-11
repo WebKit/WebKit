@@ -34,6 +34,7 @@
 
 #include "ImageLayerChromium.h"
 
+#include "cc/CCLayerImpl.h"
 #include "Image.h"
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
@@ -60,29 +61,44 @@ void ImageLayerChromium::setContents(Image* contents)
     setNeedsDisplay();
 }
 
-void ImageLayerChromium::paintContentsIfDirty()
+void ImageLayerChromium::paintContentsIfDirty(const IntRect&)
 {
     ASSERT(layerRenderer());
-
-    // FIXME: Remove this test when tiled layers are implemented.
-    if (requiresClippedUpdateRect()) {
-        // Use the base version of updateContents which draws a subset of the
-        // image to a bitmap, as the pixel contents can't be uploaded directly.
-        ContentLayerChromium::paintContentsIfDirty();
-        return;
-    }
 
     m_decodedImage.updateFromImage(m_contents->nativeImageForCurrentFrame());
 }
 
-void ImageLayerChromium::updateTextureIfNeeded()
+void ImageLayerChromium::updateCompositorResources()
 {
-    // FIXME: Remove this test when tiled layers are implemented.
-    if (requiresClippedUpdateRect()) {
-        ContentLayerChromium::updateTextureIfNeeded();
-        return;
-    }
-    updateTexture(m_decodedImage.pixels(), m_decodedImage.size());
+    updateLayerSize(m_decodedImage.size());
+
+    IntRect paintRect(IntPoint(0, 0), m_decodedImage.size());
+    m_tiler->invalidateRect(paintRect);
+    m_tiler->updateFromPixels(paintRect, m_decodedImage.pixels());
+}
+
+IntRect ImageLayerChromium::layerBounds() const
+{
+    return IntRect(IntPoint(0, 0), m_decodedImage.size());
+}
+
+TransformationMatrix ImageLayerChromium::tilingTransform()
+{
+    // Tiler draws from the upper left corner. The draw transform
+    // specifies the middle of the layer.
+    TransformationMatrix transform = ccLayerImpl()->drawTransform();
+    const IntRect sourceRect = layerBounds();
+    const IntSize destSize = bounds();
+
+    transform.translate(-destSize.width() / 2.0, -destSize.height() / 2.0);
+
+    // Tiler also draws at the original content size, so rescale the original
+    // image dimensions to the bounds that it is meant to be drawn at.
+    float scaleX = destSize.width() / static_cast<float>(sourceRect.size().width());
+    float scaleY = destSize.height() / static_cast<float>(sourceRect.size().height());
+    transform.scale3d(scaleX, scaleY, 1.0f);
+
+    return transform;
 }
 
 }

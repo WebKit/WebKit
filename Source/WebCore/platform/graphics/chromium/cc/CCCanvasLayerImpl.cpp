@@ -47,7 +47,7 @@ CCCanvasLayerImpl::~CCCanvasLayerImpl()
 {
 }
 
-void CCCanvasLayerImpl::draw()
+void CCCanvasLayerImpl::draw(const IntRect&)
 {
     ASSERT(layerRenderer());
     const CCCanvasLayerImpl::Program* program = layerRenderer()->canvasLayerProgram();
@@ -77,4 +77,3 @@ void CCCanvasLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)
-

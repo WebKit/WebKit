@@ -42,7 +42,7 @@ public:
 
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexFlipAlpha> Program;
 
-    virtual void draw();
+    virtual void draw(const IntRect&);
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
@@ -58,4 +58,3 @@ private:
 }
 
 #endif // CCCanvasLayerImpl_h
-

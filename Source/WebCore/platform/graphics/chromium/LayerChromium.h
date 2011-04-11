@@ -113,6 +113,7 @@ public:
 
     void setNeedsDisplay(const FloatRect& dirtyRect);
     void setNeedsDisplay();
+    virtual void invalidateRect(const FloatRect& dirtyRect) {}
     const FloatRect& dirtyRect() const { return m_dirtyRect; }
     void resetNeedsDisplay();
 
@@ -156,11 +157,13 @@ public:
 
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return false; }
+    virtual void paintContentsIfDirty(const IntRect&) { }
     virtual void paintContentsIfDirty() { }
     virtual void updateCompositorResources() { }
+    virtual void setIsMask(bool) {}
     virtual void unreserveContentsTexture() { }
     virtual void bindContentsTexture() { }
-    virtual void draw() { }
+    virtual void draw(const IntRect&) { }
 
     // These exists just for debugging (via drawDebugBorder()).
     void setBorderColor(const Color&);

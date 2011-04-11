@@ -222,13 +222,26 @@ void LayerRendererChromium::updateRootLayerScrollbars()
 
 void LayerRendererChromium::drawRootLayer()
 {
-    m_rootLayerContentTiler->draw(m_viewportVisibleRect);
+    TransformationMatrix scroll;
+    scroll.translate(-m_viewportVisibleRect.x(), -m_viewportVisibleRect.y());
 
-    if (m_verticalScrollbarTiler)
-        m_verticalScrollbarTiler->draw(m_viewportVisibleRect);
+    if (m_rootLayerContentTiler) {
+        m_rootLayerContentTiler->uploadCanvas();
+        m_rootLayerContentTiler->draw(m_viewportVisibleRect, scroll, 1.0f);
+        m_rootLayerContentTiler->unreserveTextures();
+    }
 
-    if (m_horizontalScrollbarTiler)
-        m_horizontalScrollbarTiler->draw(m_viewportVisibleRect);
+    if (m_verticalScrollbarTiler) {
+        m_verticalScrollbarTiler->uploadCanvas();
+        m_verticalScrollbarTiler->draw(m_viewportVisibleRect, scroll, 1.0f);
+        m_verticalScrollbarTiler->unreserveTextures();
+    }
+
+    if (m_horizontalScrollbarTiler) {
+        m_horizontalScrollbarTiler->uploadCanvas();
+        m_horizontalScrollbarTiler->draw(m_viewportVisibleRect, scroll, 1.0f);
+        m_horizontalScrollbarTiler->unreserveTextures();
+    }
 }
 
 void LayerRendererChromium::setViewport(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition)
@@ -347,6 +360,7 @@ void LayerRendererChromium::drawLayers(const LayerList& renderSurfaceLayerList)
     m_context->colorMask(true, true, true, true);
 
     GLC(m_context.get(), m_context->enable(GraphicsContext3D::BLEND));
+    GLC(m_context.get(), m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
     GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
 
     // Update the contents of the render surfaces. We traverse the array from
@@ -757,14 +771,16 @@ void LayerRendererChromium::paintContentsRecursive(LayerChromium* layer)
     if (layer->bounds().isEmpty())
         return;
 
+    const IntRect targetSurfaceRect = layer->ccLayerImpl()->scissorRect();
+
     if (layer->drawsContent())
-        layer->paintContentsIfDirty();
+        layer->paintContentsIfDirty(targetSurfaceRect);
     if (layer->maskLayer() && layer->maskLayer()->drawsContent())
-        layer->maskLayer()->paintContentsIfDirty();
+        layer->maskLayer()->paintContentsIfDirty(targetSurfaceRect);
     if (layer->replicaLayer() && layer->replicaLayer()->drawsContent())
-        layer->replicaLayer()->paintContentsIfDirty();
+        layer->replicaLayer()->paintContentsIfDirty(targetSurfaceRect);
     if (layer->replicaLayer() && layer->replicaLayer()->maskLayer() && layer->replicaLayer()->maskLayer()->drawsContent())
-        layer->replicaLayer()->maskLayer()->paintContentsIfDirty();
+        layer->replicaLayer()->maskLayer()->paintContentsIfDirty(targetSurfaceRect);
 }
 
 void LayerRendererChromium::updateCompositorResourcesRecursive(LayerChromium* layer)
@@ -816,7 +832,7 @@ void LayerRendererChromium::copyOffscreenTextureToDisplay()
         m_defaultRenderSurface->m_drawTransform.translate3d(0.5 * m_defaultRenderSurface->m_contentRect.width(),
                                                             0.5 * m_defaultRenderSurface->m_contentRect.height(), 0);
         m_defaultRenderSurface->m_drawOpacity = 1;
-        m_defaultRenderSurface->draw();
+        m_defaultRenderSurface->draw(m_defaultRenderSurface->m_contentRect);
     }
 }
 
@@ -857,7 +873,7 @@ bool LayerRendererChromium::useRenderSurface(RenderSurfaceChromium* renderSurfac
 void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium* targetSurface)
 {
     if (layer->renderSurface() && layer->renderSurface() != targetSurface) {
-        layer->renderSurface()->draw();
+        layer->renderSurface()->draw(layer->getDrawRect());
         return;
     }
 
@@ -897,7 +913,7 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
         }
     }
 
-    layer->draw();
+    layer->draw(layer->scissorRect());
 
     // Draw the debug border if there is one.
     layer->drawDebugBorder();
@@ -970,7 +986,6 @@ bool LayerRendererChromium::initializeSharedObjects()
 
     m_sharedGeometry = adoptPtr(new GeometryBinding(m_context.get()));
     m_borderProgram = adoptPtr(new LayerChromium::BorderProgram(m_context.get()));
-    m_contentLayerProgram = adoptPtr(new ContentLayerChromium::Program(m_context.get()));
     m_canvasLayerProgram = adoptPtr(new CCCanvasLayerImpl::Program(m_context.get()));
     m_videoLayerRGBAProgram = adoptPtr(new CCVideoLayerImpl::RGBAProgram(m_context.get()));
     m_videoLayerYUVProgram = adoptPtr(new CCVideoLayerImpl::YUVProgram(m_context.get()));
@@ -980,7 +995,7 @@ bool LayerRendererChromium::initializeSharedObjects()
     m_tilerProgram = adoptPtr(new LayerTilerChromium::Program(m_context.get()));
 
     if (!m_sharedGeometry->initialized() || !m_borderProgram->initialized()
-        || !m_contentLayerProgram->initialized() || !m_canvasLayerProgram->initialized()
+        || !m_canvasLayerProgram->initialized()
         || !m_videoLayerRGBAProgram->initialized() || !m_videoLayerYUVProgram->initialized()
         || !m_pluginLayerProgram->initialized() || !m_renderSurfaceProgram->initialized()
         || !m_renderSurfaceMaskProgram->initialized() || !m_tilerProgram->initialized()) {
@@ -999,7 +1014,6 @@ void LayerRendererChromium::cleanupSharedObjects()
 
     m_sharedGeometry.clear();
     m_borderProgram.clear();
-    m_contentLayerProgram.clear();
     m_canvasLayerProgram.clear();
     m_videoLayerRGBAProgram.clear();
     m_videoLayerYUVProgram.clear();

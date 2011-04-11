@@ -75,7 +75,7 @@ void CCVideoLayerImpl::setTexture(size_t i, VideoLayerChromium::Texture texture)
     m_textures[i] = texture;
 }
 
-void CCVideoLayerImpl::draw()
+void CCVideoLayerImpl::draw(const IntRect&)
 {
     if (m_skipsDraw)
         return;
@@ -170,4 +170,3 @@ void CCVideoLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)
-
