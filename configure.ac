@@ -805,6 +805,12 @@ if test "$enable_jit" = "yes"; then
                 ;;
             esac
         ;;
+        sh4)
+            AC_DEFINE([ENABLE_YARR], [1], [Define to enable YARR])
+            AC_DEFINE([ENABLE_YARR_JIT], [1], [Define to enable YARR JIT])
+            AC_DEFINE([ENABLE_JIT], [1], [Define to enable JIT])
+            AC_DEFINE([WTF_USE_JIT_STUB_ARGUMENT_REGISTER], [1], [Use stub register])
+        ;;
         *)
             enable_jit="no (CPU '$host_cpu' not supported)"
         ;;
@@ -878,6 +884,11 @@ case "$with_font_backend" in
      *) AC_MSG_ERROR([Invalid font backend: must be freetype or pango.]) ;;
 esac
 AC_MSG_RESULT([$with_font_backend])
+
+if test "$host_cpu" = "sh4"; then
+   CXXFLAGS="$CXXFLAGS -mieee -w"
+   CFLAGS="$CFLAGS -mieee -w"
+fi
 
 # Add '-g' flag to gcc if it's debug build
 if test "$enable_debug" = "yes"; then
