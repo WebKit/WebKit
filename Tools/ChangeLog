@@ -1,3 +1,22 @@
+2011-02-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] The GTK+ DRT needs an implementation of the PlainTextController
+        https://bugs.webkit.org/show_bug.cgi?id=53605
+
+        Add an implementation of the PlainTextController for the GTK+ DRT.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (addControllerToWindow): Added this helper method.
+        (webViewWindowObjectCleared): Use the new helper to add EventSender
+        and the PlainTextController to the window object.
+        * GNUmakefile.am: Added PlainTextController source files.
+        * DumpRenderTree/gtk/PlainTextController.cpp: Added. This will rely
+        on DumpRenderTreeSupportGtk to convert a JSValueRef into a WebKitDOMRange
+        until that functionality exists somewhere in the WebKitGTK+ stack.
+        * DumpRenderTree/gtk/PlainTextController.h: Added.
+
 2011-04-11  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed.

@@ -20,12 +20,10 @@
 #define DumpRenderTreeSupportGtk_h
 
 #include "JSStringRef.h"
-#include <webkit/webkitdefines.h>
-
 #include <atk/atk.h>
 #include <glib.h>
 #include <webkit/webkitdefines.h>
-#include <webkit/webkitwebframe.h>
+#include <webkit/webkitdomdefines.h>
 #include <wtf/text/CString.h>
 
 namespace WebKit {
@@ -62,6 +60,7 @@ public:
     static void clearOpener(WebKitWebFrame*);
 
     static JSValueRef shadowRoot(JSContextRef, JSValueRef);
+    static WebKitDOMRange* jsValueToDOMRange(JSContextRef, JSValueRef);
 
     // FIXME: Move these to webkitwebframe.h once their API has been discussed.
     static GSList* getFrameChildren(WebKitWebFrame*);

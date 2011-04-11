@@ -1,3 +1,18 @@
+2011-02-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] The GTK+ DRT needs an implementation of the PlainTextController
+        https://bugs.webkit.org/show_bug.cgi?id=53605
+
+        Added jsValueToDOMRange to DumpRenderTreeSupportGtk. This static method can convert
+        a JSValueRef to a WebKitDOMRange. When it's possible to do this with the public
+        API, we can remove this method.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::jsValueToDOMRange): Added.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h: Added declaration.
+
 2011-04-11  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

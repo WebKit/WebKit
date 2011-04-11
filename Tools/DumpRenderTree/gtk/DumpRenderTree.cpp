@@ -39,6 +39,7 @@
 #include "GOwnPtr.h"
 #include "LayoutTestController.h"
 #include "PixelDumpSupport.h"
+#include "PlainTextController.h"
 #include "TextInputController.h"
 #include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
 #include "WorkQueue.h"
@@ -814,6 +815,13 @@ static void webViewOnloadEvent(WebKitWebView* view, WebKitWebFrame* frame, void*
     }
 }
 
+static void addControllerToWindow(JSContextRef context, JSObjectRef windowObject, const char* controllerName, JSValueRef controller)
+{
+    JSStringRef controllerNameStr = JSStringCreateWithUTF8CString(controllerName);
+    JSObjectSetProperty(context, windowObject, controllerNameStr, controller, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
+    JSStringRelease(controllerNameStr); 
+}
+
 static void webViewWindowObjectCleared(WebKitWebView* view, WebKitWebFrame* frame, JSGlobalContextRef context, JSObjectRef windowObject, gpointer data)
 {
     JSValueRef exception = 0;
@@ -828,15 +836,9 @@ static void webViewWindowObjectCleared(WebKitWebView* view, WebKitWebFrame* fram
     axController->makeWindowObject(context, windowObject, &exception);
     ASSERT(!exception);
 
-    JSStringRef eventSenderStr = JSStringCreateWithUTF8CString("eventSender");
-    JSValueRef eventSender = makeEventSender(context, !webkit_web_frame_get_parent(frame));
-    JSObjectSetProperty(context, windowObject, eventSenderStr, eventSender, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
-    JSStringRelease(eventSenderStr);
-
-    JSStringRef textInputControllerStr = JSStringCreateWithUTF8CString("textInputController");
-    JSValueRef textInputController = makeTextInputController(context);
-    JSObjectSetProperty(context, windowObject, textInputControllerStr, textInputController, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
-    JSStringRelease(textInputControllerStr);
+    addControllerToWindow(context, windowObject, "eventSender", makeEventSender(context, !webkit_web_frame_get_parent(frame)));
+    addControllerToWindow(context, windowObject, "plainText", makePlainTextController(context));
+    addControllerToWindow(context, windowObject, "textInputController", makeTextInputController(context));
 }
 
 static gboolean webViewConsoleMessage(WebKitWebView* view, const gchar* message, unsigned int line, const gchar* sourceId, gpointer data)
