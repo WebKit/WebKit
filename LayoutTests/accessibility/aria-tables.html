@@ -55,27 +55,14 @@
 
             var failed = 0;
             <!-- make sure they are tables -->
-            if (table1.allAttributes().indexOf("AXRole: AXTable") == -1) {
-                failed = 1;
-            }
-            if (table2.allAttributes().indexOf("AXRole: AXTable") == -1) {
-                failed = 1;
-            }
+            result.innerText += table1.role + "\n";
+            result.innerText += table2.role + "\n";
 
             <!-- Make sure we can use cell for column and row and it works -->
-            if (table1.cellForColumnAndRow(0,0).allAttributes().indexOf("AXRole: AXCell") == -1) {
-               failed = 1;
-            }
-            if (table2.cellForColumnAndRow(0,0).allAttributes().indexOf("AXRole: AXCell") == -1) {
-               failed = 1;
-            }
-
-            if (table1.cellForColumnAndRow(2,2).allAttributes().indexOf("AXRole: AXCell") == -1) {
-               failed = 1;
-            }
-            if (table2.cellForColumnAndRow(1,1).allAttributes().indexOf("AXRole: AXCell") == -1) {
-               failed = 1;
-            }
+            result.innerText += table1.cellForColumnAndRow(0,0).role + "\n";
+            result.innerText += table2.cellForColumnAndRow(0,0).role + "\n";
+            result.innerText += table1.cellForColumnAndRow(2,2).role + "\n";
+            result.innerText += table2.cellForColumnAndRow(1,1).role + "\n";
 
             <!-- now make sure we can call all the relevant methods without crashing -->
             table1.attributesOfColumnHeaders();
@@ -92,13 +79,8 @@
 
             table1.attributesOfHeader();
             table2.attributesOfHeader();
-              
-            if (failed) {
-                result.innerText += "Test failed\n";
-            }
-            else {
-                 result.innerText += "Test passed\n";
-            }
+
+            result.innerText += "Test passed\n";
         }
     </script>
 </body>

@@ -1,3 +1,33 @@
+2011-04-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] Implement AccessibilityUIElement::cellForColumnAndRow in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=57826
+
+        Skipped aria-tables.html and table-cells.html layout tests.
+
+        Some changes were also made inside the aria-tables.html layout
+        test, in order to allow unskipping it in GTK while still keeping
+        it working in other platforms, without needing platform specific
+        tests, just different expected files.
+
+        * accessibility/aria-tables.html: Changed the layout test so it
+        just prints role names instead of comparing their actual values
+        with the expected ones in one specific platform (Mac)
+
+        * platform/gtk/Skipped: Unskipped aria-tables.html and table-cells.html.
+        * platform/gtk/accessibility/aria-tables-expected.txt: Added new
+        expectations for the GTK port.
+        * platform/gtk/accessibility/table-cells-expected.txt: Ditto.
+
+        * platform/mac-leopard/Skipped: Skipping aria-tables.html in
+        mac-leopard, as I don't know what the expected output would be in
+        this case, and since the expected file was invalid anyway.
+
+        * platform/mac/accessibility/aria-tables-expected.txt: Updated to
+        check role names, after the changes done in the layout test.
+
 2011-04-11  Jian Li  <jianli@chromium.org>
 
         Unreviewed, Updated chromium test expectations.

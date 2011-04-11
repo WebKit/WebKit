@@ -1,0 +1,32 @@
+Example #1: Nested Stubs
+Ruritanian
+Population 
+Survey	All
+Genders	By Gender
+Males	Females
+All Regions	North	3333	1111	2222
+South	3333	1111	2222
+South	3333	1111	2222
+South	3333	1111	2222
+------------------------
+[0,0]
+toolkit:WebKitGtk
+------------------------
+[3,1]
+toolkit:WebKitGtk
+------------------------
+[1,1]
+toolkit:WebKitGtk
+------------------------
+[2,2]
+toolkit:WebKitGtk
+------------------------
+[3,5]
+toolkit:WebKitGtk
+------------------------
+[100,0]
+
+------------------------
+[0,100]
+
+

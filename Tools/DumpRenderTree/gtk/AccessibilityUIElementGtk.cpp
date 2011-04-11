@@ -531,8 +531,13 @@ bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned location
 
 AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned column, unsigned row)
 {
-    // FIXME: implement
-    return 0;
+    if (!m_element)
+        return 0;
+
+    ASSERT(ATK_IS_TABLE(m_element));
+
+    AtkObject* foundCell = atk_table_ref_at(ATK_TABLE(m_element), row, column);
+    return foundCell ? AccessibilityUIElement(foundCell) : 0;
 }
 
 JSStringRef AccessibilityUIElement::selectedTextRange()

@@ -1,3 +1,16 @@
+2011-04-11  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] Implement AccessibilityUIElement::cellForColumnAndRow in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=57826
+
+        Implement missing feature in GTK's DRT.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::cellForColumnAndRow): Implemented, by
+        relying on the analogous function from the AtkTable interface.
+
 2011-04-05  Timothy Hatcher  <timothy@apple.com>
 
         Fix the extract-localizable-strings script errors that started after
