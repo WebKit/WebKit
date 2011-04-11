@@ -158,6 +158,37 @@ function runMoveLeftRight(tests, unit)
         }
 
     }
+}
+
+function runSpecificTest(tests)
+{
+    var sel = getSelection();
+    log("\n======== Move By Word Specific Test ====\n");
+    for (var i = 0; i < tests.length; ++i) {
+        log("Test " + (i + 1) + "\n");
+        var components = tests[i].title.split(" ");
+        var startOffset = components[0];
+        var movingDirection = components[1];
+        var endingNode = components[2];
+        var endingOffset = components[3];
+ 
+        log("Move " + movingDirection + " by one word\n");
+
+        var positions = [];
+        sel.setPosition(tests[i].firstChild, startOffset);
+        positions.push({ node: sel.anchorNode, offset: sel.anchorOffset, point: caretCoordinates() });
+
+        sel.modify("move", movingDirection, "-webkit-visual-word");
+        positions.push({ node: sel.anchorNode, offset: sel.anchorOffset, point: caretCoordinates() });
+
+        logPositions(positions);
+
+        if (sel.anchorNode.parentNode != document.getElementById(endingNode) || sel.anchorOffset != endingOffset) {
+            log("    FAIL: expected ");
+            var endingChildNode = document.getElementById(endingNode).firstChild;
+            log((endingChildNode instanceof Text ? '"' + fold(endingChildNode.data) + '"' : "<" + endingChildNode.tagName + ">") + "[" + endingOffset + "]");
+        }
+    }
     document.getElementById("testMoveByWord").style.display = "none";
 }
 
@@ -165,6 +196,9 @@ function runTest() {
     log("\n======== Move By Word ====\n");
     var tests = document.getElementsByClassName("test_move_by_word");
     runMoveLeftRight(tests, "word");
+    
+    tests = document.getElementsByClassName("specific_test");
+    runSpecificTest(tests);
 }
 
 onload = function() {
@@ -191,6 +225,9 @@ The numbers printed out in the output are ending word boundaries. -->
 <div dir=rtl class="test_move_by_word" title="0 3 8 12 16 19 23|23 19 16 12 8 3 0" contenteditable>abc def שנב סטז uvw xyz</div>
 <div dir=ltr class="test_move_by_word" title="0 4 8 11|11 8 4 0" contenteditable>שנב abc סטז</div>
 <div dir=rtl class="test_move_by_word" title="0 4 8 11|11 8 4 0" contenteditable>שנב abc סטז</div>
+
+<!-- The content in title means "startOffsetInCurrentNode movingDirectionByWord endingNode endingOffsetInEndingNode" -->
+<div id="div_1" contenteditable>אאא <span id="span_1" class="specific_test" title="1 left div_1 0">בב</span></div>
 </div>
 
 <pre id="console"></pre>

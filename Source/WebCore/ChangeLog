@@ -1,3 +1,32 @@
+2011-04-06  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Continue experiment with moving caret by word in visual order.
+        https://bugs.webkit.org/show_bug.cgi?id=57806
+
+        This is the 2nd patch, which adds implementation when caret is inside box
+        (not at boundaries). If the word break is inside the same box and not at the boundaries
+        either, the word break will be returned. If need to search the adjacent boxes for word
+        breaks, then, only the cases implemented in bug 57336 work.
+
+        * editing/visible_units.cpp:
+        (WebCore::leftmostPositionInRTLBoxInLTRBlock):
+        (WebCore::rightmostPositionInLTRBoxInRTLBlock):
+        (WebCore::lastWordBreakInBox):
+        (WebCore::positionIsVisuallyOrderedInBoxInBlockWithDifferentDirectionality):
+        (WebCore::nextWordBreakInBoxInsideBlockWithDifferentDirectionality):
+        (WebCore::WordBoundaryEntry::WordBoundaryEntry):
+        (WebCore::collectWordBreaksInBoxInsideBlockWithSameDirectionality):
+        (WebCore::collectWordBreaksInBoxInsideBlockWithDifferntDirectionality):
+        (WebCore::greatestValueUnder):
+        (WebCore::smallestOffsetAbove):
+        (WebCore::positionIsInsideBox):
+        (WebCore::positionBeforeNextWord):
+        (WebCore::positionAfterPreviousWord):
+        (WebCore::leftWordPosition):
+        (WebCore::rightWordPosition):
+
 2011-04-11  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

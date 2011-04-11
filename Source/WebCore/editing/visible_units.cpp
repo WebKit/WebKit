@@ -1173,6 +1173,180 @@ static VisiblePosition previousWordBreakInBoxInsideBlockWithSameDirectionality(c
     return wordBreak;
 }
 
+static VisiblePosition leftmostPositionInRTLBoxInLTRBlock(const InlineBox* box)
+{
+    // FIXME: Probably need to take care of bidi level too.
+    Node* node = box->renderer()->node();
+    InlineBox* previousLeaf = box->prevLeafChild();
+    InlineBox* nextLeaf = box->nextLeafChild();   
+    
+    if (previousLeaf && !previousLeaf->isLeftToRightDirection())
+        return Position(node, box->caretMaxOffset(), Position::PositionIsOffsetInAnchor);
+
+    if (nextLeaf && !nextLeaf->isLeftToRightDirection()) {
+        if (previousLeaf)
+            return Position(previousLeaf->renderer()->node(), previousLeaf->caretMaxOffset(), Position::PositionIsOffsetInAnchor);
+
+        InlineBox* lastRTLLeaf;
+        do {
+            lastRTLLeaf = nextLeaf;
+            nextLeaf = nextLeaf->nextLeafChild();
+        } while (nextLeaf && !nextLeaf->isLeftToRightDirection());
+        return Position(lastRTLLeaf->renderer()->node(), lastRTLLeaf->caretMinOffset(), Position::PositionIsOffsetInAnchor);
+    }
+
+    return Position(node, box->caretMinOffset(), Position::PositionIsOffsetInAnchor);
+}
+
+static VisiblePosition rightmostPositionInLTRBoxInRTLBlock(const InlineBox* box)
+{
+    // FIXME: Probably need to take care of bidi level too.
+    Node* node = box->renderer()->node();
+    InlineBox* previousLeaf = box->prevLeafChild();
+    InlineBox* nextLeaf = box->nextLeafChild();   
+    
+    if (nextLeaf && nextLeaf->isLeftToRightDirection())    
+        return Position(node, box->caretMaxOffset(), Position::PositionIsOffsetInAnchor);
+
+    if (previousLeaf && previousLeaf->isLeftToRightDirection()) {
+        if (nextLeaf)
+            return Position(nextLeaf->renderer()->node(), nextLeaf->caretMaxOffset(), Position::PositionIsOffsetInAnchor);
+
+        InlineBox* firstLTRLeaf;
+        do {
+            firstLTRLeaf = previousLeaf;
+            previousLeaf = previousLeaf->prevLeafChild();
+        } while (previousLeaf && previousLeaf->isLeftToRightDirection());
+        return Position(firstLTRLeaf->renderer()->node(), firstLTRLeaf->caretMinOffset(), Position::PositionIsOffsetInAnchor);
+    }
+
+    return Position(node, box->caretMinOffset(), Position::PositionIsOffsetInAnchor);
+}
+    
+static VisiblePosition lastWordBreakInBox(const InlineBox* box, int& offsetOfWordBreak)
+{
+    // Add the leftmost word break for RTL box or rightmost word break for LTR box.
+    InlineBox* previousLeaf = box->prevLeafChild();
+    InlineBox* nextLeaf = box->nextLeafChild();
+    VisiblePosition boundaryPosition;
+    if (box->direction() == RTL && (!previousLeaf || previousLeaf->isLeftToRightDirection()))
+        boundaryPosition = leftmostPositionInRTLBoxInLTRBlock(box);
+    else if (box->direction() == LTR && (!nextLeaf || !nextLeaf->isLeftToRightDirection()))
+        boundaryPosition = rightmostPositionInLTRBoxInRTLBlock(box);
+
+    if (boundaryPosition.isNull())
+        return VisiblePosition();            
+
+    VisiblePosition wordBreak = nextWordPosition(boundaryPosition);
+    if (wordBreak != boundaryPosition)
+        wordBreak = previousWordPosition(wordBreak);
+
+    InlineBox* boxOfWordBreak;
+    wordBreak.getInlineBoxAndOffset(boxOfWordBreak, offsetOfWordBreak);
+    if (boxOfWordBreak == box)
+        return wordBreak;
+    return VisiblePosition();    
+}
+
+static bool positionIsVisuallyOrderedInBoxInBlockWithDifferentDirectionality(const VisiblePosition& wordBreak, const InlineBox* box, int& offsetOfWordBreak)
+{
+    int previousOffset = offsetOfWordBreak;
+    InlineBox* boxOfWordBreak;
+    wordBreak.getInlineBoxAndOffset(boxOfWordBreak, offsetOfWordBreak);
+    if (boxOfWordBreak == box && (previousOffset == invalidOffset || previousOffset < offsetOfWordBreak))
+        return true;
+    return false;
+}
+    
+static VisiblePosition nextWordBreakInBoxInsideBlockWithDifferentDirectionality(
+    const InlineBox* box, const VisiblePosition& previousWordBreak, int& offsetOfWordBreak, bool& isLastWordBreakInBox)
+{
+    // FIXME: Probably need to take care of bidi level too.
+    
+    // In a LTR block, the word break should be on the left boundary of a word.
+    // In a RTL block, the word break should be on the right boundary of a word.
+    // Because previousWordPosition() returns the word break on the right boundary of the word for RTL text,
+    // we need to use nextWordPosition() to traverse words within the inline boxes from right to left to find the next word break.
+    // The same applies to LTR text, in which words are traversed within the inline boxes from left to right.
+    
+    // FIXME: handle multi-spaces (http://webkit.org/b/57543).
+    
+    bool hasSeenWordBreakInThisBox = previousWordBreak.isNotNull();
+    VisiblePosition wordBreak = hasSeenWordBreakInThisBox ? previousWordBreak : Position(box->renderer()->node(), box->caretMinOffset(), Position::PositionIsOffsetInAnchor);
+    wordBreak = nextWordPosition(wordBreak);
+    
+    if (wordBreak == previousWordBreak) {
+        isLastWordBreakInBox = true;
+        return VisiblePosition();
+    }
+
+
+    // Given RTL box "ABC DEF" either follows a LTR box or is the first visual box in an LTR block as an example,
+    // the visual display of the RTL box is: "(0)J(10)I(9)H(8) (7)F(6)E(5)D(4) (3)C(2)B(1)A(11)",
+    // where the number in parenthesis represents offset in visiblePosition. 
+    // Start at offset 0, the first word break is at offset 3, the 2nd word break is at offset 7, and the 3rd word break should be at offset 0.
+    // But nextWordPosition() of offset 7 is offset 11, which should be ignored, 
+    // and the position at offset 0 should be manually added as the last word break within the box.
+    if (positionIsVisuallyOrderedInBoxInBlockWithDifferentDirectionality(wordBreak, box, offsetOfWordBreak)) {
+        isLastWordBreakInBox = false;
+        return wordBreak;
+    }
+    
+    isLastWordBreakInBox = true;
+    return lastWordBreakInBox(box, offsetOfWordBreak);
+}
+
+struct WordBoundaryEntry {
+    WordBoundaryEntry()
+        : offsetInInlineBox(invalidOffset) 
+    { 
+    }
+
+    WordBoundaryEntry(const VisiblePosition& position, int offset)
+        : visiblePosition(position)
+        , offsetInInlineBox(offset) 
+    { 
+    }
+
+    VisiblePosition visiblePosition;
+    int offsetInInlineBox;
+};
+    
+typedef Vector<WordBoundaryEntry, 50> WordBoundaryVector;
+    
+static void collectWordBreaksInBoxInsideBlockWithSameDirectionality(const InlineBox* box, WordBoundaryVector& orderedWordBoundaries)
+{
+    orderedWordBoundaries.clear();
+    
+    VisiblePosition wordBreak;
+    int offsetOfWordBreak = invalidOffset;
+    while (1) {
+        wordBreak = previousWordBreakInBoxInsideBlockWithSameDirectionality(box, wordBreak, offsetOfWordBreak);
+        if (wordBreak.isNull())
+            break;
+        WordBoundaryEntry wordBoundaryEntry(wordBreak, offsetOfWordBreak);
+        orderedWordBoundaries.append(wordBoundaryEntry);
+    }
+}
+
+static void collectWordBreaksInBoxInsideBlockWithDifferntDirectionality(const InlineBox* box, WordBoundaryVector& orderedWordBoundaries)
+{
+    orderedWordBoundaries.clear();
+    
+    VisiblePosition wordBreak;
+    int offsetOfWordBreak = invalidOffset;
+    while (1) {
+        bool isLastWordBreakInBox = false;
+        wordBreak = nextWordBreakInBoxInsideBlockWithDifferentDirectionality(box, wordBreak, offsetOfWordBreak, isLastWordBreakInBox);
+        if (wordBreak.isNotNull()) {
+            WordBoundaryEntry wordBoundaryEntry(wordBreak, offsetOfWordBreak);
+            orderedWordBoundaries.append(wordBoundaryEntry);
+        }
+        if (isLastWordBreakInBox)
+            break;
+    }
+}
+    
 static VisiblePosition previousWordBreakInBox(const InlineBox* box, int offset, TextDirection blockDirection)
 {
     int offsetOfWordBreak = 0;
@@ -1189,6 +1363,44 @@ static VisiblePosition previousWordBreakInBox(const InlineBox* box, int offset, 
     return VisiblePosition();
 }
 
+static int greatestValueUnder(int offset, bool boxAndBlockAreInSameDirection, const WordBoundaryVector& orderedWordBoundaries)
+{
+    if (!orderedWordBoundaries.size())
+        return invalidOffset;
+    // FIXME: binary search.
+    if (boxAndBlockAreInSameDirection) {
+        for (unsigned i = 0; i < orderedWordBoundaries.size(); ++i) {
+            if (orderedWordBoundaries[i].offsetInInlineBox < offset)
+                return i;
+        }
+        return invalidOffset;
+    }
+    for (int i = orderedWordBoundaries.size() - 1; i >= 0; --i) {
+        if (orderedWordBoundaries[i].offsetInInlineBox < offset)
+            return i;
+    }
+    return invalidOffset;
+}
+
+static int smallestOffsetAbove(int offset, bool boxAndBlockAreInSameDirection, const WordBoundaryVector& orderedWordBoundaries)
+{
+    if (!orderedWordBoundaries.size())
+        return invalidOffset;
+    // FIXME: binary search.
+    if (boxAndBlockAreInSameDirection) {
+        for (int i = orderedWordBoundaries.size() - 1; i >= 0; --i) {
+            if (orderedWordBoundaries[i].offsetInInlineBox > offset)
+                return i;
+        }
+        return invalidOffset;
+    }
+    for (unsigned i = 0; i < orderedWordBoundaries.size(); ++i) {
+        if (orderedWordBoundaries[i].offsetInInlineBox > offset)
+            return i;
+    }
+    return invalidOffset;
+}
+ 
 static VisiblePosition leftWordBoundary(const InlineBox* box, int offset, TextDirection blockDirection)
 {
     VisiblePosition wordBreak;
@@ -1215,7 +1427,33 @@ static VisiblePosition rightWordBoundary(const InlineBox* box, int offset, TextD
     }
     return VisiblePosition();
 }
+    
+static bool positionIsInsideBox(const VisiblePosition& wordBreak, const InlineBox* box)
+{
+    InlineBox* boxOfWordBreak;
+    int offsetOfWordBreak;
+    wordBreak.getInlineBoxAndOffset(boxOfWordBreak, offsetOfWordBreak);
+    return box == boxOfWordBreak && offsetOfWordBreak != box->caretMaxOffset() && offsetOfWordBreak != box->caretMinOffset();
+}
 
+static VisiblePosition positionBeforeNextWord(const VisiblePosition& position)
+{
+    VisiblePosition positionAfterCurrentWord = nextWordPosition(position);
+    VisiblePosition positionAfterNextWord = nextWordPosition(positionAfterCurrentWord);
+    if (positionAfterCurrentWord == positionAfterNextWord)
+        return positionAfterCurrentWord;
+    return previousWordPosition(positionAfterNextWord);
+}
+
+static VisiblePosition positionAfterPreviousWord(const VisiblePosition& position)
+{
+    VisiblePosition positionBeforeCurrentWord = previousWordPosition(position);
+    VisiblePosition positionBeforePreviousWord = previousWordPosition(positionBeforeCurrentWord);
+    if (positionBeforeCurrentWord == positionBeforePreviousWord)
+        return positionBeforeCurrentWord;
+    return nextWordPosition(positionBeforePreviousWord);
+}
+    
 VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)
 {
     InlineBox* box;
@@ -1231,8 +1469,34 @@ VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)
     if (offset == box->caretRightmostOffset())
         return leftWordBoundary(box, offset, blockDirection);
     
-    // FIXME: Not implemented.
-    return VisiblePosition();
+    
+    VisiblePosition wordBreak;
+    if (box->direction() == blockDirection) {
+        if (blockDirection == RTL)
+            wordBreak = positionBeforeNextWord(visiblePosition);
+        else
+            wordBreak = previousWordPosition(visiblePosition);
+    } else {
+        if (blockDirection == RTL)
+            wordBreak = positionAfterPreviousWord(visiblePosition);
+        else
+            wordBreak = nextWordPosition(visiblePosition);
+    }
+    if (positionIsInsideBox(wordBreak, box))
+        return wordBreak;
+    
+    WordBoundaryVector orderedWordBoundaries;
+    if (box->direction() == blockDirection)
+        collectWordBreaksInBoxInsideBlockWithSameDirectionality(box, orderedWordBoundaries);
+    else
+        collectWordBreaksInBoxInsideBlockWithDifferntDirectionality(box, orderedWordBoundaries);
+
+    int index = box->isLeftToRightDirection() ? greatestValueUnder(offset, blockDirection == LTR, orderedWordBoundaries) :
+        smallestOffsetAbove(offset, blockDirection == RTL, orderedWordBoundaries);
+    if (index != invalidOffset)
+        return orderedWordBoundaries[index].visiblePosition;
+    
+    return leftWordBoundary(box->prevLeafChild(), invalidOffset, blockDirection);
 }
 
 VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
@@ -1245,10 +1509,34 @@ VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
     if (offset == box->caretLeftmostOffset())
         return rightWordBoundary(box, offset, blockDirection);
     if (offset == box->caretRightmostOffset())
-        return rightWordBoundary(box->nextLeafChild(), -1, blockDirection);
+        return rightWordBoundary(box->nextLeafChild(), invalidOffset, blockDirection);
+ 
+    VisiblePosition wordBreak;
+    if (box->direction() == blockDirection) {
+        if (blockDirection == LTR)
+            wordBreak = positionBeforeNextWord(visiblePosition);
+        else
+            wordBreak = previousWordPosition(visiblePosition);
+    } else {
+        if (blockDirection == LTR)
+            wordBreak = positionAfterPreviousWord(visiblePosition);
+        else
+            wordBreak = nextWordPosition(visiblePosition);
+    } 
+    if (positionIsInsideBox(wordBreak, box))
+        return wordBreak;
     
-    // FIXME: Not implemented.
-    return VisiblePosition();
+    WordBoundaryVector orderedWordBoundaries;
+    if (box->direction() == blockDirection)
+        collectWordBreaksInBoxInsideBlockWithSameDirectionality(box, orderedWordBoundaries);
+    else
+        collectWordBreaksInBoxInsideBlockWithDifferntDirectionality(box, orderedWordBoundaries);
+    int index = box->isLeftToRightDirection() ? smallestOffsetAbove(offset, blockDirection == LTR, orderedWordBoundaries) :
+        greatestValueUnder(offset, blockDirection == RTL, orderedWordBoundaries);
+    if (index != invalidOffset)
+        return orderedWordBoundaries[index].visiblePosition;
+    
+    return rightWordBoundary(box->nextLeafChild(), invalidOffset, blockDirection);
 }
 
 }

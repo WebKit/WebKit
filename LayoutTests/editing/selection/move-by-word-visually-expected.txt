@@ -2,34 +2,34 @@
 ======== Move By Word ====
 Test 1, LTR:
 Move right by one word
-"abc def hij opq rst"[0, 4, 8, 12, 16, 19]    FAIL expected: [4, 8, 12, 16, 19, 19]
+"abc def hij opq rst"[0, 8, 12, 16, 16, 19]    FAIL expected: [4, 8, 12, 16, 19, 19]
 Move left by one word
-"abc def hij opq rst"[16, 16, 12, 8, 4, 0]    FAIL expected: [16, 12, 8, 4, 0, 0]
+"abc def hij opq rst"[16, 12, 8, 4, 0, 0]
 Test 2, RTL:
 Move left by one word
-"abc def hij opq rst"[0, 15, 11, 7, 3, 19]    FAIL expected: [15, 11, 7, 3, 19, 19]
+"abc def hij opq rst"[0, 11, 7, 3, 3, 19]    FAIL expected: [15, 11, 7, 3, 19, 19]
 Move right by one word
-"abc def hij opq rst"[19, 3, 7, 11, 15, 0]    FAIL expected: [3, 7, 11, 15, 0, 0]
+"abc def hij opq rst"[19, 7, 11, 15, 0, 0]    FAIL expected: [3, 7, 11, 15, 0, 0]
 Test 3, LTR:
 Move right by one word
-"ZZZ QQQ BBB CCC XXX"[0, 15, 11, 7, 3, 19]    FAIL expected: [15, 11, 7, 3, 19, 19]
+"ZZZ QQQ BBB CCC XXX"[0, 11, 7, 3, 3, 19]    FAIL expected: [15, 11, 7, 3, 19, 19]
 Move left by one word
-"ZZZ QQQ BBB CCC XXX"[19, 3, 7, 11, 15, 0]    FAIL expected: [3, 7, 11, 15, 0, 0]
+"ZZZ QQQ BBB CCC XXX"[19, 7, 11, 15, 0, 0]    FAIL expected: [3, 7, 11, 15, 0, 0]
 Test 4, RTL:
 Move left by one word
-"ZZZ QQQ BBB CCC XXX"[0, 4, 8, 12, 16, 19]    FAIL expected: [4, 8, 12, 16, 19, 19]
+"ZZZ QQQ BBB CCC XXX"[0, 8, 12, 16, 16, 19]    FAIL expected: [4, 8, 12, 16, 19, 19]
 Move right by one word
-"ZZZ QQQ BBB CCC XXX"[16, 16, 12, 8, 4, 0]    FAIL expected: [16, 12, 8, 4, 0, 0]
+"ZZZ QQQ BBB CCC XXX"[16, 12, 8, 4, 0, 0]
 Test 5, LTR:
 Move right by one word
-"abc def ZQB RIG uvw xyz"[0, 4, 8, 11, 16, 20, 23]    FAIL expected: [4, 8, 11, 16, 20, 23, 23]
+"abc def ZQB RIG uvw xyz"[0, 4, 8, 11, 20, 20, 23]    FAIL expected: [4, 8, 11, 16, 20, 23, 23]
 Move left by one word
-"abc def ZQB RIG uvw xyz"[20, 20, 16, 11, 4, 4, 0]    FAIL expected: [20, 16, 11, 8, 4, 0, 0]
+"abc def ZQB RIG uvw xyz"[20, 16, 4, 8, 4, 0, 0]    FAIL expected: [20, 16, 11, 8, 4, 0, 0]
 Test 6, RTL:
 Move left by one word
-"abc def ZQB RIG uvw xyz"[0, 3, 8, 12, 16, 19, 23]    FAIL expected: [3, 8, 12, 16, 19, 23, 23]
+"abc def ZQB RIG uvw xyz"[0, 3, 12, 12, 16, 19, 23]    FAIL expected: [3, 8, 12, 16, 19, 23, 23]
 Move right by one word
-"abc def ZQB RIG uvw xyz"[12, 19, 12, 12, 8, 3, 0]    FAIL expected: [19, 16, 12, 8, 3, 0, 0]
+"abc def ZQB RIG uvw xyz"[12, 16, 12, 8, 8, 0, 0]    FAIL expected: [19, 16, 12, 8, 3, 0, 0]
 Test 7, LTR:
 Move right by one word
 "ZQB abc RIG"[0, 4, 8, 11]    FAIL expected: [4, 8, 11, 11]
@@ -39,5 +39,9 @@ Test 8, RTL:
 Move left by one word
 "ZQB abc RIG"[0, 4, 8, 11]    FAIL expected: [4, 8, 11, 11]
 Move right by one word
-"ZQB abc RIG"[8, 8, 0, 0]    FAIL expected: [8, 4, 0, 0]
+"ZQB abc RIG"[8, 0, 0, 0]    FAIL expected: [8, 4, 0, 0]
 
+======== Move By Word Specific Test ====
+Test 1
+Move left by one word
+"BB"[1], "AAA "[0]

@@ -1,3 +1,16 @@
+2011-04-06  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Continue experiment with moving caret by word in visual order.
+        https://bugs.webkit.org/show_bug.cgi?id=57806
+
+        Return correct result when caret and the word break are inside a box (not at boundaries).
+        Added test case to test word break at a random start point
+        (not start from a word break).
+
+        * editing/selection/move-by-word-visually-expected.txt:
+
 2011-04-11  Jian Li  <jianli@chromium.org>
 
         Unreviewed, chromium expectations change.
