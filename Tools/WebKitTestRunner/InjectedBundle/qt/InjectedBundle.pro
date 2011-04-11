@@ -80,3 +80,6 @@ unix:!mac:!symbian:!embedded {
 TARGET = WTRInjectedBundle
 DESTDIR = $$OUTPUT_DIR/lib
 !CONFIG(standalone_package): CONFIG -= app_bundle
+linux-* {
+    QMAKE_LFLAGS += -Wl,--no-undefined
+}

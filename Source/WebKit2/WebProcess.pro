@@ -27,7 +27,7 @@ linux-* {
     QMAKE_RPATHDIR = \$\$ORIGIN/../lib $$QMAKE_RPATHDIR
     MY_RPATH = $$join(QMAKE_RPATHDIR, ":")
 
-    QMAKE_LFLAGS += -Wl,-z,origin \'-Wl,-rpath,$${MY_RPATH}\'
+    QMAKE_LFLAGS += -Wl,-z,origin \'-Wl,-rpath,$${MY_RPATH}\' -Wl,--no-undefined
     QMAKE_RPATHDIR =
 } else {
     QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR

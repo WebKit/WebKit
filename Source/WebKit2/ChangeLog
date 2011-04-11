@@ -1,3 +1,16 @@
+2011-04-10  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Require no undefined symbols during compilation.
+
+        [Qt] [WK2] WebKitTestRunner, QtWebProcess and WTRInjectBundle should fail to compile when there's undefined symbols
+        https://bugs.webkit.org/show_bug.cgi?id=54896
+        
+        Add -Wl,--no-undefined to catch missing symbols early.
+
+        * WebProcess.pro:
+
 2011-04-09  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.
