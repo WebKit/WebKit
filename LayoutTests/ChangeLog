@@ -1,5 +1,12 @@
 2011-04-10  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Update test expectation.
+        svg/W3C-SVG-1.1/masking-intro-01-f.svg is crashing on Mac and Linux too.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-10  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Update test expectations.
         - absolute-sized-document-no-scrollbars.svg is flaky on Linux
         - font-update.html is failing on Windows GPU and Linux GPU.

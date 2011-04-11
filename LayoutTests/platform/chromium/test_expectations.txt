@@ -2464,7 +2464,8 @@ BUGJAPHET : fast/js/date-parse-test.html = TEXT
 // Have been flaky for a long time.
 BUGWK48143 : svg/dom/altGlyph-dom.xhtml = CRASH PASS
 BUGWK48256 WIN LINUX : fast/multicol/float-multicol.html = IMAGE+TEXT PASS
-BUGWK48341 WIN XP : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH PASS
+BUGWK48341 WIN XP DEBUG : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH
+BUGWK48341 MAC LINUX DEBUG : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH
 BUGWK58193 WIN WIN7 : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
 BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
 
