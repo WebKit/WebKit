@@ -1,3 +1,24 @@
+2011-04-11  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Shouldn't carry out autocorrection when start typing a new word
+        https://bugs.webkit.org/show_bug.cgi?id=58241
+        <rdar://problem/9264736>
+
+        Tests: platform/mac/editing/spelling/autocorrection-at-beginning-of-word-1.html
+               platform/mac/editing/spelling/autocorrection-at-beginning-of-word-2.html
+
+        In TypingCommand::markMisspellingsAfterTyping(), we want to call Editor::markMisspellingsAfterTypingToWord()
+        only when the typing command is an insertion command, and preceding word contains at least one non-whitespace
+        character.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        * editing/Editor.h:
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::markMisspellingsAfterTyping):
+
 2011-04-11  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

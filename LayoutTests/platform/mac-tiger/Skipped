@@ -213,6 +213,8 @@ http/tests/misc/401-alternative-content.php
 editing/spelling/spellcheck-paste.html
 
 # Disable spelling tests for autocorrection panel
+platform/mac/editing/spelling/autocorrection-at-beginning-of-word-1.html
+platform/mac/editing/spelling/autocorrection-at-beginning-of-word-2.html
 platform/mac/editing/spelling/autocorrection-contraction.html
 platform/mac/editing/spelling/autocorrection-delete.html
 platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html

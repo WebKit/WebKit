@@ -1969,7 +1969,7 @@ void Editor::markMisspellingsAndBadGrammar(const VisibleSelection &movingSelecti
         markBadGrammar(movingSelection);
 }
 
-void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart, const VisibleSelection& selectionAfterTyping)
+void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart, const VisibleSelection& selectionAfterTyping, bool doReplacement)
 {
 #if USE(UNIFIED_TEXT_CHECKING)
     m_spellingCorrector->applyPendingCorrection(selectionAfterTyping);
@@ -1979,11 +1979,12 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart,
         textCheckingOptions |= MarkSpelling;
 
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
-    if (isAutomaticQuoteSubstitutionEnabled()
-        || isAutomaticLinkDetectionEnabled()
-        || isAutomaticDashSubstitutionEnabled()
-        || isAutomaticTextReplacementEnabled()
-        || ((textCheckingOptions & MarkSpelling) && isAutomaticSpellingCorrectionEnabled()))
+    if (doReplacement 
+        && (isAutomaticQuoteSubstitutionEnabled()
+            || isAutomaticLinkDetectionEnabled()
+            || isAutomaticDashSubstitutionEnabled()
+            || isAutomaticTextReplacementEnabled()
+            || ((textCheckingOptions & MarkSpelling) && isAutomaticSpellingCorrectionEnabled())))
         textCheckingOptions |= PerformReplacement;
 #endif
     if (!textCheckingOptions & (MarkSpelling | PerformReplacement))

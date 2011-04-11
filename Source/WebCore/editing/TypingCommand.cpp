@@ -39,6 +39,7 @@
 #include "InsertTextCommand.h"
 #include "RenderObject.h"
 #include "SelectionController.h"
+#include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -340,9 +341,13 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
     if (previous.isNotNull()) {
         VisiblePosition p1 = startOfWord(previous, LeftWordIfOnBoundary);
         VisiblePosition p2 = startOfWord(start, LeftWordIfOnBoundary);
-        if (p1 != p2)
-            document()->frame()->editor()->markMisspellingsAfterTypingToWord(p1, endingSelection());
-        else if (commandType == TypingCommand::InsertText)
+        if (p1 != p2) {
+            RefPtr<Range> range = makeRange(p1, p2);
+            String strippedPreviousWord;
+            if (range && (commandType == TypingCommand::InsertText || commandType == TypingCommand::InsertLineBreak || commandType == TypingCommand::InsertParagraphSeparator || commandType == TypingCommand::InsertParagraphSeparatorInQuotedContent))
+                strippedPreviousWord = plainText(range.get()).stripWhiteSpace();
+            document()->frame()->editor()->markMisspellingsAfterTypingToWord(p1, endingSelection(), !strippedPreviousWord.isEmpty());
+        } else if (commandType == TypingCommand::InsertText)
             document()->frame()->editor()->startCorrectionPanelTimer();
     }
 }
