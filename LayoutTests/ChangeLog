@@ -1,3 +1,27 @@
+2011-04-11  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        iframe/compositing propagation should also work for <object> and framesets
+        https://bugs.webkit.org/show_bug.cgi?id=39037
+
+        Added pixel tests to for composited framesets and objects.
+
+        * compositing/framesets: Added.
+        * compositing/framesets/composited-frame-alignment.html: Added.
+        * compositing/framesets/composited-frame-alignment-expected.checksum: Added.
+        * compositing/framesets/composited-frame-alignment-expected.png: Added.
+        * compositing/framesets/composited-frame-alignment-expected.txt: Added.
+        * compositing/framesets/resources: Added.
+        * compositing/framesets/resources/composited-subframe.html: Added.
+        * compositing/objects: Added.
+        * compositing/objects/composited-object-alignment.html: Added.
+        * compositing/objects/composited-object-alignment-expected.checksum: Added.
+        * compositing/objects/composited-object-alignment-expected.png: Added.
+        * compositing/objects/composited-object-alignment-expected.txt: Added.
+        * compositing/objects/resources: Added.
+        * compositing/objects/resources/composited-subframe.html: Added.
+
 2011-04-11  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

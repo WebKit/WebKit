@@ -225,8 +225,8 @@ void RenderLayerBacking::updateCompositedBounds()
 
 void RenderLayerBacking::updateAfterWidgetResize()
 {
-    if (renderer()->isRenderIFrame()) {
-        if (RenderLayerCompositor* innerCompositor = RenderLayerCompositor::iframeContentsCompositor(toRenderIFrame(renderer())))
+    if (renderer()->isRenderPart()) {
+        if (RenderLayerCompositor* innerCompositor = RenderLayerCompositor::frameContentsCompositor(toRenderPart(renderer())))
             innerCompositor->frameViewDidChangeSize(contentsBox().location());
     }
 }
@@ -298,8 +298,8 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     }
 #endif
 
-    if (renderer->isRenderIFrame())
-        layerConfigChanged = RenderLayerCompositor::parentIFrameContentLayers(toRenderIFrame(renderer));
+    if (renderer->isRenderPart())
+        layerConfigChanged = RenderLayerCompositor::parentFrameContentLayers(toRenderPart(renderer));
 
     return layerConfigChanged;
 }
@@ -934,7 +934,7 @@ IntRect RenderLayerBacking::contentsBox() const
 bool RenderLayerBacking::paintingGoesToWindow() const
 {
     if (m_owningLayer->isRootLayer())
-        return compositor()->rootLayerAttachment() != RenderLayerCompositor::RootLayerAttachedViaEnclosingIframe;
+        return compositor()->rootLayerAttachment() != RenderLayerCompositor::RootLayerAttachedViaEnclosingFrame;
     
     return false;
 }

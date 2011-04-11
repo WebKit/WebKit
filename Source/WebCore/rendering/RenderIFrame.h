@@ -34,19 +34,12 @@ class RenderIFrame : public RenderFrameBase {
 public:
     explicit RenderIFrame(Element*);
 
-#if USE(ACCELERATED_COMPOSITING)
-    bool requiresAcceleratedCompositing() const;
-#endif
-
 private:
     virtual void computeLogicalHeight();
     virtual void computeLogicalWidth();
 
     virtual void layout();
 
-#if USE(ACCELERATED_COMPOSITING)
-    virtual bool requiresLayer() const;
-#endif
     virtual bool isRenderIFrame() const { return true; }
 
     virtual const char* renderName() const { return "RenderPartObject"; } // Lying for now to avoid breaking tests

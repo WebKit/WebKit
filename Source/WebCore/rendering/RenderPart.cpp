@@ -24,10 +24,11 @@
 #include "config.h"
 #include "RenderPart.h"
 
-#include "RenderView.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLFrameElementBase.h"
+#include "PluginViewBase.h"
+#include "RenderView.h"
 
 namespace WebCore {
 
@@ -57,5 +58,36 @@ void RenderPart::setWidget(PassRefPtr<Widget> widget)
 void RenderPart::viewCleared()
 {
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+bool RenderPart::requiresLayer() const
+{
+    if (RenderWidget::requiresLayer())
+        return true;
+    
+    return requiresAcceleratedCompositing();
+}
+
+bool RenderPart::requiresAcceleratedCompositing() const
+{
+    // There are two general cases in which we can return true. First, if this is a plugin 
+    // renderer and the plugin has a layer, then we need a layer. Second, if this is 
+    // a renderer with a contentDocument and that document needs a layer, then we need
+    // a layer.
+    if (widget() && widget()->isPluginViewBase() && static_cast<PluginViewBase*>(widget())->platformLayer())
+        return true;
+
+    if (!node() || !node()->isFrameOwnerElement())
+        return false;
+
+    HTMLFrameOwnerElement* element = static_cast<HTMLFrameOwnerElement*>(node());
+    if (Document* contentDocument = element->contentDocument()) {
+        if (RenderView* view = contentDocument->renderView())
+            return view->usesCompositing();
+    }
+
+    return false;
+}
+#endif
 
 }

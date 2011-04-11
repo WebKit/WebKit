@@ -634,7 +634,7 @@ bool FrameView::hasCompositedContentIncludingDescendants() const
             if (compositor->inCompositingMode())
                 return true;
 
-            if (!RenderLayerCompositor::allowsIndependentlyCompositedIFrames(this))
+            if (!RenderLayerCompositor::allowsIndependentlyCompositedFrames(this))
                 break;
         }
     }
@@ -1252,7 +1252,7 @@ void FrameView::setIsOverlapped(bool isOverlapped)
             }
         }
 
-        if (RenderLayerCompositor::allowsIndependentlyCompositedIFrames(this)) {
+        if (RenderLayerCompositor::allowsIndependentlyCompositedFrames(this)) {
             // We also need to trigger reevaluation for this and all descendant frames,
             // since a frame uses compositing if any ancestor is compositing.
             for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {

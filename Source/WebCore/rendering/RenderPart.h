@@ -36,6 +36,15 @@ public:
     virtual void setWidget(PassRefPtr<Widget>);
     virtual void viewCleared();
 
+#if USE(ACCELERATED_COMPOSITING)
+    bool requiresAcceleratedCompositing() const;
+#endif
+
+protected:
+#if USE(ACCELERATED_COMPOSITING)
+    virtual bool requiresLayer() const;
+#endif
+
 private:
     virtual bool isRenderPart() const { return true; }
     virtual const char* renderName() const { return "RenderPart"; }

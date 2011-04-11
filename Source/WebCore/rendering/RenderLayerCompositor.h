@@ -36,7 +36,7 @@ namespace WebCore {
 
 class GraphicsLayer;
 class RenderEmbeddedObject;
-class RenderIFrame;
+class RenderPart;
 #if ENABLE(VIDEO)
 class RenderVideo;
 #endif
@@ -138,7 +138,7 @@ public:
     enum RootLayerAttachment {
         RootLayerUnattached,
         RootLayerAttachedViaChromeClient,
-        RootLayerAttachedViaEnclosingIframe
+        RootLayerAttachedViaEnclosingFrame
     };
 
     RootLayerAttachment rootLayerAttachment() const { return m_rootLayerAttachment; }
@@ -161,15 +161,14 @@ public:
     
     // Most platforms connect compositing layer trees between iframes and their parent document.
     // Some (currently just Mac) allow iframes to do their own compositing.
-    static bool allowsIndependentlyCompositedIFrames(const FrameView*);
-    bool shouldPropagateCompositingToEnclosingIFrame() const;
+    static bool allowsIndependentlyCompositedFrames(const FrameView*);
+    bool shouldPropagateCompositingToEnclosingFrame() const;
 
-    // FIXME: This should be a RenderIFrame*
-    HTMLFrameOwnerElement* enclosingIFrameElement() const;
+    HTMLFrameOwnerElement* enclosingFrameElement() const;
 
-    static RenderLayerCompositor* iframeContentsCompositor(RenderIFrame*);
+    static RenderLayerCompositor* frameContentsCompositor(RenderPart*);
     // Return true if the layers changed.
-    static bool parentIFrameContentLayers(RenderIFrame*);
+    static bool parentFrameContentLayers(RenderPart*);
 
     // Update the geometry of the layers used for clipping and scrolling in frames.
     void frameViewDidChangeSize(const IntPoint& contentsOffset = IntPoint());
@@ -246,7 +245,7 @@ private:
     bool requiresCompositingForVideo(RenderObject*) const;
     bool requiresCompositingForCanvas(RenderObject*) const;
     bool requiresCompositingForPlugin(RenderObject*) const;
-    bool requiresCompositingForIFrame(RenderObject*) const;
+    bool requiresCompositingForFrame(RenderObject*) const;
     bool requiresCompositingWhenDescendantsAreCompositing(RenderObject*) const;
     bool requiresCompositingForFullScreen(RenderObject*) const;
 

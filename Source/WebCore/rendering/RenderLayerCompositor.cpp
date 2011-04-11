@@ -386,8 +386,8 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
     }
 #endif
 
-    if (layerChanged && layer->renderer()->isRenderIFrame()) {
-        RenderLayerCompositor* innerCompositor = iframeContentsCompositor(toRenderIFrame(layer->renderer()));
+    if (layerChanged && layer->renderer()->isRenderPart()) {
+        RenderLayerCompositor* innerCompositor = frameContentsCompositor(toRenderPart(layer->renderer()));
         if (innerCompositor && innerCompositor->inCompositingMode())
             innerCompositor->updateRootLayerAttachment();
     }
@@ -856,8 +856,8 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
     
     if (layerBacking) {
         bool parented = false;
-        if (layer->renderer()->isRenderIFrame())
-            parented = parentIFrameContentLayers(toRenderIFrame(layer->renderer()));
+        if (layer->renderer()->isRenderPart())
+            parented = parentFrameContentLayers(toRenderPart(layer->renderer()));
         
         if (!parented)
             layerBacking->parentForSublayers()->setChildren(layerChildren);
@@ -904,9 +904,12 @@ String RenderLayerCompositor::layerTreeAsText(bool showDebugInfo)
     return m_rootPlatformLayer->layerTreeAsText(showDebugInfo ? LayerTreeAsTextDebug : LayerTreeAsTextBehaviorNormal);
 }
 
-RenderLayerCompositor* RenderLayerCompositor::iframeContentsCompositor(RenderIFrame* renderer)
+RenderLayerCompositor* RenderLayerCompositor::frameContentsCompositor(RenderPart* renderer)
 {
-    HTMLIFrameElement* element = static_cast<HTMLIFrameElement*>(renderer->node());
+    if (!renderer->node()->isFrameOwnerElement())
+        return 0;
+        
+    HTMLFrameOwnerElement* element = static_cast<HTMLFrameOwnerElement*>(renderer->node());
     if (Document* contentDocument = element->contentDocument()) {
         if (RenderView* view = contentDocument->renderView())
             return view->compositor();
@@ -914,10 +917,10 @@ RenderLayerCompositor* RenderLayerCompositor::iframeContentsCompositor(RenderIFr
     return 0;
 }
 
-bool RenderLayerCompositor::parentIFrameContentLayers(RenderIFrame* renderer)
+bool RenderLayerCompositor::parentFrameContentLayers(RenderPart* renderer)
 {
-    RenderLayerCompositor* innerCompositor = iframeContentsCompositor(renderer);
-    if (!innerCompositor || !innerCompositor->inCompositingMode() || innerCompositor->rootLayerAttachment() != RootLayerAttachedViaEnclosingIframe)
+    RenderLayerCompositor* innerCompositor = frameContentsCompositor(renderer);
+    if (!innerCompositor || !innerCompositor->inCompositingMode() || innerCompositor->rootLayerAttachment() != RootLayerAttachedViaEnclosingFrame)
         return false;
     
     RenderLayer* layer = renderer->layer();
@@ -1095,7 +1098,7 @@ void RenderLayerCompositor::didMoveOnscreen()
     if (!inCompositingMode() || m_rootLayerAttachment != RootLayerUnattached)
         return;
 
-    RootLayerAttachment attachment = shouldPropagateCompositingToEnclosingIFrame() ? RootLayerAttachedViaEnclosingIframe : RootLayerAttachedViaChromeClient;
+    RootLayerAttachment attachment = shouldPropagateCompositingToEnclosingFrame() ? RootLayerAttachedViaEnclosingFrame : RootLayerAttachedViaChromeClient;
     attachRootPlatformLayer(attachment);
 }
 
@@ -1133,39 +1136,39 @@ bool RenderLayerCompositor::has3DContent() const
     return layerHas3DContent(rootRenderLayer());
 }
 
-bool RenderLayerCompositor::allowsIndependentlyCompositedIFrames(const FrameView* view)
+bool RenderLayerCompositor::allowsIndependentlyCompositedFrames(const FrameView* view)
 {
 #if PLATFORM(MAC)
-    // iframes are only independently composited in Mac pre-WebKit2.
+    // frames are only independently composited in Mac pre-WebKit2.
     return view->platformWidget();
 #endif
     return false;
 }
 
-bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame() const
+bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame() const
 {
-    // Parent document content needs to be able to render on top of a composited iframe, so correct behavior
+    // Parent document content needs to be able to render on top of a composited frame, so correct behavior
     // is to have the parent document become composited too. However, this can cause problems on platforms that
     // use native views for frames (like Mac), so disable that behavior on those platforms for now.
-    HTMLFrameOwnerElement* ownerElement = enclosingIFrameElement();
+    HTMLFrameOwnerElement* ownerElement = enclosingFrameElement();
     RenderObject* renderer = ownerElement ? ownerElement->renderer() : 0;
-    if (!renderer || !renderer->isRenderIFrame())
+    if (!renderer || !renderer->isRenderPart())
         return false;
 
-    if (!allowsIndependentlyCompositedIFrames(m_renderView->frameView()))
+    if (!allowsIndependentlyCompositedFrames(m_renderView->frameView()))
         return true;
 
-    // On Mac, only propagate compositing if the iframe is overlapped in the parent
+    // On Mac, only propagate compositing if the frame is overlapped in the parent
     // document, or the parent is already compositing, or the main frame is scaled.
     Frame* frame = m_renderView->frameView()->frame();
     Page* page = frame ? frame->page() : 0;
     if (page->mainFrame()->pageScaleFactor() != 1)
         return true;
     
-    RenderIFrame* iframeRenderer = toRenderIFrame(renderer);
-    if (iframeRenderer->widget()) {
-        ASSERT(iframeRenderer->widget()->isFrameView());
-        FrameView* view = static_cast<FrameView*>(iframeRenderer->widget());
+    RenderPart* frameRenderer = toRenderPart(renderer);
+    if (frameRenderer->widget()) {
+        ASSERT(frameRenderer->widget()->isFrameView());
+        FrameView* view = static_cast<FrameView*>(frameRenderer->widget());
         if (view->isOverlappedIncludingAncestors() || view->hasCompositingAncestor())
             return true;
     }
@@ -1173,10 +1176,10 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame() const
     return false;
 }
 
-HTMLFrameOwnerElement* RenderLayerCompositor::enclosingIFrameElement() const
+HTMLFrameOwnerElement* RenderLayerCompositor::enclosingFrameElement() const
 {
     if (HTMLFrameOwnerElement* ownerElement = m_renderView->document()->ownerElement())
-        return ownerElement->hasTagName(iframeTag) ? ownerElement : 0;
+        return (ownerElement->hasTagName(iframeTag) || ownerElement->hasTagName(frameTag) || ownerElement->hasTagName(objectTag)) ? ownerElement : 0;
 
     return 0;
 }
@@ -1205,7 +1208,7 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer* layer) c
              || requiresCompositingForVideo(renderer)
              || requiresCompositingForCanvas(renderer)
              || requiresCompositingForPlugin(renderer)
-             || requiresCompositingForIFrame(renderer)
+             || requiresCompositingForFrame(renderer)
              || (canRender3DTransforms() && renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden)
              || clipsCompositingDescendants(layer)
              || requiresCompositingForAnimation(renderer)
@@ -1334,28 +1337,28 @@ bool RenderLayerCompositor::requiresCompositingForPlugin(RenderObject* renderer)
     return contentBox.height() * contentBox.width() > 1;
 }
 
-bool RenderLayerCompositor::requiresCompositingForIFrame(RenderObject* renderer) const
+bool RenderLayerCompositor::requiresCompositingForFrame(RenderObject* renderer) const
 {
-    if (!renderer->isRenderIFrame())
+    if (!renderer->isRenderPart())
         return false;
     
-    RenderIFrame* iframeRenderer = toRenderIFrame(renderer);
+    RenderPart* frameRenderer = toRenderPart(renderer);
 
-    if (!iframeRenderer->requiresAcceleratedCompositing())
+    if (!frameRenderer->requiresAcceleratedCompositing())
         return false;
 
     m_compositingDependsOnGeometry = true;
 
-    RenderLayerCompositor* innerCompositor = iframeContentsCompositor(iframeRenderer);
-    if (!innerCompositor->shouldPropagateCompositingToEnclosingIFrame())
+    RenderLayerCompositor* innerCompositor = frameContentsCompositor(frameRenderer);
+    if (!innerCompositor || !innerCompositor->shouldPropagateCompositingToEnclosingFrame())
         return false;
 
     // If we can't reliably know the size of the iframe yet, don't change compositing state.
     if (renderer->needsLayout())
-        return iframeRenderer->hasLayer() && iframeRenderer->layer()->isComposited();
+        return frameRenderer->hasLayer() && frameRenderer->layer()->isComposited();
     
     // Don't go into compositing mode if height or width are zero.
-    IntRect contentBox = iframeRenderer->contentBoxRect();
+    IntRect contentBox = frameRenderer->contentBoxRect();
     return contentBox.height() * contentBox.width() > 0;
 }
 
@@ -1398,12 +1401,12 @@ bool RenderLayerCompositor::requiresScrollLayer(RootLayerAttachment attachment) 
 {
     // We need to handle our own scrolling if we're:
     return !m_renderView->frameView()->platformWidget() // viewless (i.e. non-Mac, or Mac in WebKit2)
-        || attachment == RootLayerAttachedViaEnclosingIframe; // a composited iframe on Mac
+        || attachment == RootLayerAttachedViaEnclosingFrame; // a composited frame on Mac
 }
 
 void RenderLayerCompositor::ensureRootPlatformLayer()
 {
-    RootLayerAttachment expectedAttachment = shouldPropagateCompositingToEnclosingIFrame() ? RootLayerAttachedViaEnclosingIframe : RootLayerAttachedViaChromeClient;
+    RootLayerAttachment expectedAttachment = shouldPropagateCompositingToEnclosingFrame() ? RootLayerAttachedViaEnclosingFrame : RootLayerAttachedViaChromeClient;
     if (expectedAttachment == m_rootLayerAttachment)
          return;
 
@@ -1493,9 +1496,9 @@ void RenderLayerCompositor::attachRootPlatformLayer(RootLayerAttachment attachme
             page->chrome()->client()->attachRootGraphicsLayer(frame, rootPlatformLayer());
             break;
         }
-        case RootLayerAttachedViaEnclosingIframe: {
+        case RootLayerAttachedViaEnclosingFrame: {
             // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
-            // for the iframe's renderer in the parent document.
+            // for the frame's renderer in the parent document.
             scheduleNeedsStyleRecalc(m_renderView->document()->ownerElement());
             break;
         }
@@ -1511,29 +1514,29 @@ void RenderLayerCompositor::detachRootPlatformLayer()
         return;
 
     switch (m_rootLayerAttachment) {
-        case RootLayerAttachedViaEnclosingIframe: {
-            // The layer will get unhooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
-            // for the iframe's renderer in the parent document.
-            if (m_clipLayer)
-                m_clipLayer->removeFromParent();
-            else
-                m_rootPlatformLayer->removeFromParent();
+    case RootLayerAttachedViaEnclosingFrame: {
+        // The layer will get unhooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
+        // for the frame's renderer in the parent document.
+        if (m_clipLayer)
+            m_clipLayer->removeFromParent();
+        else
+            m_rootPlatformLayer->removeFromParent();
 
-            if (HTMLFrameOwnerElement* ownerElement = m_renderView->document()->ownerElement())
-                scheduleNeedsStyleRecalc(ownerElement);
-            break;
-        }
-        case RootLayerAttachedViaChromeClient: {
-            Frame* frame = m_renderView->frameView()->frame();
-            Page* page = frame ? frame->page() : 0;
-            if (!page)
-                return;
-
-            page->chrome()->client()->attachRootGraphicsLayer(frame, 0);
-        }
+        if (HTMLFrameOwnerElement* ownerElement = m_renderView->document()->ownerElement())
+            scheduleNeedsStyleRecalc(ownerElement);
         break;
-        case RootLayerUnattached:
-            break;
+    }
+    case RootLayerAttachedViaChromeClient: {
+        Frame* frame = m_renderView->frameView()->frame();
+        Page* page = frame ? frame->page() : 0;
+        if (!page)
+            return;
+
+        page->chrome()->client()->attachRootGraphicsLayer(frame, 0);
+    }
+    break;
+    case RootLayerUnattached:
+        break;
     }
 
     m_rootLayerAttachment = RootLayerUnattached;

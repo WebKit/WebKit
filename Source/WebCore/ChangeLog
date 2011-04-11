@@ -1,3 +1,60 @@
+2011-04-11  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        iframe/compositing propagation should also work for <object> and framesets
+        https://bugs.webkit.org/show_bug.cgi?id=39037
+
+        Generalized the code that handles the parenting of composited <iframe> elements
+        to include <frame> and <object> elements. This includes forcing the parent
+        element to be composited and constructing the layer tree in the child document
+        and properly parenting it. Much of the change is giving the function calls more
+        generic names (from ...IFrame... to ...Frame...)
+        
+        Compositing tests that were done in RenderIFrame have been moved to RenderPart
+        since this is the highest base class common to all 3 elements.
+        
+        I also renamed several ...IFrame... functions to
+        ...Frame... and changed them so they work on a RenderPart for determining
+        if the renderer is composited. One other detail is that <iframe> and 
+        <object> never share style since they might be composited. I had to add
+        <frame> to that list.
+
+        Tests: compositing/framesets/composited-frame-alignment.html
+               compositing/objects/composited-object-alignment.html
+
+        * css/CSSStyleSelector.cpp: Add <frame> to list of element types that should never share style since it might be composited.
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::hasCompositedContentIncludingDescendants):
+        (WebCore::FrameView::setIsOverlapped):
+        * rendering/RenderIFrame.cpp: Moved methods to RenderPart
+        * rendering/RenderIFrame.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateAfterWidgetResize):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        (WebCore::RenderLayerBacking::paintingGoesToWindow):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::frameContentsCompositor):
+        (WebCore::RenderLayerCompositor::parentFrameContentLayers):
+        (WebCore::RenderLayerCompositor::didMoveOnscreen):
+        (WebCore::RenderLayerCompositor::allowsIndependentlyCompositedFrames):
+        (WebCore::RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame):
+        (WebCore::RenderLayerCompositor::enclosingFrameElement):
+        (WebCore::RenderLayerCompositor::requiresCompositingLayer):
+        (WebCore::RenderLayerCompositor::requiresCompositingForFrame):
+        (WebCore::RenderLayerCompositor::requiresScrollLayer):
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer):
+        (WebCore::RenderLayerCompositor::attachRootPlatformLayer):
+        (WebCore::RenderLayerCompositor::detachRootPlatformLayer):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderPart.cpp: Functions moved from RenderIFrame
+        (WebCore::RenderPart::requiresLayer):
+        (WebCore::RenderPart::requiresAcceleratedCompositing):
+        * rendering/RenderPart.h:
+
 2011-04-11  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Eric Seidel.
