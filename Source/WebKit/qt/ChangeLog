@@ -1,3 +1,18 @@
+2011-04-11  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] REGRESSION(83122): tst_QWebElement::style() fails
+        https://bugs.webkit.org/show_bug.cgi?id=58032
+
+        According to the documentation of QWebElement the styleProperty method should
+        not respect style inheritance and other CSS rules for the InlineStyle enum.
+
+        r83122 fixed this behaviour.
+
+        * tests/qwebelement/tst_qwebelement.cpp:
+        (tst_QWebElement::style): Fix the expected color for QWebElement::InlineStyle.
+
 2011-04-11  Andreas Kling  <andreas.kling@nokia.com>
 
         Build fix after r83436.

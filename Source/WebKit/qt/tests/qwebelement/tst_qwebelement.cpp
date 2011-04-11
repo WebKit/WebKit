@@ -483,7 +483,7 @@ void tst_QWebElement::style()
     QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("green"));
 
     p.setStyleProperty("color", "blue");
-    QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String("green"));
+    QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String("blue"));
     QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("green"));
 
     p.setStyleProperty("color", "blue !important");
