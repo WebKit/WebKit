@@ -33,9 +33,11 @@
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
+#include "Blob.h"
 #include "Clipboard.h"
 #include "ClipboardMimeTypes.h"
 #include "PlatformBridge.h"
+#include "SharedBuffer.h"
 #include "StringCallback.h"
 
 namespace WebCore {
@@ -88,6 +90,8 @@ void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback)
         callback->scheduleCallback(m_context, m_data);
         return;
     }
+
+    ASSERT(m_source == PasteboardSource);
     // This is ugly but there's no real alternative.
     if (m_type == mimeTypeTextPlain) {
         callback->scheduleCallback(m_context, PlatformBridge::clipboardReadPlainText(PasteboardPrivate::StandardBuffer));
@@ -101,6 +105,33 @@ void DataTransferItemChromium::getAsString(PassRefPtr<StringCallback> callback)
         return;
     }
     ASSERT_NOT_REACHED();
+}
+
+PassRefPtr<Blob> DataTransferItemChromium::getAsFile()
+{
+    if (m_source == InternalSource)
+        return 0;
+
+    ASSERT(m_source == PasteboardSource);
+    if (m_type == mimeTypeImagePng) {
+        // FIXME: This is pretty inefficient. We copy the data from the browser
+        // to the renderer. We then place it in a blob in WebKit, which
+        // registers it and copies it *back* to the browser. When a consumer
+        // wants to read the data, we then copy the data back into the renderer.
+        // https://bugs.webkit.org/show_bug.cgi?id=58107 has been filed to track
+        // improvements to this code (in particular, add a registerClipboardBlob
+        // method to the blob registry; that way the data is only copied over
+        // into the renderer when it's actually read, not when the blob is
+        // initially constructed).
+        RefPtr<SharedBuffer> data = PlatformBridge::clipboardReadImage(PasteboardPrivate::StandardBuffer);
+        RefPtr<RawData> rawData = RawData::create();
+        rawData->mutableData()->append(data->data(), data->size());
+        OwnPtr<BlobData> blobData = BlobData::create();
+        blobData->appendData(rawData, 0, -1);
+        blobData->setContentType(mimeTypeImagePng);
+        return Blob::create(blobData.release(), data->size());
+    }
+    return 0;
 }
 
 } // namespace WebCore
