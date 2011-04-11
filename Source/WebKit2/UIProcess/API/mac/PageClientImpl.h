@@ -103,6 +103,8 @@ private:
 
     virtual double customRepresentationZoomFactor();
     virtual void setCustomRepresentationZoomFactor(double);
+    virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount);
+    virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount);
 
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
 

@@ -76,6 +76,27 @@ static void _applicationInfoForMIMEType(NSString *type, NSString **name, NSImage
     *name = [[NSFileManager defaultManager] displayNameAtPath:appPath];
 }
 
+// FIXME 4182876: We can eliminate this function in favor if -isEqual: if [PDFSelection isEqual:] is overridden
+// to compare contents.
+static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selectionB)
+{
+    NSArray *aPages = [selectionA pages];
+    NSArray *bPages = [selectionB pages];
+
+    if (![aPages isEqual:bPages])
+        return NO;
+
+    NSUInteger count = [aPages count];
+    for (NSUInteger i = 0; i < count; ++i) {
+        NSRect aBounds = [selectionA boundsForPage:[aPages objectAtIndex:i]];
+        NSRect bBounds = [selectionB boundsForPage:[bPages objectAtIndex:i]];
+        if (!NSEqualRects(aBounds, bBounds))
+            return NO;
+    }
+
+    return YES;
+}
+
 @interface WKPDFView : NSView
 {
     PDFViewController* _pdfViewController;
@@ -92,7 +113,7 @@ static void _applicationInfoForMIMEType(NSString *type, NSString **name, NSImage
 - (void)setDocument:(PDFDocument *)pdfDocument;
 
 - (void)_applyPDFPreferences;
-
+- (PDFSelection *)_nextMatchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag fromSelection:(PDFSelection *)initialSelection startInSelection:(BOOL)startInSelection;
 @end
 
 @implementation WKPDFView
@@ -186,6 +207,57 @@ static void _applicationInfoForMIMEType(NSString *type, NSString **name, NSImage
 - (void)_openWithFinder:(id)sender
 {
     _pdfViewController->openPDFInFinder();
+}
+
+- (PDFSelection *)_nextMatchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag fromSelection:(PDFSelection *)initialSelection startInSelection:(BOOL)startInSelection
+{
+    if (![string length])
+        return nil;
+
+    int options = 0;
+    if (!forward)
+        options |= NSBackwardsSearch;
+
+    if (!caseFlag)
+        options |= NSCaseInsensitiveSearch;
+
+    PDFDocument *document = [_pdfView document];
+
+    PDFSelection *selectionForInitialSearch = [initialSelection copy];
+    if (startInSelection) {
+        // Initially we want to include the selected text in the search.  So we must modify the starting search 
+        // selection to fit PDFDocument's search requirements: selection must have a length >= 1, begin before 
+        // the current selection (if searching forwards) or after (if searching backwards).
+        int initialSelectionLength = [[initialSelection string] length];
+        if (forward) {
+            [selectionForInitialSearch extendSelectionAtStart:1];
+            [selectionForInitialSearch extendSelectionAtEnd:-initialSelectionLength];
+        } else {
+            [selectionForInitialSearch extendSelectionAtEnd:1];
+            [selectionForInitialSearch extendSelectionAtStart:-initialSelectionLength];
+        }
+    }
+    PDFSelection *foundSelection = [document findString:string fromSelection:selectionForInitialSearch withOptions:options];
+    [selectionForInitialSearch release];
+
+    // If we first searched in the selection, and we found the selection, search again from just past the selection
+    if (startInSelection && _PDFSelectionsAreEqual(foundSelection, initialSelection))
+        foundSelection = [document findString:string fromSelection:initialSelection withOptions:options];
+
+    if (!foundSelection && wrapFlag)
+        foundSelection = [document findString:string fromSelection:nil withOptions:options];
+
+    return foundSelection;
+}
+
+- (NSUInteger)_countMatches:(NSString *)string caseSensitive:(BOOL)caseFlag
+{
+    if (![string length])
+        return 0;
+
+    int options = caseFlag ? 0 : NSCaseInsensitiveSearch;
+
+    return [[[_pdfView document] findString:string withOptions:options] count];
 }
 
 // MARK: NSView overrides
@@ -529,6 +601,37 @@ void PDFViewController::linkClicked(const String& url)
     }
     
     page()->linkClicked(url, event);
+}
+
+void PDFViewController::findString(const String& string, FindOptions options, unsigned maxMatchCount)
+{
+    BOOL forward = !(options & FindOptionsBackwards);
+    BOOL caseFlag = !(options & FindOptionsCaseInsensitive);
+    BOOL wrapFlag = options & FindOptionsWrapAround;
+
+    PDFSelection *selection = [m_wkPDFView.get() _nextMatchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag fromSelection:[m_pdfView currentSelection] startInSelection:NO];
+    NSUInteger matchCount = [m_wkPDFView.get() _countMatches:string caseSensitive:caseFlag];
+    if (matchCount > maxMatchCount)
+        matchCount = maxMatchCount;
+
+    if (!selection) {
+        page()->didFailToFindString(string);
+        return;
+    }
+
+    [m_pdfView setCurrentSelection:selection];
+    [m_pdfView scrollSelectionToVisible:nil];
+    page()->didFindString(string, matchCount);
+}
+
+void PDFViewController::countStringMatches(const String& string, FindOptions options, unsigned maxMatchCount)
+{
+    BOOL caseFlag = !(options & FindOptionsCaseInsensitive);
+
+    NSUInteger matchCount = [m_wkPDFView.get() _countMatches:string caseSensitive:caseFlag];
+    if (matchCount > maxMatchCount)
+        matchCount = maxMatchCount;
+    page()->didCountStringMatches(string, matchCount);
 }
 
 } // namespace WebKit

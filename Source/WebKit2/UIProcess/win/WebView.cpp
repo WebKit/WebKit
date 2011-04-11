@@ -1451,6 +1451,14 @@ void WebView::didChangeScrollbarsForMainFrame() const
 {
 }
 
+void WebView::findStringInCustomRepresentation(const String&, FindOptions, unsigned)
+{
+}
+
+void WebView::countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned)
+{
+}
+
 void WebView::setIsInWindow(bool isInWindow)
 {
     m_isInWindow = isInWindow;

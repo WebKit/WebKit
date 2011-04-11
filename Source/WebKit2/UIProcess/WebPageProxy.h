@@ -355,6 +355,10 @@ public:
     void findString(const String&, FindOptions, unsigned maxMatchCount);
     void hideFindUI();
     void countStringMatches(const String&, FindOptions, unsigned maxMatchCount);
+    void didCountStringMatches(const String&, uint32_t matchCount);
+    void setFindIndicator(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, const ShareableBitmap::Handle& contentImageHandle, bool fadeOut);
+    void didFindString(const String&, uint32_t matchCount);
+    void didFailToFindString(const String&);
 
     void getContentsAsString(PassRefPtr<StringCallback>);
     void getMainResourceDataOfFrame(WebFrameProxy*, PassRefPtr<DataCallback>);
@@ -611,12 +615,6 @@ private:
 #if PLATFORM(GTK)
     void getEditorCommandsForKeyEvent(Vector<String>&);
 #endif
-
-    // Find.
-    void didCountStringMatches(const String&, uint32_t matchCount);
-    void setFindIndicator(const WebCore::FloatRect& selectionRectInWindowCoordinates, const Vector<WebCore::FloatRect>& textRectsInSelectionRectCoordinates, const ShareableBitmap::Handle& contentImageHandle, bool fadeOut);
-    void didFindString(const String&, uint32_t matchCount);
-    void didFailToFindString(const String&);
 
     // Popup Menu.
     void showPopupMenu(const WebCore::IntRect& rect, uint64_t textDirection, const Vector<WebPopupItem>& items, int32_t selectedIndex, const PlatformPopupMenuData&);

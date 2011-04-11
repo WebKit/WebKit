@@ -2174,6 +2174,22 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     _data->_pdfViewController->setZoomFactor(zoomFactor);
 }
 
+- (void)_findStringInCustomRepresentation:(NSString *)string withFindOptions:(WebKit::FindOptions)options maxMatchCount:(NSUInteger)count
+{
+    if (!_data->_pdfViewController)
+        return;
+
+    _data->_pdfViewController->findString(string, options, count);
+}
+
+- (void)_countStringMatchesInCustomRepresentation:(NSString *)string withFindOptions:(WebKit::FindOptions)options maxMatchCount:(NSUInteger)count
+{
+    if (!_data->_pdfViewController)
+        return;
+
+    _data->_pdfViewController->countStringMatches(string, options, count);
+}
+
 - (void)_setDragImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag
 {
     // We need to prevent re-entering this call to avoid crashing in AppKit.

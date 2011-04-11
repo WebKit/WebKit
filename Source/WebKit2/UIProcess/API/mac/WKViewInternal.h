@@ -24,6 +24,7 @@
  */
 
 #import "WKView.h"
+#import "WebFindOptions.h"
 #import <wtf/Forward.h>
 #import <wtf/Vector.h>
 
@@ -71,6 +72,8 @@ namespace WebKit {
 - (void)_didFinishLoadingDataForCustomRepresentationWithSuggestedFilename:(const String&)suggestedFilename dataReference:(const CoreIPC::DataReference&)dataReference;
 - (double)_customRepresentationZoomFactor;
 - (void)_setCustomRepresentationZoomFactor:(double)zoomFactor;
+- (void)_findStringInCustomRepresentation:(NSString *)string withFindOptions:(WebKit::FindOptions)options maxMatchCount:(NSUInteger)count;
+- (void)_countStringMatchesInCustomRepresentation:(NSString *)string withFindOptions:(WebKit::FindOptions)options maxMatchCount:(NSUInteger)count;
 - (void)_setDragImage:(NSImage *)image at:(NSPoint)clientPoint linkDrag:(BOOL)linkDrag;
 
 - (void)_setDrawingAreaSize:(NSSize)size;

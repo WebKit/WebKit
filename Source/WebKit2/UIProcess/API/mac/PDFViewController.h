@@ -26,6 +26,7 @@
 #ifndef PDFViewController_h
 #define PDFViewController_h
 
+#include "WebFindOptions.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
@@ -65,6 +66,9 @@ public:
     void openPDFInFinder();
     void savePDFToDownloadsFolder();
     void linkClicked(const String& url);
+
+    void findString(const String&, FindOptions, unsigned maxMatchCount);
+    void countStringMatches(const String&, FindOptions, unsigned maxMatchCount);
 
 private:
     explicit PDFViewController(WKView *wkView);

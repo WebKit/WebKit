@@ -414,6 +414,16 @@ void PageClientImpl::setCustomRepresentationZoomFactor(double zoomFactor)
     [m_wkView _setCustomRepresentationZoomFactor:zoomFactor];
 }
 
+void PageClientImpl::findStringInCustomRepresentation(const String& string, FindOptions options, unsigned maxMatchCount)
+{
+    [m_wkView _findStringInCustomRepresentation:string withFindOptions:options maxMatchCount:maxMatchCount];
+}
+
+void PageClientImpl::countStringMatchesInCustomRepresentation(const String& string, FindOptions options, unsigned maxMatchCount)
+{
+    [m_wkView _countStringMatchesInCustomRepresentation:string withFindOptions:options maxMatchCount:maxMatchCount];
+}
+
 void PageClientImpl::flashBackingStoreUpdates(const Vector<IntRect>&)
 {
     notImplemented();

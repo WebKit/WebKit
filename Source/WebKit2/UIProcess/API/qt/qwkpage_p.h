@@ -96,7 +96,8 @@ public:
     virtual void didChangeScrollbarsForMainFrame() const { }
 
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
-
+    virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) { }
+    virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) { }
     virtual float userSpaceScaleFactor() const { return 1; }
 
     void paint(QPainter* painter, QRect);

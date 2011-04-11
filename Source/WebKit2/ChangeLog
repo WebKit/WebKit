@@ -1,3 +1,43 @@
+2011-04-04  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WK2: PDF: Find in page
+        https://bugs.webkit.org/show_bug.cgi?id=57765
+
+        Support searching text within PDF documents.  Find requests must be routed from the
+        WebPageProxy, through the PageClient, and to the WKView, where they can be passed to 
+        the PDFViewController.
+
+        * UIProcess/API/mac/PDFViewController.h:
+        * UIProcess/API/mac/PDFViewController.mm:
+        (_PDFSelectionsAreEqual): Copied from WebPDFView.
+        (-[WKPDFView _nextMatchFor:direction:caseSensitive:wrap:fromSelection:startInSelection:]): Copied from WebPDFView.
+        (-[WKPDFView _countMatches:caseSensitive:]): Added.
+        (WebKit::PDFViewController::findString): Added.
+        (WebKit::PDFViewController::countStringMatches): Added.
+        * UIProcess/PageClient.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::findStringInCustomRepresentation): Added.
+        (WebKit::PageClientImpl::countStringMatchesInCustomRepresentation): Added.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _findStringInCustomRepresentation:withFindOptions:maxMatchCount:]): Added.
+        (-[WKView _countStringMatchesInCustomRepresentation:withFindOptions:maxMatchCount:]): Added.
+        * UIProcess/WebPageProxy.h: Moved a number of find-related functions from private: to public: so
+            they could be called from PDFViewController.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findString): Added. 
+        (WebKit::WebPageProxy::countStringMatches): Added.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::findStringInCustomRepresentation): Added stub.
+        (WebKit::WebView::countStringMatchesInCustomRepresentation): Ditto.
+        * UIProcess/win/WebView.h:
+        * UIProcess/API/qt/qwkpage_p.h:
+        (QWKPagePrivate::findStringInCustomRepresentation): Added stub.
+        (QWKPagePrivate::countStringMatchesInCustomRepresentation): Added stub.
+
 2011-04-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Anders Carlsson.
