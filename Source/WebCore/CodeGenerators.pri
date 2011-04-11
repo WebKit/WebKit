@@ -296,6 +296,7 @@ IDL_BINDINGS += \
     html/HTMLTableSectionElement.idl \
     html/HTMLTextAreaElement.idl \
     html/HTMLTitleElement.idl \
+    html/HTMLTrackElement.idl \
     html/HTMLUListElement.idl \
     html/HTMLVideoElement.idl \
     html/ImageData.idl \

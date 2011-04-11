@@ -335,6 +335,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLTextAreaElement.h \
 	DerivedSources/WebCore/JSHTMLTitleElement.cpp \
 	DerivedSources/WebCore/JSHTMLTitleElement.h \
+	DerivedSources/WebCore/JSHTMLTrackElement.cpp \
+	DerivedSources/WebCore/JSHTMLTrackElement.h \
 	DerivedSources/WebCore/JSHTMLUListElement.cpp \
 	DerivedSources/WebCore/JSHTMLUListElement.h \
 	DerivedSources/WebCore/JSHTMLVideoElement.cpp \

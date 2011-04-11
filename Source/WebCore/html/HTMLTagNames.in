@@ -126,7 +126,7 @@ th interfaceName=HTMLTableCellElement
 thead interfaceName=HTMLTableSectionElement
 title
 tr interfaceName=HTMLTableRowElement
-track interfaceName=HTMLElement
+track wrapperOnlyIfMediaIsAvailable, conditional=TRACK
 tt interfaceName=HTMLElement
 u interfaceName=HTMLElement
 ul interfaceName=HTMLUListElement

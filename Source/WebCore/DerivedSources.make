@@ -275,6 +275,7 @@ DOM_CLASSES = \
     HTMLTableSectionElement \
     HTMLTextAreaElement \
     HTMLTitleElement \
+    HTMLTrackElement \
     HTMLUListElement \
     HTMLVideoElement \
     IDBAny \
@@ -774,6 +775,10 @@ endif
 
 ifeq ($(findstring ENABLE_VIDEO,$(FEATURE_DEFINES)), ENABLE_VIDEO)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_VIDEO=1
+endif
+
+ifeq ($(findstring ENABLE_TRACK,$(FEATURE_DEFINES)), ENABLE_TRACK)
+    HTML_FLAGS := $(HTML_FLAGS) ENABLE_TRACK=0
 endif
 
 ifdef HTML_FLAGS
