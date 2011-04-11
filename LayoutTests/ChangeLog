@@ -1,3 +1,19 @@
+2011-04-11  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; new chromium baselines.
+
+        New chromium-mac baseline images for tests affected by r83490.
+
+        * platform/chromium-mac/fast/lists/003-vertical-expected.checksum: Removed.
+        * platform/chromium-mac/fast/lists/003-vertical-expected.png:
+        * platform/chromium-mac/fast/text/decorations-transformed-expected.png:
+        * platform/chromium-mac/svg/custom/foreign-object-skew-expected.png:
+        * platform/chromium-mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.checksum: Removed.
+        * platform/chromium-mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-foreignObject-expected.checksum: Removed.
+        * platform/chromium-mac/svg/zoom/page/zoom-foreignObject-expected.png:
+        * platform/chromium-mac/svg/zoom/text/zoom-foreignObject-expected.png:
+
 2011-03-25  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
