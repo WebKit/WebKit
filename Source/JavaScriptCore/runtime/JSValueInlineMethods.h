@@ -173,16 +173,15 @@ namespace JSC {
     }
 
 #if USE(JSVALUE32_64)
-    // JSValue member functions.
     inline EncodedJSValue JSValue::encode(JSValue value)
     {
-        return value.u.asEncodedJSValue;
+        return value.u.asInt64;
     }
 
     inline JSValue JSValue::decode(EncodedJSValue encodedJSValue)
     {
         JSValue v;
-        v.u.asEncodedJSValue = encodedJSValue;
+        v.u.asInt64 = encodedJSValue;
         return v;
     }
 
@@ -254,12 +253,12 @@ namespace JSC {
 
     inline bool JSValue::operator==(const JSValue& other) const
     {
-        return u.asEncodedJSValue == other.u.asEncodedJSValue;
+        return u.asInt64 == other.u.asInt64;
     }
 
     inline bool JSValue::operator!=(const JSValue& other) const
     {
-        return u.asEncodedJSValue != other.u.asEncodedJSValue;
+        return u.asInt64 != other.u.asInt64;
     }
 
     inline bool JSValue::isUndefined() const
@@ -362,7 +361,7 @@ namespace JSC {
     // JSValue member functions.
     inline EncodedJSValue JSValue::encode(JSValue value)
     {
-        return reinterpret_cast<EncodedJSValue>(value.m_ptr);
+        return value.u.ptr;
     }
 
     inline JSValue JSValue::decode(EncodedJSValue ptr)
@@ -370,39 +369,29 @@ namespace JSC {
         return JSValue(reinterpret_cast<JSCell*>(ptr));
     }
 
-    inline JSValue JSValue::makeImmediate(intptr_t value)
-    {
-        return JSValue(reinterpret_cast<JSCell*>(value));
-    }
-
-    inline intptr_t JSValue::immediateValue() const
-    {
-        return reinterpret_cast<intptr_t>(m_ptr);
-    }
-    
     // 0x0 can never occur naturally because it has a tag of 00, indicating a pointer value, but a payload of 0x0, which is in the (invalid) zero page.
     inline JSValue::JSValue()
-        : m_ptr(0)
     {
+        u.asInt64 = ValueEmpty;
     }
 
     // 0x4 can never occur naturally because it has a tag of 00, indicating a pointer value, but a payload of 0x4, which is in the (invalid) zero page.
     inline JSValue::JSValue(HashTableDeletedValueTag)
-        : m_ptr(reinterpret_cast<JSCell*>(0x4))
     {
+        u.asInt64 = ValueDeleted;
     }
 
     inline JSValue::JSValue(JSCell* ptr)
-        : m_ptr(ptr)
     {
+        u.ptr = ptr;
 #if ENABLE(JSC_ZOMBIES)
         ASSERT(!isZombie());
 #endif
     }
 
     inline JSValue::JSValue(const JSCell* ptr)
-        : m_ptr(const_cast<JSCell*>(ptr))
     {
+        u.ptr = const_cast<JSCell*>(ptr);
 #if ENABLE(JSC_ZOMBIES)
         ASSERT(!isZombie());
 #endif
@@ -410,17 +399,17 @@ namespace JSC {
 
     inline JSValue::operator bool() const
     {
-        return m_ptr;
+        return u.ptr;
     }
 
     inline bool JSValue::operator==(const JSValue& other) const
     {
-        return m_ptr == other.m_ptr;
+        return u.ptr == other.u.ptr;
     }
 
     inline bool JSValue::operator!=(const JSValue& other) const
     {
-        return m_ptr != other.m_ptr;
+        return u.ptr != other.u.ptr;
     }
 
     inline bool JSValue::isUndefined() const
@@ -452,7 +441,7 @@ namespace JSC {
     inline int32_t JSValue::asInt32() const
     {
         ASSERT(isInt32());
-        return static_cast<int32_t>(immediateValue());
+        return static_cast<int32_t>(u.asInt64);
     }
 
     inline bool JSValue::isDouble() const
@@ -462,43 +451,43 @@ namespace JSC {
 
     inline JSValue::JSValue(JSNullTag)
     {
-        *this = JSValue::makeImmediate(FullTagTypeNull);
+        u.asInt64 = ValueNull;
     }
     
     inline JSValue::JSValue(JSUndefinedTag)
     {
-        *this = JSValue::makeImmediate(FullTagTypeUndefined);
+        u.asInt64 = ValueUndefined;
     }
 
     inline JSValue::JSValue(JSTrueTag)
     {
-        *this = JSValue::makeImmediate(FullTagTypeTrue);
+        u.asInt64 = ValueTrue;
     }
 
     inline JSValue::JSValue(JSFalseTag)
     {
-        *this = JSValue::makeImmediate(FullTagTypeFalse);
+        u.asInt64 = ValueFalse;
     }
 
     inline bool JSValue::isUndefinedOrNull() const
     {
         // Undefined and null share the same value, bar the 'undefined' bit in the extended tag.
-        return (immediateValue() & ~ExtendedTagBitUndefined) == FullTagTypeNull;
+        return (u.asInt64 & ~TagBitUndefined) == ValueNull;
     }
 
     inline bool JSValue::isBoolean() const
     {
-        return (immediateValue() & ~1) == FullTagTypeFalse;
+        return (u.asInt64 & ~1) == ValueFalse;
     }
 
     inline bool JSValue::isCell() const
     {
-        return !(immediateValue() & TagMask);
+        return !(u.asInt64 & TagMask);
     }
 
     inline bool JSValue::isInt32() const
     {
-        return (immediateValue() & TagTypeNumber) == TagTypeNumber;
+        return (u.asInt64 & TagTypeNumber) == TagTypeNumber;
     }
 
     inline intptr_t reinterpretDoubleToIntptr(double value)
@@ -512,22 +501,28 @@ namespace JSC {
 
     ALWAYS_INLINE JSValue::JSValue(EncodeAsDoubleTag, double d)
     {
-        *this = makeImmediate(reinterpretDoubleToIntptr(d) + DoubleEncodeOffset);
+        u.asInt64 = reinterpretDoubleToIntptr(d) + DoubleEncodeOffset;
     }
 
     inline JSValue::JSValue(int i)
     {
-        *this = makeImmediate(static_cast<intptr_t>(static_cast<uint32_t>(i)) | TagTypeNumber);
+        u.asInt64 = TagTypeNumber | static_cast<uint32_t>(i);
     }
 
     inline double JSValue::asDouble() const
     {
-        return reinterpretIntptrToDouble(immediateValue() - DoubleEncodeOffset);
+        return reinterpretIntptrToDouble(u.asInt64 - DoubleEncodeOffset);
     }
 
     inline bool JSValue::isNumber() const
     {
-        return immediateValue() & TagTypeNumber;
+        return u.asInt64 & TagTypeNumber;
+    }
+
+    ALWAYS_INLINE JSCell* JSValue::asCell() const
+    {
+        ASSERT(isCell());
+        return u.ptr;
     }
 
 #endif // USE(JSVALUE64)

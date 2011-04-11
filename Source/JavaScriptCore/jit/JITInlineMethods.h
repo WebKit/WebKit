@@ -845,7 +845,7 @@ ALWAYS_INLINE void JIT::emitFastArithIntToImmNoCheck(RegisterID src, RegisterID 
 
 ALWAYS_INLINE void JIT::emitTagAsBoolImmediate(RegisterID reg)
 {
-    or32(TrustedImm32(static_cast<int32_t>(FullTagTypeFalse)), reg);
+    or32(TrustedImm32(static_cast<int32_t>(ValueFalse)), reg);
 }
 
 #endif // USE(JSVALUE32_64)

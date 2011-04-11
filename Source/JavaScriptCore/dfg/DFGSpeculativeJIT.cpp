@@ -439,9 +439,9 @@ bool SpeculativeJIT::compile(Node& node)
         GPRTemporary result(this); // FIXME: We could reuse, but on speculation fail would need recovery to restore tag (akin to add).
 
         m_jit.move(value.registerID(), result.registerID());
-        m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(FullTagTypeFalse)), result.registerID());
+        m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueFalse)), result.registerID());
         speculationCheck(m_jit.branchTestPtr(JITCompiler::NonZero, result.registerID(), TrustedImm32(static_cast<int32_t>(~1))));
-        m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(FullTagTypeTrue)), result.registerID());
+        m_jit.xorPtr(TrustedImm32(static_cast<int32_t>(ValueTrue)), result.registerID());
 
         // If we add a DataFormatBool, we should use it here.
         jsValueResult(result.gpr(), m_compileIndex);
@@ -456,7 +456,7 @@ bool SpeculativeJIT::compile(Node& node)
         m_jit.set32Compare32(JITCompiler::LessThan, op1.registerID(), op2.registerID(), result.registerID());
 
         // If we add a DataFormatBool, we should use it here.
-        m_jit.or32(TrustedImm32(FullTagTypeFalse), result.registerID());
+        m_jit.or32(TrustedImm32(ValueFalse), result.registerID());
         jsValueResult(result.gpr(), m_compileIndex);
         break;
     }
@@ -469,7 +469,7 @@ bool SpeculativeJIT::compile(Node& node)
         m_jit.set32Compare32(JITCompiler::LessThanOrEqual, op1.registerID(), op2.registerID(), result.registerID());
 
         // If we add a DataFormatBool, we should use it here.
-        m_jit.or32(TrustedImm32(FullTagTypeFalse), result.registerID());
+        m_jit.or32(TrustedImm32(ValueFalse), result.registerID());
         jsValueResult(result.gpr(), m_compileIndex);
         break;
     }
@@ -482,7 +482,7 @@ bool SpeculativeJIT::compile(Node& node)
         m_jit.set32Compare32(JITCompiler::Equal, op1.registerID(), op2.registerID(), result.registerID());
 
         // If we add a DataFormatBool, we should use it here.
-        m_jit.or32(TrustedImm32(FullTagTypeFalse), result.registerID());
+        m_jit.or32(TrustedImm32(ValueFalse), result.registerID());
         jsValueResult(result.gpr(), m_compileIndex);
         break;
     }
@@ -495,7 +495,7 @@ bool SpeculativeJIT::compile(Node& node)
         m_jit.set32Compare32(JITCompiler::Equal, op1.registerID(), op2.registerID(), result.registerID());
 
         // If we add a DataFormatBool, we should use it here.
-        m_jit.or32(TrustedImm32(FullTagTypeFalse), result.registerID());
+        m_jit.or32(TrustedImm32(ValueFalse), result.registerID());
         jsValueResult(result.gpr(), m_compileIndex);
         break;
     }

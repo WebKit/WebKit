@@ -1,3 +1,47 @@
+2011-04-11  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Bug 58263 - Use EncodedValueDescriptor on both JSVALUE32_64, JSVALUE64
+
+        The JSJITInterface already uses EncodedValueDescriptor to access the tag/payload
+        separately on JSVALUE64, even though EncodedValueDescriptor is not used in
+        JSVALUE64's implementation of JSValue. Remove the separate definition for m_ptr
+        on X86_64. Using the union allows us to remove a layer of makeImmediate()/
+        immedaiteValue() methods.
+
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitTagAsBoolImmediate):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_not):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_eq_null):
+        (JSC::JIT::emit_op_neq_null):
+        (JSC::JIT::emitSlow_op_not):
+        * runtime/JSCell.h:
+        * runtime/JSValue.h:
+        * runtime/JSValueInlineMethods.h:
+        (JSC::JSValue::encode):
+        (JSC::JSValue::decode):
+        (JSC::JSValue::operator==):
+        (JSC::JSValue::operator!=):
+        (JSC::JSValue::JSValue):
+        (JSC::JSValue::operator bool):
+        (JSC::JSValue::asInt32):
+        (JSC::JSValue::isUndefinedOrNull):
+        (JSC::JSValue::isBoolean):
+        (JSC::JSValue::isCell):
+        (JSC::JSValue::isInt32):
+        (JSC::JSValue::asDouble):
+        (JSC::JSValue::isNumber):
+        (JSC::JSValue::asCell):
+
 2011-04-11  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix a few builds.

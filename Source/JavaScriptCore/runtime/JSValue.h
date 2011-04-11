@@ -64,7 +64,7 @@ namespace JSC {
 #endif
     
     union EncodedValueDescriptor {
-        EncodedJSValue asEncodedJSValue;
+        int64_t asInt64;
 #if USE(JSVALUE32_64)
         double asDouble;
 #elif USE(JSVALUE64)
@@ -106,8 +106,8 @@ namespace JSC {
         friend class SpecializedThunkJIT;
 
     public:
-        static EncodedJSValue encode(JSValue value);
-        static JSValue decode(EncodedJSValue ptr);
+        static EncodedJSValue encode(JSValue);
+        static JSValue decode(EncodedJSValue);
 
         enum JSNullTag { JSNull };
         enum JSUndefinedTag { JSUndefined };
@@ -280,8 +280,6 @@ namespace JSC {
 
         uint32_t tag() const;
         int32_t payload() const;
-
-        EncodedValueDescriptor u;
 #elif USE(JSVALUE64)
         /*
          * On 64-bit platforms USE(JSVALUE64) should be defined, and we use a NaN-encoded
@@ -327,7 +325,7 @@ namespace JSC {
          * These values have the following properties:
          * - Bit 1 (TagBitTypeOther) is set for all four values, allowing real pointers to be
          *   quickly distinguished from all immediate values, including these invalid pointers.
-         * - With bit 3 is masked out (ExtendedTagBitUndefined) Undefined and Null share the
+         * - With bit 3 is masked out (TagBitUndefined) Undefined and Null share the
          *   same value, allowing null & undefined to be quickly detected.
          *
          * No valid JSValue will have the bit pattern 0x0, this is used to represent array
@@ -336,30 +334,36 @@ namespace JSC {
 
         // These values are #defines since using static const integers here is a ~1% regression!
 
-        // If all bits in the mask are set, this indicates an integer number,
-        // if any but not all are set this value is a double precision number.
-        #define TagTypeNumber 0xffff000000000000ll
         // This value is 2^48, used to encode doubles such that the encoded value will begin
         // with a 16-bit pattern within the range 0x0001..0xFFFE.
         #define DoubleEncodeOffset 0x1000000000000ll
-        // The second bit set indicates an immediate other than a number (bool, null, undefined).
+        // If all bits in the mask are set, this indicates an integer number,
+        // if any but not all are set this value is a double precision number.
+        #define TagTypeNumber 0xffff000000000000ll
+
+        // All non-numeric (bool, null, undefined) immediates have bit 2 set.
         #define TagBitTypeOther 0x2ll
+        #define TagBitBool      0x4ll
+        #define TagBitUndefined 0x8ll
+        // Combined integer value for non-numeric immediates.
+        #define ValueFalse     (TagBitTypeOther | TagBitBool | false)
+        #define ValueTrue      (TagBitTypeOther | TagBitBool | true)
+        #define ValueUndefined (TagBitTypeOther | TagBitUndefined)
+        #define ValueNull      (TagBitTypeOther)
+
         // TagMask is used to check for all types of immediate values (either number or 'other').
         #define TagMask (TagTypeNumber | TagBitTypeOther)
 
-        #define ExtendedTagBitBool      0x4ll
-        #define ExtendedTagBitUndefined 0x8ll
-
-        #define FullTagTypeFalse     (TagBitTypeOther | ExtendedTagBitBool | false)
-        #define FullTagTypeTrue      (TagBitTypeOther | ExtendedTagBitBool | true)
-        #define FullTagTypeUndefined (TagBitTypeOther | ExtendedTagBitUndefined)
-        #define FullTagTypeNull      (TagBitTypeOther)
-
-        static JSValue makeImmediate(intptr_t value);
-        intptr_t immediateValue() const;
-
-        JSCell* m_ptr;
+        // These special values are never visible to JavaScript code; Empty is used to represent
+        // Array holes, and for uninitialized JSValues. Deleted is used in hash table code.
+        // These values would map to cell types in the JSValue encoding, but not valid GC cell
+        // pointer should have either of these values (Empty is null, deleted is at an invalid
+        // alignment for a GC cell, and in the zero page).
+        #define ValueEmpty   0x0ll
+        #define ValueDeleted 0x4ll
 #endif
+
+        EncodedValueDescriptor u;
     };
 
 #if USE(JSVALUE32_64)

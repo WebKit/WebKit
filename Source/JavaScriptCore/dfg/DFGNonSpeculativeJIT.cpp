@@ -455,7 +455,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         callOperation(dfgConvertJSValueToBoolean, result.gpr(), arg1GPR);
 
         // If we add a DataFormatBool, we should use it here.
-        m_jit.xor32(TrustedImm32(FullTagTypeTrue), result.registerID());
+        m_jit.xor32(TrustedImm32(ValueTrue), result.registerID());
         jsValueResult(result.gpr(), m_compileIndex);
         break;
     }
@@ -469,7 +469,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
 
         GPRResult result(this);
         callOperation(operationCompareLess, result.gpr(), arg1GPR, arg2GPR);
-        m_jit.or32(TrustedImm32(FullTagTypeFalse), result.registerID());
+        m_jit.or32(TrustedImm32(ValueFalse), result.registerID());
 
         jsValueResult(result.gpr(), m_compileIndex);
         break;
@@ -484,7 +484,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
 
         GPRResult result(this);
         callOperation(operationCompareLessEq, result.gpr(), arg1GPR, arg2GPR);
-        m_jit.or32(TrustedImm32(FullTagTypeFalse), result.registerID());
+        m_jit.or32(TrustedImm32(ValueFalse), result.registerID());
 
         jsValueResult(result.gpr(), m_compileIndex);
         break;
@@ -499,7 +499,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
 
         GPRResult result(this);
         callOperation(operationCompareEq, result.gpr(), arg1GPR, arg2GPR);
-        m_jit.or32(TrustedImm32(FullTagTypeFalse), result.registerID());
+        m_jit.or32(TrustedImm32(ValueFalse), result.registerID());
 
         jsValueResult(result.gpr(), m_compileIndex);
         break;
@@ -514,7 +514,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
 
         GPRResult result(this);
         callOperation(operationCompareStrictEq, result.gpr(), arg1GPR, arg2GPR);
-        m_jit.or32(TrustedImm32(FullTagTypeFalse), result.registerID());
+        m_jit.or32(TrustedImm32(ValueFalse), result.registerID());
 
         jsValueResult(result.gpr(), m_compileIndex);
         break;

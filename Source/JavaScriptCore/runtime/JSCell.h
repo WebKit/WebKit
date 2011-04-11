@@ -242,14 +242,6 @@ namespace JSC {
         return false;
     }
 
-#if USE(JSVALUE64)
-    ALWAYS_INLINE JSCell* JSValue::asCell() const
-    {
-        ASSERT(isCell());
-        return m_ptr;
-    }
-#endif // USE(JSVALUE64)
-
     inline JSValue JSValue::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
     {
         return isCell() ? asCell()->toPrimitive(exec, preferredType) : asValue();
