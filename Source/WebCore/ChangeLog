@@ -1,3 +1,27 @@
+2011-04-11  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Tony Gentilcore.
+
+        Document source preload scanned repeatedly
+        https://bugs.webkit.org/show_bug.cgi?id=58123
+        
+        Don't clear the preload scanner after execution resumes. This would lose the current
+        scanning point and lead to rescanning when the preload scanner would get reconstructed
+        due to main parser blocking again.
+
+        Instead clear the scanner only in the specific case of receiving new data while the main
+        parser has already reached the end of the current input.
+
+        Also switched to using isWaitingForScripts() instead of m_treeBuilder->isPaused() for consistency.
+
+        The case the clearing in resumeParsingAfterScriptExecution() was added for is covered by 
+        http/tests/loading/preload-slow-loading.php.
+
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::insert):
+        (WebCore::HTMLDocumentParser::append):
+        (WebCore::HTMLDocumentParser::resumeParsingAfterScriptExecution):
+
 2011-04-11  Dan Bernstein  <mitz@apple.com>
 
         Build fix.
