@@ -1,3 +1,16 @@
+2011-04-11  Ben Taylor  <bentaylor.solx86@gmail.com>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57535
+
+        Better compile fix for Solaris 10/Sun Studio 12 CC 
+        needing <sys/time.h>
+
+        * loader/icon/IconRecord.h:
+        * page/Page.h:
+        * platform/network/ResourceResponseBase.h:
+
 2011-04-11  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Maciej Stachowiak.

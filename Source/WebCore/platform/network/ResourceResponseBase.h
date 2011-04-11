@@ -35,6 +35,10 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
+#if OS(SOLARIS)
+#include <sys/time.h> // For time_t structure.
+#endif
+
 namespace WebCore {
 
 class ResourceResponse;

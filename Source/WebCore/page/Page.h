@@ -29,6 +29,10 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 
+#if OS(SOLARIS)
+#include <sys/time.h> // For time_t structure.
+#endif
+
 #if PLATFORM(MAC)
 #include "SchedulePair.h"
 #endif

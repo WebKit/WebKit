@@ -38,6 +38,10 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/text/StringHash.h>
 
+#if OS(SOLARIS)
+#include <sys/types.h> // For time_t structure.
+#endif
+
 namespace WebCore { 
 
 class IconDataSnapshot;
