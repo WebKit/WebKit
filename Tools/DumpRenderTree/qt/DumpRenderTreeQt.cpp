@@ -997,6 +997,8 @@ void DumpRenderTree::dump()
         }
 
         if (dumpImage) {
+            image.setText("checksum", actualHash);
+
             QBuffer buffer;
             buffer.open(QBuffer::WriteOnly);
             image.save(&buffer, "PNG");
