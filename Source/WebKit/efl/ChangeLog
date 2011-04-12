@@ -1,3 +1,16 @@
+2011-04-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Adjust dpi value to viewport computation.
+        https://bugs.webkit.org/show_bug.cgi?id=58130
+
+        In viewport computation, EFL port have used 160 value for DPI since now.
+        But, we have to use device's dpi value for viewport meta tag computation.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_viewport_attributes_compute):
+
 2011-04-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Eric Carlson.

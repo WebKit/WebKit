@@ -1010,7 +1010,7 @@ static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(Evas_Ob
     EWK_VIEW_PRIV_GET(sd, priv);
 
     int desktop_width = 980;
-    int device_dpi = 160;
+    int device_dpi = ewk_view_dpi_get();
 
     int available_width = (int) priv->page->chrome()->client()->pageRect().width();
     int available_height = (int) priv->page->chrome()->client()->pageRect().height();
