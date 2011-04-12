@@ -353,7 +353,7 @@ void InspectorResourceAgent::didFinishLoading(unsigned long identifier, double f
 
 void InspectorResourceAgent::didFailLoading(unsigned long identifier, const ResourceError& error)
 {
-    m_frontend->loadingFailed(static_cast<int>(identifier), currentTime(), error.localizedDescription());
+    m_frontend->loadingFailed(static_cast<int>(identifier), currentTime(), error.localizedDescription(), error.isCancellation());
 }
 
 void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* loader, const CachedResource* resource)

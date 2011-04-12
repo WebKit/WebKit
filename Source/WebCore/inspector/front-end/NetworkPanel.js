@@ -1506,6 +1506,15 @@ WebInspector.NetworkDataGridNode.prototype = {
     {
         this._statusCell.removeChildren();
 
+        if (this._resource.failed) {
+            if (this._resource.canceled) 
+                this._statusCell.textContent = WebInspector.UIString("(canceled)");
+            else
+                this._statusCell.textContent = WebInspector.UIString("(failed)");
+            this._statusCell.addStyleClass("network-dim-cell");
+            return;
+        }
+
         var fromCache = this._resource.cached;
         if (fromCache) {
             this._statusCell.textContent = WebInspector.UIString("(from cache)");

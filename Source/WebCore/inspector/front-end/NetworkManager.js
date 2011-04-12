@@ -173,13 +173,14 @@ WebInspector.NetworkDispatcher.prototype = {
         this._finishResource(resource, finishTime);
     },
 
-    loadingFailed: function(identifier, time, localizedDescription)
+    loadingFailed: function(identifier, time, localizedDescription, canceled)
     {
         var resource = this._inflightResourcesById[identifier];
         if (!resource)
             return;
 
         resource.failed = true;
+        resource.canceled = canceled;
         resource.localizedFailDescription = localizedDescription;
         this._finishResource(resource, time);
     },

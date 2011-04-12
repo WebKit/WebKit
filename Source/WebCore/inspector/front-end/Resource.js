@@ -292,6 +292,16 @@ WebInspector.Resource.prototype = {
         this._failed = x;
     },
 
+    get canceled()
+    {
+        return this._canceled;
+    },
+
+    set canceled(x)
+    {
+        this._canceled = x;
+    },
+
     get category()
     {
         return this._category;

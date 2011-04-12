@@ -432,7 +432,8 @@
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
                     { "name": "time", "type": "number", "description": "Timestamp." },
-                    { "name": "errorText", "type": "string", "description": "User friendly error message." }
+                    { "name": "errorText", "type": "string", "description": "User friendly error message." },
+                    { "name": "canceled", "type": "boolean", "description": "True if loading was canceled." }
                 ]
             },
             {

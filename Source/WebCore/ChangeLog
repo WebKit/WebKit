@@ -1,3 +1,20 @@
+2011-04-12  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Failed/canceled resource requests kept showing as Pending in network panel.
+        https://bugs.webkit.org/show_bug.cgi?id=58135
+
+        Added statuses for failed/canceled resource loading.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/Inspector.json:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didFailLoading):
+        * inspector/front-end/NetworkManager.js:
+        * inspector/front-end/NetworkPanel.js:
+        * inspector/front-end/Resource.js:
+
 2011-04-12  Steve Block  <steveblock@google.com>
 
         Reviewed by Oliver Hunt.
