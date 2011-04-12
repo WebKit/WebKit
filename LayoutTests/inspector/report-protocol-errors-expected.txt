@@ -8,27 +8,7 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
             0 : "Message should be in JSON format."
         }
     }
-    id : 0
-}
-{
-    error : {
-        code : -32600
-        message : "Invalid Request."
-        data : {
-            0 : "Invalid message format. 'method' property wasn't found."
-        }
-    }
-    id : 0
-}
-{
-    error : {
-        code : -32600
-        message : "Invalid Request."
-        data : {
-            0 : "Invalid message format. The type of 'method' property should be string."
-        }
-    }
-    id : 0
+    id : null
 }
 {
     error : {
@@ -38,7 +18,7 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
             0 : "Invalid message format. 'id' property was not found in the request."
         }
     }
-    id : 0
+    id : null
 }
 {
     error : {
@@ -48,7 +28,27 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
             0 : "Invalid message format. The type of 'id' property should be number."
         }
     }
-    id : 0
+    id : null
+}
+{
+    error : {
+        code : -32600
+        message : "Invalid Request."
+        data : {
+            0 : "Invalid message format. The type of 'method' property should be string."
+        }
+    }
+    id : 1
+}
+{
+    error : {
+        code : -32601
+        message : "Method not found."
+        data : {
+            0 : "Invalid method name was received. 'resourceContent' wasn't found."
+        }
+    }
+    id : 2
 }
 {
     error : {
@@ -58,27 +58,27 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
             0 : "Invalid method name was received. 'DOM.test' wasn't found."
         }
     }
-    id : 1
-}
-{
-    error : {
-        code : -32602
-        message : "Invalid params."
-        data : {
-            0 : "'params' property with type 'object' was not found."
-        }
-    }
-    id : 2
-}
-{
-    error : {
-        code : -32602
-        message : "Invalid params."
-        data : {
-            0 : "'params' property with type 'object' was not found."
-        }
-    }
     id : 3
+}
+{
+    error : {
+        code : -32602
+        message : "Invalid params."
+        data : {
+            0 : "'params' property with type 'object' was not found."
+        }
+    }
+    id : 4
+}
+{
+    error : {
+        code : -32602
+        message : "Invalid params."
+        data : {
+            0 : "'params' property with type 'object' was not found."
+        }
+    }
+    id : 5
 }
 {
     error : {
@@ -89,7 +89,7 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
             1 : "Parameter 'url' with type 'String' was not found."
         }
     }
-    id : 4
+    id : 6
 }
 {
     error : {
@@ -99,6 +99,5 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
             0 : "Parameter 'url' with type 'String' was not found."
         }
     }
-    id : 5
+    id : 7
 }
-

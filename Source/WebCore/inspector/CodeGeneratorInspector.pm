@@ -472,12 +472,12 @@ sub generateBackendFunction
     push(@function, "    // use InspectorFrontend as a marker of WebInspector availability");
     push(@function, "");
     push(@function, "    if (protocolErrors->length()) {");
-    push(@function, "        reportProtocolError(callId, InvalidParams, protocolErrors);");
+    push(@function, "        reportProtocolError(&callId, InvalidParams, protocolErrors);");
     push(@function, "        return;");
     push(@function, "    }");
     push(@function, "");
     push(@function, "    if (error.length()) {");
-    push(@function, "        reportProtocolError(callId, ServerError, error);");
+    push(@function, "        reportProtocolError(&callId, ServerError, error);");
     push(@function, "        return;");
     push(@function, "    }");
     push(@function, "");
@@ -497,14 +497,14 @@ sub generateBackendReportProtocolError
 {
     my $reportProtocolError = << "EOF";
 
-void ${backendClassName}::reportProtocolError(const long callId, CommonErrorCode code, const String& customText) const
+void ${backendClassName}::reportProtocolError(const long* const callId, CommonErrorCode code, const String& customText) const
 {
     RefPtr<InspectorArray> data = InspectorArray::create();
     data->pushString(customText);
     reportProtocolError(callId, code, data.release());
 }
 
-void ${backendClassName}::reportProtocolError(const long callId, CommonErrorCode code, PassRefPtr<InspectorArray> data) const
+void ${backendClassName}::reportProtocolError(const long* const callId, CommonErrorCode code, PassRefPtr<InspectorArray> data) const
 {
     DEFINE_STATIC_LOCAL(Vector<String>,s_commonErrors,);
     if (!s_commonErrors.size()) {
@@ -524,7 +524,10 @@ void ${backendClassName}::reportProtocolError(const long callId, CommonErrorCode
     error->setArray("data", data);
     RefPtr<InspectorObject> message = InspectorObject::create();
     message->setObject("error", error);
-    message->setNumber("id", callId);
+    if (callId)
+        message->setNumber("id", *callId);
+    else
+        message->setValue("id", InspectorValue::null());
     m_inspectorFrontendChannel->sendMessageToFrontend(message->toJSONString());
 }
 EOF
@@ -587,42 +590,42 @@ $mapEntries
 
     RefPtr<InspectorValue> parsedMessage = InspectorValue::parseJSON(message);
     if (!parsedMessage) {
-        reportProtocolError(callId, ParseError, "Message should be in JSON format.");
+        reportProtocolError(0, ParseError, "Message should be in JSON format.");
         return;
     }
 
     RefPtr<InspectorObject> messageObject = parsedMessage->asObject();
     if (!messageObject) {
-        reportProtocolError(callId, InvalidRequest, "Invalid message format. The message should be a JSONified object.");
-        return;
-    }
-
-    RefPtr<InspectorValue> methodValue = messageObject->get("method");
-    if (!methodValue) {
-        reportProtocolError(callId, InvalidRequest, "Invalid message format. 'method' property wasn't found.");
-        return;
-    }
-
-    String method;
-    if (!methodValue->asString(&method)) {
-        reportProtocolError(callId, InvalidRequest, "Invalid message format. The type of 'method' property should be string.");
+        reportProtocolError(0, InvalidRequest, "Invalid message format. The message should be a JSONified object.");
         return;
     }
 
     RefPtr<InspectorValue> callIdValue = messageObject->get("id");
     if (!callIdValue) {
-        reportProtocolError(callId, InvalidRequest, "Invalid message format. 'id' property was not found in the request.");
+        reportProtocolError(0, InvalidRequest, "Invalid message format. 'id' property was not found in the request.");
         return;
     }
 
     if (!callIdValue->asNumber(&callId)) {
-        reportProtocolError(callId, InvalidRequest, "Invalid message format. The type of 'id' property should be number.");
+        reportProtocolError(0, InvalidRequest, "Invalid message format. The type of 'id' property should be number.");
+        return;
+    }
+
+    RefPtr<InspectorValue> methodValue = messageObject->get("method");
+    if (!methodValue) {
+        reportProtocolError(&callId, InvalidRequest, "Invalid message format. 'method' property wasn't found.");
+        return;
+    }
+
+    String method;
+    if (!methodValue->asString(&method)) {
+        reportProtocolError(&callId, InvalidRequest, "Invalid message format. The type of 'method' property should be string.");
         return;
     }
 
     HashMap<String, CallHandler>::iterator it = dispatchMap.find(method);
     if (it == dispatchMap.end()) {
-        reportProtocolError(callId, MethodNotFound, makeString("Invalid method name was received. '", method, "' wasn't found."));
+        reportProtocolError(&callId, MethodNotFound, makeString("Invalid method name was received. '", method, "' wasn't found."));
         return;
     }
 
@@ -975,8 +978,8 @@ sub generateBackendAgentFieldsAndConstructor
     push(@backendHead, "        LastEntry,");
     push(@backendHead, "    };");
     push(@backendHead, "");
-    push(@backendHead, "    void reportProtocolError(const long callId, CommonErrorCode, const String& errorText) const;");
-    push(@backendHead, "    void reportProtocolError(const long callId, CommonErrorCode, PassRefPtr<InspectorArray> data) const;");
+    push(@backendHead, "    void reportProtocolError(const long* const callId, CommonErrorCode, const String& errorText) const;");
+    push(@backendHead, "    void reportProtocolError(const long* const callId, CommonErrorCode, PassRefPtr<InspectorArray> data) const;");
     push(@backendHead, "    void dispatch(const String& message);");
     push(@backendHead, "    static bool getCommandName(const String& message, String* result);");
     $backendConstructor = join("\n", @backendHead);

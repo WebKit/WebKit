@@ -1,3 +1,14 @@
+2011-04-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: there was incorrect value of id property of responses for malformed json-rpc 2.0 requests.
+        https://bugs.webkit.org/show_bug.cgi?id=58305
+
+        It was 0 if the message is not a json object or it has no id property. But according to spec it must be null.
+
+        * inspector/CodeGeneratorInspector.pm:
+
 2011-04-11  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
