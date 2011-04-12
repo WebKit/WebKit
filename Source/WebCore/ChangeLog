@@ -1,3 +1,17 @@
+2011-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed, rolling out r83515.
+        http://trac.webkit.org/changeset/83515
+        https://bugs.webkit.org/show_bug.cgi?id=57178
+
+        Broke GTK builds. nextOnLineExists and prevOnLineExists are still used in AccessibilityObjectWrapperAtk.cpp.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::nextOnLineExists):
+        (WebCore::InlineBox::prevOnLineExists):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+
 2011-04-11  Brady Eidson  <beidson@apple.com>
 
         Reverting, seeing something else still broken.  Sorry.
