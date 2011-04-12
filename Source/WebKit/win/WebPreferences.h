@@ -429,6 +429,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE hyperlinkAuditingEnabled(BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setHyperlinkAuditingEnabled(BOOL);
 
+    virtual HRESULT STDMETHODCALLTYPE loadsSiteIconsIgnoringImageLoadingPreference(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setLoadsSiteIconsIgnoringImageLoadingPreference(BOOL);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.

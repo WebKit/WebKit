@@ -1,3 +1,21 @@
+2011-04-12  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58292
+        Provide new setting to allow site icon loading despite disabling automatic image loading in general.
+
+        * Interfaces/IWebPreferencesPrivate.idl: Added prefs. 
+        * Interfaces/WebKit.idl: Touch file to force autogeneration
+        * WebPreferenceKeysPrivate.h: Add preference key.
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): Initialize setting to false.
+        (WebPreferences::setLoadsSiteIconsIgnoringImageLoadingPreference): Added setter
+        (WebPreferences::loadsSiteIconsIgnoringImageLoadingPreference): Added getter
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Add to settings that get propagated upon changes.
+
 2011-04-11  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Maciej Stachowiak.

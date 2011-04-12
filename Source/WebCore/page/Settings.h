@@ -90,6 +90,11 @@ namespace WebCore {
         void setLoadsImagesAutomatically(bool);
         bool loadsImagesAutomatically() const { return m_loadsImagesAutomatically; }
 
+        // This setting only affects site icon image loading if loadsImagesAutomatically setting is false and this setting is true.
+        // All other permutations still heed loadsImagesAutomatically setting.
+        void setLoadsSiteIconsIgnoringImageLoadingSetting(bool);
+        bool loadsSiteIconsIgnoringImageLoadingSetting() const { return m_loadsSiteIconsIgnoringImageLoadingSetting; }
+
         void setJavaScriptEnabled(bool);
         // Instead of calling isJavaScriptEnabled directly, please consider calling
         // ScriptController::canExecuteScripts, which takes things like the
@@ -418,6 +423,7 @@ namespace WebCore {
         bool m_isSpatialNavigationEnabled : 1;
         bool m_isJavaEnabled : 1;
         bool m_loadsImagesAutomatically : 1;
+        bool m_loadsSiteIconsIgnoringImageLoadingSetting : 1;
         bool m_privateBrowsingEnabled : 1;
         bool m_caretBrowsingEnabled : 1;
         bool m_areImagesEnabled : 1;

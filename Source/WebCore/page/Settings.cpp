@@ -98,6 +98,7 @@ Settings::Settings(Page* page)
     , m_isSpatialNavigationEnabled(false)
     , m_isJavaEnabled(false)
     , m_loadsImagesAutomatically(false)
+    , m_loadsSiteIconsIgnoringImageLoadingSetting(false)
     , m_privateBrowsingEnabled(false)
     , m_caretBrowsingEnabled(false)
     , m_areImagesEnabled(true)
@@ -273,6 +274,11 @@ void Settings::setLoadsImagesAutomatically(bool loadsImagesAutomatically)
 {
     m_loadsImagesAutomatically = loadsImagesAutomatically;
     setLoadsImagesAutomaticallyInAllFrames(m_page);
+}
+
+void Settings::setLoadsSiteIconsIgnoringImageLoadingSetting(bool loadsSiteIcons)
+{
+    m_loadsSiteIconsIgnoringImageLoadingSetting = loadsSiteIcons;
 }
 
 void Settings::setJavaScriptEnabled(bool isJavaScriptEnabled)

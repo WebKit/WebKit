@@ -240,4 +240,7 @@ extern NSString *WebPreferencesChangedInternalNotification;
 
 - (BOOL)useQuickLookResourceCachingQuirks;
 
+- (void)setLoadsSiteIconsIgnoringImageLoadingPreference: (BOOL)flag;
+- (BOOL)loadsSiteIconsIgnoringImageLoadingPreference;
+
 @end

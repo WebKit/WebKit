@@ -71,6 +71,16 @@ bool WKPreferencesGetLoadsImagesAutomatically(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->loadsImagesAutomatically();
 }
 
+void WKPreferencesSetLoadsSiteIconsIgnoringImageLoadingPreference(WKPreferencesRef preferencesRef, bool loadsSiteIconsIgnoringImageLoadingPreference)
+{
+    toImpl(preferencesRef)->setLoadsSiteIconsIgnoringImageLoadingPreference(loadsSiteIconsIgnoringImageLoadingPreference);
+}
+
+bool WKPreferencesGetLoadsSiteIconsIgnoringImageLoadingPreference(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->loadsSiteIconsIgnoringImageLoadingPreference();
+}
+
 void WKPreferencesSetOfflineWebApplicationCacheEnabled(WKPreferencesRef preferencesRef, bool offlineWebApplicationCacheEnabled)
 {
     toImpl(preferencesRef)->setOfflineWebApplicationCacheEnabled(offlineWebApplicationCacheEnabled);

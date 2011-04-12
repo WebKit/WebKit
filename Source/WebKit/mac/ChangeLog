@@ -1,3 +1,19 @@
+2011-04-12  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58292
+        Provide new setting to allow site icon loading despite disabling automatic image loading in general.
+
+        * WebView/WebPreferenceKeysPrivate.h: Add preference key.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Initialize to false.
+        (-[WebPreferences setLoadsSiteIconsIgnoringImageLoadingPreference:]): Added.
+        (-[WebPreferences loadsSiteIconsIgnoringImageLoadingPreference]): Added.
+        * WebView/WebPreferencesPrivate.h: Add setter/getter definitions.
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Add to settings that get propagated upon changes. 
+
 2011-04-11  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Maciej Stachowiak.

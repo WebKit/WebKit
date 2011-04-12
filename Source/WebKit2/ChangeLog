@@ -1,3 +1,18 @@
+2011-04-12  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58292
+        Provide new setting to allow site icon loading despite disabling automatic image loading in general.
+
+        * Shared/WebPreferencesStore.h: Add macro for setting default value.
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetLoadsSiteIconsIgnoringImageLoadingPreference): Added setter.
+        (WKPreferencesGetLoadsSiteIconsIgnoringImageLoadingPreference): Added getter.
+        * UIProcess/API/C/WKPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Add to list of WebCore settings that get propagated to WebKit preferences.
+
 2011-04-12  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Anders Carlsson.

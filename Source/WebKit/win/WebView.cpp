@@ -4791,6 +4791,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setHyperlinkAuditingEnabled(enabled);
 
+    hr = prefsPrivate->loadsSiteIconsIgnoringImageLoadingPreference(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setLoadsSiteIconsIgnoringImageLoadingSetting(!!enabled);
+
     if (!m_closeWindowTimer)
         m_mainFrame->invalidate(); // FIXME
 

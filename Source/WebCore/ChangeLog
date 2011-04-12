@@ -1,3 +1,21 @@
+2011-04-12  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58292
+        Provide new setting to allow site icon loading despite disabling automatic image loading in general.
+
+        Test: http/tests/misc/favicon-loads-with-icon-loading-override.html
+
+        * WebCore.exp.in: Added export symbol
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::startIconLoader): Check new setting before deciding that site icon images shouldn't be loaded.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Add initializer for new setting
+        (WebCore::Settings::setLoadsSiteIconsIgnoringImageLoadingSetting): Add setter for new setting.
+        * page/Settings.h: Explain nuances regarding loadsImagesAutomatically setting.
+        (WebCore::Settings::loadsSiteIconsIgnoringImageLoadingSetting): Added getter.
+
 2011-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

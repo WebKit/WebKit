@@ -346,6 +346,7 @@ static bool useQuickLookQuirks(void)
         [NSNumber numberWithBool:YES],  WebKitAllowAnimatedImagesPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAllowAnimatedImageLoopingPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDisplayImagesKey,
+        [NSNumber numberWithBool:NO],   WebKitLoadSiteIconsKey,
         @"1800",                        WebKitBackForwardCacheExpirationIntervalKey,
         [NSNumber numberWithBool:NO],   WebKitTabToLinksPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitPrivateBrowsingEnabledPreferenceKey,
@@ -1471,6 +1472,16 @@ static NSString *classIBCreatorID = nil;
 + (void)setWebKitLinkTimeVersion:(int)version
 {
     setWebKitLinkTimeVersion(version);
+}
+
+- (void)setLoadsSiteIconsIgnoringImageLoadingPreference: (BOOL)flag
+{
+    [self _setBoolValue: flag forKey: WebKitLoadSiteIconsKey];
+}
+
+- (BOOL)loadsSiteIconsIgnoringImageLoadingPreference
+{
+    return [self _boolValueForKey: WebKitLoadSiteIconsKey];
 }
 
 @end

@@ -1,3 +1,13 @@
+2011-04-12  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58292
+        Provide new setting to allow site icon loading despite disabling automatic image loading in general.
+
+        * http/tests/misc/favicon-loads-with-icon-loading-override-expected.txt: Added.
+        * http/tests/misc/favicon-loads-with-icon-loading-override.html: Added.
+
 2011-04-11  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

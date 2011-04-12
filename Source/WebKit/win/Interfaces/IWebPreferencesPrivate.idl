@@ -121,4 +121,7 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT hyperlinkAuditingEnabled(BOOL *hyperlinkAuditingEnabled);
     HRESULT setHyperlinkAuditingEnabled(BOOL hyperlinkAuditingEnabled);
+
+    HRESULT setLoadsSiteIconsIgnoringImageLoadingPreference([in] BOOL enabled);
+    HRESULT loadsSiteIconsIgnoringImageLoadingPreference([out, retval] BOOL* enabled);
 }
