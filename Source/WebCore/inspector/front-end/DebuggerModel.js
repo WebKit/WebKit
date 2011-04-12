@@ -179,9 +179,9 @@ WebInspector.DebuggerModel.prototype = {
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerResumed);
     },
 
-    _parsedScriptSource: function(sourceID, sourceURL, lineOffset, columnOffset, length, scriptWorldType)
+    _parsedScriptSource: function(sourceID, sourceURL, lineOffset, columnOffset, length, isContentScript)
     {
-        var script = new WebInspector.Script(sourceID, sourceURL, lineOffset, columnOffset, length, undefined, undefined, scriptWorldType);
+        var script = new WebInspector.Script(sourceID, sourceURL, lineOffset, columnOffset, length, undefined, undefined, isContentScript);
         this._scripts[sourceID] = script;
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.ParsedScriptSource, script);
     },
@@ -227,9 +227,9 @@ WebInspector.DebuggerDispatcher.prototype = {
         this._debuggerModel._debuggerWasDisabled();
     },
 
-    scriptParsed: function(sourceID, sourceURL, lineOffset, columnOffset, length, scriptWorldType)
+    scriptParsed: function(sourceID, sourceURL, lineOffset, columnOffset, length, isContentScript)
     {
-        this._debuggerModel._parsedScriptSource(sourceID, sourceURL, lineOffset, columnOffset, length, scriptWorldType);
+        this._debuggerModel._parsedScriptSource(sourceID, sourceURL, lineOffset, columnOffset, length, isContentScript);
     },
 
     scriptFailedToParse: function(sourceURL, source, startingLine, errorLine, errorMessage)

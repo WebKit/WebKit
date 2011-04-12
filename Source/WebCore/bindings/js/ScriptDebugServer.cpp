@@ -214,7 +214,7 @@ void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)
     listener->didContinue();
 }
 
-void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, ScriptWorldType worldType)
+void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, bool isContentScript)
 {
     String sourceID = ustringToString(JSC::UString::number(sourceProvider->asID()));
     String url = ustringToString(sourceProvider->url());
@@ -225,7 +225,7 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
     Vector<ScriptDebugListener*> copy;
     copyToVector(listeners, copy);
     for (size_t i = 0; i < copy.size(); ++i)
-        copy[i]->didParseSource(sourceID, url, data, lineOffset, columnOffset, worldType);
+        copy[i]->didParseSource(sourceID, url, data, lineOffset, columnOffset, isContentScript);
 }
 
 void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)
@@ -240,11 +240,9 @@ void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners
         copy[i]->failedToParseSource(url, data, firstLine, errorLine, errorMessage);
 }
 
-static ScriptWorldType currentWorldType(ExecState* exec)
+static bool isContentScript(ExecState* exec)
 {
-    if (currentWorld(exec) == mainThreadNormalWorld())
-        return MAIN_WORLD;
-    return EXTENSIONS_WORLD;
+    return currentWorld(exec) != mainThreadNormalWorld();
 }
 
 void ScriptDebugServer::detach(JSGlobalObject* globalObject)
@@ -275,10 +273,8 @@ void ScriptDebugServer::sourceParsed(ExecState* exec, SourceProvider* sourceProv
     bool isError = errorLine != -1;
     if (isError)
         dispatchFailedToParseSource(*listeners, sourceProvider, errorLine, ustringToString(errorMessage));
-    else {
-        ScriptWorldType worldType = currentWorldType(exec);
-        dispatchDidParseSource(*listeners, sourceProvider, worldType);
-    }
+    else
+        dispatchDidParseSource(*listeners, sourceProvider, isContentScript(exec));
 
     m_callingListeners = false;
 }

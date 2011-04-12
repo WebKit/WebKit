@@ -1454,7 +1454,7 @@
                     { "name": "lineOffset", "type": "integer", "description": "Line offset of the script within the resource with given URL (for script tags)." },
                     { "name": "columnOffset", "type": "integer", "description": "Column offset of the script within the resource with given URL." },
                     { "name": "length", "type": "integer", "description": "Length of the script" },
-                    { "name": "scriptWorldType", "type": "integer", "description": "Script type. // FIXME." }
+                    { "name": "isContentScript", "type": "boolean", "optional": true, "description": "Determines whether this script is a user extension script." }
                 ],
                 "description": "Fired when virtual machine parses script. This even is also fired for all known scripts upon enabling debugger."
             },

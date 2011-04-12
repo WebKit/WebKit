@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Script = function(sourceID, sourceURL, lineOffset, columnOffset, length, errorLine, errorMessage, worldType)
+WebInspector.Script = function(sourceID, sourceURL, lineOffset, columnOffset, length, errorLine, errorMessage, isContentScript)
 {
     this.sourceID = sourceID;
     this.sourceURL = sourceURL;
@@ -32,12 +32,7 @@ WebInspector.Script = function(sourceID, sourceURL, lineOffset, columnOffset, le
     this.length = length;
     this.errorLine = errorLine;
     this.errorMessage = errorMessage;
-    this.worldType = worldType;
-}
-
-WebInspector.Script.WorldType = {
-    MAIN_WORLD: 0,
-    EXTENSIONS_WORLD: 1
+    this.isContentScript = isContentScript;
 }
 
 WebInspector.Script.prototype = {

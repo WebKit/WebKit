@@ -351,7 +351,7 @@ void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8
         toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("source"))),
         object->Get(v8::String::New("lineOffset"))->ToInteger()->Value(),
         object->Get(v8::String::New("columnOffset"))->ToInteger()->Value(),
-        static_cast<ScriptWorldType>(object->Get(v8::String::New("scriptWorldType"))->Int32Value()));
+        object->Get(v8::String::New("isContentScript"))->ToBoolean()->Value());
 }
 
 void ScriptDebugServer::ensureDebuggerScriptCompiled()

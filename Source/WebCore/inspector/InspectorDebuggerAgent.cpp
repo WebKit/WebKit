@@ -374,10 +374,10 @@ PassRefPtr<InspectorArray> InspectorDebuggerAgent::currentCallFrames()
 
 // JavaScriptDebugListener functions
 
-void InspectorDebuggerAgent::didParseSource(const String& sourceID, const String& url, const String& data, int lineOffset, int columnOffset, ScriptWorldType worldType)
+void InspectorDebuggerAgent::didParseSource(const String& sourceID, const String& url, const String& data, int lineOffset, int columnOffset, bool isContentScript)
 {
     // Don't send script content to the front end until it's really needed.
-    m_frontend->scriptParsed(sourceID, url, lineOffset, columnOffset, data.length(), worldType);
+    m_frontend->scriptParsed(sourceID, url, lineOffset, columnOffset, data.length(), isContentScript);
 
     m_scripts.set(sourceID, Script(url, data, lineOffset, columnOffset));
 

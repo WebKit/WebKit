@@ -102,7 +102,7 @@ protected:
     void dispatchFunctionToListeners(const ListenerSet& listeners, JavaScriptExecutionCallback callback);
     void dispatchDidPause(ScriptDebugListener*);
     void dispatchDidContinue(ScriptDebugListener*);
-    void dispatchDidParseSource(const ListenerSet& listeners, JSC::SourceProvider*, enum ScriptWorldType);
+    void dispatchDidParseSource(const ListenerSet& listeners, JSC::SourceProvider*, bool isContentScript);
     void dispatchFailedToParseSource(const ListenerSet& listeners, JSC::SourceProvider*, int errorLine, const String& errorMessage);
 
     void createCallFrameAndPauseIfNeeded(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber);

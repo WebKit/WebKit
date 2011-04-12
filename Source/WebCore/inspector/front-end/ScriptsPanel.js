@@ -280,7 +280,7 @@ WebInspector.ScriptsPanel.prototype = {
         var select = this._filesSelectElement;
         var option = document.createElement("option");
         option.text = sourceFile.url ? WebInspector.displayNameForURL(sourceFile.url) : WebInspector.UIString("(program)");
-        if (sourceFile.isExtensionScript)
+        if (sourceFile.isContentScript)
             option.addStyleClass("extension-script");
         function optionCompare(a, b)
         {

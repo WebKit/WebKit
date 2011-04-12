@@ -38,7 +38,7 @@ WebInspector.SourceFile = function(id, script, contentChangedDelegate)
 
     this.id = id;
     this.url = script.sourceURL;
-    this.isExtensionScript = script.worldType === WebInspector.Script.WorldType.EXTENSIONS_WORLD;
+    this.isContentScript = script.isContentScript;
     this.messages = [];
     this.breakpoints = {};
 

@@ -38,11 +38,6 @@ DebuggerScript.PauseOnExceptionsState = {
     PauseOnUncaughtExceptions: 2
 };
 
-DebuggerScript.ScriptWorldType = {
-    MainWorld : 0,
-    ExtensionsWorld : 1
-};
-
 DebuggerScript._pauseOnExceptionsState = DebuggerScript.PauseOnExceptionsState.DontPauseOnExceptions;
 Debug.clearBreakOnException();
 Debug.clearBreakOnUncaughtException();
@@ -76,16 +71,13 @@ DebuggerScript.getScripts = function(contextData)
 
 DebuggerScript._formatScript = function(script)
 {
-    var scriptWorldType = DebuggerScript.ScriptWorldType.MainWorld;
-    if (script.context_data && script.context_data.indexOf("injected") == 0)
-        scriptWorldType = DebuggerScript.ScriptWorldType.ExtensionsWorld;
     return {
         id: script.id,
         name: script.nameOrSourceURL(),
         source: script.source,
         lineOffset: script.line_offset,
         columnOffset: script.column_offset,
-        scriptWorldType: scriptWorldType
+        isContentScript: !!script.context_data && script.context_data.indexOf("injected") == 0
     };
 }
 
