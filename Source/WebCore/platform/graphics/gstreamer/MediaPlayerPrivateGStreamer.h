@@ -135,6 +135,11 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             void notifyPlayerOfVideoTags();
             void notifyPlayerOfAudioTags();
 
+            unsigned decodedFrameCount() const;
+            unsigned droppedFrameCount() const;
+            unsigned audioDecodedByteCount() const;
+            unsigned videoDecodedByteCount() const;
+
         private:
             MediaPlayerPrivateGStreamer(MediaPlayer*);
             ~MediaPlayerPrivateGStreamer();
@@ -144,6 +149,8 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             static void getSupportedTypes(HashSet<String>&);
             static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
             static bool isAvailable();
+
+            void updateAudioSink();
 
             void cacheDuration();
             void updateStates();
@@ -193,6 +200,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             bool m_hasAudio;
             guint m_audioTagsTimerHandler;
             guint m_videoTagsTimerHandler;
+            GstElement* m_webkitAudioSink;
     };
 }
 

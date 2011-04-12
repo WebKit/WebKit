@@ -349,6 +349,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_hasAudio(false)
     , m_audioTagsTimerHandler(0)
     , m_videoTagsTimerHandler(0)
+    , m_webkitAudioSink(0)
 {
     if (doGstInit())
         createGSTPlayBin();
@@ -958,6 +959,58 @@ unsigned MediaPlayerPrivateGStreamer::totalBytes() const
     return static_cast<unsigned>(length);
 }
 
+unsigned MediaPlayerPrivateGStreamer::decodedFrameCount() const
+{
+    guint64 decodedFrames = 0;
+    if (m_fpsSink)
+        g_object_get(m_fpsSink, "frames-rendered", &decodedFrames, NULL);
+    return static_cast<unsigned>(decodedFrames);
+}
+
+unsigned MediaPlayerPrivateGStreamer::droppedFrameCount() const
+{
+    guint64 framesDropped = 0;
+    if (m_fpsSink)
+        g_object_get(m_fpsSink, "frames-dropped", &framesDropped, NULL);
+    return static_cast<unsigned>(framesDropped);
+}
+
+unsigned MediaPlayerPrivateGStreamer::audioDecodedByteCount() const
+{
+    GstQuery* query = gst_query_new_position(GST_FORMAT_BYTES);
+    gint64 position = 0;
+
+    if (m_webkitAudioSink && gst_element_query(m_webkitAudioSink, query))
+        gst_query_parse_position(query, 0, &position);
+
+    gst_query_unref(query);
+    return static_cast<unsigned>(position);
+}
+
+unsigned MediaPlayerPrivateGStreamer::videoDecodedByteCount() const
+{
+    GstQuery* query = gst_query_new_position(GST_FORMAT_BYTES);
+    gint64 position = 0;
+
+    if (gst_element_query(m_webkitVideoSink, query))
+        gst_query_parse_position(query, 0, &position);
+
+    gst_query_unref(query);
+    return static_cast<unsigned>(position);
+}
+
+void MediaPlayerPrivateGStreamer::updateAudioSink()
+{
+    if (!m_playBin)
+        return;
+
+    GOwnPtr<GstElement> element;
+
+    g_object_get(m_playBin, "audio-sink", &element.outPtr(), NULL);
+    gst_object_replace(reinterpret_cast<GstObject**>(&m_webkitAudioSink),
+                       reinterpret_cast<GstObject*>(element.get()));
+}
+
 void MediaPlayerPrivateGStreamer::cancelLoad()
 {
     if (m_networkState < MediaPlayer::Loading || m_networkState == MediaPlayer::Loaded)
@@ -1017,6 +1070,8 @@ void MediaPlayerPrivateGStreamer::updateStates()
         // information from GStreamer, while we sync states where
         // needed.
         if (state == GST_STATE_PAUSED) {
+            if (!m_webkitAudioSink)
+                updateAudioSink();
             if (m_buffering && m_bufferingPercentage == 100) {
                 m_buffering = false;
                 m_bufferingPercentage = 0;
@@ -1619,30 +1674,37 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     gst_object_unref(GST_OBJECT(srcPad));
     gst_object_unref(GST_OBJECT(sinkPad));
 
-    WTFLogChannel* channel = getChannelFromName("Media");
-    if (channel->state == WTFLogChannelOn) {
-        m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
-        if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink), "video-sink")) {
-            g_object_set(m_fpsSink, "video-sink", m_webkitVideoSink, NULL);
-            gst_bin_add(GST_BIN(m_videoSinkBin), m_fpsSink);
+    m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
+
+    if (m_fpsSink) {
+        // The verbose property has been added in -bad 0.10.22. Making
+        // this whole code depend on it because we don't want
+        // fpsdiplaysink to spit data on stdout.
+        GstElementFactory* factory = GST_ELEMENT_FACTORY(GST_ELEMENT_GET_CLASS(m_fpsSink)->elementfactory);
+        if (gst_plugin_feature_check_version(GST_PLUGIN_FEATURE(factory), 0, 10, 22)) {
+            g_object_set(m_fpsSink, "silent", TRUE , NULL);
+
+            // Turn off text overlay unless logging is enabled.
+            WTFLogChannel* channel = getChannelFromName("Media");
+            if (channel->state != WTFLogChannelOn)
+                g_object_set(m_fpsSink, "text-overlay", FALSE , NULL);
+
+            if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink), "video-sink")) {
+                g_object_set(m_fpsSink, "video-sink", m_webkitVideoSink, NULL);
+                gst_bin_add(GST_BIN(m_videoSinkBin), m_fpsSink);
 #if GST_CHECK_VERSION(0, 10, 30)
-            // Faster elements linking, if possible.
-            gst_element_link_pads_full(queue, "src", m_fpsSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
+                // Faster elements linking, if possible.
+                gst_element_link_pads_full(queue, "src", m_fpsSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
 #else
-            gst_element_link(queue, m_fpsSink);
+                gst_element_link(queue, m_fpsSink);
 #endif
-        } else {
+            } else
+                m_fpsSink = 0;
+        } else
             m_fpsSink = 0;
-            gst_bin_add(GST_BIN(m_videoSinkBin), m_webkitVideoSink);
-#if GST_CHECK_VERSION(0, 10, 30)
-            // Faster elements linking, if possible.
-            gst_element_link_pads_full(queue, "src", m_webkitVideoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
-#else
-            gst_element_link(queue, m_webkitVideoSink);
-#endif
-            LOG_VERBOSE(Media, "Can't display FPS statistics, you need gst-plugins-bad >= 0.10.18");
-        }
-    } else {
+    }
+
+    if (!m_fpsSink) {
         gst_bin_add(GST_BIN(m_videoSinkBin), m_webkitVideoSink);
 #if GST_CHECK_VERSION(0, 10, 30)
         // Faster elements linking, if possible.
