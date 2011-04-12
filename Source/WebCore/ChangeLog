@@ -1,3 +1,20 @@
+2011-04-11  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] GPU-accelerated canvas-to-canvas drawImage is incorrect.
+        https://bugs.webkit.org/show_bug.cgi?id=58258
+
+        When one accelerated canvas is drawn to another via drawImage(), if the
+        prior call in the source canvas was non-accelerated, the 
+        hardware canvas is not up-to-date, and the results will be incorrect.
+        Fixed by calling prepareForHardwareDraw() on the source context.
+
+        Test: fast/canvas/canvas-to-canvas.html
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::draw):
+
 2011-04-12  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

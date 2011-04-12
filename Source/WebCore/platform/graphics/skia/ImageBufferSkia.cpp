@@ -117,6 +117,7 @@ void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, con
 {
     if (m_data.m_platformContext.useGPU() && context->platformContext()->useGPU()) {
         if (context->platformContext()->canAccelerate()) {
+            m_data.m_platformContext.prepareForHardwareDraw();
             DrawingBuffer* sourceDrawingBuffer = m_data.m_platformContext.gpuCanvas()->drawingBuffer();
             unsigned sourceTexture = static_cast<unsigned>(sourceDrawingBuffer->platformColorBuffer());
             FloatRect destRectNormalized(normalizeRect(destRect));
