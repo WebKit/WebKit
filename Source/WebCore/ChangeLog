@@ -1,3 +1,15 @@
+2011-04-12  Chris Fleizach  <cfleizach@apple.com>
+
+        Unreviewed. Fixing Leopard build.
+
+        REGRESSION: WK2: misspelled AX attributes no longer returned from text fields
+        https://bugs.webkit.org/show_bug.cgi?id=58304
+
+        checkTextOfParagraph is not available on Leopard. That code needs to be conditionalized with USE(UNIFIED_TEXT_CHECKING).
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (AXAttributeStringSetSpelling):
+
 2011-04-12  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed. Added missing files to GNUmakefile.list.am.

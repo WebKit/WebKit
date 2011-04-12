@@ -480,6 +480,7 @@ static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrS
 
 static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, Node* node, const UChar* chars, int charLength, NSRange range)
 {
+#if USE(UNIFIED_TEXT_CHECKING)
     // Check the spelling directly since document->markersForNode() does not store the misspelled marking when the cursor is in a word.
     TextCheckerClient* checker = node->document()->frame()->editor()->textChecker();
 
@@ -492,7 +493,25 @@ static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, 
     for (unsigned i = 0; i < size; i++) {
         const TextCheckingResult& result = results[i];
         AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, trueValue, NSMakeRange(result.location + range.location, result.length));
+    }    
+#else
+    int currentPosition = 0;
+    while (charLength > 0) {
+        const UChar* charData = chars + currentPosition;
+        TextCheckerClient* checker = node->document()->frame()->editor()->textChecker();
+        
+        int misspellingLocation = -1;
+        int misspellingLength = 0;
+        checker->checkSpellingOfString(charData, charLength, &misspellingLocation, &misspellingLength);
+        if (misspellingLocation == -1 || !misspellingLength)
+            break;
+        
+        NSRange spellRange = NSMakeRange(range.location + currentPosition + misspellingLocation, misspellingLength);
+        AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, [NSNumber numberWithBool:YES], spellRange);
+        charLength -= (misspellingLocation + misspellingLength);
+        currentPosition += (misspellingLocation + misspellingLength);
     }
+#endif    
 }
 
 static void AXAttributeStringSetHeadingLevel(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
