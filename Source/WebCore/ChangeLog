@@ -1,3 +1,28 @@
+2011-04-12  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QNetworkReplyHandler refactoring: remove nested event loop.
+        https://bugs.webkit.org/show_bug.cgi?id=58375
+
+        As QNAM now makes actual synchronous loads there is no need for a nested event loop
+        in ResourceHandleQt.
+
+        Moving the call for QNetworkReplyWrapper::synchronousLoad from
+        ResourceHandle::loadResourceSynchronously to QNetworkReplyHandler::start for the
+        redirections to work in synchronous requests.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::start):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::WebCoreSynchronousLoader::WebCoreSynchronousLoader):
+        (WebCore::WebCoreSynchronousLoader::didReceiveResponse):
+        (WebCore::WebCoreSynchronousLoader::didReceiveData):
+        (WebCore::WebCoreSynchronousLoader::didFinishLoading):
+        (WebCore::WebCoreSynchronousLoader::didFail):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
 2011-04-11  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Simon Fraser.

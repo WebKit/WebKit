@@ -106,12 +106,11 @@ public:
 
     QNetworkReply* release();
 
-    void synchronousLoad();
-
-public slots:
     void finish();
     void sendResponseIfNeeded();
     void forwardData();
+
+public slots:
     void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
 
 private:
