@@ -40,6 +40,7 @@ WEBKIT2_API_SOURCES = \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKPluginSiteDataManager.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKPreferences.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKProtectionSpace.cpp \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/C/WKResourceCacheManager.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt/WKStringQt.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/cpp/qt/WKURLQt.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/ClientImpl.cpp \

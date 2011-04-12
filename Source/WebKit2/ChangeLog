@@ -1,3 +1,10 @@
+2011-04-11  Daniel Bates  <dbates@webkit.org>
+
+        Attempt to fix the Qt Linux Release build after changeset 83550 <http://trac.webkit.org/changeset/83550>
+        (https://bugs.webkit.org/show_bug.cgi?id=54159).
+
+        * WebKit2API.pri: Append UIProcess/API/C/WKResourceCacheManager.cpp to the list WEBKIT2_API_SOURCES.
+
 2011-04-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
