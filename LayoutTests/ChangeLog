@@ -1,3 +1,12 @@
+2011-04-12  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        Skip a test on WebKit2 that depends on layoutTestController.setGeolocationPermission.
+
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+
 2011-04-12  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline of fast/block/float/021.html and
