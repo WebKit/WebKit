@@ -1043,6 +1043,7 @@ fast/loader/user-style-sheet-resource-load-callbacks.html
 http/tests/loading/307-after-303-after-post.html
 http/tests/loading/redirect-methods.html
 http/tests/misc/favicon-loads-with-images-disabled.html
+http/tests/misc/favicon-loads-with-icon-loading-override.html
 http/tests/misc/link-rel-icon-beforeload.html
 http/tests/misc/will-send-request-returns-null-on-redirect.html
 http/tests/misc/willCacheResponse-delegate-callback.html

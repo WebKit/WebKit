@@ -1,3 +1,11 @@
+2011-04-12  Alice Liu  <alice.liu@apple.com>
+
+        Added http/tests/misc/favicon-loads-with-icon-loading-override.html
+        to mac-wk2 skipped list because resource load callbacks aren't implemented
+        in WebKitTestRunner.
+
+        * platform/mac-wk2/Skipped:
+
 2011-04-12  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed.
