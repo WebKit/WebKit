@@ -1,3 +1,15 @@
+2011-04-12  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Private Q_SLOTS void orientationChanged() can't be in qwebframe.h public header file.
+        https://bugs.webkit.org/show_bug.cgi?id=58251
+
+        Fix an issue with slot names after http://trac.webkit.org/changeset/83512.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::QWebFrame):
+
 2011-04-11  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Benjamin Poulain.

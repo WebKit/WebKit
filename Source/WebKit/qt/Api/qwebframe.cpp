@@ -535,7 +535,7 @@ QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
         d->frame->loader()->load(request, frameData->name, false);
     }
 #if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
-    connect(&d->m_orientation, SIGNAL(readingChanged()), this, SLOT(orientationChanged()));
+    connect(&d->m_orientation, SIGNAL(readingChanged()), this, SLOT(_q_orientationChanged()));
     d->m_orientation.start();
 #endif
 }
@@ -547,7 +547,7 @@ QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
     d->page = parent->d->page;
     d->init(this, frameData);
 #if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
-    connect(&d->m_orientation, SIGNAL(readingChanged()), this, SLOT(orientationChanged()));
+    connect(&d->m_orientation, SIGNAL(readingChanged()), this, SLOT(_q_orientationChanged()));
     d->m_orientation.start();
 #endif
 }
