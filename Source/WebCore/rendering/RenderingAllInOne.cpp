@@ -35,7 +35,6 @@
 #include "InlineFlowBox.cpp"
 #include "InlineTextBox.cpp"
 #include "LayoutState.cpp"
-#include "MediaControlElements.cpp"
 #include "PointerEventsHitRules.cpp"
 #include "RenderApplet.cpp"
 #include "RenderArena.cpp"

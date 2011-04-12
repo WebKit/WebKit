@@ -1840,6 +1840,8 @@ webcore_sources += \
 	Source/WebCore/html/parser/TextViewSourceParser.h \
 	Source/WebCore/html/parser/XSSFilter.cpp \
 	Source/WebCore/html/parser/XSSFilter.h \
+	Source/WebCore/html/shadow/MediaControlElements.cpp \
+	Source/WebCore/html/shadow/MediaControlElements.h \
 	Source/WebCore/html/shadow/MediaControlRootElement.cpp \
 	Source/WebCore/html/shadow/MediaControlRootElement.h \
 	Source/WebCore/html/shadow/MeterShadowElement.cpp \
@@ -2723,8 +2725,6 @@ webcore_sources += \
 	Source/WebCore/rendering/InlineTextBox.h \
 	Source/WebCore/rendering/LayoutState.cpp \
 	Source/WebCore/rendering/LayoutState.h \
-	Source/WebCore/rendering/MediaControlElements.cpp \
-	Source/WebCore/rendering/MediaControlElements.h \
 	Source/WebCore/rendering/OverlapTestRequestClient.h \
 	Source/WebCore/rendering/PaintInfo.h \
 	Source/WebCore/rendering/PaintPhase.h \

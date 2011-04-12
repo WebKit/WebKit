@@ -1894,9 +1894,9 @@ IF (ENABLE_VIDEO)
         html/HTMLMediaElement.cpp
         html/HTMLSourceElement.cpp
         html/HTMLVideoElement.cpp
+        html/shadow/MediaControlElements.cpp
         html/TimeRanges.cpp
         platform/graphics/MediaPlayer.cpp
-        rendering/MediaControlElements.cpp
         rendering/RenderMedia.cpp
         rendering/RenderVideo.cpp
     )

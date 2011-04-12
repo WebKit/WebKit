@@ -2932,9 +2932,9 @@ contains(DEFINES, ENABLE_VIDEO=1) {
         html/HTMLMediaElement.cpp \
         html/HTMLSourceElement.cpp \
         html/HTMLVideoElement.cpp \
+        html/shadow/MediaControlElements.cpp \
         html/TimeRanges.cpp \
         platform/graphics/MediaPlayer.cpp \
-        rendering/MediaControlElements.cpp \
         rendering/RenderVideo.cpp \
         rendering/RenderMedia.cpp
 

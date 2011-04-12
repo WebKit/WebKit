@@ -788,7 +788,7 @@ void MediaControlFullscreenButtonElement::defaultEventHandler(Event* event)
     if (event->type() == eventNames().clickEvent) {
 #if ENABLE(FULLSCREEN_API)
         // Only use the new full screen API if the fullScreenEnabled setting has 
-        // been explicitly enabled.  Otherwise, use the old fullscreen API.  This
+        // been explicitly enabled. Otherwise, use the old fullscreen API. This
         // allows apps which embed a WebView to retain the existing full screen
         // video implementation without requiring them to implement their own full 
         // screen behavior.

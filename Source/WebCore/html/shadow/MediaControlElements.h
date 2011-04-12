@@ -455,7 +455,7 @@ private:
  
 // ----------------------------
 
-} //namespace WebCore
+} // namespace WebCore
 
 #endif // ENABLE(VIDEO)
 

@@ -355,6 +355,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/parser/TextViewSourceParser.cpp \
 	html/parser/XSSFilter.cpp \
 	\
+	html/shadow/MediaControlElements.cpp \
 	html/shadow/MediaControlRootElement.cpp \
 	html/shadow/MeterShadowElement.cpp \
 	html/shadow/ProgressShadowElement.cpp \
@@ -677,7 +678,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/InlineFlowBox.cpp \
 	rendering/InlineTextBox.cpp \
 	rendering/LayoutState.cpp \
-	rendering/MediaControlElements.cpp \
 	rendering/PointerEventsHitRules.cpp \
 	rendering/RenderApplet.cpp \
 	rendering/RenderArena.cpp \
