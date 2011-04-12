@@ -50,11 +50,7 @@ namespace WebCore {
 
 namespace WTF {
 
-    template<> struct HashTraits<WebCore::KURL> : GenericHashTraits<WebCore::KURL> {
-        static const bool emptyValueIsZero = true;
-        static void constructDeletedValue(WebCore::KURL& slot) { new (&slot) WebCore::KURL(WebCore::ParsedURLString, WTF::String(HashTableDeletedValue)); }
-        static bool isDeletedValue(const WebCore::KURL& slot) { return slot.string().isHashTableDeletedValue(); }
-    };
+    template<> struct HashTraits<WebCore::KURL> : SimpleClassHashTraits<WebCore::KURL> { };
 
 } // namespace WTF
 

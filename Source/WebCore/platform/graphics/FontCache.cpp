@@ -121,22 +121,7 @@ struct FontPlatformDataCacheKeyHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-struct FontPlatformDataCacheKeyTraits : WTF::GenericHashTraits<FontPlatformDataCacheKey> {
-    static const bool emptyValueIsZero = true;
-    static const FontPlatformDataCacheKey& emptyValue()
-    {
-        DEFINE_STATIC_LOCAL(FontPlatformDataCacheKey, key, (nullAtom));
-        return key;
-    }
-    static void constructDeletedValue(FontPlatformDataCacheKey& slot)
-    {
-        new (&slot) FontPlatformDataCacheKey(HashTableDeletedValue);
-    }
-    static bool isDeletedValue(const FontPlatformDataCacheKey& value)
-    {
-        return value.isHashTableDeletedValue();
-    }
-};
+struct FontPlatformDataCacheKeyTraits : WTF::SimpleClassHashTraits<FontPlatformDataCacheKey> { };
 
 typedef HashMap<FontPlatformDataCacheKey, FontPlatformData*, FontPlatformDataCacheKeyHash, FontPlatformDataCacheKeyTraits> FontPlatformDataCache;
 

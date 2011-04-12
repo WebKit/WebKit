@@ -57,12 +57,7 @@ struct ProtectionSpaceHash {
 
 namespace WTF {
 
-    // WebCore::ProtectionSpaceHash is the default hash for ProtectionSpace
-    template<> struct HashTraits<WebCore::ProtectionSpace> : GenericHashTraits<WebCore::ProtectionSpace> {
-        static const bool emptyValueIsZero = true;
-        static void constructDeletedValue(WebCore::ProtectionSpace& slot) { new (&slot) WebCore::ProtectionSpace(HashTableDeletedValue); }
-        static bool isDeletedValue(const WebCore::ProtectionSpace& slot) { return slot.isHashTableDeletedValue(); }
-    };
+    template<> struct HashTraits<WebCore::ProtectionSpace> : SimpleClassHashTraits<WebCore::ProtectionSpace> { };
 
     template<typename T> struct DefaultHash;
     template<> struct DefaultHash<WebCore::ProtectionSpace> {

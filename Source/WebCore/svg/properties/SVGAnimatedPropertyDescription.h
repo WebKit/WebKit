@@ -80,19 +80,7 @@ struct SVGAnimatedPropertyDescriptionHash {
     static const bool safeToCompareToEmptyOrDeleted = true;
 };
 
-struct SVGAnimatedPropertyDescriptionHashTraits : WTF::GenericHashTraits<SVGAnimatedPropertyDescription> {
-    static const bool emptyValueIsZero = true;
-
-    static void constructDeletedValue(SVGAnimatedPropertyDescription& slot)
-    {
-        new (&slot) SVGAnimatedPropertyDescription(WTF::HashTableDeletedValue);
-    }
-
-    static bool isDeletedValue(const SVGAnimatedPropertyDescription& value)
-    {
-        return value.isHashTableDeletedValue();
-    }
-};
+struct SVGAnimatedPropertyDescriptionHashTraits : WTF::SimpleClassHashTraits<SVGAnimatedPropertyDescription> { };
  
 }
 

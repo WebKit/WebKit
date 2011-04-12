@@ -76,6 +76,8 @@ public:
     KURL(ParsedURLStringTag, const char*);
     KURL(ParsedURLStringTag, const String&);
     KURL(ParsedURLStringTag, const URLString&);
+    KURL(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
+    bool isHashTableDeletedValue() const { return m_string.isHashTableDeletedValue(); }
 
     // Resolves the relative URL with the given base URL. If provided, the
     // TextEncoding is used to encode non-ASCII characers. The base URL can be

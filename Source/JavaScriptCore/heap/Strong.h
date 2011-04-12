@@ -88,6 +88,11 @@ public:
         clear();
     }
 
+    void swap(Strong& other)
+    {
+        Handle<T>::swap(other);
+    }
+
     void set(JSGlobalData& globalData, ExternalType value)
     {
         if (!slot())
@@ -145,12 +150,7 @@ template<typename T> struct VectorTraits<JSC::Strong<T> > : SimpleClassVectorTra
     static const bool canCompareWithMemcmp = false;
 };
 
-template<typename P> struct HashTraits<JSC::Strong<P> > : GenericHashTraits<JSC::Strong<P> > {
-    static const bool emptyValueIsZero = true;
-    static JSC::Strong<P> emptyValue() { return JSC::Strong<P>(); }
-    static void constructDeletedValue(JSC::Strong<P>& slot) { new (&slot) JSC::Strong<P>(JSC::Strong<P>::HashTableDeletedValue); }
-    static bool isDeletedValue(const JSC::Strong<P>& value) { return value.isHashTableDeletedValue(); }
-};
+template<typename P> struct HashTraits<JSC::Strong<P> > : SimpleClassHashTraits<JSC::Strong<P> > { };
 
 }
 

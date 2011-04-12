@@ -234,11 +234,7 @@ namespace WTF {
         return a != b.get(); 
     }
     
-    template<typename P> struct HashTraits<RetainPtr<P> > : GenericHashTraits<RetainPtr<P> > {
-        static const bool emptyValueIsZero = true;
-        static void constructDeletedValue(RetainPtr<P>& slot) { new (&slot) RetainPtr<P>(HashTableDeletedValue); }
-        static bool isDeletedValue(const RetainPtr<P>& value) { return value == reinterpret_cast<P*>(-1); }
-    };
+    template<typename P> struct HashTraits<RetainPtr<P> > : SimpleClassHashTraits<RetainPtr<P> > { };
     
     template<typename P> struct PtrHash<RetainPtr<P> > : PtrHash<P*> {
         using PtrHash<P*>::hash;

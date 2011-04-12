@@ -179,11 +179,7 @@ namespace WTF {
         }
     };
 
-    template<> struct HashTraits<String> : GenericHashTraits<String> {
-        static const bool emptyValueIsZero = true;
-        static void constructDeletedValue(String& slot) { new (&slot) String(HashTableDeletedValue); }
-        static bool isDeletedValue(const String& slot) { return slot.isHashTableDeletedValue(); }
-    };
+    template<> struct HashTraits<String> : SimpleClassHashTraits<String> { };
 
 }
 

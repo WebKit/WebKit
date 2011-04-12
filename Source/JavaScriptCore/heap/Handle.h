@@ -60,6 +60,8 @@ protected:
         : m_slot(slot)
     {
     }
+    
+    void swap(HandleBase& other) { std::swap(m_slot, other.m_slot); }
 
     HandleSlot slot() const { return m_slot; }
     void setSlot(HandleSlot slot)
@@ -141,8 +143,10 @@ public:
     template <typename U> Handle(Handle<U> o)
     {
         typename HandleTypes<T>::template validateUpcast<U>();
-        m_slot = o.slot();
+        setSlot(o.slot());
     }
+
+    void swap(Handle& other) { HandleBase::swap(other); }
 
     ExternalType get() const { return HandleTypes<T>::getFromSlot(this->slot()); }
 

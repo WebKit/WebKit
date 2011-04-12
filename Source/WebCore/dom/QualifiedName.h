@@ -141,11 +141,9 @@ namespace WTF {
         typedef WebCore::QualifiedNameHash Hash;
     };
     
-    template<> struct HashTraits<WebCore::QualifiedName> : GenericHashTraits<WebCore::QualifiedName> {
+    template<> struct HashTraits<WebCore::QualifiedName> : SimpleClassHashTraits<WebCore::QualifiedName> {
         static const bool emptyValueIsZero = false;
         static WebCore::QualifiedName emptyValue() { return WebCore::QualifiedName(nullAtom, nullAtom, nullAtom); }
-        static void constructDeletedValue(WebCore::QualifiedName& slot) { new (&slot) WebCore::QualifiedName(WTF::HashTableDeletedValue); }
-        static bool isDeletedValue(const WebCore::QualifiedName& slot) { return slot.isHashTableDeletedValue(); }
     };
 }
 

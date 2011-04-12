@@ -71,9 +71,21 @@ public:
         set(other.get());
     }
     
+    enum HashTableDeletedValueTag { HashTableDeletedValue };
+    bool isHashTableDeletedValue() const { return slot() == hashTableDeletedValue(); }
+    Weak(HashTableDeletedValueTag)
+        : Handle<T>(hashTableDeletedValue())
+    {
+    }
+
     ~Weak()
     {
         clear();
+    }
+
+    void swap(Weak& other)
+    {
+        Handle<T>::swap(other);
     }
 
     ExternalType get() const { return  HandleTypes<T>::getFromSlot(slot()); }
@@ -97,6 +109,8 @@ public:
     }
 
 private:
+    static HandleSlot hashTableDeletedValue() { return reinterpret_cast<HandleSlot>(-1); }
+
     void set(ExternalType externalType)
     {
         ASSERT(slot());
@@ -113,6 +127,8 @@ namespace WTF {
 template<typename T> struct VectorTraits<JSC::Weak<T> > : SimpleClassVectorTraits {
     static const bool canCompareWithMemcmp = false;
 };
+
+template<typename P> struct HashTraits<JSC::Weak<P> > : SimpleClassHashTraits<JSC::Weak<P> > { };
 
 }
 

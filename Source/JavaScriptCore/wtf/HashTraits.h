@@ -81,11 +81,13 @@ namespace WTF {
         static bool isDeletedValue(P* value) { return value == reinterpret_cast<P*>(-1); }
     };
 
-    template<typename P> struct HashTraits<RefPtr<P> > : GenericHashTraits<RefPtr<P> > {
+    template<typename T> struct SimpleClassHashTraits : GenericHashTraits<T> {
         static const bool emptyValueIsZero = true;
-        static void constructDeletedValue(RefPtr<P>& slot) { new (&slot) RefPtr<P>(HashTableDeletedValue); }
-        static bool isDeletedValue(const RefPtr<P>& value) { return value.isHashTableDeletedValue(); }
+        static void constructDeletedValue(T& slot) { new (&slot) T(HashTableDeletedValue); }
+        static bool isDeletedValue(const T& value) { return value.isHashTableDeletedValue(); }
     };
+
+    template<typename P> struct HashTraits<RefPtr<P> > : SimpleClassHashTraits<RefPtr<P> > { };
 
     // special traits for pairs, helpful for their use in HashMap implementation
 

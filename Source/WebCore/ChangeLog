@@ -1,3 +1,24 @@
+2011-04-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Cleaned up hash traits, and added hash traits for handles
+        https://bugs.webkit.org/show_bug.cgi?id=58381
+
+        * dom/QualifiedName.h: Use new SimpleClassHashTraits to avoid duplication.
+
+        * platform/KURL.h:
+        (WebCore::KURL::KURL):
+        (WebCore::KURL::isHashTableDeletedValue): Added explicit hash table
+        deleted value constructor, to be more explicit and enable use of
+        SimpleClassHashTraits.
+
+        * platform/KURLHash.h: Use new SimpleClassHashTraits to avoid duplication.
+
+        * platform/graphics/FontCache.cpp: Ditto.
+        * platform/network/ProtectionSpaceHash.h: Ditto.
+        * svg/properties/SVGAnimatedPropertyDescription.h: Ditto.
+
 2011-04-12  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Andreas Kling.
