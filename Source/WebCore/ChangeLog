@@ -1,3 +1,29 @@
+2011-04-11  Justin Novosad  <junov@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [Chromium] Text anti-aliasing fails when rendering text with shadow
+        https://bugs.webkit.org/show_bug.cgi?id=57584
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::drawGlyphsWin): new static function, code factored-out
+        from WebCore::Font::drawGlyphs
+        (WebCore::Font::drawGlyphs): may separate font rendering into two
+        passes to allow foreground glyphs to be rendered with GDI when Skia 
+        is required for rendering shadows
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::windowsCanHandleDrawTextShadow):
+        Modified method so that it does not assume a shadow is present, and
+        returns true if there is no shadow (GDI can draw 'no shadow')
+        (WebCore::windowsCanHandleTextDrawing):
+        Factored out into sub methods so that the the shadow and foregound
+        glyph properties can be tested separately independently.
+        (WebCore::windowsCanHandleTextDrawingWithoutShadow):
+        New method returns true if the foreground glyph only has effect
+        that can be draw with GDI
+        (WebCore::paintSkiaText):
+        * platform/graphics/skia/SkiaFontWin.h:
+
 2011-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed, rolling out r83515.

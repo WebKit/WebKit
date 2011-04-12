@@ -230,10 +230,22 @@ bool windowsCanHandleDrawTextShadow(GraphicsContext *context)
     ColorSpace shadowColorSpace;
 
     bool hasShadow = context->getShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace);
-    return (hasShadow && (shadowBlur == 0) && (shadowColor.alpha() == 255) && (context->fillColor().alpha() == 255));
+    return !hasShadow || (!shadowBlur && (shadowColor.alpha() == 255) && (context->fillColor().alpha() == 255));
 }
 
 bool windowsCanHandleTextDrawing(GraphicsContext* context)
+{
+    if (!windowsCanHandleTextDrawingWithoutShadow(context))
+        return false;
+
+    // Check for shadow effects.
+    if (!windowsCanHandleDrawTextShadow(context))
+        return false;
+
+    return true;
+}
+
+bool windowsCanHandleTextDrawingWithoutShadow(GraphicsContext* context)
 {
     // Check for non-translation transforms. Sometimes zooms will look better in
     // Skia, and sometimes better in Windows. The main problem is that zooming
@@ -254,10 +266,6 @@ bool windowsCanHandleTextDrawing(GraphicsContext* context)
 
     // Check for patterns.
     if (context->fillPattern() || context->strokePattern())
-        return false;
-
-    // Check for shadow effects.
-    if (context->platformContext()->getDrawLooper() && (!windowsCanHandleDrawTextShadow(context)))
         return false;
 
     if (!context->platformContext()->isNativeFontRenderingAllowed())
@@ -362,7 +370,7 @@ bool paintSkiaText(GraphicsContext* context,
     }
     bool didFill = false;
 
-    if ((textMode & TextModeFill) && SkColorGetA(paint.getColor())) {
+    if ((textMode & TextModeFill) && (SkColorGetA(paint.getColor()) || paint.getLooper())) {
         if (!skiaDrawText(hfont, dc, platformContext, *origin, &paint,
                           &glyphs[0], &advances[0], &offsets[0], numGlyphs))
             return false;

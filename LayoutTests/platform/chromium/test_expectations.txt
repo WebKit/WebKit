@@ -690,6 +690,16 @@ BUGCR3273 MAC : platform/mac/editing/input/caret-primary-bidi.html = FAIL PASS
 BUGCR3273 MAC : platform/mac/editing/input/firstrectforcharacterrange-plain.html = FAIL PASS
 BUGCR3273 MAC : platform/mac/editing/input/range-for-empty-document.html = FAIL PASS
 
+// Need rebaseline
+BUGWK57584 WIN : fast/multicol/shadow-breaking.html = IMAGE
+BUGWK57584 WIN : fast/text/shadow-translucent-fill.html = IMAGE
+BUGWK57584 WIN : fast/transforms/shadows.html = IMAGE
+BUGWK57584 WIN : svg/css/shadow-changes.svg = IMAGE
+BUGWK57584 WIN : transitions/svg-text-shadow-transition.html = IMAGE
+BUGWK57584 WIN : svg/css/composite-shadow-text.svg = IMAGE
+BUGWK57584 WIN : svg/css/group-with-shadow.svg = IMAGE
+BUGWK57584 WIN : svg/css/text-shadow-multiple.xhtml = IMAGE
+
 // These tests also use firstRectForCharacterRange, but they generate slightly
 // different values.
 BUGCR3273 : editing/selection/5825350-1.html = TEXT

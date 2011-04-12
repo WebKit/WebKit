@@ -1,3 +1,13 @@
+2011-04-11  Justin Novosad  <junov@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [Chromium] Text anti-aliasing fails when rendering text with shadow
+        https://bugs.webkit.org/show_bug.cgi?id=57584
+
+        * platform/chromium/test_expectations.txt:
+        Tempoaray test failures that will need to be rebaselined
+
 2011-04-11  Jian Li  <jianli@chromium.org>
 
         Unreviewed, update chromium test expectations.

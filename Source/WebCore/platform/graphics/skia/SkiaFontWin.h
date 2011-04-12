@@ -76,6 +76,10 @@ bool windowsCanHandleDrawTextShadow(GraphicsContext*);
 // Returns true if advanced font rendering is recommended.
 bool windowsCanHandleTextDrawing(GraphicsContext*);
 
+// Returns true if advanced font rendering is recommended if shadows are
+// disregarded.
+bool windowsCanHandleTextDrawingWithoutShadow(GraphicsContext*);
+
 // Note that the offsets parameter is optional.  If not NULL it represents a
 // per glyph offset (such as returned by ScriptPlace Windows API function).
 //
