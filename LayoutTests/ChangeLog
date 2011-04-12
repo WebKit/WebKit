@@ -1,3 +1,10 @@
+2011-04-12  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for 2 new tests.
+
+        * platform/gtk/fast/multicol/huge-column-count-expected.txt: Added.
+        * platform/gtk/fast/overflow/trailing-float-linebox-expected.txt: Added.
+
 2011-04-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] 9 tests have different results on 64 bit and/or in debug mode compared to 32 bit and/or release mode
