@@ -61,21 +61,6 @@ void ShadowElement<BaseElement>::detach()
     BaseElement::setShadowHost(0);
 }
 
-class ShadowBlockElement : public ShadowElement<HTMLDivElement> {
-public:
-    static PassRefPtr<ShadowBlockElement> create(HTMLElement*);
-    static PassRefPtr<ShadowBlockElement> createForPart(HTMLElement*, PseudoId);
-    static bool partShouldHaveStyle(const RenderObject* parentRenderer, PseudoId pseudoId);
-    void layoutAsPart(const IntRect& partRect);
-    virtual void updateStyleForPart(PseudoId);
-
-protected:
-    ShadowBlockElement(HTMLElement*);
-    void initAsPart(PseudoId pasuedId);
-private:
-    static PassRefPtr<RenderStyle> createStyleForPart(RenderObject*, PseudoId);
-};
-
 class ShadowInputElement : public ShadowElement<HTMLInputElement> {
 public:
     static PassRefPtr<ShadowInputElement> create(HTMLElement*);

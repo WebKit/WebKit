@@ -1101,7 +1101,6 @@ SOURCES += \
     rendering/RenderImage.cpp \
     rendering/RenderImageResource.cpp \
     rendering/RenderImageResourceStyleImage.cpp \
-    rendering/RenderIndicator.cpp \
     rendering/RenderInline.cpp \
     rendering/RenderLayer.cpp \
     rendering/RenderLayerBacking.cpp \
@@ -2110,7 +2109,6 @@ HEADERS += \
     rendering/RenderImageResource.h \
     rendering/RenderImageResourceStyleImage.h \
     rendering/RenderImage.h \
-    rendering/RenderIndicator.h \
     rendering/RenderInline.h \
     rendering/RenderInputSpeech.h \
     rendering/RenderLayer.h \

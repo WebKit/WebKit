@@ -2781,8 +2781,6 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderImageResource.h \
 	Source/WebCore/rendering/RenderImageResourceStyleImage.cpp \
 	Source/WebCore/rendering/RenderImageResourceStyleImage.h \
-	Source/WebCore/rendering/RenderIndicator.cpp \
-	Source/WebCore/rendering/RenderIndicator.h \
 	Source/WebCore/rendering/RenderInline.cpp \
 	Source/WebCore/rendering/RenderInline.h \
 	Source/WebCore/rendering/RenderLayerBacking.h \

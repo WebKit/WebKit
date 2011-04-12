@@ -5165,8 +5165,6 @@
             'rendering/RenderImage.cpp',
             'rendering/RenderImageResource.cpp',
             'rendering/RenderImageResourceStyleImage.cpp',
-            'rendering/RenderIndicator.cpp',
-            'rendering/RenderIndicator.h',
             'rendering/RenderInline.cpp',
             'rendering/RenderInline.h',
             'rendering/RenderInputSpeech.cpp',

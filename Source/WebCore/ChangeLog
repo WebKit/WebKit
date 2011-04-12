@@ -1,3 +1,27 @@
+2011-04-11  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+        
+        RenderIndicator and ShadowBlockElement are no longer used.
+        https://bugs.webkit.org/show_bug.cgi?id=58277
+
+        Removed RenderIndicator and ShadowBlockElement.
+        
+        No new tests. Just removed unused code.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderIndicator.cpp: Removed.
+        * rendering/RenderIndicator.h: Removed.
+        * rendering/RenderMeter.h:
+        * rendering/RenderingAllInOne.cpp:
+        * rendering/ShadowElement.cpp:
+        * rendering/ShadowElement.h:
+
 2011-04-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Benjamin Poulain.

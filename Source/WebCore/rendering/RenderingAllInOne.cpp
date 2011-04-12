@@ -62,7 +62,6 @@
 #include "RenderImage.cpp"
 #include "RenderImageResource.cpp"
 #include "RenderImageResourceStyleImage.cpp"
-#include "RenderIndicator.cpp"
 #include "RenderInline.cpp"
 #include "RenderLayer.cpp"
 #include "RenderLayerCompositor.cpp"

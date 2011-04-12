@@ -23,14 +23,12 @@
 
 #if ENABLE(METER_TAG)
 #include "RenderBlock.h"
-#include "RenderIndicator.h"
 #include "RenderWidget.h"
 
 
 namespace WebCore {
 
 class HTMLMeterElement;
-class ShadowBlockElement;
 
 class RenderMeter : public RenderBlock {
 public:

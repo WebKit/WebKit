@@ -1223,7 +1223,6 @@ SET(WebCore_SOURCES
     rendering/RenderImage.cpp
     rendering/RenderImageResource.cpp
     rendering/RenderImageResourceStyleImage.cpp
-    rendering/RenderIndicator.cpp
     rendering/RenderInline.cpp
     rendering/RenderLayer.cpp
     rendering/RenderLineBoxList.cpp
