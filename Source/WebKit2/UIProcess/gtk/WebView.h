@@ -108,6 +108,8 @@ private:
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
     virtual float userSpaceScaleFactor() const { return 1; }
     virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, Vector<WTF::String>&);
+    virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned);
+    virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned);
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void pageDidEnterAcceleratedCompositing();

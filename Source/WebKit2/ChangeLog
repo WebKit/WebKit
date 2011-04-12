@@ -1,3 +1,12 @@
+2011-04-12  Alejandro G. Castro  <alex@igalia.com>
+
+        Fixed GTK compilation after r83454.
+
+        * UIProcess/gtk/WebView.cpp:
+        (WebKit::WebView::findStringInCustomRepresentation):
+        (WebKit::WebView::countStringMatchesInCustomRepresentation):
+        * UIProcess/gtk/WebView.h:
+
 2011-04-11  Daniel Bates  <dbates@webkit.org>
 
         Attempt to fix the Qt Linux Release build after changeset 83550 <http://trac.webkit.org/changeset/83550>

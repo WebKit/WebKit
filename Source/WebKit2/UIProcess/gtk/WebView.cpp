@@ -553,5 +553,14 @@ void WebView::flashBackingStoreUpdates(const Vector<IntRect>&)
     notImplemented();
 }
 
+void WebView::findStringInCustomRepresentation(const String&, FindOptions, unsigned)
+{
+    notImplemented();
+}
+
+void WebView::countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned)
+{
+    notImplemented();
+}
 
 } // namespace WebKit
