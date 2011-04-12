@@ -3459,6 +3459,7 @@ http/tests/inspector/console-websocket-error.html
 fast/repaint/moving-shadow-on-container.html
 fast/repaint/moving-shadow-on-path.html
 inspector/styles/styles-iframe.html
+inspector/styles/styles-new-API.html
 inspector/styles/styles-url-linkify.html
 svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg
 svg/css/stars-with-shadow.html
