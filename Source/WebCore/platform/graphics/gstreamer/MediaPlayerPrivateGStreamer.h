@@ -46,16 +46,7 @@ class GStreamerGWorld;
 class MediaPlayerPrivateGStreamer;
 
 gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpointer data);
-void mediaPlayerPrivateVolumeChangedCallback(GObject* element, GParamSpec* pspec, gpointer data);
-void mediaPlayerPrivateMuteChangedCallback(GObject* element, GParamSpec* pspec, gpointer data);
 void mediaPlayerPrivateSourceChangedCallback(GObject* element, GParamSpec* pspec, gpointer data);
-void mediaPlayerPrivateVideoTagsChangedCallback(GObject* element, gint, MediaPlayerPrivateGStreamer*);
-void mediaPlayerPrivateAudioTagsChangedCallback(GObject* element, gint, MediaPlayerPrivateGStreamer*);
-gboolean mediaPlayerPrivateAudioTagsChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player);
-gboolean mediaPlayerPrivateVideoTagsChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player);
-
-gboolean mediaPlayerPrivateVolumeChangeTimeoutCallback(MediaPlayerPrivateGStreamer*);
-gboolean mediaPlayerPrivateMuteChangeTimeoutCallback(MediaPlayerPrivateGStreamer*);
 
 class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
         friend gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpointer data);
@@ -130,10 +121,10 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             GstElement* pipeline() const { return m_playBin; }
             bool pipelineReset() const { return m_resetPipeline; }
 
-            void videoTagsChanged(gint);
-            void audioTagsChanged(gint);
-            void notifyPlayerOfVideoTags();
-            void notifyPlayerOfAudioTags();
+            void videoChanged();
+            void audioChanged();
+            void notifyPlayerOfVideo();
+            void notifyPlayerOfAudio();
 
             unsigned decodedFrameCount() const;
             unsigned droppedFrameCount() const;
@@ -198,8 +189,8 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             guint m_muteTimerHandler;
             bool m_hasVideo;
             bool m_hasAudio;
-            guint m_audioTagsTimerHandler;
-            guint m_videoTagsTimerHandler;
+            guint m_audioTimerHandler;
+            guint m_videoTimerHandler;
             GstElement* m_webkitAudioSink;
     };
 }

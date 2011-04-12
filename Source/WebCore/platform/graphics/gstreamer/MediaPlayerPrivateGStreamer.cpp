@@ -184,55 +184,60 @@ void mediaPlayerPrivateSourceChangedCallback(GObject *object, GParamSpec *pspec,
     }
 }
 
-void mediaPlayerPrivateVolumeChangedCallback(GObject *element, GParamSpec *pspec, gpointer data)
+static void mediaPlayerPrivateVolumeChangedCallback(GObject*, GParamSpec*, gpointer data)
 {
     // This is called when playbin receives the notify::volume signal.
     MediaPlayerPrivateGStreamer* mp = reinterpret_cast<MediaPlayerPrivateGStreamer*>(data);
     mp->volumeChanged();
 }
 
-gboolean mediaPlayerPrivateVolumeChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player)
+static gboolean mediaPlayerPrivateVolumeChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player)
 {
     // This is the callback of the timeout source created in ::volumeChanged.
     player->notifyPlayerOfVolumeChange();
     return FALSE;
 }
 
-void mediaPlayerPrivateMuteChangedCallback(GObject *element, GParamSpec *pspec, gpointer data)
+static void mediaPlayerPrivateMuteChangedCallback(GObject*, GParamSpec*, gpointer data)
 {
     // This is called when playbin receives the notify::mute signal.
     MediaPlayerPrivateGStreamer* mp = reinterpret_cast<MediaPlayerPrivateGStreamer*>(data);
     mp->muteChanged();
 }
 
-gboolean mediaPlayerPrivateMuteChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player)
+static gboolean mediaPlayerPrivateMuteChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player)
 {
     // This is the callback of the timeout source created in ::muteChanged.
     player->notifyPlayerOfMute();
     return FALSE;
 }
 
-void mediaPlayerPrivateVideoTagsChangedCallback(GObject* element, gint streamId, MediaPlayerPrivateGStreamer* player)
+static void mediaPlayerPrivateVideoSinkCapsChangedCallback(GObject*, GParamSpec*, MediaPlayerPrivateGStreamer* player)
 {
-    player->videoTagsChanged(streamId);
+    player->videoChanged();
 }
 
-void mediaPlayerPrivateAudioTagsChangedCallback(GObject* element, gint streamId, MediaPlayerPrivateGStreamer* player)
+static void mediaPlayerPrivateVideoChangedCallback(GObject*, MediaPlayerPrivateGStreamer* player)
 {
-    player->audioTagsChanged(streamId);
+    player->videoChanged();
 }
 
-gboolean mediaPlayerPrivateAudioTagsChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player)
+static void mediaPlayerPrivateAudioChangedCallback(GObject*, MediaPlayerPrivateGStreamer* player)
 {
-    // This is the callback of the timeout source created in ::audioTagsChanged.
-    player->notifyPlayerOfAudioTags();
+    player->audioChanged();
+}
+
+static gboolean mediaPlayerPrivateAudioChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player)
+{
+    // This is the callback of the timeout source created in ::audioChanged.
+    player->notifyPlayerOfAudio();
     return FALSE;
 }
 
-gboolean mediaPlayerPrivateVideoTagsChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player)
+static gboolean mediaPlayerPrivateVideoChangeTimeoutCallback(MediaPlayerPrivateGStreamer* player)
 {
-    // This is the callback of the timeout source created in ::videoTagsChanged.
-    player->notifyPlayerOfVideoTags();
+    // This is the callback of the timeout source created in ::videoChanged.
+    player->notifyPlayerOfVideo();
     return FALSE;
 }
 
@@ -347,8 +352,8 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_muteTimerHandler(0)
     , m_hasVideo(false)
     , m_hasAudio(false)
-    , m_audioTagsTimerHandler(0)
-    , m_videoTagsTimerHandler(0)
+    , m_audioTimerHandler(0)
+    , m_videoTimerHandler(0)
     , m_webkitAudioSink(0)
 {
     if (doGstInit())
@@ -393,11 +398,11 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
     if (m_volumeTimerHandler)
         g_source_remove(m_volumeTimerHandler);
 
-    if (m_videoTagsTimerHandler)
-        g_source_remove(m_videoTagsTimerHandler);
+    if (m_videoTimerHandler)
+        g_source_remove(m_videoTimerHandler);
 
-    if (m_audioTagsTimerHandler)
-        g_source_remove(m_audioTagsTimerHandler);
+    if (m_audioTimerHandler)
+        g_source_remove(m_audioTimerHandler);
 }
 
 void MediaPlayerPrivateGStreamer::load(const String& url)
@@ -583,6 +588,7 @@ IntSize MediaPlayerPrivateGStreamer::naturalSize() const
         || !gst_video_parse_caps_pixel_aspect_ratio(caps, &pixelAspectRatioNumerator,
                                                     &pixelAspectRatioDenominator)) {
         gst_object_unref(GST_OBJECT(pad));
+        // The video-sink has likely not yet negotiated its caps.
         return IntSize();
     }
 
@@ -619,39 +625,40 @@ IntSize MediaPlayerPrivateGStreamer::naturalSize() const
     return IntSize(static_cast<int>(width), static_cast<int>(height));
 }
 
-void MediaPlayerPrivateGStreamer::videoTagsChanged(gint streamId)
+void MediaPlayerPrivateGStreamer::videoChanged()
 {
-    if (m_videoTagsTimerHandler)
-        g_source_remove(m_videoTagsTimerHandler);
-    m_videoTagsTimerHandler = g_timeout_add(0, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateVideoTagsChangeTimeoutCallback), this);
+    if (m_videoTimerHandler)
+        g_source_remove(m_videoTimerHandler);
+    m_videoTimerHandler = g_timeout_add(0, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateVideoChangeTimeoutCallback), this);
 }
 
-void MediaPlayerPrivateGStreamer::notifyPlayerOfVideoTags()
+void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
 {
-    m_videoTagsTimerHandler = 0;
+    m_videoTimerHandler = 0;
 
-    gint currentVideo = -1;
+    gint videoTracks = 0;
     if (m_playBin)
-        g_object_get(m_playBin, "current-video", &currentVideo, NULL);
-    m_hasVideo = currentVideo > -1;
+        g_object_get(m_playBin, "n-video", &videoTracks, NULL);
+
+    m_hasVideo = videoTracks > 0;
     m_player->mediaPlayerClient()->mediaPlayerEngineUpdated(m_player);
 }
 
-void MediaPlayerPrivateGStreamer::audioTagsChanged(gint streamId)
+void MediaPlayerPrivateGStreamer::audioChanged()
 {
-    if (m_audioTagsTimerHandler)
-        g_source_remove(m_audioTagsTimerHandler);
-    m_audioTagsTimerHandler = g_timeout_add(0, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateAudioTagsChangeTimeoutCallback), this);
+    if (m_audioTimerHandler)
+        g_source_remove(m_audioTimerHandler);
+    m_audioTimerHandler = g_timeout_add(0, reinterpret_cast<GSourceFunc>(mediaPlayerPrivateAudioChangeTimeoutCallback), this);
 }
 
-void MediaPlayerPrivateGStreamer::notifyPlayerOfAudioTags()
+void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
 {
-    m_audioTagsTimerHandler = 0;
+    m_audioTimerHandler = 0;
 
-    gint currentAudio = -1;
+    gint audioTracks = 0;
     if (m_playBin)
-        g_object_get(m_playBin, "current-audio", &currentAudio, NULL);
-    m_hasAudio = currentAudio > -1;
+        g_object_get(m_playBin, "n-audio", &audioTracks, NULL);
+    m_hasAudio = audioTracks > 0;
     m_player->mediaPlayerClient()->mediaPlayerEngineUpdated(m_player);
 }
 
@@ -1420,6 +1427,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext* context, const IntRect&
 
     if (!m_player->visible())
         return;
+
     if (!m_buffer)
         return;
 
@@ -1645,8 +1653,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     g_signal_connect(m_playBin, "notify::volume", G_CALLBACK(mediaPlayerPrivateVolumeChangedCallback), this);
     g_signal_connect(m_playBin, "notify::source", G_CALLBACK(mediaPlayerPrivateSourceChangedCallback), this);
     g_signal_connect(m_playBin, "notify::mute", G_CALLBACK(mediaPlayerPrivateMuteChangedCallback), this);
-    g_signal_connect(m_playBin, "video-tags-changed", G_CALLBACK(mediaPlayerPrivateVideoTagsChangedCallback), this);
-    g_signal_connect(m_playBin, "audio-tags-changed", G_CALLBACK(mediaPlayerPrivateAudioTagsChangedCallback), this);
+    g_signal_connect(m_playBin, "video-changed", G_CALLBACK(mediaPlayerPrivateVideoChangedCallback), this);
+    g_signal_connect(m_playBin, "audio-changed", G_CALLBACK(mediaPlayerPrivateAudioChangedCallback), this);
 
     m_webkitVideoSink = webkit_video_sink_new();
 
@@ -1722,6 +1730,14 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
 
     // Set the bin as video sink of playbin.
     g_object_set(m_playBin, "video-sink", m_videoSinkBin, NULL);
+
+
+    pad = gst_element_get_static_pad(m_webkitVideoSink, "sink");
+    if (pad) {
+        g_signal_connect(pad, "notify::caps", G_CALLBACK(mediaPlayerPrivateVideoSinkCapsChangedCallback), this);
+        gst_object_unref(GST_OBJECT(pad));
+    }
+
 }
 
 }

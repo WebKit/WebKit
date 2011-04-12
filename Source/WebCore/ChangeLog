@@ -1,3 +1,40 @@
+2011-04-06  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GStreamer] RTSP playback broken
+        https://bugs.webkit.org/show_bug.cgi?id=56930
+
+        Rely on {audio,video}-changed playbin2 signals instead of the
+        -tags-changed signals because some media don't provide tags and
+        then can trick the media-player to not paint video, for instance.
+
+        Also trigger a video size calculation after the video sink
+        negotiated its caps. This is useful in the cases where
+        audio-changed signal is emitted but the video sink takes more time
+        to negociate caps with its peer.
+
+        This patch also fixes the rtsp manual-test with a new stream url
+        which seems to be more permanent than the previous WWDC keynote
+        stream.
+
+        * manual-tests/video-rtsp.html:
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateVideoChangedCallback):
+        (WebCore::mediaPlayerPrivateAudioChangedCallback):
+        (WebCore::mediaPlayerPrivateAudioChangeTimeoutCallback):
+        (WebCore::mediaPlayerPrivateVideoChangeTimeoutCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::naturalSize):
+        (WebCore::MediaPlayerPrivateGStreamer::videoChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo):
+        (WebCore::MediaPlayerPrivateGStreamer::audioChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio):
+        (WebCore::MediaPlayerPrivateGStreamer::paint):
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
 2011-04-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
