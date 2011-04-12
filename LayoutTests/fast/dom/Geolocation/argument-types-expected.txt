@@ -9,6 +9,8 @@ PASS navigator.geolocation.getCurrentPosition(null) threw exception Error: TYPE_
 PASS navigator.geolocation.getCurrentPosition({}) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS navigator.geolocation.getCurrentPosition(objectThrowingException) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(Math.abs) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(layoutTestController.setGeolocationPermission) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(true) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS navigator.geolocation.getCurrentPosition(42) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS navigator.geolocation.getCurrentPosition(Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
@@ -19,6 +21,8 @@ PASS navigator.geolocation.getCurrentPosition(emptyFunction, null) did not throw
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, {}) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, objectThrowingException) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, emptyFunction) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, Math.abs) did not throw exception.
+PASS navigator.geolocation.getCurrentPosition(emptyFunction, layoutTestController.setGeolocationPermission) did not throw exception.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, true) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, 42) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
 PASS navigator.geolocation.getCurrentPosition(emptyFunction, Infinity) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.

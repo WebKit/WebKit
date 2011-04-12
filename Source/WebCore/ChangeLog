@@ -1,3 +1,15 @@
+2011-04-12  Steve Block  <steveblock@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Callable objects created via JavaScriptCore API cannot be used as Geolocation callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=40012
+
+        Covered by fast/dom/Geolocation/argument-types.html
+
+        * bindings/js/CallbackFunction.cpp:
+        (WebCore::checkFunctionOnlyCallback):
+
 2011-04-07  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

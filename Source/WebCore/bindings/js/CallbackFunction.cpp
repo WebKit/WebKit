@@ -27,7 +27,7 @@
 
 #include "ExceptionCode.h"
 #include "JSDOMBinding.h"
-#include <runtime/JSFunction.h>
+#include <runtime/CallData.h>
 
 namespace WebCore {
 
@@ -39,9 +39,8 @@ bool checkFunctionOnlyCallback(JSC::ExecState* exec, JSC::JSValue value, Callbac
     if (value.isNull() && (acceptedValues & CallbackAllowNull))
         return false;
 
-    // FIXME: disallows callable objects created via JSC API. It's not clear what exactly the specification intends to allow.
-    // https://bugs.webkit.org/show_bug.cgi?id=40012
-    if (!value.inherits(&JSC::JSFunction::s_info)) {
+    JSC::CallData callData;
+    if (getCallData(value, callData) == JSC::CallTypeNone) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return false;
     }

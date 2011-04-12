@@ -1,3 +1,16 @@
+2011-04-12  Steve Block  <steveblock@google.com>
+
+        Reviewed by Oliver Hunt.
+
+        Callable objects created via JavaScriptCore API cannot be used as Geolocation callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=40012
+
+        Covered by fast/dom/Geolocation/argument-types.html
+        This is a revert of http://trac.webkit.org/changeset/60522
+
+        * fast/dom/Geolocation/argument-types-expected.txt:
+        * fast/dom/Geolocation/script-tests/argument-types.js:
+
 2011-04-12  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Adjusted chrome test exceptations (state-url-sets-links-visited.html fails
