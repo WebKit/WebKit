@@ -510,7 +510,7 @@ if (isGtk()) {
     (system("perl Tools/Scripts/update-webkit-support-libs") == 0) or die;
     # Update Cairo Dependancies.
     if (isWinCairo()) {
-        (system("perl Tools/Scripts/update-webkit-cairo-libs") == 0) or die;
+        (system("perl Tools/Scripts/update-webkit-wincairo-libs") == 0) or die;
     }
 } elsif (isQt()) {
     push @options, "--install-headers=" . $installHeaders if defined($installHeaders);

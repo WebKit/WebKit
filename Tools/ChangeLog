@@ -1,3 +1,13 @@
+2011-04-12  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction for WinCairo bot after r83639.
+        https://bugs.webkit.org/show_bug.cgi?id=51790
+
+        Correct typo for the new "update-webkit-wincairo-libs" script.
+
+        * Scripts/build-webkit: Incorrectly calling the
+          update-webkit-cairo-libs which does not exist.
+
 2011-04-12  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Jon Honeycutt.
