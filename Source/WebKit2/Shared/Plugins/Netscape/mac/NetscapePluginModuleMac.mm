@@ -273,14 +273,9 @@ static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginInfo& plu
     if (mimeTypesAndExtensions.size() % 2)
         return false;
 
-    size_t numMimeTypes = mimeTypesAndExtensions.size() / 2;
-    
     // Now get the MIME type descriptions string list. This string list needs to be the same length as the number of MIME types.
     Vector<String> mimeTypeDescriptions;
     if (!getStringListResource(MIMEDescriptionStringNumber, mimeTypeDescriptions))
-        return false;
-
-    if (mimeTypeDescriptions.size() != numMimeTypes)
         return false;
 
     // Add all MIME types.
@@ -288,7 +283,9 @@ static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginInfo& plu
         MimeClassInfo mimeClassInfo;
         
         const String& mimeType = mimeTypesAndExtensions[i * 2];
-        const String& description = mimeTypeDescriptions[i];
+        String description;
+        if (i < mimeTypeDescriptions.size())
+            description = mimeTypeDescriptions[i];
         
         mimeClassInfo.type = mimeType.lower();
         mimeClassInfo.desc = description;
