@@ -137,9 +137,13 @@ private:
     }
 };
 
-}
+} // namespace JSC
 
 namespace WTF {
+
+template<typename T> struct VectorTraits<JSC::Strong<T> > : SimpleClassVectorTraits {
+    static const bool canCompareWithMemcmp = false;
+};
 
 template<typename P> struct HashTraits<JSC::Strong<P> > : GenericHashTraits<JSC::Strong<P> > {
     static const bool emptyValueIsZero = true;

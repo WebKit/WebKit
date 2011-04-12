@@ -108,4 +108,12 @@ private:
 
 } // namespace JSC
 
+namespace WTF {
+
+template<typename T> struct VectorTraits<JSC::Weak<T> > : SimpleClassVectorTraits {
+    static const bool canCompareWithMemcmp = false;
+};
+
+}
+
 #endif // Weak_h

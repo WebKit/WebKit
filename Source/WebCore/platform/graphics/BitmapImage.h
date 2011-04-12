@@ -53,11 +53,11 @@ namespace WebCore {
     struct FrameData;
 }
 
-// This complicated-looking declaration tells the FrameData Vector that it should copy without
-// invoking our constructor or destructor. This allows us to have a vector even for a struct
-// that's not copyable.
 namespace WTF {
-    template<> struct VectorTraits<WebCore::FrameData> : public SimpleClassVectorTraits {};
+    // FIXME: This declaration gives FrameData a default constructor that zeroes
+    // all its data members, even though FrameData's default constructor defined
+    // below does not zero all its data members. One of these must be wrong!
+    template<> struct VectorTraits<WebCore::FrameData> : public SimpleClassVectorTraits { };
 }
 
 namespace WebCore {

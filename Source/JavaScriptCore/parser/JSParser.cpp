@@ -2168,5 +2168,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseUnaryExpression(TreeB
 
 namespace WTF
 {
-    template <> struct VectorTraits<JSC::JSParser::Scope> : SimpleClassVectorTraits { };
+    template <> struct VectorTraits<JSC::JSParser::Scope> : SimpleClassVectorTraits {
+        static const bool canInitializeWithMemset = false; // Not all Scope data members initialize to 0.
+    };
 }

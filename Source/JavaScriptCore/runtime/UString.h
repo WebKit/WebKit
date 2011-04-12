@@ -252,10 +252,7 @@ template<> struct DefaultHash<JSC::UString> {
     typedef JSC::UStringHash Hash;
 };
 
-template <> struct VectorTraits<JSC::UString> : SimpleClassVectorTraits
-{
-    static const bool canInitializeWithMemset = true;
-};
+template <> struct VectorTraits<JSC::UString> : SimpleClassVectorTraits { };
 
 } // namespace WTF
 

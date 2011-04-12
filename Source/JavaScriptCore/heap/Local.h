@@ -141,14 +141,10 @@ private:
 
 namespace WTF {
 
-template<typename T> struct VectorTraits<JSC::Local<T> > {
+template<typename T> struct VectorTraits<JSC::Local<T> > : SimpleClassVectorTraits {
     static const bool needsDestruction = false;
-    static const bool needsInitialization = true;
     static const bool canInitializeWithMemset = false;
-    static const bool canMoveWithMemcpy = true;
-    static const bool canCopyWithMemcpy = false;
-    static const bool canFillWithMemset = false;
-    static const bool canCompareWithMemcmp = true;
+    static const bool canCompareWithMemcmp = false;
 };
 
 }

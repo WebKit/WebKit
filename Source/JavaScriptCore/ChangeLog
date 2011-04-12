@@ -1,3 +1,27 @@
+2011-04-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Cleaned up some Vector traits, and added missing Vector traits for handles
+        https://bugs.webkit.org/show_bug.cgi?id=58372
+
+        * heap/Local.h: Inherit from SimpleClassVectorTraits to avoid duplication.
+
+        * heap/Strong.h: Ditto.
+
+        * heap/Weak.h: Ditto.
+
+        * parser/JSParser.cpp: Fixed a traits error. No test case because this
+        particular trait is not currently exercised by the parser.
+
+        * runtime/UString.h: No need to override canInitializeWithMemset, since
+        our base class sets it to true.
+
+        * wtf/VectorTraits.h: Inherit from VectorTraitsBase to avoid duplication.
+
+        * wtf/text/WTFString.h: No need to override canInitializeWithMemset, since
+        our base class sets it to true.
+
 2011-04-12  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
 
         Reviewed by Eric Seidel.

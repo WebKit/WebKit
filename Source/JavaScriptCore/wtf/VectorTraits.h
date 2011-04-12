@@ -61,14 +61,10 @@ namespace WTF {
     template<typename T>
     struct VectorTraits : VectorTraitsBase<IsPod<T>::value, T> { };
 
-    struct SimpleClassVectorTraits
+    struct SimpleClassVectorTraits : VectorTraitsBase<false, void>
     {
-        static const bool needsDestruction = true;
-        static const bool needsInitialization = true;
         static const bool canInitializeWithMemset = true;
         static const bool canMoveWithMemcpy = true;
-        static const bool canCopyWithMemcpy = false;
-        static const bool canFillWithMemset = false;
         static const bool canCompareWithMemcmp = true;
     };
 
