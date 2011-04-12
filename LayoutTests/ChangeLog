@@ -1,3 +1,19 @@
+2011-04-12  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58176
+        
+        Inline replaced elements following positioned elements on lines are not rendered. Make sure the
+        logic for skipping run construction in appendRunsForObject matches the new logic that I added
+        to findNextLineBreak. If they don't match up, you risk confusing the run construction code and
+        causing it to not make runs for objects that follow the positioned object on the line.
+
+        * fast/inline/positioned-object-between-replaced-elements.html: Added.
+        * platform/mac/fast/inline/positioned-object-between-replaced-elements-expected.checksum: Added.
+        * platform/mac/fast/inline/positioned-object-between-replaced-elements-expected.png: Added.
+        * platform/mac/fast/inline/positioned-object-between-replaced-elements-expected.txt: Added.
+
 2011-04-12  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Sam Weinig.
