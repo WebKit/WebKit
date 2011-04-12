@@ -1,3 +1,20 @@
+2011-04-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: InspectorTest.addObject dumps inner array properties as objects.
+        https://bugs.webkit.org/show_bug.cgi?id=58310
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.addObject):
+        (initialize_InspectorTest.InspectorTest.addArray):
+        (initialize_InspectorTest.InspectorTest.dump):
+        * http/tests/inspector/resource-har-conversion-expected.txt:
+        * http/tests/inspector/resource-parameters-expected.txt:
+        * inspector/protocol/console-agent-expected.txt:
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/report-protocol-errors-expected.txt:
+
 2011-04-11  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by James Robinson.

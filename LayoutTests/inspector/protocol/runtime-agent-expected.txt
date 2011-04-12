@@ -135,22 +135,22 @@ request:
 response:
 {
     result : {
-        result : {
-            0 : {
+        result : [
+            {
                 name : "assignedByEvaluateOn"
                 value : {
                     type : "string"
                     description : "evaluateOn function works fine"
                 }
             }
-            1 : {
+            {
                 name : "assignedBySetPropertyValue"
                 value : {
                     type : "boolean"
                     description : "true"
                 }
             }
-            2 : {
+            {
                 name : "__proto__"
                 value : {
                     objectId : <string>
@@ -159,7 +159,7 @@ response:
                     description : "TestObject"
                 }
             }
-        }
+        ]
     }
     id : <number>
 }

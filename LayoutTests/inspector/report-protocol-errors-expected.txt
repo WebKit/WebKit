@@ -4,9 +4,9 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
     error : {
         code : -32700
         message : "Parse error."
-        data : {
-            0 : "Message should be in JSON format."
-        }
+        data : [
+            "Message should be in JSON format."
+        ]
     }
     id : null
 }
@@ -14,9 +14,9 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
     error : {
         code : -32600
         message : "Invalid Request."
-        data : {
-            0 : "Invalid message format. 'id' property was not found in the request."
-        }
+        data : [
+            "Invalid message format. 'id' property was not found in the request."
+        ]
     }
     id : null
 }
@@ -24,9 +24,9 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
     error : {
         code : -32600
         message : "Invalid Request."
-        data : {
-            0 : "Invalid message format. The type of 'id' property should be number."
-        }
+        data : [
+            "Invalid message format. The type of 'id' property should be number."
+        ]
     }
     id : null
 }
@@ -34,9 +34,9 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
     error : {
         code : -32600
         message : "Invalid Request."
-        data : {
-            0 : "Invalid message format. The type of 'method' property should be string."
-        }
+        data : [
+            "Invalid message format. The type of 'method' property should be string."
+        ]
     }
     id : 1
 }
@@ -44,9 +44,9 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
     error : {
         code : -32601
         message : "Method not found."
-        data : {
-            0 : "Invalid method name was received. 'resourceContent' wasn't found."
-        }
+        data : [
+            "Invalid method name was received. 'resourceContent' wasn't found."
+        ]
     }
     id : 2
 }
@@ -54,9 +54,9 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
     error : {
         code : -32601
         message : "Method not found."
-        data : {
-            0 : "Invalid method name was received. 'DOM.test' wasn't found."
-        }
+        data : [
+            "Invalid method name was received. 'DOM.test' wasn't found."
+        ]
     }
     id : 3
 }
@@ -64,9 +64,9 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
     error : {
         code : -32602
         message : "Invalid params."
-        data : {
-            0 : "'params' property with type 'object' was not found."
-        }
+        data : [
+            "'params' property with type 'object' was not found."
+        ]
     }
     id : 4
 }
@@ -74,9 +74,9 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
     error : {
         code : -32602
         message : "Invalid params."
-        data : {
-            0 : "'params' property with type 'object' was not found."
-        }
+        data : [
+            "'params' property with type 'object' was not found."
+        ]
     }
     id : 5
 }
@@ -84,10 +84,10 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
     error : {
         code : -32602
         message : "Invalid params."
-        data : {
-            0 : "Parameter 'frameId' with type 'String' was not found."
-            1 : "Parameter 'url' with type 'String' was not found."
-        }
+        data : [
+            "Parameter 'frameId' with type 'String' was not found."
+            "Parameter 'url' with type 'String' was not found."
+        ]
     }
     id : 6
 }
@@ -95,9 +95,10 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
     error : {
         code : -32602
         message : "Invalid params."
-        data : {
-            0 : "Parameter 'url' with type 'String' was not found."
-        }
+        data : [
+            "Parameter 'url' with type 'String' was not found."
+        ]
     }
     id : 7
 }
+

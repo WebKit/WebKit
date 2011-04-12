@@ -109,20 +109,39 @@ InspectorTest.addObject = function(object, nondeterministicProps, prefix, firstL
     for (var prop in object) {
         if (typeof object.hasOwnProperty === "function" && !object.hasOwnProperty(prop))
             continue;
-        var prefixWithName = prefix + "    " + prop + " : ";
+        var prefixWithName = "    " + prefix + prop + " : ";
         var propValue = object[prop];
         if (nondeterministicProps && prop in nondeterministicProps)
             InspectorTest.addResult(prefixWithName + "<" + typeof propValue + ">");
-        else if (propValue === null)
-            InspectorTest.addResult(prefixWithName + "null");
-        else if (typeof propValue === "object")
-            InspectorTest.addObject(propValue, nondeterministicProps, prefix + "    ", prefixWithName);
-        else if (typeof propValue === "string")
-            InspectorTest.addResult(prefixWithName + "\"" + propValue + "\"");
         else
-            InspectorTest.addResult(prefixWithName + propValue);
+            InspectorTest.dump(propValue, nondeterministicProps, "    " + prefix, prefixWithName);
     }
     InspectorTest.addResult(prefix + "}");
+}
+
+InspectorTest.addArray = function(array, nondeterministicProps, prefix, firstLinePrefix)
+{
+    prefix = prefix || "";
+    firstLinePrefix = firstLinePrefix || prefix;
+    InspectorTest.addResult(firstLinePrefix + "[");
+    for (var i = 0; i < array.length; ++i)
+        InspectorTest.dump(array[i], nondeterministicProps, prefix + "    ");
+    InspectorTest.addResult(prefix + "]");
+}
+
+InspectorTest.dump = function(value, nondeterministicProps, prefix, prefixWithName)
+{
+    prefixWithName = prefixWithName || prefix;
+    if (value === null)
+        InspectorTest.addResult(prefixWithName + "null");
+    else if (value instanceof Array)
+        InspectorTest.addArray(value, nondeterministicProps, prefix, prefixWithName);
+    else if (typeof value === "object")
+        InspectorTest.addObject(value, nondeterministicProps, prefix, prefixWithName);
+    else if (typeof value === "string")
+        InspectorTest.addResult(prefixWithName + "\"" + value + "\"");
+    else
+        InspectorTest.addResult(prefixWithName + value);
 }
 
 InspectorTest.assertGreaterOrEqual = function(expected, actual, message)

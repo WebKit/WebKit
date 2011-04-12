@@ -61,12 +61,12 @@ event ConsoleAgent.messageAdded
             url : ""
             repeatCount : 1
             text : "test"
-            parameters : {
-                0 : {
+            parameters : [
+                {
                     type : "string"
                     description : "test"
                 }
-            }
+            ]
             stackTrace : <object>
         }
     }
