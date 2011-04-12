@@ -104,6 +104,16 @@ static const float minSearchFieldResultsDecorationSize = 9;
 static const float maxSearchFieldResultsDecorationSize = 30;
 static const float defaultSearchFieldResultsButtonWidth = 18;
 
+#if USE(QT_MOBILE_THEME)
+namespace {
+    float buttonPaddingLeft = 18;
+    float buttonPaddingRight = 18;
+    float buttonPaddingTop = 2;
+    float buttonPaddingBottom = 3;
+    float menuListPadding = 9;
+    float textFieldPadding = 5;
+}
+#endif
 
 StylePainter::StylePainter(RenderThemeQt* theme, const PaintInfo& paintInfo)
 {
@@ -620,10 +630,10 @@ void RenderThemeQt::setButtonPadding(RenderStyle* style) const
 {
     if (!style)
         return;
-    style->setPaddingLeft(Length(18, Fixed));
-    style->setPaddingRight(Length(18, Fixed));
-    style->setPaddingTop(Length(2, Fixed));
-    style->setPaddingBottom(Length(3, Fixed));
+    style->setPaddingLeft(Length(buttonPaddingLeft, Fixed));
+    style->setPaddingRight(Length(buttonPaddingRight, Fixed));
+    style->setPaddingTop(Length(buttonPaddingTop, Fixed));
+    style->setPaddingBottom(Length(buttonPaddingBottom, Fixed));
 }
 #endif
 
@@ -661,6 +671,10 @@ void RenderThemeQt::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, 
     style->resetBorder();
     style->resetPadding();
     computeSizeBasedOnStyle(style);
+#if USE(QT_MOBILE_THEME)
+    style->setPaddingLeft(Length(textFieldPadding, Fixed));
+    style->setPaddingRight(Length(textFieldPadding, Fixed));
+#endif
 }
 
 bool RenderThemeQt::paintTextField(RenderObject* o, const PaintInfo& i, const IntRect& r)
@@ -691,7 +705,6 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const PaintInfo& i, const In
 
     // Now paint the text field.
     p.drawPrimitive(QStyle::PE_PanelLineEdit, panel);
-
     return false;
 }
 
@@ -719,6 +732,9 @@ void RenderThemeQt::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, E
 
     // Add in the padding that we'd like to use.
     setPopupPadding(style);
+#if USE(QT_MOBILE_THEME)
+    style->setPaddingLeft(Length(menuListPadding, Fixed));
+#endif
 }
 
 void RenderThemeQt::setPopupPadding(RenderStyle* style) const
