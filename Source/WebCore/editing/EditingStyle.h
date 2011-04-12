@@ -32,6 +32,7 @@
 #define EditingStyle_h
 
 #include "CSSPropertyNames.h"
+#include "PlatformString.h"
 #include "WritingDirection.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -43,6 +44,7 @@ namespace WebCore {
 class CSSStyleDeclaration;
 class CSSComputedStyleDeclaration;
 class CSSMutableStyleDeclaration;
+class CSSPrimitiveValue;
 class Document;
 class HTMLElement;
 class Node;
@@ -143,6 +145,62 @@ private:
     friend class HTMLElementEquivalent;
     friend class HTMLAttributeEquivalent;
 };
+
+class StyleChange {
+public:
+    StyleChange(EditingStyle*, const Position&);
+
+    String cssStyle() const { return m_cssStyle; }
+    bool applyBold() const { return m_applyBold; }
+    bool applyItalic() const { return m_applyItalic; }
+    bool applyUnderline() const { return m_applyUnderline; }
+    bool applyLineThrough() const { return m_applyLineThrough; }
+    bool applySubscript() const { return m_applySubscript; }
+    bool applySuperscript() const { return m_applySuperscript; }
+    bool applyFontColor() const { return m_applyFontColor.length() > 0; }
+    bool applyFontFace() const { return m_applyFontFace.length() > 0; }
+    bool applyFontSize() const { return m_applyFontSize.length() > 0; }
+
+    String fontColor() { return m_applyFontColor; }
+    String fontFace() { return m_applyFontFace; }
+    String fontSize() { return m_applyFontSize; }
+
+    bool operator==(const StyleChange& other)
+    {
+        return m_cssStyle == other.m_cssStyle
+            && m_applyBold == other.m_applyBold
+            && m_applyItalic == other.m_applyItalic
+            && m_applyUnderline == other.m_applyUnderline
+            && m_applyLineThrough == other.m_applyLineThrough
+            && m_applySubscript == other.m_applySubscript
+            && m_applySuperscript == other.m_applySuperscript
+            && m_applyFontColor == other.m_applyFontColor
+            && m_applyFontFace == other.m_applyFontFace
+            && m_applyFontSize == other.m_applyFontSize;
+    }
+    bool operator!=(const StyleChange& other)
+    {
+        return !(*this == other);
+    }
+private:
+    void extractTextStyles(Document*, CSSMutableStyleDeclaration*, bool shouldUseFixedFontDefaultSize);
+
+    String m_cssStyle;
+    bool m_applyBold;
+    bool m_applyItalic;
+    bool m_applyUnderline;
+    bool m_applyLineThrough;
+    bool m_applySubscript;
+    bool m_applySuperscript;
+    String m_applyFontColor;
+    String m_applyFontFace;
+    String m_applyFontSize;
+};
+
+// FIXME: Remove these functions or make them non-global to discourage using CSSStyleDeclaration directly.
+int getIdentifierValue(CSSStyleDeclaration*, int propertyID);
+enum LegacyFontSizeMode { AlwaysUseLegacyFontSize, UseLegacyFontSizeOnlyIfPixelValuesMatch };
+int legacyFontSizeFromCSSValue(Document*, CSSPrimitiveValue*, bool shouldUseFixedFontDefaultSize, LegacyFontSizeMode);
 
 } // namespace WebCore
 

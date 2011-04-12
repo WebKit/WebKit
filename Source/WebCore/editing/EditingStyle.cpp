@@ -30,6 +30,8 @@
 #include "ApplyStyleCommand.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
+#include "CSSParser.h"
+#include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 #include "Frame.h"
@@ -86,6 +88,8 @@ static PassRefPtr<CSSMutableStyleDeclaration> editingStyleFromComputedStyle(Pass
         return CSSMutableStyleDeclaration::create();
     return copyEditingProperties(style.get());
 }
+
+static RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* styleWithRedundantProperties, CSSStyleDeclaration* baseStyle);
 
 class HTMLElementEquivalent {
 public:
@@ -771,6 +775,272 @@ void EditingStyle::mergeStyle(CSSMutableStyleDeclaration* style)
         if (newTextDecorations->hasValue(lineThrough.get()) && !textDecorations->hasValue(lineThrough.get()))
             textDecorations->append(lineThrough.get());
     }
+}
+
+static void reconcileTextDecorationProperties(CSSMutableStyleDeclaration* style)
+{    
+    RefPtr<CSSValue> textDecorationsInEffect = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
+    RefPtr<CSSValue> textDecoration = style->getPropertyCSSValue(CSSPropertyTextDecoration);
+    // We shouldn't have both text-decoration and -webkit-text-decorations-in-effect because that wouldn't make sense.
+    ASSERT(!textDecorationsInEffect || !textDecoration);
+    if (textDecorationsInEffect) {
+        style->setProperty(CSSPropertyTextDecoration, textDecorationsInEffect->cssText());
+        style->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
+        textDecoration = textDecorationsInEffect;
+    }
+
+    // If text-decoration is set to "none", remove the property because we don't want to add redundant "text-decoration: none".
+    if (textDecoration && !textDecoration->isValueList())
+        style->removeProperty(CSSPropertyTextDecoration);
+}
+
+StyleChange::StyleChange(EditingStyle* style, const Position& position)
+    : m_applyBold(false)
+    , m_applyItalic(false)
+    , m_applyUnderline(false)
+    , m_applyLineThrough(false)
+    , m_applySubscript(false)
+    , m_applySuperscript(false)
+{
+    Document* document = position.anchorNode() ? position.anchorNode()->document() : 0;
+    if (!style || !style->style() || !document || !document->frame())
+        return;
+
+    RefPtr<CSSComputedStyleDeclaration> computedStyle = position.computedStyle();
+    RefPtr<CSSMutableStyleDeclaration> mutableStyle = getPropertiesNotIn(style->style(), computedStyle.get());
+
+    reconcileTextDecorationProperties(mutableStyle.get());
+    if (!document->frame()->editor()->shouldStyleWithCSS())
+        extractTextStyles(document, mutableStyle.get(), computedStyle->useFixedFontDefaultSize());
+
+    // Changing the whitespace style in a tab span would collapse the tab into a space.
+    if (isTabSpanTextNode(position.deprecatedNode()) || isTabSpanNode((position.deprecatedNode())))
+        mutableStyle->removeProperty(CSSPropertyWhiteSpace);
+
+    // If unicode-bidi is present in mutableStyle and direction is not, then add direction to mutableStyle.
+    // FIXME: Shouldn't this be done in getPropertiesNotIn?
+    if (mutableStyle->getPropertyCSSValue(CSSPropertyUnicodeBidi) && !style->style()->getPropertyCSSValue(CSSPropertyDirection))
+        mutableStyle->setProperty(CSSPropertyDirection, style->style()->getPropertyValue(CSSPropertyDirection));
+
+    // Save the result for later
+    m_cssStyle = mutableStyle->cssText().stripWhiteSpace();
+}
+
+static void setTextDecorationProperty(CSSMutableStyleDeclaration* style, const CSSValueList* newTextDecoration, int propertyID)
+{
+    if (newTextDecoration->length())
+        style->setProperty(propertyID, newTextDecoration->cssText(), style->getPropertyPriority(propertyID));
+    else {
+        // text-decoration: none is redundant since it does not remove any text decorations.
+        ASSERT(!style->getPropertyPriority(propertyID));
+        style->removeProperty(propertyID);
+    }
+}
+
+static RGBA32 getRGBAFontColor(CSSStyleDeclaration* style)
+{
+    RefPtr<CSSValue> colorValue = style->getPropertyCSSValue(CSSPropertyColor);
+    if (!colorValue || !colorValue->isPrimitiveValue())
+        return Color::transparent;
+
+    CSSPrimitiveValue* primitiveColor = static_cast<CSSPrimitiveValue*>(colorValue.get());
+    if (primitiveColor->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
+        return primitiveColor->getRGBA32Value();
+
+    // Need to take care of named color such as green and black
+    // This code should be removed after https://bugs.webkit.org/show_bug.cgi?id=28282 is fixed.
+    RGBA32 rgba = 0;
+    CSSParser::parseColor(rgba, colorValue->cssText());
+    return rgba;
+}
+
+void StyleChange::extractTextStyles(Document* document, CSSMutableStyleDeclaration* style, bool shouldUseFixedFontDefaultSize)
+{
+    ASSERT(style);
+
+    if (getIdentifierValue(style, CSSPropertyFontWeight) == CSSValueBold) {
+        style->removeProperty(CSSPropertyFontWeight);
+        m_applyBold = true;
+    }
+
+    int fontStyle = getIdentifierValue(style, CSSPropertyFontStyle);
+    if (fontStyle == CSSValueItalic || fontStyle == CSSValueOblique) {
+        style->removeProperty(CSSPropertyFontStyle);
+        m_applyItalic = true;
+    }
+
+    // Assuming reconcileTextDecorationProperties has been called, there should not be -webkit-text-decorations-in-effect
+    // Furthermore, text-decoration: none has been trimmed so that text-decoration property is always a CSSValueList.
+    RefPtr<CSSValue> textDecoration = style->getPropertyCSSValue(CSSPropertyTextDecoration);
+    if (textDecoration && textDecoration->isValueList()) {
+        DEFINE_STATIC_LOCAL(RefPtr<CSSPrimitiveValue>, underline, (CSSPrimitiveValue::createIdentifier(CSSValueUnderline)));
+        DEFINE_STATIC_LOCAL(RefPtr<CSSPrimitiveValue>, lineThrough, (CSSPrimitiveValue::createIdentifier(CSSValueLineThrough)));
+
+        RefPtr<CSSValueList> newTextDecoration = static_cast<CSSValueList*>(textDecoration.get())->copy();
+        if (newTextDecoration->removeAll(underline.get()))
+            m_applyUnderline = true;
+        if (newTextDecoration->removeAll(lineThrough.get()))
+            m_applyLineThrough = true;
+
+        // If trimTextDecorations, delete underline and line-through
+        setTextDecorationProperty(style, newTextDecoration.get(), CSSPropertyTextDecoration);
+    }
+
+    int verticalAlign = getIdentifierValue(style, CSSPropertyVerticalAlign);
+    switch (verticalAlign) {
+    case CSSValueSub:
+        style->removeProperty(CSSPropertyVerticalAlign);
+        m_applySubscript = true;
+        break;
+    case CSSValueSuper:
+        style->removeProperty(CSSPropertyVerticalAlign);
+        m_applySuperscript = true;
+        break;
+    }
+
+    if (style->getPropertyCSSValue(CSSPropertyColor)) {
+        m_applyFontColor = Color(getRGBAFontColor(style)).serialized();
+        style->removeProperty(CSSPropertyColor);
+    }
+
+    m_applyFontFace = style->getPropertyValue(CSSPropertyFontFamily);
+    style->removeProperty(CSSPropertyFontFamily);
+
+    if (RefPtr<CSSValue> fontSize = style->getPropertyCSSValue(CSSPropertyFontSize)) {
+        if (!fontSize->isPrimitiveValue())
+            style->removeProperty(CSSPropertyFontSize); // Can't make sense of the number. Put no font size.
+        else if (int legacyFontSize = legacyFontSizeFromCSSValue(document, static_cast<CSSPrimitiveValue*>(fontSize.get()),
+                shouldUseFixedFontDefaultSize, UseLegacyFontSizeOnlyIfPixelValuesMatch)) {
+            m_applyFontSize = String::number(legacyFontSize);
+            style->removeProperty(CSSPropertyFontSize);
+        }
+    }
+}
+
+static void diffTextDecorations(CSSMutableStyleDeclaration* style, int propertID, CSSValue* refTextDecoration)
+{
+    RefPtr<CSSValue> textDecoration = style->getPropertyCSSValue(propertID);
+    if (!textDecoration || !textDecoration->isValueList() || !refTextDecoration || !refTextDecoration->isValueList())
+        return;
+
+    RefPtr<CSSValueList> newTextDecoration = static_cast<CSSValueList*>(textDecoration.get())->copy();
+    CSSValueList* valuesInRefTextDecoration = static_cast<CSSValueList*>(refTextDecoration);
+
+    for (size_t i = 0; i < valuesInRefTextDecoration->length(); i++)
+        newTextDecoration->removeAll(valuesInRefTextDecoration->item(i));
+
+    setTextDecorationProperty(style, newTextDecoration.get(), propertID);
+}
+
+static bool fontWeightIsBold(CSSStyleDeclaration* style)
+{
+    ASSERT(style);
+    RefPtr<CSSValue> fontWeight = style->getPropertyCSSValue(CSSPropertyFontWeight);
+
+    if (!fontWeight)
+        return false;
+    if (!fontWeight->isPrimitiveValue())
+        return false;
+
+    // Because b tag can only bold text, there are only two states in plain html: bold and not bold.
+    // Collapse all other values to either one of these two states for editing purposes.
+    switch (static_cast<CSSPrimitiveValue*>(fontWeight.get())->getIdent()) {
+        case CSSValue100:
+        case CSSValue200:
+        case CSSValue300:
+        case CSSValue400:
+        case CSSValue500:
+        case CSSValueNormal:
+            return false;
+        case CSSValueBold:
+        case CSSValue600:
+        case CSSValue700:
+        case CSSValue800:
+        case CSSValue900:
+            return true;
+    }
+
+    ASSERT_NOT_REACHED(); // For CSSValueBolder and CSSValueLighter
+    return false; // Make compiler happy
+}
+
+static int getTextAlignment(CSSStyleDeclaration* style)
+{
+    int textAlign = getIdentifierValue(style, CSSPropertyTextAlign);
+    switch (textAlign) {
+    case CSSValueCenter:
+    case CSSValueWebkitCenter:
+        return CSSValueCenter;
+    case CSSValueJustify:
+        return CSSValueJustify;
+    case CSSValueLeft:
+    case CSSValueWebkitLeft:
+        return CSSValueLeft;
+    case CSSValueRight:
+    case CSSValueWebkitRight:
+        return CSSValueRight;
+    }
+    return CSSValueInvalid;
+}
+
+RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* styleWithRedundantProperties, CSSStyleDeclaration* baseStyle)
+{
+    ASSERT(styleWithRedundantProperties);
+    ASSERT(baseStyle);
+    RefPtr<CSSMutableStyleDeclaration> result = styleWithRedundantProperties->copy();
+    baseStyle->diff(result.get());
+
+    RefPtr<CSSValue> baseTextDecorationsInEffect = baseStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
+    diffTextDecorations(result.get(), CSSPropertyTextDecoration, baseTextDecorationsInEffect.get());
+    diffTextDecorations(result.get(), CSSPropertyWebkitTextDecorationsInEffect, baseTextDecorationsInEffect.get());
+
+    if (fontWeightIsBold(result.get()) == fontWeightIsBold(baseStyle))
+        result->removeProperty(CSSPropertyFontWeight);
+
+    if (getRGBAFontColor(result.get()) == getRGBAFontColor(baseStyle))
+        result->removeProperty(CSSPropertyColor);
+
+    if (getTextAlignment(result.get()) == getTextAlignment(baseStyle))
+        result->removeProperty(CSSPropertyTextAlign);        
+
+    return result;
+}
+
+
+int getIdentifierValue(CSSStyleDeclaration* style, int propertyID)
+{
+    if (!style)
+        return 0;
+
+    RefPtr<CSSValue> value = style->getPropertyCSSValue(propertyID);
+    if (!value || !value->isPrimitiveValue())
+        return 0;
+
+    return static_cast<CSSPrimitiveValue*>(value.get())->getIdent();
+}
+
+static bool isCSSValueLength(CSSPrimitiveValue* value)
+{
+    return value->primitiveType() >= CSSPrimitiveValue::CSS_PX && value->primitiveType() <= CSSPrimitiveValue::CSS_PC;
+}
+
+int legacyFontSizeFromCSSValue(Document* document, CSSPrimitiveValue* value, bool shouldUseFixedFontDefaultSize, LegacyFontSizeMode mode)
+{
+    if (isCSSValueLength(value)) {
+        int pixelFontSize = value->getIntValue(CSSPrimitiveValue::CSS_PX);
+        int legacyFontSize = CSSStyleSelector::legacyFontSize(document, pixelFontSize, shouldUseFixedFontDefaultSize);
+        // Use legacy font size only if pixel value matches exactly to that of legacy font size.
+        int cssPrimitiveEquivalent = legacyFontSize - 1 + CSSValueXSmall;
+        if (mode == AlwaysUseLegacyFontSize || CSSStyleSelector::fontSizeForKeyword(document, cssPrimitiveEquivalent, shouldUseFixedFontDefaultSize) == pixelFontSize)
+            return legacyFontSize;
+
+        return 0;
+    }
+
+    if (CSSValueXSmall <= value->getIdent() && value->getIdent() <= CSSValueWebkitXxxLarge)
+        return value->getIdent() - CSSValueXSmall + 1;
+
+    return 0;
 }
 
 }

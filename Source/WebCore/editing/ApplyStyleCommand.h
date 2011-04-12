@@ -34,7 +34,6 @@ namespace WebCore {
 
 class CSSPrimitiveValue;
 class EditingStyle;
-class HTMLElement;
 class StyleChange;
 
 enum ShouldIncludeTypingStyle {
@@ -130,11 +129,8 @@ private:
     IsInlineElementToRemoveFunction m_isInlineElementToRemoveFunction;
 };
 
-enum LegacyFontSizeMode { AlwaysUseLegacyFontSize, UseLegacyFontSizeOnlyIfPixelValuesMatch };
-int legacyFontSizeFromCSSValue(Document*, CSSPrimitiveValue*, bool shouldUseFixedFontDefaultSize, LegacyFontSizeMode);
 bool isStyleSpan(const Node*);
 PassRefPtr<HTMLElement> createStyleSpanElement(Document*);
-RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* styleWithRedundantProperties, CSSStyleDeclaration* baseStyle);
 
 } // namespace WebCore
 

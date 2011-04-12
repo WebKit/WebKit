@@ -1,3 +1,49 @@
+2011-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Move StyleChange and other global functions from ApplyStyleCommand to EditingStyle
+        https://bugs.webkit.org/show_bug.cgi?id=55974
+
+        Moved StyleChange, getIdentifierValue, and legacyFontSizeFromCSSValue from ApplyStyleCommand
+        to EditingStyle. Also moved reconcileTextDecorationProperties, getIdentifierValue,
+        setTextDecorationProperty, isCSSValueLength, legacyFontSizeFromCSSValue, extractTextStyles,
+        diffTextDecorations, fontWeightIsBold, getTextAlignment, and getPropertiesNotIn.
+
+        Because of this move, getPropertiesNotIn is no longer visible outside of EditingStyle.cpp
+
+        * editing/ApplyStyleCommand.cpp:
+        * editing/ApplyStyleCommand.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::reconcileTextDecorationProperties):
+        (WebCore::StyleChange::StyleChange):
+        (WebCore::setTextDecorationProperty):
+        (WebCore::getRGBAFontColor):
+        (WebCore::StyleChange::extractTextStyles):
+        (WebCore::diffTextDecorations):
+        (WebCore::fontWeightIsBold):
+        (WebCore::getTextAlignment):
+        (WebCore::getPropertiesNotIn):
+        (WebCore::getIdentifierValue):
+        (WebCore::isCSSValueLength):
+        (WebCore::legacyFontSizeFromCSSValue):
+        * editing/EditingStyle.h:
+        (WebCore::StyleChange::cssStyle):
+        (WebCore::StyleChange::applyBold):
+        (WebCore::StyleChange::applyItalic):
+        (WebCore::StyleChange::applyUnderline):
+        (WebCore::StyleChange::applyLineThrough):
+        (WebCore::StyleChange::applySubscript):
+        (WebCore::StyleChange::applySuperscript):
+        (WebCore::StyleChange::applyFontColor):
+        (WebCore::StyleChange::applyFontFace):
+        (WebCore::StyleChange::applyFontSize):
+        (WebCore::StyleChange::fontColor):
+        (WebCore::StyleChange::fontFace):
+        (WebCore::StyleChange::fontSize):
+        (WebCore::StyleChange::operator==):
+        (WebCore::StyleChange::operator!=):
+
 2011-04-12  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
