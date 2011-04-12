@@ -65,12 +65,20 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, u
 #if PLATFORM(MAC)
     , m_isComplexTextInputEnabled(false)
 #endif
+    , m_windowNPObject(0)
+    , m_pluginElementNPObject(0)
 {
 }
 
 PluginControllerProxy::~PluginControllerProxy()
 {
     ASSERT(!m_plugin);
+
+    if (m_windowNPObject)
+        releaseNPObject(m_windowNPObject);
+
+    if (m_pluginElementNPObject)
+        releaseNPObject(m_pluginElementNPObject);
 }
 
 bool PluginControllerProxy::initialize(const Plugin::Parameters& parameters)
@@ -210,28 +218,40 @@ void PluginControllerProxy::cancelManualStreamLoad()
 
 NPObject* PluginControllerProxy::windowScriptNPObject()
 {
-    uint64_t windowScriptNPObjectID = 0;
+    if (!m_windowNPObject) {
+        uint64_t windowScriptNPObjectID = 0;
 
-    if (!m_connection->connection()->sendSync(Messages::PluginProxy::GetWindowScriptNPObject(), Messages::PluginProxy::GetWindowScriptNPObject::Reply(windowScriptNPObjectID), m_pluginInstanceID))
-        return 0;
+        if (!m_connection->connection()->sendSync(Messages::PluginProxy::GetWindowScriptNPObject(), Messages::PluginProxy::GetWindowScriptNPObject::Reply(windowScriptNPObjectID), m_pluginInstanceID))
+            return 0;
 
-    if (!windowScriptNPObjectID)
-        return 0;
+        if (!windowScriptNPObjectID)
+            return 0;
 
-    return m_connection->npRemoteObjectMap()->createNPObjectProxy(windowScriptNPObjectID, m_plugin.get());
+        m_windowNPObject = m_connection->npRemoteObjectMap()->createNPObjectProxy(windowScriptNPObjectID, m_plugin.get());
+        ASSERT(m_windowNPObject);
+    }
+
+    retainNPObject(m_windowNPObject);
+    return m_windowNPObject;
 }
 
 NPObject* PluginControllerProxy::pluginElementNPObject()
 {
-    uint64_t pluginElementNPObjectID = 0;
+    if (!m_pluginElementNPObject) {
+        uint64_t pluginElementNPObjectID = 0;
 
-    if (!m_connection->connection()->sendSync(Messages::PluginProxy::GetPluginElementNPObject(), Messages::PluginProxy::GetPluginElementNPObject::Reply(pluginElementNPObjectID), m_pluginInstanceID))
-        return 0;
+        if (!m_connection->connection()->sendSync(Messages::PluginProxy::GetPluginElementNPObject(), Messages::PluginProxy::GetPluginElementNPObject::Reply(pluginElementNPObjectID), m_pluginInstanceID))
+            return 0;
 
-    if (!pluginElementNPObjectID)
-        return 0;
+        if (!pluginElementNPObjectID)
+            return 0;
 
-    return m_connection->npRemoteObjectMap()->createNPObjectProxy(pluginElementNPObjectID, m_plugin.get());
+        m_pluginElementNPObject = m_connection->npRemoteObjectMap()->createNPObjectProxy(pluginElementNPObjectID, m_plugin.get());
+        ASSERT(m_pluginElementNPObject);
+    }
+
+    retainNPObject(m_pluginElementNPObject);
+    return m_pluginElementNPObject;
 }
 
 bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result, bool allowPopups)

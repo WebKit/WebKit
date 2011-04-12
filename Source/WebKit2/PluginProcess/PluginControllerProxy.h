@@ -182,6 +182,12 @@ private:
     
     // The backing store that this plug-in draws into.
     RefPtr<ShareableBitmap> m_backingStore;
+
+    // The window NPObject.
+    NPObject* m_windowNPObject;
+
+    // The plug-in element NPObject.
+    NPObject* m_pluginElementNPObject;
 };
 
 } // namespace WebKit

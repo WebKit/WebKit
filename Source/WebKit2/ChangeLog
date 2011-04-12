@@ -1,3 +1,17 @@
+2011-04-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Cache the window and plug-in element NPObjects
+        https://bugs.webkit.org/show_bug.cgi?id=58355
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        (WebKit::PluginControllerProxy::~PluginControllerProxy):
+        (WebKit::PluginControllerProxy::windowScriptNPObject):
+        (WebKit::PluginControllerProxy::pluginElementNPObject):
+        * PluginProcess/PluginControllerProxy.h:
+
 2011-04-12  Alejandro G. Castro  <alex@igalia.com>
 
         Fixed GTK compilation after r83454.
