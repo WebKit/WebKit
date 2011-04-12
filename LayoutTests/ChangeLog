@@ -1,3 +1,27 @@
+2011-04-12  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; new chromium layout test baselines.
+
+        New baselines after r83541.  Note that these look worse, but that's
+        because we went from greyscale antialiasing to ClearType antialiasing,
+        but the layout tests turn off ClearType, so they don't get any AA
+        at all.  It looks fine in Chrome.
+
+        * platform/chromium-win/fast/multicol/shadow-breaking-expected.checksum: Removed.
+        * platform/chromium-win/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium-win/fast/text/shadow-translucent-fill-expected.checksum: Removed.
+        * platform/chromium-win/fast/text/shadow-translucent-fill-expected.png:
+        * platform/chromium-win/fast/transforms/shadows-expected.png:
+        * platform/chromium-win/svg/css/composite-shadow-text-expected.checksum: Removed.
+        * platform/chromium-win/svg/css/composite-shadow-text-expected.png:
+        * platform/chromium-win/svg/css/shadow-changes-expected.checksum: Removed.
+        * platform/chromium-win/svg/css/shadow-changes-expected.png:
+        * platform/chromium-win/svg/css/text-shadow-multiple-expected.checksum: Removed.
+        * platform/chromium-win/svg/css/text-shadow-multiple-expected.png:
+        * platform/chromium-win/transitions/svg-text-shadow-transition-expected.checksum: Removed.
+        * platform/chromium-win/transitions/svg-text-shadow-transition-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-12  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Nikolas Zimmermann.
