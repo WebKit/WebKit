@@ -1,3 +1,13 @@
+2011-04-12  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed.
+
+        Update results after r83638.
+
+        * platform/qt/css1/box_properties/padding_right_inline-expected.checksum:
+        * platform/qt/css1/box_properties/padding_right_inline-expected.png:
+        * platform/qt/css1/box_properties/padding_right_inline-expected.txt:
+
 2011-04-12  Jian Li  <jianli@chromium.org>
 
         Unreviewed, update chromium test expectations.

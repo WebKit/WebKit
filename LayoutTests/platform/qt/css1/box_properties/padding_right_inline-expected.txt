@@ -68,7 +68,7 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 578x21
                   text run at (0,0) width 415: "This element is unstyled save for a background color of gray. "
                   text run at (415,0) width 163: "However, it contains an "
-                RenderInline {SPAN} at (0,0) size 748x42 [bgcolor=#00FFFF]
+                RenderInline {SPAN} at (0,0) size 723x42 [bgcolor=#00FFFF]
                   RenderText {#text} at (578,0) size 145x21
                     text run at (578,0) width 145: "inline element of class"
                   RenderInline {TT} at (0,0) size 21x16
