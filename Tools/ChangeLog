@@ -1,3 +1,17 @@
+2011-04-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        webkitpy: fix mock_filesystem abspath to handle relative paths
+        and add filesystem.chdir() and filesystem.getcwd() to be able
+        to test this and mock it out.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58288
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/common/system/filesystem_unittest.py:
+
 2011-04-12  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Sam Weinig.

@@ -61,6 +61,10 @@ class FileSystem(object):
         """Wraps os.path.basename()."""
         return os.path.basename(path)
 
+    def chdir(self, path):
+        """Wraps os.chdir()."""
+        return os.chdir(path)
+
     def copyfile(self, source, destination):
         """Copies the contents of the file at the given path to the destination
         path."""
@@ -107,6 +111,10 @@ class FileSystem(object):
                 if file_filter(self, dirpath, filename):
                     files.append(self.join(dirpath, filename))
         return files
+
+    def getcwd(self):
+        """Wraps os.getcwd()."""
+        return os.getcwd()
 
     def glob(self, path):
         """Wraps glob.glob()."""

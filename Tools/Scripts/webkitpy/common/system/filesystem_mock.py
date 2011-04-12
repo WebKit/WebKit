@@ -35,7 +35,7 @@ from webkitpy.common.system import ospath
 
 
 class MockFileSystem(object):
-    def __init__(self, files=None):
+    def __init__(self, files=None, cwd='/'):
         """Initializes a "mock" filesystem that can be used to completely
         stub out a filesystem.
 
@@ -48,6 +48,8 @@ class MockFileSystem(object):
         self.written_files = {}
         self._sep = '/'
         self.current_tmpno = 0
+        self.cwd = cwd
+        self.dirs = {}
 
     def _get_sep(self):
         return self._sep
@@ -61,12 +63,18 @@ class MockFileSystem(object):
         return path.rsplit(self.sep, 1)
 
     def abspath(self, path):
-        if path.endswith(self.sep):
-            return path[:-1]
-        return path
+        if path.startswith(self.sep):
+            return self.normpath(path)
+        return self.abspath(self.join(self.cwd, path))
 
     def basename(self, path):
         return self._split(path)[1]
+
+    def chdir(self, path):
+        path = self.normpath(path)
+        if not self.isdir(path):
+            raise OSError(errno.ENOENT, path, os.strerror(errno.ENOENT))
+        self.cwd = path
 
     def copyfile(self, source, destination):
         if not self.exists(source):
@@ -117,6 +125,9 @@ class MockFileSystem(object):
 
         return files
 
+    def getcwd(self, path):
+        return self.cwd
+
     def glob(self, path):
         # FIXME: This only handles a wildcard '*' at the end of the path.
         # Maybe it should handle more?
@@ -134,14 +145,18 @@ class MockFileSystem(object):
     def isdir(self, path):
         if path in self.files:
             return False
-        if not path.endswith(self.sep):
-            path += self.sep
+        path = self.normpath(path)
+        if path in self.dirs:
+            return True
 
         # We need to use a copy of the keys here in order to avoid switching
         # to a different thread and potentially modifying the dict in
         # mid-iteration.
         files = self.files.keys()[:]
-        return any(f.startswith(path) for f in files)
+        result = any(f.startswith(path) for f in files)
+        if result:
+            self.dirs[path] = True
+        return result
 
     def join(self, *comps):
         # FIXME: might want tests for this and/or a better comment about how
@@ -204,8 +219,9 @@ class MockFileSystem(object):
         return TemporaryDirectory(fs=self, **kwargs)
 
     def maybe_make_directory(self, *path):
-        # FIXME: Implement such that subsequent calls to isdir() work?
-        pass
+        norm_path = self.normpath(self.join(*path))
+        if not self.isdir(norm_path):
+            self.dirs[norm_path] = True
 
     def move(self, source, destination):
         if self.files[source] is None:

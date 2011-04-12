@@ -48,6 +48,23 @@ class FileSystemTest(unittest.TestCase):
         self._missing_file = os.path.join(self._this_dir, 'missing_file.py')
         self._this_file = os.path.join(self._this_dir, 'filesystem_unittest.py')
 
+    def test_chdir(self):
+        fs = FileSystem()
+        cwd = fs.getcwd()
+        newdir = '/'
+        if sys.platform == 'win32':
+            newdir = 'c:\\'
+        fs.chdir(newdir)
+        self.assertEquals(fs.getcwd(), newdir)
+        fs.chdir(cwd)
+
+    def test_chdir__notexists(self):
+        fs = FileSystem()
+        newdir = '/dirdoesnotexist'
+        if sys.platform == 'win32':
+            newdir = 'c:\\dirdoesnotexist'
+        self.assertRaises(OSError, fs.chdir, newdir)
+
     def test_exists__true(self):
         fs = FileSystem()
         self.assertTrue(fs.exists(self._this_file))
@@ -55,6 +72,10 @@ class FileSystemTest(unittest.TestCase):
     def test_exists__false(self):
         fs = FileSystem()
         self.assertFalse(fs.exists(self._missing_file))
+
+    def test_getcwd(self):
+        fs = FileSystem()
+        self.assertTrue(fs.exists(fs.getcwd()))
 
     def test_isdir__true(self):
         fs = FileSystem()
