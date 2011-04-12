@@ -1,3 +1,23 @@
+2011-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Bundle w and tmpW in findNextLineBreak together as a class
+        https://bugs.webkit.org/show_bug.cgi?id=58362
+
+        Renamed w, tempW, and width in findNextLineBreak to committedWidth, uncommittedWidth,
+        and availableWidth respectively. Also bundled committedWidth and uncommittedWith as a class
+        named LineWidth.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::LineWidth): Added.
+        (WebCore::LineWidth::currentWidth): Added; returns the sum of committed and uncommitted width.
+        (WebCore::LineWidth::uncommittedWidth): Added.
+        (WebCore::LineWidth::committedWidth): Added.
+        (WebCore::LineWidth::addUncommittedWidth): Added; adds the specified width to the uncommitted width.
+        (WebCore::LineWidth::commit): Added; commits the current width and clears the uncommitted width.
+        (WebCore::RenderBlock::findNextLineBreak): Uses LineWidth.
+
 2011-04-12  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Eric Seidel.
