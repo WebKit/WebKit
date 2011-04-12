@@ -2,6 +2,15 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: document runtime agent, share remote object definition between domains.
+        https://bugs.webkit.org/show_bug.cgi?id=58246
+
+        * inspector/Inspector.json:
+
+2011-04-12  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: document console domain, support cross-domain type references.
         https://bugs.webkit.org/show_bug.cgi?id=58240
 
