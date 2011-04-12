@@ -704,13 +704,19 @@ void MediaPlayerPrivateGStreamer::setRate(float rate)
 
     m_playbackRate = rate;
     m_changingRate = true;
+
+    if (!rate) {
+        gst_element_set_state(m_playBin, GST_STATE_PAUSED);
+        return;
+    }
+
     float currentPosition = static_cast<float>(playbackPosition(m_playBin) * GST_SECOND);
     GstSeekFlags flags = (GstSeekFlags)(GST_SEEK_FLAG_FLUSH);
     gint64 start, end;
     bool mute = false;
 
     LOG_VERBOSE(Media, "Set Rate to %f", rate);
-    if (rate >= 0) {
+    if (rate > 0) {
         // Mute the sound if the playback rate is too extreme.
         // TODO: in other cases we should perform pitch adjustments.
         mute = (bool) (rate < 0.8 || rate > 2);
