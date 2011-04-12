@@ -1,3 +1,9 @@
+2011-04-11  Brady Eidson  <beidson@apple.com>
+
+        Fix the build.
+
+        * html/HTMLTrackElement.cpp: Case-sensitive, please.
+
 2011-04-11  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed build fix for Mac.
