@@ -1,3 +1,16 @@
+2011-04-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Assertion in DrawingAreaImpl::resumePainting() (m_isPaintingSuspended) when clicking a link at twitter.com
+        https://bugs.webkit.org/show_bug.cgi?id=58377
+        <rdar://problem/8976531>
+
+        Remove the assertion.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::resumePainting):
+
 2011-04-11  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Oliver Hunt.

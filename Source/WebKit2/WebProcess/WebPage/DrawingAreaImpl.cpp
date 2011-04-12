@@ -362,8 +362,12 @@ void DrawingAreaImpl::suspendPainting()
 
 void DrawingAreaImpl::resumePainting()
 {
-    ASSERT(m_isPaintingSuspended);
-
+    if (!m_isPaintingSuspended) {
+        // FIXME: We can get a call to resumePainting when painting is not suspended.
+        // This happens when sending a synchronous message to create a new page. See <rdar://problem/8976531>.
+        return;
+    }
+        
     m_isPaintingSuspended = false;
 
     // FIXME: We shouldn't always repaint everything here.
