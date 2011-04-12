@@ -111,6 +111,9 @@ struct WebContextMenuData {
     // The editable (possibily) misspelled word.
     WebString misspelledWord;
 
+    // If misspelledWord is not empty, holds suggestions from the dictionary.
+    WebVector<WebString> dictionarySuggestions;
+
     // Whether context is editable.
     bool isEditable;
 

@@ -32,11 +32,14 @@
 #define WebSpellCheckClient_h
 
 #include "WebString.h"
+#include "WebVector.h"
 
 namespace WebKit {
 
 class WebString;
 class WebTextCheckingCompletion;
+
+#define WEBSPELLCHECKCLIENT_HAS_SUGGESTIONS
 
 class WebSpellCheckClient {
 public:
@@ -44,9 +47,12 @@ public:
     // text contains a misspelled word, then upon return misspelledOffset
     // will point to the start of the misspelled word, and misspelledLength
     // will indicates its length. Otherwise, if there was not a spelling
-    // error, then upon return misspelledLength is 0.
-    virtual void spellCheck(
-        const WebString& text, int& misspelledOffset, int& misspelledLength) { }
+    // error, then upon return misspelledLength is 0. If optional_suggestions
+    // is given, then it will be filled with suggested words (not a cheap step).
+    virtual void spellCheck(const WebString& text,
+                            int& misspelledOffset,
+                            int& misspelledLength,
+                            WebVector<WebString>* optionalSuggestions) { }
     // Requests asynchronous spelling and grammar checking, whose result should be
     // returned by passed completion object.
     virtual void requestCheckingOfText(const WebString&, WebTextCheckingCompletion*) { }
