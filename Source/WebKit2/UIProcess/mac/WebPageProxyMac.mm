@@ -294,4 +294,20 @@ void WebPageProxy::executeSavedCommandBySelector(const String& selector, bool& h
     handled = m_pageClient->executeSavedCommandBySelector(selector);
 }
 
+bool WebPageProxy::shouldDelayWindowOrderingForEvent(const WebKit::WebMouseEvent& event)
+{
+    bool result = false;
+    const double messageTimeout = 3;
+    process()->sendSync(Messages::WebPage::ShouldDelayWindowOrderingEvent(event), Messages::WebPage::ShouldDelayWindowOrderingEvent::Reply(result), m_pageID, messageTimeout);
+    return result;
+}
+
+bool WebPageProxy::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& event)
+{
+    bool result = false;
+    const double messageTimeout = 3;
+    process()->sendSync(Messages::WebPage::AcceptsFirstMouse(eventNumber, event), Messages::WebPage::AcceptsFirstMouse::Reply(result), m_pageID, messageTimeout);
+    return result;
+}
+
 } // namespace WebKit

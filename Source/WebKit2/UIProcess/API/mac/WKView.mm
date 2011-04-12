@@ -978,6 +978,43 @@ EVENT_HANDLER(scrollWheel, Wheel)
     [self _mouseHandler:event];
 }
 
+- (BOOL)acceptsFirstMouse:(NSEvent *)event
+{
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+    
+    if (![self hitTest:[event locationInWindow]])
+        return NO;
+    
+    [self _setMouseDownEvent:event];
+    bool result = _data->_page->acceptsFirstMouse([event eventNumber], WebEventFactory::createWebMouseEvent(event, self));
+    [self _setMouseDownEvent:nil];
+    return result;
+}
+
+- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)event
+{
+    // If this is the active window or we don't have a range selection, there is no need to perform additional checks
+    // and we can avoid making a synchronous call to the WebProcess.
+    if ([[self window] isKeyWindow] || _data->_page->selectionState().isNone || !_data->_page->selectionState().selectedRangeLength)
+        return NO;
+
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+    
+    if (![self hitTest:[event locationInWindow]])
+        return NO;
+    
+    [self _setMouseDownEvent:event];
+    bool result = _data->_page->shouldDelayWindowOrderingForEvent(WebEventFactory::createWebMouseEvent(event, self));
+    [self _setMouseDownEvent:nil];
+    return result;
+}
+
 #if ENABLE(GESTURE_EVENTS)
 
 static const short kIOHIDEventTypeScroll = 6;

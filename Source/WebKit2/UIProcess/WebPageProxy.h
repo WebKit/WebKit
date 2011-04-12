@@ -267,6 +267,8 @@ public:
 
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
     CGContextRef containingWindowGraphicsContext();
+    bool shouldDelayWindowOrderingForEvent(const WebMouseEvent&);
+    bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
 #endif
 #if PLATFORM(WIN)
     void didChangeCompositionSelection(bool);

@@ -1,3 +1,30 @@
+2011-04-12  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Alexey Proskuryakov and Sam Weinig.
+
+        Implement non-activating clicks to allow dragging out of a background window.
+        https://bugs.webkit.org/show_bug.cgi?id=55053
+        <rdar://problem/9042197>
+
+        Added methods to WKView to support non activating click. Unfortunately both
+        methods require a synchronous call to the WebProcess to decide what to do.
+        acceptFirstMouse is called only if shouldDelayWindowOrderingForEvent returns
+        true. In order to minimize the number of synchronous calls, we send the request
+        only if our window is not the key window.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView acceptsFirstMouse:]):
+        (-[WKView shouldDelayWindowOrderingForEvent:]):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::shouldDelayWindowOrderingForEvent):
+        (WebKit::WebPageProxy::acceptsFirstMouse):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::shouldDelayWindowOrderingEvent):
+        (WebKit::WebPage::acceptsFirstMouse):
+
 2011-04-12  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -33,6 +33,7 @@
 #import "TextInputState.h"
 #import "WebCoreArgumentCoders.h"
 #import "WebEvent.h"
+#import "WebEventConversion.h"
 #import "WebFrame.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcess.h"
@@ -667,6 +668,33 @@ void WebPage::platformDragEnded()
     // the arguments. It's OK to just pass arbitrary constant values, so we just pass all zeroes.
     [m_dragSource.get() draggedImage:nil endedAt:NSZeroPoint operation:NSDragOperationNone];
     m_dragSource = nullptr;
+}
+
+void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent& event, bool& result)
+{
+    result = false;
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+
+    HitTestResult hitResult = frame->eventHandler()->hitTestResultAtPoint(event.position(), true);
+    if (hitResult.isSelected())
+        result = frame->eventHandler()->eventMayStartDrag(platform(event));
+}
+
+void WebPage::acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent& event, bool& result)
+{
+    result = false;
+    Frame* frame = m_page->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return;
+    
+    HitTestResult hitResult = frame->eventHandler()->hitTestResultAtPoint(event.position(), true);
+    frame->eventHandler()->setActivationEventNumber(eventNumber);
+    if (hitResult.isSelected())
+        result = frame->eventHandler()->eventMayStartDrag(platform(event));
+    else 
+        result = !!hitResult.scrollbar();
 }
 
 } // namespace WebKit

@@ -1,3 +1,13 @@
+2011-04-12  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Implement non-activating clicks to allow dragging out of a background window.
+        https://bugs.webkit.org/show_bug.cgi?id=55053
+        <rdar://problem/9042197>
+
+        * WebCore.exp.in: Added new exported method.
+
 2011-04-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Geoffrey Garen.

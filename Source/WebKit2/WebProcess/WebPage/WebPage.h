@@ -323,6 +323,8 @@ public:
     void executeKeypressCommands(const Vector<WebCore::KeypressCommand>&, bool& handled, TextInputState& newState);
     void writeSelectionToPasteboard(const WTF::String& pasteboardName, const WTF::Vector<WTF::String>& pasteboardTypes, bool& result);
     void readSelectionFromPasteboard(const WTF::String& pasteboardName, bool& result);
+    void shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, bool& result);
+    void acceptsFirstMouse(int eventNumber, const WebKit::WebMouseEvent&, bool& result);
     bool performNonEditingBehaviorForSelector(const String&);
 #elif PLATFORM(WIN)
     void confirmComposition(const String& compositionString);

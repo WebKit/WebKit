@@ -192,7 +192,8 @@ messages -> WebPage {
     CharacterIndexForPoint(WebCore::IntPoint point) -> (uint64_t result)
     FirstRectForCharacterRange(uint64_t location, uint64_t length) -> (WebCore::IntRect resultRect)
     ExecuteKeypressCommands(Vector<WebCore::KeypressCommand> savedCommands) -> (bool handled, WebKit::TextInputState newState)
-
+    ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result)
+    AcceptsFirstMouse(int eventNumber, WebKit::WebMouseEvent event) -> (bool result)
 #endif
 #if PLATFORM(WIN)
     // FIXME: Unify with Mac counterparts.
