@@ -41,7 +41,7 @@ namespace WebCore {
 
 class Event;
 class HTMLSourceElement;
-class MediaControls;
+class MediaControlRootElement;
 class MediaError;
 class KURL;
 class TimeRanges;
@@ -172,7 +172,7 @@ public:
     bool closedCaptionsVisible() const;
     void setClosedCaptionsVisible(bool);
 
-    MediaControls* mediaControls();
+    MediaControlRootElement* mediaControls();
 
     bool processingUserGesture() const;
 

@@ -48,7 +48,7 @@
 #include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
 #include "Logging.h"
-#include "MediaControls.h"
+#include "MediaControlRootElement.h"
 #include "MediaDocument.h"
 #include "MediaError.h"
 #include "MediaList.h"
@@ -2632,7 +2632,7 @@ void HTMLMediaElement::privateBrowsingStateDidChange()
     m_player->setPrivateBrowsingMode(privateMode);
 }
 
-MediaControls* HTMLMediaElement::mediaControls()
+MediaControlRootElement* HTMLMediaElement::mediaControls()
 {
     return shadowRoot() ? toMediaControls(shadowRoot()->firstChild()) : 0;
 }
@@ -2648,7 +2648,7 @@ void HTMLMediaElement::ensureMediaControls()
         return;
 
     ExceptionCode ec;
-    ensureShadowRoot()->appendChild(MediaControls::create(this), ec);
+    ensureShadowRoot()->appendChild(MediaControlRootElement::create(this), ec);
 }
 
 }

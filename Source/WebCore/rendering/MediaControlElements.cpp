@@ -38,7 +38,7 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
-#include "MediaControls.h"
+#include "MediaControlRootElement.h"
 #include "MouseEvent.h"
 #include "Page.h"
 #include "RenderFlexibleBox.h"
@@ -346,13 +346,13 @@ void MediaControlMuteButtonElement::updateDisplayType()
 
 // ----------------------------
 
-inline MediaControlPanelMuteButtonElement::MediaControlPanelMuteButtonElement(HTMLMediaElement* mediaElement, MediaControls* controls)
+inline MediaControlPanelMuteButtonElement::MediaControlPanelMuteButtonElement(HTMLMediaElement* mediaElement, MediaControlRootElement* controls)
     : MediaControlMuteButtonElement(mediaElement, MediaMuteButton)
     , m_controls(controls)
 {
 }
 
-PassRefPtr<MediaControlPanelMuteButtonElement> MediaControlPanelMuteButtonElement::create(HTMLMediaElement* mediaElement, MediaControls* controls)
+PassRefPtr<MediaControlPanelMuteButtonElement> MediaControlPanelMuteButtonElement::create(HTMLMediaElement* mediaElement, MediaControlRootElement* controls)
 {
     ASSERT(controls);
 
@@ -626,13 +626,13 @@ const AtomicString& MediaControlToggleClosedCaptionsButtonElement::shadowPseudoI
 
 // ----------------------------
 
-MediaControlTimelineElement::MediaControlTimelineElement(HTMLMediaElement* mediaElement, MediaControls* controls)
+MediaControlTimelineElement::MediaControlTimelineElement(HTMLMediaElement* mediaElement, MediaControlRootElement* controls)
     : MediaControlInputElement(mediaElement, MediaSlider)
     , m_controls(controls)
 {
 }
 
-PassRefPtr<MediaControlTimelineElement> MediaControlTimelineElement::create(HTMLMediaElement* mediaElement, MediaControls* controls)
+PassRefPtr<MediaControlTimelineElement> MediaControlTimelineElement::create(HTMLMediaElement* mediaElement, MediaControlRootElement* controls)
 {
     ASSERT(controls);
 
@@ -767,13 +767,13 @@ const AtomicString& MediaControlFullscreenVolumeSliderElement::shadowPseudoId() 
 
 // ----------------------------
 
-inline MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(HTMLMediaElement* mediaElement, MediaControls* controls)
+inline MediaControlFullscreenButtonElement::MediaControlFullscreenButtonElement(HTMLMediaElement* mediaElement, MediaControlRootElement* controls)
     : MediaControlInputElement(mediaElement, MediaFullscreenButton)
     , m_controls(controls)
 {
 }
 
-PassRefPtr<MediaControlFullscreenButtonElement> MediaControlFullscreenButtonElement::create(HTMLMediaElement* mediaElement, MediaControls* controls)
+PassRefPtr<MediaControlFullscreenButtonElement> MediaControlFullscreenButtonElement::create(HTMLMediaElement* mediaElement, MediaControlRootElement* controls)
 {
     ASSERT(controls);
 

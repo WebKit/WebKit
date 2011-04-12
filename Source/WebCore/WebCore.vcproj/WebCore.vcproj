@@ -56685,11 +56685,11 @@
 				Name="shadow"
 				>
 				<File
-					RelativePath="..\html\shadow\MediaControls.cpp"
+					RelativePath="..\html\shadow\MediaControlRootElement.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\html\shadow\MediaControls.h"
+					RelativePath="..\html\shadow\MediaControlRootElement.h"
 					>
 				</File>
 				<File

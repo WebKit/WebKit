@@ -27,7 +27,7 @@
 #include "config.h"
 
 #if ENABLE(VIDEO)
-#include "MediaControls.h"
+#include "MediaControlRootElement.h"
 
 #include "EventNames.h"
 #include "FloatConversion.h"
@@ -47,7 +47,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-MediaControls::MediaControls(HTMLMediaElement* mediaElement)
+MediaControlRootElement::MediaControlRootElement(HTMLMediaElement* mediaElement)
     : HTMLDivElement(divTag, mediaElement->document())
     , m_mediaElement(mediaElement)
     , m_rewindButton(0)
@@ -74,12 +74,12 @@ MediaControls::MediaControls(HTMLMediaElement* mediaElement)
 {
 }
 
-PassRefPtr<MediaControls> MediaControls::create(HTMLMediaElement* mediaElement)
+PassRefPtr<MediaControlRootElement> MediaControlRootElement::create(HTMLMediaElement* mediaElement)
 {
     if (!mediaElement->document()->page())
         return 0;
 
-    RefPtr<MediaControls> controls = adoptRef(new MediaControls(mediaElement));
+    RefPtr<MediaControlRootElement> controls = adoptRef(new MediaControlRootElement(mediaElement));
 
     RefPtr<MediaControlPanelElement> panel = MediaControlPanelElement::create(mediaElement);
 
@@ -217,12 +217,12 @@ PassRefPtr<MediaControls> MediaControls::create(HTMLMediaElement* mediaElement)
     return controls.release();
 }
 
-void MediaControls::show()
+void MediaControlRootElement::show()
 {
     m_panel->show();
 }
 
-void MediaControls::hide()
+void MediaControlRootElement::hide()
 {
     m_panel->hide();
 }
@@ -239,7 +239,7 @@ static const String& opacityString()
     return s;
 }
 
-void MediaControls::makeOpaque()
+void MediaControlRootElement::makeOpaque()
 {
     if (m_opaque)
         return;
@@ -256,7 +256,7 @@ void MediaControls::makeOpaque()
     m_opaque = true;
 }
 
-void MediaControls::makeTransparent()
+void MediaControlRootElement::makeTransparent()
 {
     if (!m_opaque)
         return;
@@ -273,7 +273,7 @@ void MediaControls::makeTransparent()
     m_opaque = false;
 }
 
-void MediaControls::reset()
+void MediaControlRootElement::reset()
 {
     Page* page = document()->page();
     if (!page)
@@ -315,20 +315,20 @@ void MediaControls::reset()
     makeOpaque();
 }
 
-void MediaControls::playbackStarted()
+void MediaControlRootElement::playbackStarted()
 {
     m_playButton->updateDisplayType();
     m_timeline->setPosition(m_mediaElement->currentTime());
     updateTimeDisplay();
 }
 
-void MediaControls::playbackProgressed()
+void MediaControlRootElement::playbackProgressed()
 {
     m_timeline->setPosition(m_mediaElement->currentTime());
     updateTimeDisplay();
 }
 
-void MediaControls::playbackStopped()
+void MediaControlRootElement::playbackStopped()
 {
     m_playButton->updateDisplayType();
     m_timeline->setPosition(m_mediaElement->currentTime());
@@ -336,7 +336,7 @@ void MediaControls::playbackStopped()
     makeOpaque();
 }
 
-void MediaControls::updateTimeDisplay()
+void MediaControlRootElement::updateTimeDisplay()
 {
     float now = m_mediaElement->currentTime();
     float duration = m_mediaElement->duration();
@@ -353,7 +353,7 @@ void MediaControls::updateTimeDisplay()
     m_timeRemainingDisplay->setCurrentValue(now - duration);
 }
 
-void MediaControls::reportedError()
+void MediaControlRootElement::reportedError()
 {
     Page* page = document()->page();
     if (!page)
@@ -373,7 +373,7 @@ void MediaControls::reportedError()
         m_toggleClosedCaptionsButton->hide();
 }
 
-void MediaControls::changedNetworkState()
+void MediaControlRootElement::changedNetworkState()
 {
     // FIXME: Why are we changing fullscreen button visibility here? <http://webkit.org/b/58163>
     if (m_mediaElement->supportsFullscreen())
@@ -385,7 +385,7 @@ void MediaControls::changedNetworkState()
         m_statusDisplay->update();
 }
 
-void MediaControls::loadedMetadata()
+void MediaControlRootElement::loadedMetadata()
 {
     if (m_statusDisplay)
         m_statusDisplay->hide();
@@ -393,26 +393,26 @@ void MediaControls::loadedMetadata()
     reset();
 }
 
-void MediaControls::changedClosedCaptionsVisibility()
+void MediaControlRootElement::changedClosedCaptionsVisibility()
 {
     if (m_toggleClosedCaptionsButton)
         m_toggleClosedCaptionsButton->updateDisplayType();
 }
 
-void MediaControls::changedMute()
+void MediaControlRootElement::changedMute()
 {
     m_panelMuteButton->changedMute();
     if (m_volumeSliderMuteButton)
         m_volumeSliderMuteButton->changedMute();
 }
 
-void MediaControls::changedVolume()
+void MediaControlRootElement::changedVolume()
 {
     if (m_volumeSlider)
         m_volumeSlider->setVolume(m_mediaElement->volume());
 }
 
-void MediaControls::enteredFullscreen()
+void MediaControlRootElement::enteredFullscreen()
 {
     if (m_mediaElement->movieLoadType() == MediaPlayer::LiveStream || m_mediaElement->movieLoadType() == MediaPlayer::StoredStream) {
         m_seekBackButton->hide();
@@ -421,7 +421,7 @@ void MediaControls::enteredFullscreen()
         m_rewindButton->hide();
 }
 
-void MediaControls::exitedFullscreen()
+void MediaControlRootElement::exitedFullscreen()
 {
     // "show" actually means removal of display:none style, so we are just clearing styles
     // when exiting fullscreen.
@@ -431,7 +431,7 @@ void MediaControls::exitedFullscreen()
     m_seekForwardButton->show();
 }
 
-void MediaControls::showVolumeSlider()
+void MediaControlRootElement::showVolumeSlider()
 {
     if (!m_mediaElement->hasAudio())
         return;
@@ -440,7 +440,7 @@ void MediaControls::showVolumeSlider()
         m_volumeSliderContainer->show();
 }
 
-const AtomicString& MediaControls::shadowPseudoId() const
+const AtomicString& MediaControlRootElement::shadowPseudoId() const
 {
     DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls"));
     return id;

@@ -97,7 +97,7 @@ sub wanted
 my $isDOMTypeRename = 0;
 my %renames = (
     # Renames go here in the form of:
-    "DocLoader" => "CachedResourceLoader",
+    "MediaControls" => "MediaControlRootElement",
 );
 
 my %renamesContemplatedForTheFuture = (

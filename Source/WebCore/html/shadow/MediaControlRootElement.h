@@ -68,10 +68,9 @@ class MediaPlayer;
 class RenderBox;
 class RenderMedia;
 
-// FIXME: Rename to MediaControlRootElement.
-class MediaControls : public HTMLDivElement {
+class MediaControlRootElement : public HTMLDivElement {
 public:
-    static PassRefPtr<MediaControls> create(HTMLMediaElement*);
+    static PassRefPtr<MediaControlRootElement> create(HTMLMediaElement*);
 
     void show();
     void hide();
@@ -99,7 +98,7 @@ public:
     void updateTimeDisplay();
 
 private:
-    MediaControls(HTMLMediaElement*);
+    MediaControlRootElement(HTMLMediaElement*);
 
     virtual const AtomicString& shadowPseudoId() const;
 
@@ -129,10 +128,10 @@ private:
     bool m_opaque;
 };
 
-inline MediaControls* toMediaControls(Node* node)
+inline MediaControlRootElement* toMediaControls(Node* node)
 {
     ASSERT(node->isHTMLElement());
-    return static_cast<MediaControls*>(node);
+    return static_cast<MediaControlRootElement*>(node);
 }
 
 }

@@ -95,7 +95,7 @@ struct WebContextMenuData {
         MediaCanSave = 0x10,
         MediaHasAudio = 0x20,
         MediaHasVideo = 0x40,
-        MediaControls = 0x80,
+        MediaControlRootElement = 0x80,
         MediaCanPrint = 0x100,
     };
 
