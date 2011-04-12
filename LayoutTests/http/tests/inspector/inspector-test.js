@@ -14,7 +14,7 @@ console.info = consoleOutputHook.bind(InspectorTest, "info");
 
 InspectorTest.completeTest = function()
 {
-    InspectorAgent.didEvaluateForTestInFrontend(InspectorTest.completeTestCallId, "");
+    RuntimeAgent.evaluate("didEvaluateForTestInFrontend(" + InspectorTest.completeTestCallId + ", \"\")", "test");
 }
 
 InspectorTest.evaluateInConsole = function(code, callback)

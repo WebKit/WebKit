@@ -3,13 +3,6 @@
         "domain": "Inspector",
         "types": [],
         "commands": [
-            {
-                "name": "didEvaluateForTestInFrontend",
-                "parameters": [
-                    { "name": "testCallId", "type": "integer" },
-                    { "name": "jsonResult", "type": "string" }
-                ]
-            }
         ],
         "events": [
             {

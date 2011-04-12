@@ -132,7 +132,6 @@ void InspectorController::connectFrontend()
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         m_inspectorAgent->debuggerAgent(),
 #endif
-        m_inspectorAgent.get(),
         m_inspectorAgent->resourceAgent(),
         m_inspectorAgent->pageAgent(),
 #if ENABLE(JAVASCRIPT_DEBUGGER)

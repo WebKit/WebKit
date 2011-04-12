@@ -36,7 +36,7 @@ WebInspector.TestController.prototype = {
     notifyDone: function(callId, result)
     {
         var message = typeof result === "undefined" ? "\"<undefined>\"" : JSON.stringify(result);
-        InspectorAgent.didEvaluateForTestInFrontend(callId, message);
+        RuntimeAgent.evaluate("didEvaluateForTestInFrontend(" + callId + ", " + message + ")", "test");
     }
 }
 

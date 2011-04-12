@@ -393,17 +393,6 @@ void InspectorAgent::evaluateForTestInFrontend(long callId, const String& script
         issueEvaluateForTestCommands();
 }
 
-void InspectorAgent::didEvaluateForTestInFrontend(ErrorString*, long callId, const String& jsonResult)
-{
-    ScriptState* scriptState = scriptStateFromPage(debuggerWorld(), m_inspectedPage);
-    ScriptObject window;
-    ScriptGlobalObject::get(scriptState, "window", window);
-    ScriptFunctionCall function(window, "didEvaluateForTestInFrontend");
-    function.appendArgument(callId);
-    function.appendArgument(jsonResult);
-    function.call();
-}
-
 void InspectorAgent::setInspectorExtensionAPI(const String& source)
 {
     m_inspectorExtensionAPI = source;

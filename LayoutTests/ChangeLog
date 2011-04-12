@@ -1,3 +1,16 @@
+2011-04-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: remove unnecessary method InspectorAgent.didEvaluateForTestInFrontend.
+        https://bugs.webkit.org/show_bug.cgi?id=58335
+
+        It was the method for Inspector layout tests.
+        We can use RuntimeAgent.evaluate instead.
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.completeTest):
+
 2011-04-12  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Adam Roben.
