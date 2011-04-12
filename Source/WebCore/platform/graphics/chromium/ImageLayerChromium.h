@@ -64,6 +64,7 @@ private:
     ImageLayerChromium(GraphicsLayerChromium* owner);
 
     PlatformImage m_decodedImage;
+    NativeImagePtr m_imageForCurrentFrame;
     RefPtr<Image> m_contents;
 };
 

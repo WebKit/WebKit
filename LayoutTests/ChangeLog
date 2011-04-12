@@ -1,3 +1,17 @@
+2011-04-11  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Adding a test which verifies that compositing image layers
+        update correctly when their contents change.
+        https://bugs.webkit.org/show_bug.cgi?id=58181
+
+        * compositing/images/content-image-change-expected.txt: Added.
+        * compositing/images/content-image-change.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/compositing/images/content-image-change-expected.checksum: Added.
+        * platform/mac/compositing/images/content-image-change-expected.png: Added.
+
 2011-04-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

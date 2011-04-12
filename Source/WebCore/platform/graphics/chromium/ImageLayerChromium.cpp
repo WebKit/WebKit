@@ -47,16 +47,23 @@ PassRefPtr<ImageLayerChromium> ImageLayerChromium::create(GraphicsLayerChromium*
 
 ImageLayerChromium::ImageLayerChromium(GraphicsLayerChromium* owner)
     : ContentLayerChromium(owner)
+    , m_imageForCurrentFrame(0)
     , m_contents(0)
 {
 }
 
 void ImageLayerChromium::setContents(Image* contents)
 {
-    // Check if the image has changed.
-    if (m_contents == contents)
+    // setContents() currently gets called whenever there is any
+    // style change that affects the layer even if that change doesn't
+    // affect the actual contents of the image (e.g. a CSS animation).
+    // With this check in place we avoid unecessary texture uploads.
+    if ((m_contents == contents) && (m_contents->nativeImageForCurrentFrame() == m_imageForCurrentFrame))
         return;
+
     m_contents = contents;
+    m_imageForCurrentFrame = m_contents->nativeImageForCurrentFrame();
+    m_dirtyRect = IntRect(IntPoint(0, 0), bounds());
     setNeedsDisplay();
 }
 
@@ -72,7 +79,10 @@ void ImageLayerChromium::paintContentsIfDirty()
         return;
     }
 
-    m_decodedImage.updateFromImage(m_contents->nativeImageForCurrentFrame());
+    if (!m_dirtyRect.isEmpty()) {
+        m_decodedImage.updateFromImage(m_contents->nativeImageForCurrentFrame());
+        m_uploadUpdateRect = IntRect(IntPoint(0, 0), m_decodedImage.size());
+    }
 }
 
 void ImageLayerChromium::updateTextureIfNeeded()

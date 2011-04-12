@@ -192,6 +192,9 @@ void ContentLayerChromium::updateTexture(const uint8_t* pixels, const IntSize& s
     if (!m_contentsTexture->isValid(size, GraphicsContext3D::RGBA))
         m_uploadUpdateRect = IntRect(IntPoint(0, 0), size);
 
+    if (m_uploadUpdateRect.isEmpty())
+        return;
+
     if (!m_contentsTexture->reserve(size, GraphicsContext3D::RGBA)) {
         m_skipsDraw = true;
         return;

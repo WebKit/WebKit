@@ -2854,6 +2854,9 @@ WONTFIX GPU MAC LEOPARD : compositing = IMAGE PASS
 WONTFIX GPU MAC LEOPARD : platform/chromium/compositing = IMAGE PASS
 WONTFIX GPU MAC LEOPARD : media = IMAGE PASS
 
+// Will need windows and linux baselines
+BUGWK58182 GPU : compositing/images/content-image-change.html = PASS FAIL
+
 // The picture does not match the video in the test.
 BUGWK55519 GPU WIN LINUX : compositing/video/video-background-color.html = IMAGE+TEXT
 BUGWK55519 GPU MAC : compositing/video/video-background-color.html = IMAGE

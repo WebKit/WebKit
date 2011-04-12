@@ -1,3 +1,21 @@
+2011-04-11  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Properly invalidate the contents of ImageLayerChromium's
+        when the actual image contents change.
+        https://bugs.webkit.org/show_bug.cgi?id=58181
+
+        Test: compositing/images/content-image-change.html
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::updateTexture):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::ImageLayerChromium):
+        (WebCore::ImageLayerChromium::setContents):
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+
 2011-04-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
