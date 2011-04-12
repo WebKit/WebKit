@@ -1,3 +1,9 @@
+2011-04-12  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Adjusted chromium test expectations (webgl-nonpremultiplied-blend.html crashes on Mac OS 10.6 DEBUG)
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] 9 tests have different results on 64 bit and/or in debug mode compared to 32 bit and/or release mode
