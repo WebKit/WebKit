@@ -876,6 +876,7 @@ static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
         prefsPrivate->setXSSAuditorEnabled(FALSE);
         prefsPrivate->setFrameFlatteningEnabled(FALSE);
         prefsPrivate->setOfflineWebApplicationCacheEnabled(TRUE);
+        prefsPrivate->setLoadsSiteIconsIgnoringImageLoadingPreference(FALSE);
     }
     setAlwaysAcceptCookies(false);
 

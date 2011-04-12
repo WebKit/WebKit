@@ -1,3 +1,12 @@
+2011-04-12  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        A change that should have been part of http://trac.webkit.org/changeset/83628
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues): Setting should be off for most tests. Reset to false.
+
 2011-04-12  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
