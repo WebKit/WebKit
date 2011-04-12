@@ -1,3 +1,14 @@
+2011-04-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Add platform specific expected files for new tests introduced in r83514 and r83470.
+
+        * platform/qt/fast/multicol/huge-column-count-expected.checksum: Added.
+        * platform/qt/fast/multicol/huge-column-count-expected.png: Added.
+        * platform/qt/fast/multicol/huge-column-count-expected.txt: Added.
+        * platform/qt/fast/overflow/trailing-float-linebox-expected.checksum: Added.
+        * platform/qt/fast/overflow/trailing-float-linebox-expected.png: Added.
+        * platform/qt/fast/overflow/trailing-float-linebox-expected.txt: Added.
+
 2011-04-12  Steve Block  <steveblock@google.com>
 
         Reviewed by Oliver Hunt.
@@ -38,7 +49,7 @@
 
         -webkit-box-shadow:inset does not animate transform as an inset shadow
         https://bugs.webkit.org/show_bug.cgi?id=45176
-        
+
         Testcase for transitions between different shadow styles.
 
         * transitions/mismatched-shadow-styles-expected.txt: Added.
