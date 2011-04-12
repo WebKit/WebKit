@@ -1,3 +1,13 @@
+2011-04-12  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: REGRESSION: Most resources in the Network panel show a blank panel when clicked.
+        https://bugs.webkit.org/show_bug.cgi?id=58273
+
+        * inspector/debugger/source-frame-expected.txt:
+        * inspector/debugger/source-frame.html:
+
 2011-04-12  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

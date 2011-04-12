@@ -41,6 +41,25 @@ function test()
                   InspectorTest.addResult("Message text: " + message.message);
                   next();
               }
+        },
+
+        function testShowResource(next)
+        {
+            WebInspector.showPanel("network");
+
+            InspectorTest.addSniffer(WebInspector.SourceFrame.prototype, "show", didShowSourceFrame);
+            var resources = WebInspector.resourceTreeModel._resourcesByURL;
+            for (var url in resources) {
+                if (url.indexOf("debugger-test.js") !== -1) {
+                    WebInspector.panels.network._showResource(resources[url], 1);
+                    break;
+                }
+            }
+
+            function didShowSourceFrame()
+            {
+                next();
+            }
         }
     ]);
 };

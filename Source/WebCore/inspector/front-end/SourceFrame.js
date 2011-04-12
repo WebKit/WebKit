@@ -38,6 +38,9 @@ WebInspector.SourceFrame = function(delegate, url)
     this._textModel = new WebInspector.TextEditorModel();
     this._textModel.replaceTabsWithSpaces = true;
 
+    this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url, this);
+    this._visible = false;
+
     this._currentSearchResultIndex = -1;
     this._searchResults = [];
 
@@ -55,44 +58,47 @@ WebInspector.SourceFrame.Events = {
 }
 
 WebInspector.SourceFrame.prototype = {
+    get visible()
+    {
+        return this._textViewer.visible;
+    },
+
+    set visible(x)
+    {
+        this._textViewer.visible = x;
+    },
 
     show: function(parentElement)
     {
-        this._parentElement = parentElement;
-
         this._ensureContentLoaded();
 
-        if (this._textViewer) {
+        this._textViewer.show(parentElement);
+        this._textViewer.resize();
+
+        if (this.loaded) {
             if (this._scrollTop)
                 this._textViewer.scrollTop = this._scrollTop;
             if (this._scrollLeft)
                 this._textViewer.scrollLeft = this._scrollLeft;
-            this._textViewer.show(parentElement);
-            this._textViewer.resize();
         }
     },
 
     hide: function()
     {
-        delete this._parentElement;
-
-        if (this._textViewer) {
+        if (this.loaded) {
             this._scrollTop = this._textViewer.scrollTop;
             this._scrollLeft = this._textViewer.scrollLeft;
             this._textViewer.freeCachedElements();
-            this._textViewer.hide();
         }
 
+        this._textViewer.hide();
         this._hidePopup();
         this._clearLineHighlight();
     },
 
     detach: function()
     {
-        delete this._parentElement;
-
-        if (this._textViewer)
-            this._textViewer.detach();
+        this._textViewer.detach();
     },
 
     get element()
@@ -114,7 +120,7 @@ WebInspector.SourceFrame.prototype = {
     {
         if (!this._contentRequested) {
             this._contentRequested = true;
-            this._requestContent(this._createTextViewer.bind(this));
+            this._requestContent(this._initializeTextViewer.bind(this));
         }
     },
 
@@ -125,18 +131,18 @@ WebInspector.SourceFrame.prototype = {
 
     markDiff: function(diffData)
     {
-        if (this._diffLines && this._textViewer)
+        if (this._diffLines && this.loaded)
             this._removeDiffDecorations();
 
         this._diffLines = diffData;
-        if (this._textViewer)
+        if (this.loaded)
             this._updateDiffDecorations();
     },
 
     addMessage: function(msg)
     {
         this._messages.push(msg);
-        if (this._textViewer)
+        if (this.loaded)
             this.addMessageToSource(msg.line - 1, msg);
     },
 
@@ -150,8 +156,8 @@ WebInspector.SourceFrame.prototype = {
         this._messages = [];
         this._rowMessages = {};
         this._messageBubbles = {};
-        if (this._textViewer)
-            this._textViewer.resize();
+
+        this._textViewer.resize();
     },
 
     get textModel()
@@ -161,19 +167,19 @@ WebInspector.SourceFrame.prototype = {
 
     get scrollTop()
     {
-        return this._textViewer ? this._textViewer.scrollTop : this._scrollTop;
+        return this.loaded ? this._textViewer.scrollTop : this._scrollTop;
     },
 
     set scrollTop(scrollTop)
     {
         this._scrollTop = scrollTop;
-        if (this._textViewer)
+        if (this.loaded)
             this._textViewer.scrollTop = scrollTop;
     },
 
     highlightLine: function(line)
     {
-        if (this._textViewer)
+        if (this.loaded)
             this._textViewer.highlightLine(line);
         else
             this._lineToHighlight = line;
@@ -181,7 +187,7 @@ WebInspector.SourceFrame.prototype = {
 
     _clearLineHighlight: function()
     {
-        if (this._textViewer)
+        if (this.loaded)
             this._textViewer.clearLineHighlight();
         else
             delete this._lineToHighlight;
@@ -283,12 +289,12 @@ WebInspector.SourceFrame.prototype = {
         return newLineNumber;
     },
 
-    _createTextViewer: function(mimeType, content)
+    _initializeTextViewer: function(mimeType, content)
     {
+        this._textViewer.mimeType = mimeType;
+
         this._content = content;
         this._textModel.setText(null, content);
-
-        this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url, this);
 
         var element = this._textViewer.element;
         element.addStyleClass("script-view");
@@ -302,7 +308,6 @@ WebInspector.SourceFrame.prototype = {
 
         this._textViewer.beginUpdates();
 
-        this._textViewer.mimeType = mimeType;
         this._setTextViewerDecorations();
 
         if (typeof this._executionLineNumber === "number")
@@ -366,7 +371,7 @@ WebInspector.SourceFrame.prototype = {
             callback(this, this._searchResults.length);
         }
 
-        if (this._textViewer)
+        if (this.loaded)
             doFindSearchMatches.call(this, query);
         else
             this._delayedFindSearchMatches = doFindSearchMatches.bind(this, query);
@@ -377,7 +382,7 @@ WebInspector.SourceFrame.prototype = {
     searchCanceled: function()
     {
         delete this._delayedFindSearchMatches;
-        if (!this._textViewer)
+        if (!this.loaded)
             return;
 
         this._currentSearchResultIndex = -1;
@@ -417,7 +422,7 @@ WebInspector.SourceFrame.prototype = {
 
     _jumpToSearchResult: function(index)
     {
-        if (!this._textViewer || !this._searchResults.length)
+        if (!this.loaded || !this._searchResults.length)
             return;
         this._currentSearchResultIndex = (index + this._searchResults.length) % this._searchResults.length;
         this._textViewer.markAndRevealRange(this._searchResults[this._currentSearchResultIndex]);
@@ -458,7 +463,7 @@ WebInspector.SourceFrame.prototype = {
     setExecutionLine: function(lineNumber, skipRevealLine)
     {
         this._executionLineNumber = lineNumber;
-        if (this._textViewer) {
+        if (this.loaded) {
             this._textViewer.addDecoration(lineNumber, "webkit-execution-line");
             if (!skipRevealLine)
                 this._textViewer.revealLine(lineNumber);
@@ -467,7 +472,7 @@ WebInspector.SourceFrame.prototype = {
 
     clearExecutionLine: function()
     {
-        if (this._textViewer)
+        if (this.loaded)
             this._textViewer.removeDecoration(this._executionLineNumber, "webkit-execution-line");
         delete this._executionLineNumber;
     },
@@ -863,8 +868,7 @@ WebInspector.SourceFrame.prototype = {
 
     resize: function()
     {
-        if (this._textViewer)
-            this._textViewer.resize();
+        this._textViewer.resize();
     },
 
     _registerShortcuts: function()

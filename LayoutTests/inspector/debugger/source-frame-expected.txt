@@ -9,5 +9,7 @@ Breakpoint added to source frame at line 17
 
 Running: testConsoleMessage
 Message text: source-frame.html:10test error message
+
+Running: testShowResource
 Debugger was disabled.
 
