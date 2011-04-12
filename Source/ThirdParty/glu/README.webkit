@@ -13,8 +13,8 @@ The following changes were made in order to incorporate this code:
   - The removal of inclusion of GL/glu.h and replacement with an
     include of internal_glu.h.
 
-  - Includes were modified to be scoped within thirdparty/glu/ and
-    thirdparty/glu/libtess/.
+  - Includes were modified to be scoped within ThirdParty/glu/ and
+    ThirdParty/glu/libtess/.
 
   - The entry points to the tessellator were prefixed with internal_
     to avoid symbol collisions with any host OS version of GLU.

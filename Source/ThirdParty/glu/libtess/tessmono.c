@@ -42,10 +42,10 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include "thirdparty/glu/gluos.h"
-#include "thirdparty/glu/libtess/geom.h"
-#include "thirdparty/glu/libtess/mesh.h"
-#include "thirdparty/glu/libtess/tessmono.h"
+#include "ThirdParty/glu/gluos.h"
+#include "ThirdParty/glu/libtess/geom.h"
+#include "ThirdParty/glu/libtess/mesh.h"
+#include "ThirdParty/glu/libtess/tessmono.h"
 
 #define AddWinding(eDst,eSrc)	(eDst->winding += eSrc->winding, \
 				 eDst->Sym->winding += eSrc->Sym->winding)

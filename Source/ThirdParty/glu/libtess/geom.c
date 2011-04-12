@@ -40,9 +40,9 @@
 */
 
 #include <assert.h>
-#include "thirdparty/glu/gluos.h"
-#include "thirdparty/glu/libtess/mesh.h"
-#include "thirdparty/glu/libtess/geom.h"
+#include "ThirdParty/glu/gluos.h"
+#include "ThirdParty/glu/libtess/mesh.h"
+#include "ThirdParty/glu/libtess/geom.h"
 
 int __gl_vertLeq( GLUvertex *u, GLUvertex *v )
 {

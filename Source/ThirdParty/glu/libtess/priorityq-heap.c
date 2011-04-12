@@ -42,8 +42,8 @@
 #include <assert.h>
 #include <limits.h>
 #include <stddef.h>
-#include "thirdparty/glu/libtess/memalloc.h"
-#include "thirdparty/glu/libtess/priorityq-heap.h"
+#include "ThirdParty/glu/libtess/memalloc.h"
+#include "ThirdParty/glu/libtess/priorityq-heap.h"
 
 #define INIT_SIZE	32
 

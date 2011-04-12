@@ -36,55 +36,49 @@
 ** Author: Eric Veach, July 1994.
 **
 ** $Date$ $Revision$
-** $Header: //depot/main/gfx/lib/glu/libtess/geom.h#5 $
+** $Header: //depot/main/gfx/lib/glu/libtess/sweep.h#5 $
 */
 
-#ifndef __geom_h_
-#define __geom_h_
+#ifndef __sweep_h_
+#define __sweep_h_
 
-#include "thirdparty/glu/libtess/mesh.h"
+#include "ThirdParty/glu/libtess/mesh.h"
 
-#ifdef NO_BRANCH_CONDITIONS
-/* MIPS architecture has special instructions to evaluate boolean
- * conditions -- more efficient than branching, IF you can get the
- * compiler to generate the right instructions (SGI compiler doesn't)
+/* __gl_computeInterior( tess ) computes the planar arrangement specified
+ * by the given contours, and further subdivides this arrangement
+ * into regions.  Each region is marked "inside" if it belongs
+ * to the polygon, according to the rule given by tess->windingRule.
+ * Each interior region is guaranteed be monotone.
  */
-#define VertEq(u,v)	(((u)->s == (v)->s) & ((u)->t == (v)->t))
-#define VertLeq(u,v)	(((u)->s < (v)->s) | \
-                         ((u)->s == (v)->s & (u)->t <= (v)->t))
-#else
-#define VertEq(u,v)	((u)->s == (v)->s && (u)->t == (v)->t)
-#define VertLeq(u,v)	(((u)->s < (v)->s) || \
-                         ((u)->s == (v)->s && (u)->t <= (v)->t))
-#endif
-
-#define EdgeEval(u,v,w)	__gl_edgeEval(u,v,w)
-#define EdgeSign(u,v,w)	__gl_edgeSign(u,v,w)
-
-/* Versions of VertLeq, EdgeSign, EdgeEval with s and t transposed. */
-
-#define TransLeq(u,v)	(((u)->t < (v)->t) || \
-                         ((u)->t == (v)->t && (u)->s <= (v)->s))
-#define TransEval(u,v,w)	__gl_transEval(u,v,w)
-#define TransSign(u,v,w)	__gl_transSign(u,v,w)
+int __gl_computeInterior( GLUtesselator *tess );
 
 
-#define EdgeGoesLeft(e)		VertLeq( (e)->Dst, (e)->Org )
-#define EdgeGoesRight(e)	VertLeq( (e)->Org, (e)->Dst )
+/* The following is here *only* for access by debugging routines */
 
-#define ABS(x)	((x) < 0 ? -(x) : (x))
-#define VertL1dist(u,v)	(ABS(u->s - v->s) + ABS(u->t - v->t))
+#include "dict.h"
 
-#define VertCCW(u,v,w)	__gl_vertCCW(u,v,w)
+/* For each pair of adjacent edges crossing the sweep line, there is
+ * an ActiveRegion to represent the region between them.  The active
+ * regions are kept in sorted order in a dynamic dictionary.  As the
+ * sweep line crosses each vertex, we update the affected regions.
+ */
 
-int		__gl_vertLeq( GLUvertex *u, GLUvertex *v );
-GLdouble	__gl_edgeEval( GLUvertex *u, GLUvertex *v, GLUvertex *w );
-GLdouble	__gl_edgeSign( GLUvertex *u, GLUvertex *v, GLUvertex *w );
-GLdouble	__gl_transEval( GLUvertex *u, GLUvertex *v, GLUvertex *w );
-GLdouble	__gl_transSign( GLUvertex *u, GLUvertex *v, GLUvertex *w );
-int		__gl_vertCCW( GLUvertex *u, GLUvertex *v, GLUvertex *w );
-void		__gl_edgeIntersect( GLUvertex *o1, GLUvertex *d1,
-				    GLUvertex *o2, GLUvertex *d2,
-				    GLUvertex *v );
+struct ActiveRegion {
+  GLUhalfEdge	*eUp;		/* upper edge, directed right to left */
+  DictNode	*nodeUp;	/* dictionary node corresponding to eUp */
+  int		windingNumber;	/* used to determine which regions are
+                                 * inside the polygon */
+  GLboolean	inside;		/* is this region inside the polygon? */
+  GLboolean	sentinel;	/* marks fake edges at t = +/-infinity */
+  GLboolean	dirty;		/* marks regions where the upper or lower
+                                 * edge has changed, but we haven't checked
+                                 * whether they intersect yet */
+  GLboolean	fixUpperEdge;	/* marks temporary edges introduced when
+                                 * we process a "right vertex" (one without
+                                 * any edges leaving to the right) */
+};
+
+#define RegionBelow(r)	((ActiveRegion *) dictKey(dictPred((r)->nodeUp)))
+#define RegionAbove(r)	((ActiveRegion *) dictKey(dictSucc((r)->nodeUp)))
 
 #endif

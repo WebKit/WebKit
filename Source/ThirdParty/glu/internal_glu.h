@@ -36,7 +36,7 @@
 #ifndef INTERNAL_GLU_H_
 #define INTERNAL_GLU_H_
 
-#include "thirdparty/glu/gluos.h"
+#include "ThirdParty/glu/gluos.h"
 
 /* Primitives */
 #define GL_LINE_LOOP                            0x0002

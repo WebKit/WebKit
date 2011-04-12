@@ -130,6 +130,7 @@
 
     'webcore_include_dirs': [
       '../',
+      '../..',
       '../accessibility',
       '../accessibility/chromium',
       '../bindings',
@@ -201,7 +202,7 @@
       '../svg/graphics',
       '../svg/graphics/filters',
       '../svg/properties',
-      '../thirdparty/glu',
+      '../../ThirdParty/glu',
       '../webaudio',
       '../websockets',
       '../workers',
@@ -979,6 +980,7 @@
       'type': 'none',
       'dependencies': [
         'webcore_bindings',
+        '../../ThirdParty/glu/glu.gyp:libtess',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:yarr',
         '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
         '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
@@ -1272,8 +1274,6 @@
         ['exclude', 'platform/sql/SQLiteFileSystem\\.cpp$'],
         ['exclude', 'platform/text/LocalizedNumberNone\\.cpp$'],
         ['exclude', 'platform/text/TextEncodingDetectorNone\\.cpp$'],
-
-        ['include', 'thirdparty/glu/libtess/'],
       ],
       'conditions': [
         ['OS=="linux" or OS=="freebsd"', {

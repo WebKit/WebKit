@@ -36,27 +36,82 @@
 ** Author: Eric Veach, July 1994.
 **
 ** $Date$ $Revision$
-** $Header: //depot/main/gfx/lib/glu/libtess/memalloc.c#5 $
+** $Header: //depot/main/gfx/lib/glu/libtess/dict.c#5 $
 */
 
-#include "string.h"
-#include "thirdparty/glu/libtess/memalloc.h"
+#include <stddef.h>
+#include "ThirdParty/glu/libtess/dict-list.h"
+#include "ThirdParty/glu/libtess/memalloc.h"
 
-int __gl_memInit( size_t maxFast )
+/* really __gl_dictListNewDict */
+Dict *dictNewDict( void *frame,
+		   int (*leq)(void *frame, DictKey key1, DictKey key2) )
 {
-#ifndef NO_MALLOPT
-/*  mallopt( M_MXFAST, maxFast );*/
-#ifdef MEMORY_DEBUG
-  mallopt( M_DEBUG, 1 );
-#endif
-#endif
-   return 1;
+  Dict *dict = (Dict *) memAlloc( sizeof( Dict ));
+  DictNode *head;
+
+  if (dict == NULL) return NULL;
+
+  head = &dict->head;
+
+  head->key = NULL;
+  head->next = head;
+  head->prev = head;
+
+  dict->frame = frame;
+  dict->leq = leq;
+
+  return dict;
 }
 
-#ifdef MEMORY_DEBUG
-void *__gl_memAlloc( size_t n )
+/* really __gl_dictListDeleteDict */
+void dictDeleteDict( Dict *dict )
 {
-  return memset( malloc( n ), 0xa5, n );
-}
-#endif
+  DictNode *node;
 
+  for( node = dict->head.next; node != &dict->head; node = node->next ) {
+    memFree( node );
+  }
+  memFree( dict );
+}
+
+/* really __gl_dictListInsertBefore */
+DictNode *dictInsertBefore( Dict *dict, DictNode *node, DictKey key )
+{
+  DictNode *newNode;
+
+  do {
+    node = node->prev;
+  } while( node->key != NULL && ! (*dict->leq)(dict->frame, node->key, key));
+
+  newNode = (DictNode *) memAlloc( sizeof( DictNode ));
+  if (newNode == NULL) return NULL;
+
+  newNode->key = key;
+  newNode->next = node->next;
+  node->next->prev = newNode;
+  newNode->prev = node;
+  node->next = newNode;
+
+  return newNode;
+}
+
+/* really __gl_dictListDelete */
+void dictDelete( Dict *dict, DictNode *node ) /*ARGSUSED*/
+{
+  node->next->prev = node->prev;
+  node->prev->next = node->next;
+  memFree( node );
+}
+
+/* really __gl_dictListSearch */
+DictNode *dictSearch( Dict *dict, DictKey key )
+{
+  DictNode *node = &dict->head;
+
+  do {
+    node = node->next;
+  } while( node->key != NULL && ! (*dict->leq)(dict->frame, key, node->key));
+
+  return node;
+}

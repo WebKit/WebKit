@@ -43,14 +43,14 @@
 #include <setjmp.h>
 #include <stddef.h>
 
-#include "thirdparty/glu/gluos.h"
-#include "thirdparty/glu/libtess/memalloc.h"
-#include "thirdparty/glu/libtess/mesh.h"
-#include "thirdparty/glu/libtess/normal.h"
-#include "thirdparty/glu/libtess/render.h"
-#include "thirdparty/glu/libtess/sweep.h"
-#include "thirdparty/glu/libtess/tess.h"
-#include "thirdparty/glu/libtess/tessmono.h"
+#include "ThirdParty/glu/gluos.h"
+#include "ThirdParty/glu/libtess/memalloc.h"
+#include "ThirdParty/glu/libtess/mesh.h"
+#include "ThirdParty/glu/libtess/normal.h"
+#include "ThirdParty/glu/libtess/render.h"
+#include "ThirdParty/glu/libtess/sweep.h"
+#include "ThirdParty/glu/libtess/tess.h"
+#include "ThirdParty/glu/libtess/tessmono.h"
 
 #define GLU_TESS_DEFAULT_TOLERANCE 0.0
 #define GLU_TESS_MESH		100112	/* void (*)(GLUmesh *mesh)	    */

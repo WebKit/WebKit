@@ -41,10 +41,10 @@
 
 #include <assert.h>
 #include <math.h>
-#include "thirdparty/glu/gluos.h"
-#include "thirdparty/glu/libtess/mesh.h"
-#include "thirdparty/glu/libtess/normal.h"
-#include "thirdparty/glu/libtess/tess.h"
+#include "ThirdParty/glu/gluos.h"
+#include "ThirdParty/glu/libtess/mesh.h"
+#include "ThirdParty/glu/libtess/normal.h"
+#include "ThirdParty/glu/libtess/tess.h"
 
 #define TRUE 1
 #define FALSE 0

@@ -36,24 +36,17 @@
 ** Author: Eric Veach, July 1994.
 **
 ** $Date$ $Revision$
-** $Header: //depot/main/gfx/lib/glu/libtess/render.h#5 $
+** $Header: //depot/main/gfx/lib/glu/libtess/normal.h#5 $
 */
 
-#ifndef __render_h_
-#define __render_h_
+#ifndef __normal_h_
+#define __normal_h_
 
-#include "thirdparty/glu/libtess/mesh.h"
+#include "ThirdParty/glu/libtess/tess.h"
 
-/* __gl_renderMesh( tess, mesh ) takes a mesh and breaks it into triangle
- * fans, strips, and separate triangles.  A substantial effort is made
- * to use as few rendering primitives as possible (ie. to make the fans
- * and strips as large as possible).
- *
- * The rendering output is provided as callbacks (see the api).
+/* __gl_projectPolygon( tess ) determines the polygon normal
+ * and project vertices onto the plane of the polygon.
  */
-void __gl_renderMesh( GLUtesselator *tess, GLUmesh *mesh );
-void __gl_renderBoundary( GLUtesselator *tess, GLUmesh *mesh );
-
-GLboolean __gl_renderCache( GLUtesselator *tess );
+void __gl_projectPolygon( GLUtesselator *tess );
 
 #endif

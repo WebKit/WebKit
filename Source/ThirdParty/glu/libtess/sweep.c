@@ -44,14 +44,14 @@
 #include <limits.h>		/* LONG_MAX */
 #include <stddef.h>
 
-#include "thirdparty/glu/gluos.h"
-#include "thirdparty/glu/libtess/dict.h"
-#include "thirdparty/glu/libtess/geom.h"
-#include "thirdparty/glu/libtess/memalloc.h"
-#include "thirdparty/glu/libtess/mesh.h"
-#include "thirdparty/glu/libtess/priorityq.h"
-#include "thirdparty/glu/libtess/sweep.h"
-#include "thirdparty/glu/libtess/tess.h"
+#include "ThirdParty/glu/gluos.h"
+#include "ThirdParty/glu/libtess/dict.h"
+#include "ThirdParty/glu/libtess/geom.h"
+#include "ThirdParty/glu/libtess/memalloc.h"
+#include "ThirdParty/glu/libtess/mesh.h"
+#include "ThirdParty/glu/libtess/priorityq.h"
+#include "ThirdParty/glu/libtess/sweep.h"
+#include "ThirdParty/glu/libtess/tess.h"
 
 #define TRUE 1
 #define FALSE 0

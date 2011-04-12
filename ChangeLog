@@ -1,3 +1,15 @@
+2011-03-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Kenneth Russell.
+
+        Move libtess from WebCore/thirdparty to ThirdParty
+        https://bugs.webkit.org/show_bug.cgi?id=57288
+
+        We're putting third party code in Source/ThirdParty these days.
+
+        * Source/ThirdParty/glu: Copied from Source/WebCore/thirdparty/glu.
+        * Source/ThirdParty/glu/glu.gyp: Added.
+
 2011-04-12  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
 
         Reviewed by Eric Seidel.

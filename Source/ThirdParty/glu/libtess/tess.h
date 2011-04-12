@@ -44,10 +44,10 @@
 
 #include <setjmp.h>
 
-#include "thirdparty/glu/internal_glu.h"
-#include "thirdparty/glu/libtess/dict.h"
-#include "thirdparty/glu/libtess/mesh.h"
-#include "thirdparty/glu/libtess/priorityq.h"
+#include "ThirdParty/glu/internal_glu.h"
+#include "ThirdParty/glu/libtess/dict.h"
+#include "ThirdParty/glu/libtess/mesh.h"
+#include "ThirdParty/glu/libtess/priorityq.h"
 
 /* The begin/end calls must be properly nested.  We keep track of
  * the current state to enforce the ordering.

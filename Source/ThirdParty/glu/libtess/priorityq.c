@@ -42,16 +42,16 @@
 #include <assert.h>
 #include <limits.h>		/* LONG_MAX */
 #include <stddef.h>
-#include "thirdparty/glu/gluos.h"
-#include "thirdparty/glu/libtess/memalloc.h"
+#include "ThirdParty/glu/gluos.h"
+#include "ThirdParty/glu/libtess/memalloc.h"
 
 /* Include all the code for the regular heap-based queue here. */
 
-#include "thirdparty/glu/libtess/priorityq-heap.c"
+#include "ThirdParty/glu/libtess/priorityq-heap.c"
 
 /* Now redefine all the function names to map to their "Sort" versions. */
 
-#include "thirdparty/glu/libtess/priorityq-sort.h"
+#include "ThirdParty/glu/libtess/priorityq-sort.h"
 
 /* really __gl_pqSortNewPriorityQ */
 PriorityQ *pqNewPriorityQ( int (*leq)(PQkey key1, PQkey key2) )

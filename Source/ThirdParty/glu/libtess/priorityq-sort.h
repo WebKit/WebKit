@@ -36,13 +36,13 @@
 ** Author: Eric Veach, July 1994.
 **
 ** $Date$ $Revision$
-** $Header: //depot/main/gfx/lib/glu/libtess/priorityq.h#5 $
+** $Header: //depot/main/gfx/lib/glu/libtess/priorityq-sort.h#5 $
 */
 
 #ifndef __priorityq_sort_h_
 #define __priorityq_sort_h_
 
-#include "thirdparty/glu/libtess/priorityq-heap.h"
+#include "ThirdParty/glu/libtess/priorityq-heap.h"
 
 #undef PQkey
 #undef PQhandle

@@ -1,3 +1,16 @@
+2011-03-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Kenneth Russell.
+
+        Move libtess from WebCore/thirdparty to ThirdParty
+        https://bugs.webkit.org/show_bug.cgi?id=57288
+
+        * WebCore.gyp/WebCore.gyp:
+            - Add libtess as a legit dependency.
+        * WebCore.gypi:
+            - Remove libtess files from the gypi.
+        * thirdparty/glu: Removed.
+
 2011-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by David Hyatt.

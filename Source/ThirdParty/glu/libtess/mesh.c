@@ -41,9 +41,9 @@
 
 #include <assert.h>
 #include <stddef.h>
-#include "thirdparty/glu/gluos.h"
-#include "thirdparty/glu/libtess/memalloc.h"
-#include "thirdparty/glu/libtess/mesh.h"
+#include "ThirdParty/glu/gluos.h"
+#include "ThirdParty/glu/libtess/memalloc.h"
+#include "ThirdParty/glu/libtess/mesh.h"
 
 #define TRUE 1
 #define FALSE 0

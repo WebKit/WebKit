@@ -36,17 +36,27 @@
 ** Author: Eric Veach, July 1994.
 **
 ** $Date$ $Revision$
-** $Header: //depot/main/gfx/lib/glu/libtess/normal.h#5 $
+** $Header: //depot/main/gfx/lib/glu/libtess/memalloc.c#5 $
 */
 
-#ifndef __normal_h_
-#define __normal_h_
+#include "string.h"
+#include "ThirdParty/glu/libtess/memalloc.h"
 
-#include "thirdparty/glu/libtess/tess.h"
-
-/* __gl_projectPolygon( tess ) determines the polygon normal
- * and project vertices onto the plane of the polygon.
- */
-void __gl_projectPolygon( GLUtesselator *tess );
-
+int __gl_memInit( size_t maxFast )
+{
+#ifndef NO_MALLOPT
+/*  mallopt( M_MXFAST, maxFast );*/
+#ifdef MEMORY_DEBUG
+  mallopt( M_DEBUG, 1 );
 #endif
+#endif
+   return 1;
+}
+
+#ifdef MEMORY_DEBUG
+void *__gl_memAlloc( size_t n )
+{
+  return memset( malloc( n ), 0xa5, n );
+}
+#endif
+
