@@ -1,3 +1,21 @@
+2011-04-12  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, rolling out r83649.
+        http://trac.webkit.org/changeset/83649
+        https://bugs.webkit.org/show_bug.cgi?id=57563
+
+        This patch causes compiling errors for chromium
+
+        * public/WebCanvas.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::printPage):
+        * tests/TransparencyWinTest.cpp:
+        (WebCore::drawNativeRect):
+        (WebCore::getPixelAt):
+        (WebCore::clearTopLayerAlphaChannel):
+        (WebCore::clearTopLayerAlphaPixel):
+        (WebCore::TEST):
+
 2011-04-12  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Jian Li.

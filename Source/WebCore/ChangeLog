@@ -1,3 +1,37 @@
+2011-04-12  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, rolling out r83649.
+        http://trac.webkit.org/changeset/83649
+        https://bugs.webkit.org/show_bug.cgi?id=57563
+
+        This patch causes compiling errors for chromium
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::initializeForGDI):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::~TransparencyAwareFontPainter):
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/chromium/ImageBufferData.h:
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/PlatformCanvas.cpp:
+        (WebCore::PlatformCanvas::resize):
+        * platform/graphics/chromium/PlatformCanvas.h:
+        * platform/graphics/chromium/TransparencyWin.cpp:
+        (WebCore::TransparencyWin::compositeTextComposite):
+        (WebCore::TransparencyWin::makeLayerOpaque):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::paintSkBitmap):
+        (WebCore::Image::drawPattern):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::PlatformContextSkia):
+        (WebCore::PlatformContextSkia::setCanvas):
+        (WebCore::PlatformContextSkia::isPrinting):
+        (WebCore::PlatformContextSkia::isNativeFontRenderingAllowed):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (WebCore::PlatformContextSkia::canvas):
+
 2011-04-12  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Alexey Proskuryakov.

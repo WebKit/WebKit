@@ -213,9 +213,8 @@ SkColor PlatformContextSkia::State::applyAlpha(SkColor c) const
 // PlatformContextSkia ---------------------------------------------------------
 
 // Danger: canvas can be NULL.
-PlatformContextSkia::PlatformContextSkia(SkCanvas* canvas)
+PlatformContextSkia::PlatformContextSkia(skia::PlatformCanvas* canvas)
     : m_canvas(canvas)
-    , m_printing(false)
     , m_drawingToImageBuffer(false)
     , m_useGPU(false)
 #if ENABLE(ACCELERATED_2D_CANVAS)
@@ -241,7 +240,7 @@ PlatformContextSkia::~PlatformContextSkia()
 #endif
 }
 
-void PlatformContextSkia::setCanvas(SkCanvas* canvas)
+void PlatformContextSkia::setCanvas(skia::PlatformCanvas* canvas)
 {
     m_canvas = canvas;
 }
@@ -610,12 +609,21 @@ const SkBitmap* PlatformContextSkia::bitmap() const
     return &m_canvas->getDevice()->accessBitmap(false);
 }
 
+bool PlatformContextSkia::isPrinting()
+{
+#if ENABLE(SKIA_GPU)
+    return true;
+#else
+    return m_canvas->getTopPlatformDevice().IsVectorial();
+#endif
+}
+
 bool PlatformContextSkia::isNativeFontRenderingAllowed()
 {
 #if ENABLE(SKIA_GPU)
     return false;
 #else
-    return skia::SupportsPlatformPaint(m_canvas);
+    return m_canvas->getTopPlatformDevice().IsNativeFontRenderingAllowed();
 #endif
 }
 

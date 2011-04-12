@@ -50,6 +50,11 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
+
+namespace skia {
+class PlatformCanvas;
+}
+
 namespace WebCore {
 
 class CCLayerImpl;

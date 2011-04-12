@@ -50,8 +50,8 @@ static FloatRect RECTToFloatRect(const RECT* rect)
 static void drawNativeRect(GraphicsContext* context,
                            int x, int y, int w, int h)
 {
-    SkCanvas* canvas = context->platformContext()->canvas();
-    HDC dc = skia::BeginPlatformPaint(canvas);
+    skia::PlatformCanvas* canvas = context->platformContext()->canvas();
+    HDC dc = canvas->beginPlatformPaint();
 
     RECT innerRc;
     innerRc.left = x;
@@ -61,12 +61,13 @@ static void drawNativeRect(GraphicsContext* context,
     FillRect(dc, &innerRc,
              reinterpret_cast<HBRUSH>(GetStockObject(BLACK_BRUSH)));
 
-    skia::EndPlatformPaint(canvas);
+    canvas->endPlatformPaint();
 }
 
 static Color getPixelAt(GraphicsContext* context, int x, int y)
 {
-    const SkBitmap& bitmap = context->platformContext()->canvas()->getTopDevice()->accessBitmap(false);
+    const SkBitmap& bitmap = context->platformContext()->canvas()->
+        getTopPlatformDevice().accessBitmap(false);
     return Color(*reinterpret_cast<const RGBA32*>(bitmap.getAddr32(x, y)));
 }
 
@@ -74,7 +75,8 @@ static Color getPixelAt(GraphicsContext* context, int x, int y)
 // Windows messing it up.
 static void clearTopLayerAlphaChannel(GraphicsContext* context)
 {
-    SkBitmap& bitmap = const_cast<SkBitmap&>(context->platformContext()->canvas()->getTopDevice()->accessBitmap(false));
+    SkBitmap& bitmap = const_cast<SkBitmap&>(context->platformContext()->
+        canvas()->getTopPlatformDevice().accessBitmap(false));
     for (int y = 0; y < bitmap.height(); y++) {
         uint32_t* row = bitmap.getAddr32(0, y);
         for (int x = 0; x < bitmap.width(); x++)
@@ -85,7 +87,8 @@ static void clearTopLayerAlphaChannel(GraphicsContext* context)
 // Clears the alpha channel on the specified pixel.
 static void clearTopLayerAlphaPixel(GraphicsContext* context, int x, int y)
 {
-    SkBitmap& bitmap = const_cast<SkBitmap&>(context->platformContext()->canvas()->getTopDevice()->accessBitmap(false));
+    SkBitmap& bitmap = const_cast<SkBitmap&>(context->platformContext()->
+        canvas()->getTopPlatformDevice().accessBitmap(false));
     *bitmap.getAddr32(x, y) &= 0x00FFFFFF;
 }
 
@@ -556,7 +559,9 @@ TEST(TransparencyWin, Scale)
         // the helper goes out of scope. We don't want to call
         // clearTopLayerAlphaChannel because that will actually clear the whole
         // canvas (since we have no extra layer!).
-        SkBitmap& bitmap = const_cast<SkBitmap&>(helper.context()->platformContext()->canvas()->getTopDevice()->accessBitmap(false));
+        SkBitmap& bitmap = const_cast<SkBitmap&>(helper.context()->
+            platformContext()->canvas()->getTopPlatformDevice().
+            accessBitmap(false));
         *bitmap.getAddr32(2, 2) &= 0x00FFFFFF;
         helper.composite();
     }

@@ -33,13 +33,15 @@
 
 #include "PlatformContextSkia.h"
 
+#include "skia/ext/platform_canvas.h"
+
 namespace WebCore {
 
 class ImageBufferData {
 public:
     ImageBufferData(const IntSize&);
 
-    OwnPtr<SkCanvas> m_canvas;
+    skia::PlatformCanvas m_canvas;
     PlatformContextSkia m_platformContext;
 };
 

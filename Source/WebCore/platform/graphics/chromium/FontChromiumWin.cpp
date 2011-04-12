@@ -165,7 +165,7 @@ void TransparencyAwareFontPainter::initializeForGDI()
 
     // Set up the DC, using the one from the transparency helper.
     if (m_transparency.platformContext()) {
-        m_hdc = skia::BeginPlatformPaint(m_transparency.platformContext()->canvas());
+        m_hdc = m_transparency.platformContext()->canvas()->beginPlatformPaint();
         SetTextColor(m_hdc, skia::SkColorToCOLORREF(color));
         SetBkMode(m_hdc, TRANSPARENT);
     }
@@ -179,7 +179,7 @@ TransparencyAwareFontPainter::~TransparencyAwareFontPainter()
     if (m_createdTransparencyLayer)
         m_graphicsContext->endTransparencyLayer();
     m_graphicsContext->restore();
-    skia::EndPlatformPaint(m_platformContext->canvas());
+    m_platformContext->canvas()->endPlatformPaint();
 }
 
 // Specialization for simple GlyphBuffer painting.
@@ -542,7 +542,7 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
     // the baseline, so we have to subtract off the ascent.
     state.draw(graphicsContext, hdc, lroundf(point.x()), lroundf(point.y() - fontMetrics().ascent()), from, to);
 
-    skia::EndPlatformPaint(context->canvas());
+    context->canvas()->endPlatformPaint();
 }
 
 void Font::drawEmphasisMarksForComplexText(GraphicsContext* /* context */, const TextRun& /* run */, const AtomicString& /* mark */, const FloatPoint& /* point */, int /* from */, int /* to */) const

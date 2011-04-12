@@ -194,7 +194,7 @@ private:
     bool m_compositeOffscreen;
 
 #if USE(SKIA)
-    OwnPtr<SkCanvas> m_rootLayerCanvas;
+    OwnPtr<skia::PlatformCanvas> m_rootLayerCanvas;
     OwnPtr<PlatformContextSkia> m_rootLayerSkiaContext;
     OwnPtr<GraphicsContext> m_rootLayerGraphicsContext;
 #elif PLATFORM(CG)

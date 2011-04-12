@@ -262,17 +262,12 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
     paint.setAlpha(platformContext->getNormalizedAlpha());
     paint.setLooper(platformContext->getDrawLooper());
 
-    SkCanvas* canvas = platformContext->canvas();
+    skia::PlatformCanvas* canvas = platformContext->canvas();
 
-    ResamplingMode resampling;
-#if ENABLE(SKIA_GPU)
-    resampling = RESAMPLE_LINEAR;
-#else
-    resampling = platformContext->printing() ? RESAMPLE_NONE :
+    ResamplingMode resampling = platformContext->isPrinting() ? RESAMPLE_NONE :
         computeResamplingMode(platformContext, bitmap, srcRect.width(), srcRect.height(),
                               SkScalarToFloat(destRect.width()),
                               SkScalarToFloat(destRect.height()));
-#endif
     if (resampling == RESAMPLE_AWESOME) {
         drawResampledBitmap(*canvas, paint, bitmap, srcRect, destRect);
     } else {
@@ -368,17 +363,13 @@ void Image::drawPattern(GraphicsContext* context,
 
     // Compute the resampling mode.
     ResamplingMode resampling;
-#if ENABLE(SKIA_GPU)
-    resampling = RESAMPLE_LINEAR;
-#else
-    if (context->platformContext()->printing())
+    if (context->platformContext()->isPrinting())
       resampling = RESAMPLE_LINEAR;
     else {
       resampling = computeResamplingMode(context->platformContext(), *bitmap,
                                          srcRect.width(), srcRect.height(),
                                          destBitmapWidth, destBitmapHeight);
     }
-#endif
 
     // Load the transform WebKit requested.
     SkMatrix matrix(patternTransform);
