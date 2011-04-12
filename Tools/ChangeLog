@@ -1,3 +1,21 @@
+2011-04-12  Carl Lobo  <carllobo@gmail.com> and Brent Fulgham <bfulgham@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Patch to download the WinCairo dependancies as part of build-webkit.
+        https://bugs.webkit.org/show_bug.cgi?id=51790
+
+        This patch downloads the dependancies from 
+            http://idisk.mac.com/bfulgham-Public/WinCairoRequirements.zip 
+        checking the modification timestamp etc. 
+
+        * Tools/Scripts/build-webkit
+        * Tools/Scripts/update-webkit: Modified to understand the --wincairo
+          flag, and to update WinCairo dependencies when used.
+        * Tools/Scripts/update-webkit-cairo-libs: added
+        * Tools/Scripts/update-webkit-dependency: added
+        * Tools/Scripts/update-webkit-auxiliary-libs
+
 2011-04-12  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adam Roben.

@@ -67,6 +67,7 @@ my $isSymbian;
 my %qtFeatureDefaults;
 my $isGtk;
 my $isWinCE;
+my $isWinCairo;
 my $isWx;
 my $isEfl;
 my @wxArgs;
@@ -445,26 +446,24 @@ sub determinePassedConfiguration
     return if $searchedForPassedConfiguration;
     $searchedForPassedConfiguration = 1;
 
-    my $isWinCairo = checkForArgumentAndRemoveFromARGV("--wincairo");
-
     for my $i (0 .. $#ARGV) {
         my $opt = $ARGV[$i];
         if ($opt =~ /^--debug$/i || $opt =~ /^--devel/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Debug";
-            $passedConfiguration .= "_Cairo_CFLite" if ($isWinCairo && isCygwin());
+            $passedConfiguration .= "_Cairo_CFLite" if (isWinCairo() && isCygwin());
             return;
         }
         if ($opt =~ /^--release$/i || $opt =~ /^--deploy/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Release";
-            $passedConfiguration .= "_Cairo_CFLite" if ($isWinCairo && isCygwin());
+            $passedConfiguration .= "_Cairo_CFLite" if (isWinCairo() && isCygwin());
             return;
         }
         if ($opt =~ /^--profil(e|ing)$/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Profiling";
-            $passedConfiguration .= "_Cairo_CFLite" if ($isWinCairo && isCygwin());
+            $passedConfiguration .= "_Cairo_CFLite" if (isWinCairo() && isCygwin());
             return;
         }
     }
@@ -870,6 +869,18 @@ sub determineIsChromium()
 {
     return if defined($isChromium);
     $isChromium = checkForArgumentAndRemoveFromARGV("--chromium");
+}
+
+sub isWinCairo()
+{
+    determineIsWinCairo();
+    return $isWinCairo;
+}
+
+sub determineIsWinCairo()
+{
+    return if defined($isWinCairo);
+    $isWinCairo = checkForArgumentAndRemoveFromARGV("--wincairo");
 }
 
 sub isCygwin()
