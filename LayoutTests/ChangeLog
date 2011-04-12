@@ -1,3 +1,13 @@
+2011-04-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9251515> and https://bugs.webkit.org/show_bug.cgi?id=58072
+        URLs accessed as a result of pushState/replaceState should count as "visited" and be in the global history
+
+        * fast/loader/stateobjects/state-url-sets-links-visited-expected.txt: Added.
+        * fast/loader/stateobjects/state-url-sets-links-visited.html: Added.
+
 2011-04-11  Justin Novosad  <junov@chromium.org>
 
         Reviewed by Kenneth Russell.

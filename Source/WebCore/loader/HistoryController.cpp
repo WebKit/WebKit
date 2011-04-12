@@ -799,6 +799,10 @@ void HistoryController::pushState(PassRefPtr<SerializedScriptValue> stateObject,
     m_currentItem->setURLString(urlString);
 
     page->backForward()->addItem(topItem.release());
+
+    addVisitedLink(page, KURL(ParsedURLString, urlString));
+    m_frame->loader()->client()->updateGlobalHistory();
+
 }
 
 void HistoryController::replaceState(PassRefPtr<SerializedScriptValue> stateObject, const String& title, const String& urlString)
@@ -810,6 +814,10 @@ void HistoryController::replaceState(PassRefPtr<SerializedScriptValue> stateObje
         m_currentItem->setURLString(urlString);
     m_currentItem->setTitle(title);
     m_currentItem->setStateObject(stateObject);
+
+    ASSERT(m_frame->page());
+    addVisitedLink(m_frame->page(), KURL(ParsedURLString, urlString));
+    m_frame->loader()->client()->updateGlobalHistory();
 }
 
 } // namespace WebCore
