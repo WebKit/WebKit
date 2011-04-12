@@ -3499,3 +3499,5 @@ BUGCR79110 WIN LINUX : fast/overflow/infiniteRecursionGuard.html = IMAGE+TEXT
 BUGCR79111 GPU WIN LINUX : fast/canvas/DrawImageSinglePixelStretch.html = TEXT
 BUGCR79111 GPU : compositing/framesets/composited-frame-alignment.html = IMAGE
 BUGCR79111 GPU : compositing/objects/composited-object-alignment.html = IMAGE
+
+BUGWK58308 GPU WIN LINUX DEBUG : compositing/z-order/negative-z-index.html = PASS CRASH
