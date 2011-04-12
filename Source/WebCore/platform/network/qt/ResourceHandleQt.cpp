@@ -210,8 +210,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     // When using synchronous calls, we are finished when reaching this point.
     if (reply->isFinished()) {
         syncLoader.setReplyFinished(true);
-        d->m_job->forwardData();
-        d->m_job->finish();
+        d->m_job->synchronousLoad();
     } else
         syncLoader.waitForCompletion();
 

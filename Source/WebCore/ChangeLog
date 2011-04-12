@@ -1,3 +1,50 @@
+2011-04-12  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QNetworkReplyHandler refactoring: signal queue
+        https://bugs.webkit.org/show_bug.cgi?id=57075
+
+        The idea is to make all signals that come from the QNetworkReply to pass through a queue and to
+        stop that queue when loading is deferred. This way almost all the deferred logic can be removed
+        from QNetworkReplyHandler class and encapsulated in its own class.
+
+        To stop the queue during wrapper methods execution avoids stacking handler methods over wrapper
+        methods. Because of this there is no chance for the wrapper to be destroyed inside one of its methods.
+        This together with empting the queue at wrapper destruction time makes sure that the handler will
+        not receive calls from a dead wrapper.
+
+        The new class is named QNetworkReplyHandlerCallQueue.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandlerCallQueue::QNetworkReplyHandlerCallQueue):
+        (WebCore::QNetworkReplyHandlerCallQueue::push):
+        (WebCore::QNetworkReplyHandlerCallQueue::lock):
+        (WebCore::QNetworkReplyHandlerCallQueue::unlock):
+        (WebCore::QNetworkReplyHandlerCallQueue::setDeferSignals):
+        (WebCore::QueueLocker::QueueLocker):
+        (WebCore::QueueLocker::~QueueLocker):
+        (WebCore::QNetworkReplyWrapper::QNetworkReplyWrapper):
+        (WebCore::QNetworkReplyWrapper::~QNetworkReplyWrapper):
+        (WebCore::QNetworkReplyWrapper::receiveMetaData):
+        (WebCore::QNetworkReplyWrapper::readyRead):
+        (WebCore::QNetworkReplyWrapper::didReceiveFinished):
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::resetState):
+        (WebCore::QNetworkReplyHandler::release):
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        (WebCore::QNetworkReplyHandler::forwardData):
+        (WebCore::QNetworkReplyHandler::start):
+        (WebCore::QNetworkReplyHandler::synchronousLoad):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        (WebCore::QNetworkReplyHandlerCallQueue::deferSignals):
+        (WebCore::QNetworkReplyHandlerCallQueue::clear):
+        (WebCore::QNetworkReplyWrapper::synchronousLoad):
+        (WebCore::QNetworkReplyHandler::setLoadingDeferred):
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
 2011-04-12  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
