@@ -27,17 +27,27 @@
 #import "AttributedString.h"
 
 #import "ArgumentCodersMac.h"
+#import "ArgumentDecoder.h"
+#import "ArgumentEncoder.h"
 
 namespace WebKit {
 
 void AttributedString::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
+    encoder->encode(!string);
+    if (!string)
+        return;
     CoreIPC::encode(encoder, string.get());
 }
 
 bool AttributedString::decode(CoreIPC::ArgumentDecoder* decoder, AttributedString& attributedString)
 {
+    bool isNull;
+    if (!decoder->decode(isNull))
+        return false;
+    if (isNull)
+        return true;
     return CoreIPC::decode(decoder, attributedString.string);
 }
 
-} // namespace WebKit
+}
