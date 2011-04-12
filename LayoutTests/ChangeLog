@@ -1,5 +1,13 @@
 2011-04-12  Adam Roben  <aroben@apple.com>
 
+        Add Windows expected failure results for a new test
+
+        <http://webkit.org/b/58325> tracks the failure.
+
+        * platform/win/fast/loader/stateobjects/state-url-sets-links-visited-expected.txt: Added.
+
+2011-04-12  Adam Roben  <aroben@apple.com>
+
         Remove no-longer-needed Windows-specific results for an arraybuffer test
 
         Fixes <http://webkit.org/b/58326> REGRESSION (r83532):
