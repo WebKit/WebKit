@@ -1,3 +1,10 @@
+2011-04-11  Daniel Bates  <dbates@rim.com>
+
+        Attempt to fix the GTK build after changeset 83527 <http://trac.webkit.org/changeset/83527>
+        (https://bugs.webkit.org/show_bug.cgi?id=53556).
+
+        * GNUmakefile.list.am: Append files HTMLTrackElement.{h, cpp} to the list webcore_sources.
+
 2011-04-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak.

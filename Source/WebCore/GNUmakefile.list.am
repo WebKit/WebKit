@@ -1766,6 +1766,8 @@ webcore_sources += \
 	Source/WebCore/html/HTMLTextAreaElement.h \
 	Source/WebCore/html/HTMLTitleElement.cpp \
 	Source/WebCore/html/HTMLTitleElement.h \
+	Source/WebCore/html/HTMLTrackElement.cpp \
+	Source/WebCore/html/HTMLTrackElement.h \
 	Source/WebCore/html/HTMLUListElement.cpp \
 	Source/WebCore/html/HTMLUListElement.h \
 	Source/WebCore/html/HTMLVideoElement.cpp \
