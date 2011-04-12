@@ -1,3 +1,15 @@
+2011-04-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        -webkit-box-shadow:inset does not animate transform as an inset shadow
+        https://bugs.webkit.org/show_bug.cgi?id=45176
+        
+        Testcase for transitions between different shadow styles.
+
+        * transitions/mismatched-shadow-styles-expected.txt: Added.
+        * transitions/mismatched-shadow-styles.html: Added.
+
 2011-04-11  Xianzhu Wang  <wangxianzhu@google.com>
 
         Reviewed by Tony Gentilcore.

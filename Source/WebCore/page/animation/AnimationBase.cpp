@@ -142,6 +142,9 @@ static inline ShadowStyle blendFunc(const AnimationBase* anim, ShadowStyle from,
 static inline ShadowData* blendFunc(const AnimationBase* anim, const ShadowData* from, const ShadowData* to, double progress)
 {  
     ASSERT(from && to);
+    if (from->style() != to->style())
+        return new ShadowData(*to);
+
     return new ShadowData(blendFunc(anim, from->x(), to->x(), progress),
                           blendFunc(anim, from->y(), to->y(), progress), 
                           blendFunc(anim, from->blur(), to->blur(), progress),
@@ -360,14 +363,15 @@ public:
         const ShadowData* shadowA = (a->*m_getter)();
         const ShadowData* shadowB = (b->*m_getter)();
         ShadowData defaultShadowData(0, 0, 0, 0, Normal, property() == CSSPropertyWebkitBoxShadow, Color::transparent);
+        ShadowData defaultInsetShadowData(0, 0, 0, 0, Inset, property() == CSSPropertyWebkitBoxShadow, Color::transparent);
 
         ShadowData* newShadowData = 0;
         ShadowData* lastShadow = 0;
         
         while (shadowA || shadowB) {
-            const ShadowData* srcShadow = shadowA ? shadowA : &defaultShadowData;
-            const ShadowData* dstShadow = shadowB ? shadowB : &defaultShadowData;
-            
+            const ShadowData* srcShadow = shadowA ? shadowA : (shadowB->style() == Inset ? &defaultInsetShadowData : &defaultShadowData);
+            const ShadowData* dstShadow = shadowB ? shadowB : (shadowA->style() == Inset ? &defaultInsetShadowData : &defaultShadowData);
+
             ShadowData* blendedShadow = blendFunc(anim, srcShadow, dstShadow, progress);
             if (!lastShadow)
                 newShadowData = blendedShadow;

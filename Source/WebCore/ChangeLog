@@ -1,3 +1,21 @@
+2011-04-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        -webkit-box-shadow:inset does not animate transform as an inset shadow
+        https://bugs.webkit.org/show_bug.cgi?id=45176
+        
+        Two fixes:
+        1. Don't run transitions between different shadow styles (normal vs. inset).
+        2. When either source or destination is null, use a default shadow with a
+        matching style so that the transition runs.
+
+        Test: transitions/mismatched-shadow-styles.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+        (WebCore::PropertyWrapperShadow::blend):
+
 2011-04-11  John Bates  <jbates@google.com>
 
         Reviewed by Kenneth Russell.
