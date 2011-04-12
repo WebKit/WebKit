@@ -1,3 +1,11 @@
+2011-04-12  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline of fast/block/float/021.html and
+        skipping 2 failing tests.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/block/float/021-expected.txt:
+
 2011-04-12  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Adjusted chromium test expectations (negative-z-index.html may crash on win & linux debug)

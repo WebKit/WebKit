@@ -1254,6 +1254,7 @@ fast/history/nested-visited-test.html
 fast/history/self-is-visited.html
 fast/history/sibling-visited-test.html
 fast/history/multiple-classes-visited.html
+fast/loader/stateobjects/state-url-sets-links-visited.html
 
 # Rounding color problems inside pixman
 # https://bugs.webkit.org/show_bug.cgi?id=49964
@@ -1367,3 +1368,6 @@ fast/repaint/scale-page-shrink.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=58020
 fast/forms/input-number-large-padding.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=58309
+fast/canvas/DrawImageSinglePixelStretch.html
