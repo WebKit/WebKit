@@ -1,3 +1,29 @@
+2011-04-11  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION: Vimeo fullscreen video displays incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=58291
+
+        Set the RenderFullScreen's zIndex to the max.  And make sure to override
+        a video element's specified width and height by making its full screen rules
+        important.  Also, always show the controls when a media element is in full
+        screen mode.
+
+        Test: fullscreen/video-specified-size.html
+        Test: fullscreen/full-screen-zIndex.html
+
+        * css/fullscreen.css:
+        (video:-webkit-full-screen): 
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::controls): Always show controls in full screen mode.
+        (WebCore::HTMLMediaElement::preDispatchEventHandler): Added. Handle the fullscreen
+            change event and hide or show the controls accordingly.
+        * html/HTMLMediaElement.h:
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreen::createFullScreenStyle): Set the zIndex to INT_MAX and use a 
+            vertical flexbox instead of a horizontal one.
+
 2011-04-12  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

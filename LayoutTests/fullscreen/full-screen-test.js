@@ -1,9 +1,10 @@
 var console = null;
 var printFullTestDetails = true; // This is optionaly switched of by test whose tested values can differ. (see disableFullTestDetailsPrinting())
+var runPixelTests;
 
 logConsole();
 
-if (window.layoutTestController) {
+if (!runPixelTests && window.layoutTestController) {
     layoutTestController.dumpAsText();
     layoutTestController.waitUntilDone();
 }
@@ -80,9 +81,9 @@ function reportExpected(success, testFuncString, comparison, expected, observed)
     logResult(success, msg);
 }
 
-function waitForEventAndEnd(eventName, funcString)
+function waitForEventAndEnd(element, eventName, funcString)
 {
-    waitForEvent(eventName, funcString, true)
+    waitForEvent(element, eventName, funcString, true)
 }
 
 function waitForEvent(element, eventName, func, endit)

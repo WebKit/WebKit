@@ -7,10 +7,13 @@
 }
 
 video:-webkit-full-screen {
-    background-color: black;
-    width: auto;   
-    height: 100%;
-    max-width: 100%;
+    background-color: black !important;
+    position: static !important;
+    margin: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+    -webkit-box-flex: 1 !important;
+    display: block !important;
 }
 
 img:-webkit-full-screen {

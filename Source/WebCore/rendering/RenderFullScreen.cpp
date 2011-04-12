@@ -46,7 +46,7 @@ PassRefPtr<RenderStyle> RenderFullScreen::createFullScreenStyle()
     RefPtr<RenderStyle> fullscreenStyle = RenderStyle::createDefaultStyle();
 
     // Create a stacking context:
-    fullscreenStyle->setZIndex(0);
+    fullscreenStyle->setZIndex(INT_MAX);
 
     fullscreenStyle->setFontDescription(FontDescription());
     fullscreenStyle->font().update(0);
@@ -54,7 +54,7 @@ PassRefPtr<RenderStyle> RenderFullScreen::createFullScreenStyle()
     fullscreenStyle->setDisplay(BOX);
     fullscreenStyle->setBoxPack(BCENTER);
     fullscreenStyle->setBoxAlign(BCENTER);
-    fullscreenStyle->setBoxOrient(HORIZONTAL);
+    fullscreenStyle->setBoxOrient(VERTICAL);
     
     fullscreenStyle->setPosition(FixedPosition);
     fullscreenStyle->setWidth(Length(100.0, Percent));

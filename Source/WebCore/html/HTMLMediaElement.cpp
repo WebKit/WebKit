@@ -1492,6 +1492,10 @@ bool HTMLMediaElement::controls() const
     if (isVideo() && document()->page() && document()->page()->chrome()->requiresFullscreenForVideoPlayback())
         return true;
 
+    // Always show controls when in full screen mode.
+    if (isFullscreen())
+        return true;
+
     return hasAttribute(controlsAttr);
 }
 
@@ -2650,6 +2654,22 @@ void HTMLMediaElement::ensureMediaControls()
     ExceptionCode ec;
     ensureShadowRoot()->appendChild(MediaControlRootElement::create(this), ec);
 }
+
+void* HTMLMediaElement::preDispatchEventHandler(Event* event) 
+{
+    if (event && event->type() == eventNames().webkitfullscreenchangeEvent) {
+        if (controls()) {
+            if (!hasMediaControls()) {
+                ensureMediaControls();
+                mediaControls()->reset();
+            }
+            mediaControls()->show();
+        } else if (hasMediaControls())
+            mediaControls()->hide();
+    }
+    return 0;
+}
+
 
 }
 

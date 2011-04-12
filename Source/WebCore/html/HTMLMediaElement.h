@@ -326,6 +326,8 @@ private:
     bool hasMediaControls();
     void ensureMediaControls();
 
+    virtual void* preDispatchEventHandler(Event*);
+
     Timer<HTMLMediaElement> m_loadTimer;
     Timer<HTMLMediaElement> m_asyncEventTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;
