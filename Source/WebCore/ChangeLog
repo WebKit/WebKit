@@ -1,3 +1,16 @@
+2011-04-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        fast/css/dashboard-regions-attr-crash.html asserts
+        https://bugs.webkit.org/show_bug.cgi?id=58233
+
+        Move DASHBOARD_SUPPORT feature detection from features.pri to CodeGenerators.pri
+        not to generate incorrect properties into CSSPropertyNames.h.
+
+        * CodeGenerators.pri:
+        * features.pri:
+
 2011-04-12  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Dan Bernstein.

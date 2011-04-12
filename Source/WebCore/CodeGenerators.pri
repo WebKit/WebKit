@@ -38,7 +38,7 @@ WALDOCSSPROPS = $$PWD/css/CSSPropertyNames.in
 
 WALDOCSSVALUES = $$PWD/css/CSSValueKeywords.in
 
-DASHBOARDSUPPORTCSSPROPERTIES = $$PWD/css/DashboardSupportCSSPropertyNames.in
+contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=1): DASHBOARDSUPPORTCSSPROPERTIES = $$PWD/css/DashboardSupportCSSPropertyNames.in
 
 XPATHBISON = $$PWD/xml/XPathGrammar.y
 
