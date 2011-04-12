@@ -1541,8 +1541,9 @@ bool RenderBlock::handleRunInChild(RenderBox* child)
         runInChild = nextSibling;
     }
 
-    // Now insert the new child under |currBlock|.
-    currBlock->children()->insertChildNode(currBlock, inlineRunIn, currBlock->firstChild());
+    // Now insert the new child under |currBlock|. Use addChild instead of insertChildNode since it handles correct placement of the children, esp where we cannot insert
+    // anything before the first child. e.g. details tag. See https://bugs.webkit.org/show_bug.cgi?id=58228.
+    currBlock->addChild(inlineRunIn, currBlock->firstChild());
     
     // If the run-in had an element, we need to set the new renderer.
     if (runInNode)

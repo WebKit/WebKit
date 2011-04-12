@@ -1,3 +1,13 @@
+2011-04-11  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        Tests that we do not crash when reparenting a runin to a details block.
+        https://bugs.webkit.org/show_bug.cgi?id=58228
+
+        * fast/runin/runin-reparent-crash-expected.txt: Added.
+        * fast/runin/runin-reparent-crash.html: Added.
+
 2011-04-12  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; new chromium layout test baselines.
