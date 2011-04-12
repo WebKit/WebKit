@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,44 +28,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AssociatedURLLoader_h
-#define AssociatedURLLoader_h
-
-#include "WebURLLoader.h"
-#include "WebURLLoaderOptions.h"
-#include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/RefPtr.h>
-
-namespace WebCore { class DocumentThreadableLoader; }
+#ifndef WebURLLoaderOptions_h
+#define WebURLLoaderOptions_h
 
 namespace WebKit {
 
-class WebFrameImpl;
+struct WebURLLoaderOptions {
 
-// This class is used to implement WebFrame::createAssociatedURLLoader.
-class AssociatedURLLoader : public WebURLLoader {
-    WTF_MAKE_NONCOPYABLE(AssociatedURLLoader);
-public:
-    AssociatedURLLoader(PassRefPtr<WebFrameImpl>);
-    AssociatedURLLoader(PassRefPtr<WebFrameImpl>, const WebURLLoaderOptions&);
-    ~AssociatedURLLoader();
+    enum CrossOriginRequestPolicy {
+        CrossOriginRequestPolicyDeny,
+        CrossOriginRequestPolicyUseAccessControl,
+        CrossOriginRequestPolicyAllow
+    };
 
-    // WebURLLoader methods:
-    virtual void loadSynchronously(const WebURLRequest&, WebURLResponse&, WebURLError&, WebData&);
-    virtual void loadAsynchronously(const WebURLRequest&, WebURLLoaderClient*);
-    virtual void cancel();
-    virtual void setDefersLoading(bool);
+    WebURLLoaderOptions() : sniffContent(false), allowCredentials(false), forcePreflight(false), crossOriginRequestPolicy(CrossOriginRequestPolicyAllow) { }
 
-private:
-
-    class ClientAdapter;
-
-    RefPtr<WebFrameImpl> m_frameImpl;
-    WebURLLoaderOptions m_options;
-    WebURLLoaderClient* m_client;
-    OwnPtr<ClientAdapter> m_clientAdapter;
-    RefPtr<WebCore::DocumentThreadableLoader> m_loader;
+    bool sniffContent; // Whether to sniff content.
+    bool allowCredentials; // Whether to send HTTP credentials and cookies with the request.
+    bool forcePreflight; // If policy is to use access control, whether to force a preflight.
+    CrossOriginRequestPolicy crossOriginRequestPolicy;
 };
 
 } // namespace WebKit

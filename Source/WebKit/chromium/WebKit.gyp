@@ -281,6 +281,7 @@
                 'public/WebURL.h',
                 'public/WebURLError.h',
                 'public/WebURLLoader.h',
+                'public/WebURLLoaderOptions.h',
                 'public/WebURLLoadTiming.h',
                 'public/WebURLLoaderClient.h',
                 'public/WebURLRequest.h',

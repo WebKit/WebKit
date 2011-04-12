@@ -1,3 +1,20 @@
+2011-04-12  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Move the WebURLLoaderOptions struct into its own file and rename the CrossOriginRequestPolicy enum to conform to the WebKit coding standard.
+        https://bugs.webkit.org/show_bug.cgi?id=58287
+
+        No new tests. No new functionality exposed.
+
+        * WebKit.gyp:
+        * public/WebURLLoader.h:
+        * public/WebURLLoaderOptions.h: Added.
+        (WebKit::WebURLLoaderOptions::WebURLLoaderOptions):
+        * src/AssociatedURLLoader.cpp:
+        (WebKit::AssociatedURLLoader::AssociatedURLLoader):
+        * src/AssociatedURLLoader.h:
+
 2011-04-11  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
