@@ -406,7 +406,7 @@ bool WebViewHost::handleCurrentKeyboardEvent()
     return frame->executeCommand(WebString::fromUTF8(m_editCommandName), WebString::fromUTF8(m_editCommandValue));
 }
 
-void WebViewHost::spellCheck(const WebString& text, int& misspelledOffset, int& misspelledLength)
+void WebViewHost::spellCheck(const WebString& text, int& misspelledOffset, int& misspelledLength, WebVector<WebString>* optionalSuggestions)
 {
     // Check the spelling of the given text.
     m_spellcheck.spellCheckWord(text, &misspelledOffset, &misspelledLength);

@@ -106,7 +106,7 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     virtual bool navigate(const TestNavigationEntry&, bool reload);
 
     // WebKit::WebSpellCheckClient
-    virtual void spellCheck(const WebKit::WebString&, int& offset, int& length);
+    virtual void spellCheck(const WebKit::WebString&, int& offset, int& length, WebKit::WebVector<WebKit::WebString>* optionalSuggestions);
     virtual void requestCheckingOfText(const WebKit::WebString&, WebKit::WebTextCheckingCompletion*);
     virtual WebKit::WebString autoCorrectWord(const WebKit::WebString&);
 
