@@ -65,6 +65,7 @@ public:
     void simulateRightClick(unsigned x, unsigned y);
 
 #if PLATFORM(WIN)
+    void simulateAKeyDown();
     void setParentWindowMessageObserver(WindowMessageObserver* observer) { m_parentWindowMessageObserver = observer; }
 #endif
 

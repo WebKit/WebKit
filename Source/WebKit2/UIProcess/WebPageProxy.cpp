@@ -2563,7 +2563,12 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         if (handled)
             break;
 
-        m_uiClient.didNotHandleKeyEvent(this, event);
+        if (m_uiClient.implementsDidNotHandleKeyEvent())
+            m_uiClient.didNotHandleKeyEvent(this, event);
+#if PLATFORM(WIN)
+        else
+            ::TranslateMessage(event.nativeEvent());
+#endif
         break;
     }
     }

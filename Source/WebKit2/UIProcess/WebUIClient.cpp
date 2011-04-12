@@ -155,6 +155,11 @@ void WebUIClient::missingPluginButtonClicked(WebPageProxy* page, const String& m
     m_client.missingPluginButtonClicked(toAPI(page), toAPI(mimeType.impl()), toAPI(url.impl()), toAPI(pluginsPageURL.impl()), m_client.clientInfo);
 }
 
+bool WebUIClient::implementsDidNotHandleKeyEvent() const
+{
+    return m_client.didNotHandleKeyEvent;
+}
+
 void WebUIClient::didNotHandleKeyEvent(WebPageProxy* page, const NativeWebKeyboardEvent& event)
 {
     if (!m_client.didNotHandleKeyEvent)

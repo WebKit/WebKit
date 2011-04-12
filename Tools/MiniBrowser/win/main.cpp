@@ -41,6 +41,22 @@
 
 #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='" PROCESSORARCHITECTURE "' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
+static bool shouldTranslateMessage(const MSG& msg)
+{
+    // Only these four messages are actually translated by ::TranslateMessage or ::TranslateAccelerator.
+    // It's useless (though harmless) to call those functions for other messages, so we always allow other messages to be translated.
+    if (msg.message != WM_KEYDOWN && msg.message != WM_SYSKEYDOWN && msg.message != WM_KEYUP && msg.message != WM_SYSKEYUP)
+        return true;
+    
+    wchar_t className[256];
+    if (!::GetClassNameW(msg.hwnd, className, ARRAYSIZE(className)))
+        return true;
+
+    // Don't call TranslateMessage() on key events destined for a WebKit2 view, WebKit will do this if it doesn't handle the message.
+    // It would be nice to use some API here instead of hard-coding the window class name.
+    return wcscmp(className, L"WebKit2WebViewWindowClass");
+}
+
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCmdLine, int nCmdShow)
 {
     MiniBrowser::shared().initialize(hInstance);
@@ -52,7 +68,9 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrC
     while (BOOL result = ::GetMessage(&message, 0, 0, 0)) {
         if (result == -1)
             break;
-        ::TranslateMessage(&message);
+        
+        if (shouldTranslateMessage(message))
+            ::TranslateMessage(&message);
 
         if (!MiniBrowser::shared().handleMessage(&message))
             ::DispatchMessage(&message);

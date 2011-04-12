@@ -1,3 +1,33 @@
+2011-04-12  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Pressing Tab in Web Inspector's console does not cycle through completion options
+        https://bugs.webkit.org/show_bug.cgi?id=56020
+
+        Don't call TranslateMessage() in the MiniBrowser or TestWebKitAPI for key messages destined for a WebKit2 view,
+        since WebKit will do this for us.  If we didn't do this, TranslateMessage() would be called twice,
+        which would generate two characters for every keypress (for example).  I didn't bother doing this for
+        WebKitTestRunner, since it doesn't get any WM_KEYDOWN events.
+        
+        Add new WebKit2/TranslateMessageGeneratesWMChar test to test expected TranslateMessage() behavior.
+
+        * MiniBrowser/win/main.cpp:
+        (shouldTranslateMessage): Added.
+        (_tWinMain): Don't call TranslateMessage() unless shouldTranslateMessage() says to.
+        * TestWebKitAPI/PlatformUtilities.h: Added shouldTranslateMessage() on Windows.
+        * TestWebKitAPI/PlatformWebView.h: Added simulateAKeyDown().
+        * TestWebKitAPI/Tests/WebKit2/win/TranslateMessageGeneratesWMChar.cpp: Added.
+        (TestWebKitAPI::didNotHandleKeyEventCallback): Added.
+        (TestWebKitAPI::runAndWatchForWMChar): Added.
+        (TestWebKitAPI::TEST): Added.
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp:
+        (TestWebKitAPI::Util::run): Don't call TranslateMessage() unless shouldTranslateMessage() says to.
+        (TestWebKitAPI::Util::shouldTranslateMessage): Added.
+        * TestWebKitAPI/win/PlatformWebViewWin.cpp:
+        (TestWebKitAPI::PlatformWebView::simulateAKeyDown): Added.
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj: Added TranslateMessageGeneratesWMChar.cpp.
+
 2011-04-12  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

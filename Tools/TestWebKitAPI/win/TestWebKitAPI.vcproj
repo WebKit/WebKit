@@ -559,6 +559,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\Tests\WebKit2\win\TranslateMessageGeneratesWMChar.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\Tests\WebKit2\win\WMCloseCallsUIClientClose.cpp"
 						>
 					</File>

@@ -92,6 +92,14 @@ void PlatformWebView::simulateSpacebarKeyPress()
     ::SendMessageW(window, WM_KEYUP, VK_SPACE, (1 << repeatCountBitOffset) | (39 << scanCodeBitOffset) | (1 << previousStateBitOffset) | (1 << transitionStateBitOffset));
 }
 
+void PlatformWebView::simulateAKeyDown()
+{
+    HWND window = WKViewGetWindow(m_view);
+    
+    // These values match what happens when you press the 'A' key in Notepad, as observed by Spy++.
+    ::SendMessageW(window, WM_KEYDOWN, 'A', (1 << repeatCountBitOffset) | (30 << scanCodeBitOffset));
+}
+
 void PlatformWebView::simulateAltKeyPress()
 {
     HWND window = WKViewGetWindow(m_view);

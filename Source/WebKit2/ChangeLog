@@ -1,3 +1,23 @@
+2011-04-12  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Pressing Tab in Web Inspector's console does not cycle through completion options
+        https://bugs.webkit.org/show_bug.cgi?id=56020
+
+        Safari was always calling TranslateMessage() on key events since it has no way to know whether
+        WebKit handled the event without a PageUIClient (which Safari only installs on pages inside
+        a Safari window), which was generating a WM_CHAR message containing the tab in this case.  The fix
+        is for Safari to never call TranslateMessage() on key events outside of a Safari window, but this
+        means the WebPageProxy needs to do this for unhandled key events if there is no didNotHandleKeyEvent
+        callback in the PageUIClient.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent): Call TranslateMessage() on Windows for unhandled key events that can't be handled by the PageUIClient.
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::canNotHandleKeyEvent): Added.
+        * UIProcess/WebUIClient.h: Added canNotHandleKeyEvent().
+
 2011-04-12  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Sam Weinig.
