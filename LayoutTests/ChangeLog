@@ -1,3 +1,13 @@
+2011-04-12  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58334
+        LayoutTestController.computedStyleIncludingVisitedInfo-based tests don't work in WK2
+        
+        * platform/mac-wk2/Skipped: Skip a new test due to an identified bug in WKTR and classify
+          three other skipped tests with that same bug.
+
 2011-04-12  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Adjusted chromium test expectations (webgl-reflection.html sometimes crashes on chromium mac debug)

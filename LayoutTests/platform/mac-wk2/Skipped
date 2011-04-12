@@ -1512,6 +1512,13 @@ fast/forms/interactive-validation-select-crash.html
 # http://webkit.org/b/57455
 fast/forms/validation-message-appearance.html
 
+# Misbehaving computedStyleIncludingVisitedInfo or keepWebHistory API in WebKitTestRunner
+# http://webkit.org/b/58334
+fast/history/nested-visited-test.html
+fast/history/self-is-visited.html
+fast/history/sibling-visited-test.html
+fast/loader/stateobjects/state-url-sets-links-visited.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
@@ -1858,10 +1865,7 @@ fast/frames/iframe-reparenting-adopt-node.html
 fast/frames/sandboxed-iframe-plugins.html
 fast/frames/sandboxed-iframe-storage.html
 fast/history/multiple-classes-visited.html
-fast/history/nested-visited-test.html
 fast/history/saves-state-after-fragment-nav.html
-fast/history/self-is-visited.html
-fast/history/sibling-visited-test.html
 fast/html/empty-fragment-id-goto-top.html
 fast/loader/frame-creation-removal.html
 fast/loader/hashchange-event-async.html
