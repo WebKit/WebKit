@@ -481,21 +481,17 @@ static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrS
 static void AXAttributeStringSetSpelling(NSMutableAttributedString* attrString, Node* node, const UChar* chars, int charLength, NSRange range)
 {
     // Check the spelling directly since document->markersForNode() does not store the misspelled marking when the cursor is in a word.
-    int currentPosition = 0;
-    while (charLength > 0) {
-        const UChar* charData = chars + currentPosition;
-        TextCheckerClient* checker = node->document()->frame()->editor()->textChecker();
+    TextCheckerClient* checker = node->document()->frame()->editor()->textChecker();
 
-        int misspellingLocation = -1;
-        int misspellingLength = 0;
-        checker->checkSpellingOfString(charData, charLength, &misspellingLocation, &misspellingLength);
-        if (misspellingLocation == -1 || !misspellingLength)
-            break;
-        
-        NSRange spellRange = NSMakeRange(range.location + currentPosition + misspellingLocation, misspellingLength);
-        AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, [NSNumber numberWithBool:YES], spellRange);
-        charLength -= (misspellingLocation + misspellingLength);
-        currentPosition += (misspellingLocation + misspellingLength);
+    // checkTextOfParagraph is the only spelling/grammar checker implemented in WK1 and WK2
+    Vector<TextCheckingResult> results;
+    checker->checkTextOfParagraph(chars, charLength, TextCheckingTypeSpelling, results);
+    
+    size_t size = results.size();
+    NSNumber* trueValue = [NSNumber numberWithBool:YES];
+    for (unsigned i = 0; i < size; i++) {
+        const TextCheckingResult& result = results[i];
+        AXAttributeStringSetNumber(attrString, NSAccessibilityMisspelledTextAttribute, trueValue, NSMakeRange(result.location + range.location, result.length));
     }
 }
 

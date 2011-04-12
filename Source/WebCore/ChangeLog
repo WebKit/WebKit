@@ -1,3 +1,18 @@
+2011-04-12  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: WK2: misspelled AX attributes no longer returned from text fields
+        https://bugs.webkit.org/show_bug.cgi?id=58304
+
+        checkSpellingOfString is no longer implemented in WK2. Accessibility needs to change to use
+        checkTextOfParagraph in order to retrieve misspelled ranges.
+
+        Existing tests cover this functionality.
+
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (AXAttributeStringSetSpelling):
+
 2011-04-12  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.
