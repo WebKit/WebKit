@@ -1,5 +1,11 @@
 2011-04-11  Brady Eidson  <beidson@apple.com>
 
+        Reverting, seeing something else still broken.  Sorry.
+
+        * html/HTMLTrackElement.cpp:
+
+2011-04-11  Brady Eidson  <beidson@apple.com>
+
         Fix the build.
 
         * html/HTMLTrackElement.cpp: Case-sensitive, please.
