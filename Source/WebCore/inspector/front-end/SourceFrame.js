@@ -49,8 +49,6 @@ WebInspector.SourceFrame = function(delegate, url)
     this._messageBubbles = {};
 
     this._breakpoints = {};
-
-    this._registerShortcuts();
 }
 
 WebInspector.SourceFrame.Events = {
@@ -236,7 +234,7 @@ WebInspector.SourceFrame.prototype = {
 
     isContentEditable: function()
     {
-        return this._delegate.canEditScriptSource() && !this._editScriptSourceInProgress;
+        return this._delegate.canEditScriptSource();
     },
 
     startEditing: function()
@@ -304,7 +302,6 @@ WebInspector.SourceFrame.prototype = {
             element.addEventListener("mousemove", this._mouseMove.bind(this), true);
             element.addEventListener("scroll", this._scroll.bind(this), true);
         }
-        element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
 
         this._textViewer.beginUpdates();
 
@@ -871,54 +868,21 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.resize();
     },
 
-    _registerShortcuts: function()
+    commitEditing: function(callback)
     {
-        this._shortcuts = {};
-        var handleSaveCallback = this._handleSave.bind(this);
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey("s", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta)] = handleSaveCallback;
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.Keys.Enter.code, WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta)] = handleSaveCallback;
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.Keys.Esc.code)] = this._handleRevertEditing.bind(this);
-    },
-
-    _handleKeyDown: function(e)
-    {
-        var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(e);
-        var handler = this._shortcuts[shortcutKey];
-        if (handler && handler.call(this)) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-    },
-
-    _handleSave: function()
-    {
-        if (this._textViewer.readOnly || !this.isContentEditable())
-            return false;
-
         if (!this._viewerState) {
             // No editing was actually done.
-            this._textViewer.readOnly = true;
             this._delegate.setScriptSourceIsBeingEdited(false);
-            return true;
+            callback();
+            return;
         }
 
-        var originalViewerState = this._viewerState;
-        var newSource = this._textModel.text;
-
-        delete this._viewerState;
-        this._textViewer.readOnly = true;
-        this._delegate.setScriptSourceIsBeingEdited(false);
-
-        function didEditScriptSource(error)
+        function didEditContent(error)
         {
-            this._editScriptSourceInProgress = false;
-
             if (error) {
-                this._viewerState = originalViewerState;
-                this._textViewer.readOnly = false;
-                this._delegate.setScriptSourceIsBeingEdited(true);
                 WebInspector.log(error.data[0], WebInspector.ConsoleMessage.MessageLevel.Error);
                 WebInspector.showConsole();
+                callback(error);
                 return;
             }
 
@@ -928,17 +892,20 @@ WebInspector.SourceFrame.prototype = {
                 this.removeBreakpoint(Number(lineNumber));
             }
 
-            for (var lineNumber in originalViewerState.breakpoints)
+            for (var lineNumber in this._viewerState.breakpoints)
                 this._delegate.removeBreakpoint(Number(lineNumber));
 
             for (var lineNumber in newBreakpoints) {
                 var breakpoint = newBreakpoints[lineNumber];
                 this._delegate.setBreakpoint(Number(lineNumber), breakpoint.condition, breakpoint.enabled);
             }
+
+            delete this._viewerState;
+            this._delegate.setScriptSourceIsBeingEdited(false);
+
+            callback();
         }
-        this._editContent(newSource, didEditScriptSource.bind(this));
-        this._editScriptSourceInProgress = true;
-        return true;
+        this._editContent(this._textModel.text, didEditContent.bind(this));
     },
 
     _editContent: function(newContent, callback)
@@ -946,15 +913,10 @@ WebInspector.SourceFrame.prototype = {
         this._delegate.editScriptSource(newContent, callback);
     },
 
-    _handleRevertEditing: function()
+    cancelEditing: function()
     {
-        if (this._textViewer.readOnly)
-            return false;
-
         this._restoreViewerState();
-        this._textViewer.readOnly = true;
         this._delegate.setScriptSourceIsBeingEdited(false);
-        return true;
     }
 }
 

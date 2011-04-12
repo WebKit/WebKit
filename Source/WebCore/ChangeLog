@@ -1,3 +1,30 @@
+2011-04-11  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: move shortcut handlers from SourceFrame to TextViewer.
+        https://bugs.webkit.org/show_bug.cgi?id=58238
+
+        Commit/cancel editing functionality is common for all resource types, and it deals with TextViewer state.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.isContentEditable):
+        (WebInspector.SourceFrame.prototype._createTextViewer):
+        (WebInspector.SourceFrame.prototype.commitEditing.didEditContent):
+        (WebInspector.SourceFrame.prototype.commitEditing):
+        (WebInspector.SourceFrame.prototype.cancelEditing):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._doubleClick):
+        (WebInspector.TextViewer.prototype._registerShortcuts):
+        (WebInspector.TextViewer.prototype._handleKeyDown):
+        (WebInspector.TextViewer.prototype._commitEditing.didCommitEditing):
+        (WebInspector.TextViewer.prototype._commitEditing):
+        (WebInspector.TextViewer.prototype._cancelEditing):
+        (WebInspector.TextViewerDelegate.prototype.endEditing):
+        (WebInspector.TextViewerDelegate.prototype.commitEditing):
+        (WebInspector.TextViewerDelegate.prototype.cancelEditing):
+
 2011-04-12  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

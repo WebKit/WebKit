@@ -54,22 +54,15 @@ WebInspector.TextViewer = function(textModel, platform, url, delegate)
     }.bind(this), false);
 
     this.element.addEventListener("dblclick", this._doubleClick.bind(this), true);
+    this.element.addEventListener("keydown", this._handleKeyDown.bind(this), false);
+
+    this._registerShortcuts();
 }
 
 WebInspector.TextViewer.prototype = {
     set mimeType(mimeType)
     {
         this._mainPanel.mimeType = mimeType;
-    },
-
-    set readOnly(readOnly)
-    {
-        this._mainPanel.readOnly = readOnly;
-    },
-
-    get readOnly()
-    {
-        return this._mainPanel.readOnly;
     },
 
     get textModel()
@@ -226,17 +219,65 @@ WebInspector.TextViewer.prototype = {
 
     _doubleClick: function(event)
     {
-        if (!this._delegate.isContentEditable())
+        if (!this._mainPanel.readOnly || this._commitEditingInProgress)
             return;
 
         var lineRow = event.target.enclosingNodeOrSelfWithClass("webkit-line-content");
         if (!lineRow)
             return;  // Do not trigger editing from line numbers.
 
-        if (this.readOnly) {
-            this.readOnly = false;
-            window.getSelection().collapseToStart();
+        if (!this._delegate.isContentEditable())
+            return;
+
+        this._mainPanel.readOnly = false;
+        window.getSelection().collapseToStart();
+    },
+
+    _registerShortcuts: function()
+    {
+        this._shortcuts = {};
+        var commitEditing = this._commitEditing.bind(this);
+        var cancelEditing = this._cancelEditing.bind(this);
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey("s", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta)] = commitEditing;
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.Keys.Enter.code, WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta)] = commitEditing;
+        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(WebInspector.KeyboardShortcut.Keys.Esc.code)] = cancelEditing;
+    },
+
+    _handleKeyDown: function(e)
+    {
+        var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(e);
+        var handler = this._shortcuts[shortcutKey];
+        if (handler && handler.call(this)) {
+            e.preventDefault();
+            e.stopPropagation();
         }
+    },
+
+    _commitEditing: function()
+    {
+        if (this._mainPanel.readOnly)
+            return false;
+
+        this._mainPanel.readOnly = true;
+        function didCommitEditing(error)
+        {
+            this._commitEditingInProgress = false;
+            if (error)
+                this._mainPanel.readOnly = false;
+        }
+        this._commitEditingInProgress = true;
+        this._delegate.commitEditing(didCommitEditing.bind(this));
+        return true;
+    },
+
+    _cancelEditing: function()
+    {
+        if (this._mainPanel.readOnly)
+            return false;
+
+        this._mainPanel.readOnly = true;
+        this._delegate.cancelEditing();
+        return true;
     }
 }
 
@@ -258,6 +299,16 @@ WebInspector.TextViewerDelegate.prototype = {
     },
 
     endEditing: function(oldRange, newRange)
+    {
+        // Should be implemented by subclasses.
+    },
+
+    commitEditing: function()
+    {
+        // Should be implemented by subclasses.
+    },
+
+    cancelEditing: function()
     {
         // Should be implemented by subclasses.
     }

@@ -90,7 +90,7 @@ function test()
     function replaceInSource(sourceFrame, string, replacement, callback)
     {
         InspectorTest.addSniffer(WebInspector.debuggerModel, "_didEditScriptSource", callback);
-        sourceFrame._textViewer.readOnly = false;
+        sourceFrame._textViewer._mainPanel.readOnly = false;
         sourceFrame.startEditing();
         var oldRange, newRange;
         var lines = sourceFrame._textModel._lines;
@@ -106,7 +106,7 @@ function test()
             break;
         }
         sourceFrame.endEditing(oldRange, newRange);
-        sourceFrame._handleSave();
+        sourceFrame._textViewer._commitEditing();
     }
 };
 
