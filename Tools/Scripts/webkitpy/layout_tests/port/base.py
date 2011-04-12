@@ -140,6 +140,7 @@ class Port(object):
             self._options.configuration = self.default_configuration()
         self._test_configuration = None
         self._multiprocessing_is_available = (multiprocessing is not None)
+        self._results_directory = None
 
     def default_child_processes(self):
         """Return the number of DumpRenderTree instances to use for this
@@ -570,8 +571,15 @@ class Port(object):
         return self._filesystem.normpath(self._filesystem.join(self.layout_tests_dir(), test_name))
 
     def results_directory(self):
-        """Absolute path to the place to store the test results."""
-        raise NotImplementedError('Port.results_directory')
+        """Absolute path to the place to store the test results (uses --results-directory)."""
+        if not self._results_directory:
+            option_val = self.get_option('results_directory') or self.default_results_directory()
+            self._results_directory = self._filesystem.abspath(option_val)
+        return self._results_directory
+
+    def default_results_directory(self):
+        """Absolute path to the default place to store the test results."""
+        raise NotImplementedError()
 
     def setup_test_run(self):
         """Perform port-specific work at the beginning of a test run."""

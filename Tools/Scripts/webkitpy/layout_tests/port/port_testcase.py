@@ -38,8 +38,7 @@ except ImportError:
     multiprocessing = None
 
 from webkitpy.tool import mocktool
-mock_options = mocktool.MockOptions(results_directory='layout-test-results',
-                                    use_apache=True,
+mock_options = mocktool.MockOptions(use_apache=True,
                                     configuration='Release')
 
 # FIXME: This should be used for all ports, not just WebKit Mac. See
@@ -60,10 +59,7 @@ class PortTestCase(unittest.TestCase):
         if not maker:
             return None
 
-        port = maker(options=options)
-        if hasattr(options, "results_directory"):
-            port._options.results_directory = port.results_directory()
-        return port
+        return maker(options=options)
 
     def test_default_worker_model(self):
         port = self.make_port()

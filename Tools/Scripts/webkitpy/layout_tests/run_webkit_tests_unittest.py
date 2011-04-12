@@ -35,6 +35,7 @@ from __future__ import with_statement
 import codecs
 import itertools
 import logging
+import os
 import Queue
 import sys
 import thread
@@ -465,10 +466,12 @@ class MainTest(unittest.TestCase):
     def test_results_directory_relative(self):
         # We run a configuration that should fail, to generate output, then
         # look for what the output results url was.
-
+        fs = port.unit_test_filesystem()
+        fs.maybe_make_directory('/tmp/cwd')
+        fs.chdir('/tmp/cwd')
         res, out, err, user = logging_run(['--results-directory=foo'],
-                                          tests_included=True)
-        self.assertEqual(user.opened_urls, ['/tmp/foo/results.html'])
+                                          tests_included=True, filesystem=fs)
+        self.assertEqual(user.opened_urls, ['/tmp/cwd/foo/results.html'])
 
     # These next tests test that we run the tests in ascending alphabetical
     # order per directory. HTTP tests are sharded separately from other tests,

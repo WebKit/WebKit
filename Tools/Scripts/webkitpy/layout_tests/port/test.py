@@ -329,11 +329,8 @@ class TestPort(base.Port):
     def _path_to_wdiff(self):
         return None
 
-    def results_directory(self):
-        if not self._results_directory:
-            self._results_directory = self._filesystem.join('/tmp',
-                self.get_option('results_directory'))
-        return self._results_directory
+    def default_results_directory(self):
+        return '/tmp/layout-test-results'
 
     def setup_test_run(self):
         pass

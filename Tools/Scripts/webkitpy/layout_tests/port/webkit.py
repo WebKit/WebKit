@@ -166,10 +166,10 @@ class WebKitPort(base.Port):
         sp.stop()
         return result
 
-    def results_directory(self):
+    def default_results_directory(self):
         # Results are store relative to the built products to make it easy
         # to have multiple copies of webkit checked out and built.
-        return self._build_path(self.get_option('results_directory'))
+        return self._build_path('layout-test-results')
 
     def setup_test_run(self):
         # This port doesn't require any specific configuration.

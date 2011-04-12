@@ -1,3 +1,26 @@
+2011-04-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests: --results-directory is relative to builddir, not $PWD
+        https://bugs.webkit.org/show_bug.cgi?id=58272
+
+        NRWT was interpreting the --results-directory cmd line arg as
+        relative to the build directory, not the current working
+        directory (ORWT uses the latter, which is much more intuitive).
+        
+        This patch fixes the base case, but includes an override for
+        Chromium that is needed until the bots can be updated.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2011-04-12  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, roll out r83621 as it broke the GTK build.

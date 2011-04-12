@@ -152,12 +152,6 @@ def _set_up_derived_options(port_obj, options):
     if not options.use_apache:
         options.use_apache = sys.platform in ('darwin', 'linux2')
 
-    if not port_obj._filesystem.isabs(options.results_directory):
-        # This normalizes the path to the build dir.
-        # FIXME: how this happens is not at all obvious; this is a dumb
-        # interface and should be cleaned up.
-        options.results_directory = port_obj.results_directory()
-
     if not options.time_out_ms:
         if options.configuration == "Debug":
             options.time_out_ms = str(2 * test_runner.TestRunner.DEFAULT_TEST_TIMEOUT_MS)
@@ -288,10 +282,7 @@ def parse_args(args=None):
         optparse.make_option("--tolerance",
             help="Ignore image differences less than this percentage (some "
                 "ports may ignore this option)", type="float"),
-        optparse.make_option("--results-directory",
-            default="layout-test-results",
-            help="Output results directory source dir, relative to Debug or "
-                 "Release"),
+        optparse.make_option("--results-directory", help="Location of test results"),
         optparse.make_option("--build-directory",
             help="Path to the directory under which build files are kept (should not include configuration)"),
         optparse.make_option("--new-baseline", action="store_true",
