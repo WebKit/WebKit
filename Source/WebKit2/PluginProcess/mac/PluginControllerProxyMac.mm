@@ -78,6 +78,26 @@ void PluginControllerProxy::platformGeometryDidChange(const IntRect& frameRect, 
     [CATransaction commit];
 }
 
+void PluginControllerProxy::windowFocusChanged(bool hasFocus)
+{
+    m_plugin->windowFocusChanged(hasFocus);
+}
+
+void PluginControllerProxy::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCoordinates, const IntRect& viewFrameInWindowCoordinates)
+{
+    m_plugin->windowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates);
+}
+
+void PluginControllerProxy::windowVisibilityChanged(bool isVisible)
+{
+    m_plugin->windowVisibilityChanged(isVisible);
+}
+
+void PluginControllerProxy::sendComplexTextInput(const String& textInput)
+{
+    m_plugin->sendComplexTextInput(textInput);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS)

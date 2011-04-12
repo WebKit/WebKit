@@ -501,29 +501,6 @@ void PluginControllerProxy::getPluginScriptableNPObject(uint64_t& pluginScriptab
     releaseNPObject(pluginScriptableNPObject);
 }
 
-#if PLATFORM(MAC)
-void PluginControllerProxy::windowFocusChanged(bool hasFocus)
-{
-    m_plugin->windowFocusChanged(hasFocus);
-}
-
-void PluginControllerProxy::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCoordinates, const IntRect& viewFrameInWindowCoordinates)
-{
-    m_plugin->windowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates);
-}
-
-void PluginControllerProxy::windowVisibilityChanged(bool isVisible)
-{
-    m_plugin->windowVisibilityChanged(isVisible);
-}
-
-void PluginControllerProxy::sendComplexTextInput(const String& textInput)
-{
-    m_plugin->sendComplexTextInput(textInput);
-}
-
-#endif
-
 void PluginControllerProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
 {
     m_plugin->privateBrowsingStateChanged(isPrivateBrowsingEnabled);
