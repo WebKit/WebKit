@@ -6,20 +6,27 @@
 
 function test()
 {
-    var instanceCount = 25;
-    function createHeapSnapshot()
+    var instanceCount = 24;
+    function createHeapSnapshotA()
     {
-        return InspectorTest.createHeapSnapshot(instanceCount);
+        return InspectorTest.createHeapSnapshot(instanceCount, 5);
+    }
+    function createHeapSnapshotB()
+    {
+        return InspectorTest.createHeapSnapshot(instanceCount + 1, 5 + instanceCount);
     }
 
     InspectorTest.runDetailedHeapshotTestSuite([
         function testExpansionPreservedWhenSorting(next)
         {
-            InspectorTest.takeAndOpenSnapshot(createHeapSnapshot, step1);
+            InspectorTest.takeAndOpenSnapshot(createHeapSnapshotA, createSnapshotB);
+            function createSnapshotB() {
+                InspectorTest.takeAndOpenSnapshot(createHeapSnapshotB, step1);
+            }
 
             function step1()
             {
-                InspectorTest.switchToView("Summary", step2);
+                InspectorTest.switchToView("Comparison", step2);
             }
 
             function step2()
@@ -35,14 +42,23 @@ function test()
                 }
             }
 
-            var columns;
             function step3()
             {
-                columns = InspectorTest.viewColumns();
-                InspectorTest.clickColumn(columns[0], step4);
+                var row = InspectorTest.findRow("object", "B");
+                InspectorTest.assertEquals(true, !!row, "\"B\" row");
+                var buttonsNode = InspectorTest.findButtonsNode(row);
+                InspectorTest.assertEquals(true, !!buttonsNode, "no buttons node found!");
+                InspectorTest.clickShowMoreButton("showAll", buttonsNode, step4);
             }
 
+            var columns;
             function step4()
+            {
+                columns = InspectorTest.viewColumns();
+                InspectorTest.clickColumn(columns[0], step5);
+            }
+
+            function step5()
             {
                 var row = InspectorTest.findRow("object", "B");
                 InspectorTest.assertEquals(true, !!row, "\"B\" row");
@@ -57,22 +73,45 @@ function test()
                     }
                     var aRow = InspectorTest.findRow("object", propertyMatcher, row);
                     InspectorTest.assertEquals(true, !!aRow, "\"a: A\" row");
-                    InspectorTest.expandRow(aRow, step5);
+                    InspectorTest.expandRow(aRow, step6);
+                }
+            }
+
+            function step6()
+            {
+                var row = InspectorTest.findRow("object", "B");
+                InspectorTest.assertEquals(true, !!row, "\"B\" row");
+                function deletedNodeMatcher(data)
+                {
+                    return data.removedCount && data.object.value.charAt(0) === "B";
+                }
+                var bInstanceRow = InspectorTest.findRow2(deletedNodeMatcher, row);
+                InspectorTest.assertEquals(true, !!bInstanceRow, "\"B\" instance row");
+                InspectorTest.expandRow(bInstanceRow, expandA);
+                function expandA(row)
+                {
+                    function propertyMatcher(data)
+                    {
+                        return data.name === "a" && data.value.charAt(0) === "A";
+                    }
+                    var aRow = InspectorTest.findRow("object", propertyMatcher, row);
+                    InspectorTest.assertEquals(true, !!aRow, "\"a: A\" row");
+                    InspectorTest.expandRow(aRow, step7);
                 }
             }
 
             var columnContents;
-            function step5()
+            function step7()
             {
                 columnContents = InspectorTest.columnContents(columns[0]);
                 InspectorTest.clickColumn(columns[0], clickTwice);
                 function clickTwice()
                 {
-                    InspectorTest.clickColumn(columns[0], step6);
+                    InspectorTest.clickColumn(columns[0], step8);
                 }
             }
 
-            function step6()
+            function step8()
             {
                 var newColumnContents = InspectorTest.columnContents(columns[0]);
                 InspectorTest.assertColumnContentsEqual(columnContents, newColumnContents);
@@ -86,7 +125,7 @@ function test()
 </head>
 <body onload="runTest()">
 <p>
-Tests Summary view of detailed heap snapshots.
+Tests Comparison view of detailed heap snapshots.
 Expanded nodes must be preserved after sorting.
 </p>
 </body>

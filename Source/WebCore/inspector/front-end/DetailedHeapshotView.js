@@ -151,7 +151,6 @@ WebInspector.HeapSnapshotDiffDataGrid = function()
 {
     var columns = {
         object: { title: WebInspector.UIString("Constructor"), disclosure: true, sortable: true },
-        // \xb1 is a "plus-minus" sign.
         addedCount: { title: WebInspector.UIString("# New"), width: "72px", sortable: true, sort: "descending" },
         removedCount: { title: WebInspector.UIString("# Deleted"), width: "72px", sortable: true },
         // \u0394 is a Greek delta letter.

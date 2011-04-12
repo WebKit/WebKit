@@ -68,6 +68,7 @@ InspectorTest.runDetailedHeapshotTestSuite = function(testSuite)
         return;
     }
 
+    InspectorTest._nextUid = 1;
     var testSuiteTests = testSuite.slice();
 
     function runner()
@@ -122,11 +123,22 @@ InspectorTest.checkArrayIsSorted = function(contents, sortType, sortOrder)
             InspectorTest.addResult("No name field in " + JSON.stringify(data));
         return parseInt(data.name, 10);
     }
+    function extractId(data)
+    {
+        data = JSON.parse(data);
+        if (!data.value)
+            InspectorTest.addResult("No value field in " + JSON.stringify(data));
+        var indexOfAt = data.value.indexOf("@");
+        if (indexOfAt === -1)
+            InspectorTest.addResult("Can't find @ in " + data.value);
+        return parseInt(data.value.substring(indexOfAt + 1), 10);
+    }
     var comparator = {
         text: simpleComparator,
         number: function (a, b) { return simpleComparator(parseInt(a, 10), parseInt(b, 10)); },
         size: function (a, b) { return simpleComparator(parseSize(a), parseSize(b)); },
-        name: function (a, b) { return simpleComparator(extractName(a), extractName(b)); }
+        name: function (a, b) { return simpleComparator(extractName(a), extractName(b)); },
+        id: function (a, b) { return simpleComparator(extractId(a), extractId(b)); }
     }[sortType];
     var acceptableComparisonResult = {
         ascending: -1,
@@ -202,17 +214,18 @@ InspectorTest.columnContents = function(column, row)
     return result;
 };
 
-InspectorTest.countDataRows = function(row)
+InspectorTest.countDataRows = function(row, filter)
 {
     var result = 0;
+    filter = filter || function(node) { return node.selectable; };
     for (var node = row.children[0]; node; node = node.traverseNextNode(true, row, true)) {
-        if (node.selectable)
+        if (filter(node))
             ++result;
     }
     return result;
 };
 
-InspectorTest.createHeapSnapshot = function(instanceCount)
+InspectorTest.createHeapSnapshot = function(instanceCount, firstId)
 {
     // Mocking results of running the following code:
     // 
@@ -231,7 +244,7 @@ InspectorTest.createHeapSnapshot = function(instanceCount)
         nodes.push(0, 0, 1, 0, (sizeOfA + sizeOfB) * instanceCount, 1, 1, 4, 1, null);
         // Push instances of A and B.
         var indexesOfB = [];
-        var nextId = 5;
+        var nextId = firstId || 5;
         for (var i = 0; i < instanceCount; ++i) {
             var indexOfA = nodes.length;
             nodes.push(3, 1, nextId++, sizeOfA, sizeOfA, null, 1, 2, 3, indexOfA);
@@ -297,10 +310,10 @@ InspectorTest.findAndExpandGCRoots = function(callback)
     InspectorTest.expandRow(gcRoots, callback);
 }
 
-InspectorTest.findButtonsNode = function(row)
+InspectorTest.findButtonsNode = function(row, startNode)
 {
     var result = 0;
-    for (var node = row.children[0]; node; node = node.traverseNextNode(true, row, true)) {
+    for (var node = startNode || row.children[0]; node; node = node.traverseNextNode(true, row, true)) {
         if (!node.selectable && node.showNext)
             return node;
     }
@@ -316,6 +329,16 @@ InspectorTest.findRow = function(columnIdentifier, matcher, parent)
     }
     for (var node = parent.children[0]; node; node = node.traverseNextNode(true, parent, true)) {
         if (matcher(node.data[columnIdentifier]))
+            return node;
+    }
+    return null;
+};
+
+InspectorTest.findRow2 = function(matcher, parent)
+{
+    parent = parent || this._currentGrid();
+    for (var node = parent.children[0]; node; node = node.traverseNextNode(true, parent, true)) {
+        if (matcher(node.data))
             return node;
     }
     return null;
@@ -348,7 +371,7 @@ InspectorTest.switchToView = function(title, callback)
 InspectorTest.takeAndOpenSnapshot = function(generator, callback)
 {
     callback = InspectorTest.safeWrap(callback);
-    var uid = 1;
+    var uid = InspectorTest._nextUid++;
     var profile = { typeId: WebInspector.HeapSnapshotProfileType.TypeId, uid: uid, title: UserInitiatedProfileName + "." + uid };
     function pushGeneratedSnapshot(typeId, uid)
     {
