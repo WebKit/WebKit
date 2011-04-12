@@ -51,6 +51,12 @@ WebGLLayerChromium::WebGLLayerChromium(GraphicsLayerChromium* owner)
 {
 }
 
+WebGLLayerChromium::~WebGLLayerChromium()
+{
+    if (m_context && layerRenderer())
+        layerRenderer()->removeChildContext(m_context);
+}
+
 void WebGLLayerChromium::updateCompositorResources()
 {
     if (!m_contentsDirty)
@@ -70,6 +76,9 @@ void WebGLLayerChromium::updateCompositorResources()
     }
     // Update the contents of the texture used by the compositor.
     if (m_contentsDirty && m_textureUpdated) {
+        // prepareTexture copies the contents of the off-screen render target into the texture
+        // used by the compositor.
+        //
         m_context->prepareTexture();
         m_context->markLayerComposited();
         m_contentsDirty = false;
@@ -84,6 +93,13 @@ void WebGLLayerChromium::setTextureUpdated()
 
 void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
 {
+    if (m_context != context && layerRenderer()) {
+        if (m_context)
+            layerRenderer()->removeChildContext(m_context);
+        if (context)
+            layerRenderer()->addChildContext(m_context);
+    }
+
     m_context = const_cast<GraphicsContext3D*>(context);
 
     unsigned int textureId = m_context->platformTexture();
@@ -93,6 +109,20 @@ void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
     }
     m_textureId = textureId;
     m_premultipliedAlpha = m_context->getContextAttributes().premultipliedAlpha;
+}
+
+void WebGLLayerChromium::setLayerRenderer(LayerRendererChromium* newLayerRenderer)
+{
+    if (layerRenderer() != newLayerRenderer) {
+        if (m_context) {
+            if (layerRenderer())
+                layerRenderer()->removeChildContext(m_context);
+            if (newLayerRenderer)
+                newLayerRenderer->addChildContext(m_context);
+        }
+
+        LayerChromium::setLayerRenderer(newLayerRenderer);
+    }
 }
 
 }

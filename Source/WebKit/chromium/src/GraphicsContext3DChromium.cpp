@@ -800,6 +800,10 @@ DELEGATE_TO_IMPL_1(unmapTexSubImage2DCHROMIUM, const void*)
 DELEGATE_TO_IMPL_2(copyTextureToParentTextureCHROMIUM, Platform3DObject, Platform3DObject)
 DELEGATE_TO_IMPL_10(blitFramebufferCHROMIUM, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dbitfield, GC3Denum)
 DELEGATE_TO_IMPL_5(renderbufferStorageMultisampleCHROMIUM, GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
+DELEGATE_TO_IMPL_1(getParentToChildLatchCHROMIUM, GC3Duint*)
+DELEGATE_TO_IMPL_1(getChildToParentLatchCHROMIUM, GC3Duint*)
+DELEGATE_TO_IMPL_1(waitLatchCHROMIUM, GC3Duint)
+DELEGATE_TO_IMPL_1(setLatchCHROMIUM, GC3Duint)
 
 //----------------------------------------------------------------------
 // GraphicsContext3D

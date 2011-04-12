@@ -66,6 +66,12 @@ public:
     // GL_CHROMIUM_copy_texture_to_parent_texture
     void copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture);
 
+    // Latch support
+    void getParentToChildLatchCHROMIUM(GC3Duint* latchId);
+    void getChildToParentLatchCHROMIUM(GC3Duint* latchId);
+    void waitLatchCHROMIUM(GC3Duint latchId);
+    void setLatchCHROMIUM(GC3Duint latchId);
+
 private:
     // Instances of this class are strictly owned by the GraphicsContext3D implementation and do not
     // need to be instantiated by any other code.

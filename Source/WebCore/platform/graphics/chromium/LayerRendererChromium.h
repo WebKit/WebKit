@@ -131,8 +131,12 @@ public:
 
     String layerTreeAsText() const;
 
+    void addChildContext(PassRefPtr<GraphicsContext3D>);
+    void removeChildContext(PassRefPtr<GraphicsContext3D>);
+
 private:
     typedef Vector<RefPtr<CCLayerImpl> > LayerList;
+    typedef HashMap<RefPtr<GraphicsContext3D>, int> ChildContextMap;
 
     explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D>, PassOwnPtr<TilePaintInterface> contentPaint, PassOwnPtr<TilePaintInterface> scrollbarPaint);
 
@@ -222,6 +226,15 @@ private:
     OwnPtr<CCHeadsUpDisplay> m_headsUpDisplay;
 
     RefPtr<GraphicsContext3D> m_context;
+    ChildContextMap m_childContexts;
+
+    // If true, the child contexts were copied to the compositor texture targets
+    // and the compositor will need to wait on the proper latches before using
+    // the target textures. If false, the compositor is reusing the textures
+    // from last frame.
+    bool m_childContextsWereCopied;
+
+    bool m_contextSupportsLatch;
 
     RenderSurfaceChromium* m_defaultRenderSurface;
 };

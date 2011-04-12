@@ -36,6 +36,7 @@
 
 #include "DrawingBuffer.h"
 #include "GraphicsContext3D.h"
+#include "LayerRendererChromium.h"
 
 namespace WebCore {
 
@@ -54,6 +55,8 @@ Canvas2DLayerChromium::~Canvas2DLayerChromium()
 {
     if (m_textureId)
         layerRendererContext()->deleteTexture(m_textureId);
+    if (m_drawingBuffer && layerRenderer())
+        layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D());
 }
 
 void Canvas2DLayerChromium::updateCompositorResources()
@@ -103,8 +106,28 @@ unsigned Canvas2DLayerChromium::textureId() const
 void Canvas2DLayerChromium::setDrawingBuffer(DrawingBuffer* drawingBuffer)
 {
     if (drawingBuffer != m_drawingBuffer) {
+        if (m_drawingBuffer && layerRenderer())
+            layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D());
+
         m_drawingBuffer = drawingBuffer;
         m_textureChanged = true;
+
+        if (drawingBuffer && layerRenderer())
+            layerRenderer()->addChildContext(m_drawingBuffer->graphicsContext3D());
+    }
+}
+
+void Canvas2DLayerChromium::setLayerRenderer(LayerRendererChromium* newLayerRenderer)
+{
+    if (layerRenderer() != newLayerRenderer) {
+        if (m_drawingBuffer->graphicsContext3D()) {
+            if (layerRenderer())
+                layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D());
+            if (newLayerRenderer)
+                newLayerRenderer->addChildContext(m_drawingBuffer->graphicsContext3D());
+        }
+
+        LayerChromium::setLayerRenderer(newLayerRenderer);
     }
 }
 

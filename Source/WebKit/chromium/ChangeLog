@@ -1,3 +1,21 @@
+2011-04-11  John Bates  <jbates@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        chromium support for glSetLatch and glWaitLatch between 3D contexts
+        https://bugs.webkit.org/show_bug.cgi?id=58003
+
+        * public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::getParentToChildLatchCHROMIUM):
+        (WebKit::WebGraphicsContext3D::getChildToParentLatchCHROMIUM):
+        (WebKit::WebGraphicsContext3D::waitLatchCHROMIUM):
+        (WebKit::WebGraphicsContext3D::setLatchCHROMIUM):
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::waitLatchCHROMIUM):
+        (WebCore::Extensions3DChromium::setLatchCHROMIUM):
+        * src/GraphicsContext3DChromium.cpp:
+        * src/GraphicsContext3DInternal.h:
+
 2011-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

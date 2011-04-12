@@ -1,3 +1,32 @@
+2011-04-11  John Bates  <jbates@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        chromium support for glSetLatch and glWaitLatch between 3D contexts
+        https://bugs.webkit.org/show_bug.cgi?id=58003
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::~Canvas2DLayerChromium):
+        (WebCore::Canvas2DLayerChromium::setDrawingBuffer):
+        (WebCore::Canvas2DLayerChromium::setLayerRenderer):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::Cubic::Cubic):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::updateAndDrawLayers):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::addChildContext):
+        (WebCore::LayerRendererChromium::removeChildContext):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::~WebGLLayerChromium):
+        (WebCore::WebGLLayerChromium::updateCompositorResources):
+        (WebCore::WebGLLayerChromium::setContext):
+        (WebCore::WebGLLayerChromium::setLayerRenderer):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+
 2011-04-11  Alexey Marinichev  <amarinichev@chromium.org>
 
         Reviewed by James Robinson.

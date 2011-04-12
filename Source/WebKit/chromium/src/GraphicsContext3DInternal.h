@@ -270,6 +270,12 @@ public:
     void blitFramebufferCHROMIUM(GC3Dint srcX0, GC3Dint srcY0, GC3Dint srcX1, GC3Dint srcY1, GC3Dint dstX0, GC3Dint dstY0, GC3Dint dstX1, GC3Dint dstY1, GC3Dbitfield mask, GC3Denum filter);
     void renderbufferStorageMultisampleCHROMIUM(GC3Denum target, GC3Dsizei samples, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height);
 
+    // Latch support
+    void getParentToChildLatchCHROMIUM(GC3Duint* latchId);
+    void getChildToParentLatchCHROMIUM(GC3Duint* latchId);
+    void waitLatchCHROMIUM(GC3Duint latchId);
+    void setLatchCHROMIUM(GC3Duint latchId);
+
 private:
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
     OwnPtr<Extensions3DChromium> m_extensions;
