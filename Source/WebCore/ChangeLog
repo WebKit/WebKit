@@ -1,3 +1,13 @@
+2011-04-12  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Breakpoints and execution line decoration should stay in place if the edited line is not whitespace
+        https://bugs.webkit.org/show_bug.cgi?id=58314
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._lineNumberAfterEditing):
+
 2011-04-11  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

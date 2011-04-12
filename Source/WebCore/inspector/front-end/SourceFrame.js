@@ -278,8 +278,15 @@ WebInspector.SourceFrame.prototype = {
         var shiftOffset = lineNumber <= oldRange.startLine ? 0 : newRange.linesCount - oldRange.linesCount;
 
         // Special case of editing the line itself. We should decide whether the line number should move below or not.
-        if (lineNumber === oldRange.startLine && lineNumber + 1 <= newRange.endLine && this._textModel.lineLength(lineNumber) < this._textModel.lineLength(lineNumber + 1))
-            shiftOffset = 1;
+        if (lineNumber === oldRange.startLine) {
+            var whiteSpacesRegex = /^[\s\xA0]*$/;
+            for (var i = 0; lineNumber + i <= newRange.endLine; ++i) {
+                if (!whiteSpacesRegex.test(this._textModel.line(lineNumber + i))) {
+                    shiftOffset = i;
+                    break;
+                }
+            }
+        }
 
         var newLineNumber = Math.max(0, lineNumber + shiftOffset);
         if (oldRange.startLine < lineNumber && lineNumber < oldRange.endLine)
