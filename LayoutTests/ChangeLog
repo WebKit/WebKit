@@ -1,3 +1,11 @@
+2011-04-12  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed; add two new tests to the mac-wk2 SkippedList.
+
+        Skip fullscreen/video-specified-size.html and fullscreen/full-screen-zIndex.html
+
+        * platform/mac-wk2/Skipped:
+
 2011-04-12  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Jian Li.
