@@ -104,6 +104,11 @@ symbian {
     } else {
         TARGET.UID3 = 0xE00267C2
     }
+    
+    sisheader = "; SIS header: name, uid, version" \
+                "$${LITERAL_HASH}{\"$$TARGET\"},($$TARGET.UID3),$$QT_WEBKIT_MAJOR_VERSION,$$QT_WEBKIT_MINOR_VERSION,$$QT_WEBKIT_PATCH_VERSION,TYPE=SA,RU"
+    webkitsisheader.pkg_prerules = sisheader
+
     webkitlibs.sources = QtWebKit$${QT_LIBINFIX}.dll
     v8:webkitlibs.sources += v8.dll
 
@@ -128,7 +133,7 @@ symbian {
          DEPLOYMENT += declarativeImport
     }
 
-    DEPLOYMENT += webkitlibs webkitbackup
+    DEPLOYMENT += webkitsisheader webkitlibs webkitbackup
     !CONFIG(production):CONFIG-=def_files
 
     # Need to build these sources here because of exported symbols
