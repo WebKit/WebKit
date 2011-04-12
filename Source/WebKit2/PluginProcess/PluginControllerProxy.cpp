@@ -367,14 +367,14 @@ void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const In
 
     ASSERT(m_plugin);
 
+    platformGeometryDidChange();
+
     if (!backingStoreHandle.isNull()) {
         // Create a new backing store.
         m_backingStore = ShareableBitmap::create(backingStoreHandle);
     }
 
     m_plugin->geometryDidChange(frameRect, clipRect);
-
-    platformGeometryDidChange(frameRect, clipRect);
 }
 
 void PluginControllerProxy::didEvaluateJavaScript(uint64_t requestID, const String& requestURLString, const String& result)

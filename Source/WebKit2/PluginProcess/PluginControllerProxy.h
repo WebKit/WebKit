@@ -137,7 +137,7 @@ private:
 
     void platformInitialize();
     void platformDestroy();
-    void platformGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect);
+    void platformGeometryDidChange();
 
     WebProcessConnection* m_connection;
     uint64_t m_pluginInstanceID;
