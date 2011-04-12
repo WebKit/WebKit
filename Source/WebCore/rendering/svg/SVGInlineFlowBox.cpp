@@ -104,7 +104,9 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
 
         FloatRect markerRect;
         for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-            ASSERT(box->isSVGInlineTextBox());
+            if (!box->isSVGInlineTextBox())
+                continue;
+
             SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(box);
 
             int markerStartPosition = max<int>(marker.startOffset - textBox->start(), 0);

@@ -1,3 +1,24 @@
+2011-04-12  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Add handling for non-svg inline text boxes in text box lists.
+        https://bugs.webkit.org/show_bug.cgi?id=57933
+
+        Test: svg/text/svg-rtl-text-crash.html
+
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::positionForPoint):
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer):
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGInlineTextBoxes):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::closestLeafChildForPosition):
+        (WebCore::reverseInlineBoxRangeAndValueListsIfNeeded):
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::SVGTextQuery::collectTextBoxesInFlowBox):
+
 2011-04-12  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

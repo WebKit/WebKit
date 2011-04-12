@@ -180,7 +180,9 @@ VisiblePosition RenderSVGInlineText::positionForPoint(const IntPoint& point)
     SVGInlineTextBox* closestDistanceBox = 0;
 
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        ASSERT(box->isSVGInlineTextBox());
+        if (!box->isSVGInlineTextBox())
+            continue;
+
         SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(box);
         Vector<SVGTextFragment>& fragments = textBox->textFragments();
 

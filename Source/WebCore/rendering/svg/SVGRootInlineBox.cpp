@@ -214,6 +214,8 @@ InlineBox* SVGRootInlineBox::closestLeafChildForPosition(const IntPoint& point)
     // FIXME: Check for vertical text!
     InlineBox* closestLeaf = 0;
     for (InlineBox* leaf = firstLeaf; leaf; leaf = leaf->nextLeafChild()) {
+        if (!leaf->isSVGInlineTextBox())
+            continue;
         if (point.y() < leaf->m_y)
             continue;
         if (point.y() > leaf->m_y + leaf->virtualLogicalHeight())
@@ -274,8 +276,13 @@ static inline void reverseInlineBoxRangeAndValueListsIfNeeded(void* userData, Ve
         if (first == last || first == --last)
             return;
 
-        ASSERT((*first)->isSVGInlineTextBox());
-        ASSERT((*last)->isSVGInlineTextBox());
+        if (!(*last)->isSVGInlineTextBox() || !(*first)->isSVGInlineTextBox()) {
+            InlineBox* temp = *first;
+            *first = *last;
+            *last = temp;
+            ++first;
+            continue;
+        }
 
         SVGInlineTextBox* firstTextBox = static_cast<SVGInlineTextBox*>(*first);
         SVGInlineTextBox* lastTextBox = static_cast<SVGInlineTextBox*>(*last);

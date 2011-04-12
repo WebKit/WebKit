@@ -1,3 +1,13 @@
+2011-04-12  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Tests for crash when non-svg inline text boxes exist in the list of text boxes. 
+        https://bugs.webkit.org/show_bug.cgi?id=57933
+
+        * svg/text/svg-rtl-text-crash-expected.txt: Added.
+        * svg/text/svg-rtl-text-crash.html: Added.
+
 2011-04-12  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

@@ -506,8 +506,12 @@ static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textB
 
 static inline void writeSVGInlineTextBoxes(TextStream& ts, const RenderText& text, int indent)
 {
-    for (InlineTextBox* box = text.firstTextBox(); box; box = box->nextTextBox())
+    for (InlineTextBox* box = text.firstTextBox(); box; box = box->nextTextBox()) {
+        if (!box->isSVGInlineTextBox())
+            continue;
+
         writeSVGInlineTextBox(ts, static_cast<SVGInlineTextBox*>(box), indent);
+    }
 }
 
 static void writeStandardPrefix(TextStream& ts, const RenderObject& object, int indent)
