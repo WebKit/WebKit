@@ -3503,3 +3503,8 @@ BUGCR79241 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEX
 
 // New test added as r83629. Probably need rebaseline.
 BUGJIANLI WIN LINUX : fast/inline/positioned-object-between-replaced-elements.html = TEXT
+
+// Regression caused by r83638. Probably need rebaseline.
+BUGJIANLI WIN LINUX: fast/borders/bidi-002.html = IMAGE+TEXT
+BUGJIANLI WIN LINUX: fast/borders/bidi-004.html = IMAGE+TEXT
+BUGJIANLI WIN LINUX: fast/borders/bidi-009a.html = IMAGE+TEXT
