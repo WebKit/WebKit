@@ -116,7 +116,6 @@ namespace WebCore {
             , m_buffer(0)
             , m_bodySize(0)
             , m_bodyDataSent(0)
-            , m_idleHandler(0)
             , m_gotChunkHandler(0)
 #endif
 #if PLATFORM(QT)
@@ -195,7 +194,6 @@ namespace WebCore {
         char* m_buffer;
         unsigned long m_bodySize;
         unsigned long m_bodyDataSent;
-        guint m_idleHandler;
         RefPtr<NetworkingContext> m_context;
         gulong m_gotChunkHandler;
 #endif

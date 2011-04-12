@@ -1,3 +1,18 @@
+2011-04-12  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Remove m_idleHandler from ResourceHandleSoup
+        https://bugs.webkit.org/show_bug.cgi?id=58319
+
+        The m_idleHandler attribute is no longer used in ResourceHandleSoup.
+        No new tests needed, no functionality change.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+
 2011-04-12  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Yury Semikhatsky.
