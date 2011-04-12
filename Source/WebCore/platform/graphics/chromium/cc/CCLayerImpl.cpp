@@ -151,7 +151,6 @@ void CCLayerImpl::bindContentsTexture()
 
 void CCLayerImpl::cleanupResources()
 {
-    m_owner = 0;
     if (renderSurface())
         renderSurface()->cleanupResources();
 }

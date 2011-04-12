@@ -50,6 +50,7 @@ public:
     }
     // When this class gets subclasses, remember to add 'virtual' here.
     virtual ~CCLayerImpl();
+    void resetOwner() { m_owner = 0; }
 
 #ifndef NDEBUG
     int debugID() const { return m_debugID; }

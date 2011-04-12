@@ -89,6 +89,9 @@ LayerChromium::~LayerChromium()
     // way for us to be destroyed while we still have a superlayer.
     ASSERT(!superlayer());
 
+    if (m_ccLayerImpl)
+        m_ccLayerImpl->resetOwner();
+
     // Remove the superlayer reference from all sublayers.
     removeAllSublayers();
 }

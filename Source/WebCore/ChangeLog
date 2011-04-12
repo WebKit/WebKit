@@ -1,3 +1,23 @@
+2011-04-11  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by James Robinson.
+
+        LayerChromium/CCLayerImpl ownership fix
+        https://bugs.webkit.org/show_bug.cgi?id=58283
+
+        CCLayerImpl's m_owner field lifetime should match the lifetime of the
+        corresponding LayerChromium.  This change moves resetting of m_owner
+        into LayerChromium's destructor.
+
+        Tested similarly to bug 57577.
+
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::~LayerChromium):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::cleanupResources):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::resetOwner):
+
 2011-04-11  Daniel Bates  <dbates@rim.com>
 
         Attempt to fix the GTK build after changeset 83527 <http://trac.webkit.org/changeset/83527>
