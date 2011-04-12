@@ -1198,7 +1198,7 @@ foreach my $testCase (@testCaseHashRefs) {
     open($fileHandle, "<", \$testCase->{inputText});
     my $line = <$fileHandle>;
 
-    my @got = VCSUtils::parseDiff($fileHandle, $line);
+    my @got = VCSUtils::parseDiff($fileHandle, $line, {"shouldNotUseIndexPathEOL" => 1});
     my $expectedReturn = $testCase->{expectedReturn};
 
     is_deeply(\@got, $expectedReturn, "$testNameStart return value.");

@@ -1,3 +1,36 @@
+2011-04-12  Daniel Bates  <dbates@rim.com>
+
+        Rubber-stamped by Eric Seidel.
+
+        svn-apply and/or patch(1) has trouble applying patches that makes changes to files
+        with Windows line endings
+        https://bugs.webkit.org/show_bug.cgi?id=53625
+
+        Fixes an issue where a patch made on a SCM checkout on a Unix file system cannot be
+        applied to an SCM checkout on a Windows file system and vice-versa.
+
+        This issue manifests itself due to custom SCM settings as well as differences in
+        gitattributes support in older versions of Git (e.g. 1.7.0.3). We implement support
+        into svn-apply/unapply to compensate for differences in line endings by converting
+        the line endings in a patch to match the line endings in the target file (if it exists).
+
+        * Scripts/VCSUtils.pm:
+          - Added parseFirstEOL(), which returns the first end-of-line character(s) that appear in the
+            content read from the specified file handle. Obviously, this heuristic will not work
+            for files with mixed line endings, but I don't envision such files to be the norm. If
+            this turns out to be an issue then we can improve the heuristic.
+          - Added firstEOLInFile().
+          - Modified parsePatch() and parseDiff() to take an optional hash reference to an options hash.
+            In particular, added the hash key shouldNotUseIndexPathEOL to control whether to use the line
+            endings in the diff instead of the line endings in the target file.
+          - Extracted local variable $chunkRangeRegEx from fixChangeLogPatch() so that it can be
+            re-used in parseDiff().
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiff.pl: Modified to pass {shouldNotUseIndexPathEOL => 1}
+          to parsePatch() since these unit tests don't create mock files. Instead, created unit tests that use
+          mock files in file VCSUtils_unittest/parseDiffWithMockFiles.pl.
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiffWithMockFiles.pl: Added.
+        * Scripts/webkitperl/VCSUtils_unittest/parseFirstEOL.pl: Added.
+
 2011-04-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

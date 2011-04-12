@@ -1,6 +1,6 @@
 # Copyright (C) 2007, 2008, 2009 Apple Inc.  All rights reserved.
 # Copyright (C) 2009, 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
-# Copyright (C) Research In Motion Limited 2010. All rights reserved.
+# Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -68,6 +68,7 @@ BEGIN {
         &makeFilePathRelative
         &mergeChangeLogs
         &normalizePath
+        &parseFirstEOL
         &parsePatch
         &pathRelativeToSVNRepositoryRootForPath
         &prepareParsedPatch
@@ -97,6 +98,7 @@ my $svnVersion;
 # Project time zone for Cupertino, CA, US
 my $changeLogTimeZone = "PST8PDT";
 
+my $chunkRangeRegEx = qr#^\@\@ -(\d+),(\d+) \+\d+,(\d+) \@\@$#; # e.g. @@ -2,6 +2,18 @@
 my $gitDiffStartRegEx = qr#^diff --git (\w/)?(.+) (\w/)?([^\r\n]+)#;
 my $svnDiffStartRegEx = qr#^Index: ([^\r\n]+)#;
 my $svnPropertiesStartRegEx = qr#^Property changes on: ([^\r\n]+)#; # $1 is normally the same as the index path.
@@ -447,6 +449,40 @@ sub removeEOL($)
 
     $line =~ s/[\r\n]+$//g;
     return $line;
+}
+
+sub parseFirstEOL($)
+{
+    my ($fileHandle) = @_;
+
+    # Make input record separator the new-line character to simplify regex matching below.
+    my $savedInputRecordSeparator = $INPUT_RECORD_SEPARATOR;
+    $INPUT_RECORD_SEPARATOR = "\n";
+    my $firstLine  = <$fileHandle>;
+    $INPUT_RECORD_SEPARATOR = $savedInputRecordSeparator;
+
+    return unless defined($firstLine);
+
+    my $eol;
+    if ($firstLine =~ /\r\n/) {
+        $eol = "\r\n";
+    } elsif ($firstLine =~ /\r/) {
+        $eol = "\r";
+    } elsif ($firstLine =~ /\n/) {
+        $eol = "\n";
+    }
+    return $eol;
+}
+
+sub firstEOLInFile($)
+{
+    my ($file) = @_;
+    my $eol;
+    if (open(FILE, $file)) {
+        $eol = parseFirstEOL(*FILE);
+        close(FILE);
+    }
+    return $eol;
 }
 
 sub svnStatus($)
@@ -822,23 +858,30 @@ sub parseDiffHeader($$)
 #   $fileHandle: a file handle advanced to the first line of the next
 #                header block. Leading junk is okay.
 #   $line: the line last read from $fileHandle.
+#   $optionsHashRef: a hash reference representing optional options to use
+#                    when processing a diff.
+#     shouldNotUseIndexPathEOL: whether to use the line endings in the diff instead
+#                               instead of the line endings in the target file; the
+#                               value of 1 if svnConvertedText should use the line
+#                               endings in the diff.
 #
 # Returns ($diffHashRefs, $lastReadLine):
 #   $diffHashRefs: A reference to an array of references to %diffHash hashes.
 #                  See the %diffHash documentation above.
 #   $lastReadLine: the line last read from $fileHandle
-sub parseDiff($$)
+sub parseDiff($$;$)
 {
     # FIXME: Adjust this method so that it dies if the first line does not
     #        match the start of a diff.  This will require a change to
     #        parsePatch() so that parsePatch() skips over leading junk.
-    my ($fileHandle, $line) = @_;
+    my ($fileHandle, $line, $optionsHashRef) = @_;
 
     my $headerStartRegEx = $svnDiffStartRegEx; # SVN-style header for the default
 
     my $headerHashRef; # Last header found, as returned by parseDiffHeader().
     my $svnPropertiesHashRef; # Last SVN properties diff found, as returned by parseSvnDiffProperties().
     my $svnText;
+    my $indexPathEOL;
     while (defined($line)) {
         if (!$headerHashRef && ($line =~ $gitDiffStartRegEx)) {
             # Then assume all diffs in the patch are Git-formatted. This
@@ -861,6 +904,11 @@ sub parseDiff($$)
         }
         if ($line !~ $headerStartRegEx) {
             # Then we are in the body of the diff.
+            if ($indexPathEOL && $line !~ /$chunkRangeRegEx/) {
+                # The chunk range is part of the body of the diff, but its line endings should't be
+                # modified or patch(1) will complain. So, we only modify non-chunk range lines.
+                $line =~ s/\r\n|\r|\n/$indexPathEOL/g;
+            }
             $svnText .= $line;
             $line = <$fileHandle>;
             next;
@@ -873,6 +921,9 @@ sub parseDiff($$)
         }
 
         ($headerHashRef, $line) = parseDiffHeader($fileHandle, $line);
+        if (!$optionsHashRef || !$optionsHashRef->{shouldNotUseIndexPathEOL}) {
+            $indexPathEOL = firstEOLInFile($headerHashRef->{indexPath}) if !$headerHashRef->{isNew} && !$headerHashRef->{isBinary};
+        }
 
         $svnText .= $headerHashRef->{svnConvertedText};
     }
@@ -1167,13 +1218,19 @@ sub parseSvnPropertyValue($$)
 # Args:
 #   $fileHandle: A file handle to the patch file that has not yet been
 #                read from.
+#   $optionsHashRef: a hash reference representing optional options to use
+#                    when processing a diff.
+#     shouldNotUseIndexPathEOL: whether to use the line endings in the diff instead
+#                               instead of the line endings in the target file; the
+#                               value of 1 if svnConvertedText should use the line
+#                               endings in the diff.
 #
 # Returns:
 #   @diffHashRefs: an array of diff hash references.
 #                  See the %diffHash documentation above.
-sub parsePatch($)
+sub parsePatch($;$)
 {
-    my ($fileHandle) = @_;
+    my ($fileHandle, $optionsHashRef) = @_;
 
     my $newDiffHashRefs;
     my @diffHashRefs; # return value
@@ -1182,7 +1239,7 @@ sub parsePatch($)
 
     while (defined($line)) { # Otherwise, at EOF.
 
-        ($newDiffHashRefs, $line) = parseDiff($fileHandle, $line);
+        ($newDiffHashRefs, $line) = parseDiff($fileHandle, $line, $optionsHashRef);
 
         push @diffHashRefs, @$newDiffHashRefs;
     }
@@ -1440,7 +1497,6 @@ sub fixChangeLogPatch($)
     $deletedLineCount += $dateStartIndex - $chunkStartIndex;
 
     # Update the initial chunk range.
-    my $chunkRangeRegEx = '^\@\@ -(\d+),(\d+) \+\d+,(\d+) \@\@$'; # e.g. @@ -2,6 +2,18 @@
     if ($lines[$chunkStartIndex - 1] !~ /$chunkRangeRegEx/) {
         # FIXME: Handle errors differently from ChangeLog files that
         # are okay but should not be altered. That way we can find out
