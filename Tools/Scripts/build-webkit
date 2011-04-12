@@ -574,6 +574,7 @@ for my $dir (@projects) {
 
     my $project = basename($dir);
     if (isGtk()) {
+        push(@options, @ARGV);
         $result = buildGtkProject($project, $clean,  @options);
     } elsif (isQt()) {
         #FIXME: $dir should probably be $project.
