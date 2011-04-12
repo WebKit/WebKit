@@ -1,3 +1,20 @@
+2011-04-12  Alok Priyadarshi  <alokp@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Remove dependency on chromium skia::PlatformCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=57563
+
+        * public/WebCanvas.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::printPage):
+        * tests/TransparencyWinTest.cpp:
+        (WebCore::drawNativeRect):
+        (WebCore::getPixelAt):
+        (WebCore::clearTopLayerAlphaChannel):
+        (WebCore::clearTopLayerAlphaPixel):
+        (WebCore::TEST):
+
 2011-04-12  Adam Barth  <abarth@webkit.org>
 
         Revert unintentional changes to WebKit.

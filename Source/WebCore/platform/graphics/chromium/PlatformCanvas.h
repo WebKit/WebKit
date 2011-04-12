@@ -39,8 +39,8 @@
 #endif
 
 #if USE(SKIA)
-namespace skia { class PlatformCanvas; }
 class SkBitmap;
+class SkCanvas;
 #endif
 
 namespace WebCore {
@@ -97,7 +97,7 @@ public:
 
 private:
 #if USE(SKIA)
-    OwnPtr<skia::PlatformCanvas> m_skiaCanvas;
+    OwnPtr<SkCanvas> m_skiaCanvas;
 #elif PLATFORM(CG)
     OwnArrayPtr<uint8_t> m_pixelData;
 #endif

@@ -66,19 +66,21 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode, bool& s
     : m_data(size)
     , m_size(size)
 {
-    if (!m_data.m_canvas.initialize(size.width(), size.height(), false)) {
+    SkCanvas* canvas = skia::CreateBitmapCanvas(size.width(), size.height(), false);
+    if (!canvas) {
         success = false;
         return;
     }
 
-    m_data.m_platformContext.setCanvas(&m_data.m_canvas);
+    m_data.m_canvas = canvas;
+    m_data.m_platformContext.setCanvas(m_data.m_canvas.get());
     m_context.set(new GraphicsContext(&m_data.m_platformContext));
     m_context->platformContext()->setDrawingToImageBuffer(true);
 
     // Make the background transparent. It would be nice if this wasn't
     // required, but the canvas is currently filled with the magic transparency
     // color. Can we have another way to manage this?
-    m_data.m_canvas.drawARGB(0, 0, 0, 0, SkXfermode::kClear_Mode);
+    m_data.m_canvas->drawARGB(0, 0, 0, 0, SkXfermode::kClear_Mode);
     success = true;
 }
 
