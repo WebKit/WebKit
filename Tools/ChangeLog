@@ -1,3 +1,24 @@
+2011-04-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        REGRESSION(r77974): http/tests/security/aboutBlank/security-context-window-open.html is failing
+        <rdar://problem/8981346>
+        https://bugs.webkit.org/show_bug.cgi?id=54159
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        (WTR::InjectedBundlePage::decidePolicyForNavigationAction):
+        (WTR::InjectedBundlePage::decidePolicyForNewWindowAction):
+        (WTR::InjectedBundlePage::decidePolicyForResponse):
+        (WTR::InjectedBundlePage::unableToImplementPolicy):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+        Add short-circuited policy client which matches WebKit1.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        Clear the cache between tests to ensure consistent results.
+
 2011-04-11  George Guo  <George.Guo@nokia.com>
 
         Reviewed by Eric Seidel.

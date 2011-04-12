@@ -1,3 +1,14 @@
+2011-04-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        REGRESSION(r77974): http/tests/security/aboutBlank/security-context-window-open.html is failing
+        <rdar://problem/8981346>
+        https://bugs.webkit.org/show_bug.cgi?id=54159
+
+        * platform/mac-wk2/Skipped:
+        Remove http/tests/security/aboutBlank/security-context-window-open.html from the skipped list.
+
 2011-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

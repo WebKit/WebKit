@@ -33,6 +33,7 @@
 #include <WebKit2/WKContextPrivate.h>
 #include <WebKit2/WKPageGroup.h>
 #include <WebKit2/WKPreferencesPrivate.h>
+#include <WebKit2/WKResourceCacheManager.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -376,6 +377,9 @@ bool TestController::resetStateToConsistentValues()
     WKPreferencesSetFixedFontFamily(preferences, fixedFontFamily);
     WKPreferencesSetSansSerifFontFamily(preferences, sansSerifFontFamily);
     WKPreferencesSetSerifFontFamily(preferences, serifFontFamily);
+
+    WKResourceCacheManagerRef cacheManager = WKContextGetResourceCacheManager(m_context.get());
+    WKResourceCacheManagerClearCacheForAllOrigins(cacheManager, WKResourceCachesToClearAll);
 
     m_mainWebView->focus();
 
