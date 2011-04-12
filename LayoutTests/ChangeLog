@@ -1,3 +1,14 @@
+2011-04-12  Jessie Berlin  <jberlin@apple.com>
+
+        compositing/objects/composited-object-alignment.html causing failures in other tests since
+        it's introduction in r83518
+        https://bugs.webkit.org/show_bug.cgi?id=58323
+
+        Disabling the test until it is fixed in order to get the bots green.
+
+        * compositing/objects/composited-object-alignment.html: Removed.
+        * compositing/objects/composited-object-alignment.html-disabled: Copied from LayoutTests/compositing/objects/composited-object-alignment.html.
+
 2011-04-11  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
