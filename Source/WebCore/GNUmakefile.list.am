@@ -3116,6 +3116,8 @@ webcore_sources += \
 	Source/WebCore/storage/IDBKeyPathBackendImpl.h \
 	Source/WebCore/storage/IDBKeyRange.cpp \
 	Source/WebCore/storage/IDBKeyRange.h \
+	Source/WebCore/storage/IDBLevelDBBackingStore.cpp \
+	Source/WebCore/storage/IDBLevelDBBackingStore.h \
 	Source/WebCore/storage/IDBObjectStoreBackendImpl.cpp \
 	Source/WebCore/storage/IDBObjectStoreBackendImpl.h \
 	Source/WebCore/storage/IDBObjectStoreBackendInterface.h \
