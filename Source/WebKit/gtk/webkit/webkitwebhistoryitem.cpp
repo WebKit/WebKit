@@ -22,6 +22,7 @@
 #include "webkitwebhistoryitem.h"
 
 #include "HistoryItem.h"
+#inlcude "KURL.h"
 #include "PlatformString.h"
 #include "webkitglobalsprivate.h"
 #include "webkitwebhistoryitemprivate.h"

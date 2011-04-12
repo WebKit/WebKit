@@ -1,3 +1,42 @@
+2011-04-11  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58280
+        <rdar://problem/9252824> javascript in an inconsistent state due to serialization returning an un-handled exception
+        Currently serialization and deserialization can throw javascript exceptions.  Since SerializedScriptValue is called in
+        several places that do not always involve direct calls into javascript have the functions return an error code and the callers
+        decide whether or not to throw exceptions.
+
+        Don't allow SerializedScriptValue to attempt to serialize objects that inherit from JSNavigator.h.  Walking that object creates
+        additional objects which eventually causes serialization to end up throwing a stack overflow error.  Instead fail immediately.
+
+        Untangle header includes.  SerializedScriptValue was inheriting ScriptValue.h, but not using it.  Since ScriptValue depends on
+        SerializedScriptValue this could lead to a circular header dependency.
+
+        No change in functionality, covered by current tests
+
+        * WebCore.exp.in:
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::initMessageEvent):
+        * bindings/js/ScriptValue.cpp:
+        (WebCore::ScriptValue::serialize):
+        (WebCore::ScriptValue::deserialize):
+        * bindings/js/ScriptValue.h:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneDeserializer::deserialize):
+        (WebCore::SerializedScriptValue::create):
+        (WebCore::SerializedScriptValue::deserialize):
+        (WebCore::SerializedScriptValue::maybeThrowExceptionIfSerializationFailed):
+        (WebCore::SerializedScriptValue::serializationDidCompleteSuccessfully):
+        * bindings/js/SerializedScriptValue.h:
+
+        * bindings/js/JSWorkerContextBase.cpp: header include fix
+        * loader/FrameLoader.h: header include fix
+        * page/Frame.cpp: header include fix
+
 2011-03-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Kenneth Russell.

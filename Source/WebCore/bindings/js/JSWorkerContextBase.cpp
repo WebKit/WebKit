@@ -31,6 +31,7 @@
 
 #include "JSWorkerContextBase.h"
 
+#include "DOMWrapperWorld.h"
 #include "JSDedicatedWorkerContext.h"
 #include "JSSharedWorkerContext.h"
 #include "JSWorkerContext.h"

@@ -69,6 +69,7 @@
 #include "WebProcess.h"
 #include "WebProcessProxyMessageKinds.h"
 #include "WebProcessProxyMessages.h"
+#include <JavaScriptCore/APICast.h>
 #include <WebCore/AbstractDatabase.h>
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/Chrome.h>
@@ -1235,7 +1236,8 @@ void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID
 
     JSLock lock(SilenceAssertionsOnly);
     if (JSValue resultValue = m_mainFrame->coreFrame()->script()->executeScript(script, true).jsValue()) {
-        if ((serializedResultValue = SerializedScriptValue::create(m_mainFrame->coreFrame()->script()->globalObject(mainThreadNormalWorld())->globalExec(), resultValue)))
+        if ((serializedResultValue = SerializedScriptValue::create(m_mainFrame->jsContext(), 
+            toRef(m_mainFrame->coreFrame()->script()->globalObject(mainThreadNormalWorld())->globalExec(), resultValue), 0)))
             dataReference = CoreIPC::DataReference(serializedResultValue->data().data(), serializedResultValue->data().size());
     }
 

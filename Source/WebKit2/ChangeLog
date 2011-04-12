@@ -1,3 +1,16 @@
+2011-04-11  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58280
+        <rdar://problem/9252824> javascript in an inconsistent state due to serialization returning an un-handled exception
+        Change use of SerializedScriptValue::Create to use the same api as the rest of WebKit2.  This has the benefit
+        of handling any exceptions so Javascript is not in an inconsistent state.
+
+        * Shared/API/c/WKSerializedScriptValue.h: fix a typo
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInMainFrame):
+
 2011-04-12  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Adam Roben.

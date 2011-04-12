@@ -36,7 +36,7 @@ extern "C" {
 WK_EXPORT WKTypeID WKSerializedScriptValueGetTypeID();
 
 WK_EXPORT WKSerializedScriptValueRef WKSerializedScriptValueCreate(JSContextRef context, JSValueRef value, JSValueRef* exception);
-WK_EXPORT JSValueRef WKSerializedScriptValueDeserialize(WKSerializedScriptValueRef scriptValue, JSContextRef constext, JSValueRef* exception);
+WK_EXPORT JSValueRef WKSerializedScriptValueDeserialize(WKSerializedScriptValueRef scriptValue, JSContextRef context, JSValueRef* exception);
 
 #ifdef __cplusplus
 }

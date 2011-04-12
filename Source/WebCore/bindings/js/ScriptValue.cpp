@@ -100,14 +100,14 @@ bool ScriptValue::isFunction() const
     return getCallData(m_value.get(), callData) != CallTypeNone;
 }
 
-PassRefPtr<SerializedScriptValue> ScriptValue::serialize(ScriptState* scriptState)
+PassRefPtr<SerializedScriptValue> ScriptValue::serialize(ScriptState* scriptState, SerializationErrorMode throwExceptions)
 {
-    return SerializedScriptValue::create(scriptState, jsValue());
+    return SerializedScriptValue::create(scriptState, jsValue(), throwExceptions);
 }
 
-ScriptValue ScriptValue::deserialize(ScriptState* scriptState, SerializedScriptValue* value)
+ScriptValue ScriptValue::deserialize(ScriptState* scriptState, SerializedScriptValue* value, SerializationErrorMode throwExceptions)
 {
-    return ScriptValue(scriptState->globalData(), value->deserialize(scriptState, scriptState->lexicalGlobalObject()));
+    return ScriptValue(scriptState->globalData(), value->deserialize(scriptState, scriptState->lexicalGlobalObject(), throwExceptions));
 }
 
 #if ENABLE(INSPECTOR)

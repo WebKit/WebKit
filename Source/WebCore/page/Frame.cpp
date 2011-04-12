@@ -72,6 +72,7 @@
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
+#include "ScriptValue.h"
 #include "Settings.h"
 #include "TextIterator.h"
 #include "TextResourceDecoder.h"

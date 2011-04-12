@@ -36,6 +36,7 @@
 #include "JSFile.h"
 #include "JSFileList.h"
 #include "JSImageData.h"
+#include "JSNavigator.h"
 #include "SharedBuffer.h"
 #include <limits>
 #include <JavaScriptCore/APICast.h>
@@ -160,6 +161,8 @@ static const unsigned int StringPoolTag = 0xFFFFFFFE;
  *    RegExpTag <pattern:StringData><flags:StringData>
  */
 
+typedef pair<JSC::JSValue, SerializationReturnCode> DeserializationResult;
+
 class CloneBase {
 protected:
     CloneBase(ExecState* exec)
@@ -247,7 +250,7 @@ template <typename T> static bool writeLittleEndian(Vector<uint8_t>& buffer, con
 
 class CloneSerializer : CloneBase {
 public:
-    static bool serialize(ExecState* exec, JSValue value, Vector<uint8_t>& out)
+    static SerializationReturnCode serialize(ExecState* exec, JSValue value, Vector<uint8_t>& out)
     {
         CloneSerializer serializer(exec, out);
         return serializer.serialize(value);
@@ -274,7 +277,7 @@ private:
         write(CurrentVersion);
     }
 
-    bool serialize(JSValue in);
+    SerializationReturnCode serialize(JSValue in);
 
     bool isArray(JSValue value)
     {
@@ -414,6 +417,13 @@ private:
 
         if (isArray(value))
             return false;
+           
+        // Object cannot be serialized because the act of walking the object creates new objects
+        if (value.isObject() && asObject(value)->inherits(&JSNavigator::s_info)) {
+            fail();
+            write(NullTag);
+            return true; 
+        }
 
         if (value.isObject()) {
             JSObject* obj = asObject(value);
@@ -598,7 +608,7 @@ private:
     Identifier m_emptyIdentifier;
 };
 
-bool CloneSerializer::serialize(JSValue in)
+SerializationReturnCode CloneSerializer::serialize(JSValue in)
 {
     Vector<uint32_t, 16> indexStack;
     Vector<uint32_t, 16> lengthStack;
@@ -614,10 +624,8 @@ bool CloneSerializer::serialize(JSValue in)
             arrayStartState:
             case ArrayStartState: {
                 ASSERT(isArray(inValue));
-                if (inputObjectStack.size() + inputArrayStack.size() > maximumFilterRecursion) {
-                    throwStackOverflow();
-                    return false;
-                }
+                if (inputObjectStack.size() + inputArrayStack.size() > maximumFilterRecursion)
+                    return StackOverflowError;
 
                 JSArray* inArray = asArray(inValue);
                 unsigned length = inArray->length();
@@ -631,10 +639,8 @@ bool CloneSerializer::serialize(JSValue in)
             arrayStartVisitMember:
             case ArrayStartVisitMember: {
                 if (!--tickCount) {
-                    if (didTimeOut()) {
-                        throwInterruptedException();
-                        return false;
-                    }
+                    if (didTimeOut())
+                        return InterruptedExecutionError;
                     tickCount = ticksUntilNextCheck();
                 }
 
@@ -673,10 +679,8 @@ bool CloneSerializer::serialize(JSValue in)
             objectStartState:
             case ObjectStartState: {
                 ASSERT(inValue.isObject());
-                if (inputObjectStack.size() + inputArrayStack.size() > maximumFilterRecursion) {
-                    throwStackOverflow();
-                    return false;
-                }
+                if (inputObjectStack.size() + inputArrayStack.size() > maximumFilterRecursion)
+                    return StackOverflowError;
                 JSObject* inObject = asObject(inValue);
                 if (!startObject(inObject))
                     break;
@@ -689,10 +693,8 @@ bool CloneSerializer::serialize(JSValue in)
             objectStartVisitMember:
             case ObjectStartVisitMember: {
                 if (!--tickCount) {
-                    if (didTimeOut()) {
-                        throwInterruptedException();
-                        return false;
-                    }
+                    if (didTimeOut())
+                        return InterruptedExecutionError;
                     tickCount = ticksUntilNextCheck();
                 }
 
@@ -708,7 +710,7 @@ bool CloneSerializer::serialize(JSValue in)
                 }
                 inValue = getProperty(object, properties[index]);
                 if (shouldTerminate())
-                    return false;
+                    return ExistingExceptionError;
 
                 if (!inValue) {
                     // Property was removed during serialisation
@@ -718,7 +720,7 @@ bool CloneSerializer::serialize(JSValue in)
                 write(properties[index]);
 
                 if (shouldTerminate())
-                    return false;
+                    return ExistingExceptionError;
 
                 if (!dumpIfTerminal(inValue)) {
                     stateStack.append(ObjectEndVisitMember);
@@ -728,7 +730,7 @@ bool CloneSerializer::serialize(JSValue in)
             }
             case ObjectEndVisitMember: {
                 if (shouldTerminate())
-                    return false;
+                    return ExistingExceptionError;
 
                 indexStack.last()++;
                 goto objectStartVisitMember;
@@ -749,17 +751,15 @@ bool CloneSerializer::serialize(JSValue in)
         stateStack.removeLast();
 
         if (!--tickCount) {
-            if (didTimeOut()) {
-                throwInterruptedException();
-                return false;
-            }
+            if (didTimeOut())
+                return InterruptedExecutionError;
             tickCount = ticksUntilNextCheck();
         }
     }
     if (m_failed)
-        return false;
+        return UnspecifiedError;
 
-    return true;
+    return SuccessfullyCompleted;
 }
 
 class CloneDeserializer : CloneBase {
@@ -783,15 +783,13 @@ public:
         return String(str.impl());
     }
 
-    static JSValue deserialize(ExecState* exec, JSGlobalObject* globalObject, const Vector<uint8_t>& buffer)
+    static DeserializationResult deserialize(ExecState* exec, JSGlobalObject* globalObject, const Vector<uint8_t>& buffer)
     {
         if (!buffer.size())
-            return jsNull();
+            return make_pair(jsNull(), UnspecifiedError);
         CloneDeserializer deserializer(exec, globalObject, buffer);
-        if (!deserializer.isValid()) {
-            deserializer.throwValidationError();
-            return JSValue();
-        }
+        if (!deserializer.isValid())
+            return make_pair(JSValue(), ValidationError);
         return deserializer.deserialize();
     }
 
@@ -846,7 +844,7 @@ private:
             m_version = 0xFFFFFFFF;
     }
 
-    JSValue deserialize();
+    DeserializationResult deserialize();
 
     void throwValidationError()
     {
@@ -1193,7 +1191,7 @@ private:
     Vector<CachedString> m_constantPool;
 };
 
-JSValue CloneDeserializer::deserialize()
+DeserializationResult CloneDeserializer::deserialize()
 {
     Vector<uint32_t, 16> indexStack;
     Vector<Identifier, 16> propertyNameStack;
@@ -1222,10 +1220,8 @@ JSValue CloneDeserializer::deserialize()
         arrayStartVisitMember:
         case ArrayStartVisitMember: {
             if (!--tickCount) {
-                if (didTimeOut()) {
-                    throwInterruptedException();
-                    return JSValue();
-                }
+                if (didTimeOut())
+                    return make_pair(JSValue(), InterruptedExecutionError);
                 tickCount = ticksUntilNextCheck();
             }
 
@@ -1259,10 +1255,8 @@ JSValue CloneDeserializer::deserialize()
         }
         objectStartState:
         case ObjectStartState: {
-            if (outputObjectStack.size() + outputArrayStack.size() > maximumFilterRecursion) {
-                throwStackOverflow();
-                return JSValue();
-            }
+            if (outputObjectStack.size() + outputArrayStack.size() > maximumFilterRecursion)
+                return make_pair(JSValue(), StackOverflowError);
             JSObject* outObject = constructEmptyObject(m_exec, m_globalObject);
             m_gcBuffer.append(outObject);
             outputObjectStack.append(outObject);
@@ -1271,10 +1265,8 @@ JSValue CloneDeserializer::deserialize()
         objectStartVisitMember:
         case ObjectStartVisitMember: {
             if (!--tickCount) {
-                if (didTimeOut()) {
-                    throwInterruptedException();
-                    return JSValue();
-                }
+                if (didTimeOut())
+                    return make_pair(JSValue(), InterruptedExecutionError);
                 tickCount = ticksUntilNextCheck();
             }
 
@@ -1322,20 +1314,17 @@ JSValue CloneDeserializer::deserialize()
         stateStack.removeLast();
 
         if (!--tickCount) {
-            if (didTimeOut()) {
-                throwInterruptedException();
-                return JSValue();
-            }
+            if (didTimeOut())
+                return make_pair(JSValue(), InterruptedExecutionError);
             tickCount = ticksUntilNextCheck();
         }
     }
     ASSERT(outValue);
     ASSERT(!m_failed);
-    return outValue;
+    return make_pair(outValue, SuccessfullyCompleted);
 error:
     fail();
-    throwValidationError();
-    return JSValue();
+    return make_pair(JSValue(), ValidationError);
 }
 
 
@@ -1349,11 +1338,16 @@ SerializedScriptValue::SerializedScriptValue(Vector<uint8_t>& buffer)
     m_data.swap(buffer);
 }
 
-PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec, JSValue value)
+PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec, JSValue value, SerializationErrorMode throwExceptions)
 {
     Vector<uint8_t> buffer;
-    if (!CloneSerializer::serialize(exec, value, buffer))
+    SerializationReturnCode code = CloneSerializer::serialize(exec, value, buffer);
+    if (throwExceptions)
+        maybeThrowExceptionIfSerializationFailed(exec, code);
+
+    if (!serializationDidCompleteSuccessfully(code))
         return 0;
+        
     return adoptRef(new SerializedScriptValue(buffer));
 }
 
@@ -1392,9 +1386,12 @@ String SerializedScriptValue::toString()
     return CloneDeserializer::deserializeString(m_data);
 }
 
-JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* globalObject)
+JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* globalObject, SerializationErrorMode throwExceptions)
 {
-    return CloneDeserializer::deserialize(exec, globalObject, m_data);
+    DeserializationResult result = CloneDeserializer::deserialize(exec, globalObject, m_data);
+    if (throwExceptions)
+        maybeThrowExceptionIfSerializationFailed(exec, result.second);
+    return result.first;
 }
 
 JSValueRef SerializedScriptValue::deserialize(JSContextRef destinationContext, JSValueRef* exception)
@@ -1416,6 +1413,37 @@ SerializedScriptValue* SerializedScriptValue::nullValue()
 {
     DEFINE_STATIC_LOCAL(RefPtr<SerializedScriptValue>, emptyValue, (SerializedScriptValue::create()));
     return emptyValue.get();
+}
+
+void SerializedScriptValue::maybeThrowExceptionIfSerializationFailed(ExecState* exec, SerializationReturnCode code)
+{
+    if (code == SuccessfullyCompleted)
+        return;
+    
+    switch (code) {
+    case StackOverflowError:
+        throwError(exec, createStackOverflowError(exec));
+        break;
+    case InterruptedExecutionError:
+        throwError(exec, createInterruptedExecutionException(&exec->globalData()));
+        break;
+    case ValidationError:
+        throwError(exec, createTypeError(exec, "Unable to deserialize data."));
+        break;
+    case ExistingExceptionError:
+        throwError(exec, createTypeError(exec, "Javascript has thrown an exception.  Halting serialization."));
+        break;
+    case UnspecifiedError:
+        throwError(exec, createTypeError(exec, "Unknown error while serializing or deserializing data."));
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+bool SerializedScriptValue::serializationDidCompleteSuccessfully(SerializationReturnCode code)
+{
+    return (code == SuccessfullyCompleted);
 }
 
 }

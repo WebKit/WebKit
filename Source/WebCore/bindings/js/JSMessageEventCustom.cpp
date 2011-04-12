@@ -60,6 +60,8 @@ JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec)
     bool canBubbleArg = exec->argument(1).toBoolean(exec);
     bool cancelableArg = exec->argument(2).toBoolean(exec);
     PassRefPtr<SerializedScriptValue> dataArg = SerializedScriptValue::create(exec, exec->argument(3));
+    if (exec->hadException())
+        return jsUndefined();
     const UString& originArg = exec->argument(4).toString(exec);
     const UString& lastEventIdArg = exec->argument(5).toString(exec);
     DOMWindow* sourceArg = toDOMWindow(exec->argument(6));
