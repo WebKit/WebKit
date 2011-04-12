@@ -725,6 +725,17 @@
                     ],
                 },
                 {
+                    'destination': '<(PRODUCT_DIR)/resources/inspector/UglifyJS',
+                    'files': [
+                        '<@(webinspector_uglifyjs_files)',
+                    ],
+                    'conditions': [
+                        ['debug_devtools==0', {
+                            'files/': [['exclude', '\\.(js|css|html)$']],
+                        }],
+                    ],
+                },
+                {
                     'destination': '<(PRODUCT_DIR)/resources/inspector/Images',
                     'files': [
                         '<@(webinspector_image_files)',
@@ -1189,7 +1200,7 @@
                         'input_file': '../../WebCore/inspector/front-end/ScriptFormatterWorker.js',
                         'inputs': [
                             '<@(_script_name)',
-                            '<@(webinspector_files)'
+                            '<@(webinspector_uglifyjs_files)'
                         ],
                         'search_path': '../../WebCore/inspector/front-end',
                         'outputs': ['<(PRODUCT_DIR)/resources/inspector/ScriptFormatterWorker.js'],

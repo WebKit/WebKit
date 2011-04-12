@@ -6281,8 +6281,6 @@
             'inspector/front-end/WatchExpressionsSidebarPane.js',
             'inspector/front-end/WelcomeView.js',
             'inspector/front-end/WorkersSidebarPane.js',
-            'inspector/front-end/UglifyJS/parse-js.js',
-            'inspector/front-end/UglifyJS/process.js',
             'inspector/front-end/audits.css',
             'inspector/front-end/goToLineDialog.css',
             'inspector/front-end/heapProfiler.css',
@@ -6292,6 +6290,10 @@
             'inspector/front-end/networkPanel.css',
             'inspector/front-end/popover.css',
             'inspector/front-end/textViewer.css',
+        ],
+        'webinspector_uglifyjs_files': [
+            'inspector/front-end/UglifyJS/parse-js.js',
+            'inspector/front-end/UglifyJS/process.js',
         ],
         'webinspector_image_files': [
             'inspector/front-end/Images/applicationCache.png',
