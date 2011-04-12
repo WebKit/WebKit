@@ -1,3 +1,11 @@
+2011-04-12  Adam Barth  <abarth@webkit.org>
+
+        Revert unintentional changes to WebKit.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        * src/WebSettingsImpl.h:
+
 2011-04-11  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Darin Fisher.

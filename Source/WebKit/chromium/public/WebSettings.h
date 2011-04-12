@@ -89,7 +89,6 @@ public:
     virtual void setShouldPaintCustomScrollbars(bool) = 0;
     virtual void setAllowUniversalAccessFromFileURLs(bool) = 0;
     virtual void setAllowFileAccessFromFileURLs(bool) = 0;
-    virtual void setAllowRunningInsecureContent(bool) = 0;
     virtual void setTextDirectionSubmenuInclusionBehaviorNeverIncluded() = 0;
     virtual void setOfflineWebApplicationCacheEnabled(bool) = 0;
     virtual void setWebAudioEnabled(bool) = 0;
