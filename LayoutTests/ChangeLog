@@ -1,3 +1,15 @@
+2011-04-12  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows XP Debug Tests] http/tests/inspector/resource-tree-model.html failing since introduction in r83584
+        https://bugs.webkit.org/show_bug.cgi?id=58367
+
+        Add expected failing results to get the bots green.
+
+        * platform/win-xp/http: Added.
+        * platform/win-xp/http/tests: Added.
+        * platform/win-xp/http/tests/inspector: Added.
+        * platform/win-xp/http/tests/inspector/resource-tree-model-expected.txt: Added.
+
 2011-04-12  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
