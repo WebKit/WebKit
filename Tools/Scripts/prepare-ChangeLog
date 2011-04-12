@@ -140,6 +140,7 @@ if (!$parseOptionsResult || $showHelp) {
     print STDERR "  -o|--open       Open ChangeLogs in an editor when done\n";
     print STDERR "  --[no-]update   Update ChangeLogs from svn before adding entry (default: update)\n";
     print STDERR "  --[no-]write    Write ChangeLogs to disk (otherwise send new entries to stdout) (default: write)\n";
+    print STDERR "  --email=        Specify the email address to be used in the patch\n";
     exit 1;
 }
 

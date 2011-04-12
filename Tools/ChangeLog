@@ -1,3 +1,14 @@
+2011-04-11  George Guo  <George.Guo@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        prepare-ChangeLog support email input but -h did not show the option
+        https://bugs.webkit.org/show_bug.cgi?id=58164
+
+        Add email option to -h to improve the usability
+
+        * Scripts/prepare-ChangeLog:
+
 2011-04-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Carlson.
