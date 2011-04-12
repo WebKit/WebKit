@@ -1,3 +1,12 @@
+2011-04-12  Jessie Berlin  <jberlin@apple.com>
+
+        [WebKit2 Release Tests] fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html flakey
+        https://bugs.webkit.org/show_bug.cgi?id=58337
+
+        Skip the test to get the bots green.
+
+        * platform/mac-wk2/Skipped:
+
 2011-04-12  Jian Li  <jianli@chromium.org>
 
         Unreviewed, update chromium test expectations.

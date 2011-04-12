@@ -54,6 +54,10 @@ compositing/iframes/iframe-src-change.html
 # <https://bugs.webkit.org/show_bug.cgi?id=57638>
 inspector/styles/styles-add-blank-property.html
 
+# Flakey on both Snow Leopard and Windows 7
+# https://bugs.webkit.org/show_bug.cgi?id=58337
+fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html
+
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
 editing/deleting/5729680.html
