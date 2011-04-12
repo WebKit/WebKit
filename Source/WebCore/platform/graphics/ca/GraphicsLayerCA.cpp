@@ -255,6 +255,7 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     , m_contentsLayerHasBackgroundColor(false)
     , m_uncommittedChanges(NoChange)
     , m_contentsScale(1)
+    , m_allowTiledLayer(true)
 {
     m_layer = PlatformCALayer::create(PlatformCALayer::LayerTypeWebLayer, this);
 
@@ -490,6 +491,17 @@ void GraphicsLayerCA::setAcceleratesDrawing(bool acceleratesDrawing)
 
     GraphicsLayer::setAcceleratesDrawing(acceleratesDrawing);
     noteLayerPropertyChanged(AcceleratesDrawingChanged);
+}
+
+void GraphicsLayerCA::setAllowTiledLayer(bool allowTiledLayer)
+{
+    if (allowTiledLayer == m_allowTiledLayer)
+        return;
+
+    m_allowTiledLayer = allowTiledLayer;
+    
+    // Handling this as a SizeChanged will cause use to switch in or out of tiled layer as needed
+    noteLayerPropertyChanged(SizeChanged);
 }
 
 void GraphicsLayerCA::setBackgroundColor(const Color& color)
@@ -2005,7 +2017,7 @@ FloatSize GraphicsLayerCA::constrainedSize() const
 
 bool GraphicsLayerCA::requiresTiledLayer(const FloatSize& size) const
 {
-    if (!m_drawsContent)
+    if (!m_drawsContent || !m_allowTiledLayer)
         return false;
 
     // FIXME: catch zero-size height or width here (or earlier)?

@@ -1,3 +1,16 @@
+2011-04-12  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Page tears and stutters in WebKit2 when page is > 2048 pixels wide
+        https://bugs.webkit.org/show_bug.cgi?id=58330
+
+        Turn off tiling for nonCompositedContentLayer to avoid tearing when
+        scrolling very wide (> 2048) windows.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+        (WebKit::LayerTreeHostCA::initialize):
+
 2011-04-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

@@ -122,6 +122,9 @@ public:
     virtual void syncCompositingState();
     virtual void syncCompositingStateForThisLayerOnly();
 
+    bool allowTiledLayer() const { return m_allowTiledLayer; }
+    virtual void setAllowTiledLayer(bool b);
+
 protected:
     virtual void setOpacityInternal(float);
 
@@ -399,6 +402,8 @@ private:
 
     float clampedContentsScaleForScale(float) const;
     float m_contentsScale;
+    
+    bool m_allowTiledLayer;
 };
 
 } // namespace WebCore

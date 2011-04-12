@@ -59,6 +59,7 @@ void LayerTreeHostCA::initialize()
     static_cast<GraphicsLayerCA*>(m_rootLayer.get())->platformCALayer()->setGeometryFlipped(true);
 
     m_nonCompositedContentLayer = GraphicsLayer::create(this);
+    static_cast<GraphicsLayerCA*>(m_nonCompositedContentLayer.get())->setAllowTiledLayer(false);
 #ifndef NDEBUG
     m_nonCompositedContentLayer->setName("LayerTreeHost non-composited content");
 #endif

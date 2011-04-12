@@ -1,3 +1,20 @@
+2011-04-12  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Page tears and stutters in WebKit2 when page is > 2048 pixels wide
+        https://bugs.webkit.org/show_bug.cgi?id=58330
+
+        Added API to GraphicsLayer to disable switching to tiled layers. This is 
+        set in the nonCompositedContentLayer in WK2, causing that layer to never
+        switch to tiles and avoiding the asynchronous update of the content during
+        scroll.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+            Implement setAllowTiledLayer() to simulate a SizeChanged action to 
+            properly switch between tiled and untiled layer.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2011-04-12  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by James Robinson.
