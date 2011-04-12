@@ -1,3 +1,16 @@
+2011-04-12  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GStreamer] advertize HTTP Live Streaming mime-type
+        https://bugs.webkit.org/show_bug.cgi?id=58318
+
+        Register the hls mime-type in the internal cache if found in the
+        typefind factories.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mimeTypeCache):
+
 2011-04-11  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.

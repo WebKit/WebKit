@@ -1546,6 +1546,9 @@ static HashSet<String> mimeTypeCache()
                         || (g_str_equal(mimetype[0], "application")
                             && handledApplicationSubtypes.contains(String(mimetype[1]))))
                         cache.add(String(name));
+                    else if (g_str_equal(name, "application/x-hls"))
+                        cache.add(String("application/vnd.apple.mpegurl"));
+
 
                     g_strfreev(mimetype);
                 }
