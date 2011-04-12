@@ -54,7 +54,7 @@ public:
     virtual ~AnimationBase() { }
 
     RenderObject* renderer() const { return m_object; }
-    void clearRenderer() { m_object = 0; }
+    void clear() { m_object = 0; m_compAnim = 0; }
     
     double duration() const;
 
