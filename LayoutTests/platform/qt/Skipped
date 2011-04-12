@@ -3458,9 +3458,6 @@ http/tests/inspector/console-websocket-error.html
 # https://bugs.webkit.org/show_bug.cgi?id=52812
 fast/repaint/moving-shadow-on-container.html
 fast/repaint/moving-shadow-on-path.html
-inspector/styles/styles-iframe.html
-inspector/styles/styles-new-API.html
-inspector/styles/styles-url-linkify.html
 svg/clip-path/deep-nested-clip-in-mask-different-unitTypes.svg
 svg/css/stars-with-shadow.html
 svg/custom/circular-marker-reference-1.svg
@@ -3492,3 +3489,7 @@ svg/W3C-SVG-1.1/struct-frag-02-t.svg
 svg/W3C-SVG-1.1/struct-frag-03-t.svg
 svg/W3C-SVG-1.1/text-align-04-b.svg
 svg/zoom/page/zoom-mask-with-percentages.svg
+
+# [Qt] inspector/styles/styles-disable-then-enable.html make inspector/styles/styles-iframe.html fail in debug mode
+# https://bugs.webkit.org/show_bug.cgi?id=58313
+inspector/styles/styles-disable-then-enable.html
