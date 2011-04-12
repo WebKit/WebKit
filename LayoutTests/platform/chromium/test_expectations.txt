@@ -3495,9 +3495,6 @@ BUGWK58328 GPU MAC DEBUG : compositing/webgl/webgl-reflection.html = PASS CRASH
 
 BUGCR79173 GPU LINUX DEBUG : fast/canvas/access-zero-sized-canvas.html = PASS CRASH
 
-// Regression caused by r83617. jam is going to fix it.
-BUGJAM: editing/spelling/context-menu-suggestions.html = TEXT
-
 // Regression caused by r83628.
 BUGCR79241 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEXT
 

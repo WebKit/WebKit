@@ -264,9 +264,8 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
                     m_webView->spellCheckClient()->spellCheck(
                         data.misspelledWord, misspelledOffset, misspelledLength,
                         &data.dictionarySuggestions);
-                    if (!misspelledOffset)
+                    if (!misspelledLength)
                         data.misspelledWord.reset();
-
                 }
             }
         }
