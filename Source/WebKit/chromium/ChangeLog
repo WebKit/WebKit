@@ -1,3 +1,23 @@
+2011-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Crash in WebViewImpl::caretOrSelectionBounds
+        https://bugs.webkit.org/show_bug.cgi?id=58269
+
+        The bug was caused by caretOrSelectionBounds's incorrectly assuming
+        SelectionController::toNormalizedRange to always return a non-null Range.
+
+        Fixed the bug by adding a null pointer check. Also replaced calls to deprecatedNode
+        by containerNode() and calls to SelectionController::start() and SelectionController::end()
+        by calls to SelectionController::base() and SelectionController::extent() because
+        selection extends from base to extent, not from start to end.
+
+        Test: editing/selection/extend-over-file-input-by-drag-crash.html
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::caretOrSelectionBounds):
+
 2011-04-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Eric Carlson.

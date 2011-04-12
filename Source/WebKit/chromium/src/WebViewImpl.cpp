@@ -1438,17 +1438,17 @@ WebRect WebViewImpl::caretOrSelectionBounds()
     if (!view)
         return rect;
 
-    const Node* node = controller->start().deprecatedNode();
+    const Node* node = controller->base().containerNode();
     if (!node || !node->renderer())
         return rect;
 
     if (controller->isCaret())
         rect = view->contentsToWindow(controller->absoluteCaretBounds());
     else if (controller->isRange()) {
-        node = controller->end().deprecatedNode();
-        if (!node || !node->renderer())
-            return rect;
+        node = controller->extent().containerNode();
         RefPtr<Range> range = controller->toNormalizedRange();
+        if (!node || !node->renderer() || !range)
+            return rect;
         rect = view->contentsToWindow(focused->editor()->firstRectForRange(range.get()));
     }
     return rect;
