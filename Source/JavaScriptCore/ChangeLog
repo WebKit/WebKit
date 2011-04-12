@@ -1,3 +1,20 @@
+2011-04-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make API callback objects use weak handles to run their finalizers
+        https://bugs.webkit.org/show_bug.cgi?id=58389
+
+        Make the API object's private data struct act as a finalizer for
+        an api object if the callback object has a API defined finalizer.
+
+        * API/JSCallbackObject.cpp:
+        (JSC::JSCallbackObjectData::finalize):
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::init):
+        * heap/Handle.h:
+
 2011-04-12  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

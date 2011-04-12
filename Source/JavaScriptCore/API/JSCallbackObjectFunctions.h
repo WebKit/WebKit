@@ -88,16 +88,16 @@ void JSCallbackObject<Base>::init(ExecState* exec)
         JSObjectInitializeCallback initialize = initRoutines[i];
         initialize(toRef(exec), toRef(this));
     }
-}
 
-template <class Base>
-JSCallbackObject<Base>::~JSCallbackObject()
-{
-    JSObjectRef thisRef = toRef(this);
-    
-    for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass)
-        if (JSObjectFinalizeCallback finalize = jsClass->finalize)
-            finalize(thisRef);
+    bool needsFinalizer = false;
+    for (JSClassRef jsClassPtr = classRef(); jsClassPtr && !needsFinalizer; jsClassPtr = jsClassPtr->parentClass)
+        needsFinalizer = jsClassPtr->finalize;
+    if (needsFinalizer) {
+        HandleSlot slot = exec->globalData().allocateGlobalHandle();
+        HandleHeap::heapFor(slot)->makeWeak(slot, m_callbackObjectData.get(), classRef());
+        HandleHeap::heapFor(slot)->writeBarrier(slot, this);
+        *slot = this;
+    }
 }
 
 template <class Base>

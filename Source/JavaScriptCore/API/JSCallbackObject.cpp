@@ -39,4 +39,16 @@ ASSERT_CLASS_FITS_IN_CELL(JSCallbackObject<JSGlobalObject>);
 template <> const ClassInfo JSCallbackObject<JSObjectWithGlobalObject>::s_info = { "CallbackObject", &JSObjectWithGlobalObject::s_info, 0, 0 };
 template <> const ClassInfo JSCallbackObject<JSGlobalObject>::s_info = { "CallbackGlobalObject", &JSGlobalObject::s_info, 0, 0 };
 
+void JSCallbackObjectData::finalize(Handle<Unknown> handle, void* context)
+{
+    JSClassRef jsClass = static_cast<JSClassRef>(context);
+    JSObjectRef thisRef = toRef(asObject(handle.get()));
+    
+    for (; jsClass; jsClass = jsClass->parentClass)
+        if (JSObjectFinalizeCallback finalize = jsClass->finalize)
+            finalize(thisRef);
+    HandleSlot slot = handle.slot();
+    HandleHeap::heapFor(slot)->deallocate(slot);
+}
+    
 } // namespace JSC

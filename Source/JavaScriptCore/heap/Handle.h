@@ -46,6 +46,7 @@ template <> class Handle<JSValue>;
 
 class HandleBase {
     friend class HandleHeap;
+    friend struct JSCallbackObjectData;
 
 public:
     bool operator!() const { return !m_slot || !*m_slot; }

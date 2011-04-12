@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-struct JSCallbackObjectData {
+struct JSCallbackObjectData : WeakHandleOwner {
     JSCallbackObjectData(void* privateData, JSClassRef jsClass)
         : privateData(privateData)
         , jsClass(jsClass)
@@ -110,6 +110,7 @@ struct JSCallbackObjectData {
         PrivatePropertyMap m_propertyMap;
     };
     OwnPtr<JSPrivatePropertyMap> m_privateProperties;
+    virtual void finalize(Handle<Unknown>, void*);
 };
 
     
@@ -118,7 +119,6 @@ class JSCallbackObject : public Base {
 public:
     JSCallbackObject(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, JSClassRef, void* data);
     JSCallbackObject(JSClassRef, NonNullPassRefPtr<Structure>);
-    virtual ~JSCallbackObject();
 
     void setPrivate(void* data);
     void* getPrivate();
