@@ -123,14 +123,14 @@ class SingleTestRunner:
         driver_output = self._driver.run_test(self._driver_input())
         expected_driver_output = self._expected_driver_output()
         test_result = self._compare_output(driver_output, expected_driver_output)
-        test_result_writer.write_test_result(self._port, self._options.results_directory, self._filename,
+        test_result_writer.write_test_result(self._port, self._filename,
                                              driver_output, expected_driver_output, test_result.failures)
         return test_result
 
     def _run_rebaseline(self):
         driver_output = self._driver.run_test(self._driver_input())
         failures = self._handle_error(driver_output)
-        test_result_writer.write_test_result(self._port, self._options.results_directory, self._filename,
+        test_result_writer.write_test_result(self._port, self._filename,
                                              driver_output, None, failures)
         # FIXME: It the test crashed or timed out, it might be bettter to avoid
         # to write new baselines.
@@ -272,7 +272,7 @@ class SingleTestRunner:
             base.DriverInput(self._reference_filename, self._timeout, driver_output1.image_hash))
         test_result = self._compare_output_with_reference(driver_output1, driver_output2)
 
-        test_result_writer.write_test_result(self._port, self._options.results_directory, self._filename,
+        test_result_writer.write_test_result(self._port, self._filename,
                                              driver_output1, driver_output2, test_result.failures)
         return test_result
 

@@ -36,9 +36,10 @@ from webkitpy.layout_tests.layout_package import test_failures
 _log = logging.getLogger(__name__)
 
 
-def write_test_result(port, root_output_dir, filename, driver_output,
+def write_test_result(port, filename, driver_output,
                       expected_driver_output, failures):
     """Write the test result to the result output directory."""
+    root_output_dir = port.results_directory()
     checksums_mismatch_but_images_are_same = False
     imagehash_mismatch_failure = None
     writer = TestResultWriter(port, root_output_dir, filename)

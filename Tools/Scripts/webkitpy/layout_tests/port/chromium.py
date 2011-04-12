@@ -341,8 +341,7 @@ class ChromiumDriver(base.Driver):
         self._image_path = None
         self.KILL_TIMEOUT = 3.0
         if self._port.get_option('pixel_tests'):
-            self._image_path = self._port._filesystem.join(
-                self._port.get_option('results_directory'),
+            self._image_path = self._port._filesystem.join(self._port.results_directory(),
                 'png_result%s.png' % self._worker_number)
 
     def cmd_line(self):

@@ -257,6 +257,7 @@ class TestPort(base.Port):
         filesystem = filesystem or unit_test_filesystem()
         base.Port.__init__(self, port_name=port_name, filesystem=filesystem, user=user,
                            **kwargs)
+        self._results_directory = None
 
         assert filesystem._tests
         self._tests = filesystem._tests
@@ -329,7 +330,10 @@ class TestPort(base.Port):
         return None
 
     def results_directory(self):
-        return '/tmp/' + self.get_option('results_directory')
+        if not self._results_directory:
+            self._results_directory = self._filesystem.join('/tmp',
+                self.get_option('results_directory'))
+        return self._results_directory
 
     def setup_test_run(self):
         pass

@@ -30,6 +30,24 @@
 
 2011-04-12  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests: update code to use port.results_directory() instead of options.results_directory
+        https://bugs.webkit.org/show_bug.cgi?id=58290
+
+        This is some preliminary refactoring for bug 58272.
+
+        * Scripts/webkitpy/layout_tests/layout_package/single_test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+        * Scripts/webkitpy/layout_tests/layout_package/worker_mixin.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
+2011-04-12  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Eric Seidel.
 
         webkitpy: fix mock_filesystem abspath to handle relative paths

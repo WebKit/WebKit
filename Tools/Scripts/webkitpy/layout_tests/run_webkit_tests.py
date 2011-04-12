@@ -79,7 +79,7 @@ def run(port, options, args, regular_output=sys.stderr,
         printer.cleanup()
         return 0
 
-    last_unexpected_results = _gather_unexpected_results(port._filesystem, options)
+    last_unexpected_results = _gather_unexpected_results(port)
     if options.print_last_failures:
         printer.write("\n".join(last_unexpected_results) + "\n")
         printer.cleanup()
@@ -178,11 +178,14 @@ def _set_up_derived_options(port_obj, options):
     return warnings
 
 
-def _gather_unexpected_results(filesystem, options):
+def _gather_unexpected_results(port):
     """Returns the unexpected results from the previous run, if any."""
+    filesystem = port._filesystem
+    results_directory = port.results_directory()
+    options = port._options
     last_unexpected_results = []
     if options.print_last_failures or options.retest_last_failures:
-        unexpected_results_filename = filesystem.join(options.results_directory, "unexpected_results.json")
+        unexpected_results_filename = filesystem.join(results_directory, "unexpected_results.json")
         if filesystem.exists(unexpected_results_filename):
             results = json_results_generator.load_json(filesystem, unexpected_results_filename)
             last_unexpected_results = results['tests'].keys()

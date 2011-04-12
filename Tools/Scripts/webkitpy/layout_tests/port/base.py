@@ -607,18 +607,16 @@ class Port(object):
         is already running."""
         if self.get_option('use_apache'):
             self._http_server = apache_http_server.LayoutTestApacheHttpd(self,
-                self.get_option('results_directory'))
+                self.results_directory())
         else:
-            self._http_server = http_server.Lighttpd(self,
-                self.get_option('results_directory'))
+            self._http_server = http_server.Lighttpd(self, self.results_directory())
         self._http_server.start()
 
     def start_websocket_server(self):
         """Start a websocket server if it is available. Do nothing if
         it isn't. This routine is allowed to (and may) fail if a server
         is already running."""
-        self._websocket_server = websocket_server.PyWebSocket(self,
-            self.get_option('results_directory'))
+        self._websocket_server = websocket_server.PyWebSocket(self, self.results_directory())
         self._websocket_server.start()
 
     def acquire_http_lock(self):

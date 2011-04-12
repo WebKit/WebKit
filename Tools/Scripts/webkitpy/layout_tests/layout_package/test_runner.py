@@ -205,6 +205,7 @@ class TestRunner:
         self._test_files_list = None
         self._result_queue = Queue.Queue()
         self._retrying = False
+        self._results_directory = self._port.results_directory()
 
     def collect_tests(self, args, last_unexpected_results):
         """Find all the files to test.
@@ -355,8 +356,7 @@ class TestRunner:
                 self._printer.print_expected(extra_msg)
                 tests_run_msg += "\n" + extra_msg
                 files.extend(test_files[0:extra])
-            tests_run_filename = self._fs.join(self._options.results_directory,
-                                              "tests_run.txt")
+            tests_run_filename = self._fs.join(self._results_directory, "tests_run.txt")
             self._fs.write_text_file(tests_run_filename, tests_run_msg)
 
             len_skip_chunk = int(len(files) * len(skipped) /
@@ -629,7 +629,7 @@ class TestRunner:
             self._clobber_old_results()
 
         # Create the output directory if it doesn't already exist.
-        self._port.maybe_make_directory(self._options.results_directory)
+        self._port.maybe_make_directory(self._results_directory)
 
         self._port.setup_test_run()
 
@@ -773,13 +773,12 @@ class TestRunner:
         # files in the results directory are explicitly used for cross-run
         # tracking.
         self._printer.print_update("Clobbering old results in %s" %
-                                   self._options.results_directory)
+                                   self._results_directory)
         layout_tests_dir = self._port.layout_tests_dir()
         possible_dirs = self._port.test_dirs()
         for dirname in possible_dirs:
             if self._fs.isdir(self._fs.join(layout_tests_dir, dirname)):
-                self._fs.rmtree(self._fs.join(self._options.results_directory,
-                                              dirname))
+                self._fs.rmtree(self._fs.join(self._results_directory, dirname))
 
     def _get_failures(self, result_summary, include_crashes):
         """Filters a dict of results and returns only the failures.
@@ -829,17 +828,17 @@ class TestRunner:
           individual_test_timings: list of test times (used by the flakiness
             dashboard).
         """
-        _log.debug("Writing JSON files in %s." % self._options.results_directory)
+        _log.debug("Writing JSON files in %s." % self._results_directory)
 
-        unexpected_json_path = self._fs.join(self._options.results_directory, "unexpected_results.json")
+        unexpected_json_path = self._fs.join(self._results_directory, "unexpected_results.json")
         json_results_generator.write_json(self._fs, unexpected_results, unexpected_json_path)
 
-        full_results_path = self._fs.join(self._options.results_directory, "full_results.json")
+        full_results_path = self._fs.join(self._results_directory, "full_results.json")
         json_results_generator.write_json(self._fs, summarized_results, full_results_path)
 
         # Write a json file of the test_expectations.txt file for the layout
         # tests dashboard.
-        expectations_path = self._fs.join(self._options.results_directory, "expectations.json")
+        expectations_path = self._fs.join(self._results_directory, "expectations.json")
         expectations_json = \
             self._expectations.get_expectations_json_for_all_platforms()
         self._fs.write_text_file(expectations_path,
@@ -847,7 +846,7 @@ class TestRunner:
 
         generator = json_layout_results_generator.JSONLayoutResultsGenerator(
             self._port, self._options.builder_name, self._options.build_name,
-            self._options.build_number, self._options.results_directory,
+            self._options.build_number, self._results_directory,
             BUILDER_BASE_URL, individual_test_timings,
             self._expectations, result_summary, self._test_files_list,
             self._options.test_results_server,
@@ -865,8 +864,7 @@ class TestRunner:
         p = self._printer
         p.print_config("Using port '%s'" % self._port.name())
         p.print_config("Test configuration: %s" % self._port.test_configuration())
-        p.print_config("Placing test results in %s" %
-                       self._options.results_directory)
+        p.print_config("Placing test results in %s" % self._results_directory)
         if self._options.new_baseline:
             p.print_config("Placing new baselines in %s" %
                            self._port.baseline_path())
@@ -1185,8 +1183,7 @@ class TestRunner:
         if not len(test_files):
             return False
 
-        out_filename = self._fs.join(self._options.results_directory,
-                                     "results.html")
+        out_filename = self._fs.join(self._results_directory, "results.html")
         with self._fs.open_text_file_for_writing(out_filename) as results_file:
             html = self._results_html(test_files, result_summary.failures, results_title)
             results_file.write(html)
@@ -1195,8 +1192,7 @@ class TestRunner:
 
     def _show_results_html_file(self):
         """Shows the results.html page."""
-        results_filename = self._fs.join(self._options.results_directory,
-                                         "results.html")
+        results_filename = self._fs.join(self._results_directory, "results.html")
         self._port.show_results_html_file(results_filename)
 
 
