@@ -230,10 +230,6 @@ public:
     // Callback methods when a drag-and-drop operation is trying to drop
     // something on the WebView.
     virtual WebDragOperation dragTargetDragEnter(
-        const WebDragData&, int identity, // FIXME: remove identity from this function signature.
-        const WebPoint& clientPoint, const WebPoint& screenPoint,
-        WebDragOperationsMask operationsAllowed) = 0;
-    virtual WebDragOperation dragTargetDragEnter(
         const WebDragData&,
         const WebPoint& clientPoint, const WebPoint& screenPoint,
         WebDragOperationsMask operationsAllowed) = 0;

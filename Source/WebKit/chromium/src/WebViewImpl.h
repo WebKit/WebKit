@@ -158,11 +158,6 @@ public:
         WebDragOperation operation);
     virtual void dragSourceSystemDragEnded();
     virtual WebDragOperation dragTargetDragEnter(
-        const WebDragData&, int identity, // FIXME: remove identity from this function signature.
-        const WebPoint& clientPoint,
-        const WebPoint& screenPoint,
-        WebDragOperationsMask operationsAllowed);
-    virtual WebDragOperation dragTargetDragEnter(
         const WebDragData&,
         const WebPoint& clientPoint,
         const WebPoint& screenPoint,

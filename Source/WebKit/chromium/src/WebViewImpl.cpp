@@ -1819,21 +1819,6 @@ void WebViewImpl::dragSourceSystemDragEnded()
 }
 
 WebDragOperation WebViewImpl::dragTargetDragEnter(
-    const WebDragData& webDragData, int identity, // FIXME: remove identity from this function signature.
-    const WebPoint& clientPoint,
-    const WebPoint& screenPoint,
-    WebDragOperationsMask operationsAllowed)
-{
-    ASSERT(!m_currentDragData.get());
-
-    m_currentDragData = webDragData;
-    UNUSED_PARAM(identity);
-    m_operationsAllowed = operationsAllowed;
-
-    return dragTargetDragEnterOrOver(clientPoint, screenPoint, DragEnter);
-}
-
-WebDragOperation WebViewImpl::dragTargetDragEnter(
     const WebDragData& webDragData,
     const WebPoint& clientPoint,
     const WebPoint& screenPoint,
