@@ -134,6 +134,9 @@ symbian|maemo5|maemo6 {
     CONFIG += include_webinspector
 }
 
+*sh4* {
+    CONFIG += disable_uitools
+}
 ####
 
 disable_uitools: DEFINES *= QT_NO_UITOOLS

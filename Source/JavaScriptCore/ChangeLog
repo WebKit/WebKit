@@ -1,3 +1,14 @@
+2011-04-12  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Enable JIT build for SH4 platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=58317
+        enable JIT build for QT backend  for SH4 platforms.
+
+        * JavaScriptCore.pro:
+        * wtf/Platform.h:
+
 2011-04-11  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Alexey Proskuryakov.

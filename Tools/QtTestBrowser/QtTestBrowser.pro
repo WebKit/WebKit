@@ -22,7 +22,7 @@ HEADERS += \
     webview.h \
     fpstimer.h \
 
-CONFIG += uitools
+!isEqual(QT_ARCH,sh4): CONFIG += uitools
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../..
 include(../../Source/WebKit.pri)

@@ -1,3 +1,13 @@
+2011-04-12  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
+
+        Reviewed by Eric Seidel.
+
+        [QT] Enable JIT build for SH4 platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=58317
+        add disable_uitools for SH4 platforms.
+
+        * Source/WebKit.pri:
+
 2011-04-11  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Eric Carlson.

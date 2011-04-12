@@ -1037,6 +1037,14 @@
 #error You have to have at least one execution model enabled to build JSC
 #endif
 
+#if CPU(SH4) && PLATFORM(QT)
+#define ENABLE_JIT 1
+#define ENABLE_YARR 1
+#define ENABLE_YARR_JIT 1
+#define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 1
+#define ENABLE_ASSEMBLER 1
+#endif
+
 /* Configure the JIT */
 #if ENABLE(JIT)
     #if CPU(ARM)

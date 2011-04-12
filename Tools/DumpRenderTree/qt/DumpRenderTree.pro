@@ -1,6 +1,6 @@
 TARGET = DumpRenderTree
 CONFIG  -= app_bundle
-CONFIG += uitools
+!isEqual(QT_ARCH,sh4): CONFIG += uitools
 
 BASEDIR = $$PWD/../
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../..

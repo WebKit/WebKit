@@ -62,6 +62,9 @@ SOURCES += \
     assembler/ARMAssembler.cpp \
     assembler/ARMv7Assembler.cpp \
     assembler/MacroAssemblerARM.cpp \
+    assembler/MacroAssemblerSH4.h \
+    assembler/MacroAssemblerSH4.cpp \
+    assembler/SH4Assembler.h \
     bytecode/CodeBlock.cpp \
     bytecode/JumpTable.cpp \
     bytecode/Opcode.cpp \
@@ -196,6 +199,11 @@ SOURCES += \
     runtime/TimeoutChecker.cpp \
     runtime/UString.cpp \
     yarr/YarrJIT.cpp \
+
+*sh4* {
+    QMAKE_CXXFLAGS += -mieee -w
+    QMAKE_CFLAGS   += -mieee -w
+}
 
 # Generated files, simply list them for JavaScriptCore
 

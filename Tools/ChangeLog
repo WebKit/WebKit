@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        [Qt] Enable JIT build for SH4 platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=58317
+
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * QtTestBrowser/QtTestBrowser.pro:
+        * Scripts/webkitdirs.pm:
+
+2011-04-12  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
+
+        Reviewed by Eric Seidel.
+
         [GTK] arguments passed to build-jsc and build-webkit scripts are not taken into account
         https://bugs.webkit.org/show_bug.cgi?id=58333
 
