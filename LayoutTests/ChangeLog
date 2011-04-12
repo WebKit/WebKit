@@ -1,5 +1,14 @@
 2011-04-12  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] 9 tests have different results on 64 bit and/or in debug mode compared to 32 bit and/or release mode
+        [Qt] 6 tests have different results on 64 bit compared to 32 bit
+        https://bugs.webkit.org/show_bug.cgi?id=52810
+        https://bugs.webkit.org/show_bug.cgi?id=52812
+
+        * platform/qt/Skipped: Add failing tests until fix.
+
+2011-04-12  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Add platform specific expected files for new tests introduced in r83514 and r83470.
 
         * platform/qt/fast/multicol/huge-column-count-expected.checksum: Added.
