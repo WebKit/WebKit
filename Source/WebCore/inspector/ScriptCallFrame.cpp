@@ -60,9 +60,9 @@ PassRefPtr<InspectorObject> ScriptCallFrame::buildInspectorObject() const
 {
     RefPtr<InspectorObject> frame = InspectorObject::create();
     frame->setString("functionName", m_functionName);
-    frame->setString("scriptName", m_scriptName);
+    frame->setString("url", m_scriptName);
     frame->setNumber("lineNumber", m_lineNumber);
-    frame->setNumber("column", m_column);
+    frame->setNumber("columnNumber", m_column);
     return frame;
 }
 #endif

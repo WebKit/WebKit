@@ -54,13 +54,13 @@ event ConsoleAgent.messageAdded
     method : "Console.messageAdded"
     params : {
         messageObj : {
-            source : 3
-            type : 0
-            level : 1
+            source : "javascript"
+            type : "log"
+            level : "log"
             line : 0
             url : ""
             repeatCount : 1
-            message : "test"
+            text : "test"
             parameters : {
                 0 : {
                     type : "string"

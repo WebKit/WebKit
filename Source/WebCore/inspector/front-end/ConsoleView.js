@@ -114,10 +114,10 @@ WebInspector.ConsoleView.prototype = {
                     payload.line,
                     payload.url,
                     payload.repeatCount,
-                    payload.message,
+                    payload.text,
                     payload.parameters,
                     payload.stackTrace,
-                    payload.requestId);
+                    payload.networkIdentifier);
                 console.addMessage(consoleMessage);
             },
 
@@ -691,7 +691,7 @@ WebInspector.ConsoleMessage = function(source, type, level, line, url, repeatCou
     if (stackTrace && stackTrace.length) {
         var topCallFrame = stackTrace[0];
         if (!this.url)
-            this.url = topCallFrame.scriptName;
+            this.url = topCallFrame.url;
         if (!this.line)
             this.line = topCallFrame.lineNumber;
     }
@@ -923,7 +923,7 @@ WebInspector.ConsoleMessage.prototype = {
             messageTextElement.appendChild(document.createTextNode(functionName));
             content.appendChild(messageTextElement);
 
-            var urlElement = WebInspector.linkifyResourceAsNode(frame.scriptName, "scripts", frame.lineNumber, "console-message-url");
+            var urlElement = WebInspector.linkifyResourceAsNode(frame.url, "scripts", frame.lineNumber, "console-message-url");
             content.appendChild(urlElement);
 
             var treeElement = new TreeElement(content);
@@ -1027,10 +1027,10 @@ WebInspector.ConsoleMessage.prototype = {
             var l = this._stackTrace;
             var r = msg._stackTrace;
             for (var i = 0; i < l.length; i++) {
-                if (l[i].scriptName !== r[i].scriptName ||
+                if (l[i].url !== r[i].url ||
                     l[i].functionName !== r[i].functionName ||
                     l[i].lineNumber !== r[i].lineNumber ||
-                    l[i].column !== r[i].column)
+                    l[i].columnNumber !== r[i].columnNumber)
                     return false;
             }
         }
@@ -1047,33 +1047,33 @@ WebInspector.ConsoleMessage.prototype = {
 
 // Note: Keep these constants in sync with the ones in Console.h
 WebInspector.ConsoleMessage.MessageSource = {
-    HTML: 0,
-    WML: 1,
-    XML: 2,
-    JS: 3,
-    CSS: 4,
-    Other: 5
+    HTML: "html",
+    WML: "wml",
+    XML: "xml",
+    JS: "javascript",
+    CSS: "css",
+    Other: "other"
 }
 
 WebInspector.ConsoleMessage.MessageType = {
-    Log: 0,
-    Object: 1,
-    Trace: 2,
-    StartGroup: 3,
-    StartGroupCollapsed: 4,
-    EndGroup: 5,
-    Assert: 6,
-    UncaughtException: 7,
-    NetworkError:8,
-    Result: 9
+    Log: "log",
+    Object: "other",
+    Trace: "trace",
+    StartGroup: "startGroup",
+    StartGroupCollapsed: "startGroupCollapsed",
+    EndGroup: "endGroup",
+    Assert: "assert",
+    UncaughtException: "uncaughtException",
+    NetworkError: "networkError",
+    Result: "result"
 }
 
 WebInspector.ConsoleMessage.MessageLevel = {
-    Tip: 0,
-    Log: 1,
-    Warning: 2,
-    Error: 3,
-    Debug: 4
+    Tip: "tip",
+    Log: "log",
+    Warning: "warning",
+    Error: "error",
+    Debug: "debug"
 }
 
 WebInspector.ConsoleCommand = function(command)

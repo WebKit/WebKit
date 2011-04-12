@@ -189,48 +189,86 @@
     },
     {
         "domain": "Console",
-        "types": [],
+        "description": "Console domain defines methods and events for interaction with the JavaScript console. One needs to enable this domain using <code>enable</code> function in order to start receiving the console messages.",  
+        "types": [
+            {
+                "id": "ConsoleMessage",
+                "type": "object",
+                "description": "Console message.",
+                "properties": {
+                    "source": { "type": "string", "enum": ["html", "wml", "xml", "javascript", "css", "other"], "description": "Message source." },
+                    "type": { "type": "string", "enum": ["log", "other", "trace", "startGroup", "startGroupCollapsed", "endGroup", "assert", "uncaughtException", "networkError", "result"], "description": "Message type." },
+                    "level": { "type": "string", "enum": ["tip", "log", "warning", "error", "debug"], "description": "Message severity." },
+                    "line": { "type": "integer", "description": "JavaScript source line that created console message." },
+                    "url": { "type": "string", "description": "JavaScript source url that created console message." },
+                    "repeatCount": { "type": "integer", "optional": true, "description": "Repeat count for repeated messages." },
+                    "text": { "type": "string", "description": "Message text." },
+                    "networkIdentifier": { "type": "integer", "optional": true, "description": "Identifier of the network request associated with the console message." },
+                    "parameters": { "type": "array", "items": { "$ref": "RuntimeObject" }, "description": "Message parameters in case of the formatted message." },
+                    "stackTrace": { "type": "array", "optional": true, "items": { "$ref": "CallFrame" }, "description": "Call frames for assert and error messages." }
+                }
+            },
+            {
+                "id": "CallFrame",
+                "type": "object",
+                "description": "Stack entry for console errors and assertions.",
+                "properties": {
+                    "functionName": { "type": "string", "description": "JavaScript function name." },
+                    "url": { "type": "string", "description": "JavaScript source name / url." },
+                    "lineNumber": { "type": "string", "description": "JavaScript source line number." },
+                    "columnNumber": { "type": "string", "description": "JavaScript source column number." }
+                }
+            }
+        ],
         "commands": [
             {
                 "name": "enable",
                 "returns": [
-                   { "name": "expiredMessagesCount", "type": "integer" }
-                ]
+                    { "name": "expiredMessagesCount", "type": "integer", "description": "Number of messages cleared due to message threashold overflow." }
+                ],
+                "description": "Enables console domain, sends all the messages collected so far to the client." 
             },
             {
-                "name": "disable"
+                "name": "disable",
+                "description": "Disables console domain, prevents further console messages from being sent to the client." 
             },
             {
-                "name": "clearConsoleMessages"
+                "name": "clearConsoleMessages",
+                "description": "Clears collected console messages." 
             },
             {
                 "name": "setMonitoringXHREnabled",
                 "parameters": [
-                    { "name": "enabled", "type": "boolean" }
-                ]
+                    { "name": "enabled", "type": "boolean", "description": "Monitoring enabled state." }
+                ],
+                "description": "Toggles monitoring of XMLHttpRequest. If <code>true</code>, console will receive messages upon each XHR issued." 
             },
             {
                 "name": "addInspectedNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" }
-                ]
+                    { "name": "nodeId", "type": "integer", "description": "DOM node id to be accessible by means of $x command line API." }
+                ],
+                "description": "Enables console to refer to the node with given id via $x (see Command Line API for more details $x functions)." 
             }
         ],
         "events": [
             {
                 "name": "messageAdded",
                 "parameters": [
-                    { "name": "messageObj", "$ref": "ConsoleMessage" }
-                ]
+                    { "name": "messageObj", "$ref": "ConsoleMessage", "description": "Console message that has been added." }
+                ],
+                "description": "Issued for each console message added."
             },
             {
                 "name": "messageRepeatCountUpdated",
                 "parameters": [
-                    { "name": "count", "type": "integer" }
-                ]
+                    { "name": "count", "type": "integer", "description": "New repeat count value." }
+                ],
+                "description": "In case of subsequent message being equal to the previous one, only repeat count is being updated."
             },
             {
-                "name": "messagesCleared"
+                "name": "messagesCleared",
+                "description": "Issued when console is cleared."
             }
         ]
     },
@@ -388,7 +426,7 @@
                     { "name": "request", "$ref": "ResourceRequest", "description": "Request data." },
                     { "name": "redirectResponse", "optional": true, "$ref": "ResourceResponse", "description": "Redirect response data." },
                     { "name": "time", "type": "number", "description": "Timestamp." },
-                    { "name": "callStack", "type": "array", "items": { "$ref" : "DebuggerStackFrame"}, "description": "JavaScript stack trace upon issuing this request." }
+                    { "name": "stackTrace", "type": "array", "items": { "$ref" : "Console.CallFrame"}, "description": "JavaScript stack trace upon issuing this request." }
                 ]
             },
             {
@@ -1254,7 +1292,7 @@
                 "properties": {
                     "type": { "type": "string",  "enum": ["global", "local", "with", "closure", "catch"], "description": "Scope type." },
                     "object": { "$ref": "RemoteObject", "description": "Object representing the scope." },
-                    "this": { "$ref": "RemoteObject", "optional": true, "description": "<code>this</code> object for local scope." },
+                    "this": { "$ref": "RemoteObject", "optional": true, "description": "<code>this</code> object for local scope." }
                 },
                 "description": "Debugger call frame. Array of call frames form call stack."
             }

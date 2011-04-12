@@ -86,18 +86,60 @@ ConsoleMessage::~ConsoleMessage()
 {
 }
 
+// Keep in sync with inspector/front-end/ConsoleView.js
+static String messageSourceValue(MessageSource source)
+{
+    switch (source) {
+    case HTMLMessageSource: return "html";
+    case WMLMessageSource: return "wml";
+    case XMLMessageSource: return "xml";
+    case JSMessageSource: return "javascript";
+    case CSSMessageSource: return "css";
+    case OtherMessageSource: return "other";
+    }
+    return "other";
+}
+
+static String messageTypeValue(MessageType type)
+{
+    switch (type) {
+    case LogMessageType: return "log";
+    case ObjectMessageType: return "other";
+    case TraceMessageType: return "trace";
+    case StartGroupMessageType: return "startGroup";
+    case StartGroupCollapsedMessageType: return "startGroupCollapsed";
+    case EndGroupMessageType: return "endGroup";
+    case AssertMessageType: return "assert";
+    case UncaughtExceptionMessageType: return "uncaughtException";
+    case NetworkErrorMessageType: return "networkError";
+    }
+    return "other";
+}
+
+static String messageLevelValue(MessageLevel level)
+{
+    switch (level) {
+    case TipMessageLevel: return "tip";
+    case LogMessageLevel: return "log";
+    case WarningMessageLevel: return "warning";
+    case ErrorMessageLevel: return "error";
+    case DebugMessageLevel: return "debug";
+    }
+    return "log";
+}
+
 void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, InjectedScriptManager* injectedScriptManager)
 {
     RefPtr<InspectorObject> jsonObj = InspectorObject::create();
-    jsonObj->setNumber("source", static_cast<int>(m_source));
-    jsonObj->setNumber("type", static_cast<int>(m_type));
-    jsonObj->setNumber("level", static_cast<int>(m_level));
+    jsonObj->setString("source", messageSourceValue(m_source));
+    jsonObj->setString("type", messageTypeValue(m_type));
+    jsonObj->setString("level", messageLevelValue(m_level));
     jsonObj->setNumber("line", static_cast<int>(m_line));
     jsonObj->setString("url", m_url);
     jsonObj->setNumber("repeatCount", static_cast<int>(m_repeatCount));
-    jsonObj->setString("message", m_message);
+    jsonObj->setString("text", m_message);
     if (m_type == NetworkErrorMessageType) 
-        jsonObj->setNumber("requestId", m_requestId);
+        jsonObj->setNumber("networkIdentifier", m_requestId);
     if (m_arguments && m_arguments->argumentCount()) {
         InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(m_arguments->globalState());
         if (!injectedScript.hasNoValue()) {

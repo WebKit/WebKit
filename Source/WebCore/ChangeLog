@@ -1,3 +1,28 @@
+2011-04-12  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: document console domain, support cross-domain type references.
+        https://bugs.webkit.org/show_bug.cgi?id=58240
+
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::messageSourceValue):
+        (WebCore::messageTypeValue):
+        (WebCore::messageLevelValue):
+        (WebCore::ConsoleMessage::addToFrontend):
+        * inspector/Inspector.json:
+        * inspector/ScriptCallFrame.cpp:
+        (WebCore::ScriptCallFrame::buildInspectorObject):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._registerConsoleDomainDispatcher.dispatcher.messageAdded):
+        (WebInspector.ConsoleMessage):
+        (WebInspector.ConsoleMessage.prototype._populateStackTraceTreeElement):
+        (WebInspector.ConsoleMessage.prototype.isEqual):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype.requestWillBeSent):
+        * inspector/generate-inspector-idl:
+        * page/Console.h:
+
 2011-04-06  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -112,14 +112,14 @@ WebInspector.NetworkDispatcher.prototype = {
         this._updateResourceWithResponse(resource, cachedResource.response);
     },
 
-    requestWillBeSent: function(identifier, frameId, loaderId, documentURL, request, redirectResponse, time, callStack)
+    requestWillBeSent: function(identifier, frameId, loaderId, documentURL, request, redirectResponse, time, stackTrace)
     {
         var resource = this._inflightResourcesById[identifier];
         if (resource) {
             this.responseReceived(identifier, time, "Other", redirectResponse);
             resource = this._appendRedirect(identifier, time, request.url);
         } else
-            resource = this._createResource(identifier, frameId, loaderId, request.url, documentURL, callStack);
+            resource = this._createResource(identifier, frameId, loaderId, request.url, documentURL, stackTrace);
         this._updateResourceWithRequest(resource, request);
         resource.startTime = time;
 
