@@ -246,8 +246,6 @@ WebInspector.ResourceTreeModel.prototype = {
     _callForFrameResources: function(frameId, callback)
     {
         var resources = this._resourcesByFrameId[frameId];
-        if (!resources)
-            return;
 
         for (var url in resources) {
             if (callback(resources[url]))
@@ -301,6 +299,7 @@ WebInspector.ResourceTreeModel.prototype = {
         var resource = new WebInspector.Resource(null, url);
         resource.frameId = frame.id;
         resource.loaderId = frame.loaderId;
+        resource.documentURL = frame.url;
         return resource;
     }
 }

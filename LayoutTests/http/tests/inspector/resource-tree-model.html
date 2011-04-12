@@ -1,0 +1,46 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="resources-test.js"></script>
+
+<script>
+
+function loadIframe()
+{
+    var iframe = document.createElement("iframe");
+    iframe.src = "resources/dummy-iframe.php";
+    document.body.appendChild(iframe);
+}
+
+var test = function()
+{
+    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, onResourceFinished);
+
+    var urls = [];
+    function onResourceFinished(event)
+    {
+        WebInspector.resourceTreeModel.forAllResources(printResource);
+        urls.sort();
+        urls.forEach(InspectorTest.addResult);
+        InspectorTest.completeTest();
+    }
+
+    function printResource(resource)
+    {
+        urls.push(resource.url + " => " + resource.documentURL);
+    }
+
+    InspectorTest.evaluateInPage("loadIframe()");    
+}
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>
+Tests resource tree model.
+</p>
+
+</body>
+</html>

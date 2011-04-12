@@ -1,3 +1,15 @@
+2011-04-12  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: cookies view is empty even for sites with cookies.
+        https://bugs.webkit.org/show_bug.cgi?id=58316
+
+        Test: http/tests/inspector/resource-tree-model.html
+
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._callForFrameResources):
+
 2011-04-11  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by James Robinson.
