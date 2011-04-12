@@ -1,3 +1,9 @@
+2011-04-12  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Adjusted chromium test expectations (webgl-reflection.html sometimes crashes on chromium mac debug)
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-12  Jessie Berlin  <jberlin@apple.com>
 
         [Leopard Intel Debug Tests] fast/events/tabindex-focus-blur-all.html crashing since (83513,
