@@ -280,6 +280,12 @@ void MediaControlRootElement::reset()
         return;
 
     changedNetworkState();
+
+    if (m_mediaElement->supportsFullscreen())
+        m_fullScreenButton->show();
+    else
+        m_fullScreenButton->hide();
+
     float duration = m_mediaElement->duration();
     if (!isnan(duration) || page->theme()->hasOwnDisabledStateHandlingFor(MediaSliderPart)) {
         m_timeline->setDuration(duration);
@@ -375,12 +381,6 @@ void MediaControlRootElement::reportedError()
 
 void MediaControlRootElement::changedNetworkState()
 {
-    // FIXME: Why are we changing fullscreen button visibility here? <http://webkit.org/b/58163>
-    if (m_mediaElement->supportsFullscreen())
-        m_fullScreenButton->show();
-    else
-        m_fullScreenButton->hide();
-
     if (m_statusDisplay)
         m_statusDisplay->update();
 }

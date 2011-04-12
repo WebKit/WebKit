@@ -1,3 +1,16 @@
+2011-04-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Should MediaControls::changedNetworkState fiddle with Fullscreen controls?
+        https://bugs.webkit.org/show_bug.cgi?id=58163
+
+        Covered by existing tests and manual-tests/media-controls.html.
+
+        * html/shadow/MediaControls.cpp:
+        (WebCore::MediaControls::reset): Moved fullscreen showing/hiding here.
+        (WebCore::MediaControls::changedNetworkState): ... from here.
+
 2011-04-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
