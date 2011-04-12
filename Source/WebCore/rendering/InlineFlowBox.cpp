@@ -262,9 +262,11 @@ bool InlineFlowBox::onEndChain(RenderObject* endObject)
 
     RenderObject* curr = endObject;
     RenderObject* parent = curr->parent();
-    while (parent && !parent->isRenderBlock()) {
-        if (parent->lastChild() != curr || parent == renderer())
+    while (parent && (!parent->isRenderBlock() || parent->isInline())) {
+        if (parent->lastChild() != curr)
             return false;
+        if (parent == renderer())
+            return true;
             
         curr = parent;
         parent = curr->parent();
@@ -276,7 +278,7 @@ bool InlineFlowBox::onEndChain(RenderObject* endObject)
 static bool isAnsectorAndWithinBlock(RenderObject* ancestor, RenderObject* child)
 {
     RenderObject* object = child;
-    while (object && !object->isRenderBlock()) {
+    while (object && (!object->isRenderBlock() || object->isInline())) {
         if (object == ancestor)
             return true;
         object = object->parent();
@@ -284,7 +286,7 @@ static bool isAnsectorAndWithinBlock(RenderObject* ancestor, RenderObject* child
     return false;
 }
 
-void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject, RenderObject* logicallyLastRunRenderer)
+void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogicallyLastRunWrapped, RenderObject* logicallyLastRunRenderer)
 {
     // All boxes start off open.  They will not apply any margins/border/padding on
     // any side.
@@ -307,8 +309,13 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
 
         if (!lineBoxList->lastLineBox()->isConstructed()) {
             RenderInline* inlineFlow = toRenderInline(renderer());
-            bool isLastObjectOnLine = (endObject && endObject->isText()) ? !isAnsectorAndWithinBlock(renderer(), logicallyLastRunRenderer->parent()) : onEndChain(logicallyLastRunRenderer);
+            bool isLastObjectOnLine = !isAnsectorAndWithinBlock(renderer(), logicallyLastRunRenderer) || (onEndChain(logicallyLastRunRenderer) && !isLogicallyLastRunWrapped);
 
+            // We include the border under these conditions:
+            // (1) The next line was not created, or it is constructed. We check the previous line for rtl.
+            // (2) The logicallyLastRun is not a descendant of this renderer.
+            // (3) The logicallyLastRun is a descendant of this renderer, but it is the last child of this renderer and it does not wrap to the next line.
+            
             if (ltr) {
                 if (!nextLineBox()
                     && ((lastLine || isLastObjectOnLine) && !inlineFlow->continuation()))
@@ -327,7 +334,7 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
     for (InlineBox* currChild = firstChild(); currChild; currChild = currChild->nextOnLine()) {
         if (currChild->isInlineFlowBox()) {
             InlineFlowBox* currFlow = static_cast<InlineFlowBox*>(currChild);
-            currFlow->determineSpacingForFlowBoxes(lastLine, endObject, logicallyLastRunRenderer);
+            currFlow->determineSpacingForFlowBoxes(lastLine, isLogicallyLastRunWrapped, logicallyLastRunRenderer);
         }
     }
 }

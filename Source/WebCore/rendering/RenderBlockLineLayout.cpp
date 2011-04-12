@@ -266,7 +266,7 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, bool firstLine, I
     return result;
 }
 
-RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool firstLine, bool lastLine, RenderObject* endObject, RenderObject* logicallyLastRunRenderer)
+RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool firstLine, bool lastLine, bool isLogicallyLastRunWrapped, RenderObject* logicallyLastRunRenderer)
 {
     ASSERT(firstRun);
 
@@ -325,7 +325,7 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
     // paint borders/margins/padding.  This knowledge will ultimately be used when
     // we determine the horizontal positions and widths of all the inline boxes on
     // the line.
-    lastLineBox()->determineSpacingForFlowBoxes(lastLine, endObject, logicallyLastRunRenderer);
+    lastLineBox()->determineSpacingForFlowBoxes(lastLine, isLogicallyLastRunWrapped, logicallyLastRunRenderer);
 
     // Now mark the line boxes as being constructed.
     lastLineBox()->setConstructed();
@@ -902,9 +902,9 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                 if (bidiRuns.runCount()) {
                     if (hyphenated)
                         bidiRuns.logicallyLastRun()->m_hasHyphen = true;
-                    bool lastLine = end.m_obj && end.m_obj->isText() ? reachedEndOfTextRenderer(bidiRuns) : !end.m_obj;
+                    bool isLogicallyLastRunWrapped = bidiRuns.logicallyLastRun()->m_object && bidiRuns.logicallyLastRun()->m_object->isText() ? !reachedEndOfTextRenderer(bidiRuns) : true;
                     // FIXME: Clearly constructLine should just take a bidiRuns object.
-                    lineBox = constructLine(bidiRuns.runCount(), bidiRuns.firstRun(), bidiRuns.lastRun(), firstLine, lastLine, end.m_obj && !end.m_pos ? end.m_obj : 0, bidiRuns.logicallyLastRun()->m_object);
+                    lineBox = constructLine(bidiRuns.runCount(), bidiRuns.firstRun(), bidiRuns.lastRun(), firstLine, !end.m_obj, isLogicallyLastRunWrapped, bidiRuns.logicallyLastRun()->m_object);
                     if (lineBox) {
                         lineBox->setEndsWithBreak(previousLineBrokeCleanly);
 

@@ -1,3 +1,23 @@
+2011-04-12  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION(r82419): extra border in t0805-c5519-ibrdr-r-00-a.html
+        https://bugs.webkit.org/show_bug.cgi?id=57459
+
+        * fast/borders/bidi-002.html: Added.
+        * fast/borders/bidi-004.html: Added.
+        * fast/borders/bidi-009a.html: Added.
+        * platform/mac/fast/borders/bidi-002-expected.checksum: Added.
+        * platform/mac/fast/borders/bidi-002-expected.png: Added.
+        * platform/mac/fast/borders/bidi-002-expected.txt: Added.
+        * platform/mac/fast/borders/bidi-004-expected.checksum: Added.
+        * platform/mac/fast/borders/bidi-004-expected.png: Added.
+        * platform/mac/fast/borders/bidi-004-expected.txt: Added.
+        * platform/mac/fast/borders/bidi-009a-expected.checksum: Added.
+        * platform/mac/fast/borders/bidi-009a-expected.png: Added.
+        * platform/mac/fast/borders/bidi-009a-expected.txt: Added.
+
 2011-04-12  Jessie Berlin  <jberlin@apple.com>
 
         [Windows XP Debug Tests] http/tests/inspector/resource-tree-model.html failing since introduction in r83584
