@@ -2382,16 +2382,6 @@ void WebPageProxy::changeSpellingToWord(const String& word) const
     process()->send(Messages::WebPage::ChangeSpellingToWord(word), m_pageID);
 }
 
-void WebPageProxy::unmarkAllMisspellings()
-{
-    process()->send(Messages::WebPage::UnmarkAllMisspellings(), m_pageID);
-}
-
-void WebPageProxy::unmarkAllBadGrammar()
-{
-    process()->send(Messages::WebPage::UnmarkAllBadGrammar(), m_pageID);
-}
-
 void WebPageProxy::registerEditCommand(PassRefPtr<WebEditCommandProxy> commandProxy, UndoOrRedo undoOrRedo)
 {
     m_pageClient->registerEditCommand(commandProxy, undoOrRedo);

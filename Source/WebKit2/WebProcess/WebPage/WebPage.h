@@ -385,6 +385,9 @@ public:
 
     void forceRepaintWithoutCallback();
 
+    void unmarkAllMisspellings();
+    void unmarkAllBadGrammar();
+
 #if PLATFORM(MAC)
     void setDragSource(NSObject *);
 #endif
@@ -517,8 +520,6 @@ private:
 
     void advanceToNextMisspelling(bool startBeforeSelection);
     void changeSpellingToWord(const String& word);
-    void unmarkAllMisspellings();
-    void unmarkAllBadGrammar();
 #if PLATFORM(MAC)
     void uppercaseWord();
     void lowercaseWord();

@@ -450,8 +450,6 @@ public:
 
     void advanceToNextMisspelling(bool startBeforeSelection) const;
     void changeSpellingToWord(const String& word) const;
-    void unmarkAllMisspellings();
-    void unmarkAllBadGrammar();
 #if PLATFORM(MAC)
     void uppercaseWord();
     void lowercaseWord();

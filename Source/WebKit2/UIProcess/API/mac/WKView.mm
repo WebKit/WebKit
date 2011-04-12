@@ -758,9 +758,6 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
     TextChecker::setContinuousSpellCheckingEnabled(spellCheckingEnabled);
 
     _data->_page->process()->updateTextCheckerState();
-
-    if (!spellCheckingEnabled)
-        _data->_page->unmarkAllMisspellings();
 }
 
 - (BOOL)isGrammarCheckingEnabled
@@ -775,9 +772,6 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
     
     TextChecker::setGrammarCheckingEnabled(flag);
     _data->_page->process()->updateTextCheckerState();
-
-    if (!flag)
-        _data->_page->unmarkAllBadGrammar();
 }
 
 - (IBAction)toggleGrammarChecking:(id)sender
@@ -786,9 +780,6 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
     TextChecker::setGrammarCheckingEnabled(grammarCheckingEnabled);
 
     _data->_page->process()->updateTextCheckerState();
-
-    if (!grammarCheckingEnabled)
-        _data->_page->unmarkAllBadGrammar();
 }
 
 - (IBAction)toggleAutomaticSpellingCorrection:(id)sender

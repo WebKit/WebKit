@@ -802,7 +802,22 @@ void WebProcess::stopMemorySampler()
 
 void WebProcess::setTextCheckerState(const TextCheckerState& textCheckerState)
 {
+    bool continuousSpellCheckingTurnedOff = !textCheckerState.isContinuousSpellCheckingEnabled && m_textCheckerState.isContinuousSpellCheckingEnabled;
+    bool grammarCheckingTurnedOff = !textCheckerState.isGrammarCheckingEnabled && m_textCheckerState.isGrammarCheckingEnabled;
+
     m_textCheckerState = textCheckerState;
+
+    if (!continuousSpellCheckingTurnedOff && !grammarCheckingTurnedOff)
+        return;
+
+    HashMap<uint64_t, RefPtr<WebPage> >::iterator end = m_pageMap.end();
+    for (HashMap<uint64_t, RefPtr<WebPage> >::iterator it = m_pageMap.begin(); it != end; ++it) {
+        WebPage* page = (*it).second.get();
+        if (continuousSpellCheckingTurnedOff)
+            page->unmarkAllMisspellings();
+        if (grammarCheckingTurnedOff)
+            page->unmarkAllBadGrammar();
+    }
 }
 
 } // namespace WebKit
