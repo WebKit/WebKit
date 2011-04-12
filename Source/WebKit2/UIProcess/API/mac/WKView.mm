@@ -103,6 +103,7 @@ struct WKViewInterpretKeyEventsParameters {
     TextInputState cachedTextInputState;
     bool eventInterpretationHadSideEffects;
     bool consumedByIM;
+    bool executingSavedKeypressCommands;
     Vector<KeypressCommand>* commands;
 };
 
@@ -1179,10 +1180,17 @@ static const short kIOHIDEventTypeScroll = 6;
     if (!parameters || parameters->commands->isEmpty())
         return;
 
+    // We could be called again if the execution of one command triggers a call to selectedRange.
+    // In this case, the state is up to date, and we don't need to execute any more saved commands to return a result.
+    if (parameters->executingSavedKeypressCommands)
+        return;
+
+    parameters->executingSavedKeypressCommands = true;
     TextInputState newTextInputState;
     parameters->eventInterpretationHadSideEffects |= _data->_page->executeKeypressCommands(*parameters->commands, newTextInputState);
     parameters->cachedTextInputState = newTextInputState;
     parameters->commands->clear();
+    parameters->executingSavedKeypressCommands = false;
 }
 
 - (NSTextInputContext *)inputContext
@@ -1903,6 +1911,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     WKViewInterpretKeyEventsParameters parameters;
     parameters.cachedTextInputState = cachedTextInputState;
     parameters.eventInterpretationHadSideEffects = false;
+    parameters.executingSavedKeypressCommands = false;
     // We assume that an input method has consumed the event, and only change this assumption if one of the NSTextInput methods is called.
     // We assume the IM will *not* consume hotkey sequences.
     parameters.consumedByIM = !([event modifierFlags] & NSCommandKeyMask);

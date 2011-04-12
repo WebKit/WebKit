@@ -466,6 +466,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     bool eventInterpretationHadSideEffects;
     bool shouldSaveCommands;
     bool consumedByIM;
+    bool executingSavedKeypressCommands;
 };
 
 @interface WebHTMLViewPrivate : NSObject {
@@ -5433,10 +5434,16 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     if (!parameters || parameters->event->keypressCommands().isEmpty())
         return;
 
+    // We could be called again if the execution of one command triggers a call to selectedRange.
+    // In this case, the state is up to date, and we don't need to execute any more saved commands to return a result
+    if (parameters->executingSavedKeypressCommands)
+        return;
+    
     // Avoid an infinite loop that would occur if executing a command appended it to event->keypressCommands() again.
     bool wasSavingCommands = parameters->shouldSaveCommands;
     parameters->shouldSaveCommands = false;
-
+    parameters->executingSavedKeypressCommands = true;
+    
     const Vector<KeypressCommand>& commands = parameters->event->keypressCommands();
 
     for (size_t i = 0; i < commands.size(); ++i) {
@@ -5449,6 +5456,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     }
     parameters->event->keypressCommands().clear();
     parameters->shouldSaveCommands = wasSavingCommands;
+    parameters->executingSavedKeypressCommands = false;
 }
 
 - (BOOL)_interpretKeyEvent:(KeyboardEvent*)event savingCommands:(BOOL)savingCommands
@@ -5459,6 +5467,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     WebHTMLViewInterpretKeyEventsParameters parameters;
     parameters.eventInterpretationHadSideEffects = false;
     parameters.shouldSaveCommands = savingCommands;
+    parameters.executingSavedKeypressCommands = false;
     // If we're intercepting the initial IM call we assume that the IM has consumed the event, 
     // and only change this assumption if one of the NSTextInput/Responder callbacks is used.
     // We assume the IM will *not* consume hotkey sequences

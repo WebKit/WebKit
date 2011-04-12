@@ -1,3 +1,19 @@
+2011-04-12  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Infinite recursion in WebHTMLView executeSavedKeypressCommands.
+        https://bugs.webkit.org/show_bug.cgi?id=58382
+        <rdar://problem/9239370>
+
+        Execution of some editing commands could trigger a call to selectedRange that
+        internally calls executeSavedKeypressCommands creating an infinite recursion.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _executeSavedKeypressCommands]): Added flag to avoid recursion.
+        (-[WKView _interpretKeyEvent:withCachedTextInputState:savingCommandsTo:WebCore::]):
+        Added flag initialization.
+
 2011-04-12  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
