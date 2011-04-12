@@ -1898,6 +1898,7 @@ BUGWK37283 : fast/overflow/scrollbar-restored-and-then-locked.html = TEXT
 BUGWK37297 : fast/history/nested-visited-test.html = TEXT
 BUGWK37297 : fast/history/self-is-visited.html = TEXT
 BUGWK37297 : fast/history/sibling-visited-test.html = TEXT
+BUGWK37297 : fast/loader/stateobjects/state-url-sets-links-visited.html = TEXT
 BUGWK58000 : fast/history/visited-link-background-color.html = FAIL
 
 // Added in http://trac.webkit.org/changeset/57476. Fails in Chromium because

@@ -1,3 +1,10 @@
+2011-04-12  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Adjusted chrome test exceptations (state-url-sets-links-visited.html fails
+        because of https://bugs.webkit.org/show_bug.cgi?id=37297)
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-11  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by James Robinson.
