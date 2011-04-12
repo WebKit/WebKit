@@ -16,12 +16,23 @@ function log(string)
     logDiv.appendChild(document.createElement("br"));
 }
 
+var loaded = 0;
+var messages = [];
+
 function checkLoadedImage(event, testNumber) {
     var imageWidth = event.target.width;
     if (imageWidth == 25)
-        log("PASS " + testNumber + " of 3");
+        resourceLoaded("PASS ", testNumber);
     else
-        log("IMAGE SIZE " + imageWidth + " FAIL - " + testNumber + " of 2");
+        resourceLoaded("IMAGE SIZE " + imageWidth + " FAIL - ", testNumber);
+}
+
+function resourceLoaded(message, testNumber) {
+    messages[testNumber] = message + testNumber + " of 3";
+    if (++loaded == 3) {
+        for (var i = 1; i <= 3; i++)
+            log(messages[i]);
+    }
 }
 </script>
 

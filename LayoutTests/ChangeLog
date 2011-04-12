@@ -1,3 +1,17 @@
+2011-04-11  Xianzhu Wang  <wangxianzhu@google.com>
+
+        Reviewed by Tony Gentilcore.
+
+        loader/reload-subresource-when-type-changes.html might be flaky
+        https://bugs.webkit.org/show_bug.cgi?id=56360
+
+        Onload of the third image might be triggered before that of the second image.
+        This might ahppen in environment with slow access (such as NFS, or tests
+        accessed through HTTP).
+
+        * loader/reload-subresource-when-type-changes.html:
+        * loader/resources/reload-subresource-when-type-changes.js:
+
 2011-04-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
