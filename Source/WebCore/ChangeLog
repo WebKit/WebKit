@@ -2,6 +2,35 @@
 
         Reviewed by Martin Robinson.
 
+        [GStreamer] some public callbacks remain
+        https://bugs.webkit.org/show_bug.cgi?id=58307
+
+        Cleanup of the player public/private APIs. Moving the GstMessage
+        handling code inside of the player allowed some APIs to move to
+        the private scope of the class.
+
+        No new tests, this patch is a cleanup and should not affect
+        current tests coverage.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::mediaPlayerPrivateMessageCallback):
+        (WebCore::mediaPlayerPrivateSourceChangedCallback):
+        (WebCore::mediaPlayerPrivateVolumeChangedCallback):
+        (WebCore::mediaPlayerPrivateMuteChangedCallback):
+        (WebCore::mediaPlayerPrivateRepaintCallback):
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition):
+        (WebCore::MediaPlayerPrivateGStreamer::currentTime):
+        (WebCore::MediaPlayerPrivateGStreamer::seek):
+        (WebCore::MediaPlayerPrivateGStreamer::setRate):
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage):
+        (WebCore::MediaPlayerPrivateGStreamer::sourceChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::triggerRepaint):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+
+2011-04-12  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GStreamer] advertize HTTP Live Streaming mime-type
         https://bugs.webkit.org/show_bug.cgi?id=58318
 

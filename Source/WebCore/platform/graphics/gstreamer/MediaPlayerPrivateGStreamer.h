@@ -35,7 +35,6 @@ typedef struct _WebKitVideoSink WebKitVideoSink;
 typedef struct _GstBuffer GstBuffer;
 typedef struct _GstMessage GstMessage;
 typedef struct _GstElement GstElement;
-typedef struct _GstBus GstBus;
 
 namespace WebCore {
 
@@ -45,16 +44,11 @@ class IntRect;
 class GStreamerGWorld;
 class MediaPlayerPrivateGStreamer;
 
-gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpointer data);
-void mediaPlayerPrivateSourceChangedCallback(GObject* element, GParamSpec* pspec, gpointer data);
-
 class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
-        friend gboolean mediaPlayerPrivateMessageCallback(GstBus* bus, GstMessage* message, gpointer data);
-        friend void mediaPlayerPrivateRepaintCallback(WebKitVideoSink*, GstBuffer* buffer, MediaPlayerPrivateGStreamer* playerPrivate);
-        friend void mediaPlayerPrivateSourceChangedCallback(GObject* element, GParamSpec* pspec, gpointer data);
 
         public:
             static void registerMediaEngine(MediaEngineRegistrar);
+            gboolean handleMessage(GstMessage*);
 
             IntSize naturalSize() const;
             bool hasVideo() const { return m_hasVideo; }
@@ -63,7 +57,6 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             void load(const String &url);
             void commitLoad();
             void cancelLoad();
-            bool loadNextLocation();
 
             void prepareToPlay();
             void play();
@@ -87,7 +80,6 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             void muteChanged();
             void notifyPlayerOfMute();
 
-            bool loadDelayed() const { return m_delayingLoad; }
             void setPreload(MediaPlayer::Preload);
             void fillTimerFired(Timer<MediaPlayerPrivateGStreamer>*);
 
@@ -102,7 +94,6 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             void setVisible(bool);
             void setSize(const IntSize&);
 
-            void mediaLocationChanged(GstMessage*);
             void loadStateChanged();
             void sizeChanged();
             void timeChanged();
@@ -110,6 +101,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             void durationChanged();
             void loadingFailed(MediaPlayer::NetworkState);
 
+            void triggerRepaint(GstBuffer*);
             void repaint();
             void paint(GraphicsContext*, const IntRect&);
 
@@ -118,13 +110,12 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             bool supportsFullscreen() const;
             PlatformMedia platformMedia() const;
 
-            GstElement* pipeline() const { return m_playBin; }
-            bool pipelineReset() const { return m_resetPipeline; }
-
             void videoChanged();
             void audioChanged();
             void notifyPlayerOfVideo();
             void notifyPlayerOfAudio();
+
+            void sourceChanged();
 
             unsigned decodedFrameCount() const;
             unsigned droppedFrameCount() const;
@@ -143,6 +134,8 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
 
             void updateAudioSink();
 
+            float playbackPosition() const;
+
             void cacheDuration();
             void updateStates();
             float maxTimeLoaded() const;
@@ -150,7 +143,10 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
             void createGSTPlayBin();
             bool changePipelineState(GstState state);
 
-            void processBufferingStats(GstMessage* message);
+            bool loadNextLocation();
+            void mediaLocationChanged(GstMessage*);
+
+            void processBufferingStats(GstMessage*);
 
         private:
             MediaPlayer* m_player;
