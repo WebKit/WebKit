@@ -68,7 +68,7 @@ if (isAppleMacWebKit()) {
 } elsif (isAppleWinWebKit()) {
     $result = buildVisualStudioProject("JavaScriptCore.vcproj/JavaScriptCore.sln");
 } elsif (isGtk()) {
-    $result = buildGtkProject("JavaScriptCore", 0, @ARGV);
+    $result = buildGtkProject("JavaScriptCore");
 } elsif (isQt()) {
     # Remove duplicated --qt options to avoid passing them to qmake
     checkForArgumentAndRemoveFromARGV("--qt");

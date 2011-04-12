@@ -1,3 +1,13 @@
+2011-04-12  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, roll out r83621 as it broke the GTK build.
+
+        [GTK] arguments passed to build-jsc and build-webkit scripts are not taken into account
+        https://bugs.webkit.org/show_bug.cgi?id=58333
+
+        * Scripts/build-jsc:
+        * Scripts/build-webkit:
+
 2011-04-12  Carl Lobo  <carllobo@gmail.com> and Brent Fulgham <bfulgham@webkit.org>
 
         Reviewed by Adam Roben.
@@ -99,16 +109,6 @@
         * DumpRenderTree/qt/DumpRenderTree.pro:
         * QtTestBrowser/QtTestBrowser.pro:
         * Scripts/webkitdirs.pm:
-
-2011-04-12  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
-
-        Reviewed by Eric Seidel.
-
-        [GTK] arguments passed to build-jsc and build-webkit scripts are not taken into account
-        https://bugs.webkit.org/show_bug.cgi?id=58333
-
-        * Scripts/build-jsc:
-        * Scripts/build-webkit:
 
 2011-04-12  Tony Chang  <tony@chromium.org>
 
