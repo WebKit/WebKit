@@ -97,12 +97,6 @@ blocked: 50856
         bug = tool.bugs.fetch_bug(78)
         self.assertEqual(reporter._follow_duplicate_chain(bug).id(), 76)
 
-    def test_bot_information(self):
-        tool = MockTool()
-        tool.status_server = MockStatusServer("MockBotId")
-        reporter = FlakyTestReporter(tool, 'dummy-queue')
-        self.assertEqual(reporter._bot_information(), "Bot: MockBotId  Port: MockPort  Platform: MockPlatform 1.0")
-
     def test_report_flaky_tests_creating_bug(self):
         tool = MockTool()
         tool.filesystem = MockFileSystem({"/mock/foo/bar-diffs.txt": "mock"})

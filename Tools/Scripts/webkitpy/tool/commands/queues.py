@@ -44,6 +44,7 @@ from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.tool.bot.botinfo import BotInfo
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
 from webkitpy.tool.bot.feeders import CommitQueueFeeder, EWSFeeder
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
@@ -258,6 +259,20 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         self._update_status("Processing %s" % patch_text, patch)
         return True
 
+    # FIXME: This is not really specific to the commit-queue and could be shared.
+    def _upload_results_archive_for_patch(self, patch, results_archive_zip):
+        bot_id = self._tool.status_server.bot_id or "bot"
+        description = "Archive of layout-test-results from %s" % bot_id
+        # results_archive is a ZipFile object, grab the File object (.fp) to pass to Mechanize for uploading.
+        results_archive_file = results_archive_zip.fp
+        # Rewind the file object to start (since Mechanize won't do that automatically)
+        # See https://bugs.webkit.org/show_bug.cgi?id=54593
+        results_archive_file.seek(0)
+        comment_text = "The attached test failures were seen while running run-webkit-tests on the %s.\n" % (self.name)
+        # FIXME: We could easily list the test failures from the archive here.
+        comment_text += BotInfo(self._tool).summary_text()
+        self._tool.bugs.add_attachment_to_bug(patch.bug_id(), results_archive_file, description, filename="layout-test-results.zip", comment_text=comment_text)
+
     def process_work_item(self, patch):
         self._cc_watchers(patch.bug_id())
         task = CommitQueueTask(self, patch)
@@ -269,6 +284,9 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         except ScriptError, e:
             validator = CommitterValidator(self._tool.bugs)
             validator.reject_patch_from_commit_queue(patch.id(), self._error_message_for_bug(task.failure_status_id, e))
+            results_archive = task.results_archive_from_patch_test_run(patch)
+            if results_archive:
+                self._upload_results_archive_for_patch(patch, results_archive)
             self._did_fail(patch)
 
     def _error_message_for_bug(self, status_id, script_error):

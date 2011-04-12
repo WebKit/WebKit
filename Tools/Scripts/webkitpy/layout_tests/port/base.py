@@ -129,6 +129,7 @@ class Port(object):
         # http://bugs.python.org/issue3210
         self._wdiff_available = True
 
+        # FIXME: prettypatch.py knows this path, why is it copied here?
         self._pretty_patch_path = self.path_from_webkit_base("Websites",
             "bugs.webkit.org", "PrettyPatch", "prettify.rb")
         # If we're running on a mocked-out filesystem, this file almost

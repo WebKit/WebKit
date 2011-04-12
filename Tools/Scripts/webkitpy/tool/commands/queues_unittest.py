@@ -388,7 +388,20 @@ The commit-queue is continuing to process your patch.
         queue = CommitQueue()
         queue.bind_to_tool(MockTool())
         patch = queue._tool.bugs.fetch_attachment(128)
+        # This is just to test that the method doesn't raise.
         queue.archive_last_layout_test_results(patch)
+
+    def test_upload_results_archive_for_patch(self):
+        queue = CommitQueue()
+        queue.bind_to_tool(MockTool())
+        patch = queue._tool.bugs.fetch_attachment(128)
+        expected_stderr = """MOCK add_attachment_to_bug: bug_id=42, description=Archive of layout-test-results from bot filename=layout-test-results.zip
+-- Begin comment --
+The attached test failures were seen while running run-webkit-tests on the commit-queue.
+Port: MockPort  Platform: MockPlatform 1.0
+-- End comment --
+"""
+        OutputCapture().assert_outputs(self, queue._upload_results_archive_for_patch, [patch, Mock()], expected_stderr=expected_stderr)
 
 
 class StyleQueueTest(QueuesTest):

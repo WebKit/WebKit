@@ -33,6 +33,7 @@ import os.path
 
 from webkitpy.common.net.layouttestresults import path_for_layout_test, LayoutTestResults
 from webkitpy.common.config import urls
+from webkitpy.tool.bot.botinfo import BotInfo
 from webkitpy.tool.grammar import plural, pluralize, join_with_separators
 
 _log = logging.getLogger(__name__)
@@ -42,6 +43,7 @@ class FlakyTestReporter(object):
     def __init__(self, tool, bot_name):
         self._tool = tool
         self._bot_name = bot_name
+        self._bot_info = BotInfo(tool)
 
     def _author_emails_for_test(self, flaky_test):
         test_path = path_for_layout_test(flaky_test)
@@ -121,15 +123,10 @@ If you would like to track this test fix with another bug, please close this bug
         authors_string = join_with_separators(sorted(author_emails))
         return " (%s: %s)" % (heading_string, authors_string)
 
-    def _bot_information(self):
-        bot_id = self._tool.status_server.bot_id
-        bot_id_string = "Bot: %s  " % (bot_id) if bot_id else ""
-        return "%sPort: %s  Platform: %s" % (bot_id_string, self._tool.port().name(), self._tool.platform.display_name())
-
     def _latest_flake_message(self, flaky_result, patch):
         failure_messages = [failure.message() for failure in flaky_result.failures]
         flake_message = "The %s just saw %s flake (%s) while processing attachment %s on bug %s." % (self._bot_name, flaky_result.filename, ", ".join(failure_messages), patch.id(), patch.bug_id())
-        return "%s\n%s" % (flake_message, self._bot_information())
+        return "%s\n%s" % (flake_message, self._bot_info.summary_text())
 
     def _results_diff_path_for_test(self, test_path):
         # FIXME: This is a big hack.  We should get this path from results.json

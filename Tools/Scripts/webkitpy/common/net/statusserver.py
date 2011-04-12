@@ -25,6 +25,8 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# This the client designed to talk to Tools/QueueStatusServer.
 
 from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.common.system.deprecated_logging import log
@@ -39,6 +41,7 @@ _log = logging.getLogger("webkitpy.common.net.statusserver")
 
 
 class StatusServer:
+    # FIXME: This should probably move to common.config.urls.
     default_host = "queues.webkit.org"
 
     def __init__(self, host=default_host, browser=None, bot_id=None):

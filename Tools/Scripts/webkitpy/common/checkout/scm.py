@@ -320,7 +320,7 @@ class SCM:
 
 
 class SVN(SCM):
-    # FIXME: We should move these values to a WebKit-specific config file.
+    # FIXME: These belong in common.config.urls
     svn_server_host = "svn.webkit.org"
     svn_server_realm = "<http://svn.webkit.org:80> Mac OS Forge"
 

@@ -267,7 +267,7 @@ class Build(object):
 
 
 class BuildBot(object):
-    # FIXME: This should move into some sort of webkit_config.py
+    # FIXME: This should move into common.config.urls.
     default_host = "build.webkit.org"
 
     def __init__(self, host=default_host):

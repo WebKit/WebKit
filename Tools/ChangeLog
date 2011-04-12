@@ -1,3 +1,33 @@
+2011-04-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue should upload failure diffs when tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=58348
+
+        This change was mostly just plumbing.  We were already saving
+        this information for flaky test reporting.  I just made it possible
+        for normal failures to report archives as well.
+
+        I did a little abstraction work to try and share some code between
+        flakytestreporter.py and this new code.  There is still more we could do.
+
+        In making this change I also went through and updated the various
+        places we have urls hard-coded in our python and pointed them at
+        common.config.urls.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/statusserver.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/tool/bot/botinfo.py: Added.
+        * Scripts/webkitpy/tool/bot/botinfo_unittest.py: Added.
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        * Scripts/webkitpy/tool/bot/flakytestreporter_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+
 2011-04-12  Daniel Bates  <dbates@rim.com>
 
         Rubber-stamped by Eric Seidel.

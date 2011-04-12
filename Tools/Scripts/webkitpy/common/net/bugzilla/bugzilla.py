@@ -220,7 +220,8 @@ class Bugzilla(object):
         # script.
         self.browser.set_handle_robots(False)
 
-    # FIXME: Much of this should go into some sort of config module:
+    # FIXME: Much of this should go into some sort of config module,
+    # such as common.config.urls.
     bug_server_host = "bugs.webkit.org"
     bug_server_regex = "https?://%s/" % re.sub('\.', '\\.', bug_server_host)
     bug_server_url = "https://%s/" % bug_server_host

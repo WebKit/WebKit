@@ -59,6 +59,7 @@ class CommitQueueTask(object):
         self._delegate = delegate
         self._patch = patch
         self._script_error = None
+        self._results_archive_from_patch_test_run = None
 
     def _validate(self):
         # Bugs might get closed, or patches might be obsoleted or r-'d while the
@@ -201,12 +202,17 @@ class CommitQueueTask(object):
             return False
 
         if self._build_and_test_without_patch():
-            return self.report_failure()  # The error from the previous ._test() run is real, report it.
+            return self.report_failure(first_results_archive)  # The error from the previous ._test() run is real, report it.
         return False  # Tree must be red, just retry later.
 
-    def report_failure(self):
+    def results_archive_from_patch_test_run(self, patch):
+        assert(self._patch.id() == patch.id())  # CommitQueueTask is not currently re-useable.
+        return self._results_archive_from_patch_test_run
+
+    def report_failure(self, results_archive=None):
         if not self._validate():
             return False
+        self._results_archive_from_patch_test_run = results_archive
         raise self._script_error
 
     def run(self):
