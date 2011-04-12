@@ -68,6 +68,7 @@ media/video-empty-source.html
 
 # Accessibility tests without results
 accessibility/document-attributes.html
+accessibility/aria-menubar-menuitems.html
 
 # Accessibility tests with missing AccessibilityController functionality.
 accessibility/selection-states.html

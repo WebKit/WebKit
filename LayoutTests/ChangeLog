@@ -1,3 +1,17 @@
+2011-04-12  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] Expose menu items and menus as children of a menu bar
+        https://bugs.webkit.org/show_bug.cgi?id=56659
+
+        New cross-platform test. Skipped in platforms with no results yet.
+
+        * accessibility/aria-menubar-menuitems.html: Added.
+        * platform/gtk/accessibility/aria-menubar-menuitems-expected.txt: Added.
+        * platform/mac/Skipped: Skipped the new test.
+        * platform/win/Skipped: Ditto.
+
 2011-04-12  Jessie Berlin  <jberlin@apple.com>
 
         [WebKit2 Release Tests] fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html flakey

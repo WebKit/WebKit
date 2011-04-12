@@ -1,3 +1,16 @@
+2011-04-12  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] Expose menu items and menus as children of a menu bar
+        https://bugs.webkit.org/show_bug.cgi?id=56659
+
+        Ensure menu items get exposed when they're children of menu bars.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::determineAriaRoleAttribute):
+        Consider menu bars as potential parent objects for menu items.
+
 2011-04-12  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

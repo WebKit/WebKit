@@ -2974,18 +2974,25 @@ AccessibilityRole AccessibilityRenderObject::determineAriaRoleAttribute() const
     
     if (role)
         return role;
+
+    AccessibilityObject* parentObject = parentObjectUnignored();
+    if (!parentObject)
+        return UnknownRole;
+
+    AccessibilityRole parentAriaRole = parentObject->ariaRoleAttribute();
+
     // selects and listboxes both have options as child roles, but they map to different roles within WebCore
     if (equalIgnoringCase(ariaRole, "option")) {
-        if (parentObjectUnignored()->ariaRoleAttribute() == MenuRole)
+        if (parentAriaRole == MenuRole)
             return MenuItemRole;
-        if (parentObjectUnignored()->ariaRoleAttribute() == ListBoxRole)
+        if (parentAriaRole == ListBoxRole)
             return ListBoxOptionRole;
     }
     // an aria "menuitem" may map to MenuButton or MenuItem depending on its parent
     if (equalIgnoringCase(ariaRole, "menuitem")) {
-        if (parentObjectUnignored()->ariaRoleAttribute() == GroupRole)
+        if (parentAriaRole == GroupRole)
             return MenuButtonRole;
-        if (parentObjectUnignored()->ariaRoleAttribute() == MenuRole)
+        if (parentAriaRole == MenuRole || parentAriaRole == MenuBarRole)
             return MenuItemRole;
     }
     
