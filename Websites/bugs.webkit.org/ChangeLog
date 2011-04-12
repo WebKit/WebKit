@@ -1,3 +1,18 @@
+2011-04-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Review tool should work well on iPad
+        https://bugs.webkit.org/show_bug.cgi?id=58351
+
+        On the iPad, the toolbar ends up at some random position in the middle
+        of the page because of how position:fixed interacts with scrolling on
+        the iPad.  I feel a bit dirty using a user agent detect, but I'm not
+        sure if there's a better way to detect whether the user agent has this
+        behavior.
+
+        * code-review.js:
+
 2011-03-15  David Levin  <levin@chromium.org>
 
         Reviewed by Adam Barth.
