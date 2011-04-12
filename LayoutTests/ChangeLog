@@ -1,3 +1,11 @@
+2011-04-12  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed.
+
+        Unskip t0805-c5519-ibrdr-r-00-a.html, since it is now passing.
+
+        * platform/qt/Skipped:
+
 2011-04-12  Alice Liu  <alice.liu@apple.com>
 
         Added http/tests/misc/favicon-loads-with-icon-loading-override.html
