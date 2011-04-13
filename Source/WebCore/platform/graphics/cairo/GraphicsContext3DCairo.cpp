@@ -27,6 +27,7 @@
 
 #include "config.h"
 #include "GraphicsContext3D.h"
+#include "PlatformContextCairo.h"
 
 #if ENABLE(WEBGL)
 
@@ -83,30 +84,31 @@ bool GraphicsContext3D::getImageData(Image* image, unsigned int format, unsigned
                       width, height, srcUnpackAlignment, format, type, alphaOp, outputVector.data());
 }
 
-void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight, int canvasWidth, int canvasHeight, cairo_t* context)
+void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight, int canvasWidth, int canvasHeight, PlatformContextCairo* context)
 {
     if (!imagePixels || imageWidth <= 0 || imageHeight <= 0 || canvasWidth <= 0 || canvasHeight <= 0 || !context)
         return;
 
-    cairo_save(context);
+    cairo_t *cr = context->cr();
+    context->save();
 
-    cairo_rectangle(context, 0, 0, canvasWidth, canvasHeight);
-    cairo_set_operator(context, CAIRO_OPERATOR_CLEAR);
-    cairo_paint(context);
+    cairo_rectangle(cr, 0, 0, canvasWidth, canvasHeight);
+    cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+    cairo_paint(cr);
 
     RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create_for_data(
         const_cast<unsigned char*>(imagePixels), CAIRO_FORMAT_ARGB32, imageWidth, imageHeight, imageWidth * 4));
 
     // OpenGL keeps the pixels stored bottom up, so we need to flip the image here.
-    cairo_translate(context, 0, imageHeight);
-    cairo_scale(context, 1, -1);
+    cairo_translate(cr, 0, imageHeight);
+    cairo_scale(cr, 1, -1);
 
-    cairo_set_operator(context, CAIRO_OPERATOR_OVER);
-    cairo_set_source_surface(context, imageSurface.get(), 0, 0);
-    cairo_rectangle(context, 0, 0, canvasWidth, -canvasHeight);
+    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
+    cairo_set_source_surface(cr, imageSurface.get(), 0, 0);
+    cairo_rectangle(cr, 0, 0, canvasWidth, -canvasHeight);
 
-    cairo_fill(context);
-    cairo_restore(context);
+    cairo_fill(cr);
+    context->restore();
 }
 
 void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)

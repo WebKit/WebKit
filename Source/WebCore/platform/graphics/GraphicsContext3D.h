@@ -63,7 +63,6 @@ class QPainter;
 class QRect;
 QT_END_NAMESPACE
 #elif PLATFORM(GTK)
-typedef struct _cairo cairo_t;
 typedef unsigned int GLuint;
 #endif
 
@@ -91,6 +90,9 @@ class Extensions3DOpenGL;
 class HostWindow;
 class Image;
 class ImageData;
+#if PLATFORM(CAIRO)
+class PlatformContextCairo;
+#endif
 
 struct ActiveInfo {
     String name;
@@ -765,7 +767,7 @@ public:
                        int canvasWidth, int canvasHeight, CGContextRef context);
 #elif PLATFORM(GTK)
     void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
-                       int canvasWidth, int canvasHeight, cairo_t* context);
+                       int canvasWidth, int canvasHeight, PlatformContextCairo* context);
 #endif
 
     void markContextChanged();
