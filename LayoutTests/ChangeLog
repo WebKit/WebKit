@@ -1,3 +1,10 @@
+2011-04-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Update Qt specific expected results after r83710.
+
+        * platform/qt/svg/custom/text-dom-01-f-expected.txt:
+        * platform/qt/svg/text/lengthAdjust-text-metrics-expected.txt:
+
 2011-04-13  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
