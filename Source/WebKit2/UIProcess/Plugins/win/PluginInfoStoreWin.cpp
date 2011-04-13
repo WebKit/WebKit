@@ -27,6 +27,7 @@
 #include "PluginInfoStore.h"
 
 #include "NetscapePluginModule.h"
+#include <WebCore/FileSystem.h>
 #include <WebCore/PathWalker.h>
 #include <shlwapi.h>
 
@@ -392,14 +393,12 @@ bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
 
     // FIXME: We should prefer a newer version of a plugin to an older version, rather than loading
     // only the first. <http://webkit.org/b/58469>
-    String pluginPath = plugin.path;
-    String pluginFileName(::PathFindFileNameW(pluginPath.charactersWithNullTermination()));
+    String pluginFileName = pathGetFileName(plugin.path);
     for (size_t i = 0; i < m_plugins.size(); ++i) {
         Plugin& loadedPlugin = m_plugins[i];
 
         // If a plug-in with the same filename already exists, we don't want to load it.
-        String loadedPluginFileName(::PathFindFileNameW(loadedPlugin.path.charactersWithNullTermination()));
-        if (equalIgnoringCase(pluginFileName, loadedPluginFileName))
+        if (equalIgnoringCase(pluginFileName, pathGetFileName(loadedPlugin.path)))
             return false;
     }
 
