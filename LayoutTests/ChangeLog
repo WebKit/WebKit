@@ -1,3 +1,13 @@
+2011-04-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        LayoutTestController.computedStyleIncludingVisitedInfo-based tests don't work in WK2
+        http://webkit.org/b/58334
+
+        Make same changes in Qt WK2 Skipped list as r83595 in Mac WK2 Skipped list.
+
+        * platform/qt-wk2/Skipped: Skip a new test due to an identified bug in WKTR and classify
+          three other skipped tests with that same bug.
+
 2011-04-13  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
