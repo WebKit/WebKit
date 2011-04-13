@@ -1,3 +1,28 @@
+2011-04-12  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Fix wrong calculation of HTMLFormElement::m_associatedElementsAfterIndex.
+        https://bugs.webkit.org/show_bug.cgi?id=58247
+
+        - Increment m_associatedElementsAfterIndex when the form owner and an
+        inserted form associated element have the same parent chain.
+        - Always iterate over m_associatedElements to decrease indexes when a
+        form associated element is removed. This is needed for a case that the
+        form associated element is removed from the form element due to
+        deleting the 'form' attribute. No behavioral change expected with this
+        change.
+
+        Tests: fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html
+               fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail2.html
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formElementIndexWithFormAttribute):
+        Incremet m_associatedElementsAfterIndex when compareDocumentPosition()
+        returns DOCUMENT_POSITION_CONTAINED_BY.
+        (WebCore::HTMLFormElement::removeFormElement):
+        Always iterate m_associatedElements to adjust indexes.
+
 2011-04-12  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

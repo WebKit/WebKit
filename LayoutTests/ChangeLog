@@ -1,3 +1,18 @@
+2011-04-12  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Fix wrong calculation of HTMLFormElement::m_associatedElementsAfterIndex.
+        https://bugs.webkit.org/show_bug.cgi?id=58247
+
+        Added tests which ensure calculation of m_associatedElementsAfterIndex
+        doesn't get wrong.
+
+        * fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1-expected.txt: Added.
+        * fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html: Added.
+        * fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail2-expected.txt: Added.
+        * fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail2.html: Added.
+
 2011-04-12  Jian Li  <jianli@chromium.org>
 
         Unreviewed, update chromium test expectations.

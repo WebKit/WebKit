@@ -411,7 +411,7 @@ unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element)
     // Compares the position of the form element and the inserted element.
     // Updates the indeces in order to the relation of the position:
     unsigned short position = compareDocumentPosition(element);
-    if (position & DOCUMENT_POSITION_CONTAINS)
+    if (position & (DOCUMENT_POSITION_CONTAINS | DOCUMENT_POSITION_CONTAINED_BY))
         ++m_associatedElementsAfterIndex;
     else if (position & DOCUMENT_POSITION_PRECEDING) {
         ++m_associatedElementsBeforeIndex;
@@ -482,18 +482,15 @@ void HTMLFormElement::removeFormElement(FormAssociatedElement* e)
 {
     if (e->isFormControlElement())
         m_checkedRadioButtons.removeButton(static_cast<HTMLFormControlElement*>(e));
-    HTMLElement* element = toHTMLElement(e);
-    if (element->fastHasAttribute(formAttr)) {
-        unsigned index;
-        for (index = 0; index < m_associatedElements.size(); ++index)
-            if (m_associatedElements[index] == e)
-                break;
-        ASSERT(index < m_associatedElements.size());
-        if (index < m_associatedElementsBeforeIndex)
-            --m_associatedElementsBeforeIndex;
-        if (index < m_associatedElementsAfterIndex)
-            --m_associatedElementsAfterIndex;
-    } else
+    unsigned index;
+    for (index = 0; index < m_associatedElements.size(); ++index) {
+        if (m_associatedElements[index] == e)
+            break;
+    }
+    ASSERT(index < m_associatedElements.size());
+    if (index < m_associatedElementsBeforeIndex)
+        --m_associatedElementsBeforeIndex;
+    if (index < m_associatedElementsAfterIndex)
         --m_associatedElementsAfterIndex;
     removeFromVector(m_associatedElements, e);
 }
