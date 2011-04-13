@@ -1,3 +1,20 @@
+2011-04-12  Anantanarayanan G Iyengar  <ananta@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The default backspace event handler should mark the event as handled if navigation succeeds.
+        https://bugs.webkit.org/show_bug.cgi?id=58379
+
+        We should mark the event as handled only if we were able to successfully navigate backwards or forwards.
+        These navigations can fail if there is now back/forward history. This can occur in cases like ChromeFrame
+        where history is managed by an external browser like IE.
+
+        No new tests added as this scenario can occur when the history view is split across two browsers (WebKit and IE)
+        It is non trivial to simulate this environment.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultBackspaceEventHandler):
+
 2011-04-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

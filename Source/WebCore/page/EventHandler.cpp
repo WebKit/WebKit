@@ -2889,12 +2889,15 @@ void EventHandler::defaultBackspaceEventHandler(KeyboardEvent* event)
     if (!page)
         return;
 
-    if (event->shiftKey())
-        page->goForward();
-    else
-        page->goBack();
+    bool handledEvent = false;
 
-    event->setDefaultHandled();
+    if (event->shiftKey())
+        handledEvent = page->goForward();
+    else
+        handledEvent = page->goBack();
+
+    if (handledEvent)
+        event->setDefaultHandled();
 }
 
 
