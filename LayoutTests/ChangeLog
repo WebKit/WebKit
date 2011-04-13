@@ -1,3 +1,9 @@
+2011-04-13  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, more chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-13  Jessie Berlin  <jberlin@apple.com>
 
         inspector/debugger/script-formatter.html broken on a bunch of platforms since introduction
