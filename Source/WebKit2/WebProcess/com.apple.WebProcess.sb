@@ -56,7 +56,13 @@
     (subpath "/Library/QuickTime")
 
     ;; FIXME: This should be removed when <rdar://problem/9237619> is fixed.
-    (subpath (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.universalaccess.plist"))
+    (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.universalaccess.plist"))
+
+    ;; FIXME: This should be removed when <rdar://problem/9276253> is fixed.
+    (subpath (string-append (param "HOME_DIR") "/Library/Keyboard Layouts"))
+
+    ;; FIXME: This should be removed when <rdar://problem/9276268> is fixed.
+    (subpath (string-append (param "HOME_DIR") "/Library/Input Methods"))
 
     ;; Extensions from UIProcess
     (extension)
