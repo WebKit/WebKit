@@ -44,6 +44,7 @@
 
 #if ENABLE(SKIA_GPU)
 class GrContext;
+struct GrPlatformSurfaceDesc;
 #endif
 
 namespace WebCore {
@@ -102,6 +103,7 @@ public:
 
 #if ENABLE(SKIA_GPU)
     void setGrContext(GrContext* ctx);
+    void getGrPlatformSurfaceDesc(GrPlatformSurfaceDesc*);
 #endif
 
     PassRefPtr<GraphicsContext3D> graphicsContext3D() const { return m_context; }

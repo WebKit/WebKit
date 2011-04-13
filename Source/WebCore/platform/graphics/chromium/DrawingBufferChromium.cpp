@@ -173,6 +173,29 @@ void DrawingBuffer::setGrContext(GrContext* context)
     // the SharedGraphicsContext3D object that is giving us the context.
     m_grContext = context;
 }
+
+void DrawingBuffer::getGrPlatformSurfaceDesc(GrPlatformSurfaceDesc* desc)
+{
+    desc->fSurfaceType = kTextureRenderTarget_GrPlatformSurfaceType;
+
+    desc->fPlatformTexture = m_colorBuffer;
+    if (multisample()) {
+        desc->fRenderTargetFlags = kIsMultisampled_GrPlatformRenderTargetFlagBit | kGrCanResolve_GrPlatformRenderTargetFlagBit;
+        desc->fPlatformRenderTarget = m_multisampleFBO;
+        desc->fPlatformResolveDestination = m_fbo;
+    } else {
+        desc->fRenderTargetFlags = kNone_GrPlatformRenderTargetFlagBit;
+        desc->fPlatformRenderTarget = m_fbo;
+        desc->fPlatformResolveDestination = 0;
+    }
+
+    desc->fWidth = m_size.width();
+    desc->fHeight = m_size.height();
+    desc->fConfig = kRGBA_8888_GrPixelConfig;
+
+    desc->fStencilBits = (m_depthStencilBuffer || m_stencilBuffer) ? 8 : 0;
+}
+
 #endif
 
 }

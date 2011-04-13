@@ -747,7 +747,12 @@ void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* co
         gr->resetContext();
         drawingBuffer->setGrContext(gr);
 
-        SkDeviceFactory* factory = new SkGpuDeviceFactory(gr, SkGpuDevice::Current3DApiRenderTarget());
+        GrPlatformSurfaceDesc drawBufDesc;
+        drawingBuffer->getGrPlatformSurfaceDesc(&drawBufDesc);
+        GrTexture* drawBufTex = static_cast<GrTexture*>(gr->createPlatformSurface(drawBufDesc));
+        SkDeviceFactory* factory = new SkGpuDeviceFactory(gr, drawBufTex);
+        drawBufTex->unref();
+
         SkDevice* device = factory->newDevice(m_canvas, SkBitmap::kARGB_8888_Config, drawingBuffer->size().width(), drawingBuffer->size().height(), false, false);
         m_canvas->setDevice(device)->unref();
         m_canvas->setDeviceFactory(factory);

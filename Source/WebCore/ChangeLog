@@ -1,3 +1,18 @@
+2011-04-13  Brian Salomon  <bsalomon@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Use new skia API for wrapping DrawingBuffer's FBO/Tex IDs in skia object
+        https://bugs.webkit.org/show_bug.cgi?id=58363
+
+        No new tests needed, exercised by all existing canvas2d tests.
+
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::getGrPlatformSurfaceDesc):
+        * platform/graphics/gpu/DrawingBuffer.h:
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::setSharedGraphicsContext3D):
+
 2011-04-13  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Fix chromium clang build problem:
