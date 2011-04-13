@@ -77,8 +77,6 @@ void DownloadManager::downloadFinished(Download* download)
     m_downloads.remove(download->downloadID());
 
     delete download;
-
-    WebProcess::shared().terminateIfPossible();
 }
 
 } // namespace WebKit

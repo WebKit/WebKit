@@ -57,6 +57,8 @@ void WebKeyValueStorageManager::didReceiveMessage(CoreIPC::Connection* connectio
 
 void WebKeyValueStorageManager::getKeyValueStorageOrigins(uint64_t callbackID)
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
     Vector<RefPtr<SecurityOrigin> > coreOrigins;
 
     StorageTracker::tracker().origins(coreOrigins);
@@ -76,23 +78,23 @@ void WebKeyValueStorageManager::getKeyValueStorageOrigins(uint64_t callbackID)
     }
 
     WebProcess::shared().connection()->send(Messages::WebKeyValueStorageManagerProxy::DidGetKeyValueStorageOrigins(identifiers, callbackID), 0);
-    WebProcess::shared().terminateIfPossible();
 }
 
 void WebKeyValueStorageManager::deleteEntriesForOrigin(const SecurityOriginData& originData)
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create(originData.protocol, originData.host, originData.port);
     if (!origin)
         return;
 
     StorageTracker::tracker().deleteOrigin(origin.get());
-    WebProcess::shared().terminateIfPossible();
 }
 
 void WebKeyValueStorageManager::deleteAllEntries()
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
     StorageTracker::tracker().deleteAllOrigins();
-    WebProcess::shared().terminateIfPossible();
 }
 
 } // namespace WebKit

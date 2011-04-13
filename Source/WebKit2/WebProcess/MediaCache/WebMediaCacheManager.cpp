@@ -53,6 +53,8 @@ void WebMediaCacheManager::didReceiveMessage(CoreIPC::Connection* connection, Co
 
 void WebMediaCacheManager::getHostnamesWithMediaCache(uint64_t callbackID)
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
     Vector<String> mediaCacheHostnames;
 
 #if ENABLE(VIDEO)
@@ -60,23 +62,24 @@ void WebMediaCacheManager::getHostnamesWithMediaCache(uint64_t callbackID)
 #endif
 
     WebProcess::shared().connection()->send(Messages::WebMediaCacheManagerProxy::DidGetHostnamesWithMediaCache(mediaCacheHostnames, callbackID), 0);
-    WebProcess::shared().terminateIfPossible();
 }
 
 void WebMediaCacheManager::clearCacheForHostname(const String& hostname)
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
 #if ENABLE(VIDEO)
     HTMLMediaElement::clearMediaCacheForSite(hostname);
 #endif
-    WebProcess::shared().terminateIfPossible();
 }
 
 void WebMediaCacheManager::clearCacheForAllHostnames()
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
 #if ENABLE(VIDEO)
     HTMLMediaElement::clearMediaCache();
 #endif
-    WebProcess::shared().terminateIfPossible();
 }
 
 } // namespace WebKit

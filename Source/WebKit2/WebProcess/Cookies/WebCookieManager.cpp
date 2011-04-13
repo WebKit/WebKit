@@ -54,6 +54,8 @@ void WebCookieManager::didReceiveMessage(CoreIPC::Connection* connection, CoreIP
 
 void WebCookieManager::getHostnamesWithCookies(uint64_t callbackID)
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
     HashSet<String> hostnames;
 
     WebCore::getHostnamesWithCookies(hostnames);
@@ -62,25 +64,27 @@ void WebCookieManager::getHostnamesWithCookies(uint64_t callbackID)
     copyToVector(hostnames, hostnameList);
 
     WebProcess::shared().connection()->send(Messages::WebCookieManagerProxy::DidGetHostnamesWithCookies(hostnameList, callbackID), 0);
-    WebProcess::shared().terminateIfPossible();
 }
 
 void WebCookieManager::deleteCookiesForHostname(const String& hostname)
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
     WebCore::deleteCookiesForHostname(hostname);
-    WebProcess::shared().terminateIfPossible();
 }
 
 void WebCookieManager::deleteAllCookies()
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
     WebCore::deleteAllCookies();
-    WebProcess::shared().terminateIfPossible();
 }
 
 void WebCookieManager::startObservingCookieChanges()
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
     WebCore::startObservingCookieChanges();
-    WebProcess::shared().terminateIfPossible();
 }
 
 void WebCookieManager::stopObservingCookieChanges()
@@ -95,14 +99,14 @@ void WebCookieManager::dispatchCookiesDidChange()
 
 void WebCookieManager::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
     platformSetHTTPCookieAcceptPolicy(policy);
-    WebProcess::shared().terminateIfPossible();
 }
 
 void WebCookieManager::getHTTPCookieAcceptPolicy(uint64_t callbackID)
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
     WebProcess::shared().connection()->send(Messages::WebCookieManagerProxy::DidGetHTTPCookieAcceptPolicy(platformGetHTTPCookieAcceptPolicy(), callbackID), 0);
-    WebProcess::shared().terminateIfPossible();
 }
 
 } // namespace WebKit

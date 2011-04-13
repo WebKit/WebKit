@@ -490,6 +490,9 @@ void WebProcess::createWebPage(uint64_t pageID, const WebPageCreationParameters&
     if (result.second) {
         ASSERT(!result.first->second);
         result.first->second = WebPage::create(pageID, parameters);
+
+        // Balanced by an enableTermination in removeWebPage.
+        disableTermination();
     }
 
     ASSERT(result.first->second);
@@ -497,8 +500,11 @@ void WebProcess::createWebPage(uint64_t pageID, const WebPageCreationParameters&
 
 void WebProcess::removeWebPage(uint64_t pageID)
 {
+    ASSERT(m_pageMap.contains(pageID));
+
     m_pageMap.remove(pageID);
-    terminateIfPossible();
+
+    enableTermination();
 }
 
 bool WebProcess::isSeparateProcess() const
@@ -507,29 +513,26 @@ bool WebProcess::isSeparateProcess() const
     return m_runLoop == RunLoop::main();
 }
  
-void WebProcess::terminateIfPossible()
+bool WebProcess::shouldTerminate()
 {
-    if (!m_pageMap.isEmpty())
-        return;
-
-    if (m_inDidClose)
-        return;
-
-    if (DownloadManager::shared().isDownloading())
-        return;
-
     // Keep running forever if we're running in the same process.
     if (!isSeparateProcess())
-        return;
+        return false;
+
+    ASSERT(m_pageMap.isEmpty());
+    ASSERT(!DownloadManager::shared().isDownloading());
 
     // FIXME: the ShouldTerminate message should also send termination parameters, such as any session cookies that need to be preserved.
     bool shouldTerminate = false;
     if (m_connection->sendSync(Messages::WebProcessProxy::ShouldTerminate(), Messages::WebProcessProxy::ShouldTerminate::Reply(shouldTerminate), 0)
         && !shouldTerminate)
-        return;
+        return false;
 
-    // Actually terminate the process.
+    return true;
+}
 
+void WebProcess::terminate()
+{
 #ifndef NDEBUG
     gcController().garbageCollectNow();
     memoryCache()->setDisabled(true);
@@ -541,13 +544,6 @@ void WebProcess::terminateIfPossible()
 
     platformTerminate();
     m_runLoop->stop();
-}
-
-bool WebProcess::shouldTerminate()
-{
-    // FIXME: Implement.
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 CoreIPC::SyncReplyMode WebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
@@ -736,6 +732,8 @@ void WebProcess::clearApplicationCache()
 #if !ENABLE(PLUGIN_PROCESS)
 void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint64_t callbackID)
 {
+    LocalTerminationDisabler terminationDisabler(*this);
+
     HashSet<String> sitesSet;
 
     for (size_t i = 0; i < pluginPaths.size(); ++i) {
@@ -752,11 +750,12 @@ void WebProcess::getSitesWithPluginData(const Vector<String>& pluginPaths, uint6
     copyToVector(sitesSet, sites);
 
     m_connection->send(Messages::WebContext::DidGetSitesWithPluginData(sites, callbackID), 0);
-    terminateIfPossible();
 }
 
 void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 {
+    LocalTerminationDisabler terminationDisabler(*this);
+
     for (size_t i = 0; i < pluginPaths.size(); ++i) {
         RefPtr<NetscapePluginModule> netscapePluginModule = NetscapePluginModule::getOrCreate(pluginPaths[i]);
         if (!netscapePluginModule)
@@ -773,7 +772,6 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
     }
 
     m_connection->send(Messages::WebContext::DidClearPluginSiteData(callbackID), 0);
-    terminateIfPossible();
 }
 #endif
 

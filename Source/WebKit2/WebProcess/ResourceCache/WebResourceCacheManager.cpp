@@ -63,6 +63,8 @@ void WebResourceCacheManager::didReceiveMessage(CoreIPC::Connection* connection,
 
 void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
     MemoryCache::SecurityOriginSet origins;
     memoryCache()->getOriginsWithCache(origins);
 
@@ -94,11 +96,12 @@ void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
     }
 
     WebProcess::shared().connection()->send(Messages::WebResourceCacheManagerProxy::DidGetCacheOrigins(identifiers, callbackID), 0);
-    WebProcess::shared().terminateIfPossible();
 }
 
 void WebResourceCacheManager::clearCacheForOrigin(SecurityOriginData originData, uint32_t cachesToClear) const
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
 #if USE(CFURLCACHE)
     ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);
 #else
@@ -120,15 +123,15 @@ void WebResourceCacheManager::clearCacheForOrigin(SecurityOriginData originData,
         clearCFURLCacheForHostNames(hostArray.get());
     }
 #endif
-    WebProcess::shared().terminateIfPossible();
 }
 
 void WebResourceCacheManager::clearCacheForAllOrigins(uint32_t cachesToClear) const
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
     ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);
 
     WebProcess::shared().clearResourceCaches(resourceCachesToClear);
-    WebProcess::shared().terminateIfPossible();
 }
 
 } // namespace WebKit

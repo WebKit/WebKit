@@ -66,7 +66,7 @@ struct WebPageGroupData;
 struct WebPreferencesStore;
 struct WebProcessCreationParameters;
 
-class WebProcess : ChildProcess {
+class WebProcess : public ChildProcess {
 public:
     static WebProcess& shared();
 
@@ -106,9 +106,6 @@ public:
 #if PLATFORM(QT)
     QNetworkAccessManager* networkAccessManager() { return m_networkAccessManager; }
 #endif
-
-    // Will terminate the web process if there are no live pages or downloads.
-    void terminateIfPossible();
 
     bool shouldUseCustomRepresentationForMIMEType(const String& mimeType) const { return m_mimeTypesWithCustomRepresentations.contains(mimeType); }
 
@@ -168,6 +165,7 @@ private:
 
     // ChildProcess
     virtual bool shouldTerminate();
+    virtual void terminate();
 
     // CoreIPC::Connection::Client
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

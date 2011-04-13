@@ -40,6 +40,23 @@ public:
     void disableTermination();
     void enableTermination();
 
+    class LocalTerminationDisabler {
+    public:
+        explicit LocalTerminationDisabler(ChildProcess& childProcess)
+            : m_childProcess(childProcess)
+        {
+            m_childProcess.disableTermination();
+        }
+
+        ~LocalTerminationDisabler()
+        {
+            m_childProcess.enableTermination();
+        }
+
+    private:
+        ChildProcess& m_childProcess;
+    };
+
 protected:
     explicit ChildProcess(double terminationTimeout);
     ~ChildProcess();

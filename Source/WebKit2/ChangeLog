@@ -1,3 +1,94 @@
+2011-04-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Convert WebProcess over to using disableTermination/enableTermination
+        https://bugs.webkit.org/show_bug.cgi?id=58485
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::getSitesWithData):
+        (WebKit::PluginProcess::clearSiteData):
+        Use the LocalTerminationDisabler RAII class.
+
+        * Shared/ChildProcess.h:
+        (WebKit::ChildProcess::LocalTerminationDisabler::LocalTerminationDisabler):
+        (WebKit::ChildProcess::LocalTerminationDisabler::~LocalTerminationDisabler):
+        Add RAII class for calling disableTermination/enableTermination.
+
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.cpp:
+        (WebKit::WebApplicationCacheManager::getApplicationCacheOrigins):
+        (WebKit::WebApplicationCacheManager::deleteEntriesForOrigin):
+        (WebKit::WebApplicationCacheManager::deleteAllEntries):
+        Use the LocalTerminationDisabler RAII class.
+
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::getHostnamesWithCookies):
+        (WebKit::WebCookieManager::deleteCookiesForHostname):
+        (WebKit::WebCookieManager::deleteAllCookies):
+        (WebKit::WebCookieManager::startObservingCookieChanges):
+        (WebKit::WebCookieManager::setHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::getHTTPCookieAcceptPolicy):
+        Use the LocalTerminationDisabler RAII class.
+
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::Download):
+        Call disableTermination().
+
+        (WebKit::Download::~Download):
+        Call enableTermination().
+
+        * WebProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::downloadFinished):
+        Remove call to terminateIfPossible.
+
+        * WebProcess/KeyValueStorage/WebKeyValueStorageManager.cpp:
+        (WebKit::WebKeyValueStorageManager::getKeyValueStorageOrigins):
+        (WebKit::WebKeyValueStorageManager::deleteEntriesForOrigin):
+        (WebKit::WebKeyValueStorageManager::deleteAllEntries):
+        Use the LocalTerminationDisabler RAII class.
+        
+        * WebProcess/MediaCache/WebMediaCacheManager.cpp:
+        (WebKit::WebMediaCacheManager::getHostnamesWithMediaCache):
+        (WebKit::WebMediaCacheManager::clearCacheForHostname):
+        (WebKit::WebMediaCacheManager::clearCacheForAllHostnames):
+        Use the LocalTerminationDisabler RAII class.
+        
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+        (WebKit::WebResourceCacheManager::getCacheOrigins):
+        (WebKit::WebResourceCacheManager::clearCacheForOrigin):
+        (WebKit::WebResourceCacheManager::clearCacheForAllOrigins):
+        Use the LocalTerminationDisabler RAII class.
+        
+        * WebProcess/WebCoreSupport/WebDatabaseManager.cpp:
+        (WebKit::WebDatabaseManager::getDatabasesByOrigin):
+        (WebKit::WebDatabaseManager::getDatabaseOrigins):
+        (WebKit::WebDatabaseManager::deleteDatabaseWithNameForOrigin):
+        (WebKit::WebDatabaseManager::deleteDatabasesForOrigin):
+        (WebKit::WebDatabaseManager::deleteAllDatabases):
+        (WebKit::WebDatabaseManager::setQuotaForOrigin):
+        Use the LocalTerminationDisabler RAII class.
+        
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::createWebPage):
+        Call disableTermination().
+
+        (WebKit::WebProcess::removeWebPage):
+        Call enableTermination().
+
+        (WebKit::WebProcess::shouldTerminate):
+        Move logic from terminateIfPossible over here.
+
+        (WebKit::WebProcess::terminate):
+        Move logic from terminateIfPossible over here.
+
+        (WebKit::WebProcess::getSitesWithPluginData):
+        (WebKit::WebProcess::clearPluginSiteData):
+        Use the LocalTerminationDisabler RAII class.
+
+        * WebProcess/WebProcess.h:
+        Publically inherit from ChildProcess, LocalTerminationDisabler needs to be accessible
+        from the WebProcess class.
+
 2011-04-13  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Adam Roben.

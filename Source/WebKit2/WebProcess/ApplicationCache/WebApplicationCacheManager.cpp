@@ -56,6 +56,8 @@ void WebApplicationCacheManager::didReceiveMessage(CoreIPC::Connection* connecti
 
 void WebApplicationCacheManager::getApplicationCacheOrigins(uint64_t callbackID)
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
     HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash> origins;
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -79,11 +81,12 @@ void WebApplicationCacheManager::getApplicationCacheOrigins(uint64_t callbackID)
     }
 
     WebProcess::shared().connection()->send(Messages::WebApplicationCacheManagerProxy::DidGetApplicationCacheOrigins(identifiers, callbackID), 0);
-    WebProcess::shared().terminateIfPossible();
 }
 
 void WebApplicationCacheManager::deleteEntriesForOrigin(const SecurityOriginData& originData)
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create(originData.protocol, originData.host, originData.port);
     if (!origin)
@@ -91,15 +94,15 @@ void WebApplicationCacheManager::deleteEntriesForOrigin(const SecurityOriginData
     
     ApplicationCache::deleteCacheForOrigin(origin.get());
 #endif
-    WebProcess::shared().terminateIfPossible();
 }
 
 void WebApplicationCacheManager::deleteAllEntries()
 {
+    WebProcess::LocalTerminationDisabler terminationDisabler(WebProcess::shared());
+
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     cacheStorage().deleteAllEntries();
 #endif
-    WebProcess::shared().terminateIfPossible();
 }
 
 } // namespace WebKit

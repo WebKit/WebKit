@@ -52,11 +52,15 @@ Download::Download(uint64_t downloadID, const ResourceRequest& request)
 #endif
 {
     ASSERT(m_downloadID);
+
+    WebProcess::shared().disableTermination();
 }
 
 Download::~Download()
 {
     platformInvalidate();
+
+    WebProcess::shared().enableTermination();
 }
 
 CoreIPC::Connection* Download::connection() const

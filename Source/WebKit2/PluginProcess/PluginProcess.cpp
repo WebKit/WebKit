@@ -167,20 +167,18 @@ void PluginProcess::createWebProcessConnection()
 
 void PluginProcess::getSitesWithData(uint64_t callbackID)
 {
-    disableTermination();
+    LocalTerminationDisabler terminationDisabler(*this);
 
     Vector<String> sites;
     if (NetscapePluginModule* module = netscapePluginModule())
         sites = module->sitesWithData();
 
     m_connection->send(Messages::PluginProcessProxy::DidGetSitesWithData(sites, callbackID), 0);
-
-    enableTermination();
 }
 
 void PluginProcess::clearSiteData(const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 {
-    disableTermination();
+    LocalTerminationDisabler terminationDisabler(*this);
 
     if (NetscapePluginModule* module = netscapePluginModule()) {
         if (sites.isEmpty()) {
@@ -193,8 +191,6 @@ void PluginProcess::clearSiteData(const Vector<String>& sites, uint64_t flags, u
     }
 
     m_connection->send(Messages::PluginProcessProxy::DidClearSiteData(callbackID), 0);
-
-    enableTermination();
 }
 
 } // namespace WebKit
