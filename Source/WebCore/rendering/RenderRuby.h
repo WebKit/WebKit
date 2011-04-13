@@ -47,6 +47,8 @@ namespace WebCore {
 //              1-n inline object(s)
 //
 // Note: <rp> elements are defined as having 'display:none' and thus normally are not assigned a renderer.
+//
+// Generated :before/:after content is shunted into anonymous inline blocks
 
 // <ruby> when used as 'display:inline'
 class RenderRubyAsInline : public RenderInline {
@@ -54,7 +56,6 @@ public:
     RenderRubyAsInline(Node*);
     virtual ~RenderRubyAsInline();
 
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject* child);
 
@@ -71,7 +72,6 @@ public:
     RenderRubyAsBlock(Node*);
     virtual ~RenderRubyAsBlock();
 
-    virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject* child);
 

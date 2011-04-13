@@ -1,3 +1,34 @@
+2011-04-13  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Bug 55930 - Incorrect handling of 'display:' property within nested <ruby> tags
+        https://bugs.webkit.org/show_bug.cgi?id=55930
+
+        Non-inline :before/:after generated content is now wrapped with an anonymous inline block.
+
+        Also, added an additional check in RenderObjectChildList::updateBeforeAfterContent()
+        to verify that the created render object is legal under the parent.
+
+        Tests: fast/ruby/after-block-doesnt-crash.html
+               fast/ruby/after-table-doesnt-crash.html
+               fast/ruby/before-block-doesnt-crash.html
+               fast/ruby/before-table-doesnt-crash.html
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+        * rendering/RenderRuby.cpp:
+        (WebCore::isAnonymousRubyInlineBlock):
+        (WebCore::rubyBeforeBlock):
+        (WebCore::rubyAfterBlock):
+        (WebCore::createAnonymousRubyInlineBlock):
+        (WebCore::lastRubyRun):
+        (WebCore::RenderRubyAsInline::addChild):
+        (WebCore::RenderRubyAsInline::removeChild):
+        (WebCore::RenderRubyAsBlock::addChild):
+        (WebCore::RenderRubyAsBlock::removeChild):
+        * rendering/RenderRuby.h:
+
 2011-04-13  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

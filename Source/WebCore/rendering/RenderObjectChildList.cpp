@@ -456,6 +456,12 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
                 ASSERT(styledObject->node()); // The styled object cannot be anonymous or else it could not have ':before' or ':after' pseudo elements.
                 generatedContentContainer->setNode(styledObject->node()); // This allows access to the generatingNode.
                 generatedContentContainer->setStyle(pseudoElementStyle);
+                if (!owner->isChildAllowed(generatedContentContainer, pseudoElementStyle)) {
+                    // The generated content container is not allowed here -> abort.
+                    generatedContentContainer->destroy();
+                    renderer->destroy();
+                    return;
+                }
                 owner->addChild(generatedContentContainer, insertBefore);
             }
             if (generatedContentContainer->isChildAllowed(renderer, pseudoElementStyle))

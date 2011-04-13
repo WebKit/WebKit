@@ -1,3 +1,22 @@
+2011-04-13  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Bug 55930 - Incorrect handling of 'display:' property within nested <ruby> tags
+        https://bugs.webkit.org/show_bug.cgi?id=55930
+
+        Test that 'display: block' and 'display: table' on generated :before/:after content
+        within <ruby> doesn't crash.
+        
+        * fast/ruby/after-block-doesnt-crash-expected.txt: Added.
+        * fast/ruby/after-block-doesnt-crash.html: Added.
+        * fast/ruby/after-table-doesnt-crash-expected.txt: Added.
+        * fast/ruby/after-table-doesnt-crash.html: Added.
+        * fast/ruby/before-block-doesnt-crash-expected.txt: Added.
+        * fast/ruby/before-block-doesnt-crash.html: Added.
+        * fast/ruby/before-table-doesnt-crash-expected.txt: Added.
+        * fast/ruby/before-table-doesnt-crash.html: Added.
+
 2011-04-13  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Chris Marrin.
