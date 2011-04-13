@@ -71,6 +71,7 @@ ARCHIVE_DIR_NAME_DICT = {
     'chromium-mac-leopard': 'Webkit_Mac10_5',
     'chromium-mac-snowleopard': 'Webkit_Mac10_6',
     'chromium-linux-x86': 'Webkit_Linux',
+    'chromium-linux-x86_64': 'Webkit_Linux_64',
     'chromium-gpu-mac-leopard': 'Webkit_Mac10_5_-_GPU',
     'chromium-gpu-win-xp': 'Webkit_Win_-_GPU',
     'chromium-gpu-linux': 'Webkit_Linux_-_GPU',
