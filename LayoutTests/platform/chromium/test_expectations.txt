@@ -1568,10 +1568,6 @@ BUGCR18116 : fast/dom/prototype-inheritance-2.html = TEXT
 // New in WebKit r52559
 BUGCR18116 : svg/custom/global-constructors.html = TEXT
 
-// Flaky crashes
-BUGCR18656 MAC RELEASE : fast/dom/Window/window-lookup-precedence.html = FAIL
-BUGCR18656 MAC DEBUG : fast/dom/Window/window-lookup-precedence.html = FAIL
-
 // Test failures from WebKit merge 46894 to 46977
 BUGCR26737 : fast/js/prototypes.html = FAIL
 
@@ -3135,8 +3131,6 @@ BUGCR75632 LINUX : svg/W3C-SVG-1.1/text-text-03-b.svg = CRASH PASS
 
 // Test changed in Wk r80743, throws an exception rather than returning 'true'
 BUGCR75740 : fast/js/regexp-test-null-string.html = FAIL
-
-BUGWK56608 WIN : fast/dom/Window/window-lookup-precedence.html = TEXT
 
 // Skip an overly restrictive cross-origin HTTPS test
 BUGCR69594 SKIP : http/tests/appcache/different-https-origin-resource-main.html = FAIL

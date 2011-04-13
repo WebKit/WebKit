@@ -41,11 +41,13 @@ function check(prop) {
     // showModalDialog is not currently implemented in DumpRenderTree for all platforms.
     if (name == "showModalDialog")
       return;
-    // Check subframe precedence.
-    try {
-      subframe[name] = name;
-    } catch (e) {
-      debug("Unable to set subframe[" + name + "]: " + e);
+    if (name != "location") { // Avoid navigating the subframe.
+      // Check subframe precedence.
+      try {
+        subframe[name] = name;
+      } catch (e) {
+        debug("Unable to set subframe[" + name + "]: " + e);
+      }
     }
     checkValue(name, original);
 
