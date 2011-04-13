@@ -47,7 +47,7 @@ enum SerializationReturnCode {
     UnspecifiedError
 };
     
-enum SerializationErrorMode { Throwing, NonThrowing };
+enum SerializationErrorMode { NonThrowing, Throwing };
 
 class SharedBuffer;
 

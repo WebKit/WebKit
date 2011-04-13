@@ -1342,7 +1342,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(ExecState* exec,
 {
     Vector<uint8_t> buffer;
     SerializationReturnCode code = CloneSerializer::serialize(exec, value, buffer);
-    if (throwExceptions)
+    if (throwExceptions == Throwing)
         maybeThrowExceptionIfSerializationFailed(exec, code);
 
     if (!serializationDidCompleteSuccessfully(code))
@@ -1389,7 +1389,7 @@ String SerializedScriptValue::toString()
 JSValue SerializedScriptValue::deserialize(ExecState* exec, JSGlobalObject* globalObject, SerializationErrorMode throwExceptions)
 {
     DeserializationResult result = CloneDeserializer::deserialize(exec, globalObject, m_data);
-    if (throwExceptions)
+    if (throwExceptions == Throwing)
         maybeThrowExceptionIfSerializationFailed(exec, result.second);
     return result.first;
 }
@@ -1431,10 +1431,8 @@ void SerializedScriptValue::maybeThrowExceptionIfSerializationFailed(ExecState* 
         throwError(exec, createTypeError(exec, "Unable to deserialize data."));
         break;
     case ExistingExceptionError:
-        throwError(exec, createTypeError(exec, "Javascript has thrown an exception.  Halting serialization."));
         break;
     case UnspecifiedError:
-        throwError(exec, createTypeError(exec, "Unknown error while serializing or deserializing data."));
         break;
     default:
         ASSERT_NOT_REACHED();
