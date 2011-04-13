@@ -1,0 +1,71 @@
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+}
+
+h1 {
+  border-bottom: solid 1px #ccc;
+}
+
+#builder-picker body,
+#add-form body {
+  margin: 0;
+}
+
+#builder-picker, 
+#builder-picker body {
+  height: 100%;
+}
+
+#builder-picker body {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+#builder-picker-controls {
+  padding: 0.5em;
+  border-bottom: solid 1px black;
+}
+
+#builder-picker-controls select {
+  min-width: 10em;
+}
+
+#builder-frame {
+  border: 0;
+  -webkit-box-flex: 1;
+  display: block;
+}
+
+.status {
+  font-size: 16px;
+  text-align: center;
+  padding: 1em;
+}
+
+.test-table {
+  border-collapse: collapse;
+}
+
+.test-table caption {
+  font-size: 16px;
+  font-weight: bold;
+  background: #eee;
+  padding: .5em;
+}
+
+.test-table th {
+  text-align: left;
+  border-bottom: solid 1px #ccc;
+  background: #eee;
+  min-width: 8em;
+}
+
+.test-table tbody tr:hover {
+  background: #ffa;
+}
+
+.test-table .submit-row {
+  text-align: right;
+  padding: 1em 0;
+}

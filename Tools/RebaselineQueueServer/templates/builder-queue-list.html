@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ builder_name|escape }} Queue</title>
+    <link rel="stylesheet" href="/static/styles.css" type="text/css">
+</head>
+<body>
+
+<h1>Queue: {{ builder_name|escape }}</h1>
+
+<ol>
+{% for entry in entries %}
+    <li>
+        {{ entry.test|escape }}
+    </li>
+{% empty %}
+    No tests found in queue.
+{% endfor %}
+</ol>
+
+<a href="/builder/{{ builder_name|escape }}/queue/edit">Edit queue</a>
+</body>
+</html>

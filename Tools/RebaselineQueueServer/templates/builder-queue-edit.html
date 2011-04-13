@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html id="add-form">
+<head>
+    <title>Rebaseline Queue: Edit</title>
+    <script src="http://test-results.appspot.com/dashboards/builders.js"></script>
+    <link rel="stylesheet" href="/static/styles.css" type="text/css">
+</head>
+<body">
+
+<div id="loading-indicator" class="status">Loading...</div>
+
+<form method="POST" id="form-template" style="display: none">
+    <table class="test-table">
+        <caption></caption>
+        <thead>
+            <th>Test</th>
+            <th>Expected</th>
+            <th>Actual</th>
+            <th>Results</th>
+        </thead>
+        <tbody></tbody>
+        <tbody>
+            <tr>
+              <td colspan="4" class="submit-row">
+                <input type="submit" value="">
+              </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+
+<script>
+var TEST_RESULTS_SERVER = 'http://test-results.appspot.com/';
+var BUILDER_TO_GROUP = {};
+for (var builderGroupName in LAYOUT_TESTS_BUILDER_GROUPS) {
+    for (var builderName in LAYOUT_TESTS_BUILDER_GROUPS[builderGroupName]) {
+        BUILDER_TO_GROUP[builderName] = builderGroupName;
+    }
+}
+
+// Extract template parameters
+var builderName = '{{ builder_name|escapejs }}';
+var queuedTestNames = {{ queued_test_names|safe }};
+
+function init()
+{
+  var builderMaster = BUILDER_TO_MASTER[builderName];
+  var resultsUrl = TEST_RESULTS_SERVER + 'testfile?builder=' + builderName +
+      '&master=' + builderMaster.name +
+      '&testtype=layout-tests&name=full_results.json';
+
+  var script = document.createElement('script');
+  script.src = resultsUrl;
+  document.getElementsByTagName('head')[0].appendChild(script);
+}
+
+function ADD_RESULTS(results)
+{
+    var builderGroupName = BUILDER_TO_GROUP[builderName];
+
+    var tests = results.tests;
+    var failingTests = [];
+    var queuedTests = [];
+    for (var test in tests) {
+        var testResults = tests[test];
+        if (testResults.actual == testResults.expected ||
+            testResults.expected.split(' ').indexOf(testResults.actual) != -1 ||
+            testResults.actual == 'SKIP' ||
+            testResults.actual.indexOf('PASS') != -1 ||
+            (testResults.actual != 'PASS' && testResults.expected.indexOf('FAIL') != -1)) {
+            continue;
+        }
+
+        testResults.name = test;
+
+        if (queuedTestNames.indexOf(test) != -1) {
+            queuedTests.push(testResults);
+            queuedTestNames.splice(queuedTestNames.indexOf(test), 1);
+        } else {
+            failingTests.push(testResults);
+        }
+    }
+
+    // If we have remaining queued tests that are currently not failing,
+    // synthesize results for them.
+    queuedTestNames.forEach(function(queuedTestName) {
+        queuedTests.push({
+          name: queuedTestName,
+          actual: 'UNKNOWN',
+          expected: 'UNKNOWN'
+        });
+    });
+
+    document.getElementById('loading-indicator').style.display = 'none';
+
+    renderTestResults(
+        failingTests,
+        'add',
+        'Failing tests',
+        'Add to rebaseline queue',
+        'No failing tests.');
+    renderTestResults(
+        queuedTests,
+        'remove',
+        'Queued tests',
+        'Remove from rebaseline queue',
+        'No queued tests.');
+}
+
+function renderTestResults(testResults, formAction, title, submitLabel, emptyMessage)
+{
+    if (testResults.length == 0) {
+        var emptyNode = document.createElement('div');
+        emptyNode.className = 'status';
+        emptyNode.textContent = emptyMessage;
+        document.body.appendChild(emptyNode);
+        return;
+    }
+
+    var form = document.getElementById('form-template').cloneNode(true);
+    form.action = '/builder/' + builderName + '/queue/' + formAction;
+    form.style.display = '';
+    document.body.appendChild(form);
+
+    var testsTable = form.querySelector('.test-table');
+    testsTable.querySelector('caption').textContent = title;
+    testsTable.querySelector('input[type=submit]').value = submitLabel;
+
+    testResults.sort(function(a, b) {
+        return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
+    });
+
+    testResults.forEach(function(result) {
+        var testRow = document.createElement('tr');
+
+        var testCell = document.createElement('td');
+        testRow.appendChild(testCell);
+        var testCheckbox = document.createElement('input');
+        testCheckbox.type = 'checkbox';
+        testCheckbox.name = 'test';
+        testCheckbox.value = result.name;
+        testCheckbox.id = result.name;
+        testCell.appendChild(testCheckbox);
+
+        var testName = document.createElement('label');
+        testName.textContent = result.name;
+        testName.setAttribute('for', result.name);
+        testCell.appendChild(testName);
+
+        var expectedCell = document.createElement('td');
+        testRow.appendChild(expectedCell);
+        expectedCell.textContent = result.expected;
+
+        var actualCell = document.createElement('td');
+        testRow.appendChild(actualCell);
+        actualCell.textContent = result.actual;
+
+        var resultsCell = document.createElement('td');
+        testRow.appendChild(resultsCell);
+        var resultsLink = document.createElement('a');
+        resultsLink.target = '_blank';
+        resultsLink.href = TEST_RESULTS_SERVER +
+            'dashboards/flakiness_dashboard.html#tests=' + result.name +
+            '&group=' + builderGroupName;
+        resultsLink.textContent = 'Flakiness dashboard';
+        resultsCell.appendChild(resultsLink);
+
+        testsTable.tBodies[0].appendChild(testRow);
+    });
+}
+
+init();
+</script>
+
+</body>
+</html>
