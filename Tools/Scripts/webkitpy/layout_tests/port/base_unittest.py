@@ -232,7 +232,7 @@ class PortTest(unittest.TestCase):
         port = base.Port(port_name='foo')
         self.assertEqual(port.name(), 'foo')
 
-    def test_baseline_search_path(self):
+    def test_additional_platform_directory(self):
         filesystem = MockFileSystem()
         options, args = optparse.OptionParser().parse_args([])
         port = base.Port(port_name='foo', filesystem=filesystem, options=options)
@@ -240,13 +240,13 @@ class PortTest(unittest.TestCase):
         layout_test_dir = port.layout_tests_dir()
         test_file = filesystem.join(layout_test_dir, 'fast', 'test.html')
 
-        # No baseline search path
+        # No additional platform directory
         self.assertEqual(
             port.expected_baselines(test_file, '.txt'),
             [(None, 'fast/test-expected.txt')])
 
-        # Simple search path
-        options.baseline_search_path = ['/tmp/local-baselines']
+        # Simple additional platform directory
+        options.additional_platform_directory = ['/tmp/local-baselines']
         filesystem.files = {
             '/tmp/local-baselines/fast/test-expected.txt': 'foo',
         }
@@ -254,8 +254,8 @@ class PortTest(unittest.TestCase):
             port.expected_baselines(test_file, '.txt'),
             [('/tmp/local-baselines', 'fast/test-expected.txt')])
 
-        # Multiple entries in search path
-        options.baseline_search_path = ['/foo', '/tmp/local-baselines']
+        # Multiple additional platform directories
+        options.additional_platform_directory = ['/foo', '/tmp/local-baselines']
         self.assertEqual(
             port.expected_baselines(test_file, '.txt'),
             [('/tmp/local-baselines', 'fast/test-expected.txt')])

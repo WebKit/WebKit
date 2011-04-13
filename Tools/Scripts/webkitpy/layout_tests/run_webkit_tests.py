@@ -160,14 +160,14 @@ def _set_up_derived_options(port_obj, options):
 
     options.slow_time_out_ms = str(5 * int(options.time_out_ms))
 
-    if options.baseline_search_path:
-        normalized_search_paths = []
-        for path in options.baseline_search_path:
+    if options.additional_platform_directory:
+        normalized_platform_directories = []
+        for path in options.additional_platform_directory:
             if not port_obj._filesystem.isabs(path):
-                warnings.append("--baseline-search-path=%s is ignored since it is not absolute" % path)
+                warnings.append("--additional-platform-directory=%s is ignored since it is not absolute" % path)
                 continue
-            normalized_search_paths.append(port_obj._filesystem.normpath(path))
-        options.baseline_search_path = normalized_search_paths
+            normalized_platform_directories.append(port_obj._filesystem.normpath(path))
+        options.additional_platform_directory = normalized_platform_directories
 
     return warnings
 
@@ -292,7 +292,7 @@ def parse_args(args=None):
         optparse.make_option("--reset-results", action="store_true",
             default=False, help="Reset any existing baselines to the "
                  "generated results"),
-        optparse.make_option("--baseline-search-path", action="append",
+        optparse.make_option("--additional-platform-directory", action="append",
             default=[], help="Additional directory where to look for test "
                  "baselines (will take precendence over platform baselines). "
                  "Specify multiple times to add multiple search path entries."),

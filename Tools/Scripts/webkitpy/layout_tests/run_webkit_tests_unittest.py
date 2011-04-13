@@ -575,15 +575,15 @@ class MainTest(unittest.TestCase):
                                   include_reference_html=True)
         self.assertEquals(['passes/mismatch.html', 'passes/mismatch-expected-mismatch.html'], tests_run)
 
-    def test_baseline_search_path(self):
-        self.assertTrue(passing_run(['--baseline-search-path', '/tmp/foo']))
-        self.assertTrue(passing_run(['--baseline-search-path', '/tmp/../foo']))
-        self.assertTrue(passing_run(['--baseline-search-path', '/tmp/foo',
-            '--baseline-search-path', '/tmp/bar']))
+    def test_additional_platform_directory(self):
+        self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/foo']))
+        self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/../foo']))
+        self.assertTrue(passing_run(['--additional-platform-directory', '/tmp/foo',
+            '--additional-platform-directory', '/tmp/bar']))
 
         res, buildbot_output, regular_output, user = logging_run(
-             ['--baseline-search-path', 'foo'])
-        self.assertTrue('--baseline-search-path=foo is ignored since it is not absolute\n'
+             ['--additional-platform-directory', 'foo'])
+        self.assertTrue('--additional-platform-directory=foo is ignored since it is not absolute\n'
                         in regular_output.get())
 
 

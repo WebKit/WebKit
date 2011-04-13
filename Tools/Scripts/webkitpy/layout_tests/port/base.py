@@ -285,7 +285,7 @@ class Port(object):
 
         baseline_filename = testname + '-expected' + suffix
 
-        baseline_search_path = self.get_option('baseline_search_path', []) + self.baseline_search_path()
+        baseline_search_path = self.get_option('additional_platform_directory', []) + self.baseline_search_path()
 
         baselines = []
         for platform_dir in baseline_search_path:

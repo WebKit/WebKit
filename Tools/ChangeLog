@@ -2,6 +2,21 @@
 
         Reviewed by Eric Seidel.
 
+        [NRWT] Rename --baseline-search-patch to --additional-platform-directory to match ORWT
+        https://bugs.webkit.org/show_bug.cgi?id=58489
+        
+        r83743 added --additional-platform-directory to old-run-webkit-tests,
+        rename the equivalent flag in new-run-webkit-tests to be consistent.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
+2011-04-13  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Rebaseline queue server
         https://bugs.webkit.org/show_bug.cgi?id=57891
 
