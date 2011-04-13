@@ -252,20 +252,20 @@ RenderLineBoxList* InlineFlowBox::rendererLineBoxes() const
     return toRenderInline(renderer())->lineBoxes();
 }
 
-bool InlineFlowBox::onEndChain(RenderObject* endObject)
+static inline bool isLastChildForRenderer(RenderObject* ancestor, RenderObject* child)
 {
-    if (!endObject)
+    if (!child)
         return false;
     
-    if (endObject == renderer())
+    if (child == ancestor)
         return true;
 
-    RenderObject* curr = endObject;
+    RenderObject* curr = child;
     RenderObject* parent = curr->parent();
     while (parent && (!parent->isRenderBlock() || parent->isInline())) {
         if (parent->lastChild() != curr)
             return false;
-        if (parent == renderer())
+        if (parent == ancestor)
             return true;
             
         curr = parent;
@@ -309,7 +309,7 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLogically
 
         if (!lineBoxList->lastLineBox()->isConstructed()) {
             RenderInline* inlineFlow = toRenderInline(renderer());
-            bool isLastObjectOnLine = !isAnsectorAndWithinBlock(renderer(), logicallyLastRunRenderer) || (onEndChain(logicallyLastRunRenderer) && !isLogicallyLastRunWrapped);
+            bool isLastObjectOnLine = !isAnsectorAndWithinBlock(renderer(), logicallyLastRunRenderer) || (isLastChildForRenderer(renderer(), logicallyLastRunRenderer) && !isLogicallyLastRunWrapped);
 
             // We include the border under these conditions:
             // (1) The next line was not created, or it is constructed. We check the previous line for rtl.

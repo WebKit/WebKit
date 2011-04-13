@@ -1,3 +1,17 @@
+2011-04-12  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Rename onEndChain and make it a static method.
+        https://bugs.webkit.org/show_bug.cgi?id=58403
+
+        No new tests since this is refactoring only.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::isLastChildForRenderer):
+        (WebCore::InlineFlowBox::determineSpacingForFlowBoxes):
+        * rendering/InlineFlowBox.h:
+
 2011-04-12  Eric Carlson  <eric.carlson@apple.com>
 
         Not reviewed, build fix.
