@@ -630,18 +630,13 @@ void QNetworkReplyHandler::start()
     m_replyWrapper = new QNetworkReplyWrapper(&m_queue, reply, this);
 
     if (m_loadType == SynchronousLoad && m_replyWrapper->reply()->isFinished()) {
+        m_replyWrapper->synchronousLoad();
         // If supported, a synchronous request will be finished at this point, no need to hook up the signals.
         return;
     }
 
     if (m_resourceHandle->firstRequest().reportUploadProgress())
         connect(m_replyWrapper->reply(), SIGNAL(uploadProgress(qint64, qint64)), this, SLOT(uploadProgress(qint64, qint64)));
-}
-
-void QNetworkReplyHandler::synchronousLoad()
-{
-    if (m_replyWrapper)
-        m_replyWrapper->synchronousLoad();
 }
 
 }
