@@ -1,3 +1,15 @@
+2011-04-13  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK platform results for full-screen-zIndex.html test.
+
+        [GTK] fullscreen/full-screen-zIndex.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=58444
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fullscreen/full-screen-zIndex-expected.checksum: Added.
+        * platform/gtk/fullscreen/full-screen-zIndex-expected.png: Added.
+        * platform/gtk/fullscreen/full-screen-zIndex-expected.txt: Added.
+
 2011-04-13  Jessie Berlin  <jberlin@apple.com>
 
         http/tests/inspector/extensions-resources-redirect.html and

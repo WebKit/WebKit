@@ -1373,6 +1373,3 @@ fast/forms/input-number-large-padding.html
 # https://bugs.webkit.org/show_bug.cgi?id=58309
 fast/canvas/DrawImageSinglePixelStretch.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=58444
-fullscreen/full-screen-zIndex.html
-
