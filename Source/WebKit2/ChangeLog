@@ -1,3 +1,20 @@
+2011-04-13  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Should not rely on WKEditableLinkBehavior being in synch
+        with WebCore::EditableLinkBehavior.
+        https://bugs.webkit.org/show_bug.cgi?id=58473
+
+        Adding conversion routines.
+
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toEditableLinkBehavior):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetEditableLinkBehavior):
+        (WKPreferencesGetEditableLinkBehavior):
+
 2011-04-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
