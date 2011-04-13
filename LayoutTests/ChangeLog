@@ -1,3 +1,11 @@
+2011-04-13  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed.
+        Rebaselined expectations following console message format change in V8 bindings.
+
+        * platform/chromium/fast/dom/error-to-string-stack-overflow-expected.txt:
+        * platform/chromium/fast/js/recursion-limit-equal-expected.txt:
+
 2011-04-13  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
