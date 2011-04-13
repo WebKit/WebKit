@@ -45,7 +45,9 @@ TestRunner2  --> _InlineManager ---> _InlineWorker <-> Worker
 
 import logging
 import optparse
+import printing
 import Queue
+import sys
 import thread
 import threading
 import time
@@ -315,9 +317,15 @@ if multiprocessing:
             _log.error("%s (pid %d) is wedged on test %s" % (self.name, self.pid, test_name))
 
         def run(self):
-            logging.basicConfig()
-            port_obj = port.get(self._platform_name, self._options)
+            options = self._options
+            port_obj = port.get(self._platform_name, options)
+            # FIXME: this won't work if the calling process is logging
+            # somewhere other than sys.stderr and sys.stdout, but I'm not sure
+            # if this will be an issue in practice.
+            printer = printing.Printer(port_obj, options, sys.stderr, sys.stdout,
+                int(options.child_processes), options.experimental_fully_parallel)
             self._client.run(port_obj)
+            printer.cleanup()
 
 
 class _MultiProcessWorkerConnection(_WorkerConnection):

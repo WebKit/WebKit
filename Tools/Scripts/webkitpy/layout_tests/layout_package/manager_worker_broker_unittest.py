@@ -42,6 +42,7 @@ from webkitpy.common.system import outputcapture
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.layout_package import manager_worker_broker
 from webkitpy.layout_tests.layout_package import message_broker2
+from webkitpy.layout_tests.layout_package import printing
 
 # In order to reliably control when child workers are starting and stopping,
 # we use a pair of global variables to hold queues used for messaging. Ideally
@@ -104,7 +105,10 @@ class _TestWorker(manager_worker_broker.AbstractWorker):
 
 
 def get_options(worker_model):
-    option_list = manager_worker_broker.runtime_options()
+    option_list = (manager_worker_broker.runtime_options() +
+                   printing.print_options() +
+                   [optparse.make_option("--experimental-fully-parallel", default=False),
+                    optparse.make_option("--child-processes", default='2')])
     parser = optparse.OptionParser(option_list=option_list)
     options, args = parser.parse_args(args=['--worker-model', worker_model])
     return options

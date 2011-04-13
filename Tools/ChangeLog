@@ -2,6 +2,19 @@
 
         Reviewed by Ojan Vafai.
 
+        new-run-webkit-tests: configure logging in child processes properly
+        https://bugs.webkit.org/show_bug.cgi?id=58296
+
+        Logging propagated properly from manager to worker processes on
+        Unix but not on Windows; this fixes that.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker_unittest.py:
+
+2011-04-13  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
         new-run-webkit-tests: suppress extraneous pretty patch warnings
         https://bugs.webkit.org/show_bug.cgi?id=58295
 
