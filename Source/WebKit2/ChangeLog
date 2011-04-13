@@ -1,3 +1,17 @@
+2011-04-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION (WebKit2): Input methods are active in non-editable content
+        https://bugs.webkit.org/show_bug.cgi?id=58404
+        <rdar://problem/9275940>
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView insertText:]): Re-add the old variant of this function, because it's not only part
+        of deprecated NSTextInput protocol, but it's also part of NSResponder, and it's called when
+        the input context in nil.
+        (-[WKView inputContext]): Return nil when not in editable content.
+
 2011-04-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Maciej Stachowiak.

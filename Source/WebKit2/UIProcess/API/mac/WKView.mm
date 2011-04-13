@@ -1070,6 +1070,14 @@ static const short kIOHIDEventTypeScroll = 6;
     }
 }
 
+- (void)insertText:(id)string
+{
+    // Unlike and NSTextInputClient variant with replacementRange, this NSResponder method is called when there is no input context,
+    // so text input processing isn't performed. We are not going to actually insert any text in that case, but saving an insertText
+    // command ensures that a keypress event is dispatched as appropriate.
+    [self insertText:string replacementRange:NSMakeRange(NSNotFound, 0)];
+}
+
 - (void)insertText:(id)string replacementRange:(NSRange)replacementRange
 {
     BOOL isAttributedString = [string isKindOfClass:[NSAttributedString class]];
@@ -1232,8 +1240,16 @@ static const short kIOHIDEventTypeScroll = 6;
 
 - (NSTextInputContext *)inputContext
 {
-    if (_data->_pluginComplexTextInputIdentifier && !_data->_interpretKeyEventsParameters)
+    WKViewInterpretKeyEventsParameters* parameters = _data->_interpretKeyEventsParameters;
+
+    if (_data->_pluginComplexTextInputIdentifier && !parameters)
         return [[WKTextInputWindowController sharedTextInputWindowController] inputContext];
+
+    // Disable text input machinery when in non-editable content. An invisible inline input area affects performance, and can prevent Expose from working.
+    if (parameters && !parameters->cachedTextInputState.selectionIsEditable)
+        return nil;
+    if (!_data->_page->selectionState().isContentEditable)
+        return nil;
 
     return [super inputContext];
 }
