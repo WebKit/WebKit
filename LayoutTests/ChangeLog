@@ -1,3 +1,10 @@
+2011-04-13  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, rebaseline 2 tests for linux64 in chromium.
+
+        * platform/chromium-linux-x86_64/svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr-expected.png: Added.
+        * platform/chromium-linux-x86_64/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png: Added.
+
 2011-04-12  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
