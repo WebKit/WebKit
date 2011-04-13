@@ -140,6 +140,11 @@ FrameView::FrameView(Frame* frame)
         if (Page* page = m_frame->page()) {
             m_page = page;
             m_page->addScrollableArea(this);
+
+            if (m_frame == m_page->mainFrame()) {
+                ScrollableArea::setVerticalScrollElasticity(ScrollElasticityAllowed);
+                ScrollableArea::setHorizontalScrollElasticity(ScrollElasticityAllowed);
+            }
         }
     }
 }

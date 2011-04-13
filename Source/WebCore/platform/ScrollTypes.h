@@ -108,6 +108,12 @@ namespace WebCore {
         ScrollByPixel
     };
 
+    enum ScrollElasticity {
+        ScrollElasticityAutomatic,
+        ScrollElasticityNone,
+        ScrollElasticityAllowed
+    };
+
     enum ScrollbarOrientation { HorizontalScrollbar, VerticalScrollbar };
 
     enum ScrollbarMode { ScrollbarAuto, ScrollbarAlwaysOff, ScrollbarAlwaysOn };

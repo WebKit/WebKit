@@ -789,6 +789,22 @@ void ScrollAnimatorMac::handleWheelEvent(PlatformWheelEvent& wheelEvent)
         return;
     }
 
+    // FIXME: This is somewhat roundabout hack to allow forwarding wheel events
+    // up to the parent scrollable area. It takes advantage of the fact that
+    // the base class implemenatation of handleWheelEvent will not accept the
+    // wheel event if there is nowhere to scroll.
+    if (fabsf(wheelEvent.deltaY()) >= fabsf(wheelEvent.deltaX())) {
+        if (!allowsVerticalStretching()) {
+            ScrollAnimator::handleWheelEvent(wheelEvent);
+            return;
+        }
+    } else {
+        if (!allowsHorizontalStretching()) {
+            ScrollAnimator::handleWheelEvent(wheelEvent);
+            return;
+        }
+    }
+
     wheelEvent.accept();
 
     bool isMometumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhaseNone);
@@ -837,21 +853,37 @@ bool ScrollAnimatorMac::pinnedInDirection(float deltaX, float deltaY)
 
 bool ScrollAnimatorMac::allowsVerticalStretching() const
 {
-    Scrollbar* hScroller = m_scrollableArea->horizontalScrollbar();
-    Scrollbar* vScroller = m_scrollableArea->verticalScrollbar();
-    if (((vScroller && vScroller->enabled()) || (!hScroller || !hScroller->enabled())))
+    switch (m_scrollableArea->verticalScrollElasticity()) {
+    case ScrollElasticityAutomatic: {
+        Scrollbar* hScroller = m_scrollableArea->horizontalScrollbar();
+        Scrollbar* vScroller = m_scrollableArea->verticalScrollbar();
+        return (((vScroller && vScroller->enabled()) || (!hScroller || !hScroller->enabled())));
+    }
+    case ScrollElasticityNone:
+        return false;
+    case ScrollElasticityAllowed:
         return true;
+    }
 
+    ASSERT_NOT_REACHED();
     return false;
 }
 
 bool ScrollAnimatorMac::allowsHorizontalStretching() const
 {
-    Scrollbar* hScroller = m_scrollableArea->horizontalScrollbar();
-    Scrollbar* vScroller = m_scrollableArea->verticalScrollbar();
-    if (((hScroller && hScroller->enabled()) || (!vScroller || !vScroller->enabled())))
+    switch (m_scrollableArea->horizontalScrollElasticity()) {
+    case ScrollElasticityAutomatic: {
+        Scrollbar* hScroller = m_scrollableArea->horizontalScrollbar();
+        Scrollbar* vScroller = m_scrollableArea->verticalScrollbar();
+        return (((hScroller && hScroller->enabled()) || (!vScroller || !vScroller->enabled())));
+    }
+    case ScrollElasticityNone:
+        return false;
+    case ScrollElasticityAllowed:
         return true;
+    }
 
+    ASSERT_NOT_REACHED();
     return false;
 }
 
@@ -876,7 +908,7 @@ void ScrollAnimatorMac::smoothScrollWithEvent(PlatformWheelEvent& wheelEvent)
         deltaX = 0;
     else
         deltaY = 0;
-    
+
     bool isVerticallyStretched = false;
     bool isHorizontallyStretched = false;
     bool shouldStretch = false;

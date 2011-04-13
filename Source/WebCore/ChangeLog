@@ -1,3 +1,43 @@
+2011-04-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Frames prevent scrolling containing page
+        <rdar://problem/8990409>
+        https://bugs.webkit.org/show_bug.cgi?id=58392
+
+        Also fixes:
+        Should rubber-band on pages with no scrollbars
+        <rdar://problem/9034280>
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        Make the main frame rubber-band horizontally and vertically always.
+
+        * platform/ScrollTypes.h:
+        Add ScrollElasticity enum.
+
+        * platform/ScrollableArea.cpp:
+        Default to no elasticity.
+
+        (WebCore::ScrollableArea::ScrollableArea):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::setVerticalScrollElasticity):
+        (WebCore::ScrollableArea::verticalScrollElasticity):
+        (WebCore::ScrollableArea::setHorizontalScrollElasticity):
+        (WebCore::ScrollableArea::horizontalScrollElasticity):
+        Add state for horizontal and vertical elasticity.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::handleWheelEvent):
+        Bail out of new scrolling behavior if we can't rubber-band. By bailing before
+        accepting the wheel event, we allow the wheel event to be forwarded. We will
+        need to refine this logic to allow subframe scrolling in the future.
+
+        (WebCore::ScrollAnimatorMac::allowsVerticalStretching):
+        (WebCore::ScrollAnimatorMac::allowsHorizontalStretching):
+        Switch stretching behavior based on the ScrollableArea's elasticity.
+
 2011-04-12  Geoffrey Garen  <ggaren@apple.com>
 
         Not reviewed.

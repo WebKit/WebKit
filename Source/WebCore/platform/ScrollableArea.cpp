@@ -44,6 +44,8 @@ ScrollableArea::ScrollableArea()
     : m_scrollAnimator(ScrollAnimator::create(this))
     , m_constrainsScrollingToContentEdge(true)
     , m_inLiveResize(false)
+    , m_verticalScrollElasticity(ScrollElasticityNone)
+    , m_horizontalScrollElasticity(ScrollElasticityNone)
 {
 }
 

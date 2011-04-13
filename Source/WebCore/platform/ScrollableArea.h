@@ -57,6 +57,12 @@ public:
     bool constrainsScrollingToContentEdge() const { return m_constrainsScrollingToContentEdge; }
     void setConstrainsScrollingToContentEdge(bool constrainsScrollingToContentEdge) { m_constrainsScrollingToContentEdge = constrainsScrollingToContentEdge; }
 
+    void setVerticalScrollElasticity(ScrollElasticity scrollElasticity) { m_verticalScrollElasticity = scrollElasticity; }
+    ScrollElasticity verticalScrollElasticity() const { return m_verticalScrollElasticity; }
+
+    void setHorizontalScrollElasticity(ScrollElasticity scrollElasticity) { m_horizontalScrollElasticity = scrollElasticity; }
+    ScrollElasticity horizontalScrollElasticity() const { return m_horizontalScrollElasticity; }
+
     bool inLiveResize() const { return m_inLiveResize; }
     void willStartLiveResize();
     void willEndLiveResize();
@@ -129,6 +135,9 @@ private:
     bool m_constrainsScrollingToContentEdge;
 
     bool m_inLiveResize;
+
+    ScrollElasticity m_verticalScrollElasticity;
+    ScrollElasticity m_horizontalScrollElasticity;
 
 protected:
     // There are 8 possible combinations of writing mode and direction. Scroll origin will be non-zero in the x or y axis
