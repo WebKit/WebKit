@@ -1,3 +1,9 @@
+2011-04-13  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip failing fullscreen test on GTK.
+
+        * platform/gtk/Skipped:
+
 2011-04-13  Jessie Berlin  <jberlin@apple.com>
 
         [Windows XP Debug Tests] fast/events/pageshow-pagehide-on-back-cached-with-frames.html
