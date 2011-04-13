@@ -1,3 +1,14 @@
+2011-04-13  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        WebKit2 will load two copies of the same plugin, but should not
+        https://bugs.webkit.org/show_bug.cgi?id=49075
+        <rdar://problem/8635947>
+
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::PluginInfoStore::shouldUsePlugin): Don't use a plug-in if we've already allowed a plug-in with the same filename.
+
 2011-04-13  Timothy Hatcher  <timothy@apple.com>
 
         Hide the dictionary panel when navigating or crashing.

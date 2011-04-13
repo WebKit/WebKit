@@ -339,9 +339,6 @@ static bool isNewWindowsMediaPlayerPlugin(const PluginInfoStore::Plugin& plugin)
 
 bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
 {
-    // FIXME: We should prefer a newer version of a plugin to an older version, rather than loading
-    // both. <http://webkit.org/b/49075>
-
     if (plugin.info.name == "Citrix ICA Client") {
         // The Citrix ICA Client plug-in requires a Mozilla-based browser; see <rdar://6418681>.
         return false;
@@ -391,6 +388,19 @@ bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
             m_plugins.remove(i);
         }
         return true;
+    }
+
+    // FIXME: We should prefer a newer version of a plugin to an older version, rather than loading
+    // only the first. <http://webkit.org/b/58469>
+    String pluginPath = plugin.path;
+    String pluginFileName(::PathFindFileNameW(pluginPath.charactersWithNullTermination()));
+    for (size_t i = 0; i < m_plugins.size(); ++i) {
+        Plugin& loadedPlugin = m_plugins[i];
+
+        // If a plug-in with the same filename already exists, we don't want to load it.
+        String loadedPluginFileName(::PathFindFileNameW(loadedPlugin.path.charactersWithNullTermination()));
+        if (equalIgnoringCase(pluginFileName, loadedPluginFileName))
+            return false;
     }
 
     return true;
