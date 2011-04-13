@@ -1,3 +1,17 @@
+2011-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Remove std:: prefix on some min/max calls
+        https://bugs.webkit.org/show_bug.cgi?id=58493
+
+        Remove std:: namespacing on min/max in favor of a 'using' clause.
+
+        * platform/graphics/RoundedIntRect.cpp:
+        (WebCore::RoundedIntRect::Radii::expand):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::calcConstraintScaleFor):
+
 2011-04-13  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.

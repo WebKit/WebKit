@@ -778,22 +778,22 @@ static float calcConstraintScaleFor(const IntRect& rect, const RoundedIntRect::R
     // top
     radiiSum = static_cast<unsigned>(radii.topLeft().width()) + static_cast<unsigned>(radii.topRight().width()); // Casts to avoid integer overflow.
     if (radiiSum > static_cast<unsigned>(rect.width()))
-        factor = std::min(static_cast<float>(rect.width()) / radiiSum, factor);
+        factor = min(static_cast<float>(rect.width()) / radiiSum, factor);
 
     // bottom
     radiiSum = static_cast<unsigned>(radii.bottomLeft().width()) + static_cast<unsigned>(radii.bottomRight().width());
     if (radiiSum > static_cast<unsigned>(rect.width()))
-        factor = std::min(static_cast<float>(rect.width()) / radiiSum, factor);
+        factor = min(static_cast<float>(rect.width()) / radiiSum, factor);
     
     // left
     radiiSum = static_cast<unsigned>(radii.topLeft().height()) + static_cast<unsigned>(radii.bottomLeft().height());
     if (radiiSum > static_cast<unsigned>(rect.height()))
-        factor = std::min(static_cast<float>(rect.height()) / radiiSum, factor);
+        factor = min(static_cast<float>(rect.height()) / radiiSum, factor);
     
     // right
     radiiSum = static_cast<unsigned>(radii.topRight().height()) + static_cast<unsigned>(radii.bottomRight().height());
     if (radiiSum > static_cast<unsigned>(rect.height()))
-        factor = std::min(static_cast<float>(rect.height()) / radiiSum, factor);
+        factor = min(static_cast<float>(rect.height()) / radiiSum, factor);
     
     ASSERT(factor <= 1);
     return factor;
