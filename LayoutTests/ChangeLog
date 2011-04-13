@@ -1,3 +1,14 @@
+2011-04-13  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows XP Debug Tests] fast/events/pageshow-pagehide-on-back-cached-with-frames.html
+        failing since r83699
+        https://bugs.webkit.org/show_bug.cgi?id=58441
+
+        Add the Windows-XP specific expected failing results to get the bots green.
+
+        * platform/win-xp/fast/events: Added.
+        * platform/win-xp/fast/events/pageshow-pagehide-on-back-cached-with-frames-expected.txt: Added.
+
 2011-04-13  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline of an svg test updated in r83710 and
