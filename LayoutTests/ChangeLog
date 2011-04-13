@@ -1,3 +1,33 @@
+2011-04-12  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        compositing/objects/composited-object-alignment.html causing failures in other tests since its introduction in r83518
+        https://bugs.webkit.org/show_bug.cgi?id=58323
+
+        Got rid of unnecessary JS from composited-subframe.html. This was mistakenly left in from previous experiments.
+        Also moved pixel results to be platform specific. These are for Mac WebKit and WebKit2. There are color diffs
+        between the two platforms, so I will make them all platform specific.
+
+        * compositing/framesets/composited-frame-alignment-expected.checksum: Removed.
+        * compositing/framesets/composited-frame-alignment-expected.png: Removed.
+        * compositing/objects/composited-object-alignment-expected.checksum: Removed.
+        * compositing/objects/composited-object-alignment-expected.png: Removed.
+        * compositing/objects/resources/composited-subframe.html:
+        * platform/mac-wk2/compositing: Added.
+        * platform/mac-wk2/compositing/framesets: Added.
+        * platform/mac-wk2/compositing/framesets/composited-frame-alignment-expected.checksum: Added.
+        * platform/mac-wk2/compositing/framesets/composited-frame-alignment-expected.png: Added.
+        * platform/mac-wk2/compositing/objects: Added.
+        * platform/mac-wk2/compositing/objects/composited-object-alignment-expected.checksum: Added.
+        * platform/mac-wk2/compositing/objects/composited-object-alignment-expected.png: Added.
+        * platform/mac/compositing/framesets: Added.
+        * platform/mac/compositing/framesets/composited-frame-alignment-expected.checksum: Added.
+        * platform/mac/compositing/framesets/composited-frame-alignment-expected.png: Added.
+        * platform/mac/compositing/objects: Added.
+        * platform/mac/compositing/objects/composited-object-alignment-expected.checksum: Copied from LayoutTests/compositing/objects/composited-object-alignment-expected.checksum.
+        * platform/mac/compositing/objects/composited-object-alignment-expected.png: Copied from LayoutTests/compositing/objects/composited-object-alignment-expected.png.
+
 2011-04-13  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Jian Li.

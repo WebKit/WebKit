@@ -11,19 +11,6 @@
         -webkit-transform: translateZ(0);
     }
   </style>
-  <script type="text/javascript" charset="utf-8">
-    function doTest()
-    {
-      window.setTimeout(function() {
-          if (window.layoutTestController) {
-              layoutTestController.display();
-              parent.document.getElementById('layers').innerHTML = "Layers:\n"+layoutTestController.layerTreeAsText();
-          }
-          parent.testDone();
-      }, 50);
-    }
-    window.addEventListener('load', doTest, false);
-  </script>
 </head>
 <body>
 
