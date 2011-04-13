@@ -2,29 +2,68 @@
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/debugger-test.js"></script>
+<script src="resources/obfuscated.js"></script>
 
 <script>
 
 var test = function()
 {
-    InspectorTest.runTestSuite([
+    var worker = new Worker("ScriptFormatterWorker.js");
+
+    InspectorTest.runDebuggerTestSuite([
         function testScriptFormatterWorker(next)
         {
-            var worker = new Worker("ScriptFormatterWorker.js");
-
             worker.onmessage = InspectorTest.safeWrap(function(event)
             {
                 InspectorTest.assertEquals("var x = 0;", event.data.formattedSource);
-                InspectorTest.completeTest();
+                next();
             });
 
             worker.onerror = function(event)
             {
                 InspectorTest.addResult("Error in worker: " + event.data);
-                InspectorTest.completeTest();
+                next();
             };
 
             worker.postMessage("var x=0");
+        },
+
+        function testSourceMapping(next)
+        {
+            worker.onmessage = InspectorTest.safeWrap(function(event)
+            {
+                var source = WebInspector.panels.scripts.visibleView._content;
+                var formattedSource = event.data.formattedSource;
+                var mapping = event.data.mapping;
+
+                function testMapping(string)
+                {
+                    var position = source.indexOf(string);
+                    var formattedPosition = mapping.formatted[mapping.original.upperBound(position - 1)];
+                    InspectorTest.assertEquals(string, formattedSource.substr(formattedPosition, string.length));
+                }
+
+                testMapping("onmessage");
+                testMapping("indent_start");
+                testMapping("function require");
+                testMapping("var regexp");
+                testMapping("importScripts");
+
+                next();
+            });
+
+            worker.onerror = function(event)
+            {
+                InspectorTest.addResult("Error in worker: " + event.data);
+                next();
+            };
+
+            InspectorTest.showScriptSource("obfuscated.js", didShowScriptSource);
+
+            function didShowScriptSource(sourceFrame)
+            {
+                worker.postMessage(sourceFrame._content);
+            }
         }
     ]);
 }

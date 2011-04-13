@@ -263,9 +263,10 @@ WebInspector.FormattedSourceFile.prototype = {
 
 WebInspector.FormattedSourceFile.prototype.__proto__ = WebInspector.SourceFile.prototype;
 
-WebInspector.SourceMapping = function(sortedScripts)
+WebInspector.SourceMapping = function(scripts)
 {
-    this._sortedScripts = sortedScripts;
+    this._sortedScripts = scripts.slice();
+    this._sortedScripts.sort(function(x, y) { return x.lineOffset - y.lineOffset || x.columnOffset - y.columnOffset; });
 }
 
 WebInspector.SourceMapping.prototype = {
@@ -276,7 +277,11 @@ WebInspector.SourceMapping.prototype = {
 
     sourceLineToScriptLocation: function(lineNumber)
     {
-        var columnNumber = 0;
+        return this._sourceLocationToScriptLocation(lineNumber, 0);
+    },
+
+    _sourceLocationToScriptLocation: function(lineNumber, columnNumber)
+    {
         var closestScript = this._sortedScripts[0];
         for (var i = 1; i < this._sortedScripts.length; ++i) {
             script = this._sortedScripts[i];
@@ -288,9 +293,9 @@ WebInspector.SourceMapping.prototype = {
     }
 }
 
-WebInspector.FormattedSourceMapping = function(sortedScripts, originalText, formattedText, mapping)
+WebInspector.FormattedSourceMapping = function(scripts, originalText, formattedText, mapping)
 {
-    WebInspector.SourceMapping.call(this, sortedScripts);
+    WebInspector.SourceMapping.call(this, scripts);
     this._originalLineEndings = originalText.lineEndings();
     this._formattedLineEndings = formattedText.lineEndings();
     this._mapping = mapping;
@@ -300,27 +305,18 @@ WebInspector.FormattedSourceMapping.prototype = {
     scriptLocationToSourceLine: function(location)
     {
         var originalPosition = WebInspector.ScriptFormatter.locationToPosition(this._originalLineEndings, location);
-        var formattedPosition = this._convertPosition(this._mapping.original, this._mapping.formatted, originalPosition);
+        var index = this._mapping.original.upperBound(originalPosition - 1);
+        var formattedPosition = this._mapping.formatted[index];
         return WebInspector.ScriptFormatter.positionToLocation(this._formattedLineEndings, formattedPosition).lineNumber;
     },
 
     sourceLineToScriptLocation: function(lineNumber)
     {
         var formattedPosition = WebInspector.ScriptFormatter.lineToPosition(this._formattedLineEndings, lineNumber);
-        var originalPosition = this._convertPosition(this._mapping.formatted, this._mapping.original, formattedPosition);
+        var index = this._mapping.formatted.upperBound(formattedPosition - 1);
+        var originalPosition = this._mapping.original[index];
         var originalLocation = WebInspector.ScriptFormatter.positionToLocation(this._originalLineEndings, originalPosition);
-        return WebInspector.SourceMapping.prototype.sourceLineToScriptLocation.call(this, originalLocation.lineNumber);
-    },
-
-    _convertPosition: function(positions1, positions2, position)
-    {
-        var index = positions1.upperBound(position);
-        var range1 = positions1[index] - positions1[index - 1];
-        var range2 = positions2[index] - positions2[index - 1];
-        var position2 = positions2[index - 1];
-        if (range1)
-            position2 += Math.round((position - positions1[index - 1]) * range2 / range1);
-        return position2;
+        return WebInspector.SourceMapping.prototype._sourceLocationToScriptLocation.call(this, originalLocation.lineNumber, originalLocation.columnNumber);
     }
 }
 

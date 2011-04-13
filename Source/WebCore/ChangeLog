@@ -1,3 +1,21 @@
+2011-04-12  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: fix source mapping for de-obfuscated scripts.
+        https://bugs.webkit.org/show_bug.cgi?id=58231
+
+        * inspector/front-end/ScriptFormatterWorker.js:
+        (buildMapping):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.SourceMapping):
+        (WebInspector.SourceMapping.prototype.sourceLineToScriptLocation):
+        (WebInspector.SourceMapping.prototype._sourceLocationToScriptLocation):
+        (WebInspector):
+        (WebInspector.FormattedSourceMapping):
+        (WebInspector.FormattedSourceMapping.prototype.scriptLocationToSourceLine):
+        (WebInspector.FormattedSourceMapping.prototype.sourceLineToScriptLocation):
+
 2011-04-13  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.

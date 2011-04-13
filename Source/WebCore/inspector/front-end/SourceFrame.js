@@ -39,6 +39,7 @@ WebInspector.SourceFrame = function(delegate, url)
     this._textModel.replaceTabsWithSpaces = true;
 
     this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url, this);
+    this._textViewer.element.addStyleClass("script-view");
     this._visible = false;
 
     this._currentSearchResultIndex = -1;
@@ -305,7 +306,6 @@ WebInspector.SourceFrame.prototype = {
         this._textModel.setText(null, content);
 
         var element = this._textViewer.element;
-        element.addStyleClass("script-view");
         if (this._delegate.debuggingSupported()) {
             element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
             element.addEventListener("mousedown", this._mouseDown.bind(this), true);

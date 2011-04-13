@@ -1,5 +1,9 @@
 Tests the script formatting functionality.
 
+Debugger was enabled.
 
 Running: testScriptFormatterWorker
+
+Running: testSourceMapping
+Debugger was disabled.
 
