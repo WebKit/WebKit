@@ -1,3 +1,13 @@
+2011-04-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Not reviewed, build fix.
+
+        Fix non-accelerated build after r83667.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable): Guard call to 
+            mediaPlayerRenderingModeChanged with USE(ACCELERATED_COMPOSITING.
+
 2011-04-12  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
