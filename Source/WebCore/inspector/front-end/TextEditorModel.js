@@ -93,7 +93,7 @@ WebInspector.TextEditorModel.prototype = {
     {
         if (!range)
             range = new WebInspector.TextRange(0, 0, this._lines.length - 1, this._lines[this._lines.length - 1].length);
-        var command = this._pushUndoableCommand(range, text);
+        var command = this._pushUndoableCommand(range);
         var newRange = this._innerSetText(range, text);
         command.range = newRange.clone();
 
@@ -117,7 +117,6 @@ WebInspector.TextEditorModel.prototype = {
         this._replaceTabsIfNeeded(newLines);
 
         var prefix = this._lines[range.startLine].substring(0, range.startColumn);
-        var prefixArguments = this._arguments
         var suffix = this._lines[range.startLine].substring(range.startColumn);
 
         var postCaret = prefix.length;
@@ -243,7 +242,7 @@ WebInspector.TextEditorModel.prototype = {
             delete attrs[name];
     },
 
-    _pushUndoableCommand: function(range, text)
+    _pushUndoableCommand: function(range)
     {
         var command = {
             text: this.copyRange(range),
@@ -262,29 +261,29 @@ WebInspector.TextEditorModel.prototype = {
         return command;
     },
 
-    undo: function()
+    undo: function(callback)
     {
         this._markRedoableState();
 
         this._inUndo = true;
-        var range = this._doUndo(this._undoStack);
+        var range = this._doUndo(this._undoStack, callback);
         delete this._inUndo;
 
         return range;
     },
 
-    redo: function()
+    redo: function(callback)
     {
         this.markUndoableState();
 
         this._inRedo = true;
-        var range = this._doUndo(this._redoStack);
+        var range = this._doUndo(this._redoStack, callback);
         delete this._inRedo;
 
         return range;
     },
 
-    _doUndo: function(stack)
+    _doUndo: function(stack, callback)
     {
         var range = null;
         for (var i = stack.length - 1; i >= 0; --i) {
@@ -292,6 +291,8 @@ WebInspector.TextEditorModel.prototype = {
             stack.length = i;
 
             range = this.setText(command.range, command.text);
+            if (callback)
+                callback(command.range, range);
             if (i > 0 && stack[i - 1].explicit)
                 return range;
         }

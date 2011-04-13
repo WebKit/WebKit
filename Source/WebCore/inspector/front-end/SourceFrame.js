@@ -250,6 +250,9 @@ WebInspector.SourceFrame.prototype = {
 
     endEditing: function(oldRange, newRange)
     {
+        if (!oldRange || !newRange)
+            return;
+
         // Adjust execution line number.
         if (typeof this._executionLineNumber === "number") {
             var newExecutionLineNumber = this._lineNumberAfterEditing(this._executionLineNumber, oldRange, newRange);
