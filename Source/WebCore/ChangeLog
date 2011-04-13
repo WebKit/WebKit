@@ -1,3 +1,22 @@
+2011-04-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        WebKit2 doesn't keep overlay scrollers shown while scroll gesture held
+        <rdar://problem/9260518>
+
+        Notify the scrollbar painter controller when gesture scrolls begin and end.
+
+        * WebCore.exp.in:
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::didBeginScrollGesture):
+        (WebCore::ScrollAnimatorMac::didEndScrollGesture):
+        (WebCore::ScrollAnimatorMac::beginScrollGesture):
+        (WebCore::ScrollAnimatorMac::endScrollGesture):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2011-04-13  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Maciej Stachowiak.

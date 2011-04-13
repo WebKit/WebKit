@@ -1382,6 +1382,8 @@ _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError
 _wkSignalCFReadStreamHasBytes
 _wkSignedPublicKeyAndChallengeString
+_wkDidEndScrollGesture
+_wkDidBeginScrollGesture
 
 #if ENABLE(DOM_STORAGE)
 __ZN7WebCore14StorageTracker17initializeTrackerERKN3WTF6StringE

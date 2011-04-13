@@ -106,6 +106,8 @@ private:
     virtual void willEndLiveResize();
     virtual void contentAreaDidShow() const;
     virtual void contentAreaDidHide() const;
+    void didBeginScrollGesture() const;
+    void didEndScrollGesture() const;
 
     virtual void didAddVerticalScrollbar(Scrollbar*);
     virtual void willRemoveVerticalScrollbar(Scrollbar*);

@@ -1,3 +1,14 @@
+2011-04-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        WebKit2 doesn't keep overlay scrollers shown while scroll gesture held
+        <rdar://problem/9260518>
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        Initialize new WKSI functions.
+
 2011-04-13  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Oliver Hunt.

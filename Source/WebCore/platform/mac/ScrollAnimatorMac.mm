@@ -681,6 +681,20 @@ void ScrollAnimatorMac::contentAreaDidHide() const
 #endif
 }
 
+void ScrollAnimatorMac::didBeginScrollGesture() const
+{
+#if USE(WK_SCROLLBAR_PAINTER)
+    wkDidBeginScrollGesture(m_scrollbarPainterController.get());
+#endif
+}
+
+void ScrollAnimatorMac::didEndScrollGesture() const
+{
+#if USE(WK_SCROLLBAR_PAINTER)
+    wkDidEndScrollGesture(m_scrollbarPainterController.get());
+#endif
+}
+
 void ScrollAnimatorMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {
 #if USE(WK_SCROLLBAR_PAINTER)
@@ -1043,6 +1057,8 @@ void ScrollAnimatorMac::smoothScrollWithEvent(PlatformWheelEvent& wheelEvent)
 
 void ScrollAnimatorMac::beginScrollGesture()
 {
+    didBeginScrollGesture();
+
     m_haveScrolledSincePageLoad = true;
     m_inScrollGesture = true;
     m_momentumScrollInProgress = false;
@@ -1062,6 +1078,8 @@ void ScrollAnimatorMac::beginScrollGesture()
 
 void ScrollAnimatorMac::endScrollGesture()
 {
+    didEndScrollGesture();
+
     snapRubberBand();
 }
 

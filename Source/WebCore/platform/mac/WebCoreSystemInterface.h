@@ -238,6 +238,8 @@ extern void (*wkContentAreaResized)(WKScrollbarPainterControllerRef);
 extern void (*wkWillEndLiveResize)(WKScrollbarPainterControllerRef);
 extern void (*wkContentAreaDidShow)(WKScrollbarPainterControllerRef);
 extern void (*wkContentAreaDidHide)(WKScrollbarPainterControllerRef);
+extern void (*wkDidBeginScrollGesture)(WKScrollbarPainterControllerRef);
+extern void (*wkDidEndScrollGesture)(WKScrollbarPainterControllerRef);
 
 extern bool (*wkScrollbarPainterUsesOverlayScrollers)(void);
 #endif

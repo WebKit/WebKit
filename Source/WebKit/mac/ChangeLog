@@ -1,3 +1,14 @@
+2011-04-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        WebKit2 doesn't keep overlay scrollers shown while scroll gesture held
+        <rdar://problem/9260518>
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        Initialize new WKSI functions.
+
 2011-04-13  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/58172> Fix -Wcast-align warning in WebBasePluginPackage.mm

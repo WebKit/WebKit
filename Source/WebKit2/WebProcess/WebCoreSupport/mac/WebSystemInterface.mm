@@ -135,6 +135,8 @@ void InitWebCoreSystemInterface(void)
         INIT(WillEndLiveResize);
         INIT(ContentAreaDidShow);
         INIT(ContentAreaDidHide);
+        INIT(DidBeginScrollGesture);
+        INIT(DidEndScrollGesture);
         INIT(ScrollbarPainterUsesOverlayScrollers);
 #else
         INIT(GetHyphenationLocationBeforeIndex);
