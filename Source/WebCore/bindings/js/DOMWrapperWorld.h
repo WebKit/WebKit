@@ -32,8 +32,38 @@ namespace WebCore {
 
 class ScriptController;
 
-typedef JSC::WeakGCMap<void*, DOMObject> DOMObjectWrapperMap;
-typedef JSC::WeakGCMap<StringImpl*, JSC::JSString> JSStringCache; 
+typedef HashMap<void*, JSC::Weak<DOMObject> > DOMObjectWrapperMap;
+typedef JSC::WeakGCMap<StringImpl*, JSC::JSString> JSStringCache;
+
+class JSNodeHandleOwner : public JSC::WeakHandleOwner {
+public:
+    JSNodeHandleOwner(DOMWrapperWorld*);
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void*, JSC::MarkStack&);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void*);
+
+private:
+    DOMWrapperWorld* m_world;
+};
+
+inline JSNodeHandleOwner::JSNodeHandleOwner(DOMWrapperWorld* world)
+    : m_world(world)
+{
+}
+
+class DOMObjectHandleOwner : public JSC::WeakHandleOwner {
+public:
+    DOMObjectHandleOwner(DOMWrapperWorld*);
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void*, JSC::MarkStack&);
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void*);
+
+private:
+    DOMWrapperWorld* m_world;
+};
+
+inline DOMObjectHandleOwner::DOMObjectHandleOwner(DOMWrapperWorld* world)
+    : m_world(world)
+{
+}
 
 class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
 public:
@@ -59,6 +89,8 @@ public:
     bool isNormal() const { return m_isNormal; }
 
     JSC::JSGlobalData* globalData() const { return m_globalData; }
+    JSNodeHandleOwner* jsNodeHandleOwner() { return &m_jsNodeHandleOwner; }
+    DOMObjectHandleOwner* domObjectHandleOwner() { return &m_domObjectHandleOwner; }
 
 protected:
     DOMWrapperWorld(JSC::JSGlobalData*, bool isNormal);
@@ -68,6 +100,8 @@ private:
     HashSet<Document*> m_documentsWithWrapperCaches;
     HashSet<ScriptController*> m_scriptControllersWithWindowShells;
     bool m_isNormal;
+    JSNodeHandleOwner m_jsNodeHandleOwner;
+    DOMObjectHandleOwner m_domObjectHandleOwner;
 };
 
 DOMWrapperWorld* normalWorld(JSC::JSGlobalData&);

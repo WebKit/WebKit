@@ -58,6 +58,7 @@ public:
     void deallocate(HandleSlot);
 
     void makeWeak(HandleSlot, WeakHandleOwner* = 0, void* context = 0);
+    HandleSlot copyWeak(HandleSlot);
 
     void markStrongHandles(HeapRootMarker&);
     void markWeakHandles(HeapRootMarker&);
@@ -163,6 +164,15 @@ inline void HandleHeap::deallocate(HandleSlot handle)
 
     SentinelLinkedList<Node>::remove(node);
     m_freeList.push(node);
+}
+
+inline HandleSlot HandleHeap::copyWeak(HandleSlot other)
+{
+    Node* node = toNode(allocate());
+    node->makeWeak(toNode(other)->weakOwner(), toNode(other)->weakOwnerContext());
+    writeBarrier(node->slot(), *other);
+    *node->slot() = *other;
+    return toHandle(node);
 }
 
 inline void HandleHeap::makeWeak(HandleSlot handle, WeakHandleOwner* weakOwner, void* context)

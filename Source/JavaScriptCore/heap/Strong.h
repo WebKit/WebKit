@@ -137,10 +137,16 @@ private:
     {
         ASSERT(slot());
         JSValue value = HandleTypes<T>::toJSValue(externalType);
+        ASSERT(!value || !value.isCell() || Heap::isMarked(value.asCell()));
         HandleHeap::heapFor(slot())->writeBarrier(slot(), value);
         *slot() = value;
     }
 };
+
+template<class T> inline void swap(Strong<T>& a, Strong<T>& b)
+{
+    a.swap(b);
+}
 
 } // namespace JSC
 

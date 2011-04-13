@@ -22,8 +22,10 @@
 #include "DOMWrapperWorld.h"
 
 #include "JSDOMWindow.h"
+#include "JSNode.h"
 #include "ScriptController.h"
 #include "WebCoreJSClientData.h"
+#include <heap/Weak.h>
 
 using namespace JSC;
 
@@ -32,6 +34,8 @@ namespace WebCore {
 DOMWrapperWorld::DOMWrapperWorld(JSC::JSGlobalData* globalData, bool isNormal)
     : m_globalData(globalData)
     , m_isNormal(isNormal)
+    , m_jsNodeHandleOwner(this)
+    , m_domObjectHandleOwner(this)
 {
     JSGlobalData::ClientData* clientData = m_globalData->clientData;
     ASSERT(clientData);
@@ -77,6 +81,31 @@ DOMWrapperWorld* mainThreadNormalWorld()
     ASSERT(isMainThread());
     static DOMWrapperWorld* cachedNormalWorld = normalWorld(*JSDOMWindow::commonJSGlobalData());
     return cachedNormalWorld;
+}
+
+bool JSNodeHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void*, JSC::MarkStack&)
+{
+    return false;
+}
+
+void JSNodeHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*)
+{
+    JSNode* jsNode = static_cast<JSNode*>(handle.get().asCell());
+    Node* node = jsNode->impl();
+    ASSERT(node->document());
+    ASSERT(node->document()->getWrapperCache(m_world)->find(node)->second == jsNode);
+    node->document()->getWrapperCache(m_world)->remove(node);
+}
+
+bool DOMObjectHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void*, JSC::MarkStack&)
+{
+    return false;
+}
+
+void DOMObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*)
+{
+    DOMObject* domObject = static_cast<DOMObject*>(handle.get().asCell());
+    m_world->m_wrappers.remove(domObject);
 }
 
 } // namespace WebCore

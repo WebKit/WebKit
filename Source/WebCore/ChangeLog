@@ -1,3 +1,46 @@
+2011-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Switched DOM wrappers to use HashMap of Weak<T> instead of WeakGCMap<T>
+        https://bugs.webkit.org/show_bug.cgi?id=58482
+
+        This will allow wrappers to make individual decisions about their lifetimes.
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld):
+        (WebCore::JSNodeHandleOwner::isReachableFromOpaqueRoots):
+        (WebCore::JSNodeHandleOwner::finalize):
+        (WebCore::DOMObjectHandleOwner::isReachableFromOpaqueRoots):
+        (WebCore::DOMObjectHandleOwner::finalize):
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::JSNodeHandleOwner::JSNodeHandleOwner):
+        (WebCore::DOMObjectHandleOwner::DOMObjectHandleOwner):
+        (WebCore::DOMWrapperWorld::jsNodeHandleOwner):
+        (WebCore::DOMWrapperWorld::domObjectHandleOwner): Added handle owners
+        for JSNode and DOMObject, our two hash table values. For now, the owners
+        just take care to remove their handles from their respective hash tables.
+        
+        Changed the hash table type to be a standard HashMap of weak pointers,
+        instead of a WeakGCMap.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::getCachedDOMObjectWrapper):
+        (WebCore::cacheDOMObjectWrapper):
+        (WebCore::cacheDOMNodeWrapper):
+        (WebCore::isObservableThroughDOM):
+        (WebCore::markDOMNodesForDocument):
+        (WebCore::takeWrappers):
+        (WebCore::updateDOMNodeDocument):
+        (WebCore::markDOMObjectWrapper):
+        (WebCore::markDOMNodeWrapper): Updated wrapper hash table access to
+        accomodate its new data type.
+
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::getCachedDOMNodeWrapper): Ditto.
+
+        * dom/Document.h: Updated declaration to match the above.
+
 2011-04-13  Sam Weinig  <sam@webkit.org>
 
         Fix Mac builds.

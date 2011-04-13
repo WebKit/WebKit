@@ -45,7 +45,7 @@
 #include <wtf/PassRefPtr.h>
 
 #if USE(JSC)
-#include <runtime/WeakGCMap.h>
+#include <heap/Weak.h>
 #endif
 
 namespace WebCore {
@@ -948,7 +948,7 @@ public:
     virtual void resumeScriptedAnimationControllerCallbacks();
 
 #if USE(JSC)
-    typedef JSC::WeakGCMap<WebCore::Node*, JSNode> JSWrapperCache;
+    typedef HashMap<WebCore::Node*, JSC::Weak<JSNode> > JSWrapperCache;
     typedef HashMap<DOMWrapperWorld*, JSWrapperCache*> JSWrapperCacheMap;
     JSWrapperCacheMap& wrapperCacheMap() { return m_wrapperCacheMap; }
     JSWrapperCache* getWrapperCache(DOMWrapperWorld* world);

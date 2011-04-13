@@ -58,8 +58,7 @@ public:
     {
         if (!other.slot())
             return;
-        setSlot(HandleHeap::heapFor(other.slot())->allocate());
-        set(other.get());
+        setSlot(HandleHeap::heapFor(other.slot())->copyWeak(other.slot()));
     }
 
     template <typename U> Weak(const Weak<U>& other)
@@ -67,8 +66,7 @@ public:
     {
         if (!other.slot())
             return;
-        setSlot(HandleHeap::heapFor(other.slot())->allocate());
-        set(other.get());
+        setSlot(HandleHeap::heapFor(other.slot())->copyWeak(other.slot()));
     }
     
     enum HashTableDeletedValueTag { HashTableDeletedValue };
@@ -108,6 +106,22 @@ public:
         set(value);
     }
 
+    template <typename U> Weak& operator=(const Weak<U>& other)
+    {
+        clear();
+        if (other.slot())
+            setSlot(HandleHeap::heapFor(other.slot())->copyWeak(other.slot()));
+        return *this;
+    }
+
+    Weak& operator=(const Weak& other)
+    {
+        clear();
+        if (other.slot())
+            setSlot(HandleHeap::heapFor(other.slot())->copyWeak(other.slot()));
+        return *this;
+    }
+
 private:
     static HandleSlot hashTableDeletedValue() { return reinterpret_cast<HandleSlot>(-1); }
 
@@ -115,10 +129,16 @@ private:
     {
         ASSERT(slot());
         JSValue value = HandleTypes<T>::toJSValue(externalType);
+        ASSERT(!value || !value.isCell() || Heap::isMarked(value.asCell()));
         HandleHeap::heapFor(slot())->writeBarrier(slot(), value);
         *slot() = value;
     }
 };
+
+template<class T> inline void swap(Weak<T>& a, Weak<T>& b)
+{
+    a.swap(b);
+}
 
 } // namespace JSC
 

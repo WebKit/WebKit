@@ -91,10 +91,11 @@ template <typename T> inline Local<T>& Local<T>::operator=(Handle<T> other)
     return *this;
 }
 
-template <typename T> inline void Local<T>::set(ExternalType value)
+template <typename T> inline void Local<T>::set(ExternalType externalType)
 {
     ASSERT(slot());
-    *slot() = value;
+    ASSERT(!HandleTypes<T>::toJSValue(externalType) || !HandleTypes<T>::toJSValue(externalType).isCell() || Heap::isMarked(HandleTypes<T>::toJSValue(externalType).asCell()));
+    *slot() = externalType;
 }
 
 

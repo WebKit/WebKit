@@ -158,12 +158,13 @@ bool hasCachedDOMObjectWrapper(JSGlobalData* globalData, void* objectHandle)
 
 DOMObject* getCachedDOMObjectWrapper(JSC::ExecState* exec, void* objectHandle) 
 {
-    return domObjectWrapperMapFor(exec).get(objectHandle);
+    return domObjectWrapperMapFor(exec).get(objectHandle).get();
 }
 
 void cacheDOMObjectWrapper(JSC::ExecState* exec, void* objectHandle, DOMObject* wrapper) 
 {
-    domObjectWrapperMapFor(exec).set(exec->globalData(), objectHandle, wrapper);
+    DOMWrapperWorld* world = currentWorld(exec);
+    world->m_wrappers.set(objectHandle, Weak<DOMObject>(*world->globalData(), wrapper, world->domObjectHandleOwner()));
 }
 
 bool hasCachedDOMNodeWrapperUnchecked(Document* document, Node* node)
@@ -181,13 +182,16 @@ bool hasCachedDOMNodeWrapperUnchecked(Document* document, Node* node)
 
 void cacheDOMNodeWrapper(JSC::ExecState* exec, Document* document, Node* node, JSNode* wrapper)
 {
+    ASSERT(wrapper);
     if (!document)
-        domObjectWrapperMapFor(exec).set(exec->globalData(), node, wrapper);
+        cacheDOMObjectWrapper(exec, node, wrapper);
     else
-        document->getWrapperCache(currentWorld(exec))->set(exec->globalData(), node, wrapper);
+        document->getWrapperCache(currentWorld(exec))->set(node, Weak<JSNode>(exec->globalData(), wrapper, currentWorld(exec)->jsNodeHandleOwner()));
 
-    if (currentWorld(exec)->isNormal())
+    if (currentWorld(exec)->isNormal()) {
         node->setWrapper(exec->globalData(), wrapper);
+        ASSERT(node->wrapper() == (document ? document->getWrapperCache(currentWorld(exec))->get(node).get() : domObjectWrapperMapFor(exec).get(node).get()));
+    }
 }
 
 static inline bool isObservableThroughDOM(JSNode* jsNode, DOMWrapperWorld* world)
@@ -219,7 +223,7 @@ static inline bool isObservableThroughDOM(JSNode* jsNode, DOMWrapperWorld* world
         // keep the node wrappers protecting them alive.
         if (node->isElementNode()) {
             if (NamedNodeMap* attributes = static_cast<Element*>(node)->attributeMap()) {
-                if (DOMObject* wrapper = world->m_wrappers.get(attributes)) {
+                if (DOMObject* wrapper = world->m_wrappers.get(attributes).get()) {
                     // FIXME: This check seems insufficient, because NamedNodeMap items can have custom properties themselves.
                     // Maybe it would be OK to just keep the wrapper alive, as it is done for CSSOM objects below.
                     if (wrapper->hasCustomProperties())
@@ -234,7 +238,7 @@ static inline bool isObservableThroughDOM(JSNode* jsNode, DOMWrapperWorld* world
             }
             if (static_cast<Element*>(node)->hasTagName(canvasTag)) {
                 if (CanvasRenderingContext* context = static_cast<HTMLCanvasElement*>(node)->renderingContext()) {
-                    if (DOMObject* wrapper = world->m_wrappers.get(context)) {
+                    if (DOMObject* wrapper = world->m_wrappers.get(context).get()) {
                         if (wrapper->hasCustomProperties())
                             return true;
                     }
@@ -289,8 +293,10 @@ void markDOMNodesForDocument(MarkStack& markStack, Document* document)
 
         JSWrapperCache::iterator nodeEnd = nodeDict->end();
         for (JSWrapperCache::iterator nodeIt = nodeDict->begin(); nodeIt != nodeEnd; ++nodeIt) {
-            if (isObservableThroughDOM(nodeIt.get().second, world))
-                markStack.deprecatedAppend(nodeIt.getSlot().second);
+            JSNode* node = nodeIt->second.get();
+            if (!isObservableThroughDOM(node, world))
+                continue;
+            markStack.deprecatedAppend(reinterpret_cast<JSCell**>(&node));
         }
     }
 }
@@ -327,13 +333,15 @@ static inline void takeWrappers(Node* node, Document* document, WrapperSet& wrap
     if (document) {
         JSWrapperCacheMap& wrapperCacheMap = document->wrapperCacheMap();
         for (JSWrapperCacheMap::iterator iter = wrapperCacheMap.begin(); iter != wrapperCacheMap.end(); ++iter) {
-            if (JSNode* wrapper = iter->second->take(node))
-                wrapperSet.append(WrapperAndWorld(wrapper, iter->first));
+            JSNode* wrapper = iter->second->take(node).get();
+            if (!wrapper)
+                continue;
+            wrapperSet.append(WrapperAndWorld(wrapper, iter->first));
         }
     } else {
         for (JSGlobalDataWorldIterator worldIter(JSDOMWindow::commonJSGlobalData()); worldIter; ++worldIter) {
             DOMWrapperWorld* world = *worldIter;
-            if (JSNode* wrapper = static_cast<JSNode*>(world->m_wrappers.take(node)))
+            if (JSNode* wrapper = static_cast<JSNode*>(world->m_wrappers.take(node).get()))
                 wrapperSet.append(WrapperAndWorld(wrapper, world));
         }
     }
@@ -349,9 +357,9 @@ void updateDOMNodeDocument(Node* node, Document* oldDocument, Document* newDocum
     for (unsigned i = 0; i < wrapperSet.size(); ++i) {
         JSNode* wrapper = wrapperSet[i].first;
         if (newDocument)
-            newDocument->getWrapperCache(wrapperSet[i].second)->set(*wrapperSet[i].second->globalData(), node, wrapper);
+            newDocument->getWrapperCache(wrapperSet[i].second)->set(node, Weak<JSNode>(*wrapperSet[i].second->globalData(), wrapper, wrapperSet[i].second->jsNodeHandleOwner()));
         else
-            wrapperSet[i].second->m_wrappers.set(*wrapperSet[i].second->globalData(), node, wrapper);
+            wrapperSet[i].second->m_wrappers.set(node, Weak<DOMObject>(*wrapperSet[i].second->globalData(), wrapper, wrapperSet[i].second->domObjectHandleOwner()));
     }
 }
 
@@ -364,8 +372,8 @@ void markDOMObjectWrapper(MarkStack& markStack, JSGlobalData& globalData, void* 
         return;
 
     for (JSGlobalDataWorldIterator worldIter(&globalData); worldIter; ++worldIter) {
-        if (HandleSlot wrapperSlot = worldIter->m_wrappers.getSlot(object))
-            markStack.deprecatedAppend(wrapperSlot);
+        if (DOMObject* wrapper = worldIter->m_wrappers.get(object).get())
+            markStack.deprecatedAppend(reinterpret_cast<JSCell**>(&wrapper));
     }
 }
 
@@ -374,15 +382,17 @@ void markDOMNodeWrapper(MarkStack& markStack, Document* document, Node* node)
     if (document) {
         JSWrapperCacheMap& wrapperCacheMap = document->wrapperCacheMap();
         for (JSWrapperCacheMap::iterator iter = wrapperCacheMap.begin(); iter != wrapperCacheMap.end(); ++iter) {
-            if (HandleSlot wrapperSlot = iter->second->getSlot(node))
-                markStack.deprecatedAppend(wrapperSlot);
+            JSNode* wrapper = iter->second->get(node).get();
+            if (!wrapper)
+                continue;
+            markStack.deprecatedAppend(reinterpret_cast<JSCell**>(&wrapper));
         }
         return;
     }
 
     for (JSGlobalDataWorldIterator worldIter(JSDOMWindow::commonJSGlobalData()); worldIter; ++worldIter) {
-        if (HandleSlot wrapperSlot = worldIter->m_wrappers.getSlot(node))
-            markStack.deprecatedAppend(wrapperSlot);
+        if (DOMObject* wrapper = worldIter->m_wrappers.get(node).get())
+            markStack.deprecatedAppend(reinterpret_cast<JSCell**>(&wrapper));
     }
 }
 

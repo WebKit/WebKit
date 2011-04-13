@@ -1,3 +1,40 @@
+2011-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Switched DOM wrappers to use HashMap of Weak<T> instead of WeakGCMap<T>
+        https://bugs.webkit.org/show_bug.cgi?id=58482
+        
+        This will allow wrappers to make individual decisions about their lifetimes.
+
+        * heap/HandleHeap.h:
+        (JSC::HandleHeap::copyWeak): New function for copying a weak handle.
+        It's wasn't previously possible to perform this operation using HandleHeap
+        API because the HandleHeap doesn't expose its underlying Node structure.
+
+        * heap/Local.h:
+        (JSC::::set):
+        * heap/Strong.h:
+        (JSC::Strong::set): Added ASSERTs to verify that dead objects are not
+        resurrected by placement into handles.
+
+        (JSC::swap): Added a swap helper, so use of Strong<T> inside a hash table
+        is efficient.
+
+        * heap/Weak.h:
+        (JSC::Weak::Weak): Fixed a bug where copying a weak pointer would not
+        copy its weak callback and context.
+
+        (JSC::Weak::operator=): Added an assignment operator, since the default
+        C++ assignment operator did the wrong thing.
+
+        (JSC::Weak::set): Added ASSERTs to verify that dead objects are not
+        resurrected by placement into handles.
+
+        (JSC::swap): Added a swap helper, so use of Strong<T> inside a hash table
+        is efficient, and can be done without copying, which is illegal during
+        the handle finalization phase.
+
 2011-04-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

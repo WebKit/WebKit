@@ -34,13 +34,13 @@ namespace WebCore {
 inline JSNode* getCachedDOMNodeWrapper(JSC::ExecState* exec, Document* document, Node* node)
 {
     if (currentWorld(exec)->isNormal()) {
-        ASSERT(node->wrapper() == (document ? document->getWrapperCache(currentWorld(exec))->get(node) : domObjectWrapperMapFor(exec).get(node)));
+        ASSERT(node->wrapper() == (document ? document->getWrapperCache(currentWorld(exec))->get(node).get() : domObjectWrapperMapFor(exec).get(node).get()));
         return static_cast<JSNode*>(node->wrapper());
     }
 
     if (document)
-        return document->getWrapperCache(currentWorld(exec))->get(node);
-    return static_cast<JSNode*>(domObjectWrapperMapFor(exec).get(node));
+        return document->getWrapperCache(currentWorld(exec))->get(node).get();
+    return static_cast<JSNode*>(domObjectWrapperMapFor(exec).get(node).get());
 }
 
 JSC::JSValue createWrapper(JSC::ExecState*, JSDOMGlobalObject*, Node*);
