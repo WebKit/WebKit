@@ -1,3 +1,17 @@
+2011-04-13  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        Replace our own RenderThemeQt::getMediaElementFromRenderObject by
+        MediaControlsElement::toParentMediaElement used by every other port.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintMediaFullscreenButton):
+        (WebCore::RenderThemeQt::paintMediaMuteButton):
+        (WebCore::RenderThemeQt::paintMediaPlayButton):
+        (WebCore::RenderThemeQt::paintMediaSliderTrack):
+        * platform/qt/RenderThemeQt.h:
+
 2011-04-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

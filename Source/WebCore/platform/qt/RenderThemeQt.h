@@ -159,7 +159,6 @@ protected:
     virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
     virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
 private:
-    HTMLMediaElement* getMediaElementFromRenderObject(RenderObject* o) const;
     void paintMediaBackground(QPainter* painter, const IntRect& r) const;
     double mediaControlsBaselineOpacity() const;
     QColor getMediaControlForegroundColor(RenderObject* o = 0) const;

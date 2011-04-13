@@ -46,6 +46,9 @@
 #if USE(QT_MOBILE_THEME)
 #include "QtMobileWebStyle.h"
 #endif
+#if ENABLE(VIDEO)
+#include "MediaControlElements.h"
+#endif
 #include "NotImplemented.h"
 #include "PaintInfo.h"
 #include "Page.h"
@@ -1188,16 +1191,6 @@ private:
     QTransform m_originalTransform;
 };
 
-HTMLMediaElement* RenderThemeQt::getMediaElementFromRenderObject(RenderObject* o) const
-{
-    Node* node = o->node();
-    Node* mediaNode = node ? node->shadowAncestorNode() : 0;
-    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
-        return 0;
-
-    return static_cast<HTMLMediaElement*>(mediaNode);
-}
-
 double RenderThemeQt::mediaControlsBaselineOpacity() const
 {
     return 0.4;
@@ -1221,7 +1214,7 @@ QColor RenderThemeQt::getMediaControlForegroundColor(RenderObject* o) const
 
 bool RenderThemeQt::paintMediaFullscreenButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    HTMLMediaElement* mediaElement = getMediaElementFromRenderObject(o);
+    HTMLMediaElement* mediaElement = toParentMediaElement(o);
     if (!mediaElement)
         return false;
 
@@ -1245,7 +1238,7 @@ bool RenderThemeQt::paintMediaFullscreenButton(RenderObject* o, const PaintInfo&
 
 bool RenderThemeQt::paintMediaMuteButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    HTMLMediaElement* mediaElement = getMediaElementFromRenderObject(o);
+    HTMLMediaElement* mediaElement = toParentMediaElement(o);
     if (!mediaElement)
         return false;
 
@@ -1269,7 +1262,7 @@ bool RenderThemeQt::paintMediaMuteButton(RenderObject* o, const PaintInfo& paint
 
 bool RenderThemeQt::paintMediaPlayButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    HTMLMediaElement* mediaElement = getMediaElementFromRenderObject(o);
+    HTMLMediaElement* mediaElement = toParentMediaElement(o);
     if (!mediaElement)
         return false;
 
@@ -1388,7 +1381,7 @@ bool RenderThemeQt::paintMediaVolumeSliderThumb(RenderObject *o, const PaintInfo
 
 bool RenderThemeQt::paintMediaSliderTrack(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    HTMLMediaElement* mediaElement = getMediaElementFromRenderObject(o);
+    HTMLMediaElement* mediaElement = toParentMediaElement(o);
     if (!mediaElement)
         return false;
 
