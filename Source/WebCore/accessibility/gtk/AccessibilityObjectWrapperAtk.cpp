@@ -268,7 +268,11 @@ static AtkObject* atkParentOfRootObject(AtkObject* object)
     // impossible for assistive technologies to ascend the accessible
     // hierarchy all the way to the application. (Bug 30489)
     if (!coreParent && isRootObject(coreObject)) {
-        HostWindow* hostWindow = coreObject->document()->view()->hostWindow();
+        Document* document = coreObject->document();
+        if (!document)
+            return 0;
+
+        HostWindow* hostWindow = document->view()->hostWindow();
         if (hostWindow) {
             PlatformPageClient scrollView = hostWindow->platformPageClient();
             if (scrollView) {
@@ -1176,7 +1180,11 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
 {
     AccessibilityObject* coreObject = core(textObject);
 
-    HostWindow* hostWindow = coreObject->document()->view()->hostWindow();
+    Document* document = coreObject->document();
+    if (!document)
+        return 0;
+
+    HostWindow* hostWindow = document->view()->hostWindow();
     if (!hostWindow)
         return 0;
     PlatformPageClient webView = hostWindow->platformPageClient();
@@ -1218,12 +1226,16 @@ static gint webkit_accessible_text_get_caret_offset(AtkText* text)
     if (!coreObject->isAccessibilityRenderObject())
         return 0;
 
+    Document* document = coreObject->document();
+    if (!document)
+        return 0;
+
     Node* focusedNode = coreObject->selection().end().deprecatedNode();
     if (!focusedNode)
         return 0;
 
     RenderObject* focusedRenderer = focusedNode->renderer();
-    AccessibilityObject* focusedObject = coreObject->document()->axObjectCache()->getOrCreate(focusedRenderer);
+    AccessibilityObject* focusedObject = document->axObjectCache()->getOrCreate(focusedRenderer);
 
     int offset;
     // Don't ignore links if the offset is being requested for a link.
@@ -1541,7 +1553,8 @@ static IntRect textExtents(AtkText* text, gint startOffset, gint length, AtkCoor
     IntRect extents = coreObject->doAXBoundsForRange(PlainTextRange(startOffset, rangeLength));
     switch(coords) {
     case ATK_XY_SCREEN:
-        extents = coreObject->document()->view()->contentsToScreen(extents);
+        if (Document* document = coreObject->document())
+            extents = document->view()->contentsToScreen(extents);
         break;
     case ATK_XY_WINDOW:
         // No-op
@@ -1813,12 +1826,14 @@ static void webkit_accessible_editable_text_insert_text(AtkEditableText* text, c
     //coreObject->setSelectedTextRange(PlainTextRange(*position, 0));
     //coreObject->setSelectedText(String::fromUTF8(string));
 
-    if (!coreObject->document() || !coreObject->document()->frame())
+    Document* document = coreObject->document();
+    if (!document || !document->frame())
         return;
+
     coreObject->setSelectedVisiblePositionRange(coreObject->visiblePositionRangeForRange(PlainTextRange(*position, 0)));
     coreObject->setFocused(true);
     // FIXME: We should set position to the actual inserted text length, which may be less than that requested.
-    if (coreObject->document()->frame()->editor()->insertTextWithoutSendingTextEvent(String::fromUTF8(string), false, 0))
+    if (document->frame()->editor()->insertTextWithoutSendingTextEvent(String::fromUTF8(string), false, 0))
         *position += length;
 }
 
@@ -1839,11 +1854,13 @@ static void webkit_accessible_editable_text_delete_text(AtkEditableText* text, g
     //coreObject->setSelectedTextRange(PlainTextRange(start_pos, end_pos - start_pos));
     //coreObject->setSelectedText(String());
 
-    if (!coreObject->document() || !coreObject->document()->frame())
+    Document* document = coreObject->document();
+    if (!document || !document->frame())
         return;
+
     coreObject->setSelectedVisiblePositionRange(coreObject->visiblePositionRangeForRange(PlainTextRange(start_pos, end_pos - start_pos)));
     coreObject->setFocused(true);
-    coreObject->document()->frame()->editor()->performDelete();
+    document->frame()->editor()->performDelete();
 }
 
 static void webkit_accessible_editable_text_paste_text(AtkEditableText* text, gint position)

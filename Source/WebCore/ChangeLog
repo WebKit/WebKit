@@ -1,3 +1,20 @@
+2011-04-13  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Missing nullchecks in GTK's a11y wrapper
+        https://bugs.webkit.org/show_bug.cgi?id=58429
+
+        Add missing nullchecks for coreObject->document().
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (atkParentOfRootObject): Add missing nullcheck.
+        (getPangoLayoutForAtk): Ditto.
+        (webkit_accessible_text_get_caret_offset): Ditto.
+        (textExtents): Ditto.
+        (webkit_accessible_editable_text_insert_text): Ditto.
+        (webkit_accessible_editable_text_delete_text): Ditto.
+
 2011-04-13  Thierry Reding  <thierry.reding@avionic-design.de>
 
         Gtk+ port fails to build when enabling WebGL
