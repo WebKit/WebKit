@@ -1,3 +1,14 @@
+2011-04-12  Ben Taylor  <bentaylor.solx86@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        https://bugs.webkit.org/show_bug.cgi?id=58131
+
+        Provide a workaround for an obscure Studio 12 compiler bug, which
+        couldn't call src->~T() on a const T *src.
+
+        * wtf/Vector.h:
+
 2011-04-12  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

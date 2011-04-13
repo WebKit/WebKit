@@ -129,7 +129,11 @@ namespace WTF {
         {
             while (src != srcEnd) {
                 new (dst) T(*src);
+#if COMPILER(SUNCC) && __SUNPRO_CC <= 0x590
+                const_cast<T*>(src)->~T(); // Work around obscure SunCC 12 compiler bug.
+#else
                 src->~T();
+#endif
                 ++dst;
                 ++src;
             }
