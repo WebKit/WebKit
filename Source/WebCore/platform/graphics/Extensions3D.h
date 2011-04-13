@@ -66,6 +66,11 @@ public:
     // extension names for which supports returns true.
     virtual void ensureEnabled(const String&) = 0;
 
+    // Takes full name of extension: for example, "GL_EXT_texture_format_BGRA8888".
+    // Checks to see whether the given extension is actually enabled (see ensureEnabled).
+    // Has no other side-effects.
+    virtual bool isEnabled(const String&) = 0;
+
     enum ExtensionsEnumType {
         // GL_EXT_texture_format_BGRA8888 enums
         BGRA_EXT = 0x80E1,

@@ -793,6 +793,13 @@ bool GraphicsContext3DInternal::ensureExtensionEnabled(const String& name)
     return m_enabledExtensions.contains(mappedName);
 }
 
+bool GraphicsContext3DInternal::isExtensionEnabled(const String& name)
+{
+    initializeExtensions();
+    String mappedName = mapExtensionName(name);
+    return m_enabledExtensions.contains(mappedName);
+}
+
 DELEGATE_TO_IMPL_4R(mapBufferSubDataCHROMIUM, GC3Denum, GC3Dsizeiptr, GC3Dsizei, GC3Denum, void*)
 DELEGATE_TO_IMPL_1(unmapBufferSubDataCHROMIUM, const void*)
 DELEGATE_TO_IMPL_9R(mapTexSubImage2DCHROMIUM, GC3Denum, GC3Dint, GC3Dint, GC3Dint, GC3Dsizei, GC3Dsizei, GC3Denum, GC3Denum, GC3Denum, void*)

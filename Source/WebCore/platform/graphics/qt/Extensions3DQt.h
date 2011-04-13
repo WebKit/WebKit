@@ -37,6 +37,7 @@ public:
     // Extensions3D methods.
     virtual bool supports(const String&);
     virtual void ensureEnabled(const String&);
+    virtual bool isEnabled(const String&);
     virtual int getGraphicsResetStatusARB();
     virtual void blitFramebuffer(long srcX0, long srcY0, long srcX1, long srcY1, long dstX0, long dstY0, long dstX1, long dstY1, unsigned long mask, unsigned long filter);
     virtual void renderbufferStorageMultisample(unsigned long target, unsigned long samples, unsigned long internalformat, unsigned long width, unsigned long height);

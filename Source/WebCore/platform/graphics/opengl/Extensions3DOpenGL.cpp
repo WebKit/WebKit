@@ -118,6 +118,17 @@ void Extensions3DOpenGL::ensureEnabled(const String& name)
 #endif
 }
 
+bool Extensions3DOpenGL::isEnabled(const String& name)
+{
+#if PLATFORM(MAC)
+    if (name == "GL_OES_standard_derivatives") {
+        ANGLEWebKitBridge& compiler = m_context->m_compiler;
+        return compiler.getResources().OES_standard_derivatives;
+    }
+#endif
+    return supports(name);
+}
+
 int Extensions3DOpenGL::getGraphicsResetStatusARB()
 {
     return GraphicsContext3D::NO_ERROR;

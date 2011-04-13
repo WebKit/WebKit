@@ -57,6 +57,11 @@ void Extensions3DChromium::ensureEnabled(const String& name)
     ASSERT(result);
 }
 
+bool Extensions3DChromium::isEnabled(const String& name)
+{
+    return m_internal->isExtensionEnabled(name);
+}
+
 int Extensions3DChromium::getGraphicsResetStatusARB()
 {
     return m_internal->isContextLost() ? static_cast<int>(Extensions3D::UNKNOWN_CONTEXT_RESET_ARB) : static_cast<int>(GraphicsContext3D::NO_ERROR);

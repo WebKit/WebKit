@@ -251,6 +251,7 @@ public:
     Extensions3D* getExtensions();
     bool supportsExtension(const String& name);
     bool ensureExtensionEnabled(const String& name);
+    bool isExtensionEnabled(const String& name);
 
     // EXT_texture_format_BGRA8888
     bool supportsBGRA();

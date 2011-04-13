@@ -458,14 +458,14 @@ void WebGLRenderingContext::setupFlags()
     ASSERT(m_context);
 
     m_isGLES2Compliant = m_context->isGLES2Compliant();
-    m_isErrorGeneratedOnOutOfBoundsAccesses = m_context->getExtensions()->supports("GL_CHROMIUM_strict_attribs");
-    m_isResourceSafe = m_context->getExtensions()->supports("GL_CHROMIUM_resource_safe");
+    m_isErrorGeneratedOnOutOfBoundsAccesses = m_context->getExtensions()->isEnabled("GL_CHROMIUM_strict_attribs");
+    m_isResourceSafe = m_context->getExtensions()->isEnabled("GL_CHROMIUM_resource_safe");
     if (m_isGLES2Compliant) {
-        m_isGLES2NPOTStrict = !m_context->getExtensions()->supports("GL_OES_texture_npot");
-        m_isDepthStencilSupported = m_context->getExtensions()->supports("GL_OES_packed_depth_stencil");
+        m_isGLES2NPOTStrict = !m_context->getExtensions()->isEnabled("GL_OES_texture_npot");
+        m_isDepthStencilSupported = m_context->getExtensions()->isEnabled("GL_OES_packed_depth_stencil");
     } else {
-        m_isGLES2NPOTStrict = !m_context->getExtensions()->supports("GL_ARB_texture_non_power_of_two");
-        m_isDepthStencilSupported = m_context->getExtensions()->supports("GL_EXT_packed_depth_stencil");
+        m_isGLES2NPOTStrict = !m_context->getExtensions()->isEnabled("GL_ARB_texture_non_power_of_two");
+        m_isDepthStencilSupported = m_context->getExtensions()->isEnabled("GL_EXT_packed_depth_stencil");
     }
 }
 
