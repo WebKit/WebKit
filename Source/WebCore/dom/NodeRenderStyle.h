@@ -33,7 +33,11 @@ namespace WebCore {
 
 inline RenderStyle* Node::renderStyle() const
 {
-    return m_renderer ? m_renderer->style() : nonRendererRenderStyle();
+    // Using a ternary here confuses the Solaris Studio 12/12.1/12.2 compilers:
+    // Bug is CR 6569194, "Problem with question operator binding in inline function"
+    if (m_renderer) 
+        return m_renderer->style();
+    return nonRendererRenderStyle();
 }
 
 }

@@ -1,3 +1,15 @@
+2011-04-13  Ben Taylor  <bentaylor.solx86@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=57337
+
+        Work around a bug in ternary opertions in the Solaris Studio
+        12/12.1/12.2 compilers, using an if clause.
+
+        * dom/NodeRenderStyle.h:
+        (WebCore::Node::renderStyle):
+
 2011-04-13  Brian Salomon  <bsalomon@google.com>
 
         Reviewed by Kenneth Russell.
