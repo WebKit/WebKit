@@ -514,10 +514,14 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
     // or quicksort, and much less swapping than bubblesort/insertionsort.
     for (unsigned i = 0; i < length - 1; ++i) {
         JSValue iObj = thisObj->get(exec, i);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
         unsigned themin = i;
         JSValue minObj = iObj;
         for (unsigned j = i + 1; j < length; ++j) {
             JSValue jObj = thisObj->get(exec, j);
+            if (exec->hadException())
+                return JSValue::encode(jsUndefined());
             double compareResult;
             if (jObj.isUndefined())
                 compareResult = 1; // don't check minObj because there's no need to differentiate == (0) from > (1)
@@ -682,20 +686,19 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncFilter(ExecState* exec)
     }
     for (; k < length && !exec->hadException(); ++k) {
         PropertySlot slot(thisObj);
-
         if (!thisObj->getPropertySlot(exec, k, slot))
             continue;
-
         JSValue v = slot.getValue(exec, k);
 
-        MarkedArgumentBuffer eachArguments;
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
 
+        MarkedArgumentBuffer eachArguments;
         eachArguments.append(v);
         eachArguments.append(jsNumber(k));
         eachArguments.append(thisObj);
 
         JSValue result = call(exec, function, callType, callData, applyThis, eachArguments);
-
         if (result.toBoolean(exec))
             resultArray->put(exec, filterIndex++, v);
     }
@@ -739,14 +742,18 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncMap(ExecState* exec)
         PropertySlot slot(thisObj);
         if (!thisObj->getPropertySlot(exec, k, slot))
             continue;
-
         JSValue v = slot.getValue(exec, k);
 
-        MarkedArgumentBuffer eachArguments;
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
 
+        MarkedArgumentBuffer eachArguments;
         eachArguments.append(v);
         eachArguments.append(jsNumber(k));
         eachArguments.append(thisObj);
+
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
 
         JSValue result = call(exec, function, callType, callData, applyThis, eachArguments);
         resultArray->put(exec, k, result);
@@ -797,18 +804,18 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncEvery(ExecState* exec)
     }
     for (; k < length && !exec->hadException(); ++k) {
         PropertySlot slot(thisObj);
-
         if (!thisObj->getPropertySlot(exec, k, slot))
             continue;
 
         MarkedArgumentBuffer eachArguments;
-
         eachArguments.append(slot.getValue(exec, k));
         eachArguments.append(jsNumber(k));
         eachArguments.append(thisObj);
 
-        bool predicateResult = call(exec, function, callType, callData, applyThis, eachArguments).toBoolean(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
 
+        bool predicateResult = call(exec, function, callType, callData, applyThis, eachArguments).toBoolean(exec);
         if (!predicateResult) {
             result = jsBoolean(false);
             break;
@@ -860,6 +867,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncForEach(ExecState* exec)
         eachArguments.append(jsNumber(k));
         eachArguments.append(thisObj);
 
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
+
         call(exec, function, callType, callData, applyThis, eachArguments);
     }
     return JSValue::encode(jsUndefined());
@@ -910,8 +920,10 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSome(ExecState* exec)
         eachArguments.append(jsNumber(k));
         eachArguments.append(thisObj);
 
-        bool predicateResult = call(exec, function, callType, callData, applyThis, eachArguments).toBoolean(exec);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
 
+        bool predicateResult = call(exec, function, callType, callData, applyThis, eachArguments).toBoolean(exec);
         if (predicateResult) {
             result = jsBoolean(true);
             break;
@@ -979,6 +991,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduce(ExecState* exec)
 
     for (; i < length && !exec->hadException(); ++i) {
         JSValue prop = getProperty(exec, thisObj, i);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
         if (!prop)
             continue;
         
@@ -1051,6 +1065,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduceRight(ExecState* exec)
     for (; i < length && !exec->hadException(); ++i) {
         unsigned idx = length - i - 1;
         JSValue prop = getProperty(exec, thisObj, idx);
+        if (exec->hadException())
+            return JSValue::encode(jsUndefined());
         if (!prop)
             continue;
         
