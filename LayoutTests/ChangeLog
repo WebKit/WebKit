@@ -1,3 +1,14 @@
+2011-04-12  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium] Add WebSettings::setValidationMessageTimerMagnification()
+        https://bugs.webkit.org/show_bug.cgi?id=57426
+
+        * platform/chromium/test_expectations.txt:
+          Remove validation-message-appearance.html because it becomes non-flaky
+          by the DRT change.
+
 2011-04-12  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Reviewed by Dimitri Glazkov.

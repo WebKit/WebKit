@@ -109,6 +109,7 @@ public:
     virtual void setAsynchronousSpellCheckingEnabled(bool);
     virtual void setCaretBrowsingEnabled(bool);
     virtual void setInteractiveFormValidationEnabled(bool);
+    virtual void setValidationMessageTimerMagnification(int);
     virtual void setMinimumTimerInterval(double);
     virtual void setFullScreenEnabled(bool);
 

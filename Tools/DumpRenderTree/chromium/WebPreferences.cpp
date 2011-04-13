@@ -165,8 +165,8 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setUsesEncodingDetector(false);
     settings->setImagesEnabled(true);
     settings->setInteractiveFormValidationEnabled(true);
-
     // Enable fullscreen so the fullscreen layout tests can run.
     settings->setFullScreenEnabled(true);
+    settings->setValidationMessageTimerMagnification(-1);
 }
 

@@ -378,6 +378,11 @@ void WebSettingsImpl::setInteractiveFormValidationEnabled(bool enabled)
     m_settings->setInteractiveFormValidationEnabled(enabled);
 }
 
+void WebSettingsImpl::setValidationMessageTimerMagnification(int newValue)
+{
+    m_settings->setValidationMessageTimerMagnification(newValue);
+}
+
 void WebSettingsImpl::setMinimumTimerInterval(double interval)
 {
     m_settings->setMinDOMTimerInterval(interval);
