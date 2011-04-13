@@ -123,6 +123,10 @@ deps = {
     From('chromium_deps', 'src/third_party/yasm/source/patched-yasm'),
   'third_party/libjpeg_turbo':
     From('chromium_deps', 'src/third_party/libjpeg_turbo'),
+  'third_party/leveldb':
+    From('chromium_deps', 'src/third_party/leveldb'),
+  'third_party/snappy/src':
+    From('chromium_deps', 'src/third_party/snappy/src'),
   'third_party':
     Var('chromium_svn')+'/third_party@'+Var('chromium_rev'),
 }
