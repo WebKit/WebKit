@@ -1,5 +1,11 @@
 2011-04-13  Jian Li  <jianli@chromium.org>
 
+        Unreviewed, update chromium test expectations per change in r83756.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-13  Jian Li  <jianli@chromium.org>
+
         Unreviewed, update chromium test expectations to work around a bug
         in gpu test expectations handling.
 
