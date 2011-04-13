@@ -1,3 +1,12 @@
+2011-04-13  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        Mark compositing/webgl/webgl-reflection.html as failed for all platforms
+        in chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-12  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
