@@ -1,3 +1,16 @@
+2011-04-12  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] TilingData mishandles very small texture sizes
+        https://bugs.webkit.org/show_bug.cgi?id=58364
+
+        Use zero tiles when the texture size is too small for tiling.
+
+        * platform/graphics/gpu/TilingData.cpp:
+        (WebCore::TilingData::TilingData):
+        (WebCore::TilingData::setMaxTextureSize):
+
 2011-04-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed, rolling out r83634 and r83659.

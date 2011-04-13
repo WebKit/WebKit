@@ -49,6 +49,20 @@ TEST(TilingDataTest, numTiles_NoTiling)
 
 TEST(TilingDataTest, numTiles_TilingNoBorders)
 {
+    EXPECT_EQ(0, TilingData(0,  0,  0, false).numTiles());
+    EXPECT_EQ(0, TilingData(0,  4,  0, false).numTiles());
+    EXPECT_EQ(0, TilingData(0,  0,  4, false).numTiles());
+    EXPECT_EQ(0, TilingData(4,  4,  0, false).numTiles());
+    EXPECT_EQ(0, TilingData(4,  0,  4, false).numTiles());
+    EXPECT_EQ(0, TilingData(-8, 1,  1, false).numTiles());
+    EXPECT_EQ(0, TilingData(-1, 1,  1, false).numTiles());
+    EXPECT_EQ(0, TilingData(0,  1,  1, false).numTiles());
+
+    EXPECT_EQ(1, TilingData(1,  1,  1, false).numTiles());
+    EXPECT_EQ(2, TilingData(1,  1,  2, false).numTiles());
+    EXPECT_EQ(1, TilingData(2,  2,  2, false).numTiles());
+    EXPECT_EQ(1, TilingData(3,  3,  3, false).numTiles());
+
     EXPECT_EQ(1, TilingData(4,  1,  4, false).numTiles());
     EXPECT_EQ(1, TilingData(4,  2,  4, false).numTiles());
     EXPECT_EQ(1, TilingData(4,  3,  4, false).numTiles());
@@ -82,6 +96,19 @@ TEST(TilingDataTest, numTiles_TilingNoBorders)
 
 TEST(TilingDataTest, numTiles_TilingWithBorders)
 {
+    EXPECT_EQ(0, TilingData(0,  0,  0, true).numTiles());
+    EXPECT_EQ(0, TilingData(0,  4,  0, true).numTiles());
+    EXPECT_EQ(0, TilingData(0,  0,  4, true).numTiles());
+    EXPECT_EQ(0, TilingData(4,  4,  0, true).numTiles());
+    EXPECT_EQ(0, TilingData(4,  0,  4, true).numTiles());
+    EXPECT_EQ(0, TilingData(-8, 1,  1, true).numTiles());
+    EXPECT_EQ(0, TilingData(-1, 1,  1, true).numTiles());
+    EXPECT_EQ(0, TilingData(0,  1,  1, true).numTiles());
+
+    EXPECT_EQ(0, TilingData(1,  1,  1, true).numTiles());
+    EXPECT_EQ(0, TilingData(1,  1,  2, true).numTiles());
+    EXPECT_EQ(0, TilingData(2,  2,  2, true).numTiles());
+
     EXPECT_EQ(1, TilingData(3,  1,  3, true).numTiles());
     EXPECT_EQ(1, TilingData(3,  2,  3, true).numTiles());
     EXPECT_EQ(1, TilingData(3,  3,  3, true).numTiles());
@@ -361,7 +388,7 @@ TEST(TilingDataTest, setTotalSize)
     EXPECT_EQ(2, data.tileSizeY(2));
 }
 
-TEST(TilingDataTest, setMaxTextureSize)
+TEST(TilingDataTest, setMaxTextureSizeNoBorders)
 {
     TilingData data(8, 16, 32, false);
     EXPECT_EQ(2, data.numTilesX());
@@ -381,6 +408,28 @@ TEST(TilingDataTest, setMaxTextureSize)
     EXPECT_EQ(5, data.maxTextureSize());
     EXPECT_EQ(4, data.numTilesX());
     EXPECT_EQ(7, data.numTilesY());
+}
+
+TEST(TilingDataTest, setMaxTextureSizeBorders)
+{
+    TilingData data(8, 16, 32, true);
+    EXPECT_EQ(3, data.numTilesX());
+    EXPECT_EQ(5, data.numTilesY());
+
+    data.setMaxTextureSize(32);
+    EXPECT_EQ(32, data.maxTextureSize());
+    EXPECT_EQ(1, data.numTilesX());
+    EXPECT_EQ(1, data.numTilesY());
+
+    data.setMaxTextureSize(2);
+    EXPECT_EQ(2, data.maxTextureSize());
+    EXPECT_EQ(0, data.numTilesX());
+    EXPECT_EQ(0, data.numTilesY());
+
+    data.setMaxTextureSize(5);
+    EXPECT_EQ(5, data.maxTextureSize());
+    EXPECT_EQ(5, data.numTilesX());
+    EXPECT_EQ(10, data.numTilesY());
 }
 
 } // namespace

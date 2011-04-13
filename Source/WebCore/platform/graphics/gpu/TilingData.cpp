@@ -44,6 +44,9 @@ namespace WebCore {
 
 static int computeNumTiles(int maxTextureSize, int totalSize, int borderTexels)
 {
+    if (maxTextureSize - 2 * borderTexels <= 0)
+        return 0;
+
     int numTiles = max(1, 1 + (totalSize - 1 - 2 * borderTexels) / (maxTextureSize - 2 * borderTexels));
     return totalSize > 0 ? numTiles : 0;
 }
