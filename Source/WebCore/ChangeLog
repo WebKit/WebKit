@@ -1,3 +1,21 @@
+2011-04-12  Mike Lawther  <mikelawther@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Update boolean operators in RenderStyle to be compatible with check-webkit-style
+        https://bugs.webkit.org/show_bug.cgi?id=58409
+
+        No new functionality, so no new tests.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::operator==):
+        (WebCore::RenderStyle::inheritedNotEqual):
+        (WebCore::positionedObjectMoved):
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::applyTransform):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::isOriginalDisplayInlineType):
+
 2011-04-12  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Andreas Kling.

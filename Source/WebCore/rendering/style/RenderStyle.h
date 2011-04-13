@@ -161,24 +161,24 @@ protected:
     struct InheritedFlags {
         bool operator==(const InheritedFlags& other) const
         {
-            return (_empty_cells == other._empty_cells) &&
-                   (_caption_side == other._caption_side) &&
-                   (_list_style_type == other._list_style_type) &&
-                   (_list_style_position == other._list_style_position) &&
-                   (_visibility == other._visibility) &&
-                   (_text_align == other._text_align) &&
-                   (_text_transform == other._text_transform) &&
-                   (_text_decorations == other._text_decorations) &&
-                   (_cursor_style == other._cursor_style) &&
-                   (_direction == other._direction) &&
-                   (_border_collapse == other._border_collapse) &&
-                   (_white_space == other._white_space) &&
-                   (_box_direction == other._box_direction) &&
-                   (_visuallyOrdered == other._visuallyOrdered) &&
-                   (_force_backgrounds_to_white == other._force_backgrounds_to_white) &&
-                   (_pointerEvents == other._pointerEvents) &&
-                   (_insideLink == other._insideLink) &&
-                   (m_writingMode == other.m_writingMode);
+            return (_empty_cells == other._empty_cells)
+                && (_caption_side == other._caption_side)
+                && (_list_style_type == other._list_style_type)
+                && (_list_style_position == other._list_style_position)
+                && (_visibility == other._visibility)
+                && (_text_align == other._text_align)
+                && (_text_transform == other._text_transform)
+                && (_text_decorations == other._text_decorations)
+                && (_cursor_style == other._cursor_style)
+                && (_direction == other._direction)
+                && (_border_collapse == other._border_collapse)
+                && (_white_space == other._white_space)
+                && (_box_direction == other._box_direction)
+                && (_visuallyOrdered == other._visuallyOrdered)
+                && (_force_backgrounds_to_white == other._force_backgrounds_to_white)
+                && (_pointerEvents == other._pointerEvents)
+                && (_insideLink == other._insideLink)
+                && (m_writingMode == other.m_writingMode);
         }
 
         bool operator!=(const InheritedFlags& other) const { return !(*this == other); }
@@ -1170,8 +1170,8 @@ public:
 
     bool isOriginalDisplayInlineType() const
     {
-        return originalDisplay() == INLINE || originalDisplay() == INLINE_BLOCK ||
-               originalDisplay() == INLINE_BOX || originalDisplay() == INLINE_TABLE;
+        return originalDisplay() == INLINE || originalDisplay() == INLINE_BLOCK
+            || originalDisplay() == INLINE_BOX || originalDisplay() == INLINE_TABLE;
     }
 
     void setWritingMode(WritingMode v) { inherited_flags.m_writingMode = v; }
