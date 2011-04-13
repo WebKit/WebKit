@@ -1,3 +1,21 @@
+2011-04-12  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        REGRESSION(r83561): doesn't pause in-window playback during fullscreen playback
+        https://bugs.webkit.org/show_bug.cgi?id=58312
+
+        Make sure to link the videoValve in all cases, fpsdisplaysink
+        being used or not.
+
+        No new test, this patch fixes an internal feature of the player,
+        not publicly exposed. Having two video sinks and pausing one while
+        the other displays the fullscreen video is an implementation
+        detail of the GStreamer player.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+
 2011-04-13  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

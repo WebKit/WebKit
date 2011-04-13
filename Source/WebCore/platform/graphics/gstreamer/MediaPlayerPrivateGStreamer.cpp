@@ -1689,8 +1689,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     gst_object_unref(GST_OBJECT(srcPad));
     gst_object_unref(GST_OBJECT(sinkPad));
 
+    GstElement* actualVideoSink = 0;
     m_fpsSink = gst_element_factory_make("fpsdisplaysink", "sink");
-
     if (m_fpsSink) {
         // The verbose property has been added in -bad 0.10.22. Making
         // this whole code depend on it because we don't want
@@ -1707,12 +1707,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
             if (g_object_class_find_property(G_OBJECT_GET_CLASS(m_fpsSink), "video-sink")) {
                 g_object_set(m_fpsSink, "video-sink", m_webkitVideoSink, NULL);
                 gst_bin_add(GST_BIN(m_videoSinkBin), m_fpsSink);
-#if GST_CHECK_VERSION(0, 10, 30)
-                // Faster elements linking, if possible.
-                gst_element_link_pads_full(queue, "src", m_fpsSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
-#else
-                gst_element_link(queue, m_fpsSink);
-#endif
+                actualVideoSink = m_fpsSink;
             } else
                 m_fpsSink = 0;
         } else
@@ -1721,14 +1716,17 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
 
     if (!m_fpsSink) {
         gst_bin_add(GST_BIN(m_videoSinkBin), m_webkitVideoSink);
+        actualVideoSink = m_webkitVideoSink;
+    }
+
+    ASSERT(actualVideoSink);
 #if GST_CHECK_VERSION(0, 10, 30)
         // Faster elements linking, if possible.
         gst_element_link_pads_full(queue, "src", identity, "sink", GST_PAD_LINK_CHECK_NOTHING);
-        gst_element_link_pads_full(identity, "src", m_webkitVideoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
+        gst_element_link_pads_full(identity, "src", actualVideoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
 #else
-        gst_element_link_many(queue, identity, m_webkitVideoSink, NULL);
+        gst_element_link_many(queue, identity, actualVideoSink, NULL);
 #endif
-    }
 
     // Add a ghostpad to the bin so it can proxy to tee.
     GstPad* pad = gst_element_get_static_pad(videoTee, "sink");
