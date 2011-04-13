@@ -188,7 +188,7 @@ void HTMLVideoElement::setDisplayMode(DisplayMode mode)
             if (oldMode != Video && player())
                 player()->prepareForRendering();
             if (!hasAvailableVideoFrame())
-                mode = Poster;
+                mode = PosterWaitingForVideo;
         }
     } else if (oldMode != Video && player())
         player()->prepareForRendering();

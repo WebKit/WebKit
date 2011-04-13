@@ -120,8 +120,8 @@ protected:
     virtual void prepareToPlay();
     virtual PlatformMedia platformMedia() const = 0;
 
-    virtual void play() = 0;
-    virtual void pause() = 0;
+    virtual void play();
+    virtual void pause();
 
     virtual IntSize naturalSize() const;
     virtual bool hasVideo() const { return m_cachedHasVideo; }
@@ -184,6 +184,8 @@ protected:
     };
     virtual AVAssetStatus assetStatus() const = 0;
 
+    virtual void platformPlay() = 0;
+    virtual void platformPause() = 0;
     virtual void checkPlayability() = 0;
     virtual void updateRate() = 0;
     virtual float rate() const = 0;
@@ -270,6 +272,8 @@ private:
     bool m_cachedHasVideo;
     bool m_cachedHasCaptions;
     bool m_ignoreLoadStateChanges;
+    bool m_haveReportedFirstVideoFrame;
+    bool m_playWhenFramesAvailable;
 };
 
 }

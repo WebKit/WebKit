@@ -2004,10 +2004,21 @@ void HTMLMediaElement::mediaPlayerRenderingModeChanged(MediaPlayer*)
 
 void HTMLMediaElement::mediaPlayerEngineUpdated(MediaPlayer*)
 {
-    beginProcessingMediaPlayerCallback();
     LOG(Media, "HTMLMediaElement::mediaPlayerEngineUpdated");
+    beginProcessingMediaPlayerCallback();
     if (renderer())
         renderer()->updateFromElement();
+    endProcessingMediaPlayerCallback();
+}
+
+void HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable(MediaPlayer*)
+{
+    LOG(Media, "HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable");
+    beginProcessingMediaPlayerCallback();
+    if (displayMode() == PosterWaitingForVideo) {
+        setDisplayMode(Video);
+        mediaPlayerRenderingModeChanged(m_player.get());
+    }
     endProcessingMediaPlayerCallback();
 }
 

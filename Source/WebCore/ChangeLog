@@ -1,3 +1,52 @@
+2011-04-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Apple movie trailers play only audio
+        https://bugs.webkit.org/show_bug.cgi?id=58339
+        <rdar://problem/9237606>
+
+        No new tests, covered by existing layout and manual tests.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerEngineUpdated): Do the logging before calling any functions.
+        (WebCore::HTMLMediaElement::mediaPlayerFirstVideoFrameAvailable): New, if still displaying the poster 
+            change the display mode to Video and force a style recalc so the video layer gets hooked
+            up the the render tree.
+        * html/HTMLMediaElement.h: Define new display mode, PosterWaitingForVideo, to signal that we
+            want to stop displaying the poster as soon as the first frame of video is available.
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::setDisplayMode): Change display mode to PosterWaitingForVideo when
+            we want to display Video but the media engines doesn't have the first frame yet.
+        * html/HTMLVideoElement.h:
+        (WebCore::HTMLVideoElement::shouldDisplayPosterImage): Update to return true when display mode
+            is PosterWaitingForVideo.
+
+        * manual-tests/media-elements/video-replaces-poster.html: Clean up bit-rot from patch changes.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::firstVideoFrameAvailable): New, passthrough from media engien to element.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerFirstVideoFrameAvailable):
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation): Initialize 
+            m_haveReportedFirstVideoFrame and m_playWhenFramesAvailable.
+        (WebCore::MediaPlayerPrivateAVFoundation::play): Don't actually start playback until the first
+            frame of video has loaded, or audio will begin to play before we can show video.
+        (WebCore::MediaPlayerPrivateAVFoundation::pause): Clear m_playWhenFramesAvailable.
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates): When first frame of video is
+            available, inform elment and begin playback if it was previousl requested.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer): Correct logging.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoLayer): Ditto.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformPlay): Renamed from play.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformPause): Rename from pause.
+
 2011-04-12  Jian Li  <jianli@chromium.org>
 
         Unreviewed, rolling out r83649.

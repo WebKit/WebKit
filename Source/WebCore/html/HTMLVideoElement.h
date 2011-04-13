@@ -64,7 +64,7 @@ public:
     // Used by canvas to gain raw pixel access
     void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
 
-    bool shouldDisplayPosterImage() const { return displayMode() == Poster; }
+    bool shouldDisplayPosterImage() const { return displayMode() == Poster || displayMode() == PosterWaitingForVideo; }
 
 private:
     HTMLVideoElement(const QualifiedName&, Document*);

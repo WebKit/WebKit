@@ -74,6 +74,8 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_cachedHasVideo(false)
     , m_cachedHasCaptions(false)
     , m_ignoreLoadStateChanges(false)
+    , m_haveReportedFirstVideoFrame(false)
+    , m_playWhenFramesAvailable(false)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(%p)", this);
 }
@@ -246,6 +248,25 @@ void MediaPlayerPrivateAVFoundation::prepareToPlay()
 #endif    
     createAVPlayerForURL(m_assetURL);
     checkPlayability();
+}
+
+void MediaPlayerPrivateAVFoundation::play()
+{
+    LOG(Media, "MediaPlayerPrivateAVFoundation::play(%p)", this);
+
+    // If the file has video, don't request playback until the first frame of video is ready to display
+    // or the audio may start playing before we can render video.
+    if (!m_cachedHasVideo || hasAvailableVideoFrame())
+        platformPlay();
+    else
+        m_playWhenFramesAvailable = true;
+}
+
+void MediaPlayerPrivateAVFoundation::pause()
+{
+    LOG(Media, "MediaPlayerPrivateAVFoundation::pause(%p)", this);
+    m_playWhenFramesAvailable = false;
+    platformPause();
 }
 
 void MediaPlayerPrivateAVFoundation::paint(GraphicsContext*, const IntRect&)
@@ -466,11 +487,21 @@ void MediaPlayerPrivateAVFoundation::updateStates()
     if (isReadyForVideoSetup() && currentRenderingMode() != preferredRenderingMode())
         setUpVideoRendering();
 
+    if (!m_haveReportedFirstVideoFrame && m_cachedHasVideo && hasAvailableVideoFrame()) {
+        m_haveReportedFirstVideoFrame = true;
+        m_player->firstVideoFrameAvailable();
+    }
+
     if (m_networkState != oldNetworkState)
         m_player->networkStateChanged();
 
     if (m_readyState != oldReadyState)
         m_player->readyStateChanged();
+
+    if (m_playWhenFramesAvailable && hasAvailableVideoFrame()) {
+        m_playWhenFramesAvailable = false;
+        platformPlay();
+    }
 
     LOG(Media, "MediaPlayerPrivateAVFoundation::updateStates(%p) - exiting with networkState = %i, readyState = %i", 
         this, static_cast<int>(m_networkState), static_cast<int>(m_readyState));

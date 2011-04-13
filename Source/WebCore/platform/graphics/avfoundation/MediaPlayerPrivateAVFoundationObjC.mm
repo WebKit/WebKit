@@ -201,7 +201,7 @@ void MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer()
     if (!m_imageGenerator)
         return;
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer(%p) - destroying", this, m_imageGenerator.get());
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::destroyContextVideoRenderer(%p) - destroying  %p", this, m_imageGenerator.get());
 
     m_imageGenerator = 0;
 }
@@ -214,7 +214,7 @@ void MediaPlayerPrivateAVFoundationObjC::createVideoLayer()
     if (!m_videoLayer) {
         m_videoLayer.adoptNS([[AVPlayerLayer alloc] init]);
         [m_videoLayer.get() setPlayer:m_avPlayer.get()];
-        LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning", this, m_videoLayer.get());
+        LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createVideoLayer(%p) - returning %p", this, m_videoLayer.get());
     }
 }
 
@@ -351,9 +351,9 @@ PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
     return m_videoLayer.get();
 }
 
-void MediaPlayerPrivateAVFoundationObjC::play()
+void MediaPlayerPrivateAVFoundationObjC::platformPlay()
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::play(%p)", this);
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::platformPlay(%p)", this);
     if (!metaDataAvailable())
         return;
 
@@ -362,9 +362,9 @@ void MediaPlayerPrivateAVFoundationObjC::play()
     setDelayCallbacks(false);
 }
 
-void MediaPlayerPrivateAVFoundationObjC::pause()
+void MediaPlayerPrivateAVFoundationObjC::platformPause()
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::pause(%p)", this);
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::platformPause(%p)", this);
     if (!metaDataAvailable())
         return;
 

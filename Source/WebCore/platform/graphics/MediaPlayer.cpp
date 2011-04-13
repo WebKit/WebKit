@@ -852,6 +852,12 @@ void MediaPlayer::playbackStateChanged()
         m_mediaPlayerClient->mediaPlayerPlaybackStateChanged(this);
 }
 
+void MediaPlayer::firstVideoFrameAvailable()
+{
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerFirstVideoFrameAvailable(this);
+}
+
 }
 
 #endif

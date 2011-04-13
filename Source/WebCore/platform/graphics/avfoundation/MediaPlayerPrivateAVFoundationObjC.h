@@ -73,8 +73,8 @@ private:
 
     virtual PlatformMedia platformMedia() const;
 
-    virtual void play();
-    virtual void pause();
+    virtual void platformPlay();
+    virtual void platformPause();
     virtual float currentTime() const;
     virtual void setVolume(float);
     virtual void setClosedCaptionsVisible(bool);

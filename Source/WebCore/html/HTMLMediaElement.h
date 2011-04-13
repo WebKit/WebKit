@@ -212,7 +212,7 @@ protected:
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
 
-    enum DisplayMode { Unknown, None, Poster, Video };
+    enum DisplayMode { Unknown, None, Poster, PosterWaitingForVideo, Video };
     DisplayMode displayMode() const { return m_displayMode; }
     virtual void setDisplayMode(DisplayMode mode) { m_displayMode = mode; }
 
@@ -257,6 +257,7 @@ private:
     virtual void mediaPlayerRenderingModeChanged(MediaPlayer*);
 #endif
     virtual void mediaPlayerEngineUpdated(MediaPlayer*);
+    virtual void mediaPlayerFirstVideoFrameAvailable(MediaPlayer*);
 
     void loadTimerFired(Timer<HTMLMediaElement>*);
     void asyncEventTimerFired(Timer<HTMLMediaElement>*);

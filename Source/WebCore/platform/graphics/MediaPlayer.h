@@ -143,6 +143,10 @@ public:
 
     virtual void mediaPlayerEngineUpdated(MediaPlayer*) { }
 
+    // The first frame of video is available to render. A media engine need only make this callback if the
+    // first frame is not available immediately when prepareForRendering is called.
+    virtual void mediaPlayerFirstVideoFrameAvailable(MediaPlayer*) { }
+
 #if USE(ACCELERATED_COMPOSITING)
     // whether the rendering system can accelerate the display of this MediaPlayer.
     virtual bool mediaPlayerRenderingCanBeAccelerated(MediaPlayer*) { return false; }
@@ -257,6 +261,7 @@ public:
     void rateChanged();
     void playbackStateChanged();
     void durationChanged();
+    void firstVideoFrameAvailable();
 
     void repaint();
 
