@@ -1,3 +1,32 @@
+2011-04-13  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Rebaselined SVG test expectations following mac expectations change in r83710.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png: Added.
+        * platform/chromium-linux/svg/custom/text-dom-01-f-expected.checksum: Removed.
+        * platform/chromium-linux/svg/custom/text-dom-01-f-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-dom-textLength-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-svgdom-textLength-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/text-dom-01-f-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/svg/custom/text-dom-01-f-expected.png: Removed.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGTextElement-dom-textLength-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGTextElement-svgdom-textLength-prop-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt: Added.
+        * platform/chromium-win/svg/custom/text-dom-01-f-expected.checksum: Removed.
+        * platform/chromium-win/svg/custom/text-dom-01-f-expected.png:
+        * platform/chromium-win/svg/custom/text-dom-01-f-expected.txt:
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-dom-textLength-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-svgdom-textLength-prop-expected.png: Added.
+        * platform/chromium-win/svg/text/lengthAdjust-text-metrics-expected.txt:
+
 2011-04-13  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by David Levin.
