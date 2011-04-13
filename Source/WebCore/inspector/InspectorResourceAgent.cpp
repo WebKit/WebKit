@@ -303,7 +303,7 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
         callStackValue = callStack->buildInspectorArray();
     else
         callStackValue = InspectorArray::create();
-    m_frontend->requestWillBeSent(static_cast<int>(identifier), pointerAsId(loader->frame()), pointerAsId(loader), loader->url().string(), buildObjectForResourceRequest(request), buildObjectForResourceResponse(redirectResponse), currentTime(), callStackValue);
+    m_frontend->requestWillBeSent(static_cast<int>(identifier), pointerAsId(loader->frame()), pointerAsId(loader), loader->url().string(), buildObjectForResourceRequest(request), currentTime(), callStackValue, buildObjectForResourceResponse(redirectResponse));
 }
 
 void InspectorResourceAgent::markResourceAsCached(unsigned long identifier)

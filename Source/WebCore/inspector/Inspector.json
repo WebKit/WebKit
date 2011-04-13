@@ -446,9 +446,9 @@
                     { "name": "loaderId", "type": "string", "description": "Loader identifier." },
                     { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },
                     { "name": "request", "$ref": "ResourceRequest", "description": "Request data." },
-                    { "name": "redirectResponse", "optional": true, "$ref": "ResourceResponse", "description": "Redirect response data." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
-                    { "name": "stackTrace", "type": "array", "items": { "$ref": "Console.CallFrame"}, "description": "JavaScript stack trace upon issuing this request." }
+                    { "name": "stackTrace", "type": "array", "items": { "$ref": "Console.CallFrame"}, "description": "JavaScript stack trace upon issuing this request." },
+                    { "name": "redirectResponse", "optional": true, "$ref": "ResourceResponse", "description": "Redirect response data." }
                 ]
             },
             {
