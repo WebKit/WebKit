@@ -220,7 +220,7 @@ class ChromiumPort(base.Port):
                 self._results_directory = self._build_path(self.get_option('configuration'),
                                                            option_val)
             else:
-                return super(ChromiumPort, self).results_directory(self)
+                return super(ChromiumPort, self).results_directory()
         return self._results_directory
 
     def setup_test_run(self):
