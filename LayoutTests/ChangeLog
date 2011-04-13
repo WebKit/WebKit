@@ -1,3 +1,11 @@
+2011-04-13  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline of an svg test updated in r83710 and
+        skip an http test using unimplemented DRT features.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/svg/custom/text-dom-01-f-expected.txt:
+
 2011-04-13  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Rebaselined SVG test expectations following mac expectations change in r83710.

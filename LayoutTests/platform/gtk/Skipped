@@ -683,6 +683,7 @@ fast/loader/willSendRequest-null-for-preload.html
 
 # Requires willSendRequestReturnsNullOnRedirect + willSendRequest + didFinishLoading
 http/tests/misc/will-send-request-returns-null-on-redirect.html
+http/tests/misc/favicon-loads-with-icon-loading-override.html
 
 # GTK+ does not have layoutTestController.setDomainRelaxationForbiddenForURLScheme
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html
