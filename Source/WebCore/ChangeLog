@@ -1,3 +1,15 @@
+2011-04-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Media engine fallback doesn't always work
+        https://bugs.webkit.org/show_bug.cgi?id=58462
+
+        No new tests, this was verified manually with the url noted in the bug.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::networkStateChanged):
+
 2011-04-13  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

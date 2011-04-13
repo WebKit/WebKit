@@ -786,11 +786,12 @@ void MediaPlayer::networkStateChanged()
     // If more than one media engine is installed and this one failed before finding metadata,
     // let the next engine try.
     if (m_private->networkState() >= FormatError
-        && m_private->readyState() < HaveMetadata 
-        && installedMediaEngines().size() > 1 
-        && bestMediaEngineForTypeAndCodecs(m_contentMIMEType, m_contentTypeCodecs, m_currentMediaEngine)) {
+        && m_private->readyState() < HaveMetadata
+        && installedMediaEngines().size() > 1) {
+        if ( m_contentMIMEType.isEmpty() || bestMediaEngineForTypeAndCodecs(m_contentMIMEType, m_contentTypeCodecs, m_currentMediaEngine)) {
             m_reloadTimer.startOneShot(0);
             return;
+        }
     }
     if (m_mediaPlayerClient)
         m_mediaPlayerClient->mediaPlayerNetworkStateChanged(this);
