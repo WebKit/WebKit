@@ -1,5 +1,14 @@
 2011-04-12  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Maciej Stachowiak.
+
+        Quarantine related sandbox denial when downloading files
+        <rdar://problem/9203736>
+
+        * WebProcess/com.apple.WebProcess.sb:
+
+2011-04-12  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Sandbox violations dragging an image to the desktop.
