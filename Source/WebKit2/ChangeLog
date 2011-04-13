@@ -1,5 +1,14 @@
 2011-04-12  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Sandbox violations dragging an image to the desktop.
+        <rdar://problem/9261834>
+
+        * WebProcess/com.apple.WebProcess.sb:
+
+2011-04-12  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Cameron Zwarich.
 
         Sandbox violations trying to access ~/Library/Keyboard Layouts and ~/Library/Input Methods
