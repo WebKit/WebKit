@@ -1,3 +1,16 @@
+2011-04-13  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] PluginPackage should check whether a plugin mixes GTK+ 2 and 3 symbols itself
+        https://bugs.webkit.org/show_bug.cgi?id=58297
+
+        Do not disable flash specifically when built with GTK+ 3 -
+        PluginPackage should do the right thing while loading plugins.
+
+        * GtkLauncher/main.c:
+        (main):
+
 2011-04-12  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

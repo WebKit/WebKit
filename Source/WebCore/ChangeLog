@@ -1,3 +1,17 @@
+2011-04-13  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] PluginPackage should check whether a plugin mixes GTK+ 2 and 3 symbols itself
+        https://bugs.webkit.org/show_bug.cgi?id=58297
+
+        Make sure we do not load plugins that use symbols of a different
+        GTK+ major version to avoid bugs and crashes.
+
+        * plugins/gtk/PluginPackageGtk.cpp:
+        (WebCore::moduleMixesGtkSymbols):
+        (WebCore::PluginPackage::load):
+
 2011-04-13  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.
