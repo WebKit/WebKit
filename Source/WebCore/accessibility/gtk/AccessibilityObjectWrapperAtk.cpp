@@ -63,6 +63,7 @@
 #include "TextEncoding.h"
 #include "TextIterator.h"
 #include "WebKitAccessibleHyperlink.h"
+#include "htmlediting.h"
 #include "visible_units.h"
 
 #include <atk/atk.h>
@@ -1620,7 +1621,7 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     // start position (it would belong to the node anyway).
     Node* firstLeafNode = node->firstDescendant();
     if (selRange->isPointInRange(firstLeafNode, 0, ec))
-        nodeRangeStart = firstPositionInNode(firstLeafNode);
+        nodeRangeStart = firstPositionInOrBeforeNode(firstLeafNode);
     else
         nodeRangeStart = selRange->startPosition();
 
@@ -1630,12 +1631,12 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     // end position (it would belong to the node anyway).
     Node* lastLeafNode = node->lastDescendant();
     if (selRange->isPointInRange(lastLeafNode, lastOffsetInNode(lastLeafNode), ec))
-        nodeRangeEnd = lastPositionInNode(lastLeafNode);
+        nodeRangeEnd = lastPositionInOrAfterNode(lastLeafNode);
     else
         nodeRangeEnd = selRange->endPosition();
 
     // Calculate position of the selected range inside the object.
-    Position parentFirstPosition = firstPositionInNode(node);
+    Position parentFirstPosition = firstPositionInOrBeforeNode(node);
     RefPtr<Range> rangeInParent = Range::create(node->document(), parentFirstPosition, nodeRangeStart);
 
     // Set values for start and end offsets.

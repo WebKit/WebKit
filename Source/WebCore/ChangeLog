@@ -2,6 +2,23 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Consider editable and non editable nodes when calculating selection offsets
+        https://bugs.webkit.org/show_bug.cgi?id=58431
+
+        Use firstPositionInOrBeforeNode() and lastPositionInOrAfterNode().
+
+        This is needed to ensure that getSelectionOffsetsForObject() works
+        well when non editable nodes are present in the selection, since
+        firstPositionInNode() and lastPositionInNode() don't work in those
+        cases (they assume the node is editable).
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (getSelectionOffsetsForObject): Updated calls.
+
+2011-04-13  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Missing nullchecks in GTK's a11y wrapper
         https://bugs.webkit.org/show_bug.cgi?id=58429
 
