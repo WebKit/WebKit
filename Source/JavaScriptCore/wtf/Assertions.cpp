@@ -215,7 +215,7 @@ void WTFReportArgumentAssertionFailure(const char* file, int line, const char* f
 
 void WTFReportBacktrace()
 {
-#if PLATFORM(MAC) && !defined(NDEBUG)
+#if PLATFORM(MAC)
     static const int maxFrames = 32;
     void* samples[maxFrames];
     int frames = backtrace(samples, maxFrames);

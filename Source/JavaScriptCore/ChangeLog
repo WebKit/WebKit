@@ -1,3 +1,19 @@
+2011-04-13  Paul Knight  <pknight@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        BACKTRACE() macro should check for Debug configuration in macro, not WTFReportBacktrace definition
+        https://bugs.webkit.org/show_bug.cgi?id=58405
+
+        The BACKTRACE() macro requires JavaScriptCore be built with a Debug
+        configuration in order for it to be enabled. Move the NDEBUG check to
+        the header so it will be enabled when the calling framework or
+        application is built with a Debug configuration, similar to how
+        ASSERT() and friends work.
+
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+
 2011-04-12  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Alexey Proskuryakov.

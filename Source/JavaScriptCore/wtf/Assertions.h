@@ -73,6 +73,10 @@
 #define HAVE_VARIADIC_MACRO 1
 #endif
 
+#ifndef BACKTRACE_DISABLED
+#define BACKTRACE_DISABLED ASSERTIONS_DISABLED_DEFAULT
+#endif
+
 #ifndef ASSERT_DISABLED
 #define ASSERT_DISABLED ASSERTIONS_DISABLED_DEFAULT
 #endif
@@ -188,10 +192,17 @@ WTF_EXPORT_PRIVATE void WTFLogVerbose(const char* file, int line, const char* fu
 
   Print a backtrace to the same location as ASSERT messages.
 */
-#ifndef BACKTRACE
+
+#if BACKTRACE_DISABLED
+
+#define BACKTRACE() ((void)0)
+
+#else
+
 #define BACKTRACE() do { \
     WTFReportBacktrace(); \
 } while(false)
+
 #endif
 
 /* ASSERT, ASSERT_NOT_REACHED, ASSERT_UNUSED
