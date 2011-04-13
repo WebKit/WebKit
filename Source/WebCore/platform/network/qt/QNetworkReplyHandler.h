@@ -109,8 +109,6 @@ public:
 
     QNetworkReply* release();
 
-    void synchronousLoad();
-
 public slots:
     void finish();
     void sendResponseIfNeeded();

@@ -53,61 +53,21 @@ namespace WebCore {
 
 class WebCoreSynchronousLoader : public ResourceHandleClient {
 public:
-    WebCoreSynchronousLoader();
+    WebCoreSynchronousLoader(ResourceError& error, ResourceResponse& response, Vector<char>& data)
+        : m_error(error)
+        , m_response(response)
+        , m_data(data)
+    {}
 
-    void waitForCompletion();
-
-    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-    virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived);
-    virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
-    virtual void didFail(ResourceHandle*, const ResourceError&);
-
-    ResourceResponse resourceResponse() const { return m_response; }
-    ResourceError resourceError() const { return m_error; }
-    Vector<char> data() const { return m_data; }
-
-    void setReplyFinished(bool finished) { m_replyFinished = finished; }
-
+    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse& response) { m_response = response; }
+    virtual void didReceiveData(ResourceHandle*, const char* data, int length, int) { m_data.append(data, length); }
+    virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/) {}
+    virtual void didFail(ResourceHandle*, const ResourceError& error) { m_error = error; }
 private:
-    ResourceResponse m_response;
-    ResourceError m_error;
-    Vector<char> m_data;
-    QEventLoop m_eventLoop;
-    bool m_replyFinished;
+    ResourceError& m_error;
+    ResourceResponse& m_response;
+    Vector<char>& m_data;
 };
-
-WebCoreSynchronousLoader::WebCoreSynchronousLoader()
-        : m_replyFinished(false)
-{
-}
-
-void WebCoreSynchronousLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
-{
-    m_response = response;
-}
-
-void WebCoreSynchronousLoader::didReceiveData(ResourceHandle*, const char* data, int length, int)
-{
-    m_data.append(data, length);
-}
-
-void WebCoreSynchronousLoader::didFinishLoading(ResourceHandle*, double)
-{
-    if (!m_replyFinished)
-        m_eventLoop.exit();
-}
-
-void WebCoreSynchronousLoader::didFail(ResourceHandle*, const ResourceError& error)
-{
-    m_error = error;
-    if (!m_replyFinished)
-        m_eventLoop.exit();
-}
-
-void WebCoreSynchronousLoader::waitForCompletion()
-{
-    m_eventLoop.exec(QEventLoop::ExcludeUserInputEvents);
-}
 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
@@ -191,7 +151,7 @@ PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()
 
 void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials /*storedCredentials*/, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
-    WebCoreSynchronousLoader syncLoader;
+    WebCoreSynchronousLoader syncLoader(error, response, data);
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(request, &syncLoader, true, false));
 
     ResourceHandleInternal* d = handle->getInternal();
@@ -204,19 +164,10 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
         d->m_firstRequest.setURL(urlWithCredentials);
     }
     d->m_context = context;
-    d->m_job = new QNetworkReplyHandler(handle.get(), QNetworkReplyHandler::SynchronousLoad);
 
-    QNetworkReply* reply = d->m_job->reply();
-    // When using synchronous calls, we are finished when reaching this point.
-    if (reply->isFinished()) {
-        syncLoader.setReplyFinished(true);
-        d->m_job->synchronousLoad();
-    } else
-        syncLoader.waitForCompletion();
-
-    error = syncLoader.resourceError();
-    data = syncLoader.data();
-    response = syncLoader.resourceResponse();
+    // starting in deferred mode gives d->m_job the chance of being set before sending the request.
+    d->m_job = new QNetworkReplyHandler(handle.get(), QNetworkReplyHandler::SynchronousLoad, true);
+    d->m_job->setLoadingDeferred(false);
 }
 
 void ResourceHandle::platformSetDefersLoading(bool defers)
