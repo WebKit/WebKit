@@ -3505,3 +3505,9 @@ BUGJIANLI WIN LINUX : fast/inline/positioned-object-between-replaced-elements.ht
 BUGJIANLI WIN LINUX: fast/borders/bidi-002.html = IMAGE+TEXT
 BUGJIANLI WIN LINUX: fast/borders/bidi-004.html = IMAGE+TEXT
 BUGJIANLI WIN LINUX: fast/borders/bidi-009a.html = IMAGE+TEXT
+
+// Regression caused by r83669. Seems to be V8 related.
+BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
+
+// New test added as r83654. Probably need rebaseline.
+BUGJIANLI WIN LINUX : fullscreen/full-screen-zIndex.html = TEXT

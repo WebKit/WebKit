@@ -1,3 +1,12 @@
+2011-04-12  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, update chromium test expectations.
+
+        Mark array-proto-func-property-getter-except.html and full-screen-zIndex.html
+        as filed in chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] http/tests/misc/favicon-loads-with-icon-loading-override.html fails
