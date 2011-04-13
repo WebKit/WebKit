@@ -1,3 +1,28 @@
+2011-04-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, rolling out r83695.
+        http://trac.webkit.org/changeset/83695
+        https://bugs.webkit.org/show_bug.cgi?id=58375
+
+        [Qt][WK2]It broke http tests
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::start):
+        (WebCore::QNetworkReplyHandler::synchronousLoad):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::WebCoreSynchronousLoader::resourceResponse):
+        (WebCore::WebCoreSynchronousLoader::resourceError):
+        (WebCore::WebCoreSynchronousLoader::data):
+        (WebCore::WebCoreSynchronousLoader::setReplyFinished):
+        (WebCore::WebCoreSynchronousLoader::WebCoreSynchronousLoader):
+        (WebCore::WebCoreSynchronousLoader::didReceiveResponse):
+        (WebCore::WebCoreSynchronousLoader::didReceiveData):
+        (WebCore::WebCoreSynchronousLoader::didFinishLoading):
+        (WebCore::WebCoreSynchronousLoader::didFail):
+        (WebCore::WebCoreSynchronousLoader::waitForCompletion):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
 2011-04-13  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
