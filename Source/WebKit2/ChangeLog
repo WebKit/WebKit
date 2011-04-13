@@ -1,3 +1,38 @@
+2011-04-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        <rdar://problem/9029193> and https://bugs.webkit.org/show_bug.cgi?id=58406
+        Bringing up the context menu on a link might also follow the link.
+
+        This patch adds a flag that is set just before the WebProcess tells the UIProcess to show a context menu.
+
+        As long as this flag is set, the WebProcess will ignore any other mouse events that might have queued up
+        by the time the UIProcess gets around to showing the menu.
+
+        After the UIProcess is done showing the menu, it messages back telling the WebProcess to clear the flag
+        and resume normal MouseEvent handling.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showContextMenu): No matter what internalShowContextMenu does, always notify
+          the WebProcess that any context menu is now hidden.
+        (WebKit::WebPageProxy::internalShowContextMenu):
+        * UIProcess/WebPageProxy.h:
+
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::show): Since we're telling the UIProcess to show the menu, tell the WebPage a
+          context menu is showing so it will stop handling mouse events.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::mouseEvent): Don't try to handle mouse events if a context menu is flagged as showing.
+
+        Add accessors to twiddle the "context menu showing" flag:
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::contextMenuShowing):
+        (WebKit::WebPage::contextMenuHidden):
+        * WebProcess/WebPage/WebPage.messages.in: Add the ContextMenuHidden message.
+
 2011-04-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

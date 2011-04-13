@@ -170,6 +170,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_userSpaceScaleFactor(parameters.userSpaceScaleFactor)
     , m_cachedMainFrameIsPinnedToLeftSide(false)
     , m_cachedMainFrameIsPinnedToRightSide(false)
+    , m_isShowingContextMenu(false)
 #if PLATFORM(WIN)
     , m_gestureReachedScrollingLimit(false)
 #endif
@@ -908,6 +909,12 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page)
 
 void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 {
+    // Don't try to handle any pending mouse events if a context menu is showing.
+    if (m_isShowingContextMenu) {
+        send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), false));
+        return;
+    }
+    
     bool handled = false;
     
     if (m_pageOverlay) {

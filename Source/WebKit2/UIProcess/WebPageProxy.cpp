@@ -2239,6 +2239,14 @@ void WebPageProxy::hidePopupMenu()
 
 void WebPageProxy::showContextMenu(const IntPoint& menuLocation, const ContextMenuState& contextMenuState, const Vector<WebContextMenuItemData>& proposedItems, CoreIPC::ArgumentDecoder* arguments)
 {
+    internalShowContextMenu(menuLocation, contextMenuState, proposedItems, arguments);
+    
+    // No matter the result of internalShowContextMenu, always notify the WebProcess that the menu is hidden so it starts handling mouse events again.
+    process()->send(Messages::WebPage::ContextMenuHidden(), m_pageID);
+}
+
+void WebPageProxy::internalShowContextMenu(const IntPoint& menuLocation, const ContextMenuState& contextMenuState, const Vector<WebContextMenuItemData>& proposedItems, CoreIPC::ArgumentDecoder* arguments)
+{
     RefPtr<APIObject> userData;
     WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
     if (!arguments->decode(messageDecoder))

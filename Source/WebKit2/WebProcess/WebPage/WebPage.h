@@ -402,6 +402,8 @@ public:
     void simulateMouseUp(int button, WebCore::IntPoint, int clickCount, WKEventModifiers, double time);
     void simulateMouseMotion(WebCore::IntPoint, double time);
 
+    void contextMenuShowing() { m_isShowingContextMenu = true; }
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -456,6 +458,7 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     void touchEvent(const WebTouchEvent&);
 #endif
+    void contextMenuHidden() { m_isShowingContextMenu = false; }
 
     static void scroll(WebCore::Page*, WebCore::ScrollDirection, WebCore::ScrollGranularity);
     static void logicalScroll(WebCore::Page*, WebCore::ScrollLogicalDirection, WebCore::ScrollGranularity);
@@ -635,6 +638,8 @@ private:
 
     bool m_cachedMainFrameIsPinnedToLeftSide;
     bool m_cachedMainFrameIsPinnedToRightSide;
+
+    bool m_isShowingContextMenu;
 
 #if PLATFORM(WIN)
     bool m_gestureReachedScrollingLimit;

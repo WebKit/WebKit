@@ -82,7 +82,8 @@ void WebContextMenu::show()
     contextMenuState.absoluteImageURLString = controller->hitTestResult().absoluteImageURL().string();
     contextMenuState.absoluteLinkURLString = controller->hitTestResult().absoluteLinkURL().string();
 
-    // Notify the UIProcess.
+    // Mark the WebPage has having a shown context menu then notify the UIProcess.
+    m_page->contextMenuShowing();
     m_page->send(Messages::WebPageProxy::ShowContextMenu(view->contentsToWindow(controller->hitTestResult().point()), contextMenuState, proposedMenu, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
