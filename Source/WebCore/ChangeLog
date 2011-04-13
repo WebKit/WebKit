@@ -1,3 +1,19 @@
+2011-04-12  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement remaining Background and Mask css properties in CSSStyleApplyProperty
+        https://bugs.webkit.org/show_bug.cgi?id=58390
+
+        No new tests required as no functionality changed.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyExpanding): Class to expand one property to 0-4 properties.
+        (WebCore::ApplyPropertyExpandingSuppressValue): Expand properties but suppress applyValue.
+
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        (WebCore::CSSStyleSelector::applyProperty): Remove implementations that have been moved to CSSStyleApplyProperty.
+
 2011-04-12  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Reviewed by Dimitri Glazkov.

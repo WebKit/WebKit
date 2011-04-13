@@ -38,11 +38,47 @@ using namespace std;
 
 namespace WebCore {
 
-class ApplyPropertyNull : public ApplyPropertyBase {
+class ApplyPropertyExpanding : public ApplyPropertyBase {
 public:
-    virtual void applyInheritValue(CSSStyleSelector*) const {}
-    virtual void applyInitialValue(CSSStyleSelector*) const {}
-    virtual void applyValue(CSSStyleSelector*, CSSValue*) const {}
+    ApplyPropertyExpanding(ApplyPropertyBase* one = 0, ApplyPropertyBase* two = 0, ApplyPropertyBase *three = 0, ApplyPropertyBase* four = 0)
+    {
+        m_propertyMap[0] = one;
+        m_propertyMap[1] = two;
+        m_propertyMap[2] = three;
+        m_propertyMap[3] = four;
+        m_propertyMap[4] = 0; // always null terminated
+    }
+
+    virtual void applyInheritValue(CSSStyleSelector* selector) const
+    {
+        for (ApplyPropertyBase* const* e = m_propertyMap; *e; e++)
+            (*e)->applyInheritValue(selector);
+    }
+
+    virtual void applyInitialValue(CSSStyleSelector* selector) const
+    {
+        for (ApplyPropertyBase* const* e = m_propertyMap; *e; e++)
+            (*e)->applyInitialValue(selector);
+    }
+
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        for (ApplyPropertyBase* const* e = m_propertyMap; *e; e++)
+            (*e)->applyValue(selector, value);
+    }
+private:
+    ApplyPropertyBase* m_propertyMap[5];
+};
+
+class ApplyPropertyExpandingSuppressValue : public ApplyPropertyExpanding {
+public:
+    ApplyPropertyExpandingSuppressValue(ApplyPropertyBase* one = 0, ApplyPropertyBase* two = 0, ApplyPropertyBase *three = 0, ApplyPropertyBase* four = 0)
+        : ApplyPropertyExpanding(one, two, three, four) {}
+
+    virtual void applyValue(CSSStyleSelector*, CSSValue*)
+    {
+        ASSERT_NOT_REACHED();
+    }
 };
 
 template <typename T>
@@ -268,9 +304,26 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyValue(CSSPropertyWebkitBackgroundClip, CSSPropertyBackgroundClip);
     setPropertyValue(CSSPropertyWebkitBackgroundComposite, new ApplyPropertyFillLayer<CompositeOperator>(CSSPropertyWebkitBackgroundComposite, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
             &FillLayer::isCompositeSet, &FillLayer::composite, &FillLayer::setComposite, &FillLayer::clearComposite, &FillLayer::initialFillComposite, &CSSStyleSelector::mapFillComposite));
+
+    setPropertyValue(CSSPropertyBackgroundImage, new ApplyPropertyFillLayer<StyleImage*>(CSSPropertyBackgroundImage, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+                &FillLayer::isImageSet, &FillLayer::image, &FillLayer::setImage, &FillLayer::clearImage, &FillLayer::initialFillImage, &CSSStyleSelector::mapFillImage));
+
     setPropertyValue(CSSPropertyBackgroundOrigin, new ApplyPropertyFillLayer<EFillBox>(CSSPropertyBackgroundOrigin, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
             &FillLayer::isOriginSet, &FillLayer::origin, &FillLayer::setOrigin, &FillLayer::clearOrigin, &FillLayer::initialFillOrigin, &CSSStyleSelector::mapFillOrigin));
     setPropertyValue(CSSPropertyWebkitBackgroundOrigin, CSSPropertyBackgroundOrigin);
+
+    setPropertyValue(CSSPropertyBackgroundPositionX, new ApplyPropertyFillLayer<Length>(CSSPropertyBackgroundPositionX, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+                &FillLayer::isXPositionSet, &FillLayer::xPosition, &FillLayer::setXPosition, &FillLayer::clearXPosition, &FillLayer::initialFillXPosition, &CSSStyleSelector::mapFillXPosition));
+    setPropertyValue(CSSPropertyBackgroundPositionY, new ApplyPropertyFillLayer<Length>(CSSPropertyBackgroundPositionY, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+                    &FillLayer::isYPositionSet, &FillLayer::yPosition, &FillLayer::setYPosition, &FillLayer::clearYPosition, &FillLayer::initialFillYPosition, &CSSStyleSelector::mapFillYPosition));
+    setPropertyValue(CSSPropertyBackgroundPosition, new ApplyPropertyExpandingSuppressValue(propertyValue(CSSPropertyBackgroundPositionX), propertyValue(CSSPropertyBackgroundPositionY)));
+
+    setPropertyValue(CSSPropertyBackgroundRepeatX, new ApplyPropertyFillLayer<EFillRepeat>(CSSPropertyBackgroundRepeatX, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+                &FillLayer::isRepeatXSet, &FillLayer::repeatX, &FillLayer::setRepeatX, &FillLayer::clearRepeatX, &FillLayer::initialFillRepeatX, &CSSStyleSelector::mapFillRepeatX));
+    setPropertyValue(CSSPropertyBackgroundRepeatY, new ApplyPropertyFillLayer<EFillRepeat>(CSSPropertyBackgroundRepeatY, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
+                    &FillLayer::isRepeatYSet, &FillLayer::repeatY, &FillLayer::setRepeatY, &FillLayer::clearRepeatY, &FillLayer::initialFillRepeatY, &CSSStyleSelector::mapFillRepeatY));
+    setPropertyValue(CSSPropertyBackgroundRepeat, new ApplyPropertyExpandingSuppressValue(propertyValue(CSSPropertyBackgroundRepeatX), propertyValue(CSSPropertyBackgroundRepeatY)));
+
     setPropertyValue(CSSPropertyBackgroundSize, new ApplyPropertyFillLayer<FillSize>(CSSPropertyBackgroundSize, BackgroundFillLayer, &RenderStyle::accessBackgroundLayers, &RenderStyle::backgroundLayers,
             &FillLayer::isSizeSet, &FillLayer::size, &FillLayer::setSize, &FillLayer::clearSize, &FillLayer::initialFillSize, &CSSStyleSelector::mapFillSize));
     setPropertyValue(CSSPropertyWebkitBackgroundSize, CSSPropertyBackgroundSize);
@@ -281,8 +334,27 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
             &FillLayer::isClipSet, &FillLayer::clip, &FillLayer::setClip, &FillLayer::clearClip, &FillLayer::initialFillClip, &CSSStyleSelector::mapFillClip));
     setPropertyValue(CSSPropertyWebkitMaskComposite, new ApplyPropertyFillLayer<CompositeOperator>(CSSPropertyWebkitMaskComposite, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
             &FillLayer::isCompositeSet, &FillLayer::composite, &FillLayer::setComposite, &FillLayer::clearComposite, &FillLayer::initialFillComposite, &CSSStyleSelector::mapFillComposite));
+
+    setPropertyValue(CSSPropertyWebkitMaskImage, new ApplyPropertyFillLayer<StyleImage*>(CSSPropertyWebkitMaskImage, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+                &FillLayer::isImageSet, &FillLayer::image, &FillLayer::setImage, &FillLayer::clearImage, &FillLayer::initialFillImage, &CSSStyleSelector::mapFillImage));
+
     setPropertyValue(CSSPropertyWebkitMaskOrigin, new ApplyPropertyFillLayer<EFillBox>(CSSPropertyWebkitMaskOrigin, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
             &FillLayer::isOriginSet, &FillLayer::origin, &FillLayer::setOrigin, &FillLayer::clearOrigin, &FillLayer::initialFillOrigin, &CSSStyleSelector::mapFillOrigin));
+    setPropertyValue(CSSPropertyWebkitMaskSize, new ApplyPropertyFillLayer<FillSize>(CSSPropertyWebkitMaskSize, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+            &FillLayer::isSizeSet, &FillLayer::size, &FillLayer::setSize, &FillLayer::clearSize, &FillLayer::initialFillSize, &CSSStyleSelector::mapFillSize));
+
+    setPropertyValue(CSSPropertyWebkitMaskPositionX, new ApplyPropertyFillLayer<Length>(CSSPropertyWebkitMaskPositionX, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+                &FillLayer::isXPositionSet, &FillLayer::xPosition, &FillLayer::setXPosition, &FillLayer::clearXPosition, &FillLayer::initialFillXPosition, &CSSStyleSelector::mapFillXPosition));
+    setPropertyValue(CSSPropertyWebkitMaskPositionY, new ApplyPropertyFillLayer<Length>(CSSPropertyWebkitMaskPositionY, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+                    &FillLayer::isYPositionSet, &FillLayer::yPosition, &FillLayer::setYPosition, &FillLayer::clearYPosition, &FillLayer::initialFillYPosition, &CSSStyleSelector::mapFillYPosition));
+    setPropertyValue(CSSPropertyWebkitMaskPosition, new ApplyPropertyExpandingSuppressValue(propertyValue(CSSPropertyWebkitMaskPositionX), propertyValue(CSSPropertyWebkitMaskPositionY)));
+
+    setPropertyValue(CSSPropertyWebkitMaskRepeatX, new ApplyPropertyFillLayer<EFillRepeat>(CSSPropertyWebkitMaskRepeatX, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+                &FillLayer::isRepeatXSet, &FillLayer::repeatX, &FillLayer::setRepeatX, &FillLayer::clearRepeatX, &FillLayer::initialFillRepeatX, &CSSStyleSelector::mapFillRepeatX));
+    setPropertyValue(CSSPropertyWebkitMaskRepeatY, new ApplyPropertyFillLayer<EFillRepeat>(CSSPropertyWebkitMaskRepeatY, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
+                    &FillLayer::isRepeatYSet, &FillLayer::repeatY, &FillLayer::setRepeatY, &FillLayer::clearRepeatY, &FillLayer::initialFillRepeatY, &CSSStyleSelector::mapFillRepeatY));
+    setPropertyValue(CSSPropertyWebkitMaskRepeat, new ApplyPropertyExpandingSuppressValue(propertyValue(CSSPropertyBackgroundRepeatX), propertyValue(CSSPropertyBackgroundRepeatY)));
+
     setPropertyValue(CSSPropertyWebkitMaskSize, new ApplyPropertyFillLayer<FillSize>(CSSPropertyWebkitMaskSize, MaskFillLayer, &RenderStyle::accessMaskLayers, &RenderStyle::maskLayers,
             &FillLayer::isSizeSet, &FillLayer::size, &FillLayer::setSize, &FillLayer::clearSize, &FillLayer::initialFillSize, &CSSStyleSelector::mapFillSize));
 

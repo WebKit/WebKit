@@ -159,76 +159,6 @@ HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(prop, Prop, Value) \
 if (primitiveValue) \
     m_style->set##Prop(*primitiveValue);
 
-#define HANDLE_FILL_LAYER_INHERIT_AND_INITIAL(layerType, LayerType, prop, Prop) \
-if (isInherit) { \
-    FillLayer* currChild = m_style->access##LayerType##Layers(); \
-    FillLayer* prevChild = 0; \
-    const FillLayer* currParent = m_parentStyle->layerType##Layers(); \
-    while (currParent && currParent->is##Prop##Set()) { \
-        if (!currChild) { \
-            /* Need to make a new layer.*/ \
-            currChild = new FillLayer(LayerType##FillLayer); \
-            prevChild->setNext(currChild); \
-        } \
-        currChild->set##Prop(currParent->prop()); \
-        prevChild = currChild; \
-        currChild = prevChild->next(); \
-        currParent = currParent->next(); \
-    } \
-    \
-    while (currChild) { \
-        /* Reset any remaining layers to not have the property set. */ \
-        currChild->clear##Prop(); \
-        currChild = currChild->next(); \
-    } \
-} else if (isInitial) { \
-    FillLayer* currChild = m_style->access##LayerType##Layers(); \
-    currChild->set##Prop(FillLayer::initialFill##Prop(LayerType##FillLayer)); \
-    for (currChild = currChild->next(); currChild; currChild = currChild->next()) \
-        currChild->clear##Prop(); \
-}
-
-#define HANDLE_FILL_LAYER_VALUE(layerType, LayerType, prop, Prop, value) { \
-HANDLE_FILL_LAYER_INHERIT_AND_INITIAL(layerType, LayerType, prop, Prop) \
-if (isInherit || isInitial) \
-    return; \
-FillLayer* currChild = m_style->access##LayerType##Layers(); \
-FillLayer* prevChild = 0; \
-if (value->isValueList()) { \
-    /* Walk each value and put it into a layer, creating new layers as needed. */ \
-    CSSValueList* valueList = static_cast<CSSValueList*>(value); \
-    for (unsigned int i = 0; i < valueList->length(); i++) { \
-        if (!currChild) { \
-            /* Need to make a new layer to hold this value */ \
-            currChild = new FillLayer(LayerType##FillLayer); \
-            prevChild->setNext(currChild); \
-        } \
-        mapFill##Prop(property, currChild, valueList->itemWithoutBoundsCheck(i)); \
-        prevChild = currChild; \
-        currChild = currChild->next(); \
-    } \
-} else { \
-    mapFill##Prop(property, currChild, value); \
-    currChild = currChild->next(); \
-} \
-while (currChild) { \
-    /* Reset all remaining layers to not have the property set. */ \
-    currChild->clear##Prop(); \
-    currChild = currChild->next(); \
-} }
-
-#define HANDLE_BACKGROUND_INHERIT_AND_INITIAL(prop, Prop) \
-HANDLE_FILL_LAYER_INHERIT_AND_INITIAL(background, Background, prop, Prop)
-
-#define HANDLE_BACKGROUND_VALUE(prop, Prop, value) \
-HANDLE_FILL_LAYER_VALUE(background, Background, prop, Prop, value)
-
-#define HANDLE_MASK_INHERIT_AND_INITIAL(prop, Prop) \
-HANDLE_FILL_LAYER_INHERIT_AND_INITIAL(mask, Mask, prop, Prop)
-
-#define HANDLE_MASK_VALUE(prop, Prop, value) \
-HANDLE_FILL_LAYER_VALUE(mask, Mask, prop, Prop, value)
-
 #define HANDLE_ANIMATION_INHERIT_AND_INITIAL(prop, Prop) \
 if (isInherit) { \
     AnimationList* list = m_style->accessAnimations(); \
@@ -3910,51 +3840,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWhiteSpace:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(whiteSpace, WhiteSpace)
         return;
-
-    case CSSPropertyBackgroundPosition:
-        HANDLE_BACKGROUND_INHERIT_AND_INITIAL(xPosition, XPosition);
-        HANDLE_BACKGROUND_INHERIT_AND_INITIAL(yPosition, YPosition);
-        return;
-    case CSSPropertyBackgroundPositionX: {
-        HANDLE_BACKGROUND_VALUE(xPosition, XPosition, value)
-        return;
-    }
-    case CSSPropertyBackgroundPositionY: {
-        HANDLE_BACKGROUND_VALUE(yPosition, YPosition, value)
-        return;
-    }
-    case CSSPropertyWebkitMaskPosition:
-        HANDLE_MASK_INHERIT_AND_INITIAL(xPosition, XPosition);
-        HANDLE_MASK_INHERIT_AND_INITIAL(yPosition, YPosition);
-        return;
-    case CSSPropertyWebkitMaskPositionX: {
-        HANDLE_MASK_VALUE(xPosition, XPosition, value)
-        return;
-    }
-    case CSSPropertyWebkitMaskPositionY: {
-        HANDLE_MASK_VALUE(yPosition, YPosition, value)
-        return;
-    }
-    case CSSPropertyBackgroundRepeat:
-        HANDLE_BACKGROUND_INHERIT_AND_INITIAL(repeatX, RepeatX);
-        HANDLE_BACKGROUND_INHERIT_AND_INITIAL(repeatY, RepeatY);
-        return;
-    case CSSPropertyBackgroundRepeatX:
-        HANDLE_BACKGROUND_VALUE(repeatX, RepeatX, value)
-        return;
-    case CSSPropertyBackgroundRepeatY:
-        HANDLE_BACKGROUND_VALUE(repeatY, RepeatY, value)
-        return;
-    case CSSPropertyWebkitMaskRepeat:
-        HANDLE_MASK_INHERIT_AND_INITIAL(repeatX, RepeatX);
-        HANDLE_MASK_INHERIT_AND_INITIAL(repeatY, RepeatY);
-        return;
-    case CSSPropertyWebkitMaskRepeatX:
-        HANDLE_MASK_VALUE(repeatX, RepeatX, value)
-        return;
-    case CSSPropertyWebkitMaskRepeatY:
-        HANDLE_MASK_VALUE(repeatY, RepeatY, value)
-        return;
     case CSSPropertyBorderSpacing: {
         if (isInherit) {
             m_style->setHorizontalBorderSpacing(m_parentStyle->horizontalBorderSpacing());
@@ -4021,12 +3906,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     
 // uri || inherit
-    case CSSPropertyBackgroundImage:
-        HANDLE_BACKGROUND_VALUE(image, Image, value)
-        return;
-    case CSSPropertyWebkitMaskImage:
-        HANDLE_MASK_VALUE(image, Image, value)
-        return;
     case CSSPropertyListStyleImage:
     {
         HANDLE_INHERIT_AND_INITIAL(listStyleImage, ListStyleImage)
@@ -6173,12 +6052,14 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitBackgroundComposite:
     case CSSPropertyBackgroundOrigin:
     case CSSPropertyWebkitBackgroundOrigin:
+    case CSSPropertyBackgroundImage:
     case CSSPropertyBackgroundSize:
     case CSSPropertyWebkitBackgroundSize:
     case CSSPropertyWebkitMaskAttachment:
     case CSSPropertyWebkitMaskClip:
     case CSSPropertyWebkitMaskComposite:
     case CSSPropertyWebkitMaskOrigin:
+    case CSSPropertyWebkitMaskImage:
     case CSSPropertyWebkitMaskSize:
     case CSSPropertyBackgroundColor:
     case CSSPropertyBorderBottomColor:
@@ -6190,6 +6071,18 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextStrokeColor:
+    case CSSPropertyBackgroundPosition:
+    case CSSPropertyBackgroundPositionX:
+    case CSSPropertyBackgroundPositionY:
+    case CSSPropertyWebkitMaskPosition:
+    case CSSPropertyWebkitMaskPositionX:
+    case CSSPropertyWebkitMaskPositionY:
+    case CSSPropertyBackgroundRepeat:
+    case CSSPropertyBackgroundRepeatX:
+    case CSSPropertyBackgroundRepeatY:
+    case CSSPropertyWebkitMaskRepeat:
+    case CSSPropertyWebkitMaskRepeatX:
+    case CSSPropertyWebkitMaskRepeatY:
         ASSERT_NOT_REACHED();
         return;
 
