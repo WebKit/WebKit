@@ -65,15 +65,6 @@ WebInspector.ScriptsPanel = function()
     // FIXME: append the functions select element to the top status bar when it is implemented.
     // this.topStatusBar.appendChild(this.functionsSelectElement);
 
-    this.formatButton = document.createElement("button");
-    this.formatButton.className = "status-bar-item";
-    this.formatButton.id = "format-script";
-    this.formatButton.title = WebInspector.UIString("Format script.");
-    this.formatButton.appendChild(document.createElement("img"));
-    this.formatButton.addEventListener("click", this._toggleFormatSourceFiles.bind(this), false);
-    if (Preferences.debugMode)
-        this.topStatusBar.appendChild(this.formatButton);
-
     this.sidebarButtonsElement = document.createElement("div");
     this.sidebarButtonsElement.id = "scripts-sidebar-buttons";
     this.topStatusBar.appendChild(this.sidebarButtonsElement);
@@ -781,12 +772,6 @@ WebInspector.ScriptsPanel.prototype = {
         this._updateBackAndForwardButtons();
     },
 
-    _toggleFormatSourceFiles: function()
-    {
-        this.reset();
-        this._presentationModel.toggleFormatSourceFiles();
-    },
-
     _enableDebugging: function()
     {
         if (this._debuggerEnabled)
@@ -813,8 +798,8 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var nextStateMap = {};
         var stateEnum = WebInspector.ScriptsPanel.PauseOnExceptionsState;
-        nextStateMap[stateEnum.DontPauseOnExceptions] = stateEnum.PauseOnAllExceptions;  
-        nextStateMap[stateEnum.PauseOnAllExceptions] = stateEnum.PauseOnUncaughtExceptions;  
+        nextStateMap[stateEnum.DontPauseOnExceptions] = stateEnum.PauseOnAllExceptions;
+        nextStateMap[stateEnum.PauseOnAllExceptions] = stateEnum.PauseOnUncaughtExceptions;
         nextStateMap[stateEnum.PauseOnUncaughtExceptions] = stateEnum.DontPauseOnExceptions;
         this._setPauseOnExceptions(nextStateMap[this._pauseOnExceptionButton.state]);
     },
@@ -1087,6 +1072,17 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
     releaseEvaluationResult: function()
     {
         RuntimeAgent.releaseObjectGroup(this._popoverObjectGroup);
+    },
+
+    toggleFormatSourceFiles: function()
+    {
+        WebInspector.panels.scripts.reset();
+        this._model.toggleFormatSourceFiles();
+    },
+
+    formatSourceFilesToggled: function()
+    {
+        return this._model.formatSourceFilesToggled();
     }
 }
 

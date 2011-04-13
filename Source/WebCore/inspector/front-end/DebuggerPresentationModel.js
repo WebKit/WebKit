@@ -226,6 +226,11 @@ WebInspector.DebuggerPresentationModel.prototype = {
             this._debuggerPaused();
     },
 
+    formatSourceFilesToggled: function()
+    {
+        return this._formatSourceFiles;
+    },
+
     _formatter: function()
     {
         if (!this._scriptFormatter)

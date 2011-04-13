@@ -1,3 +1,27 @@
+2011-04-06  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add "De-obfuscate Source" item to source frame text area context menu.
+        https://bugs.webkit.org/show_bug.cgi?id=57942
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.formatSourceFilesToggled):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._togglePauseOnExceptions):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.releaseEvaluationResult):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.toggleFormatSourceFiles):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.formatSourceFilesToggled):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._contextMenu):
+        (WebInspector.SourceFrame.prototype._populateLineGutterContextMenu):
+        (WebInspector.SourceFrame.prototype._populateTextAreaContextMenu):
+        (WebInspector.SourceFrameDelegate.prototype.releaseEvaluationResult):
+        (WebInspector.SourceFrameDelegate.prototype.toggleFormatSourceFiles):
+        (WebInspector.SourceFrameDelegate.prototype.formatSourceFilesToggled):
+
 2011-04-13  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

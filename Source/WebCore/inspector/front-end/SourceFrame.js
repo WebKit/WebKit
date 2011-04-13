@@ -599,13 +599,17 @@ WebInspector.SourceFrame.prototype = {
 
     _contextMenu: function(event)
     {
-        var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
-        if (!target)
-            return;
-        var lineNumber = target.lineNumber;
-
         var contextMenu = new WebInspector.ContextMenu();
+        var target = event.target.enclosingNodeOrSelfWithClass("webkit-line-number");
+        if (target)
+            this._populateLineGutterContextMenu(target.lineNumber, contextMenu);
+        else
+            this._populateTextAreaContextMenu(contextMenu);
+        contextMenu.show(event);
+    },
 
+    _populateLineGutterContextMenu: function(lineNumber, contextMenu)
+    {
         contextMenu.appendItem(WebInspector.UIString("Continue to Here"), this._delegate.continueToLine.bind(this._delegate, lineNumber));
 
         var breakpoint = this._delegate.findBreakpoint(lineNumber);
@@ -647,7 +651,11 @@ WebInspector.SourceFrame.prototype = {
             else
                 contextMenu.appendItem(WebInspector.UIString("Enable Breakpoint"), setBreakpointEnabled.bind(this, true));
         }
-        contextMenu.show(event);
+    },
+
+    _populateTextAreaContextMenu: function(contextMenu)
+    {
+        contextMenu.appendCheckboxItem(WebInspector.UIString("De-obfuscate Source"), this._delegate.toggleFormatSourceFiles.bind(this._delegate), this._delegate.formatSourceFilesToggled());
     },
 
     _scroll: function(event)
@@ -996,6 +1004,16 @@ WebInspector.SourceFrameDelegate.prototype = {
     },
 
     releaseEvaluationResult: function()
+    {
+        // Should be implemented by subclasses.
+    },
+
+    toggleFormatSourceFiles: function()
+    {
+        // Should be implemented by subclasses.
+    },
+
+    formatSourceFilesToggled: function()
     {
         // Should be implemented by subclasses.
     }
