@@ -48,6 +48,7 @@ namespace WebCore {
     public:
         KURLGooglePrivate();
         KURLGooglePrivate(const url_parse::Parsed&, bool isValid);
+        KURLGooglePrivate(WTF::HashTableDeletedValueType);
 
         // Initializes the object. This will call through the backend initializer
         // below.

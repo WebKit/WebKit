@@ -169,6 +169,11 @@ KURLGooglePrivate::KURLGooglePrivate(const url_parse::Parsed& parsed, bool isVal
 {
 }
 
+KURLGooglePrivate::KURLGooglePrivate(WTF::HashTableDeletedValueType)
+    : m_string(WTF::HashTableDeletedValue)
+{
+}
+ 
 // Setters for the data. Using the ASCII version when you know the
 // data is ASCII will be slightly more efficient. The UTF-8 version
 // will always be correct if the caller is unsure.

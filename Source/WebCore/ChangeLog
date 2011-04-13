@@ -1,3 +1,19 @@
+2011-04-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+
+        Try to fix the Chromium build.
+        
+        Why have one URL when you can have two at twice the price?
+
+        * platform/KURL.h:
+        (WebCore::KURL::KURL):
+        (WebCore::KURL::isHashTableDeletedValue):
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURLGooglePrivate::KURLGooglePrivate):
+        * platform/KURLGooglePrivate.h: Added a GoogleURL path for KURL's hash
+        table deleted value constructor.
+
 2011-04-12  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Oliver Hunt.
