@@ -52,6 +52,9 @@ function check_navigator_and_done() {
 function check_navigator() {
   var strings = [ ];
   for (p in old_nav) {
+    if (p == 'geolocation' || p == 'webkitGetUserMedia') // Don't include Geolocation or the Media Stream API functions until most platforms have support.
+      continue;
+
     if (typeof old_nav[p] == 'function') {
       try {
         var v = old_nav[p]();
@@ -62,11 +65,9 @@ function check_navigator() {
         strings.push("navigator."+p+"() threw err "+err);
       }
     } else {
-      if (p != "geolocation") { // Don't include geolocation until most platforms have support.
-        var v = old_nav[p];
-        // no crash, it is ok.
-        strings.push("navigator."+p+" is OK");
-      }
+      var v = old_nav[p];
+      // no crash, it is ok.
+      strings.push("navigator."+p+" is OK");
     }
   }
   strings.sort();

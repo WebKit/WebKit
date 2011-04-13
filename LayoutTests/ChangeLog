@@ -1,3 +1,15 @@
+2011-04-13  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Exclude webkitGetUserMedia from the navigator-detached-no-crash test.
+        https://bugs.webkit.org/show_bug.cgi?id=58459
+
+        Exclude the MediaStream API methods from the test until the feature
+        is supported by most platforms.
+
+        * fast/dom/navigator-detached-no-crash.html:
+
 2011-04-13  Jian Li  <jianli@chromium.org>
 
         Unreviewed, rebaseline 2 tests for linux64 in chromium.
