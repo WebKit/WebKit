@@ -552,12 +552,6 @@ WebInspector.HeapSnapshot.prototype = {
         return this._nodeCount;
     },
 
-    restore: function(profile)
-    {
-        this._nodes = profile.nodes;
-        this._strings = profile.strings;
-    },
-
     get rootNode()
     {
         return new WebInspector.HeapSnapshotNode(this, this._rootNodeIndex);

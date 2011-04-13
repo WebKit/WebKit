@@ -6182,6 +6182,7 @@
             'inspector/front-end/GoToLineDialog.js',
             'inspector/front-end/HAREntry.js',
             'inspector/front-end/HeapSnapshot.js',
+            'inspector/front-end/HeapSnapshotProxy.js',
             'inspector/front-end/HeapSnapshotView.js',
             'inspector/front-end/HelpScreen.js',
             'inspector/front-end/ImageView.js',

@@ -1,3 +1,87 @@
+2011-04-13  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Prepare to move detailed heap snapshots storage and processing into workers.
+        https://bugs.webkit.org/show_bug.cgi?id=58320
+
+        Introduce a proxy object that emulates worker behavior and change UI code to cope with it.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGridNode.prototype._populate.doPopulate.sorted):
+        (WebInspector.HeapSnapshotGridNode.prototype._populate.doPopulate):
+        (WebInspector.HeapSnapshotGridNode.prototype._populate):
+        (WebInspector.HeapSnapshotGridNode.prototype.populateChildren.childrenRetrieved.notify):
+        (WebInspector.HeapSnapshotGridNode.prototype.populateChildren.childrenRetrieved):
+        (WebInspector.HeapSnapshotGridNode.prototype.populateChildren):
+        (WebInspector.HeapSnapshotGridNode.prototype.sort.doSort.afterSort.afterPopulate):
+        (WebInspector.HeapSnapshotGridNode.prototype.sort.doSort.afterSort):
+        (WebInspector.HeapSnapshotGridNode.prototype.sort):
+        (WebInspector.HeapSnapshotGenericObjectNode):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.get _shallowSizePercent):
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype._updateHasChildren):
+        (WebInspector.HeapSnapshotObjectNode):
+        (WebInspector.HeapSnapshotObjectNode.prototype._createChildNode):
+        (WebInspector.HeapSnapshotObjectNode.prototype._createProvider):
+        (WebInspector.HeapSnapshotInstanceNode):
+        (WebInspector.HeapSnapshotInstanceNode.prototype._createChildNode):
+        (WebInspector.HeapSnapshotInstanceNode.prototype._createProvider):
+        (WebInspector.HeapSnapshotConstructorNode.prototype._createChildNode):
+        (WebInspector.HeapSnapshotConstructorNode.prototype._createNodesProvider):
+        (WebInspector.HeapSnapshotIteratorsTuple.prototype.sortAndRewind):
+        (WebInspector.HeapSnapshotDiffNode.prototype._calculateDiff):
+        (WebInspector.HeapSnapshotDiffNode.prototype._createChildNode):
+        (WebInspector.HeapSnapshotDiffNode.prototype._createNodesProvider.createProvider):
+        (WebInspector.HeapSnapshotDiffNode.prototype._createNodesProvider):
+        (WebInspector.HeapSnapshotDiffNode.prototype._childHashForEntity):
+        (WebInspector.HeapSnapshotDiffNode.prototype._childHashForNode):
+        (WebInspector.HeapSnapshotDiffNode.prototype.populateChildren.firstProviderPopulated):
+        (WebInspector.HeapSnapshotDiffNode.prototype.populateChildren.else.firstProviderPopulated):
+        (WebInspector.HeapSnapshotDiffNode.prototype.populateChildren):
+        (WebInspector.HeapSnapshotDominatorObjectNode):
+        (WebInspector.HeapSnapshotDominatorObjectNode.prototype._createChildNode):
+        (WebInspector.HeapSnapshotDominatorObjectNode.prototype._createProvider):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotSortableDataGrid.prototype.sortingChanged):
+        (WebInspector.HeapSnapshotSortableDataGrid.prototype._performSorting):
+        (WebInspector.HeapSnapshotConstructorsDataGrid.prototype.setDataSource):
+        (WebInspector.HeapSnapshotConstructorsDataGrid.prototype.populateChildren):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.setBaseDataSource.baseSnapshotNodeIdsReceived):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.setBaseDataSource.pushBaseSnapshotNodeIds):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.setBaseDataSource.snapshotNodeIdsReceived):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.setBaseDataSource):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.populateChildren.baseAggregatesReceived.aggregatesReceived):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.populateChildren):
+        (WebInspector.HeapSnapshotRetainingPathsList):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype._resetPaths):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.setDataSource):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.refresh):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.showNext.pathFound):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.showNext.startSearching):
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.showNext):
+        (WebInspector.DetailedHeapshotView.profileCallback):
+        (WebInspector.DetailedHeapshotView):
+        (WebInspector.DetailedHeapshotView.prototype.get profileWrapper):
+        (WebInspector.DetailedHeapshotView.prototype.get baseProfileWrapper):
+        (WebInspector.DetailedHeapshotView.prototype.show.profileCallback1):
+        (WebInspector.DetailedHeapshotView.prototype.show.profileCallback2):
+        (WebInspector.DetailedHeapshotView.prototype.show):
+        (WebInspector.DetailedHeapshotView.prototype._changeBase.baseProfileLoaded):
+        * inspector/front-end/HeapSnapshot.js:
+        * inspector/front-end/HeapSnapshotProxy.js: Added.
+        * inspector/front-end/PleaseWaitMessage.js:
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._reset):
+        (WebInspector.ProfilesPanel.prototype.loadHeapSnapshot):
+        (WebInspector.ProfilesPanel.prototype._addHeapSnapshotChunk):
+        (WebInspector.ProfilesPanel.prototype._finishHeapSnapshot.doParse):
+        (WebInspector.ProfilesPanel.prototype._finishHeapSnapshot.else.parsed):
+        (WebInspector.ProfilesPanel.prototype._finishHeapSnapshot):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-04-13  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

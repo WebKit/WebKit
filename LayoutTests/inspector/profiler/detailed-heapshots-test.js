@@ -169,7 +169,6 @@ InspectorTest.clickColumn = function(column, callback)
 
     function sortingComplete()
     {
-        this._currentGrid().removeEventListener("sorting complete", sortingComplete, this);
         InspectorTest.assertEquals(column.identifier, this._currentGrid().sortColumnIdentifier, "unexpected sorting");
         column.sort = this._currentGrid().sortOrder;
         function callCallback()
@@ -178,7 +177,7 @@ InspectorTest.clickColumn = function(column, callback)
         }
         setTimeout(callCallback, 0);
     }
-    this._currentGrid().addEventListener("sorting complete", sortingComplete, this);
+    InspectorTest._prepareForRecursiveSort(sortingComplete.bind(this));
     this._currentGrid()._clickInHeaderCell(event);
 };
 
@@ -359,12 +358,7 @@ InspectorTest.switchToView = function(title, callback)
         setTimeout(callback, 0);
         return;
     }
-    function sortingComplete()
-    {
-        view.views[index].grid.removeEventListener("sorting complete", sortingComplete, this);
-        setTimeout(callback, 0);
-    }
-    view.views[index].grid.addEventListener("sorting complete", sortingComplete, this);
+    InspectorTest._prepareForRecursiveSort(callback, view.views[index].grid);
     view._changeView({target: {selectedIndex: index}});
 };
 
@@ -396,6 +390,38 @@ InspectorTest.viewColumns = function()
 InspectorTest._currentGrid = function()
 {
     return WebInspector.panels.profiles.visibleView.dataGrid;
+};
+
+InspectorTest._prepareForRecursiveSort = function(callback, grid)
+{
+    if (InspectorTest._recursiveSortCallback)
+        console.error("Didn't finished with previous sorting");
+    InspectorTest._recursiveSortCallback = callback;
+    InspectorTest._recursiveSortDepth = 0;
+    grid = grid || InspectorTest._currentGrid();
+    grid.addEventListener("start sorting", InspectorTest._recursiveSortEnter, InspectorTest);
+    grid.addEventListener("sorting complete", InspectorTest._recursiveSortLeave, InspectorTest);
+    InspectorTest._recursiveSortGrid = grid;
+};
+
+InspectorTest._recursiveSortEnter = function()
+{
+    ++InspectorTest._recursiveSortDepth;
+    if (isNaN(InspectorTest._recursiveSortDepth))
+        console.error("Wasn't prepared to track sorting");
+};
+
+InspectorTest._recursiveSortLeave = function()
+{
+    if (!--InspectorTest._recursiveSortDepth) {
+        var callback = InspectorTest._recursiveSortCallback;
+        delete InspectorTest._recursiveSortCallback;
+        InspectorTest._recursiveSortGrid.removeEventListener("start sorting", InspectorTest._recursiveSortEnter, InspectorTest);
+        InspectorTest._recursiveSortGrid.removeEventListener("sorting complete", InspectorTest._recursiveSortLeave, InspectorTest);
+        setTimeout(callback, 0);
+    }
+    if (!(InspectorTest._recursiveSortDepth >= 0))
+        console.error("Bad sort nesting");
 };
 
 InspectorTest._snapshotViewShown = function()

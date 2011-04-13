@@ -86,7 +86,7 @@ WebInspector.PleaseWaitMessage.prototype = {
         var instance = WebInspector.PleaseWaitMessage.prototype.instance;
         var message = instance.element;
         if (message.parentNode === element) {
-            actionCallback();
+            setTimeout(actionCallback, 0);
             return;
         }
      

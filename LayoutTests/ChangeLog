@@ -1,3 +1,15 @@
+2011-04-13  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Prepare to move detailed heap snapshots storage and processing into workers.
+        https://bugs.webkit.org/show_bug.cgi?id=58320
+
+        Introduce a proxy object that emulates worker behavior and change UI code to cope with it.
+
+        * inspector/profiler/detailed-heapshots-test.js:
+        (initialize_DetailedHeapshotTest):
+
 2011-04-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Update Qt specific expected results after r83710.

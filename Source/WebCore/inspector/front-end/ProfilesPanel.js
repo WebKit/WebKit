@@ -211,11 +211,6 @@ WebInspector.ProfilesPanel.prototype = {
             if (view && ("dispose" in view))
                 view.dispose();
             delete this._profiles[i]._profileView;
-            var profile = this._profiles[i];
-            if (profile.nodes) {
-                delete profile.nodes;
-                delete profile.strings;
-            }
         }
         delete this.visibleView;
 
@@ -450,58 +445,84 @@ WebInspector.ProfilesPanel.prototype = {
         if (!profile)
             return;
 
-        if (profile._loaded)
-            callback(profile);
-        else if (profile._is_loading)
-            profile._callbacks.push(callback);
-        else {
-            profile._is_loading = true;
-            profile._callbacks = [callback];
-            profile._json = "";
-            profile.sideBarElement.subtitle = WebInspector.UIString("Loading…");
-            ProfilerAgent.getProfile(profile.typeId, profile.uid);
+        if (!Preferences.detailedHeapProfiles) {
+            if (profile._loaded)
+                callback(profile);
+            else if (profile._is_loading)
+                profile._callbacks.push(callback);
+            else {
+                profile._is_loading = true;
+                profile._callbacks = [callback];
+                profile._json = "";
+                profile.sideBarElement.subtitle = WebInspector.UIString("Loading\u2026");
+                ProfilerAgent.getProfile(profile.typeId, profile.uid);
+            }
+        } else {
+            if (!profile.proxy)
+                profile.proxy = new WebInspector.HeapSnapshotProxy();
+            var proxy = profile.proxy;
+            if (proxy.startLoading(callback)) {
+                profile.sideBarElement.subtitle = WebInspector.UIString("Loading\u2026");
+                ProfilerAgent.getProfile(profile.typeId, profile.uid);
+            }
         }
     },
 
     _addHeapSnapshotChunk: function(uid, chunk)
     {
         var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
-        if (!profile || profile._loaded || !profile._is_loading)
+        if (!profile)
             return;
-
-        profile._json += chunk;
+        if (!Preferences.detailedHeapProfiles) {
+            if (profile._loaded || !profile._is_loading)
+                return;
+            profile._json += chunk;
+        } else {
+            if (!profile.proxy)
+                return;
+            profile.proxy.pushJSONChunk(chunk);
+        }
     },
 
     _finishHeapSnapshot: function(uid)
     {
         var profile = this._profilesIdMap[this._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
-        if (!profile || profile._loaded || !profile._is_loading)
+        if (!profile)
             return;
-
-        profile.sideBarElement.subtitle = WebInspector.UIString("Parsing…");
-        window.setTimeout(doParse, 0);
-
-        function doParse()
-        {
-            var loadedSnapshot = JSON.parse(profile._json);
-            delete profile._json;
-            delete profile._is_loading;
-            var callbacks = profile._callbacks;
-            delete profile._callbacks;
-            profile._loaded = true;
-            profile.sideBarElement.subtitle = "";
-
-            if (!Preferences.detailedHeapProfiles && WebInspector.DetailedHeapshotView.prototype.isDetailedSnapshot(loadedSnapshot)) {
-                WebInspector.panels.profiles._enableDetailedHeapProfiles(false);
+        if (!Preferences.detailedHeapProfiles) {
+            if (profile._loaded || !profile._is_loading)
                 return;
-            }
+            profile.sideBarElement.subtitle = WebInspector.UIString("Parsing\u2026");
+            function doParse()
+            {
+                var loadedSnapshot = JSON.parse(profile._json);
+                var callbacks = profile._callbacks;
+                delete profile._callbacks;
+                delete profile._json;
+                delete profile._is_loading;
+                profile._loaded = true;
+                profile.sideBarElement.subtitle = "";
 
-            if (!Preferences.detailedHeapProfiles)
+                if (WebInspector.DetailedHeapshotView.prototype.isDetailedSnapshot(loadedSnapshot)) {
+                    WebInspector.panels.profiles._enableDetailedHeapProfiles(false);
+                    return;
+                }
+
                 WebInspector.HeapSnapshotView.prototype.processLoadedSnapshot(profile, loadedSnapshot);
-            else
-                WebInspector.DetailedHeapshotView.prototype.processLoadedSnapshot(profile, loadedSnapshot);
-            for (var i = 0; i < callbacks.length; ++i)
-                callbacks[i](profile);
+                for (var i = 0; i < callbacks.length; ++i)
+                    callbacks[i](profile);
+            }
+            setTimeout(doParse, 0);
+        } else {
+            if (!profile.proxy)
+                return;
+            var proxy = profile.proxy;
+            function parsed()
+            {
+                profile.sideBarElement.subtitle = Number.bytesToString(proxy.totalSize);
+            }
+            if (proxy.finishLoading(parsed))
+                profile.sideBarElement.subtitle = WebInspector.UIString("Parsing\u2026");
         }
     },
 
