@@ -102,6 +102,7 @@
 #include "WebDevToolsAgentPrivate.h"
 #include "WebDragData.h"
 #include "WebFrameImpl.h"
+#include "WebGraphicsContext3D.h"
 #include "WebImage.h"
 #include "WebInputElement.h"
 #include "WebInputEvent.h"
@@ -2474,7 +2475,10 @@ void WebViewImpl::doComposite()
 
 void WebViewImpl::reallocateRenderer()
 {
-    RefPtr<GraphicsContext3D> newContext = GraphicsContext3D::create(
+    RefPtr<GraphicsContext3D> newContext = m_temporaryOnscreenGraphicsContext3D.get();
+    WebGraphicsContext3D* webContext = GraphicsContext3DInternal::extractWebGraphicsContext3D(newContext.get());
+    if (!newContext || !webContext || webContext->isContextLost())
+        newContext = GraphicsContext3D::create(
             getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
     // GraphicsContext3D::create might fail and return 0, in that case LayerRendererChromium::create will also return 0.
     RefPtr<LayerRendererChromium> layerRenderer = LayerRendererChromium::create(newContext, WebViewImplContentPainter::create(this), WebViewImplScrollbarPainter::create(this));
@@ -2517,18 +2521,20 @@ WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (m_page->settings()->acceleratedCompositingEnabled() && allowsAcceleratedCompositing()) {
-        GraphicsContext3D* context = 0;
-        if (m_layerRenderer)
-            context = m_layerRenderer->context();
-        else if (m_temporaryOnscreenGraphicsContext3D)
-            context = m_temporaryOnscreenGraphicsContext3D.get();
-        else {
-            m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-            if (m_temporaryOnscreenGraphicsContext3D)
-                m_temporaryOnscreenGraphicsContext3D->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
-            context = m_temporaryOnscreenGraphicsContext3D.get();
+        if (m_layerRenderer) {
+            WebGraphicsContext3D* webContext = GraphicsContext3DInternal::extractWebGraphicsContext3D(m_layerRenderer->context());
+            if (webContext && !webContext->isContextLost())
+                return webContext;
         }
-        return GraphicsContext3DInternal::extractWebGraphicsContext3D(context);
+        if (m_temporaryOnscreenGraphicsContext3D) {
+            WebGraphicsContext3D* webContext = GraphicsContext3DInternal::extractWebGraphicsContext3D(m_temporaryOnscreenGraphicsContext3D.get());
+            if (webContext && !webContext->isContextLost())
+                return webContext;
+        }
+        m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+        if (m_temporaryOnscreenGraphicsContext3D)
+            m_temporaryOnscreenGraphicsContext3D->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
+        return GraphicsContext3DInternal::extractWebGraphicsContext3D(m_temporaryOnscreenGraphicsContext3D.get());
     }
 #endif
     return 0;
