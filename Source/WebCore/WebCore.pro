@@ -1740,6 +1740,7 @@ HEADERS += \
     html/parser/HTMLTreeBuilder.h \
     html/parser/HTMLViewSourceParser.h \
     html/parser/XSSFilter.h \
+    html/shadow/MediaControlElements.h \
     inspector/ConsoleMessage.h \
     inspector/DOMNodeHighlighter.h \
     inspector/InjectedScript.h \
@@ -2081,7 +2082,6 @@ HEADERS += \
     rendering/mathml/RenderMathMLSquareRoot.h \
     rendering/mathml/RenderMathMLSubSup.h \
     rendering/mathml/RenderMathMLUnderOver.h \
-    rendering/MediaControlElements.h \
     rendering/PaintInfo.h \
     rendering/PaintPhase.h \
     rendering/PointerEventsHitRules.h \

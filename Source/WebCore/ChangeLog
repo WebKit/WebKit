@@ -1,3 +1,11 @@
+2011-04-12  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed warning fix.
+
+        MediaControlElements has been moved to html/shadow.
+
+        * WebCore.pro:
+
 2011-04-12  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Eric Seidel.
