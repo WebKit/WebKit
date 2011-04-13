@@ -1,3 +1,12 @@
+2011-04-13  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg has different output on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=58421
+
+        * platform/win/Skipped: Skip svdgdom-over-01-f.svg test. The test is fine, but its missing a line compared to the mac output.
+
 2011-04-13  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed.

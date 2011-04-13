@@ -1224,6 +1224,9 @@ fast/dom/HTMLKeygenElement/keygen.html
 # https://bugs.webkit.org/show_bug.cgi?id=57693
 plugins/windowless_plugin_paint_test.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=58421
+svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg    
+
 # scalePage is currently Mac-specific WebKit API.
 fast/dom/Element/scale-page-bounding-client-rect.html
 fast/dom/Element/scale-page-client-rects.html
