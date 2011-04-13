@@ -743,6 +743,17 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
     // M[s] = M * Tr[-center]
     sublayerMatrix.translate3d(-bounds.width() * 0.5, -bounds.height() * 0.5, 0);
 
+    // Compute the depth value of the center of the layer which will be used when
+    // sorting the layers for the preserves-3d property.
+    const TransformationMatrix& layerDrawMatrix = drawLayer->renderSurface() ? drawLayer->renderSurface()->m_drawTransform : drawLayer->drawTransform();
+    if (drawLayer->superlayer()) {
+        if (!drawLayer->superlayer()->preserves3D())
+            drawLayer->setDrawDepth(drawLayer->superlayer()->drawDepth());
+        else
+            drawLayer->setDrawDepth(layerDrawMatrix.m43());
+    } else
+        drawLayer->setDrawDepth(0);
+
     LayerList& descendants = (drawLayer->renderSurface() ? drawLayer->renderSurface()->m_layerList : layerList);
     descendants.append(drawLayer);
     unsigned thisLayerIndex = descendants.size() - 1;
@@ -813,17 +824,6 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(LayerChromium* lay
             renderSurface->m_replicaDrawTransform.translate3d(surfaceCenter.x() - anchorPoint.x() * bounds.width(), surfaceCenter.y() - anchorPoint.y() * bounds.height(), 0);
         }
     }
-
-    // Compute the depth value of the center of the layer which will be used when
-    // sorting the layers for the preserves-3d property.
-    const TransformationMatrix& layerDrawMatrix = drawLayer->renderSurface() ? drawLayer->renderSurface()->m_drawTransform : drawLayer->drawTransform();
-    if (drawLayer->superlayer()) {
-        if (!drawLayer->superlayer()->preserves3D())
-            drawLayer->setDrawDepth(drawLayer->superlayer()->drawDepth());
-        else
-            drawLayer->setDrawDepth(layerDrawMatrix.m43());
-    } else
-        drawLayer->setDrawDepth(0);
 
     // If preserves-3d then sort all the descendants by the Z coordinate of their
     // center. If the preserves-3d property is also set on the superlayer then

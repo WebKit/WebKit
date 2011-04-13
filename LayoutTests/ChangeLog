@@ -1,3 +1,17 @@
+2011-04-12  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Adding layout test for:
+        https://bugs.webkit.org/show_bug.cgi?id=58397
+
+
+        * platform/chromium-gpu-mac/platform/chromium/compositing/child-layer-3d-sorting-expected.checksum: Added.
+        * platform/chromium-gpu-mac/platform/chromium/compositing/child-layer-3d-sorting-expected.png: Added.
+        * platform/chromium-gpu-mac/platform/chromium/compositing/child-layer-3d-sorting-expected.txt: Added.
+        * platform/chromium/compositing/child-layer-3d-sorting.html: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-12  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Kent Tamura.

@@ -1,3 +1,16 @@
+2011-04-12  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Move the calculation of the layer's z coordinate to the
+        right spot so that it can be picked up by its sublayers.
+        https://bugs.webkit.org/show_bug.cgi?id=58397
+
+        Test: platform/chromium/compositing/child-layer-3d-sorting.html
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+
 2011-04-12  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Andreas Kling.
