@@ -26,6 +26,12 @@ Source/JavaScriptCore/JavaScriptCore.gyp/*.ninja
 Source/JavaScriptCore/JavaScriptCore.gyp/*.sln
 Source/JavaScriptCore/JavaScriptCore.gyp/*.vcproj*
 Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.xcodeproj
+Source/ThirdParty/glu/*.Makefile
+Source/ThirdParty/glu/*.mk
+Source/ThirdParty/glu/*.ninja
+Source/ThirdParty/glu/*.sln
+Source/ThirdParty/glu/*.vcproj
+Source/ThirdParty/glu/glu.xcodeproj
 Source/WebCore/WebCore.gyp/*.Makefile
 Source/WebCore/WebCore.gyp/*.mk
 Source/WebCore/WebCore.gyp/*.ninja
