@@ -32,12 +32,52 @@
 
 namespace WebKit {
 
-ChildProcess::ChildProcess()
+void ChildProcess::disableTermination()
 {
+    m_terminationCounter++;
+    m_terminationTimer.stop();
+}
+
+void ChildProcess::enableTermination()
+{
+    ASSERT(m_terminationCounter > 0);
+    m_terminationCounter--;
+
+    if (m_terminationCounter)
+        return;
+
+    if (!m_terminationTimeout) {
+        terminationTimerFired();
+        return;
+    }
+
+    m_terminationTimer.startOneShot(m_terminationTimeout);
+}
+
+ChildProcess::ChildProcess(double terminationTimeout)
+    : m_terminationTimeout(terminationTimeout)
+    , m_terminationCounter(0)
+    , m_terminationTimer(RunLoop::main(), this, &ChildProcess::terminationTimerFired)
+{
+    // FIXME: The termination timer should not be scheduled on the main run loop.
+    // It won't work with the threaded mode, but it's not really useful anyway as is.
 }
 
 ChildProcess::~ChildProcess()
 {
+}
+
+void ChildProcess::terminationTimerFired()
+{
+    if (!shouldTerminate())
+        return;
+
+    terminate();
+}
+
+void ChildProcess::terminate()
+{
+    RunLoop::main()->stop();
 }
 
 NO_RETURN static void watchdogCallback()

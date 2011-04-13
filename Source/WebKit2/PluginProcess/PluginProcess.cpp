@@ -46,8 +46,8 @@ PluginProcess& PluginProcess::shared()
 }
 
 PluginProcess::PluginProcess()
-    : m_shutdownTimer(RunLoop::main(), this, &PluginProcess::shutdownTimerFired)
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
+    : ChildProcess(shutdownTimeout)
+#if PLATFORM(MAC)
     , m_compositingRenderServerPort(MACH_PORT_NULL)
 #endif
 {
@@ -78,7 +78,7 @@ void PluginProcess::removeWebProcessConnection(WebProcessConnection* webProcessC
         m_pluginModule->decrementLoadCount();
     }        
 
-    startShutdownTimerIfNecessary();
+    enableTermination();
 }
 
 NetscapePluginModule* PluginProcess::netscapePluginModule()
@@ -96,6 +96,13 @@ NetscapePluginModule* PluginProcess::netscapePluginModule()
     }
 
     return m_pluginModule.get();
+}
+
+bool PluginProcess::shouldTerminate()
+{
+    ASSERT(m_webProcessConnections.isEmpty());
+
+    return true;
 }
 
 void PluginProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
@@ -155,23 +162,26 @@ void PluginProcess::createWebProcessConnection()
         }
     }
 
-    // Stop the shutdown timer.
-    m_shutdownTimer.stop();
+    disableTermination();
 }
 
 void PluginProcess::getSitesWithData(uint64_t callbackID)
 {
+    disableTermination();
+
     Vector<String> sites;
     if (NetscapePluginModule* module = netscapePluginModule())
         sites = module->sitesWithData();
 
     m_connection->send(Messages::PluginProcessProxy::DidGetSitesWithData(sites, callbackID), 0);
 
-    startShutdownTimerIfNecessary();
+    enableTermination();
 }
 
 void PluginProcess::clearSiteData(const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 {
+    disableTermination();
+
     if (NetscapePluginModule* module = netscapePluginModule()) {
         if (sites.isEmpty()) {
             // Clear everything.
@@ -184,21 +194,7 @@ void PluginProcess::clearSiteData(const Vector<String>& sites, uint64_t flags, u
 
     m_connection->send(Messages::PluginProcessProxy::DidClearSiteData(callbackID), 0);
 
-    startShutdownTimerIfNecessary();
-}
-
-void PluginProcess::startShutdownTimerIfNecessary()
-{
-    if (!m_webProcessConnections.isEmpty())
-        return;
-
-    // Start the shutdown timer.
-    m_shutdownTimer.startOneShot(shutdownTimeout);
-}
-
-void PluginProcess::shutdownTimerFired()
-{
-    RunLoop::current()->stop();
+    enableTermination();
 }
 
 } // namespace WebKit

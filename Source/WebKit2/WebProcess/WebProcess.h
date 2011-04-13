@@ -166,6 +166,9 @@ private:
 
     void setTextCheckerState(const TextCheckerState&);
 
+    // ChildProcess
+    virtual bool shouldTerminate();
+
     // CoreIPC::Connection::Client
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);

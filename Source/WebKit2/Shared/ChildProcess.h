@@ -27,16 +27,40 @@
 #define ChildProcess_h
 
 #include "Connection.h"
+#include "RunLoop.h"
 
 namespace WebKit {
 
 class ChildProcess : protected CoreIPC::Connection::Client {
     WTF_MAKE_NONCOPYABLE(ChildProcess);
+
+public:
+    // disable and enable termination of the process. when disableTermination is called, the
+    // process won't terminate unless a corresponding disableTermination call is made.
+    void disableTermination();
+    void enableTermination();
+
 protected:
-    ChildProcess();
+    explicit ChildProcess(double terminationTimeout);
     ~ChildProcess();
 
     static void didCloseOnConnectionWorkQueue(WorkQueue&, CoreIPC::Connection*);
+
+private:
+    void terminationTimerFired();
+
+    virtual bool shouldTerminate() = 0;
+    virtual void terminate();
+
+    // The timeout, in seconds, before this process will be terminated if termination
+    // has been enabled. If the timeout is 0 seconds, the process will be terminated immediately.
+    double m_terminationTimeout;
+
+    // A termination counter; when the counter reaches zero, the process will be terminated
+    // after a given period of time.
+    unsigned m_terminationCounter;
+
+    RunLoop::Timer<ChildProcess> m_terminationTimer;
 };
 
 } // namespace WebKit

@@ -118,7 +118,8 @@ WebProcess& WebProcess::shared()
 }
 
 WebProcess::WebProcess()
-    : m_inDidClose(false)
+    : ChildProcess(0)
+    , m_inDidClose(false)
     , m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
@@ -540,6 +541,13 @@ void WebProcess::terminateIfPossible()
 
     platformTerminate();
     m_runLoop->stop();
+}
+
+bool WebProcess::shouldTerminate()
+{
+    // FIXME: Implement.
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 CoreIPC::SyncReplyMode WebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
