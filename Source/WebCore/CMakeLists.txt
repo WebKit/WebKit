@@ -1965,6 +1965,11 @@ IF (ENABLE_MEDIA_STREAM)
     )
 ENDIF ()
 
+if (ENABLE_QUOTA)
+    LIST(APPEND WebCore_SOURCES
+        storage/StorageInfo.cpp
+    )
+ENDIF ()
 
 
 # Modules that the bindings generator scripts may use

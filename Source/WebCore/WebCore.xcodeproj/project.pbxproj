@@ -2651,6 +2651,11 @@
 		86243D0111BC31F700CC006A /* JSArrayBufferViewHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */; };
 		86D982F7125C154000AD9E3D /* DocumentTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D982F6125C154000AD9E3D /* DocumentTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		890AE0E11256A07900F5968C /* DirectoryReaderBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 890AE0E01256A07900F5968C /* DirectoryReaderBase.h */; };
+		892CF192134C620D00AAEDA1 /* StorageInfoErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF18D134C620D00AAEDA1 /* StorageInfoErrorCallback.h */; };
+		892CF193134C620D00AAEDA1 /* StorageInfoQuotaCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF18E134C620D00AAEDA1 /* StorageInfoQuotaCallback.h */; };
+		892CF194134C620D00AAEDA1 /* StorageInfoUsageCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF18F134C620D00AAEDA1 /* StorageInfoUsageCallback.h */; };
+		892CF1EC134C655500AAEDA1 /* StorageInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 892CF1EA134C655500AAEDA1 /* StorageInfo.cpp */; };
+		892CF1ED134C655500AAEDA1 /* StorageInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF1EB134C655500AAEDA1 /* StorageInfo.h */; };
 		893C47A71238908B002B3D86 /* FileCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 893C47A51238908B002B3D86 /* FileCallback.h */; };
 		893C47A81238908B002B3D86 /* FileWriterCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 893C47A61238908B002B3D86 /* FileWriterCallback.h */; };
 		893C47B71238A099002B3D86 /* JSFileCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 893C47B51238A099002B3D86 /* JSFileCallback.cpp */; };
@@ -9186,6 +9191,11 @@
 		86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSArrayBufferViewHelper.h; sourceTree = "<group>"; };
 		86D982F6125C154000AD9E3D /* DocumentTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentTiming.h; sourceTree = "<group>"; };
 		890AE0E01256A07900F5968C /* DirectoryReaderBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryReaderBase.h; path = fileapi/DirectoryReaderBase.h; sourceTree = "<group>"; };
+		892CF18D134C620D00AAEDA1 /* StorageInfoErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageInfoErrorCallback.h; sourceTree = "<group>"; };
+		892CF18E134C620D00AAEDA1 /* StorageInfoQuotaCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageInfoQuotaCallback.h; sourceTree = "<group>"; };
+		892CF18F134C620D00AAEDA1 /* StorageInfoUsageCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageInfoUsageCallback.h; sourceTree = "<group>"; };
+		892CF1EA134C655500AAEDA1 /* StorageInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageInfo.cpp; sourceTree = "<group>"; };
+		892CF1EB134C655500AAEDA1 /* StorageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageInfo.h; sourceTree = "<group>"; };
 		893C47A51238908B002B3D86 /* FileCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCallback.h; path = fileapi/FileCallback.h; sourceTree = "<group>"; };
 		893C47A61238908B002B3D86 /* FileWriterCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileWriterCallback.h; path = fileapi/FileWriterCallback.h; sourceTree = "<group>"; };
 		893C47B51238A099002B3D86 /* JSFileCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileCallback.cpp; sourceTree = "<group>"; };
@@ -13158,6 +13168,11 @@
 				51E0BABD0DA5548400A9E417 /* StorageEvent.idl */,
 				C5E9B67610697E1300C7BB1A /* StorageEventDispatcher.cpp */,
 				C5EBDD81105EDDEC0056816F /* StorageEventDispatcher.h */,
+				892CF1EA134C655500AAEDA1 /* StorageInfo.cpp */,
+				892CF1EB134C655500AAEDA1 /* StorageInfo.h */,
+				892CF18D134C620D00AAEDA1 /* StorageInfoErrorCallback.h */,
+				892CF18E134C620D00AAEDA1 /* StorageInfoQuotaCallback.h */,
+				892CF18F134C620D00AAEDA1 /* StorageInfoUsageCallback.h */,
 				51E0BB370DA5ACB600A9E417 /* StorageMap.cpp */,
 				51E0BB360DA5ACB600A9E417 /* StorageMap.h */,
 				C50D0E800FF4272900AC2644 /* StorageNamespace.cpp */,
@@ -22377,6 +22392,10 @@
 				C5102ECF0FD9EF8C00FAFF04 /* StorageAreaSync.h in Headers */,
 				51E0BABB0DA5547100A9E417 /* StorageEvent.h in Headers */,
 				C5EBDD84105EDDEC0056816F /* StorageEventDispatcher.h in Headers */,
+				892CF1ED134C655500AAEDA1 /* StorageInfo.h in Headers */,
+				892CF192134C620D00AAEDA1 /* StorageInfoErrorCallback.h in Headers */,
+				892CF193134C620D00AAEDA1 /* StorageInfoQuotaCallback.h in Headers */,
+				892CF194134C620D00AAEDA1 /* StorageInfoUsageCallback.h in Headers */,
 				51E0BB380DA5ACB600A9E417 /* StorageMap.h in Headers */,
 				C50D0E830FF4272900AC2644 /* StorageNamespace.h in Headers */,
 				C55E38BF10040D5D00A56BDB /* StorageNamespaceImpl.h in Headers */,
@@ -25192,6 +25211,7 @@
 				C5102ED00FD9EF8C00FAFF04 /* StorageAreaSync.cpp in Sources */,
 				51E0BABC0DA5547100A9E417 /* StorageEvent.cpp in Sources */,
 				C5E9B67710697E1300C7BB1A /* StorageEventDispatcher.cpp in Sources */,
+				892CF1EC134C655500AAEDA1 /* StorageInfo.cpp in Sources */,
 				51E0BB390DA5ACB600A9E417 /* StorageMap.cpp in Sources */,
 				C50D0E820FF4272900AC2644 /* StorageNamespace.cpp in Sources */,
 				C55E38C010040D5D00A56BDB /* StorageNamespaceImpl.cpp in Sources */,

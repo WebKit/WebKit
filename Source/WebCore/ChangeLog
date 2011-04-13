@@ -1,3 +1,30 @@
+2011-04-13  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add mock implementation and plumbing code for unified Quota API
+        https://bugs.webkit.org/show_bug.cgi?id=57927
+
+        Added mock implementation and some plumbing code for the quota API,
+        that is based on the discussion on public-webapps:
+        http://lists.w3.org/Archives/Public/public-webapps/2011JanMar/0346.html
+
+        No new tests: tests will be added when we expose the API.
+
+        * CMakeLists.txt: Added new file entries.
+        * DerivedSources.cpp: Added new file entries.
+        * DerivedSources.make: Added new file entries.
+        * GNUmakefile.am: Added new file entries.
+        * WebCore.gypi: Added new file entries.
+        * WebCore.pro: Added new file entries.
+        * WebCore.vcproj/WebCore.vcproj: Added new file entries.
+        * WebCore.xcodeproj/project.pbxproj: Added new file entries.
+        * storage/StorageInfo.cpp: Added.
+        * storage/StorageInfo.h: Added.
+        * storage/StorageInfoErrorCallback.h: Added.
+        * storage/StorageInfoQuotaCallback.h: Added.
+        * storage/StorageInfoUsageCallback.h: Added.
+
 2011-04-13  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Martin Robinson.

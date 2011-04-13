@@ -2926,6 +2926,17 @@ contains(DEFINES, ENABLE_INPUT_SPEECH=1) {
         rendering/RenderInputSpeech.cpp
 }
 
+contains(DEFINES, ENABLE_QUOTA=1) {
+    HEADERS += \
+        storage/StorageInfo.h \
+        storage/StorageInfoErrorCallback.h \
+        storage/StorageInfoQuotaCallback.h \
+        storage/StorageInfoUsageCallback.h
+
+    SOURCES += \
+        storage/StorageInfo.cpp
+}
+
 contains(DEFINES, ENABLE_VIDEO=1) {
     SOURCES += \
         html/HTMLAudioElement.cpp \

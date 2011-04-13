@@ -66350,6 +66350,26 @@
 				>
 			</File>
 			<File
+				RelativePath="..\storage\StorageInfo.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageInfoErrorCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageInfoQuotaCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="..\storage\StorageInfoUsageCallback.h"
+				>
+			</File>
+			<File
 				RelativePath="..\storage\StorageMap.cpp"
 				>
 			</File>
