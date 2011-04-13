@@ -1,3 +1,13 @@
+2011-04-12  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Element::setAttribute should check the namespace of an id attribute
+        https://bugs.webkit.org/show_bug.cgi?id=58359
+
+        * fast/dom/id-attribute-with-namespace-crash-expected.txt: Added.
+        * fast/dom/id-attribute-with-namespace-crash.html: Added.
+
 2011-04-12  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Added chromium baselines for new tests.

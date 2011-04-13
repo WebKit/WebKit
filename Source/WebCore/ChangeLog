@@ -1,3 +1,15 @@
+2011-04-12  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Element::setAttribute should check the namespace of an id attribute
+        https://bugs.webkit.org/show_bug.cgi?id=58359
+
+        Test: fast/dom/id-attribute-with-namespace-crash.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::setAttribute):
+
 2011-04-12  Mike Lawther  <mikelawther@chromium.org>
 
         Reviewed by James Robinson.

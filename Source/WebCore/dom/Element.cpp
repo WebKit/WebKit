@@ -657,22 +657,20 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
 #endif
 
     const AtomicString& localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
-
+    QualifiedName attributeName(nullAtom, localName, nullAtom);
+    
     // Allocate attribute map if necessary.
     Attribute* old = attributes(false)->getAttributeItem(localName, false);
 
     document()->incDOMTreeVersion();
 
-    // FIXME: This check is probably not correct for the case where the document has an id attribute
-    // with a non-null namespace, because it will return true if the local name happens to match
-    // but the namespace does not.
-    if (localName == document()->idAttributeName().localName())
+    if (isIdAttributeName(old ? old->name() : attributeName))
         updateId(old ? old->value() : nullAtom, value);
 
     if (old && value.isNull())
         m_attributeMap->removeAttribute(old->name());
     else if (!old && !value.isNull())
-        m_attributeMap->addAttribute(createAttribute(QualifiedName(nullAtom, localName, nullAtom), value));
+        m_attributeMap->addAttribute(createAttribute(attributeName, value));
     else if (old && !value.isNull()) {
         if (Attr* attrNode = old->attr())
             attrNode->setValue(value);
