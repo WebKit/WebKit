@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,16 +24,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageBufferData_h
-#define ImageBufferData_h
-
 #include "Image.h"
+#include <wtf/ByteArray.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RetainPtr.h>
 
-#include <QPainter>
-#include <QPixmap>
+#if (PLATFORM(MAC) && PLATFORM(CA) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD))
+#define WTF_USE_IOSURFACE_CANVAS_BACKING_STORE 1
+#endif
 
-#include "OwnPtr.h"
+typedef struct __IOSurface *IOSurfaceRef;
+typedef struct CGColorSpace *CGColorSpaceRef;
+typedef struct CGDataProvider *CGDataProviderRef;
+typedef uint32_t CGBitmapInfo;
 
 namespace WebCore {
 
@@ -42,13 +46,16 @@ class ImageBufferData {
 public:
     ImageBufferData(const IntSize&);
 
-    QImage toQImage() const;
+    void* m_data;
+    
+    RetainPtr<CGDataProviderRef> m_dataProvider;
+    CGBitmapInfo m_bitmapInfo;
+    unsigned m_bytesPerRow;
+    CGColorSpaceRef m_colorSpace;
+    RetainPtr<IOSurfaceRef> m_surface;
 
-    QPixmap m_pixmap;
-    OwnPtr<QPainter> m_painter;
-    RefPtr<Image> m_image;
+    PassRefPtr<ByteArray> getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied) const;
+    void putData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering, bool unmultiplied);
 };
 
-}  // namespace WebCore
-
-#endif  // ImageBufferData_h
+} // namespace WebCore

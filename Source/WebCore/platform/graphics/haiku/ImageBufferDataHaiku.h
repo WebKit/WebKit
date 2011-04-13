@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2008 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Stephan Aßmus <superstippi@gmx.de>
+ *
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +25,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageBufferData_h
-#define ImageBufferData_h
-
-#include "PlatformContextCairo.h"
-
-typedef struct _cairo_surface cairo_surface_t;
+#include <Bitmap.h>
+#include <View.h>
 
 namespace WebCore {
 
@@ -37,11 +35,10 @@ class IntSize;
 class ImageBufferData {
 public:
     ImageBufferData(const IntSize&);
+    ~ImageBufferData();
 
-    cairo_surface_t* m_surface;
-    PlatformContextCairo m_platformContext;
+    BBitmap m_bitmap;
+    BView m_view;
 };
 
-}  // namespace WebCore
-
-#endif  // ImageBufferData_h
+} // namespace WebCore

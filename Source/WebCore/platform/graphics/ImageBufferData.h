@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,38 +20,21 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ImageBufferData_h
-#define ImageBufferData_h
-
-#include "Image.h"
-#include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
-
-typedef struct __IOSurface *IOSurfaceRef;
-typedef struct CGColorSpace *CGColorSpaceRef;
-typedef struct CGDataProvider *CGDataProviderRef;
-typedef uint32_t CGBitmapInfo;
-
-namespace WebCore {
-
-class IntSize;
-
-class ImageBufferData {
-public:
-    ImageBufferData(const IntSize&);
-
-    void* m_data;
-    
-    RetainPtr<CGDataProviderRef> m_dataProvider;
-    CGBitmapInfo m_bitmapInfo;
-    unsigned m_bytesPerRow;
-    CGColorSpaceRef m_colorSpace;
-    RetainPtr<IOSurfaceRef> m_surface;
-};
-
-}  // namespace WebCore
-
-#endif  // ImageBufferData_h
+#if PLATFORM(CG)
+#include "ImageBufferDataCG.h"
+#elif PLATFORM(CAIRO)
+#include "ImageBufferDataCairo.h"
+#elif PLATFORM(QT)
+#include "ImageBufferDataQt.h"
+#elif USE(SKIA)
+#include "ImageBufferDataSkia.h"
+#elif PLATFORM(HAIKU)
+#include "ImageBufferDataHaiku.h"
+#elif OS(WINCE)
+#include "ImageBufferDataWince.h"
+#elif PLATFORM(WX)
+#include "ImageBufferDataWx.h"
+#endif

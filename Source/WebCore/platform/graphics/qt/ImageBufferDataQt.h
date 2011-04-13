@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Kevin Ollivier. All rights reserved.
+ * Copyright (C) 2008 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageBufferData_h
-#define ImageBufferData_h
-
+#include "Image.h"
 
 #include "OwnPtr.h"
+#include <QPainter>
+#include <QPixmap>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -36,8 +37,12 @@ class IntSize;
 class ImageBufferData {
 public:
     ImageBufferData(const IntSize&);
+
+    QImage toQImage() const;
+
+    QPixmap m_pixmap;
+    OwnPtr<QPainter> m_painter;
+    RefPtr<Image> m_image;
 };
 
-}  // namespace WebCore
-
-#endif  // ImageBufferData_h
+} // namespace WebCore

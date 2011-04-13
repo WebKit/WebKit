@@ -28,9 +28,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ImageBufferData_h
-#define ImageBufferData_h
-
 #include "PlatformContextSkia.h"
 
 #include "skia/ext/platform_canvas.h"
@@ -45,6 +42,4 @@ public:
     PlatformContextSkia m_platformContext;
 };
 
-}  // namespace WebCore
-
-#endif  // ImageBufferData_h
+} // namespace WebCore

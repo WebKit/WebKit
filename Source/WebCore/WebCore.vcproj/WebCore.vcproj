@@ -27093,6 +27093,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\ImageBufferData.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\ImageObserver.h"
 					>
 				</File>
@@ -28009,6 +28013,26 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\ImageBufferCG.cpp"
+						>
+						<FileConfiguration
+							Name="Debug_Cairo_CFLite|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo_CFLite|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\cg\ImageBufferDataCG.cpp"
 						>
 						<FileConfiguration
 							Name="Debug_Cairo_CFLite|Win32"

@@ -41,10 +41,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
-#if (PLATFORM(MAC) && PLATFORM(CA) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD))
-#define WTF_USE_IOSURFACE_CANVAS_BACKING_STORE 1
-#endif
-
 namespace WebCore {
 
     class GraphicsContext;

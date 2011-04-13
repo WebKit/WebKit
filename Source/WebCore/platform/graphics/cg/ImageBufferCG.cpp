@@ -42,14 +42,6 @@
 #include <wtf/Threading.h>
 #include <math.h>
 
-#if USE(ACCELERATE)
-#include <Accelerate/Accelerate.h>
-#endif
-
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-#include <IOSurface/IOSurface.h>
-#endif
-
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
 #include "WebCoreSystemInterface.h"
 #endif
@@ -57,16 +49,6 @@
 using namespace std;
 
 namespace WebCore {
-
-#if USE(ACCELERATE)
-// The vImage unpremultiply routine had a rounding bug before 10.6.7 <rdar://problem/8631548>
-static bool haveVImageRoundingErrorFix()
-{
-    SInt32 version;
-    static bool result = (Gestalt(gestaltSystemVersion, &version) == noErr && version > 0x1066);
-    return result;
-}
-#endif
 
 #if USE(IOSURFACE_CANVAS_BACKING_STORE)
 static const int maxIOSurfaceDimension = 4096;
@@ -113,14 +95,6 @@ static RetainPtr<IOSurfaceRef> createIOSurface(const IntSize& size)
 static void releaseImageData(void*, const void* data, size_t)
 {
     fastFree(const_cast<void*>(data));
-}
-
-ImageBufferData::ImageBufferData(const IntSize&)
-    : m_data(0)
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    , m_surface(0)
-#endif
-{
 }
 
 ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, RenderingMode renderingMode, bool& success)
@@ -277,251 +251,32 @@ void ImageBuffer::clip(GraphicsContext* contextToClip, const FloatRect& rect) co
     CGContextTranslateCTM(platformContextToClip, -rect.x(), -rect.y() - rect.height());
 }
 
-template <Multiply multiplied>
-PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& imageData, const IntSize& size, bool accelerateRendering)
-{
-    RefPtr<ByteArray> result = ByteArray::create(rect.width() * rect.height() * 4);
-    unsigned char* data = result->data();
-
-    if (rect.x() < 0 || rect.y() < 0 || rect.maxX() > size.width() || rect.maxY() > size.height())
-        memset(data, 0, result->length());
-
-    int originx = rect.x();
-    int destx = 0;
-    if (originx < 0) {
-        destx = -originx;
-        originx = 0;
-    }
-    int endx = rect.maxX();
-    if (endx > size.width())
-        endx = size.width();
-    int width = endx - originx;
-
-    int originy = rect.y();
-    int desty = 0;
-    if (originy < 0) {
-        desty = -originy;
-        originy = 0;
-    }
-    int endy = rect.maxY();
-    if (endy > size.height())
-        endy = size.height();
-    int height = endy - originy;
-
-    if (width <= 0 || height <= 0)
-        return result.release();
-
-    unsigned destBytesPerRow = 4 * rect.width();
-    unsigned char* destRows = data + desty * destBytesPerRow + destx * 4;
-
-    unsigned srcBytesPerRow;
-    unsigned char* srcRows;
-
-    if (!accelerateRendering) {
-        srcBytesPerRow = 4 * size.width();
-        srcRows = reinterpret_cast<unsigned char*>(imageData.m_data) + originy * srcBytesPerRow + originx * 4;
-
-#if USE(ACCELERATE)
-        if (multiplied == Unmultiplied && haveVImageRoundingErrorFix()) {
-            vImage_Buffer src;
-            src.height = height;
-            src.width = width;
-            src.rowBytes = srcBytesPerRow;
-            src.data = srcRows;
-
-            vImage_Buffer dst;
-            dst.height = height;
-            dst.width = width;
-            dst.rowBytes = destBytesPerRow;
-            dst.data = destRows;
-
-            vImageUnpremultiplyData_RGBA8888(&src, &dst, kvImageNoFlags);
-            return result.release();
-        }
-#endif
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; x++) {
-                int basex = x * 4;
-                unsigned char alpha = srcRows[basex + 3];
-                if (multiplied == Unmultiplied && alpha) {
-                    destRows[basex] = (srcRows[basex] * 255) / alpha;
-                    destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
-                    destRows[basex + 2] = (srcRows[basex + 2] * 255) / alpha;
-                    destRows[basex + 3] = alpha;
-                } else
-                    reinterpret_cast<uint32_t*>(destRows + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
-            }
-            srcRows += srcBytesPerRow;
-            destRows += destBytesPerRow;
-        }
-    } else {
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-        IOSurfaceRef surface = imageData.m_surface.get();
-        IOSurfaceLock(surface, kIOSurfaceLockReadOnly, 0);
-        srcBytesPerRow = IOSurfaceGetBytesPerRow(surface);
-        srcRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + originy * srcBytesPerRow + originx * 4;
-        
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; x++) {
-                int basex = x * 4;
-                unsigned char alpha = srcRows[basex + 3];
-                if (multiplied == Unmultiplied && alpha) {
-                    destRows[basex] = (srcRows[basex + 2] * 255) / alpha;
-                    destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
-                    destRows[basex + 2] = (srcRows[basex] * 255) / alpha;
-                    destRows[basex + 3] = alpha;
-                } else {
-                    destRows[basex] = srcRows[basex + 2];
-                    destRows[basex + 1] = srcRows[basex + 1];
-                    destRows[basex + 2] = srcRows[basex];
-                    destRows[basex + 3] = alpha;
-                }
-            }
-            srcRows += srcBytesPerRow;
-            destRows += destBytesPerRow;
-        }
-        IOSurfaceUnlock(surface, kIOSurfaceLockReadOnly, 0);
-#else
-        ASSERT_NOT_REACHED();
-#endif
-    }
-    
-    return result.release();
-}
-
 PassRefPtr<ByteArray> ImageBuffer::getUnmultipliedImageData(const IntRect& rect) const
 {
     if (m_accelerateRendering)
         CGContextFlush(context()->platformContext());
-    return getImageData<Unmultiplied>(rect, m_data, m_size, m_accelerateRendering);
+    return m_data.getData(rect, m_size, m_accelerateRendering, true);
 }
 
 PassRefPtr<ByteArray> ImageBuffer::getPremultipliedImageData(const IntRect& rect) const
 {
     if (m_accelerateRendering)
         CGContextFlush(context()->platformContext());
-    return getImageData<Premultiplied>(rect, m_data, m_size, m_accelerateRendering);
-}
-
-template <Multiply multiplied>
-void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, ImageBufferData& imageData, const IntSize& size, bool accelerateRendering)
-{
-    ASSERT(sourceRect.width() > 0);
-    ASSERT(sourceRect.height() > 0);
-
-    int originx = sourceRect.x();
-    int destx = destPoint.x() + sourceRect.x();
-    ASSERT(destx >= 0);
-    ASSERT(destx < size.width());
-    ASSERT(originx >= 0);
-    ASSERT(originx <= sourceRect.maxX());
-
-    int endx = destPoint.x() + sourceRect.maxX();
-    ASSERT(endx <= size.width());
-
-    int width = endx - destx;
-
-    int originy = sourceRect.y();
-    int desty = destPoint.y() + sourceRect.y();
-    ASSERT(desty >= 0);
-    ASSERT(desty < size.height());
-    ASSERT(originy >= 0);
-    ASSERT(originy <= sourceRect.maxY());
-
-    int endy = destPoint.y() + sourceRect.maxY();
-    ASSERT(endy <= size.height());
-    int height = endy - desty;
-
-    if (width <= 0 || height <= 0)
-        return;
-
-    unsigned srcBytesPerRow = 4 * sourceSize.width();
-    unsigned char* srcRows = source->data() + originy * srcBytesPerRow + originx * 4;
-    unsigned destBytesPerRow;
-    unsigned char* destRows;
-
-    if (!accelerateRendering) {
-        destBytesPerRow = 4 * size.width();
-        destRows = reinterpret_cast<unsigned char*>(imageData.m_data) + desty * destBytesPerRow + destx * 4;
-
-#if USE(ACCELERATE)
-        if (haveVImageRoundingErrorFix() && multiplied == Unmultiplied) {
-            vImage_Buffer src;
-            src.height = height;
-            src.width = width;
-            src.rowBytes = srcBytesPerRow;
-            src.data = srcRows;
-
-            vImage_Buffer dst;
-            dst.height = height;
-            dst.width = width;
-            dst.rowBytes = destBytesPerRow;
-            dst.data = destRows;
-
-            vImagePremultiplyData_RGBA8888(&src, &dst, kvImageNoFlags);
-            return;
-        }
-#endif
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; x++) {
-                int basex = x * 4;
-                unsigned char alpha = srcRows[basex + 3];
-                if (multiplied == Unmultiplied && alpha != 255) {
-                    destRows[basex] = (srcRows[basex] * alpha + 254) / 255;
-                    destRows[basex + 1] = (srcRows[basex + 1] * alpha + 254) / 255;
-                    destRows[basex + 2] = (srcRows[basex + 2] * alpha + 254) / 255;
-                    destRows[basex + 3] = alpha;
-                } else
-                    reinterpret_cast<uint32_t*>(destRows + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
-            }
-            destRows += destBytesPerRow;
-            srcRows += srcBytesPerRow;
-        }
-    } else {
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-        IOSurfaceRef surface = imageData.m_surface.get();
-        IOSurfaceLock(surface, 0, 0);
-        destBytesPerRow = IOSurfaceGetBytesPerRow(surface);
-        destRows = (unsigned char*)(IOSurfaceGetBaseAddress(surface)) + desty * destBytesPerRow + destx * 4;
-        
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; x++) {
-                int basex = x * 4;
-                unsigned char alpha = srcRows[basex + 3];
-                if (multiplied == Unmultiplied && alpha != 255) {
-                    destRows[basex] = (srcRows[basex + 2] * alpha + 254) / 255;
-                    destRows[basex + 1] = (srcRows[basex + 1] * alpha + 254) / 255;
-                    destRows[basex + 2] = (srcRows[basex] * alpha + 254) / 255;
-                    destRows[basex + 3] = alpha;
-                } else {
-                    destRows[basex] = srcRows[basex + 2];
-                    destRows[basex + 1] = srcRows[basex + 1];
-                    destRows[basex + 2] = srcRows[basex];
-                    destRows[basex + 3] = alpha;
-                }
-            }
-            destRows += destBytesPerRow;
-            srcRows += srcBytesPerRow;
-        }
-        IOSurfaceUnlock(surface, 0, 0);
-#else
-        ASSERT_NOT_REACHED();
-#endif
-    }
+    return m_data.getData(rect, m_size, m_accelerateRendering, false);
 }
 
 void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
     if (m_accelerateRendering)
         CGContextFlush(context()->platformContext());
-    putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, m_data, m_size, m_accelerateRendering);
+    m_data.putData(source, sourceSize, sourceRect, destPoint, m_size, m_accelerateRendering, true);
 }
 
 void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
     if (m_accelerateRendering)
         CGContextFlush(context()->platformContext());
-    putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, m_data, m_size, m_accelerateRendering);
+    m_data.putData(source, sourceSize, sourceRect, destPoint, m_size, m_accelerateRendering, false);
 }
 
 static inline CFStringRef jpegUTI()

@@ -17,9 +17,6 @@
  *  Boston, MA 02110-1301, USA.
  */
 
-#ifndef ImageBufferData_h
-#define ImageBufferData_h
-
 #include "SharedBitmap.h"
 
 namespace WebCore {
@@ -33,5 +30,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ImageBufferData_h

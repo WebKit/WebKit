@@ -1,3 +1,42 @@
+2011-04-13  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        [CG] Refactor get/putImageData routines from ImageBufferCG into a (new) ImageBufferDataCG.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=58084
+
+        No new tests. Does not affect outward behavior.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageBufferData.h: Added.
+        * platform/graphics/cairo/ImageBufferData.h: Removed.
+        * platform/graphics/cairo/ImageBufferDataCairo.h: Added.
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        (WebCore::ImageBuffer::putUnmultipliedImageData):
+        (WebCore::ImageBuffer::putPremultipliedImageData):
+        * platform/graphics/cg/ImageBufferDataCG.cpp: Added.
+        (WebCore::ImageBufferData::ImageBufferData):
+        (WebCore::haveVImageRoundingErrorFix):
+        (WebCore::ImageBufferData::getData):
+        (WebCore::ImageBufferData::putData):
+        * platform/graphics/cg/ImageBufferData.h: Removed.
+        * platform/graphics/cg/ImageBufferDataCG.h: Added.
+        * platform/graphics/chromium/ImageBufferData.h: Removed.
+        * platform/graphics/chromium/ImageBufferDataSkia.h: Added.
+        * platform/graphics/haiku/ImageBufferData.h: Removed.
+        * platform/graphics/haiku/ImageBufferDataHaiku.h: Added.
+        * platform/graphics/qt/ImageBufferData.h: Removed.
+        * platform/graphics/qt/ImageBufferDataQt.h: Added.
+        * platform/graphics/wince/ImageBufferData.h: Removed.
+        * platform/graphics/wince/ImageBufferDataWince.h: Added.
+        * platform/graphics/wx/ImageBufferData.h: Removed.
+        * platform/graphics/wx/ImageBufferDataWx.h: Added.
+
 2011-04-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
