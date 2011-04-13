@@ -160,46 +160,49 @@ WebInspector.ResourceSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.
 WebInspector.CSSSourceFrame = function(resource)
 {
     WebInspector.ResourceSourceFrame.call(this, resource);
+    this._loadStyleSheet();
 }
 
 WebInspector.CSSSourceFrame.prototype = {
     isContentEditable: function()
     {
-        return true;
+        return !!this._styleSheet;
+    },
+
+    _loadStyleSheet: function()
+    {
+        function didGetAllStyleSheets(error, infos)
+        {
+            if (error)
+                return;
+
+            var stylesheetId;
+            for (var i = 0; i < infos.length; ++i) {
+                var info = infos[i];
+                if (info.sourceURL === this._resource.url) {
+                    stylesheetId = info.styleSheetId;
+                    break;
+                }
+            }
+            if (!stylesheetId)
+                return;
+
+            function didCreateForId(styleSheet)
+            {
+                this._styleSheet = styleSheet;
+            }
+            WebInspector.CSSStyleSheet.createForId(stylesheetId, didCreateForId.bind(this));
+        }
+        CSSAgent.getAllStyleSheets(didGetAllStyleSheets.bind(this));
     },
 
     _editContent: function(newText, callback)
     {
-        function handleStyleSheet(newText, styleSheet)
-        {
-            this._styleSheet = styleSheet;
-            this._saveStyleSheet(newText, callback);
+        if (!this._styleSheet) {
+            callback("Stylesheet not found.");
+            return;
         }
 
-        function handleInfos(newText, error, infos)
-        {
-            if (error) {
-                callback(error);
-                return;
-            }
-
-            for (var i = 0; i < infos.length; ++i) {
-                var info = infos[i];
-                if (info.sourceURL === this._resource.url) {
-                    WebInspector.CSSStyleSheet.createForId(info.styleSheetId, handleStyleSheet.bind(this, newText));
-                    break;
-                }
-            }
-        }
-
-        if (this._styleSheet)
-            this._saveStyleSheet(newText, callback);
-        else
-            CSSAgent.getAllStyleSheets(handleInfos.bind(this, newText));
-    },
-
-    _saveStyleSheet: function(newText, callback)
-    {
         function didSetText(success)
         {
             var error;

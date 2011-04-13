@@ -1,3 +1,16 @@
+2011-04-13  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: inactive style sheets should be read only.
+        https://bugs.webkit.org/show_bug.cgi?id=58423
+
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.CSSSourceFrame):
+        (WebInspector.CSSSourceFrame.prototype.isContentEditable):
+        (WebInspector.CSSSourceFrame.prototype._loadStyleSheet.didGetAllStyleSheets.didCreateForId):
+        (WebInspector.CSSSourceFrame.prototype._loadStyleSheet):
+
 2011-04-13  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

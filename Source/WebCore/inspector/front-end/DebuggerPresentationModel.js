@@ -130,7 +130,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     canEditScriptSource: function(sourceFileId)
     {
-        if (!Preferences.canEditScriptSource)
+        if (!Preferences.canEditScriptSource || this._formatSourceFiles)
             return false;
         var script = this._scriptForSourceFileId(sourceFileId);
         return !script.lineOffset && !script.columnOffset;
