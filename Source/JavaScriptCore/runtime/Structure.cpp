@@ -294,7 +294,7 @@ void Structure::stopIgnoringLeaks()
 #endif
 }
 
-void Structure::materializePropertyMap()
+void Structure::materializePropertyMap(JSGlobalData& globalData)
 {
     ASSERT(!m_propertyTable);
 
@@ -309,7 +309,7 @@ void Structure::materializePropertyMap()
             ASSERT(structure->m_propertyTable);
             ASSERT(!structure->m_previous);
 
-            m_propertyTable = structure->m_propertyTable->copy(m_offset + 1);
+            m_propertyTable = structure->m_propertyTable->copy(globalData, 0, m_offset + 1);
             break;
         }
 
@@ -321,7 +321,7 @@ void Structure::materializePropertyMap()
 
     for (ptrdiff_t i = structures.size() - 2; i >= 0; --i) {
         structure = structures[i];
-        PropertyMapEntry entry(structure->m_nameInPrevious.get(), m_anonymousSlotCount + structure->m_offset, structure->m_attributesInPrevious, structure->m_specificValueInPrevious);
+        PropertyMapEntry entry(globalData, 0, structure->m_nameInPrevious.get(), m_anonymousSlotCount + structure->m_offset, structure->m_attributesInPrevious, structure->m_specificValueInPrevious);
         m_propertyTable->add(entry);
     }
 }
@@ -334,18 +334,18 @@ void Structure::growPropertyStorageCapacity()
         m_propertyStorageCapacity *= 2;
 }
 
-void Structure::despecifyDictionaryFunction(const Identifier& propertyName)
+void Structure::despecifyDictionaryFunction(JSGlobalData& globalData, const Identifier& propertyName)
 {
     StringImpl* rep = propertyName.impl();
 
-    materializePropertyMapIfNecessary();
+    materializePropertyMapIfNecessary(globalData);
 
     ASSERT(isDictionary());
     ASSERT(m_propertyTable);
 
     PropertyMapEntry* entry = m_propertyTable->find(rep).first;
     ASSERT(entry);
-    entry->specificValue = 0;
+    entry->specificValue.clear();
 }
 
 PassRefPtr<Structure> Structure::addPropertyTransitionToExistingStructure(Structure* structure, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset)
@@ -387,9 +387,9 @@ PassRefPtr<Structure> Structure::addPropertyTransition(JSGlobalData& globalData,
         specificValue = 0;
 
     if (structure->transitionCount() > s_maxTransitionLength) {
-        RefPtr<Structure> transition = toCacheableDictionaryTransition(structure);
+        RefPtr<Structure> transition = toCacheableDictionaryTransition(globalData, structure);
         ASSERT(structure != transition);
-        offset = transition->put(propertyName, attributes, specificValue);
+        offset = transition->put(globalData, propertyName, attributes, specificValue);
         ASSERT(offset >= structure->m_anonymousSlotCount);
         ASSERT(structure->m_anonymousSlotCount == transition->m_anonymousSlotCount);
         if (transition->propertyStorageSize() > transition->propertyStorageCapacity())
@@ -407,17 +407,17 @@ PassRefPtr<Structure> Structure::addPropertyTransition(JSGlobalData& globalData,
 
     if (structure->m_propertyTable) {
         if (structure->m_isPinnedPropertyTable)
-            transition->m_propertyTable = structure->m_propertyTable->copy(structure->m_propertyTable->size() + 1);
+            transition->m_propertyTable = structure->m_propertyTable->copy(globalData, 0, structure->m_propertyTable->size() + 1);
         else
             transition->m_propertyTable = structure->m_propertyTable.release();
     } else {
         if (structure->m_previous)
-            transition->materializePropertyMap();
+            transition->materializePropertyMap(globalData);
         else
             transition->createPropertyMap();
     }
 
-    offset = transition->put(propertyName, attributes, specificValue);
+    offset = transition->put(globalData, propertyName, attributes, specificValue);
     ASSERT(offset >= structure->m_anonymousSlotCount);
     ASSERT(structure->m_anonymousSlotCount == transition->m_anonymousSlotCount);
     if (transition->propertyStorageSize() > transition->propertyStorageCapacity())
@@ -429,11 +429,11 @@ PassRefPtr<Structure> Structure::addPropertyTransition(JSGlobalData& globalData,
     return transition.release();
 }
 
-PassRefPtr<Structure> Structure::removePropertyTransition(Structure* structure, const Identifier& propertyName, size_t& offset)
+PassRefPtr<Structure> Structure::removePropertyTransition(JSGlobalData& globalData, Structure* structure, const Identifier& propertyName, size_t& offset)
 {
     ASSERT(!structure->isUncacheableDictionary());
 
-    RefPtr<Structure> transition = toUncacheableDictionaryTransition(structure);
+    RefPtr<Structure> transition = toUncacheableDictionaryTransition(globalData, structure);
 
     offset = transition->remove(propertyName);
     ASSERT(offset >= structure->m_anonymousSlotCount);
@@ -442,7 +442,7 @@ PassRefPtr<Structure> Structure::removePropertyTransition(Structure* structure, 
     return transition.release();
 }
 
-PassRefPtr<Structure> Structure::changePrototypeTransition(Structure* structure, JSValue prototype)
+PassRefPtr<Structure> Structure::changePrototypeTransition(JSGlobalData& globalData, Structure* structure, JSValue prototype)
 {
     RefPtr<Structure> transition = create(structure);
 
@@ -450,15 +450,15 @@ PassRefPtr<Structure> Structure::changePrototypeTransition(Structure* structure,
 
     // Don't set m_offset, as one can not transition to this.
 
-    structure->materializePropertyMapIfNecessary();
-    transition->m_propertyTable = structure->copyPropertyTable();
+    structure->materializePropertyMapIfNecessary(globalData);
+    transition->m_propertyTable = structure->copyPropertyTable(globalData);
     transition->m_isPinnedPropertyTable = true;
     
     ASSERT(structure->anonymousSlotCount() == transition->anonymousSlotCount());
     return transition.release();
 }
 
-PassRefPtr<Structure> Structure::despecifyFunctionTransition(Structure* structure, const Identifier& replaceFunction)
+PassRefPtr<Structure> Structure::despecifyFunctionTransition(JSGlobalData& globalData, Structure* structure, const Identifier& replaceFunction)
 {
     ASSERT(structure->m_specificFunctionThrashCount < maxSpecificFunctionThrashCount);
     RefPtr<Structure> transition = create(structure);
@@ -467,14 +467,14 @@ PassRefPtr<Structure> Structure::despecifyFunctionTransition(Structure* structur
 
     // Don't set m_offset, as one can not transition to this.
 
-    structure->materializePropertyMapIfNecessary();
-    transition->m_propertyTable = structure->copyPropertyTable();
+    structure->materializePropertyMapIfNecessary(globalData);
+    transition->m_propertyTable = structure->copyPropertyTable(globalData);
     transition->m_isPinnedPropertyTable = true;
 
     if (transition->m_specificFunctionThrashCount == maxSpecificFunctionThrashCount)
-        transition->despecifyAllFunctions();
+        transition->despecifyAllFunctions(globalData);
     else {
-        bool removed = transition->despecifyFunction(replaceFunction);
+        bool removed = transition->despecifyFunction(globalData, replaceFunction);
         ASSERT_UNUSED(removed, removed);
     }
     
@@ -482,28 +482,28 @@ PassRefPtr<Structure> Structure::despecifyFunctionTransition(Structure* structur
     return transition.release();
 }
 
-PassRefPtr<Structure> Structure::getterSetterTransition(Structure* structure)
+PassRefPtr<Structure> Structure::getterSetterTransition(JSGlobalData& globalData, Structure* structure)
 {
     RefPtr<Structure> transition = create(structure);
 
     // Don't set m_offset, as one can not transition to this.
 
-    structure->materializePropertyMapIfNecessary();
-    transition->m_propertyTable = structure->copyPropertyTable();
+    structure->materializePropertyMapIfNecessary(globalData);
+    transition->m_propertyTable = structure->copyPropertyTable(globalData);
     transition->m_isPinnedPropertyTable = true;
     
     ASSERT(structure->anonymousSlotCount() == transition->anonymousSlotCount());
     return transition.release();
 }
 
-PassRefPtr<Structure> Structure::toDictionaryTransition(Structure* structure, DictionaryKind kind)
+PassRefPtr<Structure> Structure::toDictionaryTransition(JSGlobalData& globalData, Structure* structure, DictionaryKind kind)
 {
     ASSERT(!structure->isUncacheableDictionary());
     
     RefPtr<Structure> transition = create(structure);
 
-    structure->materializePropertyMapIfNecessary();
-    transition->m_propertyTable = structure->copyPropertyTable();
+    structure->materializePropertyMapIfNecessary(globalData);
+    transition->m_propertyTable = structure->copyPropertyTable(globalData);
     transition->m_isPinnedPropertyTable = true;
     transition->m_dictionaryKind = kind;
     
@@ -511,20 +511,20 @@ PassRefPtr<Structure> Structure::toDictionaryTransition(Structure* structure, Di
     return transition.release();
 }
 
-PassRefPtr<Structure> Structure::toCacheableDictionaryTransition(Structure* structure)
+PassRefPtr<Structure> Structure::toCacheableDictionaryTransition(JSGlobalData& globalData, Structure* structure)
 {
-    return toDictionaryTransition(structure, CachedDictionaryKind);
+    return toDictionaryTransition(globalData, structure, CachedDictionaryKind);
 }
 
-PassRefPtr<Structure> Structure::toUncacheableDictionaryTransition(Structure* structure)
+PassRefPtr<Structure> Structure::toUncacheableDictionaryTransition(JSGlobalData& globalData, Structure* structure)
 {
-    return toDictionaryTransition(structure, UncachedDictionaryKind);
+    return toDictionaryTransition(globalData, structure, UncachedDictionaryKind);
 }
 
 // In future we may want to cache this transition.
-PassRefPtr<Structure> Structure::sealTransition(Structure* structure)
+PassRefPtr<Structure> Structure::sealTransition(JSGlobalData& globalData, Structure* structure)
 {
-    RefPtr<Structure> transition = preventExtensionsTransition(structure);
+    RefPtr<Structure> transition = preventExtensionsTransition(globalData, structure);
 
     if (transition->m_propertyTable) {
         PropertyTable::iterator end = transition->m_propertyTable->end();
@@ -536,9 +536,9 @@ PassRefPtr<Structure> Structure::sealTransition(Structure* structure)
 }
 
 // In future we may want to cache this transition.
-PassRefPtr<Structure> Structure::freezeTransition(Structure* structure)
+PassRefPtr<Structure> Structure::freezeTransition(JSGlobalData& globalData, Structure* structure)
 {
-    RefPtr<Structure> transition = preventExtensionsTransition(structure);
+    RefPtr<Structure> transition = preventExtensionsTransition(globalData, structure);
 
     if (transition->m_propertyTable) {
         PropertyTable::iterator end = transition->m_propertyTable->end();
@@ -550,14 +550,14 @@ PassRefPtr<Structure> Structure::freezeTransition(Structure* structure)
 }
 
 // In future we may want to cache this transition.
-PassRefPtr<Structure> Structure::preventExtensionsTransition(Structure* structure)
+PassRefPtr<Structure> Structure::preventExtensionsTransition(JSGlobalData& globalData, Structure* structure)
 {
     RefPtr<Structure> transition = create(structure);
 
     // Don't set m_offset, as one can not transition to this.
 
-    structure->materializePropertyMapIfNecessary();
-    transition->m_propertyTable = structure->copyPropertyTable();
+    structure->materializePropertyMapIfNecessary(globalData);
+    transition->m_propertyTable = structure->copyPropertyTable(globalData);
     transition->m_isPinnedPropertyTable = true;
     transition->m_preventExtensions = true;
 
@@ -566,12 +566,12 @@ PassRefPtr<Structure> Structure::preventExtensionsTransition(Structure* structur
 }
 
 // In future we may want to cache this property.
-bool Structure::isSealed()
+bool Structure::isSealed(JSGlobalData& globalData)
 {
     if (isExtensible())
         return false;
 
-    materializePropertyMapIfNecessary();
+    materializePropertyMapIfNecessary(globalData);
     if (!m_propertyTable)
         return true;
 
@@ -584,12 +584,12 @@ bool Structure::isSealed()
 }
 
 // In future we may want to cache this property.
-bool Structure::isFrozen()
+bool Structure::isFrozen(JSGlobalData& globalData)
 {
     if (isExtensible())
         return false;
 
-    materializePropertyMapIfNecessary();
+    materializePropertyMapIfNecessary(globalData);
     if (!m_propertyTable)
         return true;
 
@@ -630,30 +630,30 @@ PassRefPtr<Structure> Structure::flattenDictionaryStructure(JSGlobalData& global
     return this;
 }
 
-size_t Structure::addPropertyWithoutTransition(const Identifier& propertyName, unsigned attributes, JSCell* specificValue)
+size_t Structure::addPropertyWithoutTransition(JSGlobalData& globalData, const Identifier& propertyName, unsigned attributes, JSCell* specificValue)
 {
     ASSERT(!m_enumerationCache);
 
     if (m_specificFunctionThrashCount == maxSpecificFunctionThrashCount)
         specificValue = 0;
 
-    materializePropertyMapIfNecessary();
+    materializePropertyMapIfNecessary(globalData);
 
     m_isPinnedPropertyTable = true;
 
-    size_t offset = put(propertyName, attributes, specificValue);
+    size_t offset = put(globalData, propertyName, attributes, specificValue);
     ASSERT(offset >= m_anonymousSlotCount);
     if (propertyStorageSize() > propertyStorageCapacity())
         growPropertyStorageCapacity();
     return offset;
 }
 
-size_t Structure::removePropertyWithoutTransition(const Identifier& propertyName)
+size_t Structure::removePropertyWithoutTransition(JSGlobalData& globalData, const Identifier& propertyName)
 {
     ASSERT(isUncacheableDictionary());
     ASSERT(!m_enumerationCache);
 
-    materializePropertyMapIfNecessary();
+    materializePropertyMapIfNecessary(globalData);
 
     m_isPinnedPropertyTable = true;
     size_t offset = remove(propertyName);
@@ -688,14 +688,14 @@ inline void Structure::checkConsistency()
 
 #endif
 
-PropertyTable* Structure::copyPropertyTable()
+PropertyTable* Structure::copyPropertyTable(JSGlobalData& globalData)
 {
-    return m_propertyTable ? new PropertyTable(*m_propertyTable) : 0;
+    return m_propertyTable ? new PropertyTable(globalData, 0, *m_propertyTable) : 0;
 }
 
-size_t Structure::get(StringImpl* propertyName, unsigned& attributes, JSCell*& specificValue)
+size_t Structure::get(JSGlobalData& globalData, StringImpl* propertyName, unsigned& attributes, JSCell*& specificValue)
 {
-    materializePropertyMapIfNecessary();
+    materializePropertyMapIfNecessary(globalData);
     if (!m_propertyTable)
         return WTF::notFound;
 
@@ -704,14 +704,14 @@ size_t Structure::get(StringImpl* propertyName, unsigned& attributes, JSCell*& s
         return WTF::notFound;
 
     attributes = entry->attributes;
-    specificValue = entry->specificValue;
+    specificValue = entry->specificValue.get();
     ASSERT(entry->offset >= m_anonymousSlotCount);
     return entry->offset;
 }
 
-bool Structure::despecifyFunction(const Identifier& propertyName)
+bool Structure::despecifyFunction(JSGlobalData& globalData, const Identifier& propertyName)
 {
-    materializePropertyMapIfNecessary();
+    materializePropertyMapIfNecessary(globalData);
     if (!m_propertyTable)
         return false;
 
@@ -721,25 +721,25 @@ bool Structure::despecifyFunction(const Identifier& propertyName)
         return false;
 
     ASSERT(entry->specificValue);
-    entry->specificValue = 0;
+    entry->specificValue.clear();
     return true;
 }
 
-void Structure::despecifyAllFunctions()
+void Structure::despecifyAllFunctions(JSGlobalData& globalData)
 {
-    materializePropertyMapIfNecessary();
+    materializePropertyMapIfNecessary(globalData);
     if (!m_propertyTable)
         return;
 
     PropertyTable::iterator end = m_propertyTable->end();
     for (PropertyTable::iterator iter = m_propertyTable->begin(); iter != end; ++iter)
-        iter->specificValue = 0;
+        iter->specificValue.clear();
 }
 
-size_t Structure::put(const Identifier& propertyName, unsigned attributes, JSCell* specificValue)
+size_t Structure::put(JSGlobalData& globalData, const Identifier& propertyName, unsigned attributes, JSCell* specificValue)
 {
     ASSERT(!propertyName.isNull());
-    ASSERT(get(propertyName) == notFound);
+    ASSERT(get(globalData, propertyName) == notFound);
 
     checkConsistency();
     if (attributes & DontEnum)
@@ -758,7 +758,7 @@ size_t Structure::put(const Identifier& propertyName, unsigned attributes, JSCel
         newOffset = m_propertyTable->size() + m_anonymousSlotCount;
     ASSERT(newOffset >= m_anonymousSlotCount);
 
-    m_propertyTable->add(PropertyMapEntry(rep, newOffset, attributes, specificValue));
+    m_propertyTable->add(PropertyMapEntry(globalData, 0, rep, newOffset, attributes, specificValue));
 
     checkConsistency();
     return newOffset;
@@ -798,9 +798,9 @@ void Structure::createPropertyMap(unsigned capacity)
     checkConsistency();
 }
 
-void Structure::getPropertyNames(PropertyNameArray& propertyNames, EnumerationMode mode)
+void Structure::getPropertyNames(JSGlobalData& globalData, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
-    materializePropertyMapIfNecessary();
+    materializePropertyMapIfNecessary(globalData);
     if (!m_propertyTable)
         return;
 

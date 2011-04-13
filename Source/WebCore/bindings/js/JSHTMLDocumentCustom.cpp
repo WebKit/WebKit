@@ -86,7 +86,7 @@ JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, const Iden
 JSValue JSHTMLDocument::all(ExecState* exec) const
 {
     // If "all" has been overwritten, return the overwritten value
-    JSValue v = getDirect(Identifier(exec, "all"));
+    JSValue v = getDirect(exec->globalData(), Identifier(exec, "all"));
     if (v)
         return v;
 

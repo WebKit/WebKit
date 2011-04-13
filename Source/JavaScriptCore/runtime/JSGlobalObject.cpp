@@ -137,11 +137,11 @@ void JSGlobalObject::putWithAttributes(ExecState* exec, const Identifier& proper
     if (symbolTablePutWithAttributes(exec->globalData(), propertyName, value, attributes))
         return;
 
-    JSValue valueBefore = getDirect(propertyName);
+    JSValue valueBefore = getDirect(exec->globalData(), propertyName);
     PutPropertySlot slot;
     JSVariableObject::put(exec, propertyName, value, slot);
     if (!valueBefore) {
-        JSValue valueAfter = getDirect(propertyName);
+        JSValue valueAfter = getDirect(exec->globalData(), propertyName);
         if (valueAfter)
             JSObject::putWithAttributes(exec, propertyName, valueAfter, attributes);
     }
@@ -299,18 +299,18 @@ void JSGlobalObject::reset(JSValue prototype)
     putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, this, m_functionStructure.get(), 1, Identifier(exec, "jscprint"), globalFuncJSCPrint), DontEnum);
 #endif
 
-    resetPrototype(prototype);
+    resetPrototype(exec->globalData(), prototype);
 }
 
 // Set prototype, and also insert the object prototype at the end of the chain.
-void JSGlobalObject::resetPrototype(JSValue prototype)
+void JSGlobalObject::resetPrototype(JSGlobalData& globalData, JSValue prototype)
 {
-    setPrototype(prototype);
+    setPrototype(globalData, prototype);
 
     JSObject* oldLastInPrototypeChain = lastInPrototypeChain(this);
     JSObject* objectPrototype = m_objectPrototype.get();
     if (oldLastInPrototypeChain != objectPrototype)
-        oldLastInPrototypeChain->setPrototype(objectPrototype);
+        oldLastInPrototypeChain->setPrototype(globalData, objectPrototype);
 }
 
 void JSGlobalObject::markChildren(MarkStack& markStack)

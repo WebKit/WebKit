@@ -430,7 +430,7 @@ namespace JSC {
             if (cell->structure()->isDictionary()) {
                 asObject(cell)->flattenDictionaryObject(callFrame->globalData());
                 if (slotBase == cell)
-                    slotOffset = cell->structure()->get(propertyName); 
+                    slotOffset = cell->structure()->get(callFrame->globalData(), propertyName); 
             }
 
             ++count;

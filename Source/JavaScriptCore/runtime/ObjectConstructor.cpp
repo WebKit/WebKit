@@ -342,7 +342,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorCreate(ExecState* exec)
     if (!exec->argument(0).isObject() && !exec->argument(0).isNull())
         return throwVMError(exec, createTypeError(exec, "Object prototype may only be an Object or null."));
     JSObject* newObject = constructEmptyObject(exec);
-    newObject->setPrototype(exec->argument(0));
+    newObject->setPrototype(exec->globalData(), exec->argument(0));
     if (exec->argument(1).isUndefined())
         return JSValue::encode(newObject);
     if (!exec->argument(1).isObject())
@@ -355,7 +355,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorSeal(ExecState* exec)
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
         return throwVMError(exec, createTypeError(exec, "Object.seal can only be called on Objects."));
-    asObject(obj)->seal();
+    asObject(obj)->seal(exec->globalData());
     return JSValue::encode(obj);
 }
 
@@ -364,7 +364,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorFreeze(ExecState* exec)
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
         return throwVMError(exec, createTypeError(exec, "Object.freeze can only be called on Objects."));
-    asObject(obj)->freeze();
+    asObject(obj)->freeze(exec->globalData());
     return JSValue::encode(obj);
 }
 
@@ -373,7 +373,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorPreventExtensions(ExecState* exec)
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
         return throwVMError(exec, createTypeError(exec, "Object.preventExtensions can only be called on Objects."));
-    asObject(obj)->preventExtensions();
+    asObject(obj)->preventExtensions(exec->globalData());
     return JSValue::encode(obj);
 }
 
@@ -382,7 +382,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsSealed(ExecState* exec)
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
         return throwVMError(exec, createTypeError(exec, "Object.isSealed can only be called on Objects."));
-    return JSValue::encode(jsBoolean(asObject(obj)->isSealed()));
+    return JSValue::encode(jsBoolean(asObject(obj)->isSealed(exec->globalData())));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState* exec)
@@ -390,7 +390,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorIsFrozen(ExecState* exec)
     JSValue obj = exec->argument(0);
     if (!obj.isObject())
         return throwVMError(exec, createTypeError(exec, "Object.isFrozen can only be called on Objects."));
-    return JSValue::encode(jsBoolean(asObject(obj)->isFrozen()));
+    return JSValue::encode(jsBoolean(asObject(obj)->isFrozen(exec->globalData())));
 }
 
 EncodedJSValue JSC_HOST_CALL objectConstructorIsExtensible(ExecState* exec)

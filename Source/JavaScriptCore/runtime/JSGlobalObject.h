@@ -235,7 +235,7 @@ namespace JSC {
         void copyGlobalsTo(RegisterFile&);
         void resizeRegisters(int oldSize, int newSize);
 
-        void resetPrototype(JSValue prototype);
+        void resetPrototype(JSGlobalData&, JSValue prototype);
 
         JSGlobalData& globalData() const { return *m_globalData.get(); }
 

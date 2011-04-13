@@ -73,7 +73,7 @@ void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
     ASSERT(thisObj->structure()->anonymousSlotCount() > 0);
     ASSERT(thisObj->getAnonymousValue(0).isCell() && asObject(thisObj->getAnonymousValue(0).asCell())->isGlobalObject());
     ASSERT(entry->attributes() & Function);
-    WriteBarrierBase<Unknown>* location = thisObj->getDirectLocation(propertyName);
+    WriteBarrierBase<Unknown>* location = thisObj->getDirectLocation(exec->globalData(), propertyName);
 
     if (!location) {
         JSFunction* function;
@@ -86,7 +86,7 @@ void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
             function = new (exec) JSFunction(exec, globalObject, globalObject->functionStructure(), entry->functionLength(), propertyName, entry->function());
 
         thisObj->putDirectFunction(exec->globalData(), propertyName, function, entry->attributes());
-        location = thisObj->getDirectLocation(propertyName);
+        location = thisObj->getDirectLocation(exec->globalData(), propertyName);
     }
 
     slot.setValue(thisObj, location->get(), thisObj->offsetForLocation(location));

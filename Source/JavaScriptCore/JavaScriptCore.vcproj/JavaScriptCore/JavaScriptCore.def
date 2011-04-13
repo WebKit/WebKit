@@ -54,7 +54,7 @@ EXPORTS
     ?addCurrentThread@MachineThreads@JSC@@QAEXXZ
     ?addPropertyTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@AAVJSGlobalData@2@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
     ?addPropertyTransitionToExistingStructure@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
-    ?addPropertyWithoutTransition@Structure@JSC@@QAEIABVIdentifier@2@IPAVJSCell@2@@Z
+    ?addPropertyWithoutTransition@Structure@JSC@@QAEIAAVJSGlobalData@2@ABVIdentifier@2@IPAVJSCell@2@@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PAVStringImpl@4@@Z
     ?allocate@Heap@JSC@@QAEPAXI@Z
     ?allocateFromSizeClass@MarkedSpace@JSC@@AAEPAXAAUSizeClass@12@@Z
@@ -78,7 +78,7 @@ EXPORTS
     ?callOnMainThreadAndWait@WTF@@YAXP6AXPAX@Z0@Z
     ?cancelCallOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
     ?capacity@Heap@JSC@@QBEIXZ
-    ?changePrototypeTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@VJSValue@2@@Z
+    ?changePrototypeTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@AAVJSGlobalData@2@PAV12@VJSValue@2@@Z
     ?checkCurrentIdentifierTable@Identifier@JSC@@CAXPAVExecState@2@@Z
     ?checkCurrentIdentifierTable@Identifier@JSC@@CAXPAVJSGlobalData@2@@Z
     ?checkSyntax@JSC@@YA?AVCompletion@1@PAVExecState@1@ABVSourceCode@1@@Z
@@ -143,8 +143,8 @@ EXPORTS
     ?deleteProperty@JSVariableObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?deleteProperty@StringObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@@Z
     ?deleteTable@HashTable@JSC@@QBEXXZ
-    ?despecifyDictionaryFunction@Structure@JSC@@QAEXABVIdentifier@2@@Z
-    ?despecifyFunctionTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@PAV12@ABVIdentifier@2@@Z
+    ?despecifyDictionaryFunction@Structure@JSC@@QAEXAAVJSGlobalData@2@ABVIdentifier@2@@Z
+    ?despecifyFunctionTransition@Structure@JSC@@SA?AV?$PassRefPtr@VStructure@JSC@@@WTF@@AAVJSGlobalData@2@PAV12@ABVIdentifier@2@@Z
     ?destroy@Heap@JSC@@QAEXXZ
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
@@ -172,7 +172,8 @@ EXPORTS
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@I@Z
     ?functionGetter@PropertySlot@JSC@@ABE?AVJSValue@2@PAVExecState@2@@Z
     ?functionName@DebuggerCallFrame@JSC@@QBEPBVUString@2@XZ
-    ?get@Structure@JSC@@QAEIPAVStringImpl@WTF@@AAIAAPAVJSCell@2@@Z
+    ?get@Structure@JSC@@QAEIAAVJSGlobalData@2@ABVIdentifier@2@AAIAAPAVJSCell@2@@Z
+    ?get@Structure@JSC@@QAEIAAVJSGlobalData@2@PAVStringImpl@WTF@@AAIAAPAVJSCell@2@@Z
     ?getCallData@JSCell@JSC@@UAE?AW4CallType@2@AATCallData@2@@Z
     ?getConstructData@JSCell@JSC@@UAE?AW4ConstructType@2@AATConstructData@2@@Z
     ?getJSNumber@JSCell@JSC@@UAE?AVJSValue@2@XZ
@@ -239,7 +240,7 @@ EXPORTS
     ?markChildren@JSObject@JSC@@UAEXAAVMarkStack@2@@Z
     ?markChildren@JSWrapperObject@JSC@@EAEXAAVMarkStack@2@@Z
     ?markChildren@ScopeChainNode@JSC@@UAEXAAVMarkStack@2@@Z
-    ?materializePropertyMap@Structure@JSC@@AAEXXZ
+    ?materializePropertyMap@Structure@JSC@@AAEXAAVJSGlobalData@2@@Z
     ?monthFromDayInYear@WTF@@YAHH_N@Z
     ?msToYear@WTF@@YAHN@Z
     ?name@InternalFunction@JSC@@QAEABVUString@2@PAVExecState@2@@Z
@@ -267,6 +268,7 @@ EXPORTS
     ?put@StringObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@AAVPutPropertySlot@2@@Z
     ?putDirectFunction@JSObject@JSC@@QAEXPAVExecState@2@PAVInternalFunction@2@I@Z
     ?putDirectFunction@JSObject@JSC@@QAEXPAVExecState@2@PAVJSFunction@2@I@Z
+    ?putDirectInternal@JSObject@JSC@@AAE_NAAVJSGlobalData@2@ABVIdentifier@2@VJSValue@2@I_NAAVPutPropertySlot@2@PAVJSCell@2@@Z
     ?putWithAttributes@JSGlobalObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@I@Z
     ?putWithAttributes@JSObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@I@Z
     ?putWithAttributes@JSObject@JSC@@UAEXPAVExecState@2@ABVIdentifier@2@VJSValue@2@I_NAAVPutPropertySlot@2@@Z
@@ -301,6 +303,7 @@ EXPORTS
     ?setLoc@StatementNode@JSC@@QAEXHH@Z
     ?setMainThreadCallbacksPaused@WTF@@YAX_N@Z
     ?setOrderLowerFirst@Collator@WTF@@QAEX_N@Z
+    ?setPrototype@JSObject@JSC@@QAEXAAVJSGlobalData@2@VJSValue@2@@Z
     ?setSetter@PropertyDescriptor@JSC@@QAEXVJSValue@2@@Z
     ?setUndefined@PropertyDescriptor@JSC@@QAEXXZ
     ?setUpStaticFunctionSlot@JSC@@YAXPAVExecState@1@PBVHashEntry@1@PAVJSObject@1@ABVIdentifier@1@AAVPropertySlot@1@@Z

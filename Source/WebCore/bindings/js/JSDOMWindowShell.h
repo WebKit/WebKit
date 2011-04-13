@@ -48,7 +48,7 @@ namespace WebCore {
         {
             ASSERT_ARG(window, window);
             m_window.set(globalData, this, window);
-            setPrototype(window->prototype());
+            setPrototype(globalData, window->prototype());
         }
         void setWindow(PassRefPtr<DOMWindow>);
 

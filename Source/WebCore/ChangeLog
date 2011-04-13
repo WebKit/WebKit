@@ -1,3 +1,17 @@
+2011-04-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make PropertyMapEntry use a WriteBarrier for specificValue
+        https://bugs.webkit.org/show_bug.cgi?id=58407
+
+        Pass JSGlobalData reference on to APIs that now need them
+
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::all):
+
 2011-04-12  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

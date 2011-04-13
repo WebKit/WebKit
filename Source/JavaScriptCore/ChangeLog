@@ -1,3 +1,115 @@
+2011-04-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make PropertyMapEntry use a WriteBarrier for specificValue
+        https://bugs.webkit.org/show_bug.cgi?id=58407
+
+        Make PropertyMapEntry use a WriteBarrier for specificValue, and then
+        propagate the required JSGlobalData through all the methods it ends
+        up being needed.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::prototype):
+        * API/JSContextRef.cpp:
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSObjectSetPrototype):
+        * JavaScriptCore.exp:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * interpreter/Interpreter.cpp:
+        (JSC::appendSourceToError):
+        (JSC::Interpreter::tryCacheGetByID):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/BatchedTransitionOptimizer.h:
+        (JSC::BatchedTransitionOptimizer::BatchedTransitionOptimizer):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::name):
+        (JSC::InternalFunction::displayName):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::getOwnPropertySlot):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::name):
+        (JSC::JSFunction::displayName):
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::putWithAttributes):
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::resetPrototype):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::defineSetter):
+        (JSC::JSObject::lookupGetter):
+        (JSC::JSObject::lookupSetter):
+        (JSC::JSObject::getPropertySpecificValue):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::seal):
+        (JSC::JSObject::freeze):
+        (JSC::JSObject::preventExtensions):
+        (JSC::JSObject::removeDirect):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        (JSC::JSObject::defineOwnProperty):
+        * runtime/JSObject.h:
+        (JSC::JSObject::getDirect):
+        (JSC::JSObject::getDirectLocation):
+        (JSC::JSObject::isSealed):
+        (JSC::JSObject::isFrozen):
+        (JSC::JSObject::setPrototypeWithCycleCheck):
+        (JSC::JSObject::setPrototype):
+        (JSC::JSObject::inlineGetOwnPropertySlot):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::JSObject::putDirectFunctionWithoutTransition):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorCreate):
+        (JSC::objectConstructorSeal):
+        (JSC::objectConstructorFreeze):
+        (JSC::objectConstructorPreventExtensions):
+        (JSC::objectConstructorIsSealed):
+        (JSC::objectConstructorIsFrozen):
+        * runtime/Operations.h:
+        (JSC::normalizePrototypeChain):
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyMapEntry::PropertyMapEntry):
+        (JSC::PropertyTable::PropertyTable):
+        (JSC::PropertyTable::copy):
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::despecifyDictionaryFunction):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::removePropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::despecifyFunctionTransition):
+        (JSC::Structure::getterSetterTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::toCacheableDictionaryTransition):
+        (JSC::Structure::toUncacheableDictionaryTransition):
+        (JSC::Structure::sealTransition):
+        (JSC::Structure::freezeTransition):
+        (JSC::Structure::preventExtensionsTransition):
+        (JSC::Structure::isSealed):
+        (JSC::Structure::isFrozen):
+        (JSC::Structure::addPropertyWithoutTransition):
+        (JSC::Structure::removePropertyWithoutTransition):
+        (JSC::Structure::copyPropertyTable):
+        (JSC::Structure::get):
+        (JSC::Structure::despecifyFunction):
+        (JSC::Structure::despecifyAllFunctions):
+        (JSC::Structure::put):
+        (JSC::Structure::getPropertyNames):
+        * runtime/Structure.h:
+        (JSC::Structure::get):
+        (JSC::Structure::materializePropertyMapIfNecessary):
+
 2011-04-13  Paul Knight  <pknight@apple.com>
 
         Reviewed by Gavin Barraclough.

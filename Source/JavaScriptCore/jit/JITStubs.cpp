@@ -919,7 +919,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
         // should not be treated as a dictionary.
         if (slotBaseObject->structure()->isDictionary()) {
             slotBaseObject->flattenDictionaryObject(callFrame->globalData());
-            offset = slotBaseObject->structure()->get(propertyName);
+            offset = slotBaseObject->structure()->get(callFrame->globalData(), propertyName);
         }
         
         stubInfo->initGetByIdProto(structure, slotBaseObject->structure());
@@ -1744,7 +1744,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
         // should not be treated as a dictionary.
         if (slotBaseObject->structure()->isDictionary()) {
             slotBaseObject->flattenDictionaryObject(callFrame->globalData());
-            offset = slotBaseObject->structure()->get(propertyName);
+            offset = slotBaseObject->structure()->get(callFrame->globalData(), propertyName);
         }
 
         int listIndex;

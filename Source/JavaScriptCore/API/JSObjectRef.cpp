@@ -83,7 +83,7 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
 
     JSCallbackObject<JSObjectWithGlobalObject>* object = new (exec) JSCallbackObject<JSObjectWithGlobalObject>(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), jsClass, data);
     if (JSObject* prototype = jsClass->prototype(exec))
-        object->setPrototype(prototype);
+        object->setPrototype(exec->globalData(), prototype);
 
     return toRef(object);
 }
@@ -235,7 +235,7 @@ void JSObjectSetPrototype(JSContextRef ctx, JSObjectRef object, JSValueRef value
     JSObject* jsObject = toJS(object);
     JSValue jsValue = toJS(exec, value);
 
-    jsObject->setPrototypeWithCycleCheck(jsValue.isObject() ? jsValue : jsNull());
+    jsObject->setPrototypeWithCycleCheck(exec->globalData(), jsValue.isObject() ? jsValue : jsNull());
 }
 
 bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)

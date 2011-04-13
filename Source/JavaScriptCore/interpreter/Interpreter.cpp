@@ -620,7 +620,7 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
         return;
 
     JSGlobalData* globalData = &callFrame->globalData();
-    JSValue jsMessage = exception->getDirect(globalData->propertyNames->message);
+    JSValue jsMessage = exception->getDirect(*globalData, globalData->propertyNames->message);
     if (!jsMessage || !jsMessage.isString())
         return;
 
@@ -1364,7 +1364,7 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         // should not be treated as a dictionary.
         if (baseObject->structure()->isDictionary()) {
             baseObject->flattenDictionaryObject(callFrame->globalData());
-            offset = baseObject->structure()->get(propertyName);
+            offset = baseObject->structure()->get(callFrame->globalData(), propertyName);
         }
 
         ASSERT(!baseObject->structure()->isUncacheableDictionary());
@@ -3079,7 +3079,7 @@ skip_id_custom_self:
 
                 int value = vPC[3].u.operand;
                 unsigned offset = vPC[7].u.operand;
-                ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(codeBlock->identifier(vPC[2].u.operand))) == offset);
+                ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(callFrame->globalData(), codeBlock->identifier(vPC[2].u.operand))) == offset);
                 baseObject->putDirectOffset(callFrame->globalData(), offset, callFrame->r(value).jsValue());
 
                 vPC += OPCODE_LENGTH(op_put_by_id_transition);
@@ -3114,7 +3114,7 @@ skip_id_custom_self:
                 int value = vPC[3].u.operand;
                 unsigned offset = vPC[5].u.operand;
                 
-                ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(codeBlock->identifier(vPC[2].u.operand))) == offset);
+                ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(callFrame->globalData(), codeBlock->identifier(vPC[2].u.operand))) == offset);
                 baseObject->putDirectOffset(callFrame->globalData(), offset, callFrame->r(value).jsValue());
 
                 vPC += OPCODE_LENGTH(op_put_by_id_replace);

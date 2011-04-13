@@ -142,7 +142,7 @@ bool JSActivation::getOwnPropertySlot(ExecState* exec, const Identifier& propert
     if (symbolTableGet(propertyName, slot))
         return true;
 
-    if (WriteBarrierBase<Unknown>* location = getDirectLocation(propertyName)) {
+    if (WriteBarrierBase<Unknown>* location = getDirectLocation(exec->globalData(), propertyName)) {
         slot.setValue(location->get());
         return true;
     }

@@ -51,12 +51,12 @@ InternalFunction::InternalFunction(JSGlobalData* globalData, JSGlobalObject* glo
 
 const UString& InternalFunction::name(ExecState* exec)
 {
-    return asString(getDirect(exec->globalData().propertyNames->name))->tryGetValue();
+    return asString(getDirect(exec->globalData(), exec->globalData().propertyNames->name))->tryGetValue();
 }
 
 const UString InternalFunction::displayName(ExecState* exec)
 {
-    JSValue displayName = getDirect(exec->globalData().propertyNames->displayName);
+    JSValue displayName = getDirect(exec->globalData(), exec->globalData().propertyNames->displayName);
     
     if (displayName && isJSString(&exec->globalData(), displayName))
         return asString(displayName)->tryGetValue();

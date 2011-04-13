@@ -76,18 +76,18 @@ namespace JSC {
 
         static PassRefPtr<Structure> addPropertyTransition(JSGlobalData&, Structure*, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset);
         static PassRefPtr<Structure> addPropertyTransitionToExistingStructure(Structure*, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset);
-        static PassRefPtr<Structure> removePropertyTransition(Structure*, const Identifier& propertyName, size_t& offset);
-        static PassRefPtr<Structure> changePrototypeTransition(Structure*, JSValue prototype);
-        static PassRefPtr<Structure> despecifyFunctionTransition(Structure*, const Identifier&);
-        static PassRefPtr<Structure> getterSetterTransition(Structure*);
-        static PassRefPtr<Structure> toCacheableDictionaryTransition(Structure*);
-        static PassRefPtr<Structure> toUncacheableDictionaryTransition(Structure*);
-        static PassRefPtr<Structure> sealTransition(Structure*);
-        static PassRefPtr<Structure> freezeTransition(Structure*);
-        static PassRefPtr<Structure> preventExtensionsTransition(Structure*);
+        static PassRefPtr<Structure> removePropertyTransition(JSGlobalData&, Structure*, const Identifier& propertyName, size_t& offset);
+        static PassRefPtr<Structure> changePrototypeTransition(JSGlobalData&, Structure*, JSValue prototype);
+        static PassRefPtr<Structure> despecifyFunctionTransition(JSGlobalData&, Structure*, const Identifier&);
+        static PassRefPtr<Structure> getterSetterTransition(JSGlobalData&, Structure*);
+        static PassRefPtr<Structure> toCacheableDictionaryTransition(JSGlobalData&, Structure*);
+        static PassRefPtr<Structure> toUncacheableDictionaryTransition(JSGlobalData&, Structure*);
+        static PassRefPtr<Structure> sealTransition(JSGlobalData&, Structure*);
+        static PassRefPtr<Structure> freezeTransition(JSGlobalData&, Structure*);
+        static PassRefPtr<Structure> preventExtensionsTransition(JSGlobalData&, Structure*);
 
-        bool isSealed();
-        bool isFrozen();
+        bool isSealed(JSGlobalData&);
+        bool isFrozen(JSGlobalData&);
         bool isExtensible() const { return !m_preventExtensions; }
 
         PassRefPtr<Structure> flattenDictionaryStructure(JSGlobalData&, JSObject*);
@@ -95,8 +95,8 @@ namespace JSC {
         ~Structure();
 
         // These should be used with caution.  
-        size_t addPropertyWithoutTransition(const Identifier& propertyName, unsigned attributes, JSCell* specificValue);
-        size_t removePropertyWithoutTransition(const Identifier& propertyName);
+        size_t addPropertyWithoutTransition(JSGlobalData&, const Identifier& propertyName, unsigned attributes, JSCell* specificValue);
+        size_t removePropertyWithoutTransition(JSGlobalData&, const Identifier& propertyName);
         void setPrototypeWithoutTransition(JSValue prototype) { m_prototype = prototype; }
         
         bool isDictionary() const { return m_dictionaryKind != NoneDictionaryKind; }
@@ -120,12 +120,12 @@ namespace JSC {
         unsigned propertyStorageSize() const { return m_anonymousSlotCount + (m_propertyTable ? m_propertyTable->propertyStorageSize() : static_cast<unsigned>(m_offset + 1)); }
         bool isUsingInlineStorage() const;
 
-        size_t get(const Identifier& propertyName);
-        size_t get(StringImpl* propertyName, unsigned& attributes, JSCell*& specificValue);
-        size_t get(const Identifier& propertyName, unsigned& attributes, JSCell*& specificValue)
+        size_t get(JSGlobalData&, const Identifier& propertyName);
+        size_t get(JSGlobalData&, StringImpl* propertyName, unsigned& attributes, JSCell*& specificValue);
+        size_t get(JSGlobalData& globalData, const Identifier& propertyName, unsigned& attributes, JSCell*& specificValue)
         {
             ASSERT(!propertyName.isNull());
-            return get(propertyName.impl(), attributes, specificValue);
+            return get(globalData, propertyName.impl(), attributes, specificValue);
         }
 
         bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }
@@ -138,12 +138,12 @@ namespace JSC {
         
         bool isEmpty() const { return m_propertyTable ? m_propertyTable->isEmpty() : m_offset == noOffset; }
 
-        void despecifyDictionaryFunction(const Identifier& propertyName);
+        void despecifyDictionaryFunction(JSGlobalData&, const Identifier& propertyName);
         void disableSpecificFunctionTracking() { m_specificFunctionThrashCount = maxSpecificFunctionThrashCount; }
 
         void setEnumerationCache(JSGlobalData&, JSPropertyNameIterator* enumerationCache); // Defined in JSPropertyNameIterator.h.
         JSPropertyNameIterator* enumerationCache(); // Defined in JSPropertyNameIterator.h.
-        void getPropertyNames(PropertyNameArray&, EnumerationMode mode);
+        void getPropertyNames(JSGlobalData&, PropertyNameArray&, EnumerationMode mode);
 
         const ClassInfo* classInfo() const { return m_classInfo; }
 
@@ -178,23 +178,23 @@ namespace JSC {
             CachedDictionaryKind = 1,
             UncachedDictionaryKind = 2
         } DictionaryKind;
-        static PassRefPtr<Structure> toDictionaryTransition(Structure*, DictionaryKind);
+        static PassRefPtr<Structure> toDictionaryTransition(JSGlobalData&, Structure*, DictionaryKind);
 
-        size_t put(const Identifier& propertyName, unsigned attributes, JSCell* specificValue);
+        size_t put(JSGlobalData&, const Identifier& propertyName, unsigned attributes, JSCell* specificValue);
         size_t remove(const Identifier& propertyName);
 
         void createPropertyMap(unsigned keyCount = 0);
         void checkConsistency();
 
-        bool despecifyFunction(const Identifier&);
-        void despecifyAllFunctions();
+        bool despecifyFunction(JSGlobalData&, const Identifier&);
+        void despecifyAllFunctions(JSGlobalData&);
 
-        PropertyTable* copyPropertyTable();
-        void materializePropertyMap();
-        void materializePropertyMapIfNecessary()
+        PropertyTable* copyPropertyTable(JSGlobalData&);
+        void materializePropertyMap(JSGlobalData&);
+        void materializePropertyMapIfNecessary(JSGlobalData& globalData)
         {
             if (!m_propertyTable && m_previous)
-                materializePropertyMap();
+                materializePropertyMap(globalData);
         }
 
         signed char transitionCount() const
@@ -251,9 +251,9 @@ namespace JSC {
         // 4 free bits
     };
 
-    inline size_t Structure::get(const Identifier& propertyName)
+    inline size_t Structure::get(JSGlobalData& globalData, const Identifier& propertyName)
     {
-        materializePropertyMapIfNecessary();
+        materializePropertyMapIfNecessary(globalData);
         if (!m_propertyTable)
             return notFound;
 

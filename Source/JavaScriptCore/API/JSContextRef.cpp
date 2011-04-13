@@ -102,7 +102,7 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
     JSValue prototype = globalObjectClass->prototype(exec);
     if (!prototype)
         prototype = jsNull();
-    globalObject->resetPrototype(prototype);
+    globalObject->resetPrototype(*globalData, prototype);
     return JSGlobalContextRetain(toGlobalRef(exec));
 }
 

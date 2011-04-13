@@ -262,7 +262,7 @@ BytecodeGenerator::BytecodeGenerator(ProgramNode* programNode, ScopeChainNode* s
         Vector<std::pair<int, bool>, 16> functionInfo(functionStack.size());
         for (size_t i = 0; i < functionStack.size(); ++i) {
             FunctionBodyNode* function = functionStack[i];
-            globalObject->removeDirect(function->ident()); // Make sure our new function is not shadowed by an old property.
+            globalObject->removeDirect(*m_globalData, function->ident()); // Make sure our new function is not shadowed by an old property.
             SymbolTableEntry entry = symbolTable->inlineGet(function->ident().impl());
             
             if (entry.isNull())
