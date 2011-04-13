@@ -1529,6 +1529,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
     dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
+    m_pageClient->dismissDictionaryLookupPanel();
 #endif
 
     WebFrameProxy* frame = process()->webFrame(frameID);
@@ -2755,6 +2756,11 @@ void WebPageProxy::processDidCrash()
 
     // Can't expect DidReceiveEvent notifications from a crashed web process.
     m_keyEventQueue.clear();
+
+#if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);
+    m_pageClient->dismissDictionaryLookupPanel();
+#endif
 }
 
 WebPageCreationParameters WebPageProxy::creationParameters() const

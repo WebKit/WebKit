@@ -108,6 +108,7 @@ private:
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
 
     virtual void didPerformDictionaryLookup(const String&, double scaleFactor, const DictionaryPopupInfo&);
+    virtual void dismissDictionaryLookupPanel();
 
     virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
     virtual void dismissCorrectionPanel(WebCore::ReasonForDismissingCorrectionPanel);

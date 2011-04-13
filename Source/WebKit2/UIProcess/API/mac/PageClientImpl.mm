@@ -444,6 +444,13 @@ void PageClientImpl::didPerformDictionaryLookup(const String& text, double scale
 #endif
 }
 
+void PageClientImpl::dismissDictionaryLookupPanel()
+{
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    WKHideWordDefinitionWindow();
+#endif
+}
+
 void PageClientImpl::showCorrectionPanel(CorrectionPanelInfo::PanelType type, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
 #if !defined(BUILDING_ON_SNOW_LEOPARD)

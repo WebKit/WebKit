@@ -1,3 +1,19 @@
+2011-04-13  Timothy Hatcher  <timothy@apple.com>
+
+        Hide the dictionary panel when navigating or crashing.
+
+        <rdar://problem/9261202>
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::dismissDictionaryLookupPanel): Added. Call WKHideWordDefinitionWindow.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame): Call PageClient::dismissDictionaryLookupPanel.
+        (WebKit::WebPageProxy::processDidCrash): Call dismissCorrectionPanel and PageClient::dismissDictionaryLookupPanel.
+
 2011-04-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
