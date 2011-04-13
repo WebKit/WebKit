@@ -52,7 +52,7 @@ def main():
 					"WebKitTestRunner_debug.exe"]
 					
     for task in tasksToKill:
-        os.system("taskkill /f /im " + task)
+        os.system("taskkill /t /f /im " + task)
 
 if __name__ == '__main__':
     sys.exit(main())

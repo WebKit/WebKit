@@ -2,6 +2,15 @@
 
         Reviewed by Adam Roben.
 
+        Add the /T command to taskkill.exe.
+        This will kill spawned child processes.
+        
+        * BuildSlaveSupport/win/kill-old-processes:
+
+2011-04-13  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Adam Roben.
+
         Sort kill list alphabeticaly.
         Fixed capitalization on VcBuildHelper.  
 
