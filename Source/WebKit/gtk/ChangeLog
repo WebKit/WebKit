@@ -1,3 +1,9 @@
+2011-04-12  Xan Lopez  <xlopez@igalia.com>
+
+        Unreviewed build fix.
+
+        * webkit/webkitwebhistoryitem.cpp:
+
 2011-04-12  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Oliver Hunt.
