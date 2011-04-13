@@ -19,6 +19,13 @@
     Boston, MA 02110-1301, USA.
 */
 
+/**
+ * @file    EWebKit.h
+ * @brief   Contains the header files that are required by WebKit-EFL.
+ *
+ * It includes the all header files that are exported to public API and Evas header.
+ */
+
 #ifndef EWebKit_h
 #define EWebKit_h
 

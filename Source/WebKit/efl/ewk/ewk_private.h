@@ -18,6 +18,11 @@
     Boston, MA 02110-1301, USA.
 */
 
+/**
+ * @file    ewk_private.h
+ * @brief   Private methods of WebKit-EFL.
+ */
+
 #ifndef ewk_private_h
 #define ewk_private_h
 

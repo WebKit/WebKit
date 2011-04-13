@@ -18,6 +18,11 @@
     Boston, MA 02110-1301, USA.
 */
 
+/**
+ * @file    ewk_logging.h
+ * @brief   Provides macros for logging.
+ */
+
 #ifndef ewk_logging_h
 #define ewk_logging_h
 

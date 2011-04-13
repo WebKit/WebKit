@@ -18,6 +18,11 @@
     Boston, MA 02110-1301, USA.
 */
 
+/**
+ * @file    ewk_util.h
+ * @brief   Helpfull methods for WebKit-EFL.
+ */
+
 #ifndef ewk_util_h
 #define ewk_util_h
 

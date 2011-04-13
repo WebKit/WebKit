@@ -1,3 +1,20 @@
+2011-04-13  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Doxygen documentation for ewk_main, ewk_history and tools
+        https://bugs.webkit.org/show_bug.cgi?id=58428
+
+        * ewk/EWebKit.h:
+        * ewk/ewk_eapi.h:
+        * ewk/ewk_history.h:
+        * ewk/ewk_logging.h:
+        * ewk/ewk_main.cpp:
+        * ewk/ewk_main.h:
+        * ewk/ewk_private.h:
+        * ewk/ewk_util.cpp:
+        * ewk/ewk_util.h:
+
 2011-04-11  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

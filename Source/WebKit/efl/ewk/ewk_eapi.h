@@ -18,6 +18,15 @@
     Boston, MA 02110-1301, USA.
 */
 
+/**
+ * @file    ewk_eapi.h
+ * @brief   Defines EAPI macro.
+ *
+ * The macro must be used in declaration of public functions.
+ * Functions without EAPI macro have hidden most of symbols and
+ * they are not visible for target applications.
+ */
+
 #ifndef ewk_eapi_h
 #define ewk_eapi_h
 

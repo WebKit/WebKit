@@ -24,6 +24,13 @@
 #include "ewk_private.h"
 #include <eina_safety_checks.h>
 
+/**
+ * Converts an image from cairo_surface to the Evas_Object.
+ *
+ * @param canvas display canvas
+ * @param surface cairo representation of an image
+ * @return converted cairo_surface object to the Evas_Object
+ */
 Evas_Object* ewk_util_image_from_cairo_surface_add(Evas* canvas, cairo_surface_t* surface)
 {
     cairo_status_t status;
