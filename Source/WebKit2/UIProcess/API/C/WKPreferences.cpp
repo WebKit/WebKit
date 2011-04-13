@@ -261,6 +261,16 @@ uint32_t WKPreferencesGetMinimumFontSize(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->minimumFontSize();
 }
 
+void WKPreferencesSetEditableLinkBehavior(WKPreferencesRef preferencesRef, WKEditableLinkBehavior behavior)
+{
+    toImpl(preferencesRef)->setEditableLinkBehavior(behavior);
+}
+
+WKEditableLinkBehavior WKPreferencesGetEditableLinkBehavior(WKPreferencesRef preferencesRef)
+{
+    return static_cast<WKEditableLinkBehavior>(toImpl(preferencesRef)->editableLinkBehavior());
+}
+
 void WKPreferencesSetDefaultTextEncodingName(WKPreferencesRef preferencesRef, WKStringRef name)
 {
     toImpl(preferencesRef)->setDefaultTextEncodingName(toWTFString(name));

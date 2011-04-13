@@ -43,10 +43,23 @@ enum WKFontSmoothingLevel {
 };
 typedef enum WKFontSmoothingLevel WKFontSmoothingLevel;
 
+enum WKEditableLinkBehavior {
+    kWKEditableLinkBehaviorDefault,
+    kWKEditableLinkBehaviorAlwaysLive,
+    kWKEditableLinkBehaviorOnlyLiveWithShiftKey,
+    kWKEditableLinkBehaviorLiveWhenNotFocused,
+    kWKEditableLinkBehaviorNeverLive
+};
+typedef enum WKEditableLinkBehavior WKEditableLinkBehavior;
+
 // Defaults to kWKFontSmoothingLevelMedium.
 WK_EXPORT void WKPreferencesSetFontSmoothingLevel(WKPreferencesRef, WKFontSmoothingLevel);
 WK_EXPORT WKFontSmoothingLevel WKPreferencesGetFontSmoothingLevel(WKPreferencesRef);
 
+// Defaults to EditableLinkNeverLive.
+WK_EXPORT void WKPreferencesSetEditableLinkBehavior(WKPreferencesRef preferencesRef, WKEditableLinkBehavior);
+WK_EXPORT WKEditableLinkBehavior WKPreferencesGetEditableLinkBehavior(WKPreferencesRef preferencesRef);   
+    
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetAcceleratedDrawingEnabled(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetAcceleratedDrawingEnabled(WKPreferencesRef);

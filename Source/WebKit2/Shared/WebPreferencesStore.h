@@ -87,6 +87,7 @@ namespace WebKit {
     macro(DefaultFontSize, defaultFontSize, UInt32, uint32_t, 16) \
     macro(DefaultFixedFontSize, defaultFixedFontSize, UInt32, uint32_t, 13) \
     macro(PDFDisplayMode, pdfDisplayMode, UInt32, uint32_t, 1) \
+    macro(EditableLinkBehavior, editableLinkBehavior, UInt32, uint32_t, WebCore::EditableLinkNeverLive) \
     \
 
 #if PLATFORM(WIN)

@@ -1,3 +1,22 @@
+2011-04-13  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION: Links are clickable when a contentEditable is set to true.
+        https://bugs.webkit.org/show_bug.cgi?id=58473
+        <rdar://problem/9256793>
+        
+        Added support for editable link behavior property.
+
+        * Shared/WebPreferencesStore.cpp:
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetEditableLinkBehavior):
+        (WKPreferencesGetEditableLinkBehavior):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2011-04-12  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Oliver Hunt.

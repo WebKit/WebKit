@@ -28,6 +28,7 @@
 
 #include "FontSmoothingLevel.h"
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/Settings.h>
 
 namespace WebKit {
 
