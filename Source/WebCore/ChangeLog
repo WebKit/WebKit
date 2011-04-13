@@ -1,3 +1,14 @@
+2011-04-13  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: requestDocument can result in race condition in DOMAgent.js
+        https://bugs.webkit.org/show_bug.cgi?id=58415
+
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype.requestDocument.onDocumentAvailable):
+        (WebInspector.DOMAgent.prototype.requestDocument):
+
 2011-04-12  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

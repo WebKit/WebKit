@@ -350,14 +350,26 @@ WebInspector.DOMAgent.prototype = {
             return;
         }
 
+        if (this._pendingDocumentRequestCallbacks) {
+            this._pendingDocumentRequestCallbacks.push(callback);
+            return;
+        }
+
+        this._pendingDocumentRequestCallbacks = [callback];
+
         function onDocumentAvailable(error, root)
         {
             if (!error)
                 this._setDocument(root);
 
-            if (callback)
-                callback(this._document);
+            for (var i = 0; i < this._pendingDocumentRequestCallbacks.length; ++i) {
+                var callback = this._pendingDocumentRequestCallbacks[i];
+                if (callback)
+                    callback(this._document);
+            }
+            delete this._pendingDocumentRequestCallbacks;
         }
+
         DOMAgent.getDocument(onDocumentAvailable.bind(this));
     },
 
