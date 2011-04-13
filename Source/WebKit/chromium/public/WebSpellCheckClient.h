@@ -39,8 +39,6 @@ namespace WebKit {
 class WebString;
 class WebTextCheckingCompletion;
 
-#define WEBSPELLCHECKCLIENT_HAS_SUGGESTIONS
-
 class WebSpellCheckClient {
 public:
     // The client should perform spell-checking on the given text. If the

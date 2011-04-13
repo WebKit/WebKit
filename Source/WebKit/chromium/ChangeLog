@@ -1,3 +1,13 @@
+2011-04-13  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [chromium] Remove unnecessary #define now that chrome has rolled to the latest WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=58474
+
+        * DEPS:
+        * public/WebSpellCheckClient.h:
+
 2011-04-13  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
