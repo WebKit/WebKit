@@ -126,6 +126,7 @@ sub writeToFile($$);
 
 # Argument handling
 my $addPlatformExceptions = 0;
+my @additionalPlatformDirectories = ();
 my $complexText = 0;
 my $exitAfterNFailures = 0;
 my $exitAfterNCrashesOrTimeouts = 0;
@@ -276,6 +277,8 @@ my $sampleDefault = $runSample ? "run" : "do not run";
 my $usage = <<EOF;
 Usage: $programName [options] [testdir|testpath ...]
   --add-platform-exceptions       Put new results for non-platform-specific failing tests into the platform-specific results directory
+  --additional-platform-directory path/to/directory
+                                  Look in the specified directory before looking in any of the default platform-specific directories
   --complex-text                  Use the complex text code path for all text (Mac OS X and Windows only)
   -c|--configuration config       Set DumpRenderTree build configuration
   -g|--guard-malloc               Enable malloc guard
@@ -324,6 +327,7 @@ setConfiguration();
 
 my $getOptionsResult = GetOptions(
     'add-platform-exceptions' => \$addPlatformExceptions,
+    'additional-platform-directory=s' => \@additionalPlatformDirectories,
     'complex-text' => \$complexText,
     'exit-after-n-failures=i' => \$exitAfterNFailures,
     'exit-after-n-crashes-or-timeouts=i' => \$exitAfterNCrashesOrTimeouts,
@@ -2171,6 +2175,8 @@ sub buildPlatformResultHierarchy()
         push(@hierarchy, $scoped) if (-d $scoped);
     }
     
+    unshift @hierarchy, grep { -d $_ } @additionalPlatformDirectories;
+
     return @hierarchy;
 }
 

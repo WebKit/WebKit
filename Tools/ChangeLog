@@ -1,3 +1,18 @@
+2011-04-13  Adam Roben  <aroben@apple.com>
+
+        Teach ORWT about extra platform-specific directories to be searched before the default ones
+
+        Fixes <http://webkit.org/b/58446> ORWT needs a way to look in a user-specified directory for
+        platform-specific results
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/old-run-webkit-tests:
+        (top-level): Added @additionalPlatformDirectories and hooked up
+        --additional-platform-directories to populate it.
+        (buildPlatformResultHierarchy): Prepend the additional platform directories to the default
+        list (after filtering out any of the additional directories that don't exist).
+
 2011-04-13  Lucas Forschler  <lforschler@apple.com>
 
         Reviewed by Adam Roben.
