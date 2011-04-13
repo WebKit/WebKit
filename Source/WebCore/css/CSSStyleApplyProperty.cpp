@@ -75,7 +75,7 @@ public:
     ApplyPropertyExpandingSuppressValue(ApplyPropertyBase* one = 0, ApplyPropertyBase* two = 0, ApplyPropertyBase *three = 0, ApplyPropertyBase* four = 0)
         : ApplyPropertyExpanding(one, two, three, four) {}
 
-    virtual void applyValue(CSSStyleSelector*, CSSValue*)
+    virtual void applyValue(CSSStyleSelector*, CSSValue*) const
     {
         ASSERT_NOT_REACHED();
     }

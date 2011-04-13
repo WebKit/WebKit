@@ -1,3 +1,12 @@
+2011-04-13  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Fix chromium clang build problem:
+        ApplyPropertyExpandingSuppressValue::applyValue() shadows a virtual method
+        with a different signature in base class instead of overriding it.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyExpandingSuppressValue::applyValue):
+
 2011-04-13  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.
