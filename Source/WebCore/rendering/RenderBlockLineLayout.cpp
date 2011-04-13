@@ -1496,30 +1496,6 @@ static bool shouldSkipWhitespaceAfterStartObject(RenderBlock* block, RenderObjec
     return false;
 }
 
-void RenderBlock::fitBelowFloats(float widthToFit, float totalOverhangWidth, bool firstLine, float& availableWidth)
-{
-    ASSERT(widthToFit > availableWidth);
-
-    int floatLogicalBottom;
-    int lastFloatLogicalBottom = logicalHeight();
-    float newLineWidth = availableWidth;
-    while (true) {
-        floatLogicalBottom = nextFloatLogicalBottomBelow(lastFloatLogicalBottom);
-        if (!floatLogicalBottom)
-            break;
-
-        newLineWidth = availableLogicalWidthForLine(floatLogicalBottom, firstLine);
-        lastFloatLogicalBottom = floatLogicalBottom;
-        if (newLineWidth >= widthToFit)
-            break;
-    }
-
-    if (newLineWidth > availableWidth) {
-        setLogicalHeight(lastFloatLogicalBottom);
-        availableWidth = newLineWidth + totalOverhangWidth;
-    }
-}
-
 static inline float textWidth(RenderText* text, unsigned from, unsigned len, const Font& font, float xPos, bool isFixedPitch, bool collapseWhiteSpace)
 {
     if (isFixedPitch || (!from && len == text->textLength()) || text->style()->hasTextCombine())
@@ -1617,16 +1593,21 @@ inline void LineOffsets::shrinkWidthForNewFloatIfNeeded(RenderBlock::FloatingObj
 
 class LineWidth {
 public:
-    LineWidth()
+    LineWidth(float availableWidth)
         : m_uncommittedWidth(0)
         , m_committedWidth(0)
+        , m_overhangWidth(0)
+        , m_availableWidth(availableWidth)
     {
     }
+    bool fitsOnLine() const { return currentWidth() <= m_availableWidth; }
+    bool fitsOnLine(float extra) const { return currentWidth() + extra <= m_availableWidth; }
     float currentWidth() const { return m_committedWidth + m_uncommittedWidth; }
 
-    // FIXME: We should eventually replace these two functions by ones that work on a higher abstraction.
+    // FIXME: We should eventually replace these three functions by ones that work on a higher abstraction.
     float uncommittedWidth() const { return m_uncommittedWidth; }
     float committedWidth() const { return m_committedWidth; }
+    float availableWidth() const { return m_availableWidth; }
 
     void addUncommittedWidth(float delta) { m_uncommittedWidth += delta; }
     void commit()
@@ -1634,11 +1615,58 @@ public:
         m_committedWidth += m_uncommittedWidth;
         m_uncommittedWidth = 0;
     }
+    void applyOverhang(RenderRubyRun*, bool isFirstLine, RenderObject* startRenderer, RenderObject* endRenderer);
+    void fitBelowFloats(RenderBlock*, bool isFirstLine);
+    void setAvailableWidth(const LineOffsets& lineOffsets)
+    {
+        m_availableWidth = lineOffsets.width() + m_overhangWidth;
+    }
 
 private:
     float m_uncommittedWidth;
     float m_committedWidth;
+    float m_overhangWidth; // The amount by which |width| has been inflated to account for possible contraction due to ruby overhang.
+    float m_availableWidth;
 };
+
+void LineWidth::applyOverhang(RenderRubyRun* rubyRun, bool isFirstLine, RenderObject* startRenderer, RenderObject* endRenderer)
+{
+    int startOverhang;
+    int endOverhang;
+    rubyRun->getOverhang(isFirstLine, startRenderer, endRenderer, startOverhang, endOverhang);
+
+    startOverhang = min<int>(startOverhang, m_committedWidth);
+    m_availableWidth += startOverhang;
+
+    endOverhang = max(min<int>(endOverhang, m_availableWidth - currentWidth()), 0);
+    m_availableWidth += endOverhang;
+    m_overhangWidth += startOverhang + endOverhang;
+}
+
+void LineWidth::fitBelowFloats(RenderBlock* block, bool isFirstLine)
+{
+    ASSERT(!m_committedWidth);
+    ASSERT(!fitsOnLine());
+
+    int floatLogicalBottom;
+    int lastFloatLogicalBottom = block->logicalHeight();
+    float newLineWidth = m_availableWidth;
+    while (true) {
+        floatLogicalBottom = block->nextFloatLogicalBottomBelow(lastFloatLogicalBottom);
+        if (!floatLogicalBottom)
+            break;
+
+        newLineWidth = block->availableLogicalWidthForLine(floatLogicalBottom, isFirstLine);
+        lastFloatLogicalBottom = floatLogicalBottom;
+        if (newLineWidth >= m_uncommittedWidth)
+            break;
+    }
+
+    if (newLineWidth > m_availableWidth) {
+        block->setLogicalHeight(lastFloatLogicalBottom);
+        m_availableWidth = newLineWidth + m_overhangWidth;
+    }
+}
 
 InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool firstLine, bool& isLineEmpty, LineBreakIteratorInfo& lineBreakIteratorInfo, bool& previousLineBrokeCleanly, 
                                               bool& hyphenated, EClear* clear, FloatingObject* lastFloatFromPreviousLine, Vector<RenderBox*>& positionedBoxes)
@@ -1652,10 +1680,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
 
     skipLeadingWhitespace(resolver, isLineEmpty, previousLineBrokeCleanly, lastFloatFromPreviousLine, lineOffsets);
 
-    float availableWidth = lineOffsets.width();
-    LineWidth width;
-    // The amount by which |width| has been inflated to account for possible contraction due to ruby overhang.
-    float totalOverhangWidth = 0;
+    LineWidth width(lineOffsets.width());
 
     if (resolver.position().atEnd())
         return resolver.position();
@@ -1716,7 +1741,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
         bool collapseWhiteSpace = RenderStyle::collapseWhiteSpace(currWS);
             
         if (o->isBR()) {
-            if (width.currentWidth() <= availableWidth) {
+            if (width.fitsOnLine()) {
                 lBreak.moveToStartOf(o);
                 lBreak.increment();
 
@@ -1744,9 +1769,9 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 // check if it fits in the current line.
                 // If it does, position it now, otherwise, position
                 // it after moving to next line (in newLine() func)
-                if (floatsFitOnLine && logicalWidthForFloat(f) + width.currentWidth() <= availableWidth) {
+                if (floatsFitOnLine && width.fitsOnLine(logicalWidthForFloat(f))) {
                     positionNewFloatOnLine(f, lastFloatFromPreviousLine, lineOffsets);
-                    availableWidth = lineOffsets.width() + totalOverhangWidth;
+                    width.setAvailableWidth(lineOffsets);
                     if (lBreak.m_obj == o) {
                         ASSERT(!lBreak.m_pos);
                         lBreak.increment();
@@ -1842,18 +1867,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     width.addUncommittedWidth(replacedLogicalWidth);
             } else
                 width.addUncommittedWidth(replacedLogicalWidth);
-            if (o->isRubyRun()) {
-                RenderRubyRun* rubyRun = toRenderRubyRun(o);
-                int startOverhang;
-                int endOverhang;
-                rubyRun->getOverhang(firstLine, last, next, startOverhang, endOverhang);
-                startOverhang = min<int>(startOverhang, width.committedWidth());
-                totalOverhangWidth += startOverhang;
-                availableWidth += startOverhang;
-                endOverhang = max(min<int>(endOverhang, availableWidth - width.currentWidth()), 0);
-                totalOverhangWidth += endOverhang;
-                availableWidth += endOverhang;
-            }
+            if (o->isRubyRun())
+                width.applyOverhang(toRenderRubyRun(o), firstLine, last, next);
         } else if (o->isText()) {
             if (!pos)
                 appliedStartWidth = false;
@@ -1922,7 +1937,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 if ((breakAll || breakWords) && !midWordBreak) {
                     wrapW += charWidth;
                     charWidth = textWidth(t, pos, 1, f, width.committedWidth() + wrapW, isFixedPitch, collapseWhiteSpace);
-                    midWordBreak = width.committedWidth() + wrapW + charWidth > availableWidth;
+                    midWordBreak = width.committedWidth() + wrapW + charWidth > width.availableWidth();
                 }
 
                 if (lineBreakIteratorInfo.first != t) {
@@ -1964,29 +1979,29 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     
                     applyWordSpacing =  wordSpacing && currentCharacterIsSpace && !previousCharacterIsSpace;
 
-                    if (!width.committedWidth() && autoWrap && width.uncommittedWidth() > availableWidth)
-                        fitBelowFloats(width.uncommittedWidth(), totalOverhangWidth, firstLine, availableWidth);
+                    if (!width.committedWidth() && autoWrap && !width.fitsOnLine())
+                        width.fitBelowFloats(this, firstLine);
 
                     if (autoWrap || breakWords) {
                         // If we break only after white-space, consider the current character
                         // as candidate width for this line.
                         bool lineWasTooWide = false;
-                        if (width.currentWidth() <= availableWidth && currentCharacterIsWS && o->style()->breakOnlyAfterWhiteSpace() && !midWordBreak) {
+                        if (width.fitsOnLine() && currentCharacterIsWS && o->style()->breakOnlyAfterWhiteSpace() && !midWordBreak) {
                             int charWidth = textWidth(t, pos, 1, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace) + (applyWordSpacing ? wordSpacing : 0);
                             // Check if line is too big even without the extra space
                             // at the end of the line. If it is not, do nothing. 
                             // If the line needs the extra whitespace to be too long, 
                             // then move the line break to the space and skip all 
                             // additional whitespace.
-                            if (width.currentWidth() + charWidth > availableWidth) {
+                            if (!width.fitsOnLine(charWidth)) {
                                 lineWasTooWide = true;
                                 lBreak.moveTo(o, pos, nextBreakable);
                                 skipTrailingWhitespace(lBreak, isLineEmpty, previousLineBrokeCleanly);
                             }
                         }
-                        if (lineWasTooWide || width.currentWidth() > availableWidth) {
-                            if (canHyphenate && width.currentWidth() > availableWidth) {
-                                tryHyphenating(t, f, style->locale(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, pos, width.currentWidth() - additionalTmpW, availableWidth, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
+                        if (lineWasTooWide || !width.fitsOnLine()) {
+                            if (canHyphenate && !width.fitsOnLine()) {
+                                tryHyphenating(t, f, style->locale(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, pos, width.currentWidth() - additionalTmpW, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
                                 if (hyphenated)
                                     goto end;
                             }
@@ -2104,9 +2119,9 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             float additionalTmpW = ignoringSpaces ? 0 : textWidth(t, lastSpace, pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
             width.addUncommittedWidth(additionalTmpW + inlineLogicalWidth(o, !appliedStartWidth, true));
 
-            if (width.currentWidth() > availableWidth) {
+            if (!width.fitsOnLine()) {
                 if (canHyphenate)
-                    tryHyphenating(t, f, style->locale(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, pos, width.currentWidth() - additionalTmpW, availableWidth, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
+                    tryHyphenating(t, f, style->locale(), style->hyphenationLimitBefore(), style->hyphenationLimitAfter(), lastSpace, pos, width.currentWidth() - additionalTmpW, width.availableWidth(), isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);
 
                 if (!hyphenated && lBreak.m_obj && lBreak.m_pos && lBreak.m_obj->isText() && toRenderText(lBreak.m_obj)->textLength() && toRenderText(lBreak.m_obj)->characters()[lBreak.m_pos - 1] == softHyphen && style->hyphens() != HyphensNone)
                     hyphenated = true;
@@ -2118,7 +2133,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             ASSERT_NOT_REACHED();
 
         bool checkForBreak = autoWrap;
-        if (width.committedWidth() && width.currentWidth() > availableWidth && lBreak.m_obj && currWS == NOWRAP)
+        if (width.committedWidth() && !width.fitsOnLine() && lBreak.m_obj && currWS == NOWRAP)
             checkForBreak = true;
         else if (next && o->isText() && next->isText() && !next->isBR()) {
             if (autoWrap || (next->style()->autoWrap())) {
@@ -2136,12 +2151,11 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                             checkForBreak = true;
                     } else if (nextText->isWordBreak())
                         checkForBreak = true;
-                    bool willFitOnLine = width.currentWidth() <= availableWidth;
-                    if (!willFitOnLine && !width.committedWidth()) {
-                        fitBelowFloats(width.uncommittedWidth(), totalOverhangWidth, firstLine, availableWidth);
-                        willFitOnLine = width.uncommittedWidth() <= availableWidth;
-                    }
-                    bool canPlaceOnLine = willFitOnLine || !autoWrapWasEverTrueOnLine;
+
+                    if (!width.fitsOnLine() && !width.committedWidth())
+                        width.fitBelowFloats(this, firstLine);
+
+                    bool canPlaceOnLine = width.fitsOnLine() || !autoWrapWasEverTrueOnLine;
                     if (canPlaceOnLine && checkForBreak) {
                         width.commit();
                         lBreak.moveToStartOf(next);
@@ -2150,7 +2164,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             }
         }
 
-        if (checkForBreak && (width.currentWidth() > availableWidth)) {
+        if (checkForBreak && !width.fitsOnLine()) {
             // if we have floats, try to get below them.
             if (currentCharacterIsSpace && !ignoringSpaces && o->style()->collapseWhiteSpace()) {
                 trailingSpaceObject = 0;
@@ -2160,12 +2174,12 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             if (width.committedWidth())
                 goto end;
 
-            fitBelowFloats(width.uncommittedWidth(), totalOverhangWidth, firstLine, availableWidth);
+            width.fitBelowFloats(this, firstLine);
 
             // |width| may have been adjusted because we got shoved down past a float (thus
             // giving us more room), so we need to retest, and only jump to
             // the end label if we still don't fit on the line. -dwh
-            if (width.currentWidth() > availableWidth)
+            if (!width.fitsOnLine())
                 goto end;
         }
 
@@ -2189,7 +2203,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
         atStart = false;
     }
     
-    if (width.currentWidth() <= availableWidth || lastWS == NOWRAP)
+    if (width.fitsOnLine() || lastWS == NOWRAP)
         lBreak.clear();
 
  end:

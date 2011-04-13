@@ -1,3 +1,23 @@
+2011-04-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make availableWidth and totalOverhangWidth in findNextLineBreak member variables of LineWidth
+        https://bugs.webkit.org/show_bug.cgi?id=58400
+
+        Added m_availableWidth and m_overhangWidth to LineWidth this allows us to encapsulate m_overhangWidth.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::LineWidth):
+        (WebCore::LineWidth::fitsOnLine): Added; returns true if current width + first argument <= availableWidth.
+        (WebCore::LineWidth::availableWidth): Added.
+        (WebCore::LineWidth::setAvailableWidth): Added; takes LineOffsets.
+        (WebCore::LineWidth::applyOverhang): Added; obtains the overhang width from ruby run and inflates
+        the available width.
+        (WebCore::LineWidth::fitBelowFloats): Moved from RenderBlock.
+        (WebCore::RenderBlock::findNextLineBreak): Uses LineWidth.
+
 2011-04-12  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed warning fix.

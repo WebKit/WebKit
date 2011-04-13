@@ -38,6 +38,7 @@ class InlineIterator;
 class LayoutStateMaintainer;
 class LazyLineBreakIterator;
 class LineOffsets;
+class LineWidth;
 class RenderInline;
 
 struct BidiRun;
@@ -497,7 +498,6 @@ private:
 
     void skipTrailingWhitespace(InlineIterator&, bool isLineEmpty, bool previousLineBrokeCleanly);
     void skipLeadingWhitespace(InlineBidiResolver&, bool isLineEmpty, bool previousLineBrokeCleanly, FloatingObject* lastFloatFromPreviousLine, LineOffsets&);
-    void fitBelowFloats(float widthToFit, float totalOverhangWidth, bool firstLine, float& availableWidth);
     typedef std::pair<RenderText*, LazyLineBreakIterator> LineBreakIteratorInfo;
     InlineIterator findNextLineBreak(InlineBidiResolver&, bool firstLine, bool& isLineEmpty, LineBreakIteratorInfo&, bool& previousLineBrokeCleanly, bool& hyphenated,
                                      EClear*, FloatingObject* lastFloatFromPreviousLine, Vector<RenderBox*>& positionedObjects);
@@ -787,6 +787,7 @@ private:
     // (calling moveChildTo, moveAllChildrenTo, and makeChildrenNonInline).
     friend class RenderRubyBase;
     friend class LineOffsets; // Needs to know FloatingObject
+    friend class LineWidth;
 };
 
 inline RenderBlock* toRenderBlock(RenderObject* object)
