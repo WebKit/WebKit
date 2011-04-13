@@ -70,8 +70,10 @@ int SVGInlineTextBox::offsetForPositionInFragment(const SVGTextFragment& fragmen
 
     // Eventually handle lengthAdjust="spacingAndGlyphs".
     // FIXME: Handle vertical text.
-    if (!fragment.transform.isIdentity())
-        textRun.setHorizontalGlyphStretch(narrowPrecisionToFloat(fragment.transform.xScale()));
+    AffineTransform fragmentTransform;
+    fragment.buildFragmentTransform(fragmentTransform);
+    if (!fragmentTransform.isIdentity())
+        textRun.setHorizontalGlyphStretch(narrowPrecisionToFloat(fragmentTransform.xScale()));
 
     return fragment.characterOffset - start() + textRenderer->scaledFont().offsetForPosition(textRun, position * scalingFactor, includePartialGlyphs);
 }
@@ -124,6 +126,7 @@ IntRect SVGInlineTextBox::selectionRect(int, int, int startPosition, int endPosi
     RenderStyle* style = text->style();
     ASSERT(style);
 
+    AffineTransform fragmentTransform;
     FloatRect selectionRect;
     int fragmentStartPosition = 0;
     int fragmentEndPosition = 0;
@@ -138,8 +141,9 @@ IntRect SVGInlineTextBox::selectionRect(int, int, int startPosition, int endPosi
             continue;
 
         FloatRect fragmentRect = selectionRectForTextFragment(fragment, fragmentStartPosition, fragmentEndPosition, style);
-        if (!fragment.transform.isIdentity())
-            fragmentRect = fragment.transform.mapRect(fragmentRect);
+        fragment.buildFragmentTransform(fragmentTransform);
+        if (!fragmentTransform.isIdentity())
+            fragmentRect = fragmentTransform.mapRect(fragmentRect);
 
         selectionRect.unite(fragmentRect);
     }
@@ -211,6 +215,7 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
 
     int fragmentStartPosition = 0;
     int fragmentEndPosition = 0;
+    AffineTransform fragmentTransform;
     unsigned textFragmentsSize = m_textFragments.size();
     for (unsigned i = 0; i < textFragmentsSize; ++i) {
         SVGTextFragment& fragment = m_textFragments.at(i);
@@ -222,9 +227,9 @@ void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
             continue;
 
         paintInfo.context->save();
-
-        if (!fragment.transform.isIdentity())
-            paintInfo.context->concatCTM(fragment.transform);
+        fragment.buildFragmentTransform(fragmentTransform);
+        if (!fragmentTransform.isIdentity())
+            paintInfo.context->concatCTM(fragmentTransform);
 
         paintInfo.context->setFillColor(backgroundColor, style->colorSpace());
         paintInfo.context->fillRect(selectionRectForTextFragment(fragment, fragmentStartPosition, fragmentEndPosition, style), backgroundColor, style->colorSpace());
@@ -285,15 +290,16 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, int, int, int, int)
             selectionStyle = style;
     }
 
+    AffineTransform fragmentTransform;
     unsigned textFragmentsSize = m_textFragments.size();
     for (unsigned i = 0; i < textFragmentsSize; ++i) {
         SVGTextFragment& fragment = m_textFragments.at(i);
         ASSERT(!m_paintingResource);
 
         paintInfo.context->save();
-
-        if (!fragment.transform.isIdentity())
-            paintInfo.context->concatCTM(fragment.transform);
+        fragment.buildFragmentTransform(fragmentTransform);
+        if (!fragmentTransform.isIdentity())
+            paintInfo.context->concatCTM(fragmentTransform);
 
         // Spec: All text decorations except line-through should be drawn before the text is filled and stroked; thus, the text is rendered on top of these decorations.
         int decorations = style->textDecorationsInEffect();
@@ -694,13 +700,14 @@ IntRect SVGInlineTextBox::calculateBoundaries() const
 
     float baseline = textRenderer->scaledFont().fontMetrics().floatAscent() / scalingFactor;
 
+    AffineTransform fragmentTransform;
     unsigned textFragmentsSize = m_textFragments.size();
     for (unsigned i = 0; i < textFragmentsSize; ++i) {
         const SVGTextFragment& fragment = m_textFragments.at(i);
         FloatRect fragmentRect(fragment.x, fragment.y - baseline, fragment.width, fragment.height);
-
-        if (!fragment.transform.isIdentity())
-            fragmentRect = fragment.transform.mapRect(fragmentRect);
+        fragment.buildFragmentTransform(fragmentTransform);
+        if (!fragmentTransform.isIdentity())
+            fragmentRect = fragmentTransform.mapRect(fragmentRect);
 
         textRect.unite(fragmentRect);
     }

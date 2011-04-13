@@ -80,17 +80,6 @@ static inline InlineFlowBox* flowBoxForRenderer(RenderObject* renderer)
     return 0;
 }
 
-static inline float mapLengthThroughFragmentTransformation(const SVGTextFragment& fragment, bool isVerticalText, float length)
-{
-    if (fragment.transform.isIdentity())
-        return length;
-
-    if (isVerticalText)
-        return narrowPrecisionToFloat(static_cast<double>(length) * fragment.transform.yScale());
-
-    return narrowPrecisionToFloat(static_cast<double>(length) * fragment.transform.xScale());
-}
-
 SVGTextQuery::SVGTextQuery(RenderObject* renderer)
 {
     collectTextBoxesInFlowBox(flowBoxForRenderer(renderer));
@@ -273,9 +262,7 @@ struct TextLengthData : SVGTextQuery::Data {
 bool SVGTextQuery::textLengthCallback(Data* queryData, const SVGTextFragment& fragment) const
 {
     TextLengthData* data = static_cast<TextLengthData*>(queryData);
-
-    float fragmentLength = queryData->isVerticalText ? fragment.height : fragment.width;
-    data->textLength += mapLengthThroughFragmentTransformation(fragment, queryData->isVerticalText, fragmentLength);
+    data->textLength += queryData->isVerticalText ? fragment.height : fragment.width;
     return false;
 }
 
@@ -314,9 +301,7 @@ bool SVGTextQuery::subStringLengthCallback(Data* queryData, const SVGTextFragmen
         return false;
 
     SVGTextMetrics metrics = SVGTextMetrics::measureCharacterRange(queryData->textRenderer, fragment.characterOffset + startPosition, endPosition - startPosition);
-    float fragmentLength = queryData->isVerticalText ? metrics.height() : metrics.width();
-
-    data->subStringLength += mapLengthThroughFragmentTransformation(fragment, queryData->isVerticalText, fragmentLength);
+    data->subStringLength += queryData->isVerticalText ? metrics.height() : metrics.width();
     return false;
 }
 
@@ -360,10 +345,12 @@ bool SVGTextQuery::startPositionOfCharacterCallback(Data* queryData, const SVGTe
             data->startPosition.move(metrics.width(), 0);
     }
 
-    if (fragment.transform.isIdentity())
+    AffineTransform fragmentTransform;
+    fragment.buildFragmentTransform(fragmentTransform, SVGTextFragment::TransformIgnoringTextLength);
+    if (fragmentTransform.isIdentity())
         return true;
 
-    data->startPosition = fragment.transform.mapPoint(data->startPosition);
+    data->startPosition = fragmentTransform.mapPoint(data->startPosition);
     return true;
 }
 
@@ -405,10 +392,12 @@ bool SVGTextQuery::endPositionOfCharacterCallback(Data* queryData, const SVGText
     else
         data->endPosition.move(metrics.width(), 0);
 
-    if (fragment.transform.isIdentity())
+    AffineTransform fragmentTransform;
+    fragment.buildFragmentTransform(fragmentTransform, SVGTextFragment::TransformIgnoringTextLength);
+    if (fragmentTransform.isIdentity())
         return true;
 
-    data->endPosition = fragment.transform.mapPoint(data->endPosition);
+    data->endPosition = fragmentTransform.mapPoint(data->endPosition);
     return true;
 }
 
@@ -443,9 +432,15 @@ bool SVGTextQuery::rotationOfCharacterCallback(Data* queryData, const SVGTextFra
     if (!mapStartEndPositionsIntoFragmentCoordinates(queryData, fragment, startPosition, endPosition))
         return false;
 
-    AffineTransform newTransform(fragment.transform);
-    newTransform.scale(1 / fragment.transform.xScale(), 1 / fragment.transform.yScale());
-    data->rotation = narrowPrecisionToFloat(rad2deg(atan2(newTransform.b(), newTransform.a())));
+    AffineTransform fragmentTransform;
+    fragment.buildFragmentTransform(fragmentTransform, SVGTextFragment::TransformIgnoringTextLength);
+    if (fragmentTransform.isIdentity())
+        data->rotation = 0;
+    else {
+        fragmentTransform.scale(1 / fragmentTransform.xScale(), 1 / fragmentTransform.yScale());
+        data->rotation = narrowPrecisionToFloat(rad2deg(atan2(fragmentTransform.b(), fragmentTransform.a())));
+    }
+
     return true;
 }
 
@@ -488,10 +483,12 @@ static inline void calculateGlyphBoundaries(SVGTextQuery::Data* queryData, const
     SVGTextMetrics metrics = SVGTextMetrics::measureCharacterRange(queryData->textRenderer, fragment.characterOffset + startPosition, 1);
     extent.setSize(FloatSize(metrics.width(), metrics.height()));
 
-    if (fragment.transform.isIdentity())
+    AffineTransform fragmentTransform;
+    fragment.buildFragmentTransform(fragmentTransform, SVGTextFragment::TransformIgnoringTextLength);
+    if (fragmentTransform.isIdentity())
         return;
 
-    extent = fragment.transform.mapRect(extent);
+    extent = fragmentTransform.mapRect(extent);
 }
 
 bool SVGTextQuery::extentOfCharacterCallback(Data* queryData, const SVGTextFragment& fragment) const

@@ -91,6 +91,7 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
     RenderStyle* style = textRenderer->style();
     ASSERT(style);
 
+    AffineTransform fragmentTransform;
     Document* document = textRenderer->document();
     Vector<DocumentMarker> markers = document->markers()->markersForNode(textRenderer->node());
 
@@ -129,8 +130,9 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
                     continue;
 
                 FloatRect fragmentRect = textBox->selectionRectForTextFragment(fragment, fragmentStartPosition, fragmentEndPosition, style);
-                if (!fragment.transform.isIdentity())
-                    fragmentRect = fragment.transform.mapRect(fragmentRect);
+                fragment.buildFragmentTransform(fragmentTransform);
+                if (!fragmentTransform.isIdentity())
+                    fragmentRect = fragmentTransform.mapRect(fragmentRect);
 
                 markerRect.unite(fragmentRect);
             }

@@ -27,6 +27,7 @@
 #include "CSSValueKeywords.h"
 #include "Frame.h"
 #include "RenderObject.h"
+#include "RenderSVGResource.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 #include "SVGTextQuery.h"
@@ -36,15 +37,36 @@
 namespace WebCore {
 
 // Animated property definitions
-DEFINE_ANIMATED_LENGTH(SVGTextContentElement, SVGNames::textLengthAttr, TextLength, textLength)
 DEFINE_ANIMATED_ENUMERATION(SVGTextContentElement, SVGNames::lengthAdjustAttr, LengthAdjust, lengthAdjust)
 DEFINE_ANIMATED_BOOLEAN(SVGTextContentElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
 SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
+    , m_specifiedTextLength(LengthModeOther)
     , m_textLength(LengthModeOther)
     , m_lengthAdjust(LENGTHADJUST_SPACING)
 {
+}
+
+void SVGTextContentElement::synchronizeTextLength()
+{
+    if (!m_textLength.shouldSynchronize)
+        return;
+    AtomicString value(SVGPropertyTraits<SVGLength>::toString(m_specifiedTextLength));
+    SVGAnimatedPropertySynchronizer<true>::synchronize(this, SVGNames::textLengthAttr, value);
+}
+
+PassRefPtr<SVGAnimatedLength> SVGTextContentElement::textLengthAnimated()
+{
+    DEFINE_STATIC_LOCAL(SVGLength, defaultTextLength, (LengthModeOther));
+    if (m_specifiedTextLength == defaultTextLength) {
+        ExceptionCode ec = 0;
+        m_textLength.value.newValueSpecifiedUnits(LengthTypeNumber, getComputedTextLength(), ec);
+        ASSERT(!ec);
+    }
+
+    m_textLength.shouldSynchronize = true;
+    return SVGAnimatedProperty::lookupOrCreateWrapper<SVGAnimatedLength, SVGLength>(this, SVGNames::textLengthAttr, SVGNames::textLengthAttr.localName(), m_textLength.value);
 }
 
 unsigned SVGTextContentElement::getNumberOfChars() const
@@ -165,8 +187,8 @@ void SVGTextContentElement::parseMappedAttribute(Attribute* attr)
         else if (attr->value() == "spacingAndGlyphs")
             setLengthAdjustBaseValue(LENGTHADJUST_SPACINGANDGLYPHS);
     } else if (attr->name() == SVGNames::textLengthAttr) {
-        setTextLengthBaseValue(SVGLength(LengthModeOther, attr->value()));
-        if (textLengthBaseValue().value(this) < 0.0)
+        m_textLength.value = SVGLength(LengthModeOther, attr->value());
+        if (m_textLength.value.value(this) < 0)
             document()->accessSVGExtensions()->reportError("A negative value for text attribute <textLength> is not allowed");
     } else {
         if (SVGTests::parseMappedAttribute(attr))
@@ -218,7 +240,16 @@ void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)
     if (SVGTests::handleAttributeChange(this, attrName))
         return;
 
-    // FIXME: also handle attribute changes for lengthAdjust and textLength
+    if (attrName == SVGNames::textLengthAttr)
+        m_specifiedTextLength = m_textLength.value;
+
+    RenderObject* renderer = this->renderer();
+    if (!renderer)
+        return;
+
+    if (attrName == SVGNames::textLengthAttr
+        || attrName == SVGNames::lengthAdjustAttr)
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
 void SVGTextContentElement::fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)
@@ -227,15 +258,6 @@ void SVGTextContentElement::fillPassedAttributeToPropertyTypeMap(AttributeToProp
 
     attributeToPropertyTypeMap.set(SVGNames::textLengthAttr, AnimatedLength);
     attributeToPropertyTypeMap.set(SVGNames::lengthAdjustAttr, AnimatedEnumeration);
-}
-
-bool SVGTextContentElement::isKnownAttribute(const QualifiedName& attrName)
-{
-    return attrName.matches(SVGNames::lengthAdjustAttr)
-            || attrName.matches(SVGNames::textLengthAttr)
-            || SVGLangSpace::isKnownAttribute(attrName)
-            || SVGExternalResourcesRequired::isKnownAttribute(attrName)
-            || SVGStyledElement::isKnownAttribute(attrName);
 }
 
 bool SVGTextContentElement::selfHasRelativeLengths() const

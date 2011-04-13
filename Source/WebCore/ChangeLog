@@ -1,3 +1,82 @@
+2011-04-13  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        SVGTextContentElements textLength returns 0
+        https://bugs.webkit.org/show_bug.cgi?id=52543
+
+        Add proper handling of the SVGTextContentElement textLength property, according to SVG 1.1 2nd edition.
+
+        If the textLength attributes is not explicitely set "textContentElement.textLength.baseVal"
+        will return the same as "textContentElement.getComputedTextLength()". If it's set the values
+        aren't equal anymore. getComputedTextLength() ignores the textLength attributes as well as the
+        lengthAdjust attribute. Adapt all of SVGTextQuery to ignore the lengthAdjust/textLength attributes.
+        This is how Opera implements it, and it makes sense to a certain degree, as otherwhise getComputedTextLength()
+        and textLength.baseVal.value would always be the same. Nor does the spec mention that textLength is honored
+        in the SVG Text DOM API.
+
+        Fixes svg/custom/text-dom-01-f.svg (from SVG 1.1 2nd edition, should be moved into the new W3C-SVG-1.1-SE directory).
+        Fixes svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg (last subtest related to textLength now passes).
+
+        Added new svg/dynamic-updates testcases covering dynamic changes of lengthAdjust/textLength and the synchronization
+        with getComputedTextLength().
+
+        Tests: svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg
+               svg/dynamic-updates/SVGTextElement-dom-lengthAdjust-attr.html
+               svg/dynamic-updates/SVGTextElement-dom-textLength-attr.html
+               svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop.html
+               svg/dynamic-updates/SVGTextElement-svgdom-textLength-prop.html
+
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::positionForPoint):
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::offsetForPositionInFragment):
+        (WebCore::SVGInlineTextBox::selectionRect):
+        (WebCore::SVGInlineTextBox::paintSelectionBackground):
+        (WebCore::SVGInlineTextBox::paint):
+        (WebCore::SVGInlineTextBox::calculateBoundaries):
+        * rendering/svg/SVGTextChunkBuilder.cpp:
+        (WebCore::SVGTextChunkBuilder::buildTextChunks):
+        (WebCore::SVGTextChunkBuilder::layoutTextChunks):
+        (WebCore::SVGTextChunkBuilder::addTextChunk):
+        (WebCore::SVGTextChunkBuilder::processTextChunk):
+        (WebCore::SVGTextChunkBuilder::processTextLengthSpacingCorrection):
+        (WebCore::SVGTextChunkBuilder::processTextAnchorCorrection):
+        * rendering/svg/SVGTextFragment.h:
+        (WebCore::SVGTextFragment::SVGTextFragment):
+        (WebCore::SVGTextFragment::buildFragmentTransform):
+        (WebCore::SVGTextFragment::transformAroundOrigin):
+        (WebCore::SVGTextFragment::buildTransformForTextOnPath):
+        (WebCore::SVGTextFragment::buildTransformForTextOnLine):
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::parentDefinesTextLength):
+        (WebCore::SVGTextLayoutEngine::beginTextPathLayout):
+        (WebCore::dumpTextBoxes):
+        (WebCore::SVGTextLayoutEngine::finalizeTransformMatrices):
+        (WebCore::SVGTextLayoutEngine::finishLayout):
+        (WebCore::SVGTextLayoutEngine::layoutTextOnLineOrPath):
+        * rendering/svg/SVGTextQuery.cpp:
+        (WebCore::SVGTextQuery::textLengthCallback):
+        (WebCore::SVGTextQuery::subStringLengthCallback):
+        (WebCore::SVGTextQuery::startPositionOfCharacterCallback):
+        (WebCore::SVGTextQuery::endPositionOfCharacterCallback):
+        (WebCore::SVGTextQuery::rotationOfCharacterCallback):
+        (WebCore::calculateGlyphBoundaries):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::SVGTextContentElement):
+        (WebCore::SVGTextContentElement::synchronizeTextLength):
+        (WebCore::SVGTextContentElement::textLengthAnimated):
+        (WebCore::SVGTextContentElement::parseMappedAttribute):
+        (WebCore::SVGTextContentElement::svgAttributeChanged):
+        * svg/SVGTextContentElement.h:
+        (WebCore::SVGTextContentElement::specifiedTextLength):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::svgAttributeChanged):
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::svgAttributeChanged):
+
 2011-04-13  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

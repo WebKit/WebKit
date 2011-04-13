@@ -53,7 +53,7 @@ void SVGTextChunkBuilder::buildTextChunks(Vector<SVGInlineTextBox*>& lineLayoutB
     unsigned boxPosition = 0;
     unsigned boxCount = lineLayoutBoxes.size();
     for (; boxPosition < boxCount; ++boxPosition) {
-        SVGInlineTextBox* textBox = lineLayoutBoxes.at(boxPosition);
+        SVGInlineTextBox* textBox = lineLayoutBoxes[boxPosition];
         if (!textBox->startsNewTextChunk())
             continue;
 
@@ -82,14 +82,14 @@ void SVGTextChunkBuilder::layoutTextChunks(Vector<SVGInlineTextBox*>& lineLayout
 
     unsigned chunkCount = m_textChunks.size();
     for (unsigned i = 0; i < chunkCount; ++i)
-        processTextChunk(m_textChunks.at(i));
+        processTextChunk(m_textChunks[i]);
 
     m_textChunks.clear();
 }
 
 void SVGTextChunkBuilder::addTextChunk(Vector<SVGInlineTextBox*>& lineLayoutBoxes, unsigned boxStart, unsigned boxCount)
 {
-    SVGInlineTextBox* textBox = lineLayoutBoxes.at(boxStart);
+    SVGInlineTextBox* textBox = lineLayoutBoxes[boxStart];
     ASSERT(textBox);
 
     RenderSVGInlineText* textRenderer = toRenderSVGInlineText(textBox->textRenderer());
@@ -127,7 +127,7 @@ void SVGTextChunkBuilder::addTextChunk(Vector<SVGInlineTextBox*>& lineLayoutBoxe
     // Handle 'lengthAdjust' property.
     float desiredTextLength = 0;
     if (SVGTextContentElement* textContentElement = SVGTextContentElement::elementFromRenderer(textRenderer->parent())) {
-        desiredTextLength = textContentElement->textLength().value(textContentElement);
+        desiredTextLength = textContentElement->specifiedTextLength().value(textContentElement);
 
         switch (static_cast<SVGTextContentElement::SVGLengthAdjustType>(textContentElement->lengthAdjust())) {
         case SVGTextContentElement::LENGTHADJUST_UNKNOWN:
@@ -145,7 +145,7 @@ void SVGTextChunkBuilder::addTextChunk(Vector<SVGInlineTextBox*>& lineLayoutBoxe
 
     Vector<SVGInlineTextBox*>& boxes = chunk.boxes();
     for (unsigned i = boxStart; i < boxStart + boxCount; ++i)
-        boxes.append(lineLayoutBoxes.at(i));
+        boxes.append(lineLayoutBoxes[i]);
 
     m_textChunks.append(chunk);
 }
@@ -173,26 +173,26 @@ void SVGTextChunkBuilder::processTextChunk(const SVGTextChunk& chunk)
             float textLengthShift = (chunk.desiredTextLength() - chunkLength) / chunkCharacters;
             unsigned atCharacter = 0;
             for (unsigned boxPosition = 0; boxPosition < boxCount; ++boxPosition) {
-                Vector<SVGTextFragment>& fragments = boxes.at(boxPosition)->textFragments();
+                Vector<SVGTextFragment>& fragments = boxes[boxPosition]->textFragments();
                 if (fragments.isEmpty())
-                    continue;    
+                    continue;
                 processTextLengthSpacingCorrection(isVerticalText, textLengthShift, fragments, atCharacter);
             }
         } else {
             ASSERT(chunk.hasLengthAdjustSpacingAndGlyphs());
-            float scale = chunk.desiredTextLength() / chunkLength;
+            float textLengthScale = chunk.desiredTextLength() / chunkLength;
             AffineTransform spacingAndGlyphsTransform;
 
             bool foundFirstFragment = false;
             for (unsigned boxPosition = 0; boxPosition < boxCount; ++boxPosition) {
-                SVGInlineTextBox* textBox = boxes.at(boxPosition);
+                SVGInlineTextBox* textBox = boxes[boxPosition];
                 Vector<SVGTextFragment>& fragments = textBox->textFragments();
                 if (fragments.isEmpty())
                     continue;
-    
+
                 if (!foundFirstFragment) {
                     foundFirstFragment = true;
-                    buildSpacingAndGlyphsTransform(isVerticalText, scale, fragments.first(), spacingAndGlyphsTransform);
+                    buildSpacingAndGlyphsTransform(isVerticalText, textLengthScale, fragments.first(), spacingAndGlyphsTransform);
                 }
 
                 m_textBoxTransformations.set(textBox, spacingAndGlyphsTransform);
@@ -212,7 +212,7 @@ void SVGTextChunkBuilder::processTextChunk(const SVGTextChunk& chunk)
 
     float textAnchorShift = chunk.calculateTextAnchorShift(chunkLength);
     for (unsigned boxPosition = 0; boxPosition < boxCount; ++boxPosition) {
-        Vector<SVGTextFragment>& fragments = boxes.at(boxPosition)->textFragments();
+        Vector<SVGTextFragment>& fragments = boxes[boxPosition]->textFragments();
         if (fragments.isEmpty())
             continue;
         processTextAnchorCorrection(isVerticalText, textAnchorShift, fragments);
@@ -223,7 +223,7 @@ void SVGTextChunkBuilder::processTextLengthSpacingCorrection(bool isVerticalText
 {
     unsigned fragmentCount = fragments.size();
     for (unsigned i = 0; i < fragmentCount; ++i) {
-        SVGTextFragment& fragment = fragments.at(i);
+        SVGTextFragment& fragment = fragments[i];
 
         if (isVerticalText)
             fragment.y += textLengthShift * atCharacter;
@@ -238,7 +238,7 @@ void SVGTextChunkBuilder::processTextAnchorCorrection(bool isVerticalText, float
 {
     unsigned fragmentCount = fragments.size();
     for (unsigned i = 0; i < fragmentCount; ++i) {
-        SVGTextFragment& fragment = fragments.at(i);
+        SVGTextFragment& fragment = fragments[i];
 
         if (isVerticalText)
             fragment.y += textAnchorShift;

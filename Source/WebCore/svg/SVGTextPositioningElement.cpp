@@ -120,9 +120,6 @@ void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrNam
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         return;
     }
-
-    if (SVGTextContentElement::isKnownAttribute(attrName))
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
 void SVGTextPositioningElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

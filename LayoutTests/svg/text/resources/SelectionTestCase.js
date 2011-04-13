@@ -2,9 +2,34 @@ if (!window.eventSender || !window.layoutTestController) {
     alert('This test needs to be run in DRT, to get results!');
 }
 
+var svgRoot = 0;
+
 // Map 'point' into absolute coordinates, usable for eventSender
+function transformPoint(point, matrix) {
+    return point.matrixTransform(matrix);
+}
+
+function transformRect(rect, matrix) {
+    var topLeft = svgRoot.createSVGPoint();
+    topLeft.x = rect.x;
+    topLeft.y = rect.y;
+    topLeft = transformPoint(topLeft, matrix);
+
+    var bottomRight = svgRoot.createSVGPoint();
+    bottomRight.x = rect.x + rect.width;
+    bottomRight.y = rect.y + rect.height;
+    bottomRight = transformPoint(bottomRight, matrix);
+
+    var newRect = svgRoot.createSVGRect();
+    newRect.x = topLeft.x;
+    newRect.y = topLeft.y;
+    newRect.width = bottomRight.x - topLeft.x;
+    newRect.height = bottomRight.y - topLeft.y;
+    return newRect;
+}
+
 function toAbsoluteCoordinates(point, element) {
-    return point.matrixTransform(document.rootElement.getTransformToElement(element));
+    return transformPoint(point, document.rootElement.getTransformToElement(element));
 }
 
 // Select a range of characters in text element 'id', from the start position of the 'start' character to the end position of the 'end' character
@@ -15,6 +40,24 @@ function selectRange(id, start, end, expectedText) {
 
     var startPos = element.getStartPositionOfChar(start);
     var endPos = element.getEndPositionOfChar(end);
+
+    // Handle lengthAdjust+textLength on our own.
+    var scale = element.textLength.baseVal.value / element.getComputedTextLength();
+    if (element.lengthAdjust.baseVal == SVGTextContentElement.LENGTHADJUST_SPACINGANDGLYPHS && scale != 1) {
+        svgRoot = element.ownerSVGElement;
+
+        var firstCharPosition = element.getStartPositionOfChar(0);
+        var scaleMatrix = svgRoot.createSVGMatrix()
+                          .translate(firstCharPosition.x, firstCharPosition.y)
+                          .scaleNonUniform(scale, 1)
+                          .translate(-firstCharPosition.x, -firstCharPosition.y);
+
+        startPos = transformPoint(startPos, scaleMatrix);
+        endPos = transformPoint(endPos, scaleMatrix);
+
+        startExtent = transformRect(startExtent, scaleMatrix);
+        endExtent = transformRect(endExtent, scaleMatrix);
+    }
 
     if (window.eventSender) {
         // Trigger 'partial glyph selection' code, by adjusting the end x position by half glyph width

@@ -157,7 +157,7 @@ bool SVGTextLayoutEngine::parentDefinesTextLength(RenderObject* parent) const
         SVGTextContentElement* textContentElement = SVGTextContentElement::elementFromRenderer(currentParent);
         if (textContentElement) {
             SVGTextContentElement::SVGLengthAdjustType lengthAdjust = static_cast<SVGTextContentElement::SVGLengthAdjustType>(textContentElement->lengthAdjust());
-            if (lengthAdjust == SVGTextContentElement::LENGTHADJUST_SPACING && textContentElement->textLength().value(textContentElement) > 0)
+            if (lengthAdjust == SVGTextContentElement::LENGTHADJUST_SPACING && textContentElement->specifiedTextLength().value(textContentElement) > 0)
                 return true;
         }
 
@@ -213,7 +213,7 @@ void SVGTextLayoutEngine::beginTextPathLayout(RenderObject* object, SVGTextLayou
 
     if (SVGTextContentElement* textContentElement = SVGTextContentElement::elementFromRenderer(textPath)) {
         lengthAdjust = static_cast<SVGTextContentElement::SVGLengthAdjustType>(textContentElement->lengthAdjust());
-        desiredTextLength = textContentElement->textLength().value(textContentElement);
+        desiredTextLength = textContentElement->specifiedTextLength().value(textContentElement);
     }
 
     if (!desiredTextLength)
@@ -261,34 +261,10 @@ void SVGTextLayoutEngine::layoutInlineTextBox(SVGInlineTextBox* textBox)
     m_lineLayoutBoxes.append(textBox);
 }
 
-void SVGTextLayoutEngine::finishLayout()
-{
-    // After all text fragments are stored in their correpsonding SVGInlineTextBoxes, we can layout individual text chunks.
-    // Chunk layouting is only performed for line layout boxes, not for path layout, where it has already been done.
-    m_chunkLayoutBuilder.layoutTextChunks(m_lineLayoutBoxes);
-
-    // Finalize transform matrices, after the chunk layout corrections have been applied, and all fragment x/y positions are finalized.
-    if (!m_lineLayoutBoxes.isEmpty()) {
 #if DUMP_TEXT_FRAGMENTS > 0
-        fprintf(stderr, "Line layout: ");
-#endif
-
-        finalizeTransformMatrices(m_lineLayoutBoxes);
-    }
-
-    if (!m_pathLayoutBoxes.isEmpty()) {
-#if DUMP_TEXT_FRAGMENTS > 0
-        fprintf(stderr, "Path layout: ");
-#endif
-        finalizeTransformMatrices(m_pathLayoutBoxes);
-    }
-}
-
-void SVGTextLayoutEngine::finalizeTransformMatrices(Vector<SVGInlineTextBox*>& boxes)
+static inline void dumpTextBoxes(Vector<SVGInlineTextBox*>& boxes)
 {
     unsigned boxCount = boxes.size();
-
-#if DUMP_TEXT_FRAGMENTS > 0
     fprintf(stderr, "Dumping all text fragments in text sub tree, %i boxes\n", boxCount);
 
     for (unsigned boxPosition = 0; boxPosition < boxCount; ++boxPosition) {
@@ -308,9 +284,12 @@ void SVGTextLayoutEngine::finalizeTransformMatrices(Vector<SVGInlineTextBox*>& b
                           , i, fragment.x, fragment.y, fragment.width, fragment.height, fragment.characterOffset, fragment.length, fragmentString.utf8().data());
         }
     }
+}
 #endif
 
-
+void SVGTextLayoutEngine::finalizeTransformMatrices(Vector<SVGInlineTextBox*>& boxes)
+{
+    unsigned boxCount = boxes.size();
     if (!boxCount)
         return;
 
@@ -321,25 +300,41 @@ void SVGTextLayoutEngine::finalizeTransformMatrices(Vector<SVGInlineTextBox*>& b
 
         unsigned fragmentCount = fragments.size();
         for (unsigned i = 0; i < fragmentCount; ++i) {
-            SVGTextFragment& fragment = fragments.at(i);
-            AffineTransform& transform = fragment.transform;
-            if (!transform.isIdentity()) {
-                transform = AffineTransform::translation(fragment.x, fragment.y) * transform;
-                transform.translate(-fragment.x, -fragment.y);
-            }
-
             m_chunkLayoutBuilder.transformationForTextBox(textBox, textBoxTransformation);
             if (textBoxTransformation.isIdentity())
                 continue;
-
-            if (transform.isIdentity())
-                transform = textBoxTransformation;
-            else
-                transform = textBoxTransformation * transform;
+            ASSERT(fragments[i].lengthAdjustTransform.isIdentity());
+            fragments[i].lengthAdjustTransform = textBoxTransformation;
         }
     }
 
     boxes.clear();
+}
+
+void SVGTextLayoutEngine::finishLayout()
+{
+    // After all text fragments are stored in their correpsonding SVGInlineTextBoxes, we can layout individual text chunks.
+    // Chunk layouting is only performed for line layout boxes, not for path layout, where it has already been done.
+    m_chunkLayoutBuilder.layoutTextChunks(m_lineLayoutBoxes);
+
+    // Finalize transform matrices, after the chunk layout corrections have been applied, and all fragment x/y positions are finalized.
+    if (!m_lineLayoutBoxes.isEmpty()) {
+#if DUMP_TEXT_FRAGMENTS > 0
+        fprintf(stderr, "Line layout: ");
+        dumpTextBoxes(m_lineLayoutBoxes);
+#endif
+
+        finalizeTransformMatrices(m_lineLayoutBoxes);
+    }
+
+    if (!m_pathLayoutBoxes.isEmpty()) {
+#if DUMP_TEXT_FRAGMENTS > 0
+        fprintf(stderr, "Path layout: ");
+        dumpTextBoxes(m_pathLayoutBoxes);
+#endif
+
+        finalizeTransformMatrices(m_pathLayoutBoxes);
+    }
 }
 
 bool SVGTextLayoutEngine::currentLogicalCharacterAttributes(SVGTextLayoutAttributes& logicalAttributes)
@@ -639,11 +634,12 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
             if (orientationAngle)
                 m_currentTextFragment.transform.rotate(orientationAngle);
 
-            if (m_inPathLayout && m_textPathScaling != 1) {
+            m_currentTextFragment.isTextOnPath = m_inPathLayout && m_textPathScaling != 1;
+            if (m_currentTextFragment.isTextOnPath) {
                 if (m_isVerticalText)
-                    m_currentTextFragment.transform.scaleNonUniform(1, m_textPathScaling);
+                    m_currentTextFragment.lengthAdjustTransform.scaleNonUniform(1, m_textPathScaling);
                 else
-                    m_currentTextFragment.transform.scaleNonUniform(m_textPathScaling, 1);
+                    m_currentTextFragment.lengthAdjustTransform.scaleNonUniform(m_textPathScaling, 1);
             }
         }
 

@@ -53,9 +53,12 @@ public:
     int getCharNumAtPosition(const FloatPoint&) const;
     void selectSubString(unsigned charnum, unsigned nchars, ExceptionCode&) const;
 
-    bool isKnownAttribute(const QualifiedName&);
-
     static SVGTextContentElement* elementFromRenderer(RenderObject*);
+
+    // textLength is not declared using the standard DECLARE_ANIMATED_LENGTH macro
+    // as its getter needs special handling (return getComputedTextLength(), instead of m_textLength).
+    SVGLength& specifiedTextLength() { return m_specifiedTextLength; }
+    PassRefPtr<SVGAnimatedLength> textLengthAnimated();
 
 protected:
     SVGTextContentElement(const QualifiedName&, Document*);
@@ -73,7 +76,9 @@ private:
     virtual bool isTextContent() const { return true; }
 
     // Animated property declarations
-    DECLARE_ANIMATED_LENGTH(TextLength, textLength)
+    void synchronizeTextLength();
+    SVGLength m_specifiedTextLength;
+    mutable SVGSynchronizableAnimatedProperty<SVGLength> m_textLength;
     DECLARE_ANIMATED_ENUMERATION(LengthAdjust, lengthAdjust)
 
     // SVGExternalResourcesRequired

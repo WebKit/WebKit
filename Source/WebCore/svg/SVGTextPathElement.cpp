@@ -83,7 +83,6 @@ void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
 
     if (attrName == SVGNames::startOffsetAttr
-        || SVGTextContentElement::isKnownAttribute(attrName)
         || SVGURIReference::isKnownAttribute(attrName))
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer());
 }
