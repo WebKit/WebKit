@@ -403,8 +403,9 @@ static inline void swapIntsInHeader(uint32_t* rawData, size_t length)
             if (magic == FAT_CIGAM)
                 swapIntsInHeader(rawData.data(), rawData.size());
             
-            archs = (struct fat_arch*)((uint8_t*)rawData.data() + sizeof(struct fat_header));            
-            numArchs = ((struct fat_header *)rawData.data())->nfat_arch;
+            COMPILE_ASSERT(sizeof(struct fat_header) % sizeof(uint32_t) == 0, struct_fat_header_must_be_integral_size_of_uint32_t);
+            archs = reinterpret_cast<struct fat_arch*>(rawData.data() + sizeof(struct fat_header) / sizeof(uint32_t));
+            numArchs = reinterpret_cast<struct fat_header*>(rawData.data())->nfat_arch;
             
             unsigned maxArchs = (sizeInBytes - sizeof(struct fat_header)) / sizeof(struct fat_arch);
             if (numArchs > maxArchs)

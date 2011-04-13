@@ -1,3 +1,22 @@
+2011-04-13  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/58172> Fix -Wcast-align warning in WebBasePluginPackage.mm
+
+        Reviewed by Anders Carlsson.
+
+        Fixes the following warning with -Wcast-align enabled:
+
+            Source/WebKit/mac/Plugins/WebBasePluginPackage.mm:402:21:{402:21-402:93}{402:39-402:93}: error: cast from 'uint8_t *' (aka 'unsigned char *') to 'struct fat_arch *' increases required alignment from 1 to 4 [-Werror,-Wcast-align,3]
+                         archs = (struct fat_arch*)((uint8_t*)rawData.data() + sizeof(struct fat_header));
+                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        * Plugins/WebBasePluginPackage.mm:
+        (-[WebBasePluginPackage isNativeLibraryData:]): Added
+        COMPILE_ASSERT() to make sure our pointer math is valid.
+        Removed cast to (uint8_t*) and divide sizeof(struct fat_header)
+        by sizeof(uint32_t) to fix the pointer math.  Replaced C-style
+        casts with reinterpret_cast.
+
 2011-04-12  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Alexey Proskuryakov.
