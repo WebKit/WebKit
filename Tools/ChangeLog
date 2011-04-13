@@ -1,3 +1,11 @@
+2011-04-12  James Kozianski  <koz@chromium.org>
+
+        Unreviewed.
+
+        Adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-04-12  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction for WinCairo bot after r83639.
