@@ -120,6 +120,11 @@ class ChromiumWinPort(chromium.ChromiumPort):
         # FIXME: should use base class method instead. See bug 55163.
         return 'old-threads'
 
+    def default_worker_model(self):
+        if self._multiprocessing_is_available:
+            return 'processes'
+        return 'old-threads'
+
     def relative_test_filename(self, filename):
         path = filename[len(self.layout_tests_dir()) + 1:]
         return path.replace('\\', '/')

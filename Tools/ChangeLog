@@ -1,5 +1,18 @@
 2011-04-13  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Mihai Parparita.
+
+        nrwt: enable multiple processes by default on Chromium Win.
+        https://bugs.webkit.org/show_bug.cgi?id=55163
+
+        Re-land r79268; it should be more stable now and will hopefully
+        work.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+
+2011-04-13  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Ojan Vafai.
 
         new-run-webkit-tests: configure logging in child processes properly
