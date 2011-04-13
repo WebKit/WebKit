@@ -1,5 +1,11 @@
 2011-04-13  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: revert Inspector.json change for breaking world.
+
+        * inspector/Inspector.json:
+
+2011-04-13  Pavel Feldman  <pfeldman@chromium.org>
+
         Not reviewed: swap methods in the Inspector.json.
 
         * inspector/Inspector.json:
