@@ -1,5 +1,12 @@
 2011-04-13  Jian Li  <jianli@chromium.org>
 
+        Unreviewed, update chromium test expectations to work around a bug
+        in gpu test expectations handling.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-13  Jian Li  <jianli@chromium.org>
+
         Unreviewed, update chromium test expectations.
 
         Mark compositing/webgl/webgl-reflection.html as failed for all platforms

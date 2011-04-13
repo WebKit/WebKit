@@ -3483,7 +3483,7 @@ BUGCR79111 GPU : compositing/framesets/composited-frame-alignment.html = IMAGE
 BUGCR79111 GPU : compositing/objects/composited-object-alignment.html = IMAGE
 
 BUGWK58308 GPU WIN LINUX DEBUG : compositing/z-order/negative-z-index.html = PASS CRASH
-BUGWK58328 GPU DEBUG : compositing/webgl/webgl-reflection.html = PASS CRASH
+BUGWK58328 GPU WIN MAC LINUX DEBUG : compositing/webgl/webgl-reflection.html = PASS CRASH
 
 BUGCR79173 GPU LINUX DEBUG : fast/canvas/access-zero-sized-canvas.html = PASS CRASH
 
