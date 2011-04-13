@@ -1,3 +1,24 @@
+2011-04-12  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Added chromium baselines for new tests.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/chromium-linux/fast/borders/bidi-002-expected.png: Added.
+        * platform/chromium-linux/fast/borders/bidi-004-expected.png: Added.
+        * platform/chromium-linux/fast/borders/bidi-009a-expected.png: Added.
+        * platform/chromium-linux/fullscreen/full-screen-zIndex-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/borders/bidi-002-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/borders/bidi-004-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/borders/bidi-009a-expected.png: Added.
+        * platform/chromium-win/fast/borders/bidi-002-expected.png: Added.
+        * platform/chromium-win/fast/borders/bidi-002-expected.txt: Added.
+        * platform/chromium-win/fast/borders/bidi-004-expected.png: Added.
+        * platform/chromium-win/fast/borders/bidi-004-expected.txt: Added.
+        * platform/chromium-win/fast/borders/bidi-009a-expected.png: Added.
+        * platform/chromium-win/fast/borders/bidi-009a-expected.txt: Added.
+        * platform/chromium-win/fast/inline/positioned-object-between-replaced-elements-expected.txt: Added.
+        * platform/chromium-win/fullscreen/full-screen-zIndex-expected.txt: Added.
+
 2011-04-12  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by James Robinson.

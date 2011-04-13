@@ -3499,16 +3499,5 @@ BUGCR79173 GPU LINUX DEBUG : fast/canvas/access-zero-sized-canvas.html = PASS CR
 // Regression caused by r83628.
 BUGCR79241 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEXT
 
-// New test added as r83629. Probably need rebaseline.
-BUGJIANLI WIN LINUX : fast/inline/positioned-object-between-replaced-elements.html = TEXT
-
-// Regression caused by r83638. Probably need rebaseline.
-BUGJIANLI WIN LINUX: fast/borders/bidi-002.html = IMAGE+TEXT
-BUGJIANLI WIN LINUX: fast/borders/bidi-004.html = IMAGE+TEXT
-BUGJIANLI WIN LINUX: fast/borders/bidi-009a.html = IMAGE+TEXT
-
 // Regression caused by r83669. Seems to be V8 related.
 BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
-
-// New test added as r83654. Probably need rebaseline.
-BUGJIANLI WIN LINUX : fullscreen/full-screen-zIndex.html = TEXT
