@@ -1,5 +1,19 @@
 2011-04-13  Eric Carlson  <eric.carlson@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        MediaPlayerPrivateAVFoundationObjC should adopt [AVURLAsset isPlayableExtendedMIMEType:]
+        https://bugs.webkit.org/show_bug.cgi?id=58451
+        <rdar://problem/9278468>
+
+        No new tests, supported MIME types haven't changed.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::supportsType): Use 
+        [AVURLAsset isPlayableExtendedMIMEType] instead of just the list of types.
+
+2011-04-13  Eric Carlson  <eric.carlson@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Media engine fallback doesn't always work

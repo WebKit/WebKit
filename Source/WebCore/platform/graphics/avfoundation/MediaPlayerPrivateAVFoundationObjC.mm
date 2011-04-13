@@ -625,12 +625,16 @@ void MediaPlayerPrivateAVFoundationObjC::getSupportedTypes(HashSet<String>& supp
 
 MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsType(const String& type, const String& codecs)
 {
-    // Only return "IsSupported" if there is no codecs parameter for now as there is no way to ask if it supports an
-    // extended MIME type until rdar://6220037 is fixed.
-    if (mimeTypeCache().contains(type))
-        return codecs.isEmpty() ? MediaPlayer::MayBeSupported : MediaPlayer::IsSupported;
+    if (!mimeTypeCache().contains(type))
+        return MediaPlayer::IsNotSupported;
 
-    return MediaPlayer::IsNotSupported;
+    // The spec says:
+    // "Implementors are encouraged to return "maybe" unless the type can be confidently established as being supported or not."
+    if (codecs.isEmpty())
+        return MediaPlayer::MayBeSupported;
+
+    NSString *typeString = [NSString stringWithFormat:@"%@; codecs=\"%@\"", (NSString *)type, (NSString *)codecs];
+    return [AVURLAsset isPlayableExtendedMIMEType:typeString] ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;;
 }
 
 bool MediaPlayerPrivateAVFoundationObjC::isAvailable()
