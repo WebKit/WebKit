@@ -1,3 +1,12 @@
+2011-04-13  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Web Page Performance auditing fails
+        https://bugs.webkit.org/show_bug.cgi?id=58322
+
+        * inspector/audits/audits-panel-functional.html:
+
 2011-04-13  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.

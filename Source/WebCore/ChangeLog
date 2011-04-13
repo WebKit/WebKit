@@ -1,3 +1,23 @@
+2011-04-13  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Web Page Performance auditing fails
+        https://bugs.webkit.org/show_bug.cgi?id=58322
+
+        * inspector/front-end/AuditRules.js:
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback):
+        (WebInspector.AuditRules.UnusedCssRule.prototype.doRun.evalCallback.documentLoaded):
+        (WebInspector.AuditRules.ImageDimensionsRule.prototype.doRun):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun.externalStylesheetsReceived):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun.inlineStylesReceived):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun.onDocumentAvailable):
+        (WebInspector.AuditRules.CssInHeadRule.prototype.doRun):
+        (WebInspector.AuditRules.StylesScriptsOrderRule.prototype.doRun.cssBeforeInlineReceived):
+        (WebInspector.AuditRules.StylesScriptsOrderRule.prototype.doRun.lateStylesReceived):
+        (WebInspector.AuditRules.StylesScriptsOrderRule.prototype.doRun.onDocumentAvailable):
+        (WebInspector.AuditRules.StylesScriptsOrderRule.prototype.doRun):
+
 2011-04-13  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

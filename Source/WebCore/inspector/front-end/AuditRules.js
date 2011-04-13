@@ -63,18 +63,6 @@ WebInspector.AuditRules.getDomainToResourcesMap = function(resources, types, nee
     return domainToResourcesMap;
 }
 
-WebInspector.AuditRules.evaluateInTargetWindow = function(func, args, callback)
-{
-    function mycallback(error, result)
-    {
-        if (!error && result)
-            callback(JSON.parse(result.description));
-        else
-            callback(null);
-    }
-    RuntimeAgent.evaluate("JSON.stringify((" + func + ")(" + JSON.stringify(args) + "))", "", false, mycallback);
-}
-
 WebInspector.AuditRules.GzipRule = function()
 {
     WebInspector.AuditRule.call(this, "network-gzip", "Enable gzip compression");
@@ -360,21 +348,21 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                 callback(result);
             }
 
-            function routine(selectorArray)
+            var foundSelectors = {};
+            function queryCallback(boundSelectorsCallback, selector, styleSheets, testedSelectors, nodeId)
             {
-                var result = {};
-                for (var i = 0; i < selectorArray.length; ++i) {
-                    try {
-                        if (document.querySelector(selectorArray[i]))
-                            result[selectorArray[i]] = true;
-                    } catch(e) {
-                        // Ignore and mark as unused.
-                    }
-                }
-                return result;
+                if (nodeId)
+                    foundSelectors[selector] = true;
+                if (boundSelectorsCallback)
+                    boundSelectorsCallback(foundSelectors);
             }
 
-            WebInspector.AuditRules.evaluateInTargetWindow(routine, [selectors], selectorsCallback.bind(null, callback, styleSheets, testedSelectors));
+            function documentLoaded(selectors, document) {
+                for (var i = 0; i < selectors.length; ++i)
+                    WebInspector.domAgent.querySelector(document.id, selectors[i], queryCallback.bind(null, i === selectors.length - 1 ? selectorsCallback.bind(null, callback, styleSheets, testedSelectors) : null, selectors[i], styleSheets, testedSelectors));
+            }
+
+            WebInspector.domAgent.requestDocument(documentLoaded.bind(null, selectors));
         }
 
         function styleSheetCallback(styleSheets, sourceURL, continuation, styleSheet)
@@ -730,12 +718,13 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             for (var i = 0; i < nodeIds.length; ++i)
                 WebInspector.cssModel.getStylesAsync(nodeIds[i], imageStylesReady.bind(this, nodeIds[i], i === nodeIds.length - 1));
         }
+
         function onDocumentAvailable(root)
         {
             WebInspector.domAgent.querySelectorAll(root.id, "img[src]", getStyles);
         }
-        WebInspector.domAgent.requestDocument(onDocumentAvailable);
 
+        WebInspector.domAgent.requestDocument(onDocumentAvailable);
     }
 }
 
@@ -772,46 +761,35 @@ WebInspector.AuditRules.CssInHeadRule.prototype = {
             callback(result);
         }
 
-        function routine()
+        function externalStylesheetsReceived(root, inlineStyleNodeIds, nodeIds)
         {
-            function allViews() {
-                var views = [document.defaultView];
-                var curView = 0;
-                while (curView < views.length) {
-                    var view = views[curView];
-                    var frames = view.frames;
-                    for (var i = 0; i < frames.length; ++i) {
-                        if (frames[i] !== view)
-                            views.push(frames[i]);
-                    }
-                    ++curView;
+            var externalStylesheetNodeIds = nodeIds;
+            var result = null;
+            if (inlineStyleNodeIds.length || externalStylesheetNodeIds.length) {
+                var urlToViolationsArray = {};
+                var externalStylesheetHrefs = [];
+                for (var j = 0; j < externalStylesheetNodeIds.length; ++j) {
+                    var linkNode = WebInspector.domAgent.nodeForId(externalStylesheetNodeIds[j]);
+                    var completeHref = WebInspector.completeURL(linkNode.ownerDocument.documentURL, linkNode.getAttribute("href"));
+                    externalStylesheetHrefs.push(completeHref || "<empty>");
                 }
-                return views;
+                urlToViolationsArray[root.documentURL] = [inlineStyleNodeIds.length, externalStylesheetHrefs];
+                result = urlToViolationsArray;
             }
-
-            var views = allViews();
-            var urlToViolationsArray = {};
-            var found = false;
-            for (var i = 0; i < views.length; ++i) {
-                var view = views[i];
-                if (!view.document)
-                    continue;
-
-                var inlineStyles = view.document.querySelectorAll("body style");
-                var inlineStylesheets = view.document.querySelectorAll("body link[rel~='stylesheet'][href]");
-                if (!inlineStyles.length && !inlineStylesheets.length)
-                    continue;
-
-                found = true;
-                var inlineStylesheetHrefs = [];
-                for (var j = 0; j < inlineStylesheets.length; ++j)
-                    inlineStylesheetHrefs.push(inlineStylesheets[j].href);
-                urlToViolationsArray[view.location.href] = [inlineStyles.length, inlineStylesheetHrefs];
-            }
-            return found ? urlToViolationsArray : null;
+            evalCallback(result);
         }
 
-        WebInspector.AuditRules.evaluateInTargetWindow(routine, [], evalCallback);
+        function inlineStylesReceived(root, nodeIds)
+        {
+            WebInspector.domAgent.querySelectorAll(root.id, "body link[rel~='stylesheet'][href]", externalStylesheetsReceived.bind(null, root, nodeIds));
+        }
+
+        function onDocumentAvailable(root)
+        {
+            WebInspector.domAgent.querySelectorAll(root.id, "body style", inlineStylesReceived.bind(null, root));
+        }
+
+        WebInspector.domAgent.requestDocument(onDocumentAvailable);
     }
 }
 
@@ -845,20 +823,34 @@ WebInspector.AuditRules.StylesScriptsOrderRule.prototype = {
             callback(result);
         }
 
-        function routine()
+        function cssBeforeInlineReceived(lateStyleIds, nodeIds)
         {
-            var lateStyles = document.querySelectorAll("head script[src] ~ link[rel~='stylesheet'][href]");
-            var cssBeforeInlineCount = document.querySelectorAll("head link[rel~='stylesheet'][href] ~ script:not([src])").length;
-            if (!lateStyles.length && !cssBeforeInlineCount)
-                return null;
+            var cssBeforeInlineCount = nodeIds.length;
+            var result = null;
+            if (lateStyleIds.length || cssBeforeInlineCount) {
+                var lateStyleUrls = [];
+                for (var i = 0; i < lateStyleIds.length; ++i) {
+                    var lateStyleNode = WebInspector.domAgent.nodeForId(lateStyleIds[i]);
+                    var completeHref = WebInspector.completeURL(lateStyleNode.ownerDocument.documentURL, lateStyleNode.getAttribute("href"));
+                    lateStyleUrls.push(completeHref || "<empty>");
+                }
+                result = [ lateStyleUrls, cssBeforeInlineCount ];
+            }
 
-            var lateStyleUrls = [];
-            for (var i = 0; i < lateStyles.length; ++i)
-                lateStyleUrls.push(lateStyles[i].href);
-            return [ lateStyleUrls, cssBeforeInlineCount ];
+            evalCallback(result);
         }
 
-        WebInspector.AuditRules.evaluateInTargetWindow(routine, [], evalCallback.bind(this));
+        function lateStylesReceived(root, nodeIds)
+        {
+            WebInspector.domAgent.querySelectorAll(root.id, "head link[rel~='stylesheet'][href] ~ script:not([src])", cssBeforeInlineReceived.bind(null, nodeIds));
+        }
+
+        function onDocumentAvailable(root)
+        {
+            WebInspector.domAgent.querySelectorAll(root.id, "head script[src] ~ link[rel~='stylesheet'][href]", lateStylesReceived.bind(null, root));
+        }
+
+        WebInspector.domAgent.requestDocument(onDocumentAvailable);
     }
 }
 
