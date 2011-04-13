@@ -1,5 +1,18 @@
 2011-04-13  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        After closing the last window, re-opening my last visited website is over 2X slower
+        https://bugs.webkit.org/show_bug.cgi?id=58488
+        <rdar://problem/9233518>
+
+        Give the web process a 60 second termination timeout.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+
+2011-04-13  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Convert WebProcess over to using disableTermination/enableTermination

@@ -117,8 +117,10 @@ WebProcess& WebProcess::shared()
     return process;
 }
 
+static const double shutdownTimeout = 60;
+
 WebProcess::WebProcess()
-    : ChildProcess(0)
+    : ChildProcess(shutdownTimeout)
     , m_inDidClose(false)
     , m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
