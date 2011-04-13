@@ -123,10 +123,10 @@ public:
     void setOuterHTML(ErrorString*, int nodeId, const String& outerHTML, int* newId);
     void setNodeValue(ErrorString*, int nodeId, const String& value);
     void getEventListenersForNode(ErrorString*, int nodeId, RefPtr<InspectorArray>* listenersArray);
-    void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, bool runSynchronously);
+    void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, const bool* const runSynchronously);
     void cancelSearch(ErrorString*);
     void resolveNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* result);
-    void setSearchingForNode(ErrorString*, bool enabled, bool* newState);
+    void setSearchingForNode(ErrorString*, bool enabled);
     void pushNodeToFrontend(ErrorString*, const String& objectId, int* nodeId);
     void pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId);
     void hideHighlight(ErrorString*);

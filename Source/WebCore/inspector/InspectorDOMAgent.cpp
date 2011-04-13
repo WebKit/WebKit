@@ -442,8 +442,7 @@ void InspectorDOMAgent::getDocument(ErrorString*, RefPtr<InspectorObject>* root)
     reset();
     m_document = doc;
 
-    if (!m_documentNodeToIdMap.contains(m_document))
-        *root = buildObjectForNode(m_document.get(), 2, &m_documentNodeToIdMap);
+    *root = buildObjectForNode(m_document.get(), 2, &m_documentNodeToIdMap);
 }
 
 void InspectorDOMAgent::pushChildNodesToFrontend(int nodeId)
@@ -775,7 +774,7 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString*, int nodeId, RefPt
     }
 }
 
-void InspectorDOMAgent::performSearch(ErrorString* error, const String& whitespaceTrimmedQuery, bool runSynchronously)
+void InspectorDOMAgent::performSearch(ErrorString* error, const String& whitespaceTrimmedQuery, const bool* const runSynchronously)
 {
     // FIXME: Few things are missing here:
     // 1) Search works with node granularity - number of matches within node is not calculated.
@@ -850,7 +849,7 @@ void InspectorDOMAgent::performSearch(ErrorString* error, const String& whitespa
         m_pendingMatchJobs.append(new MatchXPathJob(document, whitespaceTrimmedQuery));
     }
 
-    if (runSynchronously) {
+    if (runSynchronously && *runSynchronously) {
         // For tests.
         ListHashSet<Node*> resultCollector;
         for (Deque<MatchJob*>::iterator it = m_pendingMatchJobs.begin(); it != m_pendingMatchJobs.end(); ++it)
@@ -942,9 +941,8 @@ void InspectorDOMAgent::setSearchingForNode(bool enabled)
     }
 }
 
-void InspectorDOMAgent::setSearchingForNode(ErrorString*, bool enabled, bool* newState)
+void InspectorDOMAgent::setSearchingForNode(ErrorString*, bool enabled)
 {
-    *newState = enabled;
     setSearchingForNode(enabled);
 }
 

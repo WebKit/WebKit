@@ -49,11 +49,11 @@ InspectorRuntimeAgent::~InspectorRuntimeAgent()
 {
 }
 
-void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, const bool* const optionalIncludeCommandLineAPI, RefPtr<InspectorObject>* result)
+void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, RefPtr<InspectorObject>* result)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(getDefaultInspectedState());
     if (!injectedScript.hasNoValue())
-        injectedScript.evaluate(errorString, expression, objectGroup, optionalIncludeCommandLineAPI ? *optionalIncludeCommandLineAPI : false, result);
+        injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : "", includeCommandLineAPI ? *includeCommandLineAPI : false, result);
 }
 
 void InspectorRuntimeAgent::evaluateOn(ErrorString* errorString, const String& objectId, const String& expression, RefPtr<InspectorObject>* result)

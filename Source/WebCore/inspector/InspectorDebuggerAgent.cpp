@@ -351,13 +351,11 @@ void InspectorDebuggerAgent::setPauseOnExceptions(ErrorString* errorString, cons
         *errorString = "Internal error. Could not change pause on exceptions state";
 }
 
-void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString* errorString, const String& callFrameId, const String& expression, const String& objectGroup, const bool* const optionalIncludeCommandLineAPI, RefPtr<InspectorObject>* result)
+void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString* errorString, const String& callFrameId, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, RefPtr<InspectorObject>* result)
 {
-    bool includeCommandLineAPI = optionalIncludeCommandLineAPI ? *optionalIncludeCommandLineAPI : false;
-
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(callFrameId);
     if (!injectedScript.hasNoValue())
-        injectedScript.evaluateOnCallFrame(errorString, callFrameId, expression, objectGroup, includeCommandLineAPI, result);
+        injectedScript.evaluateOnCallFrame(errorString, callFrameId, expression, objectGroup ? *objectGroup : "", includeCommandLineAPI ? *includeCommandLineAPI : false, result);
 }
 
 PassRefPtr<InspectorArray> InspectorDebuggerAgent::currentCallFrames()

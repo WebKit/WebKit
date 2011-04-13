@@ -112,13 +112,13 @@
             {
                 "name": "domContentEventFired",
                 "parameters": [
-                    { "name": "time", "type": "number" }
+                    { "name": "timestamp", "type": "number" }
                 ]
             },
             {
                 "name": "loadEventFired",
                 "parameters": [
-                    { "name": "time", "type": "number" }
+                    { "name": "timestamp", "type": "number" }
                 ]
             }
         ]
@@ -154,7 +154,7 @@
                 "name": "evaluate",
                 "parameters": [
                     { "name": "expression", "type": "string", "description": "Expression to evaluate." },
-                    { "name": "objectGroup", "type": "string", "description": "Symbolic group name that can be used to release multiple objects." },
+                    { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." },
                     { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Determines whether Command Line API should be available during the evaluation." }
                 ],
                 "returns": [
@@ -447,7 +447,7 @@
                     { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },
                     { "name": "request", "$ref": "ResourceRequest", "description": "Request data." },
                     { "name": "redirectResponse", "optional": true, "$ref": "ResourceResponse", "description": "Redirect response data." },
-                    { "name": "time", "type": "number", "description": "Timestamp." },
+                    { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "stackTrace", "type": "array", "items": { "$ref" : "Console.CallFrame"}, "description": "JavaScript stack trace upon issuing this request." }
                 ]
             },
@@ -463,7 +463,7 @@
                 "description": "Fired when HTTP response is available.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
-                    { "name": "time", "type": "number", "description": "Timestamp." },
+                    { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "type", "$ref": "ResourceType", "description": "Resource type." },
                     { "name": "response", "$ref": "ResourceResponse", "description": "Response data." }
                 ]
@@ -473,9 +473,9 @@
                 "description": "Fired when data chunk was received over the network.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
-                    { "name": "time", "type": "number", "description": "Timestamp." },
+                    { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "dataLength", "type": "integer", "description": "Data chunk length." },
-                    { "name": "lengthReceived", "type": "integer", "description": "Actual bytes received (might be less than dataLength for compressed encodings)." }
+                    { "name": "encodedDataLength", "type": "integer", "description": "Actual bytes received (might be less than dataLength for compressed encodings)." }
                 ]
             },
             {
@@ -483,7 +483,7 @@
                 "description": "Fired when HTTP request has finished loading.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
-                    { "name": "finishTime", "type": "number", "description": "Timestamp." }
+                    { "name": "timestamp", "type": "number", "description": "Timestamp." }
                 ]
             },
             {
@@ -491,9 +491,9 @@
                 "description": "Fired when HTTP request has failed to load.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
-                    { "name": "time", "type": "number", "description": "Timestamp." },
+                    { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "errorText", "type": "string", "description": "User friendly error message." },
-                    { "name": "canceled", "type": "boolean", "description": "True if loading was canceled." }
+                    { "name": "canceled", "type": "boolean", "optional": true, "description": "True if loading was canceled." }
                 ]
             },
             {
@@ -503,7 +503,7 @@
                     { "name": "frameId", "type": "string", "description": "Frame identifier." },
                     { "name": "loaderId", "type": "string", "description": "Loader identifier." },
                     { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },
-                    { "name": "time", "type": "number", "description": "Timestamp." },
+                    { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "resource", "$ref": "CachedResource", "description": "Cached resource data." }
                 ]
             },
@@ -529,7 +529,7 @@
                 "description": "Fired when WebSocket is about to initiate handshake.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
-                    { "name": "time", "type": "number", "description": "Timestamp." },
+                    { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "request", "type": "object", "description": "WebSocket request data." }
                 ]
             },
@@ -538,7 +538,7 @@
                 "description": "Fired when WebSocket handshake response becomes available.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
-                    { "name": "time", "type": "number", "description": "Timestamp." },
+                    { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "response", "type": "object", "description": "WebSocket response data." }
                 ]
             },
@@ -555,7 +555,7 @@
                 "description": "Fired when WebSocket is closed.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
-                    { "name": "time", "type": "number", "description": "Timestamp." }
+                    { "name": "timestamp", "type": "number", "description": "Timestamp." }
                 ]
             }
         ]
@@ -792,7 +792,7 @@
             {
                 "name": "setAttribute",
                 "parameters": [
-                    { "name": "elementId", "type": "integer", "description": "Id of the element to set attribute for." },
+                    { "name": "nodeId", "type": "integer", "description": "Id of the element to set attribute for." },
                     { "name": "name", "type": "string", "description": "Attribute name." },
                     { "name": "value", "type": "string", "description": "Attribute value." }
                 ],
@@ -801,7 +801,7 @@
             {
                 "name": "removeAttribute",
                 "parameters": [
-                    { "name": "elementId", "type": "integer", "description": "Id of the element to remove attribute from." },
+                    { "name": "nodeId", "type": "integer", "description": "Id of the element to remove attribute from." },
                     { "name": "name", "type": "string", "description": "Name of the attribute to remove." }
                 ],
                 "description": "Removes attribute with given name from an element with given id."
@@ -812,7 +812,7 @@
                     { "name": "nodeId", "type": "integer", "description": "Id of the node to get listeners for." }
                 ],
                 "returns": [
-                    { "name": "listenersArray", "type": "array", "items": { "$ref" : "DOMEventListener"}, "description": "Array of relevant listeners." }
+                    { "name": "listeners", "type": "array", "items": { "$ref" : "DOMEventListener"}, "description": "Array of relevant listeners." }
                 ],
                 "description": "Returns event listeners relevant to the node."
             },
@@ -840,7 +840,7 @@
                     { "name": "outerHTML", "type": "string", "description": "Outer HTML markup to set." }
                 ],
                 "returns": [
-                    { "name": "outNodeId", "type": "integer", "description": "Setting outer HTML can change node's id." }
+                    { "name": "newNodeId", "type": "integer", "description": "Setting outer HTML can change node's id." }
                 ],
                 "description": "Sets node HTML markup, returns new node id."
             },
@@ -848,7 +848,7 @@
                 "name": "performSearch",
                 "parameters": [
                     { "name": "query", "type": "string", "description": "Plain text or query selector or XPath search query." },
-                    { "name": "runSynchronously", "type": "boolean", "description": "When set to true, performing search synchronously (can block user interaction)." }
+                    { "name": "runSynchronously", "type": "boolean", "optional": true, "description": "When set to true, performing search synchronously (can block user interaction)." }
                 ],
                 "description": "Starts asynchronous search for a given string in the DOM tree. Use <code>cancelSearch</code> to stop given asynchronous search task."
             },
@@ -870,9 +870,6 @@
                 "name": "setSearchingForNode",
                 "parameters": [
                     { "name": "enabled", "type": "boolean" }
-                ],
-                "returns": [
-                    { "name": "newState", "type": "boolean" }
                 ]
             },
             {
@@ -1399,10 +1396,10 @@
                 "name": "editScriptSource",
                 "parameters": [
                     { "name": "sourceID", "type": "string", "description": "Id of the script to edit." },
-                    { "name": "newContent", "type": "string", "description": "New content of the script." }
+                    { "name": "scriptSource", "type": "string", "description": "New content of the script." }
                 ],
                 "returns": [
-                    { "name": "callFrames", "type": "array", "items": { "$ref" : "CallFrame"}, "description": "New stack trace in case editing has happened while VM was stopped." }
+                    { "name": "callFrames", "type": "array", "optional": true, "items": { "$ref" : "CallFrame"}, "description": "New stack trace in case editing has happened while VM was stopped." }
                 ],
                 "description": "Edits JavaScript script live."
             },
@@ -1428,7 +1425,7 @@
                 "parameters": [
                     { "name": "callFrameId", "type": "string", "description": "Call frame identifier to evaluate on. This identifier is a part of backtrace reported by the <code>pausedScript</code>." },
                     { "name": "expression", "type": "string", "description": "Expression to evaluate." },
-                    { "name": "objectGroup", "type": "string", "description": "String object group name to put result into (allows rapid releasing resulting object handles using <code>releaseObjectGroup</code>)." },
+                    { "name": "objectGroup", "type": "string", "optional": true, "description": "String object group name to put result into (allows rapid releasing resulting object handles using <code>releaseObjectGroup</code>)." },
                     { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Specifies whether command line API should be available to the evaluated expression, defaults to false." }
                 ],
                 "returns": [

@@ -1,3 +1,26 @@
+2011-04-12  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: another pass of protocol renames.
+        https://bugs.webkit.org/show_bug.cgi?id=58340
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getDocument):
+        (WebCore::InspectorDOMAgent::performSearch):
+        (WebCore::InspectorDOMAgent::setSearchingForNode):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::evaluateOnCallFrame):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::evaluate):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._setSearchingForNode):
+        (WebInspector.ElementsPanel.prototype.setSearchingForNode):
+
 2011-04-12  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Dimitri Glazkov.
