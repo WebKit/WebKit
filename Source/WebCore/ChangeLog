@@ -1,3 +1,40 @@
+2011-04-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, rolling out r83634 and r83659.
+        http://trac.webkit.org/changeset/83634
+        http://trac.webkit.org/changeset/83659
+        https://bugs.webkit.org/show_bug.cgi?id=57075
+
+        It made 2 tests time out
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyWrapper::QNetworkReplyWrapper):
+        (WebCore::QNetworkReplyWrapper::~QNetworkReplyWrapper):
+        (WebCore::QNetworkReplyWrapper::receiveMetaData):
+        (WebCore::QNetworkReplyWrapper::didReceiveFinished):
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::resetState):
+        (WebCore::QNetworkReplyHandler::setLoadingDeferred):
+        (WebCore::QNetworkReplyHandler::resumeDeferredLoad):
+        (WebCore::QNetworkReplyHandler::release):
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        (WebCore::QNetworkReplyHandler::forwardData):
+        (WebCore::QNetworkReplyHandler::start):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::WebCoreSynchronousLoader::resourceResponse):
+        (WebCore::WebCoreSynchronousLoader::resourceError):
+        (WebCore::WebCoreSynchronousLoader::data):
+        (WebCore::WebCoreSynchronousLoader::setReplyFinished):
+        (WebCore::WebCoreSynchronousLoader::WebCoreSynchronousLoader):
+        (WebCore::WebCoreSynchronousLoader::didReceiveResponse):
+        (WebCore::WebCoreSynchronousLoader::didReceiveData):
+        (WebCore::WebCoreSynchronousLoader::didFinishLoading):
+        (WebCore::WebCoreSynchronousLoader::didFail):
+        (WebCore::WebCoreSynchronousLoader::waitForCompletion):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
 2011-04-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Simon Fraser.

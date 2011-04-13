@@ -35,46 +35,29 @@ namespace WebCore {
 
 class ResourceHandle;
 class ResourceResponse;
-class QNetworkReplyHandler;
-
-class QNetworkReplyHandlerCallQueue {
-public:
-    QNetworkReplyHandlerCallQueue(QNetworkReplyHandler*, bool deferSignals);
-    bool deferSignals() const { return m_deferSignals; }
-    void setDeferSignals(bool);
-
-    typedef void (QNetworkReplyHandler::*EnqueuedCall)();
-    void push(EnqueuedCall method);
-    void clear() { m_enqueuedCalls.clear(); }
-
-    void lock();
-    void unlock();
-private:
-    QNetworkReplyHandler* m_replyHandler;
-    int m_locks;
-    bool m_deferSignals;
-    QList<EnqueuedCall> m_enqueuedCalls;
-};
 
 class QNetworkReplyWrapper : public QObject {
     Q_OBJECT
 public:
-    QNetworkReplyWrapper(QNetworkReplyHandlerCallQueue*, QNetworkReply*, QObject* parent = 0);
+    QNetworkReplyWrapper(QNetworkReply*, QObject* parent = 0);
     ~QNetworkReplyWrapper();
 
     QNetworkReply* reply() const { return m_reply; }
     QNetworkReply* release();
 
-    void synchronousLoad() { receiveMetaData(); }
-
     QUrl redirectionTargetUrl() const { return m_redirectionTargetUrl; }
     QString encoding() const { return m_encoding; }
     QString advertisedMimeType() const { return m_advertisedMimeType; }
 
+Q_SIGNALS:
+    void finished();
+    void metaDataChanged();
+    void readyRead();
+    void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
+
 private Q_SLOTS:
     void receiveMetaData();
     void didReceiveFinished();
-    void didReceiveReadyRead();
 
 private:
     void resetConnections();
@@ -84,8 +67,6 @@ private:
 
     QString m_encoding;
     QString m_advertisedMimeType;
-
-    QNetworkReplyHandlerCallQueue* m_queue;
 };
 
 class QNetworkReplyHandler : public QObject
@@ -98,7 +79,7 @@ public:
     };
 
     QNetworkReplyHandler(ResourceHandle*, LoadType, bool deferred = false);
-    void setLoadingDeferred(bool deferred) { m_queue.setDeferSignals(deferred); }
+    void setLoadingDeferred(bool);
 
     QNetworkReply* reply() const { return m_replyWrapper ? m_replyWrapper->reply() : 0; }
 
@@ -106,17 +87,17 @@ public:
 
     QNetworkReply* release();
 
+public slots:
     void finish();
     void sendResponseIfNeeded();
     void forwardData();
-
-public slots:
     void uploadProgress(qint64 bytesSent, qint64 bytesTotal);
 
 private:
     void start();
     void resetState();
     String httpMethod() const;
+    void resumeDeferredLoad();
     void redirect(ResourceResponse&, const QUrl&);
     bool wasAborted() const { return !m_resourceHandle; }
     QNetworkReply* sendNetworkRequest();
@@ -124,15 +105,20 @@ private:
     QNetworkReplyWrapper* m_replyWrapper;
     ResourceHandle* m_resourceHandle;
     bool m_redirected;
+    bool m_responseSent;
     bool m_responseContainsData;
     LoadType m_loadType;
     QNetworkAccessManager::Operation m_method;
     QNetworkRequest m_request;
 
-    // defer state holding
-    int m_redirectionTries;
+    bool m_deferred;
 
-    QNetworkReplyHandlerCallQueue m_queue;
+    // defer state holding
+    bool m_hasStarted;
+    bool m_callFinishOnResume;
+    bool m_callSendResponseIfNeededOnResume;
+    bool m_callForwardDataOnResume;
+    int m_redirectionTries;
 };
 
 // Self destructing QIODevice for FormData
