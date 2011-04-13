@@ -1,5 +1,12 @@
 2011-04-12  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed. Adjusted chromium test expectations
+         - adding WIN crash for webgl-reflection.html
+
+        * platform/chromium/test_expectations.txt:
+
+2011-04-12  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed. Adjusted chromium test expectations:
          - missing expectations for child-layer-3d-sorting.html
          - adopt-node-crash.html crash of mac debug gpu
