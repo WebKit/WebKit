@@ -2,6 +2,15 @@
 
         Reviewed by Adam Roben.
 
+        Sort kill list alphabeticaly.
+        Fixed capitalization on VcBuildHelper.  
+
+        * BuildSlaveSupport/win/kill-old-processes:
+
+2011-04-13  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Adam Roben.
+
         https://bugs.webkit.org/show_bug.cgi?id=58384
         Update kill-old-processes to include a few new ones.
         
