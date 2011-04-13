@@ -223,6 +223,7 @@ my @backendConstantDeclarations;
 my @backendConstantDefinitions;
 my @backendFooter;
 my @backendJSStubs;
+my @backendJSEvents;
 my %backendDomains;
 
 my $frontendClassName;
@@ -348,6 +349,7 @@ sub generateFunctions
     }
 
     collectBackendJSStubFunctions($interface);
+    collectBackendJSStubEvents($interface);
 }
 
 sub generateFrontendFunction
@@ -681,9 +683,24 @@ sub collectBackendJSStubFunctions
     }
 }
 
+sub collectBackendJSStubEvents
+{
+    my $interface = shift;
+    my @functions = grep($_->signature->extendedAttributes->{"event"}, @{$interface->functions});
+    my $domain = $interface->name;
+
+    foreach my $function (@functions) {
+        my $name = $domain . "." . $function->signature->name;
+        my @outArgs = grep($_->direction eq "out", @{$function->parameters});
+        my $argumentNames = join(",", map("\"" . $_->name . "\"" , @outArgs));
+        push(@backendJSEvents, "    this._eventArgs[\"" . $name . "\"] = [" . $argumentNames ."];");
+    }
+}
+
 sub generateBackendStubJS
 {
     my $JSStubs = join("\n", @backendJSStubs);
+    my $JSEvents = join("\n", @backendJSEvents);
     my $inspectorBackendStubJS = << "EOF";
 $licenseTemplate
 
@@ -693,7 +710,9 @@ InspectorBackendStub = function()
     this._pendingResponsesCount = 0;
     this._callbacks = {};
     this._domainDispatchers = {};
+    this._eventArgs = {};
 $JSStubs
+$JSEvents
 }
 
 InspectorBackendStub.prototype = {
@@ -811,10 +830,16 @@ InspectorBackendStub.prototype = {
                 return;
             }
 
+            if (!this._eventArgs[messageObject.method]) {
+                console.error("Protocol Error: Attempted to dispatch an unspecified method '" + messageObject.method + "'");
+                return;
+            }
+
             var params = [];
             if (messageObject.params) {
-                for (var key in messageObject.params)
-                    params.push(messageObject.params[key]);
+                var paramNames = this._eventArgs[messageObject.method];
+                for (var i = 0; i < paramNames.length; ++i)
+                    params.push(messageObject.params[paramNames[i]]);
             }
 
             dispatcher[functionName].apply(dispatcher, params);

@@ -1,3 +1,17 @@
+2011-04-13  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: there is a problem if an optional param is not at the end of a params list.
+        https://bugs.webkit.org/show_bug.cgi?id=58440
+
+        In InspectorBackend.dispatch method we are converting the message's params object into array of arguments
+        for a callback. But in some cases the optional parameter is declared in the middle of the params list.
+        That gets us into a problem if this param has been skipped in the message. In that case the tail of the
+        event params will be shifted. We can slightly modify dispatcher and it will put the params in right places.
+
+        * inspector/CodeGeneratorInspector.pm:
+
 2011-04-13  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Eric Seidel.
