@@ -1,3 +1,14 @@
+2011-04-13  Jessie Berlin  <jberlin@apple.com>
+
+        inspector/debugger/script-formatter.html broken on a bunch of platforms since introduction
+        in r83748
+        https://bugs.webkit.org/show_bug.cgi?id=58487
+
+        Disable the test until it is fixed to get the bots green.
+
+        * inspector/debugger/script-formatter.html: Removed.
+        * inspector/debugger/script-formatter.html-disabled: Copied from inspector/debugger/script-formatter.html.
+
 2011-04-13  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change / build fix. The file had
