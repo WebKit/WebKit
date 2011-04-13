@@ -86,8 +86,8 @@ class PortTest(unittest.TestCase):
 
     def test_pretty_patch_script_error(self):
         # FIXME: This is some ugly white-box test hacking ...
-        base._pretty_patch_available = True
         port = base.Port(executive=executive_mock.MockExecutive2(exception=ScriptError))
+        port._pretty_patch_available = True
         self.assertEqual(port.pretty_patch_text("patch.txt"),
                          port._pretty_patch_error_html)
 

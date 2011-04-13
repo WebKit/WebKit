@@ -132,10 +132,8 @@ class Port(object):
         # FIXME: prettypatch.py knows this path, why is it copied here?
         self._pretty_patch_path = self.path_from_webkit_base("Websites",
             "bugs.webkit.org", "PrettyPatch", "prettify.rb")
-        # If we're running on a mocked-out filesystem, this file almost
-        # certainly won't be available, so it's a good test to keep us
-        # from erroring out later.
-        self._pretty_patch_available = self._filesystem.exists(self._pretty_patch_path)
+        self._pretty_patch_available = None
+
         if not hasattr(self._options, 'configuration') or self._options.configuration is None:
             self._options.configuration = self.default_configuration()
         self._test_configuration = None
@@ -179,23 +177,22 @@ class Port(object):
         """This routine is used to check whether image_diff binary exists."""
         raise NotImplementedError('Port.check_image_diff')
 
-    def check_pretty_patch(self):
+    def check_pretty_patch(self, logging=True):
         """Checks whether we can use the PrettyPatch ruby script."""
-
         # check if Ruby is installed
         try:
             result = self._executive.run_command(['ruby', '--version'])
         except OSError, e:
             if e.errno in [errno.ENOENT, errno.EACCES, errno.ECHILD]:
-                _log.error("Ruby is not installed; "
-                           "can't generate pretty patches.")
-                _log.error('')
+                if logging:
+                    _log.error("Ruby is not installed; can't generate pretty patches.")
+                    _log.error('')
                 return False
 
         if not self.path_exists(self._pretty_patch_path):
-            _log.error('Unable to find %s .' % self._pretty_patch_path)
-            _log.error("Can't generate pretty patches.")
-            _log.error('')
+            if logging:
+                _log.error("Unable to find %s; can't generate pretty patches." % self._pretty_patch_path)
+                _log.error('')
             return False
 
         return True
@@ -758,6 +755,8 @@ class Port(object):
     _pretty_patch_error_html = "Failed to run PrettyPatch, see error log."
 
     def pretty_patch_text(self, diff_path):
+        if self._pretty_patch_available is None:
+            self._pretty_patch_available = self.check_pretty_patch(logging=False)
         if not self._pretty_patch_available:
             return self._pretty_patch_error_html
         command = ("ruby", "-I", self._filesystem.dirname(self._pretty_patch_path),

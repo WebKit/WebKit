@@ -108,7 +108,7 @@ class ChromiumPort(base.Port):
 
         # It's okay if pretty patch isn't available, but we will at
         # least log a message.
-        self.check_pretty_patch()
+        self._pretty_patch_available = self.check_pretty_patch()
 
         return result
 

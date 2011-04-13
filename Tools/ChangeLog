@@ -1,5 +1,21 @@
 2011-04-13  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: suppress extraneous pretty patch warnings
+        https://bugs.webkit.org/show_bug.cgi?id=58295
+
+        NRWT wasn't being careful about when it logged messages from
+        PrettyPatch not being available; it should only log during
+        check_build(), and be silent otherwise. This was causing us to
+        get multiple errors at runtime, which was confusing.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
+2011-04-13  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Jian Li.
 
         add chromium-linux-x86_64 to rebaseline-chromium-webkit-tests
