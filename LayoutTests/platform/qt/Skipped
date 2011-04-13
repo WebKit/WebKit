@@ -795,6 +795,10 @@ fast/ruby/rubyDOM-remove-rt2.html
 fast/ruby/rubyDOM-remove-text1.html
 fast/ruby/rubyDOM-remove-text2.html
 
+# [Qt] http/tests/misc/favicon-loads-with-icon-loading-override.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=58396
+http/tests/misc/favicon-loads-with-icon-loading-override.html
+
 # ============================================================================= #
 # Failing SVG tests
 # ============================================================================= #
