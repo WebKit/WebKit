@@ -1194,7 +1194,10 @@ class TestRunner:
     # FIXME: Have this replace results.html and have a checkbox for whether to show expected failures or not.
     def _write_unexpected_results_html_file(self, unexpected_results):
         base_dir = self._port.path_from_webkit_base('Tools', 'Scripts', 'webkitpy', 'layout_tests', 'layout_package')
-        self._fs.copyfile(self._fs.join(base_dir, "json_results.html"), self._fs.join(self._results_directory, "json_results.html"))
+        results_file = self._fs.join(base_dir, 'json_results.html')
+        # FIXME: What should we do if this doesn't exist (e.g., in unit tests)?
+        if self._fs.exists(results_file):
+            self._fs.copyfile(results_file, self._fs.join(self._results_directory, "json_results.html"))
 
     def _show_results_html_file(self):
         """Shows the results.html page."""

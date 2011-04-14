@@ -1,5 +1,17 @@
 2011-04-13  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, build fix.
+        https://bugs.webkit.org/show_bug.cgi?id=52763
+
+        r83799 broke test-webkitpy because it assumed we always have
+        access to a real filesystem (we don't during the unit tests).
+        Stubbing out the copy for now but we might need a better
+        solution at some point.
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+
+2011-04-13  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Tony Chang.
 
         new-run-webkit-tests --run-singly option is busted
