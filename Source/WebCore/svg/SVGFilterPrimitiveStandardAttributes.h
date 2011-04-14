@@ -70,6 +70,7 @@ private:
     virtual bool isFilterEffect() const { return true; }
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual bool rendererIsNeeded(RenderStyle*);
 
     // Animated property declarations
     DECLARE_ANIMATED_LENGTH(X, x)

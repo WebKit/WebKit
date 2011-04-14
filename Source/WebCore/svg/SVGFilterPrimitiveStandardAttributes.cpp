@@ -168,6 +168,14 @@ RenderObject* SVGFilterPrimitiveStandardAttributes::createRenderer(RenderArena* 
     return new (arena) RenderSVGResourceFilterPrimitive(this);
 }
 
+bool SVGFilterPrimitiveStandardAttributes::rendererIsNeeded(RenderStyle* style)
+{
+    if (parentNode() && (parentNode()->hasTagName(SVGNames::filterTag)))
+        return SVGStyledElement::rendererIsNeeded(style);
+
+    return false;
+}
+
 }
 
 #endif // ENABLE(SVG)

@@ -1,3 +1,20 @@
+2011-04-14  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Dirk Schulze.
+
+        svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg crashes in Debug build
+        https://bugs.webkit.org/show_bug.cgi?id=58525
+
+        A renderer is created even for those filter primitives
+        which parent is not a filter. A rendererIsNeeded() is
+        added to SVGFilterPrimitiveStandardAttributes.
+
+        Test: svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg
+
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::rendererIsNeeded):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+
 2011-04-14  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.
