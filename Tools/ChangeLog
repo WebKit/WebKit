@@ -1,3 +1,13 @@
+2011-04-13  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Barth.
+
+        Perl unit test removeEOL.pl should print test case name on failure
+        https://bugs.webkit.org/show_bug.cgi?id=58513
+
+        * Scripts/webkitperl/VCSUtils_unittest/removeEOL.pl: Pass $title as
+          second argument of Test::Simple::ok().
+
 2011-04-13  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -37,20 +37,20 @@ my $title;
 
 # New test
 $title = "removeEOL: Undefined argument.";
-ok(removeEOL(undef) eq "");
+ok(removeEOL(undef) eq "", $title);
 
 # New test
 $title = "removeEOL: Line with Windows line ending.";
-ok(removeEOL("This line ends with a Windows line ending.\r\n") eq "This line ends with a Windows line ending.");
+ok(removeEOL("This line ends with a Windows line ending.\r\n") eq "This line ends with a Windows line ending.", $title);
 
 # New test
 $title = "removeEOL: Line with Unix line ending.";
-ok(removeEOL("This line ends with a Unix line ending.\n") eq "This line ends with a Unix line ending.");
+ok(removeEOL("This line ends with a Unix line ending.\n") eq "This line ends with a Unix line ending.", $title);
 
 # New test
 $title = "removeEOL: Line with Mac line ending.";
-ok(removeEOL("This line ends with a Mac line ending.\r") eq "This line ends with a Mac line ending.");
+ok(removeEOL("This line ends with a Mac line ending.\r") eq "This line ends with a Mac line ending.", $title);
 
 # New test
 $title = "removeEOL: Line with a mix of line endings.";
-ok(removeEOL("This line contains a mix of line endings.\r\n\r\n\r\r\n\n\n\n") eq "This line contains a mix of line endings.");
+ok(removeEOL("This line contains a mix of line endings.\r\n\r\n\r\r\n\n\n\n") eq "This line contains a mix of line endings.", $title);
