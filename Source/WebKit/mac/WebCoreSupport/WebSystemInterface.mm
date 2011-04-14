@@ -78,6 +78,7 @@ void InitWebCoreSystemInterface(void)
     INIT(SetDragImage);
     INIT(SetHTTPPipeliningMaximumPriority);
     INIT(SetHTTPPipeliningPriority);
+    INIT(SetHTTPPipeliningMinimumFastLanePriority);
     INIT(SetNSURLConnectionDefersCallbacks);
     INIT(SetNSURLRequestShouldContentSniff);
     INIT(SetPatternBaseCTM);

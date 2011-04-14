@@ -220,6 +220,7 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
 #if PLATFORM(MAC)
     if (isHTTPPipeliningEnabled()) {
         wkSetHTTPPipeliningMaximumPriority(ResourceLoadPriorityHighest);
+        wkSetHTTPPipeliningMinimumFastLanePriority(ResourceLoadPriorityMedium);
         // When pipelining do not rate-limit requests sent from WebCore since CFNetwork handles that.
         return unlimitedConnectionCount;
     }

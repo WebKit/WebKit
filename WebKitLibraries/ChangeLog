@@ -1,3 +1,16 @@
+2011-04-14  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by David Kilzer.
+
+        Set minimum priority for fast lane connections
+        https://bugs.webkit.org/show_bug.cgi?id=58353
+
+        Add WKSetHTTPPipeliningMinimumFastLanePriority.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2011-04-08  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed, rolling out r83335.

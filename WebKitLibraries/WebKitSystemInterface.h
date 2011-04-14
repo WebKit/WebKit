@@ -354,6 +354,7 @@ unsigned WKInitializeMaximumHTTPConnectionCountPerHost(unsigned preferredConnect
 int WKGetHTTPPipeliningPriority(NSURLRequest *);
 void WKSetHTTPPipeliningMaximumPriority(int maximumPriority);
 void WKSetHTTPPipeliningPriority(NSMutableURLRequest *, int priority);
+void WKSetHTTPPipeliningMinimumFastLanePriority(int priority);
 
 void WKSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
 void WKSetCONNECTProxyAuthorizationForStream(CFReadStreamRef, CFStringRef proxyAuthorizationString);

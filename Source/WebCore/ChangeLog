@@ -1,3 +1,18 @@
+2011-04-14  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by David Kilzer.
+
+        Set minimum priority for fast lane connections
+        https://bugs.webkit.org/show_bug.cgi?id=58353
+
+        * WebCore.exp.in:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::initializeMaximumHTTPConnectionCountPerHost): Call
+        wkSetHTTPPipeliningMinimumFastLanePriority to allow javascript resources to use the fast
+        lane connections.
+
 2011-04-14  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

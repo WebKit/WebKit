@@ -93,6 +93,7 @@ unsigned (*wkInitializeMaximumHTTPConnectionCountPerHost)(unsigned preferredConn
 int (*wkGetHTTPPipeliningPriority)(NSURLRequest *);
 void (*wkSetHTTPPipeliningMaximumPriority)(int priority);
 void (*wkSetHTTPPipeliningPriority)(NSMutableURLRequest *, int priority);
+void (*wkSetHTTPPipeliningMinimumFastLanePriority)(int priority);
 void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
 void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL);
