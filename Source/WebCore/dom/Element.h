@@ -376,7 +376,7 @@ private:
 
     virtual void setPrefix(const AtomicString&, ExceptionCode&);
     virtual NodeType nodeType() const;
-    virtual bool childTypeAllowed(NodeType);
+    virtual bool childTypeAllowed(NodeType) const;
 
     virtual PassRefPtr<Attribute> createAttribute(const QualifiedName&, const AtomicString& value);
     

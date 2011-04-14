@@ -101,7 +101,7 @@ PassRefPtr<Node> ProcessingInstruction::cloneNode(bool /*deep*/)
 }
 
 // DOM Section 1.1.1
-bool ProcessingInstruction::childTypeAllowed(NodeType)
+bool ProcessingInstruction::childTypeAllowed(NodeType) const
 {
     return false;
 }

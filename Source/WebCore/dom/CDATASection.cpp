@@ -51,7 +51,7 @@ PassRefPtr<Node> CDATASection::cloneNode(bool /*deep*/)
     return create(document(), data());
 }
 
-bool CDATASection::childTypeAllowed(NodeType)
+bool CDATASection::childTypeAllowed(NodeType) const
 {
     return false;
 }

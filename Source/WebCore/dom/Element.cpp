@@ -1193,7 +1193,7 @@ void Element::removeShadowRoot()
     }
 }
 
-bool Element::childTypeAllowed(NodeType type)
+bool Element::childTypeAllowed(NodeType type) const
 {
     switch (type) {
     case ELEMENT_NODE:

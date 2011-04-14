@@ -49,7 +49,7 @@ PassRefPtr<Node> Notation::cloneNode(bool /*deep*/)
     return 0;
 }
 
-bool Notation::childTypeAllowed(NodeType)
+bool Notation::childTypeAllowed(NodeType) const
 {
     return false;
 }

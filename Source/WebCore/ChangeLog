@@ -1,3 +1,44 @@
+2011-04-13  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 58460 - childTypeAllowed() should be const
+        https://bugs.webkit.org/show_bug.cgi?id=58460
+
+        Made childTypeAllowed const.
+
+        No new tests. (minor refactoring).
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::childTypeAllowed):
+        * dom/Attr.h:
+        * dom/CDATASection.cpp:
+        (WebCore::CDATASection::childTypeAllowed):
+        * dom/CDATASection.h:
+        * dom/Comment.cpp:
+        (WebCore::Comment::childTypeAllowed):
+        * dom/Comment.h:
+        * dom/Document.cpp:
+        (WebCore::Document::childTypeAllowed):
+        * dom/Document.h:
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::childTypeAllowed):
+        * dom/DocumentFragment.h:
+        * dom/Element.cpp:
+        (WebCore::Element::childTypeAllowed):
+        * dom/Element.h:
+        * dom/Node.h:
+        (WebCore::Node::childTypeAllowed):
+        * dom/Notation.cpp:
+        (WebCore::Notation::childTypeAllowed):
+        * dom/Notation.h:
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::childTypeAllowed):
+        * dom/ProcessingInstruction.h:
+        * dom/Text.cpp:
+        (WebCore::Text::childTypeAllowed):
+        * dom/Text.h:
+
 2011-04-13  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Maciej Stachowiak.

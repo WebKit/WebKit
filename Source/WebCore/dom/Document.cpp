@@ -2733,7 +2733,7 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
 }
 
 // DOM Section 1.1.1
-bool Document::childTypeAllowed(NodeType type)
+bool Document::childTypeAllowed(NodeType type) const
 {
     switch (type) {
     case ATTRIBUTE_NODE:

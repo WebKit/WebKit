@@ -152,7 +152,7 @@ PassRefPtr<Node> Attr::cloneNode(bool /*deep*/)
 }
 
 // DOM Section 1.1.1
-bool Attr::childTypeAllowed(NodeType type)
+bool Attr::childTypeAllowed(NodeType type) const
 {
     switch (type) {
         case TEXT_NODE:
