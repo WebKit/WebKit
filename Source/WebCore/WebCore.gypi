@@ -3951,6 +3951,7 @@
             'platform/graphics/cg/GraphicsContextCG.h',
             'platform/graphics/cg/GraphicsContextPlatformPrivateCG.h',
             'platform/graphics/cg/ImageBufferCG.cpp',
+            'platform/graphics/cg/ImageBufferDataCG.cpp',
             'platform/graphics/cg/ImageCG.cpp',
             'platform/graphics/cg/ImageSourceCG.cpp',
             'platform/graphics/cg/ImageSourceCG.h',
