@@ -3493,3 +3493,10 @@ svg/zoom/page/zoom-mask-with-percentages.svg
 # [Qt] inspector/styles/styles-disable-then-enable.html make inspector/styles/styles-iframe.html fail in debug mode
 # https://bugs.webkit.org/show_bug.cgi?id=58313
 inspector/styles/styles-disable-then-enable.html
+
+# [Qt] fast/ruby tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=58523
+fast/ruby/after-block-doesnt-crash.html
+fast/ruby/after-table-doesnt-crash.html
+fast/ruby/before-block-doesnt-crash.html
+fast/ruby/before-table-doesnt-crash.html
