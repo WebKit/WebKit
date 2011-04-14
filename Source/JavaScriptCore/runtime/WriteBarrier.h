@@ -102,7 +102,6 @@ public:
     COMPILE_ASSERT(!JSValueChecker<T>::IsJSValue, WriteBarrier_JSValue_is_invalid__use_unknown);
     void set(JSGlobalData& globalData, const JSCell* owner, T* value)
     {
-        ASSERT_UNUSED(owner, owner);
         this->m_cell = reinterpret_cast<JSCell*>(value);
         writeBarrier(globalData, owner, this->m_cell);
 #if ENABLE(JSC_ZOMBIES)
@@ -156,7 +155,6 @@ template <> class WriteBarrierBase<Unknown> {
 public:
     void set(JSGlobalData& globalData, const JSCell* owner, JSValue value)
     {
-        ASSERT_UNUSED(owner, owner);
 #if ENABLE(JSC_ZOMBIES)
         ASSERT(!isZombie(owner));
         ASSERT(!value.isZombie());

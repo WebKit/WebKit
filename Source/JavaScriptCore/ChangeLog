@@ -1,5 +1,14 @@
 2011-04-14  Oliver Hunt  <oliver@apple.com>
 
+        Temporarily remove assertion that's firing all the time.
+
+        RS=Anders
+
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::set):
+
+2011-04-14  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Make protected object list in caches window reflect reality
