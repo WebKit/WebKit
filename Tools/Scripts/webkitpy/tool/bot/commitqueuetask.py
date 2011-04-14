@@ -205,10 +205,10 @@ class CommitQueueTask(object):
 
         second_results = self._delegate.layout_test_results()
         if self._results_failed_different_tests(first_results, second_results):
-            # We could report flaky tests here, but since run-webkit-tests
-            # is currently run with --exit-after-N-failures=1, we would need to
-            # be careful not to report constant failures as flaky due to earlier
-            # flaky test making them not fail (no results) in one of the runs.
+            # We could report flaky tests here, but we would need to be careful
+            # to use similar checks to ExpectedFailures._can_trust_results
+            # to make sure we don't report constant failures as flakes when
+            # we happen to hit the --exit-after-N-failures limit.
             # See https://bugs.webkit.org/show_bug.cgi?id=51272
             return False
 

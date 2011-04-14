@@ -2,6 +2,25 @@
 
         Reviewed by Adam Barth.
 
+        Up the failure limit to allow the commit-queue to actually land when the tree is red
+        https://bugs.webkit.org/show_bug.cgi?id=58499
+
+        This change increases the --exit-after-N-failures limit used by the commit-queue
+        from 1 to 10.  This will cause the code added in bug 58494 to actually get
+        exercised and the queues should start being able to land when the trees are red.
+
+        When testing I found that test_runtests_leopard_commit_queue_hack_command was the
+        only unit test to actually detect this change!  Since we don't actually
+        run on leopard anymore, I removed the hack code and repurposed the test.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+
+2011-04-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         commit-queue should be able to land when tree is red
         https://bugs.webkit.org/show_bug.cgi?id=58494
 

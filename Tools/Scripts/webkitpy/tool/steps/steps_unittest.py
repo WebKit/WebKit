@@ -66,17 +66,12 @@ class StepsTest(unittest.TestCase):
         tool.user.prompt = lambda message: 42
         self._run_step(PromptForBugOrTitle, tool=tool)
 
-    def test_runtests_leopard_commit_queue_hack_step(self):
-        expected_stderr = "Running Python unit tests\nRunning Perl unit tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\n"
-        OutputCapture().assert_outputs(self, self._run_step, [RunTests], expected_stderr=expected_stderr)
-
-    def test_runtests_leopard_commit_queue_hack_command(self):
+    def test_runtests_args(self):
         mock_options = self._step_options()
         step = RunTests(MockTool(log_executive=True), mock_options)
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
         mock_port = WebKitPort()
         mock_port.name = lambda: "Mac"
-        mock_port.is_leopard = lambda: True
         tool = MockTool(log_executive=True)
         tool.port = lambda: mock_port
         step = RunTests(tool, mock_options)
@@ -87,6 +82,6 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl']
 Running JavaScriptCore tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests']
 Running run-webkit-tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--no-new-test-results', '--no-launch-safari', '--exit-after-n-failures=1', '--wait-for-httpd', '--ignore-tests', 'compositing,media', '--quiet']
+MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--no-new-test-results', '--no-launch-safari', '--exit-after-n-failures=10', '--wait-for-httpd', '--quiet']
 """
         OutputCapture().assert_outputs(self, step.run, [{}], expected_stderr=expected_stderr)
