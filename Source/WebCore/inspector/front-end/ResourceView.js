@@ -166,7 +166,7 @@ WebInspector.CSSSourceFrame = function(resource)
 WebInspector.CSSSourceFrame.prototype = {
     isContentEditable: function()
     {
-        return !!this._styleSheet;
+        return !!this._styleSheet && !this._resource.isResourceRevision();
     },
 
     _loadStyleSheet: function()
@@ -196,12 +196,14 @@ WebInspector.CSSSourceFrame.prototype = {
         CSSAgent.getAllStyleSheets(didGetAllStyleSheets.bind(this));
     },
 
-    _editContent: function(newText, callback)
+    editContent: function(newText, callback)
     {
         if (!this._styleSheet) {
             callback("Stylesheet not found.");
             return;
         }
+
+        this._resetIncrementalUpdateTimer();
 
         function didSetText(success)
         {
@@ -210,8 +212,25 @@ WebInspector.CSSSourceFrame.prototype = {
                 error = "Failed to save modified stylesheet " + this._resource.url;
             callback(error);
         }
+        this._styleSheet.setText(newText, true, didSetText.bind(this));
+    },
 
-        this._styleSheet.setText(newText, didSetText.bind(this));
+    endEditing: function(oldRange, newRange)
+    {
+        function commitIncrementalEdit()
+        {
+            var majorChange = false;
+            this._styleSheet.setText(this._textModel.text, majorChange);
+        }
+        const updateTimeout = 200;
+        this._incrementalUpdateTimer = setTimeout(commitIncrementalEdit.bind(this), updateTimeout);
+    },
+
+    _resetIncrementalUpdateTimer: function()
+    {
+        if (this._incrementalUpdateTimer)
+            clearTimeout(this._incrementalUpdateTimer);
+        delete this._incrementalUpdateTimer;
     }
 }
 

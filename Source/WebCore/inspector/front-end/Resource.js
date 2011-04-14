@@ -640,9 +640,9 @@ WebInspector.Resource.prototype = {
         this._content = content;
     },
 
-    isLocallyModified: function()
+    isResourceRevision: function()
     {
-        return !!this._baseRevision;
+        return !!this._actualResource;
     },
 
     setContent: function(newContent, onRevert)
@@ -674,6 +674,7 @@ WebInspector.Resource.prototype = {
         var data = { revision: revisionResource };
         this._content = newContent;
         this.timestamp = new Date();
+
         this.dispatchEventToListeners("content-changed", data);
     },
 

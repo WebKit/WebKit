@@ -581,14 +581,14 @@ WebInspector.CSSStyleSheet.prototype = {
         return this._text;
     },
 
-    setText: function(newText, userCallback)
+    setText: function(newText, majorChange, userCallback)
     {
         function callback(error, isChangeSuccessful)
         {
              if (userCallback)
                  userCallback(isChangeSuccessful);
              if (isChangeSuccessful)
-                 WebInspector.cssModel._styleSheetChanged(this.id, true);
+                 WebInspector.cssModel._styleSheetChanged(this.id, majorChange);
         }
 
         CSSAgent.setStyleSheetText(this.id, newText, callback.bind(this));

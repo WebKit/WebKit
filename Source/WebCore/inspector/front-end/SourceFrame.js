@@ -923,10 +923,10 @@ WebInspector.SourceFrame.prototype = {
 
             callback();
         }
-        this._editContent(this._textModel.text, didEditContent.bind(this));
+        this.editContent(this._textModel.text, didEditContent.bind(this));
     },
 
-    _editContent: function(newContent, callback)
+    editContent: function(newContent, callback)
     {
         this._delegate.editScriptSource(newContent, callback);
     },

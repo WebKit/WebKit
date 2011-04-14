@@ -1,3 +1,24 @@
+2011-04-14  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: implement incremental CSS free flow editing.
+        https://bugs.webkit.org/show_bug.cgi?id=58529
+
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleSheet.prototype.setText):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.isResourceRevision):
+        (WebInspector.Resource.prototype.setContent):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.CSSSourceFrame.prototype.isContentEditable):
+        (WebInspector.CSSSourceFrame.prototype.editContent):
+        (WebInspector.CSSSourceFrame.prototype.endEditing.commitIncrementalEdit):
+        (WebInspector.CSSSourceFrame.prototype.endEditing):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.commitEditing):
+        (WebInspector.SourceFrame.prototype.editContent):
+
 2011-04-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.
