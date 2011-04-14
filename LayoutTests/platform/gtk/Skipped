@@ -183,6 +183,9 @@ fast/workers/storage/use-same-database-in-page-and-workers.html
 # https://bugs.webkit.org/show_bug.cgi?id=56309
 svg/text/text-deco-01-b.svg
 
+# https://bugs.webkit.org/show_bug.cgi?id=58525
+svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg
+
 ###############################################################################
 # EXPECTED FAILURES
 ###############################################################################
@@ -684,6 +687,9 @@ fast/loader/willSendRequest-null-for-preload.html
 # Requires willSendRequestReturnsNullOnRedirect + willSendRequest + didFinishLoading
 http/tests/misc/will-send-request-returns-null-on-redirect.html
 http/tests/misc/favicon-loads-with-icon-loading-override.html
+# Requires willPerformClientRedirectToURL
+# https://bugs.webkit.org/show_bug.cgi?id=58526
+http/tests/loading/onload-vs-immediate-refresh.pl
 
 # GTK+ does not have layoutTestController.setDomainRelaxationForbiddenForURLScheme
 http/tests/security/setDomainRelaxationForbiddenForURLScheme.html

@@ -1,3 +1,11 @@
+2011-04-14  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip 2 failing tests.
+
+        * platform/gtk/Skipped: Skip
+        http/tests/loading/onload-vs-immediate-refresh.pl and
+        svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg
+
 2011-04-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] fast/ruby tests fail
