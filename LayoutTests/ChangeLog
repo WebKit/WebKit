@@ -1,3 +1,26 @@
+2011-04-14  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for new tests.
+
+        * platform/gtk/fast/borders/bidi-002-expected.checksum: Added.
+        * platform/gtk/fast/borders/bidi-002-expected.png: Added.
+        * platform/gtk/fast/borders/bidi-002-expected.txt: Added.
+        * platform/gtk/fast/borders/bidi-004-expected.checksum: Added.
+        * platform/gtk/fast/borders/bidi-004-expected.png: Added.
+        * platform/gtk/fast/borders/bidi-004-expected.txt: Added.
+        * platform/gtk/fast/borders/bidi-009a-expected.checksum: Added.
+        * platform/gtk/fast/borders/bidi-009a-expected.png: Added.
+        * platform/gtk/fast/borders/bidi-009a-expected.txt: Added.
+        * platform/gtk/fast/frames/iframe-outline-expected.checksum: Added.
+        * platform/gtk/fast/frames/iframe-outline-expected.png: Added.
+        * platform/gtk/fast/frames/iframe-outline-expected.txt: Added.
+        * platform/gtk/fast/inline/positioned-object-between-replaced-elements-expected.checksum: Added.
+        * platform/gtk/fast/inline/positioned-object-between-replaced-elements-expected.png: Added.
+        * platform/gtk/fast/inline/positioned-object-between-replaced-elements-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.checksum: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt: Added.
+
 2011-04-14  Victoria Kirst  <vrk@google.com>
 
         Reviewed by James Robinson.
