@@ -53,6 +53,10 @@
 #include "PlatformString.h"
 #include "RealtimeAnalyserNode.h"
 
+#if DEBUG_AUDIONODE_REFERENCES
+#include <stdio.h>
+#endif
+
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>

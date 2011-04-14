@@ -32,6 +32,10 @@
 
 #include "FFTFrame.h"
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 #include <wtf/Complex.h>
 #include <wtf/MathExtras.h>
 #include <wtf/OwnPtr.h>

@@ -1,3 +1,18 @@
+2011-04-14  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix Web Audio build on Linux Debug and with stub FFTFrame
+        https://bugs.webkit.org/show_bug.cgi?id=58555
+
+        Built Chromium/Linux in Debug mode to test.
+
+        * platform/audio/FFTFrame.cpp:
+        * platform/audio/FFTFrameStub.cpp:
+        (WebCore::FFTFrame::initialize):
+        * webaudio/AudioContext.cpp:
+        * webaudio/DefaultAudioDestinationNode.cpp:
+
 2011-04-14  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

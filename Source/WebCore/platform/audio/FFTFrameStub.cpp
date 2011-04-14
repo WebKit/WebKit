@@ -79,6 +79,10 @@ void FFTFrame::doInverseFFT(float* data)
     ASSERT_NOT_REACHED();
 }
 
+void FFTFrame::initialize()
+{
+}
+
 void FFTFrame::cleanup()
 {
     ASSERT_NOT_REACHED();

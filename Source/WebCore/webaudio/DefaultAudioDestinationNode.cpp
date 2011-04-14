@@ -28,6 +28,10 @@
 
 #include "DefaultAudioDestinationNode.h"
 
+#ifndef NDEBUG
+#include <stdio.h>
+#endif
+
 namespace WebCore {
     
 DefaultAudioDestinationNode::DefaultAudioDestinationNode(AudioContext* context)
