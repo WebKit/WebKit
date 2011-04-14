@@ -722,7 +722,10 @@ static String nodePosition(Node* node)
                 result += "body";
                 break;
             }
-            result += "child " + String::number(n->nodeIndex()) + " {" + getTagName(n) + "}";
+            if (n->isShadowBoundary())
+                result += "{" + getTagName(n) + "}";
+            else
+                result += "child " + String::number(n->nodeIndex()) + " {" + getTagName(n) + "}";
         } else
             result += "document";
     }

@@ -35,6 +35,11 @@ ShadowRoot::ShadowRoot(Document* document)
     ASSERT(document);
 }
 
+String ShadowRoot::nodeName() const
+{
+    return "#shadow-root";
+}
+
 void ShadowRoot::recalcStyle(StyleChange change)
 {
     for (Node* n = firstChild(); n; n = n->nextSibling())

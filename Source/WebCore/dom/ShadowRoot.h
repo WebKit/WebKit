@@ -42,6 +42,7 @@ public:
 
 private:
     ShadowRoot(Document*);
+    virtual String nodeName() const;
 };
 
 inline PassRefPtr<ShadowRoot> ShadowRoot::create(Document* document)

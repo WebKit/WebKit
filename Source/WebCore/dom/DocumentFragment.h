@@ -38,9 +38,9 @@ public:
 
 protected:
     DocumentFragment(Document*);
+    virtual String nodeName() const;
 
 private:
-    virtual String nodeName() const;
     virtual NodeType nodeType() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType);

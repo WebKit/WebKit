@@ -1,3 +1,26 @@
+2011-04-13  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Change the representation of ShadowRoot nodes in render tree dumps
+        https://bugs.webkit.org/show_bug.cgi?id=58432
+
+        Show "#shadow-root" for ShadorRoot nodes instead of "#document-fragment"
+        in DRT results.
+
+        No new tests. This change doesn't affect existing tests yet.
+
+        * dom/DocumentFragment.h:
+          Make nodeName() protected in order that ShdowRoot can override it.
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::nodeName): Returns "#shadow-root".
+        * dom/ShadowRoot.h: Declare nodeName().
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::nodePosition): Don't show "child N " if the node is a shadow boundary.
+          We don't use isShadowRoot() here because the legacy shadow root nodes
+          return true for isShadowRoot() and we don't want to update existing
+          test results.
+
 2011-04-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
