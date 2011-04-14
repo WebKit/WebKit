@@ -1,3 +1,18 @@
+2011-04-14  Andrew Wason  <rectalogic@rectalogic.com>
+
+        Reviewed by Andreas Kling.
+
+        Fix GraphicsContext3DQt.cpp compilation warnings treated as errors
+        https://bugs.webkit.org/show_bug.cgi?id=58478
+
+        No new tests.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::getProcAddress):
+         Do not use deprecated QString constructor to avoid warning.
+        (WebCore::GraphicsContext3D::reshape):
+         Use parenthesis to avoid warning.
+
 2011-04-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Removed ScrollableArea::paintScrollCorner() added in r83820,
