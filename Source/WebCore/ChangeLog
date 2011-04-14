@@ -1,3 +1,11 @@
+2011-04-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Removed ScrollableArea::paintScrollCorner() added in r83820,
+        as it breaks chromium clang build (shadowed by RenderLayer::paintScrollCorner()
+        with a different signature)
+
+        * platform/ScrollableArea.h:
+
 2011-04-14  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
