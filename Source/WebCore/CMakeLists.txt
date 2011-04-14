@@ -1054,6 +1054,7 @@ SET(WebCore_SOURCES
     platform/LinkHash.cpp
     platform/Logging.cpp
     platform/MIMETypeRegistry.cpp
+    platform/RuntimeApplicationChecks.cpp
     platform/ScrollAnimator.cpp
     platform/ScrollableArea.cpp
     platform/Scrollbar.cpp

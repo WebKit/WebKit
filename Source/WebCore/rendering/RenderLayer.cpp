@@ -1404,7 +1404,7 @@ void RenderLayer::scrollTo(int x, int y)
         renderer()->repaintUsingContainer(repaintContainer, rectForRepaint);
 
     // Schedule the scroll DOM event.
-    renderer()->node()->document()->eventQueue()->enqueueScrollEvent(renderer()->node(), EventQueue::ScrollEventElementTarget);
+    renderer()->node()->document()->eventQueue()->enqueueOrDispatchScrollEvent(renderer()->node(), EventQueue::ScrollEventElementTarget);
 }
 
 void RenderLayer::scrollRectToVisible(const IntRect& rect, bool scrollToAnchor, const ScrollAlignment& alignX, const ScrollAlignment& alignY)

@@ -51,7 +51,7 @@ public:
     ~EventQueue();
 
     void enqueueEvent(PassRefPtr<Event>);
-    void enqueueScrollEvent(PassRefPtr<Node>, ScrollEventTargetType);
+    void enqueueOrDispatchScrollEvent(PassRefPtr<Node>, ScrollEventTargetType);
     bool cancelEvent(Event*);
     void cancelQueuedEvents();
 

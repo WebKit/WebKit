@@ -2572,6 +2572,8 @@ webcore_sources += \
 	Source/WebCore/platform/PopupMenuStyle.h \
 	Source/WebCore/platform/PurgeableBuffer.h \
 	Source/WebCore/platform/PurgePriority.h \
+	Source/WebCore/platform/RuntimeApplicationChecks.cpp \
+	Source/WebCore/platform/RuntimeApplicationChecks.h \
 	Source/WebCore/platform/SchemeRegistry.cpp \
 	Source/WebCore/platform/SchemeRegistry.h \
 	Source/WebCore/platform/ScrollAnimator.cpp \

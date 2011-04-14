@@ -2968,7 +2968,7 @@ void EventHandler::sendScrollEvent()
 {
     setFrameWasScrolledByUser();
     if (m_frame->view() && m_frame->document())
-        m_frame->document()->eventQueue()->enqueueScrollEvent(m_frame->document(), EventQueue::ScrollEventDocumentTarget);
+        m_frame->document()->eventQueue()->enqueueOrDispatchScrollEvent(m_frame->document(), EventQueue::ScrollEventDocumentTarget);
 }
 
 void EventHandler::setFrameWasScrolledByUser()

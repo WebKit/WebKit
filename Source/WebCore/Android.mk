@@ -486,6 +486,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/LinkHash.cpp \
 	platform/Logging.cpp \
 	platform/MIMETypeRegistry.cpp \
+	platform/RuntimeApplicationChecks.cpp \
 	platform/ScrollView.cpp \
 	platform/Scrollbar.cpp \
 	platform/ScrollbarThemeComposite.cpp \

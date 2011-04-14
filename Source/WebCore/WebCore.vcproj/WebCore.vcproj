@@ -26178,6 +26178,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\RuntimeApplicationChecks.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\RuntimeApplicationChecks.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\SchemeRegistry.cpp"
 				>
 			</File>

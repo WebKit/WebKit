@@ -28,12 +28,20 @@
 #include "EventQueue.h"
 
 #include "DOMWindow.h"
+#include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "RuntimeApplicationChecks.h"
 #include "ScriptExecutionContext.h"
 #include "SuspendableTimer.h"
 
 namespace WebCore {
+    
+static inline bool shouldDispatchScrollEventSynchronously(Document* document)
+{
+    ASSERT_ARG(document, document);
+    return applicationIsSafari() && (document->url().protocolIs("feed") || document->url().protocolIs("feeds"));
+}
 
 class EventQueueTimer : public SuspendableTimer {
     WTF_MAKE_NONCOPYABLE(EventQueueTimer);
@@ -71,14 +79,20 @@ void EventQueue::enqueueEvent(PassRefPtr<Event> event)
         m_pendingEventTimer->startOneShot(0);
 }
 
-void EventQueue::enqueueScrollEvent(PassRefPtr<Node> target, ScrollEventTargetType targetType)
+void EventQueue::enqueueOrDispatchScrollEvent(PassRefPtr<Node> target, ScrollEventTargetType targetType)
 {
-    if (!m_nodesWithQueuedScrollEvents.add(target.get()).second)
-        return;
-
     // Per the W3C CSSOM View Module, scroll events fired at the document should bubble, others should not.
     bool canBubble = targetType == ScrollEventDocumentTarget;
     RefPtr<Event> scrollEvent = Event::create(eventNames().scrollEvent, canBubble, false /* non cancelleable */);
+     
+    if (shouldDispatchScrollEventSynchronously(target->document())) {
+        target->dispatchEvent(scrollEvent.release());
+        return;
+    }
+
+    if (!m_nodesWithQueuedScrollEvents.add(target.get()).second)
+        return;
+
     scrollEvent->setTarget(target);
     enqueueEvent(scrollEvent.release());
 }

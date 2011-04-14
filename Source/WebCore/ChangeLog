@@ -1,3 +1,57 @@
+2011-04-14  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION (r75555): Safari RSS sidebar jiggles when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=52988
+        
+        Safari RSS relies on synchronous dispatch of ScrollEvent to update the
+        position of its sidebar during scrolling without producing a jiggling
+        effect. Due to r75555, this event is no longer dispatched synchronously
+        which results in stale repaints before the onscroll handler gets a
+        chance to update the position of the sidebar.
+        
+        Since it is impractical to resolve this issue in Safari RSS itself, add
+        a quirk that restores synchronous ScrollEvent dispatch for Safari RSS.
+        
+        No tests. This is an app-specific change that doesn't affect web
+        content.
+
+        * Android.mk: Add platform/RuntimeApplicationChecks.[cpp|h]
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * dom/EventQueue.cpp:
+        (WebCore::shouldDispatchScrollEventSynchronously): Send ScrollEvent
+        synchronously if the embedding application is Safari and the document's
+        URL scheme is "feed" or "feeds".
+        (WebCore::EventQueue::enqueueOrDispatchScrollEvent): Dispatch
+        ScrollEvent synchronously if shouldDispatchScrollEventSynchronously()
+        returns true.
+        * dom/EventQueue.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::sendScrollEvent): Call enqueueOrDispatchScrollEvent().
+        * platform/RuntimeApplicationChecks.cpp: Added.
+        (WebCore::mainBundleIsEqualTo): Add a helper routine for CF platforms
+        that checks if the main bundle's identifier is equal to a given string.
+        This function returns false for non-CF platforms.
+        (WebCore::applicationIsSafari): Call mainBundleIsEqualTo().
+        (WebCore::applicationIsAppleMail): Ditto.
+        (WebCore::applicationIsMicrosoftMessenger): Ditto.
+        (WebCore::applicationIsAdobeInstaller): Ditto.
+        (WebCore::applicationIsAOLInstantMessenger): Ditto.
+        (WebCore::applicationIsMicrosoftMyDay): Ditto.
+        (WebCore::applicationIsMicrosoftOutlook): Ditto.
+        * platform/mac/RuntimeApplicationChecks.mm: Removed. Functions moved to
+        RuntimeApplicationChecks.cpp.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo): Call enqueueOrDispatchScrollEvent().
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::scrollTo): Call enqueueOrDispatchScrollEvent().
+
 2011-04-14  John Bates  <jbates@google.com>
 
         Reviewed by Kenneth Russell.
