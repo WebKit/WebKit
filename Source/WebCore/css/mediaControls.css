@@ -60,7 +60,7 @@ audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-bu
     width: 16px;
     height: 16px;
     background-color: initial;
-    border: initial;
+    border: none !important;
     color: inherit;
 }
 
@@ -70,7 +70,7 @@ audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-bu
     width: 16px;
     height: 16px;
     background-color: initial;
-    border: initial;
+    border: none !important;
     color: inherit;
 }
 
@@ -100,7 +100,7 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     height: 16px;
     padding: 0px 2px;
     background-color: initial;
-    border: initial;
+    border: none !important;
     color: inherit;
     margin: initial;
 }
@@ -108,7 +108,7 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
 audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider {
     background-color: initial;
     border: initial;
-    color: inherit;
+    border: none !important;
     margin: initial;
 }
 
@@ -118,7 +118,7 @@ audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-se
     width: 16px;
     height: 16px;
     background-color: initial;
-    border: initial;
+    border: none !important;
     color: inherit;
 }
 
@@ -128,7 +128,7 @@ audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls
     width: 16px;
     height: 16px;
     background-color: initial;
-    border: initial;
+    border: none !important;
     color: inherit;
 }
 
@@ -138,21 +138,21 @@ audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-f
     width: 16px;
     height: 16px;
     background-color: initial;
-    border: initial;
+    border: none !important;
     color: inherit;
 }
 
 audio::-webkit-media-controls-rewind-button, video::-webkit-media-controls-rewind-button {
     display: none;
     background-color: initial;
-    border: initial;
+    border: none !important;
     color: inherit;
 }
 
 audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-controls-return-to-realtime-button {
     display: none;
     background-color: initial;
-    border: initial;
+    border: none !important;
     color: inherit;
 }
 
@@ -162,7 +162,7 @@ audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-medi
     width: 16px;
     height: 16px;
     background-color: initial;
-    border: initial;
+    border: none !important;
     color: inherit;
 }
 
@@ -170,7 +170,7 @@ audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-co
     -webkit-appearance: media-volume-slider-mute-button;
     display: none;
     background-color: initial;
-    border: initial;
+    border: none !important;
     color: inherit;
 }
 

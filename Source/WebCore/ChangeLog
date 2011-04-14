@@ -1,3 +1,29 @@
+2011-04-14  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        REGRESSION(r83397) [Qt] When clicking on the media elements they
+        grow 2 pixels.
+        https://bugs.webkit.org/show_bug.cgi?id=58477
+
+        Since r83397 the media controls elements are actual DOM elements.
+        Therefore the global style-sheet applies to them. html.css defines
+        input[type="button"]:active to be border-style: inset which means
+        that when the buttons are active they grow by their border size.
+
+        * css/mediaControls.css:
+        (audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button):
+        (audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline):
+        (audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider):
+        (audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button):
+        (audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button):
+        (audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-rewind-button, video::-webkit-media-controls-rewind-button):
+        (audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-controls-return-to-realtime-button):
+        (audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button):
+        (audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-controls-volume-slider-mute-button):
+
 2011-04-14  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
