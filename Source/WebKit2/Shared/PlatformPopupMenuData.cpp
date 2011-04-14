@@ -61,6 +61,7 @@ void PlatformPopupMenuData::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(selectedBackingStoreHandle);
 #elif PLATFORM(MAC)
     encoder->encode(fontInfo);
+    encoder->encode(shouldPopOver);
 #endif
 }
 
@@ -91,6 +92,8 @@ bool PlatformPopupMenuData::decode(CoreIPC::ArgumentDecoder* decoder, PlatformPo
     data.m_selectedBackingStore = ShareableBitmap::create(selectedBackingStoreHandle);
 #elif PLATFORM(MAC)
     if (!decoder->decode(data.fontInfo))
+        return false;
+    if (!decoder->decode(data.shouldPopOver))
         return false;
 #endif
     

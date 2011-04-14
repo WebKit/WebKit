@@ -54,6 +54,7 @@ struct PlatformPopupMenuData {
     RefPtr<ShareableBitmap> m_selectedBackingStore;
 #elif PLATFORM(MAC)
     FontInfo fontInfo;
+    bool shouldPopOver;
 #endif
 };
 

@@ -108,11 +108,20 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
 
     // These values were borrowed from AppKit to match their placement of the menu.
     const int popOverHorizontalAdjust = -10;
-    NSRect titleFrame = [m_popup.get()  titleRectForBounds:rect];
-    if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
-        titleFrame = rect;
-    float vertOffset = roundf((NSMaxY(rect) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
-    NSPoint location = NSMakePoint(NSMinX(rect) + popOverHorizontalAdjust, NSMaxY(rect) - vertOffset);
+    const int popUnderHorizontalAdjust = 6;
+    const int popUnderVerticalAdjust = 6;
+    
+    // Menus that pop-over directly obscure the node that generated the popup menu.
+    // Menus that pop-under are offset underneath it.
+    NSPoint location;
+    if (data.shouldPopOver) {
+        NSRect titleFrame = [m_popup.get()  titleRectForBounds:rect];
+        if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
+            titleFrame = rect;
+        float vertOffset = roundf((NSMaxY(rect) - NSMaxY(titleFrame)) + NSHeight(titleFrame));
+        location = NSMakePoint(NSMinX(rect) + popOverHorizontalAdjust, NSMaxY(rect) - vertOffset);
+    } else
+        location = NSMakePoint(NSMinX(rect) + popUnderHorizontalAdjust, NSMaxY(rect) + popUnderVerticalAdjust);  
 
     RetainPtr<NSView> dummyView(AdoptNS, [[NSView alloc] initWithFrame:rect]);
     [m_webView addSubview:dummyView.get()];

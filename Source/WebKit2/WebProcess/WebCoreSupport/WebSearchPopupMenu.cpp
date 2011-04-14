@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -52,7 +52,7 @@ void WebSearchPopupMenu::loadRecentSearches(const AtomicString&, Vector<String>&
 
 bool WebSearchPopupMenu::enabled()
 {
-    return false;
+    return true;
 }
 
 } // namespace WebKit

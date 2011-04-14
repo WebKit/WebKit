@@ -1,3 +1,24 @@
+2011-04-14  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8665102> and https://bugs.webkit.org/show_bug.cgi?id=58595
+        Menu is not displayed for <input type=search results="5">
+
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp:
+        (WebKit::WebSearchPopupMenu::enabled): Return true, like all good search popup menus should.
+
+        * WebProcess/WebCoreSupport/mac/WebPopupMenuMac.mm:
+        (WebKit::WebPopupMenu::setUpPlatformData): Remember the shouldPopOver-ness.
+
+        * Shared/PlatformPopupMenuData.cpp:
+        (WebKit::PlatformPopupMenuData::encode): Remember the shouldPopOver-ness.
+        (WebKit::PlatformPopupMenuData::decode): Remember the shouldPopOver-ness.
+        * Shared/PlatformPopupMenuData.h:
+
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu): Use the shouldPopOver-ness to adjust display position.
+
 2011-04-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
