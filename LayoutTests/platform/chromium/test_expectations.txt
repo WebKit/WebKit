@@ -2860,9 +2860,6 @@ BUGWK47925 GPU MAC : compositing/plugins/large-to-small-composited-plugin.html =
 // in Safari's; this should probably be fixed.
 BUGWK47926 GPU MAC : compositing/geometry/composited-html-size.html = IMAGE
 
-// These tests are missing an entire layer in the layer tree output.
-BUGWK47927 DEBUG GPU WIN LINUX : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = PASS TEXT
-
 // The following failure seems suspicious because it does not contain
 // any text; it seems that the layer tree should precisely match
 // Safari's.
@@ -2925,7 +2922,7 @@ BUGCR74982 GPU WIN LINUX : media/video-transformed.html = IMAGE
 BUGCR74982 GPU MAC SNOWLEOPARD : media/video-transformed.html = IMAGE
 BUGCR74982 GPU : media/video-zoom-controls.html = IMAGE
 
-BUGWK55708 BUGCR75345 GPU MAC : media/video-controls-rendering.html = CRASH
+BUGWK55708 BUGCR75345 GPU MAC : media/video-controls-rendering.html = CRASH IMAGE
 BUGWK55708 BUGCR75345 GPU MAC : media/video-zoom.html = CRASH
 BUGWK55718 BUGCR75354 GPU : media/media-document-audio-repaint.html = IMAGE+TEXT
 
@@ -3492,5 +3489,4 @@ BUGCR79241 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEX
 BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
 
 BUGWK58306 GPU MAC DEBUG : media/adopt-node-crash.html = CRASH
-
 
