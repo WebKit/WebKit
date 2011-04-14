@@ -1,3 +1,31 @@
+2011-04-14  Adam Roben  <aroben@apple.com>
+
+        Add new Windows expected results after r83820
+
+        Windows differs from Mac on these tests due to extra scrollbar layers. Presumably this is
+        because Mac uses native scrollbars for frames, and thus can't put them into layers.
+
+        <http://webkit.org/b/58535> tracks the difference, but will probably just be closed as
+        "works correctly".
+
+        * platform/win/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt: Added.
+        * platform/win/compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt: Added.
+        * platform/win/compositing/iframes/become-overlapped-iframe-expected.txt: Added.
+        * platform/win/compositing/iframes/composited-parent-iframe-expected.txt: Added.
+        * platform/win/compositing/iframes/connect-compositing-iframe-delayed-expected.txt: Added.
+        * platform/win/compositing/iframes/connect-compositing-iframe-expected.txt: Added.
+        * platform/win/compositing/iframes/connect-compositing-iframe2-expected.txt: Added.
+        * platform/win/compositing/iframes/connect-compositing-iframe3-expected.txt: Added.
+        * platform/win/compositing/iframes/enter-compositing-iframe-expected.txt: Added.
+        * platform/win/compositing/iframes/iframe-resize-expected.txt: Added.
+        * platform/win/compositing/iframes/iframe-size-from-zero-expected.txt: Added.
+        * platform/win/compositing/iframes/overlapped-iframe-expected.txt: Added.
+        * platform/win/compositing/iframes/scrolling-iframe-expected.txt: Added.
+        * platform/win/compositing/layer-creation/overflow-scroll-overlap-expected.txt: Added.
+        * platform/win/compositing/overflow/content-gains-scrollbars-expected.txt: Added.
+        * platform/win/compositing/overflow/overflow-scrollbar-layers-expected.txt: Added.
+        * platform/win/compositing/overflow/resize-painting-expected.txt: Added.
+
 2011-04-14  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Updated/added chromium test expectation for media controls tests following CSS change in r83847.
