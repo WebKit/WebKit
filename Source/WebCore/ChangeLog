@@ -1,3 +1,15 @@
+2011-04-13  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION(r81880): Paste menu is disabled for many edit fields (yahoo and google search, yahoo mail msg, forms, etc)
+        https://bugs.webkit.org/show_bug.cgi?id=58284
+        <rdar://problem/9246149>
+
+        * WebCore.exp.in: Exporting EditingBehavior.h for use in WebKit2
+        * editing/EditingBehavior.h:
+        (WebCore::EditingBehavior::shouldClearSelectionWhenLosingWebPageFocus): moving the platform-specific code out of an #ifdef and into this class for run-time instead of compile-time checking
+
 2011-04-13  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Eric Seidel.

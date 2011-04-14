@@ -79,6 +79,7 @@
 #include <WebCore/DocumentMarkerController.h>
 #include <WebCore/DragController.h>
 #include <WebCore/DragData.h>
+#include <WebCore/EditingBehavior.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/FormState.h>
@@ -1145,8 +1146,9 @@ void WebPage::viewWillEndLiveResize()
 
 void WebPage::setFocused(bool isFocused)
 {
-    if (!isFocused)
+    if (!isFocused && m_page->focusController()->focusedOrMainFrame()->editor()->behavior().shouldClearSelectionWhenLosingWebPageFocus())
         m_page->focusController()->focusedOrMainFrame()->selection()->clear();
+
     m_page->focusController()->setFocused(isFocused);
 }
 

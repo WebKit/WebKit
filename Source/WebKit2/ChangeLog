@@ -1,3 +1,14 @@
+2011-04-13  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION(r81880): Paste menu is disabled for many edit fields (yahoo and google search, yahoo mail msg, forms, etc)
+        https://bugs.webkit.org/show_bug.cgi?id=58284
+        <rdar://problem/9246149>
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setFocused): Check for whether we are not supposed to be focused AND whether our platform behavior dictates to clear out the selection
+
 2011-04-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
