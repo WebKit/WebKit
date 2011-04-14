@@ -1,3 +1,15 @@
+2011-04-13  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        gdb-safari should pass arguments to safari.
+        https://bugs.webkit.org/show_bug.cgi?id=58439
+
+        We can do:
+          gdb-safari --debug LayoutTests/.../foo.html
+
+        * Scripts/gdb-safari: Passing @ARGV to Safari via gdb --arg.
+
 2011-04-13  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, build fix.
