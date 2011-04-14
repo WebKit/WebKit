@@ -32,7 +32,7 @@
 #include "Tracing.h"
 #include <algorithm>
 
-#define COLLECT_ON_EVERY_SLOW_ALLOCATION 1
+#define COLLECT_ON_EVERY_SLOW_ALLOCATION 0
 
 using namespace std;
 
