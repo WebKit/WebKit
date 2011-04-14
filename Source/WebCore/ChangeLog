@@ -1,3 +1,25 @@
+2011-04-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r83847.
+        http://trac.webkit.org/changeset/83847
+        https://bugs.webkit.org/show_bug.cgi?id=58477
+
+        Chromium media controls do use button borders, so this change
+        is incorrect.
+
+        * css/mediaControls.css:
+        (audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button):
+        (audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button):
+        (audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline):
+        (audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider):
+        (audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button):
+        (audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button):
+        (audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button):
+        (audio::-webkit-media-controls-rewind-button, video::-webkit-media-controls-rewind-button):
+        (audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-controls-return-to-realtime-button):
+        (audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button):
+        (audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-controls-volume-slider-mute-button):
+
 2011-04-14  Andrew Wason  <rectalogic@rectalogic.com>
 
         Reviewed by Andreas Kling.
