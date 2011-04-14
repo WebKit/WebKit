@@ -1,3 +1,10 @@
+2011-04-13  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change - remove tests that are no longer
+        failing.
+
+        * platform/mac/test_expectations.txt:
+
 2011-04-13  Jian Li  <jianli@chromium.org>
 
         Unreviewed, rebaseline 4 tests added as r83787.
