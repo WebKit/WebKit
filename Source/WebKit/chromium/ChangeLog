@@ -1,3 +1,15 @@
+2011-04-14  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] TilingData should return 1 tile if tile size is texture size.
+        https://bugs.webkit.org/show_bug.cgi?id=58364
+
+        Update test to properly handle this case.
+
+        * tests/TilingDataTest.cpp:
+        (WebCore::TEST):
+
 2011-04-14  Bill Budge  <bbudge@chromium.org>
 
         Reviewed by Darin Fisher.

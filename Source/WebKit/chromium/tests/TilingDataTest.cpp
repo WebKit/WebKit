@@ -60,6 +60,10 @@ TEST(TilingDataTest, numTiles_TilingNoBorders)
 
     EXPECT_EQ(1, TilingData(1,  1,  1, false).numTiles());
     EXPECT_EQ(2, TilingData(1,  1,  2, false).numTiles());
+    EXPECT_EQ(2, TilingData(1,  2,  1, false).numTiles());
+    EXPECT_EQ(1, TilingData(2,  1,  1, false).numTiles());
+    EXPECT_EQ(1, TilingData(2,  1,  2, false).numTiles());
+    EXPECT_EQ(1, TilingData(2,  2,  1, false).numTiles());
     EXPECT_EQ(1, TilingData(2,  2,  2, false).numTiles());
     EXPECT_EQ(1, TilingData(3,  3,  3, false).numTiles());
 
@@ -105,9 +109,13 @@ TEST(TilingDataTest, numTiles_TilingWithBorders)
     EXPECT_EQ(0, TilingData(-1, 1,  1, true).numTiles());
     EXPECT_EQ(0, TilingData(0,  1,  1, true).numTiles());
 
-    EXPECT_EQ(0, TilingData(1,  1,  1, true).numTiles());
+    EXPECT_EQ(1, TilingData(1,  1,  1, true).numTiles());
     EXPECT_EQ(0, TilingData(1,  1,  2, true).numTiles());
-    EXPECT_EQ(0, TilingData(2,  2,  2, true).numTiles());
+    EXPECT_EQ(0, TilingData(1,  2,  1, true).numTiles());
+    EXPECT_EQ(1, TilingData(2,  1,  1, true).numTiles());
+    EXPECT_EQ(1, TilingData(2,  1,  2, true).numTiles());
+    EXPECT_EQ(1, TilingData(2,  2,  1, true).numTiles());
+    EXPECT_EQ(1, TilingData(2,  2,  2, true).numTiles());
 
     EXPECT_EQ(1, TilingData(3,  1,  3, true).numTiles());
     EXPECT_EQ(1, TilingData(3,  2,  3, true).numTiles());
