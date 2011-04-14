@@ -220,6 +220,11 @@ private:
 
 void InspectorDatabaseAgent::didOpenDatabase(PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
 {
+    if (InspectorDatabaseResource* resource = findByFileName(database->fileName())) {
+        resource->setDatabase(database);
+        return;
+    }
+
     RefPtr<InspectorDatabaseResource> resource = InspectorDatabaseResource::create(database, domain, name, version);
     m_resources.set(resource->id(), resource);
     // Resources are only bound while visible.
@@ -289,6 +294,15 @@ int InspectorDatabaseAgent::databaseId(Database* database)
     for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != m_resources.end(); ++it) {
         if (it->second->database() == database)
             return it->first;
+    }
+    return 0;
+}
+
+InspectorDatabaseResource* InspectorDatabaseAgent::findByFileName(const String& fileName)
+{
+    for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != m_resources.end(); ++it) {
+        if (it->second->database()->fileName() == fileName)
+            return it->second.get();
     }
     return 0;
 }

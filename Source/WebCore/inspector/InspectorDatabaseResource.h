@@ -48,6 +48,7 @@ public:
 
     void bind(InspectorFrontend::Database*);
     Database* database() { return m_database.get(); }
+    void setDatabase(PassRefPtr<Database> database) { m_database = database; }
     int id() const { return m_id; }
 
 private:

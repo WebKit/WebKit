@@ -70,6 +70,7 @@ private:
     explicit InspectorDatabaseAgent(InstrumentingAgents*);
 
     Database* databaseForId(int databaseId);
+    InspectorDatabaseResource* findByFileName(const String& fileName);
 
     InstrumentingAgents* m_instrumentingAgents;
     typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
