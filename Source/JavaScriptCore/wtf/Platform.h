@@ -352,6 +352,10 @@
 #  error "Cannot use both of WTF_CPU_ARM_TRADITIONAL and WTF_CPU_ARM_THUMB2 platforms"
 #endif /* !defined(WTF_CPU_ARM_TRADITIONAL) && !defined(WTF_CPU_ARM_THUMB2) */
 
+#if defined(__ARM_NEON__) && !defined(WTF_CPU_ARM_NEON)
+#define WTF_CPU_ARM_NEON 1
+#endif
+
 #endif /* ARM */
 
 #if CPU(ARM) || CPU(MIPS)

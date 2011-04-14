@@ -30,6 +30,13 @@
 #include "FELighting.h"
 
 #include "LightSource.h"
+#include "PointLightSource.h"
+#include "SpotLightSource.h"
+
+#if CPU(ARM_NEON) && COMPILER(GCC)
+#include "FELightingNEON.h"
+#include <wtf/Vector.h>
+#endif
 
 namespace WebCore {
 
@@ -301,6 +308,9 @@ bool FELighting::drawLighting(ByteArray* pixels, int width, int height)
 
     if (width >= 3 && height >= 3) {
         // Interior pixels
+#if CPU(ARM_NEON) && COMPILER(GCC)
+        drawInteriorPixels(data, paintingData);
+#else
         for (int y = 1; y < data.heightDecreasedByOne; ++y) {
             offset = y * data.widthMultipliedByPixelSize + cPixelSize;
             for (int x = 1; x < data.widthDecreasedByOne; ++x, offset += cPixelSize) {
@@ -308,6 +318,7 @@ bool FELighting::drawLighting(ByteArray* pixels, int width, int height)
                 inlineSetPixel(offset, data, paintingData, x, y, cFactor1div4, cFactor1div4, normalVector);
             }
         }
+#endif
     }
 
     int lastPixel = data.widthMultipliedByPixelSize * height;
@@ -353,6 +364,118 @@ void FELighting::apply()
     IntSize absolutePaintSize = absolutePaintRect().size();
     drawLighting(srcPixelArray, absolutePaintSize.width(), absolutePaintSize.height());
 }
+
+#if CPU(ARM_NEON) && COMPILER(GCC)
+
+static int getPowerCoefficients(float exponent)
+{
+    // Calling a powf function from the assembly code would require to save
+    // and reload a lot of NEON registers. Since the base is in range [0..1]
+    // and only 8 bit precision is required, we use our own powf function.
+    // This is probably not the best, but it uses only a few registers and
+    // gives us enough precision (modifying the exponent field directly would
+    // also be possible).
+
+    // First, we limit the exponent to maximum of 64, which gives us enough
+    // precision. We split the exponent to an integer and fraction part,
+    // since a^x = (a^y)*(a^z) where x = y+z. The integer exponent of the
+    // power is estimated by square, and the fraction exponent of the power
+    // is estimated by square root assembly instructions.
+    int i, result;
+
+    if (exponent < 0)
+        exponent = 1 / (-exponent);
+
+    if (exponent > 63.99)
+        exponent = 63.99;
+
+    exponent /= 64;
+    result = 0;
+    for (i = 11; i >= 0; --i) {
+        exponent *= 2;
+        if (exponent >= 1) {
+            result |= 1 << i;
+            exponent -= 1;
+        }
+    }
+    return result;
+}
+
+void FELighting::drawInteriorPixels(LightingData& data, LightSource::PaintingData& paintingData)
+{
+    WTF_ALIGNED(FELightingFloatArgumentsForNeon, floatArguments, 16);
+
+    FELightingPaintingDataForNeon neonData = {
+        data.pixels->data(),
+        data.widthDecreasedByOne - 1,
+        data.heightDecreasedByOne - 1,
+        0,
+        0,
+        0,
+        &floatArguments,
+        feLightingConstantsForNeon()
+    };
+
+    // Set light source arguments.
+    floatArguments.constOne = 1;
+
+    floatArguments.colorRed = m_lightingColor.red();
+    floatArguments.colorGreen = m_lightingColor.green();
+    floatArguments.colorBlue = m_lightingColor.blue();
+    floatArguments.padding4 = 0;
+
+    if (m_lightSource->type() == LS_POINT) {
+        neonData.flags |= FLAG_POINT_LIGHT;
+        PointLightSource* pointLightSource = static_cast<PointLightSource*>(m_lightSource.get());
+        floatArguments.lightX = pointLightSource->position().x();
+        floatArguments.lightY = pointLightSource->position().y();
+        floatArguments.lightZ = pointLightSource->position().z();
+        floatArguments.padding2 = 0;
+    } else if (m_lightSource->type() == LS_SPOT) {
+        neonData.flags |= FLAG_SPOT_LIGHT;
+        SpotLightSource* spotLightSource = static_cast<SpotLightSource*>(m_lightSource.get());
+        floatArguments.lightX = spotLightSource->position().x();
+        floatArguments.lightY = spotLightSource->position().y();
+        floatArguments.lightZ = spotLightSource->position().z();
+        floatArguments.padding2 = 0;
+
+        floatArguments.directionX = paintingData.directionVector.x();
+        floatArguments.directionY = paintingData.directionVector.y();
+        floatArguments.directionZ = paintingData.directionVector.z();
+        floatArguments.padding3 = 0;
+
+        floatArguments.coneCutOffLimit = paintingData.coneCutOffLimit;
+        floatArguments.coneFullLight = paintingData.coneFullLight;
+        floatArguments.coneCutOffRange = paintingData.coneCutOffLimit - paintingData.coneFullLight;
+        neonData.coneExponent = getPowerCoefficients(spotLightSource->specularExponent());
+        if (spotLightSource->specularExponent() == 1)
+            neonData.flags |= FLAG_CONE_EXPONENT_IS_1;
+    } else {
+        ASSERT(m_lightSource.type == LS_DISTANT);
+        floatArguments.lightX = paintingData.lightVector.x();
+        floatArguments.lightY = paintingData.lightVector.y();
+        floatArguments.lightZ = paintingData.lightVector.z();
+        floatArguments.padding2 = 1;
+    }
+
+    // Set lighting arguments.
+    floatArguments.surfaceScale = data.surfaceScale;
+    floatArguments.minusSurfaceScaleDividedByFour = -data.surfaceScale / 4;
+    if (m_lightingType == FELighting::DiffuseLighting)
+        floatArguments.diffuseConstant = m_diffuseConstant;
+    else {
+        neonData.flags |= FLAG_SPECULAR_LIGHT;
+        floatArguments.diffuseConstant = m_specularConstant;
+        neonData.specularExponent = getPowerCoefficients(m_specularExponent);
+        if (m_specularExponent == 1)
+            neonData.flags |= FLAG_SPECULAR_EXPONENT_IS_1;
+    }
+    if (floatArguments.diffuseConstant == 1)
+        neonData.flags |= FLAG_DIFFUSE_CONST_IS_1;
+
+    neonDrawLighting(&neonData);
+}
+#endif // CPU(ARM_NEON) && COMPILER(GCC)
 
 } // namespace WebCore
 

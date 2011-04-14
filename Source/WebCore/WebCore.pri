@@ -93,6 +93,7 @@ WEBCORE_INCLUDEPATH = \
     $$SOURCE_DIR/WebCore/platform/audio \
     $$SOURCE_DIR/WebCore/platform/graphics \
     $$SOURCE_DIR/WebCore/platform/graphics/filters \
+    $$SOURCE_DIR/WebCore/platform/graphics/filters/arm \
     $$SOURCE_DIR/WebCore/platform/graphics/texmap \
     $$SOURCE_DIR/WebCore/platform/graphics/transforms \
     $$SOURCE_DIR/WebCore/platform/image-decoders \

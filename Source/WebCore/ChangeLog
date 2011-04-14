@@ -1,3 +1,25 @@
+2011-04-14  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Optimizing lightning filter to ARM-NEON SIMD instruction set
+        https://bugs.webkit.org/show_bug.cgi?id=54456
+
+        NEON is the SIMD instruction set for ARM. This instruction set
+        allows to speed-up the lighting filter by 4 times on ARM
+        (on WebCore/manual-tests/svg-filter-animation.svg).
+
+        * WebCore.pri:
+        * WebCore.pro:
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::drawLighting):
+        (WebCore::getPowerCoefficients):
+        (WebCore::FELighting::drawInteriorPixels):
+        * platform/graphics/filters/FELighting.h:
+        * platform/graphics/filters/arm/FELightingNEON.cpp: Added.
+        (__attribute__):
+        * platform/graphics/filters/arm/FELightingNEON.h: Added.
+
 2011-04-14  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
 
         Reviewed by Benjamin Poulain.

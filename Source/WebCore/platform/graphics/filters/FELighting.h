@@ -33,6 +33,7 @@
 #include "FilterEffect.h"
 #include "LightSource.h"
 #include <wtf/ByteArray.h>
+#include <wtf/Platform.h>
 
 // Common base class for FEDiffuseLighting and FESpecularLighting
 
@@ -78,6 +79,10 @@ protected:
     // Not worth to inline every occurence of setPixel.
     void setPixel(int offset, LightingData&, LightSource::PaintingData&,
                   int lightX, int lightY, float factorX, float factorY, IntPoint& normalVector);
+
+#if CPU(ARM_NEON) && COMPILER(GCC)
+    void drawInteriorPixels(LightingData&, LightSource::PaintingData&);
+#endif
 
     LightingType m_lightingType;
     RefPtr<LightSource> m_lightSource;
