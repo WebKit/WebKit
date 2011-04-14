@@ -63,7 +63,7 @@ private:
     virtual Type type() const { return APIType; }
 
     WebPageGroupData m_data;
-    RefPtr<WebPreferences> m_preferences;
+    mutable RefPtr<WebPreferences> m_preferences;
     HashSet<WebPageProxy*> m_pages;
 };
 

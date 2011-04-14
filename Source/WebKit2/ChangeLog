@@ -1,3 +1,18 @@
+2011-04-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Make creating WebPreferences lazy
+        https://bugs.webkit.org/show_bug.cgi?id=58570
+
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::WebPageGroup):
+        (WebKit::WebPageGroup::~WebPageGroup):
+        (WebKit::WebPageGroup::setPreferences):
+        (WebKit::WebPageGroup::preferences):
+        * UIProcess/WebPageGroup.h:
+        Don't create the WebPreference object until it is requested.
+
 2011-04-14  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by David Kilzer.
