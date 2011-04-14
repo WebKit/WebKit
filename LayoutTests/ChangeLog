@@ -1,25 +1,10 @@
-2011-04-14  Philippe Normand  <pnormand@igalia.com>
+2011-04-14  James Robinson  <jamesr@chromium.org>
 
-        Unreviewed, GTK baselines for new tests.
+        Few more updates for r83820.
 
-        * platform/gtk/fast/borders/bidi-002-expected.checksum: Added.
-        * platform/gtk/fast/borders/bidi-002-expected.png: Added.
-        * platform/gtk/fast/borders/bidi-002-expected.txt: Added.
-        * platform/gtk/fast/borders/bidi-004-expected.checksum: Added.
-        * platform/gtk/fast/borders/bidi-004-expected.png: Added.
-        * platform/gtk/fast/borders/bidi-004-expected.txt: Added.
-        * platform/gtk/fast/borders/bidi-009a-expected.checksum: Added.
-        * platform/gtk/fast/borders/bidi-009a-expected.png: Added.
-        * platform/gtk/fast/borders/bidi-009a-expected.txt: Added.
-        * platform/gtk/fast/frames/iframe-outline-expected.checksum: Added.
-        * platform/gtk/fast/frames/iframe-outline-expected.png: Added.
-        * platform/gtk/fast/frames/iframe-outline-expected.txt: Added.
-        * platform/gtk/fast/inline/positioned-object-between-replaced-elements-expected.checksum: Added.
-        * platform/gtk/fast/inline/positioned-object-between-replaced-elements-expected.png: Added.
-        * platform/gtk/fast/inline/positioned-object-between-replaced-elements-expected.txt: Added.
-        * platform/gtk/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.checksum: Added.
-        * platform/gtk/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png: Added.
-        * platform/gtk/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt: Added.
+        * platform/chromium-gpu/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt: Renamed from LayoutTests/platform/chromium-gpu-win/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt.
+        * platform/chromium-gpu/compositing/layer-creation/overflow-scroll-overlap-expected.txt: Renamed from LayoutTests/platform/chromium-gpu/compositing/layer-creation.
+        * platform/chromium/test_expectations.txt:
 
 2011-04-14  Victoria Kirst  <vrk@google.com>
 
