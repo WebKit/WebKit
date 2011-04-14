@@ -1,3 +1,15 @@
+2011-04-13  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Tests that iframe outline is drawn.
+        https://bugs.webkit.org/show_bug.cgi?id=57439
+
+        * fast/frames/iframe-outline.html: Added.
+        * platform/mac/fast/frames/iframe-outline-expected.checksum: Added.
+        * platform/mac/fast/frames/iframe-outline-expected.png: Added.
+        * platform/mac/fast/frames/iframe-outline-expected.txt: Added.
+
 2011-04-13  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change - remove tests that are no longer

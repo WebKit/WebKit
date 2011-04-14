@@ -1,3 +1,15 @@
+2011-04-13  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Draw outline for render widgets.
+        https://bugs.webkit.org/show_bug.cgi?id=57439
+
+        Test: fast/frames/iframe-outline.html
+
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+
 2011-04-13  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
