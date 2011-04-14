@@ -3285,9 +3285,6 @@ BUGWK50661 MAC LEOPARD : fast/speech/input-appearance-numberandspeech.html = IMA
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS
 
-BUGWK57926 GPU : media/video-display-toggle.html = IMAGE
-BUGWK57926 GPU : media/video-no-audio.html = IMAGE
-BUGWK57926 GPU : media/video-volume-slider.html = IMAGE
 
 // We need to skip Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.
 // http://trac.webkit.org/changeset/83126
