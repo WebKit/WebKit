@@ -349,7 +349,7 @@ body.attached #search {
     background-position: 0 0;
     background-color: transparent;
     border: 0 none transparent;
-    margin-top: 9px;
+    margin-top: 4px;
 }
 
 #close-button-left:hover, #close-button-right:hover {

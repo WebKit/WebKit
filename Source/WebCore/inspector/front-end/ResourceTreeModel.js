@@ -44,7 +44,8 @@ WebInspector.ResourceTreeModel.EventTypes = {
     FrameAdded: "FrameAdded",
     FrameNavigated: "FrameNavigated",
     FrameDetached: "FrameDetached",
-    ResourceAdded: "ResourceAdded"
+    ResourceAdded: "ResourceAdded",
+    CachedResourcesLoaded: "CachedResourcesLoaded"
 }
 
 WebInspector.ResourceTreeModel.prototype = {
@@ -65,6 +66,8 @@ WebInspector.ResourceTreeModel.prototype = {
 
         WebInspector.mainResource = this._addFramesRecursively(mainFramePayload);
         this._cachedResourcesProcessed = true;
+
+        this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded);
     },
 
     _addOrUpdateFrame: function(frame)

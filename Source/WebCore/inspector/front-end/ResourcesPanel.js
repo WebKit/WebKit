@@ -111,10 +111,6 @@ WebInspector.ResourcesPanel.prototype = {
 
     _initDefaultSelection: function()
     {
-        if (this._initializedDefaultSelection)
-            return;
-
-        this._initializedDefaultSelection = true;
         var itemURL = WebInspector.settings.resourcesLastSelectedItem;
         if (itemURL) {
             for (var treeElement = this.sidebarTree.children[0]; treeElement; treeElement = treeElement.traverseNextTreeElement(false, this.sidebarTree, true)) {
@@ -177,6 +173,7 @@ WebInspector.ResourcesPanel.prototype = {
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, this._frameDetached, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._resourceAdded, this);
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded, this._cachedResourcesLoaded, this); 
 
         function populateFrame(frameId)
         {
@@ -191,7 +188,6 @@ WebInspector.ResourcesPanel.prototype = {
                 this._resourceAdded({data:resources[i]});
         }
         populateFrame.call(this, 0);
-        this._initDefaultSelection();
     },
 
     _frameAdded: function(event)
@@ -292,6 +288,11 @@ WebInspector.ResourcesPanel.prototype = {
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (frameTreeElement)
             frameTreeElement.removeChildren();        
+    },
+
+    _cachedResourcesLoaded: function()
+    {
+        this._initDefaultSelection();
     },
 
     _refreshResource: function(event)
