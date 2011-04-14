@@ -3483,7 +3483,7 @@ BUGCR79111 GPU WIN LINUX : fast/canvas/DrawImageSinglePixelStretch.html = TEXT
 BUGCR79111 GPU : compositing/framesets/composited-frame-alignment.html = IMAGE
 
 BUGWK58308 GPU WIN LINUX DEBUG : compositing/z-order/negative-z-index.html = PASS CRASH
-BUGWK58328 GPU WIN MAC LINUX DEBUG : compositing/webgl/webgl-reflection.html = PASS CRASH
+BUGWK58328 GPU WIN MAC LINUX DEBUG : compositing/webgl/webgl-reflection.html = IMAGE PASS CRASH
 
 BUGCR79173 GPU LINUX DEBUG : fast/canvas/access-zero-sized-canvas.html = PASS CRASH
 
@@ -3495,3 +3495,4 @@ BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
 
 BUGWK58306 GPU MAC DEBUG : media/adopt-node-crash.html = CRASH
 
+BUGCROGERS WIN LINUX : fast/text/zero-font-size.html = IMAGE+TEXT

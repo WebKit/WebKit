@@ -1,3 +1,15 @@
+2011-04-14  Chris Rogers  <crogers@google.com>
+
+        Unreviewed.
+
+        Rebaseline fast/box-shadow/box-shadow-transformed.html
+        and other test_expectations.txt fixup
+        https://bugs.webkit.org/show_bug.cgi?id=58585
+
+        * platform/chromium-mac/fast/box-shadow/box-shadow-transformed-expected.checksum: Removed.
+        * platform/chromium-mac/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-14  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, expectations change.
