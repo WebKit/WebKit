@@ -228,7 +228,7 @@ h1 :hover {
     background-color: #fef;
 }
 
-.Line.add, .FileDiff .add {
+.Line.add {
     background-color: #dfd;
 }
 
@@ -237,7 +237,7 @@ h1 :hover {
     text-decoration: none;
 }
 
-.Line.remove, .FileDiff .remove {
+.Line.remove {
     background-color: #fdd;
 }
 
@@ -516,7 +516,6 @@ EOF
             @sections = DiffSection.parse(lines_with_contents) unless @binary
             if @image
                 @image_url = "data:image/png;base64," + lines_with_contents.join
-                @image_checksum = FileDiff.read_checksum_from_png(lines_with_contents.join.unpack("m").join)
             elsif @git_image
                 begin
                     raise "index line is missing" unless @git_indexes
@@ -531,12 +530,9 @@ EOF
 
                     raise "no binary chunks" unless chunks
 
-                    binary_contents = chunks.zip(@git_indexes).collect do |chunk, git_index|
+                    @image_urls = chunks.zip(@git_indexes).collect do |chunk, git_index|
                         FileDiff.extract_contents_from_git_binary_chunk(chunk, git_index)
                     end
-
-                    @image_urls = binary_contents.collect { |content| "data:image/png;base64," + [content].pack("m") }
-                    @image_checksums = binary_contents.collect { |content| FileDiff.read_checksum_from_png(content) }
                 rescue
                     @image_error = "Exception raised during decoding git binary patch:<pre>#{CGI.escapeHTML($!.to_s + "\n" + $!.backtrace.join("\n"))}</pre>"
                 end
@@ -548,9 +544,6 @@ EOF
             str = "<div class='FileDiff'>\n"
             str += "<h1>#{PrettyPatch.linkifyFilename(@filename)}</h1>\n"
             if @image then
-                if @image_checksum then
-                    str += "<p>" + @image_checksum + "</p>"
-                end
                 str += "<img class='image' src='" + @image_url + "' />"
             elsif @git_image then
                 if @image_error
@@ -558,14 +551,8 @@ EOF
                 else
                     for i in (0...2)
                         image_url = @image_urls[i]
-                        image_checksum = @image_checksums[i]
-
                         style = ["remove", "add"][i]
                         str += "<p class=\"#{style}\">"
-
-                        if image_checksum
-                            str += image_checksum + "<br>"
-                        end
                         if image_url
                             str += "<img class='image' src='" + image_url + "' />"
                         else
@@ -601,11 +588,6 @@ EOF
             end
 
             linesForDiffs.collect { |lines| FileDiff.new(lines) }
-        end
-
-        def self.read_checksum_from_png(png_bytes)
-            match = png_bytes.match(/tEXtchecksum\0([a-fA-F0-9]{32})/)
-            match ? match[1] : nil
         end
 
         def self.git_new_file_binary_patch(filename, encoded_chunk, git_index)
@@ -650,7 +632,7 @@ END
             end
 
             return nil if contents.empty?
-            return contents
+            return "data:image/png;base64," + [contents].pack("m")
         end
     end
 

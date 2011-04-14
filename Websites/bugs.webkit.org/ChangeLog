@@ -1,3 +1,10 @@
+2011-04-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Revert http://trac.webkit.org/changeset/83750 because it broke PrettyPatch.
+        https://bugs.webkit.org/show_bug.cgi?id=58510        
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2011-04-12  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Roben.
