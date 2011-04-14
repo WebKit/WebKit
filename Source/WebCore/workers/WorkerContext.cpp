@@ -167,9 +167,10 @@ void WorkerContext::close()
     if (m_closing)
         return;
 
-    m_closing = true;
     // Let current script run to completion but prevent future script evaluations.
-    m_script->forbidExecution(WorkerScriptController::LetRunningScriptFinish);
+    // After m_closing is set, all the tasks in the queue continue to be fetched but only
+    // tasks with isCleanupTask()==true will be executed.
+    m_closing = true;
     postTask(CloseWorkerContextTask::create());
 }
 
@@ -320,7 +321,7 @@ bool WorkerContext::isContextThread() const
     return currentThread() == thread()->threadID();
 }
 
-bool WorkerContext::isJSExecutionTerminated() const
+bool WorkerContext::isJSExecutionForbidden() const
 {
     return m_script->isExecutionForbidden();
 }

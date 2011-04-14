@@ -127,7 +127,7 @@ void* WorkerThread::workerThread()
         if (m_runLoop.terminated()) {
             // The worker was terminated before the thread had a chance to run. Since the context didn't exist yet,
             // forbidExecution() couldn't be called from stop().
-           m_workerContext->script()->forbidExecution(WorkerScriptController::TerminateRunningScript);
+           m_workerContext->script()->forbidExecution();
         }
     }
 
@@ -228,7 +228,7 @@ void WorkerThread::stop()
 
     // Ensure that tasks are being handled by thread event loop. If script execution weren't forbidden, a while(1) loop in JS could keep the thread alive forever.
     if (m_workerContext) {
-        m_workerContext->script()->forbidExecution(WorkerScriptController::TerminateRunningScript);
+        m_workerContext->script()->scheduleExecutionTermination();
 
 #if ENABLE(DATABASE)
         DatabaseTracker::tracker().interruptAllDatabasesForContext(m_workerContext.get());

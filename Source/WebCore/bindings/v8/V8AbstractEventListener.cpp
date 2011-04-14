@@ -72,6 +72,10 @@ V8AbstractEventListener::~V8AbstractEventListener()
 
 void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event* event)
 {
+    // Don't reenter V8 if execution was terminated in this instance of V8.
+    if (context->isJSExecutionForbidden())
+        return;
+
     ASSERT(event);
 
     // The callback function on XMLHttpRequest can clear the event listener and destroys 'this' object. Keep a local reference to it.
@@ -150,8 +154,12 @@ void V8AbstractEventListener::invokeEventHandler(ScriptExecutionContext* context
         returnValue = callListenerFunction(context, jsEvent, event);
         if (tryCatch.HasCaught())
             event->target()->uncaughtExceptionInEventHandler();
-        if (!tryCatch.CanContinue())
+
+        if (!tryCatch.CanContinue()) { // Result of TerminateExecution().
+            if (context->isWorkerContext())
+                static_cast<WorkerContext*>(context)->script()->forbidExecution();
             return;
+        }
         tryCatch.Reset();
 
         // Restore the old event. This must be done for all exit paths through this method.

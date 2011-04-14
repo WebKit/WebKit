@@ -1,3 +1,18 @@
+2011-04-14  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        Simplifying Worker termination sequence (removing unnecessary mutex)
+        https://bugs.webkit.org/show_bug.cgi?id=57090
+
+        * fast/workers/resources/shared-worker-lifecycle.js:
+        (createWorkerFrame): Fixing flaky worker test - removing document.write().
+
+        When document.write() is called directly from inline script as in this test, it appends to the document.
+        However, if worker threads from previously run test are still exiting,
+        the test defers itself using setTimeout() and in this case document.write() overwrites the whole document
+        and makes the test fail.
+
 2011-04-14  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver Hunt.

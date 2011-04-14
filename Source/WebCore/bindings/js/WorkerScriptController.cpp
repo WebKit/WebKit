@@ -101,11 +101,9 @@ void WorkerScriptController::initScript()
 
 ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
 {
-    {
-        MutexLocker lock(m_sharedDataMutex);
-        if (m_executionForbidden)
-            return ScriptValue();
-    }
+    if (isExecutionForbidden())
+        return ScriptValue();
+
     ScriptValue exception;
     ScriptValue result(evaluate(sourceCode, &exception));
     if (exception.jsValue()) {
@@ -117,11 +115,8 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
 
 ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, ScriptValue* exception)
 {
-    {
-        MutexLocker lock(m_sharedDataMutex);
-        if (m_executionForbidden)
-            return ScriptValue();
-    }
+    if (isExecutionForbidden())
+        return ScriptValue();
 
     initScriptIfNeeded();
     JSLock lock(SilenceAssertionsOnly);
@@ -131,10 +126,18 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode,
     Completion comp = JSC::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceCode.jsSourceCode(), m_workerContextWrapper.get());
     m_workerContextWrapper->globalData().timeoutChecker.stop();
 
-    if (comp.complType() == Normal || comp.complType() == ReturnValue)
+
+    ComplType completionType = comp.complType();
+
+    if (completionType == Terminated || m_workerContextWrapper->globalData().terminator.shouldTerminate()) {
+        forbidExecution();
+        return ScriptValue();
+    }
+
+    if (completionType == Normal || completionType == ReturnValue)
         return ScriptValue(*m_globalData, comp.value());
 
-    if (comp.complType() == Throw) {
+    if (completionType == Throw) {
         String errorMessage;
         int lineNumber = 0;
         String sourceURL = sourceCode.url().string();
@@ -151,16 +154,21 @@ void WorkerScriptController::setException(ScriptValue exception)
     throwError(m_workerContextWrapper->globalExec(), exception.jsValue());
 }
 
-void WorkerScriptController::forbidExecution(ForbidExecutionOption option)
+void WorkerScriptController::scheduleExecutionTermination()
 {
-    // This function may be called from another thread.
-    // Mutex protection for m_executionForbidden is needed to guarantee that the value is synchronized between processors, because
-    // if it were not, the worker could re-enter JSC::evaluate(), but with timeout already reset.
-    // It is not critical for Terminator::m_shouldTerminate to be synchronized, we just rely on it reaching the worker thread's processor sooner or later.
-    MutexLocker lock(m_sharedDataMutex);
+    m_globalData->terminator.terminateSoon();
+}
+
+void WorkerScriptController::forbidExecution()
+{
+    ASSERT(m_workerContext->isContextThread());
     m_executionForbidden = true;
-    if (option == TerminateRunningScript)
-        m_globalData->terminator.terminateSoon();
+}
+
+bool WorkerScriptController::isExecutionForbidden() const
+{
+    ASSERT(m_workerContext->isContextThread());
+    return m_executionForbidden;
 }
 
 } // namespace WebCore

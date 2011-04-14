@@ -21,7 +21,10 @@ function runTests()
 
 function createWorkerFrame(id, workerNames)
 {
-    document.write("<iframe id='" + id + "' src='resources/create-shared-worker-frame.html?" + workerNames + "'></iframe>");
+    var iframe = document.createElement("iframe");
+    iframe.setAttribute("id", id);
+    iframe.setAttribute("src", "resources/create-shared-worker-frame.html?" + workerNames);
+    document.body.appendChild(iframe);
 }
 
 function closeFrame(id)

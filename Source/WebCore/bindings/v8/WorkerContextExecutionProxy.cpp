@@ -203,8 +203,10 @@ ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const St
     v8::Handle<v8::Script> compiledScript = V8Proxy::compileScript(scriptString, fileName, scriptStartPosition);
     v8::Local<v8::Value> result = runScript(compiledScript);
 
-    if (!exceptionCatcher.CanContinue())
+    if (!exceptionCatcher.CanContinue()) {
+        m_workerContext->script()->forbidExecution();
         return ScriptValue();
+    }
 
     if (exceptionCatcher.HasCaught()) {
         v8::Local<v8::Message> message = exceptionCatcher.Message();

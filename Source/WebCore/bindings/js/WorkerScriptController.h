@@ -61,9 +61,17 @@ namespace WebCore {
 
         void setException(ScriptValue);
 
-        enum ForbidExecutionOption { TerminateRunningScript, LetRunningScriptFinish };
-        void forbidExecution(ForbidExecutionOption);
-        bool isExecutionForbidden() const { return m_executionForbidden; }
+        // Async request to terminate a JS run execution. Eventually causes termination
+        // exception raised during JS execution, if the worker thread happens to run JS.
+        // After JS execution was terminated in this way, the Worker thread has to use
+        // forbidExecution()/isExecutionForbidden() to guard against reentry into JS.
+        // Can be called from any thread.
+        void scheduleExecutionTermination();
+
+        // Called on Worker thread when JS exits with termination exception caused by forbidExecution() request,
+        // or by Worker thread termination code to prevent future entry into JS.
+        void forbidExecution();
+        bool isExecutionForbidden() const;
 
         JSC::JSGlobalData* globalData() { return m_globalData.get(); }
 
@@ -78,8 +86,6 @@ namespace WebCore {
         RefPtr<JSC::JSGlobalData> m_globalData;
         WorkerContext* m_workerContext;
         JSC::Strong<JSWorkerContext> m_workerContextWrapper;
-
-        Mutex m_sharedDataMutex;
         bool m_executionForbidden;
     };
 

@@ -120,7 +120,7 @@ namespace WebCore {
         virtual void databaseExceededQuota(const String&);
 #endif
         virtual bool isContextThread() const;
-        virtual bool isJSExecutionTerminated() const;
+        virtual bool isJSExecutionForbidden() const;
 
 #if ENABLE(BLOB)
         DOMURL* webkitURL() const;

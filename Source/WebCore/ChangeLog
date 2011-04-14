@@ -1,3 +1,64 @@
+2011-04-14  Dmitry Titov  <dimich@chromium.org>
+
+        Reviewed by David Levin.
+
+        Simplifying Worker termination sequence (removing unnecessary mutex)
+        https://bugs.webkit.org/show_bug.cgi?id=57090
+
+        No new tests. Existing Worker tests should pass.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::handleEvent):
+        Check for Terminator-caused exception (or Terminator::shouldTerminate since sometimes
+        JS might not run significant enough chunk to be terminated by Terminator) and set
+        the flag to forbid future reentry into JS.
+
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        (WebCore::WorkerScriptController::scheduleExecutionTermination):
+        (WebCore::WorkerScriptController::forbidExecution):
+        (WebCore::WorkerScriptController::isExecutionForbidden):
+        * bindings/js/WorkerScriptController.h:
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        (WebCore::WorkerScriptController::scheduleExecutionTermination):
+        (WebCore::WorkerScriptController::forbidExecution):
+        (WebCore::WorkerScriptController::isExecutionForbidden):
+        * bindings/v8/WorkerScriptController.h:
+        (WebCore::WorkerScriptController::proxy):
+        Symmetrical changes to JSC and V8 WorkerScriptControllers:
+        - remove Mutex around operations with executionForbidden flag.
+        - set/check that flag only on Worker thread.
+        - some renaming in attempt to better reflect what the methods do.
+
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::handleEvent):
+        (WebCore::V8AbstractEventListener::invokeEventHandler):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::evaluate):
+        Check for v8::TryCatch::CanContinue() and set forbidExecution flag.
+        This result indicates that TerminateExecution() was in effect - we should
+        not reenter V8 anymore after that.
+
+        * dom/Document.h:
+        (WebCore::Document::isJSExecutionForbidden):
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::dispatchMessages):
+        Stop dispatching messages once the worker context started to close.
+        Per Workers spec, once WorkerGlobalScope.Close() is called, the next
+        JS execution does not happen, including onmessage events. Before this
+        change, Close() was setting the forbidExecution flag, indirectly stopping
+        events from dispatching.
+
+        * dom/ScriptExecutionContext.h:
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::close):
+        (WebCore::WorkerContext::isJSExecutionForbidden):
+        * workers/WorkerContext.h:
+        * workers/WorkerThread.cpp:
+        (WebCore::WorkerThread::workerThread):
+        (WebCore::WorkerThread::stop):
+
 2011-04-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.

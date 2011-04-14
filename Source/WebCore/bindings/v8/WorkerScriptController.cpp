@@ -68,11 +68,8 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
 
 ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, ScriptValue* exception)
 {
-    {
-        MutexLocker lock(m_sharedDataMutex);
-        if (m_executionForbidden)
-            return ScriptValue();
-    }
+    if (isExecutionForbidden())
+        return ScriptValue();
 
     WorkerContextExecutionState state;
     ScriptValue result = m_proxy->evaluate(sourceCode.source(), sourceCode.url().string(), WTF::toZeroBasedTextPosition(sourceCode.startPosition()), &state);
@@ -86,13 +83,21 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode,
     return result;
 }
 
-void WorkerScriptController::forbidExecution(ForbidExecutionOption option)
+void WorkerScriptController::scheduleExecutionTermination()
 {
-    // This function may be called from another thread.
-    MutexLocker lock(m_sharedDataMutex);
+    v8::V8::TerminateExecution();
+}
+
+void WorkerScriptController::forbidExecution()
+{
+    ASSERT(m_workerContext->isContextThread());
     m_executionForbidden = true;
-    if (option == TerminateRunningScript)
-        v8::V8::TerminateExecution();
+}
+
+bool WorkerScriptController::isExecutionForbidden() const
+{
+    ASSERT(m_workerContext->isContextThread());
+    return m_executionForbidden;
 }
 
 void WorkerScriptController::setException(ScriptValue exception)

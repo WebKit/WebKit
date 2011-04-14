@@ -48,7 +48,7 @@ namespace WebCore {
         WorkerScriptController(WorkerContext*);
         ~WorkerScriptController();
 
-        WorkerContextExecutionProxy* proxy() { return m_executionForbidden ? 0 : m_proxy.get(); }
+        WorkerContextExecutionProxy* proxy() { return m_proxy.get(); }
         WorkerContext* workerContext() { return m_workerContext; }
 
         ScriptValue evaluate(const ScriptSourceCode&);
@@ -56,9 +56,17 @@ namespace WebCore {
 
         void setException(ScriptValue);
 
-        enum ForbidExecutionOption { TerminateRunningScript, LetRunningScriptFinish };
-        void forbidExecution(ForbidExecutionOption);
-        bool isExecutionForbidden() const { return m_executionForbidden; }
+        // Async request to terminate a future JS execution. Eventually causes termination
+        // exception raised during JS execution, if the worker thread happens to run JS.
+        // After JS execution was terminated in this way, the Worker thread has to use
+        // forbidExecution()/isExecutionForbidden() to guard against reentry into JS.
+        // Can be called from any thread.
+        void scheduleExecutionTermination();
+
+        // Called on Worker thread when JS exits with termination exception caused by forbidExecution() request,
+        // or by Worker thread termination code to prevent future entry into JS.
+        void forbidExecution();
+        bool isExecutionForbidden() const;
 
         // Returns WorkerScriptController for the currently executing context. 0 will be returned if the current executing context is not the worker context.
         static WorkerScriptController* controllerForContext();
@@ -66,8 +74,6 @@ namespace WebCore {
     private:
         WorkerContext* m_workerContext;
         OwnPtr<WorkerContextExecutionProxy> m_proxy;
-
-        Mutex m_sharedDataMutex;
         bool m_executionForbidden;
     };
 
