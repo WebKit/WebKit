@@ -173,6 +173,7 @@ void QtMobileWebStyle::drawControl(ControlElement element, const QStyleOption* o
         break;
     }
     case CE_PushButton: {
+        const bool disabled = !(option->state & State_Enabled);
         QRect rect = option->rect;
         QPen pen(Qt::darkGray, 1.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
         painter->setPen(pen);
@@ -183,9 +184,20 @@ void QtMobileWebStyle::drawControl(ControlElement element, const QStyleOption* o
             break;
         }
 
-        QLinearGradient linearGradient(rect.bottomLeft(), QPoint(rect.bottomLeft().x(), rect.bottomLeft().y() - /* offset limit for gradient */ 20));
-        linearGradient.setColorAt(0.0, Qt::gray);
-        linearGradient.setColorAt(0.4, Qt::white);
+        QLinearGradient linearGradient;
+        if (disabled) {
+            linearGradient.setStart(rect.bottomLeft());
+            linearGradient.setFinalStop(rect.topLeft());
+            linearGradient.setColorAt(0.0, Qt::gray);
+            linearGradient.setColorAt(1.0, Qt::white);
+        } else {
+            linearGradient.setStart(rect.bottomLeft());
+            linearGradient.setFinalStop(QPoint(rect.bottomLeft().x(),
+                        rect.bottomLeft().y() - /* offset limit for gradient */ 20));
+            linearGradient.setColorAt(0.0, Qt::gray);
+            linearGradient.setColorAt(0.4, Qt::white);
+        }
+
         drawRectangularControlBackground(painter, pen, rect, linearGradient);
         break;
     }
@@ -208,11 +220,16 @@ void QtMobileWebStyle::drawPrimitive(PrimitiveElement element, const QStyleOptio
             break;
         }
 
-        QLinearGradient linearGradient(rect.topLeft(), QPoint(rect.topLeft().x(), rect.topLeft().y() + 20));
+        QLinearGradient linearGradient;
         if (disabled) {
+            linearGradient.setStart(rect.topLeft());
+            linearGradient.setFinalStop(rect.bottomLeft());
             linearGradient.setColorAt(0.0, Qt::lightGray);
-            linearGradient.setColorAt(0.3, Qt::white);
+            linearGradient.setColorAt(1.0, Qt::white);
         } else {
+            linearGradient.setStart(rect.topLeft());
+            linearGradient.setFinalStop(QPoint(rect.topLeft().x(),
+                        rect.topLeft().y() + /* offset limit for gradient */ 20));
             linearGradient.setColorAt(0.0, Qt::darkGray);
             linearGradient.setColorAt(0.35, Qt::white);
         }
@@ -325,11 +342,21 @@ void QtMobileWebStyle::drawComplexControl(ComplexControl control, const QStyleOp
             break;
 
         QRect rect = option->rect;
-        QLinearGradient linearGradient(rect.bottomLeft(), QPoint(rect.bottomLeft().x(), rect.bottomLeft().y() - /* offset limit for gradient */ 20));
-        linearGradient.setColorAt(0.0, Qt::gray);
-        linearGradient.setColorAt(0.4, Qt::white);
         QPen pen(Qt::darkGray, 1.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-        painter->setPen(pen);
+        QLinearGradient linearGradient;
+        if (disabled) {
+            linearGradient.setStart(rect.bottomLeft());
+            linearGradient.setFinalStop(rect.topLeft());
+            linearGradient.setColorAt(0.0, Qt::gray);
+            linearGradient.setColorAt(1.0, Qt::white);
+        } else {
+            linearGradient.setStart(rect.bottomLeft());
+            linearGradient.setFinalStop(QPoint(rect.bottomLeft().x(),
+                        rect.bottomLeft().y() - /* offset limit for gradient */ 20));
+            linearGradient.setColorAt(0.0, Qt::gray);
+            linearGradient.setColorAt(0.4, Qt::white);
+        }
+
         drawRectangularControlBackground(painter, pen, rect, linearGradient);
 
         rect = subControlRect(CC_ComboBox, cmb, SC_ComboBoxArrow, widget);
