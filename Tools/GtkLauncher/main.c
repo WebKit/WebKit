@@ -230,24 +230,6 @@ static gchar* filenameToURL(const char* filename)
     return fileURL;
 }
 
-#ifndef GTK_API_VERSION_2
-static void disablePlugin(const char* pluginName)
-{
-    WebKitWebPluginDatabase *database = webkit_get_web_plugin_database();
-    GSList *plugins = webkit_web_plugin_database_get_plugins(database);
-    GSList *p;
-
-    for (p = plugins; p; p = g_slist_next(p)) {
-        WebKitWebPlugin *plugin = WEBKIT_WEB_PLUGIN(p->data);
-
-        if (!g_strcmp0(webkit_web_plugin_get_name(plugin), pluginName))
-            webkit_web_plugin_set_enabled(plugin, FALSE);
-    }
-
-    webkit_web_plugin_database_plugins_list_free(plugins);
-}
-#endif
-
 int main(int argc, char* argv[])
 {
     WebKitWebView *webView;
@@ -256,10 +238,6 @@ int main(int argc, char* argv[])
     gtk_init(&argc, &argv);
     if (!g_thread_supported())
         g_thread_init(NULL);
-
-#ifndef GTK_API_VERSION_2
-    disablePlugin("Shockwave Flash");
-#endif
 
     main_window = createWindow(&webView);
 
