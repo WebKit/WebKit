@@ -13,11 +13,16 @@ thead tr, tr:nth-child(even) {
 }
 
 td {
-    padding: 0 40px;
+    padding: 0 4px;
 }
 
 th:empty, td:empty {
     padding: 0;
+}
+
+th {
+    -webkit-user-select: none;
+    -moz-user-select: none;
 }
 </style>
 
@@ -50,15 +55,13 @@ var html = 'Tests where results did not match expected results:<table>' +
     '</tr></thead>';
 
 // FIXME: Should this point to the local file instead? Should it dynamically figure out where to point?
-// FIXME: remove the version number from the URL if possible.
-var test_base_path = 'http://trac.webkit.org/export/76053/trunk/LayoutTests/';
+var test_base_path = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
 
 function resultLink(test_prefix, suffix, contents)
 {
     return '<a href="' + test_prefix + suffix + '">' + contents + '</a> ';
 }
 
-// FIXME: allow sorting the table by columns
 // FIXME: show expected/actual/diff contents inline in iframes
 // FIXME: allow zooming in on pixel diffs
 // FIXME: store stderr information in the json
@@ -67,6 +70,7 @@ function resultLink(test_prefix, suffix, contents)
 var hasTextFailures = false;
 var hasImageFailures = false;
 
+html += '<tbody>';
 for (var test in results.tests) {
   var row = '<td><a href="' + test_base_path + test + '">' + test + '</a></td>';
   var test_prefix = stripExtension(test);
@@ -102,7 +106,90 @@ for (var test in results.tests) {
   html += '<tr>' + row + '</tr>';
 }
 
+html += '</tbody></table>'
 document.write(html);
+
+function toArray(nodeList)
+{
+    return Array.prototype.slice.call(nodeList);
+}
+
+function trim(string)
+{
+    return string.replace(/^[\s\xa0]+|[\s\xa0]+$/g, '');
+}
+
+// Just a namespace for code management.
+var TableSorter = {};
+
+TableSorter._forwardArrow = '<svg style="width:10px;height:10px"><polygon points="0,0 10,0 5,10" style="fill:#aaa"></svg>';
+
+TableSorter._backwardArrow = '<svg style="width:10px;height:10px"><polygon points="0,10 10,10 5,0" style="fill:#aaa"></svg>';
+
+TableSorter._sortedContents = function(header, arrow)
+{
+    return arrow + ' ' + trim(header.textContent) + ' ' + arrow;
+}
+
+TableSorter._updateHeaderClassNames = function(newHeader)
+{
+    var sortHeader = document.querySelector('.sortHeader');
+    if (sortHeader) {
+        if (sortHeader == newHeader) {
+            var isAlreadyReversed = sortHeader.classList.contains('reversed');
+            if (isAlreadyReversed)
+                sortHeader.classList.remove('reversed');
+            else
+                sortHeader.classList.add('reversed');
+        } else {
+            sortHeader.textContent = sortHeader.textContent;
+            sortHeader.classList.remove('sortHeader');
+            sortHeader.classList.remove('reversed');
+        }
+    }
+
+    newHeader.classList.add('sortHeader');
+}
+
+TableSorter._sortRows = function(newHeader, reversed)
+{
+    var testsTable = document.querySelector('table');
+    var headers = toArray(testsTable.querySelectorAll('th'));
+    var sortColumn = headers.indexOf(newHeader);
+
+    var tbody = testsTable.querySelector('tbody');
+    var rows = toArray(tbody.querySelectorAll('tr'));
+
+    rows.sort(function(a, b) {
+        // Only need to support lexicographic sort for now.
+        var aText = a.childNodes[sortColumn].textContent;
+        var bText = b.childNodes[sortColumn].textContent;
+        if (reversed)
+            return aText < bText;
+        else
+            return bText < aText;
+    });
+
+    for (var i = 0; i < rows.length; i++)
+        tbody.appendChild(rows[i]);
+}
+
+TableSorter.handleClick = function(e)
+{
+    var newHeader = e.target;
+    if (newHeader.localName != 'th')
+        return;
+    
+    TableSorter._updateHeaderClassNames(newHeader);
+    
+    var reversed = newHeader.classList.contains('reversed');
+    var sortArrow = reversed ? TableSorter._backwardArrow : TableSorter._forwardArrow;
+    newHeader.innerHTML = TableSorter._sortedContents(newHeader, sortArrow);
+    
+    TableSorter._sortRows(newHeader, reversed);
+}
+
+document.querySelector('table').addEventListener('click', TableSorter.handleClick, false);
 
 if (!hasTextFailures)
   document.body.querySelector('#text-results-header').textContent = '';
