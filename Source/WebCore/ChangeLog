@@ -1,3 +1,37 @@
+2011-04-13  Cary Clark  <caryclark@chromium.org>
+ 
+         Reviewed by Eric Seidel.
+          
+         [Chromium] allow concurrent Skia and CG datatypes
+         https://bugs.webkit.org/show_bug.cgi?id=57848
+
+         The Chromium port is experimenting with running Skia as the WebKit rendering engine, and CoreGraphics
+         as the UI rendering engine. This permits Chromium to unify its graphics story while leveraging OS X to
+         draw elements like scrollbars and buttons.
+ 
+         Restructure the common graphics units, points, and rectangles, to convert to Sk-types and CG-types at
+         the same time. This requires only adding to the existing preprocessor commands, and will have no effect
+         on any existing platform.
+         
+         Eventually, WTF_USE_SKIA_ON_MAC_CHROME will be defined to enable this, but for now, there's no
+         functional change.
+ 
+         No new tests as this provides no new functionality.
+ 
+         * platform/graphics/FloatPoint.h: Add USE(SKIA_ON_MAC_CHROME) to make CG type and operators visible
+         to a Skia-based Chrome Mac build.
+         * platform/graphics/FloatRect.h: Ditto.
+         * platform/graphics/FloatSize.h: Ditto.
+         * platform/graphics/IntPoint.h: Ditto.
+         * platform/graphics/IntRect.h: Ditto.
+         * platform/graphics/IntSize.h: Ditto.
+         * platform/graphics/cg/FloatPointCG.cpp: Ditto.
+         * platform/graphics/cg/FloatRectCG.cpp: Ditto.
+         * platform/graphics/cg/FloatSizeCG.cpp: Ditto.
+         * platform/graphics/cg/IntPointCG.cpp: Ditto.
+         * platform/graphics/cg/IntRectCG.cpp: Ditto.
+         * platform/graphics/cg/IntSizeCG.cpp: Ditto.
+ 
 2011-04-13  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Dimitri Glazkov.

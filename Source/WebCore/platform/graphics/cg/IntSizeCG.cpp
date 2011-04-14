@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IntSize.h"
 
-#if PLATFORM(CG)
+#if PLATFORM(CG) || USE(SKIA_ON_MAC_CHROME)
 
 #include <ApplicationServices/ApplicationServices.h>
 

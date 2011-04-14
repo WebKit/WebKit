@@ -31,7 +31,7 @@
 #include "IntPoint.h"
 #include <wtf/MathExtras.h>
 
-#if PLATFORM(CG)
+#if PLATFORM(CG) || USE(SKIA_ON_MAC_CHROME)
 typedef struct CGPoint CGPoint;
 #endif
 
@@ -109,7 +109,7 @@ public:
         return m_x * m_x + m_y * m_y;
     }
 
-#if PLATFORM(CG)
+#if PLATFORM(CG) || USE(SKIA_ON_MAC_CHROME)
     FloatPoint(const CGPoint&);
     operator CGPoint() const;
 #endif
