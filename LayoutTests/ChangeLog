@@ -1,3 +1,14 @@
+2011-04-14  Herczeg Zoltan  <zherczeg@webkit.org>
+
+        Unreviewed.
+
+        svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg crashes in Debug build
+        https://bugs.webkit.org/show_bug.cgi?id=58525
+
+        Unskip svgdom-over-01-f.svg, since it is now passing.
+
+        * platform/gtk/Skipped:
+
 2011-04-14  Nancy Piedra  <nancy.piedra@nokia.com>
 
         Reviewed by Benjamin Poulain.
