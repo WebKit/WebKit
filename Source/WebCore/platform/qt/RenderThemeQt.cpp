@@ -1111,9 +1111,6 @@ ControlPart RenderThemeQt::initializeCommonQStyleOptions(QStyleOption& option, R
     // Default bits: no focus, no mouse over
     option.state &= ~(QStyle::State_HasFocus | QStyle::State_MouseOver);
 
-    if (!isEnabled(o))
-        option.state &= ~QStyle::State_Enabled;
-
     if (isReadOnlyControl(o))
         // Readonly is supported on textfields.
         option.state |= QStyle::State_ReadOnly;
@@ -1124,6 +1121,12 @@ ControlPart RenderThemeQt::initializeCommonQStyleOptions(QStyleOption& option, R
         option.state |= QStyle::State_MouseOver;
 
     setPaletteFromPageClientIfExists(option.palette);
+
+    if (!isEnabled(o)) {
+        option.palette.setCurrentColorGroup(QPalette::Disabled);
+        option.state &= ~QStyle::State_Enabled;
+    }
+
     RenderStyle* style = o->style();
     if (!style)
         return NoControlPart;
