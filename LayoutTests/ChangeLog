@@ -1,3 +1,11 @@
+2011-04-14  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, fixed tests caused by r83873.
+
+        * fast/filesystem/resources/file-writer-utils.js:
+        (verifyByteRangeIsZeroesHelper):
+        (verifyByteRangeAsStringHelper):
+
 2011-04-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] fast/transforms/scrollIntoView-transformed.html fails
