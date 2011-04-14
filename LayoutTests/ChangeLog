@@ -1,3 +1,16 @@
+2011-04-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Added chromium baselines for SVG tests added in r83821.
+
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDiffuseLightingElement-inherit-lighting-color-css-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEFloodElement-inherit-flood-color-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEDiffuseLightingElement-inherit-lighting-color-css-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEFloodElement-inherit-flood-color-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.png: Added.
+
 2011-04-14  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
