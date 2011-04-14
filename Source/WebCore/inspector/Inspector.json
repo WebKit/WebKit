@@ -565,14 +565,6 @@
         "types": [],
         "commands": [
             {
-                "name": "enable",
-                "description": "Enables database tracking, database events will now be delivered to the client."
-            },
-            {
-                "name": "disable",
-                "description": "Disables database tracking, prevents database events from being sent to the client."
-            },
-            {
                 "name": "getDatabaseTableNames",
                 "parameters": [
                     { "name": "databaseId", "type": "integer" }

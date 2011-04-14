@@ -18,17 +18,13 @@ function onload()
 
 function test()
 {
-    function run()
-    {
-        var databases = WebInspector.panels.resources._databases;
-        for (var i = 0; i < databases.length; ++i) {
-            InspectorTest.addResult("Name: " + databases[i].name);
-            InspectorTest.addResult("Version: " + databases[i].version);
-            InspectorTest.addResult("Domain: " + databases[i].domain);
-        }
-        InspectorTest.completeTest();
+    var databases = WebInspector.panels.resources._databases;
+    for (var i = 0; i < databases.length; ++i) {
+        InspectorTest.addResult("Name: " + databases[i].name);
+        InspectorTest.addResult("Version: " + databases[i].version);
+        InspectorTest.addResult("Domain: " + databases[i].domain);
     }
-    InspectorBackend.runAfterPendingDispatches(run);
+    InspectorTest.completeTest();
 }
 
 </script>

@@ -1,3 +1,9 @@
+2011-04-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Rollout r83849 and r83857.
+
+        * http/tests/inspector-enabled/database-open.html:
+
 2011-04-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r83855.

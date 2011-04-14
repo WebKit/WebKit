@@ -59,8 +59,6 @@ public:
     void clearResources();
 
     // Called from the front-end.
-    void enable(ErrorString*);
-    void disable(ErrorString*);
     void getDatabaseTableNames(ErrorString*, int databaseId, RefPtr<InspectorArray>* names);
     void executeSQL(ErrorString*, int databaseId, const String& query, bool* success, int* transactionId);
 
@@ -78,7 +76,6 @@ private:
     typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
     DatabaseResourcesMap m_resources;
     RefPtr<FrontendProvider> m_frontendProvider;
-    bool m_enabled;
 };
 
 } // namespace WebCore
