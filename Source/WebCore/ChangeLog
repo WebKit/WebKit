@@ -1,3 +1,20 @@
+2011-04-07  David Levin  <levin@chromium.org>
+
+        Reviewed by Brady Eidson.
+
+        Fix some threading issues in IconDatabase.
+        https://bugs.webkit.org/show_bug.cgi?id=57985
+
+        No functionality change so no new tests. It would be very hard to test this, but
+        I am working on a change for bug 31639 to detect these (which makes layout tests
+        fail for at least one of these issues).
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::setIconDataForIconURL): Release imageData so that it won't get deref'ed outside of locks.
+        (WebCore::IconDatabase::readFromDatabase): Ditto.
+        (WebCore::IconDatabase::writeToDatabase): Acquire m_urlAndIconLock because the SharedBuffer<> data
+        is used, and this lock seems to be the one which consistently guards it.
+
 2011-04-14  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.

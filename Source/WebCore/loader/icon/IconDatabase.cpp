@@ -528,7 +528,7 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
             icon = getOrCreateIconRecord(iconURL);
     
         // Update the data and set the time stamp
-        icon->setImageData(data);
+        icon->setImageData(data.release());
         icon->setTimestamp((int)currentTime());
         
         // Copy the current retaining pageURLs - if any - to notify them of the change
@@ -1482,7 +1482,7 @@ bool IconDatabase::readFromDatabase()
                 
                 if (m_iconsPendingReading.contains(icons[i])) {
                     // Set the new data
-                    icons[i]->setImageData(imageData.get());
+                    icons[i]->setImageData(imageData.release());
                     
                     // Remove this icon from the set that needs to be read
                     m_iconsPendingReading.remove(icons[i]);
@@ -1571,41 +1571,44 @@ bool IconDatabase::writeToDatabase()
     // We can copy the current work queue then clear it out - If any new work comes in while we're writing out,
     // we'll pick it up on the next pass.  This greatly simplifies the locking strategy for this method and remains cohesive with changes
     // asked for by the database on the main thread
-    Vector<IconSnapshot> iconSnapshots;
-    Vector<PageURLSnapshot> pageSnapshots;
     {
-        MutexLocker locker(m_pendingSyncLock);
-        
-        iconSnapshots.appendRange(m_iconsPendingSync.begin().values(), m_iconsPendingSync.end().values());
-        m_iconsPendingSync.clear();
-        
-        pageSnapshots.appendRange(m_pageURLsPendingSync.begin().values(), m_pageURLsPendingSync.end().values());
-        m_pageURLsPendingSync.clear();
-    }
-    
-    if (iconSnapshots.size() || pageSnapshots.size())
-        didAnyWork = true;
-        
-    SQLiteTransaction syncTransaction(m_syncDB);
-    syncTransaction.begin();
-    
-    for (unsigned i = 0; i < iconSnapshots.size(); ++i) {
-        writeIconSnapshotToSQLDatabase(iconSnapshots[i]);
-        LOG(IconDatabase, "Wrote IconRecord for IconURL %s with timeStamp of %i to the DB", urlForLogging(iconSnapshots[i].iconURL()).ascii().data(), iconSnapshots[i].timestamp());
-    }
-    
-    for (unsigned i = 0; i < pageSnapshots.size(); ++i) {
-        // If the icon URL is empty, this page is meant to be deleted
-        // ASSERTs are sanity checks to make sure the mappings exist if they should and don't if they shouldn't
-        if (pageSnapshots[i].iconURL().isEmpty())
-            removePageURLFromSQLDatabase(pageSnapshots[i].pageURL());
-        else
-            setIconURLForPageURLInSQLDatabase(pageSnapshots[i].iconURL(), pageSnapshots[i].pageURL());
-        LOG(IconDatabase, "Committed IconURL for PageURL %s to database", urlForLogging(pageSnapshots[i].pageURL()).ascii().data());
+        MutexLocker locker(m_urlAndIconLock);
+        Vector<IconSnapshot> iconSnapshots;
+        Vector<PageURLSnapshot> pageSnapshots;
+        {
+            MutexLocker locker(m_pendingSyncLock);
+
+            iconSnapshots.appendRange(m_iconsPendingSync.begin().values(), m_iconsPendingSync.end().values());
+            m_iconsPendingSync.clear();
+
+            pageSnapshots.appendRange(m_pageURLsPendingSync.begin().values(), m_pageURLsPendingSync.end().values());
+            m_pageURLsPendingSync.clear();
+        }
+
+        if (iconSnapshots.size() || pageSnapshots.size())
+            didAnyWork = true;
+
+        SQLiteTransaction syncTransaction(m_syncDB);
+        syncTransaction.begin();
+
+        for (unsigned i = 0; i < iconSnapshots.size(); ++i) {
+            writeIconSnapshotToSQLDatabase(iconSnapshots[i]);
+            LOG(IconDatabase, "Wrote IconRecord for IconURL %s with timeStamp of %i to the DB", urlForLogging(iconSnapshots[i].iconURL()).ascii().data(), iconSnapshots[i].timestamp());
+        }
+
+        for (unsigned i = 0; i < pageSnapshots.size(); ++i) {
+            // If the icon URL is empty, this page is meant to be deleted
+            // ASSERTs are sanity checks to make sure the mappings exist if they should and don't if they shouldn't
+            if (pageSnapshots[i].iconURL().isEmpty())
+                removePageURLFromSQLDatabase(pageSnapshots[i].pageURL());
+            else
+                setIconURLForPageURLInSQLDatabase(pageSnapshots[i].iconURL(), pageSnapshots[i].pageURL());
+            LOG(IconDatabase, "Committed IconURL for PageURL %s to database", urlForLogging(pageSnapshots[i].pageURL()).ascii().data());
+        }
+
+        syncTransaction.commit();
     }
 
-    syncTransaction.commit();
-    
     // Check to make sure there are no dangling PageURLs - If there are, we want to output one log message but not spam the console potentially every few seconds
     if (didAnyWork)
         checkForDanglingPageURLs(false);
