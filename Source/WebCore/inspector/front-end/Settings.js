@@ -72,13 +72,8 @@ WebInspector.Settings = function()
     this.installApplicationSetting("watchExpressions", []);
     this.installApplicationSetting("breakpoints", []);
     this.installApplicationSetting("eventListenerBreakpoints", []);
+    this.installApplicationSetting("domBreakpoints", []);
     this.installApplicationSetting("xhrBreakpoints", []);
-
-    this.installProjectSetting("nativeBreakpoints", []);
-}
-
-WebInspector.Settings.Events = {
-    ProjectChanged: "project-changed"
 }
 
 WebInspector.Settings.prototype = {
@@ -89,47 +84,6 @@ WebInspector.Settings.prototype = {
 
         this.__defineGetter__(key, this._get.bind(this, key, defaultValue));
         this.__defineSetter__(key, this._set.bind(this, key));
-    },
-
-    installProjectSetting: function(key, defaultValue)
-    {
-        this.__defineGetter__(key, this._getProjectSetting.bind(this, key, defaultValue));
-        this.__defineSetter__(key, this._setProjectSetting.bind(this, key));
-    },
-
-    inspectedURLChanged: function(url)
-    {
-        var fragmentIndex = url.indexOf("#");
-        if (fragmentIndex !== -1)
-            url = url.substring(0, fragmentIndex);
-        this._projectId = url;
-        this.dispatchEventToListeners(WebInspector.Settings.Events.ProjectChanged);
-    },
-
-    get projectId()
-    {
-        return this._projectId;
-    },
-
-    findSettingForAllProjects: function(key)
-    {
-        var result = {};
-        if (window.localStorage == null)
-            return result;
-
-        var regexp = "^" + key + ":(.*)";
-        for (var i = 0; i < window.localStorage.length; ++i) {
-            var fullKey =  window.localStorage.key(i);
-            var match = fullKey.match(regexp);
-            if (!match)
-                continue;
-            try {
-                result[match[1]] = JSON.parse(window.localStorage[fullKey]);
-            } catch(e) {
-                window.localStorage.removeItem(fullKey);
-            }
-        }
-        return result;
     },
 
     _get: function(key, defaultValue)
@@ -148,21 +102,6 @@ WebInspector.Settings.prototype = {
     {
         if (window.localStorage != null)
             window.localStorage[key] = JSON.stringify(value);
-    },
-
-    _getProjectSetting: function(key, defaultValue)
-    {
-        return this._get(this._formatProjectKey(key), defaultValue);
-    },
-
-    _setProjectSetting: function(key, value)
-    {
-        return this._set(this._formatProjectKey(key), value);
-    },
-
-    _formatProjectKey: function(key)
-    {
-        return key + ":" + this._projectId;
     }
 }
 

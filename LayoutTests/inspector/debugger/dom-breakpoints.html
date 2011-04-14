@@ -26,6 +26,7 @@ function removeElement(elementId)
 
 function test()
 {
+    var pane = WebInspector.domBreakpointsSidebarPane;
     var rootElement;
     InspectorTest.runDebuggerTestSuite([
         function testInsertChild(next)
@@ -36,7 +37,7 @@ function test()
             function step2(node)
             {
                 rootElement = node;
-                WebInspector.breakpointManager.createDOMBreakpoint(node.id, WebInspector.DOMBreakpointTypes.SubtreeModified);
+                pane._setBreakpoint(node, pane._breakpointTypes.SubtreeModified, true);
                 InspectorTest.addResult("Set 'Subtree Modified' DOM breakpoint on rootElement.");
                 InspectorTest.evaluateInPageWithTimeout("appendElement('rootElement', 'childElement')");
                 InspectorTest.addResult("Append childElement to rootElement.");
@@ -61,7 +62,7 @@ function test()
 
             function step2()
             {
-                rootElement.breakpoints[WebInspector.DOMBreakpointTypes.SubtreeModified].remove();
+                pane._removeBreakpoint(rootElement, pane._breakpointTypes.SubtreeModified);
                 next();
             }
         },
@@ -69,7 +70,7 @@ function test()
         function testModifyAttribute(next)
         {
             InspectorTest.addResult("Test that 'Attribute Modified' breakpoint is hit when modifying attribute.");
-            WebInspector.breakpointManager.createDOMBreakpoint(rootElement.id, WebInspector.DOMBreakpointTypes.AttributeModified);
+            pane._setBreakpoint(rootElement, pane._breakpointTypes.AttributeModified, true);
             InspectorTest.addResult("Set 'Attribute Modified' DOM breakpoint on rootElement.");
             InspectorTest.evaluateInPageWithTimeout("modifyAttribute('rootElement', 'className', 'foo')");
             InspectorTest.addResult("Modify rootElement className.");
@@ -77,7 +78,7 @@ function test()
     
             function step2(callFrames)
             {
-                rootElement.breakpoints[WebInspector.DOMBreakpointTypes.AttributeModified].remove();
+                pane._removeBreakpoint(rootElement, pane._breakpointTypes.AttributeModified);
                 next();
             }
         },
@@ -89,7 +90,7 @@ function test()
 
             function step2(node)
             {
-                WebInspector.breakpointManager.createDOMBreakpoint(node.id, WebInspector.DOMBreakpointTypes.NodeRemoved);
+                pane._setBreakpoint(node, pane._breakpointTypes.NodeRemoved, true);
                 InspectorTest.addResult("Set 'Node Removed' DOM breakpoint on elementToRemove.");
                 InspectorTest.evaluateInPageWithTimeout("removeElement('elementToRemove')");
                 InspectorTest.addResult("Remove elementToRemove.");
@@ -104,7 +105,8 @@ function test()
 
             function step2(node)
             {
-                WebInspector.breakpointManager.createDOMBreakpoint(node.id, WebInspector.DOMBreakpointTypes.SubtreeModified);
+                pane._setBreakpoint(node, pane._breakpointTypes.SubtreeModified, true);
+                pane._saveBreakpoints();
                 InspectorTest.addResult("Set 'Subtree Modified' DOM breakpoint on rootElement.");
                 InspectorTest.reloadPage(step3);
             }
@@ -121,15 +123,17 @@ function test()
     function waitUntilPausedAndDumpStack(callback)
     {
         InspectorTest.waitUntilPaused(paused);
-        InspectorTest.addSniffer(WebInspector.DOMBreakpointView.prototype, "_format", format);
-
+        InspectorTest.addSniffer(WebInspector.CallStackSidebarPane.prototype, "setStatus", setStatus);
 
         var caption;
         var callFrames;
 
-        function format(element)
+        function setStatus(status)
         {
-            caption = element.textContent;
+            if (typeof status === "string")
+                caption = status;
+            else
+                caption = status.textContent;
             if (callFrames)
                 step1();
         }

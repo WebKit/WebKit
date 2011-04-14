@@ -1,3 +1,69 @@
+2011-04-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: re-implement dom breakpoints.
+        https://bugs.webkit.org/show_bug.cgi?id=57038
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/BreakpointManager.js: Removed.
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.NativeBreakpointsSidebarPane):
+        (WebInspector.NativeBreakpointsSidebarPane.prototype._reset):
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._restoreBreakpoints):
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.update):
+        (WebInspector.CallStackSidebarPane.prototype.setStatus):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+        (WebInspector.DOMAgent.prototype._childNodeRemoved):
+        * inspector/front-end/DOMBreakpointsSidebarPane.js: Added.
+        (WebInspector.DOMBreakpointsSidebarPane):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype.setInspectedURL):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype.populateNodeContextMenu.toggleBreakpoint):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype.populateNodeContextMenu):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype.createBreakpointHitStatusMessage.didPushNodeToFrontend):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype.createBreakpointHitStatusMessage):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._doCreateBreakpointHitStatusMessage.formatters.s):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._doCreateBreakpointHitStatusMessage.append):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._doCreateBreakpointHitStatusMessage):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype.nodeRemoved):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._removeBreakpointsForNode):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._setBreakpoint):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._removeBreakpoint):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._contextMenu.removeBreakpoint):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._contextMenu):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._checkboxClicked):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype.highlightBreakpoint):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype.clearBreakpointHighlight):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._createBreakpointId):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype._saveBreakpoints):
+        (WebInspector.DOMBreakpointsSidebarPane.prototype.restoreBreakpoints):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype.show):
+        (WebInspector.ElementsPanel.prototype.updateModifiedNodes):
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumbSizes.coalesceCollapsedCrumbs):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._populateTagContextMenu):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.show):
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused.didCreateBreakpointHitStatusMessage):
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused.else.didGetSourceLocation):
+        (WebInspector.ScriptsPanel.prototype._debuggerPaused):
+        (WebInspector.ScriptsPanel.prototype._clearInterface):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        (WebInspector.Settings.prototype._set):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.inspectedURLChanged):
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-04-14  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Kent Tamura.

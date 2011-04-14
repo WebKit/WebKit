@@ -791,23 +791,8 @@ WebInspector.ElementsTreeElement.prototype = {
         if (Preferences.nativeInstrumentationEnabled) {
             // Add debbuging-related actions
             contextMenu.appendSeparator();
-
-            function handlerFunction(nodeId, breakType)
-            {
-                WebInspector.breakpointManager.createDOMBreakpoint(nodeId, breakType);
-                WebInspector.panels.elements.sidebarPanes.domBreakpoints.expand();
-            }
-            var node = this.representedObject;
-            for (var key in WebInspector.DOMBreakpointTypes) {
-                var type = WebInspector.DOMBreakpointTypes[key];
-                var label = WebInspector.domBreakpointTypeContextMenuLabel(type);
-                var breakpoint = node.breakpoints[type];
-                if (!breakpoint)
-                    var handler = handlerFunction.bind(this, node.id, type);
-                else
-                    var handler = breakpoint.remove.bind(breakpoint);
-                contextMenu.appendCheckboxItem(label, handler, !!breakpoint);
-            }
+            var pane = WebInspector.panels.elements.sidebarPanes.domBreakpoints;
+            pane.populateNodeContextMenu(this.representedObject, contextMenu);
         }
     },
 

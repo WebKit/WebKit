@@ -79,7 +79,7 @@ WebInspector.ElementsPanel = function()
     this.sidebarPanes.metrics = new WebInspector.MetricsSidebarPane();
     this.sidebarPanes.properties = new WebInspector.PropertiesSidebarPane();
     if (Preferences.nativeInstrumentationEnabled)
-        this.sidebarPanes.domBreakpoints = WebInspector.createDOMBreakpointsSidebarPane();
+        this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane;
     this.sidebarPanes.eventListeners = new WebInspector.EventListenersSidebarPane();
 
     this.sidebarPanes.styles.onexpand = this.updateStyles.bind(this);
@@ -153,6 +153,9 @@ WebInspector.ElementsPanel.prototype = {
         if (this.recentlyModifiedNodes.length)
             this.updateModifiedNodes();
 
+        if (Preferences.nativeInstrumentationEnabled)
+            this.sidebarElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.eventListeners.element);
+
         if (!this.rootDOMNode)
             WebInspector.domAgent.requestDocument();
     },
@@ -199,8 +202,8 @@ WebInspector.ElementsPanel.prototype = {
         if (!inspectedRootDocument)
             return;
 
-        WebInspector.breakpointManager.restoreDOMBreakpoints();
-
+        if (Preferences.nativeInstrumentationEnabled)
+            this.sidebarPanes.domBreakpoints.restoreBreakpoints();
 
         this.rootDOMNode = inspectedRootDocument;
 
@@ -483,7 +486,7 @@ WebInspector.ElementsPanel.prototype = {
                     nodeItem.updateTitle();
                 continue;
             }
-            
+
             if (!parent)
                 continue;
 
@@ -768,13 +771,13 @@ WebInspector.ElementsPanel.prototype = {
         var i = 0;
         var crumb = crumbs.firstChild;
         while (crumb) {
-            // Find the selected crumb and index. 
+            // Find the selected crumb and index.
             if (!selectedCrumb && crumb.hasStyleClass("selected")) {
                 selectedCrumb = crumb;
                 selectedIndex = i;
             }
 
-            // Find the focused crumb index. 
+            // Find the focused crumb index.
             if (crumb === focusedCrumb)
                 focusedIndex = i;
 
@@ -883,7 +886,7 @@ WebInspector.ElementsPanel.prototype = {
             while (crumb) {
                 var hidden = crumb.hasStyleClass("hidden");
                 if (!hidden) {
-                    var collapsed = crumb.hasStyleClass("collapsed"); 
+                    var collapsed = crumb.hasStyleClass("collapsed");
                     if (collapsedRun && collapsed) {
                         crumb.addStyleClass("hidden");
                         crumb.removeStyleClass("compact");

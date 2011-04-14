@@ -171,17 +171,6 @@ var WebInspector = {
         }
     },
 
-    createDOMBreakpointsSidebarPane: function()
-    {
-        var pane = new WebInspector.NativeBreakpointsSidebarPane(WebInspector.UIString("DOM Breakpoints"));
-        function breakpointAdded(event)
-        {
-            pane.addBreakpointItem(new WebInspector.BreakpointItem(event.data));
-        }
-        WebInspector.breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.DOMBreakpointAdded, breakpointAdded);
-        return pane;
-    },
-
     _createPanels: function()
     {
         var hiddenPanels = (InspectorFrontendHost.hiddenPanels() || "").split(',');
@@ -460,8 +449,8 @@ WebInspector.doLoadedDone = function()
     this.cssModel = new WebInspector.CSSStyleModel();
     this.debuggerModel = new WebInspector.DebuggerModel();
 
-    this.breakpointManager = new WebInspector.BreakpointManager();
     this.searchController = new WebInspector.SearchController();
+    this.domBreakpointsSidebarPane = new WebInspector.DOMBreakpointsSidebarPane();
 
     this.panels = {};
     this._createPanels();
@@ -1035,7 +1024,7 @@ WebInspector.bringToFront = function()
 WebInspector.inspectedURLChanged = function(url)
 {
     InspectorFrontendHost.inspectedURLChanged(url);
-    this.settings.inspectedURLChanged(url);
+    this.domBreakpointsSidebarPane.setInspectedURL(url);
     this.extensionServer.notifyInspectedURLChanged(url);
 }
 

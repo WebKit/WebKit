@@ -59,8 +59,6 @@ WebInspector.DOMNode = function(doc, payload) {
     this.style = null;
     this._matchedCSSRules = [];
 
-    this.breakpoints = {};
-
     if (this._nodeType === Node.ELEMENT_NODE) {
         // HTML and BODY from internal iframes should not overwrite top-level ones.
         if (!this.ownerDocument.documentElement && this._nodeName === "HTML")
@@ -504,17 +502,7 @@ WebInspector.DOMAgent.prototype = {
         parent.removeChild_(node);
         this.dispatchEventToListeners(WebInspector.DOMAgent.Events.NodeRemoved, {node:node, parent:parent});
         delete this._idToDOMNode[nodeId];
-        this._removeBreakpoints(node);
-    },
-
-    _removeBreakpoints: function(node)
-    {
-        for (var type in node.breakpoints)
-            node.breakpoints[type].remove();
-        if (!node.children)
-            return;
-        for (var i = 0; i < node.children.length; ++i)
-            this._removeBreakpoints(node.children[i]);
+        WebInspector.panels.elements.sidebarPanes.domBreakpoints.nodeRemoved(node);
     },
 
     performSearch: function(query, searchResultCollector, searchSynchronously)

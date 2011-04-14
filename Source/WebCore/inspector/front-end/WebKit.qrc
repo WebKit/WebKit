@@ -9,7 +9,6 @@
     <file>AuditRules.js</file>
     <file>AuditsPanel.js</file>
     <file>BottomUpProfileDataGridTree.js</file>
-    <file>BreakpointManager.js</file>
     <file>BreakpointsSidebarPane.js</file>
     <file>CallStackSidebarPane.js</file>
     <file>Checkbox.js</file>
@@ -33,6 +32,7 @@
     <file>DebuggerPresentationModel.js</file>
     <file>SourceFile.js</file>
     <file>DOMAgent.js</file>
+    <file>DOMBreakpointsSidebarPane.js</file>
     <file>DOMStorage.js</file>
     <file>DOMStorageItemsView.js</file>
     <file>DOMSyntaxHighlighter.js</file>

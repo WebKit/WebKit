@@ -451,6 +451,14 @@ String.prototype.trimURL = function(baseURLDomain)
     return result;
 }
 
+String.prototype.removeURLFragment = function()
+{
+    var fragmentIndex = this.indexOf("#");
+    if (fragmentIndex == -1)
+        fragmentIndex = this.length;
+    return this.substring(0, fragmentIndex);
+}
+
 function isNodeWhitespace()
 {
     if (!this || this.nodeType !== Node.TEXT_NODE)

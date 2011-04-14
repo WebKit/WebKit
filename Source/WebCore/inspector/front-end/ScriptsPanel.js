@@ -135,7 +135,7 @@ WebInspector.ScriptsPanel = function()
     this.sidebarPanes.scopechain = new WebInspector.ScopeChainSidebarPane();
     this.sidebarPanes.jsBreakpoints = new WebInspector.JavaScriptBreakpointsSidebarPane(this._presentationModel, this._showSourceLine.bind(this));
     if (Preferences.nativeInstrumentationEnabled) {
-        this.sidebarPanes.domBreakpoints = WebInspector.createDOMBreakpointsSidebarPane();
+        this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane;
         this.sidebarPanes.xhrBreakpoints = new WebInspector.XHRBreakpointsSidebarPane();
         this.sidebarPanes.eventListenerBreakpoints = new WebInspector.EventListenerBreakpointsSidebarPane();
     }
@@ -200,6 +200,12 @@ WebInspector.ScriptsPanel.PauseOnExceptionsState = {
     PauseOnUncaughtExceptions: "uncaught"
 };
 
+WebInspector.ScriptsPanel.BrowserBreakpointTypes = {
+    DOM: "DOM",
+    EventListener: "EventListener",
+    XHR: "XHR"
+}
+
 WebInspector.ScriptsPanel.prototype = {
     get toolbarItemLabel()
     {
@@ -225,6 +231,8 @@ WebInspector.ScriptsPanel.prototype = {
     {
         WebInspector.Panel.prototype.show.call(this);
         this.sidebarResizeElement.style.right = (this.sidebarElement.offsetWidth - 3) + "px";
+        if (Preferences.nativeInstrumentationEnabled)
+            this.sidebarElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.xhrBreakpoints.element);
 
         if (this.visibleView)
             this.visibleView.show(this.viewsContainerElement);
@@ -366,16 +374,22 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.callstack.update(callFrames, details);
         this.sidebarPanes.callstack.selectedCallFrame = this._presentationModel.selectedCallFrame;
 
-        var status;
         if (details.eventType === WebInspector.DebuggerEventTypes.NativeBreakpoint) {
-            if (details.eventData.breakpointType === WebInspector.BreakpointManager.BreakpointTypes.EventListener) {
+            if (details.eventData.breakpointType === WebInspector.ScriptsPanel.BrowserBreakpointTypes.DOM) {
+                this.sidebarPanes.domBreakpoints.highlightBreakpoint(details.eventData);
+                function didCreateBreakpointHitStatusMessage(element)
+                {
+                    this.sidebarPanes.callstack.setStatus(element);
+                }
+                this.sidebarPanes.domBreakpoints.createBreakpointHitStatusMessage(details.eventData, didCreateBreakpointHitStatusMessage.bind(this));
+            } else if (details.eventData.breakpointType === WebInspector.ScriptsPanel.BrowserBreakpointTypes.EventListener) {
                 var eventName = details.eventData.eventName;
                 this.sidebarPanes.eventListenerBreakpoints.highlightBreakpoint(details.eventData.eventName);
                 var eventNameForUI = WebInspector.EventListenerBreakpointsSidebarPane.eventNameForUI(eventName);
-                status = WebInspector.UIString("Paused on a \"%s\" Event Listener.", eventNameForUI);
-            } else if (details.eventData.breakpointType === WebInspector.BreakpointManager.BreakpointTypes.XHR) {
+                this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on a \"%s\" Event Listener.", eventNameForUI));
+            } else if (details.eventData.breakpointType === WebInspector.ScriptsPanel.BrowserBreakpointTypes.XHR) {
                 this.sidebarPanes.xhrBreakpoints.highlightBreakpoint(details.eventData.breakpointURL);
-                status = WebInspector.UIString("Paused on a XMLHttpRequest.");
+                this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on a XMLHttpRequest."));
             }
         } else {
             function didGetSourceLocation(sourceFileId, lineNumber)
@@ -383,12 +397,10 @@ WebInspector.ScriptsPanel.prototype = {
                 if (!sourceFileId || !this._presentationModel.findBreakpoint(sourceFileId, lineNumber))
                     return;
                 this.sidebarPanes.jsBreakpoints.highlightBreakpoint(sourceFileId, lineNumber);
-                status = WebInspector.UIString("Paused on a JavaScript breakpoint.");
+                this.sidebarPanes.callstack.setStatus(WebInspector.UIString("Paused on a JavaScript breakpoint."));
             }
             callFrames[0].sourceLine(didGetSourceLocation.bind(this));
         }
-        if (status)
-            this.sidebarPanes.callstack.setStatus(status);
 
         window.focus();
         InspectorFrontendHost.bringToFront();
@@ -742,6 +754,7 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.scopechain.update(null);
         this.sidebarPanes.jsBreakpoints.clearBreakpointHighlight();
         if (Preferences.nativeInstrumentationEnabled) {
+            this.sidebarPanes.domBreakpoints.clearBreakpointHighlight();
             this.sidebarPanes.eventListenerBreakpoints.clearBreakpointHighlight();
             this.sidebarPanes.xhrBreakpoints.clearBreakpointHighlight();
         }

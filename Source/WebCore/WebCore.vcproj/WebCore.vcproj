@@ -66945,10 +66945,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\BreakpointManager.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\BreakpointsSidebarPane.js"
 					>
 				</File>
@@ -67038,6 +67034,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\DOMAgent.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\DOMBreakpointsSidebarPane.js"
 					>
 				</File>
 				<File
