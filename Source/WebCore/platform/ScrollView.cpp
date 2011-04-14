@@ -57,6 +57,7 @@ ScrollView::ScrollView()
     , m_paintsEntireContents(false)
     , m_clipsRepaints(true)
     , m_delegatesScrolling(false)
+    , m_containsScrollableAreaWithOverlayScrollbars(false)
 {
     platformInit();
 }
@@ -982,6 +983,9 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
         return;
 
     notifyPageThatContentAreaWillPaint();
+
+    // If we encounter any overlay scrollbars as we paint, this will be set to true.
+    m_containsScrollableAreaWithOverlayScrollbars = false;
     
     IntRect documentDirtyRect = rect;
     documentDirtyRect.intersect(frameRect());

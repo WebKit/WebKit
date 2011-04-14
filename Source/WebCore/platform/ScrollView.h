@@ -282,6 +282,9 @@ public:
     virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const;
     virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const;
 
+    bool containsScrollableAreaWithOverlayScrollbars() const { return m_containsScrollableAreaWithOverlayScrollbars; }
+    void setContainsScrollableAreaWithOverlayScrollbars(bool contains) { m_containsScrollableAreaWithOverlayScrollbars = contains; }
+
 protected:
     ScrollView();
 
@@ -351,6 +354,8 @@ private:
     bool m_paintsEntireContents;
     bool m_clipsRepaints;
     bool m_delegatesScrolling;
+
+    bool m_containsScrollableAreaWithOverlayScrollbars;
 
     IntSize m_boundsSize;
 

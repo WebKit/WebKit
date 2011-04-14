@@ -1,3 +1,35 @@
+2011-04-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=56493
+        Drag-scrolling overlay scrollbars thumb in overflow regions does not work
+        -and corresponding-
+        <rdar://problem/9112688>
+
+        There was an original change to fix this in the normal hit-testing case, but hit 
+        testing of transformed and/or positioned objects was still broken. The transformed 
+        case is fixed by sending an OverlayScrollbarSizeRelevancy parameter to 
+        calculateRects(). Getting positioned objects right is a little trickier. Those need 
+        to opt into using temporary clip rects during hit testing. To avoid doing that when 
+        it is not necessary, I added a new bit to ScrollView to track whether there are 
+        currently overlay scrollbars painted in the view.
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::containsScrollableAreaWithOverlayScrollbars):
+        (WebCore::ScrollView::setContainsScrollableAreaWithOverlayScrollbars):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintOverflowControls):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::updateClipRects):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::parentClipRects):
+        (WebCore::RenderLayer::backgroundClipRect):
+        (WebCore::RenderLayer::calculateRects):
+        * rendering/RenderLayer.h:
+
 2011-04-14  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver Hunt.
