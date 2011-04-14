@@ -1,3 +1,15 @@
+2011-04-14  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r72141): Acid3 rendering is not pixel perfect.
+        https://bugs.webkit.org/show_bug.cgi?id=55734
+
+        * fast/text/zero-font-size.html: Added.
+        * platform/mac/fast/text/zero-font-size-expected.checksum: Added.
+        * platform/mac/fast/text/zero-font-size-expected.png: Added.
+        * platform/mac/fast/text/zero-font-size-expected.txt: Added.
+
 2011-04-14  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

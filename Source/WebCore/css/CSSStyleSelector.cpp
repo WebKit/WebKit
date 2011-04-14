@@ -6801,6 +6801,13 @@ void CSSStyleSelector::setFontSize(FontDescription& fontDescription, float size)
 
 float CSSStyleSelector::getComputedSizeFromSpecifiedSize(Document* document, RenderStyle* style, bool isAbsoluteSize, float specifiedSize, bool useSVGZoomRules)
 {
+    // Text with a 0px font size should not be visible and therefore needs to be
+    // exempt from minimum font size rules. Acid3 relies on this for pixel-perfect
+    // rendering. This is also compatible with other browsers that have minimum
+    // font size settings (e.g. Firefox).
+    if (fabsf(specifiedSize) < std::numeric_limits<float>::epsilon())
+        return 0.0f;
+
     float zoomFactor = 1.0f;
     if (!useSVGZoomRules) {
         zoomFactor = style->effectiveZoom();

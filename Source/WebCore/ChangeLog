@@ -1,3 +1,22 @@
+2011-04-14  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r72141): Acid3 rendering is not pixel perfect.
+        https://bugs.webkit.org/show_bug.cgi?id=55734
+        
+        WebCore should render text with a 0px font size at 0px regardless of
+        minimum font size settings. This is compatible with other browsers that
+        have a minimum font size preference and ensures pixel-perfect rendering
+        on Acid3.
+
+        Test: fast/text/zero-font-size.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::getComputedSizeFromSpecifiedSize): If
+        specifiedSize is 0, return specified size regardless of zoom factor or
+        minimum font size.
+
 2011-04-14  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.
