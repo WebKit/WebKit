@@ -1,5 +1,12 @@
 2011-04-13  Oliver Hunt  <oliver@apple.com>
 
+        Fix 32bit tests.
+
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::singleTransition):
+
+2011-04-13  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoff Garen.
 
         GC allocate Structure

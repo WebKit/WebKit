@@ -133,8 +133,10 @@ private:
     Structure* singleTransition() const
     {
         ASSERT(isUsingSingleSlot());
-        if (HandleSlot slot = this->slot())
-            return reinterpret_cast<Structure*>(slot->asCell());
+        if (HandleSlot slot = this->slot()) {
+            if (*slot)
+                return reinterpret_cast<Structure*>(slot->asCell());
+        }
         return 0;
     }
     
