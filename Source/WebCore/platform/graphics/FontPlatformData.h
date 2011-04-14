@@ -84,7 +84,7 @@ typedef const struct __CTFont* CTFontRef;
 typedef struct HFONT__* HFONT;
 #endif
 
-#if PLATFORM(CG)
+#if PLATFORM(CG) || USE(SKIA_ON_MAC_CHROME)
 typedef struct CGFont* CGFontRef;
 #if OS(DARWIN)
 #ifndef BUILDING_ON_TIGER
@@ -179,6 +179,7 @@ public:
 #if OS(DARWIN)
     FontPlatformData(NSFont*, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = Horizontal,
                      TextOrientation = TextOrientationVerticalRight, FontWidthVariant = RegularWidth);
+#if PLATFORM(CG) || USE(SKIA_ON_MAC_CHROME)
     FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation,
                      TextOrientation textOrientation, FontWidthVariant widthVariant)
         : m_syntheticBold(syntheticBold)
@@ -192,6 +193,7 @@ public:
         , m_isColorBitmapFont(false)
     {
     }
+#endif
 #endif
 #if PLATFORM(WIN)
     FontPlatformData(HFONT, float size, bool syntheticBold, bool syntheticOblique, bool useGDI);
@@ -213,7 +215,7 @@ public:
     void setFont(NSFont*);
 #endif
 
-#if PLATFORM(CG)
+#if PLATFORM(CG) || USE(SKIA_ON_MAC_CHROME)
 #if OS(DARWIN)
 #ifndef BUILDING_ON_TIGER
     CGFontRef cgFont() const { return m_cgFont.get(); }
@@ -250,7 +252,9 @@ public:
 #if PLATFORM(WIN) && !PLATFORM(CAIRO)
         return m_font ? m_font->hash() : 0;
 #elif OS(DARWIN)
+#if PLATFORM(CG) || USE(SKIA_ON_MAC_CHROME)
         ASSERT(m_font || !m_cgFont);
+#endif
         uintptr_t hashCodes[3] = { (uintptr_t)m_font, m_widthVariant, m_textOrientation << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique };
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
 #elif PLATFORM(CAIRO)
@@ -324,7 +328,7 @@ private:
     RefPtr<RefCountedGDIHandle<HFONT> > m_font;
 #endif
 
-#if PLATFORM(CG)
+#if PLATFORM(CG) || USE(SKIA_ON_MAC_CHROME)
 #if PLATFORM(WIN)
     RetainPtr<CGFontRef> m_cgFont;
 #else

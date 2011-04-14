@@ -1,3 +1,26 @@
+2011-04-13  Cary Clark  <caryclark@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Allow CG Font support in Chrome Darwin build using Skia
+        https://bugs.webkit.org/show_bug.cgi?id=58321
+        
+        This allows Chrome to use Skia to do WebKit rendering, while
+        using CoreGraphics for glyph creation and computing font metrics.
+        It relies on an undefined platform token, WTF_USE_SKIA_ON_MAC_CHROME.
+
+        No new tests needed, no functionality change.
+
+        * loader/cache/CachedFont.cpp: Make CGFontRef functions and
+        CG-specific font code available to Chrome builds on Darwin using Skia.
+        * platform/graphics/FontPlatformData.h: Ditto.
+        (WebCore::FontPlatformData::hash): Ditto.
+        * platform/graphics/GlyphBuffer.h: Ditto.
+        (WebCore::GlyphBuffer::advanceAt): Ditto.
+        (WebCore::GlyphBuffer::add): Ditto.
+        (WebCore::GlyphBuffer::expandLastAdvance): Ditto.
+        * platform/graphics/SimpleFontData.h: Ditto.
+
 2011-04-13  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Dimitri Glazkov.
