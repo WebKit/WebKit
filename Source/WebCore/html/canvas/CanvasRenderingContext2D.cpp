@@ -1237,8 +1237,12 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image,
     drawImage(image, FloatRect(sx, sy, sw, sh), FloatRect(dx, dy, dw, dh), ec);
 }
 
-void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRect& srcRect, const FloatRect& dstRect,
-    ExceptionCode& ec)
+void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRect& srcRect, const FloatRect& dstRect, ExceptionCode& ec)
+{
+    drawImage(image, srcRect, dstRect, state().m_globalComposite, ec);
+}
+
+void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRect& srcRect, const FloatRect& dstRect, const CompositeOperator& op, ExceptionCode& ec)
 {
     if (!image) {
         ec = TYPE_MISMATCH_ERR;
@@ -1280,7 +1284,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
 
     FloatRect sourceRect = c->roundToDevicePixels(normalizedSrcRect);
     FloatRect destRect = c->roundToDevicePixels(normalizedDstRect);
-    c->drawImage(cachedImage->image(), ColorSpaceDeviceRGB, destRect, sourceRect, state().m_globalComposite);
+    c->drawImage(cachedImage->image(), ColorSpaceDeviceRGB, destRect, sourceRect, op);
     didDraw(destRect);
 }
 
@@ -1439,34 +1443,17 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
 }
 #endif
 
-// FIXME: Why isn't this just another overload of drawImage? Why have a different name?
 void CanvasRenderingContext2D::drawImageFromRect(HTMLImageElement* image,
     float sx, float sy, float sw, float sh,
     float dx, float dy, float dw, float dh,
     const String& compositeOperation)
 {
-    if (!image)
-        return;
-
-    CachedImage* cachedImage = image->cachedImage();
-    if (!cachedImage)
-        return;
-
-    checkOrigin(image);
-
-    GraphicsContext* c = drawingContext();
-    if (!c)
-        return;
-    if (!state().m_invertibleCTM)
-        return;
-
     CompositeOperator op;
     if (!parseCompositeOperator(compositeOperation, op))
         op = CompositeSourceOver;
 
-    FloatRect destRect = FloatRect(dx, dy, dw, dh);
-    c->drawImage(cachedImage->image(), ColorSpaceDeviceRGB, destRect, FloatRect(sx, sy, sw, sh), op);
-    didDraw(destRect);
+    ExceptionCode ec;
+    drawImage(image, FloatRect(sx, sy, sw, sh), FloatRect(dx, dy, dw, dh), op, ec);
 }
 
 void CanvasRenderingContext2D::setAlpha(float alpha)
