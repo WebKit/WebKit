@@ -6,7 +6,7 @@
 select (STDOUT);
 $| = 1;
 
-print "Refresh: 0;url=data:text/plain,You should have seen an alert.\r\n";
+print "Refresh: 0;url=data:text/html,<body onload='if (window.layoutTestController) layoutTestController.notifyDone();'>You should have seen an alert.\r\n";
 print "Content-Type: text/html\r\n";
 print "\r\n";
 
@@ -14,10 +14,12 @@ print << "EOF";
 <html>
 <head>
 <script>
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
 </script>
-<meta http-equiv="refresh" content="0;url=data:text/plain,You should have seen an alert.">
+<meta http-equiv="refresh" content="0;url=data:text/html,%3Cbody%20onload='if(window.layoutTestController)layoutTestController.notifyDone();'%3EYou%20should%20have%20seen%20an%20alert.">
 </head>
 EOF
 
@@ -26,7 +28,7 @@ for ($count=1; $count<20000; $count++) {
 }
 
 print << "EOF";
-<body onload="if (window.layoutTestController) document.write('<p>SUCCESS</p>'); else alert('SUCCESS');">
+<body onload="alert('SUCCESS');">
 </body>
 </html>
 EOF

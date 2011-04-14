@@ -1,3 +1,25 @@
+2011-04-14  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] http/tests/loading/preload-append-scan.php fails
+        https://bugs.webkit.org/show_bug.cgi?id=58352
+
+        On chromium, onload-vs-immediate-refresh always caused the subsequent test to fail
+        with an additional didFinishLoadForFrame message. This was because the test
+        navigates via a refresh, but did not actually wait for the navigation to complete.
+
+        This patch fixes that by adding a waitUntilDone() and calling notifyDone() after the
+        redirect target page loads. Now the log for this test shows both navigations and no
+        part of the navigation leaks into the next test.
+
+        Also, since dumpAsText() shows alerts, there was no reason to write vs. alert the
+        SUCCESS message.
+
+        * http/tests/loading/onload-vs-immediate-refresh-expected.txt:
+        * http/tests/loading/onload-vs-immediate-refresh.pl:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-14  James Robinson  <jamesr@chromium.org>
 
         Update expectations and baselines for r83820.

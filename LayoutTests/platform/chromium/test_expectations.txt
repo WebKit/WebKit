@@ -2591,10 +2591,6 @@ BUG_DRT MAC : fast/reflections/inline-crash.html = IMAGE
 // The background color of Apple Mac results also look wrong.
 BUG_DRT : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE
 
-// Extra didFinishDocumentLoadForFrame line.
-// The first didFinishDocumentLoadForFrame line is for the previous test document.
-BUG_DRT WIN MAC LINUX : http/tests/loading/preload-img-test.html = TEXT TIMEOUT PASS
-
 // Flaky since 2010-09-17?
 BUGCR57950 WIN XP : svg/batik/text/verticalText.svg = CRASH PASS
 BUGWK58193 WIN WIN7 : svg/batik/text/verticalText.svg = IMAGE+TEXT
@@ -3317,8 +3313,6 @@ BUGCR78996 DEBUG : fast/css/first-of-type-pseudo-class.html = PASS TEXT
 // http://trac.webkit.org/changeset/83411/ merged some frame tests into one.
 // The merged test is flaky on Chromium since then.
 BUGCR78998 DEBUG : fast/frames/frame-element-name.html = TEXT PASS
-// Added in http://trac.webkit.org/changeset/83321/. It's very flaky.
-BUGCR79006 : http/tests/loading/preload-append-scan.php = TEXT PASS
 
 // Windows 7 failures that need triaging and probably mostly just need
 // new baselines.
