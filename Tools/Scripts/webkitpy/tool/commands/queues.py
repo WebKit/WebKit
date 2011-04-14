@@ -50,6 +50,7 @@ from webkitpy.tool.bot.feeders import CommitQueueFeeder, EWSFeeder
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
 from webkitpy.tool.bot.flakytestreporter import FlakyTestReporter
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
+from webkitpy.tool.steps.runtests import RunTests
 from webkitpy.tool.multicommandtool import Command, TryAgain
 
 
@@ -314,8 +315,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
     # tool.filesystem.read_text_file.  They have different error handling at the moment.
     def _read_file_contents(self, path):
         try:
-            with codecs.open(path, "r", "utf-8") as open_file:
-                return open_file.read()
+            return self._tool.filesystem.read_text_file(path)
         except OSError, e:  # File does not exist or can't be read.
             return None
 
@@ -325,7 +325,11 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         results_html = self._read_file_contents(results_path)
         if not results_html:
             return None
-        return LayoutTestResults.results_from_string(results_html)
+        # FIXME: We should not have to pass a failure_limit_count, but we
+        # do until run-webkit-tests can be updated save off the value
+        # of --exit-after-N-failures in results.html/results.json.
+        # https://bugs.webkit.org/show_bug.cgi?id=58481
+        return LayoutTestResults.results_from_string(results_html, failure_limit_count=RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT)
 
     def _results_directory(self):
         results_path = self._tool.port().layout_tests_results_path()

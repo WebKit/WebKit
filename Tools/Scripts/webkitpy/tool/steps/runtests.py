@@ -31,6 +31,9 @@ from webkitpy.tool.steps.options import Options
 from webkitpy.common.system.deprecated_logging import log
 
 class RunTests(AbstractStep):
+    # FIXME: This knowledge really belongs in the commit-queue.
+    NON_INTERACTIVE_FAILURE_LIMIT_COUNT = 1
+
     @classmethod
     def options(cls):
         return AbstractStep.options() + [
@@ -59,7 +62,7 @@ class RunTests(AbstractStep):
         if self._options.non_interactive:
             args.append("--no-new-test-results")
             args.append("--no-launch-safari")
-            args.append("--exit-after-n-failures=1")
+            args.append("--exit-after-n-failures=%s" % self.NON_INTERACTIVE_FAILURE_LIMIT_COUNT)
             args.append("--wait-for-httpd")
             # FIXME: Hack to work around https://bugs.webkit.org/show_bug.cgi?id=38912
             # when running the commit-queue on a mac leopard machine since compositing

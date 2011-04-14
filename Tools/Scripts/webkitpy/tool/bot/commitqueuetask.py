@@ -28,6 +28,7 @@
 
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.net.layouttestresults import LayoutTestResults
+from webkitpy.tool.bot.expectedfailures import ExpectedFailures
 
 
 class CommitQueueTaskDelegate(object):
@@ -60,6 +61,7 @@ class CommitQueueTask(object):
         self._patch = patch
         self._script_error = None
         self._results_archive_from_patch_test_run = None
+        self._expected_failures = ExpectedFailures()
 
     def _validate(self):
         # Bugs might get closed, or patches might be obsoleted or r-'d while the
@@ -133,7 +135,7 @@ class CommitQueueTask(object):
         "Unable to build without patch")
 
     def _test(self):
-        return self._run_command([
+        success = self._run_command([
             "build-and-test",
             "--no-clean",
             "--no-update",
@@ -144,8 +146,11 @@ class CommitQueueTask(object):
         "Passed tests",
         "Patch does not pass tests")
 
+        self._expected_failures.shrink_expected_failures(self._delegate.layout_test_results(), success)
+        return success
+
     def _build_and_test_without_patch(self):
-        return self._run_command([
+        success = self._run_command([
             "build-and-test",
             "--force-clean",
             "--no-update",
@@ -156,11 +161,8 @@ class CommitQueueTask(object):
         "Able to pass tests without patch",
         "Unable to pass tests without patch (tree is red?)")
 
-    def _failing_results_from_last_run(self):
-        results = self._delegate.layout_test_results()
-        if not results:
-            return []  # Makes callers slighty cleaner to not have to deal with None
-        return results.failing_test_results()
+        self._expected_failures.shrink_expected_failures(self._delegate.layout_test_results(), success)
+        return success
 
     def _land(self):
         # Unclear if this should pass --quiet or not.  If --parent-command always does the reporting, then it should.
@@ -178,32 +180,50 @@ class CommitQueueTask(object):
     def _report_flaky_tests(self, flaky_test_results, results_archive):
         self._delegate.report_flaky_tests(self._patch, flaky_test_results, results_archive)
 
+    def _results_failed_different_tests(self, first, second):
+        first_failing_tests = [] if not first else first.failing_tests()
+        second_failing_tests = [] if not second else second.failing_tests()
+        return first_failing_tests != second_failing_tests
+
     def _test_patch(self):
         if self._test():
             return True
 
-        first_results = self._failing_results_from_last_run()
-        first_failing_tests = [result.filename for result in first_results]
+        # Note: archive_last_layout_test_results deletes the results directory, making these calls order-sensitve.
+        # We could remove this dependency by building the layout_test_results from the archive.
+        first_results = self._delegate.layout_test_results()
         first_results_archive = self._delegate.archive_last_layout_test_results(self._patch)
-        if self._test():
-            # Only report flaky tests if we were successful at archiving results.
-            if first_results_archive:
-                self._report_flaky_tests(first_results, first_results_archive)
+
+        if self._expected_failures.failures_were_expected(first_results):
             return True
 
-        second_results = self._failing_results_from_last_run()
-        second_failing_tests = [result.filename for result in second_results]
-        if first_failing_tests != second_failing_tests:
+        if self._test():
+            # Only report flaky tests if we were successful at parsing results.html and archiving results.
+            if first_results and first_results_archive:
+                self._report_flaky_tests(first_results.failing_test_results(), first_results_archive)
+            return True
+
+        second_results = self._delegate.layout_test_results()
+        if self._results_failed_different_tests(first_results, second_results):
             # We could report flaky tests here, but since run-webkit-tests
-            # is run with --exit-after-N-failures=1, we would need to
+            # is currently run with --exit-after-N-failures=1, we would need to
             # be careful not to report constant failures as flaky due to earlier
             # flaky test making them not fail (no results) in one of the runs.
             # See https://bugs.webkit.org/show_bug.cgi?id=51272
             return False
 
+        # Archive (and remove) second results so layout_test_results() after
+        # build_and_test_without_patch won't use second results instead of the clean-tree results.
+        second_results_archive = self._delegate.archive_last_layout_test_results(self._patch)
+
         if self._build_and_test_without_patch():
-            return self.report_failure(first_results_archive)  # The error from the previous ._test() run is real, report it.
-        return False  # Tree must be red, just retry later.
+            # The error from the previous ._test() run is real, report it.
+            return self.report_failure(first_results_archive)
+
+        clean_tree_results = self._delegate.layout_test_results()
+        self._expected_failures.grow_expected_failures(clean_tree_results)
+
+        return False  # Tree must be redder than we expected, just retry later.
 
     def results_archive_from_patch_test_run(self, patch):
         assert(self._patch.id() == patch.id())  # CommitQueueTask is not currently re-useable.

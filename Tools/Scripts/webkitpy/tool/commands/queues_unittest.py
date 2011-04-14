@@ -253,6 +253,7 @@ MOCK: release_work_item: commit-queue 197
 
     def test_rollout(self):
         tool = MockTool(log_executive=True)
+        tool.filesystem.write_text_file('/mock/results.html', '')  # Otherwise the commit-queue will hit a KeyError trying to read the results from the MockFileSystem.
         tool.buildbot.light_tree_on_fire()
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
@@ -321,6 +322,7 @@ MOCK: release_work_item: commit-queue 106
     def test_manual_reject_during_processing(self):
         queue = SecondThoughtsCommitQueue()
         queue.bind_to_tool(MockTool())
+        queue._tool.filesystem.write_text_file('/mock/results.html', '')  # Otherwise the commit-queue will hit a KeyError trying to read the results from the MockFileSystem.
         queue._options = Mock()
         queue._options.port = None
         expected_stderr = """MOCK: update_status: commit-queue Cleaned working directory

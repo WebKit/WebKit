@@ -1,3 +1,49 @@
+2011-04-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue should be able to land when tree is red
+        https://bugs.webkit.org/show_bug.cgi?id=58494
+
+        There is some yak hair on my hands, I will admit.
+
+        This change is mostly about adding an ExpectedFailures
+        class to track when the bots are red and we should be
+        ignoring failures when landing from the commit-queue.
+
+        However, to make intelligent decisions about patches we
+        need to know whether the run hit the --exit-after-N-failures limit
+        or not.  Right now that information is not saved off in results.html
+        so we have to pull the information from RunTests.
+
+        I've plumbed the --exit-after-N-failures information into
+        LayoutTestResults for now to make the ExpectedFailures code cleaner.
+
+        As a result of adding all these additional calls to delegate.layout_test_results()
+        I broke some of our flaky test detection tests and had to re-write them
+        to not depend on the number of layout_test_results code.
+
+        At the same time I updated the commit-queue to use the newer filesystem
+        API (to allow us to use MockFileSystem) which required further changes
+        to the layout tests.  Changes were required in either case, since
+        we're now calling layout_test_results() in more cases, which previously
+        would try and hit the disk (until I moved it to use tool.filesystem).
+
+        I should note that *all* of this code is disabled for now, since our
+        --exit-after-N-failures limit is currently 1!  (Thus were always in the
+        case where we can't actually tell if the layout test results are legit.)
+        I will up that limit in a second patch (which may require a couple more unit test tweaks).
+
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/bot/expectedfailures.py: Added.
+        * Scripts/webkitpy/tool/bot/expectedfailures_unittest.py: Added.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+
 2011-04-13  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction.

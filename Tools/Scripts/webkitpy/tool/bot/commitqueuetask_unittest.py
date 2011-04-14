@@ -30,6 +30,7 @@ from datetime import datetime
 import unittest
 
 from webkitpy.common.net import bugzilla
+from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.layout_package import test_results
@@ -77,9 +78,6 @@ class MockCommitQueue(CommitQueueTaskDelegate):
 
 
 class CommitQueueTaskTest(unittest.TestCase):
-    def _mock_test_result(self, testname):
-        return test_results.TestResult(testname, [test_failures.FailureTextMismatch()])
-
     def _run_through_task(self, commit_queue, expected_stderr, expected_exception=None, expect_retry=False):
         tool = MockTool(log_executive=True)
         patch = tool.bugs.fetch_attachment(197)
@@ -190,6 +188,9 @@ command_failed: failure_message='Unable to build without patch' script_error='MO
             None,
             ScriptError("MOCK tests failure"),
         ])
+        # CommitQueueTask will only report flaky tests if we successfully parsed
+        # results.html and returned a LayoutTestResults object, so we fake one.
+        commit_queue.layout_test_results = lambda: LayoutTestResults([])
         expected_stderr = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='197'
 run_webkit_patch: ['update']
@@ -217,6 +218,7 @@ command_passed: success_message='Landed patch' patch='197'
             None,
             ScriptError("MOCK tests failure"),
         ])
+        commit_queue.layout_test_results = lambda: LayoutTestResults([])
         # It's possible delegate to fail to archive layout tests, don't try to report
         # flaky tests when that happens.
         commit_queue.archive_last_layout_test_results = lambda patch: None
@@ -237,10 +239,25 @@ command_passed: success_message='Landed patch' patch='197'
 """
         self._run_through_task(commit_queue, expected_stderr)
 
-    _double_flaky_test_counter = 0
-
     def test_double_flaky_test_failure(self):
-        commit_queue = MockCommitQueue([
+        class DoubleFlakyCommitQueue(MockCommitQueue):
+            def __init__(self, error_plan):
+                MockCommitQueue.__init__(self, error_plan)
+                self._double_flaky_test_counter = 0
+
+            def run_command(self, command):
+                self._double_flaky_test_counter += 1
+                MockCommitQueue.run_command(self, command)
+
+            def _mock_test_result(self, testname):
+                return test_results.TestResult(testname, [test_failures.FailureTextMismatch()])
+
+            def layout_test_results(self):
+                if self._double_flaky_test_counter % 2:
+                    return LayoutTestResults([self._mock_test_result('foo.html')])
+                return LayoutTestResults([self._mock_test_result('bar.html')])
+
+        commit_queue = DoubleFlakyCommitQueue([
             None,
             None,
             None,
@@ -268,15 +285,6 @@ command_failed: failure_message='Patch does not pass tests' script_error='MOCK t
         tool = MockTool(log_executive=True)
         patch = tool.bugs.fetch_attachment(197)
         task = CommitQueueTask(commit_queue, patch)
-        self._double_flaky_test_counter = 0
-
-        def mock_failing_results_from_last_run():
-            CommitQueueTaskTest._double_flaky_test_counter += 1
-            if CommitQueueTaskTest._double_flaky_test_counter % 2:
-                return [self._mock_test_result('foo.html')]
-            return [self._mock_test_result('bar.html')]
-
-        task._failing_results_from_last_run = mock_failing_results_from_last_run
         success = OutputCapture().assert_outputs(self, task.run, expected_stderr=expected_stderr)
         self.assertEqual(success, False)
 
@@ -302,6 +310,7 @@ command_failed: failure_message='Patch does not pass tests' script_error='MOCK t
 archive_last_layout_test_results: patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure again' patch='197'
+archive_last_layout_test_results: patch='197'
 run_webkit_patch: ['build-and-test', '--force-clean', '--no-update', '--build', '--test', '--non-interactive']
 command_passed: success_message='Able to pass tests without patch' patch='197'
 """
@@ -330,6 +339,7 @@ command_failed: failure_message='Patch does not pass tests' script_error='MOCK t
 archive_last_layout_test_results: patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure again' patch='197'
+archive_last_layout_test_results: patch='197'
 run_webkit_patch: ['build-and-test', '--force-clean', '--no-update', '--build', '--test', '--non-interactive']
 command_failed: failure_message='Unable to pass tests without patch (tree is red?)' script_error='MOCK clean test failure' patch='197'
 """

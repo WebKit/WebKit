@@ -132,8 +132,19 @@ class LayoutTestResults(object):
             return None
         return cls(test_results)
 
-    def __init__(self, test_results):
+    # FIXME: run-webkit-tests should store the --exit-after-N-failures value
+    # (or some indication of early exit) somewhere in the results.html/results.json
+    # file.  Until it does, we depend on callers of this function to create
+    # LayoutTestResults with a failure_limit_count value, representing the
+    # --exit-after-N-failures value used in that run.  Consumers of LayoutTestResults
+    # will use that value to know if absence from the failure list means PASS.
+    # https://bugs.webkit.org/show_bug.cgi?id=58481
+    def __init__(self, test_results, failure_limit_count=None):
         self._test_results = test_results
+        self._failure_limit_count = failure_limit_count
+
+    def failure_limit_count(self):
+        return self._failure_limit_count
 
     def test_results(self):
         return self._test_results

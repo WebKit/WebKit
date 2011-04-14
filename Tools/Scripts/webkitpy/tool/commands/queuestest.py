@@ -67,6 +67,9 @@ class QueuesTest(unittest.TestCase):
     def assert_queue_outputs(self, queue, args=None, work_item=None, expected_stdout=None, expected_stderr=None, expected_exceptions=None, options=None, tool=None):
         if not tool:
             tool = MockTool()
+            # This is a hack to make it easy for callers to not have to setup a custom MockFileSystem just to test the commit-queue
+            # the cq tries to read the layout test results, and will hit a KeyError in MockFileSystem if we don't do this.
+            tool.filesystem.write_text_file('/mock/results.html', "")
         if not expected_stdout:
             expected_stdout = {}
         if not expected_stderr:
