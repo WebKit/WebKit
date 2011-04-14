@@ -1,3 +1,31 @@
+2011-04-14  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION (r83820): Lots of compositing tests failing on Windows 7 Release (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=58535
+
+        Remove unnecessary baselines - the behavior on these tests should
+        match the mac port now.
+
+        * platform/win/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt: Removed.
+        * platform/win/compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt: Removed.
+        * platform/win/compositing/iframes/become-overlapped-iframe-expected.txt: Removed.
+        * platform/win/compositing/iframes/composited-parent-iframe-expected.txt: Removed.
+        * platform/win/compositing/iframes/connect-compositing-iframe-delayed-expected.txt: Removed.
+        * platform/win/compositing/iframes/connect-compositing-iframe-expected.txt: Removed.
+        * platform/win/compositing/iframes/connect-compositing-iframe2-expected.txt: Removed.
+        * platform/win/compositing/iframes/connect-compositing-iframe3-expected.txt: Removed.
+        * platform/win/compositing/iframes/enter-compositing-iframe-expected.txt: Removed.
+        * platform/win/compositing/iframes/iframe-resize-expected.txt: Removed.
+        * platform/win/compositing/iframes/iframe-size-from-zero-expected.txt: Removed.
+        * platform/win/compositing/iframes/overlapped-iframe-expected.txt: Removed.
+        * platform/win/compositing/iframes/scrolling-iframe-expected.txt: Removed.
+        * platform/win/compositing/layer-creation/overflow-scroll-overlap-expected.txt: Removed.
+        * platform/win/compositing/overflow/content-gains-scrollbars-expected.txt: Removed.
+        * platform/win/compositing/overflow/overflow-scrollbar-layers-expected.txt: Removed.
+        * platform/win/compositing/overflow/resize-painting-expected.txt: Removed.
+
 2011-04-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] 9 tests have different results on 64 bit and/or in debug mode compared to 32 bit and/or release mode

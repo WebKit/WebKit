@@ -565,7 +565,7 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
 
 bool RenderLayerBacking::requiresHorizontalScrollbarLayer() const
 {
-#if PLATFORM(MAC)
+#if !PLATFORM(CHROMIUM)
     if (!m_owningLayer->hasOverlayScrollbars())
         return false;
 #endif
@@ -574,7 +574,7 @@ bool RenderLayerBacking::requiresHorizontalScrollbarLayer() const
 
 bool RenderLayerBacking::requiresVerticalScrollbarLayer() const
 {
-#if PLATFORM(MAC)
+#if !PLATFORM(CHROMIUM)
     if (!m_owningLayer->hasOverlayScrollbars())
         return false;
 #endif
@@ -583,7 +583,7 @@ bool RenderLayerBacking::requiresVerticalScrollbarLayer() const
 
 bool RenderLayerBacking::requiresScrollCornerLayer() const
 {
-#if PLATFORM(MAC)
+#if !PLATFORM(CHROMIUM)
     if (!m_owningLayer->hasOverlayScrollbars())
         return false;
 #endif

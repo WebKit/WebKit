@@ -1466,7 +1466,7 @@ static bool shouldCompositeOverflowControls(ScrollView* view)
 {
     if (view->platformWidget())
         return false;
-#if PLATFORM(MAC)
+#if !PLATFORM(CHROMIUM)
     if (!view->hasOverlayScrollbars())
         return false;
 #endif
