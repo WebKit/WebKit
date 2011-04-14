@@ -1,3 +1,35 @@
+2011-04-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Merge LineOffsets and LineWidth
+        https://bugs.webkit.org/show_bug.cgi?id=58411
+
+        Merged lineOffsets into LineWidth.
+
+        After this patch, available width is updated in positionNewFloatOnLine via updateAvailableWidth and
+        shrinkAvailableWidthForNewFloatIfNeeded instead of findNextBreak. This is correct because
+        - LineOffsets::update and LineOffsets::shrinkWidthForNewFloatIfNeeded were only called in positionNewFloatOnLine
+          besides LineOffsets' constructor
+        - positionNewFloatOnLine was only called in skipLeadingWhitespace and findNextLineBreak
+        - findNextLineBreak updates the available width whenever it calls skipLeadingWhitespace or positionNewFloatOnLine
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::skipLeadingWhitespace): Takes LineWidth instead of LineOffset
+        (WebCore::LineWidth::LineWidth): Takes RenderBlock* and boolean isFirstLine; call updateAvailableWidth
+        because the initial available width was used to be computed from lineOffsets.width().
+        (WebCore::LineWidth::computeAvailableWidthFromLeftAndRight): Added.
+        (WebCore::LineWidth::updateAvailableWidth): Renamed from LineOffsets::update; this function now updates
+        m_availableWidth via computeAvailableWidthFromLeftAndRight as well as m_left and m_right.
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded): Renamed from
+        LineOffsets::shrinkWidthForNewFloatIfNeeded. This function also calls computeAvailableWidthFromLeftAndRight.
+        (WebCore::LineWidth::applyOverhang): No longer takes arguments since both arguments were member variables
+        of LineOffsets.
+        (WebCore::LineWidth::fitBelowFloats): No longer takes isFirstLine.
+        (WebCore::RenderBlock::findNextLineBreak): Uses LineWidth.
+        (WebCore::RenderBlock::positionNewFloatOnLine): Takes a reference to LineWidth.
+
 2011-04-13  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.
