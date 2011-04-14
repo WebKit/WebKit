@@ -345,6 +345,8 @@ void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& so
 template <typename T>
 static String ImageToDataURL(T& source, const String& mimeType, const double* quality)
 {
+    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
+
     Vector<unsigned char> encodedImage;
     if (mimeType == "image/jpeg") {
         int compressionQuality = JPEGImageEncoder::DefaultCompressionQuality;
@@ -366,9 +368,6 @@ static String ImageToDataURL(T& source, const String& mimeType, const double* qu
 
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
 {
-    ASSERT(MIMETypeRegistry::isSupportedImageMIMETypeForEncoding(mimeType));
-
-    Vector<unsigned char> encodedImage;
     SkDevice* device = context()->platformContext()->canvas()->getDevice();
     SkBitmap bitmap = device->accessBitmap(false);
 

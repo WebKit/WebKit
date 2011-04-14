@@ -1,3 +1,18 @@
+2011-04-13  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Fix canvas.toDataURL mimeType assertion
+        https://bugs.webkit.org/show_bug.cgi?id=58425
+
+        Following r81213, reassert expected toDataURL() mimeType, remove an unused variable.
+
+        No new tests. Covered by existing tests.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageToDataURL):
+        (WebCore::ImageBuffer::toDataURL):
+
 2011-04-12  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Andreas Kling.
