@@ -343,8 +343,19 @@ PassOwnPtr<TypeCountSet> Heap::protectedObjectTypeCounts()
     ProtectCountSet::iterator end = m_protectedValues.end();
     for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
         typeCounter(it->first);
+    m_handleHeap.protectedObjectTypeCounts(typeCounter);
 
     return typeCounter.take();
+}
+
+void HandleHeap::protectedObjectTypeCounts(TypeCounter& typeCounter)
+{
+    Node* end = m_strongList.end();
+    for (Node* node = m_strongList.begin(); node != end; node = node->next()) {
+        JSValue value = *node->slot();
+        if (value && value.isCell())
+            typeCounter(value.asCell());
+    }
 }
 
 PassOwnPtr<TypeCountSet> Heap::objectTypeCounts()

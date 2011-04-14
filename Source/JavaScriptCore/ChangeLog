@@ -1,3 +1,17 @@
+2011-04-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make protected object list in caches window reflect reality
+        https://bugs.webkit.org/show_bug.cgi?id=58565
+
+        Make sure the heap includes objects protected by Strong handles
+        in its list of protected objects.
+
+        * heap/HandleHeap.h:
+        * heap/Heap.cpp:
+        (JSC::HandleHeap::protectedObjectTypeCounts):
+
 2011-04-14  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Anders Carlsson.

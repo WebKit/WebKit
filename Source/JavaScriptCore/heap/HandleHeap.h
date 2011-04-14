@@ -38,6 +38,7 @@ class HeapRootMarker;
 class JSGlobalData;
 class JSValue;
 class MarkStack;
+class TypeCounter;
 
 class WeakHandleOwner {
 public:
@@ -71,6 +72,7 @@ public:
 #endif
 
     unsigned protectedGlobalObjectCount();
+    void protectedObjectTypeCounts(TypeCounter&);
 
 private:
     class Node {
