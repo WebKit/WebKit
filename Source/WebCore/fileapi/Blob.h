@@ -63,7 +63,7 @@ public:
     virtual bool isFile() const { return false; }
 
 #if ENABLE(BLOB)
-    PassRefPtr<Blob> slice(long long start, long long length, const String& contentType = String()) const;
+    PassRefPtr<Blob> webkitSlice(long long start, long long end = std::numeric_limits<long long>::max(), const String& contentType = String()) const;
 #endif
 
 protected:

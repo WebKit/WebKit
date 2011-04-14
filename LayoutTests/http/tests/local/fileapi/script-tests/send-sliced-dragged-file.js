@@ -89,7 +89,7 @@ function computeExpectedLength(fileLength, start, length)
 function onStableFileDrop(file, filePath, fileLength, start, length, contentType)
 {
     // Slice the file.
-    subfile = file.slice(start, length, contentType);
+    subfile = file.webkitSlice(start, start + length, contentType);
     shouldEvaluateTo("subfile.size", computeExpectedLength(fileLength, start, length));
     shouldBe("subfile.type", (contentType != undefined && contentType != null) ? '"' + contentType + '"' : '""');
 
@@ -108,7 +108,7 @@ function dragAndSliceStableFile(filePath, fileLength, start, length, contentType
 function onUnstableFileDrop(file, filePath, fileLength, start, length, contentType)
 {
     // Slice the file.
-    subfile = file.slice(start, length, contentType);
+    subfile = file.webkitSlice(start, start + length, contentType);
     shouldEvaluateTo("subfile.size", computeExpectedLength(fileLength, start, length));
     shouldBe("subfile.type", (contentType != undefined && contentType != null) ? '"' + contentType + '"' : '""');
   

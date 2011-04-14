@@ -1,3 +1,21 @@
+2011-04-14  Jian Li  <jianli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Add webkit prefix to Blob.slice method and change its semantics to be
+        like Array.slice
+        https://bugs.webkit.org/show_bug.cgi?id=58496
+
+        Renamed Blob.slice to blob.webkitSlice and made it take start and end
+        parameters that're like Array.slice.
+
+        Test: fast/files/blob-slice-test.html
+
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::webkitSlice):
+        * fileapi/Blob.h:
+        * fileapi/Blob.idl:
+
 2011-04-14  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Benjamin Poulain.

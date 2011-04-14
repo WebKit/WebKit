@@ -63,7 +63,7 @@ Blob::~Blob()
 }
 
 #if ENABLE(BLOB)
-PassRefPtr<Blob> Blob::slice(long long start, long long length, const String& contentType) const
+PassRefPtr<Blob> Blob::webkitSlice(long long start, long long end, const String& contentType) const
 {
     // When we slice a file for the first time, we obtain a snapshot of the file by capturing its current size and modification time.
     // The modification time will be used to verify if the file has been changed or not, when the underlying data are accessed.
@@ -77,18 +77,26 @@ PassRefPtr<Blob> Blob::slice(long long start, long long length, const String& co
         size = m_size;
     }
 
+    // Convert the negative value that is used to select from the end.
+    if (start < 0)
+        start = start + size;
+    if (end < 0)
+        end = end + size;
+
     // Clamp the range if it exceeds the size limit.
     if (start < 0)
         start = 0;
-    if (length < 0)
-        length = 0;
-
+    if (end < 0)
+        end = 0;
     if (start >= size) {
         start = 0;
-        length = 0;
-    } else if (start + length > size || length > std::numeric_limits<long long>::max() - start)
-        length = size - start;
+        end = 0;
+    } else if (end < start)
+        end = start;
+    else if (end > size)
+        end = size;
 
+    long long length = end - start;
     OwnPtr<BlobData> blobData = BlobData::create();
     blobData->setContentType(contentType);
     if (isFile())
