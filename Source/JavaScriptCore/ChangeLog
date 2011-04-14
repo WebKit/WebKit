@@ -1,3 +1,10 @@
+2011-04-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix ASSERTs seen on Windows bots.
+
+        * wtf/HashTable.h:
+        (WTF::hashTableSwap): Force MSVC to use the right version of swap.
+
 2011-04-13  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -259,19 +259,21 @@ namespace WTF {
 
     using std::swap;
 
-#if !COMPILER(MSVC)
-    // Visual C++ has a swap for pairs defined.
+    // Work around MSVC's standard library, whose swap for pairs does not swap by component.
+    template<typename T> inline void hashTableSwap(T& a, T& b)
+    {
+        swap(a, b);
+    }
 
-    // swap pairs by component, in case of pair members that specialize swap
-    template<typename T, typename U> inline void swap(pair<T, U>& a, pair<T, U>& b)
+    // Swap pairs by component, in case of pair members that specialize swap.
+    template<typename T, typename U> inline void hashTableSwap(pair<T, U>& a, pair<T, U>& b)
     {
         swap(a.first, b.first);
         swap(a.second, b.second);
     }
-#endif
 
     template<typename T, bool useSwap> struct Mover;
-    template<typename T> struct Mover<T, true> { static void move(T& from, T& to) { swap(from, to); } };
+    template<typename T> struct Mover<T, true> { static void move(T& from, T& to) { hashTableSwap(from, to); } };
     template<typename T> struct Mover<T, false> { static void move(T& from, T& to) { to = from; } };
 
     template<typename Key, typename Value, typename HashFunctions> class IdentityHashTranslator {
