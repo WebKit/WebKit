@@ -35,6 +35,7 @@ types = {
 entriesPerLine = 50
 arrays = "";
 functions = "";
+emitTables = (len(sys.argv) < 2 or sys.argv[1] != "--no-tables")
 
 for name, classes in types.items():
     ranges = [];
@@ -56,7 +57,7 @@ for name, classes in types.items():
             ranges.append((min,max))
     ranges.sort();
     
-    if classes["UseTable"] and (not "Inverse" in classes):
+    if emitTables and classes["UseTable"] and (not "Inverse" in classes):
         array = ("static const char _%sData[65536] = {\n" % name);
         i = 0
         for (min,max) in ranges:
@@ -87,7 +88,7 @@ for name, classes in types.items():
     function = "";
     function += ("CharacterClass* %sCreate()\n" % name)
     function += ("{\n")
-    if classes["UseTable"]:
+    if emitTables and classes["UseTable"]:
         if "Inverse" in classes:
             function += ("    CharacterClass* characterClass = new CharacterClass(CharacterClassTable::create(_%sData, true));\n" % (classes["Inverse"]))
         else:

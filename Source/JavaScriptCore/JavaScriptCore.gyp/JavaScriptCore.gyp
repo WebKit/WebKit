@@ -206,10 +206,13 @@
           'inputs': [
             '../create_regex_tables',
           ],
+          'arguments': [
+            '--no-tables',
+          ],
           'outputs': [
             '<(INTERMEDIATE_DIR)/RegExpJitTables.h',
           ],
-          'action': ['python', '<@(_inputs)', '<@(_outputs)'],
+          'action': ['python', '<@(_inputs)', '<@(_arguments)', '<@(_outputs)'],
         },
       ],
       'include_dirs': [
