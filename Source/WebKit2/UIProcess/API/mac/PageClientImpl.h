@@ -30,8 +30,8 @@
 #include "PageClient.h"
 #include <wtf/RetainPtr.h>
 
+@class WKEditorUndoTargetObjC;
 @class WKView;
-@class WebEditorUndoTargetObjC;
 
 namespace WebKit {
 
@@ -118,7 +118,7 @@ private:
     virtual float userSpaceScaleFactor() const;
 
     WKView* m_wkView;
-    RetainPtr<WebEditorUndoTargetObjC> m_undoTarget;
+    RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
     CorrectionPanel m_correctionPanel;
 #endif

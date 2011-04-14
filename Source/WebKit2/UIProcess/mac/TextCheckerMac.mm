@@ -353,7 +353,7 @@ void TextChecker::updateSpellingUIWithGrammarString(int64_t, const String& badGr
 
     NSRange grammarRange = NSMakeRange(grammarDetail.location, grammarDetail.length);
     NSString *grammarUserDescription = grammarDetail.userDescription;
-    RetainPtr<NSMutableDictionary> grammarDetailDict(AdoptNS, [[NSDictionary alloc] initWithObjectsAndKeys:[NSValue valueWithRange:grammarRange], NSGrammarRange, grammarUserDescription, NSGrammarUserDescription, corrections.get(), NSGrammarCorrections, nil]);
+    RetainPtr<NSDictionary> grammarDetailDict(AdoptNS, [[NSDictionary alloc] initWithObjectsAndKeys:[NSValue valueWithRange:grammarRange], NSGrammarRange, grammarUserDescription, NSGrammarUserDescription, corrections.get(), NSGrammarCorrections, nil]);
 
     [[NSSpellChecker sharedSpellChecker] updateSpellingPanelWithGrammarString:badGrammarPhrase detail:grammarDetailDict.get()];
 }

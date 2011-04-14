@@ -1,3 +1,11 @@
+2011-04-14  Anders Carlsson  <andersca@apple.com>
+
+        Clang warning fixes.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/mac/TextCheckerMac.mm:
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+
 2011-04-14  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Timothy Hatcher.

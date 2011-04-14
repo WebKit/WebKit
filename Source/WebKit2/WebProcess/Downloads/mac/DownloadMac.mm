@@ -45,7 +45,7 @@
 - (void)_setOriginatingURL:(NSURL *)originatingURL;
 @end
 
-@interface WKDownloadAsDelegate : NSObject <NSURLConnectionDelegate> {
+@interface WKDownloadAsDelegate : NSObject <NSURLDownloadDelegate> {
     WebKit::Download* _download;
 }
 - (id)initWithDownload:(WebKit::Download*)download;
