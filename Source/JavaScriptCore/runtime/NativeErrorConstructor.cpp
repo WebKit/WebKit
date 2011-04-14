@@ -32,7 +32,7 @@ ASSERT_CLASS_FITS_IN_CELL(NativeErrorConstructor);
 
 const ClassInfo NativeErrorConstructor::s_info = { "Function", &InternalFunction::s_info, 0, 0 };
 
-NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, NonNullPassRefPtr<Structure> prototypeStructure, const UString& nameAndMessage)
+NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* prototypeStructure, const UString& nameAndMessage)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, nameAndMessage))
 {
     ASSERT(inherits(&s_info));
@@ -41,13 +41,23 @@ NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, JSGlobalObject* 
 
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
     putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | ReadOnly | DontEnum);
-    m_errorStructure = ErrorInstance::createStructure(exec->globalData(), prototype);
+    m_errorStructure.set(exec->globalData(), this, ErrorInstance::createStructure(exec->globalData(), prototype));
+    ASSERT(m_errorStructure);
+    ASSERT(m_errorStructure->typeInfo().type() == ObjectType);
+}
+
+void NativeErrorConstructor::markChildren(MarkStack& markStack)
+{
+    InternalFunction::markChildren(markStack);
+    if (m_errorStructure)
+        markStack.append(&m_errorStructure);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructWithNativeErrorConstructor(ExecState* exec)
 {
     JSValue message = exec->argumentCount() ? exec->argument(0) : jsUndefined();
     Structure* errorStructure = static_cast<NativeErrorConstructor*>(exec->callee())->errorStructure();
+    ASSERT(errorStructure);
     return JSValue::encode(ErrorInstance::create(exec, errorStructure, message));
 }
 

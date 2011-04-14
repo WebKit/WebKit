@@ -34,7 +34,7 @@ class JSGlobalObject;
 
 class JSObjectWithGlobalObject : public JSNonFinalObject {
 public:
-    static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto)
+    static Structure* createStructure(JSGlobalData& globalData, JSValue proto)
     {
         return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
@@ -42,10 +42,11 @@ public:
     JSGlobalObject* globalObject() const;
 
 protected:
-    JSObjectWithGlobalObject(JSGlobalObject*, NonNullPassRefPtr<Structure>);
+    JSObjectWithGlobalObject(JSGlobalObject*, Structure*);
+    JSObjectWithGlobalObject(JSGlobalData&, JSGlobalObject*, Structure*);
 
-    JSObjectWithGlobalObject(NonNullPassRefPtr<Structure> structure)
-        : JSNonFinalObject(structure)
+    JSObjectWithGlobalObject(VPtrStealingHackType)
+        : JSNonFinalObject(VPtrStealingHack)
     {
         // Should only be used by JSFunction when we aquire the JSFunction vptr.
     }

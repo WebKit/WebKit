@@ -31,11 +31,11 @@ namespace JSC {
 
     class NativeErrorConstructor : public InternalFunction {
     public:
-        NativeErrorConstructor(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure> structure, NonNullPassRefPtr<Structure> prototypeStructure, const UString&);
+        NativeErrorConstructor(ExecState*, JSGlobalObject*, Structure*, Structure* prototypeStructure, const UString&);
 
         static const ClassInfo s_info;
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
@@ -43,10 +43,12 @@ namespace JSC {
         Structure* errorStructure() { return m_errorStructure.get(); }
 
     private:
+        static const unsigned StructureFlags = OverridesMarkChildren | InternalFunction::StructureFlags;
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
+        virtual void markChildren(MarkStack&);
 
-        RefPtr<Structure> m_errorStructure;
+        WriteBarrier<Structure> m_errorStructure;
     };
 
 } // namespace JSC

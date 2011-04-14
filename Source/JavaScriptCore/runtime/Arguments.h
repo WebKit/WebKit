@@ -92,7 +92,7 @@ namespace JSC {
             d->registers = &activation->registerAt(0);
         }
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype) 
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype) 
         { 
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); 
         }
@@ -143,7 +143,7 @@ namespace JSC {
     }
 
     inline Arguments::Arguments(CallFrame* callFrame)
-        : JSNonFinalObject(callFrame->lexicalGlobalObject()->argumentsStructure())
+        : JSNonFinalObject(callFrame->globalData(), callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(adoptPtr(new ArgumentsData))
     {
         ASSERT(inherits(&s_info));
@@ -185,7 +185,7 @@ namespace JSC {
     }
 
     inline Arguments::Arguments(CallFrame* callFrame, NoParametersType)
-        : JSNonFinalObject(callFrame->lexicalGlobalObject()->argumentsStructure())
+        : JSNonFinalObject(callFrame->globalData(), callFrame->lexicalGlobalObject()->argumentsStructure())
         , d(adoptPtr(new ArgumentsData))
     {
         ASSERT(inherits(&s_info));
@@ -247,7 +247,7 @@ namespace JSC {
         int registerOffset = m_numParametersMinusThis + RegisterFile::CallFrameHeaderSize;
         size_t registerArraySize = numLocals + RegisterFile::CallFrameHeaderSize;
 
-        OwnArrayPtr<WriteBarrier<Unknown> > registerArray = copyRegisterArray(globalData, m_registers - registerOffset, registerArraySize);
+        OwnArrayPtr<WriteBarrier<Unknown> > registerArray = copyRegisterArray(globalData, m_registers - registerOffset, registerArraySize, m_numParametersMinusThis + 1);
         WriteBarrier<Unknown>* registers = registerArray.get() + registerOffset;
         setRegisters(registers, registerArray.release());
     }

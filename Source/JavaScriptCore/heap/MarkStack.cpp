@@ -57,7 +57,13 @@ void MarkStack::append(ConservativeRoots& conservativeRoots)
 inline void MarkStack::markChildren(JSCell* cell)
 {
     ASSERT(Heap::isMarked(cell));
+    if (cell->structure()->typeInfo().type() < CompoundType) {
+        cell->JSCell::markChildren(*this);
+        return;
+    }
+
     if (!cell->structure()->typeInfo().overridesMarkChildren()) {
+        ASSERT(cell->isObject());
 #ifdef NDEBUG
         asObject(cell)->markChildrenDirect(*this);
 #else
@@ -105,6 +111,7 @@ void MarkStack::drain()
             }
 
             if (cell->structure()->typeInfo().type() < CompoundType) {
+                cell->JSCell::markChildren(*this);
                 if (current.m_values == end) {
                     m_markSets.removeLast();
                     continue;

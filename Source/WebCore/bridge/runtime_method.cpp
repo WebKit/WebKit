@@ -43,7 +43,7 @@ ASSERT_CLASS_FITS_IN_CELL(RuntimeMethod);
 
 const ClassInfo RuntimeMethod::s_info = { "RuntimeMethod", &InternalFunction::s_info, 0, 0 };
 
-RuntimeMethod::RuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, const Identifier& ident, Bindings::MethodList& m)
+RuntimeMethod::RuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const Identifier& ident, Bindings::MethodList& m)
     // Callers will need to pass in the right global object corresponding to this native object "m".
     : InternalFunction(&exec->globalData(), globalObject, structure, ident)
     , _methodList(new MethodList(m))

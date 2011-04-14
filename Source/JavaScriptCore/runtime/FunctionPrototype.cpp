@@ -37,7 +37,7 @@ static EncodedJSValue JSC_HOST_CALL functionProtoFuncToString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionProtoFuncCall(ExecState*);
 
-FunctionPrototype::FunctionPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
+FunctionPrototype::FunctionPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
     : InternalFunction(&exec->globalData(), globalObject, structure, exec->propertyNames().nullIdentifier)
 {
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);

@@ -40,7 +40,7 @@ ASSERT_CLASS_FITS_IN_CELL(JSActivation);
 const ClassInfo JSActivation::s_info = { "JSActivation", &Base::s_info, 0, 0 };
 
 JSActivation::JSActivation(CallFrame* callFrame, FunctionExecutable* functionExecutable)
-    : Base(callFrame->globalData().activationStructure, functionExecutable->symbolTable(), callFrame->registers())
+    : Base(callFrame->globalData(), callFrame->globalData().activationStructure.get(), functionExecutable->symbolTable(), callFrame->registers())
     , m_numParametersMinusThis(static_cast<int>(functionExecutable->parameterCount()))
     , m_numCapturedVars(functionExecutable->capturedVariableCount())
     , m_requiresDynamicChecks(functionExecutable->usesEval())

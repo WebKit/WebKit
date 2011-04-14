@@ -97,7 +97,7 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
         return JSGlobalContextRetain(toGlobalRef(globalObject->globalExec()));
     }
 
-    JSGlobalObject* globalObject = new (globalData.get()) JSCallbackObject<JSGlobalObject>(globalObjectClass, JSCallbackObject<JSGlobalObject>::createStructure(*globalData, jsNull()));
+    JSGlobalObject* globalObject = new (globalData.get()) JSCallbackObject<JSGlobalObject>(*globalData, globalObjectClass, JSCallbackObject<JSGlobalObject>::createStructure(*globalData, jsNull()));
     ExecState* exec = globalObject->globalExec();
     JSValue prototype = globalObjectClass->prototype(exec);
     if (!prototype)
@@ -141,9 +141,10 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
     //   it may  release a lot of GC memory - run the garbage collector now.
     // * If there are more references remaining the the global object, then do nothing
     //   (specifically that is more protects, which we assume come from other JSGlobalContextRefs).
-    if (releasingContextGroup)
+    if (releasingContextGroup) {
+        globalData.clearBuiltinStructures();
         globalData.heap.destroy();
-    else if (releasingGlobalObject)
+    } else if (releasingGlobalObject)
         globalData.heap.collectAllGarbage();
 
     globalData.deref();

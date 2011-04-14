@@ -95,7 +95,7 @@ const ClassInfo RegExpConstructor::s_info = { "Function", &InternalFunction::s_i
 @end
 */
 
-RegExpConstructor::RegExpConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, RegExpPrototype* regExpPrototype)
+RegExpConstructor::RegExpConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExpPrototype* regExpPrototype)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, "RegExp"))
     , d(adoptPtr(new RegExpConstructorPrivate))
 {
@@ -109,7 +109,7 @@ RegExpConstructor::RegExpConstructor(ExecState* exec, JSGlobalObject* globalObje
 }
 
 RegExpMatchesArray::RegExpMatchesArray(ExecState* exec, RegExpConstructorPrivate* data)
-    : JSArray(exec->lexicalGlobalObject()->regExpMatchesArrayStructure(), data->lastNumSubPatterns + 1, CreateInitialized)
+    : JSArray(exec->globalData(), exec->lexicalGlobalObject()->regExpMatchesArrayStructure(), data->lastNumSubPatterns + 1, CreateInitialized)
 {
     RegExpConstructorPrivate* d = new RegExpConstructorPrivate;
     d->input = data->lastInput;

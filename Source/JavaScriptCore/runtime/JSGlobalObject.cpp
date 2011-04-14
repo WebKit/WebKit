@@ -84,12 +84,6 @@ template <typename T> static inline void markIfNeeded(MarkStack& markStack, Writ
         markStack.append(v);
 }
 
-static inline void markIfNeeded(MarkStack& markStack, const RefPtr<Structure>& s)
-{
-    if (s)
-        s->markAggregate(markStack);
-}
-
 JSGlobalObject::~JSGlobalObject()
 {
     ASSERT(JSLock::currentThreadIsHoldingLock());
@@ -176,46 +170,46 @@ void JSGlobalObject::reset(JSValue prototype)
     // Prototypes
 
     m_functionPrototype.set(exec->globalData(), this, new (exec) FunctionPrototype(exec, this, FunctionPrototype::createStructure(exec->globalData(), jsNull()))); // The real prototype will be set once ObjectPrototype is created.
-    m_functionStructure = JSFunction::createStructure(exec->globalData(), m_functionPrototype.get());
-    m_internalFunctionStructure = InternalFunction::createStructure(exec->globalData(), m_functionPrototype.get());
+    m_functionStructure.set(exec->globalData(), this, JSFunction::createStructure(exec->globalData(), m_functionPrototype.get()));
+    m_internalFunctionStructure.set(exec->globalData(), this, InternalFunction::createStructure(exec->globalData(), m_functionPrototype.get()));
     JSFunction* callFunction = 0;
     JSFunction* applyFunction = 0;
     m_functionPrototype->addFunctionProperties(exec, this, m_functionStructure.get(), &callFunction, &applyFunction);
     m_callFunction.set(exec->globalData(), this, callFunction);
     m_applyFunction.set(exec->globalData(), this, applyFunction);
     m_objectPrototype.set(exec->globalData(), this, new (exec) ObjectPrototype(exec, this, ObjectPrototype::createStructure(exec->globalData(), jsNull()), m_functionStructure.get()));
-    m_functionPrototype->structure()->setPrototypeWithoutTransition(m_objectPrototype.get());
+    m_functionPrototype->structure()->setPrototypeWithoutTransition(exec->globalData(), m_objectPrototype.get());
 
-    m_emptyObjectStructure = m_objectPrototype->inheritorID(exec->globalData());
+    m_emptyObjectStructure.set(exec->globalData(), this, m_objectPrototype->inheritorID(exec->globalData()));
 
-    m_callbackFunctionStructure = JSCallbackFunction::createStructure(exec->globalData(), m_functionPrototype.get());
-    m_argumentsStructure = Arguments::createStructure(exec->globalData(), m_objectPrototype.get());
-    m_callbackConstructorStructure = JSCallbackConstructor::createStructure(exec->globalData(), m_objectPrototype.get());
-    m_callbackObjectStructure = JSCallbackObject<JSObjectWithGlobalObject>::createStructure(exec->globalData(), m_objectPrototype.get());
+    m_callbackFunctionStructure.set(exec->globalData(), this, JSCallbackFunction::createStructure(exec->globalData(), m_functionPrototype.get()));
+    m_argumentsStructure.set(exec->globalData(), this, Arguments::createStructure(exec->globalData(), m_objectPrototype.get()));
+    m_callbackConstructorStructure.set(exec->globalData(), this, JSCallbackConstructor::createStructure(exec->globalData(), m_objectPrototype.get()));
+    m_callbackObjectStructure.set(exec->globalData(), this, JSCallbackObject<JSObjectWithGlobalObject>::createStructure(exec->globalData(), m_objectPrototype.get()));
 
     m_arrayPrototype.set(exec->globalData(), this, new (exec) ArrayPrototype(this, ArrayPrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
-    m_arrayStructure = JSArray::createStructure(exec->globalData(), m_arrayPrototype.get());
-    m_regExpMatchesArrayStructure = RegExpMatchesArray::createStructure(exec->globalData(), m_arrayPrototype.get());
+    m_arrayStructure.set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), m_arrayPrototype.get()));
+    m_regExpMatchesArrayStructure.set(exec->globalData(), this, RegExpMatchesArray::createStructure(exec->globalData(), m_arrayPrototype.get()));
 
     m_stringPrototype.set(exec->globalData(), this, new (exec) StringPrototype(exec, this, StringPrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
-    m_stringObjectStructure = StringObject::createStructure(exec->globalData(), m_stringPrototype.get());
+    m_stringObjectStructure.set(exec->globalData(), this, StringObject::createStructure(exec->globalData(), m_stringPrototype.get()));
 
     m_booleanPrototype.set(exec->globalData(), this, new (exec) BooleanPrototype(exec, this, BooleanPrototype::createStructure(exec->globalData(), m_objectPrototype.get()), m_functionStructure.get()));
-    m_booleanObjectStructure = BooleanObject::createStructure(exec->globalData(), m_booleanPrototype.get());
+    m_booleanObjectStructure.set(exec->globalData(), this, BooleanObject::createStructure(exec->globalData(), m_booleanPrototype.get()));
 
     m_numberPrototype.set(exec->globalData(), this, new (exec) NumberPrototype(exec, this, NumberPrototype::createStructure(exec->globalData(), m_objectPrototype.get()), m_functionStructure.get()));
-    m_numberObjectStructure = NumberObject::createStructure(exec->globalData(), m_numberPrototype.get());
+    m_numberObjectStructure.set(exec->globalData(), this, NumberObject::createStructure(exec->globalData(), m_numberPrototype.get()));
 
     m_datePrototype.set(exec->globalData(), this, new (exec) DatePrototype(exec, this, DatePrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
-    m_dateStructure = DateInstance::createStructure(exec->globalData(), m_datePrototype.get());
+    m_dateStructure.set(exec->globalData(), this, DateInstance::createStructure(exec->globalData(), m_datePrototype.get()));
 
     m_regExpPrototype.set(exec->globalData(), this, new (exec) RegExpPrototype(exec, this, RegExpPrototype::createStructure(exec->globalData(), m_objectPrototype.get()), m_functionStructure.get()));
-    m_regExpStructure = RegExpObject::createStructure(exec->globalData(), m_regExpPrototype.get());
+    m_regExpStructure.set(exec->globalData(), this, RegExpObject::createStructure(exec->globalData(), m_regExpPrototype.get()));
 
     m_methodCallDummy.set(exec->globalData(), this, constructEmptyObject(exec));
 
     ErrorPrototype* errorPrototype = new (exec) ErrorPrototype(exec, this, ErrorPrototype::createStructure(exec->globalData(), m_objectPrototype.get()), m_functionStructure.get());
-    m_errorStructure = ErrorInstance::createStructure(exec->globalData(), errorPrototype);
+    m_errorStructure.set(exec->globalData(), this, ErrorInstance::createStructure(exec->globalData(), errorPrototype));
 
     // Constructors
 
@@ -231,8 +225,8 @@ void JSGlobalObject::reset(JSValue prototype)
 
     m_errorConstructor.set(exec->globalData(), this, new (exec) ErrorConstructor(exec, this, ErrorConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), errorPrototype));
 
-    RefPtr<Structure> nativeErrorPrototypeStructure = NativeErrorPrototype::createStructure(exec->globalData(), errorPrototype);
-    RefPtr<Structure> nativeErrorStructure = NativeErrorConstructor::createStructure(exec->globalData(), m_functionPrototype.get());
+    Structure* nativeErrorPrototypeStructure = NativeErrorPrototype::createStructure(exec->globalData(), errorPrototype);
+    Structure* nativeErrorStructure = NativeErrorConstructor::createStructure(exec->globalData(), m_functionPrototype.get());
     m_evalErrorConstructor.set(exec->globalData(), this, new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "EvalError"));
     m_rangeErrorConstructor.set(exec->globalData(), this, new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "RangeError"));
     m_referenceErrorConstructor.set(exec->globalData(), this, new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "ReferenceError"));
@@ -342,21 +336,21 @@ void JSGlobalObject::markChildren(MarkStack& markStack)
     markIfNeeded(markStack, &m_datePrototype);
     markIfNeeded(markStack, &m_regExpPrototype);
 
-    markIfNeeded(markStack, m_argumentsStructure);
-    markIfNeeded(markStack, m_arrayStructure);
-    markIfNeeded(markStack, m_booleanObjectStructure);
-    markIfNeeded(markStack, m_callbackConstructorStructure);
-    markIfNeeded(markStack, m_callbackFunctionStructure);
-    markIfNeeded(markStack, m_callbackObjectStructure);
-    markIfNeeded(markStack, m_dateStructure);
-    markIfNeeded(markStack, m_emptyObjectStructure);
-    markIfNeeded(markStack, m_errorStructure);
-    markIfNeeded(markStack, m_functionStructure);
-    markIfNeeded(markStack, m_numberObjectStructure);
-    markIfNeeded(markStack, m_regExpMatchesArrayStructure);
-    markIfNeeded(markStack, m_regExpStructure);
-    markIfNeeded(markStack, m_stringObjectStructure);
-    markIfNeeded(markStack, m_internalFunctionStructure);
+    markIfNeeded(markStack, &m_argumentsStructure);
+    markIfNeeded(markStack, &m_arrayStructure);
+    markIfNeeded(markStack, &m_booleanObjectStructure);
+    markIfNeeded(markStack, &m_callbackConstructorStructure);
+    markIfNeeded(markStack, &m_callbackFunctionStructure);
+    markIfNeeded(markStack, &m_callbackObjectStructure);
+    markIfNeeded(markStack, &m_dateStructure);
+    markIfNeeded(markStack, &m_emptyObjectStructure);
+    markIfNeeded(markStack, &m_errorStructure);
+    markIfNeeded(markStack, &m_functionStructure);
+    markIfNeeded(markStack, &m_numberObjectStructure);
+    markIfNeeded(markStack, &m_regExpMatchesArrayStructure);
+    markIfNeeded(markStack, &m_regExpStructure);
+    markIfNeeded(markStack, &m_stringObjectStructure);
+    markIfNeeded(markStack, &m_internalFunctionStructure);
 
     if (m_registerArray) {
         // Outside the execution of global code, when our variables are torn off,
@@ -391,7 +385,7 @@ void JSGlobalObject::copyGlobalsFrom(RegisterFile& registerFile)
         return;
     }
 
-    OwnArrayPtr<WriteBarrier<Unknown> > registerArray = copyRegisterArray(globalData(), reinterpret_cast<WriteBarrier<Unknown>*>(registerFile.lastGlobal()), numGlobals);
+    OwnArrayPtr<WriteBarrier<Unknown> > registerArray = copyRegisterArray(globalData(), reinterpret_cast<WriteBarrier<Unknown>*>(registerFile.lastGlobal()), numGlobals, numGlobals);
     WriteBarrier<Unknown>* registers = registerArray.get() + numGlobals;
     setRegisters(registers, registerArray.release(), numGlobals);
 }

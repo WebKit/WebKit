@@ -35,14 +35,14 @@
 
 class JSGlueGlobalObject : public JSGlobalObject {
     public:
-        JSGlueGlobalObject(JSGlobalData&, PassRefPtr<Structure>, JSFlags = kJSFlagNone);
+        JSGlueGlobalObject(JSGlobalData&, Structure*, JSFlags = kJSFlagNone);
 
         JSFlags Flags() const { return m_flags; }
         Structure* userObjectStructure() const { return m_userObjectStructure.get(); }
 
     private:
         JSFlags m_flags;
-        RefPtr<Structure> m_userObjectStructure;
+        Strong<Structure> m_userObjectStructure;
 };
 
 class JSRun : public JSBase {

@@ -34,15 +34,15 @@ namespace JSC {
 
 const ClassInfo DateInstance::s_info = {"Date", &JSWrapperObject::s_info, 0, 0};
 
-DateInstance::DateInstance(ExecState* exec, NonNullPassRefPtr<Structure> structure)
-    : JSWrapperObject(structure)
+DateInstance::DateInstance(ExecState* exec, Structure* structure)
+    : JSWrapperObject(exec->globalData(), structure)
 {
     ASSERT(inherits(&s_info));
     setInternalValue(exec->globalData(), jsNaN());
 }
 
-DateInstance::DateInstance(ExecState* exec, NonNullPassRefPtr<Structure> structure, double time)
-    : JSWrapperObject(structure)
+DateInstance::DateInstance(ExecState* exec, Structure* structure, double time)
+    : JSWrapperObject(exec->globalData(), structure)
 {
     ASSERT(inherits(&s_info));
     setInternalValue(exec->globalData(), jsNumber(timeClip(time)));

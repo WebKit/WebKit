@@ -28,7 +28,7 @@ namespace JSC {
 
     class NativeErrorPrototype : public JSObjectWithGlobalObject {
     public:
-        NativeErrorPrototype(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, const UString&, NativeErrorConstructor*);
+        NativeErrorPrototype(ExecState*, JSGlobalObject*, Structure*, const UString&, NativeErrorConstructor*);
     };
 
 } // namespace JSC

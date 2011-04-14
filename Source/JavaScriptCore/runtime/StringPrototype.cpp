@@ -131,7 +131,7 @@ const ClassInfo StringPrototype::s_info = { "String", &StringObject::s_info, 0, 
 */
 
 // ECMA 15.5.4
-StringPrototype::StringPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
+StringPrototype::StringPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
     : StringObject(exec, structure)
 {
     ASSERT(inherits(&s_info));

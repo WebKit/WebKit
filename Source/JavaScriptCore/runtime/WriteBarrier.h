@@ -32,6 +32,14 @@ namespace JSC {
 class JSCell;
 class JSGlobalData;
 
+inline void writeBarrier(JSGlobalData&, const JSCell*, JSValue)
+{
+}
+
+inline void writeBarrier(JSGlobalData&, const JSCell*, JSCell*)
+{
+}
+
 typedef enum { } Unknown;
 typedef JSValue* HandleSlot;
 
@@ -92,7 +100,16 @@ template <> struct JSValueChecker<JSValue> {
 template <typename T> class WriteBarrierBase {
 public:
     COMPILE_ASSERT(!JSValueChecker<T>::IsJSValue, WriteBarrier_JSValue_is_invalid__use_unknown);
-    void set(JSGlobalData&, const JSCell*, T* value) { this->m_cell = reinterpret_cast<JSCell*>(value); }
+    void set(JSGlobalData& globalData, const JSCell* owner, T* value)
+    {
+        ASSERT_UNUSED(owner, owner);
+        this->m_cell = reinterpret_cast<JSCell*>(value);
+        writeBarrier(globalData, owner, this->m_cell);
+#if ENABLE(JSC_ZOMBIES)
+        ASSERT(!isZombie(owner));
+        ASSERT(!isZombie(m_cell));
+#endif
+    }
     
     T* get() const
     {
@@ -101,11 +118,16 @@ public:
 
     T* operator*() const
     {
+        ASSERT(m_cell);
+#if ENABLE(JSC_ZOMBIES)
+        ASSERT(!isZombie(m_cell));
+#endif
         return static_cast<T*>(m_cell);
     }
 
     T* operator->() const
     {
+        ASSERT(m_cell);
         return static_cast<T*>(m_cell);
     }
 
@@ -118,7 +140,13 @@ public:
     
     bool operator!() const { return !m_cell; }
 
-    void setWithoutWriteBarrier(T* value) { this->m_cell = reinterpret_cast<JSCell*>(value); }
+    void setWithoutWriteBarrier(T* value)
+    {
+        this->m_cell = reinterpret_cast<JSCell*>(value);
+#if ENABLE(JSC_ZOMBIES)
+        ASSERT(!m_cell || !isZombie(m_cell));
+#endif
+    }
 
 private:
     JSCell* m_cell;
@@ -126,18 +154,33 @@ private:
 
 template <> class WriteBarrierBase<Unknown> {
 public:
-    void set(JSGlobalData&, const JSCell*, JSValue value) { m_value = JSValue::encode(value); }
-    void setWithoutWriteBarrier(JSValue value) { m_value = JSValue::encode(value); }
-    JSValue get() const
+    void set(JSGlobalData& globalData, const JSCell* owner, JSValue value)
+    {
+        ASSERT_UNUSED(owner, owner);
+#if ENABLE(JSC_ZOMBIES)
+        ASSERT(!isZombie(owner));
+        ASSERT(!value.isZombie());
+#endif
+        m_value = JSValue::encode(value);
+        writeBarrier(globalData, owner, value);
+    }
+    void setWithoutWriteBarrier(JSValue value)
     {
 #if ENABLE(JSC_ZOMBIES)
-        ASSERT(!JSValue::decode(m_value) || !JSValue::decode(m_value).isZombie());
+        ASSERT(!value.isZombie());
 #endif
+        m_value = JSValue::encode(value);
+    }
+
+    JSValue get() const
+    {
         return JSValue::decode(m_value);
     }
     void clear() { m_value = JSValue::encode(JSValue()); }
     void setUndefined() { m_value = JSValue::encode(jsUndefined()); }
     bool isNumber() const { return get().isNumber(); }
+    bool isObject() const { return get().isObject(); }
+    bool isNull() const { return get().isNull(); }
     bool isGetterSetter() const { return get().isGetterSetter(); }
     
     JSValue* slot()

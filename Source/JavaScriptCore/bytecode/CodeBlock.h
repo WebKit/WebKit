@@ -122,8 +122,6 @@ namespace JSC {
 
     struct MethodCallLinkInfo {
         MethodCallLinkInfo()
-            : cachedStructure(0)
-            , cachedPrototypeStructure(0)
         {
         }
 
@@ -142,24 +140,23 @@ namespace JSC {
             //     - Once this transition has been taken once, cachedStructure is
             //       null and cachedPrototypeStructure is set to a nun-null value.
             //     - Once the call is linked both structures are set to non-null values.
-            cachedPrototypeStructure = (Structure*)1;
+            cachedPrototypeStructure.setWithoutWriteBarrier((Structure*)1);
         }
 
         CodeLocationCall callReturnLocation;
         CodeLocationDataLabelPtr structureLabel;
-        Structure* cachedStructure;
-        Structure* cachedPrototypeStructure;
+        WriteBarrier<Structure> cachedStructure;
+        WriteBarrier<Structure> cachedPrototypeStructure;
     };
 
     struct GlobalResolveInfo {
         GlobalResolveInfo(unsigned bytecodeOffset)
-            : structure(0)
-            , offset(0)
+            : offset(0)
             , bytecodeOffset(bytecodeOffset)
         {
         }
 
-        Structure* structure;
+        WriteBarrier<Structure> structure;
         unsigned offset;
         unsigned bytecodeOffset;
     };
@@ -215,8 +212,6 @@ namespace JSC {
         virtual ~CodeBlock();
 
         void markAggregate(MarkStack&);
-        void refStructures(Instruction* vPC) const;
-        void derefStructures(Instruction* vPC) const;
 
         static void dumpStatistics();
 
@@ -486,6 +481,7 @@ namespace JSC {
         void printGetByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
         void printPutByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op) const;
 #endif
+        void markStructures(MarkStack&, Instruction* vPC) const;
 
         void createRareDataIfNecessary()
         {

@@ -59,7 +59,6 @@ static void initializeThreadingOnce()
     s_dtoaP5Mutex = new Mutex;
     initializeDates();
     RegisterFile::initializeThreading();
-    Structure::initializeThreading();
 #endif
 }
 

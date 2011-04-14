@@ -31,7 +31,7 @@
 namespace JSC {
 
 DebuggerActivation::DebuggerActivation(JSGlobalData& globalData, JSObject* activation)
-    : JSNonFinalObject(DebuggerActivation::createStructure(globalData, jsNull()))
+    : JSNonFinalObject(globalData, DebuggerActivation::createStructure(globalData, jsNull()))
 {
     ASSERT(activation);
     ASSERT(activation->isActivationObject());

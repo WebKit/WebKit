@@ -45,6 +45,7 @@
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
 #include "JSStaticScopeObject.h"
+#include "JSZombie.h"
 #include "Lexer.h"
 #include "Lookup.h"
 #include "Nodes.h"
@@ -115,26 +116,18 @@ void JSGlobalData::storeVPtrs()
     COMPILE_ASSERT(sizeof(JSArray) <= sizeof(storage), sizeof_JSArray_must_be_less_than_storage);
     JSCell* jsArray = new (storage) JSArray(JSArray::VPtrStealingHack);
     JSGlobalData::jsArrayVPtr = jsArray->vptr();
-    jsArray->~JSCell();
 
     COMPILE_ASSERT(sizeof(JSByteArray) <= sizeof(storage), sizeof_JSByteArray_must_be_less_than_storage);
     JSCell* jsByteArray = new (storage) JSByteArray(JSByteArray::VPtrStealingHack);
     JSGlobalData::jsByteArrayVPtr = jsByteArray->vptr();
-    jsByteArray->~JSCell();
 
     COMPILE_ASSERT(sizeof(JSString) <= sizeof(storage), sizeof_JSString_must_be_less_than_storage);
     JSCell* jsString = new (storage) JSString(JSString::VPtrStealingHack);
     JSGlobalData::jsStringVPtr = jsString->vptr();
-    jsString->~JSCell();
 
     COMPILE_ASSERT(sizeof(JSFunction) <= sizeof(storage), sizeof_JSFunction_must_be_less_than_storage);
-    char executableStorage[sizeof(VPtrHackExecutable)];
-    RefPtr<Structure> executableStructure = Structure::create(Structure::VPtrStealingHack, 0);
-    JSCell* executable = new (executableStorage) VPtrHackExecutable(executableStructure.get());
-    JSCell* jsFunction = new (storage) JSFunction(Structure::create(Structure::VPtrStealingHack, &JSFunction::s_info), static_cast<VPtrHackExecutable*>(executable));
+    JSCell* jsFunction = new (storage) JSFunction(JSCell::VPtrStealingHack);
     JSGlobalData::jsFunctionVPtr = jsFunction->vptr();
-    executable->~JSCell();
-    jsFunction->~JSCell();
 }
 
 JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType)
@@ -168,28 +161,38 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , exclusiveThread(0)
 #endif
 {
-    activationStructure = JSActivation::createStructure(*this, jsNull());
-    interruptedExecutionErrorStructure = JSNonFinalObject::createStructure(*this, jsNull());
-    terminatedExecutionErrorStructure = JSNonFinalObject::createStructure(*this, jsNull());
-    staticScopeStructure = JSStaticScopeObject::createStructure(*this, jsNull());
-    strictEvalActivationStructure = StrictEvalActivation::createStructure(*this, jsNull());
-    stringStructure = JSString::createStructure(*this, jsNull());
-    notAnObjectStructure = JSNotAnObject::createStructure(*this, jsNull());
-    propertyNameIteratorStructure = JSPropertyNameIterator::createStructure(*this, jsNull());
-    getterSetterStructure = GetterSetter::createStructure(*this, jsNull());
-    apiWrapperStructure = JSAPIValueWrapper::createStructure(*this, jsNull());
-    scopeChainNodeStructure = ScopeChainNode::createStructure(*this, jsNull());
-    executableStructure = ExecutableBase::createStructure(*this, jsNull());
-    nativeExecutableStructure = NativeExecutable::createStructure(*this, jsNull());
-    evalExecutableStructure = EvalExecutable::createStructure(*this, jsNull());
-    programExecutableStructure = ProgramExecutable::createStructure(*this, jsNull());
-    functionExecutableStructure = FunctionExecutable::createStructure(*this, jsNull());
-    dummyMarkableCellStructure = JSCell::createDummyStructure(*this);
-    structureChainStructure = StructureChain::createStructure(*this, jsNull());
-
     interpreter = new Interpreter(*this);
     if (globalDataType == Default)
         m_stack = wtfThreadData().stack();
+
+    // Need to be careful to keep everything consistent here
+    IdentifierTable* existingEntryIdentifierTable = wtfThreadData().setCurrentIdentifierTable(identifierTable);
+    JSLock lock(SilenceAssertionsOnly);
+    structureStructure.set(*this, Structure::createStructure(*this));
+    activationStructure.set(*this, JSActivation::createStructure(*this, jsNull()));
+    interruptedExecutionErrorStructure.set(*this, JSNonFinalObject::createStructure(*this, jsNull()));
+    terminatedExecutionErrorStructure.set(*this, JSNonFinalObject::createStructure(*this, jsNull()));
+    staticScopeStructure.set(*this, JSStaticScopeObject::createStructure(*this, jsNull()));
+    strictEvalActivationStructure.set(*this, StrictEvalActivation::createStructure(*this, jsNull()));
+    stringStructure.set(*this, JSString::createStructure(*this, jsNull()));
+    notAnObjectStructure.set(*this, JSNotAnObject::createStructure(*this, jsNull()));
+    propertyNameIteratorStructure.set(*this, JSPropertyNameIterator::createStructure(*this, jsNull()));
+    getterSetterStructure.set(*this, GetterSetter::createStructure(*this, jsNull()));
+    apiWrapperStructure.set(*this, JSAPIValueWrapper::createStructure(*this, jsNull()));
+    scopeChainNodeStructure.set(*this, ScopeChainNode::createStructure(*this, jsNull()));
+    executableStructure.set(*this, ExecutableBase::createStructure(*this, jsNull()));
+    nativeExecutableStructure.set(*this, NativeExecutable::createStructure(*this, jsNull()));
+    evalExecutableStructure.set(*this, EvalExecutable::createStructure(*this, jsNull()));
+    programExecutableStructure.set(*this, ProgramExecutable::createStructure(*this, jsNull()));
+    functionExecutableStructure.set(*this, FunctionExecutable::createStructure(*this, jsNull()));
+    dummyMarkableCellStructure.set(*this, JSCell::createDummyStructure(*this));
+    structureChainStructure.set(*this, StructureChain::createStructure(*this, jsNull()));
+
+#if ENABLE(JSC_ZOMBIES)
+    zombieStructure.set(*this, JSZombie::createStructure(*this, jsNull()));
+#endif
+
+    wtfThreadData().setCurrentIdentifierTable(existingEntryIdentifierTable);
 
 #if PLATFORM(MAC)
     startProfilerServerIfNeeded();
@@ -219,6 +222,33 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
         m_canUseJIT = executableAllocator.isValid();
 #endif
     jitStubs = new JITThunks(this);
+#endif
+}
+
+void JSGlobalData::clearBuiltinStructures()
+{
+    structureStructure.clear();
+    activationStructure.clear();
+    interruptedExecutionErrorStructure.clear();
+    terminatedExecutionErrorStructure.clear();
+    staticScopeStructure.clear();
+    strictEvalActivationStructure.clear();
+    stringStructure.clear();
+    notAnObjectStructure.clear();
+    propertyNameIteratorStructure.clear();
+    getterSetterStructure.clear();
+    apiWrapperStructure.clear();
+    scopeChainNodeStructure.clear();
+    executableStructure.clear();
+    nativeExecutableStructure.clear();
+    evalExecutableStructure.clear();
+    programExecutableStructure.clear();
+    functionExecutableStructure.clear();
+    dummyMarkableCellStructure.clear();
+    structureChainStructure.clear();
+    
+#if ENABLE(JSC_ZOMBIES)
+    zombieStructure.clear();
 #endif
 }
 
@@ -282,10 +312,7 @@ PassRefPtr<JSGlobalData> JSGlobalData::create(ThreadStackType type)
 
 PassRefPtr<JSGlobalData> JSGlobalData::createLeaked(ThreadStackType type)
 {
-    Structure::startIgnoringLeaks();
-    RefPtr<JSGlobalData> data = create(type);
-    Structure::stopIgnoringLeaks();
-    return data.release();
+    return create(type);
 }
 
 bool JSGlobalData::sharedInstanceExists()

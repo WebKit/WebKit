@@ -35,7 +35,7 @@ namespace Bindings {
 
 class RuntimeObject : public JSObjectWithGlobalObject {
 public:
-    RuntimeObject(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, PassRefPtr<Instance>);
+    RuntimeObject(ExecState*, JSGlobalObject*, Structure*, PassRefPtr<Instance>);
     virtual ~RuntimeObject();
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
@@ -61,7 +61,7 @@ public:
         return globalObject->objectPrototype();
     }
 
-    static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
     {
         return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }

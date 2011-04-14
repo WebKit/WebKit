@@ -48,7 +48,7 @@ static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
 
 ASSERT_CLASS_FITS_IN_CELL(StringConstructor);
 
-StringConstructor::StringConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, Structure* functionStructure, StringPrototype* stringPrototype)
+StringConstructor::StringConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* functionStructure, StringPrototype* stringPrototype)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, stringPrototype->classInfo()->className))
 {
     // ECMA 15.5.3.1 String.prototype

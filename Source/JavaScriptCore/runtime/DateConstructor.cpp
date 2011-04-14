@@ -57,7 +57,7 @@ static EncodedJSValue JSC_HOST_CALL dateParse(ExecState*);
 static EncodedJSValue JSC_HOST_CALL dateNow(ExecState*);
 static EncodedJSValue JSC_HOST_CALL dateUTC(ExecState*);
 
-DateConstructor::DateConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, Structure* functionStructure, DatePrototype* datePrototype)
+DateConstructor::DateConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* functionStructure, DatePrototype* datePrototype)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, datePrototype->classInfo()->className))
 {
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, datePrototype, DontEnum | DontDelete | ReadOnly);

@@ -328,10 +328,8 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
     // getters and setters, though, we also need to change our Structure
     // if we override an existing non-getter or non-setter.
     if (slot.type() != PutPropertySlot::NewProperty) {
-        if (!m_structure->isDictionary()) {
-            RefPtr<Structure> structure = Structure::getterSetterTransition(globalData, m_structure);
-            setStructure(structure.release());
-        }
+        if (!m_structure->isDictionary())
+            setStructure(exec->globalData(), Structure::getterSetterTransition(globalData, m_structure.get()));
     }
 
     m_structure->setHasGetterSetterProperties(true);
@@ -355,10 +353,8 @@ void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSO
     // getters and setters, though, we also need to change our Structure
     // if we override an existing non-getter or non-setter.
     if (slot.type() != PutPropertySlot::NewProperty) {
-        if (!m_structure->isDictionary()) {
-            RefPtr<Structure> structure = Structure::getterSetterTransition(exec->globalData(), m_structure);
-            setStructure(structure.release());
-        }
+        if (!m_structure->isDictionary())
+            setStructure(exec->globalData(), Structure::getterSetterTransition(exec->globalData(), m_structure.get()));
     }
 
     m_structure->setHasGetterSetterProperties(true);
@@ -512,18 +508,18 @@ JSObject* JSObject::unwrappedObject()
 
 void JSObject::seal(JSGlobalData& globalData)
 {
-    setStructure(Structure::sealTransition(globalData, m_structure));
+    setStructure(globalData, Structure::sealTransition(globalData, m_structure.get()));
 }
 
 void JSObject::freeze(JSGlobalData& globalData)
 {
-    setStructure(Structure::freezeTransition(globalData, m_structure));
+    setStructure(globalData, Structure::freezeTransition(globalData, m_structure.get()));
 }
 
 void JSObject::preventExtensions(JSGlobalData& globalData)
 {
     if (isExtensible())
-        setStructure(Structure::preventExtensionsTransition(globalData, m_structure));
+        setStructure(globalData, Structure::preventExtensionsTransition(globalData, m_structure.get()));
 }
 
 void JSObject::removeDirect(JSGlobalData& globalData, const Identifier& propertyName)
@@ -536,8 +532,7 @@ void JSObject::removeDirect(JSGlobalData& globalData, const Identifier& property
         return;
     }
 
-    RefPtr<Structure> structure = Structure::removePropertyTransition(globalData, m_structure, propertyName, offset);
-    setStructure(structure.release());
+    setStructure(globalData, Structure::removePropertyTransition(globalData, m_structure.get(), propertyName, offset));
     if (offset != WTF::notFound)
         putUndefinedAtDirectOffset(offset);
 }
@@ -575,7 +570,8 @@ NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, WriteBarr
 
 Structure* JSObject::createInheritorID(JSGlobalData& globalData)
 {
-    m_inheritorID = createEmptyObjectStructure(globalData, this);
+    m_inheritorID.set(globalData, this, createEmptyObjectStructure(globalData, this));
+    ASSERT(m_inheritorID->isEmpty());
     return m_inheritorID.get();
 }
 

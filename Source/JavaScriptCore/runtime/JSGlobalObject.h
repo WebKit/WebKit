@@ -87,21 +87,21 @@ namespace JSC {
         WriteBarrier<DatePrototype> m_datePrototype;
         WriteBarrier<RegExpPrototype> m_regExpPrototype;
 
-        RefPtr<Structure> m_argumentsStructure;
-        RefPtr<Structure> m_arrayStructure;
-        RefPtr<Structure> m_booleanObjectStructure;
-        RefPtr<Structure> m_callbackConstructorStructure;
-        RefPtr<Structure> m_callbackFunctionStructure;
-        RefPtr<Structure> m_callbackObjectStructure;
-        RefPtr<Structure> m_dateStructure;
-        RefPtr<Structure> m_emptyObjectStructure;
-        RefPtr<Structure> m_errorStructure;
-        RefPtr<Structure> m_functionStructure;
-        RefPtr<Structure> m_numberObjectStructure;
-        RefPtr<Structure> m_regExpMatchesArrayStructure;
-        RefPtr<Structure> m_regExpStructure;
-        RefPtr<Structure> m_stringObjectStructure;
-        RefPtr<Structure> m_internalFunctionStructure;
+        WriteBarrier<Structure> m_argumentsStructure;
+        WriteBarrier<Structure> m_arrayStructure;
+        WriteBarrier<Structure> m_booleanObjectStructure;
+        WriteBarrier<Structure> m_callbackConstructorStructure;
+        WriteBarrier<Structure> m_callbackFunctionStructure;
+        WriteBarrier<Structure> m_callbackObjectStructure;
+        WriteBarrier<Structure> m_dateStructure;
+        WriteBarrier<Structure> m_emptyObjectStructure;
+        WriteBarrier<Structure> m_errorStructure;
+        WriteBarrier<Structure> m_functionStructure;
+        WriteBarrier<Structure> m_numberObjectStructure;
+        WriteBarrier<Structure> m_regExpMatchesArrayStructure;
+        WriteBarrier<Structure> m_regExpStructure;
+        WriteBarrier<Structure> m_stringObjectStructure;
+        WriteBarrier<Structure> m_internalFunctionStructure;
 
         unsigned m_profileGroup;
         Debugger* m_debugger;
@@ -115,7 +115,7 @@ namespace JSC {
         void* operator new(size_t, JSGlobalData*);
         
         explicit JSGlobalObject(JSGlobalData& globalData)
-            : JSVariableObject(JSGlobalObject::createStructure(globalData, jsNull()), &m_symbolTable, 0)
+            : JSVariableObject(globalData, JSGlobalObject::createStructure(globalData, jsNull()), &m_symbolTable, 0)
             , m_registerArraySize(0)
             , m_globalScopeChain()
             , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
@@ -125,8 +125,8 @@ namespace JSC {
             init(this);
         }
         
-        explicit JSGlobalObject(NonNullPassRefPtr<Structure> structure)
-            : JSVariableObject(structure, &m_symbolTable, 0)
+        explicit JSGlobalObject(JSGlobalData& globalData, Structure* structure)
+            : JSVariableObject(globalData, structure, &m_symbolTable, 0)
             , m_registerArraySize(0)
             , m_globalScopeChain()
             , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
@@ -137,8 +137,8 @@ namespace JSC {
         }
 
     protected:
-        JSGlobalObject(NonNullPassRefPtr<Structure> structure, JSObject* thisValue)
-            : JSVariableObject(structure, &m_symbolTable, 0)
+        JSGlobalObject(JSGlobalData& globalData, Structure* structure, JSObject* thisValue)
+            : JSVariableObject(globalData, structure, &m_symbolTable, 0)
             , m_registerArraySize(0)
             , m_globalScopeChain()
             , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
@@ -239,7 +239,7 @@ namespace JSC {
 
         JSGlobalData& globalData() const { return *m_globalData.get(); }
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
@@ -363,7 +363,7 @@ namespace JSC {
         // We cache our prototype chain so our clients can share it.
         if (!isValid(exec, m_cachedPrototypeChain.get())) {
             JSValue prototype = prototypeForLookup(exec);
-            m_cachedPrototypeChain.set(exec->globalData(), StructureChain::create(exec->globalData(), prototype.isNull() ? 0 : asObject(prototype)->structure()), 0);
+            m_cachedPrototypeChain.set(exec->globalData(), this, StructureChain::create(exec->globalData(), prototype.isNull() ? 0 : asObject(prototype)->structure()));
         }
         return m_cachedPrototypeChain.get();
     }
@@ -374,9 +374,9 @@ namespace JSC {
             return false;
 
         JSValue prototype = prototypeForLookup(exec);
-        RefPtr<Structure>* cachedStructure = cachedPrototypeChain->head();
+        WriteBarrier<Structure>* cachedStructure = cachedPrototypeChain->head();
         while(*cachedStructure && !prototype.isNull()) {
-            if (asObject(prototype)->structure() != *cachedStructure)
+            if (asObject(prototype)->structure() != cachedStructure->get())
                 return false;
             ++cachedStructure;
             prototype = asObject(prototype)->prototype();
@@ -407,17 +407,17 @@ namespace JSC {
     
     inline JSArray* constructEmptyArray(ExecState* exec)
     {
-        return new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure());
+        return new (exec) JSArray(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure());
     }
     
     inline JSArray* constructEmptyArray(ExecState* exec, JSGlobalObject* globalObject)
     {
-        return new (exec) JSArray(globalObject->arrayStructure());
+        return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure());
     }
 
     inline JSArray* constructEmptyArray(ExecState* exec, unsigned initialLength)
     {
-        return new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure(), initialLength, CreateInitialized);
+        return new (exec) JSArray(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), initialLength, CreateInitialized);
     }
 
     inline JSArray* constructArray(ExecState* exec, JSValue singleItemValue)

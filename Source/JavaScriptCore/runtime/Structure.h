@@ -55,49 +55,41 @@ namespace JSC {
         IncludeDontEnumProperties
     };
 
-    class Structure : public RefCounted<Structure> {
+    class Structure : public JSCell {
     public:
         friend class StructureTransitionTable;
-        static PassRefPtr<Structure> create(JSGlobalData&, JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
+        static Structure* create(JSGlobalData& globalData, JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
         {
-            return adoptRef(new Structure(prototype, typeInfo, anonymousSlotCount, classInfo));
+            ASSERT(globalData.structureStructure);
+            return new (&globalData) Structure(globalData, prototype, typeInfo, anonymousSlotCount, classInfo);
         }
-
-        enum VPtrStealingHackType { VPtrStealingHack };
-        static PassRefPtr<Structure> create(VPtrStealingHackType, const ClassInfo* classInfo)
-        {
-            return adoptRef(new Structure(jsNull(), TypeInfo(UnspecifiedType), 0, classInfo));
-        }
-
-        static void startIgnoringLeaks();
-        static void stopIgnoringLeaks();
 
         static void dumpStatistics();
 
-        static PassRefPtr<Structure> addPropertyTransition(JSGlobalData&, Structure*, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset);
-        static PassRefPtr<Structure> addPropertyTransitionToExistingStructure(Structure*, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset);
-        static PassRefPtr<Structure> removePropertyTransition(JSGlobalData&, Structure*, const Identifier& propertyName, size_t& offset);
-        static PassRefPtr<Structure> changePrototypeTransition(JSGlobalData&, Structure*, JSValue prototype);
-        static PassRefPtr<Structure> despecifyFunctionTransition(JSGlobalData&, Structure*, const Identifier&);
-        static PassRefPtr<Structure> getterSetterTransition(JSGlobalData&, Structure*);
-        static PassRefPtr<Structure> toCacheableDictionaryTransition(JSGlobalData&, Structure*);
-        static PassRefPtr<Structure> toUncacheableDictionaryTransition(JSGlobalData&, Structure*);
-        static PassRefPtr<Structure> sealTransition(JSGlobalData&, Structure*);
-        static PassRefPtr<Structure> freezeTransition(JSGlobalData&, Structure*);
-        static PassRefPtr<Structure> preventExtensionsTransition(JSGlobalData&, Structure*);
+        static Structure* addPropertyTransition(JSGlobalData&, Structure*, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset);
+        static Structure* addPropertyTransitionToExistingStructure(Structure*, const Identifier& propertyName, unsigned attributes, JSCell* specificValue, size_t& offset);
+        static Structure* removePropertyTransition(JSGlobalData&, Structure*, const Identifier& propertyName, size_t& offset);
+        static Structure* changePrototypeTransition(JSGlobalData&, Structure*, JSValue prototype);
+        static Structure* despecifyFunctionTransition(JSGlobalData&, Structure*, const Identifier&);
+        static Structure* getterSetterTransition(JSGlobalData&, Structure*);
+        static Structure* toCacheableDictionaryTransition(JSGlobalData&, Structure*);
+        static Structure* toUncacheableDictionaryTransition(JSGlobalData&, Structure*);
+        static Structure* sealTransition(JSGlobalData&, Structure*);
+        static Structure* freezeTransition(JSGlobalData&, Structure*);
+        static Structure* preventExtensionsTransition(JSGlobalData&, Structure*);
 
         bool isSealed(JSGlobalData&);
         bool isFrozen(JSGlobalData&);
         bool isExtensible() const { return !m_preventExtensions; }
 
-        PassRefPtr<Structure> flattenDictionaryStructure(JSGlobalData&, JSObject*);
+        Structure* flattenDictionaryStructure(JSGlobalData&, JSObject*);
 
         ~Structure();
 
         // These should be used with caution.  
         size_t addPropertyWithoutTransition(JSGlobalData&, const Identifier& propertyName, unsigned attributes, JSCell* specificValue);
         size_t removePropertyWithoutTransition(JSGlobalData&, const Identifier& propertyName);
-        void setPrototypeWithoutTransition(JSValue prototype) { m_prototype = prototype; }
+        void setPrototypeWithoutTransition(JSGlobalData& globalData, JSValue prototype) { m_prototype.set(globalData, this, prototype); }
         
         bool isDictionary() const { return m_dictionaryKind != NoneDictionaryKind; }
         bool isUncacheableDictionary() const { return m_dictionaryKind == UncachedDictionaryKind; }
@@ -107,11 +99,7 @@ namespace JSC {
         JSValue storedPrototype() const { return m_prototype.get(); }
         JSValue prototypeForLookup(ExecState*) const;
         StructureChain* prototypeChain(ExecState*) const;
-        void markAggregate(MarkStack& markStack)
-        {
-            if (m_prototype)
-                markStack.append(&m_prototype);
-        }
+        void markChildren(MarkStack&);
 
         Structure* previousID() const { return m_previous.get(); }
 
@@ -147,8 +135,6 @@ namespace JSC {
 
         const ClassInfo* classInfo() const { return m_classInfo; }
 
-        static void initializeThreading();
-
         static ptrdiff_t prototypeOffset()
         {
             return OBJECT_OFFSETOF(Structure, m_prototype);
@@ -164,21 +150,31 @@ namespace JSC {
             return OBJECT_OFFSETOF(Structure, m_typeInfo) + TypeInfo::typeOffset();
         }
 
-    private:
-        Structure(JSValue prototype, const TypeInfo&, unsigned anonymousSlotCount, const ClassInfo*);
-        Structure(const Structure*);
-
-        static PassRefPtr<Structure> create(const Structure* structure)
+        static Structure* createStructure(JSGlobalData& globalData)
         {
-            return adoptRef(new Structure(structure));
+            ASSERT(!globalData.structureStructure);
+            return new (&globalData) Structure(globalData);
         }
-        
+
+    private:
+        Structure(JSGlobalData&, JSValue prototype, const TypeInfo&, unsigned anonymousSlotCount, const ClassInfo*);
+        Structure(JSGlobalData&);
+        Structure(JSGlobalData&, const Structure*);
+
+        static Structure* create(JSGlobalData& globalData, const Structure* structure)
+        {
+            ASSERT(globalData.structureStructure);
+            return new (&globalData) Structure(globalData, structure);
+        }
+
+        static const ClassInfo s_info;
+
         typedef enum { 
             NoneDictionaryKind = 0,
             CachedDictionaryKind = 1,
             UncachedDictionaryKind = 2
         } DictionaryKind;
-        static PassRefPtr<Structure> toDictionaryTransition(JSGlobalData&, Structure*, DictionaryKind);
+        static Structure* toDictionaryTransition(JSGlobalData&, Structure*, DictionaryKind);
 
         size_t put(JSGlobalData&, const Identifier& propertyName, unsigned attributes, JSCell* specificValue);
         size_t remove(const Identifier& propertyName);
@@ -189,7 +185,7 @@ namespace JSC {
         bool despecifyFunction(JSGlobalData&, const Identifier&);
         void despecifyAllFunctions(JSGlobalData&);
 
-        PropertyTable* copyPropertyTable(JSGlobalData&);
+        PropertyTable* copyPropertyTable(JSGlobalData&, Structure* owner);
         void materializePropertyMap(JSGlobalData&);
         void materializePropertyMapIfNecessary(JSGlobalData& globalData)
         {
@@ -213,18 +209,18 @@ namespace JSC {
 
         TypeInfo m_typeInfo;
 
-        DeprecatedPtr<Unknown> m_prototype;
-        mutable Weak<StructureChain> m_cachedPrototypeChain;
+        WriteBarrier<Unknown> m_prototype;
+        mutable WriteBarrier<StructureChain> m_cachedPrototypeChain;
 
-        RefPtr<Structure> m_previous;
+        WriteBarrier<Structure> m_previous;
         RefPtr<StringImpl> m_nameInPrevious;
-        JSCell* m_specificValueInPrevious;
+        WriteBarrier<JSCell> m_specificValueInPrevious;
 
         const ClassInfo* m_classInfo;
 
         StructureTransitionTable m_transitionTable;
 
-        Weak<JSPropertyNameIterator> m_enumerationCache;
+        WriteBarrier<JSPropertyNameIterator> m_enumerationCache;
 
         OwnPtr<PropertyTable> m_propertyTable;
 
@@ -277,7 +273,7 @@ namespace JSC {
         return m_structure->classInfo();
     }
 
-    inline PassRefPtr<Structure> JSCell::createDummyStructure(JSGlobalData& globalData)
+    inline Structure* JSCell::createDummyStructure(JSGlobalData& globalData)
     {
         return Structure::create(globalData, jsNull(), TypeInfo(UnspecifiedType), AnonymousSlotCount, 0);
     }
@@ -297,6 +293,11 @@ namespace JSC {
             return;
         if (cell->structure()->typeInfo().type() >= CompoundType)
             m_values.append(cell);
+    }
+
+    inline StructureTransitionTable::Hash::Key StructureTransitionTable::WeakGCMapFinalizerCallback::keyForFinalizer(void*, Structure* structure)
+    {
+        return Hash::Key(structure->m_nameInPrevious.get(), structure->m_attributesInPrevious);
     }
 
 } // namespace JSC

@@ -466,6 +466,8 @@ namespace JSC {
     inline bool operator!=(const JSValue a, const JSCell* b) { return a != JSValue(b); }
     inline bool operator!=(const JSCell* a, const JSValue b) { return JSValue(a) != b; }
 
+    bool isZombie(const JSCell*);
+
 } // namespace JSC
 
 #endif // JSValue_h

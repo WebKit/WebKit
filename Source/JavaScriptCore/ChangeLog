@@ -1,3 +1,410 @@
+2011-04-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        GC allocate Structure
+        https://bugs.webkit.org/show_bug.cgi?id=58483
+
+        Turn Structure into a GC allocated object.  Most of this patch
+        is the mechanical change of replacing variations on RefPtr<Structure>
+        with either Structure* (for arguments and locals), WriteBarrier<Structure>
+        for the few cases where Structures are held by GC allocated objects
+        and Strong<Structure> for the root structure objects in GlobalData.
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::JSCallbackConstructor::JSCallbackConstructor):
+        * API/JSCallbackConstructor.h:
+        (JSC::JSCallbackConstructor::createStructure):
+        * API/JSCallbackFunction.h:
+        (JSC::JSCallbackFunction::createStructure):
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::createStructure):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::JSCallbackObject):
+        * API/JSContextRef.cpp:
+        * JavaScriptCore.JSVALUE32_64only.exp:
+        * JavaScriptCore.JSVALUE64only.exp:
+        * JavaScriptCore.exp:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::markStructures):
+        (JSC::CodeBlock::markAggregate):
+        * bytecode/CodeBlock.h:
+        (JSC::MethodCallLinkInfo::setSeen):
+        (JSC::GlobalResolveInfo::GlobalResolveInfo):
+        * bytecode/Instruction.h:
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::set):
+        (JSC::PolymorphicAccessStructureList::PolymorphicAccessStructureList):
+        (JSC::PolymorphicAccessStructureList::markAggregate):
+        (JSC::Instruction::Instruction):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::markAggregate):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::initGetByIdSelf):
+        (JSC::StructureStubInfo::initGetByIdProto):
+        (JSC::StructureStubInfo::initGetByIdChain):
+        (JSC::StructureStubInfo::initPutByIdTransition):
+        (JSC::StructureStubInfo::initPutByIdReplace):
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::DebuggerActivation):
+        * debugger/DebuggerActivation.h:
+        (JSC::DebuggerActivation::createStructure):
+        * heap/Handle.h:
+        * heap/MarkStack.cpp:
+        (JSC::MarkStack::markChildren):
+        (JSC::MarkStack::drain):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::sweep):
+        * heap/Strong.h:
+        (JSC::Strong::Strong):
+        (JSC::Strong::set):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolveGlobal):
+        (JSC::Interpreter::resolveGlobalDynamic):
+        (JSC::Interpreter::tryCachePutByID):
+        (JSC::Interpreter::uncachePutByID):
+        (JSC::Interpreter::tryCacheGetByID):
+        (JSC::Interpreter::uncacheGetByID):
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchMethodCallProto):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::patchMethodCallProto):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::getPolymorphicAccessStructureListSlot):
+        * jit/JSInterfaceJIT.h:
+        (JSC::JSInterfaceJIT::storePtrWithWriteBarrier):
+        * jsc.cpp:
+        (cleanupGlobalData):
+        * runtime/Arguments.h:
+        (JSC::Arguments::createStructure):
+        (JSC::Arguments::Arguments):
+        (JSC::JSActivation::copyRegisters):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::ArrayConstructor):
+        (JSC::constructArrayWithSizeQuirk):
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::ArrayPrototype):
+        (JSC::arrayProtoFuncSplice):
+        * runtime/ArrayPrototype.h:
+        (JSC::ArrayPrototype::createStructure):
+        * runtime/BatchedTransitionOptimizer.h:
+        (JSC::BatchedTransitionOptimizer::BatchedTransitionOptimizer):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::BooleanConstructor):
+        * runtime/BooleanConstructor.h:
+        * runtime/BooleanObject.cpp:
+        (JSC::BooleanObject::BooleanObject):
+        * runtime/BooleanObject.h:
+        (JSC::BooleanObject::createStructure):
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::BooleanPrototype):
+        * runtime/BooleanPrototype.h:
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::DateConstructor):
+        * runtime/DateConstructor.h:
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::DateInstance):
+        * runtime/DateInstance.h:
+        (JSC::DateInstance::createStructure):
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::DatePrototype):
+        * runtime/DatePrototype.h:
+        (JSC::DatePrototype::createStructure):
+        * runtime/Error.cpp:
+        (JSC::StrictModeTypeErrorFunction::StrictModeTypeErrorFunction):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::ErrorConstructor):
+        * runtime/ErrorConstructor.h:
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        (JSC::ErrorInstance::create):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::createStructure):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+        * runtime/ErrorPrototype.h:
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::InterruptedExecutionError::InterruptedExecutionError):
+        (JSC::TerminatedExecutionError::TerminatedExecutionError):
+        * runtime/Executable.cpp:
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::ExecutableBase):
+        (JSC::ExecutableBase::createStructure):
+        (JSC::NativeExecutable::createStructure):
+        (JSC::NativeExecutable::NativeExecutable):
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::EvalExecutable::createStructure):
+        (JSC::ProgramExecutable::createStructure):
+        (JSC::FunctionExecutable::createStructure):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::FunctionConstructor):
+        * runtime/FunctionConstructor.h:
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::FunctionPrototype):
+        * runtime/FunctionPrototype.h:
+        (JSC::FunctionPrototype::createStructure):
+        * runtime/GetterSetter.h:
+        (JSC::GetterSetter::GetterSetter):
+        (JSC::GetterSetter::createStructure):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::createStructure):
+        * runtime/JSAPIValueWrapper.h:
+        (JSC::JSAPIValueWrapper::createStructure):
+        (JSC::JSAPIValueWrapper::JSAPIValueWrapper):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::JSActivation):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::createStructure):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::JSArray):
+        * runtime/JSArray.h:
+        (JSC::JSArray::createStructure):
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::JSByteArray):
+        (JSC::JSByteArray::createStructure):
+        * runtime/JSByteArray.h:
+        (JSC::JSByteArray::JSByteArray):
+        * runtime/JSCell.cpp:
+        (JSC::isZombie):
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSCell::JSCell):
+        (JSC::JSCell::JSCell::addressOfStructure):
+        (JSC::JSCell::JSCell::structure):
+        (JSC::JSCell::JSCell::markChildren):
+        (JSC::JSCell::JSValue::isZombie):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::createStructure):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::storeVPtrs):
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::clearBuiltinStructures):
+        (JSC::JSGlobalData::createLeaked):
+        * runtime/JSGlobalData.h:
+        (JSC::allocateGlobalHandle):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::markChildren):
+        (JSC::JSGlobalObject::copyGlobalsFrom):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::createStructure):
+        (JSC::Structure::prototypeChain):
+        (JSC::Structure::isValid):
+        (JSC::constructEmptyArray):
+        * runtime/JSNotAnObject.h:
+        (JSC::JSNotAnObject::JSNotAnObject):
+        (JSC::JSNotAnObject::createStructure):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::JSONObject):
+        * runtime/JSONObject.h:
+        (JSC::JSONObject::createStructure):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::defineGetter):
+        (JSC::JSObject::defineSetter):
+        (JSC::JSObject::seal):
+        (JSC::JSObject::freeze):
+        (JSC::JSObject::preventExtensions):
+        (JSC::JSObject::removeDirect):
+        (JSC::JSObject::createInheritorID):
+        * runtime/JSObject.h:
+        (JSC::JSObject::createStructure):
+        (JSC::JSObject::JSObject):
+        (JSC::JSNonFinalObject::createStructure):
+        (JSC::JSNonFinalObject::JSNonFinalObject):
+        (JSC::JSFinalObject::create):
+        (JSC::JSFinalObject::createStructure):
+        (JSC::JSFinalObject::JSFinalObject):
+        (JSC::constructEmptyObject):
+        (JSC::createEmptyObjectStructure):
+        (JSC::JSObject::~JSObject):
+        (JSC::JSObject::setPrototype):
+        (JSC::JSObject::setStructure):
+        (JSC::JSObject::inheritorID):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::transitionTo):
+        (JSC::JSObject::markChildrenDirect):
+        * runtime/JSObjectWithGlobalObject.cpp:
+        (JSC::JSObjectWithGlobalObject::JSObjectWithGlobalObject):
+        * runtime/JSObjectWithGlobalObject.h:
+        (JSC::JSObjectWithGlobalObject::createStructure):
+        (JSC::JSObjectWithGlobalObject::JSObjectWithGlobalObject):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::JSPropertyNameIterator):
+        (JSC::JSPropertyNameIterator::create):
+        (JSC::JSPropertyNameIterator::get):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::createStructure):
+        (JSC::JSPropertyNameIterator::setCachedStructure):
+        (JSC::Structure::setEnumerationCache):
+        * runtime/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::JSStaticScopeObject):
+        (JSC::JSStaticScopeObject::createStructure):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::JSString):
+        (JSC::RopeBuilder::createStructure):
+        * runtime/JSType.h:
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::TypeInfo):
+        * runtime/JSValue.h:
+        * runtime/JSVariableObject.h:
+        (JSC::JSVariableObject::createStructure):
+        (JSC::JSVariableObject::JSVariableObject):
+        (JSC::JSVariableObject::copyRegisterArray):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::createStructure):
+        (JSC::JSWrapperObject::JSWrapperObject):
+        * runtime/JSZombie.cpp:
+        * runtime/JSZombie.h:
+        (JSC::JSZombie::JSZombie):
+        (JSC::JSZombie::createStructure):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::MathObject):
+        * runtime/MathObject.h:
+        (JSC::MathObject::createStructure):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::NativeErrorConstructor):
+        (JSC::NativeErrorConstructor::markChildren):
+        * runtime/NativeErrorConstructor.h:
+        (JSC::NativeErrorConstructor::createStructure):
+        * runtime/NativeErrorPrototype.cpp:
+        (JSC::NativeErrorPrototype::NativeErrorPrototype):
+        * runtime/NativeErrorPrototype.h:
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::NumberConstructor):
+        * runtime/NumberConstructor.h:
+        (JSC::NumberConstructor::createStructure):
+        * runtime/NumberObject.cpp:
+        (JSC::NumberObject::NumberObject):
+        * runtime/NumberObject.h:
+        (JSC::NumberObject::createStructure):
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::NumberPrototype):
+        * runtime/NumberPrototype.h:
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::ObjectConstructor):
+        * runtime/ObjectConstructor.h:
+        (JSC::ObjectConstructor::createStructure):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::ObjectPrototype):
+        * runtime/ObjectPrototype.h:
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::PropertyTable):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::RegExpConstructor):
+        (JSC::RegExpMatchesArray::RegExpMatchesArray):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::createStructure):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::RegExpObject):
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::createStructure):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::RegExpPrototype):
+        * runtime/RegExpPrototype.h:
+        * runtime/ScopeChain.h:
+        (JSC::ScopeChainNode::ScopeChainNode):
+        (JSC::ScopeChainNode::createStructure):
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::StrictEvalActivation):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::StringConstructor):
+        * runtime/StringConstructor.h:
+        * runtime/StringObject.cpp:
+        (JSC::StringObject::StringObject):
+        * runtime/StringObject.h:
+        (JSC::StringObject::createStructure):
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+        (JSC::StringObjectThatMasqueradesAsUndefined::StringObjectThatMasqueradesAsUndefined):
+        (JSC::StringObjectThatMasqueradesAsUndefined::createStructure):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::StringPrototype):
+        * runtime/StringPrototype.h:
+        (JSC::StringPrototype::createStructure):
+        * runtime/Structure.cpp:
+        (JSC::StructureTransitionTable::remove):
+        (JSC::StructureTransitionTable::add):
+        (JSC::Structure::Structure):
+        (JSC::Structure::~Structure):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::addPropertyTransitionToExistingStructure):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::removePropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::despecifyFunctionTransition):
+        (JSC::Structure::getterSetterTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::toCacheableDictionaryTransition):
+        (JSC::Structure::toUncacheableDictionaryTransition):
+        (JSC::Structure::sealTransition):
+        (JSC::Structure::freezeTransition):
+        (JSC::Structure::preventExtensionsTransition):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::copyPropertyTable):
+        (JSC::Structure::put):
+        (JSC::Structure::markChildren):
+        * runtime/Structure.h:
+        (JSC::Structure::create):
+        (JSC::Structure::setPrototypeWithoutTransition):
+        (JSC::Structure::createStructure):
+        (JSC::JSCell::createDummyStructure):
+        (JSC::StructureTransitionTable::WeakGCMapFinalizerCallback::keyForFinalizer):
+        * runtime/StructureChain.cpp:
+        (JSC::StructureChain::StructureChain):
+        (JSC::StructureChain::markChildren):
+        * runtime/StructureChain.h:
+        (JSC::StructureChain::create):
+        (JSC::StructureChain::head):
+        (JSC::StructureChain::createStructure):
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::WeakGCMapFinalizerCallback::finalizerContextFor):
+        (JSC::StructureTransitionTable::~StructureTransitionTable):
+        (JSC::StructureTransitionTable::slot):
+        (JSC::StructureTransitionTable::setMap):
+        (JSC::StructureTransitionTable::singleTransition):
+        (JSC::StructureTransitionTable::clearSingleTransition):
+        (JSC::StructureTransitionTable::setSingleTransition):
+        * runtime/WeakGCMap.h:
+        (JSC::DefaultWeakGCMapFinalizerCallback::finalizerContextFor):
+        (JSC::DefaultWeakGCMapFinalizerCallback::keyForFinalizer):
+        (JSC::WeakGCMap::contains):
+        (JSC::WeakGCMap::find):
+        (JSC::WeakGCMap::remove):
+        (JSC::WeakGCMap::add):
+        (JSC::WeakGCMap::set):
+        (JSC::WeakGCMap::finalize):
+        * runtime/WriteBarrier.h:
+        (JSC::writeBarrier):
+        (JSC::WriteBarrierBase::set):
+        (JSC::WriteBarrierBase::operator*):
+        (JSC::WriteBarrierBase::operator->):
+        (JSC::WriteBarrierBase::setWithoutWriteBarrier):
+
 2011-04-13  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix ASSERTs seen on Windows bots.

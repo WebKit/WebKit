@@ -31,8 +31,8 @@ namespace JSC {
 
     class DateInstance : public JSWrapperObject {
     public:
-        DateInstance(ExecState*, NonNullPassRefPtr<Structure>, double);
-        explicit DateInstance(ExecState*, NonNullPassRefPtr<Structure>);
+        DateInstance(ExecState*, Structure*, double);
+        explicit DateInstance(ExecState*, Structure*);
 
         double internalNumber() const { return internalValue().uncheckedGetNumber(); }
 
@@ -52,7 +52,7 @@ namespace JSC {
             return calculateGregorianDateTimeUTC(exec);
         }
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }

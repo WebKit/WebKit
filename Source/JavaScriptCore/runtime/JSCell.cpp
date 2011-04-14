@@ -209,4 +209,14 @@ JSObject* JSCell::toObject(ExecState*, JSGlobalObject*) const
     return 0;
 }
 
+bool isZombie(const JSCell* cell)
+{
+#if ENABLE(JSC_ZOMBIES)
+    return cell && cell->isZombie();
+#else
+    UNUSED_PARAM(cell);
+    return false;
+#endif
+}
+
 } // namespace JSC

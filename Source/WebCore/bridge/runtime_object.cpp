@@ -38,7 +38,7 @@ namespace Bindings {
 
 const ClassInfo RuntimeObject::s_info = { "RuntimeObject", &JSObjectWithGlobalObject::s_info, 0, 0 };
 
-RuntimeObject::RuntimeObject(ExecState*, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, PassRefPtr<Instance> instance)
+RuntimeObject::RuntimeObject(ExecState*, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
     : JSObjectWithGlobalObject(globalObject, structure)
     , m_instance(instance)
 {

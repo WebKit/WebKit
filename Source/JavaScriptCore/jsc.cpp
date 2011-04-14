@@ -366,6 +366,7 @@ int main(int argc, char** argv)
 static void cleanupGlobalData(JSGlobalData* globalData)
 {
     JSLock lock(SilenceAssertionsOnly);
+    globalData->clearBuiltinStructures();
     globalData->heap.destroy();
     globalData->deref();
 }

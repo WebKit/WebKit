@@ -31,6 +31,7 @@
 #include <runtime/JSValue.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef const struct OpaqueJSValue* JSValueRef;

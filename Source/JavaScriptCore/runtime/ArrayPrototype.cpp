@@ -114,8 +114,8 @@ const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, 0, ExecStat
 */
 
 // ECMA 15.4.4
-ArrayPrototype::ArrayPrototype(JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
-    : JSArray(structure)
+ArrayPrototype::ArrayPrototype(JSGlobalObject* globalObject, Structure* structure)
+    : JSArray(globalObject->globalData(), structure)
 {
     ASSERT(inherits(&s_info));
     putAnonymousValue(globalObject->globalData(), 0, globalObject);
@@ -574,7 +574,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
             deleteCount = static_cast<unsigned>(deleteDouble);
     }
 
-    JSArray* resObj = new (exec) JSArray(exec->lexicalGlobalObject()->arrayStructure(), deleteCount, CreateCompact);
+    JSArray* resObj = new (exec) JSArray(exec->globalData(), exec->lexicalGlobalObject()->arrayStructure(), deleteCount, CreateCompact);
     JSValue result = resObj;
     JSGlobalData& globalData = exec->globalData();
     for (unsigned k = 0; k < deleteCount; k++)

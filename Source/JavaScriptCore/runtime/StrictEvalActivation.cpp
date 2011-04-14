@@ -29,7 +29,7 @@
 namespace JSC {
 
 StrictEvalActivation::StrictEvalActivation(ExecState* exec)
-    : JSNonFinalObject(exec->globalData().strictEvalActivationStructure)
+    : JSNonFinalObject(exec->globalData(), exec->globalData().strictEvalActivationStructure.get())
 {
 }
 

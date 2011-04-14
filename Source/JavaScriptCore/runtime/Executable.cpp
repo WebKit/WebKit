@@ -48,10 +48,6 @@ NativeExecutable::~NativeExecutable()
 {
 }
 
-VPtrHackExecutable::~VPtrHackExecutable()
-{
-}
-
 const ClassInfo EvalExecutable::s_info = { "EvalExecutable", &ScriptExecutable::s_info, 0, 0 };
 
 EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext)

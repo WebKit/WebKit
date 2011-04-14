@@ -28,14 +28,14 @@ namespace JSC {
 
     class ArrayPrototype : public JSArray {
     public:
-        explicit ArrayPrototype(JSGlobalObject*, NonNullPassRefPtr<Structure>);
+        explicit ArrayPrototype(JSGlobalObject*, Structure*);
 
         bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 
         static const ClassInfo s_info;
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }

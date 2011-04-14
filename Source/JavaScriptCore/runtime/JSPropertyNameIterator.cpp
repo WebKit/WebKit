@@ -35,9 +35,10 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSPropertyNameIterator);
 
+const ClassInfo JSPropertyNameIterator::s_info = { "JSPropertyNameIterator", 0, 0, 0 };
+
 inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlots)
-    : JSCell(exec->globalData().propertyNameIteratorStructure.get())
-    , m_cachedStructure(0)
+    : JSCell(exec->globalData(), exec->globalData().propertyNameIteratorStructure.get())
     , m_numCacheableSlots(numCacheableSlots)
     , m_jsStringsSize(propertyNameArrayData->propertyNameVector().size())
     , m_jsStrings(adoptArrayPtr(new WriteBarrier<Unknown>[m_jsStringsSize]))
@@ -71,14 +72,14 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
     
     size_t count = normalizePrototypeChain(exec, o);
     StructureChain* structureChain = o->structure()->prototypeChain(exec);
-    RefPtr<Structure>* structure = structureChain->head();
+    WriteBarrier<Structure>* structure = structureChain->head();
     for (size_t i = 0; i < count; ++i) {
         if (structure[i]->typeInfo().overridesGetPropertyNames())
             return jsPropertyNameIterator;
     }
 
     jsPropertyNameIterator->setCachedPrototypeChain(exec->globalData(), structureChain);
-    jsPropertyNameIterator->setCachedStructure(o->structure());
+    jsPropertyNameIterator->setCachedStructure(exec->globalData(), o->structure());
     o->structure()->setEnumerationCache(exec->globalData(), jsPropertyNameIterator);
     return jsPropertyNameIterator;
 }
@@ -86,7 +87,7 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject
 JSValue JSPropertyNameIterator::get(ExecState* exec, JSObject* base, size_t i)
 {
     JSValue identifier = m_jsStrings[i].get();
-    if (m_cachedStructure == base->structure() && m_cachedPrototypeChain.get() == base->structure()->prototypeChain(exec))
+    if (m_cachedStructure.get() == base->structure() && m_cachedPrototypeChain.get() == base->structure()->prototypeChain(exec))
         return identifier;
 
     if (!base->hasProperty(exec, Identifier(exec, asString(identifier)->value(exec))))
@@ -101,12 +102,4 @@ void JSPropertyNameIterator::markChildren(MarkStack& markStack)
         markStack.append(&m_cachedPrototypeChain);
 }
 
-#if !ASSERT_DISABLED
-
-JSPropertyNameIterator::~JSPropertyNameIterator()
-{
-    ASSERT(!m_cachedStructure || m_cachedStructure->enumerationCache() != this);
-}
-
-#endif
 } // namespace JSC

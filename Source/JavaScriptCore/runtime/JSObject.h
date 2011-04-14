@@ -90,7 +90,7 @@ namespace JSC {
         void setPrototype(JSGlobalData&, JSValue prototype);
         bool setPrototypeWithCycleCheck(JSGlobalData&, JSValue prototype);
         
-        void setStructure(NonNullPassRefPtr<Structure>);
+        void setStructure(JSGlobalData&, Structure*);
         Structure* inheritorID(JSGlobalData&);
 
         virtual UString className() const;
@@ -170,7 +170,7 @@ namespace JSC {
             return location - propertyStorage();
         }
 
-        void transitionTo(Structure*);
+        void transitionTo(JSGlobalData&, Structure*);
 
         void removeDirect(JSGlobalData&, const Identifier& propertyName);
         bool hasCustomProperties() { return !m_structure->isEmpty(); }
@@ -249,7 +249,7 @@ namespace JSC {
         static JS_EXPORTDATA const ClassInfo s_info;
 
     protected:
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
@@ -263,7 +263,12 @@ namespace JSC {
 
         // To instantiate objects you likely want JSFinalObject, below.
         // To create derived types you likely want JSNonFinalObject, below.
-        JSObject(NonNullPassRefPtr<Structure>, PropertyStorage inlineStorage);
+        JSObject(JSGlobalData&, Structure*, PropertyStorage inlineStorage);
+        JSObject(VPtrStealingHackType, PropertyStorage inlineStorage)
+            : JSCell(VPtrStealingHack)
+            , m_propertyStorage(inlineStorage)
+        {
+        }
 
     private:
         // Nobody should ever ask any of these questions on something already known to be a JSObject.
@@ -298,7 +303,7 @@ namespace JSC {
         Structure* createInheritorID(JSGlobalData&);
 
         PropertyStorage m_propertyStorage;
-        RefPtr<Structure> m_inheritorID;
+        WriteBarrier<Structure> m_inheritorID;
     };
 
 
@@ -319,14 +324,19 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         friend class JSObject;
 
     public:
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     protected:
-        explicit JSNonFinalObject(NonNullPassRefPtr<Structure> structure)
-            : JSObject(structure, m_inlineStorage)
+        explicit JSNonFinalObject(VPtrStealingHackType)
+            : JSObject(VPtrStealingHack, m_inlineStorage)
+        {
+        }
+    
+        explicit JSNonFinalObject(JSGlobalData& globalData, Structure* structure)
+            : JSObject(globalData, structure, m_inlineStorage)
         {
             ASSERT(!(OBJECT_OFFSETOF(JSNonFinalObject, m_inlineStorage) % sizeof(double)));
             ASSERT(this->structure()->propertyStorageCapacity() == JSNonFinalObject_inlineStorageCapacity);
@@ -342,19 +352,19 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         friend class JSObject;
 
     public:
-        static JSFinalObject* create(ExecState* exec, NonNullPassRefPtr<Structure> structure)
+        static JSFinalObject* create(ExecState* exec, Structure* structure)
         {
-            return new (exec) JSFinalObject(structure);
+            return new (exec) JSFinalObject(exec->globalData(), structure);
         }
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     private:
-        explicit JSFinalObject(NonNullPassRefPtr<Structure> structure)
-            : JSObject(structure, m_inlineStorage)
+        explicit JSFinalObject(JSGlobalData& globalData, Structure* structure)
+            : JSObject(globalData, structure, m_inlineStorage)
         {
             ASSERT(OBJECT_OFFSETOF(JSFinalObject, m_inlineStorage) % sizeof(double) == 0);
             ASSERT(this->structure()->propertyStorageCapacity() == JSFinalObject_inlineStorageCapacity);
@@ -371,12 +381,12 @@ inline size_t JSObject::offsetOfInlineStorage()
     return OBJECT_OFFSETOF(JSFinalObject, m_inlineStorage);
 }
 
-inline JSObject* constructEmptyObject(ExecState* exec, NonNullPassRefPtr<Structure> structure)
+inline JSObject* constructEmptyObject(ExecState* exec, Structure* structure)
 {
     return JSFinalObject::create(exec, structure);
 }
 
-inline PassRefPtr<Structure> createEmptyObjectStructure(JSGlobalData& globalData, JSValue prototype)
+inline Structure* createEmptyObjectStructure(JSGlobalData& globalData, JSValue prototype)
 {
     return JSFinalObject::createStructure(globalData, prototype);
 }
@@ -392,8 +402,8 @@ inline JSObject* asObject(JSValue value)
     return asObject(value.asCell());
 }
 
-inline JSObject::JSObject(NonNullPassRefPtr<Structure> structure, PropertyStorage inlineStorage)
-    : JSCell(structure.releaseRef()) // ~JSObject balances this ref()
+inline JSObject::JSObject(JSGlobalData& globalData, Structure* structure, PropertyStorage inlineStorage)
+    : JSCell(globalData, structure)
     , m_propertyStorage(inlineStorage)
 {
     ASSERT(inherits(&s_info));
@@ -401,14 +411,13 @@ inline JSObject::JSObject(NonNullPassRefPtr<Structure> structure, PropertyStorag
     ASSERT(m_structure->isEmpty());
     ASSERT(prototype().isNull() || Heap::heap(this) == Heap::heap(prototype()));
     ASSERT(static_cast<void*>(inlineStorage) == static_cast<void*>(this + 1));
+    ASSERT(m_structure->typeInfo().type() == ObjectType);
 }
 
 inline JSObject::~JSObject()
 {
-    ASSERT(m_structure);
     if (!isUsingInlineStorage())
         delete [] m_propertyStorage;
-    m_structure->deref();
 }
 
 inline JSValue JSObject::prototype() const
@@ -432,20 +441,20 @@ inline bool JSObject::setPrototypeWithCycleCheck(JSGlobalData& globalData, JSVal
 inline void JSObject::setPrototype(JSGlobalData& globalData, JSValue prototype)
 {
     ASSERT(prototype);
-    RefPtr<Structure> newStructure = Structure::changePrototypeTransition(globalData, m_structure, prototype);
-    setStructure(newStructure.release());
+    setStructure(globalData, Structure::changePrototypeTransition(globalData, m_structure.get(), prototype));
 }
 
-inline void JSObject::setStructure(NonNullPassRefPtr<Structure> structure)
+inline void JSObject::setStructure(JSGlobalData& globalData, Structure* structure)
 {
-    m_structure->deref();
-    m_structure = structure.leakRef(); // ~JSObject balances this ref()
+    m_structure.set(globalData, this, structure);
 }
 
 inline Structure* JSObject::inheritorID(JSGlobalData& globalData)
 {
-    if (m_inheritorID)
+    if (m_inheritorID) {
+        ASSERT(m_inheritorID->isEmpty());
         return m_inheritorID.get();
+    }
     return createInheritorID(globalData);
 }
 
@@ -596,12 +605,12 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
 
     size_t offset;
     size_t currentCapacity = m_structure->propertyStorageCapacity();
-    if (RefPtr<Structure> structure = Structure::addPropertyTransitionToExistingStructure(m_structure, propertyName, attributes, specificFunction, offset)) {    
+    if (Structure* structure = Structure::addPropertyTransitionToExistingStructure(m_structure.get(), propertyName, attributes, specificFunction, offset)) {    
         if (currentCapacity != structure->propertyStorageCapacity())
             allocatePropertyStorage(currentCapacity, structure->propertyStorageCapacity());
 
         ASSERT(offset < structure->propertyStorageCapacity());
-        setStructure(structure.release());
+        setStructure(globalData, structure);
         putDirectOffset(globalData, offset, value);
         // This is a new property; transitions with specific values are not currently cachable,
         // so leave the slot in an uncachable state.
@@ -633,7 +642,7 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
                 return true;
             }
             // case (2) Despecify, fall through to (3).
-            setStructure(Structure::despecifyFunctionTransition(globalData, m_structure, propertyName));
+            setStructure(globalData, Structure::despecifyFunctionTransition(globalData, m_structure.get(), propertyName));
         }
 
         // case (3) set the slot, do the put, return.
@@ -645,13 +654,13 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
     if (!isExtensible())
         return false;
 
-    RefPtr<Structure> structure = Structure::addPropertyTransition(globalData, m_structure, propertyName, attributes, specificFunction, offset);
+    Structure* structure = Structure::addPropertyTransition(globalData, m_structure.get(), propertyName, attributes, specificFunction, offset);
 
     if (currentCapacity != structure->propertyStorageCapacity())
         allocatePropertyStorage(currentCapacity, structure->propertyStorageCapacity());
 
     ASSERT(offset < structure->propertyStorageCapacity());
-    setStructure(structure.release());
+    setStructure(globalData, structure);
     putDirectOffset(globalData, offset, value);
     // This is a new property; transitions with specific values are not currently cachable,
     // so leave the slot in an uncachable state.
@@ -722,11 +731,11 @@ inline void JSObject::putDirectFunctionWithoutTransition(JSGlobalData& globalDat
     putDirectOffset(globalData, offset, value);
 }
 
-inline void JSObject::transitionTo(Structure* newStructure)
+inline void JSObject::transitionTo(JSGlobalData& globalData, Structure* newStructure)
 {
     if (m_structure->propertyStorageCapacity() != newStructure->propertyStorageCapacity())
         allocatePropertyStorage(m_structure->propertyStorageCapacity(), newStructure->propertyStorageCapacity());
-    setStructure(newStructure);
+    setStructure(globalData, newStructure);
 }
 
 inline JSValue JSObject::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
@@ -815,10 +824,11 @@ ALWAYS_INLINE void JSObject::markChildrenDirect(MarkStack& markStack)
 {
     JSCell::markChildren(markStack);
 
-    m_structure->markAggregate(markStack);
     PropertyStorage storage = propertyStorage();
     size_t storageSize = m_structure->propertyStorageSize();
     markStack.appendValues(storage, storageSize);
+    if (m_inheritorID)
+        markStack.append(&m_inheritorID);
 }
 
 // --- JSValue inlines ----------------------------

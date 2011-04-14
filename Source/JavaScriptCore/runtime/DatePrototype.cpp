@@ -429,7 +429,7 @@ const ClassInfo DatePrototype::s_info = {"Date", &DateInstance::s_info, 0, ExecS
 
 // ECMA 15.9.4
 
-DatePrototype::DatePrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
+DatePrototype::DatePrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
     : DateInstance(exec, structure)
 {
     ASSERT(inherits(&s_info));

@@ -64,13 +64,13 @@ namespace WebCore {
             return globalObject()->scriptExecutionContext();
         }
 
-        static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
+        static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
         {
             return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     protected:
-        DOMObjectWithGlobalPointer(NonNullPassRefPtr<JSC::Structure> structure, JSDOMGlobalObject* globalObject)
+        DOMObjectWithGlobalPointer(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
             : DOMObject(globalObject, structure)
         {
             // FIXME: This ASSERT is valid, but fires in fast/dom/gc-6.html when trying to create
@@ -83,14 +83,14 @@ namespace WebCore {
     // Base class for all constructor objects in the JSC bindings.
     class DOMConstructorObject : public DOMObjectWithGlobalPointer {
     public:
-        static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
+        static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
         {
             return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     protected:
         static const unsigned StructureFlags = JSC::ImplementsHasInstance | JSC::OverridesMarkChildren | DOMObjectWithGlobalPointer::StructureFlags;
-        DOMConstructorObject(NonNullPassRefPtr<JSC::Structure> structure, JSDOMGlobalObject* globalObject)
+        DOMConstructorObject(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
             : DOMObjectWithGlobalPointer(structure, globalObject)
         {
         }
@@ -106,7 +106,7 @@ namespace WebCore {
         }
 
     protected:
-        DOMConstructorWithDocument(NonNullPassRefPtr<JSC::Structure> structure, JSDOMGlobalObject* globalObject)
+        DOMConstructorWithDocument(JSC::Structure* structure, JSDOMGlobalObject* globalObject)
             : DOMConstructorObject(structure, globalObject)
         {
             ASSERT(globalObject->scriptExecutionContext()->isDocument());
@@ -129,7 +129,7 @@ namespace WebCore {
     bool hasCachedDOMNodeWrapperUnchecked(Document*, Node*);
 
     JSC::Structure* getCachedDOMStructure(JSDOMGlobalObject*, const JSC::ClassInfo*);
-    JSC::Structure* cacheDOMStructure(JSDOMGlobalObject*, NonNullPassRefPtr<JSC::Structure>, const JSC::ClassInfo*);
+    JSC::Structure* cacheDOMStructure(JSDOMGlobalObject*, JSC::Structure*, const JSC::ClassInfo*);
 
     inline JSDOMGlobalObject* deprecatedGlobalObjectForPrototype(JSC::ExecState* exec)
     {

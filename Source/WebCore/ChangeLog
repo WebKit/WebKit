@@ -1,3 +1,84 @@
+2011-04-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        GC allocate Structure
+        https://bugs.webkit.org/show_bug.cgi?id=58483
+
+        Update WebCore for Structure being a GC allocated object
+
+        * WebCore.exp.in:
+        * bindings/js/JSAudioConstructor.h:
+        (WebCore::JSAudioConstructor::createStructure):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::cacheDOMStructure):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObjectWithGlobalPointer::createStructure):
+        (WebCore::DOMObjectWithGlobalPointer::DOMObjectWithGlobalPointer):
+        (WebCore::DOMConstructorObject::createStructure):
+        (WebCore::DOMConstructorObject::DOMConstructorObject):
+        (WebCore::DOMConstructorWithDocument::DOMConstructorWithDocument):
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::JSDOMGlobalObject):
+        (WebCore::JSDOMGlobalObject::markChildren):
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::JSDOMGlobalObject::createStructure):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        * bindings/js/JSDOMWindowBase.h:
+        (WebCore::JSDOMWindowBase::createStructure):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell):
+        (WebCore::JSDOMWindowShell::setWindow):
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::createStructure):
+        * bindings/js/JSDOMWrapper.h:
+        (WebCore::DOMObject::DOMObject):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        * bindings/js/JSImageConstructor.h:
+        (WebCore::JSImageConstructor::createStructure):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSOptionConstructor.h:
+        (WebCore::JSOptionConstructor::createStructure):
+        * bindings/js/JSWorkerContextBase.cpp:
+        (WebCore::JSWorkerContextBase::JSWorkerContextBase):
+        * bindings/js/JSWorkerContextBase.h:
+        (WebCore::JSWorkerContextBase::createStructure):
+        * bindings/js/ScriptCachedFrameData.h:
+        * bindings/js/SerializedScriptValue.h:
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initScript):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/c/CRuntimeObject.h:
+        (JSC::Bindings::CRuntimeObject::createStructure):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CRuntimeMethod::createStructure):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaRuntimeMethod::createStructure):
+        * bridge/jni/jsc/JavaRuntimeObject.h:
+        (JSC::Bindings::JavaRuntimeObject::createStructure):
+        * bridge/objc/ObjCRuntimeObject.h:
+        (JSC::Bindings::ObjCRuntimeObject::createStructure):
+        * bridge/objc/objc_instance.mm:
+        (ObjCRuntimeMethod::createStructure):
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::createStructure):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::RuntimeArray):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::createStructure):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::RuntimeMethod):
+        * bridge/runtime_method.h:
+        (JSC::RuntimeMethod::createStructure):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::RuntimeObject):
+        * bridge/runtime_object.h:
+        (JSC::Bindings::RuntimeObject::createStructure):
+        * history/HistoryItem.h:
+
 2011-04-13  Cary Clark  <caryclark@google.com>
 
         Reviewed by Eric Seidel.

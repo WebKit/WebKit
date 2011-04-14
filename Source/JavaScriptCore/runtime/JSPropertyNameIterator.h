@@ -45,9 +45,9 @@ namespace JSC {
     public:
         static JSPropertyNameIterator* create(ExecState*, JSObject*);
         
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
-            return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesMarkChildren), AnonymousSlotCount, 0);
+            return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesMarkChildren), AnonymousSlotCount, &s_info);
         }
 
         virtual bool isPropertyNameIterator() const { return true; }
@@ -65,11 +65,11 @@ namespace JSC {
         JSValue get(ExecState*, JSObject*, size_t i);
         size_t size() { return m_jsStringsSize; }
 
-        void setCachedStructure(Structure* structure)
+        void setCachedStructure(JSGlobalData& globalData, Structure* structure)
         {
             ASSERT(!m_cachedStructure);
             ASSERT(structure);
-            m_cachedStructure = structure;
+            m_cachedStructure.set(globalData, this, structure);
         }
         Structure* cachedStructure() { return m_cachedStructure.get(); }
 
@@ -77,13 +77,10 @@ namespace JSC {
         StructureChain* cachedPrototypeChain() { return m_cachedPrototypeChain.get(); }
 
     private:
+        static const ClassInfo s_info;
         JSPropertyNameIterator(ExecState*, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlot);
-        
-#if !ASSERT_DISABLED
-        virtual ~JSPropertyNameIterator();
-#endif
 
-        RefPtr<Structure> m_cachedStructure;
+        WriteBarrier<Structure> m_cachedStructure;
         WriteBarrier<StructureChain> m_cachedPrototypeChain;
         uint32_t m_numCacheableSlots;
         uint32_t m_jsStringsSize;
@@ -93,7 +90,7 @@ namespace JSC {
     inline void Structure::setEnumerationCache(JSGlobalData& globalData, JSPropertyNameIterator* enumerationCache)
     {
         ASSERT(!isDictionary());
-        m_enumerationCache.set(globalData, enumerationCache);
+        m_enumerationCache.set(globalData, this, enumerationCache);
     }
 
     inline JSPropertyNameIterator* Structure::enumerationCache()

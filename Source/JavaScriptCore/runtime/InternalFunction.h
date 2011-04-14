@@ -39,7 +39,7 @@ namespace JSC {
         const UString displayName(ExecState*);
         const UString calculatedDisplayName(ExecState*);
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) 
+        static Structure* createStructure(JSGlobalData& globalData, JSValue proto) 
         { 
             return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); 
         }
@@ -48,9 +48,9 @@ namespace JSC {
         static const unsigned StructureFlags = ImplementsHasInstance | JSObject::StructureFlags;
 
         // Only used to allow us to determine the JSFunction vptr
-        InternalFunction(NonNullPassRefPtr<Structure> structure);
+        InternalFunction(VPtrStealingHackType);
 
-        InternalFunction(JSGlobalData*, JSGlobalObject*, NonNullPassRefPtr<Structure>, const Identifier&);
+        InternalFunction(JSGlobalData*, JSGlobalObject*, Structure*, const Identifier&);
 
     private:
         virtual CallType getCallData(CallData&) = 0;

@@ -44,9 +44,13 @@ template <class T> class Handle;
 // Creating a JSValue Handle is invalid
 template <> class Handle<JSValue>;
 
+// Forward declare WeakGCMap
+template<typename KeyType, typename MappedType, typename FinalizerCallback, typename HashArg, typename KeyTraitsArg> class WeakGCMap;
+
 class HandleBase {
     friend class HandleHeap;
     friend struct JSCallbackObjectData;
+    template <typename KeyType, typename MappedType, typename FinalizerCallback, typename HashArg, typename KeyTraitsArg> friend class WeakGCMap;
 
 public:
     bool operator!() const { return !m_slot || !*m_slot; }

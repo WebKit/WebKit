@@ -167,7 +167,7 @@ JSObject* throwSyntaxError(ExecState* exec)
 
 class StrictModeTypeErrorFunction : public InternalFunction {
 public:
-    StrictModeTypeErrorFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, const UString& message)
+    StrictModeTypeErrorFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& message)
         : InternalFunction(&exec->globalData(), globalObject, structure, exec->globalData().propertyNames->emptyIdentifier)
         , m_message(message)
     {

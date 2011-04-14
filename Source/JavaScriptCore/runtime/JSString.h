@@ -185,7 +185,7 @@ namespace JSC {
         };
 
         ALWAYS_INLINE JSString(JSGlobalData* globalData, const UString& value)
-            : JSCell(globalData->stringStructure.get())
+            : JSCell(*globalData, globalData->stringStructure.get())
             , m_length(value.length())
             , m_value(value)
             , m_fiberCount(0)
@@ -196,7 +196,7 @@ namespace JSC {
 
         enum HasOtherOwnerType { HasOtherOwner };
         JSString(JSGlobalData* globalData, const UString& value, HasOtherOwnerType)
-            : JSCell(globalData->stringStructure.get())
+            : JSCell(*globalData, globalData->stringStructure.get())
             , m_length(value.length())
             , m_value(value)
             , m_fiberCount(0)
@@ -204,7 +204,7 @@ namespace JSC {
             ASSERT(!m_value.isNull());
         }
         JSString(JSGlobalData* globalData, PassRefPtr<StringImpl> value, HasOtherOwnerType)
-            : JSCell(globalData->stringStructure.get())
+            : JSCell(*globalData, globalData->stringStructure.get())
             , m_length(value->length())
             , m_value(value)
             , m_fiberCount(0)
@@ -212,7 +212,7 @@ namespace JSC {
             ASSERT(!m_value.isNull());
         }
         JSString(JSGlobalData* globalData, PassRefPtr<RopeImpl> rope)
-            : JSCell(globalData->stringStructure.get())
+            : JSCell(*globalData, globalData->stringStructure.get())
             , m_length(rope->length())
             , m_fiberCount(1)
         {
@@ -221,7 +221,7 @@ namespace JSC {
         // This constructor constructs a new string by concatenating s1 & s2.
         // This should only be called with fiberCount <= 3.
         JSString(JSGlobalData* globalData, unsigned fiberCount, JSString* s1, JSString* s2)
-            : JSCell(globalData->stringStructure.get())
+            : JSCell(*globalData, globalData->stringStructure.get())
             , m_length(s1->length() + s2->length())
             , m_fiberCount(fiberCount)
         {
@@ -234,7 +234,7 @@ namespace JSC {
         // This constructor constructs a new string by concatenating s1 & s2.
         // This should only be called with fiberCount <= 3.
         JSString(JSGlobalData* globalData, unsigned fiberCount, JSString* s1, const UString& u2)
-            : JSCell(globalData->stringStructure.get())
+            : JSCell(*globalData, globalData->stringStructure.get())
             , m_length(s1->length() + u2.length())
             , m_fiberCount(fiberCount)
         {
@@ -247,7 +247,7 @@ namespace JSC {
         // This constructor constructs a new string by concatenating s1 & s2.
         // This should only be called with fiberCount <= 3.
         JSString(JSGlobalData* globalData, unsigned fiberCount, const UString& u1, JSString* s2)
-            : JSCell(globalData->stringStructure.get())
+            : JSCell(*globalData, globalData->stringStructure.get())
             , m_length(u1.length() + s2->length())
             , m_fiberCount(fiberCount)
         {
@@ -262,7 +262,7 @@ namespace JSC {
         // value must require a fiberCount of at least one implies that the length
         // for each value must be exactly 1!
         JSString(ExecState* exec, JSValue v1, JSValue v2, JSValue v3)
-            : JSCell(exec->globalData().stringStructure.get())
+            : JSCell(exec->globalData(), exec->globalData().stringStructure.get())
             , m_length(0)
             , m_fiberCount(s_maxInternalRopeLength)
         {
@@ -275,7 +275,7 @@ namespace JSC {
 
         // This constructor constructs a new string by concatenating u1 & u2.
         JSString(JSGlobalData* globalData, const UString& u1, const UString& u2)
-            : JSCell(globalData->stringStructure.get())
+            : JSCell(*globalData, globalData->stringStructure.get())
             , m_length(u1.length() + u2.length())
             , m_fiberCount(2)
         {
@@ -287,7 +287,7 @@ namespace JSC {
 
         // This constructor constructs a new string by concatenating u1, u2 & u3.
         JSString(JSGlobalData* globalData, const UString& u1, const UString& u2, const UString& u3)
-            : JSCell(globalData->stringStructure.get())
+            : JSCell(*globalData, globalData->stringStructure.get())
             , m_length(u1.length() + u2.length() + u3.length())
             , m_fiberCount(s_maxInternalRopeLength)
         {
@@ -299,7 +299,7 @@ namespace JSC {
         }
 
         JSString(JSGlobalData* globalData, const UString& value, JSStringFinalizerCallback finalizer, void* context)
-            : JSCell(globalData->stringStructure.get())
+            : JSCell(*globalData, globalData->stringStructure.get())
             , m_length(value.length())
             , m_value(value)
             , m_fiberCount(0)
@@ -349,12 +349,11 @@ namespace JSC {
 
         JSValue replaceCharacter(ExecState*, UChar, const UString& replacement);
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot | NeedsThisConversion), AnonymousSlotCount, 0); }
+        static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(StringType, OverridesGetOwnPropertySlot | NeedsThisConversion), AnonymousSlotCount, 0); }
 
     private:
-        enum VPtrStealingHackType { VPtrStealingHack };
         JSString(VPtrStealingHackType) 
-            : JSCell(0)
+            : JSCell(VPtrStealingHack)
             , m_fiberCount(0)
         {
         }

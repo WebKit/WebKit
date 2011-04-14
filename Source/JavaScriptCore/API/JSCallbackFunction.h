@@ -39,7 +39,7 @@ public:
     
     // InternalFunction mish-mashes constructor and function behavior -- we should 
     // refactor the code so this override isn't necessary
-    static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) 
+    static Structure* createStructure(JSGlobalData& globalData, JSValue proto) 
     { 
         return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); 
     }

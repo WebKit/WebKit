@@ -29,12 +29,12 @@ namespace JSC {
 
     class StringPrototype : public StringObject {
     public:
-        StringPrototype(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>);
+        StringPrototype(ExecState*, JSGlobalObject*, Structure*);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }

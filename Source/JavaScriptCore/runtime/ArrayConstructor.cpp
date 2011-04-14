@@ -37,7 +37,7 @@ ASSERT_CLASS_FITS_IN_CELL(ArrayConstructor);
     
 static EncodedJSValue JSC_HOST_CALL arrayConstructorIsArray(ExecState*);
 
-ArrayConstructor::ArrayConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, ArrayPrototype* arrayPrototype, Structure* functionStructure)
+ArrayConstructor::ArrayConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ArrayPrototype* arrayPrototype, Structure* functionStructure)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, arrayPrototype->classInfo()->className))
 {
     // ECMA 15.4.3.1 Array.prototype
@@ -59,7 +59,7 @@ static inline JSObject* constructArrayWithSizeQuirk(ExecState* exec, const ArgLi
         uint32_t n = args.at(0).toUInt32(exec);
         if (n != args.at(0).toNumber(exec))
             return throwError(exec, createRangeError(exec, "Array size is not a small enough positive integer."));
-        return new (exec) JSArray(globalObject->arrayStructure(), n, CreateInitialized);
+        return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure(), n, CreateInitialized);
     }
 
     // otherwise the array is constructed with the arguments in it
