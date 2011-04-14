@@ -1,3 +1,12 @@
+2011-04-14  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change.
+
+        Mark several tests as only failing in Linux debug, add a bug
+        number.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-14  Dmitry Titov  <dimich@chromium.org>
 
         Reviewed by David Levin.
