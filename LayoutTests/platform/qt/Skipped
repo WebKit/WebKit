@@ -3500,3 +3500,7 @@ fast/ruby/after-block-doesnt-crash.html
 fast/ruby/after-table-doesnt-crash.html
 fast/ruby/before-block-doesnt-crash.html
 fast/ruby/before-table-doesnt-crash.html
+
+# [Qt] fast/transforms/scrollIntoView-transformed.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=58559
+fast/transforms/scrollIntoView-transformed.html
