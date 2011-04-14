@@ -61,6 +61,12 @@ class LayoutTestResultsTest(unittest.TestCase):
 </html>
 """
 
+    def test_set_failure_limit_count(self):
+        results = LayoutTestResults([])
+        self.assertEquals(results.failure_limit_count(), None)
+        results.set_failure_limit_count(10)
+        self.assertEquals(results.failure_limit_count(), 10)
+
     def test_parse_layout_test_results(self):
         failures = [test_failures.FailureMissingResult(), test_failures.FailureMissingImageHash(), test_failures.FailureMissingImage()]
         testname = 'fast/repaint/no-caret-repaint-in-non-content-editable-element.html'

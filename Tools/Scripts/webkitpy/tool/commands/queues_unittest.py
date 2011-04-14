@@ -385,6 +385,10 @@ The commit-queue is continuing to process your patch.
         self.assertEquals(queue.layout_test_results(), None)
         queue._read_file_contents = lambda path: ""
         self.assertEquals(queue.layout_test_results(), None)
+        queue._create_layout_test_results = lambda: LayoutTestResults([])
+        results = queue.layout_test_results()
+        self.assertNotEquals(results, None)
+        self.assertEquals(results.failure_limit_count(), 10)  # This value matches RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT
 
     def test_archive_last_layout_test_results(self):
         queue = CommitQueue()

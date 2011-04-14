@@ -319,17 +319,23 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         except OSError, e:  # File does not exist or can't be read.
             return None
 
-    # FIXME: This may belong on the Port object.
-    def layout_test_results(self):
+    # FIXME: This logic should move to the port object.
+    def _create_layout_test_results(self):
         results_path = self._tool.port().layout_tests_results_path()
         results_html = self._read_file_contents(results_path)
         if not results_html:
             return None
-        # FIXME: We should not have to pass a failure_limit_count, but we
+        return LayoutTestResults.results_from_string(results_html)
+
+    def layout_test_results(self):
+        results = self._create_layout_test_results()
+        # FIXME: We should not have to set failure_limit_count, but we
         # do until run-webkit-tests can be updated save off the value
         # of --exit-after-N-failures in results.html/results.json.
         # https://bugs.webkit.org/show_bug.cgi?id=58481
-        return LayoutTestResults.results_from_string(results_html, failure_limit_count=RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT)
+        if results:
+            results.set_failure_limit_count(RunTests.NON_INTERACTIVE_FAILURE_LIMIT_COUNT)
+        return results
 
     def _results_directory(self):
         results_path = self._tool.port().layout_tests_results_path()
