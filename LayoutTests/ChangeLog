@@ -1,3 +1,14 @@
+2011-04-14  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] REGRESSION(83820): Composited scrollbar layers sometimes not positioned when initially creating frame
+        https://bugs.webkit.org/show_bug.cgi?id=58575
+
+        Remove expected failure lines for pixel tests that now should pass.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-14  Chris Rogers  <crogers@google.com>
 
         Unreviewed.

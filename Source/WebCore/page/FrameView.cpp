@@ -1512,13 +1512,6 @@ void FrameView::contentsResized()
 {
     scrollAnimator()->contentsResized();
     setNeedsLayout();
-
-#if USE(ACCELERATED_COMPOSITING)
-    if (RenderView* root = m_frame->contentRenderer()) {
-        if (root->usesCompositing())
-            root->compositor()->frameViewDidChangeSize();
-    }
-#endif
 }
 
 void FrameView::visibleContentsResized()
@@ -1532,6 +1525,13 @@ void FrameView::visibleContentsResized()
 
     if (needsLayout())
         layout();
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (RenderView* root = m_frame->contentRenderer()) {
+        if (root->usesCompositing())
+            root->compositor()->frameViewDidChangeSize();
+    }
+#endif
 }
 
 void FrameView::beginDeferredRepaints()

@@ -1,3 +1,19 @@
+2011-04-14  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] REGRESSION(83820): Composited scrollbar layers sometimes not positioned when initially creating frame
+        https://bugs.webkit.org/show_bug.cgi?id=58575
+
+        Tell the RenderLayerCompositor to create/destroy composited layers for overflow controls on a FrameView when visibleContentsResized()
+        is called, not contentsResized() so that we always update layers when adding or removing scrollbars.
+
+        Covered by several chromium pixel tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::contentsResized):
+        (WebCore::FrameView::visibleContentsResized):
+
 2011-04-07  David Levin  <levin@chromium.org>
 
         Reviewed by Brady Eidson.
