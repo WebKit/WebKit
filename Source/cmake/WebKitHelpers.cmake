@@ -65,12 +65,12 @@ ENDMACRO()
 
 
 # Append the given dependencies to the source file
-# This one consider the given dependencies are in ${DERIVED_SOURCES_DIR}
+# This one consider the given dependencies are in ${DERIVED_SOURCES_WEBCORE_DIR}
 # and prepends this to every member of dependencies list
-MACRO(ADD_SOURCE_DERIVED_DEPENDENCIES _source _deps)
+MACRO(ADD_SOURCE_WEBCORE_DERIVED_DEPENDENCIES _source _deps)
   SET(_tmp "")
   FOREACH (f ${_deps})
-    LIST(APPEND _tmp "${DERIVED_SOURCES_DIR}/${f}")
+    LIST(APPEND _tmp "${DERIVED_SOURCES_WEBCORE_DIR}/${f}")
   ENDFOREACH ()
 
   ADD_SOURCE_DEPENDENCIES(${_source} ${_tmp})

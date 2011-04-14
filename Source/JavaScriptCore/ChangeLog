@@ -1,3 +1,12 @@
+2011-04-13  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [CMAKE] Separate DerivedSources.
+        https://bugs.webkit.org/show_bug.cgi?id=58427
+
+        * CMakeLists.txt: Change DERIVED_SOURCES_DIR to DERIVED_SOURCES_JAVASCRIPTCORE_DIR.
+
 2011-04-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

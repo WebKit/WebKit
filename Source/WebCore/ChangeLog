@@ -1,3 +1,15 @@
+2011-04-13  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [CMAKE] Separate DerivedSources.
+        https://bugs.webkit.org/show_bug.cgi?id=58427
+
+        No new tests since these are refactoring only.
+
+        * CMakeLists.txt:
+        * UseJSC.cmake:
+
 2011-04-13  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Kenneth Russell.

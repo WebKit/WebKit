@@ -194,10 +194,10 @@ ENDFOREACH ()
 FOREACH (_file ${WebCore_IDL_FILES})
     GET_FILENAME_COMPONENT (_name ${_file} NAME_WE)
     ADD_CUSTOM_COMMAND(
-        OUTPUT  ${DERIVED_SOURCES_DIR}/JS${_name}.cpp ${DERIVED_SOURCES_DIR}/JS${_name}.h
+        OUTPUT  ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_name}.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_name}.h
         MAIN_DEPENDENCY ${_file}
         DEPENDS ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl ${SCRIPTS_BINDINGS} ${WEBCORE_DIR}/bindings/scripts/CodeGeneratorJS.pm ${_file}
-        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --generator JS ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_DIR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${WEBCORE_DIR}/${_file}
+        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/generate-bindings.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --generator JS ${IDL_INCLUDES} --outputDir "${DERIVED_SOURCES_WEBCORE_DIR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${WEBCORE_DIR}/${_file}
         VERBATIM)
-    LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_DIR}/JS${_name}.cpp)
+    LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_name}.cpp)
 ENDFOREACH ()

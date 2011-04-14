@@ -27,7 +27,7 @@ ENDMACRO ()
 MACRO (GENERATE_DOM_NAMES _namespace _attrs)
     SET(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_names.pl)
     SET(_arguments  --attrs ${_attrs})
-    SET(_outputfiles ${DERIVED_SOURCES_DIR}/${_namespace}Names.cpp ${DERIVED_SOURCES_DIR}/${_namespace}Names.h)
+    SET(_outputfiles ${DERIVED_SOURCES_WEBCORE_DIR}/${_namespace}Names.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/${_namespace}Names.h)
     SET(_extradef)
     SET(_tags)
 
@@ -41,7 +41,7 @@ MACRO (GENERATE_DOM_NAMES _namespace _attrs)
 
     IF (_tags)
         SET(_arguments "${_arguments}" --tags ${_tags} --factory --wrapperFactory)
-        SET(_outputfiles "${_outputfiles}" ${DERIVED_SOURCES_DIR}/${_namespace}ElementFactory.cpp ${DERIVED_SOURCES_DIR}/${_namespace}ElementFactory.h ${DERIVED_SOURCES_DIR}/JS${_namespace}ElementWrapperFactory.cpp ${DERIVED_SOURCES_DIR}/JS${_namespace}ElementWrapperFactory.h)
+        SET(_outputfiles "${_outputfiles}" ${DERIVED_SOURCES_WEBCORE_DIR}/${_namespace}ElementFactory.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/${_namespace}ElementFactory.h ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_namespace}ElementWrapperFactory.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/JS${_namespace}ElementWrapperFactory.h)
     ENDIF ()
 
     IF (_extradef)
@@ -51,7 +51,7 @@ MACRO (GENERATE_DOM_NAMES _namespace _attrs)
     ADD_CUSTOM_COMMAND(
         OUTPUT  ${_outputfiles}
         DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS} ${_attrs} ${_tags}
-        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --outputDir ${DERIVED_SOURCES_DIR} ${_arguments} ${_additionArguments}
+        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --outputDir ${DERIVED_SOURCES_WEBCORE_DIR} ${_arguments} ${_additionArguments}
         VERBATIM)
 ENDMACRO ()
 
@@ -88,15 +88,15 @@ MACRO(MAKE_HASH_TOOLS _source)
     GET_FILENAME_COMPONENT(_name ${_source} NAME_WE)
 
     IF (${_source} STREQUAL "DocTypeStrings")
-        SET(_hash_tools_h "${DERIVED_SOURCES_DIR}/HashTools.h")
+        SET(_hash_tools_h "${DERIVED_SOURCES_WEBCORE_DIR}/HashTools.h")
     ELSE ()
         SET(_hash_tools_h "")
     ENDIF ()
 
     ADD_CUSTOM_COMMAND(
-        OUTPUT ${DERIVED_SOURCES_DIR}/${_name}.cpp ${_hash_tools_h}
+        OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_name}.cpp ${_hash_tools_h}
         MAIN_DEPENDENCY ${_source}.gperf 
-        COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/make-hash-tools.pl ${DERIVED_SOURCES_DIR} ${_source}.gperf
+        COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/make-hash-tools.pl ${DERIVED_SOURCES_WEBCORE_DIR} ${_source}.gperf
         VERBATIM)
 
     UNSET(_name)
@@ -108,13 +108,13 @@ MACRO (WEBKIT_WRAP_SOURCELIST)
         GET_FILENAME_COMPONENT(_basename ${_file} NAME_WE)
         GET_FILENAME_COMPONENT(_path ${_file} PATH)
 
-		IF (NOT _file MATCHES "${DERIVED_SOURCES_DIR}")
+		IF (NOT _file MATCHES "${DERIVED_SOURCES_WEBCORE_DIR}")
             STRING(REGEX REPLACE "/" "\\\\\\\\" _sourcegroup "${_path}")
             SOURCE_GROUP("${_sourcegroup}" FILES ${_file})
 		ENDIF ()
 
         IF (WTF_PLATFORM_QT)
-            SET(_moc_filename ${DERIVED_SOURCES_DIR}/${_basename}.moc)
+            SET(_moc_filename ${DERIVED_SOURCES_WEBCORE_DIR}/${_basename}.moc)
 
             FILE(READ ${_file} _contents)
 
@@ -126,5 +126,5 @@ MACRO (WEBKIT_WRAP_SOURCELIST)
         ENDIF ()
     ENDFOREACH ()
 
-    SOURCE_GROUP("DerivedSources" REGULAR_EXPRESSION "${DERIVED_SOURCES_DIR}")
+    SOURCE_GROUP("DerivedSources" REGULAR_EXPRESSION "${DERIVED_SOURCES_WEBCORE_DIR}")
 ENDMACRO ()
