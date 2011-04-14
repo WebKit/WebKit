@@ -1,3 +1,11 @@
+2011-04-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed test fix for r83849.
+
+        It was flaky.
+
+        * http/tests/inspector-enabled/database-open.html:
+
 2011-04-14  Adam Roben  <aroben@apple.com>
 
         Add new Windows expected results after r83820
