@@ -1,3 +1,13 @@
+2011-04-14  Nancy Piedra  <nancy.piedra@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        Added additional test for parsing codecs parameter.
+        https://bugs.webkit.org/show_bug.cgi?id=58188
+
+        * media/video-can-play-type-expected.txt:
+        * media/video-can-play-type.html:
+
 2011-04-14  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip 2 failing tests.

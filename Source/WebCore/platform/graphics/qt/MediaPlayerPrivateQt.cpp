@@ -84,7 +84,17 @@ MediaPlayer::SupportsType MediaPlayerPrivateQt::supportsType(const String& mime,
     if (!mime.startsWith("audio/") && !mime.startsWith("video/"))
         return MediaPlayer::IsNotSupported;
 
-    if (QMediaPlayer::hasSupport(mime, QStringList(codec)) >= QtMultimediaKit::ProbablySupported)
+    // Parse and trim codecs.
+    QString codecStr = codec;
+    QStringList codecList = codecStr.split(QLatin1Char(','), QString::SkipEmptyParts);
+    QStringList codecListTrimmed;
+    foreach (const QString& codecStrNotTrimmed, codecList) {
+        QString codecStrTrimmed = codecStrNotTrimmed.trimmed();
+        if (!codecStrTrimmed.isEmpty())
+            codecListTrimmed.append(codecStrTrimmed);
+    }
+
+    if (QMediaPlayer::hasSupport(mime, codecListTrimmed) >= QtMultimediaKit::ProbablySupported)
         return MediaPlayer::IsSupported;
 
     return MediaPlayer::MayBeSupported;

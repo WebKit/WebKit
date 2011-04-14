@@ -7,6 +7,7 @@ EXPECTED (video.canPlayType('video/mpeg; Codecs="avc1.4D400C"') == 'probably') O
 EXPECTED (video.canPlayType(' Video/MP4 ; CODECS="mp4v.20.8, mp4a.40.2"') == 'probably') OK
 EXPECTED (video.canPlayType('audio/mpeg') == 'maybe') OK
 EXPECTED (video.canPlayType('audio/Wav') == 'maybe') OK
+EXPECTED (video.canPlayType('video/blahblah; codecs="blah, , blah"') == '') OK
 EXPECTED (video.canPlayType('video/blahblah; codecs=blah') == '') OK
 EXPECTED (video.canPlayType('video/blahblah; codecs="blah"') == '') OK
 EXPECTED (video.canPlayType('video/blahblah; codecs="badcontent') == '') OK

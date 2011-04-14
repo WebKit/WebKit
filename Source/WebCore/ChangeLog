@@ -1,3 +1,18 @@
+2011-04-14  Nancy Piedra  <nancy.piedra@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] MediaPlayerPrivateQt::supportsType does not parse codec parameter
+        https://bugs.webkit.org/show_bug.cgi?id=58188
+
+        The codec parameter in MediaPlayerPrivateQt::supportsType was not parsed into
+        a QStringList. This change parses and trims the list.
+
+        An additional test was added to video-can-play-type.html to test parsing of codec parameter.
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::supportsType):
+
 2011-04-14  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

@@ -22,6 +22,7 @@
             testExpected("video.canPlayType('        Video/MP4 ; CODECS=\"mp4v.20.8, mp4a.40.2\"')", "probably");
             testExpected("video.canPlayType('audio/mpeg')", "maybe");
             testExpected("video.canPlayType('audio/Wav')", "maybe");
+            testExpected("video.canPlayType('video/blahblah; codecs=\"blah,  , blah\"')", "");
             testExpected("video.canPlayType('video/blahblah; codecs=blah')", "");
             testExpected("video.canPlayType('video/blahblah; codecs=\"blah\"')", "");
             testExpected("video.canPlayType('video/blahblah; codecs=\"badcontent')", "");
