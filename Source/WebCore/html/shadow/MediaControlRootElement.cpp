@@ -287,7 +287,7 @@ void MediaControlRootElement::reset()
         m_fullScreenButton->hide();
 
     float duration = m_mediaElement->duration();
-    if (!isnan(duration) || page->theme()->hasOwnDisabledStateHandlingFor(MediaSliderPart)) {
+    if (isfinite(duration) || page->theme()->hasOwnDisabledStateHandlingFor(MediaSliderPart)) {
         m_timeline->setDuration(duration);
         m_timelineContainer->show();
         m_timeline->setPosition(m_mediaElement->currentTime());

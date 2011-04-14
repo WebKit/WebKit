@@ -1,3 +1,22 @@
+2011-04-13  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        The timeline of the video controls is unusable if the multimedia backend returns a
+        infinite duration.
+        https://bugs.webkit.org/show_bug.cgi?id=58452
+
+        In case the underlaying media element backend returns crazy values, e.g.
+        an infinite duration for the video we need to bail out and hide the timeline
+        rather than in a broken state where you can't use it. The previous code was just
+        checking if the duration was NaN.
+
+        We can't control from JS what the backend will return as a duration for the video
+        so we can't make an test for it.
+
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::reset):
+
 2011-04-13  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by James Robinson.
