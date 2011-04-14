@@ -1,3 +1,10 @@
+2011-04-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, build fix for r83864.
+
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype._childNodeRemoved):
+
 2011-04-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

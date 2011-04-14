@@ -502,7 +502,8 @@ WebInspector.DOMAgent.prototype = {
         parent.removeChild_(node);
         this.dispatchEventToListeners(WebInspector.DOMAgent.Events.NodeRemoved, {node:node, parent:parent});
         delete this._idToDOMNode[nodeId];
-        WebInspector.panels.elements.sidebarPanes.domBreakpoints.nodeRemoved(node);
+        if (Preferences.nativeInstrumentationEnabled)
+            WebInspector.panels.elements.sidebarPanes.domBreakpoints.nodeRemoved(node);
     },
 
     performSearch: function(query, searchResultCollector, searchSynchronously)
