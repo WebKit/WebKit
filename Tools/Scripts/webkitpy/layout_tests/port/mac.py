@@ -94,11 +94,6 @@ class MacPort(WebKitPort):
             return 4
         return child_processes
 
-    def default_worker_model(self):
-        if self._multiprocessing_is_available:
-            return 'processes'
-        return 'threads'
-
     def baseline_path(self):
         if self.version() != 'future':
             return WebKitPort.baseline_path(self)

@@ -1,3 +1,16 @@
+2011-04-14  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        REGRESSION (r83764): webkitpy.layout_tests.port.chromium_win_unittest.ChromiumWinTest.test_default_worker_model fails on apple-windows-13
+        https://bugs.webkit.org/show_bug.cgi?id=58545
+
+        Remove platform-specific overrides; the default behavior should
+        be working everywhere now, I think.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+
 2011-04-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
