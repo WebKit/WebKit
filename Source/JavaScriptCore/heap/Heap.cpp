@@ -240,16 +240,27 @@ void Heap::markRoots()
     markStack.drain();
 
     m_handleHeap.markStrongHandles(heapRootMarker);
-    m_handleStack.mark(heapRootMarker);
-
-    m_handleHeap.markWeakHandles(heapRootMarker);
     markStack.drain();
 
-    // Mark the small strings cache last, since it will clear itself if nothing
-    // else has marked it.
+    m_handleStack.mark(heapRootMarker);
+    markStack.drain();
+
+    // Mark the small strings cache as late as possible, since it will clear
+    // itself if nothing else has marked it.
+    // FIXME: Change the small strings cache to use Weak<T>.
     m_globalData->smallStrings.markChildren(heapRootMarker);
     markStack.drain();
     
+    // Weak handles must be marked last, because their owners use the set of
+    // opaque roots to determine reachability.
+    int lastOpaqueRootCount;
+    do {
+        lastOpaqueRootCount = markStack.opaqueRootCount();
+        m_handleHeap.markWeakHandles(heapRootMarker);
+        markStack.drain();
+    // If the set of opaque roots has grown, more weak handles may have become reachable.
+    } while (lastOpaqueRootCount != markStack.opaqueRootCount());
+
     markStack.reset();
 
     m_operationInProgress = NoOperation;

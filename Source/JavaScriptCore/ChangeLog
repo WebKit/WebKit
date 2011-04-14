@@ -1,3 +1,29 @@
+2011-04-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Drain the mark stack while marking weak handles, not after.
+        https://bugs.webkit.org/show_bug.cgi?id=58574
+
+        Otherwise, items that would have caused more weak handle marking are
+        processed after all weak handle marking has finished, and referenced
+        weak handles get recycled.
+
+        * heap/HandleHeap.cpp:
+        (JSC::HandleHeap::markWeakHandles): Removed looping from here, since we
+        want Heap::markRoots to be responsible for draining the mark stack.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots): Moved looping to here, as explained above.
+        
+        For efficiency's sake, drain the mark stack before starting to mark weak
+        handles. Otherwise, items drained while marking weak handles may force
+        an extra trip through the weak handle list.
+
+        For correctness's sake, drain the mark stack each time through the weak
+        handle list. Otherwise, opaque roots that would make weak handles reachable
+        are not discovered until after weak handle marking is over.
+
 2011-04-14  Oliver Hunt  <oliver@apple.com>
 
         Temporarily remove assertion that's firing all the time.

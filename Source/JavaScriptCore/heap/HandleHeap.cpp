@@ -71,27 +71,22 @@ void HandleHeap::markWeakHandles(HeapRootMarker& heapRootMarker)
 {
     MarkStack& markStack = heapRootMarker.markStack();
 
-    int oldCount;
-    do {
-        oldCount = markStack.opaqueRootCount();
+    Node* end = m_weakList.end();
+    for (Node* node = m_weakList.begin(); node != end; node = node->next()) {
+        ASSERT(isValidWeakNode(node));
+        JSCell* cell = node->slot()->asCell();
+        if (Heap::isMarked(cell))
+            continue;
 
-        Node* end = m_weakList.end();
-        for (Node* node = m_weakList.begin(); node != end; node = node->next()) {
-            ASSERT(isValidWeakNode(node));
-            JSCell* cell = node->slot()->asCell();
-            if (Heap::isMarked(cell))
-                continue;
+        WeakHandleOwner* weakOwner = node->weakOwner();
+        if (!weakOwner)
+            continue;
 
-            WeakHandleOwner* weakOwner = node->weakOwner();
-            if (!weakOwner)
-                continue;
+        if (!weakOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(node->slot()), node->weakOwnerContext(), markStack))
+            continue;
 
-            if (!weakOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(node->slot()), node->weakOwnerContext(), markStack))
-                continue;
-
-            heapRootMarker.mark(node->slot());
-        }
-    } while (oldCount != markStack.opaqueRootCount()); // If the set of opaque roots has grown, more handles may have become reachable.
+        heapRootMarker.mark(node->slot());
+    }
 }
 
 void HandleHeap::finalizeWeakHandles()
