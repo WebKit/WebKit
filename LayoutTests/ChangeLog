@@ -1,3 +1,16 @@
+2011-04-13  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, rebaseline 4 tests added as r83787.
+
+        * platform/chromium-mac/fast/ruby/after-block-doesnt-crash-expected.txt: Added.
+        * platform/chromium-mac/fast/ruby/after-table-doesnt-crash-expected.txt: Added.
+        * platform/chromium-mac/fast/ruby/before-block-doesnt-crash-expected.txt: Added.
+        * platform/chromium-mac/fast/ruby/before-table-doesnt-crash-expected.txt: Added.
+        * platform/chromium-win/fast/ruby/after-block-doesnt-crash-expected.txt: Added.
+        * platform/chromium-win/fast/ruby/after-table-doesnt-crash-expected.txt: Added.
+        * platform/chromium-win/fast/ruby/before-block-doesnt-crash-expected.txt: Added.
+        * platform/chromium-win/fast/ruby/before-table-doesnt-crash-expected.txt: Added.
+
 2011-04-13  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by David Hyatt.
