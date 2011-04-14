@@ -27,7 +27,10 @@
 #define PlatformWebView_h
 
 #include <wtf/Platform.h>
+
+#if PLATFORM(CG)
 #include <CoreGraphics/CGGeometry.h>
+#endif
 
 #ifdef __APPLE__
 #ifdef __OBJC__
