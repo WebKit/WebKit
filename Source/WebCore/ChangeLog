@@ -1,3 +1,13 @@
+2011-04-14  Jarkko Sakkinen  <jarkko.j.sakkinen@gmail.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] GraphicsContext3D internal buffers are not freed
+        https://bugs.webkit.org/show_bug.cgi?id=57530
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::~GraphicsContext3DInternal):
+
 2011-04-14  Andy Estes  <aestes@apple.com>
 
         Reviewed by Maciej Stachowiak.

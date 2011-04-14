@@ -447,6 +447,12 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attribut
 
 GraphicsContext3DInternal::~GraphicsContext3DInternal()
 {
+    m_glWidget->makeCurrent();
+    if (m_glWidget->isValid()) {
+        ::glDeleteTextures(1, &m_texture);
+        deleteRenderbuffers(1, &m_depthBuffer);
+        deleteFramebuffers(1, &m_canvasFbo);
+    }
     delete m_glWidget;
     m_glWidget = 0;
 }
