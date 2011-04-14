@@ -3099,6 +3099,11 @@ BUGJAMESR GPU : compositing/masks/masked-ancestor.html = IMAGE
 BUGJAMESR GPU MAC : compositing/masks/multiple-masks.html = IMAGE
 BUGJAMESR GPU : compositing/layer-creation/overflow-scroll-overlap.html = TEXT
 
+// Seems to blend scrollbars very slightly differently in 32 vs 64 mode.
+BUGJAMESR GPU LINUX : compositing/geometry/horizontal-scroll-composited.html = IMAGE
+BUGJAMESR GPU LINUX : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGJAMESR GPU LINUX : media/video-zoom.html = IMAGE
+BUGJAMESR GPU LINUX : platform/chromium/compositing/layout-width-change.html = IMAGE
 
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)

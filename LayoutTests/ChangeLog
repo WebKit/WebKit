@@ -1,3 +1,9 @@
+2011-04-14  James Robinson  <jamesr@chromium.org>
+
+        Update chromium expectations for tests that have subtle 32vs64 bit rendering differences on linux in the GPU path.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-14  Andy Estes  <aestes@apple.com>
 
         Reviewed by Dan Bernstein.
