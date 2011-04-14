@@ -49,9 +49,13 @@ public:
     void removeListener(ScriptDebugListener*, WorkerContext*);
 
 private:
-    virtual ScriptDebugListener* getDebugListenerForContext(v8::Handle<v8::Context>) { return 0; }
-    virtual void runMessageLoopOnPause(v8::Handle<v8::Context>) { }
-    virtual void quitMessageLoopOnPause() { }
+    virtual ScriptDebugListener* getDebugListenerForContext(v8::Handle<v8::Context>);
+    virtual void runMessageLoopOnPause(v8::Handle<v8::Context>);
+    virtual void quitMessageLoopOnPause();
+
+    typedef HashMap<WorkerContext*, ScriptDebugListener*> ListenersMap;
+    ListenersMap m_listenersMap;
+    WorkerContext* m_pausedWorkerContext;
 };
 
 } // namespace WebCore

@@ -47,6 +47,21 @@ DebuggerScript.getAfterCompileScript = function(eventData)
     return DebuggerScript._formatScript(eventData.script_.script_);
 }
 
+DebuggerScript.getWorkerScripts = function()
+{
+    var result = [];
+    var scripts = Debug.scripts();
+    for (var i = 0; i < scripts.length; ++i) {
+        var script = scripts[i];
+        // Workers don't share same V8 heap now so there is no need to complicate stuff with
+        // the context id like we do to discriminate between scripts from different pages.
+        // However we need to filter out v8 native scripts.
+        if (script.context_data && script.context_data === "worker")
+            result.push(DebuggerScript._formatScript(script));
+    }
+    return result;
+}
+
 DebuggerScript.getScripts = function(contextData)
 {
     var result = [];

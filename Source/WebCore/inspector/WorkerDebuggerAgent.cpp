@@ -54,10 +54,12 @@ WorkerDebuggerAgent::~WorkerDebuggerAgent()
 
 void WorkerDebuggerAgent::startListeningScriptDebugServer()
 {
+    scriptDebugServer().addListener(this, m_inspectedWorkerContext);
 }
 
 void WorkerDebuggerAgent::stopListeningScriptDebugServer()
 {
+    scriptDebugServer().removeListener(this, m_inspectedWorkerContext);
 }
 
 WorkerScriptDebugServer& WorkerDebuggerAgent::scriptDebugServer()
