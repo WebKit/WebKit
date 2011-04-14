@@ -51,7 +51,7 @@ CSSFontFaceSource::CSSFontFaceSource(const String& str, CachedFont* font)
     , m_font(font)
     , m_face(0)
 #if ENABLE(SVG_FONTS)
-    , m_svgFontFaceElement(0)
+    , m_hasExternalSVGFont(false)
 #endif
 {
     if (m_font)
@@ -126,7 +126,7 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
     if (isLoaded()) {
         if (m_font) {
 #if ENABLE(SVG_FONTS)
-            if (m_font->isSVGFont()) {
+            if (m_hasExternalSVGFont) {
                 // For SVG fonts parse the external SVG document, and extract the <font> element.
                 if (!m_font->ensureSVGFontData())
                     return 0;
@@ -204,7 +204,7 @@ void CSSFontFaceSource::setSVGFontFaceElement(PassRefPtr<SVGFontFaceElement> ele
 
 bool CSSFontFaceSource::isSVGFontFaceSource() const
 {
-    return m_svgFontFaceElement || (m_font && m_font->isSVGFont());
+    return m_svgFontFaceElement || m_hasExternalSVGFont;
 }
 #endif
 

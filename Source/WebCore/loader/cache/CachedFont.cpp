@@ -59,9 +59,6 @@ CachedFont::CachedFont(const String &url)
     : CachedResource(url, FontResource)
     , m_fontData(0)
     , m_loadInitiated(false)
-#if ENABLE(SVG_FONTS)
-    , m_isSVGFont(false)
-#endif
 {
 }
 
@@ -106,9 +103,6 @@ void CachedFont::beginLoadIfNeeded(CachedResourceLoader* dl)
 bool CachedFont::ensureCustomFontData()
 {
 #ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
-#if ENABLE(SVG_FONTS)
-    ASSERT(!m_isSVGFont);
-#endif
     if (!m_fontData && !errorOccurred() && !isLoading() && m_data) {
         m_fontData = createFontCustomPlatformData(m_data.get());
         if (!m_fontData)
@@ -135,13 +129,14 @@ FontPlatformData CachedFont::platformDataFromCustomData(float size, bool bold, b
 #if ENABLE(SVG_FONTS)
 bool CachedFont::ensureSVGFontData()
 {
-    ASSERT(m_isSVGFont);
     if (!m_externalSVGDocument && !errorOccurred() && !isLoading() && m_data) {
         m_externalSVGDocument = SVGDocument::create(0, KURL());
 
         RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("application/xml");
-
-        m_externalSVGDocument->setContent(decoder->decode(m_data->data(), m_data->size()) + decoder->flush());
+        String svgSource = decoder->decode(m_data->data(), m_data->size());
+        svgSource += decoder->flush();
+        
+        m_externalSVGDocument->setContent(svgSource);
         
         if (decoder->sawError())
             m_externalSVGDocument = 0;
@@ -152,7 +147,6 @@ bool CachedFont::ensureSVGFontData()
 
 SVGFontElement* CachedFont::getSVGFontById(const String& fontName) const
 {
-    ASSERT(m_isSVGFont);
     RefPtr<NodeList> list = m_externalSVGDocument->getElementsByTagNameNS(SVGNames::fontTag.namespaceURI(), SVGNames::fontTag.localName());
     if (!list)
         return 0;

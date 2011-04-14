@@ -1,3 +1,35 @@
+2011-04-14  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION(r74107): Including svg format in @font-face rules makes Web Fonts fail to load
+        https://bugs.webkit.org/show_bug.cgi?id=57766
+        <rdar://problem/9232183>
+
+        Move the knowledge of whether to interpret a font as SVG from CachedFont to CSSFontFaceSource. This way
+        we can try to interpret the same cached resource in multiple ways.
+
+        Test: fast/css/font-face-repeated-url.html
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource):
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSFontFaceSource.h:
+        (WebCore::CSSFontFaceSource::setHasExternalSVGFont):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::CachedFont):
+        (WebCore::CachedFont::ensureCustomFontData):
+        (WebCore::CachedFont::ensureSVGFontData):
+
+            Use TextResourceDecoder correctly.
+
+        (WebCore::CachedFont::getSVGFontById):
+        * loader/cache/CachedFont.h:
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::loadFont):
+
 2011-04-14  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

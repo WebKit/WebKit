@@ -247,11 +247,11 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
             if (allowDownloading && item->isSupportedFormat() && m_document) {
                 CachedFont* cachedFont = m_document->cachedResourceLoader()->requestFont(item->resource());
                 if (cachedFont) {
+                    source = new CSSFontFaceSource(item->resource(), cachedFont);
 #if ENABLE(SVG_FONTS)
                     if (foundSVGFont)
-                        cachedFont->setSVGFont(true);
+                        source->setHasExternalSVGFont(true);
 #endif
-                    source = new CSSFontFaceSource(item->resource(), cachedFont);
                 }
             }
         } else {

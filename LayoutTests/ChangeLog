@@ -1,3 +1,14 @@
+2011-04-14  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        REGRESSION(r74107): Including svg format in @font-face rules makes Web Fonts fail to load
+        https://bugs.webkit.org/show_bug.cgi?id=57766
+        <rdar://problem/9232183>
+
+        * fast/css/font-face-repeated-url-expected.txt: Added.
+        * fast/css/font-face-repeated-url.html: Added.
+
 2011-04-14  James Robinson  <jamesr@chromium.org>
 
         Update chromium expectations for tests that have subtle 32vs64 bit rendering differences on linux in the GPU path.

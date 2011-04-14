@@ -66,6 +66,7 @@ public:
     SVGFontFaceElement* svgFontFaceElement() const;
     void setSVGFontFaceElement(PassRefPtr<SVGFontFaceElement>);
     bool isSVGFontFaceSource() const;
+    void setHasExternalSVGFont(bool value) { m_hasExternalSVGFont = value; }
 #endif
 
 private:
@@ -77,6 +78,7 @@ private:
 #if ENABLE(SVG_FONTS)
     RefPtr<SVGFontFaceElement> m_svgFontFaceElement;
     RefPtr<SVGFontElement> m_externalSVGFontElement;
+    bool m_hasExternalSVGFont;
 #endif
 };
 
