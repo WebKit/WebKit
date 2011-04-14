@@ -3098,6 +3098,26 @@ BUGCR75109 WIN LINUX MAC : platform/chromium/fast/text/international/complex-tex
 BUGCR75109 WIN LINUX : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
+// Will need image rebaselines due to subpixel diffs in scrollbar rendering
+BUGJAMESR GPU : compositing/direct-image-compositing.html = IMAGE
+BUGJAMESR GPU WIN : compositing/geometry/clipping-foreground.html = IMAGE
+BUGJAMESR GPU WIN LINUX : compositing/geometry/fixed-in-composited.html = IMAGE
+BUGJAMESR GPU : compositing/geometry/fixed-position.html = IMAGE
+BUGJAMESR GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
+BUGJAMESR GPU WIN LINUX : compositing/geometry/tall-page-composited.html = IMAGE
+BUGJAMESR GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
+BUGJAMESR GPU WIN LINUX : compositing/geometry/video-fixed-scrolling.html = IMAGE
+BUGJAMESR GPU WIN : compositing/iframes/composited-iframe-alignment.html = IMAGE
+BUGJAMESR GPU  WIN LINUX: compositing/masks/masked-ancestor.html = IMAGE
+BUGJAMESR GPU  WIN LINUX: compositing/masks/simple-composited-mask.html = IMAGE
+BUGJAMESR GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
+BUGJAMESR GPU WIN LINUX : compositing/overflow/scrollbar-painting.html = IMAGE
+BUGJAMESR GPU : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGJAMESR GPU WIN LINUX : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGJAMESR GPU WIN LINUX : media/video-zoom.html = IMAGE
+BUGJAMESR GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
+
+
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
 BUGCR75424 MAC LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE

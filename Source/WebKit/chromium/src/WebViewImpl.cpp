@@ -2379,35 +2379,6 @@ private:
     WebViewImpl* m_webViewImpl;
 };
 
-class WebViewImplScrollbarPainter : public TilePaintInterface {
-    WTF_MAKE_NONCOPYABLE(WebViewImplScrollbarPainter);
-public:
-    static PassOwnPtr<WebViewImplScrollbarPainter> create(WebViewImpl* webViewImpl)
-    {
-        return adoptPtr(new WebViewImplScrollbarPainter(webViewImpl));
-    }
-
-    virtual void paint(GraphicsContext& context, const IntRect& contentRect)
-    {
-        Page* page = m_webViewImpl->page();
-        if (!page)
-            return;
-        FrameView* view = page->mainFrame()->view();
-
-        context.translate(static_cast<float>(view->scrollX()), static_cast<float>(view->scrollY()));
-        IntRect windowRect = view->contentsToWindow(contentRect);
-        view->paintScrollbars(&context, windowRect);
-    }
-
-private:
-    explicit WebViewImplScrollbarPainter(WebViewImpl* webViewImpl)
-        : m_webViewImpl(webViewImpl)
-    {
-    }
-
-    WebViewImpl* m_webViewImpl;
-};
-
 void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 {
     PlatformBridge::histogramEnumeration("GPU.setIsAcceleratedCompositingActive", active * 2 + m_isAcceleratedCompositingActive, 4);
@@ -2437,7 +2408,8 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
                 context->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
         }
 
-        m_layerRenderer = LayerRendererChromium::create(context.release(), WebViewImplContentPainter::create(this), WebViewImplScrollbarPainter::create(this));
+
+        m_layerRenderer = LayerRendererChromium::create(context.release(), WebViewImplContentPainter::create(this));
         if (m_layerRenderer) {
             m_client->didActivateAcceleratedCompositing(true);
             m_isAcceleratedCompositingActive = true;
@@ -2481,7 +2453,7 @@ void WebViewImpl::reallocateRenderer()
         newContext = GraphicsContext3D::create(
             getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
     // GraphicsContext3D::create might fail and return 0, in that case LayerRendererChromium::create will also return 0.
-    RefPtr<LayerRendererChromium> layerRenderer = LayerRendererChromium::create(newContext, WebViewImplContentPainter::create(this), WebViewImplScrollbarPainter::create(this));
+    RefPtr<LayerRendererChromium> layerRenderer = LayerRendererChromium::create(newContext, WebViewImplContentPainter::create(this));
 
     // Reattach the root layer.  Child layers will get reattached as a side effect of updateLayersRecursive.
     if (layerRenderer) {

@@ -65,8 +65,10 @@ private:
     virtual int scrollPosition(WebCore::Scrollbar*) const;
     virtual void setScrollOffset(const WebCore::IntPoint&);
     virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&);
+    virtual void invalidateScrollCornerRect(const WebCore::IntRect&) { }
     virtual bool isActive() const { return true; }
-    virtual bool scrollbarCornerPresent() const { return false; }
+    virtual bool isScrollCornerVisible() const { return false; }
+    virtual WebCore::IntRect scrollCornerRect() const { return WebCore::IntRect(); }
     virtual WebCore::Scrollbar* verticalScrollbar() const { return m_scrollbar.get(); }
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.

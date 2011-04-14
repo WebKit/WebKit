@@ -79,10 +79,6 @@ bool ContentLayerChromium::requiresClippedUpdateRect()
 
 void ContentLayerChromium::paintContentsIfDirty()
 {
-    RenderLayerBacking* backing = static_cast<RenderLayerBacking*>(m_owner->client());
-    if (!backing || backing->paintingGoesToWindow())
-        return;
-
     ASSERT(drawsContent());
 
     ASSERT(layerRenderer());

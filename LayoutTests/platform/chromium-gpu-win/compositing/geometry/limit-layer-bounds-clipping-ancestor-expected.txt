@@ -54,6 +54,10 @@ middlebottom
           (position 18.00 240.00)
           (bounds 220.00 220.00)
           (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+            )
+          )
         )
         (GraphicsLayer
           (position 28.00 250.00)

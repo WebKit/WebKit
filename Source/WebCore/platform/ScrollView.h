@@ -63,6 +63,7 @@ public:
     virtual void setScrollOffset(const IntPoint&);
     virtual void didCompleteRubberBand(const IntSize&) const;
     virtual void notifyPageThatContentAreaWillPaint() const;
+    virtual bool isScrollCornerVisible() const;
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
     virtual void scrollTo(const IntSize& newOffset);
@@ -84,6 +85,8 @@ public:
     virtual Scrollbar* horizontalScrollbar() const { return m_horizontalScrollbar.get(); }
     virtual Scrollbar* verticalScrollbar() const { return m_verticalScrollbar.get(); }
     bool isScrollViewScrollbar(const Widget* child) const { return horizontalScrollbar() == child || verticalScrollbar() == child; }
+
+    void positionScrollbarLayers();
 
     // Functions for setting and retrieving the scrolling mode in each axis (horizontal/vertical). The mode has values of
     // AlwaysOff, AlwaysOn, and Auto. AlwaysOff means never show a scrollbar, AlwaysOn means always show a scrollbar.
@@ -271,6 +274,8 @@ public:
 
     virtual bool isPointInScrollbarCorner(const IntPoint&);
     virtual bool scrollbarCornerPresent() const;
+    virtual IntRect scrollCornerRect() const;
+    virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
 
     virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const;
     virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const;
@@ -296,9 +301,8 @@ protected:
     void setHasHorizontalScrollbar(bool);
     void setHasVerticalScrollbar(bool);
 
-    IntRect scrollCornerRect() const;
     virtual void updateScrollCorner();
-    virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
+    virtual void invalidateScrollCornerRect(const IntRect&);
 
     // Scroll the content by blitting the pixels.
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);

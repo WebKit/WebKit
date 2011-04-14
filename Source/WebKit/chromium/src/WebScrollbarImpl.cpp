@@ -281,12 +281,16 @@ void WebScrollbarImpl::invalidateScrollbarRect(Scrollbar*, const IntRect& rect)
     m_client->invalidateScrollbarRect(this, webrect);
 }
 
+void WebScrollbarImpl::invalidateScrollCornerRect(const IntRect&)
+{
+}
+
 bool WebScrollbarImpl::isActive() const
 {
     return true;
 }
 
-bool WebScrollbarImpl::scrollbarCornerPresent() const
+bool WebScrollbarImpl::isScrollCornerVisible() const
 {
     return false;
 }

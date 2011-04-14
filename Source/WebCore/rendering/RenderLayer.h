@@ -252,14 +252,14 @@ public:
     PassRefPtr<Scrollbar> createScrollbar(ScrollbarOrientation);
     void destroyScrollbar(ScrollbarOrientation);
 
-    Scrollbar* horizontalScrollbar() const { return m_hBar.get(); }
-    Scrollbar* verticalScrollbar() const { return m_vBar.get(); }
+    // ScrollableArea overrides
+    virtual Scrollbar* horizontalScrollbar() const { return m_hBar.get(); }
+    virtual Scrollbar* verticalScrollbar() const { return m_vBar.get(); }
 
     int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy relevancy = IgnoreOverlayScrollbarSize) const;
     int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevancy = IgnoreOverlayScrollbarSize) const;
 
     bool hasOverflowControls() const;
-    void positionOverflowControls(int tx, int ty);
     bool isPointInResizeControl(const IntPoint& absolutePoint) const;
     bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);
     IntSize offsetFromResizeCorner(const IntPoint& absolutePoint) const;
@@ -432,6 +432,9 @@ public:
     RenderLayerBacking* backing() const { return m_backing.get(); }
     RenderLayerBacking* ensureBacking();
     void clearBacking();
+    virtual GraphicsLayer* layerForHorizontalScrollbar() const;
+    virtual GraphicsLayer* layerForVerticalScrollbar() const;
+    virtual GraphicsLayer* layerForScrollCorner() const;
 #else
     bool isComposited() const { return false; }
     bool hasCompositedMask() const { return false; }
@@ -521,8 +524,10 @@ private:
     virtual void setScrollOffset(const IntPoint&);
     virtual int scrollPosition(Scrollbar*) const;
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
+    virtual void invalidateScrollCornerRect(const IntRect&);
     virtual bool isActive() const;
-    virtual bool scrollbarCornerPresent() const;
+    virtual bool isScrollCornerVisible() const;
+    virtual IntRect scrollCornerRect() const;
     virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const;
     virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const;
     virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const;
@@ -532,6 +537,9 @@ private:
     virtual int visibleWidth() const;
     virtual IntPoint currentMousePosition() const;
     virtual bool shouldSuspendScrollAnimations() const;
+
+    // Rectangle encompassing the scroll corner and resizer rect.
+    IntRect scrollCornerAndResizerRect() const;
 
     virtual void disconnectFromPage() { m_page = 0; }
 
@@ -571,6 +579,7 @@ private:
     // Convert a point in absolute coords into layer coords, taking transforms into account
     IntPoint absoluteToContents(const IntPoint&) const;
 
+    void positionOverflowControls(int tx, int ty);
     void updateScrollCornerStyle();
     void updateResizerStyle();
 

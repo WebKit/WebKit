@@ -69,7 +69,6 @@ public:
     // Update graphics layer position and bounds.
     void updateGraphicsLayerGeometry(); // make private
     // Update contents and clipping structure.
-    void updateInternalHierarchy(); // make private
     void updateDrawsContent();
     
     GraphicsLayer* graphicsLayer() const { return m_graphicsLayer.get(); }
@@ -139,6 +138,10 @@ public:
     
     void updateContentsScale(float);
 
+    GraphicsLayer* layerForHorizontalScrollbar() const { return m_layerForHorizontalScrollbar.get(); }
+    GraphicsLayer* layerForVerticalScrollbar() const { return m_layerForVerticalScrollbar.get(); }
+    GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
+
 private:
     void createGraphicsLayer();
     void destroyGraphicsLayer();
@@ -146,9 +149,14 @@ private:
     RenderBoxModelObject* renderer() const { return m_owningLayer->renderer(); }
     RenderLayerCompositor* compositor() const { return m_owningLayer->compositor(); }
 
+    void updateInternalHierarchy();
     bool updateClippingLayers(bool needsAncestorClip, bool needsDescendantClip);
+    bool updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer);
     bool updateForegroundLayer(bool needsForegroundLayer);
     bool updateMaskLayer(bool needsMaskLayer);
+    bool requiresHorizontalScrollbarLayer() const;
+    bool requiresVerticalScrollbarLayer() const;
+    bool requiresScrollCornerLayer() const;
 
     GraphicsLayerPaintingPhase paintingPhaseForPrimaryLayer() const;
     
@@ -195,6 +203,10 @@ private:
     OwnPtr<GraphicsLayer> m_foregroundLayer;       // only used in cases where we need to draw the foreground separately
     OwnPtr<GraphicsLayer> m_clippingLayer;         // only used if we have clipping on a stacking context, with compositing children
     OwnPtr<GraphicsLayer> m_maskLayer;             // only used if we have a mask
+
+    OwnPtr<GraphicsLayer> m_layerForHorizontalScrollbar;
+    OwnPtr<GraphicsLayer> m_layerForVerticalScrollbar;
+    OwnPtr<GraphicsLayer> m_layerForScrollCorner;
 
     IntRect m_compositedBounds;
 

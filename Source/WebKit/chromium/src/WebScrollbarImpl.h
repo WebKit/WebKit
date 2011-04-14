@@ -62,8 +62,10 @@ public:
     virtual int scrollPosition(WebCore::Scrollbar*) const;
     virtual void setScrollOffset(const WebCore::IntPoint&);
     virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&);
+    virtual void invalidateScrollCornerRect(const WebCore::IntRect&);
     virtual bool isActive() const;
-    virtual bool scrollbarCornerPresent() const;
+    virtual WebCore::IntRect scrollCornerRect() const { return WebCore::IntRect(); }
+    virtual bool isScrollCornerVisible() const;
     virtual void getTickmarks(Vector<WebCore::IntRect>&) const;
     virtual WebCore::Scrollbar* horizontalScrollbar() const;
     virtual WebCore::Scrollbar* verticalScrollbar() const;

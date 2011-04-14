@@ -34,7 +34,6 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "LayerRendererChromium.h"
 
-#include "cc/CCLayerImpl.h"
 #include "Canvas2DLayerChromium.h"
 #include "Extensions3DChromium.h"
 #include "FloatQuad.h"
@@ -94,23 +93,23 @@ bool LayerRendererChromium::compareLayerZ(const RefPtr<CCLayerImpl>& a, const Re
     return a->drawDepth() < b->drawDepth();
 }
 
-PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(PassRefPtr<GraphicsContext3D> context, PassOwnPtr<TilePaintInterface> contentPaint, PassOwnPtr<TilePaintInterface> scrollbarPaint)
+PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(PassRefPtr<GraphicsContext3D> context, PassOwnPtr<TilePaintInterface> contentPaint)
 {
     if (!context)
         return 0;
 
-    RefPtr<LayerRendererChromium> layerRenderer(adoptRef(new LayerRendererChromium(context, contentPaint, scrollbarPaint)));
+    RefPtr<LayerRendererChromium> layerRenderer(adoptRef(new LayerRendererChromium(context, contentPaint)));
     if (!layerRenderer->hardwareCompositing())
         return 0;
 
     return layerRenderer.release();
 }
 
-LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> context, PassOwnPtr<TilePaintInterface> contentPaint, PassOwnPtr<TilePaintInterface> scrollbarPaint)
+LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> context,
+                                             PassOwnPtr<TilePaintInterface> contentPaint)
     : m_viewportScrollPosition(IntPoint(-1, -1))
     , m_rootLayer(0)
     , m_rootLayerContentPaint(contentPaint)
-    , m_rootLayerScrollbarPaint(scrollbarPaint)
     , m_currentShader(0)
     , m_currentRenderSurface(0)
     , m_offscreenFramebufferId(0)
@@ -154,40 +153,9 @@ void LayerRendererChromium::useShader(unsigned programId)
     }
 }
 
-IntRect LayerRendererChromium::verticalScrollbarRect() const
-{
-    IntRect verticalScrollbar(IntPoint(m_viewportContentRect.maxX(), m_viewportContentRect.y()), IntSize(m_viewportVisibleRect.width() - m_viewportContentRect.width(), m_viewportVisibleRect.height()));
-    return verticalScrollbar;
-}
-
-IntRect LayerRendererChromium::horizontalScrollbarRect() const
-{
-    IntRect horizontalScrollbar(IntPoint(m_viewportContentRect.x(), m_viewportContentRect.maxY()), IntSize(m_viewportVisibleRect.width(), m_viewportVisibleRect.height() - m_viewportContentRect.height()));
-    return horizontalScrollbar;
-}
-
 void LayerRendererChromium::invalidateRootLayerRect(const IntRect& dirtyRect)
 {
     m_rootLayerContentTiler->invalidateRect(dirtyRect);
-
-    // Scrollbars never need to render beyond the fold, so clip to the viewport.
-    IntRect visibleDirtyRect = dirtyRect;
-    visibleDirtyRect.intersect(m_viewportVisibleRect);
-
-    if (m_horizontalScrollbarTiler) {
-        IntRect scrollbar = horizontalScrollbarRect();
-        if (visibleDirtyRect.intersects(scrollbar)) {
-            m_horizontalScrollbarTiler->setLayerPosition(scrollbar.location());
-            m_horizontalScrollbarTiler->invalidateRect(visibleDirtyRect);
-        }
-    }
-    if (m_verticalScrollbarTiler) {
-        IntRect scrollbar = verticalScrollbarRect();
-        if (visibleDirtyRect.intersects(scrollbar)) {
-            m_verticalScrollbarTiler->setLayerPosition(scrollbar.location());
-            m_verticalScrollbarTiler->invalidateRect(visibleDirtyRect);
-        }
-    }
 }
 
 void LayerRendererChromium::updateRootLayerContents()
@@ -196,43 +164,9 @@ void LayerRendererChromium::updateRootLayerContents()
     m_rootLayerContentTiler->update(*m_rootLayerContentPaint, m_viewportVisibleRect);
 }
 
-void LayerRendererChromium::updateRootLayerScrollbars()
-{
-    TRACE_EVENT("LayerRendererChromium::updateRootLayerScrollbars", this, 0);
-    if (m_viewportVisibleRect.width() > m_viewportContentRect.width()) {
-        IntRect verticalScrollbar = verticalScrollbarRect();
-        IntSize tileSize = verticalScrollbar.size().shrunkTo(IntSize(m_maxTextureSize, m_maxTextureSize));
-        if (!m_verticalScrollbarTiler)
-            m_verticalScrollbarTiler = LayerTilerChromium::create(this, tileSize, LayerTilerChromium::NoBorderTexels);
-        else
-            m_verticalScrollbarTiler->setTileSize(tileSize);
-        m_verticalScrollbarTiler->setLayerPosition(verticalScrollbar.location());
-        m_verticalScrollbarTiler->update(*m_rootLayerScrollbarPaint, m_viewportVisibleRect);
-    } else
-        m_verticalScrollbarTiler.clear();
-
-    if (m_viewportVisibleRect.height() > m_viewportContentRect.height()) {
-        IntRect horizontalScrollbar = horizontalScrollbarRect();
-        IntSize tileSize = horizontalScrollbar.size().shrunkTo(IntSize(m_maxTextureSize, m_maxTextureSize));
-        if (!m_horizontalScrollbarTiler)
-            m_horizontalScrollbarTiler = LayerTilerChromium::create(this, tileSize, LayerTilerChromium::NoBorderTexels);
-        else
-            m_horizontalScrollbarTiler->setTileSize(tileSize);
-        m_horizontalScrollbarTiler->setLayerPosition(horizontalScrollbar.location());
-        m_horizontalScrollbarTiler->update(*m_rootLayerScrollbarPaint, m_viewportVisibleRect);
-    } else
-        m_horizontalScrollbarTiler.clear();
-}
-
 void LayerRendererChromium::drawRootLayer()
 {
     m_rootLayerContentTiler->draw(m_viewportVisibleRect);
-
-    if (m_verticalScrollbarTiler)
-        m_verticalScrollbarTiler->draw(m_viewportVisibleRect);
-
-    if (m_horizontalScrollbarTiler)
-        m_horizontalScrollbarTiler->draw(m_viewportVisibleRect);
 }
 
 void LayerRendererChromium::setViewport(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition)
@@ -247,12 +181,7 @@ void LayerRendererChromium::setViewport(const IntRect& visibleRect, const IntRec
         // Reset the current render surface to force an update of the viewport and
         // projection matrix next time useRenderSurface is called.
         m_currentRenderSurface = 0;
-
         m_rootLayerContentTiler->invalidateEntireLayer();
-        if (m_horizontalScrollbarTiler)
-            m_horizontalScrollbarTiler->invalidateEntireLayer();
-        if (m_verticalScrollbarTiler)
-            m_verticalScrollbarTiler->invalidateEntireLayer();
     }
 }
 
@@ -270,9 +199,8 @@ void LayerRendererChromium::updateAndDrawLayers()
     if (!m_rootLayer)
         return;
 
-    updateRootLayerScrollbars();
-
     LayerList renderSurfaceLayerList;
+
     updateLayers(renderSurfaceLayerList);
 
     // Before drawLayers:
@@ -332,8 +260,7 @@ void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
 
     rootDrawLayer->renderSurface()->m_contentRect = IntRect(IntPoint(0, 0), m_viewportVisibleRect.size());
 
-    // Scissor out the scrollbars to avoid rendering on top of them.
-    IntRect rootScissorRect(m_viewportContentRect);
+    IntRect rootScissorRect(m_viewportVisibleRect);
     // The scissorRect should not include the scroll offset.
     rootScissorRect.move(-m_viewportScrollPosition.x(), -m_viewportScrollPosition.y());
     rootDrawLayer->setScissorRect(rootScissorRect);
@@ -496,10 +423,6 @@ void LayerRendererChromium::setRootLayer(PassRefPtr<LayerChromium> layer)
     if (m_rootLayer)
         m_rootLayer->setLayerRenderer(this);
     m_rootLayerContentTiler->invalidateEntireLayer();
-    if (m_horizontalScrollbarTiler)
-        m_horizontalScrollbarTiler->invalidateEntireLayer();
-    if (m_verticalScrollbarTiler)
-        m_verticalScrollbarTiler->invalidateEntireLayer();
 }
 
 void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& rect)
@@ -1096,8 +1019,6 @@ void LayerRendererChromium::cleanupSharedObjects()
 
     // Clear tilers before the texture manager, as they have references to textures.
     m_rootLayerContentTiler.clear();
-    m_horizontalScrollbarTiler.clear();
-    m_verticalScrollbarTiler.clear();
 
     m_textureManager.clear();
 }

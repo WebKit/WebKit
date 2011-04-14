@@ -95,7 +95,7 @@ bool ScrollbarThemeComposite::paint(Scrollbar* scrollbar, GraphicsContext* graph
             scrollMask |= BackTrackPart;
         if (damageRect.intersects(endTrackRect))
             scrollMask |= ForwardTrackPart;
-    } 
+    }
 
 #if PLATFORM(WIN)
     // FIXME: This API makes the assumption that the custom scrollbar's metrics will match

@@ -583,6 +583,30 @@ void FrameView::updateCompositingLayers()
 #endif
 }
 
+GraphicsLayer* FrameView::layerForHorizontalScrollbar() const
+{
+    RenderView* view = m_frame->contentRenderer();
+    if (!view)
+        return 0;
+    return view->compositor()->layerForHorizontalScrollbar();
+}
+
+GraphicsLayer* FrameView::layerForVerticalScrollbar() const
+{
+    RenderView* view = m_frame->contentRenderer();
+    if (!view)
+        return 0;
+    return view->compositor()->layerForVerticalScrollbar();
+}
+
+GraphicsLayer* FrameView::layerForScrollCorner() const
+{
+    RenderView* view = m_frame->contentRenderer();
+    if (!view)
+        return 0;
+    return view->compositor()->layerForScrollCorner();
+}
+
 bool FrameView::syncCompositingStateForThisFrame()
 {
     ASSERT(m_frame->view() == this);
@@ -594,6 +618,13 @@ bool FrameView::syncCompositingStateForThisFrame()
     // layer content to occur before layout has happened, which will cause paintContents() to bail.
     if (needsLayout())
         return false;
+
+    if (GraphicsLayer* graphicsLayer = view->compositor()->layerForHorizontalScrollbar())
+        graphicsLayer->syncCompositingStateForThisLayerOnly();
+    if (GraphicsLayer* graphicsLayer = view->compositor()->layerForVerticalScrollbar())
+        graphicsLayer->syncCompositingStateForThisLayerOnly();
+    if (GraphicsLayer* graphicsLayer = view->compositor()->layerForScrollCorner())
+        graphicsLayer->syncCompositingStateForThisLayerOnly();
 
     view->compositor()->flushPendingLayerChanges();
 
@@ -1481,6 +1512,13 @@ void FrameView::contentsResized()
 {
     scrollAnimator()->contentsResized();
     setNeedsLayout();
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (RenderView* root = m_frame->contentRenderer()) {
+        if (root->usesCompositing())
+            root->compositor()->frameViewDidChangeSize();
+    }
+#endif
 }
 
 void FrameView::visibleContentsResized()
@@ -2111,11 +2149,6 @@ void FrameView::updateDashboardRegions()
 }
 #endif
 
-void FrameView::invalidateScrollCorner()
-{
-    invalidateRect(scrollCornerRect());
-}
-
 void FrameView::updateScrollCorner()
 {
     RenderObject* renderer = 0;
@@ -2150,11 +2183,13 @@ void FrameView::updateScrollCorner()
         if (!m_scrollCorner)
             m_scrollCorner = new (renderer->renderArena()) RenderScrollbarPart(renderer->document());
         m_scrollCorner->setStyle(cornerStyle.release());
-        invalidateRect(scrollCornerRect());
+        invalidateScrollCorner();
     } else if (m_scrollCorner) {
         m_scrollCorner->destroy();
         m_scrollCorner = 0;
     }
+
+    ScrollView::updateScrollCorner();
 }
 
 void FrameView::paintScrollCorner(GraphicsContext* context, const IntRect& cornerRect)

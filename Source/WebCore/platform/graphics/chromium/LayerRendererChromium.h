@@ -59,15 +59,15 @@
 
 namespace WebCore {
 
+class CCHeadsUpDisplay;
 class CCLayerImpl;
 class GeometryBinding;
 class GraphicsContext3D;
-class CCHeadsUpDisplay;
 
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium : public RefCounted<LayerRendererChromium> {
 public:
-    static PassRefPtr<LayerRendererChromium> create(PassRefPtr<GraphicsContext3D>, PassOwnPtr<TilePaintInterface> contentPaint, PassOwnPtr<TilePaintInterface> scrollbarPaint);
+    static PassRefPtr<LayerRendererChromium> create(PassRefPtr<GraphicsContext3D>, PassOwnPtr<TilePaintInterface> contentPaint);
 
     ~LayerRendererChromium();
 
@@ -88,7 +88,7 @@ public:
 
     IntSize viewportSize() const { return m_viewportVisibleRect.size(); }
 
-    void setRootLayer(PassRefPtr<LayerChromium> layer);
+    void setRootLayer(PassRefPtr<LayerChromium>);
     LayerChromium* rootLayer() { return m_rootLayer.get(); }
     void transferRootLayer(LayerRendererChromium* other) { other->m_rootLayer = m_rootLayer.release(); }
 
@@ -138,12 +138,12 @@ private:
     typedef Vector<RefPtr<CCLayerImpl> > LayerList;
     typedef HashMap<RefPtr<GraphicsContext3D>, int> ChildContextMap;
 
-    explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D>, PassOwnPtr<TilePaintInterface> contentPaint, PassOwnPtr<TilePaintInterface> scrollbarPaint);
+    explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D>, PassOwnPtr<TilePaintInterface> contentPaint);
 
     void updateLayers(LayerList& renderSurfaceLayerList);
     void updateRootLayerContents();
-    void updateRootLayerScrollbars();
     void updatePropertiesAndRenderSurfaces(LayerChromium*, const TransformationMatrix& parentMatrix, LayerList& renderSurfaceLayerList, LayerList& layers);
+
     void paintContentsRecursive(LayerChromium*);
     void updateCompositorResourcesRecursive(LayerChromium*);
 
@@ -169,9 +169,6 @@ private:
     bool initializeSharedObjects();
     void cleanupSharedObjects();
 
-    IntRect verticalScrollbarRect() const;
-    IntRect horizontalScrollbarRect() const;
-
     IntRect m_viewportVisibleRect;
     IntRect m_viewportContentRect;
     IntPoint m_viewportScrollPosition;
@@ -180,10 +177,7 @@ private:
 
     RefPtr<LayerChromium> m_rootLayer;
     OwnPtr<TilePaintInterface> m_rootLayerContentPaint;
-    OwnPtr<TilePaintInterface> m_rootLayerScrollbarPaint;
     OwnPtr<LayerTilerChromium> m_rootLayerContentTiler;
-    OwnPtr<LayerTilerChromium> m_horizontalScrollbarTiler;
-    OwnPtr<LayerTilerChromium> m_verticalScrollbarTiler;
 
     bool m_hardwareCompositing;
 

@@ -1,3 +1,17 @@
+2011-04-13  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Allow setting composited backing stores for scrollbars and scroll corners
+        https://bugs.webkit.org/show_bug.cgi?id=57202
+
+        Update WebScrollBar to reflect ScrollableArea interface changes.
+
+        * WebScrollBar.h:
+        (WebScrollBar::invalidateScrollCornerRect):
+        (WebScrollBar::scrollCornerPresent):
+        (WebScrollBar::scrollCornerRect):
+
 2011-04-12  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Sam Weinig.

@@ -1700,17 +1700,17 @@ static IntRect cornerRect(const RenderLayer* layer, const IntRect& bounds)
                    horizontalThickness, verticalThickness);
 }
 
-static IntRect scrollCornerRect(const RenderLayer* layer, const IntRect& bounds)
+IntRect RenderLayer::scrollCornerRect() const
 {
     // We have a scrollbar corner when a scrollbar is visible and not filling the entire length of the box.
     // This happens when:
     // (a) A resizer is present and at least one scrollbar is present
     // (b) Both scrollbars are present.
-    bool hasHorizontalBar = layer->horizontalScrollbar();
-    bool hasVerticalBar = layer->verticalScrollbar();
-    bool hasResizer = layer->renderer()->style()->resize() != RESIZE_NONE;
+    bool hasHorizontalBar = horizontalScrollbar();
+    bool hasVerticalBar = verticalScrollbar();
+    bool hasResizer = renderer()->style()->resize() != RESIZE_NONE;
     if ((hasHorizontalBar && hasVerticalBar) || (hasResizer && (hasHorizontalBar || hasVerticalBar)))
-        return cornerRect(layer, bounds);
+        return cornerRect(this, renderBox()->borderBoxRect());
     return IntRect();
 }
 
@@ -1722,10 +1722,21 @@ static IntRect resizerCornerRect(const RenderLayer* layer, const IntRect& bounds
     return cornerRect(layer, bounds);
 }
 
-bool RenderLayer::scrollbarCornerPresent() const
+IntRect RenderLayer::scrollCornerAndResizerRect() const
+{
+    RenderBox* box = renderBox();
+    if (!box)
+        return IntRect();
+    IntRect scrollCornerAndResizer = scrollCornerRect();
+    if (scrollCornerAndResizer.isEmpty())
+        scrollCornerAndResizer = resizerCornerRect(this, box->borderBoxRect());
+    return scrollCornerAndResizer;
+}
+
+bool RenderLayer::isScrollCornerVisible() const
 {
     ASSERT(renderer()->isBox());
-    return !scrollCornerRect(this, renderBox()->borderBoxRect()).isEmpty();
+    return !scrollCornerRect().isEmpty();
 }
 
 IntRect RenderLayer::convertFromScrollbarToContainingView(const Scrollbar* scrollbar, const IntRect& scrollbarRect) const
@@ -1818,6 +1829,19 @@ IntSize RenderLayer::scrollbarOffset(const Scrollbar* scrollbar) const
 
 void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
 {
+#if USE(ACCELERATED_COMPOSITING)
+    if (scrollbar == m_vBar.get()) {
+        if (GraphicsLayer* layer = layerForVerticalScrollbar()) {
+            layer->setNeedsDisplayInRect(rect);
+            return;
+        }
+    } else {
+        if (GraphicsLayer* layer = layerForHorizontalScrollbar()) {
+            layer->setNeedsDisplayInRect(rect);
+            return;
+        }
+    }
+#endif
     IntRect scrollRect = rect;
     RenderBox* box = renderBox();
     ASSERT(box);
@@ -1826,6 +1850,20 @@ void RenderLayer::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& r
     else
         scrollRect.move(box->borderLeft(), box->height() - box->borderBottom() - scrollbar->height());
     renderer()->repaintRectangle(scrollRect);
+}
+
+void RenderLayer::invalidateScrollCornerRect(const IntRect& rect)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (GraphicsLayer* layer = layerForScrollCorner()) {
+        layer->setNeedsDisplayInRect(rect);
+        return;
+    }
+#endif
+    if (m_scrollCorner)
+        m_scrollCorner->repaintRectangle(rect);
+    if (m_resizer)
+        m_resizer->repaintRectangle(rect);
 }
 
 PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
@@ -1947,8 +1985,8 @@ void RenderLayer::positionOverflowControls(int tx, int ty)
     if (!box)
         return;
 
-    IntRect borderBox = box->borderBoxRect();
-    IntRect scrollCorner(scrollCornerRect(this, borderBox));
+    const IntRect& borderBox = box->borderBoxRect();
+    const IntRect& scrollCorner = scrollCornerRect();
     IntRect absBounds(borderBox.x() + tx, borderBox.y() + ty, borderBox.width(), borderBox.height());
     if (m_vBar)
         m_vBar->setFrameRect(IntRect(absBounds.maxX() - box->borderRight() - m_vBar->width(),
@@ -1961,7 +1999,31 @@ void RenderLayer::positionOverflowControls(int tx, int ty)
                                      absBounds.maxY() - box->borderBottom() - m_hBar->height(),
                                      absBounds.width() - (box->borderLeft() + box->borderRight()) - scrollCorner.width(),
                                      m_hBar->height()));
-    
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (GraphicsLayer* layer = layerForHorizontalScrollbar()) {
+        if (m_hBar) {
+            layer->setPosition(IntPoint(m_hBar->frameRect().x() - tx, m_hBar->frameRect().y() - ty));
+            layer->setSize(m_hBar->frameRect().size());
+        }
+        layer->setDrawsContent(m_hBar);
+    }
+    if (GraphicsLayer* layer = layerForVerticalScrollbar()) {
+        if (m_vBar) {
+            layer->setPosition(IntPoint(m_vBar->frameRect().x() - tx, m_vBar->frameRect().y() - ty));
+            layer->setSize(m_vBar->frameRect().size());
+        }
+        layer->setDrawsContent(m_vBar);
+    }
+
+    if (GraphicsLayer* layer = layerForScrollCorner()) {
+        const IntRect& scrollCornerAndResizer = scrollCornerAndResizerRect();
+        layer->setPosition(scrollCornerAndResizer.location());
+        layer->setSize(scrollCornerAndResizer.size());
+        layer->setDrawsContent(!scrollCornerAndResizer.isEmpty());
+    }
+#endif
+
     if (m_scrollCorner)
         m_scrollCorner->setFrameRect(scrollCorner);
     if (m_resizer)
@@ -2199,10 +2261,23 @@ void RenderLayer::paintOverflowControls(GraphicsContext* context, int tx, int ty
     positionOverflowControls(offsetX, offsetY);
 
     // Now that we're sure the scrollbars are in the right place, paint them.
-    if (m_hBar)
+    if (m_hBar
+#if USE(ACCELERATED_COMPOSITING)
+        && !layerForHorizontalScrollbar()
+#endif
+              )
         m_hBar->paint(context, damageRect);
-    if (m_vBar)
+    if (m_vBar
+#if USE(ACCELERATED_COMPOSITING)
+        && !layerForVerticalScrollbar()
+#endif
+              )
         m_vBar->paint(context, damageRect);
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (layerForScrollCorner())
+        return;
+#endif
 
     // We fill our scroll corner with white if we have a scrollbar that doesn't run all the way up to the
     // edge of the box.
@@ -2217,7 +2292,7 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, int tx, int ty, co
     RenderBox* box = renderBox();
     ASSERT(box);
 
-    IntRect cornerRect = scrollCornerRect(this, box->borderBoxRect());
+    IntRect cornerRect = scrollCornerRect();
     IntRect absRect = IntRect(cornerRect.x() + tx, cornerRect.y() + ty, cornerRect.width(), cornerRect.height());
     if (!absRect.intersects(damageRect))
         return;
@@ -3542,6 +3617,21 @@ void RenderLayer::clearBacking()
 bool RenderLayer::hasCompositedMask() const
 {
     return m_backing && m_backing->hasMaskLayer();
+}
+
+GraphicsLayer* RenderLayer::layerForHorizontalScrollbar() const
+{
+    return m_backing ? m_backing->layerForHorizontalScrollbar() : 0;
+}
+
+GraphicsLayer* RenderLayer::layerForVerticalScrollbar() const
+{
+    return m_backing ? m_backing->layerForVerticalScrollbar() : 0;
+}
+
+GraphicsLayer* RenderLayer::layerForScrollCorner() const
+{
+    return m_backing ? m_backing->layerForScrollCorner() : 0;
 }
 #endif
 

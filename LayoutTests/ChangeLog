@@ -1,3 +1,82 @@
+2011-04-13  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Allow setting composited backing stores for scrollbars and scroll corners
+        https://bugs.webkit.org/show_bug.cgi?id=57202
+
+        Adds some new tests for composited scrollbars, updates test expectations to take into account scrollbar layers.
+
+        * compositing/iframes/become-composited-nested-iframes-expected.txt:
+        * compositing/iframes/become-overlapped-iframe-expected.txt:
+        * compositing/iframes/composited-parent-iframe-expected.txt:
+        * compositing/iframes/connect-compositing-iframe-delayed-expected.txt:
+        * compositing/iframes/connect-compositing-iframe-expected.txt:
+        * compositing/iframes/connect-compositing-iframe2-expected.txt:
+        * compositing/iframes/connect-compositing-iframe3-expected.txt:
+        * compositing/iframes/enter-compositing-iframe-expected.txt:
+        * compositing/iframes/iframe-resize-expected.txt:
+        * compositing/iframes/iframe-size-from-zero-expected.txt:
+        * compositing/iframes/overlapped-iframe-expected.txt:
+        * compositing/iframes/repaint-after-losing-scrollbars-expected.checksum: Added.
+        * compositing/iframes/repaint-after-losing-scrollbars-expected.png: Added.
+        * compositing/iframes/repaint-after-losing-scrollbars-expected.txt: Added.
+        * compositing/iframes/repaint-after-losing-scrollbars.html: Added.
+        * compositing/iframes/resources/repaint-after-losing-scrollbars-iframe.html: Added.
+        * compositing/iframes/scrolling-iframe-expected.txt:
+        * compositing/overflow/clip-content-under-overflow-controls-expected.checksum: Added.
+        * compositing/overflow/clip-content-under-overflow-controls-expected.png: Added.
+        * compositing/overflow/clip-content-under-overflow-controls-expected.txt: Added.
+        * compositing/overflow/clip-content-under-overflow-controls.html: Added.
+        * compositing/overflow/content-gains-scrollbars-expected.txt: Added.
+        * compositing/overflow/content-gains-scrollbars.html: Added.
+        * compositing/overflow/content-loses-scrollbars-expected.txt: Added.
+        * compositing/overflow/content-loses-scrollbars.html: Added.
+        * compositing/overflow/overflow-scrollbar-layers-expected.txt: Added.
+        * compositing/overflow/overflow-scrollbar-layers.html: Added.
+        * compositing/overflow/repaint-after-losing-scrollbars-expected.checksum: Added.
+        * compositing/overflow/repaint-after-losing-scrollbars-expected.png: Added.
+        * compositing/overflow/repaint-after-losing-scrollbars-expected.txt: Added.
+        * compositing/overflow/repaint-after-losing-scrollbars.html: Added.
+        * compositing/tiling/huge-layer-img-expected.png:
+        * platform/chromium-gpu-linux/compositing/color-matching/image-color-matching-expected.txt: Removed.
+        * platform/chromium-gpu-linux/compositing/geometry/abs-position-inside-opacity-expected.txt: Removed.
+        * platform/chromium-gpu-linux/compositing/geometry/foreground-layer-expected.png:
+        * platform/chromium-gpu-linux/compositing/iframes/composited-iframe-alignment-expected.txt: Removed.
+        * platform/chromium-gpu-linux/compositing/masks/direct-image-mask-expected.txt: Removed.
+        * platform/chromium-gpu-linux/compositing/overflow/ancestor-overflow-expected.txt: Removed.
+        * platform/chromium-gpu-linux/compositing/repaint/composited-document-element-expected.txt: Removed.
+        * platform/chromium-gpu-linux/compositing/shadows/shadow-drawing-expected.txt: Removed.
+        * platform/chromium-gpu-linux/compositing/text-on-large-layer-expected.txt: Removed.
+        * platform/chromium-gpu-win/compositing/geometry/limit-layer-bounds-clipping-ancestor-expected.txt:
+        * platform/chromium-gpu-win/compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt:
+        * platform/chromium-gpu-win/compositing/iframes/composited-parent-iframe-expected.txt:
+        * platform/chromium-gpu-win/compositing/iframes/connect-compositing-iframe-delayed-expected.txt:
+        * platform/chromium-gpu-win/compositing/iframes/connect-compositing-iframe-expected.txt:
+        * platform/chromium-gpu-win/compositing/iframes/connect-compositing-iframe2-expected.txt:
+        * platform/chromium-gpu-win/compositing/iframes/connect-compositing-iframe3-expected.txt:
+        * platform/chromium-gpu-win/compositing/iframes/enter-compositing-iframe-expected.txt:
+        * platform/chromium-gpu-win/compositing/iframes/iframe-resize-expected.txt:
+        * platform/chromium-gpu-win/compositing/iframes/iframe-size-from-zero-expected.txt:
+        * platform/chromium-gpu-win/compositing/iframes/overlapped-iframe-expected.txt:
+        * platform/chromium-gpu-win/compositing/iframes/scrolling-iframe-expected.txt: Removed.
+        * platform/chromium-gpu-win/compositing/layer-creation/overflow-scroll-overlap-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/overflow/resize-painting-expected.txt:
+        * platform/chromium-gpu/compositing/geometry/foreground-layer-expected.txt: Added.
+        * platform/chromium-gpu/compositing/iframes/become-composited-nested-iframes-expected.txt: Copied from LayoutTests/compositing/iframes/become-composited-nested-iframes-expected.txt.
+        * platform/chromium-gpu/compositing/iframes/become-overlapped-iframe-expected.txt: Copied from LayoutTests/compositing/iframes/become-overlapped-iframe-expected.txt.
+        * platform/chromium-gpu/compositing/iframes/overlapped-nested-iframes-expected.txt: Copied from LayoutTests/compositing/iframes/become-composited-nested-iframes-expected.txt.
+        * platform/chromium-gpu/compositing/iframes/repaint-after-losing-scrollbars-expected.checksum: Added.
+        * platform/chromium-gpu/compositing/iframes/repaint-after-losing-scrollbars-expected.png: Added.
+        * platform/chromium-gpu/compositing/iframes/scrolling-iframe-expected.txt: Added.
+        * platform/chromium-gpu/compositing/overflow/content-gains-scrollbars-expected.txt: Added.
+        * platform/chromium-gpu/compositing/overflow/content-loses-scrollbars-expected.txt: Added.
+        * platform/chromium-gpu/compositing/overflow/overflow-scrollbar-layers-expected.txt: Added.
+        * platform/chromium-gpu/compositing/overflow/repaint-after-losing-scrollbars-expected.checksum: Added.
+        * platform/chromium-gpu/compositing/overflow/repaint-after-losing-scrollbars-expected.png: Copied from LayoutTests/compositing/tiling/huge-layer-img-expected.png.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/Skipped:
+
 2011-04-13  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Added chromium expectations for test added in r83803.

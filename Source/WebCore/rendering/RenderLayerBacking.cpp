@@ -94,6 +94,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
 RenderLayerBacking::~RenderLayerBacking()
 {
     updateClippingLayers(false, false);
+    updateOverflowControlsLayers(false, false, false);
     updateForegroundLayer(false);
     updateMaskLayer(false);
     destroyGraphicsLayer();
@@ -226,8 +227,10 @@ void RenderLayerBacking::updateCompositedBounds()
 void RenderLayerBacking::updateAfterWidgetResize()
 {
     if (renderer()->isRenderPart()) {
-        if (RenderLayerCompositor* innerCompositor = RenderLayerCompositor::frameContentsCompositor(toRenderPart(renderer())))
-            innerCompositor->frameViewDidChangeSize(contentsBox().location());
+        if (RenderLayerCompositor* innerCompositor = RenderLayerCompositor::frameContentsCompositor(toRenderPart(renderer()))) {
+            innerCompositor->frameViewDidChangeSize();
+            innerCompositor->frameViewDidChangeLocation(contentsBox().location());
+        }
     }
 }
 
@@ -263,6 +266,12 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     
     if (updateClippingLayers(compositor->clippedByAncestor(m_owningLayer), compositor->clipsCompositingDescendants(m_owningLayer)))
         layerConfigChanged = true;
+
+    if (updateOverflowControlsLayers(requiresHorizontalScrollbarLayer(), requiresVerticalScrollbarLayer(), requiresScrollCornerLayer()))
+        layerConfigChanged = true;
+
+    if (layerConfigChanged)
+        updateInternalHierarchy();
 
     if (updateMaskLayer(renderer->hasMask()))
         m_graphicsLayer->setMaskLayer(m_maskLayer.get());
@@ -492,6 +501,22 @@ void RenderLayerBacking::updateInternalHierarchy()
     if (m_clippingLayer) {
         m_clippingLayer->removeFromParent();
         m_graphicsLayer->addChild(m_clippingLayer.get());
+
+        // The clip for child layers does not include space for overflow controls, so they exist as
+        // siblings of the clipping layer if we have one. Normal children of this layer are set as
+        // children of the clipping layer.
+        if (m_layerForHorizontalScrollbar) {
+            m_layerForHorizontalScrollbar->removeFromParent();
+            m_graphicsLayer->addChild(m_layerForHorizontalScrollbar.get());
+        }
+        if (m_layerForVerticalScrollbar) {
+            m_layerForVerticalScrollbar->removeFromParent();
+            m_graphicsLayer->addChild(m_layerForVerticalScrollbar.get());
+        }
+        if (m_layerForScrollCorner) {
+            m_layerForScrollCorner->removeFromParent();
+            m_graphicsLayer->addChild(m_layerForScrollCorner.get());
+        }
     }
 }
 
@@ -535,8 +560,77 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
         layersChanged = true;
     }
     
-    if (layersChanged)
-        updateInternalHierarchy();
+    return layersChanged;
+}
+
+bool RenderLayerBacking::requiresHorizontalScrollbarLayer() const
+{
+#if PLATFORM(MAC)
+    if (!m_owningLayer->hasOverlayScrollbars())
+        return false;
+#endif
+    return m_owningLayer->horizontalScrollbar();
+}
+
+bool RenderLayerBacking::requiresVerticalScrollbarLayer() const
+{
+#if PLATFORM(MAC)
+    if (!m_owningLayer->hasOverlayScrollbars())
+        return false;
+#endif
+    return m_owningLayer->verticalScrollbar();
+}
+
+bool RenderLayerBacking::requiresScrollCornerLayer() const
+{
+#if PLATFORM(MAC)
+    if (!m_owningLayer->hasOverlayScrollbars())
+        return false;
+#endif
+    return !m_owningLayer->scrollCornerAndResizerRect().isEmpty();
+}
+
+bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScrollbarLayer, bool needsVerticalScrollbarLayer, bool needsScrollCornerLayer)
+{
+    bool layersChanged = false;
+    if (needsHorizontalScrollbarLayer) {
+        if (!m_layerForHorizontalScrollbar) {
+            m_layerForHorizontalScrollbar = GraphicsLayer::create(this);
+#ifndef NDEBUG
+            m_layerForHorizontalScrollbar ->setName("horizontal scrollbar");
+#endif
+            layersChanged = true;
+        }
+    } else if (m_layerForHorizontalScrollbar) {
+        m_layerForHorizontalScrollbar.clear();
+        layersChanged = true;
+    }
+
+    if (needsVerticalScrollbarLayer) {
+        if (!m_layerForVerticalScrollbar) {
+            m_layerForVerticalScrollbar = GraphicsLayer::create(this);
+#ifndef NDEBUG
+            m_layerForVerticalScrollbar->setName("vertical scrollbar");
+#endif
+            layersChanged = true;
+        }
+    } else if (m_layerForVerticalScrollbar) {
+        m_layerForVerticalScrollbar.clear();
+        layersChanged = true;
+    }
+
+    if (needsScrollCornerLayer) {
+        if (!m_layerForScrollCorner) {
+            m_layerForScrollCorner = GraphicsLayer::create(this);
+#ifndef NDEBUG
+            m_layerForScrollCorner->setName("scroll corner");
+#endif
+            layersChanged = true;
+        }
+    } else if (m_layerForScrollCorner) {
+        m_layerForScrollCorner.clear();
+        layersChanged = true;
+    }
 
     return layersChanged;
 }
@@ -1096,25 +1190,54 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     ASSERT(!m_owningLayer->m_usedTransparency);
 }
 
+static void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const IntRect& clip)
+{
+    if (!scrollbar)
+        return;
+
+    context.save();
+    const IntRect& scrollbarRect = scrollbar->frameRect();
+    context.translate(-scrollbarRect.x(), -scrollbarRect.y());
+    IntRect transformedClip = clip;
+    transformedClip.move(scrollbarRect.x(), scrollbarRect.y());
+    scrollbar->paint(&context, transformedClip);
+    context.restore();
+}
+
 // Up-call from compositing layer drawing callback.
 void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase paintingPhase, const IntRect& clip)
 {
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willPaint(m_owningLayer->renderer()->frame(), clip);
+    if (graphicsLayer == m_graphicsLayer.get() || graphicsLayer == m_foregroundLayer.get() || graphicsLayer == m_maskLayer.get()) {
+        InspectorInstrumentationCookie cookie = InspectorInstrumentation::willPaint(m_owningLayer->renderer()->frame(), clip);
 
-    IntSize offset = graphicsLayer->offsetFromRenderer();
-    context.translate(-offset);
+        IntSize offset = graphicsLayer->offsetFromRenderer();
+        context.translate(-offset);
 
-    IntRect clipRect(clip);
-    clipRect.move(offset);
-    
-    // The dirtyRect is in the coords of the painting root.
-    IntRect dirtyRect = compositedBounds();
-    dirtyRect.intersect(clipRect);
+        IntRect clipRect(clip);
+        clipRect.move(offset);
 
-    // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
-    paintIntoLayer(m_owningLayer, &context, dirtyRect, PaintBehaviorNormal, paintingPhase, renderer());
+        // The dirtyRect is in the coords of the painting root.
+        IntRect dirtyRect = compositedBounds();
+        dirtyRect.intersect(clipRect);
 
-    InspectorInstrumentation::didPaint(cookie);
+        // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
+        paintIntoLayer(m_owningLayer, &context, dirtyRect, PaintBehaviorNormal, paintingPhase, renderer());
+
+        InspectorInstrumentation::didPaint(cookie);
+    } else if (graphicsLayer == layerForHorizontalScrollbar()) {
+        paintScrollbar(m_owningLayer->horizontalScrollbar(), context, clip);
+    } else if (graphicsLayer == layerForVerticalScrollbar()) {
+        paintScrollbar(m_owningLayer->verticalScrollbar(), context, clip);
+    } else if (graphicsLayer == layerForScrollCorner()) {
+        const IntRect& scrollCornerAndResizer = m_owningLayer->scrollCornerAndResizerRect();
+        context.save();
+        context.translate(-scrollCornerAndResizer.x(), -scrollCornerAndResizer.y());
+        IntRect transformedClip = clip;
+        transformedClip.move(scrollCornerAndResizer.x(), scrollCornerAndResizer.y());
+        m_owningLayer->paintScrollCorner(&context, 0, 0, transformedClip);
+        m_owningLayer->paintResizer(&context, 0, 0, transformedClip);
+        context.restore();
+    }
 }
 
 bool RenderLayerBacking::showDebugBorders() const

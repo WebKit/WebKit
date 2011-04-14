@@ -1,3 +1,17 @@
+2011-04-13  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Allow setting composited backing stores for scrollbars and scroll corners
+        https://bugs.webkit.org/show_bug.cgi?id=57202
+
+        Update WebPopupMenuProxyWin to reflect ScrollableArea interface changes.
+
+        * UIProcess/win/WebPopupMenuProxyWin.h:
+        (WebKit::WebPopupMenuProxyWin::invalidateScrollCornerRect):
+        (WebKit::WebPopupMenuProxyWin::scrollCornerPresent):
+        (WebKit::WebPopupMenuProxyWin::scrollCornerRect):
+
 2011-04-13  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Maciej Stachowiak.

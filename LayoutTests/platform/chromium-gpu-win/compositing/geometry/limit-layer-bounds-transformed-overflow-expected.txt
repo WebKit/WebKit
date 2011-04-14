@@ -19,7 +19,7 @@ middle
           (bounds 242.00 162.00)
           (drawsContent 1)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [100.00 0.00 0.00 1.00])
-          (children 1
+          (children 2
             (GraphicsLayer
               (position 1.00 1.00)
               (bounds 240.00 145.00)
@@ -35,6 +35,11 @@ middle
                   (drawsContent 1)
                 )
               )
+            )
+            (GraphicsLayer
+              (position 1.00 146.00)
+              (bounds 240.00 15.00)
+              (drawsContent 1)
             )
           )
         )

@@ -1,3 +1,134 @@
+2011-04-13  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Allow setting composited backing stores for scrollbars and scroll corners
+        https://bugs.webkit.org/show_bug.cgi?id=57202
+
+        This teaches ScrollableArea to manage GraphicsLayer backings for the two scrollbars and
+        scroll corner. ScrollableArea can position the layers and route invalidation and paint calls to
+        the correct place but depends on subclasses to manage the lifetime of the GraphicsLayers and
+        place them into the correct place in the hierarchy.
+
+        FrameView and RenderLayerCompositor updated to provide layers for frames with overflow controls.
+        that need them.  The overflow control layers are siblings of the frame's clip layer.
+
+        RenderLayer and RenderLayerBacking updated to provide overflow control layers for layers that
+        need them.  Currently, layers are only created for overflow controls on layers that are already composited
+        for other reasons and not necessarily for every RenderLayer with overflow.  Overflow control layers are siblings
+        of the RenderLayerBacking's clipping layer if it exists, otherwise they are siblings of the layer's normal
+        children.
+
+        Tested by a number of compositing/ tests that have scrollbars and by these new tests:
+               compositing/iframes/repaint-after-losing-scrollbars.html
+               compositing/overflow/clip-content-under-overflow-controls.html
+               compositing/overflow/content-gains-scrollbars.html
+               compositing/overflow/content-loses-scrollbars.html
+               compositing/overflow/overflow-scrollbar-layers.html
+               compositing/overflow/repaint-after-losing-scrollbars.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkScrollbarPseudoClass):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layerForHorizontalScrollbar):
+        (WebCore::FrameView::layerForVerticalScrollbar):
+        (WebCore::FrameView::layerForScrollCorner):
+        (WebCore::FrameView::syncCompositingStateForThisFrame):
+        (WebCore::FrameView::contentsResized):
+        (WebCore::FrameView::updateScrollCorner):
+        * page/FrameView.h:
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::invalidateScrollbar):
+        (WebCore::ScrollableArea::invalidateScrollCorner):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::paintScrollCorner):
+        (WebCore::ScrollableArea::layerForHorizontalScrollbar):
+        (WebCore::ScrollableArea::layerForVerticalScrollbar):
+        (WebCore::ScrollableArea::layerForScrollCorner):
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::invalidateRect):
+        * platform/Scrollbar.h:
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::paint):
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::invalidateRootLayerRect):
+        (WebCore::LayerRendererChromium::drawRootLayer):
+        (WebCore::LayerRendererChromium::setViewport):
+        (WebCore::LayerRendererChromium::updateAndDrawLayers):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::setRootLayer):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPartAnimation setCurrentProgress:]):
+        * platform/win/PopupMenuWin.h:
+        (WebCore::PopupMenuWin::invalidateScrollCornerRect):
+        (WebCore::PopupMenuWin::isScrollCornerVisible):
+        (WebCore::PopupMenuWin::scrollCornerRect):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollCornerRect):
+        (WebCore::RenderLayer::scrollCornerAndResizerRect):
+        (WebCore::RenderLayer::isScrollCornerVisible):
+        (WebCore::RenderLayer::invalidateScrollbarRect):
+        (WebCore::RenderLayer::invalidateScrollCornerRect):
+        (WebCore::RenderLayer::positionOverflowControls):
+        (WebCore::RenderLayer::paintOverflowControls):
+        (WebCore::RenderLayer::paintScrollCorner):
+        (WebCore::RenderLayer::layerForHorizontalScrollbar):
+        (WebCore::RenderLayer::layerForVerticalScrollbar):
+        (WebCore::RenderLayer::layerForScrollCorner):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::horizontalScrollbar):
+        (WebCore::RenderLayer::verticalScrollbar):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::~RenderLayerBacking):
+        (WebCore::RenderLayerBacking::updateAfterWidgetResize):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        (WebCore::RenderLayerBacking::updateInternalHierarchy):
+        (WebCore::RenderLayerBacking::updateClippingLayers):
+        (WebCore::RenderLayerBacking::requiresHorizontalScrollbarLayer):
+        (WebCore::RenderLayerBacking::requiresVerticalScrollbarLayer):
+        (WebCore::RenderLayerBacking::requiresScrollCornerLayer):
+        (WebCore::RenderLayerBacking::updateOverflowControlsLayers):
+        (WebCore::paintScrollbar):
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerBacking.h:
+        (WebCore::RenderLayerBacking::layerForHorizontalScrollbar):
+        (WebCore::RenderLayerBacking::layerForVerticalScrollbar):
+        (WebCore::RenderLayerBacking::layerForScrollCorner):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::frameViewDidChangeLocation):
+        (WebCore::RenderLayerCompositor::frameViewDidChangeSize):
+        (WebCore::RenderLayerCompositor::rootPlatformLayer):
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        (WebCore::paintScrollbar):
+        (WebCore::RenderLayerCompositor::paintContents):
+        (WebCore::shouldCompositeOverflowControls):
+        (WebCore::RenderLayerCompositor::requiresHorizontalScrollbarLayer):
+        (WebCore::RenderLayerCompositor::requiresVerticalScrollbarLayer):
+        (WebCore::RenderLayerCompositor::requiresScrollCornerLayer):
+        (WebCore::RenderLayerCompositor::updateOverflowControlsLayers):
+        (WebCore::RenderLayerCompositor::ensureRootPlatformLayer):
+        (WebCore::RenderLayerCompositor::destroyRootPlatformLayer):
+        (WebCore::RenderLayerCompositor::detachRootPlatformLayer):
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::layerForHorizontalScrollbar):
+        (WebCore::RenderLayerCompositor::layerForVerticalScrollbar):
+        (WebCore::RenderLayerCompositor::layerForScrollCorner):
+        * rendering/RenderListBox.h:
+        (WebCore::RenderListBox::isScrollCornerVisible):
+        (WebCore::RenderListBox::scrollCornerRect):
+        (WebCore::RenderListBox::invalidateScrollCornerRect):
+
 2011-04-13  Cary Clark  <caryclark@chromium.org>
  
          Reviewed by Eric Seidel.

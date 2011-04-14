@@ -327,9 +327,9 @@ static NSSize abs(NSSize size)
 
     // Invalidate the scrollbars so that they paint the animation
     if (WebCore::Scrollbar* verticalScrollbar = _animator->scrollableArea()->verticalScrollbar())
-        _animator->scrollableArea()->invalidateScrollbarRect(verticalScrollbar, WebCore::IntRect(0, 0, verticalScrollbar->width(), verticalScrollbar->height()));
+        verticalScrollbar->invalidateRect(WebCore::IntRect(0, 0, verticalScrollbar->width(), verticalScrollbar->height()));
     if (WebCore::Scrollbar* horizontalScrollbar = _animator->scrollableArea()->horizontalScrollbar())
-        _animator->scrollableArea()->invalidateScrollbarRect(horizontalScrollbar, WebCore::IntRect(0, 0, horizontalScrollbar->width(), horizontalScrollbar->height()));
+        horizontalScrollbar->invalidateRect(WebCore::IntRect(0, 0, horizontalScrollbar->width(), horizontalScrollbar->height()));
 }
 
 - (void)scrollAnimatorDestroyed

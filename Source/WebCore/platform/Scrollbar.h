@@ -146,7 +146,7 @@ protected:
     ScrollbarOrientation m_orientation;
     ScrollbarControlSize m_controlSize;
     ScrollbarTheme* m_theme;
-    
+
     int m_visibleSize;
     int m_totalSize;
     float m_currentPos;

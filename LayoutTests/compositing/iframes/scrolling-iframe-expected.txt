@@ -12,22 +12,26 @@
           (children 1
             (GraphicsLayer
               (position 35.00 35.00)
-              (bounds 285.00 135.00)
               (children 1
                 (GraphicsLayer
-                  (position -80.00 -80.00)
+                  (bounds 285.00 135.00)
                   (children 1
                     (GraphicsLayer
-                      (bounds 508.00 608.00)
+                      (position -80.00 -80.00)
                       (children 1
                         (GraphicsLayer
                           (bounds 508.00 608.00)
-                          (drawsContent 1)
                           (children 1
                             (GraphicsLayer
-                              (position 108.00 100.00)
-                              (bounds 200.00 200.00)
+                              (bounds 508.00 608.00)
                               (drawsContent 1)
+                              (children 1
+                                (GraphicsLayer
+                                  (position 108.00 100.00)
+                                  (bounds 200.00 200.00)
+                                  (drawsContent 1)
+                                )
+                              )
                             )
                           )
                         )

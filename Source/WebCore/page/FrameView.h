@@ -211,6 +211,7 @@ public:
     void setNodeToDraw(Node*);
 
     virtual void paintOverhangAreas(GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
+    virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
 
     static double currentPaintTimeStamp() { return sCurrentPaintTimeStamp; } // returns 0 if not painting
     
@@ -251,7 +252,6 @@ public:
     virtual IntPoint convertToRenderer(const RenderObject*, const IntPoint&) const;
 
     bool isFrameViewScrollCorner(RenderScrollbarPart* scrollCorner) const { return m_scrollCorner == scrollCorner; }
-    void invalidateScrollCorner();
 
     void calculateScrollbarModesForLayout(ScrollbarMode& hMode, ScrollbarMode& vMode);
 
@@ -317,6 +317,11 @@ private:
     virtual void scrollTo(const IntSize&);
     virtual void didCompleteRubberBand(const IntSize&) const;
     virtual void scrollbarStyleChanged();
+#if USE(ACCELERATED_COMPOSITING)
+    virtual GraphicsLayer* layerForHorizontalScrollbar() const;
+    virtual GraphicsLayer* layerForVerticalScrollbar() const;
+    virtual GraphicsLayer* layerForScrollCorner() const;
+#endif
 
     virtual void notifyPageThatContentAreaWillPaint() const;
     virtual void disconnectFromPage() { m_page = 0; }
@@ -334,7 +339,6 @@ private:
     bool hasCustomScrollbars() const;
 
     virtual void updateScrollCorner();
-    virtual void paintScrollCorner(GraphicsContext*, const IntRect& cornerRect);
 
     FrameView* parentFrameView() const;
 

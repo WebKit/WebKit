@@ -247,7 +247,7 @@ void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 
     bool checkForHierarchyUpdate = m_compositingDependsOnGeometry;
     bool needGeometryUpdate = false;
-    
+
     switch (updateType) {
     case CompositingUpdateAfterLayoutOrStyleChange:
     case CompositingUpdateOnPaitingOrHitTest:
@@ -858,7 +858,26 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
         bool parented = false;
         if (layer->renderer()->isRenderPart())
             parented = parentFrameContentLayers(toRenderPart(layer->renderer()));
-        
+
+        // If the layer has a clipping layer the overflow controls layers will be siblings of the clipping layer.
+        // Otherwise, the overflow control layers are normal children.
+        if (!layerBacking->hasClippingLayer()) {
+            if (GraphicsLayer* overflowControlLayer = layerBacking->layerForHorizontalScrollbar()) {
+                overflowControlLayer->removeFromParent();
+                layerChildren.append(overflowControlLayer);
+            }
+
+            if (GraphicsLayer* overflowControlLayer = layerBacking->layerForVerticalScrollbar()) {
+                overflowControlLayer->removeFromParent();
+                layerChildren.append(overflowControlLayer);
+            }
+
+            if (GraphicsLayer* overflowControlLayer = layerBacking->layerForScrollCorner()) {
+                overflowControlLayer->removeFromParent();
+                layerChildren.append(overflowControlLayer);
+            }
+        }
+
         if (!parented)
             layerBacking->parentForSublayers()->setChildren(layerChildren);
 
@@ -873,15 +892,21 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
     }
 }
 
-void RenderLayerCompositor::frameViewDidChangeSize(const IntPoint& contentsOffset)
+void RenderLayerCompositor::frameViewDidChangeLocation(const IntPoint& contentsOffset)
+{
+    if (m_overflowControlsHostLayer)
+        m_overflowControlsHostLayer->setPosition(contentsOffset);
+}
+
+void RenderLayerCompositor::frameViewDidChangeSize()
 {
     if (m_clipLayer) {
         FrameView* frameView = m_renderView->frameView();
-        m_clipLayer->setPosition(contentsOffset);
-        m_clipLayer->setSize(FloatSize(frameView->layoutWidth(), frameView->layoutHeight()));
+        m_clipLayer->setSize(frameView->visibleContentRect(false /* exclude scrollbars */).size());
 
         IntPoint scrollPosition = frameView->scrollPosition();
         m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
+        updateOverflowControlsLayers();
     }
 }
 
@@ -1090,7 +1115,9 @@ RenderLayer* RenderLayerCompositor::rootRenderLayer() const
 
 GraphicsLayer* RenderLayerCompositor::rootPlatformLayer() const
 {
-    return m_clipLayer ? m_clipLayer.get() : m_rootPlatformLayer.get();
+    if (m_overflowControlsHostLayer)
+        return m_overflowControlsHostLayer.get();
+    return m_rootPlatformLayer.get();
 }
 
 void RenderLayerCompositor::didMoveOnscreen()
@@ -1118,7 +1145,7 @@ void RenderLayerCompositor::updateRootLayerPosition()
     }
     if (m_clipLayer) {
         FrameView* frameView = m_renderView->frameView();
-        m_clipLayer->setSize(FloatSize(frameView->layoutWidth(), frameView->layoutHeight()));
+        m_clipLayer->setSize(frameView->visibleContentRect(false /* exclude scrollbars */).size());
     }
 }
 
@@ -1404,6 +1431,113 @@ bool RenderLayerCompositor::requiresScrollLayer(RootLayerAttachment attachment) 
         || attachment == RootLayerAttachedViaEnclosingFrame; // a composited frame on Mac
 }
 
+static void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const IntRect& clip)
+{
+    if (!scrollbar)
+        return;
+
+    context.save();
+    const IntRect& scrollbarRect = scrollbar->frameRect();
+    context.translate(-scrollbarRect.x(), -scrollbarRect.y());
+    IntRect transformedClip = clip;
+    transformedClip.move(scrollbarRect.x(), scrollbarRect.y());
+    scrollbar->paint(&context, transformedClip);
+    context.restore();
+}
+
+void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect& clip)
+{
+    if (graphicsLayer == layerForHorizontalScrollbar())
+        paintScrollbar(m_renderView->frameView()->horizontalScrollbar(), context, clip);
+    else if (graphicsLayer == layerForVerticalScrollbar())
+        paintScrollbar(m_renderView->frameView()->verticalScrollbar(), context, clip);
+    else if (graphicsLayer == layerForScrollCorner()) {
+        const IntRect& scrollCorner = m_renderView->frameView()->scrollCornerRect();
+        context.save();
+        context.translate(-scrollCorner.x(), -scrollCorner.y());
+        IntRect transformedClip = clip;
+        transformedClip.move(scrollCorner.x(), scrollCorner.y());
+        m_renderView->frameView()->paintScrollCorner(&context, transformedClip);
+        context.restore();
+    }
+}
+
+static bool shouldCompositeOverflowControls(ScrollView* view)
+{
+    if (view->platformWidget())
+        return false;
+#if PLATFORM(MAC)
+    if (!view->hasOverlayScrollbars())
+        return false;
+#endif
+    return true;
+}
+
+bool RenderLayerCompositor::requiresHorizontalScrollbarLayer() const
+{
+    ScrollView* view = m_renderView->frameView();
+    return shouldCompositeOverflowControls(view) && view->horizontalScrollbar();
+}
+
+bool RenderLayerCompositor::requiresVerticalScrollbarLayer() const
+{
+    ScrollView* view = m_renderView->frameView();
+    return shouldCompositeOverflowControls(view) && view->verticalScrollbar();
+}
+
+bool RenderLayerCompositor::requiresScrollCornerLayer() const
+{
+    ScrollView* view = m_renderView->frameView();
+    return shouldCompositeOverflowControls(view) && view->isScrollCornerVisible();
+}
+
+void RenderLayerCompositor::updateOverflowControlsLayers()
+{
+    bool layersChanged = false;
+
+    if (requiresHorizontalScrollbarLayer()) {
+        m_layerForHorizontalScrollbar = GraphicsLayer::create(this);
+#ifndef NDEBUG
+        m_layerForHorizontalScrollbar->setName("horizontal scrollbar");
+#endif
+        m_overflowControlsHostLayer->addChild(m_layerForHorizontalScrollbar.get());
+        layersChanged = true;
+    } else if (m_layerForHorizontalScrollbar) {
+        m_layerForHorizontalScrollbar->removeFromParent();
+        m_layerForHorizontalScrollbar = 0;
+        layersChanged = true;
+    }
+
+    if (requiresVerticalScrollbarLayer()) {
+        m_layerForVerticalScrollbar = GraphicsLayer::create(this);
+#ifndef NDEBUG
+        m_layerForVerticalScrollbar->setName("vertical scrollbar");
+#endif
+        m_overflowControlsHostLayer->addChild(m_layerForVerticalScrollbar.get());
+        layersChanged = true;
+    } else if (m_layerForVerticalScrollbar) {
+        m_layerForVerticalScrollbar->removeFromParent();
+        m_layerForVerticalScrollbar = 0;
+        layersChanged = true;
+    }
+
+    if (requiresScrollCornerLayer()) {
+        m_layerForScrollCorner = GraphicsLayer::create(this);
+#ifndef NDEBUG
+        m_layerForScrollCorner->setName("scroll corner");
+#endif
+        m_overflowControlsHostLayer->addChild(m_layerForScrollCorner.get());
+        layersChanged = true;
+    } else if (m_layerForScrollCorner) {
+        m_layerForScrollCorner->removeFromParent();
+        m_layerForScrollCorner = 0;
+        layersChanged = true;
+    }
+
+    if (layersChanged)
+        m_renderView->frameView()->positionScrollbarLayers();
+}
+
 void RenderLayerCompositor::ensureRootPlatformLayer()
 {
     RootLayerAttachment expectedAttachment = shouldPropagateCompositingToEnclosingFrame() ? RootLayerAttachedViaEnclosingFrame : RootLayerAttachedViaChromeClient;
@@ -1423,8 +1557,16 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
     }
 
     if (requiresScrollLayer(expectedAttachment)) {
-        if (!m_clipLayer) {
+        if (!m_overflowControlsHostLayer) {
             ASSERT(!m_scrollLayer);
+            ASSERT(!m_clipLayer);
+
+            // Create a layer to host the clipping layer and the overflow controls layers.
+            m_overflowControlsHostLayer = GraphicsLayer::create(0);
+#ifndef NDEBUG
+            m_overflowControlsHostLayer->setName("overflow controls host");
+#endif
+
             // Create a clipping layer if this is an iframe
             m_clipLayer = GraphicsLayer::create(this);
 #ifndef NDEBUG
@@ -1436,20 +1578,19 @@ void RenderLayerCompositor::ensureRootPlatformLayer()
 #ifndef NDEBUG
             m_scrollLayer->setName("iframe scrolling");
 #endif
+
             // Hook them up
+            m_overflowControlsHostLayer->addChild(m_clipLayer.get());
             m_clipLayer->addChild(m_scrollLayer.get());
             m_scrollLayer->addChild(m_rootPlatformLayer.get());
-            
+
             frameViewDidChangeSize();
             frameViewDidScroll(m_renderView->frameView()->scrollPosition());
         }
     } else {
-        if (m_clipLayer) {
-            m_clipLayer->removeAllChildren();
-            m_clipLayer->removeFromParent();
+        if (m_overflowControlsHostLayer) {
+            m_overflowControlsHostLayer = 0;
             m_clipLayer = 0;
-            
-            m_scrollLayer->removeAllChildren();
             m_scrollLayer = 0;
         }
     }
@@ -1467,11 +1608,29 @@ void RenderLayerCompositor::destroyRootPlatformLayer()
         return;
 
     detachRootPlatformLayer();
-    if (m_clipLayer) {
-        m_clipLayer->removeAllChildren();
+
+    if (m_layerForHorizontalScrollbar) {
+        m_layerForHorizontalScrollbar->removeFromParent();
+        m_layerForHorizontalScrollbar = 0;
+        if (Scrollbar* horizontalScrollbar = m_renderView->frameView()->verticalScrollbar())
+            m_renderView->frameView()->invalidateScrollbar(horizontalScrollbar, IntRect(IntPoint(0, 0), horizontalScrollbar->frameRect().size()));
+    }
+
+    if (m_layerForVerticalScrollbar) {
+        m_layerForVerticalScrollbar->removeFromParent();
+        m_layerForVerticalScrollbar = 0;
+        if (Scrollbar* verticalScrollbar = m_renderView->frameView()->verticalScrollbar())
+            m_renderView->frameView()->invalidateScrollbar(verticalScrollbar, IntRect(IntPoint(0, 0), verticalScrollbar->frameRect().size()));
+    }
+
+    if (m_layerForScrollCorner) {
+        m_layerForScrollCorner = 0;
+        m_renderView->frameView()->invalidateScrollCorner();
+    }
+
+    if (m_overflowControlsHostLayer) {
+        m_overflowControlsHostLayer = 0;
         m_clipLayer = 0;
-        
-        m_scrollLayer->removeAllChildren();
         m_scrollLayer = 0;
     }
     ASSERT(!m_scrollLayer);
@@ -1517,8 +1676,8 @@ void RenderLayerCompositor::detachRootPlatformLayer()
     case RootLayerAttachedViaEnclosingFrame: {
         // The layer will get unhooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
         // for the frame's renderer in the parent document.
-        if (m_clipLayer)
-            m_clipLayer->removeFromParent();
+        if (m_overflowControlsHostLayer)
+            m_overflowControlsHostLayer->removeFromParent();
         else
             m_rootPlatformLayer->removeFromParent();
 

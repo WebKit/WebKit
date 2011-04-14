@@ -171,7 +171,8 @@ public:
     static bool parentFrameContentLayers(RenderPart*);
 
     // Update the geometry of the layers used for clipping and scrolling in frames.
-    void frameViewDidChangeSize(const IntPoint& contentsOffset = IntPoint());
+    void frameViewDidChangeLocation(const IntPoint& contentsOffset);
+    void frameViewDidChangeSize();
     void frameViewDidScroll(const IntPoint& = IntPoint());
 
     String layerTreeAsText(bool showDebugInfo = false);
@@ -183,11 +184,15 @@ public:
 
     void updateContentsScale(float, RenderLayer* = 0);
 
+    GraphicsLayer* layerForHorizontalScrollbar() const { return m_layerForHorizontalScrollbar.get(); }
+    GraphicsLayer* layerForVerticalScrollbar() const { return m_layerForVerticalScrollbar.get(); }
+    GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
+
 private:
     // GraphicsLayerClient Implementation
     virtual void notifyAnimationStarted(const GraphicsLayer*, double) { }
     virtual void notifySyncRequired(const GraphicsLayer*) { scheduleLayerFlush(); }
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect&) { }
+    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect&);
 
     // These calls return false always. They are saying that the layers associated with this client
     // (the clipLayer and scrollLayer) should never show debugging info.
@@ -235,7 +240,9 @@ private:
     void detachRootPlatformLayer();
     
     void rootLayerAttachmentChanged();
-    
+
+    void updateOverflowControlsLayers();
+
     void scheduleNeedsStyleRecalc(Element*);
     void notifyIFramesOfCompositingChange();
 
@@ -250,7 +257,10 @@ private:
     bool requiresCompositingForFullScreen(RenderObject*) const;
 
     bool requiresScrollLayer(RootLayerAttachment) const;
-    
+    bool requiresHorizontalScrollbarLayer() const;
+    bool requiresVerticalScrollbarLayer() const;
+    bool requiresScrollCornerLayer() const;
+
 private:
     RenderView* m_renderView;
     OwnPtr<GraphicsLayer> m_rootPlatformLayer;
@@ -278,7 +288,14 @@ private:
     // Enclosing clipping layer for iframe content
     OwnPtr<GraphicsLayer> m_clipLayer;
     OwnPtr<GraphicsLayer> m_scrollLayer;
-    
+
+    // Enclosing layer for overflow controls and the clipping layer
+    OwnPtr<GraphicsLayer> m_overflowControlsHostLayer;
+
+    // Layers for overflow controls
+    OwnPtr<GraphicsLayer> m_layerForHorizontalScrollbar;
+    OwnPtr<GraphicsLayer> m_layerForVerticalScrollbar;
+    OwnPtr<GraphicsLayer> m_layerForScrollCorner;
 #if PROFILE_LAYER_REBUILD
     int m_rootLayerUpdateCount;
 #endif
