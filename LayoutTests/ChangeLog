@@ -1,3 +1,118 @@
+2011-04-14  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Updated/added chromium test expectation for media controls tests following CSS change in r83847.
+
+        * platform/chromium-gpu-linux/media/controls-after-reload-expected.png: Added.
+        * platform/chromium-gpu-linux/media/controls-strict-expected.png: Added.
+        * platform/chromium-gpu-linux/media/controls-styling-expected.png: Added.
+        * platform/chromium-gpu-linux/media/controls-without-preload-expected.png: Added.
+        * platform/chromium-gpu-linux/media/media-document-audio-repaint-expected.png: Added.
+        * platform/chromium-gpu-linux/media/video-controls-rendering-expected.png: Added.
+        * platform/chromium-gpu-linux/media/video-display-toggle-expected.png:
+        * platform/chromium-gpu-linux/media/video-no-audio-expected.png:
+        * platform/chromium-gpu-linux/media/video-volume-slider-expected.png:
+        * platform/chromium-gpu-linux/media/video-zoom-controls-expected.png: Added.
+        * platform/chromium-gpu-mac/media/controls-after-reload-expected.png: Added.
+        * platform/chromium-gpu-mac/media/controls-strict-expected.png: Added.
+        * platform/chromium-gpu-mac/media/controls-styling-expected.png: Added.
+        * platform/chromium-gpu-mac/media/controls-without-preload-expected.png: Added.
+        * platform/chromium-gpu-mac/media/media-document-audio-repaint-expected.png: Added.
+        * platform/chromium-gpu-mac/media/media-document-audio-repaint-expected.txt: Added.
+        * platform/chromium-gpu-mac/media/video-controls-rendering-expected.png: Added.
+        * platform/chromium-gpu-mac/media/video-display-toggle-expected.png:
+        * platform/chromium-gpu-mac/media/video-no-audio-expected.png:
+        * platform/chromium-gpu-mac/media/video-volume-slider-expected.png:
+        * platform/chromium-gpu-mac/media/video-zoom-controls-expected.png:
+        * platform/chromium-gpu-win/media/controls-after-reload-expected.png: Added.
+        * platform/chromium-gpu-win/media/controls-strict-expected.png: Added.
+        * platform/chromium-gpu-win/media/controls-styling-expected.png: Added.
+        * platform/chromium-gpu-win/media/controls-without-preload-expected.png: Added.
+        * platform/chromium-gpu-win/media/media-document-audio-repaint-expected.png: Added.
+        * platform/chromium-gpu-win/media/media-document-audio-repaint-expected.txt: Added.
+        * platform/chromium-gpu-win/media/video-controls-rendering-expected.png: Added.
+        * platform/chromium-gpu-win/media/video-display-toggle-expected.png:
+        * platform/chromium-gpu-win/media/video-no-audio-expected.png:
+        * platform/chromium-gpu-win/media/video-volume-slider-expected.png:
+        * platform/chromium-gpu-win/media/video-zoom-controls-expected.png: Added.
+        * platform/chromium-linux/fast/layers/video-layer-expected.png:
+        * platform/chromium-linux/media/audio-controls-rendering-expected.png:
+        * platform/chromium-linux/media/controls-after-reload-expected.png:
+        * platform/chromium-linux/media/controls-strict-expected.png:
+        * platform/chromium-linux/media/controls-styling-expected.png:
+        * platform/chromium-linux/media/controls-without-preload-expected.png:
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-linux/media/video-controls-rendering-expected.png:
+        * platform/chromium-linux/media/video-display-toggle-expected.png:
+        * platform/chromium-linux/media/video-empty-source-expected.png:
+        * platform/chromium-linux/media/video-no-audio-expected.png:
+        * platform/chromium-linux/media/video-volume-slider-expected.png:
+        * platform/chromium-linux/media/video-zoom-controls-expected.png:
+        * platform/chromium-mac/fast/canvas/image-object-in-canvas-expected.png: Added.
+        * platform/chromium-mac/fast/layers/video-layer-expected.checksum: Removed.
+        * platform/chromium-mac/fast/layers/video-layer-expected.png:
+        * platform/chromium-mac/fast/layers/video-layer-expected.txt:
+        * platform/chromium-mac/media/audio-controls-rendering-expected.checksum: Removed.
+        * platform/chromium-mac/media/audio-controls-rendering-expected.png:
+        * platform/chromium-mac/media/audio-controls-rendering-expected.txt:
+        * platform/chromium-mac/media/controls-after-reload-expected.checksum: Removed.
+        * platform/chromium-mac/media/controls-after-reload-expected.png:
+        * platform/chromium-mac/media/controls-after-reload-expected.txt:
+        * platform/chromium-mac/media/controls-strict-expected.checksum: Removed.
+        * platform/chromium-mac/media/controls-strict-expected.png:
+        * platform/chromium-mac/media/controls-strict-expected.txt:
+        * platform/chromium-mac/media/controls-styling-expected.checksum: Removed.
+        * platform/chromium-mac/media/controls-styling-expected.png:
+        * platform/chromium-mac/media/controls-styling-expected.txt:
+        * platform/chromium-mac/media/controls-without-preload-expected.checksum: Removed.
+        * platform/chromium-mac/media/controls-without-preload-expected.png:
+        * platform/chromium-mac/media/controls-without-preload-expected.txt:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.checksum: Removed.
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.txt:
+        * platform/chromium-mac/media/video-controls-rendering-expected.checksum: Removed.
+        * platform/chromium-mac/media/video-controls-rendering-expected.png:
+        * platform/chromium-mac/media/video-controls-rendering-expected.txt:
+        * platform/chromium-mac/media/video-display-toggle-expected.checksum: Removed.
+        * platform/chromium-mac/media/video-display-toggle-expected.png:
+        * platform/chromium-mac/media/video-display-toggle-expected.txt:
+        * platform/chromium-mac/media/video-empty-source-expected.checksum: Removed.
+        * platform/chromium-mac/media/video-empty-source-expected.png:
+        * platform/chromium-mac/media/video-empty-source-expected.txt:
+        * platform/chromium-mac/media/video-no-audio-expected.checksum: Removed.
+        * platform/chromium-mac/media/video-no-audio-expected.png:
+        * platform/chromium-mac/media/video-no-audio-expected.txt:
+        * platform/chromium-mac/media/video-volume-slider-expected.checksum: Removed.
+        * platform/chromium-mac/media/video-volume-slider-expected.png:
+        * platform/chromium-mac/media/video-volume-slider-expected.txt:
+        * platform/chromium-mac/media/video-zoom-controls-expected.png:
+        * platform/chromium-mac/media/video-zoom-controls-expected.txt:
+        * platform/chromium-win/fast/layers/video-layer-expected.png:
+        * platform/chromium-win/fast/layers/video-layer-expected.txt:
+        * platform/chromium-win/media/audio-controls-rendering-expected.png:
+        * platform/chromium-win/media/audio-controls-rendering-expected.txt:
+        * platform/chromium-win/media/controls-after-reload-expected.png:
+        * platform/chromium-win/media/controls-after-reload-expected.txt:
+        * platform/chromium-win/media/controls-strict-expected.png:
+        * platform/chromium-win/media/controls-strict-expected.txt:
+        * platform/chromium-win/media/controls-styling-expected.png:
+        * platform/chromium-win/media/controls-styling-expected.txt:
+        * platform/chromium-win/media/controls-without-preload-expected.png:
+        * platform/chromium-win/media/controls-without-preload-expected.txt:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.png:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.txt:
+        * platform/chromium-win/media/video-controls-rendering-expected.png:
+        * platform/chromium-win/media/video-controls-rendering-expected.txt:
+        * platform/chromium-win/media/video-display-toggle-expected.png:
+        * platform/chromium-win/media/video-display-toggle-expected.txt:
+        * platform/chromium-win/media/video-empty-source-expected.png:
+        * platform/chromium-win/media/video-empty-source-expected.txt:
+        * platform/chromium-win/media/video-no-audio-expected.png:
+        * platform/chromium-win/media/video-no-audio-expected.txt:
+        * platform/chromium-win/media/video-volume-slider-expected.png:
+        * platform/chromium-win/media/video-volume-slider-expected.txt:
+        * platform/chromium-win/media/video-zoom-controls-expected.png:
+        * platform/chromium-win/media/video-zoom-controls-expected.txt:
+
 2011-04-14  Adam Roben  <aroben@apple.com>
 
         Add Windows results for new tests added in r83787
