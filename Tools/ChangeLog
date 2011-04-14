@@ -1,3 +1,19 @@
+2011-04-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        queues.webkit.org should display when a bot last passed a patch
+        https://bugs.webkit.org/show_bug.cgi?id=58546
+
+        I am suspicious that some of our commit-queue instances are never
+        actually passing anything.
+
+        This will let us know if those bots are never passing patches.
+
+        * QueueStatusServer/handlers/queuestatus.py:
+        * QueueStatusServer/index.yaml:
+        * QueueStatusServer/templates/queuestatus.html:
+
 2011-04-14  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Roben.

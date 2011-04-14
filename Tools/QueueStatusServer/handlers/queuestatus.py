@@ -63,6 +63,14 @@ class QueueStatus(webapp.RequestHandler):
             statuses.filter("bot_id =", bot_id)
         return statuses.order("-date").fetch(15)
 
+    def _fetch_last_pass(self, queue, bot_id):
+        statuses = queuestatus.QueueStatus.all()
+        statuses = statuses.filter("queue_name =", queue.name())
+        if bot_id:
+            statuses.filter("bot_id =", bot_id)
+        statuses.filter("message =", "Pass")
+        return statuses.order("-date").get()
+
     def _page_title(self, queue, bot_id):
         title = "%s Messages" % queue.display_name()
         if bot_id:
@@ -77,10 +85,12 @@ class QueueStatus(webapp.RequestHandler):
             return
 
         statuses = self._fetch_statuses(queue, bot_id)
+        last_pass = self._fetch_last_pass(queue, bot_id)
         template_values = {
             "page_title": self._page_title(queue, bot_id),
             "work_item_rows": self._rows_for_work_items(queue),
             "status_groups": self._build_status_groups(statuses),
             "bot_id": bot_id,
+            "last_pass": last_pass,
         }
         self.response.out.write(template.render("templates/queuestatus.html", template_values))

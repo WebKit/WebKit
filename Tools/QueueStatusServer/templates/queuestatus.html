@@ -7,6 +7,11 @@
 <body>
 <h1>{{ page_title }}</h1>
 
+{% if last_pass %}
+<h3>Summary</h3>
+<div>Last Pass: {{ last_pass.date|timesince }} ago</div>
+{% endif %}
+
 <h3>Recent Status</h3>
 
 <div class="status-details">
