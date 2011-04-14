@@ -1,3 +1,39 @@
+2011-04-14  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        CSS related SVG*Element changes doesn't require relayout
+        https://bugs.webkit.org/show_bug.cgi?id=56906
+
+        Testing inherited CSS related SVG property changes by FEFlood, FESpecularLighting and FEDiffuseLighing filters.
+        Adding a missing test to check the dynamic update of lighting-color property of FESpecularLighting.
+        All the other modifications are covered by the existing dyanmic-update tests.
+
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-inherit-lighting-color-css-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEDiffuseLightingElement-inherit-lighting-color-css-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEFloodElement-inherit-flood-color-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFEFloodElement-inherit-flood-color-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-inherit-lighting-color-css-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEDiffuseLightingElement-inherit-lighting-color-css-prop.html: Added.
+        * svg/dynamic-updates/SVGFEFloodElement-inherit-flood-color-expected.txt: Added.
+        * svg/dynamic-updates/SVGFEFloodElement-inherit-flood-color.html: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop.html: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop.html: Added.
+        * svg/dynamic-updates/script-tests/SVGFEDiffuseLightingElement-inherit-lighting-color-css-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFEFloodElement-inherit-flood-color-css-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpecularLightingElement-inherit-lighting-color-css-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGFESpecularLightingElement-lighting-color-css-prop.js: Added.
+        (executeTest):
+
 2011-04-13  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Simon Fraser.

@@ -54,9 +54,12 @@ Color FESpecularLighting::lightingColor() const
     return m_lightingColor;
 }
 
-void FESpecularLighting::setLightingColor(const Color& lightingColor)
+bool FESpecularLighting::setLightingColor(const Color& lightingColor)
 {
+    if (m_lightingColor == lightingColor)
+        return false;
     m_lightingColor = lightingColor;
+    return true;
 }
 
 float FESpecularLighting::surfaceScale() const

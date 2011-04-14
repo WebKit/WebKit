@@ -92,6 +92,13 @@ void SVGFESpecularLightingElement::parseMappedAttribute(Attribute* attr)
 bool SVGFESpecularLightingElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
 {
     FESpecularLighting* specularLighting = static_cast<FESpecularLighting*>(effect);
+
+    if (attrName == SVGNames::lighting_colorAttr) {
+        RenderObject* renderer = this->renderer();
+        ASSERT(renderer);
+        ASSERT(renderer->style());
+        return specularLighting->setLightingColor(renderer->style()->svgStyle()->lightingColor());
+    }
     if (attrName == SVGNames::surfaceScaleAttr)
         return specularLighting->setSurfaceScale(surfaceScale());
     if (attrName == SVGNames::specularConstantAttr)

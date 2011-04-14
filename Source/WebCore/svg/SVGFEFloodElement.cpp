@@ -25,6 +25,7 @@
 
 #include "Attribute.h"
 #include "RenderStyle.h"
+#include "SVGNames.h"
 #include "SVGRenderStyle.h"
 
 namespace WebCore {
@@ -37,6 +38,24 @@ inline SVGFEFloodElement::SVGFEFloodElement(const QualifiedName& tagName, Docume
 PassRefPtr<SVGFEFloodElement> SVGFEFloodElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new SVGFEFloodElement(tagName, document));
+}
+
+
+bool SVGFEFloodElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
+{
+    RenderObject* renderer = this->renderer();
+    ASSERT(renderer);
+    RenderStyle* style = renderer->style();
+    ASSERT(style);
+    FEFlood* flood = static_cast<FEFlood*>(effect);
+
+    if (attrName == SVGNames::flood_colorAttr)
+        return flood->setFloodColor(style->svgStyle()->floodColor());
+    if (attrName == SVGNames::flood_opacityAttr)
+        return flood->setFloodOpacity(style->svgStyle()->floodOpacity());
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 PassRefPtr<FilterEffect> SVGFEFloodElement::build(SVGFilterBuilder*, Filter* filter)

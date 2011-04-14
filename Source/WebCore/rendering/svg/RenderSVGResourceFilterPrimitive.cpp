@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 University of Szeged
  * Copyright (C) 2010 Zoltan Herczeg
+ * Copyright (C) 2011 Renata Hodovan (reni@webkit.org)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,8 +33,34 @@
 #include "RenderSVGResource.h"
 #include "SVGFEImage.h"
 #include "SVGFilter.h"
+#include "SVGNames.h"
 
 namespace WebCore {
+
+
+void RenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
+
+    RenderObject* filter = parent();
+    if (!filter)
+        return;
+    ASSERT(filter->isSVGResourceFilter());
+
+    if (diff == StyleDifferenceEqual || !oldStyle)
+        return;
+
+    const SVGRenderStyle* newStyle = this->style()->svgStyle();
+    if (node()->hasTagName(SVGNames::feFloodTag)) {
+        if (newStyle->floodColor() != oldStyle->svgStyle()->floodColor())
+            static_cast<RenderSVGResourceFilter*>(filter)->primitiveAttributeChanged(this, SVGNames::flood_colorAttr);
+        if (newStyle->floodOpacity() != oldStyle->svgStyle()->floodOpacity())
+            static_cast<RenderSVGResourceFilter*>(filter)->primitiveAttributeChanged(this, SVGNames::flood_opacityAttr);
+    } else if (node()->hasTagName(SVGNames::feDiffuseLightingTag) || node()->hasTagName(SVGNames::feSpecularLightingTag)) {
+        if (newStyle->lightingColor() != oldStyle->svgStyle()->lightingColor())
+            static_cast<RenderSVGResourceFilter*>(filter)->primitiveAttributeChanged(this, SVGNames::lighting_colorAttr);
+    }
+}
 
 FloatRect RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(FilterEffect* effect)
 {

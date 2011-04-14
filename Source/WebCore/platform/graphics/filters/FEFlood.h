@@ -34,10 +34,10 @@ public:
     static PassRefPtr<FEFlood> create(Filter* filter, const Color&, float);
 
     Color floodColor() const;
-    void setFloodColor(const Color &);
+    bool setFloodColor(const Color &);
 
     float floodOpacity() const;
-    void setFloodOpacity(float);
+    bool setFloodOpacity(float);
 
     virtual void apply();
     virtual void dump();
