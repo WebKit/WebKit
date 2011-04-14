@@ -1,3 +1,9 @@
+2011-04-13  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Added chromium expectations for test added in r83803.
+
+        * platform/chromium/iframe-outline-expected.png: Added.
+
 2011-04-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
