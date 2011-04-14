@@ -1,3 +1,12 @@
+2011-04-14  Adam Barth  <abarth@webkit.org>
+
+        Remove some trailing whitespace.  I'm making this change to initialize
+        the SVN credentials on a new commit-queue machine.  I'm sure there's a
+        better way to do this, but I don't know it.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+
 2011-04-14  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by David Kilzer.

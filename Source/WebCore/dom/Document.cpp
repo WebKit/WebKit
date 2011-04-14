@@ -123,7 +123,7 @@
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
-#include "ScopedEventQueue.h" 
+#include "ScopedEventQueue.h"
 #include "ScriptCallStack.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"
@@ -483,7 +483,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     m_usesLinkRules = false;
 
     m_gotoAnchorNeededAfterStylesheetsLoad = false;
- 
+
     m_didCalculateStyleSelector = false;
     m_hasDirtyStyleSelector = false;
     m_pendingStylesheets = 0;
