@@ -29,6 +29,8 @@
 
 #if ENABLE(WEB_AUDIO)
 
+#if !OS(DARWIN) && USE(WEBAUDIO_FFTW)
+
 #include "FFTFrame.h"
 
 #include <wtf/MathExtras.h>
@@ -297,5 +299,7 @@ fftwf_plan FFTFrame::fftwPlanForSize(unsigned fftSize, Direction direction,
 }
 
 } // namespace WebCore
+
+#endif // !OS(DARWIN) && USE(WEBAUDIO_FFTW)
 
 #endif // ENABLE(WEB_AUDIO)

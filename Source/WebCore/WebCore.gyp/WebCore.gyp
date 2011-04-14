@@ -959,13 +959,6 @@
             'include_dirs+++': ['../dom'],
           },
         }],
-        # FIXME: (kbr) ideally this target should just depend on webcore_prerequisites
-        # to pick up these include directories, but I'm nervous about making that change.
-        ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_MKL=1" in feature_defines', {
-          'include_dirs': [
-            '<(chromium_src_dir)/third_party/mkl/include',
-          ],
-        }],
         ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
           'include_dirs': [
             '<(chromium_src_dir)/third_party/fftw/api',
@@ -1170,13 +1163,10 @@
             'include_dirs++': ['../dom'],
           },
         }],
-        ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_MKL=1" in feature_defines', {
-          # This directory needs to be on the include path for multiple sub-targets of webcore.
-          'direct_dependent_settings': {
-            'include_dirs': [
-              '<(chromium_src_dir)/third_party/mkl/include',
-            ],
-          },
+        ['(OS=="linux" or OS=="win") and branding=="Chrome"', {
+          'dependencies': [
+            '<(chromium_src_dir)/third_party/mkl/google/mkl.gyp:mkl_libs',
+          ],
         }],
         ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
           # This directory needs to be on the include path for multiple sub-targets of webcore.
@@ -1259,7 +1249,7 @@
         ['include', 'platform/'],
 
         # FIXME: Figure out how to store these patterns in a variable.
-        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mac|mkl|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
+        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|freetype|gstreamer|gtk|haiku|linux|mac|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|JSC|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|WinCE|Wx)\\.(cpp|mm?)$'],
 
         ['include', 'platform/graphics/opentype/OpenTypeSanitizer\\.cpp$'],
@@ -1423,16 +1413,6 @@
             ['include', 'platform/win/SystemInfo\\.cpp$'],
           ],
         }],
-        ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_MKL=1" in feature_defines', {
-          'sources/': [
-            ['include', 'platform/audio/mkl/FFTFrameMKL\\.cpp$'],
-          ],
-        }],
-        ['(OS=="linux" or OS=="win") and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {
-          'sources/': [
-            ['include', 'platform/audio/fftw/FFTFrameFFTW\\.cpp$'],
-          ],
-        }],
       ],
     },
     {
@@ -1450,7 +1430,7 @@
         ['include', 'rendering/'],
 
         # FIXME: Figure out how to store these patterns in a variable.
-        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mac|mkl|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
+        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|freetype|gstreamer|gtk|haiku|linux|mac|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|JSC|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|WinCE|Wx)\\.(cpp|mm?)$'],
 
         ['exclude', 'AllInOne\\.cpp$'],
@@ -1524,7 +1504,7 @@
         ['exclude', 'bridge/jni/jsc/'],
 
         # FIXME: Figure out how to store these patterns in a variable.
-        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|freetype|fftw|gstreamer|gtk|haiku|linux|mac|mkl|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
+        ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|freetype|gstreamer|gtk|haiku|linux|mac|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|JSC|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|WinCE|Wx)\\.(cpp|mm?)$'],
 
         ['exclude', 'AllInOne\\.cpp$'],
@@ -1689,29 +1669,6 @@
         ['OS=="win"', {
           'direct_dependent_settings': {
             'include_dirs+++': ['../dom'],
-          },
-        }],
-        ['OS=="win" and "WTF_USE_WEBAUDIO_MKL=1" in feature_defines', {
-          # FIXME: (kbr) figure out how to make these dependencies
-          # work in a cross-platform way. Attempts to use
-          # "link_settings" and "libraries" in conjunction with the
-          # msvs-specific settings didn't work so far.
-          'all_dependent_settings': {
-            'msvs_settings': {
-              'VCLinkerTool': {
-                'AdditionalLibraryDirectories': [
-                  # This is a hack to make this directory correct
-                  # relative to targets like chrome_dll. Should use
-                  # <(chromium_src_dir).
-                  '../third_party/mkl/lib/win/ia32',
-                ],
-                'AdditionalDependencies': [
-                  'mkl_intel_c.lib',
-                  'mkl_sequential.lib',
-                  'mkl_core.lib',
-                ],
-              },
-            },
           },
         }],
         ['OS=="linux" and "WTF_USE_WEBAUDIO_FFTW=1" in feature_defines', {

@@ -30,6 +30,8 @@
 
 #if ENABLE(WEB_AUDIO)
 
+#if !OS(DARWIN) && USE(WEBAUDIO_MKL)
+
 #include "FFTFrame.h"
 
 #include "mkl_vml.h"
@@ -260,5 +262,7 @@ DFTI_DESCRIPTOR_HANDLE FFTFrame::descriptorHandleForSize(unsigned fftSize)
 }
 
 } // namespace WebCore
+
+#endif // !OS(DARWIN) && USE(WEBAUDIO_MKL)
 
 #endif // ENABLE(WEB_AUDIO)

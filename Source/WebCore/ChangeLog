@@ -1,3 +1,22 @@
+2011-04-14  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Enable building Web Audio with MKL in Chrome-branded builds
+        https://bugs.webkit.org/show_bug.cgi?id=58561
+
+        Factored out MKL support into a separate GYP file that is
+        incorporated in Chrome-branded builds. Changed how the FFTFrame
+        implementations are pulled in and chosen so that all files can be
+        unconditionally compiled.
+
+        Tested with both Chrome-branded build (incorporating MKL) and
+        Chromium build (building just FFTFrameStub.cpp) on Linux.
+
+        * WebCore.gyp/WebCore.gyp:
+        * platform/audio/fftw/FFTFrameFFTW.cpp:
+        * platform/audio/mkl/FFTFrameMKL.cpp:
+
 2011-04-14  Ragner Magalhaes  <ragner.magalhaes@openbossa.org>
 
         Reviewed by Antonio Gomes.
