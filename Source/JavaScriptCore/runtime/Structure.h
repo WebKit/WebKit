@@ -295,7 +295,7 @@ namespace JSC {
             m_values.append(cell);
     }
 
-    inline StructureTransitionTable::Hash::Key StructureTransitionTable::WeakGCMapFinalizerCallback::keyForFinalizer(void*, Structure* structure)
+    inline StructureTransitionTable::Hash::Key StructureTransitionTable::keyForWeakGCMapFinalizer(void*, Structure* structure)
     {
         return Hash::Key(structure->m_nameInPrevious.get(), structure->m_attributesInPrevious);
     }

@@ -74,11 +74,16 @@ class StructureTransitionTable {
         {
             return 0;
         }
-        
-        static Hash::Key keyForFinalizer(void* context, Structure*);
+
+        static inline Hash::Key keyForFinalizer(void* context, Structure* structure)
+        {
+            return keyForWeakGCMapFinalizer(context, structure);
+        }
     };
 
     typedef WeakGCMap<Hash::Key, Structure, WeakGCMapFinalizerCallback, Hash, HashTraits> TransitionMap;
+
+    static Hash::Key keyForWeakGCMapFinalizer(void* context, Structure*);
 
 public:
     StructureTransitionTable()

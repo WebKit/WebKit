@@ -1,3 +1,15 @@
+2011-04-14  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed WinCE build fix for r83808.
+
+        It seams that the MSVC compiler for WinCE does not handle the friend scope correct.
+        Add an addtional inline function to StructureTransitionTable to work around this.
+
+        * runtime/Structure.h:
+        (JSC::StructureTransitionTable::keyForWeakGCMapFinalizer):
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::WeakGCMapFinalizerCallback::keyForFinalizer):
+
 2011-04-13  Oliver Hunt  <oliver@apple.com>
 
         Fix 32bit tests.
