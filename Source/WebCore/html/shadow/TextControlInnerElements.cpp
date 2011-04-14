@@ -393,6 +393,12 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
     // here, we take a temporary reference.
     RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowAncestorNode()));
 
+    if (input->disabled() || input->isReadOnlyFormControl()) {
+        if (!event->defaultHandled())
+            HTMLDivElement::defaultEventHandler(event);
+        return;
+    }
+
     // On mouse down, select the text and set focus.
     if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         if (renderer() && renderer()->visibleToHitTesting()) {
@@ -471,6 +477,9 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
     // remove the input element from DOM. To make sure it remains valid until we finish our work
     // here, we take a temporary reference.
     RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowAncestorNode()));
+    if (input->disabled() || input->isReadOnlyFormControl())
+        return;
+
     RefPtr<InputFieldSpeechButtonElement> holdRefButton(this);
     input->setValue(results.isEmpty() ? "" : results[0]->utterance());
     input->dispatchEvent(SpeechInputEvent::create(eventNames().webkitspeechchangeEvent, results));

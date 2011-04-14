@@ -1,3 +1,13 @@
+2011-04-14  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Disable speech input for readonly and disabled input fields.
+        https://bugs.webkit.org/show_bug.cgi?id=58540
+
+        * fast/speech/input-readonly-and-disabled-expected.txt: Added.
+        * fast/speech/input-readonly-and-disabled.html: Added.
+
 2011-04-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Rollout r83849 and r83857.
