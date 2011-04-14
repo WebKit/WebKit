@@ -1,3 +1,11 @@
+2011-04-14  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Rubber-stamped by Martin Robinson.
+
+        Bump version to 1.4.0.
+
+        * configure.ac:
+
 2011-03-21  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
