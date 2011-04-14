@@ -228,7 +228,7 @@ void InspectorDatabaseAgent::didOpenDatabase(PassRefPtr<Database> database, cons
     RefPtr<InspectorDatabaseResource> resource = InspectorDatabaseResource::create(database, domain, name, version);
     m_resources.set(resource->id(), resource);
     // Resources are only bound while visible.
-    if (m_frontendProvider)
+    if (m_frontendProvider && m_enabled)
         resource->bind(m_frontendProvider->frontend());
 }
 
@@ -239,6 +239,7 @@ void InspectorDatabaseAgent::clearResources()
 
 InspectorDatabaseAgent::InspectorDatabaseAgent(InstrumentingAgents* instrumentingAgents)
     : m_instrumentingAgents(instrumentingAgents)
+    , m_enabled(false)
 {
     m_instrumentingAgents->setInspectorDatabaseAgent(this);
 }
@@ -251,9 +252,6 @@ InspectorDatabaseAgent::~InspectorDatabaseAgent()
 void InspectorDatabaseAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontendProvider = FrontendProvider::create(frontend);
-    DatabaseResourcesMap::iterator databasesEnd = m_resources.end();
-    for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != databasesEnd; ++it)
-        it->second->bind(m_frontendProvider->frontend());
 }
 
 void InspectorDatabaseAgent::clearFrontend()
@@ -262,8 +260,31 @@ void InspectorDatabaseAgent::clearFrontend()
     m_frontendProvider.clear();
 }
 
-void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString*, int databaseId, RefPtr<InspectorArray>* names)
+void InspectorDatabaseAgent::enable(ErrorString*)
 {
+    if (m_enabled)
+        return;
+    m_enabled = true;
+
+    DatabaseResourcesMap::iterator databasesEnd = m_resources.end();
+    for (DatabaseResourcesMap::iterator it = m_resources.begin(); it != databasesEnd; ++it)
+        it->second->bind(m_frontendProvider->frontend());
+}
+
+void InspectorDatabaseAgent::disable(ErrorString*)
+{
+    if (!m_enabled)
+        return;
+    m_enabled = false;
+}
+
+void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString* error, int databaseId, RefPtr<InspectorArray>* names)
+{
+    if (!m_enabled) {
+        *error = "Database agent is not enabled";
+        return;
+    }
+
     Database* database = databaseForId(databaseId);
     if (database) {
         Vector<String> tableNames = database->tableNames();
@@ -273,8 +294,13 @@ void InspectorDatabaseAgent::getDatabaseTableNames(ErrorString*, int databaseId,
     }
 }
 
-void InspectorDatabaseAgent::executeSQL(ErrorString*, int databaseId, const String& query, bool* success, int* transactionId)
+void InspectorDatabaseAgent::executeSQL(ErrorString* error, int databaseId, const String& query, bool* success, int* transactionId)
 {
+    if (!m_enabled) {
+        *error = "Database agent is not enabled";
+        return;
+    }
+
     Database* database = databaseForId(databaseId);
     if (!database) {
         *success = false;
