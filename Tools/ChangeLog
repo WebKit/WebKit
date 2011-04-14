@@ -1,3 +1,29 @@
+2011-04-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Martin Robinson.
+
+        [WinCairo] Implement ImageDiff Logic.
+        http://bugs.webkit.org/show_bug.cgi?id=58486
+
+        * DumpRenderTree/win/ImageDiffCairo.cpp: Added.
+        (strtof):
+        (readFromData):
+        (createImageFromStdin):
+        (releaseMallocBuffer):
+        (createDifferenceImage):
+        (imageHasAlpha):
+        (writeToData):
+        (main):
+        * DumpRenderTree/win/ImageDiff.vcproj: Updated for new
+          ImageDiffCairo.cpp (excluding from Apple builds).
+        * DumpRenderTree/win/ImageDiffDebugCairoCFLite.vsprops: Use
+          new ImageDiffWinCairoCommon.vsprops file.
+        * DumpRenderTree/win/ImageDiffReleaseCairoCFLite.vsprops: Use
+          new ImageDiffWinCairoCommon.vsprops file.
+        * DumpRenderTree/win/ImageDiffWinCairoCommon.vsprops: Added.
+        * Scripts/old-run-webkit-tests: Make sure proper executable
+          is built and executed for WinCairo port.
+
 2011-04-14  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -7,6 +7,6 @@
       $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\common.vsprops;
       $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug.vsprops;
       $(WebKitVSPropsRedirectionDir)..\..\..\WebKitLibraries\win\tools\vsprops\debug_wincairo.vsprops;
-      .\ImageDiffCommon.vsprops"
+      .\ImageDiffWinCairoCommon.vsprops"
 	>
 </VisualStudioPropertySheet>
