@@ -1,3 +1,15 @@
+2011-04-14  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Make WebURLLoaderOptions disallow cross origin requests by default.
+        https://bugs.webkit.org/show_bug.cgi?id=58475
+
+        No new tests. Exposes no new functionality.
+
+        * public/WebURLLoaderOptions.h:
+        (WebKit::WebURLLoaderOptions::WebURLLoaderOptions):
+
 2011-04-13  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Simon Fraser.
