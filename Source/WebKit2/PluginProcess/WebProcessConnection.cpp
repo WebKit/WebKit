@@ -173,7 +173,9 @@ void WebProcessConnection::createPlugin(uint64_t pluginInstanceID, const Plugin:
     if (!result)
         return;
 
+#if PLATFORM(MAC)
     remoteLayerClientID = pluginControllerProxyPtr->remoteLayerClientID();
+#endif
 }
 
 } // namespace WebKit

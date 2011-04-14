@@ -23,8 +23,9 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 messages -> PluginProcessProxy {
-    # FIXME: This is platform specific
+#if PLATFORM(MAC)
     DidCreateWebProcessConnection(CoreIPC::MachPort connectionIdentifier)
+#endif
 
     DidGetSitesWithData(Vector<WTF::String> sites, uint64_t callbackID)
     DidClearSiteData(uint64_t callbackID)

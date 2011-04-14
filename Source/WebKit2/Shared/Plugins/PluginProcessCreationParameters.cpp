@@ -46,7 +46,7 @@ void PluginProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) 
 #endif
 }
 
-bool PluginProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, PluginProcessCreationParameters::PluginProcessCreationParameters& result)
+bool PluginProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, PluginProcessCreationParameters& result)
 {
     if (!decoder->decode(result.pluginPath))
         return false;

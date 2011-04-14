@@ -86,10 +86,10 @@ messages -> PluginControllerProxy {
     # Get a reference to the plug-in's scriptable NPObject.
     GetPluginScriptableNPObject() -> (uint64_t pluginScriptableNPObjectID)
 
+#if PLATFORM(MAC)
     # Send the complex text input to the plug-in.
     SendComplexTextInput(WTF::String textInput)
 
-#if PLATFORM(MAC)
     # Sent when the containing NSWindow's focus changes
     WindowFocusChanged(bool hasFocus)
 

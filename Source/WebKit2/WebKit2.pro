@@ -107,6 +107,9 @@ HEADERS += \
     Platform/SharedMemory.h \
     Platform/WorkItem.h \
     Platform/WorkQueue.h \
+    PluginProcess/PluginControllerProxy.h \
+    PluginProcess/PluginProcess.h \
+    PluginProcess/WebProcessConnection.h \
     Shared/ShareableBitmap.h \
     Shared/CacheModel.h \
     Shared/ChildProcess.h \
@@ -308,6 +311,11 @@ SOURCES += \
     Platform/qt/RunLoopQt.cpp \
     Platform/qt/WorkQueueQt.cpp \
     Platform/unix/SharedMemoryUnix.cpp \
+    PluginProcess/PluginControllerProxy.cpp \
+    PluginProcess/PluginProcess.cpp \
+    PluginProcess/WebProcessConnection.cpp \
+    PluginProcess/qt/PluginControllerProxyQt.cpp \
+    PluginProcess/qt/PluginProcessQt.cpp \
     Shared/Plugins/Netscape/NetscapePluginModule.cpp \
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \

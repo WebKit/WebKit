@@ -86,7 +86,9 @@ private:
 
     // Message handlers
     void didReceivePluginProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+#if PLATFORM(MAC)
     void didCreateWebProcessConnection(const CoreIPC::MachPort&);
+#endif
     void didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID);
     void didClearSiteData(uint64_t callbackID);
 

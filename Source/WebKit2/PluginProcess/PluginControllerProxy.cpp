@@ -293,6 +293,7 @@ void PluginControllerProxy::pluginProcessCrashed()
     ASSERT_NOT_REACHED();
 }
 
+#if PLATFORM(MAC)
 void PluginControllerProxy::setComplexTextInputEnabled(bool complexTextInputEnabled)
 {
     if (m_isComplexTextInputEnabled == complexTextInputEnabled)
@@ -307,6 +308,7 @@ mach_port_t PluginControllerProxy::compositingRenderServerPort()
 {
     return PluginProcess::shared().compositingRenderServerPort();
 }
+#endif
 
 String PluginControllerProxy::proxiesForURL(const String& urlString)
 {

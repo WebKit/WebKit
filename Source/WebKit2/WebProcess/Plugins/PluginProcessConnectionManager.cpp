@@ -30,12 +30,15 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
-#include "MachPort.h"
 #include "PluginProcessConnection.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessageKinds.h"
 #include <wtf/StdLibExtras.h>
+
+#if PLATFORM(MAC)
+#include "MachPort.h"
+#endif
 
 namespace WebKit {
 
@@ -61,11 +64,17 @@ PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnect
     }
 
     CoreIPC::Connection::Identifier connectionIdentifier;
+#if PLATFORM(MAC)
     CoreIPC::MachPort connectionMachPort;
     if (!WebProcess::shared().connection()->deprecatedSendSync(WebProcessProxyLegacyMessage::GetPluginProcessConnection, 0, CoreIPC::In(pluginPath), CoreIPC::Out(connectionMachPort)))
         return 0;
 
     connectionIdentifier = connectionMachPort.port();
+#else
+    // FIXME: Implement.
+    connectionIdentifier = 0;
+    ASSERT_NOT_REACHED();
+#endif
     if (!connectionIdentifier)
         return 0;
 

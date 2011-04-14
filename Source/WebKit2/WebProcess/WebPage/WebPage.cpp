@@ -117,8 +117,9 @@
 #endif
 
 #if ENABLE(PLUGIN_PROCESS)
-// FIXME: This is currently Mac-specific!
+#if PLATFORM(MAC)
 #include "MachPort.h"
+#endif
 #endif
 
 #if PLATFORM(QT)

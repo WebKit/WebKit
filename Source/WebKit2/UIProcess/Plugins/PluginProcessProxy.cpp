@@ -28,7 +28,6 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-#include "MachPort.h"
 #include "PluginProcessCreationParameters.h"
 #include "PluginProcessManager.h"
 #include "PluginProcessMessages.h"
@@ -36,6 +35,10 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebPluginSiteDataManager.h"
 #include "WebProcessProxy.h"
+
+#if PLATFORM(MAC)
+#include "MachPort.h"
+#endif
 
 namespace WebKit {
 
@@ -125,8 +128,12 @@ void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()
         CoreIPC::ArgumentEncoder* reply = m_pendingConnectionReplies.first().second;
         m_pendingConnectionReplies.removeFirst();
 
-        // FIXME: This is Mac specific.
+#if PLATFORM(MAC)
         reply->encode(CoreIPC::MachPort(0, MACH_MSG_TYPE_MOVE_SEND));
+#else
+        // FIXME: Implement.
+        ASSERT_NOT_REACHED();
+#endif
         replyWebProcessProxy->connection()->sendSyncReply(reply);
     }
 
@@ -201,6 +208,7 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connectio
     m_numPendingConnectionRequests = 0;
 }
 
+#if PLATFORM(MAC)
 void PluginProcessProxy::didCreateWebProcessConnection(const CoreIPC::MachPort& machPort)
 {
     ASSERT(!m_pendingConnectionReplies.isEmpty());
@@ -210,10 +218,10 @@ void PluginProcessProxy::didCreateWebProcessConnection(const CoreIPC::MachPort& 
     CoreIPC::ArgumentEncoder* reply = m_pendingConnectionReplies.first().second;
     m_pendingConnectionReplies.removeFirst();
 
-    // FIXME: This is Mac specific.
     reply->encode(CoreIPC::MachPort(machPort.port(), MACH_MSG_TYPE_MOVE_SEND));
     replyWebProcessProxy->connection()->sendSyncReply(reply);
 }
+#endif
 
 void PluginProcessProxy::didGetSitesWithData(const Vector<String>& sites, uint64_t callbackID)
 {

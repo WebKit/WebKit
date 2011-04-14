@@ -29,11 +29,14 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include "ArgumentCoders.h"
-#include "MachPort.h"
 #include "NetscapePluginModule.h"
 #include "PluginProcessProxyMessages.h"
 #include "PluginProcessCreationParameters.h"
 #include "WebProcessConnection.h"
+
+#if PLATFORM(MAC)
+#include "MachPort.h"
+#endif
 
 namespace WebKit {
 
@@ -139,13 +142,12 @@ void PluginProcess::initializePluginProcess(const PluginProcessCreationParameter
 
 void PluginProcess::createWebProcessConnection()
 {
-    // FIXME: This is platform specific!
+    bool didHaveAnyWebProcessConnections = !m_webProcessConnections.isEmpty();
 
+#if PLATFORM(MAC)
     // Create the listening port.
     mach_port_t listeningPort;
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
-
-    bool didHaveAnyWebProcessConnections = !m_webProcessConnections.isEmpty();
 
     // Create a listening connection.
     RefPtr<WebProcessConnection> connection = WebProcessConnection::create(listeningPort);
@@ -153,6 +155,10 @@ void PluginProcess::createWebProcessConnection()
 
     CoreIPC::MachPort clientPort(listeningPort, MACH_MSG_TYPE_MAKE_SEND);
     m_connection->send(Messages::PluginProcessProxy::DidCreateWebProcessConnection(clientPort), 0);
+#else
+    // FIXME: Implement.
+    ASSERT_NOT_REACHED();
+#endif
 
     if (NetscapePluginModule* module = netscapePluginModule()) {
         if (!didHaveAnyWebProcessConnections) {
