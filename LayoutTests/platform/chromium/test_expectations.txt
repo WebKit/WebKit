@@ -2833,6 +2833,7 @@ BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 WONTFIX GPU MAC LEOPARD : compositing = IMAGE PASS
 WONTFIX GPU MAC LEOPARD : platform/chromium/compositing = IMAGE PASS
 WONTFIX GPU MAC LEOPARD : media = IMAGE PASS
+BUGJAMESR GPU MAC LEOPARD : compositing/overflow/content-gains-scrollbars.html = CRASH
 
 // Will need windows and linux baselines
 BUGWK58182 GPU : compositing/images/content-image-change.html = PASS FAIL
@@ -3130,7 +3131,7 @@ BUGCR75561 MAC : fast/blockflow/text-orientation-basic.html = IMAGE IMAGE+TEXT
 // introduced by brarraclough in WK r80621
 BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT
 
-BUGWK56060 LINUX X86_64 : http/tests/loading/preload-slow-loading.php = TEXT
+BUGWK56060 LINUX X86_64 : http/tests/loading/preload-slow-loading.php = TEXT PASS
 BUGWK56060 LINUX X86_64 : svg/custom/pattern-excessive-malloc.svg = IMAGE
 BUGWK56060 LINUX X86_64 : fast/images/favicon-as-image.html = IMAGE+TEXT
 
