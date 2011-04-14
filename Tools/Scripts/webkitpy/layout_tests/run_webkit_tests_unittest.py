@@ -325,6 +325,10 @@ class MainTest(unittest.TestCase):
         for batch in batch_tests_run:
             self.assertEquals(len(batch), 1, '%s had too many tests' % ', '.join(batch))
 
+    def test_run_singly_actually_runs_tests(self):
+        res, _, _, _ = logging_run(['--run-singly', 'failures/unexpected'])
+        self.assertEquals(res, 5)
+
     def test_single_file(self):
         tests_run = get_tests_run(['passes/text.html'], tests_included=True, flatten_batches=True)
         self.assertEquals(['passes/text.html'], tests_run)

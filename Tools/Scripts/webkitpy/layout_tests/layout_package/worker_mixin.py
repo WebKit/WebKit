@@ -159,18 +159,18 @@ class WorkerMixin(object):
           A TestResult
         """
         worker = self
-        result = None
 
         driver = worker._port.create_driver(worker._worker_number)
         driver.start()
 
         class SingleTestThread(threading.Thread):
             def run(self):
-                result = worker._run_single_test(driver, test_input)
+                self.result = worker._run_single_test(driver, test_input)
 
         thread = SingleTestThread()
         thread.start()
         thread.join(thread_timeout_sec)
+        result = getattr(thread, 'result', None)
         if thread.isAlive():
             # If join() returned with the thread still running, the
             # DumpRenderTree is completely hung and there's nothing
