@@ -373,7 +373,7 @@ InspectorTest.takeAndOpenSnapshot = function(generator, callback)
         snapshot.snapshot.typeId = profile.typeId;
         snapshot.snapshot.title = profile.title;
         snapshot.snapshot.uid = profile.uid;
-        WebInspector.panels.profiles._addHeapSnapshotChunk(uid, JSON.stringify(generator()));
+        WebInspector.panels.profiles._addHeapSnapshotChunk(uid, JSON.stringify(snapshot));
         WebInspector.panels.profiles._finishHeapSnapshot(uid);
     }
     InspectorTest.override(ProfilerAgent, "getProfile", pushGeneratedSnapshot);

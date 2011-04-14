@@ -198,28 +198,7 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
         this.removeChildren();
         if (this.baseSnapshot === this.snapshot)
             return;
-
-        function baseSnapshotNodeIdsReceived(nodeIds)
-        {
-            this.snapshot.pushSnapshotNodeIds(this.baseSnapshot.uid, nodeIds);
-            this.populateChildren();
-        }
-        function pushBaseSnapshotNodeIds()
-        {
-            if (!this.snapshot.hasSnapshotNodeIds(this.baseSnapshot.uid))
-                this.baseSnapshot.nodeIds(baseSnapshotNodeIdsReceived.bind(this));
-            else
-                this.populateChildren();        
-        }
-        function snapshotNodeIdsReceived(nodeIds)
-        {
-            this.baseSnapshot.pushSnapshotNodeIds(this.snapshot.uid, nodeIds);
-            pushBaseSnapshotNodeIds.call(this);
-        }
-        if (!this.baseSnapshot.hasSnapshotNodeIds(this.snapshot.uid))
-            this.snapshot.nodeIds(snapshotNodeIdsReceived.bind(this));
-        else
-            pushBaseSnapshotNodeIds.call(this);
+        this.populateChildren();        
     },
 
     populateChildren: function()
@@ -228,19 +207,26 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
         {
             function aggregatesReceived(classes)
             {
+                var nodeCount = 0;
+                function addNodeIfNonZeroDiff(node, zeroDiff)
+                {
+                    if (!zeroDiff)
+                        this.appendChild(node);
+                    if (!--nodeCount)
+                        this.sortingChanged();
+                }
                 for (var clss in baseClasses) {
                     var node = new WebInspector.HeapSnapshotDiffNode(this, clss, baseClasses[clss], classes[clss]);
-                    if (!node.zeroDiff)
-                        this.appendChild(node);
+                    ++nodeCount;
+                    node.calculateDiff(this, addNodeIfNonZeroDiff.bind(this, node));
                 }
                 for (clss in classes) {
                     if (!(clss in baseClasses)) {
                         var node = new WebInspector.HeapSnapshotDiffNode(this, clss, null, classes[clss]);
-                        if (!node.zeroDiff)
-                            this.appendChild(node);
+                        ++nodeCount;
+                        node.calculateDiff(this, addNodeIfNonZeroDiff.bind(this, node));
                     }
                 }
-                this.sortingChanged();
             }
             this.snapshot.aggregates(true, aggregatesReceived.bind(this));
         }

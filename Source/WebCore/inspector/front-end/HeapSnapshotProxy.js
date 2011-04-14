@@ -31,7 +31,6 @@
 WebInspector.HeapSnapshotProxy = function()
 {   
     this._snapshot = null;
-    this._nodeIds = [];
 }
 
 WebInspector.HeapSnapshotProxy.prototype = {
@@ -63,12 +62,17 @@ WebInspector.HeapSnapshotProxy.prototype = {
         return {id: node.id, name: node.name, nodeIndex: node.nodeIndex, retainedSize: node.retainedSize, selfSize: node.selfSize, type: node.type};
     },
 
+    createDiff: function(className)
+    {
+        return new WebInspector.HeapSnapshotsDiffProxy(new WebInspector.HeapSnapshotsDiff(this._snapshot, className));
+    },
+
     createEdgesProvider: function(nodeIndex, filter)
     {
         function createProvider()
         {
             if (filter)
-                filter = filter.bind(this);
+                filter = filter.bind(this._snapshot);
             return new WebInspector.HeapSnapshotEdgesProvider(this._snapshot, nodeIndex, filter);
         }
         return new WebInspector.HeapSnapshotProviderProxy(createProvider.bind(this), this._extractEdgeData.bind(this));
@@ -79,7 +83,7 @@ WebInspector.HeapSnapshotProxy.prototype = {
         function createProvider()
         {
             if (filter)
-                filter = filter.bind(this);
+                filter = filter.bind(this._snapshot);
             return new WebInspector.HeapSnapshotNodesProvider(this._snapshot, filter);
         }
         return new WebInspector.HeapSnapshotProviderProxy(createProvider.bind(this), this._extractNodeData.bind(this));
@@ -93,12 +97,6 @@ WebInspector.HeapSnapshotProxy.prototype = {
     dispose: function()
     {
         this._snapshot.dispose();
-        delete this._nodeIds;
-    },
-
-    hasSnapshotNodeIds: function(snapshotId)
-    {
-        return snapshotId in this._nodeIds;
     },
 
     finishLoading: function(callback)
@@ -133,6 +131,15 @@ WebInspector.HeapSnapshotProxy.prototype = {
         return this._nodeCount;
     },
 
+    nodeFieldValuesByIndex: function(fieldName, indexes, callback)
+    {
+        function returnResult()
+        {
+            callback(this._snapshot.nodeFieldValuesByIndex(fieldName, indexes));
+        }
+        setTimeout(returnResult.bind(this), 0);
+    },
+
     nodeIds: function(callback)
     {
         this._invokeGetter("nodeIds", callback);
@@ -145,23 +152,14 @@ WebInspector.HeapSnapshotProxy.prototype = {
         this._json += chunk;
     },
 
-    pushSnapshotNodeIds: function(snapshotId, nodeIds)
+    pushBaseIds: function(snapshotId, className, nodeIds)
     {
-        this._nodeIds[snapshotId] = nodeIds;
+        this._snapshot.updateBaseNodeIds(snapshotId, className, nodeIds);
     },
 
     get rootNodeIndex()
     {
         return this._rootNodeIndex;
-    },
-
-    snapshotHasNodeWithId: function(snapshotId, nodeId)
-    {
-        var nodeIds = this._nodeIds[snapshotId];
-        if (nodeIds)
-            return nodeIds.binaryIndexOf(nodeId, this._snapshot._numbersComparator) >= 0;
-        else
-            return false;
     },
 
     startLoading: function(callback)
@@ -259,5 +257,31 @@ WebInspector.HeapSnapshotPathFinderProxy.prototype = {
             this._pathFinder.updateRoots(filter);
         }
         setTimeout(asyncInvoke.bind(this), 0);
+    }
+};
+
+WebInspector.HeapSnapshotsDiffProxy = function(diff)
+{
+    this._diff = diff;
+}
+
+WebInspector.HeapSnapshotsDiffProxy.prototype = {
+    calculate: function(callback)
+    {
+        function returnResult()
+        {
+            callback(this._diff.calculate());
+        }
+        setTimeout(returnResult.bind(this), 0);
+    },
+
+    pushBaseIds: function(baseSnapshotId, baseIds)
+    {
+        this._diff.baseIds = baseIds;
+    },
+
+    pushBaseSelfSizes: function(baseSelfSizes)
+    {
+        this._diff.baseSelfSizes = baseSelfSizes;
     }
 };

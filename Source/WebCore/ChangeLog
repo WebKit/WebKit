@@ -1,3 +1,49 @@
+2011-04-14  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Ready to move detailed heap snapshots storage and processing into workers.
+        https://bugs.webkit.org/show_bug.cgi?id=58534
+
+        * inspector/front-end/DetailedHeapshotGridNodes.js:
+        (WebInspector.HeapSnapshotGenericObjectNode.prototype.get _countPercent):
+        (WebInspector.HeapSnapshotDiffNode):
+        (WebInspector.HeapSnapshotDiffNode.prototype.calculateDiff.diffCalculated):
+        (WebInspector.HeapSnapshotDiffNode.prototype.calculateDiff):
+        (WebInspector.HeapSnapshotDiffNode.prototype.calculateDiff.baseIdsReceived):
+        (WebInspector.HeapSnapshotDiffNode.prototype.calculateDiff.idsReceived):
+        (WebInspector.HeapSnapshotDiffNode.prototype._createNodesProvider.createProvider):
+        (WebInspector.HeapSnapshotDiffNode.prototype._createNodesProvider):
+        (WebInspector.HeapSnapshotDiffNode.prototype.get data):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.setBaseDataSource):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.populateChildren.baseAggregatesReceived.aggregatesReceived.addNodeIfNonZeroDiff):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.populateChildren.baseAggregatesReceived.aggregatesReceived):
+        (WebInspector.HeapSnapshotDiffDataGrid.prototype.populateChildren):
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshot):
+        (WebInspector.HeapSnapshot.prototype.dispose):
+        (WebInspector.HeapSnapshot.prototype.nodeFieldValuesByIndex):
+        (WebInspector.HeapSnapshot.prototype._numbersComparator):
+        (WebInspector.HeapSnapshot.prototype.baseSnapshotHasNode):
+        (WebInspector.HeapSnapshot.prototype.updateBaseNodeIds):
+        (WebInspector.HeapSnapshotsDiff):
+        (WebInspector.HeapSnapshotsDiff.prototype.set baseIds):
+        (WebInspector.HeapSnapshotsDiff.prototype.set baseSelfSizes):
+        (WebInspector.HeapSnapshotsDiff.prototype.calculate):
+        * inspector/front-end/HeapSnapshotProxy.js:
+        (WebInspector.HeapSnapshotProxy):
+        (WebInspector.HeapSnapshotProxy.prototype.createDiff):
+        (WebInspector.HeapSnapshotProxy.prototype.createEdgesProvider):
+        (WebInspector.HeapSnapshotProxy.prototype.createNodesProvider):
+        (WebInspector.HeapSnapshotProxy.prototype.dispose):
+        (WebInspector.HeapSnapshotProxy.prototype.nodeFieldValuesByIndex):
+        (WebInspector.HeapSnapshotProxy.prototype.pushBaseIds):
+        (WebInspector.HeapSnapshotsDiffProxy):
+        (WebInspector.HeapSnapshotsDiffProxy.prototype.calculate):
+        (WebInspector.HeapSnapshotsDiffProxy.prototype.pushBaseIds):
+        (WebInspector.HeapSnapshotsDiffProxy.prototype.pushBaseSelfSizes):
+
 2011-04-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

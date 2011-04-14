@@ -194,7 +194,7 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
 
     get _countPercent()
     {
-        return this._count / this.tree.snapshot.nodeCount * 100.0;
+        return this._count / this.dataGrid.snapshot.nodeCount * 100.0;
     },
 
     get data()
@@ -514,55 +514,42 @@ WebInspector.HeapSnapshotIteratorsTuple.prototype = {
 
 WebInspector.HeapSnapshotDiffNode = function(tree, className, baseAggregate, aggregate)
 {
-    if (!baseAggregate)
-        baseAggregate = { count: 0, self: 0, maxRet: 0, type:aggregate.type, name:aggregate.name, idxs: [] };
-    if (!aggregate)
-        aggregate = { count: 0, self: 0, maxRet: 0, type:baseAggregate.type, name:baseAggregate.name, idxs: [] };
     WebInspector.HeapSnapshotGridNode.call(this, tree, true);
     this._name = className;
-    this._calculateDiff(tree.baseSnapshot, tree.snapshot, baseAggregate.idxs, aggregate.idxs);
-    this._provider = this._createNodesProvider(tree.baseSnapshot, tree.snapshot, aggregate.type, className);
+    this._baseIndexes = baseAggregate ? baseAggregate.idxs : [];
+    this._indexes = aggregate ? aggregate.idxs : [];
+    this._provider = this._createNodesProvider(tree.baseSnapshot, tree.snapshot, aggregate ? aggregate.type : baseAggregate.type, className);
 }
 
 WebInspector.HeapSnapshotDiffNode.prototype = {
-    _calculateDiff: function(baseSnapshot, snapshot, baseIndexes, currentIndexes)
+    calculateDiff: function(dataGrid, callback)
     {
-        var i = 0, l = baseIndexes.length;
-        var j = 0, m = currentIndexes.length;
-        this._addedCount = 0;
-        this._removedCount = 0;
-        this._addedSize = 0;
-        this._removedSize = 0;
-        var nodeA = new WebInspector.HeapSnapshotNode(baseSnapshot._snapshot);
-        var nodeB = new WebInspector.HeapSnapshotNode(snapshot._snapshot);
-        nodeA.nodeIndex = baseIndexes[i];
-        nodeB.nodeIndex = currentIndexes[j];
-        while (i < l && j < m) {
-            if (nodeA.id < nodeB.id) {
-                this._removedCount++;
-                this._removedSize += nodeA.selfSize;
-                nodeA.nodeIndex = baseIndexes[++i];
-            } else if (nodeA.id > nodeB.id) {
-                this._addedCount++;
-                this._addedSize += nodeB.selfSize;
-                nodeB.nodeIndex = currentIndexes[++j];                
-            } else {
-                nodeA.nodeIndex = baseIndexes[++i];
-                nodeB.nodeIndex = currentIndexes[++j];                
-            }
+        var diff = dataGrid.snapshot.createDiff(this._name);
+        
+        function diffCalculated(diffResult)
+        {
+            this._diff = diffResult;
+            this._baseIndexes = null;
+            this._indexes = null;
+            callback(this._diff.addedSize === 0 && this._diff.removedSize === 0);
         }
-        while (i < l) {
-            this._removedCount++;
-            this._removedSize += nodeA.selfSize;
-            nodeA.nodeIndex = baseIndexes[++i];
+        function baseSelfSizesReceived(baseSelfSizes)
+        {
+            diff.pushBaseSelfSizes(baseSelfSizes);
+            diff.calculate(diffCalculated.bind(this));
         }
-        while (j < m) {
-            this._addedCount++;
-            this._addedSize += nodeB.selfSize;
-            nodeB.nodeIndex = currentIndexes[++j];
+        function baseIdsReceived(baseIds)
+        {
+            diff.pushBaseIds(dataGrid.baseSnapshot.uid, baseIds);
+            dataGrid.snapshot.pushBaseIds(dataGrid.baseSnapshot.uid, this._name, baseIds);
+            dataGrid.baseSnapshot.nodeFieldValuesByIndex("selfSize", this._baseIndexes, baseSelfSizesReceived.bind(this));
         }
-        this._countDelta = this._addedCount - this._removedCount;
-        this._sizeDelta = this._addedSize - this._removedSize;
+        function idsReceived(ids)
+        {
+            dataGrid.baseSnapshot.pushBaseIds(dataGrid.snapshot.uid, this._name, ids);
+        }
+        dataGrid.baseSnapshot.nodeFieldValuesByIndex("id", this._baseIndexes, baseIdsReceived.bind(this));
+        dataGrid.snapshot.nodeFieldValuesByIndex("id", this._indexes, idsReceived.bind(this));
     },
 
     _createChildNode: function(item, provider)
@@ -575,6 +562,7 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
 
     _createNodesProvider: function(baseSnapshot, snapshot, nodeType, nodeClassName)
     {
+        var className = this._name;
         return new WebInspector.HeapSnapshotIteratorsTuple(
             createProvider(snapshot, baseSnapshot), createProvider(baseSnapshot, snapshot));
 
@@ -585,7 +573,7 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
                 function (node) {
                      return node.type === nodeType
                          && (nodeClassName === null || node.className === nodeClassName)
-                         && !this.snapshotHasNodeWithId(otherSnapshotId, node.id);
+                         && !this.baseSnapshotHasNode(otherSnapshotId, className, node.id);
                 });
             provider.snapshot = snapshot;
             return provider;
@@ -650,19 +638,16 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
     {
         var data = {object: this._name};
 
-        data["addedCount"] = this._addedCount;
-        data["removedCount"] = this._removedCount;
-        data["countDelta"] = WebInspector.UIString("%s%d", this._signForDelta(this._countDelta), Math.abs(this._countDelta));
-        data["addedSize"] = Number.bytesToString(this._addedSize);
-        data["removedSize"] = Number.bytesToString(this._removedSize);
-        data["sizeDelta"] = WebInspector.UIString("%s%s", this._signForDelta(this._sizeDelta), Number.bytesToString(Math.abs(this._sizeDelta)));
+        data["addedCount"] = this._diff.addedCount;
+        data["removedCount"] = this._diff.removedCount;
+        var countDelta = this._diff.countDelta;
+        data["countDelta"] = WebInspector.UIString("%s%d", this._signForDelta(countDelta), Math.abs(countDelta));
+        data["addedSize"] = Number.bytesToString(this._diff.addedSize);
+        data["removedSize"] = Number.bytesToString(this._diff.removedSize);
+        var sizeDelta = this._diff.sizeDelta;
+        data["sizeDelta"] = WebInspector.UIString("%s%s", this._signForDelta(sizeDelta), Number.bytesToString(Math.abs(sizeDelta)));
 
         return data;
-    },
-
-    get zeroDiff()
-    {
-        return this._addedCount === 0 && this._removedCount === 0;
     }
 };
 
