@@ -1,3 +1,16 @@
+2011-04-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Crash in NetscapePluginModule::tryGetSitesWithData when NPP_GetSitesWithData returns null
+        https://bugs.webkit.org/show_bug.cgi?id=58578
+        <rdar://problem/9275201>
+
+        It's OK for NPP_GetSitesWithData to return null.
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::tryGetSitesWithData):
+
 2011-04-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
