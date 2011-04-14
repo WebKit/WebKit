@@ -1,3 +1,59 @@
+2011-04-14  James Robinson  <jamesr@chromium.org>
+
+        Update expectations and baselines for r83820.
+
+        * compositing/iframes/overlapped-nested-iframes-expected.txt:
+        * platform/chromium-gpu-linux/compositing/geometry/fixed-position-expected.checksum: Removed.
+        * platform/chromium-gpu-linux/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/horizontal-scroll-composited-expected.checksum: Removed.
+        * platform/chromium-gpu-linux/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/vertical-scroll-composited-expected.checksum: Removed.
+        * platform/chromium-gpu-linux/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/iframes/become-overlapped-iframe-expected.txt: Copied from LayoutTests/platform/chromium-gpu-win/compositing/iframes/iframe-size-from-zero-expected.txt.
+        * platform/chromium-gpu-linux/compositing/overflow/fixed-position-ancestor-clip-expected.checksum: Removed.
+        * platform/chromium-gpu-linux/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-linux/compositing/overflow/scrollbar-painting-expected.checksum: Removed.
+        * platform/chromium-gpu-linux/compositing/overflow/scrollbar-painting-expected.png:
+        * platform/chromium-gpu-linux/platform/chromium/compositing/layout-width-change-expected.checksum: Removed.
+        * platform/chromium-gpu-linux/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/fixed-position-expected.checksum: Removed.
+        * platform/chromium-gpu-mac/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/horizontal-scroll-composited-expected.checksum: Removed.
+        * platform/chromium-gpu-mac/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/vertical-scroll-composited-expected.checksum: Removed.
+        * platform/chromium-gpu-mac/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-mac/compositing/iframes/become-overlapped-iframe-expected.txt: Copied from LayoutTests/platform/chromium-gpu-win/compositing/iframes/iframe-size-from-zero-expected.txt.
+        * platform/chromium-gpu-mac/compositing/iframes/composited-iframe-alignment-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/overflow/fixed-position-ancestor-clip-expected.checksum: Removed.
+        * platform/chromium-gpu-mac/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-mac/compositing/overflow/scrollbar-painting-expected.checksum: Removed.
+        * platform/chromium-gpu-mac/compositing/overflow/scrollbar-painting-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/layout-width-change-expected.checksum: Removed.
+        * platform/chromium-gpu-mac/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/fixed-position-expected.checksum: Removed.
+        * platform/chromium-gpu-win/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/horizontal-scroll-composited-expected.checksum: Removed.
+        * platform/chromium-gpu-win/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/vertical-scroll-composited-expected.checksum: Removed.
+        * platform/chromium-gpu-win/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/iframes/scrolling-iframe-expected.txt: Removed.
+        * platform/chromium-gpu-win/compositing/overflow/fixed-position-ancestor-clip-expected.checksum: Removed.
+        * platform/chromium-gpu-win/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-win/platform/chromium/compositing/layout-width-change-expected.checksum: Removed.
+        * platform/chromium-gpu-win/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-gpu/compositing/iframes/composited-parent-iframe-expected.txt: Renamed from LayoutTests/platform/chromium-gpu-win/compositing/iframes/composited-parent-iframe-expected.txt.
+        * platform/chromium-gpu/compositing/iframes/connect-compositing-iframe-delayed-expected.txt: Renamed from LayoutTests/platform/chromium-gpu-win/compositing/iframes/connect-compositing-iframe-delayed-expected.txt.
+        * platform/chromium-gpu/compositing/iframes/connect-compositing-iframe-expected.txt: Renamed from LayoutTests/platform/chromium-gpu-win/compositing/iframes/connect-compositing-iframe-expected.txt.
+        * platform/chromium-gpu/compositing/iframes/connect-compositing-iframe2-expected.txt: Renamed from LayoutTests/platform/chromium-gpu-win/compositing/iframes/connect-compositing-iframe2-expected.txt.
+        * platform/chromium-gpu/compositing/iframes/connect-compositing-iframe3-expected.txt: Renamed from LayoutTests/platform/chromium-gpu-win/compositing/iframes/connect-compositing-iframe3-expected.txt.
+        * platform/chromium-gpu/compositing/iframes/enter-compositing-iframe-expected.txt: Renamed from LayoutTests/platform/chromium-gpu-win/compositing/iframes/enter-compositing-iframe-expected.txt.
+        * platform/chromium-gpu/compositing/iframes/iframe-resize-expected.txt: Renamed from LayoutTests/platform/chromium-gpu-win/compositing/iframes/iframe-resize-expected.txt.
+        * platform/chromium-gpu/compositing/iframes/iframe-size-from-zero-expected.txt: Renamed from LayoutTests/platform/chromium-gpu-win/compositing/iframes/iframe-size-from-zero-expected.txt.
+        * platform/chromium-gpu/compositing/iframes/overlapped-iframe-expected.txt: Renamed from LayoutTests/platform/chromium-gpu-win/compositing/iframes/overlapped-iframe-expected.txt.
+        * platform/chromium-gpu/compositing/layer-creation: Renamed from LayoutTests/platform/chromium-gpu-win/compositing/layer-creation/overflow-scroll-overlap-expected.txt.
+        * platform/chromium-gpu/compositing/overflow/resize-painting-expected.txt: Renamed from LayoutTests/platform/chromium-gpu-win/compositing/overflow/resize-painting-expected.txt.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-14  Renata Hodovan  <reni@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

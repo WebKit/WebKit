@@ -2848,9 +2848,6 @@ BUGWK55519 GPU MAC : compositing/video/video-background-color.html = IMAGE
 
 BUGWK47923 GPU : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 
-// The following test is flaky; it occasionally times out, but not always.
-BUGWK47924 GPU MAC : compositing/iframes/composited-iframe-alignment.html = TIMEOUT IMAGE
-
 // Chromium does not support PDF content in <img> tags.
 WONTFIX GPU WIN LINUX : compositing/color-matching/pdf-image-match.html = IMAGE+TEXT
 WONTFIX GPU MAC : compositing/color-matching/pdf-image-match.html = IMAGE
@@ -3100,22 +3097,13 @@ BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TE
 
 // Will need image rebaselines due to subpixel diffs in scrollbar rendering
 BUGJAMESR GPU : compositing/direct-image-compositing.html = IMAGE
-BUGJAMESR GPU WIN : compositing/geometry/clipping-foreground.html = IMAGE
 BUGJAMESR GPU WIN LINUX : compositing/geometry/fixed-in-composited.html = IMAGE
-BUGJAMESR GPU : compositing/geometry/fixed-position.html = IMAGE
-BUGJAMESR GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
 BUGJAMESR GPU WIN LINUX : compositing/geometry/tall-page-composited.html = IMAGE
-BUGJAMESR GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
 BUGJAMESR GPU WIN LINUX : compositing/geometry/video-fixed-scrolling.html = IMAGE
-BUGJAMESR GPU WIN : compositing/iframes/composited-iframe-alignment.html = IMAGE
 BUGJAMESR GPU  WIN LINUX: compositing/masks/masked-ancestor.html = IMAGE
 BUGJAMESR GPU  WIN LINUX: compositing/masks/simple-composited-mask.html = IMAGE
-BUGJAMESR GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
-BUGJAMESR GPU WIN LINUX : compositing/overflow/scrollbar-painting.html = IMAGE
 BUGJAMESR GPU : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGJAMESR GPU WIN LINUX : fast/canvas/image-object-in-canvas.html = IMAGE
-BUGJAMESR GPU WIN LINUX : media/video-zoom.html = IMAGE
-BUGJAMESR GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
+BUGJAMESR GPU WIN LINUX REBASELINE : fast/canvas/image-object-in-canvas.html = IMAGE
 
 
 // WebKit roll 80564:80631: rendering on Mac LEOPARD is shifted to the top right
@@ -3513,4 +3501,5 @@ BUGCR79241 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEX
 BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
 
 BUGWK58306 GPU MAC DEBUG : media/adopt-node-crash.html = CRASH
+
 
