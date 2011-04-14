@@ -56,7 +56,7 @@ Canvas2DLayerChromium::~Canvas2DLayerChromium()
     if (m_textureId)
         layerRendererContext()->deleteTexture(m_textureId);
     if (m_drawingBuffer && layerRenderer())
-        layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D());
+        layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D().get());
 }
 
 void Canvas2DLayerChromium::updateCompositorResources()
@@ -107,13 +107,13 @@ void Canvas2DLayerChromium::setDrawingBuffer(DrawingBuffer* drawingBuffer)
 {
     if (drawingBuffer != m_drawingBuffer) {
         if (m_drawingBuffer && layerRenderer())
-            layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D());
+            layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D().get());
 
         m_drawingBuffer = drawingBuffer;
         m_textureChanged = true;
 
         if (drawingBuffer && layerRenderer())
-            layerRenderer()->addChildContext(m_drawingBuffer->graphicsContext3D());
+            layerRenderer()->addChildContext(m_drawingBuffer->graphicsContext3D().get());
     }
 }
 
@@ -122,9 +122,9 @@ void Canvas2DLayerChromium::setLayerRenderer(LayerRendererChromium* newLayerRend
     if (layerRenderer() != newLayerRenderer) {
         if (m_drawingBuffer->graphicsContext3D()) {
             if (layerRenderer())
-                layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D());
+                layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D().get());
             if (newLayerRenderer)
-                newLayerRenderer->addChildContext(m_drawingBuffer->graphicsContext3D());
+                newLayerRenderer->addChildContext(m_drawingBuffer->graphicsContext3D().get());
         }
 
         LayerChromium::setLayerRenderer(newLayerRenderer);

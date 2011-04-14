@@ -97,7 +97,7 @@ void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
         if (m_context)
             layerRenderer()->removeChildContext(m_context);
         if (context)
-            layerRenderer()->addChildContext(m_context);
+            layerRenderer()->addChildContext(const_cast<GraphicsContext3D*>(context));
     }
 
     m_context = const_cast<GraphicsContext3D*>(context);

@@ -131,12 +131,12 @@ public:
 
     String layerTreeAsText() const;
 
-    void addChildContext(PassRefPtr<GraphicsContext3D>);
-    void removeChildContext(PassRefPtr<GraphicsContext3D>);
+    void addChildContext(GraphicsContext3D*);
+    void removeChildContext(GraphicsContext3D*);
 
 private:
     typedef Vector<RefPtr<CCLayerImpl> > LayerList;
-    typedef HashMap<RefPtr<GraphicsContext3D>, int> ChildContextMap;
+    typedef HashMap<GraphicsContext3D*, int> ChildContextMap;
 
     explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D>, PassOwnPtr<TilePaintInterface> contentPaint);
 

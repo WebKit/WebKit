@@ -1034,9 +1034,8 @@ String LayerRendererChromium::layerTreeAsText() const
     return ts.release();
 }
 
-void LayerRendererChromium::addChildContext(PassRefPtr<GraphicsContext3D> pctx)
+void LayerRendererChromium::addChildContext(GraphicsContext3D* ctx)
 {
-    RefPtr<GraphicsContext3D> ctx = pctx;
     if (!ctx->getExtensions()->supports("GL_CHROMIUM_latch"))
         return;
 
@@ -1060,9 +1059,8 @@ void LayerRendererChromium::addChildContext(PassRefPtr<GraphicsContext3D> pctx)
     }
 }
 
-void LayerRendererChromium::removeChildContext(PassRefPtr<GraphicsContext3D> pctx)
+void LayerRendererChromium::removeChildContext(GraphicsContext3D* ctx)
 {
-    RefPtr<GraphicsContext3D> ctx = pctx;
     if (!ctx->getExtensions()->supports("GL_CHROMIUM_latch"))
         return;
 
