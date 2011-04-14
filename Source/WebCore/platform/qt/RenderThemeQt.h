@@ -158,6 +158,7 @@ protected:
     virtual bool paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
     virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
     virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
+    virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const { return true; }
 private:
     void paintMediaBackground(QPainter* painter, const IntRect& r) const;
     double mediaControlsBaselineOpacity() const;

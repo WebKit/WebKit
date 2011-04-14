@@ -1,3 +1,20 @@
+2011-04-14  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        REGRESSION(r83397) [Qt] When the video is loading and the poster is shown
+        all the controls are not visible except the play button.
+        https://bugs.webkit.org/show_bug.cgi?id=58484
+
+        r83397 introduces a new API hasOwnDisabledStateHandlingFor to handle when
+        the controls should be disabled. Qt port paints its own controls, we don't want
+        the default implementation to handle the hidden/disable state for us.
+
+        Existing tests covers the visibility of the controls.
+
+        * platform/qt/RenderThemeQt.h:
+        (WebCore::RenderThemeQt::hasOwnDisabledStateHandlingFor):
+
 2011-04-14  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
