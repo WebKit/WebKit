@@ -50,9 +50,12 @@ var html = 'Tests where results did not match expected results:<table>' +
         '<th>test</th>' +
         '<th id="text-results-header">text results</th>' +
         '<th id="image-results-header">image results</th>' +
-        '<th>failure type</th>' +
-        '<th>expected failure type</th>' +
-    '</tr></thead>';
+        '<th>failure type</th>';
+        
+if (results.uses_expectations_file)
+    html += '<th>expected failure type</th>';
+
+html += '</tr></thead>';
 
 // FIXME: Should this point to the local file instead? Should it dynamically figure out where to point?
 var test_base_path = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
@@ -65,7 +68,6 @@ function resultLink(test_prefix, suffix, contents)
 // FIXME: show expected/actual/diff contents inline in iframes
 // FIXME: allow zooming in on pixel diffs
 // FIXME: store stderr information in the json
-// FIXME: don't show expected failure type for non-chromium ports
 
 var hasTextFailures = false;
 var hasImageFailures = false;
@@ -102,7 +104,10 @@ for (var test in results.tests) {
   row += '</td>';
   // FIXME: Handle stderr output.
   row += '<td>' + actual + '</td>';
-  row += '<td>' + results.tests[test].expected + '</td>';
+  
+  if (results.uses_expectations_file)
+    row += '<td>' + results.tests[test].expected + '</td>';
+
   html += '<tr>' + row + '</tr>';
 }
 

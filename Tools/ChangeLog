@@ -1,3 +1,13 @@
+2011-04-14  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        only show expected failure type for ports that use an expectations file
+        https://bugs.webkit.org/show_bug.cgi?id=58588
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html:
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+
 2011-04-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

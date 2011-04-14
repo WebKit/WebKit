@@ -154,6 +154,9 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
     results['num_passes'] = num_passes
     results['num_flaky'] = num_flaky
     results['num_regressions'] = num_regressions
+    # FIXME: If non-chromium ports start using an expectations file,
+    # we should make this check more robust.
+    results['uses_expectations_file'] = port_obj.name().find('chromium') != -1
 
     return results
 
