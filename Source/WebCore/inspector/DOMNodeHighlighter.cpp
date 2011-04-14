@@ -243,7 +243,10 @@ void DrawNodeHighlight(GraphicsContext& context, Node* node)
     if (renderer->isBox() && !isSVGRenderer) {
         RenderBox* renderBox = toRenderBox(renderer);
 
+        // RenderBox returns the "pure" content area box, exclusive of the scrollbars (if present), which also count towards the content area in CSS.
         IntRect contentBox = renderBox->contentBoxRect();
+        contentBox.setWidth(contentBox.width() + renderBox->verticalScrollbarWidth());
+        contentBox.setHeight(contentBox.height() + renderBox->horizontalScrollbarHeight());
 
         IntRect paddingBox(contentBox.x() - renderBox->paddingLeft(), contentBox.y() - renderBox->paddingTop(),
                            contentBox.width() + renderBox->paddingLeft() + renderBox->paddingRight(), contentBox.height() + renderBox->paddingTop() + renderBox->paddingBottom());

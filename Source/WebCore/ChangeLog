@@ -1,3 +1,13 @@
+2011-04-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Content area highlight does not cover scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=58528
+
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::DOMNodeHighlighter::DrawNodeHighlight):
+
 2011-04-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
