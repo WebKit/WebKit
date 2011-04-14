@@ -1,3 +1,20 @@
+2011-04-14  Adam Roben  <aroben@apple.com>
+
+        Replace some known-to-fail assertions with FIXMEs
+
+        These assertions get hit during various layout tests. They indicate that we're sometimes
+        doing some extra work when a page goes into accelerated compositing mode, but otherwise
+        there's no bad effect.
+
+        See <http://webkit.org/b/58539> for more details.
+
+        Rubber-stamped by John Sullivan.
+
+        * WebView.cpp:
+        (WebView::paintIntoBackingStore):
+        (WebView::paintIntoWindow):
+        Replaced assertions with FIXMEs.
+
 2011-04-13  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Simon Fraser.

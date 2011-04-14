@@ -1079,9 +1079,9 @@ void WebView::paint(HDC dc, LPARAM options)
 
 void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const IntRect& dirtyRect, WindowsToPaint windowsToPaint)
 {
-#if USE(ACCELERATED_COMPOSITING)
-    ASSERT(!isAcceleratedCompositing());
-#endif
+    // FIXME: This function should never be called in accelerated compositing mode, and we should
+    // assert as such. But currently it *is* sometimes called, so we can't assert yet. See
+    // <http://webkit.org/b/58539>.
 
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 
@@ -1122,9 +1122,9 @@ void WebView::paintIntoBackingStore(FrameView* frameView, HDC bitmapDC, const In
 
 void WebView::paintIntoWindow(HDC bitmapDC, HDC windowDC, const IntRect& dirtyRect)
 {
-#if USE(ACCELERATED_COMPOSITING)
-    ASSERT(!isAcceleratedCompositing());
-#endif
+    // FIXME: This function should never be called in accelerated compositing mode, and we should
+    // assert as such. But currently it *is* sometimes called, so we can't assert yet. See
+    // <http://webkit.org/b/58539>.
 
     LOCAL_GDI_COUNTER(0, __FUNCTION__);
 #if FLASH_WINDOW_REDRAW
