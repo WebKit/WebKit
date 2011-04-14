@@ -3,33 +3,33 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 57x21
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 57x22
           text run at (0,0) width 57: "Test for "
-        RenderInline {I} at (0,0) size 330x21
-          RenderInline {A} at (0,0) size 154x21 [color=#0000EE]
-            RenderText {#text} at (57,0) size 154x21
+        RenderInline {I} at (0,0) size 330x22
+          RenderInline {A} at (0,0) size 154x22 [color=#0000EE]
+            RenderText {#text} at (57,0) size 154x22
               text run at (57,0) width 154: "rdar://problem/7898436"
-          RenderText {#text} at (211,0) size 176x21
+          RenderText {#text} at (211,0) size 176x22
             text run at (211,0) width 176: " :after content is duplicated"
-        RenderText {#text} at (387,0) size 4x21
+        RenderText {#text} at (387,0) size 4x22
           text run at (387,0) width 4: "."
-      RenderBlock {P} at (0,37) size 784x21
-        RenderText {#text} at (0,0) size 541x21
+      RenderBlock {P} at (0,38) size 784x22
+        RenderText {#text} at (0,0) size 541x22
           text run at (0,0) width 541: "The test passed if the word \x{201C}not\x{201D} appears exactly once in the following sentence:"
-      RenderBlock {DIV} at (0,74) size 784x250
-        RenderBlock (anonymous) at (0,0) size 784x125
-          RenderText {#text} at (0,0) size 485x125
+      RenderBlock {DIV} at (0,76) size 784x252
+        RenderBlock (anonymous) at (0,0) size 784x126
+          RenderText {#text} at (0,0) size 485x126
             text run at (0,0) width 485: "The test did"
           RenderInline {SPAN} at (0,0) size 0x0
             RenderInline {B} at (0,0) size 0x0
-        RenderBlock (anonymous) at (0,125) size 784x0
+        RenderBlock (anonymous) at (0,126) size 784x0
           RenderBlock {DIV} at (0,0) size 784x0
-        RenderBlock (anonymous) at (0,125) size 784x125
-          RenderInline {SPAN} at (0,0) size 157x125
+        RenderBlock (anonymous) at (0,126) size 784x126
+          RenderInline {SPAN} at (0,0) size 157x126
             RenderInline {B} at (0,0) size 0x0
-            RenderInline (generated) at (0,0) size 157x125
-              RenderText at (0,0) size 157x125
+            RenderInline (generated) at (0,0) size 157x126
+              RenderText at (0,0) size 157x126
                 text run at (0,0) width 157: "not "
-          RenderText {#text} at (157,0) size 158x125
+          RenderText {#text} at (157,0) size 158x126
             text run at (157,0) width 158: "fail."

@@ -44,7 +44,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 2 at (24.67,49.00) startOffset 5 endOffset 7 width 4.83: "- "
             chunk 1 text run 3 at (32.50,49.00) startOffset 7 endOffset 11 width 17.33: "Two "
             chunk 1 text run 4 at (52.83,49.00) startOffset 11 endOffset 16 width 23.17: "Words"
-    RenderSVGText {text} at (5,51) size 41x8 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 41x8
+    RenderSVGText {text} at (5,51) size 41x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 41x9
         chunk 1 text run 1 at (5.00,57.00) startOffset 0 endOffset 16 width 40.50: "$Revision: 1.6 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=78.00] [height=58.00]

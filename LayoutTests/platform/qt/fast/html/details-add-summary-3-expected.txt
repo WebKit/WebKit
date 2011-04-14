@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderDetails {DETAILS} at (0,0) size 784x21
-        RenderBlock (anonymous) at (0,0) size 784x21
-          RenderSummary {SUMMARY} at (0,0) size 784x21
-            RenderDetailsMarker at (0,0) size 10x21: right
-            RenderText {#text} at (17,0) size 40x21
+      RenderDetails {DETAILS} at (0,0) size 784x22
+        RenderBlock (anonymous) at (0,0) size 784x22
+          RenderSummary {SUMMARY} at (0,0) size 784x22
+            RenderDetailsMarker at (0,0) size 10x22: right
+            RenderText {#text} at (17,0) size 40x22
               text run at (17,0) width 40: "new 2"
-        RenderBlock (anonymous) at (0,21) size 784x0
+        RenderBlock (anonymous) at (0,22) size 784x0

@@ -11,22 +11,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 578x21
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 578x22
           text run at (0,0) width 357: "Tests for a case where paste's end merge was failing. "
           text run at (357,0) width 221: "You should see xfoo\\nbar\\nbazx."
-      RenderBlock {DIV} at (0,37) size 784x63
-        RenderBlock (anonymous) at (0,0) size 784x21
-          RenderText {#text} at (0,0) size 8x21
+      RenderBlock {DIV} at (0,38) size 784x66
+        RenderBlock (anonymous) at (0,0) size 784x22
+          RenderText {#text} at (0,0) size 8x22
             text run at (0,0) width 8: "x"
-          RenderText {#text} at (8,0) size 21x21
+          RenderText {#text} at (8,0) size 21x22
             text run at (8,0) width 21: "foo"
-        RenderBlock {DIV} at (0,21) size 784x21
-          RenderText {#text} at (0,0) size 24x21
+        RenderBlock {DIV} at (0,22) size 784x22
+          RenderText {#text} at (0,0) size 24x22
             text run at (0,0) width 24: "bar"
-        RenderBlock (anonymous) at (0,42) size 784x21
-          RenderText {#text} at (0,0) size 24x21
+        RenderBlock (anonymous) at (0,44) size 784x22
+          RenderText {#text} at (0,0) size 24x22
             text run at (0,0) width 24: "baz"
-          RenderText {#text} at (24,0) size 8x21
+          RenderText {#text} at (24,0) size 8x22
             text run at (24,0) width 8: "x"
 caret: position 3 of child 3 {#text} of child 2 {DIV} of body

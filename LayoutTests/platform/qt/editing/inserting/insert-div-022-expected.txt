@@ -15,30 +15,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x568
-      RenderBlock (anonymous) at (0,0) size 784x124
-        RenderText {#text} at (0,0) size 782x94
+      RenderBlock (anonymous) at (0,0) size 784x132
+        RenderText {#text} at (0,0) size 782x99
           text run at (0,0) width 752: "Test inserting paragraphs: should see \"foo\" in a blue box, then a blue box"
           text run at (752,0) width 6: " "
-          text run at (0,31) width 776: "with with two lines in it: First line a bold \"x\"; second line a non-bold \"bar\"."
-          text run at (776,31) width 6: " "
-          text run at (0,62) width 172: "Fix for this bug: "
-        RenderInline {A} at (0,0) size 275x32 [color=#0000EE]
-          RenderText {#text} at (172,62) size 275x32
-            text run at (172,62) width 275: "<rdar://problem/3927554>"
-        RenderText {#text} at (447,62) size 779x63
-          text run at (447,62) width 326: " Style info applied to remainder"
-          text run at (773,62) width 6: " "
-          text run at (0,93) width 392: "of document after a newline is entered"
-      RenderBlock {DIV} at (0,124) size 784x12
-      RenderBlock {P} at (0,160) size 784x59 [border: (2px solid #0000FF)]
-        RenderInline {B} at (0,0) size 32x32
-          RenderText {#text} at (14,14) size 32x32
+          text run at (0,33) width 776: "with with two lines in it: First line a bold \"x\"; second line a non-bold \"bar\"."
+          text run at (776,33) width 6: " "
+          text run at (0,66) width 172: "Fix for this bug: "
+        RenderInline {A} at (0,0) size 275x33 [color=#0000EE]
+          RenderText {#text} at (172,66) size 275x33
+            text run at (172,66) width 275: "<rdar://problem/3927554>"
+        RenderText {#text} at (447,66) size 779x66
+          text run at (447,66) width 326: " Style info applied to remainder"
+          text run at (773,66) width 6: " "
+          text run at (0,99) width 392: "of document after a newline is entered"
+      RenderBlock {DIV} at (0,132) size 784x12
+      RenderBlock {P} at (0,168) size 784x61 [border: (2px solid #0000FF)]
+        RenderInline {B} at (0,0) size 32x33
+          RenderText {#text} at (14,14) size 32x33
             text run at (14,14) width 32: "foo"
-      RenderBlock {P} at (0,243) size 784x90 [border: (2px solid #0000FF)]
-        RenderInline {B} at (0,0) size 12x32
-          RenderText {#text} at (14,14) size 12x32
+      RenderBlock {P} at (0,253) size 784x94 [border: (2px solid #0000FF)]
+        RenderInline {B} at (0,0) size 12x33
+          RenderText {#text} at (14,14) size 12x33
             text run at (14,14) width 12: "x"
           RenderBR {BR} at (26,38) size 0x0 [bgcolor=#008000]
-        RenderText {#text} at (14,45) size 36x32
-          text run at (14,45) width 36: "bar"
+        RenderText {#text} at (14,47) size 36x33
+          text run at (14,47) width 36: "bar"
 caret: position 1 of child 0 {#text} of child 0 {B} of child 6 {P} of body

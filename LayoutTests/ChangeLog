@@ -1,3 +1,10 @@
+2011-04-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Height of "Ahem" font differs from all other ports.
+        https://bugs.webkit.org/show_bug.cgi?id=57954
+
+        * platform/qt/ [...]: Update expected files.
+
 2011-04-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

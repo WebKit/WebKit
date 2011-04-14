@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x42
-        RenderText {#text} at (0,0) size 770x42
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 770x44
           text run at (0,0) width 770: "This tests for a bug where hitting return between two tables would add a new paragraph at the end of the editable"
-          text run at (0,21) width 47: "region."
-      RenderBlock {DIV} at (0,58) size 784x100
-        RenderTable {TABLE} at (0,0) size 516x29 [border: (1px solid #AAAAAA)]
-          RenderTableSection {TBODY} at (1,1) size 514x27
-            RenderTableRow {TR} at (0,2) size 514x23
-              RenderTableCell {TD} at (2,2) size 510x23 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 508x21
+          text run at (0,22) width 47: "region."
+      RenderBlock {DIV} at (0,60) size 784x104
+        RenderTable {TABLE} at (0,0) size 516x30 [border: (1px solid #AAAAAA)]
+          RenderTableSection {TBODY} at (1,1) size 514x28
+            RenderTableRow {TR} at (0,2) size 514x24
+              RenderTableCell {TD} at (2,2) size 510x24 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 508x22
                   text run at (1,1) width 508: "There should be two empty paragraphs after this table and before the next."
-        RenderBlock (anonymous) at (0,29) size 784x21
-          RenderBR {BR} at (0,0) size 0x21
-        RenderBlock {DIV} at (0,50) size 784x50
-          RenderBlock (anonymous) at (0,0) size 784x21
-            RenderBR {BR} at (0,0) size 0x21
-          RenderTable {TABLE} at (0,21) size 294x29 [border: (1px solid #AAAAAA)]
-            RenderTableSection {TBODY} at (1,1) size 292x27
-              RenderTableRow {TR} at (0,2) size 292x23
-                RenderTableCell {TD} at (2,2) size 288x23 [r=0 c=0 rs=1 cs=1]
-                  RenderText {#text} at (1,1) size 286x21
+        RenderBlock (anonymous) at (0,30) size 784x22
+          RenderBR {BR} at (0,0) size 0x22
+        RenderBlock {DIV} at (0,52) size 784x52
+          RenderBlock (anonymous) at (0,0) size 784x22
+            RenderBR {BR} at (0,0) size 0x22
+          RenderTable {TABLE} at (0,22) size 294x30 [border: (1px solid #AAAAAA)]
+            RenderTableSection {TBODY} at (1,1) size 292x28
+              RenderTableRow {TR} at (0,2) size 292x24
+                RenderTableCell {TD} at (2,2) size 288x24 [r=0 c=0 rs=1 cs=1]
+                  RenderText {#text} at (1,1) size 286x22
                     text run at (1,1) width 286: "And the caret should be in the second one."
 caret: position 0 of child 0 {BR} of child 2 {DIV} of child 2 {DIV} of body

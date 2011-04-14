@@ -20,32 +20,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x21
-        RenderText {#text} at (0,0) size 657x21
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 657x22
           text run at (0,0) width 433: "This tests pasting a Mail blockquote at the start of a paragraph. "
           text run at (433,0) width 224: "Blockquoting should be stripped."
-      RenderBlock {DIV} at (0,37) size 784x21
-        RenderText {#text} at (0,0) size 121x21
+      RenderBlock {DIV} at (0,38) size 784x22
+        RenderText {#text} at (0,0) size 121x22
           text run at (0,0) width 121: "Blockquoted Text"
-        RenderText {#text} at (121,0) size 8x21
+        RenderText {#text} at (121,0) size 8x22
           text run at (121,0) width 8: "x"
-      RenderBlock {P} at (0,74) size 784x42
-        RenderText {#text} at (0,0) size 754x42
+      RenderBlock {P} at (0,76) size 784x44
+        RenderText {#text} at (0,0) size 754x44
           text run at (0,0) width 309: "This tests pasting text into a Mail blockquote. "
           text run at (309,0) width 445: "The last bit of content in the incoming fragment should be merged"
-          text run at (0,21) width 373: "with the paragraph after the position being pasted into."
-      RenderBlock {DIV} at (0,132) size 784x58
-        RenderBlock {BLOCKQUOTE} at (40,0) size 704x21
-          RenderBlock {DIV} at (0,0) size 704x21
-            RenderText {#text} at (0,0) size 86x21
+          text run at (0,22) width 373: "with the paragraph after the position being pasted into."
+      RenderBlock {DIV} at (0,136) size 784x60
+        RenderBlock {BLOCKQUOTE} at (40,0) size 704x22
+          RenderBlock {DIV} at (0,0) size 704x22
+            RenderText {#text} at (0,0) size 86x22
               text run at (0,0) width 86: "Blockquoted"
-            RenderText {#text} at (86,0) size 21x21
+            RenderText {#text} at (86,0) size 21x22
               text run at (86,0) width 21: "foo"
-        RenderBlock (anonymous) at (0,37) size 784x0
-        RenderBlock {BLOCKQUOTE} at (40,37) size 704x21
-          RenderBlock {DIV} at (0,0) size 704x21
-            RenderText {#text} at (0,0) size 24x21
+        RenderBlock (anonymous) at (0,38) size 784x0
+        RenderBlock {BLOCKQUOTE} at (40,38) size 704x22
+          RenderBlock {DIV} at (0,0) size 704x22
+            RenderText {#text} at (0,0) size 24x22
               text run at (0,0) width 24: "bar"
-            RenderText {#text} at (24,0) size 31x21
+            RenderText {#text} at (24,0) size 31x22
               text run at (24,0) width 31: "Text"
 caret: position 3 of child 0 {#text} of child 0 {DIV} of child 1 {BLOCKQUOTE} of child 10 {DIV} of body

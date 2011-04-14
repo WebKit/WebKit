@@ -22,7 +22,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 2 at (123.12,90.00) startOffset 2 endOffset 3 width 44.04: "G"
           RenderSVGPath {rect} at (126,99) size 234x126 [fill={[type=SOLID] [color=#820032]}] [x=70.00] [y=55.00] [width=130.00] [height=70.00]
           RenderSVGImage {image} at (291,135) size 145x144
-    RenderSVGText {text} at (10,301) size 270x52 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 270x52
+    RenderSVGText {text} at (10,301) size 270x53 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 270x53
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.6 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

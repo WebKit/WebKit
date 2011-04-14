@@ -17,34 +17,34 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x261 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x93
-          RenderText {#text} at (0,0) size 67x32
+      RenderBlock {DIV} at (0,0) size 784x275 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x99
+          RenderText {#text} at (0,0) size 67x33
             text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,31) size 719x63
-            text run at (0,31) width 719: "Pasting and matching style when there is nothing typed, but the typing"
-            text run at (0,62) width 533: "style is set to bold. This test was created after fixing "
-          RenderInline {A} at (0,0) size 84x32 [color=#0000EE]
-            RenderText {#text} at (533,62) size 84x32
-              text run at (533,62) width 84: "3976872"
-          RenderText {#text} at (617,62) size 6x32
-            text run at (617,62) width 6: "."
-        RenderBlock {DIV} at (14,123) size 756x124
-          RenderText {#text} at (0,0) size 189x32
+          RenderText {#text} at (0,33) size 719x66
+            text run at (0,33) width 719: "Pasting and matching style when there is nothing typed, but the typing"
+            text run at (0,66) width 533: "style is set to bold. This test was created after fixing "
+          RenderInline {A} at (0,0) size 84x33 [color=#0000EE]
+            RenderText {#text} at (533,66) size 84x33
+              text run at (533,66) width 84: "3976872"
+          RenderText {#text} at (617,66) size 6x33
+            text run at (617,66) width 6: "."
+        RenderBlock {DIV} at (14,129) size 756x132
+          RenderText {#text} at (0,0) size 189x33
             text run at (0,0) width 189: "Expected Results: "
           RenderBR {BR} at (189,24) size 0x0
-          RenderText {#text} at (0,31) size 730x63
-            text run at (0,31) width 730: "The pasted word should match the current typing style. In this case, the"
-            text run at (0,62) width 724: "typing style is set to bold. Should see this content in the red box below: "
-          RenderBR {BR} at (724,86) size 0x0
-          RenderInline {B} at (0,0) size 50x32
-            RenderText {#text} at (0,93) size 50x32
-              text run at (0,93) width 50: "hello"
+          RenderText {#text} at (0,33) size 730x66
+            text run at (0,33) width 730: "The pasted word should match the current typing style. In this case, the"
+            text run at (0,66) width 724: "typing style is set to bold. Should see this content in the red box below: "
+          RenderBR {BR} at (724,90) size 0x0
+          RenderInline {B} at (0,0) size 50x33
+            RenderText {#text} at (0,99) size 50x33
+              text run at (0,99) width 50: "hello"
           RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (0,285) size 784x35
-        RenderBlock {DIV} at (0,0) size 784x35 [border: (2px solid #FF0000)]
-          RenderInline {B} at (0,0) size 50x32
-            RenderText {#text} at (2,2) size 50x32
+      RenderBlock {DIV} at (0,299) size 784x37
+        RenderBlock {DIV} at (0,0) size 784x37 [border: (2px solid #FF0000)]
+          RenderInline {B} at (0,0) size 50x33
+            RenderText {#text} at (2,2) size 50x33
               text run at (2,2) width 50: "hello"
 caret: position 5 of child 0 {#text} of child 0 {B} of child 1 {DIV} of child 3 {DIV} of body

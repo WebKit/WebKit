@@ -113,29 +113,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x276 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 70x249
-          RenderText {#text} at (14,14) size 70x32
+      RenderBlock {DIV} at (0,0) size 784x292 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 70x264
+          RenderText {#text} at (14,14) size 70x33
             text run at (14,14) width 70: "XXxxx"
           RenderBR {BR} at (84,38) size 0x0
-          RenderText {#text} at (14,45) size 70x32
-            text run at (14,45) width 70: "XXxxx"
-          RenderBR {BR} at (84,69) size 0x0
-          RenderText {#text} at (14,76) size 36x32
-            text run at (14,76) width 36: "xxx"
-          RenderBR {BR} at (50,100) size 0x0
-          RenderText {#text} at (14,107) size 70x32
-            text run at (14,107) width 70: "XXxxx"
-          RenderBR {BR} at (84,131) size 0x0
-          RenderText {#text} at (14,138) size 36x32
-            text run at (14,138) width 36: "xxx"
-          RenderBR {BR} at (50,162) size 0x0
-          RenderText {#text} at (14,169) size 36x32
-            text run at (14,169) width 36: "xxx"
-          RenderBR {BR} at (50,193) size 0x0
-          RenderText {#text} at (14,200) size 36x32
-            text run at (14,200) width 36: "xxx"
-          RenderBR {BR} at (50,224) size 0x0
-          RenderText {#text} at (14,231) size 70x32
-            text run at (14,231) width 70: "XXxxx"
+          RenderText {#text} at (14,47) size 70x33
+            text run at (14,47) width 70: "XXxxx"
+          RenderBR {BR} at (84,71) size 0x0
+          RenderText {#text} at (14,80) size 36x33
+            text run at (14,80) width 36: "xxx"
+          RenderBR {BR} at (50,104) size 0x0
+          RenderText {#text} at (14,113) size 70x33
+            text run at (14,113) width 70: "XXxxx"
+          RenderBR {BR} at (84,137) size 0x0
+          RenderText {#text} at (14,146) size 36x33
+            text run at (14,146) width 36: "xxx"
+          RenderBR {BR} at (50,170) size 0x0
+          RenderText {#text} at (14,179) size 36x33
+            text run at (14,179) width 36: "xxx"
+          RenderBR {BR} at (50,203) size 0x0
+          RenderText {#text} at (14,212) size 36x33
+            text run at (14,212) width 36: "xxx"
+          RenderBR {BR} at (50,236) size 0x0
+          RenderText {#text} at (14,245) size 70x33
+            text run at (14,245) width 70: "XXxxx"
 caret: position 5 of child 14 {#text} of child 1 {SPAN} of child 1 {DIV} of body

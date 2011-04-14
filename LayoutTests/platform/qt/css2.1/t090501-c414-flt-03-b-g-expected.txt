@@ -1,25 +1,25 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x169
-  RenderBlock {HTML} at (0,0) size 800x169
-    RenderBody {BODY} at (8,16) size 784x137
-      RenderBlock {P} at (0,0) size 784x42 [color=#000080]
-        RenderText {#text} at (0,0) size 414x21
+layer at (0,0) size 800x174
+  RenderBlock {HTML} at (0,0) size 800x174
+    RenderBody {BODY} at (8,16) size 784x142
+      RenderBlock {P} at (0,0) size 784x44 [color=#000080]
+        RenderText {#text} at (0,0) size 414x22
           text run at (0,0) width 265: "In the following test, the purple square "
           text run at (265,0) width 149: "should be on the left (\x{21E6}"
-        RenderImage {IMG} at (414,2) size 19x19
-        RenderText {#text} at (433,0) size 234x21
+        RenderImage {IMG} at (414,3) size 19x19
+        RenderText {#text} at (433,0) size 234x22
           text run at (433,0) width 234: "), and the teal square on the right ("
-        RenderImage {IMG} at (667,2) size 19x19
-        RenderText {#text} at (686,0) size 770x42
+        RenderImage {IMG} at (667,3) size 19x19
+        RenderText {#text} at (686,0) size 770x44
           text run at (686,0) width 84: "\x{21E8}) of the blue"
-          text run at (0,21) width 66: "rectangle."
-      RenderBlock {DIV} at (0,58) size 784x79
-        RenderBlock {DIV} at (16,0) size 752x79 [color=#0000FF] [bgcolor=#000080]
+          text run at (0,22) width 66: "rectangle."
+      RenderBlock {DIV} at (0,60) size 784x82
+        RenderBlock {DIV} at (16,0) size 752x82 [color=#0000FF] [bgcolor=#000080]
           RenderImage {IMG} at (8,8) size 160x160
           RenderImage {IMG} at (584,8) size 160x160
-          RenderText {#text} at (168,8) size 416x63
+          RenderText {#text} at (168,8) size 416x66
             text run at (168,8) width 416: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."
-            text run at (168,29) width 210: "Blue rectangle. Blue rectangle. "
-            text run at (378,29) width 206: "Blue rectangle. Blue rectangle."
-            text run at (168,50) width 416: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."
+            text run at (168,30) width 210: "Blue rectangle. Blue rectangle. "
+            text run at (378,30) width 206: "Blue rectangle. Blue rectangle."
+            text run at (168,52) width 416: "Blue rectangle. Blue rectangle. Blue rectangle. Blue rectangle."

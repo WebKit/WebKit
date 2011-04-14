@@ -20,7 +20,7 @@ layer at (0,0) size 480x360
           RenderSVGInlineText {#text} at (0,0) size 26x11
             chunk 1 text run 1 at (52.00,37.00) startOffset 0 endOffset 7 width 26.00: "3+ sec."
         RenderSVGPath {path} at (54,186) size 72x78 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,43.00)}] [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M -5 0 L 0 -10 L 5 0 Z"]
-    RenderSVGText {text} at (5,51) size 41x8 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 41x8
+    RenderSVGText {text} at (5,51) size 41x9 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 41x9
         chunk 1 text run 1 at (5.00,57.00) startOffset 0 endOffset 16 width 40.50: "$Revision: 1.7 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=78.00] [height=58.00]

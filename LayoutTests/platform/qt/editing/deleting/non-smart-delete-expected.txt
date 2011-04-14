@@ -12,25 +12,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x230 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x62
-          RenderText {#text} at (0,0) size 67x32
+      RenderBlock {DIV} at (0,0) size 784x242 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x66
+          RenderText {#text} at (0,0) size 67x33
             text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,31) size 673x32
-            text run at (0,31) width 673: "Non-smart delete when deleting a word selected via the keyboard."
-        RenderBlock {DIV} at (14,92) size 756x124
-          RenderText {#text} at (0,0) size 189x32
+          RenderText {#text} at (0,33) size 673x33
+            text run at (0,33) width 673: "Non-smart delete when deleting a word selected via the keyboard."
+        RenderBlock {DIV} at (14,96) size 756x132
+          RenderText {#text} at (0,0) size 189x33
             text run at (0,0) width 189: "Expected Results: "
           RenderBR {BR} at (189,24) size 0x0
-          RenderText {#text} at (0,31) size 749x63
-            text run at (0,31) width 749: "The first word should be deleted. The space following it should remain. It"
-            text run at (0,62) width 218: "should look like this: "
-          RenderBR {BR} at (218,86) size 0x0
-          RenderText {#text} at (0,93) size 110x32
-            text run at (0,93) width 110: "\" bar baz\""
-      RenderBlock {DIV} at (0,254) size 784x35
-        RenderBlock {DIV} at (0,0) size 784x35 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 84x32
+          RenderText {#text} at (0,33) size 749x66
+            text run at (0,33) width 749: "The first word should be deleted. The space following it should remain. It"
+            text run at (0,66) width 218: "should look like this: "
+          RenderBR {BR} at (218,90) size 0x0
+          RenderText {#text} at (0,99) size 110x33
+            text run at (0,99) width 110: "\" bar baz\""
+      RenderBlock {DIV} at (0,266) size 784x37
+        RenderBlock {DIV} at (0,0) size 784x37 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 84x33
             text run at (2,2) width 84: " bar baz"
 caret: position 0 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

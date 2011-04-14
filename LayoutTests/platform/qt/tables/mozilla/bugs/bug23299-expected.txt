@@ -3,37 +3,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
-      RenderTable {TABLE} at (0,0) size 123x42 [bgcolor=#0000FF]
-        RenderTableSection {TBODY} at (0,0) size 123x42
-          RenderTableRow {TR} at (0,0) size 123x42
-            RenderTableCell {TD} at (0,0) size 123x42 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 71x21
+      RenderTable {TABLE} at (0,0) size 123x44 [bgcolor=#0000FF]
+        RenderTableSection {TBODY} at (0,0) size 123x44
+          RenderTableRow {TR} at (0,0) size 123x44
+            RenderTableCell {TD} at (0,0) size 123x44 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 71x22
                 text run at (0,0) width 71: "Left Table"
               RenderBR {BR} at (71,16) size 0x0
-              RenderText {#text} at (0,21) size 123x21
-                text run at (0,21) width 123: "ALIGN=\"LEFT\""
-              RenderBR {BR} at (123,37) size 0x0
-      RenderTable {TABLE} at (123,0) size 123x42 [bgcolor=#0000FF]
-        RenderTableSection {TBODY} at (0,0) size 123x42
-          RenderTableRow {TR} at (0,0) size 123x42
-            RenderTableCell {TD} at (0,0) size 123x42 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 90x21
+              RenderText {#text} at (0,22) size 123x22
+                text run at (0,22) width 123: "ALIGN=\"LEFT\""
+              RenderBR {BR} at (123,38) size 0x0
+      RenderTable {TABLE} at (123,0) size 123x44 [bgcolor=#0000FF]
+        RenderTableSection {TBODY} at (0,0) size 123x44
+          RenderTableRow {TR} at (0,0) size 123x44
+            RenderTableCell {TD} at (0,0) size 123x44 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 90x22
                 text run at (0,0) width 90: "Center Table"
               RenderBR {BR} at (90,16) size 0x0
-              RenderText {#text} at (0,21) size 123x21
-                text run at (0,21) width 123: "ALIGN=\"LEFT\""
-              RenderBR {BR} at (123,37) size 0x0
-      RenderTable {TABLE} at (246,0) size 123x42 [bgcolor=#0000FF]
-        RenderTableSection {TBODY} at (0,0) size 123x42
-          RenderTableRow {TR} at (0,0) size 123x42
-            RenderTableCell {TD} at (0,0) size 123x42 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 81x21
+              RenderText {#text} at (0,22) size 123x22
+                text run at (0,22) width 123: "ALIGN=\"LEFT\""
+              RenderBR {BR} at (123,38) size 0x0
+      RenderTable {TABLE} at (246,0) size 123x44 [bgcolor=#0000FF]
+        RenderTableSection {TBODY} at (0,0) size 123x44
+          RenderTableRow {TR} at (0,0) size 123x44
+            RenderTableCell {TD} at (0,0) size 123x44 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 81x22
                 text run at (0,0) width 81: "Right Table"
               RenderBR {BR} at (81,16) size 0x0
-              RenderText {#text} at (0,21) size 123x21
-                text run at (0,21) width 123: "ALIGN=\"LEFT\""
-              RenderBR {BR} at (123,37) size 0x0
-      RenderBR {BR} at (369,0) size 0x21
-      RenderBR {BR} at (0,42) size 0x21
-      RenderText {#text} at (0,63) size 520x21
-        text run at (0,63) width 520: "The three tables above should abut each other. (in NN3/4 and IE4/5 they do)."
+              RenderText {#text} at (0,22) size 123x22
+                text run at (0,22) width 123: "ALIGN=\"LEFT\""
+              RenderBR {BR} at (123,38) size 0x0
+      RenderBR {BR} at (369,0) size 0x22
+      RenderBR {BR} at (0,44) size 0x22
+      RenderText {#text} at (0,66) size 520x22
+        text run at (0,66) width 520: "The three tables above should abut each other. (in NN3/4 and IE4/5 they do)."

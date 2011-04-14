@@ -3,27 +3,27 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
-      RenderBlock {DIV} at (0,0) size 784x135
-        RenderTable {TABLE} at (4,0) size 776x41
-          RenderTableSection {TBODY} at (0,0) size 776x41
+      RenderBlock {DIV} at (0,0) size 784x138
+        RenderTable {TABLE} at (4,0) size 776x42
+          RenderTableSection {TBODY} at (0,0) size 776x42
             RenderTableRow {TR} at (0,0) size 776x23 [color=#FFFFFF] [bgcolor=#455166]
               RenderTableCell {TD} at (0,0) size 776x23 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (510,1) size 254x20
+                RenderText {#text} at (510,1) size 254x21
                   text run at (510,1) width 254: "This column seems to finish early"
-            RenderTableRow {TR} at (0,23) size 776x18
-              RenderTableCell {TD} at (0,23) size 776x18 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 4x16
+            RenderTableRow {TR} at (0,23) size 776x19
+              RenderTableCell {TD} at (0,23) size 776x19 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 4x17
                   text run at (1,1) width 4: " "
-        RenderBlock {P} at (0,57) size 784x21
-          RenderText {#text} at (390,0) size 4x21
+        RenderBlock {P} at (0,58) size 784x22
+          RenderText {#text} at (390,0) size 4x22
             text run at (390,0) width 4: " "
-        RenderTable {TABLE} at (4,94) size 776x41
-          RenderTableSection {TBODY} at (0,0) size 776x41
+        RenderTable {TABLE} at (4,96) size 776x42
+          RenderTableSection {TBODY} at (0,0) size 776x42
             RenderTableRow {TR} at (0,0) size 776x23
               RenderTableCell {TD} at (0,0) size 776x23 [color=#FFFFFF] [bgcolor=#455166] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (653,1) size 111x20
+                RenderText {#text} at (653,1) size 111x21
                   text run at (653,1) width 111: "This one is OK"
-            RenderTableRow {TR} at (0,23) size 776x18
-              RenderTableCell {TD} at (0,23) size 776x18 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 4x16
+            RenderTableRow {TR} at (0,23) size 776x19
+              RenderTableCell {TD} at (0,23) size 776x19 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 4x17
                   text run at (1,1) width 4: " "

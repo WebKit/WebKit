@@ -37,8 +37,8 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,0) size 47x22
             chunk 1 text run 1 at (0.00,270.00) startOffset 0 endOffset 7 width 46.20: "2.x 2.y"
       RenderSVGContainer {g} at (181,11) size 244x539 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,40.00)}]
-        RenderSVGText {text} at (-41,-33) size 82x22 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 82x22
+        RenderSVGText {text} at (-41,-33) size 82x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 82x23
             chunk 1 (middle anchor) text run 1 at (-40.50,-17.00) startOffset 0 endOffset 11 width 81.00: "text-anchor"
         RenderSVGText {text} at (-17,-19) size 34x22 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 34x22
@@ -232,8 +232,8 @@ layer at (0,0) size 800x600
                 chunk 1 text run 1 at (10.00,-10.00) startOffset 0 endOffset 1 width 15.00: "1"
                 chunk 1 text run 1 at (60.00,-5.00) startOffset 0 endOffset 3 width 45.00: "234"
       RenderSVGContainer {g} at (348,11) size 207x539 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,40.00)}]
-        RenderSVGText {text} at (-41,-33) size 82x22 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 82x22
+        RenderSVGText {text} at (-41,-33) size 82x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 82x23
             chunk 1 (middle anchor) text run 1 at (-40.50,-17.00) startOffset 0 endOffset 11 width 81.00: "text-anchor"
         RenderSVGText {text} at (-24,-19) size 48x22 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 48x22
@@ -402,8 +402,8 @@ layer at (0,0) size 800x600
                     chunk 1 (middle anchor) text run 1 at (2.50,-10.00) startOffset 0 endOffset 1 width 15.00: "1"
                     chunk 1 (middle anchor) text run 1 at (37.50,-5.00) startOffset 0 endOffset 3 width 45.00: "234"
       RenderSVGContainer {g} at (483,11) size 207x539 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,40.00)}]
-        RenderSVGText {text} at (-41,-33) size 82x22 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 82x22
+        RenderSVGText {text} at (-41,-33) size 82x23 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 82x23
             chunk 1 (middle anchor) text run 1 at (-40.50,-17.00) startOffset 0 endOffset 11 width 81.00: "text-anchor"
         RenderSVGText {text} at (-13,-19) size 26x22 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 26x22

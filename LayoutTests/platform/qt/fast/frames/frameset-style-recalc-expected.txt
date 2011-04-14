@@ -9,22 +9,22 @@ layer at (0,0) size 800x600
         layer at (0,0) size 800x200
           RenderBlock {HTML} at (0,0) size 800x200
             RenderBody {BODY} at (8,8) size 784x176
-              RenderBlock {P} at (0,0) size 784x42
-                RenderText {#text} at (0,0) size 57x21
+              RenderBlock {P} at (0,0) size 784x44
+                RenderText {#text} at (0,0) size 57x22
                   text run at (0,0) width 57: "Test for "
-                RenderInline {I} at (0,0) size 743x42
-                  RenderInline {A} at (0,0) size 310x21 [color=#0000EE]
-                    RenderText {#text} at (57,0) size 310x21
+                RenderInline {I} at (0,0) size 743x44
+                  RenderInline {A} at (0,0) size 310x22 [color=#0000EE]
+                    RenderText {#text} at (57,0) size 310x22
                       text run at (57,0) width 310: "https://bugs.webkit.org/show_bug.cgi?id=19348"
-                  RenderText {#text} at (367,0) size 743x42
+                  RenderText {#text} at (367,0) size 743x44
                     text run at (367,0) width 4: " "
                     text run at (371,0) width 372: "REGRESSION (r34193): Setting the size of a frame with"
-                    text run at (0,21) width 66: "javascript "
-                    text run at (66,21) width 238: "document.body.row no longer works"
-                RenderText {#text} at (304,21) size 4x21
-                  text run at (304,21) width 4: "."
-              RenderBlock {P} at (0,58) size 784x21
-                RenderText {#text} at (0,0) size 217x21
+                    text run at (0,22) width 66: "javascript "
+                    text run at (66,22) width 238: "document.body.row no longer works"
+                RenderText {#text} at (304,22) size 4x22
+                  text run at (304,22) width 4: "."
+              RenderBlock {P} at (0,60) size 784x22
+                RenderText {#text} at (0,0) size 217x22
                   text run at (0,0) width 217: "This frame should be 200px tall."
         layer at (0,100) size 100x100
           RenderBlock (positioned) {DIV} at (0,100) size 100x100 [bgcolor=#008000]

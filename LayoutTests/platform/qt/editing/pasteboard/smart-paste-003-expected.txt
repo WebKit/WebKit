@@ -15,32 +15,32 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x292 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x93
-          RenderText {#text} at (0,0) size 67x32
+      RenderBlock {DIV} at (0,0) size 784x308 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x99
+          RenderText {#text} at (0,0) size 67x33
             text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,31) size 722x63
-            text run at (0,31) width 722: "Smart paste when pasting after a word and before a space and another"
-            text run at (0,62) width 59: "word."
-        RenderBlock {DIV} at (14,123) size 756x155
-          RenderText {#text} at (0,0) size 189x32
+          RenderText {#text} at (0,33) size 722x66
+            text run at (0,33) width 722: "Smart paste when pasting after a word and before a space and another"
+            text run at (0,66) width 59: "word."
+        RenderBlock {DIV} at (14,129) size 756x165
+          RenderText {#text} at (0,0) size 189x33
             text run at (0,0) width 189: "Expected Results: "
           RenderBR {BR} at (189,24) size 0x0
-          RenderText {#text} at (0,31) size 730x94
-            text run at (0,31) width 698: "A space should be added between the preexisting word and the word"
-            text run at (0,62) width 730: "that's pasted. No space should be added after the pasted word. It should"
-            text run at (0,93) width 138: "like this this: "
-          RenderBR {BR} at (138,117) size 0x0
-          RenderText {#text} at (0,124) size 120x32
-            text run at (0,124) width 120: "test test test"
-      RenderBlock {DIV} at (0,316) size 784x35
-        RenderBlock {DIV} at (0,0) size 784x35 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 36x32
+          RenderText {#text} at (0,33) size 730x99
+            text run at (0,33) width 698: "A space should be added between the preexisting word and the word"
+            text run at (0,66) width 730: "that's pasted. No space should be added after the pasted word. It should"
+            text run at (0,99) width 138: "like this this: "
+          RenderBR {BR} at (138,123) size 0x0
+          RenderText {#text} at (0,132) size 120x33
+            text run at (0,132) width 120: "test test test"
+      RenderBlock {DIV} at (0,332) size 784x37
+        RenderBlock {DIV} at (0,0) size 784x37 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 36x33
             text run at (2,2) width 36: "test"
-          RenderText {#text} at (38,2) size 42x32
+          RenderText {#text} at (38,2) size 42x33
             text run at (38,2) width 42: " test"
-          RenderText {#text} at (80,2) size 42x32
+          RenderText {#text} at (80,2) size 42x33
             text run at (80,2) width 42: " test"
-        RenderBlock (anonymous) at (0,35) size 784x0
+        RenderBlock (anonymous) at (0,37) size 784x0
 caret: position 5 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of body

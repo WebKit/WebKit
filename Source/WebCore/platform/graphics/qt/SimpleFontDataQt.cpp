@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2008, 2009, 2010, 2011 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2008 Holger Hans Peter Freyther
 
     This library is free software; you can redistribute it and/or
@@ -48,11 +48,29 @@ void SimpleFontData::platformInit()
     }
 
     QFontMetricsF fm(m_platformData.font());
-    m_fontMetrics.setAscent(fm.ascent());
-    m_fontMetrics.setDescent(fm.descent());
+
+    // Qt subtracts 1 from the descent to account for the baseline,
+    // we add it back here to get correct metrics for WebKit.
+    float descent = fm.descent() + 1;
+    float ascent = fm.ascent();
+
+    float lineSpacing = fm.lineSpacing();
+
+    // The line spacing should always be >= (ascent + descent), but this
+    // may be false in some cases due to misbehaving platform libraries.
+    // Workaround from SimpleFontPango.cpp and SimpleFontFreeType.cpp
+    if (lineSpacing < ascent + descent)
+        lineSpacing = ascent + descent;
+
+    // QFontMetricsF::leading() may return negative values on platforms
+    // such as FreeType. Calculate the line gap manually instead.
+    float lineGap = lineSpacing - ascent - descent;
+
+    m_fontMetrics.setAscent(ascent);
+    m_fontMetrics.setDescent(descent);
+    m_fontMetrics.setLineSpacing(lineSpacing);
     m_fontMetrics.setXHeight(fm.xHeight());
-    m_fontMetrics.setLineGap(fm.leading());
-    m_fontMetrics.setLineSpacing(fm.lineSpacing());
+    m_fontMetrics.setLineGap(lineGap);
     m_spaceWidth = fm.width(QLatin1Char(' '));
 }
 

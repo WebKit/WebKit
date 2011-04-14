@@ -3,25 +3,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 352x21
+      RenderText {#text} at (0,0) size 352x22
         text run at (0,0) width 352: "This tests that you can set the placeholder text color."
       RenderBR {BR} at (352,16) size 0x0
-      RenderText {#text} at (184,55) size 4x21
-        text run at (184,55) width 4: " "
-      RenderText {#text} at (372,55) size 4x21
-        text run at (372,55) width 4: " "
-      RenderText {#text} at (560,55) size 4x21
-        text run at (560,55) width 4: " "
+      RenderText {#text} at (184,58) size 4x22
+        text run at (184,58) width 4: " "
+      RenderText {#text} at (372,58) size 4x22
+        text run at (372,58) width 4: " "
+      RenderText {#text} at (560,58) size 4x22
+        text run at (560,58) width 4: " "
       RenderText {#text} at (0,0) size 0x0
-layer at (10,31) size 180x46
-  RenderTextControl {TEXTAREA} at (2,23) size 180x46
-    RenderBlock {DIV} at (2,2) size 176x21
-layer at (198,31) size 180x46
-  RenderTextControl {TEXTAREA} at (190,23) size 180x46
-    RenderBlock {DIV} at (2,2) size 176x21 [color=#545454]
-layer at (386,31) size 180x46
-  RenderTextControl {TEXTAREA} at (378,23) size 180x46
-    RenderBlock {DIV} at (2,2) size 176x21
-layer at (574,31) size 180x46
-  RenderTextControl {TEXTAREA} at (566,23) size 180x46
-    RenderBlock {DIV} at (2,2) size 176x21 [color=#545454]
+layer at (10,32) size 180x48
+  RenderTextControl {TEXTAREA} at (2,24) size 180x48
+    RenderBlock {DIV} at (2,2) size 176x22
+layer at (198,32) size 180x48
+  RenderTextControl {TEXTAREA} at (190,24) size 180x48
+    RenderBlock {DIV} at (2,2) size 176x22 [color=#545454]
+layer at (386,32) size 180x48
+  RenderTextControl {TEXTAREA} at (378,24) size 180x48
+    RenderBlock {DIV} at (2,2) size 176x22
+layer at (574,32) size 180x48
+  RenderTextControl {TEXTAREA} at (566,24) size 180x48
+    RenderBlock {DIV} at (2,2) size 176x22 [color=#545454]

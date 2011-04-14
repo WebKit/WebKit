@@ -12,43 +12,43 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x323 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x93
-          RenderText {#text} at (0,0) size 67x32
+      RenderBlock {DIV} at (0,0) size 784x341 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x99
+          RenderText {#text} at (0,0) size 67x33
             text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,31) size 172x32
-            text run at (0,31) width 172: "Fix for this bug: "
-          RenderInline {A} at (0,0) size 275x32 [color=#0000EE]
-            RenderText {#text} at (172,31) size 275x32
-              text run at (172,31) width 275: "<rdar://problem/4045521>"
-          RenderText {#text} at (447,31) size 734x63
-            text run at (447,31) width 287: " Hitting return key with full"
-            text run at (0,62) width 488: "line selected does not add blank line as it should"
-        RenderBlock {DIV} at (14,123) size 756x186
-          RenderBlock (anonymous) at (0,0) size 756x93
-            RenderText {#text} at (0,0) size 189x32
+          RenderText {#text} at (0,33) size 172x33
+            text run at (0,33) width 172: "Fix for this bug: "
+          RenderInline {A} at (0,0) size 275x33 [color=#0000EE]
+            RenderText {#text} at (172,33) size 275x33
+              text run at (172,33) width 275: "<rdar://problem/4045521>"
+          RenderText {#text} at (447,33) size 734x66
+            text run at (447,33) width 287: " Hitting return key with full"
+            text run at (0,66) width 488: "line selected does not add blank line as it should"
+        RenderBlock {DIV} at (14,129) size 756x198
+          RenderBlock (anonymous) at (0,0) size 756x99
+            RenderText {#text} at (0,0) size 189x33
               text run at (0,0) width 189: "Expected Results: "
             RenderBR {BR} at (189,24) size 0x0
-            RenderText {#text} at (0,31) size 746x63
-              text run at (0,31) width 746: "Should see this content in the red box below (note that the insertion point"
-              text run at (0,62) width 713: "should be at the start of the third line, immediately preceding \"baz\"):"
-          RenderBlock {DIV} at (0,93) size 756x31
-            RenderText {#text} at (0,0) size 32x32
+            RenderText {#text} at (0,33) size 746x66
+              text run at (0,33) width 746: "Should see this content in the red box below (note that the insertion point"
+              text run at (0,66) width 713: "should be at the start of the third line, immediately preceding \"baz\"):"
+          RenderBlock {DIV} at (0,99) size 756x33
+            RenderText {#text} at (0,0) size 32x33
               text run at (0,0) width 32: "foo"
-          RenderBlock {DIV} at (0,124) size 756x31
-            RenderBR {BR} at (0,0) size 0x32
-          RenderBlock {DIV} at (0,155) size 756x31
-            RenderText {#text} at (0,0) size 36x32
+          RenderBlock {DIV} at (0,132) size 756x33
+            RenderBR {BR} at (0,0) size 0x33
+          RenderBlock {DIV} at (0,165) size 756x33
+            RenderText {#text} at (0,0) size 36x33
               text run at (0,0) width 36: "baz"
-      RenderBlock {DIV} at (0,347) size 784x97
-        RenderBlock {DIV} at (0,0) size 784x97 [border: (2px solid #FF0000)]
-          RenderBlock {DIV} at (2,2) size 780x31
-            RenderText {#text} at (0,0) size 32x32
+      RenderBlock {DIV} at (0,365) size 784x103
+        RenderBlock {DIV} at (0,0) size 784x103 [border: (2px solid #FF0000)]
+          RenderBlock {DIV} at (2,2) size 780x33
+            RenderText {#text} at (0,0) size 32x33
               text run at (0,0) width 32: "foo"
-          RenderBlock {DIV} at (2,33) size 780x31
-            RenderBR {BR} at (0,0) size 0x32
-          RenderBlock {DIV} at (2,64) size 780x31
-            RenderText {#text} at (0,0) size 36x32
+          RenderBlock {DIV} at (2,35) size 780x33
+            RenderBR {BR} at (0,0) size 0x33
+          RenderBlock {DIV} at (2,68) size 780x33
+            RenderText {#text} at (0,0) size 36x33
               text run at (0,0) width 36: "baz"
 caret: position 0 of child 0 {#text} of child 3 {DIV} of child 1 {DIV} of child 3 {DIV} of body

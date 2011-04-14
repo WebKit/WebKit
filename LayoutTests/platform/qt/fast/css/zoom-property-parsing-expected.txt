@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x310
-  RenderBlock {HTML} at (0,0) size 800x310
-    RenderBody {BODY} at (8,8) size 784x294
-      RenderBlock {DIV} at (0,0) size 250x294
-        RenderText {#text} at (0,0) size 247x294
+layer at (0,0) size 800x324
+  RenderBlock {HTML} at (0,0) size 800x324
+    RenderBody {BODY} at (8,8) size 784x308
+      RenderBlock {DIV} at (0,0) size 250x308
+        RenderText {#text} at (0,0) size 247x308
           text run at (0,0) width 191: "Lorem ipsum dolor sit amet,"
-          text run at (0,21) width 228: "consectetur adipisicing elit, sed do"
-          text run at (0,42) width 247: "eiusmod tempor incididunt ut labore"
-          text run at (0,63) width 238: "et dolore magna aliqua. Ut enim ad"
-          text run at (0,84) width 189: "minim veniam, quis nostrud"
-          text run at (0,105) width 231: "exercitation ullamco laboris nisi ut"
-          text run at (0,126) width 231: "aliquip ex ea commodo consequat."
-          text run at (0,147) width 159: "Duis aute irure dolor in"
-          text run at (0,168) width 240: "reprehenderit in voluptate velit esse"
-          text run at (0,189) width 189: "cillum dolore eu fugiat nulla"
-          text run at (0,210) width 224: "pariatur. Excepteur sint occaecat"
-          text run at (0,231) width 210: "cupidatat non proident, sunt in"
-          text run at (0,252) width 213: "culpa qui officia deserunt mollit"
-          text run at (0,273) width 139: "anim id est laborum."
+          text run at (0,22) width 228: "consectetur adipisicing elit, sed do"
+          text run at (0,44) width 247: "eiusmod tempor incididunt ut labore"
+          text run at (0,66) width 238: "et dolore magna aliqua. Ut enim ad"
+          text run at (0,88) width 189: "minim veniam, quis nostrud"
+          text run at (0,110) width 231: "exercitation ullamco laboris nisi ut"
+          text run at (0,132) width 231: "aliquip ex ea commodo consequat."
+          text run at (0,154) width 159: "Duis aute irure dolor in"
+          text run at (0,176) width 240: "reprehenderit in voluptate velit esse"
+          text run at (0,198) width 189: "cillum dolore eu fugiat nulla"
+          text run at (0,220) width 224: "pariatur. Excepteur sint occaecat"
+          text run at (0,242) width 210: "cupidatat non proident, sunt in"
+          text run at (0,264) width 213: "culpa qui officia deserunt mollit"
+          text run at (0,286) width 139: "anim id est laborum."

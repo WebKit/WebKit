@@ -21,8 +21,8 @@ layer at (0,0) size 800x600
           chunk 1 text run 4 at (85.60,60.00) startOffset 3 endOffset 4 width 25.20: "A"
           chunk 1 text run 5 at (110.80,60.00) startOffset 4 endOffset 5 width 23.40: "T"
           chunk 1 text run 6 at (134.20,60.00) startOffset 5 endOffset 6 width 23.40: "E"
-      RenderSVGText {text} at (10,160) size 250x152 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,106) size 250x152
+      RenderSVGText {text} at (10,160) size 251x152 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,106) size 251x152
           chunk 1 text run 1 at (10.00,300.00) startOffset 0 endOffset 1 width 23.40: "B"
           chunk 1 text run 1 at (30.00,290.00) startOffset 0 endOffset 1 width 17.40: "o"
           chunk 1 text run 1 at (50.00,280.00) startOffset 0 endOffset 1 width 11.40: "t"

@@ -1,300 +1,300 @@
-layer at (0,0) size 784x1046
+layer at (0,0) size 784x1079
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1046
-  RenderBlock {HTML} at (0,0) size 784x1046
-    RenderBody {BODY} at (8,21) size 768x1009
+layer at (0,0) size 784x1079
+  RenderBlock {HTML} at (0,0) size 784x1079
+    RenderBody {BODY} at (8,21) size 768x1042
       RenderBlock {H1} at (0,0) size 768x42
-        RenderText {#text} at (0,0) size 344x41
+        RenderText {#text} at (0,0) size 344x42
           text run at (0,0) width 344: "Anonymous table objects"
-      RenderBlock {P} at (0,63) size 768x21
-        RenderText {#text} at (0,0) size 52x21
+      RenderBlock {P} at (0,63) size 768x22
+        RenderText {#text} at (0,0) size 52x22
           text run at (0,0) width 52: "See the "
-        RenderInline {A} at (0,0) size 164x21 [color=#0000EE]
-          RenderText {#text} at (52,0) size 164x21
+        RenderInline {A} at (0,0) size 164x22 [color=#0000EE]
+          RenderText {#text} at (52,0) size 164x22
             text run at (52,0) width 59: "relevant "
             text run at (111,0) width 105: "section of CSS2"
-        RenderText {#text} at (216,0) size 136x21
+        RenderText {#text} at (216,0) size 136x22
           text run at (216,0) width 136: " for an explanation. "
-        RenderInline {STRONG} at (0,0) size 270x21
-          RenderText {#text} at (352,0) size 270x21
+        RenderInline {STRONG} at (0,0) size 270x22
+          RenderText {#text} at (352,0) size 270x22
             text run at (352,0) width 121: "This test does not "
             text run at (473,0) width 149: "test inline-tables at all."
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {H2} at (0,103) size 768x31
-        RenderText {#text} at (0,0) size 66x32
+      RenderBlock {H2} at (0,104) size 768x33
+        RenderText {#text} at (0,0) size 66x33
           text run at (0,0) width 66: "Rule 1"
-      RenderTable {DIV} at (0,153) size 150x21 [bgcolor=#00FFFF]
-        RenderTableSection (anonymous) at (0,0) size 150x21
-          RenderTableRow (anonymous) at (0,0) size 150x21
-            RenderTableCell (anonymous) at (0,0) size 150x21 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 150x21
+      RenderTable {DIV} at (0,156) size 150x22 [bgcolor=#00FFFF]
+        RenderTableSection (anonymous) at (0,0) size 150x22
+          RenderTableRow (anonymous) at (0,0) size 150x22
+            RenderTableCell (anonymous) at (0,0) size 150x22 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 150x22
                 text run at (0,0) width 150: "Table 1, Cell 1, Row 1"
-      RenderBlock {H2} at (0,193) size 768x31
-        RenderText {#text} at (0,0) size 66x32
+      RenderBlock {H2} at (0,197) size 768x33
+        RenderText {#text} at (0,0) size 66x33
           text run at (0,0) width 66: "Rule 2"
-      RenderBlock {DIV} at (0,243) size 768x21
-        RenderTable at (0,0) size 600x21
-          RenderTableSection (anonymous) at (0,0) size 600x21
-            RenderTableRow (anonymous) at (0,0) size 600x21
-              RenderTableCell {SPAN} at (0,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+      RenderBlock {DIV} at (0,249) size 768x22
+        RenderTable at (0,0) size 600x22
+          RenderTableSection (anonymous) at (0,0) size 600x22
+            RenderTableRow (anonymous) at (0,0) size 600x22
+              RenderTableCell {SPAN} at (0,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 1, Row 1, Cell 1"
-              RenderTableCell {SPAN} at (150,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (150,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 1, Row 1, Cell 2"
-              RenderTableCell {SPAN} at (300,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (300,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 1, Row 1, Cell 3"
-              RenderTableCell {SPAN} at (450,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=3 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (450,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=3 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 1, Row 1, Cell 4"
-      RenderBlock {DIV} at (0,280) size 768x63
-        RenderTable at (0,0) size 600x63
-          RenderTableSection (anonymous) at (0,0) size 600x63
-            RenderTableRow (anonymous) at (0,0) size 600x21
-              RenderTableCell {SPAN} at (0,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+      RenderBlock {DIV} at (0,287) size 768x66
+        RenderTable at (0,0) size 600x66
+          RenderTableSection (anonymous) at (0,0) size 600x66
+            RenderTableRow (anonymous) at (0,0) size 600x22
+              RenderTableCell {SPAN} at (0,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 1, Cell 1"
-              RenderTableCell {SPAN} at (150,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (150,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 1, Cell 2"
-              RenderTableCell {SPAN} at (300,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (300,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 1, Cell 3"
-              RenderTableCell {SPAN} at (450,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=3 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (450,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=3 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 1, Cell 4"
-            RenderTableRow {SPAN} at (0,21) size 600x21 [bgcolor=#00FFFF]
-              RenderTableCell {SPAN} at (0,21) size 150x21 [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+            RenderTableRow {SPAN} at (0,22) size 600x22 [bgcolor=#00FFFF]
+              RenderTableCell {SPAN} at (0,22) size 150x22 [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 2, Cell 1"
-              RenderTableCell {SPAN} at (150,21) size 150x21 [r=1 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (150,22) size 150x22 [r=1 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 2, Cell 2"
-              RenderTableCell {SPAN} at (300,21) size 150x21 [r=1 c=2 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (300,22) size 150x22 [r=1 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 2, Cell 3"
-              RenderTableCell {SPAN} at (450,21) size 150x21 [r=1 c=3 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (450,22) size 150x22 [r=1 c=3 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 2, Cell 4"
-            RenderTableRow (anonymous) at (0,42) size 600x21
-              RenderTableCell {SPAN} at (0,42) size 150x21 [bgcolor=#00FFFF] [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+            RenderTableRow (anonymous) at (0,44) size 600x22
+              RenderTableCell {SPAN} at (0,44) size 150x22 [bgcolor=#00FFFF] [r=2 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 3, Cell 1"
-              RenderTableCell {SPAN} at (150,42) size 150x21 [bgcolor=#00FFFF] [r=2 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (150,44) size 150x22 [bgcolor=#00FFFF] [r=2 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 3, Cell 2"
-              RenderTableCell {SPAN} at (300,42) size 150x21 [bgcolor=#00FFFF] [r=2 c=2 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (300,44) size 150x22 [bgcolor=#00FFFF] [r=2 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 3, Cell 3"
-              RenderTableCell {SPAN} at (450,42) size 150x21 [bgcolor=#00FFFF] [r=2 c=3 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (450,44) size 150x22 [bgcolor=#00FFFF] [r=2 c=3 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 3, Cell 4"
-      RenderBlock {H2} at (0,362) size 768x31
-        RenderText {#text} at (0,0) size 137x32
+      RenderBlock {H2} at (0,372) size 768x33
+        RenderText {#text} at (0,0) size 137x33
           text run at (0,0) width 137: "Rules 3 and 4"
-      RenderBlock {P} at (0,412) size 768x21
-        RenderText {#text} at (0,0) size 529x21
+      RenderBlock {P} at (0,424) size 768x22
+        RenderText {#text} at (0,0) size 529x22
           text run at (0,0) width 450: "This section does not test the behavior of columns, column groups, "
           text run at (450,0) width 79: "or captions."
-      RenderBlock {DIV} at (0,449) size 768x63
-        RenderTable at (0,0) size 600x63
-          RenderTableSection (anonymous) at (0,0) size 600x63
-            RenderTableRow {SPAN} at (0,0) size 600x21 [bgcolor=#00FFFF]
-              RenderTableCell {SPAN} at (0,0) size 150x21 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+      RenderBlock {DIV} at (0,462) size 768x66
+        RenderTable at (0,0) size 600x66
+          RenderTableSection (anonymous) at (0,0) size 600x66
+            RenderTableRow {SPAN} at (0,0) size 600x22 [bgcolor=#00FFFF]
+              RenderTableCell {SPAN} at (0,0) size 150x22 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 1, Row 1, Cell 1"
-              RenderTableCell {SPAN} at (150,0) size 150x21 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (150,0) size 150x22 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 1, Row 1, Cell 2"
-              RenderTableCell {SPAN} at (300,0) size 150x21 [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (300,0) size 150x22 [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 1, Row 1, Cell 3"
-              RenderTableCell {SPAN} at (450,0) size 150x21 [r=0 c=3 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (450,0) size 150x22 [r=0 c=3 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 1, Row 1, Cell 4"
-            RenderTableRow {SPAN} at (0,21) size 600x21 [bgcolor=#00FFFF]
-              RenderTableCell {SPAN} at (0,21) size 150x21 [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 87x21
+            RenderTableRow {SPAN} at (0,22) size 600x22 [bgcolor=#00FFFF]
+              RenderTableCell {SPAN} at (0,22) size 150x22 [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 87x22
                   text run at (0,0) width 87: "T 1, R 2, C 1"
-              RenderTableCell {SPAN} at (150,21) size 150x21 [r=1 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (150,22) size 150x22 [r=1 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 1, Row 2, Cell 2"
-              RenderTableCell {SPAN} at (300,21) size 150x21 [r=1 c=2 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (300,22) size 150x22 [r=1 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 1, Row 2, Cell 3"
-              RenderTableCell {SPAN} at (450,21) size 150x21 [r=1 c=3 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (450,22) size 150x22 [r=1 c=3 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 1, Row 2, Cell 4"
-            RenderTableRow {SPAN} at (0,42) size 600x21 [bgcolor=#00FFFF]
-              RenderTableCell {SPAN} at (0,42) size 150x21 [r=2 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+            RenderTableRow {SPAN} at (0,44) size 600x22 [bgcolor=#00FFFF]
+              RenderTableCell {SPAN} at (0,44) size 150x22 [r=2 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 1, Row 3, Cell 1"
-              RenderTableCell {SPAN} at (150,42) size 150x21 [r=2 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (150,44) size 150x22 [r=2 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 1, Row 3, Cell 2"
-              RenderTableCell {SPAN} at (300,42) size 150x21 [r=2 c=2 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 87x21
+              RenderTableCell {SPAN} at (300,44) size 150x22 [r=2 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 87x22
                   text run at (0,0) width 87: "T 1, R 3, C 3"
-              RenderTableCell {SPAN} at (450,42) size 150x21 [r=2 c=3 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (450,44) size 150x22 [r=2 c=3 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 1, Row 3, Cell 4"
-      RenderBlock {P} at (0,528) size 768x42
-        RenderText {#text} at (0,0) size 732x42
+      RenderBlock {P} at (0,544) size 768x44
+        RenderText {#text} at (0,0) size 732x44
           text run at (0,0) width 732: "Note: table-header-group and table-footer-group are tested only in their HTML order, and they only appear"
-          text run at (0,21) width 35: "once."
-      RenderBlock {DIV} at (0,586) size 768x105
-        RenderTable at (0,0) size 600x105
-          RenderTableSection {SPAN} at (0,0) size 600x21 [bgcolor=#00FFFF]
-            RenderTableRow (anonymous) at (0,0) size 600x21
-              RenderTableCell {SPAN} at (0,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+          text run at (0,22) width 35: "once."
+      RenderBlock {DIV} at (0,604) size 768x110
+        RenderTable at (0,0) size 600x110
+          RenderTableSection {SPAN} at (0,0) size 600x22 [bgcolor=#00FFFF]
+            RenderTableRow (anonymous) at (0,0) size 600x22
+              RenderTableCell {SPAN} at (0,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 1, Cell 1"
-              RenderTableCell {SPAN} at (150,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (150,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 1, Cell 2"
-              RenderTableCell {SPAN} at (300,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (300,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 1, Cell 3"
-              RenderTableCell {SPAN} at (450,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=3 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (450,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=3 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 1, Cell 4"
-          RenderTableSection {SPAN} at (0,84) size 600x21 [bgcolor=#00FFFF]
-            RenderTableRow (anonymous) at (0,0) size 600x21
-              RenderTableCell {SPAN} at (0,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+          RenderTableSection {SPAN} at (0,88) size 600x22 [bgcolor=#00FFFF]
+            RenderTableRow (anonymous) at (0,0) size 600x22
+              RenderTableCell {SPAN} at (0,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 5, Cell 1"
-              RenderTableCell {SPAN} at (150,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (150,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 5, Cell 2"
-              RenderTableCell {SPAN} at (300,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 87x21
+              RenderTableCell {SPAN} at (300,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 87x22
                   text run at (0,0) width 87: "T 2, R 5, C 5"
-              RenderTableCell {SPAN} at (450,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=3 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (450,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=3 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 5, Cell 4"
-          RenderTableSection (anonymous) at (0,21) size 600x21
-            RenderTableRow {SPAN} at (0,0) size 600x21 [bgcolor=#00FFFF]
-              RenderTableCell {SPAN} at (0,0) size 150x21 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 87x21
+          RenderTableSection (anonymous) at (0,22) size 600x22
+            RenderTableRow {SPAN} at (0,0) size 600x22 [bgcolor=#00FFFF]
+              RenderTableCell {SPAN} at (0,0) size 150x22 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 87x22
                   text run at (0,0) width 87: "T 2, R 2, C 1"
-              RenderTableCell {SPAN} at (150,0) size 150x21 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (150,0) size 150x22 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 2, Cell 2"
-              RenderTableCell {SPAN} at (300,0) size 150x21 [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (300,0) size 150x22 [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 2, Cell 3"
-              RenderTableCell {SPAN} at (450,0) size 150x21 [r=0 c=3 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (450,0) size 150x22 [r=0 c=3 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 2, Cell 4"
-          RenderTableSection {SPAN} at (0,42) size 600x21 [bgcolor=#00FFFF]
-            RenderTableRow (anonymous) at (0,0) size 600x21
-              RenderTableCell {SPAN} at (0,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 87x21
+          RenderTableSection {SPAN} at (0,44) size 600x22 [bgcolor=#00FFFF]
+            RenderTableRow (anonymous) at (0,0) size 600x22
+              RenderTableCell {SPAN} at (0,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 87x22
                   text run at (0,0) width 87: "T 2, R 3, C 1"
-              RenderTableCell {SPAN} at (150,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (150,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 3, Cell x"
-              RenderTableCell {SPAN} at (300,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (300,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 3, Cell 3"
-              RenderTableCell {SPAN} at (450,0) size 150x21 [bgcolor=#00FFFF] [r=0 c=3 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (450,0) size 150x22 [bgcolor=#00FFFF] [r=0 c=3 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 3, Cell 4"
-          RenderTableSection {SPAN} at (0,63) size 600x21 [bgcolor=#00FFFF]
-            RenderTableRow {SPAN} at (0,0) size 600x21
-              RenderTableCell {SPAN} at (0,0) size 150x21 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 87x21
+          RenderTableSection {SPAN} at (0,66) size 600x22 [bgcolor=#00FFFF]
+            RenderTableRow {SPAN} at (0,0) size 600x22
+              RenderTableCell {SPAN} at (0,0) size 150x22 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 87x22
                   text run at (0,0) width 87: "T 2, R 4, C 1"
-              RenderTableCell {SPAN} at (150,0) size 150x21 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (150,0) size 150x22 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 4, Cell x"
-              RenderTableCell {SPAN} at (300,0) size 150x21 [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (300,0) size 150x22 [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 4, Cell 3"
-              RenderTableCell {SPAN} at (450,0) size 150x21 [r=0 c=3 rs=1 cs=1]
-                RenderText {#text} at (0,0) size 150x21
+              RenderTableCell {SPAN} at (450,0) size 150x22 [r=0 c=3 rs=1 cs=1]
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 4, Cell 4"
-      RenderBlock {H2} at (0,710) size 768x31
-        RenderText {#text} at (0,0) size 66x32
+      RenderBlock {H2} at (0,733) size 768x33
+        RenderText {#text} at (0,0) size 66x33
           text run at (0,0) width 66: "Rule 5"
-      RenderTable {DIV} at (0,760) size 706x105 [bgcolor=#00FFFF]
-        RenderTableSection (anonymous) at (0,0) size 706x105
-          RenderTableRow {SPAN} at (0,0) size 706x21 [bgcolor=#00FFFF]
-            RenderTableCell {SPAN} at (0,0) size 150x21 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 150x21
+      RenderTable {DIV} at (0,785) size 706x110 [bgcolor=#00FFFF]
+        RenderTableSection (anonymous) at (0,0) size 706x110
+          RenderTableRow {SPAN} at (0,0) size 706x22 [bgcolor=#00FFFF]
+            RenderTableCell {SPAN} at (0,0) size 150x22 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 150x22
                 text run at (0,0) width 150: "Table 2, Row 1, Cell 1"
-            RenderTableCell {SPAN} at (150,0) size 150x21 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 150x21
+            RenderTableCell {SPAN} at (150,0) size 150x22 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 150x22
                 text run at (0,0) width 150: "Table 2, Row 1, Cell 2"
-            RenderTableCell {SPAN} at (300,0) size 256x21 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 150x21
+            RenderTableCell {SPAN} at (300,0) size 256x22 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 150x22
                 text run at (0,0) width 150: "Table 2, Row 1, Cell 3"
-            RenderTableCell {SPAN} at (556,0) size 150x21 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 150x21
+            RenderTableCell {SPAN} at (556,0) size 150x22 [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 150x22
                 text run at (0,0) width 150: "Table 2, Row 1, Cell 4"
-          RenderTableRow {SPAN} at (0,21) size 706x63 [bgcolor=#00FFFF]
-            RenderTableCell (anonymous) at (0,21) size 150x21 [r=1 c=0 rs=1 cs=1]
-              RenderBlock {SPAN} at (0,0) size 150x21
-                RenderText {#text} at (0,0) size 150x21
+          RenderTableRow {SPAN} at (0,22) size 706x66 [bgcolor=#00FFFF]
+            RenderTableCell (anonymous) at (0,22) size 150x22 [r=1 c=0 rs=1 cs=1]
+              RenderBlock {SPAN} at (0,0) size 150x22
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 2, Cell 1"
-            RenderTableCell {SPAN} at (150,21) size 150x21 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 150x21
+            RenderTableCell {SPAN} at (150,22) size 150x22 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 150x22
                 text run at (0,0) width 150: "Table 2, Row 2, Cell 2"
-            RenderTableCell (anonymous) at (300,21) size 256x63 [r=1 c=2 rs=1 cs=1]
-              RenderBlock {SPAN} at (0,0) size 256x21
-                RenderText {#text} at (0,0) size 150x21
+            RenderTableCell (anonymous) at (300,22) size 256x66 [r=1 c=2 rs=1 cs=1]
+              RenderBlock {SPAN} at (0,0) size 256x22
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 2, Cell 3"
-              RenderBlock {SPAN} at (0,21) size 256x21
-                RenderText {#text} at (0,0) size 180x21
+              RenderBlock {SPAN} at (0,22) size 256x22
+                RenderText {#text} at (0,0) size 180x22
                   text run at (0,0) width 180: "also Table 2, Row 2, Cell 3"
-              RenderBlock (anonymous) at (0,42) size 256x21
-                RenderText {#text} at (0,0) size 180x21
+              RenderBlock (anonymous) at (0,44) size 256x22
+                RenderText {#text} at (0,0) size 180x22
                   text run at (0,0) width 180: "also Table 2, Row 2, Cell 3"
-            RenderTableCell {SPAN} at (556,21) size 150x21 [r=1 c=3 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 150x21
+            RenderTableCell {SPAN} at (556,22) size 150x22 [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 150x22
                 text run at (0,0) width 150: "Table 2, Row 2, Cell 4"
-          RenderTableRow {SPAN} at (0,84) size 706x21 [bgcolor=#00FFFF]
-            RenderTableCell (anonymous) at (0,84) size 150x21 [r=2 c=0 rs=1 cs=1]
-              RenderInline {SPAN} at (0,0) size 150x21
-                RenderText {#text} at (0,0) size 150x21
+          RenderTableRow {SPAN} at (0,88) size 706x22 [bgcolor=#00FFFF]
+            RenderTableCell (anonymous) at (0,88) size 150x22 [r=2 c=0 rs=1 cs=1]
+              RenderInline {SPAN} at (0,0) size 150x22
+                RenderText {#text} at (0,0) size 150x22
                   text run at (0,0) width 150: "Table 2, Row 3, Cell 1"
-            RenderTableCell {SPAN} at (150,84) size 150x21 [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 150x21
+            RenderTableCell {SPAN} at (150,88) size 150x22 [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 150x22
                 text run at (0,0) width 150: "Table 2, Row 3, Cell 2"
-            RenderTableCell (anonymous) at (300,84) size 256x21 [r=2 c=2 rs=1 cs=1]
-              RenderTable {SPAN} at (0,0) size 256x21 [bgcolor=#00FFFF]
-                RenderTableSection (anonymous) at (0,0) size 256x21
-                  RenderTableRow (anonymous) at (0,0) size 256x21
-                    RenderTableCell (anonymous) at (0,0) size 256x21 [r=0 c=0 rs=1 cs=1]
-                      RenderText {#text} at (0,0) size 256x21
+            RenderTableCell (anonymous) at (300,88) size 256x22 [r=2 c=2 rs=1 cs=1]
+              RenderTable {SPAN} at (0,0) size 256x22 [bgcolor=#00FFFF]
+                RenderTableSection (anonymous) at (0,0) size 256x22
+                  RenderTableRow (anonymous) at (0,0) size 256x22
+                    RenderTableCell (anonymous) at (0,0) size 256x22 [r=0 c=0 rs=1 cs=1]
+                      RenderText {#text} at (0,0) size 256x22
                         text run at (0,0) width 256: "Table 2, Row 3, Cell 3 (a nested table)"
-            RenderTableCell {SPAN} at (556,84) size 150x21 [r=2 c=3 rs=1 cs=1]
-              RenderText {#text} at (0,0) size 150x21
+            RenderTableCell {SPAN} at (556,88) size 150x22 [r=2 c=3 rs=1 cs=1]
+              RenderText {#text} at (0,0) size 150x22
                 text run at (0,0) width 150: "Table 2, Row 3, Cell 4"
-      RenderBlock {HR} at (0,881) size 768x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,899) size 768x36
-        RenderInline {A} at (0,0) size 88x21 [color=#0000EE]
+      RenderBlock {HR} at (0,911) size 768x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,929) size 768x37
+        RenderInline {A} at (0,0) size 88x22 [color=#0000EE]
           RenderImage {IMG} at (0,0) size 88x31
-      RenderBlock {P} at (0,951) size 768x21
-        RenderText {#text} at (0,0) size 61x21
+      RenderBlock {P} at (0,982) size 768x22
+        RenderText {#text} at (0,0) size 61x22
           text run at (0,0) width 61: "(Back to "
-        RenderInline {A} at (0,0) size 170x21 [color=#0000EE]
-          RenderText {#text} at (61,0) size 170x21
+        RenderInline {A} at (0,0) size 170x22 [color=#0000EE]
+          RenderText {#text} at (61,0) size 170x22
             text run at (61,0) width 170: "CSS Testing Information"
-        RenderText {#text} at (231,0) size 8x21
+        RenderText {#text} at (231,0) size 8x22
           text run at (231,0) width 8: ", "
-        RenderInline {A} at (0,0) size 88x21 [color=#0000EE]
-          RenderText {#text} at (239,0) size 88x21
+        RenderInline {A} at (0,0) size 88x22 [color=#0000EE]
+          RenderText {#text} at (239,0) size 88x22
             text run at (239,0) width 88: "David Baron"
-        RenderText {#text} at (327,0) size 5x21
+        RenderText {#text} at (327,0) size 5x22
           text run at (327,0) width 5: ")"
-      RenderBlock {P} at (0,988) size 768x21
-        RenderInline {A} at (0,0) size 34x21 [color=#0000EE]
-          RenderText {#text} at (0,0) size 34x21
+      RenderBlock {P} at (0,1020) size 768x22
+        RenderInline {A} at (0,0) size 34x22 [color=#0000EE]
+          RenderText {#text} at (0,0) size 34x22
             text run at (0,0) width 34: "LDB"
-        RenderText {#text} at (34,0) size 8x21
+        RenderText {#text} at (34,0) size 8x22
           text run at (34,0) width 8: ", "
-        RenderInline {A} at (0,0) size 173x21 [color=#0000EE]
-          RenderText {#text} at (42,0) size 173x21
+        RenderInline {A} at (0,0) size 173x22 [color=#0000EE]
+          RenderText {#text} at (42,0) size 173x22
             text run at (42,0) width 173: "dbaron@fas.harvard.edu"

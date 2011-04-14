@@ -19,40 +19,40 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x338 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x93
-          RenderText {#text} at (0,0) size 67x32
+      RenderBlock {DIV} at (0,0) size 784x350 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x99
+          RenderText {#text} at (0,0) size 67x33
             text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,31) size 720x63
-            text run at (0,31) width 720: "Copying and pasting content inside of a PRE tag. This test was created"
-            text run at (0,62) width 121: "after fixing "
-          RenderInline {A} at (0,0) size 84x32 [color=#0000EE]
-            RenderText {#text} at (121,62) size 84x32
-              text run at (121,62) width 84: "3918056"
-          RenderText {#text} at (205,62) size 6x32
-            text run at (205,62) width 6: "."
-        RenderBlock {DIV} at (14,123) size 756x177
-          RenderBlock (anonymous) at (0,0) size 756x93
-            RenderText {#text} at (0,0) size 189x32
+          RenderText {#text} at (0,33) size 720x66
+            text run at (0,33) width 720: "Copying and pasting content inside of a PRE tag. This test was created"
+            text run at (0,66) width 121: "after fixing "
+          RenderInline {A} at (0,0) size 84x33 [color=#0000EE]
+            RenderText {#text} at (121,66) size 84x33
+              text run at (121,66) width 84: "3918056"
+          RenderText {#text} at (205,66) size 6x33
+            text run at (205,66) width 6: "."
+        RenderBlock {DIV} at (14,129) size 756x183
+          RenderBlock (anonymous) at (0,0) size 756x99
+            RenderText {#text} at (0,0) size 189x33
               text run at (0,0) width 189: "Expected Results: "
             RenderBR {BR} at (189,24) size 0x0
-            RenderText {#text} at (0,31) size 727x63
-              text run at (0,31) width 727: "The PRE tag and the formatting of the text inside of the PRE should be"
-              text run at (0,62) width 583: "maintained. Should see this content in the red box below:"
-          RenderBlock {PRE} at (0,117) size 756x60
-            RenderText {#text} at (0,0) size 34x59
+            RenderText {#text} at (0,33) size 727x66
+              text run at (0,33) width 727: "The PRE tag and the formatting of the text inside of the PRE should be"
+              text run at (0,66) width 583: "maintained. Should see this content in the red box below:"
+          RenderBlock {PRE} at (0,123) size 756x60
+            RenderText {#text} at (0,0) size 34x60
               text run at (0,0) width 33: "foo"
               text run at (33,0) width 0: " "
               text run at (0,30) width 34: "bar"
-      RenderBlock {DIV} at (0,362) size 784x112
+      RenderBlock {DIV} at (0,374) size 784x112
         RenderBlock {DIV} at (0,0) size 784x112 [border: (2px solid #FF0000)]
           RenderBlock {PRE} at (2,26) size 780x60
             RenderBlock (anonymous) at (0,0) size 780x0
               RenderInline {SPAN} at (0,0) size 0x0
             RenderBlock (anonymous) at (0,0) size 780x60
               RenderBlock {PRE} at (0,0) size 780x60
-                RenderText {#text} at (0,0) size 34x59
+                RenderText {#text} at (0,0) size 34x60
                   text run at (0,0) width 33: "foo"
                   text run at (33,0) width 0: " "
                   text run at (0,30) width 34: "bar"

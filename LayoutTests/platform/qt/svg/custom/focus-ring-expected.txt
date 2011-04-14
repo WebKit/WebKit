@@ -11,15 +11,15 @@ layer at (0,0) size 800x600
     RenderSVGPath {rect} at (150,140) size 137x137 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(200.00,140.00)}] [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
     RenderSVGContainer {g} at (310,140) size 137x137
       RenderSVGPath {rect} at (310,140) size 137x137 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(360.00,140.00)}] [fill={[type=SOLID] [color=#FFA500]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-    RenderSVGText {text} at (10,304) size 80x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 80x21
+    RenderSVGText {text} at (10,304) size 80x22 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 80x22
         chunk 1 text run 1 at (10.00,320.00) startOffset 0 endOffset 12 width 80.00: "focused text"
-    RenderSVGText {text} at (0,-16) size 80x21 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 80x21
+    RenderSVGText {text} at (0,-16) size 80x22 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 80x22
         chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 12 width 80.00: "focused text"
-    RenderSVGContainer {g} at (197,306) size 81x59
-      RenderSVGText {text} at (0,-16) size 80x21 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 80x21
+    RenderSVGContainer {g} at (197,306) size 81x60
+      RenderSVGText {text} at (0,-16) size 80x22 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 80x22
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 12 width 80.00: "focused text"
     RenderSVGResourceClipper {clipPath} [id="clip"] [clipPathUnits=userSpaceOnUse]
       RenderSVGPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

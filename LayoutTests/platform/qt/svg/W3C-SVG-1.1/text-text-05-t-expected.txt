@@ -8,40 +8,40 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (0,0) size 4x4
           RenderSVGPath {line} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=0.00] [y2=-15.00]
           RenderSVGPath {rect} at (0,0) size 4x4 [fill={[type=SOLID] [color=#000000]}] [x=-4.00] [y=-4.00] [width=8.00] [height=8.00]
-      RenderSVGContainer {g} at (10,54) size 44x261 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,40.00)}]
-        RenderSVGText {text} at (0,14) size 44x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 44x21
+      RenderSVGContainer {g} at (10,54) size 44x262 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,40.00)}]
+        RenderSVGText {text} at (0,14) size 44x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 44x22
             chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 7 width 44.00: "1.x 1.y"
-        RenderSVGText {text} at (0,44) size 44x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 44x21
+        RenderSVGText {text} at (0,44) size 44x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 44x22
             chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 7 width 44.00: "4.x 1.y"
-        RenderSVGText {text} at (0,74) size 44x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 44x21
+        RenderSVGText {text} at (0,74) size 44x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 44x22
             chunk 1 text run 1 at (0.00,90.00) startOffset 0 endOffset 7 width 44.00: "2.x 1.y"
-        RenderSVGText {text} at (0,104) size 44x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 44x21
+        RenderSVGText {text} at (0,104) size 44x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 44x22
             chunk 1 text run 1 at (0.00,120.00) startOffset 0 endOffset 7 width 44.00: "1.x 4.y"
-        RenderSVGText {text} at (0,134) size 44x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 44x21
+        RenderSVGText {text} at (0,134) size 44x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 44x22
             chunk 1 text run 1 at (0.00,150.00) startOffset 0 endOffset 7 width 44.00: "4.x 4.y"
-        RenderSVGText {text} at (0,164) size 44x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 44x21
+        RenderSVGText {text} at (0,164) size 44x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 44x22
             chunk 1 text run 1 at (0.00,180.00) startOffset 0 endOffset 7 width 44.00: "2.x 4.y"
-        RenderSVGText {text} at (0,194) size 44x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 44x21
+        RenderSVGText {text} at (0,194) size 44x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 44x22
             chunk 1 text run 1 at (0.00,210.00) startOffset 0 endOffset 7 width 44.00: "1.x 2.y"
-        RenderSVGText {text} at (0,224) size 44x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 44x21
+        RenderSVGText {text} at (0,224) size 44x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 44x22
             chunk 1 text run 1 at (0.00,240.00) startOffset 0 endOffset 7 width 44.00: "4.x 2.y"
-        RenderSVGText {text} at (0,254) size 44x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 44x21
+        RenderSVGText {text} at (0,254) size 44x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 44x22
             chunk 1 text run 1 at (0.00,270.00) startOffset 0 endOffset 7 width 44.00: "2.x 2.y"
       RenderSVGContainer {g} at (111,7) size 144x323 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,40.00)}]
-        RenderSVGText {text} at (-39,-33) size 78x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 78x21
+        RenderSVGText {text} at (-39,-33) size 78x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x22
             chunk 1 (middle anchor) text run 1 at (-39.00,-17.00) startOffset 0 endOffset 11 width 78.00: "text-anchor"
-        RenderSVGText {text} at (-16,-19) size 32x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 32x21
+        RenderSVGText {text} at (-16,-19) size 32x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 32x22
             chunk 1 (middle anchor) text run 1 at (-15.50,-3.00) startOffset 0 endOffset 5 width 31.00: "start"
         RenderSVGPath {line} at (149,50) size 2x280 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=10.00] [x2=0.00] [y2=290.00]
         RenderSVGContainer {g} at (146,55) size 109x254
@@ -232,11 +232,11 @@ layer at (0,0) size 480x360
                 chunk 1 text run 1 at (10.00,-10.00) startOffset 0 endOffset 1 width 15.00: "1"
                 chunk 1 text run 1 at (60.00,-5.00) startOffset 0 endOffset 3 width 45.00: "234"
       RenderSVGContainer {g} at (211,7) size 122x323 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,40.00)}]
-        RenderSVGText {text} at (-39,-33) size 78x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 78x21
+        RenderSVGText {text} at (-39,-33) size 78x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x22
             chunk 1 (middle anchor) text run 1 at (-39.00,-17.00) startOffset 0 endOffset 11 width 78.00: "text-anchor"
-        RenderSVGText {text} at (-23,-19) size 46x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 46x21
+        RenderSVGText {text} at (-23,-19) size 46x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 46x22
             chunk 1 (middle anchor) text run 1 at (-23.00,-3.00) startOffset 0 endOffset 6 width 46.00: "middle"
         RenderSVGPath {line} at (249,50) size 2x280 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=10.00] [x2=0.00] [y2=290.00]
         RenderSVGContainer {use} at (220,55) size 113x254
@@ -402,11 +402,11 @@ layer at (0,0) size 480x360
                     chunk 1 (middle anchor) text run 1 at (2.50,-10.00) startOffset 0 endOffset 1 width 15.00: "1"
                     chunk 1 (middle anchor) text run 1 at (37.50,-5.00) startOffset 0 endOffset 3 width 45.00: "234"
       RenderSVGContainer {g} at (290,7) size 124x323 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,40.00)}]
-        RenderSVGText {text} at (-39,-33) size 78x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 78x21
+        RenderSVGText {text} at (-39,-33) size 78x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x22
             chunk 1 (middle anchor) text run 1 at (-39.00,-17.00) startOffset 0 endOffset 11 width 78.00: "text-anchor"
-        RenderSVGText {text} at (-13,-19) size 26x21 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 26x21
+        RenderSVGText {text} at (-13,-19) size 26x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 26x22
             chunk 1 (middle anchor) text run 1 at (-12.50,-3.00) startOffset 0 endOffset 3 width 25.00: "end"
         RenderSVGPath {line} at (349,50) size 2x280 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=10.00] [x2=0.00] [y2=290.00]
         RenderSVGContainer {use} at (290,55) size 124x254
@@ -571,7 +571,7 @@ layer at (0,0) size 480x360
                   RenderSVGInlineText {#text} at (0,0) size 65x18
                     chunk 1 (end anchor) text run 1 at (-5.00,-10.00) startOffset 0 endOffset 1 width 15.00: "1"
                     chunk 1 (end anchor) text run 1 at (15.00,-5.00) startOffset 0 endOffset 3 width 45.00: "234"
-    RenderSVGText {text} at (10,311) size 270x52 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 270x52
+    RenderSVGText {text} at (10,311) size 270x53 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 270x53
         chunk 1 text run 1 at (10.00,350.00) startOffset 0 endOffset 16 width 270.00: "$Revision: 1.8 $"
     RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

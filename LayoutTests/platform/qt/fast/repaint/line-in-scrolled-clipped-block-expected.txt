@@ -5,5 +5,5 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
 layer at (8,8) size 100x100 scrollX 63 scrollWidth 164
   RenderBlock {DIV} at (0,0) size 100x100
-    RenderText {#text} at (0,0) size 164x21
+    RenderText {#text} at (0,0) size 164x22
       text run at (0,0) width 164: "                         PASS     ."

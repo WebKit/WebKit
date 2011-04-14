@@ -1,3 +1,24 @@
+2011-04-14  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Height of "Ahem" font differs from all other ports.
+        https://bugs.webkit.org/show_bug.cgi?id=57954
+
+        QFontMetricsF::descent() returns the actual descent minus 1,
+        to account for the baseline. Add it back to get correct metrics
+        for WebKit.
+
+        QFontMetricsF::leading() may return negative values on some
+        platforms (those using FreeType), this breaks WebKit's assumption
+        that lineSpacing >= (ascent + descent), so we work around this in
+        the same fashion as SimpleFontDataFreeType and SimpleFontDataPango.
+
+        This is covered by thousands of layout tests.
+
+        * platform/graphics/qt/SimpleFontDataQt.cpp:
+        (WebCore::SimpleFontData::platformInit):
+
 2011-04-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fixes for wxMSW and wx 2.9.1.1.

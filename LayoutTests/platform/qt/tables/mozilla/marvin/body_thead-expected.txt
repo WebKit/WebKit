@@ -3,63 +3,63 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 504x150
-        RenderBlock {CAPTION} at (0,0) size 504x21
-          RenderText {#text} at (42,0) size 420x21
+      RenderTable {TABLE} at (0,0) size 504x156
+        RenderBlock {CAPTION} at (0,0) size 504x22
+          RenderText {#text} at (42,0) size 420x22
             text run at (42,0) width 420: "Communicator 4.5 Installers for Mac and Windows Platforms"
-        RenderTableSection {THEAD} at (0,21) size 504x27
-          RenderTableRow {TR} at (0,2) size 504x23
-            RenderTableCell {TD} at (2,2) size 206x23 [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 204x21
+        RenderTableSection {THEAD} at (0,22) size 504x28
+          RenderTableRow {TR} at (0,2) size 504x24
+            RenderTableCell {TD} at (2,2) size 206x24 [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 204x22
                 text run at (1,1) width 204: "This is the header information"
-        RenderTableSection {TBODY} at (0,48) size 504x102
-          RenderTableRow {TR} at (0,2) size 504x23
-            RenderTableCell {TH} at (2,12) size 206x2 [r=0 c=0 rs=1 cs=1]
-            RenderTableCell {TH} at (210,2) size 109x23 [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 107x21
+        RenderTableSection {TBODY} at (0,50) size 504x106
+          RenderTableRow {TR} at (0,2) size 504x24
+            RenderTableCell {TH} at (2,13) size 206x2 [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TH} at (210,2) size 109x24 [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 107x22
                 text run at (1,1) width 107: "Macintosh PPC"
-            RenderTableCell {TH} at (321,2) size 86x23 [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 84x21
+            RenderTableCell {TH} at (321,2) size 86x24 [r=0 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 84x22
                 text run at (1,1) width 84: "Windows 95"
-            RenderTableCell {TH} at (409,2) size 93x23 [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 91x21
+            RenderTableCell {TH} at (409,2) size 93x24 [r=0 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 91x22
                 text run at (1,1) width 91: "Windows NT"
-          RenderTableRow {TR} at (0,27) size 504x23
-            RenderTableCell {TD} at (2,27) size 206x23 [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 78x21
+          RenderTableRow {TR} at (0,28) size 504x24
+            RenderTableCell {TD} at (2,28) size 206x24 [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 78x22
                 text run at (1,1) width 78: "Base Install"
-            RenderTableCell {TD} at (210,27) size 109x23 [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x21
+            RenderTableCell {TD} at (210,28) size 109x24 [r=1 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 21x22
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (321,27) size 86x23 [r=1 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x21
+            RenderTableCell {TD} at (321,28) size 86x24 [r=1 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 21x22
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (409,27) size 93x23 [r=1 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x21
+            RenderTableCell {TD} at (409,28) size 93x24 [r=1 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 21x22
                 text run at (1,1) width 21: "yes"
-          RenderTableRow {TR} at (0,52) size 504x23
-            RenderTableCell {TD} at (2,52) size 206x23 [r=2 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 111x21
+          RenderTableRow {TR} at (0,54) size 504x24
+            RenderTableCell {TD} at (2,54) size 206x24 [r=2 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 111x22
                 text run at (1,1) width 111: "Complete Install"
-            RenderTableCell {TD} at (210,52) size 109x23 [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x21
+            RenderTableCell {TD} at (210,54) size 109x24 [r=2 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 21x22
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (321,52) size 86x23 [r=2 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x21
+            RenderTableCell {TD} at (321,54) size 86x24 [r=2 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 21x22
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (409,52) size 93x23 [r=2 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x21
+            RenderTableCell {TD} at (409,54) size 93x24 [r=2 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 21x22
                 text run at (1,1) width 21: "yes"
-          RenderTableRow {TR} at (0,77) size 504x23
-            RenderTableCell {TD} at (2,77) size 206x23 [r=3 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 125x21
+          RenderTableRow {TR} at (0,80) size 504x24
+            RenderTableCell {TD} at (2,80) size 206x24 [r=3 c=0 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 125x22
                 text run at (1,1) width 125: "Pro Edition Install"
-            RenderTableCell {TD} at (210,77) size 109x23 [r=3 c=1 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x21
+            RenderTableCell {TD} at (210,80) size 109x24 [r=3 c=1 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 21x22
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (321,77) size 86x23 [r=3 c=2 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x21
+            RenderTableCell {TD} at (321,80) size 86x24 [r=3 c=2 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 21x22
                 text run at (1,1) width 21: "yes"
-            RenderTableCell {TD} at (409,77) size 93x23 [r=3 c=3 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 21x21
+            RenderTableCell {TD} at (409,80) size 93x24 [r=3 c=3 rs=1 cs=1]
+              RenderText {#text} at (1,1) size 21x22
                 text run at (1,1) width 21: "yes"
