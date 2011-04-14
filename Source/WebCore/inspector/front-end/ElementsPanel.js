@@ -38,7 +38,7 @@ WebInspector.ElementsPanel = function()
     if (!WebInspector.settings.domWordWrap)
         this.contentElement.classList.add("nowrap");
 
-    this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
+    this.contentElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 
     this.treeOutline = new WebInspector.ElementsTreeOutline();
     this.treeOutline.panel = this;
