@@ -378,6 +378,17 @@ The commit-queue is continuing to process your patch.
 
         OutputCapture().assert_outputs(self, queue.report_flaky_tests, [QueuesTest.mock_work_item, test_results, MockZipFile()], expected_stderr=expected_stderr)
 
+    def test_missing_layout_test_results(self):
+        queue = CommitQueue()
+        tool = MockTool()
+        results_path = '/mock/results.html'
+        tool.filesystem = MockFileSystem({results_path: None})
+        queue.bind_to_tool(tool)
+        # Make sure that our filesystem mock functions as we expect.
+        self.assertRaises(IOError, tool.filesystem.read_text_file, results_path)
+        # layout_test_results shouldn't raise even if the results.html file is missing.
+        self.assertEquals(queue.layout_test_results(), None)
+
     def test_layout_test_results(self):
         queue = CommitQueue()
         queue.bind_to_tool(MockTool())

@@ -1,3 +1,13 @@
+2011-04-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue fails to catch IOError when results.html is missing
+        https://bugs.webkit.org/show_bug.cgi?id=58589
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2011-04-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix for Mac installation script.

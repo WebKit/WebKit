@@ -316,7 +316,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
     def _read_file_contents(self, path):
         try:
             return self._tool.filesystem.read_text_file(path)
-        except OSError, e:  # File does not exist or can't be read.
+        except IOError, e:  # File does not exist or can't be read.
             return None
 
     # FIXME: This logic should move to the port object.
