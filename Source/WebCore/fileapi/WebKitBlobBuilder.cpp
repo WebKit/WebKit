@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#include "BlobBuilder.h"
+#include "WebKitBlobBuilder.h"
 
 #include "ArrayBuffer.h"
 #include "Blob.h"
@@ -45,12 +45,12 @@
 
 namespace WebCore {
 
-BlobBuilder::BlobBuilder()
+WebKitBlobBuilder::WebKitBlobBuilder()
     : m_size(0)
 {
 }
 
-Vector<char>& BlobBuilder::getBuffer()
+Vector<char>& WebKitBlobBuilder::getBuffer()
 {
     // If the last item is not a data item, create one. Otherwise, we simply append the new string to the last data item.
     if (m_items.isEmpty() || m_items[m_items.size() - 1].type != BlobDataItem::Data)
@@ -59,7 +59,7 @@ Vector<char>& BlobBuilder::getBuffer()
     return *m_items[m_items.size() - 1].data->mutableData();
 }
 
-void BlobBuilder::append(const String& text, const String& endingType, ExceptionCode& ec)
+void WebKitBlobBuilder::append(const String& text, const String& endingType, ExceptionCode& ec)
 {
     bool isEndingTypeTransparent = endingType == "transparent";
     bool isEndingTypeNative = endingType == "native";
@@ -80,13 +80,13 @@ void BlobBuilder::append(const String& text, const String& endingType, Exception
     m_size += buffer.size() - oldSize;
 }
 
-void BlobBuilder::append(const String& text, ExceptionCode& ec)
+void WebKitBlobBuilder::append(const String& text, ExceptionCode& ec)
 {
     append(text, String(), ec);
 }
 
 #if ENABLE(BLOB)
-void BlobBuilder::append(ArrayBuffer* arrayBuffer)
+void WebKitBlobBuilder::append(ArrayBuffer* arrayBuffer)
 {
     Vector<char>& buffer = getBuffer();
     size_t oldSize = buffer.size();
@@ -95,7 +95,7 @@ void BlobBuilder::append(ArrayBuffer* arrayBuffer)
 }
 #endif
 
-void BlobBuilder::append(Blob* blob)
+void WebKitBlobBuilder::append(Blob* blob)
 {
     if (blob->isFile()) {
         // If the blob is file that is not snapshoted, capture the snapshot now.
@@ -114,7 +114,7 @@ void BlobBuilder::append(Blob* blob)
     }
 }
 
-PassRefPtr<Blob> BlobBuilder::getBlob(const String& contentType)
+PassRefPtr<Blob> WebKitBlobBuilder::getBlob(const String& contentType)
 {
     OwnPtr<BlobData> blobData = BlobData::create();
     blobData->setContentType(contentType);

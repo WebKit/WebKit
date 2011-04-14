@@ -159,7 +159,6 @@ IDL_BINDINGS += \
     dom/WebKitTransitionEvent.idl \
     dom/WheelEvent.idl \
     fileapi/Blob.idl \
-    fileapi/BlobBuilder.idl \
     fileapi/DirectoryEntry.idl \
     fileapi/DirectoryEntrySync.idl \
     fileapi/DirectoryReader.idl \
@@ -188,6 +187,7 @@ IDL_BINDINGS += \
     fileapi/Flags.idl \
     fileapi/Metadata.idl \
     fileapi/MetadataCallback.idl \
+    fileapi/WebKitBlobBuilder.idl \
     html/canvas/ArrayBufferView.idl \
     html/canvas/ArrayBuffer.idl \
     html/canvas/DataView.idl \

@@ -28,43 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef BlobBuilder_h
-#define BlobBuilder_h
-
-#include "BlobData.h"
-#include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
-
-namespace WebCore {
-
-class ArrayBuffer;
-class Blob;
-class TextEncoding;
-
-typedef int ExceptionCode;
-
-class BlobBuilder : public RefCounted<BlobBuilder> {
-public:
-    static PassRefPtr<BlobBuilder> create() { return adoptRef(new BlobBuilder()); }
-
-    void append(Blob*);
-    void append(const String& text, ExceptionCode&);
-    void append(const String& text, const String& ending, ExceptionCode&);
-#if ENABLE(BLOB)
-    void append(ArrayBuffer*);
+module html {
+    interface [
+        CanBeConstructed,
+        GenerateNativeConverter,
+        NoStaticTables
+    ] WebKitBlobBuilder {
+#if !defined(LANGUAGE_OBJECTIVE_C)
+        Blob getBlob(in [Optional, ConvertUndefinedOrNullToNullString] DOMString contentType);
 #endif
+        void append(in Blob blob);
+#if defined(ENABLE_BLOB) && ENABLE_BLOB
+        void append(in ArrayBuffer arrayBuffer);
+#endif
+        void append(in DOMString value, in [Optional, ConvertUndefinedOrNullToNullString] DOMString endings) raises (DOMException);
+    };
 
-    PassRefPtr<Blob> getBlob(const String& contentType = String());
+}
 
-private:
-    BlobBuilder();
-
-    Vector<char>& getBuffer();
-
-    long long m_size;
-    BlobDataItemList m_items;
-};
-
-} // namespace WebCore
-
-#endif // BlobBuilder_h

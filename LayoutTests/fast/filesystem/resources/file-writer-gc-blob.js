@@ -29,7 +29,7 @@ function onTestSuccess() {
 }
 
 function tenXBlob(blob) {
-    var bb = new BlobBuilder();
+    var bb = new WebKitBlobBuilder();
     for (var i = 0; i < 10; ++i) {
         bb.append(blob);
     }
@@ -38,7 +38,7 @@ function tenXBlob(blob) {
 
 function startWrite(writer) {
     // Let's make it about a megabyte.
-    var bb = new BlobBuilder();
+    var bb = new WebKitBlobBuilder();
     bb.append("lorem ipsum");
     var blob = tenXBlob(bb.getBlob());
     blob = tenXBlob(blob);

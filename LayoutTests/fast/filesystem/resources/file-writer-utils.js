@@ -134,7 +134,7 @@ function createEmptyFile(fileSystem, fileName, onSuccess)
 
 function writeString(fileEntry, fileWriter, offset, data, onSuccess)
 {
-    var bb = new BlobBuilder();
+    var bb = new WebKitBlobBuilder();
     bb.append(data);
     var blob = bb.getBlob();
     fileWriter.seek(offset);

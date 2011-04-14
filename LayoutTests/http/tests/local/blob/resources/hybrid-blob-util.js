@@ -131,7 +131,7 @@ var HybridBlobTestUtil = function(testFunc, opt_filePaths) {
 
     this.appendAndCreateBlob = function(items, opt_ending, opt_type)
     {
-        var bb = new BlobBuilder();
+        var bb = new WebKitBlobBuilder();
         for (var i = 0; i < items.length; i++) {
             if (items[i] instanceof Array) {
                 // If it's an array, combine its elements and append as a blob.

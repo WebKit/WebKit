@@ -10,7 +10,7 @@ function log(message)
 function runTest()
 {
     log("Test inline web worker via blob URL.");
-    var blobBuilder = new BlobBuilder();
+    var blobBuilder = new WebKitBlobBuilder();
     blobBuilder.append([
         "onmessage = function(e) {",
         "    postMessage('Hello from worker');",

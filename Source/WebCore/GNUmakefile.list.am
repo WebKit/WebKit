@@ -39,8 +39,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSBeforeLoadEvent.h \
 	DerivedSources/WebCore/JSBeforeProcessEvent.cpp \
 	DerivedSources/WebCore/JSBeforeProcessEvent.h \
-	DerivedSources/WebCore/JSBlobBuilder.cpp \
-	DerivedSources/WebCore/JSBlobBuilder.h \
 	DerivedSources/WebCore/JSBlob.cpp \
 	DerivedSources/WebCore/JSBlob.h \
 	DerivedSources/WebCore/JSCanvasGradient.cpp \
@@ -521,6 +519,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebKitAnimationList.h \
 	DerivedSources/WebCore/JSWebKitAnimationList.cpp \
 	DerivedSources/WebCore/JSWebKitAnimationEvent.h \
+	DerivedSources/WebCore/JSWebKitBlobBuilder.cpp \
+	DerivedSources/WebCore/JSWebKitBlobBuilder.h \
 	DerivedSources/WebCore/JSWebKitCSSKeyframeRule.cpp \
 	DerivedSources/WebCore/JSWebKitCSSKeyframeRule.h \
 	DerivedSources/WebCore/JSWebKitCSSKeyframesRule.cpp \
@@ -1413,8 +1413,6 @@ webcore_sources += \
 	Source/WebCore/editing/WritingDirection.h \
 	Source/WebCore/fileapi/AsyncFileWriter.h \
 	Source/WebCore/fileapi/AsyncFileWriterClient.h \
-	Source/WebCore/fileapi/BlobBuilder.cpp \
-	Source/WebCore/fileapi/BlobBuilder.h \
 	Source/WebCore/fileapi/Blob.cpp \
 	Source/WebCore/fileapi/Blob.h \
 	Source/WebCore/fileapi/BlobURL.cpp \
@@ -1488,6 +1486,8 @@ webcore_sources += \
 	Source/WebCore/fileapi/Metadata.h \
 	Source/WebCore/fileapi/ThreadableBlobRegistry.cpp \
 	Source/WebCore/fileapi/ThreadableBlobRegistry.h \
+	Source/WebCore/fileapi/WebKitBlobBuilder.cpp \
+	Source/WebCore/fileapi/WebKitBlobBuilder.h \
 	Source/WebCore/history/BackForwardController.cpp \
 	Source/WebCore/history/BackForwardController.h \
 	Source/WebCore/history/BackForwardList.h \

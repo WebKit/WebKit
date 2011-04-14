@@ -613,7 +613,6 @@ SOURCES += \
     editing/visible_units.cpp \
     editing/WrapContentsInDummySpanCommand.cpp \
     fileapi/Blob.cpp \
-    fileapi/BlobBuilder.cpp \
     fileapi/BlobURL.cpp \
     fileapi/File.cpp \
     fileapi/FileList.cpp \
@@ -623,6 +622,7 @@ SOURCES += \
     fileapi/FileStreamProxy.cpp \
     fileapi/FileThread.cpp \
     fileapi/ThreadableBlobRegistry.cpp \
+    fileapi/WebKitBlobBuilder.cpp \
     history/BackForwardController.cpp \
     history/BackForwardListImpl.cpp \
     history/CachedFrame.cpp \
@@ -1576,7 +1576,6 @@ HEADERS += \
     editing/visible_units.h \
     editing/WrapContentsInDummySpanCommand.h \
     fileapi/Blob.h \
-    fileapi/BlobBuilder.h \
     fileapi/BlobURL.h \
     fileapi/File.h \
     fileapi/FileError.h \
@@ -1589,6 +1588,7 @@ HEADERS += \
     fileapi/FileStreamProxy.h \
     fileapi/FileThread.h \
     fileapi/FileThreadTask.h \
+    fileapi/WebKitBlobBuilder.h \
     history/BackForwardController.h \
     history/BackForwardListImpl.h \
     history/BackForwardList.h \

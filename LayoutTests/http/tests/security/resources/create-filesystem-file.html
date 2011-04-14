@@ -5,7 +5,7 @@
             requestFileSystem(TEMPORARY, 100, function(fs) {
                 fs.root.getFile("page.html", {create:true}, function(entry) {
                     entry.createWriter(function(writer) {
-                        var bb = new BlobBuilder();
+                        var bb = new WebKitBlobBuilder();
                         bb.append('<div id="innerDiv">Visible Contents</div>\n');
                         writer.write(bb.getBlob());
                     })

@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 4: ReferenceError: Can't find variable: BlobBuilder
+CONSOLE MESSAGE: line 4: ReferenceError: Can't find variable: WebKitBlobBuilder
 PASS

@@ -79,7 +79,7 @@ DOM_CLASSES = \
     BeforeLoadEvent \
     BeforeProcessEvent \
     Blob \
-    BlobBuilder \
+    WebKitBlobBuilder \
     CDATASection \
     CSSCharsetRule \
     CSSFontFaceRule \

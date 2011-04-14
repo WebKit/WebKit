@@ -8,7 +8,7 @@ if (window.layoutTestController) {
   layoutTestController.dumpAsText();
   layoutTestController.waitUntilDone()
 }
-var builder =  new BlobBuilder();
+var builder =  new WebKitBlobBuilder();
 var text = '';
 for (var i = 0; i < 2000; ++i) text += 'A';
 builder.append(text);

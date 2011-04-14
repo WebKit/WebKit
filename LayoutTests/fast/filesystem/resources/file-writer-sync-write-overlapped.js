@@ -14,7 +14,7 @@ removeAllInDirectorySync(fileSystem.root);
 var entry = fileSystem.root.getFile('a', {create:true, exclusive:true});
 var writer = entry.createWriter();
 assert(!writer.position);
-var builder = new BlobBuilder();
+var builder = new WebKitBlobBuilder();
 var testData = "test data";
 builder.append(testData);
 var blob = builder.getBlob();

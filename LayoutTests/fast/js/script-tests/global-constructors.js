@@ -36,7 +36,8 @@ for (var x in constructorNames) {
         name == "Uint32Array" ||
         name == "Float32Array" ||
         name == "FileError" ||
-        name == "FileReader")
+        name == "FileReader" ||
+        name == "WebKitBlobBuilder")
         continue;
 
     if (name == "XMLDocument")

@@ -80,7 +80,8 @@ function constructorNamesForWindow(globalObject)
             type =="Uint16ArrayConstructor" ||
             type =="Uint32ArrayConstructor" ||
             type == "FileErrorConstructor" ||
-            type == "FileReaderConstructor")
+            type == "FileReaderConstructor" ||
+            type == "WebKitBlobBuilderConstructor")
             continue; // We ignore WebGLRenderingContext and test it elsewhere, since it is not in all builds
         if (!type.match('Constructor$'))
             continue;

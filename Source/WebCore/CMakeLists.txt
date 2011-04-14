@@ -185,11 +185,11 @@ SET(WebCore_IDL_FILES
     dom/WheelEvent.idl
 
     fileapi/Blob.idl
-    fileapi/BlobBuilder.idl
     fileapi/FileError.idl
     fileapi/File.idl
     fileapi/FileList.idl
     fileapi/FileReader.idl
+    fileapi/WebKitBlobBuilder.idl
 
     html/DataGridColumn.idl
     html/DataGridColumnList.idl
@@ -691,11 +691,11 @@ SET(WebCore_SOURCES
     editing/visible_units.cpp
 
     fileapi/Blob.cpp
-    fileapi/BlobBuilder.cpp
     fileapi/BlobURL.cpp
     fileapi/File.cpp
     fileapi/FileList.cpp
     fileapi/ThreadableBlobRegistry.cpp
+    fileapi/WebKitBlobBuilder.cpp
 
     history/BackForwardController.cpp
     history/BackForwardListImpl.cpp

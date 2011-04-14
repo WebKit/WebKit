@@ -4,7 +4,7 @@
 function buildBlob(items, contentType, builder)
 {
     if (builder === undefined)
-        builder = new BlobBuilder();
+        builder = new WebKitBlobBuilder();
     for (var i = 0; i < items.length; i++)
         builder.append(items[i]);
     return builder.getBlob(contentType);
