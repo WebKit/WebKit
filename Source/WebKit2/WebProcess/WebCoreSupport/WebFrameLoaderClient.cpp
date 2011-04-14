@@ -840,7 +840,7 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
 void WebFrameLoaderClient::updateGlobalHistory()
 {
     WebPage* webPage = m_frame->page();
-    if (!webPage)
+    if (!webPage || !webPage->pageGroup()->isVisibleToHistoryClient())
         return;
 
     DocumentLoader* loader = m_frame->coreFrame()->loader()->documentLoader();
@@ -856,7 +856,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
 void WebFrameLoaderClient::updateGlobalHistoryRedirectLinks()
 {
     WebPage* webPage = m_frame->page();
-    if (!webPage)
+    if (!webPage || !webPage->pageGroup()->isVisibleToHistoryClient())
         return;
 
     DocumentLoader* loader = m_frame->coreFrame()->loader()->documentLoader();
@@ -1066,7 +1066,7 @@ PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const Reso
 void WebFrameLoaderClient::setTitle(const StringWithDirection& title, const KURL& url)
 {
     WebPage* webPage = m_frame->page();
-    if (!webPage)
+    if (!webPage || !webPage->pageGroup()->isVisibleToHistoryClient())
         return;
 
     // FIXME: use direction of title.

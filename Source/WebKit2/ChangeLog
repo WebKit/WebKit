@@ -1,3 +1,36 @@
+2011-04-14  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        WebKit2: Add an option for a PageGroup to be invisible to the History Client.
+        https://bugs.webkit.org/show_bug.cgi?id=58547
+
+        * Shared/WebPageGroupData.cpp:
+        (WebKit::WebPageGroupData::encode):
+        (WebKit::WebPageGroupData::decode):
+        * Shared/WebPageGroupData.h:
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::inspectorPageGroup):
+        The Web Inspector should not be visible to the History Client, because its HTML-based nature
+        should not be exposed through the API.
+
+        * UIProcess/WebPageGroup.cpp:
+        (WebKit::WebPageGroup::create):
+        (WebKit::WebPageGroup::WebPageGroup):
+        * UIProcess/WebPageGroup.h:
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::updateGlobalHistory):
+        Do not send the message to the WebContent for the history client.
+        (WebKit::WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+        Ditto.
+        (WebKit::WebFrameLoaderClient::setTitle):
+        Ditto.
+
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        (WebKit::WebPageGroupProxy::isVisibleToHistoryClient):
+
 2011-04-14  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.

@@ -46,7 +46,7 @@ namespace WebKit {
 
 WebPageGroup* WebInspectorProxy::inspectorPageGroup()
 {
-    static WebPageGroup* pageGroup = WebPageGroup::create("__WebInspectorPageGroup__", false).leakRef();
+    static WebPageGroup* pageGroup = WebPageGroup::create("__WebInspectorPageGroup__", false, false).leakRef();
     return pageGroup;
 }
 

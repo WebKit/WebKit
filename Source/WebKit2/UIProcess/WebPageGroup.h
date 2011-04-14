@@ -40,7 +40,7 @@ class WebPageGroup : public APIObject {
 public:
     static const Type APIType = TypePageGroup;
 
-    static PassRefPtr<WebPageGroup> create(const String& identifier = String(), bool visibleToInjectedBundle = true);
+    static PassRefPtr<WebPageGroup> create(const String& identifier = String(), bool visibleToInjectedBundle = true, bool visibleToHistoryClient = true);
     static WebPageGroup* get(uint64_t pageGroupID);
 
     virtual ~WebPageGroup();
@@ -58,7 +58,7 @@ public:
     void preferencesDidChange();
 
 private:
-    WebPageGroup(const String& identifier, bool visibleToInjectedBundle);
+    WebPageGroup(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient);
 
     virtual Type type() const { return APIType; }
 

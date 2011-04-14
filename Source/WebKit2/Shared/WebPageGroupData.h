@@ -42,6 +42,7 @@ struct WebPageGroupData {
     String identifer;
     uint64_t pageGroupID;
     bool visibleToInjectedBundle;
+    bool visibleToHistoryClient;
 };
 
 } // namespace WebKit

@@ -33,12 +33,12 @@ namespace WebKit {
 
 void WebPageGroupData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    return encoder->encode(CoreIPC::In(identifer, pageGroupID, visibleToInjectedBundle));
+    return encoder->encode(CoreIPC::In(identifer, pageGroupID, visibleToInjectedBundle, visibleToHistoryClient));
 }
 
 bool WebPageGroupData::decode(CoreIPC::ArgumentDecoder* decoder, WebPageGroupData& data)
 {
-    return decoder->decode(CoreIPC::Out(data.identifer, data.pageGroupID, data.visibleToInjectedBundle));
+    return decoder->decode(CoreIPC::Out(data.identifer, data.pageGroupID, data.visibleToInjectedBundle, data.visibleToHistoryClient));
 }
 
 } // namespace WebKit

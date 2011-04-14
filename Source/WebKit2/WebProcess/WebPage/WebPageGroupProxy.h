@@ -42,6 +42,7 @@ public:
     const String& identifier() const { return m_data.identifer; }
     uint64_t pageGroupID() const { return m_data.pageGroupID; }
     bool isVisibleToInjectedBundle() const { return m_data.visibleToInjectedBundle; }
+    bool isVisibleToHistoryClient() const { return m_data.visibleToHistoryClient; }
 
 private:
     WebPageGroupProxy(const WebPageGroupData& data)
