@@ -386,6 +386,13 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QFlags<QWe
 #endif
     }
     renderFrameExtras(context, layers, clip);
+#if ENABLE(INSPECTOR)
+    if (frame->page()->inspectorController()->highlightedNode()) {
+        context->save();
+        frame->page()->inspectorController()->drawNodeHighlight(*context);
+        context->restore();
+    }
+#endif
 }
 
 void QWebFramePrivate::renderFrameExtras(GraphicsContext* context, QFlags<QWebFrame::RenderLayer> layers, const QRegion& clip)

@@ -254,6 +254,11 @@ void InspectorController::hideHighlight()
     m_inspectorAgent->domAgent()->hideHighlight(&error);
 }
 
+Node* InspectorController::highlightedNode() const
+{
+    return m_inspectorAgent->domAgent()->highlightedNode();
+}
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 void InspectorController::enableProfiler()
 {

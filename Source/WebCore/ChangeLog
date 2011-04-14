@@ -1,3 +1,19 @@
+2011-04-14  Ragner Magalhaes  <ragner.magalhaes@openbossa.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Web Inspector does not highlight elements
+        https://bugs.webkit.org/show_bug.cgi?id=35125
+
+        We should call drawNodeHighlight() just if a highlighted node exists
+        to avoid do save()/restore() on the Graphics Context unnecessarily.
+
+        Added highlightedNode() method to check if we need to call drawNodeHighlight()
+        and only on this case do save()/restore() on the Graphics Context.
+
+        * inspector/InspectorAgent.h:
+        (WebCore::InspectorAgent::highlightedNode):
+
 2011-04-14  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

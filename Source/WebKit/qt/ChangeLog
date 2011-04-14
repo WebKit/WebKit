@@ -1,3 +1,19 @@
+2011-01-26  Ragner Magalhaes  <ragner.magalhaes@openbossa.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Web Inspector does not highlight elements
+        https://bugs.webkit.org/show_bug.cgi?id=35125
+
+        Adjust Web inspector to highlight elements on the page when the mouse
+        hovers the element on DOM inspector.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::renderRelativeCoords):
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::highlight):
+        (WebCore::InspectorClientQt::hideHighlight):
+
 2011-04-12  George Guo  <George.Guo@nokia.com>
 
         Reviewed by Laszlo Gombos.

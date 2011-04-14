@@ -134,6 +134,7 @@ public:
     void hideDOMNodeHighlight(ErrorString* error) { hideHighlight(error); }
     void highlightFrame(ErrorString*, const String& frameId);
     void hideFrameHighlight(ErrorString* error) { hideHighlight(error); }
+    Node* highlightedNode() const { return m_highlightedNode.get(); }
 
     // Methods called from the InspectorInstrumentation.
     void setDocument(Document*);

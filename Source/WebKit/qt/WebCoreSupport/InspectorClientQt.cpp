@@ -32,6 +32,7 @@
 #include "InspectorClientQt.h"
 
 #include "Frame.h"
+#include "FrameView.h"
 #include "InspectorController.h"
 #include "InspectorFrontend.h"
 #include "InspectorServerQt.h"
@@ -262,12 +263,17 @@ void InspectorClientQt::detachRemoteFrontend()
 
 void InspectorClientQt::highlight(Node*)
 {
-    notImplemented();
+    hideHighlight();
 }
 
 void InspectorClientQt::hideHighlight()
 {
-    notImplemented();
+    WebCore::Frame* frame = m_inspectedWebPage->d->page->mainFrame();
+    if (frame) {
+        QRect rect = m_inspectedWebPage->mainFrame()->geometry();
+        if (!rect.isEmpty())
+            frame->view()->invalidateRect(rect);
+    }
 }
 
 bool InspectorClientQt::sendMessageToFrontend(const String& message)

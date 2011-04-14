@@ -80,6 +80,7 @@ public:
     void inspect(Node*);
     void drawNodeHighlight(GraphicsContext&) const;
     void hideHighlight();
+    Node* highlightedNode() const;
 
     void evaluateForTestInFrontend(long callId, const String& script);
 
