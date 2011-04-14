@@ -1,3 +1,10 @@
+2011-04-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fixes for wxMSW and wx 2.9.1.1.
+        
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::setCursor):
+
 2011-04-06  Malcolm MacLeod  <malcolm.macleod@tshwanedje.com>
 
         Reviewed by Kevin Ollivier.

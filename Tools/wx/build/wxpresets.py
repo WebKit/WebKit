@@ -53,8 +53,12 @@ def get_wx_version(wx_root):
     
     majorVersion = re.search("#define\swxMAJOR_VERSION\s+(\d+)", versionText).group(1)
     minorVersion = re.search("#define\swxMINOR_VERSION\s+(\d+)", versionText).group(1)
+    releaseVersion = re.search("#define\swxRELEASE_NUMBER\s+(\d+)", versionText).group(1)
     
-    return (majorVersion, minorVersion)
+    release = [majorVersion, minorVersion]
+    if int(minorVersion) % 2 == 1:
+        release.append(releaseVersion)
+    return release
 
 def get_wxmsw_settings(wx_root, shared = False, unicode = False, debug = False, wxPython=False):
     if not os.path.exists(wx_root):
@@ -71,7 +75,7 @@ def get_wxmsw_settings(wx_root, shared = False, unicode = False, debug = False, 
     ext = ''
     postfix = 'vc'
     
-    version_str_nodot = ''.join(get_wx_version(wx_root))
+    version_str_nodot = ''.join(get_wx_version(wx_root)[0:2])
     
     if shared:
         defines.append('WXUSINGDLL')
@@ -84,7 +88,7 @@ def get_wxmsw_settings(wx_root, shared = False, unicode = False, debug = False, 
         ext += 'u'
     
     depext = ''
-    if wxPython:
+    if wxPython and not version_str_nodot.startswith('29'):
         ext += 'h'
         depext += 'h'
     elif debug:

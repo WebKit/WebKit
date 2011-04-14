@@ -128,7 +128,7 @@ void closeFile(PlatformFileHandle& handle)
 int writeToFile(PlatformFileHandle handle, const char* data, int length)
 {
     if (handle)
-        return handle->Write(data, length);
+        return static_cast<wxFile*>(handle)->Write(data, length);
     return -1;
 }
 

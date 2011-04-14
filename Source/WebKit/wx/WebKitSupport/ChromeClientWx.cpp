@@ -462,7 +462,7 @@ void ChromeClientWx::chooseIconForFiles(const Vector<String>& filenames, FileCho
 
 void ChromeClientWx::setCursor(const Cursor& cursor)
 {
-    if (m_webView)
+    if (m_webView && cursor.impl())
         m_webView->SetCursor(*cursor.impl());
 }
 

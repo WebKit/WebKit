@@ -616,4 +616,5 @@ void LayoutTestController::deleteLocalStorageForOrigin(JSStringRef URL)
 const OpaqueJSValue* LayoutTestController::shadowRoot(const OpaqueJSContext*, const OpaqueJSValue*)
 {
     // FIXME: Implement.
+    return 0;
 }

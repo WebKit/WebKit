@@ -1,3 +1,11 @@
+2011-04-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fixes for wxMSW and wx 2.9.1.1.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::shadowRoot):
+        * wx/build/wxpresets.py:
+
 2011-04-14  Victoria Kirst  <vrk@google.com>
 
         Reviewed by James Robinson.

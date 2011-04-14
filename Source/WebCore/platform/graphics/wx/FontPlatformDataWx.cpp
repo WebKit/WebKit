@@ -99,11 +99,13 @@ FontPlatformData::FontPlatformData(const FontDescription& desc, const AtomicStri
                             )
                         )); 
 #endif
-#if OS(DARWIN) && !defined(wxOSX_USE_CORE_TEXT)
+#if OS(DARWIN)
+#if !wxOSX_USE_CORE_TEXT
 #if wxCHECK_VERSION(2,9,0)
     m_atsuFontID = m_font->font()->OSXGetATSUFontID();
 #else
     m_atsuFontID = m_font->font()->MacGetATSUFontID();
+#endif
 #endif
     m_nsFont = 0;
     cacheNSFont();
