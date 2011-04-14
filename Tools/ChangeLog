@@ -1,3 +1,9 @@
+2011-04-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix for Mac installation script.
+
+        * wx/packaging/build-mac-installer.py:
+
 2011-04-14  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.

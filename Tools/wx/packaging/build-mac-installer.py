@@ -70,7 +70,7 @@ if sys.platform.startswith("darwin"):
     wx_root = "/usr/local/lib/wxPython-unicode-%s" % wx.__version__
     sp_root = "%s/lib/python%s/site-packages" % (wx_root, py_version)
 sitepackages = "%s/wx-%s-mac-unicode/wx" % (sp_root, wx_version[:3])
-prefix = wxroot + "/lib"
+prefix = wx_root + "/lib"
 
 def mac_update_dependencies(dylib, prefix):
     """
@@ -131,7 +131,7 @@ try:
             shutil.copy(afile, wxroot)
     
     if sys.platform.startswith("darwin"):
-        dylib_path = os.path.join(wxpythonroot, "libwxwebkit.dylib")
+        dylib_path = os.path.join(wxroot, "libwxwebkit.dylib")
         os.system("install_name_tool -id %s %s" % (os.path.join(prefix, "libwxwebkit.dylib"), dylib_path))
         mac_update_dependencies(dylib_path, prefix)
         mac_update_dependencies(os.path.join(wxpythonroot, "_webview.so"), prefix)
@@ -140,7 +140,7 @@ try:
         if not os.path.exists(demodir):
             os.makedirs(demodir)
             
-        shutil.copy(os.path.join(wxwk_root, "WebKit", "wx", "bindings", "python", "samples", "simple.py"), demodir)
+        shutil.copy(os.path.join(wxwk_root, "Source", "WebKit", "wx", "bindings", "python", "samples", "simple.py"), demodir)
         
         if os.path.exists(pkgname + ".pkg"):
             shutil.rmtree(pkgname + ".pkg")
@@ -152,7 +152,6 @@ try:
                     '--domain system',
                     '--root-volume-only',
                     '--root ' + installroot,
-                    '--resources %s/mac/resources' % script_dir,
                     '--verbose'
                     ]
     
