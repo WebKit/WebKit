@@ -714,6 +714,7 @@ class TestRunner:
             wrote_results = self._write_results_html_file(result_summary)
             if self._options.show_results and wrote_results:
                 self._show_results_html_file()
+            self._write_unexpected_results_html_file(unexpected_results)
 
         # Now that we've completed all the processing we can, we re-raise
         # a KeyboardInterrupt if necessary so the caller can handle it.
@@ -1189,6 +1190,11 @@ class TestRunner:
             results_file.write(html)
 
         return True
+
+    # FIXME: Have this replace results.html and have a checkbox for whether to show expected failures or not.
+    def _write_unexpected_results_html_file(self, unexpected_results):
+        base_dir = self._port.path_from_webkit_base('Tools', 'Scripts', 'webkitpy', 'layout_tests', 'layout_package')
+        self._fs.copyfile(self._fs.join(base_dir, "json_results.html"), self._fs.join(self._results_directory, "json_results.html"))
 
     def _show_results_html_file(self):
         """Shows the results.html page."""

@@ -1,0 +1,111 @@
+<!DocType html>
+<style>
+tr:hover {
+    opacity: 0.7
+}
+
+tr:nth-child(odd) {
+    background-color: #E3E9FF;
+}
+
+thead tr, tr:nth-child(even) {
+    background-color: #BCF;
+}
+
+td {
+    padding: 0 40px;
+}
+
+th:empty, td:empty {
+    padding: 0;
+}
+</style>
+
+<script>
+var results;
+function ADD_RESULTS(input)
+{
+    results = input;
+}
+</script>
+
+<!-- FIXME: once we are happy with this page, load full_results.json 
+and have a checkbox to show only unexpected results. -->
+<script src="unexpected_results.json"></script>
+
+<script>
+function stripExtension(test)
+{
+    var index = test.lastIndexOf('.');
+    return test.substring(0, index);
+}
+
+var html = 'Tests where results did not match expected results:<table>' +
+    '<thead><tr>' +
+        '<th>test</th>' +
+        '<th id="text-results-header">text results</th>' +
+        '<th id="image-results-header">image results</th>' +
+        '<th>failure type</th>' +
+        '<th>expected failure type</th>' +
+    '</tr></thead>';
+
+// FIXME: Should this point to the local file instead? Should it dynamically figure out where to point?
+// FIXME: remove the version number from the URL if possible.
+var test_base_path = 'http://trac.webkit.org/export/76053/trunk/LayoutTests/';
+
+function resultLink(test_prefix, suffix, contents)
+{
+    return '<a href="' + test_prefix + suffix + '">' + contents + '</a> ';
+}
+
+// FIXME: allow sorting the table by columns
+// FIXME: show expected/actual/diff contents inline in iframes
+// FIXME: allow zooming in on pixel diffs
+// FIXME: store stderr information in the json
+// FIXME: don't show expected failure type for non-chromium ports
+
+var hasTextFailures = false;
+var hasImageFailures = false;
+
+for (var test in results.tests) {
+  var row = '<td><a href="' + test_base_path + test + '">' + test + '</a></td>';
+  var test_prefix = stripExtension(test);
+
+  row += '<td>';
+  var actual = results.tests[test].actual;
+  // FIXME: only include timeout actual/expected results here if we actually spit out results for timeout tests.
+  if (actual == 'CRASH')
+      row += resultLink(test, '-stack.txt', 'stack');
+  else if (actual.indexOf('TEXT' || actual == 'TIMEOUT') != -1) {
+      hasTextFailures = true;
+      // FIXME: Show wdiff here too?
+      // FIXME: store a bit in the JSON as to whether pretty-diff/wdiffs were generated
+      row += resultLink(test, '-expected.txt', 'expected') +
+          resultLink(test, '-actual.txt', 'actual') +
+          resultLink(test, '-diff.txt', 'diff') +
+          resultLink(test, '-pretty-diff.html', 'pretty diff');
+  }
+
+  row += '</td><td>';
+
+  if (actual.indexOf('IMAGE') != -1) {
+      hasImageFailures = true;
+      row += resultLink(test, '-expected.png', 'expected') +
+          resultLink(test, '-actual.png', 'actual') +
+          resultLink(test, '-diff.png', 'diff');
+  }
+
+  row += '</td>';
+  // FIXME: Handle stderr output.
+  row += '<td>' + actual + '</td>';
+  row += '<td>' + results.tests[test].expected + '</td>';
+  html += '<tr>' + row + '</tr>';
+}
+
+document.write(html);
+
+if (!hasTextFailures)
+  document.body.querySelector('#text-results-header').textContent = '';
+if (!hasImageFailures)
+  document.body.querySelector('#image-results-header').textContent = '';
+</script>

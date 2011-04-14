@@ -1,3 +1,16 @@
+2011-04-13  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        generated unexpected_results.html from unexpected_results.json
+        https://bugs.webkit.org/show_bug.cgi?id=52763
+
+        Eventually, we'll merge this with results.html and have a single richer results page.
+        For now, I just want to get something checked in that we can iterate on.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html: Added.
+        * Scripts/webkitpy/layout_tests/layout_package/test_runner.py:
+
 2011-04-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
