@@ -1,3 +1,13 @@
+2011-04-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fixed a bug where WKView changed the cursor when the mouse was moving over other views.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView mouseMoved:]): If getting this message because this view is the first responder,
+        ignore it unless it is inside the visible rect.
+
 2011-04-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

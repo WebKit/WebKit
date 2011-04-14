@@ -935,7 +935,6 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
 
 EVENT_HANDLER(mouseEntered, Mouse)
 EVENT_HANDLER(mouseExited, Mouse)
-EVENT_HANDLER(mouseMoved, Mouse)
 EVENT_HANDLER(otherMouseDown, Mouse)
 EVENT_HANDLER(otherMouseDragged, Mouse)
 EVENT_HANDLER(otherMouseMoved, Mouse)
@@ -947,6 +946,16 @@ EVENT_HANDLER(rightMouseUp, Mouse)
 EVENT_HANDLER(scrollWheel, Wheel)
 
 #undef EVENT_HANDLER
+
+- (void)mouseMoved:(NSEvent *)event
+{
+    // When a view is first responder, it gets mouse moved events even when the mouse is outside its visible rect.
+    if (self == [[self window] firstResponder] && !NSPointInRect([self convertPoint:[event locationInWindow] fromView:nil], [self visibleRect]))
+        return;
+
+    WebMouseEvent webEvent = WebEventFactory::createWebMouseEvent(event, self);
+    _data->_page->handleMouseEvent(webEvent);
+}
 
 - (void)_mouseHandler:(NSEvent *)event
 {
