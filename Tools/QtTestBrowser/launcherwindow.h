@@ -104,6 +104,11 @@ public:
         , useTestFonts(false)
 #endif
         , printLoadedUrls(false)
+#if defined(Q_OS_SYMBIAN)
+        , startMaximized(true)
+#else
+        , startMaximized(false)
+#endif
     {
     }
 
@@ -129,6 +134,7 @@ public:
     bool printLoadedUrls;
     QUrl inspectorUrl;
     quint16 remoteInspectorPort;
+    bool startMaximized;
 };
 
 class LauncherWindow : public MainWindow {

@@ -66,12 +66,10 @@ void LauncherWindow::init()
     QSplitter* splitter = new QSplitter(Qt::Vertical, this);
     setCentralWidget(splitter);
 
-#if defined(Q_OS_SYMBIAN)
-    setWindowState(Qt::WindowMaximized);
-#else
-    setWindowState(Qt::WindowNoState);
-    resize(800, 600);
-#endif
+    if (m_windowOptions.startMaximized)
+        setWindowState(windowState() | Qt::WindowMaximized);
+    else
+        resize(800, 600);
 
     m_inspector = new WebInspector;
 #ifndef QT_NO_PROPERTIES
@@ -775,15 +773,9 @@ void LauncherWindow::toggleSpatialNavigation(bool b)
 
 void LauncherWindow::toggleFullScreenMode(bool enable)
 {
-    if (enable)
-        setWindowState(Qt::WindowFullScreen);
-    else {
-#if defined(Q_OS_SYMBIAN)
-        setWindowState(Qt::WindowMaximized);
-#else
-        setWindowState(Qt::WindowNoState);
-#endif
-    }
+    bool alreadyEnabled = windowState() & Qt::WindowFullScreen;
+    if (enable ^ alreadyEnabled)
+        setWindowState(windowState() ^ Qt::WindowFullScreen);
 }
 
 void LauncherWindow::toggleFrameFlattening(bool toggle)

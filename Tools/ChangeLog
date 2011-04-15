@@ -1,3 +1,31 @@
+2011-04-14  Keith Kyzivat  <keith.kyzivat@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Add -maximize flag to QtTestBrowser and MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=58007
+
+        Adds flag to start the test browsers maximized.
+        Symbian started maximized on QtTestBrowser - made MiniBrowser follow
+        suit.
+        Also fixes some ToggleFullScreen issues so that prior window state is
+        restored.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::toggleFullScreenMode):
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::handleUserOptions):
+        * MiniBrowser/qt/MiniBrowserApplication.h:
+        (WindowOptions::WindowOptions):
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::init):
+        (LauncherWindow::toggleFullScreenMode):
+        * QtTestBrowser/launcherwindow.h:
+        (WindowOptions::WindowOptions):
+        * QtTestBrowser/main.cpp:
+        (LauncherApplication::handleUserOptions):
+
 2011-04-14  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

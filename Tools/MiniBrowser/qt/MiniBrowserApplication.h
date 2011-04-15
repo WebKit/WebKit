@@ -37,12 +37,18 @@ struct WindowOptions {
         : useTiledBackingStore(true)
         , useSeparateWebProcessPerWindow(false)
         , printLoadedUrls(false)
+#if defined(Q_OS_SYMBIAN)
+        , startMaximized(true)
+#else
+        , startMaximized(false)
+#endif
     {
     }
 
     bool useTiledBackingStore;
     bool useSeparateWebProcessPerWindow;
     bool printLoadedUrls;
+    bool startMaximized;
 };
 
 class MiniBrowserApplication : public QApplication {

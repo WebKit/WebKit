@@ -141,7 +141,10 @@ BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
         m_zoomLevels << 1.1 << 1.2 << 1.33 << 1.5 << 1.7 << 2 << 2.4 << 3;
     }
 
-    resize(800, 600);
+    if (m_windowOptions.startMaximized)
+        setWindowState(windowState() | Qt::WindowMaximized);
+    else
+        resize(800, 600);
     show();
 }
 
@@ -298,10 +301,9 @@ void BrowserWindow::toggleZoomTextOnly(bool b)
 
 void BrowserWindow::toggleFullScreenMode(bool enable)
 {
-    if (enable)
-        setWindowState(Qt::WindowFullScreen);
-    else
-        setWindowState(Qt::WindowNoState);
+    bool alreadyEnabled = windowState() & Qt::WindowFullScreen;
+    if (enable ^ alreadyEnabled)
+        setWindowState(windowState() ^ Qt::WindowFullScreen);
 }
 
 void BrowserWindow::toggleFrameFlattening(bool toggle)

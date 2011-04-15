@@ -55,6 +55,7 @@ void MiniBrowserApplication::handleUserOptions()
 
     if (args.contains("-help")) {
         qDebug() << "Usage:" << programName.toLatin1().data()
+             << "[-maximize]"
              << "[-r list]"
              << "[-robot-timeout seconds]"
              << "[-robot-extra-time seconds]"
@@ -64,6 +65,9 @@ void MiniBrowserApplication::handleUserOptions()
              << "URLs";
         appQuit(0);
     }
+
+    if (args.contains("-maximize"))
+        m_windowOptions.startMaximized = true;
 
     int robotIndex = args.indexOf("-r");
     if (robotIndex != -1) {

@@ -183,6 +183,7 @@ void LauncherApplication::handleUserOptions()
 #endif
              << QString("[-viewport-update-mode %1]").arg(formatKeys(updateModes)).toLatin1().data()
              << "[-cache-webview]"
+             << "[-maximize]"
              << "[-show-fps]"
              << "[-r list]"
              << "[-robot-timeout seconds]"
@@ -234,6 +235,9 @@ void LauncherApplication::handleUserOptions()
     if (args.contains("-local-storage-enabled"))
         windowOptions.useLocalStorage = true;
         
+    if (args.contains("-maximize"))
+        windowOptions.startMaximized = true;
+
     if (args.contains("-offline-storage-database-enabled"))
         windowOptions.useOfflineStorageDatabase = true;
         
