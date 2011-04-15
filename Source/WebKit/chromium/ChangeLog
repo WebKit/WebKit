@@ -1,3 +1,20 @@
+2011-04-15  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Create tests for network panel timing, size and raw headers text
+        https://bugs.webkit.org/show_bug.cgi?id=58566
+
+        Added network timing, size and raw headers tests for Inspector
+        Since chromium used different version of network stack for layout
+        tests, these are interactive ui tests (DevToolsSanityTest.TestNetwork*)
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testNetworkSize.finishResource):
+        (.TestSuite.prototype.testNetworkSyncSize.finishResource):
+        (.TestSuite.prototype.testNetworkRawHeadersText.finishResource):
+        (.TestSuite.prototype.testNetworkTiming.finishResource):
+
 2011-04-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

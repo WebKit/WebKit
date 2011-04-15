@@ -81,7 +81,6 @@ TestSuite.prototype.assertEquals = function(expected, actual, opt_message)
     }
 };
 
-
 /**
  * True assertion tests that value == true.
  * @param {Object} value Actual object.
@@ -516,6 +515,101 @@ TestSuite.prototype.testPauseWhenScriptIsRunning = function()
                 test.releaseControl();
             });
     }
+
+    this.takeControl();
+};
+
+
+/**
+ * Tests network size.
+ */
+TestSuite.prototype.testNetworkSize = function()
+{
+    var test = this;
+
+    function finishResource(resource, finishTime)
+    {
+        test.assertEquals(221, resource.transferSize, "Incorrect total encoded data length");
+        test.assertEquals(25, resource.resourceSize, "Incorrect total data length");
+        test.releaseControl();
+    }
+    
+    this.addSniffer(WebInspector.NetworkDispatcher.prototype, "_finishResource", finishResource);
+
+    // Reload inspected page to sniff network events
+    test.evaluateInConsole_("window.location.reload(true);", function(resultText) {});
+    
+    this.takeControl();
+};
+
+
+/**
+ * Tests network sync size.
+ */
+TestSuite.prototype.testNetworkSyncSize = function()
+{
+    var test = this;
+
+    function finishResource(resource, finishTime)
+    {
+        test.assertEquals(221, resource.transferSize, "Incorrect total encoded data length");
+        test.assertEquals(25, resource.resourceSize, "Incorrect total data length");
+        test.releaseControl();
+    }
+    
+    this.addSniffer(WebInspector.NetworkDispatcher.prototype, "_finishResource", finishResource);
+
+    // Send synchronous XHR  to sniff network events
+    test.evaluateInConsole_("var xhr = new XMLHttpRequest(); xhr.open(\"GET\", \"chunked\", false); xhr.send(null);", function() {});
+    
+    this.takeControl();
+};
+
+
+/**
+ * Tests network raw headers text.
+ */
+TestSuite.prototype.testNetworkRawHeadersText = function()
+{
+    var test = this;
+    
+    function finishResource(resource, finishTime)
+    {
+        var rawResponseHeadersText = resource.rawResponseHeadersText
+        if (!rawResponseHeadersText)
+            test.fail("Failure: resource does not have raw response header text");
+        test.assertEquals(166, resource.rawResponseHeadersText.length, "Incorrect raw response header text length");
+        test.releaseControl();
+    }
+    
+    this.addSniffer(WebInspector.NetworkDispatcher.prototype, "_finishResource", finishResource);
+
+    // Reload inspected page to sniff network events
+    test.evaluateInConsole_("window.location.reload(true);", function(resultText) {});
+    
+    this.takeControl();
+};
+
+
+/**
+ * Tests network timing.
+ */
+TestSuite.prototype.testNetworkTiming = function()
+{
+    var test = this;
+
+    function finishResource(resource, finishTime)
+    {
+        test.assertTrue(resource.timing.receiveHeadersEnd - resource.timing.connectStart >= 100, "Time between connectStart and receiveHeadersEnd should be more than 100ms.");        
+        test.assertTrue(resource.endTime - resource.responseReceivedTime >= 0.1, "Time between endTime and responseReceivedTime should be more than 100ms.");        
+        test.assertTrue(resource.responseReceivedTime - resource.startTime >= 0.1, "Time between responseReceivedTime and startTime should be more than 100ms.");        
+        test.releaseControl();
+    }
+    
+    this.addSniffer(WebInspector.NetworkDispatcher.prototype, "_finishResource", finishResource);
+    
+    // Reload inspected page to sniff network events
+    test.evaluateInConsole_("window.location.reload(true);", function(resultText) {});
 
     this.takeControl();
 };
