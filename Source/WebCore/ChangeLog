@@ -1,3 +1,46 @@
+2011-04-14  Justin Novosad  <junov@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [Chromium] Accelerated 2D Canvas is slow to execute putImageData
+        https://bugs.webkit.org/show_bug.cgi?id=57960
+
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::drawTexturedRect):
+        Added an option for using the blend ops for alpha multiplication
+        instead of compositing.
+        (WebCore::GLES2Canvas::applyClipping):
+        (WebCore::GLES2Canvas::putImageData):
+        New method for drawing raw pixel data from memory to the canvas
+        (WebCore::GLES2Canvas::putUnmultipliedImageData):
+        Wrapper for putImageData
+        (WebCore::GLES2Canvas::putPremultipliedImageData):
+        Wrapper for putImageData
+        * platform/graphics/chromium/GLES2Canvas.h:
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::copySubRect):
+        (WebCore::Texture::load):
+        (WebCore::Texture::updateSubRect):
+        Added an overload of the updateSubRect method that can receive a pixel 
+        of a size that is different from texture size. Improved the performance
+        of updateSubrect by avoiding the allocation of a temporary buffer when
+        not required.
+        * platform/graphics/gpu/Texture.h:
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::getImageData):
+        In the unmultiplied path, division by alpha now performs proper
+        rounding in order to avoid generational degradation with putImageData
+        (WebCore::putImageData):
+        Alpha multiplication now performs proper rounding in order to be
+        consistent with the hardware rendering path: OpenGL always rounds when
+        converting to fixed point representation.
+        (WebCore::ImageBuffer::putUnmultipliedImageData):
+        Now supports a hardware rendering path, which eliminates the need
+        for a readback from the GPU
+        (WebCore::ImageBuffer::putPremultipliedImageData):
+        Now supports a hardware rendering path, which eliminates the need
+        for a readback from the GPU
+
 2011-04-14  Joone Hur  <joone.hur@collabora.co.uk>
 
         Reviewed by Martin Robinson.

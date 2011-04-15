@@ -1,3 +1,16 @@
+2011-04-14  Justin Novosad  <junov@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [Chromium] Accelerated 2D Canvas is slow to execute putImageData
+        https://bugs.webkit.org/show_bug.cgi?id=57960
+
+        * platform/chromium/test_expectations.txt:
+        added expected failure for test
+        canvas/philip/tests/2d.gradient.interpolate.colouralpha.html
+        Logged as chromium issue:
+        http://code.google.com/p/chromium/issues/detail?id=79477
+
 2011-04-14  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, test expectations for more bug 57113 fallout.

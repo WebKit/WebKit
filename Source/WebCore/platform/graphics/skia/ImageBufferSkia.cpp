@@ -231,9 +231,10 @@ PassRefPtr<ByteArray> getImageData(const IntRect& rect, SkDevice& srcDevice,
             unsigned char* destPixel = &destRow[x * 4];
             if (multiplied == Unmultiplied) {
                 unsigned char a = SkGetPackedA32(srcPMColor);
-                destPixel[0] = a ? SkGetPackedR32(srcPMColor) * 255 / a : 0;
-                destPixel[1] = a ? SkGetPackedG32(srcPMColor) * 255 / a : 0;
-                destPixel[2] = a ? SkGetPackedB32(srcPMColor) * 255 / a : 0;
+                unsigned char halfA = a >> 1;
+                destPixel[0] = a ? (SkGetPackedR32(srcPMColor) * 255 + halfA) / a : 0;
+                destPixel[1] = a ? (SkGetPackedG32(srcPMColor) * 255 + halfA) / a : 0;
+                destPixel[2] = a ? (SkGetPackedB32(srcPMColor) * 255 + halfA) / a : 0;
                 destPixel[3] = a;
             } else {
                 // Input and output are both pre-multiplied, we just need to re-arrange the
@@ -317,9 +318,9 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
             const unsigned char* srcPixel = &srcRow[x * 4];
             if (multiplied == Unmultiplied) {
                 unsigned char alpha = srcPixel[3];
-                unsigned char r = SkMulDiv255Ceiling(srcPixel[0], alpha);
-                unsigned char g = SkMulDiv255Ceiling(srcPixel[1], alpha);
-                unsigned char b = SkMulDiv255Ceiling(srcPixel[2], alpha);
+                unsigned char r = SkMulDiv255Round(srcPixel[0], alpha);
+                unsigned char g = SkMulDiv255Round(srcPixel[1], alpha);
+                unsigned char b = SkMulDiv255Round(srcPixel[2], alpha);
                 destRow[x] = SkPackARGB32(alpha, r, g, b);
             } else
                 destRow[x] = SkPackARGB32(srcPixel[3], srcPixel[0], srcPixel[1], srcPixel[2]);
@@ -334,13 +335,23 @@ void putImageData(ByteArray*& source, const IntSize& sourceSize, const IntRect& 
 
 void ImageBuffer::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    context()->platformContext()->syncSoftwareCanvas();
-    putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, context()->platformContext()->canvas()->getDevice(), m_size);
+    PlatformContextSkia* platformContext = context()->platformContext();
+    if (platformContext->useGPU()) {
+        platformContext->prepareForHardwareDraw();
+        platformContext->gpuCanvas()->putUnmultipliedImageData(source, sourceSize, sourceRect, destPoint);
+        return;
+    }
+    putImageData<Unmultiplied>(source, sourceSize, sourceRect, destPoint, platformContext->canvas()->getDevice(), m_size);
 }
 
 void ImageBuffer::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
 {
-    context()->platformContext()->syncSoftwareCanvas();
+    PlatformContextSkia* platformContext = context()->platformContext();
+    if (platformContext->useGPU()) {
+        platformContext->prepareForHardwareDraw();
+        platformContext->gpuCanvas()->putPremultipliedImageData(source, sourceSize, sourceRect, destPoint);
+        return;
+    }
     putImageData<Premultiplied>(source, sourceSize, sourceRect, destPoint, context()->platformContext()->canvas()->getDevice(), m_size);
 }
 
