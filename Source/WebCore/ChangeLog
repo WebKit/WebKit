@@ -1,3 +1,19 @@
+2011-04-15  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Brian Weinstein.
+
+        Hang underneath ApplicationCacheStorage::writeDataToUniqueFileInDirectory when loading
+        http://www.webkit.org/demos/calendar.
+        https://bugs.webkit.org/show_bug.cgi?id=58698
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::openFile):
+        Add breaks to the case statement.
+        (WebCore::directoryName):
+        Remove any trailing slash in directoryName. After closer inspection of all callers, it
+        appears the that callers do not need the trailing slash, and those that use the length do
+        so only to change the direction of the slashes throughout the length of the path.
+
 2011-04-15  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Dimitri Glazkov.

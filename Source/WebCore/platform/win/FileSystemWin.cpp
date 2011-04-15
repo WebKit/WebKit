@@ -136,7 +136,12 @@ String pathGetFileName(const String& path)
 
 String directoryName(const String& path)
 {
-    return path.left(path.length() - pathGetFileName(path).length());
+    String name = path.left(path.length() - pathGetFileName(path).length());
+    if (name.characterStartingAt(name.length() - 1) == '\\') {
+        // Remove any trailing "\".
+        name.truncate(name.length() - 1);
+    }
+    return name;
 }
 
 static String bundleName()
@@ -241,9 +246,11 @@ PlatformFileHandle openFile(const String& path, FileOpenMode mode)
     case OpenForRead:
         desiredAccess = GENERIC_READ;
         creationDisposition = OPEN_EXISTING;
+        break;
     case OpenForWrite:
         desiredAccess = GENERIC_WRITE;
         creationDisposition = CREATE_ALWAYS;
+        break;
     default:
         ASSERT_NOT_REACHED();
     }
