@@ -2826,7 +2826,8 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
         }
 #endif
     }
-    notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, response, data.size(), static_cast<int>(response.expectedContentLength()), error);
+    int encodedDataLength = response.resourceLoadInfo() ? static_cast<int>(response.resourceLoadInfo()->encodedDataLength) : -1;
+    notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, response, data.size(), encodedDataLength, error);
     return identifier;
 }
 

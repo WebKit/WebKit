@@ -1,3 +1,17 @@
+2011-04-14  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: ResourceResponse should have encodedDataLength field for synchronous requests transfer size
+        https://bugs.webkit.org/show_bug.cgi?id=58447
+
+        FrameLoader now takes encoded data length for synchronous requests from the field with the same name.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * platform/network/ResourceLoadInfo.h:
+        (WebCore::ResourceLoadInfo::ResourceLoadInfo):
+
 2011-04-14  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by James Robinson.

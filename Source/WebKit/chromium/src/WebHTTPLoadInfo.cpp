@@ -89,6 +89,18 @@ void WebHTTPLoadInfo::setHTTPStatusText(const WebString& statusText)
     m_private->httpStatusText = statusText;
 }
 
+long long WebHTTPLoadInfo::encodedDataLength() const
+{
+    ASSERT(!m_private.isNull());
+    return m_private->encodedDataLength;
+}
+
+void WebHTTPLoadInfo::setEncodedDataLength(long long encodedDataLength)
+{
+    ASSERT(!m_private.isNull());
+    m_private->encodedDataLength = encodedDataLength;
+}
+
 static void addHeader(HTTPHeaderMap* map, const WebString& name, const WebString& value)
 {
     pair<HTTPHeaderMap::iterator, bool> result = map->add(name, value);
