@@ -1,3 +1,10 @@
+2011-04-15  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac: bump to 1.5.0, 1.4.0 will be released from a
+        branch and was already cut off.
+
 2011-04-15  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Eric Carlson.
