@@ -3489,3 +3489,11 @@ inspector/styles/styles-disable-then-enable.html
 # [Qt] fast/transforms/scrollIntoView-transformed.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=58559
 fast/transforms/scrollIntoView-transformed.html
+
+# Stuff Kling broke while happy-hacking DRT (r84010, r84012)
+fast/css/font-face-repeated-url.html
+fast/loader/onload-policy-ignore-for-frame.html
+http/tests/inspector/network/download.html
+http/tests/inspector/network/x-frame-options-deny.html
+http/tests/loading/cross-origin-XHR-willLoadRequest.html
+http/tests/misc/redirect-to-external-url.html

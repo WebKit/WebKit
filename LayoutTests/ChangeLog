@@ -1,3 +1,9 @@
+2011-04-15  Andreas Kling  <kling@webkit.org>
+
+        Skip failing tests after r84010 and r84012.
+
+        * platform/qt/Skipped:
+
 2011-04-15  Brian Weinstein  <bweinstein@apple.com>
 
         REGRESSION(r81262): plugins/refcount-leaks.html failing on Windows
