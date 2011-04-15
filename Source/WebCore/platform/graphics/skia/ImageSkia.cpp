@@ -66,6 +66,7 @@ enum ResamplingMode {
     RESAMPLE_AWESOME,
 };
 
+#if !ENABLE(SKIA_GPU)
 static ResamplingMode computeResamplingMode(PlatformContextSkia* platformContext, const NativeImageSkia& bitmap, int srcWidth, int srcHeight, float destWidth, float destHeight)
 {
     if (platformContext->hasImageResamplingHint()) {
@@ -150,6 +151,7 @@ static ResamplingMode computeResamplingMode(PlatformContextSkia* platformContext
     
     return RESAMPLE_LINEAR;
 }
+#endif
 
 // Draws the given bitmap to the given canvas. The subset of the source bitmap
 // identified by src_rect is drawn to the given destination rect. The bitmap
