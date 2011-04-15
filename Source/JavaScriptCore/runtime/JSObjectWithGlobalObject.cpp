@@ -41,9 +41,4 @@ JSObjectWithGlobalObject::JSObjectWithGlobalObject(JSGlobalObject* globalObject,
         putAnonymousValue(globalObject->globalData(), GlobalObjectSlot, globalObject);
 }
 
-JSGlobalObject* JSObjectWithGlobalObject::globalObject() const
-{
-    return asGlobalObject((getAnonymousValue(GlobalObjectSlot).asCell()));
-}
-
 } // namespace JSC

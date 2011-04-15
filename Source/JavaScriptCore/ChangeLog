@@ -1,3 +1,20 @@
+2011-04-15  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        globalObject moved to JSObjectWithGlobalObject.cpp inhibits inlining
+        https://bugs.webkit.org/show_bug.cgi?id=58677
+
+        Moved JSObjectWithGlobalObject::globalObject() to 
+        runtime/JSObjectWithGlobalObject.h to allow the compiler to inline
+        it for a performance benefit.  An equivalent instance had been in
+        a header file before r60057.
+
+        * JavaScriptCore.exp:
+        * runtime/JSObjectWithGlobalObject.cpp:
+        * runtime/JSObjectWithGlobalObject.h:
+        (JSC::JSObjectWithGlobalObject::globalObject):
+
 2011-04-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

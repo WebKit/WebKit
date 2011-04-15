@@ -26,7 +26,7 @@
 #ifndef JSObjectWithGlobalObject_h
 #define JSObjectWithGlobalObject_h
 
-#include "JSObject.h"
+#include "JSGlobalObject.h"
 
 namespace JSC {
 
@@ -39,7 +39,10 @@ public:
         return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
 
-    JSGlobalObject* globalObject() const;
+    JSGlobalObject* globalObject() const
+    {
+        return asGlobalObject((getAnonymousValue(GlobalObjectSlot).asCell()));
+    }
 
 protected:
     JSObjectWithGlobalObject(JSGlobalObject*, NonNullPassRefPtr<Structure>);
