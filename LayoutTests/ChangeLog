@@ -1,3 +1,9 @@
+2011-04-14  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed, test expectations for more bug 57113 fallout.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-14  Ami Fischman  <fischman@google.com>
 
         Reviewed by Eric Carlson.
