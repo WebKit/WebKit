@@ -120,28 +120,28 @@ void WebHTTPLoadInfo::addResponseHeader(const WebString& name, const WebString& 
     addHeader(&m_private->responseHeaders, name, value);
 }
 
-WebString WebHTTPLoadInfo::rawRequestHeadersText() const
+WebString WebHTTPLoadInfo::requestHeadersText() const
 {
     ASSERT(!m_private.isNull());
-    return m_private->rawRequestHeadersText;
+    return m_private->requestHeadersText;
 }
 
-void WebHTTPLoadInfo::setRawRequestHeadersText(const WebString& rawHeadersText)
+void WebHTTPLoadInfo::setRequestHeadersText(const WebString& headersText)
 {
     ASSERT(!m_private.isNull());
-    m_private->rawRequestHeadersText = rawHeadersText;
+    m_private->requestHeadersText = headersText;
 }
 
-WebString WebHTTPLoadInfo::rawResponseHeadersText() const
+WebString WebHTTPLoadInfo::responseHeadersText() const
 {
     ASSERT(!m_private.isNull());
-    return m_private->rawResponseHeadersText;
+    return m_private->responseHeadersText;
 }
 
-void WebHTTPLoadInfo::setRawResponseHeadersText(const WebString& rawHeadersText)
+void WebHTTPLoadInfo::setResponseHeadersText(const WebString& headersText)
 {
     ASSERT(!m_private.isNull());
-    m_private->rawResponseHeadersText = rawHeadersText;
+    m_private->responseHeadersText = headersText;
 }
 
 } // namespace WebKit

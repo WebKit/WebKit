@@ -61,8 +61,8 @@ WebInspector.ResourceHeadersView = function(resource)
 
     this._decodeRequestParameters = true;
 
-    this._showRawRequestHeadersText = false;
-    this._showRawResponseHeadersText = false;
+    this._showRequestHeadersText = false;
+    this._showResponseHeadersText = false;
 
     this._queryStringTreeElement = new TreeElement("", null, true);
     this._queryStringTreeElement.expanded = true;
@@ -214,14 +214,14 @@ WebInspector.ResourceHeadersView.prototype = {
         var additionalRow = null;
         if (typeof this._resource.webSocketRequestKey3 !== "undefined")
             additionalRow = {header: "(Key3)", value: this._resource.webSocketRequestKey3};
-        if (this._showRawRequestHeadersText)
-            this._refreshRawHeadersText(WebInspector.UIString("Request Headers"), this._resource.rawRequestHeadersText, this._requestHeadersTreeElement);
+        if (this._showRequestHeadersText)
+            this._refreshHeadersText(WebInspector.UIString("Request Headers"), this._resource.requestHeadersText, this._requestHeadersTreeElement);
         else 
             this._refreshHeaders(WebInspector.UIString("Request Headers"), this._resource.sortedRequestHeaders, additionalRow, this._requestHeadersTreeElement);
 
-        if (this._resource.rawRequestHeadersText) { 
-            var toggleButton = this._createHeadersToggleButton(this._showRawRequestHeadersText);
-            toggleButton.addEventListener("click", this._toggleRawRequestHeadersText.bind(this));
+        if (this._resource.requestHeadersText) { 
+            var toggleButton = this._createHeadersToggleButton(this._showRequestHeadersText);
+            toggleButton.addEventListener("click", this._toggleRequestHeadersText.bind(this));
             this._requestHeadersTreeElement.listItemElement.appendChild(toggleButton);
         }
 
@@ -233,14 +233,14 @@ WebInspector.ResourceHeadersView.prototype = {
         var additionalRow = null;
         if (typeof this._resource.webSocketChallengeResponse !== "undefined")
             additionalRow = {header: "(Challenge Response)", value: this._resource.webSocketChallengeResponse};
-        if (this._showRawResponseHeadersText)
-            this._refreshRawHeadersText(WebInspector.UIString("Response Headers"), this._resource.rawResponseHeadersText, this._responseHeadersTreeElement);
+        if (this._showResponseHeadersText)
+            this._refreshHeadersText(WebInspector.UIString("Response Headers"), this._resource.responseHeadersText, this._responseHeadersTreeElement);
         else
             this._refreshHeaders(WebInspector.UIString("Response Headers"), this._resource.sortedResponseHeaders, additionalRow, this._responseHeadersTreeElement);
         
-        if (this._resource.rawResponseHeadersText) {
-            var toggleButton = this._createHeadersToggleButton(this._showRawResponseHeadersText);
-            toggleButton.addEventListener("click", this._toggleRawResponseHeadersText.bind(this));
+        if (this._resource.responseHeadersText) {
+            var toggleButton = this._createHeadersToggleButton(this._showResponseHeadersText);
+            toggleButton.addEventListener("click", this._toggleResponseHeadersText.bind(this));
             this._responseHeadersTreeElement.listItemElement.appendChild(toggleButton);
         }
     },
@@ -273,12 +273,12 @@ WebInspector.ResourceHeadersView.prototype = {
         }
     },
     
-    _refreshHeadersTitle: function(title, headersTreeElement, isRawHeadersTextShown, headersLength)
+    _refreshHeadersTitle: function(title, headersTreeElement, isHeadersTextShown, headersLength)
     {
         headersTreeElement.listItemElement.removeChildren();
         headersTreeElement.listItemElement.appendChild(document.createTextNode(title));
         
-        if (!isRawHeadersTextShown) {
+        if (!isHeadersTextShown) {
             var headerCount = document.createElement("span");
             headerCount.addStyleClass("header-count");
             headerCount.textContent = WebInspector.UIString(" (%d)", headersLength);
@@ -314,7 +314,7 @@ WebInspector.ResourceHeadersView.prototype = {
         }
     },
     
-    _refreshRawHeadersText: function(title, rawHeadersText, headersTreeElement)
+    _refreshHeadersText: function(title, headersText, headersTreeElement)
     {
         headersTreeElement.removeChildren();
         
@@ -322,24 +322,24 @@ WebInspector.ResourceHeadersView.prototype = {
         var headerTreeElement = new TreeElement(null, null, false);
         headerTreeElement.selectable = false;
         headersTreeElement.appendChild(headerTreeElement);
-        headerTreeElement.listItemElement.addStyleClass("raw-headers-text");
+        headerTreeElement.listItemElement.addStyleClass("headers-text");
         
-        var rawHeadersTextElement = document.createElement("span");
-        rawHeadersTextElement.addStyleClass("header-value");
-        rawHeadersTextElement.addStyleClass("source-code");
-        rawHeadersTextElement.textContent = String(rawHeadersText).trim();
-        headerTreeElement.listItemElement.appendChild(rawHeadersTextElement);
+        var headersTextElement = document.createElement("span");
+        headersTextElement.addStyleClass("header-value");
+        headersTextElement.addStyleClass("source-code");
+        headersTextElement.textContent = String(headersText).trim();
+        headerTreeElement.listItemElement.appendChild(headersTextElement);
     },
 
-    _toggleRawRequestHeadersText: function(event)
+    _toggleRequestHeadersText: function(event)
     {
-        this._showRawRequestHeadersText = !this._showRawRequestHeadersText;
+        this._showRequestHeadersText = !this._showRequestHeadersText;
         this._refreshRequestHeaders();
     },
 
-    _toggleRawResponseHeadersText: function(event)
+    _toggleResponseHeadersText: function(event)
     {
-        this._showRawResponseHeadersText = !this._showRawResponseHeadersText;
+        this._showResponseHeadersText = !this._showResponseHeadersText;
         this._refreshResponseHeaders();
     },
 
@@ -351,9 +351,9 @@ WebInspector.ResourceHeadersView.prototype = {
         return button;
     },
     
-    _createHeadersToggleButton: function(isRawHeadersTextShown)
+    _createHeadersToggleButton: function(isHeadersTextShown)
     {
-        var toggleTitle = isRawHeadersTextShown ? WebInspector.UIString("view parsed") : WebInspector.UIString("view source");
+        var toggleTitle = isHeadersTextShown ? WebInspector.UIString("view parsed") : WebInspector.UIString("view source");
         return this._createToggleButton(toggleTitle);
     }
 }

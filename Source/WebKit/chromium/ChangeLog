@@ -1,3 +1,17 @@
+2011-04-15  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Rename rawRequestHeadersText and RawResponseHeadersText to requestHeadersText and responseHeadersText
+        https://bugs.webkit.org/show_bug.cgi?id=58650
+
+        * public/WebHTTPLoadInfo.h:
+        * src/WebHTTPLoadInfo.cpp:
+        (WebKit::WebHTTPLoadInfo::requestHeadersText):
+        (WebKit::WebHTTPLoadInfo::setRequestHeadersText):
+        (WebKit::WebHTTPLoadInfo::responseHeadersText):
+        (WebKit::WebHTTPLoadInfo::setResponseHeadersText):
+
 2011-04-15  Zelidrag Hornung  <zelidrag@chromium.org>
 
         Reviewed by Darin Fisher.

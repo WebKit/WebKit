@@ -419,14 +419,14 @@ WebInspector.Resource.prototype = {
         this.dispatchEventToListeners("requestHeaders changed");
     },
 
-    get rawRequestHeadersText()
+    get requestHeadersText()
     {
-        return this._rawRequestHeadersText;
+        return this._requestHeadersText;
     },
 
-    set rawRequestHeadersText(x)
+    set requestHeadersText(x)
     {
-        this._rawRequestHeadersText = x;
+        this._requestHeadersText = x;
         delete this._responseHeadersSize;
 
         this.dispatchEventToListeners("requestHeaders changed");
@@ -435,8 +435,8 @@ WebInspector.Resource.prototype = {
     get requestHeadersSize()
     {
         if (typeof(this._requestHeadersSize) === "undefined") {
-            if (this._rawRequestHeadersText)
-                this._requestHeadersSize = this._rawRequestHeadersText.length;
+            if (this._requestHeadersText)
+                this._requestHeadersSize = this._requestHeadersText.length;
             else 
                 this._requestHeadersSize = this._headersSize(this._requestHeaders)
         }
@@ -494,14 +494,14 @@ WebInspector.Resource.prototype = {
         this.dispatchEventToListeners("responseHeaders changed");
     },
     
-    get rawResponseHeadersText()
+    get responseHeadersText()
     {
-        return this._rawResponseHeadersText;
+        return this._responseHeadersText;
     },
 
-    set rawResponseHeadersText(x)
+    set responseHeadersText(x)
     {
-        this._rawResponseHeadersText = x;
+        this._responseHeadersText = x;
         delete this._responseHeadersSize;
 
         this.dispatchEventToListeners("responseHeaders changed");
@@ -510,8 +510,8 @@ WebInspector.Resource.prototype = {
     get responseHeadersSize()
     {
         if (typeof(this._responseHeadersSize) === "undefined") {
-            if (this._rawResponseHeadersText)
-                this._responseHeadersSize = this._rawResponseHeadersText.length;
+            if (this._responseHeadersText)
+                this._responseHeadersSize = this._responseHeadersText.length;
             else 
                 this._responseHeadersSize = this._headersSize(this._responseHeaders)
         }
@@ -597,7 +597,7 @@ WebInspector.Resource.prototype = {
     _headersSize: function(headers)
     {
         // We should take actual headers size from network stack, when possible, but fall back to
-        // this lousy computation when no raw headers are available.
+        // this lousy computation when no headers text is available.
         var size = 0;
         for (var header in headers)
             size += header.length + headers[header].length + 4; // _typical_ overhead per header is ": ".length + "\r\n".length.

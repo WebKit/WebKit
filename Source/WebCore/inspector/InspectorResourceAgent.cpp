@@ -245,12 +245,12 @@ static PassRefPtr<InspectorObject> buildObjectForResourceResponse(const Resource
 
     if (response.resourceLoadInfo()) {
         responseObject->setObject("headers", buildObjectForHeaders(response.resourceLoadInfo()->responseHeaders));
-        if (!response.resourceLoadInfo()->rawResponseHeadersText.isEmpty())
-            responseObject->setString("rawHeadersText", response.resourceLoadInfo()->rawResponseHeadersText);
+        if (!response.resourceLoadInfo()->responseHeadersText.isEmpty())
+            responseObject->setString("headersText", response.resourceLoadInfo()->responseHeadersText);
 
         responseObject->setObject("requestHeaders", buildObjectForHeaders(response.resourceLoadInfo()->requestHeaders));
-        if (!response.resourceLoadInfo()->rawRequestHeadersText.isEmpty())
-            responseObject->setString("rawRequestHeadersText", response.resourceLoadInfo()->rawRequestHeadersText);
+        if (!response.resourceLoadInfo()->requestHeadersText.isEmpty())
+            responseObject->setString("requestHeadersText", response.resourceLoadInfo()->requestHeadersText);
     } else
         responseObject->setObject("headers", buildObjectForHeaders(response.httpHeaderFields()));
 

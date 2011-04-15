@@ -41,8 +41,8 @@ struct ResourceLoadInfo : RefCounted<ResourceLoadInfo> {
     long long encodedDataLength;
     HTTPHeaderMap requestHeaders;
     HTTPHeaderMap responseHeaders;
-    String rawRequestHeadersText;
-    String rawResponseHeadersText;
+    String requestHeadersText;
+    String responseHeadersText;
 };
 
 }
