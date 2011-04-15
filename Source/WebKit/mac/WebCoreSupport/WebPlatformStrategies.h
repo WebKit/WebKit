@@ -29,10 +29,9 @@
 #include <WebCore/CookiesStrategy.h>
 #include <WebCore/PlatformStrategies.h>
 #include <WebCore/PluginStrategy.h>
-#include <WebCore/LocalizationStrategy.h>
 #include <WebCore/VisitedLinkStrategy.h>
 
-class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::PluginStrategy, private WebCore::LocalizationStrategy, private WebCore::VisitedLinkStrategy {
+class WebPlatformStrategies : public WebCore::PlatformStrategies, private WebCore::CookiesStrategy, private WebCore::PluginStrategy, private WebCore::VisitedLinkStrategy {
 public:
     static void initialize();
     
@@ -42,7 +41,6 @@ private:
     // WebCore::PlatformStrategies
     virtual WebCore::CookiesStrategy* createCookiesStrategy();
     virtual WebCore::PluginStrategy* createPluginStrategy();
-    virtual WebCore::LocalizationStrategy* createLocalizationStrategy();
     virtual WebCore::VisitedLinkStrategy* createVisitedLinkStrategy();
 
     // WebCore::CookiesStrategy
@@ -51,125 +49,6 @@ private:
     // WebCore::PluginStrategy
     virtual void refreshPlugins();
     virtual void getPluginInfo(const WebCore::Page*, Vector<WebCore::PluginInfo>&);
-
-    // WebCore::LocalizationStrategy    
-    virtual WTF::String inputElementAltText();
-    virtual WTF::String resetButtonDefaultLabel();
-    virtual WTF::String searchableIndexIntroduction();
-    virtual WTF::String submitButtonDefaultLabel();
-    virtual WTF::String fileButtonChooseFileLabel();
-    virtual WTF::String fileButtonNoFileSelectedLabel();
-    virtual WTF::String copyImageUnknownFileLabel();
-    virtual WTF::String defaultDetailsSummaryText();
-#if ENABLE(CONTEXT_MENUS)
-    virtual WTF::String contextMenuItemTagOpenLinkInNewWindow();
-    virtual WTF::String contextMenuItemTagDownloadLinkToDisk();
-    virtual WTF::String contextMenuItemTagCopyLinkToClipboard();
-    virtual WTF::String contextMenuItemTagOpenImageInNewWindow();
-    virtual WTF::String contextMenuItemTagDownloadImageToDisk();
-    virtual WTF::String contextMenuItemTagCopyImageToClipboard();
-    virtual WTF::String contextMenuItemTagOpenFrameInNewWindow();
-    virtual WTF::String contextMenuItemTagCopy();
-    virtual WTF::String contextMenuItemTagGoBack();
-    virtual WTF::String contextMenuItemTagGoForward();
-    virtual WTF::String contextMenuItemTagStop();
-    virtual WTF::String contextMenuItemTagReload();
-    virtual WTF::String contextMenuItemTagCut();
-    virtual WTF::String contextMenuItemTagPaste();
-    virtual WTF::String contextMenuItemTagNoGuessesFound();
-    virtual WTF::String contextMenuItemTagIgnoreSpelling();
-    virtual WTF::String contextMenuItemTagLearnSpelling();
-    virtual WTF::String contextMenuItemTagSearchWeb();
-    virtual WTF::String contextMenuItemTagLookUpInDictionary(const WTF::String& selectedString);
-    virtual WTF::String contextMenuItemTagOpenLink();
-    virtual WTF::String contextMenuItemTagIgnoreGrammar();
-    virtual WTF::String contextMenuItemTagSpellingMenu();
-    virtual WTF::String contextMenuItemTagShowSpellingPanel(bool show);
-    virtual WTF::String contextMenuItemTagCheckSpelling();
-    virtual WTF::String contextMenuItemTagCheckSpellingWhileTyping();
-    virtual WTF::String contextMenuItemTagCheckGrammarWithSpelling();
-    virtual WTF::String contextMenuItemTagFontMenu();
-    virtual WTF::String contextMenuItemTagBold();
-    virtual WTF::String contextMenuItemTagItalic();
-    virtual WTF::String contextMenuItemTagUnderline();
-    virtual WTF::String contextMenuItemTagOutline();
-    virtual WTF::String contextMenuItemTagWritingDirectionMenu();
-    virtual WTF::String contextMenuItemTagTextDirectionMenu();
-    virtual WTF::String contextMenuItemTagDefaultDirection();
-    virtual WTF::String contextMenuItemTagLeftToRight();
-    virtual WTF::String contextMenuItemTagRightToLeft();
-    virtual WTF::String contextMenuItemTagSearchInSpotlight();
-    virtual WTF::String contextMenuItemTagShowFonts();
-    virtual WTF::String contextMenuItemTagStyles();
-    virtual WTF::String contextMenuItemTagShowColors();
-    virtual WTF::String contextMenuItemTagSpeechMenu();
-    virtual WTF::String contextMenuItemTagStartSpeaking();
-    virtual WTF::String contextMenuItemTagStopSpeaking();
-    virtual WTF::String contextMenuItemTagCorrectSpellingAutomatically();
-    virtual WTF::String contextMenuItemTagSubstitutionsMenu();
-    virtual WTF::String contextMenuItemTagShowSubstitutions(bool show);
-    virtual WTF::String contextMenuItemTagSmartCopyPaste();
-    virtual WTF::String contextMenuItemTagSmartQuotes();
-    virtual WTF::String contextMenuItemTagSmartDashes();
-    virtual WTF::String contextMenuItemTagSmartLinks();
-    virtual WTF::String contextMenuItemTagTextReplacement();
-    virtual WTF::String contextMenuItemTagTransformationsMenu();
-    virtual WTF::String contextMenuItemTagMakeUpperCase();
-    virtual WTF::String contextMenuItemTagMakeLowerCase();
-    virtual WTF::String contextMenuItemTagCapitalize();
-    virtual WTF::String contextMenuItemTagChangeBack(const WTF::String& replacedString);
-    virtual WTF::String contextMenuItemTagInspectElement();
-    virtual WTF::String contextMenuItemTagOpenVideoInNewWindow();
-    virtual WTF::String contextMenuItemTagOpenAudioInNewWindow();
-    virtual WTF::String contextMenuItemTagCopyVideoLinkToClipboard();
-    virtual WTF::String contextMenuItemTagCopyAudioLinkToClipboard();
-    virtual WTF::String contextMenuItemTagToggleMediaControls();
-    virtual WTF::String contextMenuItemTagToggleMediaLoop();
-    virtual WTF::String contextMenuItemTagEnterVideoFullscreen();
-    virtual WTF::String contextMenuItemTagMediaPlay();
-    virtual WTF::String contextMenuItemTagMediaPause();
-    virtual WTF::String contextMenuItemTagMediaMute();
-#endif // ENABLE(CONTEXT_MENUS)
-    virtual WTF::String searchMenuNoRecentSearchesText();
-    virtual WTF::String searchMenuRecentSearchesText();
-    virtual WTF::String searchMenuClearRecentSearchesText();
-    virtual WTF::String AXWebAreaText();
-    virtual WTF::String AXLinkText();
-    virtual WTF::String AXListMarkerText();
-    virtual WTF::String AXImageMapText();
-    virtual WTF::String AXHeadingText();
-    virtual WTF::String AXDefinitionListTermText();
-    virtual WTF::String AXDefinitionListDefinitionText();
-    virtual WTF::String AXARIAContentGroupText(const WTF::String& ariaType);
-    virtual WTF::String AXButtonActionVerb();
-    virtual WTF::String AXRadioButtonActionVerb();
-    virtual WTF::String AXTextFieldActionVerb();
-    virtual WTF::String AXCheckedCheckBoxActionVerb();
-    virtual WTF::String AXUncheckedCheckBoxActionVerb();
-    virtual WTF::String AXMenuListActionVerb();
-    virtual WTF::String AXMenuListPopupActionVerb();
-    virtual WTF::String AXLinkActionVerb();
-    virtual WTF::String missingPluginText();
-    virtual WTF::String crashedPluginText();
-    virtual WTF::String multipleFileUploadText(unsigned numberOfFiles);
-    virtual WTF::String unknownFileSizeText();
-    virtual WTF::String keygenMenuItem512();
-    virtual WTF::String keygenMenuItem1024();
-    virtual WTF::String keygenMenuItem2048();
-    virtual WTF::String keygenKeychainItemName(const WTF::String& host);
-    virtual WTF::String imageTitle(const WTF::String& filename, const WebCore::IntSize& size);
-    virtual WTF::String mediaElementLoadingStateText();
-    virtual WTF::String mediaElementLiveBroadcastStateText();
-    virtual WTF::String localizedMediaControlElementString(const WTF::String&);
-    virtual WTF::String localizedMediaControlElementHelpText(const WTF::String&);
-    virtual WTF::String localizedMediaTimeDescription(float);
-    virtual WTF::String validationMessageValueMissingText();
-    virtual WTF::String validationMessageTypeMismatchText();
-    virtual WTF::String validationMessagePatternMismatchText();
-    virtual WTF::String validationMessageTooLongText();
-    virtual WTF::String validationMessageRangeUnderflowText();
-    virtual WTF::String validationMessageRangeOverflowText();
-    virtual WTF::String validationMessageStepMismatchText();
 
     // WebCore::VisitedLinkStrategy
     virtual bool isLinkVisited(WebCore::Page*, WebCore::LinkHash);

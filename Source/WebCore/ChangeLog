@@ -1,3 +1,19 @@
+2011-04-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Make mac WebKit1 use the default localization strategy
+        https://bugs.webkit.org/show_bug.cgi?id=58628
+
+        * English.lproj/Localizable.strings:
+        Update by running update-webkit-localizable-strings.
+
+        * platform/DefaultLocalizationStrategy.cpp:
+        (WebCore::DefaultLocalizationStrategy::contextMenuItemTagLookUpInDictionary):
+        (WebCore::DefaultLocalizationStrategy::keygenKeychainItemName):
+        (WebCore::DefaultLocalizationStrategy::imageTitle):
+        Match the WebKit1 versions of these functions by special casing CF platforms.
+
 2011-04-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

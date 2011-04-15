@@ -1,3 +1,15 @@
+2011-04-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Make mac WebKit1 use the default localization strategy
+        https://bugs.webkit.org/show_bug.cgi?id=58628
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        Remove the localization strategy code. The equivalent is now
+        in WebCore/platform/DefaultLocalizationStrategy.cpp.
+
 2011-04-15  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Eric Carlson.
