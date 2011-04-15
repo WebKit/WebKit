@@ -1,3 +1,18 @@
+2011-04-15  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Views should be made visible before painting in WM_PRINTCLIENT messages
+        https://bugs.webkit.org/show_bug.cgi?id=58676
+        <rdar://problem/9279211>
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onPrintClientEvent): If our view isn't currently visible set it to visible
+            before painting, then reset it back to not visible after painting.
+        (WebKit::WebView::onShowWindowEvent): Call setIsVisible instead of duplicating logic.
+        (WebKit::WebView::setIsVisible): Set the m_isVisible flag and call viewStateDidChange.
+        * UIProcess/win/WebView.h:
+
 2011-04-15  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Anders Carlsson.

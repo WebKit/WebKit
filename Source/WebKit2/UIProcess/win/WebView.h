@@ -60,6 +60,7 @@ public:
     void setParentWindow(HWND);
     void windowAncestryDidChange();
     void setIsInWindow(bool);
+    void setIsVisible(bool);
     void setOverrideCursor(HCURSOR);
     void setInitialFocus(bool forward);
     void setScrollOffsetOnNextResize(const WebCore::IntSize&);

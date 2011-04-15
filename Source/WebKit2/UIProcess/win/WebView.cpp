@@ -691,7 +691,21 @@ LRESULT WebView::onPrintClientEvent(HWND hWnd, UINT, WPARAM wParam, LPARAM, bool
     RECT winRect;
     ::GetClientRect(hWnd, &winRect);
 
+    // Twidding the visibility flags tells the DrawingArea to resume painting. Right now, the
+    // the visible state of the view only affects whether or not painting happens, but in the
+    // future it could affect more, which we wouldn't want to touch here.
+
+    // FIXME: We should have a better way of telling the WebProcess to draw even if we're
+    // invisible than twiddling the visibility flag.
+
+    bool wasVisible = isViewVisible();
+    if (!wasVisible)
+        setIsVisible(true);
+
     paint(hdc, winRect);
+
+    if (!wasVisible)
+        setIsVisible(false);
 
     handled = true;
     return 0;
@@ -752,11 +766,8 @@ LRESULT WebView::onShowWindowEvent(HWND hWnd, UINT message, WPARAM wParam, LPARA
     // lParam is 0 when the message is sent because of a ShowWindow call.
     // FIXME: Since we don't get notified when an ancestor window is hidden or shown, we will keep
     // painting even when we have a hidden ancestor. <http://webkit.org/b/54104>
-    if (!lParam) {
-        m_isVisible = wParam;
-        if (m_page)
-            m_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
-    }
+    if (!lParam)
+        setIsVisible(wParam);
 
     handled = false;
     return 0;
@@ -1467,6 +1478,14 @@ void WebView::setIsInWindow(bool isInWindow)
 {
     m_isInWindow = isInWindow;
     m_page->viewStateDidChange(WebPageProxy::ViewIsInWindow);
+}
+
+void WebView::setIsVisible(bool isVisible)
+{
+    m_isVisible = isVisible;
+
+    if (m_page)
+        m_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
 #if USE(ACCELERATED_COMPOSITING)
