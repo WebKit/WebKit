@@ -1,3 +1,18 @@
+2011-04-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Select All context menu item doesn't work in Flash
+        https://bugs.webkit.org/show_bug.cgi?id=58615
+        <rdar://problem/9225761>
+
+        In some cases, -[NSWindow isKeyWindow] will return false even if
+        a window is the key window, so we have to compare our window
+        against -[NSApplication keyWindow].
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::isViewWindowActive):
+
 2011-04-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

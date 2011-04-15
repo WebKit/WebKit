@@ -154,7 +154,7 @@ IntSize PageClientImpl::viewSize()
 
 bool PageClientImpl::isViewWindowActive()
 {
-    return [[m_wkView window] isKeyWindow];
+    return [[m_wkView window] isKeyWindow] || [NSApp keyWindow] == [m_wkView window];
 }
 
 bool PageClientImpl::isViewFocused()
