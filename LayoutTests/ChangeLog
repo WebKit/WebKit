@@ -2,6 +2,14 @@
 
         Reviewed by Antonio Gomes.
 
+        [Qt] DRT: Default custom policy delegate decision should be Ignore.
+
+        * platform/qt/Skipped: Unskip now passing tests.
+
+2011-04-15  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
         [Qt] DRT: Block access to external URLs.
 
         * platform/qt/Skipped: Unskip now passing tests.

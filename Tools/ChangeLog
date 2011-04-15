@@ -1,3 +1,14 @@
+2011-04-15  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] DRT: Default custom policy delegate decision should be Ignore.
+
+        If layoutTestController.setCustomPolicyDelegate() is called with only
+        one argument, the second ("permissive") should default to false.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2011-04-15  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Eric Seidel.

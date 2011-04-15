@@ -745,10 +745,6 @@ fast/repaint/table-writing-modes-v.html
 fast/repaint/text-emphasis-h.html
 fast/repaint/text-emphasis-v.html
 
-# timeout
-http/tests/misc/redirect-to-external-url.html
-http/tests/security/feed-urls-from-remote.html
-
 # This requires didClearWindowObjectForFrameInIsolatedWorld foo in FrameLoaderClient
 http/tests/security/isolatedWorld/didClearWindowObject.html
 # This needs more investigation
