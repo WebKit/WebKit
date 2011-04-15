@@ -1,3 +1,62 @@
+2011-04-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Use opaque roots instead of direct marking for nodes in the DOM
+        https://bugs.webkit.org/show_bug.cgi?id=58624
+
+        A node treats the root of its tree (usually the document) as its opaque
+        root during GC.
+        
+        This is needed for correctness in a generational GC world, but it also
+        happens to be a 3.5X speedup in a DOM-heavy GC test (scratch-gc-dom2.html).
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::isObservable):
+        (WebCore::isReachableFromDOM): Moved a helper function from JSDOMBinding.
+        We use this function to determine whether a node is observable.
+
+        (WebCore::JSNodeHandleOwner::isReachableFromOpaqueRoots): Start using
+        our weak handle callback to determine reachability, instead of direct
+        marking traversal through the DOM.
+
+        * bindings/js/JSAttrCustom.cpp:
+        (WebCore::JSAttr::markChildren): Updated to use the opaque roots mechanism
+        instead of direct marking.
+
+        * bindings/js/JSDOMBinding.cpp:
+        * bindings/js/JSDOMBinding.h: Moved code mentioned above. Removed
+        markDOMNodeWrapper because it is now unused. This is a good thing because
+        markDOMNodeWrapper used deprecatedAppend, which is not compatible
+        with generational GC.
+
+        * bindings/js/JSDOMImplementationCustom.cpp:
+        (WebCore::JSDOMImplementation::markChildren): Updated to use opaque roots.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::markChildren): No need to mark our child nodes directly,
+        since they will take care of themselves through the opaque roots mechanism.
+
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        (WebCore::JSNamedNodeMap::markChildren): Updated to use opaque roots.
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::markChildren): No need to mark our tree or our document
+        directly, since they will take care of themselves through the opaque
+        roots mechanism.
+
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::root): Helper function for accessing the root of a node tree.
+        This is O(1) while you're in the document, O(log(N)) when you're in a
+        reasonably balanced disconnected tree, and O(N) in the pathological case
+        of a disconnected tree that's shaped like a linked list. If average case
+        O(long(N)) turns out to be too slow, we can optimize through use of
+        rare data or an external hash table, but it is so uncommon that I have
+        ignored it for now.
+
+        * bindings/js/JSSVGElementInstanceCustom.cpp:
+        (WebCore::JSSVGElementInstance::markChildren): Updated to use opaque roots.
+
 2011-04-14  Mike Reed  <reed@google.com>
 
         Reviewed by Kenneth Russell.

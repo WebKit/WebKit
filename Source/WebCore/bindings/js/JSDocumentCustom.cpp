@@ -55,7 +55,6 @@ void JSDocument::markChildren(MarkStack& markStack)
     Document* document = impl();
     JSGlobalData& globalData = *Heap::heap(this)->globalData();
 
-    markDOMNodesForDocument(markStack, document);
     markActiveObjectsForContext(markStack, globalData, document);
     markDOMObjectWrapper(markStack, globalData, document->implementation());
     markDOMObjectWrapper(markStack, globalData, document->styleSheets());

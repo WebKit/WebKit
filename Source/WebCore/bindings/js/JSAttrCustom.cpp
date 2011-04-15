@@ -43,10 +43,10 @@ void JSAttr::markChildren(MarkStack& markStack)
 {
     Base::markChildren(markStack);
 
-    // Mark the element so that this will work to access the attribute even if the last
-    // other reference goes away.
-    if (Element* element = impl()->ownerElement())
-        markDOMNodeWrapper(markStack, element->document(), element);
+    Element* element = impl()->ownerElement();
+    if (!element)
+        return;
+    markStack.addOpaqueRoot(root(element));
 }
 
 } // namespace WebCore

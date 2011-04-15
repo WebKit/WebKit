@@ -33,10 +33,10 @@ void JSDOMImplementation::markChildren(MarkStack& markStack)
 {
     Base::markChildren(markStack);
 
-    DOMImplementation* domImplementation = impl();
-    Document* ownerDocument = domImplementation->ownerDocument();
-    if (ownerDocument)
-        markDOMNodeWrapper(markStack, ownerDocument, ownerDocument);
+    Document* ownerDocument = impl()->ownerDocument();
+    if (!ownerDocument)
+        return;
+    markStack.addOpaqueRoot(ownerDocument);
 }
 
 }

@@ -57,6 +57,16 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
     return createWrapper(exec, globalObject, node);
 }
 
+static inline Node* root(Node* node)
+{
+    if (node->inDocument())
+        return node->document();
+
+    while (node->parentNode())
+        node = node->parentNode();
+    return node;
+}
+
 }
 
 #endif // JSDOMNodeCustom_h

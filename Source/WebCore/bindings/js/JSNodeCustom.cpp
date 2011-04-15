@@ -124,41 +124,7 @@ void JSNode::markChildren(MarkStack& markStack)
     Node* node = m_impl.get();
     node->markJSEventListeners(markStack);
 
-    // Nodes in the document are kept alive by JSDocument::mark, so, if we're in
-    // the document, we need to mark the document, but we don't need to explicitly
-    // mark any other nodes.
-    if (node->inDocument()) {
-        // FIXME: Do we really want to call a virtual function, ownerDocument here,
-        // when the non-virtual inline function, document, is so much faster?!
-        if (Document* doc = node->ownerDocument())
-            markDOMNodeWrapper(markStack, doc, doc);
-        return;
-    }
-
-    // This is a node outside the document.
-    // Find the the root, and the highest ancestor with a wrapper.
-    Node* root = node;
-    Node* outermostNodeWithWrapper = node;
-    for (Node* current = m_impl.get(); current; current = current->parentNode()) {
-        root = current;
-        if (hasCachedDOMNodeWrapperUnchecked(current->document(), current))
-            outermostNodeWithWrapper = current;
-    }
-
-    // Only nodes that have no ancestors with wrappers mark the subtree. In the common
-    // case, the root of the detached subtree has a wrapper, so the tree will only
-    // get marked once. Nodes that aren't outermost need to mark the outermost
-    // in case it is otherwise unreachable.
-    // FIXME: In the non-common case of root not having a wrapper, this is still an O(n^2) algorithm,
-    // as we will traverse the whole tree as many times as there are nodes with wrappers in it.
-    if (node != outermostNodeWithWrapper) {
-        markDOMNodeWrapper(markStack, m_impl->document(), outermostNodeWithWrapper);
-        return;
-    }
-
-    // Mark the whole tree subtree.
-    for (Node* nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode())
-        markDOMNodeWrapper(markStack, m_impl->document(), nodeToMark);
+    markStack.addOpaqueRoot(root(node));
 }
 
 static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)

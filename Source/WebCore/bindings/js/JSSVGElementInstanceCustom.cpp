@@ -28,6 +28,7 @@
 #include "JSSVGElementInstance.h"
 
 #if ENABLE(SVG)
+#include "JSNode.h"
 #include "SVGElementInstance.h"
 
 namespace WebCore {
@@ -35,9 +36,7 @@ namespace WebCore {
 void JSSVGElementInstance::markChildren(JSC::MarkStack& markStack)
 {
     Base::markChildren(markStack);
-
-    // Mark the wrapper for our corresponding element, so it can mark its event handlers.
-    markDOMNodeWrapper(markStack, impl()->correspondingElement()->document(), impl()->correspondingElement());
+    markStack.addOpaqueRoot(root(impl()->correspondingElement()));
 }
 
 } // namespace WebCore
