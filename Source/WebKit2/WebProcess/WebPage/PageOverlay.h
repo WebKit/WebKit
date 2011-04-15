@@ -27,6 +27,7 @@
 #define PageOverlay_h
 
 #include "APIObject.h"
+#include "RunLoop.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -65,10 +66,13 @@ public:
     void drawRect(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
     bool mouseEvent(const WebMouseEvent&);
 
+    void startFadeInAnimation();
+    void startFadeOutAnimation();
+
+    float fractionFadedIn() const { return m_fractionFadedIn; }
+
 protected:
     explicit PageOverlay(Client*);
-
-    WebPage* webPage() const { return m_webPage; }
 
 private:
     // APIObject
@@ -76,9 +80,24 @@ private:
 
     WebCore::IntRect bounds() const;
 
-    Client* m_client;
+    void startFadeAnimation();
+    void fadeAnimationTimerFired();
 
+    Client* m_client;
     WebPage* m_webPage;
+
+    RunLoop::Timer<PageOverlay> m_fadeAnimationTimer;
+    double m_fadeAnimationStartTime;
+    double m_fadeAnimationDuration;
+
+    enum FadeAnimationType {
+        NoAnimation,
+        FadeInAnimation,
+        FadeOutAnimation,
+    };
+
+    FadeAnimationType m_fadeAnimationType;
+    float m_fractionFadedIn;
 };
 
 } // namespace WebKit

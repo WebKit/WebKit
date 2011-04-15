@@ -729,16 +729,18 @@ void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay)
 
     m_pageOverlay = pageOverlay;
     m_pageOverlay->setPage(this);
-
     m_drawingArea->didInstallPageOverlay();
-
-    m_pageOverlay->setNeedsDisplay();
 }
 
-void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay)
+void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay, bool fadeOut)
 {
     if (pageOverlay != m_pageOverlay)
         return;
+
+    if (fadeOut) {
+        m_pageOverlay->startFadeOutAnimation();
+        return;
+    }
 
     m_pageOverlay->setPage(0);
     m_pageOverlay = nullptr;

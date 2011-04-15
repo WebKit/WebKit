@@ -27,6 +27,7 @@
 #include "PageOverlay.h"
 
 #include "WebPage.h"
+#include "WebProcess.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
@@ -37,6 +38,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static const double fadeAnimationDuration = 0.2;
+static const double fadeAnimationFrameRate = 30;
+
 PassRefPtr<PageOverlay> PageOverlay::create(Client* client)
 {
     return adoptRef(new PageOverlay(client));
@@ -45,6 +49,11 @@ PassRefPtr<PageOverlay> PageOverlay::create(Client* client)
 PageOverlay::PageOverlay(Client* client)
     : m_client(client)
     , m_webPage(0)
+    , m_fadeAnimationTimer(WebProcess::shared().runLoop(), this, &PageOverlay::fadeAnimationTimerFired)
+    , m_fadeAnimationStartTime(0.0)
+    , m_fadeAnimationDuration(fadeAnimationDuration)
+    , m_fadeAnimationType(NoAnimation)
+    , m_fractionFadedIn(1.0)
 {
 }
 
@@ -54,7 +63,7 @@ PageOverlay::~PageOverlay()
 
 IntRect PageOverlay::bounds() const
 {
-    FrameView* frameView = webPage()->corePage()->mainFrame()->view();
+    FrameView* frameView = m_webPage->corePage()->mainFrame()->view();
 
     int width = frameView->width();
     int height = frameView->height();
@@ -73,6 +82,11 @@ void PageOverlay::setPage(WebPage* webPage)
     m_client->willMoveToWebPage(this, webPage);
     m_webPage = webPage;
     m_client->didMoveToWebPage(this, webPage);
+
+    if (m_webPage)
+        setNeedsDisplay();
+
+    m_fadeAnimationTimer.stop();
 }
 
 void PageOverlay::setNeedsDisplay(const IntRect& dirtyRect)
@@ -110,6 +124,56 @@ bool PageOverlay::mouseEvent(const WebMouseEvent& mouseEvent)
         return false;
 
     return m_client->mouseEvent(this, mouseEvent);
+}
+
+void PageOverlay::startFadeInAnimation()
+{
+    m_fractionFadedIn = 0.0;
+    m_fadeAnimationType = FadeInAnimation;
+
+    startFadeAnimation();
+}
+
+void PageOverlay::startFadeOutAnimation()
+{
+    m_fractionFadedIn = 1.0;
+    m_fadeAnimationType = FadeOutAnimation;
+
+    startFadeAnimation();
+}
+
+void PageOverlay::startFadeAnimation()
+{
+    m_fadeAnimationStartTime = currentTime();
+    
+    // Start the timer
+    m_fadeAnimationTimer.startRepeating(1 / fadeAnimationFrameRate);
+}
+
+void PageOverlay::fadeAnimationTimerFired()
+{
+    float animationProgress = (currentTime() - m_fadeAnimationStartTime) / m_fadeAnimationDuration;
+
+    if (animationProgress >= 1.0)
+        animationProgress = 1.0;
+
+    double sine = sin(M_PI_2 * animationProgress);
+    float fadeAnimationValue = sine * sine;
+
+    m_fractionFadedIn = (m_fadeAnimationType == FadeInAnimation) ? fadeAnimationValue : 1 - fadeAnimationValue;
+    setNeedsDisplay();
+
+    if (animationProgress == 1.0) {
+        m_fadeAnimationTimer.stop();
+
+        bool wasFadingOut = m_fadeAnimationType == FadeOutAnimation;
+        m_fadeAnimationType = NoAnimation;
+
+        if (wasFadingOut) {
+            // If this was a fade out, go ahead and uninstall the page overlay.
+            m_webPage->uninstallPageOverlay(this, false);
+        }
+    }
 }
 
 } // namespace WebKit

@@ -175,7 +175,7 @@ void WKBundlePageInstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlay
 
 void WKBundlePageUninstallPageOverlay(WKBundlePageRef pageRef, WKBundlePageOverlayRef pageOverlayRef)
 {
-    toImpl(pageRef)->uninstallPageOverlay(toImpl(pageOverlayRef));
+    toImpl(pageRef)->uninstallPageOverlay(toImpl(pageOverlayRef), false);
 }
 
 bool WKBundlePageHasLocalDataForURL(WKBundlePageRef pageRef, WKURLRef urlRef)

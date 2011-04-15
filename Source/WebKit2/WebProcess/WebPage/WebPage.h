@@ -252,7 +252,7 @@ public:
 
     bool windowIsFocused() const;
     void installPageOverlay(PassRefPtr<PageOverlay>);
-    void uninstallPageOverlay(PageOverlay*);
+    void uninstallPageOverlay(PageOverlay*, bool fadeOut);
     bool hasPageOverlay() const { return m_pageOverlay; }
     WebCore::IntRect windowToScreen(const WebCore::IntRect&);
 

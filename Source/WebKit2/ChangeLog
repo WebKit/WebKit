@@ -1,3 +1,49 @@
+2011-04-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add the ability for PageOverlays to fade in and out
+        https://bugs.webkit.org/show_bug.cgi?id=58694
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageUninstallPageOverlay):
+        WebPage::uninstallPageOverlay now takes a boolean. Default to false for now.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findString):
+        Pass false to uninstallPageOverlay.
+
+        (WebKit::FindController::hideFindUI):
+        Pass true to uninstallPageOverlay.
+        
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::PageOverlay):
+        Initialize new member variables.
+
+        (WebKit::PageOverlay::bounds):
+        Get rid of an unnecessary webPage() getter.
+
+        (WebKit::PageOverlay::setPage):
+        Stop the animation timer.
+
+        (WebKit::PageOverlay::startFadeInAnimation):
+        Update m_fractionFadedIn and call startFadeAnimation.
+
+        (WebKit::PageOverlay::startFadeOutAnimation):
+        Ditto.
+        
+        (WebKit::PageOverlay::startFadeAnimation):
+        Initialize m_fadeAnimationStartTime and start the fade animation timer.
+
+        (WebKit::PageOverlay::fadeAnimationTimerFired):
+        Update m_fractionFadedIn and call setNeedsDisplay().
+
+        * WebProcess/WebPage/PageOverlay.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::uninstallPageOverlay):
+        If fadeOut is true, tell the page overlay to start the fade out animation.
+        When the fade animation is complete, the page overlay will uninstall itself.
+
 2011-04-15  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.
