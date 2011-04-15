@@ -2,6 +2,24 @@
 
         Reviewed by Eric Seidel.
 
+        CSP should block string arguments to setTimeout and setInterval unless options eval-script
+        https://bugs.webkit.org/show_bug.cgi?id=58610
+
+        Herein lies a four-way testing matrix.
+
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setInterval-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setInterval-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setInterval-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setInterval-blocked.html: Added.
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setTimeout-allowed-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setTimeout-allowed.html: Added.
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setTimeout-blocked-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setTimeout-blocked.html: Added.
+
+2011-04-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Add support for CSP's 'self' source
         https://bugs.webkit.org/show_bug.cgi?id=58604
 
