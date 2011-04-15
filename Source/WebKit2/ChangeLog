@@ -1,3 +1,17 @@
+2011-04-15  Nancy Piedra  <nancy.piedra@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt][Symbian] Need to export ViewportAttributes class
+        https://bugs.webkit.org/show_bug.cgi?id=58651
+
+        On Symbian, if the ViewportAttributes class is not exported we get
+        linking errors.
+
+        Since this is a compilation issue, no new tests added.
+
+        * UIProcess/API/qt/qwkpage.h:
+
 2011-04-15  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Eric Carlson.

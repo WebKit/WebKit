@@ -48,7 +48,7 @@ public:
         WebActionCount
     };
 
-    class ViewportAttributes {
+    class QWEBKIT_EXPORT ViewportAttributes {
     public:
         ViewportAttributes();
         ViewportAttributes(const QWKPage::ViewportAttributes& other);
