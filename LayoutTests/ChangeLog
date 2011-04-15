@@ -1,5 +1,13 @@
 2011-04-15  Adam Roben  <aroben@apple.com>
 
+        Skip a sometimes-failing test on Windows
+
+        <http://webkit.org/b/58441> tracks the failure.
+
+        * platform/win/Skipped: Added fast/events/pageshow-pagehide-on-back-cached-with-frames.html.
+
+2011-04-15  Adam Roben  <aroben@apple.com>
+
         Skip a timing-out test on Windows
 
         <http://webkit.org/b/58654> tracks the failure.

@@ -412,6 +412,8 @@ http/tests/security/xssAuditor/script-tag-with-fancy-unicode.html
 
 # Sometimes fails http://webkit.org/b/55329
 fast/events/pageshow-pagehide-on-back-cached.html
+# Sometimes fails, maybe dependent on which other tests are run? http://webkit.org/b/58441
+fast/events/pageshow-pagehide-on-back-cached-with-frames.html
 
 # Different tests sometimes time out on apple-windows-5 http://webkit.org/b/55579
 http/tests/websocket
