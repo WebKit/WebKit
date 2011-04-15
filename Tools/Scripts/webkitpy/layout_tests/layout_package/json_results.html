@@ -181,14 +181,30 @@ TableSorter._sortRows = function(newHeader, reversed)
         // Only need to support lexicographic sort for now.
         var aText = a.childNodes[sortColumn].textContent;
         var bText = b.childNodes[sortColumn].textContent;
+        
+        // Forward sort equal values by test name.
+        if (sortColumn && aText == bText) {
+            var aTestName = a.childNodes[0].textContent;
+            var bTestName = b.childNodes[0].textContent;
+            if (aTestName == bTestName)
+                return 0;
+            return aTestName < bTestName ? -1 : 1;
+        }
+
         if (reversed)
-            return aText < bText;
+            return aText < bText ? 1 : -1;
         else
-            return bText < aText;
+            return aText < bText ? -1 : 1;
     });
 
     for (var i = 0; i < rows.length; i++)
         tbody.appendChild(rows[i]);
+}
+
+TableSorter.sortColumn = function(columnNumber)
+{
+    var newHeader = document.querySelector('table').querySelectorAll('th')[columnNumber];
+    TableSorter._sort(newHeader);
 }
 
 TableSorter.handleClick = function(e)
@@ -196,7 +212,11 @@ TableSorter.handleClick = function(e)
     var newHeader = e.target;
     if (newHeader.localName != 'th')
         return;
-    
+    TableSorter._sort(newHeader);
+}
+
+TableSorter._sort = function(newHeader)
+{
     TableSorter._updateHeaderClassNames(newHeader);
     
     var reversed = newHeader.classList.contains('reversed');
@@ -207,6 +227,7 @@ TableSorter.handleClick = function(e)
 }
 
 document.querySelector('table').addEventListener('click', TableSorter.handleClick, false);
+TableSorter.sortColumn(0);
 
 var unexpectedStyleNode = document.createElement('style');
 document.body.appendChild(unexpectedStyleNode);

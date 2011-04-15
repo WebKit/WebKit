@@ -1,3 +1,16 @@
+2011-04-15  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        fix sorting in new results file
+        https://bugs.webkit.org/show_bug.cgi?id=58616
+
+        -Fix the custom sort to return -1, 0, 1 instead of true/false.
+        -Secondary sort by test name when sort values are equal.
+        -Sort by test name by default.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results.html:
+
 2011-04-15  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by David Levin.
