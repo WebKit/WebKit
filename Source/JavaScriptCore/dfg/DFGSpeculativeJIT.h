@@ -135,6 +135,7 @@ public:
 
 private:
     bool compile(Node&);
+    bool compile(BasicBlock&);
 
     // Add a speculation check without additional recovery.
     void speculationCheck(MacroAssembler::Jump jumpToFail)

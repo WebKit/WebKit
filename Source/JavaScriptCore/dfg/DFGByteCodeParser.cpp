@@ -69,7 +69,7 @@ public:
 
 private:
     // Parse a single basic block of bytecode instructions.
-    bool parseBlock();
+    bool parseBlock(unsigned limit);
 
     // Get/Set the operands/result of a bytecode instruction.
     NodeIndex get(int operand)
@@ -150,7 +150,7 @@ private:
         m_parseFailed = true;
         return constantUndefined();
     }
-    void setTemporary(int operand, NodeIndex value)
+    void setTemporary(unsigned operand, NodeIndex value)
     {
         m_temporaries[operand] = value;
     }
@@ -447,6 +447,15 @@ private:
             m_graph.ref(resultIndex);
         return resultIndex;
     }
+    NodeIndex addToGraph(NodeType op, OpInfo info1, OpInfo info2, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
+    {
+        NodeIndex resultIndex = (NodeIndex)m_graph.size();
+        m_graph.append(Node(op, m_currentIndex, info1, info2, child1, child2, child3));
+
+        if (op & NodeMustGenerate)
+            m_graph.ref(resultIndex);
+        return resultIndex;
+    }
 
     JSGlobalData* m_globalData;
     CodeBlock* m_codeBlock;
@@ -517,13 +526,31 @@ private:
     m_currentIndex += OPCODE_LENGTH(name); \
     return !m_parseFailed
 
-bool ByteCodeParser::parseBlock()
+bool ByteCodeParser::parseBlock(unsigned limit)
 {
+    // No need to reset state initially, since it has been set by the constructor.
+    if (m_currentIndex) {
+        for (unsigned i = 0; i < m_constants.size(); ++i)
+            m_constants[i] = ConstantRecord();
+        for (unsigned i = 0; i < m_variables.size(); ++i)
+            m_variables[i] = VariableRecord();
+        for (unsigned i = 0; i < m_arguments.size(); ++i)
+            m_arguments[i] = VariableRecord();
+        for (unsigned i = 0; i < m_temporaries.size(); ++i)
+            m_temporaries[i] = NoNode;
+    }
+
     AliasTracker aliases(m_graph);
 
     Interpreter* interpreter = m_globalData->interpreter;
     Instruction* instructionsBegin = m_codeBlock->instructions().begin();
     while (true) {
+        // Don't extend over jump destinations.
+        if (m_currentIndex == limit) {
+            addToGraph(Jump, OpInfo(m_currentIndex));
+            return !m_parseFailed;
+        }
+
         // Switch on the current bytecode opcode.
         Instruction* currentInstruction = instructionsBegin + m_currentIndex;
         switch (interpreter->getOpcodeID(currentInstruction->u.opcode)) {
@@ -843,6 +870,116 @@ bool ByteCodeParser::parseBlock()
 
         // === Block terminators. ===
 
+        case op_jmp: {
+            unsigned relativeOffset = currentInstruction[1].u.operand;
+            addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));
+            LAST_OPCODE(op_jmp);
+        }
+
+        case op_loop: {
+            unsigned relativeOffset = currentInstruction[1].u.operand;
+            addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));
+            LAST_OPCODE(op_loop);
+        }
+
+        case op_jtrue: {
+            unsigned relativeOffset = currentInstruction[2].u.operand;
+            NodeIndex condition = get(currentInstruction[1].u.operand);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jtrue)), condition);
+            LAST_OPCODE(op_jtrue);
+        }
+
+        case op_jfalse: {
+            unsigned relativeOffset = currentInstruction[2].u.operand;
+            NodeIndex condition = get(currentInstruction[1].u.operand);
+            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jfalse)), OpInfo(m_currentIndex + relativeOffset), condition);
+            LAST_OPCODE(op_jfalse);
+        }
+
+        case op_loop_if_true: {
+            unsigned relativeOffset = currentInstruction[2].u.operand;
+            NodeIndex condition = get(currentInstruction[1].u.operand);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_loop_if_true)), condition);
+            LAST_OPCODE(op_loop_if_true);
+        }
+
+        case op_loop_if_false: {
+            unsigned relativeOffset = currentInstruction[2].u.operand;
+            NodeIndex condition = get(currentInstruction[1].u.operand);
+            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_loop_if_false)), OpInfo(m_currentIndex + relativeOffset), condition);
+            LAST_OPCODE(op_loop_if_false);
+        }
+
+        case op_jeq_null: {
+            unsigned relativeOffset = currentInstruction[2].u.operand;
+            NodeIndex value = get(currentInstruction[1].u.operand);
+            NodeIndex condition = addToGraph(CompareEq, value, constantNull());
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jeq_null)), condition);
+            LAST_OPCODE(op_jeq_null);
+        }
+
+        case op_jneq_null: {
+            unsigned relativeOffset = currentInstruction[2].u.operand;
+            NodeIndex value = get(currentInstruction[1].u.operand);
+            NodeIndex condition = addToGraph(CompareEq, value, constantNull());
+            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jneq_null)), OpInfo(m_currentIndex + relativeOffset), condition);
+            LAST_OPCODE(op_jneq_null);
+        }
+
+        case op_jnless: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareLess, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jnless)), OpInfo(m_currentIndex + relativeOffset), condition);
+            LAST_OPCODE(op_jnless);
+        }
+
+        case op_jnlesseq: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareLessEq, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jnlesseq)), OpInfo(m_currentIndex + relativeOffset), condition);
+            LAST_OPCODE(op_jnlesseq);
+        }
+
+        case op_jless: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareLess, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jless)), condition);
+            LAST_OPCODE(op_jless);
+        }
+
+        case op_jlesseq: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareLessEq, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jlesseq)), condition);
+            LAST_OPCODE(op_jlesseq);
+        }
+
+        case op_loop_if_less: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareLess, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_loop_if_less)), condition);
+            LAST_OPCODE(op_loop_if_less);
+        }
+
+        case op_loop_if_lesseq: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareLessEq, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_loop_if_lesseq)), condition);
+            LAST_OPCODE(op_loop_if_lesseq);
+        }
+
         case op_ret: {
             addToGraph(Return, get(currentInstruction[1].u.operand));
 
@@ -866,8 +1003,31 @@ bool ByteCodeParser::parseBlock()
 
 bool ByteCodeParser::parse()
 {
-    if (!parseBlock())
-        return false;
+    // Set during construction.
+    ASSERT(!m_currentIndex);
+
+    for (unsigned jumpTargetIndex = 0; jumpTargetIndex <= m_codeBlock->numberOfJumpTargets(); ++jumpTargetIndex) {
+        // The maximum bytecode offset to go into the current basicblock is either the next jump target, or the end of the instructions.
+        unsigned limit = jumpTargetIndex < m_codeBlock->numberOfJumpTargets() ? m_codeBlock->jumpTarget(jumpTargetIndex) : m_codeBlock->instructions().size();
+        ASSERT(m_currentIndex < limit);
+
+        // Loop until we reach the current limit (i.e. next jump target).
+        do {
+            unsigned bytecodeBegin = m_currentIndex;
+            NodeIndex begin = m_graph.size();
+
+            if (!parseBlock(limit))
+                return false;
+            // We should not have gone beyond the limit.
+            ASSERT(m_currentIndex <= limit);
+
+            NodeIndex end = m_graph.size();
+            m_graph.m_blocks.append(BasicBlock(bytecodeBegin, begin, end));
+        } while (m_currentIndex < limit);
+    }
+
+    // Should have reached the end of the instructions.
+    ASSERT(m_currentIndex == m_codeBlock->instructions().size());
 
     // Assign VirtualRegisters.
     ScoreBoard scoreBoard(m_graph, m_variables.size());

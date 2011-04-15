@@ -63,6 +63,8 @@ typedef uint32_t ExceptionInfo;
 #define NodeResultMask     0xF000
 #define NodeMustGenerate  0x10000 // set on nodes that have side effects, and may not trivially be removed by DCE.
 #define NodeIsConstant    0x20000
+#define NodeIsJump        0x40000
+#define NodeIsBranch      0x80000
 
 // These values record the result type of the node (as checked by NodeResultMask, above), 0 for no result.
 #define NodeResultJS      0x1000
@@ -129,6 +131,9 @@ typedef uint32_t ExceptionInfo;
     /* Nodes for misc operations. */\
     macro(LogicalNot, NodeResultJS) \
     \
+    /* Block terminals. */\
+    macro(Jump, NodeMustGenerate | NodeIsJump) \
+    macro(Branch, NodeMustGenerate | NodeIsBranch) \
     macro(Return, NodeMustGenerate)
 
 // This enum generates a monotonically increasing id for all Node types,
@@ -182,6 +187,20 @@ struct Node {
         , refCount(0)
         , m_opInfo(imm.m_value)
     {
+    }
+
+    // Construct a node with up to 3 children and two immediate values.
+    Node(NodeType op, ExceptionInfo exceptionInfo, OpInfo imm1, OpInfo imm2, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
+        : op(op)
+        , exceptionInfo(exceptionInfo)
+        , child1(child1)
+        , child2(child2)
+        , child3(child3)
+        , virtualRegister(InvalidVirtualRegister)
+        , refCount(0)
+        , m_opInfo(imm1.m_value)
+    {
+        m_constantValue.opInfo2 = imm2.m_value;
     }
 
     bool mustGenerate()
@@ -280,6 +299,28 @@ struct Node {
         m_constantValue.asDouble = value;
     }
 
+    bool isJump()
+    {
+        return op & NodeIsJump;
+    }
+
+    bool isBranch()
+    {
+        return op & NodeIsBranch;
+    }
+
+    unsigned takenBytecodeOffset()
+    {
+        ASSERT(isBranch() || isJump());
+        return m_opInfo;
+    }
+
+    unsigned notTakenBytecodeOffset()
+    {
+        ASSERT(isBranch());
+        return m_constantValue.opInfo2;
+    }
+
     // This enum value describes the type of the node.
     NodeType op;
     // Used to look up exception handling information (currently implemented as a bytecode index).
@@ -298,6 +339,7 @@ private:
     union {
         int32_t asInt32;
         double asDouble;
+        unsigned opInfo2;
     } m_constantValue;
 };
 

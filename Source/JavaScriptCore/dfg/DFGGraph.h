@@ -30,12 +30,33 @@
 
 #include <dfg/DFGNode.h>
 #include <wtf/Vector.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 
 class CodeBlock;
 
 namespace DFG {
+
+typedef uint32_t BlockIndex;
+
+struct BasicBlock {
+    BasicBlock(unsigned bytecodeBegin, NodeIndex begin, NodeIndex end)
+        : bytecodeBegin(bytecodeBegin)
+        , begin(begin)
+        , end(end)
+    {
+    }
+
+    static inline BlockIndex getBytecodeBegin(BasicBlock* block)
+    {
+        return block->bytecodeBegin;
+    }
+
+    unsigned bytecodeBegin;
+    NodeIndex begin;
+    NodeIndex end;
+};
 
 // 
 // === Graph ===
@@ -67,6 +88,16 @@ public:
     void dump(CodeBlock* = 0);
     void dump(NodeIndex, CodeBlock* = 0);
 #endif
+
+    Vector<BasicBlock> m_blocks;
+
+    BlockIndex blockIndexForBytecodeOffset(unsigned bytecodeBegin)
+    {
+        BasicBlock* begin = m_blocks.begin();
+        BasicBlock* block = binarySearch<BasicBlock, unsigned, BasicBlock::getBytecodeBegin>(begin, m_blocks.size(), bytecodeBegin);
+        ASSERT(block >= m_blocks.begin() && block < m_blocks.end());
+        return static_cast<BlockIndex>(block - begin);
+    }
 
 private:
     // When a node's refCount goes from 0 to 1, it must (logically) recursively ref all of its children, and vice versa.

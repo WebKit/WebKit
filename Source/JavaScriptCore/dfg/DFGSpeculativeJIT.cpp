@@ -599,6 +599,40 @@ bool SpeculativeJIT::compile(Node& node)
         break;
     }
 
+    case DFG::Jump: {
+        BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
+        if (taken != (m_block + 1))
+            addBranch(m_jit.jump(), taken);
+        noResult(m_compileIndex);
+        break;
+    }
+
+    case Branch: {
+        JSValueOperand value(this, node.child1);
+        MacroAssembler::RegisterID valueReg = value.registerID();
+
+        BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
+        BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(node.notTakenBytecodeOffset());
+
+        // Integers
+        addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueReg, MacroAssembler::ImmPtr(JSValue::encode(jsNumber(0)))), notTaken);
+        MacroAssembler::Jump isNonZeroInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, valueReg, JITCompiler::tagTypeNumberRegister);
+
+        // Booleans
+        addBranch(m_jit.branchPtr(MacroAssembler::Equal, valueReg, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(false)))), notTaken);
+        speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, valueReg, MacroAssembler::ImmPtr(JSValue::encode(jsBoolean(true)))));
+
+        if (taken == (m_block + 1))
+            isNonZeroInteger.link(&m_jit);
+        else {
+            addBranch(isNonZeroInteger, taken);
+            addBranch(m_jit.jump(), taken);
+        }
+
+        noResult(m_compileIndex);
+        break;
+    }
+
     case Return: {
         ASSERT(JITCompiler::callFrameRegister != JITCompiler::regT1);
         ASSERT(JITCompiler::regT1 != JITCompiler::returnValueRegister);
@@ -704,22 +738,34 @@ bool SpeculativeJIT::compile(Node& node)
     return true;
 }
 
-bool SpeculativeJIT::compile()
+bool SpeculativeJIT::compile(BasicBlock& block)
 {
-    ASSERT(!m_compileIndex);
-    Node* nodes = m_jit.graph().begin();
+    ASSERT(m_compileIndex == block.begin);
+    m_blockHeads[m_block] = m_jit.label();
 
-    for (; m_compileIndex < m_jit.graph().size(); ++m_compileIndex) {
+    for (; m_compileIndex < block.end; ++m_compileIndex) {
 #if DFG_DEBUG_VERBOSE
-        fprintf(stderr, "SpeculativeJIT generating Node @%d at code offset 0x%x\n", (int)m_compileIndex, m_jit.debugOffset());
+        fprintf(stderr, "Generating Node @%d at JIT offset 0x%x\n", (int)m_compileIndex, m_jit.debugOffset());
 #endif
 
-        Node& node = nodes[m_compileIndex];
+        Node& node = m_jit.graph()[m_compileIndex];
         if (!node.refCount)
             continue;
         if (!compile(node))
             return false;
     }
+    return true;
+}
+
+bool SpeculativeJIT::compile()
+{
+    ASSERT(!m_compileIndex);
+    Vector<BasicBlock> blocks = m_jit.graph().m_blocks;
+    for (m_block = 0; m_block < blocks.size(); ++m_block) {
+        if (!compile(blocks[m_block]))
+            return false;
+    }
+    linkBranches();
     return true;
 }
 

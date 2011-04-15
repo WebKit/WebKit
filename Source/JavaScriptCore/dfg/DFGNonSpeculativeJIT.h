@@ -80,6 +80,7 @@ public:
 
 private:
     void compile(SpeculationCheckIndexIterator&, Node&);
+    void compile(SpeculationCheckIndexIterator&, BasicBlock&);
 
     bool isKnownInteger(NodeIndex);
     bool isKnownNumeric(NodeIndex);

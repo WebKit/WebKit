@@ -2,6 +2,45 @@
 
         Reviewed by Geoff Garen.
 
+        Bug 58705 - DFG JIT Add support for flow control (branch, jump).
+
+        Add support for control flow by breaking the CodeBlock up into multiple
+        basic blocks, generating code for each basic block in turn through the
+        speculative JIT & then the non-speculative JIT.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::setTemporary):
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::BasicBlock::BasicBlock):
+        (JSC::DFG::BasicBlock::getBytecodeOffset):
+        (JSC::DFG::Graph::blockIndexForBytecodeOffset):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::JITCodeGenerator):
+        (JSC::DFG::JITCodeGenerator::addBranch):
+        (JSC::DFG::JITCodeGenerator::linkBranches):
+        (JSC::DFG::JITCodeGenerator::BranchRecord::BranchRecord):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::isJump):
+        (JSC::DFG::Node::isBranch):
+        (JSC::DFG::Node::takenBytecodeOffset):
+        (JSC::DFG::Node::notTakenBytecodeOffset):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGNonSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+
+2011-04-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
         Bug 58701 - DFG JIT - add GetLocal/SetLocal nodes
 
         Use these for both access to arguments & local variables, adds ability

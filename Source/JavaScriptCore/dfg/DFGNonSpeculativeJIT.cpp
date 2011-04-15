@@ -591,6 +591,33 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         break;
     }
 
+    case DFG::Jump: {
+        BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
+        if (taken != (m_block + 1))
+            addBranch(m_jit.jump(), taken);
+        noResult(m_compileIndex);
+        break;
+    }
+
+    case Branch: {
+        JSValueOperand value(this, node.child1);
+        GPRReg valueGPR = value.gpr();
+        flushRegisters();
+
+        GPRResult result(this);
+        callOperation(dfgConvertJSValueToBoolean, result.gpr(), valueGPR);
+
+        BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(node.takenBytecodeOffset());
+        BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(node.notTakenBytecodeOffset());
+
+        addBranch(m_jit.branchTest8(MacroAssembler::NonZero, result.registerID()), taken);
+        if (notTaken != (m_block + 1))
+            addBranch(m_jit.jump(), notTaken);
+
+        noResult(m_compileIndex);
+        break;
+    }
+
     case Return: {
         ASSERT(JITCompiler::callFrameRegister != JITCompiler::regT1);
         ASSERT(JITCompiler::regT1 != JITCompiler::returnValueRegister);
@@ -619,21 +646,30 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     checkConsistency();
 }
 
-void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator)
+void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, BasicBlock& block)
 {
-    ASSERT(!m_compileIndex);
-    Node* nodes = m_jit.graph().begin();
+    ASSERT(m_compileIndex == block.begin);
+    m_blockHeads[m_block] = m_jit.label();
 
-    for (; m_compileIndex < m_jit.graph().size(); ++m_compileIndex) {
+    for (; m_compileIndex < block.end; ++m_compileIndex) {
 #if DFG_DEBUG_VERBOSE
         fprintf(stderr, "NonSpeculativeJIT generating Node @%d at code offset 0x%x\n", (int)m_compileIndex, m_jit.debugOffset());
 #endif
 
-        Node& node = nodes[m_compileIndex];
+        Node& node = m_jit.graph()[m_compileIndex];
         if (!node.refCount)
             continue;
         compile(checkIterator, node);
     }
+}
+
+void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator)
+{
+    ASSERT(!m_compileIndex);
+    Vector<BasicBlock> blocks = m_jit.graph().m_blocks;
+    for (m_block = 0; m_block < blocks.size(); ++m_block)
+        compile(checkIterator, blocks[m_block]);
+    linkBranches();
 }
 
 } } // namespace JSC::DFG

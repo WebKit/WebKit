@@ -110,14 +110,26 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
         printf("%s$%u", hasPrinted ? ", " : "", node.constantNumber());
         hasPrinted = true;
     }
+    if  (node.isBranch() || node.isJump()) {
+        printf("%sT:#%u", hasPrinted ? ", " : "", blockIndexForBytecodeOffset(node.takenBytecodeOffset()));
+        hasPrinted = true;
+    }
+    if  (node.isBranch()) {
+        printf("%sF:#%u", hasPrinted ? ", " : "", blockIndexForBytecodeOffset(node.notTakenBytecodeOffset()));
+        hasPrinted = true;
+    }
 
     printf(")\n");
 }
 
 void Graph::dump(CodeBlock* codeBlock)
 {
-    for (size_t i = 0; i < size(); ++i)
-        dump(i, codeBlock);
+    for (size_t b = 0; b < m_blocks.size(); ++b) {
+        printf("Block #%u:\n", (int)b);
+        BasicBlock& block = m_blocks[b];
+        for (size_t i = block.begin; i < block.end; ++i)
+            dump(i, codeBlock);
+    }
 }
 
 #endif
