@@ -1,5 +1,11 @@
 2011-04-15  Adam Roben  <aroben@apple.com>
 
+        Update Windows results after r83939
+
+        * platform/win/media/media-document-audio-repaint-expected.txt:
+
+2011-04-15  Adam Roben  <aroben@apple.com>
+
         Skip a sometimes-failing test on Windows
 
         <http://webkit.org/b/58441> tracks the failure.
