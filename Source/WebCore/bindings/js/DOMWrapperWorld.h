@@ -22,14 +22,13 @@
 #ifndef DOMWrapperWorld_h
 #define DOMWrapperWorld_h
 
-#include "Document.h"
 #include "JSDOMGlobalObject.h"
-#include "JSDOMWrapper.h"
 #include <runtime/WeakGCMap.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
+class DOMObject;
 class ScriptController;
 
 typedef HashMap<void*, JSC::Weak<DOMObject> > DOMObjectWrapperMap;
@@ -76,9 +75,6 @@ public:
     // Free as much memory held onto by this world as possible.
     void clearWrappers();
 
-    void didCreateWrapperCache(Document* document) { m_documentsWithWrapperCaches.add(document); }
-    void didDestroyWrapperCache(Document* document) { m_documentsWithWrapperCaches.remove(document); }
-
     void didCreateWindowShell(ScriptController* scriptController) { m_scriptControllersWithWindowShells.add(scriptController); }
     void didDestroyWindowShell(ScriptController* scriptController) { m_scriptControllersWithWindowShells.remove(scriptController); }
 
@@ -97,7 +93,6 @@ protected:
 
 private:
     JSC::JSGlobalData* m_globalData;
-    HashSet<Document*> m_documentsWithWrapperCaches;
     HashSet<ScriptController*> m_scriptControllersWithWindowShells;
     bool m_isNormal;
     JSNodeHandleOwner m_jsNodeHandleOwner;
@@ -112,19 +107,6 @@ inline DOMWrapperWorld* pluginWorld() { return mainThreadNormalWorld(); }
 inline DOMWrapperWorld* currentWorld(JSC::ExecState* exec)
 {
     return static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->world();
-}
-
-// From Document.h
-
-inline Document::JSWrapperCache* Document::getWrapperCache(DOMWrapperWorld* world)
-{
-    if (world->isNormal()) {
-        if (Document::JSWrapperCache* wrapperCache = m_normalWorldWrapperCache)
-            return wrapperCache;
-        ASSERT(!m_wrapperCacheMap.contains(world));
-    } else if (Document::JSWrapperCache* wrapperCache = m_wrapperCacheMap.get(world))
-        return wrapperCache;
-    return createWrapperCache(world);
 }
 
 } // namespace WebCore

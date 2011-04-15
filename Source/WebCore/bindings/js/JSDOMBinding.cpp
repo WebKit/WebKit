@@ -94,9 +94,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-typedef Document::JSWrapperCache JSWrapperCache;
-typedef Document::JSWrapperCacheMap JSWrapperCacheMap;
-
 class JSGlobalDataWorldIterator {
 public:
     JSGlobalDataWorldIterator(JSGlobalData* globalData)
@@ -167,31 +164,10 @@ void cacheDOMObjectWrapper(JSC::ExecState* exec, void* objectHandle, DOMObject* 
     world->m_wrappers.set(objectHandle, Weak<DOMObject>(*world->globalData(), wrapper, world->domObjectHandleOwner()));
 }
 
-bool hasCachedDOMNodeWrapperUnchecked(Document* document, Node* node)
+void uncacheDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle, DOMObject* wrapper)
 {
-    if (!document)
-        return hasCachedDOMObjectWrapperUnchecked(JSDOMWindow::commonJSGlobalData(), node);
-
-    JSWrapperCacheMap& wrapperCacheMap = document->wrapperCacheMap();
-    for (JSWrapperCacheMap::iterator iter = wrapperCacheMap.begin(); iter != wrapperCacheMap.end(); ++iter) {
-        if (iter->second->get(node))
-            return true;
-    }
-    return false;
-}
-
-void cacheDOMNodeWrapper(JSC::ExecState* exec, Document* document, Node* node, JSNode* wrapper)
-{
-    ASSERT(wrapper);
-    if (!document)
-        cacheDOMObjectWrapper(exec, node, wrapper);
-    else
-        document->getWrapperCache(currentWorld(exec))->set(node, Weak<JSNode>(exec->globalData(), wrapper, currentWorld(exec)->jsNodeHandleOwner()));
-
-    if (currentWorld(exec)->isNormal()) {
-        node->setWrapper(exec->globalData(), wrapper);
-        ASSERT(node->wrapper() == (document ? document->getWrapperCache(currentWorld(exec))->get(node).get() : domObjectWrapperMapFor(exec).get(node).get()));
-    }
+    ASSERT_UNUSED(wrapper, world->m_wrappers.get(objectHandle) == wrapper);
+    world->m_wrappers.remove(objectHandle);
 }
 
 void markActiveObjectsForContext(MarkStack& markStack, JSGlobalData& globalData, ScriptExecutionContext* scriptExecutionContext)
@@ -215,44 +191,6 @@ void markActiveObjectsForContext(MarkStack& markStack, JSGlobalData& globalData,
         // If the message port is remotely entangled, then always mark it as in-use because we can't determine reachability across threads.
         if (!(*iter)->locallyEntangledPort() || (*iter)->hasPendingActivity())
             markDOMObjectWrapper(markStack, globalData, *iter);
-    }
-}
-
-typedef std::pair<JSNode*, DOMWrapperWorld*> WrapperAndWorld;
-typedef WTF::Vector<WrapperAndWorld, 8> WrapperSet;
-
-static inline void takeWrappers(Node* node, Document* document, WrapperSet& wrapperSet)
-{
-    if (document) {
-        JSWrapperCacheMap& wrapperCacheMap = document->wrapperCacheMap();
-        for (JSWrapperCacheMap::iterator iter = wrapperCacheMap.begin(); iter != wrapperCacheMap.end(); ++iter) {
-            JSNode* wrapper = iter->second->take(node).get();
-            if (!wrapper)
-                continue;
-            wrapperSet.append(WrapperAndWorld(wrapper, iter->first));
-        }
-    } else {
-        for (JSGlobalDataWorldIterator worldIter(JSDOMWindow::commonJSGlobalData()); worldIter; ++worldIter) {
-            DOMWrapperWorld* world = *worldIter;
-            if (JSNode* wrapper = static_cast<JSNode*>(world->m_wrappers.take(node).get()))
-                wrapperSet.append(WrapperAndWorld(wrapper, world));
-        }
-    }
-}
-
-void updateDOMNodeDocument(Node* node, Document* oldDocument, Document* newDocument)
-{
-    ASSERT(oldDocument != newDocument);
-
-    WrapperSet wrapperSet;
-    takeWrappers(node, oldDocument, wrapperSet);
-
-    for (unsigned i = 0; i < wrapperSet.size(); ++i) {
-        JSNode* wrapper = wrapperSet[i].first;
-        if (newDocument)
-            newDocument->getWrapperCache(wrapperSet[i].second)->set(node, Weak<JSNode>(*wrapperSet[i].second->globalData(), wrapper, wrapperSet[i].second->jsNodeHandleOwner()));
-        else
-            wrapperSet[i].second->m_wrappers.set(node, Weak<DOMObject>(*wrapperSet[i].second->globalData(), wrapper, wrapperSet[i].second->domObjectHandleOwner()));
     }
 }
 

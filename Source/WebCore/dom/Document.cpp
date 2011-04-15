@@ -414,9 +414,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_isHTML(isHTML)
     , m_usesViewSourceStyles(false)
     , m_sawElementsInKnownNamespaces(false)
-#if USE(JSC)
-    , m_normalWorldWrapperCache(0)
-#endif
     , m_usingGeolocation(false)
     , m_eventQueue(EventQueue::create(this))
 #if ENABLE(WML)
@@ -521,10 +518,6 @@ Document::~Document()
     m_scriptRunner.clear();
 
     removeAllEventListeners();
-
-#if USE(JSC)
-    destroyAllWrapperCaches();
-#endif
 
     // Currently we believe that Document can never outlive the parser.
     // Although the Document may be replaced synchronously, DocumentParsers
@@ -631,35 +624,6 @@ MediaQueryMatcher* Document::mediaQueryMatcher()
         m_mediaQueryMatcher = MediaQueryMatcher::create(this);
     return m_mediaQueryMatcher.get();
 }
-
-#if USE(JSC)
-Document::JSWrapperCache* Document::createWrapperCache(DOMWrapperWorld* world)
-{
-    JSWrapperCache* wrapperCache = new JSWrapperCache;
-    m_wrapperCacheMap.set(world, wrapperCache);
-    if (world->isNormal()) {
-        ASSERT(!m_normalWorldWrapperCache);
-        m_normalWorldWrapperCache = wrapperCache;
-    }
-    world->didCreateWrapperCache(this);
-    return wrapperCache;
-}
-
-void Document::destroyWrapperCache(DOMWrapperWorld* world)
-{
-    Document::JSWrapperCache* wrappers = wrapperCacheMap().take(world);
-    ASSERT(wrappers);
-    delete wrappers;
-    world->didDestroyWrapperCache(this);
-}
-
-void Document::destroyAllWrapperCaches()
-{
-    JSWrapperCacheMap& wrapperCacheMap = this->wrapperCacheMap();
-    while (!wrapperCacheMap.isEmpty())
-        destroyWrapperCache(wrapperCacheMap.begin()->first);
-}
-#endif
 
 void Document::setCompatibilityMode(CompatibilityMode mode)
 {

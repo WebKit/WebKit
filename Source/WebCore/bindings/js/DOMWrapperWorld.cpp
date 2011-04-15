@@ -161,26 +161,12 @@ DOMWrapperWorld::~DOMWrapperWorld()
     JSGlobalData::ClientData* clientData = m_globalData->clientData;
     ASSERT(clientData);
     static_cast<WebCoreJSClientData*>(clientData)->forgetWorld(this);
-
-    // These items are created lazily.
-    while (!m_documentsWithWrapperCaches.isEmpty())
-        (*m_documentsWithWrapperCaches.begin())->destroyWrapperCache(this);
-
-    while (!m_scriptControllersWithWindowShells.isEmpty())
-        (*m_scriptControllersWithWindowShells.begin())->destroyWindowShell(this);
 }
 
 void DOMWrapperWorld::clearWrappers()
 {
     m_wrappers.clear();
     m_stringCache.clear();
-
-    // These items are created lazily.
-    while (!m_documentsWithWrapperCaches.isEmpty())
-        (*m_documentsWithWrapperCaches.begin())->destroyWrapperCache(this);
-
-    while (!m_scriptControllersWithWindowShells.isEmpty())
-        (*m_scriptControllersWithWindowShells.begin())->destroyWindowShell(this);
 }
 
 DOMWrapperWorld* normalWorld(JSC::JSGlobalData& globalData)
@@ -206,10 +192,7 @@ bool JSNodeHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> han
 void JSNodeHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*)
 {
     JSNode* jsNode = static_cast<JSNode*>(handle.get().asCell());
-    Node* node = jsNode->impl();
-    ASSERT(node->document());
-    ASSERT(node->document()->getWrapperCache(m_world)->find(node)->second == jsNode);
-    node->document()->getWrapperCache(m_world)->remove(node);
+    uncacheDOMNodeWrapper(m_world, jsNode->impl(), jsNode);
 }
 
 bool DOMObjectHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void*, JSC::MarkStack&)

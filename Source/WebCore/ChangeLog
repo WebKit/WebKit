@@ -1,3 +1,75 @@
+2011-04-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Complicated hash table is complicated
+        https://bugs.webkit.org/show_bug.cgi?id=58631
+        
+        Now that we use the opaque roots system to track node wrapper lifetime,
+        we can remove a lot of complicated hash-tablery that used to do the same.
+        
+        Now normal world node wrappers are just set as direct properties of
+        ScriptWrappable, while isolated world node wrappers and other DOM object
+        wrappers are stored in a shared, per-world hash table.
+
+        In addition to reducing complexity, this makes DOM wrapper allocation
+        1.6X faster (tested with scratch-gc-dom3.html), and it reduces the memory
+        footprint of normal world wrappers by ~2/3, and isolated world wrappers
+        by ~1/3.
+
+        * WebCore.exp.in: Paying the patch tithe.
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::clearWrappers): No more per-document hash tables.
+
+        (WebCore::JSNodeHandleOwner::finalize): Changed to call a helper function,
+        so the code to destroy a wrapper can live next to the code to create one.
+
+        * bindings/js/DOMWrapperWorld.h: No more per-document hash tables.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::uncacheDOMObjectWrapper):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::createDOMNodeWrapper):
+        (WebCore::getDOMNodeWrapper): No more per-document hash tables.
+        Added uncacheDOMObjectWrapper to be symmetrical with cacheDOMObjectWrapper.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline): Ditto.
+
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::getCachedDOMNodeWrapper):
+        (WebCore::cacheDOMNodeWrapper):
+        (WebCore::uncacheDOMNodeWrapper):
+        (WebCore::toJS): Implemented the scheme described above.
+
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::wrapper):
+        (WebCore::ScriptWrappable::setWrapper):
+        (WebCore::ScriptWrappable::clearWrapper): ScriptWrappable needs a handle
+        owner now, since we don't have an extra handle living in a hash table
+        to maintain ownership for us.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        * dom/Document.h:
+        * dom/Node.cpp:
+        (WebCore::Node::setDocument): No more per-document hash tables.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createImageBuffer): Removed call to
+        hasCachedDOMNodeWrapperUnchecked because that was the old way of doing
+        things, and I was in the mood for getting rid of the old way. It's
+        debatable whether the check was ever a good idea. Even when a <canvas>
+        doesn't have a direct JS wrapper, other JS references can still keep
+        the <canvas> alive. So, it's probably best always to report extra cost.
+
 2011-04-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

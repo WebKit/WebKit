@@ -31,16 +31,32 @@
 
 namespace WebCore {
 
-inline JSNode* getCachedDOMNodeWrapper(JSC::ExecState* exec, Document* document, Node* node)
+inline JSNode* getCachedDOMNodeWrapper(JSC::ExecState* exec, Node* node)
 {
-    if (currentWorld(exec)->isNormal()) {
-        ASSERT(node->wrapper() == (document ? document->getWrapperCache(currentWorld(exec))->get(node).get() : domObjectWrapperMapFor(exec).get(node).get()));
+    if (currentWorld(exec)->isNormal())
         return static_cast<JSNode*>(node->wrapper());
-    }
+    return static_cast<JSNode*>(getCachedDOMObjectWrapper(exec, node));
+}
 
-    if (document)
-        return document->getWrapperCache(currentWorld(exec))->get(node).get();
-    return static_cast<JSNode*>(domObjectWrapperMapFor(exec).get(node).get());
+inline void cacheDOMNodeWrapper(JSC::ExecState* exec, Node* node, JSNode* wrapper)
+{
+    ASSERT(wrapper);
+
+    DOMWrapperWorld* world = currentWorld(exec);
+    if (world->isNormal()) {
+        node->setWrapper(*world->globalData(), wrapper, world->jsNodeHandleOwner());
+        return;
+    }
+    cacheDOMObjectWrapper(exec, node, wrapper);
+}
+
+inline void uncacheDOMNodeWrapper(DOMWrapperWorld* world, Node* node, JSNode* jsNode)
+{
+    if (world->isNormal()) {
+        node->clearWrapper();
+        return;
+    }
+    uncacheDOMObjectWrapper(world, node, jsNode);
 }
 
 JSC::JSValue createWrapper(JSC::ExecState*, JSDOMGlobalObject*, Node*);
@@ -50,7 +66,7 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, 
     if (!node)
         return JSC::jsNull();
 
-    JSNode* wrapper = getCachedDOMNodeWrapper(exec, node->document(), node);
+    JSNode* wrapper = getCachedDOMNodeWrapper(exec, node);
     if (wrapper)
         return wrapper;
 

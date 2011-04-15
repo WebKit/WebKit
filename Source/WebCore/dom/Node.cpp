@@ -448,10 +448,6 @@ void Node::setDocument(Document* document)
     willMoveToNewOwnerDocument();
     ASSERT(willMoveToNewOwnerDocumentWasCalled);
 
-#if USE(JSC)
-    updateDOMNodeDocument(this, m_document, document);
-#endif
-
     if (hasRareData() && rareData()->nodeLists()) {
         if (m_document)
             m_document->removeNodeListCache();

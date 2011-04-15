@@ -38,18 +38,19 @@ namespace WebCore {
 
 class ScriptWrappable {
 public:
-    ScriptWrappable()
-    {
-    }
-
     DOMObject* wrapper() const
     {
         return m_wrapper.get();
     }
 
-    void setWrapper(JSC::JSGlobalData& globalData, DOMObject* wrapper)
+    void setWrapper(JSC::JSGlobalData& globalData, DOMObject* wrapper, JSC::WeakHandleOwner* wrapperOwner)
     {
-        m_wrapper.set(globalData, wrapper, 0);
+        m_wrapper.set(globalData, wrapper, wrapperOwner);
+    }
+
+    void clearWrapper()
+    {
+        m_wrapper.clear();
     }
 
 private:

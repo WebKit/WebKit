@@ -44,10 +44,6 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
-#if USE(JSC)
-#include <heap/Weak.h>
-#endif
-
 namespace WebCore {
 
 class AXObjectCache;
@@ -947,16 +943,6 @@ public:
     virtual void suspendScriptedAnimationControllerCallbacks();
     virtual void resumeScriptedAnimationControllerCallbacks();
 
-#if USE(JSC)
-    typedef HashMap<WebCore::Node*, JSC::Weak<JSNode> > JSWrapperCache;
-    typedef HashMap<DOMWrapperWorld*, JSWrapperCache*> JSWrapperCacheMap;
-    JSWrapperCacheMap& wrapperCacheMap() { return m_wrapperCacheMap; }
-    JSWrapperCache* getWrapperCache(DOMWrapperWorld* world);
-    JSWrapperCache* createWrapperCache(DOMWrapperWorld*);
-    void destroyWrapperCache(DOMWrapperWorld*);
-    void destroyAllWrapperCaches();
-#endif
-
     virtual void finishedParsing();
 
     bool inPageCache() const { return m_inPageCache; }
@@ -1362,11 +1348,6 @@ private:
 
     bool m_usesViewSourceStyles;
     bool m_sawElementsInKnownNamespaces;
-
-#if USE(JSC)
-    JSWrapperCacheMap m_wrapperCacheMap;
-    JSWrapperCache* m_normalWorldWrapperCache;
-#endif
 
     bool m_usingGeolocation;
     
