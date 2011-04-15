@@ -1409,7 +1409,13 @@ float WebFrameImpl::printPage(int page, WebCanvas* canvas)
         return 0;
     }
 
-    return m_printContext->spoolPage(GraphicsContextBuilder(canvas).context(), page);
+    GraphicsContextBuilder builder(canvas);
+    GraphicsContext& gc = builder.context();
+#if WEBKIT_USING_SKIA
+    gc.platformContext()->setPrinting(true);
+#endif
+
+    return m_printContext->spoolPage(gc, page);
 }
 
 void WebFrameImpl::printEnd()

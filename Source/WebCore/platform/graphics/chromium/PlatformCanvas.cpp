@@ -52,7 +52,7 @@ void PlatformCanvas::resize(const IntSize& size)
 {
     m_size = size;
 #if USE(SKIA)
-    m_skiaCanvas = new skia::PlatformCanvas(size.width(), size.height(), false);
+    m_skiaCanvas = skia::CreateBitmapCanvas(size.width(), size.height(), false);
 #elif PLATFORM(CG)
     size_t bufferSize = size.width() * size.height() * 4;
     m_pixelData = adoptArrayPtr(new uint8_t[bufferSize]);

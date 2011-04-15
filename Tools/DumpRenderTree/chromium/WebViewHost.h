@@ -45,7 +45,9 @@
 #include <wtf/text/WTFString.h>
 
 class LayoutTestController;
+class SkCanvas;
 class TestShell;
+
 namespace WebKit {
 class WebFrame;
 class WebDeviceOrientationClient;
@@ -60,9 +62,6 @@ class WebURL;
 struct WebRect;
 struct WebURLError;
 struct WebWindowFeatures;
-}
-namespace skia {
-class PlatformCanvas;
 }
 
 class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewClient, public WebKit::WebFrameClient, public NavigationHost {
@@ -87,7 +86,7 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
     void paintRect(const WebKit::WebRect&);
     void updatePaintRect(const WebKit::WebRect&);
     void paintInvalidatedRegion();
-    skia::PlatformCanvas* canvas();
+    SkCanvas* canvas();
     void displayRepaintMask();
 
     void loadURLForFrame(const WebKit::WebURL&, const WebKit::WebString& frameName);
@@ -333,7 +332,7 @@ private:
     MockSpellCheck m_spellcheck;
 
     // Painting.
-    OwnPtr<skia::PlatformCanvas> m_canvas;
+    OwnPtr<SkCanvas> m_canvas;
     WebKit::WebRect m_paintRect;
     bool m_isPainting;
 

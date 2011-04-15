@@ -120,12 +120,9 @@ public:
         ProgressBarType
     };
 
-    // canvas is the canvas to draw onto, and rect gives the size of the
-    // control. ctype and cstate specify the type and state of the control.
-    WebThemeControlDRTWin(skia::PlatformCanvas* canvas,
-                          const SkIRect& rect,
-                          Type ctype,
-                          State cstate);
+    // Constructs a control of the given size, type and state to draw
+    // on to the given canvas.
+    WebThemeControlDRTWin(SkCanvas*, const SkIRect&, Type, State);
     ~WebThemeControlDRTWin();
 
     // Draws the control.
@@ -184,7 +181,7 @@ private:
     // color is which.
     void markState();
 
-    skia::PlatformCanvas* m_canvas;
+    SkCanvas* m_canvas;
     const SkIRect m_irect;
     const Type m_type;
     const State m_state;

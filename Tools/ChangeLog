@@ -1,3 +1,24 @@
+2011-04-14  Alok Priyadarshi  <alokp@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Remove dependency on chromium skia::PlatformCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=57563
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (makeCanvasOpaque):
+        (TestShell::dumpImage):
+        * DumpRenderTree/chromium/TestShell.h:
+        * DumpRenderTree/chromium/WebThemeControlDRTWin.cpp:
+        (WebThemeControlDRTWin::WebThemeControlDRTWin):
+        (WebThemeControlDRTWin::draw):
+        (WebThemeControlDRTWin::drawTextField):
+        (WebThemeControlDRTWin::drawProgressBar):
+        * DumpRenderTree/chromium/WebThemeControlDRTWin.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::canvas):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-04-14  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         Reviewed by Laszlo Gombos.

@@ -54,9 +54,6 @@ class WebNotificationPresenter;
 class WebView;
 class WebURL;
 }
-namespace skia {
-class PlatformCanvas;
-}
 
 class DRTDevToolsAgent;
 class DRTDevToolsCallArgs;
@@ -182,7 +179,7 @@ private:
     void resetWebSettings(WebKit::WebView&);
     void dump();
     std::string dumpAllBackForwardLists();
-    void dumpImage(skia::PlatformCanvas*) const;
+    void dumpImage(SkCanvas*) const;
 
     bool m_testIsPending;
     bool m_testIsPreparing;

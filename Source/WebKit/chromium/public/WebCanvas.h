@@ -34,7 +34,7 @@
 #include "WebCommon.h"
 
 #if WEBKIT_USING_SKIA
-namespace skia { class PlatformCanvas; }
+class SkCanvas;
 #elif WEBKIT_USING_CG
 struct CGContext;
 #endif
@@ -42,7 +42,7 @@ struct CGContext;
 namespace WebKit {
 
 #if WEBKIT_USING_SKIA
-typedef skia::PlatformCanvas WebCanvas;
+typedef SkCanvas WebCanvas;
 #elif WEBKIT_USING_CG
 typedef struct CGContext WebCanvas;
 #else

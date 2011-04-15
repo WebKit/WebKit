@@ -38,7 +38,7 @@ class ImageBufferData {
 public:
     ImageBufferData(const IntSize&);
 
-    skia::PlatformCanvas m_canvas;
+    OwnPtr<SkCanvas> m_canvas;
     PlatformContextSkia m_platformContext;
 };
 

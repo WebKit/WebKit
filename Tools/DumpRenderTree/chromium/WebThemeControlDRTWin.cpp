@@ -46,7 +46,6 @@
 #include <wtf/Assertions.h>
 
 using namespace std;
-using namespace skia;
 
 static const SkColor edgeColor     = SK_ColorBLACK;
 static const SkColor readOnlyColor = SkColorSetRGB(0xe9, 0xc2, 0xa6);
@@ -93,7 +92,7 @@ static SkIRect validate(const SkIRect& rect, WebThemeControlDRTWin::Type ctype)
 
 // WebThemeControlDRTWin
 
-WebThemeControlDRTWin::WebThemeControlDRTWin(PlatformCanvas* canvas,
+WebThemeControlDRTWin::WebThemeControlDRTWin(SkCanvas* canvas,
                                              const SkIRect& irect,
                                              Type ctype,
                                              State cstate)
@@ -304,7 +303,7 @@ void WebThemeControlDRTWin::draw()
     // Indents for the the slider track.
     const int sliderIndent = 2;
 
-    m_canvas->beginPlatformPaint();
+    skia::BeginPlatformPaint(m_canvas);
 
     switch (m_type) {
     case UnknownType:
@@ -475,7 +474,7 @@ void WebThemeControlDRTWin::draw()
     }
 
     markState();
-    m_canvas->endPlatformPaint();
+    skia::EndPlatformPaint(m_canvas);
 }
 
 // Because rendering a text field is dependent on input
@@ -485,7 +484,7 @@ void WebThemeControlDRTWin::drawTextField(bool drawEdges, bool fillContentArea, 
 {
     SkPaint paint;
 
-    m_canvas->beginPlatformPaint();
+    skia::BeginPlatformPaint(m_canvas);
     if (fillContentArea) {
         paint.setColor(color);
         paint.setStyle(SkPaint::kFill_Style);
@@ -498,14 +497,14 @@ void WebThemeControlDRTWin::drawTextField(bool drawEdges, bool fillContentArea, 
     }
 
     markState();
-    m_canvas->endPlatformPaint();
+    skia::EndPlatformPaint(m_canvas);
 }
 
 void WebThemeControlDRTWin::drawProgressBar(const SkIRect& fillRect)
 {
     SkPaint paint;
 
-    m_canvas->beginPlatformPaint();
+    skia::BeginPlatformPaint(m_canvas);
     paint.setColor(m_bgColor);
     paint.setStyle(SkPaint::kFill_Style);
     m_canvas->drawIRect(m_irect, paint);
@@ -518,6 +517,6 @@ void WebThemeControlDRTWin::drawProgressBar(const SkIRect& fillRect)
     m_canvas->drawIRect(tofill, paint);
 
     markState();
-    m_canvas->endPlatformPaint();
+    skia::EndPlatformPaint(m_canvas);
 }
 

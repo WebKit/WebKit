@@ -66,7 +66,6 @@
 
 using namespace WebCore;
 using namespace WebKit;
-using namespace skia;
 using namespace std;
 
 static const int screenWidth = 1920;
@@ -1512,13 +1511,14 @@ void WebViewHost::paintInvalidatedRegion()
     ASSERT(m_paintRect.isEmpty());
 }
 
-PlatformCanvas* WebViewHost::canvas()
+SkCanvas* WebViewHost::canvas()
 {
     if (m_canvas)
         return m_canvas.get();
     WebSize widgetSize = webWidget()->size();
     resetScrollRect();
-    m_canvas.set(new PlatformCanvas(widgetSize.width, widgetSize.height, true));
+    m_canvas.set(skia::CreateBitmapCanvas(
+        widgetSize.width, widgetSize.height, true));
     return m_canvas.get();
 }
 

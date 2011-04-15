@@ -50,7 +50,6 @@
 #include "WebURLResponse.h"
 #include "WebView.h"
 #include "WebViewHost.h"
-#include "skia/ext/bitmap_platform_device.h"
 #include "skia/ext/platform_canvas.h"
 #include "webkit/support/webkit_support.h"
 #include "webkit/support/webkit_support_gfx.h"
@@ -76,6 +75,21 @@ static const char fileUrlPattern[] = "file:/";
 static const char fileTestPrefix[] = "(file test):";
 static const char dataUrlPattern[] = "data:";
 static const string::size_type dataUrlPatternSize = sizeof(dataUrlPattern) - 1;
+
+// FIXME: Move this to a common place so that it can be shared with
+// WebCore::TransparencyWin::makeLayerOpaque().
+static void makeCanvasOpaque(SkCanvas* canvas)
+{
+    const SkBitmap& bitmap = canvas->getTopDevice()->accessBitmap(true);
+    ASSERT(bitmap.config() == SkBitmap::kARGB_8888_Config);
+
+    SkAutoLockPixels lock(bitmap);
+    for (int y = 0; y < bitmap.height(); y++) {
+        uint32_t* row = bitmap.getAddr32(0, y);
+        for (int x = 0; x < bitmap.width(); x++)
+            row[x] |= 0xFF000000; // Set alpha bits to 1.
+    }
+}
 
 TestShell::TestShell(bool testShellMode)
     : m_testIsPending(false)
@@ -516,14 +530,8 @@ void TestShell::dump()
     fflush(stderr);
 }
 
-void TestShell::dumpImage(skia::PlatformCanvas* canvas) const
+void TestShell::dumpImage(SkCanvas* canvas) const
 {
-    skia::BitmapPlatformDevice& device =
-        static_cast<skia::BitmapPlatformDevice&>(canvas->getTopPlatformDevice());
-    const SkBitmap& sourceBitmap = device.accessBitmap(false);
-
-    SkAutoLockPixels sourceBitmapLock(sourceBitmap);
-
     // Fix the alpha. The expected PNGs on Mac have an alpha channel, so we want
     // to keep it. On Windows, the alpha channel is wrong since text/form control
     // drawing may have erased it in a few places. So on Windows we force it to
@@ -533,8 +541,11 @@ void TestShell::dumpImage(skia::PlatformCanvas* canvas) const
     bool discardTransparency = false;
 #else
     bool discardTransparency = true;
-    device.makeOpaque(0, 0, sourceBitmap.width(), sourceBitmap.height());
+    makeCanvasOpaque(canvas);
 #endif
+
+    const SkBitmap& sourceBitmap = canvas->getTopDevice()->accessBitmap(false);
+    SkAutoLockPixels sourceBitmapLock(sourceBitmap);
 
     // Compute MD5 sum.
     MD5 digester;

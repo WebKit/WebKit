@@ -49,14 +49,14 @@ namespace {
 // into. Buffers larger than this will be destroyed when we're done with them.
 const int maxCachedBufferPixelSize = 65536;
 
-inline skia::PlatformCanvas* canvasForContext(const GraphicsContext& context)
+inline SkCanvas* canvasForContext(const GraphicsContext& context)
 {
     return context.platformContext()->canvas();
 }
 
 inline const SkBitmap& bitmapForContext(const GraphicsContext& context)
 {
-    return canvasForContext(context)->getTopPlatformDevice().accessBitmap(false);
+    return canvasForContext(context)->getTopDevice()->accessBitmap(false);
 }
 
 void compositeToCopy(const GraphicsContext& sourceLayers,
@@ -466,7 +466,7 @@ void TransparencyWin::compositeTextComposite()
     if (!m_validLayer)
         return;
 
-    const SkBitmap& bitmap = m_layerBuffer->context()->platformContext()->canvas()->getTopPlatformDevice().accessBitmap(true);
+    const SkBitmap& bitmap = m_layerBuffer->context()->platformContext()->canvas()->getTopDevice()->accessBitmap(true);
     SkColor textColor = m_textCompositeColor.rgb();
     for (int y = 0; y < m_layerSize.height(); y++) {
         uint32_t* row = bitmap.getAddr32(0, y);
@@ -502,7 +502,7 @@ void TransparencyWin::makeLayerOpaque()
         return;
 
     SkBitmap& bitmap = const_cast<SkBitmap&>(m_drawContext->platformContext()->
-        canvas()->getTopPlatformDevice().accessBitmap(true));
+        canvas()->getTopDevice()->accessBitmap(true));
     for (int y = 0; y < m_layerSize.height(); y++) {
         uint32_t* row = bitmap.getAddr32(0, y);
         for (int x = 0; x < m_layerSize.width(); x++)
