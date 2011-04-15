@@ -2,6 +2,29 @@
 
         Reviewed by Eric Carlson.
 
+        Rewrote video-controls-in-media-document layouttest to use the shadow
+        DOM (possible as of r83397) and avoid the need for pixel-test status.
+        https://bugs.webkit.org/show_bug.cgi?id=54634
+
+        * media/video-controls-in-media-document-expected.txt: Added.
+        * media/video-controls-in-media-document.html:
+        * platform/chromium-mac-leopard/media/video-controls-in-media-document-expected.checksum: Removed.
+        * platform/chromium-mac-leopard/media/video-controls-in-media-document-expected.png: Removed.
+        * platform/chromium-mac-leopard/media/video-controls-in-media-document-expected.txt: Removed.
+        * platform/chromium-win-xp/media/video-controls-in-media-document-expected.checksum: Removed.
+        * platform/chromium-win-xp/media/video-controls-in-media-document-expected.png: Removed.
+        * platform/chromium/media/video-controls-in-media-document-expected.checksum: Removed.
+        * platform/chromium/media/video-controls-in-media-document-expected.png: Removed.
+        * platform/chromium/media/video-controls-in-media-document-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/media/video-controls-in-media-document-expected.txt: Removed.
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
+2011-04-14  Ami Fischman  <fischman@google.com>
+
+        Reviewed by Eric Carlson.
+
         Update expectation to reflect removal of the -25px bottom margin.
         https://bugs.webkit.org/show_bug.cgi?id=58442
 

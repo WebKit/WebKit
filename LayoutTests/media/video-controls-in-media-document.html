@@ -1,32 +1,18 @@
 <p>Test that controls don't increase the size of the container (i.e. are
 rendered overlapping with the video canvas).<p>
 <script src="media-file.js" type="text/javascript"></script>
+<script src="video-test.js" type="text/javascript"></script>
 
 <iframe style="width: 400px; height: 300px; border: 0px;" id="container"> </iframe>
 
 <script type="text/javascript">
-if (window.layoutTestController)
-    layoutTestController.waitUntilDone();
-
 var iframe = document.getElementById("container");
-
-function finish() { 
-    // Sadly, "seeked" fires before the canvas is fully repainted or the controls
-    // finish "fading in", so we have to insert an artificial delay before exiting
-    // the test.
-    if (window.layoutTestController)
-        setTimeout("layoutTestController.notifyDone();", 100);
-};
 
 function timeupdate(event) {
     var video = event.target;
-    video.addEventListener("seeked", finish);
-    // In order to get a predictable image (for pixels expectation) we seek to
-    // time 0.  A simpler and more robust test would simply inspect the height of
-    // the rendered video+controls but the controls are part of the shadow DOM and
-    // are not reachable from JS (not even in DumpRenderTree).
-    video.pause();
-    video.currentTime = 0;
+    controls = layoutTestController.shadowRoot(video).firstChild.firstChild;
+    testExpected("controls.offsetTop + controls.offsetHeight", video.offsetHeight, "<=");
+    layoutTestController.notifyDone();
 };
 
 function start() {
