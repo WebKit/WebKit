@@ -238,6 +238,11 @@ WebInspector.SourceFrame.prototype = {
         return this._delegate.canEditScriptSource();
     },
 
+    readOnlyStateChanged: function(readOnly)
+    {
+        WebInspector.markBeingEdited(this._textViewer.element, !readOnly);
+    },
+
     startEditing: function()
     {
         if (!this._viewerState) {

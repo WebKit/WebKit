@@ -1,3 +1,28 @@
+2011-04-14  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Ctrl+Left/Right switch panels during live editing
+        https://bugs.webkit.org/show_bug.cgi?id=58521
+
+        Disable Ctrl+Left/Right keyboard shortcuts while in live edit.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.readOnlyStateChanged):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype.set readOnly):
+        (WebInspector.TextViewer.prototype.get readOnly):
+        (WebInspector.TextViewer.prototype._doubleClick):
+        (WebInspector.TextViewer.prototype._commitEditing.didCommitEditing):
+        (WebInspector.TextViewer.prototype._commitEditing):
+        (WebInspector.TextViewer.prototype._cancelEditing):
+        (WebInspector.TextViewerDelegate.prototype.readOnlyStateChanged):
+        (WebInspector.TextEditorMainPanel.prototype.set readOnly):
+        * inspector/front-end/inspector.js:
+        (WebInspector.markBeingEdited):
+        (WebInspector.isEditingAnyField):
+        (WebInspector.startEditing.cleanUpAfterEditing):
+
 2011-04-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

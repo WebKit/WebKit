@@ -1432,9 +1432,25 @@ WebInspector.isBeingEdited = function(element)
     return element.__editing;
 }
 
+WebInspector.markBeingEdited = function(element, value)
+{
+    if (value) {
+        if (element.__editing)
+            return false;
+        element.__editing = true;
+        WebInspector.__editingCount = (WebInspector.__editingCount || 0) + 1;
+    } else {
+        if (!element.__editing)
+            return false;
+        delete element.__editing;
+        --WebInspector.__editingCount;
+    }
+    return true;
+}
+
 WebInspector.isEditingAnyField = function()
 {
-    return this.__editing;
+    return !!WebInspector.__editingCount;
 }
 
 // Available config fields (all optional):
@@ -1446,10 +1462,8 @@ WebInspector.isEditingAnyField = function()
 // multiline: Boolean - whether the edited element is multiline
 WebInspector.startEditing = function(element, config)
 {
-    if (element.__editing)
+    if (!WebInspector.markBeingEdited(element, true))
         return;
-    element.__editing = true;
-    WebInspector.__editing = true;
 
     config = config || {};
     var committedCallback = config.commitHandler;
@@ -1477,8 +1491,7 @@ WebInspector.startEditing = function(element, config)
     }
 
     function cleanUpAfterEditing() {
-        delete this.__editing;
-        delete WebInspector.__editing;
+        WebInspector.markBeingEdited(element, false);
 
         this.removeStyleClass("editing");
         this.tabIndex = oldTabIndex;

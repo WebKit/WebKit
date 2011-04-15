@@ -66,6 +66,19 @@ WebInspector.TextViewer.prototype = {
         this._mainPanel.mimeType = mimeType;
     },
 
+    set readOnly(readOnly)
+    {
+        if (this._mainPanel.readOnly === readOnly)
+            return;
+        this._mainPanel.readOnly = readOnly;
+        this._delegate.readOnlyStateChanged(readOnly);
+    },
+
+    get readOnly()
+    {
+        return this._mainPanel.readOnly;
+    },
+
     get textModel()
     {
         return this._textModel;
@@ -214,7 +227,7 @@ WebInspector.TextViewer.prototype = {
 
     _doubleClick: function(event)
     {
-        if (!this._mainPanel.readOnly || this._commitEditingInProgress)
+        if (!this.readOnly || this._commitEditingInProgress)
             return;
 
         var lineRow = event.target.enclosingNodeOrSelfWithClass("webkit-line-content");
@@ -224,7 +237,7 @@ WebInspector.TextViewer.prototype = {
         if (!this._delegate.isContentEditable())
             return;
 
-        this._mainPanel.readOnly = false;
+        this.readOnly = false;
         window.getSelection().collapseToStart();
     },
 
@@ -258,15 +271,15 @@ WebInspector.TextViewer.prototype = {
 
     _commitEditing: function()
     {
-        if (this._mainPanel.readOnly)
+        if (this.readOnly)
             return false;
 
-        this._mainPanel.readOnly = true;
+        this.readOnly = true;
         function didCommitEditing(error)
         {
             this._commitEditingInProgress = false;
             if (error)
-                this._mainPanel.readOnly = false;
+                this.readOnly = false;
         }
         this._commitEditingInProgress = true;
         this._delegate.commitEditing(didCommitEditing.bind(this));
@@ -275,10 +288,10 @@ WebInspector.TextViewer.prototype = {
 
     _cancelEditing: function()
     {
-        if (this._mainPanel.readOnly)
+        if (this.readOnly)
             return false;
 
-        this._mainPanel.readOnly = true;
+        this.readOnly = true;
         this._delegate.cancelEditing();
         return true;
     },
@@ -297,6 +310,11 @@ WebInspector.TextViewerDelegate = function()
 
 WebInspector.TextViewerDelegate.prototype = {
     isContentEditable: function()
+    {
+        // Should be implemented by subclasses.
+    },
+
+    readOnlyStateChanged: function(readOnly)
     {
         // Should be implemented by subclasses.
     },
@@ -835,6 +853,9 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     set readOnly(readOnly)
     {
+        if (this._readOnly === readOnly)
+            return;
+
         this.beginDomUpdates();
         this._readOnly = readOnly;
         if (this._readOnly)
