@@ -1,3 +1,10 @@
+2011-04-14  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed, update test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=58619
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Ojan Vafai.

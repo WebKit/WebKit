@@ -3495,3 +3495,5 @@ BUGWK57113 GPU : compositing/overflow/fixed-position-ancestor-clip.html = FAIL
 BUGWK57113 GPU : compositing/overflow/overflow-scroll.html = FAIL
 BUGWK57113 GPU : platform/chromium/compositing/huge-layer-rotated.html = FAIL
 BUGWK57113 GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
+
+BUGWK58619 GPU LINUX : media/video-volume-slider.html = IMAGE
