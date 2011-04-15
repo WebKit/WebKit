@@ -1,3 +1,9 @@
+2011-04-15  James Robinson  <jamesr@chromium.org>
+
+        Fix duplicate expectation for compositing/tiling/huge-layer-img.html on chromium mac.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Beth Dakin.

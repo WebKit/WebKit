@@ -2895,7 +2895,6 @@ BUGWK47953 GPU MAC : compositing/webgl/webgl-background-color.html = IMAGE
 
 // The following tests are failing on Mac.
 BUGWK48029 GPU MAC : compositing/tiling/crash-reparent-tiled-layer.html = TEXT
-BUGWK48029 GPU MAC : compositing/tiling/huge-layer-img.html = TEXT
 BUGWK48029 GPU MAC : compositing/tiling/huge-layer-resize.html = TEXT
 BUGWK48029 GPU MAC : compositing/tiling/huge-layer-with-layer-children-resize.html = TEXT
 
