@@ -3600,18 +3600,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 return;
         }
         return;
-    case CSSPropertyBorderTopStyle:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(borderTopStyle, BorderTopStyle, BorderStyle)
-        return;
-    case CSSPropertyBorderRightStyle:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(borderRightStyle, BorderRightStyle, BorderStyle)
-        return;
-    case CSSPropertyBorderBottomStyle:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(borderBottomStyle, BorderBottomStyle, BorderStyle)
-        return;
-    case CSSPropertyBorderLeftStyle:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(borderLeftStyle, BorderLeftStyle, BorderStyle)
-        return;
     case CSSPropertyOutlineStyle:
         HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(outlineStyle, OutlineStyle, BorderStyle)
         if (primitiveValue) {
@@ -6066,6 +6054,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBorderLeftColor:
     case CSSPropertyBorderRightColor:
     case CSSPropertyBorderTopColor:
+    case CSSPropertyBorderTopStyle:
+    case CSSPropertyBorderRightStyle:
+    case CSSPropertyBorderBottomStyle:
+    case CSSPropertyBorderLeftStyle:
     case CSSPropertyOutlineColor:
     case CSSPropertyWebkitColumnRuleColor:
     case CSSPropertyWebkitTextEmphasisColor:

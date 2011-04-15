@@ -363,6 +363,12 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyValue(CSSPropertyBorderLeftColor, new ApplyPropertyColorBase(&RenderStyle::borderLeftColor, &RenderStyle::color, &RenderStyle::setBorderLeftColor));
     setPropertyValue(CSSPropertyBorderRightColor, new ApplyPropertyColorBase(&RenderStyle::borderRightColor, &RenderStyle::color, &RenderStyle::setBorderRightColor));
     setPropertyValue(CSSPropertyBorderTopColor, new ApplyPropertyColorBase(&RenderStyle::borderTopColor, &RenderStyle::color, &RenderStyle::setBorderTopColor));
+
+    setPropertyValue(CSSPropertyBorderTopStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderTopStyle, &RenderStyle::setBorderTopStyle, &RenderStyle::initialBorderStyle));
+    setPropertyValue(CSSPropertyBorderRightStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderRightStyle, &RenderStyle::setBorderRightStyle, &RenderStyle::initialBorderStyle));
+    setPropertyValue(CSSPropertyBorderBottomStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderBottomStyle, &RenderStyle::setBorderBottomStyle, &RenderStyle::initialBorderStyle));
+    setPropertyValue(CSSPropertyBorderLeftStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderLeftStyle, &RenderStyle::setBorderLeftStyle, &RenderStyle::initialBorderStyle));
+
     setPropertyValue(CSSPropertyOutlineColor, new ApplyPropertyColorBase(&RenderStyle::outlineColor, &RenderStyle::color, &RenderStyle::setOutlineColor));
     setPropertyValue(CSSPropertyWebkitColumnRuleColor, new ApplyPropertyColorBase(&RenderStyle::columnRuleColor, &RenderStyle::color, &RenderStyle::setColumnRuleColor));
     setPropertyValue(CSSPropertyWebkitTextEmphasisColor, new ApplyPropertyColorBase(&RenderStyle::textEmphasisColor, &RenderStyle::color, &RenderStyle::setTextEmphasisColor));

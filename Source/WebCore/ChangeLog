@@ -1,3 +1,20 @@
+2011-04-14  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement border style css properties in CSSStyleApplyProperty
+        https://bugs.webkit.org/show_bug.cgi?id=58506
+
+        No new functionality added.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Added new property initializers.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Removed old property handlers.
+
 2011-04-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Ojan Vafai.
