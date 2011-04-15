@@ -118,6 +118,8 @@ public:
     static void didReceiveResourceData(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willReceiveResourceResponse(Frame*, unsigned long identifier, const ResourceResponse&);
     static void didReceiveResourceResponse(const InspectorInstrumentationCookie&, unsigned long identifier, DocumentLoader*, const ResourceResponse&);
+    static void continueWithPolicyDownload(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
+    static void continueWithPolicyIgnore(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
     static void didReceiveContentLength(Frame*, unsigned long identifier, int dataLength, int lengthReceived);
     static void didFinishLoading(Frame*, unsigned long identifier, double finishTime);
     static void didFailLoading(Frame*, unsigned long identifier, const ResourceError&);
@@ -234,6 +236,9 @@ private:
     static void didReceiveResourceDataImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willReceiveResourceResponseImpl(InspectorAgent*, unsigned long identifier, const ResourceResponse&);
     static void didReceiveResourceResponseImpl(const InspectorInstrumentationCookie&, unsigned long identifier, DocumentLoader*, const ResourceResponse&);
+    static void didReceiveResourceResponseButCanceledImpl(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
+    static void continueWithPolicyDownloadImpl(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
+    static void continueWithPolicyIgnoreImpl(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
     static void didReceiveContentLengthImpl(InspectorAgent*, unsigned long identifier, int dataLength, int lengthReceived);
     static void didFinishLoadingImpl(InspectorAgent*, unsigned long identifier, double finishTime);
     static void didFailLoadingImpl(InspectorAgent*, unsigned long identifier, const ResourceError&);
@@ -662,6 +667,22 @@ inline void InspectorInstrumentation::didReceiveResourceResponse(const Inspector
 #if ENABLE(INSPECTOR)
     // Call this unconditionally so that we're able to log to console with no front-end attached.
     didReceiveResourceResponseImpl(cookie, identifier, loader, response);
+#endif
+}
+
+inline void InspectorInstrumentation::continueWithPolicyDownload(Frame* frame, DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r)
+{
+#if ENABLE(INSPECTOR)
+    if (inspectorAgentWithFrontendForFrame(frame))
+        InspectorInstrumentation::continueWithPolicyDownloadImpl(frame, loader, identifier, r);
+#endif
+}
+
+inline void InspectorInstrumentation::continueWithPolicyIgnore(Frame* frame, DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r)
+{
+#if ENABLE(INSPECTOR)
+    if (inspectorAgentWithFrontendForFrame(frame))
+        InspectorInstrumentation::continueWithPolicyIgnoreImpl(frame, loader, identifier, r);
 #endif
 }
 

@@ -457,6 +457,22 @@ void InspectorInstrumentation::didReceiveResourceResponseImpl(const InspectorIns
     }
 }
 
+void InspectorInstrumentation::didReceiveResourceResponseButCanceledImpl(Frame* frame, DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r)
+{
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(frame, identifier, r);
+    InspectorInstrumentation::didReceiveResourceResponse(cookie, identifier, loader, r);
+}
+
+void InspectorInstrumentation::continueWithPolicyDownloadImpl(Frame* frame, DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r)
+{
+    didReceiveResourceResponseButCanceledImpl(frame, loader, identifier, r);
+}
+
+void InspectorInstrumentation::continueWithPolicyIgnoreImpl(Frame* frame, DocumentLoader* loader, unsigned long identifier, const ResourceResponse& r)
+{
+    didReceiveResourceResponseButCanceledImpl(frame, loader, identifier, r);
+}
+
 void InspectorInstrumentation::didReceiveContentLengthImpl(InspectorAgent* inspectorAgent, unsigned long identifier, int dataLength, int lengthReceived)
 {
     if (InspectorResourceAgent* resourceAgent = retrieveResourceAgent(inspectorAgent))

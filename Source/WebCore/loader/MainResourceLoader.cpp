@@ -39,6 +39,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLFormElement.h"
+#include "InspectorInstrumentation.h"
 #include "Page.h"
 #if PLATFORM(QT)
 #include "PluginDatabase.h"
@@ -262,6 +263,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
             receivedError(cannotShowURLError());
             return;
         }
+        InspectorInstrumentation::continueWithPolicyDownload(m_frame.get(), documentLoader(), identifier(), r);
         frameLoader()->client()->download(m_handle.get(), request(), m_handle.get()->firstRequest(), r);
         // It might have gone missing
         if (frameLoader())
@@ -269,6 +271,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
         return;
 
     case PolicyIgnore:
+        InspectorInstrumentation::continueWithPolicyIgnore(m_frame.get(), documentLoader(), identifier(), r);
         stopLoadingForPolicyChange();
         return;
     

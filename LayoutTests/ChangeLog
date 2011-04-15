@@ -1,3 +1,16 @@
+2011-04-14  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: No headers information in network panel for downloads.
+        https://bugs.webkit.org/show_bug.cgi?id=58139
+
+        Passed resource response to inspector for PolicyDownload and PolicyIgnore requests.
+
+        * http/tests/inspector/network/download-expected.txt: Added.
+        * http/tests/inspector/network/download.html: Added.
+        * http/tests/inspector/network/resources/download.zzz: Added.
+
 2011-04-14  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Eric Seidel.
