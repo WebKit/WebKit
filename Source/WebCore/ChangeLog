@@ -1,3 +1,70 @@
+2011-04-15  Sergey Vorobyev  <sergeyvorobyev@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Network events don't preserves,
+        when inspector frontend closed and open again
+        https://bugs.webkit.org/show_bug.cgi?id=58064
+
+        Added InspectorFrontendProxy and EventsCollector.
+        They allow captured messages from InspectorResourceAgent
+        to frontend (or mockFrontend if frontend disabled) and
+        push collected data when frontend reconnect.
+        This functionality is disabled by default.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/EventsCollector.cpp: Added.
+        (WebCore::EventsCollector::EventsCollector):
+        (WebCore::EventsCollector::addEvent):
+        (WebCore::EventsCollector::sendCollectedEvents):
+        * inspector/EventsCollector.h: Added.
+        (WebCore::EventsCollector::~EventsCollector):
+        * inspector/Inspector.json:
+        * inspector/InspectorFrontendProxy.cpp: Added.
+        (WebCore::InspectorFrontendProxy::InspectorFrontendProxy):
+        (WebCore::InspectorFrontendProxy::setInspectorFrontendChannel):
+        (WebCore::InspectorFrontendProxy::setEventsCollector):
+        (WebCore::InspectorFrontendProxy::sendMessageToFrontend):
+        * inspector/InspectorFrontendProxy.h: Added.
+        (WebCore::InspectorFrontendProxy::~InspectorFrontendProxy):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFiredImpl):
+        (WebCore::InspectorInstrumentation::loadEventFiredImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willSendRequest):
+        (WebCore::InspectorInstrumentation::willReceiveResourceResponse):
+        (WebCore::InspectorInstrumentation::didReceiveContentLength):
+        (WebCore::InspectorInstrumentation::didFinishLoading):
+        (WebCore::InspectorInstrumentation::domContentLoadedEventFired):
+        (WebCore::InspectorInstrumentation::loadEventFired):
+        (WebCore::InspectorInstrumentation::frameDetachedFromParent):
+        (WebCore::InspectorInstrumentation::didCreateWebSocket):
+        (WebCore::InspectorInstrumentation::willSendWebSocketHandshakeRequest):
+        (WebCore::InspectorInstrumentation::didReceiveWebSocketHandshakeResponse):
+        (WebCore::InspectorInstrumentation::didCloseWebSocket):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::setFrontend):
+        (WebCore::InspectorResourceAgent::resourceContent):
+        (WebCore::InspectorResourceAgent::~InspectorResourceAgent):
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::domContentEventFired):
+        (WebCore::InspectorResourceAgent::loadEventFired):
+        (WebCore::InspectorResourceAgent::enabledBackgoundEventsCoollection):
+        (WebCore::InspectorResourceAgent::enable):
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype.domContentEventFired):
+        (WebInspector.NetworkDispatcher.prototype.loadEventFired):
+        * inspector/front-end/inspector.js:
+        (WebInspector.domContentEventFired):
+        (WebInspector.loadEventFired):
+
 2011-04-15  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Dimitri Glazkov.

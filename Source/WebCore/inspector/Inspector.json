@@ -433,6 +433,18 @@
         ],
         "events": [
             {
+                "name": "domContentEventFired",
+                "parameters": [
+                    { "name": "time", "type": "number" }
+                ]
+            },
+            {
+                "name": "loadEventFired",
+                "parameters": [
+                    { "name": "time", "type": "number" }
+                ]
+            },
+            {
                 "name": "frameDetached",
                 "description": "Fired when frame has been detached from its parent.",
                 "parameters": [

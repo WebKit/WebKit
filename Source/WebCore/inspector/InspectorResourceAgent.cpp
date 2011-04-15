@@ -34,21 +34,24 @@
 #if ENABLE(INSPECTOR)
 
 #include "Base64.h"
-#include "MemoryCache.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "EventsCollector.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "HTTPHeaderMap.h"
 #include "InspectorFrontend.h"
+#include "InspectorFrontendChannel.h"
+#include "InspectorFrontendProxy.h"
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "KURL.h"
+#include "MemoryCache.h"
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "ResourceError.h"
@@ -88,11 +91,22 @@ static const char other[] = "Other";
 void InspectorResourceAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend->network();
+    if (backgroundEventsCollectionEnabled()) {
+        // Insert Message Proxy in receiver chain.
+        InspectorFrontendChannel* client = m_frontend->getInspectorFrontendChannel();
+        m_inspectorFrontendProxy->setInspectorFrontendChannel(client);
+        m_frontend->setInspectorFrontendChannel(m_inspectorFrontendProxy.get());
+        m_eventsCollector->sendCollectedEvents(client);
+    }
 }
 
 void InspectorResourceAgent::clearFrontend()
 {
-    m_frontend = 0;
+    if (backgroundEventsCollectionEnabled()) {
+        m_inspectorFrontendProxy->setInspectorFrontendChannel(0);
+        m_frontend = m_mockFrontend.get();
+    } else
+        m_frontend = 0;
     disable(0);
 }
 
@@ -105,7 +119,7 @@ void InspectorResourceAgent::restore()
 void InspectorResourceAgent::resourceContent(ErrorString* errorString, Frame* frame, const KURL& url, String* result)
 {
     if (!frame) {
-        *errorString = "No frame to get resource content for"; 
+        *errorString = "No frame to get resource content for";
         return;
     }
 
@@ -285,6 +299,10 @@ static PassRefPtr<InspectorObject> buildObjectForCachedResource(const CachedReso
 
 InspectorResourceAgent::~InspectorResourceAgent()
 {
+    if (m_state->getBoolean(ResourceAgentState::resourceAgentEnabled)) {
+        ErrorString error;
+        disable(&error);
+    }
     ASSERT(!m_instrumentingAgents->inspectorResourceAgent());
 }
 
@@ -376,6 +394,16 @@ void InspectorResourceAgent::setInitialScriptContent(unsigned long identifier, c
 void InspectorResourceAgent::setInitialXHRContent(unsigned long identifier, const String& sourceString)
 {
     m_frontend->initialContentSet(static_cast<int>(identifier), sourceString, ResourceType::xhr);
+}
+
+void InspectorResourceAgent::domContentEventFired()
+{
+    m_frontend->domContentEventFired(currentTime());
+}
+
+void InspectorResourceAgent::loadEventFired()
+{
+    m_frontend->loadEventFired(currentTime());
 }
 
 static PassRefPtr<InspectorObject> buildObjectForFrame(Frame* frame)
@@ -490,6 +518,14 @@ Frame* InspectorResourceAgent::frameForId(const String& frameId)
     return 0;
 }
 
+bool InspectorResourceAgent::backgroundEventsCollectionEnabled()
+{
+    // FIXME (https://bugs.webkit.org/show_bug.cgi?id=58652)
+    // Add here condition to enable background events collection.
+    // Now this function is disable.
+    return false;
+}
+
 void InspectorResourceAgent::enable(ErrorString*)
 {
     enable();
@@ -536,8 +572,16 @@ InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentin
     : m_instrumentingAgents(instrumentingAgents)
     , m_page(page)
     , m_state(state)
-    , m_frontend(0)
 {
+    if (backgroundEventsCollectionEnabled()) {
+        m_eventsCollector = new EventsCollector();
+        m_inspectorFrontendProxy = new InspectorFrontendProxy(m_eventsCollector.get());
+        // Create mock frontend, so we can collect network events.
+        m_mockFrontend = new InspectorFrontend::Network(m_inspectorFrontendProxy.get());
+        m_frontend = m_mockFrontend.get();
+        enable();
+    } else
+        m_frontend = 0;
 }
 
 } // namespace WebCore

@@ -979,15 +979,12 @@ WebInspector.startUserInitiatedDebugging = function()
 WebInspector.domContentEventFired = function(time)
 {
     this.panels.audits.mainResourceDOMContentTime = time;
-    if (this.panels.network)
-        this.panels.network.mainResourceDOMContentTime = time;
     this.mainResourceDOMContentTime = time;
 }
 
 WebInspector.loadEventFired = function(time)
 {
     this.panels.audits.mainResourceLoadTime = time;
-    this.panels.network.mainResourceLoadTime = time;
     this.panels.resources.loadEventFired();
     this.mainResourceLoadTime = time;
 }

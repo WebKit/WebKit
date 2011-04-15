@@ -810,6 +810,7 @@ SOURCES += \
     html/shadow/TextControlInnerElements.cpp \
     inspector/ConsoleMessage.cpp \
     inspector/DOMNodeHighlighter.cpp \
+    inspector/EventsCollector.cpp \
     inspector/InjectedScript.cpp \
     inspector/InjectedScriptHost.cpp \
     inspector/InjectedScriptManager.cpp \
@@ -828,6 +829,7 @@ SOURCES += \
     inspector/InspectorDOMStorageResource.cpp \
     inspector/InspectorFrontendClientLocal.cpp \
     inspector/InspectorFrontendHost.cpp \
+    inspector/InspectorFrontendProxy.cpp \
     inspector/InspectorInstrumentation.cpp \
     inspector/InspectorPageAgent.cpp \
     inspector/InspectorProfilerAgent.cpp \
@@ -1744,6 +1746,7 @@ HEADERS += \
     html/shadow/MediaControlElements.h \
     inspector/ConsoleMessage.h \
     inspector/DOMNodeHighlighter.h \
+    inspector/EventsCollector.h \
     inspector/InjectedScript.h \
     inspector/InjectedScriptHost.h \
     inspector/InjectedScriptManager.h \
@@ -1760,9 +1763,11 @@ HEADERS += \
     inspector/InspectorDebuggerAgent.h \
     inspector/InspectorDOMStorageAgent.h \
     inspector/InspectorDOMStorageResource.h \
+    inspector/InspectorFrontendChannel.h \
     inspector/InspectorFrontendClient.h \
     inspector/InspectorFrontendClientLocal.h \
     inspector/InspectorFrontendHost.h \
+    inspector/InspectorFrontendProxy.h \
     inspector/InspectorInstrumentation.h \
     inspector/InspectorPageAgent.h \
     inspector/InspectorProfilerAgent.h \

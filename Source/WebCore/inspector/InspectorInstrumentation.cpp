@@ -525,6 +525,9 @@ void InspectorInstrumentation::domContentLoadedEventFiredImpl(InspectorAgent* in
     if (InspectorTimelineAgent* timelineAgent = inspectorAgent->instrumentingAgents()->inspectorTimelineAgent())
         timelineAgent->didMarkDOMContentEvent();
 
+    if (InspectorResourceAgent* resourceAgent = inspectorAgent->instrumentingAgents()->inspectorResourceAgent())
+        resourceAgent->domContentEventFired();
+
     if (InspectorPageAgent* pageAgent = inspectorAgent->instrumentingAgents()->inspectorPageAgent())
         pageAgent->domContentEventFired();
 }
@@ -542,6 +545,9 @@ void InspectorInstrumentation::loadEventFiredImpl(InspectorAgent* inspectorAgent
 
     if (InspectorTimelineAgent* timelineAgent = inspectorAgent->instrumentingAgents()->inspectorTimelineAgent())
         timelineAgent->didMarkLoadEvent();
+
+    if (InspectorResourceAgent* resourceAgent = inspectorAgent->instrumentingAgents()->inspectorResourceAgent())
+        resourceAgent->loadEventFired();
 
     if (InspectorPageAgent* pageAgent = inspectorAgent->instrumentingAgents()->inspectorPageAgent())
         pageAgent->loadEventFired();

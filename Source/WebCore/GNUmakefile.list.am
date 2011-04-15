@@ -1921,6 +1921,8 @@ webcore_sources += \
 	Source/WebCore/inspector/ConsoleMessage.h \
 	Source/WebCore/inspector/DOMNodeHighlighter.cpp \
 	Source/WebCore/inspector/DOMNodeHighlighter.h \
+	Source/WebCore/inspector/EventsCollector.cpp \
+	Source/WebCore/inspector/EventsCollector.h \
 	Source/WebCore/inspector/InjectedScript.cpp \
 	Source/WebCore/inspector/InjectedScript.h \
 	Source/WebCore/inspector/InjectedScriptHost.cpp \
@@ -1961,6 +1963,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorFrontendClientLocal.h \
 	Source/WebCore/inspector/InspectorFrontendHost.cpp \
 	Source/WebCore/inspector/InspectorFrontendHost.h \
+	Source/WebCore/inspector/InspectorFrontendProxy.cpp \
+	Source/WebCore/inspector/InspectorFrontendProxy.h \
 	Source/WebCore/inspector/InspectorInstrumentation.cpp \
 	Source/WebCore/inspector/InspectorInstrumentation.h \
 	Source/WebCore/inspector/InspectorPageAgent.cpp \

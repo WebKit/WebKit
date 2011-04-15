@@ -153,6 +153,18 @@ WebInspector.NetworkDispatcher.prototype = {
         this._updateResource(resource);
     },
 
+    domContentEventFired: function(time)
+    {
+        if (WebInspector.panels.network)
+            WebInspector.panels.network.mainResourceDOMContentTime = time;
+    },
+
+    loadEventFired: function(time)
+    {
+        if (WebInspector.panels.network)
+            WebInspector.panels.network.mainResourceLoadTime = time;
+    },
+
     dataReceived: function(identifier, time, dataLength, lengthReceived)
     {
         var resource = this._inflightResourcesById[identifier];

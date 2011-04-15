@@ -34,6 +34,7 @@
 #include "InspectorFrontend.h"
 #include "PlatformString.h"
 
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
@@ -51,10 +52,12 @@ class DocumentLoader;
 class Frame;
 class InspectorArray;
 class InspectorFrontend;
+class InspectorFrontendProxy;
 class InspectorObject;
 class InspectorState;
 class InstrumentingAgents;
 class KURL;
+class EventsCollector;
 class Page;
 class ResourceError;
 class ResourceRequest;
@@ -97,6 +100,8 @@ public:
     void didLoadResourceFromMemoryCache(DocumentLoader*, const CachedResource*);
     void setInitialScriptContent(unsigned long identifier, const String& sourceString);
     void setInitialXHRContent(unsigned long identifier, const String& sourceString);
+    void domContentEventFired();
+    void loadEventFired();
     void didCommitLoad(DocumentLoader*);
     void frameDetachedFromParent(Frame*);
 
@@ -108,6 +113,7 @@ public:
 #endif
 
     Frame* frameForId(const String& frameId);
+    bool backgroundEventsCollectionEnabled();
 
     // Called from frontend 
     void enable(ErrorString*);
@@ -124,7 +130,10 @@ private:
     InstrumentingAgents* m_instrumentingAgents;
     Page* m_page;
     InspectorState* m_state;
+    OwnPtr<EventsCollector> m_eventsCollector;
     InspectorFrontend::Network* m_frontend;
+    OwnPtr<InspectorFrontend::Network> m_mockFrontend;
+    OwnPtr<InspectorFrontendProxy> m_inspectorFrontendProxy;
 };
 
 } // namespace WebCore

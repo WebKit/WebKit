@@ -66602,6 +66602,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\EventsCollector.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\EventsCollector.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\DOMNodeHighlighter.cpp"
 				>
 			</File>
@@ -66767,6 +66775,14 @@
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorFrontendHost.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorFrontendProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorFrontendProxy.h"
 				>
 			</File>
 			<File
