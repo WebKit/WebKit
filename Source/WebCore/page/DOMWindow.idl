@@ -786,6 +786,8 @@ module window {
 
         readonly attribute [Conditional=BLOB] DOMURL webkitURL;
 
+        readonly attribute [Conditional=QUOTA] StorageInfo webkitStorageInfo;
+
 #endif // defined(LANGUAGE_JAVASCRIPT)
 
 #if defined(V8_BINDING) && V8_BINDING

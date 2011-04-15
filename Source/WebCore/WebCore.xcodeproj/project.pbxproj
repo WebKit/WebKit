@@ -2663,6 +2663,12 @@
 		892CF194134C620D00AAEDA1 /* StorageInfoUsageCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF18F134C620D00AAEDA1 /* StorageInfoUsageCallback.h */; };
 		892CF1EC134C655500AAEDA1 /* StorageInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 892CF1EA134C655500AAEDA1 /* StorageInfo.cpp */; };
 		892CF1ED134C655500AAEDA1 /* StorageInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF1EB134C655500AAEDA1 /* StorageInfo.h */; };
+		892CF20B134C8BB300AAEDA1 /* JSStorageInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 892CF203134C8BB300AAEDA1 /* JSStorageInfo.cpp */; };
+		892CF20C134C8BB300AAEDA1 /* JSStorageInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF204134C8BB300AAEDA1 /* JSStorageInfo.h */; };
+		892CF20D134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 892CF205134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.cpp */; };
+		892CF20E134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF206134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.h */; };
+		892CF211134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 892CF209134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.cpp */; };
+		892CF212134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF20A134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.h */; };
 		893C47A71238908B002B3D86 /* FileCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 893C47A51238908B002B3D86 /* FileCallback.h */; };
 		893C47A81238908B002B3D86 /* FileWriterCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 893C47A61238908B002B3D86 /* FileWriterCallback.h */; };
 		893C47B71238A099002B3D86 /* JSFileCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 893C47B51238A099002B3D86 /* JSFileCallback.cpp */; };
@@ -9211,6 +9217,12 @@
 		892CF18F134C620D00AAEDA1 /* StorageInfoUsageCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageInfoUsageCallback.h; sourceTree = "<group>"; };
 		892CF1EA134C655500AAEDA1 /* StorageInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageInfo.cpp; sourceTree = "<group>"; };
 		892CF1EB134C655500AAEDA1 /* StorageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageInfo.h; sourceTree = "<group>"; };
+		892CF203134C8BB300AAEDA1 /* JSStorageInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageInfo.cpp; sourceTree = "<group>"; };
+		892CF204134C8BB300AAEDA1 /* JSStorageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageInfo.h; sourceTree = "<group>"; };
+		892CF205134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageInfoErrorCallback.cpp; sourceTree = "<group>"; };
+		892CF206134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageInfoErrorCallback.h; sourceTree = "<group>"; };
+		892CF209134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageInfoUsageCallback.cpp; sourceTree = "<group>"; };
+		892CF20A134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageInfoUsageCallback.h; sourceTree = "<group>"; };
 		893C47A51238908B002B3D86 /* FileCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCallback.h; path = fileapi/FileCallback.h; sourceTree = "<group>"; };
 		893C47A61238908B002B3D86 /* FileWriterCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileWriterCallback.h; path = fileapi/FileWriterCallback.h; sourceTree = "<group>"; };
 		893C47B51238A099002B3D86 /* JSFileCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileCallback.cpp; sourceTree = "<group>"; };
@@ -15533,8 +15545,6 @@
 			children = (
 				2E2D99CB10E2BBDA00496337 /* JSBlob.cpp */,
 				2E2D99CC10E2BBDA00496337 /* JSBlob.h */,
-				89CD029111C85B870070B791 /* JSWebKitBlobBuilder.cpp */,
-				89CD029211C85B870070B791 /* JSWebKitBlobBuilder.h */,
 				89878586122CA26A003AABDA /* JSDirectoryEntry.cpp */,
 				89878587122CA26A003AABDA /* JSDirectoryEntry.h */,
 				893C482612495472002B3D86 /* JSDirectoryEntrySync.cpp */,
@@ -15591,6 +15601,8 @@
 				898785A1122CA2A7003AABDA /* JSMetadata.h */,
 				898785A2122CA2A7003AABDA /* JSMetadataCallback.cpp */,
 				898785A3122CA2A7003AABDA /* JSMetadataCallback.h */,
+				89CD029111C85B870070B791 /* JSWebKitBlobBuilder.cpp */,
+				89CD029211C85B870070B791 /* JSWebKitBlobBuilder.h */,
 			);
 			name = FileAPI;
 			sourceTree = "<group>";
@@ -16160,8 +16172,6 @@
 				976D6C74122B8A3D001FD1F7 /* AsyncFileWriterClient.h */,
 				976D6C59122B8A3D001FD1F7 /* Blob.cpp */,
 				976D6C5A122B8A3D001FD1F7 /* Blob.h */,
-				976D6C5C122B8A3D001FD1F7 /* WebKitBlobBuilder.cpp */,
-				976D6C5D122B8A3D001FD1F7 /* WebKitBlobBuilder.h */,
 				976D6C5F122B8A3D001FD1F7 /* BlobURL.cpp */,
 				976D6C60122B8A3D001FD1F7 /* BlobURL.h */,
 				89878539122CA064003AABDA /* DirectoryEntry.cpp */,
@@ -16236,6 +16246,8 @@
 				89878551122CA064003AABDA /* MetadataCallback.h */,
 				976D6C75122B8A3D001FD1F7 /* ThreadableBlobRegistry.cpp */,
 				976D6C76122B8A3D001FD1F7 /* ThreadableBlobRegistry.h */,
+				976D6C5C122B8A3D001FD1F7 /* WebKitBlobBuilder.cpp */,
+				976D6C5D122B8A3D001FD1F7 /* WebKitBlobBuilder.h */,
 			);
 			name = fileapi;
 			sourceTree = "<group>";
@@ -17138,6 +17150,12 @@
 				51E3F9D50DA05E1D00250911 /* JSStorage.h */,
 				51E0BAE80DA55D4A00A9E417 /* JSStorageEvent.cpp */,
 				51E0BAE90DA55D4A00A9E417 /* JSStorageEvent.h */,
+				892CF203134C8BB300AAEDA1 /* JSStorageInfo.cpp */,
+				892CF204134C8BB300AAEDA1 /* JSStorageInfo.h */,
+				892CF205134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.cpp */,
+				892CF206134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.h */,
+				892CF209134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.cpp */,
+				892CF20A134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.h */,
 			);
 			name = Storage;
 			sourceTree = "<group>";
@@ -18680,6 +18698,7 @@
 				E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */,
 				7E33CD00127F340D00BE8F17 /* PurgePriority.h */,
 				1C63A2460F71646600C09D5A /* RunLoopTimer.h */,
+				293EAE201356B32E0067ACF9 /* RuntimeApplicationChecks.cpp */,
 				293EAE1E1356B2FE0067ACF9 /* RuntimeApplicationChecks.h */,
 				5162C7F211F77EFA00612EFE /* SchemeRegistry.cpp */,
 				5162C7F311F77EFB00612EFE /* SchemeRegistry.h */,
@@ -18723,7 +18742,6 @@
 				9380F47109A11AB4001FDB34 /* Widget.cpp */,
 				9380F47209A11AB4001FDB34 /* Widget.h */,
 				E1E1BEFF115FF6FB006F52CA /* WindowsKeyboardCodes.h */,
-				293EAE201356B32E0067ACF9 /* RuntimeApplicationChecks.cpp */,
 			);
 			path = platform;
 			sourceTree = "<group>";
@@ -19836,7 +19854,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				293EAE1F1356B2FE0067ACF9 /* RuntimeApplicationChecks.h in Headers */,
 				B5B5DC6A119BB3D5002A8790 /* AbstractDatabase.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
@@ -19958,7 +19975,6 @@
 				FD31602712B0267600C1A359 /* BiquadProcessor.h in Headers */,
 				A89943280B42338800D7C802 /* BitmapImage.h in Headers */,
 				976D6C79122B8A3D001FD1F7 /* Blob.h in Headers */,
-				976D6C7C122B8A3D001FD1F7 /* WebKitBlobBuilder.h in Headers */,
 				2EDEF1F4121B0EFC00726DB2 /* BlobData.h in Headers */,
 				2EDEF1F5121B0EFC00726DB2 /* BlobRegistry.h in Headers */,
 				2EDEF1F7121B0EFC00726DB2 /* BlobRegistryImpl.h in Headers */,
@@ -21311,6 +21327,8 @@
 				8AB4BC77126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h in Headers */,
 				B27535700B053814002CE64F /* Image.h in Headers */,
 				B2A10B920B3818BD00099AA4 /* ImageBuffer.h in Headers */,
+				22BD9F7F1353625C009BD102 /* ImageBufferData.h in Headers */,
+				22BD9F81135364FE009BD102 /* ImageBufferDataCG.h in Headers */,
 				A779791A0D6B9D0C003851B9 /* ImageData.h in Headers */,
 				97205AB61239291000B17380 /* ImageDocument.h in Headers */,
 				F55B3DC21251F12D003EF269 /* ImageInputType.h in Headers */,
@@ -21420,7 +21438,6 @@
 				BC946348107A936600857193 /* JSBeforeLoadEvent.h in Headers */,
 				51721FD311D27EF200638B42 /* JSBeforeProcessEvent.h in Headers */,
 				2E2D99CE10E2BBDA00496337 /* JSBlob.h in Headers */,
-				89CD029411C85B870070B791 /* JSWebKitBlobBuilder.h in Headers */,
 				1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */,
 				65DF323A09D1DE65000BE325 /* JSCanvasGradient.h in Headers */,
 				65DF323C09D1DE65000BE325 /* JSCanvasPattern.h in Headers */,
@@ -21706,6 +21723,9 @@
 				B58CEB6D1191361C002A6790 /* JSSQLTransactionSync.h in Headers */,
 				B55D5AA4119131FC00BCC315 /* JSSQLTransactionSyncCallback.h in Headers */,
 				51E0BAEB0DA55D4A00A9E417 /* JSStorageEvent.h in Headers */,
+				892CF20C134C8BB300AAEDA1 /* JSStorageInfo.h in Headers */,
+				892CF20E134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.h in Headers */,
+				892CF212134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.h in Headers */,
 				0FF5026A102BA9430066F39A /* JSStyleMedia.h in Headers */,
 				BCE0139B0C0BEF180043860A /* JSStyleSheet.h in Headers */,
 				A84EBD830CB8C97700079609 /* JSStyleSheetList.h in Headers */,
@@ -21869,6 +21889,7 @@
 				3194616313020B20004BB3F8 /* JSWebKitAnimation.h in Headers */,
 				31C0FF3E0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.h in Headers */,
 				319461FF13022BB8004BB3F8 /* JSWebKitAnimationList.h in Headers */,
+				89CD029411C85B870070B791 /* JSWebKitBlobBuilder.h in Headers */,
 				316FE0720E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.h in Headers */,
 				316FE0740E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.h in Headers */,
 				498391400F1E767500C23782 /* JSWebKitCSSMatrix.h in Headers */,
@@ -22282,6 +22303,7 @@
 				1A569D210D7E2B82007C3983 /* runtime_method.h in Headers */,
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
 				1A569D250D7E2B82007C3983 /* runtime_root.h in Headers */,
+				293EAE1F1356B2FE0067ACF9 /* RuntimeApplicationChecks.h in Headers */,
 				8C6EA61A11EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h in Headers */,
 				49E911CB0EF86D47009D0CAF /* ScaleTransformOperation.h in Headers */,
 				5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */,
@@ -22419,8 +22441,12 @@
 				51E0BABB0DA5547100A9E417 /* StorageEvent.h in Headers */,
 				C5EBDD84105EDDEC0056816F /* StorageEventDispatcher.h in Headers */,
 				892CF1ED134C655500AAEDA1 /* StorageInfo.h in Headers */,
+				892CF1ED134C655500AAEDA1 /* StorageInfo.h in Headers */,
+				892CF192134C620D00AAEDA1 /* StorageInfoErrorCallback.h in Headers */,
 				892CF192134C620D00AAEDA1 /* StorageInfoErrorCallback.h in Headers */,
 				892CF193134C620D00AAEDA1 /* StorageInfoQuotaCallback.h in Headers */,
+				892CF193134C620D00AAEDA1 /* StorageInfoQuotaCallback.h in Headers */,
+				892CF194134C620D00AAEDA1 /* StorageInfoUsageCallback.h in Headers */,
 				892CF194134C620D00AAEDA1 /* StorageInfoUsageCallback.h in Headers */,
 				51E0BB380DA5ACB600A9E417 /* StorageMap.h in Headers */,
 				C50D0E830FF4272900AC2644 /* StorageNamespace.h in Headers */,
@@ -22812,6 +22838,7 @@
 				319E69B313299BBD004AC91A /* WebKitAnimation.h in Headers */,
 				31C0FF220E4CEB6E007D6FE5 /* WebKitAnimationEvent.h in Headers */,
 				319E69B613299BBD004AC91A /* WebKitAnimationList.h in Headers */,
+				976D6C7C122B8A3D001FD1F7 /* WebKitBlobBuilder.h in Headers */,
 				31288E730E3005D6003619AE /* WebKitCSSKeyframeRule.h in Headers */,
 				31288E750E3005D6003619AE /* WebKitCSSKeyframesRule.h in Headers */,
 				498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */,
@@ -22932,8 +22959,6 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
-				22BD9F7F1353625C009BD102 /* ImageBufferData.h in Headers */,
-				22BD9F81135364FE009BD102 /* ImageBufferDataCG.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23320,7 +23345,6 @@
 				FD31602612B0267600C1A359 /* BiquadProcessor.cpp in Sources */,
 				A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */,
 				976D6C78122B8A3D001FD1F7 /* Blob.cpp in Sources */,
-				976D6C7B122B8A3D001FD1F7 /* WebKitBlobBuilder.cpp in Sources */,
 				2EDEF1F3121B0EFC00726DB2 /* BlobData.cpp in Sources */,
 				2EDEF1F6121B0EFC00726DB2 /* BlobRegistryImpl.cpp in Sources */,
 				2EB4BCD2121F03E300EC4885 /* BlobResourceHandle.cpp in Sources */,
@@ -24124,6 +24148,7 @@
 				1A71D57B0F33819000F9CE4E /* IdentifierRep.cpp in Sources */,
 				B275356F0B053814002CE64F /* Image.cpp in Sources */,
 				B2A10B940B3818D700099AA4 /* ImageBufferCG.cpp in Sources */,
+				2292B27C1356669400CF11EF /* ImageBufferDataCG.cpp in Sources */,
 				B275355E0B053814002CE64F /* ImageCG.cpp in Sources */,
 				A77979190D6B9D0C003851B9 /* ImageData.cpp in Sources */,
 				97205AB51239291000B17380 /* ImageDocument.cpp in Sources */,
@@ -24229,7 +24254,6 @@
 				BC946346107A934B00857193 /* JSBeforeLoadEvent.cpp in Sources */,
 				51721FD211D27EF200638B42 /* JSBeforeProcessEvent.cpp in Sources */,
 				2E2D99CD10E2BBDA00496337 /* JSBlob.cpp in Sources */,
-				89CD029311C85B870070B791 /* JSWebKitBlobBuilder.cpp in Sources */,
 				1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */,
 				65DF323909D1DE65000BE325 /* JSCanvasGradient.cpp in Sources */,
 				65DF323B09D1DE65000BE325 /* JSCanvasPattern.cpp in Sources */,
@@ -24601,6 +24625,9 @@
 				51E3F9D60DA05E1D00250911 /* JSStorage.cpp in Sources */,
 				51D0C5160DAA90B7003B3831 /* JSStorageCustom.cpp in Sources */,
 				51E0BAEA0DA55D4A00A9E417 /* JSStorageEvent.cpp in Sources */,
+				892CF20B134C8BB300AAEDA1 /* JSStorageInfo.cpp in Sources */,
+				892CF20D134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.cpp in Sources */,
+				892CF211134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.cpp in Sources */,
 				0FF50269102BA9430066F39A /* JSStyleMedia.cpp in Sources */,
 				BCE0139A0C0BEF180043860A /* JSStyleSheet.cpp in Sources */,
 				BC98A27D0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp in Sources */,
@@ -24777,6 +24804,7 @@
 				31C0FF3D0E4CEFAC007D6FE5 /* JSWebKitAnimationEvent.cpp in Sources */,
 				319461FE13022BB8004BB3F8 /* JSWebKitAnimationList.cpp in Sources */,
 				3194623213022F65004BB3F8 /* JSWebKitAnimationListCustom.cpp in Sources */,
+				89CD029311C85B870070B791 /* JSWebKitBlobBuilder.cpp in Sources */,
 				316FE0710E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.cpp in Sources */,
 				E1AD14C51297354900ACA989 /* JSWebKitCSSKeyframeRuleCustom.cpp in Sources */,
 				316FE0730E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.cpp in Sources */,
@@ -25119,6 +25147,7 @@
 				1A569D200D7E2B82007C3983 /* runtime_method.cpp in Sources */,
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
 				1A569D240D7E2B82007C3983 /* runtime_root.cpp in Sources */,
+				293EAE211356B32E0067ACF9 /* RuntimeApplicationChecks.cpp in Sources */,
 				8C6EA61911EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp in Sources */,
 				49E911CA0EF86D47009D0CAF /* ScaleTransformOperation.cpp in Sources */,
 				5DFE8F560D16477B0076E937 /* ScheduledAction.cpp in Sources */,
@@ -25524,6 +25553,7 @@
 				319E69B213299BBD004AC91A /* WebKitAnimation.cpp in Sources */,
 				31C0FF210E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp in Sources */,
 				319E69B513299BBD004AC91A /* WebKitAnimationList.cpp in Sources */,
+				976D6C7B122B8A3D001FD1F7 /* WebKitBlobBuilder.cpp in Sources */,
 				31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */,
 				31288E740E3005D6003619AE /* WebKitCSSKeyframesRule.cpp in Sources */,
 				498391580F1E776900C23782 /* WebKitCSSMatrix.cpp in Sources */,
@@ -25634,8 +25664,6 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
-				2292B27C1356669400CF11EF /* ImageBufferDataCG.cpp in Sources */,
-				293EAE211356B32E0067ACF9 /* RuntimeApplicationChecks.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

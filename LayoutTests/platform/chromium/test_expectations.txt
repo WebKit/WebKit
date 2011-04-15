@@ -204,6 +204,9 @@ WONTFIX SKIP : java/lc3 = TEXT
 // TODO: move to platform/chromium-linux/.
 WONTFIX SKIP MAC WIN : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = FAIL
 
+// Quota API is not yet enabled by default.
+BUGCR61676 SKIP : storage/storageinfo-query-usage.html = FAIL
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------
@@ -3535,3 +3538,4 @@ BUGMORRITA : fast/html/details-remove-summary-6.html = FAIL
 BUGMORRITA : fast/html/details-writing-mode.html = FAIL
 
 BUGWK58619 GPU LINUX WIN : media/video-volume-slider.html = IMAGE
+

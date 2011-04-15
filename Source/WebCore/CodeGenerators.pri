@@ -362,6 +362,9 @@ IDL_BINDINGS += \
     storage/IDBTransaction.idl \
     storage/Storage.idl \
     storage/StorageEvent.idl \
+    storage/StorageInfo.idl \
+    storage/StorageInfoErrorCallback.idl \
+    storage/StorageInfoUsageCallback.idl \
     storage/SQLError.idl \
     storage/SQLException.idl \
     storage/SQLResultSet.idl \

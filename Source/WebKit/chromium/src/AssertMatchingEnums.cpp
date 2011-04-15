@@ -53,6 +53,7 @@
 #include "PasteboardPrivate.h"
 #include "PlatformCursor.h"
 #include "Settings.h"
+#include "StorageInfo.h"
 #include "TextAffinity.h"
 #include "UserContentTypes.h"
 #include "UserScriptTypes.h"
@@ -77,6 +78,7 @@
 #include "WebScrollbar.h"
 #include "WebSettings.h"
 #include "WebStorageQuotaError.h"
+#include "WebStorageQuotaType.h"
 #include "WebTextAffinity.h"
 #include "WebTextCaseSensitivity.h"
 #include "WebTextCheckingResult.h"
@@ -418,6 +420,12 @@ COMPILE_ASSERT_MATCHING_ENUM(WebTextCheckingResult::ErrorSpelling, DocumentMarke
 COMPILE_ASSERT_MATCHING_ENUM(WebTextCheckingResult::ErrorGrammar, DocumentMarker::Grammar);
 
 #if ENABLE(QUOTA)
+COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaErrorNotSupported, NOT_SUPPORTED_ERR);
+COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaErrorAbort, ABORT_ERR);
+
+COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaTypeTemporary, StorageInfo::TEMPORARY);
+COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaTypePersistent, StorageInfo::PERSISTENT);
+
 COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaErrorNotSupported, NOT_SUPPORTED_ERR);
 COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaErrorAbort, ABORT_ERR);
 #endif

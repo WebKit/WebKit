@@ -86,6 +86,7 @@
 #include "Settings.h"
 #include "Storage.h"
 #include "StorageArea.h"
+#include "StorageInfo.h"
 #include "StorageNamespace.h"
 #include "StyleMedia.h"
 #include "SuddenTermination.h"
@@ -786,9 +787,10 @@ void DOMWindow::resolveLocalFileSystemURL(const String& url, PassRefPtr<EntryCal
     LocalFileSystem::localFileSystem().readFileSystem(document, type, ResolveURICallbacks::create(successCallback, errorCallback, document, filePath));
 }
 
+COMPILE_ASSERT(static_cast<int>(DOMWindow::EXTERNAL) == static_cast<int>(AsyncFileSystem::External), enum_mismatch);
+
 COMPILE_ASSERT(static_cast<int>(DOMWindow::TEMPORARY) == static_cast<int>(AsyncFileSystem::Temporary), enum_mismatch);
 COMPILE_ASSERT(static_cast<int>(DOMWindow::PERSISTENT) == static_cast<int>(AsyncFileSystem::Persistent), enum_mismatch);
-COMPILE_ASSERT(static_cast<int>(DOMWindow::EXTERNAL) == static_cast<int>(AsyncFileSystem::External), enum_mismatch);
 
 #endif
 
@@ -1859,6 +1861,15 @@ DOMURL* DOMWindow::webkitURL() const
     if (!m_domURL)
         m_domURL = DOMURL::create(this->scriptExecutionContext());
     return m_domURL.get();
+}
+#endif
+
+#if ENABLE(QUOTA)
+StorageInfo* DOMWindow::webkitStorageInfo() const
+{
+    if (!m_storageInfo)
+        m_storageInfo = StorageInfo::create();
+    return m_storageInfo.get();
 }
 #endif
 

@@ -379,6 +379,9 @@ SET(WebCore_IDL_FILES
     storage/SQLTransactionSyncCallback.idl
     storage/Storage.idl
     storage/StorageEvent.idl
+    storage/StorageInfo.idl
+    storage/StorageInfoErrorCallback.idl
+    storage/StorageInfoUsageCallback.idl
 
     webaudio/AudioBuffer.idl
     webaudio/AudioBufferSourceNode.idl
@@ -1336,6 +1339,7 @@ SET(WebCore_SOURCES
     storage/StorageAreaSync.cpp
     storage/StorageEvent.cpp
     storage/StorageEventDispatcher.cpp
+    storage/StorageInfo.cpp
     storage/StorageMap.cpp
     storage/StorageNamespace.cpp
     storage/StorageNamespaceImpl.cpp
@@ -1966,12 +1970,6 @@ IF (ENABLE_MEDIA_STREAM)
 
     LIST(APPEND WebCore_IDL_FILES
         page/NavigatorUserMediaError.idl
-    )
-ENDIF ()
-
-if (ENABLE_QUOTA)
-    LIST(APPEND WebCore_SOURCES
-        storage/StorageInfo.cpp
     )
 ENDIF ()
 

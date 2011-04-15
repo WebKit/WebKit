@@ -356,6 +356,9 @@ DOM_CLASSES = \
     SQLTransactionSyncCallback \
     Storage \
     StorageEvent \
+    StorageInfo \
+    StorageInfoErrorCallback \
+    StorageInfoUsageCallback \
     StringCallback \
     SVGAElement \
     SVGAltGlyphElement \

@@ -3496,3 +3496,6 @@ http/tests/inspector/network/download.html
 http/tests/inspector/network/x-frame-options-deny.html
 http/tests/loading/cross-origin-XHR-willLoadRequest.html
 http/tests/misc/redirect-to-external-url.html
+
+# Quota API is not yet supported.
+storage/storageinfo-query-usage.html

@@ -1378,3 +1378,6 @@ fast/canvas/DrawImageSinglePixelStretch.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=58667
 editing/selection/select-out-of-editable.html
+
+# Quota API is not supported.
+storage/storageinfo-query-usage.html

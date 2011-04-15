@@ -1232,3 +1232,6 @@ fast/dom/Element/scale-page-client-rects.html
 fast/dom/Range/scale-page-bounding-client-rect.html
 fast/dom/Range/scale-page-client-rects.html
 fast/repaint/scale-page-shrink.html
+
+# Quota API is not supported.
+storage/storageinfo-query-usage.html

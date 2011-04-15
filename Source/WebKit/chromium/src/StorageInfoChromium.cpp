@@ -63,7 +63,7 @@ void StorageInfo::queryUsageAndQuota(ScriptExecutionContext* context, int storag
     ASSERT(context);
     if (storageType != WebStorageQuotaTypeTemporary && storageType != WebStorageQuotaTypePersistent) {
         // Unknown storage type is requested.
-        fireStorageInfoErrorCallback(NOT_SUPPORTED_ERR);
+        fireStorageInfoErrorCallback(errorCallback, NOT_SUPPORTED_ERR);
         return;
     }
     if (context->isDocument()) {
@@ -72,7 +72,7 @@ void StorageInfo::queryUsageAndQuota(ScriptExecutionContext* context, int storag
         webFrame->client()->queryStorageUsageAndQuota(webFrame, static_cast<WebStorageQuotaType>(storageType), WebStorageQuotaCallbacksImpl::createForUsageCallback(successCallback, errorCallback));
     } else if (errorCallback) {
         // FIXME: calling this on worker is not yet supported.
-        fireStorageInfoErrorCallback(NOT_SUPPORTED_ERR);
+        fireStorageInfoErrorCallback(errorCallback, NOT_SUPPORTED_ERR);
     }
 }
 
@@ -81,7 +81,7 @@ void StorageInfo::requestQuota(ScriptExecutionContext* context, int storageType,
     ASSERT(context);
     if (storageType != WebStorageQuotaTypeTemporary && storageType != WebStorageQuotaTypePersistent) {
         // Unknown storage type is requested.
-        fireStorageInfoErrorCallback(NOT_SUPPORTED_ERR);
+        fireStorageInfoErrorCallback(errorCallback, NOT_SUPPORTED_ERR);
         return;
     }
     if (context->isDocument()) {
@@ -90,7 +90,7 @@ void StorageInfo::requestQuota(ScriptExecutionContext* context, int storageType,
         webFrame->client()->requestStorageQuota(webFrame, static_cast<WebStorageQuotaType>(storageType), newQuotaInBytes, WebStorageQuotaCallbacksImpl::createForQuotaCallback(successCallback, errorCallback));
     } else if (errorCallback) {
         // FIXME: calling this on worker is not yet supported.
-        fireStorageInfoErrorCallback(NOT_SUPPORTED_ERR);
+        fireStorageInfoErrorCallback(errorCallback, NOT_SUPPORTED_ERR);
     }
 }
 

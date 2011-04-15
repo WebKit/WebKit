@@ -254,6 +254,13 @@ endif # END ENABLE_FILE_SYSTEM
 if ENABLE_QUOTA
 FEATURE_DEFINES += ENABLE_QUOTA=1
 webcore_cppflags += -DENABLE_QUOTA=1
+webcore_built_sources += \
+	DerivedSources/WebCore/JSStorageInfo.cpp \
+	DerivedSources/WebCore/JSStorageInfo.h \
+	DerivedSources/WebCore/JSStorageInfoErrorCallback.cpp \
+	DerivedSources/WebCore/JSStorageInfoErrorCallback.h \
+	DerivedSources/WebCore/JSStorageInfoUsageCallback.cpp \
+	DerivedSources/WebCore/JSStorageInfoUsageCallback.h
 endif # END ENABLE_QUOTA
 
 # ----
