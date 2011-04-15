@@ -174,7 +174,7 @@ void FFTFrame::doFFT(float* data)
 {
     // Compute Forward transform.
     MKL_LONG status = DftiComputeForward(m_handle, data, m_complexData.data());
-    ASSERT(DftiErrorClass(status, DFTI_NO_ERROR));
+    ASSERT_UNUSED(status, DftiErrorClass(status, DFTI_NO_ERROR));
 
     // De-interleave to separate real and complex arrays. FIXME:
     // figure out if it's possible to get MKL to use split-complex
@@ -199,7 +199,7 @@ void FFTFrame::doInverseFFT(float* data)
 
     // Compute backward transform.
     MKL_LONG status = DftiComputeBackward(m_handle, interleavedData, data);
-    ASSERT(DftiErrorClass(status, DFTI_NO_ERROR));
+    ASSERT_UNUSED(status, DftiErrorClass(status, DFTI_NO_ERROR));
 }
 
 void FFTFrame::initialize()
@@ -214,7 +214,7 @@ void FFTFrame::cleanup()
     for (int i = 0; i < kMaxFFTPow2Size; ++i) {
         if (descriptorHandles[i]) {
             MKL_LONG status = DftiFreeDescriptor(&descriptorHandles[i]);
-            ASSERT(DftiErrorClass(status, DFTI_NO_ERROR));
+            ASSERT_UNUSED(status, DftiErrorClass(status, DFTI_NO_ERROR));
         }
     }
 
