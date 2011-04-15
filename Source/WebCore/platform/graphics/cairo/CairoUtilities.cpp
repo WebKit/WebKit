@@ -27,13 +27,13 @@
 #include "CairoUtilities.h"
 
 #include "AffineTransform.h"
-#include "CairoPath.h"
 #include "Color.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "OwnPtrCairo.h"
 #include "Path.h"
+#include "PlatformPathCairo.h"
 #include "RefPtrCairo.h"
 #include <wtf/Vector.h>
 

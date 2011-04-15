@@ -1,3 +1,29 @@
+2011-04-14  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        Creating a CairoPath instance is not thread safe
+        https://bugs.webkit.org/show_bug.cgi?id=58514
+
+        This patch allows a cairo surface to be created just one time in order to 
+        guarantee thread safety.
+        In addition, CairoPath.{h,cpp} is renamed to PlatformPathCairo.{h,cpp} to 
+        prevent confusing them with PathCairo.cpp
+
+        * CMakeListsEfl.txt: Added PlatformPathCairo.cpp
+        * GNUmakefile.list.am: Added PlatformPathCairo.{h,cpp} instead of CairoPath.h.
+        * platform/graphics/cairo/CairoPath.h: Removed.
+        * platform/graphics/cairo/CairoUtilities.cpp: Include PlatformPathCairo.h instead of CairoPath.h.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp: Ditto.
+        * platform/graphics/cairo/PathCairo.cpp: Ditto.
+        * platform/graphics/cairo/PlatformPathCairo.cpp: Added.
+        (WebCore::getPathSurface): Getting a static cairo surface.
+        (WebCore::CairoPath::CairoPath): Moved the implementation of the constructor 
+        into the CPP file.
+        * platform/graphics/cairo/PlatformPathCairo.h: Renamed CairoPath.h to this.
+        (WebCore::CairoPath::~CairoPath):
+        (WebCore::CairoPath::context):
+
 2011-04-14  Nat Duca  <nduca@chromium.org>
 
         Reviewed by Darin Fisher.

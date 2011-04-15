@@ -27,10 +27,10 @@
 #include "Path.h"
 
 #include "AffineTransform.h"
-#include "CairoPath.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "OwnPtrCairo.h"
+#include "PlatformPathCairo.h"
 #include "PlatformString.h"
 #include "StrokeStyleApplier.h"
 #include <cairo.h>

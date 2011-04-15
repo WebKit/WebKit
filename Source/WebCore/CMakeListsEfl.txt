@@ -91,6 +91,7 @@ IF (WTF_PLATFORM_CAIRO)
     platform/graphics/cairo/PathCairo.cpp
     platform/graphics/cairo/PatternCairo.cpp
     platform/graphics/cairo/PlatformContextCairo.cpp
+    platform/graphics/cairo/PlatformPathCairo.cpp
     platform/graphics/cairo/RefPtrCairo.cpp
     platform/graphics/cairo/TransformationMatrixCairo.cpp
 

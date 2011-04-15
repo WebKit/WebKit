@@ -35,7 +35,6 @@
 #if PLATFORM(CAIRO)
 
 #include "AffineTransform.h"
-#include "CairoPath.h"
 #include "CairoUtilities.h"
 #include "ContextShadow.h"
 #include "FloatConversion.h"
@@ -48,6 +47,7 @@
 #include "Path.h"
 #include "Pattern.h"
 #include "PlatformContextCairo.h"
+#include "PlatformPathCairo.h"
 #include "RefPtrCairo.h"
 #include "SimpleFontData.h"
 #include <cairo.h>

@@ -3683,7 +3683,6 @@ webcoregtk_sources += \
 	Source/WebCore/page/gtk/DragControllerGtk.cpp \
 	Source/WebCore/page/gtk/EventHandlerGtk.cpp \
 	Source/WebCore/page/gtk/FrameGtk.cpp \
-	Source/WebCore/platform/graphics/cairo/CairoPath.h \
 	Source/WebCore/platform/graphics/cairo/CairoUtilities.cpp \
 	Source/WebCore/platform/graphics/cairo/CairoUtilities.h \
 	Source/WebCore/platform/graphics/cairo/ContextShadowCairo.cpp \
@@ -3702,6 +3701,8 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/cairo/PatternCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/PlatformContextCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/PlatformContextCairo.h \
+	Source/WebCore/platform/graphics/cairo/PlatformPathCairo.h \
+	Source/WebCore/platform/graphics/cairo/PlatformPathCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/RefPtrCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/RefPtrCairo.h \
 	Source/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
