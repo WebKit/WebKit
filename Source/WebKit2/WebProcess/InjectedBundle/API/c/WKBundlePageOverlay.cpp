@@ -137,3 +137,8 @@ void WKBundlePageOverlaySetNeedsDisplay(WKBundlePageOverlayRef bundlePageOverlay
 {
     toImpl(bundlePageOverlayRef)->setNeedsDisplay(enclosingIntRect(toFloatRect(rect)));
 }
+
+float WKBundlePageOverlayFractionFadedIn(WKBundlePageOverlayRef bundlePageOverlayRef)
+{
+    return toImpl(bundlePageOverlayRef)->fractionFadedIn();
+}

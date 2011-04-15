@@ -66,6 +66,7 @@ WK_EXPORT WKTypeID WKBundlePageOverlayGetTypeID();
 
 WK_EXPORT WKBundlePageOverlayRef WKBundlePageOverlayCreate(WKBundlePageOverlayClient* client);
 WK_EXPORT void WKBundlePageOverlaySetNeedsDisplay(WKBundlePageOverlayRef bundlePageOverlay, WKRect rect);
+WK_EXPORT float WKBundlePageOverlayFractionFadedIn(WKBundlePageOverlayRef bundlePageOverlay);
 
 #ifdef __cplusplus
 }

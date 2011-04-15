@@ -1,5 +1,15 @@
 2011-04-15  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Add API to get the bundle page overlay fade in fraction.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp:
+        (WKBundlePageOverlayFractionFadedIn):
+        * WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h:
+
+2011-04-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Fade the find page overlay
