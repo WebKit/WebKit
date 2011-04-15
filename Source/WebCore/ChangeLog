@@ -1,3 +1,18 @@
+2011-04-14  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        Convert use of raw pointers to RefPtr in using Cairo
+        https://bugs.webkit.org/show_bug.cgi?id=57717
+
+        No new tests added becaue of just replacing raw pointers with smart pointers.
+
+        * platform/graphics/cairo/ContextShadowCairo.cpp: Use a RefPtr<cairo_surface_t> instead of raw pointer.
+        (WebCore::purgeScratchBuffer):
+        (WebCore::getScratchBuffer):
+        * platform/graphics/cairo/ImageBufferCairo.cpp: Use a RefPtr<cairo_t> instead of raw pointer.
+        (copySurface):
+
 2011-04-14  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Eric Seidel.

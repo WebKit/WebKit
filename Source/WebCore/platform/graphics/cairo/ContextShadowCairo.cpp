@@ -42,11 +42,10 @@ using WTF::max;
 
 namespace WebCore {
 
-static cairo_surface_t* scratchBuffer = 0;
+static RefPtr<cairo_surface_t> gScratchBuffer;
 static void purgeScratchBuffer()
 {
-    cairo_surface_destroy(scratchBuffer);
-    scratchBuffer = 0;
+    gScratchBuffer.clear();
 }
 
 // ContextShadow needs a scratch image as the buffer for the blur filter.
@@ -68,20 +67,20 @@ static cairo_surface_t* getScratchBuffer(const IntSize& size)
 {
     int width = size.width();
     int height = size.height();
-    int scratchWidth = scratchBuffer ? cairo_image_surface_get_width(scratchBuffer) : 0;
-    int scratchHeight = scratchBuffer ? cairo_image_surface_get_height(scratchBuffer) : 0;
+    int scratchWidth = gScratchBuffer.get() ? cairo_image_surface_get_width(gScratchBuffer.get()) : 0;
+    int scratchHeight = gScratchBuffer.get() ? cairo_image_surface_get_height(gScratchBuffer.get()) : 0;
 
     // We do not need to recreate the buffer if the current buffer is large enough.
-    if (scratchBuffer && scratchWidth >= width && scratchHeight >= height)
-        return scratchBuffer;
+    if (gScratchBuffer.get() && scratchWidth >= width && scratchHeight >= height)
+        return gScratchBuffer.get();
 
     purgeScratchBuffer();
 
     // Round to the nearest 32 pixels so we do not grow the buffer for similar sized requests.
     width = (1 + (width >> 5)) << 5;
     height = (1 + (height >> 5)) << 5;
-    scratchBuffer = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
-    return scratchBuffer;
+    gScratchBuffer = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height));
+    return gScratchBuffer.get();
 }
 
 PlatformContext ContextShadow::beginShadowLayer(GraphicsContext* context, const FloatRect& layerArea)

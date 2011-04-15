@@ -55,11 +55,10 @@ static inline cairo_surface_t* copySurface(cairo_surface_t* surface)
     int height = cairo_image_surface_get_height(surface);
     cairo_surface_t* newsurface = cairo_image_surface_create(format, width, height);
 
-    cairo_t* cr = cairo_create(newsurface);
-    cairo_set_source_surface(cr, surface, 0, 0);
-    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
-    cairo_paint(cr);
-    cairo_destroy(cr);
+    RefPtr<cairo_t> cr = adoptRef(cairo_create(newsurface));
+    cairo_set_source_surface(cr.get(), surface, 0, 0);
+    cairo_set_operator(cr.get(), CAIRO_OPERATOR_SOURCE);
+    cairo_paint(cr.get());
 
     return newsurface;
 }
