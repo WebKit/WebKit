@@ -416,6 +416,8 @@ WebInspector.doLoadedDone = function()
         document.body.addStyleClass("platform-" + flavor);
     var port = WebInspector.port;
     document.body.addStyleClass("port-" + port);
+    if (WebInspector.socket)
+        document.body.addStyleClass("remote");
 
     WebInspector.settings = new WebInspector.Settings();
 

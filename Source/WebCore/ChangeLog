@@ -1,5 +1,21 @@
 2011-04-15  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Reviewed by Yury Semikhatsky.
+
+        Frontend Part of Web Inspector: Remote Web Inspector - Cross Platform InspectorServer
+        https://bugs.webkit.org/show_bug.cgi?id=51364
+
+        The front end should not use a transparent background when
+        loaded as a web page (remote debugging) but should when loaded
+        regularly in a custom window. This adds a "remote" style class
+        onto the document body when the page is loaded remotely.
+
+        * inspector/front-end/inspector.css:
+        (body.detached.platform-mac-snowleopard:not(.remote) #toolbar): respect the "remote" class.
+        * inspector/front-end/inspector.js: add a "remote" class on the body when loaded remotely.
+
+2011-04-15  Joseph Pecoraro  <joepeck@webkit.org>
+
         Reviewed by David Kilzer.
 
         JSLock ASSERT seen often when using the inspector for long
