@@ -1,3 +1,17 @@
+2011-04-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add support for CSP's 'self' source
+        https://bugs.webkit.org/show_bug.cgi?id=58604
+
+        This change is now trivially easy.
+
+        Test: http/tests/security/contentSecurityPolicy/script-src-self.html
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPSourceList::addSourceSelf):
+
 2011-04-15  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Eric Carlson.

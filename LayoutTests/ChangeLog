@@ -1,3 +1,13 @@
+2011-04-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add support for CSP's 'self' source
+        https://bugs.webkit.org/show_bug.cgi?id=58604
+
+        * http/tests/security/contentSecurityPolicy/script-src-self-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/script-src-self.html: Added.
+
 2011-04-14  Justin Novosad  <junov@chromium.org>
 
         Reviewed by Kenneth Russell.

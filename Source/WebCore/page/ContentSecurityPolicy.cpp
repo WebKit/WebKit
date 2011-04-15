@@ -390,8 +390,7 @@ bool CSPSourceList::parsePort(const UChar* begin, const UChar* end, int& port, b
 
 void CSPSourceList::addSourceSelf()
 {
-    // FIXME: Inherit the scheme, host, and port from the current URL.
-    notImplemented();
+    m_list.append(CSPSource(m_origin->protocol(), m_origin->host(), m_origin->port(), false, false));
 }
 
 class CSPDirective {
