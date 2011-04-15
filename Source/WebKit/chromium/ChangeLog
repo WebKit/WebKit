@@ -2,6 +2,22 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: Enable raw HTTP headers support
+        https://bugs.webkit.org/show_bug.cgi?id=58259
+
+        Added raw headers text support to inspector.
+
+        * public/WebHTTPLoadInfo.h:
+        * src/WebHTTPLoadInfo.cpp:
+        (WebKit::WebHTTPLoadInfo::rawRequestHeadersText):
+        (WebKit::WebHTTPLoadInfo::setRawRequestHeadersText):
+        (WebKit::WebHTTPLoadInfo::rawResponseHeadersText):
+        (WebKit::WebHTTPLoadInfo::setRawResponseHeadersText):
+
+2011-04-14  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector: ResourceResponse should have encodedDataLength field for synchronous requests transfer size
         https://bugs.webkit.org/show_bug.cgi?id=58447
 

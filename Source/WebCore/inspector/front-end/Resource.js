@@ -33,7 +33,6 @@ WebInspector.Resource = function(identifier, url)
     this._endTime = -1;
     this._category = WebInspector.resourceCategories.other;
     this._pendingContentCallbacks = [];
-    this._responseHeadersSize = 0;
 }
 
 // Keep these in sync with WebCore::InspectorResource::Type
@@ -240,7 +239,7 @@ WebInspector.Resource.prototype = {
         if (this.cached)
             return 0;
         if (this.statusCode === 304) // Not modified
-            return this._responseHeadersSize;
+            return this.responseHeadersSize;
         if (this._transferSize !== undefined)
             return this._transferSize;
         // If we did not receive actual transfer size from network
@@ -254,7 +253,7 @@ WebInspector.Resource.prototype = {
         // work for chunks with non-trivial encodings. We need a way to
         // get actual transfer size from the network stack.
         var bodySize = Number(this.responseHeaders["Content-Length"] || this.resourceSize);
-        return this._responseHeadersSize + bodySize;
+        return this.responseHeadersSize + bodySize;
     },
 
     increaseTransferSize: function(x)
@@ -403,8 +402,33 @@ WebInspector.Resource.prototype = {
         this._requestHeaders = x;
         delete this._sortedRequestHeaders;
         delete this._requestCookies;
+        delete this._responseHeadersSize;
 
         this.dispatchEventToListeners("requestHeaders changed");
+    },
+
+    get rawRequestHeadersText()
+    {
+        return this._rawRequestHeadersText;
+    },
+
+    set rawRequestHeadersText(x)
+    {
+        this._rawRequestHeadersText = x;
+        delete this._responseHeadersSize;
+
+        this.dispatchEventToListeners("requestHeaders changed");
+    },
+
+    get requestHeadersSize()
+    {
+        if (typeof(this._requestHeadersSize) === "undefined") {
+            if (this._rawRequestHeadersText)
+                this._requestHeadersSize = this._rawRequestHeadersText.length;
+            else 
+                this._requestHeadersSize = this._headersSize(this._requestHeaders)
+        }
+        return this._requestHeadersSize;
     },
 
     get sortedRequestHeaders()
@@ -451,13 +475,37 @@ WebInspector.Resource.prototype = {
     set responseHeaders(x)
     {
         this._responseHeaders = x;
-        // FIXME: we should take actual headers size from network stack, when possible.
-        this._responseHeadersSize = this._headersSize(x);
+        delete this._responseHeadersSize;
         delete this._sortedResponseHeaders;
         delete this._responseCookies;
 
         this.dispatchEventToListeners("responseHeaders changed");
     },
+    
+    get rawResponseHeadersText()
+    {
+        return this._rawResponseHeadersText;
+    },
+
+    set rawResponseHeadersText(x)
+    {
+        this._rawResponseHeadersText = x;
+        delete this._responseHeadersSize;
+
+        this.dispatchEventToListeners("responseHeaders changed");
+    },
+    
+    get responseHeadersSize()
+    {
+        if (typeof(this._responseHeadersSize) === "undefined") {
+            if (this._rawResponseHeadersText)
+                this._responseHeadersSize = this._rawResponseHeadersText.length;
+            else 
+                this._responseHeadersSize = this._headersSize(this._responseHeaders)
+        }
+        return this._responseHeadersSize;
+    },
+    
 
     get sortedResponseHeaders()
     {
@@ -536,9 +584,11 @@ WebInspector.Resource.prototype = {
 
     _headersSize: function(headers)
     {
+        // We should take actual headers size from network stack, when possible, but fall back to
+        // this lousy computation when no raw headers are available.
         var size = 0;
         for (var header in headers)
-            size += header.length + headers[header].length + 3; // _typical_ overhead per herader is ": ".length + "\n".length.
+            size += header.length + headers[header].length + 4; // _typical_ overhead per header is ": ".length + "\r\n".length.
         return size;
     },
 

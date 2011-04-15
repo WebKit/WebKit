@@ -120,4 +120,28 @@ void WebHTTPLoadInfo::addResponseHeader(const WebString& name, const WebString& 
     addHeader(&m_private->responseHeaders, name, value);
 }
 
+WebString WebHTTPLoadInfo::rawRequestHeadersText() const
+{
+    ASSERT(!m_private.isNull());
+    return m_private->rawRequestHeadersText;
+}
+
+void WebHTTPLoadInfo::setRawRequestHeadersText(const WebString& rawHeadersText)
+{
+    ASSERT(!m_private.isNull());
+    m_private->rawRequestHeadersText = rawHeadersText;
+}
+
+WebString WebHTTPLoadInfo::rawResponseHeadersText() const
+{
+    ASSERT(!m_private.isNull());
+    return m_private->rawResponseHeadersText;
+}
+
+void WebHTTPLoadInfo::setRawResponseHeadersText(const WebString& rawHeadersText)
+{
+    ASSERT(!m_private.isNull());
+    m_private->rawResponseHeadersText = rawHeadersText;
+}
+
 } // namespace WebKit

@@ -92,9 +92,12 @@ WebInspector.NetworkDispatcher.prototype = {
         resource.statusCode = response.status;
         resource.statusText = response.statusText;
         resource.responseHeaders = response.headers;
-        // Raw request headers can be a part of response as well.
+        if (response.rawHeadersText)
+            resource.rawResponseHeadersText = response.rawHeadersText;
         if (response.requestHeaders)
             resource.requestHeaders = response.requestHeaders;
+        if (response.rawRequestHeadersText)
+            resource.rawRequestHeadersText = response.rawRequestHeadersText;
 
         resource.connectionReused = response.connectionReused;
         resource.connectionID = response.connectionID;

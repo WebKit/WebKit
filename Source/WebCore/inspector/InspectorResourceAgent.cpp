@@ -221,7 +221,6 @@ static PassRefPtr<InspectorObject> buildObjectForResourceResponse(const Resource
     RefPtr<InspectorObject> responseObject = InspectorObject::create();
     responseObject->setNumber("status", response.resourceLoadInfo() ? response.resourceLoadInfo()->httpStatusCode : response.httpStatusCode());
     responseObject->setString("statusText", response.resourceLoadInfo() ? response.resourceLoadInfo()->httpStatusText : response.httpStatusText());
-    responseObject->setObject("headers", buildObjectForHeaders(response.resourceLoadInfo() ? response.resourceLoadInfo()->responseHeaders : response.httpHeaderFields()));
 
     responseObject->setString("mimeType", response.mimeType());
     responseObject->setBoolean("connectionReused", response.connectionReused());
@@ -230,8 +229,16 @@ static PassRefPtr<InspectorObject> buildObjectForResourceResponse(const Resource
     if (response.resourceLoadTiming())
         responseObject->setObject("timing", buildObjectForTiming(*response.resourceLoadTiming()));
 
-    if (response.resourceLoadInfo())
+    if (response.resourceLoadInfo()) {
+        responseObject->setObject("headers", buildObjectForHeaders(response.resourceLoadInfo()->responseHeaders));
+        if (!response.resourceLoadInfo()->rawResponseHeadersText.isEmpty())
+            responseObject->setString("rawHeadersText", response.resourceLoadInfo()->rawResponseHeadersText);
+
         responseObject->setObject("requestHeaders", buildObjectForHeaders(response.resourceLoadInfo()->requestHeaders));
+        if (!response.resourceLoadInfo()->rawRequestHeadersText.isEmpty())
+            responseObject->setString("rawRequestHeadersText", response.resourceLoadInfo()->rawRequestHeadersText);
+    } else
+        responseObject->setObject("headers", buildObjectForHeaders(response.httpHeaderFields()));
 
     return responseObject;
 }

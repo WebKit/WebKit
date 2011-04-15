@@ -68,6 +68,12 @@ public:
     WEBKIT_API void addRequestHeader(const WebString& name, const WebString& value);
     WEBKIT_API void addResponseHeader(const WebString& name, const WebString& value);
 
+    WEBKIT_API WebString rawRequestHeadersText() const;
+    WEBKIT_API void setRawRequestHeadersText(const WebString&);
+
+    WEBKIT_API WebString rawResponseHeadersText() const;
+    WEBKIT_API void setRawResponseHeadersText(const WebString&);
+
 #if WEBKIT_IMPLEMENTATION
     WebHTTPLoadInfo(WTF::PassRefPtr<WebCore::ResourceLoadInfo>);
     operator WTF::PassRefPtr<WebCore::ResourceLoadInfo>() const;

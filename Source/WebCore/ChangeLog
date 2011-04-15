@@ -1,3 +1,49 @@
+2011-04-14  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Enable raw HTTP headers support
+        https://bugs.webkit.org/show_bug.cgi?id=58259
+
+        Added raw headers text support to inspector.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/Inspector.json:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForResourceResponse):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype._updateResourceWithResponse):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.prototype.get transferSize):
+        (WebInspector.Resource.prototype.set requestHeaders):
+        (WebInspector.Resource.prototype.get rawRequestHeadersText):
+        (WebInspector.Resource.prototype.set rawRequestHeadersText):
+        (WebInspector.Resource.prototype.get requestHeadersSize):
+        (WebInspector.Resource.prototype.set responseHeaders):
+        (WebInspector.Resource.prototype.get rawResponseHeadersText):
+        (WebInspector.Resource.prototype.set rawResponseHeadersText):
+        (WebInspector.Resource.prototype.get responseHeadersSize):
+        (WebInspector.Resource.prototype._headersSize):
+        * inspector/front-end/ResourceHeadersView.js:
+        (WebInspector.ResourceHeadersView):
+        (WebInspector.ResourceHeadersView.prototype._refreshParms):
+        (WebInspector.ResourceHeadersView.prototype._refreshRequestHeaders):
+        (WebInspector.ResourceHeadersView.prototype._refreshResponseHeaders):
+        (WebInspector.ResourceHeadersView.prototype._refreshHeadersTitle):
+        (WebInspector.ResourceHeadersView.prototype._refreshHeaders):
+        (WebInspector.ResourceHeadersView.prototype._refreshRawHeadersText):
+        (WebInspector.ResourceHeadersView.prototype._toggleRawRequestHeadersText):
+        (WebInspector.ResourceHeadersView.prototype._toggleRawResponseHeadersText):
+        (WebInspector.ResourceHeadersView.prototype._createToggleButton):
+        (WebInspector.ResourceHeadersView.prototype._createHeadersToggleButton):
+        * inspector/front-end/networkPanel.css:
+        (.resource-headers-view .outline-disclosure li .header-toggle):
+        (.resource-headers-view .outline-disclosure li.expanded .header-toggle):
+        (.resource-headers-view .outline-disclosure li .header-toggle:hover):
+        (.resource-headers-view .outline-disclosure li.raw-headers-text):
+        * platform/network/ResourceLoadInfo.h:
+
 2011-04-14  Justin Novosad  <junov@chromium.org>
 
         Reviewed by Kenneth Russell.
