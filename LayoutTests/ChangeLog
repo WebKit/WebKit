@@ -1,3 +1,28 @@
+2011-04-15  Alice Boxhall  <aboxhall@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Text selection changes unexpectedly when dragging out of the <input>
+        https://bugs.webkit.org/show_bug.cgi?id=55552
+
+        Tests that dragging outside of a contenteditable, input or textarea selects to the end of the
+        element, rather than jumping back to the beginning.
+
+        * editing/selection/resources/select-out-of-floated-editable.js: Added.
+        (log):
+        (else.window.onmouseup):
+        (getSelectionStart):
+        (getSelectionEnd):
+        (checkSelection):
+        * editing/selection/select-out-of-editable-expected.txt: Added.
+        * editing/selection/select-out-of-editable.html: Added.
+        * editing/selection/select-out-of-floated-contenteditable-expected.txt: Added.
+        * editing/selection/select-out-of-floated-contenteditable.html: Added.
+        * editing/selection/select-out-of-floated-input-expected.txt: Added.
+        * editing/selection/select-out-of-floated-input.html: Added.
+        * editing/selection/select-out-of-floated-textarea-expected.txt: Added.
+        * editing/selection/select-out-of-floated-textarea.html: Added.
+
 2011-04-15  Adam Roben  <aroben@apple.com>
 
         Update Windows results after r83939

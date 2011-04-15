@@ -1,3 +1,22 @@
+2011-04-15  Alice Boxhall  <aboxhall@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Text selection changes unexpectedly when dragging out of the <input>
+        https://bugs.webkit.org/show_bug.cgi?id=55552
+
+        Tests: editing/selection/select-out-of-editable.html
+               editing/selection/select-out-of-floated-contenteditable.html
+               editing/selection/select-out-of-floated-input.html
+               editing/selection/select-out-of-floated-textarea.html
+
+        * page/EventHandler.cpp:
+        (WebCore::selectionExtentRespectingEditingBoundary): When dragging from an editable element, check that
+        the endpoint is not outside the element. If it is, translate the point into a local point within
+        the editable element.
+        (WebCore::EventHandler::updateSelectionForMouseDrag): Call targetPositionForSelectionEndpoint() to
+        calculate the selection endpoint.
+
 2011-04-15  Adam Roben  <aroben@apple.com>
 
         Roll out r83954

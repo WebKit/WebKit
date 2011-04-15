@@ -622,6 +622,28 @@ void EventHandler::updateSelectionForMouseDrag()
     updateSelectionForMouseDrag(result);
 }
 
+static VisiblePosition selectionExtentRespectingEditingBoundary(const VisibleSelection& selection, const IntPoint& localPoint, Node* targetNode)
+{
+    IntPoint selectionEndPoint = localPoint;
+    Element* editableElement = selection.rootEditableElement();
+    Node* selectionEndNode = targetNode;
+
+    if (editableElement && !editableElement->contains(targetNode)) {
+        selectionEndNode = editableElement;
+
+        if (!selectionEndNode->renderer())
+            return VisiblePosition();
+
+        FloatPoint absolutePoint = targetNode->renderer()->localToAbsolute(FloatPoint(selectionEndPoint));
+        selectionEndPoint = roundedIntPoint(selectionEndNode->renderer()->absoluteToLocal(absolutePoint));
+    }
+
+    if (!selectionEndNode->renderer())
+        return VisiblePosition();
+
+    return selectionEndNode->renderer()->positionForPoint(selectionEndPoint);
+}
+
 void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResult)
 {
     if (!m_mouseDownMayStartSelect)
@@ -634,11 +656,7 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     if (!canMouseDragExtendSelect(target))
         return;
 
-    RenderObject* targetRenderer = target->renderer();
-    if (!targetRenderer)
-        return;
-
-    VisiblePosition targetPosition = targetRenderer->positionForPoint(hitTestResult.localPoint());
+    VisiblePosition targetPosition = selectionExtentRespectingEditingBoundary(m_frame->selection()->selection(), hitTestResult.localPoint(), target);
 
     // Don't modify the selection if we're not on a node.
     if (targetPosition.isNull())
