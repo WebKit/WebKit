@@ -1,5 +1,17 @@
 2011-04-14  Alok Priyadarshi  <alokp@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        Remove dependency on chromium skia::PlatformCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=57563
+        
+        Fixed compile error on Mac when using Core Graphics.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::paintRect):
+
+2011-04-14  Alok Priyadarshi  <alokp@chromium.org>
+
         Reviewed by James Robinson.
 
         Remove dependency on chromium skia::PlatformCanvas

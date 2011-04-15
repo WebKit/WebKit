@@ -1470,7 +1470,8 @@ void WebViewHost::paintRect(const WebRect& rect)
     ASSERT(canvas());
     m_isPainting = true;
 #if PLATFORM(CG)
-    webWidget()->paint(canvas()->getTopPlatformDevice().GetBitmapContext(), rect);
+    webWidget()->paint(skia::BeginPlatformPaint(canvas()), rect);
+    skia::EndPlatformPaint(canvas());
 #else
     webWidget()->paint(canvas(), rect);
 #endif
