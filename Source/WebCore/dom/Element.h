@@ -39,6 +39,7 @@ class DOMStringMap;
 class DOMTokenList;
 class ElementRareData;
 class IntSize;
+class ShadowRoot;
 class WebKitAnimationList;
 
 enum SpellcheckAttributeState {
@@ -229,6 +230,7 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void recalcStyle(StyleChange = NoChange);
 
+    // FIXME: Make these return a proper ShadowRoot* (bug 58703).
     ContainerNode* shadowRoot() const;
     ContainerNode* ensureShadowRoot();
     void removeShadowRoot();

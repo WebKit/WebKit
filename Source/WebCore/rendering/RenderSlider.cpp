@@ -37,7 +37,7 @@
 #include "RenderLayer.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "ShadowElement.h"
+#include "ShadowRoot.h"
 #include "SliderThumbElement.h"
 #include "StepRange.h"
 #include <wtf/MathExtras.h>

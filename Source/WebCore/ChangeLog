@@ -1,3 +1,46 @@
+2011-04-15  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bug 52963 - Enable O(1) access to root from any node in shadow DOM subtree
+        https://bugs.webkit.org/show_bug.cgi?id=52963
+
+        .) Change base class of ShadowRoot from DocumentFragment to TreeScope.
+        .) Re-enable tree scope handling in Node (had ASSERT_NOT_REACHED, etc.).
+        .) Merged setTreeScope() with setTreeScopeRecursively()
+        .) Call setTreeScopeRecursively in DOM manipulation functions where applicable.
+
+        No new tests. (refactoring)
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::takeAllChildrenFrom):
+        (WebCore::ContainerNode::removeBetween):
+        (WebCore::ContainerNode::removeChildren):
+        (WebCore::ContainerNode::parserAddChild):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::~Document):
+        (WebCore::Document::setDocType):
+        * dom/Element.h:
+        * dom/Node.cpp:
+        (WebCore::Node::treeScope):
+        (WebCore::Node::setTreeScopeRecursively):
+        * dom/Node.h:
+        (WebCore::Node::document):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        (WebCore::ShadowRoot::~ShadowRoot):
+        (WebCore::ShadowRoot::nodeType):
+        (WebCore::ShadowRoot::cloneNode):
+        (WebCore::ShadowRoot::childTypeAllowed):
+        * dom/ShadowRoot.h:
+        (WebCore::toShadowRoot):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::TreeScope):
+        (WebCore::TreeScope::setParentTreeScope):
+        * dom/TreeScope.h:
+        * rendering/RenderSlider.cpp:
+
 2011-04-15  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
