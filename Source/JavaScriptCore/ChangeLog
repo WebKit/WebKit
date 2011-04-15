@@ -1,5 +1,40 @@
 2011-04-15  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Geoff Garen.
+
+        Bug 58701 - DFG JIT - add GetLocal/SetLocal nodes
+
+        Use these for both access to arguments & local variables, adds ability
+        to set locals, such that values will persist between basic blocks.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::set):
+        (JSC::DFG::ByteCodeParser::getVariable):
+        (JSC::DFG::ByteCodeParser::setVariable):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::getThis):
+        (JSC::DFG::ByteCodeParser::setThis):
+        (JSC::DFG::ByteCodeParser::VariableRecord::VariableRecord):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::derefChildren):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::ref):
+        (JSC::DFG::Graph::deref):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasLocal):
+        (JSC::DFG::Node::local):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-04-15  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Sam Weinig.
 
         Bug 58696 - DFG JIT split handling of vars/temporaries

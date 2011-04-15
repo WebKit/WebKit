@@ -198,11 +198,18 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     case JSConstant:
         initConstantInfo(m_compileIndex);
         break;
-    
-    case Argument: {
+
+    case GetLocal: {
         GPRTemporary result(this);
-        m_jit.loadPtr(m_jit.addressForArgument(node.argumentNumber()), result.registerID());
+        m_jit.loadPtr(JITCompiler::addressFor(node.local()), result.registerID());
         jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case SetLocal: {
+        JSValueOperand value(this, node.child1);
+        m_jit.storePtr(value.registerID(), JITCompiler::addressFor(node.local()));
+        noResult(m_compileIndex);
         break;
     }
 

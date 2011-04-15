@@ -60,10 +60,6 @@ public:
         , m_variables(codeBlock->m_numVars)
         , m_temporaries(codeBlock->m_numCalleeRegisters - codeBlock->m_numVars)
     {
-        for (unsigned i = 0; i < m_arguments.size(); ++i)
-            m_arguments[i] = NoNode;
-        for (unsigned i = 0; i < m_variables.size(); ++i)
-            m_variables[i] = NoNode;
         for (unsigned i = 0; i < m_temporaries.size(); ++i)
             m_temporaries[i] = NoNode;
     }
@@ -86,11 +82,8 @@ private:
         }
 
         // Is this an argument?
-        if (operand < 0) {
-            unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
-            ASSERT(argument < m_arguments.size());
-            return getArgument(argument);
-        }
+        if (operand < 0)
+            return getArgument(operand);
 
         // Is this a variable?
         unsigned numVariables = m_variables.size();
@@ -106,9 +99,8 @@ private:
     {
         // Is this an argument?
         if (operand < 0) {
-            unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
-            ASSERT(argument < m_arguments.size());
-            return setArgument(argument, value);
+            setArgument(operand, value);
+            return;
         }
 
         // Is this a variable?
@@ -127,19 +119,24 @@ private:
     // Used in implementing get/set, above, where the operand is a local variable.
     NodeIndex getVariable(unsigned operand)
     {
-        NodeIndex index = m_variables[operand];
-        if (index != NoNode)
-            return index;
-        // We have not yet seen a definition for this value in this block.
-        // For now, since we are only generating single block functions,
-        // this value must be undefined.
-        // For example:
-        //     function f() { var x; return x; }
-        return constantUndefined();
+        NodeIndex setNode = m_variables[operand].set;
+        if (setNode != NoNode)
+            return m_graph[setNode].child1;
+
+        NodeIndex getNode = m_variables[operand].get;
+        if (getNode != NoNode)
+            return getNode;
+
+        getNode = addToGraph(GetLocal, OpInfo(operand));
+        m_variables[operand].get = getNode;
+        return getNode;
     }
-    void setVariable(int operand, NodeIndex value)
+    void setVariable(unsigned operand, NodeIndex value)
     {
-        m_variables[operand] = value;
+        NodeIndex priorSet = m_variables[operand].set;
+        m_variables[operand].set = addToGraph(SetLocal, OpInfo(operand), value);
+        if (priorSet != NoNode)
+            m_graph.deref(priorSet);
     }
 
     // Used in implementing get/set, above, where the operand is a temporary.
@@ -159,17 +156,32 @@ private:
     }
 
     // Used in implementing get/set, above, where the operand is an argument.
-    NodeIndex getArgument(unsigned argument)
+    NodeIndex getArgument(unsigned operand)
     {
-        NodeIndex index = m_arguments[argument];
-        if (index != NoNode)
-            return index;
-        NodeIndex resultIndex = addToGraph(Argument, OpInfo(argument));
-        return m_arguments[argument] = resultIndex;
+        unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
+        ASSERT(argument < m_arguments.size());
+
+        NodeIndex setNode = m_arguments[argument].set;
+        if (setNode != NoNode)
+            return m_graph[setNode].child1;
+
+        NodeIndex getNode = m_arguments[argument].get;
+        if (getNode != NoNode)
+            return getNode;
+
+        getNode = addToGraph(GetLocal, OpInfo(operand));
+        m_arguments[argument].get = getNode;
+        return getNode;
     }
     void setArgument(int operand, NodeIndex value)
     {
-        m_arguments[operand] = value;
+        unsigned argument = operand + m_codeBlock->m_numParameters + RegisterFile::CallFrameHeaderSize;
+        ASSERT(argument < m_arguments.size());
+
+        NodeIndex priorSet = m_arguments[argument].set;
+        m_arguments[argument].set = addToGraph(SetLocal, OpInfo(operand), value);
+        if (priorSet != NoNode)
+            m_graph.deref(priorSet);
     }
 
     // Get an operand, and perform a ToInt32/ToNumber conversion on it.
@@ -300,11 +312,11 @@ private:
     // Helper functions to get/set the this value.
     NodeIndex getThis()
     {
-        return getArgument(0);
+        return getArgument(m_codeBlock->thisRegister());
     }
     void setThis(NodeIndex value)
     {
-        setArgument(0, value);
+        setArgument(m_codeBlock->thisRegister(), value);
     }
 
     // Convenience methods for checking nodes for constants.
@@ -469,12 +481,26 @@ private:
         NodeIndex asNumeric;
         NodeIndex asJSValue;
     };
-    Vector <ConstantRecord, 32> m_constants;
+
+    // For every local variable we track any existing get or set of the value.
+    // We track the get so that these may be shared, and we track the set to
+    // retrieve the current value, and to reference the final definition.
+    struct VariableRecord {
+        VariableRecord()
+            : get(NoNode)
+            , set(NoNode)
+        {
+        }
+
+        NodeIndex get;
+        NodeIndex set;
+    };
 
     // Track the index of the node whose result is the current value for every
     // register value in the bytecode - argument, local, and temporary.
-    Vector <NodeIndex, 32> m_arguments;
-    Vector <NodeIndex, 32> m_variables;
+    Vector <ConstantRecord, 32> m_constants;
+    Vector <VariableRecord, 32> m_arguments;
+    Vector <VariableRecord, 32> m_variables;
     Vector <NodeIndex, 32> m_temporaries;
 
     // These maps are used to unique ToNumber and ToInt32 operations.
@@ -505,8 +531,9 @@ bool ByteCodeParser::parseBlock()
         // === Function entry opcodes ===
 
         case op_enter:
-            // This is a no-op for now - may need to initialize locals, if
-            // DCE analysis cannot determine that the values are never read.
+            // Initialize all locals to undefined.
+            for (int i = 0; i < m_codeBlock->m_numVars; ++i)
+                set(i, constantUndefined());
             NEXT_OPCODE(op_enter);
 
         case op_convert_this: {
@@ -818,6 +845,15 @@ bool ByteCodeParser::parseBlock()
 
         case op_ret: {
             addToGraph(Return, get(currentInstruction[1].u.operand));
+
+            // FIXME: throw away terminal definitions of variables;
+            // should not be necessary once we have proper DCE!
+            for (unsigned i = 0; i < m_variables.size(); ++i) {
+                NodeIndex priorSet = m_variables[i].set;
+                if (priorSet != NoNode)
+                    m_graph.deref(priorSet);
+            }
+
             LAST_OPCODE(op_ret);
         }
 

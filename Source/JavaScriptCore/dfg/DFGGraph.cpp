@@ -90,8 +90,12 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
             printf("%sid%u", hasPrinted ? ", " : "", node.identifierNumber());
         hasPrinted = true;
     }
-    if (node.isArgument()) {
-        printf("%sarg%u", hasPrinted ? ", " : "", node.argumentNumber());
+    if (node.hasLocal()) {
+        int local = node.local();
+        if (local < 0)
+            printf("%sarg%u", hasPrinted ? ", " : "", local - codeBlock->thisRegister());
+        else
+            printf("%sr%u", hasPrinted ? ", " : "", local);
         hasPrinted = true;
     }
     if (op == Int32Constant) {
@@ -118,7 +122,7 @@ void Graph::dump(CodeBlock* codeBlock)
 
 #endif
 
-// FIXME: Convert this method to be iterative, not recursive.
+// FIXME: Convert these methods to be iterative, not recursive.
 void Graph::refChildren(NodeIndex op)
 {
     Node& node = at(op);
@@ -138,6 +142,26 @@ void Graph::refChildren(NodeIndex op)
     if (node.child3 == NoNode)
         return;
     ref(node.child3);
+}
+void Graph::derefChildren(NodeIndex op)
+{
+    Node& node = at(op);
+
+    if (node.child1 == NoNode) {
+        ASSERT(node.child2 == NoNode && node.child3 == NoNode);
+        return;
+    }
+    deref(node.child1);
+
+    if (node.child2 == NoNode) {
+        ASSERT(node.child3 == NoNode);
+        return;
+    }
+    deref(node.child2);
+
+    if (node.child3 == NoNode)
+        return;
+    deref(node.child3);
 }
 
 } } // namespace JSC::DFG

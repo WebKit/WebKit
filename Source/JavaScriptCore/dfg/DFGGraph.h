@@ -48,9 +48,18 @@ public:
     // Mark a node as being referenced.
     void ref(NodeIndex nodeIndex)
     {
-        // If the value (before incrementing) was at reCount zero then we need to ref its children.
-        if (!at(nodeIndex).refCount++)
+        Node& node = at(nodeIndex);
+        // If the value (before incrementing) was at refCount zero then we need to ref its children.
+        if (!node.refCount++)
             refChildren(nodeIndex);
+    }
+    void deref(NodeIndex nodeIndex)
+    {
+        Node& node = at(nodeIndex);
+        ASSERT(node.refCount);
+        // If the value (after decrementing) becomes refCount zero then we need to deref its children.
+        if (!--node.refCount)
+            derefChildren(nodeIndex);
     }
 
 #ifndef NDEBUG
@@ -60,8 +69,9 @@ public:
 #endif
 
 private:
-    // When a node's refCount goes from 0 to 1, it must (logically) recursively ref all of its children.
+    // When a node's refCount goes from 0 to 1, it must (logically) recursively ref all of its children, and vice versa.
     void refChildren(NodeIndex);
+    void derefChildren(NodeIndex);
 };
 
 } } // namespace JSC::DFG

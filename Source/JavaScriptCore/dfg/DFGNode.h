@@ -75,8 +75,11 @@ typedef uint32_t ExceptionInfo;
     macro(JSConstant, NodeResultJS | NodeIsConstant) \
     macro(Int32Constant, NodeResultJS | NodeIsConstant) \
     macro(DoubleConstant, NodeResultJS | NodeIsConstant) \
-    macro(Argument, NodeResultJS) \
     macro(ConvertThis, NodeResultJS) \
+    \
+    /* Nodes for local variable access. */\
+    macro(GetLocal, NodeResultJS) \
+    macro(SetLocal, NodeMustGenerate) \
     \
     /* Nodes for bitwise operations. */\
     macro(BitAnd, NodeResultInt32) \
@@ -197,15 +200,15 @@ struct Node {
         return m_opInfo;
     }
 
-    bool isArgument()
+    bool hasLocal()
     {
-        return op == Argument;
+        return op == GetLocal || op == SetLocal;
     }
 
-    unsigned argumentNumber()
+    VirtualRegister local()
     {
-        ASSERT(isArgument());
-        return m_opInfo;
+        ASSERT(hasLocal());
+        return (VirtualRegister)m_opInfo;
     }
 
     bool hasIdentifier()
