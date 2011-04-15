@@ -1,3 +1,32 @@
+2011-04-14  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        REGRESSION: Rendering in <video> element appears to render quickly to catch up if it has been playing in a background tab
+        https://bugs.webkit.org/show_bug.cgi?id=58637
+
+        Notify AVFoundation that no one will be rendering when the view or window moves off screen.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::isViewVisible): Return false if the view's window is not visible.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView addWindowObserversForWindow:]): Observe orderOut and orderIn events.
+        (-[WKView removeWindowObservers]): Ditto.
+        (-[WKView _windowDidOrderOffScreen:]): Added.
+        (-[WKView _windowDidOrderOnScreen:]): Added.
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::suspendPainting): Call LayerTreeHost::pauseRendering.
+        (WebKit::DrawingAreaImpl::resumePainting): Call LayerTreeHost::resumeRendering.
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::pauseRendering): Added stub.
+        (WebKit::LayerTreeHost::resumeRendering): Added stub.
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.h:
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.mm:
+        (WebKit::LayerTreeHostCAMac::pauseRendering): Added. Post a notification with our
+            intention to stop rendering.
+        (WebKit::LayerTreeHostCAMac::resumeRendering): Added. Post a notification with our
+            intention to start rendering.
+
 2011-04-15  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.

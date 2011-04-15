@@ -1640,6 +1640,10 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
                                                      name:NSWindowDidMoveNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowFrameDidChange:) 
                                                      name:NSWindowDidResizeNotification object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidOrderOffScreen:) 
+                                                     name:@"NSWindowDidOrderOffScreenNotification" object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidOrderOnScreen:) 
+                                                     name:@"_NSWindowDidBecomeVisible" object:window];
     }
 }
 
@@ -1655,6 +1659,8 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidDeminiaturizeNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidMoveNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResizeNotification object:window];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NSWindowDidOrderOffScreenNotification" object:window];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidBecomeVisible" object:window];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
@@ -1733,6 +1739,16 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
 - (void)_windowFrameDidChange:(NSNotification *)notification
 {
     [self _updateWindowAndViewFrames];
+}
+
+- (void)_windowDidOrderOffScreen:(NSNotification *)notification
+{
+    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+}
+
+- (void)_windowDidOrderOnScreen:(NSNotification *)notification
+{
+    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
 static void drawPageBackground(CGContextRef context, WebPageProxy* page, const IntRect& rect)

@@ -110,7 +110,21 @@ void LayerTreeHostCAMac::forceRepaint()
     LayerTreeHostCA::forceRepaint();
     [CATransaction flush];
     [CATransaction synchronize];
-}    
+}
+
+void LayerTreeHostCAMac::pauseRendering()
+{
+    CALayer* root = rootLayer()->platformLayer();
+    [root setValue:(id)kCFBooleanTrue forKey:@"NSCAViewRenderPaused"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidPauseNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:root forKey:@"layer"]];
+}
+
+void LayerTreeHostCAMac::resumeRendering()
+{
+    CALayer* root = rootLayer()->platformLayer();
+    [root setValue:(id)kCFBooleanFalse forKey:@"NSCAViewRenderPaused"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"NSCAViewRenderDidResumeNotification" object:nil userInfo:[NSDictionary dictionaryWithObject:root forKey:@"layer"]];
+}
 
 void LayerTreeHostCAMac::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
 {

@@ -356,6 +356,9 @@ void DrawingAreaImpl::suspendPainting()
 {
     ASSERT(!m_isPaintingSuspended);
 
+    if (m_layerTreeHost)
+        m_layerTreeHost->pauseRendering();
+
     m_isPaintingSuspended = true;
     m_displayTimer.stop();
 }
@@ -367,6 +370,9 @@ void DrawingAreaImpl::resumePainting()
         // This happens when sending a synchronous message to create a new page. See <rdar://problem/8976531>.
         return;
     }
+    
+    if (m_layerTreeHost)
+        m_layerTreeHost->resumeRendering();
         
     m_isPaintingSuspended = false;
 

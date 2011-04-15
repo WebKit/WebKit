@@ -63,6 +63,9 @@ public:
     virtual void didUninstallPageOverlay() = 0;
     virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) = 0;
 
+    virtual void pauseRendering() { }
+    virtual void resumeRendering() { }
+
     // If a derived class overrides this function to return true, the derived class must also
     // override the functions beneath it.
     virtual bool participatesInDisplay() { return false; }

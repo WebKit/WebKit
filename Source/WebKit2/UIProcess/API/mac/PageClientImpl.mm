@@ -167,6 +167,9 @@ bool PageClientImpl::isViewVisible()
     if (![m_wkView window])
         return false;
 
+    if (![[m_wkView window] isVisible])
+        return false;
+
     if ([m_wkView isHiddenOrHasHiddenAncestor])
         return false;
 

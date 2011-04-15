@@ -46,6 +46,8 @@ private:
     virtual void invalidate();
     virtual void sizeDidChange(const WebCore::IntSize& newSize);
     virtual void forceRepaint();
+    virtual void pauseRendering();
+    virtual void resumeRendering();
 
     // LayerTreeHostCA
     virtual void platformInitialize(LayerTreeContext&);
