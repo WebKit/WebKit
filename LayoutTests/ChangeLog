@@ -1,3 +1,11 @@
+2011-04-15  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] DRT: Block access to external URLs.
+
+        * platform/qt/Skipped: Unskip now passing tests.
+
 2011-04-15  James Robinson  <jamesr@chromium.org>
 
         Fix duplicate expectation for compositing/tiling/huge-layer-img.html on chromium mac.

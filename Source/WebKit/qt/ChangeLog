@@ -1,3 +1,17 @@
+2011-04-15  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] DRT: Block access to external URLs.
+
+        Implement the "Blocked access to external URL" behavior for Qt's DRT,
+        based on what other ports are doing.
+
+        Fixes <http://webkit.org/b/57306> and <http://webkit.org/b/58523>.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchWillSendRequest):
+
 2011-01-26  Ragner Magalhaes  <ragner.magalhaes@openbossa.org>
 
         Reviewed by Antonio Gomes.

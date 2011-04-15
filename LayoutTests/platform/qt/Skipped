@@ -1648,7 +1648,6 @@ fast/transforms/transform-positioned-ancestor.html
 # -- timedout with --platform mac --ignore-metrics
 fast/events/5056619.html
 fast/events/drag-in-frames.html
-fast/loader/null-request-after-willSendRequest.html
 fast/text/international/thai-line-breaks.html
 
 # --crashed with --platform mac --ignore-metrics
@@ -3234,10 +3233,6 @@ http/tests/inspector/network/network-size-sync.html
 # https://bugs.webkit.org/show_bug.cgi?id=57137
 plugins/embed-prefers-plugins-for-images.html
 
-# http/tests/uri/username-with-no-hostname.html fails after r82151
-# https://bugs.webkit.org/show_bug.cgi?id=57306
-http/tests/uri/username-with-no-hostname.html
-
 # [Qt]REGRESSION(r82243): fast/events/onsearch-enter.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=57472
 fast/events/onsearch-enter.html
@@ -3494,13 +3489,6 @@ svg/zoom/page/zoom-mask-with-percentages.svg
 # [Qt] inspector/styles/styles-disable-then-enable.html make inspector/styles/styles-iframe.html fail in debug mode
 # https://bugs.webkit.org/show_bug.cgi?id=58313
 inspector/styles/styles-disable-then-enable.html
-
-# [Qt] fast/ruby tests fail
-# https://bugs.webkit.org/show_bug.cgi?id=58523
-fast/ruby/after-block-doesnt-crash.html
-fast/ruby/after-table-doesnt-crash.html
-fast/ruby/before-block-doesnt-crash.html
-fast/ruby/before-table-doesnt-crash.html
 
 # [Qt] fast/transforms/scrollIntoView-transformed.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=58559

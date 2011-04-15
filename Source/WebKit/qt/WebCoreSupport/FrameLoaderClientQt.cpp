@@ -1026,6 +1026,7 @@ void FrameLoaderClientQt::assignIdentifierToInitialRequest(unsigned long identif
 
 void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsigned long identifier, WebCore::ResourceRequest& newRequest, const WebCore::ResourceResponse& redirectResponse)
 {
+    KURL url = newRequest.url();
 
     if (dumpResourceLoadCallbacks)
         printf("%s - willSendRequest %s redirectResponse %s\n",
@@ -1033,24 +1034,38 @@ void FrameLoaderClientQt::dispatchWillSendRequest(WebCore::DocumentLoader*, unsi
                qPrintable(drtDescriptionSuitableForTestResult(newRequest)),
                (redirectResponse.isNull()) ? "(null)" : qPrintable(drtDescriptionSuitableForTestResult(redirectResponse)));
 
-    if (sendRequestReturnsNull)
+    if (sendRequestReturnsNull) {
         newRequest.setURL(QUrl());
+        return;
+    }
 
     if (sendRequestReturnsNullOnRedirect && !redirectResponse.isNull()) {
         printf("Returning null for this redirect\n");
         newRequest.setURL(QUrl());
+        return;
+    }
+
+    if (QWebPagePrivate::drtRun
+        && url.protocolInHTTPFamily()
+        && url.host() != "127.0.0.1"
+        && url.host() != "255.255.255.255"
+        && !equalIgnoringCase(url.host(), "localhost")) {
+
+        printf("Blocked access to external URL %s\n", qPrintable(drtDescriptionSuitableForTestResult(url)));
+        newRequest.setURL(QUrl());
+        return;
     }
 
     for (int i = 0; i < sendRequestClearHeaders.size(); ++i)
           newRequest.setHTTPHeaderField(sendRequestClearHeaders.at(i).toLocal8Bit().constData(), QString());
 
     if (QWebPagePrivate::drtRun) {
-        QString url = newRequest.url().string();
-        if (URLsToRedirect.contains(url))
-            newRequest.setURL(QUrl(URLsToRedirect[url]));
+        QMap<QString, QString>::const_iterator it = URLsToRedirect.constFind(url.string());
+        if (it != URLsToRedirect.constEnd())
+            newRequest.setURL(QUrl(it.value()));
     }
     // Seems like the Mac code doesn't do anything here by default neither.
-    // qDebug() << "FrameLoaderClientQt::dispatchWillSendRequest" << request.isNull() << request.url().string();
+    // qDebug() << "FrameLoaderClientQt::dispatchWillSendRequest" << request.isNull() << url;
 }
 
 bool FrameLoaderClientQt::shouldUseCredentialStorage(DocumentLoader*, unsigned long)

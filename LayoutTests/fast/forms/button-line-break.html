@@ -1,0 +1,11 @@
+<p><a href="https://bugs.webkit.org/show_bug.cgi?id=50521">Bug 50521</a>
+tests whether or not HTML line breaks such as &lt;br&gt; are honored.
+The tests here will only pass if
+<div>All of the buttons below should show the same two lines:</div>
+<div><button>Test<br>button</button></div>
+<div><button>Test<br>
+button</button></div>
+
+<div><button><b>Test<br>Button</b></button></div>
+<div><button><b>Test<br>
+Button</b></button></div>
