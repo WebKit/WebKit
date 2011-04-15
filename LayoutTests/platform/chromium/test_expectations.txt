@@ -3487,15 +3487,4 @@ BUGCROGERS WIN LINUX : fast/text/zero-font-size.html = IMAGE+TEXT
 // Flaky due to this webkit bug
 BUGWK58632 GPU LINUX DEBUG : compositing/direct-image-compositing.html = IMAGE
 
-// Temporarily marked failing for rebaselining.
-BUGWK57113 GPU : compositing/geometry/fixed-position.html = FAIL
-BUGWK57113 GPU : compositing/geometry/horizontal-scroll-composited.html = FAIL
-BUGWK57113 GPU : compositing/geometry/vertical-scroll-composited.html = FAIL
-BUGWK57113 GPU WIN LINUX : compositing/tiling/huge-layer-img.html = FAIL
-BUGWK57113 GPU MAC : compositing/tiling/huge-layer-img.html = FAIL
-BUGWK57113 GPU : compositing/overflow/fixed-position-ancestor-clip.html = FAIL
-BUGWK57113 GPU : compositing/overflow/overflow-scroll.html = FAIL
-BUGWK57113 GPU : platform/chromium/compositing/huge-layer-rotated.html = FAIL
-BUGWK57113 GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
-
 BUGWK58619 GPU LINUX WIN : media/video-volume-slider.html = IMAGE

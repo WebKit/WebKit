@@ -1,3 +1,31 @@
+2011-04-15  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed, update baselines for compositing changes.
+        https://bugs.webkit.org/show_bug.cgi?id=57113
+
+        * platform/chromium-gpu-linux/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-linux/platform/chromium/compositing/huge-layer-rotated-expected.png: Added.
+        * platform/chromium-gpu-linux/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-mac/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-mac/compositing/tiling/huge-layer-img-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/tiling/huge-layer-img-expected.txt: Added.
+        * platform/chromium-gpu-mac/platform/chromium/compositing/huge-layer-rotated-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-win/compositing/tiling/huge-layer-img-expected.png: Added.
+        * platform/chromium-gpu-win/platform/chromium/compositing/huge-layer-rotated-expected.png:
+        * platform/chromium-gpu-win/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-04-15  Andreas Kling  <kling@webkit.org>
 
         Skip failing tests after r84010 and r84012.
