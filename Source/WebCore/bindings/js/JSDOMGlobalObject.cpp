@@ -42,8 +42,8 @@ namespace WebCore {
 
 const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject", &JSGlobalObject::s_info, 0, 0 };
 
-JSDOMGlobalObject::JSDOMGlobalObject(NonNullPassRefPtr<Structure> structure, PassRefPtr<DOMWrapperWorld> world, JSObject* thisValue)
-    : JSGlobalObject(structure, thisValue)
+JSDOMGlobalObject::JSDOMGlobalObject(JSGlobalData& globalData, Structure* structure, PassRefPtr<DOMWrapperWorld> world, JSObject* thisValue)
+    : JSGlobalObject(globalData, structure, thisValue)
     , m_currentEvent(0)
     , m_world(world)
 {
@@ -56,7 +56,7 @@ void JSDOMGlobalObject::markChildren(MarkStack& markStack)
 
     JSDOMStructureMap::iterator end = structures().end();
     for (JSDOMStructureMap::iterator it = structures().begin(); it != end; ++it)
-        it->second->markAggregate(markStack);
+        markStack.append(&it->second);
 
     JSDOMConstructorMap::iterator end2 = constructors().end();
     for (JSDOMConstructorMap::iterator it2 = constructors().begin(); it2 != end2; ++it2)

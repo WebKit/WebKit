@@ -31,8 +31,8 @@ ASSERT_CLASS_FITS_IN_CELL(NumberObject);
 
 const ClassInfo NumberObject::s_info = { "Number", &JSWrapperObject::s_info, 0, 0 };
 
-NumberObject::NumberObject(JSGlobalData&, NonNullPassRefPtr<Structure> structure)
-    : JSWrapperObject(structure)
+NumberObject::NumberObject(JSGlobalData& globalData, Structure* structure)
+    : JSWrapperObject(globalData, structure)
 {
     ASSERT(inherits(&s_info));
 }

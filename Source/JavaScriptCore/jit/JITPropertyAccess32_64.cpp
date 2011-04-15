@@ -597,7 +597,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     
     if (!direct) {
         // Verify that nothing in the prototype chain has a setter for this property. 
-        for (RefPtr<Structure>* it = chain->head(); *it; ++it)
+        for (WriteBarrier<Structure>* it = chain->head(); *it; ++it)
             testPrototype((*it)->storedPrototype(), failureCases);
     }
 
@@ -619,10 +619,8 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
         
         restoreReturnAddressBeforeReturn(regT3);
     }
-    
-    sub32(TrustedImm32(1), AbsoluteAddress(oldStructure->addressOfCount()));
-    add32(TrustedImm32(1), AbsoluteAddress(newStructure->addressOfCount()));
-    storePtr(TrustedImmPtr(newStructure), Address(regT0, JSCell::structureOffset()));
+
+    storePtrWithWriteBarrier(TrustedImmPtr(newStructure), regT0, Address(regT0, JSCell::structureOffset()));
     
 #if CPU(MIPS) || CPU(SH4)
     // For MIPS, we don't add sizeof(void*) to the stack offset.
@@ -674,17 +672,14 @@ void JIT::patchGetByIdSelf(CodeBlock* codeBlock, StructureStubInfo* stubInfo, St
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(patchOffsetGetByIdPropertyMapOffset2), offset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)); // tag
 }
 
-void JIT::patchMethodCallProto(CodeBlock* codeBlock, MethodCallLinkInfo& methodCallLinkInfo, JSFunction* callee, Structure* structure, JSObject* proto, ReturnAddressPtr returnAddress)
+void JIT::patchMethodCallProto(JSGlobalData& globalData, CodeBlock* codeBlock, MethodCallLinkInfo& methodCallLinkInfo, JSFunction* callee, Structure* structure, JSObject* proto, ReturnAddressPtr returnAddress)
 {
     RepatchBuffer repatchBuffer(codeBlock);
     
     ASSERT(!methodCallLinkInfo.cachedStructure);
-    methodCallLinkInfo.cachedStructure = structure;
-    structure->ref();
-    
+    methodCallLinkInfo.cachedStructure.set(globalData, codeBlock->ownerExecutable(), structure);
     Structure* prototypeStructure = proto->structure();
-    methodCallLinkInfo.cachedPrototypeStructure = prototypeStructure;
-    prototypeStructure->ref();
+    methodCallLinkInfo.cachedPrototypeStructure.set(globalData, codeBlock->ownerExecutable(), prototypeStructure);
     
     repatchBuffer.repatch(methodCallLinkInfo.structureLabel, structure);
     repatchBuffer.repatch(methodCallLinkInfo.structureLabel.dataLabelPtrAtOffset(patchOffsetMethodCheckProtoObj), proto);
@@ -762,7 +757,7 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     Jump failureCases1 = checkStructure(regT0, structure);
     
     // Check the prototype object's Structure had not changed.
-    Structure* const * prototypeStructureAddress = protoObject->addressOfStructure();
+    const void* prototypeStructureAddress = protoObject->addressOfStructure();
 #if CPU(X86_64)
     move(TrustedImmPtr(prototypeStructure), regT3);
     Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), regT3);
@@ -867,9 +862,8 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(patchOffsetGetByIdPutResult));
 
     CodeLocationLabel entryLabel = patchBuffer.finalizeCodeAddendum();
-    
-    structure->ref();
-    polymorphicStructures->list[currentIndex].set(entryLabel, structure);
+
+    polymorphicStructures->list[currentIndex].set(*m_globalData, m_codeBlock->ownerExecutable(), entryLabel, structure);
     
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
@@ -889,7 +883,7 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     Jump failureCases1 = checkStructure(regT0, structure);
     
     // Check the prototype object's Structure had not changed.
-    Structure* const * prototypeStructureAddress = protoObject->addressOfStructure();
+    const void* prototypeStructureAddress = protoObject->addressOfStructure();
 #if CPU(X86_64)
     move(TrustedImmPtr(prototypeStructure), regT3);
     Jump failureCases2 = branchPtr(NotEqual, AbsoluteAddress(prototypeStructureAddress), regT3);
@@ -935,10 +929,8 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     patchBuffer.link(success, stubInfo->hotPathBegin.labelAtOffset(patchOffsetGetByIdPutResult));
     
     CodeLocationLabel entryLabel = patchBuffer.finalizeCodeAddendum();
-    
-    structure->ref();
-    prototypeStructure->ref();
-    prototypeStructures->list[currentIndex].set(entryLabel, structure, prototypeStructure);
+
+    prototypeStructures->list[currentIndex].set(callFrame->globalData(), m_codeBlock->ownerExecutable(), entryLabel, structure, prototypeStructure);
     
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(patchOffsetGetByIdBranchToSlowCase);
@@ -957,7 +949,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     bucketsOfFail.append(checkStructure(regT0, structure));
     
     Structure* currStructure = structure;
-    RefPtr<Structure>* it = chain->head();
+    WriteBarrier<Structure>* it = chain->head();
     JSObject* protoObject = 0;
     for (unsigned i = 0; i < count; ++i, ++it) {
         protoObject = asObject(currStructure->prototypeForLookup(callFrame));
@@ -1006,7 +998,6 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     CodeLocationLabel entryLabel = patchBuffer.finalizeCodeAddendum();
     
     // Track the stub we have created so that it will be deleted later.
-    structure->ref();
     prototypeStructures->list[currentIndex].set(callFrame->globalData(), m_codeBlock->ownerExecutable(), entryLabel, structure, chain);
     
     // Finally patch the jump to slow case back in the hot path to jump here instead.
@@ -1026,7 +1017,7 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     bucketsOfFail.append(checkStructure(regT0, structure));
     
     Structure* currStructure = structure;
-    RefPtr<Structure>* it = chain->head();
+    WriteBarrier<Structure>* it = chain->head();
     JSObject* protoObject = 0;
     for (unsigned i = 0; i < count; ++i, ++it) {
         protoObject = asObject(currStructure->prototypeForLookup(callFrame));

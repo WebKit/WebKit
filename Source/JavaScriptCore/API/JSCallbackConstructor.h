@@ -33,13 +33,13 @@ namespace JSC {
 
 class JSCallbackConstructor : public JSObjectWithGlobalObject {
 public:
-    JSCallbackConstructor(JSGlobalObject*, NonNullPassRefPtr<Structure>, JSClassRef, JSObjectCallAsConstructorCallback);
+    JSCallbackConstructor(JSGlobalObject*, Structure*, JSClassRef, JSObjectCallAsConstructorCallback);
     virtual ~JSCallbackConstructor();
     JSClassRef classRef() const { return m_class; }
     JSObjectCallAsConstructorCallback callback() const { return m_callback; }
     static const ClassInfo s_info;
 
-    static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) 
+    static Structure* createStructure(JSGlobalData& globalData, JSValue proto) 
     {
         return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }

@@ -47,7 +47,7 @@ static EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*);
 
 // ECMA 15.10.5
 
-RegExpPrototype::RegExpPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, Structure* functionStructure)
+RegExpPrototype::RegExpPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* functionStructure)
     : RegExpObject(globalObject, structure, RegExp::create(&exec->globalData(), "", NoFlags))
 {
     putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 2, exec->propertyNames().compile, regExpProtoFuncCompile), DontEnum);

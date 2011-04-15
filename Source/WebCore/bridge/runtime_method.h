@@ -35,7 +35,7 @@ namespace JSC {
 
 class RuntimeMethod : public InternalFunction {
 public:
-    RuntimeMethod(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, const Identifier& name, Bindings::MethodList&);
+    RuntimeMethod(ExecState*, JSGlobalObject*, Structure*, const Identifier& name, Bindings::MethodList&);
     Bindings::MethodList* methods() const { return _methodList.get(); }
 
     static const ClassInfo s_info;
@@ -45,7 +45,7 @@ public:
         return globalObject->functionPrototype();
     }
 
-    static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
     {
         return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }

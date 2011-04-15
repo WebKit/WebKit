@@ -29,7 +29,7 @@ namespace JSC {
 
     class ErrorPrototype : public ErrorInstance {
     public:
-        ErrorPrototype(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, Structure* functionStructure);
+        ErrorPrototype(ExecState*, JSGlobalObject*, Structure*, Structure* functionStructure);
     };
 
 } // namespace JSC

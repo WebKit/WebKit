@@ -36,13 +36,12 @@ ASSERT_CLASS_FITS_IN_CELL(InternalFunction);
 
 const ClassInfo InternalFunction::s_info = { "Function", &JSObjectWithGlobalObject::s_info, 0, 0 };
 
-InternalFunction::InternalFunction(NonNullPassRefPtr<Structure> structure)
-    : JSObjectWithGlobalObject(structure)
+InternalFunction::InternalFunction(VPtrStealingHackType)
+    : JSObjectWithGlobalObject(VPtrStealingHack)
 {
-    ASSERT(inherits(&s_info));
 }
 
-InternalFunction::InternalFunction(JSGlobalData* globalData, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, const Identifier& name)
+InternalFunction::InternalFunction(JSGlobalData* globalData, JSGlobalObject* globalObject, Structure* structure, const Identifier& name)
     : JSObjectWithGlobalObject(globalObject, structure)
 {
     ASSERT(inherits(&s_info));

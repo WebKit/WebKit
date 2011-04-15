@@ -54,6 +54,7 @@ namespace JSC {
         {
             ASSERT(flags <= 0x1FF);
             ASSERT(type <= 0xFF);
+            ASSERT(type >= CompoundType || !(flags & OverridesMarkChildren));
             // ImplementsDefaultHasInstance means (ImplementsHasInstance & !OverridesHasInstance)
             if ((m_flags & (ImplementsHasInstance | OverridesHasInstance)) == ImplementsHasInstance)
                 m_flags |= ImplementsDefaultHasInstance;

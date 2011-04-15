@@ -75,7 +75,7 @@ const ClassInfo ObjectConstructor::s_info = { "Function", &InternalFunction::s_i
 @end
 */
 
-ObjectConstructor::ObjectConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, ObjectPrototype* objectPrototype)
+ObjectConstructor::ObjectConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ObjectPrototype* objectPrototype)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, "Object"))
 {
     // ECMA 15.2.3.1

@@ -38,7 +38,7 @@ namespace JSC {
         friend class JIT;
     public:
         GetterSetter(ExecState* exec)
-            : JSCell(exec->globalData().getterSetterStructure.get())
+            : JSCell(exec->globalData(), exec->globalData().getterSetterStructure.get())
         {
         }
 
@@ -48,7 +48,7 @@ namespace JSC {
         void setGetter(JSGlobalData& globalData, JSObject* getter) { m_getter.set(globalData, this, getter); }
         JSObject* setter() const { return m_setter.get(); }
         void setSetter(JSGlobalData& globalData, JSObject* setter) { m_setter.set(globalData, this, setter); }
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(GetterSetterType, OverridesMarkChildren), AnonymousSlotCount, 0);
         }

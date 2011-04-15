@@ -28,8 +28,8 @@ namespace JSC {
 
     class StringObject : public JSWrapperObject {
     public:
-        StringObject(ExecState*, NonNullPassRefPtr<Structure>);
-        StringObject(ExecState*, NonNullPassRefPtr<Structure>, const UString&);
+        StringObject(ExecState*, Structure*);
+        StringObject(ExecState*, Structure*, const UString&);
 
         static StringObject* create(ExecState*, JSGlobalObject*, JSString*);
 
@@ -45,14 +45,14 @@ namespace JSC {
 
         JSString* internalValue() const { return asString(JSWrapperObject::internalValue());}
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSWrapperObject::StructureFlags;
-        StringObject(JSGlobalData&, NonNullPassRefPtr<Structure>, JSString*);
+        StringObject(JSGlobalData&, Structure*, JSString*);
     };
 
     StringObject* asStringObject(JSValue);

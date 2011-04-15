@@ -75,8 +75,8 @@ namespace JSC {
                 setIndex(i, byteValue);
         }
 
-        JSByteArray(ExecState*, NonNullPassRefPtr<Structure>, WTF::ByteArray* storage);
-        static PassRefPtr<Structure> createStructure(JSGlobalData&, JSValue prototype, const JSC::ClassInfo* = &s_defaultInfo);
+        JSByteArray(ExecState*, Structure*, WTF::ByteArray* storage);
+        static Structure* createStructure(JSGlobalData&, JSValue prototype, const JSC::ClassInfo* = &s_defaultInfo);
 
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
         virtual bool getOwnPropertySlot(JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);
@@ -100,9 +100,8 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObject::StructureFlags;
 
     private:
-        enum VPtrStealingHackType { VPtrStealingHack };
         JSByteArray(VPtrStealingHackType)
-            : JSNonFinalObject(Structure::create(Structure::VPtrStealingHack, &s_info))
+            : JSNonFinalObject(VPtrStealingHack)
         {
         }
 

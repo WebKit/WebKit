@@ -61,7 +61,7 @@ const ClassInfo RegExpObject::s_info = { "RegExp", &JSObjectWithGlobalObject::s_
 @end
 */
 
-RegExpObject::RegExpObject(JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, NonNullPassRefPtr<RegExp> regExp)
+RegExpObject::RegExpObject(JSGlobalObject* globalObject, Structure* structure, NonNullPassRefPtr<RegExp> regExp)
     : JSObjectWithGlobalObject(globalObject, structure)
     , d(adoptPtr(new RegExpObjectData(regExp)))
 {

@@ -22,6 +22,7 @@
 #define PropertyMapHashTable_h
 
 #include "UString.h"
+#include "WriteBarrier.h"
 #include <wtf/HashTable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
@@ -244,7 +245,7 @@ inline PropertyTable::PropertyTable(unsigned initialCapacity)
     ASSERT(isPowerOf2(m_indexSize));
 }
 
-inline PropertyTable::PropertyTable(JSGlobalData&, JSCell*, const PropertyTable& other)
+inline PropertyTable::PropertyTable(JSGlobalData& globalData, JSCell* owner, const PropertyTable& other)
     : m_indexSize(other.m_indexSize)
     , m_indexMask(other.m_indexMask)
     , m_index(static_cast<unsigned*>(fastMalloc(dataSize())))
@@ -256,8 +257,10 @@ inline PropertyTable::PropertyTable(JSGlobalData&, JSCell*, const PropertyTable&
     memcpy(m_index, other.m_index, dataSize());
 
     iterator end = this->end();
-    for (iterator iter = begin(); iter != end; ++iter)
+    for (iterator iter = begin(); iter != end; ++iter) {
         iter->key->ref();
+        writeBarrier(globalData, owner, iter->specificValue.get());
+    }
 
     // Copy the m_deletedOffsets vector.
     Vector<unsigned>* otherDeletedOffsets = other.m_deletedOffsets.get();
@@ -265,7 +268,7 @@ inline PropertyTable::PropertyTable(JSGlobalData&, JSCell*, const PropertyTable&
         m_deletedOffsets.set(new Vector<unsigned>(*otherDeletedOffsets));
 }
 
-inline PropertyTable::PropertyTable(JSGlobalData&, JSCell*, unsigned initialCapacity, const PropertyTable& other)
+inline PropertyTable::PropertyTable(JSGlobalData& globalData, JSCell* owner, unsigned initialCapacity, const PropertyTable& other)
     : m_indexSize(sizeForCapacity(initialCapacity))
     , m_indexMask(m_indexSize - 1)
     , m_index(static_cast<unsigned*>(fastZeroedMalloc(dataSize())))
@@ -280,6 +283,7 @@ inline PropertyTable::PropertyTable(JSGlobalData&, JSCell*, unsigned initialCapa
         ASSERT(canInsert());
         reinsert(*iter);
         iter->key->ref();
+        writeBarrier(globalData, owner, iter->specificValue.get());
     }
 
     // Copy the m_deletedOffsets vector.

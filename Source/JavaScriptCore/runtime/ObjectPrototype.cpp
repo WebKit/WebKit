@@ -40,8 +40,8 @@ static EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState*);
 
-ObjectPrototype::ObjectPrototype(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> stucture, Structure* functionStructure)
-    : JSNonFinalObject(stucture)
+ObjectPrototype::ObjectPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* stucture, Structure* functionStructure)
+    : JSNonFinalObject(exec->globalData(), stucture)
     , m_hasNoPropertiesWithUInt32Names(true)
 {
     putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 0, exec->propertyNames().toString, objectProtoFuncToString), DontEnum);

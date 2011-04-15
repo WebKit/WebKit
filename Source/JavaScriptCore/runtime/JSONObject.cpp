@@ -53,7 +53,7 @@ static EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState*);
 
 namespace JSC {
 
-JSONObject::JSONObject(JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
+JSONObject::JSONObject(JSGlobalObject* globalObject, Structure* structure)
     : JSObjectWithGlobalObject(globalObject, structure)
 {
     ASSERT(inherits(&s_info));

@@ -29,13 +29,13 @@ namespace JSC {
     public:
         static const ClassInfo s_info;
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
-        static ErrorInstance* create(JSGlobalData*, NonNullPassRefPtr<Structure>, const UString&);
-        static ErrorInstance* create(ExecState* exec, NonNullPassRefPtr<Structure>, JSValue message);
+        static ErrorInstance* create(JSGlobalData*, Structure*, const UString&);
+        static ErrorInstance* create(ExecState*, Structure*, JSValue message);
 
 
         bool appendSourceToMessage() { return m_appendSourceToMessage; }
@@ -45,8 +45,8 @@ namespace JSC {
         virtual bool isErrorInstance() const { return true; }
 
     protected:
-        explicit ErrorInstance(JSGlobalData*, NonNullPassRefPtr<Structure>);
-        explicit ErrorInstance(JSGlobalData*, NonNullPassRefPtr<Structure>, const UString&);
+        explicit ErrorInstance(JSGlobalData*, Structure*);
+        explicit ErrorInstance(JSGlobalData*, Structure*, const UString&);
 
         bool m_appendSourceToMessage;
     };

@@ -34,19 +34,19 @@ namespace JSC {
     
 ClassInfo StructureChain::s_info = { "StructureChain", 0, 0, 0 };
 
-StructureChain::StructureChain(NonNullPassRefPtr<Structure> structure, Structure* head)
-    : JSCell(structure.releaseRef())
+StructureChain::StructureChain(JSGlobalData& globalData, Structure* structure, Structure* head)
+    : JSCell(globalData, structure)
 {
     size_t size = 0;
     for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
         ++size;
     
-    m_vector = adoptArrayPtr(new RefPtr<Structure>[size + 1]);
+    m_vector = adoptArrayPtr(new WriteBarrier<Structure>[size + 1]);
 
     size_t i = 0;
     for (Structure* current = head; current; current = current->storedPrototype().isNull() ? 0 : asObject(current->storedPrototype())->structure())
-        m_vector[i++] = current;
-    m_vector[i] = 0;
+        m_vector[i++].set(globalData, this, current);
+    m_vector[i].clear();
 }
 
 StructureChain::~StructureChain()
@@ -57,7 +57,7 @@ void StructureChain::markChildren(MarkStack& markStack)
 {
     size_t i = 0;
     while (m_vector[i])
-        m_vector[i++]->markAggregate(markStack);
+        markStack.append(&m_vector[i++]);
 }
 
 } // namespace JSC

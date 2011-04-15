@@ -41,7 +41,7 @@ namespace WebCore {
     class JSWorkerContextBase : public JSDOMGlobalObject {
         typedef JSDOMGlobalObject Base;
     public:
-        JSWorkerContextBase(NonNullPassRefPtr<JSC::Structure>, PassRefPtr<WorkerContext>);
+        JSWorkerContextBase(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<WorkerContext>);
         virtual ~JSWorkerContextBase();
 
         static const JSC::ClassInfo s_info;
@@ -49,7 +49,7 @@ namespace WebCore {
         WorkerContext* impl() const { return m_impl.get(); }
         virtual ScriptExecutionContext* scriptExecutionContext() const;
 
-        static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
+        static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
         {
             return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }

@@ -29,7 +29,7 @@ namespace JSC {
 
     class NumberConstructor : public InternalFunction {
     public:
-        NumberConstructor(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, NumberPrototype*);
+        NumberConstructor(ExecState*, JSGlobalObject*, Structure*, NumberPrototype*);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
@@ -37,7 +37,7 @@ namespace JSC {
 
         static const ClassInfo s_info;
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) 
+        static Structure* createStructure(JSGlobalData& globalData, JSValue proto) 
         { 
             return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); 
         }

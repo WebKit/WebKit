@@ -34,17 +34,31 @@ namespace JSC {
 
 // A HashMap for GC'd values that removes entries when the associated value
 // dies.
-template<typename KeyType, typename MappedType> class WeakGCMap : private WeakHandleOwner {
+template <typename KeyType, typename MappedType> struct DefaultWeakGCMapFinalizerCallback {
+    static void* finalizerContextFor(KeyType key)
+    {
+        return reinterpret_cast<void*>(key);
+    }
+
+    static KeyType keyForFinalizer(void* context, typename HandleTypes<MappedType>::ExternalType)
+    {
+        return reinterpret_cast<KeyType>(context);
+    }
+};
+
+template<typename KeyType, typename MappedType, typename FinalizerCallback = DefaultWeakGCMapFinalizerCallback<KeyType, MappedType>, typename HashArg = typename DefaultHash<KeyType>::Hash, typename KeyTraitsArg = HashTraits<KeyType> >
+class WeakGCMap : private WeakHandleOwner {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(WeakGCMap);
 
-    typedef HashMap<KeyType, HandleSlot> MapType;
+    typedef HashMap<KeyType, HandleSlot, HashArg, KeyTraitsArg> MapType;
     typedef typename HandleTypes<MappedType>::ExternalType ExternalType;
     typedef typename MapType::iterator map_iterator;
 
 public:
 
     struct iterator {
+        friend class WeakGCMap;
         iterator(map_iterator iter)
             : m_iterator(iter)
         {
@@ -62,7 +76,7 @@ public:
         bool operator!=(const iterator& other) const { return m_iterator != other.m_iterator; }
         
     private:
-            map_iterator m_iterator;
+        map_iterator m_iterator;
     };
 
     WeakGCMap()
@@ -78,6 +92,25 @@ public:
         m_map.clear();
     }
 
+    bool contains(const KeyType& key) const
+    {
+        return m_map.contains(key);
+    }
+
+    iterator find(const KeyType& key)
+    {
+        return m_map.find(key);
+    }
+
+    void remove(iterator iter)
+    {
+        ASSERT(iter.m_iterator != m_map.end());
+        HandleSlot slot = iter.m_iterator->second;
+        ASSERT(slot);
+        HandleHeap::heapFor(slot)->deallocate(slot);
+        m_map.remove(iter.m_iterator);
+    }
+
     ExternalType get(const KeyType& key) const
     {
         return HandleTypes<MappedType>::getFromSlot(m_map.get(key));
@@ -86,6 +119,27 @@ public:
     HandleSlot getSlot(const KeyType& key) const
     {
         return m_map.get(key);
+    }
+
+    pair<iterator, bool> add(JSGlobalData& globalData, const KeyType& key, ExternalType value)
+    {
+        pair<typename MapType::iterator, bool> iter = m_map.add(key, 0);
+        if (iter.second) {
+            HandleSlot slot = globalData.allocateGlobalHandle();
+            iter.first->second = slot;
+            HandleHeap::heapFor(slot)->makeWeak(slot, this, FinalizerCallback::finalizerContextFor(key));
+            HandleHeap::heapFor(slot)->writeBarrier(slot, value);
+            *slot = value;
+        }
+        return iter;
+    }
+    
+    void set(iterator iter, ExternalType value)
+    {
+        HandleSlot slot = iter.m_iterator->second;
+        ASSERT(slot);
+        HandleHeap::heapFor(slot)->writeBarrier(slot, value);
+        *slot = value;
     }
 
     void set(JSGlobalData& globalData, const KeyType& key, ExternalType value)
@@ -122,9 +176,9 @@ public:
     }
     
 private:
-    virtual void finalize(Handle<Unknown>, void* context)
+    virtual void finalize(Handle<Unknown> handle, void* context)
     {
-        HandleSlot slot = m_map.take(static_cast<KeyType>(context));
+        HandleSlot slot = m_map.take(FinalizerCallback::keyForFinalizer(context, HandleTypes<MappedType>::getFromSlot(handle.slot())));
         ASSERT(slot);
         HandleHeap::heapFor(slot)->deallocate(slot);
     }

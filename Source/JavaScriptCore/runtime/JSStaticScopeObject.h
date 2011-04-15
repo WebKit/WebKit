@@ -33,7 +33,7 @@ namespace JSC{
     class JSStaticScopeObject : public JSVariableObject {
     public:
         JSStaticScopeObject(ExecState* exec, const Identifier& ident, JSValue value, unsigned attributes)
-            : JSVariableObject(exec->globalData().staticScopeStructure, &m_symbolTable, reinterpret_cast<Register*>(&m_registerStore + 1))
+            : JSVariableObject(exec->globalData(), exec->globalData().staticScopeStructure.get(), &m_symbolTable, reinterpret_cast<Register*>(&m_registerStore + 1))
         {
             m_registerStore.set(exec->globalData(), this, value);
             symbolTable().add(ident.impl(), SymbolTableEntry(-1, attributes));
@@ -47,7 +47,7 @@ namespace JSC{
         virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);
         void putWithAttributes(ExecState*, const Identifier&, JSValue, unsigned attributes);
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); }
+        static Structure* createStructure(JSGlobalData& globalData, JSValue proto) { return Structure::create(globalData, proto, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); }
 
     protected:
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | NeedsThisConversion | OverridesMarkChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;

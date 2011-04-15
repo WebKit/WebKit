@@ -42,16 +42,16 @@ namespace JSC {
         friend class JIT;
 
     public:
-        static StructureChain* create(JSGlobalData& globalData, Structure* head) { return new (&globalData) StructureChain(globalData.structureChainStructure, head); }
-        RefPtr<Structure>* head() { return m_vector.get(); }
+        static StructureChain* create(JSGlobalData& globalData, Structure* head) { return new (&globalData) StructureChain(globalData, globalData.structureChainStructure.get(), head); }
+        WriteBarrier<Structure>* head() { return m_vector.get(); }
         void markChildren(MarkStack&);
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype) { return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesMarkChildren), 0, &s_info); }
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype) { return Structure::create(globalData, prototype, TypeInfo(CompoundType, OverridesMarkChildren), 0, &s_info); }
 
     private:
-        StructureChain(NonNullPassRefPtr<Structure>, Structure* head);
+        StructureChain(JSGlobalData&, Structure*, Structure* head);
         ~StructureChain();
-        OwnArrayPtr<RefPtr<Structure> > m_vector;
+        OwnArrayPtr<WriteBarrier<Structure> > m_vector;
         static ClassInfo s_info;
     };
 

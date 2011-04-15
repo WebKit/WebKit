@@ -184,7 +184,7 @@ JSValue JSObjectKJSValue(JSUserObject* ptr)
         if (!handled)
         {
             ExecState* exec = getThreadGlobalExecState();
-            result = new (exec) UserObjectImp(getThreadGlobalObject()->userObjectStructure(), ptr);
+            result = new (exec) UserObjectImp(exec->globalData(), getThreadGlobalObject()->userObjectStructure(), ptr);
         }
     }
     return result;

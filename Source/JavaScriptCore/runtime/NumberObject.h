@@ -27,11 +27,11 @@ namespace JSC {
 
     class NumberObject : public JSWrapperObject {
     public:
-        explicit NumberObject(JSGlobalData&, NonNullPassRefPtr<Structure>);
+        explicit NumberObject(JSGlobalData&, Structure*);
 
         static const ClassInfo s_info;
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }

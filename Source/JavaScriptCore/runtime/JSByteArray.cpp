@@ -35,8 +35,8 @@ namespace JSC {
 
 const ClassInfo JSByteArray::s_defaultInfo = { "ByteArray", &Base::s_info, 0, 0 };
 
-JSByteArray::JSByteArray(ExecState* exec, NonNullPassRefPtr<Structure> structure, ByteArray* storage)
-    : JSNonFinalObject(structure)
+JSByteArray::JSByteArray(ExecState* exec, Structure* structure, ByteArray* storage)
+    : JSNonFinalObject(exec->globalData(), structure)
     , m_storage(storage)
 {
     putDirect(exec->globalData(), exec->globalData().propertyNames->length, jsNumber(m_storage->length()), ReadOnly | DontDelete);
@@ -50,7 +50,7 @@ JSByteArray::~JSByteArray()
 #endif
 
 
-PassRefPtr<Structure> JSByteArray::createStructure(JSGlobalData& globalData, JSValue prototype, const JSC::ClassInfo* classInfo)
+Structure* JSByteArray::createStructure(JSGlobalData& globalData, JSValue prototype, const JSC::ClassInfo* classInfo)
 {
     return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, classInfo);
 }

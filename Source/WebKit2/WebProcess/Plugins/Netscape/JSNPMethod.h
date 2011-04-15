@@ -42,7 +42,7 @@ public:
     NPIdentifier npIdentifier() const { return m_npIdentifier; }
 
 private:    
-    static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
     {
         return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }

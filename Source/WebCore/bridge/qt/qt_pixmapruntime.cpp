@@ -150,7 +150,7 @@ public:
 
     static const ClassInfo s_info;
 
-    static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
     {
         return Structure::create(globalData, prototype, TypeInfo(ObjectType,  StructureFlags), AnonymousSlotCount, &s_info);
     }

@@ -27,21 +27,21 @@
 #define JSZombie_h
 
 #include "JSCell.h"
+#include "Structure.h"
 
 #if ENABLE(JSC_ZOMBIES)
 namespace JSC {
 
 class JSZombie : public JSCell {
 public:
-    JSZombie(const ClassInfo* oldInfo, Structure* structure)
-        : JSCell(structure)
+    JSZombie(JSGlobalData& globalData, const ClassInfo* oldInfo, Structure* structure)
+        : JSCell(globalData, structure)
         , m_oldInfo(oldInfo)
     {
         ASSERT(inherits(&s_info));
     }
 
     virtual bool isZombie() const { return true; }
-    static Structure* leakedZombieStructure(JSGlobalData&);
 
     virtual bool isGetterSetter() const { ASSERT_NOT_REACHED(); return false; }
     virtual bool isAPIValueWrapper() const { ASSERT_NOT_REACHED(); return false; }
@@ -66,9 +66,9 @@ public:
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&) { ASSERT_NOT_REACHED(); return false; }
     virtual bool getOwnPropertySlot(ExecState*, unsigned, PropertySlot&) { ASSERT_NOT_REACHED(); return false; }
     
-    static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
+    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
     {
-        return Structure::create(globalData, prototype, TypeInfo(ObjectType, 0), AnonymousSlotCount, &s_info);
+        return Structure::create(globalData, prototype, TypeInfo(LeafType, 0), AnonymousSlotCount, &s_info);
     }
 
     static const ClassInfo s_info;

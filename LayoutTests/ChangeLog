@@ -1,3 +1,13 @@
+2011-04-15  Oliver Hunt  <oliver@apple.com>
+
+        GC allocate Structure
+        https://bugs.webkit.org/show_bug.cgi?id=58483
+
+        Rolling r83894 r83827 r83810 r83809 r83808 back in with
+        a workaround for the gcc bug seen by the gtk bots
+
+        * fast/dom/gc-10.html:
+
 2011-04-15  Andreas Kling  <kling@webkit.org>
 
         Unreviewed, remove a Qt-specific expectation that's no longer needed.

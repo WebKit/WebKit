@@ -86,7 +86,7 @@ const ClassInfo MathObject::s_info = { "Math", &JSObjectWithGlobalObject::s_info
 @end
 */
 
-MathObject::MathObject(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
+MathObject::MathObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
     : JSObjectWithGlobalObject(globalObject, structure)
 {
     ASSERT(inherits(&s_info));

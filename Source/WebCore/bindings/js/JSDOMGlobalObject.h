@@ -38,7 +38,7 @@ namespace WebCore {
     class JSEventListener;
     class ScriptExecutionContext;
 
-    typedef HashMap<const JSC::ClassInfo*, RefPtr<JSC::Structure> > JSDOMStructureMap;
+    typedef HashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::Structure> > JSDOMStructureMap;
     typedef HashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::JSObject> > JSDOMConstructorMap;
 
     class JSDOMGlobalObject : public JSC::JSGlobalObject {
@@ -46,7 +46,7 @@ namespace WebCore {
     protected:
         struct JSDOMGlobalObjectData;
 
-        JSDOMGlobalObject(NonNullPassRefPtr<JSC::Structure>, PassRefPtr<DOMWrapperWorld>, JSC::JSObject* thisValue);
+        JSDOMGlobalObject(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<DOMWrapperWorld>, JSC::JSObject* thisValue);
 
     public:
         JSDOMStructureMap& structures() { return m_structures; }
@@ -69,7 +69,7 @@ namespace WebCore {
 
         static const JSC::ClassInfo s_info;
 
-        static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
+        static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
         {
             return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }

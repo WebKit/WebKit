@@ -28,7 +28,7 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(BooleanConstructor);
 
-BooleanConstructor::BooleanConstructor(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, BooleanPrototype* booleanPrototype)
+BooleanConstructor::BooleanConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, BooleanPrototype* booleanPrototype)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, booleanPrototype->classInfo()->className))
 {
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, booleanPrototype, DontEnum | DontDelete | ReadOnly);

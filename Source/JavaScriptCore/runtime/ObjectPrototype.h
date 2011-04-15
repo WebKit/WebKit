@@ -27,7 +27,7 @@ namespace JSC {
 
     class ObjectPrototype : public JSNonFinalObject {
     public:
-        ObjectPrototype(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, Structure* functionStructure);
+        ObjectPrototype(ExecState*, JSGlobalObject*, Structure*, Structure* functionStructure);
 
     private:
         virtual void put(ExecState*, const Identifier&, JSValue, PutPropertySlot&);

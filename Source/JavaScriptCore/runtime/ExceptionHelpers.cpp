@@ -44,7 +44,7 @@ namespace JSC {
 class InterruptedExecutionError : public JSNonFinalObject {
 public:
     InterruptedExecutionError(JSGlobalData* globalData)
-        : JSNonFinalObject(globalData->interruptedExecutionErrorStructure)
+        : JSNonFinalObject(*globalData, globalData->interruptedExecutionErrorStructure.get())
     {
     }
 
@@ -61,7 +61,7 @@ JSObject* createInterruptedExecutionException(JSGlobalData* globalData)
 class TerminatedExecutionError : public JSNonFinalObject {
 public:
     TerminatedExecutionError(JSGlobalData* globalData)
-        : JSNonFinalObject(globalData->terminatedExecutionErrorStructure)
+        : JSNonFinalObject(*globalData, globalData->terminatedExecutionErrorStructure.get())
     {
     }
 

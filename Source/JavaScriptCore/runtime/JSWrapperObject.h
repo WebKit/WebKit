@@ -30,13 +30,13 @@ namespace JSC {
     // Number, Boolean and Date which are wrappers for primitive types.
     class JSWrapperObject : public JSNonFinalObject {
     protected:
-        explicit JSWrapperObject(NonNullPassRefPtr<Structure>);
+        explicit JSWrapperObject(JSGlobalData&, Structure*);
 
     public:
         JSValue internalValue() const;
         void setInternalValue(JSGlobalData&, JSValue);
 
-        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype) 
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype) 
         { 
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
@@ -50,8 +50,8 @@ namespace JSC {
         WriteBarrier<Unknown> m_internalValue;
     };
 
-    inline JSWrapperObject::JSWrapperObject(NonNullPassRefPtr<Structure> structure)
-        : JSNonFinalObject(structure)
+    inline JSWrapperObject::JSWrapperObject(JSGlobalData& globalData, Structure* structure)
+        : JSNonFinalObject(globalData, structure)
     {
     }
 

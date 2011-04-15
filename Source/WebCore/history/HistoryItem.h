@@ -29,6 +29,7 @@
 #include "IntPoint.h"
 #include "PlatformString.h"
 #include "SerializedScriptValue.h"
+#include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
