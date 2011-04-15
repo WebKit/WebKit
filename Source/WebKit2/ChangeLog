@@ -1,3 +1,24 @@
+2011-04-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add CFPreference based backend for WebKit2 preferences
+        https://bugs.webkit.org/show_bug.cgi?id=58605
+
+        * UIProcess/cf/WebPreferencesCF.cpp:
+        (WebKit::cfStringFromWebCoreString):
+        (WebKit::makeKey):
+        (WebKit::setStringValueIfInUserDefaults):
+        (WebKit::setBoolValueIfInUserDefaults):
+        (WebKit::setUInt32ValueIfInUserDefaults):
+        (WebKit::setDoubleValueIfInUserDefaults):
+        (WebKit::WebPreferences::platformInitializeStore):
+        (WebKit::WebPreferences::platformUpdateStringValueForKey):
+        (WebKit::WebPreferences::platformUpdateBoolValueForKey):
+        (WebKit::WebPreferences::platformUpdateUInt32ValueForKey):
+        (WebKit::WebPreferences::platformUpdateDoubleValueForKey):
+        Implement platform functions using CFPreferences API.
+
 2011-04-14  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.

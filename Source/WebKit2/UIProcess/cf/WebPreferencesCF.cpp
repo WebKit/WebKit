@@ -26,28 +26,119 @@
 #include "config.h"
 #include "WebPreferences.h"
 
+#include <wtf/RetainPtr.h>
+#include <wtf/text/StringConcatenate.h>
+
 #if !PLATFORM(MAC)
 
 namespace WebKit {
 
+static RetainPtr<CFStringRef> cfStringFromWebCoreString(const String& string)
+{
+    return RetainPtr<CFStringRef>(AdoptCF, CFStringCreateWithCharacters(0, reinterpret_cast<const UniChar*>(string.characters()), string.length()));
+}
+
+static inline RetainPtr<CFStringRef> makeKey(const String& identifier, const String& baseKey)
+{
+    return cfStringFromWebCoreString(makeString(identifier, ".WebKit2", baseKey));
+}
+
+static void setStringValueIfInUserDefaults(const String& identifier, const String& baseKey, WebPreferencesStore& store)
+{
+    RetainPtr<CFPropertyListRef> value(AdoptCF, CFPreferencesCopyAppValue(makeKey(identifier, baseKey).get(), kCFPreferencesCurrentApplication));
+    if (!value)
+        return;
+    if (CFGetTypeID(value.get()) != CFStringGetTypeID())
+        return;
+
+    store.setStringValueForKey(baseKey, (CFStringRef)value.get());
+}
+
+static void setBoolValueIfInUserDefaults(const String& identifier, const String& baseKey, WebPreferencesStore& store)
+{
+    RetainPtr<CFPropertyListRef> value(AdoptCF, CFPreferencesCopyAppValue(makeKey(identifier, baseKey).get(), kCFPreferencesCurrentApplication));
+    if (!value)
+        return;
+    if (CFGetTypeID(value.get()) != CFBooleanGetTypeID())
+        return;
+
+    store.setBoolValueForKey(baseKey, CFBooleanGetValue((CFBooleanRef)value.get()) ? true : false);
+}
+
+static void setUInt32ValueIfInUserDefaults(const String& identifier, const String& baseKey, WebPreferencesStore& store)
+{
+    RetainPtr<CFPropertyListRef> value(AdoptCF, CFPreferencesCopyAppValue(makeKey(identifier, baseKey).get(), kCFPreferencesCurrentApplication));
+    if (!value)
+        return;
+    if (CFGetTypeID(value.get()) != CFNumberGetTypeID())
+        return;
+    int32_t intValue = 0;
+    if (!CFNumberGetValue((CFNumberRef)value.get(), kCFNumberSInt32Type, &intValue))
+        return;
+
+    store.setUInt32ValueForKey(baseKey, intValue);
+}
+
+static void setDoubleValueIfInUserDefaults(const String& identifier, const String& baseKey, WebPreferencesStore& store)
+{
+    RetainPtr<CFPropertyListRef> value(AdoptCF, CFPreferencesCopyAppValue(makeKey(identifier, baseKey).get(), kCFPreferencesCurrentApplication));
+    if (!value)
+        return;
+    if (CFGetTypeID(value.get()) != CFNumberGetTypeID())
+        return;
+    double doubleValue = 0;
+    if (!CFNumberGetValue((CFNumberRef)value.get(), kCFNumberDoubleType, &doubleValue))
+        return;
+
+    store.setDoubleValueForKey(baseKey, doubleValue);
+}
+
 void WebPreferences::platformInitializeStore()
 {
+    if (!m_identifier)
+        return;
+
+#define INITIALIZE_PREFERENCE_FROM_NSUSERDEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) \
+    set##TypeName##ValueIfInUserDefaults(m_identifier, WebPreferencesKey::KeyLower##Key(), m_store);
+
+    FOR_EACH_WEBKIT_PREFERENCE(INITIALIZE_PREFERENCE_FROM_NSUSERDEFAULTS)
+
+#undef INITIALIZE_PREFERENCE_FROM_NSUSERDEFAULTS
+
 }
 
-void WebPreferences::platformUpdateStringValueForKey(const String&, const String&)
+void WebPreferences::platformUpdateStringValueForKey(const String& key, const String& value)
 {
+    if (!m_identifier)
+        return;
+
+    CFPreferencesSetAppValue(makeKey(m_identifier, key).get(), cfStringFromWebCoreString(value).get(), kCFPreferencesCurrentApplication);
 }
 
-void WebPreferences::platformUpdateBoolValueForKey(const String&, bool)
+void WebPreferences::platformUpdateBoolValueForKey(const String& key, bool value)
 {
+    if (!m_identifier)
+        return;
+
+    CFPreferencesSetAppValue(makeKey(m_identifier, key).get(), value ? kCFBooleanTrue : kCFBooleanFalse, kCFPreferencesCurrentApplication);
 }
 
-void WebPreferences::platformUpdateUInt32ValueForKey(const String&, uint32_t)
+void WebPreferences::platformUpdateUInt32ValueForKey(const String& key, uint32_t value)
 {
+    if (!m_identifier)
+        return;
+
+    RetainPtr<CFNumberRef> number(AdoptCF, CFNumberCreate(0, kCFNumberSInt32Type, &value));
+    CFPreferencesSetAppValue(makeKey(m_identifier, key).get(), number.get(), kCFPreferencesCurrentApplication);
 }
 
-void WebPreferences::platformUpdateDoubleValueForKey(const String&, double)
+void WebPreferences::platformUpdateDoubleValueForKey(const String& key, double value)
 {
+    if (!m_identifier)
+        return;
+
+    RetainPtr<CFNumberRef> number(AdoptCF, CFNumberCreate(0, kCFNumberDoubleType, &value));
+    CFPreferencesSetAppValue(makeKey(m_identifier, key).get(), number.get(), kCFPreferencesCurrentApplication);
 }
 
 } // namespace WebKit
