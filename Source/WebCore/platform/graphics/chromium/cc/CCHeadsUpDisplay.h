@@ -27,7 +27,9 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "Font.h"
 #include "LayerRendererChromium.h"
+
 
 namespace WebCore {
 
@@ -59,17 +61,26 @@ public:
 private:
     explicit CCHeadsUpDisplay(LayerRendererChromium* owner);
     void drawHudContents(GraphicsContext*, const IntSize& hudSize);
+    void drawFPSCounter(GraphicsContext*, int top, int height);
+    void drawPlatformLayerTree(GraphicsContext*, int top);
+
 
     int m_currentFrameNumber;
+
+    double m_filteredFrameTime;
 
     OwnPtr<LayerTexture> m_hudTexture;
 
     LayerRendererChromium* m_layerRenderer;
 
-    double m_presentTimeHistoryInSec[2];
+    static const int kPresentHistorySize = 64;
+    double m_presentTimeHistoryInSec[kPresentHistorySize];
 
     bool m_showFPSCounter;
     bool m_showPlatformLayerTree;
+
+    OwnPtr<Font> m_smallFont;
+    OwnPtr<Font> m_mediumFont;
 };
 
 }

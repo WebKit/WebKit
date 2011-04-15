@@ -1,3 +1,18 @@
+2011-04-14  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Add lowpass filter and graph to fps indicator
+        https://bugs.webkit.org/show_bug.cgi?id=58186
+
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::CCHeadsUpDisplay):
+        (WebCore::CCHeadsUpDisplay::drawHudContents):
+        (WebCore::CCHeadsUpDisplay::drawFPSCounter):
+        (WebCore::CCHeadsUpDisplay::drawPlatformLayerTree):
+        (WebCore::CCHeadsUpDisplay::onPresent):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.h:
+
 2011-04-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele Peterson.

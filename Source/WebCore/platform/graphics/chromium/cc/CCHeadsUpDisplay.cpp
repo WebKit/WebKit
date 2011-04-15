@@ -44,13 +44,30 @@ namespace WebCore {
 using namespace std;
 
 CCHeadsUpDisplay::CCHeadsUpDisplay(LayerRendererChromium* owner)
-    : m_currentFrameNumber(0)
+    : m_currentFrameNumber(1)
+    , m_filteredFrameTime(0)
     , m_layerRenderer(owner)
     , m_showFPSCounter(false)
     , m_showPlatformLayerTree(false)
 {
     m_presentTimeHistoryInSec[0] = currentTime();
     m_presentTimeHistoryInSec[1] = m_presentTimeHistoryInSec[0];
+    for (int i = 2; i < kPresentHistorySize; i++)
+        m_presentTimeHistoryInSec[i] = 0;
+
+    FontDescription mediumFontDesc;
+    mediumFontDesc.setGenericFamily(FontDescription::MonospaceFamily);
+    mediumFontDesc.setComputedSize(20);
+
+    m_mediumFont = adoptPtr(new Font(mediumFontDesc, 0, 0));
+    m_mediumFont->update(0);
+
+    FontDescription smallFontDesc;
+    smallFontDesc.setGenericFamily(FontDescription::MonospaceFamily);
+    smallFontDesc.setComputedSize(10);
+
+    m_smallFont = adoptPtr(new Font(smallFontDesc, 0, 0));
+    m_smallFont->update(0);
 }
 
 CCHeadsUpDisplay::~CCHeadsUpDisplay()
@@ -111,59 +128,98 @@ void CCHeadsUpDisplay::draw()
 
 void CCHeadsUpDisplay::drawHudContents(GraphicsContext* ctx, const IntSize& hudSize)
 {
-    FontDescription mediumFontDesc;
-    mediumFontDesc.setGenericFamily(FontDescription::MonospaceFamily);
-    mediumFontDesc.setComputedSize(12);
-    Font mediumFont(mediumFontDesc, 0, 0);
-    mediumFont.update(0);
-
-    FontDescription smallFontDesc;
-    smallFontDesc.setGenericFamily(FontDescription::MonospaceFamily);
-    smallFontDesc.setComputedSize(10);
-    Font smallFont(smallFontDesc, 0, 0);
-    smallFont.update(0);
-
-    // We haven't finished rendering yet, so we don't now the "current" present time.
-    // So, consider the *last two* present times and use those as our present time.
-    double secForLastFrame = m_presentTimeHistoryInSec[(m_currentFrameNumber - 1) % 2] - m_presentTimeHistoryInSec[m_currentFrameNumber % 2];
-
-    int y = 14;
-
     if (m_showPlatformLayerTree) {
         ctx->setFillColor(Color(0, 0, 0, 192), ColorSpaceDeviceRGB);
         ctx->fillRect(FloatRect(0, 0, hudSize.width(), hudSize.height()));
     }
 
-    // Draw fps.
-    String topLine = "";
-    if (secForLastFrame > 0 && m_showFPSCounter) {
-        double fps = 1.0 / secForLastFrame;
-        topLine += String::format("FPS: %3.1f", fps);
-    }
-    if (topLine.length()) {
-        ctx->setFillColor(Color(0, 0, 0, 255), ColorSpaceDeviceRGB);
-        TextRun run(topLine);
-        ctx->fillRect(FloatRect(2, 2, mediumFont.width(run) + 2.0f, 15));
+    int fpsCounterHeight = m_mediumFont->fontMetrics().floatHeight() + 2;
+    int fpsCounterTop = 2;
+    int platformLayerTreeTop;
+    if (m_showFPSCounter)
+        platformLayerTreeTop = fpsCounterTop + fpsCounterHeight + 2;
+    else
+        platformLayerTreeTop = 0;
+
+    if (m_showFPSCounter)
+        drawFPSCounter(ctx, fpsCounterTop, fpsCounterHeight);
+
+    if (m_showPlatformLayerTree)
+        drawPlatformLayerTree(ctx, platformLayerTreeTop);
+}
+
+void CCHeadsUpDisplay::drawFPSCounter(GraphicsContext* ctx, int top, int height)
+{
+    // Note that since we haven't finished the current frame, the FPS counter
+    // actually reports the last frame's time.
+    double secForLastFrame = m_presentTimeHistoryInSec[(m_currentFrameNumber + kPresentHistorySize - 1) % kPresentHistorySize] -
+                             m_presentTimeHistoryInSec[(m_currentFrameNumber + kPresentHistorySize - 2) % kPresentHistorySize];
+
+    // Filter the frame times to avoid spikes.
+    const float alpha = 0.1;
+    if (!m_filteredFrameTime) {
+        if (m_currentFrameNumber == 2)
+            m_filteredFrameTime = secForLastFrame;
+    } else
+        m_filteredFrameTime = ((1.0 - alpha) * m_filteredFrameTime) + (alpha * secForLastFrame);
+
+    // Create & measure FPS text.
+    String text(String::format("FPS: %5.1f", 1.0 / m_filteredFrameTime));
+    TextRun run(text);
+    float textWidth = m_mediumFont->width(run) + 2.0f;
+    float graphWidth = kPresentHistorySize;
+
+    // Draw background.
+    ctx->setFillColor(Color(0, 0, 0, 255), ColorSpaceDeviceRGB);
+    ctx->fillRect(FloatRect(2, top, textWidth + graphWidth, height));
+
+    // Draw FPS text.
+    if (m_filteredFrameTime) {
         ctx->setFillColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
-        ctx->drawText(mediumFont, run, IntPoint(3, y));
-        y = 26;
+        ctx->drawText(*m_mediumFont, run, IntPoint(3, top + height - 6));
     }
 
-    // Draw layer tree, if enabled.
-    if (m_showPlatformLayerTree) {
-        ctx->setFillColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
-        Vector<String> lines;
-        m_layerRenderer->layerTreeAsText().split('\n', lines);
-        for (size_t i = 0; i < lines.size(); ++i) {
-            ctx->drawText(smallFont, TextRun(lines[i]), IntPoint(2, y));
-            y += 12;
-        }
+    // Draw FPS graph.
+    const double loFPS = 0.0;
+    const double hiFPS = 120.0;
+    ctx->setStrokeStyle(SolidStroke);
+    ctx->setStrokeColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
+    int graphLeft = static_cast<int>(textWidth + 3);
+    IntPoint prev(-1, 0);
+    int x = 0;
+    double h = static_cast<double>(height - 2);
+    for (int i = m_currentFrameNumber % kPresentHistorySize; i != (m_currentFrameNumber - 1) % kPresentHistorySize; i = (i + 1) % kPresentHistorySize) {
+        int j = (i + 1) % kPresentHistorySize;
+        double fps = 1.0 / (m_presentTimeHistoryInSec[j] - m_presentTimeHistoryInSec[i]);
+        double p = 1 - ((fps - loFPS) / (hiFPS - loFPS));
+        if (p < 0)
+            p = 0;
+        if (p > 1)
+            p = 1;
+        IntPoint cur(graphLeft + x, 1 + top + p*h);
+        if (prev.x() != -1)
+            ctx->drawLine(prev, cur);
+        prev = cur;
+        x += 1;
+    }
+}
+
+void CCHeadsUpDisplay::drawPlatformLayerTree(GraphicsContext* ctx, int top)
+{
+    float smallFontHeight = m_smallFont->fontMetrics().floatHeight();
+    int y = top + smallFontHeight - 4;
+    ctx->setFillColor(Color(255, 0, 0), ColorSpaceDeviceRGB);
+    Vector<String> lines;
+    m_layerRenderer->layerTreeAsText().split('\n', lines);
+    for (size_t i = 0; i < lines.size(); ++i) {
+        ctx->drawText(*m_smallFont, TextRun(lines[i]), IntPoint(2, y));
+        y += smallFontHeight;
     }
 }
 
 void CCHeadsUpDisplay::onPresent()
 {
-    m_presentTimeHistoryInSec[m_currentFrameNumber % 2] = currentTime();
+    m_presentTimeHistoryInSec[m_currentFrameNumber % kPresentHistorySize] = currentTime();
     m_currentFrameNumber += 1;
 }
 
