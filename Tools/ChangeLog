@@ -1,3 +1,16 @@
+2011-04-15  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mihai Parparita.
+
+        queues.webkit.org should display when a bot last rebooted
+        https://bugs.webkit.org/show_bug.cgi?id=58562
+
+        There is more repeated code here than I would like.  I fear
+        my django-fu isn't quite up to snuff.
+
+        * QueueStatusServer/handlers/queuestatus.py:
+        * QueueStatusServer/templates/queuestatus.html:
+
 2011-04-14  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by Adam Barth.
