@@ -1,3 +1,11 @@
+2011-04-15  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK platform results for
+        fast/css/font-face-repeated-url.html
+
+        * fast/css/font-face-repeated-url-expected.txt:
+        * platform/gtk/fast/css/font-face-repeated-url-expected.txt: Copied from LayoutTests/fast/css/font-face-repeated-url-expected.txt.
+
 2011-04-15  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed, rolling out r83949.
