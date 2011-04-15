@@ -56,12 +56,14 @@ bool JSFunction::isHostFunctionNonInline() const
     return isHostFunction();
 }
 
-JSFunction::JSFunction(VPtrStealingHackType)
-    : Base(VPtrStealingHack)
+JSFunction::JSFunction(NonNullPassRefPtr<Structure> structure, VPtrHackExecutable* executable)
+    : Base(structure)
 {
+    ASSERT(inherits(&s_info));
+    m_executable.setWithoutWriteBarrier(executable);
 }
 
-JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, int length, const Identifier& name, NativeExecutable* thunk)
+JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, NativeExecutable* thunk)
     : Base(globalObject, structure)
     , m_executable(exec->globalData(), this, thunk)
     , m_scopeChain(exec->globalData(), this, globalObject->globalScopeChain())
@@ -71,7 +73,7 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure*
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
 
-JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, int length, const Identifier& name, NativeFunction func)
+JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, int length, const Identifier& name, NativeFunction func)
     : Base(globalObject, structure)
     , m_scopeChain(exec->globalData(), this, globalObject->globalScopeChain())
 {

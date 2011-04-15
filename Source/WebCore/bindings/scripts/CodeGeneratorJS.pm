@@ -682,11 +682,11 @@ sub GenerateHeader
 
     # Constructor
     if ($interfaceName eq "DOMWindow") {
-        push(@headerContent, "    $className(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<$implType>, JSDOMWindowShell*);\n");
+        push(@headerContent, "    $className(NonNullPassRefPtr<JSC::Structure>, PassRefPtr<$implType>, JSDOMWindowShell*);\n");
     } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
-        push(@headerContent, "    $className(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<$implType>);\n");
+        push(@headerContent, "    $className(NonNullPassRefPtr<JSC::Structure>, PassRefPtr<$implType>);\n");
     } else {
-        push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<$implType>);\n");
+        push(@headerContent, "    $className(NonNullPassRefPtr<JSC::Structure>, JSDOMGlobalObject*, PassRefPtr<$implType>);\n");
     }
 
     # Prototype
@@ -746,7 +746,7 @@ sub GenerateHeader
         $structureFlags{"JSC::NeedsThisConversion"} = 1;
     }
     push(@headerContent,
-        "    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)\n" .
+        "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)\n" .
         "    {\n" .
         "        return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n" .
         "    }\n\n");
@@ -958,7 +958,7 @@ sub GenerateHeader
         $structureFlags{"JSC::OverridesMarkChildren"} = 1;
     }
     push(@headerContent,
-        "    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)\n" .
+        "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)\n" .
         "    {\n" .
         "        return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n" .
         "    }\n");
@@ -970,7 +970,7 @@ sub GenerateHeader
     # Custom defineGetter function
     push(@headerContent, "    virtual void defineGetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* getterFunction, unsigned attributes);\n") if $dataNode->extendedAttributes->{"CustomPrototypeDefineGetter"};
 
-    push(@headerContent, "    ${className}Prototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure) : JSC::JSObjectWithGlobalObject(globalData, globalObject, structure) { }\n");
+    push(@headerContent, "    ${className}Prototype(JSC::JSGlobalObject* globalObject, NonNullPassRefPtr<JSC::Structure> structure) : JSC::JSObjectWithGlobalObject(globalObject, structure) { }\n");
 
     # structure flags
     push(@headerContent, "protected:\n");
@@ -1407,14 +1407,14 @@ sub GenerateImplementation
     # Constructor
     if ($interfaceName eq "DOMWindow") {
         AddIncludesForType("JSDOMWindowShell");
-        push(@implContent, "${className}::$className(JSGlobalData& globalData, Structure* structure, PassRefPtr<$implType> impl, JSDOMWindowShell* shell)\n");
-        push(@implContent, "    : $parentClassName(globalData, structure, impl, shell)\n");
+        push(@implContent, "${className}::$className(NonNullPassRefPtr<Structure> structure, PassRefPtr<$implType> impl, JSDOMWindowShell* shell)\n");
+        push(@implContent, "    : $parentClassName(structure, impl, shell)\n");
     } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
         AddIncludesForType($interfaceName);
-        push(@implContent, "${className}::$className(JSGlobalData& globalData, Structure* structure, PassRefPtr<$implType> impl)\n");
-        push(@implContent, "    : $parentClassName(globalData, structure, impl)\n");
+        push(@implContent, "${className}::$className(NonNullPassRefPtr<Structure> structure, PassRefPtr<$implType> impl)\n");
+        push(@implContent, "    : $parentClassName(structure, impl)\n");
     } else {
-        push(@implContent, "${className}::$className(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<$implType> impl)\n");
+        push(@implContent, "${className}::$className(NonNullPassRefPtr<Structure> structure, JSDOMGlobalObject* globalObject, PassRefPtr<$implType> impl)\n");
         if ($hasParent) {
             push(@implContent, "    : $parentClassName(structure, globalObject, impl)\n");
         } else {
@@ -1442,9 +1442,9 @@ sub GenerateImplementation
         push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
-            push(@implContent, "    return new (exec) ${className}Prototype(exec->globalData(), globalObject, ${className}Prototype::createStructure(exec->globalData(), ${parentClassName}Prototype::self(exec, globalObject)));\n");
+            push(@implContent, "    return new (exec) ${className}Prototype(globalObject, ${className}Prototype::createStructure(exec->globalData(), ${parentClassName}Prototype::self(exec, globalObject)));\n");
         } else {
-            push(@implContent, "    return new (exec) ${className}Prototype(exec->globalData(), globalObject, ${className}Prototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));\n");
+            push(@implContent, "    return new (exec) ${className}Prototype(globalObject, ${className}Prototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));\n");
         }
         push(@implContent, "}\n\n");
     }
@@ -2872,7 +2872,7 @@ sub GenerateConstructorDeclaration
     push(@$outputArray, "    virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);\n");
     push(@$outputArray, "    static const JSC::ClassInfo s_info;\n");
 
-    push(@$outputArray, "    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)\n");
+    push(@$outputArray, "    static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)\n");
     push(@$outputArray, "    {\n");
     push(@$outputArray, "        return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);\n");
     push(@$outputArray, "    }\n");

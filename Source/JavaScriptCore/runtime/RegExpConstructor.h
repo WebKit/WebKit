@@ -57,9 +57,9 @@ namespace JSC {
 
     class RegExpConstructor : public InternalFunction {
     public:
-        RegExpConstructor(ExecState*, JSGlobalObject*, Structure*, RegExpPrototype*);
+        RegExpConstructor(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, RegExpPrototype*);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }

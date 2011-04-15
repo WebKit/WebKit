@@ -30,8 +30,8 @@
 
 namespace JSC {
 
-JSObjectWithGlobalObject::JSObjectWithGlobalObject(JSGlobalObject* globalObject, Structure* structure)
-    : JSNonFinalObject(globalObject->globalData(), structure)
+JSObjectWithGlobalObject::JSObjectWithGlobalObject(JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure)
+    : JSNonFinalObject(structure)
 {
     COMPILE_ASSERT(AnonymousSlotCount == 1, AnonymousSlotCount_must_be_one);
     ASSERT(!globalObject || globalObject->isGlobalObject());
@@ -39,17 +39,6 @@ JSObjectWithGlobalObject::JSObjectWithGlobalObject(JSGlobalObject* globalObject,
         clearAnonymousValue(GlobalObjectSlot);
     else
         putAnonymousValue(globalObject->globalData(), GlobalObjectSlot, globalObject);
-}
-
-JSObjectWithGlobalObject::JSObjectWithGlobalObject(JSGlobalData& globalData, JSGlobalObject* globalObject, Structure* structure)
-    : JSNonFinalObject(globalData, structure)
-{
-    COMPILE_ASSERT(AnonymousSlotCount == 1, AnonymousSlotCount_must_be_one);
-    ASSERT(!globalObject || globalObject->isGlobalObject());
-    if (!globalObject)
-        clearAnonymousValue(GlobalObjectSlot);
-    else
-        putAnonymousValue(globalData, GlobalObjectSlot, globalObject);
 }
 
 JSGlobalObject* JSObjectWithGlobalObject::globalObject() const

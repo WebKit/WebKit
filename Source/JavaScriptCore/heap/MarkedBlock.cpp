@@ -60,12 +60,14 @@ MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, JSGlobalData* 
 
     Structure* dummyMarkableCellStructure = globalData->dummyMarkableCellStructure.get();
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell)
-        new (&atoms()[i]) JSCell(*globalData, dummyMarkableCellStructure);
+        new (&atoms()[i]) JSCell(dummyMarkableCellStructure);
 }
 
 void MarkedBlock::sweep()
 {
+#if !ENABLE(JSC_ZOMBIES)
     Structure* dummyMarkableCellStructure = m_heap->globalData()->dummyMarkableCellStructure.get();
+#endif
 
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
         if (m_marks.get(i))
@@ -73,15 +75,15 @@ void MarkedBlock::sweep()
 
         JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[i]);
 #if ENABLE(JSC_ZOMBIES)
-        if (cell->structure() && cell->structure() != dummyMarkableCellStructure && !cell->isZombie()) {
+        if (!cell->isZombie()) {
             const ClassInfo* info = cell->classInfo();
             cell->~JSCell();
-            new (cell) JSZombie(*m_heap->globalData(), info, m_heap->globalData()->zombieStructure.get());
+            new (cell) JSZombie(info, JSZombie::leakedZombieStructure(*m_heap->globalData()));
             m_marks.set(i);
         }
 #else
         cell->~JSCell();
-        new (cell) JSCell(*m_heap->globalData(), dummyMarkableCellStructure);
+        new (cell) JSCell(dummyMarkableCellStructure);
 #endif
     }
 }

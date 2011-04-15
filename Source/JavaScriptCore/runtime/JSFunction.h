@@ -45,8 +45,8 @@ namespace JSC {
         typedef JSObjectWithGlobalObject Base;
 
     public:
-        JSFunction(ExecState*, JSGlobalObject*, Structure*, int length, const Identifier&, NativeFunction);
-        JSFunction(ExecState*, JSGlobalObject*, Structure*, int length, const Identifier&, NativeExecutable*);
+        JSFunction(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, int length, const Identifier&, NativeFunction);
+        JSFunction(ExecState*, JSGlobalObject*, NonNullPassRefPtr<Structure>, int length, const Identifier&, NativeExecutable*);
         JSFunction(ExecState*, FunctionExecutable*, ScopeChainNode*);
         virtual ~JSFunction();
 
@@ -73,7 +73,7 @@ namespace JSC {
 
         static JS_EXPORTDATA const ClassInfo s_info;
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype) 
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype) 
         { 
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info); 
         }
@@ -87,7 +87,7 @@ namespace JSC {
         const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesMarkChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
     private:
-        explicit JSFunction(VPtrStealingHackType);
+        JSFunction(NonNullPassRefPtr<Structure>, VPtrHackExecutable*);
 
         bool isHostFunctionNonInline() const;
 

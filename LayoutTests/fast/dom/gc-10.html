@@ -20,7 +20,6 @@ function test()
     if (window.GCController)
     {
         GCController.collect();
-        window.frames.myframe.location.reload(true);
         before = GCController.getJSObjectCount();
         
         window.frames.myframe.location.reload(true);

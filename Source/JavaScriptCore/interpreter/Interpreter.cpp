@@ -164,7 +164,7 @@ NEVER_INLINE bool Interpreter::resolveGlobal(CallFrame* callFrame, Instruction* 
     JSGlobalObject* globalObject = codeBlock->globalObject();
     ASSERT(globalObject->isGlobalObject());
     int property = vPC[2].u.operand;
-    Structure* structure = vPC[3].u.structure.get();
+    Structure* structure = vPC[3].u.structure;
     int offset = vPC[4].u.operand;
 
     if (structure == globalObject->structure()) {
@@ -177,7 +177,10 @@ NEVER_INLINE bool Interpreter::resolveGlobal(CallFrame* callFrame, Instruction* 
     if (globalObject->getPropertySlot(callFrame, ident, slot)) {
         JSValue result = slot.getValue(callFrame, ident);
         if (slot.isCacheableValue() && !globalObject->structure()->isUncacheableDictionary() && slot.slotBase() == globalObject) {
-            vPC[3].u.structure.set(callFrame->globalData(), codeBlock->ownerExecutable(), globalObject->structure());
+            if (vPC[3].u.structure)
+                vPC[3].u.structure->deref();
+            globalObject->structure()->ref();
+            vPC[3] = globalObject->structure();
             vPC[4] = slot.cachedOffset();
             callFrame->uncheckedR(dst) = JSValue(result);
             return true;
@@ -201,7 +204,7 @@ NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instru
     JSGlobalObject* globalObject = codeBlock->globalObject();
     ASSERT(globalObject->isGlobalObject());
     int property = vPC[2].u.operand;
-    Structure* structure = vPC[3].u.structure.get();
+    Structure* structure = vPC[3].u.structure;
     int offset = vPC[4].u.operand;
     int skip = vPC[5].u.operand;
     
@@ -252,7 +255,10 @@ NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instru
     if (globalObject->getPropertySlot(callFrame, ident, slot)) {
         JSValue result = slot.getValue(callFrame, ident);
         if (slot.isCacheableValue() && !globalObject->structure()->isUncacheableDictionary() && slot.slotBase() == globalObject) {
-            vPC[3].u.structure.set(callFrame->globalData(), codeBlock->ownerExecutable(), globalObject->structure());
+            if (vPC[3].u.structure)
+                vPC[3].u.structure->deref();
+            globalObject->structure()->ref();
+            vPC[3] = globalObject->structure();
             vPC[4] = slot.cachedOffset();
             ASSERT(result);
             callFrame->uncheckedR(dst) = JSValue(result);
@@ -1219,11 +1225,11 @@ NEVER_INLINE void Interpreter::tryCachePutByID(CallFrame* callFrame, CodeBlock* 
     }
 
     // Cache miss: record Structure to compare against next time.
-    Structure* lastStructure = vPC[4].u.structure.get();
+    Structure* lastStructure = vPC[4].u.structure;
     if (structure != lastStructure) {
         // First miss: record Structure to compare against next time.
         if (!lastStructure) {
-            vPC[4].u.structure.set(callFrame->globalData(), codeBlock->ownerExecutable(), structure);
+            vPC[4] = structure;
             return;
         }
 
@@ -1249,23 +1255,24 @@ NEVER_INLINE void Interpreter::tryCachePutByID(CallFrame* callFrame, CodeBlock* 
 
         // put_by_id_transition checks the prototype chain for setters.
         normalizePrototypeChain(callFrame, baseCell);
-        JSCell* owner = codeBlock->ownerExecutable();
-        JSGlobalData& globalData = callFrame->globalData();
+
         vPC[0] = getOpcode(op_put_by_id_transition);
-        vPC[4].u.structure.set(globalData, owner, structure->previousID());
-        vPC[5].u.structure.set(globalData, owner, structure);
-        vPC[6].u.structureChain.set(callFrame->globalData(), codeBlock->ownerExecutable(), structure->prototypeChain(callFrame));
-        ASSERT(vPC[6].u.structureChain);
+        vPC[4] = structure->previousID();
+        vPC[5] = structure;
+        vPC[6] = Instruction(callFrame->globalData(), codeBlock->ownerExecutable(), structure->prototypeChain(callFrame));
         vPC[7] = slot.cachedOffset();
+        codeBlock->refStructures(vPC);
         return;
     }
 
     vPC[0] = getOpcode(op_put_by_id_replace);
     vPC[5] = slot.cachedOffset();
+    codeBlock->refStructures(vPC);
 }
 
-NEVER_INLINE void Interpreter::uncachePutByID(CodeBlock*, Instruction* vPC)
+NEVER_INLINE void Interpreter::uncachePutByID(CodeBlock* codeBlock, Instruction* vPC)
 {
+    codeBlock->derefStructures(vPC);
     vPC[0] = getOpcode(op_put_by_id);
     vPC[4] = 0;
 }
@@ -1307,11 +1314,11 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
     }
 
     // Cache miss
-    Structure* lastStructure = vPC[4].u.structure.get();
+    Structure* lastStructure = vPC[4].u.structure;
     if (structure != lastStructure) {
         // First miss: record Structure to compare against next time.
         if (!lastStructure) {
-            vPC[4].u.structure.set(callFrame->globalData(), codeBlock->ownerExecutable(), structure);
+            vPC[4] = structure;
             return;
         }
 
@@ -1337,6 +1344,8 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
             vPC[5] = slot.cachedOffset();
             break;
         }
+
+        codeBlock->refStructures(vPC);
         return;
     }
 
@@ -1374,7 +1383,9 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
             vPC[6] = offset;
             break;
         }
-        vPC[5].u.structure.set(callFrame->globalData(), codeBlock->ownerExecutable(), baseObject->structure());
+        vPC[5] = baseObject->structure();
+
+        codeBlock->refStructures(vPC);
         return;
     }
 
@@ -1400,13 +1411,15 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
         vPC[7] = offset;
         break;
     }
-    vPC[4].u.structure.set(callFrame->globalData(), codeBlock->ownerExecutable(), structure);
-    vPC[5].u.structureChain.set(callFrame->globalData(), codeBlock->ownerExecutable(), structure->prototypeChain(callFrame));
+    vPC[4] = structure;
+    vPC[5] = Instruction(callFrame->globalData(), codeBlock->ownerExecutable(), structure->prototypeChain(callFrame));
     vPC[6] = count;
+    codeBlock->refStructures(vPC);
 }
 
-NEVER_INLINE void Interpreter::uncacheGetByID(CodeBlock*, Instruction* vPC)
+NEVER_INLINE void Interpreter::uncacheGetByID(CodeBlock* codeBlock, Instruction* vPC)
 {
+    codeBlock->derefStructures(vPC);
     vPC[0] = getOpcode(op_get_by_id);
     vPC[4] = 0;
 }
@@ -2515,7 +2528,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
         if (LIKELY(baseValue.isCell())) {
             JSCell* baseCell = baseValue.asCell();
-            Structure* structure = vPC[4].u.structure.get();
+            Structure* structure = vPC[4].u.structure;
 
             if (LIKELY(baseCell->structure() == structure)) {
                 ASSERT(baseCell->isObject());
@@ -2546,12 +2559,12 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
         if (LIKELY(baseValue.isCell())) {
             JSCell* baseCell = baseValue.asCell();
-            Structure* structure = vPC[4].u.structure.get();
+            Structure* structure = vPC[4].u.structure;
 
             if (LIKELY(baseCell->structure() == structure)) {
                 ASSERT(structure->prototypeForLookup(callFrame).isObject());
                 JSObject* protoObject = asObject(structure->prototypeForLookup(callFrame));
-                Structure* prototypeStructure = vPC[5].u.structure.get();
+                Structure* prototypeStructure = vPC[5].u.structure;
 
                 if (LIKELY(protoObject->structure() == prototypeStructure)) {
                     int dst = vPC[1].u.operand;
@@ -2585,12 +2598,12 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         
         if (LIKELY(baseValue.isCell())) {
             JSCell* baseCell = baseValue.asCell();
-            Structure* structure = vPC[4].u.structure.get();
+            Structure* structure = vPC[4].u.structure;
             
             if (LIKELY(baseCell->structure() == structure)) {
                 ASSERT(structure->prototypeForLookup(callFrame).isObject());
                 JSObject* protoObject = asObject(structure->prototypeForLookup(callFrame));
-                Structure* prototypeStructure = vPC[5].u.structure.get();
+                Structure* prototypeStructure = vPC[5].u.structure;
                 
                 if (LIKELY(protoObject->structure() == prototypeStructure)) {
                     int dst = vPC[1].u.operand;
@@ -2630,12 +2643,12 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         
         if (LIKELY(baseValue.isCell())) {
             JSCell* baseCell = baseValue.asCell();
-            Structure* structure = vPC[4].u.structure.get();
+            Structure* structure = vPC[4].u.structure;
             
             if (LIKELY(baseCell->structure() == structure)) {
                 ASSERT(structure->prototypeForLookup(callFrame).isObject());
                 JSObject* protoObject = asObject(structure->prototypeForLookup(callFrame));
-                Structure* prototypeStructure = vPC[5].u.structure.get();
+                Structure* prototypeStructure = vPC[5].u.structure;
                 
                 if (LIKELY(protoObject->structure() == prototypeStructure)) {
                     int dst = vPC[1].u.operand;
@@ -2699,9 +2712,6 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         vPC += OPCODE_LENGTH(op_get_by_id_proto_list);
         NEXT_INSTRUCTION();
     }
-#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
-    goto *(&&skip_get_by_id_chain);
-#endif
     DEFINE_OPCODE(op_get_by_id_chain) {
         /* op_get_by_id_chain dst(r) base(r) property(id) structure(sID) structureChain(chain) count(n) offset(n)
 
@@ -2714,12 +2724,12 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
         if (LIKELY(baseValue.isCell())) {
             JSCell* baseCell = baseValue.asCell();
-            Structure* structure = vPC[4].u.structure.get();
+            Structure* structure = vPC[4].u.structure;
 
             if (LIKELY(baseCell->structure() == structure)) {
-                WriteBarrier<Structure>* it = vPC[5].u.structureChain->head();
+                RefPtr<Structure>* it = vPC[5].u.structureChain->head();
                 size_t count = vPC[6].u.operand;
-                WriteBarrier<Structure>* end = it + count;
+                RefPtr<Structure>* end = it + count;
 
                 while (true) {
                     JSObject* baseObject = asObject(baseCell->structure()->prototypeForLookup(callFrame));
@@ -2749,7 +2759,6 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         NEXT_INSTRUCTION();
     }
 #if USE(GCC_COMPUTED_GOTO_WORKAROUND)
-    skip_get_by_id_chain:
     goto *(&&skip_id_getter_self);
 #endif
     DEFINE_OPCODE(op_get_by_id_getter_self) {
@@ -2764,7 +2773,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         
         if (LIKELY(baseValue.isCell())) {
             JSCell* baseCell = baseValue.asCell();
-            Structure* structure = vPC[4].u.structure.get();
+            Structure* structure = vPC[4].u.structure;
             
             if (LIKELY(baseCell->structure() == structure)) {
                 ASSERT(baseCell->isObject());
@@ -2807,7 +2816,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         
         if (LIKELY(baseValue.isCell())) {
             JSCell* baseCell = baseValue.asCell();
-            Structure* structure = vPC[4].u.structure.get();
+            Structure* structure = vPC[4].u.structure;
             
             if (LIKELY(baseCell->structure() == structure)) {
                 ASSERT(baseCell->isObject());
@@ -2864,12 +2873,12 @@ skip_id_custom_self:
         
         if (LIKELY(baseValue.isCell())) {
             JSCell* baseCell = baseValue.asCell();
-            Structure* structure = vPC[4].u.structure.get();
+            Structure* structure = vPC[4].u.structure;
             
             if (LIKELY(baseCell->structure() == structure)) {
-                WriteBarrier<Structure>* it = vPC[5].u.structureChain->head();
+                RefPtr<Structure>* it = vPC[5].u.structureChain->head();
                 size_t count = vPC[6].u.operand;
-                WriteBarrier<Structure>* end = it + count;
+                RefPtr<Structure>* end = it + count;
                 
                 while (true) {
                     JSObject* baseObject = asObject(baseCell->structure()->prototypeForLookup(callFrame));
@@ -2919,12 +2928,12 @@ skip_id_custom_self:
         
         if (LIKELY(baseValue.isCell())) {
             JSCell* baseCell = baseValue.asCell();
-            Structure* structure = vPC[4].u.structure.get();
+            Structure* structure = vPC[4].u.structure;
             
             if (LIKELY(baseCell->structure() == structure)) {
-                WriteBarrier<Structure>* it = vPC[5].u.structureChain->head();
+                RefPtr<Structure>* it = vPC[5].u.structureChain->head();
                 size_t count = vPC[6].u.operand;
-                WriteBarrier<Structure>* end = it + count;
+                RefPtr<Structure>* end = it + count;
                 
                 while (true) {
                     JSObject* baseObject = asObject(baseCell->structure()->prototypeForLookup(callFrame));
@@ -2955,7 +2964,6 @@ skip_id_custom_self:
     }
 #if USE(GCC_COMPUTED_GOTO_WORKAROUND)
     skip_id_custom_chain:
-    goto *(&&skip_get_array_length);
 #endif
     DEFINE_OPCODE(op_get_array_length) {
         /* op_get_array_length dst(r) base(r) property(id) nop(sID) nop(n) nop(n) nop(n)
@@ -2977,10 +2985,6 @@ skip_id_custom_self:
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
-    skip_get_array_length:
-    goto *(&&skip_get_string_length);
-#endif
     DEFINE_OPCODE(op_get_string_length) {
         /* op_get_string_length dst(r) base(r) property(id) nop(sID) nop(n) nop(n) nop(n)
 
@@ -3001,10 +3005,6 @@ skip_id_custom_self:
         uncacheGetByID(codeBlock, vPC);
         NEXT_INSTRUCTION();
     }
-#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
-    skip_get_string_length:
-    goto *(&&skip_put_by_id);
-#endif
     DEFINE_OPCODE(op_put_by_id) {
         /* put_by_id base(r) property(id) value(r) nop(n) nop(n) nop(n) nop(n) direct(b)
 
@@ -3038,9 +3038,6 @@ skip_id_custom_self:
         vPC += OPCODE_LENGTH(op_put_by_id);
         NEXT_INSTRUCTION();
     }
-#if USE(GCC_COMPUTED_GOTO_WORKAROUND)
-      skip_put_by_id:
-#endif
     DEFINE_OPCODE(op_put_by_id_transition) {
         /* op_put_by_id_transition base(r) property(id) value(r) oldStructure(sID) newStructure(sID) structureChain(chain) offset(n) direct(b)
          
@@ -3057,8 +3054,8 @@ skip_id_custom_self:
         
         if (LIKELY(baseValue.isCell())) {
             JSCell* baseCell = baseValue.asCell();
-            Structure* oldStructure = vPC[4].u.structure.get();
-            Structure* newStructure = vPC[5].u.structure.get();
+            Structure* oldStructure = vPC[4].u.structure;
+            Structure* newStructure = vPC[5].u.structure;
             
             if (LIKELY(baseCell->structure() == oldStructure)) {
                 ASSERT(baseCell->isObject());
@@ -3066,7 +3063,7 @@ skip_id_custom_self:
                 int direct = vPC[8].u.operand;
                 
                 if (!direct) {
-                    WriteBarrier<Structure>* it = vPC[6].u.structureChain->head();
+                    RefPtr<Structure>* it = vPC[6].u.structureChain->head();
 
                     JSValue proto = baseObject->structure()->prototypeForLookup(callFrame);
                     while (!proto.isNull()) {
@@ -3078,11 +3075,11 @@ skip_id_custom_self:
                         proto = asObject(proto)->structure()->prototypeForLookup(callFrame);
                     }
                 }
-                baseObject->transitionTo(*globalData, newStructure);
+                baseObject->transitionTo(newStructure);
 
                 int value = vPC[3].u.operand;
                 unsigned offset = vPC[7].u.operand;
-                ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(*globalData, codeBlock->identifier(vPC[2].u.operand))) == offset);
+                ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(callFrame->globalData(), codeBlock->identifier(vPC[2].u.operand))) == offset);
                 baseObject->putDirectOffset(callFrame->globalData(), offset, callFrame->r(value).jsValue());
 
                 vPC += OPCODE_LENGTH(op_put_by_id_transition);
@@ -3109,7 +3106,7 @@ skip_id_custom_self:
 
         if (LIKELY(baseValue.isCell())) {
             JSCell* baseCell = baseValue.asCell();
-            Structure* structure = vPC[4].u.structure.get();
+            Structure* structure = vPC[4].u.structure;
 
             if (LIKELY(baseCell->structure() == structure)) {
                 ASSERT(baseCell->isObject());
@@ -3117,7 +3114,7 @@ skip_id_custom_self:
                 int value = vPC[3].u.operand;
                 unsigned offset = vPC[5].u.operand;
                 
-                ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(*globalData, codeBlock->identifier(vPC[2].u.operand))) == offset);
+                ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(callFrame->globalData(), codeBlock->identifier(vPC[2].u.operand))) == offset);
                 baseObject->putDirectOffset(callFrame->globalData(), offset, callFrame->r(value).jsValue());
 
                 vPC += OPCODE_LENGTH(op_put_by_id_replace);

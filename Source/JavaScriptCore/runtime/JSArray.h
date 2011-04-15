@@ -61,11 +61,12 @@ namespace JSC {
         friend class Walker;
 
     public:
+        enum VPtrStealingHackType { VPtrStealingHack };
         JSArray(VPtrStealingHackType);
 
-        explicit JSArray(JSGlobalData&, Structure*);
-        JSArray(JSGlobalData&, Structure*, unsigned initialLength, ArrayCreationMode);
-        JSArray(JSGlobalData&, Structure*, const ArgList& initialValues);
+        explicit JSArray(NonNullPassRefPtr<Structure>);
+        JSArray(NonNullPassRefPtr<Structure>, unsigned initialLength, ArrayCreationMode);
+        JSArray(JSGlobalData&, NonNullPassRefPtr<Structure>, const ArgList& initialValues);
         virtual ~JSArray();
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
@@ -123,7 +124,7 @@ namespace JSC {
         void fillArgList(ExecState*, MarkedArgumentBuffer&);
         void copyToRegisters(ExecState*, Register*, uint32_t);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }

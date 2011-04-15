@@ -29,11 +29,9 @@
 #include "Assertions.h"
 #include "Handle.h"
 #include "HandleHeap.h"
+#include "JSGlobalData.h"
 
 namespace JSC {
-
-class JSGlobalData;
-HandleSlot allocateGlobalHandle(JSGlobalData&);
 
 // A strongly referenced handle that prevents the object it points to from being garbage collected.
 template <typename T> class Strong : public Handle<T> {
@@ -49,13 +47,13 @@ public:
     }
     
     Strong(JSGlobalData& globalData, ExternalType value = ExternalType())
-        : Handle<T>(allocateGlobalHandle(globalData))
+        : Handle<T>(globalData.allocateGlobalHandle())
     {
         set(value);
     }
 
     Strong(JSGlobalData& globalData, Handle<T> handle)
-        : Handle<T>(allocateGlobalHandle(globalData))
+        : Handle<T>(globalData.allocateGlobalHandle())
     {
         set(handle.get());
     }
@@ -98,7 +96,7 @@ public:
     void set(JSGlobalData& globalData, ExternalType value)
     {
         if (!slot())
-            setSlot(allocateGlobalHandle(globalData));
+            setSlot(globalData.allocateGlobalHandle());
         set(value);
     }
 
@@ -139,6 +137,7 @@ private:
     {
         ASSERT(slot());
         JSValue value = HandleTypes<T>::toJSValue(externalType);
+        ASSERT(!value || !value.isCell() || Heap::isMarked(value.asCell()));
         HandleHeap::heapFor(slot())->writeBarrier(slot(), value);
         *slot() = value;
     }

@@ -39,11 +39,11 @@ namespace JSC {
     class JSNotAnObject : public JSNonFinalObject {
     public:
         JSNotAnObject(ExecState* exec)
-            : JSNonFinalObject(exec->globalData(), exec->globalData().notAnObjectStructure.get())
+            : JSNonFinalObject(exec->globalData().notAnObjectStructure)
         {
         }
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }

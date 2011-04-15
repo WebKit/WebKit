@@ -61,50 +61,65 @@ namespace JSC {
         struct PolymorphicStubInfo {
             bool isChain;
             PolymorphicAccessStructureListStubRoutineType stubRoutine;
-            WriteBarrier<Structure> base;
+            Structure* base;
             union {
-                WriteBarrierBase<Structure> proto;
+                Structure* proto;
                 WriteBarrierBase<StructureChain> chain;
             } u;
 
-            void set(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base)
+            void set(PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base)
             {
                 stubRoutine = _stubRoutine;
-                base.set(globalData, owner, _base);
-                u.proto.clear();
+                base = _base;
+                u.proto = 0;
                 isChain = false;
             }
             
-            void set(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, Structure* _proto)
+            void set(PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, Structure* _proto)
             {
                 stubRoutine = _stubRoutine;
-                base.set(globalData, owner, _base);
-                u.proto.set(globalData, owner, _proto);
+                base = _base;
+                u.proto = _proto;
                 isChain = false;
             }
             
             void set(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType _stubRoutine, Structure* _base, StructureChain* _chain)
             {
                 stubRoutine = _stubRoutine;
-                base.set(globalData, owner, _base);
+                base = _base;
                 u.chain.set(globalData, owner, _chain);
                 isChain = true;
             }
         } list[POLYMORPHIC_LIST_CACHE_SIZE];
         
-        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase)
+        PolymorphicAccessStructureList(PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase)
         {
-            list[0].set(globalData, owner, stubRoutine, firstBase);
+            list[0].set(stubRoutine, firstBase);
         }
 
-        PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, Structure* firstProto)
+        PolymorphicAccessStructureList(PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, Structure* firstProto)
         {
-            list[0].set(globalData, owner, stubRoutine, firstBase, firstProto);
+            list[0].set(stubRoutine, firstBase, firstProto);
         }
 
         PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PolymorphicAccessStructureListStubRoutineType stubRoutine, Structure* firstBase, StructureChain* firstChain)
         {
             list[0].set(globalData, owner, stubRoutine, firstBase, firstChain);
+        }
+
+        void derefStructures(int count)
+        {
+            for (int i = 0; i < count; ++i) {
+                PolymorphicStubInfo& info = list[i];
+
+                ASSERT(info.base);
+                info.base->deref();
+
+                if (info.u.proto) {
+                    if (!info.isChain)
+                        info.u.proto->deref();
+                }
+            }
         }
 
         void markAggregate(MarkStack& markStack, int count)
@@ -113,9 +128,6 @@ namespace JSC {
                 PolymorphicStubInfo& info = list[i];
                 ASSERT(info.base);
                 
-                markStack.append(&info.base);
-                if (info.u.proto && !info.isChain)
-                    markStack.append(&info.u.proto);
                 if (info.u.chain && info.isChain)
                     markStack.append(&info.u.chain);
             }
@@ -141,11 +153,7 @@ namespace JSC {
             u.operand = operand;
         }
 
-        Instruction(JSGlobalData& globalData, JSCell* owner, Structure* structure)
-        {
-            u.structure.clear();
-            u.structure.set(globalData, owner, structure);
-        }
+        Instruction(Structure* structure) { u.structure = structure; }
         Instruction(JSGlobalData& globalData, JSCell* owner, StructureChain* structureChain)
         {
             u.structureChain.clear();
@@ -162,7 +170,7 @@ namespace JSC {
         union {
             Opcode opcode;
             int operand;
-            WriteBarrierBase<Structure> structure;
+            Structure* structure;
             WriteBarrierBase<StructureChain> structureChain;
             WriteBarrierBase<JSCell> jsCell;
             PolymorphicAccessStructureList* polymorphicStructures;
@@ -171,7 +179,6 @@ namespace JSC {
         
     private:
         Instruction(StructureChain*);
-        Instruction(Structure*);
     };
 
 } // namespace JSC

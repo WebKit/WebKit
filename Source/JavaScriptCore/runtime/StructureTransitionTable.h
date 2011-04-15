@@ -27,8 +27,8 @@
 #define StructureTransitionTable_h
 
 #include "UString.h"
-#include "WeakGCMap.h"
 #include <wtf/HashFunctions.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -69,21 +69,7 @@ class StructureTransitionTable {
         static bool isDeletedValue(const TraitType& value) { return FirstTraits::isDeletedValue(value.first); }
     };
 
-    struct WeakGCMapFinalizerCallback {
-        static void* finalizerContextFor(Hash::Key)
-        {
-            return 0;
-        }
-
-        static inline Hash::Key keyForFinalizer(void* context, Structure* structure)
-        {
-            return keyForWeakGCMapFinalizer(context, structure);
-        }
-    };
-
-    typedef WeakGCMap<Hash::Key, Structure, WeakGCMapFinalizerCallback, Hash, HashTraits> TransitionMap;
-
-    static Hash::Key keyForWeakGCMapFinalizer(void* context, Structure*);
+    typedef HashMap<Hash::Key, Structure*, Hash, HashTraits> TransitionMap;
 
 public:
     StructureTransitionTable()
@@ -95,11 +81,9 @@ public:
     {
         if (!isUsingSingleSlot())
             delete map();
-        else
-            clearSingleTransition();
     }
 
-    inline void add(JSGlobalData&, Structure*);
+    inline void add(Structure*);
     inline void remove(Structure*);
     inline bool contains(StringImpl* rep, unsigned attributes) const;
     inline Structure* get(StringImpl* rep, unsigned attributes) const;
@@ -116,18 +100,9 @@ private:
         return reinterpret_cast<TransitionMap*>(m_data);
     }
 
-    HandleSlot slot() const
-    {
-        ASSERT(isUsingSingleSlot());
-        return reinterpret_cast<HandleSlot>(m_data & ~UsingSingleSlotFlag);
-    }
-
     void setMap(TransitionMap* map)
     {
         ASSERT(isUsingSingleSlot());
-        
-        if (HandleSlot slot = this->slot())
-            HandleHeap::heapFor(slot)->deallocate(slot);
 
         // This implicitly clears the flag that indicates we're using a single transition
         m_data = reinterpret_cast<intptr_t>(map);
@@ -138,31 +113,13 @@ private:
     Structure* singleTransition() const
     {
         ASSERT(isUsingSingleSlot());
-        if (HandleSlot slot = this->slot()) {
-            if (*slot)
-                return reinterpret_cast<Structure*>(slot->asCell());
-        }
-        return 0;
+        return reinterpret_cast<Structure*>(m_data & ~UsingSingleSlotFlag);
     }
-    
-    void clearSingleTransition()
+
+    void setSingleTransition(Structure* structure)
     {
         ASSERT(isUsingSingleSlot());
-        if (HandleSlot slot = this->slot())
-            HandleHeap::heapFor(slot)->deallocate(slot);
-    }
-    
-    void setSingleTransition(JSGlobalData& globalData, Structure* structure)
-    {
-        ASSERT(isUsingSingleSlot());
-        HandleSlot slot = this->slot();
-        if (!slot) {
-            slot = globalData.allocateGlobalHandle();
-            HandleHeap::heapFor(slot)->makeWeak(slot, 0, 0);
-            m_data = reinterpret_cast<intptr_t>(slot) | UsingSingleSlotFlag;
-        }
-        HandleHeap::heapFor(slot)->writeBarrier(slot, reinterpret_cast<JSCell*>(structure));
-        *slot = reinterpret_cast<JSCell*>(structure);
+        m_data = reinterpret_cast<intptr_t>(structure) | UsingSingleSlotFlag;
     }
 
     intptr_t m_data;

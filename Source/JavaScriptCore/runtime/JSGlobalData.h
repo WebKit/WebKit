@@ -33,7 +33,6 @@
 #include "Heap.h"
 #include "DateInstanceCache.h"
 #include "ExecutableAllocator.h"
-#include "Strong.h"
 #include "JITStubs.h"
 #include "JSValue.h"
 #include "NumericStrings.h"
@@ -146,29 +145,24 @@ namespace JSC {
         const HashTable* regExpConstructorTable;
         const HashTable* stringTable;
         
-        Strong<Structure> structureStructure;
-        Strong<Structure> activationStructure;
-        Strong<Structure> interruptedExecutionErrorStructure;
-        Strong<Structure> terminatedExecutionErrorStructure;
-        Strong<Structure> staticScopeStructure;
-        Strong<Structure> strictEvalActivationStructure;
-        Strong<Structure> stringStructure;
-        Strong<Structure> notAnObjectStructure;
-        Strong<Structure> propertyNameIteratorStructure;
-        Strong<Structure> getterSetterStructure;
-        Strong<Structure> apiWrapperStructure;
-        Strong<Structure> scopeChainNodeStructure;
-        Strong<Structure> executableStructure;
-        Strong<Structure> nativeExecutableStructure;
-        Strong<Structure> evalExecutableStructure;
-        Strong<Structure> programExecutableStructure;
-        Strong<Structure> functionExecutableStructure;
-        Strong<Structure> dummyMarkableCellStructure;
-        Strong<Structure> structureChainStructure;
-
-#if ENABLE(JSC_ZOMBIES)
-        Strong<Structure> zombieStructure;
-#endif
+        RefPtr<Structure> activationStructure;
+        RefPtr<Structure> interruptedExecutionErrorStructure;
+        RefPtr<Structure> terminatedExecutionErrorStructure;
+        RefPtr<Structure> staticScopeStructure;
+        RefPtr<Structure> strictEvalActivationStructure;
+        RefPtr<Structure> stringStructure;
+        RefPtr<Structure> notAnObjectStructure;
+        RefPtr<Structure> propertyNameIteratorStructure;
+        RefPtr<Structure> getterSetterStructure;
+        RefPtr<Structure> apiWrapperStructure;
+        RefPtr<Structure> scopeChainNodeStructure;
+        RefPtr<Structure> executableStructure;
+        RefPtr<Structure> nativeExecutableStructure;
+        RefPtr<Structure> evalExecutableStructure;
+        RefPtr<Structure> programExecutableStructure;
+        RefPtr<Structure> functionExecutableStructure;
+        RefPtr<Structure> dummyMarkableCellStructure;
+        RefPtr<Structure> structureChainStructure;
 
         static void storeVPtrs();
         static JS_EXPORTDATA void* jsArrayVPtr;
@@ -267,7 +261,6 @@ namespace JSC {
         void dumpRegExpTrace();
         HandleSlot allocateGlobalHandle() { return heap.allocateGlobalHandle(); }
         HandleSlot allocateLocalHandle() { return heap.allocateLocalHandle(); }
-        void clearBuiltinStructures();
 
     private:
         JSGlobalData(GlobalDataType, ThreadStackType);
@@ -278,11 +271,6 @@ namespace JSC {
 #endif
         StackBounds m_stack;
     };
-
-    inline HandleSlot allocateGlobalHandle(JSGlobalData& globalData)
-    {
-        return globalData.allocateGlobalHandle();
-    }
 
 } // namespace JSC
 

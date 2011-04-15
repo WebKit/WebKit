@@ -1390,9 +1390,31 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
 
 CodeBlock::~CodeBlock()
 {
+#if ENABLE(INTERPRETER)
+    for (size_t size = m_globalResolveInstructions.size(), i = 0; i < size; ++i)
+        derefStructures(&m_instructions[m_globalResolveInstructions[i]]);
+
+    for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i)
+        derefStructures(&m_instructions[m_propertyAccessInstructions[i]]);
+#endif
 #if ENABLE(JIT)
+    for (size_t size = m_globalResolveInfos.size(), i = 0; i < size; ++i) {
+        if (m_globalResolveInfos[i].structure)
+            m_globalResolveInfos[i].structure->deref();
+    }
+
     for (size_t size = m_structureStubInfos.size(), i = 0; i < size; ++i)
         m_structureStubInfos[i].deref();
+
+    for (size_t size = m_methodCallLinkInfos.size(), i = 0; i < size; ++i) {
+        if (Structure* structure = m_methodCallLinkInfos[i].cachedStructure) {
+            structure->deref();
+            // Both members must be filled at the same time
+            ASSERT(!!m_methodCallLinkInfos[i].cachedPrototypeStructure);
+            m_methodCallLinkInfos[i].cachedPrototypeStructure->deref();
+        }
+    }
+
 #endif // ENABLE(JIT)
 
 #if DUMP_CODE_BLOCK_STATISTICS
@@ -1400,37 +1422,35 @@ CodeBlock::~CodeBlock()
 #endif
 }
 
-void CodeBlock::markStructures(MarkStack& markStack, Instruction* vPC) const
+void CodeBlock::derefStructures(Instruction* vPC) const
 {
     Interpreter* interpreter = m_globalData->interpreter;
 
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_self)) {
-        markStack.append(&vPC[4].u.structure);
+        vPC[4].u.structure->deref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_proto) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_proto)) {
-        markStack.append(&vPC[4].u.structure);
-        markStack.append(&vPC[5].u.structure);
+        vPC[4].u.structure->deref();
+        vPC[5].u.structure->deref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_chain)) {
-        markStack.append(&vPC[4].u.structure);
-        markStack.append(&vPC[5].u.structureChain);
+        vPC[4].u.structure->deref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition)) {
-        markStack.append(&vPC[4].u.structure);
-        markStack.append(&vPC[5].u.structure);
-        markStack.append(&vPC[6].u.structureChain);
+        vPC[4].u.structure->deref();
+        vPC[5].u.structure->deref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
-        markStack.append(&vPC[4].u.structure);
+        vPC[4].u.structure->deref();
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global) || vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global_dynamic)) {
         if (vPC[3].u.structure)
-            markStack.append(&vPC[3].u.structure);
+            vPC[3].u.structure->deref();
         return;
     }
     if ((vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto_list))
@@ -1440,13 +1460,44 @@ void CodeBlock::markStructures(MarkStack& markStack, Instruction* vPC) const
         || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_proto_list))
         || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_self_list))) {
         PolymorphicAccessStructureList* polymorphicStructures = vPC[4].u.polymorphicStructures;
-        polymorphicStructures->markAggregate(markStack, vPC[5].u.operand);
+        polymorphicStructures->derefStructures(vPC[5].u.operand);
         delete polymorphicStructures;
         return;
     }
 
     // These instructions don't ref their Structures.
     ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_get_array_length) || vPC[0].u.opcode == interpreter->getOpcode(op_get_string_length));
+}
+
+void CodeBlock::refStructures(Instruction* vPC) const
+{
+    Interpreter* interpreter = m_globalData->interpreter;
+
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_self)) {
+        vPC[4].u.structure->ref();
+        return;
+    }
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_proto) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_proto)) {
+        vPC[4].u.structure->ref();
+        vPC[5].u.structure->ref();
+        return;
+    }
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_chain)) {
+        vPC[4].u.structure->ref();
+        return;
+    }
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition)) {
+        vPC[4].u.structure->ref();
+        vPC[5].u.structure->ref();
+        return;
+    }
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
+        vPC[4].u.structure->ref();
+        return;
+    }
+    
+    // These instructions don't ref their Structures.
+    ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic));
 }
 
 void EvalCodeCache::markAggregate(MarkStack& markStack)
@@ -1473,24 +1524,30 @@ void CodeBlock::markAggregate(MarkStack& markStack)
             markStack.append(&callLinkInfo(i).callee);
 #endif
 #if ENABLE(INTERPRETER)
-    for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i)
-        markStructures(markStack, &m_instructions[m_propertyAccessInstructions[i]]);
+    Interpreter* interpreter = m_globalData->interpreter;
+    for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i) {
+        Instruction* vPC = &m_instructions[m_propertyAccessInstructions[i]];
+        if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_chain) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_chain))
+            markStack.append(&vPC[5].u.structureChain);
+        else if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_transition))
+            markStack.append(&vPC[6].u.structureChain);
+    }
 #endif
 #if ENABLE(JIT)
     for (size_t size = m_globalResolveInfos.size(), i = 0; i < size; ++i) {
-        if (m_globalResolveInfos[i].structure)
-            markStack.append(&m_globalResolveInfos[i].structure);
+        if (Structure* structure = m_globalResolveInfos[i].structure)
+            structure->markAggregate(markStack);
     }
 
     for (size_t size = m_structureStubInfos.size(), i = 0; i < size; ++i)
         m_structureStubInfos[i].markAggregate(markStack);
 
     for (size_t size = m_methodCallLinkInfos.size(), i = 0; i < size; ++i) {
-        if (m_methodCallLinkInfos[i].cachedStructure) {
+        if (Structure* structure = m_methodCallLinkInfos[i].cachedStructure) {
             // Both members must be filled at the same time
-            markStack.append(&m_methodCallLinkInfos[i].cachedStructure);
+            structure->markAggregate(markStack);
             ASSERT(!!m_methodCallLinkInfos[i].cachedPrototypeStructure);
-            markStack.append(&m_methodCallLinkInfos[i].cachedPrototypeStructure);
+            m_methodCallLinkInfos[i].cachedPrototypeStructure->markAggregate(markStack);
         }
     }
 #endif

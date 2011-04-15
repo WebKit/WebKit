@@ -127,12 +127,26 @@ inline void JSArray::checkConsistency(ConsistencyCheckType)
 #endif
 
 JSArray::JSArray(VPtrStealingHackType)
-    : JSNonFinalObject(VPtrStealingHack)
+    : JSNonFinalObject(Structure::create(Structure::VPtrStealingHack, &s_info))
 {
+    ASSERT(inherits(&s_info));
+
+    unsigned initialCapacity = 0;
+
+    m_storage = static_cast<ArrayStorage*>(fastZeroedMalloc(storageSize(initialCapacity)));
+    m_storage->m_allocBase = m_storage;
+    m_indexBias = 0;
+    m_vectorLength = initialCapacity;
+
+    checkConsistency();
+    
+    // It's not safe to call Heap::heap(this) in order to report extra memory
+    // cost here, because the VPtrStealingHackType JSArray is not allocated on
+    // the heap. For the same reason, it's OK not to report extra cost.
 }
 
-JSArray::JSArray(JSGlobalData& globalData, Structure* structure)
-    : JSNonFinalObject(globalData, structure)
+JSArray::JSArray(NonNullPassRefPtr<Structure> structure)
+    : JSNonFinalObject(structure)
 {
     ASSERT(inherits(&s_info));
 
@@ -148,8 +162,8 @@ JSArray::JSArray(JSGlobalData& globalData, Structure* structure)
     Heap::heap(this)->reportExtraMemoryCost(storageSize(0));
 }
 
-JSArray::JSArray(JSGlobalData& globalData, Structure* structure, unsigned initialLength, ArrayCreationMode creationMode)
-    : JSNonFinalObject(globalData, structure)
+JSArray::JSArray(NonNullPassRefPtr<Structure> structure, unsigned initialLength, ArrayCreationMode creationMode)
+    : JSNonFinalObject(structure)
 {
     ASSERT(inherits(&s_info));
 
@@ -190,8 +204,8 @@ JSArray::JSArray(JSGlobalData& globalData, Structure* structure, unsigned initia
     Heap::heap(this)->reportExtraMemoryCost(storageSize(initialCapacity));
 }
 
-JSArray::JSArray(JSGlobalData& globalData, Structure* structure, const ArgList& list)
-    : JSNonFinalObject(globalData, structure)
+JSArray::JSArray(JSGlobalData& globalData, NonNullPassRefPtr<Structure> structure, const ArgList& list)
+    : JSNonFinalObject(structure)
 {
     ASSERT(inherits(&s_info));
 

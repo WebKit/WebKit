@@ -58,26 +58,32 @@ namespace JSC {
         {
         }
 
-        void initGetByIdSelf(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure)
+        void initGetByIdSelf(Structure* baseObjectStructure)
         {
             accessType = access_get_by_id_self;
 
-            u.getByIdSelf.baseObjectStructure.set(globalData, owner, baseObjectStructure);
+            u.getByIdSelf.baseObjectStructure = baseObjectStructure;
+            baseObjectStructure->ref();
         }
 
-        void initGetByIdProto(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure, Structure* prototypeStructure)
+        void initGetByIdProto(Structure* baseObjectStructure, Structure* prototypeStructure)
         {
             accessType = access_get_by_id_proto;
 
-            u.getByIdProto.baseObjectStructure.set(globalData, owner, baseObjectStructure);
-            u.getByIdProto.prototypeStructure.set(globalData, owner, prototypeStructure);
+            u.getByIdProto.baseObjectStructure = baseObjectStructure;
+            baseObjectStructure->ref();
+
+            u.getByIdProto.prototypeStructure = prototypeStructure;
+            prototypeStructure->ref();
         }
 
         void initGetByIdChain(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure, StructureChain* chain)
         {
             accessType = access_get_by_id_chain;
 
-            u.getByIdChain.baseObjectStructure.set(globalData, owner, baseObjectStructure);
+            u.getByIdChain.baseObjectStructure = baseObjectStructure;
+            baseObjectStructure->ref();
+
             u.getByIdChain.chain.set(globalData, owner, chain);
         }
 
@@ -103,16 +109,21 @@ namespace JSC {
         {
             accessType = access_put_by_id_transition;
 
-            u.putByIdTransition.previousStructure.set(globalData, owner, previousStructure);
-            u.putByIdTransition.structure.set(globalData, owner, structure);
+            u.putByIdTransition.previousStructure = previousStructure;
+            previousStructure->ref();
+
+            u.putByIdTransition.structure = structure;
+            structure->ref();
+
             u.putByIdTransition.chain.set(globalData, owner, chain);
         }
 
-        void initPutByIdReplace(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure)
+        void initPutByIdReplace(Structure* baseObjectStructure)
         {
             accessType = access_put_by_id_replace;
     
-            u.putByIdReplace.baseObjectStructure.set(globalData, owner, baseObjectStructure);
+            u.putByIdReplace.baseObjectStructure = baseObjectStructure;
+            baseObjectStructure->ref();
         }
 
         void deref();
@@ -133,14 +144,14 @@ namespace JSC {
 
         union {
             struct {
-                WriteBarrierBase<Structure> baseObjectStructure;
+                Structure* baseObjectStructure;
             } getByIdSelf;
             struct {
-                WriteBarrierBase<Structure> baseObjectStructure;
-                WriteBarrierBase<Structure> prototypeStructure;
+                Structure* baseObjectStructure;
+                Structure* prototypeStructure;
             } getByIdProto;
             struct {
-                WriteBarrierBase<Structure> baseObjectStructure;
+                Structure* baseObjectStructure;
                 WriteBarrierBase<StructureChain> chain;
             } getByIdChain;
             struct {
@@ -152,12 +163,12 @@ namespace JSC {
                 int listSize;
             } getByIdProtoList;
             struct {
-                WriteBarrierBase<Structure> previousStructure;
-                WriteBarrierBase<Structure> structure;
+                Structure* previousStructure;
+                Structure* structure;
                 WriteBarrierBase<StructureChain> chain;
             } putByIdTransition;
             struct {
-                WriteBarrierBase<Structure> baseObjectStructure;
+                Structure* baseObjectStructure;
             } putByIdReplace;
         } u;
 

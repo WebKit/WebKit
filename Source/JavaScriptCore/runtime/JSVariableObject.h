@@ -58,7 +58,7 @@ namespace JSC {
 
         WriteBarrier<Unknown>* const * addressOfRegisters() const { return &m_registers; }
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
@@ -66,8 +66,8 @@ namespace JSC {
     protected:
         static const unsigned StructureFlags = OverridesGetPropertyNames | JSObject::StructureFlags;
 
-        JSVariableObject(JSGlobalData& globalData, Structure* structure, SymbolTable* symbolTable, Register* registers)
-            : JSNonFinalObject(globalData, structure)
+        JSVariableObject(NonNullPassRefPtr<Structure> structure, SymbolTable* symbolTable, Register* registers)
+            : JSNonFinalObject(structure)
             , m_symbolTable(symbolTable)
             , m_registers(reinterpret_cast<WriteBarrier<Unknown>*>(registers))
         {
@@ -75,7 +75,7 @@ namespace JSC {
             COMPILE_ASSERT(sizeof(WriteBarrier<Unknown>) == sizeof(Register), Register_should_be_same_size_as_WriteBarrier);
         }
 
-        PassOwnArrayPtr<WriteBarrier<Unknown> > copyRegisterArray(JSGlobalData&, WriteBarrier<Unknown>* src, size_t count, size_t callframeStarts);
+        PassOwnArrayPtr<WriteBarrier<Unknown> > copyRegisterArray(JSGlobalData&, WriteBarrier<Unknown>* src, size_t count);
         void setRegisters(WriteBarrier<Unknown>* registers, PassOwnArrayPtr<WriteBarrier<Unknown> > registerArray);
 
         bool symbolTableGet(const Identifier&, PropertySlot&);
@@ -137,12 +137,10 @@ namespace JSC {
         return true;
     }
 
-    inline PassOwnArrayPtr<WriteBarrier<Unknown> > JSVariableObject::copyRegisterArray(JSGlobalData& globalData, WriteBarrier<Unknown>* src, size_t count, size_t callframeStarts)
+    inline PassOwnArrayPtr<WriteBarrier<Unknown> > JSVariableObject::copyRegisterArray(JSGlobalData& globalData, WriteBarrier<Unknown>* src, size_t count)
     {
         OwnArrayPtr<WriteBarrier<Unknown> > registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[count]);
-        for (size_t i = 0; i < callframeStarts; i++)
-            registerArray[i].set(globalData, this, src[i].get());
-        for (size_t i = callframeStarts + RegisterFile::CallFrameHeaderSize; i < count; i++)
+        for (size_t i = 0; i < count; i++)
             registerArray[i].set(globalData, this, src[i].get());
 
         return registerArray.release();

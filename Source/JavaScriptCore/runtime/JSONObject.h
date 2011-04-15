@@ -34,9 +34,9 @@ namespace JSC {
 
     class JSONObject : public JSObjectWithGlobalObject {
     public:
-        JSONObject(JSGlobalObject*, Structure*);
+        JSONObject(JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure);
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }

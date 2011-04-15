@@ -36,7 +36,7 @@
 
 class UserObjectImp : public JSNonFinalObject {
 public:
-    UserObjectImp(JSGlobalData&, Structure*, JSUserObject*);
+    UserObjectImp(PassRefPtr<Structure>, JSUserObject*);
     virtual ~UserObjectImp();
 
     static const ClassInfo s_info;
@@ -58,7 +58,7 @@ public:
 
     JSUserObject *GetJSUserObject() const;
 
-    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+    static PassRefPtr<Structure> createStructure(JSGlobalData& globalData, JSValue prototype)
     {
         return Structure::create(globalData, prototype, TypeInfo(ObjectType, OverridesGetOwnPropertySlot | OverridesMarkChildren | OverridesGetPropertyNames), AnonymousSlotCount, &s_info);
     }

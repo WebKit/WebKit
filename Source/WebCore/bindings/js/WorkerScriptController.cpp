@@ -61,7 +61,6 @@ WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
 WorkerScriptController::~WorkerScriptController()
 {
     m_workerContextWrapper.clear(); // Unprotect the global object.
-    m_globalData->clearBuiltinStructures();
     m_globalData->heap.destroy();
 }
 
@@ -74,25 +73,25 @@ void WorkerScriptController::initScript()
     // Explicitly protect the global object's prototype so it isn't collected
     // when we allocate the global object. (Once the global object is fully
     // constructed, it can mark its own prototype.)
-    Structure* workerContextPrototypeStructure = JSWorkerContextPrototype::createStructure(*m_globalData, jsNull());
-    Strong<JSWorkerContextPrototype> workerContextPrototype(*m_globalData, new (m_globalData.get()) JSWorkerContextPrototype(*m_globalData, 0, workerContextPrototypeStructure));
+    RefPtr<Structure> workerContextPrototypeStructure = JSWorkerContextPrototype::createStructure(*m_globalData, jsNull());
+    Strong<JSWorkerContextPrototype> workerContextPrototype(*m_globalData, new (m_globalData.get()) JSWorkerContextPrototype(0, workerContextPrototypeStructure.release()));
 
     if (m_workerContext->isDedicatedWorkerContext()) {
-        Structure* dedicatedContextPrototypeStructure = JSDedicatedWorkerContextPrototype::createStructure(*m_globalData, workerContextPrototype.get());
-        Strong<JSDedicatedWorkerContextPrototype> dedicatedContextPrototype(*m_globalData, new (m_globalData.get()) JSDedicatedWorkerContextPrototype(*m_globalData, 0, dedicatedContextPrototypeStructure));
-        Structure* structure = JSDedicatedWorkerContext::createStructure(*m_globalData, dedicatedContextPrototype.get());
+        RefPtr<Structure> dedicatedContextPrototypeStructure = JSDedicatedWorkerContextPrototype::createStructure(*m_globalData, workerContextPrototype.get());
+        Strong<JSDedicatedWorkerContextPrototype> dedicatedContextPrototype(*m_globalData, new (m_globalData.get()) JSDedicatedWorkerContextPrototype(0, dedicatedContextPrototypeStructure.release()));
+        RefPtr<Structure> structure = JSDedicatedWorkerContext::createStructure(*m_globalData, dedicatedContextPrototype.get());
 
-        m_workerContextWrapper.set(*m_globalData, new (m_globalData.get()) JSDedicatedWorkerContext(*m_globalData, structure, m_workerContext->toDedicatedWorkerContext()));
+        m_workerContextWrapper.set(*m_globalData, new (m_globalData.get()) JSDedicatedWorkerContext(structure.release(), m_workerContext->toDedicatedWorkerContext()));
         workerContextPrototype->putAnonymousValue(*m_globalData, 0, m_workerContextWrapper.get());
         dedicatedContextPrototype->putAnonymousValue(*m_globalData, 0, m_workerContextWrapper.get());
 #if ENABLE(SHARED_WORKERS)
     } else {
         ASSERT(m_workerContext->isSharedWorkerContext());
-        Structure* sharedContextPrototypeStructure = JSSharedWorkerContextPrototype::createStructure(*m_globalData, workerContextPrototype.get());
-        Strong<JSSharedWorkerContextPrototype> sharedContextPrototype(*m_globalData, new (m_globalData.get()) JSSharedWorkerContextPrototype(*m_globalData, 0, sharedContextPrototypeStructure));
-        Structure* structure = JSSharedWorkerContext::createStructure(*m_globalData, sharedContextPrototype.get());
+        RefPtr<Structure> sharedContextPrototypeStructure = JSSharedWorkerContextPrototype::createStructure(*m_globalData, workerContextPrototype.get());
+        Strong<JSSharedWorkerContextPrototype> sharedContextPrototype(*m_globalData, new (m_globalData.get()) JSSharedWorkerContextPrototype(0, sharedContextPrototypeStructure.release()));
+        RefPtr<Structure> structure = JSSharedWorkerContext::createStructure(*m_globalData, sharedContextPrototype.get());
 
-        m_workerContextWrapper.set(*m_globalData, new (m_globalData.get()) JSSharedWorkerContext(*m_globalData, structure, m_workerContext->toSharedWorkerContext()));
+        m_workerContextWrapper.set(*m_globalData, new (m_globalData.get()) JSSharedWorkerContext(structure.release(), m_workerContext->toSharedWorkerContext()));
         workerContextPrototype->putAnonymousValue(*m_globalData, 0, m_workerContextWrapper.get());
         sharedContextPrototype->putAnonymousValue(*m_globalData, 0, m_workerContextWrapper.get());
 #endif

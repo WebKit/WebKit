@@ -30,6 +30,7 @@
 #include "JSLock.h"
 #include "JSValueInlineMethods.h"
 #include "MarkStack.h"
+#include "UString.h"
 #include <wtf/Noncopyable.h>
 
 namespace JSC {
@@ -68,19 +69,14 @@ namespace JSC {
         friend class MarkedSpace;
         friend class MarkedBlock;
         friend class ScopeChainNode;
-        friend class Structure;
         friend class StructureChain;
 
-    protected:
-        enum VPtrStealingHackType { VPtrStealingHack };
-
     private:
-        explicit JSCell(VPtrStealingHackType) { }
-        JSCell(JSGlobalData&, Structure*);
+        explicit JSCell(Structure*);
         virtual ~JSCell();
 
     public:
-        static Structure* createDummyStructure(JSGlobalData&);
+        static PassRefPtr<Structure> createDummyStructure(JSGlobalData&);
 
         // Querying the type.
         bool isString() const;
@@ -146,7 +142,7 @@ namespace JSC {
             return OBJECT_OFFSETOF(JSCell, m_structure);
         }
 
-        const void* addressOfStructure() const
+        Structure* const * addressOfStructure() const
         {
             return &m_structure;
         }
@@ -159,14 +155,12 @@ namespace JSC {
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
         
-        WriteBarrier<Structure> m_structure;
+        Structure* m_structure;
     };
 
-    inline JSCell::JSCell(JSGlobalData& globalData, Structure* structure)
-        : m_structure(globalData, this, structure)
+    inline JSCell::JSCell(Structure* structure)
+        : m_structure(structure)
     {
-        // Very first set of allocations won't have a real structure.
-        ASSERT(m_structure || !globalData.dummyMarkableCellStructure);
     }
 
     inline JSCell::~JSCell()
@@ -175,12 +169,11 @@ namespace JSC {
 
     inline Structure* JSCell::structure() const
     {
-        return m_structure.get();
+        return m_structure;
     }
 
-    inline void JSCell::markChildren(MarkStack& markStack)
+    inline void JSCell::markChildren(MarkStack&)
     {
-        markStack.append(&m_structure);
     }
 
     // --- JSValue inlines ----------------------------
@@ -347,7 +340,7 @@ namespace JSC {
 #if ENABLE(JSC_ZOMBIES)
     inline bool JSValue::isZombie() const
     {
-        return isCell() && asCell() > (JSCell*)0x1ffffffffL && asCell()->isZombie();
+        return isCell() && asCell() && asCell()->isZombie();
     }
 #endif
 

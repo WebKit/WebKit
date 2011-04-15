@@ -39,11 +39,7 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
     , m_isAttribute(isAttribute)
     , m_isolatedWorld(isolatedWorld)
 {
-    if (wrapper)
-        m_jsFunction.set(*m_isolatedWorld->globalData(), wrapper, function);
-    else
-        ASSERT(!function);
-
+    m_jsFunction.set(*m_isolatedWorld->globalData(), wrapper, function);
 }
 
 JSEventListener::~JSEventListener()

@@ -33,7 +33,6 @@
 #define ScriptCachedFrameData_h
 
 #include <heap/Strong.h>
-#include <wtf/HashMap.h>
 
 namespace WebCore {
     class Frame;

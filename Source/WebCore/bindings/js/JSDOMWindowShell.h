@@ -58,7 +58,7 @@ namespace WebCore {
 
         void* operator new(size_t);
 
-        static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype) 
+        static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype) 
         {
             return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info); 
         }

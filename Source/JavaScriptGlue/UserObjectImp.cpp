@@ -34,8 +34,8 @@
 
 const ClassInfo UserObjectImp::s_info = { "UserObject", &JSNonFinalObject::s_info, 0, 0 };
 
-UserObjectImp::UserObjectImp(JSGlobalData& globalData, Structure* structure, JSUserObject* userObject)
-    : JSNonFinalObject(globalData, structure)
+UserObjectImp::UserObjectImp(PassRefPtr<Structure> structure, JSUserObject* userObject)
+    : JSNonFinalObject(structure)
     , fJSUserObject((JSUserObject*)userObject->Retain())
 {
 }

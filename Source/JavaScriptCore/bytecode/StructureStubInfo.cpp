@@ -35,28 +35,42 @@ namespace JSC {
 void StructureStubInfo::deref()
 {
     switch (accessType) {
+    case access_get_by_id_self:
+        u.getByIdSelf.baseObjectStructure->deref();
+        return;
+    case access_get_by_id_proto:
+        u.getByIdProto.baseObjectStructure->deref();
+        u.getByIdProto.prototypeStructure->deref();
+        return;
+    case access_get_by_id_chain:
+        u.getByIdChain.baseObjectStructure->deref();
+        return;
     case access_get_by_id_self_list: {
         PolymorphicAccessStructureList* polymorphicStructures = u.getByIdSelfList.structureList;
+        polymorphicStructures->derefStructures(u.getByIdSelfList.listSize);
         delete polymorphicStructures;
         return;
     }
     case access_get_by_id_proto_list: {
         PolymorphicAccessStructureList* polymorphicStructures = u.getByIdProtoList.structureList;
+        polymorphicStructures->derefStructures(u.getByIdProtoList.listSize);
         delete polymorphicStructures;
         return;
     }
-    case access_get_by_id_self:
-    case access_get_by_id_proto:
-    case access_get_by_id_chain:
     case access_put_by_id_transition:
+        u.putByIdTransition.previousStructure->deref();
+        u.putByIdTransition.structure->deref();
+        return;
     case access_put_by_id_replace:
+        u.putByIdReplace.baseObjectStructure->deref();
+        return;
     case access_get_by_id:
     case access_put_by_id:
     case access_get_by_id_generic:
     case access_put_by_id_generic:
     case access_get_array_length:
     case access_get_string_length:
-        // These instructions don't have to release any allocated memory
+        // These instructions don't ref their Structures.
         return;
     default:
         ASSERT_NOT_REACHED();
@@ -67,14 +81,14 @@ void StructureStubInfo::markAggregate(MarkStack& markStack)
 {
     switch (accessType) {
     case access_get_by_id_self:
-        markStack.append(&u.getByIdSelf.baseObjectStructure);
+        u.getByIdSelf.baseObjectStructure->markAggregate(markStack);
         return;
     case access_get_by_id_proto:
-        markStack.append(&u.getByIdProto.baseObjectStructure);
-        markStack.append(&u.getByIdProto.prototypeStructure);
+        u.getByIdProto.baseObjectStructure->markAggregate(markStack);
+        u.getByIdProto.prototypeStructure->markAggregate(markStack);
         return;
     case access_get_by_id_chain:
-        markStack.append(&u.getByIdChain.baseObjectStructure);
+        u.getByIdChain.baseObjectStructure->markAggregate(markStack);
         markStack.append(&u.getByIdChain.chain);
         return;
     case access_get_by_id_self_list: {
@@ -88,12 +102,12 @@ void StructureStubInfo::markAggregate(MarkStack& markStack)
         return;
     }
     case access_put_by_id_transition:
-        markStack.append(&u.putByIdTransition.previousStructure);
-        markStack.append(&u.putByIdTransition.structure);
+        u.putByIdTransition.previousStructure->markAggregate(markStack);
+        u.putByIdTransition.structure->markAggregate(markStack);
         markStack.append(&u.putByIdTransition.chain);
         return;
     case access_put_by_id_replace:
-        markStack.append(&u.putByIdReplace.baseObjectStructure);
+        u.putByIdReplace.baseObjectStructure->markAggregate(markStack);
         return;
     case access_get_by_id:
     case access_put_by_id:
@@ -101,7 +115,7 @@ void StructureStubInfo::markAggregate(MarkStack& markStack)
     case access_put_by_id_generic:
     case access_get_array_length:
     case access_get_string_length:
-        // These instructions don't need to mark anything
+        // These instructions don't ref their Structures.
         return;
     default:
         ASSERT_NOT_REACHED();
