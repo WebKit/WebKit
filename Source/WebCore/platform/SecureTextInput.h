@@ -40,7 +40,7 @@ namespace WebCore {
 void enableSecureTextInput();
 void disableSecureTextInput();
 
-#if !USE(CARBON_SECURE_INPUT_MODE)
+#if !(PLATFORM(CHROMIUM) && OS(DARWIN))
 inline void enableSecureTextInput() { }
 inline void disableSecureTextInput() { }
 #endif
