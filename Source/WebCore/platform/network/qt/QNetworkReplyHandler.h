@@ -74,6 +74,9 @@ public:
     QString encoding() const { return m_encoding; }
     QString advertisedMimeType() const { return m_advertisedMimeType; }
 
+    bool responseContainsData() const { return m_responseContainsData; }
+    bool wasRedirected() const { return m_redirectionTargetUrl.isValid(); }
+
 private Q_SLOTS:
     void receiveMetaData();
     void didReceiveFinished();
@@ -89,6 +92,7 @@ private:
     QString m_advertisedMimeType;
 
     QNetworkReplyHandlerCallQueue* m_queue;
+    bool m_responseContainsData;
 };
 
 class QNetworkReplyHandler : public QObject
@@ -117,16 +121,13 @@ public slots:
 
 private:
     void start();
-    void resetState();
     String httpMethod() const;
     void redirect(ResourceResponse&, const QUrl&);
     bool wasAborted() const { return !m_resourceHandle; }
     QNetworkReply* sendNetworkRequest();
 
-    QNetworkReplyWrapper* m_replyWrapper;
+    OwnPtr<QNetworkReplyWrapper> m_replyWrapper;
     ResourceHandle* m_resourceHandle;
-    bool m_redirected;
-    bool m_responseContainsData;
     LoadType m_loadType;
     QNetworkAccessManager::Operation m_method;
     QNetworkRequest m_request;

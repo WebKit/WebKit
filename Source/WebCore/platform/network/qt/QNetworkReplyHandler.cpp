@@ -209,10 +209,10 @@ QNetworkReplyWrapper::QNetworkReplyWrapper(QNetworkReplyHandlerCallQueue* queue,
     : QObject(parent)
     , m_reply(reply)
     , m_queue(queue)
+    , m_responseContainsData(false)
 {
     Q_ASSERT(m_reply);
 
-    connect(m_reply, SIGNAL(metaDataChanged()), this, SLOT(receiveMetaData()));
     connect(m_reply, SIGNAL(readyRead()), this, SLOT(receiveMetaData()));
     connect(m_reply, SIGNAL(finished()), this, SLOT(receiveMetaData()));
 }
@@ -263,8 +263,10 @@ void QNetworkReplyWrapper::receiveMetaData()
 
     m_queue->push(&QNetworkReplyHandler::sendResponseIfNeeded);
 
-    if (m_reply->bytesAvailable())
+    if (m_reply->bytesAvailable()) {
+        m_responseContainsData = true;
         m_queue->push(&QNetworkReplyHandler::forwardData);
+    }
 
     if (m_reply->isFinished()) {
         m_queue->push(&QNetworkReplyHandler::finish);
@@ -278,6 +280,8 @@ void QNetworkReplyWrapper::receiveMetaData()
 
 void QNetworkReplyWrapper::didReceiveReadyRead()
 {
+    if (m_reply->bytesAvailable())
+        m_responseContainsData = true;
     m_queue->push(&QNetworkReplyHandler::forwardData);
 }
 
@@ -317,8 +321,6 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadType load
     , m_redirectionTries(gMaxRedirections)
     , m_queue(this, deferred)
 {
-    resetState();
-
     const ResourceRequest &r = m_resourceHandle->firstRequest();
 
     if (r.httpMethod() == "GET")
@@ -343,17 +345,6 @@ QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadType load
     m_queue.push(&QNetworkReplyHandler::start);
 }
 
-void QNetworkReplyHandler::resetState()
-{
-    m_redirected = false;
-    m_responseContainsData = false;
-
-    if (m_replyWrapper) {
-        delete m_replyWrapper;
-        m_replyWrapper = 0;
-    }
-}
-
 void QNetworkReplyHandler::abort()
 {
     m_resourceHandle = 0;
@@ -370,7 +361,6 @@ QNetworkReply* QNetworkReplyHandler::release()
         return 0;
 
     QNetworkReply* reply = m_replyWrapper->release();
-    delete m_replyWrapper;
     m_replyWrapper = 0;
     return reply;
 }
@@ -394,18 +384,17 @@ void QNetworkReplyHandler::finish()
 
     ResourceHandleClient* client = m_resourceHandle->client();
     if (!client) {
-        delete m_replyWrapper;
         m_replyWrapper = 0;
         return;
     }
 
-    if (m_redirected) {
-        resetState();
+    if (m_replyWrapper->wasRedirected()) {
+        m_replyWrapper = 0;
         m_queue.push(&QNetworkReplyHandler::start);
         return;
     }
 
-    if (!m_replyWrapper->reply()->error() || shouldIgnoreHttpError(m_replyWrapper->reply(), m_responseContainsData))
+    if (!m_replyWrapper->reply()->error() || shouldIgnoreHttpError(m_replyWrapper->reply(), m_replyWrapper->responseContainsData()))
         client->didFinishLoading(m_resourceHandle, 0);
     else {
         QUrl url = m_replyWrapper->reply()->url();
@@ -420,17 +409,14 @@ void QNetworkReplyHandler::finish()
         }
     }
 
-    if (m_replyWrapper) {
-        delete m_replyWrapper;
-        m_replyWrapper = 0;
-    }
+    m_replyWrapper = 0;
 }
 
 void QNetworkReplyHandler::sendResponseIfNeeded()
 {
     ASSERT(m_replyWrapper && m_replyWrapper->reply() && !wasAborted());
 
-    if (m_replyWrapper->reply()->error() && !shouldIgnoreHttpError(m_replyWrapper->reply(), m_responseContainsData))
+    if (m_replyWrapper->reply()->error() && m_replyWrapper->reply()->attribute(QNetworkRequest::HttpStatusCodeAttribute).isNull())
         return;
 
     ResourceHandleClient* client = m_resourceHandle->client();
@@ -499,9 +485,9 @@ void QNetworkReplyHandler::redirect(ResourceResponse& response, const QUrl& redi
                             newUrl.toString(),
                             QCoreApplication::translate("QWebPage", "Redirection limit reached"));
         client->didFail(m_resourceHandle, error);
+        m_replyWrapper = 0;
         return;
     }
-    m_redirected = true;
 
     //  Status Code 301 (Moved Permanently), 302 (Moved Temporarily), 303 (See Other):
     //    - If original request is POST convert to GET and redirect automatically
@@ -531,12 +517,7 @@ void QNetworkReplyHandler::redirect(ResourceResponse& response, const QUrl& redi
 
 void QNetworkReplyHandler::forwardData()
 {
-    ASSERT(m_replyWrapper && m_replyWrapper->reply() && !wasAborted());
-
-    ASSERT(!m_redirected);
-
-    if (m_replyWrapper->reply()->bytesAvailable())
-        m_responseContainsData = true;
+    ASSERT(m_replyWrapper && m_replyWrapper->reply() && !wasAborted() && !m_replyWrapper->wasRedirected());
 
     QByteArray data = m_replyWrapper->reply()->read(m_replyWrapper->reply()->bytesAvailable());
 
@@ -627,7 +608,7 @@ void QNetworkReplyHandler::start()
     if (!reply)
         return;
 
-    m_replyWrapper = new QNetworkReplyWrapper(&m_queue, reply, this);
+    m_replyWrapper = new QNetworkReplyWrapper(&m_queue, reply);
 
     if (m_loadType == SynchronousLoad && m_replyWrapper->reply()->isFinished()) {
         m_replyWrapper->synchronousLoad();

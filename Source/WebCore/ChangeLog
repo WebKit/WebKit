@@ -1,3 +1,30 @@
+2011-04-13  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QNetworkReplyHandler refactoring: some adjustments
+        https://bugs.webkit.org/show_bug.cgi?id=57092
+
+        - Removing flag m_redirected from QNetworkReplyHandler and using m_redirectionTargetUrl.isValid() instead.
+        - Moving flag m_responseContainsData from QNetworkReplyHandler to the reply wrapper and removing the connection of
+        signal metaDataChanged for m_responseContainsData to be consistent.
+        - Using an OwnPtr to keep the reference to the QNetworkReplyWrapper.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyWrapper::QNetworkReplyWrapper):
+        (WebCore::QNetworkReplyWrapper::receiveMetaData):
+        (WebCore::QNetworkReplyWrapper::didReceiveReadyRead):
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::release):
+        (WebCore::shouldIgnoreHttpError):
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        (WebCore::QNetworkReplyHandler::redirect):
+        (WebCore::QNetworkReplyHandler::forwardData):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        (WebCore::QNetworkReplyWrapper::responseContainsData):
+        (WebCore::QNetworkReplyWrapper::redirected):
+
 2011-04-15  Alexey Proskuryakov  <ap@apple.com>
 
         Chromium build fix.
