@@ -32,21 +32,16 @@ using namespace JSC;
 
 ASSERT_CLASS_FITS_IN_CELL(JSNodeFilterCondition);
 
-JSNodeFilterCondition::JSNodeFilterCondition(JSValue filter)
-    : m_filter(filter)
+JSNodeFilterCondition::JSNodeFilterCondition(JSGlobalData& globalData, NodeFilter* owner, JSValue filter)
+    : m_filter(globalData, filter, &m_weakOwner, owner)
 {
-}
-
-void JSNodeFilterCondition::markAggregate(MarkStack& markStack)
-{
-    markStack.append(&m_filter);
 }
 
 short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) const
 {
     JSLock lock(SilenceAssertionsOnly);
 
-    if (!m_filter->isObject())
+    if (!m_filter.isObject())
         return NodeFilter::FILTER_ACCEPT;
 
    // The exec argument here should only be null if this was called from a
@@ -62,7 +57,7 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     CallData callData;
     CallType callType = getCallData(function, callData);
     if (callType == CallTypeNone) {
-        function = m_filter->get(exec, Identifier(exec, "acceptNode"));
+        function = m_filter.get().get(exec, Identifier(exec, "acceptNode"));
         callType = getCallData(function, callData);
         if (callType == CallTypeNone) {
             throwError(exec, createTypeError(exec, "NodeFilter object does not have an acceptNode function"));
@@ -86,6 +81,11 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
         return NodeFilter::FILTER_REJECT;
 
     return intResult;
+}
+
+bool JSNodeFilterCondition::WeakOwner::isReachableFromOpaqueRoots(JSC::Handle<Unknown>, void* context, MarkStack& markStack)
+{
+    return markStack.containsOpaqueRoot(context);
 }
 
 } // namespace WebCore

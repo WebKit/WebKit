@@ -21,27 +21,32 @@
 #define JSNodeFilterCondition_h
 
 #include "NodeFilterCondition.h"
+#include <heap/Weak.h>
 #include <runtime/JSValue.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
     class Node;
+    class NodeFilter;
 
     class JSNodeFilterCondition : public NodeFilterCondition {
     public:
-        static PassRefPtr<JSNodeFilterCondition> create(JSC::JSValue filter)
+        static PassRefPtr<JSNodeFilterCondition> create(JSC::JSGlobalData& globalData, NodeFilter* owner, JSC::JSValue filter)
         {
-            return adoptRef(new JSNodeFilterCondition(filter));
+            return adoptRef(new JSNodeFilterCondition(globalData, owner, filter));
         }
 
     private:
-        JSNodeFilterCondition(JSC::JSValue filter);
+        JSNodeFilterCondition(JSC::JSGlobalData&, NodeFilter* owner, JSC::JSValue filter);
 
         virtual short acceptNode(ScriptState*, Node*) const;
-        virtual void markAggregate(JSC::MarkStack&);
 
-        mutable JSC::DeprecatedPtr<JSC::Unknown> m_filter;
+        class WeakOwner : public JSC::WeakHandleOwner {
+            virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::MarkStack&);
+        };
+        WeakOwner m_weakOwner;
+        mutable JSC::Weak<JSC::Unknown> m_filter;
     };
 
 } // namespace WebCore

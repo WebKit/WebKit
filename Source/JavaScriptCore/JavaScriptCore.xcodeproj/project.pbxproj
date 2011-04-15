@@ -664,49 +664,49 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 4539C8FF0EC27F6400A70F4C /* gtest.framework */;
+			remoteGlobalIDString = 4539C8FF0EC27F6400A70F4C;
 			remoteInfo = "gtest-framework";
 		};
 		F33EE0E4135678CA00E09E65 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 40C848FA101A209C0083642A /* libgtest.a */;
+			remoteGlobalIDString = 40C848FA101A209C0083642A;
 			remoteInfo = "gtest-static";
 		};
 		F33EE0E6135678CA00E09E65 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 40C8490B101A217E0083642A /* libgtest_main.a */;
+			remoteGlobalIDString = 40C8490B101A217E0083642A;
 			remoteInfo = "gtest_main-static";
 		};
 		F33EE0E8135678CA00E09E65 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 40899F430FFA7184000B29AE /* gtest_unittest-framework */;
+			remoteGlobalIDString = 40899F430FFA7184000B29AE;
 			remoteInfo = "gtest_unittest-framework";
 		};
 		F33EE0EA135678CA00E09E65 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 40C84987101A36850083642A /* gtest_unittest */;
+			remoteGlobalIDString = 40C84987101A36850083642A;
 			remoteInfo = "gtest_unittest-static";
 		};
 		F33EE0EC135678CA00E09E65 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 4089A0130FFACEFC000B29AE /* sample1_unittest-framework */;
+			remoteGlobalIDString = 4089A0130FFACEFC000B29AE;
 			remoteInfo = "sample1_unittest-framework";
 		};
 		F33EE0EE135678CA00E09E65 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F33EE0D3135678CA00E09E65 /* gtest.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 40C84997101A36A60083642A /* sample1_unittest-static */;
+			remoteGlobalIDString = 40C84997101A36A60083642A;
 			remoteInfo = "sample1_unittest-static";
 		};
 /* End PBXContainerItemProxy section */

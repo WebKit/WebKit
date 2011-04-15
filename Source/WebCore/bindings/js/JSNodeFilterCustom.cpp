@@ -39,15 +39,17 @@ namespace WebCore {
 void JSNodeFilter::markChildren(MarkStack& markStack)
 {
     Base::markChildren(markStack);
-    impl()->markAggregate(markStack);
+    markStack.addOpaqueRoot(impl());
 }
 
-PassRefPtr<NodeFilter> toNodeFilter(JSValue value)
+PassRefPtr<NodeFilter> toNodeFilter(JSGlobalData& globalData, JSValue value)
 {
     if (value.inherits(&JSNodeFilter::s_info))
         return static_cast<JSNodeFilter*>(asObject(value))->impl();
 
-    return NodeFilter::create(JSNodeFilterCondition::create(value));
+    RefPtr<NodeFilter> result = NodeFilter::create();
+    result->setCondition(JSNodeFilterCondition::create(globalData, result.get(), value));
+    return result.release();
 }
 
 } // namespace WebCore

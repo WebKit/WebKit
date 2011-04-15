@@ -34,7 +34,7 @@ void JSTreeWalker::markChildren(MarkStack& markStack)
     Base::markChildren(markStack);
 
     if (NodeFilter* filter = m_impl->filter())
-        filter->markAggregate(markStack);
+        markStack.addOpaqueRoot(filter);
 }
 
 }

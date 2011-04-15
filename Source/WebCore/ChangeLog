@@ -1,3 +1,24 @@
+2011-04-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make JSNodeFilterCondition handle its lifetime correctly
+        https://bugs.webkit.org/show_bug.cgi?id=58622
+
+        Switch over to a WeakHandle and external roots to keep the
+        condition value live.
+
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::JSNodeFilterCondition):
+        (WebCore::JSNodeFilterCondition::markAggregate):
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        (WebCore::JSNodeFilterCondition::WeakOwner::isReachableFromOpaqueRoots):
+        * bindings/js/JSNodeFilterCondition.h:
+        (WebCore::JSNodeFilterCondition::create):
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::toNodeFilter):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2011-04-13  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Andreas Kling.

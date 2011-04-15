@@ -923,7 +923,7 @@ sub GenerateHeader
     }
     if (!$hasParent || $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
         if ($interfaceName eq "NodeFilter") {
-            push(@headerContent, "PassRefPtr<NodeFilter> toNodeFilter(JSC::JSValue);\n");
+            push(@headerContent, "PassRefPtr<NodeFilter> toNodeFilter(JSC::JSGlobalData&, JSC::JSValue);\n");
         } else {
             push(@headerContent, "$implType* to${interfaceName}(JSC::JSValue);\n");
         }
@@ -2464,6 +2464,11 @@ sub JSValueToNative
 
     if ($type eq "DOMObject") {
         return "exec->globalData(), $value";
+    }
+
+    if ($type eq "NodeFilter") {
+        $implIncludes{"JS$type.h"} = 1;
+        return "to$type(exec->globalData(), $value)";
     }
 
     if ($type eq "MediaQueryListListener") {
