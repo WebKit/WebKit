@@ -1,3 +1,19 @@
+2011-04-15  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement css overflow properties in CSSStyleApplyProperty
+        https://bugs.webkit.org/show_bug.cgi?id=58633
+
+        No new tests required as no functionality changes.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Add initializers for CSSPropertyOverflowX, CSSPropertyOverflowY and CSSPropertyOverflow.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Delete existing implementations.
+
 2011-04-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.

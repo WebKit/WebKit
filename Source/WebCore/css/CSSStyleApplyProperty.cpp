@@ -370,6 +370,11 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyValue(CSSPropertyBorderLeftStyle, new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::borderLeftStyle, &RenderStyle::setBorderLeftStyle, &RenderStyle::initialBorderStyle));
 
     setPropertyValue(CSSPropertyOutlineColor, new ApplyPropertyColorBase(&RenderStyle::outlineColor, &RenderStyle::color, &RenderStyle::setOutlineColor));
+
+    setPropertyValue(CSSPropertyOverflowX, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowX, &RenderStyle::setOverflowX, &RenderStyle::initialOverflowX));
+    setPropertyValue(CSSPropertyOverflowY, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowY, &RenderStyle::setOverflowY, &RenderStyle::initialOverflowY));
+    setPropertyValue(CSSPropertyOverflow, new ApplyPropertyExpanding(propertyValue(CSSPropertyOverflowX), propertyValue(CSSPropertyOverflowY)));
+
     setPropertyValue(CSSPropertyWebkitColumnRuleColor, new ApplyPropertyColorBase(&RenderStyle::columnRuleColor, &RenderStyle::color, &RenderStyle::setColumnRuleColor));
     setPropertyValue(CSSPropertyWebkitTextEmphasisColor, new ApplyPropertyColorBase(&RenderStyle::textEmphasisColor, &RenderStyle::color, &RenderStyle::setTextEmphasisColor));
     setPropertyValue(CSSPropertyWebkitTextFillColor, new ApplyPropertyColorBase(&RenderStyle::textFillColor, &RenderStyle::color, &RenderStyle::setTextFillColor));

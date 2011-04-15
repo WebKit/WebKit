@@ -3759,33 +3759,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyListStyleType:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(listStyleType, ListStyleType)
         return;
-    case CSSPropertyOverflow:
-    {
-        if (isInherit) {
-            m_style->setOverflowX(m_parentStyle->overflowX());
-            m_style->setOverflowY(m_parentStyle->overflowY());
-            return;
-        }
-        
-        if (isInitial) {
-            m_style->setOverflowX(RenderStyle::initialOverflowX());
-            m_style->setOverflowY(RenderStyle::initialOverflowY());
-            return;
-        }
-            
-        EOverflow o = *primitiveValue;
-
-        m_style->setOverflowX(o);
-        m_style->setOverflowY(o);
-        return;
-    }
-
-    case CSSPropertyOverflowX:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(overflowX, OverflowX)
-        return;
-    case CSSPropertyOverflowY:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(overflowY, OverflowY)
-        return;
     case CSSPropertyPageBreakBefore:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(pageBreakBefore, PageBreakBefore, PageBreak)
         return;
@@ -6075,9 +6048,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitMaskRepeat:
     case CSSPropertyWebkitMaskRepeatX:
     case CSSPropertyWebkitMaskRepeatY:
+    case CSSPropertyOverflow:
+    case CSSPropertyOverflowX:
+    case CSSPropertyOverflowY:
         ASSERT_NOT_REACHED();
         return;
-
 #if ENABLE(SVG)
     default:
         // Try the SVG properties
