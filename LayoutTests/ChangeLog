@@ -1,3 +1,13 @@
+2011-04-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Presence of shadow DOM should suppress rendering of ordinary child nodes
+        https://bugs.webkit.org/show_bug.cgi?id=58073
+
+        * fast/dom/shadow/no-renderers-for-light-children-expected.txt: Added.
+        * fast/dom/shadow/no-renderers-for-light-children.html: Added.
+
 2011-04-14  James Robinson  <jamesr@chromium.org>
 
         Add correct chromium expectation for compositing/layer-creation/overflow-scroll-overlap

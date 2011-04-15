@@ -1,3 +1,19 @@
+2011-04-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Presence of shadow DOM should suppress rendering of ordinary child nodes
+        https://bugs.webkit.org/show_bug.cgi?id=58073
+
+        Test: fast/dom/shadow/no-renderers-for-light-children.html
+
+        * dom/Node.cpp:
+        (WebCore::shadowRoot): Added a helper function.
+        (WebCore::Node::setDocumentRecursively): Changed to use the helper.
+        (WebCore::shouldCreateRendererFor): Expanded a long condition check into a helper function,
+            added a check for children of an element with a shadow DOM.
+        (WebCore::Node::createRendererAndStyle): Changed to use the helper.
+
 2011-04-14  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

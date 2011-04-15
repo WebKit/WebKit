@@ -852,6 +852,11 @@ bool Node::hasNonEmptyBoundingBox() const
     return false;
 }
 
+inline static ContainerNode* shadowRoot(Node* node)
+{
+    return node->isElementNode() ? toElement(node)->shadowRoot() : 0;
+}
+
 void Node::setDocumentRecursively(Document* newDocument)
 {
     ASSERT(document() != newDocument);
@@ -860,7 +865,7 @@ void Node::setDocumentRecursively(Document* newDocument)
         node->setDocument(newDocument);
         if (!node->isElementNode())
             continue;
-        if (Node* shadow = toElement(node)->shadowRoot())
+        if (Node* shadow = shadowRoot(node))
             shadow->setDocumentRecursively(newDocument);
     }
 }
@@ -1452,6 +1457,28 @@ ContainerNode* Node::parentNodeForRenderingAndStyle() const
     return parent && parent->isShadowBoundary() ? parent->shadowHost() : parent;
 }
 
+static bool shouldCreateRendererFor(Node* node, ContainerNode* parentForRenderingAndStyle)
+{
+    RenderObject* parentRenderer = parentForRenderingAndStyle->renderer();
+    if (!parentRenderer)
+        return false;
+
+    bool atShadowBoundary = node->parentOrHostNode()->isShadowBoundary();
+
+    // FIXME: Ignoring canHaveChildren() in a case of isShadowRoot() might be wrong.
+    // See https://bugs.webkit.org/show_bug.cgi?id=52423
+    if (!parentRenderer->canHaveChildren() && !(node->isShadowRoot() || atShadowBoundary))
+        return false;
+
+    if (shadowRoot(parentForRenderingAndStyle) && !atShadowBoundary)
+        return false;
+
+    if (!parentForRenderingAndStyle->childShouldCreateRenderer(node))
+        return false;
+
+    return true;
+}
+
 RenderObject* Node::createRendererAndStyle()
 {
     ASSERT(!renderer());
@@ -1460,11 +1487,7 @@ RenderObject* Node::createRendererAndStyle()
     ContainerNode* parent = parentNodeForRenderingAndStyle();
     ASSERT(parent);
 
-    RenderObject* parentRenderer = parent->renderer();
-
-    // FIXME: Ignoring canHaveChildren() in a case of isShadowRoot() might be wrong.
-    // See https://bugs.webkit.org/show_bug.cgi?id=52423
-    if (!parentRenderer || (!parentRenderer->canHaveChildren() && !(isShadowRoot() || parentNode()->isShadowBoundary())) || !parent->childShouldCreateRenderer(this))
+    if (!shouldCreateRendererFor(this, parent))
         return 0;
 
     RefPtr<RenderStyle> style = styleForRenderer();
@@ -1475,7 +1498,7 @@ RenderObject* Node::createRendererAndStyle()
     if (!newRenderer)
         return 0;
 
-    if (!parentRenderer->isChildAllowed(newRenderer, style.get())) {
+    if (!parent->renderer()->isChildAllowed(newRenderer, style.get())) {
         newRenderer->destroy();
         return 0;
     }
