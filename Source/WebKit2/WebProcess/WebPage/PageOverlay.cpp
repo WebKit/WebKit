@@ -157,7 +157,7 @@ void PageOverlay::fadeAnimationTimerFired()
     if (animationProgress >= 1.0)
         animationProgress = 1.0;
 
-    double sine = sin(M_PI_2 * animationProgress);
+    double sine = sin(piOverTwoFloat * animationProgress);
     float fadeAnimationValue = sine * sine;
 
     m_fractionFadedIn = (m_fadeAnimationType == FadeInAnimation) ? fadeAnimationValue : 1 - fadeAnimationValue;

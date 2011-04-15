@@ -1,5 +1,12 @@
 2011-04-15  Anders Carlsson  <andersca@apple.com>
 
+        Fix Windows build.
+
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::fadeAnimationTimerFired):
+
+2011-04-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Add the ability for PageOverlays to fade in and out
