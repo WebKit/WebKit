@@ -1,3 +1,10 @@
+2011-04-15  Oliver Hunt  <oliver@apple.com>
+
+        Forgot windows build fix.
+
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::WeakOwner::isReachableFromOpaqueRoots):
+
 2011-04-15  Joseph Pecoraro  <joepeck@webkit.org>
 
         Reviewed by Yury Semikhatsky.

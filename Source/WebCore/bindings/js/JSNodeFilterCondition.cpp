@@ -83,7 +83,7 @@ short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) 
     return intResult;
 }
 
-bool JSNodeFilterCondition::WeakOwner::isReachableFromOpaqueRoots(JSC::Handle<Unknown>, void* context, MarkStack& markStack)
+bool JSNodeFilterCondition::WeakOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, MarkStack& markStack)
 {
     return markStack.containsOpaqueRoot(context);
 }
