@@ -34,6 +34,7 @@
 #include "FindIndicator.h"
 #include "LocalizedStrings.h"
 #include "NativeWebKeyboardEvent.h"
+#include "NativeWebMouseEvent.h"
 #include "NotImplemented.h"
 #include "TiledDrawingAreaProxy.h"
 #include "WebContext.h"
@@ -306,32 +307,27 @@ void QWKPagePrivate::mouseMoveEvent(QGraphicsSceneMouseEvent* ev)
         return;
     lastPos = ev->pos();
 
-    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(ev, 0);
-    page->handleMouseEvent(mouseEvent);
+    page->handleMouseEvent(NativeWebMouseEvent(ev, 0));
 }
 
 void QWKPagePrivate::mousePressEvent(QGraphicsSceneMouseEvent* ev)
 {
     if (tripleClickTimer.isActive() && (ev->pos() - tripleClick).manhattanLength() < QApplication::startDragDistance()) {
-        WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(ev, 3);
-        page->handleMouseEvent(mouseEvent);
+        page->handleMouseEvent(NativeWebMouseEvent(ev, 3));
         return;
     }
 
-    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(ev, 1);
-    page->handleMouseEvent(mouseEvent);
+    page->handleMouseEvent(NativeWebMouseEvent(ev, 1));
 }
 
 void QWKPagePrivate::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev)
 {
-    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(ev, 0);
-    page->handleMouseEvent(mouseEvent);
+    page->handleMouseEvent(NativeWebMouseEvent(ev, 0));
 }
 
 void QWKPagePrivate::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* ev)
 {
-    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(ev, 2);
-    page->handleMouseEvent(mouseEvent);
+    page->handleMouseEvent(NativeWebMouseEvent(ev, 2));
 
     tripleClickTimer.start(QApplication::doubleClickInterval(), q);
     tripleClick = ev->pos().toPoint();

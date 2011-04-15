@@ -236,6 +236,7 @@
 		1CA8B954127C891500576C2B /* WebInspectorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C8E2DAD1278C5B200BC7BD0 /* WebInspectorMac.mm */; };
 		29CD55AA128E294F00133C85 /* AccessibilityWebPageObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 29CD55A8128E294F00133C85 /* AccessibilityWebPageObject.h */; };
 		29CD55AB128E294F00133C85 /* AccessibilityWebPageObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29CD55A9128E294F00133C85 /* AccessibilityWebPageObject.mm */; };
+		31EA25D2134F78C0005B1452 /* NativeWebMouseEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31EA25D0134F78B2005B1452 /* NativeWebMouseEventMac.mm */; };
 		330934471315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 330934431315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp */; };
 		330934481315B9220097A7BC /* WebCookieManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 330934441315B9220097A7BC /* WebCookieManagerMessages.h */; };
 		330934491315B9220097A7BC /* WebCookieManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 330934451315B9220097A7BC /* WebCookieManagerProxyMessageReceiver.cpp */; };
@@ -1116,6 +1117,8 @@
 		1CA8B944127C882A00576C2B /* WebInspectorProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorProxyMessages.h; sourceTree = "<group>"; };
 		29CD55A8128E294F00133C85 /* AccessibilityWebPageObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityWebPageObject.h; sourceTree = "<group>"; };
 		29CD55A9128E294F00133C85 /* AccessibilityWebPageObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityWebPageObject.mm; sourceTree = "<group>"; };
+		31EA25D0134F78B2005B1452 /* NativeWebMouseEventMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeWebMouseEventMac.mm; sourceTree = "<group>"; };
+		31EA25D3134F78D6005B1452 /* NativeWebMouseEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeWebMouseEvent.h; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* WebKit2Prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2Prefix.h; sourceTree = "<group>"; };
 		330934431315B9220097A7BC /* WebCookieManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCookieManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		330934441315B9220097A7BC /* WebCookieManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCookieManagerMessages.h; sourceTree = "<group>"; };
@@ -2069,6 +2072,7 @@
 				BCB0AEE8122F53E300B1341E /* MutableDictionary.cpp */,
 				BCB0AEE7122F53E300B1341E /* MutableDictionary.h */,
 				C02BFF1512514FD8009CCBEA /* NativeWebKeyboardEvent.h */,
+				31EA25D3134F78D6005B1452 /* NativeWebMouseEvent.h */,
 				BCCF673212C7F15C008F9C35 /* OriginAndDatabases.cpp */,
 				BCCF672C12C7EDF7008F9C35 /* OriginAndDatabases.h */,
 				BCC43AB8127B95DC00317F16 /* PlatformPopupMenuData.cpp */,
@@ -2775,6 +2779,7 @@
 				1A9639F512F38ECD0078A062 /* CoreAnimationRenderer.h */,
 				1A9639F612F38ECD0078A062 /* CoreAnimationRenderer.mm */,
 				1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */,
+				31EA25D0134F78B2005B1452 /* NativeWebMouseEventMac.mm */,
 				C02BFF1D1251502E009CCBEA /* NativeWebKeyboardEventMac.mm */,
 				C574A57F12E66681002DFE98 /* PasteboardTypes.h */,
 				C574A58012E66681002DFE98 /* PasteboardTypes.mm */,
@@ -4307,6 +4312,7 @@
 				51834592134532E90092B696 /* WebIconDatabaseClient.cpp in Sources */,
 				E1A31735134CEA80007C9A4F /* AttributedString.mm in Sources */,
 				E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */,
+				31EA25D2134F78C0005B1452 /* NativeWebMouseEventMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

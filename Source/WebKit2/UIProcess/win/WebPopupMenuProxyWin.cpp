@@ -29,6 +29,7 @@
 #include "config.h"
 #include "WebPopupMenuProxyWin.h"
 
+#include "NativeWebMouseEvent.h"
 #include "WebView.h"
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/ScrollbarTheme.h>
@@ -324,8 +325,26 @@ void WebPopupMenuProxyWin::showPopupMenu(const IntRect& rect, TextDirection, dou
     m_showPopup = false;
     ::ShowWindow(m_popup, SW_HIDE);
 
-    if (m_client)
-        m_client->valueChangedForPopupMenu(this, m_newSelectedIndex);
+    if (!m_client)
+        return;
+
+    m_client->valueChangedForPopupMenu(this, m_newSelectedIndex);
+
+    // <https://bugs.webkit.org/show_bug.cgi?id=57904> In order to properly call the onClick()
+    // handler on a <select> element, we need to fake a mouse up event in the main window.
+    // The main window already received the mouse down, which showed this popup, but upon
+    // selection of an item the mouse up gets eaten by the popup menu. So we take the mouse down
+    // event, change the message type to a mouse up event, and post that in the message queue.
+    // Thus, we are virtually clicking at the
+    // same location where the mouse down event occurred. This allows the hit test to select
+    // the correct element, and thereby call the onClick() JS handler.
+    if (!m_client->currentlyProcessedMouseDownEvent())
+        return;
+        
+    const MSG* initiatingWinEvent = m_client->currentlyProcessedMouseDownEvent()->nativeEvent();
+    MSG fakeEvent = *initiatingWinEvent;
+    fakeEvent.message = WM_LBUTTONUP;
+    ::PostMessage(fakeEvent.hwnd, fakeEvent.message, fakeEvent.wParam, fakeEvent.lParam);
 }
 
 void WebPopupMenuProxyWin::hidePopupMenu()

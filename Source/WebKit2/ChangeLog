@@ -1,3 +1,46 @@
+2011-04-15  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        onClick does not function with <select> elements in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=57904
+        <rdar://problem/9217757>
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/NativeWebMouseEvent.h: Copied from Source/WebKit2/UIProcess/WebPopupMenuProxy.h.
+        (WebKit::NativeWebMouseEvent::nativeEvent):
+        * Shared/mac/NativeWebMouseEventMac.mm: Added.
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * Shared/qt/NativeWebMouseEventQt.cpp: Copied from Source/WebKit2/UIProcess/WebPopupMenuProxy.h.
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * Shared/win/NativeWebMouseEventWin.cpp: Copied from Source/WebKit2/UIProcess/WebPopupMenuProxy.h.
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView mouseMoved:]):
+        (-[WKView _mouseHandler:]): Pre-compiler mouse handler calls need to use the new NativeWebMouseEvent class
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::mouseMoveEvent):
+        (QWKPagePrivate::mousePressEvent):
+        (QWKPagePrivate::mouseReleaseEvent):
+        (QWKPagePrivate::mouseDoubleClickEvent):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleMouseEvent): keep track of mouse down event in order to be able to send a fake mouse up event on the select element
+        (WebKit::WebPageProxy::currentMouseDownEvent): for access by the popup menu proxy to dispatch the fake mouse up event
+        (WebKit::WebPageProxy::didReceiveEvent): clear out the cached mouse down event
+        (WebKit::WebPageProxy::processDidCrash): clear out the cached events since we assume that didReceiveEvent did not called prior to the crash
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPopupMenuProxy.h:
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu): after notifying the popup menu client that the value changed, fake mouse up and mouse move events are posted
+        * UIProcess/win/WebPopupMenuProxyWin.cpp:
+        (WebKit::WebPopupMenuProxyWin::showPopupMenu): after notifying the popup menu client that the value changed, fake mouse up and mouse move events are posted
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onMouseEvent):
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
 2011-04-15  Alexey Proskuryakov  <ap@apple.com>
 
         Qt build fix.

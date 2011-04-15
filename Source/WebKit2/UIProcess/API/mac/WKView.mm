@@ -35,6 +35,7 @@
 #import "LayerTreeContext.h"
 #import "Logging.h"
 #import "NativeWebKeyboardEvent.h"
+#import "NativeWebMouseEvent.h"
 #import "PDFViewController.h"
 #import "PageClientImpl.h"
 #import "PasteboardTypes.h"
@@ -939,6 +940,26 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
     _data->_mouseDownEvent = [event retain];
 }
 
+#define NATIVE_MOUSE_EVENT_HANDLER(Selector) \
+    - (void)Selector:(NSEvent *)theEvent \
+    { \
+        NativeWebMouseEvent webEvent(theEvent, self); \
+        _data->_page->handleMouseEvent(webEvent); \
+    }
+
+NATIVE_MOUSE_EVENT_HANDLER(mouseEntered)
+NATIVE_MOUSE_EVENT_HANDLER(mouseExited)
+NATIVE_MOUSE_EVENT_HANDLER(otherMouseDown)
+NATIVE_MOUSE_EVENT_HANDLER(otherMouseDragged)
+NATIVE_MOUSE_EVENT_HANDLER(otherMouseMoved)
+NATIVE_MOUSE_EVENT_HANDLER(otherMouseUp)
+NATIVE_MOUSE_EVENT_HANDLER(rightMouseDown)
+NATIVE_MOUSE_EVENT_HANDLER(rightMouseDragged)
+NATIVE_MOUSE_EVENT_HANDLER(rightMouseMoved)
+NATIVE_MOUSE_EVENT_HANDLER(rightMouseUp)
+
+#undef NATIVE_MOUSE_EVENT_HANDLER
+
 #define EVENT_HANDLER(Selector, Type) \
     - (void)Selector:(NSEvent *)theEvent \
     { \
@@ -946,16 +967,6 @@ static void speakString(WKStringRef string, WKErrorRef error, void*)
         _data->_page->handle##Type##Event(webEvent); \
     }
 
-EVENT_HANDLER(mouseEntered, Mouse)
-EVENT_HANDLER(mouseExited, Mouse)
-EVENT_HANDLER(otherMouseDown, Mouse)
-EVENT_HANDLER(otherMouseDragged, Mouse)
-EVENT_HANDLER(otherMouseMoved, Mouse)
-EVENT_HANDLER(otherMouseUp, Mouse)
-EVENT_HANDLER(rightMouseDown, Mouse)
-EVENT_HANDLER(rightMouseDragged, Mouse)
-EVENT_HANDLER(rightMouseMoved, Mouse)
-EVENT_HANDLER(rightMouseUp, Mouse)
 EVENT_HANDLER(scrollWheel, Wheel)
 
 #undef EVENT_HANDLER
@@ -966,8 +977,7 @@ EVENT_HANDLER(scrollWheel, Wheel)
     if (self == [[self window] firstResponder] && !NSPointInRect([self convertPoint:[event locationInWindow] fromView:nil], [self visibleRect]))
         return;
 
-    WebMouseEvent webEvent = WebEventFactory::createWebMouseEvent(event, self);
-    _data->_page->handleMouseEvent(webEvent);
+    _data->_page->handleMouseEvent(NativeWebMouseEvent(event, self));
 }
 
 - (void)_mouseHandler:(NSEvent *)event
@@ -975,8 +985,7 @@ EVENT_HANDLER(scrollWheel, Wheel)
     NSInputManager *currentInputManager = [NSInputManager currentInputManager];
     if ([currentInputManager wantsToHandleMouseEvents] && [currentInputManager handleMouseEvent:event])
         return;
-    WebMouseEvent webEvent = WebEventFactory::createWebMouseEvent(event, self);
-    _data->_page->handleMouseEvent(webEvent);
+    _data->_page->handleMouseEvent(NativeWebMouseEvent(event, self));
 }
 
 - (void)mouseDown:(NSEvent *)event

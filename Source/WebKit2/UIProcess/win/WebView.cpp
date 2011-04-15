@@ -31,6 +31,7 @@
 #include "FindIndicator.h"
 #include "Logging.h"
 #include "NativeWebKeyboardEvent.h"
+#include "NativeWebMouseEvent.h"
 #include "Region.h"
 #include "RunLoop.h"
 #include "WKAPICast.h"
@@ -387,7 +388,7 @@ void WebView::windowAncestryDidChange()
 
 LRESULT WebView::onMouseEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
 {
-    WebMouseEvent mouseEvent = WebEventFactory::createWebMouseEvent(hWnd, message, wParam, lParam, m_wasActivatedByMouseEvent);
+    NativeWebMouseEvent mouseEvent = NativeWebMouseEvent(hWnd, message, wParam, lParam, m_wasActivatedByMouseEvent);
     setWasActivatedByMouseEvent(false);
     
     switch (message) {

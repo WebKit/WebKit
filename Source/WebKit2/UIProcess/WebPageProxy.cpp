@@ -33,6 +33,7 @@
 #include "FindIndicator.h"
 #include "MessageID.h"
 #include "NativeWebKeyboardEvent.h"
+#include "NativeWebMouseEvent.h"
 #include "PageClient.h"
 #include "PrintInfo.h"
 #include "SessionState.h"
@@ -811,7 +812,7 @@ void WebPageProxy::dragEnded(const WebCore::IntPoint& clientPosition, const WebC
     process()->send(Messages::WebPage::DragEnded(clientPosition, globalPosition, operation), m_pageID);
 }
 
-void WebPageProxy::handleMouseEvent(const WebMouseEvent& event)
+void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
 {
     if (!isValid())
         return;
@@ -821,12 +822,19 @@ void WebPageProxy::handleMouseEvent(const WebMouseEvent& event)
         process()->responsivenessTimer()->start();
     else {
         if (m_processingMouseMoveEvent) {
-            m_nextMouseMoveEvent = adoptPtr(new WebMouseEvent(event));
+            m_nextMouseMoveEvent = adoptPtr(new NativeWebMouseEvent(event));
             return;
         }
 
         m_processingMouseMoveEvent = true;
     }
+
+    // <https://bugs.webkit.org/show_bug.cgi?id=57904> We need to keep track of the mouse down event in the case where we
+    // display a popup menu for select elements. When the user changes the selected item,
+    // we fake a mouse up event by using this stored down event. This event gets cleared
+    // when the mouse up message is received from WebProcess.
+    if (event.type() == WebEvent::MouseDown)
+        m_currentlyProcessedMouseDownEvent = adoptPtr(new NativeWebMouseEvent(event));
 
     process()->send(Messages::WebPage::MouseEvent(event), m_pageID);
 }
@@ -2221,6 +2229,11 @@ void WebPageProxy::setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index
     process()->send(Messages::WebPage::SetTextForActivePopupMenu(index), m_pageID);
 }
 
+NativeWebMouseEvent* WebPageProxy::currentlyProcessedMouseDownEvent()
+{
+    return m_currentlyProcessedMouseDownEvent.get();
+}
+
 void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, const Vector<WebPopupItem>& items, int32_t selectedIndex, const PlatformPopupMenuData& data)
 {
     if (m_activePopupMenu) {
@@ -2555,11 +2568,13 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
         }
         break;
     case WebEvent::MouseDown:
-    case WebEvent::MouseUp:
 #if ENABLE(GESTURE_EVENTS)
     case WebEvent::GestureScrollBegin:
     case WebEvent::GestureScrollEnd:
 #endif
+        break;
+    case WebEvent::MouseUp:
+        m_currentlyProcessedMouseDownEvent = nullptr;
         break;
 
     case WebEvent::Wheel: {
@@ -2769,6 +2784,9 @@ void WebPageProxy::processDidCrash()
 
     // Can't expect DidReceiveEvent notifications from a crashed web process.
     m_keyEventQueue.clear();
+    m_nextWheelEvent = nullptr;
+    m_nextMouseMoveEvent = nullptr;
+    m_currentlyProcessedMouseDownEvent = nullptr;
 
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
     dismissCorrectionPanel(ReasonForDismissingCorrectionPanelIgnored);

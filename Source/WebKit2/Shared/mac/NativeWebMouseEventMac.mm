@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPopupMenuProxy_h
-#define WebPopupMenuProxy_h
+#import "config.h"
+#import "NativeWebMouseEvent.h"
 
-#include <WebCore/TextDirection.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
-
-namespace WebCore {
-    class IntRect;
-}
+#import "WebEventFactory.h"
 
 namespace WebKit {
 
-struct PlatformPopupMenuData;
-struct WebPopupItem;
-class NativeWebMouseEvent;
-
-class WebPopupMenuProxy : public RefCounted<WebPopupMenuProxy> {
-public:
-    class Client {
-    protected:
-        virtual ~Client()
-        {
-        }
-
-    public:
-        virtual void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex) = 0;
-        virtual void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index) = 0;
-        virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent() = 0;
-    };
-
-    virtual ~WebPopupMenuProxy()
-    {
-    }
-
-    virtual void showPopupMenu(const WebCore::IntRect& rect, WebCore::TextDirection, double scaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex) = 0;
-    virtual void hidePopupMenu() = 0;
-
-    void invalidate() { m_client = 0; }
-
-protected:
-    WebPopupMenuProxy(Client* client)
-        : m_client(client)
-    {
-    }
-
-    Client* m_client;
-};
+NativeWebMouseEvent::NativeWebMouseEvent(NSEvent* event, NSView* view)
+    : WebMouseEvent(WebEventFactory::createWebMouseEvent(event, view))
+    , m_nativeEvent(event)
+{
+}
 
 } // namespace WebKit
-
-#endif // WebPopupMenuProxy_h

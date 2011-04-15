@@ -78,6 +78,7 @@ namespace WebCore {
 namespace WebKit {
 
 class NativeWebKeyboardEvent;
+class NativeWebMouseEvent;
 class PageClient;
 class PlatformCertificateInfo;
 class StringPairVector;
@@ -287,7 +288,7 @@ public:
     void setActualVisibleContentRect(const WebCore::IntRect& rect);
 #endif
 
-    void handleMouseEvent(const WebMouseEvent&);
+    void handleMouseEvent(const NativeWebMouseEvent&);
     void handleWheelEvent(const WebWheelEvent&);
     void handleKeyboardEvent(const NativeWebKeyboardEvent&);
 #if ENABLE(GESTURE_EVENTS)
@@ -498,6 +499,7 @@ private:
     // WebPopupMenuProxy::Client
     virtual void valueChangedForPopupMenu(WebPopupMenuProxy*, int32_t newSelectedIndex);
     virtual void setTextFromItemForPopupMenu(WebPopupMenuProxy*, int32_t index);
+    virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent();
 
     // Implemented in generated WebPageProxyMessageReceiver.cpp
     void didReceiveWebPageProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
@@ -800,7 +802,8 @@ private:
     OwnPtr<WebWheelEvent> m_nextWheelEvent;
 
     bool m_processingMouseMoveEvent;
-    OwnPtr<WebMouseEvent> m_nextMouseMoveEvent;
+    OwnPtr<NativeWebMouseEvent> m_nextMouseMoveEvent;
+    OwnPtr<NativeWebMouseEvent> m_currentlyProcessedMouseDownEvent;
 
     uint64_t m_pageID;
 
