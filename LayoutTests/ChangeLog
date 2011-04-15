@@ -1,3 +1,18 @@
+2011-04-15  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows Tests] fast/forms/input-text-drag-down.html and
+        editing/selection/select-from-textfield-outwards.html failing since r83967.
+        https://bugs.webkit.org/show_bug.cgi?id=58664
+
+        Adding Windows-specific expected failing results to get the bots green.
+
+        * platform/win/editing/selection/select-from-textfield-outwards-expected.checksum: Added.
+        * platform/win/editing/selection/select-from-textfield-outwards-expected.png: Added.
+        * platform/win/editing/selection/select-from-textfield-outwards-expected.txt: Added.
+        * platform/win/fast/forms/input-text-drag-down-expected.checksum: Added.
+        * platform/win/fast/forms/input-text-drag-down-expected.png: Added.
+        * platform/win/fast/forms/input-text-drag-down-expected.txt: Added.
+
 2011-04-15  Sergio Villar Senin  <svillar@igalia.com>
 
         Unreviewed, added new GTK+ test expectations.
