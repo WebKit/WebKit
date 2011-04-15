@@ -171,9 +171,11 @@ void NPN_PopPopupsEnabledState(NPP instance)
     pluginViewForInstance(instance)->popPopupsEnabledState();
 }
 
-void NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void *), void *userData)
+extern "C" typedef void PluginThreadAsyncCallFunction(void*);
+void NPN_PluginThreadAsyncCall(NPP instance, PluginThreadAsyncCallFunction func, void* userData)
 {
-    PluginMainThreadScheduler::scheduler().scheduleCall(instance, func, userData);
+    // Callback function type only differs from MainThreadFunction by being extern "C", which doesn't affect calling convention on any compilers we use.
+    PluginMainThreadScheduler::scheduler().scheduleCall(instance, reinterpret_cast<PluginMainThreadScheduler::MainThreadFunction*>(func), userData);
 }
 
 NPError NPN_GetValueForURL(NPP instance, NPNURLVariable variable, const char* url, char** value, uint32_t* len)

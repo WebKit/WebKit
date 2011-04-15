@@ -1,3 +1,16 @@
+2011-04-15  Ben Taylor  <bentaylor.solx86@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix building with Sun Studio 12: function pointers for extern "C" are treated differently
+        https://bugs.webkit.org/show_bug.cgi?id=58508
+
+        Since extern "C" makes a different type (although most compilers ignore that),
+        we should be more careful when passing NPAPI callback functions.
+
+        * plugins/npapi.cpp:
+        (NPN_PluginThreadAsyncCall):
+
 2011-04-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
