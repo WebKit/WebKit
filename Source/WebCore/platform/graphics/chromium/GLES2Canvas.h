@@ -43,10 +43,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
-namespace WTF {
-class ByteArray;
-}
-
 namespace WebCore {
 
 class Color;
@@ -59,11 +55,6 @@ class SharedGraphicsContext3D;
 class GLES2Canvas {
     WTF_MAKE_NONCOPYABLE(GLES2Canvas);
 public:
-    enum DrawTextureFlags {
-        ApplyClipping =         1 << 0,
-        MultiplySourceAlpha =   1 << 1
-    };
-
     GLES2Canvas(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
     ~GLES2Canvas();
 
@@ -97,13 +88,10 @@ public:
     void drawTexturedRect(unsigned texture, const IntSize& textureSize, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace, CompositeOperator);
     // This version is called by BitmapImage::draw().
     void drawTexturedRect(Texture*, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace, CompositeOperator);
-    // This version is called by the above, by putImageData, and by the software->hardware uploads.
-    void drawTexturedRect(Texture*, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&, float alpha, ColorSpace, CompositeOperator, unsigned drawTextureFlags);
+    // This version is called by the above, and by the software->hardware uploads.
+    void drawTexturedRect(Texture*, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform&, float alpha, ColorSpace, CompositeOperator, bool clip);
     Texture* createTexture(NativeImagePtr, Texture::Format, int width, int height);
     Texture* getTexture(NativeImagePtr);
-    void putImageData(void* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, Texture::Format, float alpha, ColorSpace, CompositeOperator, unsigned drawTextureFlags);
-    void putUnmultipliedImageData(WTF::ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint);
-    void putPremultipliedImageData(WTF::ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint);
 
     SharedGraphicsContext3D* context() const { return m_context; }
 

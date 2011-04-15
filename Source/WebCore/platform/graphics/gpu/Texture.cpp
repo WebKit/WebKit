@@ -120,9 +120,13 @@ PassRefPtr<Texture> Texture::create(GraphicsContext3D* context, Format format, i
 }
 
 template <bool swizzle>
-static void copySubRect(uint32_t* src, int srcX, int srcY, uint32_t* dst, int width, int height, int srcStride)
+static uint32_t* copySubRect(uint32_t* src, int srcX, int srcY, uint32_t* dst, int width, int height, int srcStride)
 {
     uint32_t* srcOffset = src + srcX + srcY * srcStride;
+
+    if (!swizzle && width == srcStride)
+        return srcOffset;
+
     if (swizzle) {
         uint32_t* dstPixel = dst;
         for (int y = 0; y < height; ++y) {
@@ -137,23 +141,18 @@ static void copySubRect(uint32_t* src, int srcX, int srcY, uint32_t* dst, int wi
             memcpy(dst + y * width, srcOffset + y * srcStride, 4 * width);
         }
     }
+    return dst;
 }
 
 void Texture::load(void* pixels)
 {
-    updateSubRect(pixels, IntSize(m_tiles.totalSizeX(), m_tiles.totalSizeY()), IntRect(0, 0, m_tiles.totalSizeX(), m_tiles.totalSizeY()));
+    updateSubRect(pixels, IntRect(0, 0, m_tiles.totalSizeX(), m_tiles.totalSizeY()));
 }
 
 void Texture::updateSubRect(void* pixels, const IntRect& updateRect)
 {
-    updateSubRect(pixels, IntSize(m_tiles.totalSizeX(), m_tiles.totalSizeY()), updateRect);
-}
-
-void Texture::updateSubRect(void* pixels, const IntSize& pixelBufferSize, const IntRect& updateRect)
-{
-    IntSize updateBounds = pixelBufferSize.shrunkTo(IntSize(m_tiles.totalSizeX(), m_tiles.totalSizeY()));
     IntRect updateRectSanitized(updateRect);
-    updateRectSanitized.intersect(IntRect(0, 0, updateBounds.width(), updateBounds.height()));
+    updateRectSanitized.intersect(IntRect(0, 0, m_tiles.totalSizeX(), m_tiles.totalSizeY()));
 
     uint32_t* pixels32 = static_cast<uint32_t*>(pixels);
     unsigned int glFormat = 0;
@@ -164,14 +163,10 @@ void Texture::updateSubRect(void* pixels, const IntSize& pixelBufferSize, const 
         ASSERT(glFormat == GraphicsContext3D::RGBA && glType == GraphicsContext3D::UNSIGNED_BYTE);
         // FIXME:  This could use PBO's to save doing an extra copy here.
     }
-
     int tempBuffSize = // Temporary buffer size is the smaller of the max texture size or the updateRectSanitized
         min(m_tiles.maxTextureSize(), m_tiles.borderTexels() + updateRectSanitized.width()) *
         min(m_tiles.maxTextureSize(), m_tiles.borderTexels() + updateRectSanitized.height());
-    bool needTempBuff = swizzle || updateRect.width() != m_tiles.totalSizeX() || updateRect.width() != pixelBufferSize.width() || m_tiles.numTilesX() > 1;
-    OwnArrayPtr<uint32_t> tempBuff;
-    if (needTempBuff)
-        tempBuff = adoptArrayPtr(new uint32_t[tempBuffSize]);
+    OwnArrayPtr<uint32_t> tempBuff = adoptArrayPtr(new uint32_t[tempBuffSize]);
 
     for (int tile = 0; tile < m_tiles.numTiles(); tile++) {
         // Intersect with tile
@@ -186,21 +181,16 @@ void Texture::updateSubRect(void* pixels, const IntSize& pixelBufferSize, const 
         if (updateRectIntersected.isEmpty())
             continue;
 
+        // Copy sub rectangle out of larger pixel data
         uint32_t* uploadBuff = 0;
-        if (needTempBuff) {
-            uploadBuff = tempBuff.get();
-            // Copy sub rectangle out of larger pixel data
-            if (swizzle) {
-                copySubRect<true>(
-                pixels32, updateRectIntersected.x(), updateRectIntersected.y(),
-                uploadBuff, updateRectIntersected.width(), updateRectIntersected.height(), pixelBufferSize.width());
-            } else {
-                copySubRect<false>(
-                pixels32, updateRectIntersected.x(), updateRectIntersected.y(),
-                uploadBuff, updateRectIntersected.width(), updateRectIntersected.height(), pixelBufferSize.width());
-            }
+        if (swizzle) {
+            uploadBuff = copySubRect<true>(
+            pixels32, updateRectIntersected.x(), updateRectIntersected.y(),
+            tempBuff.get(), updateRectIntersected.width(), updateRectIntersected.height(), m_tiles.totalSizeX());
         } else {
-            uploadBuff = pixels32 + updateRectIntersected.x() + updateRectIntersected.y() * pixelBufferSize.width();
+            uploadBuff = copySubRect<false>(
+            pixels32, updateRectIntersected.x(), updateRectIntersected.y(),
+            tempBuff.get(), updateRectIntersected.width(), updateRectIntersected.height(), m_tiles.totalSizeX());
         }
 
         m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_tileTextureIds->at(tile));

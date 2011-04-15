@@ -32,7 +32,6 @@
 
 #include "GLES2Canvas.h"
 
-#include "ByteArray.h"
 #include "DrawingBuffer.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
@@ -57,8 +56,6 @@
 #include <wtf/text/CString.h>
 
 namespace WebCore {
-
-using WTF::ByteArray;
 
 // Number of line segments used to approximate bezier curves.
 const int pathTesselation = 30;
@@ -409,22 +406,15 @@ void GLES2Canvas::drawTexturedRect(unsigned texture, const IntSize& textureSize,
 
 void GLES2Canvas::drawTexturedRect(Texture* texture, const FloatRect& srcRect, const FloatRect& dstRect, ColorSpace colorSpace, CompositeOperator compositeOp)
 {
-    drawTexturedRect(texture, srcRect, dstRect, m_state->m_ctm, m_state->m_alpha, colorSpace, compositeOp, m_state->clippingEnabled() ? ApplyClipping : 0);
+    drawTexturedRect(texture, srcRect, dstRect, m_state->m_ctm, m_state->m_alpha, colorSpace, compositeOp, m_state->clippingEnabled());
 }
 
-void GLES2Canvas::drawTexturedRect(Texture* texture, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha, ColorSpace colorSpace, CompositeOperator compositeOp, unsigned drawTextureFlags)
+
+void GLES2Canvas::drawTexturedRect(Texture* texture, const FloatRect& srcRect, const FloatRect& dstRect, const AffineTransform& transform, float alpha, ColorSpace colorSpace, CompositeOperator compositeOp, bool clip)
 {
     bindFramebuffer();
-    
-    if (drawTextureFlags & MultiplySourceAlpha) {
-        // The multiply option hijacks the blend func, so it can't be combined with a compositing op
-        ASSERT(CompositeCopy == compositeOp);
-        // Custom composite operation that performs alpha multiplication on color components
-        m_context->graphicsContext3D()->enable(GraphicsContext3D::BLEND);
-        m_context->graphicsContext3D()->blendFuncSeparate(GraphicsContext3D::SRC_ALPHA, GraphicsContext3D::ZERO, GraphicsContext3D::ONE, GraphicsContext3D::ZERO);
-    } else
-        m_context->applyCompositeOperator(compositeOp);
-    applyClipping(drawTextureFlags & ApplyClipping);
+    m_context->applyCompositeOperator(compositeOp);
+    applyClipping(clip);
     const TilingData& tiles = texture->tiles();
     IntRect tileIdxRect = tiles.overlappedTileIndices(srcRect);
 
@@ -911,44 +901,6 @@ void GLES2Canvas::applyClipping(bool enable)
                                                   GraphicsContext3D::KEEP);
         checkGLError("stencilOp");
     }
-}
-
-void GLES2Canvas::putImageData(void* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, Texture::Format format, float alpha, ColorSpace colorSpace, CompositeOperator op, unsigned drawTextureFlags)
-{
-    ASSERT(source);
-    IntRect clippedSourceRect(0, 0, sourceSize.width(), sourceSize.height());
-    clippedSourceRect.intersect(sourceRect);
-    int deltaX = clippedSourceRect.x() - sourceRect.x();
-    int deltaY = clippedSourceRect.y() - sourceRect.y();
-    IntPoint adjustedDestPoint(destPoint.x() + deltaX, destPoint.y() + deltaY);    
-    IntRect destRect(adjustedDestPoint, clippedSourceRect.size());
-    IntRect canvasRect(0, 0, m_size.width(), m_size.height());
-    destRect.intersect(canvasRect);
-    deltaX = destRect.x() - adjustedDestPoint.x();
-    deltaY = destRect.y() - adjustedDestPoint.y();
-    clippedSourceRect.move(deltaX, deltaY);
-    clippedSourceRect.setSize(destRect.size());
-    if (!clippedSourceRect.width() || !clippedSourceRect.height()) 
-        return;
-    RefPtr<Texture> uploadTexture = m_context->createTexture(format, clippedSourceRect.width(), clippedSourceRect.height());
-    IntRect texUpdateRect(0, 0, clippedSourceRect.width(), clippedSourceRect.height());
-    // To get the row stride right, we still take the width of the full buffer for the source size.
-    IntSize adjustedSourceSize(sourceSize.width(), texUpdateRect.height());
-    uploadTexture->updateSubRect(((char*)source) + (clippedSourceRect.y() * sourceSize.width() + clippedSourceRect.x()) * 4, adjustedSourceSize, texUpdateRect);
-    AffineTransform identity;
-    drawTexturedRect(uploadTexture.get(), texUpdateRect, destRect, identity, alpha, colorSpace, op, drawTextureFlags);
-}
-
-void GLES2Canvas::putUnmultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
-{
-    IntPoint newDestPoint(destPoint.x() + sourceRect.x(), destPoint.y() + sourceRect.y());
-    putImageData(source->data(), sourceSize, sourceRect, newDestPoint, Texture::RGBA8, 1.0f, ColorSpaceDeviceRGB, CompositeCopy, MultiplySourceAlpha);
-}
-
-void GLES2Canvas::putPremultipliedImageData(ByteArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint)
-{
-    IntPoint newDestPoint(destPoint.x() + sourceRect.x(), destPoint.y() + sourceRect.y());
-    putImageData(source->data(), sourceSize, sourceRect, newDestPoint, Texture::RGBA8, 1.0f, ColorSpaceDeviceRGB, CompositeCopy, 0);
 }
 
 void GLES2Canvas::checkGLError(const char* header)

@@ -699,8 +699,6 @@ BUGCR3273 : editing/selection/mixed-editability-10.html = TEXT
 // selection
 BUGCR10369 LINUX : editing/selection/5354455-2.html = FAIL
 
-BUGCR79477 LINUX WIN : canvas/philip/tests/2d.gradient.interpolate.colouralpha.html = TEXT
-
 // TODO(erg): Attempted to rebaseline these tests as part of the above
 // 43346:43361 rebaseling from http://trac.webkit.org/changeset/43355. Turned
 // tree red. May be more involved then just rebaselining.

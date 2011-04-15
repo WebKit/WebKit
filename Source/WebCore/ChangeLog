@@ -1,3 +1,25 @@
+2011-04-15  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed, rolling out r83949.
+        http://trac.webkit.org/changeset/83949
+        https://bugs.webkit.org/show_bug.cgi?id=57960
+
+        broke 31 tests in chromium win & linux
+
+        * platform/graphics/chromium/GLES2Canvas.cpp:
+        (WebCore::GLES2Canvas::drawTexturedRect):
+        * platform/graphics/chromium/GLES2Canvas.h:
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::copySubRect):
+        (WebCore::Texture::load):
+        (WebCore::Texture::updateSubRect):
+        * platform/graphics/gpu/Texture.h:
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::getImageData):
+        (WebCore::putImageData):
+        (WebCore::ImageBuffer::putUnmultipliedImageData):
+        (WebCore::ImageBuffer::putPremultipliedImageData):
+
 2011-04-15  Ben Taylor  <bentaylor.solx86@gmail.com>
 
         Reviewed by Alexey Proskuryakov.
