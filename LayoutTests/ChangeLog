@@ -1,5 +1,13 @@
 2011-04-15  Adam Roben  <aroben@apple.com>
 
+        Skip a timing-out test on Windows
+
+        <http://webkit.org/b/58654> tracks the failure.
+
+        * platform/win/Skipped: Added media/video-controls-in-media-document.html.
+
+2011-04-15  Adam Roben  <aroben@apple.com>
+
         Roll out r83954
 
         It was causing fast/dom/Window/timer-null-script-execution-context.html to crash on multiple
