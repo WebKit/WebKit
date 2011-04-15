@@ -1,3 +1,14 @@
+2011-04-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fade the find page overlay
+        https://bugs.webkit.org/show_bug.cgi?id=58697
+
+        Add a symbol that WebKit2 needs.
+
+        * WebCore.exp.in:
+
 2011-04-15  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

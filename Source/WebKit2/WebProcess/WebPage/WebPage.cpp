@@ -724,11 +724,24 @@ void WebPage::setFixedLayoutSize(const IntSize& size)
 
 void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay)
 {
-    if (m_pageOverlay)
-        pageOverlay->setPage(0);
+    bool shouldFadeIn = true;
+    
+    if (m_pageOverlay) {
+        m_pageOverlay->setPage(0);
+
+        if (pageOverlay) {
+            // We're installing a page overlay when a page overlay is already active.
+            // In this case we don't want to fade in the new overlay.
+            shouldFadeIn = false;
+        }
+    }
 
     m_pageOverlay = pageOverlay;
     m_pageOverlay->setPage(this);
+
+    if (shouldFadeIn)
+        m_pageOverlay->startFadeInAnimation();
+
     m_drawingArea->didInstallPageOverlay();
 }
 

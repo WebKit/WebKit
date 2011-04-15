@@ -270,27 +270,39 @@ static const float shadowOffsetY = 1.0;
 static const float shadowBlurRadius = 2.0;
 static const float whiteFrameThickness = 1.0;
 
-static const int overlayBackgroundRed = 25;
-static const int overlayBackgroundGreen = 25;
-static const int overlayBackgroundBlue = 25;
-static const int overlayBackgroundAlpha = 63;
+static const float overlayBackgroundRed = 0.1;
+static const float overlayBackgroundGreen = 0.1;
+static const float overlayBackgroundBlue = 0.1;
+static const float overlayBackgroundAlpha = 0.25;
 
-static Color overlayBackgroundColor()
+static Color overlayBackgroundColor(float fractionFadedIn)
 {
-    return Color(overlayBackgroundRed, overlayBackgroundGreen, overlayBackgroundBlue, overlayBackgroundAlpha);
+    return Color(overlayBackgroundRed, overlayBackgroundGreen, overlayBackgroundBlue, overlayBackgroundAlpha * fractionFadedIn);
 }
 
-void FindController::drawRect(PageOverlay*, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
+static Color holeShadowColor(float fractionFadedIn)
 {
+    return Color(0.0f, 0.0f, 0.0f, fractionFadedIn);
+}
+
+static Color holeFillColor(float fractionFadedIn)
+{
+    return Color(1.0f, 1.0f, 1.0f, fractionFadedIn);
+}
+
+void FindController::drawRect(PageOverlay* pageOverlay, GraphicsContext& graphicsContext, const IntRect& dirtyRect)
+{
+    float fractionFadedIn = pageOverlay->fractionFadedIn();
+
     Vector<IntRect> rects = rectsForTextMatches();
 
     // Draw the background.
-    graphicsContext.fillRect(dirtyRect, overlayBackgroundColor(), ColorSpaceSRGB);
+    graphicsContext.fillRect(dirtyRect, overlayBackgroundColor(fractionFadedIn), ColorSpaceSRGB);
 
     graphicsContext.save();
-    graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, Color::black, ColorSpaceSRGB);
+    graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, holeShadowColor(fractionFadedIn), ColorSpaceSRGB);
 
-    graphicsContext.setFillColor(Color::white, ColorSpaceSRGB);
+    graphicsContext.setFillColor(holeFillColor(fractionFadedIn), ColorSpaceSRGB);
 
     // Draw white frames around the holes.
     for (size_t i = 0; i < rects.size(); ++i) {
