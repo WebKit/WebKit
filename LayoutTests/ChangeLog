@@ -1,3 +1,13 @@
+2011-04-13  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Continue (3rd) experiment with moving caret by word in visual order.
+        https://bugs.webkit.org/show_bug.cgi?id=58294
+
+        * editing/selection/move-by-word-visually-expected.txt:
+        * editing/selection/move-by-word-visually.html:
+
 2011-04-15  Simon Fraser  <simon.fraser@apple.com>
 
         Rebaseline Mac pixel results in fast/ on SnowLeopard.

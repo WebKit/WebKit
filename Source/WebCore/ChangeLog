@@ -1,3 +1,65 @@
+2011-04-13  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Continue (3rd) experiment with moving caret by word in visual order.
+        https://bugs.webkit.org/show_bug.cgi?id=58294
+
+        This patch along with r82588 and r83483 implements moving caret by
+        word in visual order.
+        
+        The overall algorithm is:
+        1. First get the InlineBox and offset of the pass-in VisiblePosition.
+        2. Based on the position (left boundary, middle, right boundary) of the offset and the
+           direction of the movement, look for visually adjacent word breaks.
+        2.1 If the offset is the minimum offset of the box,
+            return the rightmost word boundary in previous boxes if moving left.
+            return the leftmost word boundary in box and next boxes if moving right.
+        2.2 Similar for the case when offset is at the maximum offset of the box.
+        2.3 When offset is inside the box (not at boundaries), first find the previousWordPosition 
+            or nextWordPosition based on the directionality of the box. If this word break position 
+            is also inside the same box, return it. Otherwise (the nextWordPosition or 
+            previousWordPosition is not in the same box or is at the box boundary), collect all the 
+            word breaks in the box and search for the one closest to the input "offset" based on 
+            box directionality, block directionality, and movement direction. Continue search in 
+            adjacent boxes if needed.
+
+        Notes:
+        1. Word boundaries are collected one box at a time. Only when a boundary that is closest to 
+           the input position (in the moving direction) is not available in current box, word 
+           boundaries in adjacent box will be collected. So, there is no need to save InlineBox in 
+           word boundaries. Instead, the word boundaries are saved as a pair 
+           (VisiblePosition, offset) to avoid recomputing VisiblePosition.
+ 
+        2. We only collect boundaries of the right kind (i.e. left boundary of a word in LTR block
+           and right boundary of a word in RTL block). And word boundaries are collected using 
+           previousWordPosition() and nextWordPosition(). So when box directionality is the same as 
+           block directionality, word boundaries are collected from right to left visually in a LTR 
+           box, and word boundaries are collected from left to right visually in a RTL box. It is
+           the other way around when box directionality is different from block directionality.
+
+        3. To find the right kinds of word boundaries, we must move back and forth between words
+           in some situations. For example, if we're moving to the right in a LTR box in LTR block,
+           we cannot simply return nextWordPosition() because it would return the right boundary
+           of a word. Instead, we return nextWordPosition()'s nextWordPosition()'s previousWordPosition().
+
+        4. When collecting word breaks inside a box, it first computes a start position, then
+           collect the right kind of word breaks until it reaches the end of (or beyond) the box.
+           In the meanwhile, it might need special handling on the rightmost or leftmost position 
+           based on the directionality of the box and block. These computations do not consider the 
+           box's bidi level.
+
+        * editing/visible_units.cpp:
+        (WebCore::nextWordBreakInBoxInsideBlockWithDifferentDirectionality):
+        (WebCore::collectWordBreaksInBox):
+        (WebCore::previousWordBoundaryInBox):
+        (WebCore::nextWordBoundaryInBox):
+        (WebCore::visuallyLastWordBoundaryInBox):
+        (WebCore::leftWordBoundary):
+        (WebCore::rightWordBoundary):
+        (WebCore::leftWordPosition):
+        (WebCore::rightWordPosition):
+
 2011-04-14  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
