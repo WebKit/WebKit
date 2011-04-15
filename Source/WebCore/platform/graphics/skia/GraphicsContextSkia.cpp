@@ -44,8 +44,10 @@
 #include "PlatformContextSkia.h"
 
 #include "SkBitmap.h"
-#include "SkBlurDrawLooper.h"
+#include "SkBlurMaskFilter.h"
+#include "SkColorFilter.h"
 #include "SkCornerPathEffect.h"
+#include "SkLayerDrawLooper.h"
 #include "SkShader.h"
 #include "SkiaUtils.h"
 #include "skia/ext/platform_canvas.h"
@@ -1044,16 +1046,15 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
     double height = size.height();
     double blur = blurFloat;
 
-    uint32_t blurFlags = SkBlurDrawLooper::kHighQuality_BlurFlag | 
-        SkBlurDrawLooper::kOverrideColor_BlurFlag;
+    uint32_t mfFlags = SkBlurMaskFilter::kHighQuality_BlurFlag;
 
     if (m_state.shadowsIgnoreTransforms)  {
         // Currently only the GraphicsContext associated with the
         // CanvasRenderingContext for HTMLCanvasElement have shadows ignore
         // Transforms. So with this flag set, we know this state is associated
         // with a CanvasRenderingContext.
-        blurFlags |= SkBlurDrawLooper::kIgnoreTransform_BlurFlag;
-        
+        mfFlags |= SkBlurMaskFilter::kIgnoreTransform_BlurFlag;
+
         // CG uses natural orientation for Y axis, but the HTML5 canvas spec
         // does not.
         // So we now flip the height since it was flipped in
@@ -1069,9 +1070,32 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
 
     // TODO(tc): Should we have a max value for the blur?  CG clamps at 1000.0
     // for perf reasons.
-    SkDrawLooper* dl = new SkBlurDrawLooper(blur / 2, width, height, c, blurFlags);
+
+    SkLayerDrawLooper* dl = new SkLayerDrawLooper;
+    SkAutoUnref aur(dl);
+
+    // top layer, we just draw unchanged
+    dl->addLayer();
+
+    // lower layer contains our offset, blur, and colorfilter
+    SkLayerDrawLooper::LayerInfo info;
+
+    info.fPaintBits |= SkLayerDrawLooper::kMaskFilter_Bit; // our blur
+    info.fPaintBits |= SkLayerDrawLooper::kColorFilter_Bit;
+    info.fColorMode = SkXfermode::kDst_Mode;
+    info.fOffset.set(width, height);
+    info.fPostTranslate = m_state.shadowsIgnoreTransforms;
+
+    SkMaskFilter* mf = SkBlurMaskFilter::Create(blur / 2, SkBlurMaskFilter::kNormal_BlurStyle, mfFlags);
+
+    SkColorFilter* cf = SkColorFilter::CreateModeFilter(c, SkXfermode::kSrcIn_Mode);
+
+    SkPaint* paint = dl->addLayer(info);
+    SkSafeUnref(paint->setMaskFilter(mf));
+    SkSafeUnref(paint->setColorFilter(cf));
+
+    // dl is now built, just install it
     platformContext()->setDrawLooper(dl);
-    dl->unref();
 }
 
 void GraphicsContext::setPlatformStrokeColor(const Color& strokecolor, ColorSpace colorSpace)

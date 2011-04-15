@@ -1,3 +1,16 @@
+2011-04-14  Mike Reed  <reed@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        fix shadows with gradients
+        https://bugs.webkit.org/show_bug.cgi?id=58376
+
+        No new tests. Existing tests exercise this
+        LayoutTests/fast/canvas/canvas-fillPath-gradient-shadow.html
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+
 2011-04-14  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
