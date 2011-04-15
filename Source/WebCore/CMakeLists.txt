@@ -1903,7 +1903,7 @@ IF (ENABLE_VIDEO)
     )
 ENDIF()
 
-IF (ENABLE_TRACK)
+IF (ENABLE_VIDEO_TRACK)
     LIST(APPEND WebCore_SOURCES
         html/HTMLTrackElement.cpp
     )

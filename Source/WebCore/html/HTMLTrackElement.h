@@ -26,7 +26,7 @@
 #ifndef HTMLTrackElement_h
 #define HTMLTrackElement_h
 
-#if ENABLE(TRACK)
+#if ENABLE(VIDEO_TRACK)
 
 #include "HTMLElement.h"
 

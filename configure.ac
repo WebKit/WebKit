@@ -522,13 +522,13 @@ AC_ARG_ENABLE(video,
               [],[enable_video="yes"])
 AC_MSG_RESULT([$enable_video])
 
-# check whether to enable HTML5 track support
-AC_MSG_CHECKING([whether to enable HTML5 track support])
-AC_ARG_ENABLE(track,
-              AC_HELP_STRING([--enable-track],
-                             [enable HTML5 track support [default=yes]]),
-              [],[enable_track="yes"])
-AC_MSG_RESULT([$enable_track])
+# check whether to enable HTML5 video track support
+AC_MSG_CHECKING([whether to enable HTML5 video track support])
+AC_ARG_ENABLE(video_track,
+              AC_HELP_STRING([--enable-video-track],
+                             [enable HTML5 video track support [default=yes]]),
+              [],[enable_video_track="yes"])
+AC_MSG_RESULT([$enable_video_track])
 
 # check whether to enable media statistics support
 AC_MSG_CHECKING([whether to enable media statistics support])
@@ -1080,7 +1080,7 @@ AM_CONDITIONAL([ENABLE_CLIENT_BASED_GEOLOCATION], [test "$enable_client_based_ge
 AM_CONDITIONAL([ENABLE_MATHML], [test "$enable_mathml" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
 AM_CONDITIONAL([ENABLE_MEDIA_STATISTICS],[test "$enable_media_statistics" = "yes"])
-AM_CONDITIONAL([ENABLE_TRACK],[test "$enable_track" = "yes"])
+AM_CONDITIONAL([ENABLE_VIDEO_TRACK],[test "$enable_video_track" = "yes"])
 AM_CONDITIONAL([ENABLE_FULLSCREEN_API],[test "$enable_fullscreen_api" = "yes"])
 AM_CONDITIONAL([ENABLE_NOTIFICATIONS],[test "$enable_notifications" = "yes"])
 AM_CONDITIONAL([ENABLE_ORIENTATION_EVENTS],[test "$enable_orientation_events" = "yes"])
@@ -1173,7 +1173,7 @@ Features:
  HTML5 sandboxed iframe support                           : $enable_sandbox
  HTML5 server-sent events support                         : $enable_eventsource
  HTML5 video element support                              : $enable_video
- HTML5 track element support                              : $enable_track
+ HTML5 track element support                              : $enable_video_track
  Fullscreen API support                                   : $enable_fullscreen_api
  Icon database support                                    : $enable_icon_database
  Image resizer support                                    : $enable_image_resizer
