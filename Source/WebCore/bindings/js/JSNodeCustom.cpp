@@ -130,7 +130,7 @@ void JSNode::markChildren(MarkStack& markStack)
 static ALWAYS_INLINE JSValue createWrapperInline(ExecState* exec, JSDOMGlobalObject* globalObject, Node* node)
 {
     ASSERT(node);
-    ASSERT(!getCachedDOMNodeWrapper(exec, node));
+    ASSERT(!getCachedDOMNodeWrapper(currentWorld(exec), node));
     
     JSNode* wrapper;    
     switch (node->nodeType()) {

@@ -135,32 +135,13 @@ const JSC::HashTable* getHashTableForGlobalData(JSGlobalData& globalData, const 
     return DOMObjectHashTableMap::mapFor(globalData).get(staticTable);
 }
 
-bool hasCachedDOMObjectWrapperUnchecked(JSGlobalData* globalData, void* objectHandle)
+DOMObject* getCachedDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle) 
 {
-    for (JSGlobalDataWorldIterator worldIter(globalData); worldIter; ++worldIter) {
-        if (worldIter->m_wrappers.get(objectHandle))
-            return true;
-    }
-    return false;
+    return world->m_wrappers.get(objectHandle).get();
 }
 
-bool hasCachedDOMObjectWrapper(JSGlobalData* globalData, void* objectHandle)
+void cacheDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle, DOMObject* wrapper) 
 {
-    for (JSGlobalDataWorldIterator worldIter(globalData); worldIter; ++worldIter) {
-        if (worldIter->m_wrappers.get(objectHandle))
-            return true;
-    }
-    return false;
-}
-
-DOMObject* getCachedDOMObjectWrapper(JSC::ExecState* exec, void* objectHandle) 
-{
-    return domObjectWrapperMapFor(exec).get(objectHandle).get();
-}
-
-void cacheDOMObjectWrapper(JSC::ExecState* exec, void* objectHandle, DOMObject* wrapper) 
-{
-    DOMWrapperWorld* world = currentWorld(exec);
     world->m_wrappers.set(objectHandle, Weak<DOMObject>(*world->globalData(), wrapper, world->domObjectHandleOwner()));
 }
 

@@ -120,27 +120,26 @@ static bool isObservable(JSNode* jsNode, Node* node, DOMWrapperWorld* world)
 
 static inline bool isReachableFromDOM(JSNode* jsNode, Node* node, DOMWrapperWorld* world, MarkStack& markStack)
 {
-    if (node->inDocument())
-        return isObservable(jsNode, node, world) && markStack.containsOpaqueRoot(root(node));
+    if (!node->inDocument()) {
+        // If a wrapper is the last reference to an image or script element
+        // that is loading but not in the document, the wrapper is observable
+        // because it is the only thing keeping the image element alive, and if
+        // the image element is destroyed, its load event will not fire.
+        // FIXME: The DOM should manage this issue without the help of JavaScript wrappers.
+        if (node->hasTagName(imgTag) && !static_cast<HTMLImageElement*>(node)->haveFiredLoadEvent())
+            return true;
+        if (node->hasTagName(scriptTag) && !static_cast<HTMLScriptElement*>(node)->haveFiredLoadEvent())
+            return true;
+    #if ENABLE(VIDEO)
+        if (node->hasTagName(audioTag) && !static_cast<HTMLAudioElement*>(node)->paused())
+            return true;
+    #endif
 
-    // If a wrapper is the last reference to an image or script element
-    // that is loading but not in the document, the wrapper is observable
-    // because it is the only thing keeping the image element alive, and if
-    // the image element is destroyed, its load event will not fire.
-    // FIXME: The DOM should manage this issue without the help of JavaScript wrappers.
-    if (node->hasTagName(imgTag) && !static_cast<HTMLImageElement*>(node)->haveFiredLoadEvent())
-        return true;
-    if (node->hasTagName(scriptTag) && !static_cast<HTMLScriptElement*>(node)->haveFiredLoadEvent())
-        return true;
-#if ENABLE(VIDEO)
-    if (node->hasTagName(audioTag) && !static_cast<HTMLAudioElement*>(node)->paused())
-        return true;
-#endif
-
-    // If a node is firing event listeners, its wrapper is observable because
-    // its wrapper is responsible for marking those event listeners.
-    if (node->isFiringEventListeners())
-        return true;
+        // If a node is firing event listeners, its wrapper is observable because
+        // its wrapper is responsible for marking those event listeners.
+        if (node->isFiringEventListeners())
+            return true;
+    }
 
     return isObservable(jsNode, node, world) && markStack.containsOpaqueRoot(root(node));
 }

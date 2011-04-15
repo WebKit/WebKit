@@ -441,24 +441,24 @@ JSValue JSDOMWindow::lookupSetter(ExecState* exec, const Identifier& propertyNam
 JSValue JSDOMWindow::history(ExecState* exec) const
 {
     History* history = impl()->history();
-    if (DOMObject* wrapper = getCachedDOMObjectWrapper(exec, history))
+    if (DOMObject* wrapper = getCachedDOMObjectWrapper(currentWorld(exec), history))
         return wrapper;
 
     JSDOMWindow* window = const_cast<JSDOMWindow*>(this);
     JSHistory* jsHistory = new (exec) JSHistory(getDOMStructure<JSHistory>(exec, window), window, history);
-    cacheDOMObjectWrapper(exec, history, jsHistory);
+    cacheDOMObjectWrapper(currentWorld(exec), history, jsHistory);
     return jsHistory;
 }
 
 JSValue JSDOMWindow::location(ExecState* exec) const
 {
     Location* location = impl()->location();
-    if (DOMObject* wrapper = getCachedDOMObjectWrapper(exec, location))
+    if (DOMObject* wrapper = getCachedDOMObjectWrapper(currentWorld(exec), location))
         return wrapper;
 
     JSDOMWindow* window = const_cast<JSDOMWindow*>(this);
     JSLocation* jsLocation = new (exec) JSLocation(getDOMStructure<JSLocation>(exec, window), window, location);
-    cacheDOMObjectWrapper(exec, location, jsLocation);
+    cacheDOMObjectWrapper(currentWorld(exec), location, jsLocation);
     return jsLocation;
 }
 

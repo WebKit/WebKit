@@ -1,3 +1,65 @@
+2011-04-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Some mechanical DOM wrapper cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=58689
+
+        * WebCore.exp.in: Export!
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::isReachableFromDOM): Inverted the inDocument test to make the
+        relationship of the special cases to the normal case clearer.
+
+        * bindings/js/JSArrayBufferViewHelper.h:
+        (WebCore::toJSArrayBufferView):
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::getCachedDOMObjectWrapper):
+        (WebCore::cacheDOMObjectWrapper):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::createDOMObjectWrapper):
+        (WebCore::getDOMObjectWrapper):
+        (WebCore::createDOMNodeWrapper):
+        (WebCore::getDOMNodeWrapper): Changed DOM wrapper functions to operate
+        in terms of DOMWrapperWorlds instead of ExecStates. This is clearer,
+        and ever-so-slightly faster.
+        
+        Removed hasCachedXXX functions, now that they're unused.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::history):
+        (WebCore::JSDOMWindow::location):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::location):
+        (WebCore::toJS):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapperInline):
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::getCachedDOMNodeWrapper):
+        (WebCore::cacheDOMNodeWrapper):
+        (WebCore::toJS):
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS): Updated for changes above.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dropProtection): Removed use of hasCachedDOMObjectWrapper
+        because XHR is almost always created and used by JavaScript, so it's
+        simpler to just always report extra cost.
+
 2011-04-15  Andreas Kling  <kling@webkit.org>
 
         Rolling out accidental part of r84010.
