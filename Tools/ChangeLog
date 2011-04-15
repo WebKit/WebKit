@@ -1,3 +1,14 @@
+2011-04-15  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by David Levin.
+
+        check-webkit-style shouldn't complain about not including a primary header file 
+        if none exists
+        https://bugs.webkit.org/show_bug.cgi?id=39514
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+
 2011-04-15  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mihai Parparita.

@@ -312,7 +312,7 @@ class _IncludeState(dict):
     def visited_primary_section(self):
         return self._visited_primary_section
 
-    def check_next_include_order(self, header_type, file_is_header):
+    def check_next_include_order(self, header_type, file_is_header, primary_header_exists):
         """Returns a non-empty error message if the next header is out of order.
 
         This function also updates the internal state to be ready to check
@@ -357,7 +357,8 @@ class _IncludeState(dict):
         else:
             assert header_type == _OTHER_HEADER
             if not file_is_header and self._section < self._PRIMARY_SECTION:
-                error_message = before_error_message
+                if primary_header_exists:
+                    error_message = before_error_message
             self._section = self._OTHER_SECTION
 
         return error_message
@@ -2597,6 +2598,17 @@ def _classify_include(filename, include, is_system, include_state):
     return _OTHER_HEADER
 
 
+def _does_primary_header_exist(filename):
+    """Return a primary header file name for a file, or empty string
+    if the file is not source file or primary header does not exist.
+    """
+    fileinfo = FileInfo(filename)
+    if not fileinfo.is_source():
+        return False
+    primary_header = fileinfo.no_extension() + ".h"
+    return os.path.isfile(primary_header)
+
+
 def check_include_line(filename, file_extension, clean_lines, line_number, include_state, error):
     """Check rules that are applicable to #include lines.
 
@@ -2646,6 +2658,7 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
         include_state[include] = line_number
 
     header_type = _classify_include(filename, include, is_system, include_state)
+    primary_header_exists = _does_primary_header_exist(filename)
     include_state.header_types[line_number] = header_type
 
     # Only proceed if this isn't a duplicate header.
@@ -2657,7 +2670,9 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
     # 2) for header files: alphabetically sorted
     # The include_state object keeps track of the last type seen
     # and complains if the header types are out of order or missing.
-    error_message = include_state.check_next_include_order(header_type, file_extension == "h")
+    error_message = include_state.check_next_include_order(header_type,
+                                                           file_extension == "h",
+                                                           primary_header_exists)
 
     # Check to make sure we have a blank line after primary header.
     if not error_message and header_type == _PRIMARY_HEADER:
