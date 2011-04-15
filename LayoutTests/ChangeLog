@@ -1,3 +1,14 @@
+2011-04-15  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, added new GTK+ test expectations.
+
+        * platform/gtk/fast/forms/select-background-none-expected.checksum: Added.
+        * platform/gtk/fast/forms/select-background-none-expected.png: Added.
+        * platform/gtk/fast/forms/select-background-none-expected.txt: Added.
+        * platform/gtk/fast/text/zero-font-size-expected.checksum: Added.
+        * platform/gtk/fast/text/zero-font-size-expected.png: Added.
+        * platform/gtk/fast/text/zero-font-size-expected.txt: Added.
+
 2011-04-15  Adam Roben  <aroben@apple.com>
 
         Add new eventSender-dependent tests from r83967 to the mac-wks Skipped file
