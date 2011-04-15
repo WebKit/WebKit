@@ -24,6 +24,10 @@ th {
     -webkit-user-select: none;
     -moz-user-select: none;
 }
+
+label {
+    margin-left: 10px;
+}
 </style>
 
 <script>
@@ -34,9 +38,7 @@ function ADD_RESULTS(input)
 }
 </script>
 
-<!-- FIXME: once we are happy with this page, load full_results.json 
-and have a checkbox to show only unexpected results. -->
-<script src="unexpected_results.json"></script>
+<script src="full_results.json"></script>
 
 <script>
 function stripExtension(test)
@@ -45,8 +47,12 @@ function stripExtension(test)
     return test.substring(0, index);
 }
 
-var html = 'Tests where results did not match expected results:<table>' +
-    '<thead><tr>' +
+var html = 'Tests where results did not match expected results:';
+
+if (results.uses_expectations_file)
+    html += '<label><input class="unexpected-results" type=checkbox checked>Only show unexpected results</label>';
+
+html += '<table><thead><tr>' +
         '<th>test</th>' +
         '<th id="text-results-header">text results</th>' +
         '<th id="image-results-header">image results</th>' +
@@ -74,11 +80,16 @@ var hasImageFailures = false;
 
 html += '<tbody>';
 for (var test in results.tests) {
+  var actual = results.tests[test].actual;
+  var expected = results.tests[test].expected || 'PASS';
+  
+  if (actual == 'PASS' && (!results.uses_expectations_file || expected == 'PASS'))
+    continue;
+
   var row = '<td><a href="' + test_base_path + test + '">' + test + '</a></td>';
   var test_prefix = stripExtension(test);
 
   row += '<td>';
-  var actual = results.tests[test].actual;
   // FIXME: only include timeout actual/expected results here if we actually spit out results for timeout tests.
   if (actual == 'CRASH')
       row += resultLink(test, '-stack.txt', 'stack');
@@ -106,9 +117,10 @@ for (var test in results.tests) {
   row += '<td>' + actual + '</td>';
   
   if (results.uses_expectations_file)
-    row += '<td>' + results.tests[test].expected + '</td>';
+    row += '<td>' + expected + '</td>';
 
-  html += '<tr>' + row + '</tr>';
+  var isExpected = results.uses_expectations_file && expected == actual;
+  html += '<tr class="' + (isExpected ? 'expected' : '') + '">' + row + '</tr>';
 }
 
 html += '</tbody></table>'
@@ -195,6 +207,20 @@ TableSorter.handleClick = function(e)
 }
 
 document.querySelector('table').addEventListener('click', TableSorter.handleClick, false);
+
+var unexpectedStyleNode = document.createElement('style');
+document.body.appendChild(unexpectedStyleNode);
+
+function updateExpectedResults()
+{
+    if (document.querySelector('.unexpected-results').checked)
+        unexpectedStyleNode.innerText = '.expected { display: none; }';
+    else
+        unexpectedStyleNode.innerText = '';
+}
+
+updateExpectedResults();
+document.querySelector('.unexpected-results').addEventListener('change', updateExpectedResults, false);
 
 if (!hasTextFailures)
   document.body.querySelector('#text-results-header').textContent = '';
