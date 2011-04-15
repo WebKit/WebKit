@@ -126,6 +126,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     , m_shouldPaintNativeControls(true)
     , m_initialHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicyAlways)
 #endif
+    , m_processTerminationEnabled(true)
 {
 #ifndef NDEBUG
     WebKit::initializeLogChannelsIfNecessary();
@@ -261,10 +262,20 @@ void WebContext::ensureWebProcess()
     m_pendingMessagesToPostToInjectedBundle.clear();
 }
 
+void WebContext::enableProcessTermination()
+{
+    m_processTerminationEnabled = true;
+    if (shouldTerminate(m_process.get()))
+        m_process->terminate();
+}
+
 bool WebContext::shouldTerminate(WebProcessProxy* process)
 {
     // FIXME: Once we support multiple processes per context, this assertion won't hold.
     ASSERT(process == m_process);
+
+    if (!m_processTerminationEnabled)
+        return false;
 
     if (!m_downloads.isEmpty())
         return false;

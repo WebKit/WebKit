@@ -217,3 +217,13 @@ void WKContextSetLocalStorageDirectory(WKContextRef contextRef, WKStringRef loca
 {
     toImpl(contextRef)->setLocalStorageDirectory(toImpl(localStorageDirectory)->string());
 }
+
+void WKContextDisableProcessTermination(WKContextRef contextRef)
+{
+    toImpl(contextRef)->disableProcessTermination();
+}
+
+void WKContextEnableProcessTermination(WKContextRef contextRef)
+{
+    toImpl(contextRef)->enableProcessTermination();
+}

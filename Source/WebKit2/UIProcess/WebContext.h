@@ -168,6 +168,9 @@ public:
 
     bool shouldTerminate(WebProcessProxy*);
 
+    void disableProcessTermination() { m_processTerminationEnabled = false; }
+    void enableProcessTermination();
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
 
@@ -260,6 +263,8 @@ private:
     String m_overrideDatabaseDirectory;
     String m_overrideIconDatabasePath;
     String m_overrideLocalStorageDirectory;
+
+    bool m_processTerminationEnabled;
 };
 
 template<typename U> inline bool WebContext::sendToAllProcesses(const U& message)
