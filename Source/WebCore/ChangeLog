@@ -1,3 +1,12 @@
+2011-04-15  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build change after r83945.
+
+        New 'PlatformPathCairo.cpp' was not added to the WinCairo build.
+
+        * WebCore.vcproj/WebCore.vcproj: Add missing file to WinCairo
+          build.  Exclude for standard Apple build.
+
 2011-04-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
