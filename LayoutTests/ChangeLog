@@ -1,3 +1,10 @@
+2011-04-14  James Robinson  <jamesr@chromium.org>
+
+        Update chromium test expectations.
+
+        * platform/chromium-gpu/compositing/layer-creation: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-04-14  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoffrey Garen.
