@@ -28,6 +28,7 @@
 #include "WebPageProxy.h"
 
 #include "NativeWebKeyboardEvent.h"
+#include "NotImplemented.h"
 #include "PageClient.h"
 
 namespace WebKit {
@@ -41,6 +42,16 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
 void WebPageProxy::getEditorCommandsForKeyEvent(Vector<WTF::String>& commandsList)
 {
     m_pageClient->getEditorCommandsForKeyEvent(m_keyEventQueue.first(), commandsList);
+}
+
+void WebPageProxy::saveRecentSearches(const String&, const Vector<String>&)
+{
+    notImplemented();
+}
+
+void WebPageProxy::loadRecentSearches(const String&, Vector<String>&)
+{
+    notImplemented();
 }
 
 } // namespace WebKit

@@ -43,6 +43,8 @@ public:
     static PassRefPtr<WebPopupMenu> create(WebPage*, WebCore::PopupMenuClient*);
     ~WebPopupMenu();
 
+    WebPage* page() { return m_page; }
+
     void disconnectFromPage() { m_page = 0; }
     void didChangeSelectedIndex(int newIndex);
     void setTextForIndex(int newIndex);

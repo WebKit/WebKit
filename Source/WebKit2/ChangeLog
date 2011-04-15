@@ -1,3 +1,35 @@
+2011-04-15  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/9287880> and https://bugs.webkit.org/show_bug.cgi?id=58596
+        WK2: Past searches not remembered for <input type=search results="5" autosave="foo">
+
+        Add SaveRecentSearches and LoadRecentSearches messages:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPageProxy.h:
+
+        Message up to the UIProcess for the save/load operations:
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp:
+        (WebKit::WebSearchPopupMenu::saveRecentSearches):
+        (WebKit::WebSearchPopupMenu::loadRecentSearches):
+        * WebProcess/WebCoreSupport/WebPopupMenu.h:
+        (WebKit::WebPopupMenu::page):
+
+        Save the values to disk CFPreference-style:
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::autosaveKey):
+        (WebKit::WebPageProxy::saveRecentSearches):
+        (WebKit::WebPageProxy::loadRecentSearches):
+
+        Stubbed out for non-CF platforms:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebPageProxy::saveRecentSearches):
+        (WebKit::WebPageProxy::loadRecentSearches):
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit::WebPageProxy::saveRecentSearches):
+        (WebKit::WebPageProxy::loadRecentSearches):
+
 2011-04-14  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Dan Bernstein.

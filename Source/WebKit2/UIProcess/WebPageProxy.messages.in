@@ -238,4 +238,8 @@ messages -> WebPageProxy {
     # Windows 7 Gesture Messages
     SetGestureReachedScrollingLimit(bool limitReached)
 #endif
+
+    # Search popup menus
+    SaveRecentSearches(WTF::String name, Vector<String> searchItems)
+    LoadRecentSearches(WTF::String name) -> (Vector<String> result)
 }

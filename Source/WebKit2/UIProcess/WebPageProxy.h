@@ -625,6 +625,10 @@ private:
     void showContextMenu(const WebCore::IntPoint& menuLocation, const ContextMenuState&, const Vector<WebContextMenuItemData>&, CoreIPC::ArgumentDecoder*);
     void internalShowContextMenu(const WebCore::IntPoint& menuLocation, const ContextMenuState&, const Vector<WebContextMenuItemData>&, CoreIPC::ArgumentDecoder*);
 
+    // Search popup results
+    void saveRecentSearches(const String&, const Vector<String>&);
+    void loadRecentSearches(const String&, Vector<String>&);
+
 #if PLATFORM(MAC)
     // Speech.
     void getIsSpeaking(bool&);
