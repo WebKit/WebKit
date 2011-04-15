@@ -1,3 +1,16 @@
+2011-04-14  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Use HTMLImageElement in Canvas 2D / WebGL before response is ready causes crash
+        https://bugs.webkit.org/show_bug.cgi?id=58501
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::texImage2D): Call validateHTMLImageElement().
+        (WebCore::WebGLRenderingContext::texSubImage2D): Ditto.
+        (WebCore::WebGLRenderingContext::validateHTMLImageElement): Make sure image is ready.
+        * html/canvas/WebGLRenderingContext.h:
+
 2011-04-07  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.

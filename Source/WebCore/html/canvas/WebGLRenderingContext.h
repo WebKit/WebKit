@@ -590,6 +590,9 @@ public:
     // Return the current bound buffer to target, or 0 if parameters are invalid.
     WebGLBuffer* validateBufferDataParameters(GC3Denum target, GC3Denum usage);
 
+    // Helper function for tex{Sub}Image2D to make sure image is ready.
+    bool validateHTMLImageElement(HTMLImageElement*);
+
     // Helper functions for vertexAttribNf{v}.
     void vertexAttribfImpl(GC3Duint index, GC3Dsizei expectedSize, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat);
     void vertexAttribfvImpl(GC3Duint index, Float32Array*, GC3Dsizei expectedSize);

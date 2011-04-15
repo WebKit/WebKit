@@ -3140,10 +3140,8 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
     ec = 0;
     if (isContextLost())
         return;
-    if (!image || !image->cachedImage()) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+    if (!validateHTMLImageElement(image))
         return;
-    }
     checkOrigin(image);
     texImage2DImpl(target, level, internalformat, format, type, image->cachedImage()->image(),
                    m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
@@ -3334,10 +3332,8 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
     ec = 0;
     if (isContextLost())
         return;
-    if (!image || !image->cachedImage()) {
-        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+    if (!validateHTMLImageElement(image))
         return;
-    }
     checkOrigin(image);
     texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image->cachedImage()->image(),
                       m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
@@ -4611,6 +4607,20 @@ WebGLBuffer* WebGLRenderingContext::validateBufferDataParameters(GC3Denum target
     }
     m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
     return 0;
+}
+
+bool WebGLRenderingContext::validateHTMLImageElement(HTMLImageElement* image)
+{
+    if (!image || !image->cachedImage()) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return false;
+    }
+    const KURL& url = image->cachedImage()->response().url();
+    if (url.isNull() || url.isEmpty() || !url.isValid()) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
+        return false;
+    }
+    return true;
 }
 
 void WebGLRenderingContext::vertexAttribfImpl(GC3Duint index, GC3Dsizei expectedSize, GC3Dfloat v0, GC3Dfloat v1, GC3Dfloat v2, GC3Dfloat v3)
