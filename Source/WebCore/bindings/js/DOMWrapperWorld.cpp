@@ -188,10 +188,10 @@ bool JSNodeHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> han
     return isReachableFromDOM(jsNode, jsNode->impl(), m_world, markStack);
 }
 
-void JSNodeHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*)
+void JSNodeHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     JSNode* jsNode = static_cast<JSNode*>(handle.get().asCell());
-    uncacheDOMNodeWrapper(m_world, jsNode->impl(), jsNode);
+    uncacheDOMNodeWrapper(m_world, static_cast<Node*>(context), jsNode);
 }
 
 bool DOMObjectHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void*, JSC::MarkStack&)
@@ -199,10 +199,10 @@ bool DOMObjectHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>,
     return false;
 }
 
-void DOMObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*)
+void DOMObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     DOMObject* domObject = static_cast<DOMObject*>(handle.get().asCell());
-    m_world->m_wrappers.remove(domObject);
+    uncacheDOMObjectWrapper(m_world, context, domObject);
 }
 
 } // namespace WebCore

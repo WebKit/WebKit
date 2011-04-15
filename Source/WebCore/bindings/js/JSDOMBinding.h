@@ -28,7 +28,6 @@
 #include "Document.h"
 #include <runtime/Completion.h>
 #include <runtime/Lookup.h>
-#include <runtime/WeakGCMap.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 

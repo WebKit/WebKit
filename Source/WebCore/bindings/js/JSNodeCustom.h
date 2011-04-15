@@ -42,7 +42,7 @@ inline void cacheDOMNodeWrapper(DOMWrapperWorld* world, Node* node, JSNode* wrap
 {
     ASSERT(wrapper);
     if (world->isNormal()) {
-        node->setWrapper(*world->globalData(), wrapper, world->jsNodeHandleOwner());
+        node->setWrapper(*world->globalData(), wrapper, world->jsNodeHandleOwner(), node);
         return;
     }
     cacheDOMObjectWrapper(world, node, wrapper);

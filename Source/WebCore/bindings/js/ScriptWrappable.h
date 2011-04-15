@@ -43,9 +43,9 @@ public:
         return m_wrapper.get();
     }
 
-    void setWrapper(JSC::JSGlobalData& globalData, DOMObject* wrapper, JSC::WeakHandleOwner* wrapperOwner)
+    void setWrapper(JSC::JSGlobalData& globalData, DOMObject* wrapper, JSC::WeakHandleOwner* wrapperOwner, void* context)
     {
-        m_wrapper.set(globalData, wrapper, wrapperOwner);
+        m_wrapper.set(globalData, wrapper, wrapperOwner, context);
     }
 
     void clearWrapper()

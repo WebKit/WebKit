@@ -142,12 +142,12 @@ DOMObject* getCachedDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle)
 
 void cacheDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle, DOMObject* wrapper) 
 {
-    world->m_wrappers.set(objectHandle, Weak<DOMObject>(*world->globalData(), wrapper, world->domObjectHandleOwner()));
+    world->m_wrappers.set(objectHandle, Weak<DOMObject>(*world->globalData(), wrapper, world->domObjectHandleOwner(), objectHandle));
 }
 
 void uncacheDOMObjectWrapper(DOMWrapperWorld* world, void* objectHandle, DOMObject* wrapper)
 {
-    ASSERT_UNUSED(wrapper, world->m_wrappers.get(objectHandle) == wrapper);
+    ASSERT_UNUSED(wrapper, world->m_wrappers.find(objectHandle)->second.get() == wrapper);
     world->m_wrappers.remove(objectHandle);
 }
 

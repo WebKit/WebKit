@@ -1,3 +1,34 @@
+2011-04-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        DOM object handles are never removed from cache
+        https://bugs.webkit.org/show_bug.cgi?id=58707
+
+        We were trying to remove hash table items by value instead of by key.
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        (WebCore::JSNodeHandleOwner::finalize): Changed to work more like
+        DOMObjectHandleOwner::finalize because I'm going to merge them.
+
+        (WebCore::DOMObjectHandleOwner::finalize): Remove hash table items
+        by key, not value. (Oops!) Use a helper function to make sure we get
+        this right.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::cacheDOMObjectWrapper): Store the hash table key as our weak
+        handle context, so we can use it at destruction time.
+
+        * bindings/js/JSDOMBinding.h: Removed unnecessary include.
+
+        * bindings/js/JSNodeCustom.h:
+        (WebCore::cacheDOMNodeWrapper): Store the hash table key as our weak
+        handle context, so we can use it at destruction time.
+
+        * bindings/js/ScriptWrappable.h:
+        (WebCore::ScriptWrappable::setWrapper): Forward context parameter, to
+        support the above.
+
 2011-04-15  Kenneth Russell  <kbr@google.com>
 
         Unreviewed. Chromium Linux Release build fix due to unused variables.
