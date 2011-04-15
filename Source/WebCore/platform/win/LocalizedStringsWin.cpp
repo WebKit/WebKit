@@ -26,14 +26,54 @@
 #include "config.h"
 #include "LocalizedStrings.h"
 
+#include "WebCoreInstanceHandle.h"
+#include <CoreFoundation/CFBundle.h>
+#include <wtf/Assertions.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+static CFBundleRef createWebKitBundle()
+{
+    if (CFBundleRef existingBundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit"))) {
+        CFRetain(existingBundle);
+        return existingBundle;
+    }
+
+    wchar_t dllPathBuffer[MAX_PATH];
+    DWORD length = ::GetModuleFileNameW(instanceHandle(), dllPathBuffer, WTF_ARRAY_LENGTH(dllPathBuffer));
+    ASSERT(length);
+    ASSERT(length < WTF_ARRAY_LENGTH(dllPathBuffer));
+
+    RetainPtr<CFStringRef> dllPath(AdoptCF, CFStringCreateWithCharactersNoCopy(0, reinterpret_cast<const UniChar*>(dllPathBuffer), length, kCFAllocatorNull));
+    RetainPtr<CFURLRef> dllURL(AdoptCF, CFURLCreateWithFileSystemPath(0, dllPath.get(), kCFURLWindowsPathStyle, false));
+    RetainPtr<CFURLRef> dllDirectoryURL(AdoptCF, CFURLCreateCopyDeletingLastPathComponent(0, dllURL.get()));
+    RetainPtr<CFURLRef> resourcesDirectoryURL(AdoptCF, CFURLCreateCopyAppendingPathComponent(0, dllDirectoryURL.get(), CFSTR("WebKit.resources"), true));
+
+    return CFBundleCreate(0, resourcesDirectoryURL.get());
+}
+
+static CFBundleRef webKitBundle()
+{
+    static CFBundleRef bundle = createWebKitBundle();
+    ASSERT(bundle);
+    return bundle;
+}
+
 String localizedString(const char* key)
 {
-    // FIXME: <rdar://problem/9119405> Win: WebKit2 needs to be made localizable
-    return String::fromUTF8(key, strlen(key));
+    ASSERT(isMainThread());
+
+    static CFStringRef notFound = CFSTR("localized string not found");
+
+    RetainPtr<CFStringRef> keyString(AdoptCF, CFStringCreateWithCStringNoCopy(NULL, key, kCFStringEncodingUTF8, kCFAllocatorNull));
+    RetainPtr<CFStringRef> result(AdoptCF, CFCopyLocalizedStringWithDefaultValue(keyString.get(), 0, webKitBundle(), notFound, 0));
+    ASSERT_WITH_MESSAGE(result.get() != notFound, "could not find localizable string %s in bundle", key);
+
+    return result.get();
 }
 
 } // namespace WebCore
