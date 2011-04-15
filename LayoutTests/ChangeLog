@@ -1,5 +1,12 @@
 2011-04-14  James Robinson  <jamesr@chromium.org>
 
+        Add correct chromium expectation for compositing/layer-creation/overflow-scroll-overlap
+
+        * platform/chromium-gpu/compositing/layer-creation/overflow-scroll-overlap-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-04-14  James Robinson  <jamesr@chromium.org>
+
         Update chromium test expectations.
 
         * platform/chromium-gpu/compositing/layer-creation: Removed.
