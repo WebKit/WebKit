@@ -1,3 +1,17 @@
+2011-04-15  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by David Levin.
+
+        Add a sample test case for GTest framework
+        https://bugs.webkit.org/show_bug.cgi?id=58509
+
+        Add an example of GTest testcase, complete with a runner, to JavaScriptCore.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/tests/RunAllWtfTests.cpp: Added.
+        (main):
+        * wtf/tests/StringTests.cpp: Added.
+
 2011-04-15  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by Eric Carlson.
