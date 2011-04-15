@@ -21,8 +21,11 @@
 #include "config.h"
 #include "HTMLSummaryElement.h"
 
+#include "DetailsMarkerControl.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLNames.h"
+#include "MouseEvent.h"
+#include "PlatformMouseEvent.h"
 #include "RenderSummary.h"
 
 namespace WebCore {
@@ -31,7 +34,9 @@ using namespace HTMLNames;
 
 PassRefPtr<HTMLSummaryElement> HTMLSummaryElement::create(const QualifiedName& tagName, Document* document)
 {
-    return adoptRef(new HTMLSummaryElement(tagName, document));
+    RefPtr<HTMLSummaryElement> result = adoptRef(new HTMLSummaryElement(tagName, document));
+    result->createShadowSubtree();
+    return result;
 }
 
 HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document* document)
@@ -43,6 +48,42 @@ HTMLSummaryElement::HTMLSummaryElement(const QualifiedName& tagName, Document* d
 RenderObject* HTMLSummaryElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     return new (arena) RenderSummary(this);
+}
+
+void HTMLSummaryElement::createShadowSubtree()
+{
+    ExceptionCode ec = 0;
+    ensureShadowRoot()->appendChild(DetailsMarkerControl::create(document()), ec, true);
+}
+
+HTMLDetailsElement* HTMLSummaryElement::detailsElement() const
+{
+    Element* mayDetails = toElement(parentNodeForRenderingAndStyle());
+    if (!mayDetails || !mayDetails->hasTagName(detailsTag))
+        return 0;
+    return static_cast<HTMLDetailsElement*>(mayDetails);
+}
+
+bool HTMLSummaryElement::isMainSummary() const
+{
+    if (HTMLDetailsElement* details = detailsElement())
+        return details->mainSummary() == this;
+    return 0;
+}
+
+void HTMLSummaryElement::defaultEventHandler(Event* event)
+{
+    HTMLElement::defaultEventHandler(event);
+    if (!isMainSummary() || !renderer() || !renderer()->isSummary() || !event->isMouseEvent() || event->type() != eventNames().clickEvent || event->defaultHandled())
+        return;
+
+    MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
+    if (mouseEvent->button() != LeftButton)
+        return;
+
+    if (HTMLDetailsElement* details = detailsElement())
+        details->toggleOpen();
+    event->setDefaultHandled();
 }
 
 }

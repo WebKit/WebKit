@@ -358,6 +358,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/shadow/MediaControlElements.cpp \
 	html/shadow/MediaControlRootElement.cpp \
 	html/shadow/MeterShadowElement.cpp \
+	html/shadow/DetailControlElement.cpp \
 	html/shadow/ProgressShadowElement.cpp \
 	html/shadow/SliderThumbElement.cpp \
 	html/shadow/TextControlInnerElements.cpp \

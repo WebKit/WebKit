@@ -1466,7 +1466,8 @@ static bool shouldCreateRendererFor(Node* node, ContainerNode* parentForRenderin
     if (!parentRenderer->canHaveChildren() && !(node->isShadowRoot() || atShadowBoundary))
         return false;
 
-    if (shadowRoot(parentForRenderingAndStyle) && !atShadowBoundary)
+    if (shadowRoot(parentForRenderingAndStyle) && !atShadowBoundary 
+        && !parentForRenderingAndStyle->canHaveLightChildRendererWithShadow())
         return false;
 
     if (!parentForRenderingAndStyle->childShouldCreateRenderer(node))

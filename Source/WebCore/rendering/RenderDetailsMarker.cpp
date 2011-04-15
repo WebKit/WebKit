@@ -25,89 +25,21 @@
 #include "HTMLNames.h"
 #include "PaintInfo.h"
 #include "RenderDetails.h"
-#include "RenderSummary.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderDetailsMarker::RenderDetailsMarker(RenderDetails* item)
-    : RenderBox(item->document())
-    , m_details(item)
+RenderDetailsMarker::RenderDetailsMarker(Node* node)
+    : RenderBlock(node)
 {
-    setInline(true);
-    setReplaced(true);
-}
-
-void RenderDetailsMarker::destroy()
-{
-    if (m_details)
-        m_details->markerDestroyed();
-
-    RenderBox::destroy();
-}
-
-int RenderDetailsMarker::lineHeight(bool firstLine, LineDirectionMode direction, LinePositionMode) const
-{
-    return m_details->lineHeight(firstLine, direction, PositionOfInteriorLineBoxes);
-}
-
-int RenderDetailsMarker::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode) const
-{
-    return m_details->baselinePosition(baselineType, firstLine, direction, PositionOfInteriorLineBoxes);
-}
-
-void RenderDetailsMarker::computePreferredLogicalWidths()
-{
-    ASSERT(preferredLogicalWidthsDirty());
-
-    int ascent = style()->fontMetrics().ascent();
-    m_minPreferredLogicalWidth = 2 * ascent / 3;
-    m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth;
-
-    style()->setMarginStart(Length(0, Fixed));
-    style()->setMarginEnd(Length(ascent - m_minPreferredLogicalWidth + 1, Fixed));
-
-    setPreferredLogicalWidthsDirty(false);
-}
-
-void RenderDetailsMarker::layout()
-{
-    ASSERT(needsLayout());
-
-    setLogicalWidth(minPreferredLogicalWidth());
-    setLogicalHeight(style()->fontMetrics().height());
-
-    Length startMargin = style()->marginStart();
-    Length endMargin = style()->marginEnd();
-
-    ASSERT(startMargin.isFixed());
-    setMarginStart(startMargin.value());
-
-    ASSERT(endMargin.isFixed());
-    setMarginEnd(endMargin.value());
-
-    setNeedsLayout(false);
-}
-
-IntRect RenderDetailsMarker::getRelativeMarkerRect() const
-{
-    IntRect relativeRect;
-
-    int bulletWidth = minPreferredLogicalWidth();
-    relativeRect = IntRect((logicalWidth() - bulletWidth) / 2, (logicalHeight() - bulletWidth) / 2, bulletWidth, bulletWidth);
-
-    if (!style()->isHorizontalWritingMode()) {
-        relativeRect = relativeRect.transposedRect();
-        relativeRect.setX(width() - relativeRect.x() - relativeRect.width());
-    }
-
-    return relativeRect;
 }
 
 bool RenderDetailsMarker::isOpen() const
 {
-    return m_details && m_details->isOpen();
+    if (RenderDetails* owner = details())
+        return owner->isOpen();
+    return false;
 }
 
 static Path createPath(const FloatPoint* path)
@@ -180,17 +112,18 @@ Path RenderDetailsMarker::getCanonicalPath() const
 
 Path RenderDetailsMarker::getPath(const IntPoint& origin) const
 {
-    IntRect rect = getRelativeMarkerRect();
     Path result = getCanonicalPath();
-    result.transform(AffineTransform().scale(rect.width()));
-    result.translate(FloatSize(origin.x() + rect.x(), origin.y() + rect.y()));
+    result.transform(AffineTransform().scale(logicalHeight()));
+    result.translate(FloatSize(origin.x(), origin.y()));
     return result;
 }
 
 void RenderDetailsMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (paintInfo.phase != PaintPhaseForeground || style()->visibility() != VISIBLE)
+    if (paintInfo.phase != PaintPhaseForeground || style()->visibility() != VISIBLE) {
+        RenderBlock::paint(paintInfo, tx, ty);
         return;
+    }
 
     IntPoint boxOrigin(tx + x(), ty + y());
     IntRect overflowRect(visualOverflowRect());
@@ -207,6 +140,16 @@ void RenderDetailsMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     paintInfo.context->setFillColor(color, style()->colorSpace());
 
     paintInfo.context->fillPath(getPath(boxOrigin));
+}
+
+RenderDetails* RenderDetailsMarker::details() const
+{
+    for (RenderObject* renderer = parent(); renderer; renderer = renderer->parent()) {
+        if (renderer->isDetails())
+            return toRenderDetails(renderer);
+    }
+
+    return 0;
 }
 
 }

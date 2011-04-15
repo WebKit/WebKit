@@ -24,10 +24,6 @@
 #include "CSSStyleSelector.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLNames.h"
-#include "LocalizedStrings.h"
-#include "RenderDetailsMarker.h"
-#include "RenderTextFragment.h"
-#include "RenderView.h"
 
 namespace WebCore {
 
@@ -37,21 +33,8 @@ RenderDetails::RenderDetails(Node* node)
     : RenderBlock(node)
     , m_summaryBlock(0)
     , m_contentBlock(0)
-    , m_defaultSummaryBlock(0)
-    , m_defaultSummaryText(0)
-    , m_marker(0)
     , m_mainSummary(0)
 {
-}
-
-void RenderDetails::destroy()
-{
-    if (m_marker) {
-        m_marker->destroy();
-        m_marker = 0;
-    }
-
-    RenderBlock::destroy();
 }
 
 RenderBlock* RenderDetails::summaryBlock()
@@ -106,26 +89,9 @@ void RenderDetails::removeChild(RenderObject* oldChild)
     ASSERT_NOT_REACHED();
 }
 
-void RenderDetails::setMarkerStyle()
-{
-    if (m_marker) {
-        RefPtr<RenderStyle> markerStyle = RenderStyle::create();
-        markerStyle->inheritFrom(style());
-        m_marker->setStyle(markerStyle.release());
-    }
-}
-
 void RenderDetails::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
-
-    if (m_defaultSummaryBlock) {
-        m_defaultSummaryBlock->setStyle(createSummaryStyle());
-        m_defaultSummaryText->setStyle(m_defaultSummaryBlock->style());
-    }
-
-    setMarkerStyle();
-
     // Ensure that if we ended up being inline that we set our replaced flag
     // so that we're treated like an inline-block.
     setReplaced(isInline());
@@ -144,11 +110,6 @@ RenderObject* RenderDetails::getRenderPosition(RenderObject* object)
     return element ? element->renderer() : 0;
 }
 
-void RenderDetails::markerDestroyed()
-{
-    m_marker = 0;
-}
-
 void RenderDetails::summaryDestroyed(RenderObject* summary)
 {
     if (summary == m_mainSummary)
@@ -157,26 +118,12 @@ void RenderDetails::summaryDestroyed(RenderObject* summary)
 
 void RenderDetails::moveSummaryToContents()
 {
-    if (m_defaultSummaryBlock) {
-        ASSERT(!m_mainSummary);
-        m_defaultSummaryBlock->destroy();
-        m_defaultSummaryBlock = 0;
-        m_defaultSummaryText = 0;
-        return;
-    }
-
     if (!m_mainSummary)
         return;
 
     m_mainSummary->remove();
     contentBlock()->addChild(m_mainSummary, getRenderPosition(m_mainSummary));
     m_mainSummary = 0;
-}
-
-PassRefPtr<RenderStyle> RenderDetails::createSummaryStyle()
-{
-    RefPtr<HTMLElement> summary(HTMLElement::create(summaryTag, document()));
-    return document()->styleSelector()->styleForElement(summary.get(), style(), true);
 }
 
 void RenderDetails::replaceMainSummary(RenderObject* newSummary)
@@ -191,153 +138,25 @@ void RenderDetails::replaceMainSummary(RenderObject* newSummary)
     m_mainSummary = newSummary;
 }
 
-void RenderDetails::createDefaultSummary()
-{
-    if (m_defaultSummaryBlock)
-        return;
-
-    moveSummaryToContents();
-
-    m_defaultSummaryBlock = summaryBlock()->createAnonymousBlock();
-    m_defaultSummaryBlock->setStyle(createSummaryStyle());
-
-    m_defaultSummaryText = new (renderArena()) RenderTextFragment(document(), defaultDetailsSummaryText().impl());
-    m_defaultSummaryText->setStyle(m_defaultSummaryBlock->style());
-    m_defaultSummaryBlock->addChild(m_defaultSummaryText);
-
-    summaryBlock()->addChild(m_defaultSummaryBlock);
-}
-
 void RenderDetails::checkMainSummary()
 {
     if (!node() || !node()->hasTagName(detailsTag))
         return;
 
     Node* mainSummaryNode = static_cast<HTMLDetailsElement*>(node())->mainSummary();
-
-    if (!mainSummaryNode || !mainSummaryNode->renderer() || mainSummaryNode->renderer()->isFloatingOrPositioned())
-        createDefaultSummary();
-    else
+    if (mainSummaryNode && mainSummaryNode->renderer())
         replaceMainSummary(mainSummaryNode->renderer());
-
 }
 
 void RenderDetails::layout()
 {
-    ASSERT(needsLayout());
-
     checkMainSummary();
-    ASSERT(m_summaryBlock);
-
-    if (!m_marker) {
-        m_marker = new (renderArena()) RenderDetailsMarker(this);
-        setMarkerStyle();
-    }
-    updateMarkerLocation();
-
     RenderBlock::layout();
-
-    m_interactiveArea = m_summaryBlock->frameRect();
-
-    // FIXME: the following code will not be needed once absoluteToLocal get patched to handle flipped blocks writing modes.
-    switch (style()->writingMode()) {
-    case TopToBottomWritingMode:
-    case LeftToRightWritingMode:
-        break;
-    case RightToLeftWritingMode: {
-        m_interactiveArea.setX(width() - m_interactiveArea.x() - m_interactiveArea.width());
-        break;
-    }
-    case BottomToTopWritingMode: {
-        m_interactiveArea.setY(height() - m_interactiveArea.y() - m_interactiveArea.height());
-        break;
-    }
-    }
 }
 
 bool RenderDetails::isOpen() const
 {
     return node() && node()->isElementNode() ? !static_cast<Element*>(node())->getAttribute(openAttr).isNull() : false;
-}
-
-RenderObject* RenderDetails::getParentOfFirstLineBox(RenderBlock* curr)
-{
-    RenderObject* firstChild = curr->firstChild();
-    if (!firstChild)
-        return 0;
-
-    for (RenderObject* currChild = firstChild; currChild; currChild = currChild->nextSibling()) {
-        if (currChild == m_marker)
-            continue;
-
-        if (currChild->isInline() && (!currChild->isRenderInline() || curr->generatesLineBoxesForInlineChild(currChild)))
-            return curr;
-
-        if (currChild->isFloating() || currChild->isPositioned())
-            continue;
-
-        if (currChild->isTable() || !currChild->isRenderBlock() || (currChild->isBox() && toRenderBox(currChild)->isWritingModeRoot()))
-            break;
-
-        if (currChild->isDetails())
-            break;
-
-        RenderObject* lineBox = getParentOfFirstLineBox(toRenderBlock(currChild));
-        if (lineBox)
-            return lineBox;
-    }
-
-    return 0;
-}
-
-RenderObject* RenderDetails::firstNonMarkerChild(RenderObject* parent)
-{
-    RenderObject* result = parent->firstChild();
-    while (result && result->isDetailsMarker())
-        result = result->nextSibling();
-    return result;
-}
-
-void RenderDetails::updateMarkerLocation()
-{
-    // Sanity check the location of our marker.
-    if (m_marker) {
-        RenderObject* markerPar = m_marker->parent();
-        RenderObject* lineBoxParent = getParentOfFirstLineBox(m_summaryBlock);
-        if (!lineBoxParent) {
-            // If the marker is currently contained inside an anonymous box,
-            // then we are the only item in that anonymous box (since no line box
-            // parent was found). It's ok to just leave the marker where it is
-            // in this case.
-            if (markerPar && markerPar->isAnonymousBlock())
-                lineBoxParent = markerPar;
-            else
-                lineBoxParent = m_summaryBlock;
-        }
-
-        if (markerPar != lineBoxParent || m_marker->preferredLogicalWidthsDirty()) {
-            // Removing and adding the marker can trigger repainting in
-            // containers other than ourselves, so we need to disable LayoutState.
-            view()->disableLayoutState();
-            m_marker->remove();
-            if (!lineBoxParent)
-                lineBoxParent = m_summaryBlock;
-            lineBoxParent->addChild(m_marker, firstNonMarkerChild(lineBoxParent));
-
-            if (m_marker->preferredLogicalWidthsDirty())
-                m_marker->computePreferredLogicalWidths();
-
-            view()->enableLayoutState();
-        }
-    }
-}
-
-void RenderDetails::computePreferredLogicalWidths()
-{
-    ASSERT(preferredLogicalWidthsDirty());
-
-    updateMarkerLocation();
-    RenderBlock::computePreferredLogicalWidths();
 }
 
 } // namespace WebCore

@@ -985,13 +985,16 @@ void Element::attach()
     createRendererIfNeeded();
     
     StyleSelectorParentPusher parentPusher(this);
-    if (firstChild())
-        parentPusher.push();
-    ContainerNode::attach();
+
     if (Node* shadow = shadowRoot()) {
         parentPusher.push();
         shadow->attach();
     }
+
+    if (firstChild())
+        parentPusher.push();
+    ContainerNode::attach();
+
     if (hasRareData()) {   
         ElementRareData* data = rareData();
         if (data->needsFocusAppearanceUpdateSoonAfterAttach()) {

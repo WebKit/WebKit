@@ -3165,6 +3165,8 @@
             'html/parser/TextViewSourceParser.h',
             'html/parser/XSSFilter.cpp',
             'html/parser/XSSFilter.h',
+            'html/shadow/DetailsMarkerControl.cpp',
+            'html/shadow/DetailsMarkerControl.h',
             'html/shadow/MediaControlElements.cpp',
             'html/shadow/MediaControlElements.h',
             'html/shadow/MediaControlRootElement.cpp',

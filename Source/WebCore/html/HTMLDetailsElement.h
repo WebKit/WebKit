@@ -29,19 +29,29 @@ class HTMLDetailsElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLDetailsElement> create(const QualifiedName& tagName, Document* document);
     Node* mainSummary() const { return m_mainSummary; }
+    void toggleOpen();
 
 private:
+    enum RefreshRenderer {
+        RefreshRendererAllowed,
+        RefreshRendererSupressed,
+    };
+
     HTMLDetailsElement(const QualifiedName&, Document*);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta);
     virtual void finishParsingChildren();
+    virtual bool canHaveLightChildRendererWithShadow() const { return true; }
 
     void parseMappedAttribute(Attribute*);
     bool childShouldCreateRenderer(Node*) const;
-    void defaultEventHandler(Event*);
 
-    void findMainSummary();
+    Node* findSummaryFor(ContainerNode*);
+    Node* findMainSummary();
+    void refreshMainSummary(RefreshRenderer);
+
+    void createShadowSubtree();
 
     Node* m_mainSummary;
     bool m_isOpen;

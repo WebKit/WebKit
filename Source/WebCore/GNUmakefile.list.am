@@ -1840,6 +1840,8 @@ webcore_sources += \
 	Source/WebCore/html/parser/TextViewSourceParser.h \
 	Source/WebCore/html/parser/XSSFilter.cpp \
 	Source/WebCore/html/parser/XSSFilter.h \
+	Source/WebCore/html/shadow/DetailsMarkerControl.cpp \
+	Source/WebCore/html/shadow/DetailsMarkerControl.h \
 	Source/WebCore/html/shadow/MediaControlElements.cpp \
 	Source/WebCore/html/shadow/MediaControlElements.h \
 	Source/WebCore/html/shadow/MediaControlRootElement.cpp \

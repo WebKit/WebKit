@@ -803,6 +803,7 @@ SOURCES += \
     html/parser/TextDocumentParser.cpp \
     html/parser/TextViewSourceParser.cpp \
     html/parser/XSSFilter.cpp \
+    html/shadow/DetailsMarkerControl.cpp \
     html/shadow/MediaControlRootElement.cpp \
     html/shadow/MeterShadowElement.cpp \
     html/shadow/ProgressShadowElement.cpp \
@@ -1744,6 +1745,7 @@ HEADERS += \
     html/parser/HTMLViewSourceParser.h \
     html/parser/XSSFilter.h \
     html/shadow/MediaControlElements.h \
+    html/shadow/DetailsMarkerControl.h \
     inspector/ConsoleMessage.h \
     inspector/DOMNodeHighlighter.h \
     inspector/EventsCollector.h \

@@ -21,38 +21,29 @@
 #ifndef RenderDetailsMarker_h
 #define RenderDetailsMarker_h
 
-#include "RenderBox.h"
+#include "RenderBlock.h"
 
 namespace WebCore {
 
 class RenderDetails;
 
-class RenderDetailsMarker : public RenderBox {
+class RenderDetailsMarker : public RenderBlock {
 public:
-    RenderDetailsMarker(RenderDetails*);
+    RenderDetailsMarker(Node*);
 
     enum Orientation { Up, Down, Left, Right };
 
     Orientation orientation() const;
 
-    virtual void computePreferredLogicalWidths();
-    virtual void destroy();
-
 private:
     virtual const char* renderName() const { return "RenderDetailsMarker"; }
     virtual bool isDetailsMarker() const { return true; }
     virtual void paint(PaintInfo&, int tx, int ty);
-    virtual void layout();
-    virtual int lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
-
-    IntRect getRelativeMarkerRect() const;
 
     bool isOpen() const;
     Path getCanonicalPath() const;
     Path getPath(const IntPoint& origin) const;
-
-    RenderDetails* m_details;
+    RenderDetails* details() const;
 };
 
 inline RenderDetailsMarker* toRenderDetailsMarker(RenderObject* object)

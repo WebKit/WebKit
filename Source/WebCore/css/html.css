@@ -887,6 +887,13 @@ summary {
     display: block
 }
 
+summary::-webkit-details-marker {
+    display: inline-block;
+    width: 0.66em;
+    height: 0.66em;
+    margin-right: 0.4em;
+}
+
 /* page */
 
 @page {

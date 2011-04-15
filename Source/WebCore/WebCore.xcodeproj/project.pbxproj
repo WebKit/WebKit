@@ -3251,6 +3251,8 @@
 		A7B6E69F0B291A9600D0529F /* DragData.h in Headers */ = {isa = PBXBuildFile; fileRef = A7B6E69D0B291A9600D0529F /* DragData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7BBE26611AFB3F20005EA03 /* JSHTMLMeterElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7BBE26411AFB3F20005EA03 /* JSHTMLMeterElement.cpp */; };
 		A7BBE26711AFB3F20005EA03 /* JSHTMLMeterElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A7BBE26511AFB3F20005EA03 /* JSHTMLMeterElement.h */; };
+		A7C9ABF81357A3BF00F5503F /* DetailsMarkerControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7C9ABF61357A3BF00F5503F /* DetailsMarkerControl.cpp */; };
+		A7C9ABF91357A3BF00F5503F /* DetailsMarkerControl.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C9ABF71357A3BF00F5503F /* DetailsMarkerControl.h */; };
 		A7CA595D0B27BD9E00FA021D /* DragController.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA595B0B27BD9E00FA021D /* DragController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7CA595E0B27BD9E00FA021D /* DragController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7CA595C0B27BD9E00FA021D /* DragController.cpp */; };
 		A7CA59630B27C1F200FA021D /* DragClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A7CA59620B27C1F200FA021D /* DragClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9803,6 +9805,8 @@
 		A7B6E69D0B291A9600D0529F /* DragData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragData.h; sourceTree = "<group>"; };
 		A7BBE26411AFB3F20005EA03 /* JSHTMLMeterElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLMeterElement.cpp; sourceTree = "<group>"; };
 		A7BBE26511AFB3F20005EA03 /* JSHTMLMeterElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLMeterElement.h; sourceTree = "<group>"; };
+		A7C9ABF61357A3BF00F5503F /* DetailsMarkerControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DetailsMarkerControl.cpp; sourceTree = "<group>"; };
+		A7C9ABF71357A3BF00F5503F /* DetailsMarkerControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailsMarkerControl.h; sourceTree = "<group>"; };
 		A7CA595B0B27BD9E00FA021D /* DragController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragController.h; sourceTree = "<group>"; };
 		A7CA595C0B27BD9E00FA021D /* DragController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DragController.cpp; sourceTree = "<group>"; };
 		A7CA59620B27C1F200FA021D /* DragClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragClient.h; sourceTree = "<group>"; };
@@ -13499,6 +13503,8 @@
 		4150F9ED12B6E0990008C860 /* shadow */ = {
 			isa = PBXGroup;
 			children = (
+				A7C9ABF61357A3BF00F5503F /* DetailsMarkerControl.cpp */,
+				A7C9ABF71357A3BF00F5503F /* DetailsMarkerControl.h */,
 				417253A81354BBBC00360F2A /* MediaControlElements.cpp */,
 				417253A91354BBBC00360F2A /* MediaControlElements.h */,
 				4157AF7F12F1FB0400A8C6F5 /* MediaControlRootElement.cpp */,
@@ -20159,6 +20165,7 @@
 				1C4C8F020AD85D87009475CE /* DeleteButtonController.h in Headers */,
 				93309DDF099E64920056E581 /* DeleteFromTextNodeCommand.h in Headers */,
 				93309DE1099E64920056E581 /* DeleteSelectionCommand.h in Headers */,
+				A7C9ABF91357A3BF00F5503F /* DetailsMarkerControl.h in Headers */,
 				31FB1A57120A5D0600DC02A0 /* DeviceMotionClient.h in Headers */,
 				31FB1A59120A5D0600DC02A0 /* DeviceMotionController.h in Headers */,
 				31FB1A5B120A5D0600DC02A0 /* DeviceMotionData.h in Headers */,
@@ -23484,6 +23491,7 @@
 				1CE83AC30ADAFFD7009354F6 /* DeleteButtonController.cpp in Sources */,
 				93309DDE099E64920056E581 /* DeleteFromTextNodeCommand.cpp in Sources */,
 				93309DE0099E64920056E581 /* DeleteSelectionCommand.cpp in Sources */,
+				A7C9ABF81357A3BF00F5503F /* DetailsMarkerControl.cpp in Sources */,
 				31FB1A58120A5D0600DC02A0 /* DeviceMotionController.cpp in Sources */,
 				31FB1A5A120A5D0600DC02A0 /* DeviceMotionData.cpp in Sources */,
 				31FB1A5C120A5D0600DC02A0 /* DeviceMotionEvent.cpp in Sources */,

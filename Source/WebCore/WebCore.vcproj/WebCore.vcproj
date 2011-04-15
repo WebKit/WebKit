@@ -56605,6 +56605,14 @@
 				Name="shadow"
 				>
 				<File
+					RelativePath="..\html\shadow\DetailsMarkerControl.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\DetailsMarkerControl.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\shadow\MediaControlElements.cpp"
 					>
 				</File>

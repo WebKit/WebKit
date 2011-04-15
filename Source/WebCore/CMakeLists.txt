@@ -880,6 +880,7 @@ SET(WebCore_SOURCES
     html/parser/TextViewSourceParser.cpp
     html/parser/XSSFilter.cpp
 
+    html/shadow/DetailsMarkerControl.cpp
     html/shadow/MediaControlRootElement.cpp
     html/shadow/MeterShadowElement.cpp
     html/shadow/ProgressShadowElement.cpp

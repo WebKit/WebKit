@@ -25,14 +25,22 @@
 
 namespace WebCore {
 
+class HTMLDetailsElement;
+
 class HTMLSummaryElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLSummaryElement> create(const QualifiedName&, Document*);
+    bool isMainSummary() const;
 
 private:
     HTMLSummaryElement(const QualifiedName&, Document*);
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual void defaultEventHandler(Event*);
+    virtual void createShadowSubtree();
+    virtual bool canHaveLightChildRendererWithShadow() const { return true; }
+
+    HTMLDetailsElement* detailsElement() const;
 };
 
 }

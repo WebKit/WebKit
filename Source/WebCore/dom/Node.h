@@ -208,6 +208,8 @@ public:
     bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
     // FIXME: Remove this when all shadow roots are ShadowRoots.
     virtual bool isShadowBoundary() const { return false; }
+    virtual bool canHaveLightChildRendererWithShadow() const { return false; }
+
     Node* shadowAncestorNode();
     Node* shadowTreeRootNode();
     bool isInShadowTree();

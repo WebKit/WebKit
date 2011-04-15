@@ -21,11 +21,12 @@
 #include "config.h"
 #include "HTMLDetailsElement.h"
 
-#include "Frame.h"
 #include "HTMLNames.h"
+#include "HTMLSummaryElement.h"
+#include "LocalizedStrings.h"
 #include "MouseEvent.h"
-#include "PlatformMouseEvent.h"
 #include "RenderDetails.h"
+#include "Text.h"
 
 namespace WebCore {
 
@@ -49,48 +50,76 @@ RenderObject* HTMLDetailsElement::createRenderer(RenderArena* arena, RenderStyle
     return new (arena) RenderDetails(this);
 }
 
-void HTMLDetailsElement::findMainSummary()
+Node* HTMLDetailsElement::findSummaryFor(ContainerNode* container)
 {
-    m_mainSummary = 0;
+    for (Node* child = container->firstChild(); child; child = child->nextSibling()) {
+        if (child->hasTagName(summaryTag))
+            return child;
+    }
 
-    for (Node* child = firstChild(); child; child = child->nextSibling()) {
-        if (child->hasTagName(summaryTag)) {
-            m_mainSummary = child;
-            break;
-        }
+    return 0;
+}
+
+Node* HTMLDetailsElement::findMainSummary()
+{
+    Node* found = findSummaryFor(this);
+    if (found) {
+        removeShadowRoot();
+        return found;
+    }
+    
+    createShadowSubtree();
+    found = findSummaryFor(shadowRoot());
+    ASSERT(found);
+    return found;
+}
+
+void HTMLDetailsElement::refreshMainSummary(RefreshRenderer refreshRenderer)
+{
+    Node* oldSummary = m_mainSummary;
+    m_mainSummary = findMainSummary();
+
+    if (oldSummary == m_mainSummary || !attached())
+        return;
+
+    if (oldSummary && oldSummary->parentNodeForRenderingAndStyle()) {
+        oldSummary->detach();
+        oldSummary->attach();
+    }
+        
+    if (refreshRenderer == RefreshRendererAllowed) {
+        m_mainSummary->detach();
+        m_mainSummary->attach();
     }
 }
+
+void HTMLDetailsElement::createShadowSubtree()
+{
+    if (shadowRoot())
+        return;
+
+    RefPtr<HTMLSummaryElement> defaultSummary = HTMLSummaryElement::create(summaryTag, document());
+    ExceptionCode ec = 0;
+    defaultSummary->appendChild(Text::create(document(), defaultDetailsSummaryText()), ec);
+    ensureShadowRoot()->appendChild(defaultSummary, ec, true);
+}
+
 
 void HTMLDetailsElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    if (!changedByParser) {
-        Node* oldSummary = m_mainSummary;
-        findMainSummary();
-
-        if (oldSummary != m_mainSummary && !m_isOpen && attached()) {
-            if (oldSummary && oldSummary->attached())
-                oldSummary->detach();
-            if (m_mainSummary && childCountDelta < 0 && !m_mainSummary->renderer()) {
-                // If childCountDelta is less then zero and the main summary has changed it must be because previous main
-                // summary was removed. The new main summary was then inside the unrevealed content and needs to be
-                // reattached to create its renderer. If childCountDelta is not less then zero then a new <summary> element
-                // has been added and it will be attached without our help.
-                m_mainSummary->detach();
-                m_mainSummary->attach();
-            }
-        }
-    }
+    // If childCountDelta is less then zero and the main summary has changed it must be because previous main
+    // summary was removed. The new main summary was then inside the unrevealed content and needs to be
+    // reattached to create its renderer. If childCountDelta is not less then zero then a new <summary> element
+    // has been added and it will be attached without our help.
+    if (!changedByParser)
+        refreshMainSummary(childCountDelta < 0 ? RefreshRendererAllowed : RefreshRendererSupressed);
 }
 
 void HTMLDetailsElement::finishParsingChildren()
 {
     HTMLElement::finishParsingChildren();
-    findMainSummary();
-    if (attached() && m_mainSummary && !m_mainSummary->renderer()) {
-        m_mainSummary->detach();
-        m_mainSummary->attach();
-    }
+    refreshMainSummary(RefreshRendererAllowed);
 }
 
 void HTMLDetailsElement::parseMappedAttribute(Attribute* attr)
@@ -111,26 +140,9 @@ bool HTMLDetailsElement::childShouldCreateRenderer(Node* child) const
     return m_isOpen || child == m_mainSummary;
 }
 
-void HTMLDetailsElement::defaultEventHandler(Event* event)
+void HTMLDetailsElement::toggleOpen()
 {
-    HTMLElement::defaultEventHandler(event);
-
-    if (!renderer() || !renderer()->isDetails() || !event->isMouseEvent() || event->type() != eventNames().clickEvent || event->defaultHandled())
-        return;
-
-    MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
-    if (mouseEvent->button() != LeftButton)
-        return;
-
-    RenderDetails* renderDetails = static_cast<RenderDetails*>(renderer());
-
-    float factor = document() && document()->frame() ? document()->frame()->pageZoomFactor() : 1.0f;
-    FloatPoint pos = renderDetails->absoluteToLocal(FloatPoint(mouseEvent->pageX() * factor, mouseEvent->pageY() * factor));
-
-    if (renderDetails->interactiveArea().contains(pos.x(), pos.y())) {
-        setAttribute(openAttr, m_isOpen ? String() : String(""));
-        event->setDefaultHandled();
-    }
+    setAttribute(openAttr, m_isOpen ? nullAtom : emptyAtom);
 }
 
 }

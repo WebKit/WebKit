@@ -1,3 +1,76 @@
+2011-04-15  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        RenderDetailsMarker should belong to shadow element.
+        https://bugs.webkit.org/show_bug.cgi?id=58591
+
+        - Introduced DetailsMarkerControl element, which is a shadow element of <summary>, creates RenderDetailsMarker.
+        - Removed custom layout code from RenderDetails, RenderDetailsMarker, which is now done by usual CSS layout.
+          Note that marker size is given via style for -webkit-details-marker pseudo class.
+        - Converted default summary implementation from pure-renderer style to shadow of HTMLDetailsElement.
+          Now RenderDetails knows nothing about default summary.
+        - Moved event handling code from HTMLDetailsElement to HTMLSummaryElement because now the marker is always child of 
+          <summary>, and the clickable area is now <summary> itself.
+
+        - Note that the rendering result is changed due to the conversion from custom layout code to usual CSS styling.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/html.css:
+        (summary::-webkit-details-marker):
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        * dom/Node.cpp:
+        (WebCore::shouldCreateRendererFor):
+        * dom/Node.h:
+        (WebCore::Node::canHaveLightChildRendererWithShadow):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::findSummaryFor):
+        (WebCore::HTMLDetailsElement::findMainSummary):
+        (WebCore::HTMLDetailsElement::refreshMainSummary):
+        (WebCore::HTMLDetailsElement::createShadowSubtree):
+        (WebCore::HTMLDetailsElement::childrenChanged):
+        (WebCore::HTMLDetailsElement::finishParsingChildren):
+        (WebCore::HTMLDetailsElement::toggleOpen):
+        * html/HTMLDetailsElement.h:
+        (WebCore::HTMLDetailsElement::canHaveLightChildRendererWithShadow):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::HTMLSummaryElement::create):
+        (WebCore::HTMLSummaryElement::createShadowSubtree):
+        (WebCore::HTMLSummaryElement::detailsElement):
+        (WebCore::HTMLSummaryElement::isMainSummary):
+        (WebCore::HTMLSummaryElement::defaultEventHandler):
+        * html/HTMLSummaryElement.h:
+        (WebCore::HTMLSummaryElement::canHaveLightChildRendererWithShadow):
+        * html/shadow/DetailsMarkerControl.cpp: Added.
+        (WebCore::DetailsMarkerControl::DetailsMarkerControl):
+        (WebCore::DetailsMarkerControl::createRenderer):
+        (WebCore::DetailsMarkerControl::rendererIsNeeded):
+        (WebCore::DetailsMarkerControl::shadowPseudoId):
+        (WebCore::DetailsMarkerControl::summaryElement):
+        * html/shadow/DetailsMarkerControl.h: Added.
+        (WebCore::DetailsMarkerControl::create):
+        * rendering/RenderDetails.cpp:
+        (WebCore::RenderDetails::RenderDetails):
+        (WebCore::RenderDetails::styleDidChange):
+        (WebCore::RenderDetails::moveSummaryToContents):
+        (WebCore::RenderDetails::checkMainSummary):
+        (WebCore::RenderDetails::layout):
+        * rendering/RenderDetails.h:
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::RenderDetailsMarker):
+        (WebCore::RenderDetailsMarker::isOpen):
+        (WebCore::RenderDetailsMarker::getPath):
+        (WebCore::RenderDetailsMarker::paint):
+        (WebCore::RenderDetailsMarker::details):
+        * rendering/RenderDetailsMarker.h:
+
 2011-04-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
