@@ -60,9 +60,6 @@ GPRReg JITCodeGenerator::fillInteger(NodeIndex nodeIndex, DataFormat& returnForm
                 JSValue jsValue = valueOfJSConstant(nodeIndex);
                 m_jit.move(MacroAssembler::ImmPtr(JSValue::encode(jsValue)), reg);
             }
-        } else if (node.isArgument()) {
-            m_gprs.retain(gpr, virtualRegister, SpillOrderArgument);
-            m_jit.loadPtr(m_jit.addressForArgument(m_jit.graph()[nodeIndex].argumentNumber()), reg);
         } else {
             ASSERT(info.spillFormat() == DataFormatJS || info.spillFormat() == DataFormatJSInteger);
             m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
@@ -143,11 +140,6 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
                 info.fillJSValue(gpr, DataFormatJS);
                 unlock(gpr);
             }
-        } else if (node.isArgument()) {
-            m_gprs.retain(gpr, virtualRegister, SpillOrderArgument);
-            m_jit.loadPtr(m_jit.addressForArgument(m_jit.graph()[nodeIndex].argumentNumber()), reg);
-            info.fillJSValue(gpr, DataFormatJS);
-            unlock(gpr);
         } else {
             DataFormat spillFormat = info.spillFormat();
             ASSERT(spillFormat & DataFormatJS);
@@ -267,10 +259,6 @@ GPRReg JITCodeGenerator::fillJSValue(NodeIndex nodeIndex)
             }
 
             m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-        } else if (node.isArgument()) {
-            m_gprs.retain(gpr, virtualRegister, SpillOrderArgument);
-            m_jit.loadPtr(m_jit.addressForArgument(m_jit.graph()[nodeIndex].argumentNumber()), reg);
-            info.fillJSValue(gpr, DataFormatJS);
         } else {
             DataFormat spillFormat = info.spillFormat();
             ASSERT(spillFormat & DataFormatJS);

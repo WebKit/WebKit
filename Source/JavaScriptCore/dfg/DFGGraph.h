@@ -56,6 +56,7 @@ public:
 #ifndef NDEBUG
     // CodeBlock is optional, but may allow additional information to be dumped (e.g. Identifier names).
     void dump(CodeBlock* = 0);
+    void dump(NodeIndex, CodeBlock* = 0);
 #endif
 
 private:

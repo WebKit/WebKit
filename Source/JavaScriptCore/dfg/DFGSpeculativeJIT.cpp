@@ -51,9 +51,6 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat&
                 return gpr;
             }
             m_jit.move(constantAsJSValueAsImmPtr(nodeIndex), reg);
-        } else if (node.isArgument()) {
-            m_gprs.retain(gpr, virtualRegister, SpillOrderArgument);
-            m_jit.loadPtr(m_jit.addressForArgument(m_jit.graph()[nodeIndex].argumentNumber()), reg);
         } else {
             DataFormat spillFormat = info.spillFormat();
             ASSERT(spillFormat & DataFormatJS);
@@ -203,13 +200,6 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
             terminateSpeculativeExecution();
             return gpr;
         }
-        if (node.isArgument()) {
-            m_gprs.retain(gpr, virtualRegister, SpillOrderArgument);
-            m_jit.loadPtr(m_jit.addressForArgument(m_jit.graph()[nodeIndex].argumentNumber()), reg);
-            speculationCheck(m_jit.branchTestPtr(MacroAssembler::NonZero, reg, JITCompiler::tagMaskRegister));
-            info.fillJSValue(gpr, DataFormatJSCell);
-            return gpr;
-        }
         ASSERT(info.spillFormat() & DataFormatJS);
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), reg);
@@ -262,9 +252,12 @@ bool SpeculativeJIT::compile(Node& node)
         initConstantInfo(m_compileIndex);
         break;
     
-    case Argument:
-        initArgumentInfo(m_compileIndex);
+    case Argument: {
+        GPRTemporary result(this);
+        m_jit.loadPtr(m_jit.addressForArgument(node.argumentNumber()), result.registerID());
+        jsValueResult(result.gpr(), m_compileIndex);
         break;
+    }
 
     case BitAnd:
     case BitOr:

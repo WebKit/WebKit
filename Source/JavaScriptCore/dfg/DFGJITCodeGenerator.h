@@ -59,7 +59,6 @@ protected:
         SpillOrderNone,
         SpillOrderConstant = 1, // no spill, and cheap fill
         SpillOrderSpilled = 2,  // no spill
-        SpillOrderArgument = 3, // no spill, but we may lose typeinfo
         SpillOrderJS = 4,       // needs spill
         SpillOrderCell = 4,     // needs spill
         SpillOrderInteger = 5,  // needs spill and box
@@ -444,11 +443,6 @@ protected:
         ASSERT(isInt32Constant(nodeIndex) || isDoubleConstant(nodeIndex) || isJSConstant(nodeIndex));
         Node& node = m_jit.graph()[nodeIndex];
         m_generationInfo[node.virtualRegister].initConstant(nodeIndex, node.refCount);
-    }
-    void initArgumentInfo(NodeIndex nodeIndex)
-    {
-        Node& node = m_jit.graph()[nodeIndex];
-        m_generationInfo[node.virtualRegister].initArgument(nodeIndex, node.refCount);
     }
 
     // These methods used to sort arguments into the correct registers.

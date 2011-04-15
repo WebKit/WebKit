@@ -2,6 +2,43 @@
 
         Reviewed by Geoffrey Garen.
 
+        Bug 58620 - DFG JIT - loading of arguments should not be lazy
+
+        This optimization is overly simplistic. It only works because we never
+        write out definitions to arguments (since we currently only compile
+        single block functions). Revert this for now, we may want to reintroduce
+        something like this again in the future, but it will need to be aware
+        how to schedule definitions to arguments versus lazy loads that have not
+        yet been performed.
+
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::needsSpill):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::fillInteger):
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        (JSC::DFG::JITCodeGenerator::fillJSValue):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::initConstantInfo):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::fillNumericToDouble):
+        (JSC::DFG::JITCompiler::fillInt32ToInteger):
+        (JSC::DFG::JITCompiler::fillToJS):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::isKnownInteger):
+        (JSC::DFG::NonSpeculativeJIT::isKnownNumeric):
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2011-04-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
         Bug 58600 - DFG JIT bugs in ValueToInt, PutByVal
 
         The bug in PutByVal is that an operand is in JSValueOperand - when this

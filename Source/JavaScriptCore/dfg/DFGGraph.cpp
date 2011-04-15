@@ -33,85 +33,89 @@
 namespace JSC { namespace DFG {
 
 #ifndef NDEBUG
+
+// Creates an array of stringized names.
+static const char* dfgOpNames[] = {
+#define STRINGIZE_DFG_OP_ENUM(opcode, flags) #opcode ,
+    FOR_EACH_DFG_OP(STRINGIZE_DFG_OP_ENUM)
+#undef STRINGIZE_DFG_OP_ENUM
+};
+
+void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
+{
+    Node& node = at(nodeIndex);
+    NodeType op = node.op;
+
+    unsigned refCount = node.refCount;
+    if (!refCount)
+        return;
+    bool mustGenerate = node.mustGenerate();
+    if (mustGenerate)
+        --refCount;
+
+    // Example/explanation of dataflow dump output
+    //
+    //   14:   <!2:7>  GetByVal(@3, @13)
+    //   ^1     ^2 ^3     ^4       ^5
+    //
+    // (1) The nodeIndex of this operation.
+    // (2) The reference count. The number printed is the 'real' count,
+    //     not including the 'mustGenerate' ref. If the node is
+    //     'mustGenerate' then the count it prefixed with '!'.
+    // (3) The virtual register slot assigned to this node.
+    // (4) The name of the operation.
+    // (5) The arguments to the operation. The may be of the form:
+    //         @#   - a NodeIndex referencing a prior node in the graph.
+    //         arg# - an argument number.
+    //         $#   - the index in the CodeBlock of a constant { for numeric constants the value is displayed | for integers, in both decimal and hex }.
+    //         id#  - the index in the CodeBlock of an identifier { if codeBlock is passed to dump(), the string representation is displayed }.
+    //         var# - the index of a var on the global object, used by GetGlobalVar/PutGlobalVar operations.
+    printf("% 4d:\t<%c%u:%u>\t%s(", (int)nodeIndex, mustGenerate ? '!' : ' ', refCount, node.virtualRegister, dfgOpNames[op & NodeIdMask]);
+    if (node.child1 != NoNode)
+        printf("@%u", node.child1);
+    if (node.child2 != NoNode)
+        printf(", @%u", node.child2);
+    if (node.child3 != NoNode)
+        printf(", @%u", node.child3);
+    bool hasPrinted = node.child1 != NoNode;
+
+    if (node.hasVarNumber()) {
+        printf("%svar%u", hasPrinted ? ", " : "", node.varNumber());
+        hasPrinted = true;
+    }
+    if (node.hasIdentifier()) {
+        if (codeBlock)
+            printf("%sid%u{%s}", hasPrinted ? ", " : "", node.identifierNumber(), codeBlock->identifier(node.identifierNumber()).ustring().utf8().data());
+        else
+            printf("%sid%u", hasPrinted ? ", " : "", node.identifierNumber());
+        hasPrinted = true;
+    }
+    if (node.isArgument()) {
+        printf("%sarg%u", hasPrinted ? ", " : "", node.argumentNumber());
+        hasPrinted = true;
+    }
+    if (op == Int32Constant) {
+        printf("%s$%u{%d|0x%08x}", hasPrinted ? ", " : "", node.constantNumber(), node.int32Constant(), node.int32Constant());
+        hasPrinted = true;
+    }
+    if (op == DoubleConstant) {
+        printf("%s$%u{%f})", hasPrinted ? ", " : "", node.constantNumber(), node.numericConstant());
+        hasPrinted = true;
+    }
+    if (op == JSConstant) {
+        printf("%s$%u", hasPrinted ? ", " : "", node.constantNumber());
+        hasPrinted = true;
+    }
+
+    printf(")\n");
+}
+
 void Graph::dump(CodeBlock* codeBlock)
 {
-    // Creates an array of stringized names.
-#define STRINGIZE_DFG_OP_ENUM(opcode, flags) #opcode ,
-    const char* dfgOpNames[] = {
-        FOR_EACH_DFG_OP(STRINGIZE_DFG_OP_ENUM)
-    };
-#undef STRINGIZE_DFG_OP_ENUM
-
-    Node* nodes = this->begin();
-
-    for (size_t i = 0; i < size(); ++i) {
-        Node& node = nodes[i];
-        NodeType op = node.op;
-
-        unsigned refCount = node.refCount;
-        if (!refCount)
-            continue;
-        bool mustGenerate = node.mustGenerate();
-        if (mustGenerate)
-            --refCount;
-
-        // Example/explanation of dataflow dump output
-        //
-        //   14:   <!2:7>  GetByVal(@3, @13)
-        //   ^1     ^2 ^3     ^4       ^5
-        //
-        // (1) The nodeIndex of this operation.
-        // (2) The reference count. The number printed is the 'real' count,
-        //     not including the 'mustGenerate' ref. If the node is
-        //     'mustGenerate' then the count it prefixed with '!'.
-        // (3) The virtual register slot assigned to this node.
-        // (4) The name of the operation.
-        // (5) The arguments to the operation. The may be of the form:
-        //         @#   - a NodeIndex referencing a prior node in the graph.
-        //         arg# - an argument number.
-        //         $#   - the index in the CodeBlock of a constant { for numeric constants the value is displayed | for integers, in both decimal and hex }.
-        //         id#  - the index in the CodeBlock of an identifier { if codeBlock is passed to dump(), the string representation is displayed }.
-        //         var# - the index of a var on the global object, used by GetGlobalVar/PutGlobalVar operations.
-        printf("% 4d:\t<%c%u:%u>\t%s(", (int)i, mustGenerate ? '!' : ' ', refCount, node.virtualRegister, dfgOpNames[op & NodeIdMask]);
-        if (node.child1 != NoNode)
-            printf("@%u", node.child1);
-        if (node.child2 != NoNode)
-            printf(", @%u", node.child2);
-        if (node.child3 != NoNode)
-            printf(", @%u", node.child3);
-        bool hasPrinted = node.child1 != NoNode;
-
-        if (node.hasVarNumber()) {
-            printf("%svar%u", hasPrinted ? ", " : "", node.varNumber());
-            hasPrinted = true;
-        }
-        if (node.hasIdentifier()) {
-            if (codeBlock)
-                printf("%sid%u{%s}", hasPrinted ? ", " : "", node.identifierNumber(), codeBlock->identifier(node.identifierNumber()).ustring().utf8().data());
-            else
-                printf("%sid%u", hasPrinted ? ", " : "", node.identifierNumber());
-            hasPrinted = true;
-        }
-        if (node.isArgument()) {
-            printf("%sarg%u", hasPrinted ? ", " : "", node.argumentNumber());
-            hasPrinted = true;
-        }
-        if (op == Int32Constant) {
-            printf("%s$%u{%d|0x%08x}", hasPrinted ? ", " : "", node.constantNumber(), node.int32Constant(), node.int32Constant());
-            hasPrinted = true;
-        }
-        if (op == DoubleConstant) {
-            printf("%s$%u{%f})", hasPrinted ? ", " : "", node.constantNumber(), node.numericConstant());
-            hasPrinted = true;
-        }
-        if (op == JSConstant) {
-            printf("%s$%u", hasPrinted ? ", " : "", node.constantNumber());
-            hasPrinted = true;
-        }
-
-        printf(")\n");
-    }
+    for (size_t i = 0; i < size(); ++i)
+        dump(i, codeBlock);
 }
+
 #endif
 
 // FIXME: Convert this method to be iterative, not recursive.

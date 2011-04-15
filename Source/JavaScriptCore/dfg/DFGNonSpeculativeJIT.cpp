@@ -149,9 +149,6 @@ bool NonSpeculativeJIT::isKnownInteger(NodeIndex nodeIndex)
     if (spillFormat != DataFormatNone)
         return (spillFormat | DataFormatJS) == DataFormatJSInteger;
 
-    if (m_jit.graph()[nodeIndex].isArgument())
-        return false;
-
     ASSERT(isConstant(nodeIndex));
     return isInt32Constant(nodeIndex);
 }
@@ -169,9 +166,6 @@ bool NonSpeculativeJIT::isKnownNumeric(NodeIndex nodeIndex)
     if (spillFormat != DataFormatNone)
         return (spillFormat | DataFormatJS) == DataFormatJSInteger
             || (spillFormat | DataFormatJS) == DataFormatJSDouble;
-
-    if (m_jit.graph()[nodeIndex].isArgument())
-        return false;
 
     ASSERT(isConstant(nodeIndex));
     return isInt32Constant(nodeIndex) || isDoubleConstant(nodeIndex);
@@ -205,9 +199,12 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         initConstantInfo(m_compileIndex);
         break;
     
-    case Argument:
-        initArgumentInfo(m_compileIndex);
+    case Argument: {
+        GPRTemporary result(this);
+        m_jit.loadPtr(m_jit.addressForArgument(node.argumentNumber()), result.registerID());
+        jsValueResult(result.gpr(), m_compileIndex);
         break;
+    }
 
     case BitAnd:
     case BitOr:

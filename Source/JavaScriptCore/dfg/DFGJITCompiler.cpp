@@ -45,9 +45,6 @@ void JITCompiler::fillNumericToDouble(NodeIndex nodeIndex, FPRReg fpr, GPRReg te
     Node& node = graph()[nodeIndex];
     MacroAssembler::RegisterID tempReg = gprToRegisterID(temporary);
 
-    // Arguments can't be know to be double, would need to have been a ValueToNumber node in the way!
-    ASSERT(!node.isArgument());
-
     if (node.isConstant()) {
         ASSERT(node.op == DoubleConstant);
         move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(nodeIndex)))), tempReg);
@@ -70,9 +67,6 @@ void JITCompiler::fillInt32ToInteger(NodeIndex nodeIndex, GPRReg gpr)
 {
     Node& node = graph()[nodeIndex];
 
-    // Arguments can't be know to be int32, would need to have been a ValueToInt32 node in the way!
-    ASSERT(!node.isArgument());
-
     if (node.isConstant()) {
         ASSERT(node.op == Int32Constant);
         move(MacroAssembler::Imm32(valueOfInt32Constant(nodeIndex)), gprToRegisterID(gpr));
@@ -90,11 +84,6 @@ void JITCompiler::fillInt32ToInteger(NodeIndex nodeIndex, GPRReg gpr)
 void JITCompiler::fillToJS(NodeIndex nodeIndex, GPRReg gpr)
 {
     Node& node = graph()[nodeIndex];
-
-    if (node.isArgument()) {
-        loadPtr(addressForArgument(node.argumentNumber()), gprToRegisterID(gpr));
-        return;
-    }
 
     if (node.isConstant()) {
         if (isInt32Constant(nodeIndex)) {
