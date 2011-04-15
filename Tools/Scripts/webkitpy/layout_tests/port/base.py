@@ -140,6 +140,12 @@ class Port(object):
         self._multiprocessing_is_available = (multiprocessing is not None)
         self._results_directory = None
 
+    def wdiff_available(self):
+        return bool(self._wdiff_available)
+
+    def pretty_patch_available(self):
+        return bool(self._pretty_patch_available)
+
     def default_child_processes(self):
         """Return the number of DumpRenderTree instances to use for this
         port."""

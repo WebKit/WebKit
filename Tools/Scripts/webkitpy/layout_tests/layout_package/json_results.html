@@ -77,6 +77,8 @@ function resultLink(test_prefix, suffix, contents)
 // FIXME: show expected/actual/diff contents inline in iframes
 // FIXME: allow zooming in on pixel diffs
 // FIXME: store stderr information in the json
+// FIXME: add links to the httpd access/error logs
+// FIXME: handle new tests
 
 var hasTextFailures = false;
 var hasImageFailures = false;
@@ -93,26 +95,29 @@ for (var test in results.tests) {
   var test_prefix = stripExtension(test);
 
   row += '<td>';
-  // FIXME: only include timeout actual/expected results here if we actually spit out results for timeout tests.
   if (actual == 'CRASH')
-      row += resultLink(test, '-stack.txt', 'stack');
+      row += resultLink(test_prefix, '-stack.txt', 'stack');
   else if (actual.indexOf('TEXT' || actual == 'TIMEOUT') != -1) {
+      // FIXME: only include timeout actual/expected results here if we actually spit out results for timeout tests.
       hasTextFailures = true;
-      // FIXME: Show wdiff here too?
-      // FIXME: store a bit in the JSON as to whether pretty-diff/wdiffs were generated
-      row += resultLink(test, '-expected.txt', 'expected') +
-          resultLink(test, '-actual.txt', 'actual') +
-          resultLink(test, '-diff.txt', 'diff') +
-          resultLink(test, '-pretty-diff.html', 'pretty diff');
+      row += resultLink(test_prefix, '-expected.txt', 'expected') +
+          resultLink(test_prefix, '-actual.txt', 'actual') +
+          resultLink(test_prefix, '-diff.txt', 'diff');
+        
+      if (results.has_pretty_patch)
+          row += resultLink(test_prefix, '-pretty-diff.html', 'pretty diff');
+
+      if (results.has_wdiff)
+          row += resultLink(test_prefix, '-wdiff.html', 'wdiff');
   }
 
   row += '</td><td>';
 
   if (actual.indexOf('IMAGE') != -1) {
       hasImageFailures = true;
-      row += resultLink(test, '-expected.png', 'expected') +
-          resultLink(test, '-actual.png', 'actual') +
-          resultLink(test, '-diff.png', 'diff');
+      row += resultLink(test_prefix, '-expected.png', 'expected') +
+          resultLink(test_prefix, '-actual.png', 'actual') +
+          resultLink(test_prefix, '-diff.png', 'diff');
   }
 
   row += '</td>';
