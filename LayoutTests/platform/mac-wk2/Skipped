@@ -150,6 +150,10 @@ editing/selection/mixed-editability-10.html
 editing/selection/move-begin-end.html
 editing/selection/paragraph-granularity.html
 editing/selection/select-from-textfield-outwards.html
+editing/selection/select-out-of-editable.html
+editing/selection/select-out-of-floated-contenteditable.html
+editing/selection/select-out-of-floated-input.html
+editing/selection/select-out-of-floated-textarea.html
 editing/selection/selection-actions.html
 editing/selection/shift-click.html
 editing/selection/shrink-selection-after-shift-pagedown.html

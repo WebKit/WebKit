@@ -1,3 +1,9 @@
+2011-04-15  Adam Roben  <aroben@apple.com>
+
+        Add new eventSender-dependent tests from r83967 to the mac-wks Skipped file
+
+        * platform/mac-wk2/Skipped: Added some new editing/selection tests.
+
 2011-04-15  Alice Boxhall  <aboxhall@chromium.org>
 
         Reviewed by Ryosuke Niwa.
