@@ -1,3 +1,10 @@
+2011-04-15  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed, remove a Qt-specific expectation that's no longer needed.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/loader/onload-policy-ignore-for-frame-expected.txt: Removed.
+
 2011-04-15  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
