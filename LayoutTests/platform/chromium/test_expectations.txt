@@ -3291,9 +3291,6 @@ BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = CRASH PASS
 BUGWK58005 MAC : editing/inserting/editable-inline-element.html = IMAGE
 BUGCR780807 : http/tests/misc/webtiming-origins.html = PASS TEXT
 
-BUGWK58147 : fast/dom/MediaStream/argument-types.html = TEXT
-BUGWK58147 : fast/dom/MediaStream/enabled.html = TEXT
-
 BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = CRASH
 BUGWK58158 : editing/pasteboard/paste-xml.xhtml = PASS TEXT
 BUGCR78988 LINUX : svg/zoom/text/absolute-sized-document-no-scrollbars.svg = CRASH PASS

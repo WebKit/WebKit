@@ -1,3 +1,14 @@
+2011-04-14  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Steve Block.
+
+        [Chromium] Two new tests added by r83287 fail in chromium
+        https://bugs.webkit.org/show_bug.cgi?id=58147
+
+        Solved by enabling the Media Stream API in the chromium feature override file.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-04-14  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, update test expectations.
