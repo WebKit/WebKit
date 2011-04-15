@@ -732,13 +732,9 @@ JSValue JSDOMWindow::postMessage(ExecState* exec)
 
 JSValue JSDOMWindow::setTimeout(ExecState* exec)
 {
-    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), impl()->document()->contentSecurityPolicy());
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec));
     if (exec->hadException())
         return jsUndefined();
-
-    if (!action)
-        return jsNumber(0);
-
     int delay = exec->argument(1).toInt32(exec);
 
     ExceptionCode ec = 0;
@@ -750,13 +746,10 @@ JSValue JSDOMWindow::setTimeout(ExecState* exec)
 
 JSValue JSDOMWindow::setInterval(ExecState* exec)
 {
-    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec), impl()->document()->contentSecurityPolicy());
+    OwnPtr<ScheduledAction> action = ScheduledAction::create(exec, currentWorld(exec));
     if (exec->hadException())
         return jsUndefined();
     int delay = exec->argument(1).toInt32(exec);
-
-    if (!action)
-        return jsNumber(0);
 
     ExceptionCode ec = 0;
     int result = impl()->setInterval(action.release(), delay, ec);

@@ -498,11 +498,6 @@ bool ContentSecurityPolicy::allowInlineScript() const
     return !protectAgainstXSS();
 }
 
-bool ContentSecurityPolicy::allowEval() const
-{
-    return !m_scriptSrc || (m_options && m_options->evalScript());
-}
-
 bool ContentSecurityPolicy::allowScriptFromSource(const KURL& url) const
 {
     return !m_scriptSrc || m_scriptSrc->allows(url);

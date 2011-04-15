@@ -1,3 +1,26 @@
+2011-04-15  Adam Roben  <aroben@apple.com>
+
+        Roll out r83954
+
+        It was causing fast/dom/Window/timer-null-script-execution-context.html to crash on multiple
+        bots.
+
+        See <http://webkit.org/b/58610>.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setTimeout):
+        (WebCore::JSDOMWindow::setInterval):
+        * bindings/js/JSWorkerContextCustom.cpp:
+        (WebCore::JSWorkerContext::setTimeout):
+        (WebCore::JSWorkerContext::setInterval):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::create):
+        * bindings/js/ScheduledAction.h:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::WindowSetTimeoutImpl):
+        * page/ContentSecurityPolicy.cpp:
+        * page/ContentSecurityPolicy.h:
+
 2011-04-15  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

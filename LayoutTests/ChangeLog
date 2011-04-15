@@ -1,3 +1,21 @@
+2011-04-15  Adam Roben  <aroben@apple.com>
+
+        Roll out r83954
+
+        It was causing fast/dom/Window/timer-null-script-execution-context.html to crash on multiple
+        bots.
+
+        See <http://webkit.org/b/58610>.
+
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setInterval-allowed-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setInterval-allowed.html: Removed.
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setInterval-blocked-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setInterval-blocked.html: Removed.
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setTimeout-allowed-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setTimeout-allowed.html: Removed.
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setTimeout-blocked-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/eval-scripts-setTimeout-blocked.html: Removed.
+
 2011-04-15  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK platform results for
