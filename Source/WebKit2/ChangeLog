@@ -1,6 +1,6 @@
 2011-04-15  Brady Eidson  <beidson@apple.com>
 
-        Reviewed by Sam Weinig.
+        Reviewed by Dan Bernstein.
 
         <rdar://problem/9287880> and https://bugs.webkit.org/show_bug.cgi?id=58596
         WK2: Past searches not remembered for <input type=search results="5" autosave="foo">
