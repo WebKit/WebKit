@@ -67,7 +67,7 @@ using namespace std;
 
 namespace JSC {
 
-#if OS(DARWIN) || OS(WINDOWS)
+#if OS(DARWIN) || (OS(WINDOWS) && CPU(X86))
 #define SYMBOL_STRING(name) "_" #name
 #else
 #define SYMBOL_STRING(name) #name
@@ -81,7 +81,7 @@ namespace JSC {
 
 #if (OS(LINUX) || OS(FREEBSD)) && CPU(X86_64)
 #define SYMBOL_STRING_RELOCATION(name) #name "@plt"
-#elif OS(DARWIN)
+#elif OS(DARWIN) || (CPU(X86_64) && COMPILER(MINGW) && !GCC_VERSION_AT_LEAST(4, 5, 0))
 #define SYMBOL_STRING_RELOCATION(name) "_" #name
 #elif CPU(X86) && COMPILER(MINGW)
 #define SYMBOL_STRING_RELOCATION(name) "@" #name "@4"

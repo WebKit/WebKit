@@ -1,3 +1,14 @@
+2011-04-15  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Gavin Barraclough.
+
+        Correctly prefix symbols. Since gcc 4.5.0, Windows x64 symbols
+        are not prefixed by underscore anymore. This is consistent with
+        what MSVC does.
+        https://bugs.webkit.org/show_bug.cgi?id=58573
+
+        * jit/JITStubs.cpp:
+
 2011-04-15  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.
