@@ -17,7 +17,7 @@ function test()
         function callback(error, styles)
         {
             if (error) {
-                InspectorTest.addError("error: " + error);
+                InspectorTest.addResult("error: " + error);
                 return;
             }
 
@@ -297,14 +297,14 @@ function test()
     function loadAndDumpStyleSheet(styleSheetId, continuation, error)
     {
         if (error) {
-            InspectorTest.addError("error: " + error);
+            InspectorTest.addResult("error: " + error);
             return;
         }
 
         function styleSheetLoaded(error, styleSheet)
         {
             if (error) {
-                InspectorTest.addError("error: " + error);
+                InspectorTest.addResult("error: " + error);
                 return;
             }
             InspectorTest.addResult("");

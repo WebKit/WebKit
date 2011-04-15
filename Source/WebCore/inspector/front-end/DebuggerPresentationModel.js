@@ -45,6 +45,8 @@ WebInspector.DebuggerPresentationModel = function()
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.Reset, this._debuggerReset, this);
+
+    new WebInspector.DebuggerPresentationModelResourceBinding(this);
 }
 
 WebInspector.DebuggerPresentationModel.Events = {
@@ -140,12 +142,15 @@ WebInspector.DebuggerPresentationModel.prototype = {
     {
         var script = this._scriptForSourceFileId(sourceFileId);
         var sourceFile = this._sourceFiles[sourceFileId];
-        var oldSource = sourceFile.content;
-        function didEditScriptSource(error)
+
+        function didEditScriptSource(oldSource, error)
         {
             if (!error) {
                 sourceFile.content = newSource;
-                this._updateResourceContent(sourceFile, oldSource, newSource);
+
+                var resource = WebInspector.resourceForURL(sourceFile.url);
+                if (resource)
+                    resource.addRevision(newSource);
             }
 
             callback(error);
@@ -153,22 +158,12 @@ WebInspector.DebuggerPresentationModel.prototype = {
             if (!error && WebInspector.debuggerModel.callFrames)
                 this._debuggerPaused();
         }
-        WebInspector.debuggerModel.editScriptSource(script.sourceID, newSource, didEditScriptSource.bind(this));
-    },
 
-    _updateResourceContent: function(sourceFile, oldSource, newSource)
-    {
-        var resource = WebInspector.resourceForURL(sourceFile.url);
-        if (!resource)
-            return;
-
-        function didEditScriptSource(error)
+        var oldSource = sourceFile.requestContent(didReceiveSource.bind(this));
+        function didReceiveSource(oldSource)
         {
-            this._updateBreakpointsAfterLiveEdit(sourceFile.id, oldSource, newSource);
-            sourceFile.reload();
+            WebInspector.debuggerModel.editScriptSource(script.sourceID, newSource, didEditScriptSource.bind(this, oldSource));
         }
-        var revertHandle = this.editScriptSource.bind(this, sourceFile.id, oldSource, didEditScriptSource.bind(this));
-        resource.setContent(newSource, revertHandle);
     },
 
     _updateBreakpointsAfterLiveEdit: function(sourceFileId, oldSource, newSource)
@@ -712,3 +707,49 @@ WebInspector.PresenationCallFrame.prototype = {
         this._sourceFile.requestSourceMapping(didRequestSourceMapping.bind(this));
     }
 }
+
+WebInspector.DebuggerPresentationModelResourceBinding = function(model)
+{
+    this._presentationModel = model;
+    WebInspector.Resource.registerDomainModelBinding(WebInspector.Resource.Type.Script, this);
+}
+
+WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
+    canSetContent: function(resource)
+    {
+        var sourceFile = this._presentationModel._sourceFileForScript(resource.url)
+        if (!sourceFile)
+            return false;
+        return this._presentationModel.canEditScriptSource(sourceFile.id);
+    },
+
+    setContent: function(resource, content, majorChange, userCallback)
+    {
+        if (!majorChange)
+            return;
+
+        var sourceFile = this._presentationModel._sourceFileForScript(resource.url);
+        if (!sourceFile) {
+            userCallback("Resource is not editable");
+            return;
+        }
+
+        resource.requestContent(this._setContentWithInitialContent.bind(this, sourceFile, content, userCallback));
+    },
+
+    _setContentWithInitialContent: function(sourceFile, content, userCallback, oldContent)
+    {
+        function callback(error)
+        {
+            if (userCallback)
+                userCallback(error);
+            if (!error) {
+                this._presentationModel._updateBreakpointsAfterLiveEdit(sourceFile.id, oldContent, content);
+                sourceFile.reload();
+            }
+        }
+        this._presentationModel.editScriptSource(sourceFile.id, content, callback.bind(this));
+    }
+}
+
+WebInspector.DebuggerPresentationModelResourceBinding.prototype.__proto__ = WebInspector.ResourceDomainModelBinding.prototype;

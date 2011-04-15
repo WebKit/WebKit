@@ -49,9 +49,8 @@ WebInspector.ResourceView.createResourceView = function(resource)
     case WebInspector.resourceCategories.documents:
     case WebInspector.resourceCategories.scripts:
     case WebInspector.resourceCategories.xhr:
-        return new WebInspector.ResourceSourceFrame(resource);
     case WebInspector.resourceCategories.stylesheets:
-        return new WebInspector.CSSSourceFrame(resource);
+        return new WebInspector.ResourceSourceFrame(resource);
     case WebInspector.resourceCategories.images:
         return new WebInspector.ImageView(resource);
     case WebInspector.resourceCategories.fonts:
@@ -68,9 +67,8 @@ WebInspector.ResourceView.resourceViewTypeMatchesResource = function(resource)
     case WebInspector.resourceCategories.documents:
     case WebInspector.resourceCategories.scripts:
     case WebInspector.resourceCategories.xhr:
-        return resourceView.__proto__ === WebInspector.ResourceSourceFrame.prototype;
     case WebInspector.resourceCategories.stylesheets:
-        return resourceView.__proto__ === WebInspector.CSSSourceFrame.prototype;
+        return resourceView.__proto__ === WebInspector.ResourceSourceFrame.prototype;
     case WebInspector.resourceCategories.images:
         return resourceView.__proto__ === WebInspector.ImageView.prototype;
     case WebInspector.resourceCategories.fonts:
@@ -140,7 +138,32 @@ WebInspector.ResourceSourceFrame.prototype = {
 
     isContentEditable: function()
     {
-        return false;
+        return this._resource.isEditable();
+    },
+
+    editContent: function(newText, callback)
+    {
+        this._clearIncrementalUpdateTimer();
+        var majorChange = true;
+        this._resource.setContent(newText, majorChange, callback);
+    },
+
+    endEditing: function(oldRange, newRange)
+    {
+        function commitIncrementalEdit()
+        {
+            var majorChange = false;
+            this._resource.setContent(this._textModel.text, majorChange, function() {});
+        }
+        const updateTimeout = 200;
+        this._incrementalUpdateTimer = setTimeout(commitIncrementalEdit.bind(this), updateTimeout);
+    },
+
+    _clearIncrementalUpdateTimer: function()
+    {
+        if (this._incrementalUpdateTimer)
+            clearTimeout(this._incrementalUpdateTimer);
+        delete this._incrementalUpdateTimer;
     },
 
     _requestContent: function(callback)
@@ -155,83 +178,3 @@ WebInspector.ResourceSourceFrame.prototype = {
 }
 
 WebInspector.ResourceSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;
-
-
-WebInspector.CSSSourceFrame = function(resource)
-{
-    WebInspector.ResourceSourceFrame.call(this, resource);
-    this._loadStyleSheet();
-}
-
-WebInspector.CSSSourceFrame.prototype = {
-    isContentEditable: function()
-    {
-        return !!this._styleSheet && !this._resource.isResourceRevision();
-    },
-
-    _loadStyleSheet: function()
-    {
-        function didGetAllStyleSheets(error, infos)
-        {
-            if (error)
-                return;
-
-            var stylesheetId;
-            for (var i = 0; i < infos.length; ++i) {
-                var info = infos[i];
-                if (info.sourceURL === this._resource.url) {
-                    stylesheetId = info.styleSheetId;
-                    break;
-                }
-            }
-            if (!stylesheetId)
-                return;
-
-            function didCreateForId(styleSheet)
-            {
-                this._styleSheet = styleSheet;
-            }
-            WebInspector.CSSStyleSheet.createForId(stylesheetId, didCreateForId.bind(this));
-        }
-        CSSAgent.getAllStyleSheets(didGetAllStyleSheets.bind(this));
-    },
-
-    editContent: function(newText, callback)
-    {
-        if (!this._styleSheet) {
-            callback("Stylesheet not found.");
-            return;
-        }
-
-        this._resetIncrementalUpdateTimer();
-
-        function didSetText(success)
-        {
-            var error;
-            if (!success)
-                error = "Failed to save modified stylesheet " + this._resource.url;
-            callback(error);
-        }
-        this._styleSheet.setText(newText, true, didSetText.bind(this));
-    },
-
-    endEditing: function(oldRange, newRange)
-    {
-        function commitIncrementalEdit()
-        {
-            var majorChange = false;
-            this._styleSheet.setText(this._textModel.text, majorChange);
-        }
-        const updateTimeout = 200;
-        this._incrementalUpdateTimer = setTimeout(commitIncrementalEdit.bind(this), updateTimeout);
-    },
-
-    _resetIncrementalUpdateTimer: function()
-    {
-        if (this._incrementalUpdateTimer)
-            clearTimeout(this._incrementalUpdateTimer);
-        delete this._incrementalUpdateTimer;
-    }
-}
-
-WebInspector.CSSSourceFrame.prototype.__proto__ = WebInspector.ResourceSourceFrame.prototype;

@@ -66,8 +66,8 @@ public:
     void getComputedStyleForNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* style);
     void getAllStyleSheets(ErrorString*, RefPtr<InspectorArray>* styleSheetInfos);
     void getStyleSheet(ErrorString*, const String& styleSheetId, RefPtr<InspectorObject>* result);
-    void getStyleSheetText(ErrorString*, const String& styleSheetId, String* url, String* result);
-    void setStyleSheetText(ErrorString*, const String& styleSheetId, const String& text, bool* success);
+    void getStyleSheetText(ErrorString*, const String& styleSheetId, String* result);
+    void setStyleSheetText(ErrorString*, const String& styleSheetId, const String& text);
     void setPropertyText(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, const String& text, bool overwrite, RefPtr<InspectorObject>* result);
     void toggleProperty(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, bool disable, RefPtr<InspectorObject>* result);
     void setRuleSelector(ErrorString*, const RefPtr<InspectorObject>& ruleId, const String& selector, RefPtr<InspectorObject>* result);
@@ -87,7 +87,7 @@ private:
 
     InspectorStyleSheet* bindStyleSheet(CSSStyleSheet*);
     InspectorStyleSheet* viaInspectorStyleSheet(Document*, bool createIfAbsent);
-    InspectorStyleSheet* styleSheetForId(ErrorString*, const String&);
+    InspectorStyleSheet* assertStyleSheetForId(ErrorString*, const String&);
     String detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument);
 
     PassRefPtr<InspectorArray> buildArrayForRuleList(CSSRuleList* ruleList);

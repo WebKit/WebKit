@@ -39,10 +39,10 @@ function test()
 
     function testSetText(next)
     {
-        function callback(success)
+        function callback(error)
         {
-            if (!success) {
-                InspectorTest.addError("Failed to set stylesheet text");
+            if (error) {
+                InspectorTest.addResult("Failed to set stylesheet text: " + error);
                 return;
             }
 
@@ -59,7 +59,7 @@ function test()
         function callback(error, styles)
         {
             if (error) {
-                InspectorTest.addError("error: " + error);
+                InspectorTest.addResult("error: " + error);
                 return;
             }
 

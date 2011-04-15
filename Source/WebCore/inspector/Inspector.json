@@ -1165,7 +1165,6 @@
                     { "name": "styleSheetId", "type": "string" }
                 ],
                 "returns": [
-                    { "name": "url", "type": "string", "description": "The stylesheet resource URL." },
                     { "name": "text", "type": "string", "description": "The stylesheet text." }
                 ],
                 "description": "Returns the current textual content and the URL for a stylesheet."
@@ -1175,9 +1174,6 @@
                 "parameters": [
                     { "name": "styleSheetId", "type": "string" },
                     { "name": "text", "type": "string" }
-                ],
-                "returns": [
-                    { "name": "success", "type": "boolean", "description": "Whether the modification was successful." }
                 ],
                 "description": "Sets the new stylesheet text, thereby invalidating all existing <code>CSSStyleId</code>'s and <code>CSSRuleId</code>'s contained by this stylesheet."
             },

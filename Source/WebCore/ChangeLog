@@ -1,3 +1,81 @@
+2011-04-15  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: refactor resource setContent / revisions infrastructure to get
+        rid of onRevert callback.
+        https://bugs.webkit.org/show_bug.cgi?id=58649
+
+        Instead, we will have DomainModel/Resource binding responsible for changing
+        underlying model upon resource changes and vice versa.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getStyleSheet):
+        (WebCore::InspectorCSSAgent::getStyleSheetText):
+        (WebCore::InspectorCSSAgent::setStyleSheetText):
+        (WebCore::InspectorCSSAgent::setPropertyText):
+        (WebCore::InspectorCSSAgent::toggleProperty):
+        (WebCore::InspectorCSSAgent::setRuleSelector):
+        (WebCore::InspectorCSSAgent::assertStyleSheetForId):
+        * inspector/InspectorCSSAgent.h:
+        * inspector/front-end/CSSStyleModel.js:
+        (WebInspector.CSSStyleModel):
+        (WebInspector.CSSStyleModel.prototype.setRuleSelector):
+        (WebInspector.CSSStyleModel.prototype.addRule):
+        (WebInspector.CSSStyleModel.prototype._fireStyleSheetChanged.callback):
+        (WebInspector.CSSStyleModel.prototype._fireStyleSheetChanged):
+        (WebInspector.CSSStyleModel.prototype.setStyleSheetText):
+        (WebInspector.CSSStyleDeclaration.prototype.insertPropertyAt):
+        (WebInspector.CSSProperty.prototype.setText):
+        (WebInspector.CSSProperty.prototype.setText.callback):
+        (WebInspector.CSSProperty.prototype.setDisabled.callback):
+        (WebInspector.CSSProperty.prototype.setDisabled):
+        (WebInspector.CSSStyleSheet.prototype.setText):
+        (WebInspector.CSSStyleModelResourceBinding):
+        (WebInspector.CSSStyleModelResourceBinding.prototype.setContent):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._frameNavigated):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._innerSetContent):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._loadStyleSheetHeaders):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._styleSheetChanged.setContent):
+        (WebInspector.CSSStyleModelResourceBinding.prototype._styleSheetChanged):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype.editScriptSource.didEditScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype.editScriptSource.didReceiveSource):
+        (WebInspector.DebuggerPresentationModel.prototype.editScriptSource):
+        (WebInspector.DebuggerPresentationModelResourceBinding):
+        (WebInspector.DebuggerPresentationModelResourceBinding.prototype.canSetContent):
+        (WebInspector.DebuggerPresentationModelResourceBinding.prototype.setContent):
+        * inspector/front-end/Object.js:
+        (WebInspector.Object.prototype.hasEventListeners):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.registerDomainModelBinding):
+        (WebInspector.Resource.prototype.isEditable):
+        (WebInspector.Resource.prototype.setContent):
+        (WebInspector.Resource.prototype.addRevision):
+        (WebInspector.Resource.prototype.revertToThis.callback):
+        (WebInspector.Resource.prototype.revertToThis):
+        (WebInspector.ResourceDomainModelBinding):
+        (WebInspector.ResourceDomainModelBinding.prototype.canSetContent):
+        (WebInspector.ResourceDomainModelBinding.prototype.setContent):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.createResourceView):
+        (WebInspector.ResourceView.resourceViewTypeMatchesResource):
+        (WebInspector.ResourceSourceFrame.prototype.isContentEditable):
+        (WebInspector.ResourceSourceFrame.prototype.editContent):
+        (WebInspector.ResourceSourceFrame.prototype.endEditing):
+        (WebInspector.ResourceSourceFrame.prototype._clearIncrementalUpdateTimer):
+        (WebInspector.ResourceSourceFrame.prototype._requestContent):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._resourceAdded):
+        (WebInspector.FrameResourceTreeElement):
+        (WebInspector.FrameResourceTreeElement.prototype._populateRevisions):
+        (WebInspector.FrameResourceTreeElement.prototype._revisionAdded):
+        (WebInspector.FrameResourceTreeElement.prototype._appendRevision):
+        * inspector/front-end/inspector.html:
+
 2011-04-15  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed, rolling out r83949.

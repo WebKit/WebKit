@@ -277,33 +277,32 @@ void InspectorCSSAgent::getAllStyleSheets(ErrorString*, RefPtr<InspectorArray>* 
 
 void InspectorCSSAgent::getStyleSheet(ErrorString* errorString, const String& styleSheetId, RefPtr<InspectorObject>* styleSheetObject)
 {
-    InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(errorString, styleSheetId);
+    InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, styleSheetId);
     if (!inspectorStyleSheet)
         return;
 
     *styleSheetObject = inspectorStyleSheet->buildObjectForStyleSheet();
 }
 
-void InspectorCSSAgent::getStyleSheetText(ErrorString* errorString, const String& styleSheetId, String* url, String* result)
+void InspectorCSSAgent::getStyleSheetText(ErrorString* errorString, const String& styleSheetId, String* result)
 {
-    InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(errorString, styleSheetId);
+    InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, styleSheetId);
     if (!inspectorStyleSheet)
         return;
-    *url = inspectorStyleSheet->finalURL();
+
     inspectorStyleSheet->text(result);
 }
 
-void InspectorCSSAgent::setStyleSheetText(ErrorString* errorString, const String& styleSheetId, const String& text, bool* success)
+void InspectorCSSAgent::setStyleSheetText(ErrorString* errorString, const String& styleSheetId, const String& text)
 {
-    InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(errorString, styleSheetId);
-    if (!inspectorStyleSheet) {
-        *success = false;
+    InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, styleSheetId);
+    if (!inspectorStyleSheet)
         return;
-    }
 
-    *success = inspectorStyleSheet->setText(text);
-    if (*success)
+    if (inspectorStyleSheet->setText(text))
         inspectorStyleSheet->reparseStyleSheet(text);
+    else
+        *errorString = "Internal error setting style sheet text.";
 }
 
 void InspectorCSSAgent::setPropertyText(ErrorString* errorString, const RefPtr<InspectorObject>& fullStyleId, int propertyIndex, const String& text, bool overwrite, RefPtr<InspectorObject>* result)
@@ -311,7 +310,7 @@ void InspectorCSSAgent::setPropertyText(ErrorString* errorString, const RefPtr<I
     InspectorCSSId compoundId(fullStyleId);
     ASSERT(!compoundId.isEmpty());
 
-    InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(errorString, compoundId.styleSheetId());
+    InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, compoundId.styleSheetId());
     if (!inspectorStyleSheet)
         return;
 
@@ -325,7 +324,7 @@ void InspectorCSSAgent::toggleProperty(ErrorString* errorString, const RefPtr<In
     InspectorCSSId compoundId(fullStyleId);
     ASSERT(!compoundId.isEmpty());
 
-    InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(errorString, compoundId.styleSheetId());
+    InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, compoundId.styleSheetId());
     if (!inspectorStyleSheet)
         return;
 
@@ -339,7 +338,7 @@ void InspectorCSSAgent::setRuleSelector(ErrorString* errorString, const RefPtr<I
     InspectorCSSId compoundId(fullRuleId);
     ASSERT(!compoundId.isEmpty());
 
-    InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(errorString, compoundId.styleSheetId());
+    InspectorStyleSheet* inspectorStyleSheet = assertStyleSheetForId(errorString, compoundId.styleSheetId());
     if (!inspectorStyleSheet)
         return;
 
@@ -471,7 +470,7 @@ InspectorStyleSheet* InspectorCSSAgent::viaInspectorStyleSheet(Document* documen
     return inspectorStyleSheet.get();
 }
 
-InspectorStyleSheet* InspectorCSSAgent::styleSheetForId(ErrorString* errorString, const String& styleSheetId)
+InspectorStyleSheet* InspectorCSSAgent::assertStyleSheetForId(ErrorString* errorString, const String& styleSheetId)
 {
     IdToInspectorStyleSheet::iterator it = m_idToInspectorStyleSheet.find(styleSheetId);
     if (it == m_idToInspectorStyleSheet.end()) {

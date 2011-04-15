@@ -33,6 +33,7 @@ WebInspector.Resource = function(identifier, url)
     this._endTime = -1;
     this._category = WebInspector.resourceCategories.other;
     this._pendingContentCallbacks = [];
+    this.history = [];
 }
 
 // Keep these in sync with WebCore::InspectorResource::Type
@@ -98,6 +99,17 @@ WebInspector.Resource.Type = {
                 return "other";
         }
     }
+}
+
+WebInspector.Resource._domainModelBindings = [];
+
+WebInspector.Resource.registerDomainModelBinding = function(type, binding)
+{
+    WebInspector.Resource._domainModelBindings[type] = binding;
+}
+
+WebInspector.Resource.Events = {
+    RevisionAdded: 0
 }
 
 WebInspector.Resource.prototype = {
@@ -690,20 +702,36 @@ WebInspector.Resource.prototype = {
         this._content = content;
     },
 
-    isResourceRevision: function()
+    isEditable: function()
     {
-        return !!this._actualResource;
+        if (this._actualResource)
+            return false;
+        var binding = WebInspector.Resource._domainModelBindings[this.type];
+        return binding && binding.canSetContent(this);
     },
 
-    setContent: function(newContent, onRevert)
+    setContent: function(newContent, majorChange, callback)
+    {
+        if (!this.isEditable(this)) {
+            if (callback)
+                callback("Resource is not editable");
+            return;
+        }
+        var binding = WebInspector.Resource._domainModelBindings[this.type];
+        binding.setContent(this, newContent, majorChange, callback);
+    },
+
+    addRevision: function(newContent)
     {
         var revisionResource = new WebInspector.Resource(null, this.url);
+        revisionResource.frameId = this.frameId;
+        revisionResource.loaderId = this.loaderId;
+        revisionResource.documentURL = this.documentURL;
         revisionResource.type = this.type;
         revisionResource.loader = this.loader;
         revisionResource.timestamp = this.timestamp;
         revisionResource._content = this._content;
         revisionResource._actualResource = this;
-        revisionResource._fireOnRevert = onRevert;
 
         if (this.finished)
             revisionResource.finished = true;
@@ -721,22 +749,22 @@ WebInspector.Resource.prototype = {
         else
             revisionResource._baseRevision = this._baseRevision;
 
-        var data = { revision: revisionResource };
         this._content = newContent;
         this.timestamp = new Date();
 
-        this.dispatchEventToListeners("content-changed", data);
+        this.history.push(revisionResource);
+        this.dispatchEventToListeners(WebInspector.Resource.Events.RevisionAdded, revisionResource);
     },
 
     revertToThis: function()
     {
-        if (!this._actualResource || !this._fireOnRevert)
+        if (!this._actualResource)
             return;
 
         function callback(content)
         {
             if (content)
-                this._fireOnRevert(content);
+                this._actualResource.setContent(content, true);
         }
         this.requestContent(callback.bind(this));
     },
@@ -813,3 +841,21 @@ WebInspector.Resource.prototype = {
 }
 
 WebInspector.Resource.prototype.__proto__ = WebInspector.Object.prototype;
+
+
+WebInspector.ResourceDomainModelBinding = function()
+{
+}
+
+WebInspector.ResourceDomainModelBinding.prototype = {
+    canSetContent: function()
+    {
+        // Implemented by the domains.
+        return true;
+    },
+
+    setContent: function(resource, content, majorChange, callback)
+    {
+        // Implemented by the domains.
+    }
+}

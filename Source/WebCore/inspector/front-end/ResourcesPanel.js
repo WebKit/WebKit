@@ -260,18 +260,17 @@ WebInspector.ResourcesPanel.prototype = {
 
         // Insert in the alphabetical order, first frames, then resources. Document resource goes first.
         var children = frameTreeElement.children;
-        for (var i = 0; i < children.length; ++i) {
+        var i;
+        for (i = 0; i < children.length; ++i) {
             var child = children[i];
             if (!(child instanceof WebInspector.FrameResourceTreeElement))
                 continue;
 
-            if (resource.type === WebInspector.Resource.Type.Document ||
-                    (child._resource.type !== WebInspector.Resource.Type.Document && child._resource.displayName.localeCompare(resource.displayName) > 0)) {
-                frameTreeElement.insertChild(resourceTreeElement, i);
-                return;
-            }
+            if (resource.type === WebInspector.Resource.Type.Document || (child._resource.type !== WebInspector.Resource.Type.Document && child._resource.displayName.localeCompare(resource.displayName) > 0))
+                break;
         }
-        frameTreeElement.appendChild(resourceTreeElement);
+        frameTreeElement.insertChild(resourceTreeElement, i);
+        resourceTreeElement._populateRevisions();
     },
 
     _frameNavigated: function(event)
@@ -991,7 +990,7 @@ WebInspector.FrameResourceTreeElement = function(storagePanel, resource)
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, resource, resource.displayName, ["resource-sidebar-tree-item", "resources-category-" + resource.category.name]);
     this._resource = resource;
     this._resource.addEventListener("errors-warnings-updated", this._errorsWarningsUpdated, this);
-    this._resource.addEventListener("content-changed", this._contentChanged, this);
+    this._resource.addEventListener(WebInspector.Resource.Events.RevisionAdded, this._revisionAdded, this);
     this.tooltip = resource.url;
 }
 
@@ -1103,9 +1102,20 @@ WebInspector.FrameResourceTreeElement.prototype = {
             this._bubbleElement.addStyleClass("error");
     },
 
-    _contentChanged: function(event)
+    _populateRevisions: function()
     {
-        this.insertChild(new WebInspector.ResourceRevisionTreeElement(this._storagePanel, event.data.revision), 0);
+        for (var i = 0; i < this._resource.history.length; ++i)
+            this._appendRevision(this._resource.history[i]);
+    },
+
+    _revisionAdded: function(event)
+    {
+        this._appendRevision(event.data);
+    },
+
+    _appendRevision: function(revision)
+    {
+        this.insertChild(new WebInspector.ResourceRevisionTreeElement(this._storagePanel, revision), 0);
         var oldView = WebInspector.ResourceView.existingResourceViewForResource(this._resource);
         if (oldView) {
             var newView = WebInspector.ResourceView.recreateResourceView(this._resource);

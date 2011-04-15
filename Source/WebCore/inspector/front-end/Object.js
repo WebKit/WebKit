@@ -57,6 +57,13 @@ WebInspector.Object.prototype = {
         delete this._listeners;
     },
 
+    hasEventListeners: function(eventType)
+    {
+        if (!("_listeners" in this) || !(eventType in this._listeners))
+            return false;
+        return true;
+    },
+
     dispatchEventToListeners: function(eventType, eventData)
     {
         if (!("_listeners" in this) || !(eventType in this._listeners))
